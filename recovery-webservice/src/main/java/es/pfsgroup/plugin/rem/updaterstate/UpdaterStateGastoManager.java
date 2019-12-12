@@ -217,12 +217,10 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 					codigo = estadoGastoDesdePendiente(gasto);
 					
 				}else if(DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo())) {
-					//codigo = estadoGastoDesdeRechazadoAdmin(gasto);
-					return true;
+					codigo = estadoGastoDesdeRechazadoAdmin(gasto);
 					
 				}else if(DDEstadoGasto.RECHAZADO_PROPIETARIO.equals(gasto.getEstadoGasto().getCodigo())) {
-					//codigo = estadoGastoDesdeRechazadoProp(gasto);
-					return true;
+					codigo = estadoGastoDesdeRechazadoProp(gasto);
 					
 				}else if(DDEstadoGasto.SUBSANADO.equals(gasto.getEstadoGasto().getCodigo())) {
 					codigo = estadoGastoDesdeSubsanado(gasto);

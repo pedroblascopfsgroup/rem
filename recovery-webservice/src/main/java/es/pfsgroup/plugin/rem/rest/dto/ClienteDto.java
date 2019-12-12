@@ -133,7 +133,7 @@ public class ClienteDto implements Serializable{
 			Update.class })
 	private String conyugeTipoDocumento;
 	
-	@Size(groups = { Insert.class, Update.class })
+	@Size(max=14,groups = { Insert.class, Update.class })
 	private String conyugeDocumento;
 	
 	@Size(max=5,groups = { Insert.class, Update.class })

@@ -89,22 +89,6 @@ Ext.define('HreRem.view.configuracion.ConfiguracionController', {
 		return true;
 	},
 	
-	paramLoadingGestoresSustitutos: function(store, operation, opts) {
-		var initialData = {};
-		var searchForm = this.getReferences().configuracionGestoresSustitutosFiltros;
-		var criteria = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
-		
-		Ext.Object.each(criteria, function(key, val) {
-			if (Ext.isEmpty(val)) {
-				delete criteria[key];
-			}
-		});
-
-		store.getProxy().extraParams = criteria;
-		
-		return true;
-	},
-	
 	paramLoadingPerfiles: function(store, operation, opts) {
 		var initialData = {};
 		var searchForm = this.getReferences().configuracionPerfilesBusqueda;
@@ -136,12 +120,6 @@ Ext.define('HreRem.view.configuracion.ConfiguracionController', {
 	onSearchProveedoresClick: function(btn) {
 		var me = this;
 		me.getViewModel().getData().configuracionproveedores.load(1);
-	},
-	 
-	// Función que se ejecuta al hacer click en el botón Buscar.
-	onSearchGestoresSustitutosClick: function(btn) {
-		var me = this;
-		me.getViewModel().getData().configuraciongestoressustitutos.load(1);
 	},
 	
 	onSearchPerfilesClick: function(btn) {

@@ -1812,7 +1812,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		nuevaOferta.setFechaAlta(new Date());
 		nuevaOferta.setTipoOferta(oferta.getTipoOferta());
 		nuevaOferta.setVentaDirecta(oferta.getVentaDirecta());
-		nuevaOferta.setOrigen(OfertaApi.ORIGEN_REM);
+		nuevaOferta.setOrigen(oferta.getOrigen());
 		nuevaOferta.setOfertaExpress(oferta.getOfertaExpress());
 		nuevaOferta.setCanalPrescripcion(oferta.getCanalPrescripcion());
 		nuevaOferta.setPrescriptor(oferta.getPrescriptor());

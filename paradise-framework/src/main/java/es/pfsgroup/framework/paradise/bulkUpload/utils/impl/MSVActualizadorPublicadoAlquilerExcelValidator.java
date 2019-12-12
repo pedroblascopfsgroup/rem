@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -132,12 +132,12 @@ public class MSVActualizadorPublicadoAlquilerExcelValidator extends MSVExcelVali
 			mapaErrores.put(AGRUPACION_DESTINO_COMERCIAL_NO_ALQUILER, activosAgrupacionDestinoComercialNoAlquilerRows(exc));
 			mapaErrores.put(AGRUPACION_ACTIVO_SIN_INFORME_NI_PRECIO, activosAgrupacionSinInformeAprobadoNiPrecioOSinPublicarSinPrecioRows(exc));
 			mapaErrores.put(AGRUPACION_ACTIVO_SIN_PRECIO, agrupacionSinPrecio(exc));
-	
-			for (Entry<String, List<Integer>> registro : mapaErrores.entrySet()) {
-				if (!registro.getValue().isEmpty()) {
+
+			Set<String> keySet = mapaErrores.keySet();			
+			for (String key : keySet) {				
+				if(!Checks.estaVacio(mapaErrores.get(key))) {
 					dtoValidacionContenido.setFicheroTieneErrores(true);
 					dtoValidacionContenido.setExcelErroresFormato(new FileItem(new File(exc.crearExcelErroresMejorado(mapaErrores))));
-					break;
 				}
 			}	
 		}

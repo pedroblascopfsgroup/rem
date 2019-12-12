@@ -446,7 +446,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		 },
 		
 		isGestorFormalizacion: function(){
-			if($AU.userIsRol(CONST.PERFILES['HAYAGESTFORM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTIAFORM'])){
+			if($AU.userIsRol(CONST.PERFILES['HAYAGESTFORM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
 				return false;
 			}else{
 				return true;

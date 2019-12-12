@@ -1,18 +1,13 @@
 Ext.define('HreRem.view.configuracion.ConfiguracionModel', {
     extend: 'HreRem.view.common.GenericViewModel',
     alias: 'viewmodel.configuracion',
-    requires: ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.Proveedor', 'HreRem.model.Perfil', 'HreRem.model.ComboMunicipio','HreRem.model.GestorSustituto'],
+    requires: ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.Proveedor', 'HreRem.model.Perfil', 'HreRem.model.ComboMunicipio'],
 
     stores: { 
 //    	comboFiltroMunicipios: {
 //	   		source: 'municipios',
 //	   		loadSource: true
-//		},   
-    	comboUsuariosGestorSustituto: {
-	   		source: 'usuariosgestorsustituto',
-	   		loadSource: true
-		},
-		
+//		},      	
 		configuracionproveedores: {    
    		 	pageSize: $AC.getDefaultPageSize(),
    		 	model: 'HreRem.model.Proveedor',
@@ -26,21 +21,6 @@ Ext.define('HreRem.view.configuracion.ConfiguracionModel', {
 	    	remoteFilter: true,
 	    	listeners : {
 	            beforeload : 'paramLoadingProveedores'
-	        }
-   		},
-   		configuraciongestoressustitutos: {
-   			pageSize: $AC.getDefaultPageSize(),
-   		 	model: 'HreRem.model.GestorSustituto',
-       		proxy: {
-		        type: 'uxproxy',
-		        remoteUrl: 'gestorsustituto/getGestoresSustitutos',
-		        actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'}
-	    	},
-	    	session: true,
-	    	remoteSort: true,
-	    	remoteFilter: true,
-	    	listeners : {
-	            beforeload : 'paramLoadingGestoresSustitutos'
 	        }
    		},
    		configuracionperfiles: {    

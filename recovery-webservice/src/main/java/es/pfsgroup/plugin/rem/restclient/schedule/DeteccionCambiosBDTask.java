@@ -42,6 +42,8 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 
 	private final Log logger = LogFactory.getLog(getClass());
 
+	private boolean running = false;
+
 	private Integer tamanyoBloque = null;
 
 	private Integer MAXIMO_INTENTOS = MAXIMO_INTENTOS_DEFAULT;
@@ -120,6 +122,14 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void detectaCambios(DetectorCambiosBD handlerToExecute, TIPO_ENVIO tipoEnvio)
 			throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
+		if (running) {
+			throw new ErrorServicioEnEjecucion("El servicio ya se esta ejecutando");
+		}
+		synchronized (this) {
+			running = true;
+			this.notifyAll();
+		}
+
 		obtenerProperties();
 
 		long iteracion = System.currentTimeMillis();
@@ -220,9 +230,11 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
+			running = false;
 			handlerToExecute.eviarCorreoErrorDC(e.getMessage());
 			throw new ErrorServicioWebcom(e.getMessage());
 		} finally {
+			running = false;
 			trace("[DETECCIÓN CAMBIOS] Fin [it=" + iteracion + "]");
 		}
 

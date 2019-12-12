@@ -293,27 +293,6 @@ function SQL_dml_rules() {
 	done
 }
 
-function check_select() {
-	file=$1
-	declare -A rule=(	[name]="Script con contenido incorrecto (SELECT *)"
-						[file]=$file 
-						[problem]="Se han detectado sentencias SELECT * dentro de un script"
-						[solution]="Revise que no contenga sentencias (SELECT *). Sustitúyalas por SELECT <lista_de_campos>" )
-
-	existe=`cat $file | grep -Eia 'SELECT \*' | wc -l`
-	if [ $existe -gt 0 ]; then
-		paint_error rule
-	    exit 1
-	fi
-
-}
-
-function SQL_rules2() {
-	for f in `eval $modified_files | grep -Ei '*\.sql$'`; do
-		check_select $f
-	done
-}
-
 ########################################################
 ##### MAIN
 ########################################################
@@ -325,6 +304,5 @@ ficheros_rules
 JSP_rules
 JS_rules
 SQL_rules
-SQL_rules2
 
 exit 0

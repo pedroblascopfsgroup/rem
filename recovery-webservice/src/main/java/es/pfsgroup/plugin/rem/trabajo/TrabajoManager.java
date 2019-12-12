@@ -3,8 +3,6 @@ package es.pfsgroup.plugin.rem.trabajo;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,7 +11,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -2632,31 +2629,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		filtro.setIdTrabajo(idTrabajo);
-		int limiteOriginal = filtro.getLimit();
-		int startOriginal = filtro.getStart();
-		filtro.setStart(0);
-		filtro.setLimit(Integer.MAX_VALUE);
 		Page page = trabajoDao.getTarifasTrabajo(filtro, usuarioLogado);
-		BigDecimal sumaTotal = BigDecimal.ZERO;
-		NumberFormat format = NumberFormat.getNumberInstance(Locale.ENGLISH);
-        format.setMinimumFractionDigits(2);
-        format.setMaximumFractionDigits(5);
-        format.setRoundingMode(RoundingMode.HALF_EVEN);
-		
+
 		List<TrabajoConfiguracionTarifa> lista = (List<TrabajoConfiguracionTarifa>) page.getResults();
 		List<DtoTarifaTrabajo> tarifas = new ArrayList<DtoTarifaTrabajo>();
 
 		for (TrabajoConfiguracionTarifa trabajoTarifa : lista) {
-			BigDecimal precioUnitario = new BigDecimal(trabajoTarifa.getPrecioUnitario().toString());
-			BigDecimal medicion = new BigDecimal(trabajoTarifa.getMedicion().toString());
-			sumaTotal = sumaTotal.add(precioUnitario.multiply(medicion));
-		}
-		
-		for(int i=startOriginal; i<(((startOriginal+limiteOriginal) > lista.size()) ? lista.size() : startOriginal+limiteOriginal); i++) {		
 
-			DtoTarifaTrabajo dtoTarifaTrabajo = tarifaAplicadaToDto(lista.get(i));
-			dtoTarifaTrabajo.setTotalCount(page.getTotalCount());
-			dtoTarifaTrabajo.setImporteTotalTarifas(format.format(sumaTotal));
+			DtoTarifaTrabajo dtoTarifaTrabajo = tarifaAplicadaToDto(trabajoTarifa);
 			tarifas.add(dtoTarifaTrabajo);
 		}
 
@@ -2667,12 +2647,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public DtoPage getTarifasTrabajo(DtoGestionEconomicaTrabajo filtro, Long idTrabajo) {
 
 		List<DtoTarifaTrabajo> listaTarifasTrabajo = getListDtoTarifaTrabajo(filtro, idTrabajo);
-		
-		if(!Checks.esNulo(listaTarifasTrabajo)) {
-			return new DtoPage(listaTarifasTrabajo, listaTarifasTrabajo.get(0).getTotalCount());
-		}else {
-			return new DtoPage(listaTarifasTrabajo, 0);
-		}
+		return new DtoPage(listaTarifasTrabajo, listaTarifasTrabajo.size());
 	}
 
 	@SuppressWarnings("unchecked")

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Beltrán
---## FECHA_CREACION=20191128
+--## FECHA_CREACION=20191118
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-5757
@@ -10,7 +10,6 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
---##        0.2 Anyadir nuevos subtipos de activo
 --##########################################
 --*/
 
@@ -38,21 +37,18 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        --T_TIPO_DATA('DD_TPA_CODIGO','DD_SAC_CODIGO','DD_SAC_DESCRIPCION')
-           T_TIPO_DATA('01','27','No Urbanizable'),
-           T_TIPO_DATA('03','28','Parque Medianas'),
-           T_TIPO_DATA('03','29','Gasolinera'),
-           T_TIPO_DATA('08','30','Dotacional Deportivo'),
-           T_TIPO_DATA('08','31','Dotacional Sanitario'),
-           T_TIPO_DATA('08','32','Dotacional Recreativo'),
-           T_TIPO_DATA('09','33','Otros Derechos'),
-           T_TIPO_DATA('08','34','Dotacional Asistencial'),
-           T_TIPO_DATA('07','35','Infraestructura Técnica'),
-           T_TIPO_DATA('07','36','Superficie en Zona Común'),
-           T_TIPO_DATA('04','37','Nave en varias plantas'),
-           T_TIPO_DATA('07','38','Residencia Estudiantes'),
-           T_TIPO_DATA('08','39','Dotacional Privado')
-          
+        --T_TIPO_DATA('DD_TPN_CODIGO','DD_TPA_CODIGO','DD_SAC_CODIGO','DD_SAC_DESCRIPCION','DD_SAC_DESCRIPCION_LARGA')
+          T_TIPO_DATA('0924','01','27','No Urbanizable'),
+          T_TIPO_DATA('0929','03','28','Parque Medianas'),
+          T_TIPO_DATA('0930','03','29','Gasolinera'),
+          T_TIPO_DATA('0932','08','30','Dotacional Deportivo'),
+          T_TIPO_DATA('0933','08','31','Dotacional Sanitario'),
+          T_TIPO_DATA('0934','08','32','Dotacional Recreativo'),
+          T_TIPO_DATA('0935','09','33','Otros Derechos'),
+          T_TIPO_DATA('0936','08','34','Dotacional Asistencial'),
+          T_TIPO_DATA('0937','07','35','Infraestructura Técnica'),
+          T_TIPO_DATA('0941','07','36','Superficie en Zona Común'),
+          T_TIPO_DATA('0943','08','37','Dotacional Deportivo')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 
@@ -68,46 +64,31 @@ BEGIN
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
 
         --Comprobar el dato a insertar.
-        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_'||V_TEXT_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||'''';
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_'||V_TEXT_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_REGISTROS;
 
         IF V_NUM_REGISTROS = 0 THEN
        	-- Si no existe se inserta.
-        	DBMS_OUTPUT.PUT_LINE('[INFO]: NUEVO REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(2)) ||'''');                    
+          DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAR EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(3)) ||'''');                    
 
-          	V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
+          V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
 					   DD_'||V_TEXT_CHARS||'_ID, 
-                       DD_TPA_ID,                                           
+                       DD_TPA_ID, 
+                       DD_TPA_COD_UVEM,                       
                        DD_'||V_TEXT_CHARS||'_CODIGO, 
                        DD_'||V_TEXT_CHARS||'_DESCRIPCION, 
                        DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA, 
                        VERSION, USUARIOCREAR, FECHACREAR, BORRADO) 
 					  SELECT '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL,
-                       TPA.DD_TPA_ID,         
-                       '''|| TRIM(V_TMP_TIPO_DATA(2)) ||''', 
+                       TPA.DD_TPA_ID,  
+                       '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''',                       
                        '''|| TRIM(V_TMP_TIPO_DATA(3)) ||''', 
-                       '''|| TRIM(V_TMP_TIPO_DATA(3)) ||''', 
+                       '''|| TRIM(V_TMP_TIPO_DATA(4)) ||''', 
+                       '''|| TRIM(V_TMP_TIPO_DATA(4)) ||''', 
                        0, '''|| V_USUARIO_CREAR ||''', SYSDATE, 0 
-                      FROM '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO TPA WHERE TPA.DD_TPA_CODIGO = '|| TRIM(V_TMP_TIPO_DATA(1)) ||'';
-          	EXECUTE IMMEDIATE V_MSQL;
-          	DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
-          
-       ELSIF V_NUM_REGISTROS = 1 THEN
-       -- Si existe se modifica.
-       		DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAR REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(2)) ||'''');
-       		
-       		V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'                        
-                    SET DD_'||V_TEXT_CHARS||'_DESCRIPCION = '''|| TRIM(V_TMP_TIPO_DATA(3)) ||''', 
-                    	DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA = '''|| TRIM(V_TMP_TIPO_DATA(3)) ||''', 
-                       	USUARIOMODIFICAR = '''||V_USUARIO_MODIFICAR||''',
-					   	FECHAMODIFICAR = SYSDATE,
-					   	DD_TPA_ID = (SELECT TPA.DD_TPA_ID FROM '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO TPA WHERE TPA.DD_TPA_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''),
-					   	DD_TPA_COD_UVEM = NULL
-					WHERE DD_'||V_TEXT_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||'''';
-					
-       		EXECUTE IMMEDIATE V_MSQL;
-          	DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
-       		
+                      FROM '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO TPA WHERE TPA.DD_TPA_CODIGO = '|| TRIM(V_TMP_TIPO_DATA(2)) ||'';
+          EXECUTE IMMEDIATE V_MSQL;
+          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
        END IF;
       END LOOP;
       
@@ -120,9 +101,9 @@ EXCEPTION
           ERR_NUM := SQLCODE;
           ERR_MSG := SQLERRM;
 
-          DBMS_OUTPUT.PUT_LINE('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
-          DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------'); 
-          DBMS_OUTPUT.PUT_LINE(ERR_MSG);
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
 
           ROLLBACK;
           RAISE;          

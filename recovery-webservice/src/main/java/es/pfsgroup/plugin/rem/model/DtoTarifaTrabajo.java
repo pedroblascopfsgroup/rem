@@ -25,8 +25,6 @@ public class DtoTarifaTrabajo extends WebDto {
 	private String cuentaContable;
 	private String partidaPresupuestaria;
 	private String importeTotal;
-	private Integer totalCount;
-	private String importeTotalTarifas;
 
 	public String getId() {
 		return id;
@@ -99,18 +97,6 @@ public class DtoTarifaTrabajo extends WebDto {
 	}
 	public void setImporteTotal(String importeTotal) {
 		this.importeTotal = importeTotal;
-	}
-	public Integer getTotalCount() {
-		return totalCount;
-	}
-	public void setTotalCount(Integer totalCount) {
-		this.totalCount = totalCount;
-	}
-	public String getImporteTotalTarifas() {
-		return importeTotalTarifas;
-	}
-	public void setImporteTotalTarifas(String importeTotalTarifas) {
-		this.importeTotalTarifas = importeTotalTarifas;
 	}
 
 }

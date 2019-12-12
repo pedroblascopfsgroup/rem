@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina Garrido
---## FECHA_CREACION=20191122
+--## AUTOR=Guillermo Llidó Parra
+--## FECHA_CREACION=20190712
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-5838
+--## INCIDENCIA_LINK=REMVIP-4808
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -21,7 +21,6 @@
 --##		REMVIP-4116 Nuevo filtro de subcartera
 --##		HREOS-5997 Correción GENCAT
 --##		REMVIP-4808 Corrección Rendimiento
---##		REMVIP-5838 Arreglar filtro tipo comercialización
 --##########################################
 --*/
 
@@ -113,7 +112,6 @@ BEGIN
 		INNER JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT 					ON ACT.ACT_ID = VAO.ACT_ID and act.borrado = 0
 		LEFT JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA  				ON ACT.DD_CRA_ID = CRA.DD_CRA_ID
 		LEFT JOIN '|| V_ESQUEMA ||'.DD_SCR_SUBCARTERA SCR  				ON ACT.DD_SCR_ID = SCR.DD_SCR_ID
-		LEFT JOIN '|| V_ESQUEMA ||'.DD_TCR_TIPO_COMERCIALIZAR TCR  		ON ACT.DD_TCR_ID = TCR.DD_TCR_ID
 		LEFT JOIN '|| V_ESQUEMA ||'.ACT_ABA_ACTIVO_BANCARIO ABA 		ON ACT.ACT_ID = ABA.ACT_ID 
 		INNER JOIN '|| V_ESQUEMA ||'.DD_TOF_TIPOS_OFERTA TOF 			ON TOF.DD_TOF_ID = OFR.DD_TOF_ID
 		INNER JOIN '|| V_ESQUEMA ||'.DD_EOF_ESTADOS_OFERTA EOF 			ON EOF.DD_EOF_ID = OFR.DD_EOF_ID

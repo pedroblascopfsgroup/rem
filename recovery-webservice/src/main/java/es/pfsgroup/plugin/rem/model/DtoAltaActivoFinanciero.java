@@ -35,6 +35,7 @@ public final class DtoAltaActivoFinanciero {
 	// COMERCIALIZACION
 	private String destinoComercialCodigo;
 	private String tipoAlquilerCodigo;
+	private String tipoDeComercializacion;
 
 	// DATOS PRESTAMO QUE GRAVA EL ACTIVO
 	private String numPrestamo;
@@ -228,6 +229,12 @@ public final class DtoAltaActivoFinanciero {
 	}
 	public void setTipoAlquilerCodigo(String tipoAlquilerCodigo) {
 		this.tipoAlquilerCodigo = tipoAlquilerCodigo;
+	}
+	public String getTipoDeComercializacion() {
+		return tipoDeComercializacion;
+	}
+	public void setTipoDeComercializacion(String tipoDeComercializacion) {
+		this.tipoDeComercializacion = tipoDeComercializacion;
 	}
 	public String getEstadoExpedienteRiesgoCodigo() {
 		return estadoExpedienteRiesgoCodigo;

@@ -55,7 +55,6 @@ import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.DtoAltaActivoFinanciero;
-import es.pfsgroup.plugin.rem.model.DtoAltaActivoThirdParty;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PresupuestoActivo;
@@ -73,6 +72,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalificacionEnergetica;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
@@ -182,7 +182,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		beanUtilNotNull.copyProperty(activo, "tipoAlquiler", utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoAlquiler.class, dtoAAF.getTipoAlquilerCodigo()));
 		beanUtilNotNull.copyProperty(activo, "situacionComercial",
 				utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionComercial.class, DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE));
-
+		beanUtilNotNull.copyProperty(activo, "tipoComercializar", utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializar.class, dtoAAF.getTipoDeComercializacion()));
 		activo = genericDao.save(Activo.class, activo);
 		return activo;
 	}

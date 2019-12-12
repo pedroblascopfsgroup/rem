@@ -29,6 +29,7 @@ public class DtoAltaActivoThirdParty {
 	//comercializacion
 	private String destinoComercialCodigo;
 	private String tipoAlquilerCodigo;
+	private String tipoDeComercializacion;
 	
 	//inscripcion
 	private String poblacionRegistroCodigo;
@@ -233,6 +234,12 @@ public class DtoAltaActivoThirdParty {
 	}
 	public void setTipoAlquilerCodigo(String tipoAlquilerCodigo) {
 		this.tipoAlquilerCodigo = tipoAlquilerCodigo;
+	}
+	public String getTipoDeComercializacion() {
+		return tipoDeComercializacion;
+	}
+	public void setTipoDeComercializacion(String tipoDeComercializacion) {
+		this.tipoDeComercializacion = tipoDeComercializacion;
 	}
 	public String getPoblacionRegistroCodigo() {
 		return poblacionRegistroCodigo;

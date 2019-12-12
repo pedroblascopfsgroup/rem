@@ -247,6 +247,7 @@ BEGIN
 					    FROM '||V_ESQUEMA||'.act_tit_titulo tit
 					    left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
 					    where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is null and eti.dd_eti_codigo = ''02'' and tit.TIT_FECHA_INSC_REG is not null
+						and tit.tit_fecha_envio_auto is null
    			) T2
 				ON (T1.TIT_ID = T2.TIT_ID)
 				 WHEN NOT MATCHED THEN INSERT (  AHT_ID, 

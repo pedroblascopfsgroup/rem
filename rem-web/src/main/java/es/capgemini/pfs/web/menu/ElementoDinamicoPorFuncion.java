@@ -9,9 +9,7 @@ import es.capgemini.pfs.users.UsuarioManager;
 
 public class ElementoDinamicoPorFuncion extends DynamicElementAdapter {
 
-    private static final long serialVersionUID = 2608858094257729516L;
-
-	@Autowired
+    @Autowired
     UsuarioManager usuarioManager;
 
     @Autowired

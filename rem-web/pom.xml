@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -59,17 +58,6 @@
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-api-plugin</artifactId>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>es.pfsgroup.plugin</groupId>
-			<artifactId>rem-logs</artifactId>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -219,7 +207,7 @@
 		<dependency>
 			<groupId>es.pfsgroup.recovery</groupId>
 			<artifactId>rec-encrypt</artifactId>
-			<version>9.1.0-REM</version><!--$NO-MVN-MAN-VER$-->
+			<version>9.1.0-REM</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -955,9 +943,9 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi-ooxml</artifactId>
-			<version>3.7</version>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-ooxml</artifactId>
+		    <version>3.7</version>
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.recovery.framework.libs</groupId>
@@ -1061,7 +1049,7 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.0.5</version><!--$NO-MVN-MAN-VER$-->
+			<version>2.0.5</version>
 		</dependency>
 		<!-- JasperReports Dependency -->
 		<dependency>
@@ -1268,13 +1256,13 @@
 		</dependency>
 		<!-- Fin dependencias UVEM BANKIA -->
 
-
+		
 		<!-- 0Auth2 compatibility -->
-		<dependency>
-			<groupId>com.nimbusds</groupId>
-			<artifactId>nimbus-jose-jwt</artifactId>
-			<version>4.11.2</version>
-		</dependency>
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>4.11.2</version>
+        </dependency>
 
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
@@ -1285,195 +1273,189 @@
 	</dependencies>
 	<build>
 		<finalName>pfs-${project.version}</finalName>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>2.3.2</version>
-					<configuration>
-						<source>1.6</source>
-						<target>1.6</target>
-						<encoding>UTF-8</encoding>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-dependency-plugin</artifactId>
-					<version>2.8</version>
-					<executions>
-						<execution>
-							<id>extract-reports</id>
-							<phase>compile</phase>
-							<goals>
-								<goal>unpack-dependencies</goal>
-							</goals>
-							<configuration>
-								<includes>reports/**/*.*</includes>
-								<excludes>**/*.class</excludes>
-								<outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
-								<overWriteReleases>true</overWriteReleases>
-								<overWriteSnapshots>true</overWriteSnapshots>
-							</configuration>
-						</execution>
-						<execution>
-							<id>extract-optionalConfiguration</id>
-							<phase>compile</phase>
-							<goals>
-								<goal>unpack-dependencies</goal>
-							</goals>
-							<configuration>
-								<includes>optionalConfiguration/**/*.*</includes>
-								<excludes>**/*.class</excludes>
-								<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
-								<overWriteReleases>true</overWriteReleases>
-								<overWriteSnapshots>true</overWriteSnapshots>
-							</configuration>
-						</execution>
-						<execution>
-							<id>extract-jsp</id>
-							<phase>compile</phase>
-							<goals>
-								<goal>unpack-dependencies</goal>
-							</goals>
-							<configuration>
-								<includes>jsp/**/*.*</includes>
-								<excludes>**/*.class</excludes>
-								<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF</outputDirectory>
-								<overWriteReleases>true</overWriteReleases>
-								<overWriteSnapshots>true</overWriteSnapshots>
-							</configuration>
-						</execution>
-						<execution>
-							<id>extract-js</id>
-							<phase>compile</phase>
-							<goals>
-								<goal>unpack-dependencies</goal>
-							</goals>
-							<configuration>
-								<includes>js/**/*.*</includes>
-								<excludes>**/*.class</excludes>
-								<outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
-								<overWriteReleases>true</overWriteReleases>
-								<overWriteSnapshots>true</overWriteSnapshots>
-							</configuration>
-						</execution>
-						<execution>
-							<id>extract-img</id>
-							<phase>compile</phase>
-							<goals>
-								<goal>unpack-dependencies</goal>
-							</goals>
-							<configuration>
-								<includes>img/**/*.*</includes>
-								<excludes>**/*.class</excludes>
-								<outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
-								<overWriteReleases>true</overWriteReleases>
-								<overWriteSnapshots>true</overWriteSnapshots>
-							</configuration>
-						</execution>
-						<execution>
-							<id>extract-flows</id>
-							<phase>compile</phase>
-							<goals>
-								<goal>unpack-dependencies</goal>
-							</goals>
-							<configuration>
-								<includes>flows/**/*.*</includes>
-								<excludes>**/*.class</excludes>
-								<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF</outputDirectory>
-								<overWriteReleases>true</overWriteReleases>
-								<overWriteSnapshots>true</overWriteSnapshots>
-							</configuration>
-						</execution>
-					</executions>
-
-				</plugin>
-				<!-- JETTY PLUGIN -->
-				<plugin>
-					<groupId>org.mortbay.jetty</groupId>
-					<artifactId>jetty-maven-plugin</artifactId>
-					<version>8.1.3.v20120416</version>
-					<configuration>
-						<systemProperties>
-							<systemProperty>
-								<name>DEVON_HOME</name>
-								<value>home/bruno/mydata/work/Git-Dev/Unirepo/recovery/rem-web/target</value>
-							</systemProperty>
-						</systemProperties>
-						<jettyXml>jetty/desarrollo/jetty-env-bankia.xml</jettyXml>
-						<war>${project.build.directory}/pfs-${version}.war</war>
-						<scanIntervalSeconds>10</scanIntervalSeconds>
-						<connectors>
-							<connector
-								implementation="org.mortbay.jetty.nio.SelectChannelConnector">
-								<port>8888</port>
-								<maxIdleTime>60000</maxIdleTime>
-							</connector>
-						</connectors>
-					</configuration>
-				</plugin>
-				<!-- JETTY PLUGIN (end) -->
-				<plugin>
-					<groupId>es.pfsgroup.maven</groupId>
-					<artifactId>docker-maven-plugin</artifactId>
-					<version>2.0.0-RC15</version>
-					<configuration>
-						<DB>${b}</DB>
-						<cliente>${docker.cliente}</cliente>
-						<war>pfs-${project.version}</war>
-						<warDirectory>rem-web/target</warDirectory>
-						<dumpsDir>${dumpsDir}</dumpsDir>
-						<directory>${directory}</directory>
-						<tag>${tag}</tag>
-						<container>${container}</container>
-						<port>${port}</port>
-						<debugPort>${debugPort}</debugPort>
-						<dumpName>${dumpName}</dumpName>
-						<loginPage>js/plugin/rem/index.jsp</loginPage>
-						<watchList>
-							<param>
-								<localFile>proyecto-rem-online/sencha-app</localFile>
-								<dockerFile>/recovery/app-server/tomcat/webapps/pfs/js/plugin/rem</dockerFile>
-							</param>
-						</watchList>
-						<senchaResources>
-							<param>
-								<input>proyecto-rem-online/sencha-app</input>
-								<output>proyecto-rem-online/./src/web/js/plugin/rem</output>
-								<name>default</name>
-							</param>
-						</senchaResources>
-					</configuration>
-				</plugin>
-				<plugin>
-					<artifactId>maven-antrun-plugin</artifactId>
-					<version>1.4</version>
-					<executions>
-						<execution>
-							<id>copy</id>
-							<phase>package</phase>
-							<configuration>
-								<tasks>
-									<copy file="../config/hooks/pre-commit"
-										tofile="../.git/hooks/pre-commit" />
-									<chmod file="../.git/hooks/pre-commit" perm="+x" />
-									<copy file="../config/hooks/commit-msg"
-										tofile="../.git/hooks/commit-msg" />
-									<chmod file="../.git/hooks/commit-msg" perm="+x" />
-									<copy file="../config/hooks/prepare-commit-msg"
-										tofile="../.git/hooks/prepare-commit-msg" />
-									<chmod file="../.git/hooks/prepare-commit-msg" perm="+x" />
-								</tasks>
-							</configuration>
-							<goals>
-								<goal>run</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-			</plugins>
-		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.8</version>
+				<executions>
+					<execution>
+						<id>extract-reports</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<includes>reports/**/*.*</includes>
+							<excludes>**/*.class</excludes>
+							<outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+					<execution>
+						<id>extract-optionalConfiguration</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<includes>optionalConfiguration/**/*.*</includes>
+							<excludes>**/*.class</excludes>
+							<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+					<execution>
+						<id>extract-jsp</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<includes>jsp/**/*.*</includes>
+							<excludes>**/*.class</excludes>
+							<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF</outputDirectory>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+					<execution>
+						<id>extract-js</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<includes>js/**/*.*</includes>
+							<excludes>**/*.class</excludes>
+							<outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+					<execution>
+						<id>extract-img</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<includes>img/**/*.*</includes>
+							<excludes>**/*.class</excludes>
+							<outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+					<execution>
+						<id>extract-flows</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<includes>flows/**/*.*</includes>
+							<excludes>**/*.class</excludes>
+							<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF</outputDirectory>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+				</executions>
+				
+			</plugin>
+			<!-- JETTY PLUGIN -->
+			<plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>8.1.3.v20120416</version>
+				<configuration>
+					<systemProperties>
+						<systemProperty>
+							<name>DEVON_HOME</name>
+							<value>home/bruno/mydata/work/Git-Dev/Unirepo/recovery/rem-web/target</value>
+						</systemProperty>
+					</systemProperties>
+					<jettyXml>jetty/desarrollo/jetty-env-bankia.xml</jettyXml>
+					<war>${project.build.directory}/pfs-${version}.war</war>
+					<scanIntervalSeconds>10</scanIntervalSeconds>
+					<connectors>
+						<connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+							<port>8888</port>
+							<maxIdleTime>60000</maxIdleTime>
+						</connector>
+					</connectors>
+				</configuration>
+			</plugin>
+			<!-- JETTY PLUGIN (end) -->
+			<plugin>
+				<groupId>es.pfsgroup.maven</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>2.0.0-RC15</version>
+				<configuration>
+					<DB>${b}</DB>
+					<cliente>${docker.cliente}</cliente>
+					<war>pfs-${project.version}</war>
+					<warDirectory>rem-web/target</warDirectory>
+					<dumpsDir>${dumpsDir}</dumpsDir>
+					<directory>${directory}</directory>
+					<tag>${tag}</tag>
+					<container>${container}</container>
+					<port>${port}</port>
+					<debugPort>${debugPort}</debugPort>
+					<dumpName>${dumpName}</dumpName>
+					<loginPage>js/plugin/rem/index.jsp</loginPage>
+					<watchList>
+						<param>
+							<localFile>proyecto-rem-online/sencha-app</localFile>
+							<dockerFile>/recovery/app-server/tomcat/webapps/pfs/js/plugin/rem</dockerFile>
+						</param>
+					</watchList>
+					<senchaResources>
+						<param>
+							<input>proyecto-rem-online/sencha-app</input>
+							<output>proyecto-rem-online/./src/web/js/plugin/rem</output>
+							<name>default</name>
+						</param>
+					</senchaResources>
+				</configuration>
+			</plugin>
+		    <plugin>
+		      <artifactId>maven-antrun-plugin</artifactId>
+		      <version>1.4</version>
+		      <executions>
+		        <execution>
+		          <id>copy</id>
+		          <phase>package</phase>
+		          <configuration>
+		            <tasks>
+		              <copy file="../config/hooks/pre-commit" tofile="../.git/hooks/pre-commit"/>
+		              <chmod file="../.git/hooks/pre-commit" perm="+x"/>
+		              <copy file="../config/hooks/commit-msg" tofile="../.git/hooks/commit-msg"/>
+		              <chmod file="../.git/hooks/commit-msg" perm="+x"/>
+		              <copy file="../config/hooks/prepare-commit-msg" tofile="../.git/hooks/prepare-commit-msg"/>
+		              <chmod file="../.git/hooks/prepare-commit-msg" perm="+x"/>
+		            </tasks>
+		          </configuration>
+		          <goals>
+		            <goal>run</goal>
+		          </goals>
+		        </execution> 
+		      </executions>
+		    </plugin>
+		</plugins>
 	</build>
 	<profiles>
 		<!-- Perfil por defecto -->
@@ -1519,19 +1501,19 @@
 					<version>${aspectj.version}</version>
 					<scope>compile</scope>
 				</dependency>
-
+				
 				<!-- Versión de Oracle -->
-				<!-- Nota: si la compilacion esta cascando por esto es que no se está 
-					compilando bien. Hay que compilar con los perfiles de java7 y ora11 o bien 
-					ora12 según la versión de oracle que vayamos a usar. Ahora será obligatorio 
-					especificar la versión de oracle al compilar. -->
+				<!-- Nota: si la compilacion esta cascando por esto es que no se está compilando bien.
+				Hay que compilar con los perfiles de java7 y ora11 o bien ora12 según la versión
+				de oracle que vayamos a usar. Ahora será obligatorio especificar la versión de oracle
+				al compilar. -->
 				<dependency>
 					<groupId>${ojdbc.groupid}</groupId>
 					<artifactId>${ojdbc.artifactId}</artifactId>
 					<version>${ojdbc.version}</version>
 					<scope>compile</scope>
-				</dependency>
-
+				</dependency> 
+				
 				<!-- Libs para Spring Json View -->
 				<dependency>
 					<groupId>net.sf.spring-json</groupId>
@@ -1691,7 +1673,7 @@
 				</plugins>
 			</build>
 		</profile>
-
+		
 		<profile>
 			<id>java7</id>
 			<properties>
@@ -1701,14 +1683,14 @@
 				<aspectj.version>1.7.2.RELEASE</aspectj.version>
 			</properties>
 		</profile>
-
+		
 		<profile>
 			<id>ora11</id>
 			<properties>
 				<ojdbc.groupid>batch.libraries</ojdbc.groupid>
 				<ojdbc.artifactId>ojdbc6</ojdbc.artifactId>
 				<ojdbc.version>STABLE</ojdbc.version>
-			</properties>
+			</properties>					
 		</profile>
 
 		<profile>
@@ -1717,8 +1699,8 @@
 				<ojdbc.groupid>oracle.ojdbc6</ojdbc.groupid>
 				<ojdbc.artifactId>ojdbc6</ojdbc.artifactId>
 				<ojdbc.version>12.1.0.1.0</ojdbc.version>
-			</properties>
+			</properties>		
 		</profile>
-
+		
 	</profiles>
 </project>

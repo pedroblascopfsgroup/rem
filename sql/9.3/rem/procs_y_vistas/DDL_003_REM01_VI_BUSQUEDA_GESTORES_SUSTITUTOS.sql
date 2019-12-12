@@ -1,0 +1,82 @@
+--/*
+--##########################################
+--## AUTOR=GUILLEM REY
+--## FECHA_CREACION=20191119
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-5286
+--## PRODUCTO=NO
+--## Finalidad: DDL VISTA BUSQUEDA GESTORES SUSTITUTOS
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+
+DECLARE
+    seq_count number(3); -- Vble. para validar la existencia de las Secuencias.
+    table_count number(3); -- Vble. para validar la existencia de las Tablas.
+    v_column_count number(3); -- Vble. para validar la existencia de las Columnas.    
+    v_constraint_count number(3); -- Vble. para validar la existencia de las Constraints.
+    err_num NUMBER; -- N?mero de errores
+    err_msg VARCHAR2(2048); -- Mensaje de error
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
+    V_MSQL VARCHAR2(4000 CHAR); 
+
+    CUENTA NUMBER;
+    
+BEGIN
+
+  SELECT COUNT(*) INTO CUENTA FROM ALL_OBJECTS WHERE OBJECT_NAME = 'V_BUSQUEDA_GESTORES_SUSTITUTOS' AND OWNER=V_ESQUEMA AND OBJECT_TYPE='MATERIALIZED VIEW';  
+  IF CUENTA>0 THEN
+    DBMS_OUTPUT.PUT_LINE('DROP MATERIALIZED VIEW '|| V_ESQUEMA ||'.V_BUSQUEDA_GESTORES_SUSTITUTOS...');
+    EXECUTE IMMEDIATE 'DROP MATERIALIZED VIEW ' || V_ESQUEMA || '.V_BUSQUEDA_GESTORES_SUSTITUTOS';  
+    DBMS_OUTPUT.PUT_LINE('DROP MATERIALIZED VIEW '|| V_ESQUEMA ||'.V_BUSQUEDA_GESTORES_SUSTITUTOS... borrada OK');
+  END IF;
+
+  SELECT COUNT(*) INTO CUENTA FROM ALL_OBJECTS WHERE OBJECT_NAME = 'V_BUSQUEDA_GESTORES_SUSTITUTOS' AND OWNER=V_ESQUEMA AND OBJECT_TYPE='VIEW';  
+  IF CUENTA>0 THEN
+    DBMS_OUTPUT.PUT_LINE('DROP VIEW '|| V_ESQUEMA ||'.V_BUSQUEDA_GESTORES_SUSTITUTOS...');
+    EXECUTE IMMEDIATE 'DROP VIEW ' || V_ESQUEMA || '.V_BUSQUEDA_GESTORES_SUSTITUTOS';  
+    DBMS_OUTPUT.PUT_LINE('DROP VIEW '|| V_ESQUEMA ||'.V_BUSQUEDA_GESTORES_SUSTITUTOS... borrada OK');
+  END IF;
+
+  DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_BUSQUEDA_GESTORES_SUSTITUTOS...');
+  EXECUTE IMMEDIATE 'CREATE VIEW ' || V_ESQUEMA || '.V_BUSQUEDA_GESTORES_SUSTITUTOS 
+	AS
+		SELECT DISTINCT
+		SGS.SGS_ID,
+		USU.USU_USERNAME USERNAME_ORI,
+		USU2.USU_USERNAME USERNAME_SUS,
+		TRIM(CASE WHEN USU.BORRADO = 1 THEN ''(BORRADO) '' END || USU.USU_NOMBRE || '' '' || USU.USU_APELLIDO1 || '' '' || USU.USU_APELLIDO2) NOMBRE_ORI,
+		TRIM(CASE WHEN USU2.BORRADO = 1 THEN ''(BORRADO) '' END || USU2.USU_NOMBRE || '' '' || USU2.USU_APELLIDO1 || '' '' || USU2.USU_APELLIDO2) NOMBRE_SUS,
+		SGS.FECHA_INICIO,
+		SGS.FECHA_FIN,
+		CASE WHEN (SGS.FECHA_INICIO < SYSDATE AND (SGS.FECHA_FIN > SYSDATE OR SGS.FECHA_FIN IS NULL)) AND USU2.BORRADO = 0 THEN 1 ELSE 0 END VIGENTE
+		FROM '|| V_ESQUEMA ||'.SGS_GESTOR_SUSTITUTO SGS
+		INNER JOIN '|| V_ESQUEMA_M ||'.USU_USUARIOS USU ON SGS.USU_ID_ORI = USU.USU_ID
+		INNER JOIN '|| V_ESQUEMA_M ||'.USU_USUARIOS USU2 ON USU2.USU_ID = SGS.USU_ID_SUS
+		WHERE SGS.BORRADO = 0';
+
+  DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_BUSQUEDA_GESTORES_SUSTITUTOS...Creada OK');
+  
+  EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          ROLLBACK;
+          RAISE;   
+END;
+/
+
+EXIT;

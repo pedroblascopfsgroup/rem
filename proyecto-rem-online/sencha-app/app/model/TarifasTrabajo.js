@@ -55,6 +55,11 @@ Ext.define('HreRem.model.TarifasTrabajo', {
      				}
      				
     			}
+    		},
+    		{
+    			name:'importeTotalTarifas',
+    			type: 'float',
+    			defaultValue: 0
     		}
     ],
     

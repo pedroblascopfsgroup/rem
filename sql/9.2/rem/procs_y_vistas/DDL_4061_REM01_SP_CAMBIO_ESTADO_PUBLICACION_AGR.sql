@@ -1297,7 +1297,7 @@ ELSE
            NVL(fDD_MTO_CODIGO_V, '00') <> NVL(hDD_MTO_CODIGO_V, '00') THEN
            
         IF vACTUALIZADO_V = 'S' THEN
-        	V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+        	V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
                         SET APU_FECHA_CAMB_PUBL_VENTA = SYSDATE
                             ,USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                             ,FECHAMODIFICAR = SYSDATE
@@ -1354,7 +1354,7 @@ ELSE
         END IF;
         
         IF vACTUALIZADO_A = 'S' THEN
-        	V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+        	V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
                         SET APU_FECHA_CAMB_PUBL_ALQ = SYSDATE
                             ,USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                             ,FECHAMODIFICAR = SYSDATE

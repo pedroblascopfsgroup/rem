@@ -30,45 +30,45 @@ public class MSVActualizadorDistribucionPreciosCargaMasiva extends AbstractMSVAc
 	private static final int EXP_NUM_EXPEDIENTE = 0;
 	private static final int ACT_NUM_ACTIVO = 1;
 	private static final int ACT_IMPORTE_PARTICIPACION = 2;
-	
+
 	private static final String SI = "SI";
 	private static final String NO = "NO";
 	@Autowired
 	private GenericABMDao genericDao;
-		
+
 	@Override
 	public String getValidOperation() {
 		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_DISTRIBUCION_PRECIOS;
 	}
-	
+
 	@Autowired
 	private ActivoApi activoApi;
-	
-	
+
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
-	
 
 	@Override
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
 			throws IOException, ParseException, JsonViewerException, SQLException, Exception {
-		
+
 		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, ACT_NUM_ACTIVO)));
-		ExpedienteComercial expediente = expedienteComercialApi.getExpedientePorActivo(activo);
-		
+		ExpedienteComercial expediente = expedienteComercialApi
+				.findOneByNumExpediente(Long.valueOf(exc.dameCelda(fila, EXP_NUM_EXPEDIENTE)));
+
 		Double importeParticipacionActivo = Double.parseDouble(exc.dameCelda(fila, ACT_IMPORTE_PARTICIPACION));
-		// Aqui buscamos el activo y el expediente si se encuentran, que deben encontrarse
+		// Aqui buscamos el activo y el expediente si se encuentran, que deben
+		// encontrarse
 		Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "primaryKey.activo.id", activo.getId());
-		Filter filterOferta = genericDao.createFilter(FilterType.EQUALS, "primaryKey.oferta.id", expediente.getOferta().getId());
+		Filter filterOferta = genericDao.createFilter(FilterType.EQUALS, "primaryKey.oferta.id",
+				expediente.getOferta().getId());
 		ActivoOferta activoOferta = genericDao.get(ActivoOferta.class, filterActivo, filterOferta);
-		
+
 		Double importeOferta = expediente.getOferta().getImporteOferta();
 		activoOferta.setImporteActivoOferta(importeParticipacionActivo);
 		activoOferta.setPorcentajeParticipacion(100 * (importeParticipacionActivo / importeOferta));
-	
-			
-		genericDao.update(ActivoOferta.class, activoOferta);			
-		
+
+		genericDao.update(ActivoOferta.class, activoOferta);
+
 		return new ResultadoProcesarFila();
 	}
 

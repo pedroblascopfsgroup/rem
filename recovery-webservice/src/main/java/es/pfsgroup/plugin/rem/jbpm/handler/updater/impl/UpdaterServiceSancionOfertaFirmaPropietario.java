@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
@@ -82,8 +83,9 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.VENDIDO);
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expediente.setEstado(estado);
-						
-						
+						if ( ofertaAceptada.getActivoPrincipal() != null ) {
+							activoApi.changeAndSavePlusvaliaEstadoGestionActivoById(ofertaAceptada.getActivoPrincipal().getId(), DDEstadoGestionPlusv.COD_EN_CURSO);
+						}
 						genericDao.save(ExpedienteComercial.class, expediente);
 						
 						//Finaliza el trámite

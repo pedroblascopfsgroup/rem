@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -92,6 +93,9 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.FIRMADO);
 			}else {
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.VENDIDO);
+				if (ofertaAceptada.getActivoPrincipal() != null) {
+					activoApi.changeAndSavePlusvaliaEstadoGestionActivoById(ofertaAceptada.getActivoPrincipal().getId(), DDEstadoGestionPlusv.COD_EN_CURSO);
+				}
 			}
 			DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 			expediente.setEstado(estado);

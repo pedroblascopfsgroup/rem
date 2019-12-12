@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
@@ -166,6 +167,13 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 									Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 									DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 									expediente.setEstado(estado);
+									Oferta oferta = expediente.getOferta();
+									List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
+									for (Oferta ofertaAux : listaOfertas) {
+										if (!ofertaAux.getId().equals(oferta.getId()) && !DDEstadoOferta.CODIGO_RECHAZADA.equals(ofertaAux.getEstadoOferta().getCodigo())) {
+											ofertaApi.congelarOferta(ofertaAux);
+										}
+									}
 								}
 								expediente.setEstadoPbc(1);
 							}

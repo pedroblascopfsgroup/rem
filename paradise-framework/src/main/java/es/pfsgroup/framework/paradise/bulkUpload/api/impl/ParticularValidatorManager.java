@@ -4083,7 +4083,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
 				+"		AND ECO.DD_EEC_ID NOT IN (SELECT EEC.DD_EEC_ID"
 				+"		FROM DD_EEC_EST_EXP_COMERCIAL EEC"
-				+"		WHERE EEC.DD_EEC_CODIGO IN ('03','06','08','11'))");
+				+"		WHERE EEC.DD_EEC_CODIGO IN ('02','03','06','08','11'))");
 
 		return "1".equals(resultado);
 	}

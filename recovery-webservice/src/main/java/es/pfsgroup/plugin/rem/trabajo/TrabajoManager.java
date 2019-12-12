@@ -2611,7 +2611,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		filtro.setLimit(Integer.MAX_VALUE);
 		Page page = trabajoDao.getTarifasTrabajo(filtro, usuarioLogado);
 		BigDecimal sumaTotal = BigDecimal.ZERO;
-		NumberFormat format = NumberFormat.getNumberInstance();
+		NumberFormat format = NumberFormat.getNumberInstance(Locale.ENGLISH);
         format.setMinimumFractionDigits(2);
         format.setMaximumFractionDigits(5);
         format.setRoundingMode(RoundingMode.HALF_EVEN);

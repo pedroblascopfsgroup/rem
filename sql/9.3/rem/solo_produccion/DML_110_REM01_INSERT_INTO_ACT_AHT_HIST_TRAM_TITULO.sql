@@ -198,7 +198,7 @@ BEGIN
 				VALUES (S_'||V_TEXT_TABLA||'.NEXTVAL,
 					T2.tit_id, 
 					T2.TIT_FECHA_PRESENT1_REG,
-					T2.tit_fecha_envio_auto,
+					TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
 					(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02''),
 					NULL,
 					0, 

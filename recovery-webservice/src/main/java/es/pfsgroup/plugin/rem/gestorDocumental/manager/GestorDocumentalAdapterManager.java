@@ -95,7 +95,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
-import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 
 
 @Service("gestorDocumentalAdapterManager")
@@ -137,9 +136,6 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
-    
-    @Autowired
-    private ProveedoresDao proveedoresDao;
 
     @Resource(name = "entityTransactionManager")
     private PlatformTransactionManager transactionManager;
@@ -231,94 +227,67 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		return list;
 	}
 
-	/*@Override
-	public List<DtoAdjunto> getAdjuntosProveedor(ActivoProveedor proveedor) throws GestorDocumentalException {
+	@Override
+	public List<DtoAdjunto> getAdjuntosProveedor(ActivoProveedor proveedor) throws GestorDocumentalException, Exception {
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
 		List<DtoAdjunto> list = new ArrayList<DtoAdjunto>();
-		List<DtoAdjunto> listAdjuntoProveedor = new ArrayList<DtoAdjunto>();
-
-		List<ActivoProveedorCartera> listaActivoProveedoresCartera = new ArrayList<ActivoProveedorCartera>();
+		List<DtoAdjunto> listAdjuntoProveedor;
 		
-		try {
-			listaActivoProveedoresCartera = proveedoresDao.getProveedoresCarteraById(proveedor.getId());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		for (ActivoProveedorCartera activoProveedorCartera: listaActivoProveedoresCartera) {
-			if(!Checks.esNulo(activoProveedorCartera) && !Checks.esNulo(activoProveedorCartera.getClienteGestorDocumental())) {
-				CabeceraPeticionRestClientDto cabeceraComunidades = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
-						activoProveedorCartera.getIdPersonaHaya().toString(), GestorDocumentalConstants.CODIGO_TIPO_PROVEEDORES, GestorDocumentalConstants.CODIGO_CLASE_PROVEEDORES_COMUNIDAD);
-				CabeceraPeticionRestClientDto cabeceraJuntas = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
-						activoProveedorCartera.getIdPersonaHaya().toString(), GestorDocumentalConstants.CODIGO_TIPO_PROVEEDORES, GestorDocumentalConstants.CODIGO_CLASE_PROVEEDORES_JUNTAS);
-				
-				Usuario userLogin = genericAdapter.getUsuarioLogado();
-				DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
-				RespuestaDocumentosExpedientes respuestaComunidades = new RespuestaDocumentosExpedientes();
-				RespuestaDocumentosExpedientes respuestaJuntas = new RespuestaDocumentosExpedientes();
-				
-				try {
-					respuestaComunidades = gestorDocumentalApi.documentosExpediente(cabeceraComunidades, docExpDto);
-					respuestaJuntas = gestorDocumentalApi.documentosExpediente(cabeceraJuntas, docExpDto);
-				} catch (GestorDocumentalException gex) {
-					if (gestorDocumentalManager.ERROR_SERVER_NOT_RESPONDING.contains(gex.getMessage())) {
-						logger.error(gestorDocumentalManager.ERROR_SERVER_NOT_RESPONDING);
-					} else {						
-						logger.error("Se debe crear un contenedor para este proveedor");
-					}
-					throw gex;
+		if (!Checks.esNulo(proveedor.getIdPersonaHaya())) {
+			CabeceraPeticionRestClientDto cabeceraComunidades = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
+					proveedor.getIdPersonaHaya(), GestorDocumentalConstants.CODIGO_TIPO_PROVEEDORES, GestorDocumentalConstants.CODIGO_CLASE_PROVEEDORES_COMUNIDAD);
+			CabeceraPeticionRestClientDto cabeceraJuntas = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
+					proveedor.getIdPersonaHaya(), GestorDocumentalConstants.CODIGO_TIPO_PROVEEDORES, GestorDocumentalConstants.CODIGO_CLASE_PROVEEDORES_JUNTAS);
+			
+			Usuario userLogin = genericAdapter.getUsuarioLogado();
+			DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
+			RespuestaDocumentosExpedientes respuestaComunidades = new RespuestaDocumentosExpedientes();
+			RespuestaDocumentosExpedientes respuestaJuntas = new RespuestaDocumentosExpedientes();
+			
+			try {
+				respuestaComunidades = gestorDocumentalApi.documentosExpediente(cabeceraComunidades, docExpDto);
+				respuestaJuntas = gestorDocumentalApi.documentosExpediente(cabeceraJuntas, docExpDto);
+			} catch (GestorDocumentalException gex) {
+				if (gestorDocumentalManager.ERROR_SERVER_NOT_RESPONDING.contains(gex.getMessage())) {
+					logger.error(gestorDocumentalManager.ERROR_SERVER_NOT_RESPONDING);
+				} else {						
+					logger.error("No existe contenedor para este proveedor");
 				}
-	
-				if(!Checks.esNulo(respuestaComunidades) && !(Checks.esNulo(respuestaComunidades.getCodigoError()) && Checks.esNulo(respuestaComunidades.getDocumentos()) && Checks.esNulo(respuestaComunidades.getMensajeError()))) {
-					listAdjuntoProveedor = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuestaComunidades);
-					for(DtoAdjunto adjProveedor : listAdjuntoProveedor) {
-						if(!Checks.esNulo(activoProveedorCartera)) {
-							if(!Checks.esNulo(activoProveedorCartera.getCartera()) && !Checks.esNulo(activoProveedorCartera.getCartera().getDescripcion())) {
-								adjProveedor.setCartera(activoProveedorCartera.getCartera().getDescripcion());
-							}
-							if(!Checks.esNulo(activoProveedorCartera.getSubcartera()) && !Checks.esNulo(activoProveedorCartera.getSubcartera().getDescripcion())) {
-								adjProveedor.setSubcartera(activoProveedorCartera.getSubcartera().getDescripcion());
-							}
-						}
-					}
-					list.addAll(listAdjuntoProveedor);
-				}
-				
-				if(!Checks.esNulo(respuestaJuntas) && !(Checks.esNulo(respuestaJuntas.getCodigoError()) && Checks.esNulo(respuestaJuntas.getDocumentos()) && Checks.esNulo(respuestaJuntas.getMensajeError()))) {
-					listAdjuntoProveedor = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuestaJuntas);
-					for(DtoAdjunto adjProveedor : listAdjuntoProveedor) {
-						if(!Checks.esNulo(activoProveedorCartera)) {
-							if(!Checks.esNulo(activoProveedorCartera.getCartera()) && !Checks.esNulo(activoProveedorCartera.getCartera().getDescripcion())) {
-								adjProveedor.setCartera(activoProveedorCartera.getCartera().getDescripcion());
-							}
-							if(!Checks.esNulo(activoProveedorCartera.getSubcartera()) && !Checks.esNulo(activoProveedorCartera.getSubcartera().getDescripcion())) {
-								adjProveedor.setSubcartera(activoProveedorCartera.getSubcartera().getDescripcion());
-							}
-						}
-					}
-					list.addAll(listAdjuntoProveedor);
-				}
-					
+				throw gex;
 			}
-		}
-		
-		if (!Checks.esNulo(list) || !Checks.estaVacio(list)) {
-			for (DtoAdjunto adjunto : list) {
-				List<ActivoAdjuntoProveedor> listActivoAdjuntoProveedor = genericDao.getList(ActivoAdjuntoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "proveedor", proveedor), 
-						genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", adjunto.getId()));
-				if (!Checks.estaVacio(listActivoAdjuntoProveedor)) {
-					adjunto.setDescripcionTipo(listActivoAdjuntoProveedor.get(0).getTipoContenedorProveedor().getDescripcion());
-					if(!Checks.esNulo(listActivoAdjuntoProveedor.get(0).getTipoDocumentoProveedor())) {
-						adjunto.setDescripcionSubtipo(listActivoAdjuntoProveedor.get(0).getTipoDocumentoProveedor().getDescripcion());
+			
+			if(!Checks.esNulo(respuestaComunidades) && 
+					!(Checks.esNulo(respuestaComunidades.getCodigoError()) && Checks.esNulo(respuestaComunidades.getDocumentos()) && Checks.esNulo(respuestaComunidades.getMensajeError()))) {
+				listAdjuntoProveedor = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuestaComunidades);
+				list.addAll(listAdjuntoProveedor);
+			}
+			
+			if(!Checks.esNulo(respuestaJuntas) && 
+					!(Checks.esNulo(respuestaJuntas.getCodigoError()) && Checks.esNulo(respuestaJuntas.getDocumentos()) && Checks.esNulo(respuestaJuntas.getMensajeError()))) {
+				listAdjuntoProveedor = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuestaJuntas);
+				list.addAll(listAdjuntoProveedor);
+			}
+			
+			if (!Checks.estaVacio(list)) {
+				for (DtoAdjunto adjunto : list) {
+					ActivoAdjuntoProveedor activoAdjuntoProveedor = genericDao.get(ActivoAdjuntoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "proveedor", proveedor), 
+							genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", adjunto.getId()));
+					if (!Checks.esNulo(activoAdjuntoProveedor)) {
+						if(!Checks.esNulo(activoAdjuntoProveedor.getTipoContenedorProveedor()))
+							adjunto.setDescripcionTipo(activoAdjuntoProveedor.getTipoContenedorProveedor().getDescripcion());
+						if(!Checks.esNulo(activoAdjuntoProveedor.getTipoDocumentoProveedor())) 
+							adjunto.setDescripcionSubtipo(activoAdjuntoProveedor.getTipoDocumentoProveedor().getDescripcion());
+						adjunto.setGestor(activoAdjuntoProveedor.getAuditoria().getUsuarioCrear());
+						adjunto.setFechaDocumento(activoAdjuntoProveedor.getAuditoria().getFechaCrear());
 					}
-					adjunto.setGestor(listActivoAdjuntoProveedor.get(0).getAuditoria().getUsuarioCrear());
-					adjunto.setFechaDocumento(listActivoAdjuntoProveedor.get(0).getAuditoria().getFechaCrear());
 				}
 			}
+		} else {
+			throw new GestorDocumentalException(GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE);
 		}
 
 		return list;
-	}*/
+	}
 
 	@Override
 	public Long upload(Activo activo, WebFileItem webFileItem, String userLogin, String matricula) throws Exception {
@@ -741,9 +710,9 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		return respuesta;
 	}
 	
-	/*@Override
-	public Long uploadDocumentoProveedor(ActivoProveedorCartera proveedorCartera,
-			WebFileItem webFileItem, String userLogin, DDTipoContenedorProveedor tipoContenedor, String matricula) throws GestorDocumentalException {
+	@Override
+	public Long uploadDocumentoProveedor(ActivoProveedor proveedor, WebFileItem webFileItem, String userLogin, 
+			DDTipoContenedorProveedor tipoContenedor, String matricula) throws GestorDocumentalException {
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
 		Long respuesta;
 		String codigoClaseProveedores = "";
@@ -755,7 +724,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		}
 
 		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
-				proveedorCartera.getIdPersonaHaya().toString(), GestorDocumentalConstants.CODIGO_TIPO_PROVEEDORES, codigoClaseProveedores);
+				proveedor.getIdPersonaHaya(), GestorDocumentalConstants.CODIGO_TIPO_PROVEEDORES, codigoClaseProveedores);
 		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoDto(webFileItem, userLogin, matricula);
 		
 		RespuestaCrearDocumento respuestaCrearDocumento;
@@ -769,7 +738,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		}
 
 		return respuesta;
-	}*/
+	}
 
 	@Override
 	public Long uploadDocumentoExpedienteComercial(ExpedienteComercial expedienteComercial,

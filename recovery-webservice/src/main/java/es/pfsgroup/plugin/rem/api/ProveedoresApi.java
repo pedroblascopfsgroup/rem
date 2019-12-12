@@ -154,10 +154,10 @@ public interface ProveedoresApi {
 	 * 
 	 * @param id: ID del proveedor.
 	 * @return Devuelve una lista de documentos con los resultados obtenidos.
-	 * @throws GestorDocumentalException 
+	 * @throws GestorDocumentalException
+	 * @throws Exception 
 	 */
-	//public List<DtoAdjunto> getAdjuntos(Long id, ActivoProveedorCartera actProvCar, String username) throws GestorDocumentalException;
-	public List<DtoAdjunto> getAdjuntos(Long id);
+	public List<DtoAdjunto> getAdjuntos(Long id) throws GestorDocumentalException, Exception;
 
 	/**
 	 * Verificación de adjunto existente la lista de proveedores de 1 activo.
@@ -289,10 +289,6 @@ public interface ProveedoresApi {
 	 * @return Devuelve True si el usuario tiene el perfil de proveedor, False si no lo tiene.
 	 */
 	public Boolean esUsuarioConPerfilProveedor(Usuario usuario);
-
-	/*List<DDCartera> getCarteraPorProveedor(Long idProveedor);
-
-	List<DDSubcartera> getSubcarteraPorProveedor(Long idProveedor, String codigoCartera);*/
 	
 	/** Este método cambia .el proveedor asociado a un activo por el recibido en pvrCodRem
 	 * 

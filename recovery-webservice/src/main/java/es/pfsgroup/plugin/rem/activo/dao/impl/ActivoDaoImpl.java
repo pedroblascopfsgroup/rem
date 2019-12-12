@@ -1493,6 +1493,37 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 		return false;
 	}
+	
+	@Override
+	public boolean existeAMalquilado(Long idAgrupacion) {
+		String sql = " SELECT count(1) FROM ACT_AGA_AGRUPACION_ACTIVO AGA	"
+	+			"				INNER JOIN ACT_ACTIVO act ON AGA.ACT_ID = act.ACT_ID	"
+	+			"				INNER JOIN ACT_PTA_PATRIMONIO_ACTIVO PTA ON ACT.ACT_ID = PTA.ACT_ID	"
+	+			"				WHERE AGA.AGR_ID = 	"	+idAgrupacion
+	+			"				AND PTA.DD_EAL_ID = (SELECT DD_EAL_ID FROM DD_EAL_ESTADO_ALQUILER WHERE DD_EAL_CODIGO = 02)	"
+	+			"				AND AGA.AGA_PRINCIPAL = 1 ";
+		
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean existenUAsAlquiladas(Long idAgrupacion) {
+		String sql = " SELECT count(1) FROM ACT_AGA_AGRUPACION_ACTIVO AGA	"
+		+		"				INNER JOIN ACT_ACTIVO ACT ON AGA.ACT_ID = ACT.ACT_ID	"
+		+		"				INNER JOIN ACT_PTA_PATRIMONIO_ACTIVO PTA ON ACT.ACT_ID = PTA.ACT_ID	"
+		+		"				WHERE AGA.AGR_ID =  "	+idAgrupacion
+		+		"				AND PTA.DD_EAL_ID = (SELECT DD_EAL_ID FROM DD_EAL_ESTADO_ALQUILER WHERE DD_EAL_CODIGO = 02)	"
+		+		"				AND AGA.AGA_PRINCIPAL = 0 	"
+		+		"				AND ACT.DD_TTA_ID  = (SELECT DD_TTA_ID FROM DD_TTA_TIPO_TITULO_ACTIVO WHERE DD_TTA_CODIGO = '05')";
+		
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
+		}
+		return false;
+	}
 
 
 	public void validateAgrupacion(Long idActivo) {

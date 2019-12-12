@@ -8948,18 +8948,36 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public boolean checkContratoSubido(TareaExterna tareaExterna) {
 
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
-		try {
-			List<DtoAdjunto> adjuntosExpediente = gestorDocumentalAdapterApi
-					.getAdjuntosExpedienteComercial(expedienteComercial);
-			for (DtoAdjunto adjunto : adjuntosExpediente) {
-				if(DDSubtipoDocumentoExpediente.MATRICULA_CONTRATO.equals(adjunto.getMatricula()) || DDSubtipoDocumentoExpediente.MATRICULA_CONTRATO_ALQUILER_CON_OPCION_A_COMPRA.equals(adjunto.getMatricula())) {
-					return true;
+		List<DtoAdjunto> adjuntosExpediente = new ArrayList<DtoAdjunto>();
+		
+		if(gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			try {
+				adjuntosExpediente = gestorDocumentalAdapterApi
+						.getAdjuntosExpedienteComercial(expedienteComercial);
+				for (DtoAdjunto adjunto : adjuntosExpediente) {
+					if(DDSubtipoDocumentoExpediente.MATRICULA_CONTRATO.equals(adjunto.getMatricula()) || DDSubtipoDocumentoExpediente.MATRICULA_CONTRATO_ALQUILER_CON_OPCION_A_COMPRA.equals(adjunto.getMatricula())) {
+						return true;
+					}
 				}
+			} catch (GestorDocumentalException e) {
+				e.printStackTrace();
 			}
-		} catch (GestorDocumentalException e) {
-			e.printStackTrace();
+			return false;
+		} else {
+
+			adjuntosExpediente = getAdjuntosExp(expedienteComercial.getId(), adjuntosExpediente);
+			if (!Checks.esNulo(adjuntosExpediente)) {
+				for (DtoAdjunto adjunto : adjuntosExpediente) {
+					if (!Checks.esNulo(adjunto))
+					if("Contrato".equals(adjunto.getDescripcionSubtipo()) || "Contrato de alquiler con opción a compra".equals(adjunto.getDescripcionSubtipo())) {
+						return true;
+					}
+
+				}
+
+			}
+			return false;
 		}
-		return false;
 	}
 
 	@Override

@@ -1155,6 +1155,15 @@ END IF;
            NVL(fDD_MTO_CODIGO_V, '00') <> NVL(hDD_MTO_CODIGO_V, '00') THEN
 
 		IF vACTUALIZADO_V = 'S' THEN
+			V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+                        SET APU_FECHA_CAMB_PUBL_VENTA = SYSDATE
+                            ,USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+                            ,FECHAMODIFICAR = SYSDATE
+                        WHERE ACT_ID = '||nACT_ID||'
+							AND BORRADO = 0
+                    ';
+          	EXECUTE IMMEDIATE V_MSQL;
+		
         	V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION
                         SET AHP_FECHA_FIN_VENTA = SYSDATE
                             ,USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
@@ -1205,6 +1214,15 @@ END IF;
 		END IF;
 		
 		IF vACTUALIZADO_A = 'S' THEN
+			V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+                        SET APU_FECHA_CAMB_PUBL_ALQ = SYSDATE
+                            ,USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+                            ,FECHAMODIFICAR = SYSDATE
+                        WHERE ACT_ID = '||nACT_ID||'
+							AND BORRADO = 0
+                    ';
+          	EXECUTE IMMEDIATE V_MSQL;
+		
           	V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION
                         SET AHP_FECHA_FIN_ALQUILER = SYSDATE
                             ,USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''

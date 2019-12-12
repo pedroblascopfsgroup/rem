@@ -15,6 +15,7 @@ import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoLocalidadSimple;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
+import es.pfsgroup.plugin.rem.model.DtoUsuarios;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
@@ -254,6 +255,13 @@ public interface GenericApi {
 	 * @return Devuelve una lista de tipos de agrupaciones
 	 */
 	public List<DDTipoAgrupacion> getTodosComboTipoAgrupacion();
+	
+	/**
+	 * Este método obtiene una lista con todos los tipos de agrupaciones.
+	 * 
+	 * @return Devuelve una lista de tipos de agrupaciones
+	 */
+	public List<DtoUsuarios> getTodosComboUsuarios();
 
 	/**
 	 * Devuelve los tipos de titulo, filtrando por la posesión del activo

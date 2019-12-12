@@ -11,10 +11,9 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.mail.MailManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
@@ -28,7 +27,7 @@ public class NotificatorServiceProveedor extends AbstractNotificatorService impl
 	private static final String CODIGO_T004_RESULTADO_TARIFICADA = "T004_ResultadoTarificada";
 	private static final String CODIGO_T004_RESULTADO_NOTARIFICADA = "T004_ResultadoNoTarificada";
 	private static final String BUZON_ELECNOR = "buzonelecnor";
-	private static final String PVC_NOMBRE_ELECNOR = "ELECNOR, S.A.";
+	private static final String ELECNOR ="---------.29";
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
@@ -37,7 +36,7 @@ public class NotificatorServiceProveedor extends AbstractNotificatorService impl
 	private ActivoTramiteApi activoTramiteApi;
 	
 	@Autowired
-	private GenericABMDao genericDao;
+	private UsuarioManager usuarioManager;
 	
 	@Override
 	public String[] getKeys() {
@@ -61,20 +60,19 @@ public class NotificatorServiceProveedor extends AbstractNotificatorService impl
 		List<String> mailsPara = new ArrayList<String>();
 		List<String> mailsCC = new ArrayList<String>();
 		
-		Usuario buzonElecnor = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_ELECNOR));
-		
 	    String correos = "";
 	   
-	    if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto())) {
-	    	correos = tramite.getTrabajo().getProveedorContacto().getEmail();
-		    if(PVC_NOMBRE_ELECNOR.equals(tramite.getTrabajo().getProveedorContacto().getNombre())) {
-				correos += "," + buzonElecnor.getEmail();
-			}
+	    if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto().getUsuario())){
+	    	correos = tramite.getTrabajo().getProveedorContacto().getUsuario().getEmail();
+		    if(ELECNOR.equals(tramite.getTrabajo().getProveedorContacto().getUsuario().getUsername())) {
+		    	Usuario buzonElecnor = usuarioManager.getByUsername(BUZON_ELECNOR);			    	
+				correos += !Checks.esNulo(buzonElecnor) ? ";" + buzonElecnor.getEmail() : "";
+			}		    
 	    }
 	    
-	    if(correos != null && !correos.isEmpty()){
-	    	 Collections.addAll(mailsPara, correos.split(";"));
-	    }
+		if(!Checks.esNulo(correos)) {
+			Collections.addAll(mailsPara, correos.split(";"));
+		}
 	   
 		mailsCC.add(this.getCorreoFrom());
 		

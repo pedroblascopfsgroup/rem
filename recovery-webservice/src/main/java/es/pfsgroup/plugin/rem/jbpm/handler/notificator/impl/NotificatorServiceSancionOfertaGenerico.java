@@ -92,6 +92,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	private static final String BUZON_OFR_APPLE = "buzonofrapple";
 	private static final String BUZON_FOR_APPLE = "buzonforapple";
 	private static final String BUZON_CES_APPLE = "buzoncesapple";
+	private static final String BUZON_BOARDING = "buzonboarding";
 	
 	//Variables de tareas
 	private static final String CODIGO_T017_ANALISIS_PM = "T017_AnalisisPM";
@@ -190,6 +191,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		Usuario buzonfdv = usuarioManager.getByUsername(BUZON_FDV);
 		Usuario buzonOfertaApple = usuarioManager.getByUsername(BUZON_OFR_APPLE);
 		Usuario buzonFormApple = usuarioManager.getByUsername(BUZON_FOR_APPLE);
+		Usuario buzonBoarding = usuarioManager.getByUsername(BUZON_BOARDING);
 		Usuario usuarioBackOffice = null;
 		Usuario supervisorComercial = null;
 		ActivoProveedor proveedor = oferta.getPrescriptor();
@@ -226,15 +228,23 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					destinatarios.add(buzonPfs.getEmail());
 				}
 				
-				if(!Checks.esNulo(oferta.getPrescriptor())) {
-					proveedor = oferta.getPrescriptor();
-					if(!Checks.esNulo(proveedor.getTipoProveedor())) {
-						if(!Checks.esNulo(proveedor.getTipoProveedor().getCodigo())) {
-							codProveedor = proveedor.getTipoProveedor().getCodigo();
+				if(!Checks.esNulo(proveedor)) {					
+					codProveedor = Checks.esNulo(proveedor.getTipoProveedor()) ? null : proveedor.getTipoProveedor().getCodigo();
+					if(DDCartera.CODIGO_CARTERA_HYT.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+							&& !Checks.esNulo(proveedor.getEmail()) 
+							&& !destinatarios.contains(proveedor.getEmail())){
+							destinatarios.add(proveedor.getEmail());
 						}
 					}
-				}
-				if (!Checks.esNulo(buzonfdv) && DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA.equals(codProveedor)) {
+				
+				if(DDCartera.CODIGO_CARTERA_HYT.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+						&& !Checks.esNulo(oferta.getCustodio()) 
+						&& !Checks.esNulo(oferta.getCustodio().getEmail())
+						&& !destinatarios.contains(oferta.getCustodio().getEmail())){
+					destinatarios.add(oferta.getCustodio().getEmail());
+					}				
+				
+				if (!Checks.esNulo(buzonfdv) && (DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA.equals(codProveedor) || DDTipoProveedor.COD_CAT.equals(codProveedor))) {
 					destinatarios.add(buzonfdv.getEmail());
 				}
 				if(!Checks.esNulo(buzonOfertaApple) && (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
@@ -265,9 +275,20 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				if(!Checks.esNulo(supervisorComercial)) {
 					destinatarios.add(supervisorComercial.getEmail());
 				}
+				
+				if(DDCartera.CODIGO_CARTERA_TANGO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_HYT.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_ZEUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+					this.enviaSegundaNotificacionAceptar(tramite, oferta, expediente, destinatarios.toArray(new String[] {}));
+					destinatarios.clear();
+					if(!Checks.esNulo(buzonBoarding)){
+						destinatarios.add(buzonBoarding.getEmail());
+					}
+				}
 
 				this.enviaNotificacionAceptar(tramite, oferta, expediente, destinatarios.toArray(new String[] {}));
-
+				
 			} else if (permiteRechazar
 					&& DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) { // RECHAZO
 				String prescriptor = getPrescriptor(activo, oferta);
@@ -872,6 +893,39 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					destinatarios);
 		} catch (Exception e) {
 			logger.error("Error creando mail de aprobacion",e);
+			correoError(oferta, e);
+		}
+	}
+	
+	private void enviaSegundaNotificacionAceptar(ActivoTramite tramite, Oferta oferta, ExpedienteComercial expediente,
+			String... destinatarios) {
+		try {
+			String numOferta = STR_MISSING_VALUE;
+			if(oferta != null){
+				numOferta = oferta.getNumOferta().toString();
+			}
+
+			String asunto = "Notificación de aprobación provisional de la oferta " + numOferta;
+			String cuerpo = "<p>Nos complace comunicarle que la oferta " + numOferta + " a nombre de "
+					+ this.nombresOfertantes(expediente) + " ha sido PROVISIONALMENTE ACEPTADA";
+
+
+			cuerpo = cuerpo
+					+ ". En los próximos días le comunicaremos la resolución, y en el caso de que sea favorable le remitiremos las instrucciones y el contrato de reserva.";
+			
+
+			cuerpo = cuerpo
+					+ "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";
+
+			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(oferta,tramite);
+			dtoSendNotificator.setTitulo(asunto);
+
+			String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
+
+			enviaNotificacionGenerico(oferta.getActivoPrincipal(), asunto, cuerpoCorreo, false, oferta,
+					destinatarios);
+		} catch (Exception e) {
+			logger.error("Error creando segundo mail de aprobacion",e);
 			correoError(oferta, e);
 		}
 	}

@@ -22,12 +22,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
+import es.capgemini.pfs.users.dao.UsuarioDao;
 import es.capgemini.pfs.users.domain.Funcion;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -58,6 +60,7 @@ import es.pfsgroup.plugin.rem.model.CarteraCondicionesPrecios;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoLocalidadSimple;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
+import es.pfsgroup.plugin.rem.model.DtoUsuarios;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GestionCCPP;
@@ -68,6 +71,7 @@ import es.pfsgroup.plugin.rem.model.LocalizacionSubestadoGestion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
+import es.pfsgroup.plugin.rem.model.VGestoresActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
@@ -141,6 +145,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	
 	@Autowired
 	private UsuarioApi usuarioApi;
+
+	@Autowired
+	private UsuarioDao usuarioDao;
 
 	@Override
 	public String managerName() {
@@ -893,7 +900,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			filtroCartera = genericDao.createFilter(FilterType.EQUALS,"cartera.codigo", carteraCodigo);
 			listaComites = genericDao.getList(DDComiteSancion.class,filtro,filtroCartera);
 
-		}else{
+		}
+		if(Checks.esNulo(listaComites) || listaComites.isEmpty()){
 			filtro = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", carteraCodigo);
 			listaComites = genericDao.getListOrdered(DDComiteSancion.class,order,filtro);
 			
@@ -1108,6 +1116,39 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	}
 
 	@Override
+	public List<DDTipoAgrupacion> getTodosComboTipoAgrupacion() {
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		return genericDao.getList(DDTipoAgrupacion.class, filtroBorrado,
+				filtroBorrado);
+	}
+	
+	@Override
+	public List<DtoUsuarios> getTodosComboUsuarios() {
+		List<DtoUsuarios> result = new ArrayList<DtoUsuarios>();
+		List<Usuario> lista = genericDao.getList(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+		for (Usuario u : lista) {
+			DtoUsuarios aux = new DtoUsuarios();
+			aux.setCodigo(u.getUsername());
+			StringBuilder sb = new StringBuilder(u.getUsername());
+			if(!Checks.esNulo(u.getNombre())) {
+				sb.append(" - ");
+				sb.append(u.getNombre());
+				if(!Checks.esNulo(u.getApellido1())) {
+					sb.append(" ");
+					sb.append(u.getApellido1());
+					if(!Checks.esNulo(u.getApellido2())) {
+						sb.append(" ");
+						sb.append(u.getApellido2());				
+					}
+				}
+			}
+			aux.setDescripcion(sb.toString().trim());
+			result.add(aux);
+		}
+		return result; 
+	}
+	
+	@Override
 	public List<DDTipoTituloActivoTPA> getComboTipoTituloActivoTPA(Long numActivo) {
 
 		Activo activo = activoApi.getByNumActivo(numActivo);
@@ -1213,5 +1254,25 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		}
 		
 		return gestion.getSubestadoGestion();
+	}
+
+	@Override
+	public List<DDComiteSancion> getComitesResolucionLiberbank() {
+		List<DDComiteSancion> listaComites = new ArrayList<DDComiteSancion>();
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", DDCartera.CODIGO_CARTERA_LIBERBANK);
+		listaComites = genericDao.getListOrdered(DDComiteSancion.class,order,filtro);
+		
+		List<String> comitesResolucionComiteCodigos = new ArrayList<String>(Arrays.asList(new String[] { "34", "35", "36", "37"}));
+		
+		if(listaComites != null && !listaComites.isEmpty()) {
+			for (int i = listaComites.size() -1; i >= 0 ; i--) {
+				if(!comitesResolucionComiteCodigos.contains(listaComites.get(i).getCodigo())){
+					listaComites.remove(i);
+				}
+			}
+		}
+		
+		return listaComites;
 	}
 }

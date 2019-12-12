@@ -1324,4 +1324,6 @@ public interface ActivoApi {
 	public List<DDFasePublicacion> getDiccionarioFasePublicacion() throws Exception;
 	
 	public void crearRegistroFaseHistorico(Activo activo);
+
+	void changeAndSavePlusvaliaEstadoGestionActivoById(Long id, String codigo);
 }

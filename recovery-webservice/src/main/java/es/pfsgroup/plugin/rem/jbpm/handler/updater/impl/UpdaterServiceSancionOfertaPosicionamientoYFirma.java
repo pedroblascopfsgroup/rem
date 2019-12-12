@@ -125,16 +125,13 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 								//activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 								idActivoActualizarPublicacion.add(activo.getId());
 								
-								ActivoPlusvalia activoPlusvalia = activoDao.getPlusvaliaByIdActivo(activo.getId());
-								if(!Checks.esNulo(activoPlusvalia)) {
-								Filter filtroEstadoGestionPlusc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoGestionPlusv.COD_EN_CURSO);
-								activoPlusvalia.setEstadoGestion(genericDao.get(DDEstadoGestionPlusv.class, filtroEstadoGestionPlusc));								
-								genericDao.save(ActivoPlusvalia.class, activoPlusvalia);
-								
-								notificationPlusvaliaManager.sendNotificationPlusvaliaLiquidacion(activo, expediente);
+								if ( DDEstadosExpedienteComercial.VENDIDO.equals(filtro.getPropertyValue())) {
+									ActivoPlusvalia activoPlusvalia = activoDao.getPlusvaliaByIdActivo(activo.getId());
+									if(activoPlusvalia != null) {
+										activoApi.changeAndSavePlusvaliaEstadoGestionActivoById(activo.getId(), DDEstadoGestionPlusv.COD_EN_CURSO);
+										notificationPlusvaliaManager.sendNotificationPlusvaliaLiquidacion(activo, expediente);
+									}
 								}
-								
-	
 								activoApi.saveOrUpdate(activo);
 							}
 

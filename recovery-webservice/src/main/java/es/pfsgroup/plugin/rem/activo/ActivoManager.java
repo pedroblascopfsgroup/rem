@@ -132,6 +132,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoLocalizacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoMotivoCalificacionNegativa;
@@ -3802,7 +3803,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaAux.getEstadoOferta().getCodigo())) {
 					ExpedienteComercial expediente = expedienteComercialApi
 							.expedienteComercialPorOferta(ofertaAux.getId());
-					if (!Checks.esNulo(expediente)) { // Si el expediente está
+					if (!Checks.esNulo(expediente) && expediente.getEstado() != null) { // Si el expediente está
 														// aprobado (o estados
 														// posteriores).
 						if (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
@@ -7792,6 +7793,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				
 			}
 				
+		}
+	}
+	
+	@Override
+	public void changeAndSavePlusvaliaEstadoGestionActivoById(Long id, String codigo) {
+		ActivoPlusvalia activoPlusvalia = activoDao.getPlusvaliaByIdActivo(id);
+		if ( activoPlusvalia != null) {
+			Filter filtroLiquidacionEnCurso = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
+			DDEstadoGestionPlusv estado = genericDao.get(DDEstadoGestionPlusv.class, filtroLiquidacionEnCurso);
+			if (estado != null) {
+				activoPlusvalia.setEstadoGestion(estado);
+				genericDao.save(ActivoPlusvalia.class, activoPlusvalia);
+			}
 		}
 	}
 }

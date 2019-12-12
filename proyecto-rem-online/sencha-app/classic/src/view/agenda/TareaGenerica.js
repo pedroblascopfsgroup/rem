@@ -1474,6 +1474,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 												})
 											);
 			
+			comboResolucionComite.allowBlank = false;
+											
 			var url = $AC.getRemoteUrl('ofertas/getClaseOferta');
 	    	Ext.Ajax.request({
 	    			url:url,

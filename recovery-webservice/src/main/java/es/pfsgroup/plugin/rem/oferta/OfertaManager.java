@@ -3512,7 +3512,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Override
 	public DDComiteSancion calculoComiteLBK(Oferta oferta, ExpedienteComercial eco) {
-		if(!cumpleRequisitosCalculoLBK(oferta, eco)) throw new JSONException("Faltan datos en algún activo para calcular el comité");
+		if(!cumpleRequisitosCalculoLBK(oferta, eco)) {
+			logger.error("Faltan datos para calcular el comité de Liberbank.");
+			return null;
+		}
 		
 		DtoVariablesCalculoComiteLBK variables = calculoVariablesComiteLBK(oferta, eco);
 		

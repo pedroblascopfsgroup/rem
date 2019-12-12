@@ -212,7 +212,7 @@ public class MSVActualizacionInformacionInscripcionExcelValidator extends MSVExc
 				
 				Boolean existeActivo = particularValidator.existeActivo(exc.dameCelda(fila, COL_NUM.ACT_NUM_ACTIVO));
 				Boolean existeActivoTitulo = particularValidator.existeActivoTitulo(exc.dameCelda(fila, COL_NUM.ACT_NUM_ACTIVO));
-				Boolean existeAccion = particularValidator.esAccionValido(exc.dameCelda(fila, COL_NUM.ACCION));
+				Boolean existeAccion = particularValidator.esAccionValidaInscripciones(exc.dameCelda(fila, COL_NUM.ACCION));
 				Boolean esCarteraNoBankia = particularValidator.existeActivoNoBankia(exc.dameCelda(fila, COL_NUM.ACT_NUM_ACTIVO));
 				if (existeActivo && existeAccion) {
 
@@ -262,18 +262,18 @@ public class MSVActualizacionInformacionInscripcionExcelValidator extends MSVExc
 					} 
 					// --------------------------VALIDACION-----------------------------// 
 					// ----------------------------BORRAR-------------------------------//
-					else if (accionBorrar.equals(codAccion)) {
-						if (!existeActivoTitulo) {
-							listaErroresActivoAccionNoValida.add(fila);
-							esCorrecto = false;
-						}
-
-						if (!esCarteraNoBankia) {
-							errList = listasError.get(COL_NUM.ACT_NUM_ACTIVO);
-							errList.add(fila);
-							esCorrecto = false;
-						}
-					}
+//					else if (accionBorrar.equals(codAccion)) {
+//						if (!existeActivoTitulo) {
+//							listaErroresActivoAccionNoValida.add(fila);
+//							esCorrecto = false;
+//						}
+//
+//						if (!esCarteraNoBankia) {
+//							errList = listasError.get(COL_NUM.ACT_NUM_ACTIVO);
+//							errList.add(fila);
+//							esCorrecto = false;
+//						}
+//					}
 					// --------------------------VALIDACION-----------------------------//
 					// --------------------------MODIFICAR------------------------------//
 					else if (accionModificar.equals(codAccion)) {
@@ -371,7 +371,9 @@ public class MSVActualizacionInformacionInscripcionExcelValidator extends MSVExc
 				return esEquis(fecha);
 			}
 			try {
-				ft.parse(fecha);
+				if(!esEquis(fecha)) {
+					ft.parse(fecha);
+				}
 			} catch (ParseException e) {
 				logger.error(e.getMessage());
 				return false;

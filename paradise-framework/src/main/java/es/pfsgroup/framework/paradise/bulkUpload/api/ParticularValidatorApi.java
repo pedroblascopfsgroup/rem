@@ -984,4 +984,6 @@ public interface ParticularValidatorApi {
 	 */
 	Boolean verificaTipoDeAdjudicacion(String idActivo, String tipoAdjudicacion);
 
+	Boolean esAccionValidaInscripciones(String codAccion);
+
 }

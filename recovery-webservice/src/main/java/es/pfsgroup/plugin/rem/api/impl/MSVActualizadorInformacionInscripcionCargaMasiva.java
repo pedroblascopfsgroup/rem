@@ -147,16 +147,21 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 				}
 			}
 			genericDao.save(ActivoTitulo.class, titulo);
-		} else if (DDAccionMasiva.CODIGO_BORRAR.equals(codAccion)) {
+		} /*else if (DDAccionMasiva.CODIGO_BORRAR.equals(codAccion)) {
 			titulo = genericDao.get(ActivoTitulo.class,
 					genericDao.createFilter(FilterType.EQUALS, "activo", activo));
 			genericDao.deleteById(ActivoTitulo.class, titulo.getId());
 		}
+		*/
 		return new ResultadoProcesarFila();
 	}
 
 	private Date obtenerDateExcel(String celdaExcel) {
 		if (Checks.esNulo(celdaExcel)) {
+			return null;
+		}
+		
+		if (esEquis(celdaExcel)) {
 			return null;
 		}
 

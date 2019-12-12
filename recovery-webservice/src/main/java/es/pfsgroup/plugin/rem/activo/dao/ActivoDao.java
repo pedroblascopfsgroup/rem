@@ -15,6 +15,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
@@ -312,4 +313,11 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	ActivoAgrupacionActivo getActivoAgrupacionActivoObraNuevaPorActivoID(Long id);
 	
 	ActivoAgrupacionActivo getActivoAgrupacionActivoPA(Long idActivo);
+	
+	Long getAgrupacionYubaiByIdActivo(Long id);
+	
+	List<ActivoProveedor> getComboApiPrimario();
+
+	void deleteActOfr(Long idActivo, Long idOferta);
+
 }

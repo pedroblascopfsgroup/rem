@@ -39,6 +39,7 @@ public class DDEstadoTitulo implements Auditable, Dictionary {
 	public static final String ESTADO_INSCRITO = "02";
 	public static final String ESTADO_IMPOSIBLE_INSCRIPCION = "03";
 	public static final String ESTADO_DESCONOCIDO = "04";
+	public static final String ESTADO_SUBSANAR = "06";
 	
 	
 	@Id

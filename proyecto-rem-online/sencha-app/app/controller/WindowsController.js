@@ -83,7 +83,6 @@ Ext.define('HreRem.controller.WindowsController', {
     },
     
 	downloadFile: function(config) {
-	    
 	    config = config || {};
 	    
 	    var url = config.url,

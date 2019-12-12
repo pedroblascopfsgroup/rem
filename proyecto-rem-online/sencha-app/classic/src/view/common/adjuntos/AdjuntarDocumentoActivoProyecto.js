@@ -23,12 +23,23 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoActivoProyecto', {
      * @type
      */
     parent: null,
+    
+    /**
+     * Párametro para definir el nombre de la ventana.
+     * @type
+     */
+    title: null,
+    
+    /**
+     * Párametro para definir el diccionario del combo de tipos de documentos.
+     * @type
+     */
+    diccionario: null,
 
     initComponent: function() {
-
     	var me = this;
 
-    	me.setTitle(HreRem.i18n("title.adjuntar.documento.promocion"));
+    	me.setTitle(me.title != null ? me.title : HreRem.i18n("title.adjuntar.documento.promocion"));
 
     	me.buttonAlign = 'left';
 
@@ -37,7 +48,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoActivoProyecto', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'tiposDocumentoPromocion'}
+				extraParams: {diccionario: me.diccionario != null ? me.diccionario : 'tiposDocumentoPromocion'}
 			}
     	});
 
@@ -86,14 +97,29 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoActivoProyecto', {
 									xtype: 'combobox',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
 						        	name: 'tipo',
-						        	editable: false,
+						        	editable: true,
 						        	msgTarget: 'side',
 					            	store: comboTipoDocPromo,
 					            	displayField	: 'descripcion',
 
 								    valueField		: 'codigo',
 									allowBlank: false,
-									width: '100%'
+									width: '100%',
+									enableKeyEvents:true,
+								    listeners: {
+								    	'keyup': function() {
+								    		this.getStore().clearFilter();
+								    	   	this.getStore().filter({
+								        	    property: 'descripcion',
+								        	    value: this.getRawValue(),
+								        	    anyMatch: true,
+								        	    caseSensitive: false
+								        	})
+								    	},
+								    	'beforequery': function(queryEvent) {
+								         	queryEvent.combo.onLoad();
+								    	}
+								    }
 						        },
 						        {
 				                	xtype: 'textarea',

@@ -10,14 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.mail.MailManager;
-import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
@@ -25,6 +22,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorServic
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 
 @Component
 public class NotificatorServiceODocCEEAnalisisPeticion extends AbstractNotificatorService implements NotificatorService {
@@ -42,7 +40,7 @@ public class NotificatorServiceODocCEEAnalisisPeticion extends AbstractNotificat
 	private GestorActivoApi gestorActivoApi;
 	
 	@Autowired
-	private GenericABMDao genericDao;
+	private UsuarioManager usuarioManager;
 	
 	@Override
 	public String[] getKeys() {
@@ -60,7 +58,30 @@ public class NotificatorServiceODocCEEAnalisisPeticion extends AbstractNotificat
 
 	@Override
 	public void notificator(ActivoTramite tramite) {
-
+		if(!Checks.esNulo(tramite) && !Checks.esNulo(tramite.getTrabajo()) 
+			&& DDCartera.CODIGO_CARTERA_BANKIA.equals(tramite.getActivo().getCartera().getCodigo())) {
+					
+			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
+			final String BUZON_PACI = "paci03";
+			List<String> mailsPara = new ArrayList<String>();
+			List<String> mailsCC = new ArrayList<String>();
+						 
+			Usuario buzonPaci = usuarioManager.getByUsername(BUZON_PACI);			    	
+			String correos = !Checks.esNulo(buzonPaci) ? buzonPaci.getEmail() : "";
+		    Collections.addAll(mailsPara, correos.split(";"));
+			mailsCC.add(this.getCorreoFrom());
+						
+			String descripcionTrabajo = !Checks.esNulo(tramite.getTrabajo().getDescripcion())? (tramite.getTrabajo().getDescripcion() + " - ") : "";
+			String titulo = "Notificación de petición en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+			String contenido = "<p>Se le ha asignado una actuación técnica del tipo "+dtoSendNotificator.getTipoContrato()+", la cual se ha abierto en REM con "
+	  		  		 + "el número de trabajo " +tramite.getTrabajo().getNumTrabajo() + ".</p>"
+	  		  		 + "<p>El activo objeto de la actuación es el número " +dtoSendNotificator.getNumActivo() + ", situado en "+dtoSendNotificator.getDireccion()+"</p>"
+	  		  		 + "<p>La fecha de finalización del trabajo por su parte es el "+dtoSendNotificator.getFechaFinalizacion()+"</p>"
+	  		  		 + "<p>Por favor, entre en la aplicación REM y compruebe las condiciones del trabajo.</p>"
+	  		  		 + "<p>Gracias.</p>";
+			
+			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));		
+		}				
 	}
 	
 	@Override

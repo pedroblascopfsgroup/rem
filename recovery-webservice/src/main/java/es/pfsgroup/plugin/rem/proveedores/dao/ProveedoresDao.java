@@ -10,7 +10,10 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.MapeoGestorDocumental;
 import es.pfsgroup.plugin.rem.model.VProveedores;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 
 public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
@@ -93,5 +96,7 @@ public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
 
 	List<ActivoProveedor> getMediadoresActivos();
 
+	public List<MapeoGestorDocumental> getCarteraClientesProveedores();
 
+	List<MapeoGestorDocumental> getCarteraClientesProveedoresByCarteraYSubcartera(DDCartera cartera, DDSubcartera subcartera);
 }

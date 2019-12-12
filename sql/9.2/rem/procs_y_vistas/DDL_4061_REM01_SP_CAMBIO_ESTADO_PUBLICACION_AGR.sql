@@ -1297,14 +1297,22 @@ ELSE
            NVL(fDD_MTO_CODIGO_V, '00') <> NVL(hDD_MTO_CODIGO_V, '00') THEN
            
         IF vACTUALIZADO_V = 'S' THEN
-	          V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION ACT
-	                        SET AHP_FECHA_FIN_VENTA = SYSDATE
-	                            ,USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
-	                            ,FECHAMODIFICAR = SYSDATE
-							WHERE (AHP_FECHA_INI_VENTA IS NOT NULL AND AHP_FECHA_FIN_VENTA IS NULL)
-	                            AND BORRADO = 0
-	                            AND EXISTS '|| replace(vQUERY,'AUX','');
-	          EXECUTE IMMEDIATE V_MSQL;
+        	V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
+                        SET APU_FECHA_CAMB_PUBL_VENTA = SYSDATE
+                            ,USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+                            ,FECHAMODIFICAR = SYSDATE
+                        WHERE BORRADO = 0
+                            AND EXISTS '|| replace(vQUERY,'AUX','');
+          	EXECUTE IMMEDIATE V_MSQL;
+        
+            V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION ACT
+                        SET AHP_FECHA_FIN_VENTA = SYSDATE
+                            ,USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+                            ,FECHAMODIFICAR = SYSDATE
+						WHERE (AHP_FECHA_INI_VENTA IS NOT NULL AND AHP_FECHA_FIN_VENTA IS NULL)
+                            AND BORRADO = 0
+                            AND EXISTS '|| replace(vQUERY,'AUX','');
+            EXECUTE IMMEDIATE V_MSQL;
 			
           	V_MSQL := '
             	INSERT INTO '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION(AHP_ID,ACT_ID
@@ -1346,14 +1354,22 @@ ELSE
         END IF;
         
         IF vACTUALIZADO_A = 'S' THEN
-	          V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION ACT
-	                        SET AHP_FECHA_FIN_ALQUILER = SYSDATE
-	                            ,USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
-	                            ,FECHAMODIFICAR = SYSDATE
-	                        WHERE (AHP_FECHA_INI_ALQUILER IS NOT NULL AND AHP_FECHA_FIN_ALQUILER IS NULL)
+        	V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
+                        SET APU_FECHA_CAMB_PUBL_ALQ = SYSDATE
+                            ,USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+                            ,FECHAMODIFICAR = SYSDATE
+                        WHERE BORRADO = 0
+                            AND EXISTS '|| replace(vQUERY,'AUX','');
+          	EXECUTE IMMEDIATE V_MSQL;
+        
+	        V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION ACT
+                        SET AHP_FECHA_FIN_ALQUILER = SYSDATE
+                            ,USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+                            ,FECHAMODIFICAR = SYSDATE
+                        WHERE (AHP_FECHA_INI_ALQUILER IS NOT NULL AND AHP_FECHA_FIN_ALQUILER IS NULL)
 	                            AND BORRADO = 0
 	                            AND EXISTS '|| replace(vQUERY,'AUX','');
-	          EXECUTE IMMEDIATE V_MSQL;
+	        EXECUTE IMMEDIATE V_MSQL;
 			
           	V_MSQL := '
             	INSERT INTO '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION(AHP_ID,ACT_ID

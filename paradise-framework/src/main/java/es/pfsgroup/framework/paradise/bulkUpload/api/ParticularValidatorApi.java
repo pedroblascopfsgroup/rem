@@ -2,7 +2,10 @@ package es.pfsgroup.framework.paradise.bulkUpload.api;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.List;
+
+import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 
 public interface ParticularValidatorApi {
 
@@ -782,8 +785,29 @@ public interface ParticularValidatorApi {
 	 * @return true si el activo pertenece a un activo de venta.
 	 */
 	
-	public Boolean activosVendidos(String numExpedienteComercial);	
-
+	public Boolean activosVendidos(String numExpedienteComercial);
+	
+	/**
+	 * @param importe Suma de la columna de importes en la hoja
+	 * @param numExpedienteComercial
+	 * @return true si el total de la oferta es distinto a la suma de los activos en la hoja.
+	 */
+	public Boolean isTotalOfertaDistintoSumaActivos(Double importe, String numExpedienteComercial);
+	
+	/**
+	 * 
+	 * @param numExpedienteComercial
+	 * @return true si existe un activo en el Expediente Comercial con importe nulo
+	 */
+	public Boolean isNullImporteActivos(String numExpedienteComercial);
+	
+	/**
+	 * @param numExpedienteComercial
+	 * @param List <activos> contiene una lista con los activos que se supone componen la oferta 
+	 * @return false si el nº de los activos de la oferta no coincide con los de la lista 
+	 */
+	public Boolean isAllActivosEnOferta(String numExpedienteComercial, Hashtable <String, Integer> activos); 
+	
 	Boolean esActivoPrincipalEnAgrupacion(Long numActivo, String tipoAgr);
 
 	Boolean existeActivoAsociado(String numActivo);
@@ -818,12 +842,6 @@ public interface ParticularValidatorApi {
 	 * @return true si ambos gastos son de la misma cartera
 	 */
 	public Boolean esGastoMismaCartera(String numGasto, String numOtroGasto);
-
-	/**
-	 * @param numActivo
-	 * @return devuelve true si el activo se encuentra incluido en una agrupacion tipo proyecto
-	 */
-	Boolean activoEnAgrupacionProyecto(String numActivo);
 
 	/** 
 	 * @param codigoServicer
@@ -913,11 +931,18 @@ public interface ParticularValidatorApi {
 	 * @param numGasto
 	 * @return true si el gasto es refacturable
 	 */
+
 	Boolean esGastoRefacturable(String numGasto);
 
 	Boolean existeGastoRefacturable(String numGasto);
 
-	Boolean esGastoDestinatarioPropietario(String numGasto);
+	Boolean esGastoDestinatarioPropietario(String numGasto);	
+	
+	/**
+	 * @param numActivo
+	 * @return devuelve true si el activo se encuentra incluido en una agrupacion tipo proyecto
+	 */
+	Boolean activoEnAgrupacionProyecto(String numActivo);
 
 	/**
 	 * @param codDocumento
@@ -954,5 +979,15 @@ public interface ParticularValidatorApi {
 	 * @return true si el Codigo Proveedor Rem corresponde a mediador o fuerza venta directa
 	 */
 	Boolean esTipoMediadorCorrecto(String codMediador);
+
+	/**
+	 * @param numExpediente, numActivo
+	 * @return true si un activo esta relacionado con un expediente
+	 */
+	public Boolean activoConRelacionExpedienteComercial(String numExpediente, String numActivo);
+
+	Boolean esExpedienteVenta(String numExpediente);
+
+	Boolean esExpedienteValido(String numExpediente);
 
 }

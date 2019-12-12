@@ -5,6 +5,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
@@ -42,7 +43,7 @@ public class WebcomController {
 	 * @throws ErrorServicioWebcom 
 	 */
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public String notificaciones(Long idUsuarioRemAccion, String descripcion, Long idActivoHaya, Long idNotificacionRem,
 			Long idNotificacionWebcom) throws ErrorServicioWebcom {
 		NotificacionDto dto = new NotificacionDto();
@@ -82,7 +83,7 @@ public class WebcomController {
 	 * @throws ErrorServicioWebcom 
 	 */
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public String comisiones(Long idUsuarioRemAccion, Boolean esColaboracion, Boolean esDoblePrescripcion,
 			Boolean esFdv, Boolean esPrescripcion, Boolean esResponsable, Long idOfertaRem, Long idOfertaWebcom,
 			Long idProveedorRem, Double importe, String observaciones, Double porcentaje) throws ErrorServicioWebcom {
@@ -124,7 +125,7 @@ public class WebcomController {
 	 * @throws ErrorServicioWebcom 
 	 */
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public String stock(Long idActivoHaya, String codTipoVia, String nombreCalle, String numeroCalle, String escalera,
 			String planta, String puerta, Long idUsuarioRemAccion) throws ErrorServicioWebcom {
 
@@ -163,7 +164,7 @@ public class WebcomController {
 	 * @throws ErrorServicioWebcom 
 	 */
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public String ofertas(Long idUsuarioRemAccion, Long idOfertaWebcom, Long idOfertaRem, Long idActivoHaya,
 			String codEstadoOferta, String codEstadoExpediente, Boolean vendido) throws ErrorServicioWebcom {
 		EstadoOfertaDto dto = new EstadoOfertaDto();
@@ -196,7 +197,7 @@ public class WebcomController {
 	 * @throws ErrorServicioWebcom 
 	 */
 	@SuppressWarnings("unchecked")
-	@RequestMapping
+	@RequestMapping(method = RequestMethod.GET)
 	public String trabajos(Long idUsuarioRemAccion, Long idTrabajoWebcom, Long idTrabajoRem, String codEstadoTrabajo,
 			String motivoRechazo) throws ErrorServicioWebcom {
 		EstadoTrabajoDto dto = new EstadoTrabajoDto();

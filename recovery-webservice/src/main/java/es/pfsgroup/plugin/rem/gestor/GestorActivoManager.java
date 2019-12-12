@@ -40,9 +40,12 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.ConfiguracionAccesoGestoria;
 import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.GestorActivoHistorico;
+import es.pfsgroup.plugin.rem.model.GrupoUsuario;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  
  @Component
@@ -81,9 +84,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  	
  	@Autowired
  	private ActivoAdapter activoAdapter;
- 	
- 	@Autowired
- 	private GestorActivoHistoricoDao gestorActivoHistoricoDao;
  	
  	public static final String CODIGO_TGE_PROVEEDOR_TECNICO = "PTEC";
  	public static final String USERNAME = "username";
@@ -520,4 +520,25 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 		
 		return userTarea;
 	}
+ 	
+ 	@Override
+ 	@Transactional(readOnly = false)
+	public Usuario supervisorTareaApple(String codigoTarea) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, USERNAME, CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+		return genericDao.get(Usuario.class, filtro);
+	}
+ 	 	 	
+ 	@Override
+	public DDIdentificacionGestoria isGestoria(Usuario usuario) {
+		List<GrupoUsuario> grupos = genericDao.getList(GrupoUsuario.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId()));
+		if (!Checks.estaVacio(grupos)) {
+			for (GrupoUsuario grupo : grupos) {
+				ConfiguracionAccesoGestoria cag = genericDao.get(ConfiguracionAccesoGestoria.class, genericDao.createFilter(FilterType.EQUALS, "usuarioGrupo.id", grupo.getGrupo().getId()));
+				if (!Checks.esNulo(cag)) {
+					return cag.getGestoria();
+				}
+			}
+		}
+		return null;
+	} 
  }

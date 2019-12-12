@@ -13,6 +13,9 @@ DECLARE
 SQL_YA_EJECUTADO EXCEPTION;
 PRAGMA EXCEPTION_INIT(SQL_YA_EJECUTADO, -20001);
 
+SQL_EJECUCION_RECIENTE EXCEPTION;
+PRAGMA EXCEPTION_INIT(SQL_EJECUCION_RECIENTE, -20002);
+
 BEGIN
   v_RSR_NOMBRE_SCRIPT := '&&1';
   v_RSR_FECHACREACION := '&&2';
@@ -25,11 +28,20 @@ BEGIN
   );
 
   IF v_RESULTADO = 'YA_EXISTE' THEN
+  	DBMS_OUTPUT.put_line('Script ya ejecutado');
   	raise_application_error(-20001, 'Script ya ejecutado');
+  ELSIF v_RESULTADO = 'EJECUCION_RECIENTE' THEN
+  	DBMS_OUTPUT.put_line('Script ejecutado hace nada');
+  	raise_application_error(-20002, 'Script ejecutado recientemente');
   END IF;
 
 EXCEPTION
      WHEN SQL_YA_EJECUTADO THEN
+        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE(SQLERRM);
+        RAISE;
+
+     WHEN SQL_EJECUCION_RECIENTE THEN
         ROLLBACK;
         DBMS_OUTPUT.PUT_LINE(SQLERRM);
         RAISE;

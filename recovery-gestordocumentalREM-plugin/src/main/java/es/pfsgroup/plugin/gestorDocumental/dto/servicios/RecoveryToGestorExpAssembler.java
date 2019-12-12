@@ -88,8 +88,49 @@ public class RecoveryToGestorExpAssembler {
 				sb.append(GestorDocumentalConstants.metadataCrearContenedor[3]).append("\"").append(cliente).append("\"");
 			sb.append("}");
 		sb.append("}");
+		System.out.println(sb.toString());
 		return sb.toString();
 	}
+	public CrearExpedienteComercialDto getCrearAgrupacionlDto(String idExpedienteComercial, String descripcionExpediente, String username, String cliente, String estadoExpediente, String idSistemaOrigen, String codClase, String tipoExpediente) {
+		CrearExpedienteComercialDto doc = new CrearExpedienteComercialDto();
+		
+		doc.setUsuario(USUARIO);
+		doc.setPassword(PASSWORD);
+		doc.setCodClase(codClase);
+		doc.setUsuarioOperacional(username);
+		doc.setDescripcionExpediente(descripcionExpediente);
+		doc.setOperacionMetadatos(rellenarAgrupacionMetadatos(idExpedienteComercial, idExpedienteComercial, idSistemaOrigen, estadoExpediente, cliente));
+		doc.setTipoClase(tipoExpediente);
+		return doc;
+	}
+	private static String rellenarAgrupacionMetadatos (String id, String idExterno, String idSistemaOrigen, String estadoExpediente, String cliente) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+			sb.append(GestorDocumentalConstants.AGRUPACION_REO).append("{");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[0]).append("\"").append(id).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[1]).append("\"").append(idExterno).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[2]).append("\"").append(idSistemaOrigen).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[3]).append("\"").append(cliente).append("\"");
+			sb.append("}");
+		sb.append("}");
+		System.out.println(sb.toString());
+		return sb.toString();
+	}
+	
+	private static String rellenarAgrupacionProyectoSarebMetadatos (String id, String idExterno, String idSistemaOrigen, String estadoExpediente, String cliente) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+			sb.append(GestorDocumentalConstants.AGRUPACION_PROMOCION).append("{");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[0]).append("\"").append(id).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[1]).append("\"").append(idExterno).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[2]).append("\"").append(idSistemaOrigen).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[3]).append("\"").append(cliente).append("\"");
+			sb.append("}");
+		sb.append("}");
+		System.out.println(sb.toString());
+		return sb.toString();
+	}
+	
 	
 	public CrearEntidadCompradorDto getCrearActivoOferta(String idIntervinienteHaya, String username, String cliente, String idSistemaOrigen, String codClase, String descripcionEntidad, String tipoActivoOferta) {
 		CrearEntidadCompradorDto doc = new CrearEntidadCompradorDto();
@@ -143,7 +184,6 @@ public class RecoveryToGestorExpAssembler {
 		sb.append("}");
 		return sb.toString();
 	}
-	
 
 	// --------------------------------------------------- JUNTAS -------------------------------------------------------------------
 		
@@ -158,6 +198,7 @@ public class RecoveryToGestorExpAssembler {
 		doc.setOperacionMetadatos(rellenarJuntaMetadatos(idJunta, idJunta, idSistemaOrigen, cliente));
 		return doc;
 	}
+	
 	public CrearPlusvaliaDto getCrearPlusvaliaDto(String idPlusvalia, String descripcionPlusvalia,String username,String cliente,String idSistemaOrigen,String codClase,String tipoTrabajo) {
 		CrearPlusvaliaDto doc = new CrearPlusvaliaDto();
 		doc.setUsuario(USUARIO);
@@ -169,10 +210,38 @@ public class RecoveryToGestorExpAssembler {
 		doc.setOperacionMetadatos(rellenarPlusvaliaMetadatos(idPlusvalia, idPlusvalia, idSistemaOrigen, cliente));
 		return doc;
 	}
+
 	private static String rellenarJuntaMetadatos (String id, String idExterno, String idSistemaOrigen, String cliente) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 			sb.append(GestorDocumentalConstants.OPERACION).append("{");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[0]).append("\"").append(id).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[1]).append("\"").append(idExterno).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[2]).append("\"").append(idSistemaOrigen).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[3]).append("\"").append(cliente).append("\"");
+			sb.append("}");
+		sb.append("}");
+		return sb.toString();
+	}
+
+	public CrearProveedorDto getCrearProveedorDto(String idPersonaHaya, String username, String cliente, String idSistemaOrigen, String codClase, String descripcionProveedor, String tipoProveedor) {
+		CrearProveedorDto doc = new CrearProveedorDto();
+
+		doc.setUsuario(USUARIO);
+		doc.setPassword(PASSWORD);
+		doc.setCodClase(codClase);
+		doc.setTipoClase(tipoProveedor);
+		doc.setUsuarioOperacional(username);
+		doc.setDescripcionProveedor(descripcionProveedor);
+		doc.setOperacionMetadatos(rellenarProveedorMetadatos(idPersonaHaya, idPersonaHaya, idSistemaOrigen, cliente));
+
+		return doc;
+	}
+
+	private static String rellenarProveedorMetadatos (String id, String idExterno, String idSistemaOrigen, String cliente) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+			sb.append(GestorDocumentalConstants.ENTIDAD).append("{");
 				sb.append(GestorDocumentalConstants.metadataCrearContenedor[0]).append("\"").append(id).append("\"").append(",");
 				sb.append(GestorDocumentalConstants.metadataCrearContenedor[1]).append("\"").append(idExterno).append("\"").append(",");
 				sb.append(GestorDocumentalConstants.metadataCrearContenedor[2]).append("\"").append(idSistemaOrigen).append("\"").append(",");
@@ -195,9 +264,7 @@ public class RecoveryToGestorExpAssembler {
 		
 		return doc;
 	}
-
-
-
+	
 	private static String rellenarPlusvaliaMetadatos (String id, String idExterno, String idSistemaOrigen, String cliente) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
@@ -209,5 +276,21 @@ public class RecoveryToGestorExpAssembler {
 			sb.append("}");
 		sb.append("}");
 		return sb.toString();
+	}
+	
+	public CrearProyectoDto getCrearProyectoDto(String numeroAgrupacion,  String userLogin, String tipoExpediente, String cliente) {
+		CrearProyectoDto doc = new CrearProyectoDto();
+	
+		doc.setUsuario(USUARIO);
+		doc.setPassword(PASSWORD);
+		doc.setCodClase(GestorDocumentalConstants.CODIGO_CLASE_PROYECTO);
+		doc.setCodTipo(GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO);
+		doc.setUsuarioOperacional(userLogin);
+		doc.setProyectoDescripcion(numeroAgrupacion);
+		doc.setProyectoMetadatos(rellenarAgrupacionProyectoSarebMetadatos(numeroAgrupacion, numeroAgrupacion, numeroAgrupacion, null, cliente));
+
+
+		
+		return doc;
 	}
 }

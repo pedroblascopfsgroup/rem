@@ -8,6 +8,8 @@ import java.util.Properties;
 import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
@@ -27,6 +29,7 @@ import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.AdjuntosPromocion;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoPromocion;
 
@@ -56,6 +59,8 @@ public class PromocionAdapter {
 	@Autowired
 	private DownloaderFactoryApi downloaderFactoryApi;
 	
+	protected static final Log logger = LogFactory.getLog(PromocionAdapter.class);
+	
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	
 	public List<DtoAdjuntoPromocion> getAdjuntosPromocion(Long id)
@@ -79,6 +84,7 @@ public class PromocionAdapter {
 						adj.setGestor(adjuntosPromocion.getAuditoria().getUsuarioCrear());
 					}
 					adj.setTamanyo(adjuntosPromocion.getTamanyo());
+					adj.setFechaDocumento(adjuntosPromocion.getFechaDocumento());
 				}
 			}
 
@@ -105,6 +111,7 @@ public class PromocionAdapter {
 				dto.setDescripcionTipo(adjuntoPromocion.getTipoDocumentoPromocion().getDescripcion());
 				dto.setGestor(adjuntoPromocion.getAuditoria().getUsuarioCrear());
 				dto.setCodPromo(codPromo);
+				dto.setFechaDocumento(adjuntoPromocion.getFechaDocumento());
 
 				listaAdjuntos.add(dto);
 			}
@@ -170,6 +177,21 @@ public class PromocionAdapter {
 			throw new UserException("El fichero no existe");
 		}
 		return result;
+	}
+	
+	public boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {
+		boolean borrado = false;
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+			try {
+				borrado = gestorDocumentalAdapterApi.borrarAdjunto(dtoAdjunto.getId(), usuarioLogado.getUsername());
+			} catch (Exception e) {
+				logger.error("Error en PromocionAdapter", e);
+			}
+		} else {
+			borrado = activoPromocionApi.deleteAdjunto(dtoAdjunto);
+		}
+		return borrado;
 	}
 
 }

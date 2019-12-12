@@ -51,7 +51,6 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tiposUsoDestino", DDTipoUsoDestino.class);
 		mapa.put("acabadosCarpinteria", DDAcabadoCarpinteria.class);
 		mapa.put("estadosActivo", DDEstadoActivo.class);
-		mapa.put("paises", DDCicCodigoIsoCirbeBKP.class);
 		mapa.put("tiposCuota", DDTipoCuota.class);
 		mapa.put("tiposVpo", DDTipoVpo.class);
 		mapa.put("tiposPosesorio", DDTipoTituloPosesorio.class);
@@ -79,7 +78,9 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tiposCarga", DDTipoCargaActivo.class);
 		mapa.put("subtiposCarga", DDSubtipoCarga.class);
 		mapa.put("tiposHabitaculo", DDTipoHabitaculo.class);
-		mapa.put("estadosCarga", DDSituacionCarga.class);
+		mapa.put("situacionCarga", DDSituacionCarga.class);
+		mapa.put("estadosCarga", DDEstadoCarga.class);
+		mapa.put("subestadosCarga", DDSubestadoCarga.class);
 		mapa.put("estadosAdjudicacion", DDEstadoAdjudicacion.class);
 		mapa.put("tiposJuzgado", TipoJuzgado.class);
 		mapa.put("entidadesAdjudicacion", DDEntidadAdjudicataria.class);
@@ -207,6 +208,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("estadoSeguroRentas", DDEstadoSeguroRentas.class);
 		mapa.put("entidadesAvalistas", DDEntidadesAvalistas.class);
 		mapa.put("tiposDocumentoPromocion", DDTipoDocumentoPromocion.class);
+		mapa.put("tiposDocumentoProyecto", DDTipoDocumentoProyecto.class);
 		mapa.put("estadosReserva", DDEstadosReserva.class);
 		mapa.put("situacionActivo", DDSituacionActivo.class);
 		mapa.put("calificacionNegativa", DDCalificacionNegativa.class);
@@ -221,10 +223,12 @@ public class DiccionarioTargetClassMap{
 		mapa.put("responsableSubsanar", DDResponsableSubsanar.class);
 		mapa.put("clasificacionApple", DDClasificacionApple.class);
 		mapa.put("entidadFinanciera", DDEntidadFinanciera.class);
-		mapa.put("estadoMotivoCalificacionNegativa", DDEstadoMotivoCalificacionNegativa.class);
-		mapa.put("responsableSubsanar", DDResponsableSubsanar.class);
 		mapa.put("origenComprador", DDOrigenComprador.class);
 		mapa.put("estadosCivilesURSUS", DDEstadosCivilesURSUS.class);
+		mapa.put("EstadoPresentacion", DDEstadoPresentacion.class);
+		mapa.put("fasePublicacion", DDFasePublicacion.class);
+		mapa.put("direccionTerritorial", DDDireccionTerritorial.class);
+		mapa.put("tipoDocumentoAgrupacion", DDTipoDocumentoAgrupacion.class);
 		mapa.put("claseOferta", DDClaseOferta.class);
 		mapa.put("servicerActivo", DDServicerActivo.class);
 		mapa.put("cesionSaneamiento", DDCesionSaneamiento.class);

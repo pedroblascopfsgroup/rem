@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20191016
+--## FECHA_CREACION=20191107
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.19
---## INCIDENCIA_LINK=REMVIP-5373
+--## INCIDENCIA_LINK=REMVIP-5609
 --## PRODUCTO=NO
 --## Finalidad: Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación. Liberbank.
 --## Info: https://link-doc.pfsgroup.es/confluence/display/REOS/SP_EXT_PR_ACT_RES_VENTA
@@ -23,7 +23,9 @@
 --##		1.04 (20190808) - Adrián Molina - Se añade al filtro de la cartera Liberbank, la cartera Cerberus
 --##		1.05 (20190827) - Viorel Remus Ovidiu - Se desactiva la actualizacion del estado del expediente a 'RESERVADO'
 --##		1.06 (20191007) - Viorel Remus Ovidiu - Se soluciona error de subcartera
---##		1.07 (20191016) - Viorel Remus Ovidiu - Se añadie filtro de borrado en reservas
+--## 		1.07 (20191010) - Jin Li Hu - Se añade el código de la caretra Cajamar para todas la queries donde se filtra por cartera, y se ha modificado una query según la descripción del item - HREOS-7988
+--##		1.08 (20191016) - Viorel Remus Ovidiu - Se añadie filtro de borrado en reservas
+--##		1.09 (20191107) - Viorel Remus Ovidiu - Se mezclan los cambios de subcartera (1.07) con los filtros de borrado (1.08)
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -40,6 +42,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
     FECHA_DEVOLUCION_RESERVA    IN VARCHAR2,
     IDENTIFICACION_COBRO        IN NUMBER,
     FECHA_COBRO_VENTA           IN VARCHAR2,
+    CARTERA                     IN VARCHAR2,
 
     --Variables de salida
     COD_RETORNO                 OUT VARCHAR2 -- 0 OK / 1 KO
@@ -110,7 +113,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
                                                             ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
                                                             LEFT JOIN REM01.DD_ERE_ESTADOS_RESERVA ERE
                                                             ON ERE.DD_ERE_ID = RES.DD_ERE_ID
-                                                            WHERE (CAR.DD_CRA_CODIGO = ''08'' OR (CAR.DD_CRA_CODIGO = ''07'' AND SCR.DD_SCR_CODIGO = ''138''))
+                                                            WHERE (CAR.DD_CRA_CODIGO = ''08'' OR (CAR.DD_CRA_CODIGO = ''07'' AND SCR.DD_SCR_CODIGO = ''138'') OR CAR.DD_CRA_CODIGO = ''01'')
                                                             AND OFR.OFR_NUM_OFERTA = :1 
 							    AND RES.BORRADO = 0';
                                                             
@@ -131,7 +134,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
                                                             ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
                                                             LEFT JOIN REM01.DD_ERE_ESTADOS_RESERVA ERE
                                                             ON ERE.DD_ERE_ID = RES.DD_ERE_ID
-                                                            WHERE (CAR.DD_CRA_CODIGO = ''08'' OR (CAR.DD_CRA_CODIGO = ''07'' AND SCR.DD_SCR_CODIGO = ''138''))
+                                                            WHERE (CAR.DD_CRA_CODIGO = ''08'' OR (CAR.DD_CRA_CODIGO = ''07'' AND SCR.DD_SCR_CODIGO = ''138'') OR CAR.DD_CRA_CODIGO = ''01'')
                                                             AND OFR.OFR_NUM_OFERTA = :1
                                                             AND ROWNUM = 1 
 							    AND RES.BORRADO = 0';                                                        
@@ -166,7 +169,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
                                                             ON CAR.DD_CRA_ID = ACT.DD_CRA_ID
                                                             LEFT JOIN REM01.DD_EEC_EST_EXP_COMERCIAL EEC
                                                             ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
-                                                            WHERE CAR.DD_CRA_CODIGO IN ('08', '07') /*LIBERBANK Y CERBERUS*/
+                                                            WHERE CAR.DD_CRA_CODIGO IN ('08', '07', '01') /*LIBERBANK, CERBERUS Y CAJAMAR*/
                                                             AND OFR.OFR_NUM_OFERTA =  ''||IDENTIFICACION_COBRO||'';
                                                             
     CURSOR ACTIVOS IS SELECT
@@ -186,7 +189,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
                                                             ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
                                                             LEFT JOIN REM01.DD_ERE_ESTADOS_RESERVA ERE
                                                             ON ERE.DD_ERE_ID = RES.DD_ERE_ID
-                                                            WHERE CAR.DD_CRA_CODIGO IN ('08', '07')
+                                                            WHERE CAR.DD_CRA_CODIGO IN ('08', '07', '01') /*LIBERBANK, CERBERUS Y CAJAMAR*/
                                                             AND OFR.OFR_NUM_OFERTA = ''||IDENTIFICACION_COBRO||'';
 
     V_FROM_COBRO                    VARCHAR2(2000 CHAR) := 'FROM REM01.ECO_EXPEDIENTE_COMERCIAL ECO
@@ -200,7 +203,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
                                                             ON CAR.DD_CRA_ID = ACT.DD_CRA_ID
                                                             LEFT JOIN REM01.DD_EEC_EST_EXP_COMERCIAL EEC
                                                             ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
-                                                            WHERE CAR.DD_CRA_CODIGO IN (''08'', ''07'')
+                                                            WHERE CAR.DD_CRA_CODIGO IN (''08'', ''07'', ''01'')
                                                             AND OFR.OFR_NUM_OFERTA = '||IDENTIFICACION_COBRO||'';
 
     V_LOGAR_HDL                     VARCHAR2(1400 CHAR) := 'HLD_HIST_LANZA_PER_DETA(''SP_EXT_PR_ACT_RES_VENTA'',:1,:2,:3,:4,:5,:6,:7)'; -- 1 HLD_SP_CARGA, 2 HLD_CODIGO_REG, 3 HLD_TABLA_MODIFICAR, 4 HLD_TABLA_MODIFICAR_CLAVE, 5 HLD_TABLA_MODIFICAR_CLAVE_ID, 6 HLD_CAMPO_MODIFICAR, 7 HLD_VALOR_ORIGINAL, 8 HLD_VALOR_ACTUALIZADO
@@ -314,7 +317,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
     END;
 
 BEGIN
---v1.03
+--v1.04
 
     COD_RETORNO := 0;
     DBMS_OUTPUT.PUT_LINE('[INICIO] Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación.');
@@ -324,6 +327,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('FECHA_COBRO_RESERVA (Se espera yyyyMMdd): '||FECHA_COBRO_RESERVA);
     DBMS_OUTPUT.PUT_LINE('FECHA_DEVOLUCION_RESERVA (Se espera yyyyMMdd): '||FECHA_DEVOLUCION_RESERVA);
     DBMS_OUTPUT.PUT_LINE('FECHA_COBRO_VENTA (Se espera yyyyMMdd): '||FECHA_COBRO_VENTA);
+    DBMS_OUTPUT.PUT_LINE('CARTERA: '||CARTERA);
 
     --Seteamos la descripción del error correspondiente a la imposibilidad de convertir el parametro de entrada a DATE.
     V_ERROR_DESC := '[ERROR] No se ha podido convertir la fecha a DATE, comprobar máscara. Paramos la ejecución.';
@@ -479,34 +483,74 @@ BEGIN
                     ';
                     EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_ACTUAL;
 
-                    V_MSQL := '
-                    UPDATE '||V_ESQUEMA||'.RES_RESERVAS
-                    SET RES_FECHA_FIRMA = '''||FECHA_COBRO_RESERVA_DATE||''',
-                    USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
-                    FECHAMODIFICAR = SYSDATE
-                    WHERE RES_ID = '||V_RES_ID||'
-                    AND ECO_ID = '||V_ECO_ID||'
-                    AND RES_FECHA_FIRMA IS NULL
-                    ';
-                    EXECUTE IMMEDIATE V_MSQL;
+		    IF V_ACTIVO_APPLE = 1 THEN
+                    
+                        V_MSQL := '
+                            UPDATE '||V_ESQUEMA||'.RES_RESERVAS
+                            SET RES_FECHA_FIRMA = '''||FECHA_COBRO_RESERVA_DATE||''',
+                            RES_FECHA_VENCIMIENTO = NULL,
+                            USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
+                            FECHAMODIFICAR = SYSDATE
+                            WHERE RES_ID = '||V_RES_ID||'
+                            AND ECO_ID = '||V_ECO_ID||'
+                            AND RES_FECHA_FIRMA IS NULL
+                        ';
+                        EXECUTE IMMEDIATE V_MSQL;
+
+		    ELSE 
+
+		         V_MSQL := '
+		            UPDATE '||V_ESQUEMA||'.RES_RESERVAS
+		            SET RES_FECHA_FIRMA = '''||FECHA_COBRO_RESERVA_DATE||''',
+		            USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
+		            FECHAMODIFICAR = SYSDATE
+		            WHERE RES_ID = '||V_RES_ID||'
+		            AND ECO_ID = '||V_ECO_ID||'
+		            AND RES_FECHA_FIRMA IS NULL
+		            ';
+		          EXECUTE IMMEDIATE V_MSQL;
+
+		    END IF;
 
                     IF SQL%ROWCOUNT > 0 THEN
-                        DBMS_OUTPUT.PUT_LINE('[INFO] PASO 2/4 | Se ha informado el campo RES_FECHA_FIRMA para la OFERTA '||IDENTIFICACION_COBRO||'.');
-                        V_PASOS := V_PASOS+1;
-                        --Logado en HLD_HIST_LANZA_PER_DETA
 
-                        V_VALOR_NUEVO := FECHA_COBRO_RESERVA_DATE;
+ 			IF UPPER(CARTERA) = 'CAM' THEN --Si el parametro de entrada CARTERA es CAM (CAJAMAR)
+                            DBMS_OUTPUT.PUT_LINE('[INFO] PASO 2/4 | Se ha informado el campo RES_FECHA_CONTABILIZACION para la OFERTA '||IDENTIFICACION_COBRO||'.');
+                            V_PASOS := V_PASOS+1;
+                            --Logado en HLD_HIST_LANZA_PER_DETA
 
-                        PARAM1 := 'RES_RESERVAS';
-                        PARAM2 := 'RES_ID';
-                        PARAM3 := 'RES_FECHA_FIRMA';
+                            V_VALOR_NUEVO := FECHA_COBRO_RESERVA_DATE;
+
+                            PARAM1 := 'RES_RESERVAS';
+                            PARAM2 := 'RES_ID';
+                            PARAM3 := 'RES_FECHA_CONTABILIZACION';
+
+			ELSE
+
+		                DBMS_OUTPUT.PUT_LINE('[INFO] PASO 2/4 | Se ha informado el campo RES_FECHA_FIRMA para la OFERTA '||IDENTIFICACION_COBRO||'.');
+		                V_PASOS := V_PASOS+1;
+		                --Logado en HLD_HIST_LANZA_PER_DETA
+
+		                V_VALOR_NUEVO := FECHA_COBRO_RESERVA_DATE;
+
+		                PARAM1 := 'RES_RESERVAS';
+		                PARAM2 := 'RES_ID';
+		                PARAM3 := 'RES_FECHA_FIRMA';
+
+			END IF;
+			
                         HLD_HISTORICO_LANZA_PER_DETA (TO_CHAR(IDENTIFICACION_COBRO), PARAM1, PARAM2, V_RES_ID, PARAM3, V_VALOR_ACTUAL, V_VALOR_NUEVO);
                         --Reseteamos el V_VALOR_NUEVO
                         V_VALOR_NUEVO := '';
 
                     ELSE
                         COD_RETORNO := 1;
-                        V_ERROR_DESC := '[ERROR] No se ha podido informar el campo RES_FECHA_FIRMA para la OFERTA '||IDENTIFICACION_COBRO||'. Paramos la ejecución.';
+
+                        IF UPPER(CARTERA) = 'CAM' THEN --Si el parametro de entrada CARTERA es CAM (CAJAMAR)
+                            V_ERROR_DESC := '[ERROR] No se ha podido informar el campo RES_FECHA_CONTABILIZACION para la OFERTA '||IDENTIFICACION_COBRO||'. Paramos la ejecución.';
+			ELSE
+			    V_ERROR_DESC := '[ERROR] No se ha podido informar el campo RES_FECHA_FIRMA para la OFERTA '||IDENTIFICACION_COBRO||'. Paramos la ejecución.';
+                        END IF;
                         --DBMS_OUTPUT.PUT_LINE(V_ERROR_DESC);
                     END IF;
 
@@ -719,17 +763,40 @@ BEGIN
                     ';
                     EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_ACTUAL;
 
-                    V_MSQL := '
-                    UPDATE '||V_ESQUEMA||'.RES_RESERVAS
-                    SET RES_FECHA_ANULACION = '''||V_VALOR_NUEVO||''',
-                    RES_FECHA_FIRMA = NULL,
-                    USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
-                    FECHAMODIFICAR = SYSDATE
-                    WHERE RES_ID = '||V_RES_ID||'
-                    AND ECO_ID = '||V_ECO_ID||'
-                    AND RES_FECHA_ANULACION IS NULL
-                    ';
-                    EXECUTE IMMEDIATE V_MSQL;
+		    V_MSQL := '
+		    SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_ID = (SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_ID = '||V_ACT_ID||') AND DD_SCR_CODIGO = ''138''';
+                    EXECUTE IMMEDIATE V_MSQL INTO V_ACTIVO_APPLE;
+            
+                    IF V_ACTIVO_APPLE = 1 THEN
+
+		            V_MSQL := '
+		            UPDATE '||V_ESQUEMA||'.RES_RESERVAS
+		            SET RES_FECHA_ANULACION = '''||V_VALOR_NUEVO||''',
+		            RES_FECHA_FIRMA = NULL,
+ 			    RES_FECHA_VENCIMIENTO = NULL,
+		            USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
+		            FECHAMODIFICAR = SYSDATE
+		            WHERE RES_ID = '||V_RES_ID||'
+		            AND ECO_ID = '||V_ECO_ID||'
+		            AND RES_FECHA_ANULACION IS NULL
+		            ';
+		            EXECUTE IMMEDIATE V_MSQL;
+
+		    ELSE 
+
+		            V_MSQL := '
+		            UPDATE '||V_ESQUEMA||'.RES_RESERVAS
+		            SET RES_FECHA_ANULACION = '''||V_VALOR_NUEVO||''',
+		            RES_FECHA_FIRMA = NULL,
+		            USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
+		            FECHAMODIFICAR = SYSDATE
+		            WHERE RES_ID = '||V_RES_ID||'
+		            AND ECO_ID = '||V_ECO_ID||'
+		            AND RES_FECHA_ANULACION IS NULL
+		            ';
+		            EXECUTE IMMEDIATE V_MSQL;
+
+		    END IF;
 
                     IF SQL%ROWCOUNT > 0 THEN
                         DBMS_OUTPUT.PUT_LINE('[INFO] PASO 2y3/8 | Se ha informado el campo RES_FECHA_ANULACION para la OFERTA '||IDENTIFICACION_COBRO||'. Se ha borrado la RES_FECHA_FIRMA.');
@@ -916,7 +983,7 @@ BEGIN
                                                             ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
                                                             LEFT JOIN REM01.DD_ERE_ESTADOS_RESERVA ERE
                                                             ON ERE.DD_ERE_ID = RES.DD_ERE_ID
-                                                            WHERE CAR.DD_CRA_CODIGO IN (''08'', ''07'')
+                                                            WHERE CAR.DD_CRA_CODIGO IN (''08'', ''07'', ''01'')
                                                             AND OFR.OFR_NUM_OFERTA = '||IDENTIFICACION_COBRO||'
                                                          )
                                         AND EOF.DD_EOF_CODIGO = ''03''
@@ -984,7 +1051,7 @@ BEGIN
                                                             ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
                                                             LEFT JOIN REM01.DD_ERE_ESTADOS_RESERVA ERE
                                                             ON ERE.DD_ERE_ID = RES.DD_ERE_ID
-                                                            WHERE CAR.DD_CRA_CODIGO IN (''08'', ''07'')
+                                                            WHERE CAR.DD_CRA_CODIGO IN (''08'', ''07'', ''01'')
                                                             AND OFR.OFR_NUM_OFERTA = '||IDENTIFICACION_COBRO||'
                                                          )
                                             AND EOF1.DD_EOF_CODIGO = ''03'' /*CONGELADA*/

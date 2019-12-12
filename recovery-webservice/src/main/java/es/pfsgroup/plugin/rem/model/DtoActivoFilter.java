@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import es.capgemini.devon.dto.WebDto;
+import java.util.Date;
 
 /**
  * Dto para el filtro de Activos
@@ -93,6 +94,29 @@ public class DtoActivoFilter extends WebDto {
 	private String codigoPromocionPrinex;
 	private String tipoTituloPosesorio;
 	private String estadoComunicacionGencatCodigo;
+	private Boolean usuarioGestoria;
+	private Long gestoria;
+	private String fasePublicacionCodigo;
+	private String fasePublicacionDescripcion;
+	private String gestoriaAdmision;
+	private String gestoriaAdministracion;
+	private String gestoriaFormalizacion;
+	private String gestorPublicacionUsername;
+	private Long numAgrupacion;
+	private String direccionTerritorialCodigo;
+	private Long apiPrimarioId;
+	private String tipoAlquilerDescripcion;
+	private Date fechaPublicacionVenta;
+	private Date fechaPublicacionAlquiler;
+	/*tipoComercializacionCodigoAuxiliar la utiliza el listado de activos del filtro para saber si tiene
+	  que mostrar la fecha de publicacion venta o de alquiler en la columna Fecha de publicacion.
+	  No se puede utilizar el tipoComercializacionCodigo que hay definido más arriba porque es el que utiliza el filtro para buscar.*/
+	private String  tipoComercializacionCodigoAuxiliar;
+	private Long precioTasacionActivo;
+	private String estadoPublicacionVenta;
+	private String estadoPublicacionAlquiler;
+	private String tipoGestorCodigo;
+	private String estadoPublicacionActivoListadoCodigo;
 	private boolean listPage;
 	
 	public String getNumActivo() {
@@ -593,11 +617,124 @@ public class DtoActivoFilter extends WebDto {
 	public void setEstadoComunicacionGencatCodigo(String estadoComunicacionGencatCodigo) {
 		this.estadoComunicacionGencatCodigo = estadoComunicacionGencatCodigo;
 	}
+	public Boolean getUsuarioGestoria() {
+		return usuarioGestoria;
+	}
+	public void setUsuarioGestoria(Boolean usuarioGestoria) {
+		this.usuarioGestoria = usuarioGestoria;
+	}
+	public Long getGestoria() {
+		return gestoria;
+	}
+	public void setGestoria(Long gestoria) {
+		this.gestoria = gestoria;
+	}
+	public String getGestorPublicacionUsername() {
+		return gestorPublicacionUsername;
+	}
+	public void setGestorPublicacionUsername(String gestorPublicacionUsername) {
+		this.gestorPublicacionUsername = gestorPublicacionUsername;
+	}
+	public Long getNumAgrupacion() {
+		return numAgrupacion;
+	}
+	public void setNumAgrupacion(Long numAgrupacion) {
+		this.numAgrupacion = numAgrupacion;
+	}
+	public String getDireccionTerritorialCodigo() {
+		return direccionTerritorialCodigo;
+	}
+	public void setDireccionTerritorialCodigo(String direccionTerritorialCodigo) {
+		this.direccionTerritorialCodigo = direccionTerritorialCodigo;
+	}
+	public Long getApiPrimarioId() {
+		return apiPrimarioId;
+	}
+	public void setApiPrimarioId(Long apiPrimarioId) {
+		this.apiPrimarioId = apiPrimarioId;
+	}
+	public String getTipoAlquilerDescripcion() {
+		return tipoAlquilerDescripcion;
+	}
+	public void setTipoAlquilerDescripcion(String tipoAlquilerDescripcion) {
+		this.tipoAlquilerDescripcion = tipoAlquilerDescripcion;
+	}
+	public Date getFechaPublicacionVenta() {
+		return fechaPublicacionVenta;
+	}
+	public void setFechaPublicacionVenta(Date fechaPublicacionVenta) {
+		this.fechaPublicacionVenta = fechaPublicacionVenta;
+	}
+	public Date getFechaPublicacionAlquiler() {
+		return fechaPublicacionAlquiler;
+	}
+	public void setFechaPublicacionAlquiler(Date fechaPublicacionAlquiler) {
+		this.fechaPublicacionAlquiler = fechaPublicacionAlquiler;
+	}
+	public String getTipoComercializacionCodigoAuxiliar() {
+		return tipoComercializacionCodigoAuxiliar;
+	}
+	public void setTipoComercializacionCodigoAuxiliar(String tipoComercializacionCodigoAuxiliar) {
+		this.tipoComercializacionCodigoAuxiliar = tipoComercializacionCodigoAuxiliar;
+	}
+	public Long getPrecioTasacionActivo() {
+		return precioTasacionActivo;
+	}
+	public void setPrecioTasacionActivo(Long precioTasacionActivo) {
+		this.precioTasacionActivo = precioTasacionActivo;
+	}
+	public String getEstadoPublicacionVenta() {
+		return estadoPublicacionVenta;
+	}
+	public void setEstadoPublicacionVenta(String estadoPublicacionVenta) {
+		this.estadoPublicacionVenta = estadoPublicacionVenta;
+	}
+	public String getEstadoPublicacionAlquiler() {
+		return estadoPublicacionAlquiler;
+	}
+	public void setEstadoPublicacionAlquiler(String estadoPublicacionAlquiler) {
+		this.estadoPublicacionAlquiler = estadoPublicacionAlquiler;
+	}
+	public String getFasePublicacionCodigo() {
+		return fasePublicacionCodigo;
+	}
+	public void setFasePublicacionCodigo(String fasePublicacionCodigo) {
+		this.fasePublicacionCodigo = fasePublicacionCodigo;
+	}
+	public String getFasePublicacionDescripcion() {
+		return fasePublicacionDescripcion;
+	}
+	public void setFasePublicacionDescripcion(String fasePublicacionDescripcion) {
+		this.fasePublicacionDescripcion = fasePublicacionDescripcion;
+	}
+	public String getGestoriaAdmision() {
+		return gestoriaAdmision;
+	}
+	public void setGestoriaAdmision(String gestoriaAdmision) {
+		this.gestoriaAdmision = gestoriaAdmision;
+	}
+	public String getGestoriaAdministracion() {
+		return gestoriaAdministracion;
+	}
+	public void setGestoriaAdministracion(String gestoriaAdministracion) {
+		this.gestoriaAdministracion = gestoriaAdministracion;
+	}
+	public String getGestoriaFormalizacion() {
+		return gestoriaFormalizacion;
+	}
+	public void setGestoriaFormalizacion(String gestoriaFormalizacion) {
+		this.gestoriaFormalizacion = gestoriaFormalizacion;
+	}
+	public String getTipoGestorCodigo() {
+		return tipoGestorCodigo;
+	}
+	public void setTipoGestorCodigo(String tipoGestorCodigo) {
+		this.tipoGestorCodigo = tipoGestorCodigo;
+	}
 	public boolean isListPage() {
 		return listPage;
 	}
 	public void setListPage(boolean listPage) {
 		this.listPage = listPage;
 	}	
-	
 }

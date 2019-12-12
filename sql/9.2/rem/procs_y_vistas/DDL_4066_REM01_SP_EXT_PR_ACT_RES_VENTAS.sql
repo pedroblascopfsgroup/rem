@@ -488,21 +488,12 @@ BEGIN
                     ';
                     EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_ACTUAL;
 
-                    IF UPPER(CARTERA) = 'CAM' THEN --Si el parametro de entrada CARTERA es CAM (CAJAMAR)
-                        V_MSQL := '
-                            UPDATE '||V_ESQUEMA||'.RES_RESERVAS
-                            SET RES_FECHA_CONTABILIZACION = '''||FECHA_COBRO_RESERVA_DATE||''',
-                            USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
-                            FECHAMODIFICAR = SYSDATE
-                            WHERE RES_ID = '||V_RES_ID||'
-                            AND ECO_ID = '||V_ECO_ID||'
-                            AND RES_FECHA_CONTABILIZACION IS NULL
-                        ';
-                        EXECUTE IMMEDIATE V_MSQL;
-                    ELSE
+		    IF V_ACTIVO_APPLE = 1 THEN
+                    
                         V_MSQL := '
                             UPDATE '||V_ESQUEMA||'.RES_RESERVAS
                             SET RES_FECHA_FIRMA = '''||FECHA_COBRO_RESERVA_DATE||''',
+                            RES_FECHA_VENCIMIENTO = NULL,
                             USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
                             FECHAMODIFICAR = SYSDATE
                             WHERE RES_ID = '||V_RES_ID||'
@@ -510,7 +501,21 @@ BEGIN
                             AND RES_FECHA_FIRMA IS NULL
                         ';
                         EXECUTE IMMEDIATE V_MSQL;
-                    END IF;
+
+		    ELSE 
+
+		         V_MSQL := '
+		            UPDATE '||V_ESQUEMA||'.RES_RESERVAS
+		            SET RES_FECHA_FIRMA = '''||FECHA_COBRO_RESERVA_DATE||''',
+		            USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
+		            FECHAMODIFICAR = SYSDATE
+		            WHERE RES_ID = '||V_RES_ID||'
+		            AND ECO_ID = '||V_ECO_ID||'
+		            AND RES_FECHA_FIRMA IS NULL
+		            ';
+		          EXECUTE IMMEDIATE V_MSQL;
+
+		    END IF;
 
                     IF SQL%ROWCOUNT > 0 THEN
 
@@ -763,17 +768,40 @@ BEGIN
                     ';
                     EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_ACTUAL;
 
-                    V_MSQL := '
-                    UPDATE '||V_ESQUEMA||'.RES_RESERVAS
-                    SET RES_FECHA_ANULACION = '''||V_VALOR_NUEVO||''',
-                    RES_FECHA_FIRMA = NULL,
-                    USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
-                    FECHAMODIFICAR = SYSDATE
-                    WHERE RES_ID = '||V_RES_ID||'
-                    AND ECO_ID = '||V_ECO_ID||'
-                    AND RES_FECHA_ANULACION IS NULL
-                    ';
-                    EXECUTE IMMEDIATE V_MSQL;
+		    V_MSQL := '
+		    SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_ID = (SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_ID = '||V_ACT_ID||') AND DD_SCR_CODIGO = ''138''';
+                    EXECUTE IMMEDIATE V_MSQL INTO V_ACTIVO_APPLE;
+            
+                    IF V_ACTIVO_APPLE = 1 THEN
+
+		            V_MSQL := '
+		            UPDATE '||V_ESQUEMA||'.RES_RESERVAS
+		            SET RES_FECHA_ANULACION = '''||V_VALOR_NUEVO||''',
+		            RES_FECHA_FIRMA = NULL,
+ 			    RES_FECHA_VENCIMIENTO = NULL,
+		            USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
+		            FECHAMODIFICAR = SYSDATE
+		            WHERE RES_ID = '||V_RES_ID||'
+		            AND ECO_ID = '||V_ECO_ID||'
+		            AND RES_FECHA_ANULACION IS NULL
+		            ';
+		            EXECUTE IMMEDIATE V_MSQL;
+
+		    ELSE 
+
+		            V_MSQL := '
+		            UPDATE '||V_ESQUEMA||'.RES_RESERVAS
+		            SET RES_FECHA_ANULACION = '''||V_VALOR_NUEVO||''',
+		            RES_FECHA_FIRMA = NULL,
+		            USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
+		            FECHAMODIFICAR = SYSDATE
+		            WHERE RES_ID = '||V_RES_ID||'
+		            AND ECO_ID = '||V_ECO_ID||'
+		            AND RES_FECHA_ANULACION IS NULL
+		            ';
+		            EXECUTE IMMEDIATE V_MSQL;
+
+		    END IF;
 
                     IF SQL%ROWCOUNT > 0 THEN
                         DBMS_OUTPUT.PUT_LINE('[INFO] PASO 2y3/8 | Se ha informado el campo RES_FECHA_ANULACION para la OFERTA '||IDENTIFICACION_COBRO||'. Se ha borrado la RES_FECHA_FIRMA.');

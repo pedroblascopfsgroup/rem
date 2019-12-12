@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Beltrán
---## FECHA_CREACION=20191118
+--## FECHA_CREACION=20191128
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-5757
@@ -10,6 +10,7 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Anyadir nuevos tipos de inmueble
 --##########################################
 --*/
 
@@ -37,27 +38,53 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        --T_TIPO_DATA('DD_TPN_CODIGO',		'DD_TPN_DESCRIPCION',		'DD_TPN_DESCRIPCION_LARGA')
-        T_TIPO_DATA('0909','Oficina en edificio exclusivo'),
-        T_TIPO_DATA('0912','Local en centro comercial Polivalente'),
-        T_TIPO_DATA('0949','Local en centro comercial No Polivalente'),
-        T_TIPO_DATA('0951','Local en edificio de oficinas No Polivalente'),
-        T_TIPO_DATA('0914','Local en edificio de oficinas Polivalente'),
-        T_TIPO_DATA('0920','Hotel vacacional'),
-        T_TIPO_DATA('0921','Hotel rural'),
-        T_TIPO_DATA('0922','Hostal/Pension'),
-        T_TIPO_DATA('0923','Aparthotel/AATT'),
-        T_TIPO_DATA('0924','Camping'),
-        T_TIPO_DATA('0929','Parque de medianas'),
-        T_TIPO_DATA('0930','Gasolinera'),
-        T_TIPO_DATA('0932','Campo de golf'),
-        T_TIPO_DATA('0933','Hospital, Clinica'),
-        T_TIPO_DATA('0934','Cine, Teatro, Discoteca'),
-        T_TIPO_DATA('0935','Concesion administrativa/ otros derechos'),
-        T_TIPO_DATA('0936','Geriatrico'),
-        T_TIPO_DATA('0937','Pantano / Recursos hidraulicos'),
-        T_TIPO_DATA('0941','Superficie en zona comun'),
-        T_TIPO_DATA('0943','Instalacion deportiva')
+        --T_TIPO_DATA('DD_TPN_CODIGO',		'DD_TPN_DESCRIPCION',		'DD_TPN_DESCRIPCION_LARGA') 
+        T_TIPO_DATA('0904',	'Vivienda colectiva'),
+		T_TIPO_DATA('0905',	'Vivienda unifamiliar aislada'),
+		T_TIPO_DATA('0906',	'Vivienda unifamiliar pareada'),
+		T_TIPO_DATA('0907',	'Vivienda unifamiliar adosada'),
+		T_TIPO_DATA('0908',	'Edificio exclusivo (oficinas)'),
+		T_TIPO_DATA('0909',	'Oficina en edificio exclusivo'),
+		T_TIPO_DATA('0910',	'Oficina en edificio residencial'),
+		T_TIPO_DATA('0911',	'Centro comercial'),
+		T_TIPO_DATA('0912',	'Local en centro comercial Polivalente'),
+		T_TIPO_DATA('0913',	'Local en edificio residencial'),
+		T_TIPO_DATA('0914',	'Local en edificio de oficinas Polivalente'),
+		T_TIPO_DATA('0915',	'Nave Polivalente'),
+		T_TIPO_DATA('0916',	'Nave adosada Polivalente'),
+		T_TIPO_DATA('0917',	'Nave escaparate Polivalente'),
+		T_TIPO_DATA('0918',	'Industrial en altura'),
+		T_TIPO_DATA('0919',	'Hotel urbano'),
+		T_TIPO_DATA('0920',	'Hotel vacacional'),
+		T_TIPO_DATA('0921',	'Hotel rural'),
+		T_TIPO_DATA('0922',	'Hostal/Pension'),
+		T_TIPO_DATA('0923',	'Aparthotel/AATT'),
+		T_TIPO_DATA('0924',	'Camping'),
+		T_TIPO_DATA('0925',	'Garaje'),
+		T_TIPO_DATA('0926',	'Trastero'),
+		T_TIPO_DATA('0927',	'Promocion sin division horizontal'),
+		T_TIPO_DATA('0928',	'Suelo'),
+		T_TIPO_DATA('0929',	'Parque de medianas'),
+		T_TIPO_DATA('0930',	'Gasolinera'),
+		T_TIPO_DATA('0931',	'Residncia de estudiantes'),
+		T_TIPO_DATA('0932',	'Campo de golf'),
+		T_TIPO_DATA('0933',	'Hospital, Clinica'),
+		T_TIPO_DATA('0934',	'Cine, Teatro, Discoteca'),
+		T_TIPO_DATA('0935',	'Concesion administrativa/ otros derechos'),
+		T_TIPO_DATA('0936',	'Geriatrico'),
+		T_TIPO_DATA('0937',	'Pantano / Recursos hidraulicos'),
+		T_TIPO_DATA('0938',	'Edificio de Garajes'),
+		T_TIPO_DATA('0939',	'Inmueble Uso dotacional privado'),
+		T_TIPO_DATA('0940',	'Otro'),
+		T_TIPO_DATA('0941',	'Superficie en zona comun'),
+		T_TIPO_DATA('0942',	'Loft'),
+		T_TIPO_DATA('0943',	'Instalacion deportiva'),
+		T_TIPO_DATA('0946',	'Nave No polivalente'),
+		T_TIPO_DATA('0947',	'Nave adosada No polivalente'),
+		T_TIPO_DATA('0948',	'Nave escaparate No polivalente'),
+		T_TIPO_DATA('0949',	'Local en centro comercial No Polivalente'),
+		T_TIPO_DATA('0950',	'Local en edificio residencial'),
+		T_TIPO_DATA('0951',	'Local en edificio de oficinas No Polivalente')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 

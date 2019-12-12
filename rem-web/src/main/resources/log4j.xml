@@ -353,7 +353,13 @@
 		<appender-ref ref="file" />
 		<appender-ref ref="syslog" />
 	</logger>
-
+	<logger name="es.pfsgroup.plugin.rem.controller.GestorSustitutoController"
+		additivity="false">
+		<level value="error" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+		<appender-ref ref="syslog" />
+	</logger>
 	<logger name="es.pfsgroup.plugin.rem.rest.api.impl.GestorDocumentalFotos"
 		additivity="false">
 		<level value="error" />

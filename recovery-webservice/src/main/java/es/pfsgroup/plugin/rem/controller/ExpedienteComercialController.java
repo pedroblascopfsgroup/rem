@@ -51,6 +51,7 @@ import es.pfsgroup.plugin.rem.excel.ActivosExpedienteExcelReport;
 import es.pfsgroup.plugin.rem.excel.AgrupacionListadoActivosExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
+import es.pfsgroup.plugin.rem.excel.PlantillaDistribucionPrecios;
 import es.pfsgroup.plugin.rem.excel.OfertaAgrupadaListadoActivosExcelReport;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
@@ -1750,6 +1751,21 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			List<DtoActivosExpediente> dtosActivos = (List<DtoActivosExpediente>) dto.getResults();
 
 			ExcelReport report = new ActivosExpedienteExcelReport(dtosActivos, expedienteComercial.getNumExpediente());
+			excelReportGeneratorApi.generateAndSend(report, response);
+
+		} catch (IOException e) {
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public void getExcelPlantillaDistribucionPrecios(Long idExpediente, HttpServletRequest request, HttpServletResponse response) {
+		try {
+			DtoPage dto = expedienteComercialApi.getActivosExpediente(idExpediente);
+			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOne(idExpediente);
+			List<DtoActivosExpediente> dtosActivos = (List<DtoActivosExpediente>) dto.getResults();
+
+			ExcelReport report = new PlantillaDistribucionPrecios(dtosActivos, expedienteComercial.getNumExpediente());
 			excelReportGeneratorApi.generateAndSend(report, response);
 
 		} catch (IOException e) {

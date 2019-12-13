@@ -33,6 +33,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 						{ 
 							xtype		: 'displayfieldbase',
 							fieldLabel	:  HreRem.i18n('fieldlabel.numero.agrupacion'),
+							reference: 'numAgrupacionRemRef',
 			            	bind		: {
 			            		value: '{agrupacionficha.numAgrupRem}'
 			            	}		
@@ -383,8 +384,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 						{
 							xtype: 'comboboxfieldbase',
 				        	fieldLabel: HreRem.i18n('fieldlabel.venta.sobre.plano'),
-				        	reference: 'ventaPlano',
-						
+				        	reference: 'ventaPlano',						
 				        	bind: {	
 				        		readOnly: '{!esUsuarioGestorComercialAgrupacionObraNueva}',
 			            		store: '{comboSiNoBoolean}',

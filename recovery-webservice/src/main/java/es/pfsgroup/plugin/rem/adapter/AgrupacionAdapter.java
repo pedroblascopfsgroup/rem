@@ -75,6 +75,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionObservacion;
 import es.pfsgroup.plugin.rem.model.ActivoAsistida;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
@@ -1161,6 +1162,11 @@ public class AgrupacionAdapter {
 			if (!activo.getCartera().equals(proyecto.getCartera())
 					|| !activo.getProvincia().equals(proyecto.getProvincia().getCodigo())) {
 				throw new JsonViewerException("El activo no tiene la misma Provincia o Cartera que la agrupación");
+			}
+			if (!Checks.esNulo(numActivo)) {
+				if(particularValidator.activoEnAgrupacionProyecto(Long.toString(numActivo))) {
+					throw new JsonViewerException(AgrupacionValidator.ERROR_EN_OTRA_PROYECTO);
+				}
 			}
 		}
 
@@ -2458,10 +2464,11 @@ public class AgrupacionAdapter {
 	}
 
 	@Transactional(readOnly = false)
-	public boolean createOfertaAgrupacion(DtoOfertasFilter dto) throws Exception {
+	public Oferta createOfertaAgrupacion(DtoOfertasFilter dto) throws Exception {
 
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(dto.getIdAgrupacion());
-
+		
+		Oferta ofertaNueva = null;
 
 		// Comprobar tipo oferta compatible con tipo agrupacion
 		if (!Checks.esNulo(agrupacion) && !Checks.esNulo(agrupacion.getTipoAgrupacion())) {
@@ -2631,8 +2638,11 @@ public class AgrupacionAdapter {
 				oferta.setClaseOferta(genericDao.get(DDClaseOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOferta())));
 			}
 			
+
 			oferta.setGestorComercialPrescriptor(ofertaApi.calcularGestorComercialPrescriptorOferta(oferta));
-			genericDao.save(Oferta.class, oferta);
+
+			ofertaNueva = genericDao.save(Oferta.class, oferta);
+
 			// Actualizamos la situacion comercial de los activos de la oferta
 			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
 
@@ -2727,10 +2737,10 @@ public class AgrupacionAdapter {
 
 		} catch (Exception ex) {
 			logger.error("error en agrupacionAdapter", ex);
-			return false;
+			return null;
 		}
 
-		return true;
+		return ofertaNueva;
 	}
 
 	// public List<DtoActivoAviso> getAvisosActivoById(Long id) {
@@ -4371,5 +4381,10 @@ public class AgrupacionAdapter {
 			}
 		}
 		return esGestorComercial;
+	}
+	
+	@Transactional(readOnly = false)
+	public Oferta clonateOfertaAgrupacion(String idOferta) {
+		return genericAdapter.clonateOferta(idOferta, true);
 	}
 }

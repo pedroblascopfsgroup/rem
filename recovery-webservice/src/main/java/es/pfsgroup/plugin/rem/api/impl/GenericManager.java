@@ -446,7 +446,6 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 			for (ActivoProveedor seguro : listaSeguros) {
 				DtoDiccionario seguroDD = new DtoDiccionario();
-				;
 				try {
 					beanUtilNotNull.copyProperty(seguroDD, "id", seguro.getId());
 					beanUtilNotNull.copyProperty(seguroDD, "descripcion", seguro.getNombre());
@@ -858,7 +857,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			return  genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter);
 		}
 
-		return null;
+		return new ArrayList<DDMotivoRechazoOferta>();
 	}
 
 	@Override
@@ -934,14 +933,16 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			filtroCartera = genericDao.createFilter(FilterType.EQUALS,"cartera.codigo", carteraCodigo);
 			listaComites = genericDao.getList(DDComiteSancion.class,filtro,filtroCartera);
 
-		}
-		if(Checks.esNulo(subcarteraCodigo) || listaComites.isEmpty()){
+		}else{
 			filtro = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", carteraCodigo);
 			listaComites = genericDao.getListOrdered(DDComiteSancion.class,order,filtro);
-			List<DDComiteSancion> copiaListaComites =  genericDao.getListOrdered(DDComiteSancion.class,order,filtro);
-			for (DDComiteSancion comite : copiaListaComites) {
-				if(comite.getSubcartera()!=null){
-					listaComites.remove(comite);
+			
+			if(listaComites != null && !listaComites.isEmpty()) {
+				List<DDComiteSancion> copiaListaComites =  new  ArrayList<DDComiteSancion>(listaComites);
+				for (DDComiteSancion comite : copiaListaComites) {
+					if(comite.getSubcartera()!=null){
+						listaComites.remove(comite);
+					}
 				}
 			}
 
@@ -1000,8 +1001,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	public List<DDTipoComercializacion> getComboTipoDestinoComercialCreaFiltered() {
 
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
-		List<DDTipoComercializacion> listaDD = (List<DDTipoComercializacion>) genericDao
-				.getListOrdered(DDTipoComercializacion.class, order);
+		List<DDTipoComercializacion> listaDD = genericDao.getListOrdered(DDTipoComercializacion.class, order);
 		List<DDTipoComercializacion> listaTiposFiltered = new ArrayList<DDTipoComercializacion>();
 
 		for (DDTipoComercializacion tipo : listaDD) {
@@ -1015,8 +1015,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	@Override
 	public List<DDTiposPorCuenta> getDiccionarioPorCuenta(String tipoCodigo) {
-		List<DDTiposPorCuenta> listaTiposPorCuenta = (List<DDTiposPorCuenta>) genericDao
-				.getList(DDTiposPorCuenta.class);
+		List<DDTiposPorCuenta> listaTiposPorCuenta = genericDao.getList(DDTiposPorCuenta.class);
 		List<DDTiposPorCuenta> listaTiposPorCuentaFiltered = new ArrayList<DDTiposPorCuenta>();
 
 		if (!Checks.esNulo(tipoCodigo)) {
@@ -1145,8 +1144,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@Override
 	public List<DDTipoAgrupacion> getComboTipoAgrupacion() {
 			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		return genericDao.getList(DDTipoAgrupacion.class, filtroBorrado,
-				filtroBorrado);
+		return genericDao.getList(DDTipoAgrupacion.class, filtroBorrado);
 	}
 
 	@Override

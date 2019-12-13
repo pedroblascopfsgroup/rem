@@ -97,6 +97,24 @@ public class TabActivoInfoAdministrativa implements TabActivoService {
 			activoDto.setCamposPropagables(TabActivoService.TAB_INFO_ADMINISTRATIVA);
 		}
 		
+		// datos informacion relacionada con VPO
+		if (!Checks.esNulo(activo.getInfoAdministrativa())) {
+			activoDto.setVigencia(activo.getInfoAdministrativa().getVigencia());
+			activoDto.setComunicarAdquisicion(activo.getInfoAdministrativa().getComunicarAdquisicion());
+			activoDto.setNecesarioInscribirVpo(activo.getInfoAdministrativa().getNecesarioInscribirVpo());
+			activoDto.setLibertadCesion(activo.getInfoAdministrativa().getLibertadCesion());
+			activoDto.setRenunciaTanteoRetrac(activo.getInfoAdministrativa().getRenunciaTanteoRetrac());
+			activoDto.setVisaContratoPriv(activo.getInfoAdministrativa().getVisaContratoPriv());
+			activoDto.setVenderPersonaJuridica(activo.getInfoAdministrativa().getVenderPersonaJuridica());
+			activoDto.setMinusvalia(activo.getInfoAdministrativa().getMinusvalia());
+			activoDto.setInscripcionRegistroDemVpo(activo.getInfoAdministrativa().getInscripcionRegistroDemVpo());
+			activoDto.setIngresosInfNivel(activo.getInfoAdministrativa().getIngresosInfNivel());
+			activoDto.setResidenciaComAutonoma(activo.getInfoAdministrativa().getResidenciaComAutonoma());
+			activoDto.setNoTitularOtraVivienda(activo.getInfoAdministrativa().getNoTitularOtraVivienda());
+			
+		}
+		
+		
 		return activoDto;		
 	}
 

@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
-import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
 
@@ -120,8 +119,7 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private Double importeContraofertaOfertanteCES;
 	
 	private String ofertaSingular;
-
-
+	
 	public Long getIdOferta() {
 		return idOferta;
 	}
@@ -514,7 +512,7 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public void setImporteContraofertaOfertanteCES(Double importeContraofertaOfertanteCES) {
 		this.importeContraofertaOfertanteCES = importeContraofertaOfertanteCES;
 	}
-
+	
 	public String getOfertaSingular() {
 		return ofertaSingular;
 	}

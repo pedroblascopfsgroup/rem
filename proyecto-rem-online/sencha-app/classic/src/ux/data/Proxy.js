@@ -49,7 +49,7 @@
                        destroy: 'DELETE'
                    };
 		}
-
+				
 		Ext.apply(config,{
 				simpleSortMode: true,
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, 

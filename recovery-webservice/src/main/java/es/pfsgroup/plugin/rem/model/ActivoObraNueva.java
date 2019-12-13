@@ -10,7 +10,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
@@ -137,21 +136,20 @@ public class ActivoObraNueva extends ActivoAgrupacion implements Serializable {
 	public Integer getIncluidos() {
 		return Checks.estaVacio(this.getActivos()) ? 0 : this.getActivos().size();
 	}
-
-	public Boolean getIsDND() {
-		return isDND;
-	}
-
-	public void setIsDND(Boolean isDND) {
-		this.isDND = isDND;
-	}
 	
 	public DDSinSiNo getVentaPlano() {
 		return ventaPlano;
 	}
-
+	
 	public void setVentaPlano(DDSinSiNo ventaPlano) {
 		this.ventaPlano = ventaPlano;
 	}
 
+	public Boolean getIsDND() {
+		return isDND;
+	}
+	
+	public void setIsDND(Boolean isDND) {
+		this.isDND = isDND;
+	}
 }

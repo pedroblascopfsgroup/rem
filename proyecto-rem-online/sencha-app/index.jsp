@@ -39,7 +39,7 @@
                 <%-- //profile = tags.phone ? 'modern' : 'classic'; --%>
             }
             
-            <%-- // Profile por defecto que no tendrá en cuenta el dispositivo  --%>
+            <%-- // Profile por defecto que no tendrï¿½ en cuenta el dispositivo  --%>
             profile = 'classic';
             <%-- // ---------------------------------------------------------- --%>
             
@@ -56,18 +56,13 @@
             <%
             java.util.Date currentDate = new java.util.Date();
             java.lang.Long hoy = new java.util.Date().getTime();
+            java.lang.String remApiHome = new java.util.Properties().getProperty("rem-api.home", "http://localhost/");
             %>
-            var remApiHome = "${devonProperties['rem-api.home']}"
-            if(remApiHome ==""){
-            	remApiHome = "http://localhost/"
-            }
             $AC.setWebPath('<c:url value="/"/>');
-            $AC.setRemApiWebPath(remApiHome);
+            $AC.setRemApiWebPath('<c:out value="<%= remApiHome %>"/>');
             $AC.setCurrentDate(<c:out value="<%= hoy %>"/>);
             $AC.setVersion('${version}');
-            $AC.setDebugMode(${jsDebug});
-            
-            
+            $AC.setDebugMode(${jsDebug});          
         };
     </script>
     

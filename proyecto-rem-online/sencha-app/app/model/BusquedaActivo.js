@@ -83,10 +83,37 @@ Ext.define('HreRem.model.BusquedaActivo', {
     		{
     			name: 'longitud',
     			type: 'number'
+    		},
+    		{
+    			name: 'gestorPublicacionUsername'
+    		},
+    		{
+    			name: 'tipoAlquilerDescripcion'
+    		},
+    		{
+    			name: 'fechaPublicacionVenta',
+	            type: 'date'
+    		},
+    		{
+    			name: 'fechaPublicacionAlquiler',
+	            type: 'date'
+	            
+    		},
+    		{
+    			name: 'tipoComercializacionCodigoAuxiliar'
+    		},
+    		{
+    			name: 'precioTasacionActivo'
+    		},
+    		{
+    			name: 'estadoPublicacionVenta'
+    		},
+    		{
+    			name: 'estadoPublicacionAlquiler'
+    		},
+    		{
+    			name: 'tipoGestorCodigo'
     		}
-    		
-        
-        
     ] 
     
 

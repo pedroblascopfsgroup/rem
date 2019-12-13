@@ -329,10 +329,6 @@ public class MSVProcesoManager implements MSVProcesoApi {
 	private String comprobarPendienteProcesar(MSVDDOperacionMasiva tipoOperacion) {
 		if (tipoOperacion == null)
 			return MSVDDEstadoProceso.CODIGO_PTE_PROCESAR;
-//		String codigoTipoOperacion=tipoOperacion.getCodigo();
-//		if(MSVDDOperacionMasiva.CODIGO_CANCELACION_ASUNTOS.equals(codigoTipoOperacion) ||
-//			MSVDDOperacionMasiva.CODIGO_PARALIZACION_ASUNTOS.equals(codigoTipoOperacion))
-//			return MSVDDEstadoProceso.CODIGO_PROCESADO;
 		return MSVDDEstadoProceso.CODIGO_PTE_PROCESAR;
 	}	
 	
@@ -355,7 +351,6 @@ public class MSVProcesoManager implements MSVProcesoApi {
 		return procesoDao.get(idProcess);
 	}	
 	
-	@Transactional
 	public MSVDDOperacionMasiva getOperacionMasiva(Long idTipoOperacion){
 		return genericDao.get(MSVDDOperacionMasiva.class, genericDao.createFilter(FilterType.EQUALS, "id", idTipoOperacion));
 	}

@@ -9,10 +9,12 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
         type: 'vbox',
         align: 'stretch'
     },  
+    
+    esAlquiler: false,
 
     initComponent: function () {
     	
-    	
+    	var me = this;
     	
         var condicionesRenderer =  function(value) {
         	var src = '',
@@ -44,10 +46,9 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
         		return 'PENDIENTE'
         	}   
         }; 
-                
         
-
-        var me = this;        
+        esAlquiler = me.lookupViewModel().get('expediente.tipoExpedienteCodigo') === CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
+        
         me.setTitle(HreRem.i18n('title.publicaciones.activos.grid'));		         
         var items= [
 			{   
@@ -68,6 +69,16 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			            	handler: 'onClickGenerarHojaExcelActivos',
 			            	margin: '10 10 10 10'
 			            
+					},
+					{
+			            	xtype: 'button',
+			            	reference: 'btnDescargaPantillaCDP',
+			            	text: HreRem.i18n('title.activo.administracion.descargar.plantilla'),
+			            	handler: 'onClickDescargaPlantillaExcel',
+							margin: '10 10 10 10',
+							bind: {
+								hidden: esAlquiler
+							}
 					}
 				]
 			},

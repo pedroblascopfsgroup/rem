@@ -309,6 +309,7 @@ public class GenericController extends ParadiseJsonController{
 		tipoGestorCodigos.add("GACT"); // Gestor de activos
 		tipoGestorCodigos.add("GCOM"); // Gestor comercial
 		tipoGestorCodigos.add("GGADM"); // Gestoría de Admisión
+		tipoGestorCodigos.add("GPUBL"); // Gestor de publicaciones
 
 		model.put("data", genericApi.getComboTipoGestorFiltrado(tipoGestorCodigos));
 
@@ -426,7 +427,7 @@ public class GenericController extends ParadiseJsonController{
 	@RequestMapping(method= RequestMethod.GET)
 	public ModelAndView getTodosComboTipoAgrupacion()
 	{
-		return createModelAndViewJson(new ModelMap("data", genericApi.getTodosComboTipoAgrupacion()));
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboTipoAgrupacion()));
 	}
 	@RequestMapping(method= RequestMethod.GET)
 	public ModelAndView getTodosComboUsuarios()
@@ -444,33 +445,24 @@ public class GenericController extends ParadiseJsonController{
 	}
 
 
-		/**
-	 * Inserta un documento a la entidad correspondiente  Ejem: IP:8080/pfs/rest/generic/altaDocumento
-	 * HEADERS:
-	 * Content-Type - application/json
-	 * signature - 
+	/**
+	 * Inserta un documento a la entidad correspondiente Ejem:
+	 * IP:8080/pfs/rest/generic/altaDocumento HEADERS: Content-Type -
+	 * application/json signature -
 	 * 
-	 * BODY:
-	 * {  
-   "id":"112",
-   "data": 
-      {  "tipoEntidad":"T",
-    	 "numEntidad":"161197",
-    	 "tipoDocumento":"03",
-    	 "subTipoDocumento":"26",
-    	 "nombreDocumento":"prueba10.pdf",
-    	 "descripcionDocumento":"prueba del post",
-    	 "documento":"YnVlbm9zIGRpYXMgdGVuZ28gbGliZXJ0YWQgcGFyYSBoYWNlciBlbiBlbCB3ZWIgc2VydmljZSBjb21vIHlvIHZlYS4="
-      
-      }
-   
-} *  
+	 * BODY: { "id":"112", "data": { "tipoEntidad":"T", "numEntidad":"161197",
+	 * "tipoDocumento":"03", "subTipoDocumento":"26",
+	 * "nombreDocumento":"prueba10.pdf", "descripcionDocumento":"prueba del post",
+	 * "documento":"YnVlbm9zIGRpYXMgdGVuZ28gbGliZXJ0YWQgcGFyYSBoYWNlciBlbiBlbCB3ZWIgc2VydmljZSBjb21vIHlvIHZlYS4="
+	 * 
+	 * }
+	 * 
+	 * } *
 	 *
 	 * @param model
 	 * @param request
 	 * @return
-	 */
-	
+	 */	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST , value = "/generic/altaDocumento")
 	public void altaDocumento (ModelMap model, RestRequestWrapper request,HttpServletResponse response) {

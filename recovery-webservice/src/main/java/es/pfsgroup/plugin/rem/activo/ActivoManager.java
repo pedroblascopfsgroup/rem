@@ -94,6 +94,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.exception.HistoricoTramitacionException;
+import es.pfsgroup.plugin.rem.activo.exception.PlusvaliaActivoException;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
@@ -7779,15 +7780,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	@Override
-	public void changeAndSavePlusvaliaEstadoGestionActivoById(Long id, String codigo) {
-		ActivoPlusvalia activoPlusvalia = activoDao.getPlusvaliaByIdActivo(id);
-		if ( activoPlusvalia != null) {
-			Filter filtroLiquidacionEnCurso = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
-			DDEstadoGestionPlusv estado = genericDao.get(DDEstadoGestionPlusv.class, filtroLiquidacionEnCurso);
-			if (estado != null) {
-				activoPlusvalia.setEstadoGestion(estado);
-				genericDao.save(ActivoPlusvalia.class, activoPlusvalia);
-			}
+	public void changeAndSavePlusvaliaEstadoGestionActivoById(Activo activo, String codigo) throws PlusvaliaActivoException {
+		ActivoPlusvalia activoPlusvalia = activoDao.getPlusvaliaByIdActivo(activo.getId());
+		if ( activoPlusvalia == null) {
+			activoPlusvalia = new ActivoPlusvalia();
+			activoPlusvalia.setAuditoria(Auditoria.getNewInstance());
+		}
+		Filter filtroPlusvalia = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
+		DDEstadoGestionPlusv estado = genericDao.get(DDEstadoGestionPlusv.class, filtroPlusvalia);
+		if (estado != null) {
+			activoPlusvalia.setEstadoGestion(estado);
+			genericDao.save(ActivoPlusvalia.class, activoPlusvalia);
+		}else {
+			throw new PlusvaliaActivoException(PlusvaliaActivoException.getErrorNoExisteEstadoDeGestionPorCodigo(codigo));
 		}
 	}
 }

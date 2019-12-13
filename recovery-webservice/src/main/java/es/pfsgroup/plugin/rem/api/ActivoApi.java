@@ -22,6 +22,7 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.exception.HistoricoTramitacionException;
+import es.pfsgroup.plugin.rem.activo.exception.PlusvaliaActivoException;
 //import es.pfsgroup.plugin.rem.activo.DtoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -1325,5 +1326,5 @@ public interface ActivoApi {
 	
 	public void crearRegistroFaseHistorico(Activo activo);
 
-	void changeAndSavePlusvaliaEstadoGestionActivoById(Long id, String codigo);
+	void changeAndSavePlusvaliaEstadoGestionActivoById(Activo activo, String codigo) throws PlusvaliaActivoException;
 }

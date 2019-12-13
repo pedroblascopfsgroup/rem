@@ -17,6 +17,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.activo.exception.PlusvaliaActivoException;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -84,7 +85,11 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expediente.setEstado(estado);
 						if ( ofertaAceptada.getActivoPrincipal() != null ) {
-							activoApi.changeAndSavePlusvaliaEstadoGestionActivoById(ofertaAceptada.getActivoPrincipal().getId(), DDEstadoGestionPlusv.COD_EN_CURSO);
+							try {
+								activoApi.changeAndSavePlusvaliaEstadoGestionActivoById(ofertaAceptada.getActivoPrincipal(), DDEstadoGestionPlusv.COD_EN_CURSO);
+							} catch (PlusvaliaActivoException e) {
+								logger.error(e);
+							}
 						}
 						genericDao.save(ExpedienteComercial.class, expediente);
 						

@@ -7751,6 +7751,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		Filter filtroPlusvalia = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
 		DDEstadoGestionPlusv estado = genericDao.get(DDEstadoGestionPlusv.class, filtroPlusvalia);
+		activoPlusvalia.setActivo(activo);
 		if (estado != null) {
 			activoPlusvalia.setEstadoGestion(estado);
 			genericDao.save(ActivoPlusvalia.class, activoPlusvalia);

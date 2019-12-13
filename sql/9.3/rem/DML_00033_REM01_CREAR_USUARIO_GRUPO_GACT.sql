@@ -46,7 +46,7 @@ DECLARE
     TYPE T_ARRAY IS TABLE OF T_LISTA;
     V_USUARIO VARCHAR2(50 CHAR) := 'REMVIP-5874';
     V_ARRAY T_ARRAY := T_ARRAY (
-        T_LISTA ('grupgact', NULL, 'grupgact', 'GACT', 'REMACT', 'Gestor de activos', 'HAYAGESACT' , 'Gestor de activos', 'GACT'  , 'Gestor de mantenimiento', NULL, 0)
+        T_LISTA ('grupgact', NULL, 'grupgact', 'REMACT', 'GACT', 'Gestor de activos', 'HAYAGESACT' , 'Gestor de activos', 'GACT'  , 'Gestor de mantenimiento', NULL, 0)
     );
     V_TMP_LISTA T_LISTA;
 

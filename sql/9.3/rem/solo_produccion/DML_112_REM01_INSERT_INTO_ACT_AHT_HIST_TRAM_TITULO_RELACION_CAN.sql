@@ -55,7 +55,7 @@ BEGIN
 					SELECT can.act_can_id, tit.act_id, tit.tit_id , aht.aht_id, can.act_fecha_subsanacion, aht.aht_fecha_pres_registro, aht.aht_fecha_calificacion
 					FROM '||V_ESQUEMA||'.act_can_calificacion_neg can
 					join '||V_ESQUEMA||'.act_tit_titulo tit on can.act_id = tit.act_id
-					join aht on aht.tit_id = tit.tit_id and aht.rn > 1
+					join aht on aht.tit_id = tit.tit_id and aht.rn = 2
 					left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
 					where can.borrado = 0 and tit.borrado = 0
 					and tit.tit_fecha_envio_auto >= tit.tit_fecha_present1_reg and tit.tit_fecha_envio_auto <= tit.tit_fecha_present2_reg

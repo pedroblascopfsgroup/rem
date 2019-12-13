@@ -122,7 +122,6 @@ import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.DtoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
-import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPaginadoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoPlusvaliaFilter;
@@ -165,7 +164,6 @@ public class ActivoController extends ParadiseJsonController {
 	private static final String ERROR_GENERICO = "La operación no se ha podido realizar";
 	private static final String ERROR_CONEXION_FOTOS = "Ha habido un error al conectar con CRM";
 	private static final String ERROR_PRECIO_CERO = "No se puede realizar la operación. Está introduciendo un importe 0";
-	private static final String FALTAN_DATOS = "Faltan datos para proponer";
 
 	@Autowired
 	private ActivoAdapter adapter;
@@ -760,7 +758,7 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-
+/*
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveOfertaActivo(DtoOfertaActivo ofertaActivoDto, ModelMap model, HttpServletRequest request) {
@@ -791,7 +789,7 @@ public class ActivoController extends ParadiseJsonController {
 		}
 
 		return createModelAndViewJson(model);
-	}
+	}*/
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)

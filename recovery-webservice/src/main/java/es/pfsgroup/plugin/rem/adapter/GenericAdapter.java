@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
@@ -82,6 +83,9 @@ public class GenericAdapter {
 	
 	@Autowired
 	private AgrupacionAdapter agrupacionAdapter;
+	
+	@Autowired
+	private TramitacionOfertasApi tramitacionOfertasApi;
 	
 	@Resource
 	private Properties appProperties;
@@ -470,13 +474,12 @@ public class GenericAdapter {
 				dtoTramitar.setCodigoEstadoOferta(DDEstadoOferta.CODIGO_ACEPTADA);
 				
 				if(!esAgrupacion) {				
-					dtoTramitar.setIdActivo(ofertaOrigen.getActivoPrincipal().getId()); 
-					activoApi.saveOfertaActivo(dtoTramitar);
+					dtoTramitar.setIdActivo(ofertaOrigen.getActivoPrincipal().getId());
 				}else {
 					dtoTramitar.setIdAgrupacion(ofertaOrigen.getAgrupacion().getId());
-					agrupacionAdapter.saveOfertaAgrupacion(dtoTramitar);
 				}
 				
+				tramitacionOfertasApi.saveOferta(dtoTramitar, esAgrupacion);				
 				
 				logger.error("Oferta clonada tramitada correctamente.");
 				

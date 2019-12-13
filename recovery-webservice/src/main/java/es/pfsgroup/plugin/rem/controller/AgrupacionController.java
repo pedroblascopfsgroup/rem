@@ -461,34 +461,6 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveOfertaAgrupacion(DtoOfertaActivo dtoOferta, ModelMap model) {
-
-		try {
-			if (!Checks.esNulo(ofertaApi.getOfertaById(dtoOferta.getIdOferta()).getClaseOferta())
-				&& ofertaApi.faltanDatosCalculo(dtoOferta.getIdOferta())) {
-				model.put("advertencia", FALTAN_DATOS);
-			}
-			boolean success = adapter.saveOfertaAgrupacion(dtoOferta);
-			model.put("success", success);
-		}catch (JsonViewerException jvex) {
-			model.put("success", false);
-			model.put("msg", jvex.getMessage());
-		}catch (Exception e) {
-			logger.error("error actualizando oferta",e);
-			if (e.getMessage().equals(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG)) {
-				model.put("msg", AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
-				model.put("success", false);
-			} else {
-				logger.error("error actualizando oferta",e);
-				model.put("success", false);
-			}
-		}
-
-		return createModelAndViewJson(model);
-	}
-
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveObservacionesAgrupacion(DtoObservacion dtoObservacion, Long idAgrupacion, ModelMap model) {
 
 		try {

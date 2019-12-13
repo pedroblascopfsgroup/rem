@@ -110,6 +110,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.rest.dto.SalesforceAuthDto;
 import es.pfsgroup.plugin.rem.rest.dto.SalesforceResponseDto;
 import es.pfsgroup.plugin.rem.rest.salesforce.api.SalesforceApi;
+import es.pfsgroup.plugin.rem.tramitacionOfertas.TramitacionOfertasManager;
 
 @Service("gencatManager")
 public class GencatManager extends  BusinessOperationOverrider<GencatApi> implements GencatApi {
@@ -216,6 +217,9 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	
 	@Autowired
 	private GestorExpedienteComercialApi gestorExpedienteComercialApi;
+	
+	@Autowired
+	private TramitacionOfertasManager tramitacionOfertasManager;
 	
 	@Override
 	public DtoGencat getDetalleGencatByIdActivo(Long idActivo) {
@@ -1858,9 +1862,9 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 			listaActivos.add(activoOferta.getPrimaryKey().getActivo());
 		}
 		DDSubtipoTrabajo subtipoTrabajo = (DDSubtipoTrabajo) utilDiccionarioApi
-				.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, activoApi.getSubtipoTrabajoByOferta(nuevaOferta));
+				.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, tramitacionOfertasManager.getSubtipoTrabajoByOferta(nuevaOferta));
 		Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null, false);
-		ExpedienteComercial nuevoExpedienteComercial = activoApi.crearExpediente(nuevaOferta, trabajo, oferta);
+		ExpedienteComercial nuevoExpedienteComercial = tramitacionOfertasManager.crearExpediente(nuevaOferta, trabajo, oferta, oferta.getActivoPrincipal());
 		trabajoApi.createTramiteTrabajo(trabajo);
 		
 		

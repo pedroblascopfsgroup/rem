@@ -2,6 +2,8 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +14,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.activo.exception.PlusvaliaActivoException;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -31,6 +34,7 @@ public class UpdaterServiceSancionOfertaCierreEconomico implements UpdaterServic
    	private static final String CODIGO_T017_CIERRE_ECONOMICO = "T017_CierreEconomico";
 	private static final String CODIGO_TRAMITE_FINALIZADO = "11";
 	private static final String CODIGO_SUBCARTERA_OMEGA = "65";
+	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaCierreEconomico.class);
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -49,7 +53,8 @@ public class UpdaterServiceSancionOfertaCierreEconomico implements UpdaterServic
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
-	
+    
+    
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		// Finaliza el trámite
 		Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
@@ -71,7 +76,11 @@ public class UpdaterServiceSancionOfertaCierreEconomico implements UpdaterServic
 					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 					expediente.setEstado(estado);
 					genericDao.save(ExpedienteComercial.class, expediente);
-					activoApi.changeAndSavePlusvaliaEstadoGestionActivoById(activo.getId(), DDEstadoGestionPlusv.COD_EN_CURSO);
+					try {
+						activoApi.changeAndSavePlusvaliaEstadoGestionActivoById(activo, DDEstadoGestionPlusv.COD_EN_CURSO);
+					} catch (PlusvaliaActivoException e) {
+						logger.error(e);
+					}
 				}
 			}
 		}

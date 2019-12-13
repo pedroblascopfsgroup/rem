@@ -31,6 +31,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
@@ -40,6 +41,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDAdecuacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionUso;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
@@ -101,6 +103,9 @@ public class TabActivoPatrimonio implements TabActivoService {
 		DtoActivoPatrimonio activoPatrimonioDto = new DtoActivoPatrimonio();
 
 		ActivoPatrimonio activoP = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());
+		
+		ActivoPatrimonioContrato patrimonioContrato = genericDao.get(ActivoPatrimonioContrato.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+		
 		if(!Checks.esNulo(activoP)) {
 			BeanUtils.copyProperties(activoPatrimonioDto, activoP);
 			if(!Checks.esNulo(activoP.getCheckHPM())) {
@@ -110,7 +115,8 @@ public class TabActivoPatrimonio implements TabActivoService {
 				activoPatrimonioDto.setComboRentaAntigua(activoP.getComboRentaAntigua());
 			}
 			if(!Checks.esNulo(activoP.getCheckSubrogado())){
-				activoPatrimonioDto.setChkSubrogado(activoP.getCheckSubrogado());
+				// Si paz social es True, subrogado tiene que ser True tambien.
+				activoPatrimonioDto.setChkSubrogado((!Checks.esNulo(patrimonioContrato) && !Checks.esNulo(patrimonioContrato.getPazSocial()) && patrimonioContrato.getPazSocial()) ? true : activoP.getCheckSubrogado());
 			}
 			if(!Checks.esNulo(activoP.getAdecuacionAlquiler())) {
 				activoPatrimonioDto.setCodigoAdecuacion(activoP.getAdecuacionAlquiler().getCodigo());
@@ -124,18 +130,30 @@ public class TabActivoPatrimonio implements TabActivoService {
 
 			if(!Checks.esNulo(activoP.getTipoInquilino())) {
 				activoPatrimonioDto.setTipoInquilino(activoP.getTipoInquilino().getCodigo());
-			}
+			}			
 			
+		}
+		
+		if(!Checks.esNulo(activo))
+		{
 			if(activoDao.isActivoMatriz(activo.getId())) {
 				activoPatrimonioDto.setActivosPropagables(activoPropagacionApi.getAllActivosAgrupacionPorActivo(activo));
 				activoPatrimonioDto.setCamposPropagablesUas(TabActivoService.TAB_PATRIMONIO);
 			}
+			
+			if(!Checks.esNulo(patrimonioContrato) && !Checks.esNulo(patrimonioContrato.getPazSocial())) {
+				activoPatrimonioDto.setPazSocial(patrimonioContrato.getPazSocial());
+			}
+			
+			activoPatrimonioDto.setIsCarteraCerberusDivarian(activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN)
+																|| activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB)
+																|| activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB));
+			
+			if(!Checks.esNulo(activo.getTipoAlquiler())) {
+				activoPatrimonioDto.setTipoAlquilerCodigo(activo.getTipoAlquiler().getCodigo());
+			}
 		}
-
-		if(!Checks.esNulo(activo.getTipoAlquiler())) {
-			activoPatrimonioDto.setTipoAlquilerCodigo(activo.getTipoAlquiler().getCodigo());
-		}
-
+		
 		return activoPatrimonioDto;
 	}
 
@@ -148,7 +166,8 @@ public class TabActivoPatrimonio implements TabActivoService {
 		DtoActivoPatrimonio activoPatrimonioDto = (DtoActivoPatrimonio) dto;
 		ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
 		ActivoSituacionPosesoria activoSituacionPosesoria;
-	 
+		ActivoPatrimonioContrato patrimonioContrato = genericDao.get(ActivoPatrimonioContrato.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+		
 		activoDao.validateAgrupacion(activo.getId());
 		if(Checks.esNulo(activoPatrimonio)) {
 			activoPatrimonio = new ActivoPatrimonio();
@@ -276,7 +295,7 @@ public class TabActivoPatrimonio implements TabActivoService {
 		if(!Checks.esNulo(activoPatrimonioDto.getTipoAlquilerCodigo())){
 
 			DDTipoAlquiler tipoAlquiler = genericDao.get(DDTipoAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo", activoPatrimonioDto.getTipoAlquilerCodigo()));
-			if(DDTipoAlquiler.CODIGO_PAZ_SOCIAL.equals(tipoAlquiler.getCodigo())) {
+			if(!Checks.esNulo(patrimonioContrato) && !Checks.esNulo(patrimonioContrato.getPazSocial())) {
 				activoApi.crearRegistroFaseHistorico(activo);
 			}
 			activo.setTipoAlquiler(tipoAlquiler);

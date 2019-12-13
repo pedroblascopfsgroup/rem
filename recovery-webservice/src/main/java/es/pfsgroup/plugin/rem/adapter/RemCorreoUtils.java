@@ -53,7 +53,7 @@ public class RemCorreoUtils {
 	private static final String PUERTO_CORREO = "agendaMultifuncion.mail.port";
 	private static final String FROM = "agendaMultifuncion.mail.from";
 	private static final String USUARIO_CORREO = "agendaMultifuncion.mail.usuario";
-	private static final String PWD_CORREO = "agendaMultifuncion.mail.pwd";
+	private static final String SMT_CONTRASENYA = "agendaMultifuncion.mail.pwd";
 	private static final String STARTTLS_ENABLE = "agendaMultifuncion.mail.starttls.enable";
 	private static final String AUTH = "agendaMultifuncion.mail.auth";
 	@Resource
@@ -92,7 +92,6 @@ public class RemCorreoUtils {
 
 			// Preparamos la sesion
 			Session session = Session.getDefaultInstance(props);
-			session.setDebugOut(System.out);
 			session.setDebug(false);
 
 			MimeMessage message = new MimeMessage(session);
@@ -274,7 +273,7 @@ public class RemCorreoUtils {
 
 	private String obtenerPass() {
 		String pass = null;
-		String passValueProp = appProperties.getProperty(PWD_CORREO);
+		String passValueProp = appProperties.getProperty(SMT_CONTRASENYA);
 		try {
 			String passValueParsed = passValueProp.replaceAll("\\\\", "");
 			pass = Encriptador.desencriptarPw(passValueParsed);

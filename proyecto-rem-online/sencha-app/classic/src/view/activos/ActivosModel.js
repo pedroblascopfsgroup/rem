@@ -229,6 +229,35 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 					}
 				}
 			},
+
+			comboFasePublicacion: {
+				model : 'HreRem.model.ComboBase',
+				proxy : {
+					type : 'uxproxy',
+					remoteUrl : 'activo/getDiccionarioFasePublicacion'
+				}
+			},
+
+			comboDireccionTerritorial: {
+				model : 'HreRem.model.ComboBase',
+				proxy : {
+					type : 'uxproxy',
+					remoteUrl : 'generic/getDiccionario',
+					extraParams : {
+						diccionario : 'direccionTerritorial'
+					}
+				}
+			},			
+
+			comboApiPrimario: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'activo/getComboApiPrimario'
+				},
+			    displayField: 'nombre',
+				valueField: 'id'				
+			},
 			
 			comboMotivoAutorizacionTramitacion: {
 				model: 'HreRem.model.ComboBase',

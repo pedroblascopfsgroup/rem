@@ -3,9 +3,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
     alias: 'viewmodel.agrupaciondetalle',
 
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.ActivoAgrupacion', 
-    'HreRem.model.ActivoSubdivision', 'HreRem.model.Subdivisiones', 'HreRem.model.VisitasAgrupacion','HreRem.model.OfertasAgrupacion','HreRem.model.OfertaComercial',
-    'HreRem.model.ActivoAgrupacionActivo','HreRem.model.VigenciaAgrupacion', 'HreRem.model.ComercialAgrupacion'],
-    
+    'HreRem.model.ActivoSubdivision', 'HreRem.model.Subdivisiones', 'HreRem.model.VisitasAgrupacion','HreRem.model.OfertasAgrupacion','HreRem.model.OfertaComercial'
+    ,'HreRem.model.ComercialAgrupacion','HreRem.model.ActivoAgrupacionActivo','HreRem.model.VigenciaAgrupacion','HreRem.model.AdjuntoActivoAgrupacion'],
     data: {
     	agrupacionficha: null,
     	ofertaRecord: null,
@@ -197,13 +196,25 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     		return false;
 	     	}
 	     },
-
+		
 		 esAgrupacionProyecto: function(get) {
 
 		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
 		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROYECTO'])) {
 		     		return true;
 		     	} else {
+		     		return false;
+		     	}
+		 },
+ 		 visibilidadPestanyaDocumentos: function(get) {
+		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo'),
+		     	cartera = get('agrupacionficha.codigoCartera'),
+		     	subCartera =  get('agrupacionficha.codSubcartera');
+		     	if ((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROYECTO'])) {
+		     		return true;
+		     	} else if ((tipoAgrupacion == CONST.TIPOS_AGRUPACION["OBRA_NUEVA"] && cartera == CONST.CARTERA["THIRDPARTIES"]  && subCartera == CONST.SUBCARTERA["YUBAI"] )) {
+		     		return true;
+		     	}else{
 		     		return false;
 		     	}
 		 },
@@ -683,51 +694,55 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		     	} else {
 		     		return false;
 		     	}
+		}/*,
+		
+		habilitaPestanyaDocumentos : function (get) {
+				if (get('agrupacionficha'))
+		}*/
+
 		},
 		    
-	    	esOtrosotivoAutorizacionTramitacion: function(get){
-	    		var me = this;
-	    		
-	    		var comboOtros = get('comercialagrupacion.motivoAutorizacionTramitacionCodigo');
-	    		
-	    		if(CONST.DD_MOTIVO_AUTORIZACION_TRAMITE['COD_OTROS'] == comboOtros){
-	    			return true;
-	    		}
-	    		me.set('comercialagrupacion.observacionesAutoTram', null);
-				return false;
-	    	},
-	    	
-	    	esSelecionadoAutorizacionTramitacion: function(get){
-	    		var me = this;
-	    		var editing = get('editing');
-	    		var todoSelec = get('comercialagrupacion.motivoAutorizacionTramitacionCodigo');
-	    		var obsv = get('comercialagrupacion.observacionesAutoTram');
-	    		if(editing){
-	    			if(todoSelec != undefined && todoSelec != null){
-			    		if(CONST.DD_MOTIVO_AUTORIZACION_TRAMITE['COD_OTROS'] == todoSelec){
-			    			if(obsv){
-			    				return true;
-			    			}
-			    			return false;
-			    		} else {
-			    			return true;
-			    		}
-		    		}
-	    		}
-	    		return false;
-	    	},
-	    	usuarioTieneFuncionTramitarOferta: function(get){
-	    		var esTramitable = get('comercialagrupacion.tramitable');
-	    		var funcion = $AU.userHasFunction('AUTORIZAR_TRAMITACION_OFERTA');
-	    			if(!esTramitable){
-	    				return !funcion;
-	    			}
-	    		return true;
-	    	},
-		     esUsuarioGestorComercialAgrupacionObraNueva: function(get) {
-			     	return CONST.TIPOS_AGRUPACION['OBRA_NUEVA'] && ($AU.userIsRol("HAYASUPER") || get('agrupacionficha.esGestorComercialEnActivo'));
-			     }
-    },
+		esOtrosotivoAutorizacionTramitacion: function(get){
+			var me = this;
+			
+			var comboOtros = get('comercialagrupacion.motivoAutorizacionTramitacionCodigo');
+			
+			if(CONST.DD_MOTIVO_AUTORIZACION_TRAMITE['COD_OTROS'] == comboOtros){
+				return true;
+			}
+			me.set('comercialagrupacion.observacionesAutoTram', null);
+		return false;
+		},
+		
+		esSelecionadoAutorizacionTramitacion: function(get){
+			var me = this;
+			var editing = get('editing');
+			var todoSelec = get('comercialagrupacion.motivoAutorizacionTramitacionCodigo');
+			var obsv = get('comercialagrupacion.observacionesAutoTram');
+			if(editing){
+				if(todoSelec != undefined && todoSelec != null){
+					if(CONST.DD_MOTIVO_AUTORIZACION_TRAMITE['COD_OTROS'] == todoSelec){
+						if(obsv){
+							return true;
+						}
+						return false;
+					} else {
+						return true;
+					}
+				}
+			}
+			return false;
+		},
+		
+		usuarioTieneFuncionTramitarOferta: function(get){
+			var esTramitable = get('comercialagrupacion.tramitable');
+			var funcion = $AU.userHasFunction('AUTORIZAR_TRAMITACION_OFERTA');
+				if(!esTramitable){
+					return !funcion;
+				}
+			return true;
+		},
+				
     stores: {
     	comboCartera: {
 			model: 'HreRem.model.ComboBase',
@@ -1077,15 +1092,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				remoteUrl: 'generic/getComboTipoDestinoComercialCreaFiltered'
 			}
 		},
-
-        comboTipoAlquiler: {
-            model: 'HreRem.model.ComboBase',
-            proxy: {
-                type: 'uxproxy',
-                remoteUrl: 'generic/getDiccionario',
-                extraParams: {diccionario: 'tiposAlquilerActivo'}
-            }
-        }, 
+		comboTipoAlquiler: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getDiccionario',
+						extraParams: {diccionario: 'tiposAlquilerActivo'}
+				}
+		}, 
 		
 		comboMotivoAutorizacionTramitacion: {
 			model: 'HreRem.model.ComboBase',
@@ -1094,6 +1108,27 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'motivoAutorizacionTramitacion'}
 				}
+    },
+		tiposAdjuntoAgrupacion : {
+			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario', 
+					extraParams: {diccionario: 'tipoDocumentoAgrupacion'}
+				},
+				autoLoad: true
+		},
+		storeDocumentosAgrupacion: {
+			 pageSize: $AC.getDefaultPageSize(),
+			 model: 'HreRem.model.AdjuntoActivoAgrupacion',
+     	     proxy: {
+     	        type: 'uxproxy',
+     	        remoteUrl: 'agrupacion/getListAdjuntosAgrupacion',
+     	        extraParams: {idAgrupacion: '{agrupacionficha.numAgrupRem}'}
+         	 },
+         	 groupField: 'descripcionTipo',
+		     remoteSort: true,
+         	 autoLoad: true
 		}
-     }
+    }
 });

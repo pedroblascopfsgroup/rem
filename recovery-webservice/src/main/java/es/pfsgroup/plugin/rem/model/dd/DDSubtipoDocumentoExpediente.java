@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.model.dd;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -124,7 +125,7 @@ public class DDSubtipoDocumentoExpediente implements Auditable, Dictionary {
 	@Column(name= "DD_SDE_VINCULABLE")
 	private Integer vinculable;
 	    
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name= "DD_SDE_TPD_ID")
 	private DDTipoDocumentoActivo tipoDocumentoActivo;
 	

@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20191015
+--## FECHA_CREACION=20191126
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-5440
@@ -28,7 +28,7 @@ DECLARE
 	V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquema
 	V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
 	V_USUARIO VARCHAR2(200 CHAR);
-	V_USUARIOMODIFICAR VARCHAR(100 CHAR):= 'REMVIP-5440';
+	V_USUARIOMODIFICAR VARCHAR(100 CHAR):= 'REMVIP-5440_V1';
    	PL_OUTPUT VARCHAR2(32000 CHAR);
     	P_ACT_ID NUMBER;
     	P_ALL_ACTIVOS NUMBER;
@@ -42,7 +42,7 @@ DECLARE
       
     
     	CURSOR ESTADO_PUBLI_RECALCULAR IS SELECT ACT.ACT_ID , ACT.ACT_NUM_ACTIVO
-					  FROM REM01.AUX_REMVIP_5440 PERIM 
+					  FROM REM01.AUX_REMVIP_5440_V1 PERIM 
 					  INNER JOIN REM01.ACT_ACTIVO ACT ON PERIM.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO 
 					  WHERE PERIM.PROCESADO = 0;
     
@@ -53,11 +53,10 @@ BEGIN
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO] Recalcular Situacion comercial '); 
 
---	
-	V_MSQL := 'UPDATE '||V_ESQUEMA||'.AUX_REMVIP_5440 
-		   SET DD_SCM_ID = ( SELECT DD_SCM_ID 
+	V_MSQL := 'UPDATE '||V_ESQUEMA||'.AUX_REMVIP_5440_V1 
+		   SET SCM_ID = ( SELECT DD_SCM_ID 
 				     FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT 
-				     WHERE ACT.ACT_NUM_ACTIVO = AUX_REMVIP_5712.ACT_NUM_ACTIVO )
+				     WHERE ACT.ACT_NUM_ACTIVO = AUX_REMVIP_5440_V1.ACT_NUM_ACTIVO )
 	           WHERE 1=1 ';
 
 	EXECUTE IMMEDIATE V_MSQL;
@@ -65,27 +64,24 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' ACTUALIZADOS');
 
 
---
-
+	--DBMS_OUTPUT.PUT_LINE('	[INFO] Se procede a borrar la situación comercial de los activos migrados.'); 
 	
-	DBMS_OUTPUT.PUT_LINE('	[INFO] Se procede a borrar la situación comercial de los activos migrados.'); 
-	
-	V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_ACTIVO SET DD_SCM_ID = NULL 
-				WHERE ACT_NUM_ACTIVO IN ( SELECT ACT_NUM_ACTIVO FROM '||V_ESQUEMA||'.AUX_REMVIP_5440 )';
+	--V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_ACTIVO SET DD_SCM_ID = NULL 
+	--			WHERE ACT_NUM_ACTIVO IN ( SELECT ACT_NUM_ACTIVO FROM '||V_ESQUEMA||'.AUX_REMVIP_5440_V1 )';
 
-	EXECUTE IMMEDIATE V_MSQL;
+	--EXECUTE IMMEDIATE V_MSQL;
 
-	DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' ACTUALIZADOS');
+	--DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' ACTUALIZADOS');
 				
-	COMMIT;
+	--COMMIT;
 	
-	DBMS_OUTPUT.PUT_LINE('[INICIO] Comienza el proceso de recalcular Situacion comercial'); 
+	--DBMS_OUTPUT.PUT_LINE('[INICIO] Comienza el proceso de recalcular Situacion comercial'); 
 	
-	REM01.SP_ASC_ACT_SIT_COM_VACIOS_V2(0);
+	--REM01.SP_ASC_ACT_SIT_COM_VACIOS_V2(0);
 	
-	DBMS_OUTPUT.PUT_LINE('[FIN] Recalcular Situacion comercial');
+	--DBMS_OUTPUT.PUT_LINE('[FIN] Recalcular Situacion comercial');
 
-	COMMIT;
+	--COMMIT;
 
 	HORA_INI := SYSTIMESTAMP;
     
@@ -104,7 +100,7 @@ BEGIN
 	  		REM01.SP_CAMBIO_ESTADO_PUBLICACION (FILA.ACT_ID,1,''||V_USUARIOMODIFICAR||'');
 
 			-- Actualiza el campo procesado = 1		
-			V_MSQL := 'UPDATE '||V_ESQUEMA||'.AUX_REMVIP_5440 
+			V_MSQL := 'UPDATE '||V_ESQUEMA||'.AUX_REMVIP_5440_V1 
 		   		   SET PROCESADO = 1
 			           WHERE ACT_NUM_ACTIVO = ' || FILA.ACT_NUM_ACTIVO ;
 
@@ -132,11 +128,10 @@ BEGIN
 	
 	    HORA_FIN := SYSTIMESTAMP;
 	    
-	    DBMS_OUTPUT.PUT_LINE('[FIN] Ha finalizado la ejecución ');
+	    DBMS_OUTPUT.PUT_LINE('[FIN] Ha finalizado la ejecución '||HORA_FIN||' ');
 	    
 	    v_n := HORA_FIN - HORA_INI;
 	    
-	    DBMS_OUTPUT.PUT_LINE('[FIN] Duración la ejecución................'||EXTRACT( SECOND FROM v_n)||' segundos ');
       
   	COMMIT;
 	

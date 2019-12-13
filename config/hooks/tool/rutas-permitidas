@@ -3,6 +3,13 @@ version-R190917|version-R191003
 version-R191003|func-rem-Divarian
 func-rem-Divarian|func-rem-Divarian-F2
 version-R191003|rem_qa
+@|func-rem-Divarian
+@|func-rem-mejoras-GD
+@|func-rem-gencat_v2
+@|func-rem-CLOA
+@|func-rem-maANof
+@|mejoras-rem-20190906
+func-rem-HREOS-7850|func-rem-Divarian
 rem_mirror|func-rem-Divarian
 rem_mirror|func-rem-mejoras-GD
 rem_mirror|func-rem-gencat_v2
@@ -14,3 +21,7 @@ version-2.14.3-cargaMasiva-rem|version-2.15.2-rem
 @|func-rem-dnd
 @|version-3.1.0-rem
 rem_mirror|version-3.1.0-rem
+func-rem-Divarian|R-Navelina
+rem_mirror|R-Navelina
+version-2.15.6-rem|R-Navelina
+R-Navelina|func-rem-dnd

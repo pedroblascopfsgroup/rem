@@ -11,7 +11,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -71,7 +70,6 @@ public class MSVActualizadorPropuestaPreciosActivoEntidad03 extends AbstractMSVA
 	}
 	
 	@Override
-	@Transactional(readOnly = false)
 	public Integer getNumFilas(MSVDocumentoMasivo file, MSVHojaExcel exc) throws IOException {
 		Integer numFilas = exc.getNumeroFilasByHoja(1, file.getProcesoMasivo().getTipoOperacion());
 		return numFilas;

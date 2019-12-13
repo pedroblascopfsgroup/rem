@@ -20,6 +20,9 @@ Ext.define('HreRem.model.Carga', {
     			name:'estadoDescripcion'
     		},
     		{
+    			name:'subestadoDescripcion'
+    		},
+    		{
     			name:'estadoEconomicaDescripcion'
     		},
     		{

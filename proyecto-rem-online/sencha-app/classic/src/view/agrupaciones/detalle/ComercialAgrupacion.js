@@ -100,8 +100,10 @@ Ext.define('HreRem.view.agrupacion.detalle.ComercialAgrupacion', {
     funcionRecargar: function() {
 		var me = this;
 		me.recargar = false;
-		me.lookupController().cargarTabData(me);
-		me.up('agrupacionesdetallemain').lookupReference('comercialagrupaciontabsref').funcionRecargar();
+		if(me.up('agrupacionesdetallemain').lookupReference('ofertascomercialagrupacionlistref')){
+			me.up('agrupacionesdetallemain').lookupReference('ofertascomercialagrupacionlistref').calcularMostrarBotonClonarExpediente();
+		}
+		me.getActiveTab().funcionRecargar();
     },
     
     evaluarBotonesEdicion: function(tab) {  

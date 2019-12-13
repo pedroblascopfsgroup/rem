@@ -20,6 +20,12 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 	 */
 	removeButton: true,
 	
+	/**
+	 * Indica si este grid puede tener o no el botón de copiar expediente. Luego se calcula si se muestra o no.
+	 * @type Boolean
+	 */
+	cloneExpedienteButton: false,
+	
 	propagationButton: false,
 	
 	idPrincipal: null,
@@ -192,6 +198,7 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 			var configAddButton = {iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onAddClick', scope: this, hidden: !me.addButton  };
 			var configRemoveButton = {iconCls:'x-fa fa-minus', itemId:'removeButton', handler: 'onDeleteClick', scope: this, disabled: true, hidden: !me.removeButton };
 			var configPropagationButton = {iconCls:'x-fa fa-th-list', itemId:'propagationButton', handler: 'onClickPropagationButton', scope: this, disabled: true, hidden: !me.propagationButton };
+			var configCloneExpedienteButton = {iconCls:'copiar-expediente-icon', itemId:'cloneExpedienteButton', reference: 'cloneExpedienteButton', handler: 'onClickCloneExpedienteButton', tooltip: HreRem.i18n("msg.info.clonar.expediente"), tooltipType: 'title', scope: this, disabled: true, hidden: !me.cloneExpedienteButton };
 			
 			if(!Ext.isEmpty(me.buttonSecurity)) {
 				
@@ -219,6 +226,9 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 	    		items: [configAddButton, configRemoveButton, configPropagationButton]
     		};
 
+    		if(me.cloneExpedienteButton){
+    			me.tbar.items.push(configCloneExpedienteButton);
+    		}
 		};
 		
 		me.callParent();
@@ -288,7 +298,7 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 			   }
 		});
 
-    },
+    },   
     
     onClickPropagationButton: function(btn) {
 		var me = this;
@@ -350,6 +360,18 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
     	
     	if (!Ext.isEmpty(me.down('#propagationButton'))) {
     		me.down('#propagationButton').setDisabled(disabled);    		
+    	}
+    },    
+        
+    mostrarBotonClonarExpediente: function(mostrar) {
+    	
+    	var me = this;
+    	
+    	if (!Ext.isEmpty(me.down('[reference=cloneExpedienteButton]'))) {
+    		if(mostrar)
+    			me.down('[reference=cloneExpedienteButton]').show();
+			else
+				me.down('[reference=cloneExpedienteButton]').hide();
     	}
     },
     

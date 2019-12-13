@@ -34,14 +34,12 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
-import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
@@ -49,7 +47,6 @@ import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.OfertasExcelReport;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
@@ -112,9 +109,7 @@ public class OfertasController {
 	@Autowired
 	private ActivoTareaExternaApi activoTareaExternaApi;
 
-	@Autowired
-	private ActivoTramiteApi activoTramiteApi;
-
+	
 	@Autowired
 	private ActivoApi activoApi;
 	
@@ -124,6 +119,7 @@ public class OfertasController {
 	@Autowired
 	private ProveedoresDao proveedoresDao;
 	
+	@Autowired
 	private AgendaAdapter agendaAdapter;
 
 	@Autowired
@@ -684,6 +680,7 @@ public class OfertasController {
 	 * @return model
 	 */
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/ofertas/avanzaOferta")
 	public void avanzaOferta( ModelMap model, RestRequestWrapper request, HttpServletResponse response){
 		TareaRequestDto jsonData = null;
@@ -830,6 +827,7 @@ public class OfertasController {
 
 
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListOfertasAgrupadas(DtoVListadoOfertasAgrupadasLbk dtoOfertasAgrupadas, ModelMap model){
 		{
@@ -850,6 +848,7 @@ public class OfertasController {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListActivosOfertasAgrupadas(DtoVListadoOfertasAgrupadasLbk dtoOfertasAgrupadas, ModelMap model){
 		{

@@ -70,6 +70,7 @@ import es.pfsgroup.plugin.rem.model.VTramitacionOfertaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDDireccionTerritorial;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
@@ -228,6 +229,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 		}
 		
+		if(!Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
+			BeanUtils.copyProperty(activoDto, "nombreMediador", activo.getInfoComercial().getMediadorInforme().getNombre());
+		}
+			
 		if (activo.getMotivoActivo() != null) {
 			BeanUtils.copyProperty(activoDto, "motivoActivo", activo.getMotivoActivo());
 		}
@@ -417,6 +422,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionAsistida", pertenceAgrupacionAsistida);
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionObraNueva", pertenceAgrupacionObraNueva);
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionProyecto", pertenceAgrupacionProyecto);
+			
+			if(pertenceAgrupacionProyecto && !Checks.esNulo(activo.getCartera()) && DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
+				activoDto.setEsSarebProyecto(true);
+			}else {
+				activoDto.setEsSarebProyecto(false);
+			}
 		}
 
 		for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){
@@ -816,6 +827,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(activo.getServicerActivo() != null) {
 			BeanUtils.copyProperty(activoDto, "servicerActivoCodigo", activo.getServicerActivo().getCodigo());
 		}
+		
+		if (!Checks.esNulo(activo.getDireccionTerritorial())){
+			beanUtilNotNull.copyProperty(activoDto, "direccionTerritorialCodigo", activo.getDireccionTerritorial().getCodigo());
+			beanUtilNotNull.copyProperty(activoDto, "direccionTerritorialDescripcion", activo.getDireccionTerritorial().getDescripcion());
+		}				
+		
 		if (activo.getCartera() != null
 				&& DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo()))
 			BeanUtils.copyProperty(activoDto, "tramitable", isTramitable(activo));
@@ -900,6 +917,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCesionSaneamientoCodigo());
 				DDCesionSaneamiento cesionNuevo = (DDCesionSaneamiento) genericDao.get(DDCesionSaneamiento.class, filtro);
 				activo.setCesionSaneamiento(cesionNuevo);
+			}
+			
+			if (!Checks.esNulo(dto.getDireccionTerritorialCodigo())) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getDireccionTerritorialCodigo());
+				DDDireccionTerritorial direccionTerritorial = genericDao.get(DDDireccionTerritorial.class, filtro);
+				activo.setDireccionTerritorial(direccionTerritorial);
 			}
 			
 			if (!Checks.esNulo(dto.getServicerActivoCodigo())) {

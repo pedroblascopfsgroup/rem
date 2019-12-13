@@ -111,6 +111,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadFinanciera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
+import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -203,6 +204,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public static final Integer NUMERO_DIAS_VENCIMIENTO_SAREB = 40;
 	private static final String DESCRIPCION_COMITE_HAYA = "Haya";
 	private static final String PROBLEMA = "Problema";
+	private static final String AVISO = "Aviso";
+	private static final String TITULAR_NO_CLIENTE_URSUS = "TITULAR NO CLIENTE EN URSUS";
 	private static final String OFERTA_SIN_GESTOR_COMERCIAL_ASIGNADO = "Oferta sin gestor comercial asignado, revise la parametrización";
 	private static final String OFERTA_NA_LOTE = "N/A lote";
 	private static final String OFERTA_DICCIONARIO_CODIGO_NULO = "0";
@@ -1603,6 +1606,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private DtoDatosBasicosOferta expedienteToDtoDatosBasicosOferta(ExpedienteComercial expediente) {
 		DtoDatosBasicosOferta dto = new DtoDatosBasicosOferta();
 		Oferta oferta = expediente.getOferta();
+		Boolean isMayoristaOSingular = false;
 
 		dto.setIdOferta(oferta.getId());
 		dto.setNumOferta(oferta.getNumOferta());
@@ -1820,7 +1824,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setIdEco(expediente.getId());
 		}
 		
-		if (DDTipoComercializar.CODIGO_SINGULAR.equals(oferta.getActivoPrincipal().getTipoComercializar().getCodigo())) {
+		if (!Checks.esNulo(oferta.getActivoPrincipal().getEquipoGestion())) {
+			if(DDEquipoGestion.CODIGO_MAYORISTA.equals(oferta.getActivoPrincipal().getEquipoGestion().getCodigo())) {
+				isMayoristaOSingular = true;
+			}
+		} else if (!Checks.esNulo(oferta.getActivoPrincipal().getTipoComercializar()) 
+				&& DDTipoComercializar.CODIGO_SINGULAR.equals(oferta.getActivoPrincipal().getTipoComercializar().getCodigo())) {
+			isMayoristaOSingular = true;
+		}
+		
+		if (isMayoristaOSingular) {
 			Usuario gestorComercialPrescriptor = gestorActivoApi.getGestorByActivoYTipo(oferta.getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 			if (!Checks.esNulo(gestorComercialPrescriptor)) {
 				if (!Checks.esNulo(oferta.getAgrupacion()))
@@ -2136,13 +2149,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "agrupacionId", agr.getId());
 				VActivosSubdivision vActSub  = genericDao.get(VActivosSubdivision.class, filtro, filtro2);
 
-				Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "agrupacionId", agr.getId());
-				Filter filtro4 = genericDao.createFilter(FilterType.EQUALS, "id", vActSub.getIdSubdivision());
-				VSubdivisionesAgrupacion vSubAgr  = genericDao.get(VSubdivisionesAgrupacion.class, filtro3, filtro4);
+				if(!Checks.esNulo(vActSub)) {
+					Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "agrupacionId", agr.getId());
+					Filter filtro4 = genericDao.createFilter(FilterType.EQUALS, "id", vActSub.getIdSubdivision());
+					VSubdivisionesAgrupacion vSubAgr  = genericDao.get(VSubdivisionesAgrupacion.class, filtro3, filtro4);
 
 
-				if(!Checks.esNulo(vSubAgr) && !Checks.esNulo(vSubAgr.getDescripcion())) {
-					dtoActivo.setSubdivision(vSubAgr.getDescripcion());
+					if(!Checks.esNulo(vSubAgr) && !Checks.esNulo(vSubAgr.getDescripcion())) {
+						dtoActivo.setSubdivision(vSubAgr.getDescripcion());
+					}
 				}
 			}
 
@@ -3671,7 +3686,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	@Override
-	@Transactional(readOnly = true)
 	public ExpedienteComercial expedienteComercialPorOferta(Long idOferta) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id", idOferta);
 
@@ -6428,10 +6442,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			for (ActivoOferta activoOferta : listaOfertas) {
 				Oferta oferta = activoOferta.getPrimaryKey().getOferta();
 
-				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
+				if (oferta != null && oferta.getEstadoOferta() != null &&
+						DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
 					ExpedienteComercial expediente = expedienteComercialPorOferta(oferta.getId());
 
-					if (!DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo())
+					if (expediente != null && expediente.getEstado() != null 
+							&& !DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo())
 							&& !DDEstadosExpedienteComercial.PTE_SANCION.equals(expediente.getEstado().getCodigo())
 							&& !DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expediente.getEstado().getCodigo())
 							&& !DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
@@ -7567,6 +7583,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public String validaBloqueoExpediente(Long idExpediente) {
 		String codigoError = "";
 
@@ -7613,7 +7630,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								&& condiciones.getSituacionPosesoriaCodigo()
 										.equals(condiciones.getSituacionPosesoriaCodigoInformada())
 								&& condiciones.getPosesionInicial() != null
-								&& condiciones.getPosesionInicialInformada() != null & condiciones.getPosesionInicial()
+								&& condiciones.getPosesionInicialInformada() != null && condiciones.getPosesionInicial()
 										.equals(condiciones.getPosesionInicialInformada())
 								&& condiciones.getEstadoTitulo() != null
 								&& condiciones.getEstadoTituloInformada() != null
@@ -9693,6 +9710,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					if(PROBLEMA.equals(datosClienteProblemasVentaDto.getTipoMensaje())){
 						problemasPorComprador = true;
 						return true;
+					}else if(AVISO.equals(datosClienteProblemasVentaDto.getTipoMensaje()) && TITULAR_NO_CLIENTE_URSUS.equals(datosClienteProblemasVentaDto.getLiavi1().toUpperCase())) {
+						return false;
 					}
 				}
 				if(!problemasPorComprador) {
@@ -9990,6 +10009,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						crearTareaValidacionClientes (expediente);
 						genericDao.update(Comprador.class, comprador);
 						return true;
+					}else if(AVISO.equals(datosClienteProblemasVentaDto.getTipoMensaje()) && TITULAR_NO_CLIENTE_URSUS.equals(datosClienteProblemasVentaDto.getLiavi1().toUpperCase())) {						
+						comprador.setProblemasUrsus(false);
+						finalizarTareaValidacionClientes(expediente);
+						genericDao.update(Comprador.class, comprador);
+						return false;
 					}
 				}
 				if(!problemasPorComprador) {
@@ -10135,6 +10159,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public List<DtoDiccionario> calcularGestorComercialPrescriptor(Long idExpediente) {
 		Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "id", idExpediente);
 		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtroExpediente);
+		Boolean isMinoristaOResidencial = false;
 		if (expediente != null) {
 			Oferta ofr = expediente.getOferta();
 			if (ofr != null) {
@@ -10144,8 +10169,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						if (listadoActivos.get(i).getPrimaryKey() != null) {
 							Activo act = listadoActivos.get(i).getPrimaryKey().getActivo();
 							if (act != null) {
-								if (act.getTipoComercializar() != null && DDTipoComercializar.CODIGO_RETAIL
-										.equals(act.getTipoComercializar().getCodigo())) {
+								if (!Checks.esNulo(ofr.getActivoPrincipal().getEquipoGestion())) {
+									if(DDEquipoGestion.CODIGO_MINORISTA.equals(ofr.getActivoPrincipal().getEquipoGestion().getCodigo())) {
+										return calcularGestorComercialPrescriptorResidencial(expediente, listadoActivos);
+									}
+								} else if (!Checks.esNulo(ofr.getActivoPrincipal().getTipoComercializar()) 
+										&& DDTipoComercializar.CODIGO_RETAIL.equals(ofr.getActivoPrincipal().getTipoComercializar().getCodigo())) {
 									return calcularGestorComercialPrescriptorResidencial(expediente, listadoActivos);
 								}
 							}
@@ -10155,10 +10184,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					if (listadoActivos.get(0).getPrimaryKey() != null) {
 						Activo act = listadoActivos.get(0).getPrimaryKey().getActivo();
 						if (act != null)
-							if (act.getTipoComercializar() != null && DDTipoComercializar.CODIGO_RETAIL.equals(act.getTipoComercializar().getCodigo())) {
+							if (!Checks.esNulo(ofr.getActivoPrincipal().getEquipoGestion())) {
+								if(DDEquipoGestion.CODIGO_MINORISTA.equals(ofr.getActivoPrincipal().getEquipoGestion().getCodigo())) {
+									isMinoristaOResidencial = true;
+								}
+							} else if (!Checks.esNulo(ofr.getActivoPrincipal().getTipoComercializar()) 
+									&& DDTipoComercializar.CODIGO_RETAIL.equals(ofr.getActivoPrincipal().getTipoComercializar().getCodigo())) {
+								isMinoristaOResidencial = true;
+							}
+							if (isMinoristaOResidencial) {
 								return calcularGestorComercialPrescriptorResidencial(expediente, listadoActivos);
-							} else if (act.getTipoComercializar() != null && DDTipoComercializar.CODIGO_SINGULAR.equals(act.getTipoComercializar().getCodigo()) 
-									&& Checks.esNulo(ofr.getAgrupacion())) {
+							} else if (Checks.esNulo(ofr.getAgrupacion())) {
 								List<DtoDiccionario> listado= new ArrayList<DtoDiccionario>();
 								DtoDiccionario diccionario = new DtoDiccionario();
 								diccionario = new DtoDiccionario();
@@ -10577,5 +10613,5 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		return true;
-	}
+	}	
 }

@@ -1,9 +1,6 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,7 +26,6 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
-import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.dto.ActivoOutputDto;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistralBien;
@@ -70,7 +66,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
-@Component
+@Component @Transactional(readOnly = false)
 public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActualizador implements MSVLiberator {
 	
 	private static final String ERROR_ACTIVO_NO_PROC_CORREC = "Activo no procesado correctamente, intentelo de nuevo más tarde";
@@ -119,8 +115,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 
 	@Override
 	@Transactional(readOnly = false)
-	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
-			throws IOException, ParseException, JsonViewerException, SQLException, Exception {
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws Exception {
 		
 		//-----Usuariocrear, Fechacrear
 		Auditoria auditoria = new Auditoria();
@@ -194,6 +189,8 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 				unidadAlquilable.setTipoAlquiler(activoMatriz.getTipoAlquiler());
 			if (!Checks.esNulo(activoMatriz.getBloqueoTipoComercializacionAutomatico()))
 				unidadAlquilable.setBloqueoTipoComercializacionAutomatico(activoMatriz.getBloqueoTipoComercializacionAutomatico());			
+			if (!Checks.esNulo(activoMatriz.getDireccionTerritorial()))
+				unidadAlquilable.setDireccionTerritorial(activoMatriz.getDireccionTerritorial());
 		}
 		
 		
@@ -653,7 +650,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		if ( !Checks.esNulo(activoMatriz)) {
 			
 			
-			ActivoInfoComercial infoComercialMatriz =(ActivoInfoComercial) activoMatriz.getInfoComercial();
+			ActivoInfoComercial infoComercialMatriz = activoMatriz.getInfoComercial();
 			ActivoInfoComercial infoComercialUA = new ActivoInfoComercial();
 			
 			infoComercialUA.setActivo(unidadAlquilable);

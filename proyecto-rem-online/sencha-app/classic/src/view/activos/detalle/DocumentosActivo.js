@@ -5,34 +5,47 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivo', {
     collapsed	: false,
     reference	: 'documentosactivoref',
     scrollable	: 'y',
-    requires	: ['HreRem.model.AdjuntoActivo','HreRem.model.AdjuntoActivoPromocion','Ext.data.Store'],
+    requires	: ['HreRem.model.AdjuntoActivo','HreRem.model.AdjuntoActivoPromocion','HreRem.model.AdjuntoActivoAgrupacion','HreRem.model.AdjuntoActivoProyecto','Ext.data.Store','HreRem.model.Activo'],
 
     initComponent: function () {
     	var me = this;
         me.setTitle(HreRem.i18n('title.documentos'));
-        var isVisibleCodPrinex = me.lookupController().getViewModel().get('activo').get('isVisibleCodPrinex');
         
-        var gridDocsPromocion ={
-    		xtype:'documentosactivopromocion',
-			reference: 'listadoDocumentosPromo',
-            collapsible: true,
-			colspan: 3
-		}
-
     	var items= [
     	         {
      				xtype:'documentosactivosimple',
 					reference: 'listadoDocumentosSimple',
 					collapsible: true,
 					colspan: 3
-    	        	 
-    	        	 
-    	         }
+    	         },
+    	         {
+    	     		xtype:'documentosactivopromocion',
+    	 			reference: 'listadoDocumentosPromo',
+    	            collapsible: true,
+    	 			colspan: 3
+    	 		},
+    	 		{
+    	     		xtype:'documentosactivoproyecto',
+    	 			reference: 'listadoDocumentosProyecto',
+    	            collapsible: true,
+//    	            readOnly: true,
+    	            bind:{
+    	            	disabled: '{!activo.esSarebProyecto}',
+    	            	hidden: '{!activo.esSarebProyecto}'
+    	            },
+    	 			colspan: 3
+    	 		}/*,
+    	 		{
+    	     		xtype:'documentosactivoagrupacion',
+    	 			reference: 'listadoDocumentosagrupacion',
+    	            collapsible: true,
+//    	            readOnly: true,
+    	            bind:{
+    	            	//hidden: '{visibilidadPestanyaDocumentacionAgrupacion}'
+    	            },
+    	 			colspan: 3
+    	 		}*/
     	];
-    	
-    	if(isVisibleCodPrinex){
-    		items.push(gridDocsPromocion);
-    	}
 
     	me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();    	

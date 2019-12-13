@@ -91,7 +91,11 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 						}
 
 						if ( ofertaAceptada.getActivoPrincipal() != null ) {
-							activoApi.changeAndSavePlusvaliaEstadoGestionActivoById(ofertaAceptada.getActivoPrincipal().getId(), DDEstadoGestionPlusv.COD_EN_CURSO);
+							try {
+								activoApi.changeAndSavePlusvaliaEstadoGestionActivoById(ofertaAceptada.getActivoPrincipal(), DDEstadoGestionPlusv.COD_EN_CURSO);
+							}catch (PlusvaliaActivoException e) {
+								logger.error(e);
+							}
 						}
 						
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.VENDIDO);

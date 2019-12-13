@@ -21,6 +21,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.activo.exception.PlusvaliaActivoException;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -125,12 +126,13 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 								//activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 								idActivoActualizarPublicacion.add(activo.getId());
 								
-								if ( DDEstadosExpedienteComercial.VENDIDO.equals(filtro.getPropertyValue())) {
-									ActivoPlusvalia activoPlusvalia = activoDao.getPlusvaliaByIdActivo(activo.getId());
-									if(activoPlusvalia != null) {
-										activoApi.changeAndSavePlusvaliaEstadoGestionActivoById(activo.getId(), DDEstadoGestionPlusv.COD_EN_CURSO);
-										notificationPlusvaliaManager.sendNotificationPlusvaliaLiquidacion(activo, expediente);
+								if ( DDEstadosExpedienteComercial.VENDIDO.equals(filtro.getPropertyValue())) { 
+									try {
+										activoApi.changeAndSavePlusvaliaEstadoGestionActivoById(activo, DDEstadoGestionPlusv.COD_EN_CURSO);
+									} catch (PlusvaliaActivoException e) {
+										logger.error(e);
 									}
+									notificationPlusvaliaManager.sendNotificationPlusvaliaLiquidacion(activo, expediente);
 								}
 								activoApi.saveOrUpdate(activo);
 							}

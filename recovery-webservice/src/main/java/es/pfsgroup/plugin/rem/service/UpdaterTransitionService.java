@@ -15,6 +15,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.activo.exception.PlusvaliaActivoException;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -245,8 +246,12 @@ public class UpdaterTransitionService {
 		if (expediente.getEstado() != null
 				&& DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
 				&& activoTramite.getActivo() != null) {
-			activoApi.changeAndSavePlusvaliaEstadoGestionActivoById(activoTramite.getActivo().getId(),
-					DDEstadoGestionPlusv.COD_EN_CURSO);
+			try {
+				activoApi.changeAndSavePlusvaliaEstadoGestionActivoById(activoTramite.getActivo(),
+						DDEstadoGestionPlusv.COD_EN_CURSO);
+			} catch (PlusvaliaActivoException e) {
+				logger.error(e);
+			}
 		}
 		updateExpediente(expediente, dto);
 		

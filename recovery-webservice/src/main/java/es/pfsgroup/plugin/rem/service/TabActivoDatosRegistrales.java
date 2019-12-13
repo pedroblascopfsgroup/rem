@@ -169,6 +169,9 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			
 			if(activo.getAdjJudicial() != null) {
 				BeanUtils.copyProperties(activoDto, activo.getAdjJudicial());
+				if(Checks.esNulo(activo.getAdjJudicial().getIdAsunto())) {
+					activoDto.setIdAsunto(null);
+				}
 			}
 			
 			if (activo.getAdjNoJudicial() != null) {
@@ -231,9 +234,15 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			if (!Checks.esNulo(activo.getAdjJudicial())) {
 				
 				BeanUtils.copyProperties(activoDto, activo.getAdjJudicial());
+				if(Checks.esNulo(activo.getAdjJudicial().getIdAsunto())) {
+					activoDto.setIdAsunto(null);
+				}
 				
 				if (!Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien())) {
 					BeanUtils.copyProperties(activoDto, activo.getAdjJudicial().getAdjudicacionBien());
+					if(Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien().getImporteAdjudicacion()) || activo.getAdjJudicial().getAdjudicacionBien().getImporteAdjudicacion() == BigDecimal.ZERO) {
+						activoDto.setImporteAdjudicacion(null);
+					}
 					
 				if(Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien().getLanzamientoNecesario())){
 					activoDto.setLanzamientoNecesario(null);
@@ -384,6 +393,9 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			
 			if (!Checks.esNulo(activoMatriz.getAdjJudicial().getAdjudicacionBien())) {
 				BeanUtils.copyProperties(activoDto, activoMatriz.getAdjJudicial().getAdjudicacionBien());
+				if(Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien().getImporteAdjudicacion()) || activo.getAdjJudicial().getAdjudicacionBien().getImporteAdjudicacion() == BigDecimal.ZERO ) {
+					activoDto.setImporteAdjudicacion(null);
+				}
 				
 			if(Checks.esNulo(activoMatriz.getAdjJudicial().getAdjudicacionBien().getLanzamientoNecesario())){
 				activoDto.setLanzamientoNecesario(null);
@@ -424,9 +436,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				BeanUtils.copyProperty(activoDto, "estadoAdjudicacionCodigo", activoMatriz.getAdjJudicial().getEstadoAdjudicacion().getCodigo());
 			
 			}
-		}
-		
-		
+		}	
 		return activoDto;
 	}
 

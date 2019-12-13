@@ -961,6 +961,55 @@ public interface ParticularValidatorApi {
 	 * @return true si la Agrupación de tipo alquiler tiene precio
 	 */
 	public Boolean esAgrupacionAlquilerConPrecio(String numAgrupacion);
+	
+	/**
+	 * 
+	 * @param numActivo
+	 * @return true si el activo indicado no es de la cartera bankia
+	 */
+	public Boolean existeActivoNoBankia(String numActivo);
+	
+	/**
+	 * 
+	 * @param numActivo
+	 * @return true si el activo tiene titulo
+	 */
+	public Boolean existeActivoTitulo(String numActivo);
+
+	/**
+	 * 
+	 * @param situacionTitulo
+	 * @return true si existe el estado del titulo
+	 */
+	public Boolean existeEstadoTitulo(String situacionTitulo);
+
+	/**
+	 * 
+	 * @param numActivo
+	 * @return true si el activo pertenece a la cartera Bankia
+	 */
+	public Boolean esActivoBankia(String numActivo);
+
+	/**
+	 * 
+	 * @param codigo
+	 * @return true si el codigo pertenece a una entidad hipotecaria
+	 */
+	public Boolean existeEntidadHipotecaria(String codigo);
+
+	public Boolean existeTipoJuzgado(String celda);
+
+	public Boolean existePoblacionJuzgado(String celda);
+
+	/**
+	 * 
+	 * @param idActivo
+	 * @param tipoAdjudicacion
+	 * @return true si el idActivo es del tipo de adjudicación que le estamos pasando por parámetros
+	 */
+	Boolean verificaTipoDeAdjudicacion(String idActivo, String tipoAdjudicacion);
+
+	Boolean esAccionValidaInscripciones(String codAccion);
 
 	/**
 	 * @param numExpediente, numActivo

@@ -185,6 +185,12 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired
 	private MSVGastosRefacturablesExcelValidator gastosRefacturables;
+	
+	@Autowired
+	private MSVActualizacionInformacionInscripcionExcelValidator informacionInscripcion;
+	
+	@Autowired
+	private MSVActualizacionTomaPosesionExcelValidator tomaPosesion;
 		
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
@@ -301,12 +307,16 @@ public class MSVExcelValidatorFactoryImpl {
 			return docAdministrativa;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CONTROL_TRIBUTOS.equals(codTipoOperacion)) {
 			return controlTributos;
-		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_RECLAMACIONES_PLUSVALIAS.equals(codTipoOperacion)) {
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_RECLAMACIONES_PLUSVALIAS.equals(codTipoOperacion)) {
 			return reclamacionesPlusvalia;
-		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_JUNTAS.equals(codTipoOperacion)) {
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_JUNTAS.equals(codTipoOperacion)) {
 			return juntasOrdinariasExtraordinarias;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_SUPER_GASTOS_REFACTURABLES.equals(codTipoOperacion)) {
 			return gastosRefacturables;
+		}else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_INSCRIPCIONES.equals(codTipoOperacion)) {
+			return informacionInscripcion;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_TOMA_POSESION.equals(codTipoOperacion)) {
+			return tomaPosesion;
 		}
 		return null;
 	}

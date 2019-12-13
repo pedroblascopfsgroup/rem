@@ -1,7 +1,7 @@
 --/*
 --######################################### 
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20191203
+--## FECHA_CREACION=20191212
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-5874
@@ -62,7 +62,7 @@ BEGIN
 		          				SET  USU_NOMBRE = ''BUZON GDA'', USU_MAIL = ''usuariogenericogda@haya.es'', USUARIOMODIFICAR = '''||V_USUARIOMODIFICAR||''', FECHAMODIFICAR = SYSDATE
 								WHERE USU_USERNAME = ''buzongda''';		     		
 		        	EXECUTE IMMEDIATE V_MSQL;
-		        	DBMS_OUTPUT.PUT_LINE('[INFO] Modifiado usuario buzonelecnor.......');
+		        	DBMS_OUTPUT.PUT_LINE('[INFO] Modifiado usuario buzongda.......');
 		        ELSE
 		      		V_MSQL := 'INSERT INTO '||V_ESQUEMA_M||'.'||V_TEXT_TABLA||' (USU_ID, USU_USERNAME, USU_PASSWORD, USU_NOMBRE, USU_MAIL, USUARIOCREAR, FECHACREAR) 
 		          				VALUES ('||V_ESQUEMA_M||'.S_USU_USUARIOS.NEXTVAL, ''buzongda'', ''kotPgXb'', ''BUZON GDA'', ''usuariogenericogda@haya.es'', '''||V_USUARIOMODIFICAR||''', SYSDATE)';		     		
@@ -74,18 +74,18 @@ BEGIN
 		    ELSE
 		    	--Comprobar el dato a insertar.
         		V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.'||V_TEXT_TABLA||' 
-							WHERE USU_USERNAME = ''buzonelecnor''';
+							WHERE USU_USERNAME = ''buzongda''';
         		EXECUTE IMMEDIATE V_SQL INTO V_NUM_REGISTROS;		    	
 		    	
         		IF V_NUM_REGISTROS > 0 THEN
 		          	V_MSQL := 'UPDATE '||V_ESQUEMA_M||'.'||V_TEXT_TABLA||'  
-		          				SET  USU_NOMBRE = ''BUZON GDA'', USU_MAIL = ''usuariogenericogda@haya.es'', USUARIOMODIFICAR = '''||V_USUARIOMODIFICAR||''', FECHAMODIFICAR = SYSDATE
+		          				SET  USU_NOMBRE = ''BUZON GDA'', USU_MAIL = ''pruebashrem@gmail.com'', USUARIOMODIFICAR = '''||V_USUARIOMODIFICAR||''', FECHAMODIFICAR = SYSDATE
 								WHERE USU_USERNAME = ''buzongda''';		     		
 		        	EXECUTE IMMEDIATE V_MSQL;
-		        	DBMS_OUTPUT.PUT_LINE('[INFO] Modifiado usuario buzonelecnor.......');
+		        	DBMS_OUTPUT.PUT_LINE('[INFO] Modifiado usuario buzongda.......');
 		        ELSE		    
 			    	V_MSQL := 'INSERT INTO '||V_ESQUEMA_M||'.'||V_TEXT_TABLA||' (USU_ID, USU_USERNAME, USU_PASSWORD, USU_NOMBRE, USU_MAIL, USUARIOCREAR, FECHACREAR) 
-			          VALUES ('||V_ESQUEMA_M||'.S_USU_USUARIOS.NEXTVAL, ''buzongda'', ''1234'', ''BUZON GDA'', ''usuariogenericogda@haya.es'', '''||V_USUARIOMODIFICAR||''', SYSDATE)';
+			          VALUES ('||V_ESQUEMA_M||'.S_USU_USUARIOS.NEXTVAL, ''buzongda'', ''1234'', ''BUZON GDA'', ''pruebashrem@gmail.com'', '''||V_USUARIOMODIFICAR||''', SYSDATE)';
 			      	DBMS_OUTPUT.PUT_LINE('[INFO] Insertando usuario ficticio buzongda.......');
 					EXECUTE IMMEDIATE V_MSQL;
 				END IF;

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20191209
+--## FECHA_CREACION=20191212
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-8607
@@ -399,39 +399,7 @@ BEGIN
 					0)';
 					
 	   EXECUTE IMMEDIATE V_MSQL;
-	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS CASO 14 ');
-	   
-	   /*	   	   	V_MSQL:= '	MERGE INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1
-				USING(
-				      SELECT tit.tit_id, tit.tit_fecha_present1_reg, tit.tit_fecha_present2_reg, tit.TIT_FECHA_INSC_REG, tit.tit_fecha_envio_auto  
-					    FROM '||V_ESQUEMA||'.act_tit_titulo tit
-					    left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
-					    where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is null and tit.TIT_FECHA_INSC_REG is null and eti.dd_eti_codigo = ''01''
-						and tit.tit_fecha_envio_auto is null
-				) T2
-				ON (T1.TIT_ID = T2.TIT_ID)
-				 WHEN NOT MATCHED THEN INSERT (  AHT_ID, 
-												 TIT_ID, 
-												 AHT_FECHA_PRES_REGISTRO, 
-				                                 DD_ESP_ID,
-				                                 AHT_OBSERVACIONES,
-												 VERSION, 
-												 USUARIOCREAR, 
-												 FECHACREAR,  
-												 BORRADO)
-				
-				VALUES (S_'||V_TEXT_TABLA||'.NEXTVAL,
-					T2.tit_id, 
-					T2.TIT_FECHA_PRESENT1_REG,
-					(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''01''),
-					NULL,
-					0, 
-					'''||V_USU||''', 
-					SYSDATE,  
-					0)';
-					
-	   EXECUTE IMMEDIATE V_MSQL;
-	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS CASO 15 ');*/
+	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS CASO 14 ');				
 
 	   		   	   	V_MSQL:= '	MERGE INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1
 				USING(
@@ -968,6 +936,7 @@ BEGIN
 				 WHEN NOT MATCHED THEN INSERT (  AHT_ID, 
 												 TIT_ID, 
 												 AHT_FECHA_PRES_REGISTRO, 
+												 AHT_FECHA_CALIFICACION,
 				                                 DD_ESP_ID,
 				                                 AHT_OBSERVACIONES,
 												 VERSION, 
@@ -977,8 +946,9 @@ BEGIN
 				
 				VALUES (S_'||V_TEXT_TABLA||'.NEXTVAL,
 					T2.tit_id, 
-					T2.TIT_FECHA_PRESENT2_REG,
-					(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''01''),
+					TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
+					TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
+					(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02''),
 					NULL,
 					0, 
 					'''||V_USU||''', 
@@ -987,6 +957,35 @@ BEGIN
 					
 	   EXECUTE IMMEDIATE V_MSQL;
 	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS CASO 32 ');
+
+	   	   	   	V_MSQL:= 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (AHT_ID, 
+                                         TIT_ID, 
+                                         AHT_FECHA_PRES_REGISTRO,
+                                         DD_ESP_ID,
+                                         AHT_OBSERVACIONES,
+                                         VERSION, 
+                                         USUARIOCREAR, 
+                                         FECHACREAR, 
+                                         BORRADO)
+											SELECT 
+											S_'||V_TEXT_TABLA||'.NEXTVAL,
+											tit.tit_id, 
+											tit.TIT_FECHA_PRESENT2_REG,
+											(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''01''),
+											NULL,
+											0, 
+											'''||V_USU||''', 
+											SYSDATE, 
+											0
+											FROM '||V_ESQUEMA||'.act_tit_titulo tit
+											left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
+											where tit.borrado = 0 and tit.tit_fecha_present1_reg is null and tit.tit_fecha_present2_reg is not null and tit.TIT_FECHA_INSC_REG is null and eti.dd_eti_codigo = ''01''
+											and tit.tit_fecha_envio_auto is null
+											and EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.act_aht_hist_tram_titulo aht where aht.borrado = 0 
+											and aht.dd_esp_id = (select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02'') and aht.tit_id = tit.tit_id)';
+					
+	   EXECUTE IMMEDIATE V_MSQL;
+	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS CASO 32 TRAMITACIÓN ');
 
 	   	   	V_MSQL:= '	MERGE INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1
 				USING(
@@ -1308,7 +1307,7 @@ BEGIN
 				VALUES (S_'||V_TEXT_TABLA||'.NEXTVAL,
 					T2.tit_id, 
 					TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
-					T2.TIT_FECHA_INSC_REG,
+					TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
 					(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''03''),
 					NULL,
 					0, 
@@ -1944,6 +1943,37 @@ BEGIN
 	   EXECUTE IMMEDIATE V_MSQL;
 	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS CASO 63 ');
 
+	   	   	   	V_MSQL:= 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (AHT_ID, 
+                                         TIT_ID, 
+                                         AHT_FECHA_PRES_REGISTRO,
+										 AHT_FECHA_INSCRIPCION,
+                                         DD_ESP_ID,
+                                         AHT_OBSERVACIONES,
+                                         VERSION, 
+                                         USUARIOCREAR, 
+                                         FECHACREAR, 
+                                         BORRADO)
+											SELECT 
+											S_'||V_TEXT_TABLA||'.NEXTVAL,
+											tit.tit_id, 
+											TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
+											tit.TIT_FECHA_INSC_REG,
+											(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''03''),
+											NULL,
+											0, 
+											'''||V_USU||''', 
+											SYSDATE, 
+											0
+											FROM '||V_ESQUEMA||'.act_tit_titulo tit
+											left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
+											where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is null and tit.TIT_FECHA_INSC_REG is null and eti.dd_eti_codigo = ''02''
+											and tit.tit_fecha_envio_auto is not null
+											and EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.act_aht_hist_tram_titulo aht where aht.borrado = 0 
+											and aht.dd_esp_id = (select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02'') and aht.tit_id = tit.tit_id)';
+					
+	   EXECUTE IMMEDIATE V_MSQL;
+	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS CASO 63 ');
+
 	   	   	   	   	   	V_MSQL:= '	MERGE INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1
 				USING(
 					SELECT tit.tit_id, tit.tit_fecha_present1_reg, tit.tit_fecha_present2_reg, tit.TIT_FECHA_INSC_REG, tit.tit_fecha_envio_auto     
@@ -2471,7 +2501,6 @@ BEGIN
 	   	   	V_MSQL:= 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (AHT_ID, 
                                          TIT_ID, 
 										 AHT_FECHA_PRES_REGISTRO,
-										 AHT_FECHA_CALIFICACION,
                                          DD_ESP_ID,
                                          AHT_OBSERVACIONES,
                                          VERSION, 
@@ -2482,8 +2511,7 @@ BEGIN
 											S_'||V_TEXT_TABLA||'.NEXTVAL,
 											tit.tit_id, 
 											tit.TIT_FECHA_PRESENT2_REG,
-											tit.tit_fecha_envio_auto,
-											(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02''),
+											(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''01''),
 											NULL,
 											0, 
 											'''||V_USU||''', 
@@ -2498,40 +2526,6 @@ BEGIN
 					
 	   EXECUTE IMMEDIATE V_MSQL;
 	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS CASO 79-80 ');
-
-	   	   	   	   	   	   	   	   	   	   	V_MSQL:= '	MERGE INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1
-				USING(
-				      SELECT tit.tit_id, tit.tit_fecha_present1_reg, tit.tit_fecha_present2_reg, tit.TIT_FECHA_INSC_REG, tit.tit_fecha_envio_auto 
-					    FROM '||V_ESQUEMA||'.act_tit_titulo tit
-					    left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
-					    where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is null and tit.TIT_FECHA_INSC_REG is null and eti.dd_eti_codigo is null
-						and tit.tit_fecha_envio_auto is not null
-				) T2
-				ON (T1.TIT_ID = T2.TIT_ID)
-				 WHEN NOT MATCHED THEN INSERT (  AHT_ID, 
-												 TIT_ID, 
-												 AHT_FECHA_PRES_REGISTRO, 
-												 AHT_FECHA_CALIFICACION,
-				                                 DD_ESP_ID,
-				                                 AHT_OBSERVACIONES,
-												 VERSION, 
-												 USUARIOCREAR, 
-												 FECHACREAR,  
-												 BORRADO)
-				
-				VALUES (S_'||V_TEXT_TABLA||'.NEXTVAL,
-					T2.tit_id, 
-					T2.TIT_FECHA_PRESENT1_REG,
-					T2.tit_fecha_envio_auto,
-					(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02''),
-					NULL,
-					0, 
-					'''||V_USU||''', 
-					SYSDATE,  
-					0)';
-					
-	   EXECUTE IMMEDIATE V_MSQL;
-	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS CASO 81 ');
 
 	   	   	   	V_MSQL:= '	MERGE INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1
 				USING(
@@ -2662,6 +2656,136 @@ BEGIN
 					
 	   EXECUTE IMMEDIATE V_MSQL;
 	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS INSCRITOS 2ª PRESENTACIÓN NO NULA ');	  
+
+	   	   	   	   	V_MSQL:= '	MERGE INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1
+				USING(
+				      SELECT tit.tit_id, tit.tit_fecha_present1_reg, tit.tit_fecha_present2_reg, tit.TIT_FECHA_INSC_REG, tit.tit_fecha_envio_auto  
+					    FROM '||V_ESQUEMA||'.act_tit_titulo tit
+					    left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
+					    where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is null and tit.TIT_FECHA_INSC_REG is null and eti.dd_eti_codigo = ''01''
+						and tit.tit_fecha_envio_auto is not null
+				) T2
+				ON (T1.TIT_ID = T2.TIT_ID)
+				 WHEN NOT MATCHED THEN INSERT (  AHT_ID, 
+												 TIT_ID, 
+												 AHT_FECHA_PRES_REGISTRO, 
+												 AHT_FECHA_CALIFICACION,
+				                                 DD_ESP_ID,
+				                                 AHT_OBSERVACIONES,
+												 VERSION, 
+												 USUARIOCREAR, 
+												 FECHACREAR,  
+												 BORRADO)
+				
+				VALUES (S_'||V_TEXT_TABLA||'.NEXTVAL,
+					T2.tit_id, 
+					T2.TIT_FECHA_PRESENT1_REG,
+					T2.tit_fecha_envio_auto,
+					(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02''),
+					NULL,
+					0, 
+					'''||V_USU||''', 
+					SYSDATE,  
+					0)';
+					
+	   EXECUTE IMMEDIATE V_MSQL;
+	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS CASO 15 CALIFICACIÓN NEGATIVA');
+	   
+	   	V_MSQL:= 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (AHT_ID, 
+                                         TIT_ID, 
+                                         AHT_FECHA_PRES_REGISTRO,
+                                         DD_ESP_ID,
+                                         AHT_OBSERVACIONES,
+                                         VERSION, 
+                                         USUARIOCREAR, 
+                                         FECHACREAR, 
+                                         BORRADO)
+											SELECT 
+											S_'||V_TEXT_TABLA||'.NEXTVAL AHT_ID,
+											tit.tit_id TIT_ID, 
+											TO_DATE(''01/01/1900'',''DD/MM/YYYY'') AHT_FECHA_PRES_REGISTRO,
+											(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''01'') DD_ESP_ID,
+											NULL AHT_OBSERVACIONES,
+											0 VERSION, 
+											'''||V_USU||''' USUARIOCREAR, 
+											SYSDATE FECHACREAR, 
+											0 BORRADO
+											FROM '||V_ESQUEMA||'.act_tit_titulo tit
+											left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
+											where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is null and tit.TIT_FECHA_INSC_REG is null and eti.dd_eti_codigo = ''01''
+											and tit.tit_fecha_envio_auto is not null
+											and EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.act_aht_hist_tram_titulo aht where aht.borrado = 0 
+											and aht.dd_esp_id = (select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02'') and aht.tit_id = tit.tit_id)';
+
+	   EXECUTE IMMEDIATE V_MSQL;
+	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS CASO 15 2ª PRESENTACIÓN NULA ');		
+
+	   	   	   	   	   	V_MSQL:= '	MERGE INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1
+				USING(
+				     SELECT tit.tit_id, tit.tit_fecha_present1_reg, tit.tit_fecha_present2_reg, tit.TIT_FECHA_INSC_REG, tit.tit_fecha_envio_auto 
+					    FROM '||V_ESQUEMA||'.act_tit_titulo tit
+					    left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
+					    where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is null and tit.TIT_FECHA_INSC_REG is not null and eti.dd_eti_codigo = ''02'' 
+						and tit.tit_fecha_envio_auto is not null
+   
+				) T2
+				ON (T1.TIT_ID = T2.TIT_ID)
+				 WHEN NOT MATCHED THEN INSERT (  AHT_ID, 
+												 TIT_ID, 
+												 AHT_FECHA_PRES_REGISTRO, 
+												 AHT_FECHA_CALIFICACION,
+				                                 DD_ESP_ID,
+				                                 AHT_OBSERVACIONES,
+												 VERSION, 
+												 USUARIOCREAR, 
+												 FECHACREAR, 
+												 BORRADO)
+				
+				VALUES (S_'||V_TEXT_TABLA||'.NEXTVAL,
+					T2.tit_id, 
+					T2.TIT_FECHA_PRESENT1_REG,
+					T2.tit_fecha_envio_auto,
+					(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02''),
+					NULL,
+					0, 
+					'''||V_USU||''', 
+					SYSDATE, 
+					0)';
+					
+	   EXECUTE IMMEDIATE V_MSQL;
+	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS INSCRITOS 2ª PRESENTACIÓN CALIFICACIÓN NEGATIVA NULA ');
+	   
+	   	V_MSQL:= 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (AHT_ID, 
+                                         TIT_ID, 
+                                         AHT_FECHA_PRES_REGISTRO,
+										 AHT_FECHA_INSCRIPCION,
+                                         DD_ESP_ID,
+                                         AHT_OBSERVACIONES,
+                                         VERSION, 
+                                         USUARIOCREAR, 
+                                         FECHACREAR, 
+                                         BORRADO)
+											SELECT 
+											S_'||V_TEXT_TABLA||'.NEXTVAL,
+											tit.tit_id, 
+											TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
+											tit.TIT_FECHA_INSC_REG,
+											(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''03''),
+											NULL,
+											0, 
+											'''||V_USU||''', 
+											SYSDATE, 
+											0
+											FROM '||V_ESQUEMA||'.act_tit_titulo tit
+											left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
+											where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is null and tit.TIT_FECHA_INSC_REG is not null and eti.dd_eti_codigo = ''02'' 
+											and tit.tit_fecha_envio_auto is not null
+											and EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.act_aht_hist_tram_titulo aht where aht.borrado = 0 
+											and aht.dd_esp_id = (select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02'') and aht.tit_id = tit.tit_id)';
+					
+	   EXECUTE IMMEDIATE V_MSQL;
+	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS ACTUALIZADOS INSCRITOS 2ª PRESENTACIÓN NO NULA ');	
+	   
 
     DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN '||V_ESQUEMA||'.'||V_TEXT_TABLA);
    	

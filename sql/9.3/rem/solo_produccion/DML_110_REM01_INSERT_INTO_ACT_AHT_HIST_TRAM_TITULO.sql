@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20191202
+--## FECHA_CREACION=20191212
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-8607
@@ -50,6 +50,7 @@ BEGIN
 					    FROM '||V_ESQUEMA||'.act_tit_titulo tit
 					    left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
 					    where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is null and tit.TIT_FECHA_INSC_REG is null and eti.dd_eti_codigo = ''01''
+						and tit.tit_fecha_envio_auto is null
 				) T2
 				ON (T1.TIT_ID = T2.TIT_ID)
 				 WHEN NOT MATCHED THEN INSERT (  AHT_ID, 
@@ -197,7 +198,7 @@ BEGIN
 				VALUES (S_'||V_TEXT_TABLA||'.NEXTVAL,
 					T2.tit_id, 
 					T2.TIT_FECHA_PRESENT1_REG,
-					T2.tit_fecha_envio_auto,
+					TO_DATE(''01/01/1900'',''DD/MM/YYYY''),
 					(select DD_esp_id from '||V_ESQUEMA||'.DD_ESP_ESTADO_PRESENTACION where dd_esp_codigo = ''02''),
 					NULL,
 					0, 
@@ -246,6 +247,7 @@ BEGIN
 					    FROM '||V_ESQUEMA||'.act_tit_titulo tit
 					    left join '||V_ESQUEMA||'.dd_eti_estado_titulo eti on tit.dd_eti_id = eti.dd_eti_id
 					    where tit.borrado = 0 and tit.tit_fecha_present1_reg is not null and tit.tit_fecha_present2_reg is null and eti.dd_eti_codigo = ''02'' and tit.TIT_FECHA_INSC_REG is not null
+						and tit.tit_fecha_envio_auto is null
    			) T2
 				ON (T1.TIT_ID = T2.TIT_ID)
 				 WHEN NOT MATCHED THEN INSERT (  AHT_ID, 

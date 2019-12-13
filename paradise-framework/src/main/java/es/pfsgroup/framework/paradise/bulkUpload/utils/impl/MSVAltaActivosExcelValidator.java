@@ -112,6 +112,8 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 	public static final String CODIGO_POSTAL_IS_NAN = "El código postal no tiene un formato numérico válido o no contiene 5 posiciones";
 	public static final String MUNICIPIO_NOT_EXISTS = "El código de municipio especificado no existe";
 	public static final String UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS = "El código de la unidad inferior al municipio especificado no existe";
+	public static final String TIPO_DE_COMERCIALIZACION_INCORRECTO = "El tipo de comercialización es incorrecto";
+	public static final String TIPO_DE_COMERCIALIZACION_IS_NULL = "El tipo de comercialización no puede estar vacía";
 
 	// Posicion fija de Columnas excel, para cualquier referencia por posicion
 	public static final class COL_NUM {
@@ -145,50 +147,51 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 
 		static final int COD_DESTINO_COMER = 23;
 		static final int COD_TIPO_ALQUILER = 24;
+		static final int COD_TIPO_DE_COMERCIALIZACION = 25;
 
-		static final int NUM_PRESTAMO = 25; // (MATRIZ, DIVIDIDO)
-		static final int ESTADO_EXP_RIESGO = 26;
-		static final int NIF_SOCIEDAD_ACREEDORA = 27;
-		static final int CODIGO_SOCIEDAD_ACREEDORA = 28;
-		static final int NOMBRE_SOCIEDAD_ACREEDORA = 29;
-		static final int DIRECCION_SOCIEDAD_ACREEDORA = 30;
-		static final int IMPORTE_DEUDA = 31;
-		static final int ID_GARANTIA = 32;
+		static final int NUM_PRESTAMO = 26; // (MATRIZ, DIVIDIDO)
+		static final int ESTADO_EXP_RIESGO = 27;
+		static final int NIF_SOCIEDAD_ACREEDORA = 28;
+		static final int CODIGO_SOCIEDAD_ACREEDORA = 29;
+		static final int NOMBRE_SOCIEDAD_ACREEDORA = 30;
+		static final int DIRECCION_SOCIEDAD_ACREEDORA = 31;
+		static final int IMPORTE_DEUDA = 32;
+		static final int ID_GARANTIA = 33;
 
-		static final int POBL_REGISTRO = 33;
-		static final int NUM_REGISTRO = 34;
-		static final int TOMO = 35;
-		static final int LIBRO = 36;
-		static final int FOLIO = 37;
-		static final int FINCA = 38;
-		static final int IDUFIR_CRU = 39;
-		static final int SUPERFICIE_CONSTRUIDA_M2 = 40;
-		static final int SUPERFICIE_UTIL_M2 = 41;
-		static final int SUPERFICIE_REPERCUSION_EE_CC = 42;
-		static final int PARCELA = 43; // (INCLUIDA OCUPADA EDIFICACION)
-		static final int ES_INTEGRADO_DIV_HORIZONTAL = 44;
+		static final int POBL_REGISTRO = 34;
+		static final int NUM_REGISTRO = 35;
+		static final int TOMO = 36;
+		static final int LIBRO = 37;
+		static final int FOLIO = 38;
+		static final int FINCA = 39;
+		static final int IDUFIR_CRU = 40;
+		static final int SUPERFICIE_CONSTRUIDA_M2 = 41;
+		static final int SUPERFICIE_UTIL_M2 = 42;
+		static final int SUPERFICIE_REPERCUSION_EE_CC = 43;
+		static final int PARCELA = 44; // (INCLUIDA OCUPADA EDIFICACION)
+		static final int ES_INTEGRADO_DIV_HORIZONTAL = 45;
 
-		static final int NIF_PROPIETARIO = 45;
-		static final int GRADO_PROPIEDAD = 46;
-		static final int PERCENT_PROPIEDAD = 47;
+		static final int NIF_PROPIETARIO = 46;
+		static final int GRADO_PROPIEDAD = 47;
+		static final int PERCENT_PROPIEDAD = 48;
 
-		static final int REF_CATASTRAL = 48;
-		static final int VPO = 49;
-		static final int CALIFICACION_CEE = 50;
+		static final int REF_CATASTRAL = 49;
+		static final int VPO = 50;
+		static final int CALIFICACION_CEE = 51;
 
-		static final int NIF_MEDIADOR = 51;
-		static final int VIVIENDA_NUM_PLANTAS = 52;
-		static final int VIVIENDA_NUM_BANYOS = 53;
-		static final int VIVIENDA_NUM_ASEOS = 54;
-		static final int VIVIENDA_NUM_DORMITORIOS = 55;
-		static final int TRASTERO_ANEJO = 56;
-		static final int GARAJE_ANEJO = 57;
-		static final int ASCENSOR = 58;
+		static final int NIF_MEDIADOR = 52;
+		static final int VIVIENDA_NUM_PLANTAS = 53;
+		static final int VIVIENDA_NUM_BANYOS = 54;
+		static final int VIVIENDA_NUM_ASEOS = 55;
+		static final int VIVIENDA_NUM_DORMITORIOS = 56;
+		static final int TRASTERO_ANEJO = 57;
+		static final int GARAJE_ANEJO = 58;
+		static final int ASCENSOR = 59;
 
-		static final int PRECIO_MINIMO = 59;
-		static final int PRECIO_VENTA_WEB = 60;
-		static final int VALOR_TASACION = 61;
-		static final int FECHA_TASACION = 62;
+		static final int PRECIO_MINIMO = 60;
+		static final int PRECIO_VENTA_WEB = 61;
+		static final int VALOR_TASACION = 62;
+		static final int FECHA_TASACION = 63;
 	};
 
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -260,6 +263,8 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 			mapaErrores.put(DESTINO_COMERCIAL_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_DESTINO_COMER));
 			mapaErrores.put(TIPO_ALQUILER_IS_NULL,
 					isTipoAlquilerNullConDestinoComercialAlquilerByRows(exc, COL_NUM.COD_TIPO_ALQUILER));
+			mapaErrores.put(TIPO_DE_COMERCIALIZACION_INCORRECTO, isTipoDeComercializacionCorrecto(exc, COL_NUM.COD_TIPO_DE_COMERCIALIZACION));
+			mapaErrores.put(TIPO_DE_COMERCIALIZACION_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_TIPO_DE_COMERCIALIZACION));
 			mapaErrores.put(NUM_PRESTAMO_IS_NULL, isColumnNullByRows(exc, COL_NUM.NUM_PRESTAMO));
 			mapaErrores.put(NIF_SOCIEDAD_ACREEDORA_IS_NULL, isColumnNullByRows(exc, COL_NUM.NIF_SOCIEDAD_ACREEDORA));
 			mapaErrores.put(CODIGO_SOCIEDAD_ACREEDORA_IS_NULL,
@@ -330,6 +335,8 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 					|| !mapaErrores.get(CODIGO_POSTAL_IS_NULL).isEmpty()
 					|| !mapaErrores.get(DESTINO_COMERCIAL_IS_NULL).isEmpty()
 					|| !mapaErrores.get(TIPO_ALQUILER_IS_NULL).isEmpty()
+					|| !mapaErrores.get(TIPO_DE_COMERCIALIZACION_INCORRECTO).isEmpty()
+					|| !mapaErrores.get(TIPO_DE_COMERCIALIZACION_IS_NULL).isEmpty()
 					|| !mapaErrores.get(NUM_PRESTAMO_IS_NULL).isEmpty()
 					|| !mapaErrores.get(NIF_SOCIEDAD_ACREEDORA_IS_NULL).isEmpty()
 					|| !mapaErrores.get(CODIGO_SOCIEDAD_ACREEDORA_IS_NULL).isEmpty()
@@ -992,6 +999,29 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 				e.printStackTrace();
 			}
 		}
+		return listaFilas;
+	}
+	
+	private List<Integer> isTipoDeComercializacionCorrecto(MSVHojaExcel exc, int columnNumber){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
+				if (!Checks.esNulo(exc.dameCelda(i, columnNumber)) && !exc.dameCelda(i, columnNumber).equals("01") && !exc.dameCelda(i, columnNumber).equals("02")){
+					listaFilas.add(i);
+				}
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		return listaFilas;
 	}
 }

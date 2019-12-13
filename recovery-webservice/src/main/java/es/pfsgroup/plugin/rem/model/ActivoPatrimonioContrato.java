@@ -90,7 +90,10 @@ public class ActivoPatrimonioContrato implements Serializable, Auditable {
 	
 	@Column(name = "DCA_ID_CONTRATO_ANTIGUO")
 	private String idContratoAntiguo;
-	
+
+    @Column(name = "DCA_PAZ_SOCIAL")
+    private Boolean pazSocial;
+    
 	
 	@Version
 	private Long version;
@@ -244,6 +247,14 @@ public class ActivoPatrimonioContrato implements Serializable, Auditable {
 
 	public void setIdContratoAntiguo(String idContratoAntiguo) {
 		this.idContratoAntiguo = idContratoAntiguo;
+	}
+
+	public Boolean getPazSocial() {
+		return pazSocial;
+	}
+
+	public void setPazSocial(Boolean pazSocial) {
+		this.pazSocial = pazSocial;
 	}
 }
 	

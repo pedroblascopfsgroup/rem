@@ -1024,14 +1024,7 @@ public interface ParticularValidatorApi {
 	Boolean esExpedienteValidoAnulado(String numExpediente);
 
 	Boolean esExpedienteValidoAprobado(String numExpediente);
-	
-	/**
-	 * 
-	 * @param idHaya
-	 * @return true si el id de Haya Existe
-	 */
-	public Boolean idHayaExiste(String idHaya);
-	
+		
 	/**
 	 * 
 	 * @param direccionComercial

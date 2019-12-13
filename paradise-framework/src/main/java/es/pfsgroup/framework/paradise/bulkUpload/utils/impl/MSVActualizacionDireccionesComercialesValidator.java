@@ -166,7 +166,7 @@ public class MSVActualizacionDireccionesComercialesValidator extends MSVExcelVal
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
-					if(!Checks.esNulo(exc.dameCelda(i, COL_ID_HAYA)) && !particularValidator.idHayaExiste(exc.dameCelda(i, COL_ID_HAYA)))
+					if(!Checks.esNulo(exc.dameCelda(i, COL_ID_HAYA)) && !particularValidator.existeActivo(exc.dameCelda(i, COL_ID_HAYA)))
 						listaFilas.add(i);
 				} catch (ParseException e) {
 					listaFilas.add(i);

@@ -4041,6 +4041,45 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public String getCodigoMediadorPrimarioByActivo(String numActivo) {
+		String resultado = "";
+		if(!Checks.esNulo(numActivo)){
+			 resultado = rawDao.getExecuteSQL("SELECT pve.PVE_COD_REM " +
+			 		" FROM ACT_ICO_INFO_COMERCIAL ico  " +
+			 		" INNER JOIN ACT_PVE_PROVEEDOR pve ON pve.PVE_ID = ico.ICO_MEDIADOR_ID " +
+			 		" INNER JOIN ACT_ACTIVO act ON act.ACT_ID = ico.ACT_ID " +
+			 		" WHERE act.ACT_NUM_ACTIVO = " + numActivo);
+		}
+		return resultado;
+	}
+	
+	@Override
+	public String getCodigoMediadorEspejoByActivo(String numActivo) {
+		String resultado = "";
+		if(!Checks.esNulo(numActivo)){
+			 resultado = rawDao.getExecuteSQL("SELECT pve.PVE_COD_REM " +
+			 		" FROM ACT_ICO_INFO_COMERCIAL ico  " +
+			 		" INNER JOIN ACT_PVE_PROVEEDOR pve ON pve.PVE_ID = ico.ICO_MEDIADOR_ESPEJO_ID " +
+			 		" INNER JOIN ACT_ACTIVO act ON act.ACT_ID = ico.ACT_ID " +
+			 		" WHERE act.ACT_NUM_ACTIVO = " + numActivo);
+		}
+		return resultado;
+	}
+	
+	@Override
+	public Boolean esTipoMediadorCorrecto(String codMediador) {
+		if (Checks.esNulo(codMediador)) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL("SELECT tpr.DD_TPR_CODIGO "
+				+ "FROM ACT_PVE_PROVEEDOR pve "
+				+ "JOIN DD_TPR_TIPO_PROVEEDOR tpr ON tpr.DD_TPR_ID = pve.DD_TPR_ID "
+				+ "WHERE pve.PVE_COD_REM = " + codMediador);
+		
+		return COD_MEDIADOR.equals(resultado) || COD_FUERZA_VENTA_DIRECTA.equals(resultado);
+	}
+	
 	public Boolean activoConRelacionExpedienteComercial(String numExpediente, String numActivo) {
 		if(Checks.esNulo(numExpediente))
 			return false;
@@ -4087,45 +4126,4 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return "1".equals(resultado);
 	}
-
-	@Override
-	public String getCodigoMediadorPrimarioByActivo(String numActivo) {
-		String resultado = "";
-		if(!Checks.esNulo(numActivo)){
-			 resultado = rawDao.getExecuteSQL("SELECT pve.PVE_COD_REM " +
-			 		" FROM ACT_ICO_INFO_COMERCIAL ico  " +
-			 		" INNER JOIN ACT_PVE_PROVEEDOR pve ON pve.PVE_ID = ico.ICO_MEDIADOR_ID " +
-			 		" INNER JOIN ACT_ACTIVO act ON act.ACT_ID = ico.ACT_ID " +
-			 		" WHERE act.ACT_NUM_ACTIVO = " + numActivo);
-		}
-		return resultado;
-	}
-	
-	@Override
-	public String getCodigoMediadorEspejoByActivo(String numActivo) {
-		String resultado = "";
-		if(!Checks.esNulo(numActivo)){
-			 resultado = rawDao.getExecuteSQL("SELECT pve.PVE_COD_REM " +
-			 		" FROM ACT_ICO_INFO_COMERCIAL ico  " +
-			 		" INNER JOIN ACT_PVE_PROVEEDOR pve ON pve.PVE_ID = ico.ICO_MEDIADOR_ESPEJO_ID " +
-			 		" INNER JOIN ACT_ACTIVO act ON act.ACT_ID = ico.ACT_ID " +
-			 		" WHERE act.ACT_NUM_ACTIVO = " + numActivo);
-		}
-		return resultado;
-	}
-	
-	@Override
-	public Boolean esTipoMediadorCorrecto(String codMediador) {
-		if (Checks.esNulo(codMediador)) {
-			return false;
-		}
-		
-		String resultado = rawDao.getExecuteSQL("SELECT tpr.DD_TPR_CODIGO "
-				+ "FROM ACT_PVE_PROVEEDOR pve "
-				+ "JOIN DD_TPR_TIPO_PROVEEDOR tpr ON tpr.DD_TPR_ID = pve.DD_TPR_ID "
-				+ "WHERE pve.PVE_COD_REM = " + codMediador);
-		
-		return COD_MEDIADOR.equals(resultado) || COD_FUERZA_VENTA_DIRECTA.equals(resultado);
-	}
-	
 }

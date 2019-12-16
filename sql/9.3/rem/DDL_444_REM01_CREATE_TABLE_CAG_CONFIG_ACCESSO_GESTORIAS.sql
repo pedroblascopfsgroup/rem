@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20191031
+--## FECHA_CREACION=20191213
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO= 9.3
 --## INCIDENCIA_LINK=HREOS-8188
@@ -42,120 +42,132 @@ BEGIN
 
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_TABLA|| '********'); 
 
-	V_MSQL := 'DROP TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||' borrada.');
-
-	-- Creamos la tabla
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
-	V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
-	(
-		CAG_ID           				NUMBER(16, 0) NOT NULL,
-		DD_IGE_ID						NUMBER(16,0) NOT NULL,
-		CAG_USU_GRUPO					NUMBER(16,0) NOT NULL,
-		DD_TGE_ID						NUMBER(16,0) NOT NULL,
-		VERSION 						NUMBER(38,0) DEFAULT 0 NOT NULL ENABLE, 
-		USUARIOCREAR 					VARCHAR2(50 CHAR) NOT NULL ENABLE, 
-		FECHACREAR 						TIMESTAMP (6) NOT NULL ENABLE, 
-		USUARIOMODIFICAR 				VARCHAR2(50 CHAR), 
-		FECHAMODIFICAR 					TIMESTAMP (6), 
-		USUARIOBORRAR 					VARCHAR2(50 CHAR), 
-		FECHABORRAR 					TIMESTAMP (6), 
-		BORRADO 						NUMBER(1,0) DEFAULT 0 NOT NULL ENABLE
-	)';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');
-
-	-- Creamos primary key
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (CAG_ID))';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
-
-	-- Creamos foreign key
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT CAG_USU_FK 
-	FOREIGN KEY (CAG_USU_GRUPO)
-	REFERENCES '||V_ESQUEMA_M||'.'||V_TEXT_REF_TABLA_USU||' (USU_ID)';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] CAG_USU_FK ... FK creada.');
-
-	-- Creamos foreign key
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT CAG_IGE_FK 
-	FOREIGN KEY (DD_IGE_ID)
-	REFERENCES '||V_ESQUEMA||'.'||V_TEXT_REF_TABLA_GES||' (DD_IGE_ID)';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] CAG_GES_FK ... FK creada.');
-
-	-- Creamos foreign key
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT CAG_DD_TGE_FK 
-	FOREIGN KEY (DD_TGE_ID)
-	REFERENCES '||V_ESQUEMA_M||'.'||V_TEXT_REF_TABLA_TGE||' (DD_TGE_ID)';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] CAG_DD_TGE_FK ... FK creada.');
-
-	-- Comprobamos si existe la secuencia
-	V_MSQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_'||V_TEXT_TABLA||''' and sequence_owner = '''||V_ESQUEMA||'''';
-		
+	V_MSQL := 'SELECT COUNT(*) FROM all_tab_columns where owner = '''||V_ESQUEMA||''' and table_name = '''||V_TEXT_TABLA||''' and column_name = ''CAG_USU_GRUPO_FORMALIZACION''';
 	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
-	
-	IF V_NUM_TABLAS = 0 THEN
-		-- Creamos sequence
-		V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';		
-		EXECUTE IMMEDIATE V_MSQL;		
-		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');
+
+	IF V_NUM_TABLAS = 1 THEN
+		V_MSQL := 'DROP TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||' borrada.');
 	END IF;
-	
-	-- Creamos el comentario de las columnas
-	V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS ''Tabla de configuracion para gestorias.''';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la tabla creado.');		
 
-	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CAG_ID IS ''Código identificador único.''';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna CAG_ID creado.');
+	V_MSQL := 'SELECT COUNT(*) FROM all_tab_columns where owner = '''||V_ESQUEMA||''' and table_name = '''||V_TEXT_TABLA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
 
-	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_IGE_ID IS ''Gestoria''';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_IGE_ID creado.');	
+	IF V_NUM_TABLAS = 0 THEN
+		-- Creamos la tabla
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
+		V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
+		(
+			CAG_ID           				NUMBER(16, 0) NOT NULL,
+			DD_IGE_ID						NUMBER(16,0) NOT NULL,
+			CAG_USU_GRUPO					NUMBER(16,0) NOT NULL,
+			DD_TGE_ID						NUMBER(16,0) NOT NULL,
+			VERSION 						NUMBER(38,0) DEFAULT 0 NOT NULL ENABLE, 
+			USUARIOCREAR 					VARCHAR2(50 CHAR) NOT NULL ENABLE, 
+			FECHACREAR 						TIMESTAMP (6) NOT NULL ENABLE, 
+			USUARIOMODIFICAR 				VARCHAR2(50 CHAR), 
+			FECHAMODIFICAR 					TIMESTAMP (6), 
+			USUARIOBORRAR 					VARCHAR2(50 CHAR), 
+			FECHABORRAR 					TIMESTAMP (6), 
+			BORRADO 						NUMBER(1,0) DEFAULT 0 NOT NULL ENABLE
+		)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');
 
-	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CAG_USU_GRUPO IS ''Identificador unico del usuario de grupo''';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna CAG_USU_GRUPO creado.');
+		-- Creamos primary key
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (CAG_ID))';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
 
-	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TGE_ID IS ''Tipo de gestor''';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_TGE_ID creado.');
+		-- Creamos foreign key
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT CAG_USU_FK 
+		FOREIGN KEY (CAG_USU_GRUPO)
+		REFERENCES '||V_ESQUEMA_M||'.'||V_TEXT_REF_TABLA_USU||' (USU_ID)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] CAG_USU_FK ... FK creada.');
 
-	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.VERSION IS ''Indica la versión del registro.''';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna VERSION creado.');
-	
-	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOCREAR IS ''Indica el usuario que creó el registro.''';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna USUARIOCREAR creado.');
+		-- Creamos foreign key
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT CAG_IGE_FK 
+		FOREIGN KEY (DD_IGE_ID)
+		REFERENCES '||V_ESQUEMA||'.'||V_TEXT_REF_TABLA_GES||' (DD_IGE_ID)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] CAG_GES_FK ... FK creada.');
 
-	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHACREAR IS ''Indica la fecha en la que se creó el registro.''';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna FECHACREAR creado.');
+		-- Creamos foreign key
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT CAG_DD_TGE_FK 
+		FOREIGN KEY (DD_TGE_ID)
+		REFERENCES '||V_ESQUEMA_M||'.'||V_TEXT_REF_TABLA_TGE||' (DD_TGE_ID)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] CAG_DD_TGE_FK ... FK creada.');
 
-	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOMODIFICAR IS ''Indica el usuario que modificó el registro.''';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna USUARIOMODIFICAR creado.');
+		-- Comprobamos si existe la secuencia
+		V_MSQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_'||V_TEXT_TABLA||''' and sequence_owner = '''||V_ESQUEMA||'''';
+			
+		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+		
+		IF V_NUM_TABLAS = 0 THEN
+			-- Creamos sequence
+			V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';		
+			EXECUTE IMMEDIATE V_MSQL;		
+			DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');
+		END IF;
+		
+		-- Creamos el comentario de las columnas
+		V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS ''Tabla de configuracion para gestorias.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la tabla creado.');		
 
-	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHAMODIFICAR IS ''Indica la fecha en la que se modificó el registro.''';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna FECHAMODIFICAR creado.');
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CAG_ID IS ''Código identificador único.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna CAG_ID creado.');
 
-	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOBORRAR IS ''Indica el usuario que borró el registro.''';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna USUARIOBORRAR creado.');
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_IGE_ID IS ''Gestoria''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_IGE_ID creado.');	
 
-	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHABORRAR IS ''Indica la fecha en la que se borró el registro.''';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna FECHABORRAR creado.');
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CAG_USU_GRUPO IS ''Identificador unico del usuario de grupo''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna CAG_USU_GRUPO creado.');
 
-	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BORRADO IS ''Indicador de borrado.''';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna BORRADO creado.');
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TGE_ID IS ''Tipo de gestor''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_TGE_ID creado.');
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.VERSION IS ''Indica la versión del registro.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna VERSION creado.');
+		
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOCREAR IS ''Indica el usuario que creó el registro.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna USUARIOCREAR creado.');
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHACREAR IS ''Indica la fecha en la que se creó el registro.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna FECHACREAR creado.');
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOMODIFICAR IS ''Indica el usuario que modificó el registro.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna USUARIOMODIFICAR creado.');
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHAMODIFICAR IS ''Indica la fecha en la que se modificó el registro.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna FECHAMODIFICAR creado.');
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOBORRAR IS ''Indica el usuario que borró el registro.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna USUARIOBORRAR creado.');
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHABORRAR IS ''Indica la fecha en la que se borró el registro.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna FECHABORRAR creado.');
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BORRADO IS ''Indicador de borrado.''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna BORRADO creado.');
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('[INFO] Ya existe.');	
+	END IF;
 
 	COMMIT;
 

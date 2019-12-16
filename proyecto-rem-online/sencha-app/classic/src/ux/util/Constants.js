@@ -244,8 +244,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		MOSCATA: '57',
 		BEYOSPONGA: '59',
 		RETAMAR: '60',
-		DIVARIAN: '150',
-		OMEGA: '65'
+		OMEGA: '65',
+		DIVARIAN: '150'
     },
 
     NOMBRE_SUBCARTERA: {

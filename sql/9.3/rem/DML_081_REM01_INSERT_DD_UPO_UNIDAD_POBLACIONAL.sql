@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alberto Flores
---## FECHA_CREACION=20191204
+--## FECHA_CREACION=20191216
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-8735
@@ -27,7 +27,7 @@ DECLARE
 	V_TABLA VARCHAR2(30 CHAR) := 'DD_UPO_UNID_POBLACIONAL';
 	V_USUARIO VARCHAR2(30 CHAR) := 'HREOS-8735';
 	V_NUM NUMBER(16,0);
-	V_CODIGO VARCHAR (50 CHAR) := '0000000000'; -- Código de la unidad poblacional
+	V_CODIGO VARCHAR (50 CHAR) := '00000'; -- Código de la unidad poblacional
 	V_LOC NUMBER(16,0) := '8121'; -- Código de la localidad 'No disponible'
 	V_DESC VARCHAR2(100 CHAR) := 'No definido'; -- Descripción de la unidad poblacional
 

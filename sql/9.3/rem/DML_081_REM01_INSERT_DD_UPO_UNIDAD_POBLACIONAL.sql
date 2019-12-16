@@ -28,7 +28,7 @@ DECLARE
 	V_USUARIO VARCHAR2(30 CHAR) := 'HREOS-8735';
 	V_NUM NUMBER(16,0);
 	V_CODIGO VARCHAR (50 CHAR) := '00000'; -- Código de la unidad poblacional
-	V_LOC NUMBER(16,0) := '8121'; -- Código de la localidad 'No disponible'
+	V_LOC VARCHAR (50 CHAR) := '00000'; -- Código de la localidad 'No disponible'
 	V_DESC VARCHAR2(100 CHAR) := 'No definido'; -- Descripción de la unidad poblacional
 
 	ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
@@ -42,7 +42,7 @@ BEGIN
 
 	IF V_NUM > 0 THEN
 		V_MSQL := 'UPDATE '||V_ESQUEMA_M||'.'||V_TABLA||' SET 
-			DD_LOC_ID = '||V_LOC||',
+			DD_LOC_ID = (SELECT LOC.DD_LOC_ID FROM '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD LOC WHERE LOC.DD_LOC_CODIGO = '''||V_LOC||'''),
 			DD_UPO_CODIGO = '''||V_CODIGO||''',
 			DD_UPO_DESCRIPCION = '''||V_DESC||''',
 			USUARIOMODIFICAR = '''||V_USUARIO||''',
@@ -63,13 +63,14 @@ BEGIN
 		)
 		SELECT
 			'||V_ESQUEMA_M||'.S_'||V_TABLA||'.NEXTVAL,
-			'||V_LOC||',
+			LOC.DD_LOC_ID,
 			'''||V_CODIGO||''',
 			'''||V_DESC||''',
 			'''||V_DESC||''',
 			'''||V_USUARIO||''',
 			SYSDATE
 		FROM DUAL
+		JOIN '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_CODIGO = '''||V_LOC||'''
 		';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('	[INFO] REGISTRO INSERTADO CORRECTAMENTE');

@@ -29,7 +29,8 @@ DECLARE
     V_NUM_REG NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-	V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
+    V_NUM_TABLAS_2 NUMBER(16); -- Vble. para validar la existencia de una tabla.
     V_TABLA VARCHAR2(50 CHAR):= 'ACT_ACTIVO'; -- Nombre de la tabla 
     
     --Tipos de campo
@@ -39,7 +40,7 @@ DECLARE
 	
     -- Nombre de tablas a REFERENCIAR
 	V_TABLA_REF_SRA VARCHAR2(50 CHAR):= 'DD_ECA_ESTADO_CARGA_ACTIVOS';
-	V_KEY_NAME_SRA VARCHAR2(50 CHAR):= 'FK_ACT_DD_ECA_ID';
+	V_KEY_NAME_SRA VARCHAR2(50 CHAR):= 'FK_DD_ECA_ID';
 	
     --Nombre de las columnas
         V_COL_ECA VARCHAR2(50 CHAR):= 'DD_ECA_ID'; 
@@ -66,14 +67,27 @@ BEGIN
                 
                 -- Añadimos el campo
                 EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD '||V_COL_ECA||' '||V_TIPO_NUM_LONG||'';   
-                -- Añadimos LA CLAVE AJENA
+                
+		 V_MSQL := 'SELECT COUNT (1) FROM ALL_CONSTRAINTS WHERE TABLE_NAME = '''||V_TABLA||''' AND CONSTRAINT_NAME = '''||V_KEY_NAME_SRA||'''';
+ 		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS_2; 
+	
+		 IF V_NUM_TABLAS_2 = 0 THEN
+
+		-- Añadimos LA CLAVE AJENA
                 EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD CONSTRAINT '||V_KEY_NAME_SRA||' FOREIGN KEY ('||V_COL_ECA||')
-	  								REFERENCES '||V_ESQUEMA||'.'||V_TABLA_REF_SRA||' ('||V_COL_ECA||') ON DELETE SET NULL ENABLE';
+							REFERENCES '||V_ESQUEMA||'.'||V_TABLA_REF_SRA||' ('||V_COL_ECA||') ON DELETE SET NULL ENABLE';
+
+ 		ELSE
+               	 DBMS_OUTPUT.PUT_LINE('  [INFO] YA EXISTE ESA FOREIGN-KEY');
+            	END IF;  
+
 	  	-- Añadimos el comentario al campo
-                EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.'||V_COL_ECA||' IS ''Estado carga activo'''; 					
-            ELSE
-                DBMS_OUTPUT.PUT_LINE('  [INFO] El campo '||V_TABLA||'.'||V_COL_ECA||'... YA existe.');
-            END IF;    
+                EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.'||V_COL_ECA||' IS ''Estado carga activo'''; 	
+ 
+				
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('  [INFO] El campo '||V_TABLA||'.'||V_COL_ECA||'... YA existe.');
+    END IF;    
 
     
   ELSE

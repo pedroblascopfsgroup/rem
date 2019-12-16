@@ -10,7 +10,7 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
     		var me = this;
     		me.lookupController().cargarTabData(me);
     	
-    		if (!$AU.userIsRol(CONST.PERFILES['GESOR_ADMINISTRACION']) && !$AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMINISTRACION']) && !$AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
+    		if (!$AU.userIsRol(CONST.PERFILES['GESTOR_ADMINISTRACION']) && !$AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMINISTRACION']) && !$AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
     			me.lookupController().lookupReference('tributosGrid').setEditOnSelect(false);
     			me.lookupController().lookupReference('tributosGrid').setTopBar(false);
     		}

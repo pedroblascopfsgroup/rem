@@ -661,5 +661,26 @@ public class GenericController extends ParadiseJsonController{
 	
 		restApi.sendResponse(response, model,request);
 	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComboSubfase(Long idActivo) {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubfase(idActivo)));	
+	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComboSubfaseFiltered(String codFase) {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubfaseFiltered(codFase)));	
+	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComboSubestadoGestionFiltered(String codLocalizacion) {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubestadoGestionFiltered(codLocalizacion)));	
+	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getSubestadoGestion(Long idActivo) {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getSubestadoGestion(idActivo)));	
+	}
+	
  }
 

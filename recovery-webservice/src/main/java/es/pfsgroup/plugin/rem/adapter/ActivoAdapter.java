@@ -198,6 +198,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
@@ -868,6 +869,7 @@ public class ActivoAdapter {
 								beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo",
 										activoCarga.getEstadoCarga().getCodigo());								
 								if (!Checks.esNulo(activoCarga.getSubestadoCarga())){
+
 								    cargaDto.setSubestadoCodigo(activoCarga.getSubestadoCarga().getCodigo());
 								    cargaDto.setSubestadoDescripcion(activoCarga.getSubestadoCarga().getDescripcion());
 								}else {
@@ -4486,6 +4488,18 @@ public class ActivoAdapter {
 	
 	public boolean isUnidadAlquilable (Long idActivo) {
 		return activoDao.isUnidadAlquilable(idActivo);
+	}
+	
+	public List<DDSiNo> getComboImpideVenta(String codEstadoCarga) {
+		List<DDSiNo> listaCombo = new ArrayList<DDSiNo>();
+		
+		if(Checks.esNulo(codEstadoCarga) || DDEstadoCarga.CODIGO_VIGENTE.equals(codEstadoCarga)) {
+			listaCombo = genericDao.getList(DDSiNo.class);
+		} else {
+			listaCombo = genericDao.getList(DDSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSiNo.NO));
+		}
+		
+		return listaCombo;
 	}	
 	
 	public Boolean deleteAdjuntoTributo(Long idRestTributo) {
@@ -4604,18 +4618,6 @@ public class ActivoAdapter {
 			}
 		}
 		return listaAdjuntos;
-	}
-	
-	public List<DDSiNo> getComboImpideVenta(String codEstadoCarga) {
-		List<DDSiNo> listaCombo = new ArrayList<DDSiNo>();
-		
-		if(Checks.esNulo(codEstadoCarga) || DDEstadoCarga.CODIGO_VIGENTE.equals(codEstadoCarga)) {
-			listaCombo = genericDao.getList(DDSiNo.class);
-		} else {
-			listaCombo = genericDao.getList(DDSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSiNo.NO));
-		}
-		
-		return listaCombo;
 	}
 
 	@Transactional(readOnly = false)

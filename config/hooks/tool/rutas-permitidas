@@ -47,9 +47,14 @@ version-2.14.3-cargaMasiva-rem|version-2.15.2-rem
 func-rem-HREOS-8146|R-Sanguinelli
 func-rem-HREOS-8178|R-Sanguinelli
 rem_mirror|R-Sanguinelli
+func-rem-omega|func-rem-Divarian-F2
 func-rem-Divarian|R-Navelina
+R-Navelina|func-rem-Divarian-F2
+func-rem-Divarian-F2|func-HREOS-8656
+func-HREOS-8656|func-rem-Divarian-F2
 rem_mirror|R-Navelina
 R-Navelina|R-Sanguinelli
 func-rem-apiEspejo|R-Sanguinelli
 version-2.15.6-rem|R-Navelina
 R-Navelina|func-rem-apiEspejo
+func-rem-Divarian-F2|func-rem-apiEspejo

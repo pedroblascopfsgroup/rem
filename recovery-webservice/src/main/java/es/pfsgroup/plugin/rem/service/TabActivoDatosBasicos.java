@@ -831,8 +831,16 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if (!Checks.esNulo(activo.getDireccionTerritorial())){
 			beanUtilNotNull.copyProperty(activoDto, "direccionTerritorialCodigo", activo.getDireccionTerritorial().getCodigo());
 			beanUtilNotNull.copyProperty(activoDto, "direccionTerritorialDescripcion", activo.getDireccionTerritorial().getDescripcion());
-		}				
+		}	
 		
+		if (!Checks.esNulo(activo.getSociedadPagoAnterior())) {
+			BeanUtils.copyProperty(activoDto, "sociedadPagoAnterior", activo.getSociedadPagoAnterior().getDescripcion());
+		}
+
+		Boolean visualizarTabFasesPublicacion = activoApi.getVisibilidadTabFasesPublicacion(activo);
+		
+		activoDto.setVisualizarTabFasesPublicacion(visualizarTabFasesPublicacion);
+
 		if (activo.getCartera() != null
 				&& DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo()))
 			BeanUtils.copyProperty(activoDto, "tramitable", isTramitable(activo));

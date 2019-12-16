@@ -225,7 +225,6 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				if (!Checks.esNulo(activo.getCartera())) {
 					BeanUtils.copyProperty(activoDto, "entidadPropietariaCodigo", activo.getCartera().getCodigo());
 				}
-				
 			}
 		
 			if (!Checks.esNulo(activo.getAdjJudicial())) {

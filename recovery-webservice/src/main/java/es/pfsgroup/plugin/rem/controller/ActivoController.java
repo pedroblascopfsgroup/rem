@@ -108,6 +108,7 @@ import es.pfsgroup.plugin.rem.model.DtoCondicionHistorico;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoDistribucion;
+import es.pfsgroup.plugin.rem.model.DtoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoFoto;
 import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
@@ -497,7 +498,12 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView saveActivoComunidadPropietarios(DtoComunidadpropietariosActivo activoDto, @RequestParam Long id, ModelMap model, HttpServletRequest request) {
 		try {
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_COMUNIDAD_PROPIETARIOS);
-			if (success) adapter.actualizarEstadoPublicacionActivo(id);
+			if (success) {
+				adapter.actualizarEstadoPublicacionActivo(id);	
+				if(!Checks.esNulo(activoDto.getEstadoLocalizacion()) || !Checks.esNulo(activoDto.getSubestadoGestion()))  {
+					 activoApi.crearHistoricoDiarioGestion(activoDto,id);
+				}		
+			}
 
 			Activo activo = activoApi.get(id);
 			// Después de haber guardado los cambios sobre informacion comercial, recalculamos el rating del activo.
@@ -3274,13 +3280,6 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboImpideVenta(String codEstadoCarga, ModelMap model) {
-		model.put(RESPONSE_DATA_KEY, adapter.getComboImpideVenta(codEstadoCarga));
-		return new ModelAndView("jsonView", model);
-	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	public void bajarAdjuntoPlusvalia (HttpServletRequest request, HttpServletResponse response) {
@@ -3333,7 +3332,24 @@ public class ActivoController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoDiarioGestion(Long id, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, activoApi.getHistoricoDiarioGestion(id));
 
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboImpideVenta(String codEstadoCarga, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, adapter.getComboImpideVenta(codEstadoCarga));
+
+		return new ModelAndView("jsonView", model);
+	}
+
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView clonateOferta(String idOferta, ModelMap model) {
 		try {
@@ -3349,6 +3365,41 @@ public class ActivoController extends ParadiseJsonController {
 				model.put(RESPONSE_SUCCESS_KEY, false);
 			}
 		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveFasePublicacionActivo(DtoFasePublicacionActivo dto, ModelMap model) {
+		try {
+			model.put(RESPONSE_SUCCESS_KEY, activoEstadoPublicacionApi.saveFasePublicacionActivo(dto));
+		} catch (JsonViewerException jvex) {
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		} catch (Exception e) {
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error al guardar la fase de publicacion del activo", e);
+		} 
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getFasePublicacionActivo(Long id, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, activoEstadoPublicacionApi.getFasePublicacionActivo(id));
+		model.put(RESPONSE_SUCCESS_KEY, true);
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoFasesDePublicacionActivo(Long id, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, activoEstadoPublicacionApi.getHistoricoFasesDePublicacionActivo(id));
+		model.put(RESPONSE_SUCCESS_KEY, true);
 
 		return createModelAndViewJson(model);
 	}

@@ -45,7 +45,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOferta.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteComercialAlquiler.xml" p:version="-1"/>
     <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteComunicacionGENCAT.xml" p:version="-1"/>
-    <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOfertaApple.xml" p:version="1"/>
+    <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOfertaApple.xml" p:version="-1"/>
 
 	<bean id="jbpmActivoScriptExecutor" class="es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutor" >
   	<property name="contextScripts">
@@ -481,6 +481,14 @@
             	def activoManager = ctx.getBean("activoManager");
             	return activoManager.isActivoIntegradoAgrupacionComercial(idActivo);
             }
+            def esPopietarioRemaining = {
+            	def activoManager = ctx.getBean("activoManager");
+            	return activoManager.esPopietarioRemaining(tareaExterna);
+            }
+            def esPopietarioArrow = {
+            	def activoManager = ctx.getBean("activoManager");
+            	return activoManager.esPopietarioArrow(tareaExterna);
+            }
             def checkReservaFirmada = {
 				def ofertaManager = ctx.getBean("ofertaManager");
 				return ofertaManager.checkReservaFirmada(tareaExterna);
@@ -657,6 +665,10 @@
 				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkContabilizacionReserva(tareaExterna);
 			}
+			def fechaReservaPBCReserva = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.fechaReservaPBCReserva(tareaExterna);
+            }
   			 ]]></value>
   		</list>
   	</property>

@@ -20,6 +20,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -659,7 +660,7 @@ public class TabActivoInformeComercial implements TabActivoService {
 		Auditoria auditoria = new Auditoria();
 		auditoria.setFechaCrear(new Date());
 		auditoria.setBorrado(false);
-		auditoria.setUsuarioCrear(proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado().getUsername());
+		auditoria.setUsuarioCrear(genericAdapter.getUsuarioLogado().getUsername());
 		
 		edi.setAuditoria(auditoria);
 		

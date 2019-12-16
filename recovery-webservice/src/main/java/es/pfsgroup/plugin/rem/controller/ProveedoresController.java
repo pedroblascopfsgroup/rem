@@ -1,12 +1,37 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
+import es.capgemini.pfs.config.ConfigManager;
+import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.domain.Perfil;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -14,33 +39,33 @@ import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.ProveedorExcelReport;
-import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
+import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
+import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
+import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoDireccionDelegacion;
+import es.pfsgroup.plugin.rem.model.DtoMediador;
+import es.pfsgroup.plugin.rem.model.DtoMediadorEvalua;
+import es.pfsgroup.plugin.rem.model.DtoMediadorEvaluaFilter;
+import es.pfsgroup.plugin.rem.model.DtoMediadorOferta;
+import es.pfsgroup.plugin.rem.model.DtoMediadorStats;
+import es.pfsgroup.plugin.rem.model.DtoPersonaContacto;
+import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.proveedores.ProveedoresManager;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
 
 
 @Controller
 public class ProveedoresController extends ParadiseJsonController {
 
 	protected static final Log logger = LogFactory.getLog(ProveedoresController.class);
+
+	private static final String RESPONSE_SUCCESS_KEY = "success";
+
+	private static final String RESPONSE_DATA_KEY = "data";
 
 	@Autowired
 	private ProveedoresApi proveedoresApi;
@@ -53,6 +78,15 @@ public class ProveedoresController extends ParadiseJsonController {
 
 	@Autowired
 	private LogTrustEvento trustMe;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
+
+	@Autowired
+	private GenericABMDao genericDao;
+
+	@Autowired
+	private ConfigManager configManager;
 
 
 	@SuppressWarnings("unchecked")
@@ -99,7 +133,67 @@ public class ProveedoresController extends ParadiseJsonController {
 
 		excelReportGeneratorApi.generateAndSend(report, response);
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	@Transactional()
+	public ModelAndView registrarExportacion(DtoProveedorFilter dtoProveedorFiltro, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		dtoProveedorFiltro.setStart(0);
+		dtoProveedorFiltro.setLimit(1);
+		ModelMap model = new ModelMap();
+		Usuario user = null;
+		Boolean isSuperExport = false;
+		List<DtoProveedorFilter> listaProveedores = null;
+		int count = 0;
+		try {
+			listaProveedores = proveedoresApi.getProveedores(dtoProveedorFiltro);
+			if(!Checks.estaVacio(listaProveedores)) {
+				count = listaProveedores.get(0).getTotalCount();
+			}
+			user = usuarioManager.getUsuarioLogado();
+			AuditoriaExportaciones ae = new AuditoriaExportaciones();
+			ae.setBuscador(buscador);
+			ae.setFechaExportacion(new Date());
+			ae.setNumRegistros(Long.valueOf(count));
+			ae.setUsuario(user);
+			ae.setFiltros(parameterParser(request.getParameterMap()));
+			ae.setAccion(exportar);
+			genericDao.save(AuditoriaExportaciones.class, ae);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+			model.put(RESPONSE_DATA_KEY, count);
+			for(Perfil pef : user.getPerfiles()) {
+				if(pef.getCodigo().equals("SUPEREXPORTADMIN")) {
+					isSuperExport = true;
+					break;
+				}
+			}
+			if(isSuperExport) {
+				model.put("limite", configManager.getConfigByKey("super.limite.exportar.excel.gastos").getValor());
+				model.put("limiteMax", configManager.getConfigByKey("super.limite.maximo.exportar.excel.gastos").getValor());
+			}else {
+				model.put("limite", configManager.getConfigByKey("limite.exportar.excel.gastos").getValor());
+				model.put("limiteMax", configManager.getConfigByKey("limite.maximo.exportar.excel.gastos").getValor());
+			}
+		}catch(Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("error en proveedoresController", e);
+		}
+		return createModelAndViewJson(model);
+	}
+		
+	@SuppressWarnings("rawtypes")
+	private String parameterParser(Map map) {
+		StringBuilder mapAsString = new StringBuilder("{");
+	    for (Object key : map.keySet()) {
+	    	if(!key.toString().equals("buscador") && !key.toString().equals("exportar"))
+	    		mapAsString.append(key.toString() + "=" + ((String[])map.get(key))[0] + ",");
+	    }
+	    mapAsString.delete(mapAsString.length()-1, mapAsString.length());
+	    if(mapAsString.length()>0)
+	    	mapAsString.append("}");
+	    return mapAsString.toString();
+	}
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getProveedores(DtoProveedorFilter dtoProveedorFiltro, ModelMap model) {

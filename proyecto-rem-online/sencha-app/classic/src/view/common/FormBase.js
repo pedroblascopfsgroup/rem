@@ -57,7 +57,7 @@
     			'HreRem.view.common.GridBaseEditableRow', 'HreRem.view.common.TimeFieldBase',
     			'HreRem.view.common.RadioFieldBase', 'HreRem.view.common.CurrencyFieldBase',
     			'HreRem.view.common.NumberFieldBase', 'HreRem.view.common.ImageFieldBase',
-    			'Ext.plugin.LazyItems'],
+    			'Ext.plugin.LazyItems','HreRem.view.common.ComboBoxSearchFieldBase'],
     /**
      * Atributo para pintar botones de guardar y cancelar
      * @type Boolean
@@ -229,7 +229,14 @@
     		me.buttonAlign = 'left';
     		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchProveedoresClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel', disabled: !exportarProveedores}];
     	}
-
+    	
+    	if (me.isSearchGestoresSustitutosForm) {
+    		me.collapsible= true;
+    		me.collapsed= false;    		
+    		me.buttonAlign = 'left';
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchGestoresSustitutosClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}];
+    	}
+    	
     	if (me.isSearchPerfilesForm) {
     		me.collapsible= true;
     		me.collapsed= false;
@@ -237,8 +244,6 @@
     		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchPerfilesClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}];
 
     	}
-
-
 
     	me.callParent();
 

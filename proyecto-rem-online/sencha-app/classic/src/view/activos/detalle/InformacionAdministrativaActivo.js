@@ -25,6 +25,273 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
         var me = this;
         me.setTitle(HreRem.i18n('title.informacion.administrativa'));
         var items= [
+        
+         {
+         		xtype:'fieldsettable',
+         		
+         		width:'100%',
+				title: HreRem.i18n('title.informacion.relacionada.vpo'),		//VPO
+				layout: {
+						 
+						 type: 'table',
+				         columns: 1
+				        },
+				        hidden: true,
+				bind: 
+					{
+			        	hidden: '{!infoAdministrativa.vpo}',
+			        	disabled: '{!infoAdministrativa.vpo}'
+			        },
+				defaultType: 'textfieldbase',
+
+				items :
+					[
+					{
+						xtype:'container',
+						layout: {
+							type : 'hbox'
+					},
+
+						items :
+							[
+					
+					
+						{
+				        	xtype:'fieldset',
+				        	height: 160,
+				        	margin: '0 10 10 0',
+				        	layout: {
+						        type: 'table',
+				        		columns: 3
+				        	},
+							defaultType: 'textfieldbase',
+							title: HreRem.i18n("title.datos.proteccion"), // Datos de la proteccion
+							items :
+								[
+									{ 
+								 		xtype: 'comboboxfieldbase',
+								 		fieldLabel: HreRem.i18n('fieldlabel.regimen.proteccion'),	//R�gimen protecci�n 							 		
+								 		bind: {
+			            						store: '{comboTipoVpo}',
+			            						value: '{infoAdministrativa.tipoVpoCodigo}'
+			            					  }
+									},
+									{ 
+										xtype: 'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.descalificada'),			// Descalificada
+		                				bind: {
+			            						store: '{comboSiNoRem}',
+			            						value: '{infoAdministrativa.descalificado}'
+			            					  }
+					                },
+					                { 
+					                	xtype: 'datefieldbase',
+					                	fieldLabel: HreRem.i18n('fieldlabel.fecha.calificacion'), // Fecha de calificaci�n
+					                	bind: '{infoAdministrativa.fechaCalificacion}'
+					                },
+					                { 
+					                	xtype: 'textfieldbase',
+					                	maskRe: /[A-Za-z0-9]/,
+								 		fieldLabel: HreRem.i18n('fieldlabel.expediente.calificacion'), // N� expediente calificaci�n
+								 		bind: '{infoAdministrativa.numExpediente}'
+									},
+					                { 
+					                	xtype: 'datefieldbase',     
+								 		fieldLabel: HreRem.i18n('fieldlabel.vigencia'), // Vigencia (NUEVO CAMPO)
+								 		bind: '{infoAdministrativa.vigencia}',
+								 		maxValue : null
+									}
+		
+								]
+				        },
+				        
+				        {
+				        	xtype:'fieldset',
+				        	height: 160,
+				        	margin: '0 10 10 0',
+
+							defaultType: 'textfieldbase',
+							title: HreRem.i18n("title.requisitos.fase.adquisicion"), // Requisitos fase de adquisicion
+							items :
+								[								
+									 { 
+							        	xtype: 'comboboxfieldbase',							        	
+							        	fieldLabel:  HreRem.i18n('fieldlabel.precisa.comunicar.adquisicion'), // Precisa comunicar adquisici�n (NUEVO CAMPO)
+							        	bind: {
+			            						store: '{comboSiNoRem}',
+			            						value: '{infoAdministrativa.comunicarAdquisicion}'
+			            					  }
+							        },							        
+							        { 
+							        	xtype: 'comboboxfieldbase',							        	
+							        	fieldLabel:  HreRem.i18n('fieldlabel.necesario.inscribir.registro.especial.vpo'),  // �Necesario inscribir en registro especial VPO? (NUEVO CAMPO)
+							        	bind: {
+			            						store: '{comboSiNoRem}',
+			            						value: '{infoAdministrativa.necesarioInscribirVpo}'
+			            					  }
+							        }		              
+									
+								]
+				        }
+				        
+				     ]
+					},
+					{
+						xtype:'container',
+						layout: {
+				         			columns: 1
+				        		},
+						items : [
+						
+				        
+				        {
+				        	xtype:'fieldsettable',
+				        	height: 300,
+				        	margin: '0 10 10 0',
+							layout: {
+						 			type: 'table',
+				         			columns: 3
+				        			},
+				        	
+							defaultType: 'textfieldbase',
+							title: HreRem.i18n("title.requisitos.fase.venta"), // Requisitos para la fase de venta
+							items :
+								[
+									
+									{
+							        	xtype:'fieldset',
+							        	height: 260,
+							        	colspan: 1,
+							        	margin: '0 0 10 0',
+										layout: {
+						 						type: 'table',
+				         						columns: 3
+				        						},
+										defaultType: 'textfieldbase',
+										title: HreRem.i18n("title.limitaciones.vendedor"), // Limitaciones del vendedor
+										
+										items :
+											[
+												{ 
+											 		xtype: 'comboboxfieldbase',
+											 		fieldLabel: HreRem.i18n('fieldlabel.necesaria.autorizacion.venta'),		// Necesitar�a autorizaci�n						 		
+											 		bind: {
+			            									store: '{comboSiNoRem}',
+			            									value: '{infoAdministrativa.obligatorioAutAdmVenta}'
+			            								  }
+												},
+												{ 
+													xtype: 'currencyfieldbase',
+													fieldLabel: HreRem.i18n('fieldlabel.precio.maximo.venta.vpo'), 			// Precio m�ximo de venta
+					                				bind: '{infoAdministrativa.maxPrecioVenta}'
+								                },
+								                { 
+													xtype: 'comboboxfieldbase',
+													fieldLabel: HreRem.i18n('fieldlabel.devolucion.ayudas'), 			// Devoluci�n de ayudas
+					                				bind: {
+															store: '{comboSiNoRem}',
+															value: '{infoAdministrativa.obligatorioSolDevAyuda}'
+														  }
+								                },
+								                { 
+								                	xtype: 'comboboxfieldbase',
+								                	fieldLabel: HreRem.i18n('fieldlabel.libertad.cesion'), // Libertad de cesi�n (NUEVO CAMPO)
+								                	bind: {
+			            									store: '{comboSiNoRem}',
+			            									value: '{infoAdministrativa.libertadCesion}'
+			            								  }
+								                },
+								                { 
+								                	xtype: 'comboboxfieldbase',
+											 		fieldLabel: HreRem.i18n('fieldlabel.renuncia.tanteo.retracto'), // Renuncia a tanteo y retracto (NUEVO CAMPO)
+											 		bind: {
+			            									store: '{comboSiNoRem}',
+			            									value: '{infoAdministrativa.renunciaTanteoRetrac}'
+			            								  }
+												},
+								                { 
+								                	xtype: 'comboboxfieldbase',
+								                	fieldLabel: HreRem.i18n('fieldlabel.visado.contrato.privado'), // Visado del contrato privado (NUEVO CAMPO)
+								                	bind: {
+			            									store: '{comboSiNoRem}',
+			            									value: '{infoAdministrativa.visaContratoPriv}'
+			            								  }
+								                },
+								                { 
+								                	xtype: 'comboboxfieldbase',
+											 		fieldLabel: HreRem.i18n('fieldlabel.vender.persona.juridica'), // Permite vender a persona jur�dica (NUEVO CAMPO)
+											 		bind: {
+			            									store: '{comboSiNoRem}',
+			            									value: '{infoAdministrativa.venderPersonaJuridica}'
+			            								  }
+												}
+					
+											]
+							        },
+							        
+							        {
+							        	xtype:'fieldset',
+							        	height: 260,
+							        	margin: '0 10 10 10',
+
+										defaultType: 'textfieldbase',
+										title: HreRem.i18n("title.limitaciones.comprador"), // Limitaciones del comprador
+										items :
+											[								
+												 { 
+										        	xtype: 'comboboxfieldbase',							        	
+										        	fieldLabel:  HreRem.i18n('fieldlabel.minusvalia'),	// Minusval�a (NUEVO CAMPO)
+										        	bind: {
+			            									store: '{comboSiNoRem}',
+			            									value: '{infoAdministrativa.minusvalia}'
+			            								  }
+										        },							        
+										        { 
+										        	xtype: 'comboboxfieldbase',							        	
+										        	fieldLabel:  HreRem.i18n('fieldlabel.inscripcion.registro.demandante.vpo'),				// Inscripci�n en registro demandante VPO (NUEVO CAMPO)
+										        	bind: {
+			            									store: '{comboSiNoRem}',
+			            									value: '{infoAdministrativa.inscripcionRegistroDemVpo}'
+			            								  }
+										        },
+										        {
+													xtype: 'comboboxfieldbase',
+													fieldLabel: HreRem.i18n('fieldlabel.ingresos.inferiores.nivel'), // Ingresos inferiores a un nivel (NUEVO CAMPO)
+									            	bind: {
+			            									store: '{comboSiNoRem}',
+			            									value: '{infoAdministrativa.ingresosInfNivel}'
+			            								  }
+												},							        
+										        { 
+										        	xtype: 'comboboxfieldbase',							        	
+										        	fieldLabel:  HreRem.i18n('fieldlabel.residencia.comunidad.autonoma'),				// Residencia en comunidad aut�noma (NUEVO CAMPO)
+										        	bind: {
+			            									store: '{comboSiNoRem}',
+			            									value: '{infoAdministrativa.residenciaComAutonoma}'
+			            								  }
+										        },
+										        {
+													xtype: 'comboboxfieldbase',
+													fieldLabel: HreRem.i18n('fieldlabel.no.titular.otra.vivienda'), // No ser titular de otra vivienda (NUEVO CAMPO)
+													bind: {
+			            									store: '{comboSiNoRem}',
+			            									value: '{infoAdministrativa.noTitularOtraVivienda}'
+			            								  }
+												}				              
+												
+											]
+							        }
+
+
+
+								]
+
+           			}
+           			]
+					}
+           		]
+         },
+        
        	 	{
 				title:HreRem.i18n('title.catastro'),
 			    xtype: 'gridBaseEditableRow',
@@ -314,90 +581,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 			        }
 			    ]
 			},
-
-            {
-				xtype:'fieldsettable',
-				title: HreRem.i18n('title.vpo'),
-				bind: 
-					{
-			        	hidden: '{!infoAdministrativa.vpo}',
-			        	disabled: '{!infoAdministrativa.vpo}'
-			        },
-				defaultType: 'textfieldbase',
-
-				items :
-					[
-					   // fila 1
-					   	{ 
-				        	xtype: 'comboboxfieldbase',
-				        	allowBlank: false,
-				        	fieldLabel: HreRem.i18n('fieldlabel.regimen.proteccion'),
-				        	width: 		400,
-				        	bind: {
-			            		store: '{comboTipoVpo}',
-			            		value: '{infoAdministrativa.tipoVpoCodigo}'
-			            	}
-				        },
-				        { 
-							xtype: 'comboboxfieldbase',
-							width: 		250,
-							fieldLabel: HreRem.i18n('fieldlabel.necesaria.solicitud.devolucion.ayuda'),
-							bind: {
-								store: '{comboSiNoRem}',
-								value: '{infoAdministrativa.obligatorioSolDevAyuda}'
-							}
-						},										        
-		                { 
-		                	xtype: 'textareafieldbase',
-		                	rowspan: 5,
-		                	fieldLabel: HreRem.i18n('fieldlabel.observaciones'),
-		                	width: 		'100%',
-		                	height:		120,
-		                	bind:		'{infoAdministrativa.observaciones}',
-		                	rowspan:	3
-		                },
-				        // fila 2			        
-						{ 
-		                	fieldLabel: HreRem.i18n('fieldlabel.numero.expediente.vpo'),
-		                	width: 		300,
-		                	bind:		'{infoAdministrativa.numExpediente}'
-		                },
-						{ 
-				        	xtype: 'comboboxfieldbase',
-				        	width: 		250,
-				        	fieldLabel: HreRem.i18n('fieldlabel.necesaria.autorizacion.venta'),
-				        	bind: {
-			            		store: '{comboSiNoRem}',
-			            		value: '{infoAdministrativa.obligatorioAutAdmVenta}'
-			            	}
-				        },
-				        // fila 3
-				       { 
-		                	xtype:'datefieldbase',
-					 		fieldLabel: HreRem.i18n('fieldlabel.fecha.calificacion'),
-					 		width: 		275,
-			            	bind:		'{infoAdministrativa.fechaCalificacion}'
-						},	
-						{ 
-				        	xtype:'currencyfieldbase',
-							fieldLabel: HreRem.i18n('fieldlabel.precio.maximo.venta.vpo'),
-							width: 		250,
-		                	bind:		'{infoAdministrativa.maxPrecioVenta}'
-		                },
-		                // fila 4
-				        { 
-				        	xtype: 'comboboxfieldbase',
-				        	width: 		250,
-				        	fieldLabel: HreRem.i18n('fieldlabel.descalificada'),
-				        	bind: {
-			            		store: '{comboSiNoRem}',
-			            		value: '{infoAdministrativa.descalificado}'
-			            	}
-				        }
-
-					 ]
-
-           },
+			
            {
         	   xtype:'fieldset',
 			   title: HreRem.i18n('title.expropiacion.forzosa'),

@@ -1,8 +1,5 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -93,47 +90,33 @@ public class UvemManager implements UvemManagerApi {
 
 	private final Log logger = LogFactory.getLog(getClass());
 
-	private final String INSTANCIA_DECISION_ALTA = "ALTA";
-	private final String INSTANCIA_DECISION_CONSULTA = "CONS";
-	private final String INSTANCIA_DECISION_MODIFICACION = "MODI";
-	private final String COCGUS = "0562";
-	private final String INSTANCIA_DECISION_MODIFICACION_3 = "MOD3";
+	private static final String INSTANCIA_DECISION_ALTA = "ALTA";
+	private static final String INSTANCIA_DECISION_CONSULTA = "CONS";
+	private static final String INSTANCIA_DECISION_MODIFICACION = "MODI";
+	private static final String COCGUS = "0562";
+	private static final String INSTANCIA_DECISION_MODIFICACION_3 = "MOD3";
 
-	private final String ERROR_UVEM_OFERTA_YA_ANULADA = "YA ESTA ANULADA";
+	private static final String ERROR_UVEM_OFERTA_YA_ANULADA = "YA ESTA ANULADA";
 	
 	private String URL = "";
 	private String ALIAS = "";
 
 	//Códigos COTLAV - 8 caracteres
-	private final String COTLAV_CLVAAPCO = "CLVAAPCO";
-	private final String COTLAV_CLCDC4   = "CLCDC4";
-	private final String COTLAV_CLCDB4   = "CLCDB4";
+	private static final String COTLAV_CLVAAPCO = "CLVAAPCO";
+	private static final String COTLAV_CLCDC4   = "CLCDC4";
+	private static final String COTLAV_CLCDB4   = "CLCDB4";
 	
 	//Códigos COMEAV - 8 caracteres
-	private final String COMEAV_0413 = "0413";
-	private final String COMEAV_0414 = "0414";
-	private final String COMEAV_80   = "80";
+	private static final String COMEAV_0413 = "0413";
+	private static final String COMEAV_0414 = "0414";
+	private static final String COMEAV_80   = "80";
 	
 	//Códigos LIAVI1 para construir ejemplos - 80 caracteres
-	private final String LIAVI1_CLVAAPCO_CL00024E = "Cliente en situación de bloqueo.                                                ";
-	@SuppressWarnings("unused")
-	private final String LIAVI1_CLVAAPCO_CL00025E = "Cliente en situación de no cliente.                                             ";
-	@SuppressWarnings("unused")
-	private final String LIAVI1_CLVAAPCO_CL00026E = "Cliente sin documento fiscal válido y/o no escaneado.                           ";
-	private final String LIAVI1_CLVAAPCO_CL00027E = "Cliente carece de documento fiscal válido y producto.                           ";
-	@SuppressWarnings("unused")
-	private final String LIAVI1_CLVAAPCO_CL00035E = "Cliente en situación de absorbido.                                              ";
-	@SuppressWarnings("unused")
-	private final String LIAVI1_CLVAAPCO_CL00050E = "Cliente sin documento identificativo digitalizado.                              ";
-	@SuppressWarnings("unused")
-	private final String LIAVI1_CLVAAPCO_CL00107E = "Cliente bloqueado política de aceptación de clientes.                           ";
-	private final String LIAVI1_CLVAAPCO_CL00108E = "Cliente bloqueado debe justificar actividad.                                    ";
-	@SuppressWarnings("unused")
-	private final String LIAVI1_ERROR			  = "No se ha podido encontrar el código COMEAV.                                     ";
-	@SuppressWarnings("unused")
-	private final String LIAVI1_CLCDC4_0413 	  = "Cliente precaución operativa blanqueo capitales (Seguimiento).                  ";
-	private final String LIAVI1_CLCDC4_0414 	  = "Cliente precaución operativa blanqueo capitales (Cancelar).                     ";
-	private final String LIAVI1_CLCDB4_80		  = "Cliente bloqueado                                                               ";
+	private static final String LIAVI1_CLVAAPCO_CL00024E = "Cliente en situación de bloqueo.                                                ";
+	private static final String LIAVI1_CLVAAPCO_CL00027E = "Cliente carece de documento fiscal válido y producto.                           ";
+	private static final String LIAVI1_CLVAAPCO_CL00108E = "Cliente bloqueado debe justificar actividad.                                    ";
+	private static final String LIAVI1_CLCDC4_0414 	  = "Cliente precaución operativa blanqueo capitales (Cancelar).                     ";
+	private static final String LIAVI1_CLCDB4_80		  = "Cliente bloqueado                                                               ";
 	
 	private GMPETS07_INS servicioGMPETS07_INS;
 
@@ -167,21 +150,12 @@ public class UvemManager implements UvemManagerApi {
 
 	@Autowired
 	private LogTrustWebService trustMe;
+	
+	//private Random rand = null;
 
 	private static final int MASK = (-1) >>> 1; // all ones except the sign bit
 
 	private void iniciarServicio() throws WIException {
-		if (appProperties == null) {
-			// esto solo se ejecuta desde el jar ejecutable de pruebas. No
-			// podemos usar log4j
-			appProperties = new Properties();
-			try {
-				appProperties
-						.load(new FileInputStream(new File(new File(".").getCanonicalPath() + "/devon.properties")));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
 		this.URL = !Checks.esNulo(appProperties.getProperty("rest.client.uvem.url.base"))
 				? appProperties.getProperty("rest.client.uvem.url.base") : "";
 		this.ALIAS = !Checks.esNulo(appProperties.getProperty("rest.client.uvem.alias.integrador"))
@@ -268,7 +242,7 @@ public class UvemManager implements UvemManagerApi {
 				//Ejemplo Grid para Problemas con la venta en Cliente Ursus:
 				//Rellenaremos 'iter' ocurrencias (estructuras) de un máximo de 10 para almacenarlas en el vector VectorGMPAJC93_INS_NumeroDeOcurrenciasnumocu.
 				Short iter = 2;
-				((GMPAJC93_INS) servicio).setNumeroDeOcurrenciasDeAvisonuocav(Short.valueOf(iter));
+				((GMPAJC93_INS) servicio).setNumeroDeOcurrenciasDeAvisonuocav(iter);
 				VectorGMPAJC93_INS_NumeroDeOcurrenciasnumocu vector = new VectorGMPAJC93_INS_NumeroDeOcurrenciasnumocu();
 				StructGMPAJC93_INS_NumeroDeOcurrenciasnumocu estructura = new StructGMPAJC93_INS_NumeroDeOcurrenciasnumocu();
 				//Cada estructura llevará un código cotlav, un código comeav y un liavi1 correspondiente con los dos primeros:
@@ -281,7 +255,6 @@ public class UvemManager implements UvemManagerApi {
 					estructura.setCodigoDeServiciocotlav(cod_cotlav[i]);
 					estructura.setCodigoMensajeDeErrorcomeav(cod_comeav[i]);
 					estructura.setLiteralAvisoEnPantallaliavi1(cod_liavi1[i]);
-//					vector.setStructGMPAJC93_INS_NumeroDeOcurrenciasnumocu(estructura);
 					vector.add(estructura);
 				}
 				
@@ -309,6 +282,29 @@ public class UvemManager implements UvemManagerApi {
 		}
 		return servicio;
 	}
+	
+	/**
+	 * No compila con java6, lo activamos cuando todos los jovs compilen con java7
+	 * @return
+	 */
+	@SuppressWarnings("unused")
+	private int getRandomInt() {
+		/*if(rand == null) {
+			try {
+				rand = SecureRandom.getInstanceStrong();
+			} catch (NoSuchAlgorithmException e) {
+				logger.error(e.getMessage(),e);
+				return 0;
+			}
+			return rand.nextInt();
+		}else {
+			rand.nextInt();
+		}
+		
+		return 0;*/
+		return 0;
+		
+	}
 
 	/**
 	 * Invoca al servicio GMPETS07_INS de BANKIA para solicitar una Tasación
@@ -331,7 +327,7 @@ public class UvemManager implements UvemManagerApi {
 			// instanciamos el servicio
 			servicioGMPETS07_INS = new GMPETS07_INS();
 
-			// Requeridos por el servicio;
+			// Requeridos por el servicio
 			servicioGMPETS07_INS.setnumeroCliente(0);
 			servicioGMPETS07_INS.setnumeroUsuario("");
 
@@ -465,12 +461,11 @@ public class UvemManager implements UvemManagerApi {
 	public List<DatosClienteDto> ejecutarNumCliente(String nDocumento, String tipoDocumento, String qcenre)
 			throws Exception {
 
-		ClienteUrsusRequestDto clienteUrsusRequestDto = new ClienteUrsusRequestDto();
 		List<DatosClienteDto> listaClientes = null;
 		List<DatosClienteDto> listaClientesFinal = new ArrayList<DatosClienteDto>();
 		Boolean paginar = false;
 
-		clienteUrsusRequestDto = this.ejecutarNumCliente(nDocumento, tipoDocumento, qcenre, String.valueOf(0));
+		ClienteUrsusRequestDto clienteUrsusRequestDto = this.ejecutarNumCliente(nDocumento, tipoDocumento, qcenre, String.valueOf(0));
 
 		if (!Checks.esNulo(clienteUrsusRequestDto) && !Checks.esNulo(clienteUrsusRequestDto.getData())) {
 			listaClientes = clienteUrsusRequestDto.getData();
@@ -489,7 +484,7 @@ public class UvemManager implements UvemManagerApi {
 				if (!Checks.esNulo(clienteUrsusRequestDto) && !Checks.esNulo(clienteUrsusRequestDto.getData())) {
 
 					listaClientes = clienteUrsusRequestDto.getData();
-					if (!Checks.esNulo(listaClientes) && listaClientes.size() > 0) {
+					if (!Checks.esNulo(listaClientes) && listaClientes.isEmpty()) {
 						String ultimoNumCliente = listaClientes.get(listaClientes.size() - 1).getNumeroClienteUrsus();
 
 						clienteUrsusRequestDto = this.ejecutarNumCliente(nDocumento, tipoDocumento, qcenre,
@@ -582,8 +577,7 @@ public class UvemManager implements UvemManagerApi {
 
 			servicioGMPAJC11_INS.setAlias(ALIAS);
 			executeService(servicioGMPAJC11_INS);
-			// servicioGMPAJC11_INS.execute();
-
+			
 			if (servicioGMPAJC11_INS.getNumeroDeOcurrenciasnumocu().size() > 0) {
 				for (int i = 0; i < servicioGMPAJC11_INS.getNumeroDeOcurrenciasnumocu().size(); i++) {
 					StructGMPAJC11_INS_NumeroDeOcurrenciasnumocu struct = servicioGMPAJC11_INS
@@ -630,11 +624,9 @@ public class UvemManager implements UvemManagerApi {
 		String qcenre = dtoCliente.getQcenre();
 
 		List<DatosClienteDto> clientes = ejecutarNumCliente(nDocumento, tipoDocumento, qcenre);
-		if (clientes != null && clientes.size() > 0) {
-			if (clientes.get(0).getNumeroClienteUrsus() != null && !clientes.get(0).getNumeroClienteUrsus().isEmpty()) {
-				resultado = ejecutarDatosCliente(Integer.valueOf(clientes.get(0).getNumeroClienteUrsus()), qcenre);
-			}
-
+		if (clientes != null && clientes.isEmpty() && clientes.get(0).getNumeroClienteUrsus() != null
+				&& !clientes.get(0).getNumeroClienteUrsus().isEmpty()) {
+			resultado = ejecutarDatosCliente(Integer.valueOf(clientes.get(0).getNumeroClienteUrsus()), qcenre);
 		}
 
 		return resultado;
@@ -699,7 +691,6 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPAJC93_INS.setCodEntidadRepresntClienteUrsusqcenre(qcenre);
 
 			servicioGMPAJC93_INS.setAlias(ALIAS);
-			// servicioGMPAJC93_INS.execute();
 			executeService(servicioGMPAJC93_INS);
 
 			datos = new DatosClienteDto();
@@ -824,7 +815,6 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPAJC93_INS.setCodEntidadRepresntClienteUrsusqcenre(qcenre);
 
 			servicioGMPAJC93_INS.setAlias(ALIAS);
-			// servicioGMPAJC93_INS.execute();
 			executeService(servicioGMPAJC93_INS);
 			
 			dto = new DatosClienteProblemasVentaDto();
@@ -902,7 +892,7 @@ public class UvemManager implements UvemManagerApi {
 					titulares.add(titularAux);
 					instanciaDecisionDto.setTitulares(titulares);
 				} else {
-					new WIException("Al menos debe existir un titular de la contratación ");
+					throw new WIException("Al menos debe existir un titular de la contratación ");
 				}
 			}
 			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_ALTA);
@@ -1026,7 +1016,7 @@ public class UvemManager implements UvemManagerApi {
 		if (instanciaDecisionDto.getTitulares() != null) {
 			servicioGMPDJB13_INS
 					.setNumeroDeOcurrenciasEntrada1nuoce1((short) instanciaDecisionDto.getTitulares().size());
-			if (instanciaDecisionDto.getTitulares() != null && instanciaDecisionDto.getTitulares() != null) {
+			if (instanciaDecisionDto.getTitulares() != null) {
 				for (TitularDto titular : instanciaDecisionDto.getTitulares()) {
 					StructGMPDJB13_INS_NumeroDeOcurrenciasnumocx structTitular = new StructGMPDJB13_INS_NumeroDeOcurrenciasnumocx();
 					// n ursus
@@ -1183,15 +1173,7 @@ public class UvemManager implements UvemManagerApi {
 				servicioGMPDJB13_INS
 						.setIndicadorDeFinanciacionClientebificl(instanciaDecisionDto.FINANCIACION_CLIENTE_NO);
 			}
-			/*
-			 * Según llamada telefonica con Antonio Rios Muñoz(Atos Origin) if
-			 * (accion.equals(INSTANCIA_DECISION_MODIFICACION)) {
-			 * servicioGMPDJB13_INS.setTipoPropuestacotprw(
-			 * InstanciaDecisionDataDto.PROPUESTA_CONTRAOFERTA); } else {
-			 * servicioGMPDJB13_INS.setTipoPropuestacotprw(
-			 * InstanciaDecisionDataDto.PROPUESTA_VENTA); }
-			 */
-
+			
 			servicioGMPDJB13_INS.setTipoPropuestacotprw(InstanciaDecisionDataDto.PROPUESTA_VENTA);
 
 			if (accion.equals(INSTANCIA_DECISION_MODIFICACION_3)) {
@@ -1232,8 +1214,6 @@ public class UvemManager implements UvemManagerApi {
 			// Importe de la reserva
 			ImporteMonetario importeMonetarioReserva = new ImporteMonetario();
 			if (instanciaDecisionDto.getImporteReserva() != null) {
-				//importeMonetarioReserva.setImporteConSigno(Double.valueOf(instanciaDecisionDto.getImporteReserva() * 100).longValue());
-
 				BigDecimal importe = BigDecimal.valueOf(instanciaDecisionDto.getImporteReserva());
 				importeMonetarioReserva.setImporteConSigno(importe.multiply(new BigDecimal(100)).longValue());
 				
@@ -1248,7 +1228,7 @@ public class UvemManager implements UvemManagerApi {
 
 			servicioGMPDJB13_INS.setImporteMonetarioDeLaReservaBISA(importeMonetarioReserva);
 			if (instanciaDecisionDto.getImporteReserva() == null
-					|| instanciaDecisionDto.getImporteReserva().compareTo(new Double(0)) == 0
+					|| instanciaDecisionDto.getImporteReserva().compareTo(Double.valueOf(0)) == 0
 					|| Checks.esNulo(instanciaListData.get(0).getPorcentajeImpuesto())
 					|| instanciaListData.get(0).getPorcentajeImpuesto() == 0) {
 				servicioGMPDJB13_INS.setIndicadorCobroImpuestosReservabicirv(' ');
@@ -1345,7 +1325,6 @@ public class UvemManager implements UvemManagerApi {
 
 			servicioGMPDJB13_INS.setAlias(ALIAS);
 
-			// servicioGMPDJB13_INS.execute();
 			executeService(servicioGMPDJB13_INS);
 
 			result.setLongitudMensajeSalida(servicioGMPDJB13_INS.getLongitudMensajeDeSalidarcslon());
@@ -1575,7 +1554,6 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPTOE83_INS.setCodigoDeEntidadlcoett((short) 0);
 
 			servicioGMPTOE83_INS.setAlias(ALIAS);
-			// servicioGMPTOE83_INS.execute();
 			executeService(servicioGMPTOE83_INS);
 			
 			WSDevolBankiaDto dto = new WSDevolBankiaDto();
@@ -1751,7 +1729,6 @@ public class UvemManager implements UvemManagerApi {
 			servicioGMPAJC29_INS.setnumeroCliente(0);
 
 			servicioGMPAJC29_INS.setAlias(ALIAS);
-			// servicioGMPAJC29_INS.execute();
 			
 			executeService(servicioGMPAJC29_INS);
 
@@ -1872,10 +1849,8 @@ public class UvemManager implements UvemManagerApi {
 		Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
 		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 		Double porcentajeImpuesto = null;
-		if (!Checks.esNulo(expediente.getCondicionante())) {
-			if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
-				porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable();
-			}
+		if (!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
+			porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable();
 		}
 
 		try {
@@ -1904,10 +1879,8 @@ public class UvemManager implements UvemManagerApi {
 	public boolean esTramiteOffline(String codigoTarea, ExpedienteComercial expediente) {
 		boolean esOffline = false;
 		boolean tieneFechaFirmaReserva = false;
-		if (!Checks.esNulo(expediente.getReserva())) {
-			if (!Checks.esNulo(expediente.getReserva().getFechaFirma())) {
-				tieneFechaFirmaReserva = true;
-			}
+		if (!Checks.esNulo(expediente.getReserva()) && !Checks.esNulo(expediente.getReserva().getFechaFirma())) {
+			tieneFechaFirmaReserva = true;
 		}
 		boolean tieneFechaIngresoChequeVenta = false;
 		if (!Checks.esNulo(expediente.getFechaContabilizacionPropietario())) {

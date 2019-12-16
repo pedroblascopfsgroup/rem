@@ -125,6 +125,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCategoriaContable;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
+import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -1399,8 +1400,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	public void borradoOfertaAgrupadaDependiente(Oferta oferta) {
-		Long idOfertaLBK = ofertasAgrupadasLbkDao.getIdOfertaAgrupadaLBK(oferta.getId());
-		genericDao.deleteById(OfertasAgrupadasLbk.class, idOfertaLBK);
+		try {
+			Long idOfertaLBK = ofertasAgrupadasLbkDao.getIdOfertaAgrupadaLBK(oferta.getId());
+			genericDao.deleteById(OfertasAgrupadasLbk.class, idOfertaLBK);
+		}catch(Exception e) {
+			logger.error(e.getMessage());
+		}
 	}
 	
 	@Override
@@ -1566,6 +1571,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 	}
 
+	@Transactional(readOnly = false)
 	@Override
 	public Boolean congelarOferta(Oferta oferta) {
 		try {
@@ -1593,6 +1599,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		return true;
 	}
+	
+	@Transactional(readOnly = false)
 	@Override
 	public Boolean finalizarOferta(Oferta oferta) {
 		try {
@@ -4536,7 +4544,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (activo.getCartera() != cartera
 				|| activo.getSubcartera() != subcartera
 				|| activo.getPropietarioPrincipal() != propietario
-				|| activoApi.getGeolocalizacion(activo) != geolocalizacion) {
+				|| !activoApi.getGeolocalizacion(activo).equals(geolocalizacion)) {
 			errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
 		}
 	}
@@ -4661,7 +4669,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ActivoProveedor activoProveedor = oferta.getPrescriptor();
 			ProveedorGestorCajamar proveedorGestorCajamar = null;
 			boolean isPreescriptorTipoOficina;
-			boolean isTipoComercializarRetail;
+			boolean isMinoristaOResidencial = false;
 			boolean isComprobarMultipleActivos = false;
 
 			if(!DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
@@ -4672,14 +4680,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			List<GestorEntidad> listaGestoresActivosOferta = new ArrayList<GestorEntidad>();
 
 			if(!Checks.esNulo(listaActivos)
-					&& !Checks.esNulo(listaActivos.get(0).getPrimaryKey().getActivo())
-					&& !Checks.esNulo(listaActivos.get(0).getPrimaryKey().getActivo().getTipoComercializar())) {
-				if(!Checks.esNulo(listaActivos.get(0).getPrimaryKey().getActivo().getTipoComercializar().getCodigo())
-						&& !Checks.esNulo(activoProveedor.getTipoProveedor().getCodigo())) {
-					isTipoComercializarRetail = DDTipoComercializar.CODIGO_RETAIL.equals(listaActivos.get(0).getPrimaryKey().getActivo().getTipoComercializar().getCodigo());
+					&& !Checks.esNulo(listaActivos.get(0).getPrimaryKey().getActivo())) {
+				if(!Checks.esNulo(activoProveedor.getTipoProveedor().getCodigo())) {
+					
+					if (!Checks.esNulo(listaActivos.get(0).getPrimaryKey().getActivo().getEquipoGestion())) {
+						if(DDEquipoGestion.CODIGO_MINORISTA.equals(listaActivos.get(0).getPrimaryKey().getActivo().getEquipoGestion().getCodigo())) {
+							isMinoristaOResidencial = true;
+						}
+					} else if (!Checks.esNulo(listaActivos.get(0).getPrimaryKey().getActivo().getTipoComercializar()) 
+							&& DDTipoComercializar.DESCRIPCION_RETAIL.equals(listaActivos.get(0).getPrimaryKey().getActivo().getTipoComercializar().getCodigo())) {
+						isMinoristaOResidencial = true;
+					}
+					
 					isPreescriptorTipoOficina = DDTipoProveedor.COD_OFICINA_CAJAMAR.equals(activoProveedor.getTipoProveedor().getCodigo());
 
-					if(isTipoComercializarRetail) {
+					if(isMinoristaOResidencial) {
 						if(isPreescriptorTipoOficina) {
 							Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activoProveedor.id", activoProveedor.getId());
 							proveedorGestorCajamar = genericDao.get(ProveedorGestorCajamar.class, filtro);

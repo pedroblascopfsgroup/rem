@@ -20,14 +20,13 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoConfigDocumento;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 
 @Component
 public class MSVActualizadorActualizacionLPOCargaMasiva extends AbstractMSVActualizador implements MSVLiberator {
-	private static final int FILA_CABECERA = 0;
 	private static final int DATOS_PRIMERA_FILA = 1;
 	private static final int ACT_NUM_ACTIVO = 0;
 	private static final int ACT_ES_LPO = 1;
@@ -65,9 +64,9 @@ public class MSVActualizadorActualizacionLPOCargaMasiva extends AbstractMSVActua
 			ActivoConfigDocumento activoConfigDocumento = genericDao.get(ActivoConfigDocumento.class, filterTipoActivo, filterLPOCFD);
 			activoAdmisionDocumento.setConfigDocumento(activoConfigDocumento);
 			String lpo = exc.dameCelda(fila, ACT_ES_LPO).toUpperCase().toString();
-			if (lpo.equals(SI) || lpo.equals('S')){
+			if (lpo.equals(SI) || lpo.equals("S")){
 				activoAdmisionDocumento.setAplica(true);
-			}else if (lpo.equals(NO) || lpo.equals('N')){
+			}else if (lpo.equals(NO) || lpo.equals("N")){
 				activoAdmisionDocumento.setAplica(false);
 			}
 			

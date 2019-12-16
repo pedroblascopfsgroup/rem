@@ -59,6 +59,7 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesModel', {
 					remoteUrl: 'generic/getComboSubcartera'
 				}
 		}
+		
         
     }
     

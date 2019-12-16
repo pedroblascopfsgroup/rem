@@ -28,6 +28,7 @@ import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
+import es.capgemini.pfs.users.dao.UsuarioDao;
 import es.capgemini.pfs.users.domain.Funcion;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -58,6 +59,7 @@ import es.pfsgroup.plugin.rem.model.CarteraCondicionesPrecios;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoLocalidadSimple;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
+import es.pfsgroup.plugin.rem.model.DtoUsuarios;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
@@ -65,6 +67,7 @@ import es.pfsgroup.plugin.rem.model.GrupoUsuario;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
+import es.pfsgroup.plugin.rem.model.VGestoresActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
@@ -135,6 +138,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	
 	@Autowired
 	private UsuarioApi usuarioApi;
+
+	@Autowired
+	private UsuarioDao usuarioDao;
 
 	@Override
 	public String managerName() {
@@ -400,7 +406,6 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 			for (ActivoProveedor seguro : listaSeguros) {
 				DtoDiccionario seguroDD = new DtoDiccionario();
-				;
 				try {
 					beanUtilNotNull.copyProperty(seguroDD, "id", seguro.getId());
 					beanUtilNotNull.copyProperty(seguroDD, "descripcion", seguro.getNombre());
@@ -812,7 +817,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			return  genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter);
 		}
 
-		return null;
+		return new ArrayList<DDMotivoRechazoOferta>();
 	}
 
 	@Override
@@ -888,14 +893,16 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			filtroCartera = genericDao.createFilter(FilterType.EQUALS,"cartera.codigo", carteraCodigo);
 			listaComites = genericDao.getList(DDComiteSancion.class,filtro,filtroCartera);
 
-		}
-		if(Checks.esNulo(subcarteraCodigo) || listaComites.isEmpty()){
+		}else{
 			filtro = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", carteraCodigo);
 			listaComites = genericDao.getListOrdered(DDComiteSancion.class,order,filtro);
-			List<DDComiteSancion> copiaListaComites =  genericDao.getListOrdered(DDComiteSancion.class,order,filtro);
-			for (DDComiteSancion comite : copiaListaComites) {
-				if(comite.getSubcartera()!=null){
-					listaComites.remove(comite);
+			
+			if(listaComites != null && !listaComites.isEmpty()) {
+				List<DDComiteSancion> copiaListaComites =  new  ArrayList<DDComiteSancion>(listaComites);
+				for (DDComiteSancion comite : copiaListaComites) {
+					if(comite.getSubcartera()!=null){
+						listaComites.remove(comite);
+					}
 				}
 			}
 
@@ -954,8 +961,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	public List<DDTipoComercializacion> getComboTipoDestinoComercialCreaFiltered() {
 
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
-		List<DDTipoComercializacion> listaDD = (List<DDTipoComercializacion>) genericDao
-				.getListOrdered(DDTipoComercializacion.class, order);
+		List<DDTipoComercializacion> listaDD = genericDao.getListOrdered(DDTipoComercializacion.class, order);
 		List<DDTipoComercializacion> listaTiposFiltered = new ArrayList<DDTipoComercializacion>();
 
 		for (DDTipoComercializacion tipo : listaDD) {
@@ -969,8 +975,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	@Override
 	public List<DDTiposPorCuenta> getDiccionarioPorCuenta(String tipoCodigo) {
-		List<DDTiposPorCuenta> listaTiposPorCuenta = (List<DDTiposPorCuenta>) genericDao
-				.getList(DDTiposPorCuenta.class);
+		List<DDTiposPorCuenta> listaTiposPorCuenta = genericDao.getList(DDTiposPorCuenta.class);
 		List<DDTiposPorCuenta> listaTiposPorCuentaFiltered = new ArrayList<DDTiposPorCuenta>();
 
 		if (!Checks.esNulo(tipoCodigo)) {
@@ -1099,8 +1104,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@Override
 	public List<DDTipoAgrupacion> getComboTipoAgrupacion() {
 			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		return genericDao.getList(DDTipoAgrupacion.class, filtroBorrado,
-				filtroBorrado);
+		return genericDao.getList(DDTipoAgrupacion.class, filtroBorrado);
 	}
 
 	@Override
@@ -1108,6 +1112,32 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		return genericDao.getList(DDTipoAgrupacion.class, filtroBorrado,
 				filtroBorrado);
+	}
+	
+	@Override
+	public List<DtoUsuarios> getTodosComboUsuarios() {
+		List<DtoUsuarios> result = new ArrayList<DtoUsuarios>();
+		List<Usuario> lista = genericDao.getList(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+		for (Usuario u : lista) {
+			DtoUsuarios aux = new DtoUsuarios();
+			aux.setCodigo(u.getUsername());
+			StringBuilder sb = new StringBuilder(u.getUsername());
+			if(!Checks.esNulo(u.getNombre())) {
+				sb.append(" - ");
+				sb.append(u.getNombre());
+				if(!Checks.esNulo(u.getApellido1())) {
+					sb.append(" ");
+					sb.append(u.getApellido1());
+					if(!Checks.esNulo(u.getApellido2())) {
+						sb.append(" ");
+						sb.append(u.getApellido2());				
+					}
+				}
+			}
+			aux.setDescripcion(sb.toString().trim());
+			result.add(aux);
+		}
+		return result; 
 	}
 	
 	@Override

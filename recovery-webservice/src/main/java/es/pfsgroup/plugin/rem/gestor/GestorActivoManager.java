@@ -54,6 +54,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 	//En el caso de Apple existen varias tareas en que no se asignan a gestores si no a usuario de grupo
 	public static final String USERNAME_GRUPO_CES ="grucoces";
 	public static final String USERNAME_PROMONTORIA_MANZANA ="gruproman";
+	public static final String USERNAME_COMITE_ARROW = "grucoarrow";
  	
  	@Autowired
  	private GenericABMDao genericDao;
@@ -527,6 +528,13 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, USERNAME, CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 		return genericDao.get(Usuario.class, filtro);
 	}
+ 	
+ 	@Override
+ 	@Transactional(readOnly = false)
+	public Usuario supervisorTareaDivarian(String codigoTarea) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, USERNAME, CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+		return genericDao.get(Usuario.class, filtro);
+	}
  	 	 	
  	@Override
 	public DDIdentificacionGestoria isGestoria(Usuario usuario) {
@@ -540,5 +548,32 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 			}
 		}
 		return null;
-	} 
+	}  
+ 	/* Se comenta por que no lo llama nadie ni llama a nada, pero se anyadio recientemente, por si hay necesidad de recuperarlo pronto
+ 	@Override
+ 	public List<ConfiguracionAccesoGestoria> getUsuariosGestorias(List<GrupoUsuario> grupos){
+		ArrayList<String> idGrupos = new ArrayList<String>();
+		List<ConfiguracionAccesoGestoria> config = new ArrayList<ConfiguracionAccesoGestoria>();
+		for (int i = 0 ; i < grupos.size(); i++) {
+			idGrupos.add(grupos.get(i).getUsuario().getId().toString());
+		}
+		if ( !idGrupos.isEmpty() )
+			config = gestorActivoDao.getConfiguracionGestorias(idGrupos);
+		return config;
+ 	}*/
+
+ 	@Override
+ 	@Transactional(readOnly = false)
+ 	public Usuario usuarioTareaDivarian(String codigoTarea) {
+		Usuario userTarea = null;
+		Filter filtro = null;
+		if (ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_DIVARIAN.equals(codigoTarea) || ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_ARROW.equals(codigoTarea)) {
+			filtro = genericDao.createFilter(FilterType.EQUALS, USERNAME, USERNAME_COMITE_ARROW);
+		}
+		if(!Checks.esNulo(filtro)) {
+			userTarea = genericDao.get(Usuario.class, filtro);
+		}
+		
+		return userTarea;
+	}
  }

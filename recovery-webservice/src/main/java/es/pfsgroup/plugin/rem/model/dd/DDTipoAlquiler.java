@@ -35,6 +35,7 @@ public class DDTipoAlquiler implements Auditable, Dictionary {
     public static final String CODIGO_FONDO_SOCIAL = "03";
     public static final String CODIGO_ESPECIAL = "04";
     public static final String CODIGO_NO_DEFINIDO = "05";
+    public static final String CODIGO_PAZ_SOCIAL="06";
 
 	/**
 	 * 

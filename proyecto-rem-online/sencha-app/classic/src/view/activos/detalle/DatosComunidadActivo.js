@@ -17,7 +17,7 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 	  recordName: "datosComunidad",
       recordClass: "HreRem.model.ActivoComunidadPropietarios",
       
-      requires : ['HreRem.model.ActivoComunidadPropietarios'],
+      requires : ['HreRem.model.ActivoComunidadPropietarios', 'HreRem.model.HistoricoGestionGrid'],
 
       initComponent : function() {
 
@@ -195,24 +195,65 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 									      value : '{datosComunidad.burofax}',
 									      readOnly: '{datosComunidad.unidadAlquilable}'
 									    }
-									}, {xtype : 'comboboxfieldbase',
-										fieldLabel : HreRem.i18n('fieldlabel.situacion'),
+									}, 
+									{	xtype : 'comboboxfieldbase',
+										fieldLabel : HreRem.i18n('fieldlabel.estado.localizacion'),
+										reference: 'estadoLocalizacion',
+		        						listeners:{
+		        							select: 'onChangeChainedCombo',
+		        							afterrender: 'usuarioLogadoEditar'
+		        						},
 									    bind : {
-										      store : '{comboSituacionActivo}',
-										      value : '{datosComunidad.situacionCodigo}',
-										      readOnly: '{datosComunidad.unidadAlquilable}'
+										    store : '{comboEstadoLocalizacion}',
+										    value : '{datosComunidad.estadoLocalizacion}'
+										},
+										chainedStore: 'comboSubestadoGestionFiltered',
+										chainedReference: 'subestadoGestion'
+										   
+									},
+									{	xtype : 'comboboxfieldbase',
+										fieldLabel : HreRem.i18n('fieldlabel.subestado.gestion'),
+										reference: 'subestadoGestion',
+										listeners:{
+		        								afterrender: 'usuarioLogadoEditar'
+		        						},
+									    bind : {
+										      store : '{comboSubestadoGestion}',
+										      value : '{datosComunidad.subestadoGestion}',
+		        							  disabled: '{!datosComunidad.estadoLocalizacion}',
+										      allowBlank: '{!datosComunidad.estadoLocalizacion}'
 										    }	
-									},							
-										{
+									},
+									{
 										xtype : 'datefieldbase',
 									    fieldLabel : HreRem.i18n('fieldlabel.fechaEnvioCarta'),
 										bind : {
 											value: '{datosComunidad.fechaEnvioCarta}',
 											readOnly: '{datosComunidad.unidadAlquilable}'
 										}
-									  }
+									},
+									{
+										xtype : 'comboboxfieldbase',
+									    fieldLabel : HreRem.i18n('fieldlabel.asistencia.junta.obligatoria'),
+									    bind : {
+									      store : '{comboSiNoRemActivo}',
+									      value : '{datosComunidad.asistenciaJuntaObligatoria}',
+									      editable: '{esEditableAsistenciaJuntaObligatoria}'
+									    }
+									}
 						]
-				}
+				},
+				{
+					xtype:'fieldsettable',
+							title: HreRem.i18n('title.diario.de.gestion'),
+							collapsible: false,
+							items :	[
+								{
+									xtype: 'historicoDiarioGestionGrid'
+									
+								}
+							]
+					}
 			]
 			
 			me.addPlugin({ptype: 'lazyitems', items: items });
@@ -231,5 +272,20 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 	  			grid.getStore().load();
 	  		});
 		}
+		var comboEstadoLocalizacion = me.lookupController().getView().lookupReference('estadoLocalizacion');
+		var storeEstadoLocalizacion = me.lookupController().getViewModel().get("comboEstadoLocalizacion");
+		comboEstadoLocalizacion.bindStore(storeEstadoLocalizacion);
+		storeEstadoLocalizacion.load({
+			scope: this,
+			callback: function(records, operation, success) {
+				var estadoLocalizacion = me.lookupController().getViewModel().get('datosComunidad.estadoLocalizacion');
+				comboEstadoLocalizacion.setValue(estadoLocalizacion);
+			}
+		});
+		var comboSubestadoGestion = me.lookupController().getView().lookupReference('subestadoGestion');
+		var storeSubestadoGestion = me.lookupController().getViewModel().get("comboSubestadoGestion");
+		comboSubestadoGestion.bindStore(storeSubestadoGestion);
+		storeSubestadoGestion.load();
+		comboSubestadoGestion.setDisabled(!(me.lookupController().getViewModel().get('estadoLocalizacion').selection.data.codigo != null && me.lookupController().getViewModel().get('estadoLocalizacion').selection.data.codigo != ''));
    }
   });

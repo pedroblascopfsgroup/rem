@@ -20,9 +20,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 
 
@@ -308,6 +306,24 @@ public class VBusquedaActivos implements Serializable {
 	
 	@Column(name = "ESTADO_PUBLICACION_ALQUILER")
 	private String estadoPublicacionAlquiler;
+	
+	@Column(name = "FASE_PUBLICACION_CODIGO")
+	private String fasePublicacionCodigo;
+	
+	@Column(name = "FASE_PUBLICACION_DESCRIPCION")
+	private String fasePublicacionDescripcion;
+	
+	@Column(name = "SUBFASE_PUBLICACION_CODIGO")
+	private String subFasePublicacionCodigo;
+	
+	@Column(name = "SUBFASE_PUBLICACION_DESCRIPCION")
+	private String subFasePublicacionDescripcion;
+	
+	@Column(name= "MOTIVO_OCULTACION_ALQUILER")
+    private String motivoOcultacionAlquiler;
+    
+    @Column(name= "MOTIVO_OCULTACION_VENTA")
+    private String motivoOcultacionVenta;
 	
 	
 	public Long getId() {
@@ -680,6 +696,14 @@ public class VBusquedaActivos implements Serializable {
 		this.direccionTerritorialCodigo = direccionTerritorialCodigo;
 	}
 
+	public Long getApiPrimariaId() {
+		return apiPrimarioId;
+	}
+
+	public void setApiPrimariaId(Long apiPrimarioId) {
+		this.apiPrimarioId = apiPrimarioId;
+	}
+
 	public String getTipoAlquilerDescripcion() {
 		return tipoAlquilerDescripcion;
 	}
@@ -742,5 +766,53 @@ public class VBusquedaActivos implements Serializable {
 
 	public void setApiPrimarioId(Long apiPrimarioId) {
 		this.apiPrimarioId = apiPrimarioId;
+	}
+
+	public String getFasePublicacionCodigo() {
+		return fasePublicacionCodigo;
+	}
+
+	public void setFasePublicacionCodigo(String fasePublicacionCodigo) {
+		this.fasePublicacionCodigo = fasePublicacionCodigo;
+	}
+
+	public String getFasePublicacionDescripcion() {
+		return fasePublicacionDescripcion;
+	}
+
+	public void setFasePublicacionDescripcion(String fasePublicacionDescripcion) {
+		this.fasePublicacionDescripcion = fasePublicacionDescripcion;
+	}
+
+	public String getSubFasePublicacionCodigo() {
+		return subFasePublicacionCodigo;
+	}
+
+	public void setSubFasePublicacionCodigo(String subFasePublicacionCodigo) {
+		this.subFasePublicacionCodigo = subFasePublicacionCodigo;
+	}
+
+	public String getSubFasePublicacionDescripcion() {
+		return subFasePublicacionDescripcion;
+	}
+
+	public void setSubFasePublicacionDescripcion(String subFasePublicacionDescripcion) {
+		this.subFasePublicacionDescripcion = subFasePublicacionDescripcion;
+	}
+
+	public String getMotivoOcultacionAlquiler() {
+		return motivoOcultacionAlquiler;
+	}
+
+	public void setMotivoOcultacionAlquiler(String motivoOcultacionAlquiler) {
+		this.motivoOcultacionAlquiler = motivoOcultacionAlquiler;
+	}
+
+	public String getMotivoOcultacionVenta() {
+		return motivoOcultacionVenta;
+	}
+
+	public void setMotivoOcultacionVenta(String motivoOcultacionVenta) {
+		this.motivoOcultacionVenta = motivoOcultacionVenta;
 	}
 }

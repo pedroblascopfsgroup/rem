@@ -20,6 +20,8 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.activo.exception.PlusvaliaActivoException;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -27,17 +29,20 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
+import es.pfsgroup.plugin.rem.plusvalia.NotificationPlusvaliaManager;
 
 @Component
 public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements UpdaterService {
@@ -50,12 +55,18 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 
     @Autowired
     private ActivoApi activoApi;
+    
+    @Autowired
+    private ActivoDao activoDao;
 
     @Autowired
     private ActivoAdapter activoAdapter;
 
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
+    
+    @Autowired
+    private NotificationPlusvaliaManager notificationPlusvaliaManager;
 
     @Resource
     private MessageService messageServices;
@@ -75,6 +86,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		
 		    ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
+		    Boolean correoEnviado = false;
 			Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 			if(!Checks.esNulo(ofertaAceptada)) {
 				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -113,7 +125,15 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 
 								//activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 								idActivoActualizarPublicacion.add(activo.getId());
-	
+								
+								if ( DDEstadosExpedienteComercial.VENDIDO.equals(filtro.getPropertyValue())) { 
+									try {
+										activoApi.changeAndSavePlusvaliaEstadoGestionActivoById(activo, DDEstadoGestionPlusv.COD_EN_CURSO);
+									} catch (PlusvaliaActivoException e) {
+										logger.error(e);
+									}
+									notificationPlusvaliaManager.sendNotificationPlusvaliaLiquidacion(activo, expediente);
+								}
 								activoApi.saveOrUpdate(activo);
 							}
 
@@ -151,7 +171,18 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 								Filter filtroSituacionComercial = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_VENDIDO);
 								activo.setSituacionComercial(genericDao.get(DDSituacionComercial.class, filtroSituacionComercial));
 							}
-
+							
+							ActivoPlusvalia activoPlusvalia = activoDao.getPlusvaliaByIdActivo(activo.getId());
+							if(!Checks.esNulo(activoPlusvalia)) {
+							Filter filtroEstadoGestionPlusc = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoGestionPlusv.COD_EN_CURSO);
+							activoPlusvalia.setEstadoGestion(genericDao.get(DDEstadoGestionPlusv.class, filtroEstadoGestionPlusc));								
+							genericDao.save(ActivoPlusvalia.class, activoPlusvalia);
+							
+							if(!COMBO_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+								notificationPlusvaliaManager.sendNotificationPlusvaliaLiquidacion(activo, expediente);
+							}		
+							}
+							
 							activo.setBloqueoPrecioFechaIni(new Date());
 							
 														

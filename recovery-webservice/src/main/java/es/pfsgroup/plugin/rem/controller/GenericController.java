@@ -34,13 +34,22 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UploadApi;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustAcceso;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -69,6 +78,21 @@ public class GenericController extends ParadiseJsonController{
 	
 	@Resource
 	Properties appProperties;
+	
+	@Autowired
+	private ActivoAdapter adapterActivo;
+
+	@Autowired
+	private TrabajoApi trabajoApi;
+
+	@Autowired
+	private ExpedienteComercialAdapter expedienteComercialAdapter;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private GastoProveedorApi gastoProveedorApi;
 	
 	@Autowired
 	private UploadApi uploadApi;
@@ -448,6 +472,30 @@ public class GenericController extends ParadiseJsonController{
 		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioTiposDocumentoTributo()));
 	}
 
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDiccionarioLanzarTareaAdministrativa(String diccionario, Long idExpediente) {
+		ExpedienteComercial expediente = null;
+		List<Dictionary> lista = adapter.getDiccionario(diccionario);
+		
+		if(!Checks.esNulo(idExpediente)) {
+			expediente = expedienteComercialApi.findOne(idExpediente);
+		
+			if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getOferta()) && 
+					DDCartera.CODIGO_CARTERA_THIRD_PARTY.equalsIgnoreCase(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo()) && 
+					DDSubcartera.CODIGO_OMEGA.equalsIgnoreCase(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo()) && 
+					"tareaDestinoSalto".equals(diccionario)) {
+				for(int i=0; i<lista.size(); i++) {
+					DDTareaDestinoSalto tareaSalto = (DDTareaDestinoSalto) lista.get(i);
+					if(DDTareaDestinoSalto.CODIGO_RESULTADO_PBC.equalsIgnoreCase(tareaSalto.getCodigo())) {
+						tareaSalto.setDescripcion("PBC Venta");
+						tareaSalto.setDescripcionLarga("PBC Venta");
+					}
+				}
+			}
+		}
+		
+		return createModelAndViewJson(new ModelMap("data", lista));
+	}
 
 	/**
 	 * Inserta un documento a la entidad correspondiente Ejem:
@@ -613,5 +661,26 @@ public class GenericController extends ParadiseJsonController{
 	
 		restApi.sendResponse(response, model,request);
 	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComboSubfase(Long idActivo) {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubfase(idActivo)));	
+	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComboSubfaseFiltered(String codFase) {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubfaseFiltered(codFase)));	
+	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComboSubestadoGestionFiltered(String codLocalizacion) {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubestadoGestionFiltered(codLocalizacion)));	
+	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getSubestadoGestion(Long idActivo) {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getSubestadoGestion(idActivo)));	
+	}
+	
  }
 

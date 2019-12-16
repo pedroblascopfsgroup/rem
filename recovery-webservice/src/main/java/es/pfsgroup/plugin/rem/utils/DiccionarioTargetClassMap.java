@@ -227,16 +227,21 @@ public class DiccionarioTargetClassMap{
 		mapa.put("estadosCivilesURSUS", DDEstadosCivilesURSUS.class);
 		mapa.put("EstadoPresentacion", DDEstadoPresentacion.class);
 		mapa.put("fasePublicacion", DDFasePublicacion.class);
-		mapa.put("direccionTerritorial", DDDireccionTerritorial.class);
 		mapa.put("tipoDocumentoAgrupacion", DDTipoDocumentoAgrupacion.class);
 		mapa.put("claseOferta", DDClaseOferta.class);
 		mapa.put("servicerActivo", DDServicerActivo.class);
 		mapa.put("cesionSaneamiento", DDCesionSaneamiento.class);
 		mapa.put("tiposEquipoGestion", DDEquipoGestion.class);
+		mapa.put("tiposDeRecargo", DDTipoRecargoGasto.class);
+		mapa.put("tipoEstadoLoc", DDEstadoLocalizacion.class);
+		mapa.put("tipoSubestadoGestion", DDSubestadoGestion.class);
 		mapa.put("motivoAutorizacionTramitacion", DDMotivoAutorizacionTramitacion.class);
 		mapa.put("tipoSolicitudTributo", DDTipoSolicitudTributo.class);
 		mapa.put("tipoDocJunta", DDTipoDocJuntas.class);
 		mapa.put("tipoDocumentoPlusvalia", DDTipoDocPlusvalias.class);
+		mapa.put("estadoGestionPlusvalia", DDEstadoGestionPlusv.class);
+		mapa.put("faseDePublicacion", DDFasePublicacion.class);
+		mapa.put("subfaseDePublicacion", DDSubfasePublicacion.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

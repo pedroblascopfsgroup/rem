@@ -220,6 +220,11 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			}
 		}
 		
+		if ((!Checks.esNulo(dto.getOcupado()) && dto.getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloNo.equals(dto.getConTitulo())) ||
+			(!Checks.esNulo(activoSituacionPosesoria.getOcupado()) && activoSituacionPosesoria.getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloNo.equals(dto.getConTitulo()))) {
+			activoApi.crearRegistroFaseHistorico(activo);
+		}		
+		
 		if (!Checks.esNulo(activoPatrimonio) && !Checks.esNulo(tipoEstadoAlquiler)) {
 			activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
 			genericDao.update(ActivoPatrimonio.class, activoPatrimonio);

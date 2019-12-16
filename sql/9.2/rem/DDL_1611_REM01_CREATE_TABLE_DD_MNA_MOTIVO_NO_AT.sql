@@ -30,7 +30,7 @@ DECLARE
     V_NUM_SEQ NUMBER(16); -- Vble. para validar la existencia de una sECVencia.  
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_TEXT_TABLA VARCHAR2(30 CHAR) := 'DD_MNA_MOTIVO_NO_AT_2'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(30 CHAR) := 'DD_MNA_MOTIVO_NO_AT'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_TEXT_CHARS VARCHAR2(2400 CHAR) := 'MNA'; -- Vble. auxiliar para almacenar las 3 letras orientativas de la tabla de ref.
     V_ID NUMBER(16); -- Vble. auxiliar para almacenar temporalmente el numero de la sequencia.
     V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para gestionar el diccionario de motivo NO_AT'; -- Vble. para los comentarios de las tablas

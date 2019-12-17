@@ -1227,6 +1227,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			reserva = expediente.getReserva();
 			oferta = expediente.getOferta();
 			condiciones = expediente.getCondicionante();
+			
+			Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+			dto.setPerteneceGrupoPBC(usuarioPerteneceGrupoPBC(usuarioLogado));
 
 			if (!Checks.esNulo(condiciones)) {
 				dto.setSolicitaReserva(condiciones.getSolicitaReserva());
@@ -10653,4 +10656,19 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		return true;
 	}	
+	
+	private Boolean usuarioPerteneceGrupoPBC(Usuario usuarioLogado) {
+		
+		if(genericAdapter.isSuper(usuarioLogado)) {
+			return true;
+		}
+		
+		GrupoUsuario grupo = genericDao.get(GrupoUsuario.class, genericDao.createFilter(FilterType.EQUALS, "usuario", usuarioLogado));
+		
+		if(grupo != null && grupo.getGrupo() != null && "gestpbc".equals(grupo.getGrupo().getUsername())) {
+			return true;
+		}
+		
+		return false;
+	}
 }

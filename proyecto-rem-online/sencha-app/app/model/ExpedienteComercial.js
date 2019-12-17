@@ -308,6 +308,10 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     				return 'Comité seleccionado';
     			},
     			depends: ['tipoExpedienteCodigo','entidadPropietariaCodigo']
+    		},
+    		{
+    			name: 'perteneceGrupoPBC',
+    			type: 'boolean'
     		}
     ],
     formulas: {

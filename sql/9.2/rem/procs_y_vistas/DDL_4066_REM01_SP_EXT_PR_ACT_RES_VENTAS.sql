@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20191107
+--## FECHA_CREACION=20191202
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.19
---## INCIDENCIA_LINK=REMVIP-5609
+--## INCIDENCIA_LINK=REMVIP-5793
 --## PRODUCTO=NO
 --## Finalidad: Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación. Liberbank.
 --## Info: https://link-doc.pfsgroup.es/confluence/display/REOS/SP_EXT_PR_ACT_RES_VENTA
@@ -26,6 +26,7 @@
 --## 		1.07 (20191010) - Jin Li Hu - Se añade el código de la caretra Cajamar para todas la queries donde se filtra por cartera, y se ha modificado una query según la descripción del item - HREOS-7988
 --##		1.08 (20191016) - Viorel Remus Ovidiu - Se añadie filtro de borrado en reservas
 --##		1.09 (20191107) - Viorel Remus Ovidiu - Se mezclan los cambios de subcartera (1.07) con los filtros de borrado (1.08)
+--##		1.10 (20191203) - Viorel Remus Ovidiu - Se añade borrado de fecha_vencimiento de la reserva si la cartera es Apple
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -483,12 +484,21 @@ BEGIN
                     ';
                     EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_ACTUAL;
 
-		    IF V_ACTIVO_APPLE = 1 THEN
-                    
+                    IF UPPER(CARTERA) = 'CAM' THEN --Si el parametro de entrada CARTERA es CAM (CAJAMAR)
+                        V_MSQL := '
+                            UPDATE '||V_ESQUEMA||'.RES_RESERVAS
+                            SET RES_FECHA_CONTABILIZACION = '''||FECHA_COBRO_RESERVA_DATE||''',
+                            USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
+                            FECHAMODIFICAR = SYSDATE
+                            WHERE RES_ID = '||V_RES_ID||'
+                            AND ECO_ID = '||V_ECO_ID||'
+                            AND RES_FECHA_CONTABILIZACION IS NULL
+                        ';
+                        EXECUTE IMMEDIATE V_MSQL;
+                    ELSE
                         V_MSQL := '
                             UPDATE '||V_ESQUEMA||'.RES_RESERVAS
                             SET RES_FECHA_FIRMA = '''||FECHA_COBRO_RESERVA_DATE||''',
-                            RES_FECHA_VENCIMIENTO = NULL,
                             USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
                             FECHAMODIFICAR = SYSDATE
                             WHERE RES_ID = '||V_RES_ID||'
@@ -496,21 +506,16 @@ BEGIN
                             AND RES_FECHA_FIRMA IS NULL
                         ';
                         EXECUTE IMMEDIATE V_MSQL;
+                    END IF;
 
-		    ELSE 
+                    IF SQL%ROWCOUNT > 0 THEN
 
-		         V_MSQL := '
-		            UPDATE '||V_ESQUEMA||'.RES_RESERVAS
-		            SET RES_FECHA_FIRMA = '''||FECHA_COBRO_RESERVA_DATE||''',
-		            USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
-		            FECHAMODIFICAR = SYSDATE
-		            WHERE RES_ID = '||V_RES_ID||'
-		            AND ECO_ID = '||V_ECO_ID||'
-		            AND RES_FECHA_FIRMA IS NULL
-		            ';
-		          EXECUTE IMMEDIATE V_MSQL;
+ 			IF UPPER(CARTERA) = 'CAM' THEN --Si el parametro de entrada CARTERA es CAM (CAJAMAR)
+                            DBMS_OUTPUT.PUT_LINE('[INFO] PASO 2/4 | Se ha informado el campo RES_FECHA_CONTABILIZACION para la OFERTA '||IDENTIFICACION_COBRO||'.');
+                            V_PASOS := V_PASOS+1;
+                            --Logado en HLD_HIST_LANZA_PER_DETA
 
-		    END IF;
+                            V_VALOR_NUEVO := FECHA_COBRO_RESERVA_DATE;
 
                     IF SQL%ROWCOUNT > 0 THEN
 
@@ -763,7 +768,7 @@ BEGIN
                     ';
                     EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_ACTUAL;
 
-		    V_MSQL := '
+ 		    V_MSQL := '
 		    SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_ID = (SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_ID = '||V_ACT_ID||') AND DD_SCR_CODIGO = ''138''';
                     EXECUTE IMMEDIATE V_MSQL INTO V_ACTIVO_APPLE;
             

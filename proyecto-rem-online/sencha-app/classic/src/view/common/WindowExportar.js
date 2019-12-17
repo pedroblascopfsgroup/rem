@@ -40,7 +40,7 @@ Ext.define('HreRem.view.common.WindowExportar', {
     			  {
     				  text: 'Exportar',
     				  formBind: true,
-    				  hidden: parseInt(me.count) > parseInt(me.limiteMax),
+    				  hidden: !(parseInt(me.count) < parseInt(me.limiteMax)),
     				  handler: function(){
     					  var me = this;
     					  me.up('window').registrarExportacion(true);

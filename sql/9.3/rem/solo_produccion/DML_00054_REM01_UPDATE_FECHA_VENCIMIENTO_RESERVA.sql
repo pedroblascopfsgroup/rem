@@ -40,7 +40,7 @@ BEGIN
                     SET RES_FECHA_VENCIMIENTO = NULL,
                     USUARIOMODIFICAR = '''|| V_USR ||''',
                     FECHAMODIFICAR = SYSDATE
-                    WHERE ECO_ID IN  = (171437,
+                    WHERE ECO_ID IN (171437,
 					178346,
 					178441,
 					182629,

@@ -1,11 +1,14 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -22,9 +25,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.exception.UserException;
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.config.ConfigManager;
+import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -33,7 +39,10 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
+import es.pfsgroup.plugin.rem.adapter.AgrupacionAdjuntosAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
@@ -46,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
 import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesActivo;
@@ -68,6 +78,9 @@ import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
 public class AgrupacionController extends ParadiseJsonController {
 
 	private static final String FALTAN_DATOS = "Faltan datos para proponer";
+	private static final String RESPONSE_SUCCESS_KEY = "success";
+	private static final String RESPONSE_MESSAGE_KEY = "msg";
+	private static final String RESPONSE_DATA_KEY = "data";
 	
 	
 	@Autowired
@@ -86,6 +99,9 @@ public class AgrupacionController extends ParadiseJsonController {
 	private ExcelReportGeneratorApi excelReportGeneratorApi;
 
 	@Autowired
+	private AgrupacionAdjuntosAdapter agrupacionAdjuntos;
+
+	@Autowired
 	private OfertaApi ofertaApi;
 	
 	@Autowired
@@ -99,8 +115,6 @@ public class AgrupacionController extends ParadiseJsonController {
 	@Autowired
 	private ConfigManager configManager;
 	
-	private static final String RESPONSE_SUCCESS_KEY = "success";	
-	private static final String RESPONSE_DATA_KEY = "data";
 	/**
 	 * Método para modificar la plantilla de JSON utilizada en el servlet.
 	 * 
@@ -814,7 +828,7 @@ public class AgrupacionController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createOferta(DtoOfertasFilter dtoOferta, ModelMap model) throws Exception {
 		try {
-			boolean success = adapter.createOfertaAgrupacion(dtoOferta);// trabajoApi.createPresupuestoTrabajo(presupuestoDto,
+			boolean success = !Checks.esNulo(adapter.createOfertaAgrupacion(dtoOferta));// trabajoApi.createPresupuestoTrabajo(presupuestoDto,
 																		// idTrabajo);
 			model.put("success", success);
 
@@ -1127,6 +1141,143 @@ public class AgrupacionController extends ParadiseJsonController {
 		//puesto que por ahora todo lo que tiene que hacer la pestaña, lo guarda insertarActAutoTram
 		boolean success = true;
 		model.put("success", success);
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListAdjuntosAgrupacion(Long idAgrupacion, ModelMap model) {
+
+		try {
+			model.put("data", agrupacionAdjuntos.getAdjuntosAgrupacion(idAgrupacion));
+		} catch (GestorDocumentalException e) {
+			logger.error("error en agrupacioncontroller", e);
+			model.put("success", false);
+			model.put("errorMessage",
+					"Gestor documental: No existe la agrupacion o no tiene permisos para listar el contenedor");
+		} catch (Exception e) {
+			logger.error("error en agrupacioncontroller", e);
+			model.put("success", false);
+			model.put("errorMessage", e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView upload(HttpServletRequest request) {
+
+		ModelMap model = new ModelMap();
+
+		try {
+			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
+			agrupacionAdjuntos.uploadDocumento(webFileItem);
+			model.put("success", true);
+		} catch (GestorDocumentalException e) {
+			logger.error("error en agrupacion", e);
+			model.put("success", false);
+			model.put("errorMessage", "Gestor documental: No existe la agrupacion o no tiene permiso para subir el documento");
+		} catch (Exception e) {
+			logger.error("error en agrupacionController", e);
+			model.put("success", false);
+			model.put("errorMessage",e.getMessage());
+		}
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public void bajarAdjuntoAgrupacion(HttpServletRequest request, HttpServletResponse response) {
+		ServletOutputStream salida = null;
+		Long id = null;
+		try {
+			id = Long.parseLong(request.getParameter("id"));
+			String nombreDocumento = request.getParameter("nombreDocumento");
+			salida = response.getOutputStream();
+			FileItem fileItem = agrupacionAdjuntos.download(id,nombreDocumento);
+			response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
+			response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
+			response.setHeader("Cache-Control", "max-age=0");
+			response.setHeader("Expires", "0");
+			response.setHeader("Pragma", "public");
+			response.setDateHeader("Expires", 0); // prevents caching at the
+													// proxy
+			if(!Checks.esNulo(fileItem.getContentType())) {
+				response.setContentType(fileItem.getContentType());
+			}
+			
+			// Write
+			FileUtils.copy(fileItem.getInputStream(), salida);
+			
+		}catch(UserException ex) {
+			try {
+				salida.write(ex.toString().getBytes(Charset.forName("UTF-8")));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	
+		} catch (Exception e) {
+			logger.error("error en agrupacionController", e);
+		}finally {
+			try {
+				salida.flush();			
+				salida.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method= RequestMethod.POST)
+	public ModelAndView deleteAdjunto(DtoAdjunto dtoAdjunto) {
+		ModelMap model = new ModelMap();
+		try {
+			agrupacionAdjuntos.deleteAdjunto(dtoAdjunto);
+			model.put("success", true);
+		}catch (Exception e) {
+			logger.error("error en agrupacionController", e);
+			model.put("success", false);
+			model.put("errorMessage",e.getMessage());
+		}
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getListAdjuntosAgrupacionByIdActivo(Long id) {
+		ModelMap model = new ModelMap();
+		try {
+			Long idAgrupacion = agrupacionAdjuntos.getAgrupacionYubaiByIdActivo(id);
+			if (Checks.esNulo(idAgrupacion)) throw new Exception();
+			model.put("data", agrupacionAdjuntos.getAdjuntosAgrupacion(idAgrupacion));
+			model.put("success", true);
+		}catch (Exception e) {
+			logger.error("error en agrupacionController", e);
+			model.put("success", false);
+			model.put("errorMessage",e.getMessage());
+		}
+		return createModelAndViewJson(model);
+	}
+
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView clonateOferta(String idOferta, ModelMap model) {
+		try {
+			boolean success = !Checks.esNulo(adapter.clonateOfertaAgrupacion(idOferta));
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			if (e.getMessage().equals(ActivoAdapter.OFERTA_INCOMPATIBLE_MSG)) {
+				model.put(RESPONSE_MESSAGE_KEY, ActivoAdapter.OFERTA_INCOMPATIBLE_MSG);
+				model.put(RESPONSE_SUCCESS_KEY, false);
+			} else {
+				logger.error("error en activoController", e);
+				model.put(RESPONSE_SUCCESS_KEY, false);
+			}
+		}
+
 		return createModelAndViewJson(model);
 	}
 }

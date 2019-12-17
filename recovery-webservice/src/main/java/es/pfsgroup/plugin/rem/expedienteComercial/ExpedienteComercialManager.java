@@ -3685,7 +3685,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	@Override
-	@Transactional(readOnly = true)
 	public ExpedienteComercial expedienteComercialPorOferta(Long idOferta) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id", idOferta);
 
@@ -6442,10 +6441,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			for (ActivoOferta activoOferta : listaOfertas) {
 				Oferta oferta = activoOferta.getPrimaryKey().getOferta();
 
-				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
+				if (oferta != null && oferta.getEstadoOferta() != null &&
+						DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
 					ExpedienteComercial expediente = expedienteComercialPorOferta(oferta.getId());
 
-					if (!DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo())
+					if (expediente != null && expediente.getEstado() != null 
+							&& !DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo())
 							&& !DDEstadosExpedienteComercial.PTE_SANCION.equals(expediente.getEstado().getCodigo())
 							&& !DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expediente.getEstado().getCodigo())
 							&& !DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
@@ -7581,6 +7582,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public String validaBloqueoExpediente(Long idExpediente) {
 		String codigoError = "";
 
@@ -7627,7 +7629,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								&& condiciones.getSituacionPosesoriaCodigo()
 										.equals(condiciones.getSituacionPosesoriaCodigoInformada())
 								&& condiciones.getPosesionInicial() != null
-								&& condiciones.getPosesionInicialInformada() != null & condiciones.getPosesionInicial()
+								&& condiciones.getPosesionInicialInformada() != null && condiciones.getPosesionInicial()
 										.equals(condiciones.getPosesionInicialInformada())
 								&& condiciones.getEstadoTitulo() != null
 								&& condiciones.getEstadoTituloInformada() != null
@@ -10628,5 +10630,5 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		return true;
-	}
+	}	
 }

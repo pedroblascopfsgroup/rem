@@ -12,6 +12,8 @@ Ext.define('HreRem.model.ActivoCargasTab', {
     		},
     		{
     			name:'conCargas'
+    		},{
+    			name:'estadoCargas'
     		},
     		{
     			name:'fechaRevisionCarga',

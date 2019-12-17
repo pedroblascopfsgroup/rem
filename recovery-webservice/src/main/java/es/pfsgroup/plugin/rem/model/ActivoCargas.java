@@ -22,8 +22,12 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienCargas;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenDato;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 
@@ -87,14 +91,23 @@ public class ActivoCargas implements Serializable, Auditable {
     @Column(name = "CRG_CARGAS_PROPIAS")
     private Integer cargasPropias;
 
+    @ManyToOne
+    @JoinColumn(name = "DD_ECG_ID")
+    private DDEstadoCarga estadoCarga;
+    
+    @ManyToOne
+    @JoinColumn(name = "DD_SCG_ID")
+    private DDSubestadoCarga subestadoCarga;
+    
+    @ManyToOne
+    @JoinColumn(name = "CRG_IMPIDE_VENTA")
+    private DDSiNo impideVenta;
+
 	@Version   
 	private Long version;
-
 	
 	@Embedded
 	private Auditoria auditoria;
-	
-	
 
 	public Long getId() {
 		return id;
@@ -200,7 +213,28 @@ public class ActivoCargas implements Serializable, Auditable {
 		this.cargasPropias = cargasPropias;
 	}
 	
-	
+	public DDEstadoCarga getEstadoCarga() {
+		return estadoCarga;
+	}
 
+	public void setEstadoCarga(DDEstadoCarga estadoCarga) {
+		this.estadoCarga = estadoCarga;
+	}
+
+	public DDSubestadoCarga getSubestadoCarga() {
+		return subestadoCarga;
+	}
+
+	public void setSubestadoCarga(DDSubestadoCarga subestadoCarga) {
+		this.subestadoCarga = subestadoCarga;
+	}
+
+	public DDSiNo getImpideVenta() {
+		return impideVenta;
+	}
+
+	public void setImpideVenta(DDSiNo impideVenta) {
+		this.impideVenta = impideVenta;
+	}
 	
 }

@@ -6,6 +6,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
       'fotossubdivision': {
          	updateOrdenFotos: 'updateOrdenFotosInterno',
          	cargarFotosSubdivision: 'cargarFotosSubdivision'
+      },
+      'documentosagrupacion': {
+    	  download: 'downloadDocumentosAgrupacion'
       }
     },
 
@@ -1191,7 +1194,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     		     }
     		 });    
 		}
-    },
+  },
 
     onChangeComboComercializableConsPlano: function(combo){
 		var me = this;
@@ -1258,5 +1261,98 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 				    	 });
 					}
 				});
-    }
+    },
+	
+		onClickCerrarPestanyaAnyadirNuevoDocumentoAgrupacion: function(btn){
+			var me = this,
+			window = btn.up('window');
+				window.close();
+		},
+	
+	  onClickAnyadirNuevoDocumentoAgrupacion: function(btn){
+	  		var me = this;
+	    	var idAgrupacion = me.getView().idAgrupacion;
+	    	form = btn.up("anyadirNuevoDocumentoAgrupacion").down("form"); 
+	    	if(form.isValid()){
+	            form.submit({
+	                waitMsg: HreRem.i18n('msg.mask.loading'),
+	                params: {
+	                	idAgrupacion: idAgrupacion
+	                },
+	                success: function(fp, o) {
+	                	if(o.result.success == "false") {
+	                		me.fireEvent("errorToast", o.result.errorMessage);
+	                	}
+	                	else {
+	                		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	                	}
+	                	
+	                	if(!Ext.isEmpty(me.parent)) {
+	                		me.parent.fireEvent("afterupload", me.parent);
+	                	}
+	                	me.getView().grid.getStore().load();
+	                    btn.up("window").close();
+	                },
+	                failure: function(fp, o) {
+	                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	                }
+	            });
+	        }
+	    },
+	
+		downloadDocumentosAgrupacion: function(grid, record) {
+			
+			var me = this,
+			config = {};
+			
+			config.url= $AC.getWebPath() + "agrupacion/bajarAdjuntoAgrupacion." + $AC.getUrlPattern();
+			config.params = {};
+			config.params.id=record.get('id');
+			config.params.nombreDocumento=record.get("nombre");
+			me.fireEvent("downloadFile", config);
+			
+	},
+	
+	onSelectedRow: function(grid, record, index){
+		me = this;
+		if(!Ext.isEmpty(record)){
+			idOferta = record.data.idOferta;
+			if (idOferta && !Ext.isEmpty(me.view.down('[reference=cloneExpedienteButton]'))) {
+				var hideButton = record.data.codigoEstadoOferta != CONST.ESTADOS_OFERTA['RECHAZADA'];
+	    		me.view.down('[reference=cloneExpedienteButton]').setDisabled(hideButton); 
+			}	
+		}
+	},
+	
+	onDeselectedRow: function(grid, record, index){
+		me = this;
+		if(!Ext.isEmpty(record)){
+			idOferta = record.get("idOferta");
+		}
+		if (!Ext.isEmpty(me.view.down('[reference=cloneExpedienteButton]'))) {
+    		me.view.down('[reference=cloneExpedienteButton]').setDisabled(true); 
+		}	
+	},
+	
+	clonateOferta: function(numIdOferta, ofertasGrid)
+	{
+    	var url = $AC.getRemoteUrl('agrupacion/clonateOferta');
+		Ext.Ajax.request({
+  		     url: url,
+  		     params: {idOferta : numIdOferta},
+  		
+  		     success: function(response, opts) {
+  		    	data = Ext.decode(response.responseText);
+  		    	var id= data.data;
+				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	 			ofertasGrid.unmask();
+    			me.onClickBotonRefrescar();
+	    	},
+ 		    failure: function (a, operation) {
+ 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+ 				ofertasGrid.unmask();
+    			me.onClickBotonRefrescar();
+ 		    }
+		});
+	}	
 });

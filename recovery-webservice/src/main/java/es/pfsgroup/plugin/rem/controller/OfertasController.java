@@ -41,7 +41,6 @@ import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
-import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
@@ -64,7 +63,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
-import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaRequestDto;
@@ -110,17 +108,12 @@ public class OfertasController {
 	@Autowired
 	private ActivoTareaExternaApi activoTareaExternaApi;
 
-	@Autowired
-	private ActivoTramiteApi activoTramiteApi;
-
+	
 	@Autowired
 	private ActivoApi activoApi;
 	
 	@Autowired
 	private ActivoDao activoDao;
-	
-	@Autowired
-	private ProveedoresDao proveedoresDao;
 	
 	@Autowired
 	private AgendaAdapter agendaAdapter;
@@ -700,6 +693,7 @@ public class OfertasController {
 	 * @return model
 	 */
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/ofertas/avanzaOferta")
 	public void avanzaOferta( ModelMap model, RestRequestWrapper request, HttpServletResponse response){
 		TareaRequestDto jsonData = null;
@@ -846,6 +840,7 @@ public class OfertasController {
 
 
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListOfertasAgrupadas(DtoVListadoOfertasAgrupadasLbk dtoOfertasAgrupadas, ModelMap model){
 		{
@@ -866,6 +861,7 @@ public class OfertasController {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListActivosOfertasAgrupadas(DtoVListadoOfertasAgrupadasLbk dtoOfertasAgrupadas, ModelMap model){
 		{

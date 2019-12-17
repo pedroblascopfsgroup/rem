@@ -2270,6 +2270,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 							adj.setCodigoTipo(tipoDocumento.getDescripcion());
 							adj.setDescripcionTipo(tipoDocumento.getDescripcion());
 						}
+						adj.setFechaDocumento(adj.getFechaDocumento());
 					}
 				}
 
@@ -2308,6 +2309,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setIdEntidad(gasto.getId());
 				dto.setDescripcionTipo(adjunto.getTipoDocumentoGasto().getDescripcion());
 				dto.setGestor(adjunto.getAuditoria().getUsuarioCrear());
+				dto.setFechaDocumento(adjunto.getFechaDocumento());
 
 				listaAdjuntos.add(dto);
 			}

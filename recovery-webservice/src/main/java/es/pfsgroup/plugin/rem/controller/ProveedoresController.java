@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.List;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +36,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
@@ -414,7 +416,25 @@ public class ProveedoresController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListAdjuntos(Long id, ModelMap model, HttpServletRequest request){
+		//ESTE CODIGO ESTA COMENTADO PARA UN FUTURO DESARROLLO ¡¡NO BORRAR!!
+		
+		/*try {
+			model.put("data", proveedoresApi.getAdjuntos(id));
+		} catch (GestorDocumentalException gex) {
+			logger.error("Error en ProveedoresController sobre el Gestor Documental", gex);
+			model.put("success", false);
+			model.put("errorMessage", "Ha habido un problema al recuperar los archivos desde el gestor documental.");
+		} catch (Exception e) {
+			logger.error("Error en ProveedoresController", e);
+			model.put("success", false);
+			model.put("errores", e.getCause());
+		}
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_PROVEEDOR, "adjuntos", ACCION_CODIGO.CODIGO_VER);
+
+		return createModelAndViewJson(model);*/
+		
 		model.put("data", proveedoresApi.getAdjuntos(id));
+		
 		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_PROVEEDOR, "adjuntos", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
@@ -448,10 +468,22 @@ public class ProveedoresController extends ParadiseJsonController {
 			model.put("errores", errores);
 			model.put("success", errores == null);
 
+			//ESTE CODIGO ESTA COMENTADO PARA UN FUTURO DESARROLLO ¡¡NO BORRAR!!
+			
+		/*} catch (GestorDocumentalException ex) {
+			logger.error("Error en ProveedoresController sobre el Gestor Documental", ex);
+			model.put("success", false);
+			model.put("errorMessage", "Ha habido un problema con la subida del archivo al gestor documental.");*/
 		} catch (Exception e) {
 			logger.error("Error en ProveedoresController", e);
-			model.put("success", false);
-			model.put("errores", e.getCause());
+			if (e.getMessage().equals(ProveedoresManager.ERROR_TIPO_DOCUMENTO_PROVEEDOR)) {
+				model.put("errorMessage", ProveedoresManager.ERROR_TIPO_DOCUMENTO_PROVEEDOR);
+				model.put("errores", e.getCause());
+				model.put("success", false);
+			} else {
+				model.put("success", false);
+				model.put("errores", e.getCause());
+			}
 		}
 
 		return createModelAndViewJson(model);

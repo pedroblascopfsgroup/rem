@@ -3,8 +3,6 @@ package es.pfsgroup.plugin.rem.gencat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +18,6 @@ import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
 
 @Service
 public class NotificacionesGencatManager extends AbstractNotificatorService{
-	protected static final Log logger = LogFactory.getLog(GencatManager.class);
 	
 	@Autowired
 	private GenericAdapter genericAdapter;

@@ -31,20 +31,6 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
 		          selType: 'checkboxmodel',
 		          mode: 'MULTI'
 		      	}; 
-		 
-	    me.dockedItems = [
-	        {
-	            xtype: 'pagingtoolbar',
-	            dock: 'bottom',
-	            itemId: 'activosPaginationToolbar',
-	            inputItemWidth: 60,
-	            displayInfo: true,
-	            bind: {
-	                store: '{storeGastosRefacturablesExistentes}'
-	            }
-	        }
-	    ];
-
 
 		me.callParent();
 		        

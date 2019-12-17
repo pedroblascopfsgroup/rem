@@ -8,7 +8,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.OfertaActivo', 'HreRem.model.PropuestaActivosVinculados', 'HreRem.model.HistoricoMediadorModel','HreRem.model.AdjuntoActivoPromocion',
     'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ActivoPatrimonio', 'HreRem.model.HistoricoAdecuacionesPatrimonioModel',
     'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados','HreRem.model.CalificacionNegativaModel',
-    'HreRem.model.ListaActivoGrid','HreRem.model.DocumentacionAdministrativa'],
+    'HreRem.model.HistoricoTramtitacionTituloModel','HreRem.model.ListaActivoGrid','HreRem.model.AdjuntoActivoAgrupacion','HreRem.model.AdjuntoActivoProyecto',
+    'HreRem.model.DocumentacionAdministrativa'],
 
     data: {
     	activo: null,
@@ -669,6 +670,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 }
 			 return false;
 		 },
+		 
+		 isCarteraDivarian: function(get){
+			 var isDivarian = get('activo.isCarteraDivarian');
+			 if(isDivarian){
+				 return true;
+			 }
+			 return false;
+		 },
 		 getTiposOfertasUAs: function (get) {
 			var unidadAlquilable = get('activo.unidadAlquilable');
 		 	tiposDeOferta = new Ext.data.Store({
@@ -745,6 +754,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				return !editable;
 		},
 		
+		visibilidadPestanyaDocumentacionAgrupacion : function (get)  {
+			if ( CONST.CARTERA['THIRDPARTIES'] === get('activo.entidad')
+			&& CONST.SUBCARTERA['YUBAI'] === get('activo.subCartera')){
+				return false;
+			}
+			return true;
+		},
+
 		esGestorPublicacionVenta: function(get) {
 
 	    	var me = this;
@@ -769,6 +786,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    	}
 	    },
 	    
+	    esSubcarteraDivarian: function(get){
+			return get('activo.subcarteraCodigo') == CONST.SUBCARTERA['DIVARIAN'];
+		},
+
 	    esSuperUsuario: function(get){
 	    		return $AU.userIsRol(CONST.PERFILES["HAYASUPER"]);
 	    },
@@ -1291,7 +1312,30 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	          	 groupField: 'descripcionTipo',
 	          	 autoLoad: false
     		},
-
+    		
+    		storeDocumentosActivoAgrupacion: {
+   			 pageSize: $AC.getDefaultPageSize(),
+   			 model: 'HreRem.model.AdjuntoActivoAgrupacion',
+	      	     proxy: {
+	      	        type: 'uxproxy',
+	      	        remoteUrl: 'agrupacion/getListAdjuntosAgrupacionByIdActivo',
+	      	        extraParams: {id:'{activo.id}'}
+	          	 },
+	          	 groupField: 'descripcionTipo',
+	          	 autoLoad: false
+    		},
+    		
+    		storeDocumentosActivoProyecto: {
+   			 pageSize: $AC.getDefaultPageSize(),
+   			 model: 'HreRem.model.AdjuntoActivoProyecto',
+	      	     proxy: {
+	      	        type: 'uxproxy',
+	      	        remoteUrl: 'proyecto/getListAdjuntosProyecto',
+	      	        extraParams: {id:'{activo.id}'}
+	          	 },
+	          	 groupField: 'descripcionTipo',
+	          	 autoLoad: false
+    		},
     		historicoTrabajos: {
 				pageSize: $AC.getDefaultPageSize(),
 		    	model: 'HreRem.model.BusquedaTrabajo',
@@ -2031,7 +2075,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'activo/getCalificacionNegativa',
 				extraParams: {id: '{activo.id}'}
-			}
+			},
+			autoLoad: true
 		},
 		
    		comboDDTipoTituloActivoTPA: {
@@ -2041,6 +2086,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getComboTipoTituloActivoTPA',
    				extraParams: {numActivo: '{activo.numActivo}'}
 			}
+		},
+		
+		storeHistoricoTramitacionTitulo:{
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.HistoricoTramtitacionTituloModel',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getHistoricoTramitacionTitulo',
+				extraParams: {id: '{activo.id}'}
+			},
+
+			autoLoad: true
 		},
 
 		comboServicerActivo: {

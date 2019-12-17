@@ -2830,7 +2830,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	@Override
 	public Boolean isAgrupacionSinActivoPrincipal(String mumAgrupacionRem) {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)"
-				+ "			FROM ACT_AGR_AGRUPACION agr\n"
+				+ "			FROM ACT_AGR_AGRUPACION agr "
 				+ "			WHERE agr.AGR_NUM_AGRUP_REM = "+ mumAgrupacionRem
 				+ "			AND agr.AGR_ACT_PRINCIPAL IS NOT NULL");
 
@@ -4246,5 +4246,30 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 	
+	@Override
+	public Boolean isActivoEnCesionDeUso( String numActivo) {
+		
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT count(1) " + 
+				"FROM ACT_PTA_PATRIMONIO_ACTIVO pta " + 
+				"JOIN DD_CDU_CESION_USO cdu ON pta.DD_CDU_ID = cdu.DD_CDU_ID " + 
+				"AND DD_CDU_CODIGO IN ('01','02','03','04') " + 
+				"JOIN ACT_ACTIVO act ON act.ACT_ID = pta.ACT_ID " + 
+				"AND act.ACT_NUM_ACTIVO = " + numActivo
+				);
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean isActivoEnAlquilerSocial( String numActivo) {
+		
+		String resultado = rawDao.getExecuteSQL(
+				"  SELECT count(1)   "
+				+" FROM ACT_PTA_PATRIMONIO_ACTIVO pta     " 
+				+" JOIN ACT_ACTIVO act ON act.ACT_ID = pta.ACT_ID AND act.ACT_NUM_ACTIVO = " +  numActivo
+				+" WHERE pta.PTA_TRAMITE_ALQ_SOCIAL = 1"
+				);
+		return !"0".equals(resultado); 
+	}
 	//-------------------------------------------------------------------------
 }

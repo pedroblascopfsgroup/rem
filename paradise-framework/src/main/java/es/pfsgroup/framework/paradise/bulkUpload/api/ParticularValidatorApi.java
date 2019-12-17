@@ -1032,6 +1032,10 @@ public interface ParticularValidatorApi {
 	 */
 	public Boolean direccionComercialExiste(String direccionComercial);
 
+	Boolean isActivoEnCesionDeUso(String numActivo);
+
+	Boolean isActivoEnAlquilerSocial(String numActivo);
+
 	
 	
 }

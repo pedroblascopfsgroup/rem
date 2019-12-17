@@ -8903,7 +8903,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			Activo activo = activoApi.get(activoOferta.getPrimaryKey().getActivo().getId());
 			esDivarian=false;
 			if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) &&
-				DDSubcartera.CODIGO_DIVARIAN.equals(activo.getSubcartera().getCodigo())) {
+				(DDSubcartera.CODIGO_DIVARIAN.equals(activo.getSubcartera().getCodigo())
+						|| DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo())
+						|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo()))) {
 				esDivarian = true;
 			}
 		}

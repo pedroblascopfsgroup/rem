@@ -795,7 +795,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    },
 	    
 	    esSubcarteraDivarian: function(get){
-			return get('activo.subcarteraCodigo') == CONST.SUBCARTERA['DIVARIAN'];
+			return get('activo.subcarteraCodigo') == CONST.SUBCARTERA['DIVARIAN'] || get('activo.subcarteraCodigo') == CONST.SUBCARTERA['DIVARIANARROW'] 
+				|| get('activo.subcarteraCodigo') == CONST.SUBCARTERA['DIVARIANREMAINING'];
 		},
 
 	    esSuperUsuario: function(get){

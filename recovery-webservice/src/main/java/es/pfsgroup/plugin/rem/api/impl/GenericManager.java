@@ -901,7 +901,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			listaComites = genericDao.getList(DDComiteSancion.class,filtro,filtroCartera);
 
 		}
-		if(Checks.esNulo(listaComites) || listaComites.isEmpty()){
+		if(Checks.esNulo(subcarteraCodigo) || Checks.estaVacio(listaComites)){
 			filtro = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", carteraCodigo);
 			listaComites = genericDao.getListOrdered(DDComiteSancion.class,order,filtro);
 			
@@ -913,8 +913,6 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 					}
 				}
 			}
-
-
 		}
 		return listaComites;
 

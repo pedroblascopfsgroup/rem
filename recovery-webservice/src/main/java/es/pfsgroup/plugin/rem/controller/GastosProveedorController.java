@@ -26,12 +26,12 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.FileUtils;
+import es.capgemini.pfs.config.ConfigManager;
 import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
@@ -63,8 +63,6 @@ import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
 import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
-import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
-import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
@@ -72,7 +70,6 @@ import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
 import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 
 @Controller
 public class GastosProveedorController extends ParadiseJsonController {
@@ -105,6 +102,9 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@Autowired
 	private UsuarioManager usuarioManager;
+
+	@Autowired
+	private ConfigManager configManager;
 	
 	private static final String RESPONSE_SUCCESS_KEY = "success";	
 	private static final String RESPONSE_DATA_KEY = "data";
@@ -928,19 +928,34 @@ public class GastosProveedorController extends ParadiseJsonController {
 	@Transactional()
 	public ModelAndView registrarExportacion(DtoGastosFilter dtoGastosFilter, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelMap model = new ModelMap();
-		
+		Usuario user = null;
+		Boolean isSuperExport = false;
 		try {
 			int count = gastoProveedorApi.getListGastosExcel(dtoGastosFilter).getTotalCount();
+			user = usuarioManager.getUsuarioLogado();
 			AuditoriaExportaciones ae = new AuditoriaExportaciones();
 			ae.setBuscador(buscador);
 			ae.setFechaExportacion(new Date());
 			ae.setNumRegistros(Long.valueOf(count));
-			ae.setUsuario(usuarioManager.getUsuarioLogado());
+			ae.setUsuario(user);
 			ae.setFiltros(parameterParser(request.getParameterMap()));
 			ae.setAccion(exportar);
 			genericDao.save(AuditoriaExportaciones.class, ae);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 			model.put(RESPONSE_DATA_KEY, count);
+			for(Perfil pef : user.getPerfiles()) {
+				if(pef.getCodigo().equals("SUPEREXPORTADMIN")) {
+					isSuperExport = true;
+					break;
+				}
+			}
+			if(isSuperExport) {
+				model.put("limite", configManager.getConfigByKey("super.limite.exportar.excel.gastos").getValor());
+				model.put("limiteMax", configManager.getConfigByKey("super.limite.maximo.exportar.excel.gastos").getValor());
+			}else {
+				model.put("limite", configManager.getConfigByKey("limite.exportar.excel.gastos").getValor());
+				model.put("limiteMax", configManager.getConfigByKey("limite.maximo.exportar.excel.gastos").getValor());
+			}
 		}catch(Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("error en gastosProveedorController", e);

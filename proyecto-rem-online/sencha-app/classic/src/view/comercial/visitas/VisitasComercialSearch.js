@@ -4,7 +4,7 @@ Ext.define('HreRem.view.comercial.visitas.VisitasComercialSearch', {
     cls	: 'panel-base shadow-panel',
     collapsible: true,
     collapsed: false,
-    isSearchForm: true,
+    isSearchFormVisitas: true,
   	layout: {
         type: 'table',
         // The total column count must be specified here

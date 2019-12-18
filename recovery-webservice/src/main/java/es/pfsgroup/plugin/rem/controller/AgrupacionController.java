@@ -29,8 +29,11 @@ import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.config.ConfigManager;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.domain.Perfil;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
@@ -109,6 +112,9 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	@Autowired
 	private GenericABMDao genericDao;
+
+	@Autowired
+	private ConfigManager configManager;
 	
 	/**
 	 * Método para modificar la plantilla de JSON utilizada en el servlet.
@@ -766,19 +772,34 @@ public class AgrupacionController extends ParadiseJsonController {
 	@Transactional()
 	public ModelAndView registrarExportacion(DtoAgrupacionFilter dtoAgrupacionFilter, Boolean exportar, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelMap model = new ModelMap();
-
+		Usuario user = null;
+		Boolean isSuperExport = false;
 		try {
 			int count = adapter.getListAgrupaciones(dtoAgrupacionFilter).getTotalCount();
+			user = usuarioManager.getUsuarioLogado();
 			AuditoriaExportaciones ae = new AuditoriaExportaciones();
 			ae.setBuscador("agrupaciones");
 			ae.setFechaExportacion(new Date());
 			ae.setNumRegistros(Long.valueOf(count));
-			ae.setUsuario(usuarioManager.getUsuarioLogado());
+			ae.setUsuario(user);
 			ae.setFiltros(parameterParser(request.getParameterMap()));
 			ae.setAccion(exportar);
 			genericDao.save(AuditoriaExportaciones.class, ae);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 			model.put(RESPONSE_DATA_KEY, count);
+			for(Perfil pef : user.getPerfiles()) {
+				if(pef.getCodigo().equals("SUPEREXPORTACTAGR")) {
+					isSuperExport = true;
+					break;
+				}
+			}
+			if(isSuperExport) {
+				model.put("limite", configManager.getConfigByKey("super.limite.exportar.excel.activos").getValor());
+				model.put("limiteMax", configManager.getConfigByKey("super.limite.maximo.exportar.excel.activos").getValor());
+			}else {
+				model.put("limite", configManager.getConfigByKey("limite.exportar.excel.activos").getValor());
+				model.put("limiteMax", configManager.getConfigByKey("limite.maximo.exportar.excel.activos").getValor());
+			}
 		}catch(Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("error en agrupacionController", e);

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
@@ -54,14 +55,18 @@ public class MSVEnvioBurofaxProcesar extends AbstractMSVActualizador implements 
 
 	@Override
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
-		
-		Activo activo= null;
-		ActivoComunidadPropietarios actComProp = null;
-		
-		if (!Checks.esNulo(exc.dameCelda(fila, COL_NUM.COL_NUM_ID_ACTIVO_HAYA))) {
-			activo = activoApi.getByNumActivo(this.obtenerLongExcel(exc.dameCelda(fila, COL_NUM.COL_NUM_ID_ACTIVO_HAYA)));	
-			actComProp = activo.getComunidadPropietarios();
-		
+				
+			Activo activo = activoApi.getByNumActivo(Long.valueOf(exc.dameCelda(fila, COL_NUM.COL_NUM_ID_ACTIVO_HAYA)));	
+			if(activo != null ) {
+				ActivoComunidadPropietarios actComProp = activo.getComunidadPropietarios();
+				if(Checks.esNulo(actComProp)) {
+					actComProp = new ActivoComunidadPropietarios();
+					actComProp.setAuditoria(Auditoria.getNewInstance());
+					genericDao.save(ActivoComunidadPropietarios.class, actComProp);
+					activo.setComunidadPropietarios(actComProp);
+					activoApi.saveOrUpdate(activo);
+				}
+			
 			if (!Checks.esNulo(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_COMUNICACION))) {
 				actComProp.setFechaComunicacionComunidad(this.obtenerDateExcel(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_COMUNICACION)));
 			}
@@ -93,14 +98,6 @@ public class MSVEnvioBurofaxProcesar extends AbstractMSVActualizador implements 
 		}
 		
 		return new ResultadoProcesarFila();
-	}
-
-	private Long obtenerLongExcel(String celdaExcel) {
-		if (Checks.esNulo(celdaExcel)) {
-			return null;
-		}
-
-		return Long.valueOf(celdaExcel);
 	}
 	
 	private Integer obtenerIntegerExcel(String celdaExcel) {

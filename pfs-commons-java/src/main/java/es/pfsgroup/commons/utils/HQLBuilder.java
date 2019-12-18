@@ -366,6 +366,54 @@ public class HQLBuilder {
 		this.stringBuilder.append("))");
 
 	}
+	
+	/**
+	 * añade una clausula WHERE para comprobar si un determinado campo está
+	 * entre unos determinados valores
+	 * 
+	 * @param field
+	 *            Campo
+	 * @param values
+	 *            Conjunto de valores
+	 * @param quiereOr
+	 * 				Si está a true el valor, se añadira OR en vez de AND en caso de tener varias condiciones
+	 */
+	public void appendWhereIN(final String field, final String[] values, Boolean quiereOr) {
+		initWhereClause(quiereOr);
+
+		this.stringBuilder.append(field).append(" in (");
+		boolean first = true;
+		for (String v : values) {
+			if (!first) {
+				this.stringBuilder.append(", ");
+			} else {
+				first = false;
+			}
+			this.stringBuilder.append(v);
+		}
+
+		this.stringBuilder.append("))");
+
+	}
+	/**
+	 * añade una clausula WHERE para comprobar si un determinado campo está
+	 * entre unos determinados valores
+	 * 
+	 * @param field
+	 *            Campo
+	 * @param strValores
+	 *            Valores. Esta cadena debe contener los valores separados por
+	 *            comas, tal y como requiere la clausula IN
+	 *@param quiereOr
+	 * 	 Si está a true el valor, se añadira "OR" en vez de "AND"
+	 */
+	public void appendWhereIN(final String field, final String strValores, Boolean quiereOr) {
+		initWhereClause(quiereOr);
+		this.stringBuilder.append(field);
+		this.stringBuilder.append(" in (");
+		this.stringBuilder.append(strValores);
+		this.stringBuilder.append("))");
+	}
 
 	/**
 	 * añade una clausula WHERE para comprobar si un determinado campo está
@@ -376,6 +424,7 @@ public class HQLBuilder {
 	 * @param strValores
 	 *            Valores. Esta cadena debe contener los valores separados por
 	 *            comas, tal y como requiere la clausula IN
+	 * 
 	 */
 	public void appendWhereIN(final String field, final String strValores) {
 		initWhereClause();

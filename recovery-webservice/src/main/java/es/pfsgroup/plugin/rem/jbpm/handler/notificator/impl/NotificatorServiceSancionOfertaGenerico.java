@@ -146,8 +146,14 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	protected void generaNotificacion(ActivoTramite tramite, boolean permiteRechazar,
 			boolean permiteNotificarAprobacion, boolean correoLlegadaTarea, String codTareaActual) {
 
-		if (tramite.getActivo() != null && tramite.getTrabajo() != null) {
-			sendNotification(tramite, permiteRechazar, getExpComercial(tramite).getOferta(), permiteNotificarAprobacion, correoLlegadaTarea, codTareaActual);
+		ExpedienteComercial eco = getExpComercial(tramite);
+		Oferta oferta =null;
+		if(eco != null) {
+			oferta = eco.getOferta();
+		}
+		
+		if (tramite.getActivo() != null && tramite.getTrabajo() != null && oferta != null) {
+			sendNotification(tramite, permiteRechazar,oferta, permiteNotificarAprobacion, correoLlegadaTarea, codTareaActual);
 		}
 
 	}

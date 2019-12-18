@@ -56,6 +56,11 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivoTabPanel', {
 
             	return true;
         	}
+        },
+        click: function(){
+			var listadoOfertas = me.down('[xtype=ofertascomercialactivolist]');
+			
+			listadoOfertas.calcularMostrarBotonClonarExpediente();
         }
     },
     tabBar: { // Botones edicion

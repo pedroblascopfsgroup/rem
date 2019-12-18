@@ -1,0 +1,158 @@
+--/*
+--##########################################
+--## AUTOR=JIN LI HU
+--## FECHA_CREACION=201909017
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-7822
+--## PRODUCTO=NO
+--## Finalidad: 
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+	V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM NUMBER; 
+    
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    
+    TYPE T_TIPO_ITI IS TABLE OF VARCHAR2(1000);
+    TYPE T_ARRAY_TPO IS TABLE OF T_TIPO_ITI;
+    V_TIPO_ITI T_ARRAY_TPO := T_ARRAY_TPO(
+		T_TIPO_ITI('VIG','01','01'),
+		T_TIPO_ITI('SAN','01','04'),
+		T_TIPO_ITI('NCN','02','07')
+    ); 
+    V_TMP_TIPO_ITI T_TIPO_ITI;
+    
+BEGIN
+	DBMS_OUTPUT.put_line('[INICIO PARTE 1 - Cargas Económico y Registral con Situación de la carga no nulo]');
+	FOR I IN V_TIPO_ITI.FIRST .. V_TIPO_ITI.LAST
+      LOOP
+        V_TMP_TIPO_ITI := V_TIPO_ITI(I);
+		
+		DBMS_OUTPUT.put_line('Situación económica de la carga: '||V_TMP_TIPO_ITI(1)||', Nuevo estado carga: '||V_TMP_TIPO_ITI(2)||', Nuevo subestado carga: '||V_TMP_TIPO_ITI(3));
+		
+		V_SQL:='MERGE INTO ACT_CRG_CARGAS T1
+				USING (SELECT DISTINCT CRG.CRG_ID 
+						FROM '||V_ESQUEMA||'.ACT_CRG_CARGAS CRG
+						JOIN '||V_ESQUEMA||'.BIE_CAR_CARGAS CAR ON CAR.BIE_CAR_ID = CRG.BIE_CAR_ID
+						JOIN '||V_ESQUEMA||'.DD_SIC_SITUACION_CARGA SIC ON SIC.DD_SIC_ID = CAR.DD_SIC_ID2
+						JOIN '||V_ESQUEMA||'.DD_TCA_TIPO_CARGA TCA ON TCA.DD_TCA_ID = CRG.DD_TCA_ID
+						WHERE TCA.DD_TCA_CODIGO = ''REGECO''
+						AND SIC.DD_SIC_CODIGO = '''||V_TMP_TIPO_ITI(1)||''') T2 
+				ON (T1.CRG_ID = T2.CRG_ID)
+				WHEN MATCHED THEN 
+				UPDATE SET T1.DD_ECG_ID = (SELECT DD_ECG_ID FROM '||V_ESQUEMA||'.DD_ECG_ESTADO_CARGA WHERE DD_ECG_CODIGO = '''||V_TMP_TIPO_ITI(2)||'''),
+				T1.DD_SCG_ID = (SELECT DD_SCG_ID FROM '||V_ESQUEMA||'.DD_SCG_SUBESTADO_CARGA WHERE DD_SCG_CODIGO = '''||V_TMP_TIPO_ITI(3)||'''),
+				USUARIOMODIFICAR = ''HREOS-7822'',
+				FECHAMODIFICAR = SYSDATE';
+				
+		EXECUTE IMMEDIATE V_SQL;
+    END LOOP;
+		DBMS_OUTPUT.put_line('[FIN PARTE 1]');
+		
+		DBMS_OUTPUT.put_line('[INICIO PARTE 2 - Situación económica: Cancelada, Situación resgitral:Vigente/En saneamiento/No cancelable/null, Nuevo estado carga: Vigente, Nuevo subestado carga: Cancelado económico]');
+		
+		V_SQL:='MERGE INTO ACT_CRG_CARGAS T1
+				USING (SELECT DISTINCT CRG.CRG_ID 
+						FROM '||V_ESQUEMA||'.ACT_CRG_CARGAS CRG
+						JOIN '||V_ESQUEMA||'.BIE_CAR_CARGAS CAR ON CAR.BIE_CAR_ID = CRG.BIE_CAR_ID
+						JOIN '||V_ESQUEMA||'.DD_SIC_SITUACION_CARGA SIC ON SIC.DD_SIC_ID = CAR.DD_SIC_ID2
+						JOIN '||V_ESQUEMA||'.DD_TCA_TIPO_CARGA TCA ON TCA.DD_TCA_ID = CRG.DD_TCA_ID
+						WHERE TCA.DD_TCA_CODIGO = ''REGECO''
+						AND (SIC.DD_SIC_CODIGO = ''CAN''
+								AND (CAR.DD_SIC_ID IN (SELECT DD_SIC_ID FROM '||V_ESQUEMA||'.DD_SIC_SITUACION_CARGA WHERE DD_SIC_CODIGO IN (''VIG'',''SAN'',''NCN''))
+										OR CAR.DD_SIC_ID IS NULL))) T2 
+				ON (T1.CRG_ID = T2.CRG_ID)
+				WHEN MATCHED THEN 
+				UPDATE SET T1.DD_ECG_ID = (SELECT DD_ECG_ID FROM '||V_ESQUEMA||'.DD_ECG_ESTADO_CARGA WHERE DD_ECG_CODIGO = ''01''),
+				T1.DD_SCG_ID = (SELECT DD_SCG_ID FROM '||V_ESQUEMA||'.DD_SCG_SUBESTADO_CARGA WHERE DD_SCG_CODIGO = ''05''),
+				USUARIOMODIFICAR = ''HREOS-7822'',
+				FECHAMODIFICAR = SYSDATE';
+				
+		EXECUTE IMMEDIATE V_SQL;	
+		DBMS_OUTPUT.put_line('[FIN PARTE 2]');
+		
+		DBMS_OUTPUT.put_line('[INICIO PARTE 3 - Situación economico: Cancelada, Situación resgitral: Cancelada, Nuevo estado carga: Cancelada, Nuevo subestado carga: Cancelada la carga]');
+		
+		V_SQL:='MERGE INTO ACT_CRG_CARGAS T1
+				USING (SELECT DISTINCT CRG.CRG_ID 
+						FROM '||V_ESQUEMA||'.ACT_CRG_CARGAS CRG
+						JOIN '||V_ESQUEMA||'.BIE_CAR_CARGAS CAR ON CAR.BIE_CAR_ID = CRG.BIE_CAR_ID
+						JOIN '||V_ESQUEMA||'.DD_SIC_SITUACION_CARGA SIC ON SIC.DD_SIC_ID = CAR.DD_SIC_ID
+						JOIN '||V_ESQUEMA||'.DD_TCA_TIPO_CARGA TCA ON TCA.DD_TCA_ID = CRG.DD_TCA_ID
+						WHERE TCA.DD_TCA_CODIGO = ''REGECO''
+						AND (SIC.DD_SIC_CODIGO = ''CAN'' AND (CAR.DD_SIC_ID2 = (SELECT DD_SIC_ID FROM '||V_ESQUEMA||'.DD_SIC_SITUACION_CARGA WHERE DD_SIC_CODIGO =''CAN'')))) T2 
+				ON (T1.CRG_ID = T2.CRG_ID)
+				WHEN MATCHED THEN 
+				UPDATE SET T1.DD_ECG_ID = (SELECT DD_ECG_ID FROM '||V_ESQUEMA||'.DD_ECG_ESTADO_CARGA WHERE DD_ECG_CODIGO = ''03''),
+				T1.DD_SCG_ID = (SELECT DD_SCG_ID FROM '||V_ESQUEMA||'.DD_SCG_SUBESTADO_CARGA WHERE DD_SCG_CODIGO = ''19''),
+				USUARIOMODIFICAR = ''HREOS-7822'',
+				FECHAMODIFICAR = SYSDATE';
+				
+		EXECUTE IMMEDIATE V_SQL;	
+		DBMS_OUTPUT.put_line('[FIN PARTE 3]');
+		
+		DBMS_OUTPUT.put_line('[INICIO PARTE 4 - Cargas Económico y Registral con Situación de la carga a null]');
+		
+		V_SQL:='MERGE INTO ACT_CRG_CARGAS T1
+				USING (SELECT DISTINCT CRG.CRG_ID 
+						FROM '||V_ESQUEMA||'.ACT_CRG_CARGAS CRG
+						JOIN '||V_ESQUEMA||'.BIE_CAR_CARGAS CAR ON CAR.BIE_CAR_ID = CRG.BIE_CAR_ID
+						JOIN '||V_ESQUEMA||'.DD_TCA_TIPO_CARGA TCA ON TCA.DD_TCA_ID = CRG.DD_TCA_ID
+						WHERE TCA.DD_TCA_CODIGO = ''REGECO''
+						AND CAR.DD_SIC_ID2 IS NULL) T2 
+				ON (T1.CRG_ID = T2.CRG_ID)
+				WHEN MATCHED THEN 
+				UPDATE SET T1.DD_ECG_ID = NULL,
+				T1.DD_SCG_ID = NULL,
+				USUARIOMODIFICAR = ''HREOS-7822'',
+				FECHAMODIFICAR = SYSDATE';
+				
+		EXECUTE IMMEDIATE V_SQL;	
+		DBMS_OUTPUT.put_line('[FIN PARTE 4]');
+		
+		DBMS_OUTPUT.put_line('[INICIO PARTE 5 - Tipo de carga a null]');
+		
+		V_SQL:='MERGE INTO ACT_CRG_CARGAS T1
+				USING (SELECT DISTINCT CRG.CRG_ID 
+						FROM '||V_ESQUEMA||'.ACT_CRG_CARGAS CRG
+						JOIN '||V_ESQUEMA||'.DD_TCA_TIPO_CARGA TCA ON TCA.DD_TCA_ID = CRG.DD_TCA_ID
+						WHERE TCA.DD_TCA_CODIGO IS NULL) T2 
+				ON (T1.CRG_ID = T2.CRG_ID)
+				WHEN MATCHED THEN 
+				UPDATE SET T1.DD_ECG_ID = NULL,
+				T1.DD_SCG_ID = NULL,
+				USUARIOMODIFICAR = ''HREOS-7822'',
+				FECHAMODIFICAR = SYSDATE';
+				
+		EXECUTE IMMEDIATE V_SQL;	
+		DBMS_OUTPUT.put_line('[FIN PARTE 5]');
+	COMMIT;
+	
+EXCEPTION
+  WHEN OTHERS THEN
+    ERR_NUM := SQLCODE;
+    ERR_MSG := SQLERRM;
+    DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+    DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+    DBMS_OUTPUT.put_line(ERR_MSG);
+    ROLLBACK;
+    RAISE;   
+    
+END;
+/
+
+EXIT;

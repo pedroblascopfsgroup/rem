@@ -17,6 +17,7 @@ tmp
 .recommenders
 *~
 .gitmodules
+**/.sts4-cache
 **.sts4-cache
 
 ### Intellij ###

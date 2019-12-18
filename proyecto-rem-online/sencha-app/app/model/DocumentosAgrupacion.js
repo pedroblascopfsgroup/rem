@@ -11,40 +11,37 @@ Ext.define('HreRem.model.DocumentosAgrupacion', {
     			name:'id'
     		},
     		{
-    			name:'idUsuario'
+    			name:'idAgrupacion'
     		},
     		{
     			name:'nombreDocumento'
     		},
     		{
-    			name:'tipoDocumento'
+    			name:'descripcionTipo'
     		},
     		{
     			name:'descripcion'
     		},
     		{
-    			name:'tamanoDocumento'
+    			name:'tamanyo'
     		},
     		{
-    			name:'fechaSubida',
+    			name:'fechaDocumento',
     			type:'date',
     			dateFormat: 'c'
     		},
     		{
     			name:'nombreCompleto'
     		}
-    		
     ],
     
-	proxy: {
+    proxy: {
 		type: 'uxproxy',
-		localUrl: '',
-		remoteUrl: '',
-		api: {
-            create: '',
-            update: '',
-            destroy: ''
-        }
-    }
+		localUrl: 'activos.json',
+		//remoteUrl: 'activo/getActivoById',
+			api: {
+	            //destroy: 'gencat/deleteAdjunto'
+	        }
+    } 
 
 });

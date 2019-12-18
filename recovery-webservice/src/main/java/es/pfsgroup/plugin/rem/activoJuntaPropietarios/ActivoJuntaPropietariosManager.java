@@ -448,7 +448,6 @@ public class ActivoJuntaPropietariosManager implements ActivoJuntaPropietariosAp
 				activoJunta.getAdjuntos().remove(adjunto);
 				activoJuntaPropietariosDao.save(activoJunta);
 			}
-			borrado = true;
 		} catch (Exception ex) {
 			logger.debug(ex.getMessage());
 			borrado = false;

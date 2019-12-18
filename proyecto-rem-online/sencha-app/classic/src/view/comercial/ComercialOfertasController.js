@@ -153,7 +153,9 @@ Ext.define('HreRem.view.comercial.ComercialOfertasController', {
 		     method: 'POST'
 		    ,success: function (a, operation, context) {
 		    	var count = Ext.decode(a.responseText).data;
-		    	if(count < 1000){
+		    	var limite = Ext.decode(a.responseText).limite;
+		    	var limiteMax = Ext.decode(a.responseText).limiteMax;
+		    	if(count < limite){
 		    		config.params.exportar = true;
 		    		Ext.Ajax.request({			
 		   		     url: url,
@@ -184,6 +186,7 @@ Ext.define('HreRem.view.comercial.ComercialOfertasController', {
 		        		params: params,
 		        		url: url,
 		        		count: count,
+		        		limiteMax: limiteMax,
 		        		view: view,
 		        		renderTo: view.body		        		
 		        	});

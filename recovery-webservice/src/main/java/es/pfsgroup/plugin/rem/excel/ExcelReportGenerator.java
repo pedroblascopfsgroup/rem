@@ -54,7 +54,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 	
 	protected static final Log logger = LogFactory.getLog(ExcelReportGenerator.class);
 	
-	private static final int MAX_ROW_LIMIT = 5000;
+	private static final int MAX_ROW_LIMIT = 100000;
 
 	private static final String EXPORTAR_EXCEL_LIMITE_ACTIVOS = "exportar.excel.limite.activos";
 
@@ -627,9 +627,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 	}
 
 	@Override
-	public int getLimit() {
-		String limite = appProperties.getProperty(EXPORTAR_EXCEL_LIMITE_ACTIVOS);
-		return (!(Checks.esNulo(limite)) ? Integer.parseInt(limite) : MAX_ROW_LIMIT);
+	public int getLimit() {		
+		return MAX_ROW_LIMIT;
 	}
 	
 	

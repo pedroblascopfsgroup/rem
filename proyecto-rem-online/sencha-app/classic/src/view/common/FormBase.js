@@ -244,6 +244,13 @@
     		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchPerfilesClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}];
 
     	}
+    	if (me.isSearchFormVisitas) {
+
+    		me.collapsible= true;
+    		me.collapsed= false;
+    		me.buttonAlign = 'left';
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel', disabled: !exportarOfertas}];
+    	}
 
     	me.callParent();
 

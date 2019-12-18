@@ -33,6 +33,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 
@@ -159,6 +160,11 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		
 		if(activoApi.isActivoVendido(activo)) {
 			codigo = DDSituacionComercial.CODIGO_VENDIDO;
+		}else if (!Checks.esNulo(activo.getTipoComercializacion()) && (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getTipoComercializacion().getCodigo())) && (activoApi.isActivoAlquilado(activo) || activoApi.isOcupadoConTituloOrEstadoAlquilado(activo))) {
+			codigo = DDSituacionComercial.CODIGO_ALQUILADO;
+		}
+		else if (!Checks.esNulo(activo.getTipoComercializacion()) && (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getTipoComercializacion().getCodigo())) && (activoApi.isActivoMatriz(activo.getId()) && activoApi.isAlquiladoParcialmente(activo.getId()))) {
+			codigo = DDSituacionComercial.CODIGO_ALQUILADO_PARCIALMENTE;
 		}
 		else if(activoApi.isActivoConReservaByEstado(activo,DDEstadosReserva.CODIGO_FIRMADA)) {
 			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_RESERVA;
@@ -185,12 +191,6 @@ public class UpdaterStateManager implements UpdaterStateApi{
 			} else {
 				codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA;
 			}			
-		}
-		else if (activoApi.isActivoAlquilado(activo) || activoApi.isOcupadoConTituloOrEstadoAlquilado(activo)) {
-			codigo = DDSituacionComercial.CODIGO_ALQUILADO;
-		}
-		else if (activoApi.isActivoMatriz(activo.getId()) && activoApi.isAlquiladoParcialmente(activo.getId())) {
-			codigo = DDSituacionComercial.CODIGO_ALQUILADO_PARCIALMENTE;
 		}
 		else if(activoApi.getCondicionantesDisponibilidad(activo.getId()).getIsCondicionado()) {
 			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_CONDICIONADO;

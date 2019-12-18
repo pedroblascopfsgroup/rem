@@ -313,11 +313,14 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	ActivoAgrupacionActivo getActivoAgrupacionActivoObraNuevaPorActivoID(Long id);
 	
 	ActivoAgrupacionActivo getActivoAgrupacionActivoPA(Long idActivo);
+
+	boolean existeAMalquilado(Long idAgrupacion);
+
+	boolean existenUAsAlquiladas(Long idAgrupacion);
 	
 	Long getAgrupacionYubaiByIdActivo(Long id);
 	
 	List<ActivoProveedor> getComboApiPrimario();
 
 	void deleteActOfr(Long idActivo, Long idOferta);
-
 }

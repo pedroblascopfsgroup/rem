@@ -650,14 +650,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 		esTipoEstadoAlquilerAlquilado: function(get){
 			var estadoAlquilerCodigo = get('situacionPosesoria.tipoEstadoAlquiler');
-			return (CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] == estadoAlquilerCodigo);
+			
+			return CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] == estadoAlquilerCodigo 
+				|| !($AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
 		},
 		
 		disabledComboConTituloTPA: function(get){
 			var esTipoEstadoAlquilerAlquilado = get('esTipoEstadoAlquilerAlquilado');
 			var ocupado = get('situacionPosesoria.ocupado');
-
-			return esTipoEstadoAlquilerAlquilado || ocupado == CONST.COMBO_OCUPACION["NO"];
+			
+			return (esTipoEstadoAlquilerAlquilado || ocupado == CONST.COMBO_OCUPACION["NO"]) 
+				&&  !($AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
 		},
 
 		isCarteraLiberbank: function(get){

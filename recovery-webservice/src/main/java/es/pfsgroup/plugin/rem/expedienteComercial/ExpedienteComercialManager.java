@@ -4887,7 +4887,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(dto.getIdDocAdjunto())) {
 				docAdjunto = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdDocAdjunto()));
 			} else {
-				if(!Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
+				if(!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
 					docAdjunto = genericDao.get(AdjuntoComprador.class,
 							genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));
 				}
@@ -8950,18 +8950,36 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public boolean checkContratoSubido(TareaExterna tareaExterna) {
 
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
-		try {
-			List<DtoAdjunto> adjuntosExpediente = gestorDocumentalAdapterApi
-					.getAdjuntosExpedienteComercial(expedienteComercial);
-			for (DtoAdjunto adjunto : adjuntosExpediente) {
-				if(DDSubtipoDocumentoExpediente.MATRICULA_CONTRATO.equals(adjunto.getMatricula()) || DDSubtipoDocumentoExpediente.MATRICULA_CONTRATO_ALQUILER_CON_OPCION_A_COMPRA.equals(adjunto.getMatricula())) {
-					return true;
+		List<DtoAdjunto> adjuntosExpediente = new ArrayList<DtoAdjunto>();
+		
+		if(gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			try {
+				adjuntosExpediente = gestorDocumentalAdapterApi
+						.getAdjuntosExpedienteComercial(expedienteComercial);
+				for (DtoAdjunto adjunto : adjuntosExpediente) {
+					if(DDSubtipoDocumentoExpediente.MATRICULA_CONTRATO.equals(adjunto.getMatricula()) || DDSubtipoDocumentoExpediente.MATRICULA_CONTRATO_ALQUILER_CON_OPCION_A_COMPRA.equals(adjunto.getMatricula())) {
+						return true;
+					}
 				}
+			} catch (GestorDocumentalException e) {
+				e.printStackTrace();
 			}
-		} catch (GestorDocumentalException e) {
-			e.printStackTrace();
+			return false;
+		} else {
+
+			adjuntosExpediente = getAdjuntosExp(expedienteComercial.getId(), adjuntosExpediente);
+			if (!Checks.esNulo(adjuntosExpediente)) {
+				for (DtoAdjunto adjunto : adjuntosExpediente) {
+					if (!Checks.esNulo(adjunto))
+					if("Contrato".equals(adjunto.getDescripcionSubtipo()) || "Contrato de alquiler con opción a compra".equals(adjunto.getDescripcionSubtipo())) {
+						return true;
+					}
+
+				}
+
+			}
+			return false;
 		}
-		return false;
 	}
 
 	@Override
@@ -10119,8 +10137,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			List<TareaExterna> tareasActivas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
 			if (tareasActivas != null && !tareasActivas.isEmpty()) {
 				for (TareaExterna tarea : tareasActivas) {
-					if (ComercialUserAssigantionService.CODIGO_T013_VALIDACION_CLIENTES
-							.equals(tarea.getTareaProcedimiento().getCodigo())) {
+					if (!Checks.esNulo(tarea.getTareaProcedimiento()) 
+							&& ComercialUserAssigantionService.CODIGO_T013_VALIDACION_CLIENTES.equals(tarea.getTareaProcedimiento().getCodigo())) {
 						tarNot = tarea.getTareaPadre();
 						if (!Checks.esNulo(tarNot)) {
 							tarNot.setFechaFin(new Date());

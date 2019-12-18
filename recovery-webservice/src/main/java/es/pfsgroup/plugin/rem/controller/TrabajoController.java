@@ -32,7 +32,9 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
+import es.capgemini.pfs.config.ConfigManager;
 import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -162,6 +164,9 @@ public class TrabajoController extends ParadiseJsonController {
 
 	@Autowired
 	private GenericABMDao genericDao;
+
+	@Autowired
+	private ConfigManager configManager;
 	
 	private static final String RESPONSE_SUCCESS_KEY = "success";	
 	private static final String RESPONSE_DATA_KEY = "data";
@@ -1161,19 +1166,34 @@ public class TrabajoController extends ParadiseJsonController {
 	@Transactional()
 	public ModelAndView registrarExportacion(DtoTrabajoFilter dtoTrabajoFilter, Boolean exportar, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelMap model = new ModelMap();
-		
+		Usuario user = null;
+		Boolean isSuperExport = false;
 		try {
 			int count = trabajoApi.findAll(dtoTrabajoFilter, genericAdapter.getUsuarioLogado()).getTotalCount();
+			user = usuarioManager.getUsuarioLogado();
 			AuditoriaExportaciones ae = new AuditoriaExportaciones();
 			ae.setBuscador("trabajos");
 			ae.setFechaExportacion(new Date());
 			ae.setNumRegistros(Long.valueOf(count));
-			ae.setUsuario(usuarioManager.getUsuarioLogado());
+			ae.setUsuario(user);
 			ae.setFiltros(parameterParser(request.getParameterMap()));
 			ae.setAccion(exportar);
 			genericDao.save(AuditoriaExportaciones.class, ae);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 			model.put(RESPONSE_DATA_KEY, count);
+			for(Perfil pef : user.getPerfiles()) {
+				if(pef.getCodigo().equals("SUPEREXPORTTBJ")) {
+					isSuperExport = true;
+					break;
+				}
+			}
+			if(isSuperExport) {
+				model.put("limite", configManager.getConfigByKey("super.limite.exportar.excel.trabajos").getValor());
+				model.put("limiteMax", configManager.getConfigByKey("super.limite.maximo.exportar.excel.trabajos").getValor());
+			}else {
+				model.put("limite", configManager.getConfigByKey("limite.exportar.excel.trabajos").getValor());
+				model.put("limiteMax", configManager.getConfigByKey("limite.maximo.exportar.excel.trabajos").getValor());
+			}
 		}catch(Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("error en trabajoController", e);

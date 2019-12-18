@@ -25,9 +25,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.config.ConfigManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -110,6 +112,9 @@ public class AgendaController extends TareaController {
 		
 	
 	private final Log logger = LogFactory.getLog(getClass());
+
+	@Autowired
+	private ConfigManager configManager;
 	
 	private static final String RESPONSE_SUCCESS_KEY = "success";	
 	private static final String RESPONSE_DATA_KEY = "data";
@@ -327,19 +332,34 @@ public class AgendaController extends TareaController {
 	@Transactional()
 	public ModelAndView registrarExportacion(DtoTareaFilter dtoTareaFilter, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelMap model = new ModelMap();
-		
+		Usuario user = null;
+		Boolean isSuperExport = false;
 		try {
 			int count = adapter.getListTareas(dtoTareaFilter).getTotalCount();
+			user = usuarioManager.getUsuarioLogado();
 			AuditoriaExportaciones ae = new AuditoriaExportaciones();
 			ae.setBuscador(buscador);
 			ae.setFechaExportacion(new Date());
 			ae.setNumRegistros(Long.valueOf(count));
-			ae.setUsuario(usuarioManager.getUsuarioLogado());
+			ae.setUsuario(user);
 			ae.setFiltros(parameterParser(request.getParameterMap()));
 			ae.setAccion(exportar);
 			genericDao.save(AuditoriaExportaciones.class, ae);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 			model.put(RESPONSE_DATA_KEY, count);
+			for(Perfil pef : user.getPerfiles()) {
+				if(pef.getCodigo().equals("SUPEREXPORTTARAVAL")) {
+					isSuperExport = true;
+					break;
+				}
+			}
+			if(isSuperExport) {
+				model.put("limite", configManager.getConfigByKey("super.limite.exportar.excel.tareas").getValor());
+				model.put("limiteMax", configManager.getConfigByKey("super.limite.maximo.exportar.excel.tareas").getValor());
+			}else {
+				model.put("limite", configManager.getConfigByKey("limite.exportar.excel.tareas").getValor());
+				model.put("limiteMax", configManager.getConfigByKey("limite.maximo.exportar.excel.tareas").getValor());
+			}
 		}catch(Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("error en agendaController", e);

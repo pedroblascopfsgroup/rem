@@ -27,6 +27,8 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -126,11 +128,6 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 				expedienteComercial.setNumContratoAlquiler(valor.getValor());
 			}
 		}
-		Activo activo = tramite.getActivo();
-		if(!Checks.esNulo(activo)) {
-			activoApi.actualizarOfertasTrabajosVivos(activo);
-			activoAdapter.actualizarEstadoPublicacionActivo(tramite.getActivo().getId(), true);
-		}
 		
 		//Llamada a Maestro de Personas
 		try {
@@ -147,6 +144,20 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 			expedienteComercialApi.enviarCorreoAsegurador(expedienteComercial.getId());
 		}
 		expedienteComercialApi.bloquearExpediente(expedienteComercial.getId());
+		
+		Activo activo = tramite.getActivo();
+		if(!Checks.esNulo(activo)) {
+			activoApi.actualizarOfertasTrabajosVivos(activo);
+			activoAdapter.actualizarEstadoPublicacionActivo(tramite.getActivo().getId(), false);
+			
+			if(activoDao.isActivoMatriz(activo.getId())){
+				ActivoAgrupacion activoAgrupacion = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+				List<ActivoAgrupacionActivo> listaActivosAgrupacion = activoAgrupacion.getActivos();
+				for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivosAgrupacion) {	
+					activoAdapter.actualizarEstadoPublicacionActivo(activoAgrupacionActivo.getActivo().getId());
+				}
+			}
+		}
 		
 	}
 

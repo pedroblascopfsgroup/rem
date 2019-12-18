@@ -4034,6 +4034,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "AND act.act_id   = aga.act_id " 
 				+ "AND tag.dd_tag_codigo = '02' " 
 				+ "AND act.ACT_NUM_ACTIVO = " + numActivo +" " 
+				+ "AND agr.agr_fecha_baja is null "
 				+ "AND aga.BORRADO  = 0 " 
 				+ "AND agr.BORRADO  = 0 " 
 				+ "AND act.BORRADO  = 0 ");

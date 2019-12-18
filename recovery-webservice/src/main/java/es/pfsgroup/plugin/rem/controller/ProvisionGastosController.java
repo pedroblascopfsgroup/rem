@@ -16,7 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import es.capgemini.pfs.config.ConfigManager;
 import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.domain.Perfil;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
@@ -46,6 +49,9 @@ public class ProvisionGastosController extends ParadiseJsonController {
 	
 	@Autowired
 	private GenericABMDao genericDao;
+
+	@Autowired
+	private ConfigManager configManager;
 	
 	private static final String RESPONSE_SUCCESS_KEY = "success";	
 	private static final String RESPONSE_DATA_KEY = "data";
@@ -91,9 +97,11 @@ public class ProvisionGastosController extends ParadiseJsonController {
 	@Transactional()
 	public ModelAndView registrarExportacion(DtoProvisionGastosFilter dtoProvisionGastos, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelMap model = new ModelMap();
-		
+		Usuario user = null;
+		Boolean isSuperExport = false;
 		try {
 			int count = provisionGastosApi.findAll(dtoProvisionGastos).getTotalCount();
+			user = usuarioManager.getUsuarioLogado();
 			AuditoriaExportaciones ae = new AuditoriaExportaciones();
 			ae.setBuscador(buscador);
 			ae.setFechaExportacion(new Date());
@@ -104,6 +112,19 @@ public class ProvisionGastosController extends ParadiseJsonController {
 			genericDao.save(AuditoriaExportaciones.class, ae);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 			model.put(RESPONSE_DATA_KEY, count);
+			for(Perfil pef : user.getPerfiles()) {
+				if(pef.getCodigo().equals("SUPEREXPORTADMIN")) {
+					isSuperExport = true;
+					break;
+				}
+			}
+			if(isSuperExport) {
+				model.put("limite", configManager.getConfigByKey("super.limite.exportar.excel.gastos").getValor());
+				model.put("limiteMax", configManager.getConfigByKey("super.limite.maximo.exportar.excel.gastos").getValor());
+			}else {
+				model.put("limite", configManager.getConfigByKey("limite.exportar.excel.gastos").getValor());
+				model.put("limiteMax", configManager.getConfigByKey("limite.maximo.exportar.excel.gastos").getValor());
+			}
 		}catch(Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("error en provisionGastosController", e);

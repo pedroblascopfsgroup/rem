@@ -8,6 +8,7 @@ Ext.define('HreRem.view.common.WindowExportar', {
 	params: null,
 	url: null,
 	count: 1,
+	limiteMax: 1,
 	view: null,
 	layout: 'fit',
 	bodyPadding: 0,
@@ -28,7 +29,7 @@ Ext.define('HreRem.view.common.WindowExportar', {
     				id: 'mensajeExportar',
     				name: 'mensajeExportar',
     				reference: 'mensajeExportar',		            				
-    				value: me.count < 4999 ? 'Esta usted solicitando una extracci\u00f3n masiva que ser\u00e1 comunicada a Seguridad, Auditor\u00eda y su responsable.' :
+    				value: parseInt(me.count) < parseInt(me.limiteMax) ? 'Esta usted solicitando una extracci\u00f3n masiva que ser\u00e1 comunicada a Seguridad, Auditor\u00eda y su responsable.' :
     					'Esta usted solicitando una extracci\u00f3n masiva que excede el numero de registros permitidos y su acci\u00f3n ser\u00e1 comunicada a Seguridad, Auditor\u00eda y su responsable.'
     				
     			}
@@ -39,7 +40,7 @@ Ext.define('HreRem.view.common.WindowExportar', {
     			  {
     				  text: 'Exportar',
     				  formBind: true,
-    				  hidden: me.count > 4999,
+    				  hidden: !(parseInt(me.count) < parseInt(me.limiteMax)),
     				  handler: function(){
     					  var me = this;
     					  me.up('window').registrarExportacion(true);

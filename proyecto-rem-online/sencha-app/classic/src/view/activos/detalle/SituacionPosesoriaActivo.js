@@ -219,9 +219,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							fieldLabel: HreRem.i18n('fieldlabel.ocupado'),
 				        	bind: {
 			            		store: '{comboSiNoRem}',
-
 			            		value : '{situacionPosesoria.ocupado}',
-			            		disabled: '{esTipoEstadoAlquilerAlquilado}',
 			            		readOnly: '{esTipoEstadoAlquilerAlquilado}'
 			            	},
 			            	listeners: {
@@ -277,9 +275,8 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 									allowBlank: false,
 							        bind: {
 							        	store : '{comboDDTipoTituloActivoTPA}',
-						            	value: '{situacionPosesoria.conTitulo}',
-			                            disabled: '{disabledComboConTituloTPA}',
-			                            readOnly: '{esTipoEstadoAlquilerAlquilado}'
+						            	value: '{situacionPosesoria.conTitulo}',			                           
+			                            readOnly: '{disabledComboConTituloTPA}'			                            
 						            }//,
 							        
 //					            	labelWidth: 80,

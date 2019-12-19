@@ -82,7 +82,8 @@ Ext.define('HreRem.model.OfertaActivo', {
 		writeAll: true,
 		api: {
             update: 'tramitacionofertas/saveOferta'
-        }
+        },
+        extraParams: {entidad: 'activo'}
     }    
 
 });

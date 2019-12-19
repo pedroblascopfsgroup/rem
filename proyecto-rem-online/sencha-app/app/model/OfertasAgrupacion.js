@@ -69,7 +69,8 @@ Ext.define('HreRem.model.OfertasAgrupacion', {
 		timeout: 600000,
 		api: {
             update: 'tramitacionofertas/saveOferta'
-        }
+        },
+        extraParams: {entidad: 'agrupacion'}
     } 
 
 });

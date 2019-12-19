@@ -24,6 +24,7 @@ public class TramitacionOfertasController extends ParadiseJsonController {
 	protected static final Log logger = LogFactory.getLog(TramitacionOfertasController.class);
 	private static final String RESPONSE_SUCCESS_KEY = "success";
 	private static final String RESPONSE_MESSAGE_KEY = "msg";
+	private static final String ENTIDAD_ARUPACION = "agrupacion";
 	
 	@Autowired
 	private TramitacionOfertasApi tramitacionOfertasManager;
@@ -31,9 +32,9 @@ public class TramitacionOfertasController extends ParadiseJsonController {
 	//ActivoController
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveOferta(DtoOfertaActivo ofertaActivoDto, ModelMap model, HttpServletRequest request) {
+	public ModelAndView saveOferta(DtoOfertaActivo ofertaActivoDto, ModelMap model, HttpServletRequest request, String entidad) {
 		try {
-			boolean success = tramitacionOfertasManager.saveOferta(ofertaActivoDto, ofertaActivoDto.getIdAgrupacion() != null);
+			boolean success = tramitacionOfertasManager.saveOferta(ofertaActivoDto, ENTIDAD_ARUPACION.equals(entidad));
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (JsonViewerException jvex) {

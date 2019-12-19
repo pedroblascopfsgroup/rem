@@ -530,23 +530,8 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						            	},
 						            	displayField: 'apellidoNombre',
 			    						valueField: 'id',
-			    						mode: 'local',
-			    						emptyText: 'Introduzca un usuario',
-			    						enableKeyEvents:true,
-		    						    listeners: {
-											'keyup': function() {
-											   this.getStore().clearFilter();
-											   this.getStore().filter({
-												    property: 'apellidoNombre',
-												    value: this.getRawValue(),
-												    anyMatch: true,
-												    caseSensitive: false
-												})
-											},
-											'beforequery': function(queryEvent) {
-												queryEvent.combo.onLoad();
-											}
-		    						    }
+										filtradoEspecial: true,
+			    						emptyText: 'Introduzca un usuario'
 								    },
 							    	{ 
 							    		xtype: 'comboboxfieldbase',
@@ -554,32 +539,8 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							    		name: 'apiPrimarioId',
 							    		valueField : 'id',
 										displayField : 'nombre',
-							    		enableKeyEvents:true,
-							    		mode: 'local',
-							    		forceSelection	: false,
-							    		editable: true,
-							    		minChars: 0,
+										filtradoEspecial: true,
 							    		emptyText: 'Introduzca nombre mediador',
-										listeners: {
-											'keyup': function() {
-												if(this.getRawValue().length >= 3)
-												{
-													this.getStore().clearFilter();
-												   	this.getStore().filter({
-													    property: 'nombre',
-													    value: this.getRawValue(),
-													    anyMatch: true,
-													    caseSensitive: false
-													})
-												}else if (this.getRawValue().length == 0) {
-													this.getStore().clearFilter();
-													this.getStore().load();
-												}
-											},
-											'beforequery': function(queryEvent) {
-											 	queryEvent.combo.onLoad();
-											}
-										},
 							    		bind: {
 							    			store: '{comboApiPrimario}'
 							    		}

@@ -49,6 +49,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
@@ -160,7 +161,11 @@ public class Activo implements Serializable, Auditable {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_SCM_ID")
-    private DDSituacionComercial situacionComercial;       
+    private DDSituacionComercial situacionComercial;     
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_SPG_ID")
+    private DDSociedadPagoAnterior sociedadPagoAnterior;
     
     @Column(name = "ACT_VPO")
     private Integer vpo;
@@ -474,6 +479,10 @@ public class Activo implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_EQG_ID")
     private DDEquipoGestion equipoGestion;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ECA_ID")
+    private DDEstadoCargaActivo estadoCargaActivo;  
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_VENTA_PLANO")
@@ -483,10 +492,6 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "ACT_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private ActivoAutorizacionTramitacionOfertas activoAutorizacionTramitacionOfertas;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_ECA_ID")
-    private DDEstadoCargaActivo estadoCargaActivo;
 	
     // Getters del activo --------------------------------------------
     
@@ -778,6 +783,14 @@ public class Activo implements Serializable, Auditable {
 		this.bien.setSarebId(sarebId);
 	}
     
+	public DDSociedadPagoAnterior getSociedadPagoAnterior() {
+		return sociedadPagoAnterior;
+	}
+
+	public void setSociedadPagoAnterior(DDSociedadPagoAnterior sociedadPagoAnterior) {
+		this.sociedadPagoAnterior = sociedadPagoAnterior;
+	}
+
 	public String getPoblacion() {
 		if (bien.getLocalizaciones() != null) {
 			return bien.getLocalizaciones().get(0).getPoblacion();

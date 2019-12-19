@@ -7,7 +7,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion','HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 
     		'HreRem.view.expedientes.ExpedienteDetalleController', 'HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', 
     		'HreRem.view.activos.detalle.InformeComercialActivo','HreRem.view.activos.detalle.AdministracionActivo',
-    		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias', 'HreRem.model.ComercialActivoModel'],
+    		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias','HreRem.view.activos.detalle.PlusvaliaActivo', 'HreRem.model.ComercialActivoModel'],
 
     control: {
          'documentosactivosimple gridBase': {
@@ -103,7 +103,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		models = null,
 		nameModels = null,
 		id = me.getViewModel().get("activo.id");
-
 		form.mask(HreRem.i18n("msg.mask.loading"));
 		if(!form.saveMultiple) {	
 			model = form.getModelInstance(),
@@ -280,6 +279,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                 || tabData.models[0].name == "activotrabajo"
                 || tabData.models[0].name == "activotrabajosubida"
                 || tabData.models[0].name == "activotramite"
+                || tabData.models[0].name == "fasepublicacionactivo"
                 ){
                 idActivo = tabData.models[0].data.idActivo;
             } else {
@@ -505,14 +505,25 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     
     onChangeChainedCombo: function(combo) {
-
     	var me = this,
     	chainedCombo = me.lookupReference(combo.chainedReference);   
     	
     	me.getViewModel().notify();
-    	if(!Ext.isEmpty(chainedCombo.getValue())) {
+    	if(!Ext.isEmpty(chainedCombo.store) && !Ext.isEmpty(chainedCombo.getValue())) {
 			chainedCombo.clearValue();
     	}
+    	
+    	if(combo.chainedStore == 'storeSubfasesDePublicacionFiltered'){
+    		var storeSubfaseFiltered = me.getViewModel().get("storeSubfasesDePublicacionFiltered");
+			chainedCombo.bindStore(storeSubfaseFiltered);
+			storeSubfaseFiltered.getProxy().setExtraParams({'codFase':combo.getValue()});	
+		}
+		else if (combo.chainedStore == 'comboSubestadoGestionFiltered'){
+			var storeSubestadoGestionFiltered = me.getViewModel().get("comboSubestadoGestionFiltered");
+			chainedCombo.bindStore(storeSubestadoGestionFiltered);
+			storeSubestadoGestionFiltered.getProxy().setExtraParams({'codLocalizacion':combo.getValue()});	
+		}
+		
 		chainedCombo.getStore().load({ 			
 			callback: function(records, operation, success) {
    				if(!Ext.isEmpty(records) && records.length > 0) {
@@ -1570,7 +1581,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		view.lookupReference('fieldlabelDistrito').hide();
     	}
     },
-    
+  
     actualizarCoordenadas: function(parent, latitud, longitud) {
     	var me = this;  
     	
@@ -5562,8 +5573,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},		
 
+	usuarioLogadoEditar: function() {
+
+    	var me = this;
+    	var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYASADM']) || $AU.userIsRol(CONST.PERFILES['HAYAADM']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTADMT'])
+		if(usuariosValidos){
+			me.lookupReference("subestadoGestion").readOnly = false;
+			me.lookupReference("estadoLocalizacion").readOnly = false;
+    	}
+    	else{
+    		me.lookupReference("subestadoGestion").readOnly = true;
+    		me.lookupReference("estadoLocalizacion").readOnly = true;
+    	}
+	},
+
 	onInsertarAutorizacionTramOfertas: function(btn){
-		
+
 		var me = this;	
 		Ext.Msg.confirm(
 				HreRem.i18n("title.autorizar.tramitacion.ofertas"),
@@ -5807,6 +5832,37 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			models = form.getModelsInstance();
 			me.cargarTabDataMultiple(form, 0, models, form.records);
 		}
-	}
+	},
 	
+	onChkbxSubfaseChange: function(chkbox, newValue, oldValue) {
+		var modelValue = chkbox.lookupController().getViewModel().data.fasepublicacionactivo.data.subfasePublicacionCodigo;
+		if (newValue != modelValue) {
+			var me = this;
+			var faseComentario = me.lookupReference('faseComentario');
+		    faseComentario.reset();
+		}
+	},
+	
+	onChkbxFaseChange: function(chkbox, newValue, oldValue) {
+		var comboSubfase = chkbox.lookupController().getView().lookupReference('chkbxSubfase');
+		if (newValue != '01') {
+			comboSubfase.setAllowBlank(false);
+		} else {
+			comboSubfase.setAllowBlank(true);
+		}
+	},
+	doFilterEstadoGestionByUserRol: function(combo) {
+		if ($AU.userIsRol(CONST.PERFILES['GESTIAFORM'])){
+			if (combo !== null 
+			&& typeof combo !== "undefined") {
+				combo.getStore()
+					.filter({
+						fn: function(record){
+							return CONST.DD_ESTADO_GEST_PLUVS["RECHAZADO"] !== record.data.codigo;
+						},
+						scope: this
+					});
+			}
+		}
+	}
 });

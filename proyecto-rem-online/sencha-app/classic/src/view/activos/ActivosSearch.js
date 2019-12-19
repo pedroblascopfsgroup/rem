@@ -105,7 +105,6 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 								store : '{comboSiNoRem}'
 							}
 						}
-				        
 				    ]},
 				    {
 			    	defaults: {
@@ -667,14 +666,58 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							    		bind: {
 							    			store: '{comboFasePublicacion}'
 							    		}
-							    	}
+							    	},
+							    	{
+								        xtype: 'comboboxfieldbase',
+							        	fieldLabel: HreRem.i18n('combolabel.activos.estado.publicacion.venta'),
+							        	name: 'estadoPublicacionVentaCodigo',
+							        	reference: 'estadoPublicacionVenta',
+							        	bind: {
+						            		store: '{comboEstadoPublicacionVenta}'
+							        	},
+										listeners: {
+											change: 'hiddenMotivosOcultacionVenta'
+										}
+									},
+									{
+										xtype: 'comboboxfieldbase',
+							        	fieldLabel: HreRem.i18n('combolabel.activos.estado.publicacion.alquiler'),
+							        	name: 'estadoPublicacionAlquilerCodigo',
+							        	reference: 'estadoPublicacionAlquiler',
+							        	bind: {
+						            		store: '{comboEstadoPublicacionAlquiler}'
+						            	},
+										listeners: {
+											change: 'hiddenMotivosOcultacionAlquiler'
+										}
+							        },
+									{ 
+									   	xtype: 'comboboxfieldbase',
+							        	fieldLabel: HreRem.i18n('combolabel.activos.combo.motivo.ocultacion.venta'),
+							        	name: 'motivosOcultacionVenta',
+							        	reference: 'motivosOcultacionVenta',
+							        	bind: {
+							        		hidden: true,
+						            		store: '{comboMotivoOcultacion}'
+						            	}
+									},
+					        		{ 
+							        	xtype: 'comboboxfieldbase',
+							        	fieldLabel: HreRem.i18n('combolabel.activos.combo.motivo.ocultacion.alquiler'),
+							        	name: 'motivosOcultacionAlquiler',
+							        	reference: 'motivosOcultacionAlquiler',
+							        	bind: {
+							        		hidden: true,
+						            		store: '{comboMotivoOcultacion}'
+						            	}
+					        		}
 								]
 			            }
 		            ]}
 		            
     			]
     		}
-	    ],
+	    ];
 		
 		me.callParent();
 		

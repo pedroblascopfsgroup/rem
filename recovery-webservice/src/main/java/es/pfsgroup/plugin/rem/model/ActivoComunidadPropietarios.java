@@ -141,8 +141,11 @@ public class ActivoComunidadPropietarios implements Serializable, Auditable {
 	
 	@Column(name = "CPR_BUROFAX")
 	private Integer burofax;
-	
-    @OneToMany(mappedBy = "comunidadPropietarios", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+
+	@Column(name = "CPR_ASISTENCIA_JUNTA_OBLIGA")
+	private  Integer asistenciaJuntaObligatoria;
+
+	@OneToMany(mappedBy = "comunidadPropietarios", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "CPR_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<ActivoCuotasComunidadPropietarios> cuotaComunidadPropietarios;
@@ -458,6 +461,12 @@ public class ActivoComunidadPropietarios implements Serializable, Auditable {
 		this.situacion = situacion;
 	}
 
-	
+	public Integer getAsistenciaJuntaObligatoria() {
+		return asistenciaJuntaObligatoria;
+	}
+
+	public void setAsistenciaJuntaObligatoria(Integer asistenciaJuntaObligatoria) {
+		this.asistenciaJuntaObligatoria = asistenciaJuntaObligatoria;
+	}
 
 }

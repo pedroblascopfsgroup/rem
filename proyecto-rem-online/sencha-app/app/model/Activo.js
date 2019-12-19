@@ -869,8 +869,15 @@ Ext.define('HreRem.model.Activo', {
     			name: 'nombreMediador'
     		},
     		{
+    			name: 'visualizarTabFasesPublicacion',
+    			type: 'boolean'
+			},
+			{
     			name:'esSarebProyecto',
     			type:'boolean'
+    		},
+    		{
+    			name: 'sociedadPagoAnterior'
     		}
     ],
     

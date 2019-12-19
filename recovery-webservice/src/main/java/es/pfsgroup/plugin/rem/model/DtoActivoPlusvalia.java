@@ -28,6 +28,7 @@ public class DtoActivoPlusvalia extends DtoTabActivo {
 	private String exento;
 	private String autoliquidacion;
 	private String observaciones;
+	private String estadoGestion;
 	
 	public Long getIdPlusvalia() {
 		return idPlusvalia;
@@ -113,6 +114,12 @@ public class DtoActivoPlusvalia extends DtoTabActivo {
 	}
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
+	}
+	public String getEstadoGestion() {
+		return estadoGestion;
+	}
+	public void setEstadoGestion(String estadoGestion) {
+		this.estadoGestion = estadoGestion;
 	}
 	
 }

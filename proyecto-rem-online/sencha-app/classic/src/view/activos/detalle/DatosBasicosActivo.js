@@ -229,7 +229,15 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					                	}
 					                }
 								]
-							}
+							},
+					        {
+					        	xtype: 'textfieldbase',
+					        	fieldLabel: HreRem.i18n('fieldlabel.sociedad.pago'),
+					        	bind: '{activo.sociedadPagoAnterior}',
+					        	readOnly: true,
+					        	style:'margin-left:10px'
+					        }
+							
 						]
 					},
 					{ // Columna 3 

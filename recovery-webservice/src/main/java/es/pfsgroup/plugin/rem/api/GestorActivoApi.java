@@ -184,5 +184,8 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	 */
 	public DDIdentificacionGestoria isGestoria(Usuario usuario);
 
+	public Usuario usuarioTareaDivarian(String codigoTarea);
+
+	Usuario supervisorTareaDivarian(String codigoTarea);
 
 }

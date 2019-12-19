@@ -22,6 +22,7 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.exception.HistoricoTramitacionException;
+import es.pfsgroup.plugin.rem.activo.exception.PlusvaliaActivoException;
 //import es.pfsgroup.plugin.rem.activo.DtoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -51,6 +52,7 @@ import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoDiarioGestion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoTramitacionTitulo;
@@ -1287,11 +1289,19 @@ public interface ActivoApi {
 	 */
 	public DtoPage getListPlusvalia(DtoPlusvaliaFilter dtoPlusvaliaFilter);
 
+	boolean esPopietarioRemaining(TareaExterna tareaExterna);
+
+	boolean esPopietarioArrow(TareaExterna tareaExterna);
+
+	List<DtoProveedorMediador> getComboApiPrimario();
+
 	boolean isActivoPerteneceAgrupacionRestringida(Activo activo);
 	
 	void bloquearChecksComercializacionActivo(ActivoAgrupacionActivo aga, DtoActivoFichaCabecera activoDto);
 
-	List<DtoProveedorMediador> getComboApiPrimario();
+	List<DtoHistoricoDiarioGestion> getHistoricoDiarioGestion(Long idActivo);
+
+	Boolean crearHistoricoDiarioGestion(DtoComunidadpropietariosActivo activoDto, Long idActivo);
 
 	@BusinessOperationDefinition("activoManager.deleteAdjuntoPlusvalia")
 	boolean deleteAdjuntoPlusvalia(DtoAdjunto dtoAdjunto);
@@ -1306,6 +1316,8 @@ public interface ActivoApi {
 	public List<GastosExpediente> crearGastosExpediente(ExpedienteComercial nuevoExpediente);
 
 	Long activoPerteneceDND(Activo activo);
+	
+	Boolean getVisibilidadTabFasesPublicacion(Activo activo);
 
 	/**
 	 * Devuelve la lista ordenada de valores del diccionario Fase de Publicacion.
@@ -1314,4 +1326,7 @@ public interface ActivoApi {
 	 */
 	public List<DDFasePublicacion> getDiccionarioFasePublicacion() throws Exception;
 	
+	public void crearRegistroFaseHistorico(Activo activo);
+
+	void changeAndSavePlusvaliaEstadoGestionActivoById(Activo activo, String codigo) throws PlusvaliaActivoException;
 }

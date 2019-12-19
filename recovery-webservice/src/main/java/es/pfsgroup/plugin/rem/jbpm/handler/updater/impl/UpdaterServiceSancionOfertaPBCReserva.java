@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
@@ -52,17 +53,20 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 	private NotificatorServiceSancionOfertaSoloRechazo notificatorRechazo;
 
 	private static final String CODIGO_T017_PBC_RESERVA = "T017_PBCReserva";
+	private static final String CODIGO_T013_PBC_RESERVA = "T013_PBCReserva";
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaPBCReserva.class);
 
 	private static final String COMBO_RESPUESTA = "comboRespuesta";
 	private static final String CODIGO_TRAMITE_FINALIZADO = "11";
 	private static final String CODIGO_ANULACION_IRREGULARIDADES = "601";
+	private static final String CODIGO_SUBCARTERA_OMEGA = "65";
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
 	@Override
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+		Activo activo = ofertaAceptada.getActivoPrincipal();
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi
 					.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -136,6 +140,22 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 						} 
 
 						} else {
+							String codSubCartera = null;
+							if (!Checks.esNulo(activo.getSubcartera())) {
+								codSubCartera = activo.getSubcartera().getCodigo();
+							}
+							if (CODIGO_SUBCARTERA_OMEGA.equals(codSubCartera)) {
+								Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.RESERVADO);
+								DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+								expediente.setEstado(estado);
+								Oferta oferta = expediente.getOferta();
+								List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
+								for (Oferta ofertaAux : listaOfertas) {
+									if (!ofertaAux.getId().equals(oferta.getId()) && !DDEstadoOferta.CODIGO_RECHAZADA.equals(ofertaAux.getEstadoOferta().getCodigo())) {
+										ofertaApi.congelarOferta(ofertaAux);
+									}
+								}
+							}
 							expediente.setEstadoPbcR(1);
 							genericDao.save(ExpedienteComercial.class, expediente);
 
@@ -153,7 +173,7 @@ public class UpdaterServiceSancionOfertaPBCReserva implements UpdaterService {
 	}
     @Override
 	public String[] getCodigoTarea() {
-		return new String[] { CODIGO_T017_PBC_RESERVA };
+		return new String[] { CODIGO_T017_PBC_RESERVA , CODIGO_T013_PBC_RESERVA};
 	}
 
 

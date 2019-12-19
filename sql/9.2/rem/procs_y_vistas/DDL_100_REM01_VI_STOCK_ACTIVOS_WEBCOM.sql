@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Jose Antonio Gigante
---## FECHA_CREACION=20191016
+--## AUTOR=Alejandro Valverde
+--## FECHA_CREACION=20191219
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-7800
+--## INCIDENCIA_LINK=HREOS-8846
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico del stock de activos enviados a webcom.
 --##           
@@ -14,6 +14,7 @@
 --##        0.2 Versiń Adrián
 --##        0.3 Versiń Jose Luis Barba -> HREOS-6309
 --##		0.4 Versión Jose Antonio Gigante -> HREOS-7800 - Agregados campos Fase y sufase de la tabla ACT_HFP_HIST_FASES_PUB
+--##		0.5 Versión Alejandro Valverde -> HREOS-8846 - Cambiar ID de Fase y Subfase Publicacion por Código de Fase y Subfase Publicacion.
 --##########################################
 --*/
 
@@ -39,9 +40,9 @@ DECLARE
 
     CUENTA NUMBER;
     
-BEGIN/*Versión 0.4*/
+BEGIN/*Versión 0.5*/
 
-
+	
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_VISTA|| '********'); 
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_VISTA||'... Comprobaciones previas');
 		
@@ -268,8 +269,8 @@ BEGIN/*Versión 0.4*/
 			ELSE CAST(NULL AS NUMBER(32,0))
 		END 																				AS ID_PA,
         CAST(NVL2(PIVOT_UA.PROMOCION_ALQUILER_NUM_REM, SUBD_ACT.ID, NULL) AS NUMBER(32,0)) AS ID_SUBDIVISION_PA,
-		CAST(HFP.DD_FSP_ID AS NUMBER(16,0))													AS FASE,
-		CAST(HFP.DD_SFP_ID AS NUMBER(16,0))													AS SUB_FASE
+		CAST(FSP.DD_FSP_CODIGO AS VARCHAR2(20 CHAR))										AS COD_FASE_PUBLICACION,
+		CAST(SFP.DD_SFP_CODIGO AS VARCHAR2(20 CHAR))										AS COD_SUBFASE_PUBLICACION
     	FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
 		INNER JOIN '||V_ESQUEMA||'.ACT_LOC_LOCALIZACION LOC ON LOC.ACT_ID = ACT.ACT_ID
 		INNER JOIN '||V_ESQUEMA||'.BIE_LOCALIZACION BLOC ON BLOC.BIE_LOC_ID = LOC.BIE_LOC_ID
@@ -410,8 +411,10 @@ BEGIN/*Versión 0.4*/
 			JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON (GEE.DD_TGE_ID = TGE.DD_TGE_ID AND DD_TGE_CODIGO = ''HAYAGBOINM'' AND  GEE.BORRADO = 0)
 			JOIN '||V_ESQUEMA_M||'.USU_USUARIOS USU ON USU.USU_ID = GEE.USU_ID
 		) GMO ON GMO.ACT_ID = ACT.ACT_ID
-		LEFT JOIN '||V_ESQUEMA||'.ACT_HFP_HIST_FASES_PUB HFP ON HFP.ACT_ID = act.ACT_ID
-		where act.borrado = 0 and sps.borrado = 0 and ico.borrado = 0 and hfp.borrado = 0 and hfp.hfp_fecha_fin is null';
+		LEFT JOIN '||V_ESQUEMA||'.ACT_HFP_HIST_FASES_PUB HFP ON HFP.ACT_ID = act.ACT_ID 
+		LEFT JOIN '||V_ESQUEMA||'.DD_FSP_FASE_PUBLICACION FSP ON FSP.DD_FSP_ID = HFP.DD_FSP_ID 
+		LEFT JOIN '||V_ESQUEMA||'.DD_SFP_SUBFASE_PUBLICACION SFP ON SFP.DD_SFP_ID = HFP.DD_SFP_ID  
+		where act.borrado = 0 and sps.borrado = 0 and ico.borrado = 0 and (hfp.borrado = 0 or hfp.borrado is null) and hfp.hfp_fecha_fin is null ';
 
 		DBMS_OUTPUT.PUT_LINE('[INFO] Vista materializada : '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'... creada');
 		

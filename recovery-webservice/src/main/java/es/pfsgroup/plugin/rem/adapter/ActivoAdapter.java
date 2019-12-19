@@ -1569,7 +1569,7 @@ public class ActivoAdapter {
 		}
 		
 		DDIdentificacionGestoria gestoria = gestorActivoApi.isGestoria(usuarioLogado);
-		if (!Checks.esNulo(gestoria)) {
+		if (!Checks.esNulo(gestoria) && !genericAdapter.isExternoEspecial(usuarioLogado)) {
 			dtoActivoFiltro.setUsuarioGestoria(true);
 			dtoActivoFiltro.setGestoria(gestoria.getId());
 		}else {

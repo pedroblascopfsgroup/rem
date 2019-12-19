@@ -14,7 +14,6 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -41,7 +40,6 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@SuppressWarnings("rawtypes")
-	@Transactional(readOnly = false)
 	public Serializable saveDtoToBbdd(Object dto, ArrayList<Serializable> objetoEntitys,JSONObject jsonFields)
 			throws Exception {
 
@@ -310,7 +308,6 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 			if (f.getType().isAssignableFrom(claseFK)) {
 				String propertyEntityName = null;
 				propertyEntityName = f.getName().substring(0, 1).toUpperCase() + f.getName().substring(1);
-				// result = "get".concat(propertyEntityName);
 				result = propertyEntityName;
 				break;
 			}
@@ -335,7 +332,6 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 			if (f.getAnnotation(javax.persistence.Id.class) != null) {
 				String propertyEntityName = null;
 				propertyEntityName = f.getName().substring(0, 1).toUpperCase() + f.getName().substring(1);
-				// result = "get".concat(propertyEntityName);
 				result = propertyEntityName;
 				break;
 			}

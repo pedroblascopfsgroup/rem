@@ -17,7 +17,6 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.HistoricoFasePublicacionActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -38,7 +37,6 @@ import es.pfsgroup.plugin.rem.model.ActivoParamentoVertical;
 import es.pfsgroup.plugin.rem.model.ActivoPlazaAparcamiento;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoSolado;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.ActivoZonaComun;
@@ -49,7 +47,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
 import es.pfsgroup.plugin.rem.rest.api.DtoToEntityApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
@@ -1239,24 +1236,22 @@ public class InformeMediadorManager implements InformeMediadorApi {
 	 * @param informe
 	 * @throws Exception
 	 */
-	@Transactional(readOnly = false)
 	private Long parcheEspecificacionTablas(Object objeto, InformeMediadorDto informe) throws Exception {
 		Long idProveedor = null;
-		ActivoInfoComercial infoAux = (ActivoInfoComercial) dtoToEntity
-				.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoInfoComercial.class, "activo.numActivo");
+		ActivoInfoComercial infoAux = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
+				ActivoInfoComercial.class, "activo.numActivo");
 
-		if (infoAux != null && infoAux.getId() != null) {
-//			if ((infoAux.getId() != null && infoAux.getTipoActivo() != null && informe.getCodTipoActivo() != null
-//					&& !infoAux.getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()))
-//					|| (infoAux.getId() != null && infoAux.getTipoActivo() == null
-//							&& !infoAux.getActivo().getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()))
-//					|| ((ActivoInfoComercial) objeto).getId() == null) {
-				if (infoAux.getMediadorInforme() != null) {
-					idProveedor = infoAux.getMediadorInforme().getId();
-				}
+		if (infoAux != null
+				&& (infoAux.getId() != null && infoAux.getTipoActivo() != null && informe.getCodTipoActivo() != null
+						&& !infoAux.getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()))
+				|| (infoAux.getId() != null && infoAux.getTipoActivo() == null
+						&& !infoAux.getActivo().getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()))
+				|| ((ActivoInfoComercial) objeto).getId() == null) {
+			if (infoAux.getMediadorInforme() != null) {
+				idProveedor = infoAux.getMediadorInforme().getId();
+			}
 
-				genericaRestDaoImp.deleteInformeMediador(infoAux);
-//			}
+			genericaRestDaoImp.deleteInformeMediador(infoAux);
 		}
 
 		return idProveedor;
@@ -1274,6 +1269,12 @@ public class InformeMediadorManager implements InformeMediadorApi {
 			// proveedor de confianza, puede editar el informe, sin tramite de
 			// aceptacion
 			boolean autorizacionWebProveedor = false;
+			Long idProveedorParche = null;
+			ActivoInfoComercial informeEntity = (ActivoInfoComercial) dtoToEntity.obtenerObjetoEntity(
+					informe.getIdActivoHaya(), ActivoInfoComercial.class, "activo.numActivo");
+			if (!informe.getCodTipoActivo().equals(DDTipoActivo.COD_SUELO) && !informe.getCodTipoActivo().equals(DDTipoActivo.COD_INDUSTRIAL)) {
+				idProveedorParche = parcheEspecificacionTablas(informeEntity, informe);
+			}
 			
 			map = new HashMap<String, Object>();
 			HashMap<String, String> errorsList = null;
@@ -1334,9 +1335,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 			if (errorsList.size() == 0) {
 				boolean tieneInformeComercialAceptado = false;
-				Long idProveedorParche = null;
 				tieneInformeComercialAceptado = activoApi.isInformeComercialAceptado(activo);
-				ActivoInfoComercial informeEntity = null;
 				HistoricoFasePublicacionActivo histFasePublicacionActivo = historicoFasePublicacionActivoDao
 						.getHistoricoFasesPublicacionActivoActualById(activo.getId());
 				if (histFasePublicacionActivo != null
@@ -1351,7 +1350,6 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_COMERCIAL)) {
 							informeEntity = (ActivoLocalComercial) dtoToEntity.obtenerObjetoEntity(
 									informe.getIdActivoHaya(), ActivoLocalComercial.class, "activo.numActivo");
-							idProveedorParche = parcheEspecificacionTablas(informeEntity, informe);
 							((ActivoLocalComercial) informeEntity).setMtsAlturaLibre(informe.getAltura());
 							entitys.add(informeEntity);
 
@@ -1365,9 +1363,6 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_OTROS)) {
 							informeEntity = (ActivoPlazaAparcamiento) dtoToEntity.obtenerObjetoEntity(
 									informe.getIdActivoHaya(), ActivoPlazaAparcamiento.class, "activo.numActivo");
-							idProveedorParche = parcheEspecificacionTablas(informeEntity, informe);
-							informeEntity = (ActivoPlazaAparcamiento) dtoToEntity.obtenerObjetoEntity(
-									informe.getIdActivoHaya(), ActivoPlazaAparcamiento.class, "activo.numActivo");
 							((ActivoPlazaAparcamiento) informeEntity).setAparcamientoAltura(informe.getAltura());
 							entitys.add(informeEntity);
 						} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_VIVIENDA)) {
@@ -1376,8 +1371,6 @@ public class InformeMediadorManager implements InformeMediadorApi {
 							if (informe.getDistribucionInterior() != null) {
 								((ActivoVivienda) informeEntity).setDistribucionTxt(informe.getDistribucionInterior());
 							}
-							idProveedorParche = parcheEspecificacionTablas(informeEntity, informe);
-							genericDao.get(ActivoInfraestructura.class, genericDao.createFilter(FilterType.EQUALS, "infoComercial.activo.numActivo", informe.getIdActivoHaya()));
 							ActivoInfraestructura activoInfraestructura = (ActivoInfraestructura) dtoToEntity
 									.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoInfraestructura.class,
 											"infoComercial.activo.numActivo");

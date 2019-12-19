@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -62,7 +63,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 
 	private static final String CODIGO_T013_DEFINICION_OFERTA = "T013_DefinicionOferta";
 	private static final String CODIGO_T017_DEFINICION_OFERTA = "T017_DefinicionOferta";
-	//private static final String FECHA_ENVIO_COMITE = "fechaEnvio";
+	private static final String FECHA_ENVIO_COMITE = "fechaEnvio";
 	private static final String COMBO_CONFLICTO = "comboConflicto";
 	private static final String COMBO_RIESGO = "comboRiesgo";
 	private static final String COMBO_COMITE_SUPERIOR = "comiteSuperior";
@@ -168,6 +169,13 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 					expediente.setEstado(estado);
 				}	
+				if (FECHA_ENVIO_COMITE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					try {
+						expediente.setFechaSancion(ft.parse(valor.getValor()));
+					} catch (ParseException e) {
+						logger.error(e);
+					}
+				}
 				if (COMBO_RIESGO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 					if (DDSiNo.SI.equals(valor.getValor())) {
 						expediente.setRiesgoReputacional(1);

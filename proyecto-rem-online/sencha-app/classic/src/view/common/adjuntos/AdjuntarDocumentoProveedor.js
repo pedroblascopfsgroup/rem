@@ -79,7 +79,6 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 						        	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
 						        	reference: 'tipo',
 						        	name: 'tipo',
-						        	editable: true,
 						        	msgTarget: 'side',
 						        	publishes: 'value',
 						        	width: '100%',
@@ -89,22 +88,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 					            	displayField	: 'descripcion',    							
 								    valueField		: 'codigo',
 									allowBlank: false,
-									width: '100%',
-									enableKeyEvents:true,
-								    listeners: {
-								    	'keyup': function() {
-								    		this.getStore().clearFilter();
-								    	   	this.getStore().filter({
-								        	    property: 'descripcion',
-								        	    value: this.getRawValue(),
-								        	    anyMatch: true,
-								        	    caseSensitive: false
-								        	})
-								    	},
-								    	'beforequery': function(queryEvent) {
-								         	queryEvent.combo.onLoad();
-								    	}
-								    }
+									filtradoEspecial: true
 						        },
 						        { 
 									xtype: 'combobox',

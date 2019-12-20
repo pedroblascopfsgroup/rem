@@ -26,6 +26,7 @@ import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.gestorEntidad.manager.GestorEntidadManager;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
@@ -85,6 +86,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  	
  	@Autowired
  	private ActivoAdapter activoAdapter;
+ 	
+ 	@Autowired
+ 	private GenericAdapter genericAdapter;
  	
  	public static final String CODIGO_TGE_PROVEEDOR_TECNICO = "PTEC";
  	public static final String USERNAME = "username";
@@ -538,15 +542,17 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  	 	 	
  	@Override
 	public DDIdentificacionGestoria isGestoria(Usuario usuario) {
-		List<GrupoUsuario> grupos = genericDao.getList(GrupoUsuario.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId()));
-		if (!Checks.estaVacio(grupos)) {
-			for (GrupoUsuario grupo : grupos) {
-				ConfiguracionAccesoGestoria cag = genericDao.get(ConfiguracionAccesoGestoria.class, genericDao.createFilter(FilterType.EQUALS, "usuarioGrupo.id", grupo.getGrupo().getId()));
-				if (!Checks.esNulo(cag)) {
-					return cag.getGestoria();
+ 		if (!genericAdapter.isExternoEspecial(genericAdapter.getUsuarioLogado())) {
+			List<GrupoUsuario> grupos = genericDao.getList(GrupoUsuario.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId()));
+			if (!Checks.estaVacio(grupos)) {
+				for (GrupoUsuario grupo : grupos) {
+					ConfiguracionAccesoGestoria cag = genericDao.get(ConfiguracionAccesoGestoria.class, genericDao.createFilter(FilterType.EQUALS, "usuarioGrupo.id", grupo.getGrupo().getId()));
+					if (!Checks.esNulo(cag)) {
+						return cag.getGestoria();
+					}
 				}
 			}
-		}
+ 		}
 		return null;
 	}  
  	/* Se comenta por que no lo llama nadie ni llama a nada, pero se anyadio recientemente, por si hay necesidad de recuperarlo pronto

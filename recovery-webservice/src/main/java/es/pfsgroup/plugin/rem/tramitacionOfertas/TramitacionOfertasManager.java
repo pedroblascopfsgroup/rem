@@ -565,7 +565,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			// Activos de Galeon, debe haber reserva necesaria con un importe
 			// fijo del 5%
 			else if (DDCartera.CODIGO_CARTERA_GALEON.equals(cartera.getCodigo())
-					|| DDCartera.CODIGO_CARTERA_ZEUS.equals(cartera.getCodigo())) {
+					|| (DDCartera.CODIGO_CARTERA_EGEO.equals(cartera.getCodigo())
+							&& DDSubcartera.CODIGO_ZEUS.equals(subcartera.getCodigo()))) {
 				condicionante.setSolicitaReserva(1);
 				DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
@@ -701,7 +702,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 						.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.CONFIRMATORIAS);
 			}
 			if(DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-				|| DDCartera.CODIGO_CARTERA_ZEUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+				|| (DDCartera.CODIGO_CARTERA_EGEO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						&& DDSubcartera.CODIGO_ZEUS.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))) {
 				tipoArras = (DDTiposArras) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.PENITENCIALES);
 			}

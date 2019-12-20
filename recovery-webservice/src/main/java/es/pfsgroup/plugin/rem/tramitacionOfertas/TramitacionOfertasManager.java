@@ -702,7 +702,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			}
 			if(DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
 				|| DDCartera.CODIGO_CARTERA_ZEUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-	            
+				tipoArras = (DDTiposArras) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.PENITENCIALES);
 			}
 			
 			if ( (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())

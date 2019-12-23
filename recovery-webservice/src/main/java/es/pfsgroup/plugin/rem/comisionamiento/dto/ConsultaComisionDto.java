@@ -62,6 +62,8 @@ public class ConsultaComisionDto {
 	private String portfolio;
 	private String subPortfolio;
 	private String classType;
+	private String commisionType;
+	private String providerType;
 
 	public String getLeadOrigin() {
 		return leadOrigin;
@@ -116,6 +118,18 @@ public class ConsultaComisionDto {
 	}
 	public void setClassType(String classType) {
 		this.classType = classType;
+	}
+	public String getCommisionType() {
+		return commisionType;
+	}
+	public void setCommisionType(String commisionType) {
+		this.commisionType = commisionType;
+	}
+	public String getProviderType() {
+		return providerType;
+	}
+	public void setProviderType(String providerType) {
+		this.providerType = providerType;
 	}
 	
 }

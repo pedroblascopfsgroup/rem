@@ -153,20 +153,30 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INICIO] Ejecutándose SP cambio estado de publicación ');
      
      	-- Busca los activos que no están en una agrupación asistida ni restringida:
-    	V_SQL := ' SELECT ACT.ACT_ID
+    	V_SQL := ' SELECT DISTINCT ACT.ACT_ID
 		   FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT,
 			'||V_ESQUEMA||'.AUX_REMVIP_6063 AUX
 		   WHERE 1 = 1			   
 		   AND AUX.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO
 		   AND ACT.BORRADO = 0 
 		   AND NOT EXISTS ( SELECT 1 
-				    FROM '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA
+				    FROM '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA,
+					 '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR, 
+					 '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION  TAG
 				    WHERE 1 = 1
 				    AND AGA.ACT_ID = ACT.ACT_ID
-                    		    AND EXISTS ( SELECT 1 FROM '||V_ESQUEMA||'.V_CAMBIO_ESTADO_PUBLI_AGR AGR
-                                 		 WHERE 1 = 1
-                                 		 AND AGR.AGR_ID = AGA.AGR_ID
-                               			)  
+				    AND AGR.BORRADO = 0	
+				    AND TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0
+				    AND AGR.AGR_ID = AGA.AGR_ID	
+                        	    AND (
+                              			(        TAG.DD_TAG_CODIGO = ''02''	/*Restringida*/
+			                            AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
+		                                )
+		                            OR(     TAG.DD_TAG_CODIGO = ''13''	/*Asistida*/
+                     			           AND (TRUNC(AGR.AGR_FIN_VIGENCIA) < TRUNC(SYSDATE))
+                     		  	           )
+                            		)	
+
 				    AND AGA.BORRADO = 0
 				  )		
 		 ' ;
@@ -193,16 +203,28 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INICIO] Ejecutándose SP cambio estado de publicación en caso de agrupaciones asistidas ');
      
      	-- Busca los activos que sí están en una agrupación asistida ni restringida:
-    	V_SQL := ' SELECT AGR.AGR_ID
+    	V_SQL := ' SELECT DISTINCT AGR.AGR_ID
 		   FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT,
 			'||V_ESQUEMA||'.AUX_REMVIP_6063 AUX,
 			'||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA,
-			'||V_ESQUEMA||'.V_CAMBIO_ESTADO_PUBLI_AGR AGR
-		   WHERE 1 = 1			   
+			'||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR,
+			'||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION  TAG
+		   WHERE 1 = 1
+		   AND AGA.ACT_ID = ACT.ACT_ID
+		   AND TAG.DD_TAG_ID = AGR.DD_TAG_ID 
+		   AND TAG.BORRADO = 0
+                   AND (
+                          (        TAG.DD_TAG_CODIGO = ''02''	/*Restringida*/
+			      AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
+		          )
+		        OR(     TAG.DD_TAG_CODIGO = ''13''	/*Asistida*/
+                     	      AND (TRUNC(AGR.AGR_FIN_VIGENCIA) < TRUNC(SYSDATE))
+                          )
+                       )	
+
 		   AND AUX.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO
 		   AND ACT.BORRADO = 0 
- 		   AND AGR.AGR_ID = AGA.AGR_ID
-		   AND AGA.ACT_ID = ACT.ACT_ID
+		   AND AGA.AGR_ID = AGR.AGR_ID
 		   AND AGA.BORRADO = 0
 		 ' ;
 

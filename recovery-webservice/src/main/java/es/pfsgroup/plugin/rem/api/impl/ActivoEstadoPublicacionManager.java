@@ -77,6 +77,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosOcultacion;
+import es.pfsgroup.plugin.rem.model.dd.DDPortal;
 import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -799,7 +800,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				if(!Checks.esNulo(dto.getFechaRevisionPublicacionesAlquiler())) {
 					activoPublicacion.setFechaRevisionPublicacionesAlquiler(dto.getFechaRevisionPublicacionesAlquiler());
 				}
-
+				if (dto.getCanalDePublicacion() != null) {
+					DDPortal portal = genericDao.get(DDPortal.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCanalDePublicacion()));
+					activoPublicacion.setPortal(portal);
+				}
 
 			}
 		} catch (IllegalAccessException e) {

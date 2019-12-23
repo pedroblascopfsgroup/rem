@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Sergio Salt
---## FECHA_CREACION=20191227
+--## FECHA_CREACION=20191228
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-8881
@@ -38,9 +38,9 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 --T_TIPO_DATA(  'CODIGO_CARTERA','CODIGO_SUBCARTERA','PENDIENTE_INSCRIPCION','CON_CARGAS,OCUPADO_SIN_TITULO,OCUPADO_CON_TITULO',USUARIO_ACCION)
-        T_TIPO_DATA(    '08',             NULL,               1,              1,             1,            1,          V_USUARIO_ACCION),
+        T_TIPO_DATA(    '08',             NULL,               1,              1,             0,            0,          V_USUARIO_ACCION),
         T_TIPO_DATA(    '02',             NULL,               1,              1,             1,            1,          V_USUARIO_ACCION),
-        T_TIPO_DATA(    '07',             NULL,               1,              1,             1,            1,          V_USUARIO_ACCION)
+        T_TIPO_DATA(    '07',             NULL,               1,              0,             0,            0,          V_USUARIO_ACCION)
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 

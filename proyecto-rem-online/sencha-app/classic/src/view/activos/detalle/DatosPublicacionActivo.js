@@ -298,7 +298,13 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												
 											},
 											{
-												xtype: 'label',
+												xtype: 'comboboxfieldbase',
+												fieldLabel: HreRem.i18n('title.publicaciones.historico.canal.de.publicacion'), 
+												reference: 'canalDePublicacion',
+												bind: {
+													store:'{comboCanalDePublicacion}',
+													value:'{datospublicacionactivo.canalDePublicacion}'
+												},
 												colspan: 1
 											},
 											{

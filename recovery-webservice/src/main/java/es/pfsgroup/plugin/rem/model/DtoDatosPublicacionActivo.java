@@ -56,6 +56,7 @@ public class DtoDatosPublicacionActivo extends WebDto {
 	private Integer diasCambioPrecioAlqWeb;
 	private Date fechaRevisionPublicacionesVenta;
 	private Date fechaRevisionPublicacionesAlquiler;
+	private String canalDePublicacion;
 
 	public String getTipoPublicacionVentaDescripcion() {
 		return tipoPublicacionVentaDescripcion;
@@ -430,6 +431,14 @@ public class DtoDatosPublicacionActivo extends WebDto {
 
 	public void setFechaRevisionPublicacionesAlquiler(Date fechaRevisionPublicacionesAlquiler) {
 		this.fechaRevisionPublicacionesAlquiler = fechaRevisionPublicacionesAlquiler;
+	}
+
+	public String getCanalDePublicacion() {
+		return canalDePublicacion;
+	}
+
+	public void setCanalDePublicacion(String canalDePublicacion) {
+		this.canalDePublicacion = canalDePublicacion;
 	}
 	
 }

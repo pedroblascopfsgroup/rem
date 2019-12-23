@@ -48,6 +48,11 @@ Ext.define('HreRem.view.activos.detalle.HistoricoEstadosPublicacionList', {
 				flex: 1
 			},
 			{
+				dataIndex: 'canalPublicacion',
+				text: HreRem.i18n('title.publicaciones.historico.canal.publicacion'),
+				flex: 2
+			},
+			{
 				dataIndex: 'motivo',
 				text: HreRem.i18n('title.publicaciones.historico.motivo'),
 				flex: 2

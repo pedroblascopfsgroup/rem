@@ -179,7 +179,6 @@ BEGIN
 
 				    AND AGA.BORRADO = 0
 				  )		
-		  AND ROWNUM < 5
 		 ' ;
 
 	OPEN v_cursor FOR V_SQL;
@@ -227,7 +226,6 @@ BEGIN
 		   AND ACT.BORRADO = 0 
 		   AND AGA.AGR_ID = AGR.AGR_ID
 		   AND AGA.BORRADO = 0
-		  AND ROWNUM < 5
 		 ' ;
 
 	OPEN v_cursor FOR V_SQL;

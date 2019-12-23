@@ -126,7 +126,7 @@ public class ActivoPublicacion implements Serializable, Auditable {
 	private Date fechaRevisionPublicacionesAlquiler;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DD_EPA_ID")
+	@JoinColumn(name = "DD_POR_ID")
 	private DDPortal portal;
 
 	@Version

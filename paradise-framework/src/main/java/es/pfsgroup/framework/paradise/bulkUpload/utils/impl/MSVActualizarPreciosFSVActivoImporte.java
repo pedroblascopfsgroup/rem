@@ -41,9 +41,11 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 		
 	public static final String ACTIVE_NOT_EXISTS = "El activo no existe.";
 	public static final String ACTIVE_PRIZE_NAN = "msg.error.masivo.actualizar.precios.fsv.activo.importe.formato.incorrecto";
-	public static final String ACTIVE_PRIZES_VENTA_RENTA_LIMIT_EXCEEDED = "El valor renta Haya no puede ser mayor al valor venta Haya (Valor Venta Haya >= Valor Renta Haya) o uno de estos valores no tiene un formato correcto";
+	public static final String ACTIVE_PRIZES_VENTA_RENTA_LIMIT_EXCEEDED = "El valor Renta Haya o Renta Haya Origen no puede ser mayor al valor Venta Haya o Venta Haya Origen (Valor Venta Haya >= Valor Renta Haya ó Valor Venta Haya Origen >= Valor Renta Haya Origen) o uno de estos valores no tiene un formato correcto";
 	public static final String ACTIVE_PRIZES_VENTA_NOT_GREATER_ZERO = "msg.error.masivo.actualizar.precios.FSV.Venta.importe.no.mayor.cero";
 	public static final String ACTIVE_PRIZES_RENTA_NOT_GREATER_ZERO = "msg.error.masivo.actualizar.precios.FSV.Renta.importe.no.mayor.cero";
+	public static final String ACTIVE_PRIZES_VENTA_ORIGIN_NOT_GREATER_ZERO = "msg.error.masivo.actualizar.precios.FSV.Venta.Origen.importe.no.mayor.cero";
+	public static final String ACTIVE_PRIZES_RENTA_ORIGIN_NOT_GREATER_ZERO = "msg.error.masivo.actualizar.precios.FSV.Renta.Origen.importe.no.mayor.cero";
 	
 	public static final String ACTIVE_NOT_ACTUALIZABLE = "El estado del activo no puede actualizarse al indicado.";
 	public static final String ACTIVE_PRECIOS_BLOQUEO = "El activo tiene habilitado el bloqueo de precios. No se pueden actualizar precios";
@@ -112,6 +114,8 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 			mapaErrores.put(ACTIVE_PRIZES_VENTA_RENTA_LIMIT_EXCEEDED, getLimitePreciosVentaRentaIncorrectoRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVE_PRIZES_VENTA_NOT_GREATER_ZERO), isPrecioVentaMayorCero(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVE_PRIZES_RENTA_NOT_GREATER_ZERO), isPrecioRentaMayorCero(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVE_PRIZES_VENTA_ORIGIN_NOT_GREATER_ZERO), isPrecioVentaOrigenMayorCero(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVE_PRIZES_RENTA_ORIGIN_NOT_GREATER_ZERO), isPrecioRentaOrigenMayorCero(exc));
 			mapaErrores.put(LIQUIDEZ_A_E, isLetraEntreAE(exc));
 
 			if (!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty()
@@ -119,6 +123,8 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 					|| !mapaErrores.get(ACTIVE_PRIZES_VENTA_RENTA_LIMIT_EXCEEDED).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZES_VENTA_NOT_GREATER_ZERO)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZES_RENTA_NOT_GREATER_ZERO)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZES_VENTA_ORIGIN_NOT_GREATER_ZERO)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZES_RENTA_ORIGIN_NOT_GREATER_ZERO)).isEmpty()
 					|| !mapaErrores.get(LIQUIDEZ_A_E).isEmpty()){
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -265,6 +271,8 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		Double precioFSVVenta = null;
 		Double precioFSVRenta = null;
+		Double precioFSVVentaOrigen = null;
+		Double precioFSVRentaOrigen = null;
 
 		
 		// Validacion que evalua si los precios son numeros correctos
@@ -273,10 +281,13 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 				try{
 					precioFSVVenta = !Checks.esNulo(exc.dameCelda(i, 1)) ? Double.parseDouble(exc.dameCelda(i, 1)) : null;
 					precioFSVRenta = !Checks.esNulo(exc.dameCelda(i, 2)) ? Double.parseDouble(exc.dameCelda(i, 2)) : null;
+					precioFSVVentaOrigen = !Checks.esNulo(exc.dameCelda(i, 3)) ? Double.parseDouble(exc.dameCelda(i, 3)) : null;
+					precioFSVRentaOrigen = !Checks.esNulo(exc.dameCelda(i, 4)) ? Double.parseDouble(exc.dameCelda(i, 4)) : null;
 					
 					// Si alguno de los precios no es un numero
-					if((!Checks.esNulo(precioFSVVenta) && precioFSVVenta.isNaN()) ||
-							(!Checks.esNulo(precioFSVRenta) && precioFSVRenta.isNaN()) )
+					if((!Checks.esNulo(precioFSVVenta) && precioFSVVenta.isNaN()) || (!Checks.esNulo(precioFSVRenta) && precioFSVRenta.isNaN()) ||
+							(!Checks.esNulo(precioFSVVentaOrigen) && precioFSVVentaOrigen.isNaN()) || 
+							(!Checks.esNulo(precioFSVRentaOrigen) && precioFSVRentaOrigen.isNaN()))
 						listaFilas.add(i);	
 				} catch (ParseException e) {
 					listaFilas.add(i);
@@ -296,6 +307,8 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		Double valorFSVVenta = null;
 		Double valorFSVRenta = null;
+		Double valorFSVVentaOrigen = null;
+		Double valorFSVRentaOrigen = null;
 		
 		// Validacion que evalua si los precios estan dentro de los l�mites, comparandolos entre si
 		try {
@@ -303,13 +316,18 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 				try{
 					valorFSVVenta = !Checks.esNulo(exc.dameCelda(i, 1)) ? Double.parseDouble(exc.dameCelda(i, 1)) : null;
 					valorFSVRenta = !Checks.esNulo(exc.dameCelda(i, 2)) ? Double.parseDouble(exc.dameCelda(i, 2)) : null;
+					valorFSVVentaOrigen = !Checks.esNulo(exc.dameCelda(i, 1)) ? Double.parseDouble(exc.dameCelda(i, 1)) : null;
+					valorFSVRentaOrigen = !Checks.esNulo(exc.dameCelda(i, 2)) ? Double.parseDouble(exc.dameCelda(i, 2)) : null;
 					
 					// Condiciones Limites: dto<=dto web<=aprobado
 					
 					// Limite: Precio Descuento Web >= Precio Descuento Aprobado
 					if(!Checks.esNulo(valorFSVVenta) && 
 							!Checks.esNulo(valorFSVRenta) &&
-							(valorFSVRenta > valorFSVVenta)){
+							(valorFSVRenta > valorFSVVenta) || 
+							!Checks.esNulo(valorFSVVentaOrigen) && 
+							!Checks.esNulo(valorFSVRentaOrigen) &&
+							(valorFSVRentaOrigen > valorFSVVentaOrigen)){
 						if (!listaFilas.contains(i))
 							listaFilas.add(i);
 					}
@@ -365,6 +383,64 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 			for(int i=1; i<this.numFilasHoja;i++){
 				try{
 					valorFSVRenta = !Checks.esNulo(exc.dameCelda(i, 2)) ? Double.parseDouble(exc.dameCelda(i, 2)) : null;
+					
+					if(!Checks.esNulo(valorFSVRenta) &&
+							(valorFSVRenta.compareTo(0.0D) <= 0)){
+						if (!listaFilas.contains(i))
+							listaFilas.add(i);
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+					logger.error(e.getMessage());
+				}
+			}
+		} catch (Exception e) {
+			listaFilas.add(0);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> isPrecioVentaOrigenMayorCero(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		Double valorFSVVenta = null;
+		
+		// Validacion que evalua si el precio FSV Venta es > 0
+		try {
+			for(int i=1; i<this.numFilasHoja;i++){
+				try{
+					valorFSVVenta = !Checks.esNulo(exc.dameCelda(i, 3)) ? Double.parseDouble(exc.dameCelda(i, 3)) : null;
+
+					if(!Checks.esNulo(valorFSVVenta) && 
+							(valorFSVVenta.compareTo(0.0D) <= 0)){
+						if (!listaFilas.contains(i))
+							listaFilas.add(i);
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+					logger.error(e.getMessage());
+				}
+			}
+		} catch (Exception e) {
+			listaFilas.add(0);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> isPrecioRentaOrigenMayorCero(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		Double valorFSVRenta = null;
+		
+		// Validacion que evalua si el precio FSV Renta es > 0
+		try {
+			for(int i=1; i<this.numFilasHoja;i++){
+				try{
+					valorFSVRenta = !Checks.esNulo(exc.dameCelda(i, 4)) ? Double.parseDouble(exc.dameCelda(i, 4)) : null;
 					
 					if(!Checks.esNulo(valorFSVRenta) &&
 							(valorFSVRenta.compareTo(0.0D) <= 0)){

@@ -64,11 +64,6 @@ BEGIN
         V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_TPC_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
         EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
         
-             
-
-
-        DBMS_OUTPUT.PUT_LINE('[INFO NUMERO]: '||V_NUM_TABLAS||'');
-      DBMS_OUTPUT.PUT_LINE('[INFO]: LLEGAMOS AQUI');
         --Si existe modificamos los valores
         IF V_NUM_TABLAS > 0 THEN
 			    V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||

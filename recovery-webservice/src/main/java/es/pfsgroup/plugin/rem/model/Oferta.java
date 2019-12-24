@@ -289,6 +289,18 @@ public class Oferta implements Serializable, Auditable {
 	
 	@Column(name="OFR_OFERTA_SINGULAR")
 	private Boolean ofertaSingular;
+	
+	@Column(name="OFR_ID_PRES_ORI_LEAD")
+	private String idProveedorPrescriptorLeadOrigen;
+	
+	@Column(name="OFR_FECHA_ORI_LEAD")
+	private Date fechaProveedorPrescriptorLeadOrigen;
+	
+	@Column(name="OFR_COD_TIPO_PROV_ORI_LEAD")
+	private String canalLeadOrigen;
+	
+	@Column(name="OFR_ID_REALIZA_ORI_LEAD")
+	private String proveedorRealizadorLeadOrigen;
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -866,5 +878,37 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setOfertaSingular(Boolean ofertaSingular) {
 		this.ofertaSingular = ofertaSingular;
+	}
+
+	public String getIdProveedorPrescriptorLeadOrigen() {
+		return idProveedorPrescriptorLeadOrigen;
+	}
+
+	public void setIdProveedorPrescriptorLeadOrigen(String idProveedorPrescriptorLeadOrigen) {
+		this.idProveedorPrescriptorLeadOrigen = idProveedorPrescriptorLeadOrigen;
+	}
+
+	public Date getFechaProveedorPrescriptorLeadOrigen() {
+		return fechaProveedorPrescriptorLeadOrigen;
+	}
+
+	public void setFechaProveedorPrescriptorLeadOrigen(Date fechaProveedorPrescriptorLeadOrigen) {
+		this.fechaProveedorPrescriptorLeadOrigen = fechaProveedorPrescriptorLeadOrigen;
+	}
+
+	public String getCanalLeadOrigen() {
+		return canalLeadOrigen;
+	}
+
+	public void setCanalLeadOrigen(String canalLeadOrigen) {
+		this.canalLeadOrigen = canalLeadOrigen;
+	}
+
+	public String getProveedorRealizadorLeadOrigen() {
+		return proveedorRealizadorLeadOrigen;
+	}
+
+	public void setProveedorRealizadorLeadOrigen(String proveedorRealizadorLeadOrigen) {
+		this.proveedorRealizadorLeadOrigen = proveedorRealizadorLeadOrigen;
 	}
 }

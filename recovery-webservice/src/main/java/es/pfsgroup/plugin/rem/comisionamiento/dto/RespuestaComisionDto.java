@@ -1,7 +1,5 @@
 package es.pfsgroup.plugin.rem.comisionamiento.dto;
 
-import java.util.ArrayList;
-
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -10,7 +8,7 @@ public class RespuestaComisionDto {
 	private String idComision;
 	private ConsultaComisionDto body;
 	//private String[] headers;
-	private RespuestaComisionResultDto[] result;
+	private RespuestaComisionResultDto result;
 	
 	public String getId() {
 		return id;
@@ -30,10 +28,10 @@ public class RespuestaComisionDto {
 	public void setBody(ConsultaComisionDto body) {
 		this.body = body;
 	}
-	public RespuestaComisionResultDto[] getResult() {
+	public RespuestaComisionResultDto getResult() {
 		return result;
 	}
-	public void setResult(RespuestaComisionResultDto[] result) {
+	public void setResult(RespuestaComisionResultDto result) {
 		this.result = result;
 	}
 //	public String[] getHeaders() {

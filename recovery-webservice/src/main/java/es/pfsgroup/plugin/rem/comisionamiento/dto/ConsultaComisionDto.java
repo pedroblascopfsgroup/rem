@@ -63,7 +63,6 @@ public class ConsultaComisionDto {
 	private String subPortfolio;
 	private String classType;
 	private String commisionType;
-	private String providerType;
 
 	public String getLeadOrigin() {
 		return leadOrigin;
@@ -124,12 +123,6 @@ public class ConsultaComisionDto {
 	}
 	public void setCommisionType(String commisionType) {
 		this.commisionType = commisionType;
-	}
-	public String getProviderType() {
-		return providerType;
-	}
-	public void setProviderType(String providerType) {
-		this.providerType = providerType;
 	}
 	
 }

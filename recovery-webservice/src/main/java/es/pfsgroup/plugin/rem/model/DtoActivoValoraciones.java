@@ -29,6 +29,10 @@ public class DtoActivoValoraciones extends WebDto{
 	
 	private String fsvVenta;
 	private String fsvRenta;
+	
+	private String fsvVentaOrigen;
+	private String fsvRentaOrigen;
+	
 	private String valorEstimadoVenta;
 	private String valorEstimadoRenta; 
 	
@@ -229,6 +233,18 @@ public class DtoActivoValoraciones extends WebDto{
 	}
 	public void setLiquidez(String liquidez) {
 		this.liquidez = liquidez;
+	}
+	public String getFsvVentaOrigen() {
+		return fsvVentaOrigen;
+	}
+	public void setFsvVentaOrigen(String fsvVentaOrigen) {
+		this.fsvVentaOrigen = fsvVentaOrigen;
+	}
+	public String getFsvRentaOrigen() {
+		return fsvRentaOrigen;
+	}
+	public void setFsvRentaOrigen(String fsvRentaOrigen) {
+		this.fsvRentaOrigen = fsvRentaOrigen;
 	}
 	
 	

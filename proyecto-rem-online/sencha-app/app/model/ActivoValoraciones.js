@@ -146,6 +146,12 @@ Ext.define('HreRem.model.ActivoValoraciones', {
     		},
     		{
     			name:'liquidez'
+    		},
+    		{
+    			name:'fsvVentaOrigen'
+    		},
+    		{
+    			name:'fsvRentaOrigen'
     		}
     		
     ],

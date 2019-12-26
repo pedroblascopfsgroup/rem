@@ -467,7 +467,7 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 		for(int i=1; i<this.numFilasHoja;i++){
 			
 			try {
-				String letra = exc.dameCelda(i, 4).toUpperCase();
+				String letra = exc.dameCelda(i, 6).toUpperCase();
 				
 				if(!Checks.esNulo(letra)) {
 					if(!A.equals(letra) && !B.equals(letra)

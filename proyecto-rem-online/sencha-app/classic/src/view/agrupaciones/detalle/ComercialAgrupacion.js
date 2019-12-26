@@ -12,13 +12,8 @@ Ext.define('HreRem.view.agrupacion.detalle.ComercialAgrupacion', {
 		boxready: function(){
 			var me = this;
 			me.lookupController().cargarTabData(me);
-			//me.evaluarBotonesEdicion();
 		}
 	},
-//	bind: {
-//		ocultarBotonesEdicion: '{!usuarioTieneFuncionTramitarOferta}'
-//    },
-   
     
     initComponent: function () {
     	
@@ -34,7 +29,15 @@ Ext.define('HreRem.view.agrupacion.detalle.ComercialAgrupacion', {
     			hidden: true,
     			bind : {
     				hidden: '{comercialagrupacion.tramitable}'
-    			}
+    			},
+    			listeners:{
+    				
+    				afterrender: function(){
+    					var me = this;
+    					me.lookupController().usuarioTieneFuncionTramitarOferta();
+    					
+    				}
+				}
     		},
     		{
 				xtype:'fieldsettable',
@@ -42,9 +45,6 @@ Ext.define('HreRem.view.agrupacion.detalle.ComercialAgrupacion', {
 				collapsible: true,
 				reference: 'autorizacionTramOfertasAgrupacion',
 				hidden: true,
-				bind:{
-					hidden: '{usuarioTieneFuncionTramitarOferta}'
-				},
 				title: HreRem.i18n('title.autorizacion.tramitacion.ofertas'),
 				items :
 					[{
@@ -104,6 +104,7 @@ Ext.define('HreRem.view.agrupacion.detalle.ComercialAgrupacion', {
 			me.up('agrupacionesdetallemain').lookupReference('ofertascomercialagrupacionlistref').calcularMostrarBotonClonarExpediente();
 		}
 		me.lookupController().cargarTabData(me);
+		me.lookupController().usuarioTieneFuncionTramitarOferta();
     },
     
     evaluarBotonesEdicion: function(tab) {  

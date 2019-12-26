@@ -44,4 +44,24 @@ public class ComisionamientoManager implements ComisionamientoApi {
 		
 		return respuestaDto;
 	}
+	
+	@Override
+	public Double calculaHonorario(RespuestaComisionResultDto dto) {
+		
+		if(dto.getCommissionAmount() < dto.getMinAmount()) {
+			return dto.getMinAmount();
+		} else if(dto.getCommissionAmount() >= dto.getMinAmount()
+				&& dto.getCommissionAmount() <= dto.getMaxAmount()) {
+			return dto.getCommissionAmount();
+		}else if(dto.getCommissionAmount() > dto.getMaxAmount()) {
+			return dto.getMaxAmount();
+		}
+		
+		return 0d;
+	}
+	
+	@Override
+	public Double calculaImporteCalculo(Double importeOferta, Double comision) {
+		return (100d*comision)/importeOferta;
+	}
 }

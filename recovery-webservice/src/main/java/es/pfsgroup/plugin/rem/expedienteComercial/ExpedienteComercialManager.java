@@ -5928,7 +5928,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			if (Checks.esNulo(proveedor) || Checks.esNulo(proveedor.getTipoProveedor())
 					|| !proveedor.getTipoProveedor().getCodigo().equals(dto.getCodigoTipoProveedor())
-					|| proveedor.getFechaBaja().before(fechaHoy)) {
+					|| !Checks.esNulo(proveedor.getFechaBaja()) && proveedor.getFechaBaja().before(fechaHoy)) {
 				throw new JsonViewerException(ExpedienteComercialManager.PROVEDOR_NO_EXISTE_O_DISTINTO_TIPO);
 			}
 

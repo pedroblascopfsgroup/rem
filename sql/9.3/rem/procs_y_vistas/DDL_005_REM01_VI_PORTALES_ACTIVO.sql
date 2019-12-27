@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20191226
+--## FECHA_CREACION=20191227
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-8887
@@ -110,7 +110,8 @@ BEGIN
     AND AGA.BORRADO = 0
     AND COND.BORRADO = 0
     AND EPV.DD_EPV_CODIGO IN (''03'',''04'') 
-    AND TAG.DD_TAG_CODIGO = ''02''';
+    AND TAG.DD_TAG_CODIGO = ''02''
+    AND AGR.AGR_FECHA_BAJA IS NULL';
 		
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_PORTALES_ACTIVO...Creada OK');

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin Bahamonde
---## FECHA_CREACION=20191220
+--## FECHA_CREACION=20191226
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-8872
@@ -29,6 +29,10 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_ID NUMBER(16);
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_ACC_ACCION_GASTOS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_CHARS VARCHAR2(2400 CHAR) := 'ACC'; -- Vble. auxiliar para almacenar las 3 letras orientativas de la tabla de ref.
+    V_INCIDENCIA VARCHAR2(25 CHAR) := 'HREOS-8872';
+    V_ID_ACC NUMBER(16); --Vble para extraer el ID del registro a modificar, si procede.
 
     
     
@@ -36,7 +40,9 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
         T_TIPO_DATA('PRE_Y_COL', 'Prescripción y Colaboración', 'Prescripción y Colaboración'),
-        T_TIPO_DATA('API_ORI_LEA', 'API Origen lead', 'API Origen lead')
+        T_TIPO_DATA('API_ORI_LEA_PRP', 'API Origen lead PRP', 'API Origen lead PRP'),
+        T_TIPO_DATA('API_ORI_LEA_PP', 'API Origen lead PP', 'API Origen lead PP'),
+        T_TIPO_DATA('COL_HRE', 'Colaboración Haya', 'Colaboración Haya')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -52,24 +58,37 @@ BEGIN
       
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
     
-        --Comprobamos el dato a insertar
-        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_ACC_ACCION_GASTOS WHERE DD_ACC_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
-        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         
-        --Si existe NO modificamos nada
-        IF V_NUM_TABLAS > 0 THEN				         
-  		DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.DD_ACC_ACCION_GASTOS...no se modifica nada.');
-  			
+      --Comprobamos el dato a insertar
+        V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_ACC_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+        EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+ 
+        
+        --Si existe modificamos los valores
+        IF V_NUM_TABLAS > 0 THEN
+
+        V_MSQL := 'SELECT DD_ACC_ID FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_ACC_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+		    EXECUTE IMMEDIATE V_MSQL INTO V_ID_ACC;
+
+
+			    V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
+          'SET DD_'||V_TEXT_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''''||
+		      ', DD_'||V_TEXT_CHARS||'_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
+          ', DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
+          ', USUARIOMODIFICAR = '''||V_INCIDENCIA||''''||
+          ', FECHAMODIFICAR = SYSDATE 
+          WHERE DD_'||V_TEXT_CHARS||'_ID = '''||V_ID_ACC||'''';
+          EXECUTE IMMEDIATE V_MSQL;
+
         ELSE
-       
           DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   
-          V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_DD_ACC_ACCION_GASTOS.NEXTVAL FROM DUAL';
+          V_MSQL := 'SELECT '||V_ESQUEMA||'.S_DD_ACC_ACCION_GASTOS.NEXTVAL FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
           
           V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.DD_ACC_ACCION_GASTOS (' ||
                       'DD_ACC_ID, DD_ACC_CODIGO, DD_ACC_DESCRIPCION, DD_ACC_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
                       'SELECT '|| V_ID || ','''||TRIM(V_TMP_TIPO_DATA(1))||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''','||
-                      '0, ''HREOS-8872'', SYSDATE, 0 FROM DUAL';
+                      '0, '''||V_INCIDENCIA||''', SYSDATE, 0 FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTROS INSERTADO CORRECTAMENTE');
         

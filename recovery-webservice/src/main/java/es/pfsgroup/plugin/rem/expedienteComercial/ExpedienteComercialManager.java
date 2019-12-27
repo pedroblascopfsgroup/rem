@@ -3947,6 +3947,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				gastoExpedienteDto.setImporteFinal(gasto.getImporteFinal());
 			}
 			
+			if(gasto.getImporteOriginal() != null) {
+				gastoExpedienteDto.setImporteOriginal(gasto.getImporteOriginal());
+			}
+			
 		}
 
 		return honorarios;
@@ -6885,6 +6889,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		gastoExpediente.setImporteCalculo(dtoGastoExpediente.getImporteCalculo());
 		gastoExpediente.setImporteFinal(dtoGastoExpediente.getHonorarios());
+		gastoExpediente.setImporteOriginal(dtoGastoExpediente.getImporteOriginal());
 		gastoExpediente.setExpediente(expediente);
 		gastoExpediente.setActivo(activo);
 		gastoExpediente.setEditado(0);
@@ -10667,6 +10672,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 					gastoExpediente.setImporteCalculo(dtoGastoExpediente.getImporteCalculo());
 					gastoExpediente.setImporteFinal(dtoGastoExpediente.getHonorarios());
+					gastoExpediente.setImporteOriginal(dtoGastoExpediente.getImporteOriginal());
 					gastoExpediente.setExpediente(expedienteComercial);
 					gastoExpediente.setActivo(activo);
 	

@@ -2809,192 +2809,32 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			dto.setDescripcionTipoComision(accionGastoC.getDescripcion());
 		}
 
+		// Información del tipo de cálculo. Por defecto siempre son porcentajes
+		DDTipoCalculo tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
+				DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
+
+		if (!Checks.esNulo(tipoCalculoC)) {
+			dto.setTipoCalculo(tipoCalculoC.getDescripcion());
+			dto.setCodigoTipoCalculo(tipoCalculoC.getCodigo());
+		}
+
+		// Información del cálculo de la comisión para venta
+		RespuestaComisionResultDto calculoComision = null;
+		try {
+			calculoComision = comisionamientoApi.createCommission(consultaComisionDto);
+		} catch (Exception e) {
+			logger.error("Error en la llamada al comisionamiento: " + e);
+		}
 		
-		if(DDTipoOferta.CODIGO_VENTA.equals(codigoOferta)) {
-			// Información del tipo de cálculo. Por defecto siempre son porcentajes
-			DDTipoCalculo tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-					DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
-
-			if (!Checks.esNulo(tipoCalculoC)) {
-				dto.setTipoCalculo(tipoCalculoC.getDescripcion());
-				dto.setCodigoTipoCalculo(tipoCalculoC.getCodigo());
-			}
-
-			// Información del cálculo de la comisión para venta
-			/*BigDecimal calculoComision = ofertaDao.getImporteCalculo(oferta.getId(), TIPO_HONORARIOS.get(accion),activo.getId(), idProveedor);*/
-			RespuestaComisionResultDto calculoComision = null;
-			try {
-				calculoComision = comisionamientoApi.createCommission(consultaComisionDto);
-			} catch (Exception e) {
-				logger.error("Error en la llamada al comisionamiento: " + e);
-			}
-			
-			/*if (!Checks.esNulo(calculoComision) && !Checks.esNulo(calculoComision.getAmount()) && !Checks.esNulo(calculoComision.getRule().getCommissionPercentage())) {
-				dto.setImporteCalculo(Double.valueOf(calculoComision.getRule().getCommissionPercentage()));
-				dto.setHonorarios(Double.valueOf(calculoComision.getAmount()));
-			} else {
-				dto.setImporteCalculo(0.00);
-				dto.setHonorarios(0.00);
-			}*/
-			
-		} else if(DDTipoOferta.CODIGO_ALQUILER.equals(codigoOferta)) {
-			DDTipoCalculo tipoCalculoC = null;
-
-			// Determinar tipo de calculo para alquiler
-			/*BigDecimal calculoComision = ofertaDao.getImporteCalculoAlquiler(oferta.getId(), TIPO_HONORARIOS.get(accion), idProveedor);*/
-			RespuestaComisionResultDto calculoComision = null;
-			try {
-				calculoComision = comisionamientoApi.createCommission(consultaComisionDto);
-			} catch (Exception e) {
-				logger.error("Error en la llamada al comisionamiento: " + e);
-			}
-			
+		if (!Checks.esNulo(calculoComision) && calculoComision.getCommissionAmount() != null && calculoComision.getMaxAmount() != null 
+				&& calculoComision.getMinAmount() != null) {
+			dto.setHonorarios(comisionamientoApi.calculaHonorario(calculoComision));
+			dto.setImporteOriginal(calculoComision.getCommissionAmount());
+			dto.setImporteCalculo(comisionamientoApi.calculaImporteCalculo(oferta.getImporteOferta(), dto.getHonorarios()));
+		} else {
 			dto.setImporteCalculo(0.00);
+			dto.setImporteOriginal(0d);
 			dto.setHonorarios(0.00);
-			
-			if (!Checks.esNulo(calculoComision)) {
-				//if (!Checks.esNulo(calculoComision.getAmount()) && !Checks.esNulo(calculoComision.getRule().getCommissionPercentage())) {
-					
-					/*Double calculoImporteC = Double.valueOf(calculoComision.getRule().getCommissionPercentage());
-					dto.setImporteCalculo(calculoImporteC);*/
-	
-					if (!Checks.esNulo(activo) && !Checks.esNulo(oferta.getImporteOferta())) {
-						for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
-							if (activoOferta.getPrimaryKey().getActivo().getId().equals(activo.getId()) && !Checks.esNulo(activoOferta.getImporteActivoOferta())) {
-	
-								Double result = 0d;
-								/*if(!Checks.esNulo(calculoImporteC) && !calculoImporteC.equals(0d)){
-									result = Double.valueOf(calculoComision.getAmount());
-								}*/
-	
-								if(!Checks.esNulo(oferta.getPrescriptor())) {
-	
-									ActivoProveedor activoProveedor = oferta.getPrescriptor();
-	
-									if (!Checks.esNulo(activoProveedor.getTipoProveedor()) && !Checks.esNulo(activoProveedor.getTipoProveedor().getCodigo())) {
-	
-										if (DDTipoProveedor.COD_MEDIADOR.equals(activoProveedor.getTipoProveedor().getCodigo())
-												&& !Checks.esNulo(activoProveedor.getCustodio()) && activoProveedor.getCustodio().equals(1)) {
-	
-											// 1
-	
-											if(DDAccionGastos.CODIGO_COLABORACION.equals(accion)) {
-												dto.setHonorarios(0d);
-												// API Custodio - Colaborador
-												tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-														DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
-												dto.setImporteCalculo(0d);
-											} else if(DDAccionGastos.CODIGO_PRESCRIPCION.equals(accion)) {
-												// API Custodio - Prescripcion
-												if(result <= 100) {
-														dto.setHonorarios(100d);
-														tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-																DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
-														dto.setImporteCalculo(0d);
-												} else {
-														dto.setHonorarios(result);
-														tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-																DDTipoCalculo.TIPO_CALCULO_PORCENTAJE_ALQ);
-												}
-											}
-	
-										} else if (DDTipoProveedor.COD_MEDIADOR.equals(activoProveedor.getTipoProveedor().getCodigo())
-												&& (Checks.esNulo(activoProveedor.getCustodio()) || ( !Checks.esNulo(activoProveedor.getCustodio()) && !activoProveedor.getCustodio().equals(1) ) )) {
-	
-											// 0
-	
-											if(DDAccionGastos.CODIGO_COLABORACION.equals(accion)) {
-												// API No Custodio - Colaborador
-												if(result <= 100) {
-														dto.setHonorarios(100d);
-														tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-																DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
-														dto.setImporteCalculo(0d);
-												}else {
-														dto.setHonorarios(result);
-														tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-																DDTipoCalculo.TIPO_CALCULO_PORCENTAJE_ALQ);
-												}
-	
-											} else if(DDAccionGastos.CODIGO_PRESCRIPCION.equals(accion)) {
-												// API No Custodio - Prescripcion
-												if(result <= 100) {
-														dto.setHonorarios(100d);
-														tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-																DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
-														dto.setImporteCalculo(0d);
-												}else {
-														dto.setHonorarios(activoOferta.getImporteActivoOferta());
-														tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-																DDTipoCalculo.TIPO_CALCULO_MENSUALIDAD_ALQ);
-														dto.setImporteCalculo(1d);
-												}
-											}
-	
-										} else if (DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA.equals(activoProveedor.getTipoProveedor().getCodigo())) {
-	
-											if(DDAccionGastos.CODIGO_COLABORACION.equals(accion)) {
-												// FvD - Colaboracion
-												if(result <= 100) {
-														dto.setHonorarios(100d);
-														tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-																DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
-														dto.setImporteCalculo(0d);
-												}else {
-														dto.setHonorarios(result);
-														tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-																DDTipoCalculo.TIPO_CALCULO_PORCENTAJE_ALQ);
-												}
-											}
-											if(DDAccionGastos.CODIGO_PRESCRIPCION.equals(accion)) {
-												// FvD - Prescripcion
-												dto.setHonorarios(0d);
-												tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-														DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
-												dto.setImporteCalculo(0d);
-											}
-	
-										} else if ( !Checks.esNulo(activo.getInfoComercial()) && (DDTipoProveedor.COD_OFICINA_CAJAMAR.equals(activoProveedor.getTipoProveedor().getCodigo())
-												|| DDTipoProveedor.COD_OFICINA_BANKIA.equals(activoProveedor.getTipoProveedor().getCodigo()))) {
-	
-											if(DDAccionGastos.CODIGO_COLABORACION.equals(accion)) {
-												// Oficina - Colaboracion
-												if(result <= 100) {
-													dto.setHonorarios(100d);
-													tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-															DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
-													dto.setImporteCalculo(0d);
-												}else {
-													dto.setHonorarios(result);
-													tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-															DDTipoCalculo.TIPO_CALCULO_PORCENTAJE_ALQ);
-												}
-											}
-	
-											if(DDAccionGastos.CODIGO_PRESCRIPCION.equals(accion)) {
-												// Oficina - Prescripcion
-												dto.setHonorarios(0d);
-												tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-														DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ);
-												dto.setImporteCalculo(0d);
-											}
-										}
-	
-									}
-	
-								}
-	
-							}
-						}
-					}
-	
-					if (!Checks.esNulo(tipoCalculoC)) {
-						dto.setTipoCalculo(tipoCalculoC.getDescripcion());
-						dto.setCodigoTipoCalculo(tipoCalculoC.getCodigo());
-					}
-
-				//}
-			}
 		}
 
 		return dto;

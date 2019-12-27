@@ -108,6 +108,9 @@ public class GastosExpediente implements Serializable, Auditable {
 	
 	@Column(name="GEX_EDITADO")
     private Integer editado;
+	
+	@Column(name = "GEX_IMPORTE_ORIGINAL")
+	private Double importeOriginal;
     
 	@Version   
 	private Long version;
@@ -269,5 +272,13 @@ public class GastosExpediente implements Serializable, Auditable {
 
 	public void setEditado(Integer editado) {
 		this.editado = editado;
+	}
+
+	public Double getImporteOriginal() {
+		return importeOriginal;
+	}
+
+	public void setImporteOriginal(Double importeOriginal) {
+		this.importeOriginal = importeOriginal;
 	}
 }

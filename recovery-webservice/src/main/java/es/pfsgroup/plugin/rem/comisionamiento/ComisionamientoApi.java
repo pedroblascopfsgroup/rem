@@ -16,4 +16,8 @@ public interface ComisionamientoApi {
 	public RespuestaComisionResultDto createCommission(ConsultaComisionDto parametros)
 			throws JsonGenerationException, JsonMappingException, IOException, HttpClientException, NumberFormatException, RestConfigurationException, HttpsClientException;
 
+	Double calculaHonorario(RespuestaComisionResultDto dto);
+
+	Double calculaImporteCalculo(Double importeOferta, Double comision);
+
 }

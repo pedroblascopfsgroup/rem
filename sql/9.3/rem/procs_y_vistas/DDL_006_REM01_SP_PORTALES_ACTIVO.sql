@@ -30,15 +30,15 @@ CREATE OR REPLACE PROCEDURE SP_PORTALES_ACTIVO (
     V_POR_A NUMBER(16);
 -- 0.1
 BEGIN
-   DBMS_OUTPUT.PUT_LINE('[INICIO]');
+   PL_OUTPUT := PL_OUTPUT || '[INICIO]' || CHR(10);
 
 	IF V_USUARIO IS NULL OR P_ACT_ID IS NOT NULL AND P_AGR_ID IS NOT NULL THEN
-		DBMS_OUTPUT.PUT_LINE('KO. No se ha podido completar la operativa');
+		PL_OUTPUT := PL_OUTPUT || 'KO. No se ha podido completar la operativa' || CHR(10);
     ELSIF P_ACT_ID IS NOT NULL AND P_AGR_ID IS NULL THEN --ACTIVOS
         EXECUTE IMMEDIATE 'SELECT VPA.DD_POR_ID FROM '||V_ESQUEMA||'.V_PORTALES_ACTIVO VPA WHERE VPA.ACT_ID = '||P_ACT_ID INTO V_POR_V;
         EXECUTE IMMEDIATE 'SELECT APU.DD_POR_ID FROM '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU WHERE APU.BORRADO = 0 AND APU.ACT_ID = '||P_ACT_ID INTO V_POR_A;
         IF V_POR_V IS NULL OR V_POR_V = V_POR_A THEN
-            DBMS_OUTPUT.PUT_LINE('OK. Sin cambios que realizar');
+            PL_OUTPUT := PL_OUTPUT || 'OK. Sin cambios que realizar' || CHR(10);
         ELSE 
              V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU
                    USING (
@@ -57,9 +57,9 @@ BEGIN
                     ,APU.FECHAMODIFICAR = SYSDATE';
             EXECUTE IMMEDIATE V_MSQL;
             
-            DBMS_OUTPUT.PUT_LINE('Se ha cambiado el canal de publicación para ' ||SQL%ROWCOUNT|| ' activos');
+            PL_OUTPUT := PL_OUTPUT || 'Se ha cambiado el canal de publicación para ' ||SQL%ROWCOUNT|| ' activos' || CHR(10);
             
-            DBMS_OUTPUT.PUT_LINE('OK. Se han realizado los cambios de portal');
+            PL_OUTPUT := PL_OUTPUT || 'OK. Se han realizado los cambios de portal' || CHR(10);
         END IF;
     ELSIF P_ACT_ID IS NULL AND P_AGR_ID IS NOT NULL THEN-- AGRUPACIONES
         EXECUTE IMMEDIATE 'SELECT VPA.DD_POR_ID FROM '||V_ESQUEMA||'.V_PORTALES_ACTIVO VPA
@@ -69,7 +69,7 @@ BEGIN
                            JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON APU.ACT_ID = AGA.ACT_ID
                            WHERE AGA.BORRADO = 0 AND AGA.AGA_PRINCIPAL = 1 AND AGA.AGR_ID = '||P_AGR_ID INTO V_POR_A;
         IF V_POR_V IS NULL OR V_POR_V = V_POR_A THEN
-            DBMS_OUTPUT.PUT_LINE('OK. Sin cambios que realizar');
+            PL_OUTPUT := PL_OUTPUT || 'OK. Sin cambios que realizar' || CHR(10);
         ELSE 
              V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU
                    USING (
@@ -90,8 +90,8 @@ BEGIN
                     ,APU.FECHAMODIFICAR = SYSDATE';
             EXECUTE IMMEDIATE V_MSQL;
             
-            DBMS_OUTPUT.PUT_LINE('Se ha cambiado el canal de publicación para ' ||SQL%ROWCOUNT|| ' activos');
-            DBMS_OUTPUT.PUT_LINE('OK. Se han realizado los cambios de portal');
+            PL_OUTPUT := PL_OUTPUT || 'Se ha cambiado el canal de publicación para ' ||SQL%ROWCOUNT|| ' activos' || CHR(10);
+            PL_OUTPUT := PL_OUTPUT || 'OK. Se han realizado los cambios de portal' || CHR(10);
           END IF;  
     ELSIF P_ACT_ID IS NULL AND P_AGR_ID IS NULL AND UPPER(V_USUARIO) = 'PROC_CALCULO_PORTAL' THEN 
             
@@ -180,7 +180,7 @@ BEGIN
                         WHERE APU.BORRADO = 0 AND AGA.BORRADO = 0 AND (APU.DD_POR_ID IS NULL OR APU.DD_POR_ID <> PRN.DD_POR_ID) AND EPV.DD_EPV_CODIGO IN (''03'',''04'')';
         EXECUTE IMMEDIATE V_MSQL;
 
-        DBMS_OUTPUT.PUT_LINE('Se inserta un nuevo registro en el histórico de publicaciones para ' ||SQL%ROWCOUNT|| ' activos');
+        PL_OUTPUT := PL_OUTPUT || 'Se inserta un nuevo registro en el histórico de publicaciones para ' ||SQL%ROWCOUNT|| ' activos' || CHR(10);
      
         V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU
                USING (
@@ -203,19 +203,20 @@ BEGIN
                 ,APU.FECHAMODIFICAR = SYSDATE';
         EXECUTE IMMEDIATE V_MSQL;
         
-        DBMS_OUTPUT.PUT_LINE('Se ha cambiado el canal de publicación para ' ||SQL%ROWCOUNT|| ' activos');
+        PL_OUTPUT := PL_OUTPUT || 'Se ha cambiado el canal de publicación para ' ||SQL%ROWCOUNT|| ' activos' || CHR(10);
         
-        DBMS_OUTPUT.PUT_LINE('OK. Se han realizado los cambios de portal');         
+        PL_OUTPUT := PL_OUTPUT || 'OK. Se han realizado los cambios de portal' || CHR(10);         
        
     END IF;
 
     COMMIT;
-	DBMS_OUTPUT.PUT_LINE('[FIN]');
+	PL_OUTPUT := PL_OUTPUT || '[FIN]' || CHR(10);
 EXCEPTION
     WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE('KO. No se ha podido completar la operativa: ' || TO_CHAR(SQLCODE));
-        DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------');
-        DBMS_OUTPUT.PUT_LINE(SQLERRM);
+        PL_OUTPUT := PL_OUTPUT || 'KO. No se ha podido completar la operativa: ' || TO_CHAR(SQLCODE) || CHR(10);
+        PL_OUTPUT := PL_OUTPUT || '-----------------------------------------------------------' || CHR(10);
+        PL_OUTPUT := PL_OUTPUT || SQLERRM || CHR(10);
+        PL_OUTPUT := PL_OUTPUT || V_MSQL || CHR(10);
         ROLLBACK;
         RAISE;
 END SP_PORTALES_ACTIVO;

@@ -257,7 +257,8 @@ public class GenericAdapter {
 		Perfil perfilExternoEspecial = genericDao.get(Perfil.class, filtro);
 
 		for (Perfil perfil : usuario.getPerfiles()) {
-			if (perfil.getCodigo().equals(perfilExternoEspecial.getCodigo())) {
+			if (!Checks.esNulo(perfilExternoEspecial) 
+					&& perfil.getCodigo().equals(perfilExternoEspecial.getCodigo())) {
 				return true;
 			}
 		}

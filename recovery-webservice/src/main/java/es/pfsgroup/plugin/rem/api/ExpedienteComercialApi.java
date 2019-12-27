@@ -781,8 +781,7 @@ public interface ExpedienteComercialApi {
 	 * @param codigoColaboracion
 	 * @return
 	 */
-	public GastosExpediente creaGastoExpediente(ExpedienteComercial expediente, Oferta oferta, Activo activo,
-			String codigoColaboracion);
+	public List<GastosExpediente> creaGastoExpediente(ExpedienteComercial expediente, Oferta oferta, Activo activo);
 
 	/**
 	 * Devuelve los activos de un expediente dado, para mostrarlos en un combo

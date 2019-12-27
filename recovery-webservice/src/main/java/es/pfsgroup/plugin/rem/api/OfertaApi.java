@@ -509,7 +509,7 @@ public interface OfertaApi {
 	 * @param activo
 	 * @return
 	 */
-	public DtoGastoExpediente calculaHonorario(Oferta oferta, String accion,Activo activo);
+	public List<DtoGastoExpediente> calculaHonorario(Oferta oferta,Activo activo);
 
 	/**
 	 * Método que ratifica el comité de Bankia

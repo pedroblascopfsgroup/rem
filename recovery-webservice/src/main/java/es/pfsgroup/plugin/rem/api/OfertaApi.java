@@ -40,7 +40,7 @@ public interface OfertaApi {
 
 	public static String ORIGEN_REM ="REM";
 	public static String ORIGEN_WEBCOM ="WCOM";
-	public final static String CLIENTE_HAYA = "HAYA";
+	public static final  String CLIENTE_HAYA = "HAYA";
 
 	/**
 	 * Devuelve una Oferta por id.
@@ -563,8 +563,6 @@ public interface OfertaApi {
 	 */
 	public ActivoProveedor getPreescriptor(Oferta oferta);
 
-	public void desocultarActivoOferta(Oferta oferta) throws Exception;
-
 	/**
 	 * Método que comprueba para Bankia (excepto subcartera BH) si el estado de la reserva es firmada.
 	 * @param tareaExterna
@@ -578,7 +576,6 @@ public interface OfertaApi {
 
 	boolean comprobarComiteLiberbankPlantillaPropuesta(TareaExterna tareaExterna);
 
-//	DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk);
 	
 	DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada);
 	
@@ -802,5 +799,7 @@ public interface OfertaApi {
 	boolean checkTipoImpuesto(TareaExterna tareaExterna);
 
 	boolean checkReservaInformada(TareaExterna tareaExterna);
+	
+	public Long saveOferta(Oferta oferta);
 
 }

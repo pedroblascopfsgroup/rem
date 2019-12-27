@@ -18,6 +18,7 @@ import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosBDDao;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
+import net.sf.json.JSONObject;
 
 @Component
 public class DetectorWebcomStock extends DetectorCambiosBD<StockDto> {
@@ -43,8 +44,8 @@ public class DetectorWebcomStock extends DetectorCambiosBD<StockDto> {
 	}
 
 	@Override
-	public void invocaServicio(List<StockDto> data, RestLlamada registro) throws ErrorServicioWebcom {
-		serviciosWebcom.webcomRestStock(data, registro);
+	public JSONObject invocaServicio(List<StockDto> data, RestLlamada registro) throws ErrorServicioWebcom {
+		return serviciosWebcom.webcomRestStock(data, registro);
 
 	}
 

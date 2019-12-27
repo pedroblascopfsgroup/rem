@@ -92,7 +92,7 @@ public class RestLlamada implements Serializable, Auditable {
 	private Long msInsertarHistorico;
 	
 	@Column(name = "RST_REFRESCO_TIME")
-	private Long msRefrescoVista;
+	private Long msRefrescoVista = 0L;
 	
 	@Transient
 	private ArrayList<JSONObject> datosErroneos;

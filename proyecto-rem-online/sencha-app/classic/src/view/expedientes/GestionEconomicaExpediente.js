@@ -46,9 +46,9 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 								if(!$AU.userHasFunction('EDITAR_GRID_GESTION_ECONOMICA_EXPEDIENTE')){
 									return false;
 								}
-								// Siempre que se vaya a entrar en modo edición filtrar o limpiar el combo 'Tipo proveedor'.
+								// Siempre que se vaya a entrar en modo ediciÃ³n filtrar o limpiar el combo 'Tipo proveedor'.
 								if (editor.editing) {
-					        		// Si se está editando impedir filtrar erroneamente.
+					        		// Si se estÃ¡ editando impedir filtrar erroneamente.
 									return false;
 					        	}
 
@@ -88,7 +88,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 						columns: [
 						   
 						
-							{
+							/*{
 								text : HreRem.i18n('header.numero.activo'),
 					        	dataIndex: 'idActivo',
 					            flex     : 1,
@@ -125,7 +125,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 						        		}
 					        		}
 								}
-							},
+							},*/
 						   	{
 					            text: HreRem.i18n('fieldlabel.tipoComision'),
 					            dataIndex: 'codigoTipoComision',
@@ -278,7 +278,19 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 					            	editable: false,
 					            	reference: 'honorarios'
 					            },
-					            renderer: Utils.rendererCurrency,
+					            renderer: function (value, meta, record) {
+						    		var importeOriginal = record.get('importeOriginal');
+						    		if(value){
+							    		if (importeOriginal != null && importeOriginal != value) {
+							    			return '<span style="font-weight: bold;">('+Utils.rendererCurrency(value)+')</span> '
+							    			+ '<span style="color: #DF0101; text-decoration: line-through; font-weight: bold;">'+Utils.rendererCurrency(importeOriginal)+'</span>';
+							    		} else {
+							    			return Utils.rendererCurrency(value);
+							    		}
+						    		} else {
+							    		return '-';
+							    	}
+						    	},
 					            summaryType: 'sum',
 				            	summaryRenderer: function(value, summaryData, dataIndex) {
 					            	var suma = 0;
@@ -302,7 +314,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 					            	xtype:'textarea',
 					            	reference: 'observaciones'
 					            }
-						   },
+						   }/*,
 						   {
 						   		text: HreRem.i18n('header.origen.comprador'),
 					            dataIndex: 'origenComprador',
@@ -314,7 +326,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
     								readOnly: true,
     								reference: 'origenCompradorRef'
 								}
-						   }
+						   }*/
 					    ]/*,
 					    dockedItems : [
 					        {
@@ -341,7 +353,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 		me.recargar = false;
 		var listadoHonorarios = me.down("[reference=listadohoronarios]");
 		
-		// FIXME ¿¿Deberiamos cargar la primera página??
+		// FIXME Â¿Â¿Deberiamos cargar la primera pÃ¡gina??
 		listadoHonorarios.getStore().load();		
 		
     }

@@ -241,8 +241,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Autowired
 	private ActivoApi activoApi;
 
-	@Autowired
-	private ActivoAdapter activoAdapter;
 
 	@Autowired
 	private AgendaAdapter adapter;
@@ -2690,10 +2688,28 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dto.setCodigoTipoCalculo(tipoCalculoC.getCodigo());
 			}
 
+			// Información del cálculo de la comisión para venta
+			/*BigDecimal calculoComision = ofertaDao.getImporteCalculo(oferta.getId(), TIPO_HONORARIOS.get(accion),activo.getId(), idProveedor);*/
+			RespuestaComisionResultDto calculoComision = null;
+			try {
+				calculoComision = comisionamientoApi.createCommission(consultaComisionDto);
+			} catch (Exception e) {
+				logger.error("Error en la llamada al comisionamiento: " + e);
+			}
+			
+			/*if (!Checks.esNulo(calculoComision) && !Checks.esNulo(calculoComision.getAmount()) && !Checks.esNulo(calculoComision.getRule().getCommissionPercentage())) {
+				dto.setImporteCalculo(Double.valueOf(calculoComision.getRule().getCommissionPercentage()));
+				dto.setHonorarios(Double.valueOf(calculoComision.getAmount()));
+			} else {
+				dto.setImporteCalculo(0.00);
+				dto.setHonorarios(0.00);
+			}*/
+			
 		} else if(DDTipoOferta.CODIGO_ALQUILER.equals(codigoOferta)) {
 			DDTipoCalculo tipoCalculoC = null;
 
 			// Determinar tipo de calculo para alquiler
+			/*BigDecimal calculoComision = ofertaDao.getImporteCalculoAlquiler(oferta.getId(), TIPO_HONORARIOS.get(accion), idProveedor);*/
 			RespuestaComisionResultDto calculoComision = null;
 			try {
 				calculoComision = comisionamientoApi.createCommission(consultaComisionDto);
@@ -2705,11 +2721,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			dto.setHonorarios(0.00);
 			
 			if (!Checks.esNulo(calculoComision)) {
+				//if (!Checks.esNulo(calculoComision.getAmount()) && !Checks.esNulo(calculoComision.getRule().getCommissionPercentage())) {
+					
+					/*Double calculoImporteC = Double.valueOf(calculoComision.getRule().getCommissionPercentage());
+					dto.setImporteCalculo(calculoImporteC);*/
+	
 					if (!Checks.esNulo(activo) && !Checks.esNulo(oferta.getImporteOferta())) {
 						for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
 							if (activoOferta.getPrimaryKey().getActivo().getId().equals(activo.getId()) && !Checks.esNulo(activoOferta.getImporteActivoOferta())) {
 	
 								Double result = 0d;
+								/*if(!Checks.esNulo(calculoImporteC) && !calculoImporteC.equals(0d)){
+									result = Double.valueOf(calculoComision.getAmount());
+								}*/
 	
 								if(!Checks.esNulo(oferta.getPrescriptor())) {
 	
@@ -2836,6 +2860,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						dto.setTipoCalculo(tipoCalculoC.getDescripcion());
 						dto.setCodigoTipoCalculo(tipoCalculoC.getCodigo());
 					}
+
+				//}
 			}
 		}
 

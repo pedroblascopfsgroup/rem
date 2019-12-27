@@ -40,7 +40,63 @@ DECLARE
 
     
 BEGIN	
+
+        ---------------------------------------------------------------------------------
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] Borrado lógico del histórico creado por REMVIP-6063 ');
+     
+    	V_MSQL := ' MERGE INTO '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION AHP
+		  USING
+		  (
+
+		   SELECT DISTINCT AHP.AHP_ID
+		   FROM '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION AHP, '||V_ESQUEMA||'.ACT_ACTIVO ACT
+		   WHERE AHP.USUARIOCREAR = ''REMVIP-6063''
+		   AND AHP.ACT_ID = ACT.ACT_ID 
+		   AND AHP.BORRADO = 0
+
+                  ) AUX
+		 ON ( AHP.AHP_ID = AUX.AHP_ID )
+		 WHEN MATCHED THEN UPDATE SET
+		 BORRADO = 1,
+		 USUARIOBORRAR = ''REMVIP-6093'',
+		 FECHABORRAR = SYSDATE
 	
+		' ;
+	   EXECUTE IMMEDIATE V_MSQL;
+
+
+	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' registros del histórico borrados ');
+	
+
+        ---------------------------------------------------------------------------------
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] Borrar la fecha hasta de los registros del histórico modificados por REMVIP-6063 ');
+     
+    	V_MSQL := ' MERGE INTO '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION AHP
+		  USING
+		  (
+
+		   SELECT DISTINCT AHP.AHP_ID
+		   FROM '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION AHP, '||V_ESQUEMA||'.ACT_ACTIVO ACT
+		   WHERE AHP.USUARIOCREAR = ''REMVIP-6063''
+		   AND AHP.ACT_ID = ACT.ACT_ID 
+		   AND AHP.BORRADO = 0
+
+                  ) AUX
+		 ON ( AHP.AHP_ID = AUX.AHP_ID )
+		 WHEN MATCHED THEN UPDATE SET
+		 AHP_FECHA_FIN_VENTA = NULL,
+		 USUARIOMODIFICAR = ''REMVIP-6093'',
+		 FECHAMODIFICAR = SYSDATE
+	
+		' ;
+	   EXECUTE IMMEDIATE V_MSQL;
+
+
+	   DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' registros del histórico borrados ');
+	
+
         ---------------------------------------------------------------------------------
 
 
@@ -188,6 +244,7 @@ FECHAMODIFICAR = SYSDATE ';
 				    AND AGR.AGR_ID = AGA.AGR_ID	
                         	    AND AGR_FECHA_BAJA IS NOT NULL	
 				    AND AGA.BORRADO = 0
+				    AND TAG.DD_TAG_CODIGO = ''02''
 				  )
 		 ' ;
 
@@ -229,6 +286,7 @@ FECHAMODIFICAR = SYSDATE ';
 		   AND AGR.AGR_ID = AGA.AGR_ID	
                    AND AGR_FECHA_BAJA IS NULL	
 		   AND AGA.BORRADO = 0
+		   AND TAG.DD_TAG_CODIGO = ''02''
 
 		 ' ;
 

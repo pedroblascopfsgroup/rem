@@ -67,6 +67,10 @@ public class OfertaDto implements Serializable {
 	private Long codigoAgrupacionComercialRem;
 	private String origenLeadProveedor;
 	private Boolean esOfertaSingular;
+	private String idProveedorPrescriptorRemOrigenLead;
+	private Date fechaOrigenLead;
+	private String codTipoProveedorOrigenCliente;
+	private String idProveedorRealizadorRemOrigenLead;
 	
 	public Long getIdOfertaWebcom() {
 		return idOfertaWebcom;
@@ -260,5 +264,29 @@ public class OfertaDto implements Serializable {
 	}
 	public void setEsOfertaSingular(Boolean esOfertaSingular) {
 		this.esOfertaSingular = esOfertaSingular;
+	}
+	public String getIdProveedorPrescriptorRemOrigenLead() {
+		return idProveedorPrescriptorRemOrigenLead;
+	}
+	public void setIdProveedorPrescriptorRemOrigenLead(String idProveedorPrescriptorRemOrigenLead) {
+		this.idProveedorPrescriptorRemOrigenLead = idProveedorPrescriptorRemOrigenLead;
+	}
+	public Date getFechaOrigenLead() {
+		return fechaOrigenLead;
+	}
+	public void setFechaOrigenLead(Date fechaOrigenLead) {
+		this.fechaOrigenLead = fechaOrigenLead;
+	}
+	public String getCodTipoProveedorOrigenCliente() {
+		return codTipoProveedorOrigenCliente;
+	}
+	public void setCodTipoProveedorOrigenCliente(String codTipoProveedorOrigenCliente) {
+		this.codTipoProveedorOrigenCliente = codTipoProveedorOrigenCliente;
+	}
+	public String getIdProveedorRealizadorRemOrigenLead() {
+		return idProveedorRealizadorRemOrigenLead;
+	}
+	public void setIdProveedorRealizadorRemOrigenLead(String idProveedorRealizadorRemOrigenLead) {
+		this.idProveedorRealizadorRemOrigenLead = idProveedorRealizadorRemOrigenLead;
 	}
 }

@@ -55,7 +55,7 @@ public interface RestApi {
 	public static final String REST_MSG_INVALID_WORKINGCODE = "INVALID";
 	public static final String REST_MSG_UNKNOWN_KEY = "INVALID";
 	public static final String REST_MSG_OVERFLOW = "INVALID";
-	public static final String REST_UNIQUE_VIOLATED = "INVALID";// "UNIQUE_CONSTRAINT_VIOLATED";
+	public static final String REST_UNIQUE_VIOLATED = "INVALID";
 	public static final String REST_MSG_UNEXPECTED_ERROR = "UNEXPECTED_ERROR";
 	public static final String REST_LOGGED_USER_USERNAME = "REST-USER";
 	public static final String REM_LOGGED_USER_USERNAME = "REM-USER";
@@ -293,14 +293,6 @@ public interface RestApi {
 	public void simulateRestFilter(ServletRequest req) throws Exception;
 	
 	/**
-	 * Marca un registro como modificado
-	 * @param entidad
-	 * @param instanciaEntidad
-	 */
-	public void marcarRegistroParaEnvio(ENTIDADES entidad,Object instanciaEntidad);
-	
-	
-	/**
 	 * Obtiene el valor de un campo de un dto
 	 * 
 	 * @param dto
@@ -315,5 +307,12 @@ public interface RestApi {
 	@SuppressWarnings("rawtypes")
 	public Object getValue(Object dto, Class claseDto, String methodName)
 			throws Exception;
+	
+	/**
+	 * Traza en log solo en desarrollo
+	 * 
+	 * @param mensaje
+	 */
+	public void trace(String mensaje);
 
 }

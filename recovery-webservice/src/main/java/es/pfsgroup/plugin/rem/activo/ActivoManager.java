@@ -2159,6 +2159,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		return false;
 	}
+	
+	@Transactional(readOnly = false)
+	public List<GastosExpediente> crearGastosExpediente(ExpedienteComercial nuevoExpediente) {
+		
+		List<GastosExpediente> gastosExpediente = expedienteComercialApi.creaGastoExpediente(nuevoExpediente, nuevoExpediente.getOferta(), 
+				nuevoExpediente.getOferta().getActivosOferta().get(0).getPrimaryKey().getActivo());
+
+		return gastosExpediente;
+	}
 
 	@Override
 	public boolean isIntegradoAgrupacionAsistida(Activo activo) {

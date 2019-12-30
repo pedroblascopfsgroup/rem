@@ -53,8 +53,10 @@ public class DDAccionGastos implements Auditable, Dictionary {
 	public static final String CODIGO_PRESCRIPCION = "04";
 	public static final String CODIGO_COLABORACION = "05";
 	public static final String CODIGO_RESPONSABLE_CLIENTE = "06";
-	    
-	
+	public static final String CODIGO_PRE_Y_COL = "PRE_Y_COL";
+	public static final String CODIGO_API_ORI_LEA_PRP = "API_ORI_LEA_PRP";
+	public static final String CODIGO_API_ORI_LEA_PP = "API_ORI_LEA_PP";
+	public static final String CODIGO_COL_HRE = "COL_HRE";
 	    
 	@Version   
 	private Long version;

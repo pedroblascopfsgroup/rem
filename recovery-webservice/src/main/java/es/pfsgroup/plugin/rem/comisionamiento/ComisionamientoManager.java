@@ -2,6 +2,8 @@ package es.pfsgroup.plugin.rem.comisionamiento;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -9,10 +11,15 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.comisionamiento.dto.ConsultaComisionDto;
 import es.pfsgroup.plugin.rem.comisionamiento.dto.RespuestaComisionDto;
 import es.pfsgroup.plugin.rem.comisionamiento.dto.RespuestaComisionResultDto;
 import es.pfsgroup.plugin.rem.microservicios.ClienteMicroservicioGenerico;
+import es.pfsgroup.plugin.rem.model.DtoPrescriptoresComision;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpsclient.HttpsClientException;
@@ -63,5 +70,96 @@ public class ComisionamientoManager implements ComisionamientoApi {
 	@Override
 	public Double calculaImporteCalculo(Double importeOferta, Double comision) {
 		return (100d*comision)/importeOferta;
+	}
+	
+	@Override
+	public List<DtoPrescriptoresComision> getTiposDeComisionAccionGasto(Oferta oferta){
+		List<DtoPrescriptoresComision> listAcciones = new ArrayList<DtoPrescriptoresComision>();
+		
+		DtoPrescriptoresComision dto = new DtoPrescriptoresComision();
+		
+		String prescriptorOferta = oferta.getPrescriptor().getCodigoProveedorRem().toString();
+		String prescriptorVisita = oferta.getIdProveedorPrescriptorRemOrigenLead();
+		String realizadorVisita = oferta.getIdProveedorRealizadorRemOrigenLead();
+		String codLeadOrigin = null;
+		Long diferenciaFechaVisitaYAlta = Math.abs((oferta.getFechaOrigenLead().getTime()-oferta.getFechaAlta().getTime())/86400000);
+		
+		if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getOrigenComprador())) {
+			codLeadOrigin = oferta.getOrigenComprador().getCodigo();
+		} else if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getVisita()) && !Checks.esNulo(oferta.getVisita().getOrigenComprador())) {
+			codLeadOrigin = oferta.getVisita().getOrigenComprador().getCodigo();
+		} else {
+			codLeadOrigin = DDOrigenComprador.CODIGO_ORC_HRE;
+		}
+		
+		if(prescriptorVisita == null || realizadorVisita == null) {
+			return null;
+		}
+		
+		if(prescriptorOferta.equals(prescriptorVisita) && prescriptorOferta.equals(realizadorVisita)) {
+			dto.setPrescriptorCodRem(prescriptorOferta);
+			dto.setTipoAccion(DDAccionGastos.CODIGO_PRE_Y_COL);
+			
+			if(DDOrigenComprador.CODIGO_ORC_API_AJENO.equals(codLeadOrigin)) {
+				
+				if(diferenciaFechaVisitaYAlta > 90L) {
+					dto.setOrigenLead(DDOrigenComprador.CODIGO_ORC_API_PROPIO);
+					
+					listAcciones.add(dto);
+				}else {
+					dto.setOrigenLead(codLeadOrigin);
+					
+					listAcciones.add(dto);
+					
+					dto = new DtoPrescriptoresComision();
+					
+					dto.setPrescriptorCodRem(prescriptorVisita);
+					dto.setTipoAccion(DDAccionGastos.CODIGO_API_ORI_LEA_PRP);
+					dto.setOrigenLead(codLeadOrigin);
+					listAcciones.add(dto);
+				}
+			}
+		} else if(prescriptorOferta.equals(prescriptorVisita) && !prescriptorOferta.equals(realizadorVisita)
+				&& DDOrigenComprador.CODIGO_ORC_HRE.equals(codLeadOrigin)) {
+			dto.setPrescriptorCodRem(prescriptorOferta);
+			dto.setTipoAccion(DDAccionGastos.CODIGO_COLABORACION);
+			dto.setOrigenLead(codLeadOrigin);
+			
+			listAcciones.add(dto);
+			
+		} else if(prescriptorOferta.equals(prescriptorVisita) && !prescriptorOferta.equals(realizadorVisita)
+				&& realizadorVisita != null) {
+			dto.setPrescriptorCodRem(realizadorVisita);
+			dto.setTipoAccion(DDAccionGastos.CODIGO_COLABORACION);
+			dto.setOrigenLead(codLeadOrigin);
+			
+			listAcciones.add(dto);
+			
+			if(DDOrigenComprador.CODIGO_ORC_API_AJENO.equals(codLeadOrigin)) {
+				
+				dto = new DtoPrescriptoresComision();
+				
+				dto.setPrescriptorCodRem(prescriptorOferta);
+				dto.setTipoAccion(DDAccionGastos.CODIGO_PRE_Y_COL);
+				dto.setOrigenLead(codLeadOrigin);
+				
+				listAcciones.add(dto);
+				
+				if(diferenciaFechaVisitaYAlta <= 90L) {
+					
+					dto = new DtoPrescriptoresComision();
+					
+					dto.setPrescriptorCodRem(prescriptorVisita);
+					dto.setTipoAccion(DDAccionGastos.CODIGO_API_ORI_LEA_PP);
+					dto.setOrigenLead(codLeadOrigin);
+					
+					listAcciones.add(dto);
+				}
+			}
+		}
+		
+		
+		
+		return listAcciones;
 	}
 }

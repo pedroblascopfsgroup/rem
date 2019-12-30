@@ -86,46 +86,6 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 				            dock: 'bottom'
 						}],
 						columns: [
-						   
-						
-							/*{
-								text : HreRem.i18n('header.numero.activo'),
-					        	dataIndex: 'idActivo',
-					            flex     : 1,
-					            editor: {
-					            	xtype: 'combobox',	
-									reference: 'comboActivoRef',
-									allowBlank: false,
-									store: new Ext.data.Store({
-										model: 'HreRem.model.ComboBase',
-										proxy: {
-											type: 'uxproxy',
-											remoteUrl: 'expedientecomercial/getComboActivos',
-											extraParams: {idExpediente: me.lookupController().getViewModel().get("expediente.id")}
-										},
-										autoLoad: true
-									}),
-									displayField: 'numActivo',
-    								valueField: 'idActivo',
-    								listeners: {
-    									beforeselect: 'onSelectComboActivoHonorarios'
-    								}
-					            },
-					            renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {	
-					        		var me = this,				        		
-					        		comboEditor =  me.columns  && me.columns[colIndex].getEditor ? me.columns[colIndex].getEditor() : me.getEditor ? me.getEditor() : null;
-					        		if(!Ext.isEmpty(comboEditor)) {
-						        		var store = comboEditor.getStore(),							        		
-						        		activo = store.findRecord("idActivo", value);
-						        		if(!Ext.isEmpty(activo)) {								        			
-						        			return activo.get("numActivo");								        		
-						        		} else if (!Ext.isEmpty(record)) {
-						        			comboEditor.setValue(record.get("idActivo"));	
-						        			return record.get("numActivo");							        			
-						        		}
-					        		}
-								}
-							},*/
 						   	{
 					            text: HreRem.i18n('fieldlabel.tipoComision'),
 					            dataIndex: 'codigoTipoComision',
@@ -314,19 +274,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 					            	xtype:'textarea',
 					            	reference: 'observaciones'
 					            }
-						   }/*,
-						   {
-						   		text: HreRem.i18n('header.origen.comprador'),
-					            dataIndex: 'origenComprador',
-					            reference: 'origenCompradorVistaRef',
-					            flex: 1,
-					            editor: {
-									xtype: 'textfield',
-    								editable: false,
-    								readOnly: true,
-    								reference: 'origenCompradorRef'
-								}
-						   }*/
+						   }
 					    ]/*,
 					    dockedItems : [
 					        {

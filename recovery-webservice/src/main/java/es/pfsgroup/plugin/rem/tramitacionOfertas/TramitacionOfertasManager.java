@@ -929,35 +929,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	
 	@Override
 	public List<GastosExpediente> crearGastosExpediente(Oferta oferta, ExpedienteComercial nuevoExpediente) {
-		List<GastosExpediente> gastosExpediente = new ArrayList<GastosExpediente>();
-		
-		ComisionDto filtroDto = new ComisionDto();
-		
-		filtroDto.setIdOfertaRem(nuevoExpediente.getOferta().getNumOferta());
-		List<GastosExpediente> listaGastos = gastosExpedienteApi.getListaGastosExpediente(filtroDto);
-		
-		if(listaGastos == null || listaGastos.isEmpty()) {
-		
-			List<String> acciones = new ArrayList<String>();
-			String codigoOferta = nuevoExpediente.getOferta().getTipoOferta().getCodigo();
-	
-			acciones.add(DDAccionGastos.CODIGO_COLABORACION);
-			acciones.add(DDAccionGastos.CODIGO_PRESCRIPCION); 
-	
-			if(DDTipoOferta.CODIGO_VENTA.equals(codigoOferta)) {
-				acciones.add(DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE);
-			}
-			
-			for(ActivoOferta activoOferta : nuevoExpediente.getOferta().getActivosOferta()) {
-				Activo activo = activoOferta.getPrimaryKey().getActivo();
-	
-				for (String accion : acciones) {
-					GastosExpediente gex = expedienteComercialApi.creaGastoExpediente(nuevoExpediente, nuevoExpediente.getOferta(), activo, accion);
-					gastosExpediente.add(gex);
-				}
-			}
-		}
-
+		List<GastosExpediente> gastosExpediente = expedienteComercialApi.creaGastoExpediente(nuevoExpediente, nuevoExpediente.getOferta(),
+				nuevoExpediente.getOferta().getActivosOferta().get(0).getPrimaryKey().getActivo());
 		return gastosExpediente;
 	}
 	

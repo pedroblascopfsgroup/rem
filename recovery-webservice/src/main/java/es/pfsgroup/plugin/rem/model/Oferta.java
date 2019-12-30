@@ -291,16 +291,16 @@ public class Oferta implements Serializable, Auditable {
 	private Boolean ofertaSingular;
 	
 	@Column(name="OFR_ID_PRES_ORI_LEAD")
-	private String idProveedorPrescriptorLeadOrigen;
+	private String idProveedorPrescriptorRemOrigenLead;
 	
 	@Column(name="OFR_FECHA_ORI_LEAD")
-	private Date fechaProveedorPrescriptorLeadOrigen;
+	private Date fechaOrigenLead;
 	
 	@Column(name="OFR_COD_TIPO_PROV_ORI_LEAD")
-	private String canalLeadOrigen;
+	private String codTipoProveedorOrigenCliente;
 	
 	@Column(name="OFR_ID_REALIZA_ORI_LEAD")
-	private String proveedorRealizadorLeadOrigen;
+	private String idProveedorRealizadorRemOrigenLead;
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -880,35 +880,35 @@ public class Oferta implements Serializable, Auditable {
 		this.ofertaSingular = ofertaSingular;
 	}
 
-	public String getIdProveedorPrescriptorLeadOrigen() {
-		return idProveedorPrescriptorLeadOrigen;
+	public String getIdProveedorPrescriptorRemOrigenLead() {
+		return idProveedorPrescriptorRemOrigenLead;
 	}
 
-	public void setIdProveedorPrescriptorLeadOrigen(String idProveedorPrescriptorLeadOrigen) {
-		this.idProveedorPrescriptorLeadOrigen = idProveedorPrescriptorLeadOrigen;
+	public void setIdProveedorPrescriptorRemOrigenLead(String idProveedorPrescriptorRemOrigenLead) {
+		this.idProveedorPrescriptorRemOrigenLead = idProveedorPrescriptorRemOrigenLead;
 	}
 
-	public Date getFechaProveedorPrescriptorLeadOrigen() {
-		return fechaProveedorPrescriptorLeadOrigen;
+	public Date getFechaOrigenLead() {
+		return fechaOrigenLead;
 	}
 
-	public void setFechaProveedorPrescriptorLeadOrigen(Date fechaProveedorPrescriptorLeadOrigen) {
-		this.fechaProveedorPrescriptorLeadOrigen = fechaProveedorPrescriptorLeadOrigen;
+	public void setFechaOrigenLead(Date fechaOrigenLead) {
+		this.fechaOrigenLead = fechaOrigenLead;
 	}
 
-	public String getCanalLeadOrigen() {
-		return canalLeadOrigen;
+	public String getCodTipoProveedorOrigenCliente() {
+		return codTipoProveedorOrigenCliente;
 	}
 
-	public void setCanalLeadOrigen(String canalLeadOrigen) {
-		this.canalLeadOrigen = canalLeadOrigen;
+	public void setCodTipoProveedorOrigenCliente(String codTipoProveedorOrigenCliente) {
+		this.codTipoProveedorOrigenCliente = codTipoProveedorOrigenCliente;
 	}
 
-	public String getProveedorRealizadorLeadOrigen() {
-		return proveedorRealizadorLeadOrigen;
+	public String getIdProveedorRealizadorRemOrigenLead() {
+		return idProveedorRealizadorRemOrigenLead;
 	}
 
-	public void setProveedorRealizadorLeadOrigen(String proveedorRealizadorLeadOrigen) {
-		this.proveedorRealizadorLeadOrigen = proveedorRealizadorLeadOrigen;
+	public void setIdProveedorRealizadorRemOrigenLead(String idProveedorRealizadorRemOrigenLead) {
+		this.idProveedorRealizadorRemOrigenLead = idProveedorRealizadorRemOrigenLead;
 	}
 }

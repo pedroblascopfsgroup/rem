@@ -1,12 +1,15 @@
 package es.pfsgroup.plugin.rem.comisionamiento;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 
 import es.pfsgroup.plugin.rem.comisionamiento.dto.ConsultaComisionDto;
 import es.pfsgroup.plugin.rem.comisionamiento.dto.RespuestaComisionResultDto;
+import es.pfsgroup.plugin.rem.model.DtoPrescriptoresComision;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpsclient.HttpsClientException;
@@ -19,5 +22,7 @@ public interface ComisionamientoApi {
 	Double calculaHonorario(RespuestaComisionResultDto dto);
 
 	Double calculaImporteCalculo(Double importeOferta, Double comision);
+
+	List<DtoPrescriptoresComision> getTiposDeComisionAccionGasto(Oferta oferta);
 
 }

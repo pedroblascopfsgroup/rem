@@ -1,21 +1,48 @@
 package es.pfsgroup.plugin.rem.restclient.schedule.dbchanges;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
 
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoOfertaDto;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 @Component
-public class DetectorWebcomEstadoOferta  extends DetectorCambiosBD<EstadoOfertaDto>{
-	
+public class DetectorWebcomEstadoOferta extends DetectorCambiosBD<EstadoOfertaDto> {
+
 	@Autowired
 	private ServiciosWebcomManager serviciosWebcom;
+
+	@Autowired
+	private RestApi restApi;
+
+	@Autowired
+	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private OfertaDao ofertaDao;
+	
+	private final Log logger = LogFactory.getLog(getClass());
+	
+	@Resource(name = "entityTransactionManager")
+    private PlatformTransactionManager transactionManager;
 
 	@Override
 	public String nombreVistaDatosActuales() {
@@ -38,15 +65,15 @@ public class DetectorWebcomEstadoOferta  extends DetectorCambiosBD<EstadoOfertaD
 	}
 
 	@Override
-	public void invocaServicio(List<EstadoOfertaDto> data, RestLlamada registro) throws ErrorServicioWebcom {
-		serviciosWebcom.webcomRestEstadoOferta(data, registro);
+	public JSONObject invocaServicio(List<EstadoOfertaDto> data, RestLlamada registro) throws ErrorServicioWebcom {
+		return serviciosWebcom.webcomRestEstadoOferta(data, registro);
 	}
 
 	@Override
 	protected Integer getWeight() {
 		return 9991;
 	}
-	
+
 	@Override
 	public boolean isActivo() {
 		return true;
@@ -61,9 +88,69 @@ public class DetectorWebcomEstadoOferta  extends DetectorCambiosBD<EstadoOfertaD
 	public List<String> vistasAuxiliares() {
 		return null;
 	}
-	
+
 	@Override
 	public Boolean procesarSoloCambiosMarcados() {
 		return false;
+	}
+
+	@Override
+	public void procesaResultado(JSONObject resultado) {
+		restApi.trace("[DETECCIÓN CAMBIOS] Procesando la respuesta");
+		
+
+		if (resultado.getJSONArray("data") instanceof JSONArray ) {
+			for (int i = 0; i < resultado.getJSONArray("data").size(); i++) {
+				JSONObject oferta = (JSONObject) resultado.getJSONArray("data").get(i);
+				if (oferta.containsKey("idOfertaRem")) {
+					Oferta ofertaEntity = ofertaApi.getOfertaByNumOfertaRem(oferta.getLong("idOfertaRem"));
+					if (ofertaEntity != null) {
+						modificaOferta(oferta, ofertaEntity);
+					}
+				}
+			}
+		}
+
+	}
+	
+	private void modificaOferta(JSONObject oferta,Oferta ofertaEntity) {
+		Boolean actualizar = false;
+		if (oferta.containsKey("idProveedorPrescriptorRemOrigenLead")) {
+			ofertaEntity.setIdProveedorPrescriptorRemOrigenLead(
+					oferta.getString("idProveedorPrescriptorRemOrigenLead"));
+			actualizar = true;
+		}
+		if (oferta.containsKey("fechaOrigenLead")) {
+			ofertaEntity.setFechaOrigenLead(getFechaOrigenLead(oferta));
+			actualizar = true;
+		}
+		if (oferta.containsKey("codTipoProveedorOrigenCliente")) {
+			ofertaEntity.setCodTipoProveedorOrigenCliente(
+					oferta.getString("codTipoProveedorOrigenCliente"));
+			actualizar = true;
+
+		}
+		if (oferta.containsKey("idProveedorRealizadorRemOrigenLead")) {
+			ofertaEntity.setIdProveedorRealizadorRemOrigenLead(
+					oferta.getString("idProveedorRealizadorRemOrigenLead"));
+			actualizar = true;
+		}
+		if (actualizar) {
+			ofertaDao.guardaRegistroWebcom(ofertaEntity);						
+		}
+	}
+	
+	private Date getFechaOrigenLead(JSONObject oferta) {
+		Date fechaOrigenLead = null;
+		try {
+			String dateStr = oferta.getString("fechaOrigenLead");
+			if (dateStr != null && !dateStr.equals("")) {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+				fechaOrigenLead = sdf.parse(dateStr);
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+		}
+		return fechaOrigenLead;
 	}
 }

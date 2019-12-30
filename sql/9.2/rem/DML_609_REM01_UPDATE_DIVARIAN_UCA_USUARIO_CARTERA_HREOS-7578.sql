@@ -36,6 +36,7 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
+    V_COUNT NUMBER(16);
         
 BEGIN   
     
@@ -46,25 +47,30 @@ BEGIN
     
     DBMS_OUTPUT.PUT_LINE('ID DE LA SUBCARTERA APPLE RECOGIDO.');
     
-    V_SQL := 'SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA_DD||' WHERE DD_SCR_CODIGO = ''150''';
-    EXECUTE IMMEDIATE V_SQL INTO V_ID_SCR_DIVARIAN;
+    V_SQL := 'SELECT COUNT(DD_SCR_ID) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA_DD||' WHERE DD_SCR_CODIGO = ''150''';
+    EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
+    
+    IF V_COUNT > 0 THEN
+	    V_SQL := 'SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA_DD||' WHERE DD_SCR_CODIGO = ''150''';
+	    EXECUTE IMMEDIATE V_SQL INTO V_ID_SCR_DIVARIAN;
+		
+	    DBMS_OUTPUT.PUT_LINE('ID DE LA SUBCARTERA DIVARIAN RECOGIDO.');
+	        
+	    -- Update que modifica los datos para replicar datos de Apple para Divarian.
+	    DBMS_OUTPUT.PUT_LINE('[INFO]: UPDATE DE LA TABLA' ||V_TEXT_TABLA);
+	          
+	   	V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' UCA
+				 SET UCA.DD_SCR_ID = '||V_ID_SCR_DIVARIAN||'
+				 WHERE UCA.DD_SCR_ID = '||V_ID_SCR_APPLE||'';
 	
-    DBMS_OUTPUT.PUT_LINE('ID DE LA SUBCARTERA DIVARIAN RECOGIDO.');
-        
-    -- Update que modifica los datos para replicar datos de Apple para Divarian.
-    DBMS_OUTPUT.PUT_LINE('[INFO]: UPDATE DE LA TABLA' ||V_TEXT_TABLA);
-          
-   	V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' UCA
-			 SET UCA.DD_SCR_ID = '||V_ID_SCR_DIVARIAN||'
-			 WHERE UCA.DD_SCR_ID = '||V_ID_SCR_APPLE||'';
-
-	DBMS_OUTPUT.PUT_LINE('');
-	DBMS_OUTPUT.PUT_LINE('');
-	DBMS_OUTPUT.PUT_LINE(V_SQL);
-	DBMS_OUTPUT.PUT_LINE('');
-	DBMS_OUTPUT.PUT_LINE('');
-			 
-        EXECUTE IMMEDIATE V_SQL;
+		DBMS_OUTPUT.PUT_LINE('');
+		DBMS_OUTPUT.PUT_LINE('');
+		DBMS_OUTPUT.PUT_LINE(V_SQL);
+		DBMS_OUTPUT.PUT_LINE('');
+		DBMS_OUTPUT.PUT_LINE('');
+				 
+	        EXECUTE IMMEDIATE V_SQL;
+	END IF;
 
 	DBMS_OUTPUT.PUT_LINE('[FIN] Finalizado el proceso de modificación de usuarios y carteras de Apple y Divarian.');
     COMMIT;

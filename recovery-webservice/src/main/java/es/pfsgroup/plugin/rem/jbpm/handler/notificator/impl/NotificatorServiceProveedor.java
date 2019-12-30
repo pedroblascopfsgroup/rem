@@ -62,9 +62,10 @@ public class NotificatorServiceProveedor extends AbstractNotificatorService impl
 		
 	    String correos = "";
 	   
-	    if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto().getUsuario())){
+	    if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto())){
 	    	correos = tramite.getTrabajo().getProveedorContacto().getEmail();
-		    if(ELECNOR.equals(tramite.getTrabajo().getProveedorContacto().getUsuario().getUsername())) {
+	    	if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto().getUsuario()) 
+	    			&& ELECNOR.equals(tramite.getTrabajo().getProveedorContacto().getUsuario().getUsername())) {
 		    	Usuario buzonElecnor = usuarioManager.getByUsername(BUZON_ELECNOR);			    	
 				correos += !Checks.esNulo(buzonElecnor) ? ";" + buzonElecnor.getEmail() : "";
 			}		    

@@ -287,15 +287,23 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 				}
      		},
      		
-     		comboMotivoOcultacion: {
-			model: 'HreRem.model.ComboBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'motivosOcultacion'}
-			}
-			
-		}
+	     	comboMotivoOcultacion: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'motivosOcultacion'}
+				}
+	     	},
+     		comboSituacionPagoAnterior: {
+    			model: 'HreRem.model.ComboBase',
+    			proxy: {
+    				type: 'uxproxy',
+    				remoteUrl: 'generic/getDiccionario',
+    				extraParams: {diccionario: 'situacionPagoAnterior'}
+    			}
+     		}
+     		
     }
 
 });

@@ -3066,45 +3066,32 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Override
 	public List<DtoProveedorContactoSimple> getComboProveedorContacto(Long idProveedor) throws Exception {
-
-		List<DtoProveedorContactoSimple> listaDtoProveedorContactoSimple = new ArrayList<DtoProveedorContactoSimple>();
-		List<ActivoProveedorContacto> listaProveedorContacto = null;
-
+		
+		List<DtoProveedorContactoSimple> listaDtoProveedorContactoSimple = new ArrayList<DtoProveedorContactoSimple>();		
+		
 		if (Checks.esNulo(idProveedor)) {
 			throw new JsonViewerException("Debe seleccionar antes un proveedor.");
-
 		} else {
-
+			final String USUARIO_BORRADO = "usuario_borrado";
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", idProveedor);
-			listaProveedorContacto = genericDao.getList(ActivoProveedorContacto.class, filtro1);
-
+			List<ActivoProveedorContacto> listaProveedorContacto =  genericDao.getList(ActivoProveedorContacto.class, filtro1);
 			for (ActivoProveedorContacto source : listaProveedorContacto) {
 				try {
-
-					if (source.getUsuario() != null) {
-						DtoProveedorContactoSimple target = new DtoProveedorContactoSimple();
+					Usuario usuario = source.getUsuario();
+					if (!Checks.esNulo(usuario) && !usuario.getUsername().toLowerCase().contains(USUARIO_BORRADO)) {
+						DtoProveedorContactoSimple target = new DtoProveedorContactoSimple();				
 						BeanUtils.copyProperties(target, source);
-
-						if (!Checks.esNulo(source.getUsuario())) {
-							target.setIdUsuario(source.getUsuario().getId());
-						}
-						if (!Checks.esNulo(source.getUsuario())) {
-							target.setLoginUsuario(source.getUsuario().getUsername());
-						}
-						if (!Checks.esNulo(source.getUsuario())) {
-							target.setLoginUsuario(source.getUsuario().getUsername());
-						}
+						target.setIdUsuario(usuario.getId());
+						target.setLoginUsuario(usuario.getUsername());					
 						if (!Checks.esNulo(source.getProvincia())) {
 							target.setCodProvincia(source.getProvincia().getCodigo());
 						}
 						if (!Checks.esNulo(source.getTipoDocIdentificativo())) {
 							target.setCodTipoDocIdentificativo(source.getTipoDocIdentificativo().getCodigo());
 						}
-						if (!Checks.esNulo(source.getUsuario())) {
-							if (!Checks.esNulo(source.getUsuario().getUsuarioGrupo())) {
-								target.setUsuarioGrupo(source.getUsuario().getUsuarioGrupo());
-							}
-						}
+						if (!Checks.esNulo(usuario.getUsuarioGrupo())) {
+							target.setUsuarioGrupo(usuario.getUsuarioGrupo());
+						}						
 						listaDtoProveedorContactoSimple.add(target);
 					}
 				} catch (IllegalAccessException e) {

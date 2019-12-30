@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20191213
+--## FECHA_CREACION=20191219
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-8737
+--## INCIDENCIA_LINK=REMVIP-6045
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM - UVEM. Nuevas columnas. Anula DDL_99900087
 --##           
@@ -20,6 +20,7 @@
 --##		0.7 Oscar Diestre - Crea registro en ACT_VIV_VIVIENDA aunque no vengan datos asociados
 --##    0.8 Daniel Algaba - HREOS-8087 - Modificación cálculo situación del título
 --##    0.9 Daniel Algaba - HREOS-8737 - Se añaden nuevas casuísticas en la actualización/inserción de registros en ACT_AHT_HIST_TRAM_TITULO
+--##    0.10 Oscar Diestre - REMVIP-6045 - Modificado merge en ln524 3.1 BIE_DATOS_REGISTRALES por error al hacer la conversión
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -534,9 +535,9 @@ BEGIN
             INNER JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
             WHERE TEMP.REM = 1
             AND CRA.DD_CRA_CODIGO = ''03''
-               AND  (     BIE.BIE_DREG_LIBRO <> TEMP.NUM_LIBRO_ESCRITURA 
-                      OR  BIE.BIE_DREG_TOMO <> TEMP.NUM_TOMO_ESCRITURA 
-                      OR  BIE.BIE_DREG_FOLIO <> TEMP.NUM_FOLIO_ESCRITURA 
+               AND  (     BIE.BIE_DREG_LIBRO <> TO_CHAR( TEMP.NUM_LIBRO_ESCRITURA )
+                      OR  BIE.BIE_DREG_TOMO <> TO_CHAR( TEMP.NUM_TOMO_ESCRITURA )
+                      OR  BIE.BIE_DREG_FOLIO <> TO_CHAR( TEMP.NUM_FOLIO_ESCRITURA )
                       OR  BIE.BIE_DREG_LIBRO IS NULL OR TEMP.NUM_LIBRO_ESCRITURA IS NULL
                       OR  BIE.BIE_DREG_TOMO IS NULL OR TEMP.NUM_TOMO_ESCRITURA IS NULL
                       OR  BIE.BIE_DREG_FOLIO IS NULL OR TEMP.NUM_FOLIO_ESCRITURA IS NULL

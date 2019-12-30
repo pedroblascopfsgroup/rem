@@ -1029,10 +1029,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 
         if(checkbox.getValue()) {
             combobox.setDisabled(false);
-            combobox.setAllowblank(false);
+            combobox.setAllowBlank(false);
         } else {
             combobox.setDisabled(true);
-            combobox.setAllowblank(true);
+            combobox.setAllowBlank(true);
             combobox.clearValue();
         }
 
@@ -1246,9 +1246,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 									me.fireEvent("errorToast", HreRem.i18n(Ext.decode(response.responseText).errorCode));
 									// me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 				    	         }else{
-				    	        	 btn.up('agrupacionesdetallemain').down("[itemId=botoneditar]").setVisible(false);
-				    	        	 btn.up('agrupacionesdetallemain').down("[itemId=botonguardar]").setVisible(false);
-				    	        	 btn.up('agrupacionesdetallemain').down("[itemId=botoncancelar]").setVisible(false);
 				    	        	 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 				    	        	 //se fuerza el valor a true dado que desde java llega bien pero en algunas pocas lecturas Sencha sigue mostrando false (HREOS-8034)
 				    	        	 btn.up('agrupacionesdetallemain').getViewModel().set("agrupacionficha.tramitable", true);
@@ -1354,5 +1351,17 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     			me.onClickBotonRefrescar();
  		    }
 		});
-	}	
+	},
+
+	usuarioTieneFuncionTramitarOferta: function(get){
+		var me = this,
+		esTramitable = me.getViewModel().get("agrupacionficha.tramitable"),
+		funcion = $AU.userHasFunction('AUTORIZAR_TRAMITACION_OFERTA');
+		
+		if(!esTramitable){
+			me.getView().lookupReference('autorizacionTramOfertasAgrupacion').setHidden(!funcion);
+		} else {
+			me.getView().lookupReference('autorizacionTramOfertasAgrupacion').setHidden(true);
+		}
+	}
 });

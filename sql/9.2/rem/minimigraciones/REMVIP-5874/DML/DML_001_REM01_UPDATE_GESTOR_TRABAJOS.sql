@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20191212
+--## FECHA_CREACION=20191216
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-5874
@@ -26,7 +26,7 @@ DECLARE
     V_NUM_FILAS NUMBER(16); -- Vble. para validar la existencia de un registro.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_USR VARCHAR2(30 CHAR) := 'REMVIP-5874'; -- USUARIOCREAR/USUARIOMODIFICAR.
+    V_USR VARCHAR2(30 CHAR) := 'REMVIP-5874.1'; -- USUARIOCREAR/USUARIOMODIFICAR.
 
     
 BEGIN		

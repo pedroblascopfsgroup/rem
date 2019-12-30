@@ -231,10 +231,14 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								]
 							},
 					        {
-					        	xtype: 'textfieldbase',
+					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel: HreRem.i18n('fieldlabel.sociedad.pago'),
-					        	bind: '{activo.sociedadPagoAnterior}',
-					        	readOnly: true,
+					        	bind: { 
+					        		value:'{activo.sociedadPagoAnterior}',
+					        		store: '{comboSituacionPagoAnterior}',
+					        		readOnly: '{!activo.isSubcarteraDivarian}'
+					        	},
+					        	
 					        	style:'margin-left:10px'
 					        }
 							

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Mª José Ponce
---## FECHA_CREACION=20191120
+--## AUTOR=Carles
+--## FECHA_CREACION=20191230
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-8527
+--## INCIDENCIA_LINK=REMVIP-6109
 --## PRODUCTO=NO
 --## Finalidad: Procedimiento almacenado que calcula el DD_ECA_ID de la tabla ACT_CRG_CARGAS.
 --##           
@@ -93,7 +93,8 @@ BEGIN
                    UPDATE SET
                     ACT.DD_ECA_ID = AUX.DD_ECA_ID
                     ,ACT.USUARIOMODIFICAR = '''||V_USUARIO||'''
-                    ,ACT.FECHAMODIFICAR = SYSDATE';
+                    ,ACT.FECHAMODIFICAR = SYSDATE
+				   WHERE ACT.DD_ECA_ID <> AUX.DD_ECA_ID';
 
         EXECUTE IMMEDIATE V_MSQL;
 
@@ -124,7 +125,8 @@ BEGIN
                    UPDATE SET
                     ACT.DD_ECA_ID = AUX.DD_ECA_ID
                     ,ACT.USUARIOMODIFICAR = '''||V_USUARIO||'''
-                    ,ACT.FECHAMODIFICAR = SYSDATE';
+                    ,ACT.FECHAMODIFICAR = SYSDATE
+				   WHERE ACT.DD_ECA_ID <> AUX.DD_ECA_ID';
 
         EXECUTE IMMEDIATE V_MSQL;
 
@@ -155,7 +157,8 @@ BEGIN
                    UPDATE SET
                     ACT.DD_ECA_ID = AUX.DD_ECA_ID
                     ,ACT.USUARIOMODIFICAR = '''||V_USUARIO||'''
-                    ,ACT.FECHAMODIFICAR = SYSDATE';
+                    ,ACT.FECHAMODIFICAR = SYSDATE
+				   WHERE ACT.DD_ECA_ID <> AUX.DD_ECA_ID';
 
         EXECUTE IMMEDIATE V_MSQL;
 
@@ -188,7 +191,8 @@ BEGIN
                    UPDATE SET
                     ACT.DD_ECA_ID = AUX.DD_ECA_ID
                     ,ACT.USUARIOMODIFICAR = '''||V_USUARIO||'''
-                    ,ACT.FECHAMODIFICAR = SYSDATE';
+                    ,ACT.FECHAMODIFICAR = SYSDATE
+				   WHERE ACT.DD_ECA_ID <> AUX.DD_ECA_ID';
 
         EXECUTE IMMEDIATE V_MSQL;
 
@@ -207,7 +211,8 @@ BEGIN
                    UPDATE SET
                     ACT.DD_ECA_ID = NULL
                     , ACT.USUARIOMODIFICAR = '''||V_USUARIO||'''
-                    , ACT.FECHAMODIFICAR = SYSDATE';
+                    , ACT.FECHAMODIFICAR = SYSDATE
+				   WHERE ACT.DD_ECA_ID IS NOT NULL';
 
         EXECUTE IMMEDIATE V_MSQL;
         

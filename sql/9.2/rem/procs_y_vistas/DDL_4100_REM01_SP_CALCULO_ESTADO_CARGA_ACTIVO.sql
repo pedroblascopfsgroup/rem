@@ -60,7 +60,8 @@ BEGIN
                    UPDATE SET
                     ACT.DD_ECA_ID = AUX.DD_ECA_ID
                     ,ACT.USUARIOMODIFICAR = '''||V_USUARIO||'''
-                    ,ACT.FECHAMODIFICAR = SYSDATE';
+                    ,ACT.FECHAMODIFICAR = SYSDATE
+				   WHERE ACT.DD_ECA_ID <> AUX.DD_ECA_ID';
 
         EXECUTE IMMEDIATE V_MSQL;
 

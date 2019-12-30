@@ -733,15 +733,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 			}
 			return false;
 		},
-		
-		usuarioTieneFuncionTramitarOferta: function(get){
-			var esTramitable = get('comercialagrupacion.tramitable');
-			var funcion = $AU.userHasFunction('AUTORIZAR_TRAMITACION_OFERTA');
-				if(!esTramitable){
-					return !funcion;
-				}
-			return true;
-		},
 				
     stores: {
     	comboCartera: {

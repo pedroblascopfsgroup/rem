@@ -256,6 +256,19 @@ public class GenericAdapter {
 		return usuario.getPerfiles().contains(perfilProveedor);
 	}
 	
+	public Boolean isExternoEspecial(Usuario usuario) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "EXTERNOESPECIAL");
+		Perfil perfilExternoEspecial = genericDao.get(Perfil.class, filtro);
+
+		for (Perfil perfil : usuario.getPerfiles()) {
+			if (perfil.getCodigo().equals(perfilExternoEspecial.getCodigo())) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	
 
 	

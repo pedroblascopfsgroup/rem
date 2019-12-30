@@ -57,9 +57,10 @@ public class NotificatorServiceProveedorCierre extends AbstractNotificatorServic
 			List<String> mailsCC = new ArrayList<String>();
 			String correos = null;
 					    	
-		    if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto().getUsuario())){
-		    	correos = tramite.getTrabajo().getProveedorContacto().getUsuario().getEmail();
-			    if(ELECNOR.equals(tramite.getTrabajo().getProveedorContacto().getUsuario().getUsername())) {
+		    if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto())){
+		    	correos = tramite.getTrabajo().getProveedorContacto().getEmail();
+			    if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto().getUsuario()) 
+			    		&& ELECNOR.equals(tramite.getTrabajo().getProveedorContacto().getUsuario().getUsername())) {
 			    	Usuario buzonElecnor = usuarioManager.getByUsername(BUZON_ELECNOR);			    	
 					correos += !Checks.esNulo(buzonElecnor) ? ";" + buzonElecnor.getEmail() : "";
 				}		    

@@ -5867,5 +5867,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					});
 			}
 		}
+	},
+	
+	onChangeComboGestPlusv: function(combo, value){
+		var me = this;
+		var observaciones = me.lookupReference('plusvObservacionesGestion');
+		if(value == CONST.DD_ESTADO_GEST_PLUVS["RECHAZADO"]){
+			observaciones.setDisabled(false);
+		}else{
+			observaciones.setDisabled(true);
+		}
 	}
 });

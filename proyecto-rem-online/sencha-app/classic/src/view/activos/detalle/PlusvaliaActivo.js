@@ -119,17 +119,19 @@ Ext.define('HreRem.view.activos.detalle.PlusvaliaActivo', {
 	            	expand: function(){
 	            	var me = this;
 	            		me.lookupController().doFilterEstadoGestionByUserRol(me);
-	            	}
+	            	},
+	            	change: 'onChangeComboGestPlusv'
 	            }
 	        }, {
 	        	xtype: 'textareafieldbase',
+	        	reference:'plusvObservacionesGestion',
             	labelWidth: 200,
             	rowspan: 5,
             	height: 130,
             	labelAlign: 'top',
             	fieldLabel: HreRem.i18n('fieldlabel.plusvalia.observaciones'),
             	bind:{
-            		value: '{plusvalia.observaciones}'            		
+            		value: '{plusvalia.observaciones}'
             	},
             	allowBlank: false
 	        } ]

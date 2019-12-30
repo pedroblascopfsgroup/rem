@@ -5574,11 +5574,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},		
 
 	usuarioLogadoEditar: function() {
-
     	var me = this;
-    	var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYASADM']) || $AU.userIsRol(CONST.PERFILES['HAYAADM']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTADMT'])
+    	var usuariosValidos = $AU.userIsRol(CONST.PERFILES.HAYASUPER) 
+    	|| $AU.userIsRol(CONST.PERFILES.SUPERVISOR_ADMINISTRACION) 
+    	|| $AU.userIsRol(CONST.PERFILES.GESTOR_ADMINISTRACION)
+    	|| $AU.userIsRol(CONST.PERFILES.GESTORIAS_ADMINISTRACION);
+    	
 		if(usuariosValidos){
-			me.lookupReference("subestadoGestion").readOnly = false;
+			me.lookupReference("subestadoGestion").readOnly = false;	
 			me.lookupReference("estadoLocalizacion").readOnly = false;
     	}
     	else{

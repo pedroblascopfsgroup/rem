@@ -174,9 +174,12 @@ public class MaestroDePersonas implements Runnable {
 									if(tmpClienteGDPR == null){
 										tmpClienteGDPR = new TmpClienteGDPR();
 										tmpClienteGDPR.setIdPersonaHaya(Long.parseLong(personaOutputDto.getIdIntervinienteHaya()));
+										tmpClienteGDPR.setNumDocumento(personaDto.getIdPersonaOrigen());
+										genericDao.save(TmpClienteGDPR.class, tmpClienteGDPR);
+									}else {
+										tmpClienteGDPR.setNumDocumento(personaDto.getIdPersonaOrigen());
+										genericDao.update(TmpClienteGDPR.class, tmpClienteGDPR);
 									}									
-									tmpClienteGDPR.setNumDocumento(personaDto.getIdPersonaOrigen());
-									genericDao.save(TmpClienteGDPR.class, tmpClienteGDPR);
 								} else if (ID_PERSONA_SIMULACION.equals(personaOutputDto.getResultDescription())) {
 									Criteria criteria = sessionObj.createCriteria(TmpClienteGDPR.class);
 									criteria.add(Restrictions.eq("numDocumento",

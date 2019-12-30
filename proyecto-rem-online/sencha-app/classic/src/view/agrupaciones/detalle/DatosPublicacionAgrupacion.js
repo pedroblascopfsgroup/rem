@@ -118,7 +118,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', {
 								reference: 'chkbxpublicarventa',
 								textareaRefChained: 'textareaMotivoPublicacionVenta',
 								bind: {
-									disabled: '{!datospublicacionactivo.publicarVenta}',
+									readOnly: '{datospublicacionagrupacion.deshabilitarCheckPublicarVenta}',
 									value: '{datospublicacionagrupacion.publicarVenta}'
 								},
 								listeners: {

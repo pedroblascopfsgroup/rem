@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin Bahamonde
---## FECHA_CREACION=20191224
+--## FECHA_CREACION=20191230
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-8900
@@ -40,7 +40,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
         T_TIPO_DATA('26', 'Final Sale Value venta', 'Final Sale Value (FSV) venta'),
-        T_TIPO_DATA('27', '	Final Sale Value renta', 'Final Sale Value (FSV) renta')
+        T_TIPO_DATA('27', 'Final Sale Value renta', 'Final Sale Value (FSV) renta')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -56,24 +56,24 @@ BEGIN
       
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
     
-        
-        V_MSQL := 'SELECT DD_TPC_ID FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_TPC_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
-		    EXECUTE IMMEDIATE V_MSQL INTO V_ID_TIPO_PRECIO;
-        
-        --Comprobamos el dato a insertar
+             --Comprobamos el dato a insertar
         V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_TPC_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
         EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
-        
+                
         --Si existe modificamos los valores
         IF V_NUM_TABLAS > 0 THEN
-			    V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
-          'SET DD_TPC_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''''||
-		      ', DD_'||V_TEXT_CHARS||'_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
-          ', DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
-          ', USUARIOMODIFICAR = '''||V_INCIDENCIA||''' , FECHAMODIFICAR = SYSDATE '||
-          'WHERE DD_'||V_TEXT_CHARS||'_ID = '''||V_ID_TIPO_PRECIO||'''';
-          EXECUTE IMMEDIATE V_MSQL;
+    
+	        V_MSQL := 'SELECT DD_TPC_ID FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_TPC_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+			EXECUTE IMMEDIATE V_MSQL INTO V_ID_TIPO_PRECIO;
 
+		    V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
+	          'SET DD_TPC_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''''||
+		      ', DD_'||V_TEXT_CHARS||'_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
+	          ', DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
+	          ', USUARIOMODIFICAR = '''||V_INCIDENCIA||''' , FECHAMODIFICAR = SYSDATE '||
+	          'WHERE DD_'||V_TEXT_CHARS||'_ID = '''||V_ID_TIPO_PRECIO||'''';
+	          EXECUTE IMMEDIATE V_MSQL;
+			  DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''' '''|| TRIM(V_TMP_TIPO_DATA(2)) ||''''); 
         ELSE
           DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   
           V_MSQL := 'SELECT '||V_ESQUEMA||'.S_DD_TPC_TIPO_PRECIO.NEXTVAL FROM DUAL';
@@ -84,7 +84,7 @@ BEGIN
                       'SELECT '||V_ID|| ','''||TRIM(V_TMP_TIPO_DATA(1))||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''','||
                       '0, '||V_INCIDENCIA||', SYSDATE, 0 FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL;
-          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTROS INSERTADO CORRECTAMENTE');
+			  DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''' '''|| TRIM(V_TMP_TIPO_DATA(2)) ||''''); 
         
        END IF;
       END LOOP;

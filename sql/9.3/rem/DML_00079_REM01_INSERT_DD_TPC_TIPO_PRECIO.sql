@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin Bahamonde
---## FECHA_CREACION=20191230
+--## FECHA_CREACION=20191231
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-8900
@@ -82,7 +82,7 @@ BEGIN
           V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.DD_TPC_TIPO_PRECIO (' ||
                       'DD_TPC_ID, DD_TPC_CODIGO, DD_TPC_DESCRIPCION, DD_TPC_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
                       'SELECT '||V_ID|| ','''||TRIM(V_TMP_TIPO_DATA(1))||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''','||
-                      '0, '||V_INCIDENCIA||', SYSDATE, 0 FROM DUAL';
+                      '0, '''||V_INCIDENCIA||''', SYSDATE, 0 FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL;
 			  DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''' '''|| TRIM(V_TMP_TIPO_DATA(2)) ||''''); 
         

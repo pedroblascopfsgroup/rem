@@ -78,9 +78,9 @@ public class ComisionamientoManager implements ComisionamientoApi {
 		List<DtoPrescriptoresComision> listAcciones = new ArrayList<DtoPrescriptoresComision>();
 		
 		DtoPrescriptoresComision dto = new DtoPrescriptoresComision();
-		
-		Long prescriptorVisita = oferta.getProveedorPrescriptorRemOrigenLead().getId();
-		Long realizadorVisita = oferta.getProveedorRealizadorRemOrigenLead().getId();
+				
+		Long prescriptorVisita = (oferta.getProveedorPrescriptorRemOrigenLead() == null) ? null : oferta.getProveedorPrescriptorRemOrigenLead().getId();
+		Long realizadorVisita = (oferta.getProveedorRealizadorRemOrigenLead() == null) ? null : oferta.getProveedorRealizadorRemOrigenLead().getId();
 		
 		if(prescriptorVisita == null
 				|| realizadorVisita == null

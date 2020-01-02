@@ -2841,68 +2841,69 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		List<DtoPrescriptoresComision> listAccionesComision = comisionamientoApi.getTiposDeComisionAccionGasto(oferta);
 		
-		for(DtoPrescriptoresComision accionesComision: listAccionesComision) {
-			consultaComisionDto.setLeadOrigin(accionesComision.getOrigenLead());
-			
-			// Información del receptor del honorario
-			if (!Checks.esNulo(accionesComision.getPrescriptorCodRem())) {
-
-				proveedor = genericDao.get(ActivoProveedor.class, 
-						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", accionesComision.getPrescriptorCodRem()));
+		if(listAccionesComision != null) {
+			for(DtoPrescriptoresComision accionesComision: listAccionesComision) {
+				consultaComisionDto.setLeadOrigin(accionesComision.getOrigenLead());
 				
-				if (!Checks.esNulo(proveedor.getTipoProveedor())) {
-					dto.setTipoProveedor(proveedor.getTipoProveedor().getDescripcion());
+				// Información del receptor del honorario
+				if (!Checks.esNulo(accionesComision.getPrescriptorCodRem())) {
+	
+					proveedor = genericDao.get(ActivoProveedor.class, 
+							genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", accionesComision.getPrescriptorCodRem()));
+					
+					if (!Checks.esNulo(proveedor.getTipoProveedor())) {
+						dto.setTipoProveedor(proveedor.getTipoProveedor().getDescripcion());
+					}
+					dto.setProveedor(proveedor.getNombre());
+					dto.setIdProveedor(proveedor.getCodigoProveedorRem());
 				}
-				dto.setProveedor(proveedor.getNombre());
-				dto.setIdProveedor(proveedor.getCodigoProveedorRem());
+	
+				// Información del tipo de honorario
+				DDAccionGastos accionGastoC = (DDAccionGastos) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDAccionGastos.class, accionesComision.getTipoAccion());
+				if (!Checks.esNulo(accionGastoC)) {
+					dto.setCodigoTipoComision(accionGastoC.getCodigo());
+					dto.setDescripcionTipoComision(accionGastoC.getDescripcion());
+					consultaComisionDto.setCommisionType(accionGastoC.getCodigo());
+				}
+	
+				// Información del tipo de cálculo. Por defecto siempre son porcentajes
+				DDTipoCalculo tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
+						DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
+	
+				if (!Checks.esNulo(tipoCalculoC)) {
+					dto.setTipoCalculo(tipoCalculoC.getDescripcion());
+					dto.setCodigoTipoCalculo(tipoCalculoC.getCodigo());
+				}
+	
+				// Información del cálculo de la comisión para venta
+				RespuestaComisionResultDto calculoComision = null;
+				try {
+					calculoComision = comisionamientoApi.createCommission(consultaComisionDto);
+				} catch (Exception e) {
+					logger.error("Error en la llamada al comisionamiento: " + e);
+				}
+	
+				//TODO PARTE CALCULO TIPO PRODUCTO
+				if(contieneActGarTrast) {
+					calculoComision.setCommissionAmount(calculoComision.getCommissionAmount() + calculoComisionActGarTrast.getCommissionAmount()); 
+				}
+				// TODO FIN PARTE CALCULO TIPO PRODUCTO
+				
+				if (!Checks.esNulo(calculoComision) && calculoComision.getCommissionAmount() != null && calculoComision.getMaxCommissionAmount() != null 
+						&& calculoComision.getMinCommissionAmount() != null) {
+					dto.setHonorarios(comisionamientoApi.calculaHonorario(calculoComision));
+					dto.setImporteOriginal(calculoComision.getCommissionAmount());
+					dto.setImporteCalculo(comisionamientoApi.calculaImporteCalculo(oferta.getImporteOferta(), dto.getHonorarios()));
+				} else {
+					dto.setImporteCalculo(0.00);
+					dto.setImporteOriginal(0d);
+					dto.setHonorarios(0.00);
+				}
+				
+				listDto.add(dto);
 			}
-
-			// Información del tipo de honorario
-			DDAccionGastos accionGastoC = (DDAccionGastos) utilDiccionarioApi
-					.dameValorDiccionarioByCod(DDAccionGastos.class, accionesComision.getTipoAccion());
-			if (!Checks.esNulo(accionGastoC)) {
-				dto.setCodigoTipoComision(accionGastoC.getCodigo());
-				dto.setDescripcionTipoComision(accionGastoC.getDescripcion());
-				consultaComisionDto.setCommisionType(accionGastoC.getCodigo());
-			}
-
-			// Información del tipo de cálculo. Por defecto siempre son porcentajes
-			DDTipoCalculo tipoCalculoC = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class,
-					DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
-
-			if (!Checks.esNulo(tipoCalculoC)) {
-				dto.setTipoCalculo(tipoCalculoC.getDescripcion());
-				dto.setCodigoTipoCalculo(tipoCalculoC.getCodigo());
-			}
-
-			// Información del cálculo de la comisión para venta
-			RespuestaComisionResultDto calculoComision = null;
-			try {
-				calculoComision = comisionamientoApi.createCommission(consultaComisionDto);
-			} catch (Exception e) {
-				logger.error("Error en la llamada al comisionamiento: " + e);
-			}
-
-			//TODO PARTE CALCULO TIPO PRODUCTO
-			if(contieneActGarTrast) {
-				calculoComision.setCommissionAmount(calculoComision.getCommissionAmount() + calculoComisionActGarTrast.getCommissionAmount()); 
-			}
-			// TODO FIN PARTE CALCULO TIPO PRODUCTO
-			
-			if (!Checks.esNulo(calculoComision) && calculoComision.getCommissionAmount() != null && calculoComision.getMaxAmount() != null 
-					&& calculoComision.getMinAmount() != null) {
-				dto.setHonorarios(comisionamientoApi.calculaHonorario(calculoComision));
-				dto.setImporteOriginal(calculoComision.getCommissionAmount());
-				dto.setImporteCalculo(comisionamientoApi.calculaImporteCalculo(oferta.getImporteOferta(), dto.getHonorarios()));
-			} else {
-				dto.setImporteCalculo(0.00);
-				dto.setImporteOriginal(0d);
-				dto.setHonorarios(0.00);
-			}
-			
-			listDto.add(dto);
 		}
-		
 		return listDto;
 	}
 

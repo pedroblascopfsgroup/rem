@@ -1122,6 +1122,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					oferta.setPrescriptor(visita.getPrescriptor());
 				}
 
+				List<GastosExpediente> gastos = genericDao.getList(GastosExpediente.class,genericDao.createFilter(FilterType.EQUALS,
+						"expediente.id", expedienteComercial.getId()));
+				
+				if(gastos == null || gastos.isEmpty()) {
+					creaGastoExpediente(expedienteComercial, oferta, oferta.getActivoPrincipal());
+				} else {
+					actualizarGastosExpediente(expedienteComercial, oferta);
+				}
+				
 				genericDao.save(Oferta.class, oferta);
 
 			} else {

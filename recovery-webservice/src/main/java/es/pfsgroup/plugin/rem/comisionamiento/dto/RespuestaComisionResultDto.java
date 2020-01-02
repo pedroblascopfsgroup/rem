@@ -5,8 +5,8 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RespuestaComisionResultDto {
 	private Double commissionAmount;
-	private Double maxAmount;
-	private Double minAmount;
+	private Double maxCommissionAmount;
+	private Double minCommissionAmount ;
 
 	public RespuestaComisionResultDto() {
 		
@@ -18,17 +18,21 @@ public class RespuestaComisionResultDto {
 	public void setCommissionAmount(Double commissionAmount) {
 		this.commissionAmount = commissionAmount;
 	}
-	public Double getMaxAmount() {
-		return maxAmount;
+
+	public Double getMaxCommissionAmount() {
+		return maxCommissionAmount;
 	}
-	public void setMaxAmount(Double maxAmount) {
-		this.maxAmount = maxAmount;
+
+	public void setMaxCommissionAmount(Double maxCommissionAmount) {
+		this.maxCommissionAmount = maxCommissionAmount;
 	}
-	public Double getMinAmount() {
-		return minAmount;
+
+	public Double getMinCommissionAmount() {
+		return minCommissionAmount;
 	}
-	public void setMinAmount(Double minAmount) {
-		this.minAmount = minAmount;
+
+	public void setMinCommissionAmount(Double minCommissionAmount) {
+		this.minCommissionAmount = minCommissionAmount;
 	}
 	
 }

@@ -126,6 +126,7 @@ Ext.define('HreRem.view.activos.detalle.PlusvaliaActivo', {
 	        	xtype: 'textareafieldbase',
 	        	reference:'plusvObservacionesGestion',
             	labelWidth: 200,
+            	disabled: true,
             	rowspan: 5,
             	height: 130,
             	labelAlign: 'top',

@@ -1151,12 +1151,22 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					} else if (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcartera) || DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(codSubcartera)) {
 						ActivoAgrupacion agrupacion = oferta.getAgrupacion();
 						String codComite = DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcartera)? DDComiteSancion.CODIGO_APPLE_CERBERUS : DDComiteSancion.CODIGO_COMITE_DIVARIAN_REMAINING;
-						Double importeOferta = Checks.esNulo(agrupacion)? Checks.esNulo(oferta.getImporteOferta())? 0d : oferta.getImporteOferta() : calcularAskingPriceAgrupacion(agrupacion);  							
-							if (importeOferta < umbralAskingPrice && (importeOferta >= precioAprVenta.getImporte() * 0.95)) {
+						Double importeOferta = Checks.esNulo(oferta.getImporteOferta()) ? 0d : oferta.getImporteOferta();
+						
+						if(Checks.esNulo(agrupacion)) {
+							if (importeOferta <= umbralAskingPrice && (importeOferta >= precioAprVenta.getImporte() * 0.95)) {
 								nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codComite)));
 							} else {
 								nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CERBERUS)));
 							} 
+						}else {
+							Double askingPrice =  calcularAskingPriceAgrupacion(agrupacion);  							
+							if (importeOferta <= umbralAskingPrice && (importeOferta >= askingPrice * 0.95)) {
+								nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codComite)));
+							} else {
+								nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CERBERUS)));
+							} 
+						}				
 							
 					}else if(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){
 							nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
@@ -7800,9 +7810,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		for (ActivoAgrupacionActivo activoAgrupacionActivo : activos) {
 			List<ActivoValoraciones> valoracion = activoAgrupacionActivo.getActivo().getValoracion();
 			if (!Checks.estaVacio(valoracion)) {
-				for (ActivoValoraciones valorAp : valoracion) {
-					if (DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(valorAp.getTipoPrecio().getCodigo())) {
-						askingPrice += valorAp.getImporte();
+				for (ActivoValoraciones valor : valoracion) {
+					if (DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(valor.getTipoPrecio().getCodigo())) {
+						askingPrice += valor.getImporte();
 					}
 				}
 			}

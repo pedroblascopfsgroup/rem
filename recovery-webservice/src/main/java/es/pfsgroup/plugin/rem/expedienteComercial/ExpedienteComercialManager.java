@@ -124,6 +124,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosDesbloqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
@@ -10693,5 +10694,44 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		return true;
-	}	
+	}
+	
+	@Override
+	public DtoOrigenLead  getOrigenLeadList (Long idExpediente){
+		DtoOrigenLead dtoOrigenLead = new DtoOrigenLead();
+		Boolean devolverOrigenLead = false;
+		Oferta oferta = ofertaApi.getOfertaByIdExpediente(idExpediente);
+		
+		
+		DDOrigenComprador origenComprador = oferta.getOrigenComprador();
+		
+		if(!Checks.esNulo(origenComprador)) {
+			dtoOrigenLead.setOrigenCompradorLead(origenComprador.getDescripcion());
+			devolverOrigenLead = true;
+		}
+		
+		if(!Checks.esNulo(oferta.getProveedorPrescriptorRemOrigenLead())) {
+			dtoOrigenLead.setProveedorPrescriptorLead(oferta.getProveedorPrescriptorRemOrigenLead().getNombre());
+			devolverOrigenLead = true;
+		}
+		
+		if(!Checks.esNulo(oferta.getProveedorPrescriptorRemOrigenLead())) {
+			dtoOrigenLead.setProveedorRealizadorLead(oferta.getProveedorRealizadorRemOrigenLead().getNombre());
+			devolverOrigenLead = true;
+		}
+		
+		if(!Checks.esNulo(oferta.getFechaOrigenLead())) {
+			String fechaOrigenLeadString = oferta.getFechaOrigenLead().toString();
+			fechaOrigenLeadString.substring(0, 10);
+			dtoOrigenLead.setFechaAltaLead(fechaOrigenLeadString);
+			devolverOrigenLead = true;
+		}
+		
+		
+		if(devolverOrigenLead){
+			return dtoOrigenLead;
+		}
+		
+		return null;
+	}
 }

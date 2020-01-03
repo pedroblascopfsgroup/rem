@@ -12,17 +12,17 @@ import es.capgemini.devon.dto.WebDto;
 public class DtoPrescriptoresComision extends WebDto {
 	private static final long serialVersionUID = 3574353502838449106L;
 	
-	private String prescriptorCodRem;
+	private Long prescriptorCodRem;
 	private String tipoAccion;
 	private String origenLead;
 	
-	public String getPrescriptorCodRem() {
+	public Long getPrescriptorCodRem() {
 		return prescriptorCodRem;
 	}
 	public String getTipoAccion() {
 		return tipoAccion;
 	}
-	public void setPrescriptorCodRem(String prescriptorCodRem) {
+	public void setPrescriptorCodRem(Long prescriptorCodRem) {
 		this.prescriptorCodRem = prescriptorCodRem;
 	}
 	public void setTipoAccion(String tipoAccion) {

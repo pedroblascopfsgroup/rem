@@ -290,17 +290,19 @@ public class Oferta implements Serializable, Auditable {
 	@Column(name="OFR_OFERTA_SINGULAR")
 	private Boolean ofertaSingular;
 	
-	@Column(name="OFR_ID_PRES_ORI_LEAD")
-	private String idProveedorPrescriptorRemOrigenLead;
-	
 	@Column(name="OFR_FECHA_ORI_LEAD")
 	private Date fechaOrigenLead;
 	
 	@Column(name="OFR_COD_TIPO_PROV_ORI_LEAD")
 	private String codTipoProveedorOrigenCliente;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="OFR_ID_PRES_ORI_LEAD")
+	private ActivoProveedor proveedorPrescriptorRemOrigenLead;
 	
-	@Column(name="OFR_ID_REALIZA_ORI_LEAD")
-	private String idProveedorRealizadorRemOrigenLead;
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="OFR_ID_REALIZA_ORI_LEAD")
+	private ActivoProveedor proveedorRealizadorRemOrigenLead;
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -880,14 +882,6 @@ public class Oferta implements Serializable, Auditable {
 		this.ofertaSingular = ofertaSingular;
 	}
 
-	public String getIdProveedorPrescriptorRemOrigenLead() {
-		return idProveedorPrescriptorRemOrigenLead;
-	}
-
-	public void setIdProveedorPrescriptorRemOrigenLead(String idProveedorPrescriptorRemOrigenLead) {
-		this.idProveedorPrescriptorRemOrigenLead = idProveedorPrescriptorRemOrigenLead;
-	}
-
 	public Date getFechaOrigenLead() {
 		return fechaOrigenLead;
 	}
@@ -904,11 +898,19 @@ public class Oferta implements Serializable, Auditable {
 		this.codTipoProveedorOrigenCliente = codTipoProveedorOrigenCliente;
 	}
 
-	public String getIdProveedorRealizadorRemOrigenLead() {
-		return idProveedorRealizadorRemOrigenLead;
+	public ActivoProveedor getProveedorPrescriptorRemOrigenLead() {
+		return proveedorPrescriptorRemOrigenLead;
 	}
 
-	public void setIdProveedorRealizadorRemOrigenLead(String idProveedorRealizadorRemOrigenLead) {
-		this.idProveedorRealizadorRemOrigenLead = idProveedorRealizadorRemOrigenLead;
+	public void setProveedorPrescriptorRemOrigenLead(ActivoProveedor proveedorPrescriptorRemOrigenLead) {
+		this.proveedorPrescriptorRemOrigenLead = proveedorPrescriptorRemOrigenLead;
+	}
+
+	public ActivoProveedor getProveedorRealizadorRemOrigenLead() {
+		return proveedorRealizadorRemOrigenLead;
+	}
+
+	public void setProveedorRealizadorRemOrigenLead(ActivoProveedor proveedorRealizadorRemOrigenLead) {
+		this.proveedorRealizadorRemOrigenLead = proveedorRealizadorRemOrigenLead;
 	}
 }

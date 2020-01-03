@@ -16,6 +16,7 @@ import es.pfsgroup.plugin.rem.comisionamiento.dto.ConsultaComisionDto;
 import es.pfsgroup.plugin.rem.comisionamiento.dto.RespuestaComisionDto;
 import es.pfsgroup.plugin.rem.comisionamiento.dto.RespuestaComisionResultDto;
 import es.pfsgroup.plugin.rem.microservicios.ClienteMicroservicioGenerico;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoPrescriptoresComision;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
@@ -42,7 +43,7 @@ public class ComisionamientoManager implements ComisionamientoApi {
 		RespuestaComisionResultDto respuestaDto = null;
 		
 		String jsonString = mapper.writeValueAsString(parametros);
-		JSONObject response = microservicio.send("POST", "commissions", jsonString);
+		JSONObject response = microservicio.send("POST", "commissions/calculate", jsonString);
 		
 		RespuestaComisionDto respuestaMS = mapper.readValue(response.toString(), RespuestaComisionDto.class);
 		
@@ -55,13 +56,13 @@ public class ComisionamientoManager implements ComisionamientoApi {
 	@Override
 	public Double calculaHonorario(RespuestaComisionResultDto dto) {
 		
-		if(dto.getCommissionAmount() < dto.getMinAmount()) {
-			return dto.getMinAmount();
-		} else if(dto.getCommissionAmount() >= dto.getMinAmount()
-				&& dto.getCommissionAmount() <= dto.getMaxAmount()) {
+		if(dto.getCommissionAmount() < dto.getMinCommissionAmount()) {
+			return dto.getMinCommissionAmount();
+		} else if(dto.getCommissionAmount() >= dto.getMinCommissionAmount()
+				&& dto.getCommissionAmount() <= dto.getMaxCommissionAmount()) {
 			return dto.getCommissionAmount();
-		}else if(dto.getCommissionAmount() > dto.getMaxAmount()) {
-			return dto.getMaxAmount();
+		}else if(dto.getCommissionAmount() > dto.getMaxCommissionAmount()) {
+			return dto.getMaxCommissionAmount();
 		}
 		
 		return 0d;
@@ -77,10 +78,18 @@ public class ComisionamientoManager implements ComisionamientoApi {
 		List<DtoPrescriptoresComision> listAcciones = new ArrayList<DtoPrescriptoresComision>();
 		
 		DtoPrescriptoresComision dto = new DtoPrescriptoresComision();
+				
+		Long prescriptorVisita = (oferta.getProveedorPrescriptorRemOrigenLead() == null) ? null : oferta.getProveedorPrescriptorRemOrigenLead().getId();
+		Long realizadorVisita = (oferta.getProveedorRealizadorRemOrigenLead() == null) ? null : oferta.getProveedorRealizadorRemOrigenLead().getId();
 		
-		String prescriptorOferta = oferta.getPrescriptor().getCodigoProveedorRem().toString();
-		String prescriptorVisita = oferta.getIdProveedorPrescriptorRemOrigenLead();
-		String realizadorVisita = oferta.getIdProveedorRealizadorRemOrigenLead();
+		if(prescriptorVisita == null
+				|| realizadorVisita == null
+				|| oferta.getFechaOrigenLead() == null
+				|| oferta.getFechaAlta() == null) {
+			return null;
+		}
+		
+		Long prescriptorOferta = oferta.getPrescriptor().getId();
 		String codLeadOrigin = null;
 		Long diferenciaFechaVisitaYAlta = Math.abs((oferta.getFechaOrigenLead().getTime()-oferta.getFechaAlta().getTime())/86400000);
 		
@@ -90,10 +99,6 @@ public class ComisionamientoManager implements ComisionamientoApi {
 			codLeadOrigin = oferta.getVisita().getOrigenComprador().getCodigo();
 		} else {
 			codLeadOrigin = DDOrigenComprador.CODIGO_ORC_HRE;
-		}
-		
-		if(prescriptorVisita == null || realizadorVisita == null) {
-			return null;
 		}
 		
 		if(prescriptorOferta.equals(prescriptorVisita) && prescriptorOferta.equals(realizadorVisita)) {
@@ -127,8 +132,7 @@ public class ComisionamientoManager implements ComisionamientoApi {
 			
 			listAcciones.add(dto);
 			
-		} else if(prescriptorOferta.equals(prescriptorVisita) && !prescriptorOferta.equals(realizadorVisita)
-				&& realizadorVisita != null) {
+		} else if(prescriptorOferta.equals(prescriptorVisita) && !prescriptorOferta.equals(realizadorVisita)) {
 			dto.setPrescriptorCodRem(realizadorVisita);
 			dto.setTipoAccion(DDAccionGastos.CODIGO_COLABORACION);
 			dto.setOrigenLead(codLeadOrigin);

@@ -15,6 +15,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoOfertaDto;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -115,9 +116,8 @@ public class DetectorWebcomEstadoOferta extends DetectorCambiosBD<EstadoOfertaDt
 	
 	private void modificaOferta(JSONObject oferta,Oferta ofertaEntity) {
 		Boolean actualizar = false;
-		if (oferta.containsKey("idProveedorPrescriptorRemOrigenLead")) {
-			ofertaEntity.setIdProveedorPrescriptorRemOrigenLead(
-					oferta.getString("idProveedorPrescriptorRemOrigenLead"));
+		if (oferta.containsKey("proveedorPrescriptorRemOrigenLead")) {
+			ofertaEntity.setProveedorPrescriptorRemOrigenLead((ActivoProveedor) oferta.get("proveedorPrescriptorRemOrigenLead"));
 			actualizar = true;
 		}
 		if (oferta.containsKey("fechaOrigenLead")) {
@@ -130,9 +130,8 @@ public class DetectorWebcomEstadoOferta extends DetectorCambiosBD<EstadoOfertaDt
 			actualizar = true;
 
 		}
-		if (oferta.containsKey("idProveedorRealizadorRemOrigenLead")) {
-			ofertaEntity.setIdProveedorRealizadorRemOrigenLead(
-					oferta.getString("idProveedorRealizadorRemOrigenLead"));
+		if (oferta.containsKey("proveedorRealizadorRemOrigenLead")) {
+			ofertaEntity.setProveedorRealizadorRemOrigenLead((ActivoProveedor) oferta.get("proveedorRealizadorRemOrigenLead"));
 			actualizar = true;
 		}
 		if (actualizar) {

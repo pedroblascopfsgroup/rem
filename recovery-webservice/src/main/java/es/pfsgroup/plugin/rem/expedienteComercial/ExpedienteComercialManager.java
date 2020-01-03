@@ -10726,7 +10726,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if(!Checks.esNulo(oferta.getFechaOrigenLead())) {
 			String fechaOrigenLeadString = oferta.getFechaOrigenLead().toString();
-			fechaOrigenLeadString.substring(0, 10);
+			fechaOrigenLeadString = fechaOrigenLeadString.substring(0, 10);
 			dtoOrigenLead.setFechaAltaLead(fechaOrigenLeadString);
 			devolverOrigenLead = true;
 		}

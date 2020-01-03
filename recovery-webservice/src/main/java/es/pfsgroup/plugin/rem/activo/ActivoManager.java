@@ -1138,6 +1138,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					esFinanciero = true;
 				}
 
+				String codSubcartera = oferta.getActivoPrincipal().getSubcartera().getCodigo();
+				
 				if (DDCartera.CODIGO_CARTERA_TANGO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
 					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_TANGO)));
 				} else if (DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
@@ -1146,30 +1148,26 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					if(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())||
 					DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){
 						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CERBERUS)));
-					
 						
-					}else if(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){	
-						if(oferta.getImporteOferta() != null 
-						&& oferta.getImporteOferta()<umbralAskingPrice
-						&& (oferta.getImporteOferta()>=precioAprVenta.getImporte()*0.95)){
-							nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
-									genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_APPLE_CERBERUS)));
+					} else if (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcartera) || DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(codSubcartera)) {
+						ActivoAgrupacion agrupacion = oferta.getAgrupacion();
+						String codComite = DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcartera)? DDComiteSancion.CODIGO_APPLE_CERBERUS : DDComiteSancion.CODIGO_COMITE_DIVARIAN_REMAINING;
+						Double importeOferta = Checks.esNulo(oferta.getImporteOferta()) ? 0d : oferta.getImporteOferta();
+						
+						if(Checks.esNulo(agrupacion)) {
+							if (importeOferta <= umbralAskingPrice && (importeOferta >= precioAprVenta.getImporte() * 0.95)) {
+								nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codComite)));
+							} else {
+								nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CERBERUS)));
+							} 
 						}else {
-							nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
-									genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CERBERUS)));
-						}
-						
-					}else if(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){	
-						if(!Checks.esNulo(oferta.getImporteOferta()) && (oferta.getImporteOferta()<=umbralAskingPrice) 
-								||(oferta.getImporteOferta()>=precioAprVenta.getImporte()*0.95)) {
-							
-								nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
-										genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_COMITE_DIVARIAN_REAMING)));
-							}else {
-								
-								nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
-										genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CERBERUS)));
-							}
+							Double askingPrice =  calcularAskingPriceAgrupacion(agrupacion);  							
+							if (importeOferta <= umbralAskingPrice && (importeOferta >= askingPrice * 0.95)) {
+								nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codComite)));
+							} else {
+								nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CERBERUS)));
+							} 
+						}				
 							
 					}else if(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){
 							nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
@@ -7819,5 +7817,24 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}else {
 			throw new PlusvaliaActivoException(PlusvaliaActivoException.getErrorNoExisteEstadoDeGestionPorCodigo(codigo));
 		}
+	}
+	
+	private Double calcularAskingPriceAgrupacion(ActivoAgrupacion agrupacion) {
+		Double askingPrice = 0d;
+		if (Checks.esNulo(agrupacion)) {
+			return askingPrice;
+		}
+		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
+		for (ActivoAgrupacionActivo activoAgrupacionActivo : activos) {
+			List<ActivoValoraciones> valoracion = activoAgrupacionActivo.getActivo().getValoracion();
+			if (!Checks.estaVacio(valoracion)) {
+				for (ActivoValoraciones valor : valoracion) {
+					if (DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(valor.getTipoPrecio().getCodigo())) {
+						askingPrice += valor.getImporte();
+					}
+				}
+			}
+		}
+		return askingPrice;
 	}
 }

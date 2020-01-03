@@ -39,6 +39,7 @@ import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoOferta;
+import es.pfsgroup.plugin.rem.model.DtoOrigenLead;
 import es.pfsgroup.plugin.rem.model.DtoPlusvaliaVenta;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
@@ -1284,6 +1285,8 @@ public interface ExpedienteComercialApi {
 	 * @return boolean
 	 */
 	boolean esOmega(TareaExterna tareaExterna);
+
+	DtoOrigenLead getOrigenLeadList(Long idExpediente);
 
 }
 

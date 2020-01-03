@@ -15,7 +15,18 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
         var storeProveedores=null;
 		me.setTitle(HreRem.i18n('title.gestion.economica'));
         var items= [
-
+        	{   
+				xtype:'fieldsettable',
+				title: HreRem.i18n('fieldlabel.canal.origen.lead'),
+				items :
+					[
+						{
+							xtype: 'origenDelLeadGrid',
+							reference: 'listaOrigenLead',
+							margin: '10 40 5 10'
+						}
+					]
+        	},
 			{
 				
             	xtype: 'fieldset',
@@ -300,9 +311,11 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
     	var me = this; 
 		me.recargar = false;
 		var listadoHonorarios = me.down("[reference=listadohoronarios]");
+		var listaOrigenLead = me.down("[reference=listaOrigenLead]");
 		
 		// FIXME Â¿Â¿Deberiamos cargar la primera pÃ¡gina??
-		listadoHonorarios.getStore().load();		
+		listadoHonorarios.getStore().load();	
+		listaOrigenLead.getStore().load();	
 		
     }
 });

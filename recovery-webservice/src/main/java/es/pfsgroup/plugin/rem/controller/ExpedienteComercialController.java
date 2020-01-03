@@ -87,6 +87,7 @@ import es.pfsgroup.plugin.rem.model.DtoModificarCompradores;
 import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
+import es.pfsgroup.plugin.rem.model.DtoOrigenLead;
 import es.pfsgroup.plugin.rem.model.DtoPlusvaliaVenta;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
@@ -2210,6 +2211,21 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("Error en ExpedienteComercialController (getGestorPrescriptor)", e);
 		}
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getOrigenLead(ModelMap model, Long idExpediente, HttpServletRequest request) {
+		try {
+			DtoOrigenLead origenLead = expedienteComercialApi.getOrigenLeadList(idExpediente);
+			model.put(RESPONSE_DATA_KEY, origenLead);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
 		return createModelAndViewJson(model);
 	}
 }

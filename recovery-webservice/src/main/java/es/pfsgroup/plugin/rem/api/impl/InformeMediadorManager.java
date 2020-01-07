@@ -1339,7 +1339,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				HistoricoFasePublicacionActivo histFasePublicacionActivo = historicoFasePublicacionActivoDao
 						.getHistoricoFasesPublicacionActivoActualById(activo.getId());
 				if (histFasePublicacionActivo != null
-						&& DDFasePublicacion.CODIGO_FASE_III
+						&& DDFasePublicacion.CODIGO_FASE_III_PENDIENTE_INFORMACION
 								.equals(histFasePublicacionActivo.getFasePublicacion().getCodigo())
 						&& (histFasePublicacionActivo.getSubFasePublicacion() == null
 								|| (histFasePublicacionActivo.getSubFasePublicacion() != null

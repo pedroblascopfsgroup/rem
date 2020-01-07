@@ -1168,20 +1168,19 @@ public class GastoProveedorManager implements GastoProveedorApi {
  					dto.setNoAnyadirEliminarGastosRefacturados(false);
  				}
 			}
-
-			if (!Checks.esNulo(detalleGasto.getImporteRecargo()) &&  detalleGasto.getImporteRecargo() != 0.0) {
+			
+			if (!Checks.esNulo(detalleGasto.getExisteRecargo()) && detalleGasto.getExisteRecargo()) {
+				dto.setExisteRecargo(COD_SI);
 				
-				if(!Checks.esNulo(detalleGasto.getExisteRecargo()) && detalleGasto.getExisteRecargo() && !Checks.esNulo(detalleGasto.getTipoRecargoGasto())){
-					dto.setExisteRecargo(COD_SI);
-					dto.setTipoRecargo(detalleGasto.getTipoRecargoGasto().getCodigo());
+				if(!Checks.esNulo(detalleGasto.getTipoRecargoGasto().getCodigo()) && DDTipoRecargoGasto.CODIGO_EVITABLE.equals(detalleGasto.getTipoRecargoGasto().getCodigo())) {
+					dto.setTipoRecargo(DDTipoRecargoGasto.CODIGO_EVITABLE);
 				}else {
-					dto.setExisteRecargo(COD_NO);
-					dto.setTipoRecargo(null);
+					dto.setTipoRecargo(DDTipoRecargoGasto.CODIGO_NO_EVITABLE);
 				}
 			}else {
-				dto.setExisteRecargo(null);
-				dto.setTipoRecargo(null);
+				dto.setExisteRecargo(COD_NO);
 			}
+
 		}
 
 		return dto;
@@ -1343,11 +1342,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					updaterStateApi.updaterStates(gasto, null);
 				}
 				
-				if(!Checks.esNulo(dto.getExisteRecargo()) && COD_SI.equals(dto.getExisteRecargo())) {			
-					detalleGasto.setExisteRecargo(true);
-				}else {
-					detalleGasto.setExisteRecargo(false);
-					detalleGasto.setTipoRecargoGasto(null);
+				if(!Checks.esNulo(dto.getExisteRecargo())) {	
+					if(COD_SI.equals(dto.getExisteRecargo())) {
+						detalleGasto.setExisteRecargo(true);
+					}else {
+						detalleGasto.setExisteRecargo(false);
+					}
+					
 				}
 				
 				if(!Checks.esNulo(dto.getTipoRecargo())) {

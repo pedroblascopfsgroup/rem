@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=José Antonio Gigante Pamplona
---## FECHA_CREACION=20191223
+--## FECHA_CREACION=20200107
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-8909
@@ -45,8 +45,8 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     
-    V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	     T_FUNCION('ACMT','CARGA_MASIVA_TRABAJOS', 'API Automatizado: Carga masiva de trabajos', 'n*,n,s,s,s,s')
+    V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION( -- La última posición es la descripción de FUN_FUNCIONES
+	     T_FUNCION('ACMT','API Automatizado: Carga masiva de trabajos', 'n*,n,s,s,s,s', 'CARGA_MASIVA_TRABAJOS')
     ); 
     V_TMP_FUNCION T_FUNCION;
     
@@ -58,23 +58,25 @@ BEGIN
   V_TABLA_FUN_FUNCIONES := 'FUN_FUNCIONES';
     
     DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN '|| V_TABLA_OPM);
+
     FOR I IN V_FUNCION.FIRST .. V_FUNCION.LAST
       LOOP
       V_TMP_FUNCION := V_FUNCION(I);
-			
+      
 			V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_OPM||' WHERE DD_OPM_CODIGO = '''||V_TMP_FUNCION(1)||'''';
 			EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
       V_FUN_ID := -1;
-      V_MSQL_1 := ' SELECT FUN_ID FROM '||V_ESQUEMA_M||'.'||V_TABLA_FUN_FUNCIONES||' WHERE FUN_DESCRIPCION = '''||V_TMP_FUNCION(2)||'''';
+      V_MSQL_1 := ' SELECT FUN_ID FROM '||V_ESQUEMA_M||'.'||V_TABLA_FUN_FUNCIONES||' WHERE FUN_DESCRIPCION = '''||V_TMP_FUNCION(4)||'''';
 			EXECUTE IMMEDIATE V_MSQL_1 INTO V_FUN_ID;
 
       IF V_NUM_TABLAS > 0 AND V_FUN_ID >= 0 THEN	  
         DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.'||V_TABLA_OPM||'...actualizando.');
-        V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA_OPM||
-              '  SET DD_OPM_DESCRIPCION ='''||V_TMP_FUNCION(2)||
-              ''', DD_OPM_DESCRIPCION_LARGA = '''||V_TMP_FUNCION(3)||''', FUN_ID = ('|| V_MSQL_1 || 
-              '), VERSION = VERSION + 1, USUARIOMODIFICAR = '''||V_USUARIO||''', FECHAMODIFICAR = SYSDATE, BORRADO = 0, DD_OPM_VALIDACION_FORMATO = '''||
-              V_TMP_FUNCION(5)||''' WHERE DD_OPM_CODIGO = '''||V_TMP_FUNCION(1)||'''';
+        V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA_OPM
+              ||'  SET DD_OPM_DESCRIPCION ='''||V_TMP_FUNCION(2)
+              ||''', DD_OPM_DESCRIPCION_LARGA = '''||V_TMP_FUNCION(2)||'''' 
+              ||', VERSION = VERSION + 1, USUARIOMODIFICAR = '''||V_USUARIO||''', FECHAMODIFICAR = SYSDATE, BORRADO = 0, DD_OPM_VALIDACION_FORMATO = '''
+              ||V_TMP_FUNCION(3)||''' WHERE DD_OPM_CODIGO = '''||V_TMP_FUNCION(1)||'''';
+
         EXECUTE IMMEDIATE V_MSQL;
 
         DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.'||V_TABLA_OPM||' actualizados correctamente.');
@@ -83,8 +85,8 @@ BEGIN
 
         V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_OPM
               ||' (DD_OPM_ID, DD_OPM_CODIGO, DD_OPM_DESCRIPCION, DD_OPM_DESCRIPCION_LARGA, FUN_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_OPM_VALIDACION_FORMATO)'
-              ||' SELECT '||V_ESQUEMA||'.S_'||V_TABLA_OPM||'.NEXTVAL, '''||V_TMP_FUNCION(1)||''','''||V_TMP_FUNCION(2)||''','''||V_TMP_FUNCION(3)||''',('|| V_MSQL_1 ||'), 0,'''
-              ||V_USUARIO||''', SYSDATE, 0, '''||V_TMP_FUNCION(4)||''' FROM DUAL';
+              ||' SELECT '||V_ESQUEMA||'.S_'||V_TABLA_OPM||'.NEXTVAL, '''||V_TMP_FUNCION(1)||''','''||V_TMP_FUNCION(2)||''','''||V_TMP_FUNCION(2)||''',('|| V_MSQL_1 ||'), 0,'''
+              ||V_USUARIO||''', SYSDATE, 0, '''||V_TMP_FUNCION(3)||''' FROM DUAL';
               
         EXECUTE IMMEDIATE V_MSQL;
 

@@ -1035,6 +1035,36 @@ public interface ParticularValidatorApi {
 	Boolean isActivoEnCesionDeUso(String numActivo);
 
 	Boolean isActivoEnAlquilerSocial(String numActivo);
+	
+	/**
+	 * 
+	 * @param codPerfil
+	 * @param codUsuario
+	 * @return true si el usuario propuesto no pertenece al perfil
+	 */
+
+    public Boolean esPerfilErroneo(String codPerfil, String codUsuario);
+
+    /*
+     * @param proveedor (código del proveedor)
+     * @param tipologias (Array con las tipologias a verificar)
+     * @return false si el proveedor no está en el conjunto de tipologías recibidas
+     */
+    Boolean isProveedorInTipologias(String proveedor, String[] tipologias);
+    
+    /*
+     * @param user (código usuario)
+     * @param codGestor (Código del gestor)
+     * @return true si el usuario pertenece al tipo de gestor propuesto en codGestor
+     */
+    Boolean isUserGestorType(String user, String codGestor);
+
+    /*
+     * @param codTrabajo (Número de trabajo)
+     * @param tarea (tarea formateada para búsqueda con like)
+     * @return true si encuentra la tarea en relación con el trabajo.
+     */
+    Boolean esTareaCompletada(String codTrabajo, String tarea);
 
 	
 	

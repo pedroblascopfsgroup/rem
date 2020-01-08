@@ -1917,7 +1917,22 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			AND   AGR.AGR_ID = " + numAgrupacion + " ");
 		return !"0".equals(resultado);
 	}
-
+	
+	@Override
+	public Boolean esPerfilErroneo(String codPerfil, String codUsuario){
+	    if(Checks.esNulo(codPerfil) || Checks.esNulo(codUsuario))
+	        return false;
+	    
+	    String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)"
+	            +"         FROM REMMASTER.USU_USUARIOS U"  
+	            +"         JOIN ZON_PEF_USU Z ON Z.USU_ID =  U.USU_ID" 
+	            +"         JOIN PEF_PERFILES P ON P.PEF_ID = Z.PEF_ID"  
+	            +"         WHERE LOWER(P.PEF_CODIGO) = LOWER('"+codPerfil+"')"  
+	            +"         AND LOWER(U.USU_USERNAME) = LOWER('"+codUsuario+"')"
+	            +"         AND P.BORRADO = 0 AND U.BORRADO = 0");
+	    
+        return "0".equals(resultado);
+    }
 	@Override
 	public Boolean isActivoNoComercializableAgrupacion(String numAgrupacion) {
 		if(Checks.esNulo(numAgrupacion))
@@ -4271,6 +4286,72 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+" WHERE pta.PTA_TRAMITE_ALQ_SOCIAL = 1"
 				);
 		return !"0".equals(resultado); 
+	}
+	
+	@Override
+    public Boolean isProveedorInTipologias( String proveedor, String[] tipologias) {
+        if (tipologias.length<1 || Checks.esNulo(proveedor)) return false;
+        String tips= null;
+        String resultado = "-1";
+        tips = arrayToString(tipologias);
+        if (!Checks.esNulo(tips)) {
+            resultado = rawDao.getExecuteSQL("  SELECT COUNT(1) FROM ACT_PVE_PROVEEDOR"  
+                + "                 WHERE DD_TPR_ID IN (SELECT DD_TPR_ID FROM DD_TPR_TIPO_PROVEEDOR"
+                + "                    WHERE DD_TPR_CODIGO IN ("+tips+"))"
+                + "                 AND PVE_COD_REM = '" + proveedor+"'");
+        }
+        return !"0".equals(resultado); 
+    }
+	
+	@Override
+	public Boolean isUserGestorType(String user, String codGestor) {
+	    if (Checks.esNulo(user) || Checks.esNulo(codGestor)) return false;
+	    String resultado;
+
+	    resultado = rawDao.getExecuteSQL(" SELECT COUNT(1)" 
+	            +"                  FROM REMMASTER.USU_USUARIOS USU" 
+	            +"                 JOIN GEE_GESTOR_ENTIDAD GEE ON GEE.USU_ID = "
+	            +"                (SELECT USU_ID FROM REMMASTER.USU_USUARIOS "
+	            + "                    WHERE LOWER(USU_USERNAME) = LOWER('"+user+"'))"
+	            +"                JOIN REMMASTER.DD_TGE_TIPO_GESTOR TGE "
+	            +"                ON TGE.DD_TGE_ID = GEE.DD_TGE_ID "
+	            + "               WHERE TGE.DD_TGE_CODIGO = '" +codGestor+"'");
+	    
+	    return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esTareaCompletada(String codTrabajo, String tarea) {
+	    if (Checks.esNulo(codTrabajo) || Checks.esNulo(tarea)) return false;
+	    String resultado;
+	    resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+	            +"                 FROM ACT_TBJ_TRABAJO TBJ"
+	            +"                 JOIN ACT_TRA_TRAMITE TRA ON TRA.TBJ_ID = TBJ.TBJ_ID"
+	            +"                 JOIN TAC_TAREAS_ACTIVOS TAC ON TAC.TRA_ID = TRA.TRA_ID"
+	            +"                 JOIN TAR_TAREAS_NOTIFICACIONES TAR ON TAR.TAR_ID = TAC.TAR_ID"
+	            +"                 WHERE LOWER(TAR.TAR_TAREA) LIKE LOWER('"+tarea+"')"
+	            +"                 AND TAR_TAREA_FINALIZADA = 1" 
+	            +"                 AND TAR.BORRADO = 0"
+	            +"                 AND TBJ.TBJ_NUM_TRABAJO = "+ codTrabajo);
+	            
+	    return !"0".equals(resultado);
+	}
+	
+
+	private String arrayToString(String[] array) {
+	    /* Retorna un string con los valores del array 
+	     * entrecomillados y separados por comas
+	     * si el array está vacío retorna null
+	     */
+	    String resp = "";
+	    String comilla = "'";
+	    String separador = "";
+	    if (array.length > 0) 
+	        for (String item : array) { 
+	            resp += separador + comilla+item+comilla;
+	            separador = ", ";
+	        }
+	    return resp;
 	}
 	//-------------------------------------------------------------------------
 }

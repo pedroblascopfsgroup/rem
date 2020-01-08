@@ -83,6 +83,7 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String USU_PROVEEDOR_ELECNOR = "proveedor.elecnor";
 	public static final String CODIGO_GESTORIA_ADMINISTRACION = "GIAADMT";
 	public static final String USU_PROVEEDOR_PACI = "proveedor.paci";
+	public static final String CODIGO_GESTORIA_PLUSVALIA = "GESTOPLUS";
 	
 	Boolean insertarGestorAdicionalActivo(GestorEntidadDto dto);
 

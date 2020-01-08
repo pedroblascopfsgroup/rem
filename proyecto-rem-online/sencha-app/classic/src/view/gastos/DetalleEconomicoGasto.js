@@ -180,12 +180,18 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 														        				var me = this;
 														        				
 														        				var tipoRecargo = me.up('gastodetallemain').lookupReference('tipoRecargo');
+														        				var importeRecargo = me.up('gastodetallemain').lookupReference('importeRecargo');
 														        				if(me.getValue() =='' || me.getValue() == CONST.DD_SINO['NO']){
 														        					tipoRecargo.setDisabled(true);
-															        				tipoRecargo.setValue('');
+														        					importeRecargo.setDisabled(true);
+														        					tipoRecargo.setValue('');
+														        					importeRecargo.setValue('');
 															        			}else{	
 															        				tipoRecargo.setDisabled(false);
-														        					tipoRecargo.setValue(CONST.DD_TIPO_RECARGO['NO_EVITABLE']);
+															        				tipoRecargo.setAllowBlank(false);
+															        				importeRecargo.setDisabled(false);
+															        				importeRecargo.setAllowBlank(false);
+															        				tipoRecargo.setValue(CONST.DD_TIPO_RECARGO['NO_EVITABLE']);
 															        			}
 														        			
 														        			}
@@ -197,35 +203,22 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																		reference: 'tipoRecargo',
 														               	bind: {
 															           		store: '{comboTipoRecargo}',
-															           		value: '{detalleeconomico.tipoRecargo}'	
+															           		value: '{detalleeconomico.tipoRecargo}'
 															         	}
 																	},
 																	{ 
 																		fieldLabel: HreRem.i18n('header.gasto.importe.recargo'),
-																		bind: '{detalleeconomico.importeRecargo}',
-																		listeners:{
-														        			change: function(){	
-														        				var me = this;
-														        				
-														        				var existeRecargo = me.up('gastodetallemain').lookupReference('existeRecargo');
-														        				var tipoRecargo = me.up('gastodetallemain').lookupReference('tipoRecargo');
-														        				
-														        				if(me.getValue() !='' || me.getValue() !=0){
-														        					existeRecargo.setDisabled(false);
-														        					if(existeRecargo.getValue() == null || existeRecargo.getValue() =='' || existeRecargo.getValue() == CONST.DD_SINO['NO']){
-														        						tipoRecargo.setValue('');
-														        						tipoRecargo.setDisabled(true);
-																        				
-														        					}
-															        			}else{
-															        				existeRecargo.setDisabled(true);
-															        				existeRecargo.setValue('');
-															        				tipoRecargo.setValue('');
-															        				tipoRecargo.setDisabled(true);
-															        			}
-														        			
-														        			}
-														        		}
+																		reference: 'importeRecargo',
+																		bind: {
+																			value: '{detalleeconomico.importeRecargo}'
+																		},
+																		validator: function(v) {
+																			if(this.value <= 0){
+																				return 'el importe de recargo no puede ser 0 o negativo';
+																			}else{
+																				return true;
+																			}
+																		}
 																	},
 																	{ 
 																		fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.interes.demora'),

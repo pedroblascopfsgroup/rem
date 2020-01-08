@@ -392,7 +392,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		if (PESTANA_FICHA.equals(tab)) {
 			dto = expedienteToDtoFichaExpediente(expediente);
-			activoApi.crearGastosExpediente(expediente);
 		} else if (PESTANA_DATOSBASICOS_OFERTA.equals(tab)) {
 			dto = expedienteToDtoDatosBasicosOferta(expediente);
 		}

@@ -717,6 +717,9 @@ Ext.define('HreRem.ux.util.Constants', {
 		ALQUILER_SOCIAL: '09',
 		CESION_GENERALITAT_CX: '10',
 		OTRAS_CORPORACIONES: '11'
+	},
+	COMITE_SANCIONADOR: {
+		HAYA_CERBERUS: '26'
 	}
 	
 });

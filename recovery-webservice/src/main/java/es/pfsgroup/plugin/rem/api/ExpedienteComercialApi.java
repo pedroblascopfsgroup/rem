@@ -1286,5 +1286,7 @@ public interface ExpedienteComercialApi {
 	 */
 	boolean esOmega(TareaExterna tareaExterna);
 
+	String doCalculateComiteByExpedienteId(Long idExpediente);
+
 }
 

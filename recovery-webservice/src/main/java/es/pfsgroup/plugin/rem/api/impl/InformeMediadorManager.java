@@ -1341,9 +1341,10 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				if (histFasePublicacionActivo != null
 						&& DDFasePublicacion.CODIGO_FASE_III
 								.equals(histFasePublicacionActivo.getFasePublicacion().getCodigo())
-						&& (histFasePublicacionActivo.getSubFasePublicacion() == null
-								|| (histFasePublicacionActivo.getSubFasePublicacion() != null
-										&& DDSubfasePublicacion.CODIGO_DEVUELTO.equals(
+						&& (histFasePublicacionActivo.getSubFasePublicacion() != null
+								&& (DDSubfasePublicacion.CODIGO_DEVUELTO
+										.equals(histFasePublicacionActivo.getSubFasePublicacion().getCodigo())
+										|| DDSubfasePublicacion.CODIGO_PENDIENTE_DE_INFORMACION.equals(
 												histFasePublicacionActivo.getSubFasePublicacion().getCodigo())))) {
 					if (!tieneInformeComercialAceptado || autorizacionWebProveedor) {
 						ArrayList<Serializable> entitys = new ArrayList<Serializable>();

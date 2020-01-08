@@ -44,7 +44,7 @@ public class NotificationPlusvaliaManager extends AbstractNotificatorService {
 		ArrayList<String> mailsPara = new ArrayList<String>();
 		ArrayList<String> mailsCC = new ArrayList<String>();
 		
-		usuarioRemApiImpl.rellenaListaCorreos(eco, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION, mailsPara, mailsCC, false);
+		usuarioRemApiImpl.rellenaListaCorreos(eco, GestorActivoApi.CODIGO_GESTORIA_PLUSVALIA, mailsPara, mailsCC, false);
 		
 			String asunto = "Solicitud de revisión del activo " + activo.getNumActivo();
 			String cuerpo = "<p>Buenos días,</p>";
@@ -82,7 +82,7 @@ public class NotificationPlusvaliaManager extends AbstractNotificatorService {
 		ArrayList<String> mailsPara = new ArrayList<String>();
 		ArrayList<String> mailsCC = new ArrayList<String>();
 		
-		usuarioRemApiImpl.rellenaListaCorreos(expediente, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION, mailsPara, mailsCC, false);
+		usuarioRemApiImpl.rellenaListaCorreos(expediente, GestorActivoApi.CODIGO_GESTORIA_PLUSVALIA, mailsPara, mailsCC, false);
 		
 			String asunto = "Notificación de venta del activo " + activo.getNumActivo();
 			String cuerpo = "<p>Buenos días,</p>";

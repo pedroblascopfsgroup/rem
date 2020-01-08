@@ -249,9 +249,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private ActivoApi activoApi;
 
 	@Autowired
-	private ActivoAdapter activoAdapter;
-
-	@Autowired
 	private AgendaAdapter adapter;
 
 	@Autowired
@@ -714,6 +711,23 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			oferta = new Oferta();
 			oferta.setOrigen(OfertaApi.ORIGEN_WEBCOM);
+			
+			if (ofertaDto.getIdProveedorPrescriptorRemOrigenLead() != null && !ofertaDto.getIdProveedorPrescriptorRemOrigenLead().equals("")) {
+				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS,
+						"codigoProveedorRem", Long.valueOf(ofertaDto.getIdProveedorPrescriptorRemOrigenLead())));
+				if (proveedor != null) {
+					oferta.setProveedorPrescriptorRemOrigenLead(proveedor);
+				}
+			}
+			
+			if (ofertaDto.getIdProveedorRealizadorRemOrigenLead() != null && !ofertaDto.getIdProveedorRealizadorRemOrigenLead().equals("")) {
+				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS,
+						"codigoProveedorRem", Long.valueOf(ofertaDto.getIdProveedorRealizadorRemOrigenLead())));
+				if (proveedor != null) {
+					oferta.setProveedorRealizadorRemOrigenLead(proveedor);
+				}
+			}
+			
 			beanUtilNotNull.copyProperties(oferta, ofertaDto);
 			if (!Checks.esNulo(ofertaDto.getIdOfertaWebcom())) {
 				oferta.setIdWebCom(ofertaDto.getIdOfertaWebcom());
@@ -1092,16 +1106,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(ofertaDto.getObservaciones())
 					&& !ofertaDto.getObservaciones().equals(oferta.getObservaciones())) {
 				oferta.setObservaciones(ofertaDto.getObservaciones());
+				modificado = true;
 			}
 
 			if (!Checks.esNulo(ofertaDto.getFinanciacion())
-					&& ofertaDto.getFinanciacion().equals(oferta.getNecesitaFinanciacion())) {
+					&& !ofertaDto.getFinanciacion().equals(oferta.getNecesitaFinanciacion())) {
 				oferta.setNecesitaFinanciacion(ofertaDto.getFinanciacion());
+				modificado = true;
 			}
 
 			if (!Checks.esNulo(ofertaDto.getIsExpress())
-					&& ofertaDto.getIsExpress().equals(oferta.getOfertaExpress())) {
+					&& !ofertaDto.getIsExpress().equals(oferta.getOfertaExpress())) {
 				oferta.setOfertaExpress(ofertaDto.getIsExpress());
+				modificado = true;
 			}
 			
 			if (!Checks.esNulo(ofertaDto.getOrigenLeadProveedor())) {
@@ -1109,7 +1126,42 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						"codigo", ofertaDto.getOrigenLeadProveedor()));
 				if (!Checks.esNulo(origenComprador)) {
 					oferta.setOrigenComprador(origenComprador);
+					modificado = true;
 				}
+			}
+
+			if (ofertaDto.getIdProveedorPrescriptorRemOrigenLead() != null
+					&& !ofertaDto.getIdProveedorPrescriptorRemOrigenLead().equals("")) {
+				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
+								Long.valueOf(ofertaDto.getIdProveedorPrescriptorRemOrigenLead())));
+				if (proveedor != null && !proveedor.equals(oferta.getProveedorPrescriptorRemOrigenLead())) {
+					oferta.setProveedorPrescriptorRemOrigenLead(proveedor);
+					modificado = true;
+				}
+			}
+
+			if (ofertaDto.getIdProveedorRealizadorRemOrigenLead() != null
+					&& !ofertaDto.getIdProveedorRealizadorRemOrigenLead().equals("")) {
+				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
+								Long.valueOf(ofertaDto.getIdProveedorRealizadorRemOrigenLead())));
+				if (proveedor != null && !proveedor.equals(oferta.getProveedorRealizadorRemOrigenLead())) {
+					oferta.setProveedorRealizadorRemOrigenLead(proveedor);
+					modificado = true;
+				}
+			}
+
+			if (!Checks.esNulo(ofertaDto.getFechaOrigenLead())
+					&& !ofertaDto.getFechaOrigenLead().equals(oferta.getFechaOrigenLead())) {
+				oferta.setFechaOrigenLead(ofertaDto.getFechaOrigenLead());
+				modificado = true;
+			}
+
+			if (!Checks.esNulo(ofertaDto.getCodTipoProveedorOrigenCliente()) && !ofertaDto
+					.getCodTipoProveedorOrigenCliente().equals(oferta.getCodTipoProveedorOrigenCliente())) {
+				oferta.setCodTipoProveedorOrigenCliente(ofertaDto.getCodTipoProveedorOrigenCliente());
+				modificado = true;
 			}
 
 			if (modificado) {

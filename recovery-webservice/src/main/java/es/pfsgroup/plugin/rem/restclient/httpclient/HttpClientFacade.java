@@ -192,7 +192,7 @@ public class HttpClientFacade {
 			resultado = StringEscapeUtils.unescapeHtml(stringOut.toString());
 		} else {
 			//resultado = "{\"id\":0,\"succes\":\"true\"}";
-			resultado = "{\"id\":\"157734784728321256810068\",\"data\":[{\"idOfertaRem\":\"62875808\",\"idOfertaWebcom\":\"210472\",\"origenLeadProveedor\":\"02\",\"idOfertaSalesforce\":\"a0V4I00000G9AZlUAN\",\"idClienteRem\":\"2212163\",\"idClienteSalesforce\":\"0014I00001tbOLQQA2\",\"idProveedorPrescriptorRemOrigenLead\":\"0204\",\"fechaOrigenLead\":\"2017-08-13T20:02:12\",\"codTipoProveedorOrigenCliente\":\"0609\",\"idProveedorRealizadorRemOrigenLead\":\"56565\",\"success\":true}],\"error\":null}";
+			resultado = "{\"id\":\"157734784728321256810068\",\"data\":[{\"idOfertaRem\":\"62875808\",\"idOfertaWebcom\":\"210472\",\"origenLeadProveedor\":\"02\",\"idOfertaSalesforce\":\"a0V4I00000G9AZlUAN\",\"idClienteRem\":\"2212163\",\"idClienteSalesforce\":\"0014I00001tbOLQQA2\",\"idProveedorPrescriptorRemOrigenLead\":\"10\",\"fechaOrigenLead\":\"2017-08-13T20:02:12\",\"codTipoProveedorOrigenCliente\":\"0609\",\"idProveedorRealizadorRemOrigenLead\":\"11\",\"success\":true}],\"error\":null}";
 		}
 		return resultado;
 	}

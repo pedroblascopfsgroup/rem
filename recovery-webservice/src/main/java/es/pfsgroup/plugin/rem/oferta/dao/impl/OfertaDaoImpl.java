@@ -530,7 +530,12 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 			obj.getAuditoria().setFechaModificar(new Date());
 			session.saveOrUpdate(obj);
 			tx.commit();
-		}finally{
+		}
+		catch (Exception e) {
+			logger.error("error al persistir la oferta",e);
+			tx.rollback();
+		}
+		finally{
 			if (session.isOpen()){
 				session.flush();
 				session.close();

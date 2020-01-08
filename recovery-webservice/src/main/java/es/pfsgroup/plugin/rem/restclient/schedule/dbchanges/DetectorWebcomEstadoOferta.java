@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import es.pfsgroup.plugin.rem.activoproveedor.dao.ActivoProveedorDao;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoOfertaDto;
@@ -36,14 +37,17 @@ public class DetectorWebcomEstadoOferta extends DetectorCambiosBD<EstadoOfertaDt
 
 	@Autowired
 	private OfertaApi ofertaApi;
-	
+
 	@Autowired
 	private OfertaDao ofertaDao;
-	
+
+	@Autowired
+	private ActivoProveedorDao activoProveedorDao;
+
 	private final Log logger = LogFactory.getLog(getClass());
-	
+
 	@Resource(name = "entityTransactionManager")
-    private PlatformTransactionManager transactionManager;
+	private PlatformTransactionManager transactionManager;
 
 	@Override
 	public String nombreVistaDatosActuales() {
@@ -98,9 +102,8 @@ public class DetectorWebcomEstadoOferta extends DetectorCambiosBD<EstadoOfertaDt
 	@Override
 	public void procesaResultado(JSONObject resultado) {
 		restApi.trace("[DETECCIÓN CAMBIOS] Procesando la respuesta");
-		
 
-		if (resultado.getJSONArray("data") instanceof JSONArray ) {
+		if (resultado.getJSONArray("data") instanceof JSONArray) {
 			for (int i = 0; i < resultado.getJSONArray("data").size(); i++) {
 				JSONObject oferta = (JSONObject) resultado.getJSONArray("data").get(i);
 				if (oferta.containsKey("idOfertaRem")) {
@@ -113,32 +116,40 @@ public class DetectorWebcomEstadoOferta extends DetectorCambiosBD<EstadoOfertaDt
 		}
 
 	}
-	
-	private void modificaOferta(JSONObject oferta,Oferta ofertaEntity) {
-		Boolean actualizar = false;
-		if (oferta.containsKey("proveedorPrescriptorRemOrigenLead")) {
-			ofertaEntity.setProveedorPrescriptorRemOrigenLead((ActivoProveedor) oferta.get("proveedorPrescriptorRemOrigenLead"));
-			actualizar = true;
-		}
-		if (oferta.containsKey("fechaOrigenLead")) {
-			ofertaEntity.setFechaOrigenLead(getFechaOrigenLead(oferta));
-			actualizar = true;
-		}
-		if (oferta.containsKey("codTipoProveedorOrigenCliente")) {
-			ofertaEntity.setCodTipoProveedorOrigenCliente(
-					oferta.getString("codTipoProveedorOrigenCliente"));
-			actualizar = true;
 
-		}
-		if (oferta.containsKey("proveedorRealizadorRemOrigenLead")) {
-			ofertaEntity.setProveedorRealizadorRemOrigenLead((ActivoProveedor) oferta.get("proveedorRealizadorRemOrigenLead"));
-			actualizar = true;
-		}
-		if (actualizar) {
-			ofertaDao.guardaRegistroWebcom(ofertaEntity);						
+	private void modificaOferta(JSONObject oferta, Oferta ofertaEntity) {
+		Boolean actualizar = false;
+		if (oferta.containsKey("success") && oferta.getBoolean("success")) {
+			if (oferta.containsKey("idProveedorPrescriptorRemOrigenLead")) {
+				ActivoProveedor proveedor = activoProveedorDao.getProveedorByCodigoRem(oferta.getLong("idProveedorPrescriptorRemOrigenLead"));
+				if (proveedor != null) {
+					ofertaEntity.setProveedorPrescriptorRemOrigenLead(proveedor);
+					actualizar = true;
+				}
+			}
+			if (oferta.containsKey("fechaOrigenLead")) {
+				ofertaEntity.setFechaOrigenLead(getFechaOrigenLead(oferta));
+				actualizar = true;
+			}
+			if (oferta.containsKey("codTipoProveedorOrigenCliente")) {
+				ofertaEntity.setCodTipoProveedorOrigenCliente(oferta.getString("codTipoProveedorOrigenCliente"));
+				actualizar = true;
+
+			}
+			if (oferta.containsKey("idProveedorRealizadorRemOrigenLead")) {
+				ActivoProveedor proveedor = activoProveedorDao.getProveedorByCodigoRem(oferta.getLong("idProveedorRealizadorRemOrigenLead"));
+				if (proveedor != null) {
+					ofertaEntity.setProveedorRealizadorRemOrigenLead(proveedor);
+					actualizar = true;
+				}
+
+			}
+			if (actualizar) {
+				ofertaDao.guardaRegistroWebcom(ofertaEntity);
+			}
 		}
 	}
-	
+
 	private Date getFechaOrigenLead(JSONObject oferta) {
 		Date fechaOrigenLead = null;
 		try {
@@ -148,7 +159,7 @@ public class DetectorWebcomEstadoOferta extends DetectorCambiosBD<EstadoOfertaDt
 				fechaOrigenLead = sdf.parse(dateStr);
 			}
 		} catch (Exception e) {
-			logger.error(e.getMessage(),e);
+			logger.error(e.getMessage(), e);
 		}
 		return fechaOrigenLead;
 	}

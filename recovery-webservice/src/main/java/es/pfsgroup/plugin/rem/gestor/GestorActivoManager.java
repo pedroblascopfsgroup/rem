@@ -510,13 +510,14 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  	
  	@Override
  	@Transactional(readOnly = false)
-	public Usuario usuarioGrupoTareaT017(String codigoTarea, Boolean esApple, Boolean esArrow, Boolean esRemaining) {
+	public Usuario usuarioGrupoTareaT017(String codigoTarea, Boolean esApple, Boolean esArrow, Boolean esRemaining, TareaExterna tareaExterna) {
 		Usuario userTarea = null;
 		Filter filtro = null;
 
 		if (esApple && (ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES.equals(codigoTarea)  
 				|| ComercialUserAssigantionService.CODIGO_T017_RATIFICACION_COMITE_CES.equals(codigoTarea)
 				|| ComercialUserAssigantionService.CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea))) {
+			
 			filtro = genericDao.createFilter(FilterType.EQUALS, "username", USERNAME_GRUPO_CES);
 		} else if(esRemaining && (ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES.equals(codigoTarea)  
 				|| ComercialUserAssigantionService.CODIGO_T017_RATIFICACION_COMITE_CES.equals(codigoTarea)

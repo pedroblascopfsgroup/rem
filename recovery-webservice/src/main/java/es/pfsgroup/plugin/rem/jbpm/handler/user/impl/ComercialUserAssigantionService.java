@@ -15,6 +15,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -62,7 +63,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	public static final String CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION = "T013_RespuestaBankiaAnulacionDevolucion";
 	public static final String CODIGO_T013_VALIDACION_CLIENTES = "T013_ValidacionClientes";
 	public static final String CODIGO_T017_DEFINICION_OFERTA = "T017_DefinicionOferta";
-	//public static final String CODIGO_T017_ANALISIS_PM ="T017_AnalisisPM";
+	public static final String CODIGO_T017_ANALISIS_PM ="T017_AnalisisPM";
 	public static final String CODIGO_T017_RESOLUCION_CES ="T017_ResolucionCES";	
 	public static final String CODIGO_T017_RATIFICACION_COMITE_CES ="T017_RatificacionComiteCES";
 	//public static final String CODIGO_T017_RESPUESTA_OFERTANTE_PM ="T017_RespuestaOfertantePM";
@@ -87,6 +88,10 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
+	
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
@@ -132,6 +137,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		ActivoLoteComercial loteComercial = this.obtenerLoteComercial(tareaActivo);
 		EXTDDTipoGestor tipoGestor = null;
 		boolean esActivoApple = this.isActivoApple(tareaActivo);
+		boolean esActivoRemaining = this.isActivoRemaining(tareaActivo);
 
 		if(this.isTrabajoDeActivoOrLoteRestEntidad01(tareaActivo)) {
 			if(null == loteComercial) {
@@ -146,7 +152,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 				codigoGestor = this.getMapCodigoTipoGestorActivoAndLoteRestEntidad01Formalizacion(formalizacion).get(codigoTarea);
 			}
 		} else if(this.isActivoGiants(tareaActivo)){
-			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false).get(codigoTarea);
+			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false).get(codigoTarea);
 		} else if(this.isActivoLiberbank(tareaActivo)){
 			boolean isLiberbankResidencial = false;
 			boolean isLiberbankInmobiliaria = false;
@@ -168,46 +174,65 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 					}
 				}
 			
-			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, true, isLiberbankResidencial, isLiberbankInmobiliaria, isLiberbankTerciaria, false, false, false, false, false, false, false, false, false, false, false, false).get(codigoTarea);
+			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, true, isLiberbankResidencial, isLiberbankInmobiliaria, isLiberbankTerciaria, false, false, false, false, false, false, false, false, false, false, false, false, false).get(codigoTarea);
 		}else if(this.isActivoBankia(tareaActivo)) {
-			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, true, false, isRetailActivo(tareaActivo), false, false, false, false, false, false, false, false, false).get(codigoTarea);
+			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, true, false, isRetailActivo(tareaActivo), false, false, false, false, false, false, false, false, false, false).get(codigoTarea);
 		}
 		else if(this.isActivoSareb(tareaActivo)) {
-			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, false, true, isRetailActivo(tareaActivo), false, false, false, false, false, false, false, false, false).get(codigoTarea);
-		} else if(esActivoApple) {
-			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false).get(codigoTarea);
+			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, false, true, isRetailActivo(tareaActivo), false, false, false, false, false, false, false, false, false, false).get(codigoTarea);
+		
+		} else if(esActivoApple || esActivoRemaining) {
+			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, true).get(codigoTarea);
 		} else if(this.isActivoTango(tareaActivo)) {
-			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false).get(codigoTarea);
+			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false).get(codigoTarea);
 		} else if(this.isActivoGaleon(tareaActivo)) {
-			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false).get(codigoTarea);
+			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false).get(codigoTarea);
 		} else if(this.isActivoThirdPartiesING(tareaActivo)) {
-			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false).get(codigoTarea);
+			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false).get(codigoTarea);
 		} else if(this.isActivoHYT(tareaActivo)) {
-			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false).get(codigoTarea);
+			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false).get(codigoTarea);
 		} else if(this.isActivoEgeoZeus(tareaActivo)) {
-			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false).get(codigoTarea);
+			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false).get(codigoTarea);
 		} else if(this.isActivoYubai(tareaActivo)) {
-			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false).get(codigoTarea);
+			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false).get(codigoTarea);
 
 		} else if (this.isActivoDivarian(tareaActivo)|| this.isActivoArrow(tareaActivo) || this.isActivoRemaining(tareaActivo)) {
-			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false).get(codigoTarea);
+			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false).get(codigoTarea);
 		} else if(this.isActivoOmega(tareaActivo)) {
-			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true).get(codigoTarea);		
+			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false).get(codigoTarea);		
 		}else {
-			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false).get(codigoTarea);
+			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false).get(codigoTarea);
 		}
-			
+		
 		if(CODIGO_T017_RESOLUCION_CES.equals(codigoTarea) || CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea) 
 				|| CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigoTarea) || CODIGO_T017_RATIFICACION_COMITE_CES.equals(codigoTarea)) {
-			return gestorActivoApi.usuarioGrupoTareaT017(codigoTarea, esActivoApple, this.isActivoArrow(tareaActivo), this.isActivoRemaining(tareaActivo));
+			DDComiteSancion comite = null;
+			if  ( tareaActivo != null && tareaActivo.getTramite() != null
+					&& tareaActivo.getTramite().getTrabajo() != null ) {
+				ExpedienteComercial expediente = expedienteComercialApi.findOneByTrabajo(tareaActivo.getTramite().getTrabajo());
+				if ( expediente != null ) {
+					comite = expediente.getComiteSancion();
+				}
+			}
+			if((CODIGO_T017_RESOLUCION_CES.equals(codigoTarea) || CODIGO_T017_RATIFICACION_COMITE_CES.equals(codigoTarea))
+					&& (esActivoApple || esActivoRemaining) 
+					&& (comite != null && DDComiteSancion.CODIGO_CERBERUS.equals(comite.getCodigo()))){		
+				
+				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoGestor);
+				tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+				
+				if(Checks.esNulo(tipoGestor)) {
+					return null;
+				}
+			}else {
+				return gestorActivoApi.usuarioGrupoTareaT017(codigoTarea, esActivoApple, this.isActivoArrow(tareaActivo), this.isActivoRemaining(tareaActivo), tareaExterna);
+			}
 		} else {
 			Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoGestor);
-			
 			tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
 			if(Checks.esNulo(tipoGestor))
 				return null;
 		}
-		
 		if(CODIGO_T017_RESOLUCION_DIVARIAN.equals(codigoTarea) || CODIGO_T017_RESOLUCION_ARROW.equals(codigoTarea)) {
 			return gestorActivoApi.usuarioTareaDivarian(codigoTarea);
 		}
@@ -529,9 +554,10 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	}
 	
 	//  --- Mapas con la relación Tarea - Tipo Gestor/supervisor  -------------------------------------------------
-	private HashMap<String,String> getMapCodigoTipoGestor(boolean isFdv, boolean isConFormalizacion, boolean isGiants, boolean isLiberbank, boolean isLiberbankResidencial, 
+	private HashMap<String,String> getMapCodigoTipoGestor(boolean isFdv, boolean isConFormalizacion, boolean isGiants, boolean isLiberbank, boolean isLiberbankResidencial,
 			boolean isLiberbankInmobiliaria, boolean isLiberbankTerciaria, boolean isActivoBankia, boolean isActivoSareb, boolean isRetail, boolean isActivoApple, boolean isActivoTango,
-			boolean isActivoGaleon, boolean isActivoThirdPartiesING, boolean isActivoHYT, boolean isActivoEgeoZeus, boolean isActivoYubai, boolean isActivoDivarian, boolean isActivoOmega) {
+			boolean isActivoGaleon, boolean isActivoThirdPartiesING, boolean isActivoHYT, boolean isActivoEgeoZeus, boolean isActivoYubai, boolean isActivoDivarian, boolean isActivoOmega, 
+			boolean isActivoRemaining) {
 		
 		HashMap<String,String> mapa = new HashMap<String,String>();
 		
@@ -612,9 +638,16 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			mapa.put(ComercialUserAssigantionService.CODIGO_T013_OBTENCION_CONTRATO_RESERVA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 		}
 		
-		if(isActivoApple) {
+		if(isActivoApple || isActivoRemaining) {
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_DEFINICION_OFERTA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+			
+				mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES, GestorActivoApi.CODIGO_GESTOR_COMERCIAL); 
+				
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESPUESTA_OFERTANTE_CES, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+			
+			
+				mapa.put(ComercialUserAssigantionService.CODIGO_T017_RATIFICACION_COMITE_CES, GestorActivoApi.CODIGO_GESTOR_COMERCIAL); 
+			
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_INFORME_JURIDICO, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);  
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_ADVISORY_NOTE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_PBC_RESERVA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
@@ -1215,4 +1248,14 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		return esConFormalizacion;
 	}
 	
+	
+	// Comprobar que el activo tiene atribuciones 
+	private boolean isConAtribuciones(TareaExterna tareaExterna) {
+		boolean esConAtribucion = false;
+		esConAtribucion = ofertaApi.checkAtribuciones(tareaExterna);
+		if(esConAtribucion) {
+			return true;
+		}
+		return false;
+	}
 }

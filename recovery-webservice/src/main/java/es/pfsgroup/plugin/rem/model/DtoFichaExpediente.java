@@ -148,7 +148,9 @@ public class DtoFichaExpediente extends WebDto {
 	private Date fechaRecomendacionCes;
 	
 	private Date fechaAprobacionProManzana;
-
+	
+	private Boolean esComiteHaya;
+	
 	public Long getId() {
 		return id;
 	}
@@ -756,6 +758,14 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setFechaAprobacionProManzana(Date fechaAprobacionProManzana) {
 		this.fechaAprobacionProManzana = fechaAprobacionProManzana;
+	}
+
+	public Boolean getEsComiteHaya() {
+		return esComiteHaya;
+	}
+
+	public void setEsComiteHaya(Boolean esComiteHaya) {
+		this.esComiteHaya = esComiteHaya;
 	}
 	
 	

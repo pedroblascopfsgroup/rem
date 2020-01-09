@@ -196,7 +196,7 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarScoring implements Up
 			}
 		}
 		expedienteComercial.setOferta(oferta);
-		expedienteComercialApi.update(expedienteComercial);
+		expedienteComercialApi.update(expedienteComercial,false);
 		genericDao.save(ScoringAlquiler.class, scoringAlquiler);
 		histScoringAlquiler.setScoringAlquiler(scoringAlquiler);
 		genericDao.save(HistoricoScoringAlquiler.class, histScoringAlquiler);

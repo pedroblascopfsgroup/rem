@@ -2219,4 +2219,18 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		}
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView doCalculateComiteByExpedienteId(Long idExpediente, ModelMap model) {
+		try {
+			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.doCalculateComiteByExpedienteId(idExpediente));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController (getGestorPrescriptor)", e);
+		}
+		return createModelAndViewJson(model);
+	}
+	
 }

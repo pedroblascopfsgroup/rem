@@ -153,6 +153,8 @@ public class DtoFichaExpediente extends WebDto {
 	
 	private Boolean perteneceGrupoPBC;
 
+	private Boolean esComiteHaya;
+	
 	public Long getId() {
 		return id;
 	}
@@ -776,6 +778,14 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setPerteneceGrupoPBC(Boolean perteneceGrupoPBC) {
 		this.perteneceGrupoPBC = perteneceGrupoPBC;
+	}
+	
+	public Boolean getEsComiteHaya() {
+		return esComiteHaya;
+	}
+
+	public void setEsComiteHaya(Boolean esComiteHaya) {
+		this.esComiteHaya = esComiteHaya;
 	}
 	
 	

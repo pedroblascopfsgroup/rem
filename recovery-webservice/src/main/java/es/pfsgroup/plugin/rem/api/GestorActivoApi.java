@@ -1,15 +1,11 @@
 package es.pfsgroup.plugin.rem.api;
 
-import java.util.List;
-
 import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.gestorEntidad.api.GestorEntidadApi;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ConfiguracionAccesoGestoria;
-import es.pfsgroup.plugin.rem.model.GrupoUsuario;
 import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
 
 public interface GestorActivoApi extends GestorEntidadApi {
@@ -83,7 +79,7 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String USU_PROVEEDOR_ELECNOR = "proveedor.elecnor";
 	public static final String CODIGO_GESTORIA_ADMINISTRACION = "GIAADMT";
 	public static final String USU_PROVEEDOR_PACI = "proveedor.paci";
-	public static final String CODIGO_GESTORIA_PLUSVALIA = "GESTOPLUS";
+	public static final String CODIGO_GESTORIA_PLUSVALIA = "GTOPLUS";
 	
 	Boolean insertarGestorAdicionalActivo(GestorEntidadDto dto);
 

@@ -271,7 +271,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	private String nombreMediador;
 	private String sociedadPagoAnterior; 
-	private Boolean visualizarTabFasesPublicacion;
+	private Boolean mostrarEditarFasePublicacion;
 	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -2041,14 +2041,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setNombreMediador(String nombreMediador) {
 		this.nombreMediador = nombreMediador;
 	}
-
-	public Boolean getVisualizarTabFasesPublicacion() {
-		return visualizarTabFasesPublicacion;
-	}
-
-	public void setVisualizarTabFasesPublicacion(Boolean visualizarTabFasesPublicacion) {
-		this.visualizarTabFasesPublicacion = visualizarTabFasesPublicacion;
-	}
 	public Boolean getTramitable() {
 		return tramitable;
 	}
@@ -2071,6 +2063,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setSociedadPagoAnterior(String sociedadPagoAnterior) {
 		this.sociedadPagoAnterior = sociedadPagoAnterior;
+	}
+
+	public Boolean getMostrarEditarFasePublicacion() {
+		return mostrarEditarFasePublicacion;
+	}
+
+	public void setMostrarEditarFasePublicacion(Boolean mostrarEditarFasePublicacion) {
+		this.mostrarEditarFasePublicacion = mostrarEditarFasePublicacion;
 	}
 	
 }

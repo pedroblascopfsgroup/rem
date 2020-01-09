@@ -22,7 +22,10 @@ import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoComunidadPropietarios;
+import es.pfsgroup.plugin.rem.model.GestionCCPP;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoLocalizacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoGestion;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
@@ -128,7 +131,7 @@ public class ComunidadesPropietariosAdapter {
 
 
 	@Transactional(readOnly = false)
-	public void updateComunidad(Long idActivo, String idComunidadPropietarios,  String situacion, String fechaEnvioCarta)
+	public void updateComunidad(Long idActivo, String idComunidadPropietarios, String fechaEnvioCarta, String codEstadoLocalizacion, String codSubestadoGestion)
 			throws JsonViewerException {
 
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "numActivo", idActivo);
@@ -140,24 +143,33 @@ public class ComunidadesPropietariosAdapter {
 				throw new JsonViewerException("El activo no existe");
 			}
 			
-			DDSituacionActivo ddSituacionActivo = genericDao.get(DDSituacionActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", situacion));
+			Filter filtroComunidadPropietarios = genericDao.createFilter(FilterType.EQUALS, "comunidadPropietarios.id", activo.getComunidadPropietarios().getId());
+			Filter filtroFechaFin = genericDao.createFilter(FilterType.NULL, "fechaFin");
 			
-			if (!Checks.esNulo(ddSituacionActivo)  ) {
+			GestionCCPP gestionAnterior  = genericDao.get(GestionCCPP.class, filtroComunidadPropietarios, filtroFechaFin );
+			
+			if(!Checks.esNulo(gestionAnterior)) {				
 				
 				 activoComunidadPropietarios = genericDao.get(ActivoComunidadPropietarios.class, genericDao.createFilter(FilterType.EQUALS,"id",activo.getComunidadPropietarios().getId()),
 						genericDao.createFilter(FilterType.EQUALS,"codigoComPropUvem", idComunidadPropietarios));
+				 DDEstadoLocalizacion estadoLocalizacion = genericDao.get(DDEstadoLocalizacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codEstadoLocalizacion));
+				 DDSubestadoGestion subestadoGestion = genericDao.get(DDSubestadoGestion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codSubestadoGestion));
+				 
+				 if(!Checks.esNulo(estadoLocalizacion)) {
+					 gestionAnterior.setEstadoLocalizacion(estadoLocalizacion);
+				 }
+				 if(!Checks.esNulo(subestadoGestion)) {
+					 gestionAnterior.setSubestadoGestion(subestadoGestion);
+				 }
+				 genericDao.save(GestionCCPP.class, gestionAnterior);
 			} 
 			
 			if (!Checks.esNulo(activoComunidadPropietarios)) 
-			{
-				activoComunidadPropietarios.setSituacion(ddSituacionActivo);
+			{				
 			    Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(fechaEnvioCarta);  
-
 				activoComunidadPropietarios.setFechaEnvioCarta(date1);
+				genericDao.save(ActivoComunidadPropietarios.class, activoComunidadPropietarios);
 			}
-
-			genericDao.save(ActivoComunidadPropietarios.class, activoComunidadPropietarios);
-
 		} catch (JsonViewerException jve) {
 			throw jve;
 		} catch (Exception e) {

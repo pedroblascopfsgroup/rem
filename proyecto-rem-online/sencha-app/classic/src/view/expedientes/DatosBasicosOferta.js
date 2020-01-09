@@ -15,9 +15,10 @@ recordClass: "HreRem.model.DatosBasicosOferta",
     'HreRem.model.OfertasAgrupadasModel', 'HreRem.view.expedientes.OfertasAgrupadasTabPanel'],
     
     listeners: {
-boxready:'cargarTabData',
-beforeedit: 'numVisitaIsEditable'
-},
+		boxready:'cargarTabData',
+		beforeedit: 'numVisitaIsEditable',
+		afterrender: 'doCalculateTitleByComite'
+	},
     
     initComponent: function () {
 
@@ -179,27 +180,26 @@ beforeedit: 'numVisitaIsEditable'
 					}, {
 						xtype : 'datefieldbase',
 						formatter : 'date("d/m/Y")',
-						fieldLabel : HreRem.i18n('fieldlabel.resolucion.ces'),
+						reference: 'fechaResolucionCES',
 						bind : {
 							value : '{datosbasicosoferta.fechaResolucionCES}',
-							hidden : '{!datosbasicosoferta.isCarteraCerberusApple}'
+							hidden : '{!esSubcarteraDivarianOApple}'
 						},
 						readOnly : true
 					}, {
 						xtype : 'currencyfieldbase',
-						fieldLabel : HreRem.i18n('fieldlabel.importe.ces'),
+						reference: 'importeContraOfertaCES',
 						bind : {
 							value : '{datosbasicosoferta.importeContraofertaCES}',
-							hidden : '{!datosbasicosoferta.isCarteraCerberusApple}'
+							hidden : '{!esSubcarteraDivarianOApple}'
 						},
 						readOnly : true
 					}, {
 						xtype : 'datefieldbase',
-						fieldLabel : HreRem
-								.i18n('fieldlabel.fecha.respuesta.ofertante.CES'),
+						reference: 'fechaResupuestaCES',
 						bind : {
 							value : '{datosbasicosoferta.fechaRespuestaCES}',
-							hidden : '{!datosbasicosoferta.isCarteraCerberusApple}'
+							hidden : '{!esSubcarteraDivarianOApple}'
 						},
 						readOnly : true
 					}, 
@@ -210,10 +210,10 @@ beforeedit: 'numVisitaIsEditable'
 					}, 
 					{
 						xtype : 'currencyfieldbase',
-						fieldLabel : HreRem.i18n('fieldlabel.contraoferta.ofertante.ces'),
+						reference:'importeContraofertaOfertanteCES',
 						bind : {
 							value : '{datosbasicosoferta.importeContraofertaOfertanteCES}',
-							hidden : '{!datosbasicosoferta.isCarteraCerberusApple}'
+							hidden : '{!esSubcarteraDivarianOApple}'
 						},
 						readOnly : true
 					},

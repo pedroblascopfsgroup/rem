@@ -177,7 +177,7 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 * @parame xpedienteComercial
 	 */
-	boolean update(ExpedienteComercial expedienteComercial);
+	boolean update(ExpedienteComercial expedienteComercial,boolean pasaAVendido);
 
 	/**
 	 * Actualiza el estado de la dev reserva al codigo dado
@@ -1286,5 +1286,7 @@ public interface ExpedienteComercialApi {
 	 * @return boolean
 	 */
 	boolean esOmega(TareaExterna tareaExterna);
+
+	String doCalculateComiteByExpedienteId(Long idExpediente);
 
 }

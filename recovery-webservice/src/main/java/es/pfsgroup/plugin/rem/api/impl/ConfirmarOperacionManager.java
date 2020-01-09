@@ -190,7 +190,7 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 			throw new Exception("Error al actualizar el estado del expediente comercial.");
 		}
 		expedienteComercial.setEstado(estadoExpCom);
-		if (!expedienteComercialApi.update(expedienteComercial)) {
+		if (!expedienteComercialApi.update(expedienteComercial,false)) {
 			throw new Exception("Error al actualizar el expediente comercial.");
 		}
 
@@ -256,12 +256,13 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 		}
 
 		expedienteComercial.setFechaContabilizacionPropietario(fechaActual);
-		
+		boolean pasaAVendido = false;
 		if (!Checks.esNulo(expedienteComercial.getFechaVenta())){
 			DDEstadosExpedienteComercial estadoExpCom = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.VENDIDO);
 			expedienteComercial.setEstado(estadoExpCom);
+			pasaAVendido = true;
 		}
-		if (!expedienteComercialApi.update(expedienteComercial)) {
+		if (!expedienteComercialApi.update(expedienteComercial,pasaAVendido)) {
 			throw new Exception("Error al actualizar el expediente comercial.");
 		}
 
@@ -370,7 +371,7 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 			}
 		}
 		
-		if (!expedienteComercialApi.update(expedienteComercial)) {
+		if (!expedienteComercialApi.update(expedienteComercial,false)) {
 			throw new Exception("Error al actualizar el expediente comercial.");
 		}
 
@@ -427,7 +428,7 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 		}
 		expedienteComercial.getReserva().setEstadoReserva(estReserva);
 
-		if (!expedienteComercialApi.update(expedienteComercial)) {
+		if (!expedienteComercialApi.update(expedienteComercial,false)) {
 			throw new Exception("Error al actualizar el expediente comercial.");
 		}
 
@@ -501,7 +502,7 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 			throw new Exception("Error al actualizar el estado del expediente comercial.");
 		}
 		expedienteComercial.setEstado(estadoExpCom);
-		if (!expedienteComercialApi.update(expedienteComercial)) {
+		if (!expedienteComercialApi.update(expedienteComercial,false)) {
 			throw new Exception("Error al actualizar el expediente comercial.");
 		}
 
@@ -572,7 +573,7 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 			expedienteComercial.setEstado(estadoExpCom);
 		}
 		
-		if (!expedienteComercialApi.update(expedienteComercial)) {
+		if (!expedienteComercialApi.update(expedienteComercial,false)) {
 			throw new Exception("Error al actualizar el expediente comercial.");
 		}
 
@@ -684,7 +685,7 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 		expedienteComercial.setFechaDevolucionEntregas(null);
 		expedienteComercial.setImporteDevolucionEntregas(null);
 
-		if (!expedienteComercialApi.update(expedienteComercial)) {
+		if (!expedienteComercialApi.update(expedienteComercial,false)) {
 			throw new Exception("Error al actualizar el expediente comercial.");
 		}
 

@@ -522,7 +522,26 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	 		}
 	 		
 	 		return false;
+	 	},
+	 	
+	 	esSubcarteraDivarianOApple: function(get){
+	 		var me = this;
+	 		var resp = false;
+	 		var isApple = CONST.SUBCARTERA['APPLEINMOBILIARIO'] === me.get('expediente.subcarteraCodigo');
+	 		var isDivarian = CONST.SUBCARTERA['DIVARIAN'] === me.get('expediente.subcarteraCodigo');
+	 		
+	 		if(isApple == true || isDivarian == true){
+	 			resp = true;
+	 		}
+	 		
+	 		
+	 		return resp;
+	 	},
+	 	esComiteHaya: function(get){
+	 		var me = this;
+	 		return me.get('expediente.esComiteHaya');
 	 	}
+	 	
 	 },
 	 
 

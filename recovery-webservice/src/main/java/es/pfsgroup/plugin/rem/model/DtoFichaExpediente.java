@@ -151,6 +151,8 @@ public class DtoFichaExpediente extends WebDto {
 	
 	private Date fechaContabilizacionVenta;
 
+	private Boolean esComiteHaya;
+	
 	public Long getId() {
 		return id;
 	}
@@ -766,6 +768,14 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setFechaContabilizacionVenta(Date fechaContabilizacionVenta) {
 		this.fechaContabilizacionVenta = fechaContabilizacionVenta;
+	}
+	
+	public Boolean getEsComiteHaya() {
+		return esComiteHaya;
+	}
+
+	public void setEsComiteHaya(Boolean esComiteHaya) {
+		this.esComiteHaya = esComiteHaya;
 	}
 	
 	

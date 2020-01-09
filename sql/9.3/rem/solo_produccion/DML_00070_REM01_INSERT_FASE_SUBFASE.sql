@@ -55,12 +55,12 @@ BEGIN
 		                                T1.BORRADO)
 		                        VALUES (
 		                                T2.ACT_ID,
-		                                T2.COD_FASE,
-		                                T2.COD_SUBFASE,
+		                                T2.DD_FSP_ID,
+		                                T2.DD_SFP_ID,
 		                                29468,
 		                                SYSDATE,
 		                                1,
-		                                ''REMVIP-6999'',
+		                                ''REMVIP-6152'',
 		                                SYSDATE,
 		                                0 
 		                                )';	

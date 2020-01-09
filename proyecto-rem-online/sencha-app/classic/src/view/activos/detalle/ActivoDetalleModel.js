@@ -877,7 +877,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     		return $AU.userIsRol('GESTALQ');
     	},
     	
-    	tipoComercializacionVenta: function() {
+    	tipoComercializacionVenta: function(get) {
     		var tipoComercializacionActivo = get('activo.tipoComercializacionCodigo');
     		
     		return tipoComercializacionActivo === CONST.TIPOS_COMERCIALIZACION['VENTA'] || tipoComercializacionActivo === CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'];

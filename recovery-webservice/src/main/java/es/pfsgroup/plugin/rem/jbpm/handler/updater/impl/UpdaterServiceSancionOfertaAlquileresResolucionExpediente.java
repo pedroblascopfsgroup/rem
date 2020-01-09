@@ -133,7 +133,7 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionExpediente implement
 			}
 		}
 		expedienteComercial.setOferta(oferta);
-		expedienteComercialApi.update(expedienteComercial);
+		expedienteComercialApi.update(expedienteComercial,false);
 	}
 
 	public String[] getCodigoTarea() {

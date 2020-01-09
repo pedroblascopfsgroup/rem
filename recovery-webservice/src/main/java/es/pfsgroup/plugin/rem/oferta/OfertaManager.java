@@ -2836,12 +2836,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					agr = activoAgrupacionActivo.getAgrupacion();
 					if(!Checks.esNulo(agr.getTipoAgrupacion()) && DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(agr.getTipoAgrupacion().getCodigo())) {
 						List<ActivoAgrupacionActivo> listActAgrDeAgr = agr.getActivos();
-						if(!Checks.estaVacio(listActAgrDeAgr) && listActivosAgr.size() > MIN_COUNT_LIST_ACT_AGR) {
+						if(!Checks.estaVacio(listActAgrDeAgr) && listActAgrDeAgr.size() > MIN_COUNT_LIST_ACT_AGR) {
 							for (ActivoAgrupacionActivo actAgrAct : listActAgrDeAgr) {
 								actDeActAgr = actAgrAct.getActivo();
 								subtipoAct = actDeActAgr.getSubtipoActivo();
 								if(!Checks.esNulo(subtipoAct)) {
-									if(contadorActPrinc <= MAX_COUNT_LIST_ACT_AGR) {
+									if(contadorActPrinc < MAX_COUNT_LIST_ACT_AGR) {
 										if(!DDSubtipoActivo.COD_GARAJE.equals(subtipoAct.getCodigo()) && !DDSubtipoActivo.COD_TRASTERO.equals(subtipoAct.getCodigo())) {
 											contadorActPrinc++;
 										}
@@ -2868,24 +2868,27 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						listActOfr = oferta.getActivosOferta();
 						if(!Checks.estaVacio(listActOfr)) {
 							for (ActivoOferta activoOferta : listActOfr) {
-								if(!DDSubtipoActivo.COD_GARAJE.equals(subtipoAct.getCodigo()) && !DDSubtipoActivo.COD_TRASTERO.equals(subtipoAct.getCodigo())) {
-									contieneActPrinc = true;
-									importeActPrinc += activoOferta.getImporteActivoOferta();
-								} else {
+								if(DDSubtipoActivo.COD_GARAJE.equals(subtipoAct.getCodigo()) || DDSubtipoActivo.COD_TRASTERO.equals(subtipoAct.getCodigo())) {
 									contieneActGarTrast = true;
 									importeActGarTrast += activoOferta.getImporteActivoOferta();
+								} else {
+									contieneActPrinc = true;
+									importeActPrinc += activoOferta.getImporteActivoOferta();
 								}
 							}
 						}
 					}
 				}
-				if(contieneActGarTrast) {
+				if(contieneActGarTrast && contieneActPrinc) {
 					consultaComisionDto.setAmount(importeActGarTrast);
 					try {
 						calculoComisionActGarTrast = comisionamientoApi.createCommission(consultaComisionDto);
 					} catch (Exception e) {
 						logger.error("Error en la llamada al comisionamiento: " + e);
 					}
+					consultaComisionDto.setAmount(importeActPrinc);
+					consultaComisionDto.setComercialType(DD_TCR_CODIGO_OBRA_NUEVA);
+					
 				}else if(contieneActPrinc){
 					consultaComisionDto.setAmount(importeActPrinc);
 					consultaComisionDto.setComercialType(DD_TCR_CODIGO_OBRA_NUEVA);
@@ -2894,7 +2897,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		
 		// TODO FIN PARTE CALCULO TIPO PRODUCTO
-		
 		List<DtoPrescriptoresComision> listAccionesComision = comisionamientoApi.getTiposDeComisionAccionGasto(oferta);
 		
 		if(listAccionesComision != null) {
@@ -2941,7 +2943,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 	
 				//TODO PARTE CALCULO TIPO PRODUCTO
-				if(contieneActGarTrast) {
+				if(contieneActGarTrast && contieneActPrinc) {
 					calculoComision.setCommissionAmount(calculoComision.getCommissionAmount() + calculoComisionActGarTrast.getCommissionAmount()); 
 				}
 				// TODO FIN PARTE CALCULO TIPO PRODUCTO

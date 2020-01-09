@@ -17,7 +17,6 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.rem.activo.exception.PlusvaliaActivoException;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -28,7 +27,6 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
@@ -66,7 +64,7 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 
 		
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
-		Activo activoAceptado = ofertaAceptada.getActivoPrincipal();
+		boolean pasaAVendido = false;
 		if(!Checks.esNulo(ofertaAceptada)){
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 		
@@ -75,23 +73,11 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 				if(COMBO_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
 				{
 					if(DDSiNo.SI.equals(valor.getValor())){
-						//Expediente se marca a vendido
-						String codSubCartera = null;
-						if (!Checks.esNulo(activoAceptado.getSubcartera())) {
-							codSubCartera = activoAceptado.getSubcartera().getCodigo();
-						}
-						
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.VENDIDO);
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expediente.setEstado(estado);
-						if ( ofertaAceptada.getActivoPrincipal() != null ) {
-							try {
-								activoApi.changeAndSavePlusvaliaEstadoGestionActivoById(ofertaAceptada.getActivoPrincipal(), DDEstadoGestionPlusv.COD_EN_CURSO);
-							} catch (PlusvaliaActivoException e) {
-								logger.error(e);
-							}
-						}
-						genericDao.save(ExpedienteComercial.class, expediente);
+						pasaAVendido = true;
+						
 						
 						//Finaliza el trámite
 						Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
@@ -104,7 +90,6 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 							
 							PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(activo.getId());
 							perimetro.setAplicaComercializar(0);
-							//TODO: Cuando esté el motivo de no comercialización como texto libre, poner el texto: "Vendido".
 							genericDao.save(PerimetroActivo.class, perimetro);
 							
 							//Marcamos el activo como vendido
@@ -113,7 +98,6 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 							
 							activo.setBloqueoPrecioFechaIni(new Date());
 							
-							//genericDao.save(Activo.class, activo);
 							activoApi.saveOrUpdate(activo);
 						}
 						
@@ -156,7 +140,6 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 					try {
 						expediente.setFechaVenta(ft.parse(valor.getValor()));
 					} catch (ParseException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -164,13 +147,14 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 				if(MOTIVO_ANULACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
 					// Se incluye un motivo de anulacion del expediente, si se indico en la tarea
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());
-					DDMotivoAnulacionExpediente motivoAnulacion = (DDMotivoAnulacionExpediente) genericDao.get(DDMotivoAnulacionExpediente.class, filtro);
+					DDMotivoAnulacionExpediente motivoAnulacion =  genericDao.get(DDMotivoAnulacionExpediente.class, filtro);
 					expediente.setMotivoAnulacion(motivoAnulacion);
 				}
 				
-				genericDao.save(ExpedienteComercial.class, expediente);
-				genericDao.save(Oferta.class, ofertaAceptada);
+				
 			}
+			expedienteComercialApi.update(expediente, pasaAVendido);
+			genericDao.save(Oferta.class, ofertaAceptada);
 		}
 
 

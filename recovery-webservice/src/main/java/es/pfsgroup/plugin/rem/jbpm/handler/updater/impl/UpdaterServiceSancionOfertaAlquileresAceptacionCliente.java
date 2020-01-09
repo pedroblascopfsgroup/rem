@@ -135,7 +135,7 @@ public class UpdaterServiceSancionOfertaAlquileresAceptacionCliente implements U
 				expedienteComercial.setMotivoAnulacion(motivoAnulacion);
 			}
 		}
-		expedienteComercialApi.update(expedienteComercial);
+		expedienteComercialApi.update(expedienteComercial,false);
 	}
 
 	public String[] getCodigoTarea() {

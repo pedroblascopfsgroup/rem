@@ -8,7 +8,8 @@ Ext.define('HreRem.view.activos.detalle.HistoricoEstadosPublicacionList', {
 
 	initComponent: function () {
 		var me = this;
-
+		var isAlquilerGrid = me.reference === "historicoestadospublicacionalquilerlist";
+		
 		me.columns = [
 			{
 				dataIndex: 'id',
@@ -57,7 +58,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoEstadosPublicacionList', {
 				text: HreRem.i18n('title.publicaciones.historico.canal.publicacion'),
 				flex: 2,
 				bind: {
-					hidden:'{activo.isDestinoComercialAlquiler}'
+					hidden:isAlquilerGrid
 				}
 			
 			},

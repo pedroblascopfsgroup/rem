@@ -2747,7 +2747,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public List<DtoGastoExpediente> calculaHonorario(Oferta oferta, Activo activo) {
 
 		List<DtoGastoExpediente> listDto = new ArrayList<DtoGastoExpediente>();
-		DtoGastoExpediente dto = new DtoGastoExpediente();
 		ActivoProveedor proveedor = null;
 		String codigoOferta = null;
 		ActivoBancario activoBancario = genericDao.get(ActivoBancario.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
@@ -2901,13 +2900,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		if(listAccionesComision != null) {
 			for(DtoPrescriptoresComision accionesComision: listAccionesComision) {
+				DtoGastoExpediente dto = new DtoGastoExpediente();
+				
 				consultaComisionDto.setLeadOrigin(accionesComision.getOrigenLead());
 				
 				// Información del receptor del honorario
 				if (!Checks.esNulo(accionesComision.getPrescriptorCodRem())) {
 	
 					proveedor = genericDao.get(ActivoProveedor.class, 
-							genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", accionesComision.getPrescriptorCodRem()));
+							genericDao.createFilter(FilterType.EQUALS, "id", accionesComision.getPrescriptorCodRem()));
 					
 					if (!Checks.esNulo(proveedor.getTipoProveedor())) {
 						dto.setTipoProveedor(proveedor.getTipoProveedor().getDescripcion());

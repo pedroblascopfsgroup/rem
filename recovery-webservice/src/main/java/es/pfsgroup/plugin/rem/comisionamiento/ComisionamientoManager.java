@@ -81,17 +81,9 @@ public class ComisionamientoManager implements ComisionamientoApi {
 				
 		Long prescriptorVisita = (oferta.getProveedorPrescriptorRemOrigenLead() == null) ? null : oferta.getProveedorPrescriptorRemOrigenLead().getId();
 		Long realizadorVisita = (oferta.getProveedorRealizadorRemOrigenLead() == null) ? null : oferta.getProveedorRealizadorRemOrigenLead().getId();
-		
-		if(prescriptorVisita == null
-				|| realizadorVisita == null
-				|| oferta.getFechaOrigenLead() == null
-				|| oferta.getFechaAlta() == null) {
-			return null;
-		}
-		
 		Long prescriptorOferta = oferta.getPrescriptor().getId();
+		
 		String codLeadOrigin = null;
-		Long diferenciaFechaVisitaYAlta = Math.abs((oferta.getFechaOrigenLead().getTime()-oferta.getFechaAlta().getTime())/86400000);
 		
 		if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getOrigenComprador())) {
 			codLeadOrigin = oferta.getOrigenComprador().getCodigo();
@@ -101,11 +93,28 @@ public class ComisionamientoManager implements ComisionamientoApi {
 			codLeadOrigin = DDOrigenComprador.CODIGO_ORC_HRE;
 		}
 		
+		if(prescriptorOferta != null && (prescriptorVisita == null || realizadorVisita == null)) {
+			dto.setPrescriptorCodRem(prescriptorOferta);
+			dto.setTipoAccion(DDAccionGastos.CODIGO_PRESCRIPCION);
+			dto.setOrigenLead(codLeadOrigin);
+			
+			listAcciones.add(dto);
+			
+			return listAcciones;
+		}
+		
+		Long diferenciaFechaVisitaYAlta = null;
+		
+		if(oferta.getFechaOrigenLead() != null
+				&& oferta.getFechaAlta() != null) {
+			diferenciaFechaVisitaYAlta = Math.abs((oferta.getFechaOrigenLead().getTime()-oferta.getFechaAlta().getTime())/86400000);
+		}
+		
 		if(prescriptorOferta.equals(prescriptorVisita) && prescriptorOferta.equals(realizadorVisita)) {
 			dto.setPrescriptorCodRem(prescriptorOferta);
 			dto.setTipoAccion(DDAccionGastos.CODIGO_PRE_Y_COL);
 			
-			if(DDOrigenComprador.CODIGO_ORC_API_AJENO.equals(codLeadOrigin)) {
+			if(DDOrigenComprador.CODIGO_ORC_API_AJENO.equals(codLeadOrigin) && diferenciaFechaVisitaYAlta != null) {
 				
 				if(diferenciaFechaVisitaYAlta > 90L) {
 					dto.setOrigenLead(DDOrigenComprador.CODIGO_ORC_API_PROPIO);
@@ -123,6 +132,10 @@ public class ComisionamientoManager implements ComisionamientoApi {
 					dto.setOrigenLead(codLeadOrigin);
 					listAcciones.add(dto);
 				}
+			}else {
+				dto.setOrigenLead(codLeadOrigin);
+				
+				listAcciones.add(dto);
 			}
 		} else if(prescriptorOferta.equals(prescriptorVisita) && !prescriptorOferta.equals(realizadorVisita)
 				&& DDOrigenComprador.CODIGO_ORC_HRE.equals(codLeadOrigin)) {
@@ -149,7 +162,7 @@ public class ComisionamientoManager implements ComisionamientoApi {
 				
 				listAcciones.add(dto);
 				
-				if(diferenciaFechaVisitaYAlta <= 90L) {
+				if(diferenciaFechaVisitaYAlta != null && diferenciaFechaVisitaYAlta <= 90L) {
 					
 					dto = new DtoPrescriptoresComision();
 					

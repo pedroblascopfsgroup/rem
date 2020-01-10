@@ -10588,75 +10588,73 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Transactional(readOnly = false)
 	public boolean actualizarGastosExpediente(ExpedienteComercial expedienteComercial, Oferta oferta) {
 		
-		for(ActivoOferta activoOferta : oferta.getActivosOferta()) {
-			Activo activo = activoOferta.getPrimaryKey().getActivo();
+		Activo activo = oferta.getActivoPrincipal();
+	
+		List<DtoGastoExpediente> listDtoGastoExpediente = ofertaApi.calculaHonorario(oferta, activo);
 		
-			List<DtoGastoExpediente> listDtoGastoExpediente = ofertaApi.calculaHonorario(oferta, activo);
+		for(DtoGastoExpediente dtoGastoExpediente: listDtoGastoExpediente) {
+			DDAccionGastos acciongasto = (DDAccionGastos) utilDiccionarioApi
+					.dameValorDiccionarioByCod(DDAccionGastos.class, dtoGastoExpediente.getCodigoTipoComision());
 			
-			for(DtoGastoExpediente dtoGastoExpediente: listDtoGastoExpediente) {
-				DDAccionGastos acciongasto = (DDAccionGastos) utilDiccionarioApi
-						.dameValorDiccionarioByCod(DDAccionGastos.class, dtoGastoExpediente.getCodigoTipoComision());
-				
-				GastosExpediente gastoExpediente = gastosExpedienteApi.getGastoExpedienteByActivoYAccion(activo.getId(), 
-						expedienteComercial.getId(), acciongasto.getCodigo());
-				
-				if(gastoExpediente == null) {
-					gastoExpediente = new GastosExpediente();
-				}
-
-				if (!Checks.esNulo(acciongasto)) {
-					gastoExpediente.setAccionGastos(acciongasto);
-				}
-
-				if (!Checks.esNulo(dtoGastoExpediente.getCodigoTipoCalculo())) {
-					DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
-							.dameValorDiccionarioByCod(DDTipoCalculo.class, dtoGastoExpediente.getCodigoTipoCalculo());
-					gastoExpediente.setTipoCalculo(tipoCalculo);
-				}
-
-				if (!Checks.esNulo(dtoGastoExpediente.getIdProveedor())) {
-					Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
-							dtoGastoExpediente.getIdProveedor());
-					ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filtroProveedor);
-					gastoExpediente.setProveedor(proveedor);
-
-					DDTipoProveedorHonorario tipoProveedor = null;
-
-					if (!Checks.esNulo(proveedor) && !Checks.esNulo(proveedor.getTipoProveedor())) {
-						if (proveedor.getTipoProveedor().getCodigo().equals(DDTipoProveedorHonorario.CODIGO_MEDIADOR)) {
-							tipoProveedor = (DDTipoProveedorHonorario) utilDiccionarioApi.dameValorDiccionarioByCod(
-									DDTipoProveedorHonorario.class, DDTipoProveedorHonorario.CODIGO_MEDIADOR);
-						} else if (proveedor.getTipoProveedor().getCodigo().equals(DDTipoProveedorHonorario.CODIGO_FVD)) {
-							tipoProveedor = (DDTipoProveedorHonorario) utilDiccionarioApi.dameValorDiccionarioByCod(
-									DDTipoProveedorHonorario.class, DDTipoProveedorHonorario.CODIGO_FVD);
-						} else if (proveedor.getTipoProveedor().getCodigo()
-								.equals(DDTipoProveedorHonorario.CODIGO_OFICINA_BANKIA)) {
-							tipoProveedor = (DDTipoProveedorHonorario) utilDiccionarioApi.dameValorDiccionarioByCod(
-									DDTipoProveedorHonorario.class, DDTipoProveedorHonorario.CODIGO_OFICINA_BANKIA);
-						} else if (proveedor.getTipoProveedor().getCodigo()
-								.equals(DDTipoProveedorHonorario.CODIGO_OFICINA_CAJAMAR)) {
-							tipoProveedor = (DDTipoProveedorHonorario) utilDiccionarioApi.dameValorDiccionarioByCod(
-									DDTipoProveedorHonorario.class, DDTipoProveedorHonorario.CODIGO_OFICINA_CAJAMAR);
-						}
-
-						gastoExpediente.setTipoProveedor(tipoProveedor);
-					}
-				}
-
-				gastoExpediente.setImporteCalculo(dtoGastoExpediente.getImporteCalculo());
-				gastoExpediente.setImporteFinal(dtoGastoExpediente.getHonorarios());
-				gastoExpediente.setImporteOriginal(dtoGastoExpediente.getImporteOriginal());
-				gastoExpediente.setExpediente(expedienteComercial);
-				gastoExpediente.setActivo(activo);
-
-				if(!Checks.esNulo(gastoExpediente) && gastoExpediente.getId() != null && gastoExpediente.getEditado() == 0) {
-					genericDao.update(GastosExpediente.class, gastoExpediente);
-				} else {
-					gastoExpediente.setEditado(0);
-					genericDao.save(GastosExpediente.class, gastoExpediente);
-				}
-				
+			GastosExpediente gastoExpediente = gastosExpedienteApi.getGastoExpedienteByActivoYAccion(activo.getId(), 
+					expedienteComercial.getId(), acciongasto.getCodigo());
+			
+			if(gastoExpediente == null) {
+				gastoExpediente = new GastosExpediente();
 			}
+
+			if (!Checks.esNulo(acciongasto)) {
+				gastoExpediente.setAccionGastos(acciongasto);
+			}
+
+			if (!Checks.esNulo(dtoGastoExpediente.getCodigoTipoCalculo())) {
+				DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTipoCalculo.class, dtoGastoExpediente.getCodigoTipoCalculo());
+				gastoExpediente.setTipoCalculo(tipoCalculo);
+			}
+
+			if (!Checks.esNulo(dtoGastoExpediente.getIdProveedor())) {
+				Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
+						dtoGastoExpediente.getIdProveedor());
+				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filtroProveedor);
+				gastoExpediente.setProveedor(proveedor);
+
+				DDTipoProveedorHonorario tipoProveedor = null;
+
+				if (!Checks.esNulo(proveedor) && !Checks.esNulo(proveedor.getTipoProveedor())) {
+					if (proveedor.getTipoProveedor().getCodigo().equals(DDTipoProveedorHonorario.CODIGO_MEDIADOR)) {
+						tipoProveedor = (DDTipoProveedorHonorario) utilDiccionarioApi.dameValorDiccionarioByCod(
+								DDTipoProveedorHonorario.class, DDTipoProveedorHonorario.CODIGO_MEDIADOR);
+					} else if (proveedor.getTipoProveedor().getCodigo().equals(DDTipoProveedorHonorario.CODIGO_FVD)) {
+						tipoProveedor = (DDTipoProveedorHonorario) utilDiccionarioApi.dameValorDiccionarioByCod(
+								DDTipoProveedorHonorario.class, DDTipoProveedorHonorario.CODIGO_FVD);
+					} else if (proveedor.getTipoProveedor().getCodigo()
+							.equals(DDTipoProveedorHonorario.CODIGO_OFICINA_BANKIA)) {
+						tipoProveedor = (DDTipoProveedorHonorario) utilDiccionarioApi.dameValorDiccionarioByCod(
+								DDTipoProveedorHonorario.class, DDTipoProveedorHonorario.CODIGO_OFICINA_BANKIA);
+					} else if (proveedor.getTipoProveedor().getCodigo()
+							.equals(DDTipoProveedorHonorario.CODIGO_OFICINA_CAJAMAR)) {
+						tipoProveedor = (DDTipoProveedorHonorario) utilDiccionarioApi.dameValorDiccionarioByCod(
+								DDTipoProveedorHonorario.class, DDTipoProveedorHonorario.CODIGO_OFICINA_CAJAMAR);
+					}
+
+					gastoExpediente.setTipoProveedor(tipoProveedor);
+				}
+			}
+
+			gastoExpediente.setImporteCalculo(dtoGastoExpediente.getImporteCalculo());
+			gastoExpediente.setImporteFinal(dtoGastoExpediente.getHonorarios());
+			gastoExpediente.setImporteOriginal(dtoGastoExpediente.getImporteOriginal());
+			gastoExpediente.setExpediente(expedienteComercial);
+			gastoExpediente.setActivo(activo);
+
+			if(!Checks.esNulo(gastoExpediente) && gastoExpediente.getId() != null && gastoExpediente.getEditado() == 0) {
+				genericDao.update(GastosExpediente.class, gastoExpediente);
+			} else {
+				gastoExpediente.setEditado(0);
+				genericDao.save(GastosExpediente.class, gastoExpediente);
+			}
+			
 		}
 		
 		return true;

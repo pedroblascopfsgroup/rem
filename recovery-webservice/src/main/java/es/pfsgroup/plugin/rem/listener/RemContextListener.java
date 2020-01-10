@@ -27,7 +27,7 @@ public class RemContextListener implements ServletContextListener {
 		try {
 			if (servletContextEvent.getServletContext().getAttribute(RemContextListener.DEVON_PROPERTIE) == null) {
 				String path = getDevonPath();
-				logger.info("################# INICIADOR DE PROPIEDADES PARA EL FRONTEND ############################"
+				logger.error("################# INICIADOR DE PROPIEDADES PARA EL FRONTEND ############################"
 						.concat(path));
 				appProperties.load(new FileInputStream(path));
 				servletContextEvent.getServletContext().setAttribute(RemContextListener.DEVON_PROPERTIE, appProperties);

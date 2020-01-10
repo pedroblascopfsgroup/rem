@@ -137,7 +137,7 @@ public class ComisionamientoManager implements ComisionamientoApi {
 				
 				listAcciones.add(dto);
 			}
-		} else if(prescriptorOferta.equals(prescriptorVisita) && !prescriptorOferta.equals(realizadorVisita)
+		} else if(!prescriptorOferta.equals(prescriptorVisita) && prescriptorOferta.equals(realizadorVisita)
 				&& DDOrigenComprador.CODIGO_ORC_HRE.equals(codLeadOrigin)) {
 			dto.setPrescriptorCodRem(prescriptorOferta);
 			dto.setTipoAccion(DDAccionGastos.CODIGO_COLABORACION);

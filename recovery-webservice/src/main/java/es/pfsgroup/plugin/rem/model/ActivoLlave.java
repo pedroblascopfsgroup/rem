@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -24,6 +25,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
 
 
 
@@ -84,6 +86,29 @@ public class ActivoLlave implements Serializable, Auditable {
 	
 	@Column(name ="LLV_NUM_LLAVE")
 	private String numLlave;
+	
+	@ManyToOne
+    @JoinColumn(name = "DD_TTE_ID_POSEEDOR")
+	private DDTipoTenedor tipoTenedor;
+	
+	@ManyToOne
+    @JoinColumn(name = "LLV_COD_TENEDOR_POSEEDOR")
+	private ActivoProveedor poseedor;
+	
+	@Column(name = "LLV_COD_TENEDOR_NO_PVE")
+	private String codNoPoseedor;
+	
+	@Column(name = "LLV_FECHA_ANILLADO")
+	private Date fechaPrimerAnillado;
+	
+	@Column(name ="LLV_FECHA_RECEPCION")
+	private Date fechaRecepcion;
+	
+	@Column(name ="LLV_CODE")
+	private String codigoLlavero;
+	
+	@Column(name ="LLV_OBSERVACIONES")
+	private String observaciones;
 	
 	
 	@Version   
@@ -198,6 +223,63 @@ public class ActivoLlave implements Serializable, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+
+	public DDTipoTenedor getTipoTenedor() {
+		return tipoTenedor;
+	}
+
+	public void setTipoTenedor(DDTipoTenedor tipoTenedor) {
+		this.tipoTenedor = tipoTenedor;
+	}
+
+	public ActivoProveedor getPoseedor() {
+		return poseedor;
+	}
+
+	public void setPoseedor(ActivoProveedor poseedor) {
+		this.poseedor = poseedor;
+	}
+
+	public String getCodNoPoseedor() {
+		return codNoPoseedor;
+	}
+
+	public void setCodNoPoseedor(String codNoPoseedor) {
+		this.codNoPoseedor = codNoPoseedor;
+	}
+
+	public Date getFechaPrimerAnillado() {
+		return fechaPrimerAnillado;
+	}
+
+	public void setFechaPrimerAnillado(Date fechaPrimerAnillado) {
+		this.fechaPrimerAnillado = fechaPrimerAnillado;
+	}
+
+	public Date getFechaRecepcion() {
+		return fechaRecepcion;
+	}
+
+	public void setFechaRecepcion(Date fechaRecepcion) {
+		this.fechaRecepcion = fechaRecepcion;
+	}
+
+	public String getCodigoLlavero() {
+		return codigoLlavero;
+	}
+
+	public void setCodigoLlavero(String codigoLlavero) {
+		this.codigoLlavero = codigoLlavero;
+	}
+
+	public String getObservaciones() {
+		return observaciones;
+	}
+
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
+	}
+	
 	
 	
 }

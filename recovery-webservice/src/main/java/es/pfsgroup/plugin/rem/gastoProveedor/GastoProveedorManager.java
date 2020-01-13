@@ -1172,7 +1172,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if (!Checks.esNulo(detalleGasto.getExisteRecargo()) && detalleGasto.getExisteRecargo()) {
 				dto.setExisteRecargo(COD_SI);
 				
-				if(!Checks.esNulo(detalleGasto.getTipoRecargoGasto().getCodigo()) && DDTipoRecargoGasto.CODIGO_EVITABLE.equals(detalleGasto.getTipoRecargoGasto().getCodigo())) {
+				if(!Checks.esNulo(detalleGasto.getTipoRecargoGasto()) && DDTipoRecargoGasto.CODIGO_EVITABLE.equals(detalleGasto.getTipoRecargoGasto().getCodigo())) {
 					dto.setTipoRecargo(DDTipoRecargoGasto.CODIGO_EVITABLE);
 				}else {
 					dto.setTipoRecargo(DDTipoRecargoGasto.CODIGO_NO_EVITABLE);

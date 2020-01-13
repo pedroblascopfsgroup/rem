@@ -75,12 +75,7 @@ public class UpdaterServiceSancionOfertaCierreEconomico implements UpdaterServic
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.VENDIDO);
 					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 					expediente.setEstado(estado);
-					genericDao.save(ExpedienteComercial.class, expediente);
-					try {
-						activoApi.changeAndSavePlusvaliaEstadoGestionActivoById(activo, DDEstadoGestionPlusv.COD_EN_CURSO);
-					} catch (PlusvaliaActivoException e) {
-						logger.error(e);
-					}
+					expedienteComercialApi.update(expediente, true);
 				}
 			}
 		}

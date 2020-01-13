@@ -103,7 +103,7 @@ public class UpdaterServiceAprobacionInformeComercialRevisionInformeComercial im
 			genericDao.save(HistoricoFasePublicacionActivo.class, histFasePub);
 		}
 		
-		Filter faseFiltro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDFasePublicacion.CODIGO_FASE_III);
+		Filter faseFiltro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDFasePublicacion.CODIGO_FASE_III_PENDIENTE_INFORMACION);
 		DDFasePublicacion faseTres = genericDao.get(DDFasePublicacion.class, faseFiltro);
 		
 		if(checkAcepta){

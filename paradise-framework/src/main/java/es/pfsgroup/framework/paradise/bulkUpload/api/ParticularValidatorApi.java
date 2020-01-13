@@ -1042,18 +1042,6 @@ public interface ParticularValidatorApi {
 	Boolean esExpedienteValidoVendido(String numExpediente);
 
 	Boolean esExpedienteValidoAnulado(String numExpediente);
-
-	Boolean existeFasePublicacion(String fasePublicacion);
-	
-	Boolean existeSubfasePublicacion(String subfasePublicacion);
-
-	
-	/**
-	 * @param codSubFasePublicacion
-	 * @param codFasePublicacion
-	 * @return true si la subfase pertenece a la fase de publicación
-	 */
-	public Boolean perteneceSubfaseAFasePublicacion(String codSubFasePublicacion, String codFasePublicacion);
 	
 	 /***
      * @param numTrabajo

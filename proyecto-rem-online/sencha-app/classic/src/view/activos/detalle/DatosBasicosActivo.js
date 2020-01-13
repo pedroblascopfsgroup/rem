@@ -229,7 +229,19 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					                	}
 					                }
 								]
-							}
+							},
+					        {
+					        	xtype: 'comboboxfieldbase',
+					        	fieldLabel: HreRem.i18n('fieldlabel.sociedad.pago'),
+					        	bind: { 
+					        		value:'{activo.sociedadPagoAnterior}',
+					        		store: '{comboSituacionPagoAnterior}',
+					        		readOnly: '{!activo.isSubcarteraDivarian}'
+					        	},
+					        	
+					        	style:'margin-left:10px'
+					        }
+							
 						]
 					},
 					{ // Columna 3 

@@ -869,8 +869,25 @@ Ext.define('HreRem.model.Activo', {
     			name: 'nombreMediador'
     		},
     		{
+    			name: 'visualizarTabFasesPublicacion',
+    			type: 'boolean'
+			},
+			{
     			name:'esSarebProyecto',
     			type:'boolean'
+    		},
+    		{
+    			name: 'sociedadPagoAnterior'
+    		},
+    		{
+    			name: 'isSubcarteraDivarian',
+    			calculate: function(data) { 
+    				if(data.entidadPropietariaCodigo == CONST.CARTERA['CERBERUS'] && data.subcarteraCodigo == CONST.SUBCARTERA['DIVARIAN']){
+    					return true;
+    				}
+    				return false;
+    			},
+				depends: ['subcarteraCodigo', 'entidadPropietariaCodigo']
     		}
     ],
     

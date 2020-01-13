@@ -1,15 +1,16 @@
 --/*
 --##########################################
 --## AUTOR=Mariam Lliso
---## FECHA_CREACION=20190715
+--## FECHA_CREACION=20190102019
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.5
---## INCIDENCIA_LINK=HREOS-6634
+--## INCIDENCIA_LINK=HREOS-7851
 --## PRODUCTO=NO
 --##
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 HREOS-7851 - mariam lliso - se le dan permisos de edicion a GESTIAFORM
 --##########################################
 --*/
 
@@ -41,6 +42,7 @@ DECLARE
     V_PERFIL T_ARRAY_PERFIL := T_ARRAY_PERFIL(
       T_PERFIL('HAYASUPER'),
       T_PERFIL('HAYASADM'),
+      T_PERFIL('GESTIAFORM'),
       T_PERFIL('HAYAADM')
     ); 
     V_TMP_PERFIL T_PERFIL; 

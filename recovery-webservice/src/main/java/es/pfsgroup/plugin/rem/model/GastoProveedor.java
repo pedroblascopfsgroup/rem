@@ -177,8 +177,11 @@ public class GastoProveedor implements Serializable, Auditable {
 	@Column(name="GPV_EXISTE_DOCUMENTO")
 	private Integer existeDocumento;
 	
+	@Column(name="GPV_IDENTIFICADOR_UNICO")
+	private String identificadorUnico;
+	
 	@Column(name="GPV_ID_PRIMER_GASTO_SERIE")
-	private Long numeroPrimerGastoSerie;	
+	private Long numeroPrimerGastoSerie;
 
 	@Column(name="GPV_FECHA_REC_PROP")
 	private Date fechaRecPropiedad;
@@ -499,6 +502,14 @@ public class GastoProveedor implements Serializable, Auditable {
 		return subcartera;
 	
 	}
+
+	public String getIdentificadorUnico() {
+		return identificadorUnico;
+	}
+
+	public void setIdentificadorUnico(String identificadorUnico) {
+		this.identificadorUnico = identificadorUnico;
+	}	
 
 	public Long getNumeroPrimerGastoSerie() {
 		return numeroPrimerGastoSerie;

@@ -550,6 +550,15 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
           	 },
           	 groupField: 'descripcionTipo'
 		},
+    		
+		comboTipoRecargo: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposDeRecargo'}
+			}
+    	},
     	
     	storeGastosRefacturablesExistentes: {
    			model: 'HreRem.model.GastoRefacturableGridExistenteStore',

@@ -938,6 +938,10 @@ public interface ParticularValidatorApi {
 
 	Boolean esGastoDestinatarioPropietario(String numGasto);	
 	
+	Boolean existeFasePublicacion(String fasePublicacion);
+	
+	Boolean existeSubfasePublicacion(String subfasePublicacion);
+
 	/**
 	 * @param numActivo
 	 * @return devuelve true si el activo se encuentra incluido en una agrupacion tipo proyecto
@@ -969,7 +973,21 @@ public interface ParticularValidatorApi {
 	public Boolean activoConRelacionExpedienteComercial(String numExpediente, String numActivo);
 
 	Boolean esExpedienteVenta(String numExpediente);
+	
+	/**
+	 * @param codSubFasePublicacion
+	 * @param codFasePublicacion
+	 * @return true si la subfase pertenece a la fase de publicación
+	 */
+	public Boolean perteneceSubfaseAFasePublicacion(String codSubFasePublicacion, String codFasePublicacion);
 
-	Boolean esExpedienteValido(String numExpediente);
+	Boolean esExpedienteValidoFirmado(String numExpediente);
 
+	Boolean esExpedienteValidoReservado(String numExpediente);
+
+	Boolean esExpedienteValidoVendido(String numExpediente);
+
+	Boolean esExpedienteValidoAnulado(String numExpediente);
+
+	Boolean esExpedienteValidoAprobado(String numExpediente);
 }

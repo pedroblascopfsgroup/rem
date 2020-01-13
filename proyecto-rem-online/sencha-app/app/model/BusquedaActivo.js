@@ -113,6 +113,12 @@ Ext.define('HreRem.model.BusquedaActivo', {
     		},
     		{
     			name: 'tipoGestorCodigo'
+    		},
+    		{
+    			name: 'fasePublicacionDescripcion'
+    		},
+    		{
+    			name: 'subFasePublicacionDescripcion'
     		}
     ] 
     

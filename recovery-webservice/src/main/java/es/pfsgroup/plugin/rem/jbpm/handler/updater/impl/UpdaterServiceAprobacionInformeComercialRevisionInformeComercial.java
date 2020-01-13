@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.activo.publicacion.dao.HistoricoFasePublicacionActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -25,8 +27,12 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.notificacion.NotificationActivoManager;
 
 @Component
 public class UpdaterServiceAprobacionInformeComercialRevisionInformeComercial implements UpdaterService {
@@ -49,7 +55,11 @@ public class UpdaterServiceAprobacionInformeComercialRevisionInformeComercial im
     @Resource
     private MessageService messageService;
     
+   @Autowired
+   private HistoricoFasePublicacionActivoDao historicoFasePublicacionActivoDao;
    
+   @Autowired
+   private NotificationActivoManager notificationActivoManager;
     
     
     private static final String COMBO_ACEPTACION = "comboAceptacion";
@@ -86,7 +96,27 @@ public class UpdaterServiceAprobacionInformeComercialRevisionInformeComercial im
 		}
 
 		// Acepta / Rechaza el I.C.
+		HistoricoFasePublicacionActivo histFasePub = historicoFasePublicacionActivoDao.getHistoricoFasesPublicacionActivoActualById(activo.getId());
+		
+		if(histFasePub != null) {
+			histFasePub.setFechaFin(new Date());
+			genericDao.save(HistoricoFasePublicacionActivo.class, histFasePub);
+		}
+		
+		Filter faseFiltro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDFasePublicacion.CODIGO_FASE_III);
+		DDFasePublicacion faseTres = genericDao.get(DDFasePublicacion.class, faseFiltro);
+		
 		if(checkAcepta){
+			
+			//nueva fase en estado clasificado
+			HistoricoFasePublicacionActivo nuevaFase = new HistoricoFasePublicacionActivo();
+			nuevaFase.setActivo(activo);
+			nuevaFase.setUsuario(genericAdapter.getUsuarioLogado());
+			nuevaFase.setFasePublicacion(faseTres);
+			nuevaFase.setSubFasePublicacion(genericDao.get(DDSubfasePublicacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubfasePublicacion.CODIGO_CLASIFICADO)));
+			nuevaFase.setFechaInicio(new Date());
+			
+			genericDao.save(HistoricoFasePublicacionActivo.class, nuevaFase);
 			
 			//Si acepta el informe comercial, hay que cambiar el informe comercial, aunque no se continue con el proceso de publicación.
 			// Consideracion de datos iguales entre activo e I.C.
@@ -126,6 +156,8 @@ public class UpdaterServiceAprobacionInformeComercialRevisionInformeComercial im
 				// No se cambian datos, se lanza siguiente tarea de correccion I.C.
 			}
 			
+			//cambiamos de fase
+			
 		}else{
 				// Ha rechazado I.C.
 				estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_RECHAZO);
@@ -139,6 +171,45 @@ public class UpdaterServiceAprobacionInformeComercialRevisionInformeComercial im
 				// activo.setFechaPublicable(null);
 				
 				// Se termina el tramite
+				
+				//SE ENVIA CORREO NOTIFICACION
+				
+				
+				if(!Checks.esNulo(activo)) {
+					String asunto = "Revisar el informe comercial enviado del activo "+activo.getNumActivo();
+					String cuerpo = "";
+					ArrayList<String> mailsPara = new ArrayList<String>();
+					ArrayList<String> mailsCC = new ArrayList<String>();
+					if(!Checks.esNulo(histFasePub)) {
+						
+						if(DDFasePublicacion.CODIGO_FASE_III.equals(histFasePub.getFasePublicacion().getCodigo())) {
+							
+							HistoricoFasePublicacionActivo nuevaFase = new HistoricoFasePublicacionActivo();
+							Filter subfaseFiltro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubfasePublicacion.CODIGO_DEVUELTO);
+							DDSubfasePublicacion subfaseDevuelto = genericDao.get(DDSubfasePublicacion.class, subfaseFiltro);
+							
+							nuevaFase.setActivo(activo);
+							nuevaFase.setUsuario(genericAdapter.getUsuarioLogado());
+							nuevaFase.setFasePublicacion(faseTres);
+							nuevaFase.setSubFasePublicacion(subfaseDevuelto);
+							nuevaFase.setFechaInicio(new Date());
+							
+							genericDao.save(HistoricoFasePublicacionActivo.class, nuevaFase);
+						}
+						
+						cuerpo = String.format("El informe comercial correspondiente al activo "+activo.getNumActivo()
+						+" ha sido rechazado, por lo que, rogamos que lo revise, y realice las modificaciones necesarias para subsanarlo. Posteriormente, proceda de nuevo a su envío.");
+						
+						if(!Checks.esNulo(activo.getInfoComercial()) 
+								&& !Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
+							mailsPara.add(activo.getInfoComercial().getMediadorInforme().getEmail());
+						}
+						
+						if(!Checks.estaVacio(mailsPara) || !Checks.estaVacio(mailsCC)) {
+							notificationActivoManager.sendMailFasePublicacion(activo, asunto,cuerpo,mailsPara,mailsCC);
+						}
+					}
+				}
 		}
 		
 		

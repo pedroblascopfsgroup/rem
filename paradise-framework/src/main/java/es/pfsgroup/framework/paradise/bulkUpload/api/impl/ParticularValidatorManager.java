@@ -3937,6 +3937,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean existeFasePublicacion(String fasePublicacion) {
+		if(Checks.esNulo(fasePublicacion) || !StringUtils.isAlphanumeric(fasePublicacion))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_FSP_FASE_PUBLICACION WHERE"
+				+ "		 	DD_FSP_CODIGO ='"+fasePublicacion+"' "
+				+ "		 	AND BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
 	public Boolean activoEnAgrupacionProyecto(String numActivo) {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(AGR.AGR_ID) FROM ACT_AGR_AGRUPACION AGR " +
 				" INNER JOIN DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.DD_TAG_CODIGO = '04' " +
@@ -3949,7 +3960,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				" AND AGA.BORRADO = 0");
 
 		return Integer.valueOf(resultado) > 0;
-	};
+	}
 
 	@Override
 	public Boolean existeTipoDoc(String codTipoDoc) {
@@ -3961,10 +3972,30 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean existeSubfasePublicacion(String subfasePublicacion) {
+		if(Checks.esNulo(subfasePublicacion) || !StringUtils.isAlphanumeric(subfasePublicacion))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "	     FROM DD_SFP_SUBFASE_PUBLICACION WHERE"
+				+ "	     DD_SFP_CODIGO ='"+subfasePublicacion+"' "
+				+ "      AND BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	@Override
+	public Boolean perteneceSubfaseAFasePublicacion(String codSubFasePublicacion, String codFasePublicacion) {
+		if (Checks.esNulo(codSubFasePublicacion) || Checks.esNulo(codFasePublicacion)) return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_FSP_FASE_PUBLICACION FSP "
+				+ " JOIN DD_SFP_SUBFASE_PUBLICACION SFP ON SFP.DD_FSP_ID = FSP.DD_FSP_ID"
+				+ " WHERE FSP.DD_FSP_CODIGO = '" + codFasePublicacion + "' "
+				+ " AND SFP.DD_SFP_CODIGO = '" + codSubFasePublicacion + "'"
+				+ " AND FSP.BORRADO = 0 AND SFP.BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	@Override
 	public Boolean existeEstadoDocumento(String codEstadoDoc) {
 		if (Checks.esNulo(codEstadoDoc)) return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_EDC_ESTADO_DOCUMENTO "
-				+" WHERE DD_EDC_CODIGO = '" + codEstadoDoc +"'");
+				+ " WHERE DD_EDC_CODIGO = '" + codEstadoDoc +"'");
 		return !"0".equals(resultado);
 	}
 	
@@ -3972,7 +4003,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	public Boolean existeCalificacionEnergetica(String codCE) {
 		if (Checks.esNulo(codCE)) return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_TCE_TIPO_CALIF_ENERGETICA "
-				+" WHERE DD_TCE_CODIGO = '" + codCE +"'");
+				+ " WHERE DD_TCE_CODIGO = '" + codCE +"'");
 		return !"0".equals(resultado);
 	}
 
@@ -3980,8 +4011,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	public Boolean esDocumentoCEE(String codDocumento) {
 		if (Checks.esNulo(codDocumento)) return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM DD_TPD_TIPO_DOCUMENTO "
-				+" WHERE DD_TPD_CODIGO =  '"+ codDocumento + "'"
-				+ "AND DD_TPD_CODIGO IN ('25')");
+				+ " WHERE DD_TPD_CODIGO =  '"+ codDocumento + "'"
+				+ " AND DD_TPD_CODIGO IN ('25')");
 		return !"0".equals(resultado);
 	}
 	
@@ -4072,17 +4103,79 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
-	public Boolean esExpedienteValido(String numExpediente) {
+	public Boolean esExpedienteValidoAprobado(String numExpediente) {
 		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
 			return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
 				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
-				+"		AND ECO.DD_EEC_ID NOT IN (SELECT EEC.DD_EEC_ID"
+				+"		AND ECO.DD_EEC_ID IN (SELECT EEC.DD_EEC_ID"
 				+"		FROM DD_EEC_EST_EXP_COMERCIAL EEC"
-				+"		WHERE EEC.DD_EEC_CODIGO IN ('02','03','06','08','11'))");
+				+"		WHERE EEC.DD_EEC_CODIGO IN ('11'))");
 
 		return "1".equals(resultado);
 	}
+	
+	
+	//---------------------------------------------------------------------
+	@Override
+	public Boolean esExpedienteValidoFirmado(String numExpediente) {
+		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
+				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
+				+"		AND ECO.DD_EEC_ID IN (SELECT EEC.DD_EEC_ID"
+				+"		FROM DD_EEC_EST_EXP_COMERCIAL EEC"
+				+"		WHERE EEC.DD_EEC_CODIGO IN ('03'))");
+
+		return "1".equals(resultado);
+	}
+	@Override
+	public Boolean esExpedienteValidoReservado(String numExpediente) {
+		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
+				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
+				+"		AND ECO.DD_EEC_ID IN (SELECT EEC.DD_EEC_ID"
+				+"		FROM DD_EEC_EST_EXP_COMERCIAL EEC"
+				+"		WHERE EEC.DD_EEC_CODIGO IN ('06'))");
+
+		return "1".equals(resultado);
+	}
+	@Override
+	public Boolean esExpedienteValidoVendido(String numExpediente) {
+		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
+				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
+				+"		AND ECO.DD_EEC_ID IN (SELECT EEC.DD_EEC_ID"
+				+"		FROM DD_EEC_EST_EXP_COMERCIAL EEC"
+				+"		WHERE EEC.DD_EEC_CODIGO IN ('08'))");
+
+		return "1".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esExpedienteValidoAnulado(String numExpediente) {
+		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
+				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
+				+"		AND ECO.DD_EEC_ID IN (SELECT EEC.DD_EEC_ID"
+				+"		FROM DD_EEC_EST_EXP_COMERCIAL EEC"
+				+"		WHERE EEC.DD_EEC_CODIGO IN ('02'))");
+
+		return "1".equals(resultado);
+	}
+	
+	//-------------------------------------------------------------------------
 }

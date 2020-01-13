@@ -29,6 +29,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 
@@ -102,6 +103,10 @@ public class ActivoPlusvalia implements Serializable, Auditable {
    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
    private List<AdjuntoPlusvalias> adjuntos;
 	
+	@JoinColumn(name = "DD_EGP_ID")  
+    @ManyToOne(fetch = FetchType.LAZY)
+   	private DDEstadoGestionPlusv estadoGestion;
+   
 	@Version
 	private Long version;
 
@@ -260,6 +265,13 @@ public class ActivoPlusvalia implements Serializable, Auditable {
 	       }
 	       return null;
 	   }
-	
+
+	public DDEstadoGestionPlusv getEstadoGestion() {
+		return estadoGestion;
+	}
+
+	public void setEstadoGestion(DDEstadoGestionPlusv estadoGestion) {
+		this.estadoGestion = estadoGestion;
+	}	 
 }
 	

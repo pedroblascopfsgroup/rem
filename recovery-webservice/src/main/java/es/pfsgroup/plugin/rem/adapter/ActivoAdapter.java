@@ -197,6 +197,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
+import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
@@ -867,6 +869,7 @@ public class ActivoAdapter {
 								beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo",
 										activoCarga.getEstadoCarga().getCodigo());								
 								if (!Checks.esNulo(activoCarga.getSubestadoCarga())){
+
 								    cargaDto.setSubestadoCodigo(activoCarga.getSubestadoCarga().getCodigo());
 								    cargaDto.setSubestadoDescripcion(activoCarga.getSubestadoCarga().getDescripcion());
 								}else {
@@ -2210,9 +2213,16 @@ public class ActivoAdapter {
 			try {
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "id", tarea.getTareaPadre().getId());
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "idTareaExterna", tarea.getId());
-				beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea",
-						tarea.getTareaProcedimiento().getDescripcion());
-			
+				if(DDCartera.CODIGO_CARTERA_THIRD_PARTY.equalsIgnoreCase(tramite.getActivo().getCartera().getCodigo()) && 
+						DDSubcartera.CODIGO_OMEGA.equals(tramite.getActivo().getSubcartera().getCodigo()) && 
+						DDTareaDestinoSalto.CODIGO_RESULTADO_PBC.equalsIgnoreCase(tarea.getTareaProcedimiento().getCodigo())) {
+					beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", "PBC Venta");
+				} else {
+					beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", tarea.getTareaProcedimiento().getDescripcion());
+				}
+				// beanUtilNotNull.copyProperty(dtoListadoTareas, "idTramite",
+				// value);
+
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "fechaInicio", tarea.getTareaPadre().getFechaInicio());
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "fechaVenc", tarea.getTareaPadre().getFechaVenc());
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "fechaFin", tarea.getTareaPadre().getFechaFin());
@@ -2260,10 +2270,21 @@ public class ActivoAdapter {
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "id", tareaActivo.getId());
 				if (!Checks.esNulo(tareaExterna)) {
 					beanUtilNotNull.copyProperty(dtoListadoTareas, "idTareaExterna", tareaExterna.getId());
-					beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea",
-							tareaExterna.getTareaProcedimiento().getDescripcion());
+					if(DDCartera.CODIGO_CARTERA_THIRD_PARTY.equalsIgnoreCase(tareaActivo.getActivo().getCartera().getCodigo()) && 
+							DDSubcartera.CODIGO_OMEGA.equals(tareaActivo.getActivo().getSubcartera().getCodigo()) && 
+							DDTareaDestinoSalto.CODIGO_RESULTADO_PBC.equalsIgnoreCase(tareaExterna.getTareaProcedimiento().getCodigo())) {
+						beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", "PBC Venta");
+					} else {
+						beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", tareaExterna.getTareaProcedimiento().getDescripcion());
+					}
 				} else {
-					beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", tareaActivo.getDescripcionTarea());
+					if(DDCartera.CODIGO_CARTERA_THIRD_PARTY.equalsIgnoreCase(tareaActivo.getActivo().getCartera().getCodigo()) && 
+							DDSubcartera.CODIGO_OMEGA.equals(tareaActivo.getActivo().getSubcartera().getCodigo()) && 
+							DDTareaDestinoSalto.CODIGO_RESULTADO_PBC.equalsIgnoreCase(tareaActivo.getCodigoTarea())) {
+						beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", "PBC Venta");
+					} else {
+						beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTarea", tareaActivo.getDescripcionTarea());
+					}
 				}
 		
 				if (!Checks.esNulo(tareaExterna)) {
@@ -4467,6 +4488,18 @@ public class ActivoAdapter {
 	
 	public boolean isUnidadAlquilable (Long idActivo) {
 		return activoDao.isUnidadAlquilable(idActivo);
+	}
+	
+	public List<DDSiNo> getComboImpideVenta(String codEstadoCarga) {
+		List<DDSiNo> listaCombo = new ArrayList<DDSiNo>();
+		
+		if(Checks.esNulo(codEstadoCarga) || DDEstadoCarga.CODIGO_VIGENTE.equals(codEstadoCarga)) {
+			listaCombo = genericDao.getList(DDSiNo.class);
+		} else {
+			listaCombo = genericDao.getList(DDSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSiNo.NO));
+		}
+		
+		return listaCombo;
 	}	
 	
 	public Boolean deleteAdjuntoTributo(Long idRestTributo) {
@@ -4585,18 +4618,6 @@ public class ActivoAdapter {
 			}
 		}
 		return listaAdjuntos;
-	}
-	
-	public List<DDSiNo> getComboImpideVenta(String codEstadoCarga) {
-		List<DDSiNo> listaCombo = new ArrayList<DDSiNo>();
-		
-		if(Checks.esNulo(codEstadoCarga) || DDEstadoCarga.CODIGO_VIGENTE.equals(codEstadoCarga)) {
-			listaCombo = genericDao.getList(DDSiNo.class);
-		} else {
-			listaCombo = genericDao.getList(DDSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSiNo.NO));
-		}
-		
-		return listaCombo;
 	}
 
 	@Transactional(readOnly = false)

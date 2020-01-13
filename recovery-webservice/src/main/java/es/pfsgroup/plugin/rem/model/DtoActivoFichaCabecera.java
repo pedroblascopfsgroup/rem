@@ -269,8 +269,10 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	// Es tramitable bankia
 	private Boolean tramitable;
 
-	private String nombreMediador; 
-
+	private String nombreMediador;
+	private String sociedadPagoAnterior; 
+	private Boolean visualizarTabFasesPublicacion;
+	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
 	}
@@ -2040,6 +2042,13 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.nombreMediador = nombreMediador;
 	}
 
+	public Boolean getVisualizarTabFasesPublicacion() {
+		return visualizarTabFasesPublicacion;
+	}
+
+	public void setVisualizarTabFasesPublicacion(Boolean visualizarTabFasesPublicacion) {
+		this.visualizarTabFasesPublicacion = visualizarTabFasesPublicacion;
+	}
 	public Boolean getTramitable() {
 		return tramitable;
 	}
@@ -2054,6 +2063,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setEsSarebProyecto(Boolean esSarebProyecto) {
 		this.esSarebProyecto = esSarebProyecto;
+	}
+
+	public String getSociedadPagoAnterior() {
+		return sociedadPagoAnterior;
+	}
+
+	public void setSociedadPagoAnterior(String sociedadPagoAnterior) {
+		this.sociedadPagoAnterior = sociedadPagoAnterior;
 	}
 	
 }

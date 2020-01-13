@@ -106,8 +106,27 @@ Ext.define('HreRem.view.activos.detalle.PlusvaliaActivo', {
 	            },
 	            allowBlank: false
 	        }, {
+	        	xtype : 'comboboxfieldbase',
+	        	name :'comboEstadoGestPlusv',
+	        	referende:'comboEstadoGestPlusv',
+	            fieldLabel : HreRem.i18n('fieldlabel.plusvalia.estado.estion'),
+	            bind : {
+	                store : '{comboEstadoGestionPlusvalia}',
+	                value : '{plusvalia.estadoGestion}',
+	                readOnly: '{checkEditEstadoGestionPlusvalia}'
+	            },
+	            listeners: {
+	            	expand: function(){
+	            	var me = this;
+	            		me.lookupController().doFilterEstadoGestionByUserRol(me);
+	            	},
+	            	change: 'onChangeComboGestPlusv'
+	            }
+	        }, {
 	        	xtype: 'textareafieldbase',
+	        	reference:'plusvObservacionesGestion',
             	labelWidth: 200,
+            	disabled: true,
             	rowspan: 5,
             	height: 130,
             	labelAlign: 'top',

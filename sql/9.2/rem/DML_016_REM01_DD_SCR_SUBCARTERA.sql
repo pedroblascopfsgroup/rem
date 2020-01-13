@@ -10,7 +10,7 @@
 --## Finalidad: Script que añade en DD_CRA_CARTERA los datos añadidos en T_ARRAY_DATA
 --## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Versión inicial 
+--##        0.1 Versión inicial
 --##########################################
 --*/
 

@@ -265,7 +265,44 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 						remoteUrl: 'generic/getDiccionario',
 						extraParams: {diccionario: 'motivoAutorizacionTramitacion'}
 					}
-			}
-     }
+			},
+			
+			comboEstadoPublicacionVenta: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'estadosPublicacion'}
+				}
+			
+			},
+		
+			comboEstadoPublicacionAlquiler: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'estadosPublicacionAlquiler'}
+				}
+     		},
+     		
+	     	comboMotivoOcultacion: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'motivosOcultacion'}
+				}
+	     	},
+     		comboSituacionPagoAnterior: {
+    			model: 'HreRem.model.ComboBase',
+    			proxy: {
+    				type: 'uxproxy',
+    				remoteUrl: 'generic/getDiccionario',
+    				extraParams: {diccionario: 'situacionPagoAnterior'}
+    			}
+     		}
+     		
+    }
 
 });

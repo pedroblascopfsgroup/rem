@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20191227
+--## FECHA_CREACION=20190113
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-8888
+--## INCIDENCIA_LINK=HREOS-9047
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -32,7 +32,7 @@ CREATE OR REPLACE PROCEDURE SP_PORTALES_ACTIVO (
 BEGIN
    PL_OUTPUT := PL_OUTPUT || '[INICIO]' || CHR(10);
 
-	IF V_USUARIO IS NULL OR P_ACT_ID IS NOT NULL AND P_AGR_ID IS NOT NULL THEN
+	IF V_USUARIO IS NULL OR P_ACT_ID IS NOT NULL AND P_AGR_ID IS NOT NULL OR P_ACT_ID IS NULL AND P_AGR_ID IS NULL AND V_USUARIO IS NOT NULL THEN
 		PL_OUTPUT := PL_OUTPUT || 'KO. No se ha podido completar la operativa' || CHR(10);
     ELSIF P_ACT_ID IS NOT NULL AND P_AGR_ID IS NULL THEN --ACTIVOS
         EXECUTE IMMEDIATE 'SELECT VPA.DD_POR_ID FROM '||V_ESQUEMA||'.V_PORTALES_ACTIVO VPA WHERE VPA.ACT_ID = '||P_ACT_ID INTO V_POR_V;
@@ -205,8 +205,9 @@ BEGIN
         
         PL_OUTPUT := PL_OUTPUT || 'Se ha cambiado el canal de publicación para ' ||SQL%ROWCOUNT|| ' activos' || CHR(10);
         
-        PL_OUTPUT := PL_OUTPUT || 'OK. Se han realizado los cambios de portal' || CHR(10);         
-       
+        PL_OUTPUT := PL_OUTPUT || 'OK. Se han realizado los cambios de portal' || CHR(10);    
+    ELSE
+	PL_OUTPUT := PL_OUTPUT || 'OK. Sin cambios que realizar' || CHR(10); 
     END IF;
 
     COMMIT;

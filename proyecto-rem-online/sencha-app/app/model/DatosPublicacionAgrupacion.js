@@ -230,7 +230,27 @@ Ext.define('HreRem.model.DatosPublicacionAgrupacion', {
             },
     		{
     			name: 'comboOtro'
-    		}
+    		},
+    		{
+            	name:'fechaUltimaPublicacionMin',
+                type:'date',
+                dateFormat: 'c'
+            },
+            {
+            	name:'fechaPrimeraPublicacionMin',
+                type:'date',
+                dateFormat: 'c'
+            },
+            {
+            	name:'fechaUltimaPublicacionMay',
+                type:'date',
+                dateFormat: 'c'
+            },
+            {
+            	name:'fechaPrimeraPublicacionMay',
+                type:'date',
+                dateFormat: 'c'
+            }
 	 	],
     
 	proxy: {

@@ -916,19 +916,18 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								defaultType: 'textfieldbase',
 								title: HreRem.i18n('title.publicacion.minorista'),
 								margin: '0 10px 10px 0',
-								bind: {
-									hidden: '{!activo.incluyeDestinoComercialVenta}'
-								},
 								items:
 								[
 									{
-										fieldLabel: HreRem.i18n('title.publicaciones.estados.totalDiasPublicadoUltimaPublicacion'),
-										bind: '{datospublicacionactivo.totalDiasPublicadoVenta}',
+										xtype: 'datefieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.fecha.primera.publicacion'),
+										bind: '{datospublicacionactivo.fechaPrimeraPublicacionMin}',
 										readOnly: true
 									},
 									{
-										fieldLabel: HreRem.i18n('title.publicaciones.estado.portalesExternos'),
-										bind: '{activoCondicionantesDisponibilidad.portalesExternosDescripcion}',
+										xtype: 'datefieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.fecha.ultima.publicacion'),
+										bind: '{datospublicacionactivo.fechaUltimaPublicacionMin}',
 										readOnly: true
 									}
 									
@@ -938,19 +937,18 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								xtype: 'fieldsettable',
 								defaultType: 'textfieldbase',
 								title: HreRem.i18n('title.publicacion.mayorista'),
-								bind: {
-									hidden: '{!activo.tipoComercializacionVenta}'
-								},
 								items:
 								[
 									{
-										fieldLabel: HreRem.i18n('title.publicaciones.estados.totalDiasPublicadoUltimaPublicacion'),
-										bind: '{datospublicacionactivo.totalDiasPublicadoVenta}',
+										xtype: 'datefieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.fecha.primera.publicacion'),
+										bind: '{datospublicacionactivo.fechaPrimeraPublicacionMay}',
 										readOnly: true
 									},
 									{
-										fieldLabel: HreRem.i18n('title.publicaciones.estado.portalesExternos'),
-										bind: '{activoCondicionantesDisponibilidad.portalesExternosDescripcion}',
+										xtype: 'datefieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.fecha.ultima.publicacion'),
+										bind: '{datospublicacionactivo.fechaUltimaPublicacionMay}',
 										readOnly: true
 									}
 									

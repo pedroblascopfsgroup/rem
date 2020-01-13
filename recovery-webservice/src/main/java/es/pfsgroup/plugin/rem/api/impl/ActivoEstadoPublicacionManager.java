@@ -69,6 +69,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
+import es.pfsgroup.plugin.rem.model.VFechasPubCanales;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDAdecuacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
@@ -208,7 +209,22 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				dto.setDeshabilitarCheckPublicarAlquiler(true);
 				
 			}
-			
+		}
+		
+		VFechasPubCanales canal = genericDao.get(VFechasPubCanales.class, genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo));
+		if ( canal != null ) {
+			if ( canal.getFechaPrimeraPublicacionMin() != null ) {
+				dto.setFechaPrimeraPublicacionMin(canal.getFechaPrimeraPublicacionMin());
+			}
+			if ( canal.getFechaUltimaPublicacionMin() != null ) {
+				dto.setFechaUltimaPublicacionMin(canal.getFechaUltimaPublicacionMin());
+			}
+			if ( canal.getFechaPrimeraPublicacionMay() != null ) {
+				dto.setFechaPrimeraPublicacionMay(canal.getFechaPrimeraPublicacionMay());
+			}
+			if ( canal.getFechaUltimaPublicacionMay() != null ) {
+				dto.setFechaUltimaPublicacionMay(canal.getFechaUltimaPublicacionMay());
+			}
 		}
     	return dto;
 	}

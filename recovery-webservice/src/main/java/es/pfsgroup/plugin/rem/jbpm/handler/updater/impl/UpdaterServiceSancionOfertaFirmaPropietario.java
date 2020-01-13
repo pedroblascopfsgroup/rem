@@ -56,6 +56,7 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
     private static final String FECHA_FIRMA = "fechaFirma";
     private static final String MOTIVO_ANULACION = "motivoAnulacion";
     private static final String CODIGO_TRAMITE_FINALIZADO = "11";
+    private static final String CODIGO_SUBCARTERA_OMEGA = "65";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -63,6 +64,7 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 
 		
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+		boolean pasaAVendido = false;
 		if(!Checks.esNulo(ofertaAceptada)){
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 		
@@ -71,11 +73,11 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 				if(COMBO_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
 				{
 					if(DDSiNo.SI.equals(valor.getValor())){
-						//Expediente se marca a vendido
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.VENDIDO);
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 						expediente.setEstado(estado);
-						genericDao.save(ExpedienteComercial.class, expediente);
+						pasaAVendido = true;
+						
 						
 						//Finaliza el trámite
 						Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_TRAMITE_FINALIZADO);
@@ -88,7 +90,6 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 							
 							PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(activo.getId());
 							perimetro.setAplicaComercializar(0);
-							//TODO: Cuando esté el motivo de no comercialización como texto libre, poner el texto: "Vendido".
 							genericDao.save(PerimetroActivo.class, perimetro);
 							
 							//Marcamos el activo como vendido
@@ -97,7 +98,6 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 							
 							activo.setBloqueoPrecioFechaIni(new Date());
 							
-							//genericDao.save(Activo.class, activo);
 							activoApi.saveOrUpdate(activo);
 						}
 						
@@ -140,7 +140,6 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 					try {
 						expediente.setFechaVenta(ft.parse(valor.getValor()));
 					} catch (ParseException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -148,13 +147,14 @@ public class UpdaterServiceSancionOfertaFirmaPropietario implements UpdaterServi
 				if(MOTIVO_ANULACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
 					// Se incluye un motivo de anulacion del expediente, si se indico en la tarea
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());
-					DDMotivoAnulacionExpediente motivoAnulacion = (DDMotivoAnulacionExpediente) genericDao.get(DDMotivoAnulacionExpediente.class, filtro);
+					DDMotivoAnulacionExpediente motivoAnulacion =  genericDao.get(DDMotivoAnulacionExpediente.class, filtro);
 					expediente.setMotivoAnulacion(motivoAnulacion);
 				}
 				
-				genericDao.save(ExpedienteComercial.class, expediente);
-				genericDao.save(Oferta.class, ofertaAceptada);
+				
 			}
+			expedienteComercialApi.update(expediente, pasaAVendido);
+			genericDao.save(Oferta.class, ofertaAceptada);
 		}
 
 

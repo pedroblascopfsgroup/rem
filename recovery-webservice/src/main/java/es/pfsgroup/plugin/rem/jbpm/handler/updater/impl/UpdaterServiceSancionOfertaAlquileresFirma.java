@@ -108,7 +108,7 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 			}
 		}
 		activoDao.saveOrUpdate(activo);
-		expedienteComercialApi.update(expedienteComercial);
+		expedienteComercialApi.update(expedienteComercial,false);
 		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId(),true);
 		/////////////////////////////////////////////////////////////////////////////
 		if(activoDao.isActivoMatriz(activo.getId())){

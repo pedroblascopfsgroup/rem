@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
@@ -67,6 +68,7 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
     public static final String CODIGO_T013_RESULTADO_PBC = "T013_ResultadoPBC";
     public static final String CODIGO_T017_PBC_VENTA = "T017_PBCVenta";
     private static final String CODIGO_ANULACION_IRREGULARIDADES = "601";
+    private static final String CODIGO_SUBCARTERA_OMEGA = "65";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -157,6 +159,22 @@ public class UpdaterServiceSancionOfertaResultadoPBC implements UpdaterService {
 								}
 								
 							} else {
+								String codSubCartera = null;
+								if (!Checks.esNulo(activo.getSubcartera())) {
+									codSubCartera = activo.getSubcartera().getCodigo();
+								}
+								if (CODIGO_SUBCARTERA_OMEGA.equals(codSubCartera)) {
+									Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
+									DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+									expediente.setEstado(estado);
+									Oferta oferta = expediente.getOferta();
+									List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
+									for (Oferta ofertaAux : listaOfertas) {
+										if (!ofertaAux.getId().equals(oferta.getId()) && !DDEstadoOferta.CODIGO_RECHAZADA.equals(ofertaAux.getEstadoOferta().getCodigo())) {
+											ofertaApi.congelarOferta(ofertaAux);
+										}
+									}
+								}
 								expediente.setEstadoPbc(1);
 							}
 							genericDao.save(ExpedienteComercial.class, expediente);

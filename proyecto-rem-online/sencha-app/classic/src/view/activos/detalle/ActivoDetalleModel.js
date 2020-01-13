@@ -8,8 +8,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.OfertaActivo', 'HreRem.model.PropuestaActivosVinculados', 'HreRem.model.HistoricoMediadorModel','HreRem.model.AdjuntoActivoPromocion',
     'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ActivoPatrimonio', 'HreRem.model.HistoricoAdecuacionesPatrimonioModel',
     'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados','HreRem.model.CalificacionNegativaModel',
-    'HreRem.model.HistoricoTramtitacionTituloModel','HreRem.model.ListaActivoGrid','HreRem.model.AdjuntoActivoAgrupacion','HreRem.model.AdjuntoActivoProyecto',
-    'HreRem.model.DocumentacionAdministrativa'],
+    'HreRem.model.HistoricoTramtitacionTituloModel', 'HreRem.model.HistoricoGestionGrid', 'HreRem.model.ListaActivoGrid', 'HreRem.model.HistoricoFasesDePublicacion',
+    'HreRem.model.AdjuntoActivoAgrupacion','HreRem.model.AdjuntoActivoProyecto','HreRem.model.DocumentacionAdministrativa'],
 
     data: {
     	activo: null,
@@ -20,6 +20,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
     formulas: {
 	     
+    	esEditableAsistenciaJuntaObligatoria: function(get){
+    		var isEditable = $AU.userIsRol('HAYAADM') || $AU.userIsRol('HAYASADM') || $AU.userIsRol('HAYAGESTADMT') || $AU.userIsRol('HAYASUPER');
+    		return isEditable;
+    	},
+    	
+    	
     	/**
     	 * Formula para generar el objeto center que servirá para cargar el componente gmap
     	 * @param {} get
@@ -837,12 +843,45 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    		}
     		}
     		return false;
+    	},
+    	// a�adimos tipo comercial y tipo restringida no tramitar oferta
+    	usuarioTieneFuncionTramitarOferta: function(get){
+    		var me = this;
+    		if ( CONST.CARTERA['BANKIA'] === me.get('activo.cartera')){
+    			var esTramitable = me.get('activo.tramitable');
+        		var comercial =	me.get('activo.pertenceAgrupacionComercial');
+        		var restringida = me.get('activo.pertenceAgrupacionRestringida');
+        		var funcion = $AU.userHasFunction('AUTORIZAR_TRAMITACION_OFERTA');
+        		if (comercial || restringida || !funcion )	
+        			return true;
+    		}else{
+    			if(!esTramitable){
+    				return !funcion;
+    			}
+    			return true;
+    		}
+    	}, 
+    	
+    	checkEditEstadoGestionPlusvalia: function(get) {
+    		var estadoGestion = get('plusvalia.estadoGestion');    	
+    		var usuariosPermitidosAdmin = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMINISTRACION']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMINISTRACION']) || $AU.userIsRol(CONST.PERFILES['GESTIAFORM']);
+    		if (usuariosPermitidosAdmin) {
+    			return !usuariosPermitidosAdmin;
+    		}
+    		if(Ext.isEmpty(estadoGestion)){    			
+    			return true;
+    		} else {
+    			if(estadoGestion == CONST.DD_ESTADO_GEST_PLUVS["EN_CURSO"]) {
+         			return false;
+         		} else {
+         			return true;
+         		}
+    		}
     	}
-
-    
-	 },
-		
-    stores: {
+    	
+	 }, 
+	 
+	 stores: {
     		
     		comboProvincia: {
 				model: 'HreRem.model.ComboBase',
@@ -1726,6 +1765,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				autoLoad: true
 			},
 			
+			storeHistoricoDiarioDeGestion:{
+    			pageSize: $AC.getDefaultPageSize(),
+    			model: 'HreRem.model.HistoricoGestionGrid',
+    			proxy: {
+    				type: 'uxproxy',
+    				remoteUrl: 'activo/getHistoricoDiarioGestion',
+    				extraParams: {id: '{activo.id}'}
+    			}
+    		},
+			
 		comboSituacionComercial: {
 			model: 'HreRem.model.DDBase',
 			proxy: {
@@ -2039,7 +2088,31 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 				}
 		},
-
+		comboEstadoLocalizacion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoEstadoLoc'}
+			}
+		},
+		comboSubestadoGestion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getSubestadoGestion',
+				extraParams: {idActivo: '{activo.id}'}
+			}
+		},
+		
+		comboSubestadoGestionFiltered: {
+			model: 'HreRem.model.DDBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboSubestadoGestionFiltered'
+			}
+		},
+		
 		comboAdecuacionAlquiler: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -2138,6 +2211,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
 		},
 		
+		comboEstadoGestionPlusvalia: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadoGestionPlusvalia'}
+			}
+		},
+		
 		comboSiNoDatosPerimetroApple: {
 			data : [	        	
 	        	{"codigo":"0", "descripcion":"No"},
@@ -2171,6 +2253,43 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {idActivo: '{activo.id}'}
 			},
 			autoLoad: true
+		},
+		
+		storeFasesDePublicacion: {
+			model: 'HreRem.model.DDBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'faseDePublicacion'}
+			},
+			autoLoad: true
+		},
+		
+		storeSubfasesDePublicacion: {
+			model: 'HreRem.model.DDBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboSubfase',
+				extraParams: {idActivo: '{activo.id}'}
+			}
+		},
+		
+		storeSubfasesDePublicacionFiltered: {
+			model: 'HreRem.model.DDBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboSubfaseFiltered'
+			}
+		},
+		
+		storeHistoricoFesesDePublicacion:{
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.HistoricoFasesDePublicacion',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getHistoricoFasesDePublicacionActivo',
+				extraParams: {id: '{activo.id}'}
+			}
 		}
 		
      }

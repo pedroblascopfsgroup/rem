@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=MIGUEL LOPEZ
---## FECHA_CREACION=20190926
+--## FECHA_CREACION=20191128
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-7349
@@ -23,6 +23,8 @@
 --##		    0.10 Vicente Martinez	  - HREOS-7249 - Correccion subida documentos Resolucion CES
 --##        0.11 Álvaro Valero      - HEROS-7348 - Añadida tarea Ratificación Comité CES
 --##		    0.12 Miguel Lopez 		  - HREOS-7349 - Añadir nuevo campo "Importe contraoferta ofertante" y cambiar el diccionario
+--##  		  0.13 Jin Li Hu 		    	- HREOS-7493 - Nueva tarea Resolución Divarian
+--##	    	0.14 Jin Li Hu     			- HREOS-7497 - Nueva tarea Resolución Arrow
 --##########################################
 --*/
 
@@ -77,7 +79,7 @@ SCOPE_TAREA NUMBER(16,0) := 0; --Vble. para seleccionar una tarea o todas
   **  17-   CIERRE ECONOMICO
   **  18-   RATIFICACION COMITE CES
   ************************************/
-  USUARIOCREAR VARCHAR(1000) := 'HEROS-7349';
+  USUARIOCREAR VARCHAR(1000) := 'HREOS-7497';
   
 -----------------DECLARACION DE LA TPO--------------------------
   type tpo_field is table of varchar(5000) index by VARCHAR2(64);
@@ -649,7 +651,7 @@ begin
   TAP(0).tap_field('TAP_CODIGO') := 'T017_DefinicionOferta';
   TAP(0).tap_field('TAP_VIEW') := NULL;
   TAP(0).tap_field('TAP_SCRIPT_VALIDACION') := 'checkImporteParticipacion() ? checkCamposComprador() ? checkCompradores() ? checkVendido() ? ''''El activo est&aacute; vendido'''' : checkComercializable() ? null : ''''El activo debe ser comercializable'''' : ''''Los compradores deben sumar el 100%'''' : ''''Es necesario cumplimentar todos los campos obligatorios de los compradores para avanzar la tarea.'''' : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente''''';
-  TAP(0).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'checkDepositoDespublicacionSubido() ? checkDepositoRelleno() ? existeAdjuntoUGCarteraValidacion("36", "E", "01") == null ? valores[''''T017_DefinicionOferta''''][''''comboConflicto''''] == DDSiNo.SI || valores[''''T017_DefinicionOferta''''][''''comboRiesgo''''] == DDSiNo.SI ? ''''El estado de la responsabilidad corporativa no es el correcto para poder avanzar.'''' : definicionOfertaT013(valores[''''T017_DefinicionOferta''''][''''comiteSuperior'''']) : existeAdjuntoUGCarteraValidacion("36", "E", "01") : ''''Es necesario rellenar el campo Dep&oacute;sito en la pesta&ntilde;a Condiciones.'''' : ''''Es necesario adjuntar sobre el Expediente Comercial, el documento Dep&oacute;sito para la despublicaci&oacute;n del activo.''''';
+  TAP(0).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'existeAdjuntoUGCarteraValidacion("36", "E", "01") == null ? valores[''''T017_DefinicionOferta''''][''''comboConflicto''''] == DDSiNo.SI || valores[''''T017_DefinicionOferta''''][''''comboRiesgo''''] == DDSiNo.SI ? ''''El estado de la responsabilidad corporativa no es el correcto para poder avanzar.'''' : definicionOfertaT013(valores[''''T017_DefinicionOferta''''][''''comiteSuperior'''']) : existeAdjuntoUGCarteraValidacion("36", "E", "01")';
   TAP(0).tap_field('TAP_SCRIPT_DECISION') := null;
   TAP(0).tap_field('DD_TPO_ID_BPM') := null;
   TAP(0).tap_field('TAP_SUPERVISOR') := 0;
@@ -832,7 +834,7 @@ begin
   TAP(1).tap_field('TAP_VIEW') := NULL;
   TAP(1).tap_field('TAP_SCRIPT_VALIDACION') := null;
   TAP(1).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := null;
-  TAP(1).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_AnalisisPM''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_APRUEBA ? ''''Aprueba'''': valores[''''T017_AnalisisPM''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_RECHAZA ? ''''Deniega'''' : ''''Contraoferta''''';
+  TAP(1).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_AnalisisPM''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_APRUEBA ? (esPopietarioArrow() ? ''''ApruebaArrow'''' : ''''ApruebaCES'''') : valores[''''T017_AnalisisPM''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_RECHAZA ? ''''Deniega'''' : ''''Contraoferta''''';
   TAP(1).tap_field('DD_TPO_ID_BPM') := null;
   TAP(1).tap_field('TAP_SUPERVISOR') := 0;
   TAP(1).tap_field('TAP_DESCRIPCION') := 'Análisis PM';
@@ -975,6 +977,7 @@ begin
     TFI_MAP(1).tfi_field_row(4).tfi_field('USUARIOBORRAR') := NULL;
     TFI_MAP(1).tfi_field_row(4).tfi_field('FECHABORRAR') := NULL;
     TFI_MAP(1).tfi_field_row(4).tfi_field('BORRADO') := 0;
+
 ----------------------------------------------------------------------------
 -------------------------------T017_ResolucionCES------------------------------
 ----------------------------TAP TAREA PROCEDIMIENTO-------------------------
@@ -1133,7 +1136,7 @@ begin
   TAP(3).tap_field('TAP_VIEW') := NULL;
   TAP(3).tap_field('TAP_SCRIPT_VALIDACION') := q'[checkImporteParticipacion() ? (checkCompradores() ? (checkVendido() ?	''El activo est&aacute; vendido'': (checkComercializable() ? (checkPoliticaCorporativa() ?	null : ''El estado de la pol&iacute;tica corporativa no es el correcto para poder avanzar.'') : ''El activo debe ser comercializable'') ) : ''Los compradores deben sumar el 100%'') : ''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente'']';
   TAP(3).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := q'[valores[''T017_RespuestaOfertantePM''][''comboRespuesta''] == DDRespuestaOfertante.CODIGO_RECHAZA ? null : respuestaOfertanteT013(valores[''T017_RespuestaOfertantePM''][''importeOfertante''])]';
-  TAP(3).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_RespuestaOfertantePM''''][''''comboRespuesta''''] == DDApruebaDeniega.CODIGO_APRUEBA ? ''''Aprueba'''' :  ''''Deniega'''' ';
+  TAP(3).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_RespuestaOfertantePM''''][''''comboRespuesta''''] == DDApruebaDeniega.CODIGO_APRUEBA ? (esPopietarioArrow() ? ''''ApruebaArrow'''' : ''''ApruebaCES'''') :  ''''Deniega'''' ';
   TAP(3).tap_field('DD_TPO_ID_BPM') := null;
   TAP(3).tap_field('TAP_SUPERVISOR') := 0;
   TAP(3).tap_field('TAP_DESCRIPCION') := 'Respuesta Ofertante PM';
@@ -1784,7 +1787,7 @@ begin
   TAP(9).tap_field('TAP_VIEW') := NULL;
   TAP(9).tap_field('TAP_SCRIPT_VALIDACION') := null;
   TAP(9).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'existeAdjuntoUGValidacion("63","E")';
-  TAP(9).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_RecomendCES''''][''''comboRespuesta''''] == DDApruebaDeniega.CODIGO_APRUEBA ? ''''Acepta'''': checkReservaFirmada() ?  ''''DeniegaConReserva'''' : ''''DeniegaSinReserva'''' ';
+  TAP(9).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_RecomendCES''''][''''comboRespuesta''''] == DDApruebaDeniega.CODIGO_APRUEBA ? (esPopietarioRemaining() || esPopietarioArrow() ? ''''AceptaArrowRemaining'''' : ''''Acepta'''') : checkReservaFirmada() ?  ''''DeniegaConReserva'''' : ''''DeniegaSinReserva'''' ';
   TAP(9).tap_field('DD_TPO_ID_BPM') := null;
   TAP(9).tap_field('TAP_SUPERVISOR') := 0;
   TAP(9).tap_field('TAP_DESCRIPCION') := 'Recomendación CES';
@@ -3067,6 +3070,278 @@ begin
     TFI_MAP(17).tfi_field_row(5).tfi_field('USUARIOBORRAR') := NULL;
     TFI_MAP(17).tfi_field_row(5).tfi_field('FECHABORRAR') := NULL;
     TFI_MAP(17).tfi_field_row(5).tfi_field('BORRADO') := 0;
+----------------------------------------------------------------------------
+-------------------------------T017_ResolucionDivarian------------------------------
+----------------------------TAP TAREA PROCEDIMIENTO-------------------------
+  TAP(17).tap_field('TAP_CODIGO') := 'T017_ResolucionDivarian';
+  TAP(17).tap_field('TAP_VIEW') := NULL;
+  TAP(17).tap_field('TAP_SCRIPT_VALIDACION') := null;
+  TAP(17).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'valores[''''T017_ResolucionDivarian''''][''''comboRespuesta''''] == DDApruebaDeniega.CODIGO_APRUEBA ? existeAdjuntoUGValidacion("23","E") : null';
+  TAP(17).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_ResolucionDivarian''''][''''comboRespuesta''''] == DDApruebaDeniega.CODIGO_APRUEBA ? ''''Acepta'''': checkReservaFirmada() ?  ''''DeniegaConReserva'''' : ''''DeniegaSinReservaONoExiste'''' ';
+  TAP(17).tap_field('DD_TPO_ID_BPM') := null;
+  TAP(17).tap_field('TAP_SUPERVISOR') := 0;
+  TAP(17).tap_field('TAP_DESCRIPCION') := 'Resolución Divarian';
+  TAP(17).tap_field('VERSION') := 0;
+  TAP(17).tap_field('USUARIOCREAR') := USUARIOCREAR;
+  TAP(17).tap_field('FECHACREAR') := SYSDATE;
+  TAP(17).tap_field('USUARIOMODIFICAR') := NULL;
+  TAP(17).tap_field('FECHAMODIFICAR') := NULL;
+  TAP(17).tap_field('USUARIOBORRAR') := NULL;
+  TAP(17).tap_field('FECHABORRAR') := NULL;
+  TAP(17).tap_field('BORRADO') := 0;
+  TAP(17).tap_field('TAP_ALERT_NO_RETORNO') := NULL;
+  TAP(17).tap_field('TAP_ALERT_VUELTA_ATRAS') := NULL;
+  TAP(17).tap_field('DD_FAP_ID') := NULL;
+  TAP(17).tap_field('TAP_AUTOPRORROGA') := 0;
+  TAP(17).tap_field('DTYPE') := 'EXTTareaProcedimiento';
+  TAP(17).tap_field('TAP_MAX_AUTOP') := 3;
+  V_SQL := 'SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = ' || is_string('GCOM');
+  EXECUTE IMMEDIATE V_SQL INTO TAP(17).tap_field('DD_TGE_ID');
+  V_SQL := 'SELECT DD_STA_ID FROM '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO = ' || is_string('811');
+  EXECUTE IMMEDIATE V_SQL INTO TAP(17).tap_field('DD_STA_ID');
+  TAP(17).tap_field('TAP_EVITAR_REORG') := NULL;
+  TAP(17).tap_field('DD_TSUP_ID') := NULL;
+  TAP(17).tap_field('TAP_BUCLE_BPM') := NULL;
+----------------------------------------------------------------------------
+----------------------PLAZOS_TAREAS_PLAZAS----------------------------------
+    PTP(17).ptp_field('DD_JUZ_ID') := null;
+    PTP(17).ptp_field('DD_PLA_ID') := null;
+    PTP(17).ptp_field('DD_PTP_PLAZO_SCRIPT') := '3*24*60*60*1000L';
+    PTP(17).ptp_field('VERSION') := 1;
+    PTP(17).ptp_field('USUARIOCREAR') := USUARIOCREAR;
+    PTP(17).ptp_field('FECHACREAR') := SYSDATE;
+    PTP(17).ptp_field('USUARIOMODIFICAR') := null;
+    PTP(17).ptp_field('FECHAMODIFICAR') := null;
+    PTP(17).ptp_field('USUARIOBORRAR') := null;
+    PTP(17).ptp_field('FECHABORRAR') :=null;
+    PTP(17).ptp_field('BORRADO') := 0;
+    PTP(17).ptp_field('DD_PTP_ABSOLUTO') := 0;
+    PTP(17).ptp_field('DD_PTP_OBSERVACIONES') := null;
+----------------------------------------------------------------------------
+-----------------------TFI_FORM-ITEMS---------------------------------------
+  TFI_MAP(17).tfi_field_row(0).tfi_field('TFI_ORDEN') := 0;
+  TFI_MAP(17).tfi_field_row(0).tfi_field('TFI_TIPO') := 'label';
+  TFI_MAP(17).tfi_field_row(0).tfi_field('TFI_NOMBRE') := 'titulo';
+  TFI_MAP(17).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '<p style="margin-bottom: 10px">Ha elevado un expediente comercial al comité sancionador de la cartera.
+  Para completar esta tarea es necesario esperar a la respuesta del comité, subiendo el documento de respuesta por parte del comité en la pestaña "documentos". Además:</p> 
+  <p style="margin-bottom: 10px">A) Si el comité ha <b>rechazado</b> la oferta, seleccione en el campo "Aprobacion Divarian " la opción "Rechaza". Con esto finalizará el trámite, quedando el expediente rechazado.</p>
+  <p style="margin-bottom: 10px">B) Si el comité ha <b>aprobado</b> la oferta, seleccione la opción "aprobado" en el campo " Aprobacion Divarian ".
+  La siguiente tarea se le lanzará a Posicionamiento y firma si se ha concluido el PBC de venta y el informe jurídico</p> 
+  <p style="margin-bottom: 10px"> En el campo "observaciones Pro. Manzana" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.</p>';
+  TFI_MAP(17).tfi_field_row(0).tfi_field('TFI_ERROR_VALIDACION') := NULL;
+  TFI_MAP(17).tfi_field_row(0).tfi_field('TFI_VALIDACION') := NULL;
+  TFI_MAP(17).tfi_field_row(0).tfi_field('TFI_VALOR_INICIAL') := NULL;
+  TFI_MAP(17).tfi_field_row(0).tfi_field('TFI_BUSINESS_OPERATION') := NULL;
+  TFI_MAP(17).tfi_field_row(0).tfi_field('VERSION') := 1;
+  TFI_MAP(17).tfi_field_row(0).tfi_field('USUARIOCREAR') := USUARIOCREAR;
+  TFI_MAP(17).tfi_field_row(0).tfi_field('FECHACREAR') := SYSDATE;
+  TFI_MAP(17).tfi_field_row(0).tfi_field('USUARIOMODIFICAR') := NULL;
+  TFI_MAP(17).tfi_field_row(0).tfi_field('FECHAMODIFICAR') := NULL;
+  TFI_MAP(17).tfi_field_row(0).tfi_field('USUARIOBORRAR') := NULL;
+  TFI_MAP(17).tfi_field_row(0).tfi_field('FECHABORRAR') := NULL;
+  TFI_MAP(17).tfi_field_row(0).tfi_field('BORRADO') := 0;
+  
+  TFI_MAP(17).tfi_field_row(1).tfi_field('TFI_ORDEN') := 1;
+  TFI_MAP(17).tfi_field_row(1).tfi_field('TFI_TIPO') := 'comboboxinicialedi';
+  TFI_MAP(17).tfi_field_row(1).tfi_field('TFI_NOMBRE') := 'comboRespuesta';
+  TFI_MAP(17).tfi_field_row(1).tfi_field('TFI_LABEL') :=  'Aprobación Divarian ';
+  TFI_MAP(17).tfi_field_row(1).tfi_field('TFI_ERROR_VALIDACION') := NULL;
+  TFI_MAP(17).tfi_field_row(1).tfi_field('TFI_VALIDACION') := 'false';
+  TFI_MAP(17).tfi_field_row(1).tfi_field('TFI_VALOR_INICIAL') := NULL;
+  TFI_MAP(17).tfi_field_row(1).tfi_field('TFI_BUSINESS_OPERATION') := 'DDApruebaDeniega';
+  TFI_MAP(17).tfi_field_row(1).tfi_field('VERSION') := 1;
+  TFI_MAP(17).tfi_field_row(1).tfi_field('USUARIOCREAR') := USUARIOCREAR;
+  TFI_MAP(17).tfi_field_row(1).tfi_field('FECHACREAR') := SYSDATE;
+  TFI_MAP(17).tfi_field_row(1).tfi_field('USUARIOMODIFICAR') := NULL;
+  TFI_MAP(17).tfi_field_row(1).tfi_field('FECHAMODIFICAR') := NULL;
+  TFI_MAP(17).tfi_field_row(1).tfi_field('USUARIOBORRAR') := NULL;
+  TFI_MAP(17).tfi_field_row(1).tfi_field('FECHABORRAR') := NULL;
+  TFI_MAP(17).tfi_field_row(1).tfi_field('BORRADO') := 0;
+  
+  TFI_MAP(17).tfi_field_row(2).tfi_field('TFI_ORDEN') := 2;
+  TFI_MAP(17).tfi_field_row(2).tfi_field('TFI_TIPO') := 'datefield';
+  TFI_MAP(17).tfi_field_row(2).tfi_field('TFI_NOMBRE') := 'fechaRespuesta';
+  TFI_MAP(17).tfi_field_row(2).tfi_field('TFI_LABEL') :=  'Fecha respuesta';
+  TFI_MAP(17).tfi_field_row(2).tfi_field('TFI_ERROR_VALIDACION') := NULL;
+  TFI_MAP(17).tfi_field_row(2).tfi_field('TFI_VALIDACION') := 'false';
+  TFI_MAP(17).tfi_field_row(2).tfi_field('TFI_VALOR_INICIAL') := NULL;
+  TFI_MAP(17).tfi_field_row(2).tfi_field('TFI_BUSINESS_OPERATION') := NULL;
+  TFI_MAP(17).tfi_field_row(2).tfi_field('VERSION') := 1;
+  TFI_MAP(17).tfi_field_row(2).tfi_field('USUARIOCREAR') := USUARIOCREAR;
+  TFI_MAP(17).tfi_field_row(2).tfi_field('FECHACREAR') := SYSDATE;
+  TFI_MAP(17).tfi_field_row(2).tfi_field('USUARIOMODIFICAR') := NULL;
+  TFI_MAP(17).tfi_field_row(2).tfi_field('FECHAMODIFICAR') := NULL;
+  TFI_MAP(17).tfi_field_row(2).tfi_field('USUARIOBORRAR') := NULL;
+  TFI_MAP(17).tfi_field_row(2).tfi_field('FECHABORRAR') := NULL;
+  TFI_MAP(17).tfi_field_row(2).tfi_field('BORRADO') := 0;
+  
+  TFI_MAP(17).tfi_field_row(3).tfi_field('TFI_ORDEN') := 3;
+  TFI_MAP(17).tfi_field_row(3).tfi_field('TFI_TIPO') := 'textarea';
+  TFI_MAP(17).tfi_field_row(3).tfi_field('TFI_NOMBRE') := 'observaciones';
+  TFI_MAP(17).tfi_field_row(3).tfi_field('TFI_LABEL') :=  'Observaciones';
+  TFI_MAP(17).tfi_field_row(3).tfi_field('TFI_ERROR_VALIDACION') := NULL;
+  TFI_MAP(17).tfi_field_row(3).tfi_field('TFI_VALIDACION') := NULL;
+  TFI_MAP(17).tfi_field_row(3).tfi_field('TFI_VALOR_INICIAL') := NULL;
+  TFI_MAP(17).tfi_field_row(3).tfi_field('TFI_BUSINESS_OPERATION') := NULL;
+  TFI_MAP(17).tfi_field_row(3).tfi_field('VERSION') := 1;
+  TFI_MAP(17).tfi_field_row(3).tfi_field('USUARIOCREAR') := USUARIOCREAR;
+  TFI_MAP(17).tfi_field_row(3).tfi_field('FECHACREAR') := SYSDATE;
+  TFI_MAP(17).tfi_field_row(3).tfi_field('USUARIOMODIFICAR') := NULL;
+  TFI_MAP(17).tfi_field_row(3).tfi_field('FECHAMODIFICAR') := NULL;
+  TFI_MAP(17).tfi_field_row(3).tfi_field('USUARIOBORRAR') := NULL;
+  TFI_MAP(17).tfi_field_row(3).tfi_field('FECHABORRAR') := NULL;
+  TFI_MAP(17).tfi_field_row(3).tfi_field('BORRADO') := 0;
+----------------------------------------------------------------------------
+-------------------------------T017_ResolucionArrow------------------------------
+----------------------------TAP TAREA PROCEDIMIENTO-------------------------
+    TAP(18).tap_field('TAP_CODIGO') := 'T017_ResolucionArrow';
+    TAP(18).tap_field('TAP_VIEW') := NULL;
+    TAP(18).tap_field('TAP_SCRIPT_VALIDACION') := 'checkImporteParticipacion() ? (checkCompradores() ? (checkVendido() ? ''''El activo est&aacute; vendido'''' : (checkComercializable() ? (checkPoliticaCorporativa() ?  null : ''''El estado de la pol&iacute;tica corporativa no es el correcto para poder avanzar.'''') : ''''El activo debe ser comercializable'''') ) : ''''Los compradores deben sumar el 100%'''') : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente''''';
+    TAP(18).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := null;
+    TAP(18).tap_field('TAP_SCRIPT_DECISION') := 'valores[''''T017_ResolucionArrow''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_APRUEBA ? checkReserva() ? ''''AceptaConReserva'''': ''''AceptaSinReserva'''' :  valores[''''T017_ResolucionArrow''''][''''comboResolucion''''] == DDResolucionComite.CODIGO_RECHAZA ? ''''Deniega'''' : ''''Contraoferta''''';
+    TAP(18).tap_field('DD_TPO_ID_BPM') := null;
+    TAP(18).tap_field('TAP_SUPERVISOR') := 0;
+    TAP(18).tap_field('TAP_DESCRIPCION') := 'Resolución Arrow';
+    TAP(18).tap_field('VERSION') := 0;
+    TAP(18).tap_field('USUARIOCREAR') := USUARIOCREAR;
+    TAP(18).tap_field('FECHACREAR') := SYSDATE;
+    TAP(18).tap_field('USUARIOMODIFICAR') := NULL;
+    TAP(18).tap_field('FECHAMODIFICAR') := NULL;
+    TAP(18).tap_field('USUARIOBORRAR') := NULL;
+    TAP(18).tap_field('FECHABORRAR') := NULL;
+    TAP(18).tap_field('BORRADO') := 0;
+    TAP(18).tap_field('TAP_ALERT_NO_RETORNO') := NULL;
+    TAP(18).tap_field('TAP_ALERT_VUELTA_ATRAS') := NULL;
+    TAP(18).tap_field('DD_FAP_ID') := NULL;
+    TAP(18).tap_field('TAP_AUTOPRORROGA') := 0;
+    TAP(18).tap_field('DTYPE') := 'EXTTareaProcedimiento';
+    TAP(18).tap_field('TAP_MAX_AUTOP') := 3;
+    V_SQL := 'SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = ' || is_string('GCOM');
+    EXECUTE IMMEDIATE V_SQL INTO TAP(18).tap_field('DD_TGE_ID');
+    V_SQL := 'SELECT DD_STA_ID FROM '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO = ' || is_string('811');
+    EXECUTE IMMEDIATE V_SQL INTO TAP(18).tap_field('DD_STA_ID');
+    TAP(18).tap_field('TAP_EVITAR_REORG') := NULL;
+    TAP(18).tap_field('DD_TSUP_ID') := NULL;
+    TAP(18).tap_field('TAP_BUCLE_BPM') := NULL;
+----------------------------------------------------------------------------
+----------------------PLAZOS_TAREAS_PLAZAS----------------------------------
+    PTP(18).ptp_field('DD_JUZ_ID') := null;
+    PTP(18).ptp_field('DD_PLA_ID') := null;
+    PTP(18).ptp_field('DD_PTP_PLAZO_SCRIPT') := '3*24*60*60*1000L';
+    PTP(18).ptp_field('VERSION') := 1;
+    PTP(18).ptp_field('USUARIOCREAR') := USUARIOCREAR;
+    PTP(18).ptp_field('FECHACREAR') := SYSDATE;
+    PTP(18).ptp_field('USUARIOMODIFICAR') := null;
+    PTP(18).ptp_field('FECHAMODIFICAR') := null;
+    PTP(18).ptp_field('USUARIOBORRAR') := null;
+    PTP(18).ptp_field('FECHABORRAR') :=null;
+    PTP(18).ptp_field('BORRADO') := 0;
+    PTP(18).ptp_field('DD_PTP_ABSOLUTO') := 0;
+    PTP(18).ptp_field('DD_PTP_OBSERVACIONES') := null;
+----------------------------------------------------------------------------
+-----------------------TFI_FORM-ITEMS---------------------------------------
+    TFI_MAP(18).tfi_field_row(0).tfi_field('TFI_ORDEN') := 0;
+    TFI_MAP(18).tfi_field_row(0).tfi_field('TFI_TIPO') := 'label';
+    TFI_MAP(18).tfi_field_row(0).tfi_field('TFI_NOMBRE') := 'titulo';
+    TFI_MAP(18).tfi_field_row(0).tfi_field('TFI_LABEL') :=  '<p style="margin-bottom: 10px">
+        Ha elevado un expediente comercial al comité sancionador de la cartera.
+        Para completar esta tarea es necesario esperar a la respuesta del comité, subiendo el documento de respuesta por parte del comité en la pestaña "documentos".
+        Además:
+    </p> 
+    <p style="margin-bottom: 10px">
+        A) Si el comité ha <b>rechazado</b> la oferta, seleccione en el campo "Resolución Arrow " la opción "Rechaza". Con esto finalizará el trámite, quedando el expediente rechazado.
+    </p> 	
+    <p style="margin-bottom: 10px">
+        B) Si el comité ha <b>propuesto</b> una contraoferta, suba el documento justificativo en la pestaña "documentos" del expediente.
+        Seleccione la opción "contraoferta" e introduzca el importe propuesto en el campo "importe contraoferta Arrow".
+        La siguiente tarea que se lanzará es "Respuesta ofertante Arrow".
+    </p> 
+    <p style="margin-bottom: 10px"> 
+    C) Si el comité ha <b>aprobado</b> la oferta, seleccione la opción "aprobado" en el campo "Resolución Arrow". La siguiente tarea se le lanzará a informe jurídico; creación de AN y PBC de reserva o venta según el caso.
+    </p> 
+    <p style="margin-bottom: 10px"> 
+    En el campo "observaciones Arrow" puede hacer constar cualquier aspecto relevante que considere que debe quedar reflejado en este punto del trámite.
+    </p>';
+    TFI_MAP(18).tfi_field_row(0).tfi_field('TFI_ERROR_VALIDACION') := NULL;
+    TFI_MAP(18).tfi_field_row(0).tfi_field('TFI_VALIDACION') := NULL;
+    TFI_MAP(18).tfi_field_row(0).tfi_field('TFI_VALOR_INICIAL') := NULL;
+    TFI_MAP(18).tfi_field_row(0).tfi_field('TFI_BUSINESS_OPERATION') := NULL;
+    TFI_MAP(18).tfi_field_row(0).tfi_field('VERSION') := 1;
+    TFI_MAP(18).tfi_field_row(0).tfi_field('USUARIOCREAR') := USUARIOCREAR;
+    TFI_MAP(18).tfi_field_row(0).tfi_field('FECHACREAR') := SYSDATE;
+    TFI_MAP(18).tfi_field_row(0).tfi_field('USUARIOMODIFICAR') := NULL;
+    TFI_MAP(18).tfi_field_row(0).tfi_field('FECHAMODIFICAR') := NULL;
+    TFI_MAP(18).tfi_field_row(0).tfi_field('USUARIOBORRAR') := NULL;
+    TFI_MAP(18).tfi_field_row(0).tfi_field('FECHABORRAR') := NULL;
+    TFI_MAP(18).tfi_field_row(0).tfi_field('BORRADO') := 0;
+    
+    TFI_MAP(18).tfi_field_row(1).tfi_field('TFI_ORDEN') := 1;
+    TFI_MAP(18).tfi_field_row(1).tfi_field('TFI_TIPO') := 'comboboxinicialedi';
+    TFI_MAP(18).tfi_field_row(1).tfi_field('TFI_NOMBRE') := 'comboResolucion';
+    TFI_MAP(18).tfi_field_row(1).tfi_field('TFI_LABEL') :=  'Resolución Arrow ';
+    TFI_MAP(18).tfi_field_row(1).tfi_field('TFI_ERROR_VALIDACION') := NULL;
+    TFI_MAP(18).tfi_field_row(1).tfi_field('TFI_VALIDACION') := 'false';
+    TFI_MAP(18).tfi_field_row(1).tfi_field('TFI_VALOR_INICIAL') := NULL;
+    TFI_MAP(18).tfi_field_row(1).tfi_field('TFI_BUSINESS_OPERATION') := 'DDResolucionComite';
+    TFI_MAP(18).tfi_field_row(1).tfi_field('VERSION') := 1;
+    TFI_MAP(18).tfi_field_row(1).tfi_field('USUARIOCREAR') := USUARIOCREAR;
+    TFI_MAP(18).tfi_field_row(1).tfi_field('FECHACREAR') := SYSDATE;
+    TFI_MAP(18).tfi_field_row(1).tfi_field('USUARIOMODIFICAR') := NULL;
+    TFI_MAP(18).tfi_field_row(1).tfi_field('FECHAMODIFICAR') := NULL;
+    TFI_MAP(18).tfi_field_row(1).tfi_field('USUARIOBORRAR') := NULL;
+    TFI_MAP(18).tfi_field_row(1).tfi_field('FECHABORRAR') := NULL;
+    TFI_MAP(18).tfi_field_row(1).tfi_field('BORRADO') := 0;
+    
+    TFI_MAP(18).tfi_field_row(2).tfi_field('TFI_ORDEN') := 2;
+    TFI_MAP(18).tfi_field_row(2).tfi_field('TFI_TIPO') := 'numberfield';
+    TFI_MAP(18).tfi_field_row(2).tfi_field('TFI_NOMBRE') := 'numImporteContra';
+    TFI_MAP(18).tfi_field_row(2).tfi_field('TFI_LABEL') :=  'Importe Contraoferta Arrow';
+    TFI_MAP(18).tfi_field_row(2).tfi_field('TFI_ERROR_VALIDACION') := NULL;
+    TFI_MAP(18).tfi_field_row(2).tfi_field('TFI_VALIDACION') := NULL;
+    TFI_MAP(18).tfi_field_row(2).tfi_field('TFI_VALOR_INICIAL') := NULL;
+    TFI_MAP(18).tfi_field_row(2).tfi_field('TFI_BUSINESS_OPERATION') := NULL;
+    TFI_MAP(18).tfi_field_row(2).tfi_field('VERSION') := 1;
+    TFI_MAP(18).tfi_field_row(2).tfi_field('USUARIOCREAR') := USUARIOCREAR;
+    TFI_MAP(18).tfi_field_row(2).tfi_field('FECHACREAR') := SYSDATE;
+    TFI_MAP(18).tfi_field_row(2).tfi_field('USUARIOMODIFICAR') := NULL;
+    TFI_MAP(18).tfi_field_row(2).tfi_field('FECHAMODIFICAR') := NULL;
+    TFI_MAP(18).tfi_field_row(2).tfi_field('USUARIOBORRAR') := NULL;
+    TFI_MAP(18).tfi_field_row(2).tfi_field('FECHABORRAR') := NULL;
+    TFI_MAP(18).tfi_field_row(2).tfi_field('BORRADO') := 0;
+    
+    TFI_MAP(18).tfi_field_row(3).tfi_field('TFI_ORDEN') := 3;
+    TFI_MAP(18).tfi_field_row(3).tfi_field('TFI_TIPO') := 'datefield';
+    TFI_MAP(18).tfi_field_row(3).tfi_field('TFI_NOMBRE') := 'fechaRespuesta';
+    TFI_MAP(18).tfi_field_row(3).tfi_field('TFI_LABEL') :=  'Fecha de respuesta Arrow';
+    TFI_MAP(18).tfi_field_row(3).tfi_field('TFI_ERROR_VALIDACION') := NULL;
+    TFI_MAP(18).tfi_field_row(3).tfi_field('TFI_VALIDACION') := 'false';
+    TFI_MAP(18).tfi_field_row(3).tfi_field('TFI_VALOR_INICIAL') := NULL;
+    TFI_MAP(18).tfi_field_row(3).tfi_field('TFI_BUSINESS_OPERATION') := NULL;
+    TFI_MAP(18).tfi_field_row(3).tfi_field('VERSION') := 1;
+    TFI_MAP(18).tfi_field_row(3).tfi_field('USUARIOCREAR') := USUARIOCREAR;
+    TFI_MAP(18).tfi_field_row(3).tfi_field('FECHACREAR') := SYSDATE;
+    TFI_MAP(18).tfi_field_row(3).tfi_field('USUARIOMODIFICAR') := NULL;
+    TFI_MAP(18).tfi_field_row(3).tfi_field('FECHAMODIFICAR') := NULL;
+    TFI_MAP(18).tfi_field_row(3).tfi_field('USUARIOBORRAR') := NULL;
+    TFI_MAP(18).tfi_field_row(3).tfi_field('FECHABORRAR') := NULL;
+    TFI_MAP(18).tfi_field_row(3).tfi_field('BORRADO') := 0;
+    
+    TFI_MAP(18).tfi_field_row(4).tfi_field('TFI_ORDEN') := 4;
+    TFI_MAP(18).tfi_field_row(4).tfi_field('TFI_TIPO') := 'textarea';
+    TFI_MAP(18).tfi_field_row(4).tfi_field('TFI_NOMBRE') := 'observaciones';
+    TFI_MAP(18).tfi_field_row(4).tfi_field('TFI_LABEL') :=  'Observaciones';
+    TFI_MAP(18).tfi_field_row(4).tfi_field('TFI_ERROR_VALIDACION') := NULL;
+    TFI_MAP(18).tfi_field_row(4).tfi_field('TFI_VALIDACION') := NULL;
+    TFI_MAP(18).tfi_field_row(4).tfi_field('TFI_VALOR_INICIAL') := NULL;
+    TFI_MAP(18).tfi_field_row(4).tfi_field('TFI_BUSINESS_OPERATION') := NULL;
+    TFI_MAP(18).tfi_field_row(4).tfi_field('VERSION') := 1;
+    TFI_MAP(18).tfi_field_row(4).tfi_field('USUARIOCREAR') := USUARIOCREAR;
+    TFI_MAP(18).tfi_field_row(4).tfi_field('FECHACREAR') := SYSDATE;
+    TFI_MAP(18).tfi_field_row(4).tfi_field('USUARIOMODIFICAR') := NULL;
+    TFI_MAP(18).tfi_field_row(4).tfi_field('FECHAMODIFICAR') := NULL;
+    TFI_MAP(18).tfi_field_row(4).tfi_field('USUARIOBORRAR') := NULL;
+    TFI_MAP(18).tfi_field_row(4).tfi_field('FECHABORRAR') := NULL;
+    TFI_MAP(18).tfi_field_row(4).tfi_field('BORRADO') := 0;
 ----------------------------------------------------------------------------
 ----------------------------------------------------------------------------
 ---------------------------CREACION DEL BPM---------------------------------

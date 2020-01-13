@@ -1,20 +1,20 @@
 --/*
 --##########################################
---## AUTOR=Sergio Salt
---## FECHA_CREACION=20191022
+--## AUTOR=JULIAN DOLZ
+--## FECHA_CREACION=20190930
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO= 9.2
---## INCIDENCIA_LINK=HREOS-7466
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-7831
 --## PRODUCTO=NO
 --##
---## Finalidad:            
---## INSTRUCCIONES: 
+--## Finalidad: Crear la tabla DD_TRG_TIPO_RECARGO_GASTO.
+--## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
 --*/
 
---Para permitir la visualización de texto  en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
@@ -33,8 +33,8 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'CAG_CONFIG_ACCESO_GESTORIAS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-	V_TEXT_REF_TABLA VARCHAR2(2400 CHAR) := 'USU_USUARIOS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_TRG_TIPO_RECARGO_GASTO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_CDG VARCHAR2(27 CHAR) := 'TRG'; -- Vble. auxiliar para almacenar el codigo de la tabla para las columnas.
 
 BEGIN
 
@@ -50,51 +50,26 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
 		V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
 		(
-			CAG_ID           				NUMBER(16, 0) NOT NULL,
-			CAG_NOMBRE_GESTORIA				VARCHAR2(250 CHAR),
-			CAG_USU_GRUPO_ADMISION			NUMBER(16,0),
-			CAG_USU_USERNAME_ADMISION		VARCHAR2(250 CHAR),
-			CAG_USU_GRUPO_ADMINISTRACION	NUMBER(16,0),
-			CAG_USU_USERNAME_ADMINISTRACION	VARCHAR2(250 CHAR),
-			CAG_USU_GRUPO_FORMALIZACION		NUMBER(16,0),
-			CAG_USU_USERNAME_FORMALIZACION	VARCHAR2(250 CHAR),
-			VERSION 						NUMBER(38,0) DEFAULT 0 NOT NULL ENABLE, 
-			USUARIOCREAR 					VARCHAR2(50 CHAR) NOT NULL ENABLE, 
-			FECHACREAR 						TIMESTAMP (6) NOT NULL ENABLE, 
-			USUARIOMODIFICAR 				VARCHAR2(50 CHAR), 
-			FECHAMODIFICAR 					TIMESTAMP (6), 
-			USUARIOBORRAR 					VARCHAR2(50 CHAR), 
-			FECHABORRAR 					TIMESTAMP (6), 
-			BORRADO 						NUMBER(1,0) DEFAULT 0 NOT NULL ENABLE
+			DD_'||V_CDG||'_ID           		NUMBER(16, 0) NOT NULL,
+			DD_'||V_CDG||'_CODIGO        		VARCHAR2(20 CHAR) NOT NULL,
+			DD_'||V_CDG||'_DESCRIPCION			VARCHAR2(100 CHAR),
+			DD_'||V_CDG||'_DESCRIPCION_LARGA	VARCHAR2(250 CHAR),
+			VERSION 							NUMBER(38,0) DEFAULT 0 NOT NULL ENABLE, 
+			USUARIOCREAR 						VARCHAR2(50 CHAR) NOT NULL ENABLE, 
+			FECHACREAR 							TIMESTAMP (6) NOT NULL ENABLE, 
+			USUARIOMODIFICAR 					VARCHAR2(50 CHAR), 
+			FECHAMODIFICAR 						TIMESTAMP (6), 
+			USUARIOBORRAR 						VARCHAR2(50 CHAR), 
+			FECHABORRAR 						TIMESTAMP (6), 
+			BORRADO 							NUMBER(1,0) DEFAULT 0 NOT NULL ENABLE
 		)';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');
 	
 		-- Creamos primary key
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (CAG_ID))';
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (DD_'||V_CDG||'_ID))';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
-
-		-- Creamos foreign key
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT USU_ID_GRUPO_ADMISION_FK 
-		FOREIGN KEY (CAG_USU_GRUPO_ADMISION)
-		REFERENCES '||V_ESQUEMA_M||'.'||V_TEXT_REF_TABLA||' (USU_ID)';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] USU_ID_GRUPO_ADMISION_FK ... FK creada.');
-
-		-- Creamos foreign key
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT USU_ID_GRUPO_ADMINISTRACION_FK 
-		FOREIGN KEY (CAG_USU_GRUPO_ADMINISTRACION)
-		REFERENCES '||V_ESQUEMA_M||'.'||V_TEXT_REF_TABLA||' (USU_ID)';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] USU_ID_GRUPO_ADMINISTRACION_FK ... FK creada.');
-
-		-- Creamos foreign key
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT USU_ID_GRUPO_FORMALIZACION_FK 
-		FOREIGN KEY (CAG_USU_GRUPO_FORMALIZACION)
-		REFERENCES '||V_ESQUEMA_M||'.'||V_TEXT_REF_TABLA||' (USU_ID)';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] USU_ID_GRUPO_FORMALIZACION_FK ... FK creada.');
 	
 		-- Comprobamos si existe la secuencia
 		V_MSQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_'||V_TEXT_TABLA||''' and sequence_owner = '''||V_ESQUEMA||'''';
@@ -109,41 +84,25 @@ BEGIN
 		END IF;
 		
 		-- Creamos el comentario de las columnas
-		V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS ''Tabla de configuracion para gestorias.''';
+		V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS ''Tabla de motivo de devolución.''';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la tabla creado.');		
 
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CAG_ID IS ''Código identificador único.''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_'||V_CDG||'_ID IS ''Identificador único del estado de la carga''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna CAG_ID creado.');
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_'||V_CDG||'_ID creado.');
 
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CAG_NOMBRE_GESTORIA IS ''Nombre de la gestoria''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_'||V_CDG||'_CODIGO IS ''Código identificador único del estado de la carga''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_MAT_CODIGO creado.');	
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_'||V_CDG||'_CODIGO creado.');	
 
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CAG_USU_GRUPO_ADMISION IS ''Identificador unico del usuario de grupo''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_'||V_CDG||'_DESCRIPCION IS ''Descripción del estado de la carga''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna CAG_USU_GRUPO_ADMISION creado.');
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_'||V_CDG||'_DESCRIPCION creado.');
 
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CAG_USU_USERNAME_ADMISION IS ''Username del usuario de admisión''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_'||V_CDG||'_DESCRIPCION_LARGA IS ''Descripción larga del estado de la carga''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna CAG_USU_USERNAME_ADMISION creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CAG_USU_GRUPO_ADMINISTRACION IS ''Identificador unico del usuario de grupo''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna CAG_USU_GRUPO_ADMINISTRACION creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CAG_USU_USERNAME_ADMINISTRACION IS ''Username del usuario de administracion''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna CAG_USU_USERNAME_ADMINISTRACION creado.');	
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CAG_USU_GRUPO_FORMALIZACION IS ''Identificador unico del usuario de grupo''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna CAG_USU_GRUPO_FORMALIZACION creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CAG_USU_USERNAME_FORMALIZACION IS ''Username del usuario de formalizacion''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna CAG_USU_USERNAME_FORMALIZACION creado.');
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_'||V_CDG||'_DESCRIPCION_LARGA creado.');	
 
 		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.VERSION IS ''Indica la versión del registro.''';
 		EXECUTE IMMEDIATE V_MSQL;

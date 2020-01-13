@@ -62,6 +62,7 @@ public class DDSubcartera implements Auditable, Dictionary {
 	public static final String CODIGO_THIRD_PARTIES_QUITAS_ING = "28";
 	public static final String CODIGO_THIRD_PARTIES_COMERCIAL_ING = "30";
 	public static final String CODIGO_YUBAI = "139";
+	public static final String CODIGO_OMEGA = "65";
 	public static final String CODIGO_DIVARIAN = "150";
 
 	@Id

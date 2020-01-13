@@ -3347,8 +3347,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			&& !DDSubcartera.CODIGO_BAN_BH
 			.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo()))
 		||(DDCartera.CODIGO_CARTERA_CERBERUS.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
-			&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO
-				.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())) ) {
+			&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo()) 
+					|| DDSubcartera.CODIGO_DIVARIAN.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())))) {
 
 			if (((!Checks.esNulo(expediente.getReserva()))
 				&& !Checks.esNulo(expediente.getReserva().getEstadoReserva())
@@ -4697,6 +4697,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(activo) && (!Checks.esNulo(activo.getCartera()) && !Checks.esNulo(activo.getSubcartera()))) {
 				return (DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(activo.getCartera().getCodigo())
 						&& DDSubcartera.CODIGO_YUBAI.equals(activo.getSubcartera().getCodigo()));
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean checkEsOmega(TareaExterna tareaExterna) {
+		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
+		if (!Checks.esNulo(ofertaAceptada)) {
+			Activo activo = ofertaAceptada.getActivoPrincipal();
+			if (!Checks.esNulo(activo) && (!Checks.esNulo(activo.getCartera()) && !Checks.esNulo(activo.getSubcartera()))) {
+				return (DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(activo.getCartera().getCodigo())
+						&& DDSubcartera.CODIGO_OMEGA.equals(activo.getSubcartera().getCodigo()));
 			}
 		}
 		return false;

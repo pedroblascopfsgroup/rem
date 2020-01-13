@@ -792,7 +792,11 @@ public interface OfertaApi {
 	 */
 	public boolean agrupacionConActivoYaIncluidoEnOfertaAgrupadaLbk(Long idAgrupacion, Oferta ofertaPrincipal);
 
+
+	boolean checkEsOmega(TareaExterna tareaExterna);
+
 	boolean checkTipoImpuesto(TareaExterna tareaExterna);
 
 	boolean checkReservaInformada(TareaExterna tareaExterna);
+
 }

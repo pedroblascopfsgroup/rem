@@ -24,6 +24,7 @@ import es.pfsgroup.plugin.rem.api.NotificacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.formulario.ActivoGenericFormManager;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
@@ -69,7 +70,8 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 	private static final String COMBO_COMITE_SUPERIOR = "comiteSuperior";
 	private static final String CAMPO_COMITE = "comite";
 	private static final String T017 = "T017";
-
+	private static final String CODIGO_SUBCARTERA_OMEGA = "65";
+	
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
@@ -95,6 +97,8 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 			for ofertaDependiente
 			expediente.getCondiciona
 		}*/
+		
+		Activo activo = ofertaAceptada.getActivoPrincipal();
 		
 		String tipoTramite = tramite.getTipoTramite().getCodigo();
 		
@@ -151,14 +155,18 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				
 				DDEstadosExpedienteComercial estado;
 
-				
-				if(perimetro.getAplicaFormalizar() == 0){
-					estado = genericDao.get(DDEstadosExpedienteComercial.class, filtroSinFormalizacion);	
-				}else{
-					estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+				String codSubCartera = null;
+				if (!Checks.esNulo(activo.getSubcartera())) {
+					codSubCartera = activo.getSubcartera().getCodigo();
 				}
-				 
-				expediente.setEstado(estado);
+				if (!CODIGO_SUBCARTERA_OMEGA.equals(codSubCartera)) {
+					if(perimetro.getAplicaFormalizar() == 0){
+						estado = genericDao.get(DDEstadosExpedienteComercial.class, filtroSinFormalizacion);	
+					}else{
+						estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+					}
+					expediente.setEstado(estado);
+				}
 			}
 			
 			boolean aplicaSuperior = false;

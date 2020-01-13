@@ -177,7 +177,7 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 * @parame xpedienteComercial
 	 */
-	boolean update(ExpedienteComercial expedienteComercial);
+	boolean update(ExpedienteComercial expedienteComercial,boolean pasaAVendido);
 
 	/**
 	 * Actualiza el estado de la dev reserva al codigo dado
@@ -1275,6 +1275,16 @@ public interface ExpedienteComercialApi {
 	boolean actualizarGastosExpediente(ExpedienteComercial expedienteComercial, Oferta oferta);
 
 	List<GastosExpediente> getListaGastosExpedienteByIdExpediente(Long idExpediente);
+
+	boolean esDivarian(TareaExterna tareaExterna);
+
+	/**
+	 * Metodo que comprueba si la entidad tiene subcartera Omega
+	 *
+	 * @param tareaExterna
+	 * @return boolean
+	 */
+	boolean esOmega(TareaExterna tareaExterna);
 
 }
 

@@ -231,11 +231,14 @@ public class MSVActualizacionFasesPublicacionValidator extends MSVExcelValidator
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
-					if(Boolean.FALSE.equals(Checks.esNulo(exc.dameCelda(i, INDICES.SUBFASE_PUBLICACION)))
-							&& Boolean.FALSE.equals(particularValidator.existeSubfasePublicacion(exc.dameCelda(i, INDICES.SUBFASE_PUBLICACION)))
-							
-							)
-						listaFilas.add(i);
+					if(exc.dameCelda(i, INDICES.SUBFASE_PUBLICACION) != null) {
+					    String codigoFase = exc.dameCelda(i, INDICES.FASE_PUBLICACION);
+					    String codigoSubfase = exc.dameCelda(i, INDICES.SUBFASE_PUBLICACION);
+					    if (!CODIGO_FASE_NA.equals(codigoFase) && codigoSubfase != null
+			            && Boolean.FALSE.equals(particularValidator.existeSubfasePublicacion(codigoSubfase))) {
+					            listaFilas.add(i);					            
+					        }    
+					    }					    
 				} catch (ParseException e) {
 					listaFilas.add(i);
 				}

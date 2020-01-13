@@ -81,6 +81,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivoBDE;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
@@ -831,8 +832,16 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if (!Checks.esNulo(activo.getDireccionTerritorial())){
 			beanUtilNotNull.copyProperty(activoDto, "direccionTerritorialCodigo", activo.getDireccionTerritorial().getCodigo());
 			beanUtilNotNull.copyProperty(activoDto, "direccionTerritorialDescripcion", activo.getDireccionTerritorial().getDescripcion());
-		}				
+		}	
 		
+		if (!Checks.esNulo(activo.getSociedadDePagoAnterior())) {
+			BeanUtils.copyProperty(activoDto, "sociedadPagoAnterior", activo.getSociedadDePagoAnterior().getCodigo());
+		}
+
+		Boolean visualizarTabFasesPublicacion = activoApi.getVisibilidadTabFasesPublicacion(activo);
+		
+		activoDto.setVisualizarTabFasesPublicacion(visualizarTabFasesPublicacion);
+
 		if (activo.getCartera() != null
 				&& DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo()))
 			BeanUtils.copyProperty(activoDto, "tramitable", isTramitable(activo));
@@ -944,6 +953,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 			
 			activo.getLocalizacion().setLocalizacionBien(genericDao.save(NMBLocalizacionesBien.class, activo.getLocalizacion().getLocalizacionBien()));
+			
+			if (!Checks.esNulo(dto.getSociedadPagoAnterior())) {
+				DDSociedadPagoAnterior sociedaPagoAnterior = (DDSociedadPagoAnterior) diccionarioApi.dameValorDiccionarioByCod(DDSociedadPagoAnterior.class, dto.getSociedadPagoAnterior());
+				activo.setSociedadDePagoAnterior(sociedaPagoAnterior);
+			}
 			
 			if (!Checks.esNulo(dto.getTipoActivoCodigo())) {
 				DDTipoActivo tipoActivo = (DDTipoActivo) diccionarioApi.dameValorDiccionarioByCod(DDTipoActivo.class,  dto.getTipoActivoCodigo());
@@ -1321,6 +1335,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 				}
 			}
+		
+		
 
 		} catch(JsonViewerException jve) {
 			throw jve;

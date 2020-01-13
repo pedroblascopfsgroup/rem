@@ -69,6 +69,7 @@ import es.pfsgroup.plugin.rem.model.VPlusvalia;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.utils.MSVREMUtils;
@@ -187,6 +188,26 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.apiPrimarioId", dto.getApiPrimarioId());
 		}
 		
+		if (dto.getEstadoPublicacionVentaCodigo() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoPublicacionVenta", dto.getEstadoPublicacionVentaCodigo());
+			List<String> tiposComercializacion = Arrays.asList(DDTipoComercializacion.CODIGOS_VENTA);
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "act.tipoComercializacion.codigo", tiposComercializacion);
+		}
+		
+		if (dto.getEstadoPublicacionAlquilerCodigo() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoPublicacionAlquiler", dto.getEstadoPublicacionAlquilerCodigo());	
+			List<String> tiposComercializacion = Arrays.asList(DDTipoComercializacion.CODIGOS_ALQUILER);
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "act.tipoComercializacion.codigo", tiposComercializacion);
+		}
+		
+		if(dto.getMotivosOcultacionVenta() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.motivoOcultacionVenta", dto.getMotivosOcultacionVenta());
+		}
+		
+		if(dto.getMotivosOcultacionAlquiler() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.motivoOcultacionAlquiler", dto.getMotivosOcultacionAlquiler());
+		}
+		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "scr.codigo", dto.getSubcarteraCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "scr.codigo", dto.getSubcarteraCodigoAvanzado());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoActivoCodigo", dto.getTipoActivoCodigo());
@@ -237,6 +258,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		if(!Checks.esNulo(dto.getNumAgrupacion())) {
 			hb.appendWhere(" exists (select 1 from ActivoAgrupacionActivo aga where aga.agrupacion.numAgrupRem = " + dto.getNumAgrupacion() + " and act.id = aga.activo.id)");
 		}
+		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.fasePublicacionCodigo", dto.getFasePublicacionCodigo());
 
 		if(!Checks.esNulo(dto.isListPage()) && dto.isListPage())
 			return HibernateQueryUtils.page(this, hb, dto);

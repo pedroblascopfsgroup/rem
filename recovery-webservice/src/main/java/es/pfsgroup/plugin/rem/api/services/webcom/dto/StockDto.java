@@ -344,6 +344,12 @@ public class StockDto implements WebcomRESTDto{
 	@WebcomRequired
 	private StringDataType codTipoAlquiler;
 
+	@WebcomRequired
+	private String codFasePublicacion;
+	
+	@WebcomRequired
+	private String codSubfasePublicacion;
+	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
 	}
@@ -974,5 +980,18 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setEmailGmo(StringDataType emailGmo) {
 		this.emailGmo = emailGmo;
-	}	
+	}
+	public String getCodFasePublicacion() {
+		return codFasePublicacion;
+	}
+	public void setCodFasePublicacion(String codFasePublicacion) {
+		this.codFasePublicacion = codFasePublicacion;
+	}
+	public String getCodSubfasePublicacion() {
+		return codSubfasePublicacion;
+	}
+	public void setCodSubfasePublicacion(String codSubfasePublicacion) {
+		this.codSubfasePublicacion = codSubfasePublicacion;
+	}
+	
 }

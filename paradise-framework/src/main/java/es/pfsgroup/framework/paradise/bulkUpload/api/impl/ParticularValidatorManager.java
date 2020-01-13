@@ -3937,6 +3937,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean existeFasePublicacion(String fasePublicacion) {
+		if(Checks.esNulo(fasePublicacion) || !StringUtils.isAlphanumeric(fasePublicacion))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_FSP_FASE_PUBLICACION WHERE"
+				+ "		 	DD_FSP_CODIGO ='"+fasePublicacion+"' "
+				+ "		 	AND BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
 	public Boolean activoEnAgrupacionProyecto(String numActivo) {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(AGR.AGR_ID) FROM ACT_AGR_AGRUPACION AGR " +
 				" INNER JOIN DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.DD_TAG_CODIGO = '04' " +
@@ -3949,7 +3960,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				" AND AGA.BORRADO = 0");
 
 		return Integer.valueOf(resultado) > 0;
-	};
+	}
 
 	@Override
 	public Boolean existeTipoDoc(String codTipoDoc) {
@@ -4107,16 +4118,47 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
-	public Boolean esExpedienteValido(String numExpediente) {
+	public Boolean esExpedienteValidoAprobado(String numExpediente) {
 		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
 			return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
 				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
-				+"		AND ECO.DD_EEC_ID NOT IN (SELECT EEC.DD_EEC_ID"
+				+"		AND ECO.DD_EEC_ID IN (SELECT EEC.DD_EEC_ID"
 				+"		FROM DD_EEC_EST_EXP_COMERCIAL EEC"
-				+"		WHERE EEC.DD_EEC_CODIGO IN ('02','03','06','08','11'))");
+				+"		WHERE EEC.DD_EEC_CODIGO IN ('11'))");
+
+		return "1".equals(resultado);
+	}
+	
+	
+	//---------------------------------------------------------------------
+	@Override
+	public Boolean esExpedienteValidoFirmado(String numExpediente) {
+		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
+				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
+				+"		AND ECO.DD_EEC_ID IN (SELECT EEC.DD_EEC_ID"
+				+"		FROM DD_EEC_EST_EXP_COMERCIAL EEC"
+				+"		WHERE EEC.DD_EEC_CODIGO IN ('03'))");
+
+		return "1".equals(resultado);
+	}
+	@Override
+	public Boolean esExpedienteValidoReservado(String numExpediente) {
+		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
+				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
+				+"		AND ECO.DD_EEC_ID IN (SELECT EEC.DD_EEC_ID"
+				+"		FROM DD_EEC_EST_EXP_COMERCIAL EEC"
+				+"		WHERE EEC.DD_EEC_CODIGO IN ('06'))");
 
 		return "1".equals(resultado);
 	}
@@ -4266,4 +4308,35 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
         return !"0".equals(resultado);
     }
 	
+	@Override
+	public Boolean esExpedienteValidoVendido(String numExpediente) {
+		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
+				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
+				+"		AND ECO.DD_EEC_ID IN (SELECT EEC.DD_EEC_ID"
+				+"		FROM DD_EEC_EST_EXP_COMERCIAL EEC"
+				+"		WHERE EEC.DD_EEC_CODIGO IN ('08'))");
+
+		return "1".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esExpedienteValidoAnulado(String numExpediente) {
+		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM ECO_EXPEDIENTE_COMERCIAL ECO"
+				+"		WHERE ECO.ECO_NUM_EXPEDIENTE = "+ numExpediente +" AND ECO.BORRADO = 0"
+				+"		AND ECO.DD_EEC_ID IN (SELECT EEC.DD_EEC_ID"
+				+"		FROM DD_EEC_EST_EXP_COMERCIAL EEC"
+				+"		WHERE EEC.DD_EEC_CODIGO IN ('02'))");
+
+		return "1".equals(resultado);
+	}
+	
+	//-------------------------------------------------------------------------
 }

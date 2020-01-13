@@ -175,7 +175,6 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 						isHayaLbk = true;
 					}
 				}
-			
 			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, true, isHayaLbk, /*isLiberbankInmobiliaria, isLiberbankTerciaria,*/ false, false, false, false, false, false, false, false, false, false, false, false).get(codigoTarea);
 		}else if(this.isActivoBankia(tareaActivo)) {
 			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, /*false, false,*/ true, false, isRetailActivo(tareaActivo), false, false, false, false, false, false, false, false, false).get(codigoTarea);

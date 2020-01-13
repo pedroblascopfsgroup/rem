@@ -171,6 +171,16 @@ public class ComisionamientoManager implements ComisionamientoApi {
 					dto.setOrigenLead(codLeadOrigin);
 					
 					listAcciones.add(dto);
+				} else {
+					List<DtoPrescriptoresComision> listaSup = new ArrayList<DtoPrescriptoresComision>();
+					
+					for(DtoPrescriptoresComision dtoLista: listAcciones) {
+						dtoLista.setOrigenLead(DDOrigenComprador.CODIGO_ORC_API_PROPIO);
+						
+						listaSup.add(dtoLista);
+					}
+					
+					listAcciones = listaSup;
 				}
 			}
 		}

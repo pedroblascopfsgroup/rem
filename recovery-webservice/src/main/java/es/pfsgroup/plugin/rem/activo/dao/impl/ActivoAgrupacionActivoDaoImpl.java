@@ -226,6 +226,19 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 
 		return (list.size() > 0);
 	}
+	
+	@Override
+	public boolean activoEnAgrupacionLoteComercialAlquiler(Long idActivo) {
+
+		HQLBuilder hb = new HQLBuilder(" from ActivoAgrupacionActivo aa");
+		hb.appendWhere("aa.agrupacion.fechaBaja IS NULL");
+   	  	HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aa.activo.id", idActivo);
+   	  	HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aa.agrupacion.tipoAgrupacion.codigo", DDTipoAgrupacion.AGRUPACION_COMERCIAL_ALQUILER);
+   	  	
+   	    List<ActivoAgrupacionActivo> list = HibernateQueryUtils.list(this, hb);
+
+		return (list.size() > 0);
+	}
 
 	@Override
 	public boolean algunActivoDeAgrRestringidaEnAgrLoteComercial(List<Long> activosID) {

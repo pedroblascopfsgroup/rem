@@ -181,8 +181,7 @@ public class UpdaterServiceAprobacionInformeComercialRevisionInformeComercial im
 					ArrayList<String> mailsPara = new ArrayList<String>();
 					ArrayList<String> mailsCC = new ArrayList<String>();
 					if(!Checks.esNulo(histFasePub)) {
-						if(!(DDFasePublicacion.CODIGO_FASE_III_PENDIENTE_INFORMACION.equals(histFasePub.getFasePublicacion().getCodigo()) 
-								&& DDSubfasePublicacion.CODIGO_DEVUELTO.equals(histFasePub.getSubFasePublicacion().getCodigo()))) {
+						if(!(DDFasePublicacion.CODIGO_FASE_III_PENDIENTE_INFORMACION.equals(histFasePub.getFasePublicacion().getCodigo()))){
 							
 							HistoricoFasePublicacionActivo nuevaFase = new HistoricoFasePublicacionActivo();
 							Filter subfaseFiltro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubfasePublicacion.CODIGO_DEVUELTO);

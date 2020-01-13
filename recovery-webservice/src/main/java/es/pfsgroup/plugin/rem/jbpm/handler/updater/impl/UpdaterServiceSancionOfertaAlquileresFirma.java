@@ -102,6 +102,7 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 			if(FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				try {
 					expedienteComercial.setFechaInicioAlquiler(ft.parse(valor.getValor()));
+					expedienteComercial.setFechaVenta(ft.parse(valor.getValor()));
 				} catch (ParseException e) {
 					logger.error("Error insertando Fecha anulación.", e);
 				}

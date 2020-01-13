@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Carles Molins
---## FECHA_CREACION=20200110
+--## FECHA_CREACION=20200113
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-6048
@@ -62,6 +62,7 @@ AUTHID CURRENT_USER IS
 	v_act_id 						NUMBER(16);
 	v_username						#ESQUEMA#.act_activo.usuariomodificar%TYPE;
 	v_activo_bankia					NUMBER;
+	v_valor_inicial_bankia			NUMBER := 100;
 	
 	V_MSQL							VARCHAR2(32000 CHAR);
 
@@ -344,7 +345,7 @@ BEGIN
 	
 	
 		         -- Suma de totales
-		         v_total := v_total_entorno + v_total_edificio + v_total_interior;
+		         v_total := v_valor_inicial_bankia + v_total_entorno + v_total_edificio + v_total_interior;
 		      END LOOP;
 		    
 		END IF;

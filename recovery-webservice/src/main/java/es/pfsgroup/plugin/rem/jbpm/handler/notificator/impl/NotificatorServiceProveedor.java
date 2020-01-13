@@ -71,7 +71,7 @@ public class NotificatorServiceProveedor extends AbstractNotificatorService impl
 			}		    
 	    }
 	    
-		if(!Checks.esNulo(correos) && correos.equals("")) {
+		if(!Checks.esNulo(correos) && !correos.equals("")) {
 			Collections.addAll(mailsPara, correos.split(";"));
 		}
 	   

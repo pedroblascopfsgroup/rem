@@ -58,16 +58,24 @@ public class NotificatorServiceODocCEEAnalisisPeticion extends AbstractNotificat
 
 	@Override
 	public void notificator(ActivoTramite tramite) {
-		if(!Checks.esNulo(tramite) && !Checks.esNulo(tramite.getTrabajo()) 
-			&& DDCartera.CODIGO_CARTERA_BANKIA.equals(tramite.getActivo().getCartera().getCodigo())) {
+		if(!Checks.esNulo(tramite) && !Checks.esNulo(tramite.getTrabajo())) {
 					
+			String correos = null;
+			
 			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
 			final String BUZON_PACI = "paci03";
 			List<String> mailsPara = new ArrayList<String>();
 			List<String> mailsCC = new ArrayList<String>();
 						 
-			Usuario buzonPaci = usuarioManager.getByUsername(BUZON_PACI);			    	
-			String correos = !Checks.esNulo(buzonPaci) ? buzonPaci.getEmail() : "";
+			Usuario buzonPaci = usuarioManager.getByUsername(BUZON_PACI);	
+			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(tramite.getActivo().getCartera().getCodigo())) {
+				correos = !Checks.esNulo(buzonPaci) ? buzonPaci.getEmail() : "";
+			}else {
+				if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto())) {
+					correos = tramite.getTrabajo().getProveedorContacto().getEmail();
+				}
+			}
+			
 		    Collections.addAll(mailsPara, correos.split(";"));
 			mailsCC.add(this.getCorreoFrom());
 						

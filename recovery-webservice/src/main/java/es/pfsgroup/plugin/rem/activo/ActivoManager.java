@@ -3294,11 +3294,29 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				BeanUtils.copyProperty(dtoMov, "idLlave", movimiento.getActivoLlave().getId().toString());
 				BeanUtils.copyProperty(dtoMov, "numLlave", movimiento.getActivoLlave().getNumLlave());
 			}
-
+			if ( movimiento.getTipoTenedorPoseedor() != null) {
+				BeanUtils.copyProperty(dtoMov, "descripcionTipoTenedorPoseedor", movimiento.getTipoTenedorPoseedor().getDescripcion());
+			}
+			if ( movimiento.getTipoTenedorPedidor() != null) {
+				BeanUtils.copyProperty(dtoMov, "descripcionTipoTenedorPedidor", movimiento.getTipoTenedorPedidor().getDescripcion());
+			}
+			if (movimiento.getCodNoPedidor() != null ) {
+				BeanUtils.copyProperty(dtoMov, "nombrePedidor", movimiento.getCodNoPedidor());
+			}else if ( movimiento.getPedidor() != null ) {
+				BeanUtils.copyProperty(dtoMov, "nombrePedidor", movimiento.getPedidor().getNombre());
+			}
+			if (movimiento.getCodNoPoseedor() != null ) {
+				BeanUtils.copyProperty(dtoMov, "nombrePoseedor", movimiento.getCodNoPoseedor());
+			}else if ( movimiento.getPoseedor() != null ) {
+				BeanUtils.copyProperty(dtoMov, "nombrePoseedor", movimiento.getPoseedor().getNombre());
+			}
 			if (!Checks.esNulo(movimiento.getTipoTenedor())) {
-				BeanUtils.copyProperty(dtoMov, "codigoTipoTenedor", movimiento.getTipoTenedor().getCodigo());
 				BeanUtils.copyProperty(dtoMov, "descripcionTipoTenedor", movimiento.getTipoTenedor().getDescripcion());
 			}
+			if ( movimiento.getTipoEstado() != null) {
+				BeanUtils.copyProperty(dtoMov, "estadoDescripcion", movimiento.getTipoEstado().getDescripcion());
+			}
+			
 
 		} catch (IllegalAccessException ex) {
 			logger.error("Error en activoManager", ex);

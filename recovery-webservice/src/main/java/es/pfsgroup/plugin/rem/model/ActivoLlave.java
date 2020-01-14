@@ -12,6 +12,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -39,6 +41,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
 @Table(name = "ACT_LLV_LLAVE", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
+@Inheritance(strategy=InheritanceType.JOINED)
 public class ActivoLlave implements Serializable, Auditable, Comparable<ActivoLlave> {
 
 
@@ -87,11 +90,11 @@ public class ActivoLlave implements Serializable, Auditable, Comparable<ActivoLl
 	@Column(name ="LLV_NUM_LLAVE")
 	private String numLlave;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TTE_ID_POSEEDOR")
 	private DDTipoTenedor tipoTenedor;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "LLV_COD_TENEDOR_POSEEDOR")
 	private ActivoProveedor poseedor;
 	

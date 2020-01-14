@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=GUILLEM REY
---## FECHA_CREACION=20190701
+--## FECHA_CREACION=20200114
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-4622
+--## INCIDENCIA_LINK=REMVIP-5469
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           

@@ -513,6 +513,12 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						},
 						{ 
 							xtype:'datefieldbase',
+							reference: 'fechaPrimerAnillado',
+							fieldLabel: 'Fecha primer anillado',
+		                	bind:		'{situacionPosesoria.fechaPrimerAnillado}'
+		                },
+						{ 
+							xtype:'datefieldbase',
 							reference: 'fechaRecepcionLlave',
 							fieldLabel: 'Fecha recepci&oacute;n llaves',
 		                	bind:		'{situacionPosesoria.fechaRecepcionLlave}'

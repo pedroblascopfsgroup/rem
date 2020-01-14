@@ -74,7 +74,7 @@ public class NotificatorServiceODocCEEAnalisisPeticion extends AbstractNotificat
 				correos = tramite.getTrabajo().getProveedorContacto().getEmail();
 			}
 			
-			if (!Checks.esNulo(correos)) {
+			if (correos != null) {
 				Collections.addAll(mailsPara, correos.split(";"));
 			}
 			mailsCC.add(this.getCorreoFrom());

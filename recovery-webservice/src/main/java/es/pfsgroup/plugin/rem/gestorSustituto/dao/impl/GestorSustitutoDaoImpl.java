@@ -60,7 +60,7 @@ public class GestorSustitutoDaoImpl extends AbstractEntityDao<GestorSustituto, L
 			logger.error("Error en GestorSustitutoDaoImpl", e);
 		} finally {
 			try {
-				if (!Checks.esNulo(cs) && !cs.isClosed())
+				if (cs != null && !cs.isClosed())
 					cs.close();
 			} catch (SQLException e) {
 				logger.error("Error en GestorSustitutoDaoImpl", e);

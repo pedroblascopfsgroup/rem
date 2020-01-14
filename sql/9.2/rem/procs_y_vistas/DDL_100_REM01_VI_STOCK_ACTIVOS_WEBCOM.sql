@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20191219
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20200114
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-8846
+--## INCIDENCIA_LINK=HREOS-9066
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico del stock de activos enviados a webcom.
 --##           
@@ -15,6 +15,7 @@
 --##        0.3 Versiń Jose Luis Barba -> HREOS-6309
 --##		0.4 Versión Jose Antonio Gigante -> HREOS-7800 - Agregados campos Fase y sufase de la tabla ACT_HFP_HIST_FASES_PUB
 --##		0.5 Versión Alejandro Valverde -> HREOS-8846 - Cambiar ID de Fase y Subfase Publicacion por Código de Fase y Subfase Publicacion.
+--##		0.6 Versión Daniel Algaba -> HREOS-9066 - Añadimos ARR_PROVEEDOR_LLAVES_REM.
 --##########################################
 --*/
 
@@ -40,7 +41,7 @@ DECLARE
 
     CUENTA NUMBER;
     
-BEGIN/*Versión 0.5*/
+BEGIN/*Versión 0.6*/
 
 	
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_VISTA|| '********'); 
@@ -270,7 +271,8 @@ BEGIN/*Versión 0.5*/
 		END 																				AS ID_PA,
         CAST(NVL2(PIVOT_UA.PROMOCION_ALQUILER_NUM_REM, SUBD_ACT.ID, NULL) AS NUMBER(32,0)) AS ID_SUBDIVISION_PA,
 		CAST(FSP.DD_FSP_CODIGO AS VARCHAR2(20 CHAR))										AS COD_FASE_PUBLICACION,
-		CAST(SFP.DD_SFP_CODIGO AS VARCHAR2(20 CHAR))										AS COD_SUBFASE_PUBLICACION
+		CAST(SFP.DD_SFP_CODIGO AS VARCHAR2(20 CHAR))										AS COD_SUBFASE_PUBLICACION,
+		CAST(LLV.ARR_PROVEEDOR_LLAVES_REM AS VARCHAR(3000 CHAR))								AS ARR_PROVEEDOR_LLAVES_REM
     	FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
 		INNER JOIN '||V_ESQUEMA||'.ACT_LOC_LOCALIZACION LOC ON LOC.ACT_ID = ACT.ACT_ID
 		INNER JOIN '||V_ESQUEMA||'.BIE_LOCALIZACION BLOC ON BLOC.BIE_LOC_ID = LOC.BIE_LOC_ID
@@ -414,6 +416,13 @@ BEGIN/*Versión 0.5*/
 		LEFT JOIN '||V_ESQUEMA||'.ACT_HFP_HIST_FASES_PUB HFP ON HFP.ACT_ID = act.ACT_ID 
 		LEFT JOIN '||V_ESQUEMA||'.DD_FSP_FASE_PUBLICACION FSP ON FSP.DD_FSP_ID = HFP.DD_FSP_ID 
 		LEFT JOIN '||V_ESQUEMA||'.DD_SFP_SUBFASE_PUBLICACION SFP ON SFP.DD_SFP_ID = HFP.DD_SFP_ID  
+		LEFT JOIN (SELECT DISTINCT LLV.ACT_ID,
+			   LISTAGG(CASE WHEN LLV.LLV_COD_TENEDOR_POSEEDOR IS NOT NULL AND LLV.LLV_COD_TENEDOR_NO_PVE IS NULL THEN PVE.PVE_NOMBRE
+			   WHEN LLV.LLV_COD_TENEDOR_POSEEDOR IS NULL AND LLV.LLV_COD_TENEDOR_NO_PVE IS NOT NULL THEN LLV.LLV_COD_TENEDOR_NO_PVE END , '','') 
+                           WITHIN GROUP (ORDER BY LLV.ACT_ID) over (partition by LLV.ACT_ID) ARR_PROVEEDOR_LLAVES_REM
+			   FROM '||V_ESQUEMA||'.ACT_LLV_LLAVE LLV
+			   LEFT JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON LLV.LLV_COD_TENEDOR_POSEEDOR = PVE.PVE_ID AND PVE.BORRADO = 0
+			   WHERE LLV.BORRADO = 0) LLV ON LLV.ACT_ID = ACT.ACT_ID
 		where act.borrado = 0 and sps.borrado = 0 and ico.borrado = 0 and (hfp.borrado = 0 or hfp.borrado is null) and hfp.hfp_fecha_fin is null ';
 
 		DBMS_OUTPUT.PUT_LINE('[INFO] Vista materializada : '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'... creada');

@@ -14,25 +14,28 @@ Ext.define('HreRem.model.Llaves', {
     			name:'idActivo'
     		},
     		{
-    			name:'codCentroLlave'
-    		},
-    		{
-    			name:'nomCentroLlave'
-    		},
-    		{
-    			name:'archivo1'
-    		},
-    		{
-    			name:'archivo2'
-    		},
-    		{
-    			name:'archivo3'
-    		},
-    		{
     			name:'juegoCompleto'
     		},
     		{
     			name:'motivoIncompleto'
+    		},
+    		{
+    			name:'tipoTenedor'
+    		},
+    		{
+    			name:'nombreTenedor'
+    		},
+    		{
+    			name:'telefonoTenedor'
+    		},
+    		{
+    			name:'fechaPrimerAnillado'
+    		},
+    		{
+    			name:'fechaRecepcion'
+    		},
+    		{
+    			name:'observaciones'
     		}
     ],
     

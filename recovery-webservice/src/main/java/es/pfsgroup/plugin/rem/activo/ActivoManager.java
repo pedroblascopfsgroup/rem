@@ -4258,13 +4258,24 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public DtoPage getListLlavesByActivo(DtoLlaves dto) {
+	public DtoPage getListLlavesByActivo(DtoLlaves dto) throws ParseException {
 		Page page = activoDao.getLlavesByActivo(dto);
 
 		List<DtoLlaves> llaves = new ArrayList<DtoLlaves>();
-
 		for (ActivoLlave llave : (List<ActivoLlave>) page.getResults()) {
 			DtoLlaves dtoLlave = this.llavesToDto(llave);
+			if(!Checks.esNulo(llave.getTipoTenedor())) {
+				dtoLlave.setTipoTenedor(llave.getTipoTenedor().getDescripcion());		
+			}
+			if(!Checks.esNulo(llave.getCodNoPoseedor())) {
+				dtoLlave.setNombreTenedor(llave.getCodNoPoseedor());
+			}else {
+				if(!Checks.esNulo(llave.getPoseedor())) {
+					dtoLlave.setNombreTenedor(llave.getPoseedor().getNombre());
+					dtoLlave.setTelefonoTenedor(llave.getPoseedor().getTelefono1());
+				}
+			}
+		
 			llaves.add(dtoLlave);
 		}
 

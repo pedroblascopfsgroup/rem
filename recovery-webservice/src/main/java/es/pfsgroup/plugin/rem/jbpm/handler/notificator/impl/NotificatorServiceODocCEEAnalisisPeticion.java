@@ -70,13 +70,13 @@ public class NotificatorServiceODocCEEAnalisisPeticion extends AbstractNotificat
 			Usuario buzonPaci = usuarioManager.getByUsername(BUZON_PACI);	
 			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(tramite.getActivo().getCartera().getCodigo())) {
 				correos = !Checks.esNulo(buzonPaci) ? buzonPaci.getEmail() : "";
-			}else {
-				if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto())) {
-					correos = tramite.getTrabajo().getProveedorContacto().getEmail();
-				}
+			}else if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto())) {
+				correos = tramite.getTrabajo().getProveedorContacto().getEmail();
 			}
 			
-		    Collections.addAll(mailsPara, correos.split(";"));
+			if (!Checks.esNulo(correos)) {
+				Collections.addAll(mailsPara, correos.split(";"));
+			}
 			mailsCC.add(this.getCorreoFrom());
 						
 			String descripcionTrabajo = !Checks.esNulo(tramite.getTrabajo().getDescripcion())? (tramite.getTrabajo().getDescripcion() + " - ") : "";

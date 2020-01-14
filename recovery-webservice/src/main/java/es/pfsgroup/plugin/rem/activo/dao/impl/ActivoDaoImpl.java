@@ -265,8 +265,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoComunicacionGencat",
 				dto.getEstadoComunicacionGencatCodigo());
 		
-		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoPublicacionCodigo", dto.getTipoPublicacionCodigo());
-		
 		if (dto.getUsuarioGestoria()) {
 			hb.appendWhere(" act.id = bag.id and bag.gestoria = " + dto.getGestoria());
 		}

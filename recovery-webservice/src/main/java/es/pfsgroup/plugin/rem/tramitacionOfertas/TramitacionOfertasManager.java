@@ -118,6 +118,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	private static final String AVISO_MENSAJE_EXPEDIENTE_ANULADO_POR_GENCAT = "activo.motivo.oferta.anulado.gencat";
 	private static final String EXISTEN_UNIDADES_ALQUILABLES_CON_OFERTAS_VIVAS ="activo.matriz.con.unidades.alquilables.ofertas.vivas";
 	private static final String EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS ="activo.unidad.alquilable.con.activo.matriz.ofertas.vivas";
+	private static final String AGRUPACION_SIN_FORMALIZACION = "agrupacion.sin.formalizacion";
 	private static final String MAESTRO_ORIGEN_WCOM="WCOM";
 	private static final Integer ES_FORMALIZABLE = new Integer(1);
 	private static final String FALTAN_DATOS = "Faltan datos para proponer";
@@ -1565,7 +1566,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_CLIENTE_OBLIGATORIO));
 			}
 		}
-
 		
 		// Si se pretende aceptar la oferta, comprobar primero si la agrupación
 		// de la oferta es de tipo 'Lote comercial'.
@@ -1580,6 +1580,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 					if (!agrupacionLoteComercialGestoresAsignados(oferta.getAgrupacion()) && !Checks.esNulo(oferta.getVentaDirecta()) && !oferta.getVentaDirecta()) {
 						throw new JsonViewerException(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
 					}
+				} else {
+					throw new JsonViewerException(messageServices.getMessage(AGRUPACION_SIN_FORMALIZACION));
 				}
 			}
 		}

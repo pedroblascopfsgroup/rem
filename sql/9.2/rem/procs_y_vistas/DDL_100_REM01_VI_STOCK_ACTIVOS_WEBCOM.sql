@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200114
+--## AUTOR=Cristian Montoya
+--## FECHA_CREACION=20200115
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-9066
+--## INCIDENCIA_LINK=HREOS-9115
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico del stock de activos enviados a webcom.
 --##           
@@ -16,6 +16,7 @@
 --##		0.4 Versión Jose Antonio Gigante -> HREOS-7800 - Agregados campos Fase y sufase de la tabla ACT_HFP_HIST_FASES_PUB
 --##		0.5 Versión Alejandro Valverde -> HREOS-8846 - Cambiar ID de Fase y Subfase Publicacion por Código de Fase y Subfase Publicacion.
 --##		0.6 Versión Daniel Algaba -> HREOS-9066 - Añadimos ARR_PROVEEDOR_LLAVES_REM.
+--##		0.7 Versión Cristian Montoya -> HREOS-9115 - Añadimos ID_PROVEEDOR_ESPEJO_REM.
 --##########################################
 --*/
 
@@ -272,7 +273,8 @@ BEGIN/*Versión 0.6*/
         CAST(NVL2(PIVOT_UA.PROMOCION_ALQUILER_NUM_REM, SUBD_ACT.ID, NULL) AS NUMBER(32,0)) AS ID_SUBDIVISION_PA,
 		CAST(FSP.DD_FSP_CODIGO AS VARCHAR2(20 CHAR))										AS COD_FASE_PUBLICACION,
 		CAST(SFP.DD_SFP_CODIGO AS VARCHAR2(20 CHAR))										AS COD_SUBFASE_PUBLICACION,
-		CAST(LLV.ARR_PROVEEDOR_LLAVES_REM AS VARCHAR(3000 CHAR))								AS ARR_PROVEEDOR_LLAVES_REM
+		CAST(LLV.ARR_PROVEEDOR_LLAVES_REM AS VARCHAR(3000 CHAR))								AS ARR_PROVEEDOR_LLAVES_REM,
+		ICO.ICO_MEDIADOR_ESPEJO_ID																AS ID_PROVEEDOR_ESPEJO_REM
     	FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
 		INNER JOIN '||V_ESQUEMA||'.ACT_LOC_LOCALIZACION LOC ON LOC.ACT_ID = ACT.ACT_ID
 		INNER JOIN '||V_ESQUEMA||'.BIE_LOCALIZACION BLOC ON BLOC.BIE_LOC_ID = LOC.BIE_LOC_ID

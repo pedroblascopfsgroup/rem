@@ -353,6 +353,9 @@ public class StockDto implements WebcomRESTDto{
 	@WebcomRequired
 	private String arrProveedorLlavesRem;
 	
+	@WebcomRequired
+	private LongDataType idProveedorEspejoRem;
+	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
 	}
@@ -1001,6 +1004,12 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setArrProveedorLlavesRem(String arrProveedorLlavesRem) {
 		this.arrProveedorLlavesRem = arrProveedorLlavesRem;
+	}
+	public LongDataType getIdProveedorEspejoRem() {
+		return idProveedorEspejoRem;
+	}
+	public void setIdProveedorEspejoRem(LongDataType idProveedorEspejoRem) {
+		this.idProveedorEspejoRem = idProveedorEspejoRem;
 	}
 	
 }

@@ -39,7 +39,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
 @Table(name = "ACT_LLV_LLAVE", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
-public class ActivoLlave implements Serializable, Auditable {
+public class ActivoLlave implements Serializable, Auditable, Comparable<ActivoLlave> {
 
 
 	
@@ -279,7 +279,13 @@ public class ActivoLlave implements Serializable, Auditable {
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
 	}
-	
-	
+
+	@Override
+	public int compareTo(ActivoLlave o) {
+		if ( getFechaRecepcion() == null || o.getFechaRecepcion() == null)
+			return 0; 
+		else
+			return getFechaRecepcion().compareTo(o.getFechaRecepcion());
+	}
 	
 }

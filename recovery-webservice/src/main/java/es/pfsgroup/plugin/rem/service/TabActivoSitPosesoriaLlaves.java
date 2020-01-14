@@ -93,7 +93,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 		if (activo != null){
 			BeanUtils.copyProperty(activoDto, "necesarias", activo.getLlavesNecesarias());
 			BeanUtils.copyProperty(activoDto, "llaveHre", activo.getLlavesHre());
-			BeanUtils.copyProperty(activoDto, "fechaRecepcionLlave", activo.getFechaRecepcionLlaves());
+			BeanUtils.copyProperty(activoDto, "fechaPrimerAnillado", activo.getFechaRecepcionLlaves());
 			BeanUtils.copyProperty(activoDto, "numJuegos", activo.getLlaves().size());
 			BeanUtils.copyProperty(activoDto, "tieneOkTecnico", activo.getTieneOkTecnico());
 		}
@@ -154,6 +154,11 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 				 }
 			 }
 		}
+		if (activo.getListActivoLlaveOrderedByFechaRecepcion() != null
+				&& activo.getListActivoLlaveOrderedByFechaRecepcion().get(0) != null) {
+			activoDto.setFechaRecepcionLlave(
+					activo.getListActivoLlaveOrderedByFechaRecepcion().get(0).getFechaRecepcion());
+		}
 		/*
 		//Añadir al DTO los atributos de llaves también
 		
@@ -186,7 +191,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 	}
 
 	@Override
-	public Activo saveTabActivo(Activo activo, WebDto webDto) {
+	public Activo saveTabActivo(Activo activo, WebDto webDto) { 
 	
 
 		DtoActivoSituacionPosesoria dto = (DtoActivoSituacionPosesoria) webDto;
@@ -295,9 +300,14 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			activo.setLlavesHre(dto.getLlaveHre());
 		}
 		
-		if (dto.getFechaRecepcionLlave()!=null)
+		//HREOS-9069
+		if (dto.getFechaPrimerAnillado()!=null)
 		{
-			activo.setFechaRecepcionLlaves(dto.getFechaRecepcionLlave());
+			activo.setFechaRecepcionLlaves(dto.getFechaPrimerAnillado());
+		}
+		if (dto.getFechaRecepcionLlave() != null && activo.getListActivoLlaveOrderedByFechaRecepcion() != null
+				&& activo.getListActivoLlaveOrderedByFechaRecepcion().get(0) != null) {
+			activo.getListActivoLlaveOrderedByFechaRecepcion().get(0).setFechaRecepcion(dto.getFechaRecepcionLlave());
 		}
 		if (dto.getNumJuegos()!=null)
 		{

@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -1929,6 +1931,18 @@ public class Activo implements Serializable, Auditable {
 
 	public void setDireccionTerritorial(DDDireccionTerritorial direccionTerritorial) {
 		this.direccionTerritorial = direccionTerritorial;
+	}
+	
+	public List<ActivoLlave> getListActivoLlaveOrderedByFechaRecepcion(){
+		List<ActivoLlave> listLlaves = new ArrayList<ActivoLlave>();
+		if ( getLlaves() == null) {
+			return listLlaves;
+		}else {
+			listLlaves = getLlaves();
+			Collections.reverse(listLlaves);
+			return llaves;
+		}
+		
 	}
 	
 }

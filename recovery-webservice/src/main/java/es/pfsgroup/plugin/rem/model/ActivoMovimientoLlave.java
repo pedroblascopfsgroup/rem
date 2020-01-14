@@ -69,7 +69,45 @@ public class ActivoMovimientoLlave implements Serializable, Auditable {
 	@Embedded
 	private Auditoria auditoria;
 
+	@ManyToOne
+    @JoinColumn(name = "DD_TTE_ID_POSEEDOR")
+	private DDTipoTenedor tipoTenedorPoseedor;
 
+	@ManyToOne
+    @JoinColumn(name = "MLV_COD_TENEDOR_POSEEDOR")
+	private ActivoProveedor poseedor;
+	
+	@Column(name = "MLV_COD_TENEDOR_POS_NO_PVE")
+	private String codNoPoseedor;
+	
+	@ManyToOne
+    @JoinColumn(name = "DD_TTE_ID_PEDIDOR")
+	private DDTipoTenedor tipoTenedorPedidor;
+	
+	@ManyToOne
+    @JoinColumn(name = "MLV_COD_TENEDOR_PEDIDOR")
+	private ActivoProveedor pedidor;
+
+	@Column(name = "MLV_COD_TENEDOR_PED_NO_PVE")
+	private String codNoPedidor;
+	
+	@Column(name = "MLV_ENVIO")
+	private String envio;
+	
+	@Column(name ="MLV_FECHA_RECEPCION")
+	private Date fechaRecepcion;
+	
+	@Column(name ="MLV_OBSERVACIONES")
+	private String observaciones;
+	
+	@Column(name ="MLV_ESTADO")
+	private Date DDTipoEstado;
+	
+	@Column(name ="MLV_FECHA_ENVIO")
+	private Date fechaEnvio;
+	
+	
+	
 
 	public Long getId() {
 		return id;
@@ -143,6 +181,94 @@ public class ActivoMovimientoLlave implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 
+	public DDTipoTenedor getTipoTenedorPoseedor() {
+		return tipoTenedorPoseedor;
+	}
 
+	public void setTipoTenedorPoseedor(DDTipoTenedor tipoTenedorPoseedor) {
+		this.tipoTenedorPoseedor = tipoTenedorPoseedor;
+	}
+
+	public ActivoProveedor getPoseedor() {
+		return poseedor;
+	}
+
+	public void setPoseedor(ActivoProveedor poseedor) {
+		this.poseedor = poseedor;
+	}
+
+	public String getCodNoPoseedor() {
+		return codNoPoseedor;
+	}
+
+	public void setCodNoPoseedor(String codNoPoseedor) {
+		this.codNoPoseedor = codNoPoseedor;
+	}
+
+	public DDTipoTenedor getTipoTenedorPedidor() {
+		return tipoTenedorPedidor;
+	}
+
+	public void setTipoTenedorPedidor(DDTipoTenedor tipoTenedorPedidor) {
+		this.tipoTenedorPedidor = tipoTenedorPedidor;
+	}
+
+	public ActivoProveedor getPedidor() {
+		return pedidor;
+	}
+
+	public void setPedidor(ActivoProveedor pedidor) {
+		this.pedidor = pedidor;
+	}
+
+	public String getCodNoPedidor() {
+		return codNoPedidor;
+	}
+
+	public void setCodNoPedidor(String codNoPedidor) {
+		this.codNoPedidor = codNoPedidor;
+	}
+
+	public String getEnvio() {
+		return envio;
+	}
+
+	public void setEnvio(String envio) {
+		this.envio = envio;
+	}
+
+	public Date getFechaRecepcion() {
+		return fechaRecepcion;
+	}
+
+	public void setFechaRecepcion(Date fechaRecepcion) {
+		this.fechaRecepcion = fechaRecepcion;
+	}
+
+	public String getObservaciones() {
+		return observaciones;
+	}
+
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
+	}
+
+	public Date getDDTipoEstado() {
+		return DDTipoEstado;
+	}
+
+	public void setDDTipoEstado(Date dDTipoEstado) {
+		DDTipoEstado = dDTipoEstado;
+	}
+
+	public Date getFechaEnvio() {
+		return fechaEnvio;
+	}
+
+	public void setFechaEnvio(Date fechaEnvio) {
+		this.fechaEnvio = fechaEnvio;
+	}
+
+	
 
 }

@@ -31,6 +31,11 @@ public class DDTipoBulkAdvisoryNote implements Auditable, Dictionary {
 		    
 	private static final long serialVersionUID = -6617347056146459295L;
 
+	public static final String APPLE_APROBADAS_DELEGACION = "APD";
+	public static final String DIVARIAN_REMAINING_APROBADAS_DELEGACION = "DRD";
+	public static final String APPLE_APROBADAS_CERBERUS = "APC";
+	public static final String DIVARIAN_REMAINING_APROBADAS_CERBERUS = "DRC";
+	
 	@Id
 	@Column(name = "DD_TBK_ID")	
     private Long id;

@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=DAP
---## FECHA_CREACION=20181002
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=2020
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-1868
@@ -13,6 +13,7 @@
 --##        0.1 20161006 Versión inicial
 --##		0.2 20171212 HREOS-3334 Disclaimer con cargas aparece sin que el activo tenga cargas HREOS-3334
 --##        0.3 - Se añaden validaciones nuevas dependiendo del campo "Cargas Propias"
+--##		0.4 REMVIP-6184 cambio en el diccionario de cargas
 --##########################################
 --*/
 
@@ -69,12 +70,10 @@ BEGIN
                       CRG.ACT_ID
                   FROM
                       '||V_ESQUEMA||'.ACT_CRG_CARGAS CRG
-                      INNER JOIN '||V_ESQUEMA||'.BIE_CAR_CARGAS BCG ON BCG.BIE_CAR_ID = CRG.BIE_CAR_ID
-                      INNER JOIN '||V_ESQUEMA||'.DD_SIC_SITUACION_CARGA DDSIC ON DDSIC.DD_SIC_ID = BCG.DD_SIC_ID
-                                                                       AND DDSIC.DD_SIC_CODIGO IN (
-                          ''VIG'',
-                          ''NCN'',
-                          ''SAN''
+					  INNER JOIN '||V_ESQUEMA||'.DD_ECG_ESTADO_CARGA ECG ON ECG.DD_ECG_ID = CRG.DD_ECG_ID
+                                                                       AND ECG.DD_ECG_CODIGO IN (
+                          ''01'',
+                          ''02''
                       )
                   WHERE
                       CRG.BORRADO = 0
@@ -84,12 +83,10 @@ BEGIN
                       CRG.ACT_ID
                   FROM
                       '||V_ESQUEMA||'.ACT_CRG_CARGAS CRG
-                      INNER JOIN '||V_ESQUEMA||'.BIE_CAR_CARGAS BCG ON BCG.BIE_CAR_ID = CRG.BIE_CAR_ID
-                      INNER JOIN '||V_ESQUEMA||'.DD_SIC_SITUACION_CARGA DDSIC2 ON DDSIC2.DD_SIC_ID = BCG.DD_SIC_ID2
-                                                                        AND DDSIC2.DD_SIC_CODIGO IN (
-                          ''VIG'',
-                          ''NCN'',
-                          ''SAN''
+                      INNER JOIN '||V_ESQUEMA||'.DD_ECG_ESTADO_CARGA ECG ON ECG.DD_ECG_ID = CRG.DD_ECG_ID
+                                                                       AND ECG.DD_ECG_CODIGO IN (
+                          ''01'',
+                          ''02''
                       )
                   WHERE
                       CRG.BORRADO = 0
@@ -106,17 +103,14 @@ BEGIN
           FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
           JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID AND CRA.DD_CRA_CODIGO = ''08''
           JOIN '||V_ESQUEMA||'.ACT_CRG_CARGAS CRG ON CRG.ACT_ID = ACT.ACT_ID AND CRG.BORRADO = 0 AND CRG.CRG_CARGAS_PROPIAS = 1
-          JOIN '||V_ESQUEMA||'.BIE_CAR_CARGAS BCG ON BCG.BIE_CAR_ID = CRG.BIE_CAR_ID AND BCG.BORRADO = 0
           JOIN '||V_ESQUEMA||'.DD_STC_SUBTIPO_CARGA STC ON CRG.DD_STC_ID = STC.DD_STC_ID AND STC.DD_STC_CODIGO = ''01''
-          JOIN '||V_ESQUEMA||'.BIE_CAR_CARGAS BCG ON BCG.BIE_CAR_ID = CRG.BIE_CAR_ID
-          JOIN '||V_ESQUEMA||'.DD_SIC_SITUACION_CARGA DDSIC ON DDSIC.DD_SIC_ID = BCG.DD_SIC_ID
-            AND DDSIC.DD_SIC_CODIGO IN (''VIG'', ''NCN'', ''SAN'')
+          JOIN '||V_ESQUEMA||'.DD_ECG_ESTADO_CARGA ECG ON ECG.DD_ECG_ID = CRG.DD_ECG_ID
+            AND ECG.DD_ECG_CODIGO IN (''01'',''02'')
           WHERE ACT.BORRADO = 0 AND NOT EXISTS (
                   SELECT 1
                   FROM '||V_ESQUEMA||'.ACT_CRG_CARGAS CRG1
-                  JOIN '||V_ESQUEMA||'.BIE_CAR_CARGAS BCG1 ON BCG1.BIE_CAR_ID = CRG1.BIE_CAR_ID AND BCG1.BORRADO = 0
-                  JOIN '||V_ESQUEMA||'.DD_SIC_SITUACION_CARGA DDSIC1 ON DDSIC1.DD_SIC_ID = BCG1.DD_SIC_ID
-                    AND DDSIC1.DD_SIC_CODIGO IN (''VIG'', ''NCN'', ''SAN'')
+				  JOIN '||V_ESQUEMA||'.DD_ECG_ESTADO_CARGA ECG ON ECG.DD_ECG_ID = CRG1.DD_ECG_ID
+            		AND ECG.DD_ECG_CODIGO IN (''01'',''02'')
                   WHERE CRG1.ACT_ID = ACT.ACT_ID AND CRG1.BORRADO = 0 AND (CRG1.CRG_CARGAS_PROPIAS = 0 
                   OR CRG1.CRG_CARGAS_PROPIAS IS NULL)
                   )
@@ -124,9 +118,8 @@ BEGIN
                   SELECT 1
                   FROM '||V_ESQUEMA||'.ACT_CRG_CARGAS CRG2
                   JOIN '||V_ESQUEMA||'.DD_STC_SUBTIPO_CARGA STC1 ON CRG2.DD_STC_ID = STC1.DD_STC_ID AND STC1.DD_STC_CODIGO <> ''01''
-                  JOIN '||V_ESQUEMA||'.BIE_CAR_CARGAS BCG2 ON BCG2.BIE_CAR_ID = CRG2.BIE_CAR_ID AND BCG2.BORRADO = 0
-                  JOIN '||V_ESQUEMA||'.DD_SIC_SITUACION_CARGA DDSIC2 ON DDSIC2.DD_SIC_ID = BCG2.DD_SIC_ID
-                    AND DDSIC2.DD_SIC_CODIGO IN (''VIG'', ''NCN'', ''SAN'')
+                  JOIN '||V_ESQUEMA||'.DD_ECG_ESTADO_CARGA ECG ON ECG.DD_ECG_ID = CRG2.DD_ECG_ID
+                    AND ECG.DD_ECG_CODIGO IN (''01'',''02'')
                   WHERE CRG2.ACT_ID = ACT.ACT_ID AND CRG2.BORRADO = 0 AND CRG2.CRG_CARGAS_PROPIAS = 1
                   )
           )
@@ -146,6 +139,19 @@ BEGIN
 			
 
   	DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'...Creada OK');
+  	
+EXCEPTION
+    WHEN OTHERS THEN
+         err_num := SQLCODE;
+         err_msg := SQLERRM;
+
+         DBMS_OUTPUT.PUT_LINE('KO no modificada');
+         DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+         DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+         DBMS_OUTPUT.put_line(err_msg);
+
+         ROLLBACK;
+         RAISE;  
 	  
 END;
 /

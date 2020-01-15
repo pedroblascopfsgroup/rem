@@ -289,6 +289,9 @@ public class Oferta implements Serializable, Auditable {
 	
 	@Column(name="OFR_OFERTA_SINGULAR")
 	private Boolean ofertaSingular;
+	
+	@Column(name="OFR_EXCLUSION_BULK")
+	private Boolean exclusionBulk;
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -866,5 +869,13 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setOfertaSingular(Boolean ofertaSingular) {
 		this.ofertaSingular = ofertaSingular;
+	}
+
+	public Boolean getExclusionBulk() {
+		return exclusionBulk;
+	}
+
+	public void setExclusionBulk(Boolean exclusionBulk) {
+		this.exclusionBulk = exclusionBulk;
 	}
 }

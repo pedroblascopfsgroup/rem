@@ -384,6 +384,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Autowired
 	private GestorActivoManager gestorActivoManager;
+	
+	@Autowired
+    UsuarioManager usuarioManager;
 
 	@Override
 	public String managerName() {
@@ -7810,5 +7813,53 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}else {
 			throw new PlusvaliaActivoException(PlusvaliaActivoException.getErrorNoExisteEstadoDeGestionPorCodigo(codigo));
 		}
+	}
+
+	@Override
+	public Boolean getMostrarEdicionTabFasesPublicacion(Activo activo) {
+		Usuario logedUser = usuarioManager.getUsuarioLogado();
+		Usuario gestorPublicacionActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_PUBLICACION);
+		Usuario supervisorPublicacionActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_PUBLICACION);
+		Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+		Usuario gestorEdificaciones = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+		
+		Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		Filter vigenteFilter = genericDao.createFilter(FilterType.NULL, "fechaAutorizacionHasta");
+		Order order = new Order(OrderType.DESC, "id");
+		
+		List<ActivoInfoComercial> listaMediadores = genericDao.getListOrdered(ActivoInfoComercial.class, order, activoFilter, vigenteFilter);
+		ActivoInfoComercial mediadorVigente = null;
+		
+		if(!Checks.estaVacio(listaMediadores)) {
+			mediadorVigente = listaMediadores.get(0);
+		}
+
+		if(!Checks.esNulo(gestorPublicacionActivo) && logedUser.equals(gestorPublicacionActivo)) {
+			return true;
+		}else if(!Checks.esNulo(supervisorPublicacionActivo) && logedUser.equals(supervisorPublicacionActivo)) {
+			return true;
+		}else if(!Checks.esNulo(gestorActivo) && logedUser.equals(gestorActivo)) {
+			return true;
+		}else if(!Checks.esNulo(gestorEdificaciones) && logedUser.equals(gestorEdificaciones)) {
+			return true;
+		}else if(genericAdapter.isSuper(logedUser)) {
+			return true;
+		}else if(!Checks.esNulo(mediadorVigente) && !Checks.esNulo(mediadorVigente.getMediadorInforme())) {
+			Long idProveedor = mediadorVigente.getMediadorInforme().getId();
+			Filter pvcFilter = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", idProveedor);
+			List<ActivoProveedorContacto> listaProveedorContacto = genericDao.getList(ActivoProveedorContacto.class, pvcFilter);
+			if(!Checks.estaVacio(listaProveedorContacto)) {
+				for(ActivoProveedorContacto proveedorContacto : listaProveedorContacto) {
+					if(!Checks.esNulo(proveedorContacto) && !Checks.esNulo(proveedorContacto.getDocIdentificativo())) {
+						Usuario usuMediadorVigente = proveedorContacto.getUsuario();
+						if(!Checks.esNulo(usuMediadorVigente) && usuMediadorVigente.getId().equals(logedUser.getId())) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 }

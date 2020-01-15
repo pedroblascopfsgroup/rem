@@ -144,8 +144,11 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 //						console.log(dataStore[rowCounter]);
 //						value = dataStore[rowCounter].data.importeTotalGasto / sumaValores(dataStore, ['importeTotalGasto']) * 100;/*Calculamos el porcentaje individual*/
 //						rowCounter++;
-						
-			          return Ext.util.Format.number(value, '0.00%');
+						const formatter = new Intl.NumberFormat('es-ES', {
+	            		   minimumFractionDigits: 2,      
+	            		   maximumFractionDigits: 4
+	            		});
+			          return formatter.format(value) + "%";
 			        },
 					flex : 1,
 					editor: 'numberfield',
@@ -172,7 +175,11 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 	                    }
 					},
 		            summaryRenderer: function(value, summaryData, dataIndex) {
-		            	var value2=Ext.util.Format.number(value, '0.00');
+		            	const formatter = new Intl.NumberFormat('es-ES', {
+		            		   minimumFractionDigits: 2,      
+		            		   maximumFractionDigits: 4
+		            		});
+		            	var value2 = formatter.format(value);
 		            	var msg = HreRem.i18n("fieldlabel.participacion.total") + " " + value2 + "%";
 		            	var style = "style= 'color: black'";
 		            	if(parseFloat(value) != parseFloat('100.00')) {
@@ -189,12 +196,16 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 					flex : 1,
 					summaryType: 'sum',
 		            summaryRenderer: function(value, summaryData, dataIndex) {
-		            	var value2=Ext.util.Format.number(value, '0.00');
+		            	const formatter = new Intl.NumberFormat('es-ES', {
+		            		   minimumFractionDigits: 2,      
+		            		   maximumFractionDigits: 4
+		            		});
+		            	var value2 = formatter.format(value);
 		            	var msg = HreRem.i18n("header.activos.afectados.importe.proporcional.total") + " " + value2 + "\u20AC";
 		            	var style = "style= 'color: black'";
-		            	var importeTotal = Ext.util.Format.number(me.store.getData().items[0].get('importeTotalGasto'), '0.00');
+		            	var importeTotal = formatter.format(me.store.getData().items[0].get('importeTotalGasto'));
 		            	if(importeTotal==""){
-		            		importeTotal = Ext.util.Format.number(0, '0.00');
+		            		importeTotal = formatter.format(0);
 		            	}
 		            	if(value2 != importeTotal) {
 		            		//msg = HreRem.i18n("fieldlabel.participacion.total.error")	

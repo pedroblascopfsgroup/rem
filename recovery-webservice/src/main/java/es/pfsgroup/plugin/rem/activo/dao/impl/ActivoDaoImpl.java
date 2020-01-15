@@ -67,6 +67,8 @@ import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPlusvalia;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -198,6 +200,18 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoPublicacionAlquiler", dto.getEstadoPublicacionAlquilerCodigo());	
 			List<String> tiposComercializacion = Arrays.asList(DDTipoComercializacion.CODIGOS_ALQUILER);
 			HQLBuilder.addFiltroWhereInSiNotNull(hb, "act.tipoComercializacion.codigo", tiposComercializacion);
+		}
+		
+		if (!Checks.esNulo(dto.getTipoPublicacionCodigo()) 
+				&& !Checks.esNulo(dto.getEstadoPublicacionVentaCodigo()) 
+				&& DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA.equals(dto.getEstadoPublicacionVentaCodigo())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoPublicacionVentaCodigo", dto.getTipoPublicacionCodigo());
+		}
+		
+		if (!Checks.esNulo(dto.getTipoPublicacionCodigo()) 
+				&& !Checks.esNulo(dto.getEstadoPublicacionAlquilerCodigo()) 
+				&& DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER.equals(dto.getEstadoPublicacionAlquilerCodigo())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoPublicacionAlquilerCodigo", dto.getTipoPublicacionCodigo());
 		}
 		
 		if(dto.getMotivosOcultacionVenta() != null) {

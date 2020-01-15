@@ -55,7 +55,7 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 	public static final String ACTIVO_FUERA_PERIMETRO = "msg.error.masivo.activo.fuera.perimetro";
 	public static final String ACTIVO_OFERTAS_VIVAS = "msg.error.masivo.activo.ofertas.vivas";
 	public static final String ACTIVO_LOTE_COMERCIAL_VIVO = "msg.error.masivo.activo.en.lote.comercial.vivo";
-	public static final String ACTIVO_ALQUILADO = "msg.error.masivo.activo.alquilado";
+	//public static final String ACTIVO_ALQUILADO = "msg.error.masivo.activo.alquilado";
 	public static final String AGRUPACION_NO_EXISTE = "msg.error.masivo.agrupar.agrupacion.no.existe";
 	public static final String AGRUPACION_NO_TIPO_COMERCIAL_VENTA = "msg.error.masivo.agrupar.agrupacion.no.tipo.comercial.venta";
 	public static final String ACTIVO_DISTINTA_SUBCARTERA = "msg.error.masivo.activo.distinta.subcartera";
@@ -141,7 +141,7 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 			mapaErrores.put(messageServices.getMessage(ACTIVO_FUERA_PERIMETRO), activosFueraPerimetroRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_OFERTAS_VIVAS), activosConOfertasVivasRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_LOTE_COMERCIAL_VIVO), activosEnLoteComercialVivoRows(exc));
-			mapaErrores.put(messageServices.getMessage(ACTIVO_ALQUILADO), activosSituacionComercialAlquiladoRows(exc));
+			//mapaErrores.put(messageServices.getMessage(ACTIVO_ALQUILADO), activosSituacionComercialAlquiladoRows(exc));
 			mapaErrores.put(messageServices.getMessage(AGRUPACION_NO_EXISTE), agrupacionNotExistsRows(exc));
 			mapaErrores.put(messageServices.getMessage(AGRUPACION_NO_TIPO_COMERCIAL_VENTA), agrupacionNoTipoComercialVentaRows(exc));
 			mapaErrores.put(messageServices.getMessage(ERROR_ACTIVO_DISTINTO_PROPIETARIO), comprobarDistintoPropietario(exc));
@@ -176,7 +176,7 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_FUERA_PERIMETRO)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_OFERTAS_VIVAS)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_LOTE_COMERCIAL_VIVO)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_ALQUILADO)).isEmpty()
+				//	|| !mapaErrores.get(messageServices.getMessage(ACTIVO_ALQUILADO)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(AGRUPACION_NO_EXISTE)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(AGRUPACION_NO_TIPO_COMERCIAL_VENTA)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ERROR_ACTIVO_DISTINTO_PROPIETARIO)).isEmpty()

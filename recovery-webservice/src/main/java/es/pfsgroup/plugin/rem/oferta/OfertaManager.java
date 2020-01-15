@@ -4688,7 +4688,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							isMinoristaOResidencial = true;
 						}
 					} else if (!Checks.esNulo(listaActivos.get(0).getPrimaryKey().getActivo().getTipoComercializar()) 
-							&& DDTipoComercializar.DESCRIPCION_RETAIL.equals(listaActivos.get(0).getPrimaryKey().getActivo().getTipoComercializar().getCodigo())) {
+							&& DDTipoComercializar.CODIGO_RETAIL.equals(listaActivos.get(0).getPrimaryKey().getActivo().getTipoComercializar().getCodigo())) {
 						isMinoristaOResidencial = true;
 					}
 					

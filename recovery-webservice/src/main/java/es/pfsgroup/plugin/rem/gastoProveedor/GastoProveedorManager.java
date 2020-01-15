@@ -320,7 +320,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}else{
 				dto.setCartera(null);
 			}
-			
+			dto.setSubcartera(gasto.getSubcartera() == null ? null : gasto.getSubcartera().getCodigo());
 
 			if (!Checks.esNulo(gasto.getTipoGasto())) {
 				dto.setTipoGastoCodigo(gasto.getTipoGasto().getCodigo());
@@ -890,10 +890,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 							gastoProveedorActivos = genericDao.get(GastoProveedorActivo.class, filtro2,filtro4);
 							Float participacionGasto = (float) ((gastoPrinex.getImporteGasto()*100)/gastoTotal);
 
-							DecimalFormat df = new DecimalFormat("##.##");
-							df.setRoundingMode(RoundingMode.CEILING);
+							DecimalFormat df = new DecimalFormat("##.####");
+							df.setRoundingMode(RoundingMode.HALF_DOWN);
 							
-							//truncamos a dos decimales
+							//truncamos a 4 decimales
 							participacionGasto = Float.valueOf(df.format(participacionGasto).replace(',', '.'));
 							
 							if(!Checks.esNulo(gastoProveedorActivos)) {
@@ -1683,8 +1683,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 		}
 		
-		DecimalFormat df = new DecimalFormat("##.##");
-		df.setRoundingMode(RoundingMode.DOWN);
+		DecimalFormat df = new DecimalFormat("##.####");
+		df.setRoundingMode(RoundingMode.HALF_DOWN);
 		// Calcular porcentaje equitativo.
 		Float numActivos = (float) gastosActivosList.size() - contador;
 		
@@ -1693,7 +1693,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			porcentaje = (100f-porcentajePrinex) / numActivos;
 		}		
 		
-		//truncamos a dos decimales
+		//truncamos a 4 decimales
 		porcentaje = Float.valueOf(df.format(porcentaje).replace(',', '.'));
 		
 		

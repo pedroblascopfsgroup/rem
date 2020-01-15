@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.users.UsuarioManager;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.framework.paradise.gestorEntidad.dao.GestorEntidadDao;
@@ -41,7 +42,7 @@ public class GestorSustitutoDaoImpl extends AbstractEntityDao<GestorSustituto, L
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 		String result = null;		
 		Connection con = this.getHibernateTemplate().getSessionFactory().getCurrentSession().connection();		
-		CallableStatement cs;
+		CallableStatement cs = null;
 		try {
 			cs = con.prepareCall("{CALL SP_GESTOR_SUSTITUTO_WEB(?, ?, ?, ?, ?, ?, ?)}");
 		
@@ -56,7 +57,14 @@ public class GestorSustitutoDaoImpl extends AbstractEntityDao<GestorSustituto, L
 			
 			result = cs.getString(7);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error("Error en GestorSustitutoDaoImpl", e);
+		} finally {
+			try {
+				if (cs != null && !cs.isClosed())
+					cs.close();
+			} catch (SQLException e) {
+				logger.error("Error en GestorSustitutoDaoImpl", e);
+			}
 		}
 		return result;
 	}

@@ -676,7 +676,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						            		store: '{comboEstadoPublicacionVenta}'
 							        	},
 										listeners: {
-											change: 'hiddenMotivosOcultacionVenta'
+											change: 'changeComboEstadoPublicacionVenta'
 										}
 									},
 									{
@@ -688,7 +688,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						            		store: '{comboEstadoPublicacionAlquiler}'
 						            	},
 										listeners: {
-											change: 'hiddenMotivosOcultacionAlquiler'
+											change: 'changeComboEstadoPublicacionAlquiler'
 										}
 							        },
 									{ 
@@ -710,7 +710,17 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							        		hidden: true,
 						            		store: '{comboMotivoOcultacion}'
 						            	}
-					        		}
+					        		},
+							    	{ 
+							        	xtype: 'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.tipo.de.publicacion'),
+						            	name: 'tipoPublicacionCodigo',
+						            	reference: 'tipoPublicacionCodigo',
+							        	bind: {
+							        		hidden: true,
+						            		store: '{comboTiposPublicacionActivo}'
+						            	}
+							        }
 								]
 			            }
 		            ]}

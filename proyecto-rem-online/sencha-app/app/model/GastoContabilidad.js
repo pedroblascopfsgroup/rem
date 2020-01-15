@@ -47,6 +47,9 @@ Ext.define('HreRem.model.GastoContabilidad', {
     	},
     	{
     		name: 'cartera'
+    	},
+    	{
+    		name: 'subcartera'
     	}
     ],
     

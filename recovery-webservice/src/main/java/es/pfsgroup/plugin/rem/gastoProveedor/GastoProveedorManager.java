@@ -320,7 +320,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}else{
 				dto.setCartera(null);
 			}
-			
+			dto.setSubcartera(gasto.getSubcartera() == null ? null : gasto.getSubcartera().getCodigo());
 
 			if (!Checks.esNulo(gasto.getTipoGasto())) {
 				dto.setTipoGastoCodigo(gasto.getTipoGasto().getCodigo());

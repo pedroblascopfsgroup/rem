@@ -1298,8 +1298,6 @@ public interface ActivoApi {
 
 	ActivoDto getDatosActivo(Long activoId);
 
-	Boolean getVisibilidadTabFasesPublicacion(Activo activo);
-
 	/**
 	 * Devuelve la lista ordenada de valores del diccionario Fase de Publicacion.
 	 * @return List
@@ -1310,4 +1308,6 @@ public interface ActivoApi {
 	public void crearRegistroFaseHistorico(Activo activo);
 
 	void changeAndSavePlusvaliaEstadoGestionActivoById(Activo activo, String codigo) throws PlusvaliaActivoException;
+	
+	Boolean getMostrarEdicionTabFasesPublicacion(Activo activo);
 }

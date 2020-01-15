@@ -103,7 +103,7 @@ public class UpdaterServiceAprobacionInformeComercialRevisionInformeComercial im
 			genericDao.save(HistoricoFasePublicacionActivo.class, histFasePub);
 		}
 		
-		Filter faseFiltro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDFasePublicacion.CODIGO_FASE_III);
+		Filter faseFiltro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDFasePublicacion.CODIGO_FASE_III_PENDIENTE_INFORMACION);
 		DDFasePublicacion faseTres = genericDao.get(DDFasePublicacion.class, faseFiltro);
 		
 		if(checkAcepta){
@@ -181,8 +181,7 @@ public class UpdaterServiceAprobacionInformeComercialRevisionInformeComercial im
 					ArrayList<String> mailsPara = new ArrayList<String>();
 					ArrayList<String> mailsCC = new ArrayList<String>();
 					if(!Checks.esNulo(histFasePub)) {
-						
-						if(DDFasePublicacion.CODIGO_FASE_III.equals(histFasePub.getFasePublicacion().getCodigo())) {
+						if(!(DDFasePublicacion.CODIGO_FASE_III_PENDIENTE_INFORMACION.equals(histFasePub.getFasePublicacion().getCodigo()))){
 							
 							HistoricoFasePublicacionActivo nuevaFase = new HistoricoFasePublicacionActivo();
 							Filter subfaseFiltro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubfasePublicacion.CODIGO_DEVUELTO);

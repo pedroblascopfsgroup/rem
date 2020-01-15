@@ -501,8 +501,10 @@ public interface ParticularValidatorApi {
 	Boolean mediadorExisteVigente(String codMediador);
 
 	Boolean existeComunidadPropietarios(String idPropietarios);
-
-	Boolean existeSituacion(String idSituacion);
+	
+	Boolean existeEstadoLoc(String idSituacion);
+	
+	Boolean existeSubestadoGestion(String idSituacion);
 
 	Boolean existeActivoEnPropietarios(String numActivo, String idPropietarios);
 

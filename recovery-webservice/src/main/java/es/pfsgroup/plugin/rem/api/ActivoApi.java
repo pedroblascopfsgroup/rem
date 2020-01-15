@@ -1328,4 +1328,6 @@ public interface ActivoApi {
 	public void crearRegistroFaseHistorico(Activo activo);
 
 	void changeAndSavePlusvaliaEstadoGestionActivoById(Activo activo, String codigo) throws PlusvaliaActivoException;
+	
+	Boolean getMostrarEdicionTabFasesPublicacion(Activo activo);
 }

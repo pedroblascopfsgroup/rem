@@ -53,8 +53,8 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 	public static final String ACTIVE_EXISTS = "El activo propuesto no existe = ";
 	public static final String ACTIVE_CPR_ID = "No se ha encontrado ninguna COMUNIDAD DE PROPIETARIOS asociada al activo = ";
 	public static final String PROPIETARIOS_EXISTS = "No se ha encontrado ninguna comunidad de propietarios para el identificador = ";
-	public static final String SITUACION_EXISTS = "No se ha encontrado ninguna situacion para el idendificador = ";
-
+	public static final String ESTADO_LOC_EXISTS = "No se ha encontrado ningun estado de localización para el idendificador = ";
+	public static final String SUBESTADO_GESTION_EXISTS = "No se ha encontrado ningun subestado de gestión para el idendificador = ";
 	public static final String FECHA_EMVIO = "EL formato de la fecha de envio de la carta comunicando vta a la comunidad no es correcto ";
 
 
@@ -65,8 +65,9 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 
 		static final int NUM_ACTIVO_HAYA = 0;
 		static final int ID_COMUNIDAD_PROPIETARIOS = 1;
-		static final int SITUACION = 2;
-		static final int FECHA_ENVIO_CARTA = 3;
+		static final int FECHA_ENVIO_CARTA = 2;
+		static final int ESTADO_LOC = 3;
+		static final int SUBESTADO_GESTION = 4;
 		
 	}
 	@Autowired
@@ -130,12 +131,14 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 			mapaValores.put(PROPIETARIOS_EXISTS, dameValorPropietarios(exc));
 
 			mapaErrores.put(FECHA_EMVIO, isColumnNotDateByRows(exc, COL_NUM.FECHA_ENVIO_CARTA));
-			mapaErrores.put(SITUACION_EXISTS, isSituacionExists(exc));
-			mapaValores.put(SITUACION_EXISTS, dameValorSituacion(exc));
-			
+			mapaErrores.put(ESTADO_LOC_EXISTS, isEstadoLocExists(exc));
+			mapaValores.put(ESTADO_LOC_EXISTS, dameValorEstadoLoc(exc));
+			mapaErrores.put(SUBESTADO_GESTION_EXISTS, isSubestadoGestionExists(exc));
+			mapaValores.put(SUBESTADO_GESTION_EXISTS, dameValorSubestadoGestion(exc));
 				if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(PROPIETARIOS_EXISTS).isEmpty()
 						|| !mapaErrores.get(FECHA_EMVIO).isEmpty()
-						|| !mapaErrores.get(SITUACION_EXISTS).isEmpty() ||!mapaErrores.get(ACTIVE_CPR_ID).isEmpty() ) 
+						|| !mapaErrores.get(ESTADO_LOC_EXISTS).isEmpty() || !mapaErrores.get(ACTIVE_CPR_ID).isEmpty() 
+						|| !mapaErrores.get(SUBESTADO_GESTION_EXISTS).isEmpty()) 
 			 {
 
 					dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -254,13 +257,13 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 	}
 	
 	
-	private List<Integer> isSituacionExists(MSVHojaExcel exc) {
+	private List<Integer> isEstadoLocExists(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 
 		int i = 0;
 		try {
 			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
-				if (!particularValidator.existeSituacion(exc.dameCelda(i, COL_NUM.SITUACION)))
+				if (!particularValidator.existeEstadoLoc(exc.dameCelda(i, COL_NUM.ESTADO_LOC)))
 					listaFilas.add(i);
 					
 			}
@@ -278,14 +281,14 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 		return listaFilas;
 	}
 	
-	private List<String> dameValorSituacion(MSVHojaExcel exc) {
+	private List<String> dameValorEstadoLoc(MSVHojaExcel exc) {
 		List<String> listaFilas = new ArrayList<String>();
 
 		int i = 0;
 		try {
 			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
-				if (!particularValidator.existeSituacion(exc.dameCelda(i, COL_NUM.SITUACION)))
-					listaFilas.add(exc.dameCelda(i, COL_NUM.SITUACION));
+				if (!particularValidator.existeEstadoLoc(exc.dameCelda(i, COL_NUM.ESTADO_LOC)))
+					listaFilas.add(exc.dameCelda(i, COL_NUM.ESTADO_LOC));
 			
 			}
 		} catch (IllegalArgumentException e) {
@@ -301,7 +304,53 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 
 		return listaFilas;
 	}
+	private List<Integer> isSubestadoGestionExists(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try {
+			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+				if (!particularValidator.existeSubestadoGestion(exc.dameCelda(i, COL_NUM.SUBESTADO_GESTION)))
+					listaFilas.add(i);
+					
+			}
+		} catch (IllegalArgumentException e) {
+			logger.error(e.getMessage(),e);
+			e.printStackTrace();
+		} catch (IOException e) {
+			logger.error(e.getMessage(),e);
+			e.printStackTrace();
+		} catch (ParseException e) {
+			logger.error(e.getMessage(),e);
+			listaFilas.add(i);
+		}
+
+		return listaFilas;
+	}
 	
+	private List<String> dameValorSubestadoGestion(MSVHojaExcel exc) {
+		List<String> listaFilas = new ArrayList<String>();
+
+		int i = 0;
+		try {
+			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+				if (!particularValidator.existeSubestadoGestion(exc.dameCelda(i, COL_NUM.SUBESTADO_GESTION)))
+					listaFilas.add(exc.dameCelda(i, COL_NUM.SUBESTADO_GESTION));
+			
+			}
+		} catch (IllegalArgumentException e) {
+			logger.error(e.getMessage(),e);
+			e.printStackTrace();
+		} catch (IOException e) {
+			logger.error(e.getMessage(),e);
+			e.printStackTrace();
+		} catch (ParseException e) {
+			logger.error(e.getMessage(),e);
+			listaFilas.add("0");
+		}
+
+		return listaFilas;
+	}
 	
 	
 	

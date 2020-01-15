@@ -121,6 +121,7 @@ public class DtoActivoFilter extends WebDto {
 	private String motivosOcultacionAlquiler;
 	private String tipoGestorCodigo;
 	private String estadoPublicacionActivoListadoCodigo;
+	private String tipoPublicacionCodigo;
 	private boolean listPage;
 	
 	public String getNumActivo() {
@@ -722,6 +723,12 @@ public class DtoActivoFilter extends WebDto {
 	}
 	public void setTipoGestorCodigo(String tipoGestorCodigo) {
 		this.tipoGestorCodigo = tipoGestorCodigo;
+	}
+	public String getTipoPublicacionCodigo() {
+		return tipoPublicacionCodigo;
+	}
+	public void setTipoPublicacionCodigo(String tipoPublicacionCodigo) {
+		this.tipoPublicacionCodigo = tipoPublicacionCodigo;
 	}
 	public boolean isListPage() {
 		return listPage;

@@ -1,16 +1,16 @@
 --/*
 --##########################################
---## AUTOR=Alfonso Rodriguez
---## FECHA_CREACION=20191128
+--## AUTOR=Gabriel De Toni
+--## FECHA_CREACION=20200114
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-8601
+--## INCIDENCIA_LINK=HREOS-9112
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_COS_COMITES_SANCION los datos añadidos en T_ARRAY_DATA
 --## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.2 Versión
 --##########################################
 --*/
 
@@ -32,15 +32,18 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
-
+    V_ITEM VARCHAR2(25 CHAR):= 'HREOS-9112';
     
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     -- DD_COS_CODIGO  DD_COS_DESCRIPCION  DD_COS_DESCRIPCION_LARGA  DD_CRA_CODIGO   DD_SCR_CODIGO
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('40', 'Divarian Arrow Inmb', 'Divarian Arrow Inmb', '07', '151'),
-        T_TIPO_DATA('41', 'Divarian Remaining Inmb', 'Divarian Remaining Inmb', '07', '152')
+        T_TIPO_DATA('40', 'Arrow', 'Arrow', '07', '151'),
+        T_TIPO_DATA('41', 'Haya', 'Haya', '07', '152'),
+        T_TIPO_DATA('42', 'Haya', 'Haya', '07', '138'),
+        T_TIPO_DATA('43', 'CES', 'CES', '07', '152'),
+        T_TIPO_DATA('44', 'CES', 'CES', '07', '138')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -67,7 +70,7 @@ BEGIN
        	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.DD_COS_COMITES_SANCION '||
                     'SET DD_COS_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
 					', DD_COS_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
-					', USUARIOMODIFICAR = ''REMVIP-2741'' , FECHAMODIFICAR = SYSDATE '||
+					', USUARIOMODIFICAR = '''||TRIM(V_ITEM)||''' , FECHAMODIFICAR = SYSDATE '||
 					', DD_CRA_ID = (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||''') '||
 					'WHERE DD_COS_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
           EXECUTE IMMEDIATE V_MSQL;
@@ -82,7 +85,7 @@ BEGIN
           V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.DD_COS_COMITES_SANCION (' ||
                       'DD_COS_ID, DD_COS_CODIGO, DD_COS_DESCRIPCION, DD_COS_DESCRIPCION_LARGA, DD_CRA_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_SCR_ID) ' ||
                       'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''','||
-                      '(SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||'''), 0, ''HREOS-6791'',SYSDATE,0, (SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(5))||''') FROM DUAL';
+                      '(SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||'''), 0, '''||TRIM(V_ITEM)||''',SYSDATE,0, (SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(5))||''') FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
         

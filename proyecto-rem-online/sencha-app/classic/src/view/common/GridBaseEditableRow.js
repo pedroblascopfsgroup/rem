@@ -466,8 +466,23 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
    
    editFuncion: function(editor, context){
    		var me= this;
+   		var tit, msg;
    		if(me.confirmBeforeSave){
-   	  		Ext.MessageBox.confirm(HreRem.i18n('title.agrupacion.guardar.condicion.title'), me.confirmSaveTxt, function(btn, value, opt){
+   			if(editor.grid.getXType() == "historicomediadorgrid"){
+   				var tipoApi;
+   				if(context.record.getData().rol == "01"){
+   					tipoApi = " Primario ";
+   				} else if(context.record.getData().rol == "02"){
+   					tipoApi = " Espejo ";
+   				}
+   				tit = HreRem.i18n('title.comfirmar.nuevo.api');
+   				msg = HreRem.i18n('cuerpo.confirmar.nuevo.api') + 
+   					tipoApi + HreRem.i18n('cuerpo.confirmar.nuevo.api.dos');
+   			}else{
+   				tit = HreRem.i18n('title.agrupacion.guardar.condicion.title');
+   				msg = me.confirmSaveTxt;
+   			}
+   	  		Ext.MessageBox.confirm(tit, msg, function(btn, value, opt){
    	  			if(btn === "yes"){
    	  				me.saveFunction(editor, context);
    	  			} else{

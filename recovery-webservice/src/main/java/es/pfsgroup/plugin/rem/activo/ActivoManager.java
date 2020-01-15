@@ -1660,8 +1660,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			
 			if(codigoMediador.equals(historicoMediadorRolContrario.getMediadorInforme().getCodigoProveedorRem().toString())
 					&& historicoMediadorRolContrario.getFechaHasta() == null) {
-				throw new JsonViewerException("No se puede asignar el mismo mediador que se tiene de tipo api " 
-						+ historicoMediadorRolContrario.getTipoRolMediador().getDescripcion() + " al tipo " + tipoRol.getDescripcion());
+				throw new JsonViewerException("No se puede asignar el mediador del tipo " + tipoRol.getDescripcion() + 
+						" si está asignado como mediador de tipo " + historicoMediadorRolContrario.getTipoRolMediador().getDescripcion());
 			}
 			
 		}else if(esTipoEspejo){

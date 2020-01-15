@@ -4,6 +4,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoMediadorGrid', {
 	topBar		: true,
 	editOnSelect: false,
 	disabledDeleteBtn: true,
+	confirmBeforeSave: true,
 
     bind: {
         store: '{storeHistoricoMediador}'

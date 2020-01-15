@@ -1987,7 +1987,7 @@ public class ActivoController extends ParadiseJsonController {
 
 		} catch (JsonViewerException jvex) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put(RESPONSE_MESSAGE_KEY, jvex.getMessage());
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
 		}
 
 		return createModelAndViewJson(model);

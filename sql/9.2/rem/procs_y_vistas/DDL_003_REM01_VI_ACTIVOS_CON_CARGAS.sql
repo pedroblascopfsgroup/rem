@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Carles Molins
---## FECHA_CREACION=2020
+--## FECHA_CREACION=20200115
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-1868

@@ -127,7 +127,7 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
 					visible = false;
 				}
 			}else if(tab.xtype=='fasepublicacionactivo') {
-				visible = true;
+				visible = me.lookupController().getViewModel().get('activo').get('mostrarEditarFasePublicacion');
 			}
 			me.down("[itemId=botoneditar]").setVisible(visible);
 		}
@@ -163,13 +163,14 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
 		}else{
 			ocultarDatospublicacionactivo = !$AU.userHasFunction('TAB_DATOS_PUBLICACION');
 		}
+		
+		var ocultarDatosFasePublicacion = false;
 
     	var items = [];
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informecomercialactivo', ocultarBotonesEdicion: ocultarInformecomercialactivo})}, ['TAB_INFO_COMERCIAL_PUBLICACION']);
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datospublicacionactivo', ocultarBotonesEdicion: ocultarDatospublicacionactivo})}, ['TAB_DATOS_PUBLICACION']);
-		if ($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || me.lookupController().getViewModel().get('activo').get('visualizarTabFasesPublicacion')) {
-			items.push({xtype: 'fasepublicacionactivo', ocultarBotonesEdicion: false});
-		}
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fasepublicacionactivo', ocultarBotonesEdicion: ocultarDatosFasePublicacion})}, ['TAB_ACTIVO_PUBLICACION']);
+
 		
 		me.addPlugin({ptype: 'lazyitems', items: items});
 		me.callParent();

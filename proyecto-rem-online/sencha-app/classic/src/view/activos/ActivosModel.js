@@ -294,6 +294,7 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 					extraParams: {diccionario: 'motivosOcultacion'}
 				}
 	     	},
+	     	
      		comboSituacionPagoAnterior: {
     			model: 'HreRem.model.ComboBase',
     			proxy: {
@@ -301,8 +302,16 @@ Ext.define('HreRem.view.activos.ActivosModel', {
     				remoteUrl: 'generic/getDiccionario',
     				extraParams: {diccionario: 'situacionPagoAnterior'}
     			}
-     		}
-     		
-    }
+     		},
+
+			comboTiposPublicacionActivo: {
+				model : 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tipoPublicacion'}
+				}
+			}
+     }
 
 });

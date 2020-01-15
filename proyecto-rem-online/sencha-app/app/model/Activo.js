@@ -868,10 +868,6 @@ Ext.define('HreRem.model.Activo', {
     		{
     			name: 'nombreMediador'
     		},
-    		{
-    			name: 'visualizarTabFasesPublicacion',
-    			type: 'boolean'
-			},
 			{
     			name:'esSarebProyecto',
     			type:'boolean'
@@ -888,6 +884,10 @@ Ext.define('HreRem.model.Activo', {
     				return false;
     			},
 				depends: ['subcarteraCodigo', 'entidadPropietariaCodigo']
+    		},
+    		{
+    			name: 'mostrarEditarFasePublicacion',
+    			type: 'boolean'
     		}
     ],
     

@@ -840,14 +840,15 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if (!Checks.esNulo(activo.getSociedadDePagoAnterior())) {
 			BeanUtils.copyProperty(activoDto, "sociedadPagoAnterior", activo.getSociedadDePagoAnterior().getCodigo());
 		}
-
-		Boolean visualizarTabFasesPublicacion = activoApi.getVisibilidadTabFasesPublicacion(activo);
 		
-		activoDto.setVisualizarTabFasesPublicacion(visualizarTabFasesPublicacion);
-
 		if (activo.getCartera() != null
-				&& DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo()))
+				&& DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
 			BeanUtils.copyProperty(activoDto, "tramitable", isTramitable(activo));
+		}
+		
+		Boolean muestraEditarFasePublicacion = activoApi.getMostrarEdicionTabFasesPublicacion(activo);
+		
+		activoDto.setMostrarEditarFasePublicacion(muestraEditarFasePublicacion);
 		
 		return activoDto;
 	}

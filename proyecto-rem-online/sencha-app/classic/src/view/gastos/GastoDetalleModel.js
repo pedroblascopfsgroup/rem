@@ -268,6 +268,21 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	    	 }
 	    	 
 	     },
+
+	     esEditableDivarian: function(get){
+	     	
+	     	if(this.getData().gasto != null){
+	     		 var cartera = this.getData().gasto.get('cartera');
+	     		 var subcartera = this.getData().gasto.get('subcartera');
+				    	 
+				 if(CONST.CARTERA['CERBERUS'] == cartera 
+				    	 && ( CONST.SUBCARTERA['DIVARIAN'] == subcartera || CONST.SUBCARTERA['DIVARIANARROW'] == subcartera || CONST.SUBCARTERA['DIVARIANREMAINING'] == subcartera)
+				    	 && $AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
+				    	 	return true;
+				    	 }
+	   		  }
+	   		  return false;			    		
+		},  
 	     
 	     deshabilitarGridGastosRefacturados: function(get){
 				var me = this;

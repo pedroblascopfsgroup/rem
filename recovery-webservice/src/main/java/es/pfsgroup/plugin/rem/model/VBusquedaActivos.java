@@ -324,6 +324,12 @@ public class VBusquedaActivos implements Serializable {
     
     @Column(name= "MOTIVO_OCULTACION_VENTA")
     private String motivoOcultacionVenta;
+    
+	@Column(name = "DD_TPU_V_CODIGO")
+	private String tipoPublicacionVentaCodigo;
+	
+	@Column(name = "DD_TPU_A_CODIGO")
+	private String tipoPublicacionAlquilerCodigo;
 	
 	
 	public Long getId() {
@@ -814,5 +820,21 @@ public class VBusquedaActivos implements Serializable {
 
 	public void setMotivoOcultacionVenta(String motivoOcultacionVenta) {
 		this.motivoOcultacionVenta = motivoOcultacionVenta;
+	}
+
+	public String getTipoPublicacionVentaCodigo() {
+		return tipoPublicacionVentaCodigo;
+	}
+
+	public void setTipoPublicacionVentaCodigo(String tipoPublicacionVentaCodigo) {
+		this.tipoPublicacionVentaCodigo = tipoPublicacionVentaCodigo;
+	}
+
+	public String getTipoPublicacionAlquilerCodigo() {
+		return tipoPublicacionAlquilerCodigo;
+	}
+
+	public void setTipoPublicacionAlquilerCodigo(String tipoPublicacionAlquilerCodigo) {
+		this.tipoPublicacionAlquilerCodigo = tipoPublicacionAlquilerCodigo;
 	}
 }

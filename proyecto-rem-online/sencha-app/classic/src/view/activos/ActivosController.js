@@ -237,33 +237,49 @@ Ext.define('HreRem.view.activos.ActivosController', {
 		}
 	},
 	
-	// Función para que el combo "Motivos de ocultación" del "Estado publicación Venta" 
-	// se oculte cuando se selecciona "Oculto Venta".
-    hiddenMotivosOcultacionVenta: function() {
+	changeComboEstadoPublicacionVenta: function() {
 		var me = this;
 		var estadoPublicacionVenta = me.getViewModel().get('estadoPublicacionVenta');
+		var estadoPublicacionAlquiler = me.getViewModel().get('estadoPublicacionAlquiler');
 		var motivosOcultacionVenta = me.lookupReference('motivosOcultacionVenta');
+		var tipoPublicacion = me.lookupReference('tipoPublicacionCodigo');
     	
     	if (!Ext.isEmpty(estadoPublicacionVenta.selection) && estadoPublicacionVenta.selection.data.codigo == CONST.ESTADO_PUBLICACION_VENTA['OCULTO']){
     		motivosOcultacionVenta.setHidden(false);
     	} else {
     		motivosOcultacionVenta.setHidden(true);
+    		motivosOcultacionVenta.reset();
 	    }
-	    motivosOcultacionVenta.reset();
+    	
+    	if ((!Ext.isEmpty(estadoPublicacionVenta.selection) && estadoPublicacionVenta.selection.data.codigo == CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'])
+    			|| (!Ext.isEmpty(estadoPublicacionAlquiler.selection) && estadoPublicacionAlquiler.selection.data.codigo == CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'])){
+    		tipoPublicacion.setHidden(false);
+    	} else {
+    		tipoPublicacion.setHidden(true);
+    		tipoPublicacion.reset();
+    	}
 	},
 	
-	// Función para que el combo "Motivos de ocultación" del "Estado publicación Alquiler" 
-	// se oculte cuando se selecciona "Oculto Alquiler".
-	hiddenMotivosOcultacionAlquiler: function() {
+	changeComboEstadoPublicacionAlquiler: function() {
 		var me = this;
+		var estadoPublicacionVenta = me.getViewModel().get('estadoPublicacionVenta');
 		var estadoPublicacionAlquiler = me.getViewModel().get('estadoPublicacionAlquiler');
 		var motivosOcultacionAlquiler = me.lookupReference('motivosOcultacionAlquiler');
+		var tipoPublicacion = me.lookupReference('tipoPublicacionCodigo');
     	
     	if (!Ext.isEmpty(estadoPublicacionAlquiler.selection) && estadoPublicacionAlquiler.selection.data.codigo == CONST.ESTADO_PUBLICACION_ALQUILER['OCULTO']){
     		motivosOcultacionAlquiler.setHidden(false);
     	} else {
     		motivosOcultacionAlquiler.setHidden(true);
+    	    motivosOcultacionAlquiler.reset();
 	    }
-	    motivosOcultacionAlquiler.reset();
+	    
+	    if ((!Ext.isEmpty(estadoPublicacionVenta.selection) && estadoPublicacionVenta.selection.data.codigo == CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'])
+    			|| (!Ext.isEmpty(estadoPublicacionAlquiler.selection) && estadoPublicacionAlquiler.selection.data.codigo == CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'])){
+    		tipoPublicacion.setHidden(false);
+    	} else {
+    		tipoPublicacion.setHidden(true);
+    		tipoPublicacion.reset();
+    	}
     }
 });

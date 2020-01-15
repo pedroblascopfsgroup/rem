@@ -361,17 +361,29 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	@Override
-	public Boolean existeSituacion(String idSituacion){
-		if(Checks.esNulo(idSituacion) || !StringUtils.isAlphanumeric(idSituacion))
+	public Boolean existeEstadoLoc(String codEstadoLoc){
+		if(Checks.esNulo(codEstadoLoc) || !StringUtils.isAlphanumeric(codEstadoLoc))
 			return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
-				+ "		 FROM DD_SACT_SITUACION_ACTIVO WHERE"
-				+ "		 DD_SACT_CODIGO ='"+idSituacion+"' "
+				+ "		 FROM DD_ELO_ESTADO_LOCALIZACION WHERE"
+				+ "		 DD_ELO_CODIGO ='"+codEstadoLoc+"' "
 				+ "		 	AND BORRADO = 0");
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean existeSubestadoGestion(String codSubestadoGestion){
+		if(Checks.esNulo(codSubestadoGestion))
+			return false;
 
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_SEG_SUBESTADO_GESTION WHERE"
+				+ "		 DD_SEG_CODIGO ='"+codSubestadoGestion+"' "
+				+ "		 	AND BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
 	@Override
 	public Boolean isActivoPrePublicable(String numActivo){
 		return isActivoGestionAdmision(numActivo) && isActivoUltimoInformeComercialAceptado(numActivo);

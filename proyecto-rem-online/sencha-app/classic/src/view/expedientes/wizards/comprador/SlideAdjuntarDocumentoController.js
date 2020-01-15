@@ -624,18 +624,21 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideAdjuntarDocumentoCont
 			},
 			success: function(a, operation, context) {
 				var data = Ext.decode(a.responseText);
-				if (data) {
-					grid.up().down('textfieldbase').setValue('');
-				}
-
+				if(data.success === 'true'){
+					if (data) {
+						grid.up().down('textfieldbase').setValue('');
+					}
+					grid.hide();
+					me.fireEvent('infoToast', HreRem.i18n('msg.operacion.ok'));
+					form.lookupReference('btnFinalizar').disable();
+					form.lookupReference('btnGenerarDocumento').enable();
+					form.getForm().findField('comunicacionTerceros').enable();
+					form.getForm().findField('cesionDatos').enable();
+					form.getForm().findField('transferenciasInternacionales').enable();
+				}else{
+					me.fireEvent('errorToast', data.error);
+				}				
 				wizard.unmask();
-				grid.hide();
-				me.fireEvent('infoToast', HreRem.i18n('msg.operacion.ok'));
-				form.lookupReference('btnFinalizar').disable();
-				form.lookupReference('btnGenerarDocumento').enable();
-				form.getForm().findField('comunicacionTerceros').enable();
-				form.getForm().findField('cesionDatos').enable();
-				form.getForm().findField('transferenciasInternacionales').enable();
 			},
 			failure: function(a, operation, context) {
 				me.fireEvent('errorToast', HreRem.i18n('msg.operacion.ko'));

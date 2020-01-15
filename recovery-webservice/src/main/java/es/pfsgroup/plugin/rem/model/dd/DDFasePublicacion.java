@@ -28,15 +28,15 @@ public class DDFasePublicacion implements Auditable, Dictionary {
 	private static final long serialVersionUID = 1L;
 	
 	public static final String CODIGO_NO_APLICA = "01";
-	public static final String CODIGO_FASE_0 = "02";
-	public static final String CODIGO_FASE_I = "03";
-	public static final String CODIGO_FASE_II = "04";
-	public static final String CODIGO_FASE_III = "05";
+	public static final String CODIGO_FASE_0_CALIDAD_PENDIENTE = "02";
+	public static final String CODIGO_FASE_I_PENDIENTE_ACTUACIONES_PREVIAS = "03";
+	public static final String CODIGO_FASE_II_PENDIENTE_LLAVES = "04";
+	public static final String CODIGO_FASE_III_PENDIENTE_INFORMACION = "05";
 	public static final String CODIGO_CLASIFICADO = "06";
 	public static final String CODIGO_DEVUELTO = "07";
-	public static final String CODIGO_FASE_IV = "08";
-	public static final String CODIGO_FASE_V = "09";
-	public static final String CODIGO_FASE_VI = "10";
+	public static final String CODIGO_FASE_IV_PENDIENTE_PRECIO = "08";
+	public static final String CODIGO_FASE_V_INCIDENCIAS_PUBLICACION = "09";
+	public static final String CODIGO_FASE_VI_CALIDAD_COMPROBADA = "10";
 
 
 	@Id

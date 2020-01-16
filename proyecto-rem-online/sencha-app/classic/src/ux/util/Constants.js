@@ -719,7 +719,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		OTRAS_CORPORACIONES: '11'
 	},
 	COMITE_SANCIONADOR: {
-		HAYA_CERBERUS: '26'
+		CODIGO_HAYA_REMAINING: '41',
+		CODIGO_HAYA_APPLE: '42'
 	}
 	
 });

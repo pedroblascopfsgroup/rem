@@ -523,7 +523,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	 		var me = this;
 	 		var resp = false;
 	 		var isApple = CONST.SUBCARTERA['APPLEINMOBILIARIO'] === me.get('expediente.subcarteraCodigo');
-	 		var isDivarian = CONST.SUBCARTERA['DIVARIAN'] === me.get('expediente.subcarteraCodigo');
+	 		var isDivarian = CONST.SUBCARTERA['DIVARIANREMAINING'] === me.get('expediente.subcarteraCodigo');
 	 		
 	 		if(isApple == true || isDivarian == true){
 	 			resp = true;

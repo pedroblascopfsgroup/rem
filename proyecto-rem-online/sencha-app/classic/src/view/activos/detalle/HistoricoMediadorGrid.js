@@ -5,6 +5,8 @@ Ext.define('HreRem.view.activos.detalle.HistoricoMediadorGrid', {
 	editOnSelect: false,
 	disabledDeleteBtn: true,
 	confirmBeforeSave: true,
+	confirmSaveTxt: null,
+	confirmSaveTit: null,
 
     bind: {
         store: '{storeHistoricoMediador}'
@@ -20,6 +22,10 @@ Ext.define('HreRem.view.activos.detalle.HistoricoMediadorGrid', {
     initComponent: function () {
 
      	var me = this;
+     	
+     	if(Ext.isEmpty(me.confirmSaveTit)){
+     		me.confirmSaveTit = HreRem.i18n('title.comfirmar.nuevo.api');
+     	}
 
 		me.columns = [
 		        {
@@ -115,7 +121,20 @@ Ext.define('HreRem.view.activos.detalle.HistoricoMediadorGrid', {
 							autoLoad: true
 						}),
 						displayField: 'descripcion',
-    					valueField: 'codigo'
+    					valueField: 'codigo',
+			            listeners: {
+			            	'change': function(){
+			            		var me = this;
+			            		var tipoApi;
+				   				if(me.getValue() == "01"){
+				   					tipoApi = " Primario ";
+				   				} else if(me.getValue() == "02"){
+				   					tipoApi = " Espejo ";
+				   				}
+			            		me.up().up().confirmSaveTxt = HreRem.i18n('cuerpo.confirmar.nuevo.api') + 
+   									tipoApi + HreRem.i18n('cuerpo.confirmar.nuevo.api.dos');
+			            	}
+			            }
 		            },
 		            flex: 1
 		        }

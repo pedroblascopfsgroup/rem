@@ -87,6 +87,8 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 	
 	confirmSaveTxt: null,
 	
+	confirmSaveTit: null,
+	
 	initComponent: function() {
 		
 		
@@ -94,6 +96,10 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 		
 		if(Ext.isEmpty(me.confirmSaveTxt)){
 			me.confirmSaveTxt = HreRem.i18n('msg.agrupacion.guardar.condicion.text');
+		}
+		
+		if(Ext.isEmpty(me.confirmSaveTit)){
+			me.confirmSaveTit = HreRem.i18n('title.agrupacion.guardar.condicion.title');
 		}
 		
 		me.emptyText = HreRem.i18n("grid.empty.text");
@@ -468,21 +474,7 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
    		var me= this;
    		var tit, msg;
    		if(me.confirmBeforeSave){
-   			if(editor.grid.getXType() == "historicomediadorgrid"){
-   				var tipoApi;
-   				if(context.record.getData().rol == "01"){
-   					tipoApi = " Primario ";
-   				} else if(context.record.getData().rol == "02"){
-   					tipoApi = " Espejo ";
-   				}
-   				tit = HreRem.i18n('title.comfirmar.nuevo.api');
-   				msg = HreRem.i18n('cuerpo.confirmar.nuevo.api') + 
-   					tipoApi + HreRem.i18n('cuerpo.confirmar.nuevo.api.dos');
-   			}else{
-   				tit = HreRem.i18n('title.agrupacion.guardar.condicion.title');
-   				msg = me.confirmSaveTxt;
-   			}
-   	  		Ext.MessageBox.confirm(tit, msg, function(btn, value, opt){
+   	  		Ext.MessageBox.confirm(me.confirmSaveTit, me.confirmSaveTxt, function(btn, value, opt){
    	  			if(btn === "yes"){
    	  				me.saveFunction(editor, context);
    	  			} else{

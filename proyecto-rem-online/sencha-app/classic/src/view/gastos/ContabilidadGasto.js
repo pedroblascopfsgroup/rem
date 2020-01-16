@@ -62,6 +62,7 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 													{ 
 														xtype: 'textfieldbase',
 														reference: 'cuentaContable',
+														labelWidth: 200,
 										                bind: {
 										                	value: '{contabilidad.cuentaContable}',
 										                	fieldLabel: '{marcaObligatorioCuenta}',
@@ -72,6 +73,7 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 													{
 														xtype: 'datefieldbase',
 														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.fecha.contabilizacion'),
+														labelWidth: 200,
 														bind:		'{contabilidad.fechaContabilizacion}',
 														formatter: 'date("d/m/Y")',
 														readOnly: true
@@ -91,28 +93,73 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 													{ 
 														xtype: 'textfieldbase',
 														reference: 'partidaPresupuestaria',
+														
+														labelWidth: 200,
 										                bind: {
 										                	value: '{contabilidad.partidaPresupuestaria}',
 										                	fieldLabel: '{marcaObligatorioPartida}',
 										                	readOnly: '{!esEditableDivarian}'			                 
 										                }
-													},	
+													},																								
 													{ 
 														xtype: 'displayfieldbase',
 														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.contabilizado.por'),
+														labelWidth: 200,
 										                bind: '{contabilidad.contabilizadoPorDescripcion}'
-													},																
+													},														
 													{ 
 														xtype: 'textfieldbase',
 														labelWidth: 200,
 														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.periodicidad'),
 										                bind: '{contabilidad.periodicidadDescripcion}',
 										                readOnly: true						
-													}
-														
+													},
+													{ 
+														xtype:'comboboxfieldbase',
+														fieldLabel:  HreRem.i18n('fieldlabel.gasto.contabilidad.subpartidaPresupuestaria'),
+														labelWidth: 200,
+														reference: 'comboboxfieldSubpartidaPresupuestaria',
+														listeners:{	
+															change:function(){
+																		var campoPartidaPresupuestaria = this.lookupController().lookupReference('partidaPresupuestaria');
+																		var url = $AC.getRemoteUrl('generic/getPartidaPresupuestaria');
+																		var valor = this.value;
+																  		
+																  		Ext.Ajax.request({
+			    			
+															    		     url: url,
+															    		     params: {idSubpartida : valor},
+															    			method: 'GET',
+															    		     success: function (a, operation, context) {												
+												                                	var data = Ext.decode(a.responseText);												                                											                                	
+												                                	
+												                                	if(data){
+												                                		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+												                                		campoPartidaPresupuestaria.setValue(data.data);
+												                                	}else{
+												                                		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+												                                	}
+												                                	
+												                                },
+												                                
+												                                failure: function (a, operation, context) {
+												
+												                                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+												                                }
+															    		     
+															    		 });
+																												  		
+    	 													}
+														},
+										        		bind: {
+									            			store: '{comboSubpartidaPresupuestaria}',
+									            			value: '{contabilidad.idSubpartidaPresupuestaria}'
+									            		},
+									            		displayField	: 'descripcion',  
+														valueField		: 'id'												
+											        }														
 										]
 					           }
-
            
     	];
     

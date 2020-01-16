@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -25,7 +27,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 @Table(name = "CPS_CONFIG_SUBPTDAS_PRE", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class ConfiguracionSubpartidasPresupuestarias implements Auditable {
+public class ConfiguracionSubpartidasPresupuestarias implements Auditable, Serializable {
 		    
 	private static final long serialVersionUID = 1L;
 

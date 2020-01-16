@@ -16,7 +16,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	var me= this;
 	     	var gasto= me.getData().gasto;
 	     	if(Ext.isEmpty(gasto)) {
-	     		return false
+	     		return false;
 	     	} else {
 		     	var nifEmisor= gasto.get('nifEmisor');
 		     	var nombreEmisor= gasto.get('nombreEmisor');
@@ -24,7 +24,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	}
 	     	
 	     	if(Ext.isEmpty(nifEmisor) && Ext.isEmpty(nombreEmisor) && Ext.isEmpty(codigoEmisor)){
-	     		return false
+	     		return false;
 	     	}
 	     	
 	     	return true;
@@ -41,7 +41,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	}
 	     	
 	     	if(Ext.isEmpty(nifPropietario) && Ext.isEmpty(nombrePropietario)){
-	     		return false
+	     		return false;
 	     	}
 	     	
 	     	return true;
@@ -179,6 +179,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     },
 	     
 	     esAutorizable: function(get) {
+	     	var me = this;
 	     	var estaAutorizado = get('gasto.autorizado');
 	     	var estaContabilizado = CONST.ESTADOS_GASTO['CONTABILIZADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaAnulado = CONST.ESTADOS_GASTO['ANULADO'] == get('gasto.estadoGastoCodigo');
@@ -188,9 +189,18 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	var estaRechazadoPropietario = CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO'] == get('gasto.estadoGastoCodigo');
 	     	var estaAutorizadoAdministracion = CONST.ESTADOS_GASTO['AUTORIZADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaAutorizadoPropietario = CONST.ESTADOS_GASTO['AUTORIZADO_PROPIETARIO'] == get('gasto.estadoGastoCodigo');
+	     	var estaInformadoCuentaContable = get('gasto.partidaPresupuestaria');
+	     	var estaInformadoPartidaPresupuestaria = get('gasto.partidaPresupuestaria');	     
 	     	
-	     	return !estaEnviado && !estaAutorizado && !estaContabilizado && !estaAnulado && !estaRetenido && !estaIncompleto 
-	     			&& !estaRechazadoPropietario && !estaAutorizadoAdministracion && !estaAutorizadoPropietario;
+	     	if(me.get('esCerberusDivarianApple')){				    	 
+				return !estaEnviado && !estaAutorizado && !estaContabilizado && !estaAnulado && !estaRetenido && !estaIncompleto 
+			  			&& !estaRechazadoPropietario && !estaAutorizadoAdministracion && !estaAutorizadoPropietario
+			   			&& !estaInformadoCuentaContable && !estaInformadoPartidaPresupuestaria;	     		
+	     	}else{
+		     	return !estaEnviado && !estaAutorizado && !estaContabilizado && !estaAnulado && !estaRetenido && !estaIncompleto 
+		     			&& !estaRechazadoPropietario && !estaAutorizadoAdministracion && !estaAutorizadoPropietario;	     		
+	     	}
+	     	
 	     },
 	     
 	     esRechazable: function(get) {	     
@@ -234,6 +244,21 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     
 	     },
 	     
+	     esCerberusDivarianApple:function(get){
+	     	var me = this;
+	     	if(me.getData().gasto != null){
+	     		 var cartera = me.getData().gasto.get('cartera');
+	     		 var subcartera = me.getData().gasto.get('subcartera');
+				    	 
+				 if(CONST.CARTERA['CERBERUS'] == cartera 
+				    	 && ( CONST.SUBCARTERA['DIVARIAN'] == subcartera || CONST.SUBCARTERA['DIVARIANARROW'] == subcartera 
+				    	 || CONST.SUBCARTERA['DIVARIANREMAINING'] == subcartera  || CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcartera)){
+				    	 	return true;
+				    	 }
+	   		  }
+	   		  return false;
+	     },
+	     
 	     getTipoOperacion: function(get) {
 	     
 	     	var tipoOperacionDescripcion = get('gasto.tipoOperacionDescripcion');
@@ -242,13 +267,17 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     },
 	     
 	     marcaObligatorioCuenta: function(get){
-	    	 
-	    	 if(this.getData().gasto != null){
-	    		 var cartera = this.getData().gasto.get('cartera');
+	    	 var me = this;
+	    	 if(me.getData().gasto != null){
+	    		 var cartera = me.getData().gasto.get('cartera');
 		    	 
 		    	 if(cartera == CONST.CARTERA['BANKIA'] || cartera == CONST.CARTERA['LIBERBANK']){
 		    		 return HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable');
-		    	 }else{
+		    		 
+		    	 }else if(me.get('esCerberusDivarianApple')){		    	 
+		    	 	 return HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable') + ' **';
+		    	 
+			    }else{
 		    		 return HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable') + ' *';
 		    	 }
 	    	 }
@@ -256,12 +285,16 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     },
 	     
 	     marcaObligatorioPartida: function(get){
-	    	 
-	    	 if(this.getData().gasto != null){
-	    		 var cartera = this.getData().gasto.get('cartera');
+	    	 var me = this;
+	    	 if(me.getData().gasto != null){
+	    		 var cartera = me.getData().gasto.get('cartera');
 		    	 
 		    	 if(cartera == CONST.CARTERA['LIBERBANK']){
 		    		 return HreRem.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria');
+		    		 
+		    	 }else if(me.get('esCerberusDivarianApple')){		    	 
+		    	 	return HreRem.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria') + ' **';
+		    	 	
 		    	 }else{
 		    		 return HreRem.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria') + ' *';
 		    	 } 
@@ -270,18 +303,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     },
 
 	     esEditableDivarian: function(get){
-	     	
-	     	if(this.getData().gasto != null){
-	     		 var cartera = this.getData().gasto.get('cartera');
-	     		 var subcartera = this.getData().gasto.get('subcartera');
-				    	 
-				 if(CONST.CARTERA['CERBERUS'] == cartera 
-				    	 && ( CONST.SUBCARTERA['DIVARIAN'] == subcartera || CONST.SUBCARTERA['DIVARIANARROW'] == subcartera || CONST.SUBCARTERA['DIVARIANREMAINING'] == subcartera)
-				    	 && $AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
-				    	 	return true;
-				    	 }
-	   		  }
-	   		  return false;			    		
+			return this.get('esCerberusDivarianApple') && $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
 		},  
 	     
 	     deshabilitarGridGastosRefacturados: function(get){
@@ -582,6 +604,14 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				remoteUrl: 'gastosproveedor/getGastosRefacturablesGastoCreado',
 				extraParams: {id : '{gasto.id}'}
 			}
-   		}
-    }
+   		},
+   		
+   		comboSubpartidaPresupuestaria: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboSubpartidaPresupuestaria'
+				}
+			}
+    	}
 });

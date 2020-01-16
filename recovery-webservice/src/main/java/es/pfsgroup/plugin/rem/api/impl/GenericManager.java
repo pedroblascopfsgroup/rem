@@ -56,6 +56,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.CarteraCondicionesPrecios;
+import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoLocalidadSimple;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
@@ -1251,5 +1252,17 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		}
 		
 		return gestion.getSubestadoGestion();
+	}
+	
+	@Override
+	public List<ConfiguracionSubpartidasPresupuestarias>getComboSubpartidaPresupuestaria() {		
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		return genericDao.getList(ConfiguracionSubpartidasPresupuestarias.class, filtroBorrado);		
+	}
+
+	@Override
+	public String getPartidaPresupuestaria(Long idSubpartida) {
+		
+		return "FUNCIONA!!";
 	}
 }

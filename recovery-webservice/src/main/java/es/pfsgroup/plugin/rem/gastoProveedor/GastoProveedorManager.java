@@ -1860,6 +1860,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				}
 				if (!Checks.esNulo(contabilidadGasto.getCuentaContable())) {
 					dto.setCuentaContable(contabilidadGasto.getCuentaContable());
+					dto.setIdSubpartidaPresupuestaria(1L);
 				}
 
 				dto.setFechaDevengoEspecial(contabilidadGasto.getFechaDevengoEspecial());

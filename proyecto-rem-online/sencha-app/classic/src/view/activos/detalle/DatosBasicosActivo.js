@@ -703,7 +703,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										xtype: 'comboboxfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.destino.comercial'),
 										bind: {
-											readOnly : '{esUA}',
+											readOnly : '{!esEditableDestinoComercial}',
 											disabled: '{activo.isPANoDadaDeBaja}',
 											store: '{comboTipoDestinoComercialCreaFiltered}',
 											value: '{activo.tipoComercializacionCodigo}'

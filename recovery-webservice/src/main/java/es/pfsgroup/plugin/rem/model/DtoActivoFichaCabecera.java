@@ -273,6 +273,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String sociedadPagoAnterior; 
 	private Boolean mostrarEditarFasePublicacion;
 	
+	private Boolean pazSocial;
+	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
 	}
@@ -2071,6 +2073,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setMostrarEditarFasePublicacion(Boolean mostrarEditarFasePublicacion) {
 		this.mostrarEditarFasePublicacion = mostrarEditarFasePublicacion;
+	}
+	
+	public Boolean getPazSocial() {
+		return pazSocial;
+	}
+
+	public void setPazSocial(Boolean pazSocial) {
+		this.pazSocial = pazSocial;
 	}
 	
 }

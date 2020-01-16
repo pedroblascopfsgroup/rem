@@ -875,7 +875,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     	},
     	isCesionUsoEditable: function () {
     		return $AU.userIsRol('GESTALQ');
-    	}    	    
+    	},
+    	
+    	esEditableDestinoComercial: function(get){
+			var me = this;
+			var esPazSocial = get('activo.pazSocial');
+			return !me.get('esUA') && !esPazSocial;			
+		}	    
 	 }, 
 	 
 	 stores: {

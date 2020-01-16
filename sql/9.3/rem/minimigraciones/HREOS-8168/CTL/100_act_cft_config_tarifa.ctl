@@ -1,7 +1,7 @@
-OPTIONS (DIRECT=TRUE, BINDSIZE=512000, ROWS=10000, ERRORS=999999, SKIP=1)
+OPTIONS (DIRECT=TRUE, BINDSIZE=512000, ROWS=10000, ERRORS=999999)
 LOAD DATA
 CHARACTERSET WE8ISO8859P15
-INFILE './CTL/IN/2019-11-18-02-Tarifas Carteras Varias Haya Real Estate - Grupo Avanza (2).csv'
+INFILE './CTL/IN/2019-11-18-02-Tarifas Carteras Varias Haya Real Estate - Grupo Avanza (2).dat'
 BADFILE './CTL/BAD/2019-11-18-02-Tarifas Carteras Varias Haya Real Estate - Grupo Avanza (2).bad'
 DISCARDFILE './CTL/REJECTS/2019-11-18-02-Tarifas Carteras Varias Haya Real Estate - Grupo Avanza (2).bad'
 INTO TABLE REM01.TMP_ACT_CFT_CONFIG_TARIFA

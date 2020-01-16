@@ -897,9 +897,9 @@ public interface ParticularValidatorApi {
 
 	public Boolean esSolicitudValido(String codSolicitud);
 
-	public Boolean existeActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud);
+	public Boolean existeActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud, String idTributo);
 
-	public String getIdActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud);
+	public String getIdActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud, String idTributo);
 
 	public Boolean esNumHayaVinculado(Long numGasto, String numActivo);
 

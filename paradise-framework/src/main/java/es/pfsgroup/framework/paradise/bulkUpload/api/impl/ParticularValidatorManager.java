@@ -3621,8 +3621,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	@Override
-	public Boolean existeActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud){
-		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo) || Checks.esNulo(tipoSolicitud) || !StringUtils.isNumeric(tipoSolicitud)) {
+	public Boolean existeActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud, String idTributo){
+		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo) || Checks.esNulo(tipoSolicitud) || !StringUtils.isNumeric(tipoSolicitud) || !StringUtils.isNumeric(idTributo)) {
 			return false;
 		}
 
@@ -3635,14 +3635,15 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "AND TRI.BORRADO = 0 "
 				+ "AND ACT.ACT_NUM_ACTIVO = '" + numActivo + "' "
 				+ "AND TRI.ACT_TRI_FECHA_PRESENTACION_RECURSO = TO_DATE('"+ fechaRecurso + "','dd/MM/yy') "
+				+ "AND TRI.ACT_NUM_TRIBUTO = '" + idTributo + "' "
 				);
 
 		return !"0".equals(resultado);
 	}
 
 	@Override
-	public String getIdActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud){
-		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo) || Checks.esNulo(tipoSolicitud) || !StringUtils.isNumeric(tipoSolicitud)) {
+	public String getIdActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud, String idTributo){
+		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo) || Checks.esNulo(tipoSolicitud) || !StringUtils.isNumeric(tipoSolicitud) || !StringUtils.isNumeric(idTributo)) {
 			return null;
 		}
 
@@ -3655,6 +3656,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "AND TRI.BORRADO = 0 "
 				+ "AND ACT.ACT_NUM_ACTIVO = '" + numActivo + "' "
 				+ "AND TRI.ACT_TRI_FECHA_PRESENTACION_RECURSO = TO_DATE('"+ fechaRecurso + "','dd/MM/yy') "
+				+ "AND TRI.ACT_NUM_TRIBUTO = '" + idTributo + "' "
 				);
 
 	}

@@ -121,7 +121,7 @@ public class MSVSControlTributosProcesar extends AbstractMSVActualizador impleme
 		
 		}else {
 			
-			String idActivoTributo = particularValidator.getIdActivoTributo(celdaActivo, celdaEmision, celdaSolicitud);
+			String idActivoTributo = particularValidator.getIdActivoTributo(celdaActivo, celdaEmision, celdaSolicitud, celdaIdTributo);
 			
 			if(!Checks.esNulo(idActivoTributo)) {
 				Filter filtroIdActivoTributo = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(idActivoTributo));

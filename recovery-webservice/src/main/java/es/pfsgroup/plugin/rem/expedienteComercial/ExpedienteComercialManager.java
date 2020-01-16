@@ -1127,8 +1127,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					oferta.setPrescriptor(visita.getPrescriptor());
 				}
 
-				genericDao.save(Oferta.class, oferta);
-
 			} else {
 				throw new JsonViewerException(messageServices.getMessage(VISITA_SIN_RELACION_OFERTA));
 			}
@@ -1180,7 +1178,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		ofertaApi.updateStateDispComercialActivosByOferta(oferta);
 
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
-
+		genericDao.save(Oferta.class, oferta);
 		// Si se ha modificado el importe de la oferta o de la contraoferta actualizamos
 		// el listado de activos.
 		// También se actualiza el importe de la reserva. Actualizar honorarios para el
@@ -1720,7 +1718,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		if (!Checks.esNulo(oferta.getNecesitaFinanciacion())) {
-			dto.setNecesitaFinanciacion(oferta.getNecesitaFinanciacion() ? "Si" : "No");
+			dto.setNecesitaFinanciacion(oferta.getNecesitaFinanciacion() ? DDSiNo.SI : "0");
 		}
 
 		dto.setObservaciones(oferta.getObservaciones());

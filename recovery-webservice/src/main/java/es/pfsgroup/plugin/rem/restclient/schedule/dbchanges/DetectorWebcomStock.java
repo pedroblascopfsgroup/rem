@@ -61,7 +61,7 @@ public class DetectorWebcomStock extends DetectorCambiosBD<StockDto> {
 
 	@Override
 	public String clavePrimaria() {
-		return "ID_ACTIVO_HAYA";
+		return "ID";
 	}
 
 	@Override

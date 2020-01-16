@@ -519,13 +519,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	 		return false;
 	 	},
 	 	
-	 	esSubcarteraDivarianOApple: function(get){
+	 	esSubcarteraRemainingOAppleOArrow: function(get){
 	 		var me = this;
 	 		var resp = false;
 	 		var isApple = CONST.SUBCARTERA['APPLEINMOBILIARIO'] === me.get('expediente.subcarteraCodigo');
-	 		var isDivarian = CONST.SUBCARTERA['DIVARIANREMAINING'] === me.get('expediente.subcarteraCodigo');
+	 		var isRemaining = CONST.SUBCARTERA['DIVARIANREMAINING'] === me.get('expediente.subcarteraCodigo');
+	 		var isArrow = CONST.SUBCARTERA['DIVARIANARROW'] === me.get('expediente.subcarteraCodigo');
 	 		
-	 		if(isApple == true || isDivarian == true){
+	 		if(isApple == true || isRemaining == true || isArrow == true){
 	 			resp = true;
 	 		}
 	 		

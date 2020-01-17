@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin Bahamonde
---## FECHA_CREACION=20191226
+--## FECHA_CREACION=20200117
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-8872
+--## INCIDENCIA_LINK=HREOS-9144
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_ACC_ACCION_GASTOS los datos añadidos en T_ARRAY_DATA
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 HREOS-9144
 --##########################################
 --*/
 
@@ -31,7 +32,7 @@ DECLARE
     V_ID NUMBER(16);
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_ACC_ACCION_GASTOS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_TEXT_CHARS VARCHAR2(2400 CHAR) := 'ACC'; -- Vble. auxiliar para almacenar las 3 letras orientativas de la tabla de ref.
-    V_INCIDENCIA VARCHAR2(25 CHAR) := 'HREOS-8872';
+    V_INCIDENCIA VARCHAR2(25 CHAR) := 'HREOS-9144';
     V_ID_ACC NUMBER(16); --Vble para extraer el ID del registro a modificar, si procede.
 
     
@@ -40,9 +41,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
         T_TIPO_DATA('PRE_Y_COL', 'Prescripción y Colaboración', 'Prescripción y Colaboración'),
-        T_TIPO_DATA('API_ORI_LEA_PRP', 'API Origen lead PRP', 'API Origen lead PRP'),
-        T_TIPO_DATA('API_ORI_LEA_PP', 'API Origen lead PP', 'API Origen lead PP'),
-        T_TIPO_DATA('COL_HRE', 'Colaboración Haya', 'Colaboración Haya')
+        T_TIPO_DATA('API_ORI_LEA', 'API Origen lead ', 'API Origen lead')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -64,6 +63,7 @@ BEGIN
         EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
  
         
+
         --Si existe modificamos los valores
         IF V_NUM_TABLAS > 0 THEN
 

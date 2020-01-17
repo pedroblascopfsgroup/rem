@@ -1334,6 +1334,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	// TODO Este método hay que cambiarlo.
 	@Override
 	@BusinessOperation(overrides = "trabajoManager.createTramiteTrabajo")
+	@Transactional
 	public ActivoTramite createTramiteTrabajo(Trabajo trabajo){
 		TipoProcedimiento tipoTramite = new TipoProcedimiento();
 

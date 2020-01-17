@@ -33,7 +33,6 @@ import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalExpedientesManager;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
@@ -104,6 +103,7 @@ import es.pfsgroup.plugin.rem.oferta.OfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.thread.ContenedorExpComercial;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
+import es.pfsgroup.plugin.rem.thread.TramitacionOfertasAsync;
 
 @Service("tramitacionOfertasManager")
 public class TramitacionOfertasManager implements TramitacionOfertasApi {
@@ -140,9 +140,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
-	
-	@Autowired
-	private ActivoManager activoManager;
 	
 	@Autowired
 	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
@@ -254,8 +251,12 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		if(!resultado){
 			resultado = this.persistOferta(oferta);
 		}
+		String usuarioLogado = genericAdapter.getUsuarioLogado().getUsername();
+		ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta", oferta));
 		
-		Thread creacionAsincrona = new Thread(finalizaCreacionExpediente(activo, esAcepta, trabajo, oferta));
+		Thread creacionAsincrona = new Thread(new TramitacionOfertasAsync(activo.getId(), esAcepta, 
+				trabajo.getId(), oferta.getId(), expedienteComercial.getId(), usuarioLogado));
+		
 		creacionAsincrona.start();
 
 		return resultado;
@@ -647,6 +648,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		return condicionante;
 	}
 	
+	@Transactional
 	public ExpedienteComercial crearCondicionanteYTanteo(Activo activo, Oferta oferta, ExpedienteComercial expedienteComercial) {
 		CondicionanteExpediente nuevoCondicionante = null;
 		if (!Checks.esNulo(activo)) {
@@ -691,7 +693,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	}
 	
 	@Transactional(readOnly = false)
-	private ExpedienteComercial crearExpedienteReserva(ExpedienteComercial expedienteComercial) {
+	public ExpedienteComercial crearExpedienteReserva(ExpedienteComercial expedienteComercial) {
 		// HREOS-2799
 		// Activos de Cajamar, debe tener en Reserva - tipo de Arras por
 		// defecto: Confirmatorias
@@ -731,6 +733,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	}
 	
 	@Override
+	@Transactional
 	public List<GastosExpediente> crearGastosExpediente(Oferta oferta, ExpedienteComercial nuevoExpediente) {
 		List<GastosExpediente> gastosExpediente = new ArrayList<GastosExpediente>();
 		List<String> acciones = new ArrayList<String>();
@@ -755,6 +758,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		return gastosExpediente;
 	}
 	
+	@Transactional
 	public boolean crearCompradores(Oferta oferta, ExpedienteComercial nuevoExpediente) {
 		ClienteComercial cliente = oferta.getCliente();
 		
@@ -1071,7 +1075,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	}
 	
 	@SuppressWarnings("static-access")
-	private void asignarGestorYSupervisorFormalizacionToExpediente(ExpedienteComercial expediente) {
+	@Transactional
+	public void asignarGestorYSupervisorFormalizacionToExpediente(ExpedienteComercial expediente) {
 		GestorEntidadDto dto = new GestorEntidadDto();
 		dto.setIdEntidad(expediente.getId());
 		dto.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
@@ -1333,6 +1338,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		return true;
 	}
 	
+	@Transactional
 	public DDComiteSancion devuelveComiteByCartera(String carteraCodigo, Oferta oferta) {
 		
 		Filter filtroComite = null;
@@ -1606,57 +1612,11 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		}
 	}
 	
-	private Formalizacion crearFormalizacion(ExpedienteComercial expedienteComercial) {
+	public Formalizacion crearFormalizacion(ExpedienteComercial expedienteComercial) {
 		Formalizacion nuevaFormalizacion = new Formalizacion();
 		nuevaFormalizacion.setAuditoria(Auditoria.getNewInstance());
 		nuevaFormalizacion.setExpediente(expedienteComercial);
 		return nuevaFormalizacion;
-	}
-	
-	private Runnable finalizaCreacionExpediente(Activo activo, Boolean aceptado, Trabajo trabajo, Oferta oferta) {
-		
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-		
-		ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta", oferta));
-		
-		if(aceptado) {	
-			// Creación de formalización y condicionantes. Evita errores en los
-			// trámites al preguntar por datos de algunos de estos objetos y aún
-			// no esten creados. Para ello creamos los objetos vacios con el
-			// unico fin que se cree la fila.
-			expedienteComercial = crearCondicionanteYTanteo(activo, oferta, expedienteComercial);
-			expedienteComercial = crearExpedienteReserva(expedienteComercial);
-			expedienteComercialApi.crearCondicionesActivoExpediente(oferta.getActivoPrincipal(), expedienteComercial);
-			
-			Formalizacion formalizacion = crearFormalizacion(expedienteComercial);
-			expedienteComercial.setFormalizacion(formalizacion);
-			
-			DDComiteSancion comite = devuelveComiteByCartera(activo.getCartera().getCodigo(), oferta);
-			
-			expedienteComercial.setComiteSancion(comite);
-			
-			if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())){
-				expedienteComercial.setComitePropuesto(comite);
-			}
-			
-			crearCompradores(oferta, expedienteComercial);
-			
-			crearGastosExpediente(oferta, expedienteComercial);
-			
-			// Se asigna un gestor de Formalización al crear un nuevo expediente.
-			asignarGestorYSupervisorFormalizacionToExpediente(expedienteComercial);
-			
-			trabajoApi.createTramiteTrabajo(trabajo);
-		}
-		
-		if(activo != null) {
-			activoManager.actualizarOfertasTrabajosVivos(activo);
-		}
-		
-		transactionManager.commit(transaction);
-		
-		return null;
-		
 	}
 
 }

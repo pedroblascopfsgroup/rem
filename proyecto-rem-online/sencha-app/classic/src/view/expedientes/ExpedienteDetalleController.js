@@ -4882,7 +4882,7 @@ comprobarFormatoModificar: function() {
 		     success: function(response) {
 		    	data = Ext.decode(response.responseText);
 		    	var codigoComite = data.data;
-		    	if(CONST.COMITE_SANCIONADOR['HAYA_CERBERUS'] === codigoComite){
+		    	if(CONST.COMITE_SANCIONADOR['CODIGO_HAYA_REMAINING'] === codigoComite || CONST.COMITE_SANCIONADOR['CODIGO_HAYA_APPLE'] === codigoComite){
 		    		fechaResolucionCmp.setFieldLabel( HreRem.i18n('fieldlabel.fecha.resolucion.comite.haya'));
 		    		importeContraOfertaCmp.setFieldLabel( HreRem.i18n('fieldlabel.importe.contraoferta.comite.haya'));
 		    		fechaRespuestaCmp.setFieldLabel( HreRem.i18n('fieldlabel.fecha.respuesta.ofertante.comite.haya'));

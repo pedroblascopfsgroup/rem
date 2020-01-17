@@ -1600,9 +1600,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 			}
 		}
-		if ( expediente != null && expediente.getComiteSancion() != null ) {
-			dto.setEsComiteHaya(DDComiteSancion.CODIGO_HAYA_CERBERUS.equals(expediente.getComiteSancion().getCodigo()));
-		}
 		return dto;
 	}
 
@@ -1761,15 +1758,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		dto.setIsCarteraCerberusApple(isCarteraCerberusApple);
 		
-		Boolean isCarteraCerberusDivarian = false;
-		if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getActivoPrincipal())
-		&& (!Checks.esNulo(oferta.getActivoPrincipal().getCartera())
-		&& !Checks.esNulo(oferta.getActivoPrincipal().getSubcartera()))
-		&& (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) &&
-		DDSubcartera.CODIGO_DIVARIAN.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))) {
-			isCarteraCerberusDivarian = true;
-		}
-		dto.setIsCarteraCerberusDivarian(isCarteraCerberusDivarian);
 		
 		if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getFechaRespuestaCES()) && isCarteraCerberusApple) {
 			dto.setFechaRespuestaCES(oferta.getFechaRespuestaCES());

@@ -109,6 +109,11 @@ public class Visita implements Serializable, Auditable {
     @JoinColumn(name = "PVE_ID_PVE_VISITA")
 	private ActivoProveedor proveedorVisita; 
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PVE_ID_PRES_OPORTUNIDAD")
+	private ActivoProveedor idProveedorPrescriptorOportunidad; 
+    
+    
     @Column(name="VIS_OBSERVACIONES")
     private String observaciones;
     
@@ -350,6 +355,14 @@ public class Visita implements Serializable, Auditable {
 
 	public void setOrigenComprador(DDOrigenComprador origenComprador) {
 		this.origenComprador = origenComprador;
+	}
+
+	public ActivoProveedor getIdProveedorPrescriptorOportunidad() {
+		return idProveedorPrescriptorOportunidad;
+	}
+
+	public void setIdProveedorPrescriptorOportunidad(ActivoProveedor idProveedorPrescriptorOportunidad) {
+		this.idProveedorPrescriptorOportunidad = idProveedorPrescriptorOportunidad;
 	}
     
     

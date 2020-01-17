@@ -183,7 +183,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						reference: 'fechaResolucionCES',
 						bind : {
 							value : '{datosbasicosoferta.fechaResolucionCES}',
-							hidden : '{!esSubcarteraDivarianOApple}'
+							hidden : '{!esSubcarteraRemainingOAppleOArrow}'
 						},
 						readOnly : true
 					}, {
@@ -191,7 +191,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						reference: 'importeContraOfertaCES',
 						bind : {
 							value : '{datosbasicosoferta.importeContraofertaCES}',
-							hidden : '{!esSubcarteraDivarianOApple}'
+							hidden : '{!esSubcarteraRemainingOAppleOArrow}'
 						},
 						readOnly : true
 					}, {
@@ -199,7 +199,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						reference: 'fechaResupuestaCES',
 						bind : {
 							value : '{datosbasicosoferta.fechaRespuestaCES}',
-							hidden : '{!esSubcarteraDivarianOApple}'
+							hidden : '{!esSubcarteraRemainingOAppleOArrow}'
 						},
 						readOnly : true
 					}, 
@@ -213,7 +213,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						reference:'importeContraofertaOfertanteCES',
 						bind : {
 							value : '{datosbasicosoferta.importeContraofertaOfertanteCES}',
-							hidden : '{!esSubcarteraDivarianOApple}'
+							hidden : '{!esSubcarteraRemainingOAppleOArrow}'
 						},
 						readOnly : true
 					},

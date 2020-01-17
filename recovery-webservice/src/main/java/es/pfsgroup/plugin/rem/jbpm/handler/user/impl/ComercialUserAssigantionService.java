@@ -216,7 +216,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			}
 			if((CODIGO_T017_RESOLUCION_CES.equals(codigoTarea) || CODIGO_T017_RATIFICACION_COMITE_CES.equals(codigoTarea))
 					&& (esActivoApple || esActivoRemaining) 
-					&& (comite != null && DDComiteSancion.CODIGO_CERBERUS.equals(comite.getCodigo()))){		
+					&& (comite != null && (DDComiteSancion.CODIGO_HAYA_APPLE.equals(comite.getCodigo()) || (DDComiteSancion.CODIGO_HAYA_REMAINING.equals(comite.getCodigo()))))){		
 				
 				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoGestor);
 				tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);

@@ -52,7 +52,7 @@ public class MSVActualizacionFasesPublicacionValidator extends MSVExcelValidator
 	public static final String FASE_PUBLICACION_NO_EXISTE = "La fase de publicación no existe.";
 	public static final String SUBFASE_PUBLICACION_NO_EXISTE = "La subfase de publicación no existe.";
 	public static final String SUBFASE_PUBLICACION_ERRONEA = "La subfase de publicación no pertenece a la fase de publicación propuesta";
-	public static final String FASE_NA_SUBFASE_RELLENA = "La subfase de publicación debe estar vacía";
+	public static final String FASE_NA_SUBFASE_RELLENA = "La subfase de publicación debe estar vacía cuando la fase no aplica (01)";
 	public static final String CODIGO_FASES_PUBLICACION = "CMFP";
 	
 	public static final String CODIGO_FASE_NA = "01";

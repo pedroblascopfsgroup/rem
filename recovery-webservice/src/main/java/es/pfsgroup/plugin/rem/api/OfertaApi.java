@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -417,8 +418,10 @@ public interface OfertaApi {
 	 * @param idActivo id del activo para filtrar.
 	 * @param idOferta id de la oferta para filtrar.
 	 * @return Devuelve una lista de DtoGastoExpediente.
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	public List<DtoGastoExpediente> getHonorariosActivoByOfertaId(Long idActivo, Long idOferta);
+	public List<DtoGastoExpediente> getHonorariosActivoByOfertaId(Long idActivo, Long idOferta) throws IllegalAccessException, InvocationTargetException;
 
 	/**
 	 * Este método obtiene una lista de honorarios para el ID de oferta dado.
@@ -508,8 +511,10 @@ public interface OfertaApi {
 	 * @param accion
 	 * @param activo
 	 * @return
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	public List<DtoGastoExpediente> calculaHonorario(Oferta oferta,Activo activo);
+	public List<DtoGastoExpediente> calculaHonorario(Oferta oferta,Activo activo) throws IllegalAccessException, InvocationTargetException;
 
 	/**
 	 * Método que ratifica el comité de Bankia
@@ -579,7 +584,7 @@ public interface OfertaApi {
 	
 	DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada);
 	
-	DDComiteSancion calculoComiteLiberbankActivoSolo(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk);
+	DDComiteSancion calculoComiteLiberbankActivoSolo(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk) throws IllegalAccessException, InvocationTargetException;
 
 	Boolean checkProvinciaCompradores(TareaExterna tareaExterna);
 
@@ -710,9 +715,9 @@ public interface OfertaApi {
 
 	DDComiteSancion calculoComiteLiberbankOfertasDependientes(Oferta ofertaNueva, List<GastosExpediente> gastosExpediente, boolean esLote);
 
-	DDComiteSancion calculoComiteLiberbankLoteActivos(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk);
+	DDComiteSancion calculoComiteLiberbankLoteActivos(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk) throws IllegalAccessException, InvocationTargetException;
 
-	DDComiteSancion calculoComiteLBK(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk);
+	DDComiteSancion calculoComiteLBK(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk) throws IllegalAccessException, InvocationTargetException;
 
 	/**
 	 * Método que comprueba si la oferta es una oferta principal

@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -18,6 +19,6 @@ public interface TramitacionOfertasApi {
 
 	boolean saveOferta(DtoOfertaActivo dto, Boolean esAgrupacion) throws JsonViewerException, Exception, Error;
 
-	public List<GastosExpediente> crearGastosExpediente(Oferta oferta, ExpedienteComercial nuevoExpediente);
+	public List<GastosExpediente> crearGastosExpediente(Oferta oferta, ExpedienteComercial nuevoExpediente) throws IllegalAccessException, InvocationTargetException;
 
 }

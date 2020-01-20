@@ -1297,6 +1297,8 @@ public interface ActivoApi {
 	FileItem getFileItemPlusvalia(DtoAdjunto dtoAdjunto);
 
 	ActivoDto getDatosActivo(Long activoId);
+	
+	public List<GastosExpediente> crearGastosExpediente(ExpedienteComercial nuevoExpediente) throws IllegalAccessException, InvocationTargetException;
 
 	/**
 	 * Devuelve la lista ordenada de valores del diccionario Fase de Publicacion.

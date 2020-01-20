@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -143,8 +144,10 @@ public interface ExpedienteComercialApi {
 	 * @param dto
 	 * @param idExpediente
 	 * @return
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	boolean saveDatosBasicosOferta(DtoDatosBasicosOferta dto, Long idExpediente);
+	boolean saveDatosBasicosOferta(DtoDatosBasicosOferta dto, Long idExpediente) throws IllegalAccessException, InvocationTargetException;
 
 	/**
 	 * Metodo que guarda la informacion de la pestanya Tanteo y Retracto de la oferta
@@ -781,8 +784,10 @@ public interface ExpedienteComercialApi {
 	 * @param activo
 	 * @param codigoColaboracion
 	 * @return
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	public List<GastosExpediente> creaGastoExpediente(ExpedienteComercial expediente, Oferta oferta, Activo activo);
+	public List<GastosExpediente> creaGastoExpediente(ExpedienteComercial expediente, Oferta oferta, Activo activo) throws IllegalAccessException, InvocationTargetException;
 
 	/**
 	 * Devuelve los activos de un expediente dado, para mostrarlos en un combo
@@ -1272,7 +1277,7 @@ public interface ExpedienteComercialApi {
 	
 	boolean checkExpedienteFechaCheque(Long idTramite);
 
-	boolean actualizarGastosExpediente(ExpedienteComercial expedienteComercial, Oferta oferta);
+	boolean actualizarGastosExpediente(ExpedienteComercial expedienteComercial, Oferta oferta) throws IllegalAccessException, InvocationTargetException;
 
 	List<GastosExpediente> getListaGastosExpedienteByIdExpediente(Long idExpediente);
 

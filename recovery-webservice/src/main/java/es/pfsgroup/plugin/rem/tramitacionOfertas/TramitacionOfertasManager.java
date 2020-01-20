@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.tramitacionOfertas;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -928,7 +929,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	}
 	
 	@Override
-	public List<GastosExpediente> crearGastosExpediente(Oferta oferta, ExpedienteComercial nuevoExpediente) {
+	public List<GastosExpediente> crearGastosExpediente(Oferta oferta, ExpedienteComercial nuevoExpediente) throws IllegalAccessException, InvocationTargetException {
 		List<GastosExpediente> gastosExpediente = expedienteComercialApi.creaGastoExpediente(nuevoExpediente, nuevoExpediente.getOferta(),
 				nuevoExpediente.getOferta().getActivosOferta().get(0).getPrimaryKey().getActivo());
 		return gastosExpediente;

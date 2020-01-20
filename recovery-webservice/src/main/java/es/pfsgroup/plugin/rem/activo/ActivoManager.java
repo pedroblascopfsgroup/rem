@@ -2164,7 +2164,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	@Transactional(readOnly = false)
-	public List<GastosExpediente> crearGastosExpediente(ExpedienteComercial nuevoExpediente) {
+	public List<GastosExpediente> crearGastosExpediente(ExpedienteComercial nuevoExpediente) throws IllegalAccessException, InvocationTargetException {
 		
 		List<GastosExpediente> gastosExpediente = expedienteComercialApi.creaGastoExpediente(nuevoExpediente, nuevoExpediente.getOferta(), 
 				nuevoExpediente.getOferta().getActivosOferta().get(0).getPrimaryKey().getActivo());

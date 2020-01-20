@@ -15,6 +15,10 @@ public class DtoPrescriptoresComision extends WebDto {
 	private Long prescriptorCodRem;
 	private String tipoAccion;
 	private String origenLead;
+	private String providerType;
+	private String visitPrescriber;
+	private String visitMaker;
+	private String offerPrescriber;
 	
 	public Long getPrescriptorCodRem() {
 		return prescriptorCodRem;
@@ -33,6 +37,30 @@ public class DtoPrescriptoresComision extends WebDto {
 	}
 	public void setOrigenLead(String origenLead) {
 		this.origenLead = origenLead;
+	}
+	public String getProviderType() {
+		return providerType;
+	}
+	public String getVisitPrescriber() {
+		return visitPrescriber;
+	}
+	public String getVisitMaker() {
+		return visitMaker;
+	}
+	public String getOfferPrescriber() {
+		return offerPrescriber;
+	}
+	public void setProviderType(String providerType) {
+		this.providerType = providerType;
+	}
+	public void setVisitPrescriber(String visitPrescriber) {
+		this.visitPrescriber = visitPrescriber;
+	}
+	public void setVisitMaker(String visitMaker) {
+		this.visitMaker = visitMaker;
+	}
+	public void setOfferPrescriber(String offerPrescriber) {
+		this.offerPrescriber = offerPrescriber;
 	}
 	
 	

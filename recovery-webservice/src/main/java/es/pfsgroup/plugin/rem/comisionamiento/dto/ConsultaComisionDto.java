@@ -19,6 +19,10 @@ public class ConsultaComisionDto {
 	private String subPortfolio;
 	private String classType;
 	private String commisionType;
+	private String providerType;
+	private String visitPrescriber;
+	private String visitMaker;
+	private String offerPrescriber;
 
 	public String getLeadOrigin() {
 		return leadOrigin;
@@ -79,6 +83,30 @@ public class ConsultaComisionDto {
 	}
 	public void setCommisionType(String commisionType) {
 		this.commisionType = commisionType;
+	}
+	public String getProviderType() {
+		return providerType;
+	}
+	public String getVisitPrescriber() {
+		return visitPrescriber;
+	}
+	public String getVisitMaker() {
+		return visitMaker;
+	}
+	public String getOfferPrescriber() {
+		return offerPrescriber;
+	}
+	public void setProviderType(String providerType) {
+		this.providerType = providerType;
+	}
+	public void setVisitPrescriber(String visitPrescriber) {
+		this.visitPrescriber = visitPrescriber;
+	}
+	public void setVisitMaker(String visitMaker) {
+		this.visitMaker = visitMaker;
+	}
+	public void setOfferPrescriber(String offerPrescriber) {
+		this.offerPrescriber = offerPrescriber;
 	}
 	
 }

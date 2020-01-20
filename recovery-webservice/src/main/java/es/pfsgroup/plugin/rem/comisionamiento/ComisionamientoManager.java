@@ -16,9 +16,9 @@ import es.pfsgroup.plugin.rem.comisionamiento.dto.ConsultaComisionDto;
 import es.pfsgroup.plugin.rem.comisionamiento.dto.RespuestaComisionDto;
 import es.pfsgroup.plugin.rem.comisionamiento.dto.RespuestaComisionResultDto;
 import es.pfsgroup.plugin.rem.microservicios.ClienteMicroservicioGenerico;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoPrescriptoresComision;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
@@ -77,11 +77,21 @@ public class ComisionamientoManager implements ComisionamientoApi {
 	public List<DtoPrescriptoresComision> getTiposDeComisionAccionGasto(Oferta oferta){
 		List<DtoPrescriptoresComision> listAcciones = new ArrayList<DtoPrescriptoresComision>();
 		
-		DtoPrescriptoresComision dto = new DtoPrescriptoresComision();
+		Visita visita = oferta.getVisita();
+		
+		DtoPrescriptoresComision dtoOriginal = new DtoPrescriptoresComision();
 				
-		Long prescriptorVisita = (oferta.getProveedorPrescriptorRemOrigenLead() == null) ? null : oferta.getProveedorPrescriptorRemOrigenLead().getId();
-		Long realizadorVisita = (oferta.getProveedorRealizadorRemOrigenLead() == null) ? null : oferta.getProveedorRealizadorRemOrigenLead().getId();
+		Long prescriptorVisita = (visita == null || visita.getPrescriptor() == null) ? null : visita.getPrescriptor().getId();
+		Long realizadorVisita = (visita == null || visita.getProveedorVisita() == null) ? null : visita.getProveedorVisita().getId();
 		Long prescriptorOferta = oferta.getPrescriptor().getId();
+		
+		dtoOriginal.setProviderType((visita == null || visita.getProveedorPrescriptorOportunidad() == null) ? null
+				: visita.getProveedorPrescriptorOportunidad().getCodigoProveedorRem().toString());
+		dtoOriginal.setVisitPrescriber((visita == null || visita.getPrescriptor() == null) ? null 
+				: visita.getPrescriptor().getCodigoProveedorRem().toString());
+		dtoOriginal.setVisitMaker((visita == null || visita.getProveedorVisita() == null) ? null
+				: visita.getProveedorVisita().getCodigoProveedorRem().toString()); 
+		dtoOriginal.setOfferPrescriber(oferta.getPrescriptor().getCodigoProveedorRem().toString());
 		
 		String codLeadOrigin = null;
 		
@@ -92,6 +102,8 @@ public class ComisionamientoManager implements ComisionamientoApi {
 		} else {
 			codLeadOrigin = DDOrigenComprador.CODIGO_ORC_HRE;
 		}
+		
+		DtoPrescriptoresComision dto = dtoOriginal;
 		
 		if(prescriptorOferta != null && (prescriptorVisita == null || realizadorVisita == null)) {
 			dto.setPrescriptorCodRem(prescriptorOferta);
@@ -125,10 +137,10 @@ public class ComisionamientoManager implements ComisionamientoApi {
 					
 					listAcciones.add(dto);
 					
-					dto = new DtoPrescriptoresComision();
+					dto = dtoOriginal;
 					
 					dto.setPrescriptorCodRem(prescriptorVisita);
-					dto.setTipoAccion(DDAccionGastos.CODIGO_API_ORI_LEA_PRP);
+					dto.setTipoAccion(DDAccionGastos.CODIGO_API_ORI_LEA);
 					dto.setOrigenLead(codLeadOrigin);
 					listAcciones.add(dto);
 				}
@@ -154,7 +166,7 @@ public class ComisionamientoManager implements ComisionamientoApi {
 			
 			if(DDOrigenComprador.CODIGO_ORC_API_AJENO.equals(codLeadOrigin)) {
 				
-				dto = new DtoPrescriptoresComision();
+				dto = dtoOriginal;
 				
 				dto.setPrescriptorCodRem(prescriptorOferta);
 				dto.setTipoAccion(DDAccionGastos.CODIGO_PRE_Y_COL);
@@ -164,10 +176,10 @@ public class ComisionamientoManager implements ComisionamientoApi {
 				
 				if(diferenciaFechaVisitaYAlta != null && diferenciaFechaVisitaYAlta <= 90L) {
 					
-					dto = new DtoPrescriptoresComision();
+					dto = dtoOriginal;
 					
 					dto.setPrescriptorCodRem(prescriptorVisita);
-					dto.setTipoAccion(DDAccionGastos.CODIGO_API_ORI_LEA_PP);
+					dto.setTipoAccion(DDAccionGastos.CODIGO_API_ORI_LEA);
 					dto.setOrigenLead(codLeadOrigin);
 					
 					listAcciones.add(dto);

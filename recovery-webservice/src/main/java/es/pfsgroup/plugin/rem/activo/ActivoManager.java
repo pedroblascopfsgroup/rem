@@ -2684,7 +2684,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 			
 		}else if(esTipoEspejo){
-			throw new JsonViewerException("No se puede asignar Api Espejo sin Api Primario asignado");
+			//Solución temporal HREOS-9160
+			ActivoInfoComercial infoComercial = activo.getInfoComercial();
+			if ( infoComercial != null && infoComercial.getMediadorInforme() == null) {
+				throw new JsonViewerException("No se puede asignar Api Espejo sin Api Primario asignado");
+			}
 		}
 		
 	}

@@ -1358,6 +1358,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						detalleGasto.setTipoRecargoGasto(tipoRecargo);
 					}
 				}
+				
+				Usuario usuario = genericAdapter.getUsuarioLogado();
+				if(!Checks.esNulo(detalleGasto.getAuditoria())) {
+					detalleGasto.getAuditoria().setUsuarioModificar(usuario.getUsername());
+					detalleGasto.getAuditoria().setFechaModificar(new Date());
+				}
 
 				genericDao.update(GastoDetalleEconomico.class, detalleGasto);
 			}

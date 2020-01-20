@@ -5149,7 +5149,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 			if (!Checks.esNulo(activo)) {
 				Long idUsuarioGestorFormalizacion = null;
-				if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_THIRD_PARTY)) {
+				
+				if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_THIRD_PARTY)){
+					Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", "GCOM");
+					EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, f1);
+					Filter f2 = genericDao.createFilter(FilterType.EQUALS, "activo", activo);
+					Filter f3 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor", tipoGestor);
+					GestorActivo nuevoGestorC = genericDao.get(GestorActivo.class, f2, f3);
+					if(!Checks.esNulo(nuevoGestorC) && !Checks.esNulo(nuevoGestorC.getUsuario())) {
+						usuarioGestorComercial = nuevoGestorC.getUsuario();
+					}
+				}
+				
+				if ((activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_THIRD_PARTY)) && !(activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_OMEGA))) {
 					Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", "GFORM");
 					EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, f1);
 					Filter f2 = genericDao.createFilter(FilterType.EQUALS, "activo", activo);
@@ -5157,14 +5169,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					GestorActivo nuevoGestorF = genericDao.get(GestorActivo.class, f2, f3);					
 					if(!Checks.esNulo(nuevoGestorF) && !Checks.esNulo(nuevoGestorF.getUsuario())) {
 						idUsuarioGestorFormalizacion = nuevoGestorF.getUsuario().getId();// flag
-					}
-					f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", "GCOM");
-					tipoGestor = genericDao.get(EXTDDTipoGestor.class, f1);
-					f3 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor", tipoGestor);
-					GestorActivo nuevoGestorC = genericDao.get(GestorActivo.class, f2, f3);
-					if(!Checks.esNulo(nuevoGestorC) && !Checks.esNulo(nuevoGestorC.getUsuario())) {
-						usuarioGestorComercial = nuevoGestorC.getUsuario();
-					}					
+					}			
 
 				} else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR) || activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)){
 					idUsuarioGestorFormalizacion = gestorExpedienteComercialDao

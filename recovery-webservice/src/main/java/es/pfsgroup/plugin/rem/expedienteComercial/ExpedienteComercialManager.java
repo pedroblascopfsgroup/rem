@@ -581,7 +581,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Override
 	@Transactional(readOnly = false)
-	public boolean saveDatosBasicosOferta(DtoDatosBasicosOferta dto, Long idExpediente) {
+	public boolean saveDatosBasicosOferta(DtoDatosBasicosOferta dto, Long idExpediente) throws IllegalAccessException, InvocationTargetException {
 		ExpedienteComercial expedienteComercial = findOne(idExpediente);
 		Oferta oferta = expedienteComercial.getOferta();
 		Visita visitaOferta = oferta.getVisita();
@@ -6857,7 +6857,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional(readOnly = false)
-	public List<GastosExpediente> creaGastoExpediente(ExpedienteComercial expediente, Oferta oferta, Activo activo) {
+	public List<GastosExpediente> creaGastoExpediente(ExpedienteComercial expediente, Oferta oferta, Activo activo) throws IllegalAccessException, InvocationTargetException {
 		
 		
 		List<GastosExpediente> listaGastos = new ArrayList<GastosExpediente>();
@@ -10587,7 +10587,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Override
 	@Transactional(readOnly = false)
-	public boolean actualizarGastosExpediente(ExpedienteComercial expedienteComercial, Oferta oferta) {
+	public boolean actualizarGastosExpediente(ExpedienteComercial expedienteComercial, Oferta oferta) throws IllegalAccessException, InvocationTargetException {
 		
 		Activo activo = oferta.getActivoPrincipal();
 	

@@ -325,7 +325,7 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 				ActivoProveedor pveOportunidad = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao
 						.createFilter(FilterType.EQUALS, "codigoProveedorRem", visitaDto.getIdProveedorPrescriptorOportunidadREM()));
 				if (!Checks.esNulo(pveOportunidad)) {
-					visita.setIdProveedorPrescriptorOportunidad(pveOportunidad);
+					visita.setProveedorPrescriptorOportunidad(pveOportunidad);
 				}
 			}
 			if (!Checks.esNulo(visitaDto.getFechaAccion())) {

@@ -2708,7 +2708,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
-	public List<DtoGastoExpediente> getHonorariosActivoByOfertaId(Long idActivo, Long idOferta) {
+	public List<DtoGastoExpediente> getHonorariosActivoByOfertaId(Long idActivo, Long idOferta) throws IllegalAccessException, InvocationTargetException {
 
 		List<DtoGastoExpediente> listaHonorarios = new ArrayList<DtoGastoExpediente>();
 
@@ -2740,7 +2740,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
-	public List<DtoGastoExpediente> calculaHonorario(Oferta oferta, Activo activo) {
+	public List<DtoGastoExpediente> calculaHonorario(Oferta oferta, Activo activo) throws IllegalAccessException, InvocationTargetException {
 
 		List<DtoGastoExpediente> listDto = new ArrayList<DtoGastoExpediente>();
 		ActivoProveedor proveedor = null;
@@ -2897,6 +2897,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if(listAccionesComision != null) {
 			for(DtoPrescriptoresComision accionesComision: listAccionesComision) {
 				DtoGastoExpediente dto = new DtoGastoExpediente();
+				
+				beanUtilNotNull.copyProperties(dto, accionesComision);
 				
 				consultaComisionDto.setLeadOrigin(accionesComision.getOrigenLead());
 				
@@ -3645,7 +3647,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 //	}
 
 	@Override
-	public DDComiteSancion calculoComiteLBK(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk) {
+	public DDComiteSancion calculoComiteLBK(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk) throws IllegalAccessException, InvocationTargetException {
 		if(!Checks.esNulo(ofertaAceptada)){
 			ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
 			
@@ -3739,7 +3741,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return false;
 	}
 	
-	private List<Double> getImportesAcumulados(Oferta ofertaAceptada, Double vta, Double pvb, Double cco, Double pvn, Double vnc, Double vr, OfertasAgrupadasLbk nuevafertaAgrupadaLbk){
+	private List<Double> getImportesAcumulados(Oferta ofertaAceptada, Double vta, Double pvb, Double cco, Double pvn, Double vnc, Double vr, OfertasAgrupadasLbk nuevafertaAgrupadaLbk) throws IllegalAccessException, InvocationTargetException{
 		List<Double> listaImportesAcumulados = new ArrayList<Double>();
 		//Acumular pvb, cco de las ofertas dependientes
 		//A nivel de expediente
@@ -3850,7 +3852,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	@Override
-	public DDComiteSancion calculoComiteLiberbankActivoSolo(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk) {
+	public DDComiteSancion calculoComiteLiberbankActivoSolo(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk) throws IllegalAccessException, InvocationTargetException {
 			
 		Double vta= 0.0, pvb= 0.0, cco= 0.0, pvn= 0.0, vnc= 0.0, vr = 0.0;
 
@@ -3924,7 +3926,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
-	public DDComiteSancion calculoComiteLiberbankLoteActivos(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk) {
+	public DDComiteSancion calculoComiteLiberbankLoteActivos(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk) throws IllegalAccessException, InvocationTargetException {
 			
 		Double vta= 0.0, pvb= 0.0, cco= 0.0, pvn= 0.0, vnc= 0.0, vr = 0.0;
 

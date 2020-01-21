@@ -154,7 +154,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 				 }
 			 }
 		}
-		if (activo.getListActivoLlaveOrderedByFechaRecepcion() != null
+		if (activo.getListActivoLlaveOrderedByFechaRecepcion() != null && !activo.getListActivoLlaveOrderedByFechaRecepcion().isEmpty()
 				&& activo.getListActivoLlaveOrderedByFechaRecepcion().get(0) != null) {
 			activoDto.setFechaRecepcionLlave(
 					activo.getListActivoLlaveOrderedByFechaRecepcion().get(0).getFechaRecepcion());

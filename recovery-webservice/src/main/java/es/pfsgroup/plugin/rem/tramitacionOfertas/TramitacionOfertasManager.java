@@ -1660,6 +1660,13 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOne(idExpedienteComercial);
 		
 		try {
+			expedienteComercial = this.crearCompradores(oferta, expedienteComercial);
+			transactionManager.commit(transaction);
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			trabajoApi.createTramiteTrabajo(idTrabajo);
+			transactionManager.commit(transaction);
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			
 			expedienteComercial = this.crearCondicionanteYTanteo(activo, oferta,
 					expedienteComercial);
 			expedienteComercial = this.crearExpedienteReserva(expedienteComercial);
@@ -1675,15 +1682,12 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			if (comite.getCartera() != null && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(comite.getCartera().getCodigo())) {
 				expedienteComercial.setComitePropuesto(comite);
 			}
-
-			expedienteComercial = this.crearCompradores(oferta, expedienteComercial);
-
 			this.crearGastosExpediente(oferta, expedienteComercial);
 
 			// Se asigna un gestor de Formalización al crear un nuevo expediente.
 			this.asignarGestorYSupervisorFormalizacionToExpediente(expedienteComercial);
 
-			trabajoApi.createTramiteTrabajo(idTrabajo);
+			
 			
 			transactionManager.commit(transaction);
 

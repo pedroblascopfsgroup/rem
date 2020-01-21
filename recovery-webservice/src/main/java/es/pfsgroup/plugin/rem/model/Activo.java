@@ -1933,16 +1933,5 @@ public class Activo implements Serializable, Auditable {
 		this.direccionTerritorial = direccionTerritorial;
 	}
 	
-	public List<ActivoLlave> getListActivoLlaveOrderedByFechaRecepcion(){
-		List<ActivoLlave> listLlaves = new ArrayList<ActivoLlave>();
-		if ( getLlaves() == null) {
-			return listLlaves;
-		}else {
-			listLlaves = getLlaves();
-			Collections.reverse(listLlaves);
-			return llaves;
-		}
-		
-	}
 	
 }

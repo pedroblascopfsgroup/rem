@@ -9556,6 +9556,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					avisosFormateados.setDescripcion(avisosFormateados.getDescripcion()	+ "<div class='div-aviso red'> Expediente pre-bloqueado por GENCAT </div>");
 				}
 			}
+			Filter bulkOfertaFilter = genericDao.createFilter(FilterType.EQUALS, "oferta", expediente.getOferta().getId());
+			Filter bulkOfertaBorradoFilter = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			List<BulkOferta> bulkOfertas = genericDao.getList(BulkOferta.class, bulkOfertaFilter, bulkOfertaBorradoFilter);
+			
+			if(bulkOfertas != null && !bulkOfertas.isEmpty()) {
+				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion()	+ "<div class='div-aviso red'> Oferta incluida dentro de Bulk AN </div>");
+			}
 		}
 		return avisosFormateados;
 	}

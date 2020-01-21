@@ -1309,4 +1309,6 @@ public interface ActivoApi {
 	void changeAndSavePlusvaliaEstadoGestionActivoById(Activo activo, String codigo) throws PlusvaliaActivoException;
 	
 	Boolean getMostrarEdicionTabFasesPublicacion(Activo activo);
+
+	void actualizarOfertasTrabajosVivos(Long idActivo);
 }

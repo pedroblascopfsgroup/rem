@@ -20,4 +20,8 @@ public interface TramitacionOfertasApi {
 			Activo activo) throws Exception;
 
 	List<GastosExpediente> crearGastosExpediente(Oferta oferta, ExpedienteComercial nuevoExpediente);
+
+	List<GastosExpediente> crearGastosExpediente(Long idOferta, ExpedienteComercial nuevoExpediente);
+
+	void doTramitacionAsincrona(Long idActivo, Long idTrabajo, Long idOferta, Long idExpedienteComercial);
 }

@@ -862,4 +862,6 @@ public interface TrabajoApi {
 	
 	@BusinessOperationDefinition("trabajoManager.getListActivoMatrizPresupuesto")
 	Page getActivoMatrizPresupuesto(DtoActivosTrabajoFilter dto);
+
+	public ActivoTramite createTramiteTrabajo(Long idTrabajo);
 }

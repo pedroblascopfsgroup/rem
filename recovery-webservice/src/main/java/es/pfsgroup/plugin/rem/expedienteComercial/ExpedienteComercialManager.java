@@ -339,7 +339,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public ExpedienteComercial findOne(Long id) {
 		return expedienteComercialDao.get(id);
 	}
-
+	
 	@Override
 	public ExpedienteComercial findOneTransactional(Long id) {
 		TransactionStatus transaction = null;
@@ -2896,6 +2896,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		createReservaExpediente(expedienteComercial);
 
 		return true;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public CondicionesActivo crearCondicionesActivoExpediente(Long idActivo, ExpedienteComercial expediente) {
+		return this.crearCondicionesActivoExpediente(activoAdapter.getActivoById(idActivo), expediente);
 	}
 
 	@Override

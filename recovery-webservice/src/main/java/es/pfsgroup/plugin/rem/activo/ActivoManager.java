@@ -5454,6 +5454,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 	}
 
+	@Override
+	@Transactional(readOnly = false)	
+	public void actualizarOfertasTrabajosVivos(Long idActivo) {
+		this.actualizarOfertasTrabajosVivos(activoAdapter.getActivoById(idActivo));
+	}
 
 	@Override
 	@Transactional(readOnly = false)	

@@ -2921,7 +2921,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if (!Checks.esNulo(accionGastoC)) {
 					dto.setCodigoTipoComision(accionGastoC.getCodigo());
 					dto.setDescripcionTipoComision(accionGastoC.getDescripcion());
-					consultaComisionDto.setCommisionType(accionGastoC.getCodigo());
+					consultaComisionDto.setCommissionType(accionGastoC.getCodigo());
 				}
 	
 				// Información del tipo de cálculo. Por defecto siempre son porcentajes

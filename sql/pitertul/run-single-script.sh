@@ -230,7 +230,7 @@ cp -f $BASEDIR/scripts/reg*.sql $BASEDIR/tmp/
 chmod u+x $BASEDIR/tmp/$nombreSinDirSinExt.sh
 
 # print_ouput_console $FICHERO
-ESQUEMA=`echo $PW | cut -d'/' -f2`
+ESQUEMA=`echo $PW | cut -d'@' -f 2`
 if [[ "$ESQUEMA" == "null" ]] ; then
 	ESQUEMA=' '
 else

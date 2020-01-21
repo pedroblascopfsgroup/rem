@@ -18,7 +18,7 @@ public class ConsultaComisionDto {
 	private String portfolio;
 	private String subPortfolio;
 	private String classType;
-	private String commisionType;
+	private String commissionType;
 	private String providerType;
 	private String visitPrescriber;
 	private String visitMaker;
@@ -78,11 +78,11 @@ public class ConsultaComisionDto {
 	public void setClassType(String classType) {
 		this.classType = classType;
 	}
-	public String getCommisionType() {
-		return commisionType;
+	public String getCommissionType() {
+		return commissionType;
 	}
-	public void setCommisionType(String commisionType) {
-		this.commisionType = commisionType;
+	public void setCommissionType(String commissionType) {
+		this.commissionType = commissionType;
 	}
 	public String getProviderType() {
 		return providerType;

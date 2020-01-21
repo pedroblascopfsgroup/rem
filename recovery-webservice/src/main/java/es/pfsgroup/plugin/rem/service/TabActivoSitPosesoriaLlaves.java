@@ -14,8 +14,10 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.dto.WebDto;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
@@ -25,6 +27,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceDesbloqExpCambioSitJuridica;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
@@ -154,10 +157,13 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 				 }
 			 }
 		}
-		if (activo.getListActivoLlaveOrderedByFechaRecepcion() != null && !activo.getListActivoLlaveOrderedByFechaRecepcion().isEmpty()
-				&& activo.getListActivoLlaveOrderedByFechaRecepcion().get(0) != null) {
-			activoDto.setFechaRecepcionLlave(
-					activo.getListActivoLlaveOrderedByFechaRecepcion().get(0).getFechaRecepcion());
+		
+		Filter filtroFechaNotNull = genericDao.createFilter(FilterType.NOTNULL, "fechaRecepcion");
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		Order order = new Order(OrderType.DESC,"fechaRecepcion");
+		List<ActivoLlave> lista = genericDao.getListOrdered(ActivoLlave.class , order, filtro, filtroFechaNotNull);
+		if (lista != null && !lista.isEmpty() && lista.get(0) != null) {
+			activoDto.setFechaRecepcionLlave(lista.get(0).getFechaRecepcion());
 		}
 		/*
 		//Añadir al DTO los atributos de llaves también
@@ -305,10 +311,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 		{
 			activo.setFechaRecepcionLlaves(dto.getFechaPrimerAnillado());
 		}
-		if (dto.getFechaRecepcionLlave() != null && activo.getListActivoLlaveOrderedByFechaRecepcion() != null
-				&& activo.getListActivoLlaveOrderedByFechaRecepcion().get(0) != null) {
-			activo.getListActivoLlaveOrderedByFechaRecepcion().get(0).setFechaRecepcion(dto.getFechaRecepcionLlave());
-		}
+			
 		if (dto.getNumJuegos()!=null)
 		{
 			activo.setNumJuegosLlaves(Integer.valueOf(dto.getNumJuegos()));

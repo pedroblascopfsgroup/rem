@@ -14,7 +14,7 @@ public interface TramitacionOfertasApi {
 
 	String getSubtipoTrabajoByOferta(Oferta oferta);
 
-	boolean saveOferta(DtoOfertaActivo dto, Boolean esAgrupacion) throws JsonViewerException, Exception, Error;
+	boolean saveOferta(DtoOfertaActivo dto, Boolean esAgrupacion,Boolean asincrono) throws JsonViewerException, Exception, Error;
 
 	ExpedienteComercial crearExpediente(Oferta oferta, Trabajo trabajo, Oferta ofertaOriginalGencatEjerce,
 			Activo activo) throws Exception;

@@ -32,7 +32,7 @@ public class TramitacionOfertasController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveOferta(DtoOfertaActivo ofertaActivoDto, ModelMap model, HttpServletRequest request, String entidad) {
 		try {
-			boolean success = tramitacionOfertasManager.saveOferta(ofertaActivoDto, ENTIDAD_ARUPACION.equals(entidad));
+			boolean success = tramitacionOfertasManager.saveOferta(ofertaActivoDto, ENTIDAD_ARUPACION.equals(entidad),true);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (JsonViewerException jvex) {

@@ -9,7 +9,6 @@ import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.plugin.rem.bulkAdvisoryNote.dao.BulkOfertaDao;
 import es.pfsgroup.plugin.rem.model.BulkOferta;
-import es.pfsgroup.plugin.rem.model.Oferta;
 
 @Repository("BulkOfertaDao")
 public class BulkOfertaDaoImpl extends AbstractEntityDao<BulkOferta, Long> implements BulkOfertaDao{
@@ -29,7 +28,7 @@ public class BulkOfertaDaoImpl extends AbstractEntityDao<BulkOferta, Long> imple
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Oferta> getListOfertasByIdBulk(Long idBulk) {
+	public List<BulkOferta> getListBulkOfertasByIdBulk(Long idBulk) {
 
 		
 		HQLBuilder hql = new HQLBuilder("from BulkOferta");

@@ -481,7 +481,8 @@ public class AgendaAdapter {
 		    return false;  
 		  }  
 	}
-
+	
+	@Transactional
 	public Boolean save(Map<String,String[]> valores) throws Exception{
 		DtoGenericForm dto = new DtoGenericForm();
 		Long idTarea = 0L;

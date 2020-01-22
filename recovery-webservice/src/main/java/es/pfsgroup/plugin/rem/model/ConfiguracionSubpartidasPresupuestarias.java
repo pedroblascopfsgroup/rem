@@ -35,12 +35,14 @@ public class ConfiguracionSubpartidasPresupuestarias implements Auditable, Seria
 	@Column(name = "CPS_ID")	
     private Long id;    
 
-	@ManyToOne
-	@JoinColumn(name = "CCC_ID")
-	ConfigCuentaContable configCuentaContable;
+	@Column(name = "CPS_CUENTA_CONTABLE")
+	private String cuentaContable;
 	 
 	@Column(name = "CPS_DESCRIPCION")   
 	private String descripcion;
+	
+	@Column(name = "CPS_PARTIDA_PRESUPUESTARIA")   
+	private String partidaPresupuestaria;
 	    	    
 	@Version   
 	private Long version;
@@ -54,14 +56,6 @@ public class ConfiguracionSubpartidasPresupuestarias implements Auditable, Seria
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public ConfigCuentaContable getConfigCuentaContable() {
-		return configCuentaContable;
-	}
-
-	public void setConfigCuentaContable(ConfigCuentaContable configCuentaContable) {
-		this.configCuentaContable = configCuentaContable;
 	}
 
 	public String getDescripcion() {
@@ -86,6 +80,22 @@ public class ConfiguracionSubpartidasPresupuestarias implements Auditable, Seria
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public String getPartidaPresupuestaria() {
+		return partidaPresupuestaria;
+	}
+
+	public void setPartidaPresupuestaria(String partidaPresupuestaria) {
+		this.partidaPresupuestaria = partidaPresupuestaria;
+	}
+
+	public String getCuentaContable() {
+		return cuentaContable;
+	}
+
+	public void setCuentaContable(String cuentaContable) {
+		this.cuentaContable = cuentaContable;
 	}
 
 	

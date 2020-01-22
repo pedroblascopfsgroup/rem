@@ -69,6 +69,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
 import es.pfsgroup.plugin.rem.model.ConfigCuentaContable;
 import es.pfsgroup.plugin.rem.model.ConfigPdaPresupuestaria;
+import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -1860,7 +1861,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				}
 				if (!Checks.esNulo(contabilidadGasto.getCuentaContable())) {
 					dto.setCuentaContable(contabilidadGasto.getCuentaContable());
-					dto.setIdSubpartidaPresupuestaria(1L);
+					
+					if(contabilidadGasto.getPartidaPresupuestaria() != null) {
+						Filter partidaPresupuestariaFilter = genericDao.createFilter(FilterType.EQUALS, "partidaPresupuestaria", contabilidadGasto.getPartidaPresupuestaria());
+						ConfiguracionSubpartidasPresupuestarias csp = genericDao.get(ConfiguracionSubpartidasPresupuestarias.class, partidaPresupuestariaFilter);
+						if(csp != null) {
+							dto.setIdSubpartidaPresupuestaria(csp.getId());
+						}
+					}
 				}
 
 				dto.setFechaDevengoEspecial(contabilidadGasto.getFechaDevengoEspecial());
@@ -1905,8 +1913,15 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					contabilidadGasto.setEjercicio(ejercicio);
 				}
 
+				if(dtoContabilidadGasto.getIdSubpartidaPresupuestaria() != null) {
+					Filter filtroSubpartidaPresupuestaria = genericDao.createFilter(FilterType.EQUALS, "id", dtoContabilidadGasto.getIdSubpartidaPresupuestaria());
+					ConfiguracionSubpartidasPresupuestarias cps = genericDao.get(ConfiguracionSubpartidasPresupuestarias.class, filtroSubpartidaPresupuestaria);
+					
+					contabilidadGasto.setConfiguracionSubpartidasPresupuestarias(cps);
+				}
+				
 				gasto.setGastoInfoContabilidad(contabilidadGasto);
-			}
+			}			
 			
 			updateEjercicio(gasto);
 			DtoInfoContabilidadGasto dtoFin = infoContabilidadToDtoInfoContabilidad(gasto);

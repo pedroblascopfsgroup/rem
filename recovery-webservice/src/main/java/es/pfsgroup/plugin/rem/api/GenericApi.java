@@ -298,7 +298,7 @@ public interface GenericApi {
 	 * @param codigo
 	 * @return Devuelve un listado con todas las subpartidas presupuestarias
 	 */
-	public List<ConfiguracionSubpartidasPresupuestarias> getComboSubpartidaPresupuestaria();
+	public List<ConfiguracionSubpartidasPresupuestarias> getComboSubpartidaPresupuestaria(Long idGasto);
 
 	/***
 	 * 

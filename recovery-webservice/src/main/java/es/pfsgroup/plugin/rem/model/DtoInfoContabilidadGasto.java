@@ -31,6 +31,7 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	private String cuentaContableEspecial;
 	private Date fechaContabilizacion;
 	private String contabilizadoPorDescripcion;
+	private Long idSubpartidaPresupuestaria;
 
 	public Long getEjercicioImputaGasto() {
 		return ejercicioImputaGasto;
@@ -96,6 +97,11 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	public void setContabilizadoPorDescripcion(String contabilizadoPorDescripcion) {
 		this.contabilizadoPorDescripcion = contabilizadoPorDescripcion;
 	}
-	
+	public Long getIdSubpartidaPresupuestaria() {
+		return idSubpartidaPresupuestaria;
+	}
+	public void setIdSubpartidaPresupuestaria(Long idSubpartidaPresupuestaria) {
+		this.idSubpartidaPresupuestaria = idSubpartidaPresupuestaria;
+	}
    	
 }

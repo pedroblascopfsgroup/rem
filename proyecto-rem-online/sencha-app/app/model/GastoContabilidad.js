@@ -50,6 +50,9 @@ Ext.define('HreRem.model.GastoContabilidad', {
     	},
     	{
     		name: 'subcartera'
+    	},    	
+    	{
+    		name: 'idSubpartidaPresupuestaria'
     	}
     ],
     

@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.rem.jbpm.handler;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.jbpm.graph.exe.ExecutionContext;
@@ -15,12 +17,22 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.prorroga.model.Prorroga;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.plugin.rem.activo.ActivoTramiteManager;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.bulkAdvisoryNote.BulkAdvisoryNoteAdapter;
+import es.pfsgroup.plugin.rem.bulkAdvisoryNote.dao.BulkOfertaDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterServiceFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.BulkOferta;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler {
@@ -31,13 +43,27 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
     private ActivoTareaExternaApi activoTareaExternaManagerApi;
     
     @Autowired
-    private ActivoTramiteManager activoTramite;
-    
-    @Autowired
     private UpdaterServiceFactoryApi updaterServiceFactory;
 
     @Autowired
     private UpdaterStateApi updaterState;
+    
+    @Autowired
+    private OfertaApi ofertaApi;
+    
+    @Autowired
+    private BulkOfertaDao bulkOfertaDao;
+    
+    @Autowired
+    private BulkAdvisoryNoteAdapter bulkAdvisoryNoteAdapter;
+    
+    @Autowired
+    private GenericABMDao genericDao;
+    
+	@Autowired
+	private OfertaDao ofertaDao;
+    
+    public static final String COD_TAP_TAREA_AUTORIZACION_PROPIEDAD = "T017_ResolucionPROManzana";
     
 	@Override
 	protected void process(Object delegateTransitionClass, Object delegateSpecificClass, ExecutionContext executionContext) {
@@ -121,18 +147,22 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 		boolean transicionSalto = transicion.startsWith("salto") || ActivoBaseActionHandler.SALTO_CIERRE_ECONOMICO.equals(transicion) || ActivoBaseActionHandler.SALTO_RESOLUCION_EXPEDIENTE.equals(transicion);
 		if (!BPMContants.TRANSICION_VUELTA_ATRAS.equals(transicion) && !StringUtils.isBlank(scriptValidacion) && !transicionSalto && !transicion.toLowerCase().equals("fin") && !transicion.toLowerCase().equals("saltofin")) {
 			try {
-				Long activoTramite = getActivoTramite(executionContext).getId();
-				Object result = jbpmMActivoScriptExecutorApi.evaluaScript(activoTramite, tareaExterna.getId(), tareaExterna.getTareaProcedimiento().getId(),
-						null, scriptValidacion);
+				Boolean avanzaNormal = ofertaEnBulkOferta(tareaExterna);
+				
+				if(avanzaNormal) {
+					Long activoTramite = getActivoTramite(executionContext).getId();
+					Object result = jbpmMActivoScriptExecutorApi.evaluaScript(activoTramite, tareaExterna.getId(), tareaExterna.getTareaProcedimiento().getId(),
+							null, scriptValidacion);
 
-				if (result instanceof Boolean && !(Boolean) result) {
-					throw new UserException("bpm.error.script");
+					if (result instanceof Boolean && !(Boolean) result) {
+						throw new UserException("bpm.error.script");
+					}
+
+					if (result instanceof String && ((String) result).length() > 0 && !"null".equalsIgnoreCase((String) result)) {
+						throw new UserException((String) result);
+					}
+				
 				}
-
-				if (result instanceof String && ((String) result).length() > 0 && !"null".equalsIgnoreCase((String) result)) {
-					throw new UserException((String) result);
-				}
-
 			} catch (UserException e) {
 				logger.info("No se ha podido validar el formulario correctamente. Trámite [" + getActivoTramite(executionContext).getId() + "], tarea [" + tareaExterna.getId() + "]. Mensaje ["
 						+ e.getMessage() + "]", e);
@@ -150,6 +180,32 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 		proxyFactory.proxy(TareaExternaApi.class).borrar(tareaExterna);
 
 		logger.debug("\tCaducamos la tarea: " + getNombreNodo(executionContext));
+	}
+
+	private Boolean ofertaEnBulkOferta(TareaExterna tareaExterna) {
+
+		Oferta ofertaActual = ofertaApi.tareaExternaToOferta(tareaExterna);
+		ActivoOferta actOfr = genericDao.get(ActivoOferta.class, genericDao.createFilter(FilterType.EQUALS, "oferta", ofertaActual.getId()));
+		List<BulkOferta> listOfertasBulk = new ArrayList<BulkOferta>();
+		Boolean avanzaNormal = true;
+		
+		if(!Checks.esNulo(actOfr) && ofertaDao.tieneTareaActiva(COD_TAP_TAREA_AUTORIZACION_PROPIEDAD,ofertaActual.getNumOferta().toString()) &&
+				 !Checks.esNulo(actOfr.getPrimaryKey().getActivo().getCartera()) && DDCartera.CODIGO_CARTERA_CERBERUS.equals(actOfr.getPrimaryKey().getActivo().getCartera().getCodigo()) &&
+				 !Checks.esNulo(actOfr.getPrimaryKey().getActivo().getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(actOfr.getPrimaryKey().getActivo().getSubcartera().getCodigo())) {
+			List<TareaExternaValor> valores = activoTareaExternaManagerApi.obtenerValoresTarea(tareaExterna.getId());
+			BulkOferta bulkAdvisoryNote = bulkOfertaDao.findOne(null, ofertaActual.getId());
+			if(!Checks.esNulo(bulkAdvisoryNote) && !Checks.esNulo(bulkAdvisoryNote.getPrimaryKey().getBulkAdvisoryNote())) {
+				listOfertasBulk = bulkOfertaDao.getListBulkOfertasByIdBulk(bulkAdvisoryNote.getPrimaryKey().getBulkAdvisoryNote().getId());
+				if(!Checks.estaVacio(listOfertasBulk)) {
+					if(bulkAdvisoryNoteAdapter.validarTareasOfertasBulk(listOfertasBulk, valores)) {
+						Map<String,String[]> valoresTarea = bulkAdvisoryNoteAdapter.insertValoresToHashMap(valores);
+						bulkAdvisoryNoteAdapter.avanzarTareasOfertasBulk(listOfertasBulk,ofertaActual,valoresTarea);
+						avanzaNormal=false;
+					}
+				}
+			}
+		}
+		return avanzaNormal;
 	}
 
 	/**

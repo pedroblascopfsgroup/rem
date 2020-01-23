@@ -520,6 +520,7 @@ public class TareaActivoManager implements TareaActivoApi {
 		return !tareaCompletada.isEmpty();
 	}
 	
+	@Transactional
 	@Override
 	public TareaActivo tareaOfertaDependiente(Oferta oferta) {
 		TareaActivo tarea = null;

@@ -10,6 +10,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
@@ -375,8 +376,9 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	}
 	
 	@Override
+	@Transactional
 	public Boolean tieneTareaActiva(String tarea, String numOferta) {
-		String sql = "SELECT COUNT(*)" + 
+		String sql = "SELECT COUNT(1)" + 
 				"		FROM ECO_EXPEDIENTE_COMERCIAL ECO" + 
 				"		INNER JOIN ACT_OFR ACTOFR ON ACTOFR.OFR_ID = ECO.OFR_ID" + 
 				"		INNER JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = ACTOFR.ACT_ID" + 

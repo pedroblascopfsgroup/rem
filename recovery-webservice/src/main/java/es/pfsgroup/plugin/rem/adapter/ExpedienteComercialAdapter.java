@@ -1,21 +1,20 @@
 package es.pfsgroup.plugin.rem.adapter;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
-import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -25,46 +24,42 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
-import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
-import es.pfsgroup.plugin.rem.activo.ActivoManager;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.bulkAdvisoryNote.dao.BulkOfertaDao;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.AdjuntoExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.DDSubtipoDocumentoExpedienteDao;
+import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
-import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.BulkOferta;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
 import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
+import es.pfsgroup.plugin.rem.thread.EnvioDocumentoGestorDocBulk;
 
 @Service
 public class ExpedienteComercialAdapter {
 
 	private static final String EXCEPTION_DOCUMENTO_SUBTIPO = "Error, solo se puede insertar 1 documento de este subtipo";
-	private static final String RELACION_TIPO_DOCUMENTO_EXPEDIENTE = "d-e";	
-	private static final String OPERACION_ALTA = "Alta";
 	private static final String ERROR_CREACION_CONTENEDOR = "Error creando el contenedor de la persona";
 	private static final String CREANDO_CONTENEDOR = "Creando contenedor...";
-	private static final String GESTOR_GD_EXTERNO = "Gestor externo";
+	private static final String EXCEPTION_UPLOAD_DOCUMENTO_BULK = "Error, existen ofertas sin tramitar en el Bulk";
+	private static final String ERROR_SUBIDA_DOCUMENTO_GD = "Error en la subida del documento al Gestor Documental";
+	//private static final String GESTOR_GD_EXTERNO = "Gestor externo";
 
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
-	
-	@Autowired
-	private ActivoApi activoApi;
-	
-	@Autowired
-	private ActivoManager activoManager;
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
@@ -79,7 +74,16 @@ public class ExpedienteComercialAdapter {
 	private AdjuntoExpedienteComercialDao adjuntoExpedienteComercialDao;
 	
 	@Autowired
+	private ExpedienteComercialDao expedienteComercialDao;
+	
+	@Autowired
 	private DDSubtipoDocumentoExpedienteDao ddSubtipoDocumentoExpedienteDao;
+	
+	@Autowired
+	private BulkOfertaDao bulkOfertaDao;
+	
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 	
 	
 	protected static final Log logger = LogFactory.getLog(ExpedienteComercialAdapter.class);
@@ -351,12 +355,17 @@ public class ExpedienteComercialAdapter {
 		return listaAdjuntos;
 	}
 
-	public String uploadDocumento(WebFileItem webFileItem, ExpedienteComercial expedienteComercialEntrada, String matricula) throws Exception {
+	@Transactional(readOnly = false)
+	public String uploadDocumento(WebFileItem webFileItem) throws Exception {
+		
+		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOne(Long.parseLong(webFileItem.getParameter("idEntidad")));
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		List<Long> listaExpComercial = new ArrayList<Long>();
 		
 		// Comprobar que el documento sea único para aquellos que así se requiera.
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("subtipo"));
 		DDSubtipoDocumentoExpediente subtipoDocumento = (DDSubtipoDocumentoExpediente) genericDao.get(DDSubtipoDocumentoExpediente.class, filtro);
-		if(expedienteComercialApi.existeDocSubtipo(webFileItem,expedienteComercialEntrada) 
+		if(expedienteComercialApi.existeDocSubtipo(webFileItem, expedienteComercial) 
 				&& (DDSubtipoDocumentoExpediente.CODIGO_PRE_CONTRATO.equals(subtipoDocumento.getCodigo()) 
 				|| DDSubtipoDocumentoExpediente.CODIGO_PRE_LIQUIDACION_ITP.equals(subtipoDocumento.getCodigo()) 
 				|| DDSubtipoDocumentoExpediente.CODIGO_CONTRATO.equals(subtipoDocumento.getCodigo())
@@ -368,76 +377,49 @@ public class ExpedienteComercialAdapter {
 			return EXCEPTION_DOCUMENTO_SUBTIPO;
 		}
 		
-		if (Checks.esNulo(expedienteComercialEntrada)) {
-			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-								
-				ExpedienteComercial expedienteComercial = expedienteComercialApi.findOne(Long.parseLong(webFileItem.getParameter("idEntidad")));
-				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-				
-				if (!Checks.esNulo(subtipoDocumento)) {
-					Long idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoExpedienteComercial(expedienteComercial, webFileItem, usuarioLogado.getUsername(), subtipoDocumento.getMatricula());
-					expedienteComercialApi.uploadDocumento(webFileItem, idDocRestClient,null,null);
-					String activos = webFileItem.getParameter("activos");
-					String[] arrayActivos = null;
-					
-					if(activos != null && !activos.isEmpty()){
-						arrayActivos = activos.split(",");
-					}
-					if(arrayActivos != null && arrayActivos.length > 0){
-						CrearRelacionExpedienteDto crearRelacionExpedienteDto = new CrearRelacionExpedienteDto();
-						crearRelacionExpedienteDto.setTipoRelacion(RELACION_TIPO_DOCUMENTO_EXPEDIENTE);
-						String mat = subtipoDocumento.getMatricula();
-						if(!Checks.esNulo(mat)){
-							String[] matSplit = mat.split("-");
-							crearRelacionExpedienteDto.setCodTipoDestino(matSplit[0]);
-							crearRelacionExpedienteDto.setCodClaseDestino(matSplit[1]);
-						}
-						crearRelacionExpedienteDto.setOperacion(OPERACION_ALTA);
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			if (!Checks.esNulo(subtipoDocumento)) {
+				if (DDSubtipoDocumentoExpediente.CODIGO_ADVISORY_NOTE.equals(subtipoDocumento.getCodigo()) &&
+						DDCartera.CODIGO_CARTERA_CERBERUS.equals(expedienteComercial.getOferta().getActivoPrincipal().getCartera().getCodigo()) && 
+						DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(expedienteComercial.getOferta().getActivoPrincipal().getSubcartera().getCodigo()) ||
+						DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(expedienteComercial.getOferta().getActivoPrincipal().getSubcartera().getCodigo())) {
+					//Comprobamos que tengan lo subtipos de documentos apropiados.
+					BulkOferta blkOfr = bulkOfertaDao.findOne(null, expedienteComercial.getOferta().getId());
+					//Comprobamos que la oferta pertenezca un Bulk.
+					if (!Checks.esNulo(blkOfr)) {
+						List<BulkOferta> listaBlkOfr = bulkOfertaDao.getListBulkOfertasByIdBulk(blkOfr.getPrimaryKey().getBulkAdvisoryNote().getId());
 						
-						gestorDocumentalAdapterApi.crearRelacionActivosExpediente(expedienteComercial, idDocRestClient, arrayActivos, usuarioLogado.getUsername(),crearRelacionExpedienteDto);
-						if(!Checks.esNulo(subtipoDocumento.getTipoDocumentoActivo())) {
-							webFileItem.putParameter("tipo", subtipoDocumento.getTipoDocumentoActivo().getCodigo());
-						}
-						for (int i = 0; i < arrayActivos.length; i++) {
-							Activo activoEntrada = activoApi.getByNumActivo(Long.parseLong(arrayActivos[i], 10));
-							// Según item HREOS-2379:
-							// Adjuntar el documento a la tabla de adjuntos del activo, pero sin subir el
-							// documento realmente, sólo insertando la fila.
-							File file = File.createTempFile("idDocRestClient[" + idDocRestClient + "]", ".pdf");
-							BufferedWriter out = new BufferedWriter(new FileWriter(file));
-							try {
-								out.write("pfs");
-							}finally {
-								out.close();
-							}
-							FileItem fileItem = new FileItem();
-							fileItem.setFileName("idDocRestClient[" + idDocRestClient + "]");
-							fileItem.setFile(file);
-							fileItem.setLength(file.length());
-							webFileItem.setFileItem(fileItem);
-							activoManager.uploadDocumento(webFileItem, idDocRestClient, activoEntrada, matricula);
-							if(!file.delete()) {
-								logger.error("Imposible borrar temporal");
+						for(BulkOferta blkOferta : listaBlkOfr) {
+							ExpedienteComercial expComercial = expedienteComercialDao.getExpedienteComercialByIdOferta(blkOferta.getOferta());
+							if(!Checks.esNulo(expComercial)) {
+								if (!expedienteComercial.getNumExpediente().toString().equals(expComercial.getNumExpediente().toString())) 
+									listaExpComercial.add(expComercial.getId()); 
+							} else { 
+								return EXCEPTION_UPLOAD_DOCUMENTO_BULK;
 							}
 						}
+						
+						//Subida del documento al GD del expediente actual / Subida a BBDD / Crear relacion con activo.
+						Long idDocRestClient = expedienteComercialApi.uploadDocumentoGestorDocumental(expedienteComercial, webFileItem, subtipoDocumento, usuarioLogado.getUsername());
+						
+						if (!Checks.esNulo(idDocRestClient)) {							
+							//Hilo que se utiliza para subir los documentos al resto de ofertas pertenecientes al Bulk correspondiente.
+							Thread envioDocumentoGestorDocBulk = new Thread(new EnvioDocumentoGestorDocBulk(listaExpComercial, webFileItem, subtipoDocumento.getId(), usuarioLogado.getUsername()));
+							envioDocumentoGestorDocBulk.start();
+						} else {
+							return ERROR_SUBIDA_DOCUMENTO_GD;
+						}
+					} else {
+						expedienteComercialApi.uploadDocumentoGestorDocumental(expedienteComercial, webFileItem, subtipoDocumento, usuarioLogado.getUsername());
 					}
-										
+				} else {
+					expedienteComercialApi.uploadDocumentoGestorDocumental(expedienteComercial, webFileItem, subtipoDocumento, usuarioLogado.getUsername());
 				}
-			} else {
-				expedienteComercialApi.uploadDocumento(webFileItem, null,null,null);
 			}
 		} else {
-			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-				if (!Checks.esNulo(subtipoDocumento)) {
-					Long idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoExpedienteComercial(expedienteComercialEntrada, webFileItem,
-							usuarioLogado.getUsername(), subtipoDocumento.getMatricula());
-					expedienteComercialApi.uploadDocumento(webFileItem, idDocRestClient, expedienteComercialEntrada, matricula);
-				}
-			} else {
-				expedienteComercialApi.uploadDocumento(webFileItem, null, expedienteComercialEntrada, matricula);
-			}
+			expedienteComercialApi.uploadDocumento(webFileItem, null, expedienteComercial, null);
 		}
+		
 		return null;
 	}
 

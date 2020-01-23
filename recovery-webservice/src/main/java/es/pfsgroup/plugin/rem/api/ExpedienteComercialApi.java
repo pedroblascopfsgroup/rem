@@ -64,6 +64,7 @@ import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
@@ -1287,6 +1288,12 @@ public interface ExpedienteComercialApi {
 	boolean esOmega(TareaExterna tareaExterna);
 
 	String doCalculateComiteByExpedienteId(Long idExpediente);
+
+	public Long uploadDocumentoGestorDocumental(ExpedienteComercial expedienteComercial, WebFileItem webFileItem,
+			DDSubtipoDocumentoExpediente subtipoDocumento, String username) throws Exception;
+
+	public void uploadDocumentosBulkGD(List<Long> listaIdsExpedientesCom, WebFileItem webFileItem, Long idSubtipoDocumento,
+			String username) throws Exception;
 
 }
 

@@ -130,7 +130,10 @@ public class TabActivoPatrimonio implements TabActivoService {
 
 			if(!Checks.esNulo(activoP.getTipoInquilino())) {
 				activoPatrimonioDto.setTipoInquilino(activoP.getTipoInquilino().getCodigo());
-			}			
+			}
+						
+			activoPatrimonioDto.setCesionUso( Checks.esNulo(activoP.getCesionUso())  ? null :  activoP.getCesionUso().getCodigo());
+			activoPatrimonioDto.setTramiteAlquilerSocial(Checks.esNulo(activoP.getTramiteAlquilerSocial()) ?  DDSinSiNo.CODIGO_NO: activoP.getTramiteAlquilerSocial().booleanValue() == true ? DDSinSiNo.CODIGO_SI: DDSinSiNo.CODIGO_NO);
 			
 		}
 		

@@ -1,5 +1,8 @@
 package es.pfsgroup.plugin.rem.expedienteComercial;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -70,13 +73,16 @@ import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
+import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -210,6 +216,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private static final String OFERTA_SIN_GESTOR_COMERCIAL_ASIGNADO = "Oferta sin gestor comercial asignado, revise la parametrización";
 	private static final String OFERTA_NA_LOTE = "N/A lote";
 	private static final String OFERTA_DICCIONARIO_CODIGO_NULO = "0";
+	private static final String RELACION_TIPO_DOCUMENTO_EXPEDIENTE = "d-e";	
+	private static final String OPERACION_ALTA = "Alta";
 
 	//Codigo Estdo Civil URSUS
 	private static final String DESCONOCIDO = "5" ;
@@ -246,6 +254,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Autowired
 	private ExpedienteComercialDao expedienteComercialDao;
+	
+	@Autowired
+	private ExpedienteComercialAdapter expedienteComercialAdapter;
 
 	@Autowired
 	private UploadAdapter uploadAdapter;
@@ -259,7 +270,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Autowired
 	private ActivoAdapter activoAdapter;
 
-
+	@Autowired
+	private ActivoManager activoManager;
+	
 	@Autowired
 	private UvemManagerApi uvemManagerApi;
 
@@ -2398,6 +2411,89 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		return null;
+	}
+	
+	@Override
+	public Long uploadDocumentoGestorDocumental(ExpedienteComercial expedienteComercial, WebFileItem webFileItem, DDSubtipoDocumentoExpediente subtipoDocumento, String username) throws Exception {
+		Long idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoExpedienteComercial(expedienteComercial, webFileItem, username, subtipoDocumento.getMatricula());
+		if (!Checks.esNulo(idDocRestClient)) {
+			uploadDocumento(webFileItem, idDocRestClient, expedienteComercial, null);
+			String activos = webFileItem.getParameter("activos");
+			String[] arrayActivos = null;
+			
+			if(activos != null && !activos.isEmpty()){
+				arrayActivos = activos.split(",");
+			}
+			if(arrayActivos != null && arrayActivos.length > 0){
+				CrearRelacionExpedienteDto crearRelacionExpedienteDto = new CrearRelacionExpedienteDto();
+				crearRelacionExpedienteDto.setTipoRelacion(RELACION_TIPO_DOCUMENTO_EXPEDIENTE);
+				String mat = subtipoDocumento.getMatricula();
+				if(!Checks.esNulo(mat)){
+					String[] matSplit = mat.split("-");
+					crearRelacionExpedienteDto.setCodTipoDestino(matSplit[0]);
+					crearRelacionExpedienteDto.setCodClaseDestino(matSplit[1]);
+				}
+				crearRelacionExpedienteDto.setOperacion(OPERACION_ALTA);
+				
+				gestorDocumentalAdapterApi.crearRelacionActivosExpediente(expedienteComercial, idDocRestClient, arrayActivos, username, crearRelacionExpedienteDto);
+				if(!Checks.esNulo(subtipoDocumento.getTipoDocumentoActivo())) {
+					webFileItem.putParameter("tipo", subtipoDocumento.getTipoDocumentoActivo().getCodigo());
+				}
+				for (int i = 0; i < arrayActivos.length; i++) {
+					Activo activoEntrada = activoApi.getByNumActivo(Long.parseLong(arrayActivos[i], 10));
+					// Según item HREOS-2379:
+					// Adjuntar el documento a la tabla de adjuntos del activo, pero sin subir el
+					// documento realmente, sólo insertando la fila.
+					File file = File.createTempFile("idDocRestClient[" + idDocRestClient + "]", ".pdf");
+					BufferedWriter out = new BufferedWriter(new FileWriter(file));
+					try {
+						out.write("pfs");
+					}finally {
+						out.close();
+					}
+					FileItem fileItem = new FileItem();
+					fileItem.setFileName("idDocRestClient[" + idDocRestClient + "]");
+					fileItem.setFile(file);
+					fileItem.setLength(file.length());
+					webFileItem.setFileItem(fileItem);
+					activoManager.uploadDocumento(webFileItem, idDocRestClient, activoEntrada, subtipoDocumento.getMatricula());
+					if(!file.delete()) {
+						logger.error("Imposible borrar temporal");
+					}
+				}
+			}
+			
+			return idDocRestClient;
+		}
+		
+		return null;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void uploadDocumentosBulkGD(List<Long> listaIdsExpedientesCom, WebFileItem webFileItem, Long idSubtipoDocumento, String username) throws Exception {
+		
+		TransactionStatus transaction = null;
+		try{
+			Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "id", idSubtipoDocumento);
+			DDSubtipoDocumentoExpediente sde = genericDao.get(DDSubtipoDocumentoExpediente.class, filtroSubtipo);
+			
+			if(!Checks.estaVacio(listaIdsExpedientesCom)) {
+				for(Long idExpedienteComercial : listaIdsExpedientesCom) {
+					transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+					ExpedienteComercial eco = findOne(idExpedienteComercial);
+					//Este método contiene la comprobación del contenedor y en su defecto, lo crea.
+					expedienteComercialAdapter.getAdjuntosExpedienteComercial(idExpedienteComercial);
+					//Subida de documento al GD y a BBDD.
+					uploadDocumentoGestorDocumental(eco, webFileItem, sde, username);
+					transactionManager.commit(transaction);
+				}
+			}
+			
+		} catch(Exception e) {
+			transactionManager.rollback(transaction);
+			throw e;
+		}
 	}
 
 	@Override

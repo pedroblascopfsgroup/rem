@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin Bahamonde
---## FECHA_CREACION=20200117
+--## FECHA_CREACION=20200122
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-9143
@@ -26,7 +26,7 @@ DECLARE
     V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
-    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.  
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una columna.  
     V_NUM NUMBER(16); -- Vble. para validar la existencia de una secuencia.  
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
@@ -50,18 +50,28 @@ BEGIN
       V_TMP_TIPO_DATA := V_TIPO_DATA(I);
           
         -- Comprobamos si existe columna 
-      V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= '''||TRIM(V_TMP_TIPO_DATA(1))||''' and DATA_TYPE = '''||TRIM(V_TMP_TIPO_DATA(2))||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+      V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= '''||TRIM(V_TMP_TIPO_DATA(1))||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
       EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
       DBMS_OUTPUT.PUT_LINE(V_MSQL);
+      -- Si existe la columna cambiamos solo la FK
       IF V_NUM_TABLAS = 1 THEN
-        DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||' '||TRIM(V_TMP_TIPO_DATA(1))||'''... Ya existe');
+        DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||' '||TRIM(V_TMP_TIPO_DATA(1))||'''... Ya existe, la modificamos');
+        V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' DROP CONSTRAINT FK_PVE_ID_PRES_OPORTUNIDAD';
+        DBMS_OUTPUT.PUT_LINE(V_MSQL);
+        EXECUTE IMMEDIATE V_MSQL;
+        DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||'... FK Dropeada');
+        
+        V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_PVE_ID_PRES_OPORTUNIDAD FOREIGN KEY (PVE_ID_PRES_OPORTUNIDAD) REFERENCES '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR (PVE_ID) ON DELETE SET NULL)';
+        DBMS_OUTPUT.PUT_LINE(V_MSQL);
+        EXECUTE IMMEDIATE V_MSQL;
+        DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||'... FK Modificada');
         ELSE
           V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD ('||V_TMP_TIPO_DATA(1)||' '||V_TMP_TIPO_DATA(2)||')';
           DBMS_OUTPUT.PUT_LINE(V_MSQL);
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||'... Creada');
 
-          V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_PVE_ID_PRES_OPORTUNIDAD FOREIGN KEY (PVE_ID_PRES_OPORTUNIDAD) REFERENCES '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR (PVE_ID))';
+          V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_PVE_ID_PRES_OPORTUNIDAD FOREIGN KEY (PVE_ID_PRES_OPORTUNIDAD) REFERENCES '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR (PVE_ID) ON DELETE SET NULL)';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO] Constraint Creada');     
 

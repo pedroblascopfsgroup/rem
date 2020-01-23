@@ -22,7 +22,6 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
-import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -188,9 +187,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	private List<CondicionTanteoApi> condiciones;
 
 	@Autowired
-	private UsuarioManager usuarioApi;
-
-	@Autowired
 	private GestorExpedienteComercialApi gestorExpedienteComercialApi;
 
 	@Autowired
@@ -261,6 +257,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			String usuarioLogado = genericAdapter.getUsuarioLogado().getUsername();
 			ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class,
 					genericDao.createFilter(FilterType.EQUALS, "oferta", oferta));
+			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
 			if (asincrono) {
 				Thread creacionAsincrona = new Thread(new TramitacionOfertasAsync(activo.getId(), esAcepta,
 						trabajo.getId(), oferta.getId(), expedienteComercial.getId(), usuarioLogado));
@@ -672,57 +669,44 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		return condicionante;
 	}
 
-	public ExpedienteComercial crearCondicionanteYTanteo(Long idActivo, Long idOferta, Long idExpedienteComercial) {
-		Activo activo = activoManager.get(idActivo);
-		Oferta oferta = ofertaApi.getOfertaById(idOferta);
-		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOne(idExpedienteComercial);
-		return crearCondicionanteYTanteo(activo, oferta, expedienteComercial);
-	}
-
 	@Transactional
 	public ExpedienteComercial crearCondicionanteYTanteo(Activo activo, Oferta oferta,
 			ExpedienteComercial expedienteComercial) {
 		boolean noCumple = false;
-		CondicionanteExpediente nuevoCondicionante = null;
+		CondicionanteExpediente condicionanteExpediente = expedienteComercial.getCondicionante();
 		List<ActivoOferta> activoOfertaList = oferta.getActivosOferta();
 		List<TanteoActivoExpediente> tanteosExpediente = new ArrayList<TanteoActivoExpediente>();
-		
+
 		if (!Checks.esNulo(activo)) {
-			nuevoCondicionante = calculoCondicionantes(activo, oferta.getImporteOferta());
-			
-			if (!Checks.esNulo(nuevoCondicionante)) {
-				nuevoCondicionante.setExpediente(expedienteComercial);
-				
-				for (ActivoOferta activoOferta : activoOfertaList) {
-					noCumple = false;
-					for (CondicionTanteoApi condicion : condiciones) {
-						if (!condicion.checkCondicion(activo))
-							noCumple = true;
-					}
-					if (!noCumple) {
-						TanteoActivoExpediente tanteoActivo = new TanteoActivoExpediente();
-						tanteoActivo.setActivo(activoOferta.getPrimaryKey().getActivo());
-						tanteoActivo.setExpediente(expedienteComercial);
+			if (condicionanteExpediente == null) {
+				condicionanteExpediente = calculoCondicionantes(activo, oferta.getImporteOferta());
+				condicionanteExpediente.setExpediente(expedienteComercial);
+			}
 
-						Auditoria auditoria = new Auditoria();
-						auditoria.setFechaCrear(new Date());
-						auditoria.setUsuarioCrear(usuarioApi.getUsuarioLogado().getUsername());
-						auditoria.setBorrado(false);
-
-						tanteoActivo.setAuditoria(auditoria);
-						DDAdministracion administracion = genericDao.get(DDAdministracion.class,
-								genericDao.createFilter(FilterType.EQUALS, "codigo", "02"));
-						tanteoActivo.setAdminitracion(administracion);
-						nuevoCondicionante.setSujetoTanteoRetracto(1);
-						tanteosExpediente.add(tanteoActivo);
-					}
+			for (ActivoOferta activoOferta : activoOfertaList) {
+				noCumple = false;
+				for (CondicionTanteoApi condicion : condiciones) {
+					if (!condicion.checkCondicion(activo))
+						noCumple = true;
+				}
+				if (!noCumple) {
+					TanteoActivoExpediente tanteoActivo = new TanteoActivoExpediente();
+					tanteoActivo.setActivo(activoOferta.getPrimaryKey().getActivo());
+					tanteoActivo.setExpediente(expedienteComercial);
+					tanteoActivo.setAuditoria(Auditoria.getNewInstance());
+					DDAdministracion administracion = genericDao.get(DDAdministracion.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", DDAdministracion.CODIGO_CONSEJERIA));
+					tanteoActivo.setAdminitracion(administracion);
+					condicionanteExpediente.setSujetoTanteoRetracto(1);
+					tanteosExpediente.add(tanteoActivo);
 				}
 			}
+
 		}
 
 		expedienteComercial.setTanteoActivoExpediente(tanteosExpediente);
-		expedienteComercial.setCondicionante(nuevoCondicionante);
-
+		expedienteComercial.setCondicionante(condicionanteExpediente);
+		
 		return expedienteComercial;
 	}
 
@@ -1717,7 +1701,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	@Transactional
 	public void doTramitacion(Activo activo, Oferta oferta, Long idTrabajo, ExpedienteComercial expedienteComercial) {
 		expedienteComercial = this.crearCompradores(oferta, expedienteComercial);
-		trabajoApi.createTramiteTrabajo(idTrabajo);
+		trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
 		expedienteComercial = this.crearCondicionanteYTanteo(activo, oferta, expedienteComercial);
 		expedienteComercial = this.crearExpedienteReserva(expedienteComercial);
 		expedienteComercialApi.crearCondicionesActivoExpediente(activo, expedienteComercial);
@@ -1759,7 +1743,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			expedienteComercial = this.crearCompradores(oferta, expedienteComercial);
 			transactionManager.commit(transaction);
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-			trabajoApi.createTramiteTrabajo(idTrabajo);
+			trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
 			transactionManager.commit(transaction);
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 

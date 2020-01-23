@@ -91,7 +91,6 @@ import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
-import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.controller.ExpedienteComercialController;
@@ -329,9 +328,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Autowired
 	private GastosExpedienteApi gastosExpedienteApi;
 	
-	@Autowired
-	private TramitacionOfertasApi tramitacionOfertasApi;
-
+	
 	@Autowired
     private NotificationPlusvaliaManager notificationPlusvaliaManager;
 
@@ -10172,7 +10169,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			List<TareaExterna> tareasActivas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
 			if (tareasActivas != null && !tareasActivas.isEmpty()) {
 				for (TareaExterna tarea : tareasActivas) {
-					if (!Checks.esNulo(tarea.getTareaProcedimiento()) 
+					if (tarea != null && tarea.getTareaProcedimiento() != null 
 							&& ComercialUserAssigantionService.CODIGO_T013_VALIDACION_CLIENTES.equals(tarea.getTareaProcedimiento().getCodigo())) {
 						tarNot = tarea.getTareaPadre();
 						if (!Checks.esNulo(tarNot)) {

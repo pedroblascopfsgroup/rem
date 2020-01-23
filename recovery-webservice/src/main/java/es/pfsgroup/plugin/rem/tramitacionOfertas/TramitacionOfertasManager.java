@@ -456,7 +456,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	}
 
 	@Transactional(readOnly = false)
-	private boolean persistOferta(Oferta oferta) {
+	public boolean persistOferta(Oferta oferta) {
 		TransactionStatus transaction = null;
 		boolean resultado = false;
 		try {
@@ -682,39 +682,41 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	@Transactional
 	public ExpedienteComercial crearCondicionanteYTanteo(Activo activo, Oferta oferta,
 			ExpedienteComercial expedienteComercial) {
-		CondicionanteExpediente nuevoCondicionante = null;
-		if (!Checks.esNulo(activo)) {
-
-			nuevoCondicionante = calculoCondicionantes(activo, oferta.getImporteOferta());
-		}
-
-		nuevoCondicionante.setExpediente(expedienteComercial);
-
 		boolean noCumple = false;
+		CondicionanteExpediente nuevoCondicionante = null;
 		List<ActivoOferta> activoOfertaList = oferta.getActivosOferta();
 		List<TanteoActivoExpediente> tanteosExpediente = new ArrayList<TanteoActivoExpediente>();
-		for (ActivoOferta activoOferta : activoOfertaList) {
-			noCumple = false;
-			for (CondicionTanteoApi condicion : condiciones) {
-				if (!condicion.checkCondicion(activo))
-					noCumple = true;
-			}
-			if (!noCumple) {
-				TanteoActivoExpediente tanteoActivo = new TanteoActivoExpediente();
-				tanteoActivo.setActivo(activoOferta.getPrimaryKey().getActivo());
-				tanteoActivo.setExpediente(expedienteComercial);
+		
+		if (!Checks.esNulo(activo)) {
+			nuevoCondicionante = calculoCondicionantes(activo, oferta.getImporteOferta());
+			
+			if (!Checks.esNulo(nuevoCondicionante)) {
+				nuevoCondicionante.setExpediente(expedienteComercial);
+				
+				for (ActivoOferta activoOferta : activoOfertaList) {
+					noCumple = false;
+					for (CondicionTanteoApi condicion : condiciones) {
+						if (!condicion.checkCondicion(activo))
+							noCumple = true;
+					}
+					if (!noCumple) {
+						TanteoActivoExpediente tanteoActivo = new TanteoActivoExpediente();
+						tanteoActivo.setActivo(activoOferta.getPrimaryKey().getActivo());
+						tanteoActivo.setExpediente(expedienteComercial);
 
-				Auditoria auditoria = new Auditoria();
-				auditoria.setFechaCrear(new Date());
-				auditoria.setUsuarioCrear(usuarioApi.getUsuarioLogado().getUsername());
-				auditoria.setBorrado(false);
+						Auditoria auditoria = new Auditoria();
+						auditoria.setFechaCrear(new Date());
+						auditoria.setUsuarioCrear(usuarioApi.getUsuarioLogado().getUsername());
+						auditoria.setBorrado(false);
 
-				tanteoActivo.setAuditoria(auditoria);
-				DDAdministracion administracion = genericDao.get(DDAdministracion.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigo", "02"));
-				tanteoActivo.setAdminitracion(administracion);
-				nuevoCondicionante.setSujetoTanteoRetracto(1);
-				tanteosExpediente.add(tanteoActivo);
+						tanteoActivo.setAuditoria(auditoria);
+						DDAdministracion administracion = genericDao.get(DDAdministracion.class,
+								genericDao.createFilter(FilterType.EQUALS, "codigo", "02"));
+						tanteoActivo.setAdminitracion(administracion);
+						nuevoCondicionante.setSujetoTanteoRetracto(1);
+						tanteosExpediente.add(tanteoActivo);
+					}
+				}
 			}
 		}
 

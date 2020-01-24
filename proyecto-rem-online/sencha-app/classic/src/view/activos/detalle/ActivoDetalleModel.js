@@ -874,7 +874,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     		}
     	},
     	isCesionUsoEditable: function () {
-    		return $AU.userIsRol('GESTALQ');
+    		return $AU.userIsRol('GESTALQ') || $AU.userIsRol(CONST.PERFILES['HAYASUPER']);    		
     	},
     	
     	esEditableDestinoComercial: function(get){

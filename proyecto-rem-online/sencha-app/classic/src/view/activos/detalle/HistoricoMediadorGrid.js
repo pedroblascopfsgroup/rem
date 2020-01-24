@@ -7,6 +7,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoMediadorGrid', {
 	confirmBeforeSave: true,
 	confirmSaveTxt: null,
 	confirmSaveTit: null,
+	requires: ['HreRem.model.ComboProveedorHistoricoMediadorModel'],
 
     bind: {
         store: '{storeHistoricoMediador}'
@@ -164,6 +165,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoMediadorGrid', {
     
     evaluarEdicion: function() {    	
  		var me = this;
+ 		me.disableAddButton(!$AU.userIsRol('SUPERPLANIF') && !$AU.userIsRol('HAYASUPER'));
  		if(me.lookupController().getViewModel().get('activo').get('unidadAlquilable')) {
  			me.setTopBar(false);
  		}

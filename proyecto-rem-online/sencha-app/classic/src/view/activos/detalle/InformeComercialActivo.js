@@ -121,25 +121,6 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 									bind: '{infoComercial.fechaAutorizacionHasta}',
 									readOnly: true,
 									colspan: 2
-								},
-							// Fila 4
-								{ 
-									fieldLabel: HreRem.i18n('fieldlabel.codigo.proveedor'),
-									readOnly: true,
-									bind: {
-						        		disabled: '{!infoComercial.tieneProveedorTecnico}',
-						        		value: '{infoComercial.codigoProveedor}'
-						        	}					
-									
-								},
-								{ 
-									fieldLabel: HreRem.i18n('fieldlabel.nombre.proveedor'),
-									readOnly: true,
-									colspan: 2,
-									bind: {
-						        		disabled: '{!infoComercial.tieneProveedorTecnico}',
-						        		value: '{infoComercial.nombreProveedor}'
-						        	}
 								}
 								]
 						},
@@ -194,49 +175,46 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 								{
 									xtype: 'datefieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.frecepcion.llaves'),
-									bind: '{infoComercial.fechaRecepcionLlaves}',
-									readOnly: true
-								},
-								{
-									xtype: 'datefieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.fultima.visita'),
-									bind: '{infoComercial.fechaUltimaVisita}',
 									colspan: 2,
+									bind: '{infoComercial.fechaRecepcionLlavesEspejo}',
 									readOnly: true
 								},
 							// Fila 3
 								{
 									xtype: 'checkboxfieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.autorizado.web'),
-									bind: '{infoComercial.autorizacionWeb}',
+									bind: '{infoComercial.autorizacionWebEspejo}',
 									readOnly: true
-								},
-								{
-									xtype: 'datefieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.fautorizacion.hasta'),
-									bind: '{infoComercial.fechaAutorizacionHasta}',
-									readOnly: true,
-									colspan: 2
-								},
-							// Fila 4
-								{ 
-									fieldLabel: HreRem.i18n('fieldlabel.codigo.proveedor'),
-									readOnly: true,
-									bind: {
-						        		disabled: '{!infoComercial.tieneProveedorTecnico}',
-						        		value: '{infoComercial.codigoProveedorEspejo}'
-						        	}					
-									
-								},
-								{ 
-									fieldLabel: HreRem.i18n('fieldlabel.nombre.proveedor'),
-									readOnly: true,
-									colspan: 2,
-									bind: {
-						        		disabled: '{!infoComercial.tieneProveedorTecnico}',
-						        		value: '{infoComercial.nombreProveedorEspejo}'
-						        	}
 								}
+								]
+						},
+						{
+							xtype:'fieldsettable',
+							title:HreRem.i18n('titulo.grid.proveedor.tecnico'),
+							defaultType:'textfieldbase',
+							colspan: 3,
+							items:
+								[	
+									{ 
+										fieldLabel: HreRem.i18n('fieldlabel.codigo.proveedor'),
+										readOnly: true,
+										bind: {
+							        		disabled: '{!infoComercial.tieneProveedorTecnico}',
+							        		value: '{infoComercial.codigoProveedor}'
+							        	}					
+										
+									},
+									{ 
+										fieldLabel: HreRem.i18n('fieldlabel.nombre.proveedor'),
+										readOnly: true,
+										bind: {
+							        		disabled: '{!infoComercial.tieneProveedorTecnico}',
+							        		value: '{infoComercial.nombreProveedor}'
+							        	}
+									},
+									{
+										
+									}
 								]
 						},
 					// Fila 5

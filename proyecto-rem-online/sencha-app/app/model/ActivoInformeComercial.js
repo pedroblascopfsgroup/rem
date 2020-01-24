@@ -192,6 +192,21 @@ Ext.define('HreRem.model.ActivoInformeComercial', {
     		{
     			name: 'tieneProveedorTecnico',
     			type: 'boolean'
+    		},
+    		{
+    			name:'autorizacionWebEspejo'
+    		},
+     		{
+    			name:'fechaRecepcionLlavesEspejo',
+    			convert: function(value) {
+    				if (!Ext.isEmpty(value)) {
+						if  ((typeof value) == 'string') {
+	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+	    				} else {
+	    					return value;
+	    				}
+    				}
+    			}
     		}
     ],
 	proxy: {

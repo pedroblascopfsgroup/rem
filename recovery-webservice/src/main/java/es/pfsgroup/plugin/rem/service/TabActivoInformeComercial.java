@@ -20,13 +20,14 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
-import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
@@ -39,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
+import es.pfsgroup.plugin.rem.model.ActivoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoLocalComercial;
 import es.pfsgroup.plugin.rem.model.ActivoPlazaAparcamiento;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -56,7 +58,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
-import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Component
 public class TabActivoInformeComercial implements TabActivoService {
@@ -162,21 +163,47 @@ public class TabActivoInformeComercial implements TabActivoService {
 				if (!Checks.esNulo(activo.getInfoComercial().getUbicacionActivo())) {
 					beanUtilNotNull.copyProperty(informeComercial, "ubicacionActivoCodigo", activo.getInfoComercial().getUbicacionActivo().getCodigo());
 				}
-
-				// Datos del mediador (proveedor).
+				
+				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo", activo);
+				Order order = new Order(OrderType.DESC, "fechaRecepcion");
+				
+				// Datos del mediador (proveedor). La mayoria nos viene de el TabActivoInformacionComercial
 				if (!Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
-					beanUtilNotNull.copyProperty(informeComercial, "codigoMediador", activo.getInfoComercial().getMediadorInforme().getCodigoProveedorRem());
-					beanUtilNotNull.copyProperty(informeComercial, "nombreMediador", activo.getInfoComercial().getMediadorInforme().getNombre());
-					beanUtilNotNull.copyProperty(informeComercial, "telefonoMediador", activo.getInfoComercial().getMediadorInforme().getTelefono1());
-					beanUtilNotNull.copyProperty(informeComercial, "emailMediador", activo.getInfoComercial().getMediadorInforme().getEmail());
 					
-					if(activo.getInfoComercial().getMediadorInforme().getAutorizacionWeb() != null && activo.getInfoComercial().getMediadorInforme().getAutorizacionWeb().equals(Integer.valueOf(1))){
-						informeComercial.setAutorizacionWeb(1);
+					Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "poseedor", activo.getInfoComercial().getMediadorInforme());
+					
+					List<ActivoLlave> llaves = genericDao.getListOrdered(ActivoLlave.class, order, filtroActivo, filtroProveedor);
+					
+					if(llaves != null && !llaves.isEmpty()) {
+						informeComercial.setFechaRecepcionLlaves(llaves.get(0).getFechaRecepcion());
+					}else if(llaves.isEmpty()) {
+						informeComercial.setFechaRecepcionLlaves(null);
+					}
+					
+					if(activo.getInfoComercial().getMediadorInforme().getAutorizacionWeb() != null){
+						informeComercial.setAutorizacionWeb(activo.getInfoComercial().getMediadorInforme().getAutorizacionWeb());
 					}else{
 						informeComercial.setAutorizacionWeb(0);
 					}
-				}else{
-					informeComercial.setAutorizacionWeb(0);
+					
+				}
+				
+				// Datos del mediador espejo (proveedor). La mayoria nos viene de el TabActivoInformacionComercial
+				if(activo.getInfoComercial().getMediadorEspejo() != null) {
+					
+					Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "poseedor", activo.getInfoComercial().getMediadorEspejo());
+					
+					List<ActivoLlave> llaves = genericDao.getListOrdered(ActivoLlave.class, order, filtroActivo, filtroProveedor);
+					
+					if(llaves != null && !llaves.isEmpty()) {
+						beanUtilNotNull.copyProperty(informeComercial, "fechaRecepcionLlavesEspejo", llaves.get(0).getFechaRecepcion());
+					}
+					
+					if(activo.getInfoComercial().getMediadorEspejo().getAutorizacionWeb() != null){
+						informeComercial.setAutorizacionWebEspejo(activo.getInfoComercial().getMediadorEspejo().getAutorizacionWeb());
+					}else{
+						informeComercial.setAutorizacionWebEspejo(0);
+					}
 				}
 				
 				//Informe mediador

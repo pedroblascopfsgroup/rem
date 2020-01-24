@@ -2858,39 +2858,41 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			if(contieneActPrincAgrObraNueva){
 				ActivoAgrupacion agrOfertada = oferta.getAgrupacion();
-				listActivosAgr = agrOfertada.getActivos();
-				for (ActivoAgrupacionActivo actAgr : listActivosAgr) {
-					activoDeAgr = actAgr.getActivo();
-					subtipoAct = activoDeAgr.getSubtipoActivo();
-					
-					if(!Checks.esNulo(subtipoAct)){
-						listActOfr = oferta.getActivosOferta();
-						if(!Checks.estaVacio(listActOfr)) {
-							for (ActivoOferta activoOferta : listActOfr) {
-								if(DDSubtipoActivo.COD_GARAJE.equals(subtipoAct.getCodigo()) || DDSubtipoActivo.COD_TRASTERO.equals(subtipoAct.getCodigo())) {
-									contieneActGarTrast = true;
-									importeActGarTrast += activoOferta.getImporteActivoOferta();
-								} else {
-									contieneActPrinc = true;
-									importeActPrinc += activoOferta.getImporteActivoOferta();
+				if(agrOfertada != null) {
+					listActivosAgr = agrOfertada.getActivos();
+					for (ActivoAgrupacionActivo actAgr : listActivosAgr) {
+						activoDeAgr = actAgr.getActivo();
+						subtipoAct = activoDeAgr.getSubtipoActivo();
+						
+						if(!Checks.esNulo(subtipoAct)){
+							listActOfr = oferta.getActivosOferta();
+							if(!Checks.estaVacio(listActOfr)) {
+								for (ActivoOferta activoOferta : listActOfr) {
+									if(DDSubtipoActivo.COD_GARAJE.equals(subtipoAct.getCodigo()) || DDSubtipoActivo.COD_TRASTERO.equals(subtipoAct.getCodigo())) {
+										contieneActGarTrast = true;
+										importeActGarTrast += activoOferta.getImporteActivoOferta();
+									} else {
+										contieneActPrinc = true;
+										importeActPrinc += activoOferta.getImporteActivoOferta();
+									}
 								}
 							}
 						}
 					}
-				}
-				if(contieneActGarTrast && contieneActPrinc) {
-					consultaComisionDto.setAmount(importeActGarTrast);
-					try {
-						calculoComisionActGarTrast = comisionamientoApi.createCommission(consultaComisionDto);
-					} catch (Exception e) {
-						logger.error("Error en la llamada al comisionamiento: " + e);
+					if(contieneActGarTrast && contieneActPrinc) {
+						consultaComisionDto.setAmount(importeActGarTrast);
+						try {
+							calculoComisionActGarTrast = comisionamientoApi.createCommission(consultaComisionDto);
+						} catch (Exception e) {
+							logger.error("Error en la llamada al comisionamiento: " + e);
+						}
+						consultaComisionDto.setAmount(importeActPrinc);
+						consultaComisionDto.setComercialType(DD_TCR_CODIGO_OBRA_NUEVA);
+						
+					}else if(contieneActPrinc){
+						consultaComisionDto.setAmount(importeActPrinc);
+						consultaComisionDto.setComercialType(DD_TCR_CODIGO_OBRA_NUEVA);
 					}
-					consultaComisionDto.setAmount(importeActPrinc);
-					consultaComisionDto.setComercialType(DD_TCR_CODIGO_OBRA_NUEVA);
-					
-				}else if(contieneActPrinc){
-					consultaComisionDto.setAmount(importeActPrinc);
-					consultaComisionDto.setComercialType(DD_TCR_CODIGO_OBRA_NUEVA);
 				}
 			}
 		}

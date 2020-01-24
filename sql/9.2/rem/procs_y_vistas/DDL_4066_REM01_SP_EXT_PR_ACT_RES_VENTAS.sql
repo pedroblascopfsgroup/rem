@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Oscar Diestre
---## FECHA_CREACION=20200121
+--## FECHA_CREACION=20200124
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.19
 --## INCIDENCIA_LINK=REMVIP-6169
@@ -77,7 +77,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
     V_OBTIENE_RESERVA               VARCHAR2(2000 CHAR)  := 'SELECT
                                                             CASE
 							    WHEN DD_CRA_CODIGO = ''01'' THEN	
-                                                            	CASE WHEN EEC.DD_EEC_CODIGO NOT IN (''02'',''03'',''08'',''16'') AND ERE.DD_ERE_CODIGO IN (''01'')
+                                                            	CASE WHEN EEC.DD_EEC_CODIGO NOT IN (''02'',''08'',''16'') AND ERE.DD_ERE_CODIGO IN (''01'')
                                                             		THEN 0
                                                             		ELSE 1
 								END
@@ -428,7 +428,7 @@ BEGIN
                 V_ERROR_DESC := '[ERROR] El estado del expediente es "Reservado", "Firmado","Vendido", "En Devolución" ó "Anulado", o la reserva no esta en estado "Pendiente de firma" o no existe estado para éste expediente.';
                 --DBMS_OUTPUT.PUT_LINE(V_ERROR_DESC);
             ELSE
-                DBMS_OUTPUT.PUT_LINE('[INFO] El estado del expediente NO es "Reservado" (O está reservado pero pertenece a "Cajamar"), "Firmado","Vendido", "En Devolución" ó "Anulado" y la reserva esta en estado "Pendiente de firma". Continuamos la ejecución.');
+                DBMS_OUTPUT.PUT_LINE('[INFO] El estado del expediente NO es "Reservado" (O está reservado pero pertenece a "Cajamar"), "Firmado" (O está firmado pero pertenece a "Cajamar") ,"Vendido", "En Devolución" ó "Anulado" y la reserva esta en estado "Pendiente de firma". Continuamos la ejecución.');
                 FOR row in ACTIVOS
                 LOOP
                        DBMS_OUTPUT.PUT_LINE('[INFO] ACT_ID > '||row.ACT_ID||', ECO_ID > '||V_ECO_ID||', OFR_ID > '||V_OFR_ID||', RES_ID > '||V_RES_ID||', DD_EEC_ID > '||V_VALOR_ACTUAL||'.');

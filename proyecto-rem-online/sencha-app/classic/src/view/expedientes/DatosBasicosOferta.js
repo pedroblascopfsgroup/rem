@@ -184,7 +184,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						bind : {
 							value : '{datosbasicosoferta.fechaResolucionCES}',
 							hidden : '{!esSubcarteraRemainingOAppleOArrow}'
-						},
+						},						
 						readOnly : true
 					}, {
 						xtype : 'currencyfieldbase',
@@ -192,7 +192,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						bind : {
 							value : '{datosbasicosoferta.importeContraofertaCES}',
 							hidden : '{!esSubcarteraRemainingOAppleOArrow}'
-						},
+						},						
 						readOnly : true
 					}, {
 						xtype : 'datefieldbase',
@@ -200,7 +200,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						bind : {
 							value : '{datosbasicosoferta.fechaRespuestaCES}',
 							hidden : '{!esSubcarteraRemainingOAppleOArrow}'
-						},
+						},					
 						readOnly : true
 					}, 
 					{
@@ -209,12 +209,18 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						}
 					}, 
 					{
+						bind : {
+							hidden : '{!esSubcarteraRemainingOAppleOArrow}'
+						}
+					},
+					{
 						xtype : 'currencyfieldbase',
 						reference:'importeContraofertaOfertanteCES',
+						colspan: 2,
 						bind : {
 							value : '{datosbasicosoferta.importeContraofertaOfertanteCES}',
 							hidden : '{!esSubcarteraRemainingOAppleOArrow}'
-						},
+						},						
 						readOnly : true
 					},
 					{
@@ -292,6 +298,9 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 								hidden : '{esOfertaAlquiler}',
 								fieldLabel : '{expediente.comiteComboboxLabel}'
 
+							},
+							listeners: {
+								change: 'onComiteChange'
 							},
 							// TODO Sobreescribimos la función porque está dando problemas la carga del store. A veces llega null.
 							setStore : function(store) {

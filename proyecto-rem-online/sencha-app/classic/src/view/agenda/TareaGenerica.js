@@ -1383,7 +1383,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.habilitarCampo(me.down('[name=checkboxVentaDirecta]'));
 			me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
 		} else if(CONST.CARTERA['LIBERBANK'] == codigoCartera){
-			me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
+			me.habilitarCampo(me.down('[name=fechaIngreso]'));
 		}
 
 		me.down('[name=checkboxVentaDirecta]').addListener('change', function(checkbox, newValue, oldValue, eOpts) {

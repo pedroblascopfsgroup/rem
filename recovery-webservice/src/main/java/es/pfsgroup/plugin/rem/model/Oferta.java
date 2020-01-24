@@ -38,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -289,9 +290,11 @@ public class Oferta implements Serializable, Auditable {
 	
 	@Column(name="OFR_OFERTA_SINGULAR")
 	private Boolean ofertaSingular;
-	
-	@Column(name="OFR_EXCLUSION_BULK")
-	private Boolean exclusionBulk;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="OFR_EXCLUSION_BULK")
+	private DDSinSiNo sinoExclusionBulk;
+
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -870,12 +873,14 @@ public class Oferta implements Serializable, Auditable {
 	public void setOfertaSingular(Boolean ofertaSingular) {
 		this.ofertaSingular = ofertaSingular;
 	}
-
-	public Boolean getExclusionBulk() {
-		return exclusionBulk;
+	
+	public DDSinSiNo getSinoExclusionBulk() {
+		return sinoExclusionBulk;
 	}
 
-	public void setExclusionBulk(Boolean exclusionBulk) {
-		this.exclusionBulk = exclusionBulk;
+	public void setSinoExclusionBulk(DDSinSiNo sinoExclusionBulk) {
+		this.sinoExclusionBulk = sinoExclusionBulk;
 	}
+
+
 }

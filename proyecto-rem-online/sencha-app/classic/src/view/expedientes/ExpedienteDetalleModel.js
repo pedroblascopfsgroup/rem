@@ -157,6 +157,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			 	CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['DIVARIANARROW'] == subcarteraCodigo ||
 			 	CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo;
 		 },
+
+		 esCarteraAppleOrRemaining: function(get) {
+			 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+			 var subcarteraCodigo = get('expediente.subcarteraCodigo');
+			 return CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcarteraCodigo ||
+			 	CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo;
+		 },
 		 
 		 esCarteraAppleOAgora: function(get) {
 			 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
@@ -460,6 +467,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				return true;
 			}
 		},
+		
+		requisitosEdicionExclusionBulk: function(get){
+			var tarea = get('datosbasicosoferta.isAdvisoryNoteEnTareas');
+			return ($AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL_SINGULAR']) || $AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL_BO_INM']) && (tarea == false || tarea == 'false'));
+		},
+
 
 		esPerfilPMyCEs: function(get){
 			
@@ -1273,6 +1286,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 					diccionario: 'claseOferta'
 				}
 			}
+
+		},
+
+		comboSiNoExclusionBulk: { 
+			data : [ 
+				{"codigo":"1", "descripcion":"Si"}, 
+				{"codigo":"2", "descripcion":"No"} 
+			] 
 		}
 		
     }

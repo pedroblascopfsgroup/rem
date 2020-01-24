@@ -135,6 +135,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -1167,6 +1168,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		try {
 			beanUtilNotNull.copyProperties(oferta, dto);
+			
 
 		} catch (IllegalAccessException e) {
 			logger.error("error en expedienteComercialManager", e);
@@ -1175,7 +1177,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			logger.error("error en expedienteComercialManager", e);
 		}
 
-
+		
+		if (!Checks.esNulo(dto.getExclusionBulk())) {
+			DDSinSiNo sino = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", (dto.getExclusionBulk() == 1L) ? DDSinSiNo.CODIGO_SI : DDSinSiNo.CODIGO_NO));
+			oferta.setSinoExclusionBulk(sino);
+		}
+		
 		if (!Checks.esNulo(dto.getNecesitaFinanciacion())) {
 			oferta.setNecesitaFinanciacion(dto.getNecesitaFinanciacion().equals("01") ? true : false);
 		}
@@ -1884,6 +1891,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setOfertaSingular(oferta.getOfertaSingular() ? "Si" : "No");
 		}
 
+			dto.setExclusionBulk(Checks.esNulo(oferta.getSinoExclusionBulk()) ? 2L : oferta.getSinoExclusionBulk().getId());
+			
+			dto.setIsAdvisoryNoteEnTareas(ofertaDao.tieneTareaActivaOrFinalizada("T017_AdvisoryNote", oferta.getNumOferta().toString()));
+		
 		return dto;
 	}
 

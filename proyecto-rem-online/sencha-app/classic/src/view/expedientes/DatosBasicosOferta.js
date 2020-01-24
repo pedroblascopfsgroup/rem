@@ -97,7 +97,18 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							readOnly : 'true',
 							hidden : '{esTipoAlquiler}'
 						}
-					}, {
+					}, 
+						{
+						xtype : 'comboboxfieldbase',
+						fieldLabel : HreRem.i18n('fieldlabel.exclusion.bulk'),
+						bind : {
+							store: '{comboSiNoExclusionBulk}',
+							value : '{datosbasicosoferta.exclusionBulk}',
+							readOnly : '{!requisitosEdicionExclusionBulk}',
+							hidden : '{!esCarteraAppleOrRemaining}'
+						}
+					},
+					{
 						xtype : 'datefieldbase',
 						fieldLabel : HreRem.i18n('fieldlabel.fecha.respuesta'),
 						colspan : 3,
@@ -151,7 +162,8 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							value:'{datosbasicosoferta.idGestorComercialPrescriptor}',
 							hidden: '{!mostrarPrescriptorCajamar}'
 						}
-					}, {
+					},
+						{
 						xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
 						fieldLabel:  HreRem.i18n('fieldlabel.respuesta.pm'),
@@ -168,7 +180,8 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							hidden : '{!datosbasicosoferta.isCarteraCerberusApple}'
 						},
 						readOnly : true
-					}, {
+					}, 
+							{
 						xtype : 'datefieldbase',
 						fieldLabel : HreRem
 								.i18n('fieldlabel.fecha.ofertante.pm'),

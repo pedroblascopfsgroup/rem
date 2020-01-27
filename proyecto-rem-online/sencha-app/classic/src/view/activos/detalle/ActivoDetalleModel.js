@@ -9,7 +9,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ActivoPatrimonio', 'HreRem.model.HistoricoAdecuacionesPatrimonioModel',
     'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados','HreRem.model.CalificacionNegativaModel',
     'HreRem.model.HistoricoTramtitacionTituloModel', 'HreRem.model.HistoricoGestionGrid', 'HreRem.model.ListaActivoGrid', 'HreRem.model.HistoricoFasesDePublicacion',
-    'HreRem.model.AdjuntoActivoAgrupacion','HreRem.model.AdjuntoActivoProyecto','HreRem.model.DocumentacionAdministrativa'],
+    'HreRem.model.AdjuntoActivoAgrupacion','HreRem.model.AdjuntoActivoProyecto','HreRem.model.DocumentacionAdministrativa', 'HreRem.model.ActivoPatrimonio'],
 
     data: {
     	activo: null,
@@ -19,6 +19,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     },
 
     formulas: {
+    	
+    	editableCES: function(get){	
+    		var isEditable = $AU.userIsRol('DIRTERRITORIAL') || $AU.userIsRol('HAYASUPER');
+    		return isEditable;
+    	},
 	     
     	esEditableAsistenciaJuntaObligatoria: function(get){
     		var isEditable = $AU.userIsRol('HAYAADM') || $AU.userIsRol('HAYASADM') || $AU.userIsRol('HAYAGESTADMT') || $AU.userIsRol('HAYASUPER');
@@ -793,7 +798,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    },
 	    
 	    esSubcarteraDivarian: function(get){
-			return get('activo.subcarteraCodigo') == CONST.SUBCARTERA['DIVARIAN'];
+			return get('activo.subcarteraCodigo') == CONST.SUBCARTERA['DIVARIAN'] || get('activo.subcarteraCodigo') == CONST.SUBCARTERA['DIVARIANARROW'] 
+				|| get('activo.subcarteraCodigo') == CONST.SUBCARTERA['DIVARIANREMAINING'];
 		},
 
 	    esSuperUsuario: function(get){
@@ -866,8 +872,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
          			return true;
          		}
     		}
+    	},
+    	isCesionUsoEditable: function () {
+    		return $AU.userIsRol('GESTALQ');
     	}
-    	
 	 }, 
 	 
 	 stores: {
@@ -1679,6 +1687,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					extraParams: {diccionario: 'motivosOcultacion'}
 				}
     		},
+    		comboCanalDePublicacion:{
+	 			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'canalDePublicacionActivo'}
+				}
+    		},
 
     		comboMotivosOcultacionAlquiler: {
                 model: 'HreRem.model.ComboBase',
@@ -2279,7 +2295,33 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'activo/getHistoricoFasesDePublicacionActivo',
 				extraParams: {id: '{activo.id}'}
 			}
+		},
+
+		comboCesionUso :{
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'cesionUso'}
+			}
+		},
+				
+		comboSinSino: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'DDSiNo'}
+			}
+		},
+
+		comboDireccionComercial: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+			    extraParams: {diccionario: 'tipoDireccionComercial'}
+			 }
 		}
-		
      }
 });

@@ -770,7 +770,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 								handler : 'onClickAdvisoryNoteExpediente',
 								margin : '10 10 10 10',
 								bind : {
-									hidden:'{!esCarteraApple}'
+									hidden:'{!esCarteraAppleOrArrowOrRemaining}'
 								}
 							}]
 				},

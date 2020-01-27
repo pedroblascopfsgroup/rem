@@ -135,6 +135,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -1167,6 +1168,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		try {
 			beanUtilNotNull.copyProperties(oferta, dto);
+			
 
 		} catch (IllegalAccessException e) {
 			logger.error("error en expedienteComercialManager", e);
@@ -1175,7 +1177,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			logger.error("error en expedienteComercialManager", e);
 		}
 
-
+		
+		if (!Checks.esNulo(dto.getExclusionBulk())) {
+			DDSinSiNo sino = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", (dto.getExclusionBulk() == 1L) ? DDSinSiNo.CODIGO_SI : DDSinSiNo.CODIGO_NO));
+			oferta.setSinoExclusionBulk(sino);
+		}
+		
 		if (!Checks.esNulo(dto.getNecesitaFinanciacion())) {
 			oferta.setNecesitaFinanciacion(dto.getNecesitaFinanciacion().equals("01") ? true : false);
 		}
@@ -1615,7 +1622,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 			}
 		}
-
+		if ( expediente != null && expediente.getComiteSancion() != null ) {
+			dto.setEsComiteHaya(DDComiteSancion.CODIGO_HAYA_CERBERUS.equals(expediente.getComiteSancion().getCodigo()));
+		}
 		return dto;
 	}
 
@@ -1773,6 +1782,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			isCarteraCerberusApple = true;
 		}
 		dto.setIsCarteraCerberusApple(isCarteraCerberusApple);
+		
+		Boolean isCarteraCerberusDivarian = false;
+		if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getActivoPrincipal())
+		&& (!Checks.esNulo(oferta.getActivoPrincipal().getCartera())
+		&& !Checks.esNulo(oferta.getActivoPrincipal().getSubcartera()))
+		&& (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) &&
+		DDSubcartera.CODIGO_DIVARIAN.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))) {
+			isCarteraCerberusDivarian = true;
+		}
+		dto.setIsCarteraCerberusDivarian(isCarteraCerberusDivarian);
+		
 		if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getFechaRespuestaCES()) && isCarteraCerberusApple) {
 			dto.setFechaRespuestaCES(oferta.getFechaRespuestaCES());
 		}
@@ -1871,6 +1891,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setOfertaSingular(oferta.getOfertaSingular() ? "Si" : "No");
 		}
 
+			dto.setExclusionBulk(Checks.esNulo(oferta.getSinoExclusionBulk()) ? 2L : oferta.getSinoExclusionBulk().getId());
+			
+			dto.setIsAdvisoryNoteEnTareas(ofertaDao.tieneTareaActivaOrFinalizada("T017_AdvisoryNote", oferta.getNumOferta().toString()));
+		
 		return dto;
 	}
 
@@ -9015,7 +9039,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			Activo activo = activoApi.get(activoOferta.getPrimaryKey().getActivo().getId());
 			esDivarian=false;
 			if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) &&
-				DDSubcartera.CODIGO_DIVARIAN.equals(activo.getSubcartera().getCodigo())) {
+				(DDSubcartera.CODIGO_DIVARIAN.equals(activo.getSubcartera().getCodigo())
+						|| DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo())
+						|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo()))) {
 				esDivarian = true;
 			}
 		}
@@ -10363,7 +10389,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	private List<DtoDiccionario> GestorComercialPrescriptorParaOfertaAgrupacionSingular() {
 		List<DtoDiccionario> listado= new ArrayList<DtoDiccionario>();
-		 DtoDiccionario diccionario = new DtoDiccionario();
+		DtoDiccionario diccionario = new DtoDiccionario();
 		diccionario.setDescripcion(OFERTA_NA_LOTE);
 		diccionario.setCodigo(OFERTA_DICCIONARIO_CODIGO_NULO);
 		listado.add(diccionario);
@@ -10372,71 +10398,76 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private List<DtoDiccionario> calcularGestorComercialPrescriptorResidencial(ExpedienteComercial expediente, List<ActivoOferta> listaActivosOferta){
 		List<DtoDiccionario> listado = new ArrayList<DtoDiccionario>();
 		DtoDiccionario diccionario = null;
-		boolean minoristaRetail = true;
+		boolean minoristaRetail = false;
 		boolean prescriptorOficina = false;
 		String apellidosNombre;
 		String codigo;
 		Activo activo = null;
-		ProveedorGestorCajamar proveedorGestorCajamar = null;
 		Usuario gestorComercialPrescriptor = null;
-		if (!Checks.esNulo(expediente)) {
+		
+		if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getOferta())) {
 			Oferta oferta = expediente.getOferta();
-			
-			if (!Checks.esNulo(oferta) 
-					&& !Checks.esNulo(oferta.getGestorComercialPrescriptor()))
-				gestorComercialPrescriptor = oferta.getGestorComercialPrescriptor();
+			gestorComercialPrescriptor = oferta.getGestorComercialPrescriptor();
 			
 			if (!Checks.esNulo(oferta.getPrescriptor()) && !Checks.esNulo(oferta.getPrescriptor().getTipoProveedor()))
 				prescriptorOficina = DDTipoProveedor.COD_OFICINA_CAJAMAR.equals(oferta.getPrescriptor().getTipoProveedor().getCodigo());
+			
+			if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getEquipoGestion())) {
+				if(DDEquipoGestion.CODIGO_MINORISTA.equals(oferta.getActivoPrincipal().getEquipoGestion().getCodigo())) {
+					minoristaRetail = true;
+				}
+			} else if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getTipoComercializar()) 
+					&& DDTipoComercializar.CODIGO_RETAIL.equals(oferta.getActivoPrincipal().getTipoComercializar().getCodigo())) {
+				minoristaRetail = true;
+			}
 
-			if(!Checks.esNulo(gestorComercialPrescriptor)) { 
-				diccionario = new DtoDiccionario();
-				apellidosNombre = gestorComercialPrescriptor.getApellidoNombre();
-				codigo = gestorComercialPrescriptor.getId().toString();
-				diccionario.setDescripcion(apellidosNombre);
-				diccionario.setCodigo(!Checks.esNulo(codigo) ? codigo : OFERTA_DICCIONARIO_CODIGO_NULO);
-				listado.add(diccionario);
-			} else {
+			if(Checks.esNulo(gestorComercialPrescriptor)) {
 				if (minoristaRetail && prescriptorOficina) {
 					diccionario = new DtoDiccionario();
 					diccionario.setDescripcion(OFERTA_SIN_GESTOR_COMERCIAL_ASIGNADO);
 					diccionario.setCodigo(OFERTA_DICCIONARIO_CODIGO_NULO);
 					listado.add(diccionario);
+				} else {
+					diccionario = new DtoDiccionario();
+					diccionario.setDescripcion(OFERTA_NA_LOTE);
+					diccionario.setCodigo(OFERTA_DICCIONARIO_CODIGO_NULO);
+					listado.add(diccionario);
 				}
-			}
-			if (!prescriptorOficina || !minoristaRetail) {
-				if( !Checks.estaVacio(listaActivosOferta)){
-					for(ActivoOferta activoOferta: listaActivosOferta) {
-						diccionario = new DtoDiccionario();
-						activo = activoOferta.getPrimaryKey().getActivo();
-						if (!Checks.esNulo(activo) && !Checks.esNulo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL))){
-							gestorComercialPrescriptor = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
-							if(!Checks.esNulo(gestorComercialPrescriptor)) {
-								apellidosNombre = gestorComercialPrescriptor.getApellidoNombre();
-								codigo = gestorComercialPrescriptor.getId().toString();
-								diccionario.setDescripcion(apellidosNombre);
-								diccionario.setCodigo(!Checks.esNulo(codigo) ? codigo : OFERTA_DICCIONARIO_CODIGO_NULO);
-								listado.add(diccionario);
+			} else {
+				if (minoristaRetail && prescriptorOficina) {
+					diccionario = new DtoDiccionario();
+					apellidosNombre = gestorComercialPrescriptor.getApellidoNombre();
+					codigo = gestorComercialPrescriptor.getId().toString();
+					diccionario.setDescripcion(apellidosNombre);
+					diccionario.setCodigo(!Checks.esNulo(codigo) ? codigo : OFERTA_DICCIONARIO_CODIGO_NULO);
+					listado.add(diccionario);
+				} else {
+					if( !Checks.estaVacio(listaActivosOferta)){
+						for(ActivoOferta activoOferta: listaActivosOferta) {
+							diccionario = new DtoDiccionario();
+							activo = activoOferta.getPrimaryKey().getActivo();
+							if (!Checks.esNulo(activo) && !Checks.esNulo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL))){
+								gestorComercialPrescriptor = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+								if(!Checks.esNulo(gestorComercialPrescriptor)) {
+									apellidosNombre = gestorComercialPrescriptor.getApellidoNombre();
+									codigo = gestorComercialPrescriptor.getId().toString();
+									diccionario.setDescripcion(apellidosNombre);
+									diccionario.setCodigo(!Checks.esNulo(codigo) ? codigo : OFERTA_DICCIONARIO_CODIGO_NULO);
+									
+									if (Checks.estaVacio(listado)) {
+										listado.add(diccionario);
+									} else if (!listado.get(0).getCodigo().equals(diccionario.getCodigo())){
+										listado.clear();
+										break;
+									}
+								}
 							}
 						}
 					}
-				}
-				diccionario = new DtoDiccionario();
-				diccionario.setDescripcion(OFERTA_NA_LOTE);
-				diccionario.setCodigo(OFERTA_DICCIONARIO_CODIGO_NULO);
-				listado.add(diccionario);
-			}else {
-				if ( oferta.getPrescriptor() != null ) {
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activoProveedor.id", oferta.getPrescriptor().getId());
-					proveedorGestorCajamar = genericDao.get(ProveedorGestorCajamar.class, filtro);
-					if(!Checks.esNulo(proveedorGestorCajamar)
-						&& !Checks.esNulo(proveedorGestorCajamar.getUsuario())
-						&& !Checks.esNulo(proveedorGestorCajamar.getUsuario().getId())) {
-						diccionario = new DtoDiccionario();
-						diccionario.setDescripcion(proveedorGestorCajamar.getUsuario().getApellidoNombre());
-						diccionario.setCodigo(proveedorGestorCajamar.getUsuario().getId().toString());
-						listado.add(diccionario);
-					}
+					diccionario = new DtoDiccionario();
+					diccionario.setDescripcion(OFERTA_NA_LOTE);
+					diccionario.setCodigo(OFERTA_DICCIONARIO_CODIGO_NULO);
+					listado.add(diccionario);
 				}
 			}
 		}
@@ -10730,5 +10761,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		return true;
-	}	
+	}
+	@Override
+	public String doCalculateComiteByExpedienteId(Long idExpediente) {
+		if ( idExpediente == null) return null;
+		ExpedienteComercial expediente  = genericDao.get(ExpedienteComercial.class, 
+					genericDao.createFilter(FilterType.EQUALS, "id", idExpediente));
+		return expediente == null || expediente.getComiteSancion() == null ? null
+				: expediente.getComiteSancion().getCodigo();
+	}
+	
+	
 }

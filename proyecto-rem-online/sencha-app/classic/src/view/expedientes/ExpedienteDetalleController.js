@@ -4867,5 +4867,37 @@ comprobarFormatoModificar: function() {
     	});
 
     	win.show();
+	},
+	doCalculateTitleByComite: function () {
+		var me = this;
+		var url =  $AC.getRemoteUrl('expedientecomercial/doCalculateComiteByExpedienteId');
+		var fechaResolucionCmp = me.lookupReference("fechaResolucionCES"),
+		importeContraOfertaCmp = me.lookupReference("importeContraOfertaCES"),
+		fechaRespuestaCmp = me.lookupReference("fechaResupuestaCES"),
+		importeContraofertaOfertanteCmp = me.lookupReference("importeContraofertaOfertanteCES");
+		Ext.Ajax.request({
+		     url: url,
+		     method: 'GET',
+		     params: {idExpediente: me.getViewModel().data.expediente.id},
+		     success: function(response) {
+		    	data = Ext.decode(response.responseText);
+		    	var codigoComite = data.data;
+		    	if(CONST.COMITE_SANCIONADOR['HAYA_CERBERUS'] === codigoComite){
+		    		fechaResolucionCmp.setFieldLabel( HreRem.i18n('fieldlabel.fecha.resolucion.comite.haya'));
+		    		importeContraOfertaCmp.setFieldLabel( HreRem.i18n('fieldlabel.importe.contraoferta.comite.haya'));
+		    		fechaRespuestaCmp.setFieldLabel( HreRem.i18n('fieldlabel.fecha.respuesta.ofertante.comite.haya'));
+		    		importeContraofertaOfertanteCmp.setFieldLabel( HreRem.i18n('fieldlabel.importe.contraoferta.ofertante.comite.haya'));
+		    	}else{
+		    		fechaResolucionCmp.setFieldLabel(HreRem.i18n('fieldlabel.fecha.resolucion.advisory'));
+		    		importeContraOfertaCmp.setFieldLabel(HreRem.i18n('fieldlabel.importe.contraoferta.advisory'));
+		    		fechaRespuestaCmp.setFieldLabel( HreRem.i18n('fieldlabel.fecha.respuesta.ofertante.advisory'));
+		    		importeContraofertaOfertanteCmp.setFieldLabel( HreRem.i18n('fieldlabel.importe.contraoferta.ofrtante.advisory'));
+		    	}
+		    		
+		    },
+		    failure: function () {
+		    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		 	}
+		});
 	}
 });

@@ -1287,6 +1287,8 @@ public interface ExpedienteComercialApi {
 	 */
 	boolean esOmega(TareaExterna tareaExterna);
 
+	String doCalculateComiteByExpedienteId(Long idExpediente);
+
 	public Long uploadDocumentoGestorDocumental(ExpedienteComercial expedienteComercial, WebFileItem webFileItem,
 			DDSubtipoDocumentoExpediente subtipoDocumento, String username) throws Exception;
 

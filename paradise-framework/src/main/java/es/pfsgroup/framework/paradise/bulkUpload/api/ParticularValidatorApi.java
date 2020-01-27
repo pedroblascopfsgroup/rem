@@ -501,8 +501,10 @@ public interface ParticularValidatorApi {
 	Boolean mediadorExisteVigente(String codMediador);
 
 	Boolean existeComunidadPropietarios(String idPropietarios);
-
-	Boolean existeSituacion(String idSituacion);
+	
+	Boolean existeEstadoLoc(String idSituacion);
+	
+	Boolean existeSubestadoGestion(String idSituacion);
 
 	Boolean existeActivoEnPropietarios(String numActivo, String idPropietarios);
 
@@ -990,4 +992,18 @@ public interface ParticularValidatorApi {
 	Boolean esExpedienteValidoAnulado(String numExpediente);
 
 	Boolean esExpedienteValidoAprobado(String numExpediente);
+		
+	/**
+	 * 
+	 * @param direccionComercial
+	 * @return true si la dirección comercial Existe
+	 */
+	public Boolean direccionComercialExiste(String direccionComercial);
+
+	Boolean isActivoEnCesionDeUso(String numActivo);
+
+	Boolean isActivoEnAlquilerSocial(String numActivo);
+
+	
+	
 }

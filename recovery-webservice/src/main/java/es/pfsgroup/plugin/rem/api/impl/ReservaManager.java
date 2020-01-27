@@ -86,7 +86,7 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 			hashErrores.put("accion", RestApi.REST_MSG_UNKNOWN_KEY);		
 			
 		} else if (Checks.esNulo(reservaDto.getActivo())) {
-			hashErrores.put("accion", RestApi.REST_MSG_MISSING_REQUIRED);	
+			hashErrores.put("activo", RestApi.REST_MSG_MISSING_REQUIRED);	
 			
 		} else {
 			

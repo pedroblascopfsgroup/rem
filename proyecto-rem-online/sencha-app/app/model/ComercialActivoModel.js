@@ -39,6 +39,8 @@ Ext.define('HreRem.model.ComercialActivoModel', {
 			name: 'motivoAutorizacionTramitacionCodigo'
 		},{
 			name: 'observacionesAutoTram'
+		},{
+			name:'direccionComercial'
 		}
     ],
     

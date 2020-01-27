@@ -136,6 +136,10 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 		} catch (ParseException e) {
 			mLogger.error("Error en ActivoPublicacionHistoricoDaoImpl al obtener días periodo", e);
 		}
+		
+		if (entidad.getPortal() != null) {
+			dto.setCanalPublicacion(entidad.getPortal().getDescripcion());
+		}
 
 		return dto;
 	}

@@ -169,7 +169,28 @@ Ext.define('HreRem.model.DatosPublicacionActivo', {
             name:'fechaRevisionPublicacionesAlquiler',
             type:'date',
             dateFormat: 'c'
+        },
+        {
+        	name:'fechaUltimaPublicacionMin',
+            type:'date',
+            dateFormat: 'c'
+        },
+        {
+        	name:'fechaPrimeraPublicacionMin',
+            type:'date',
+            dateFormat: 'c'
+        },
+        {
+        	name:'fechaUltimaPublicacionMay',
+            type:'date',
+            dateFormat: 'c'
+        },
+        {
+        	name:'fechaPrimeraPublicacionMay',
+            type:'date',
+            dateFormat: 'c'
         }
+        
 	],
 
 	proxy: {

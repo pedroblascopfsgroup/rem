@@ -361,17 +361,29 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	@Override
-	public Boolean existeSituacion(String idSituacion){
-		if(Checks.esNulo(idSituacion) || !StringUtils.isAlphanumeric(idSituacion))
+	public Boolean existeEstadoLoc(String codEstadoLoc){
+		if(Checks.esNulo(codEstadoLoc) || !StringUtils.isAlphanumeric(codEstadoLoc))
 			return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
-				+ "		 FROM DD_SACT_SITUACION_ACTIVO WHERE"
-				+ "		 DD_SACT_CODIGO ='"+idSituacion+"' "
+				+ "		 FROM DD_ELO_ESTADO_LOCALIZACION WHERE"
+				+ "		 DD_ELO_CODIGO ='"+codEstadoLoc+"' "
 				+ "		 	AND BORRADO = 0");
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean existeSubestadoGestion(String codSubestadoGestion){
+		if(Checks.esNulo(codSubestadoGestion))
+			return false;
 
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_SEG_SUBESTADO_GESTION WHERE"
+				+ "		 DD_SEG_CODIGO ='"+codSubestadoGestion+"' "
+				+ "		 	AND BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
 	@Override
 	public Boolean isActivoPrePublicable(String numActivo){
 		return isActivoGestionAdmision(numActivo) && isActivoUltimoInformeComercialAceptado(numActivo);
@@ -2830,7 +2842,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	@Override
 	public Boolean isAgrupacionSinActivoPrincipal(String mumAgrupacionRem) {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)"
-				+ "			FROM ACT_AGR_AGRUPACION agr\n"
+				+ "			FROM ACT_AGR_AGRUPACION agr "
 				+ "			WHERE agr.AGR_NUM_AGRUP_REM = "+ mumAgrupacionRem
 				+ "			AND agr.AGR_ACT_PRINCIPAL IS NOT NULL");
 
@@ -4177,5 +4189,40 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return "1".equals(resultado);
 	}
 	
+	@Override
+	public Boolean direccionComercialExiste(String direccionComercial){
+		if(Checks.esNulo(direccionComercial))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		FROM DD_TDC_TERRITORIOS_DIR_COM "
+				+ "		WHERE DD_TDC_CODIGO = '"+ direccionComercial +"'");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean isActivoEnCesionDeUso( String numActivo) {
+		
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT count(1) " + 
+				"FROM ACT_PTA_PATRIMONIO_ACTIVO pta " + 
+				"JOIN DD_CDU_CESION_USO cdu ON pta.DD_CDU_ID = cdu.DD_CDU_ID " + 
+				"AND DD_CDU_CODIGO IN ('01','02','03','04') " + 
+				"JOIN ACT_ACTIVO act ON act.ACT_ID = pta.ACT_ID " + 
+				"AND act.ACT_NUM_ACTIVO = " + numActivo
+				);
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean isActivoEnAlquilerSocial( String numActivo) {
+		
+		String resultado = rawDao.getExecuteSQL(
+				"  SELECT count(1)   "
+				+" FROM ACT_PTA_PATRIMONIO_ACTIVO pta     " 
+				+" JOIN ACT_ACTIVO act ON act.ACT_ID = pta.ACT_ID AND act.ACT_NUM_ACTIVO = " +  numActivo
+				+" WHERE pta.PTA_TRAMITE_ALQ_SOCIAL = 1"
+				);
+		return !"0".equals(resultado); 
+	}
 	//-------------------------------------------------------------------------
 }

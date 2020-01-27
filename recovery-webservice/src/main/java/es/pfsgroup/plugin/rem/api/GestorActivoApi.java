@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.api;
 
 import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.gestorEntidad.api.GestorEntidadApi;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
@@ -170,7 +171,7 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	 * @param codigoTarea
 	 * @return
 	 */
-	public Usuario usuarioTareaApple(String codigoTarea);
+	public Usuario usuarioGrupoTareaT017(String codigoTarea, Boolean esApple, Boolean esArrow, Boolean esRemaining, TareaExterna tareaExterna);
 	
 	public Usuario supervisorTareaApple(String codigoTarea);
 

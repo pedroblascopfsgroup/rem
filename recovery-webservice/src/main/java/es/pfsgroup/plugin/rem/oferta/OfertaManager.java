@@ -3344,7 +3344,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo()))
 		||(DDCartera.CODIGO_CARTERA_CERBERUS.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
 			&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo()) 
-					|| DDSubcartera.CODIGO_DIVARIAN.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())))) {
+					|| DDSubcartera.CODIGO_DIVARIAN.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())))) {
 
 			if (((!Checks.esNulo(expediente.getReserva()))
 				&& !Checks.esNulo(expediente.getReserva().getEstadoReserva())
@@ -4688,7 +4690,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							isMinoristaOResidencial = true;
 						}
 					} else if (!Checks.esNulo(listaActivos.get(0).getPrimaryKey().getActivo().getTipoComercializar()) 
-							&& DDTipoComercializar.DESCRIPCION_RETAIL.equals(listaActivos.get(0).getPrimaryKey().getActivo().getTipoComercializar().getCodigo())) {
+							&& DDTipoComercializar.CODIGO_RETAIL.equals(listaActivos.get(0).getPrimaryKey().getActivo().getTipoComercializar().getCodigo())) {
 						isMinoristaOResidencial = true;
 					}
 					

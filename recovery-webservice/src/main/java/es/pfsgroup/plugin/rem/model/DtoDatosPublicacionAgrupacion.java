@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
+import java.util.Date;
+
 public class DtoDatosPublicacionAgrupacion extends DtoDatosPublicacionActivo {
 	
 	private static final long serialVersionUID = -3202851556168833024L;
@@ -76,6 +78,43 @@ public class DtoDatosPublicacionAgrupacion extends DtoDatosPublicacionActivo {
 	private Boolean vandalizado;
 	private Boolean conCargas;
 	private Integer comboOtro;
+	private Date fechaPrimeraPublicacionMin;
+	private Date fechaUltimaPublicacionMin;
+	private Date fechaPrimeraPublicacionMay;
+	private Date fechaUltimaPublicacionMay;
+	
+	
+	public Date getFechaPrimeraPublicacionMin() {
+		return fechaPrimeraPublicacionMin;
+	}
+
+	public void setFechaPrimeraPublicacionMin(Date fechaPrimeraPublicacionMin) {
+		this.fechaPrimeraPublicacionMin = fechaPrimeraPublicacionMin;
+	}
+
+	public Date getFechaUltimaPublicacionMin() {
+		return fechaUltimaPublicacionMin;
+	}
+
+	public void setFechaUltimaPublicacionMin(Date fechaUltimaPublicacionMin) {
+		this.fechaUltimaPublicacionMin = fechaUltimaPublicacionMin;
+	}
+
+	public Date getFechaPrimeraPublicacionMay() {
+		return fechaPrimeraPublicacionMay;
+	}
+
+	public void setFechaPrimeraPublicacionMay(Date fechaPrimeraPublicacionMay) {
+		this.fechaPrimeraPublicacionMay = fechaPrimeraPublicacionMay;
+	}
+
+	public Date getFechaUltimaPublicacionMay() {
+		return fechaUltimaPublicacionMay;
+	}
+
+	public void setFechaUltimaPublicacionMay(Date fechaUltimaPublicacionMay) {
+		this.fechaUltimaPublicacionMay = fechaUltimaPublicacionMay;
+	}
 
 	public Long getId() {
 		return id;

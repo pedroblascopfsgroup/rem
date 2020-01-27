@@ -47,7 +47,11 @@ func-rem-omega|func-rem-Divarian-F2
 version-2.15.7-rem|version-2.16.2-rem
 func-rem-Divarian|R-Navelina
 R-Navelina|func-rem-Divarian-F2
+func-rem-Divarian-F2|func-rem-Divarian-F3
 func-rem-Divarian-F2|func-HREOS-8656
 func-HREOS-8656|func-rem-Divarian-F2
 rem_mirror|R-Navelina
 version-2.15.6-rem|R-Navelina
+func-rem-Divarian-F3|func-rem-Divarian-F4
+2.17.0-20011001-rem|version-2.17.1-rem
+func-rem-HulkPrimerAviso|func-rem-Divarian-F5

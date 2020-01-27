@@ -52,6 +52,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTerritorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -487,6 +488,10 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "ACT_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private ActivoAutorizacionTramitacionOfertas activoAutorizacionTramitacionOfertas;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TDC_ID")
+    private DDTerritorio territorio; 
 	
     // Getters del activo --------------------------------------------
     
@@ -1929,6 +1934,14 @@ public class Activo implements Serializable, Auditable {
 
 	public void setDireccionTerritorial(DDDireccionTerritorial direccionTerritorial) {
 		this.direccionTerritorial = direccionTerritorial;
+	}
+
+	public DDTerritorio getTerritorio() {
+		return territorio;
+	}
+
+	public void setTerritorio(DDTerritorio territorio) {
+		this.territorio = territorio;
 	}
 	
 }

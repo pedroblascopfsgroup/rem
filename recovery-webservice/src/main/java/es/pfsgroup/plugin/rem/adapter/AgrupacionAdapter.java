@@ -117,6 +117,8 @@ import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.VCondicionantesAgrDisponibilidad;
+import es.pfsgroup.plugin.rem.model.VFechasPubCanales;
+import es.pfsgroup.plugin.rem.model.VFechasPubCanalesAgr;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
@@ -4238,6 +4240,22 @@ public class AgrupacionAdapter {
 		dto.setDeshabilitarCheckOcultarVenta(activoEstadoPublicacionApi.getCheckOcultarDeshabilitarAgrupacionVenta(agrupacion.getActivos()));
 		dto.setDeshabilitarCheckPublicarAlquiler(activoEstadoPublicacionApi.getCheckPublicacionDeshabilitarAgrupacionAlquiler(agrupacion.getActivos()));
 		dto.setDeshabilitarCheckOcultarAlquiler(activoEstadoPublicacionApi.getCheckOcultarDeshabilitarAgrupacionAlquiler(agrupacion.getActivos()));
+		
+		VFechasPubCanalesAgr canal = genericDao.get(VFechasPubCanalesAgr.class, genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", id));
+		if ( canal != null ) {
+			if ( canal.getFechaPrimeraPublicacionMin() != null ) {
+				dto.setFechaPrimeraPublicacionMin(canal.getFechaPrimeraPublicacionMin());
+			}
+			if ( canal.getFechaUltimaPublicacionMin() != null ) {
+				dto.setFechaUltimaPublicacionMin(canal.getFechaUltimaPublicacionMin());
+			}
+			if ( canal.getFechaPrimeraPublicacionMay() != null ) {
+				dto.setFechaPrimeraPublicacionMay(canal.getFechaPrimeraPublicacionMay());
+			}
+			if ( canal.getFechaUltimaPublicacionMay() != null ) {
+				dto.setFechaUltimaPublicacionMay(canal.getFechaUltimaPublicacionMay());
+			}
+		}
 
 		return dto;
 	}

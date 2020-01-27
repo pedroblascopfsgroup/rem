@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=GUILLEM REY
---## FECHA_CREACION=20190701
+--## FECHA_CREACION=20200114
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-4622
+--## INCIDENCIA_LINK=REMVIP-5469
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -147,6 +147,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                    WHERE ACT.BORRADO = 0
 									 AND RES.DD_ERE_ID = (SELECT DD_ERE_ID FROM '||V_ESQUEMA||'.DD_ERE_ESTADOS_RESERVA WHERE DD_ERE_CODIGO = ''02'')
 									 AND ECO.DD_EEC_ID <> (SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''02'')
+									 AND OFR.DD_EOF_ID = (SELECT DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = ''01'')
                                      AND ACT.ACT_ID= '||pACT_ID||
                          ' UNION
                           SELECT APU.ACT_ID

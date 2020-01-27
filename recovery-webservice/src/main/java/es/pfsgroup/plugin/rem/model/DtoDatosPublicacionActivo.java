@@ -56,6 +56,45 @@ public class DtoDatosPublicacionActivo extends WebDto {
 	private Integer diasCambioPrecioAlqWeb;
 	private Date fechaRevisionPublicacionesVenta;
 	private Date fechaRevisionPublicacionesAlquiler;
+	private String canalDePublicacion;
+	private Date fechaPrimeraPublicacionMin;
+	private Date fechaUltimaPublicacionMin;
+	private Date fechaPrimeraPublicacionMay;
+	private Date fechaUltimaPublicacionMay;
+
+	
+
+	public Date getFechaPrimeraPublicacionMin() {
+		return fechaPrimeraPublicacionMin;
+	}
+
+	public void setFechaPrimeraPublicacionMin(Date fechaPrimeraPublicacionMin) {
+		this.fechaPrimeraPublicacionMin = fechaPrimeraPublicacionMin;
+	}
+
+	public Date getFechaUltimaPublicacionMin() {
+		return fechaUltimaPublicacionMin;
+	}
+
+	public void setFechaUltimaPublicacionMin(Date fechaUltimaPublicacionMin) {
+		this.fechaUltimaPublicacionMin = fechaUltimaPublicacionMin;
+	}
+
+	public Date getFechaPrimeraPublicacionMay() {
+		return fechaPrimeraPublicacionMay;
+	}
+
+	public void setFechaPrimeraPublicacionMay(Date fechaPrimeraPublicacionMay) {
+		this.fechaPrimeraPublicacionMay = fechaPrimeraPublicacionMay;
+	}
+
+	public Date getFechaUltimaPublicacionMay() {
+		return fechaUltimaPublicacionMay;
+	}
+
+	public void setFechaUltimaPublicacionMay(Date fechaUltimaPublicacionMay) {
+		this.fechaUltimaPublicacionMay = fechaUltimaPublicacionMay;
+	}
 
 	public String getTipoPublicacionVentaDescripcion() {
 		return tipoPublicacionVentaDescripcion;
@@ -430,6 +469,14 @@ public class DtoDatosPublicacionActivo extends WebDto {
 
 	public void setFechaRevisionPublicacionesAlquiler(Date fechaRevisionPublicacionesAlquiler) {
 		this.fechaRevisionPublicacionesAlquiler = fechaRevisionPublicacionesAlquiler;
+	}
+
+	public String getCanalDePublicacion() {
+		return canalDePublicacion;
+	}
+
+	public void setCanalDePublicacion(String canalDePublicacion) {
+		this.canalDePublicacion = canalDePublicacion;
 	}
 	
 }

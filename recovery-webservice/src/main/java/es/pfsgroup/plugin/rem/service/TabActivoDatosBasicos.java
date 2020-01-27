@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.service;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -69,6 +70,7 @@ import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VTramitacionOfertaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
+import es.pfsgroup.plugin.rem.model.dd.DDCesionUso;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDDireccionTerritorial;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
@@ -113,6 +115,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private static final Integer CHECK_PUBLICACION = 2;
 	private static final Integer CHECK_COMERCIALIZAR = 3;
 	private static final Integer CHECK_FORMALIZAR = 4;
+	private static final String  CESION_USO_ERROR= "msg.error.activo.patrimonio.en.cesion.uso";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -837,14 +840,15 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if (!Checks.esNulo(activo.getSociedadDePagoAnterior())) {
 			BeanUtils.copyProperty(activoDto, "sociedadPagoAnterior", activo.getSociedadDePagoAnterior().getCodigo());
 		}
-
-		Boolean visualizarTabFasesPublicacion = activoApi.getVisibilidadTabFasesPublicacion(activo);
 		
-		activoDto.setVisualizarTabFasesPublicacion(visualizarTabFasesPublicacion);
-
 		if (activo.getCartera() != null
-				&& DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo()))
+				&& DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
 			BeanUtils.copyProperty(activoDto, "tramitable", isTramitable(activo));
+		}
+		
+		Boolean muestraEditarFasePublicacion = activoApi.getMostrarEdicionTabFasesPublicacion(activo);
+		
+		activoDto.setMostrarEditarFasePublicacion(muestraEditarFasePublicacion);
 		
 		return activoDto;
 	}
@@ -1070,7 +1074,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					perimetroActivo.setAplicaAsignarMediador(dto.getAplicaAsignarMediador() ? 1 : 0);
 					perimetroActivo.setFechaAplicaAsignarMediador(new Date());
 				}
-				if(!Checks.esNulo(dto.getAplicaComercializar())) {					
+				if ((dto.getAplicaComercializar() != null && dto.getAplicaComercializar())
+				|| (dto.getAplicaPublicar() != null && dto.getAplicaPublicar())
+				|| (dto.getAplicaFormalizar() != null && dto.getAplicaFormalizar())) {
+					this.isActivoInCesionUso(activo);
+				}
+				if(!Checks.esNulo(dto.getAplicaComercializar())) {	
+					
 					perimetroActivo.setAplicaComercializar(dto.getAplicaComercializar() ? 1 : 0);
 					perimetroActivo.setFechaAplicaComercializar(new Date());					
 					
@@ -1080,11 +1090,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 				}
 				if(!Checks.esNulo(dto.getAplicaFormalizar())) {
+					
 					perimetroActivo.setAplicaFormalizar(dto.getAplicaFormalizar() ? 1 : 0);
 					perimetroActivo.setFechaAplicaFormalizar(new Date());
 
 					//Validacion al desmarcar check formalizar
 					if(!dto.getAplicaFormalizar()) {
+						
 						this.validarPerimetroActivo(activo,2);
 					}
 				}
@@ -1349,6 +1361,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		return activo;
 	}
 	
+
+
 	/**
 	 * Acciones al desmarcar check Comercializar
 	 * 1. Valida si se puede demarcar (Activo sin ofertas vivas).
@@ -1537,6 +1551,19 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 
 		return tramitable;
+	}
+	private void isActivoInCesionUso(Activo activo) {
+		ActivoPatrimonio activoP = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());
+		if (activoP != null && activoP.getCesionUso() != null) {
+			DDCesionUso cesion =  activoP.getCesionUso();
+			List<String> types = new ArrayList<String>(
+					Arrays.asList(DDCesionUso.CARITAS, DDCesionUso.CESION_GENERALITAT_CX,
+							DDCesionUso.CESION_OTRAS_OPERACIONES, DDCesionUso.EN_TRAMITE_OTRAS_OPERACIONES));
+			if (types.contains(cesion.getCodigo())) {
+				throw new JsonViewerException(messageServices.getMessage(CESION_USO_ERROR));
+			}
+			
+		}
 	}
 
 }

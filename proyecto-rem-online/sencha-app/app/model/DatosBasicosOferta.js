@@ -82,6 +82,12 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		{
     			name: 'ventaCartera'
     		},
+    		{
+    			name: 'exclusionBulk'
+    		},
+    		{
+    			name: 'isAdvisoryNoteEnTareas'
+    		},
      		{
 			name:'fechaRespuestaCES',
 			convert: function(value) {
@@ -149,8 +155,8 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		},
     		{
     			name:'idGestorComercialPrescriptor'
-        },
-        {
+        	},
+        	{
     			name:'importeContraofertaPM'
     		},
     		{

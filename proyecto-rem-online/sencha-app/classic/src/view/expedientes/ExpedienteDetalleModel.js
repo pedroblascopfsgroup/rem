@@ -150,6 +150,21 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			 return CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcarteraCodigo ;
 		 },
 		 
+		 esCarteraAppleOrArrowOrRemaining: function(get) {
+			 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+			 var subcarteraCodigo = get('expediente.subcarteraCodigo');
+			 return CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcarteraCodigo || 
+			 	CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['DIVARIANARROW'] == subcarteraCodigo ||
+			 	CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo;
+		 },
+
+		 esCarteraAppleOrRemaining: function(get) {
+			 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+			 var subcarteraCodigo = get('expediente.subcarteraCodigo');
+			 return CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcarteraCodigo ||
+			 	CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo;
+		 },
+		 
 		 esCarteraAppleOAgora: function(get) {
 			 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 			 var subcarteraCodigo = get('expediente.subcarteraCodigo');
@@ -452,6 +467,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				return true;
 			}
 		},
+		
+		requisitosEdicionExclusionBulk: function(get){
+			var tarea = get('datosbasicosoferta.isAdvisoryNoteEnTareas');
+			return ($AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL_SINGULAR']) || $AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL_BO_INM']) && (tarea == false || tarea == 'false'));
+		},
+
 
 		esPerfilPMyCEs: function(get){
 			
@@ -509,7 +530,26 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	 		}
 	 		
 	 		return false;
+	 	},
+	 	
+	 	esSubcarteraDivarianOApple: function(get){
+	 		var me = this;
+	 		var resp = false;
+	 		var isApple = CONST.SUBCARTERA['APPLEINMOBILIARIO'] === me.get('expediente.subcarteraCodigo');
+	 		var isDivarian = CONST.SUBCARTERA['DIVARIAN'] === me.get('expediente.subcarteraCodigo');
+	 		
+	 		if(isApple == true || isDivarian == true){
+	 			resp = true;
+	 		}
+	 		
+	 		
+	 		return resp;
+	 	},
+	 	esComiteHaya: function(get){
+	 		var me = this;
+	 		return me.get('expediente.esComiteHaya');
 	 	}
+	 	
 	 },
 	 
 
@@ -1246,6 +1286,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 					diccionario: 'claseOferta'
 				}
 			}
+
+		},
+
+		comboSiNoExclusionBulk: { 
+			data : [ 
+				{"codigo":"1", "descripcion":"Si"}, 
+				{"codigo":"2", "descripcion":"No"} 
+			] 
 		}
 		
     }

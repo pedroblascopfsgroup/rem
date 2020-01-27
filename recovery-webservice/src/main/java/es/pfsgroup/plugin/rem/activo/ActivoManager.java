@@ -145,6 +145,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTerritorio;
 import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionTramitacion;
@@ -379,6 +380,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private GestorActivoManager gestorActivoManager;
+	
+	@Autowired
+    UsuarioManager usuarioManager;
 
 	@Override
 	public String managerName() {
@@ -908,6 +912,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private ExpedienteComercial crearExpedienteGuardado(Oferta oferta, Trabajo trabajo){
 
 		ExpedienteComercial nuevoExpediente = new ExpedienteComercial();
+		Double umbralAskingPrice=200000.0;
 
 		if (!Checks.esNulo(oferta.getVisita())) {
 			DDEstadosVisitaOferta estadoVisitaOferta = (DDEstadosVisitaOferta) utilDiccionarioApi
@@ -1127,7 +1132,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 				}
 			}
-
+			ActivoValoraciones precioAprVenta =getValoracionAprobadoVenta(activo);
 			boolean esFinanciero = false;
 			if (!Checks.esNulo(activoBancario)) {
 				if (!Checks.esNulo(activoBancario.getClaseActivo()) && activoBancario.getClaseActivo().getCodigo()
@@ -1135,17 +1140,42 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					esFinanciero = true;
 				}
 
+				String codSubcartera = oferta.getActivoPrincipal().getSubcartera().getCodigo();
+				
 				if (DDCartera.CODIGO_CARTERA_TANGO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
 					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_TANGO)));
 				} else if (DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
 					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_GIANTS)));
 				} else if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
 					if(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())||
-					DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))
-					{
+					DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){
 						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CERBERUS)));
-					}else if(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){
-						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_APPLE_CERBERUS)));
+						
+					} else if (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcartera) || DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(codSubcartera)) {
+						ActivoAgrupacion agrupacion = oferta.getAgrupacion();
+						String codComiteHaya = DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcartera)? DDComiteSancion.CODIGO_HAYA_APPLE : DDComiteSancion.CODIGO_HAYA_REMAINING;
+						String codComiteCes = DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcartera)? DDComiteSancion.CODIGO_CES_APPLE : DDComiteSancion.CODIGO_CES_REMAINING;
+						Double importeOferta = Checks.esNulo(oferta.getImporteOferta()) ? 0d : oferta.getImporteOferta();
+						
+						if(Checks.esNulo(agrupacion)) {
+							if (importeOferta <= umbralAskingPrice && (importeOferta >= precioAprVenta.getImporte() * 0.95)) {
+								nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteHaya)));
+							} else {
+								nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteCes)));
+							} 
+						}else {
+							Double askingPrice =  calcularAskingPriceAgrupacion(agrupacion);  							
+							if (importeOferta <= umbralAskingPrice && (importeOferta >= askingPrice * 0.95)) {
+								nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteCes)));
+							} else {
+								nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteCes)));
+							} 
+						}				
+							
+					}else if(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){
+							nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
+									genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_ARROW)));
+							
 					}else {
 						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_CERBERUS)));
 					}
@@ -1217,7 +1247,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		// Se asigna un gestor de Formalización al crear un nuevo expediente.
 		asignarGestorYSupervisorFormalizacionToExpediente(nuevoExpediente);
-
 		return nuevoExpediente;
 	}
 
@@ -3765,7 +3794,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaAux.getEstadoOferta().getCodigo())) {
 					ExpedienteComercial expediente = expedienteComercialApi
 							.expedienteComercialPorOferta(ofertaAux.getId());
-					if (!Checks.esNulo(expediente)) { // Si el expediente está
+					if (!Checks.esNulo(expediente) && expediente.getEstado() != null) { // Si el expediente está
 														// aprobado (o estados
 														// posteriores).
 						if (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
@@ -4469,6 +4498,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				beanUtilNotNull.copyProperty(dto, "motivoAutorizacionTramitacionCodigo", activo.getActivoAutorizacionTramitacionOfertas().getMotivoAutorizacionTramitacion().getCodigo());
 				beanUtilNotNull.copyProperty(dto, "observacionesAutoTram", activo.getActivoAutorizacionTramitacionOfertas().getObservacionesAutoTram());
 			}
+			if(!Checks.esNulo(activo.getTerritorio())) {
+				beanUtilNotNull.copyProperty(dto, "direccionComercial", activo.getTerritorio().getCodigo()); 
+			}
 
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
@@ -4537,6 +4569,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 				}
 			}
+			if(!Checks.esNulo(dto.getDireccionComercial())) {
+				DDTerritorio territorio = (DDTerritorio) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTerritorio.class, dto.getDireccionComercial());
+				
+				activo.setTerritorio(territorio);
+				
+			}
 			
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
@@ -4546,7 +4585,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			logger.error("Error en activoManager", e);
 			return false;
 		}
-
+		
 		activo.setEstaEnPuja(dto.getPuja());
 		activoDao.save(activo);
 
@@ -7632,59 +7671,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return activoDto;
 	}
 	
-	@Override
-	public Boolean getVisibilidadTabFasesPublicacion(Activo activo) {
-		Usuario logedUser = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		Usuario gestorPublicacionActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_PUBLICACION);
-		Usuario supervisorPublicacionActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_PUBLICACION);
-		Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
-		Usuario supervisorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS);
-		Usuario gestorEdificacion = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
-		Usuario supervisorEdificacion = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
-		Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-		Filter vigenteFilter = genericDao.createFilter(FilterType.NULL, "fechaHasta");
-		Order order = new Order(OrderType.DESC, "id");
-		
-		List<ActivoInformeComercialHistoricoMediador> listaMediadores = genericDao.getListOrdered(ActivoInformeComercialHistoricoMediador.class, order, activoFilter, vigenteFilter);
-		ActivoInformeComercialHistoricoMediador mediadorVigente = null;
-		if (!Checks.estaVacio(listaMediadores)) {
-			mediadorVigente = listaMediadores.get(0);
-		}
-		
-		if (!Checks.esNulo(gestorPublicacionActivo) && logedUser.equals(gestorPublicacionActivo)) {
-			return true;
-		} else if (!Checks.esNulo(supervisorPublicacionActivo) && logedUser.equals(supervisorPublicacionActivo)) {
-			return true;
-		} else if (!Checks.esNulo(gestorActivo) && logedUser.equals(gestorActivo)) {
-			return true;
-		} else if (!Checks.esNulo(supervisorActivo) && logedUser.equals(supervisorActivo)) {
-			return true;
-		} else if (!Checks.esNulo(gestorEdificacion) && logedUser.equals(gestorEdificacion)) {
-			return true;
-		} else if (!Checks.esNulo(supervisorEdificacion) && logedUser.equals(supervisorEdificacion)) {
-			return true;
-		} else if (!Checks.esNulo(mediadorVigente) && !Checks.esNulo(mediadorVigente.getMediadorInforme())) {
-			Long idProveedor = mediadorVigente.getMediadorInforme().getId();
-			Filter pvcFilter = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", idProveedor);
-			List<ActivoProveedorContacto> listaProveedorContacto = genericDao.getList(ActivoProveedorContacto.class, pvcFilter);
-			if (!Checks.estaVacio(listaProveedorContacto)) {
-				//Puede haber más de un registro en PVC con el mismo PVE_ID
-				//pero por lo que he visto entre esos registro solo puede haber uno con DocIdentificativo
-				//y ese seria el mediador
-				for (ActivoProveedorContacto proveedorContacto : listaProveedorContacto) {
-					if (!Checks.esNulo(proveedorContacto) && !Checks.esNulo(proveedorContacto.getDocIdentificativo())) {
-						Usuario usuMediadorVigente = proveedorContacto.getUsuario();
-						if (!Checks.esNulo(usuMediadorVigente) && usuMediadorVigente.equals(logedUser)) {
-							return true;
-						}
-					}
-				}
-			}
-		}
-		
-		return false;
-	}
-	
 	public void deleteActOfr(Long idActivo, Long idOferta) {
 		activoDao.deleteActOfr(idActivo, idOferta);
 	}
@@ -7764,5 +7750,71 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}else {
 			throw new PlusvaliaActivoException(PlusvaliaActivoException.getErrorNoExisteEstadoDeGestionPorCodigo(codigo));
 		}
+	}
+	
+	private Double calcularAskingPriceAgrupacion(ActivoAgrupacion agrupacion) {
+		Double askingPrice = 0d;
+		if (Checks.esNulo(agrupacion)) {
+			return askingPrice;
+		}
+		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
+		for (ActivoAgrupacionActivo activoAgrupacionActivo : activos) {
+			List<ActivoValoraciones> valoracion = activoAgrupacionActivo.getActivo().getValoracion();
+			if (!Checks.estaVacio(valoracion)) {
+				for (ActivoValoraciones valor : valoracion) {
+					if (DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(valor.getTipoPrecio().getCodigo())) {
+						askingPrice += valor.getImporte();
+					}
+				}
+			}
+		}
+		return askingPrice;
+	}
+	
+	@Override
+	public Boolean getMostrarEdicionTabFasesPublicacion(Activo activo) {
+		Usuario logedUser = usuarioManager.getUsuarioLogado();
+		Usuario gestorPublicacionActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_PUBLICACION);
+		Usuario supervisorPublicacionActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_PUBLICACION);
+		Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+		Usuario gestorEdificaciones = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+		
+		Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		Filter vigenteFilter = genericDao.createFilter(FilterType.NULL, "fechaAutorizacionHasta");
+		Order order = new Order(OrderType.DESC, "id");
+		
+		List<ActivoInfoComercial> listaMediadores = genericDao.getListOrdered(ActivoInfoComercial.class, order, activoFilter, vigenteFilter);
+		ActivoInfoComercial mediadorVigente = null;
+		
+		if(!Checks.estaVacio(listaMediadores)) {
+			mediadorVigente = listaMediadores.get(0);
+		}
+
+		if(!Checks.esNulo(gestorPublicacionActivo) && logedUser.equals(gestorPublicacionActivo)) {
+			return true;
+		}else if(!Checks.esNulo(supervisorPublicacionActivo) && logedUser.equals(supervisorPublicacionActivo)) {
+			return true;
+		}else if(!Checks.esNulo(gestorActivo) && logedUser.equals(gestorActivo)) {
+			return true;
+		}else if(!Checks.esNulo(gestorEdificaciones) && logedUser.equals(gestorEdificaciones)) {
+			return true;
+		}else if(genericAdapter.isSuper(logedUser)) {
+			return true;
+		}else if(!Checks.esNulo(mediadorVigente) && !Checks.esNulo(mediadorVigente.getMediadorInforme())) {
+			Long idProveedor = mediadorVigente.getMediadorInforme().getId();
+			Filter pvcFilter = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", idProveedor);
+			List<ActivoProveedorContacto> listaProveedorContacto = genericDao.getList(ActivoProveedorContacto.class, pvcFilter);
+			if(!Checks.estaVacio(listaProveedorContacto)) {
+				for(ActivoProveedorContacto proveedorContacto : listaProveedorContacto) {
+					if(!Checks.esNulo(proveedorContacto) && !Checks.esNulo(proveedorContacto.getDocIdentificativo())) {
+						Usuario usuMediadorVigente = proveedorContacto.getUsuario();
+						if(!Checks.esNulo(usuMediadorVigente) && usuMediadorVigente.getId().equals(logedUser.getId())) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
 	}
 }

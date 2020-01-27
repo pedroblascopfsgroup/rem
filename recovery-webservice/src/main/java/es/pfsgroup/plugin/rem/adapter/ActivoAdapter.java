@@ -1193,7 +1193,10 @@ public class ActivoAdapter {
 				Activo activoVista = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getActivo()));
 				
 				if(activoVista != null && activoVista.getSubcartera() != null) {
-					dto.setEsDivarian(DDSubcartera.CODIGO_DIVARIAN.equals(activoVista.getSubcartera().getCodigo()));
+					Boolean esDivarian = DDSubcartera.CODIGO_DIVARIAN.equals(activoVista.getSubcartera().getCodigo())
+							|| DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activoVista.getSubcartera().getCodigo())
+							|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activoVista.getSubcartera().getCodigo());
+					dto.setEsDivarian(esDivarian);
 				}
 				
 				page = actPatrimonioDao.getActivosRelacionados(dto);
@@ -2152,8 +2155,10 @@ public class ActivoAdapter {
 				if (!Checks.esNulo(expedienteComercial)) {
 					beanUtilNotNull.copyProperty(dtoTramite, "tieneEC", true);
 					beanUtilNotNull.copyProperty(dtoTramite, "idExpediente", expedienteComercial.getId());
-					beanUtilNotNull.copyProperty(dtoTramite, "descripcionEstadoEC",
-							expedienteComercial.getEstado().getDescripcion());
+					if(expedienteComercial.getEstado() != null) {
+						beanUtilNotNull.copyProperty(dtoTramite, "descripcionEstadoEC",
+								expedienteComercial.getEstado().getDescripcion());
+					}
 					beanUtilNotNull.copyProperty(dtoTramite, "numEC", expedienteComercial.getNumExpediente());
 				}
 				

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 
 /**
@@ -106,10 +107,11 @@ public class DtoDatosBasicosOferta extends WebDto {
   private Date fechaRespuestaCES;
 
 	private Boolean isCarteraCerberusApple;
-
+	private Boolean isCarteraCerberusDivarian;
 	private Boolean isCarteraLbkVenta;
 	private Boolean isLbkOfertaComercialPrincipal;
 	private Boolean muestraOfertaComercial;
+	private Boolean isAdvisoryNoteEnTareas;
 
 	private Double importeTotal;
 	
@@ -120,8 +122,9 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private Double importeContraofertaOfertanteCES;
 	
 	private String ofertaSingular;
-
-
+	
+	private Long exclusionBulk;
+	
 	public Long getIdOferta() {
 		return idOferta;
 	}
@@ -522,4 +525,29 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public void setOfertaSingular(String ofertaSingular) {
 		this.ofertaSingular = ofertaSingular;
 	}
+
+	public Boolean getIsCarteraCerberusDivarian() {
+		return isCarteraCerberusDivarian;
+	}
+
+	public void setIsCarteraCerberusDivarian(Boolean isCarteraCerberusDivarian) {
+		this.isCarteraCerberusDivarian = isCarteraCerberusDivarian;
+	}
+
+	public Long getExclusionBulk() {
+		return exclusionBulk;
+	}
+
+	public void setExclusionBulk(Long exclusionBulk) {
+		this.exclusionBulk = exclusionBulk;
+	}
+
+	public Boolean getIsAdvisoryNoteEnTareas() {
+		return isAdvisoryNoteEnTareas;
+	}
+
+	public void setIsAdvisoryNoteEnTareas(Boolean isAdvisoryNoteEnTareas) {
+		this.isAdvisoryNoteEnTareas = isAdvisoryNoteEnTareas;
+	}
+
 }

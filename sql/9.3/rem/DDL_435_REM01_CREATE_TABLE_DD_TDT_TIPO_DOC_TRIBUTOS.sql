@@ -30,7 +30,7 @@ DECLARE
     V_SCHEME VARCHAR2(25 CHAR)          := '#ESQUEMA#'; -- Configuración de esquema. Asignada por Pitertul.
 	V_MASTER_SCHEME VARCHAR2(25 CHAR)   := '#ESQUEMA_MASTER#'; -- Configuración de esquema master. Asignada por Pitertul.
     V_TABLESPACE_IDX VARCHAR2(25 CHAR)  := '#TABLESPACE_INDEX#'; -- Configuración tablespace de índices. Asignada por Pitertul.
-  	V_VERBOSITY_LEVEL NUMBER(1)         := OUTPUT_LEVEL.INFO; -- Configuración de nivel de verbosidad en el output log.
+  	--V_VERBOSITY_LEVEL NUMBER(1)         := OUTPUT_LEVEL.INFO; -- Configuración de nivel de verbosidad en el output log.
 
     -- Variable.
     V_TABLE_SCHEME VARCHAR2(25 CHAR)    := V_SCHEME; -- Indica el esquema de la tabla de referencia.
@@ -38,7 +38,7 @@ DECLARE
 	 V_TABLE_COMMENT VARCHAR2(250 CHAR)  := 'Tipos de documento de tributos'; -- Indica el comentario de la tabla de referencia.
 
 BEGIN
-    pitertul.create_dictionary(V_TABLE_SCHEME, V_TABLESPACE_IDX, V_TABLE_NAME, V_TABLE_COMMENT, V_VERBOSITY_LEVEL);
+    pitertul.create_dictionary(V_TABLE_SCHEME, V_TABLESPACE_IDX, V_TABLE_NAME, V_TABLE_COMMENT);
 EXCEPTION
 	WHEN OTHERS THEN
 	DBMS_OUTPUT.PUT_LINE(SQLERRM);

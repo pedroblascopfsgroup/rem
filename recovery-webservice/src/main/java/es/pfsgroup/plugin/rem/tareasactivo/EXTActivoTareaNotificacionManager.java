@@ -14,6 +14,7 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.cliente.model.Cliente;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
@@ -96,23 +97,27 @@ public class EXTActivoTareaNotificacionManager extends EXTAbstractTareaNotificac
     	else{
 	        tarea = new EXTTareaNotificacion();
     	}
-	        String codigoSubtarea = dto.getSubtipoTarea();
-	        SubtipoTarea subtipoTarea = getSubtipoTarea(codigoSubtarea);
-	        TipoCalculo tipoCalculo = null;
-	        if (dto instanceof EXTDtoGenerarTarea) {
-	            EXTDtoGenerarTarea sandto = (EXTDtoGenerarTarea) dto;
-	            tipoCalculo = sandto.getTipoCalculo();
-	        }
-	        if (subtipoTarea == null) {
-	            throw new GenericRollbackException("tareaNotificacion.subtipoTareaInexistente", dto.getSubtipoTarea());
-	        }
-	        if (!TipoTarea.TIPO_TAREA.equals(subtipoTarea.getTipoTarea().getCodigoTarea())) {
-	            throw new GenericRollbackException("tareaNotificacion.subtipoTarea.notificacionIncorrecta", dto.getSubtipoTarea());
-	        }
-	
-	        tarea.setEspera(dto.isEnEspera());
-	        tarea.setAlerta(dto.isEsAlerta());
-	        return saveNotificacionTarea(tarea, subtipoTarea, dto.getIdEntidad(), dto.getCodigoTipoEntidad(), dto.getPlazo(), dto.getDescripcion(), tipoCalculo);
+    	
+        String codigoSubtarea = dto.getSubtipoTarea();
+        SubtipoTarea subtipoTarea = getSubtipoTarea(codigoSubtarea);
+        TipoCalculo tipoCalculo = null;
+        if (dto instanceof EXTDtoGenerarTarea) {
+            EXTDtoGenerarTarea sandto = (EXTDtoGenerarTarea) dto;
+            tipoCalculo = sandto.getTipoCalculo();
+        }
+        if (subtipoTarea == null) {
+            throw new GenericRollbackException("tareaNotificacion.subtipoTareaInexistente", dto.getSubtipoTarea());
+        }
+        if (!TipoTarea.TIPO_TAREA.equals(subtipoTarea.getTipoTarea().getCodigoTarea())) {
+            throw new GenericRollbackException("tareaNotificacion.subtipoTarea.notificacionIncorrecta", dto.getSubtipoTarea());
+        }
+
+        tarea.setEspera(dto.isEnEspera());
+        tarea.setAlerta(dto.isEsAlerta());
+        
+        tarea.setAuditoria(Auditoria.getNewInstance());
+        
+        return saveNotificacionTarea(tarea, subtipoTarea, dto.getIdEntidad(), dto.getCodigoTipoEntidad(), dto.getPlazo(), dto.getDescripcion(), tipoCalculo);
        
     }
     

@@ -1358,6 +1358,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						detalleGasto.setTipoRecargoGasto(tipoRecargo);
 					}
 				}
+				
+				Usuario usuario = genericAdapter.getUsuarioLogado();
+				if(!Checks.esNulo(detalleGasto.getAuditoria())) {
+					detalleGasto.getAuditoria().setUsuarioModificar(usuario.getUsername());
+					detalleGasto.getAuditoria().setFechaModificar(new Date());
+				}
 
 				genericDao.update(GastoDetalleEconomico.class, detalleGasto);
 			}
@@ -3111,12 +3117,16 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 				//Obtener la configuracion de la Partida Presupuestaria a nivel de subcartera
 				//A raiz de HREOS-7241, se anyade un nuevo filtro en el caso que sea gasto refacturable. CPP_REFACTURABLE = 1
-				ConfigPdaPresupuestaria partidaArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaArrendamiento/*,filtroPropietario*/ ,filtroBorrado, filtroRefacturablePP);
-				ConfigPdaPresupuestaria partidaNoArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaNoArrendamiento/*,filtroPropietario*/,filtroBorrado, filtroRefacturablePP);
-			
+				
+			ConfigPdaPresupuestaria	partidaArrendada = null;
+			ConfigPdaPresupuestaria partidaNoArrendada = null;
+				
 				if(!Checks.esNulo(gasto.getSubcartera())) {
 					partidaArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaArrendamiento/*,filtroPropietario*/ ,filtroBorrado, filtroRefacturablePP);
 					partidaNoArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaNoArrendamiento/*,filtroPropietario*/,filtroBorrado, filtroRefacturablePP);
+				}else {
+					partidaArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaArrendamiento/*,filtroPropietario*/ ,filtroBorrado, filtroRefacturablePP);
+					partidaNoArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaNoArrendamiento/*,filtroPropietario*/,filtroBorrado, filtroRefacturablePP);
 				}
 				
 				if(!Checks.esNulo(partidaArrendada) || !Checks.esNulo(partidaNoArrendada)){

@@ -4097,6 +4097,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return !"0".equals(resultado);
 	}
+
+	public Boolean existeActivoNoBankia(String numActivo){
+		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
+			return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(*) FROM ACT_ACTIVO ACT "
+				+"JOIN DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID " 
+				+"WHERE ACT.ACT_NUM_ACTIVO = '"+ numActivo +"' " 
+				+"AND CRA.DD_CRA_CODIGO != '03' "
+				);
+
+		return !"0".equals(resultado);
+	}
 	
 	@Override
 	public Boolean esExpedienteVenta(String numExpediente) {
@@ -4188,6 +4203,110 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+"		WHERE EEC.DD_EEC_CODIGO IN ('06'))");
 
 		return "1".equals(resultado);
+	}
+
+	public Boolean existeActivoTitulo(String numActivo){
+		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
+			return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(*) FROM ACT_TIT_TITULO TIT "
+				+"JOIN ACT_ACTIVO ACT ON TIT.ACT_ID = ACT.ACT_ID "
+				+"WHERE ACT.ACT_NUM_ACTIVO = '"+ numActivo +"' "
+				);
+	
+		return !"0".equals(resultado);
+	}
+		
+	public Boolean esActivoBankia(String numActivo) {
+		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
+			return false;
+		}
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+					+"		FROM ACT_ACTIVO ACT "
+					+"		WHERE ACT.DD_CRA_ID IN (SELECT DD_CRA_ID FROM DD_CRA_CARTERA "
+					+"								WHERE DD_CRA_CODIGO = '03' "
+					+"								AND BORRADO = 0) "
+					+"		AND ACT.ACT_NUM_ACTIVO = "+ numActivo +"");
+
+		return !"0".equals(resultado);
+	}
+
+	@Override
+	public Boolean existeEstadoTitulo(String situacionTitulo) {
+		if(Checks.esNulo(situacionTitulo) || !StringUtils.isAlphanumeric(situacionTitulo)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(*) FROM DD_ETI_ESTADO_TITULO " 
+				+ "WHERE DD_ETI_CODIGO = '"+ situacionTitulo +"' "
+				+ "AND DD_ETI_CODIGO IN ('01', '02', '06')"
+		);
+		
+		return !"0".equals(resultado);
+	}
+
+	public Boolean existeEntidadHipotecaria(String codigo) {
+		if (Checks.esNulo(codigo)) {
+			return false;
+		}
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+					+"		FROM DD_EEJ_ENTIDAD_EJECUTANTE "
+					+"		WHERE DD_EEJ_CODIGO = '"+ codigo +"'");
+
+		return !"0".equals(resultado);
+	}
+	
+	public Boolean existeTipoJuzgado(String codigo) {
+		if (Checks.esNulo(codigo)) {
+			return false;
+		}
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+					+"		FROM DD_JUZ_JUZGADOS_PLAZA "
+					+"		WHERE DD_JUZ_CODIGO = '"+ codigo +"'");
+
+		return !"0".equals(resultado);
+	}
+
+	@Override
+	public Boolean existePoblacionJuzgado(String codigo) {
+		if (Checks.esNulo(codigo)) {
+			return false;
+		}
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+					+"		FROM DD_PLA_PLAZAS "
+					+"		WHERE DD_PLA_CODIGO = '"+ codigo +"'");
+		
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean verificaTipoDeAdjudicacion(String idActivo, String tipoAdjudicacion) {
+		if (Checks.esNulo(idActivo) || Checks.esNulo(tipoAdjudicacion)) {
+			return false;
+		}
+	
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+					+"		FROM ACT_ACTIVO "
+					+"		WHERE ACT_NUM_ACTIVO = "+ idActivo +" AND DD_TTA_ID = (SELECT DD_TTA_ID "
+					+"                                                       FROM DD_TTA_TIPO_TITULO_ACTIVO "
+					+"                                                       WHERE DD_TTA_CODIGO = '"+ tipoAdjudicacion +"')");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esAccionValidaInscripciones(String codAccion) {
+		if(Checks.esNulo(codAccion) || !StringUtils.isNumeric(codAccion)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM DD_ACM_ACCION_MASIVA ACM "
+				+ "WHERE ACM.DD_ACM_CODIGO ='" + codAccion + "'"
+				+ "AND ACM.DD_ACM_CODIGO NOT IN('02')");
+
+		return !"0".equals(resultado);
 	}
 	
 	@Override

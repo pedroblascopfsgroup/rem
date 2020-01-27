@@ -1330,11 +1330,22 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				trabajo.setProveedorContacto(proveedorContacto);
 		}
 	}
-
-	// TODO Este método hay que cambiarlo.
+	
 	@Override
-	@BusinessOperation(overrides = "trabajoManager.createTramiteTrabajo")
-	public ActivoTramite createTramiteTrabajo(Trabajo trabajo){
+	@Transactional
+	public ActivoTramite createTramiteTrabajo(Long idTrabajo,ExpedienteComercial expedienteComercial){
+		return this.createTramiteTrabajo(trabajoDao.get(idTrabajo),expedienteComercial);
+	}
+	
+	@Override
+	@Transactional
+	public ActivoTramite createTramiteTrabajo(Trabajo trabajo) {
+		return createTramiteTrabajo(trabajo,null);
+	}
+
+	@Override
+	@Transactional
+	public ActivoTramite createTramiteTrabajo(Trabajo trabajo,ExpedienteComercial expedienteComercial){
 		TipoProcedimiento tipoTramite = new TipoProcedimiento();
 
 		if (trabajo.getEsTarifaPlana() == null) {
@@ -1562,10 +1573,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		// Módulo de Expediente comercial ----------
 		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA)) {
-			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(trabajo);
 			boolean esApple = false;
 			boolean esDivarian = false;
-			if ( !Checks.esNulo(expedienteComercial)) {
+			if(expedienteComercial == null) {
+				expedienteComercial = expedienteComercialApi.findOneByTrabajo(trabajo);
+			}
+			if (expedienteComercial != null) {
 				for (ActivoOferta activoOferta : expedienteComercial.getOferta().getActivosOferta()) {
 					Activo activo = activoApi.get(activoOferta.getPrimaryKey().getActivo().getId());
 					esApple=false;

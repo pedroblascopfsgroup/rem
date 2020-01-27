@@ -3,7 +3,6 @@ package es.pfsgroup.plugin.rem.gestorDocumental.manager;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -63,7 +62,6 @@ import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.dto.documentos.GestorDocToRecoveryAssembler;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAdjuntoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoJuntaPropietarios;
@@ -933,13 +931,12 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 //------------------------------------------------------------ FIN JUNTA ----------------------------------------------------------------
 	
 
-	public Integer crearExpedienteComercialTransactional(Long idEco, String username) throws GestorDocumentalException {
+	public Integer crearExpedienteComercialTransactional(ExpedienteComercial eco, String username) throws GestorDocumentalException {
 		Integer resultado = null;
 		TransactionStatus transaction = null;
 
 		try{
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-			ExpedienteComercial eco = expedienteComercialApi.findOne(idEco);
 			resultado = this.crearExpedienteComercial(eco, username);
 			transactionManager.commit(transaction);
 

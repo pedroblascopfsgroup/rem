@@ -702,7 +702,7 @@ public interface OfertaApi {
 	 * @return <DtoPage> Página de valores de ofertas agrupadas Liberbank
 	 */
 	DtoPage getListActivosOfertasAgrupadasLiberbank(DtoVListadoOfertasAgrupadasLbk dtoVListadoOfertasAgrupadasLbk);
-	
+
 	/**
 	 * Método que comprueba si la oferta es una oferta principal
 	 * @param oferta oferta actual

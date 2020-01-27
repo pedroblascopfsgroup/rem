@@ -328,6 +328,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Autowired
 	private GastosExpedienteApi gastosExpedienteApi;
 	
+	
 	@Autowired
     private NotificationPlusvaliaManager notificationPlusvaliaManager;
 
@@ -335,7 +336,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public ExpedienteComercial findOne(Long id) {
 		return expedienteComercialDao.get(id);
 	}
-
+	
 	@Override
 	public ExpedienteComercial findOneTransactional(Long id) {
 		TransactionStatus transaction = null;
@@ -395,7 +396,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		if (PESTANA_FICHA.equals(tab)) {
 			dto = expedienteToDtoFichaExpediente(expediente);
-			activoApi.getGastosExpediente(expediente);
+			//tramitacionOfertasApi.crearGastosExpediente(expediente.getOferta(), expediente);
 		} else if (PESTANA_DATOSBASICOS_OFERTA.equals(tab)) {
 			dto = expedienteToDtoDatosBasicosOferta(expediente);
 		}
@@ -1126,8 +1127,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					oferta.setPrescriptor(visita.getPrescriptor());
 				}
 
-				genericDao.save(Oferta.class, oferta);
-
 			} else {
 				throw new JsonViewerException(messageServices.getMessage(VISITA_SIN_RELACION_OFERTA));
 			}
@@ -1171,7 +1170,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		ofertaApi.updateStateDispComercialActivosByOferta(oferta);
 
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
-
+		genericDao.save(Oferta.class, oferta);
 		// Si se ha modificado el importe de la oferta o de la contraoferta actualizamos
 		// el listado de activos.
 		// También se actualiza el importe de la reserva. Actualizar honorarios para el
@@ -1714,7 +1713,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		if (!Checks.esNulo(oferta.getNecesitaFinanciacion())) {
-			dto.setNecesitaFinanciacion(oferta.getNecesitaFinanciacion() ? "Si" : "No");
+			dto.setNecesitaFinanciacion(oferta.getNecesitaFinanciacion() ? DDSiNo.SI : "0");
 		}
 
 		dto.setObservaciones(oferta.getObservaciones());
@@ -2890,6 +2889,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		createReservaExpediente(expedienteComercial);
 
 		return true;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public CondicionesActivo crearCondicionesActivoExpediente(Long idActivo, ExpedienteComercial expediente) {
+		return this.crearCondicionesActivoExpediente(activoAdapter.getActivoById(idActivo), expediente);
 	}
 
 	@Override
@@ -10166,7 +10171,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			List<TareaExterna> tareasActivas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
 			if (tareasActivas != null && !tareasActivas.isEmpty()) {
 				for (TareaExterna tarea : tareasActivas) {
-					if (!Checks.esNulo(tarea.getTareaProcedimiento()) 
+					if (tarea != null && tarea.getTareaProcedimiento() != null 
 							&& ComercialUserAssigantionService.CODIGO_T013_VALIDACION_CLIENTES.equals(tarea.getTareaProcedimiento().getCodigo())) {
 						tarNot = tarea.getTareaPadre();
 						if (!Checks.esNulo(tarNot)) {

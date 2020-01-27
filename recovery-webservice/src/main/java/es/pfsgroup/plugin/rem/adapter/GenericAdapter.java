@@ -26,17 +26,17 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
-import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
@@ -74,14 +74,15 @@ public class GenericAdapter {
 	@Autowired
     private ActivoManager activoManager;
 	
-	@Autowired
-	private ActivoApi activoApi;
 	
 	@Autowired
 	private ActivoAdapter activoAdapter;
 	
 	@Autowired
 	private AgrupacionAdapter agrupacionAdapter;
+	
+	@Autowired
+	private TramitacionOfertasApi tramitacionOfertasApi;
 	
 	@Resource
 	private Properties appProperties;
@@ -484,13 +485,12 @@ public class GenericAdapter {
 				dtoTramitar.setCodigoEstadoOferta(DDEstadoOferta.CODIGO_ACEPTADA);
 				
 				if(!esAgrupacion) {				
-					dtoTramitar.setIdActivo(ofertaOrigen.getActivoPrincipal().getId()); 
-					activoApi.saveOfertaActivo(dtoTramitar);
+					dtoTramitar.setIdActivo(ofertaOrigen.getActivoPrincipal().getId());
 				}else {
 					dtoTramitar.setIdAgrupacion(ofertaOrigen.getAgrupacion().getId());
-					agrupacionAdapter.saveOfertaAgrupacion(dtoTramitar);
 				}
 				
+				tramitacionOfertasApi.saveOferta(dtoTramitar, esAgrupacion,false);				
 				
 				logger.error("Oferta clonada tramitada correctamente.");
 				

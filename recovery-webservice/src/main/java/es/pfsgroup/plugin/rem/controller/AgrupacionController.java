@@ -78,7 +78,6 @@ import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
 @Controller
 public class AgrupacionController extends ParadiseJsonController {
 
-	private static final String FALTAN_DATOS = "Faltan datos para proponer";
 	private static final String RESPONSE_SUCCESS_KEY = "success";
 	private static final String RESPONSE_MESSAGE_KEY = "msg";
 	private static final String RESPONSE_DATA_KEY = "data";
@@ -102,9 +101,6 @@ public class AgrupacionController extends ParadiseJsonController {
 	@Autowired
 	private AgrupacionAdjuntosAdapter agrupacionAdjuntos;
 
-	@Autowired
-	private OfertaApi ofertaApi;
-	
 	@Autowired
 	private UsuarioManager usuarioManager;
 
@@ -461,30 +457,6 @@ public class AgrupacionController extends ParadiseJsonController {
 			logger.error("error guardando agrupacion!",e);
 			model.put("success", false);
 			//trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "guardar", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
-		}
-
-		return createModelAndViewJson(model);
-	}
-
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveOfertaAgrupacion(DtoOfertaActivo dtoOferta, ModelMap model) {
-
-		try {
-			boolean success = adapter.saveOfertaAgrupacion(dtoOferta);
-			model.put("success", success);
-		}catch (JsonViewerException jvex) {
-			model.put("success", false);
-			model.put("msg", jvex.getMessage());
-		}catch (Exception e) {
-			logger.error("error actualizando oferta",e);
-			if (e.getMessage().equals(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG)) {
-				model.put("msg", AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
-				model.put("success", false);
-			} else {
-				logger.error("error actualizando oferta",e);
-				model.put("success", false);
-			}
 		}
 
 		return createModelAndViewJson(model);

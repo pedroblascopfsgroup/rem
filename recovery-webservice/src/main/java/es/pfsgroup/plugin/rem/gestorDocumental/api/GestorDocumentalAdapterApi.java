@@ -68,7 +68,7 @@ public interface GestorDocumentalAdapterApi {
 	
 	Integer crearJunta(ActivoJuntaPropietarios activoJunta, String username) throws GestorDocumentalException;
 	
-	Integer crearExpedienteComercialTransactional(Long idEco, String username) throws GestorDocumentalException;
+	Integer crearExpedienteComercialTransactional(ExpedienteComercial idEco, String username) throws GestorDocumentalException;
 	
 	void crearRelacionActivosExpediente(ExpedienteComercial expedienteComercial, Long idDocRestClient, String[] listaActivos, String login, CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException ;
 	

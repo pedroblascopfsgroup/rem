@@ -41,7 +41,6 @@ import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearExpedienteComercia
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearGastoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearJuntaDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearPlusvaliaDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearProveedorDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearProyectoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearTributoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.RecoveryToGestorExpAssembler;
@@ -902,13 +901,12 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 //------------------------------------------------------------ FIN JUNTA ----------------------------------------------------------------
 	
 
-	public Integer crearExpedienteComercialTransactional(Long idEco, String username) throws GestorDocumentalException {
+	public Integer crearExpedienteComercialTransactional(ExpedienteComercial eco, String username) throws GestorDocumentalException {
 		Integer resultado = null;
 		TransactionStatus transaction = null;
 
 		try{
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-			ExpedienteComercial eco = expedienteComercialApi.findOne(idEco);
 			resultado = this.crearExpedienteComercial(eco, username);
 			transactionManager.commit(transaction);
 

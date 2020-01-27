@@ -92,7 +92,6 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_OFERTAS_GTAM = "CMOFG";
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_GESTION_ECONOMICA_TRABAJOS = "CMGET";
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_FORMALIZACION="FORM";
-
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_ESTADOS_PUBLICACION = "CMEP";
 	public static final String CODE_FILE_BULKUPLOAD_DISCLAIMER_PUBLICACION = "SUFDP";
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_DISTRIBUCION_PRECIOS = "CDP";
@@ -103,6 +102,8 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 	public static final String CODE_FILE_BULKUPLOAD_CONTROL_TRIBUTOS="MASCT";
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_RECLAMACIONES_PLUSVALIAS="MRP";
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_JUNTAS="CMJOE";
+	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_INSCRIPCIONES="CMIN";
+	public static final String CODE_FILE_BULKUPLOAD_TOMA_POSESION="MSTP";
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_FASES_PUBLICACION ="CMFP";
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_API_VALIDATOR="CMCAV";
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_SUPER_BORRADO_TRABAJOS = "SUBT";

@@ -629,7 +629,6 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 								}
 								
 			                },
-			                
 							{ 
 								xtype: 'currencyfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.importe.adjudicacion'),
@@ -694,6 +693,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                		value: '{datosRegistrales.idAsunto}',
 			                		readOnly: '{datosRegistrales.unidadAlquilable}'
 			                	}
+			                	
 			                },
 			                {
 			                	xtype: 'numberfieldbase',

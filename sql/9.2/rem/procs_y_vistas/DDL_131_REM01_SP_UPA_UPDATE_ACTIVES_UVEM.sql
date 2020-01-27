@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20191219
+--## AUTOR=Oscar Diestre
+--## FECHA_CREACION=20200117
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-6045
@@ -21,6 +21,7 @@
 --##    0.8 Daniel Algaba - HREOS-8087 - Modificación cálculo situación del título
 --##    0.9 Daniel Algaba - HREOS-8737 - Se añaden nuevas casuísticas en la actualización/inserción de registros en ACT_AHT_HIST_TRAM_TITULO
 --##    0.10 Oscar Diestre - REMVIP-6045 - Modificado merge en ln524 3.1 BIE_DATOS_REGISTRALES por error al hacer la conversión
+--##    0.11 Oscar Diestre - REMVIP-6203 - Modificados merges asociados a ACT_ACTIVO para minimizar cambios y comentados merges duplicados ( parte 4 )
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -170,6 +171,9 @@ BEGIN
                   INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_UVEM = AUX.ACT_NUMERO_UVEM
                   INNER JOIN '||V_ESQUEMA||'.ACT_ESA_ESTADOS_ACT_UVEM ESA ON ESA.ACT_ID = ACT.ACT_ID
 				  WHERE REM = 1
+				  AND ( ( ACT.ACT_EN_TRAMITE <> DECODE(ESA.COESEN,''01'', 1, ''02'', 0, 0) ) OR ( COALESCE( ACT.ACT_ADMISION, 0 ) = 0 ) ) 
+
+
 			) TEMP
 			ON (ACT.ACT_NUM_ACTIVO_UVEM = TEMP.ACT_NUMERO_UVEM)
 			WHEN MATCHED THEN UPDATE SET
@@ -201,11 +205,10 @@ BEGIN
             WHERE
               TEMP.REM = 1
               AND CRA.DD_CRA_CODIGO = ''03''
-               AND
-             (ACT.ACT_VPO IS NULL
-              AND
-              TEMP.REGIMEN_PROTECCION IS NOT NULL)
                and act.borrado = 0
+	      AND  (    ACT.ACT_VPO <> TEMP.REGIMEN_PROTECCION 
+                 OR ( ACT_VPO IS NULL AND TEMP.REGIMEN_PROTECCION IS NOT NULL )
+                 OR ( ACT_VPO IS NOT NULL AND TEMP.REGIMEN_PROTECCION IS NULL ) )
           ) TMP
           ON (TMP.ACT_ID = ACT.ACT_ID)
           WHEN MATCHED THEN UPDATE SET
@@ -241,9 +244,9 @@ BEGIN
           ACT.ACT_LLAVES_NECESARIAS = TMP.LLAVES_NECESARIAS,
           ACT.USUARIOMODIFICAR = '''||V_USUARIO||''',
           ACT.FECHAMODIFICAR = SYSDATE
-          WHERE (ACT.ACT_LLAVES_NECESARIAS <> TMP.LLAVES_NECESARIAS
-          OR ACT.ACT_LLAVES_NECESARIAS IS NULL
-          OR TMP.LLAVES_NECESARIAS IS NULL)
+          WHERE (     ACT.ACT_LLAVES_NECESARIAS <> TMP.LLAVES_NECESARIAS 
+                   OR ACT.ACT_LLAVES_NECESARIAS IS NULL AND TMP.LLAVES_NECESARIAS IS NOT NULL 
+                   OR ACT.ACT_LLAVES_NECESARIAS IS NOT NULL AND TMP.LLAVES_NECESARIAS IS NULL  )       
           '
           ;
           EXECUTE IMMEDIATE V_SQL;
@@ -266,11 +269,10 @@ BEGIN
             WHERE
               TEMP.REM = 1
               AND CRA.DD_CRA_CODIGO = ''03''
-               AND
-             (ACT.ACT_LLAVES_FECHA_RECEP IS NULL
-              AND
-              TEMP.FEC_RECEP_LLAVES IS NOT NULL)
                and act.borrado = 0
+	         AND (    ACT.ACT_LLAVES_FECHA_RECEP <> TEMP.FEC_RECEP_LLAVES 
+                   OR ( ACT.ACT_LLAVES_FECHA_RECEP IS NULL AND TEMP.FEC_RECEP_LLAVES IS NOT NULL )
+                   OR ( ACT.ACT_LLAVES_FECHA_RECEP IS NOT NULL AND TEMP.FEC_RECEP_LLAVES IS NULL ) ) 
           ) TMP
           ON (TMP.ACT_ID = ACT.ACT_ID)
           WHEN MATCHED THEN UPDATE SET
@@ -388,7 +390,7 @@ BEGIN
    		WHERE APR.REM = 1
    		AND CRA.DD_CRA_CODIGO = ''03''
 		AND ACT.BORRADO = 0
-		AND (DECODE(EXISTEN_CARGAS_RECOVERY, 1, 0, 2, 0, 3, 1, null, 0) <> ACT.ACT_CON_CARGAS OR EXISTEN_CARGAS_RECOVERY IS NULL OR ACT.ACT_CON_CARGAS IS NULL)
+		AND (DECODE(EXISTEN_CARGAS_RECOVERY, 1, 0, 2, 0, 3, 1, null, 0) <> ACT.ACT_CON_CARGAS )
 	     ) T2 ON (T2.ACT_ID = T1.ACT_ID)
 		WHEN MATCHED THEN UPDATE SET
 		T1.ACT_CON_CARGAS = T2.CARGAS_UVEM,
@@ -793,6 +795,7 @@ BEGIN
 ---- [4] ACT_ACTIVO ----
 ------------------------
 --[4.1]--ACT_VPO
+/*
           V_SQL := '
           MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO ACT USING
           (
@@ -814,6 +817,9 @@ BEGIN
               AND
               TEMP.REGIMEN_PROTECCION IS NOT NULL)
                and act.borrado = 0
+	      AND  (    ACT.ACT_VPO <> TEMP.REGIMEN_PROTECCION 
+                 OR ( ACT_VPO IS NULL AND TEMP.REGIMEN_PROTECCION IS NOT NULL )
+                 OR ( ACT_VPO IS NOT NULL AND TEMP.REGIMEN_PROTECCION IS NULL ) )
           ) TMP
           ON (TMP.ACT_ID = ACT.ACT_ID)
           WHEN MATCHED THEN UPDATE SET
@@ -825,7 +831,10 @@ BEGIN
           EXECUTE IMMEDIATE V_SQL;
           V_NUM_TABLAS := SQL%ROWCOUNT;
 
+*/
 --[4.2]--ACT_LLAVES_NECESARIAS
+
+/*
           V_SQL := '
           MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO ACT USING
           (
@@ -849,9 +858,9 @@ BEGIN
           ACT.ACT_LLAVES_NECESARIAS = TMP.LLAVES_NECESARIAS,
           ACT.USUARIOMODIFICAR = '''||V_USUARIO||''',
           ACT.FECHAMODIFICAR = SYSDATE
-          WHERE (ACT.ACT_LLAVES_NECESARIAS <> TMP.LLAVES_NECESARIAS
-          OR ACT.ACT_LLAVES_NECESARIAS IS NULL
-          OR TMP.LLAVES_NECESARIAS IS NULL)
+          WHERE (    ACT.ACT_LLAVES_NECESARIAS <> TMP.LLAVES_NECESARIAS
+		  OR ( ACT.ACT_LLAVES_NECESARIAS IS NULL AND ACT_LLAVES_NECESARIAS IS NOT NULL )
+		  OR ( ACT.ACT_LLAVES_NECESARIAS IS NOT NULL AND ACT_LLAVES_NECESARIAS IS NULL ) )
           '
           ;
           EXECUTE IMMEDIATE V_SQL;
@@ -879,6 +888,7 @@ BEGIN
               AND
               TEMP.FEC_RECEP_LLAVES IS NOT NULL)
                and act.borrado = 0
+	      AND ACT.ACT_LLAVES_FECHA_RECEP <> TEMP.FEC_RECEP_LLAVES	
           ) TMP
           ON (TMP.ACT_ID = ACT.ACT_ID)
           WHEN MATCHED THEN UPDATE SET
@@ -890,8 +900,11 @@ BEGIN
           EXECUTE IMMEDIATE V_SQL;
           V_NUM_TABLAS := V_NUM_TABLAS + SQL%ROWCOUNT;
 
+*/
+
 
 --[4.4]--ACT_NUM_INMOVILIZADO_BNK
+/*
           V_SQL := '
           MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO ACT USING
           (
@@ -920,10 +933,10 @@ BEGIN
           ;
           EXECUTE IMMEDIATE V_SQL;
           V_NUM_TABLAS := V_NUM_TABLAS + SQL%ROWCOUNT;
-
+*/
 
 --[4.5]--DD_ENA_ID
-
+/*
           V_SQL := '
           MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO ACT USING
           (
@@ -952,9 +965,11 @@ BEGIN
           EXECUTE IMMEDIATE V_SQL;
           V_NUM_TABLAS := V_NUM_TABLAS + SQL%ROWCOUNT;
 
+*/
 
 --[4.6] COTSIN -> DD_SAC_ID (SUBTIPO ACTIVO)
-         
+
+/*
          V_SQL := '
           MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO ACT USING
           (  WITH TEMP AS (
@@ -982,10 +997,10 @@ BEGIN
           EXECUTE IMMEDIATE V_SQL;
           V_NUM_TABLAS := V_NUM_TABLAS + SQL%ROWCOUNT;
 	
-
+*/
 	
 --[4.7] COEXCA -> ACT_CON_CARGAS (EXISTEN_CARGAS_RECOVERY)
-
+/*
  	V_SQL := '
           MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO T1 USING(
     		SELECT DECODE(APR.EXISTEN_CARGAS_RECOVERY, 1, 0, 2, 0, 3, 1, null, 0) AS CARGAS_UVEM, ACT.ACT_CON_CARGAS, ACT.ACT_ID FROM '||V_ESQUEMA||'.APR_AUX_STOCK_UVEM_TO_REM APR
@@ -1004,9 +1019,10 @@ BEGIN
           ;
           EXECUTE IMMEDIATE V_SQL;
           V_NUM_TABLAS := V_NUM_TABLAS + SQL%ROWCOUNT;
+*/
 
 --[4.8] DD_SCR_ID -> ACTUALIZAR SUBCARTERA
-
+/*
  	V_SQL := '
           MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO T1 
 		USING(
@@ -1028,6 +1044,7 @@ BEGIN
 
           EXECUTE IMMEDIATE V_SQL;
           V_NUM_TABLAS := V_NUM_TABLAS + SQL%ROWCOUNT;
+*/
 
 --[4.9] IMPORTE_VENTA y FECHA_VENTA -> ACT_VENTA_EXTERNA_IMPORTE y ACT_VENTA_EXTERNA_FECHA
 
@@ -1054,6 +1071,7 @@ BEGIN
 		  AND (ACT.ACT_VENTA_EXTERNA_FECHA IS NULL
 		  OR NVL(ACT.ACT_VENTA_EXTERNA_IMPORTE,0) = 0))
 		  OR (APR.IMPORTE_VENTA <> ACT.ACT_VENTA_EXTERNA_IMPORTE OR APR.FEC_VENTA <> ACT.ACT_VENTA_EXTERNA_FECHA))
+		 AND ACT.DD_SCM_ID <> (SELECT DD_SCM_ID FROM DD_SCM_SITUACION_COMERCIAL WHERE DD_SCM_CODIGO = ''05'')
           ) TMP
           ON (TMP.ACT_ID = ACT.ACT_ID)
           WHEN MATCHED THEN UPDATE SET
@@ -1064,12 +1082,14 @@ BEGIN
           ACT.FECHAMODIFICAR = SYSDATE'
           ;
           EXECUTE IMMEDIATE V_SQL2;
-          V_NUM_TABLAS := V_NUM_TABLAS + SQL%ROWCOUNT;
+         -- V_NUM_TABLAS := V_NUM_TABLAS + SQL%ROWCOUNT;
+	  V_NUM_TABLAS := SQL%ROWCOUNT;
 
 
 
 
 --[4.9] ACT_ACTIVO -> ACTUALIZAR ACT_ADMISION/COESEN
+/*
 		V_SQL := '
 		  MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO ACT
 			USING (
@@ -1090,6 +1110,7 @@ BEGIN
 
 		EXECUTE IMMEDIATE V_SQL;
 		V_NUM_TABLAS := V_NUM_TABLAS + SQL%ROWCOUNT;
+*/
 
 /*--[4.10] ACT_PAC_PERIMETRO_ACTIVO -> ACTUALIZAR CHECKS QUE PASAN A FORMALIZADO
 
@@ -1129,6 +1150,9 @@ BEGIN
                 INNER JOIN '||V_ESQUEMA||'.DD_STA_SUBTIPO_TITULO_ACTIVO STA 
                     ON CASE WHEN APR.COD_ENTRADA_ACTIVO = ''02'' THEN ''04''
                                                                  ELSE APR.COD_ENTRADA_ACTIVO END = STA.DD_STA_CODIGO   
+                INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO                   ACT
+                    ON ACT.ACT_NUM_ACTIVO_UVEM = APR.ACT_NUMERO_UVEM                                               
+                AND ( ( ACT.DD_STA_ID <> STA.DD_STA_ID ) OR ( ACT.DD_TTA_ID <> STA.DD_TTA_ID ) )
                 WHERE 1 = 1
 
 		) T2 ON (T2.ACT_NUMERO_UVEM = T1.ACT_NUM_ACTIVO_UVEM )

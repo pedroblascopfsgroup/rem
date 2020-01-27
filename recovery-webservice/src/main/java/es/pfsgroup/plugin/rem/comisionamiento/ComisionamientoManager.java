@@ -122,81 +122,82 @@ public class ComisionamientoManager implements ComisionamientoApi {
 			diferenciaFechaVisitaYAlta = Math.abs((oferta.getFechaOrigenLead().getTime()-oferta.getFechaAlta().getTime())/86400000);
 		}
 		
-		if(prescriptorOferta.equals(prescriptorVisita) && prescriptorOferta.equals(realizadorVisita)) {
-			dto.setPrescriptorCodRem(prescriptorOferta);
-			dto.setTipoAccion(DDAccionGastos.CODIGO_PRE_Y_COL);
-			
-			if(DDOrigenComprador.CODIGO_ORC_API_AJENO.equals(codLeadOrigin) && diferenciaFechaVisitaYAlta != null) {
+		if(prescriptorOferta != null ) {
+			if(prescriptorOferta.equals(prescriptorVisita) && prescriptorOferta.equals(realizadorVisita)) {
+				dto.setPrescriptorCodRem(prescriptorOferta);
+				dto.setTipoAccion(DDAccionGastos.CODIGO_PRE_Y_COL);
 				
-				if(diferenciaFechaVisitaYAlta > 90L) {
-					dto.setOrigenLead(DDOrigenComprador.CODIGO_ORC_API_PROPIO);
+				if(DDOrigenComprador.CODIGO_ORC_API_AJENO.equals(codLeadOrigin) && diferenciaFechaVisitaYAlta != null) {
 					
-					listAcciones.add(dto);
+					if(diferenciaFechaVisitaYAlta > 90L) {
+						dto.setOrigenLead(DDOrigenComprador.CODIGO_ORC_API_PROPIO);
+						
+						listAcciones.add(dto);
+					}else {
+						dto.setOrigenLead(codLeadOrigin);
+						
+						listAcciones.add(dto);
+						
+						dto = dtoOriginal;
+						
+						dto.setPrescriptorCodRem(prescriptorVisita);
+						dto.setTipoAccion(DDAccionGastos.CODIGO_API_ORI_LEA);
+						dto.setOrigenLead(codLeadOrigin);
+						listAcciones.add(dto);
+					}
 				}else {
 					dto.setOrigenLead(codLeadOrigin);
 					
 					listAcciones.add(dto);
-					
-					dto = dtoOriginal;
-					
-					dto.setPrescriptorCodRem(prescriptorVisita);
-					dto.setTipoAccion(DDAccionGastos.CODIGO_API_ORI_LEA);
-					dto.setOrigenLead(codLeadOrigin);
-					listAcciones.add(dto);
 				}
-			}else {
-				dto.setOrigenLead(codLeadOrigin);
-				
-				listAcciones.add(dto);
-			}
-		} else if(!prescriptorOferta.equals(prescriptorVisita) && prescriptorOferta.equals(realizadorVisita)
-				&& DDOrigenComprador.CODIGO_ORC_HRE.equals(codLeadOrigin)) {
-			dto.setPrescriptorCodRem(prescriptorOferta);
-			dto.setTipoAccion(DDAccionGastos.CODIGO_COLABORACION);
-			dto.setOrigenLead(codLeadOrigin);
-			
-			listAcciones.add(dto);
-			
-		} else if(prescriptorOferta.equals(prescriptorVisita) && !prescriptorOferta.equals(realizadorVisita)) {
-			dto.setPrescriptorCodRem(realizadorVisita);
-			dto.setTipoAccion(DDAccionGastos.CODIGO_COLABORACION);
-			dto.setOrigenLead(codLeadOrigin);
-			
-			listAcciones.add(dto);
-			
-			if(DDOrigenComprador.CODIGO_ORC_API_AJENO.equals(codLeadOrigin)) {
-				
-				dto = dtoOriginal;
-				
+			} else if(!prescriptorOferta.equals(prescriptorVisita) && prescriptorOferta.equals(realizadorVisita)
+					&& DDOrigenComprador.CODIGO_ORC_HRE.equals(codLeadOrigin)) {
 				dto.setPrescriptorCodRem(prescriptorOferta);
-				dto.setTipoAccion(DDAccionGastos.CODIGO_PRE_Y_COL);
+				dto.setTipoAccion(DDAccionGastos.CODIGO_COLABORACION);
 				dto.setOrigenLead(codLeadOrigin);
 				
 				listAcciones.add(dto);
 				
-				if(diferenciaFechaVisitaYAlta != null && diferenciaFechaVisitaYAlta <= 90L) {
+			} else if(prescriptorOferta.equals(prescriptorVisita) && !prescriptorOferta.equals(realizadorVisita)) {
+				dto.setPrescriptorCodRem(realizadorVisita);
+				dto.setTipoAccion(DDAccionGastos.CODIGO_COLABORACION);
+				dto.setOrigenLead(codLeadOrigin);
+				
+				listAcciones.add(dto);
+				
+				if(DDOrigenComprador.CODIGO_ORC_API_AJENO.equals(codLeadOrigin)) {
 					
 					dto = dtoOriginal;
 					
-					dto.setPrescriptorCodRem(prescriptorVisita);
-					dto.setTipoAccion(DDAccionGastos.CODIGO_API_ORI_LEA);
+					dto.setPrescriptorCodRem(prescriptorOferta);
+					dto.setTipoAccion(DDAccionGastos.CODIGO_PRE_Y_COL);
 					dto.setOrigenLead(codLeadOrigin);
 					
 					listAcciones.add(dto);
-				} else {
-					List<DtoPrescriptoresComision> listaSup = new ArrayList<DtoPrescriptoresComision>();
 					
-					for(DtoPrescriptoresComision dtoLista: listAcciones) {
-						dtoLista.setOrigenLead(DDOrigenComprador.CODIGO_ORC_API_PROPIO);
+					if(diferenciaFechaVisitaYAlta != null && diferenciaFechaVisitaYAlta <= 90L) {
 						
-						listaSup.add(dtoLista);
+						dto = dtoOriginal;
+						
+						dto.setPrescriptorCodRem(prescriptorVisita);
+						dto.setTipoAccion(DDAccionGastos.CODIGO_API_ORI_LEA);
+						dto.setOrigenLead(codLeadOrigin);
+						
+						listAcciones.add(dto);
+					} else {
+						List<DtoPrescriptoresComision> listaSup = new ArrayList<DtoPrescriptoresComision>();
+						
+						for(DtoPrescriptoresComision dtoLista: listAcciones) {
+							dtoLista.setOrigenLead(DDOrigenComprador.CODIGO_ORC_API_PROPIO);
+							
+							listaSup.add(dtoLista);
+						}
+						
+						listAcciones = listaSup;
 					}
-					
-					listAcciones = listaSup;
 				}
 			}
 		}
-		
 		
 		
 		return listAcciones;

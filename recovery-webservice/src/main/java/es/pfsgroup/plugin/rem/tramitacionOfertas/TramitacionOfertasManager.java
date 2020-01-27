@@ -891,38 +891,31 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	}
 	
 	@Transactional(readOnly = false)
-	private ExpedienteComercial crearExpedienteReserva(ExpedienteComercial expedienteComercial) {
+	public ExpedienteComercial crearExpedienteReserva(ExpedienteComercial expedienteComercial) {
 		// HREOS-2799
 		// Activos de Cajamar, debe tener en Reserva - tipo de Arras por
 		// defecto: Confirmatorias
 		Oferta oferta = expedienteComercial.getOferta();
 		DDTiposArras tipoArras = null;
 		if(!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())){
-			if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
-				tipoArras = (DDTiposArras) utilDiccionarioApi
-						.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.CONFIRMATORIAS);
-			}
-			if(DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-				|| DDCartera.CODIGO_CARTERA_ZEUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-	            
+			if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+				|| 	((DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))
+						&& expedienteComercial.getCondicionante().getSolicitaReserva() == 1)){
+				tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.CONFIRMATORIAS);
 			}
 			
-			if ( (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-					&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))
-					&& expedienteComercial.getCondicionante().getSolicitaReserva() == 1)
-				tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.CONFIRMATORIAS);
-			if(tipoArras != null){
-				if (Checks.esNulo(expedienteComercial.getReserva()) ) {
+				if (tipoArras != null && Checks.esNulo(expedienteComercial.getReserva()) ) {
 					Reserva reservaExpediente = expedienteComercialApi.createReservaExpediente(expedienteComercial);
 					if(!Checks.esNulo(reservaExpediente)) {
 						reservaExpediente.setTipoArras(tipoArras);	
 						genericDao.save(Reserva.class, reservaExpediente);
 					}
 
-				} else {
+				} 
+				if (tipoArras != null &&  !Checks.esNulo(expedienteComercial.getReserva())){
 					expedienteComercial.getReserva().setTipoArras(tipoArras);
 				}
-			}
 		}
 
 		return expedienteComercial;

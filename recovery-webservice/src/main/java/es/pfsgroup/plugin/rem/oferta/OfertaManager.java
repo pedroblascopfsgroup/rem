@@ -2953,7 +2953,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 				// TODO FIN PARTE CALCULO TIPO PRODUCTO
 				
-				if (!Checks.esNulo(calculoComision) && calculoComision.getCommissionAmount() != null && calculoComision.getMaxCommissionAmount() != null 
+				if (calculoComision != null && calculoComision.getCommissionAmount() != null && calculoComision.getMaxCommissionAmount() != null 
 						&& calculoComision.getMinCommissionAmount() != null) {
 					dto.setHonorarios(comisionamientoApi.calculaHonorario(calculoComision));
 					dto.setImporteOriginal(calculoComision.getCommissionAmount());

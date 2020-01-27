@@ -93,6 +93,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	private static final String BUZON_FOR_APPLE = "buzonforapple";
 	private static final String BUZON_CES_APPLE = "buzoncesapple";
 	private static final String BUZON_BOARDING = "buzonboarding";
+	private static final String BUZON_OFR_SAREB = "buzonofrsareb";
 	
 	//Variables de tareas
 	private static final String CODIGO_T017_ANALISIS_PM = "T017_AnalisisPM";
@@ -192,6 +193,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		Usuario buzonOfertaApple = usuarioManager.getByUsername(BUZON_OFR_APPLE);
 		Usuario buzonFormApple = usuarioManager.getByUsername(BUZON_FOR_APPLE);
 		Usuario buzonBoarding = usuarioManager.getByUsername(BUZON_BOARDING);
+		Usuario buzonOfertaSareb = usuarioManager.getByUsername(BUZON_OFR_SAREB);
 		Usuario usuarioBackOffice = null;
 		Usuario supervisorComercial = null;
 		ActivoProveedor proveedor = oferta.getPrescriptor();
@@ -252,6 +254,9 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				}
 				if(!Checks.esNulo(buzonFormApple) && (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
 					destinatarios.add(buzonFormApple.getEmail());
+				}
+				if(!Checks.esNulo(buzonOfertaSareb)&& (!Checks.esNulo(activo.getCartera()) && DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo()))) {
+					destinatarios.add(buzonOfertaSareb.getEmail());
 				}
 
 				if(oferta.getActivoPrincipal() != null){
@@ -700,18 +705,23 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 						gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GIAFORM"))),
 						gestores);
 				
-				Filter filterUsu = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id",
-						gesBackInmobiliario.getId());
-				List<GestorSustituto> sgsList = genericDao.getList(GestorSustituto.class, filterUsu);
-				if (!Checks.esNulo(sgsList)) {
-					for (GestorSustituto sgs : sgsList) {
-						if (!Checks.esNulo(sgs)) {
-							if (!Checks.esNulo(sgs.getFechaFin()) && sgs.getFechaFin().after(new Date())
-									&& !Checks.esNulo(sgs.getFechaInicio())
-									&& (sgs.getFechaInicio().before(new Date())
-											|| sgs.getFechaInicio().equals(new Date()))) {
-								addMail(GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_SUS, extractEmail(sgs.getUsuarioGestorSustituto()),
-										gestores);
+				Filter filterUsu = null;
+				
+				if(!Checks.esNulo(gesBackInmobiliario)) {
+					filterUsu = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id",
+							gesBackInmobiliario.getId());
+					
+					List<GestorSustituto> sgsList = genericDao.getList(GestorSustituto.class, filterUsu);
+					if (!Checks.esNulo(sgsList)) {
+						for (GestorSustituto sgs : sgsList) {
+							if (!Checks.esNulo(sgs)) {
+								if (!Checks.esNulo(sgs.getFechaFin()) && sgs.getFechaFin().after(new Date())
+										&& !Checks.esNulo(sgs.getFechaInicio())
+										&& (sgs.getFechaInicio().before(new Date())
+												|| sgs.getFechaInicio().equals(new Date()))) {
+									addMail(GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_SUS, extractEmail(sgs.getUsuarioGestorSustituto()),
+											gestores);
+								}
 							}
 						}
 					}

@@ -43,8 +43,8 @@ import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
+import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
-import es.pfsgroup.plugin.rem.jbpm.ValidateJbpmManager;
 import es.pfsgroup.plugin.rem.jbpm.handler.listener.ActivoGenerarSaltoImpl;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -121,13 +121,14 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 	@Autowired
 	private ResolucionComiteApi resolucionComiteApi;
 	
-	@Autowired
-	private ValidateJbpmManager validateJbpmManager;
 	
 	@Resource
 	private MessageService messageServices;
 
 	private MSVHojaExcel excel;
+	
+	@Autowired
+	private TramitacionOfertasApi tramitacionOfertasManager;
 
 	@Override
 	public String getValidOperation() {
@@ -877,7 +878,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			dtoOferta.setIdAgrupacion(idAgrupacion);
 			dtoOferta.setCodigoEstadoOferta(DDEstadoOferta.CODIGO_ACEPTADA);
 
-			agrupacionAdapter.saveOfertaAgrupacion(dtoOferta);
+			tramitacionOfertasManager.saveOferta(dtoOferta, idAgrupacion != null,false);
 			transactionManager.commit(transaction);
 		} catch (Error err) {
 			throw err;

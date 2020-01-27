@@ -45,7 +45,6 @@ import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
-import es.pfsgroup.plugin.rem.jbpm.ValidateJbpmManager;
 import es.pfsgroup.plugin.rem.jbpm.handler.listener.ActivoGenerarSaltoImpl;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -122,8 +121,6 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 	@Autowired
 	private ResolucionComiteApi resolucionComiteApi;
 	
-	@Autowired
-	private ValidateJbpmManager validateJbpmManager;
 	
 	@Resource
 	private MessageService messageServices;
@@ -881,7 +878,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			dtoOferta.setIdAgrupacion(idAgrupacion);
 			dtoOferta.setCodigoEstadoOferta(DDEstadoOferta.CODIGO_ACEPTADA);
 
-			tramitacionOfertasManager.saveOferta(dtoOferta, idAgrupacion != null);
+			tramitacionOfertasManager.saveOferta(dtoOferta, idAgrupacion != null,false);
 			transactionManager.commit(transaction);
 		} catch (Error err) {
 			throw err;

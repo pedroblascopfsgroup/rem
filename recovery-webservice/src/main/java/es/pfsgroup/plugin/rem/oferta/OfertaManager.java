@@ -1280,7 +1280,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, tramitacionOfertasManager.getSubtipoTrabajoByOferta(oferta));
 
 				Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null, false);
-				tramitacionOfertasManager.crearExpediente(oferta, trabajo, null);
+				tramitacionOfertasManager.crearExpediente(oferta, trabajo, null, oferta.getActivoPrincipal());
 				ActivoTramite activoTramite = trabajoApi.createTramiteTrabajo(trabajo);
 
 				adapter.saltoInstruccionesReserva(activoTramite.getProcessBPM());
@@ -4595,7 +4595,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						return null;
 					}
 				}
-				if(!Checks.estaVacio(listaGestoresActivosOferta) && listaGestoresActivosOferta.size() == 1) {
+				if(listaGestoresActivosOferta != null && listaGestoresActivosOferta.size() == 1
+						&& listaGestoresActivosOferta.get(0) != null) {
 					return listaGestoresActivosOferta.get(0).getUsuario();
 				}
 			}

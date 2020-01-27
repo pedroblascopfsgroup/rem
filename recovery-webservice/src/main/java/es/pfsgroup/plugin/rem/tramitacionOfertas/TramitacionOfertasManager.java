@@ -23,7 +23,6 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
-import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -107,138 +106,145 @@ import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.rest.dto.ComisionDto;
 import es.pfsgroup.plugin.rem.thread.ContenedorExpComercial;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
+import es.pfsgroup.plugin.rem.thread.TramitacionOfertasAsync;
 
 @Service("tramitacionOfertasManager")
 public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 	protected static final Log logger = LogFactory.getLog(TramitacionOfertasManager.class);
-	
+
 	private static final String AVISO_MENSAJE_ACTIVO_EN_LOTE_COMERCIAL = "activo.aviso.aceptatar.oferta.activo.dentro.lote.comercial";
 	private static final String AVISO_MENSAJE_TIPO_NUMERO_DOCUMENTO = "activo.motivo.oferta.tipo.numero.documento";
 	private static final String AVISO_MENSAJE_CLIENTE_OBLIGATORIO = "activo.motivo.oferta.cliente";
 	private static final String AVISO_MENSAJE_EXISTEN_OFERTAS_VENTA = "activo.motivo.oferta.existe.venta";
 	private static final String AVISO_MENSAJE_ACITVO_ALQUILADO_O_OCUPADO = "activo.motivo.oferta.alquilado.ocupado";
 	private static final String AVISO_MENSAJE_EXPEDIENTE_ANULADO_POR_GENCAT = "activo.motivo.oferta.anulado.gencat";
-	private static final String EXISTEN_UNIDADES_ALQUILABLES_CON_OFERTAS_VIVAS ="activo.matriz.con.unidades.alquilables.ofertas.vivas";
-	private static final String EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS ="activo.unidad.alquilable.con.activo.matriz.ofertas.vivas";
-	private static final String MAESTRO_ORIGEN_WCOM="WCOM";
+	private static final String EXISTEN_UNIDADES_ALQUILABLES_CON_OFERTAS_VIVAS = "activo.matriz.con.unidades.alquilables.ofertas.vivas";
+	private static final String EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS = "activo.unidad.alquilable.con.activo.matriz.ofertas.vivas";
+	private static final String AGRUPACION_SIN_FORMALIZACION = "agrupacion.sin.formalizacion";
+	private static final String MAESTRO_ORIGEN_WCOM = "WCOM";
 	private static final Integer ES_FORMALIZABLE = new Integer(1);
 	private static final String FALTAN_DATOS = "Faltan datos para proponer";
-	
+
 	@Resource
 	private MessageService messageServices;
-	
+
 	@Autowired
 	private OfertaManager ofertaManager;
-	
+
 	@Autowired
 	private ActivoAdapter activoAdapter;
-	
-	@Autowired
-	private ExpedienteComercialDao expedienteComercialDao;
-	
-	@Autowired
-	private GenericABMDao genericDao;
-	
-	@Autowired
-	private UtilDiccionarioApi utilDiccionarioApi;
-	
+
 	@Autowired
 	private ActivoManager activoManager;
-	
+
+	@Autowired
+	private ExpedienteComercialDao expedienteComercialDao;
+
+	@Autowired
+	private GenericABMDao genericDao;
+
+	@Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
+
 	@Autowired
 	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
-	
+
 	@Autowired
 	private ActivoDao activoDao;
-	
+
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
-	
+
 	@Autowired
 	private GencatApi gencatApi;
-	
+
 	@Autowired
 	private TrabajoApi trabajoApi;
-	
+
 	@Autowired
 	private ApiProxyFactory proxyFactory;
-	
+
 	@Autowired
 	private OfertaDao ofertaDao;
-	
+
 	@Autowired
 	private ActivoAgrupacionApi activoAgrupacionApi;
-	
+
 	@Autowired
 	private NotificatorServiceSancionOfertaAceptacionYRechazo notificatorServiceSancionOfertaAceptacionYRechazo;
-	
+
 	@Resource(name = "entityTransactionManager")
-    private PlatformTransactionManager transactionManager;
-	
+	private PlatformTransactionManager transactionManager;
+
 	@Autowired
 	private OfertaApi ofertaApi;
-	
+
 	@Resource
 	private Properties appProperties;
-	
+
 	@Autowired
 	private GenericAdapter genericAdapter;
-	
+
 	@Autowired
 	private List<CondicionTanteoApi> condiciones;
-	
-	@Autowired
-	private UsuarioManager usuarioApi;
-	
+
 	@Autowired
 	private GestorExpedienteComercialApi gestorExpedienteComercialApi;
-	
+
 	@Autowired
 	private GestorExpedienteComercialDao gestorExpedienteComercialDao;
-	
+
 	@Autowired
-	private AgrupacionAdapter adapter;
-	
+	private AgrupacionAdapter agrupacionAdapter;
+
 	@Autowired
 	private ActivoApi activoApi;
 	
-	@Autowired
-	private GastosExpedienteApi gastosExpedienteApi;
-	
 	@Override
-	public boolean saveOferta(DtoOfertaActivo dto, Boolean esAgrupacion) throws JsonViewerException, Exception, Error {
-		
-		if(esAgrupacion) {
-			return saveOfertaAgrupacion(dto);
-		}else {
-			return saveOfertaActivo(dto);
+	@Transactional(readOnly = false)
+	public boolean saveOferta(DtoOfertaActivo dto, Boolean esAgrupacion, Boolean asincrono)
+			throws JsonViewerException, Exception, Error {
+
+		Activo activo = null;
+		ActivoAgrupacion agrupacion = null;
+
+		if (esAgrupacion) {
+			agrupacion = genericDao.get(ActivoAgrupacion.class,
+					genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdAgrupacion()));
+			activo = agrupacion.getActivoPrincipal() != null ? agrupacion.getActivoPrincipal()
+					: agrupacion.getActivos().get(0).getActivo();
+		} else {
+			activo = activoAdapter.getActivoById(dto.getIdActivo());
 		}
+
+		return saveOferta(dto, activo, esAgrupacion, agrupacion, asincrono);
 	}
-	
-	//@Transactional(readOnly = false)
-	public boolean saveOfertaActivo(DtoOfertaActivo dto) throws JsonViewerException, Exception {
+
+	@Transactional(readOnly = false)
+	public boolean saveOferta(DtoOfertaActivo dto, Activo activo, Boolean esAgrupacion, ActivoAgrupacion agrupacion,
+			Boolean asincrono) throws JsonViewerException, Exception {
 		boolean resultado = true;
-		
+		Trabajo trabajo = null;
+		Boolean esAcepta = false;
+
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
 		Oferta oferta = genericDao.get(Oferta.class, filtro);
-		Activo activo = activoAdapter.getActivoById(dto.getIdActivo());
 		Boolean esAlquiler = DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo());
-		
 
 		DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
-				.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());	
+				.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
 
-		validateSaveOferta(dto, oferta, estadoOferta, activo, esAlquiler);
-		
 		oferta.setEstadoOferta(estadoOferta);
+
+		validateSaveOferta(dto, oferta, estadoOferta, activo, esAlquiler, esAgrupacion, agrupacion);
 
 		// Al aceptar la oferta, se crea el trabajo de sancion oferta y el
 		// expediente comercial
 
 		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())) {
-			comprobarTramitarOferta(oferta, activo, esAlquiler);
-			resultado = doAceptaOferta(oferta);
+			trabajo = doAceptaOferta(oferta, activo);
+			esAcepta = trabajo != null;
 		}
 
 		// si la oferta ha sido rechazada guarda los motivos de rechazo y
@@ -246,182 +252,120 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		if (DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo())) {
 			resultado = doRechazaOferta(dto, oferta);
 		}
-		
-		if(!resultado){
+
+		if (!resultado) {
 			resultado = this.persistOferta(oferta);
 		}
-		
-		if(!Checks.esNulo(dto.getIdActivo())) {
-			activoManager.actualizarOfertasTrabajosVivos(activo);
+		if (esAcepta) {
+			String usuarioLogado = genericAdapter.getUsuarioLogado().getUsername();
+			ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class,
+					genericDao.createFilter(FilterType.EQUALS, "oferta", oferta));
+			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
+			if (asincrono) {
+				Thread creacionAsincrona = new Thread(new TramitacionOfertasAsync(activo.getId(), esAcepta,
+						trabajo.getId(), oferta.getId(), expedienteComercial.getId(), usuarioLogado));
+
+				creacionAsincrona.start();
+			} else {
+				doTramitacion(activo, oferta, trabajo.getId(), expedienteComercial);
+			}
 		}
 
 		return resultado;
 	}
-	
-	private void validateSaveOferta(DtoOfertaActivo dto, Oferta oferta, DDEstadoOferta estadoOferta, Activo activo, Boolean esAlquiler) {
 
-		if(activo == null) {
-			activo = oferta.getActivoPrincipal();
-		}
-		
-		if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo()) && faltanDatosCalculo(oferta, activo)) {
-			throw new JsonViewerException(FALTAN_DATOS);
-		}
-		// Si el activo pertenece a un lote comercial, no se pueden aceptar
-		// ofertas de forma individual en el activo
-		if (activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(dto.getIdActivo())
-				&& (Checks.esNulo(dto.getEsAnulacion()) || !dto.getEsAnulacion())) {
-			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACTIVO_EN_LOTE_COMERCIAL));
-		}
-		if (!Checks.esNulo(oferta.getCliente())) {
-			if (Checks.esNulo(oferta.getCliente().getDocumento())
-					|| Checks.esNulo(oferta.getCliente().getTipoDocumento())) {
-				throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_TIPO_NUMERO_DOCUMENTO));
-			}
+	private void validateSaveOferta(DtoOfertaActivo dto, Oferta oferta, DDEstadoOferta estadoOferta, Activo activo,
+			Boolean esAlquiler, Boolean esAgrupacion, ActivoAgrupacion agrupacion) throws Exception {
+
+		if (esAgrupacion) {
+			validarTramitacionAgrupacion(dto, estadoOferta, oferta, esAlquiler, agrupacion);
 		} else {
-			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_CLIENTE_OBLIGATORIO));
-		}
-		//SEGUIR MAÑANA DESDE AQUI
-		// Si el activo esta marcado como alquilado 
-		// o si el activo esta marcado como ocupado sin titulo 
-		// no permitiremos tramitar ofertas de alquiler
-		if (!Checks.esNulo(oferta) && !Checks.esNulo(activo) && !Checks.esNulo(estadoOferta)
-				&& DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo()) && esAlquiler
-				&& ((!Checks.esNulo(activo.getSituacionComercial()) && !Checks.esNulo(activo.getSituacionComercial().getCodigo())
-					&& DDSituacionComercial.CODIGO_ALQUILADO.equals(activo.getSituacionComercial().getCodigo()))
-					|| (activo.getSituacionPosesoria().getOcupado() == 1 && (Checks.esNulo(activo.getSituacionPosesoria().getConTitulo())
-					|| (!Checks.esNulo(activo.getSituacionPosesoria().getConTitulo())
-					&& activo.getSituacionPosesoria().getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloNo)))))) {
-
-			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACITVO_ALQUILADO_O_OCUPADO));
-
-		}
-
-		// Si el estado de la oferta es tramitada y tipo oferta es alquiler
-		// Sole se podrá realizar el cambio si no existe para el mismo activo
-		// una oferta de tipo venta
-		if (!Checks.esNulo(estadoOferta) && !Checks.esNulo(oferta.getTipoOferta())
-				&& DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())
-				&& esAlquiler) {
-
-			// Consultar ofertas activo
-			List<ActivoOferta> ofertasActivo = activo.getOfertas();
-
-			if(!Checks.estaVacio(ofertasActivo)) {
-				for (ActivoOferta activoOferta : ofertasActivo) {
-					Oferta ofr = activoOferta.getPrimaryKey().getOferta();
-					// Si existe oferta de venta lanzar error
-					if (!Checks.esNulo(ofr) && !Checks.esNulo(ofr.getTipoOferta()) 
-							&& DDTipoOferta.CODIGO_VENTA.equals(ofr.getTipoOferta().getCodigo())
-							&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(ofr.getEstadoOferta().getCodigo())) {
-
-						throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_EXISTEN_OFERTAS_VENTA));
-					}
-				}
-			}
-			
-		}
-		
-		if (!Checks.esNulo(dto.getIdActivo()) && activoDao.isIntegradoEnAgrupacionPA(dto.getIdActivo())) {
-			ActivoAgrupacion agrupacion = activoDao.getAgrupacionPAByIdActivo(dto.getIdActivo()); 
-			if (activoDao.existenUAsconOfertasVivas(agrupacion.getId())) {
-				if(activoDao.isActivoMatriz(dto.getIdActivo())){
-					throw new JsonViewerException(messageServices.getMessage(EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS));
-				} else if(activoDao.isUnidadAlquilable(dto.getIdActivo())) {
-					throw new JsonViewerException(messageServices.getMessage(EXISTEN_UNIDADES_ALQUILABLES_CON_OFERTAS_VIVAS));
-				}
-				
-			}
-		}
-		
-		ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(oferta);
-		if (!Checks.esNulo(expediente)) {
-			List<ComunicacionGencat> comunicacionesGencat = gencatApi.comunicacionesVivas(expediente);
-			if(!Checks.estaVacio(comunicacionesGencat) && !Checks.esNulo(estadoOferta) && (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo()) || DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo())) 
-					&& gencatApi.comprobarExpedienteAnuladoGencat(comunicacionesGencat)) {
-				throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_EXPEDIENTE_ANULADO_POR_GENCAT));
-			}
+			validartramitacionActivo(dto, oferta, estadoOferta, activo, esAlquiler);
 		}
 
 	}
-	
+
 	public boolean faltanDatosCalculo(Oferta oferta, Activo activo) {
-		Double vta= 0.0, pvb= 0.0, cco= 0.0, pvn= 0.0, vnc= 0.0, vr = 0.0;
-		
-		if(oferta != null && !Checks.esNulo(activo)) {
-			if(!Checks.estaVacio(activo.getTasacion()) 
-					&& !Checks.esNulo(activo.getTasacion().get(activo.getTasacion().size()-1).getImporteTasacionFin())) {
-				vta += activo.getTasacion().get(activo.getTasacion().size()-1).getImporteTasacionFin();
+		Double vta = 0.0, pvb = 0.0, cco = 0.0, pvn = 0.0, vnc = 0.0, vr = 0.0;
+
+		if (oferta != null && !Checks.esNulo(activo)) {
+			if (!Checks.estaVacio(activo.getTasacion()) && !Checks
+					.esNulo(activo.getTasacion().get(activo.getTasacion().size() - 1).getImporteTasacionFin())) {
+				vta += activo.getTasacion().get(activo.getTasacion().size() - 1).getImporteTasacionFin();
 			}
 			pvb = oferta.getImporteOferta();
-			
+
 			// Cuando son ofertas agrupadas, las recorro
-			if (!Checks.esNulo(oferta.getClaseOferta()) 
+			if (!Checks.esNulo(oferta.getClaseOferta())
 					&& DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
-	
+
 				Oferta principal = ofertaManager.getOfertaPrincipalById(oferta.getId());
 				List<OfertasAgrupadasLbk> ofertasAgrupadas = principal.getOfertasAgrupadas();
-	
+
 				List<Oferta> listaOfertas = new ArrayList<Oferta>();
-				
+
 				// Se añade la oferta principal
 				listaOfertas.add(principal);
-				
+
 				// Se añaden las dependientes
 				for (OfertasAgrupadasLbk lisOf : ofertasAgrupadas) {
 					Oferta ofrDependiente = lisOf.getOfertaDependiente();
-					
-					ExpedienteComercial expedienteComercial = expedienteComercialDao.getExpedienteComercialByIdOferta(ofrDependiente.getId());
-					
-					if (!Checks.esNulo(expedienteComercial) && DDEstadoOferta.CODIGO_ACEPTADA.equals(ofrDependiente.getEstadoOferta().getCodigo())) {
+
+					ExpedienteComercial expedienteComercial = expedienteComercialDao
+							.getExpedienteComercialByIdOferta(ofrDependiente.getId());
+
+					if (!Checks.esNulo(expedienteComercial)
+							&& DDEstadoOferta.CODIGO_ACEPTADA.equals(ofrDependiente.getEstadoOferta().getCodigo())) {
 						List<GastosExpediente> listaHonorarios = expedienteComercial.getHonorarios();
-						
+
 						for (GastosExpediente gex : listaHonorarios) {
 							cco += gex.getImporteFinal() * gex.getImporteCalculo();
 						}
-						
+
 					}
 				}
-	
+
 				List<ActivoValoraciones> valoraciones = activo.getValoracion();
-	
+
 				for (ActivoValoraciones valoracion : valoraciones) {
 					String codigoValoracion = valoracion.getTipoPrecio().getCodigo();
 					if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK.equals(codigoValoracion)) {
 						vnc += valoracion.getImporte();
-					}else if (DDTipoPrecio.CODIGO_TPC_VALOR_RAZONABLE_LBK.equals(codigoValoracion)) {
-						vr  += valoracion.getImporte();
+					} else if (DDTipoPrecio.CODIGO_TPC_VALOR_RAZONABLE_LBK.equals(codigoValoracion)) {
+						vr += valoracion.getImporte();
 					}
 				}
-				
-			// Si son ofertas individuales o principales se calculan ellas solas
+
+				// Si son ofertas individuales o principales se calculan ellas solas
 			} else {
 				vnc = 0.1;
 				vr = 0.1;
 				cco = 0.1;
 			}
-			
+
 			pvn = pvb - cco;
-			
-			if (vta== 0.0 || pvb == 0.0 || cco == 0.0 || pvn == 0.0 || vnc == 0.0 || vr == 0.0) {
+
+			if (vta == 0.0 || pvb == 0.0 || cco == 0.0 || pvn == 0.0 || vnc == 0.0 || vr == 0.0) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
-	private void comprobarTramitarOferta(Oferta oferta, Activo activo, Boolean esAlquiler) {
+
+	private void comprobarTramitarOferta(Oferta oferta, Activo activo, Boolean esAlquiler, String numActivo) {
 
 		if (activo != null) {
 			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 			ActivoValoraciones precio = null;
 			Filter filtroTof = null;
 			Filter filtroMin = null;
-			
-			if(esAlquiler) {
-				if(Checks.esNulo(activo.getTipoAlquiler())) {
-					throw new JsonViewerException("El valor de Tipo de Alquiler del activo "+activo.getNumActivo()+" no permite la realización de una oferta");
+			String msg;
+
+			if (esAlquiler) {
+				if (Checks.esNulo(activo.getTipoAlquiler())) {
+					throw new JsonViewerException("El valor de Tipo de Alquiler del activo " + activo.getNumActivo()
+							+ " no permite la realización de una oferta");
 				}
 				filtroTof = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo",
 						DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA);
@@ -433,32 +377,44 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				filtroMin = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo",
 						DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
 			}
-			
+
 			precio = genericDao.get(ActivoValoraciones.class, filtroActivo, filtroTof);
 
-			if (activo.getCartera() != null && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())){
-				if (Checks.esNulo(precio)
-						|| (!Checks.esNulo(precio) && Checks.esNulo(precio.getImporte()))) {
-					throw new JsonViewerException("Activo sin precio");
+			if (activo.getCartera() != null
+					&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())) {
+				if (Checks.esNulo(precio) || (!Checks.esNulo(precio) && Checks.esNulo(precio.getImporte()))) {
+					if (numActivo != null) {
+						msg = "Activo " + numActivo + " sin precio";
+					} else {
+						msg = "Activo sin precio";
+					}
+					throw new JsonViewerException(msg);
 				}
 			}
-			
+
 			// Comprobar que el precio de la oferta es inferior al mínimo del activo
-			if (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_YUBAI.equals(activo.getSubcartera().getCodigo())) {
-				
+			if (numActivo == null && !Checks.esNulo(activo.getSubcartera())
+					&& DDSubcartera.CODIGO_YUBAI.equals(activo.getSubcartera().getCodigo())) {
+
 				ActivoValoraciones precioMin = genericDao.get(ActivoValoraciones.class, filtroActivo, filtroMin);
-				
-				if (!Checks.esNulo(precioMin) && !Checks.esNulo(precioMin.getImporte()) 
-						&& !Checks.esNulo(oferta.getImporteOferta()) && oferta.getImporteOferta() < precioMin.getImporte()) {
-					throw new JsonViewerException("No se puede tramitar una oferta porque el precio es inferior al mínimo");
+
+				if (!Checks.esNulo(precioMin) && !Checks.esNulo(precioMin.getImporte())
+						&& !Checks.esNulo(oferta.getImporteOferta())
+						&& oferta.getImporteOferta() < precioMin.getImporte()) {
+					throw new JsonViewerException(
+							"No se puede tramitar una oferta porque el precio es inferior al mínimo");
+				}
+			} else {
+				if (esAlquiler && Checks.esNulo(activo.getTipoAlquiler())) {
+					throw new JsonViewerException("El valor de Tipo de Alquiler del activo " + numActivo
+							+ " no permite la realización de una oferta");
 				}
 			}
-				
+
 		}
 	}
-	
-	private boolean doAceptaOferta(Oferta oferta) throws Exception{
-		boolean resultado = false;
+
+	private Trabajo doAceptaOferta(Oferta oferta, Activo activo) throws Exception {
 		List<Activo> listaActivos = new ArrayList<Activo>();
 		for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
 			listaActivos.add(activoOferta.getPrimaryKey().getActivo());
@@ -466,12 +422,11 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		DDSubtipoTrabajo subtipoTrabajo = (DDSubtipoTrabajo) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, getSubtipoTrabajoByOferta(oferta));
 		Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null, false);
-		crearExpediente(oferta, trabajo,null);
-		trabajoApi.createTramiteTrabajo(trabajo);
-		return resultado;
+		crearExpediente(oferta, trabajo, null, activo);
+		return trabajo;
 	}
-	
-	private boolean doRechazaOferta(DtoOfertaActivo dto,Oferta oferta){
+
+	private boolean doRechazaOferta(DtoOfertaActivo dto, Oferta oferta) {
 		boolean resultado = false;
 		if (!Checks.esNulo(dto.getMotivoRechazoCodigo())) {
 			DDMotivoRechazoOferta motivoRechazoOferta = (DDMotivoRechazoOferta) utilDiccionarioApi
@@ -480,8 +435,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 			oferta.setUsuarioBaja(usu.getApellidoNombre());
 		}
-
-		
 
 		if (!Checks.esNulo(oferta.getAgrupacion())) {
 			ActivoAgrupacion agrupacion = oferta.getAgrupacion();
@@ -502,7 +455,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		return resultado;
 	}
 
-	private boolean persistOferta(Oferta oferta) {
+	@Transactional(readOnly = false)
+	public boolean persistOferta(Oferta oferta) {
 		TransactionStatus transaction = null;
 		boolean resultado = false;
 		try {
@@ -512,13 +466,13 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			transactionManager.commit(transaction);
 			resultado = true;
 		} catch (Exception e) {
-			//logger.error("Error en tramitacionOfertasManager", e);
+			// logger.error("Error en tramitacionOfertasManager", e);
 			transactionManager.rollback(transaction);
 
 		}
 		return resultado;
 	}
-	
+
 	@Override
 	public String getSubtipoTrabajoByOferta(Oferta oferta) {
 		if (oferta.getTipoOferta().getCodigo().equals(DDTipoOferta.CODIGO_VENTA)) {
@@ -526,32 +480,32 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		} else
 			return DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_ALQUILER;
 	}
-	
+
 	@Override
-	public ExpedienteComercial crearExpediente(Oferta oferta, Trabajo trabajo, Oferta ofertaOriginalGencatEjerce) throws Exception {
+	public ExpedienteComercial crearExpediente(Oferta oferta, Trabajo trabajo, Oferta ofertaOriginalGencatEjerce,
+			Activo activo) throws Exception {
 		TransactionStatus transaction = null;
 		ExpedienteComercial expedienteComercial = null;
 		boolean resultado = false;
 
 		try {
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-			expedienteComercial = crearExpedienteGuardado(oferta, trabajo, ofertaOriginalGencatEjerce);
+			expedienteComercial = crearExpedienteGuardado(oferta, trabajo, ofertaOriginalGencatEjerce, activo);
 
-			if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo()) && MAESTRO_ORIGEN_WCOM.equals(oferta.getOrigen())){
-				Usuario usu=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-				Thread maestroPersona = new Thread( new MaestroDePersonas(expedienteComercial.getId(),usu.getUsername(),oferta.getActivoPrincipal().getCartera().getDescripcion()));
+			if (DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())
+					&& MAESTRO_ORIGEN_WCOM.equals(oferta.getOrigen())) {
+				Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+				Thread maestroPersona = new Thread(new MaestroDePersonas(expedienteComercial.getId(), usu.getUsername(),
+						oferta.getActivoPrincipal().getCartera().getDescripcion()));
 				maestroPersona.start();
 			}
 
-			expedienteComercial = crearExpedienteReserva(expedienteComercial);
-			expedienteComercialApi.crearCondicionesActivoExpediente(oferta.getActivoPrincipal(), expedienteComercial);
-
 			transactionManager.commit(transaction);
-			
+
 			resultado = true;
-			
+
 		} catch (Exception ex) {
-			//logger.error("Error en tramitacionOfertasManager", ex);
+			// logger.error("Error en tramitacionOfertasManager", ex);
 			transactionManager.rollback(transaction);
 			throw ex;
 		}
@@ -562,7 +516,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			if (!Checks.esNulo(appProperties
 					.getProperty(GestorDocumentalExpedientesManager.URL_REST_CLIENT_GESTOR_DOCUMENTAL_EXPEDIENTES))) {
 				Thread hiloReactivar = new Thread(new ContenedorExpComercial(
-						genericAdapter.getUsuarioLogado().getUsername(), expedienteComercial.getId()));
+						genericAdapter.getUsuarioLogado().getUsername(), expedienteComercial));
 				hiloReactivar.start();
 
 			}
@@ -571,11 +525,10 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 		return expedienteComercial;
 	}
-	
-	private ExpedienteComercial crearExpedienteGuardado(Oferta oferta, Trabajo trabajo, Oferta ofertaOriginalGencatEjerce) throws Exception {
 
-		Activo activo = oferta.getActivoPrincipal();
-		
+	private ExpedienteComercial crearExpedienteGuardado(Oferta oferta, Trabajo trabajo,
+			Oferta ofertaOriginalGencatEjerce, Activo activo) throws Exception {
+
 		ExpedienteComercial nuevoExpediente = new ExpedienteComercial();
 
 		if (!Checks.esNulo(oferta.getVisita())) {
@@ -598,199 +551,25 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		nuevoExpediente.setNumExpediente(activoDao.getNextNumExpedienteComercial());
 		nuevoExpediente.setTrabajo(trabajo);
 
-		// Creación de formalización y condicionantes. Evita errores en los
-		// trámites al preguntar por datos de algunos de estos objetos y aún
-		// no esten creados. Para ello creamos los objetos vacios con el
-		// unico fin que se cree la fila.
-		Formalizacion nuevaFormalizacion = new Formalizacion();
-		nuevaFormalizacion.setAuditoria(Auditoria.getNewInstance());
-		nuevaFormalizacion.setExpediente(nuevoExpediente);
-		nuevoExpediente.setFormalizacion(nuevaFormalizacion);
-
-		CondicionanteExpediente nuevoCondicionante = null;
-		if (!Checks.esNulo(activo)) {
-			
-			nuevoCondicionante = calculoCondicionantes(activo, oferta.getImporteOferta());
-		}
-		
-		nuevoCondicionante.setExpediente(nuevoExpediente);
-
-		boolean noCumple = false;
-		List<ActivoOferta> activoOfertaList = oferta.getActivosOferta();
-		List<TanteoActivoExpediente> tanteosExpediente = new ArrayList<TanteoActivoExpediente>();
-		for (ActivoOferta activoOferta : activoOfertaList) {
-			noCumple = false;
-			for (CondicionTanteoApi condicion : condiciones) {
-				if (!condicion.checkCondicion(activo))
-					noCumple = true;
-			}
-			if (!noCumple) {
-				TanteoActivoExpediente tanteoActivo = new TanteoActivoExpediente();
-				tanteoActivo.setActivo(activoOferta.getPrimaryKey().getActivo());
-				tanteoActivo.setExpediente(nuevoExpediente);
-
-				Auditoria auditoria = new Auditoria();
-				auditoria.setFechaCrear(new Date());
-				auditoria.setUsuarioCrear(usuarioApi.getUsuarioLogado().getUsername());
-				auditoria.setBorrado(false);
-
-				tanteoActivo.setAuditoria(auditoria);
-				DDAdministracion administracion = genericDao.get(DDAdministracion.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigo", "02"));
-				tanteoActivo.setAdminitracion(administracion);
-				nuevoCondicionante.setSujetoTanteoRetracto(1);
-				tanteosExpediente.add(tanteoActivo);
-			}
-		}
-
-		nuevoExpediente.setTanteoActivoExpediente(tanteosExpediente);
-		nuevoExpediente.setCondicionante(nuevoCondicionante);
-
 		// Establecer la fecha de aceptación/alta a ahora.
 		nuevoExpediente.setFechaAlta(new Date());
-
-		// HREOS-2511 El combo "Comité seleccionado" vendrá informado para
-		// cartera Sareb
-		if (DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-				|| DDCartera.CODIGO_CARTERA_TANGO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-				|| DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-				|| DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-			Double precioMinimoAutorizado = 0.0;
-			ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(oferta.getActivoPrincipal().getId());
-			if (Checks.esNulo(oferta.getAgrupacion())) {
-				if (!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo())) {
-					List<VPreciosVigentes> vPreciosVigentes = activoAdapter
-							.getPreciosVigentesById(activoBancario.getActivo().getId());
-					if (!Checks.estaVacio(vPreciosVigentes)) {
-						for (VPreciosVigentes precio : vPreciosVigentes) {
-							if (DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(precio.getCodigoTipoPrecio())
-									&& !Checks.esNulo(precio.getImporte())) {
-								precioMinimoAutorizado = precio.getImporte();
-							}
-						}
-					}
-				}
-			} else {
-				ActivoAgrupacion agrupacion = oferta.getAgrupacion();
-				List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
-				if (!Checks.estaVacio(activos)) {
-					for (ActivoAgrupacionActivo activoOferta : activos) {
-						List<VPreciosVigentes> vPreciosVigentes = activoAdapter
-								.getPreciosVigentesById(activoOferta.getId());
-						if (!Checks.estaVacio(vPreciosVigentes)) {
-							for (VPreciosVigentes precio : vPreciosVigentes) {
-								if (DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(precio.getCodigoTipoPrecio())
-										&& !Checks.esNulo(precio.getImporte())) {
-									precioMinimoAutorizado += precio.getImporte();
-								}
-							}
-						}
-					}
-				}
-			}
-
-			boolean esFinanciero = false;
-			if (!Checks.esNulo(activoBancario)) {
-				if (!Checks.esNulo(activoBancario.getClaseActivo()) && activoBancario.getClaseActivo().getCodigo()
-						.equals(DDClaseActivoBancario.CODIGO_FINANCIERO)) {
-					esFinanciero = true;
-				}
-
-				if (DDCartera.CODIGO_CARTERA_TANGO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_TANGO)));
-				} else if (DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_GIANTS)));
-				} else if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-					if(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())||
-					DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))
-					{
-						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CERBERUS)));
-					}else if(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){
-						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_APPLE_CERBERUS)));
-					}else {
-						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_CERBERUS)));
-					}
-				} else {
-					// 1º Clase de activo (financiero/inmobiliario) y sin
-					// formalización.
-					if (esFinanciero && !Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo())
-							&& activoApi.getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) {
-						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao
-								.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_SAREB)));
-						// 2º Si es inmobiliario: Tipo de comercialización
-						// (singular/retail).
-					} else if (!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo())
-							&& activoBancario.getActivo().getTipoComercializar() != null
-							&& activoBancario.getActivo().getTipoComercializar().getCodigo()
-									.equals(DDTipoComercializar.CODIGO_SINGULAR)) {
-						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
-								genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_SAREB)));
-						// 3º Si es retail: Comparamos precio mínimo e importe
-						// oferta.
-					} else if (!Checks.esNulo(precioMinimoAutorizado)
-							&& precioMinimoAutorizado > oferta.getImporteOferta()) {
-						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
-								genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_SAREB)));
-					} else {
-						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_SAREB)));
-					}
-				}
-			}
-		}
-
-		// El combo "Comité seleccionado" vendrá informado para cartera
-		// Liberbank
-		else if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
-				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-				nuevoExpediente.setComiteSancion(ofertaApi.calculoComiteLiberbank(oferta));
-				nuevoExpediente.setComitePropuesto(ofertaApi.calculoComiteLiberbank(oferta));
-		}
-		// El combo "Comité seleccionado" vendrá informado para cartera Cajamar
-		else if (oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
-			nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
-					genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CAJAMAR)));
-		}
-		// El combo "Comité seleccionado" vendrá informado para cartera Galeon
-		else if (oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GALEON)) {
-			nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
-					genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_GALEON)));
-		}
-		// El combo "Comité seleccionado" vendrá informado para subcartera Zeus
-		else if (oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_EGEO) 
-				&& DDSubcartera.CODIGO_ZEUS.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) {
-			nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
-					genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_EGEO)));
-		}
-		else if (DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
-				&& DDSubcartera.CODIGO_YUBAI.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) {
-			nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
-					genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_THIRD_PARTIES_YUBAI)));
-		}
-		
-		
-		crearCompradores(oferta, nuevoExpediente);
 
 		nuevoExpediente.setTipoAlquiler(oferta.getActivoPrincipal().getTipoAlquiler());
 
 		nuevoExpediente = genericDao.save(ExpedienteComercial.class, nuevoExpediente);
 
-		crearGastosExpediente(oferta, nuevoExpediente);
-		
-		// Se asigna un gestor de Formalización al crear un nuevo expediente.
-		asignarGestorYSupervisorFormalizacionToExpediente(nuevoExpediente);
-
 		return nuevoExpediente;
 	}
-	
+
 	private CondicionanteExpediente calculoCondicionantes(Activo activo, Double importeOferta) {
-		
+
 		CondicionanteExpediente condicionante = new CondicionanteExpediente();
 		condicionante.setAuditoria(Auditoria.getNewInstance());
-		
+
 		DDCartera cartera = activo.getCartera();
 		DDSubcartera subcartera = activo.getSubcartera();
-		
-		if(cartera != null && importeOferta != null) {
+
+		if (cartera != null && importeOferta != null) {
 			// HREOS-2799
 			// Activos de Cajamar, debe haber reserva necesaria con un importe
 			// fijo de 1.000 euros y plazo 5 dias
@@ -809,7 +588,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			// Activos de Galeon, debe haber reserva necesaria con un importe
 			// fijo del 5%
 			else if (DDCartera.CODIGO_CARTERA_GALEON.equals(cartera.getCodigo())
-					|| DDCartera.CODIGO_CARTERA_ZEUS.equals(cartera.getCodigo())) {
+					|| (DDCartera.CODIGO_CARTERA_EGEO.equals(cartera.getCodigo())
+							&& DDSubcartera.CODIGO_ZEUS.equals(subcartera.getCodigo()))) {
 				condicionante.setSolicitaReserva(1);
 				DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
@@ -819,12 +599,12 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			}
 
 			// HREOS-5392
-			// Activos de Cerberus->Agora(Financiero, Inmobiliario) debe haber reserva por porcentaje del 10%
+			// Activos de Cerberus->Agora(Financiero, Inmobiliario) debe haber reserva por
+			// porcentaje del 10%
 			else if (subcartera != null && DDCartera.CODIGO_CARTERA_CERBERUS.equals(cartera.getCodigo())
-				&& (DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(subcartera.getCodigo())) ||
-					(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(subcartera.getCodigo()))
-			&& (DDCartera.CODIGO_CARTERA_CERBERUS.equals(cartera.getCodigo()) 
-					&& DDSubcartera.CODIGO_ZEUS_INMOBILIARIO.equals(subcartera.getCodigo()))){
+					&& ((DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(subcartera.getCodigo()))
+							|| (DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(subcartera.getCodigo()))
+							|| DDSubcartera.CODIGO_ZEUS_INMOBILIARIO.equals(subcartera.getCodigo()))) {
 
 				condicionante.setSolicitaReserva(1);
 				DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
@@ -832,9 +612,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				condicionante.setTipoCalculoReserva(tipoCalculo);
 				condicionante.setPorcentajeReserva(new Double(10));
 				condicionante.setImporteReserva(importeOferta * (new Double(10) / 100));
-			}else if(subcartera != null && DDCartera.CODIGO_CARTERA_CERBERUS.equals(cartera.getCodigo()) 
-				&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(subcartera.getCodigo()))) {
-				if(importeOferta >= 6000) {
+			} else if (subcartera != null && DDCartera.CODIGO_CARTERA_CERBERUS.equals(cartera.getCodigo())
+					&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(subcartera.getCodigo()))) {
+				if (importeOferta >= 6000) {
 					condicionante.setSolicitaReserva(1);
 					DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
 							.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO);
@@ -849,7 +629,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				}
 			}
 		}
-		
+
 		if (activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getFechaTomaPosesion() != null) {
 			condicionante.setPosesionInicial(1);
 		} else {
@@ -869,8 +649,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				condicionante.setSituacionPosesoria(situacionPosesoriaLibre);
 			} else if (activo.getSituacionPosesoria().getOcupado() != null
 					&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(1))
-					&& !Checks.esNulo(activo.getSituacionPosesoria().getConTitulo())
-					&& activo.getSituacionPosesoria().getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloSi)) {
+					&& !Checks.esNulo(activo.getSituacionPosesoria().getConTitulo()) && activo.getSituacionPosesoria()
+							.getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloSi)) {
 				DDSituacionesPosesoria situacionPosesoriaOcupadoTitulo = (DDSituacionesPosesoria) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDSituacionesPosesoria.class,
 								DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_CON_TITULO);
@@ -878,18 +658,61 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			} else if (activo.getSituacionPosesoria().getOcupado() != null
 					&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(1))
 					&& activo.getSituacionPosesoria().getConTitulo() != null
-					&& (activo.getSituacionPosesoria().getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloNo)
-						|| activo.getSituacionPosesoria().getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloNoConIndicios))) {
+					&& (activo.getSituacionPosesoria().getConTitulo().getCodigo()
+							.equals(DDTipoTituloActivoTPA.tipoTituloNo)
+							|| activo.getSituacionPosesoria().getConTitulo().getCodigo()
+									.equals(DDTipoTituloActivoTPA.tipoTituloNoConIndicios))) {
 				DDSituacionesPosesoria situacionPosesoriaOcupadoSinTitulo = (DDSituacionesPosesoria) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDSituacionesPosesoria.class,
 								DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_SIN_TITULO);
 				condicionante.setSituacionPosesoria(situacionPosesoriaOcupadoSinTitulo);
 			}
 		}
-		
+
 		return condicionante;
 	}
-	
+
+	@Transactional
+	public ExpedienteComercial crearCondicionanteYTanteo(Activo activo, Oferta oferta,
+			ExpedienteComercial expedienteComercial) {
+		boolean noCumple = false;
+		CondicionanteExpediente condicionanteExpediente = expedienteComercial.getCondicionante();
+		List<ActivoOferta> activoOfertaList = oferta.getActivosOferta();
+		List<TanteoActivoExpediente> tanteosExpediente = new ArrayList<TanteoActivoExpediente>();
+
+		if (!Checks.esNulo(activo)) {
+			if (condicionanteExpediente == null) {
+				condicionanteExpediente = calculoCondicionantes(activo, oferta.getImporteOferta());
+				condicionanteExpediente.setExpediente(expedienteComercial);
+			}
+
+			for (ActivoOferta activoOferta : activoOfertaList) {
+				noCumple = false;
+				for (CondicionTanteoApi condicion : condiciones) {
+					if (!condicion.checkCondicion(activo))
+						noCumple = true;
+				}
+				if (!noCumple) {
+					TanteoActivoExpediente tanteoActivo = new TanteoActivoExpediente();
+					tanteoActivo.setActivo(activoOferta.getPrimaryKey().getActivo());
+					tanteoActivo.setExpediente(expedienteComercial);
+					tanteoActivo.setAuditoria(Auditoria.getNewInstance());
+					DDAdministracion administracion = genericDao.get(DDAdministracion.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", DDAdministracion.CODIGO_CONSEJERIA));
+					tanteoActivo.setAdminitracion(administracion);
+					condicionanteExpediente.setSujetoTanteoRetracto(1);
+					tanteosExpediente.add(tanteoActivo);
+				}
+			}
+
+		}
+
+		expedienteComercial.setTanteoActivoExpediente(tanteosExpediente);
+		expedienteComercial.setCondicionante(condicionanteExpediente);
+		
+		return expedienteComercial;
+	}
+
 	@Transactional(readOnly = false)
 	public ExpedienteComercial crearExpedienteReserva(ExpedienteComercial expedienteComercial) {
 		// HREOS-2799
@@ -897,40 +720,69 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		// defecto: Confirmatorias
 		Oferta oferta = expedienteComercial.getOferta();
 		DDTiposArras tipoArras = null;
-		if(!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())){
-			if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-				|| 	((DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-						&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))
-						&& expedienteComercial.getCondicionante().getSolicitaReserva() == 1)){
-				tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.CONFIRMATORIAS);
+		if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())) {
+			if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+				tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class,
+						DDTiposArras.CONFIRMATORIAS);
 			}
-			
-				if (tipoArras != null && Checks.esNulo(expedienteComercial.getReserva()) ) {
+			if (DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+					|| (DDCartera.CODIGO_CARTERA_EGEO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+							&& DDSubcartera.CODIGO_ZEUS
+									.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))) {
+				tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class,
+						DDTiposArras.PENITENCIALES);
+			}
+
+			if ((DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+					&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO
+							.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))
+					&& expedienteComercial.getCondicionante().getSolicitaReserva() == 1)
+				tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class,
+						DDTiposArras.CONFIRMATORIAS);
+			if (tipoArras != null) {
+				if (Checks.esNulo(expedienteComercial.getReserva())) {
 					Reserva reservaExpediente = expedienteComercialApi.createReservaExpediente(expedienteComercial);
-					if(!Checks.esNulo(reservaExpediente)) {
-						reservaExpediente.setTipoArras(tipoArras);	
+					if (!Checks.esNulo(reservaExpediente)) {
+						reservaExpediente.setTipoArras(tipoArras);
 						genericDao.save(Reserva.class, reservaExpediente);
 					}
 
-				} 
-				if (tipoArras != null &&  !Checks.esNulo(expedienteComercial.getReserva())){
+				}
+				if (tipoArras != null && !Checks.esNulo(expedienteComercial.getReserva())) {
 					expedienteComercial.getReserva().setTipoArras(tipoArras);
 				}
+			}
 		}
-
 		return expedienteComercial;
 	}
-	
+
 	@Override
+	@Transactional
+	public List<GastosExpediente> crearGastosExpediente(Long idOferta, ExpedienteComercial nuevoExpediente) throws IllegalAccessException, InvocationTargetException {
+		return this.crearGastosExpediente(ofertaApi.getOfertaById(idOferta), nuevoExpediente);
+	}
+
+	@Override
+	@Transactional
 	public List<GastosExpediente> crearGastosExpediente(Oferta oferta, ExpedienteComercial nuevoExpediente) throws IllegalAccessException, InvocationTargetException {
-		List<GastosExpediente> gastosExpediente = expedienteComercialApi.creaGastoExpediente(nuevoExpediente, nuevoExpediente.getOferta(),
-				nuevoExpediente.getOferta().getActivosOferta().get(0).getPrimaryKey().getActivo());
+		List<GastosExpediente> gastosExpediente = new ArrayList<GastosExpediente>();
+		
+		Activo activo = oferta.getActivoPrincipal();
+			
+		gastosExpediente = expedienteComercialApi.creaGastoExpediente(nuevoExpediente, oferta, activo);
+
 		return gastosExpediente;
 	}
-	
-	public boolean crearCompradores(Oferta oferta, ExpedienteComercial nuevoExpediente) {
+
+	@Transactional
+	public ExpedienteComercial crearCompradores(Long idOferta, ExpedienteComercial nuevoExpediente) {
+		return this.crearCompradores(ofertaApi.getOfertaById(idOferta), nuevoExpediente);
+	}
+
+	@Transactional
+	public ExpedienteComercial crearCompradores(Oferta oferta, ExpedienteComercial nuevoExpediente) {
 		ClienteComercial cliente = oferta.getCliente();
-		
+
 		if (!Checks.esNulo(cliente)) {
 			// Busca un comprador con el mismo dni que el cliente de la oferta
 			Comprador compradorBusqueda = null;
@@ -948,15 +800,14 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			Double totalParteCompraAdicional = 0.00;
 			Double parteCompraPrincipal = 100.00;
 			/*
-			 * HREOS-3779 Problema al crear las relaciones entre
-			 * comprador-expediente Desde webcom mandan clientes comerciales y
-			 * titulares adiciones con el mismo documento para la misma oferta.
-			 * Esto hace que en el listado de compradores se creen varios con la
-			 * misma relacion comprador-expediente. Se ha añadido comprobacion
-			 * en el metodo que crea la oferta desde webcom (webservice) pero
-			 * hay muchos que ya estan creado, para estos creamos esta
-			 * comprobacion. Quita del listado de titulares adicionales los que
-			 * tengan el mismo documento que el cliente de la oferta
+			 * HREOS-3779 Problema al crear las relaciones entre comprador-expediente Desde
+			 * webcom mandan clientes comerciales y titulares adiciones con el mismo
+			 * documento para la misma oferta. Esto hace que en el listado de compradores se
+			 * creen varios con la misma relacion comprador-expediente. Se ha añadido
+			 * comprobacion en el metodo que crea la oferta desde webcom (webservice) pero
+			 * hay muchos que ya estan creado, para estos creamos esta comprobacion. Quita
+			 * del listado de titulares adicionales los que tengan el mismo documento que el
+			 * cliente de la oferta
 			 */
 			if (!Checks.estaVacio(oferta.getTitularesAdicionales())) {
 				for (TitularesAdicionalesOferta titularAdicional : oferta.getTitularesAdicionales()) {
@@ -979,13 +830,12 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				compradorBusqueda.setClienteComercial(cliente);
 				compradorBusqueda.setDocumento(cliente.getDocumento());
 			}
-			if (!Checks.esNulo(cliente.getTipoPersona()) && DDTipoPersona.CODIGO_TIPO_PERSONA_JURIDICA
-					.equals(cliente.getTipoPersona().getCodigo())) {
+			if (!Checks.esNulo(cliente.getTipoPersona())
+					&& DDTipoPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(cliente.getTipoPersona().getCodigo())) {
 				compradorBusqueda.setNombre(cliente.getRazonSocial());
 				compradorExpedienteNuevo.setNombreRepresentante(cliente.getNombre());
 				compradorExpedienteNuevo.setApellidosRepresentante(cliente.getApellidos());
-				compradorExpedienteNuevo
-						.setTipoDocumentoRepresentante(cliente.getTipoDocumentoRepresentante());
+				compradorExpedienteNuevo.setTipoDocumentoRepresentante(cliente.getTipoDocumentoRepresentante());
 				compradorExpedienteNuevo.setDocumentoRepresentante(cliente.getDocumentoRepresentante());
 
 			} else {
@@ -1005,20 +855,20 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			if (!Checks.esNulo(cliente.getEmail())) {
 				compradorBusqueda.setEmail(cliente.getEmail());
 			}
-			
+
 			String dir = "";
 			if (!Checks.esNulo(cliente.getTipoVia()))
-				dir = cliente.getTipoVia().getCodigo()+" ";
+				dir = cliente.getTipoVia().getCodigo() + " ";
 			if (!Checks.esNulo(cliente.getDireccion()))
 				dir = dir.concat(cliente.getDireccion());
 			if (!Checks.esNulo(cliente.getNumeroCalle()))
-				dir = dir.concat(" "+cliente.getNumeroCalle());
+				dir = dir.concat(" " + cliente.getNumeroCalle());
 			if (!Checks.esNulo(cliente.getPuerta()))
-				dir = dir.concat(", pta "+cliente.getPuerta());
+				dir = dir.concat(", pta " + cliente.getPuerta());
 			if (!Checks.esNulo(cliente.getPlanta()))
-				dir = dir.concat(", plta "+cliente.getPlanta());
+				dir = dir.concat(", plta " + cliente.getPlanta());
 			if (!Checks.esNulo(cliente.getEscalera()))
-				dir = dir.concat(", esc "+cliente.getEscalera());
+				dir = dir.concat(", esc " + cliente.getEscalera());
 			compradorBusqueda.setDireccion(dir);
 
 			if (!Checks.esNulo(cliente.getMunicipio())) {
@@ -1035,8 +885,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			if (!Checks.esNulo(cliente.getTipoPersona())) {
 				compradorBusqueda.setTipoPersona(cliente.getTipoPersona());
 			}
-			
-			//CHECKS GDPR
+
+			// CHECKS GDPR
 			if (!Checks.esNulo(cliente.getCesionDatos())) {
 				compradorBusqueda.setCesionDatos(cliente.getCesionDatos());
 			}
@@ -1050,8 +900,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				compradorBusqueda.setIdPersonaHaya(new Long(cliente.getIdPersonaHaya()));
 			}
 
-			
-			
 			CompradorExpediente.CompradorExpedientePk pk = new CompradorExpediente.CompradorExpedientePk();
 			pk.setComprador(compradorBusqueda);
 			pk.setExpediente(nuevoExpediente);
@@ -1070,24 +918,25 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			compradorExpedienteNuevo.setLocalidadRepresentante(cliente.getMunicipioRepresentante());
 			compradorExpedienteNuevo.setPaisRte(cliente.getPaisRepresentante());
 			compradorExpedienteNuevo.setCodigoPostalRepresentante(cliente.getCodigoPostalRepresentante());
-			
+
 			List<ClienteGDPR> clienteGDPR = genericDao.getList(ClienteGDPR.class,
-					genericDao.createFilter(FilterType.EQUALS, "numDocumento", cliente.getDocumento())
-					,genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo", cliente.getTipoDocumento().getCodigo()));
-			
-			if (clienteGDPR != null && !clienteGDPR.isEmpty()){
+					genericDao.createFilter(FilterType.EQUALS, "numDocumento", cliente.getDocumento()),
+					genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo",
+							cliente.getTipoDocumento().getCodigo()));
+
+			if (clienteGDPR != null && !clienteGDPR.isEmpty()) {
 				compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.get(0).getAdjuntoComprador());
 				compradorBusqueda.setAdjunto(clienteGDPR.get(0).getAdjuntoComprador());
 			}
-			
+
 			genericDao.save(Comprador.class, compradorBusqueda);
 			listaCompradoresExpediente.add(compradorExpedienteNuevo);
-			
-			// HREOS - 4937 - Historificando				
+
+			// HREOS - 4937 - Historificando
 			ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
 			clienteCompradorGDPR.setTipoDocumento(compradorBusqueda.getTipoDocumento());
 			clienteCompradorGDPR.setNumDocumento(compradorBusqueda.getDocumento());
-			if(!Checks.esNulo(clienteGDPR) && !clienteGDPR.isEmpty()){
+			if (!Checks.esNulo(clienteGDPR) && !clienteGDPR.isEmpty()) {
 				if (!Checks.esNulo(clienteGDPR.get(0).getCesionDatos())) {
 					clienteCompradorGDPR.setCesionDatos(clienteGDPR.get(0).getCesionDatos());
 				}
@@ -1095,12 +944,13 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 					clienteCompradorGDPR.setComunicacionTerceros(clienteGDPR.get(0).getComunicacionTerceros());
 				}
 				if (!Checks.esNulo(clienteGDPR.get(0).getTransferenciasInternacionales())) {
-					clienteCompradorGDPR.setTransferenciasInternacionales(clienteGDPR.get(0).getTransferenciasInternacionales());								
+					clienteCompradorGDPR
+							.setTransferenciasInternacionales(clienteGDPR.get(0).getTransferenciasInternacionales());
 				}
 				if (!Checks.esNulo(clienteGDPR.get(0).getAdjuntoComprador())) {
 					clienteCompradorGDPR.setAdjuntoComprador(clienteGDPR.get(0).getAdjuntoComprador());
 				}
-			}				
+			}
 			genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
 
 			// Se recorre todos los titulares adicionales, estos tambien se
@@ -1115,12 +965,12 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 							titularAdicional.getDocumento());
 					Comprador compradorBusquedaAdicional = genericDao.get(Comprador.class, filtroCompradorAdicional);
 					compradorExpedienteNuevo = new CompradorExpediente();
-					
+
 					if (Checks.esNulo(compradorBusquedaAdicional)) {
 						compradorBusquedaAdicional = new Comprador();
 						compradorBusquedaAdicional.setDocumento(titularAdicional.getDocumento());
 					}
-						
+
 					if (!Checks.esNulo(titularAdicional.getTipoPersona()) && DDTipoPersona.CODIGO_TIPO_PERSONA_JURIDICA
 							.equals(titularAdicional.getTipoPersona().getCodigo())) {
 						compradorBusquedaAdicional.setNombre(titularAdicional.getRazonSocial());
@@ -1128,7 +978,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 						compradorExpedienteNuevo.setApellidosRepresentante(titularAdicional.getApellidos());
 						compradorExpedienteNuevo
 								.setTipoDocumentoRepresentante(titularAdicional.getTipoDocumentoRepresentante());
-						compradorExpedienteNuevo.setDocumentoRepresentante(titularAdicional.getDocumentoRepresentante());
+						compradorExpedienteNuevo
+								.setDocumentoRepresentante(titularAdicional.getDocumentoRepresentante());
 
 					} else {
 						compradorBusquedaAdicional.setNombre(titularAdicional.getNombre());
@@ -1165,21 +1016,24 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 					if (!Checks.esNulo(titularAdicional.getTipoPersona())) {
 						compradorBusquedaAdicional.setTipoPersona(titularAdicional.getTipoPersona());
 					}
-									
-					//AGREGAR CHECKS DE TITULARES ADICIONALES
+
+					// AGREGAR CHECKS DE TITULARES ADICIONALES
 					if (!Checks.esNulo(titularAdicional)) {
 						if (!Checks.esNulo(titularAdicional.getRechazarCesionDatosPropietario())) {
-							compradorBusquedaAdicional.setCesionDatos(!titularAdicional.getRechazarCesionDatosPropietario());
+							compradorBusquedaAdicional
+									.setCesionDatos(!titularAdicional.getRechazarCesionDatosPropietario());
 						}
 						if (!Checks.esNulo(titularAdicional.getRechazarCesionDatosProveedores())) {
-							compradorBusquedaAdicional.setComunicacionTerceros(!titularAdicional.getRechazarCesionDatosProveedores());
+							compradorBusquedaAdicional
+									.setComunicacionTerceros(!titularAdicional.getRechazarCesionDatosProveedores());
 						}
 						if (!Checks.esNulo(titularAdicional.getRechazarCesionDatosPublicidad())) {
-							compradorBusquedaAdicional.setTransferenciasInternacionales(!titularAdicional.getRechazarCesionDatosPublicidad());
+							compradorBusquedaAdicional.setTransferenciasInternacionales(
+									!titularAdicional.getRechazarCesionDatosPublicidad());
 						}
 					}
 					genericDao.save(Comprador.class, compradorBusquedaAdicional);
-					
+
 					CompradorExpediente compradorExpedienteAdicionalNuevo = new CompradorExpediente();
 					pk = new CompradorExpedientePk();
 
@@ -1192,30 +1046,36 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 					compradorExpedienteAdicionalNuevo.setPorcionCompra(parteCompraAdicionales);
 					compradorExpedienteAdicionalNuevo.setEstadoCivil(titularAdicional.getEstadoCivil());
 					compradorExpedienteAdicionalNuevo.setRegimenMatrimonial(titularAdicional.getRegimenMatrimonial());
-					compradorExpedienteAdicionalNuevo.setTipoDocumentoConyuge(titularAdicional.getTipoDocumentoConyuge());
+					compradorExpedienteAdicionalNuevo
+							.setTipoDocumentoConyuge(titularAdicional.getTipoDocumentoConyuge());
 					compradorExpedienteAdicionalNuevo.setDocumentoConyuge(titularAdicional.getDocumentoConyuge());
 					compradorExpedienteAdicionalNuevo.setPais(titularAdicional.getPais());
-					compradorExpedienteAdicionalNuevo.setDireccionRepresentante(titularAdicional.getDireccionRepresentante());
-					compradorExpedienteAdicionalNuevo.setProvinciaRepresentante(titularAdicional.getProvinciaRepresentante());
-					compradorExpedienteAdicionalNuevo.setLocalidadRepresentante(titularAdicional.getMunicipioRepresentante());
+					compradorExpedienteAdicionalNuevo
+							.setDireccionRepresentante(titularAdicional.getDireccionRepresentante());
+					compradorExpedienteAdicionalNuevo
+							.setProvinciaRepresentante(titularAdicional.getProvinciaRepresentante());
+					compradorExpedienteAdicionalNuevo
+							.setLocalidadRepresentante(titularAdicional.getMunicipioRepresentante());
 					compradorExpedienteAdicionalNuevo.setPaisRte(titularAdicional.getPaisRepresentante());
-					compradorExpedienteAdicionalNuevo.setCodigoPostalRepresentante(titularAdicional.getCodPostalRepresentante());
-					
+					compradorExpedienteAdicionalNuevo
+							.setCodigoPostalRepresentante(titularAdicional.getCodPostalRepresentante());
+
 					clienteGDPR = genericDao.getList(ClienteGDPR.class,
-							genericDao.createFilter(FilterType.EQUALS, "numDocumento", titularAdicional.getDocumento())
-							,genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo", titularAdicional.getTipoDocumento().getCodigo()));
-					
-					if (!Checks.esNulo(clienteGDPR) && !clienteGDPR.isEmpty()){
+							genericDao.createFilter(FilterType.EQUALS, "numDocumento", titularAdicional.getDocumento()),
+							genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo",
+									titularAdicional.getTipoDocumento().getCodigo()));
+
+					if (!Checks.esNulo(clienteGDPR) && !clienteGDPR.isEmpty()) {
 						compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.get(0).getAdjuntoComprador());
 					}
-					
+
 					listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
-					
-					// HREOS - 4937 - Historificando				
+
+					// HREOS - 4937 - Historificando
 					clienteCompradorGDPR = new ClienteCompradorGDPR();
 					clienteCompradorGDPR.setTipoDocumento(compradorBusquedaAdicional.getTipoDocumento());
 					clienteCompradorGDPR.setNumDocumento(compradorBusquedaAdicional.getDocumento());
-					if(!Checks.esNulo(clienteGDPR) && !clienteGDPR.isEmpty()){
+					if (!Checks.esNulo(clienteGDPR) && !clienteGDPR.isEmpty()) {
 						if (!Checks.esNulo(clienteGDPR.get(0).getCesionDatos())) {
 							clienteCompradorGDPR.setCesionDatos(clienteGDPR.get(0).getCesionDatos());
 						}
@@ -1223,7 +1083,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 							clienteCompradorGDPR.setComunicacionTerceros(clienteGDPR.get(0).getComunicacionTerceros());
 						}
 						if (!Checks.esNulo(clienteGDPR.get(0).getTransferenciasInternacionales())) {
-							clienteCompradorGDPR.setTransferenciasInternacionales(clienteGDPR.get(0).getTransferenciasInternacionales());								
+							clienteCompradorGDPR.setTransferenciasInternacionales(
+									clienteGDPR.get(0).getTransferenciasInternacionales());
 						}
 						if (!Checks.esNulo(clienteGDPR.get(0).getAdjuntoComprador())) {
 							clienteCompradorGDPR.setAdjuntoComprador(clienteGDPR.get(0).getAdjuntoComprador());
@@ -1237,14 +1098,15 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			// nuevo expediente
 			nuevoExpediente.setCompradores(listaCompradoresExpediente);
 
-			return true;
+			return nuevoExpediente;
 		}
 
-		return false;
+		return nuevoExpediente;
 	}
-	
+
 	@SuppressWarnings("static-access")
-	private void asignarGestorYSupervisorFormalizacionToExpediente(ExpedienteComercial expediente) {
+	@Transactional
+	public void asignarGestorYSupervisorFormalizacionToExpediente(ExpedienteComercial expediente) {
 		GestorEntidadDto dto = new GestorEntidadDto();
 		dto.setIdEntidad(expediente.getId());
 		dto.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
@@ -1264,12 +1126,12 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 		if (!Checks.esNulo(oferta)) {
 			/*
-			 * Antes se diferenciaba entre agrupacion lote comercial y lote
-			 * restringido Comercial: Asignaba los gestores que hubiese en la
-			 * ficha del activo Restringida: Llama al procedimiento de balanceo
-			 * (como si fuera un activo individual Ahora se quieren todos
-			 * iguales, la unica diferencia es que el lote comercial no tiene
-			 * activo principal y el resto si (restringida y activo unico)
+			 * Antes se diferenciaba entre agrupacion lote comercial y lote restringido
+			 * Comercial: Asignaba los gestores que hubiese en la ficha del activo
+			 * Restringida: Llama al procedimiento de balanceo (como si fuera un activo
+			 * individual Ahora se quieren todos iguales, la unica diferencia es que el lote
+			 * comercial no tiene activo principal y el resto si (restringida y activo
+			 * unico)
 			 */
 			agrupacion = oferta.getAgrupacion();
 			if (!Checks.esNulo(agrupacion)) {
@@ -1293,19 +1155,20 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 					EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, f1);
 					Filter f2 = genericDao.createFilter(FilterType.EQUALS, "activo", activo);
 					Filter f3 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor", tipoGestor);
-					GestorActivo nuevoGestorF = genericDao.get(GestorActivo.class, f2, f3);					
-					if(!Checks.esNulo(nuevoGestorF) && !Checks.esNulo(nuevoGestorF.getUsuario())) {
+					GestorActivo nuevoGestorF = genericDao.get(GestorActivo.class, f2, f3);
+					if (!Checks.esNulo(nuevoGestorF) && !Checks.esNulo(nuevoGestorF.getUsuario())) {
 						idUsuarioGestorFormalizacion = nuevoGestorF.getUsuario().getId();// flag
 					}
 					f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", "GCOM");
 					tipoGestor = genericDao.get(EXTDDTipoGestor.class, f1);
 					f3 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor", tipoGestor);
 					GestorActivo nuevoGestorC = genericDao.get(GestorActivo.class, f2, f3);
-					if(!Checks.esNulo(nuevoGestorC) && !Checks.esNulo(nuevoGestorC.getUsuario())) {
+					if (!Checks.esNulo(nuevoGestorC) && !Checks.esNulo(nuevoGestorC.getUsuario())) {
 						usuarioGestorComercial = nuevoGestorC.getUsuario();
-					}					
+					}
 
-				} else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR) || activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)){
+				} else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)
+						|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
 					idUsuarioGestorFormalizacion = gestorExpedienteComercialDao
 							.getUsuarioGestorFormalizacion(activo.getId());
 				} else {
@@ -1393,8 +1256,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				tipoGestor = genericDao.get(EXTDDTipoGestor.class, f1);
 
 				f3 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor", tipoGestor);
-				GestorActivo nuevoSupervisorC = genericDao.get(GestorActivo.class, f2, f3);					
-				if(!Checks.esNulo(nuevoSupervisorC) && !Checks.esNulo(nuevoSupervisorC.getUsuario())) {
+				GestorActivo nuevoSupervisorC = genericDao.get(GestorActivo.class, f2, f3);
+				if (!Checks.esNulo(nuevoSupervisorC) && !Checks.esNulo(nuevoSupervisorC.getUsuario())) {
 					usuarioSupervisorComercial = nuevoSupervisorC.getUsuario();// flag
 				}
 				if (!Checks.esNulo(supervisorFormalzacion)) {
@@ -1416,7 +1279,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_COMERCIAL,
 					usuarioGestorComercial.getUsername(), dto);
 
-
 		if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
 			if (!Checks.esNulo(usuarioGestorReserva))
 				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_RESERVA_CAJAMAR,
@@ -1435,7 +1297,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 						usuarioSupervisorFormalizacion.getUsername(), dto);
 		}
 	}
-	
+
 	private void agregarTipoGestorYUsuarioEnDto(String codTipoGestor, String username, GestorEntidadDto dto) {
 		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class,
 				genericDao.createFilter(FilterType.EQUALS, "codigo", codTipoGestor));
@@ -1447,60 +1309,324 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(dto);
 		}
 	}
-	
-	//@Transactional(readOnly = false)
-	public boolean saveOfertaAgrupacion(DtoOfertaActivo dto) throws JsonViewerException, Exception, Error {
 
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
-		Oferta oferta = genericDao.get(Oferta.class, filtro);
-		String offerType = oferta.getTipoOferta().getCodigo();
-		
-		DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class,
-				dto.getCodigoEstadoOferta());
-		
-		if (!Checks.esNulo(dto.getIdAgrupacion())) {
-			List<ActivoAgrupacionActivo> agaList = activoAgrupacionActivoDao
-					.getListActivoAgrupacionActivoByAgrupacionID(dto.getIdAgrupacion());
+	/**
+	 * Este método comprueba la entidad de la oferta para evaluar que gestores deben
+	 * estar asignados. Si la entidad es Cajamar deben estar asignados todos los
+	 * gestores, cualquier otra pueden obviar el gestore de tipo 'Backoffice'.
+	 * Dependiendo de los requerimientos por entidad devuelve True si se encuentran
+	 * los gestores necesarios asignados o False si no lo están.
+	 * 
+	 * @param agr : agrupación de tipo 'lote comercial'.
+	 * @return True si todos los gestores de la agrupación están asignados según
+	 *         requerimientos. False si no lo están.
+	 */
+	private boolean agrupacionLoteComercialGestoresAsignados(ActivoAgrupacion agr) {
+		ActivoLoteComercial loteComercial = genericDao.get(ActivoLoteComercial.class,
+				genericDao.createFilter(FilterType.EQUALS, "id", agr.getId()));
 
-			for (ActivoAgrupacionActivo aga : agaList) {
-				Activo activo = aga.getActivo();
-				Long numActivo = activo.getNumActivo();
-				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-				Filter filtroTofVenta = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo",
-						DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
-				Filter filtroTofAlquiler = genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo",
-						DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA);
-				ActivoValoraciones precioVenta = genericDao.get(ActivoValoraciones.class, filtroActivo, filtroTofVenta);
-				ActivoValoraciones precioRenta = genericDao.get(ActivoValoraciones.class, filtroActivo,
-						filtroTofAlquiler);
+		// Comprobar entidad de la oferta.
+		if (!Checks.estaVacio(agr.getActivos()) && !Checks.esNulo(agr.getActivos().get(0))
+				&& !Checks.esNulo(agr.getActivos().get(0).getActivo())
+				&& !Checks.esNulo(agr.getActivos().get(0).getActivo().getCartera())
+				&& !Checks.esNulo(agr.getActivos().get(0).getActivo().getCartera().getCodigo())
+				&& (agr.getActivos().get(0).getActivo().getCartera().getCodigo()
+						.equals(DDCartera.CODIGO_CARTERA_CAJAMAR)
+						|| agr.getActivos().get(0).getActivo().getCartera().getCodigo()
+								.equals(DDCartera.CODIGO_CARTERA_LIBERBANK))) {
+			if (Checks.esNulo(loteComercial.getUsuarioGestorComercial()) && !agr.getActivos().get(0).getActivo()
+					.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
+				return false;
+			} else if (Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice()) && agr.getActivos().get(0)
+					.getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
+				return false;
+			}
+		} else {
+			if ((DDCartera.CODIGO_CARTERA_BANKIA.equals(agr.getActivos().get(0).getActivo().getCartera().getCodigo())
+					|| (DDCartera.CODIGO_CARTERA_EGEO
+							.equals(agr.getActivos().get(0).getActivo().getCartera().getCodigo())
+							&& (DDSubcartera.CODIGO_ZEUS
+									.equals(agr.getActivos().get(0).getActivo().getSubcartera().getCodigo())))
+					|| DDCartera.CODIGO_CARTERA_GALEON
+							.equals(agr.getActivos().get(0).getActivo().getCartera().getCodigo())
+					|| DDCartera.CODIGO_CARTERA_GIANTS
+							.equals(agr.getActivos().get(0).getActivo().getCartera().getCodigo())
+					|| DDCartera.CODIGO_CARTERA_HYT.equals(agr.getActivos().get(0).getActivo().getCartera().getCodigo())
+					|| DDCartera.CODIGO_CARTERA_SAREB
+							.equals(agr.getActivos().get(0).getActivo().getCartera().getCodigo())
+					|| DDCartera.CODIGO_CARTERA_TANGO
+							.equals(agr.getActivos().get(0).getActivo().getCartera().getCodigo())
+					|| (DDCartera.CODIGO_CARTERA_THIRD_PARTY
+							.equals(agr.getActivos().get(0).getActivo().getCartera().getCodigo())
+							&& (DDSubcartera.CODIGO_THIRD_PARTIES_QUITAS_ING
+									.equals(agr.getActivos().get(0).getActivo().getSubcartera().getCodigo())
+									|| DDSubcartera.CODIGO_THIRD_PARTIES_COMERCIAL_ING
+											.equals(agr.getActivos().get(0).getActivo().getSubcartera().getCodigo()))))
+					&& agrupacionAdapter.isRetail(agr)) {
+				if (Checks.esNulo(loteComercial.getUsuarioGestorComercial())
+						|| Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice())) {
+					return false;
+				}
 
-				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())
-						&& (oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getCartera() != null
-								&& DDCartera.CODIGO_CARTERA_LIBERBANK
-										.equals(oferta.getActivoPrincipal().getCartera().getCodigo()))) {
-					if (DDTipoOferta.CODIGO_VENTA.equals(offerType)) {
-						if (Checks.esNulo(precioVenta)
-								|| (!Checks.esNulo(precioVenta) && Checks.esNulo(precioVenta.getImporte()))) {
-							throw new JsonViewerException("Activo " + numActivo + " sin precio");
-						}
-					} else if (DDTipoOferta.CODIGO_ALQUILER.equals(offerType)) {
-						if (Checks.esNulo(precioRenta)
-								|| (!Checks.esNulo(precioRenta) && Checks.esNulo(precioRenta.getImporte()))) {
-							throw new JsonViewerException("Activo " + numActivo + " sin precio");
-						}
-						if(Checks.esNulo(activo.getTipoAlquiler())){
-							throw new JsonViewerException("El valor de Tipo de Alquiler del activo "+numActivo+" no permite la realización de una oferta");
+			} else if (Checks.esNulo(loteComercial.getUsuarioGestorComercial())) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Transactional
+	public DDComiteSancion devuelveComiteByCartera(Long idActivo, Long idOferta) {
+		return this.devuelveComiteByCartera(activoAdapter.getActivoById(idActivo).getCartera().getCodigo(),
+				ofertaApi.getOfertaById(idOferta));
+	}
+
+	@Transactional
+	public DDComiteSancion devuelveComiteByCartera(String carteraCodigo, Oferta oferta) {
+
+		Filter filtroComite = null;
+
+		// HREOS-2511 El combo "Comité seleccionado" vendrá informado para
+		// cartera Sareb
+		if (DDCartera.CODIGO_CARTERA_SAREB.equals(carteraCodigo) || DDCartera.CODIGO_CARTERA_TANGO.equals(carteraCodigo)
+				|| DDCartera.CODIGO_CARTERA_GIANTS.equals(carteraCodigo)
+				|| DDCartera.CODIGO_CARTERA_CERBERUS.equals(carteraCodigo)) {
+			Double precioMinimoAutorizado = 0.0;
+			ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(oferta.getActivoPrincipal().getId());
+			if (Checks.esNulo(oferta.getAgrupacion())) {
+				if (!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo())) {
+					List<VPreciosVigentes> vPreciosVigentes = activoAdapter
+							.getPreciosVigentesById(activoBancario.getActivo().getId());
+					if (!Checks.estaVacio(vPreciosVigentes)) {
+						for (VPreciosVigentes precio : vPreciosVigentes) {
+							if (DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(precio.getCodigoTipoPrecio())
+									&& !Checks.esNulo(precio.getImporte())) {
+								precioMinimoAutorizado = precio.getImporte();
+							}
 						}
 					}
 				}
-				
-				if(DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo()) && DDTipoOferta.CODIGO_ALQUILER.equals(offerType) && Checks.esNulo(activo.getTipoAlquiler())){
-					throw new JsonViewerException("El valor de Tipo de Alquiler del activo "+activo.getNumActivo()+" no permite la realización de una oferta");
+			} else {
+				ActivoAgrupacion agrupacion = oferta.getAgrupacion();
+				List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
+				if (!Checks.estaVacio(activos)) {
+					for (ActivoAgrupacionActivo activoOferta : activos) {
+						List<VPreciosVigentes> vPreciosVigentes = activoAdapter
+								.getPreciosVigentesById(activoOferta.getId());
+						if (!Checks.estaVacio(vPreciosVigentes)) {
+							for (VPreciosVigentes precio : vPreciosVigentes) {
+								if (DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(precio.getCodigoTipoPrecio())
+										&& !Checks.esNulo(precio.getImporte())) {
+									precioMinimoAutorizado += precio.getImporte();
+								}
+							}
+						}
+					}
+				}
+			}
+
+			boolean esFinanciero = false;
+			if (!Checks.esNulo(activoBancario)) {
+				if (!Checks.esNulo(activoBancario.getClaseActivo()) && activoBancario.getClaseActivo().getCodigo()
+						.equals(DDClaseActivoBancario.CODIGO_FINANCIERO)) {
+					esFinanciero = true;
+				}
+
+				if (DDCartera.CODIGO_CARTERA_TANGO.equals(carteraCodigo)) {
+					filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							DDComiteSancion.CODIGO_HAYA_TANGO);
+				} else if (DDCartera.CODIGO_CARTERA_GIANTS.equals(carteraCodigo)) {
+					filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							DDComiteSancion.CODIGO_HAYA_GIANTS);
+				} else if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(carteraCodigo)) {
+					if (DDSubcartera.CODIGO_AGORA_FINANCIERO
+							.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())
+							|| DDSubcartera.CODIGO_AGORA_INMOBILIARIO
+									.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) {
+						filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								DDComiteSancion.CODIGO_CERBERUS);
+					} else if (DDSubcartera.CODIGO_APPLE_INMOBILIARIO
+							.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) {
+						filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								DDComiteSancion.CODIGO_APPLE_CERBERUS);
+					} else {
+						filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								DDComiteSancion.CODIGO_HAYA_CERBERUS);
+					}
+				} else {
+					// 1º Clase de activo (financiero/inmobiliario) y sin
+					// formalización.
+					if (esFinanciero && !Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo())
+							&& activoApi.getPerimetroByIdActivo(activoBancario.getActivo().getId())
+									.getAplicaFormalizar() == 0) {
+						filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								DDComiteSancion.CODIGO_HAYA_SAREB);
+						// 2º Si es inmobiliario: Tipo de comercialización
+						// (singular/retail).
+					} else if (!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo())
+							&& activoBancario.getActivo().getTipoComercializar() != null && activoBancario.getActivo()
+									.getTipoComercializar().getCodigo().equals(DDTipoComercializar.CODIGO_SINGULAR)) {
+						filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								DDComiteSancion.CODIGO_SAREB);
+						// 3º Si es retail: Comparamos precio mínimo e importe
+						// oferta.
+					} else if (!Checks.esNulo(precioMinimoAutorizado)
+							&& precioMinimoAutorizado > oferta.getImporteOferta()) {
+						filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								DDComiteSancion.CODIGO_SAREB);
+					} else {
+						filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								DDComiteSancion.CODIGO_HAYA_SAREB);
+					}
 				}
 			}
 		}
 
-		
+		// El combo "Comité seleccionado" vendrá informado para cartera
+		// Liberbank
+		else if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
+				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(carteraCodigo)) {
+			return ofertaApi.calculoComiteLiberbank(oferta);
+		}
+		// El combo "Comité seleccionado" vendrá informado para cartera Cajamar
+		else if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(carteraCodigo)) {
+			filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CAJAMAR);
+		}
+		// El combo "Comité seleccionado" vendrá informado para cartera Galeon
+		else if (DDCartera.CODIGO_CARTERA_GALEON.equals(carteraCodigo)) {
+			filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_GALEON);
+		}
+		// El combo "Comité seleccionado" vendrá informado para subcartera Zeus
+		else if (DDCartera.CODIGO_CARTERA_EGEO.equals(carteraCodigo)
+				&& DDSubcartera.CODIGO_ZEUS.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) {
+			filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_EGEO);
+		} else if (DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(carteraCodigo)
+				&& DDSubcartera.CODIGO_YUBAI.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) {
+			filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",
+					DDComiteSancion.CODIGO_THIRD_PARTIES_YUBAI);
+		}
+
+		if (filtroComite != null) {
+			return genericDao.get(DDComiteSancion.class, filtroComite);
+		} else {
+			return null;
+		}
+	}
+
+	public void validartramitacionActivo(DtoOfertaActivo dto, Oferta oferta, DDEstadoOferta estadoOferta, Activo activo,
+			Boolean esAlquiler) {
+
+		if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())
+				&& faltanDatosCalculo(oferta, activo)) {
+			throw new JsonViewerException(FALTAN_DATOS);
+		}
+
+		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
+			comprobarTramitarOferta(oferta, activo, esAlquiler, null);
+		}
+
+		// Si el activo pertenece a un lote comercial, no se pueden aceptar
+		// ofertas de forma individual en el activo
+		if ((activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(dto.getIdActivo())
+				|| activoAgrupacionActivoDao.activoEnAgrupacionLoteComercialAlquiler(dto.getIdActivo()))
+				&& (Checks.esNulo(dto.getEsAnulacion()) || !dto.getEsAnulacion())) {
+			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACTIVO_EN_LOTE_COMERCIAL));
+		}
+		if (!Checks.esNulo(oferta.getCliente())) {
+			if (Checks.esNulo(oferta.getCliente().getDocumento())
+					|| Checks.esNulo(oferta.getCliente().getTipoDocumento())) {
+				throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_TIPO_NUMERO_DOCUMENTO));
+			}
+		} else {
+			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_CLIENTE_OBLIGATORIO));
+		}
+		// Si el activo esta marcado como alquilado
+		// o si el activo esta marcado como ocupado sin titulo
+		// no permitiremos tramitar ofertas de alquiler
+		if (!Checks.esNulo(oferta) && !Checks.esNulo(activo) && !Checks.esNulo(estadoOferta)
+				&& DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo()) && esAlquiler
+				&& ((!Checks.esNulo(activo.getSituacionComercial())
+						&& !Checks.esNulo(activo.getSituacionComercial().getCodigo())
+						&& DDSituacionComercial.CODIGO_ALQUILADO.equals(activo.getSituacionComercial().getCodigo()))
+						|| (activo.getSituacionPosesoria().getOcupado() != null
+								&& activo.getSituacionPosesoria().getOcupado() == 1
+								&& (Checks.esNulo(activo.getSituacionPosesoria().getConTitulo())
+										|| (!Checks.esNulo(activo.getSituacionPosesoria().getConTitulo())
+												&& activo.getSituacionPosesoria().getConTitulo().getCodigo()
+														.equals(DDTipoTituloActivoTPA.tipoTituloNo)))))) {
+
+			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACITVO_ALQUILADO_O_OCUPADO));
+
+		}
+
+		// Si el estado de la oferta es tramitada y tipo oferta es alquiler
+		// Sole se podrá realizar el cambio si no existe para el mismo activo
+		// una oferta de tipo venta
+		if (!Checks.esNulo(estadoOferta) && !Checks.esNulo(oferta.getTipoOferta())
+				&& DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo()) && esAlquiler) {
+
+			// Consultar ofertas activo
+			List<ActivoOferta> ofertasActivo = activo.getOfertas();
+
+			if (!Checks.estaVacio(ofertasActivo)) {
+				for (ActivoOferta activoOferta : ofertasActivo) {
+					Oferta ofr = activoOferta.getPrimaryKey().getOferta();
+					// Si existe oferta de venta lanzar error
+					if (!Checks.esNulo(ofr) && !Checks.esNulo(ofr.getTipoOferta())
+							&& DDTipoOferta.CODIGO_VENTA.equals(ofr.getTipoOferta().getCodigo())
+							&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(ofr.getEstadoOferta().getCodigo())) {
+
+						throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_EXISTEN_OFERTAS_VENTA));
+					}
+				}
+			}
+
+		}
+
+		if (!Checks.esNulo(dto.getIdActivo()) && activoDao.isIntegradoEnAgrupacionPA(dto.getIdActivo())) {
+			ActivoAgrupacion agrupacion = activoDao.getAgrupacionPAByIdActivo(dto.getIdActivo());
+			if (activoDao.isActivoMatriz(dto.getIdActivo())
+					&& activoDao.existenUAsconOfertasVivas(agrupacion.getId())) {
+				throw new JsonViewerException(
+						messageServices.getMessage(EXISTEN_UNIDADES_ALQUILABLES_CON_OFERTAS_VIVAS));
+			} else if (activoDao.isUnidadAlquilable(dto.getIdActivo())
+					&& activoDao.existeAMconOfertasVivas(agrupacion.getId())) {
+				throw new JsonViewerException(messageServices.getMessage(EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS));
+			}
+		}
+
+		ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(oferta);
+		if (!Checks.esNulo(expediente)) {
+			List<ComunicacionGencat> comunicacionesGencat = gencatApi.comunicacionesVivas(expediente);
+			if (!Checks.estaVacio(comunicacionesGencat) && !Checks.esNulo(estadoOferta)
+					&& (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())
+							|| DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo()))
+					&& gencatApi.comprobarExpedienteAnuladoGencat(comunicacionesGencat)) {
+				throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_EXPEDIENTE_ANULADO_POR_GENCAT));
+			}
+		}
+	}
+
+	public void validarTramitacionAgrupacion(DtoOfertaActivo dto, DDEstadoOferta estadoOferta, Oferta oferta,
+			Boolean esAlquiler, ActivoAgrupacion agrupacion) throws Exception {
+
+		if (!Checks.esNulo(agrupacion)) {
+			List<ActivoAgrupacionActivo> agaList = agrupacion.getActivos();
+
+			for (ActivoAgrupacionActivo aga : agaList) {
+				Activo activo = aga.getActivo();
+				Long numActivo = activo.getNumActivo();
+
+				comprobarTramitarOferta(oferta, activo, esAlquiler, numActivo.toString());
+
+				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo()) && esAlquiler
+						&& Checks.esNulo(activo.getTipoAlquiler())) {
+					throw new JsonViewerException("El valor de Tipo de Alquiler del activo " + numActivo
+							+ " no permite la realización de una oferta");
+				}
+			}
+		}
+
 		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())) {
 			if (!Checks.esNulo(oferta.getCliente())) {
 				if (Checks.esNulo(oferta.getCliente().getDocumento())
@@ -1512,7 +1638,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			}
 		}
 
-		
 		// Si se pretende aceptar la oferta, comprobar primero si la agrupación
 		// de la oferta es de tipo 'Lote comercial'.
 		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())) {
@@ -1523,15 +1648,15 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				if (ES_FORMALIZABLE.equals(oferta.getAgrupacion().getIsFormalizacion())) {
 					// // Comprobar si la agrupación tiene todos los gestores
 					// // asignados.
-					if (!agrupacionLoteComercialGestoresAsignados(oferta.getAgrupacion()) && !Checks.esNulo(oferta.getVentaDirecta()) && !oferta.getVentaDirecta()) {
-						throw new Exception(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
+					if (!agrupacionLoteComercialGestoresAsignados(oferta.getAgrupacion())
+							&& !Checks.esNulo(oferta.getVentaDirecta()) && !oferta.getVentaDirecta()) {
+						throw new JsonViewerException(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
 					}
+				} else {
+					throw new JsonViewerException(messageServices.getMessage(AGRUPACION_SIN_FORMALIZACION));
 				}
 			}
 		}
-
-		// try {
-		oferta.setEstadoOferta(estadoOferta);
 
 		// Si el estado de la oferta cambia a Aceptada cambiamos el resto de
 		// estados a Congelada excepto los que ya estuvieran en Rechazada
@@ -1545,111 +1670,101 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				if (ES_FORMALIZABLE.equals(oferta.getAgrupacion().getIsFormalizacion())) {
 					// Comprobar si la agrupación tiene todos los gestores
 					// asignados.
-					if (!agrupacionLoteComercialGestoresAsignados(oferta.getAgrupacion()) && !Checks.esNulo(oferta.getVentaDirecta()) && !oferta.getVentaDirecta()) {
-						throw new Exception(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
+					if (!agrupacionLoteComercialGestoresAsignados(oferta.getAgrupacion())
+							&& !Checks.esNulo(oferta.getVentaDirecta()) && !oferta.getVentaDirecta()) {
+						throw new JsonViewerException(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
 					}
 				}
 			}
-
-			List<Activo> listaActivos = new ArrayList<Activo>();
-
-			List<ActivoOferta> ofertasActivo = oferta.getActivosOferta();
-
-			for (ActivoOferta activoOferta : ofertasActivo) {
-				listaActivos.add(activoOferta.getPrimaryKey().getActivo());
-			}
-
-			DDSubtipoTrabajo subtipoTrabajo = (DDSubtipoTrabajo) utilDiccionarioApi
-					.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, getSubtipoTrabajoByOferta(oferta));
-
-			Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null, false);
-			crearExpediente(oferta, trabajo, null);
-			trabajoApi.createTramiteTrabajo(trabajo);
 		}
-
-		//genericDao.update(Oferta.class, oferta);
-		persistOferta(oferta);
-
-		// si la oferta ha sido rechazada enviamos un email/notificacion.
-		if (DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo())) {
-			
-			//SI LA OFERTA ES de una agrupacion COMERCIAL/VENTA Y EL ORIGEN ES WEBCOM, DAMOS DE BAJA EL LOTE A LA QUE PERTENECE
-			ofertaApi.darDebajaAgrSiOfertaEsLoteCrm(oferta);
-
-			if (!Checks.esNulo(dto.getMotivoRechazoCodigo())) {
-				DDMotivoRechazoOferta motivoRechazoOferta = (DDMotivoRechazoOferta) utilDiccionarioApi
-						.dameValorDiccionarioByCod(DDMotivoRechazoOferta.class, dto.getMotivoRechazoCodigo());
-				oferta.setMotivoRechazo(motivoRechazoOferta);
-			}
-
-			notificatorServiceSancionOfertaAceptacionYRechazo.notificatorFinSinTramite(oferta.getId());
-		}
-
-		// }
-		// catch (Exception ex) {
-		// logger.error("error en agrupacionAdapter", ex);
-		// return false;
-		// }
-
-		return true;
 	}
-	
-	/**
-	 * Este método comprueba la entidad de la oferta para evaluar que gestores
-	 * deben estar asignados. Si la entidad es Cajamar deben estar asignados
-	 * todos los gestores, cualquier otra pueden obviar el gestore de tipo
-	 * 'Backoffice'. Dependiendo de los requerimientos por entidad devuelve True
-	 * si se encuentran los gestores necesarios asignados o False si no lo
-	 * están.
-	 * 
-	 * @param agr
-	 *            : agrupación de tipo 'lote comercial'.
-	 * @return True si todos los gestores de la agrupación están asignados según
-	 *         requerimientos. False si no lo están.
-	 */
-	private boolean agrupacionLoteComercialGestoresAsignados(ActivoAgrupacion agr) {
-		ActivoLoteComercial loteComercial = genericDao.get(ActivoLoteComercial.class,
-				genericDao.createFilter(FilterType.EQUALS, "id", agr.getId()));
 
-		// Comprobar entidad de la oferta.
-		if (!Checks.estaVacio(agr.getActivos()) && !Checks.esNulo(agr.getActivos().get(0))
-				&& !Checks.esNulo(agr.getActivos().get(0).getActivo())
-				&& !Checks.esNulo(agr.getActivos().get(0).getActivo().getCartera())
-				&& !Checks.esNulo(agr.getActivos().get(0).getActivo().getCartera().getCodigo())
-				&& (agr.getActivos().get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)
-						|| agr.getActivos().get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK))) {
-			if (Checks.esNulo(loteComercial.getUsuarioGestorComercial()) &&
-					!agr.getActivos().get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
-				return false;
-			} else if(Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice()) &&
-					agr.getActivos().get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
-				return false;
-			}
-		} else {
-			if((DDCartera.CODIGO_CARTERA_BANKIA.equals(agr.getActivos().get(0).getActivo().getCartera().getCodigo())
-					|| (DDCartera.CODIGO_CARTERA_EGEO.equals(agr.getActivos().get(0).getActivo().getCartera().getCodigo()) 
-							&& (DDSubcartera.CODIGO_ZEUS.equals(agr.getActivos().get(0).getActivo().getSubcartera().getCodigo()))		
-						)
-					|| DDCartera.CODIGO_CARTERA_GALEON.equals(agr.getActivos().get(0).getActivo().getCartera().getCodigo())
-					|| DDCartera.CODIGO_CARTERA_GIANTS.equals(agr.getActivos().get(0).getActivo().getCartera().getCodigo())
-					|| DDCartera.CODIGO_CARTERA_HYT.equals(agr.getActivos().get(0).getActivo().getCartera().getCodigo())
-					|| DDCartera.CODIGO_CARTERA_SAREB.equals(agr.getActivos().get(0).getActivo().getCartera().getCodigo())
-					|| DDCartera.CODIGO_CARTERA_TANGO.equals(agr.getActivos().get(0).getActivo().getCartera().getCodigo())
-					|| (DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(agr.getActivos().get(0).getActivo().getCartera().getCodigo()) 
-							&& (DDSubcartera.CODIGO_THIRD_PARTIES_QUITAS_ING.equals(agr.getActivos().get(0).getActivo().getSubcartera().getCodigo()) 
-							|| DDSubcartera.CODIGO_THIRD_PARTIES_COMERCIAL_ING.equals(agr.getActivos().get(0).getActivo().getSubcartera().getCodigo()))
-						)	
-				)
-					&& adapter.isRetail(agr)){
-				if (Checks.esNulo(loteComercial.getUsuarioGestorComercial()) || Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice())) {
-					return false;
-				}
-				
-			}else if (Checks.esNulo(loteComercial.getUsuarioGestorComercial())) {
-				return false;
-			}
+	public Formalizacion crearFormalizacion(ExpedienteComercial expedienteComercial) {
+		Formalizacion nuevaFormalizacion = new Formalizacion();
+		nuevaFormalizacion.setAuditoria(Auditoria.getNewInstance());
+		nuevaFormalizacion.setExpediente(expedienteComercial);
+		return nuevaFormalizacion;
+	}
+
+	@Transactional
+	public void doTramitacion(Activo activo, Oferta oferta, Long idTrabajo, ExpedienteComercial expedienteComercial) throws IllegalAccessException, InvocationTargetException {
+		expedienteComercial = this.crearCompradores(oferta, expedienteComercial);
+		trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
+		expedienteComercial = this.crearCondicionanteYTanteo(activo, oferta, expedienteComercial);
+		expedienteComercial = this.crearExpedienteReserva(expedienteComercial);
+		expedienteComercialApi.crearCondicionesActivoExpediente(activo, expedienteComercial);
+
+		Formalizacion formalizacion = this.crearFormalizacion(expedienteComercial);
+		expedienteComercial.setFormalizacion(formalizacion);
+
+		DDComiteSancion comite = this.devuelveComiteByCartera(activo.getCartera().getCodigo(), oferta);
+
+		expedienteComercial.setComiteSancion(comite);
+
+		if (comite != null && comite.getCartera() != null
+				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(comite.getCartera().getCodigo())) {
+			expedienteComercial.setComitePropuesto(comite);
 		}
-		return true;
+		this.crearGastosExpediente(oferta, expedienteComercial);
+
+		// Se asigna un gestor de Formalización al crear un nuevo expediente.
+		this.asignarGestorYSupervisorFormalizacionToExpediente(expedienteComercial);
+
+		activoManager.actualizarOfertasTrabajosVivos(activo.getId());
+
+	}
+
+	@Override
+	@Transactional
+	public void doTramitacionAsincrona(Long idActivo, Long idTrabajo, Long idOferta, Long idExpedienteComercial) {
+		// Creación de formalización y condicionantes. Evita errores en los
+		// trámites al preguntar por datos de algunos de estos objetos y aún
+		// no esten creados. Para ello creamos los objetos vacios con el
+		// unico fin que se cree la fila.
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
+		Activo activo = activoManager.get(idActivo);
+		Oferta oferta = ofertaApi.getOfertaById(idOferta);
+		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOne(idExpedienteComercial);
+
+		try {
+			expedienteComercial = this.crearCompradores(oferta, expedienteComercial);
+			transactionManager.commit(transaction);
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
+			transactionManager.commit(transaction);
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
+			expedienteComercial = this.crearCondicionanteYTanteo(activo, oferta, expedienteComercial);
+			expedienteComercial = this.crearExpedienteReserva(expedienteComercial);
+			expedienteComercialApi.crearCondicionesActivoExpediente(activo, expedienteComercial);
+
+			Formalizacion formalizacion = this.crearFormalizacion(expedienteComercial);
+			expedienteComercial.setFormalizacion(formalizacion);
+
+			DDComiteSancion comite = this.devuelveComiteByCartera(activo.getCartera().getCodigo(), oferta);
+
+			expedienteComercial.setComiteSancion(comite);
+
+			if (comite != null && comite.getCartera() != null
+					&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(comite.getCartera().getCodigo())) {
+				expedienteComercial.setComitePropuesto(comite);
+			}
+			this.crearGastosExpediente(oferta, expedienteComercial);
+
+			// Se asigna un gestor de Formalización al crear un nuevo expediente.
+			this.asignarGestorYSupervisorFormalizacionToExpediente(expedienteComercial);
+
+			transactionManager.commit(transaction);
+
+			if (idActivo != null) {
+				activoManager.actualizarOfertasTrabajosVivos(idActivo);
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			transactionManager.rollback(transaction);
+		}
+
 	}
 
 }

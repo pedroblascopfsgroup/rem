@@ -1864,8 +1864,8 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		DDSubtipoTrabajo subtipoTrabajo = (DDSubtipoTrabajo) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, tramitacionOfertasManager.getSubtipoTrabajoByOferta(nuevaOferta));
 		Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null, false);
-		ExpedienteComercial nuevoExpedienteComercial = tramitacionOfertasManager.crearExpediente(nuevaOferta, trabajo, oferta);
-		trabajoApi.createTramiteTrabajo(trabajo);
+		ExpedienteComercial nuevoExpedienteComercial = tramitacionOfertasManager.crearExpediente(nuevaOferta, trabajo, oferta, oferta.getActivoPrincipal());
+		trabajoApi.createTramiteTrabajo(trabajo,nuevoExpedienteComercial);
 		
 		
 		nuevoExpedienteComercial.setConflictoIntereses(expedienteComercial.getConflictoIntereses());

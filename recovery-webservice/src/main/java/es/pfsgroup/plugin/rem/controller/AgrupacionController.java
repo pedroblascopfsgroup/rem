@@ -77,7 +77,6 @@ import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
 @Controller
 public class AgrupacionController extends ParadiseJsonController {
 
-	private static final String FALTAN_DATOS = "Faltan datos para proponer";
 	private static final String RESPONSE_SUCCESS_KEY = "success";
 	private static final String RESPONSE_MESSAGE_KEY = "msg";
 	private static final String RESPONSE_DATA_KEY = "data";
@@ -101,9 +100,6 @@ public class AgrupacionController extends ParadiseJsonController {
 	@Autowired
 	private AgrupacionAdjuntosAdapter agrupacionAdjuntos;
 
-	@Autowired
-	private OfertaApi ofertaApi;
-	
 	@Autowired
 	private UsuarioManager usuarioManager;
 

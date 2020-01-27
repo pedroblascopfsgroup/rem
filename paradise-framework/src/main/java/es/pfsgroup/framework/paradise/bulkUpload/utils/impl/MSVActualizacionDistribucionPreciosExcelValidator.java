@@ -320,7 +320,7 @@ public class MSVActualizacionDistribucionPreciosExcelValidator extends MSVExcelV
 							}
 						}
 						
-						sumaImportes = Math.floor(sumaImportes * 100) / 100;
+						sumaImportes = Math.round(sumaImportes * 100) / 100d;
 						
 					}
 							

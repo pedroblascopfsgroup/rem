@@ -712,10 +712,6 @@ public interface OfertaApi {
 	 * @return <DtoPage> Página de valores de ofertas agrupadas Liberbank
 	 */
 	DtoPage getListActivosOfertasAgrupadasLiberbank(DtoVListadoOfertasAgrupadasLbk dtoVListadoOfertasAgrupadasLbk);
-	
-
-
-	public boolean faltanDatosCalculo(Long idOferta);
 
 	DDComiteSancion calculoComiteLiberbankOfertasDependientes(Oferta ofertaNueva, List<GastosExpediente> gastosExpediente, boolean esLote);
 

@@ -81,8 +81,9 @@ Ext.define('HreRem.model.OfertaActivo', {
 		type: 'uxproxy',
 		writeAll: true,
 		api: {
-            update: 'activo/saveOfertaActivo'
-        }
+            update: 'tramitacionofertas/saveOferta'
+        },
+        extraParams: {entidad: 'activo'}
     }    
 
 });

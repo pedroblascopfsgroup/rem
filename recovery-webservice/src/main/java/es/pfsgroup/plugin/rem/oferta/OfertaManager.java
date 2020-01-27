@@ -163,6 +163,7 @@ import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
+import es.pfsgroup.plugin.rem.tramitacionOfertas.TramitacionOfertasManager;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import net.sf.json.JSONObject;
 
@@ -281,6 +282,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
+	
+	@Autowired
+	private TramitacionOfertasManager tramitacionOfertasManager;
 
 	@Override
 	public String managerName() {
@@ -1273,10 +1277,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 
 				DDSubtipoTrabajo subtipoTrabajo = (DDSubtipoTrabajo) utilDiccionarioApi
-						.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, activoApi.getSubtipoTrabajoByOferta(oferta));
+						.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, tramitacionOfertasManager.getSubtipoTrabajoByOferta(oferta));
 
 				Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null, false);
-				activoApi.crearExpediente(oferta, trabajo, null);
+				tramitacionOfertasManager.crearExpediente(oferta, trabajo, null, oferta.getActivoPrincipal());
 				ActivoTramite activoTramite = trabajoApi.createTramiteTrabajo(trabajo);
 
 				adapter.saltoInstruccionesReserva(activoTramite.getProcessBPM());
@@ -3665,83 +3669,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			return null;
 		}
 	}
-	@Override
-	public boolean faltanDatosCalculo (Long idOferta) {
-		Double vta= 0.0, pvb= 0.0, cco= 0.0, pvn= 0.0, vnc= 0.0, vr = 0.0;
-		Oferta ofertaAceptada = this.getOfertaById(idOferta);
-		Activo activoPrincipal = ofertaAceptada.getActivoPrincipal();
-		
-		if(ofertaAceptada != null && !Checks.esNulo(activoPrincipal)) {
-			if(!Checks.estaVacio(activoPrincipal.getTasacion()) 
-					&& !Checks.esNulo(activoPrincipal.getTasacion().get(activoPrincipal.getTasacion().size()-1).getImporteTasacionFin())) {
-				vta += activoPrincipal.getTasacion().get(activoPrincipal.getTasacion().size()-1).getImporteTasacionFin();
-			}
-			pvb = ofertaAceptada.getImporteOferta();
-	
-			
-			// Cuando son ofertas agrupadas, las recorro
-			if (!Checks.esNulo(ofertaAceptada.getClaseOferta()) 
-					&& DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(ofertaAceptada.getClaseOferta().getCodigo())) {
-	
-				Oferta principal = getOfertaPrincipalById(ofertaAceptada.getId());
-				List<OfertasAgrupadasLbk> ofertasAgrupadas = principal.getOfertasAgrupadas();
-	
-				List<Oferta> listaOfertas = new ArrayList<Oferta>();
-				
-				// Añado la oferta principal
-				listaOfertas.add(principal);
-	
-				
-				// Añado las dependientes
-				for (OfertasAgrupadasLbk lisOf : ofertasAgrupadas) {
-					listaOfertas.add(lisOf.getOfertaDependiente());
-				}	
-				
-				// Recorro todas las ofertas que tiene la agrupada
-				for (Oferta oferta : listaOfertas) {
-	
-					ExpedienteComercial expedienteComercial = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId()); 
-					if (expedienteComercial == null) continue;
-					if (!Checks.esNulo(expedienteComercial) && DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
-						List<GastosExpediente> listaHonorarios = expedienteComercial.getHonorarios();
-						
-						for (GastosExpediente gex : listaHonorarios) {
-							cco += gex.getImporteFinal() * gex.getImporteCalculo();
-						}
-						
-					}
-				}
-	
-				List<ActivoValoraciones> valoraciones = activoPrincipal.getValoracion();
-	
-				for (ActivoValoraciones valoracion : valoraciones) {
-					String codigoValoracion = valoracion.getTipoPrecio().getCodigo();
-					if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK.equals(codigoValoracion)) {
-						vnc += valoracion.getImporte();
-					}else if (DDTipoPrecio.CODIGO_TPC_VALOR_RAZONABLE_LBK.equals(codigoValoracion)) {
-						vr  += valoracion.getImporte();
-					}
-				}
-				
-				
-			// Si son ofertas individuales o principales se calculan ellas solas
-			} else {
-				vnc = 0.1;
-				vr = 0.1;
-				cco = 0.1;
-			}
-			
-			pvn = pvb - cco;
-			
-	
-			
-			if (vta== 0.0 || pvb == 0.0 || cco == 0.0 || pvn == 0.0 || vnc == 0.0 || vr == 0.0) {
-				return true;
-			}
-		}
-		
-		return false;
-	}
 	
 	private List<Double> getImportesAcumulados(Oferta ofertaAceptada, Double vta, Double pvb, Double cco, Double pvn, Double vnc, Double vr, OfertasAgrupadasLbk nuevafertaAgrupadaLbk) throws IllegalAccessException, InvocationTargetException{
 		List<Double> listaImportesAcumulados = new ArrayList<Double>();
@@ -4668,7 +4595,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						return null;
 					}
 				}
-				if(!Checks.estaVacio(listaGestoresActivosOferta) && listaGestoresActivosOferta.size() == 1) {
+				if(listaGestoresActivosOferta != null && listaGestoresActivosOferta.size() == 1
+						&& listaGestoresActivosOferta.get(0) != null) {
 					return listaGestoresActivosOferta.get(0).getUsuario();
 				}
 			}

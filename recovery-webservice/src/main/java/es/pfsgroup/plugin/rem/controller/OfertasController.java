@@ -108,7 +108,6 @@ public class OfertasController {
 	@Autowired
 	private ActivoTareaExternaApi activoTareaExternaApi;
 
-	
 	@Autowired
 	private ActivoApi activoApi;
 	

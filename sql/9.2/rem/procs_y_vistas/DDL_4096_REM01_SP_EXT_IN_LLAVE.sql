@@ -1,7 +1,7 @@
 --/*
 --#########################################
---## AUTOR=Mª José Ponce
---## FECHA_CREACION=20200113
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20200124
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-9065
@@ -26,8 +26,8 @@ CREATE OR REPLACE PROCEDURE       SP_EXT_IN_LLAVE (
 	 LLV_NUM_LLAVE     	      IN VARCHAR2,
     DD_TTE_CODIGO_POSEEDOR    IN VARCHAR2,
     LLV_COD_TENEDOR_POSEEDOR  IN VARCHAR2,
-    LLV_FECHA_ANILLADO        IN DATE,
-    LLV_FECHA_RECEPCION       IN DATE,
+    LLV_FECHA_ANILLADO        IN VARCHAR2,
+    LLV_FECHA_RECEPCION       IN VARCHAR2,
     LLV_CODE                  IN VARCHAR2,
     LLV_COMPLETO              IN VARCHAR2,
     LLV_OBSERVACIONES         IN VARCHAR2,
@@ -103,17 +103,17 @@ BEGIN
                 )
                 VALUES
                 (
-                 S_ACT_LLV_LLAVE.NEXTVAL,
+                 '  || V_ESQUEMA || '.S_ACT_LLV_LLAVE.NEXTVAL,
                  ' || V_ACT_ID ||',
-                 ''' || LLV_NUM_LLAVE         || ''',
+                 ''' || LLV_NUM_LLAVE|| ''',
                   ( SELECT DD_TTE_ID FROM '  || V_ESQUEMA || '.DD_TTE_TIPO_TENEDOR WHERE DD_TTE_CODIGO = ''' || DD_TTE_CODIGO_POSEEDOR || ''' ),
                  ''' || V_LLV_COD_TENEDOR_POSEEDOR || ''',
                  ''' || V_LLV_COD_TENEDOR_NO_PVE || ''',
-                 ''' || LLV_FECHA_ANILLADO        || ''',
-                 ''' || LLV_FECHA_RECEPCION           || ''',
-                 ''' || LLV_CODE           || ''',
+                 TO_DATE('''|| LLV_FECHA_ANILLADO||''',''yyyy-mm-dd''),
+                 TO_DATE('''|| LLV_FECHA_RECEPCION|| ''',''yyyy-mm-dd''),
+                 ''' || LLV_CODE|| ''',
                   ( SELECT DD_TIC_ID FROM '  || V_ESQUEMA || '.DD_TIC_TIPO_COMPLETO WHERE DD_TIC_CODIGO = ''' || LLV_COMPLETO || ''' ),                   
-                 ''' || LLV_OBSERVACIONES  || ''',
+                 ''' || LLV_OBSERVACIONES|| ''',
                  0,
                  ''' || V_USUARIO || ''',
                  SYSDATE,

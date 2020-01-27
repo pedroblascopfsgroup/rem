@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=REMVIP-6222
 --## PRODUCTO=NO
 --## 
---## Finalidad: REASIGNAR TAREAS A ELECNOR
+--## Finalidad: REASIGNAR TAREAS A PACI
 --##            
 --## INSTRUCCIONES:  
 --## VERSIONES:

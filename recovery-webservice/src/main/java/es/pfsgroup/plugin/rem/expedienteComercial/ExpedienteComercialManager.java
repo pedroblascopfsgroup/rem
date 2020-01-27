@@ -328,6 +328,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Autowired
 	private GastosExpedienteApi gastosExpedienteApi;
 	
+	
 	@Autowired
     private NotificationPlusvaliaManager notificationPlusvaliaManager;
 
@@ -335,7 +336,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public ExpedienteComercial findOne(Long id) {
 		return expedienteComercialDao.get(id);
 	}
-
+	
 	@Override
 	public ExpedienteComercial findOneTransactional(Long id) {
 		TransactionStatus transaction = null;
@@ -396,7 +397,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		if (PESTANA_FICHA.equals(tab)) {
 			dto = expedienteToDtoFichaExpediente(expediente);
-			activoApi.crearGastosExpediente(expediente);
+			//tramitacionOfertasApi.crearGastosExpediente(expediente.getOferta(), expediente);
 		} else if (PESTANA_DATOSBASICOS_OFERTA.equals(tab)) {
 			dto = expedienteToDtoDatosBasicosOferta(expediente);
 		}
@@ -2892,6 +2893,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		createReservaExpediente(expedienteComercial);
 
 		return true;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public CondicionesActivo crearCondicionesActivoExpediente(Long idActivo, ExpedienteComercial expediente) {
+		return this.crearCondicionesActivoExpediente(activoAdapter.getActivoById(idActivo), expediente);
 	}
 
 	@Override
@@ -9925,14 +9932,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (!existeTareaValidacion){
 			tramiteDao.creaTareaValidacion(usuarioLogado.getUsername(), expedienteComercial.getNumExpediente().toString());
 			Usuario gestor = gestorActivoApi.getGestorByActivoYTipo(tramite.getActivo(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
-			TareaNotificacion tarNot = new TareaNotificacion();
+			TareaNotificacion tarNot;
 			List<TareaExterna> tareasActivas2 = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
 			for (TareaExterna tarea : tareasActivas2){
 				if(tarea.getTareaProcedimiento().getCodigo().equals(ComercialUserAssigantionService.CODIGO_T013_VALIDACION_CLIENTES)){
 					tarNot = tarea.getTareaPadre();
 					if (!Checks.esNulo(tarNot)){
 						TareaActivo tac = genericDao.get(TareaActivo.class, genericDao.createFilter(FilterType.EQUALS,"id", tarNot.getId()));
-						Auditoria au = new Auditoria();
+						Auditoria au = tac.getAuditoria();
 
 						if(!Checks.esNulo(tac)) {
 							au.setFechaModificar(new Date());
@@ -9943,25 +9950,22 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								tac.setUsuario(usuarioLogado);
 							}
 							tac.setAuditoria(au);
-							tarNot.getAuditoria().setFechaCrear(new Date());
-							tarNot.getAuditoria().setUsuarioCrear(usuarioLogado.getUsername());
+							tarNot.setAuditoria(Auditoria.getNewInstance());
 							genericDao.update(TareaActivo.class, tac);
 							genericDao.update(TareaNotificacion.class, tarNot);
 						}
 						else {
-							au.setFechaCrear(new Date());
-							au.setUsuarioCrear(usuarioLogado.getUsername());
 							TareaActivo tacNuevo = new TareaActivo();
 							tacNuevo.setActivo(tramite.getActivo());
 							tacNuevo.setId(tarNot.getId());
 							tacNuevo.setTramite(tramite);
-
+							tacNuevo.setAuditoria(Auditoria.getNewInstance());
+							
 							if(!Checks.esNulo(gestor)) {
 								tacNuevo.setUsuario(gestor);
 							}else {
 								tacNuevo.setUsuario(usuarioLogado);
 							}
-							tacNuevo.setAuditoria(au);
 							genericDao.save(TareaActivo.class, tacNuevo);
 						}
 					}
@@ -10165,7 +10169,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			List<TareaExterna> tareasActivas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());
 			if (tareasActivas != null && !tareasActivas.isEmpty()) {
 				for (TareaExterna tarea : tareasActivas) {
-					if (!Checks.esNulo(tarea.getTareaProcedimiento()) 
+					if (tarea != null && tarea.getTareaProcedimiento() != null 
 							&& ComercialUserAssigantionService.CODIGO_T013_VALIDACION_CLIENTES.equals(tarea.getTareaProcedimiento().getCodigo())) {
 						tarNot = tarea.getTareaPadre();
 						if (!Checks.esNulo(tarNot)) {

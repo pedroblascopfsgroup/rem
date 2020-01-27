@@ -23,6 +23,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.cliente.model.Cliente;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
@@ -705,7 +706,12 @@ public class TareaNotificacionManager {
     @Transactional
     public TareaNotificacion get(Long id) {
     	EventFactory.onMethodStart(this.getClass());
-        return tareaNotificacionDao.get(id);
+    	TareaNotificacion tarNo = tareaNotificacionDao.get(id);
+		if (tarNo.getAuditoria() == null
+				|| (tarNo.getAuditoria() != null && tarNo.getAuditoria().getUsuarioCrear() == null)) {
+			tarNo.setAuditoria(Auditoria.getNewInstance());
+		}
+        return tarNo;
     }
 
     private Integer diasDiferencia(Date inicio, Date fin) {

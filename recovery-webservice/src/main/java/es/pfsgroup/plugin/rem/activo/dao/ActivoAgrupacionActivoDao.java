@@ -96,4 +96,6 @@ public interface ActivoAgrupacionActivoDao extends AbstractDao<ActivoAgrupacionA
 	 * @return Activo
 	 */
 	public Activo getPisoPilotoByIdAgrupacion(long idAgrupacion);
+
+	boolean activoEnAgrupacionLoteComercialAlquiler(Long idActivo);
 }

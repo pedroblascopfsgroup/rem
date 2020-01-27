@@ -994,6 +994,15 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	CondicionesActivo crearCondicionesActivoExpediente(Activo activo, ExpedienteComercial expediente);
+	
+	/**
+	 * Crea las condiciones iniciales para un Activo-Expediente. Se le pasa el activo por parametro porque no siempre coincidira con el activo principal de la oferta (relacionado con expediente)
+	 *
+	 * @param idActivo
+	 * @param expediente
+	 * @return
+	 */
+	CondicionesActivo crearCondicionesActivoExpediente(Long idActivo, ExpedienteComercial expediente);
 
 	/**
 	 * Comprueba que todos los compradores tengan numero URSUS

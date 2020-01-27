@@ -42,7 +42,8 @@ public class routerBPMSancionOfertaHandler extends ActivoBaseActionHandler{
 		DDCartera cartera = tramite.getActivo().getCartera();
 		DDSubcartera subcartera = tramite.getActivo().getSubcartera();
 		String origin = (String)executionContext.getVariable(ConstantesBPMPFS.NOMBRE_NODO_SALIENTE);
-		String target = getTarget(tramite, cartera.getCodigo(), subcartera.getCodigo(), origin);
+		String subcarteraCodigo = subcartera != null ? subcartera.getCodigo() : null;
+		String target = getTarget(tramite, cartera.getCodigo(), subcarteraCodigo, origin);
 		if (Checks.esNulo(target) && Checks.esNulo(origin)) target = INICIO_ESTANDAR;
 		executionContext.getToken().signal(target);
 	}

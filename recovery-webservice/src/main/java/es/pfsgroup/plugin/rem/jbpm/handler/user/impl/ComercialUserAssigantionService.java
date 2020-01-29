@@ -146,7 +146,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		boolean isActivoHYT = this.isActivoHYT(tareaActivo);
 		boolean isActivoEgeoZeus = this.isActivoEgeoZeus(tareaActivo);
 		boolean isActivoYubai = this.isActivoYubai(tareaActivo);
-		boolean isActivoDivarian = this.isActivoDivarian(tareaActivo) || this.isActivoArrow(tareaActivo);
+		boolean isActivoArrow = this.isActivoArrow(tareaActivo);
 		boolean isActivoOmega = this.isActivoOmega(tareaActivo);		
 		boolean esActivoRemaining = this.isActivoRemaining(tareaActivo);
 		
@@ -173,7 +173,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			String codigoCalculo = (!Checks.esNulo(comiteSancion) ? comiteSancion.getCodigo() : null);
 
 			isHayaLbk = DDComiteSancion.CODIGO_HAYA_LIBERBANK.equals(codigoCalculo);					
-			codigoGestor = this.getMapCodigoTipoGestor(isFdv, isConFormalizacion, isGiants, isLiberbank, isHayaLbk, isActivoBankia, isActivoSareb, isRetail, isActivoApple, isActivoTango, isActivoGaleon, isActivoThirdPartiesING, isActivoHYT, isActivoEgeoZeus, isActivoYubai, isActivoDivarian, isActivoOmega, esActivoRemaining).get(codigoTarea);
+			codigoGestor = this.getMapCodigoTipoGestor(isFdv, isConFormalizacion, isGiants, isLiberbank, isHayaLbk, isActivoBankia, isActivoSareb, isRetail, isActivoApple, isActivoTango, isActivoGaleon, isActivoThirdPartiesING, isActivoHYT, isActivoEgeoZeus, isActivoYubai, isActivoArrow, isActivoOmega, esActivoRemaining).get(codigoTarea);
 		}
 		
 		if(CODIGO_T017_RESOLUCION_CES.equals(codigoTarea) || CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea) 
@@ -239,7 +239,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		boolean isActivoHYT = this.isActivoHYT(tareaActivo);
 		boolean isActivoGiants = this.isActivoGiants(tareaActivo);
 		boolean isActivoEgeoZeus = this.isActivoEgeoZeus(tareaActivo);
-		boolean isActivoDivarian = this.isActivoDivarian(tareaActivo) || this.isActivoArrow(tareaActivo) || this.isActivoRemaining(tareaActivo);
+		boolean isActivoDivarian = this.isActivoArrow(tareaActivo) || this.isActivoRemaining(tareaActivo);
 		String codigoTarea = tareaExterna.getTareaProcedimiento().getCodigo();
 		String codigoSupervisor = null;
 		ActivoLoteComercial loteComercial = this.obtenerLoteComercial(tareaActivo);
@@ -359,13 +359,6 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		return DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcarteraActivo);
 	}
 	
-	private boolean isActivoDivarian(TareaActivo tareaActivo) {
-		
-		Activo activo = tareaActivo.getActivo();
-		String codSubcarteraActivo = !Checks.esNulo(activo) ? (!Checks.esNulo(activo.getSubcartera()) ? activo.getSubcartera().getCodigo() : null) : null;
-		
-		return DDSubcartera.CODIGO_DIVARIAN.equals(codSubcarteraActivo);
-	}
 	
 	private boolean isActivoTango(TareaActivo tareaActivo) {
 		
@@ -448,7 +441,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	//  --- Mapas con la relación Tarea - Tipo Gestor/supervisor  -------------------------------------------------
 	private HashMap<String,String> getMapCodigoTipoGestor(boolean isFdv, boolean isConFormalizacion, boolean isGiants, boolean isLiberbank, boolean isHayaLbk, 
 			/*boolean isLiberbankInmobiliaria, boolean isLiberbankTerciaria,*/ boolean isActivoBankia, boolean isActivoSareb, boolean isRetail, boolean isActivoApple, boolean isActivoTango,
-			boolean isActivoGaleon, boolean isActivoThirdPartiesING, boolean isActivoHYT, boolean isActivoEgeoZeus, boolean isActivoYubai, boolean isActivoDivarian, boolean isActivoOmega,
+			boolean isActivoGaleon, boolean isActivoThirdPartiesING, boolean isActivoHYT, boolean isActivoEgeoZeus, boolean isActivoYubai, boolean isActivoArrow, boolean isActivoOmega,
 			boolean isActivoRemaining) {
 		
 		HashMap<String,String> mapa = new HashMap<String,String>();
@@ -540,7 +533,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL); 
 		}
 		
-		if(isActivoDivarian) {
+		if(isActivoArrow) {
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_DEFINICION_OFERTA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_DIVARIAN, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_ARROW, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);

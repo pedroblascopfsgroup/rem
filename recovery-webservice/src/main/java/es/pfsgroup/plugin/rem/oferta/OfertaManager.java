@@ -3343,8 +3343,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			&& !DDSubcartera.CODIGO_BAN_BH
 			.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo()))
 		||(DDCartera.CODIGO_CARTERA_CERBERUS.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
-			&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo()) 
-					|| DDSubcartera.CODIGO_DIVARIAN.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())
+			&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())
 					|| DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())
 					|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(ofertaAceptada.getActivoPrincipal().getSubcartera().getCodigo())))) {
 

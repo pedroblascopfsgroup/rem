@@ -117,9 +117,9 @@ public class ComisionamientoManager implements ComisionamientoApi {
 		
 		Long diferenciaFechaVisitaYAlta = null;
 		
-		if(oferta.getFechaOrigenLead() != null
+		if(visita.getFechaVisita() != null
 				&& oferta.getFechaAlta() != null) {
-			diferenciaFechaVisitaYAlta = Math.abs((oferta.getFechaOrigenLead().getTime()-oferta.getFechaAlta().getTime())/86400000);
+			diferenciaFechaVisitaYAlta = Math.abs((visita.getFechaVisita().getTime()-oferta.getFechaAlta().getTime())/86400000);
 		}
 		
 		if(prescriptorOferta.equals(prescriptorVisita) && prescriptorOferta.equals(realizadorVisita)) {

@@ -98,7 +98,7 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 		return dto;
 	}
 
-	private File recuperarPlantilla(Long idTipoOperacion)  {
+	public File recuperarPlantilla(Long idTipoOperacion)  {
 		try {
 			FileItem fileItem = proxyFactory.proxy(ExcelRepoApi.class).dameExcelByTipoOperacion(idTipoOperacion);
 			return fileItem.getFile();

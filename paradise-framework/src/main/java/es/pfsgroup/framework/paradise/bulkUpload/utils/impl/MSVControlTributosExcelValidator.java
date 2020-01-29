@@ -201,16 +201,6 @@ public class MSVControlTributosExcelValidator extends MSVExcelValidatorAbstract 
 		return resultado;
 	}
 
-	private File recuperarPlantilla(Long idTipoOperacion) {
-		try {
-			FileItem fileItem = proxyFactory.proxy(ExcelRepoApi.class).dameExcelByTipoOperacion(idTipoOperacion);
-			return fileItem.getFile();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
 	private void validarAccion(MSVHojaExcel exc) {
 
 		final String DD_ACM_ADD = "01";

@@ -45,6 +45,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
@@ -285,6 +286,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Autowired
 	private TramitacionOfertasManager tramitacionOfertasManager;
+	
+	@Autowired
+	private ActivoPatrimonioDao activoPatrimonioDao;
 
 	@Override
 	public String managerName() {
@@ -3093,7 +3097,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 								|| DDEstadosExpedienteComercial.PTE_POSICIONAMIENTO.equals(expediente.getEstado().getCodigo())
 								|| DDEstadosExpedienteComercial.PTE_FIRMA.equals(expediente.getEstado().getCodigo())
 								|| DDEstadosExpedienteComercial.PTE_CIERRE.equals(expediente.getEstado().getCodigo())
-								|| DDEstadosExpedienteComercial.FIRMADO.equals(expediente.getEstado().getCodigo()))) {
+								|| (DDEstadosExpedienteComercial.FIRMADO.equals(expediente.getEstado().getCodigo())
+										&& !activoPatrimonioDao.isAlquilerLibreByActivo(of.getActivoPrincipal())))) {
 
 					return true;
 				}
@@ -4925,4 +4930,5 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		return false;
 	}
+	
 }

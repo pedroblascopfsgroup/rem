@@ -882,10 +882,8 @@ Ext.define('HreRem.model.Activo', {
     		{
     			name: 'isSubcarteraDivarian',
     			calculate: function(data) { 
-    				if(data.entidadPropietariaCodigo == CONST.CARTERA['CERBERUS'] && data.subcarteraCodigo == CONST.SUBCARTERA['DIVARIAN']){
-    					return true;
-    				}
-    				return false;
+    				return CONST.CARTERA['CERBERUS'] == data.entidadPropietariaCodigo
+    				&& (	CONST.SUBCARTERA['DIVARIANARROW'] == data.subcarteraCodigo || CONST.SUBCARTERA['DIVARIANREMAINING'] == data.subcarteraCodigo);
     			},
 				depends: ['subcarteraCodigo', 'entidadPropietariaCodigo']
     		},

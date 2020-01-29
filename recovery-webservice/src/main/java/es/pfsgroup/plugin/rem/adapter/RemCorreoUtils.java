@@ -72,14 +72,20 @@ public class RemCorreoUtils {
 
 		CorreoSaliente traza = obtenerTrazaCorreoSaliente(emailFrom, mailsPara, direccionesMailCc, asuntoMail,
 				cuerpoEmail, list);
-		ArrayList<String> mailsParaSinNull = new ArrayList<String>(); 
+		ArrayList<String> mailsParaSinNull = new ArrayList<String>();
+		ArrayList<String> mailsCCSinNull = new ArrayList<String>(); 
 
 		try {
-
 			emailFrom = emailFrom(emailFrom);
 			for (String para : mailsPara) {
-				if (para != null && para.length() > 0) {
+				if (para != null && para.length() > 0 && !mailsParaSinNull.contains(para)) {
 					mailsParaSinNull.add(para);
+				}
+			}
+			
+			for (String cc : direccionesMailCc) {
+				if (cc != null && cc.length() > 0 && !mailsCCSinNull.contains(cc)) {
+					mailsCCSinNull.add(cc);
 				}
 			}
 			
@@ -96,7 +102,7 @@ public class RemCorreoUtils {
 
 			MimeMessage message = new MimeMessage(session);
 
-			prepararDestinatarios(message, mailsParaSinNull, direccionesMailCc);
+			prepararDestinatarios(message, mailsParaSinNull, mailsCCSinNull);
 
 			message.setSubject(asuntoMail);
 

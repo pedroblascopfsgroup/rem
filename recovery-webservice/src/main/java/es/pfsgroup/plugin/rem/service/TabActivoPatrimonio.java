@@ -142,7 +142,7 @@ public class TabActivoPatrimonio implements TabActivoService {
 			}
 			
 			if(!Checks.esNulo(patrimonioContrato) && !Checks.esNulo(patrimonioContrato.getPazSocial())) {
-				activoPatrimonioDto.setPazSocial(patrimonioContrato.getPazSocial());
+				activoPatrimonioDto.setPazSocial(patrimonioContrato.getPazSocial().booleanValue() == true ? DDSinSiNo.CODIGO_SI : DDSinSiNo.CODIGO_NO);
 			}
 			
 			activoPatrimonioDto.setIsCarteraCerberusDivarian(activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN)

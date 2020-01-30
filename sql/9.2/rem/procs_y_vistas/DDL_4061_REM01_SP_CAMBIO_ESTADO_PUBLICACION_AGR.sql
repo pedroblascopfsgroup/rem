@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20190516
+--## AUTOR=José Antonio Gigante Pamplona
+--## FECHA_CREACION=20200130
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.8.4
---## INCIDENCIA_LINK=REMVIP-3995
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-9265
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -20,6 +20,7 @@
 --##		0.8 Sergio H . Deshacemos temporalmente las modificaciones de la 0.7
 --##		0.9 REMVIP-3306 Cambios en el funcionamiento del historico
 --##    	0.10 HREOS-6184 Cambio en vista y cambio es_condicionado
+--##		1.1 José A. Gigante - HREOS-8998-9055-9265 - Historificación de cambios al cambiar el canal de publicación
 --##########################################
 --*/
 
@@ -36,12 +37,14 @@ create or replace PROCEDURE #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUM
 
 	  ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
 	  ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+	  e_multiple_results EXCEPTION;
 
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas.
     V_MSQL VARCHAR2(20000 CHAR); -- Sentencia a ejecutar 
     vWHERE VARCHAR2(4000 CHAR);
 
     nAGR_ID           #ESQUEMA#.V_CAMBIO_ESTADO_PUBLI_AGR.AGR_ID%TYPE;
+    nACT_ID           #ESQUEMA#.V_CAMBIO_ESTADO_PUBLI.ACT_ID%TYPE;
     vDD_TCO_CODIGO    #ESQUEMA#.V_CAMBIO_ESTADO_PUBLI_AGR.DD_TCO_CODIGO%TYPE;
     vCODIGO_ESTADO_A  #ESQUEMA#.V_CAMBIO_ESTADO_PUBLI_AGR.CODIGO_ESTADO_A%TYPE;
     vDESC_ESTADO_A    #ESQUEMA#.V_CAMBIO_ESTADO_PUBLI_AGR.DESC_ESTADO_A%TYPE;
@@ -86,11 +89,17 @@ create or replace PROCEDURE #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUM
     OutOCULTAR        #ESQUEMA#.ACT_APU_ACTIVO_PUBLICACION.APU_CHECK_OCULTAR_A%TYPE;
     OutMOTIVO         #ESQUEMA#.DD_MTO_MOTIVOS_OCULTACION.DD_MTO_CODIGO%TYPE;
     
+    
+    cCODIGO_ESTADO_V REM01.DD_EPV_ESTADO_PUB_VENTA.DD_EPV_CODIGO%TYPE;
+	hDD_POR_CODIGO	 REM01.DD_POR_PORTAL.DD_POR_CODIGO%TYPE;    
+    fDD_POR_CODIGO   REM01.DD_POR_PORTAL.DD_POR_CODIGO%TYPE;
+    
     vACTUALIZADO_V    VARCHAR2(1 CHAR);
     vACTUALIZADO_A    VARCHAR2(1 CHAR);
     vACTUALIZAR_COND  VARCHAR2(1 CHAR);
     vUSUARIOMODIFICAR VARCHAR2(50 CHAR);
     vCondAlquiler     VARCHAR2(1 CHAR);
+    vNUM_RESULTADOS	  NUMBER := 0;
 
     TYPE CurTyp IS REF CURSOR;
     v_cursor    CurTyp;
@@ -101,6 +110,7 @@ create or replace PROCEDURE #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUM
     vQUERY            VARCHAR2(4000 CHAR);
     vQUERY_SINACT     VARCHAR2(4000 CHAR);
     vQUERY_ACTPRIN    VARCHAR2(4000 CHAR);
+    OutCANAL		  VARCHAR2(4000 CHAR);
     V_TABLA_TMP_V VARCHAR2(35 CHAR):= 'TMP_PUBL_AGR';
     
 
@@ -1243,16 +1253,51 @@ ELSE
         
         -- Solamente historifica cuando NO sea una agrupación restringida:        
         IF PLP$ES_ASISTIDA_VEN( nAGR_ID ) = 0 THEN -- No es una agrupación asistida ??
-
+	        /**************/
+	        /*CANAL DE PUBLICACION*/
+	        /**************/
+	   		V_MSQL := ' SELECT COUNT(AGA.ACT_ID)
+	                    FROM  '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA
+	                    JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0
+	                    JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0                         
+	                  	WHERE AGA.BORRADO = 0
+						AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
+						AND TAG.DD_TAG_CODIGO = ''02''	/*Restringida*/
+	                    AND AGR.AGR_ID = '||nAGR_ID||'
+	                    AND AGR.AGR_ACT_PRINCIPAL = AGA.ACT_ID';
+	        
+	        EXECUTE IMMEDIATE V_MSQL INTO vNUM_RESULTADOS;
+	        /* Si la consulta devuelve mas de un resultado elevamos error*/
+	        IF vNUM_RESULTADOS > 1 THEN
+	        	RAISE e_multiple_results;
+	        ELSE
+	        	nACT_ID := -1;
+	        	V_MSQL := replace(vQUERY_ACTPRIN,'AUX',''); -- Extrae activo principal de la agrupación
+	        	EXECUTE IMMEDIATE V_MSQL INTO nACT_ID;
+	        	IF nACT_ID >= 0 THEN
+		        	V_MSQL := 'SELECT EPV.DD_EPV_CODIGO, POR.DD_POR_CODIGO
+		               			FROM '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU 
+				                JOIN ' ||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA EPV ON EPV.DD_EPV_ID = APU.DD_EPV_ID 
+	    	    		        LEFT JOIN '||V_ESQUEMA||'.DD_POR_PORTAL POR ON POR.DD_POR_ID = APU.DD_POR_ID
+	            	    		WHERE APU.ACT_ID = '||nACT_ID||'
+								AND APU.BORRADO = 0';
+					EXECUTE IMMEDIATE V_MSQL INTO cCODIGO_ESTADO_V;
+			        IF cCODIGO_ESTADO_V IN ('03', '04') THEN
+			          V_MSQL := V_ESQUEMA||'.SP_PORTALES_ACTIVO(null, '||nAGR_ID||', '''||pUSUARIOMODIFICAR||''', '''||OutCANAL||''')';
+		    	      EXECUTE IMMEDIATE V_MSQL;
+		        	END IF;
+		        END IF;
+	        END IF;
+        
         /**************/
         /*HISTORIFICAR*/
         /**************/
         V_MSQL := '
             SELECT SS.DD_TCO_CODIGO, SS.DD_EPV_CODIGO, SS.DD_EPA_CODIGO, SS.MTO_V_COD, SS.MTO_A_COD
-                , SS.AHP_CHECK_OCULTAR_V, SS.AHP_CHECK_OCULTAR_A
+                , SS.AHP_CHECK_OCULTAR_V, SS.AHP_CHECK_OCULTAR_A, SS.DD_POR_CODIGO
             FROM (
                 SELECT AHP_ID, ACT_ID, TCO.DD_TCO_CODIGO, EPV.DD_EPV_CODIGO, EPA.DD_EPA_CODIGO, MTO_V.DD_MTO_CODIGO AS MTO_V_COD, MTO_A.DD_MTO_CODIGO AS MTO_A_COD
-                    , ACT.AHP_CHECK_OCULTAR_V, ACT.AHP_CHECK_OCULTAR_A
+                    , ACT.AHP_CHECK_OCULTAR_V, ACT.AHP_CHECK_OCULTAR_A, POR.DD_POR_CODIGO
                     , ROW_NUMBER() OVER(
                         PARTITION BY ACT.ACT_ID
                         ORDER BY ACT.AHP_ID
@@ -1265,15 +1310,16 @@ ELSE
                 LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO_A ON MTO_A.DD_MTO_ID = ACT.DD_MTO_A_ID
                 LEFT JOIN '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION TPU_V ON TPU_V.DD_TPU_ID = ACT.DD_TPU_V_ID
                 LEFT JOIN '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION TPU_A ON TPU_A.DD_TPU_ID = ACT.DD_TPU_A_ID
+				LEFT JOIN '|| V_ESQUEMA ||'.DD_POR_PORTAL POR ON POR.DD_POR_ID = ACT.DD_POR_ID
                 WHERE ACT.ACT_ID = '|| replace(vQUERY_ACTPRIN,'AUX','')||'
                     AND ACT.BORRADO = 0) SS
             WHERE RN = 1';           
           
         EXECUTE IMMEDIATE V_MSQL INTO hDD_TCO_CODIGO, hCODIGO_ESTADO_V, hCODIGO_ESTADO_A
-            , hDD_MTO_CODIGO_V, hDD_MTO_CODIGO_A, hCHECK_OCULTAR_V, hCHECK_OCULTAR_A;                  
+            , hDD_MTO_CODIGO_V, hDD_MTO_CODIGO_A, hCHECK_OCULTAR_V, hCHECK_OCULTAR_A, hDD_POR_CODIGO;                  
 
         V_MSQL := 'SELECT TCO.DD_TCO_CODIGO, EPV.DD_EPV_CODIGO, EPA.DD_EPA_CODIGO, MTO_V.DD_MTO_CODIGO AS MTO_V_COD, MTO_A.DD_MTO_CODIGO AS MTO_A_COD
-                , ACT.APU_CHECK_OCULTAR_V, ACT.APU_CHECK_OCULTAR_A
+                , ACT.APU_CHECK_OCULTAR_V, ACT.APU_CHECK_OCULTAR_A, POR.DD_POR_CODIGO
             FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
             LEFT JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID = ACT.DD_TCO_ID
             LEFT JOIN '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA EPV ON EPV.DD_EPV_ID = ACT.DD_EPV_ID
@@ -1282,11 +1328,12 @@ ELSE
             LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO_A ON MTO_A.DD_MTO_ID = ACT.DD_MTO_A_ID
             LEFT JOIN '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION TPU_V ON TPU_V.DD_TPU_ID = ACT.DD_TPU_V_ID
             LEFT JOIN '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION TPU_A ON TPU_A.DD_TPU_ID = ACT.DD_TPU_A_ID
+			LEFT JOIN '|| V_ESQUEMA ||'.DD_POR_PORTAL POR ON POR.DD_POR_ID = ACT.DD_POR_ID
             WHERE ACT.ACT_ID = '|| replace(vQUERY_ACTPRIN,'AUX','')||'
                 AND ACT.BORRADO = 0';
                                 
         EXECUTE IMMEDIATE V_MSQL INTO fDD_TCO_CODIGO, fCODIGO_ESTADO_V, fCODIGO_ESTADO_A
-            , fDD_MTO_CODIGO_V, fDD_MTO_CODIGO_A, fCHECK_OCULTAR_V, fCHECK_OCULTAR_A;                            
+            , fDD_MTO_CODIGO_V, fDD_MTO_CODIGO_A, fCHECK_OCULTAR_V, fCHECK_OCULTAR_A, fDD_POR_CODIGO;                            
 
         IF fDD_TCO_CODIGO <> hDD_TCO_CODIGO OR
            fCODIGO_ESTADO_A <> hCODIGO_ESTADO_A OR
@@ -1294,7 +1341,8 @@ ELSE
            NVL(fDD_MTO_CODIGO_A, '00') <> NVL(hDD_MTO_CODIGO_A, '00') OR
            fCODIGO_ESTADO_V <> hCODIGO_ESTADO_V OR
            fCHECK_OCULTAR_V <> hCHECK_OCULTAR_V OR
-           NVL(fDD_MTO_CODIGO_V, '00') <> NVL(hDD_MTO_CODIGO_V, '00') THEN
+           NVL(fDD_MTO_CODIGO_V, '00') <> NVL(hDD_MTO_CODIGO_V, '00') OR 
+           NVL(fDD_POR_CODIGO, '00') <> NVL(hDD_POR_CODIGO, '00') THEN
            
         IF vACTUALIZADO_V = 'S' THEN
         	V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
@@ -1324,6 +1372,7 @@ ELSE
                                                   ,AHP_CHECK_OCULTAR_A,AHP_CHECK_OCULTAR_PRECIO_A
                                                   ,AHP_CHECK_PUB_SIN_PRECIO_A
                                                   ,AHP_FECHA_INI_VENTA
+												  ,DD_POR_ID
                                                   ,VERSION
                                                   ,USUARIOCREAR,FECHACREAR
                                                   ,BORRADO
@@ -1342,6 +1391,7 @@ ELSE
                                                   ,APU_CHECK_OCULTAR_A,APU_CHECK_OCULTAR_PRECIO_A
                                                   ,APU_CHECK_PUB_SIN_PRECIO_A
                                                   ,SYSDATE
+												  ,DD_POR_ID
                                                   ,VERSION
                                                   ,'''||pUSUARIOMODIFICAR||''' USUARIOCREAR, SYSDATE FECHACREAR
                                                   ,0 BORRADO
@@ -1435,6 +1485,10 @@ ELSE
 	COMMIT;
 
 	EXCEPTION
+	  WHEN e_multiple_results THEN
+	    ERR_NUM := SQLCODE;
+	  	DBMS_OUTPUT.put_line('[ERROR] La consulta devuelve mas de un resultado:'||TO_CHAR(ERR_NUM));
+	    DBMS_OUTPUT.put_line('-----------------------------------------------------------');
 	  WHEN OTHERS THEN
 	    ERR_NUM := SQLCODE;
 	    ERR_MSG := SQLERRM;

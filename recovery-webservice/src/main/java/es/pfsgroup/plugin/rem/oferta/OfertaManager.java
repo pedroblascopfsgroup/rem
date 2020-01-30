@@ -1224,25 +1224,23 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, tramitacionOfertasManager.getSubtipoTrabajoByOferta(oferta));
 
 				Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null, false);
-				tramitacionOfertasManager.crearExpediente(oferta, trabajo, null, oferta.getActivoPrincipal());
-				ActivoTramite activoTramite = trabajoApi.createTramiteTrabajo(trabajo);
+				ExpedienteComercial expedienteComercial = tramitacionOfertasManager.crearExpediente(oferta, trabajo, null, oferta.getActivoPrincipal());
+				ActivoTramite activoTramite = tramitacionOfertasManager.doTramitacion(oferta.getActivoPrincipal(), oferta, trabajo.getId(), expedienteComercial);
 
 				adapter.saltoInstruccionesReserva(activoTramite.getProcessBPM());
 
 				// Se copiará el valor del campo necesita financiación al campo
 				// asociado del expediente comercial
-				ExpedienteComercial expComercial = genericDao.get(ExpedienteComercial.class,
-						genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
-				CondicionanteExpediente coe = expComercial.getCondicionante();
+				CondicionanteExpediente coe = expedienteComercial.getCondicionante();
 				if (!Checks.esNulo(coe)) {
 					coe.setSolicitaFinanciacion(oferta.getNecesitaFinanciacion() ? 1 : 0);
 				}
 				DDEstadosExpedienteComercial estadoExpCom = expedienteComercialApi
 						.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.APROBADO);
-				expComercial.setEstado(estadoExpCom);
-				expComercial.setFechaSancion(new Date());
+				expedienteComercial.setEstado(estadoExpCom);
+				expedienteComercial.setFechaSancion(new Date());
 
-				genericDao.update(ExpedienteComercial.class, expComercial);
+				genericDao.update(ExpedienteComercial.class, expedienteComercial);
 
 			}else{
 				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));

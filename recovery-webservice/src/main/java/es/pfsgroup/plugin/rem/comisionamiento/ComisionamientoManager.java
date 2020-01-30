@@ -78,20 +78,18 @@ public class ComisionamientoManager implements ComisionamientoApi {
 		List<DtoPrescriptoresComision> listAcciones = new ArrayList<DtoPrescriptoresComision>();
 		
 		Visita visita = oferta.getVisita();
-		
-		DtoPrescriptoresComision dtoOriginal = new DtoPrescriptoresComision();
 				
 		Long prescriptorVisita = (visita == null || visita.getPrescriptor() == null) ? null : visita.getPrescriptor().getId();
 		Long realizadorVisita = (visita == null || visita.getProveedorVisita() == null) ? null : visita.getProveedorVisita().getId();
 		Long prescriptorOferta = oferta.getPrescriptor().getId();
 		
-		dtoOriginal.setProviderType((visita == null || visita.getProveedorPrescriptorOportunidad() == null) ? null
-				: visita.getProveedorPrescriptorOportunidad().getCodigoProveedorRem().toString());
-		dtoOriginal.setVisitPrescriber((visita == null || visita.getPrescriptor() == null) ? null 
-				: visita.getPrescriptor().getCodigoProveedorRem().toString());
-		dtoOriginal.setVisitMaker((visita == null || visita.getProveedorVisita() == null) ? null
-				: visita.getProveedorVisita().getCodigoProveedorRem().toString()); 
-		dtoOriginal.setOfferPrescriber(oferta.getPrescriptor().getCodigoProveedorRem().toString());
+		String providerType = (visita == null || visita.getProveedorPrescriptorOportunidad() == null) ? null
+				: visita.getProveedorPrescriptorOportunidad().getCodigoProveedorRem().toString();
+		String visitPrescriber = (visita == null || visita.getPrescriptor() == null) ? null 
+				: visita.getPrescriptor().getCodigoProveedorRem().toString();
+		String visitMaker = (visita == null || visita.getProveedorVisita() == null) ? null
+				: visita.getProveedorVisita().getCodigoProveedorRem().toString(); 
+		String offerPrescriber = (oferta.getPrescriptor().getCodigoProveedorRem().toString());
 		
 		String codLeadOrigin = null;
 		
@@ -103,7 +101,12 @@ public class ComisionamientoManager implements ComisionamientoApi {
 			codLeadOrigin = DDOrigenComprador.CODIGO_ORC_HRE;
 		}
 		
-		DtoPrescriptoresComision dto = dtoOriginal;
+		DtoPrescriptoresComision dto = new DtoPrescriptoresComision();
+		
+		dto.setProviderType(providerType);
+		dto.setVisitPrescriber(visitPrescriber);
+		dto.setVisitMaker(visitMaker);
+		dto.setOfferPrescriber(offerPrescriber);
 		
 		if(prescriptorOferta != null && (prescriptorVisita == null || realizadorVisita == null)) {
 			dto.setPrescriptorCodRem(prescriptorOferta);
@@ -137,7 +140,12 @@ public class ComisionamientoManager implements ComisionamientoApi {
 					
 					listAcciones.add(dto);
 					
-					dto = dtoOriginal;
+					dto = new DtoPrescriptoresComision();
+					
+					dto.setProviderType(providerType);
+					dto.setVisitPrescriber(visitPrescriber);
+					dto.setVisitMaker(visitMaker);
+					dto.setOfferPrescriber(offerPrescriber);
 					
 					dto.setPrescriptorCodRem(prescriptorVisita);
 					dto.setTipoAccion(DDAccionGastos.CODIGO_API_ORI_LEA);
@@ -166,7 +174,12 @@ public class ComisionamientoManager implements ComisionamientoApi {
 			
 			if(DDOrigenComprador.CODIGO_ORC_API_AJENO.equals(codLeadOrigin)) {
 				
-				dto = dtoOriginal;
+				dto = new DtoPrescriptoresComision();
+				
+				dto.setProviderType(providerType);
+				dto.setVisitPrescriber(visitPrescriber);
+				dto.setVisitMaker(visitMaker);
+				dto.setOfferPrescriber(offerPrescriber);
 				
 				dto.setPrescriptorCodRem(prescriptorOferta);
 				dto.setTipoAccion(DDAccionGastos.CODIGO_PRE_Y_COL);
@@ -176,7 +189,12 @@ public class ComisionamientoManager implements ComisionamientoApi {
 				
 				if(diferenciaFechaVisitaYAlta != null && diferenciaFechaVisitaYAlta <= 90L) {
 					
-					dto = dtoOriginal;
+					dto = new DtoPrescriptoresComision();
+					
+					dto.setProviderType(providerType);
+					dto.setVisitPrescriber(visitPrescriber);
+					dto.setVisitMaker(visitMaker);
+					dto.setOfferPrescriber(offerPrescriber);
 					
 					dto.setPrescriptorCodRem(prescriptorVisita);
 					dto.setTipoAccion(DDAccionGastos.CODIGO_API_ORI_LEA);

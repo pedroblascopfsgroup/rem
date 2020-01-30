@@ -31,7 +31,7 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	private int ocupacion;
 	private int conTitulo;
 	
-	private Boolean pazSocial;
+	private String pazSocial;
 	private Boolean isCarteraCerberusDivarian;
 	
 	private List<?> activosPropagables;
@@ -169,11 +169,11 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	public void setTramiteAlquilerSocial(String tramiteAlquilerSocial) {
 		this.tramiteAlquilerSocial = tramiteAlquilerSocial;
 	}
-	public Boolean getPazSocial() {
+	public String getPazSocial() {
 		return pazSocial;
 	}
-	public void setPazSocial(Boolean pazSocial) {
-		this.pazSocial = pazSocial;
+	public void setPazSocial(String string) {
+		this.pazSocial = string;
 	}
 	public Boolean getIsCarteraCerberusDivarian() {
 		return isCarteraCerberusDivarian;

@@ -182,7 +182,7 @@ public class ComisionamientoManager implements ComisionamientoApi {
 				dto.setOfferPrescriber(offerPrescriber);
 				
 				dto.setPrescriptorCodRem(prescriptorOferta);
-				dto.setTipoAccion(DDAccionGastos.CODIGO_PRE_Y_COL);
+				dto.setTipoAccion(DDAccionGastos.CODIGO_PRESCRIPCION);
 				dto.setOrigenLead(codLeadOrigin);
 				
 				listAcciones.add(dto);

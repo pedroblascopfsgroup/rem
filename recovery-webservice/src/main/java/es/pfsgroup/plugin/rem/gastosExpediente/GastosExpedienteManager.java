@@ -167,7 +167,8 @@ public class GastosExpedienteManager extends BusinessOperationOverrider<GastosEx
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 		Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente);
 		Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "accionGastos.codigo", accion);
+		Filter filtro4 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		
-		return genericDao.get(GastosExpediente.class, filtro, filtro2, filtro3);	
+		return genericDao.get(GastosExpediente.class, filtro, filtro2, filtro3, filtro4);	
 	}
 }

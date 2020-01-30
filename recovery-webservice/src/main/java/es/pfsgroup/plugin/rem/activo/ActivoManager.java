@@ -2710,35 +2710,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					dtoTributo.setNumTributo(tributo.getNumTributo());
 				}
 
-				Filter filterAdjuntoTributo = genericDao.createFilter(FilterType.EQUALS, "activoTributo.id", tributo.getId());
-				Filter filtroRest = null;
-				ActivoAdjuntoTributo adjuntoTributo = null;
-				
-				if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-					filterAdjuntoTributo = genericDao.createFilter(FilterType.EQUALS, "activoTributo.id",
-							tributo.getId());
-					filtroRest = genericDao.createFilter(FilterType.NOTNULL, "idDocRestClient");
-					adjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filterAdjuntoTributo, filtroRest,
-							filtroAuditoria);
-				} else {
-
-					filtroRest = genericDao.createFilter(FilterType.NULL, "idDocRestClient");
-					adjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filterAdjuntoTributo, filtroRest,
-							filtroAuditoria);
-
-				}
-
-				if (!Checks.esNulo(adjuntoTributo)) {
-					dtoTributo.setExisteDocumentoTributo("true");
-					dtoTributo.setDocumentoTributoNombre(adjuntoTributo.getNombre());
-					dtoTributo.setDocumentoTributoId(adjuntoTributo.getId());
-
-				} else if (Checks.esNulo(dtoTributo.getExisteDocumentoTributo())) {
-					dtoTributo.setExisteDocumentoTributo("false");
-					dtoTributo.setDocumentoTributoNombre(null);
-					dtoTributo.setDocumentoTributoId(null);
-				}
-
 				tributos.add(dtoTributo);
 			}
 		}

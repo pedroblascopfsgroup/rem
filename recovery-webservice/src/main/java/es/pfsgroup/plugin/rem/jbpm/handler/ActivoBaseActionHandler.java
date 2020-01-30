@@ -726,7 +726,6 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 								|| DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(subcartera.getCodigo())
 								|| DDSubcartera.CODIGO_EGEO.equals(subcartera.getCodigo())
 								|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(subcartera.getCodigo())
-								|| DDSubcartera.CODIGO_DIVARIAN.equals(subcartera.getCodigo())
 								|| DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(subcartera.getCodigo())
 								|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(subcartera.getCodigo())))
 				   || (DDCartera.CODIGO_CARTERA_EGEO.equals(cartera.getCodigo())

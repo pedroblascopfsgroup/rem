@@ -145,11 +145,10 @@ public class TabActivoPatrimonio implements TabActivoService {
 			}
 			
 			if(!Checks.esNulo(patrimonioContrato) && !Checks.esNulo(patrimonioContrato.getPazSocial())) {
-				activoPatrimonioDto.setPazSocial(patrimonioContrato.getPazSocial());
+				activoPatrimonioDto.setPazSocial(patrimonioContrato.getPazSocial().booleanValue() == true ? DDSinSiNo.CODIGO_SI : DDSinSiNo.CODIGO_NO);
 			}
 			
-			activoPatrimonioDto.setIsCarteraCerberusDivarian(activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN)
-																|| activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB)
+			activoPatrimonioDto.setIsCarteraCerberusDivarian(activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB)
 																|| activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB));
 			
 			if(!Checks.esNulo(activo.getTipoAlquiler())) {

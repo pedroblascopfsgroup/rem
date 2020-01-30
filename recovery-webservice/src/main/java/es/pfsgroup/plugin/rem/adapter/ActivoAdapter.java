@@ -1193,8 +1193,7 @@ public class ActivoAdapter {
 				Activo activoVista = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getActivo()));
 				
 				if(activoVista != null && activoVista.getSubcartera() != null) {
-					Boolean esDivarian = DDSubcartera.CODIGO_DIVARIAN.equals(activoVista.getSubcartera().getCodigo())
-							|| DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activoVista.getSubcartera().getCodigo())
+					Boolean esDivarian = DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activoVista.getSubcartera().getCodigo())
 							|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activoVista.getSubcartera().getCodigo());
 					dto.setEsDivarian(esDivarian);
 				}

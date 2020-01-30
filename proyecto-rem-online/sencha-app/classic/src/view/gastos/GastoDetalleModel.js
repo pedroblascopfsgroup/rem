@@ -263,8 +263,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				var subcartera = me.getData().gasto.get('subcartera');
 
 				if (CONST.CARTERA['CERBERUS'] == cartera
-						&& (CONST.SUBCARTERA['DIVARIAN'] == subcartera
-								|| CONST.SUBCARTERA['DIVARIANARROW'] == subcartera
+						&& (CONST.SUBCARTERA['DIVARIANARROW'] == subcartera
 								|| CONST.SUBCARTERA['DIVARIANREMAINING'] == subcartera || CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcartera)) {
 					return true;
 				}

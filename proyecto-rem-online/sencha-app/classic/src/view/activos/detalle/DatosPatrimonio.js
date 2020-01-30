@@ -122,11 +122,12 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 							}
 						},
 						{
-							xtype : 'checkboxfieldbase',
+							xtype : 'comboboxfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.paz.social'),
 							readOnly: true,
 							colspan: 1,
 							bind: {
+								store: '{comboSinSino}',
 								value: '{patrimonio.pazSocial}',
 								hidden: '{!patrimonio.isCarteraCerberusDivarian}'	
 							}

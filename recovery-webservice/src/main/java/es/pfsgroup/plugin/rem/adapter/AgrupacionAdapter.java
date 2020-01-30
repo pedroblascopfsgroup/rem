@@ -3113,15 +3113,6 @@ public class AgrupacionAdapter {
 				DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDTipoComercializacion.class, dto.getTipoComercializacionCodigo());
 
-				if(!Checks.estaVacio(ofertasAgr)) {
-					for(Oferta oferta : ofertasAgr) {
-						if(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
-							ofertaViva = true;
-							throw new JsonViewerException(AGRUPACION_CAMBIO_DEST_COMERCIAL_CON_OFERTAS_VIVAS);
-						}
-					}
-				}
-
 				if(!ofertaViva) {
 					List<ActivoAgrupacionActivo> listaActivos = loteComercial.getActivos();
 
@@ -3189,15 +3180,7 @@ public class AgrupacionAdapter {
 				DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDTipoComercializacion.class, dto.getTipoComercializacionCodigo());
 
-				if(!Checks.estaVacio(ofertasAgr)) {
-					for(Oferta oferta : ofertasAgr) {
-						if(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
-							ofertaViva = true;
-							throw new JsonViewerException(AGRUPACION_CAMBIO_DEST_COMERCIAL_CON_OFERTAS_VIVAS);
-						}
-					}
-				}
-
+				
 				if(!ofertaViva && !Checks.esNulo(tipoComercializacion)) {
 					List<ActivoAgrupacionActivo> listaActivos = loteComercial.getActivos();
 

@@ -83,7 +83,7 @@ public class TareaActivoManager implements TareaActivoApi {
 	private static final String NOMBRE_CAMPO_RESPUESTA = "comboRespuesta";
 	private static final String T013_DEFINICIONOFERTA = "T013_DefinicionOferta";
 	private static final String T013_RESOLUCIONCOMITE = "T013_ResolucionComite";
-	private static final String MENSAJE_OFERTAS_DEPENDIENTES = "Para sancionar esta oferta, hay que acceder a su Oferta Agrupada (Principal), cuyo enlace se muestra m&aacute;s abajo";
+	private static final String MENSAJE_OFERTAS_DEPENDIENTES = "Para sancionar esta oferta, hay que acceder a su Oferta Agrupada (Principal)";
 	private static final String COMITE_SUPERIOR = "comiteSuperior";
 	
     @Autowired

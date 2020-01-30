@@ -133,6 +133,7 @@ public class MSVOcultacionAlquiler extends MSVExcelValidatorAbstract{
 				if(!Checks.estaVacio(mapaErrores.get(key))) {
 					dtoValidacionContenido.setFicheroTieneErrores(true);
 					dtoValidacionContenido.setExcelErroresFormato(new FileItem(new File(exc.crearExcelErroresMejorado(mapaErrores))));
+					break;
 				}
 			}	
 		}

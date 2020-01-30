@@ -127,8 +127,8 @@ public class MSVActualizacionPerimetroAppleExcelValidator extends MSVExcelValida
 			for (Entry<String, List<Integer>> registro : mapaErrores.entrySet()) {
 				if (!registro.getValue().isEmpty()) {
 					dtoValidacionContenido.setFicheroTieneErrores(true);
-					dtoValidacionContenido
-							.setExcelErroresFormato(new FileItem(new File(exc.crearExcelErroresMejorado(mapaErrores))));
+					dtoValidacionContenido.setExcelErroresFormato(new FileItem(new File(exc.crearExcelErroresMejorado(mapaErrores))));
+					break;
 				}
 			}
 		}

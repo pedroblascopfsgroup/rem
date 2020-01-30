@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
@@ -143,20 +144,12 @@ public class MSVControlTributosExcelValidator extends MSVExcelValidatorAbstract 
 			mapaErrores.put(messageServices.getMessage(FECHA_NO_VALIDA), esFechaNoValida(exc));
 
 			
-			if (!mapaErrores.get(messageServices.getMessage(ACCION_NO_VALIDO)).isEmpty() || !mapaErrores.get(messageServices.getMessage(REGISTRO_NO_EXISTE)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(REGISTRO_EXISTE)).isEmpty() || !mapaErrores.get(messageServices.getMessage(ID_TRIBUTO_NO_VALIDO)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(ID_TRIBUTO_VACIO)).isEmpty() || !mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_ES_UA)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(NUM_HAYA_VINCULADO_NO_EXISTE)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(RESULTADO_NO_VALIDO)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(SOLICITUD_NO_VALIDO)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(FECHA_NO_VALIDA)).isEmpty()) {
-
-				dtoValidacionContenido.setFicheroTieneErrores(true);
-				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
-				FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-				dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
+			for (Entry<String, List<Integer>> registro : mapaErrores.entrySet()) {
+				if (!registro.getValue().isEmpty()) {
+					dtoValidacionContenido.setFicheroTieneErrores(true);
+					dtoValidacionContenido.setExcelErroresFormato(new FileItem(new File(exc.crearExcelErroresMejorado(mapaErrores))));
+					break;
+				}
 			}
 		}
 

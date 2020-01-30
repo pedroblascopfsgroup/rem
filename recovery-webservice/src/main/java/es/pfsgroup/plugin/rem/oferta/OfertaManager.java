@@ -684,6 +684,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					dtoAgrupacion.setDescripcion("Agrupación creada desde CRM");
 				}
 				dtoAgrupacion.setGestorComercial(activoAgrupacionApi.getGestorComercialAgrupacion(ofertaDto.getActivosLote()));
+				dtoAgrupacion.setEsFormalizacion(true);
 				Long numAgrupacionRem = null;
 				if(Checks.esNulo(dtoAgrupacion.getNumAgrupacionRem())){
 					agrupacionAdapter.createAgrupacion(dtoAgrupacion);

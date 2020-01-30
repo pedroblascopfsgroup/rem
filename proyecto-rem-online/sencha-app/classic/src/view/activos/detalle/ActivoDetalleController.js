@@ -5897,5 +5897,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}else{
 			observaciones.setDisabled(true);
 		}
+	},
+	getVisiblityOfBotons: function(){
+		return this.getViewModel().get('activo.unidadAlquilable');
 	}
 });

@@ -41,7 +41,6 @@ Ext.define('HreRem.model.ActivoPatrimonio', {
     		},
     		{
     			name: 'pazSocial',
-    			type: 'boolean'
     		},
     		{
     			name: 'isCarteraCerberusDivarian',

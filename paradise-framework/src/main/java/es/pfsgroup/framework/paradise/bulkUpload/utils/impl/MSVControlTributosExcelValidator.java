@@ -1,17 +1,12 @@
 package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
@@ -23,8 +18,6 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessCompositeValidators;
@@ -39,7 +32,6 @@ import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
-import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVInfoDetallePrinexLbkExcelValidator.COL_NUM;
 
 @Component
 public class MSVControlTributosExcelValidator extends MSVExcelValidatorAbstract {
@@ -58,7 +50,7 @@ public class MSVControlTributosExcelValidator extends MSVExcelValidatorAbstract 
 	private static final String FECHA_NO_VALIDA = "msg.error.masivo.control.tributos.fecha.no.valida";
 
 	private static final String FORMATO_FECHA = "dd/MM/yyyy";
-	
+
 	private List<Integer> listaFilasAccionNoValido;
 	private List<Integer> listaFilasAccionActivoTributoExiste;
 	private List<Integer> listaFilasAccionActivoTributoNoExiste;
@@ -98,9 +90,6 @@ public class MSVControlTributosExcelValidator extends MSVExcelValidatorAbstract 
 
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
-
-	@Autowired
-	private ApiProxyFactory proxyFactory;
 
 	@Autowired
 	private MSVBusinessValidationFactory validationFactory;
@@ -152,14 +141,22 @@ public class MSVControlTributosExcelValidator extends MSVExcelValidatorAbstract 
 			mapaErrores.put(messageServices.getMessage(RESULTADO_NO_VALIDO), esResultadoValido(exc));
 			mapaErrores.put(messageServices.getMessage(SOLICITUD_NO_VALIDO), esSolicitudValido(exc));
 			mapaErrores.put(messageServices.getMessage(FECHA_NO_VALIDA), esFechaNoValida(exc));
-			
 
-			for (Entry<String, List<Integer>> registro : mapaErrores.entrySet()) {
-				if (!registro.getValue().isEmpty()) {
-					dtoValidacionContenido.setFicheroTieneErrores(true);
-					dtoValidacionContenido
-							.setExcelErroresFormato(new FileItem(new File(exc.crearExcelErroresMejorado(mapaErrores))));
-				}
+			
+			if (!mapaErrores.get(messageServices.getMessage(ACCION_NO_VALIDO)).isEmpty() || !mapaErrores.get(messageServices.getMessage(REGISTRO_NO_EXISTE)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(REGISTRO_EXISTE)).isEmpty() || !mapaErrores.get(messageServices.getMessage(ID_TRIBUTO_NO_VALIDO)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ID_TRIBUTO_VACIO)).isEmpty() || !mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_ES_UA)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(NUM_HAYA_VINCULADO_NO_EXISTE)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(RESULTADO_NO_VALIDO)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(SOLICITUD_NO_VALIDO)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(FECHA_NO_VALIDA)).isEmpty()) {
+
+				dtoValidacionContenido.setFicheroTieneErrores(true);
+				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
+				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
+				FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
+				dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
 			}
 		}
 
@@ -220,30 +217,30 @@ public class MSVControlTributosExcelValidator extends MSVExcelValidatorAbstract 
 				String valorCeldaTipoSolicitud = exc.dameCelda(i, COL_NUM.COL_NUM_TIPO_SOLICITUD);
 				String valorCeldaIdTributo = exc.dameCelda(i, COL_NUM.COL_ID_TRIBUTO);
 
-				
-				if (!Checks.esNulo(valorCeldaFechaRecurso) && (getLengthOfYear(valorCeldaFechaRecurso) != null && getLengthOfYear(valorCeldaFechaRecurso) <= 4)) {
-					Boolean existeActivoTributo = Boolean.TRUE.equals(particularValidator.existeActivoTributo(valorCeldaActivo,
-							valorCeldaFechaRecurso, valorCeldaTipoSolicitud, valorCeldaIdTributo));
-					
+				if (!Checks.esNulo(valorCeldaFechaRecurso) && (getLengthOfYear(valorCeldaFechaRecurso) != null
+						&& getLengthOfYear(valorCeldaFechaRecurso) <= 4)) {
+					Boolean existeActivoTributo = Boolean.TRUE.equals(particularValidator.existeActivoTributo(
+							valorCeldaActivo, valorCeldaFechaRecurso, valorCeldaTipoSolicitud, valorCeldaIdTributo));
+
 					if (!particularValidator.esAccionValido(valorCelda)) {
 						listaFilasAccionNoValido.add(i);
 					}
-	
+
 					if (valorCelda.equals(DD_ACM_ADD) && existeActivoTributo) {
 						listaFilasAccionActivoTributoExiste.add(i);
-						
-						if(!Checks.esNulo(valorCeldaIdTributo)) {
+
+						if (!Checks.esNulo(valorCeldaIdTributo)) {
 							listaFilasIdTributoErroneo.add(i);
 						}
 					}
-					
+
 					if (valorCelda.equals(DD_ACM_ADD) && !existeActivoTributo && !Checks.esNulo(valorCeldaIdTributo)) {
 						listaFilasIdTributoErroneo.add(i);
 					}
-	
+
 					if (!valorCelda.equals(DD_ACM_ADD) && !existeActivoTributo) {
 						listaFilasAccionActivoTributoNoExiste.add(i);
-						if(Checks.esNulo(valorCeldaIdTributo)) {
+						if (Checks.esNulo(valorCeldaIdTributo)) {
 							listaFilasSinIdTributo.add(i);
 						}
 					}
@@ -267,7 +264,8 @@ public class MSVControlTributosExcelValidator extends MSVExcelValidatorAbstract 
 			try {
 				String valorGasto = exc.dameCelda(i, COL_NUM.COL_NUM_HAYA_VINCULADO);
 				String valorActivo = exc.dameCelda(i, COL_NUM.COL_NUM_ACTIVO);
-				if (!Checks.esNulo(valorGasto) && !particularValidator.esNumHayaVinculado(Long.parseLong(valorGasto),valorActivo)) {
+				if (!Checks.esNulo(valorGasto)
+						&& !particularValidator.esNumHayaVinculado(Long.parseLong(valorGasto), valorActivo)) {
 					listaFilas.add(i);
 				}
 
@@ -357,9 +355,10 @@ public class MSVControlTributosExcelValidator extends MSVExcelValidatorAbstract 
 		}
 		return listaFilas;
 	}
-	
+
 	/**
 	 * Funcion para comprobar el formato de la Fecha
+	 * 
 	 * @param exc
 	 * @param columnNumber
 	 * @return
@@ -367,24 +366,24 @@ public class MSVControlTributosExcelValidator extends MSVExcelValidatorAbstract 
 	private List<Integer> esFechaNoValida(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		String valorDate = null;
-		Integer[] fechas = {COL_NUM.COL_NUM_FECHA_EMISION,COL_NUM.COL_NUM_FECHA_RECEPCION_PROPIETARIO,
-				COL_NUM.COL_NUM_FECHA_RECEPCION_GESTORIA,COL_NUM.COL_NUM_FECHA_RECEPCION_RECURSO_BANKIA,
-				COL_NUM.COL_NUM_FECHA_RECEPCION_RECURSO_GESTORIA,COL_NUM.COL_NUM_FECHA_RESPUESTA_} ;
-		
+		Integer[] fechas = { COL_NUM.COL_NUM_FECHA_EMISION, COL_NUM.COL_NUM_FECHA_RECEPCION_PROPIETARIO,
+				COL_NUM.COL_NUM_FECHA_RECEPCION_GESTORIA, COL_NUM.COL_NUM_FECHA_RECEPCION_RECURSO_BANKIA,
+				COL_NUM.COL_NUM_FECHA_RECEPCION_RECURSO_GESTORIA, COL_NUM.COL_NUM_FECHA_RESPUESTA_ };
+
 		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
 			try {
-				for (int j = 0; j < fechas.length ; j++) {
+				for (int j = 0; j < fechas.length; j++) {
 					valorDate = exc.dameCelda(i, fechas[j]);
 					Integer yearSize = getLengthOfYear(valorDate);
 					if (!Checks.esNulo(valorDate) && (yearSize == null || yearSize > 4)) {
-							listaFilas.add(i);
-					} 					
+						listaFilas.add(i);
+					}
 				}
-			}catch (IllegalArgumentException e) {
-				logger.error(e.getMessage(),e);
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage(), e);
 				e.printStackTrace();
 			} catch (IOException e) {
-				logger.error(e.getMessage(),e);
+				logger.error(e.getMessage(), e);
 				e.printStackTrace();
 			} catch (ParseException e) {
 				listaFilas.add(i);
@@ -396,17 +395,15 @@ public class MSVControlTributosExcelValidator extends MSVExcelValidatorAbstract 
 		}
 		return listaFilas;
 	}
-	
-	
+
 	private Integer getLengthOfYear(String date) {
 		Integer yearSize = null;
-		if ( date != null) {
+		if (date != null) {
 			String[] dateArray = date.split("\\/");
-			String year = dateArray == null ? null : dateArray[dateArray.length -1];
+			String year = dateArray == null ? null : dateArray[dateArray.length - 1];
 			yearSize = year == null ? null : year.length();
 		}
-		return  yearSize;
+		return yearSize;
 	}
-	
-	
+
 }

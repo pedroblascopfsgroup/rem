@@ -138,6 +138,7 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 			mapaErrores.put(ESPEJO_TIPO_MEDIADOR_INCORRECTO, esTipoMediadorEspejoCorrecto(exc));
 
 			if (!mapaErrores.get(ACTIVO_NO_EXISTE).isEmpty() || !mapaErrores.get(AGRUPACION_NO_EXISTE).isEmpty()
+					|| !mapaErrores.get(FALTA_SUPERPLANIF).isEmpty()
 					|| !mapaErrores.get(EXPEDIENTE_COMERCIAL_NO_EXISTE).isEmpty()
 					|| !mapaErrores.get(TIPO_GESTOR_NO_EXISTE).isEmpty()
 					|| !mapaErrores.get(USERNAME_NO_EXISTE).isEmpty()

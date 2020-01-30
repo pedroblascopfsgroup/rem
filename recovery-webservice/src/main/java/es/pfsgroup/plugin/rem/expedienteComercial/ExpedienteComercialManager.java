@@ -10712,7 +10712,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			devolverOrigenLead = true;
 		}
 		
-		if(!Checks.esNulo(oferta.getProveedorPrescriptorRemOrigenLead())) {
+		if(!Checks.esNulo(oferta.getProveedorRealizadorRemOrigenLead())) {
 			dtoOrigenLead.setProveedorRealizadorLead(oferta.getProveedorRealizadorRemOrigenLead().getNombre());
 			devolverOrigenLead = true;
 		}

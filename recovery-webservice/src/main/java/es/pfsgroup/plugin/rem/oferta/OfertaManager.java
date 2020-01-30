@@ -2895,6 +2895,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						consultaComisionDto.setAmount(importeActPrinc);
 						consultaComisionDto.setComercialType(DD_TCR_CODIGO_OBRA_NUEVA);
 					}
+				}else{
+					consultaComisionDto.setComercialType(DD_TCR_CODIGO_OBRA_NUEVA);
 				}
 			}
 		}

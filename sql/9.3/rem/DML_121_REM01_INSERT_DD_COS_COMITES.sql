@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JULIAN DOLZ
---## FECHA_CREACION=20200128
+--## FECHA_CREACION=20200131
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-9226
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Agregado el comité divarian para Arrow en T_ARRAY_DATA
 --##########################################
 --*/
 
@@ -39,7 +40,8 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     -- DD_COS_CODIGO  DD_COS_DESCRIPCION  DD_COS_DESCRIPCION_LARGA  DD_CRA_CODIGO   DD_SCR_CODIGO
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('45', 'Divarian', 'Divarian', '07', '152')
+        T_TIPO_DATA('45', 'Divarian', 'Divarian', '07', '152'),
+        T_TIPO_DATA('38', 'Divarian', 'Divarian', '07', '151')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -68,6 +70,7 @@ BEGIN
 					', DD_COS_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
 					', USUARIOMODIFICAR = '''||TRIM(V_ITEM)||''' , FECHAMODIFICAR = SYSDATE '||
 					', DD_CRA_ID = (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||''') '||
+          ', DD_SCR_ID = (SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(5))||''') '||
 					'WHERE DD_COS_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');

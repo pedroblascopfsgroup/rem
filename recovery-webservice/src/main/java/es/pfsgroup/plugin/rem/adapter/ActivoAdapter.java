@@ -1527,6 +1527,7 @@ public class ActivoAdapter {
 				Activo activoMatriz = activoDao.getActivoById(activoDao.getIdActivoMatriz(activoAgrupacion.getId()));
 				if(activoMatriz != null) {
 					id = activoMatriz.getId();
+					activo = activoMatriz;
 				}
 			}
 		}

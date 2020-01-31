@@ -603,7 +603,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(dto.getCodigoTipoPrecio())) {
 				// Actualizar el tipoComercialización del activo
 				updaterState.updaterStateTipoComercializacion(activo);
-			}			
+			}
+			
+			if (!Checks.esNulo(dto.getLiquidez())){
+				activo.setValorLiquidez(dto.getLiquidez());
+			}
+			
+			genericDao.update(Activo.class, activo);
 
 		} catch (Exception ex) {
 			logger.error("Error en activoManager", ex);

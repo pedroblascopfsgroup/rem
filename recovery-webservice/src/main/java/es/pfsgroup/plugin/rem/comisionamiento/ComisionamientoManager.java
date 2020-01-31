@@ -39,12 +39,10 @@ public class ComisionamientoManager implements ComisionamientoApi {
 	private String visitMaker;
 	private String offerPrescriber;
 	
-	@SuppressWarnings("unused")
 	@Override
 	public RespuestaComisionResultDto createCommission(ConsultaComisionDto parametros)
 			throws JsonGenerationException, JsonMappingException, IOException, HttpClientException, NumberFormatException, RestConfigurationException, HttpsClientException {
 		
-		BigDecimal respuesta = null;
 		RespuestaComisionResultDto respuestaDto = null;
 		
 		String jsonString = mapper.writeValueAsString(parametros);

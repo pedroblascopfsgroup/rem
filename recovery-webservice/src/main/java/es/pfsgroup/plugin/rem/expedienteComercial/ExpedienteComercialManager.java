@@ -91,7 +91,6 @@ import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
-import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.controller.ExpedienteComercialController;
@@ -330,12 +329,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Autowired
 	private GastosExpedienteApi gastosExpedienteApi;
 	
-	
-	@Autowired
-	private TramitacionOfertasApi tramitacionOfertasApi;
 
 	@Autowired
-  private NotificationPlusvaliaManager notificationPlusvaliaManager;
+	private NotificationPlusvaliaManager notificationPlusvaliaManager;
 
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -6001,7 +5997,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 			gastoExpediente.setActivo(activo);
 		}
-
+		gastoExpediente.setEditado(1);
 		genericDao.save(GastosExpediente.class, gastoExpediente);
 
 		return true;
@@ -10596,7 +10592,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	@Transactional(readOnly = false)
 	public boolean actualizarGastosExpediente(ExpedienteComercial expedienteComercial, Oferta oferta) throws IllegalAccessException, InvocationTargetException {
-		
+		gastosExpedienteApi.deleteGastosExpediente(expedienteComercial.getId());
 		Activo activo = oferta.getActivoPrincipal();
 	
 		List<DtoGastoExpediente> listDtoGastoExpediente = ofertaApi.calculaHonorario(oferta, activo);
@@ -10605,42 +10601,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			DDAccionGastos acciongasto = (DDAccionGastos) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDAccionGastos.class, dtoGastoExpediente.getCodigoTipoComision());
 			
-			String accionGastoCod = acciongasto.getCodigo();
+			GastosExpediente gastoExpediente =  new GastosExpediente();
 			
-			GastosExpediente gastoExpediente = gastosExpedienteApi.getGastoExpedienteByActivoYAccion(activo.getId(), 
-					expedienteComercial.getId(), accionGastoCod);
-			
-			/*Se comprueba si se dan de alta honorarios de PRE_Y_COL o de PRESCRIPCION y COLABORACION
-			 * ya que PRE_Y_COL es una agrupacion de las otras dos y no conviven, 
-			 * se actualiza o borra algún honorario si es necesario
-			*/
-			if(gastoExpediente == null && DDAccionGastos.CODIGO_PRE_Y_COL.equals(accionGastoCod)) {
-				accionGastoCod = DDAccionGastos.CODIGO_PRESCRIPCION;
-				gastoExpediente = gastosExpedienteApi.getGastoExpedienteByActivoYAccion(activo.getId(), 
-						expedienteComercial.getId(), accionGastoCod);
-				
-				GastosExpediente gastoBorrar = gastosExpedienteApi.getGastoExpedienteByActivoYAccion(activo.getId(), 
-						expedienteComercial.getId(), DDAccionGastos.CODIGO_COLABORACION);
-				
-				if(gastoBorrar != null) {
-					gastoBorrar.getAuditoria().setBorrado(true);
-					gastoBorrar.getAuditoria().setFechaBorrar(new Date());
-					gastoBorrar.getAuditoria().setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
-					
-					genericDao.update(GastosExpediente.class, gastoBorrar);
-				}
-				
-			}else if (gastoExpediente == null && (DDAccionGastos.CODIGO_PRESCRIPCION.equals(accionGastoCod) || DDAccionGastos.CODIGO_COLABORACION.equals(accionGastoCod))){
-				accionGastoCod = DDAccionGastos.CODIGO_PRE_Y_COL;
-				gastoExpediente = gastosExpedienteApi.getGastoExpedienteByActivoYAccion(activo.getId(), 
-						expedienteComercial.getId(), accionGastoCod);
-			}
-			
-			if(gastoExpediente == null) {
-				gastoExpediente = new GastosExpediente();
-			}
-
-			if (!Checks.esNulo(acciongasto)) {
+			if (acciongasto != null) {
 				gastoExpediente.setAccionGastos(acciongasto);
 			}
 
@@ -10685,17 +10648,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			gastoExpediente.setExpediente(expedienteComercial);
 			gastoExpediente.setActivo(activo);
 
-			if(!Checks.esNulo(gastoExpediente) && gastoExpediente.getId() != null && gastoExpediente.getEditado() == 0) {
-				genericDao.update(GastosExpediente.class, gastoExpediente);
-			} else {
-				gastoExpediente.setEditado(0);
-				genericDao.save(GastosExpediente.class, gastoExpediente);
-			}
+			gastoExpediente.setEditado(0);
+			genericDao.save(GastosExpediente.class, gastoExpediente);
 			
 		}
 		
 		return true;
 	}
+	
+	
 	
 	@Override
 	public DtoOrigenLead  getOrigenLeadList (Long idExpediente){

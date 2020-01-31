@@ -34,6 +34,11 @@ public class ComisionamientoManager implements ComisionamientoApi {
 
 	ObjectMapper mapper = new ObjectMapper();
 	
+	private String providerType;
+	private String visitPrescriber;
+	private String visitMaker;
+	private String offerPrescriber;
+	
 	@SuppressWarnings("unused")
 	@Override
 	public RespuestaComisionResultDto createCommission(ConsultaComisionDto parametros)
@@ -83,30 +88,17 @@ public class ComisionamientoManager implements ComisionamientoApi {
 		Long realizadorVisita = (visita == null || visita.getProveedorVisita() == null) ? null : visita.getProveedorVisita().getId();
 		Long prescriptorOferta = oferta.getPrescriptor().getId();
 		
-		String providerType = (visita == null || visita.getProveedorPrescriptorOportunidad() == null) ? null
+		providerType = (visita == null || visita.getProveedorPrescriptorOportunidad() == null) ? null
 				: visita.getProveedorPrescriptorOportunidad().getCodigoProveedorRem().toString();
-		String visitPrescriber = (visita == null || visita.getPrescriptor() == null) ? null 
+		visitPrescriber = (visita == null || visita.getPrescriptor() == null) ? null 
 				: visita.getPrescriptor().getCodigoProveedorRem().toString();
-		String visitMaker = (visita == null || visita.getProveedorVisita() == null) ? null
+		visitMaker = (visita == null || visita.getProveedorVisita() == null) ? null
 				: visita.getProveedorVisita().getCodigoProveedorRem().toString(); 
-		String offerPrescriber = (oferta.getPrescriptor().getCodigoProveedorRem().toString());
+		offerPrescriber = (oferta.getPrescriptor().getCodigoProveedorRem().toString());
 		
-		String codLeadOrigin = null;
+		String codLeadOrigin = calculaLeadOrigin(oferta);
 		
-		if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getOrigenComprador())) {
-			codLeadOrigin = oferta.getOrigenComprador().getCodigo();
-		} else if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getVisita()) && !Checks.esNulo(oferta.getVisita().getOrigenComprador())) {
-			codLeadOrigin = oferta.getVisita().getOrigenComprador().getCodigo();
-		} else {
-			codLeadOrigin = DDOrigenComprador.CODIGO_ORC_HRE;
-		}
-		
-		DtoPrescriptoresComision dto = new DtoPrescriptoresComision();
-		
-		dto.setProviderType(providerType);
-		dto.setVisitPrescriber(visitPrescriber);
-		dto.setVisitMaker(visitMaker);
-		dto.setOfferPrescriber(offerPrescriber);
+		DtoPrescriptoresComision dto = getNewDtoComision();
 		
 		if(prescriptorOferta != null && (prescriptorVisita == null || realizadorVisita == null)) {
 			dto.setPrescriptorCodRem(prescriptorOferta);
@@ -120,12 +112,50 @@ public class ComisionamientoManager implements ComisionamientoApi {
 		
 		Long diferenciaFechaVisitaYAlta = null;
 		
-		if(visita.getFechaVisita() != null
+		if(visita != null && visita.getFechaVisita() != null
 				&& oferta.getFechaAlta() != null) {
 			diferenciaFechaVisitaYAlta = Math.abs((visita.getFechaVisita().getTime()-oferta.getFechaAlta().getTime())/86400000);
 		}
 		
-		if(prescriptorOferta.equals(prescriptorVisita) && prescriptorOferta.equals(realizadorVisita)) {
+		listAcciones = calculaListaComisiones(prescriptorOferta, prescriptorVisita, realizadorVisita, codLeadOrigin, 
+				dto, diferenciaFechaVisitaYAlta);
+		
+		return listAcciones;
+	}
+	
+	public DtoPrescriptoresComision getNewDtoComision() {
+		DtoPrescriptoresComision dto = new DtoPrescriptoresComision();
+		
+		dto.setProviderType(providerType);
+		dto.setVisitPrescriber(visitPrescriber);
+		dto.setVisitMaker(visitMaker);
+		dto.setOfferPrescriber(offerPrescriber);
+		
+		return dto;
+	}
+	
+	public String calculaLeadOrigin(Oferta oferta) {
+		
+		String codLeadOrigin = null;
+		
+		if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getOrigenComprador())) {
+			codLeadOrigin = oferta.getOrigenComprador().getCodigo();
+		} else if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getVisita()) && !Checks.esNulo(oferta.getVisita().getOrigenComprador())) {
+			codLeadOrigin = oferta.getVisita().getOrigenComprador().getCodigo();
+		} else {
+			codLeadOrigin = DDOrigenComprador.CODIGO_ORC_HRE;
+		}
+		
+		return codLeadOrigin;
+	}
+	
+	public List<DtoPrescriptoresComision> calculaListaComisiones(Long prescriptorOferta, Long prescriptorVisita, Long realizadorVisita, 
+			String codLeadOrigin, DtoPrescriptoresComision dto, Long diferenciaFechaVisitaYAlta){
+		
+		List<DtoPrescriptoresComision> listAcciones = new ArrayList<DtoPrescriptoresComision>();
+		
+		if(prescriptorOferta != null &&
+				prescriptorOferta.equals(prescriptorVisita) && prescriptorOferta.equals(realizadorVisita)) {
 			dto.setPrescriptorCodRem(prescriptorOferta);
 			dto.setTipoAccion(DDAccionGastos.CODIGO_PRE_Y_COL);
 			
@@ -140,12 +170,7 @@ public class ComisionamientoManager implements ComisionamientoApi {
 					
 					listAcciones.add(dto);
 					
-					dto = new DtoPrescriptoresComision();
-					
-					dto.setProviderType(providerType);
-					dto.setVisitPrescriber(visitPrescriber);
-					dto.setVisitMaker(visitMaker);
-					dto.setOfferPrescriber(offerPrescriber);
+					dto = getNewDtoComision();
 					
 					dto.setPrescriptorCodRem(prescriptorVisita);
 					dto.setTipoAccion(DDAccionGastos.CODIGO_API_ORI_LEA);
@@ -157,7 +182,7 @@ public class ComisionamientoManager implements ComisionamientoApi {
 				
 				listAcciones.add(dto);
 			}
-		} else if(!prescriptorOferta.equals(prescriptorVisita) && prescriptorOferta.equals(realizadorVisita)
+		} else if(prescriptorOferta != null && !prescriptorOferta.equals(prescriptorVisita) && prescriptorOferta.equals(realizadorVisita)
 				&& DDOrigenComprador.CODIGO_ORC_HRE.equals(codLeadOrigin)) {
 			dto.setPrescriptorCodRem(prescriptorOferta);
 			dto.setTipoAccion(DDAccionGastos.CODIGO_COLABORACION);
@@ -165,36 +190,26 @@ public class ComisionamientoManager implements ComisionamientoApi {
 			
 			listAcciones.add(dto);
 			
-		} else if(prescriptorOferta.equals(prescriptorVisita) && !prescriptorOferta.equals(realizadorVisita)) {
+		} else if(prescriptorOferta != null && prescriptorOferta.equals(prescriptorVisita) && !prescriptorOferta.equals(realizadorVisita)) {
 			dto.setPrescriptorCodRem(realizadorVisita);
 			dto.setTipoAccion(DDAccionGastos.CODIGO_COLABORACION);
 			dto.setOrigenLead(codLeadOrigin);
 			
 			listAcciones.add(dto);
 			
+			dto = getNewDtoComision();
+			
+			dto.setPrescriptorCodRem(prescriptorOferta);
+			dto.setTipoAccion(DDAccionGastos.CODIGO_PRESCRIPCION);
+			dto.setOrigenLead(codLeadOrigin);
+			
+			listAcciones.add(dto);
+			
 			if(DDOrigenComprador.CODIGO_ORC_API_AJENO.equals(codLeadOrigin)) {
-				
-				dto = new DtoPrescriptoresComision();
-				
-				dto.setProviderType(providerType);
-				dto.setVisitPrescriber(visitPrescriber);
-				dto.setVisitMaker(visitMaker);
-				dto.setOfferPrescriber(offerPrescriber);
-				
-				dto.setPrescriptorCodRem(prescriptorOferta);
-				dto.setTipoAccion(DDAccionGastos.CODIGO_PRESCRIPCION);
-				dto.setOrigenLead(codLeadOrigin);
-				
-				listAcciones.add(dto);
 				
 				if(diferenciaFechaVisitaYAlta != null && diferenciaFechaVisitaYAlta <= 90L) {
 					
-					dto = new DtoPrescriptoresComision();
-					
-					dto.setProviderType(providerType);
-					dto.setVisitPrescriber(visitPrescriber);
-					dto.setVisitMaker(visitMaker);
-					dto.setOfferPrescriber(offerPrescriber);
+					dto = getNewDtoComision();
 					
 					dto.setPrescriptorCodRem(prescriptorVisita);
 					dto.setTipoAccion(DDAccionGastos.CODIGO_API_ORI_LEA);
@@ -214,8 +229,6 @@ public class ComisionamientoManager implements ComisionamientoApi {
 				}
 			}
 		}
-		
-		
 		
 		return listAcciones;
 	}

@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutorApi;
 import es.pfsgroup.plugin.rem.model.BulkOferta;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.thread.AvanzaTareaOfertasBulkAN;
 
 @Service("bulkAdvisoryNoteAdapter")
@@ -46,45 +47,54 @@ public class BulkAdvisoryNoteAdapter {
 	@Autowired
 	private GenericAdapter genericAdapter;
 	
+	@Autowired
+	private OfertaDao ofertaDao;
+	
 	private final Log logger = LogFactory.getLog(getClass());
 
-	public boolean validarTareasOfertasBulk(List<BulkOferta> listOfertasBulk, List<TareaExternaValor> list) {
+	public boolean validarTareasOfertasBulk(List<BulkOferta> listOfertasBulk,Map<String,String[]> valoresTarea, String tapCodigoActual) {
 		boolean resultado = false;
 		DtoGenericForm dto;
-		Map<String,String[]> valoresTarea = insertValoresToHashMap(list);
+		
 		for (BulkOferta ofertaDelBulk : listOfertasBulk) {
-
-			TareaActivo tareaActivoDeOferta = tareaActivoApi.tareaOfertaDependiente(ofertaDelBulk.getPrimaryKey().getOferta());
-			Map<String,String[]> valoresTareaOfertaBulk = tareaActivoApi.valoresTareaDependiente(valoresTarea, tareaActivoDeOferta, ofertaDelBulk.getPrimaryKey().getOferta());
 			
-			dto = agendaAdapter.convetirValoresToDto(valoresTareaOfertaBulk);
+			if(!Checks.esNulo(ofertaDelBulk.getPrimaryKey().getOferta()) 
+					&&  (ofertaDao.tieneTareaActiva(tapCodigoActual, ofertaDelBulk.getPrimaryKey().getOferta().getNumOferta().toString())) ){
 
-			try {
-				String validacionPrevia = agendaAdapter.getValidacionPrevia(dto.getForm().getTareaExterna().getTareaPadre().getId());
+				TareaActivo tareaActivoDeOferta = tareaActivoApi.tareaOfertaDependiente(ofertaDelBulk.getPrimaryKey().getOferta());
+				Map<String,String[]> valoresTareaOfertaBulk = tareaActivoApi.valoresTareaDependiente(valoresTarea, tareaActivoDeOferta, ofertaDelBulk.getPrimaryKey().getOferta());
+				
+				dto = agendaAdapter.convetirValoresToDto(valoresTareaOfertaBulk);
 
-				if (!Checks.esNulo(validacionPrevia)){
+				try {
+					String validacionPrevia = agendaAdapter.getValidacionPrevia(dto.getForm().getTareaExterna().getTareaPadre().getId());
+
+					if (!Checks.esNulo(validacionPrevia)){
+						return false;
+					}
+
+					String scriptValidacion = dto.getForm().getTareaExterna().getTareaProcedimiento().getScriptValidacionJBPM();
+					Object result = jbpmMActivoScriptExecutorApi.evaluaScript(tareaActivoDeOferta.getTramite().getId(), dto.getForm().getTareaExterna().getId(),
+							dto.getForm().getTareaExterna().getTareaProcedimiento().getId(),null, scriptValidacion);
+					
+					if (Checks.esNulo(result)) {
+						resultado = true;
+					}else {
+						return false;
+					}
+				} catch (Exception e) {
 					return false;
 				}
-
-				String scriptValidacion = dto.getForm().getTareaExterna().getTareaProcedimiento().getScriptValidacionJBPM();
-				Object result;
-				result = jbpmMActivoScriptExecutorApi.evaluaScript(tareaActivoDeOferta.getTramite().getId(), dto.getForm().getTareaExterna().getId(), dto.getForm().getTareaExterna().getTareaProcedimiento().getId(),
-											null, scriptValidacion);
-				if (!Checks.esNulo(result)) {
-					resultado = false;
-				}else {
-					resultado = true;
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
+			} else {
 				return false;
+				
 			}
-		
 		}
 		return resultado;
 	}
 	
-	public void avanzarTareasOfertasBulk(List<BulkOferta> listOfertasBulk, Oferta ofertaActual,Map<String,String[]> valoresTarea) {
+	@SuppressWarnings("static-access")
+	public void avanzarTareasOfertasBulk(List<BulkOferta> listOfertasBulk, Oferta ofertaActual,Map<String,String[]> valoresTarea,String tapCodigoActual) {
 		
 		List<Long> listIdsOfertasDelBulk = new ArrayList<Long>();
 		for (BulkOferta bulkOferta : listOfertasBulk) {
@@ -92,8 +102,14 @@ public class BulkAdvisoryNoteAdapter {
 		}
 		try {
 			Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-			Thread avanzaTareasOfertasBulkAN = new Thread(new AvanzaTareaOfertasBulkAN(usuarioLogado.getUsername(),listIdsOfertasDelBulk,ofertaActual.getId(),valoresTarea));
+			Thread avanzaTareasOfertasBulkAN = new Thread(new AvanzaTareaOfertasBulkAN(usuarioLogado.getUsername(),listIdsOfertasDelBulk,ofertaActual.getId(),valoresTarea, tapCodigoActual));
 			avanzaTareasOfertasBulkAN.start();
+			try {
+				avanzaTareasOfertasBulkAN.sleep(10000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
 		} catch (Exception e) {
 			logger.error("[ERROR] Error en BulkAdvisoryNoteAdapter al intentar avanzar la tarea de la oferta", e);
 		}

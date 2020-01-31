@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.exception.UserException;
@@ -504,7 +505,7 @@ public class AgendaAdapter {
 		return true;
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public DtoGenericForm rellenaDTO(Long idTarea, Map<String,String> camposFormulario) throws Exception {
 		TareaNotificacion tar = proxyFactory.proxy(TareaNotificacionApi.class).get(idTarea);
 		GenericForm genericForm = actGenericFormManager.get(tar.getTareaExterna().getId());
@@ -520,10 +521,17 @@ public class AgendaAdapter {
 				if (nombreCampo.equals(((Map.Entry) stringStringEntry).getKey())) {
 					String valorCampo = (String) ((Map.Entry) stringStringEntry).getValue();
 					if (valorCampo != null && !valorCampo.isEmpty() && nombreCampo.toUpperCase().contains("FECHA")) {
-						try {
-							valorCampo = valorCampo.substring(6, 10) + "-" + valorCampo.substring(3, 5) + "-" + valorCampo.substring(0, 2);
-						}catch (Exception e) {
-							//que hacemos
+						
+						String[] valoresFecha = valorCampo.replace("/", "-").split("-");
+						if(!Checks.esNulo(valoresFecha)) {
+							List<String> listValoresFecha = Arrays.asList(valoresFecha);
+							try {
+								if(!Checks.estaVacio(listValoresFecha) && listValoresFecha.get(0).length() <= 2) {
+									valorCampo = valorCampo.substring(6, 10) + "-" + valorCampo.substring(3, 5) + "-" + valorCampo.substring(0, 2);
+								}
+							}catch (Exception e) {
+								e.printStackTrace();
+							}	
 						}
 					}
 					valores[i] = valorCampo;

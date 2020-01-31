@@ -1119,6 +1119,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		Usuario usuarioSupervisorReserva = null;
 		Usuario usuarioGestorMinuta = null;
 		Usuario usuarioSupervisorMinuta = null;
+		Usuario usuarioGestorController = null;
 		ActivoAgrupacion agrupacion = null;
 		Activo activo = null;
 
@@ -1294,6 +1295,21 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION,
 						usuarioSupervisorFormalizacion.getUsername(), dto);
 		}
+		
+		if(activo != null) {
+			String usernameGestorController = gestorExpedienteComercialDao.getUsuarioGestor(activo.getId(),
+					GestorExpedienteComercialApi.CODIGO_GESTOR_CONTROLLER);
+			if(usernameGestorController != null) {
+				usuarioGestorController = genericDao.get(Usuario.class,
+						genericDao.createFilter(FilterType.EQUALS, "username", usernameGestorController));
+			}
+			
+			if(usuarioGestorController != null) {
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_CONTROLLER, 
+						usuarioGestorController.getUsername(), dto);
+			}
+		}
+		
 	}
 
 	private void agregarTipoGestorYUsuarioEnDto(String codTipoGestor, String username, GestorEntidadDto dto) {

@@ -197,6 +197,18 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		}else {
 			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false).get(codigoTarea);
 		}
+		
+		if((CODIGO_T013_CIERRE_ECONOMICO.equals(codigoTarea)
+				|| CODIGO_T017_CIERRE_ECONOMICO.equals(codigoTarea)) && usaGestorController) {
+			
+			Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_CONTROLLER);
+			
+			tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+			
+			if(tipoGestor != null) {
+				return getGestorOrSupervisorExpedienteByCodigo(tareaExterna, tipoGestor.getCodigo());
+			}	
+		}
 			
 		if(CODIGO_T017_RESOLUCION_CES.equals(codigoTarea) || CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea) 
 				|| CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigoTarea) || CODIGO_T017_RATIFICACION_COMITE_CES.equals(codigoTarea)) {
@@ -228,18 +240,6 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		if( CODIGO_T017_RESOLUCION_CES.equals(codigoTarea) || CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea) 
 				|| CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigoTarea)) {
 			return gestorActivoApi.usuarioTareaApple(codigoTarea);
-		}
-		
-		if((CODIGO_T013_CIERRE_ECONOMICO.equals(codigoTarea)
-				|| CODIGO_T017_CIERRE_ECONOMICO.equals(codigoTarea)) && usaGestorController) {
-			
-			Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_CONTROLLER);
-			
-			tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
-			
-			if(tipoGestor != null) {
-				return getGestorOrSupervisorExpedienteByCodigo(tareaExterna, tipoGestor.getCodigo());
-			}	
 		}
 
 		return gestorActivoApi.getGestorByActivoYTipo(tareaActivo.getActivo(), tipoGestor.getId());

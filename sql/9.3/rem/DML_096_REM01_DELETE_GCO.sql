@@ -50,7 +50,7 @@ BEGIN
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] BORRADOS EN GCO: ' || sql%rowcount);
 
-	V_MSQL := 'delete from '||V_ESQUEMA||'.gee_gestor_entidad gee where EXISTS 
+	/*V_MSQL := 'delete from '||V_ESQUEMA||'.gee_gestor_entidad gee where EXISTS 
 	(select 1 from '||V_ESQUEMA||'.gee_gestor_entidad aux_gee
 	left join '||V_ESQUEMA_M||'.dd_tge_tipo_gestor tge on aux_gee.dd_tge_id = tge.dd_tge_id and tge.borrado = 0
 	where tge.dd_tge_codigo in (''GCONT'') and aux_gee.usuariocrear = ''HREOS-9322''
@@ -58,7 +58,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE(V_MSQL);
 
 	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] BORRADOS EN GEE: ' || sql%rowcount);
+	DBMS_OUTPUT.PUT_LINE('[INFO] BORRADOS EN GEE: ' || sql%rowcount);*/
 
 	V_MSQL := 'delete from '||V_ESQUEMA||'.gch_gestor_eco_historico gch where EXISTS 
 	(select 1 from '||V_ESQUEMA||'.gch_gestor_eco_historico aux_gch
@@ -71,7 +71,7 @@ BEGIN
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] BORRADOS EN GCH: ' || sql%rowcount);
 
-	V_MSQL := 'delete from '||V_ESQUEMA||'.geh_gestor_entidad_hist geh where EXISTS 
+	/*V_MSQL := 'delete from '||V_ESQUEMA||'.geh_gestor_entidad_hist geh where EXISTS 
 	(select 1 from '||V_ESQUEMA||'.geh_gestor_entidad_hist aux_geh
 	left join '||V_ESQUEMA_M||'.dd_tge_tipo_gestor tge on aux_geh.dd_tge_id = tge.dd_tge_id and tge.borrado = 0
 	where tge.dd_tge_codigo in (''GCONT'') and aux_geh.usuariocrear = ''HREOS-9322''
@@ -79,7 +79,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE(V_MSQL);
 
 	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] BORRADOS EN GEH: ' || sql%rowcount);
+	DBMS_OUTPUT.PUT_LINE('[INFO] BORRADOS EN GEH: ' || sql%rowcount);*/
 
     COMMIT;
    

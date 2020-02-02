@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20190131
+--## FECHA_CREACION=20190202
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-9322
@@ -33,39 +33,28 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_ID NUMBER(16);
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'TMP_GCO_GCH'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_INCIDENCIA VARCHAR2(25 CHAR) := 'HREOS-9322';
+    V_INCIDENCIA VARCHAR2(25 CHAR) := 'HREOS-9322-2';
     
 BEGIN	
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
-      
-    V_MSQL := 'INSERT INTO REM01.TMP_GCO_GCH (ID, ECO_ID) 
-    SELECT ROWNUM, eco.eco_id
-    FROM REM01.eco_expediente_comercial eco
-    join REM01.gco_gestor_add_eco gco on eco.eco_id = gco.eco_id
-    join REM01.gee_gestor_entidad gee on gee.gee_id = gco.gee_id
-    join REMMASTER.usu_usuarios usu on gee.usu_id = usu.usu_id and usu.borrado = 0
-    left join REMMASTER.dd_tge_tipo_gestor tge on gee.dd_tge_id = tge.dd_tge_id and tge.borrado = 0
-    join REM01.ofr_ofertas ofr on eco.ofr_id = ofr.ofr_id and ofr.borrado = 0
-    join (
-    SELECT distinct act_ofr.ofr_id
-    FROM REM01.act_activo act
-    join REM01.act_ofr on act_ofr.act_id = act.act_id
-    left join REM01.act_aba_activo_bancario aba on act.act_id = aba.act_id and aba.borrado = 0
-    left join REM01.dd_cla_clase_activo cla on aba.dd_cla_id = cla.dd_cla_id and cla.borrado = 0
-    left join REM01.dd_cra_cartera cra on act.dd_cra_id = cra.dd_cra_id and cra.borrado = 0
-    left join REM01.dd_scr_subcartera scr on act.dd_scr_id = scr.dd_scr_id and scr.borrado = 0
-    where (cra.dd_cra_codigo in (''01'',''02'',''03'',''11'') or 
-    scr.dd_scr_codigo in (''65'',''151'',''152'') or cla.dd_cla_codigo = ''01'') 
-    ) cra on cra.ofr_id = ofr.ofr_id
-    left join dd_eec_est_exp_comercial eec on eco.dd_eec_id = eec.dd_eec_id and eec.borrado = 0
-    left join dd_tof_tipos_oferta tof on tof.dd_tof_id = ofr.dd_tof_id and tof.borrado = 0
-    where eco.borrado = 0 and eec.dd_eec_codigo not in (''02'',''17'',''16'',''08'') and tof.dd_tof_codigo = ''01'' and tge.dd_tge_codigo not in (''GCONT'')';
+    
+          
+  V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.GCO_GESTOR_ADD_ECO (ECO_ID, GEE_ID)
+  SELECT ECO_ID, GEE_ID FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||'';
+  EXECUTE IMMEDIATE V_MSQL;
+  DBMS_OUTPUT.PUT_LINE('[INFO] REGISTROS INSERTADOS CORRECTAMENTE EN GCO_GESTOR_ADD_ECO: ' || sql%rowcount);
 
-    EXECUTE IMMEDIATE V_MSQL;
+  V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.GCH_GESTOR_ECO_HISTORICO (ECO_ID, GEH_ID)
+  SELECT ECO_ID, GEH_ID FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||'';
+  EXECUTE IMMEDIATE V_MSQL;
+  DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTROS INSERTADO CORRECTAMENTE');
+  DBMS_OUTPUT.PUT_LINE('[INFO] REGISTROS INSERTADOS CORRECTAMENTE EN GCH_GESTOR_ECO_HISTORICO: ' || sql%rowcount);
 
-    COMMIT;
+  V_MSQL := 'DROP TABLE '||V_ESQUEMA||'.TMP_GCO_GCH';
+  EXECUTE IMMEDIATE V_MSQL;
    
+  COMMIT;   
 
 EXCEPTION
      WHEN OTHERS THEN

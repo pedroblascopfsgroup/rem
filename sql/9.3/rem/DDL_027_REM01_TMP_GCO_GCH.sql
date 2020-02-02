@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20190131
+--## FECHA_CREACION=20190202
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-9322

@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20190131
+--## FECHA_CREACION=20190202
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-9322
@@ -38,36 +38,35 @@ DECLARE
 BEGIN	
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
+      
+    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_GCO_GCH (ID, ECO_ID) 
+    SELECT ROWNUM, eco.eco_id
+    FROM '||V_ESQUEMA||'.eco_expediente_comercial eco
+    join '||V_ESQUEMA||'.ofr_ofertas ofr on eco.ofr_id = ofr.ofr_id and ofr.borrado = 0
+    join (
+    SELECT distinct act_ofr.ofr_id
+    FROM '||V_ESQUEMA||'.act_activo act
+    join '||V_ESQUEMA||'.act_ofr on act_ofr.act_id = act.act_id
+    left join '||V_ESQUEMA||'.act_aba_activo_bancario aba on act.act_id = aba.act_id and aba.borrado = 0
+    left join '||V_ESQUEMA||'.dd_cla_clase_activo cla on aba.dd_cla_id = cla.dd_cla_id and cla.borrado = 0
+    left join '||V_ESQUEMA||'.dd_cra_cartera cra on act.dd_cra_id = cra.dd_cra_id and cra.borrado = 0
+    left join '||V_ESQUEMA||'.dd_scr_subcartera scr on act.dd_scr_id = scr.dd_scr_id and scr.borrado = 0
+    where (cra.dd_cra_codigo in (''01'',''02'',''03'',''11'') or 
+    scr.dd_scr_codigo in (''65'',''151'',''152'') or cla.dd_cla_codigo = ''01'') 
+    ) cra on cra.ofr_id = ofr.ofr_id
+    left join '||V_ESQUEMA||'.dd_eec_est_exp_comercial eec on eco.dd_eec_id = eec.dd_eec_id and eec.borrado = 0
+    left join '||V_ESQUEMA||'.dd_tof_tipos_oferta tof on tof.dd_tof_id = ofr.dd_tof_id and tof.borrado = 0
+    where eco.borrado = 0 and eec.dd_eec_codigo not in (''02'',''17'',''16'',''08'') and tof.dd_tof_codigo = ''01'' 
+    and not exists (
+    select 1 from  '||V_ESQUEMA||'.gco_gestor_add_eco gco
+    join '||V_ESQUEMA||'.gee_gestor_entidad gee on gee.gee_id = gco.gee_id
+    join '||V_ESQUEMA_M||'.usu_usuarios usu on gee.usu_id = usu.usu_id and usu.borrado = 0
+    left join '||V_ESQUEMA_M||'.dd_tge_tipo_gestor tge on gee.dd_tge_id = tge.dd_tge_id and tge.borrado = 0
+    where tge.dd_tge_codigo in (''GCONT'') and gco.eco_id = eco.eco_id)';
 
-  V_MSQL := 'SELECT COUNT(*) FROM REM01.'||V_TEXT_TABLA||'';
-  EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
-	 
-    -- LOOP para insertar los valores en TMP_GCO_GCH -----------------------------------------------------------------
-    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN TMP_GCO_GCH ');
-    FOR I IN 1..V_NUM_TABLAS
-      LOOP
+    EXECUTE IMMEDIATE V_MSQL;
 
-          V_MSQL := 'SELECT REM01.S_GEE_GESTOR_ENTIDAD.NEXTVAL FROM DUAL';
-          EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
-          
-          V_MSQL := 'INSERT INTO REM01.GEE_GESTOR_ENTIDAD (GEE_ID, USU_ID, DD_TGE_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
-                      SELECT '|| V_ID || '
-                      , (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE USU_USERNAME = ''grucontroller'')
-                      , (SELECT DD_TGE_ID FROM REMMASTER.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = ''GCONT'')
-                      , 0
-                      , '''||V_INCIDENCIA||'''
-                      , SYSDATE
-                      , 0 FROM DUAL';
-          EXECUTE IMMEDIATE V_MSQL;
-
-          V_MSQL := 'UPDATE REM01.'||V_TEXT_TABLA||'
-          SET GEE_ID = '||V_ID||' WHERE ID = '||I||'';
-          EXECUTE IMMEDIATE V_MSQL;
-
-    END LOOP;
     COMMIT;
-
-    DBMS_OUTPUT.PUT_LINE('[FIN]: TMP_GCO_GCH MODIFICADO CORRECTAMENTE ');
    
 
 EXCEPTION

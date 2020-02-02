@@ -41,7 +41,7 @@ BEGIN
       
 	V_MSQL := 'delete from '||V_ESQUEMA||'.gco_gestor_add_eco gco where EXISTS 
 	(select 1 from '||V_ESQUEMA||'.gco_gestor_add_eco aux_gco
-	join '||V_ESQUEMA||'.gee_gestor_entidad gee on gee.gee_id = gco.gee_id
+	join '||V_ESQUEMA||'.gee_gestor_entidad gee on gee.gee_id = aux_gco.gee_id
 	left join '||V_ESQUEMA_M||'.dd_tge_tipo_gestor tge on gee.dd_tge_id = tge.dd_tge_id and tge.borrado = 0
 	where tge.dd_tge_codigo in (''GCONT'') and gee.usuariocrear = ''HREOS-9322''
 	and aux_gco.eco_id = gco.eco_id and aux_gco.gee_id = gco.gee_id)';
@@ -62,7 +62,7 @@ BEGIN
 
 	V_MSQL := 'delete from '||V_ESQUEMA||'.gch_gestor_eco_historico gch where EXISTS 
 	(select 1 from '||V_ESQUEMA||'.gch_gestor_eco_historico aux_gch
-	join '||V_ESQUEMA||'.geh_gestor_entidad_hist geh on geh.geh_id = gch.geh_id
+	join '||V_ESQUEMA||'.geh_gestor_entidad_hist geh on geh.geh_id = aux_gch.geh_id
 	left join '||V_ESQUEMA_M||'.dd_tge_tipo_gestor tge on geh.dd_tge_id = tge.dd_tge_id and tge.borrado = 0
 	where tge.dd_tge_codigo in (''GCONT'') and geh.usuariocrear = ''HREOS-9322''
 	and aux_gch.eco_id = gch.eco_id and aux_gch.geh_id = gch.geh_id)';

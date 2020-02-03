@@ -1,12 +1,9 @@
 package es.pfsgroup.plugin.rem.comisionamiento;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,7 +38,7 @@ public class ComisionamientoManager implements ComisionamientoApi {
 	
 	@Override
 	public RespuestaComisionResultDto createCommission(ConsultaComisionDto parametros)
-			throws JsonGenerationException, JsonMappingException, IOException, HttpClientException, NumberFormatException, RestConfigurationException, HttpsClientException {
+			throws IOException, HttpClientException, RestConfigurationException, HttpsClientException {
 		
 		RespuestaComisionResultDto respuestaDto = null;
 		

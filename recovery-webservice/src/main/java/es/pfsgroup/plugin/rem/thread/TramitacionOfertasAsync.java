@@ -9,7 +9,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.tramitacionOfertas.TramitacionOfertasManager;
+import es.pfsgroup.plugin.rem.tramitacion.TramitacionOfertasManager;
 
 
 

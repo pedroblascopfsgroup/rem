@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.devon.exception.UserException;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -19,7 +20,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.api.GastosExpedienteApi;
 import es.pfsgroup.plugin.rem.gastosExpediente.dao.GastosExpedienteDao;
-import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
@@ -54,13 +54,13 @@ public class GastosExpedienteManager extends BusinessOperationOverrider<GastosEx
 
 		try {
 			if (Checks.esNulo(id)) {
-				throw new Exception("El campo id es obligatorio.");
+				throw new UserException("El campo id es obligatorio.");
 			} else {
 				gasto = gastosExpedienteDao.get(id);
 			}
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error(ex.getMessage(),ex);
 		}
 
 		return gasto;
@@ -75,7 +75,7 @@ public class GastosExpedienteManager extends BusinessOperationOverrider<GastosEx
 			lista = gastosExpedienteDao.getListaGastosExpediente(comisionDto);
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error(ex.getMessage(),ex);
 		}
 
 		return lista;

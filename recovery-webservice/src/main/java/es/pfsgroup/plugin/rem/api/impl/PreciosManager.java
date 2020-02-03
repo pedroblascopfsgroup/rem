@@ -118,12 +118,12 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
 	//Porcentajes para el calculo de precios propuestos
-	private static final Double porc120 = 1.20;
-	private static final Double porc115 = 1.15;
-	private static final Double porc110 = 1.10;
-	private static final Double porc090 = 0.90;
-	private static final Double porc075 = 0.75;
-	private static final Double porc060 = 0.60;
+	private static final Double PORC_120 = 1.20;
+	private static final Double PORC_115 = 1.15;
+	private static final Double PORC_110 = 1.10;
+	private static final Double PORC_090 = 0.90;
+	private static final Double PORC_075 = 0.75;
+	private static final Double PORC_060 = 0.60;
 		
 	@Override
 	public String managerName() {
@@ -432,17 +432,17 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	 */
 	private Double precioPropuestoCajamar(Double fsv, Double tasacion, Double vnc, Double adquisicion) {
 		
-		if((fsv > tasacion * porc110) && (fsv > vnc * porc110) && (fsv > adquisicion * porc110))
+		if((fsv > tasacion * PORC_110) && (fsv > vnc * PORC_110) && (fsv > adquisicion * PORC_110))
 			return fsv;
 		
-		if((porc110 * vnc) > (porc090 * tasacion) && (porc110 * vnc) > (porc060 * adquisicion))
-			return porc110 * vnc;
+		if((PORC_110 * vnc) > (PORC_090 * tasacion) && (PORC_110 * vnc) > (PORC_060 * adquisicion))
+			return PORC_110 * vnc;
 		
-		if((tasacion > porc110 * vnc) && (tasacion > porc060 * adquisicion))
+		if((tasacion > PORC_110 * vnc) && (tasacion > PORC_060 * adquisicion))
 			return tasacion;
 		
-		if((porc060 * adquisicion) > (porc090 * tasacion) && (porc060 * adquisicion) > (porc110 * vnc))
-			return porc060 * adquisicion;
+		if((PORC_060 * adquisicion) > (PORC_090 * tasacion) && (PORC_060 * adquisicion) > (PORC_110 * vnc))
+			return PORC_060 * adquisicion;
 		
 		return tasacion;
 	}
@@ -454,7 +454,7 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	 */
 	private Double precioPropuestoSareb(Double fsv) {
 
-		return porc110 * fsv;
+		return PORC_110 * fsv;
 	}
 	
 	/**
@@ -468,26 +468,26 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	 */
 	private Double precioPropuestoBankia(Boolean residencial, Double tasacion, Double vnc, Double liquidativo, Double fsv) {
 		
-		Double vncDefecto = porc110 * vnc;
+		Double vncDefecto = PORC_110 * vnc;
 		
 		if(!residencial) {
 			if(tasacion >= vnc)
-				return porc110 * tasacion;
+				return PORC_110 * tasacion;
 		}
 		else {
 			Double mayor = liquidativo > fsv ? liquidativo : fsv;
 			
-			if(!Checks.esNulo(liquidativo) && !Checks.esNulo(fsv) && (porc115 * mayor >= vncDefecto)) {
-				return porc115 * mayor;
+			if(!Checks.esNulo(liquidativo) && !Checks.esNulo(fsv) && (PORC_115 * mayor >= vncDefecto)) {
+				return PORC_115 * mayor;
 			}
-			else if(!Checks.esNulo(liquidativo) && Checks.esNulo(fsv) && (porc120 * liquidativo >= vncDefecto)) {
-				return porc120 * liquidativo;
+			else if(!Checks.esNulo(liquidativo) && Checks.esNulo(fsv) && (PORC_120 * liquidativo >= vncDefecto)) {
+				return PORC_120 * liquidativo;
 			}
-			else if(Checks.esNulo(liquidativo) && Checks.esNulo(fsv) && (porc075 * tasacion >= vncDefecto)) {
-				return porc075 * tasacion;
+			else if(Checks.esNulo(liquidativo) && Checks.esNulo(fsv) && (PORC_075 * tasacion >= vncDefecto)) {
+				return PORC_075 * tasacion;
 			}
-			else if(Checks.esNulo(liquidativo) && !Checks.esNulo(fsv) && (porc115 * fsv >= vncDefecto)) {
-				return porc115 * fsv;
+			else if(Checks.esNulo(liquidativo) && !Checks.esNulo(fsv) && (PORC_115 * fsv >= vncDefecto)) {
+				return PORC_115 * fsv;
 			}
 			
 		}

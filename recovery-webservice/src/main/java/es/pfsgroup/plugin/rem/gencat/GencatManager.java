@@ -110,7 +110,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.rest.dto.SalesforceAuthDto;
 import es.pfsgroup.plugin.rem.rest.dto.SalesforceResponseDto;
 import es.pfsgroup.plugin.rem.rest.salesforce.api.SalesforceApi;
-import es.pfsgroup.plugin.rem.tramitacionOfertas.TramitacionOfertasManager;
+import es.pfsgroup.plugin.rem.tramitacion.TramitacionOfertasManager;
 
 @Service("gencatManager")
 public class GencatManager extends  BusinessOperationOverrider<GencatApi> implements GencatApi {

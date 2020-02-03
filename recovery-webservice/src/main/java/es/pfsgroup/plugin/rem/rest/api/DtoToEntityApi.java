@@ -27,7 +27,7 @@ public interface DtoToEntityApi {
 	 * @throws SecurityException
 	 */
 	@Transactional(readOnly = false)
-	public Serializable saveDtoToBbdd(Object dto, ArrayList<Serializable> objetoEntity,JSONObject jsonFields)
+	public Serializable saveDtoToBbdd(Object dto, ArrayList<Serializable> objetoEntity,JSONObject jsonFields, Long idProveedorParche)
 			throws Exception;
 
 	/**

@@ -4868,7 +4868,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Filter filtroComprador = genericDao.createFilter(FilterType.EQUALS, "documento", dto.getNumDocumento());
 		Comprador compradorBusqueda = genericDao.get(Comprador.class, filtroComprador);
 
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdExpedienteComercial());
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idExpediente);
 		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
 		CompradorExpediente compradorExpediente = new CompradorExpediente();
 		compradorExpediente.setBorrado(false);

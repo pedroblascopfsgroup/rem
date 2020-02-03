@@ -551,6 +551,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 		// Establecer la fecha de aceptación/alta a ahora.
 		nuevoExpediente.setFechaAlta(new Date());
+		
+		crearCompradores(oferta, nuevoExpediente);
 
 		nuevoExpediente.setTipoAlquiler(oferta.getActivoPrincipal().getTipoAlquiler());
 
@@ -1701,7 +1703,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 	@Transactional
 	public ActivoTramite doTramitacion(Activo activo, Oferta oferta, Long idTrabajo, ExpedienteComercial expedienteComercial) {
-		expedienteComercial = this.crearCompradores(oferta, expedienteComercial);
 		ActivoTramite activoTramite = trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
 		expedienteComercial = this.crearCondicionanteYTanteo(activo, oferta, expedienteComercial);
 		expedienteComercial = this.crearExpedienteReserva(expedienteComercial);
@@ -1742,7 +1743,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOne(idExpedienteComercial);
 
 		try {
-			expedienteComercial = this.crearCompradores(oferta, expedienteComercial);
 			transactionManager.commit(transaction);
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 			trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);

@@ -100,10 +100,8 @@ import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTributoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.GastosExpedienteApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
-import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
@@ -332,9 +330,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
 	
-	@Autowired
-	private GastosExpedienteApi gastosExpedienteApi;
-
 	@Autowired
 	private GestorActivoManager gestorActivoManager;
 	
@@ -2696,7 +2691,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		if(!Checks.estaVacio(listTributos)){
-			Filter filtroAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
 			for(ActivoTributos tributo : listTributos){
 				DtoActivoTributos dtoTributo = new DtoActivoTributos();
 				dtoTributo.setIdTributo(tributo.getId());

@@ -1240,7 +1240,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		if (!Checks.esNulo(tareaActivo) && !Checks.esNulo(tareaActivo.getTramite())
 				&& !Checks.esNulo(tareaActivo.getTramite().getTrabajo())) {
 			Activo activo = tareaActivo.getActivo();
-			if(activo==null && tareaActivo.getTramite().getActivos().size()>0){
+			if(activo==null && !tareaActivo.getTramite().getActivos().isEmpty()){
 				activo = tareaActivo.getTramite().getActivos().get(0);
 			}
 			ActivoBancario activoBancario = null;
@@ -1248,7 +1248,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 				activoBancario = activoApi.getActivoBancarioByIdActivo(tareaActivo.getActivo().getId());
 			}
 			
-			if (!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getClaseActivo())
+			if (!Checks.esNulo(activoBancario) && activoBancario.getClaseActivo() != null
 					&& activoBancario.getClaseActivo().getCodigo().equals(DDClaseActivoBancario.CODIGO_FINANCIERO)) {
 				esFinanciero = true;
 			}

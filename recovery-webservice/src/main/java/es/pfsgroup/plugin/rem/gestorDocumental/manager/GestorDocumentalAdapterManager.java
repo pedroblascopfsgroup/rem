@@ -47,7 +47,6 @@ import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearProyectoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearTributoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.RecoveryToGestorExpAssembler;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
-import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalManager;
 import es.pfsgroup.plugin.gestorDocumental.model.DDTdnTipoDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.GestorDocumentalConstants;
 import es.pfsgroup.plugin.gestorDocumental.model.RespuestaGeneral;
@@ -97,7 +96,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
-import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 
 
 @Service("gestorDocumentalAdapterManager")
@@ -115,9 +113,6 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
     
     @Autowired 
     private GestorDocumentalApi gestorDocumentalApi;
-    
-    @Autowired 
-    private GestorDocumentalManager gestorDocumentalManager;
     
     @Autowired 
     private GestorDocumentalExpedientesApi gestorDocumentalExpedientesApi;
@@ -140,9 +135,6 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
     
-    @Autowired
-    private ProveedoresDao proveedoresDao;
-
     @Resource(name = "entityTransactionManager")
     private PlatformTransactionManager transactionManager;
 
@@ -1471,7 +1463,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	
 
 		try {
-			RespuestaCrearExpediente respuesta = gestorDocumentalExpedientesApi.crearTributo(crearTributoDto);
+			gestorDocumentalExpedientesApi.crearTributo(crearTributoDto);
 		} catch (GestorDocumentalException gex) {
 			logger.debug(gex.getMessage());
 			throw gex;
@@ -1660,7 +1652,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		CrearProyectoDto crearProyectoDto = recoveryToGestorAssembler.getCrearProyectoDto(proyecto.getNumAgrupRem().toString(), usuarioLogado, tipoExpediente, cliente);
 		
 		try {
-			RespuestaCrearExpediente respuesta = gestorDocumentalExpedientesApi.crearProyecto(crearProyectoDto);
+			gestorDocumentalExpedientesApi.crearProyecto(crearProyectoDto);
 		} catch (GestorDocumentalException gex) {
 			logger.debug(gex.getMessage());
 			throw gex;

@@ -83,10 +83,6 @@ public class routerBPMSancionOfertaHandler extends ActivoBaseActionHandler{
 		this.executionContext = ctx;
 	}
 	
-	private ExecutionContext getContext() {
-		return executionContext;
-	}
-	
 	private void writeObject(java.io.ObjectOutputStream out) throws IOException {
 		//empty
 	}

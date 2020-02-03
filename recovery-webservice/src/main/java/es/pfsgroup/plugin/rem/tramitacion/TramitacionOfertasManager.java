@@ -272,10 +272,10 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	}
 
 	private void validateSaveOferta(DtoOfertaActivo dto, Oferta oferta, DDEstadoOferta estadoOferta, Activo activo,
-			Boolean esAlquiler, Boolean esAgrupacion, ActivoAgrupacion agrupacion) throws Exception {
+			Boolean esAlquiler, Boolean esAgrupacion, ActivoAgrupacion agrupacion){
 
 		if (Boolean.TRUE.equals(esAgrupacion)) {
-			validarTramitacionAgrupacion(dto, estadoOferta, oferta, esAlquiler, agrupacion);
+			validarTramitacionAgrupacion(estadoOferta, oferta, esAlquiler, agrupacion);
 		} else {
 			validartramitacionActivo(dto, oferta, estadoOferta, activo, esAlquiler);
 		}
@@ -383,15 +383,15 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			precio = genericDao.get(ActivoValoraciones.class, filtroActivo, filtroTof);
 
 			if (activo.getCartera() != null
-					&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())) {
-				if (Checks.esNulo(precio) || (!Checks.esNulo(precio) && Checks.esNulo(precio.getImporte()))) {
-					if (numActivo != null) {
-						msg = "Activo " + numActivo + " sin precio";
-					} else {
-						msg = "Activo sin precio";
-					}
-					throw new JsonViewerException(msg);
+					&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())
+					&& (Checks.esNulo(precio) || (!Checks.esNulo(precio) && Checks.esNulo(precio.getImporte())))) {
+				if (numActivo != null) {
+					msg = "Activo " + numActivo + " sin precio";
+				} else {
+					msg = "Activo sin precio";
 				}
+				throw new JsonViewerException(msg);
+
 			}
 
 			// Comprobar que el precio de la oferta es inferior al mínimo del activo
@@ -492,7 +492,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 		try {
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-			expedienteComercial = crearExpedienteGuardado(oferta, trabajo, activo);
+			expedienteComercial = crearExpedienteGuardado(oferta, trabajo);
 
 			if (DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())
 					&& MAESTRO_ORIGEN_WCOM.equals(oferta.getOrigen())) {
@@ -522,8 +522,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		return expedienteComercial;
 	}
 
-	private ExpedienteComercial crearExpedienteGuardado(Oferta oferta, Trabajo trabajo, Activo activo)
-			throws Exception {
+	private ExpedienteComercial crearExpedienteGuardado(Oferta oferta, Trabajo trabajo){
 
 		ExpedienteComercial nuevoExpediente = new ExpedienteComercial();
 
@@ -590,8 +589,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
 				condicionante.setTipoCalculoReserva(tipoCalculo);
-				condicionante.setPorcentajeReserva(new Double(5));
-				condicionante.setImporteReserva(importeOferta * (new Double(5) / 100));
+				condicionante.setPorcentajeReserva(Double.valueOf(5));
+				condicionante.setImporteReserva(importeOferta * (Double.valueOf(5) / 100));
 			}
 
 			// HREOS-5392
@@ -606,8 +605,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
 				condicionante.setTipoCalculoReserva(tipoCalculo);
-				condicionante.setPorcentajeReserva(new Double(10));
-				condicionante.setImporteReserva(importeOferta * (new Double(10) / 100));
+				condicionante.setPorcentajeReserva(Double.valueOf(10));
+				condicionante.setImporteReserva(importeOferta * (Double.valueOf(10) / 100));
 			} else if (subcartera != null && DDCartera.CODIGO_CARTERA_CERBERUS.equals(cartera.getCodigo())
 					&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(subcartera.getCodigo()))) {
 				if (importeOferta >= 6000) {
@@ -616,9 +615,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 							.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO);
 					condicionante.setTipoCalculoReserva(tipoCalculo);
 					if (importeOferta <= 50000) {
-						condicionante.setImporteReserva((new Double(1000)));
+						condicionante.setImporteReserva(Double.valueOf(1000));
 					} else {
-						condicionante.setImporteReserva((new Double(3000)));
+						condicionante.setImporteReserva(Double.valueOf(3000));
 					}
 				} else {
 					condicionante.setSolicitaReserva(0);
@@ -791,9 +790,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			CompradorExpediente compradorExpedienteNuevo = new CompradorExpediente();
 			List<TitularesAdicionalesOferta> listaTitularesAdicionalesSinRepetirDocumento = new ArrayList<TitularesAdicionalesOferta>();
 
-			Double parteCompra = 0.00;
+			Double parteCompra;
 			Double parteCompraAdicionales = 0.00;
-			Double totalParteCompraAdicional = 0.00;
+			Double totalParteCompraAdicional;
 			Double parteCompraPrincipal = 100.00;
 			/*
 			 * HREOS-3779 Problema al crear las relaciones entre comprador-expediente Desde
@@ -1345,11 +1344,11 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 						.equals(DDCartera.CODIGO_CARTERA_CAJAMAR)
 						|| agr.getActivos().get(0).getActivo().getCartera().getCodigo()
 								.equals(DDCartera.CODIGO_CARTERA_LIBERBANK))) {
-			if (Checks.esNulo(loteComercial.getUsuarioGestorComercial()) && !agr.getActivos().get(0).getActivo()
-					.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
-				return false;
-			} else if (Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice()) && agr.getActivos().get(0)
-					.getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
+			if (Checks.esNulo(loteComercial.getUsuarioGestorComercial())
+					&& !agr.getActivos().get(0).getActivo().getCartera().getCodigo()
+							.equals(DDCartera.CODIGO_CARTERA_LIBERBANK)
+					|| (Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice()) && agr.getActivos().get(0)
+							.getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK))) {
 				return false;
 			}
 		} else {
@@ -1618,8 +1617,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		}
 	}
 
-	public void validarTramitacionAgrupacion(DtoOfertaActivo dto, DDEstadoOferta estadoOferta, Oferta oferta,
-			Boolean esAlquiler, ActivoAgrupacion agrupacion) throws Exception {
+	public void validarTramitacionAgrupacion(DDEstadoOferta estadoOferta, Oferta oferta,
+			Boolean esAlquiler, ActivoAgrupacion agrupacion){
 
 		if (!Checks.esNulo(agrupacion)) {
 			List<ActivoAgrupacionActivo> agaList = agrupacion.getActivos();

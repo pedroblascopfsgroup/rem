@@ -173,7 +173,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 			DDComiteSancion comite = null;
 			for (TareaExternaValor valor : valores) {		
 				if(expedienteComercialApi.esApple(valor.getTareaExterna())){
-					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANALISIS_PM);
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.PTE_SANCION);
 					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 					expediente.setEstado(estado);
 				}	

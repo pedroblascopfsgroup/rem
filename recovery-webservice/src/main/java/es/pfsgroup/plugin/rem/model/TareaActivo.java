@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.model;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -11,6 +12,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import es.capgemini.pfs.auditoria.Auditable;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
 
@@ -46,6 +48,9 @@ public class TareaActivo extends EXTTareaNotificacion implements Auditable{
 	@ManyToOne
 	@JoinColumn(name = "SUP_ID")
 	private Usuario supervisor;
+	
+	@Embedded
+	private Auditoria auditoria;
 
 	public Activo getActivo() {
 		return activo;
@@ -79,4 +84,13 @@ public class TareaActivo extends EXTTareaNotificacion implements Auditable{
 		this.supervisor = supervisor;
 	}
 	
+	@Override
+	public Auditoria getAuditoria() {
+	    return this.auditoria;
+	}
+	
+	@Override
+	public void setAuditoria(Auditoria auditoria) {
+	    this.auditoria = auditoria;
+	}
 }

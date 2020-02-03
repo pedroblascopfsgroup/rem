@@ -850,6 +850,15 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		activoDto.setMostrarEditarFasePublicacion(muestraEditarFasePublicacion);
 		
+		
+		Filter idFiltro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		Filter borradoFiltro = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		ActivoPatrimonioContrato apc = genericDao.get(ActivoPatrimonioContrato.class, idFiltro, borradoFiltro);
+		
+		if(apc != null) {
+			activoDto.setPazSocial(apc.getPazSocial());
+		}
+		
 		return activoDto;
 	}
 	

@@ -196,24 +196,24 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						reference: 'fechaResolucionCES',
 						bind : {
 							value : '{datosbasicosoferta.fechaResolucionCES}',
-							hidden : '{!esSubcarteraDivarianOApple}'
-						},
+							hidden : '{!esSubcarteraRemainingOAppleOArrow}'
+						},						
 						readOnly : true
 					}, {
 						xtype : 'currencyfieldbase',
 						reference: 'importeContraOfertaCES',
 						bind : {
 							value : '{datosbasicosoferta.importeContraofertaCES}',
-							hidden : '{!esSubcarteraDivarianOApple}'
-						},
+							hidden : '{!esSubcarteraRemainingOAppleOArrow}'
+						},						
 						readOnly : true
 					}, {
 						xtype : 'datefieldbase',
 						reference: 'fechaResupuestaCES',
 						bind : {
 							value : '{datosbasicosoferta.fechaRespuestaCES}',
-							hidden : '{!esSubcarteraDivarianOApple}'
-						},
+							hidden : '{!esSubcarteraRemainingOAppleOArrow}'
+						},					
 						readOnly : true
 					}, 
 					{
@@ -222,12 +222,18 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						}
 					}, 
 					{
+						bind : {
+							hidden : '{!esSubcarteraRemainingOAppleOArrow}'
+						}
+					},
+					{
 						xtype : 'currencyfieldbase',
 						reference:'importeContraofertaOfertanteCES',
+						colspan: 2,
 						bind : {
 							value : '{datosbasicosoferta.importeContraofertaOfertanteCES}',
-							hidden : '{!esSubcarteraDivarianOApple}'
-						},
+							hidden : '{!esSubcarteraRemainingOAppleOArrow}'
+						},						
 						readOnly : true
 					},
 					{
@@ -305,6 +311,9 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 								hidden : '{esOfertaAlquiler}',
 								fieldLabel : '{expediente.comiteComboboxLabel}'
 
+							},
+							listeners: {
+								change: 'onComiteChange'
 							},
 							// TODO Sobreescribimos la función porque está dando problemas la carga del store. A veces llega null.
 							setStore : function(store) {

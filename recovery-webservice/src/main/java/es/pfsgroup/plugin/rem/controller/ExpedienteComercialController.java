@@ -92,6 +92,7 @@ import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
+import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
@@ -2129,7 +2130,6 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	}
 	
 	
-	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public void exportarListadoActivosOfertaPrincipal(Long idExpediente, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		

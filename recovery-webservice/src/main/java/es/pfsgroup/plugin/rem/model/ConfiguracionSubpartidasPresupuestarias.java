@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -25,7 +27,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 @Table(name = "CPS_CONFIG_SUBPTDAS_PRE", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class ConfiguracionSubpartidasPresupuestarias implements Auditable {
+public class ConfiguracionSubpartidasPresupuestarias implements Auditable, Serializable {
 		    
 	private static final long serialVersionUID = 1L;
 
@@ -33,12 +35,14 @@ public class ConfiguracionSubpartidasPresupuestarias implements Auditable {
 	@Column(name = "CPS_ID")	
     private Long id;    
 
-	@ManyToOne
-	@JoinColumn(name = "CCC_ID")
-	ConfigCuentaContable configCuentaContable;
+	@Column(name = "CPS_CUENTA_CONTABLE")
+	private String cuentaContable;
 	 
 	@Column(name = "CPS_DESCRIPCION")   
 	private String descripcion;
+	
+	@Column(name = "CPS_PARTIDA_PRESUPUESTARIA")   
+	private String partidaPresupuestaria;
 	    	    
 	@Version   
 	private Long version;
@@ -52,14 +56,6 @@ public class ConfiguracionSubpartidasPresupuestarias implements Auditable {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public ConfigCuentaContable getConfigCuentaContable() {
-		return configCuentaContable;
-	}
-
-	public void setConfigCuentaContable(ConfigCuentaContable configCuentaContable) {
-		this.configCuentaContable = configCuentaContable;
 	}
 
 	public String getDescripcion() {
@@ -84,6 +80,22 @@ public class ConfiguracionSubpartidasPresupuestarias implements Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public String getPartidaPresupuestaria() {
+		return partidaPresupuestaria;
+	}
+
+	public void setPartidaPresupuestaria(String partidaPresupuestaria) {
+		this.partidaPresupuestaria = partidaPresupuestaria;
+	}
+
+	public String getCuentaContable() {
+		return cuentaContable;
+	}
+
+	public void setCuentaContable(String cuentaContable) {
+		this.cuentaContable = cuentaContable;
 	}
 
 	

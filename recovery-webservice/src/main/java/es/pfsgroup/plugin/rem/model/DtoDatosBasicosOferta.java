@@ -107,7 +107,6 @@ public class DtoDatosBasicosOferta extends WebDto {
   private Date fechaRespuestaCES;
 
 	private Boolean isCarteraCerberusApple;
-	private Boolean isCarteraCerberusDivarian;
 	private Boolean isCarteraLbkVenta;
 	private Boolean isLbkOfertaComercialPrincipal;
 	private Boolean muestraOfertaComercial;
@@ -124,6 +123,8 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private String ofertaSingular;
 	
 	private Long exclusionBulk;
+	
+	private Boolean isCarteraCerberusDivarian;
 	
 	public Long getIdOferta() {
 		return idOferta;

@@ -40,8 +40,7 @@ Ext.define('HreRem.model.ActivoPatrimonio', {
     			name: 'conTitulo'
     		},
     		{
-    			name: 'pazSocial',
-    			type: 'boolean'
+    			name: 'pazSocial'
     		},
     		{
     			name: 'isCarteraCerberusDivarian',

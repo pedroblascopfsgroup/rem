@@ -133,18 +133,14 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 															    		     success: function (a, operation, context) {												
 												                                	var data = Ext.decode(a.responseText);												                                											                                	
 												                                	
-												                                	if(data){
-												                                		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+												                                	if(data){												                                
 												                                		campoPartidaPresupuestaria.setValue(data.data);
-												                                	}else{
-												                                		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 												                                	}
 												                                	
 												                                },
 												                                
-												                                failure: function (a, operation, context) {
-												
-												                                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+												                                failure: function (a, operation, context) {												
+												                                	
 												                                }
 															    		     
 															    		 });

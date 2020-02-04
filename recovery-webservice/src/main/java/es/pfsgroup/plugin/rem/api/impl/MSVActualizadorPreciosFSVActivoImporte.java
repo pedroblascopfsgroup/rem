@@ -75,6 +75,12 @@ public class MSVActualizadorPreciosFSVActivoImporte extends AbstractMSVActualiza
 					exc.dameCelda(fila, 3),
 					exc.dameCelda(fila, 4));
 		}
+		
+		if(!Checks.esNulo(exc.dameCelda(fila, 4))){
+			activo.setValorLiquidez(exc.dameCelda(fila, 4));			
+			genericDao.update(Activo.class, activo);
+		}
+		
 		return new ResultadoProcesarFila();
 	}
 

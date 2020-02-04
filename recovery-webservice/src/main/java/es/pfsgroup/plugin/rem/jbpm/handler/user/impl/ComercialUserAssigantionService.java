@@ -1227,32 +1227,23 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	public Boolean usaGestorController(TareaActivo tareaActivo) {
 		return isActivoOmega(tareaActivo) || isActivoBankia(tareaActivo) || isActivoSareb(tareaActivo)
 				|| isTrabajoDeActivoOrLoteRestEntidad01(tareaActivo) || isActivoThirdParties(tareaActivo)
-				|| isActivoDivarian(tareaActivo) || isFinanciero(tareaActivo.getTareaExterna());
+				|| isActivoDivarian(tareaActivo) || isFinanciero(tareaActivo.getActivo());
 	}
 	
 	/*
 	 * Comprobar si es un activo financiero de cualquier cartera
 	 */
-	private Boolean isFinanciero(TareaExterna tareaExterna) {
+	private Boolean isFinanciero(Activo activo) {
 		Boolean esFinanciero = false;
 
-		TareaActivo tareaActivo = (TareaActivo) tareaExterna.getTareaPadre();
-		if (!Checks.esNulo(tareaActivo) && !Checks.esNulo(tareaActivo.getTramite())
-				&& !Checks.esNulo(tareaActivo.getTramite().getTrabajo())) {
-			Activo activo = tareaActivo.getActivo();
-			if(activo==null && !tareaActivo.getTramite().getActivos().isEmpty()){
-				activo = tareaActivo.getTramite().getActivos().get(0);
-			}
-			ActivoBancario activoBancario = null;
-			if(activo != null){
-				activoBancario = activoApi.getActivoBancarioByIdActivo(tareaActivo.getActivo().getId());
-			}
-			
-			if (!Checks.esNulo(activoBancario) && activoBancario.getClaseActivo() != null
-					&& activoBancario.getClaseActivo().getCodigo().equals(DDClaseActivoBancario.CODIGO_FINANCIERO)) {
-				esFinanciero = true;
-			}
+		ActivoBancario activoBancario = null;
+		if(activo != null){
+			activoBancario = activoApi.getActivoBancarioByIdActivo(activo.getId());
+		}
 		
+		if (activoBancario != null && activoBancario.getClaseActivo() != null
+				&& activoBancario.getClaseActivo().getCodigo().equals(DDClaseActivoBancario.CODIGO_FINANCIERO)) {
+			esFinanciero = true;
 		}
 		return esFinanciero;
 	}

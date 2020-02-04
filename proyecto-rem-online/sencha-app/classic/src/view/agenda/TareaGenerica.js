@@ -1458,6 +1458,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.down('[name=numImporteContra]').setReadOnly(false);
 			me.down('[name=fechaRespuesta]').setReadOnly(false);
         }
+        if(CONST.CARTERA['LIBERBANK'] == codigoCartera) {
+        	me.ocultarCampo(comboResolucionComite);
+        }
 		if(CONST.CARTERA['LIBERBANK'] != codigoCartera) {
 			me.down('[name=fechaReunionComite]').hide();
 			me.down('[name=comiteInternoSancionador]').hide();

@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200124
+--## AUTOR=Mª José Ponce
+--## FECHA_CREACION=20200204
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-9065
+--## INCIDENCIA_LINK=HREOS-9344
 --## PRODUCTO=NO
 --## 
 --## Finalidad:  Creación del SP SP_EXT_IN_LLAVE
@@ -13,6 +13,7 @@
 --## VERSIONES:
 --##        0.1-Oscar Diestre-Versión inicial REMVIP-4833(20190718)
 --##        0.2-Modificar parámetros SP HREOS-9065
+--##        0.3-Modificar parámetros de fecha SP HREOS-9344
 --#########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -109,8 +110,8 @@ BEGIN
                   ( SELECT DD_TTE_ID FROM '  || V_ESQUEMA || '.DD_TTE_TIPO_TENEDOR WHERE DD_TTE_CODIGO = ''' || DD_TTE_CODIGO_POSEEDOR || ''' ),
                  ''' || V_LLV_COD_TENEDOR_POSEEDOR || ''',
                  ''' || V_LLV_COD_TENEDOR_NO_PVE || ''',
-                 TO_DATE('''|| LLV_FECHA_ANILLADO||''',''yyyy-mm-dd''),
-                 TO_DATE('''|| LLV_FECHA_RECEPCION|| ''',''yyyy-mm-dd''),
+                 TO_DATE('''|| LLV_FECHA_ANILLADO||''',''dd/mm/yyyy''),
+                 TO_DATE('''|| LLV_FECHA_RECEPCION|| ''',''dd/mm/yyyy''),
                  ''' || LLV_CODE|| ''',
                   ( SELECT DD_TIC_ID FROM '  || V_ESQUEMA || '.DD_TIC_TIPO_COMPLETO WHERE DD_TIC_CODIGO = ''' || LLV_COMPLETO || ''' ),                   
                  ''' || LLV_OBSERVACIONES|| ''',

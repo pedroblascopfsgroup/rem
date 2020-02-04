@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=Mª José Ponce
---## FECHA_CREACION=20200114
+--## FECHA_CREACION=20200204
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-9064
+--## INCIDENCIA_LINK=HREOS-9344
 --## PRODUCTO=NO
 --## 
 --## Finalidad:  Creación del SP SP_EXT_IN_MOV_LLAVE
@@ -13,6 +13,7 @@
 --## VERSIONES:
 --##        0.1-Oscar Diestre-Versión inicial REMVIP-4833 (20190718)
 --##        0.2-Modificar parámetros SP HREOS-9064
+--##        0.3-Modificar parámetros de fecha SP HREOS-9344
 --#########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -29,8 +30,8 @@ CREATE OR REPLACE PROCEDURE       SP_EXT_IN_MOV_LLAVE (
     DD_TTE_CODIGO_PEDIDOR     IN VARCHAR2,
     MLV_COD_TENEDOR_PEDIDOR   IN VARCHAR2,
     MLV_ENVIO                 IN VARCHAR2,
-    MLV_FECHA_ENVIO           IN DATE,
-    MLV_FECHA_RECEPCION       IN DATE,
+    MLV_FECHA_ENVIO           IN VARCHAR2,
+    MLV_FECHA_RECEPCION       IN VARCHAR2,
     MLV_OBSERVACIONES         IN VARCHAR2,
     MLV_ESTADO                IN VARCHAR2,	
       V_USUARIO         	   VARCHAR2 DEFAULT 'SP_EXT_IN_MOV_LLAVE',
@@ -157,8 +158,8 @@ BEGIN
                  ''' || V_MLV_COD_TENEDOR_PEDIDOR || ''',
                  ''' || V_MLV_COD_TENEDOR_PED_NO_PVE || ''',
                  ''' || MLV_ENVIO || ''',
-                 ''' || MLV_FECHA_ENVIO || ''',
-                 ''' || MLV_FECHA_RECEPCION || ''',
+                 TO_DATE(''' || MLV_FECHA_ENVIO || ''',''dd/mm/yyyy''),
+                 TO_DATE(''' || MLV_FECHA_RECEPCION || ''',''dd/mm/yyyy''),
                  ''' || MLV_OBSERVACIONES || ''',
                  ( SELECT DD_TTE_ID FROM '  || V_ESQUEMA || '.DD_TTE_TIPO_ESTADO WHERE DD_TTE_CODIGO = ''' || MLV_ESTADO || ''' ),
                  0,

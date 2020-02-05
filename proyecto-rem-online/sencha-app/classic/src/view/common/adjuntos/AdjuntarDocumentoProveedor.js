@@ -229,7 +229,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 				                	msgTarget: 'side',
 				                	width: '100%'
 				                	
-			            		},
+			            		}
 			            		/*{
 								   	xtype:'checkboxfieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.sin.carteras'),

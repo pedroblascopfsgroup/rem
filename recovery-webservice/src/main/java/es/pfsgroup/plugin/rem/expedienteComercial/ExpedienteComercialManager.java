@@ -10659,6 +10659,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		DtoOrigenLead dtoOrigenLead = new DtoOrigenLead();
 		Boolean devolverOrigenLead = false;
 		Oferta oferta = ofertaApi.getOfertaByIdExpediente(idExpediente);
+		Visita visita = oferta.getVisita();
 		
 		
 		DDOrigenComprador origenComprador = oferta.getOrigenComprador();
@@ -10683,6 +10684,22 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			fechaOrigenLeadString = fechaOrigenLeadString.substring(0, 10);
 			dtoOrigenLead.setFechaAltaLead(fechaOrigenLeadString);
 			devolverOrigenLead = true;
+		}
+		
+		if(!Checks.esNulo(visita)) {
+			if(!Checks.esNulo(visita.getFechaReasignacionRealizadorOportunidad())) {
+				String fechaReasignacionRealizadorOportunidadString = visita.getFechaReasignacionRealizadorOportunidad().toString();
+				fechaReasignacionRealizadorOportunidadString = fechaReasignacionRealizadorOportunidadString.substring(0, 10);
+				dtoOrigenLead.setFechaAsignacionRealizadorLead(fechaReasignacionRealizadorOportunidadString);
+				devolverOrigenLead = true;
+			}else {
+				if(!Checks.esNulo(visita.getFechaSolicitud())) {
+					String fechaSolicitudString = visita.getFechaSolicitud().toString();
+					fechaSolicitudString = fechaSolicitudString.substring(0, 10);
+					dtoOrigenLead.setFechaAsignacionRealizadorLead(fechaSolicitudString);
+					devolverOrigenLead = true;
+				}
+			}
 		}
 		
 		

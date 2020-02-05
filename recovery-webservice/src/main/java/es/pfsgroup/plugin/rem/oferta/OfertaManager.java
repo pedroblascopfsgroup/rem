@@ -164,7 +164,7 @@ import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
-import es.pfsgroup.plugin.rem.tramitacion.TramitacionOfertasManager;
+import es.pfsgroup.plugin.rem.tramitacionofertas.TramitacionOfertasManager;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import net.sf.json.JSONObject;
 

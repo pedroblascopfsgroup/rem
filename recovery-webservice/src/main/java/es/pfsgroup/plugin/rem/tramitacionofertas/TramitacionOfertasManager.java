@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.rem.tramitacion;
+package es.pfsgroup.plugin.rem.tramitacionofertas;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -80,6 +80,7 @@ import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
+import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDAdministracion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
@@ -121,7 +122,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	private static final String EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS = "activo.unidad.alquilable.con.activo.matriz.ofertas.vivas";
 	private static final String AGRUPACION_SIN_FORMALIZACION = "agrupacion.sin.formalizacion";
 	private static final String MAESTRO_ORIGEN_WCOM = "WCOM";
-	private static final Integer ES_FORMALIZABLE = Integer.valueOf(1);
+	private static final Integer ES_FORMALIZABLE = new Integer(1);
 	private static final String FALTAN_DATOS = "Faltan datos para proponer";
 
 	@Resource
@@ -201,12 +202,13 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean saveOferta(DtoOfertaActivo dto, Boolean esAgrupacion, Boolean asincrono) throws Exception, Error {
+	public boolean saveOferta(DtoOfertaActivo dto, Boolean esAgrupacion, Boolean asincrono)
+			throws JsonViewerException, Exception, Error {
 
 		Activo activo = null;
 		ActivoAgrupacion agrupacion = null;
 
-		if (Boolean.TRUE.equals(esAgrupacion)) {
+		if (esAgrupacion) {
 			agrupacion = genericDao.get(ActivoAgrupacion.class,
 					genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdAgrupacion()));
 			activo = agrupacion.getActivoPrincipal() != null ? agrupacion.getActivoPrincipal()
@@ -220,7 +222,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 	@Transactional(readOnly = false)
 	public boolean saveOferta(DtoOfertaActivo dto, Activo activo, Boolean esAgrupacion, ActivoAgrupacion agrupacion,
-			Boolean asincrono) throws Exception {
+			Boolean asincrono) throws JsonViewerException, Exception {
 		boolean resultado = true;
 		Trabajo trabajo = null;
 		Boolean esAcepta = false;
@@ -253,12 +255,12 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		if (!resultado) {
 			resultado = this.persistOferta(oferta);
 		}
-		if (Boolean.TRUE.equals(esAcepta)) {
+		if (esAcepta) {
 			String usuarioLogado = genericAdapter.getUsuarioLogado().getUsername();
 			ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class,
 					genericDao.createFilter(FilterType.EQUALS, "oferta", oferta));
 			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
-			if (Boolean.TRUE.equals(asincrono)) {
+			if (asincrono) {
 				Thread creacionAsincrona = new Thread(new TramitacionOfertasAsync(activo.getId(), esAcepta,
 						trabajo.getId(), oferta.getId(), expedienteComercial.getId(), usuarioLogado));
 
@@ -272,10 +274,10 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	}
 
 	private void validateSaveOferta(DtoOfertaActivo dto, Oferta oferta, DDEstadoOferta estadoOferta, Activo activo,
-			Boolean esAlquiler, Boolean esAgrupacion, ActivoAgrupacion agrupacion){
+			Boolean esAlquiler, Boolean esAgrupacion, ActivoAgrupacion agrupacion) throws Exception {
 
-		if (Boolean.TRUE.equals(esAgrupacion)) {
-			validarTramitacionAgrupacion(estadoOferta, oferta, esAlquiler, agrupacion);
+		if (esAgrupacion) {
+			validarTramitacionAgrupacion(dto, estadoOferta, oferta, esAlquiler, agrupacion);
 		} else {
 			validartramitacionActivo(dto, oferta, estadoOferta, activo, esAlquiler);
 		}
@@ -283,12 +285,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	}
 
 	public boolean faltanDatosCalculo(Oferta oferta, Activo activo) {
-		Double vta = 0.0;
-		Double pvb;
-		Double cco = 0.0;
-		Double pvn;
-		Double vnc = 0.0;
-		Double vr = 0.0;
+		Double vta = 0.0, pvb = 0.0, cco = 0.0, pvn = 0.0, vnc = 0.0, vr = 0.0;
 
 		if (oferta != null && !Checks.esNulo(activo)) {
 			if (!Checks.estaVacio(activo.getTasacion()) && !Checks
@@ -383,15 +380,15 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			precio = genericDao.get(ActivoValoraciones.class, filtroActivo, filtroTof);
 
 			if (activo.getCartera() != null
-					&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())
-					&& (Checks.esNulo(precio) || (!Checks.esNulo(precio) && Checks.esNulo(precio.getImporte())))) {
-				if (numActivo != null) {
-					msg = "Activo " + numActivo + " sin precio";
-				} else {
-					msg = "Activo sin precio";
+					&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())) {
+				if (Checks.esNulo(precio) || (!Checks.esNulo(precio) && Checks.esNulo(precio.getImporte()))) {
+					if (numActivo != null) {
+						msg = "Activo " + numActivo + " sin precio";
+					} else {
+						msg = "Activo sin precio";
+					}
+					throw new JsonViewerException(msg);
 				}
-				throw new JsonViewerException(msg);
-
 			}
 
 			// Comprobar que el precio de la oferta es inferior al mínimo del activo
@@ -468,6 +465,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			transactionManager.commit(transaction);
 			resultado = true;
 		} catch (Exception e) {
+			// logger.error("Error en tramitacionOfertasManager", e);
 			transactionManager.rollback(transaction);
 
 		}
@@ -478,10 +476,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	public String getSubtipoTrabajoByOferta(Oferta oferta) {
 		if (oferta.getTipoOferta().getCodigo().equals(DDTipoOferta.CODIGO_VENTA)) {
 			return DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA;
-		} else {
+		} else
 			return DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_ALQUILER;
-		}
-
 	}
 
 	@Override
@@ -489,10 +485,11 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			Activo activo) throws Exception {
 		TransactionStatus transaction = null;
 		ExpedienteComercial expedienteComercial = null;
+		boolean resultado = false;
 
 		try {
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-			expedienteComercial = crearExpedienteGuardado(oferta, trabajo);
+			expedienteComercial = crearExpedienteGuardado(oferta, trabajo, ofertaOriginalGencatEjerce, activo);
 
 			if (DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())
 					&& MAESTRO_ORIGEN_WCOM.equals(oferta.getOrigen())) {
@@ -504,25 +501,32 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 			transactionManager.commit(transaction);
 
+			resultado = true;
+
 		} catch (Exception ex) {
+			// logger.error("Error en tramitacionOfertasManager", ex);
 			transactionManager.rollback(transaction);
 			throw ex;
 		}
 
 		// cuando creamos el expediente, si procede, creamos el repositorio
 		// en el gestor documental
-		if (!Checks.esNulo(appProperties
-				.getProperty(GestorDocumentalExpedientesManager.URL_REST_CLIENT_GESTOR_DOCUMENTAL_EXPEDIENTES))) {
-			Thread hiloReactivar = new Thread(
-					new ContenedorExpComercial(genericAdapter.getUsuarioLogado().getUsername(), expedienteComercial));
-			hiloReactivar.start();
+		if (resultado) {
+			if (!Checks.esNulo(appProperties
+					.getProperty(GestorDocumentalExpedientesManager.URL_REST_CLIENT_GESTOR_DOCUMENTAL_EXPEDIENTES))) {
+				Thread hiloReactivar = new Thread(new ContenedorExpComercial(
+						genericAdapter.getUsuarioLogado().getUsername(), expedienteComercial));
+				hiloReactivar.start();
+
+			}
 
 		}
 
 		return expedienteComercial;
 	}
 
-	private ExpedienteComercial crearExpedienteGuardado(Oferta oferta, Trabajo trabajo){
+	private ExpedienteComercial crearExpedienteGuardado(Oferta oferta, Trabajo trabajo,
+			Oferta ofertaOriginalGencatEjerce, Activo activo) throws Exception {
 
 		ExpedienteComercial nuevoExpediente = new ExpedienteComercial();
 
@@ -548,6 +552,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 		// Establecer la fecha de aceptación/alta a ahora.
 		nuevoExpediente.setFechaAlta(new Date());
+		
+		crearCompradores(oferta, nuevoExpediente);
 
 		nuevoExpediente.setTipoAlquiler(oferta.getActivoPrincipal().getTipoAlquiler());
 
@@ -575,8 +581,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
 				condicionante.setTipoCalculoReserva(tipoCalculo);
-				condicionante.setPorcentajeReserva(Double.valueOf(3));
-				condicionante.setImporteReserva(importeOferta * (Double.valueOf(3) / 100));
+				condicionante.setPorcentajeReserva(new Double(3));
+				condicionante.setImporteReserva(importeOferta * (new Double(3) / 100));
 				condicionante.setPlazoFirmaReserva(5);
 			}
 			// HREOS-4450
@@ -589,8 +595,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
 				condicionante.setTipoCalculoReserva(tipoCalculo);
-				condicionante.setPorcentajeReserva(Double.valueOf(5));
-				condicionante.setImporteReserva(importeOferta * (Double.valueOf(5) / 100));
+				condicionante.setPorcentajeReserva(new Double(5));
+				condicionante.setImporteReserva(importeOferta * (new Double(5) / 100));
 			}
 
 			// HREOS-5392
@@ -605,8 +611,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
 				condicionante.setTipoCalculoReserva(tipoCalculo);
-				condicionante.setPorcentajeReserva(Double.valueOf(10));
-				condicionante.setImporteReserva(importeOferta * (Double.valueOf(10) / 100));
+				condicionante.setPorcentajeReserva(new Double(10));
+				condicionante.setImporteReserva(importeOferta * (new Double(10) / 100));
 			} else if (subcartera != null && DDCartera.CODIGO_CARTERA_CERBERUS.equals(cartera.getCodigo())
 					&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(subcartera.getCodigo()))) {
 				if (importeOferta >= 6000) {
@@ -615,9 +621,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 							.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO);
 					condicionante.setTipoCalculoReserva(tipoCalculo);
 					if (importeOferta <= 50000) {
-						condicionante.setImporteReserva(Double.valueOf(1000));
+						condicionante.setImporteReserva((new Double(1000)));
 					} else {
-						condicionante.setImporteReserva(Double.valueOf(3000));
+						condicionante.setImporteReserva((new Double(3000)));
 					}
 				} else {
 					condicionante.setSolicitaReserva(0);
@@ -704,7 +710,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 		expedienteComercial.setTanteoActivoExpediente(tanteosExpediente);
 		expedienteComercial.setCondicionante(condicionanteExpediente);
-
+		
 		return expedienteComercial;
 	}
 
@@ -742,31 +748,31 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 						genericDao.save(Reserva.class, reservaExpediente);
 					}
 
-				}
-				if (!Checks.esNulo(expedienteComercial.getReserva())) {
+				} else {
 					expedienteComercial.getReserva().setTipoArras(tipoArras);
 				}
 			}
 		}
+
 		return expedienteComercial;
 	}
 
 	@Override
 	@Transactional
-	public List<GastosExpediente> crearGastosExpediente(Long idOferta, ExpedienteComercial nuevoExpediente)
-			throws IllegalAccessException, InvocationTargetException {
+	public List<GastosExpediente> crearGastosExpediente(Long idOferta, ExpedienteComercial nuevoExpediente) throws IllegalAccessException, InvocationTargetException {
 		return this.crearGastosExpediente(ofertaApi.getOfertaById(idOferta), nuevoExpediente);
 	}
 
 	@Override
 	@Transactional
-	public List<GastosExpediente> crearGastosExpediente(Oferta oferta, ExpedienteComercial nuevoExpediente)
-			throws IllegalAccessException, InvocationTargetException {
-
+	public List<GastosExpediente> crearGastosExpediente(Oferta oferta, ExpedienteComercial nuevoExpediente) throws IllegalAccessException, InvocationTargetException {
+		List<GastosExpediente> gastosExpediente = new ArrayList<GastosExpediente>();
+		
 		Activo activo = oferta.getActivoPrincipal();
+			
+		gastosExpediente = expedienteComercialApi.creaGastoExpediente(nuevoExpediente, oferta, activo);
 
-		return  expedienteComercialApi.creaGastoExpediente(nuevoExpediente, oferta,
-				activo);
+		return gastosExpediente;
 	}
 
 	@Transactional
@@ -790,9 +796,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			CompradorExpediente compradorExpedienteNuevo = new CompradorExpediente();
 			List<TitularesAdicionalesOferta> listaTitularesAdicionalesSinRepetirDocumento = new ArrayList<TitularesAdicionalesOferta>();
 
-			Double parteCompra;
+			Double parteCompra = 0.00;
 			Double parteCompraAdicionales = 0.00;
-			Double totalParteCompraAdicional;
+			Double totalParteCompraAdicional = 0.00;
 			Double parteCompraPrincipal = 100.00;
 			/*
 			 * HREOS-3779 Problema al crear las relaciones entre comprador-expediente Desde
@@ -1099,6 +1105,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		return nuevoExpediente;
 	}
 
+	@SuppressWarnings("static-access")
 	@Transactional
 	public void asignarGestorYSupervisorFormalizacionToExpediente(ExpedienteComercial expediente) {
 		GestorEntidadDto dto = new GestorEntidadDto();
@@ -1115,7 +1122,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		Usuario usuarioSupervisorReserva = null;
 		Usuario usuarioGestorMinuta = null;
 		Usuario usuarioSupervisorMinuta = null;
-		Usuario usuarioGestorController = null;
 		ActivoAgrupacion agrupacion = null;
 		Activo activo = null;
 
@@ -1226,16 +1232,16 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		if (!Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaFormalizar())
 				&& BooleanUtils.toBoolean(perimetro.getAplicaFormalizar())) {
 			if (!Checks.esNulo(usuarioGestorFormalizacion)) {
-				this.agregarTipoGestorYUsuarioEnDto(GestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION,
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION,
 						usuarioGestorFormalizacion.getUsername(), dto);
 			} else {
-				this.agregarTipoGestorYUsuarioEnDto(GestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION,
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION,
 						"GESTFORM", dto);
 			}
 
 			if (!activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_THIRD_PARTY)) {
 				if (!activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
-					this.agregarTipoGestorYUsuarioEnDto(GestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION,
+					this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION,
 							"SUPFORM", dto);
 				}
 
@@ -1256,56 +1262,41 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 					usuarioSupervisorComercial = nuevoSupervisorC.getUsuario();// flag
 				}
 				if (!Checks.esNulo(supervisorFormalzacion)) {
-					this.agregarTipoGestorYUsuarioEnDto(GestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION,
+					this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION,
 							supervisorFormalzacion.getUsuario().getUsername(), dto);
 				}
 				if (!Checks.esNulo(usuarioSupervisorComercial)) {
-					this.agregarTipoGestorYUsuarioEnDto(GestorExpedienteComercialApi.CODIGO_SUPERVISOR_COMERCIAL,
+					this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_COMERCIAL,
 							usuarioSupervisorComercial.getUsername(), dto);
 				}
 			}
 
 			if (!Checks.esNulo(usuarioGestoriaFormalizacion))
-				this.agregarTipoGestorYUsuarioEnDto(GestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION,
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION,
 						usuarioGestoriaFormalizacion.getUsername(), dto);
 		}
 
 		if (!Checks.esNulo(usuarioGestorComercial))
-			this.agregarTipoGestorYUsuarioEnDto(GestorExpedienteComercialApi.CODIGO_GESTOR_COMERCIAL,
+			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_COMERCIAL,
 					usuarioGestorComercial.getUsername(), dto);
 
 		if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
 			if (!Checks.esNulo(usuarioGestorReserva))
-				this.agregarTipoGestorYUsuarioEnDto(GestorExpedienteComercialApi.CODIGO_GESTOR_RESERVA_CAJAMAR,
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_RESERVA_CAJAMAR,
 						usuarioGestorReserva.getUsername(), dto);
 			if (!Checks.esNulo(usuarioSupervisorReserva))
-				this.agregarTipoGestorYUsuarioEnDto(GestorExpedienteComercialApi.CODIGO_SUPERVISOR_RESERVA_CAJAMAR,
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_RESERVA_CAJAMAR,
 						usuarioSupervisorReserva.getUsername(), dto);
 			if (!Checks.esNulo(usuarioGestorMinuta))
-				this.agregarTipoGestorYUsuarioEnDto(GestorExpedienteComercialApi.CODIGO_GESTOR_MINUTA_CAJAMAR,
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_MINUTA_CAJAMAR,
 						usuarioGestorMinuta.getUsername(), dto);
 			if (!Checks.esNulo(usuarioSupervisorMinuta))
-				this.agregarTipoGestorYUsuarioEnDto(GestorExpedienteComercialApi.CODIGO_SUPERVISOR_MINUTA_CAJAMAR,
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_MINUTA_CAJAMAR,
 						usuarioSupervisorMinuta.getUsername(), dto);
 			if (!Checks.esNulo(usuarioSupervisorFormalizacion))
-				this.agregarTipoGestorYUsuarioEnDto(GestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION,
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION,
 						usuarioSupervisorFormalizacion.getUsername(), dto);
 		}
-
-		if (activo != null) {
-			String usernameGestorController = gestorExpedienteComercialDao.getUsuarioGestor(activo.getId(),
-					GestorExpedienteComercialApi.CODIGO_GESTOR_CONTROLLER);
-			if (usernameGestorController != null) {
-				usuarioGestorController = genericDao.get(Usuario.class,
-						genericDao.createFilter(FilterType.EQUALS, "username", usernameGestorController));
-			}
-
-			if (usuarioGestorController != null) {
-				this.agregarTipoGestorYUsuarioEnDto(GestorExpedienteComercialApi.CODIGO_GESTOR_CONTROLLER,
-						usuarioGestorController.getUsername(), dto);
-			}
-		}
-
 	}
 
 	private void agregarTipoGestorYUsuarioEnDto(String codTipoGestor, String username, GestorEntidadDto dto) {
@@ -1344,11 +1335,11 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 						.equals(DDCartera.CODIGO_CARTERA_CAJAMAR)
 						|| agr.getActivos().get(0).getActivo().getCartera().getCodigo()
 								.equals(DDCartera.CODIGO_CARTERA_LIBERBANK))) {
-			if (Checks.esNulo(loteComercial.getUsuarioGestorComercial())
-					&& !agr.getActivos().get(0).getActivo().getCartera().getCodigo()
-							.equals(DDCartera.CODIGO_CARTERA_LIBERBANK)
-					|| (Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice()) && agr.getActivos().get(0)
-							.getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK))) {
+			if (Checks.esNulo(loteComercial.getUsuarioGestorComercial()) && !agr.getActivos().get(0).getActivo()
+					.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
+				return false;
+			} else if (Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice()) && agr.getActivos().get(0)
+					.getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
 				return false;
 			}
 		} else {
@@ -1617,8 +1608,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		}
 	}
 
-	public void validarTramitacionAgrupacion(DDEstadoOferta estadoOferta, Oferta oferta,
-			Boolean esAlquiler, ActivoAgrupacion agrupacion){
+	public void validarTramitacionAgrupacion(DtoOfertaActivo dto, DDEstadoOferta estadoOferta, Oferta oferta,
+			Boolean esAlquiler, ActivoAgrupacion agrupacion) throws Exception {
 
 		if (!Checks.esNulo(agrupacion)) {
 			List<ActivoAgrupacionActivo> agaList = agrupacion.getActivos();
@@ -1668,15 +1659,25 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			}
 		}
 
-		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo()) && !Checks.esNulo(oferta.getAgrupacion())
-				&& oferta.getAgrupacion().getTipoAgrupacion().getCodigo()
-						.equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)
-				&& ES_FORMALIZABLE.equals(oferta.getAgrupacion().getIsFormalizacion())
-				&& !agrupacionLoteComercialGestoresAsignados(oferta.getAgrupacion())
-				&& !Checks.esNulo(oferta.getVentaDirecta()) && !oferta.getVentaDirecta()) {
-			throw new JsonViewerException(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
+		// Si el estado de la oferta cambia a Aceptada cambiamos el resto de
+		// estados a Congelada excepto los que ya estuvieran en Rechazada
+		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())) {
+			// Comprobar si la agrupación de la oferta es de tipo 'Lote
+			// comercial'.
+			if (!Checks.esNulo(oferta.getAgrupacion()) && oferta.getAgrupacion().getTipoAgrupacion().getCodigo()
+					.equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
+				// En caso que la agrupación sea formalizable comprobamos tenga
+				// todos los gestores
+				if (ES_FORMALIZABLE.equals(oferta.getAgrupacion().getIsFormalizacion())) {
+					// Comprobar si la agrupación tiene todos los gestores
+					// asignados.
+					if (!agrupacionLoteComercialGestoresAsignados(oferta.getAgrupacion())
+							&& !Checks.esNulo(oferta.getVentaDirecta()) && !oferta.getVentaDirecta()) {
+						throw new JsonViewerException(AgrupacionAdapter.OFERTA_AGR_LOTE_COMERCIAL_GESTORES_NULL_MSG);
+					}
+				}
+			}
 		}
-
 	}
 
 	public Formalizacion crearFormalizacion(ExpedienteComercial expedienteComercial) {
@@ -1687,10 +1688,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	}
 
 	@Transactional
-	public ActivoTramite doTramitacion(Activo activo, Oferta oferta, Long idTrabajo,
-			ExpedienteComercial expedienteComercial) throws IllegalAccessException, InvocationTargetException {
-		expedienteComercial = this.crearCompradores(oferta, expedienteComercial);
-		ActivoTramite activoTramite = trabajoApi.createTramiteTrabajo(idTrabajo, expedienteComercial);
+	public ActivoTramite doTramitacion(Activo activo, Oferta oferta, Long idTrabajo, ExpedienteComercial expedienteComercial) 
+			throws IllegalAccessException, InvocationTargetException {
+		ActivoTramite activoTramite = trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
 		expedienteComercial = this.crearCondicionanteYTanteo(activo, oferta, expedienteComercial);
 		expedienteComercial = this.crearExpedienteReserva(expedienteComercial);
 		expedienteComercialApi.crearCondicionesActivoExpediente(activo, expedienteComercial);
@@ -1730,10 +1730,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOne(idExpedienteComercial);
 
 		try {
-			expedienteComercial = this.crearCompradores(oferta, expedienteComercial);
 			transactionManager.commit(transaction);
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-			trabajoApi.createTramiteTrabajo(idTrabajo, expedienteComercial);
+			trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
 			transactionManager.commit(transaction);
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 

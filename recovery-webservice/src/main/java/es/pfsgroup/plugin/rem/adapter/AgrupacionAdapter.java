@@ -2051,7 +2051,7 @@ public class AgrupacionAdapter {
 			loteComercial.setExistePiloto(false);
 			loteComercial.setEsVisitable(false);
 			
-			if (dtoAgrupacion.getEsFormalizacion())
+			if (!Checks.esNulo(dtoAgrupacion.getEsFormalizacion()) && dtoAgrupacion.getEsFormalizacion())
 				loteComercial.setIsFormalizacion(1);
 			
 			genericDao.save(ActivoLoteComercial.class, loteComercial);

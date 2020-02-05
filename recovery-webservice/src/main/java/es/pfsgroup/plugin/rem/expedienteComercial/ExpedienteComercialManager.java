@@ -2868,14 +2868,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 
 			}
-		} else {
-			condiciones = new CondicionanteExpediente();
-			condiciones.setExpediente(expedienteComercial);
-			condiciones = dtoCondicionantestoCondicionante(condiciones, dto);
-			expedienteComercial.setCondicionante(condiciones);
+			genericDao.save(CondicionanteExpediente.class, condiciones);
+			createReservaExpediente(expedienteComercial);
 		}
-		genericDao.save(CondicionanteExpediente.class, condiciones);
-		createReservaExpediente(expedienteComercial);
+		
 
 		return true;
 	}

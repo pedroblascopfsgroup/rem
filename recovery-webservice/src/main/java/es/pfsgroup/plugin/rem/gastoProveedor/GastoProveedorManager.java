@@ -1870,7 +1870,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					
 					if(contabilidadGasto.getPartidaPresupuestaria() != null) {
 						Filter partidaPresupuestariaFilter = genericDao.createFilter(FilterType.EQUALS, "partidaPresupuestaria", contabilidadGasto.getPartidaPresupuestaria());
-						ConfiguracionSubpartidasPresupuestarias csp = genericDao.get(ConfiguracionSubpartidasPresupuestarias.class, partidaPresupuestariaFilter);
+						Filter cuentaContableFilter = genericDao.createFilter(FilterType.EQUALS, "cuentaContable", contabilidadGasto.getCuentaContable());
+						ConfiguracionSubpartidasPresupuestarias csp = genericDao.get(ConfiguracionSubpartidasPresupuestarias.class, partidaPresupuestariaFilter, cuentaContableFilter);
 						if(csp != null) {
 							dto.setIdSubpartidaPresupuestaria(csp.getId());
 						}

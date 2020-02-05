@@ -1,0 +1,85 @@
+--/*
+--#########################################
+--## AUTOR=José Antonio Gigante
+--## FECHA_CREACION=20200205
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-9360
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Actualizacion registros 
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+
+	V_TABLA_TMP VARCHAR2(100 CHAR) := 'aux_actualiza_llaves_activo'; -- Variable para tabla de salida para el borrado
+	V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01';-- '#ESQUEMA#'; -- Configuracion Esquema
+	V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER';-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+	ERR_NUM NUMBER;-- Numero de errores
+	ERR_MSG VARCHAR2(2048);-- Mensaje de error
+	V_SQL VARCHAR2(4000 CHAR);
+	PL_OUTPUT VARCHAR2(32000 CHAR);
+	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-9360';
+	
+
+BEGIN
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO]'||CHR(10));
+	V_SQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO ACT
+		USING 
+		(   SELECT ACT_ID
+			, ACT_LLAVES_NECESARIAS
+			, ACT_LLAVES_HRE
+			, ACT_LLAVES_FECHA_RECEP
+			, ACT_LLAVES_NUM_JUEGOS 
+            FROM (
+			SELECT
+			ACT.ACT_ID
+			, AUX.ACT_LLAVES_NECESARIAS
+			, AUX.ACT_LLAVES_HRE
+			, AUX.ACT_LLAVES_FECHA_RECEP
+			, AUX.ACT_LLAVES_NUM_JUEGOS
+			, ROW_NUMBER() OVER (PARTITION BY ACT.ACT_ID order by AUX.ACT_LLAVES_FECHA_RECEP DESC) RN
+			FROM '||V_ESQUEMA||'.'||V_TABLA_TMP||' aux
+			JOIN REM01.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO) AUX_F WHERE AUX_F.RN = 1
+		) AUX
+    	ON (ACT.ACT_ID = AUX.ACT_ID)
+    	WHEN MATCHED THEN
+        	UPDATE SET
+            	ACT.ACT_LLAVES_NECESARIAS = AUX.ACT_LLAVES_NECESARIAS
+				, ACT.ACT_LLAVES_HRE = AUX.ACT_LLAVES_HRE
+				, ACT.ACT_LLAVES_FECHA_RECEP = AUX.ACT_LLAVES_FECHA_RECEP
+				, ACT.ACT_LLAVES_NUM_JUEGOS = AUX.ACT_LLAVES_NUM_JUEGOS
+				, ACT.USUARIOMODIFICAR = '''||V_USUARIO||'''
+				, ACT.FECHAMODIFICAR = SYSDATE
+				';
+				
+
+		EXECUTE IMMEDIATE V_SQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Se han mergeado en total '||SQL%ROWCOUNT||' registros en la tabla '||V_ESQUEMA||'.'||V_TABLA_TMP||'');
+
+	COMMIT;
+
+	PL_OUTPUT := PL_OUTPUT || '[FIN]'||CHR(10);
+	DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
+
+EXCEPTION
+    WHEN OTHERS THEN
+      PL_OUTPUT := PL_OUTPUT ||'[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE)||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||'-----------------------------------------------------------'||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||SQLERRM||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||V_SQL||CHR(10);
+      DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
+      ROLLBACK;
+      RAISE;
+END;
+/
+EXIT;

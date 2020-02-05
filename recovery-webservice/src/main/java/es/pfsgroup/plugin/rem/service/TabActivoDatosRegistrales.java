@@ -149,7 +149,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			BeanUtils.copyProperties(activoDto, activo.getInfoRegistral());
 		}	
 		
-		if(esUA){
+		if(esUA && !Checks.esNulo(activoMatriz)){
 			if (!Checks.esNulo(activoMatriz.getInfoRegistral())) {
 				BeanUtils.copyProperties(activoDto, activoMatriz.getInfoRegistral());
 			}
@@ -387,7 +387,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			activoDto.setUnidadAlquilable(false);
 		}
 		
-		if (esUA && !Checks.esNulo(activoMatriz.getAdjJudicial())) {				
+		if (esUA && !Checks.esNulo(activoMatriz) && !Checks.esNulo(activoMatriz.getAdjJudicial())) {				
 			BeanUtils.copyProperties(activoDto, activoMatriz.getAdjJudicial());
 			
 			if (!Checks.esNulo(activoMatriz.getAdjJudicial().getAdjudicacionBien())) {
@@ -1053,28 +1053,30 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				activoMatriz.getInfoRegistral().setSuperficieParcela(Float.valueOf(activoDto.getSuperficieParcela()));
 			}
 		}
-		if(!Checks.esNulo(activoMatriz.getInfoRegistral()) && !Checks.esNulo(activoMatriz.getInfoRegistral().getInfoRegistralBien())) {
-			if(!Checks.esNulo(activoMatriz.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida())) {
-				superficieConstruidaActivoMatriz = activoMatriz.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida().floatValue();
+		if(!Checks.esNulo(activoMatriz)) {
+			if(!Checks.esNulo(activoMatriz.getInfoRegistral()) && !Checks.esNulo(activoMatriz.getInfoRegistral().getInfoRegistralBien())) {
+				if(!Checks.esNulo(activoMatriz.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida())) {
+					superficieConstruidaActivoMatriz = activoMatriz.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida().floatValue();
+				}
 			}
-		}
-		if(!Checks.esNulo(activoMatriz.getInfoRegistral().getSuperficieUtil())) {
-			superficieUtilActivoMatriz = activoMatriz.getInfoRegistral().getSuperficieUtil();
-		}
-		if(!Checks.esNulo(activoMatriz.getInfoRegistral().getSuperficieElementosComunes())) {
-			superficieElementosComunesActivoMatriz = activoMatriz.getInfoRegistral().getSuperficieElementosComunes();
-		}
-		if(!Checks.esNulo(activoMatriz.getInfoRegistral().getSuperficieParcela())) {
-			superficieParcelaActivoMatriz = activoMatriz.getInfoRegistral().getSuperficieParcela();
-		}
-		if(superficie_construida > superficieConstruidaActivoMatriz) {
-			throw new JsonViewerException(messageServices.getMessage(MENSAJE_ERROR_SUPERFICIE_CONSTRUIDA));
-		}else if(superficie_util > superficieUtilActivoMatriz) {
-			throw new JsonViewerException(messageServices.getMessage(MENSAJE_ERROR_SUPERFICIE_UTIL));
-		}else if(superficie_repercusion > superficieElementosComunesActivoMatriz) {
-			throw new JsonViewerException(messageServices.getMessage(MENSAJE_ERROR_SUPERFICIE_REPERCUSION));
-		}else if(superficie_parcela > superficieParcelaActivoMatriz) {
-			throw new JsonViewerException(messageServices.getMessage(MENSAJE_ERROR_SUPERFICIE_PARCELA));
+			if(!Checks.esNulo(activoMatriz.getInfoRegistral().getSuperficieUtil())) {
+				superficieUtilActivoMatriz = activoMatriz.getInfoRegistral().getSuperficieUtil();
+			}
+			if(!Checks.esNulo(activoMatriz.getInfoRegistral().getSuperficieElementosComunes())) {
+				superficieElementosComunesActivoMatriz = activoMatriz.getInfoRegistral().getSuperficieElementosComunes();
+			}
+			if(!Checks.esNulo(activoMatriz.getInfoRegistral().getSuperficieParcela())) {
+				superficieParcelaActivoMatriz = activoMatriz.getInfoRegistral().getSuperficieParcela();
+			}
+			if(superficie_construida > superficieConstruidaActivoMatriz) {
+				throw new JsonViewerException(messageServices.getMessage(MENSAJE_ERROR_SUPERFICIE_CONSTRUIDA));
+			}else if(superficie_util > superficieUtilActivoMatriz) {
+				throw new JsonViewerException(messageServices.getMessage(MENSAJE_ERROR_SUPERFICIE_UTIL));
+			}else if(superficie_repercusion > superficieElementosComunesActivoMatriz) {
+				throw new JsonViewerException(messageServices.getMessage(MENSAJE_ERROR_SUPERFICIE_REPERCUSION));
+			}else if(superficie_parcela > superficieParcelaActivoMatriz) {
+				throw new JsonViewerException(messageServices.getMessage(MENSAJE_ERROR_SUPERFICIE_PARCELA));
+			}
 		}
 	}
 }

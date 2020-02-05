@@ -4,24 +4,35 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RespuestaComisionResultDto {
-	private String amount;
-	private RespuestaComisionReglaDto rule;
-	
+	private Double commissionAmount;
+	private Double maxCommissionAmount;
+	private Double minCommissionAmount ;
+
 	public RespuestaComisionResultDto() {
 		
 	}
 	
-	public String getAmount() {
-		return amount;
+	public Double getCommissionAmount() {
+		return commissionAmount;
 	}
-	public void setAmount(String amount) {
-		this.amount = amount;
+	public void setCommissionAmount(Double commissionAmount) {
+		this.commissionAmount = commissionAmount;
 	}
-	public RespuestaComisionReglaDto getRule() {
-		return rule;
+
+	public Double getMaxCommissionAmount() {
+		return maxCommissionAmount;
 	}
-	public void setRule(RespuestaComisionReglaDto rule) {
-		this.rule = rule;
+
+	public void setMaxCommissionAmount(Double maxCommissionAmount) {
+		this.maxCommissionAmount = maxCommissionAmount;
+	}
+
+	public Double getMinCommissionAmount() {
+		return minCommissionAmount;
+	}
+
+	public void setMinCommissionAmount(Double minCommissionAmount) {
+		this.minCommissionAmount = minCommissionAmount;
 	}
 	
 }

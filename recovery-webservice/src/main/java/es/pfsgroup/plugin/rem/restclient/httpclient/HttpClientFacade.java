@@ -7,13 +7,12 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -23,8 +22,10 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.restclient.webcom.WebcomRESTDevonProperties;
 import net.sf.json.JSONObject;
 
@@ -35,6 +36,9 @@ public class HttpClientFacade {
 
 	@Resource
 	private Properties appProperties;
+
+	@Autowired
+	private RestApi restApi;
 
 	public JSONObject processRequest(String serviceUrl, String sendMethod, Map<String, String> headers,
 			String jsonString, int responseTimeOut, String charSet) throws HttpClientException {
@@ -48,8 +52,8 @@ public class HttpClientFacade {
 		}
 
 		responseTimeOut = responseTimeOut * 1000;
-		trace("Estableciendo coneixón con httpClient [url=" + serviceUrl + ", method=" + sendMethod + ", timeout="
-				+ responseTimeOut + ", charset=" + charSet + "]");
+		restApi.trace("Estableciendo coneixón con httpClient [url=" + serviceUrl + ", method=" + sendMethod
+				+ ", timeout=" + responseTimeOut + ", charset=" + charSet + "]");
 
 		// Essentially return a new HttpClient(), but can be pulled from Spring
 		// context
@@ -58,37 +62,38 @@ public class HttpClientFacade {
 			HttpClient httpclient = new HttpClient();
 
 			method = getHttpMethodFromString(sendMethod, jsonString, charSet);
-			trace("Método de conexión: " + method.toString());
+			restApi.trace("Método de conexión: " + method.toString());
 
 			if (headers != null && (!headers.isEmpty())) {
 				for (Entry<String, String> e : headers.entrySet()) {
-					trace("Se añade Header [" + e.getKey() + " : " + e.getValue() + "]");
+					restApi.trace("Se añade Header [" + e.getKey() + " : " + e.getValue() + "]");
 					method.addRequestHeader(e.getKey(), e.getValue());
 				}
 			}
 			method.addRequestHeader("Accept", "text/html,application/xhtml+xml,application/xml, application/json");
 			// Below
 			method.setPath(serviceUrl);
-			trace("http.protocol.version : " + HttpVersion.HTTP_1_1);
+			restApi.trace("http.protocol.version : " + HttpVersion.HTTP_1_1);
 			httpclient.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
 
-			trace("http.socket.timeout : " + responseTimeOut);
+			restApi.trace("http.socket.timeout : " + responseTimeOut);
 			httpclient.getParams().setParameter("http.socket.timeout", responseTimeOut);
 
-			trace("http.protocol.content-charset : " + charSet);
+			restApi.trace("http.protocol.content-charset : " + charSet);
 			httpclient.getParams().setParameter("http.protocol.content-charset", charSet);
 
-			trace(jsonString);
+			restApi.trace(jsonString);
 
 			return execute(httpclient, method);
 		} catch (HttpClientException e) {
-			logger.error("error ws",e);
+			logger.error("error ws", e);
 			String errorMsg = "Error Sending REST Request [URL:" + serviceUrl + ",METHOD:" + sendMethod + "]";
 			throw new HttpClientException(errorMsg, e.getResponseCode(), e);
 		} catch (Exception e) {
 			String errorMsg = "Error Sending REST Request [URL:" + serviceUrl + ",METHOD:" + sendMethod + "]";
-			//Se añade este logger para poder ver en consola los errores que desvuelve el webservice
-			logger.error("error ws",e);
+			// Se añade este logger para poder ver en consola los errores que desvuelve el
+			// webservice
+			logger.error("error ws", e);
 			throw new HttpClientException(errorMsg, 0, e);
 		} finally {
 			if (method != null) {
@@ -96,11 +101,9 @@ public class HttpClientFacade {
 			}
 		}
 	}
-	
-	
-	private JSONObject execute(HttpClient httpclient, HttpMethod method)
-			throws HttpException, IOException, HttpClientException {
-		trace("Lanzando peticion : httpClient.executeMethod()");
+
+	private JSONObject execute(HttpClient httpclient, HttpMethod method) throws IOException, HttpClientException {
+		restApi.trace("Lanzando peticion : httpClient.executeMethod()");
 		Boolean webcomSimulado = Boolean.valueOf(WebcomRESTDevonProperties.extractDevonProperty(appProperties,
 				WebcomRESTDevonProperties.WEBCOM_SIMULADO, "true"));
 		Integer responseCode = 0;
@@ -114,11 +117,11 @@ public class HttpClientFacade {
 			throw new HttpClientException("Código de error inespeado", responseCode, null);
 		}
 
-		trace("Petición finalizada. Response Code : " + responseCode);
+		restApi.trace("Petición finalizada. Response Code : " + responseCode);
 
 		String respBody = getResponseBody(method);// See details Below
-		trace("-- RESPONSE BODY --");
-		trace(respBody);
+		restApi.trace("-- RESPONSE BODY --");
+		restApi.trace(respBody);
 
 		if (respBody.trim().isEmpty()) {
 			throw new HttpClientException("Empty response", responseCode);
@@ -129,10 +132,10 @@ public class HttpClientFacade {
 
 	private void setRequestParams(PostMethod method, String jsonString, String charSet)
 			throws UnsupportedEncodingException {
-		trace("Configurando PostMethod");
+		restApi.trace("Configurando PostMethod");
 		String contentType = "application/json";
-		trace(" - Content Type : " + contentType);
-		trace(" - charset : " + charSet);
+		restApi.trace(" - Content Type : " + contentType);
+		restApi.trace(" - charset : " + charSet);
 
 		StringRequestEntity entity = new StringRequestEntity(jsonString, contentType, charSet);
 		method.setRequestEntity(entity);
@@ -188,20 +191,10 @@ public class HttpClientFacade {
 			}
 			resultado = StringEscapeUtils.unescapeHtml(stringOut.toString());
 		} else {
-			resultado ="{\"id\":0,\"succes\":\"true\"}";
+			//resultado = "{\"id\":0,\"succes\":\"true\"}";
+			resultado = "{\"id\":\"157734784728321256810068\",\"data\":[{\"idOfertaRem\":\"62875808\",\"idOfertaWebcom\":\"210472\",\"origenLeadProveedor\":\"02\",\"idOfertaSalesforce\":\"a0V4I00000G9AZlUAN\",\"idClienteRem\":\"2212163\",\"idClienteSalesforce\":\"0014I00001tbOLQQA2\",\"idProveedorPrescriptorRemOrigenLead\":\"10\",\"fechaOrigenLead\":\"2017-08-13T20:02:12\",\"codTipoProveedorOrigenCliente\":\"0609\",\"idProveedorRealizadorRemOrigenLead\":\"11\",\"success\":true}],\"error\":null}";
 		}
 		return resultado;
-	}
-
-	private void trace(String mensaje) {
-		Boolean webcomSimulado = Boolean.valueOf(WebcomRESTDevonProperties.extractDevonProperty(appProperties,
-				WebcomRESTDevonProperties.WEBCOM_SIMULADO, "true"));
-		if (webcomSimulado) {
-			logger.error(mensaje);
-		} else {
-			logger.trace(mensaje);
-		}
-
 	}
 
 }

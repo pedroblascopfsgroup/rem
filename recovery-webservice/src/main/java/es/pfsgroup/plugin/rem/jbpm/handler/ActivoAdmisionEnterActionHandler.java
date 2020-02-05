@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +10,6 @@ import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
@@ -26,13 +26,12 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.genericlistener.GenerarTransicionListener;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoRequisitoTareaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
-import es.pfsgroup.framework.paradise.genericlistener.GenerarTransicionListener;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
-import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTareasManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.plazo.PlazoAssignationService;
@@ -44,8 +43,6 @@ import es.pfsgroup.plugin.rem.model.CampoTareaNoEncontradaException;
 import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
-import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 
 public class ActivoAdmisionEnterActionHandler extends ActivoGenericActionHandler {
 
@@ -53,9 +50,7 @@ public class ActivoAdmisionEnterActionHandler extends ActivoGenericActionHandler
 
 	private TipoCalculo tipoCalculoVencimiento = null;
 	
-	@Autowired
-	private Executor executor;
-
+	
 	@Autowired
 	private GenericABMDao genericDao;
 	
@@ -74,8 +69,6 @@ public class ActivoAdmisionEnterActionHandler extends ActivoGenericActionHandler
 	@Autowired
 	GestorActivoApi gestorActivoApi;
 	
-	@Autowired
-	TareaActivoApi tareaActivoApi;
 	
 	@Autowired
 	ActivoAdapter activoAdapter;
@@ -86,8 +79,6 @@ public class ActivoAdmisionEnterActionHandler extends ActivoGenericActionHandler
 	//@Autowired
 	private List<GenerarTransicionListener> listeners;
 
-	@Autowired
-	private DiccionarioTargetClassMap diccionarioTargetClassMap;
 	
 	@Autowired
 	PlazoAssignationServiceFactoryApi plazoAssignationServiceFactoryApi;
@@ -121,7 +112,6 @@ public class ActivoAdmisionEnterActionHandler extends ActivoGenericActionHandler
 			generarTimerTareaActivo(idTarea, executionContext);
 
 			List<VAdmisionDocumentos> listaAdmisionDocumentos = activoAdapter.getListAdmisionCheckDocumentos(this.getActivoTramite(executionContext).getActivo().getId());
-			Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 			
 				
 			
@@ -149,12 +139,12 @@ public class ActivoAdmisionEnterActionHandler extends ActivoGenericActionHandler
 		}
 
 		// Llamamos al nodo genérico de transición
-		if (delegateTransitionClass != null && delegateTransitionClass instanceof ActivoJBPMEnterEventHandler) {
+		if (delegateTransitionClass instanceof ActivoJBPMEnterEventHandler) {
 			((ActivoJBPMEnterEventHandler) delegateTransitionClass).onEnter(executionContext);
 		}
 
 		// Llamamos al nodo específico
-		if (delegateSpecificClass != null && delegateSpecificClass instanceof ActivoJBPMEnterEventHandler) {
+		if (delegateSpecificClass instanceof ActivoJBPMEnterEventHandler) {
 			((ActivoJBPMEnterEventHandler) delegateSpecificClass).onEnter(executionContext);
 		}
 	}
@@ -220,7 +210,6 @@ public class ActivoAdmisionEnterActionHandler extends ActivoGenericActionHandler
 			campo = requisitoTarea.getCampoRequerido().getNombre();
 			campoDescripcion = requisitoTarea.getCampoRequerido().getLabel();
 
-			//List<TareaExterna> lista = (List<TareaExterna>) executor.execute(ComunBusinessOperation.BO_TAREA_EXTERNA_MGR_OBTENER_TAREAS_POR_PROCEDIMIENTO, idProcedimiento);
 			List<TareaExterna> lista =  activoTareaExternaManagerApi.getTareasByIdTramite(idActivoTramite);
 					
 			for (TareaExterna tax : lista) {
@@ -248,7 +237,6 @@ public class ActivoAdmisionEnterActionHandler extends ActivoGenericActionHandler
 
 		// Recogemos el procedimiento del contexto
 		ActivoTramite activoTramite = this.getActivoTramite(executionContext);
-		//Procedimiento procedimiento = getProcedimiento(executionContext);
 		Long idActivoTramite = activoTramite.getId();
 
 		// Buscamos la tarea perteneciente a ese procedimiento con el código
@@ -263,8 +251,6 @@ public class ActivoAdmisionEnterActionHandler extends ActivoGenericActionHandler
 		if (!reentrada) {
 			ActivoRequisitoTarea requisito = activoRequisitoTareaApi.existeRequisito(idTareaProcedimiento);
 			if (requisito != null) {
-				//TODO: este método no va a funcionar porque usa el procedimiento padre.
-				
 				boolean cumpleRequisito = activoRequisitoTareaApi.comprobarRequisito(requisito, idActivoTramite);
 				if (!cumpleRequisito) {
 					lanzarExcepcionPlazoTarea(getTokenId(executionContext), idActivoTramite, requisito);
@@ -278,7 +264,6 @@ public class ActivoAdmisionEnterActionHandler extends ActivoGenericActionHandler
 		// Por defecto la tarea será para un gestor
 		
 		
-		//TODO:aqui se elige el subtipo de tarea. Hay que adaptarlo a los activos. 
 		String subtipoTarea = SubtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_GESTOR;
 
 		// Si está marcada como supervisor se cambia el subtipo tarea
@@ -308,24 +293,7 @@ public class ActivoAdmisionEnterActionHandler extends ActivoGenericActionHandler
 			}
 		}
 
-//		TipoJuzgado juzgado = null;
-//		TipoPlaza plaza = null;
-//
-//		juzgado = procedimiento.getJuzgado();
-//		if (juzgado != null)
-//			plaza = juzgado.getPlaza();
-//
-//		Long idTipoPlaza = null;
-//		Long idTipoJuzgado = null;
-//
-//		if (juzgado != null)
-//			idTipoJuzgado = juzgado.getId();
-//		if (plaza != null)
-//			idTipoPlaza = plaza.getId();
 
-		//Long plazoTarea = getPlazoTareaPorTipoTarea(idTipoPlaza, idTareaProcedimiento, idTipoJuzgado, idProcedimiento, getTokenId(executionContext));
-		
-		//Long plazoTarea = jbpmActivoTareasManagerApi.getPlazoTarea(idTareaProcedimiento, idActivoTramite);
 		
     	PlazoAssignationService plazoAssignationService = plazoAssignationServiceFactoryApi.getService(tareaProcedimiento.getCodigo());
 		Long plazoTarea = plazoAssignationService.getPlazoTarea(idTareaProcedimiento, idActivoTramite);
@@ -341,7 +309,6 @@ public class ActivoAdmisionEnterActionHandler extends ActivoGenericActionHandler
 		valores.put("tipoCalculo", TipoCalculo.NO_SALTAR_AGOSTO);
 		
 		EXTDtoCrearTareaExterna dto = new ActivoDtoCrearTareaExterna(valores);
-		//EXTDtoCrearTareaExterna dto = DynamicDtoUtils.create(EXTDtoCrearTareaExterna.class, valores);
 		Long idTarea = tareaExternaManager.crearTareaExternaDto(dto);
 
 		// Si el BPM está detenido, detenemos la nueva tarea creada
@@ -368,24 +335,6 @@ public class ActivoAdmisionEnterActionHandler extends ActivoGenericActionHandler
 		return idTarea;
 	}
 	
-//	/**
-//	 * Método que indica si se han de derivar al nuevo procedimiento los bienes
-//	 * asociados en el procedimiento padre. 
-//	 */
-//	private boolean isTramitesExcluidos(ExecutionContext executionContext) {
-//		
-//		/**
-//		 * Para el caso de subasta BANKIA y subasta SAREB, en caso de venir de
-//		 * la tarea registrar acta de subasta, NO se deben derivar los bienes,
-//		 * ya que existe otro método de asignar los bienes asociados
-//		 * correspondientes
-//		 */
-//		if(executionContext.getNode().getName().contains("BPMTramiteAdjudicacionV4")){
-//			return true;
-//		}
-//		
-//		return false;
-//	}
 
 	/**
 	 * @param tipoCalculoVencimiento the tipoCalculoVencimiento to set
@@ -419,6 +368,14 @@ public class ActivoAdmisionEnterActionHandler extends ActivoGenericActionHandler
     	if(!Checks.esNulo(dtoTrabajo.getSubtipoTrabajoCodigo())) // Hay documentos que no se obtienen a través de trabajos de REM.
     		trabajoApi.create(dtoTrabajo);        
     }
+    
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+		//empty
+	}
+
+	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+		//empty
+	}
 
 	
 }

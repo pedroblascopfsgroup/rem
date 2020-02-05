@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.ActivoGenericActionHandler.ConstantesBPMPFS;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -18,11 +18,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 public class routerBPMSancionOfertaHandler extends ActivoBaseActionHandler{
 	
 	private static final long serialVersionUID = 1L;
+	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
 	
-	@Autowired
-	private TareaActivoApi tareaActivoApi;
 	
 	ExecutionContext executionContext;
 	
@@ -79,16 +78,17 @@ public class routerBPMSancionOfertaHandler extends ActivoBaseActionHandler{
 	
 	
 	
-	private void setDecision(String variable, String action) {
-		getContext().setVariable(variable, action);
-	}
-	
+		
 	private void setContext(ExecutionContext ctx) {
 		this.executionContext = ctx;
 	}
 	
-	private ExecutionContext getContext() {
-		return executionContext;
+	private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+		//empty
+	}
+
+	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+		//empty
 	}
 }
 

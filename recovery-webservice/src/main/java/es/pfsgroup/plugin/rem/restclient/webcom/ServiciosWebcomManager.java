@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.UsuarioDto;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomGenerico;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.WebcomEndpoint;
+import net.sf.json.JSONObject;
 
 @Service
 public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implements ServiciosWebcomApi {
@@ -39,200 +40,213 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	private Properties appProperties;
 
 	@Override
-	public void webcomRestEstadoPeticionTrabajo(List<EstadoTrabajoDto> estadoTrabajo) throws ErrorServicioWebcom {
-		this.webcomRestEstadoPeticionTrabajo(estadoTrabajo, null);
+	public JSONObject webcomRestEstadoPeticionTrabajo(List<EstadoTrabajoDto> estadoTrabajo) throws ErrorServicioWebcom {
+		return this.webcomRestEstadoPeticionTrabajo(estadoTrabajo, null);
 	}
 	
-	public void webcomRestEstadoPeticionTrabajo(List<EstadoTrabajoDto> estadoTrabajo, RestLlamada registro) throws ErrorServicioWebcom {
+	public JSONObject webcomRestEstadoPeticionTrabajo(List<EstadoTrabajoDto> estadoTrabajo, RestLlamada registro) throws ErrorServicioWebcom {
 		logger.trace("Invocando servicio Webcom: Estado Trabajo");
+		JSONObject result = null;
 
 		ParamsList paramsList = createParamsList(estadoTrabajo);
 
 		if (!paramsList.isEmpty()) {
-			invocarServicioRestWebcom(WebcomEndpoint.estadoPeticionTrabajo(appProperties), paramsList, registro);
+			result = invocarServicioRestWebcom(WebcomEndpoint.estadoPeticionTrabajo(appProperties), paramsList, registro);
 		} else {
 			logger.trace("ParamsList vacío. Nada que enviar");
 		}
+		return result;
 	}
 
 	@Override
-	public void webcomRestEstadoOferta(List<EstadoOfertaDto> estadoOferta) throws ErrorServicioWebcom {
-		this.webcomRestEstadoOferta(estadoOferta, null);
+	public JSONObject webcomRestEstadoOferta(List<EstadoOfertaDto> estadoOferta) throws ErrorServicioWebcom {
+		return this.webcomRestEstadoOferta(estadoOferta, null);
 	}
 	
 	
-	public void webcomRestEstadoOferta(List<EstadoOfertaDto> estadoOferta, RestLlamada registro) throws ErrorServicioWebcom {
+	public JSONObject webcomRestEstadoOferta(List<EstadoOfertaDto> estadoOferta, RestLlamada registro) throws ErrorServicioWebcom {
 		logger.trace("Invocando servicio Webcom: Estado Oferta");
+		JSONObject result = null;
  
 		ParamsList paramsList = createParamsList(estadoOferta);
 
 		if (!paramsList.isEmpty()) {
-			invocarServicioRestWebcom(WebcomEndpoint.estadoOferta(appProperties), paramsList, registro);
+			result = invocarServicioRestWebcom(WebcomEndpoint.estadoOferta(appProperties), paramsList, registro);
 		} else {
 			logger.trace("ParamsList vacío. Nada que enviar");
 		}
-
+		return result;
 	}
 
 	@Override
-	public void webcomRestStock(List<StockDto> stock) throws ErrorServicioWebcom {
-		this.webcomRestStock(stock, null);
+	public JSONObject webcomRestStock(List<StockDto> stock) throws ErrorServicioWebcom {
+		return this.webcomRestStock(stock, null);
 	}
 	
-	public void webcomRestStock(List<StockDto> stock, RestLlamada registro) throws ErrorServicioWebcom {
+	public JSONObject webcomRestStock(List<StockDto> stock, RestLlamada registro) throws ErrorServicioWebcom {
 		logger.trace("Invocando servicio Webcom: Stock");
+		JSONObject result = null;
 
 		ParamsList paramsList = createParamsList(stock);
 
 		if (!paramsList.isEmpty()) {
-			invocarServicioRestWebcom(WebcomEndpoint.stock(appProperties),paramsList, registro);
+			result = invocarServicioRestWebcom(WebcomEndpoint.stock(appProperties),paramsList, registro);
 		} else {
 			logger.trace("ParamsList vacío. Nada que enviar");
 		}
-
+		return result;
 	}
 
 	@Override
-	public void webcomRestEstadoNotificacion(List<NotificacionDto> notificaciones) throws ErrorServicioWebcom {
-		this.webcomRestEstadoNotificacion(notificaciones, null);
+	public JSONObject webcomRestEstadoNotificacion(List<NotificacionDto> notificaciones) throws ErrorServicioWebcom {
+		return this.webcomRestEstadoNotificacion(notificaciones, null);
 	}
 	
-	public void webcomRestEstadoNotificacion(List<NotificacionDto> notificaciones, RestLlamada registro) throws ErrorServicioWebcom {
+	public JSONObject webcomRestEstadoNotificacion(List<NotificacionDto> notificaciones, RestLlamada registro) throws ErrorServicioWebcom {
 		logger.trace("Invocando servicio Webcom: Estado notificaciones");
+		JSONObject result = null;
 
 		ParamsList paramsList = createParamsList(notificaciones);
 
 		if (!paramsList.isEmpty()) {
-			invocarServicioRestWebcom(WebcomEndpoint.estadoNotificacion(appProperties), paramsList, registro);
+			result = invocarServicioRestWebcom(WebcomEndpoint.estadoNotificacion(appProperties), paramsList, registro);
 		} else {
 			logger.trace("ParamsList vacío. Nada que enviar");
 		}
-
+		return result;
 	}
 
 	@Override
-	public void webcomRestVentasYcomisiones(List<ComisionesDto> comisiones) throws ErrorServicioWebcom {
-		this.webcomRestVentasYcomisiones(comisiones, null);
+	public JSONObject webcomRestVentasYcomisiones(List<ComisionesDto> comisiones) throws ErrorServicioWebcom {
+		return this.webcomRestVentasYcomisiones(comisiones, null);
 	}
 	
-	public void webcomRestVentasYcomisiones(List<ComisionesDto> comisiones, RestLlamada registro) throws ErrorServicioWebcom {
+	public JSONObject webcomRestVentasYcomisiones(List<ComisionesDto> comisiones, RestLlamada registro) throws ErrorServicioWebcom {
 		logger.trace("Invocando servicio Webcom: Ventas y Comisiones");
+		JSONObject result = null;
 
 		ParamsList paramsList = createParamsList(comisiones);
 
 		if (!paramsList.isEmpty()) {
-			invocarServicioRestWebcom(WebcomEndpoint.ventasYcomisiones(appProperties), paramsList, registro);
+			result = invocarServicioRestWebcom(WebcomEndpoint.ventasYcomisiones(appProperties), paramsList, registro);
 		} else {
 			logger.trace("ParamsList vacío. Nada que enviar");
 		}
-
+		return result;
 	}
 
 	@Override
-	public void webcomRestProveedores(List<ProveedorDto> proveedores) throws ErrorServicioWebcom {
-		this.webcomRestProveedores(proveedores, null);
+	public JSONObject webcomRestProveedores(List<ProveedorDto> proveedores) throws ErrorServicioWebcom {
+		return this.webcomRestProveedores(proveedores, null);
 	}
 	
-	public void webcomRestProveedores(List<ProveedorDto> proveedores, RestLlamada registro) throws ErrorServicioWebcom {
+	public JSONObject webcomRestProveedores(List<ProveedorDto> proveedores, RestLlamada registro) throws ErrorServicioWebcom {
 		logger.trace("Invocando servicio Webcom: Envio datos Proveedores");
+		JSONObject result = null;
 
 		ParamsList paramsList = createParamsList(proveedores);
 
 		if (!paramsList.isEmpty()) {
-			invocarServicioRestWebcom(WebcomEndpoint.proveedores(appProperties), paramsList, registro);
+			result = invocarServicioRestWebcom(WebcomEndpoint.proveedores(appProperties), paramsList, registro);
 		} else {
 			logger.trace("ParamsList vacío. Nada que enviar");
 		}
-
+		return result;
 	}
 
 	@Override
-	public void webcomRestEstadoInformeMediador(List<InformeMediadorDto> informes) throws ErrorServicioWebcom {
-		this.webcomRestEstadoInformeMediador(informes, null);
+	public JSONObject webcomRestEstadoInformeMediador(List<InformeMediadorDto> informes) throws ErrorServicioWebcom {
+		return this.webcomRestEstadoInformeMediador(informes, null);
 	}
 	
-	public void webcomRestEstadoInformeMediador(List<InformeMediadorDto> informes, RestLlamada registro) throws ErrorServicioWebcom {
+	public JSONObject webcomRestEstadoInformeMediador(List<InformeMediadorDto> informes, RestLlamada registro) throws ErrorServicioWebcom {
 		logger.trace("Invocando servicio Webcom: Envio cambios estado Informe Mediador");
+		JSONObject result = null;
 
 		ParamsList paramsList = createParamsList(informes);
 
 		if (!paramsList.isEmpty()) {
-			invocarServicioRestWebcom(WebcomEndpoint.estadoInformeMediador(appProperties), paramsList, registro);
+			result = invocarServicioRestWebcom(WebcomEndpoint.estadoInformeMediador(appProperties), paramsList, registro);
 		} else {
 			logger.trace("ParamsList vacío. Nada que enviar");
 		}
-
+		return result;
 	}
 
 	@Override
-	public void webcomRestCabeceraObrasNuevas(List<CabeceraObrasNuevasDto> cabeceras) throws ErrorServicioWebcom {
-		this.webcomRestCabeceraObrasNuevas(cabeceras, null);
+	public JSONObject webcomRestCabeceraObrasNuevas(List<CabeceraObrasNuevasDto> cabeceras) throws ErrorServicioWebcom {
+		return this.webcomRestCabeceraObrasNuevas(cabeceras, null);
 	}
 	
-	public void webcomRestCabeceraObrasNuevas(List<CabeceraObrasNuevasDto> cabeceras, RestLlamada registro) throws ErrorServicioWebcom {
+	public JSONObject webcomRestCabeceraObrasNuevas(List<CabeceraObrasNuevasDto> cabeceras, RestLlamada registro) throws ErrorServicioWebcom {
 		logger.trace("Invocando servicio Webcom: Envio Cabeceras Obras Nuevas");
+		JSONObject result = null;
 
 		ParamsList paramsList = createParamsList(cabeceras);
 
 		if (!paramsList.isEmpty()) {
-			invocarServicioRestWebcom(WebcomEndpoint.cabecerasObrasNuevas(appProperties),paramsList, registro);
+			result = invocarServicioRestWebcom(WebcomEndpoint.cabecerasObrasNuevas(appProperties),paramsList, registro);
 		} else {
 			logger.trace("ParamsList vacío. Nada que enviar");
 		}
-
+		return result;
 	}
 
 	@Override
-	public void webcomRestActivosObrasNuevas(List<ActivoObrasNuevasDto> activos) throws ErrorServicioWebcom {
-		this.webcomRestActivosObrasNuevas(activos, null);
+	public JSONObject webcomRestActivosObrasNuevas(List<ActivoObrasNuevasDto> activos) throws ErrorServicioWebcom {
+		return this.webcomRestActivosObrasNuevas(activos, null);
 	}
 	
-	public void webcomRestActivosObrasNuevas(List<ActivoObrasNuevasDto> activos, RestLlamada registro) throws ErrorServicioWebcom {
+	public JSONObject webcomRestActivosObrasNuevas(List<ActivoObrasNuevasDto> activos, RestLlamada registro) throws ErrorServicioWebcom {
 		logger.trace("Invocando servicio Webcom: Envio Activos Obras Nuevas");
+		JSONObject result = null;
 
 		ParamsList paramsList = createParamsList(activos);
 
 		if (!paramsList.isEmpty()) {
-			invocarServicioRestWebcom(WebcomEndpoint.activosObrasNuevas(appProperties), paramsList, registro);
+			result = invocarServicioRestWebcom(WebcomEndpoint.activosObrasNuevas(appProperties), paramsList, registro);
 		} else {
 			logger.trace("ParamsList vacío. Nada que enviar");
 		}
-
+		return result;
 	}
 	
 	@Override
-	public void webcomRestUsuarios(List<UsuarioDto> usuarios) throws ErrorServicioWebcom {
-		this.webcomRestUsuarios(usuarios, null);
+	public JSONObject webcomRestUsuarios(List<UsuarioDto> usuarios) throws ErrorServicioWebcom {
+		return this.webcomRestUsuarios(usuarios, null);
 	}
 	
-	public void webcomRestUsuarios(List<UsuarioDto> usuarios, RestLlamada registro) throws ErrorServicioWebcom {
+	public JSONObject webcomRestUsuarios(List<UsuarioDto> usuarios, RestLlamada registro) throws ErrorServicioWebcom {
 		logger.trace("Invocando servicio Webcom: Envio Usuarios");
+		JSONObject result = null;
 
 		ParamsList paramsList = createParamsList(usuarios);
 
 		if (!paramsList.isEmpty()) {
-			invocarServicioRestWebcom(WebcomEndpoint.usuarios(appProperties),paramsList, registro);
+			result = invocarServicioRestWebcom(WebcomEndpoint.usuarios(appProperties),paramsList, registro);
 		} else {
 			logger.trace("ParamsList vacío. Nada que enviar");
 		}
-		
+		return result;
 	}
 
 	@Override
-	public void webcomRestObrasNuevasCampanyas(List<CampanyaObrasNuevasDto> campanyas) throws ErrorServicioWebcom {
-		this.webcomRestObrasNuevasCampanyas(campanyas, null);
+	public JSONObject webcomRestObrasNuevasCampanyas(List<CampanyaObrasNuevasDto> campanyas) throws ErrorServicioWebcom {
+		return this.webcomRestObrasNuevasCampanyas(campanyas, null);
 	}
 	
-	public void webcomRestObrasNuevasCampanyas(List<CampanyaObrasNuevasDto> campanyas, RestLlamada registro) throws ErrorServicioWebcom {
+	public JSONObject webcomRestObrasNuevasCampanyas(List<CampanyaObrasNuevasDto> campanyas, RestLlamada registro) throws ErrorServicioWebcom {
 		logger.trace("Invocando servicio Webcom: Envio Obras Nuevas Campanyas");
+		JSONObject result = null;
 
 		ParamsList paramsList = createParamsList(campanyas);
 
 		if (!paramsList.isEmpty()) {
-			invocarServicioRestWebcom(WebcomEndpoint.obrasNuevasCampanyas(appProperties), paramsList, registro);
+			result = invocarServicioRestWebcom(WebcomEndpoint.obrasNuevasCampanyas(appProperties), paramsList, registro);
 		} else {
 			logger.trace("ParamsList vacío. Nada que enviar");
 		}
+		return result;
 	}
 
 	@Override

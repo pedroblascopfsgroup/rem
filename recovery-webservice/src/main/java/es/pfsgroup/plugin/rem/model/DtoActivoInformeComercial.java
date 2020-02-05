@@ -64,6 +64,8 @@ public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
 	private Integer posibleInforme;
 	private String motivoNoPosibleInforme;
 	private Boolean posibleInformeBoolean;
+	private Integer autorizacionWebEspejo;
+	private Date fechaRecepcionLlavesEspejo;
 	
 	public String getInferiorMunicipioCodigo() {
 		return inferiorMunicipioCodigo;
@@ -384,6 +386,18 @@ public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
 	}
 	public void setPosibleInformeBoolean(Boolean posibleInformeBoolean) {
 		this.posibleInformeBoolean = posibleInformeBoolean;
+	}
+	public Integer getAutorizacionWebEspejo() {
+		return autorizacionWebEspejo;
+	}
+	public void setAutorizacionWebEspejo(Integer autorizacionWebEspejo) {
+		this.autorizacionWebEspejo = autorizacionWebEspejo;
+	}
+	public Date getFechaRecepcionLlavesEspejo() {
+		return fechaRecepcionLlavesEspejo;
+	}
+	public void setFechaRecepcionLlavesEspejo(Date fechaRecepcionLlavesEspejo) {
+		this.fechaRecepcionLlavesEspejo = fechaRecepcionLlavesEspejo;
 	}
 	
 	

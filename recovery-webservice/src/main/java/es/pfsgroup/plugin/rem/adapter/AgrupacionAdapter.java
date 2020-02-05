@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.adapter;
 
 import java.lang.reflect.InvocationTargetException;
-import java.security.SecurityPermission;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -121,7 +120,6 @@ import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEntidadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -3118,15 +3116,6 @@ public class AgrupacionAdapter {
 				DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDTipoComercializacion.class, dto.getTipoComercializacionCodigo());
 
-				if(!Checks.estaVacio(ofertasAgr)) {
-					for(Oferta oferta : ofertasAgr) {
-						if(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
-							ofertaViva = true;
-							throw new JsonViewerException(AGRUPACION_CAMBIO_DEST_COMERCIAL_CON_OFERTAS_VIVAS);
-						}
-					}
-				}
-
 				if(!ofertaViva) {
 					List<ActivoAgrupacionActivo> listaActivos = loteComercial.getActivos();
 
@@ -3194,15 +3183,7 @@ public class AgrupacionAdapter {
 				DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDTipoComercializacion.class, dto.getTipoComercializacionCodigo());
 
-				if(!Checks.estaVacio(ofertasAgr)) {
-					for(Oferta oferta : ofertasAgr) {
-						if(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
-							ofertaViva = true;
-							throw new JsonViewerException(AGRUPACION_CAMBIO_DEST_COMERCIAL_CON_OFERTAS_VIVAS);
-						}
-					}
-				}
-
+				
 				if(!ofertaViva && !Checks.esNulo(tipoComercializacion)) {
 					List<ActivoAgrupacionActivo> listaActivos = loteComercial.getActivos();
 

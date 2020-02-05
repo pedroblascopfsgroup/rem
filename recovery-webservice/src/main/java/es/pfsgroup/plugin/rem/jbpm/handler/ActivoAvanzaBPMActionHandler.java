@@ -16,6 +16,7 @@ public class ActivoAvanzaBPMActionHandler extends ActivoBaseActionHandler implem
      */
     @Override
     public void onEnter(ExecutionContext executionContext) {
+    	//empty
     }
 
     /**

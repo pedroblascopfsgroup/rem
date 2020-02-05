@@ -1,17 +1,19 @@
 --/*
 --#########################################
---## AUTOR=Oscar Diestre
---## FECHA_CREACION=20190718
+--## AUTOR=Mª José Ponce
+--## FECHA_CREACION=20200204
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-4833
+--## INCIDENCIA_LINK=HREOS-9344
 --## PRODUCTO=NO
 --## 
 --## Finalidad:  Creación del SP SP_EXT_IN_LLAVE
 --##            
 --## INSTRUCCIONES:  
 --## VERSIONES:
---##        0.1-Oscar Diestre-Versión inicial (20190718)
+--##        0.1-Oscar Diestre-Versión inicial REMVIP-4833(20190718)
+--##        0.2-Modificar parámetros SP HREOS-9065
+--##        0.3-Modificar parámetros de fecha SP HREOS-9344
 --#########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -21,23 +23,25 @@ SET SERVEROUTPUT ON;
 SET DEFINE OFF;
 
 CREATE OR REPLACE PROCEDURE       SP_EXT_IN_LLAVE (
-         ACT_NUM_ACTIVO    	IN NUMBER,
-	 LLV_NUM_LLAVE     	IN VARCHAR2,
-	 LLV_COD_CENTRO    	IN VARCHAR2,
-	 LLV_NOMBRE_CENTRO 	IN VARCHAR2,
-	 LLV_ARCHIVO1	   	IN VARCHAR2,
-	 LLV_ARCHIVO2	   	IN VARCHAR2,
-	 LLV_ARCHIVO3 	   	IN VARCHAR2,
-	 LLV_COMPLETO	       	IN NUMBER,
-	 LLV_MOTIVO_INCOMPLETO 	IN VARCHAR2,
-         V_USUARIO         	  VARCHAR2 DEFAULT 'SP_EXT_IN_LLAVE',
-         COD_RETORNO    OUT NUMBER
+    ACT_NUM_ACTIVO    	      IN NUMBER,
+	 LLV_NUM_LLAVE     	      IN VARCHAR2,
+    DD_TTE_CODIGO_POSEEDOR    IN VARCHAR2,
+    LLV_COD_TENEDOR_POSEEDOR  IN VARCHAR2,
+    LLV_FECHA_ANILLADO        IN VARCHAR2,
+    LLV_FECHA_RECEPCION       IN VARCHAR2,
+    LLV_CODE                  IN VARCHAR2,
+    LLV_COMPLETO              IN VARCHAR2,
+    LLV_OBSERVACIONES         IN VARCHAR2,
+      V_USUARIO         	  VARCHAR2 DEFAULT 'SP_EXT_IN_LLAVE',
+      COD_RETORNO            OUT NUMBER
 ) AS
 
---
+--v0.2
 
 V_SQL VARCHAR2(32000 CHAR); 											-- Sentencia a ejecutar.
 V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; 								-- Configuracion Esquema.
+V_LLV_COD_TENEDOR_NO_PVE VARCHAR2(25 CHAR); --Vble. para rellenar registro de la tabla.
+V_LLV_COD_TENEDOR_POSEEDOR VARCHAR2(25 CHAR); --Vble. para rellenar registro de la tabla.  
 ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
 ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 V_ACT_ID NUMBER( 16 );
@@ -64,6 +68,18 @@ BEGIN
 	EXECUTE IMMEDIATE V_SQL INTO V_ACT_ID;
 	DBMS_OUTPUT.PUT_LINE('[INFO] Existe el activo '|| ACT_NUM_ACTIVO ||' pasado por parámetro.');
 
+   IF (DD_TTE_CODIGO_POSEEDOR NOT IN('01', '02', '03', '04', '05', '06', '07')) THEN
+   
+    V_LLV_COD_TENEDOR_NO_PVE := LLV_COD_TENEDOR_POSEEDOR;
+    V_LLV_COD_TENEDOR_POSEEDOR := '';
+
+   ELSE
+
+    V_SQL := 'SELECT PVE_ID FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR WHERE PVE_COD_REM = '||LLV_COD_TENEDOR_POSEEDOR||' AND BORRADO = 0';
+   EXECUTE IMMEDIATE V_SQL INTO V_LLV_COD_TENEDOR_POSEEDOR;
+
+   END IF;
+
 --------------------------------------------------------------------------------
 
    -- Crea el registro en ACT_LLV_LLAVE: 
@@ -72,14 +88,15 @@ BEGIN
                ( 
                  LLV_ID,
                  ACT_ID,
-                 LLV_COD_CENTRO,
-                 LLV_NOMBRE_CENTRO,
-                 LLV_ARCHIVO1,
-                 LLV_ARCHIVO2,
-                 LLV_ARCHIVO3,
-                 LLV_COMPLETO,
-                 LLV_MOTIVO_INCOMPLETO,
                  LLV_NUM_LLAVE,
+                 DD_TTE_ID_POSEEDOR,
+                 LLV_COD_TENEDOR_POSEEDOR,
+                 LLV_COD_TENEDOR_NO_PVE,
+                 LLV_FECHA_ANILLADO,
+                 LLV_FECHA_RECEPCION,
+                 LLV_CODE,
+                 LLV_COMPLETO,
+                 LLV_OBSERVACIONES,
                  VERSION,
                  USUARIOCREAR,
                  FECHACREAR,
@@ -87,16 +104,17 @@ BEGIN
                 )
                 VALUES
                 (
-                 S_ACT_LLV_LLAVE.NEXTVAL,
+                 '  || V_ESQUEMA || '.S_ACT_LLV_LLAVE.NEXTVAL,
                  ' || V_ACT_ID ||',
-                 ''' || LLV_COD_CENTRO         || ''',
-                 ''' || LLV_NOMBRE_CENTRO      || ''',
-                 ''' || LLV_ARCHIVO1           || ''',
-                 ''' || LLV_ARCHIVO2           || ''',
-                 ''' || LLV_ARCHIVO3           || ''',
-                   ' || LLV_COMPLETO           ||   ',
-                 ''' || LLV_MOTIVO_INCOMPLETO  || ''',
-                 ''' || LLV_NUM_LLAVE          || ''',
+                 ''' || LLV_NUM_LLAVE|| ''',
+                  ( SELECT DD_TTE_ID FROM '  || V_ESQUEMA || '.DD_TTE_TIPO_TENEDOR WHERE DD_TTE_CODIGO = ''' || DD_TTE_CODIGO_POSEEDOR || ''' ),
+                 ''' || V_LLV_COD_TENEDOR_POSEEDOR || ''',
+                 ''' || V_LLV_COD_TENEDOR_NO_PVE || ''',
+                 TO_DATE('''|| LLV_FECHA_ANILLADO||''',''dd/mm/yyyy''),
+                 TO_DATE('''|| LLV_FECHA_RECEPCION|| ''',''dd/mm/yyyy''),
+                 ''' || LLV_CODE|| ''',
+                  ( SELECT DD_TIC_ID FROM '  || V_ESQUEMA || '.DD_TIC_TIPO_COMPLETO WHERE DD_TIC_CODIGO = ''' || LLV_COMPLETO || ''' ),                   
+                 ''' || LLV_OBSERVACIONES|| ''',
                  0,
                  ''' || V_USUARIO || ''',
                  SYSDATE,
@@ -110,7 +128,6 @@ BEGIN
    COMMIT;
 
        COD_RETORNO := 1;
-
 
 EXCEPTION
    WHEN OTHERS THEN

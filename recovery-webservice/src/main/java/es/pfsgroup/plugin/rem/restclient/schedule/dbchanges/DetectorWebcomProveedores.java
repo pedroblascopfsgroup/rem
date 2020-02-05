@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ProveedorDto;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
-import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosList;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
+import net.sf.json.JSONObject;
 
 @Component
 public class DetectorWebcomProveedores extends DetectorCambiosBD<ProveedorDto> {
@@ -39,8 +39,8 @@ public class DetectorWebcomProveedores extends DetectorCambiosBD<ProveedorDto> {
 	}
 
 	@Override
-	public void invocaServicio(List<ProveedorDto> data, RestLlamada registro) throws ErrorServicioWebcom {
-		serviciosWebcom.webcomRestProveedores(data, registro);
+	public JSONObject invocaServicio(List<ProveedorDto> data, RestLlamada registro) throws ErrorServicioWebcom {
+		return serviciosWebcom.webcomRestProveedores(data, registro);
 		
 	}
 

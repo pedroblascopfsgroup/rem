@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.rem.tramitacionOfertas;
+package es.pfsgroup.plugin.rem.tramitacionofertas;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -57,6 +57,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
@@ -551,6 +552,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 		// Establecer la fecha de aceptación/alta a ahora.
 		nuevoExpediente.setFechaAlta(new Date());
+		
+		crearCompradores(oferta, nuevoExpediente);
 
 		nuevoExpediente.setTipoAlquiler(oferta.getActivoPrincipal().getTipoAlquiler());
 
@@ -1685,9 +1688,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	}
 
 	@Transactional
-	public void doTramitacion(Activo activo, Oferta oferta, Long idTrabajo, ExpedienteComercial expedienteComercial) throws IllegalAccessException, InvocationTargetException {
-		expedienteComercial = this.crearCompradores(oferta, expedienteComercial);
-		trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
+	public ActivoTramite doTramitacion(Activo activo, Oferta oferta, Long idTrabajo, ExpedienteComercial expedienteComercial) 
+			throws IllegalAccessException, InvocationTargetException {
+		ActivoTramite activoTramite = trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
 		expedienteComercial = this.crearCondicionanteYTanteo(activo, oferta, expedienteComercial);
 		expedienteComercial = this.crearExpedienteReserva(expedienteComercial);
 		expedienteComercialApi.crearCondicionesActivoExpediente(activo, expedienteComercial);
@@ -1709,6 +1712,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		this.asignarGestorYSupervisorFormalizacionToExpediente(expedienteComercial);
 
 		activoManager.actualizarOfertasTrabajosVivos(activo.getId());
+		return activoTramite;
 
 	}
 
@@ -1726,7 +1730,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOne(idExpedienteComercial);
 
 		try {
-			expedienteComercial = this.crearCompradores(oferta, expedienteComercial);
 			transactionManager.commit(transaction);
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 			trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);

@@ -1622,10 +1622,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		dto.setIsCarteraLbkVenta(isCarteraLbkVenta);
 		Boolean isLbkOfertaComercialPrincipal = false;
 		Boolean muestraOfertaComercial = false;
-		if (isCarteraLbkVenta && !Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.OFERTA_AGRUPADA_PRINCIPAL.equals(oferta.getClaseOferta().getCodigo())) {
+		if (isCarteraLbkVenta && !Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(oferta.getClaseOferta().getCodigo())) {
 			isLbkOfertaComercialPrincipal = true;
 			muestraOfertaComercial = true;
-		}else if (isCarteraLbkVenta && !Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.OFERTA_AGRUPADA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
+		}else if (isCarteraLbkVenta && !Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
 			muestraOfertaComercial = true;
 		
 		}
@@ -1637,10 +1637,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (isCarteraLbkVenta && !Checks.esNulo(oferta.getClaseOferta())) {
 			dto.setClaseOfertaDescripcion(oferta.getClaseOferta().getDescripcion());
 			dto.setClaseOfertaCodigo(oferta.getClaseOferta().getCodigo());
-			if (!Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.OFERTA_AGRUPADA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
+			if (!Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
 				dto.setNumOferPrincipal(ofertaApi.getOfertaPrincipalById(oferta.getId()).getNumOferta());
 
-			}else if (!Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.OFERTA_AGRUPADA_PRINCIPAL.equals(oferta.getClaseOferta().getCodigo())) {
+			}else if (!Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(oferta.getClaseOferta().getCodigo())) {
 				try {
 					List <OfertasAgrupadasLbk> oferAgrupa = oferta.getOfertasAgrupadas();
 

@@ -303,17 +303,24 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 				// Se añade la oferta principal
 				listaOfertas.add(principal);
+				
+				//Se añaden los honorarios de la oferta principal
+				ExpedienteComercial expedienteComercial = expedienteComercialDao.getExpedienteComercialByIdOferta(principal.getId());
+				List<GastosExpediente> listaHonorarios = expedienteComercial.getHonorarios();
+
+				for (GastosExpediente gex : listaHonorarios) {
+					cco += gex.getImporteFinal() * gex.getImporteCalculo();
+				}
 
 				// Se añaden las dependientes
 				for (OfertasAgrupadasLbk lisOf : ofertasAgrupadas) {
 					Oferta ofrDependiente = lisOf.getOfertaDependiente();
 
-					ExpedienteComercial expedienteComercial = expedienteComercialDao
-							.getExpedienteComercialByIdOferta(ofrDependiente.getId());
+					expedienteComercial = expedienteComercialDao.getExpedienteComercialByIdOferta(ofrDependiente.getId());
 
 					if (!Checks.esNulo(expedienteComercial)
 							&& DDEstadoOferta.CODIGO_ACEPTADA.equals(ofrDependiente.getEstadoOferta().getCodigo())) {
-						List<GastosExpediente> listaHonorarios = expedienteComercial.getHonorarios();
+						listaHonorarios = expedienteComercial.getHonorarios();
 
 						for (GastosExpediente gex : listaHonorarios) {
 							cco += gex.getImporteFinal() * gex.getImporteCalculo();

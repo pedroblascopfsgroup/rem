@@ -279,15 +279,6 @@ public class VBusquedaActivos implements Serializable {
 
 	@Column(name = "ICO_MEDIADOR_ID")
 	private Long apiPrimarioId;
-
-	@Column(name = "DD_TAL_DESCRIPCION")
-	private String tipoAlquilerDescripcion;
-
-	@Column(name = "APU_FECHA_INI_VENTA")
-	private Date fechaPublicacionVenta;
-
-	@Column(name = "APU_FECHA_INI_ALQUILER")
-	private Date fechaPublicacionAlquiler;
 	
 	/*
 	  La variable tipoComercializacionCodigoAuxiliar es utilizada el listado de activos del filtro para saber si tiene que mostrar la
@@ -669,38 +660,6 @@ public class VBusquedaActivos implements Serializable {
 
 	public void setDireccionTerritorialCodigo(String direccionTerritorialCodigo) {
 		this.direccionTerritorialCodigo = direccionTerritorialCodigo;
-	}
-
-	public Long getApiPrimariaId() {
-		return apiPrimarioId;
-	}
-
-	public void setApiPrimariaId(Long apiPrimarioId) {
-		this.apiPrimarioId = apiPrimarioId;
-	}
-
-	public String getTipoAlquilerDescripcion() {
-		return tipoAlquilerDescripcion;
-	}
-
-	public void setTipoAlquilerDescripcion(String tipoAlquilerDescripcion) {
-		this.tipoAlquilerDescripcion = tipoAlquilerDescripcion;
-	}
-
-	public Date getFechaPublicacionVenta() {
-		return fechaPublicacionVenta;
-	}
-
-	public void setFechaPublicacionVenta(Date fechaPublicacionVenta) {
-		this.fechaPublicacionVenta = fechaPublicacionVenta;
-	}
-
-	public Date getFechaPublicacionAlquiler() {
-		return fechaPublicacionAlquiler;
-	}
-
-	public void setFechaPublicacionAlquiler(Date fechaPublicacionAlquiler) {
-		this.fechaPublicacionAlquiler = fechaPublicacionAlquiler;
 	}
 
 	public String getTipoComercializacionCodigo() {

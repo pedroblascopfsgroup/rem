@@ -19,7 +19,7 @@ public class DtoAgrupacionesCreateDelete {
 	private Usuario gestorComercial;
 	private Long numAgrupacionRem;
 	private String direccion;
-
+	private Boolean esFormalizacion;
 
 	
 	public String getNombre() {
@@ -76,5 +76,11 @@ public class DtoAgrupacionesCreateDelete {
 	}
 	public void setDireccion(String direccion) {
 		this.direccion = direccion;
+	}
+	public Boolean getEsFormalizacion() {
+		return esFormalizacion;
+	}
+	public void setEsFormalizacion(Boolean esFormalizacion) {
+		this.esFormalizacion = esFormalizacion;
 	}
 }

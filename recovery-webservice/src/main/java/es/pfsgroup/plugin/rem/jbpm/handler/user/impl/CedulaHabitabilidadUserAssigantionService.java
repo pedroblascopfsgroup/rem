@@ -66,21 +66,21 @@ public class CedulaHabitabilidadUserAssigantionService implements UserAssigantio
 
 				Filter filtroTipoGestor = null;
 				Filter filtroUsuarioPorDefecto = null;
-				if ((CODIGO_T008_SOLICITUD_DOCUMENTO.equals(codTarea)
+				if (((CODIGO_T008_SOLICITUD_DOCUMENTO.equals(codTarea) && !DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()))
 						|| CODIGO_T008_OBTENCION_DOCUMENTO.equals(codTarea)) 
 						&& gestorActivoApi.existeGestorEnActivo(tareaActivo.getActivo(), GestorActivoApi.CODIGO_GESTORIA_CEDULAS)) {
 					filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo",
 								GestorActivoApi.CODIGO_GESTORIA_CEDULAS);
-				}else if(CODIGO_T008_ANALISIS_PETICION.equals(codTarea) && (DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()))) {
+				}else if(CODIGO_T008_SOLICITUD_DOCUMENTO.equals(codTarea) && DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo())) {
+					ActivoProveedorContacto proveedor = tareaActivo.getTramite().getTrabajo().getProveedorContacto();
+					if (!Checks.esNulo(proveedor)) {
+						return proveedor.getUsuario();
+					}
+				}else if(CODIGO_T008_ANALISIS_PETICION.equals(codTarea) && (DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()) 
+						|| DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()))) {
 					if(gestorActivoApi.existeGestorEnActivo(tareaActivo.getActivo(), GestorActivoApi.CODIGO_GESTOR_ACTIVO))
 						filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo",
 								GestorActivoApi.CODIGO_GESTOR_ACTIVO);
-				}else if(CODIGO_T008_ANALISIS_PETICION.equals(codTarea) && (DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()))) {
-					filtroUsuarioPorDefecto = genericDao.createFilter(FilterType.EQUALS ,"username", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_CEE_BANKIA_POR_DEFECTO));
-					Usuario usuPorDefecto = genericDao.get(Usuario.class, filtroUsuarioPorDefecto);
-					if (!Checks.esNulo(usuPorDefecto)) {
-						return usuPorDefecto;
-					}
 				}else {
 					filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo",
 							GestorActivoApi.CODIGO_GESTOR_ADMISION);

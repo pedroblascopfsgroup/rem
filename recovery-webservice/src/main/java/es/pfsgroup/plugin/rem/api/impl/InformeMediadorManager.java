@@ -1249,6 +1249,8 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				|| ((ActivoInfoComercial) objeto).getId() == null) {
 			if (infoAux.getMediadorInforme() != null) {
 				idProveedor = infoAux.getMediadorInforme().getId();
+			}else {
+				idProveedor = -1L;
 			}
 
 			genericaRestDaoImp.deleteInformeMediador(infoAux);
@@ -1433,7 +1435,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 							informeEntity.setActivo(activo);
 						}
 
-						if (!Checks.esNulo(idProveedorParche)) {
+						if (!Checks.esNulo(idProveedorParche) && !new Long(-1).equals(idProveedorParche)) {
 							Filter filterPve = genericDao.createFilter(FilterType.EQUALS, "id", idProveedorParche);
 							ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filterPve);
 							if (!Checks.esNulo(proveedor)) {
@@ -1442,7 +1444,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						}
 
 						informeEntity = (ActivoInfoComercial) dtoToEntity.saveDtoToBbdd(informe, entitys,
-								(JSONObject) jsonFields.getJSONArray("data").get(i));
+								(JSONObject) jsonFields.getJSONArray("data").get(i), idProveedorParche);
 						// Si viene información de las plantas lo guardamos
 						List<PlantaDto> plantas = informe.getPlantas();
 						if (!Checks.esNulo(informe.getPlantas()) && !Checks.estaVacio(informe.getPlantas())) {

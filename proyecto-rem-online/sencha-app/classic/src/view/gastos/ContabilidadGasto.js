@@ -149,7 +149,8 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 														},
 										        		bind: {
 									            			store: '{comboSubpartidaPresupuestaria}',
-									            			value: '{contabilidad.idSubpartidaPresupuestaria}'
+									            			value: '{contabilidad.idSubpartidaPresupuestaria}',
+									            			hidden: '{!esCerberusDivarianApple}'
 									            		},
 									            		displayField	: 'descripcion',  
 														valueField		: 'id'												

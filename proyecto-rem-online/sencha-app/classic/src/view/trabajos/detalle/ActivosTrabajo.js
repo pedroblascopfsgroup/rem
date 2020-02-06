@@ -152,7 +152,11 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
 			        	renderer: function(value) {
 			            	return Ext.util.Format.number(value, '0.00%');
 			            },
-			            summaryType: 'sum',
+			            summaryType: function(){
+			            	var store = this;
+		                    var value = store.sumaParticipacion;
+		                    return value;		                    
+			            },
 			            summaryRenderer: function(value, summaryData, dataIndex) {
 			            	var value2=Ext.util.Format.number(value, '0.00');
 			            	var msg = HreRem.i18n("fieldlabel.participacion.total") + " " + value2 + "%";

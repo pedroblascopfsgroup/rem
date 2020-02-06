@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Carles
---## FECHA_CREACION=20191230
+--## AUTOR=Adrián Molina
+--## FECHA_CREACION=20200125
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-6109
+--## INCIDENCIA_LINK=REMVIP-6181
 --## PRODUCTO=NO
 --## Finalidad: Procedimiento almacenado que calcula el DD_ECA_ID de la tabla ACT_CRG_CARGAS.
 --##           
@@ -61,7 +61,7 @@ BEGIN
                     ACT.DD_ECA_ID = AUX.DD_ECA_ID
                     ,ACT.USUARIOMODIFICAR = '''||V_USUARIO||'''
                     ,ACT.FECHAMODIFICAR = SYSDATE
-				   WHERE ACT.DD_ECA_ID <> AUX.DD_ECA_ID';
+				   WHERE ACT.DD_ECA_ID <> AUX.DD_ECA_ID OR ACT.DD_ECA_ID IS NULL';
 
         EXECUTE IMMEDIATE V_MSQL;
 
@@ -95,7 +95,7 @@ BEGIN
                     ACT.DD_ECA_ID = AUX.DD_ECA_ID
                     ,ACT.USUARIOMODIFICAR = '''||V_USUARIO||'''
                     ,ACT.FECHAMODIFICAR = SYSDATE
-				   WHERE ACT.DD_ECA_ID <> AUX.DD_ECA_ID';
+				   WHERE ACT.DD_ECA_ID <> AUX.DD_ECA_ID OR ACT.DD_ECA_ID IS NULL';
 
         EXECUTE IMMEDIATE V_MSQL;
 
@@ -127,7 +127,7 @@ BEGIN
                     ACT.DD_ECA_ID = AUX.DD_ECA_ID
                     ,ACT.USUARIOMODIFICAR = '''||V_USUARIO||'''
                     ,ACT.FECHAMODIFICAR = SYSDATE
-				   WHERE ACT.DD_ECA_ID <> AUX.DD_ECA_ID';
+				   WHERE ACT.DD_ECA_ID <> AUX.DD_ECA_ID OR ACT.DD_ECA_ID IS NULL';
 
         EXECUTE IMMEDIATE V_MSQL;
 
@@ -159,7 +159,7 @@ BEGIN
                     ACT.DD_ECA_ID = AUX.DD_ECA_ID
                     ,ACT.USUARIOMODIFICAR = '''||V_USUARIO||'''
                     ,ACT.FECHAMODIFICAR = SYSDATE
-				   WHERE ACT.DD_ECA_ID <> AUX.DD_ECA_ID';
+				   WHERE ACT.DD_ECA_ID <> AUX.DD_ECA_ID OR ACT.DD_ECA_ID IS NULL';
 
         EXECUTE IMMEDIATE V_MSQL;
 
@@ -193,7 +193,7 @@ BEGIN
                     ACT.DD_ECA_ID = AUX.DD_ECA_ID
                     ,ACT.USUARIOMODIFICAR = '''||V_USUARIO||'''
                     ,ACT.FECHAMODIFICAR = SYSDATE
-				   WHERE ACT.DD_ECA_ID <> AUX.DD_ECA_ID';
+				   WHERE ACT.DD_ECA_ID <> AUX.DD_ECA_ID OR ACT.DD_ECA_ID IS NULL';
 
         EXECUTE IMMEDIATE V_MSQL;
 

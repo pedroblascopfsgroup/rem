@@ -11,14 +11,12 @@ import org.springframework.stereotype.Repository;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.users.UsuarioManager;
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.framework.paradise.gestorEntidad.dao.GestorEntidadDao;
 import es.pfsgroup.plugin.rem.gestorSustituto.dao.GestorSustitutoDao;
 import es.pfsgroup.plugin.rem.model.DtoGestoresSustitutosFilter;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
-import es.pfsgroup.plugin.rem.model.VBusquedaGestoresSustitutos;
 
 @Repository("GestorSustitutoDao")
 public class GestorSustitutoDaoImpl extends AbstractEntityDao<GestorSustituto, Long> implements GestorSustitutoDao {
@@ -60,8 +58,11 @@ public class GestorSustitutoDaoImpl extends AbstractEntityDao<GestorSustituto, L
 			logger.error("Error en GestorSustitutoDaoImpl", e);
 		} finally {
 			try {
-				if (cs != null && !cs.isClosed())
+				if(cs != null) {
 					cs.close();
+				}				
+				con.close();
+					
 			} catch (SQLException e) {
 				logger.error("Error en GestorSustitutoDaoImpl", e);
 			}

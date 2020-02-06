@@ -89,6 +89,14 @@ Ext.define('HreRem.view.publicacion.PublicacionModel', {
 				extraParams: {diccionario: 'motivosOcultacion'}
 			}
 			
+		},
+		
+		comboFasePublicacion: {
+			model : 'HreRem.model.ComboBase',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'activo/getDiccionarioFasePublicacion'
+			}
 		}
     }
 });

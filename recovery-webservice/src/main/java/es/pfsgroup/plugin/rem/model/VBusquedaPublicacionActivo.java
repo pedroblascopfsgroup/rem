@@ -80,6 +80,9 @@ public class VBusquedaPublicacionActivo implements Serializable {
     
     @Column(name="MOTIVO_OCULTACION_VENTA")
     private String motivoOcultacionVenta;
+	
+	@Column(name = "FASE_PUBLICACION_CODIGO")
+	private String fasePublicacionCodigo;
 
 	public Long getId() {
 		return id;
@@ -247,6 +250,14 @@ public class VBusquedaPublicacionActivo implements Serializable {
 
 	public void setMotivoOcultacionVenta(String motivoOcultacionVenta) {
 		this.motivoOcultacionVenta = motivoOcultacionVenta;
+	}
+
+	public String getFasePublicacionCodigo() {
+		return fasePublicacionCodigo;
+	}
+
+	public void setFasePublicacionCodigo(String fasePublicacionCodigo) {
+		this.fasePublicacionCodigo = fasePublicacionCodigo;
 	}
     
 }

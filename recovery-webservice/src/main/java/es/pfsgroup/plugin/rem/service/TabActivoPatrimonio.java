@@ -292,7 +292,8 @@ public class TabActivoPatrimonio implements TabActivoService {
 			activoHistoricoPatrimonioDao.save(activoHistPatrimonio);
 		}
 
-		if(!Checks.esNulo(activoPatrimonioDto.getTipoAlquilerCodigo())){
+		if(!Checks.esNulo(activoPatrimonioDto.getTipoAlquilerCodigo()) 
+				|| (Checks.esNulo(activoPatrimonioDto.getTipoAlquilerCodigo()) && !Checks.esNulo(activo.getTipoAlquiler()))){
 
 			DDTipoAlquiler tipoAlquiler = genericDao.get(DDTipoAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo", activoPatrimonioDto.getTipoAlquilerCodigo()));
 			if(!Checks.esNulo(patrimonioContrato) && !Checks.esNulo(patrimonioContrato.getPazSocial())) {

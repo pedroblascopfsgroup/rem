@@ -10,12 +10,10 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.rem.adapter.RemUtils;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 
 @Component
 public class EmisionCEEUserAssigantionService implements UserAssigantionService {
@@ -29,9 +27,6 @@ public class EmisionCEEUserAssigantionService implements UserAssigantionService 
 	
 	@Autowired
 	private GenericABMDao genericDao;
-	
-	@Autowired
-	private RemUtils remUtils;
 	
 	@Override	
 	public String[] getKeys() {
@@ -50,44 +45,12 @@ public class EmisionCEEUserAssigantionService implements UserAssigantionService 
 		
 		if(!Checks.esNulo(tareaActivo) && 
 				!Checks.esNulo(tareaActivo.getTramite()) && 
-				!Checks.esNulo(tareaActivo.getTramite().getActivo()) &&
-				!Checks.esNulo(tareaActivo.getTramite().getActivo().getCartera())) {
+				!Checks.esNulo(tareaActivo.getTramite().getActivo())) {
 			
-			DDCartera cartera = tareaActivo.getTramite().getActivo().getCartera();
-			
-			// Si la cartera es TANGO o GIANTS, el gestor de las tareas es TINSA CERTIFY
-			if(DDCartera.CODIGO_CARTERA_TANGO.equals(cartera.getCodigo())
-			|| DDCartera.CODIGO_CARTERA_GIANTS.equals(cartera.getCodigo())){
-				//Usuario del Proveedor Tinsa para asignar a tareas (encontrado por CIF)
-				
-				Filter filtroUsuProveedorTangoGiants = genericDao.createFilter(FilterType.EQUALS, "username", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_PROVEEDOR_BANKIA_SAREB_TINSA));
-				Usuario usuProveedorTangoGiants = genericDao.get(Usuario.class, filtroUsuProveedorTangoGiants);
-				
-				if(!Checks.esNulo(usuProveedorTangoGiants))
-					return usuProveedorTangoGiants;
-
-			} else if (DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo())) {
-				
-				Filter filtroUsuProveedorBankia = genericDao.createFilter(FilterType.EQUALS, "username", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_PROVEEDOR_PACI));
-				Usuario usuProveedorBankia = genericDao.get(Usuario.class, filtroUsuProveedorBankia);
-				
-				if(!Checks.esNulo(usuProveedorBankia))
-					return usuProveedorBankia;
-				
-			}else if (DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo())){
-				
-				Filter filtroUsuProveedorSareb = genericDao.createFilter(FilterType.EQUALS, "username", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_PROVEEDOR_ELECNOR));
-				Usuario usuProveedorSareb = genericDao.get(Usuario.class, filtroUsuProveedorSareb);
-				
-				if(!Checks.esNulo(usuProveedorSareb))
-					return usuProveedorSareb;
-				
-			}else {
-			//Otras carteras, el gestor de las tareas es el proveedor del trabajo
-				ActivoProveedorContacto proveedor = tareaActivo.getTramite().getTrabajo().getProveedorContacto();
-				if(!Checks.esNulo(proveedor))
-					return proveedor.getUsuario();
-			}
+		//En todos los casos la asignación tirará del proveedor del trabajo (que puede variar), no de un proveedor puesto a piñón en el código
+			ActivoProveedorContacto proveedor = tareaActivo.getTramite().getTrabajo().getProveedorContacto();
+			if(!Checks.esNulo(proveedor))
+				return proveedor.getUsuario();
 		}
 
 		//Si no se ha podido determinar el gestor destinatario se mantiene el que tenga asociado la TAR_TAREAS

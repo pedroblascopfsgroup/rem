@@ -58,7 +58,7 @@ EXECUTE IMMEDIATE
     MLV_ENVIO                       VARCHAR(40  CHAR),
     MLV_FECHA_ENVIO                 VARCHAR(20 CHAR),
     MLV_FECHA_RECEPCION             VARCHAR(40 CHAR),
-    MLV_OBSERVACIONES               VARCHAR(100 CHAR),
+    MLV_OBSERVACIONES               VARCHAR(256 CHAR),
     MLV_ESTADO                      VARCHAR(100 CHAR),
     ID                              NUMBER(16,0) DEFAULT '||V_ESQUEMA_1||'.S_'||V_TABLA||'.NEXTVAL
 )'

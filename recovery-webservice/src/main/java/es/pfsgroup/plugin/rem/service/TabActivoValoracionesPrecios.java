@@ -128,9 +128,9 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 							beanUtilNotNull.copyProperty(valoracionesDto, "fechaVentaHaya", val.getFechaVentaHaya());
 						}
 						
-						if(!Checks.esNulo(val.getLiquidez())) {
-							beanUtilNotNull.copyProperty(valoracionesDto, "liquidez", val.getLiquidez());
-						}
+//						if(!Checks.esNulo(val.getLiquidez())) {
+//							beanUtilNotNull.copyProperty(valoracionesDto, "liquidez", val.getLiquidez());
+//						}
 						
 						/*
 						 * valorLegalVpo se informa desde la Info administrativa
@@ -191,6 +191,10 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 			VBusquedaActivosPrecios activoPrecio = listaActivos.get(0);
 			valoracionesDto.setIncluidoBolsaPreciar(Checks.esNulo(activoPrecio.getFechaRepreciar()));
 			valoracionesDto.setIncluidoBolsaRepreciar(!Checks.esNulo(activoPrecio.getFechaRepreciar()));
+		}
+		
+		if(!Checks.esNulo(activo.getValorLiquidez())) {
+			beanUtilNotNull.copyProperty(valoracionesDto, "liquidez", activo.getValorLiquidez());
 		}
 
 		return valoracionesDto;	

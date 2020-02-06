@@ -140,11 +140,17 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     		activosTrabajo: {
     			pageSize: $AC.getDefaultPageSize(),
 				 model: 'HreRem.model.ActivoTrabajo',
+				 sumaParticipacion: '0',
 				 proxy: {
 				    type: 'uxproxy',
 					remoteUrl: 'trabajo/getListActivos',
 					extraParams: {idTrabajo: '{trabajo.id}'},
 					timeout: 120000
+				 },
+				 listeners: {
+					 load: function(store, items, success, opts){
+						 store.sumaParticipacion = Ext.decode(opts._response.responseText).sumaParticipacion;
+					 }
 				 }
     		},
     	

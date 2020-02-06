@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.adapter;
 
 import java.lang.reflect.InvocationTargetException;
-import java.security.SecurityPermission;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -88,7 +87,6 @@ import es.pfsgroup.plugin.rem.model.ActivoProyecto;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoRestringida;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
-import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
@@ -103,7 +101,6 @@ import es.pfsgroup.plugin.rem.model.DtoComercialAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoDisponibilidadComercial;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
-import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -112,30 +109,25 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
-import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.VCondicionantesAgrDisponibilidad;
-import es.pfsgroup.plugin.rem.model.VFechasPubCanales;
 import es.pfsgroup.plugin.rem.model.VFechasPubCanalesAgr;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEntidadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
@@ -143,7 +135,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
@@ -2055,6 +2046,9 @@ public class AgrupacionAdapter {
 			loteComercial.setExistePiloto(false);
 			loteComercial.setEsVisitable(false);
 			
+			if (!Checks.esNulo(dtoAgrupacion.getEsFormalizacion()) && dtoAgrupacion.getEsFormalizacion())
+				loteComercial.setIsFormalizacion(1);
+			
 			genericDao.save(ActivoLoteComercial.class, loteComercial);
 
 			dtoAgrupacion.setId(loteComercial.getId().toString());
@@ -3699,42 +3693,44 @@ public class AgrupacionAdapter {
 		String subCartera = "";
 		Filter filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agrId);
 		List<ActivoAgrupacionActivo> agrupacion = genericDao.getList(ActivoAgrupacionActivo.class, filtroAgrupacion);
-		if (!Checks.esNulo(agrupacion.get(0).getActivo()) && !Checks.esNulo(agrupacion.get(0).getActivo().getCartera())) {
-			cartera = agrupacion.get(0).getActivo().getCartera().getCodigo();
-			subCartera = agrupacion.get(0).getActivo().getSubcartera().getCodigo();
-		}
-
-		if(((DDCartera.CODIGO_CARTERA_EGEO.equals(cartera) && DDSubcartera.CODIGO_ZEUS.equals(subCartera))
-				|| DDCartera.CODIGO_CARTERA_GALEON.equals(cartera)
-				|| DDCartera.CODIGO_CARTERA_GIANTS.equals(cartera)
-				|| DDCartera.CODIGO_CARTERA_HYT.equals(cartera)
-				|| DDCartera.CODIGO_CARTERA_TANGO.equals(cartera)
-				|| (DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(cartera) 
-						&& (DDSubcartera.CODIGO_THIRD_PARTIES_QUITAS_ING.equals(subCartera) 
-						|| DDSubcartera.CODIGO_THIRD_PARTIES_COMERCIAL_ING.equals(subCartera))
-					))
-				&& isRetail(agrupacion.get(0).getAgrupacion())
-			){
-			Usuario gestoBO = gestorActivoApi.getGestorByActivoYTipo(agrupacion.get(0).getActivo(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
-			
-			if (!Checks.esNulo(gestoBO)) {			
-				try {
-					DtoUsuario dtoUsuario = new DtoUsuario();
-					BeanUtils.copyProperties(dtoUsuario, gestoBO);
-					listaUsuariosDto.add(dtoUsuario);
-				} catch (IllegalAccessException e) {
-					logger.error("Error en ActivoAdapter", e);
-				} catch (InvocationTargetException e) {
-					logger.error("Error en ActivoAdapter", e);
-				}
-				return listaUsuariosDto;
-			}			
-		} else {
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoGestor);
-			EXTDDTipoGestor tipoGestor = (EXTDDTipoGestor) genericDao.get(EXTDDTipoGestor.class, filtro);
+		if(!Checks.estaVacio(agrupacion)) {
+			if (!Checks.esNulo(agrupacion.get(0).getActivo()) && !Checks.esNulo(agrupacion.get(0).getActivo().getCartera())) {
+				cartera = agrupacion.get(0).getActivo().getCartera().getCodigo();
+				subCartera = agrupacion.get(0).getActivo().getSubcartera().getCodigo();
+			}
 	
-			if (!Checks.esNulo(tipoGestor)) {
-				return activoAdapter.getComboUsuarios(tipoGestor.getId());
+			if(((DDCartera.CODIGO_CARTERA_EGEO.equals(cartera) && DDSubcartera.CODIGO_ZEUS.equals(subCartera))
+					|| DDCartera.CODIGO_CARTERA_GALEON.equals(cartera)
+					|| DDCartera.CODIGO_CARTERA_GIANTS.equals(cartera)
+					|| DDCartera.CODIGO_CARTERA_HYT.equals(cartera)
+					|| DDCartera.CODIGO_CARTERA_TANGO.equals(cartera)
+					|| (DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(cartera) 
+							&& (DDSubcartera.CODIGO_THIRD_PARTIES_QUITAS_ING.equals(subCartera) 
+							|| DDSubcartera.CODIGO_THIRD_PARTIES_COMERCIAL_ING.equals(subCartera))
+						))
+					&& isRetail(agrupacion.get(0).getAgrupacion())
+				){
+				Usuario gestoBO = gestorActivoApi.getGestorByActivoYTipo(agrupacion.get(0).getActivo(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+				
+				if (!Checks.esNulo(gestoBO)) {			
+					try {
+						DtoUsuario dtoUsuario = new DtoUsuario();
+						BeanUtils.copyProperties(dtoUsuario, gestoBO);
+						listaUsuariosDto.add(dtoUsuario);
+					} catch (IllegalAccessException e) {
+						logger.error("Error en ActivoAdapter", e);
+					} catch (InvocationTargetException e) {
+						logger.error("Error en ActivoAdapter", e);
+					}
+					return listaUsuariosDto;
+				}			
+			} else {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoGestor);
+				EXTDDTipoGestor tipoGestor = (EXTDDTipoGestor) genericDao.get(EXTDDTipoGestor.class, filtro);
+		
+				if (!Checks.esNulo(tipoGestor)) {
+					return activoAdapter.getComboUsuarios(tipoGestor.getId());
+				}
 			}
 		}
 
@@ -3967,70 +3963,78 @@ public class AgrupacionAdapter {
 	public DtoDatosPublicacionAgrupacion getDatosPublicacionAgrupacion(Long id) {
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
 		Activo activoPrincipal = agrupacion.getActivoPrincipal();
-		DtoDatosPublicacionAgrupacion dto = activoEstadoPublicacionApi.getDatosPublicacionAgrupacion(activoPrincipal.getId());
-		Filter idAgrupacionFilter = genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", id);
-		VCondicionantesAgrDisponibilidad vCondicionantesAgrDisponibilidad = genericDao.get(VCondicionantesAgrDisponibilidad.class, idAgrupacionFilter);
-		Double precioWebVenta = 0.0;
-		Double precioWebAlquiler = 0.0;
-
-		try {
-			List<ActivoAgrupacionActivo> l_activos = agrupacion.getActivos();
-			
-			for (ActivoAgrupacionActivo aga : l_activos) { // Verificamos que todos los activos tengaun un precio de venta 
-				Double precioAuxVenta = activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId());
-				if (Checks.esNulo(precioAuxVenta) || (!Checks.esNulo(precioAuxVenta) && precioAuxVenta == 0.0)) {
-					precioWebVenta = 0.0;
-					break;
-				} else {
-					precioWebVenta += precioAuxVenta;
+		DtoDatosPublicacionAgrupacion dto = new DtoDatosPublicacionAgrupacion();
+		if(!Checks.esNulo(activoPrincipal)) {
+			dto = activoEstadoPublicacionApi.getDatosPublicacionAgrupacion(activoPrincipal.getId());
+			Filter idAgrupacionFilter = genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", id);
+			VCondicionantesAgrDisponibilidad vCondicionantesAgrDisponibilidad = genericDao.get(VCondicionantesAgrDisponibilidad.class, idAgrupacionFilter);
+			Double precioWebVenta = 0.0;
+			Double precioWebAlquiler = 0.0;
+	
+			try {
+				List<ActivoAgrupacionActivo> l_activos = agrupacion.getActivos();
+				
+				for (ActivoAgrupacionActivo aga : l_activos) { // Verificamos que todos los activos tengaun un precio de venta 
+					Double precioAuxVenta = activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId());
+					if (Checks.esNulo(precioAuxVenta) || (!Checks.esNulo(precioAuxVenta) && precioAuxVenta == 0.0)) {
+						precioWebVenta = 0.0;
+						break;
+					} else {
+						precioWebVenta += precioAuxVenta;
+					}
 				}
-			}
-			
-			for (ActivoAgrupacionActivo aga : l_activos) { // Verificamos que todos los activos tengaun un precio de alquiler
-				Double precioAuxAlquiler = activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId());
-				if (Checks.esNulo(precioAuxAlquiler) || (!Checks.esNulo(precioAuxAlquiler) && precioAuxAlquiler == 0.0)) {
-					precioWebAlquiler = 0.0;
-					break;
-				} else {
-					precioWebAlquiler += precioAuxAlquiler;
+				
+				for (ActivoAgrupacionActivo aga : l_activos) { // Verificamos que todos los activos tengaun un precio de alquiler
+					Double precioAuxAlquiler = activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId());
+					if (Checks.esNulo(precioAuxAlquiler) || (!Checks.esNulo(precioAuxAlquiler) && precioAuxAlquiler == 0.0)) {
+						precioWebAlquiler = 0.0;
+						break;
+					} else {
+						precioWebAlquiler += precioAuxAlquiler;
+					}
 				}
+	
+			} catch (Exception e) {
+				logger.error("error en agrupacionAdapter", e);
 			}
-
-		} catch (Exception e) {
-			logger.error("error en agrupacionAdapter", e);
+	
+			dto.setPrecioWebVenta(precioWebVenta);
+			dto.setPrecioWebAlquiler(precioWebAlquiler);
+			if(!Checks.esNulo(activoPrincipal.getActivoPublicacion()) && !Checks.esNulo(activoPrincipal.getActivoPublicacion().getEstadoPublicacionAlquiler())) {
+				dto.setCodigoEstadoPublicacionAlquiler(activoPrincipal.getActivoPublicacion().getEstadoPublicacionAlquiler().getCodigo());
+			}
+			if(!Checks.esNulo(activoPrincipal.getActivoPublicacion()) && !Checks.esNulo(activoPrincipal.getActivoPublicacion().getEstadoPublicacionVenta())) {
+				dto.setCodigoEstadoPublicacionVenta(activoPrincipal.getActivoPublicacion().getEstadoPublicacionVenta().getCodigo());
+			}
+	
+			dto.setRuina(vCondicionantesAgrDisponibilidad.getRuina());
+			dto.setPendienteInscripcion(vCondicionantesAgrDisponibilidad.getPendienteInscripcion());
+			dto.setObraNuevaSinDeclarar(vCondicionantesAgrDisponibilidad.getObraNuevaSinDeclarar());
+			dto.setSinTomaPosesionInicial(vCondicionantesAgrDisponibilidad.getSinTomaPosesionInicial());
+			dto.setProindiviso(vCondicionantesAgrDisponibilidad.getProindiviso());
+			dto.setObraNuevaEnConstruccion(vCondicionantesAgrDisponibilidad.getObraNuevaEnConstruccion());
+			dto.setOcupadoConTitulo(vCondicionantesAgrDisponibilidad.getOcupadoConTitulo());
+			dto.setTapiado(vCondicionantesAgrDisponibilidad.getTapiado());
+			dto.setOtro(vCondicionantesAgrDisponibilidad.getOtro());
+			if(!Checks.esNulo(vCondicionantesAgrDisponibilidad.getOtro())) {
+				dto.setComboOtro(1);
+			} else {
+				dto.setComboOtro(0);
+			}
+			dto.setEstadoCondicionadoCodigo(vCondicionantesAgrDisponibilidad.getEstadoCondicionadoCodigo());
+			dto.setPortalesExternos(vCondicionantesAgrDisponibilidad.getPortalesExternos());
+			dto.setOcupadoSinTitulo(vCondicionantesAgrDisponibilidad.getOcupadoSinTitulo());
+			dto.setDivHorizontalNoInscrita(vCondicionantesAgrDisponibilidad.getDivHorizontalNoInscrita());
+			dto.setIsCondicionado(vCondicionantesAgrDisponibilidad.getIsCondicionado());
+			dto.setSinInformeAprobado(vCondicionantesAgrDisponibilidad.getSinInformeAprobado());
+			dto.setVandalizado(vCondicionantesAgrDisponibilidad.getVandalizado());
+			dto.setConCargas(vCondicionantesAgrDisponibilidad.getConCargas());
+	
+			dto.setDeshabilitarCheckPublicarVenta(activoEstadoPublicacionApi.getCheckPublicacionDeshabilitarAgrupacionVenta(agrupacion.getActivos()));
+			dto.setDeshabilitarCheckOcultarVenta(activoEstadoPublicacionApi.getCheckOcultarDeshabilitarAgrupacionVenta(agrupacion.getActivos()));
+			dto.setDeshabilitarCheckPublicarAlquiler(activoEstadoPublicacionApi.getCheckPublicacionDeshabilitarAgrupacionAlquiler(agrupacion.getActivos()));
+			dto.setDeshabilitarCheckOcultarAlquiler(activoEstadoPublicacionApi.getCheckOcultarDeshabilitarAgrupacionAlquiler(agrupacion.getActivos()));
 		}
-
-		dto.setPrecioWebVenta(precioWebVenta);
-		dto.setPrecioWebAlquiler(precioWebAlquiler);
-		if(!Checks.esNulo(activoPrincipal.getActivoPublicacion()) && !Checks.esNulo(activoPrincipal.getActivoPublicacion().getEstadoPublicacionAlquiler())) {
-			dto.setCodigoEstadoPublicacionAlquiler(activoPrincipal.getActivoPublicacion().getEstadoPublicacionAlquiler().getCodigo());
-		}
-		if(!Checks.esNulo(activoPrincipal.getActivoPublicacion()) && !Checks.esNulo(activoPrincipal.getActivoPublicacion().getEstadoPublicacionVenta())) {
-			dto.setCodigoEstadoPublicacionVenta(activoPrincipal.getActivoPublicacion().getEstadoPublicacionVenta().getCodigo());
-		}
-
-		dto.setRuina(vCondicionantesAgrDisponibilidad.getRuina());
-		dto.setPendienteInscripcion(vCondicionantesAgrDisponibilidad.getPendienteInscripcion());
-		dto.setObraNuevaSinDeclarar(vCondicionantesAgrDisponibilidad.getObraNuevaSinDeclarar());
-		dto.setSinTomaPosesionInicial(vCondicionantesAgrDisponibilidad.getSinTomaPosesionInicial());
-		dto.setProindiviso(vCondicionantesAgrDisponibilidad.getProindiviso());
-		dto.setObraNuevaEnConstruccion(vCondicionantesAgrDisponibilidad.getObraNuevaEnConstruccion());
-		dto.setOcupadoConTitulo(vCondicionantesAgrDisponibilidad.getOcupadoConTitulo());
-		dto.setTapiado(vCondicionantesAgrDisponibilidad.getTapiado());
-		dto.setOtro(vCondicionantesAgrDisponibilidad.getOtro());
-		if(!Checks.esNulo(vCondicionantesAgrDisponibilidad.getOtro())) {
-			dto.setComboOtro(1);
-		} else {
-			dto.setComboOtro(0);
-		}
-		dto.setEstadoCondicionadoCodigo(vCondicionantesAgrDisponibilidad.getEstadoCondicionadoCodigo());
-		dto.setPortalesExternos(vCondicionantesAgrDisponibilidad.getPortalesExternos());
-		dto.setOcupadoSinTitulo(vCondicionantesAgrDisponibilidad.getOcupadoSinTitulo());
-		dto.setDivHorizontalNoInscrita(vCondicionantesAgrDisponibilidad.getDivHorizontalNoInscrita());
-		dto.setIsCondicionado(vCondicionantesAgrDisponibilidad.getIsCondicionado());
-		dto.setSinInformeAprobado(vCondicionantesAgrDisponibilidad.getSinInformeAprobado());
-		dto.setVandalizado(vCondicionantesAgrDisponibilidad.getVandalizado());
-		dto.setConCargas(vCondicionantesAgrDisponibilidad.getConCargas());
 
 		dto.setDeshabilitarCheckPublicarVenta(activoEstadoPublicacionApi.getCheckPublicacionDeshabilitarAgrupacionVenta(agrupacion.getActivos()));
 		dto.setDeshabilitarCheckOcultarVenta(activoEstadoPublicacionApi.getCheckOcultarDeshabilitarAgrupacionVenta(agrupacion.getActivos()));

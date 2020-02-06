@@ -270,9 +270,6 @@ public class VBusquedaActivos implements Serializable {
 	
 	@Column(name = "DD_ECG_CODIGO")
 	private String estadoComunicacionGencat;
-	
-	@Column(name = "GPUBL_USU_USERNAME")
-	private String gestorPublicacionUsername;
 
 	@Column(name = "DD_DRT_CODIGO")
 	private String direccionTerritorialCodigo;
@@ -644,14 +641,6 @@ public class VBusquedaActivos implements Serializable {
 
 	public void setEstadoComunicacionGencat(String estadoComunicacionGencat) {
 		this.estadoComunicacionGencat = estadoComunicacionGencat;
-	}
-
-	public String getGestorPublicacionUsername() {
-		return gestorPublicacionUsername;
-	}
-
-	public void setGestorPublicacionUsername(String gestorPublicacionUsername) {
-		this.gestorPublicacionUsername = gestorPublicacionUsername;
 	}
 
 	public String getDireccionTerritorialCodigo() {

@@ -1380,7 +1380,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_CEE)) {// CEE
 				tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEE); 
 				// Trámite de obtención documental CEE
-				//Si el trabajo es Bankia/Sareb/Tango asignamos proveedorContacto
+				//Si el trabajo es de Tango asignamos proveedorContacto
 				if(this.checkTango(trabajo)) {
 					Filter filtroUsuProveedorBankiaSareb = genericDao.createFilter(FilterType.EQUALS, "username", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_PROVEEDOR_BANKIA_SAREB_TINSA));
 					Usuario usuProveedorBankiaSareb = genericDao.get(Usuario.class, filtroUsuProveedorBankiaSareb);
@@ -1461,14 +1461,17 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				Usuario usuario = null;				
 				Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "proveedor.tipoProveedor.codigo", DDTipoProveedor.COD_GESTORIA);
 				// Trámite de obtención de cédula				
-				// Si el trabajo es Sareb/Tango/Giants asignamos proveedorContacto
+				// Si el trabajo es de Tango/Giants asignamos proveedorContacto
 				if (this.checkTango(trabajo) || this.checkGiants(trabajo)) {
 					usuario = gestorActivoManager.getGestorByActivoYTipo(trabajo.getActivo(),
 							GestorActivoApi.CODIGO_GESTORIA_CEDULAS);					
-				// Si el trabajo es Bankia asignamos proveedorContacto	
+				// Si el trabajo es de Sareb asignamos proveedorContacto	
 				}else if(this.checkSareb(trabajo)) {
 					username = remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_CEDULA_HABITABILIDAD_SAREB_POR_DEFECTO);
 					filtro2 = genericDao.createFilter(FilterType.EQUALS, "proveedor.tipoProveedor.codigo", DDTipoProveedor.COD_MANTENIMIENTO_TECNICO);
+				// Si el trabajo es de Bankia asignamos proveedorContacto
+				}else if(this.checkBankia(trabajo)) {
+					username = remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_CEE_BANKIA_POR_DEFECTO);
 				}
 				if(!Checks.esNulo(username)){
 					usuario = usuarioDao.getByUsername(username);

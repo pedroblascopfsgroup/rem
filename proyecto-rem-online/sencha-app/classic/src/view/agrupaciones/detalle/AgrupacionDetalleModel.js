@@ -66,7 +66,16 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		     		return false;
 		     	}
 		 },
-		 
+		 habilitarPestanyaDatosPublicacionAgrupacion: function(get) {
+	    	 
+		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+		     	var numActivos = get('agrupacionficha.numeroActivos');
+		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA']) && numActivos > 0) {
+		     		return true;
+		     	} else {
+		     		return false;
+		     	}
+		 },
 		 esAgrupacionLoteComercialOrRestringida: function(get) {
 			 return !(get('esAgrupacionRestringida') || get('esAgrupacionLoteComercial'));
 		 },

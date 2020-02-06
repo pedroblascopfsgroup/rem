@@ -182,6 +182,7 @@ import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
+import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
 
 @Service("activoManager")
 public class ActivoManager extends BusinessOperationOverrider<ActivoApi> implements ActivoApi {
@@ -335,6 +336,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Autowired
     UsuarioManager usuarioManager;
+	
+	@Autowired
+	private EXTGrupoUsuariosDao extGrupoUsuariosDao;
 
 	@Override
 	public String managerName() {
@@ -599,7 +603,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(dto.getCodigoTipoPrecio())) {
 				// Actualizar el tipoComercialización del activo
 				updaterState.updaterStateTipoComercializacion(activo);
-			}			
+			}
+			
+			if (!Checks.esNulo(dto.getLiquidez())){
+				activo.setValorLiquidez(dto.getLiquidez());
+			}
+			
+			genericDao.update(Activo.class, activo);
 
 		} catch (Exception ex) {
 			logger.error("Error en activoManager", ex);
@@ -6457,6 +6467,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
 		Usuario gestorEdificaciones = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
 		
+		List<Long> idGrpsUsuario = null;
+		
+		idGrpsUsuario = extGrupoUsuariosDao.buscaGruposUsuario(logedUser);
+				
 		Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 		Filter vigenteFilter = genericDao.createFilter(FilterType.NULL, "fechaAutorizacionHasta");
 		Order order = new Order(OrderType.DESC, "id");
@@ -6468,13 +6482,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			mediadorVigente = listaMediadores.get(0);
 		}
 
-		if(!Checks.esNulo(gestorPublicacionActivo) && logedUser.equals(gestorPublicacionActivo)) {
+		if(!Checks.esNulo(gestorPublicacionActivo) && logedUser.equals(gestorPublicacionActivo)
+				|| !Checks.esNulo(gestorPublicacionActivo) && idGrpsUsuario.contains(gestorPublicacionActivo.getId())) {
 			return true;
-		}else if(!Checks.esNulo(supervisorPublicacionActivo) && logedUser.equals(supervisorPublicacionActivo)) {
+		}else if(!Checks.esNulo(supervisorPublicacionActivo) && logedUser.equals(supervisorPublicacionActivo)
+				|| !Checks.esNulo(supervisorPublicacionActivo) && idGrpsUsuario.contains(supervisorPublicacionActivo.getId())) {
 			return true;
-		}else if(!Checks.esNulo(gestorActivo) && logedUser.equals(gestorActivo)) {
+		}else if(!Checks.esNulo(gestorActivo) && logedUser.equals(gestorActivo)
+				|| !Checks.esNulo(gestorActivo) && idGrpsUsuario.contains(gestorActivo.getId())) {
 			return true;
-		}else if(!Checks.esNulo(gestorEdificaciones) && logedUser.equals(gestorEdificaciones)) {
+		}else if(!Checks.esNulo(gestorEdificaciones) && logedUser.equals(gestorEdificaciones)
+				|| !Checks.esNulo(gestorEdificaciones) && idGrpsUsuario.contains(gestorEdificaciones.getId())) {
 			return true;
 		}else if(genericAdapter.isSuper(logedUser)) {
 			return true;
@@ -6486,7 +6504,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				for(ActivoProveedorContacto proveedorContacto : listaProveedorContacto) {
 					if(!Checks.esNulo(proveedorContacto) && !Checks.esNulo(proveedorContacto.getDocIdentificativo())) {
 						Usuario usuMediadorVigente = proveedorContacto.getUsuario();
-						if(!Checks.esNulo(usuMediadorVigente) && usuMediadorVigente.getId().equals(logedUser.getId())) {
+						if(!Checks.esNulo(usuMediadorVigente) && usuMediadorVigente.getId().equals(logedUser.getId())
+								|| !Checks.esNulo(usuMediadorVigente) && idGrpsUsuario.contains(usuMediadorVigente.getId())) {
 							return true;
 						}
 					}

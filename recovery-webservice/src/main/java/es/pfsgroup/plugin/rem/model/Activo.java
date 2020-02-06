@@ -493,6 +493,9 @@ public class Activo implements Serializable, Auditable {
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private ActivoAutorizacionTramitacionOfertas activoAutorizacionTramitacionOfertas;
 	
+    @Column(name = "ACT_VALOR_LIQUIDEZ")
+    private String valorLiquidez;
+    
     // Getters del activo --------------------------------------------
     
     public Long getId() {
@@ -1942,6 +1945,14 @@ public class Activo implements Serializable, Auditable {
 
 	public void setDireccionTerritorial(DDDireccionTerritorial direccionTerritorial) {
 		this.direccionTerritorial = direccionTerritorial;
+	}
+
+	public String getValorLiquidez() {
+		return valorLiquidez;
+	}
+
+	public void setValorLiquidez(String valorLiquidez) {
+		this.valorLiquidez = valorLiquidez;
 	}
 	
 }

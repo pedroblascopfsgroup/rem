@@ -161,14 +161,14 @@ public class MSVJuntasOrdinariaExtraProcesar extends AbstractMSVActualizador imp
 								
 				
 				if(!Checks.esNulo(celdaJGOJE)) {
-					Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "codigo", celdaJGOJE);				
-					ddJunta = genericDao.get(DDJuntaComunidades.class, filtroGasto);
+					Filter filtroCodigo = genericDao.createFilter(FilterType.EQUALS, "codigo", celdaJGOJE);				
+					ddJunta = genericDao.get(DDJuntaComunidades.class, filtroCodigo);
 					activoJuntaPropietarios.setJunta(ddJunta);
 				}
 				
 				if(!Checks.esNulo(celdaComunidad)) {
-					Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", this.obtenerLongExcel(celdaComunidad));				
-					activoProveedor = genericDao.get(ActivoProveedor.class, filtroGasto);
+					Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", this.obtenerLongExcel(celdaComunidad));				
+					activoProveedor = genericDao.get(ActivoProveedor.class, filtroProveedor);
 					activoJuntaPropietarios.setComunidad(activoProveedor);
 				}
 				

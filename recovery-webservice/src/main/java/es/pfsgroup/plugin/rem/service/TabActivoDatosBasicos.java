@@ -857,6 +857,14 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		if(apc != null) {
 			activoDto.setPazSocial(apc.getPazSocial());
+			
+			activoDto.setCheckFormalizarReadOnly(apc.getPazSocial());
+			activoDto.setCheckComercializarReadOnly(apc.getPazSocial());
+			activoDto.setCheckPublicacionReadOnly(apc.getPazSocial());
+		}else {
+			activoDto.setCheckFormalizarReadOnly(false);
+			activoDto.setCheckComercializarReadOnly(false);
+			activoDto.setCheckPublicacionReadOnly(false);
 		}
 		
 		return activoDto;

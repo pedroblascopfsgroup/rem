@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20191220
+--## AUTOR=Oscar Diestre
+--## FECHA_CREACION=20200124
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.19
---## INCIDENCIA_LINK=REMVIP-5793
+--## INCIDENCIA_LINK=REMVIP-6169
 --## PRODUCTO=NO
 --## Finalidad: Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación. Liberbank.
 --## Info: https://link-doc.pfsgroup.es/confluence/display/REOS/SP_EXT_PR_ACT_RES_VENTA
@@ -26,8 +26,8 @@
 --## 		1.07 (20191010) - Jin Li Hu - Se añade el código de la caretra Cajamar para todas la queries donde se filtra por cartera, y se ha modificado una query según la descripción del item - HREOS-7988
 --##		1.08 (20191016) - Viorel Remus Ovidiu - Se añadie filtro de borrado en reservas
 --##		1.09 (20191107) - Viorel Remus Ovidiu - Se mezclan los cambios de subcartera (1.07) con los filtros de borrado (1.08)
---##		1.10 (20191210) - Jin Li Hu - La fecha cobro venta para las carteras Apple y Liberbank se escribe en el campo ECO_FECHA_CONT_VENTA
---##		1.11 (20191128) - Viorel Remus Ovidiu - Se añadie filtro de activos Apple para quitar fecha_vencimiento a la hora de devolver la reserva (PASO 3/8, operativa 2)
+--##		1.08 (20191128) - Viorel Remus Ovidiu - Se añadie filtro de activos Apple para quitar fecha_vencimiento a la hora de devolver la reserva (PASO 3/8, operativa 2)
+--##		1.11 (20200120) - Oscar Diestre - Quitada validación para Cajamar
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -78,11 +78,18 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
 
     V_COUNT                         VARCHAR2(30 CHAR)   := 'SELECT COUNT(1) ';
 
-    V_OBTIENE_RESERVA               VARCHAR2(1000 CHAR)  := 'SELECT
+    V_OBTIENE_RESERVA               VARCHAR2(2000 CHAR)  := 'SELECT
                                                             CASE
-                                                            WHEN EEC.DD_EEC_CODIGO NOT IN (''02'',''03'',''06'',''08'',''16'') AND ERE.DD_ERE_CODIGO IN (''01'')
-                                                            THEN 0
-                                                            ELSE 1
+							    WHEN DD_CRA_CODIGO = ''01'' THEN	
+                                                            	CASE WHEN EEC.DD_EEC_CODIGO NOT IN (''02'',''08'',''16'') AND ERE.DD_ERE_CODIGO IN (''01'')
+                                                            		THEN 0
+                                                            		ELSE 1
+								END
+							    ELSE
+                                                            	CASE WHEN EEC.DD_EEC_CODIGO NOT IN (''02'',''03'',''06'',''08'',''16'') AND ERE.DD_ERE_CODIGO IN (''01'')
+                                                            		THEN 0
+                                                            		ELSE 1
+								END	
                                                             END AS COD,
                                                             RES.RES_ID,
                                                             ECO.ECO_ID,
@@ -411,6 +418,7 @@ BEGIN
             --Comprobamos que el estado del expediente NO está en los estados "Reservado", "Firmado","Vendido", "En Devolución" ó "Anulado".
             --Si el resultado de la consulta es 0, quiere decir que cumple con la linea de arriba, en caso contrario, devolverá 1.
             V_MSQL := V_OBTIENE_RESERVA||V_FROM_RESERVA2;
+
             EXECUTE IMMEDIATE V_MSQL INTO V_NUM, V_RES_ID, V_ECO_ID, V_ACT_ID, V_OFR_ID, V_VALOR_ACTUAL USING IDENTIFICACION_COBRO;
 
             --Llegados a éste punto, o ejecutamos la actualización o pasamos con la siguiente comprobación.
@@ -424,7 +432,7 @@ BEGIN
                 V_ERROR_DESC := '[ERROR] El estado del expediente es "Reservado", "Firmado","Vendido", "En Devolución" ó "Anulado", o la reserva no esta en estado "Pendiente de firma" o no existe estado para éste expediente.';
                 --DBMS_OUTPUT.PUT_LINE(V_ERROR_DESC);
             ELSE
-                DBMS_OUTPUT.PUT_LINE('[INFO] El estado del expediente NO es "Reservado", "Firmado","Vendido", "En Devolución" ó "Anulado" y la reserva esta en estado "Pendiente de firma". Continuamos la ejecución.');
+                DBMS_OUTPUT.PUT_LINE('[INFO] El estado del expediente NO es "Reservado" (O está reservado pero pertenece a "Cajamar"), "Firmado" (O está firmado pero pertenece a "Cajamar") ,"Vendido", "En Devolución" ó "Anulado" y la reserva esta en estado "Pendiente de firma". Continuamos la ejecución.');
                 FOR row in ACTIVOS
                 LOOP
                        DBMS_OUTPUT.PUT_LINE('[INFO] ACT_ID > '||row.ACT_ID||', ECO_ID > '||V_ECO_ID||', OFR_ID > '||V_OFR_ID||', RES_ID > '||V_RES_ID||', DD_EEC_ID > '||V_VALOR_ACTUAL||'.');
@@ -453,7 +461,7 @@ BEGIN
                     EXECUTE IMMEDIATE V_MSQL;
     
                     IF SQL%ROWCOUNT > 0 THEN
-                        DBMS_OUTPUT.PUT_LINE('[INFO] PASO 1/4 | El estado del expediente a pasado a "Reservado" para la OFERTA '||IDENTIFICACION_COBRO||'.');
+                        DBMS_OUTPUT.PUT_LINE('[INFO] PASO 1/4 | El estado del expediente ha pasado a "Reservado" para la OFERTA '||IDENTIFICACION_COBRO||'.');
                         V_PASOS := V_PASOS+1;
                         --Logado en HLD_HIST_LANZA_PER_DETA
                         PARAM1 := 'ECO_EXPEDIENTE_COMERCIAL';

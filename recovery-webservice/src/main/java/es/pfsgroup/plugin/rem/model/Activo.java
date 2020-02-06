@@ -493,6 +493,9 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "DD_TDC_ID")
     private DDTerritorio territorio; 
 	
+    @Column(name = "ACT_VALOR_LIQUIDEZ")
+    private String valorLiquidez;
+    
     // Getters del activo --------------------------------------------
     
     public Long getId() {
@@ -1942,6 +1945,14 @@ public class Activo implements Serializable, Auditable {
 
 	public void setTerritorio(DDTerritorio territorio) {
 		this.territorio = territorio;
+	}
+	
+	public String getValorLiquidez() {
+		return valorLiquidez;
+	}
+
+	public void setValorLiquidez(String valorLiquidez) {
+		this.valorLiquidez = valorLiquidez;
 	}
 	
 }

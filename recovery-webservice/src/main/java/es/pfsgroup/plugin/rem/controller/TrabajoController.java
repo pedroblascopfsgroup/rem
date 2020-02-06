@@ -38,6 +38,7 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
@@ -167,6 +168,9 @@ public class TrabajoController extends ParadiseJsonController {
 
 	@Autowired
 	private ConfigManager configManager;
+
+	@Autowired
+	private MSVRawSQLDao rawDao;
 	
 	private static final String RESPONSE_SUCCESS_KEY = "success";	
 	private static final String RESPONSE_DATA_KEY = "data";
@@ -396,6 +400,12 @@ public class TrabajoController extends ParadiseJsonController {
 			
 			model.put("data", page.getResults());
 			model.put("totalCount", page.getTotalCount());
+			String result = rawDao.getExecuteSQL("SELECT SUM(ACT_TBJ_PARTICIPACION) FROM ACT_TBJ WHERE TBJ_ID = " + dto.getIdTrabajo());	
+			if(!Checks.esNulo(result)) {
+				model.put("sumaParticipacion", result);
+			}else {
+				model.put("sumaParticipacion", "0");
+			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);
 			model.put("success", false);		

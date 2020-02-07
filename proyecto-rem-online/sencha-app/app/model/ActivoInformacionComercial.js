@@ -758,7 +758,19 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
     	    },
     	    {
     	    	name: 'infoDistribucionInterior'
-    	    }
+    	    },
+    	    {
+    	    	name: 'nombreMediadorEspejo'
+    	    },
+    	    {
+    	    	name: 'codigoMediadorEspejo'
+    	    },
+    	    {
+    			name:'telefonoMediadorEspejo'
+    		},
+    		{
+    			name:'emailMediadorEspejo'
+    		}
     ],
     
 	proxy: {

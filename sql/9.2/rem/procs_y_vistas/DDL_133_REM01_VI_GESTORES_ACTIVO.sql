@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20191003
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20190131
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-5383
@@ -30,6 +30,7 @@
 --##    0.17 SBG Se añaden las restricciones y se ordena en base a la configuración de gestores.
 --##    0.18 VRO Se modifica el orden de la prioridad de los gestores segun subcartera.
 --##	0.19 VRO Se modifica el orden de la prioridad de los gestores segun subcartera.
+--##	0.20 HREOS-9322
 --##########################################
 --*/
 
@@ -760,7 +761,33 @@ UNION ALL
             ON (dd_prov.dd_prv_codigo = dist.cod_provincia
             AND dist.tipo_gestor = ''GFORMADM'')
           WHERE
-            act.borrado = 0 AND dist.COD_PROVINCIA IN (''8'',''17'',''43'',''25'')                
+            act.borrado = 0 AND dist.COD_PROVINCIA IN (''8'',''17'',''43'',''25'')      
+
+UNION ALL
+/* Gestor Controller  */
+
+        SELECT
+            act.act_id,
+            TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo,
+			NULL dd_scr_codigo,
+            TO_NUMBER (dd_eac.DD_EAC_CODIGO) dd_eac_codigo,
+			NULL DD_TCR_CODIGO,
+            dist.cod_provincia DD_PRV_CODIGO,
+            dist.cod_municipio DD_LOC_CODIGO,
+            dist.cod_postal cod_postal,
+            dist.tipo_gestor AS tipo_gestor,
+            dist.username username,
+            nombre_usuario nombre_usuario
+        FROM '||V_ESQUEMA||'.act_activo act
+            JOIN '||V_ESQUEMA||'.act_loc_localizacion aloc ON act.act_id = aloc.act_id
+            JOIN '||V_ESQUEMA||'.bie_localizacion loc ON loc.bie_loc_id = aloc.bie_loc_id
+            JOIN '||V_ESQUEMA_M||'.dd_loc_localidad dd_loc ON loc.dd_loc_id = dd_loc.dd_loc_id
+            JOIN '||V_ESQUEMA_M||'.dd_prv_provincia dd_prov ON dd_prov.dd_prv_id = loc.dd_prv_id
+            JOIN '||V_ESQUEMA||'.dd_eac_estado_activo dd_eac ON dd_eac.dd_eac_id = act.dd_eac_id
+            JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
+            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist ON dist.tipo_gestor = ''GCONT'' and dd_cra.dd_cra_codigo = dist.cod_cartera
+          WHERE
+            act.borrado = 0          
 ) ';
     
     

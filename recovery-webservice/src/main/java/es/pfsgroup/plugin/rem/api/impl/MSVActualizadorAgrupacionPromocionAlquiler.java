@@ -157,7 +157,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 					bien.setTipoBien(bienMatriz.getTipoBien());
 				if (!Checks.esNulo(bienMatriz.getValorActual()))
 					bien.setValorActual(bienMatriz.getValorActual());
-				if (!Checks.esNulo(bienMatriz.getImporteCargas()))
+				if (!Checks.esNulo(bienMatriz.getImporteCargas())) 
 					bien.setImporteCargas(bienMatriz.getImporteCargas());
 				if (!Checks.esNulo(bienMatriz.getSuperficie()))
 					bien.setSuperficie(bienMatriz.getSuperficie());
@@ -172,7 +172,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 				if (!Checks.esNulo(bienMatriz.getFechaVerificacion()))
 					bien.setFechaVerificacion(bienMatriz.getFechaVerificacion());
 				if (!Checks.esNulo(bienMatriz.getEmbargoProcedimiento()))
-					bien.setEmbargoProcedimiento(bienMatriz.getEmbargoProcedimiento());				
+					bien.setEmbargoProcedimiento(bienMatriz.getEmbargoProcedimiento());	
 				genericDao.save(Bien.class, bien);
 				unidadAlquilable.setBien(bien);				
 			}
@@ -616,6 +616,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 				cargaUA.setOrigenDato(cargaAM.getOrigenDato());
 				cargaUA.setSubtipoCarga(cargaAM.getSubtipoCarga());
 				cargaUA.setTipoCargaActivo(cargaAM.getTipoCargaActivo());
+				cargaUA.setImpideVenta(cargaAM.getImpideVenta());
 				cargasUa.add(cargaUA);
 			}
 		}

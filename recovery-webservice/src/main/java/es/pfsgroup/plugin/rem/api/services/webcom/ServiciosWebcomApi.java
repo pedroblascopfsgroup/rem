@@ -13,13 +13,14 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.NotificacionDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.ProveedorDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.UsuarioDto;
+import net.sf.json.JSONObject;
 
 public interface ServiciosWebcomApi {
 
 	/**
 	 * REM - WEBCOM: Contiene la información del resultado de los trabajos
 	 * solicitados, bien la denegación o bien la aceptación y finalización de
-	 * los mismos, todo ello generará un correo a dichos mediadores
+	 * los mismos, to do ello generará un correo a dichos mediadores
 	 * 
 	 * @param estadoTrabajo
 	 *            Lista de DTO's con los cambios de estado que queremos
@@ -27,7 +28,7 @@ public interface ServiciosWebcomApi {
 	 * 
 	 * @throws ErrorServicioWebcom
 	 */
-	public void webcomRestEstadoPeticionTrabajo(List<EstadoTrabajoDto> estadoTrabajo) throws ErrorServicioWebcom;
+	public JSONObject webcomRestEstadoPeticionTrabajo(List<EstadoTrabajoDto> estadoTrabajo) throws ErrorServicioWebcom;
 
 	/**
 	 * REM - WEBCOM: Contiene la información del resultado de las ofertas
@@ -41,18 +42,18 @@ public interface ServiciosWebcomApi {
 	 *            notificar.
 	 * @throws ErrorServicioWebcom
 	 */
-	public void webcomRestEstadoOferta(List<EstadoOfertaDto> estadoOferta) throws ErrorServicioWebcom;
+	public JSONObject webcomRestEstadoOferta(List<EstadoOfertaDto> estadoOferta) throws ErrorServicioWebcom;
 
 	/**
 	 * Este WS es únicamente de dirección REM - WEBCOM, contiene la información
-	 * de TODO el stock de activos de REM, los activos vendidos tendrán su
+	 * de to do el stock de activos de REM, los activos vendidos tendrán su
 	 * ultimo envío el día de la venta, este stock lo dará de alta WEBCOM en sus
 	 * BBDD
 	 * 
 	 * @param stock
 	 *            Stock de activos (alta/modificación)
 	 */
-	public void webcomRestStock(List<StockDto> stock) throws ErrorServicioWebcom;
+	public JSONObject webcomRestStock(List<StockDto> stock) throws ErrorServicioWebcom;
 
 	/**
 	 * REM - WEBCOM: Contiene la información de las contestaciones del gestor
@@ -61,7 +62,7 @@ public interface ServiciosWebcomApi {
 	 * @param notificaciones
 	 * @throws ErrorServicioWebcom
 	 */
-	public void webcomRestEstadoNotificacion(List<NotificacionDto> notificaciones) throws ErrorServicioWebcom;
+	public JSONObject webcomRestEstadoNotificacion(List<NotificacionDto> notificaciones) throws ErrorServicioWebcom;
 
 	/**
 	 * REM - WEBCOM: Contiene la información de los honorarios asociados a una
@@ -71,7 +72,7 @@ public interface ServiciosWebcomApi {
 	 * @param comisiones
 	 * @throws ErrorServicioWebcom
 	 */
-	public void webcomRestVentasYcomisiones(List<ComisionesDto> comisiones) throws ErrorServicioWebcom;
+	public JSONObject webcomRestVentasYcomisiones(List<ComisionesDto> comisiones) throws ErrorServicioWebcom;
 
 	/**
 	 * Este WS es únicamente de dirección REM - WEBCOM, contiene la información
@@ -82,7 +83,7 @@ public interface ServiciosWebcomApi {
 	 * @param proveedores
 	 * @throws ErrorServicioWebcom
 	 */
-	public void webcomRestProveedores(List<ProveedorDto> proveedores) throws ErrorServicioWebcom;
+	public JSONObject webcomRestProveedores(List<ProveedorDto> proveedores) throws ErrorServicioWebcom;
 
 	/**
 	 * REM - WEBCOM: Contiene la información existente en REM para consolidarla
@@ -92,7 +93,7 @@ public interface ServiciosWebcomApi {
 	 * @param informes
 	 * @throws ErrorServicioWebcom
 	 */
-	public void webcomRestEstadoInformeMediador(List<InformeMediadorDto> informes) throws ErrorServicioWebcom;
+	public JSONObject webcomRestEstadoInformeMediador(List<InformeMediadorDto> informes) throws ErrorServicioWebcom;
 
 	/**
 	 * Este WS es únicamente de dirección REM - WEBCOM, contiene la información
@@ -102,7 +103,7 @@ public interface ServiciosWebcomApi {
 	 * @param cabeceras
 	 * @throws ErrorServicioWebcom
 	 */
-	public void webcomRestCabeceraObrasNuevas(List<CabeceraObrasNuevasDto> cabeceras) throws ErrorServicioWebcom;
+	public JSONObject webcomRestCabeceraObrasNuevas(List<CabeceraObrasNuevasDto> cabeceras) throws ErrorServicioWebcom;
 
 	/**
 	 * Este WS es únicamente de dirección REM - WEBCOM, contiene la relación
@@ -113,7 +114,7 @@ public interface ServiciosWebcomApi {
 	 * @param activos
 	 * @throws ErrorServicioWebcom
 	 */
-	public void webcomRestActivosObrasNuevas(List<ActivoObrasNuevasDto> activos) throws ErrorServicioWebcom;
+	public JSONObject webcomRestActivosObrasNuevas(List<ActivoObrasNuevasDto> activos) throws ErrorServicioWebcom;
 
 	/**
 	 * Este WS es únicamente de dirección REM - WEBCOM, contiene la información
@@ -123,7 +124,7 @@ public interface ServiciosWebcomApi {
 	 * @param usuarios
 	 * @throws ErrorServicioWebcom
 	 */
-	public void webcomRestUsuarios(List<UsuarioDto> usuarios) throws ErrorServicioWebcom;
+	public JSONObject webcomRestUsuarios(List<UsuarioDto> usuarios) throws ErrorServicioWebcom;
 
 	/**
 	 * Este WS es únicamente de dirección REM - WEBCOM, contiene la información
@@ -133,6 +134,6 @@ public interface ServiciosWebcomApi {
 	 * @param campanyas
 	 * @throws ErrorServicioWebcom
 	 */
-	public void webcomRestObrasNuevasCampanyas(List<CampanyaObrasNuevasDto> campanyas) throws ErrorServicioWebcom;
+	public JSONObject webcomRestObrasNuevasCampanyas(List<CampanyaObrasNuevasDto> campanyas) throws ErrorServicioWebcom;
 
 }

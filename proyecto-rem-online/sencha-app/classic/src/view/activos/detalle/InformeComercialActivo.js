@@ -48,91 +48,174 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 					[
 					// Fila 0
 						{
-							// Label vacia para desplazar la línea por cuestión de estética.
-							xtype: 'label',
-							bind: {
-				        		hidden: '{infoComercial.nombreMediador}'
-				        	}
+							xtype:'fieldsettable',
+							title: HreRem.i18n('titulo.grid.mediador.primario'),
+							defaultType: 'textfieldbase',
+							colspan: 3,
+							items :
+								[
+								{
+								// Label vacia para desplazar la línea por cuestión de estética.
+								xtype: 'label',
+								bind: {
+					        		hidden: '{infoComercial.nombreMediador}'
+					        		}
+								},
+								{
+						        	xtype: 'label',
+						        	cls:'x-form-item',
+						        	text: HreRem.i18n('fieldlabel.mediador.notFound'),
+						        	style: 'font-size: small;text-align: center;font-weight: bold;color: #DF7401;',
+						        	colspan: 3,
+						        	readOnly: true,
+						        	reference: 'mediadorNotFoundLabel',
+						        	bind: {
+						        		hidden: '{infoComercial.nombreMediador}'
+						        	}
+								},
+								// Fila 1
+								{ 
+									fieldLabel: HreRem.i18n('fieldlabel.codigo'),
+									bind: '{infoComercial.codigoMediador}',
+									readOnly: true
+								},
+								{ 
+									fieldLabel: HreRem.i18n('fieldlabel.nombre'),
+									bind: '{infoComercial.nombreMediador}',
+									readOnly: true
+								},
+								{
+									fieldLabel: HreRem.i18n('fieldlabel.telefono'),
+									bind: '{infoComercial.telefonoMediador}',
+									readOnly: true
+								},
+							// Fila 2
+								{
+									fieldLabel: HreRem.i18n('fieldlabel.email'),
+									bind: '{infoComercial.emailMediador}',
+									readOnly: true
+								},
+								{
+									xtype: 'datefieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.frecepcion.llaves'),
+									bind: '{infoComercial.fechaRecepcionLlaves}',
+									readOnly: true
+								},
+								{
+									xtype: 'datefieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.fultima.visita'),
+									bind: '{infoComercial.fechaUltimaVisita}',
+									colspan: 2,
+									readOnly: true
+								},
+							// Fila 3
+								{
+									xtype: 'checkboxfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.autorizado.web'),
+									bind: '{infoComercial.autorizacionWeb}',
+									readOnly: true
+								},
+								{
+									xtype: 'datefieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.fautorizacion.hasta'),
+									bind: '{infoComercial.fechaAutorizacionHasta}',
+									readOnly: true,
+									colspan: 2
+								}
+								]
 						},
 						{
-				        	xtype: 'label',
-				        	cls:'x-form-item',
-				        	text: HreRem.i18n('fieldlabel.mediador.notFound'),
-				        	style: 'font-size: small;text-align: center;font-weight: bold;color: #DF7401;',
-				        	colspan: 2,
-				        	readOnly: true,
-				        	reference: 'mediadorNotFoundLabel',
-				        	bind: {
-				        		hidden: '{infoComercial.nombreMediador}'
-				        	}
-						},
-					// Fila 1
-						{ 
-							fieldLabel: HreRem.i18n('fieldlabel.codigo'),
-							bind: '{infoComercial.codigoMediador}',
-							readOnly: true
-						},
-						{ 
-							fieldLabel: HreRem.i18n('fieldlabel.nombre'),
-							bind: '{infoComercial.nombreMediador}',
-							readOnly: true
+							xtype:'fieldsettable',
+							title: HreRem.i18n('titulo.grid.mediador.espejo'),
+							defaultType: 'textfieldbase',
+							colspan: 3,
+							items :
+								[
+								{
+								// Label vacia para desplazar la línea por cuestión de estética.
+								xtype: 'label',
+								bind: {
+					        		hidden: '{infoComercial.nombreMediadorEspejo}'
+					        		}
+								},
+								{
+						        	xtype: 'label',
+						        	cls:'x-form-item',
+						        	text: HreRem.i18n('fieldlabel.mediador.notFound'),
+						        	style: 'font-size: small;text-align: center;font-weight: bold;color: #DF7401;',
+						        	colspan: 3,
+						        	readOnly: true,
+						        	reference: 'mediadorNotFoundLabel',
+						        	bind: {
+						        		hidden: '{infoComercial.nombreMediadorEspejo}'
+						        	}
+								},
+								// Fila 1
+								{ 
+									fieldLabel: HreRem.i18n('fieldlabel.codigo'),
+									bind: '{infoComercial.codigoMediadorEspejo}',
+									readOnly: true
+								},
+								{ 
+									fieldLabel: HreRem.i18n('fieldlabel.nombre'),
+									bind: '{infoComercial.nombreMediadorEspejo}',
+									readOnly: true
+								},
+								{
+									fieldLabel: HreRem.i18n('fieldlabel.telefono'),
+									bind: '{infoComercial.telefonoMediadorEspejo}',
+									readOnly: true
+								},
+							// Fila 2
+								{
+									fieldLabel: HreRem.i18n('fieldlabel.email'),
+									bind: '{infoComercial.emailMediadorEspejo}',
+									readOnly: true
+								},
+								{
+									xtype: 'datefieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.frecepcion.llaves'),
+									colspan: 2,
+									bind: '{infoComercial.fechaRecepcionLlavesEspejo}',
+									readOnly: true
+								},
+							// Fila 3
+								{
+									xtype: 'checkboxfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.autorizado.web'),
+									bind: '{infoComercial.autorizacionWebEspejo}',
+									readOnly: true
+								}
+								]
 						},
 						{
-							fieldLabel: HreRem.i18n('fieldlabel.telefono'),
-							bind: '{infoComercial.telefonoMediador}',
-							readOnly: true
-						},
-					// Fila 2
-						{
-							fieldLabel: HreRem.i18n('fieldlabel.email'),
-							bind: '{infoComercial.emailMediador}',
-							readOnly: true
-						},
-						{
-							xtype: 'datefieldbase',
-							fieldLabel: HreRem.i18n('fieldlabel.frecepcion.llaves'),
-							bind: '{infoComercial.fechaRecepcionLlaves}',
-							readOnly: true
-						},
-						{
-							xtype: 'datefieldbase',
-							fieldLabel: HreRem.i18n('fieldlabel.fultima.visita'),
-							bind: '{infoComercial.fechaUltimaVisita}',
-							colspan: 2,
-							readOnly: true
-						},
-					// Fila 3
-						{
-							xtype: 'checkboxfieldbase',
-							fieldLabel: HreRem.i18n('fieldlabel.autorizado.web'),
-							bind: '{infoComercial.autorizacionWeb}',
-							readOnly: true
-						},
-						{
-							xtype: 'datefieldbase',
-							fieldLabel: HreRem.i18n('fieldlabel.fautorizacion.hasta'),
-							bind: '{infoComercial.fechaAutorizacionHasta}',
-							readOnly: true,
-							colspan: 2
-						},
-					// Fila 4
-						{ 
-							fieldLabel: HreRem.i18n('fieldlabel.codigo.proveedor'),
-							readOnly: true,
-							bind: {
-				        		disabled: '{!infoComercial.tieneProveedorTecnico}',
-				        		value: '{infoComercial.codigoProveedor}'
-				        	}					
-							
-						},
-						{ 
-							fieldLabel: HreRem.i18n('fieldlabel.nombre.proveedor'),
-							readOnly: true,
-							colspan: 2,
-							bind: {
-				        		disabled: '{!infoComercial.tieneProveedorTecnico}',
-				        		value: '{infoComercial.nombreProveedor}'
-				        	}
+							xtype:'fieldsettable',
+							title:HreRem.i18n('titulo.grid.proveedor.tecnico'),
+							defaultType:'textfieldbase',
+							colspan: 3,
+							items:
+								[	
+									{ 
+										fieldLabel: HreRem.i18n('fieldlabel.codigo.proveedor'),
+										readOnly: true,
+										bind: {
+							        		disabled: '{!infoComercial.tieneProveedorTecnico}',
+							        		value: '{infoComercial.codigoProveedor}'
+							        	}					
+										
+									},
+									{ 
+										fieldLabel: HreRem.i18n('fieldlabel.nombre.proveedor'),
+										readOnly: true,
+										bind: {
+							        		disabled: '{!infoComercial.tieneProveedorTecnico}',
+							        		value: '{infoComercial.nombreProveedor}'
+							        	}
+									},
+									{
+										
+									}
+								]
 						},
 					// Fila 5
 						{

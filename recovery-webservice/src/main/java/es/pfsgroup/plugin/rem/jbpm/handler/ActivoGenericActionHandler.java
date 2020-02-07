@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 
 import org.jbpm.graph.exe.ExecutionContext;
@@ -59,7 +60,6 @@ public abstract class ActivoGenericActionHandler extends ActivoBaseActionHandler
         process(delegateTransitionClass, delegateSpecificClass, executionContext);
     }
     /**
-     * TODO documentar FO.
      * @param delegateTransitionClass Object
      * @param delegateSpecificClass Object
      * @throws Exception 
@@ -73,4 +73,12 @@ public abstract class ActivoGenericActionHandler extends ActivoBaseActionHandler
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
+    
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+		//empty
+	}
+
+	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+		//empty
+	}
 }

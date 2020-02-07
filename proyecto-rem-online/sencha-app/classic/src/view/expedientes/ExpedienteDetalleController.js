@@ -1367,28 +1367,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		
 	},
 	
-	onSelectComboActivoHonorarios: function(combo, recordSelected) {
-		
-		var me = this;
-		var grid = me.lookupReference('listadohoronarios');
-		var record = Ext.isDefined(grid.rowEditing.context) ? grid.rowEditing.context.record : null;
-		var importeParticipacionActivo = recordSelected.get("importeParticipacion");
-		
-		if(Ext.isEmpty(importeParticipacionActivo)) {
-			grid.rowEditing.cancelEdit();
-			me.fireEvent("errorToast", HreRem.i18n("msg.necesaria.participacion.calculo.honorario"));				
-		} else {
-			record.set("participacionActivo",importeParticipacionActivo);
-		}
-		
-	},
-	
 	onHaCambiadoImporteCalculo: function(field, value, oldValue){
 		var me= this;
 		var tipoCalculoField= me.lookupReference('tipoCalculoHonorario')
 		var importeField= me.lookupReference('importeCalculoHonorario')
 		var tipoCalculo= me.lookupReference('tipoCalculoHonorario').value;
-		var record = Ext.isDefined(me.lookupReference('listadohoronarios').rowEditing.context) ? me.lookupReference('listadohoronarios').rowEditing.context.record : null;
+		var importeOferta = parseFloat(me.getViewModel().get('expediente.importe')).toFixed(2);
 
 		if(CONST.TIPOS_CALCULO['FIJO'] == tipoCalculo){//importe fijo
 			var honorarios= me.lookupReference('honorarios');
@@ -1400,17 +1384,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		else if(CONST.TIPOS_CALCULO['PORCENTAJE'] == tipoCalculo){//porcentaje
 			var honorarios= me.lookupReference('honorarios');
 			var importeCalculoHonorario= me.lookupReference('importeCalculoHonorario').value;
-			var importeParticipacion = Ext.isEmpty(record) ?  null : record.get("participacionActivo");
 			var honorario;
-			if(!Ext.isEmpty(record) && Ext.isEmpty(importeParticipacion)) {
-				me.fireEvent("errorToast", HreRem.i18n("msg.necesaria.participacion.calculo.honorario"));
-			} else {				
-				importeParticipacion = parseFloat(importeParticipacion).toFixed(2);
-				honorario = (importeParticipacion*importeCalculoHonorario)/100;
-				honorarios.setValue(Math.round(honorario * 100) / 100);
-				importeField.setMaxValue(100);
-			}
-			me.fireEvent("log" , "[HONORARIOS: Tipo: "+tipoCalculo+" | Calculo: "+importeCalculoHonorario+" | Participacion: "+importeParticipacion+" | Importe: "+Math.round(honorario * 100) / 100+"]");
+			
+			honorario = (importeOferta*importeCalculoHonorario)/100;
+			honorarios.setValue(Math.round(honorario * 100) / 100);
+			importeField.setMaxValue(100);
+			
+			me.fireEvent("log" , "[HONORARIOS: Tipo: "+tipoCalculo+" | Calculo: "+importeCalculoHonorario+" | Importe Oferta: "+importeOferta+" | Importe: "+Math.round(honorario * 100) / 100+"]");
 		}
 		
 		else if(CONST.TIPOS_CALCULO['FIJO_ALQ'] == tipoCalculo){//Importe fijo Alquiler
@@ -1423,33 +1403,25 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		else if(CONST.TIPOS_CALCULO['PORCENTAJE_ALQ'] == tipoCalculo){//Porcentaje Alquiler
 			var honorarios= me.lookupReference('honorarios');
 			var importeCalculoHonorario= me.lookupReference('importeCalculoHonorario').value;
-			var importeParticipacion = Ext.isEmpty(record) ?  null : record.get("participacionActivo");
 			var honorario;
-			if(!Ext.isEmpty(record) && Ext.isEmpty(importeParticipacion)) {
-				me.fireEvent("errorToast", HreRem.i18n("msg.necesaria.participacion.calculo.honorario"));
-			} else {				
-				importeParticipacion = parseFloat(importeParticipacion).toFixed(2);
-				honorario = ((importeParticipacion*importeCalculoHonorario)/100)*12;
-				honorarios.setValue(Math.round(honorario * 100) / 100);
-				importeField.setMaxValue(100);
-			}
-			me.fireEvent("log" , "[HONORARIOS: Tipo: "+tipoCalculo+" | Calculo: "+importeCalculoHonorario+" | Participacion: "+importeParticipacion+" | Importe: "+Math.round(honorario * 100) / 100+"]");
+			
+			honorario = ((importeOferta*importeCalculoHonorario)/100)*12;
+			honorarios.setValue(Math.round(honorario * 100) / 100);
+			importeField.setMaxValue(100);
+
+			me.fireEvent("log" , "[HONORARIOS: Tipo: "+tipoCalculo+" | Calculo: "+importeCalculoHonorario+" | Importe Oferta: "+importeOferta+" | Importe: "+Math.round(honorario * 100) / 100+"]");
 		}
 		
 		else if(CONST.TIPOS_CALCULO['MENSUALIDAD_ALQ'] == tipoCalculo){//Mensualidad Alquiler
 			var honorarios= me.lookupReference('honorarios');
 			var importeCalculoHonorario= me.lookupReference('importeCalculoHonorario').value;
-			var importeParticipacion = Ext.isEmpty(record) ?  null : record.get("participacionActivo");
 			var honorario;
-			if(!Ext.isEmpty(record) && Ext.isEmpty(importeParticipacion)) {
-				me.fireEvent("errorToast", HreRem.i18n("msg.necesaria.participacion.calculo.honorario"));
-			} else {				
-				importeParticipacion = parseFloat(importeParticipacion).toFixed(2);
-				honorario = importeParticipacion*importeCalculoHonorario;
-				honorarios.setValue(Math.round(honorario * 100) / 100);
-				importeField.setMaxValue(100);
-			}
-			me.fireEvent("log" , "[HONORARIOS: Tipo: "+tipoCalculo+" | Calculo: "+importeCalculoHonorario+" | Participacion: "+importeParticipacion+" | Importe: "+Math.round(honorario * 100) / 100+"]");
+			
+			honorario = importeOferta*importeCalculoHonorario;
+			honorarios.setValue(Math.round(honorario * 100) / 100);
+			importeField.setMaxValue(100);
+
+			me.fireEvent("log" , "[HONORARIOS: Tipo: "+tipoCalculo+" | Calculo: "+importeCalculoHonorario+" | Importe Oferta: "+importeOferta+" | Importe: "+Math.round(honorario * 100) / 100+"]");
 		}/*
 		
 		else if(tipoCalculo=='Importe fijo'){

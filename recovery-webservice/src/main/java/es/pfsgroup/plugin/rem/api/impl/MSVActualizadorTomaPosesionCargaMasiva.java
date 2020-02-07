@@ -38,9 +38,13 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdjudicacion;
 @Component
 public class MSVActualizadorTomaPosesionCargaMasiva extends AbstractMSVActualizador implements MSVLiberator {
 
-	private final String VALID_OPERATION = MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_TOMA_POSESION;
+	private static final String VALID_OPERATION = MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_TOMA_POSESION;
 
-	public static final class COL_NUM {
+	public static final class ColNum {
+		
+		private ColNum(){
+			//empty
+		}
 
 		static final int FILA_CABECERA = 0;
 		static final int FILA_DATOS = 1;
@@ -98,34 +102,34 @@ public class MSVActualizadorTomaPosesionCargaMasiva extends AbstractMSVActualiza
 
 		final String ES_BORRAR = "X";
 
-		final String celdaActivo = exc.dameCelda(fila, COL_NUM.ID_ACTIVO);
-		final String celdaTipoAdjudicacion = exc.dameCelda(fila, COL_NUM.TIPO_ADJ);
-		final String celdaFtitulo = exc.dameCelda(fila, COL_NUM.F_TITULO);
-		final String celdaFirmezaTitulo = exc.dameCelda(fila, COL_NUM.F_FIRMEZA_TITULO);
-		final String celdaValorAdquisicion = exc.dameCelda(fila, COL_NUM.VALOR_ADQ);
-		final String celdaNombre = exc.dameCelda(fila, COL_NUM.NOMBRE);
-		final String celdaNumExpediente = exc.dameCelda(fila, COL_NUM.NUM_EXP);
-		final String celdaExpedienteDefectos = exc.dameCelda(fila, COL_NUM.EXP_DEFECTOS);
-		final String celdaEntidadEjecHipotecaria = exc.dameCelda(fila, COL_NUM.ENT_EJEC_HIPOTECARIA);
-		final String celdaEstadoAdj = exc.dameCelda(fila, COL_NUM.EST_ADJ);
-		final String celdaFautoadj = exc.dameCelda(fila, COL_NUM.F_AUTOADJ);
-		final String celdaFfirmezaAutoadj = exc.dameCelda(fila, COL_NUM.F_FIRMEZA_AUTOADJ);
-		final String celdaFsenyalAdj = exc.dameCelda(fila, COL_NUM.F_SENYAL_ADJ);
-		final String celdaFRealizacionPosesion = exc.dameCelda(fila, COL_NUM.F_REALIZ_POS);
-		final String celdaLanzNecesario = exc.dameCelda(fila, COL_NUM.LANZ_NECESARIO);
-		final String celdafSenyalLanz = exc.dameCelda(fila, COL_NUM.F_SENYAL_LANZ);
-		final String celdaFlanzEfectuado = exc.dameCelda(fila, COL_NUM.F_LANZ_EFECTUADO);
-		final String celdaFsolMoratoria = exc.dameCelda(fila, COL_NUM.F_SOL_MORATORIA);
-		final String celdaResolucionMoratoria = exc.dameCelda(fila, COL_NUM.RES_MORATORIA);
-		final String celdaFresMoratoria = exc.dameCelda(fila, COL_NUM.F_RES_MORATORIA);
-		final String celdaImporteAdj = exc.dameCelda(fila, COL_NUM.IMPORTE_ADJ);
-		final String celdaTipoJuzgado = exc.dameCelda(fila, COL_NUM.TIPO_JUZGADO);
-		final String celdaPoblacionJuzgado = exc.dameCelda(fila, COL_NUM.POBLACION_JUZGADO);
-		final String celdaNumAutos = exc.dameCelda(fila, COL_NUM.NUM_AUTOS);
-		final String celdaProcurador = exc.dameCelda(fila, COL_NUM.PROCURADOR);
-		final String celdaLetrado = exc.dameCelda(fila, COL_NUM.LETRADO);
-		final String celdaIdAsuntos = exc.dameCelda(fila, COL_NUM.ID_ASUNTOS);
-		final String celdaExpedienteJudicialDefectos = exc.dameCelda(fila, COL_NUM.EXP_JUD_DEFECTO);
+		final String celdaActivo = exc.dameCelda(fila, ColNum.ID_ACTIVO);
+		final String celdaTipoAdjudicacion = exc.dameCelda(fila, ColNum.TIPO_ADJ);
+		final String celdaFtitulo = exc.dameCelda(fila, ColNum.F_TITULO);
+		final String celdaFirmezaTitulo = exc.dameCelda(fila, ColNum.F_FIRMEZA_TITULO);
+		final String celdaValorAdquisicion = exc.dameCelda(fila, ColNum.VALOR_ADQ);
+		final String celdaNombre = exc.dameCelda(fila, ColNum.NOMBRE);
+		final String celdaNumExpediente = exc.dameCelda(fila, ColNum.NUM_EXP);
+		final String celdaExpedienteDefectos = exc.dameCelda(fila, ColNum.EXP_DEFECTOS);
+		final String celdaEntidadEjecHipotecaria = exc.dameCelda(fila, ColNum.ENT_EJEC_HIPOTECARIA);
+		final String celdaEstadoAdj = exc.dameCelda(fila, ColNum.EST_ADJ);
+		final String celdaFautoadj = exc.dameCelda(fila, ColNum.F_AUTOADJ);
+		final String celdaFfirmezaAutoadj = exc.dameCelda(fila, ColNum.F_FIRMEZA_AUTOADJ);
+		final String celdaFsenyalAdj = exc.dameCelda(fila, ColNum.F_SENYAL_ADJ);
+		final String celdaFRealizacionPosesion = exc.dameCelda(fila, ColNum.F_REALIZ_POS);
+		final String celdaLanzNecesario = exc.dameCelda(fila, ColNum.LANZ_NECESARIO);
+		final String celdafSenyalLanz = exc.dameCelda(fila, ColNum.F_SENYAL_LANZ);
+		final String celdaFlanzEfectuado = exc.dameCelda(fila, ColNum.F_LANZ_EFECTUADO);
+		final String celdaFsolMoratoria = exc.dameCelda(fila, ColNum.F_SOL_MORATORIA);
+		final String celdaResolucionMoratoria = exc.dameCelda(fila, ColNum.RES_MORATORIA);
+		final String celdaFresMoratoria = exc.dameCelda(fila, ColNum.F_RES_MORATORIA);
+		final String celdaImporteAdj = exc.dameCelda(fila, ColNum.IMPORTE_ADJ);
+		final String celdaTipoJuzgado = exc.dameCelda(fila, ColNum.TIPO_JUZGADO);
+		final String celdaPoblacionJuzgado = exc.dameCelda(fila, ColNum.POBLACION_JUZGADO);
+		final String celdaNumAutos = exc.dameCelda(fila, ColNum.NUM_AUTOS);
+		final String celdaProcurador = exc.dameCelda(fila, ColNum.PROCURADOR);
+		final String celdaLetrado = exc.dameCelda(fila, ColNum.LETRADO);
+		final String celdaIdAsuntos = exc.dameCelda(fila, ColNum.ID_ASUNTOS);
+		final String celdaExpedienteJudicialDefectos = exc.dameCelda(fila, ColNum.EXP_JUD_DEFECTO);
 
 		final String FILTRO_CODIGO = "codigo";
 		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");

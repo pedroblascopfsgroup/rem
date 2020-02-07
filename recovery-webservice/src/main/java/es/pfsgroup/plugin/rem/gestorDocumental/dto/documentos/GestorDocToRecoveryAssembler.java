@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -98,7 +97,7 @@ public class GestorDocToRecoveryAssembler {
 				dtoAdj.setGestor(null);
 				dtoAdj.setDescripcion(idnDoc.getDescripcionDocumento());
 				dtoAdj.setMatricula(idnDoc.getTipoExpediente() +"-"+idnDoc.getSerieDocumental()+"-"+idnDoc.getTdn1()+"-"+idnDoc.getTdn2());
-						        
+				       
 				Date fechaDocumento = null;
 				if(!Checks.esNulo(idnDoc.getFechaDocumento())){
 					fechaDocumento = new Timestamp(stringToDate(idnDoc.getFechaDocumento()).getTime());
@@ -119,8 +118,8 @@ public class GestorDocToRecoveryAssembler {
 				dtoAdj.setRel(idnDoc.getRel());
 				dtoAdj.setTdn2_desc(idnDoc.getTdn2_desc());
 				dtoAdj.setTipoExpediente(idnDoc.getTipoExpediente());
-				
-				
+
+
 				list.add(dtoAdj);
 			}
 		}

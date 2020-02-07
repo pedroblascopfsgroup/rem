@@ -1,24 +1,22 @@
 package es.pfsgroup.plugin.rem.jbpm.handler;
 
+import java.io.IOException;
+
 import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.jbpm.handler.ActivoGenericActionHandler.ConstantesBPMPFS;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
 
 public class ResultadoPBCEnterActionHandler extends ActivoGenericEnterActionHandler {
 
 	private static final long serialVersionUID = -2997523481794698821L;
 	private static final String INSTRUCCIONES_RESERVA = "T013_InstruccionesReserva";
+	
 	@Autowired
 	OfertaApi ofertaApi;
 	
-	@Autowired
-	TareaExternaManager tareaExternaManager;
 	
 	/**
 	 * PONER JAVADOC FO.
@@ -37,7 +35,6 @@ public class ResultadoPBCEnterActionHandler extends ActivoGenericEnterActionHand
 		super.process(delegateTransitionClass, delegateSpecificClass, executionContext);
 		
 		TareaExterna tareaExterna = getTareaExterna(executionContext);
-		ActivoTramite tramite = getActivoTramite(executionContext);
 		
 		Boolean saltando = !Checks.esNulo((Boolean) getVariable("saltando", executionContext)) ? (Boolean) getVariable("saltando", executionContext) : false;
 		
@@ -48,5 +45,13 @@ public class ResultadoPBCEnterActionHandler extends ActivoGenericEnterActionHand
 			tareaExterna.getTareaPadre().getAuditoria().setBorrado(true);
 		}
 
+	}
+	
+	private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+		//empty
+	}
+
+	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+		//empty
 	}
 }

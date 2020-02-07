@@ -2244,6 +2244,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			autoLoad: true
 		},
 		
+		storeDocumentosTributos: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.DocumentosTributosModel',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'tributo/getDocumentosTributo'
+			},
+			autoLoad: false
+		},
+		
 		storeFasesDePublicacion: {
 			model: 'HreRem.model.DDBase',
 			proxy: {

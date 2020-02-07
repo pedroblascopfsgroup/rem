@@ -135,8 +135,8 @@ public class MSVReclamacionesPlusvaliasExcelValidator extends MSVExcelValidatorA
 			for (Entry<String, List<Integer>> registro : mapaErrores.entrySet()) {
 				if (!registro.getValue().isEmpty()) {
 					dtoValidacionContenido.setFicheroTieneErrores(true);
-					dtoValidacionContenido
-							.setExcelErroresFormato(new FileItem(new File(exc.crearExcelErroresMejorado(mapaErrores))));
+					dtoValidacionContenido.setExcelErroresFormato(new FileItem(new File(exc.crearExcelErroresMejorado(mapaErrores))));
+					break;
 				}
 			}
 		}
@@ -179,18 +179,6 @@ public class MSVReclamacionesPlusvaliasExcelValidator extends MSVExcelValidatorA
 		}
 		return resultado;
 		
-	}
-	
-	
-	private File recuperarPlantilla(Long idTipoOperacion)  {
-		try {
-			FileItem fileItem = excelRepoApi.dameExcelByTipoOperacion(idTipoOperacion);
-			return fileItem.getFile();
-		} 
-		catch (FileNotFoundException e) {
-			logger.error(e.getMessage());
-		}
-		return null;
 	}
 	
 	private List<Integer> isActiveNotExistsRows(MSVHojaExcel exc){

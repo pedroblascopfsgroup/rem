@@ -1,10 +1,11 @@
 package es.pfsgroup.plugin.rem.jbpm.handler;
 
+import java.io.IOException;
+
 import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
 
 /**
  * Clase que comprueba si el informe comercial tiene fecha aceptación y si los datos de mediador 
@@ -22,15 +23,18 @@ public class ActivoComprobarDatosActionHandler extends ActivoBaseActionHandler{
 	@Override
 	public void run(ExecutionContext executionContext) throws Exception { 
 
-		ActivoTramite tramite = getActivoTramite(executionContext);
-		
-		Activo activo = tramite.getActivo();
-		
-		//TODO: Pendiente de definir ActivoEstadosInformeComercialHistorico de HREOS-685, de momento lanzamos la siguiente tarea.
 		
 		getExecutionContext().getToken().signal("DatosIguales");
 
 
+	}
+	
+	private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+		//empty
+	}
+
+	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+		//empty
 	}
 
 }

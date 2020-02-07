@@ -97,7 +97,7 @@ public abstract class WebcomDataType<T> {
 
 	@SuppressWarnings("rawtypes")
 	public static Object valueOf(Object o) {
-		if (o != null && o instanceof WebcomDataType) {
+		if (o instanceof WebcomDataType) {
 			return ((WebcomDataType) o).getValue();
 		} else {
 			return o;
@@ -160,13 +160,10 @@ public abstract class WebcomDataType<T> {
 				throw new UnknownWebcomDataTypeException(type);
 			}
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
 			throw new WebcomDataTypeParseException(e);
 		} catch (SecurityException e) {
-			e.printStackTrace();
 			throw new WebcomDataTypeParseException(e);
 		} catch (ParseException e) {
-			e.printStackTrace();
 			throw new WebcomDataTypeParseException(e);
 		}
 
@@ -178,12 +175,10 @@ public abstract class WebcomDataType<T> {
 			val = "null";
 		}
 			
-		if ((val != null) && (val instanceof Number) && (format != null)) {
+		if ((val instanceof Number) && (format != null)) {
 			String valString = null;
 			try {
-				if (val != null) {
-					valString = new BigDecimal(val.toString()).toPlainString();
-				}
+				valString = new BigDecimal(val.toString()).toPlainString();
 			} catch (Exception e) {
 				valString = val.toString();
 			}

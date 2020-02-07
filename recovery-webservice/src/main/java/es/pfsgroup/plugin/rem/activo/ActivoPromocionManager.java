@@ -24,6 +24,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.adapter.PromocionAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoPromocionApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.AdjuntosPromocion;
@@ -99,39 +100,43 @@ public class ActivoPromocionManager extends BusinessOperationOverrider<ActivoPro
 		}
 
 		try {
-			if (!Checks.esNulo(activo) && !Checks.esNulo(tipoDocumento)) {
-
-				Adjunto adj = uploadAdapter.saveBLOB(webFileItem.getFileItem());
-
-				AdjuntosPromocion adjuntoPromocion = new AdjuntosPromocion();
-				
-				adjuntoPromocion.setAdjunto(adj);
-				
-				adjuntoPromocion.setActivo(activo);
-				
-				adjuntoPromocion.setCodPromo(activo.getCodigoPromocionPrinex()+"_"+activo.getCartera().getCodigo().toString());
-				
-				adjuntoPromocion.setIdDocRestClient(idDocRestClient);
-
-				adjuntoPromocion.setTipoDocumentoPromocion(tipoDocumento);
-
-				adjuntoPromocion.setContentType(webFileItem.getFileItem().getContentType());
-
-				adjuntoPromocion.setTamanyo(webFileItem.getFileItem().getLength());
-
-				adjuntoPromocion.setNombre(webFileItem.getFileItem().getFileName());
-
-				adjuntoPromocion.setDescripcion(webFileItem.getParameter("descripcion"));
-
-				adjuntoPromocion.setFechaDocumento(new Date());
-
-				Auditoria.save(adjuntoPromocion);
-
-				activo.getAdjuntosPromocion().add(adjuntoPromocion);
-
-				activoDao.save(activo);
+			if (!Checks.esNulo(activo.getCodigoPromocionPrinex()) && !Checks.esNulo(activo.getCartera())) {
+				if (!Checks.esNulo(activo) && !Checks.esNulo(tipoDocumento)) {
+	
+					Adjunto adj = uploadAdapter.saveBLOB(webFileItem.getFileItem());
+	
+					AdjuntosPromocion adjuntoPromocion = new AdjuntosPromocion();
+					
+					adjuntoPromocion.setAdjunto(adj);
+					
+					adjuntoPromocion.setActivo(activo);
+					
+					adjuntoPromocion.setCodPromo(activo.getCodigoPromocionPrinex()+"_"+activo.getCartera().getCodigo().toString());
+					
+					adjuntoPromocion.setIdDocRestClient(idDocRestClient);
+	
+					adjuntoPromocion.setTipoDocumentoPromocion(tipoDocumento);
+	
+					adjuntoPromocion.setContentType(webFileItem.getFileItem().getContentType());
+	
+					adjuntoPromocion.setTamanyo(webFileItem.getFileItem().getLength());
+	
+					adjuntoPromocion.setNombre(webFileItem.getFileItem().getFileName());
+	
+					adjuntoPromocion.setDescripcion(webFileItem.getParameter("descripcion"));
+	
+					adjuntoPromocion.setFechaDocumento(new Date());
+	
+					Auditoria.save(adjuntoPromocion);
+	
+					activo.getAdjuntosPromocion().add(adjuntoPromocion);
+	
+					activoDao.save(activo);
+				} else {
+					throw new Exception("No se ha encontrado activo o tipo para relacionar adjunto promocion");
+				}
 			} else {
-				throw new Exception("No se ha encontrado activo o tipo para relacionar adjunto promocion");
+				throw new Exception(PromocionAdapter.ERROR_PROMOCION_ASOCIADA);
 			}
 		} catch (Exception e) {
 			logger.error("Error en activoPromocionManager", e);

@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -282,7 +283,6 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 			result = jbpmMActivoScriptExecutorApi.evaluaScript(getActivoTramite(executionContext).getId(), tareaExterna.getId(), tareaExterna.getTareaProcedimiento().getId(), null, script).toString();
 		} catch (Exception e) {
 			logger.info("Error en el script de decisión [" + script + "]. Trámite [" + getActivoTramite(executionContext).getId() + "], tarea [" + tareaExterna.getId() + "].", e);
-			System.out.println("Error en el script de decisión [" + script + "]. Trámite [" + getActivoTramite(executionContext).getId() + "], tarea [" + tareaExterna.getId() + "]." + e);
 			throw new UserException("bpm.error.script");
 		}
 		return result;
@@ -316,6 +316,14 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 	protected void actualizarEstados(ExecutionContext executionContext){
 		Activo activo = getActivoTramite(executionContext).getActivo();
 		updaterState.updaterStates(activo);
+	}
+	
+	private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+		//empty
+	}
+
+	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+		//empty
 	}
 
 }

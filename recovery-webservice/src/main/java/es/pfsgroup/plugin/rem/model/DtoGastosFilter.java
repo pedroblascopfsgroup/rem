@@ -72,7 +72,7 @@ public class DtoGastosFilter extends WebDto {
 	private String fechaAutorizacionHasta;
 	private Integer impuestoIndirecto;
 	private String codigoMotivoAviso;
-	
+	private Long numTrabajo;
 	
 	
 	public Long getId() {
@@ -390,6 +390,12 @@ public class DtoGastosFilter extends WebDto {
 	}
 	public void setCodigoMotivoAviso(String codigoMotivoAviso) {
 		this.codigoMotivoAviso = codigoMotivoAviso;
+	}
+	public Long getNumTrabajo() {
+		return numTrabajo;
+	}
+	public void setNumTrabajo(Long numTrabajo) {
+		this.numTrabajo = numTrabajo;
 	}
 	
 }

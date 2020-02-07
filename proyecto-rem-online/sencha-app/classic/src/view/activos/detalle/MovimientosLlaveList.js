@@ -2,7 +2,6 @@ Ext.define('HreRem.view.activos.detalle.MovimientosLlaveList', {
     extend		: 'HreRem.view.common.GridBaseEditableRow',
     xtype		: 'movimientosllavelist',
     reference	: 'movimientosllavelistref',
-	topBar		: true,
     bind: {
         store: '{storeMovimientosLlave}'
     },
@@ -35,73 +34,54 @@ Ext.define('HreRem.view.activos.detalle.MovimientosLlaveList', {
 		        	dataIndex: 'numLlave',
 		        	flex:0.6
 		        },
-				{
-		            text: HreRem.i18n('header.situacion.posesoria.llaves.tipoTenedor'),
-		            dataIndex: 'codigoTipoTenedor',
-		        	flex: 1,
-		        	renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
-			            var foundedRecord = this.up('activosdetallemain').getViewModel().getStore('comboTipoTenedor').findRecord('codigo', value);
-			            var descripcion;
-			        	if(!Ext.isEmpty(foundedRecord)) {
-			        		descripcion = foundedRecord.getData().descripcion;
-			        	}
-			            return descripcion;
-			        },
-			        editor: {
-			            xtype: 'combobox',
-			            displayField: 'descripcion',
-			            valueField: 'codigo',
-			            bind: {
-			            	store: '{comboTipoTenedor}'
-			            },
-			            reference: 'cbColTipoTenedor',
-		            	allowBlank: false
-			        }
+		        {
+		        	text: HreRem.i18n('header.situacion.posesoria.llaves.tipo.poseedor'),
+		            dataIndex: 'descripcionTipoTenedorPoseedor',
+		        	flex: 1
 		        },
 		        {
-		        	text: HreRem.i18n('header.situacion.posesoria.llaves.codTenedor'),
-		            dataIndex: 'codTenedor',
-		        	flex: 1,
-		            editor: {
-		            	xtype: 'textfield',
-		            	maxLength: 50
-		            }
+		        	text: HreRem.i18n('header.situacion.posesoria.llaves.nombre.poseedor'),
+		            dataIndex: 'nombrePoseedor',
+		        	flex: 1
+		        },
+		        		        {
+		        	text: HreRem.i18n('header.situacion.posesoria.llaves.tipo.pedidor'),
+		            dataIndex: 'descripcionTipoTenedorPedidor',
+		        	flex: 1
 		        },
 		        {
-		        	text: HreRem.i18n('header.situacion.posesoria.llaves.nombreTenedor'),
-		            dataIndex: 'nomTenedor',
-		        	flex: 1,
-		            editor: {
-		            	xtype: 'textfield',
-		            	maxLength: 100
-		            }
+		        	text: HreRem.i18n('header.situacion.posesoria.llaves.nombre.pedidor'),
+		            dataIndex: 'nombrePedidor',
+		        	flex: 1
 		        },
 		        {
-		        	text: HreRem.i18n('header.situacion.posesoria.llaves.fechaEntrega'),
-		            dataIndex: 'fechaEntrega',
-		            formatter: 'date("d/m/Y")',
-		        	flex: 1,
-	            	editor: {
-		            	xtype: 'datefield',
-		            	reference: 'datefieldEntrega',
-		            	maxValue: $AC.getCurrentDate(),
-		            	allowBlank: false,
-		            	listeners: { 
-		            		change: 'onChangeFechasMinimaMovimientosLlaveList'
-		            	}
-		            }
+		        	text: HreRem.i18n('header.situacion.posesoria.llaves.forma.envio'),
+		            dataIndex: 'envio',
+		        	flex: 1
 		        },
 		        {
-		        	text: HreRem.i18n('header.situacion.posesoria.llaves.fechaDevolucion'),
-		            dataIndex: 'fechaDevolucion',
-		            formatter: 'date("d/m/Y")',
+		        	text: HreRem.i18n('header.situacion.posesoria.llaves.fecha.envio'),
+		            dataIndex: 'fechaEnvio',
 		        	flex: 1,
-	            	editor: {
-		            	xtype: 'datefield',
-		            	reference: 'datefieldDevolucion',
-		            	maxValue: $AC.getCurrentDate()
-		            }
+		        	formatter: 'date("d/m/Y")'
+		        },
+		        {
+		        	text: HreRem.i18n('header.situacion.posesoria.llaves.fecha.recepcion'),
+		            dataIndex: 'fechaRecepcion',
+		        	flex: 1,
+		        	formatter: 'date("d/m/Y")'
+		        },
+		        {
+		        	text: HreRem.i18n('header.situacion.posesoria.llaves.observaciones'),
+		            dataIndex: 'observaciones',
+		        	flex: 1
+		        },
+		        {
+		        	text: HreRem.i18n('header.situacion.posesoria.llaves.estado'),
+		            dataIndex: 'estadoDescripcion',
+		        	flex: 1 
 		        }
+
 		    ];
 
 		    me.dockedItems = [

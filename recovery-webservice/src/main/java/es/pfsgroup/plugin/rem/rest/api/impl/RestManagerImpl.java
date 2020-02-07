@@ -41,30 +41,22 @@ import org.springframework.ui.ModelMap;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.utils.DbIdContextHolder;
-import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.dsm.dao.EntidadDao;
 import es.capgemini.pfs.dsm.model.Entidad;
 import es.capgemini.pfs.security.model.UsuarioSecurity;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.IsNumber;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.UniqueKey;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustWebService;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.dao.ActivosModificadosDao;
 import es.pfsgroup.plugin.rem.rest.dao.BrokerDao;
-import es.pfsgroup.plugin.rem.rest.dao.InformesModificadosDao;
 import es.pfsgroup.plugin.rem.rest.dao.PeticionDao;
 import es.pfsgroup.plugin.rem.rest.filter.AuthenticationRestService;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
-import es.pfsgroup.plugin.rem.rest.model.ActivosModificados;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
-import es.pfsgroup.plugin.rem.rest.model.InformesModificados;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
@@ -72,7 +64,6 @@ import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.webcom.WebcomRESTDevonProperties;
 import es.pfsgroup.plugin.rem.utils.WebcomSignatureUtils;
-import es.pfsgroup.recovery.api.UsuarioApi;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -97,14 +88,6 @@ public class RestManagerImpl implements RestApi {
 
 	private String NOMBRE_SERVICIO_WEBHOOK = "fotos";
 
-	@Autowired
-	private ActivosModificadosDao activosModificadosDao;
-	
-	@Autowired
-	private InformesModificadosDao informesModificadosDao;
-
-	@Autowired
-	private ApiProxyFactory proxyFactory;
 	
 	@Autowired
 	private LogTrustWebService trustMe;
@@ -117,7 +100,7 @@ public class RestManagerImpl implements RestApi {
 	public boolean validateSignature(Broker broker, String signature, RestRequestWrapper restRequest)
 			throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		boolean resultado = false;
-		if (broker.getValidarFirma().equals(new Long(0))) {
+		if (broker.getValidarFirma().equals(0L)) {
 			resultado = true;
 		} else {
 			String peticion = restRequest.getBody();
@@ -146,7 +129,7 @@ public class RestManagerImpl implements RestApi {
 		if (id == null || id.isEmpty() || broker == null) {
 			resultado = false;
 		} else {
-			if (broker.getValidarToken().equals(new Long(1))) {
+			if (broker.getValidarToken().equals(1L)) {
 				if (peticionDao.existePeticionToken(id, broker.getBrokerId())) {
 					resultado = false;
 				} else {
@@ -161,8 +144,7 @@ public class RestManagerImpl implements RestApi {
 
 	@Override
 	public Broker getBrokerByIp(String ip) {
-		Broker broker = brokerDao.getBrokerByIp(ip);
-		return broker;
+		return brokerDao.getBrokerByIp(ip);
 	}
 
 	public String getClientIpAddr(ServletRequest request) {
@@ -189,13 +171,13 @@ public class RestManagerImpl implements RestApi {
 
 	@Override
 	public Broker getBrokerDefault(String queryString) {
-		String DEFAULT_KEY = !Checks.esNulo(appProperties.getProperty("rest.server.rem.api.key"))
+		String defaultKey = !Checks.esNulo(appProperties.getProperty("rest.server.rem.api.key"))
 				? appProperties.getProperty("rest.server.rem.api.key") : "";
 		Broker broker = new Broker();
-		broker.setBrokerId(new Long(-1));
-		broker.setValidarFirma(new Long(1));
-		broker.setValidarToken(new Long(1));
-		broker.setKey(DEFAULT_KEY);
+		broker.setBrokerId(-1L);
+		broker.setValidarFirma(1L);
+		broker.setValidarToken(1L);
+		broker.setKey(defaultKey);
 		return broker;
 	}
 
@@ -377,7 +359,6 @@ public class RestManagerImpl implements RestApi {
 			authToken.setDetails(user);
 
 			AuthenticationRestService authRestService = new AuthenticationRestService();
-			// authRestService.setUserNameprefix("REST-");
 
 			PreAuthenticatedAuthenticationProvider preAuthenticatedProvider = new PreAuthenticatedAuthenticationProvider();
 			preAuthenticatedProvider.setPreAuthenticatedUserDetailsService(authRestService);
@@ -389,10 +370,9 @@ public class RestManagerImpl implements RestApi {
 
 	@Override
 	public PeticionRest crearPeticionObj(RestRequestWrapper req) {
-		HttpServletRequest request = (HttpServletRequest) req;
 		PeticionRest peticion = new PeticionRest();
-		peticion.setMetodo(request.getMethod());
-		peticion.setQuery(request.getPathInfo());
+		peticion.setMetodo(req.getMethod());
+		peticion.setQuery(req.getPathInfo());
 		peticion.setData(req.getBody());
 		peticion.setIp(this.getClientIpAddr(req));
 
@@ -414,8 +394,6 @@ public class RestManagerImpl implements RestApi {
 						servicename = servicename.concat("/");
 					}
 					servicename = servicename.concat(token);
-				} else {
-					continue;
 				}
 			}
 		}
@@ -427,16 +405,16 @@ public class RestManagerImpl implements RestApi {
 	public ALGORITMO_FIRMA obtenerAlgoritmoFirma(String nombreServicio, String ipClient) {
 		ALGORITMO_FIRMA resultado = ALGORITMO_FIRMA.DEFAULT;
 		nombreServicio = nombreServicio.toLowerCase().trim();
-		String SERVICIOS_NO_IP = !Checks.esNulo(appProperties.getProperty("rest.server.rem.protocolo.noip.servicios"))
+		String servicioNoIp = !Checks.esNulo(appProperties.getProperty("rest.server.rem.protocolo.noip.servicios"))
 				? appProperties.getProperty("rest.server.rem.protocolo.noip.servicios") : "reserva,reintegro";
 
-		String RANGO_IP_NO_IP = !Checks.esNulo(appProperties.getProperty("rest.server.rem.protocolo.noip.ip"))
+		String rangoIpNoIp = !Checks.esNulo(appProperties.getProperty("rest.server.rem.protocolo.noip.ip"))
 				? appProperties.getProperty("rest.server.rem.protocolo.noip.ip") : "*.*.*.*";
-		if (SERVICIOS_NO_IP != null && !SERVICIOS_NO_IP.isEmpty()) {
-			SERVICIOS_NO_IP = SERVICIOS_NO_IP.toLowerCase();
+		if (servicioNoIp != null && !servicioNoIp.isEmpty()) {
+			servicioNoIp = servicioNoIp.toLowerCase();
 			Boolean esBankia = false;
-			if (compararIps(ipClient, RANGO_IP_NO_IP)) {
-				for (String servicioAux : SERVICIOS_NO_IP.split(",")) {
+			if (compararIps(ipClient, rangoIpNoIp)) {
+				for (String servicioAux : servicioNoIp.split(",")) {
 					servicioAux = servicioAux.trim();
 					if (servicioAux.equals(nombreServicio)) {
 						esBankia = true;
@@ -657,52 +635,6 @@ public class RestManagerImpl implements RestApi {
 
 	}
 
-	@Override
-	@Deprecated
-	public void marcarRegistroParaEnvio(ENTIDADES entidad, Object instanciaEntidad) {
-		Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		if (entidad.equals(ENTIDADES.ACTIVO)) {
-			if (instanciaEntidad != null && instanciaEntidad instanceof Activo) {
-				ActivosModificados actMod = activosModificadosDao.getByActivo((Activo) instanciaEntidad);
-				if (Checks.esNulo(actMod)) {
-					actMod = new ActivosModificados();
-					Auditoria auditoria = new Auditoria();
-					auditoria.setFechaModificar(new Date());
-
-					auditoria.setUsuarioModificar(usu.getUsername());
-					auditoria.setFechaCrear(new Date());
-					auditoria.setUsuarioCrear(usu.getUsername());
-					actMod.setAuditoria(auditoria);
-					actMod.setActivo((Activo) instanciaEntidad);
-				} else {
-					actMod.getAuditoria().setFechaModificar(new Date());
-					actMod.getAuditoria().setUsuarioModificar(usu.getUsername());
-				}
-				activosModificadosDao.saveOrUpdate(actMod);
-			}
-		}else if(entidad.equals(ENTIDADES.INFORME)){
-			if (instanciaEntidad != null && instanciaEntidad instanceof ActivoInfoComercial) {
-				InformesModificados informeMod = informesModificadosDao.getByInforme((ActivoInfoComercial)instanciaEntidad);
-				if (Checks.esNulo(informeMod)) {
-					informeMod = new InformesModificados();
-					Auditoria auditoria = new Auditoria();
-					auditoria.setFechaModificar(new Date());
-
-					auditoria.setUsuarioModificar(usu.getUsername());
-					auditoria.setFechaCrear(new Date());
-					auditoria.setUsuarioCrear(usu.getUsername());
-					informeMod.setAuditoria(auditoria);
-					informeMod.setInforme((ActivoInfoComercial)instanciaEntidad);
-				}else{
-					informeMod.getAuditoria().setFechaModificar(new Date());
-					informeMod.getAuditoria().setUsuarioModificar(usu.getUsername());
-				}
-				informesModificadosDao.saveOrUpdate(informeMod);
-			}
-		}
-
-	}
-
 	@SuppressWarnings("rawtypes")
 	public Object getValue(Object dto, Class claseDto, String methodName) throws Exception {
 		Object obj = null;
@@ -714,5 +646,16 @@ public class RestManagerImpl implements RestApi {
 			}
 		}
 		return obj;
+	}
+	
+	public void trace(String mensaje) {
+		Boolean webcomSimulado = Boolean.valueOf(WebcomRESTDevonProperties.extractDevonProperty(appProperties,
+				WebcomRESTDevonProperties.WEBCOM_SIMULADO, "true"));
+		if (webcomSimulado) {
+			logger.error(mensaje);
+		} else {
+			logger.trace(mensaje);
+		}
+
 	}
 }

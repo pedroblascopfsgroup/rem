@@ -184,15 +184,7 @@ public class MSVOfertasGTAMExcelValidator extends MSVExcelValidatorAbstract{
 		return resultado;
 	}
 	
-	private File recuperarPlantilla(Long idTipoOperacion)  {
-		try {
-			FileItem fileItem = proxyFactory.proxy(ExcelRepoApi.class).dameExcelByTipoOperacion(idTipoOperacion);
-			return fileItem.getFile();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+	 
 	
 	//-------Metodos customizados
 	private List<Integer> isOfferExists(MSVHojaExcel exc){

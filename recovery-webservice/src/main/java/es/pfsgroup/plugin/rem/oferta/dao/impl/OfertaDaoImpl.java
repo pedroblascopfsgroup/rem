@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,19 +38,20 @@ import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 
 @Repository("OfertaDao")
 public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements OfertaDao {
 	
 	
-	public static String TIPO_FECHA_ALTA = "01";
-	public static String TIPO_FECHA_FIRMA_RESERVA = "02";
-	public static String TIPO_FECHA_POSICIONAMIENTO = "03";
-	public static String CODIGO_NUM_ACTIVO_UVEM= "NUM_UVEM";
-	public static String CODIGO_NUM_ACTIVO_SAREB= "NUM_SAREB";
-	public static String CODIGO_NUM_ACTIVO_PRINEX= "NUM_PRINEX";
-	public static String CODIGO_NUM_ACTIVO= "NUM_ACTIVO";
+	public static final String TIPO_FECHA_ALTA = "01";
+	public static final String TIPO_FECHA_FIRMA_RESERVA = "02";
+	public static final String TIPO_FECHA_POSICIONAMIENTO = "03";
+	public static final String CODIGO_NUM_ACTIVO_UVEM= "NUM_UVEM";
+	public static final String CODIGO_NUM_ACTIVO_SAREB= "NUM_SAREB";
+	public static final String CODIGO_NUM_ACTIVO_PRINEX= "NUM_PRINEX";
+	public static final String CODIGO_NUM_ACTIVO= "NUM_ACTIVO";
 	
 
 	
@@ -229,9 +232,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 				campo = "voferta.fechaCreacion";
 			} else if(TIPO_FECHA_FIRMA_RESERVA.equals(tipo)) {
 				campo = "voferta.fechaFirmaReserva";
-			}/* else if(TIPO_FECHA_POSICIONAMIENTO.equals(tipo)) {
-				campo = "";
-			}*/
+			}
 			
 			if(!Checks.esNulo(campo)) {
 				HQLBuilder.addFiltroBetweenSiNotNull(hb, campo, fechaDesde, fechaHasta);
@@ -240,7 +241,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 
 
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(),e);
 		}
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.codigoTipoOferta", dtoOfertasFilter.getTipoOferta());
@@ -450,7 +451,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 				} else {
 					first = false;
 				}
-				b.append("'" + s.toString() + "'");
+				b.append("'" + s + "'");
 			}
 			hb.appendWhere(nombreCampo.concat(" in (").concat(b.toString()).concat(")"));
 		}
@@ -498,16 +499,6 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	@Override
 	public Oferta getOfertaPrincipal(Long idferta) {
 
-//		StringBuilder hql = new StringBuilder(
-//				"SELECT ID_OFERTA_PRINCIPAL FROM OGR_OFERTAS_AGRUPADAS_LBK WHERE ID_OFERTA_DEPENDIENTE = :ID_OFERTA_DEPENDIENTE");
-//		Query callFunctionSql = this.getSessionFactory().getCurrentSession().createSQLQuery(hql.toString());
-//		
-//		callFunctionSql.setParameter("ID_OFERTA_DEPENDIENTE", numOferta);
-//
-//		return ((BigDecimal)callFunctionSql.uniqueResult()).longValue();
-		
-
-
 		Oferta resultado = null;
 		HQLBuilder hql = new HQLBuilder("select oferAgruLbk.ofertaPrincipal from OfertasAgrupadasLbk oferAgruLbk join oferAgruLbk.ofertaDependiente depen where depen.id ="+idferta);
 		try {
@@ -549,6 +540,30 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		List<VOfertasActivosAgrupacion> ofertas = (List<VOfertasActivosAgrupacion>) pageVisitas.getResults();
 
 		return new DtoPage(ofertas, pageVisitas.getTotalCount());
+	}
+	
+	@Override
+	public void guardaRegistroWebcom(final Oferta obj) {
+		Session session = getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		try{
+			obj.getAuditoria().setUsuarioModificar(RestApi.REST_LOGGED_USER_USERNAME);
+			obj.getAuditoria().setFechaModificar(new Date());
+			session.saveOrUpdate(obj);
+			tx.commit();
+		}
+		catch (Exception e) {
+			logger.error("error al persistir la oferta",e);
+			tx.rollback();
+		}
+		finally{
+			if (session.isOpen()){
+				session.flush();
+				session.close();
+			}
+		}
+		
+		
 	}
 	
 	public void flush() {

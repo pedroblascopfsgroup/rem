@@ -171,18 +171,6 @@ public class MSVValidatorIndicadorActivoAlquiler extends MSVExcelValidatorAbstra
 			
 		}
 		
-		private File recuperarPlantilla(Long idTipoOperacion)  {
-			try {
-				FileItem fileItem = excelRepoApi.dameExcelByTipoOperacion(idTipoOperacion);
-				return fileItem.getFile();
-			} 
-			catch (FileNotFoundException e) {
-				logger.error(e.getMessage());
-				e.printStackTrace();
-			}
-			return null;
-		}
-		
 		private List<Integer> isActiveNotExistsRows(MSVHojaExcel exc){
 			List<Integer> listaFilas = new ArrayList<Integer>();
 			

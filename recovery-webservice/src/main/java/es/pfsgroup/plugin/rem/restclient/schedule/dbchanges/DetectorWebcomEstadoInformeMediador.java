@@ -17,6 +17,7 @@ import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosBDDao;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
+import net.sf.json.JSONObject;
 
 @Component
 public class DetectorWebcomEstadoInformeMediador extends DetectorCambiosBD<InformeMediadorDto> {
@@ -55,8 +56,8 @@ public class DetectorWebcomEstadoInformeMediador extends DetectorCambiosBD<Infor
 	}
 
 	@Override
-	public void invocaServicio(List<InformeMediadorDto> data, RestLlamada registro) throws ErrorServicioWebcom {
-		this.serviciosWebcom.webcomRestEstadoInformeMediador(data, registro);
+	public JSONObject invocaServicio(List<InformeMediadorDto> data, RestLlamada registro) throws ErrorServicioWebcom {
+		return this.serviciosWebcom.webcomRestEstadoInformeMediador(data, registro);
 
 	}
 

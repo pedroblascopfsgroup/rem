@@ -23,6 +23,9 @@ Ext.define('HreRem.model.HistoricoMediadorModel', {
     		},
     		{
     			name:'responsableCambio'
+    		},
+    		{
+    			name: 'rol'
     		}
     ],
 

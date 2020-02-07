@@ -85,6 +85,11 @@ Ext.define('HreRem.model.ActivoSituacionPosesoria', {
             name:'llaveHre'
         },
         {
+            name:'fechaPrimerAnillado',
+            type:'date',
+            dateFormat: 'c'
+        },
+        {
             name:'fechaRecepcionLlave',
             type:'date',
             dateFormat: 'c'

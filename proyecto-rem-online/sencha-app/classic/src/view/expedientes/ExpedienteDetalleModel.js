@@ -1290,6 +1290,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				{"codigo":"1", "descripcion":"Si"}, 
 				{"codigo":"2", "descripcion":"No"} 
 			] 
+		},
+		storeOrigenLead: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.OrigenLead',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getOrigenLead',
+		        extraParams: {idExpediente: '{expediente.id}'}
+	    	}
 		}
 		
     }

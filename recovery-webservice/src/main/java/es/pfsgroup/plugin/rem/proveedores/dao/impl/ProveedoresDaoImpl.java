@@ -33,6 +33,8 @@ import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 
@@ -401,16 +403,26 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 				.createQuery(hb.toString()).list();
 		
 		return carterasProveedor;
-	}
+	}*/
 	
 	@Override
+	public List<ActivoProveedor> getMediadoresActivos() {
+		HQLBuilder hb = new HQLBuilder(
+				"select proveedor.id, proveedor.codigoProveedorRem, proveedor.nombre from ActivoProveedor proveedor");
+		hb.appendWhere("proveedor.tipoProveedor.codigo in ('" + DDTipoProveedor.COD_MEDIADOR + "', '" + DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA + "')");
+		hb.appendWhere("proveedor.estadoProveedor.codigo = " + DDEstadoProveedor.ESTADO_BIGENTE);
+		hb.appendWhere("proveedor.homologado = 1");
+
+		return HibernateQueryUtils.list(this, hb);
+	}
+	/*@Override
 	public List<ActivoProveedorCartera> getProveedoresCarteraById(Long idProveedor) {
 		
 		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoProveedorCartera.class);
 		criteria.add(Restrictions.eq("proveedor.id", idProveedor));
 			
 		return  HibernateUtils.castList(ActivoProveedorCartera.class, criteria.list());
-	}
+	}*/
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -425,7 +437,7 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 								
 		return mapeoGestorDocumental;
 		
-	}
+	}/*
 	
 	@Override
 	public List<MapeoGestorDocumental> getCarteraClientesProveedoresByCarteraYSubcartera(DDCartera cartera, DDSubcartera subcartera) {

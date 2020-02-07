@@ -289,6 +289,20 @@ public class Oferta implements Serializable, Auditable {
 	
 	@Column(name="OFR_OFERTA_SINGULAR")
 	private Boolean ofertaSingular;
+	
+	@Column(name="OFR_FECHA_ORI_LEAD")
+	private Date fechaOrigenLead;
+	
+	@Column(name="OFR_COD_TIPO_PROV_ORI_LEAD")
+	private String codTipoProveedorOrigenCliente;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="OFR_ID_PRES_ORI_LEAD")
+	private ActivoProveedor proveedorPrescriptorRemOrigenLead;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="OFR_ID_REALIZA_ORI_LEAD")
+	private ActivoProveedor proveedorRealizadorRemOrigenLead;
 
 	public Date getFechaAlta() {
 		return fechaAlta;
@@ -866,5 +880,37 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setOfertaSingular(Boolean ofertaSingular) {
 		this.ofertaSingular = ofertaSingular;
+	}
+
+	public Date getFechaOrigenLead() {
+		return fechaOrigenLead;
+	}
+
+	public void setFechaOrigenLead(Date fechaOrigenLead) {
+		this.fechaOrigenLead = fechaOrigenLead;
+	}
+
+	public String getCodTipoProveedorOrigenCliente() {
+		return codTipoProveedorOrigenCliente;
+	}
+
+	public void setCodTipoProveedorOrigenCliente(String codTipoProveedorOrigenCliente) {
+		this.codTipoProveedorOrigenCliente = codTipoProveedorOrigenCliente;
+	}
+
+	public ActivoProveedor getProveedorPrescriptorRemOrigenLead() {
+		return proveedorPrescriptorRemOrigenLead;
+	}
+
+	public void setProveedorPrescriptorRemOrigenLead(ActivoProveedor proveedorPrescriptorRemOrigenLead) {
+		this.proveedorPrescriptorRemOrigenLead = proveedorPrescriptorRemOrigenLead;
+	}
+
+	public ActivoProveedor getProveedorRealizadorRemOrigenLead() {
+		return proveedorRealizadorRemOrigenLead;
+	}
+
+	public void setProveedorRealizadorRemOrigenLead(ActivoProveedor proveedorRealizadorRemOrigenLead) {
+		this.proveedorRealizadorRemOrigenLead = proveedorRealizadorRemOrigenLead;
 	}
 }

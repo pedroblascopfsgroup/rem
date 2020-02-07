@@ -100,6 +100,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoRolMediador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
@@ -1191,6 +1192,15 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	public List<DDTipoDocumentoTributos> getDiccionarioTiposDocumentoTributo() {
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		return genericDao.getList(DDTipoDocumentoTributos.class, filtroBorrado);
+	}
+
+	@Override
+	public List<DDTipoRolMediador> getDiccionarioRolesMediador() {
+		List<DDTipoRolMediador> listaRoles = new ArrayList<DDTipoRolMediador>();
+		
+		listaRoles = genericDao.getList(DDTipoRolMediador.class, genericDao.createFilter(FilterType.EQUALS, "ocultar", false));
+		
+		return listaRoles;
 	}
 	
 	@Override

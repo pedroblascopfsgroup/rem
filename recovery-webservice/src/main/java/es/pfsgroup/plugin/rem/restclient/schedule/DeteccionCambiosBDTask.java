@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.rem.restclient.schedule;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -22,8 +21,8 @@ import es.pfsgroup.plugin.rem.restclient.registro.RegistroLlamadasManager;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.CambiosList;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
-import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.InfoTablasBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.WebcomRESTDevonProperties;
+import net.sf.json.JSONObject;
 
 /**
  * Task de Quartz que comprueba si ha habido algún cambio en BD que requiera de
@@ -48,8 +47,8 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 
 	private RegistroLlamadasManager registroLlamadas;
 
-	public static Integer MAXIMO_INTENTOS_DEFAULT = 5;
-	
+	public static final Integer MAXIMO_INTENTOS_DEFAULT = 5;
+
 	@Resource
 	private Properties appProperties;
 
@@ -58,16 +57,16 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	}
 
 	/*
-	 * Esa lista se puebla una vez terminado de cargar el contexto de Spring.
-	 * Esto se hace capturando el evento ContextRefreshedEvent. Ver el método
+	 * Esa lista se puebla una vez terminado de cargar el contexto de Spring. Esto
+	 * se hace capturando el evento ContextRefreshedEvent. Ver el método
 	 * onApplicationEvent(ApplicationEvent event)
 	 */
 	@SuppressWarnings("rawtypes")
 	private List<DetectorCambiosBD> registroCambiosHandlers = new ArrayList<DetectorCambiosBD>();
 
 	/**
-	 * Este método añade un nuevo handler para gestionar cambios de BD. Este
-	 * método es público para permitir realizar esta operación en los tests.
+	 * Este método añade un nuevo handler para gestionar cambios de BD. Este método
+	 * es público para permitir realizar esta operación en los tests.
 	 * 
 	 * @param handler
 	 */
@@ -78,12 +77,11 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 		}
 	}
 
-	public void enviaInformacionCompleta(DetectorCambiosBD<?> handler)
-			throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
+	public void enviaInformacionCompleta(DetectorCambiosBD<?> handler) throws ErrorServicioWebcom {
 		this.detectaCambios(handler, TIPO_ENVIO.COMPLETO);
 	}
 
-	public void detectaCambios() throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
+	public void detectaCambios() throws ErrorServicioWebcom {
 		detectaCambios(null);
 	}
 
@@ -97,17 +95,15 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public void detectaCambios(DetectorCambiosBD handlerToExecute)
-			throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
+	public void detectaCambios(DetectorCambiosBD handlerToExecute) throws ErrorServicioWebcom {
 		this.detectaCambios(handlerToExecute, TIPO_ENVIO.CAMBIOS);
 	}
 
 	@SuppressWarnings("rawtypes")
-	public void detectaCambios(DetectorCambiosBD handlerToExecute, Boolean optimizado)
-			throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
-		((InfoTablasBD) handlerToExecute).setSoloCambiosMarcados(optimizado);
+	public void detectaCambios(DetectorCambiosBD handlerToExecute, Boolean optimizado) throws ErrorServicioWebcom {
+		handlerToExecute.setSoloCambiosMarcados(optimizado);
 		this.detectaCambios(handlerToExecute, TIPO_ENVIO.CAMBIOS);
-		((InfoTablasBD) handlerToExecute).setSoloCambiosMarcados(null);
+		handlerToExecute.setSoloCambiosMarcados(null);
 	}
 
 	/**
@@ -117,15 +113,13 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	 * @throws ErrorServicioEnEjecucion
 	 * @throws Exception
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void detectaCambios(DetectorCambiosBD handlerToExecute, TIPO_ENVIO tipoEnvio)
-			throws ErrorServicioWebcom, ErrorServicioEnEjecucion {
+	@SuppressWarnings({ "rawtypes" })
+	public void detectaCambios(DetectorCambiosBD handlerToExecute, TIPO_ENVIO tipoEnvio) throws ErrorServicioWebcom {
 		obtenerProperties();
-
 		long iteracion = System.currentTimeMillis();
 		trace("[DETECCIÓN CAMBIOS] Inicio [it=" + iteracion + "]");
+		List<DetectorCambiosBD> registroCambiosHandlersAjecutar = registroCambiosHandlers;
 		try {
-			List<DetectorCambiosBD> registroCambiosHandlersAjecutar = registroCambiosHandlers;
 			if (handlerToExecute != null) {
 				registroCambiosHandlersAjecutar = new ArrayList<DetectorCambiosBD>();
 				registroCambiosHandlersAjecutar.add(handlerToExecute);
@@ -137,78 +131,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 				registroCambiosHandlersAjecutar.get(0).setdbContext();
 				if (!registroCambiosHandlersAjecutar.get(0).isApiRestCerrada()) {
 					for (DetectorCambiosBD handler : registroCambiosHandlersAjecutar) {
-						if (handler.isActivo()) {
-							trace("[DETECCIÓN CAMBIOS] Ejecutando handler: " + handler.getClass().getName());
-							ArrayList<RestLlamada> llamadas = new ArrayList<RestLlamada>();
-							Class control = handler.getDtoClass();
-							CambiosList listPendientes = null;
-							CambiosList listPendientesTodosBloques = new CambiosList(tamanyoBloque);
-							listPendientes = new CambiosList(tamanyoBloque);
-
-							RestLlamada registro = new RestLlamada();
-							Date fechaEjecucion = new Date();
-							handler.actualizarVistaMaterializada(registro);
-							Integer contError = 0;
-							Boolean marcarComoEnviado = true;
-							int i= 0;
-							do {
-								if(i>0){
-									registro = new RestLlamada();
-								}
-								registro.setIteracion(iteracion);
-								try {
-									if (tipoEnvio.equals(TIPO_ENVIO.CAMBIOS)) {
-										listPendientes = handler.listPendientes(control, registro, listPendientes);
-										if (handler.procesarSoloCambiosMarcados()) {
-											listPendientesTodosBloques.addAll(listPendientes);
-										}
-									} else {
-										listPendientes = handler.listDatosCompletos(control, registro, listPendientes);
-									}
-
-									
-									ejecutaTarea(handler, listPendientes, control, registro);
-									// pasamos de bloque
-									pasarDeBloque(listPendientes);
-									contError = 0;
-									marcarComoEnviado = true;
-								} catch (ErrorServicioWebcom e) {
-									// si no es reintentable siguiente bloque
-									if (!e.isReintentable()) {
-										logger.error(
-												"Ha ocurrido un error al invocar al servicio. Esta petición no se va a volver a enviar ya que está marcada como no reintentable",
-												e);
-										pasarDeBloque(listPendientes);
-									} else {
-										logger.error(
-												"Ha ocurrido un error al invocar al servicio. Se dejan sin marcar los registros para volver a reintentar la llamada",
-												e);
-										contError++;
-										if(contError >= MAXIMO_INTENTOS){
-											marcarComoEnviado = false;
-										}										
-									}
-								} finally {
-									if (!Checks.estaVacio(listPendientes) && registroLlamadas != null) {
-										registro.logTiempoBorrarHistorico();
-										registro.logTiempoInsertarHistorico();
-										registroLlamadas.guardaRegistroLlamada(registro, handler);
-
-										llamadas.add(registro);
-									}
-								}
-								// en la segunda pagina el tiempo de refresco es
-								// 0
-								registro.setMsRefrescoVista(new Long(0));
-								i++;
-							} while ((listPendientes != null && listPendientes.getPaginacion().getHasMore())
-									|| (contError > 0 && contError < MAXIMO_INTENTOS));
-
-							if (marcarComoEnviado) {
-								marcarComoEnviado(handler, control, llamadas, listPendientesTodosBloques,
-										fechaEjecucion);
-							}
-						}
+						procesaHandler(tipoEnvio, handler, iteracion);
 					}
 				} else {
 					trace("La API REST esta cerrada no se ejecutará");
@@ -220,12 +143,104 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			handlerToExecute.eviarCorreoErrorDC(e.getMessage());
 			throw new ErrorServicioWebcom(e.getMessage());
 		} finally {
 			trace("[DETECCIÓN CAMBIOS] Fin [it=" + iteracion + "]");
 		}
 
+	}
+
+	/**
+	 * Procesa un handler del detector
+	 * 
+	 * @param tipoEnvio
+	 * @param handler
+	 * @param iteracion
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void procesaHandler(TIPO_ENVIO tipoEnvio, DetectorCambiosBD handler, long iteracion) {
+		if (handler.isActivo()) {
+			trace("[DETECCIÓN CAMBIOS] Ejecutando handler: " + handler.getClass().getName());
+			ArrayList<RestLlamada> llamadas = new ArrayList<RestLlamada>();
+			Class control = handler.getDtoClass();
+			CambiosList listPendientes = new CambiosList(tamanyoBloque);
+
+			Integer contError = 0;
+			Boolean marcarComoEnviado = true;
+			Boolean inicializado = false;
+			RestLlamada registro = null;
+			do {
+				if (!inicializado) {
+					registro = new RestLlamada();
+					handler.actualizarVistaMaterializada(registro);
+					inicializado = true;
+				}
+				registro.setIteracion(iteracion);
+				try {
+					if (tipoEnvio.equals(TIPO_ENVIO.CAMBIOS)) {
+						listPendientes = handler.listPendientes(control, registro, listPendientes);
+					} else {
+						listPendientes = handler.listDatosCompletos(control, registro, listPendientes);
+					}
+					procesaBloque(listPendientes, registro, handler, llamadas);
+					contError = 0;
+					marcarComoEnviado = true;
+				} catch (ErrorServicioWebcom e) {
+					// si no es reintentable siguiente bloque
+					if (!e.isReintentable()) {
+						logger.error(
+								"Ha ocurrido un error al invocar al servicio. Esta petición no se va a volver a enviar ya que está marcada como no reintentable",
+								e);
+						pasarDeBloque(listPendientes);
+					} else {
+						logger.error(
+								"Ha ocurrido un error al invocar al servicio. Se dejan sin marcar los registros para volver a reintentar la llamada",
+								e);
+						contError++;
+						if (contError >= MAXIMO_INTENTOS) {
+							marcarComoEnviado = false;
+						}
+					}
+				}
+			} while ((listPendientes != null && listPendientes.getPaginacion().getHasMore())
+					|| (contError > 0 && contError < MAXIMO_INTENTOS));
+
+			if (marcarComoEnviado) {
+				marcarComoEnviado(handler, control, llamadas);
+			}
+		}
+
+	}
+
+	/**
+	 * Procesa un bloque
+	 * 
+	 * @param listPendientes
+	 * @param registro
+	 * @param tipoEnvio
+	 * @param handler
+	 * @param control
+	 * @return
+	 * @throws ErrorServicioWebcom
+	 */
+	@SuppressWarnings({ "rawtypes" })
+	private JSONObject procesaBloque(CambiosList listPendientes, RestLlamada registro, DetectorCambiosBD handler,
+			ArrayList<RestLlamada> llamadas) throws ErrorServicioWebcom {
+		JSONObject resultado = null;
+		try {
+			resultado = ejecutaTarea(handler, listPendientes, registro);
+			pasarDeBloque(listPendientes);
+		} finally {
+			if (!Checks.estaVacio(listPendientes) && registroLlamadas != null) {
+				registro.logTiempoBorrarHistorico();
+				registro.logTiempoInsertarHistorico();
+				registroLlamadas.guardaRegistroLlamada(registro, handler);
+				handler.procesaResultado(resultado);
+
+				llamadas.add(registro);
+			}
+		}
+		return resultado;
 	}
 
 	/**
@@ -239,7 +254,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 					.equals(listPendientes.getPaginacion().getTamanyoBloque())) {
 				listPendientes.getPaginacion().setHasMore(true);
 				listPendientes.getPaginacion().setNumeroBloque(listPendientes.getPaginacion().getNumeroBloque() + 1);
-				trace("[DETECCIÓN CAMBIOS] pasando al bloque "+listPendientes.getPaginacion().getNumeroBloque());
+				trace("[DETECCIÓN CAMBIOS] pasando al bloque " + listPendientes.getPaginacion().getNumeroBloque());
 
 			} else {
 				listPendientes.getPaginacion().setHasMore(false);
@@ -249,6 +264,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 
 	/**
 	 * Ejecuta una tarea del detector
+	 * 
 	 * @param handler
 	 * @param listPendientes
 	 * @param control
@@ -256,29 +272,30 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	 * @throws ErrorServicioWebcom
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void ejecutaTarea(DetectorCambiosBD<?> handler, List listPendientes, Class control, RestLlamada registro)
+	public JSONObject ejecutaTarea(DetectorCambiosBD<?> handler, List listPendientes, RestLlamada registro)
 			throws ErrorServicioWebcom {
+		JSONObject resultado = null;
 		if (!Checks.estaVacio(listPendientes)) {
-			trace("[DETECCIÓN CAMBIOS] Enviando " + listPendientes.size()
-					+ " cambios mediante el handler " + handler.getClass().getName());
+			trace("[DETECCIÓN CAMBIOS] Enviando " + listPendientes.size() + " cambios mediante el handler "
+					+ handler.getClass().getName());
 		} else {
-			trace(
-					"[DETECCIÓN CAMBIOS] No se han encontrado cambios para enviar. Handler: "
-							+ handler.getClass().getName());
+			trace("[DETECCIÓN CAMBIOS] No se han encontrado cambios para enviar. Handler: "
+					+ handler.getClass().getName());
 		}
 
 		if ((listPendientes != null) && (!listPendientes.isEmpty())) {
 			trace(handler.getClass().getName() + ": invocando al servicio REST");
-			handler.invocaServicio(listPendientes, registro);
+			resultado = handler.invocaServicio(listPendientes, registro);
 
 		} else {
 			logger.trace("'listPendientes' es nulo o está vacío. No hay datos que enviar por servicio");
 		}
+		return resultado;
 	}
 
 	/**
-	 * Este método puebla la lista de detectores de cambios una vez el contexto
-	 * de Spring ya se encuentra inicializado.
+	 * Este método puebla la lista de detectores de cambios una vez el contexto de
+	 * Spring ya se encuentra inicializado.
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -318,6 +335,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 
 	/**
 	 * Obtiene el registro de handlers
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
@@ -327,6 +345,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 
 	/**
 	 * Configura el registro de llamadas
+	 * 
 	 * @param applicationContext
 	 * @param registros
 	 */
@@ -340,6 +359,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 
 	/**
 	 * Configura los handlers
+	 * 
 	 * @param applicationContext
 	 * @param beanNames
 	 */
@@ -358,7 +378,8 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	 */
 	private void obtenerProperties() {
 		String tamanyoBloqueProperties = !Checks.esNulo(appProperties.getProperty("rest.client.webcom.tamanyobloque"))
-				? appProperties.getProperty("rest.client.webcom.tamanyobloque") : "500";
+				? appProperties.getProperty("rest.client.webcom.tamanyobloque")
+				: "500";
 		try {
 			if (tamanyoBloqueProperties != null) {
 				this.tamanyoBloque = Integer.parseInt(tamanyoBloqueProperties);
@@ -369,7 +390,8 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 
 		String maximoIntentosProperties = !Checks
 				.esNulo(appProperties.getProperty("rest.client.webcom.maximo.intentos"))
-						? appProperties.getProperty("rest.client.webcom.maximo.intentos") : null;
+						? appProperties.getProperty("rest.client.webcom.maximo.intentos")
+						: null;
 		try {
 			if (maximoIntentosProperties != null) {
 				this.MAXIMO_INTENTOS = Integer.parseInt(maximoIntentosProperties);
@@ -390,12 +412,16 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	 * @throws Exception
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private void marcarComoEnviado(DetectorCambiosBD handler, Class control, ArrayList<RestLlamada> llamadas,
-			CambiosList listPendientesTodosBloques, Date fechaEjecucion) throws Exception {
+	private void marcarComoEnviado(DetectorCambiosBD handler, Class control, ArrayList<RestLlamada> llamadas) {
 		trace(handler.getClass().getName() + ": marcando los registros de la BD como enviados");
 		handler.marcaComoEnviados(control, llamadas);
 	}
-	
+
+	/**
+	 * Traza en el log
+	 * 
+	 * @param mensaje
+	 */
 	private void trace(String mensaje) {
 		Boolean webcomSimulado = Boolean.valueOf(WebcomRESTDevonProperties.extractDevonProperty(appProperties,
 				WebcomRESTDevonProperties.WEBCOM_SIMULADO, "true"));

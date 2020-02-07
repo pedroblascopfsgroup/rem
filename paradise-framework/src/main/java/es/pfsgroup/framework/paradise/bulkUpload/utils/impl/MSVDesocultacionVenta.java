@@ -1,7 +1,6 @@
 package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -15,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessCompositeValidators;
@@ -60,9 +57,7 @@ public class MSVDesocultacionVenta extends MSVExcelValidatorAbstract{
 	@Autowired
 	private MSVExcelParser excelParser;
 	
-	@Autowired
-	private ApiProxyFactory proxyFactory;
-	
+		
 	@Autowired
 	private MSVBusinessValidationFactory validationFactory;
 	
@@ -174,15 +169,7 @@ public class MSVDesocultacionVenta extends MSVExcelValidatorAbstract{
 		return resultado;
 	}
 	
-	private File recuperarPlantilla(Long idTipoOperacion)  {
-		try {
-			FileItem fileItem = proxyFactory.proxy(ExcelRepoApi.class).dameExcelByTipoOperacion(idTipoOperacion);
-			return fileItem.getFile();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+	 
 	
 	//Métodos auxiliares
 	

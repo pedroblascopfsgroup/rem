@@ -183,15 +183,7 @@ public class MSVActualizacionInformacionInscripcionExcelValidator extends MSVExc
 		return resultado;
 	}
 	
-	private File recuperarPlantilla(Long idTipoOperacion)  {
-		try {
-			FileItem fileItem = proxyFactory.proxy(ExcelRepoApi.class).dameExcelByTipoOperacion(idTipoOperacion);
-			return fileItem.getFile();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+	 
 
 	private boolean ValidarConjunto(MSVHojaExcel exc) {
 		boolean esCorrecto = true;

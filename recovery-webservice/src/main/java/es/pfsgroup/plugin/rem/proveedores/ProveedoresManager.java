@@ -1585,4 +1585,10 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		}
 		return resultado;
 	}
+	
+	@Override
+	public List<ActivoProveedor> getMediadoresActivos() {		
+		
+		return proveedoresDao.getMediadoresActivos();
+	}
 }

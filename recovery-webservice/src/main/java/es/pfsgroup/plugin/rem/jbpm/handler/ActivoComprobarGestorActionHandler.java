@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.jbpm.graph.exe.ExecutionContext;
@@ -167,6 +168,14 @@ public class ActivoComprobarGestorActionHandler extends ActivoBaseActionHandler 
 			}
 
 		}
+	}
+	
+	private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+		//empty
+	}
+
+	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+		//empty
 	}
 
 }

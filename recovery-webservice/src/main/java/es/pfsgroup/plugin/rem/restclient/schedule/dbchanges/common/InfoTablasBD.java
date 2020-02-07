@@ -3,6 +3,8 @@ package es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common;
 import java.util.Date;
 import java.util.List;
 
+import net.sf.json.JSONObject;
+
 /**
  * Es necesario implemnetar esta interfaz para proporcionar datos
  * {@link CambiosBDDao} sobre la BD
@@ -72,5 +74,11 @@ public interface InfoTablasBD {
 	 * @param listPendientes
 	 */
 	public void marcarComoEnviadosMarcadosEspecifico(Date fechaEjecucion) throws Exception;
+	
+	/**
+	 * Procesa el JSON rerultado devuelto por la contraparte
+	 * @param resultado
+	 */
+	public void procesaResultado(JSONObject resultado);
 
 }

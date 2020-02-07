@@ -157,7 +157,7 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 									change: 'hiddenMotivosOcultacionAlquiler'
 								}
 					        },
-					        { 
+					        {
 					        	xtype: 'comboboxfieldbase',
 					        	addUxReadOnlyEditFieldPlugin: false,
 					        	fieldLabel: HreRem.i18n('combolabel.publicaciones.combo.motivos.ocultacion'),
@@ -167,7 +167,16 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 					        	bind: {
 				            		store: '{comboMotivoOcultacion}'
 				            	}
-					        }
+					        },
+					        {
+					    		xtype: 'comboboxfieldbase',
+					    		addUxReadOnlyEditFieldPlugin: false,
+					    		fieldLabel: HreRem.i18n('fieldlabel.fase.de.publicacion'),
+					    		name: 'fasePublicacionCodigo',
+					    		bind: {
+					    			store: '{comboFasePublicacion}'
+					    		}
+					    	}
 						]
 			    	}
 			    ]

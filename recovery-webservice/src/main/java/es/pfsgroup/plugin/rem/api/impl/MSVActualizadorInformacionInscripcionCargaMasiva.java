@@ -37,7 +37,7 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 	private GenericABMDao genericDao;
 	
 	protected static final Log logger = LogFactory.getLog(MSVActualizadorInformacionInscripcionCargaMasiva.class);
-
+	
 	public static final class COL_NUM {
 	
 		static final int FILA_CABECERA = 0;
@@ -168,7 +168,7 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 		try {
 			fecha = ft.parse(celdaExcel);
 		} catch (ParseException e) {
-			logger.error(e.getMessage(),e);
+			logger.error("error en MSVActualizadorInformacionInscripcionCargaMasiva", e);
 		}
 
 		return fecha;

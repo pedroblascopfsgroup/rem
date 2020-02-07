@@ -96,33 +96,21 @@ public class DtoActivoFilter extends WebDto {
 	private String estadoComunicacionGencatCodigo;
 	private Boolean usuarioGestoria;
 	private Long gestoria;
-	private String fasePublicacionCodigo;
-	private String fasePublicacionDescripcion;
-	private String subFasePublicacionCodigo;
-	private String subFasePublicacionDescripcion;
 	private String gestoriaAdmision;
 	private String gestoriaAdministracion;
 	private String gestoriaFormalizacion;
-	private String gestorPublicacionUsername;
 	private Long numAgrupacion;
 	private String direccionTerritorialCodigo;
 	private Long apiPrimarioId;
-	private String tipoAlquilerDescripcion;
-	private Date fechaPublicacionVenta;
-	private Date fechaPublicacionAlquiler;
 	/*tipoComercializacionCodigoAuxiliar la utiliza el listado de activos del filtro para saber si tiene
 	  que mostrar la fecha de publicacion venta o de alquiler en la columna Fecha de publicacion.
 	  No se puede utilizar el tipoComercializacionCodigo que hay definido más arriba porque es el que utiliza el filtro para buscar.*/
 	private String  tipoComercializacionCodigoAuxiliar;
-	private Long precioTasacionActivo;
-	private String estadoPublicacionVentaCodigo;
-	private String estadoPublicacionAlquilerCodigo;
-	private String motivosOcultacionVenta;
-	private String motivosOcultacionAlquiler;
 	private String tipoGestorCodigo;
 	private String estadoPublicacionActivoListadoCodigo;
 	private String tipoPublicacionCodigo;
 	private boolean listPage;
+	private String numActivoDivarian;
 	
 	public String getNumActivo() {
 		return numActivo;
@@ -634,12 +622,12 @@ public class DtoActivoFilter extends WebDto {
 	public void setGestoria(Long gestoria) {
 		this.gestoria = gestoria;
 	}
-	public String getGestorPublicacionUsername() {
+	/*public String getGestorPublicacionUsername() {
 		return gestorPublicacionUsername;
 	}
 	public void setGestorPublicacionUsername(String gestorPublicacionUsername) {
 		this.gestorPublicacionUsername = gestorPublicacionUsername;
-	}
+	}*/
 	public Long getNumAgrupacion() {
 		return numAgrupacion;
 	}
@@ -658,7 +646,7 @@ public class DtoActivoFilter extends WebDto {
 	public void setApiPrimarioId(Long apiPrimarioId) {
 		this.apiPrimarioId = apiPrimarioId;
 	}
-	public String getTipoAlquilerDescripcion() {
+	/*public String getTipoAlquilerDescripcion() {
 		return tipoAlquilerDescripcion;
 	}
 	public void setTipoAlquilerDescripcion(String tipoAlquilerDescripcion) {
@@ -675,14 +663,14 @@ public class DtoActivoFilter extends WebDto {
 	}
 	public void setFechaPublicacionAlquiler(Date fechaPublicacionAlquiler) {
 		this.fechaPublicacionAlquiler = fechaPublicacionAlquiler;
-	}
+	}*/
 	public String getTipoComercializacionCodigoAuxiliar() {
 		return tipoComercializacionCodigoAuxiliar;
 	}
 	public void setTipoComercializacionCodigoAuxiliar(String tipoComercializacionCodigoAuxiliar) {
 		this.tipoComercializacionCodigoAuxiliar = tipoComercializacionCodigoAuxiliar;
 	}
-	public Long getPrecioTasacionActivo() {
+	/*public Long getPrecioTasacionActivo() {
 		return precioTasacionActivo;
 	}
 	public void setPrecioTasacionActivo(Long precioTasacionActivo) {
@@ -699,7 +687,7 @@ public class DtoActivoFilter extends WebDto {
 	}
 	public void setFasePublicacionDescripcion(String fasePublicacionDescripcion) {
 		this.fasePublicacionDescripcion = fasePublicacionDescripcion;
-	}
+	}*/
 	public String getGestoriaAdmision() {
 		return gestoriaAdmision;
 	}
@@ -736,7 +724,7 @@ public class DtoActivoFilter extends WebDto {
 	public void setListPage(boolean listPage) {
 		this.listPage = listPage;
 	}
-	public String getSubFasePublicacionCodigo() {
+	/*public String getSubFasePublicacionCodigo() {
 		return subFasePublicacionCodigo;
 	}
 	public void setSubFasePublicacionCodigo(String subFasePublicacionCodigo) {
@@ -771,5 +759,11 @@ public class DtoActivoFilter extends WebDto {
 	}
 	public void setMotivosOcultacionAlquiler(String motivosOcultacionAlquiler) {
 		this.motivosOcultacionAlquiler = motivosOcultacionAlquiler;
+	}*/
+	public String getNumActivoDivarian() {
+		return numActivoDivarian;
+	}
+	public void setNumActivoDivarian(String numActivoDivarian) {
+		this.numActivoDivarian = numActivoDivarian;
 	}	
 }

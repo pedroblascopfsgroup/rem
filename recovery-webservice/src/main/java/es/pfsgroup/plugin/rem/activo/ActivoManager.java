@@ -1299,9 +1299,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					
 				} catch (IllegalAccessException e) {
 					logger.error("Error en activoManager", e);
+					return false;
 					
 				} catch (InvocationTargetException e) {
 					logger.error("Error en activoManager", e);
+					return false;
 				}
 				
 				genericDao.save(ActivoCondicionEspecifica.class, condicionEspecifica);
@@ -1339,9 +1341,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
+			return false;
 
 		} catch (InvocationTargetException e) {
 			logger.error("Error en activoManager", e);
+			return false;
 		}
 
 		genericDao.save(ActivoCondicionEspecifica.class, condicionEspecifica);

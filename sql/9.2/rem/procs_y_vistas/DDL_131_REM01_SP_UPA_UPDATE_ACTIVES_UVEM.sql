@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Oscar Diestre
---## FECHA_CREACION=20200117
+--## FECHA_CREACION=20200207
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-6045
+--## INCIDENCIA_LINK=REMVIP-6374
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM - UVEM. Nuevas columnas. Anula DDL_99900087
 --##           
@@ -22,6 +22,7 @@
 --##    0.9 Daniel Algaba - HREOS-8737 - Se añaden nuevas casuísticas en la actualización/inserción de registros en ACT_AHT_HIST_TRAM_TITULO
 --##    0.10 Oscar Diestre - REMVIP-6045 - Modificado merge en ln524 3.1 BIE_DATOS_REGISTRALES por error al hacer la conversión
 --##    0.11 Oscar Diestre - REMVIP-6203 - Modificados merges asociados a ACT_ACTIVO para minimizar cambios y comentados merges duplicados ( parte 4 )
+--##    0.12 Oscar Diestre - REMVIP-6374 - En el insert de ACT_MLV_MOVIMIENTO_LLAVE informar también MLV_COD_TENEDOR_PED_NO_PVE
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -2164,12 +2165,16 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
           (MLV_ID,
           LLV_ID,
           MLV_FECHA_ENTREGA,
+	  MLV_COD_TENEDOR_PED_NO_PVE,
+	  MLV_COD_TENEDOR_POS_NO_PVE,
           USUARIOCREAR,
           FECHACREAR)
           VALUES
           ('||V_ESQUEMA||'.S_ACT_MLV_MOVIMIENTO_LLAVE.NEXTVAL,
           TMP.LLV_ID,
           TMP.FEC_ENVIO_LLAVES_GESTOR,
+	  ''N/A'',
+	  ''N/A'',
           '''||V_USUARIO||''',
           SYSDATE)
           '

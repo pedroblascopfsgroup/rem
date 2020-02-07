@@ -124,7 +124,6 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			throw new IllegalArgumentException(INFO_TABLAS_NO_PUEDE_SER_NULL);
 		}
 
-		// Session session =this.getSessionFactory().getCurrentSession();
 		Session session = this.sesionFactoryFacade.getSession(this);
 		cambios.clear();
 
@@ -148,7 +147,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 
 			resultado = queryExecutor.sqlRunList(session, queryString, infoTablas);
 
-			if (resultado != null && resultado.size() > 0) {
+			if (resultado != null && !resultado.isEmpty()) {
 				if (cambios.getPaginacion().getTamanyoBloque() != null) {
 					cambios.getPaginacion().setTotalFilas(resultado.size());
 				}
@@ -207,7 +206,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			List<Object[]> resultado = null;
 
 			resultado = queryExecutor.sqlRunList(session, queryString, infoTablas);
-			if (resultado != null && resultado.size() > 0) {
+			if (resultado != null && !resultado.isEmpty()) {
 				if (cambios.getPaginacion().getTamanyoBloque() != null) {
 					cambios.getPaginacion().setTotalFilas(resultado.size());
 				}
@@ -321,7 +320,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	public void marcarComoEnviadosMarcadosComun(CambiosList listPendientes, DetectorCambiosBD infoTablas,
 			Class<?> dtoClass) throws Exception {
 		boolean cambios = false;
-		if (listPendientes != null && listPendientes.size() > 0) {
+		if (listPendientes != null && !listPendientes.isEmpty()) {
 			String pkMdodificadas = "(";
 			FieldInfo[] fields = getDtoFields(dtoClass);
 			String columns = columns4Select(fields, infoTablas.clavePrimaria());
@@ -431,7 +430,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	/**
 	 * Transforma un array de campos de un DTO a un String de columnas de BD.
 	 * <p>
-	 * Para ello inserta "_" como separador y convierte todo a mayúsculas
+	 * Para ello inserta "_" como separador y convierte to do a mayúsculas
 	 * </p>
 	 * 
 	 *
@@ -484,6 +483,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	 *            SessionFactory
 	 */
 	@Resource
+	@Override
 	public void setEntitySessionFactory(SessionFactory entitySessionFactory) {
 		super.setSessionFactory(entitySessionFactory);
 	}
@@ -562,7 +562,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 			List<Object[]> resultado) throws CambiosBDDaoError{
 		List<Object[]> historicos = null;
 
-		if (resultado != null && resultado.size() > 0) {
+		if (resultado != null && !resultado.isEmpty()) {
 			String selectDatoHistorico = SELECT + columns + FROM + infoTablas.nombreTablaDatosHistoricos() + WHERE;
 			int posPk = posicionColumna(columns, infoTablas.clavePrimaria());
 			boolean primeraIteracion = true;
@@ -591,7 +591,7 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 	 * @return
 	 */
 	private Object[] obtenerRegistroHistorico(List<Object[]> historicos,int posPk,Object calveaBuscar){
-		if (historicos != null && historicos.size() > 0) {
+		if (historicos != null && !historicos.isEmpty()) {
 			for (Object[] r : historicos) {
 				if(calveaBuscar.equals(r[posPk])){
 					return r;

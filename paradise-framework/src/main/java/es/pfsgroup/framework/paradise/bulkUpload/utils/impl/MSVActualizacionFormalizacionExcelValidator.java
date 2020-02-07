@@ -183,18 +183,6 @@ public class MSVActualizacionFormalizacionExcelValidator extends  MSVExcelValida
 		
 		return resultado;
 	}
-	
-	private File recuperarPlantilla(Long idTipoOperacion)  {
-		try {
-			FileItem fileItem = proxyFactory.proxy(ExcelRepoApi.class).dameExcelByTipoOperacion(idTipoOperacion);
-			return fileItem.getFile();
-		} catch (FileNotFoundException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}
-		
-		return null;
-	}
 
 	private List<Integer> existeNumExpedienteComercial(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();

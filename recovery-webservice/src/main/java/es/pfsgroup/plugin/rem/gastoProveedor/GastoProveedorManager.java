@@ -49,7 +49,6 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -190,9 +189,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Autowired
 	private ProvisionGastosDao provisionGastosDao;
-	
-	@Autowired
-	private ActivoDao activoDao;
 	
 	@Autowired
 	private UsuarioApi usuarioApi;

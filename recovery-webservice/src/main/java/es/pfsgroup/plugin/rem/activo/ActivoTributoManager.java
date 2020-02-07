@@ -1,7 +1,7 @@
 package es.pfsgroup.plugin.rem.activo;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,7 +14,6 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
@@ -22,20 +21,15 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
-import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
-import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
-import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
-import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoTributoDao;
+import es.pfsgroup.plugin.rem.adapter.TributoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTributoApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoTributo;
 import es.pfsgroup.plugin.rem.model.ActivoTributos;
-import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoTributo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
 
 
@@ -47,7 +41,6 @@ public class ActivoTributoManager extends BusinessOperationOverrider<ActivoTribu
 	@Autowired
 	private UploadAdapter uploadAdapter;
 	
-	
 	@Autowired
 	private GenericABMDao genericDao;
 	
@@ -55,13 +48,13 @@ public class ActivoTributoManager extends BusinessOperationOverrider<ActivoTribu
 	private ActivoDao activoDao;
 	
 	@Autowired
-	private GenericAdapter genericAdapter;
-
-	@Autowired
-	private ActivoAdapter adapter;
+	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 	
 	@Autowired
-	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
+	private ActivoTributoDao activoTributoDao;
+	
+	@Autowired
+	private TributoAdapter tributoAdapter;
 
 	@Override
 	@BusinessOperation(overrides = "activoTributoManager.get")
@@ -73,9 +66,8 @@ public class ActivoTributoManager extends BusinessOperationOverrider<ActivoTribu
 	@BusinessOperation(overrides = "activoTributoManager.getTributo")
 	public ActivoTributos getTributo(Long id) {
 		
-		Filter filtroTributo = genericDao.createFilter(FilterType.EQUALS, "id", id);
+		ActivoTributos activoTributo = activoTributoDao.get(id);
 		
-		ActivoTributos activoTributo = genericDao.get(ActivoTributos.class, filtroTributo);
 		return activoTributo;
 	}
 
@@ -213,92 +205,52 @@ public class ActivoTributoManager extends BusinessOperationOverrider<ActivoTribu
 	}
 
 	@Override
-	public DtoAdjunto getAdjuntoTributo(Long idTributo) {
-		DtoAdjunto dtoAdjunto = new DtoAdjunto();
+	public ActivoAdjuntoTributo getAdjuntoTributo(Long idDocRestClient) {
 		
-		Filter filtroAdjuntoActivoTributo = genericDao.createFilter(FilterType.EQUALS, "activoTributo.id", idTributo);
+		Filter filtroAdjuntoActivoTributo = genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", idDocRestClient);
 		Filter filtroAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		
 		ActivoAdjuntoTributo activoAdjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filtroAdjuntoActivoTributo, filtroAuditoria);
 		
-		if(!Checks.esNulo(activoAdjuntoTributo) && !Checks.esNulo(activoAdjuntoTributo.getAdjunto())) {
-			dtoAdjunto.setId(activoAdjuntoTributo.getAdjunto().getId());
-		
-			return dtoAdjunto;
-		}
-		
-		return null;
+		return activoAdjuntoTributo;
 	}
 	
 	@Override
 	@Transactional(readOnly = false)
-	public Boolean deleteAdjuntoDeTributo(Long idTributo) {
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		
-		Filter filtroAdjuntoActivoTributo = genericDao.createFilter(FilterType.EQUALS, "activoTributo.id", idTributo);
-		ActivoAdjuntoTributo activoAdjuntoTributo = null;
-		Filter filtroAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		
-		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-			
-			
-			Filter filtroDocRest = genericDao.createFilter(FilterType.NOTNULL, "idDocRestClient");
-	
-			activoAdjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filtroAdjuntoActivoTributo, filtroDocRest,filtroAuditoria);
-			
-			if(!Checks.esNulo(activoAdjuntoTributo)) {
-				if(adapter.deleteAdjuntoTributo(activoAdjuntoTributo.getIdDocRestClient())) {
-					activoAdjuntoTributo.getAuditoria().setUsuarioBorrar(usuarioLogado.getNombre());
-					activoAdjuntoTributo.getAuditoria().setFechaBorrar(new Date());
-					activoAdjuntoTributo.getAuditoria().setBorrado(true);
-				}
-			}else{
-				return false;
-			}
-		}else {
-			 
-			 Filter filtroDocRestNull = genericDao.createFilter(FilterType.NULL, "idDocRestClient");
-	
-			 activoAdjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filtroAdjuntoActivoTributo, filtroDocRestNull,filtroAuditoria);
-			 if(!Checks.esNulo(activoAdjuntoTributo)) {
-			 	activoAdjuntoTributo.getAuditoria().setUsuarioBorrar(usuarioLogado.getNombre());
-				activoAdjuntoTributo.getAuditoria().setFechaBorrar(new Date());
-				activoAdjuntoTributo.getAuditoria().setBorrado(true);
-			 }else {
-				 return false;
-			 }
+	public Boolean deleteAdjuntoDeTributo(DtoAdjuntoTributo dto) {
+		ActivoTributos tributo = getTributo(Long.parseLong(dto.getIdEntidad()));
+		ActivoAdjuntoTributo adjunto = tributo.getAdjunto(dto.getId());
+
+		if (adjunto == null) {
+			return false;
 		}
-		
-		genericDao.update(ActivoAdjuntoTributo.class, activoAdjuntoTributo);
+		tributo.getAdjuntos().remove(adjunto);
+		activoTributoDao.save(tributo);
 	
 		return true;
 	}
 	
 	@Override
-	public Boolean comprobarSiExisteActivoTributo(WebFileItem webFileItem) throws GestorDocumentalException {
-		ActivoTributos activoTributo = getTributo(Long.parseLong(webFileItem.getParameter("idTributo")));
+	@Transactional(readOnly = false)
+	public Runnable deleteAdjuntosDeTributo(Long idTributo) {
+		ActivoTributos tributo = getTributo(idTributo);
+		DtoAdjuntoTributo dto = new DtoAdjuntoTributo();
+		dto.setIdEntidad(idTributo.toString());
+		List<ActivoAdjuntoTributo> adjuntos = tributo.getAdjuntos();
+		Integer numAdjuntos = adjuntos.size();
 		
-		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-		DtoAdjunto adjuntoTributo = gestorDocumentalAdapterApi.getAdjuntoTributo(activoTributo);
-		
-			if(Checks.esNulo(adjuntoTributo)) {
-				return true;
-			}else {
-				return false;
-			}
-		}else {
-		
-			Filter filtroAdjuntoActivoTributo = genericDao.createFilter(FilterType.EQUALS, "activoTributo.id", activoTributo.getId());
+		for(int i = numAdjuntos-1; i >= 0; i--) {
+			ActivoAdjuntoTributo adj = adjuntos.get(i);
 			
-			Filter filtroAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-	
-			ActivoAdjuntoTributo activoAdjuntoTributo = genericDao.get(ActivoAdjuntoTributo.class, filtroAdjuntoActivoTributo, filtroAuditoria);
-			
-			if(Checks.esNulo(activoAdjuntoTributo)) {
-				return true;
+			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+				dto.setId(adj.getIdDocRestClient());
 			}else {
-				return false;
+				dto.setId(adj.getId());
 			}
+			tributoAdapter.deleteAdjunto(dto);
 		}
+		
+		
+		return null;
 	}
 }

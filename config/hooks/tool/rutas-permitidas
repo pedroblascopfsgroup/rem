@@ -41,8 +41,13 @@ rem_mirror|func-rem-gencat_v2
 rem_mirror|func-rem-CLOA
 rem_mirror|func-rem-maANof
 rem_mirror|mejoras-rem-20190906
+func-rem-omega|R-Sanguinelli
+rem_mirror|func-rem-apiEspejo
 version-2.15.2-rem|version-2.14.3-cargaMasiva-rem
 version-2.14.3-cargaMasiva-rem|version-2.15.2-rem
+func-rem-HREOS-8146|R-Sanguinelli
+func-rem-HREOS-8178|R-Sanguinelli
+rem_mirror|R-Sanguinelli
 func-rem-omega|func-rem-Divarian-F2
 version-2.15.7-rem|version-2.16.2-rem
 func-rem-Divarian|R-Navelina
@@ -51,7 +56,11 @@ func-rem-Divarian-F2|func-rem-Divarian-F3
 func-rem-Divarian-F2|func-HREOS-8656
 func-HREOS-8656|func-rem-Divarian-F2
 rem_mirror|R-Navelina
+R-Navelina|R-Sanguinelli
+func-rem-apiEspejo|R-Sanguinelli
 version-2.15.6-rem|R-Navelina
+R-Navelina|func-rem-apiEspejo
+func-rem-Divarian-F2|func-rem-apiEspejo
 rem_mirror|R-Clemenvilla
 version-2.16.2-rem|version-2.16.1-sp
 rem_mirror|version-2.16.1-sp
@@ -59,3 +68,4 @@ rem_mirror|version-2.16.1-sp
 Divarian-F3_HREOS-9082|func-rem-Divarian-F3
 2.17.2-20012401-rem|version-2.17.3-rem
 version-2.17.1-rem|version-2.16.1-sp
+version-2.17.3-rem|R-Sanguinelli

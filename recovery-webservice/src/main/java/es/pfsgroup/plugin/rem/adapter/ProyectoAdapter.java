@@ -68,6 +68,8 @@ public class ProyectoAdapter {
 	
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	
+	public static final String CODIGO_CLASE_PROYECTO = "09";
+	
 	public List<DtoAdjuntoProyecto> getAdjuntosProyecto(Long id)
 			throws GestorDocumentalException, IllegalAccessException, InvocationTargetException {
 		List<DtoAdjuntoProyecto> listaAdjuntos = new ArrayList<DtoAdjuntoProyecto>();
@@ -112,7 +114,7 @@ public class ProyectoAdapter {
 					if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE
 							.equals(gex.getCodigoError())) {
 						Thread hilo = new Thread(
-								gestorDocumentalAdapterApi.crearProyecto(activo, proyecto, usuarioLogado.getUsername(),GestorDocumentalConstants.CODIGO_CLASE_PROYECTO));
+								gestorDocumentalAdapterApi.crearProyecto(activo, proyecto, usuarioLogado.getUsername(), CODIGO_CLASE_PROYECTO));
 						hilo.start();
 					}
 				}

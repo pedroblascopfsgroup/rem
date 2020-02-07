@@ -321,6 +321,13 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 					visita.setProveedorVisita(pveVisita);
 				}
 			}
+			if (!Checks.esNulo(visitaDto.getIdProveedorPrescriptorOportunidadREM())) {
+				ActivoProveedor pveOportunidad = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao
+						.createFilter(FilterType.EQUALS, "codigoProveedorRem", visitaDto.getIdProveedorPrescriptorOportunidadREM()));
+				if (!Checks.esNulo(pveOportunidad)) {
+					visita.setProveedorPrescriptorOportunidad(pveOportunidad);
+				}
+			}
 			if (!Checks.esNulo(visitaDto.getFechaAccion())) {
 				visita.setFechaSolicitud(visitaDto.getFechaAccion());
 			}

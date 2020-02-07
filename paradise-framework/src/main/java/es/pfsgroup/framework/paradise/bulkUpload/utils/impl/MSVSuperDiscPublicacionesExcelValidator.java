@@ -134,6 +134,7 @@ public class MSVSuperDiscPublicacionesExcelValidator extends MSVExcelValidatorAb
 				if(!Checks.estaVacio(mapaErrores.get(key))) {
 					dtoValidacionContenido.setFicheroTieneErrores(true);
 					dtoValidacionContenido.setExcelErroresFormato(new FileItem(new File(exc.crearExcelErroresMejorado(mapaErrores))));
+					break;
 				}
 			}		
 		}

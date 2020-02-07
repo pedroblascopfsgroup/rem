@@ -109,6 +109,10 @@ Ext.define('HreRem.view.activos.detalle.FotosActivo', {
 		}else{
 			ocultarFotostecnicasactivo = !$AU.userHasFunction('EDITAR_TAB_FOTOS_ACTIVO_TECNICAS');
 		}
+		if(me.lookupController().getViewModel().get('activo').get('unidadAlquilable')){
+			ocultarFotoswebactivo = true;
+			ocultarFotostecnicasactivo = true;
+		}
 
 
         var items = [];

@@ -5,6 +5,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAdjuntoTributo;
 import es.pfsgroup.plugin.rem.model.ActivoTributos;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoTributo;
@@ -62,13 +63,9 @@ public interface  ActivoTributoApi {
 
 	ActivoTributos getTributo(Long id);
 
-	public DtoAdjunto getAdjuntoTributo(Long idTributo);
+	public ActivoAdjuntoTributo getAdjuntoTributo(Long idDocRestClient);
 
-	public Boolean deleteAdjuntoDeTributo(Long idTributo);
+	Boolean deleteAdjuntoDeTributo(DtoAdjuntoTributo dto);
 
-	public Boolean comprobarSiExisteActivoTributo(WebFileItem webFileItem)throws GestorDocumentalException;
-
-	
-
-	
+	Runnable deleteAdjuntosDeTributo(Long idTributo);
 }

@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.gestorDocumental.api;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoProyecto;
+import es.pfsgroup.plugin.rem.model.DtoAdjuntoTributo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
@@ -109,12 +111,12 @@ public interface GestorDocumentalAdapterApi {
 	void crearRelacionPlusvalia(ActivoPlusvalia activoPlusvalia, Long idDocRestClient, String activo, String username,
 			CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException;
 
-	DtoAdjunto getAdjuntoTributo(ActivoTributos adjuntoTributo) throws GestorDocumentalException;
-
 	Runnable crearTributo(ActivoTributos activoTributo, String usuarioLogado, String tipoExpediente) throws GestorDocumentalException;
 
 	public void crearRelacionActivoTributo(ActivoTributos activoTributo, Long idDocRestClient, String activo, String username, CrearRelacionExpedienteDto crearRelacionExpedienteDto)
 			throws GestorDocumentalException;
+
+	List<DtoAdjuntoTributo> getAdjuntosTributo(ActivoTributos tributo) throws GestorDocumentalException, IllegalAccessException, InvocationTargetException;
 
 	Long uploadDocumentoAgrupacionAdjunto(ActivoAgrupacion agrupacion, WebFileItem webFileItem, String userLogin, String matricula) throws GestorDocumentalException;
 
@@ -133,5 +135,4 @@ public interface GestorDocumentalAdapterApi {
 	public List<DtoAdjunto> getAdjuntosProveedor(ActivoProveedor proveedor) throws GestorDocumentalException, Exception;
 
 	Runnable crearProyecto(Activo activo, ActivoProyecto proyecto, String usuarioLogado, String tipoExpediente) throws GestorDocumentalException;
-
 }

@@ -2,25 +2,19 @@ package es.pfsgroup.plugin.rem.jbpm.handler;
 
 import static es.capgemini.pfs.BPMContants.TOKEN_JBPM_PADRE;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Set;
 
 import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
-
-
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
-import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 
 
@@ -72,5 +66,13 @@ public class ActivoEndProcessActionHandler extends ActivoBaseActionHandler {
             }
         }
     }
+    
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+		//empty
+	}
+
+	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+		//empty
+	}
 
 }

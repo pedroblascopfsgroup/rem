@@ -6,16 +6,26 @@ package es.pfsgroup.plugin.rem.model;
  */
 public class DtoVariablesCalculoComiteLBK {
 
-
-	
-    private Double vta;
-    private Double pvb;
-    private Double vnc;
-    private Double vr;
-    private Double pvn;
-    private Double cco;
-    private Double pmin;
+    //Importe tasación
+	private Double vta;
     
+    //Importe oferta
+    private Double pvb;
+    
+    //Valor neto contable
+    private Double vnc;
+    
+    //Valor razonable
+    private Double vr;
+    
+    //pvb - cco
+    private Double pvn;
+    
+    //Suma honorarios
+    private Double cco;
+    
+    //Importe mínimo autorizado
+    private Double pmin;
 	
     public Double getVta() {
 		return vta;

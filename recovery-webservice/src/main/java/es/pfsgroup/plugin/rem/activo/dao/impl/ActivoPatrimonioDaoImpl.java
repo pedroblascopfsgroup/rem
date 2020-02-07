@@ -10,8 +10,10 @@ import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.dd.DDAdecuacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 
 @Repository("ActivoPatrimonioDao")
 public class ActivoPatrimonioDaoImpl extends AbstractEntityDao<ActivoPatrimonio, Long>  implements ActivoPatrimonioDao{
@@ -39,6 +41,15 @@ public class ActivoPatrimonioDaoImpl extends AbstractEntityDao<ActivoPatrimonio,
 		criteria.add(Restrictions.eq("activo.id", idActivo));
 
 		return HibernateUtils.castObject(DDAdecuacionAlquiler.class, criteria.uniqueResult());
+	}
+
+	@Override
+	public boolean isAlquilerLibreByActivo(Activo activo) {
+		ActivoPatrimonio patrimonio = this.getActivoPatrimonioByActivo(activo.getId());
+		if ( patrimonio != null && patrimonio.getTipoEstadoAlquiler() != null) {
+			return DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE.equals(patrimonio.getTipoEstadoAlquiler().getCodigo());	
+		}
+		return false;
 	}
 
 

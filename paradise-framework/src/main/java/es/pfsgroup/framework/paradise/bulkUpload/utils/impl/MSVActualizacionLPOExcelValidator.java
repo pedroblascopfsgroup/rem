@@ -151,15 +151,7 @@ public class MSVActualizacionLPOExcelValidator extends MSVExcelValidatorAbstract
 		return resultado;
 	}
 
-	private File recuperarPlantilla(Long idTipoOperacion)  {
-		try {
-			FileItem fileItem = proxyFactory.proxy(ExcelRepoApi.class).dameExcelByTipoOperacion(idTipoOperacion);
-			return fileItem.getFile();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+	 
 	
 	@Override
 	protected ResultadoValidacion validaContenidoFila(Map<String, String> mapaDatos, List<String> listaCabeceras,

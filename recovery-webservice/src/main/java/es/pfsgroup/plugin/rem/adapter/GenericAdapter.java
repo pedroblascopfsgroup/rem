@@ -368,9 +368,7 @@ public class GenericAdapter {
 				|| usuario.getPerfiles().contains(FVDBACKVENTA) || usuario.getPerfiles().contains(HAYABACKOFFICE)
 				|| usuario.getPerfiles().contains(FVDNEGOCIO);		
 	}
-
-
-
+	
 	public Oferta clonateOferta(String idOferta, boolean esAgrupacion) {
 		Long numIdOferta = Long.parseLong(idOferta);
 		

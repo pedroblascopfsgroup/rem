@@ -135,7 +135,6 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		boolean isGiants = this.isActivoGiants(tareaActivo);
 		boolean isLiberbank = this.isActivoLiberbank(tareaActivo);
 		boolean isHayaLbk = false;
-		boolean isActivoFinanciero = this.isFinanciero(tareaExterna);
 		boolean isActivoBankia = this.isActivoBankia(tareaActivo);
 		boolean isActivoSareb = this.isActivoSareb(tareaActivo);
 		boolean isRetail=this. isRetailActivo(tareaActivo);
@@ -150,10 +149,16 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		boolean isActivoOmega = this.isActivoOmega(tareaActivo);		
 		boolean esActivoRemaining = this.isActivoRemaining(tareaActivo);
 		
+		boolean isFuerzaVentaDirecta = this.isFuerzaVentaDirecta(tareaExterna);
+		boolean isActivoFinanciero = this.isFinancieroCajamar(tareaExterna);
+		boolean isActivoConFormalizacion = this.isConFormalizacion(tareaExterna);
 		String codigoTarea = tareaExterna.getTareaProcedimiento().getCodigo();
 		String codigoGestor; 
 		ActivoLoteComercial loteComercial = this.obtenerLoteComercial(tareaActivo);
 		EXTDDTipoGestor tipoGestor = null;
+		boolean esActivoApple = this.isActivoApple(tareaActivo);
+		ExpedienteComercial expediente = null;
+		Boolean usaGestorController = usaGestorController(tareaActivo);
 
 		if(this.isTrabajoDeActivoOrLoteRestEntidad01(tareaActivo)) {
 			if(null == loteComercial) {
@@ -168,7 +173,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 				codigoGestor = this.getMapCodigoTipoGestorActivoAndLoteRestEntidad01Formalizacion(formalizacion).get(codigoTarea);
 			}
 		} else{
-			ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByIdTrabajo(tareaActivo.getTramite().getTrabajo().getId());			
+			expediente = expedienteComercialDao.getExpedienteComercialByIdTrabajo(tareaActivo.getTramite().getTrabajo().getId());			
 			DDComiteSancion comiteSancion = expediente.getComiteSancion();
 			String codigoCalculo = (!Checks.esNulo(comiteSancion) ? comiteSancion.getCodigo() : null);
 
@@ -176,12 +181,24 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			codigoGestor = this.getMapCodigoTipoGestor(isFdv, isConFormalizacion, isGiants, isLiberbank, isHayaLbk, isActivoBankia, isActivoSareb, isRetail, isActivoApple, isActivoTango, isActivoGaleon, isActivoThirdPartiesING, isActivoHYT, isActivoEgeoZeus, isActivoYubai, isActivoArrow, isActivoOmega, esActivoRemaining).get(codigoTarea);
 		}
 		
+		if((CODIGO_T013_CIERRE_ECONOMICO.equals(codigoTarea)
+				|| CODIGO_T017_CIERRE_ECONOMICO.equals(codigoTarea)) && usaGestorController) {
+			
+			Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_CONTROLLER);
+			
+			tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+			
+			if(tipoGestor != null) {
+				return getGestorOrSupervisorExpedienteByCodigo(tareaExterna, tipoGestor.getCodigo());
+			}	
+		}
+			
 		if(CODIGO_T017_RESOLUCION_CES.equals(codigoTarea) || CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea) 
 				|| CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigoTarea) || CODIGO_T017_RATIFICACION_COMITE_CES.equals(codigoTarea)) {
 			DDComiteSancion comite = null;
 			if  ( tareaActivo != null && tareaActivo.getTramite() != null
 					&& tareaActivo.getTramite().getTrabajo() != null ) {
-				ExpedienteComercial expediente = expedienteComercialApi.findOneByTrabajo(tareaActivo.getTramite().getTrabajo());
+				expediente = expedienteComercialApi.findOneByTrabajo(tareaActivo.getTramite().getTrabajo());
 				if ( expediente != null ) {
 					comite = expediente.getComiteSancion();
 				}
@@ -234,7 +251,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	public Usuario getSupervisor(TareaExterna tareaExterna) {
 		TareaActivo tareaActivo = (TareaActivo)tareaExterna.getTareaPadre();
 		boolean isFuerzaVentaDirecta = this.isFuerzaVentaDirecta(tareaExterna);
-		boolean isActivoFinanciero = this.isFinanciero(tareaExterna);
+		boolean isActivoFinanciero = this.isFinancieroCajamar(tareaExterna);
 		boolean isLiberbank = this.isActivoLiberbank(tareaActivo);
 		boolean isBankia = this.isActivoBankia(tareaActivo);
 		boolean isSareb = this.isActivoSareb(tareaActivo);
@@ -1016,7 +1033,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		return esFdv;
 	}
 	//Comprobar si el activo es de Cajamar y Financiero
-	private boolean isFinanciero(TareaExterna tareaExterna) {
+	private boolean isFinancieroCajamar(TareaExterna tareaExterna) {
 
 		TareaActivo tareaActivo = (TareaActivo) tareaExterna.getTareaPadre();
 		if (!Checks.esNulo(tareaActivo) && !Checks.esNulo(tareaActivo.getTramite())
@@ -1084,4 +1101,49 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		return esConFormalizacion;
 	}
 	
+	// Comprobar que el activo tiene atribuciones 
+	private boolean isConAtribuciones(TareaExterna tareaExterna) {
+		boolean esConAtribucion = false;
+		esConAtribucion = ofertaApi.checkAtribuciones(tareaExterna);
+		if(esConAtribucion) {
+			return true;
+		}
+		return false;
+	}
+
+	private boolean isActivoThirdParties(TareaActivo tareaActivo) {
+		
+		Activo activo = tareaActivo.getActivo();
+		String codCarteraActivo = !Checks.esNulo(activo) ? (!Checks.esNulo(activo.getCartera()) ? activo.getCartera().getCodigo() : null) : null;
+		
+		return !Checks.esNulo(codCarteraActivo) && DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(codCarteraActivo);
+	}
+	
+	/*
+	 * Comprueba si reune las condiciones para usar el Gestor Controller en Cierre económico
+	 */
+	public Boolean usaGestorController(TareaActivo tareaActivo) {
+		return isActivoOmega(tareaActivo) || isActivoBankia(tareaActivo) || isActivoSareb(tareaActivo)
+				|| isTrabajoDeActivoOrLoteRestEntidad01(tareaActivo) || isActivoThirdParties(tareaActivo)
+				|| isActivoArrow(tareaActivo) || isActivoRemaining(tareaActivo) 
+				|| isFinanciero(tareaActivo.getActivo());
+	}
+	
+	/*
+	 * Comprobar si es un activo financiero de cualquier cartera
+	 */
+	private Boolean isFinanciero(Activo activo) {
+		Boolean esFinanciero = false;
+
+		ActivoBancario activoBancario = null;
+		if(activo != null){
+			activoBancario = activoApi.getActivoBancarioByIdActivo(activo.getId());
+		}
+		
+		if (activoBancario != null && activoBancario.getClaseActivo() != null
+				&& activoBancario.getClaseActivo().getCodigo().equals(DDClaseActivoBancario.CODIGO_FINANCIERO)) {
+			esFinanciero = true;
+		}
+		return esFinanciero;
+	}
 }

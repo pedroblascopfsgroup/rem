@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomGenerico;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.WebcomEndpoint;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.ConstantesGenericas;
+import net.sf.json.JSONObject;
 
 public abstract class ServiciosWebcomBaseManager {
 
@@ -149,8 +150,10 @@ public abstract class ServiciosWebcomBaseManager {
 	 *
 	 * @throws ErrorServicioWebcom
 	 */
-	protected void invocarServicioRestWebcom(WebcomEndpoint endpoint, ParamsList paramsList, RestLlamada registro)
+	protected JSONObject invocarServicioRestWebcom(WebcomEndpoint endpoint, ParamsList paramsList, RestLlamada registro)
 			throws ErrorServicioWebcom {
+		
+		JSONObject resultado;
 
 		if (endpoint == null) {
 			throw new IllegalArgumentException("'endpoint' no puede ser NULL");
@@ -168,7 +171,7 @@ public abstract class ServiciosWebcomBaseManager {
 		try {
 
 			logger.trace("Invocando al servicio " + endpoint);
-			getClienteWebcom().send(endpoint, paramsList, registroLlamada);
+			resultado = getClienteWebcom().send(endpoint, paramsList, registroLlamada);
 			logger.trace("Respuesta recibida " + endpoint);
 
 		} catch (ErrorServicioWebcom e) {
@@ -186,6 +189,7 @@ public abstract class ServiciosWebcomBaseManager {
 
 			throw e;
 		}
+		return resultado;
 	}
 
 	/**

@@ -6,6 +6,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
@@ -289,6 +290,12 @@ public interface ProveedoresApi {
 	 * @return Devuelve True si el usuario tiene el perfil de proveedor, False si no lo tiene.
 	 */
 	public Boolean esUsuarioConPerfilProveedor(Usuario usuario);
+	
+	public List<ActivoProveedor> getMediadoresActivos();
+
+	/*List<DDCartera> getCarteraPorProveedor(Long idProveedor);
+
+	List<DDSubcartera> getSubcarteraPorProveedor(Long idProveedor, String codigoCartera);*/
 	
 	/** Este método cambia .el proveedor asociado a un activo por el recibido en pvrCodRem
 	 * 

@@ -24,7 +24,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Autowired
 	private MSVRawSQLDao rawDao;
-
+	
+	public static final String COD_MEDIADOR = "04";
+	public static final String COD_FUERZA_VENTA_DIRECTA="18";
+	
 	@Override
 	public String getOneNumActivoAgrupacionRaw(String numAgrupacion){
 		return rawDao.getExecuteSQL("SELECT TO_NUMBER(act.ACT_NUM_ACTIVO) "
@@ -3633,8 +3636,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	@Override
-	public Boolean existeActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud){
-		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo) || Checks.esNulo(tipoSolicitud) || !StringUtils.isNumeric(tipoSolicitud)) {
+	public Boolean existeActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud, String idTributo){
+		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo) || Checks.esNulo(tipoSolicitud) || !StringUtils.isNumeric(tipoSolicitud) || !StringUtils.isNumeric(idTributo)) {
 			return false;
 		}
 
@@ -3647,14 +3650,15 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "AND TRI.BORRADO = 0 "
 				+ "AND ACT.ACT_NUM_ACTIVO = '" + numActivo + "' "
 				+ "AND TRI.ACT_TRI_FECHA_PRESENTACION_RECURSO = TO_DATE('"+ fechaRecurso + "','dd/MM/yy') "
+				+ "AND TRI.ACT_NUM_TRIBUTO = '" + idTributo + "' "
 				);
 
 		return !"0".equals(resultado);
 	}
 
 	@Override
-	public String getIdActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud){
-		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo) || Checks.esNulo(tipoSolicitud) || !StringUtils.isNumeric(tipoSolicitud)) {
+	public String getIdActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud, String idTributo){
+		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo) || Checks.esNulo(tipoSolicitud) || !StringUtils.isNumeric(tipoSolicitud) || !StringUtils.isNumeric(idTributo)) {
 			return null;
 		}
 
@@ -3667,6 +3671,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "AND TRI.BORRADO = 0 "
 				+ "AND ACT.ACT_NUM_ACTIVO = '" + numActivo + "' "
 				+ "AND TRI.ACT_TRI_FECHA_PRESENTACION_RECURSO = TO_DATE('"+ fechaRecurso + "','dd/MM/yy') "
+				+ "AND TRI.ACT_NUM_TRIBUTO = '" + idTributo + "' "
 				);
 
 	}
@@ -4097,6 +4102,45 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public String getCodigoMediadorPrimarioByActivo(String numActivo) {
+		String resultado = "";
+		if(!Checks.esNulo(numActivo)){
+			 resultado = rawDao.getExecuteSQL("SELECT pve.PVE_COD_REM " +
+			 		" FROM ACT_ICO_INFO_COMERCIAL ico  " +
+			 		" INNER JOIN ACT_PVE_PROVEEDOR pve ON pve.PVE_ID = ico.ICO_MEDIADOR_ID " +
+			 		" INNER JOIN ACT_ACTIVO act ON act.ACT_ID = ico.ACT_ID " +
+			 		" WHERE act.ACT_NUM_ACTIVO = " + numActivo);
+		}
+		return resultado;
+	}
+	
+	@Override
+	public String getCodigoMediadorEspejoByActivo(String numActivo) {
+		String resultado = "";
+		if(!Checks.esNulo(numActivo)){
+			 resultado = rawDao.getExecuteSQL("SELECT pve.PVE_COD_REM " +
+			 		" FROM ACT_ICO_INFO_COMERCIAL ico  " +
+			 		" INNER JOIN ACT_PVE_PROVEEDOR pve ON pve.PVE_ID = ico.ICO_MEDIADOR_ESPEJO_ID " +
+			 		" INNER JOIN ACT_ACTIVO act ON act.ACT_ID = ico.ACT_ID " +
+			 		" WHERE act.ACT_NUM_ACTIVO = " + numActivo);
+		}
+		return resultado;
+	}
+	
+	@Override
+	public Boolean esTipoMediadorCorrecto(String codMediador) {
+		if (Checks.esNulo(codMediador)) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL("SELECT tpr.DD_TPR_CODIGO "
+				+ "FROM ACT_PVE_PROVEEDOR pve "
+				+ "JOIN DD_TPR_TIPO_PROVEEDOR tpr ON tpr.DD_TPR_ID = pve.DD_TPR_ID "
+				+ "WHERE pve.PVE_COD_REM = " + codMediador);
+		
+		return COD_MEDIADOR.equals(resultado) || COD_FUERZA_VENTA_DIRECTA.equals(resultado);
+	}
+	
 	public Boolean activoConRelacionExpedienteComercial(String numExpediente, String numActivo) {
 		if(Checks.esNulo(numExpediente))
 			return false;

@@ -11,6 +11,7 @@ export MAINSH="$nameETL"_run.sh
 
 echo "Nombre del directorio= $DIR_ETL"
 echo "Adjutos de $1 ha transferir"
+echo "La ruta de los directorios es $2"
 
 if [ ! -d $DIR_ETL ] ; then
 	echo "$(basename $0) Error en $filename: directorio inexistente $DIR_ETL"
@@ -23,7 +24,7 @@ if [ -f $MAINSH ]; then
     CLASS="$(cat $MAINSH | grep "^ java" | cut -f11 -d" ")"
     CLASS2=`echo $CLASS | sed -e 's/$ROOT_PATH/./g'`
     CLASEINICIO="$(cat $MAINSH | grep "^ java" | cut -f12 -d" ")"
-    java -Xms512M -Xmx1536M -Dconfig.dir=$DIR_CONFIG -Dconfig.file.mask=$CFG_FILE -Duser.country=ES -Duser.language=es -Dconfig.param=$1 -cp $CLASS2 $CLASEINICIO --context=Default "$@" 
+    java -Xms512M -Xmx1536M -Dconfig.dir=$DIR_CONFIG -Dconfig.file.mask=$CFG_FILE -Duser.country=ES -Duser.language=es -Dconfig.param=$1 -Dconfig.ruta=$2 -cp $CLASS2 $CLASEINICIO --context=Default "$@" 
     exit $?
 else
     echo "$(basename $0) Error en $filename: no se ha encontrado  $MAINSH"

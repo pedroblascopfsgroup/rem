@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +41,7 @@ public interface OfertaApi {
 
 	public static String ORIGEN_REM ="REM";
 	public static String ORIGEN_WEBCOM ="WCOM";
-	public final static String CLIENTE_HAYA = "HAYA";
+	public static final  String CLIENTE_HAYA = "HAYA";
 
 	/**
 	 * Devuelve una Oferta por id.
@@ -417,8 +418,10 @@ public interface OfertaApi {
 	 * @param idActivo id del activo para filtrar.
 	 * @param idOferta id de la oferta para filtrar.
 	 * @return Devuelve una lista de DtoGastoExpediente.
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	public List<DtoGastoExpediente> getHonorariosActivoByOfertaId(Long idActivo, Long idOferta);
+	public List<DtoGastoExpediente> getHonorariosActivoByOfertaId(Long idActivo, Long idOferta) throws IllegalAccessException, InvocationTargetException;
 
 	/**
 	 * Este método obtiene una lista de honorarios para el ID de oferta dado.
@@ -508,8 +511,10 @@ public interface OfertaApi {
 	 * @param accion
 	 * @param activo
 	 * @return
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	public DtoGastoExpediente calculaHonorario(Oferta oferta, String accion,Activo activo);
+	public List<DtoGastoExpediente> calculaHonorario(Oferta oferta,Activo activo) throws IllegalAccessException, InvocationTargetException;
 
 	/**
 	 * Método que ratifica el comité de Bankia
@@ -562,8 +567,6 @@ public interface OfertaApi {
 	 * @return ActivoProveedor
 	 */
 	public ActivoProveedor getPreescriptor(Oferta oferta);
-
-	public void desocultarActivoOferta(Oferta oferta) throws Exception;
 
 	/**
 	 * Método que comprueba para Bankia (excepto subcartera BH) si el estado de la reserva es firmada.
@@ -784,6 +787,8 @@ public interface OfertaApi {
 	boolean checkTipoImpuesto(TareaExterna tareaExterna);
 
 	boolean checkReservaInformada(TareaExterna tareaExterna);
+	
+	public Long saveOferta(Oferta oferta);
 
 	/*
 	 * Este método comprueba si están todos los valores necesarios para los cálculos de liberbank.

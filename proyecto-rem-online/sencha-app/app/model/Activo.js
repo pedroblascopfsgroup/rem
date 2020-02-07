@@ -890,6 +890,28 @@ Ext.define('HreRem.model.Activo', {
     		{
     			name: 'mostrarEditarFasePublicacion',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'editableCheckComercializar',
+    			calculate: function(data){
+    				if(data.checkComercializarReadOnly){
+    					return data.checkComercializarReadOnly;
+    				} else{
+    					return data.isVendidoOEntramite;
+    				}
+    			},
+    			depends: ['checkComercializarReadOnly', 'isVendidoOEntramite']
+    		},
+    		{
+    			name: 'editableCheckPublicacion',
+    			calculate: function(data){
+    				if(data.checkPublicacionReadOnly){
+    					return data.checkPublicacionReadOnly;
+    				} else{
+    					return data.isVendido;
+    				}
+    			},
+    			depends: ['checkPublicacionReadOnly', 'isVendido']
     		}
     ],
     

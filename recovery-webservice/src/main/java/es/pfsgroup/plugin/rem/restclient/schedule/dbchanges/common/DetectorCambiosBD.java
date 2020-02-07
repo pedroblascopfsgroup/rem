@@ -26,7 +26,7 @@ import es.pfsgroup.plugin.rem.rest.model.DestinatariosRest;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.utils.Converter;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
-import es.pfsgroup.plugin.rem.restclient.webcom.WebcomRESTDevonProperties;
+import net.sf.json.JSONObject;
 
 /**
  * Clase abstracta para desarrollar detectores de cambios.
@@ -106,7 +106,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 	 *            ejecución. Puede ser NULL si no queremos dejar ninguna traza.
 	 * @throws ErrorServicioWebcom
 	 */
-	public abstract void invocaServicio(List<T> data, RestLlamada registro) throws ErrorServicioWebcom;
+	public abstract JSONObject invocaServicio(List<T> data, RestLlamada registro) throws ErrorServicioWebcom;
 	
 	
 	/**
@@ -186,9 +186,9 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 		if (dtoClass.equals(getDtoClass())) {
 			dao.marcaComoEnviados(dtoClass, this, registro);
 		} else {
-			trace("No coincide la clase con el DTO asociado al detctor. Se esperaba " + getDtoClass().getName()
+			restApi.trace("No coincide la clase con el DTO asociado al detctor. Se esperaba " + getDtoClass().getName()
 					+ " pero se ha especificado " + dtoClass.getName());
-			trace(
+			restApi.trace(
 					"Esto puede significar que no se está usando el handler correcto, por lo tanto no se van a marcar los registros de BD como enviados.");
 		}
 
@@ -259,7 +259,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 				for (Object cambio : listCambios) {
 					try {
 						if (logger.isDebugEnabled()) {
-							trace("Obtenemos los cambios registros cambiados en BD");
+							restApi.trace("Obtenemos los cambios registros cambiados en BD");
 						}
 						Map<String, Object> camposActualizados = ((CambioBD) cambio).getCambios();
 						if (!camposActualizados.isEmpty()) {
@@ -281,7 +281,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 								fusionCambios.addDataMap(datos);
 							}
 						} else if (logger.isDebugEnabled()) {
-							trace("Map de cambios vacío, nada que notificar");
+							restApi.trace("Map de cambios vacío, nada que notificar");
 						}
 					} catch (Exception e) {
 						logger.error("Error gestionando la fusion de cambios en DetectorCambiosBD", e);
@@ -299,9 +299,9 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 			}
 			return listaCambios;
 		} else {
-			trace("No coincide la clase con el DTO asociado al detctor. Se esperaba " + getDtoClass().getName()
+			restApi.trace("No coincide la clase con el DTO asociado al detctor. Se esperaba " + getDtoClass().getName()
 					+ " pero se ha especificado " + dtoClass.getName());
-			trace(
+			restApi.trace(
 					"Esto puede significar que no se está usando el handler correcto, por lo tanto no se van a devolver resultados.");
 			return null;
 		}
@@ -335,7 +335,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 
 	private T creaYRellenaDto(Class<?> dtoClass, Map<String, Object> datos) {
 		T dto = createDtoInstance();
-		trace("Relenamos el dto " + dtoClass + " con " + datos);
+		restApi.trace("Relenamos el dto " + dtoClass + " con " + datos);
 		Converter.updateObjectFromHashMap(datos, dto, null);
 		return dto;
 	}
@@ -413,14 +413,8 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 		return destinatarios;
 	}
 	
-	private void trace(String mensaje) {
-		Boolean webcomSimulado = Boolean.valueOf(WebcomRESTDevonProperties.extractDevonProperty(appProperties,
-				WebcomRESTDevonProperties.WEBCOM_SIMULADO, "true"));
-		if (webcomSimulado) {
-			logger.error(mensaje);
-		} else {
-			logger.trace(mensaje);
-		}
-
+	public void procesaResultado(JSONObject resultado) {
+		// empty, por defecto no hacemos nada. Sobreescribimos la impl 
+		// en los managers q lo necesiten
 	}
 }

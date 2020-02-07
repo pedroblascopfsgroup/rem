@@ -1,5 +1,6 @@
-package es.pfsgroup.plugin.rem.tramitacionOfertas;
+package es.pfsgroup.plugin.rem.tramitacionofertas;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -765,33 +766,18 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 	@Override
 	@Transactional
-	public List<GastosExpediente> crearGastosExpediente(Long idOferta, ExpedienteComercial nuevoExpediente) {
+	public List<GastosExpediente> crearGastosExpediente(Long idOferta, ExpedienteComercial nuevoExpediente) throws IllegalAccessException, InvocationTargetException {
 		return this.crearGastosExpediente(ofertaApi.getOfertaById(idOferta), nuevoExpediente);
 	}
 
 	@Override
 	@Transactional
-	public List<GastosExpediente> crearGastosExpediente(Oferta oferta, ExpedienteComercial nuevoExpediente) {
+	public List<GastosExpediente> crearGastosExpediente(Oferta oferta, ExpedienteComercial nuevoExpediente) throws IllegalAccessException, InvocationTargetException {
 		List<GastosExpediente> gastosExpediente = new ArrayList<GastosExpediente>();
-		List<String> acciones = new ArrayList<String>();
-		String codigoOferta = oferta.getTipoOferta().getCodigo();
-
-		acciones.add(DDAccionGastos.CODIGO_COLABORACION);
-		acciones.add(DDAccionGastos.CODIGO_PRESCRIPCION);
-
-		if (DDTipoOferta.CODIGO_VENTA.equals(codigoOferta)) {
-			acciones.add(DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE);
-		}
-
-		for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
-			Activo activo = activoOferta.getPrimaryKey().getActivo();
-
-			for (String accion : acciones) {
-				GastosExpediente gex = expedienteComercialApi.creaGastoExpediente(nuevoExpediente, oferta, activo,
-						accion);
-				gastosExpediente.add(gex);
-			}
-		}
+		
+		Activo activo = oferta.getActivoPrincipal();
+			
+		gastosExpediente = expedienteComercialApi.creaGastoExpediente(nuevoExpediente, oferta, activo);
 
 		return gastosExpediente;
 	}
@@ -1709,7 +1695,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	}
 
 	@Transactional
-	public ActivoTramite doTramitacion(Activo activo, Oferta oferta, Long idTrabajo, ExpedienteComercial expedienteComercial) {
+	public ActivoTramite doTramitacion(Activo activo, Oferta oferta, Long idTrabajo, ExpedienteComercial expedienteComercial) 
+			throws IllegalAccessException, InvocationTargetException {
 		ActivoTramite activoTramite = trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
 		expedienteComercial = this.crearCondicionanteYTanteo(activo, oferta, expedienteComercial);
 		expedienteComercial = this.crearExpedienteReserva(expedienteComercial);

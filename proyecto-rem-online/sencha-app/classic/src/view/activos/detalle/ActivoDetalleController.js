@@ -47,6 +47,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			abrirFormulario : 'abrirFormularioAdjuntarDocumentoOferta',
 			onClickRemove : 'borrarDocumentoAdjuntoOferta'
 		},
+		
+		'documentostributosgrid gridBase' : {
+			abrirFormulario: 'abrirVentanaAdjuntarDocTributo',
+			download: 'descargarAdjuntoTributo',
+			onClickRemove: 'eliminarAdjuntoTributo',
+			afterupload: function(grid) {
+             	grid.getStore().load();
+             }
+		},
 
          'fotoswebactivo': {
          	updateOrdenFotos: 'updateOrdenFotosInterno'
@@ -5629,76 +5638,57 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
 	
 
-	descargarAdjuntoTributo: function(tableView, indiceFila, indiceColumna){
+	descargarAdjuntoTributo: function(grid, record){
 		var me = this;
-		var grid = tableView.up('grid');
-		var existeDocumentoTributo = grid.store.getAt(indiceFila).get('existeDocumentoTributo');
-		
-		if(existeDocumentoTributo == "No"){
-			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.no.existe.adjunto")); 
-		}else{
-			var nombreAdjuntoTributo = grid.store.getAt(indiceFila).get('documentoTributoNombre');	
-			if(nombreAdjuntoTributo != undefined){
-				var config = {};
+
+		var nombreAdjuntoTributo = record.data.nombre;	
+		if(nombreAdjuntoTributo != undefined){
+			var config = {};
 				
-				config.url=$AC.getWebPath()+"tributo/bajarAdjuntoActivoTributo."+$AC.getUrlPattern();
-				config.params = {};
-				config.params.idTributo=grid.store.getAt(indiceFila).get("idTributo");
-				config.params.idActivo=me.getView().getViewModel().getData().activo.id;
-				config.params.nombreDocumento=nombreAdjuntoTributo.replace(",","");
-				me.fireEvent("downloadFile", config);
-			}else{
-				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
-			}
-			
+			config.url=$AC.getWebPath()+"tributo/bajarAdjuntoActivoTributo."+$AC.getUrlPattern();
+			config.params = {};
+			config.params.id=record.data.id;
+			config.params.nombreDocumento=nombreAdjuntoTributo.replace(",","");
+			me.fireEvent("downloadFile", config);
+		}else{
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
 		}
 	},
 	
-	eliminarAdjuntoTributo: function(tableView, indiceFila, indiceColumna){
+	eliminarAdjuntoTributo: function(grid, record){
    		var me = this;
-		var grid = tableView.up('grid');
-		var existeDocumentoTributo = grid.store.getAt(indiceFila).get('existeDocumentoTributo');
 		
-		if(existeDocumentoTributo == "No"){
-			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.no.existe.adjunto")); 
-		}else{
-			var idActivo = me.getViewModel().get("activo.id"),
-			idTributo = grid.store.getAt(indiceFila).get("idTributo");
-			
-			var url = $AC.getRemoteUrl('tributo/deleteAdjunto');
-			Ext.Ajax.request({
-	    		url: url,
-	    		params: { 
-	    			idActivo: idActivo,
-	    			idTributo: idTributo	
-	    		},
-	    		success: function(response, opts){
-	    			me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok")); 
-	    			grid.getStore().load()
-	    		},
-			 	failure: function(record, operation) {
-			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
-			    },
-			    callback: function(record, operation) {
-	    			me.getView().unmask();
-			    }
-	    	});
-			
-		}
+   		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+   		
+		var id = record.data.id;
+		var idEntidad= grid.up().idTributo;
+		
+		var url = $AC.getRemoteUrl('tributo/deleteAdjunto');
+		Ext.Ajax.request({
+	    	url: url,
+	    	params: { 
+	    		id: id,
+	    		idEntidad: idEntidad
+	    	},
+	    	success: function(response, opts){
+	    		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok")); 
+	    		grid.getStore().load()
+	    	},
+		 	failure: function(record, operation) {
+		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+		    },
+		    callback: function(record, operation) {
+	    		me.getView().unmask();
+		    }
+	    });
 	},
 	 
-	anyadirAdjuntoTributo: function(tableView, indiceFila, indiceColumna){
-		var me = this,	
-		grid = tableView.up('grid'),
-		idActivo = me.getViewModel().get("activo.id"),
-		idTributo = grid.store.getAt(indiceFila).get("idTributo"),
-		existeDocumentoTributo = grid.store.getAt(indiceFila).get('existeDocumentoTributo');
+	abrirVentanaAdjuntarDocTributo: function(grid){
+		var me = this;
+		var idTributo = grid.up().idTributo;
+		var idActivo = grid.up().idActivo;
 		
-		if(existeDocumentoTributo == "Si"){
-			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.ya.existe.adjunto")); 
-		}else{
-			Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoTributo", {entidad: 'tributo', idEntidad: idActivo, parent: grid, idTributo: idTributo}).show();
-		}
+		Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoTributo", {entidad: 'tributo', idEntidad: idActivo, parent: grid, idTributo: idTributo}).show();
 	},
 	
 	onSelectedRow: function(grid, record, index){
@@ -5837,6 +5827,35 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 	
+	onTributoClick: function(grid, record){
+		var me = this;
+		var gridDocs = grid.up().up().down("[reference='documentostributosgridref']");
+		var listadoDocumentosTrabajo = gridDocs.down("[reference='listadoDocumentosTributo']");
+		gridDocs.idActivo = me.getViewModel().get("activo.id");
+		
+		if(!Ext.isEmpty(grid.selection)){
+			gridDocs.down('[xtype=toolbar]').items.items[0].setDisabled(false);
+			gridDocs.idTributo = record.data.idTributo;
+			listadoDocumentosTrabajo.getStore().getProxy().setExtraParams({'idTributo':record.data.idTributo});
+			listadoDocumentosTrabajo.getStore().load();
+		} else {
+			me.deselectTributo();
+		}
+		
+	},
+	
+	deselectTributo: function(){
+		var me = this;
+		var gridDocs = this.lookupReference('documentostributosgridref')
+		var listadoDocumentosTrabajo = gridDocs.down("[reference='listadoDocumentosTributo']");
+		gridDocs.idActivo = me.getViewModel().get("activo.id");
+		listadoDocumentosTrabajo.getStore().getProxy().setExtraParams({'idTributo':null});
+		gridDocs.idTributo = null;
+		listadoDocumentosTrabajo.getStore().load();
+		gridDocs.down('[xtype=toolbar]').items.items[0].setDisabled(true);
+		gridDocs.down('[xtype=toolbar]').items.items[1].setDisabled(true);
+	},
+
 	onChkbxSubfaseChange: function(chkbox, newValue, oldValue) {
 		var modelValue = chkbox.lookupController().getViewModel().data.fasepublicacionactivo.data.subfasePublicacionCodigo;
 		if (newValue != modelValue) {
@@ -5938,5 +5957,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}else{
 			observaciones.setDisabled(true);
 		}
+	},
+	getVisiblityOfBotons: function(){
+		return this.getViewModel().get('activo.unidadAlquilable');
 	}
 });

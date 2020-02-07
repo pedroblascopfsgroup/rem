@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.activo.dao;
 
 import es.capgemini.pfs.dao.AbstractDao;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.dd.DDAdecuacionAlquiler;
 
@@ -21,5 +22,12 @@ public interface ActivoPatrimonioDao extends AbstractDao<ActivoPatrimonio, Long>
 	 * @return Devuelve la entidad diccionario adecuación alquiler de la entidad patrimonio.
 	 */
 	DDAdecuacionAlquiler getAdecuacionAlquilerFromPatrimonioByIdActivo(Long idActivo);
+
+	/**
+	 * Este método delvuelve si el estado del aquiler es LIBRE
+	 * @param activoPrincipal
+	 * @return TRUE si el estado del alquiler del activo es LIBRE
+	 */
+	public boolean isAlquilerLibreByActivo(Activo activoPrincipal);
 	
 }

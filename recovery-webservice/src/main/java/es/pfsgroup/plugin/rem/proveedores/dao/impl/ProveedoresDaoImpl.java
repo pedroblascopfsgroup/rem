@@ -26,6 +26,12 @@ import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
+<<<<<<< HEAD
+=======
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+>>>>>>> R-Barberina
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 
@@ -359,6 +365,95 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 				.createQuery(hb.toString()).list();
 		return listaProveedores;
 	}
+	
+	/*@SuppressWarnings("unchecked")
+	@Override
+	public List<DDCartera> getCarteraPorProveedor(Long idProveedor){
+		List<DDCartera> carterasProveedor = new ArrayList<DDCartera>();
+		
+		HQLBuilder hb = new HQLBuilder("select cra from DDCartera cra, VCarteraTrabajosProveedor vis ");
+
+		hb.appendWhere("cra.id = vis.idCartera");
+		hb.appendWhere("vis.idProveedor = " + idProveedor);
+		
+		carterasProveedor = (List<DDCartera>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hb.toString()).list();
+		
+		return carterasProveedor;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DDSubcartera> getSubcarteraPorProveedor(Long idProveedor, String codigoCartera){
+		List<DDSubcartera> carterasProveedor = new ArrayList<DDSubcartera>();
+		
+		HQLBuilder hb = new HQLBuilder("select scr from DDSubcartera scr, DDCartera cra, VSubcarteraCarteraTrabajosProveedor vis ");
+
+		hb.appendWhere("cra.id = vis.idCartera");
+		hb.appendWhere("scr.id = vis.idSubcartera");
+		hb.appendWhere("vis.idProveedor = " + idProveedor);
+		if(!Checks.esNulo(codigoCartera)) {
+			hb.appendWhere("cra.codigo = '" + codigoCartera +"'");
+		}
+		
+		carterasProveedor = (List<DDSubcartera>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hb.toString()).list();
+		
+		return carterasProveedor;
+	}*/
+	
+	@Override
+	public List<ActivoProveedor> getMediadoresActivos() {
+		HQLBuilder hb = new HQLBuilder(
+				"select proveedor.id, proveedor.codigoProveedorRem, proveedor.nombre from ActivoProveedor proveedor");
+		hb.appendWhere("proveedor.tipoProveedor.codigo in ('" + DDTipoProveedor.COD_MEDIADOR + "', '" + DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA + "')");
+		hb.appendWhere("proveedor.estadoProveedor.codigo = " + DDEstadoProveedor.ESTADO_BIGENTE);
+		hb.appendWhere("proveedor.homologado = 1");
+
+		return HibernateQueryUtils.list(this, hb);
+	}
+	/*@Override
+	public List<ActivoProveedorCartera> getProveedoresCarteraById(Long idProveedor) {
+		
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoProveedorCartera.class);
+		criteria.add(Restrictions.eq("proveedor.id", idProveedor));
+			
+		return  HibernateUtils.castList(ActivoProveedorCartera.class, criteria.list());
+	}*/
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	@Transactional(readOnly = false)
+	public List<MapeoGestorDocumental> getCarteraClientesProveedores() {
+		
+		List<MapeoGestorDocumental> mapeoGestorDocumental = new ArrayList<MapeoGestorDocumental>();
+		
+		HQLBuilder hb = new HQLBuilder("select mgd from MapeoGestorDocumental mgd");
+		
+		mapeoGestorDocumental = this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();	
+								
+		return mapeoGestorDocumental;
+		
+	}/*
+	
+	@Override
+	public List<MapeoGestorDocumental> getCarteraClientesProveedoresByCarteraYSubcartera(DDCartera cartera, DDSubcartera subcartera) {
+		
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(MapeoGestorDocumental.class);
+		if(Checks.esNulo(subcartera)) {
+			criteria.add(Restrictions.isNull("subcartera"));
+		} else {
+			criteria.add(Restrictions.eq("subcartera", subcartera));
+		}
+		if(Checks.esNulo(cartera)) {
+			criteria.add(Restrictions.isNull("cartera"));
+		} else {
+			criteria.add(Restrictions.eq("cartera", cartera));
+		}
+			
+		return  HibernateUtils.castList(MapeoGestorDocumental.class, criteria.list());
+		
+	}*/
 	
 	@Override
 	public Boolean cambiaMediador(Long nActivo, String pveCodRem, String userName) {

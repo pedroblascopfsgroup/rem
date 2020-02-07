@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -52,6 +53,14 @@ public class ActivoGenericSaveActionHandler extends ActivoGenericLeaveActionHand
 		dataUpdater.saveValues(tramite, valores);
 			
 		logger.debug("\tGuardamos los datos de la tarea: " + getNombreNodo(executionContext));
+	}
+	
+	private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+		//empty
+	}
+
+	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+		//empty
 	}
 
 }

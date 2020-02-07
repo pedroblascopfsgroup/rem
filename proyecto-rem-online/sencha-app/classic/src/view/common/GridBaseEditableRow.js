@@ -87,6 +87,8 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 	
 	confirmSaveTxt: null,
 	
+	confirmSaveTit: null,
+	
 	initComponent: function() {
 		
 		
@@ -94,6 +96,10 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 		
 		if(Ext.isEmpty(me.confirmSaveTxt)){
 			me.confirmSaveTxt = HreRem.i18n('msg.agrupacion.guardar.condicion.text');
+		}
+		
+		if(Ext.isEmpty(me.confirmSaveTit)){
+			me.confirmSaveTit = HreRem.i18n('title.agrupacion.guardar.condicion.title');
 		}
 		
 		me.emptyText = HreRem.i18n("grid.empty.text");
@@ -466,8 +472,9 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
    
    editFuncion: function(editor, context){
    		var me= this;
+   		var tit, msg;
    		if(me.confirmBeforeSave){
-   	  		Ext.MessageBox.confirm(HreRem.i18n('title.agrupacion.guardar.condicion.title'), me.confirmSaveTxt, function(btn, value, opt){
+   	  		Ext.MessageBox.confirm(me.confirmSaveTit, me.confirmSaveTxt, function(btn, value, opt){
    	  			if(btn === "yes"){
    	  				me.saveFunction(editor, context);
    	  			} else{

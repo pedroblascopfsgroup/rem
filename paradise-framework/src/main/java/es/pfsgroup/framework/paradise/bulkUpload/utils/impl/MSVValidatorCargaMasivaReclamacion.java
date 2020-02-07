@@ -159,15 +159,6 @@ public class MSVValidatorCargaMasivaReclamacion extends MSVExcelValidatorAbstrac
 		return resultado;
 	}
 	
-	private File recuperarPlantilla(Long idTipoOperacion)  {
-		try {
-			FileItem fileItem = excelRepoApi.dameExcelByTipoOperacion(idTipoOperacion);
-			return fileItem.getFile();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
 	
 	// Validaciones para activos de la lista excel	
 		private List<Integer> activesNotExistsRows(MSVHojaExcel exc) {

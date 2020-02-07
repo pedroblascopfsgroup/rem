@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.devon.exception.UserException;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -19,7 +20,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.api.GastosExpedienteApi;
 import es.pfsgroup.plugin.rem.gastosExpediente.dao.GastosExpedienteDao;
-import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
@@ -37,7 +37,7 @@ public class GastosExpedienteManager extends BusinessOperationOverrider<GastosEx
 
 	@Autowired
 	private GastosExpedienteDao gastosExpedienteDao;
-	
+
 	@Autowired
 	private GenericABMDao genericDao;
 
@@ -54,13 +54,13 @@ public class GastosExpedienteManager extends BusinessOperationOverrider<GastosEx
 
 		try {
 			if (Checks.esNulo(id)) {
-				throw new Exception("El campo id es obligatorio.");
+				throw new UserException("El campo id es obligatorio.");
 			} else {
 				gasto = gastosExpedienteDao.get(id);
 			}
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error(ex.getMessage(),ex);
 		}
 
 		return gasto;
@@ -75,7 +75,7 @@ public class GastosExpedienteManager extends BusinessOperationOverrider<GastosEx
 			lista = gastosExpedienteDao.getListaGastosExpediente(comisionDto);
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error(ex.getMessage(),ex);
 		}
 
 		return lista;
@@ -128,7 +128,7 @@ public class GastosExpedienteManager extends BusinessOperationOverrider<GastosEx
 				}
 
 			}
-			if(succes){
+			if (succes) {
 				map.put("idComisionRem", gasto.getId());
 				map.put("idOfertaWebcom", gasto.getExpediente().getOferta().getIdWebCom());
 				map.put("idOfertaRem", gasto.getExpediente().getOferta().getNumOferta());
@@ -139,7 +139,7 @@ public class GastosExpedienteManager extends BusinessOperationOverrider<GastosEx
 				map.put("esFdv", comisionDto.getEsFdv());
 				map.put("esDoblePrescripcion", comisionDto.getEsDoblePrescripcion());
 				map.put("success", succes);
-			}else{
+			} else {
 				map.put("idComisionRem", comisionDto.getIdComisionRem());
 				map.put("idOfertaWebcom", comisionDto.getIdOfertaWebcom());
 				map.put("idOfertaRem", comisionDto.getIdOfertaRem());
@@ -152,7 +152,7 @@ public class GastosExpedienteManager extends BusinessOperationOverrider<GastosEx
 				map.put("success", succes);
 				map.put("invalidFields", errorsList);
 			}
-			
+
 			listaRespuesta.add(map);
 
 		}
@@ -163,11 +163,27 @@ public class GastosExpedienteManager extends BusinessOperationOverrider<GastosEx
 	@Override
 	@Transactional(readOnly = false)
 	public GastosExpediente getGastoExpedienteByActivoYAccion(Long idActivo, Long idExpediente, String accion) {
-		
+
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 		Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente);
 		Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "accionGastos.codigo", accion);
-		
-		return genericDao.get(GastosExpediente.class, filtro, filtro2, filtro3);	
+		Filter filtro4 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+
+		return genericDao.get(GastosExpediente.class, filtro, filtro2, filtro3, filtro4);
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void deleteGastosExpediente(Long idExpediente) {
+
+		List<GastosExpediente> gastos = genericDao.getList(GastosExpediente.class,
+				genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente),
+				genericDao.createFilter(FilterType.EQUALS, "editado", Integer.valueOf(0)));
+
+		if (gastos != null && !gastos.isEmpty()) {
+			for (GastosExpediente gasto : gastos) {
+				genericDao.deleteById(GastosExpediente.class, gasto.getId());
+			}
+		}
 	}
 }

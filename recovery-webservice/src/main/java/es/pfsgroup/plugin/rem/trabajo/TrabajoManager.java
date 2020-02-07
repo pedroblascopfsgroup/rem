@@ -529,7 +529,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			// Para modulo precios:
 			if (DDTipoTrabajo.CODIGO_PRECIOS.equals(trabajo.getTipoTrabajo().getCodigo())) {
 				if (gestorActivoManager.isGestorPreciosOMarketing(listaActivos.get(0),
-						genericAdapter.getUsuarioLogado())) {
+						genericAdapter.getUsuarioLogado())) { 
 					trabajo.setFechaAprobacion(new Date());
 				}
 			}
@@ -1639,6 +1639,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setNombreProveedor(trabajo.getProveedorContacto().getProveedor().getNombreComercial());
 			dtoTrabajo.setIdProveedor(trabajo.getProveedorContacto().getProveedor().getId());
 		}
+		if(!Checks.esNulo(trabajo.getGastoTrabajo())) {
+			dtoTrabajo.setGastoProveedor(trabajo.getGastoTrabajo().getGastoProveedor().getNumGastoHaya());
+			dtoTrabajo.setEstadoGasto(trabajo.getGastoTrabajo().getGastoProveedor().getEstadoGasto().getCodigo());
+		}
 
 		if (trabajo.getTipoTrabajo() != null) {
 			dtoTrabajo.setTipoTrabajoDescripcion(trabajo.getTipoTrabajo().getDescripcion());
@@ -1821,9 +1825,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 
 			 }
-			 else {
-
-			 }
 
 		 }
 	 }
@@ -1850,9 +1851,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setSubtipoTrabajoCodigo(trabajo.getSubtipoTrabajo().getCodigo());
 			dtoTrabajo.setSubtipoTrabajoDescripcion(trabajo.getSubtipoTrabajo().getDescripcion());
 		}
-		// FIXME Considerar si al final se sacará cartera también cuando el
-		// trabajo
-		// esté relacionado directamente con la agrupación (de momento no)
 		if (trabajo.getActivo() != null && trabajo.getActivo().getCartera() != null) {
 			dtoTrabajo.setCarteraCodigo(trabajo.getActivo().getCartera().getCodigo());
 			
@@ -4031,7 +4029,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 			Long idTrabajo = null;
 			Trabajo trabajo = null;
-			errorsList = new HashMap<String, String>();
 			map = new HashMap<String, Object>();
 			trabajoDto = listaTrabajoDto.get(i);
 
@@ -4046,7 +4043,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				}
 			}
 
-			if (!Checks.esNulo(errorsList) && errorsList.isEmpty() && !Checks.esNulo(trabajo)) {
+			if (!Checks.esNulo(errorsList) && errorsList.isEmpty() && trabajo != null) {
 				map.put("idTrabajoWebcom", trabajoDto.getIdTrabajoWebcom());
 				map.put("idTrabajoRem", trabajo.getNumTrabajo());
 				map.put("success", true);

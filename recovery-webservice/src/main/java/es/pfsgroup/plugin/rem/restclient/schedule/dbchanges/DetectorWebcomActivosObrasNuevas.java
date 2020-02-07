@@ -10,6 +10,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.ActivoObrasNuevasDto;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
+import net.sf.json.JSONObject;
 
 @Component
 public class DetectorWebcomActivosObrasNuevas  extends DetectorCambiosBD<ActivoObrasNuevasDto> {
@@ -38,8 +39,8 @@ public class DetectorWebcomActivosObrasNuevas  extends DetectorCambiosBD<ActivoO
 	}
 
 	@Override
-	public void invocaServicio(List<ActivoObrasNuevasDto> data, RestLlamada registro) throws ErrorServicioWebcom {
-		this.serviciosWebcom.webcomRestActivosObrasNuevas(data, registro);
+	public JSONObject invocaServicio(List<ActivoObrasNuevasDto> data, RestLlamada registro) throws ErrorServicioWebcom {
+		return this.serviciosWebcom.webcomRestActivosObrasNuevas(data, registro);
 		
 	}
 

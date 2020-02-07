@@ -118,9 +118,6 @@ public class OfertasController {
 	private ActivoDao activoDao;
 	
 	@Autowired
-	private ProveedoresDao proveedoresDao;
-	
-	@Autowired
 	private AgendaAdapter agendaAdapter;
 
 	@Autowired
@@ -128,14 +125,13 @@ public class OfertasController {
 
 	@Autowired
 	private ConfigManager configManager;
-	
+
 	@Autowired
 	private ActivoAgrupacionDao activoAgrupacionDao;
-		
-	private final static String CLIENTE_HAYA = "HAYA";
-	public static final String ERROR_NO_EXISTE_OFERTA_O_TAREA = "El número de oferta es inválido o no existe la tarea.";
+	
 	private static final String RESPONSE_SUCCESS_KEY = "success";	
 	private static final String RESPONSE_DATA_KEY = "data";
+	public static final String ERROR_NO_EXISTE_OFERTA_O_TAREA = "El número de oferta es inválido o no existe la tarea.";
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)

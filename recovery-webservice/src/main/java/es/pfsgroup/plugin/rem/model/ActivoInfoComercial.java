@@ -341,6 +341,11 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	
 	@Column(name = "ICO_MOTIVO_NO_HACER_INF")
 	private String motivoNoPosibleInforme;
+	
+	@ManyToOne
+	@JoinColumn(name = "ICO_MEDIADOR_ESPEJO_ID")
+	private ActivoProveedor mediadorEspejo;
+	
 
 	public Float getCuotaOrientativaComunidad() {
 		return cuotaOrientativaComunidad;
@@ -980,6 +985,14 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	public void setMotivoNoPosibleInforme(String motivoNoPosibleInforme) {
 		this.motivoNoPosibleInforme = motivoNoPosibleInforme;
+	}
+
+	public ActivoProveedor getMediadorEspejo() {
+		return mediadorEspejo;
+	}
+
+	public void setMediadorEspejo(ActivoProveedor mediadorEspejo) {
+		this.mediadorEspejo = mediadorEspejo;
 	}
 	
 

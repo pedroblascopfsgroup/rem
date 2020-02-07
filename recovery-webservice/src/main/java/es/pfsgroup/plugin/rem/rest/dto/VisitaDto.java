@@ -57,6 +57,9 @@ public class VisitaDto implements Serializable {
 	@Diccionary(clase = ActivoProveedor.class, message = "El idProveedorRemVisita no existe", groups = { Insert.class,
 		Update.class },foreingField="codigoProveedorRem")
 	private Long idProveedorRemVisita;
+	@Diccionary(clase = ActivoProveedor.class, message = "El idProveedorPrescriptorOportunidadREM no existe", groups = { Insert.class,
+			Update.class },foreingField="codigoProveedorRem")
+		private Long idProveedorPrescriptorOportunidadREM;
 	@Size(max=250,groups = { Insert.class, Update.class })
 	private String observaciones;
 	@NotNull(groups = { Insert.class, Update.class })
@@ -205,6 +208,12 @@ public class VisitaDto implements Serializable {
 	}
 	public void setCodOrigenComprador(String codOrigenComprador) {
 		this.codOrigenComprador = codOrigenComprador;
+	}
+	public Long getIdProveedorPrescriptorOportunidadREM() {
+		return idProveedorPrescriptorOportunidadREM;
+	}
+	public void setIdProveedorPrescriptorOportunidadREM(Long idProveedorPrescriptorOportunidadREM) {
+		this.idProveedorPrescriptorOportunidadREM = idProveedorPrescriptorOportunidadREM;
 	}
 	
 }

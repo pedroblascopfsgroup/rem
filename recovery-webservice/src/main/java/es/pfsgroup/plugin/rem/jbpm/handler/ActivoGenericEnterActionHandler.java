@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -350,5 +351,13 @@ public class ActivoGenericEnterActionHandler extends ActivoGenericActionHandler 
 			logger.error("El tipoCalculo configurado no existe, los disponibles son: " + Arrays.deepToString(TipoCalculo.values()));
 			throw e;
 		}
+	}
+	
+	private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+		//empty
+	}
+
+	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+		//empty
 	}
 }

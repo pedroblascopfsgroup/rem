@@ -35,6 +35,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoRolMediador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
@@ -208,6 +209,13 @@ public interface GenericApi {
 	 * @return Devuelve una lista con los resultados filtrados.
 	 */
 	public List<DDTipoBloqueo> getDiccionarioTipoBloqueo(String areaCodigo);
+	
+	/**
+	 * Este método obtiene una lista con los datos filtrados por el campo de ocultar del diccionario de roles.
+	 * 
+	 * @return Devuelve una lista con los resultados filtrados.
+	 */
+	public List<DDTipoRolMediador> getDiccionarioRolesMediador();
 
 	/**
 	 * Este método obtiene una lista con los datos filtrados por el código de cartera.

@@ -540,6 +540,32 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 									fieldLabel: HreRem.i18n('fieldlabel.fecha.pago'),
 									bind: '{trabajo.fechaPago}',
 									readOnly: true
+								},
+								{
+									xtype: 'textfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.gasto.asociado'),
+									bind:{ 
+										value: '{trabajo.gastoProveedor}'
+										//hidden: '{esVisibleGasto}'
+									},
+									readOnly: true,
+									cls: 'show-text-as-link',
+										listeners: {
+									        click: {
+									            element: 'el', //bind to the underlying el property on the panel
+									            fn:'onClickGasto'									       
+									        }
+										}
+								},
+								{
+									xtype: 'comboboxfieldbase',
+									editable: false,
+									fieldLabel: HreRem.i18n('fieldlabel.estado.gasto'),
+									bind: {
+					            		store: '{comboEstadoGasto}',
+					            		value: '{trabajo.estadoGasto}'
+					            	},
+									readOnly: true
 								}
 							]
 		           },

@@ -1,6 +1,9 @@
 package es.pfsgroup.plugin.rem.model;
 
+import java.util.Date;
+
 import es.capgemini.devon.dto.WebDto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
 
 
 /**
@@ -21,6 +24,13 @@ public class DtoLlaves extends WebDto {
 	private String motivoIncompleto;
 	private String numLlave;
 
+	private String tipoTenedor;
+	private String nombreTenedor;
+	private String telefonoTenedor;
+	private Date fechaPrimerAnillado;
+	private Date fechaRecepcion;
+	private String observaciones;
+	
 
 	public String getId() {
 		return id;
@@ -84,6 +94,42 @@ public class DtoLlaves extends WebDto {
 	}
 	public void setNumLlave(String numLlave) {
 		this.numLlave = numLlave;
+	}
+	public String getTipoTenedor() {
+		return tipoTenedor;
+	}
+	public void setTipoTenedor(String tipoTenedor) {
+		this.tipoTenedor = tipoTenedor;
+	}
+	public String getNombreTenedor() {
+		return nombreTenedor;
+	}
+	public void setNombreTenedor(String nombreTenedor) {
+		this.nombreTenedor = nombreTenedor;
+	}
+	public String getTelefonoTenedor() {
+		return telefonoTenedor;
+	}
+	public void setTelefonoTenedor(String telefonoTenedor) {
+		this.telefonoTenedor = telefonoTenedor;
+	}
+	public Date getFechaPrimerAnillado() {
+		return fechaPrimerAnillado;
+	}
+	public void setFechaPrimerAnillado(Date fechaPrimerAnillado) {
+		this.fechaPrimerAnillado = fechaPrimerAnillado;
+	}
+	public Date getFechaRecepcion() {
+		return fechaRecepcion;
+	}
+	public void setFechaRecepcion(Date fechaRecepcion) {
+		this.fechaRecepcion = fechaRecepcion;
+	}
+	public String getObservaciones() {
+		return observaciones;
+	}
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
 	}
 	
 }

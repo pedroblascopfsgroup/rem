@@ -234,17 +234,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		}
 		return resultado;
 	}
-	
-	private File recuperarPlantilla(Long idTipoOperacion)  {
-		try {
-			FileItem fileItem = proxyFactory.proxy(ExcelRepoApi.class).dameExcelByTipoOperacion(idTipoOperacion);
-			return fileItem.getFile();
-		} catch (FileNotFoundException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}
-		return null;
-	}
+
 	
 	@SuppressWarnings("unused")
 	private boolean isActiveExists(MSVHojaExcel exc){

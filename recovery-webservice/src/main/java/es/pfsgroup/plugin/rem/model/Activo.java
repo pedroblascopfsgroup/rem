@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -1954,5 +1956,6 @@ public class Activo implements Serializable, Auditable {
 	public void setValorLiquidez(String valorLiquidez) {
 		this.valorLiquidez = valorLiquidez;
 	}
+	
 	
 }

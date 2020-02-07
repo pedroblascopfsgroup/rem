@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler;
 
 import static es.capgemini.pfs.BPMContants.TRANSICION_ALERTA_TIMER;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -838,4 +839,12 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 		
 		return notificatorUpdaterService;
     }
+    
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+		//empty
+	}
+
+	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+		//empty
+	}
 }

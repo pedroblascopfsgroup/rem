@@ -70,6 +70,9 @@ Ext.define('HreRem.model.Honorario', {
     		},
     		{
     			name: 'origenComprador'
+    		},
+    		{
+    			name: 'importeOriginal'
     		}
 
     ],

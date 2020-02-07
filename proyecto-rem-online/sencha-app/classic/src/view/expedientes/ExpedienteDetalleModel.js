@@ -1248,6 +1248,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 					diccionario: 'claseOferta'
 				}
 			}
+		},
+		storeOrigenLead: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.OrigenLead',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getOrigenLead',
+		        extraParams: {idExpediente: '{expediente.id}'}
+	    	}
 		}
 		
     }

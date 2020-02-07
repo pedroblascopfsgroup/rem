@@ -1,11 +1,11 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +18,6 @@ import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
-import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
@@ -36,20 +35,23 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	protected static final Log logger = LogFactory.getLog(MSVActualizadorInformacionInscripcionCargaMasiva.class);
 
 	public static final class COL_NUM {
+	
 		static final int FILA_CABECERA = 0;
 		static final int DATOS_PRIMERA_FILA = 1;
 		static final int ACT_NUM_ACTIVO = 0;
 		static final int SITUACION_TITULO = 1;
-		static final int FECHA_ENTREGA_TITULO_GESTORÍA = 2;
-		static final int FECHA_PRESENTACIÓN_HACIENDA = 3;
+		static final int FECHA_ENTREGA_TITULO_GESTORIA = 2;
+		static final int FECHA_PRESENTACION_HACIENDA = 3;
 		static final int FECHA_INSCRIPCION_REGISTRO = 4;
 		static final int FECHA_RETIRADA_REGISTRO = 5;
 		static final int FECHA_NOTA_SIMPLE = 6;
 		static final int ACCION = 7;
 		
-	};
+	}
 
 	@Override
 	public String getValidOperation() {
@@ -63,8 +65,8 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 
 		final String numActivo = exc.dameCelda(fila, COL_NUM.ACT_NUM_ACTIVO);
 		final String situacionTitulo = exc.dameCelda(fila, COL_NUM.SITUACION_TITULO);
-		final String fechaEntregaTitulo = exc.dameCelda(fila, COL_NUM.FECHA_ENTREGA_TITULO_GESTORÍA);
-		final String fechaPresentacion = exc.dameCelda(fila, COL_NUM.FECHA_PRESENTACIÓN_HACIENDA);
+		final String fechaEntregaTitulo = exc.dameCelda(fila, COL_NUM.FECHA_ENTREGA_TITULO_GESTORIA);
+		final String fechaPresentacion = exc.dameCelda(fila, COL_NUM.FECHA_PRESENTACION_HACIENDA);
 		final String fechaInscripcion = exc.dameCelda(fila, COL_NUM.FECHA_INSCRIPCION_REGISTRO);
 		final String fechaRetirada = exc.dameCelda(fila, COL_NUM.FECHA_RETIRADA_REGISTRO);
 		final String fechaNota = exc.dameCelda(fila, COL_NUM.FECHA_NOTA_SIMPLE);
@@ -147,12 +149,7 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 				}
 			}
 			genericDao.save(ActivoTitulo.class, titulo);
-		} /*else if (DDAccionMasiva.CODIGO_BORRAR.equals(codAccion)) {
-			titulo = genericDao.get(ActivoTitulo.class,
-					genericDao.createFilter(FilterType.EQUALS, "activo", activo));
-			genericDao.deleteById(ActivoTitulo.class, titulo.getId());
 		}
-		*/
 		return new ResultadoProcesarFila();
 	}
 
@@ -171,7 +168,7 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 		try {
 			fecha = ft.parse(celdaExcel);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(),e);
 		}
 
 		return fecha;

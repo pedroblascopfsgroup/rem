@@ -24,6 +24,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoTributoDaoImpl;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTributos;
@@ -42,6 +43,9 @@ public class MSVSControlTributosProcesar extends AbstractMSVActualizador impleme
 		
 	@Autowired
 	private ParticularValidatorApi particularValidator;
+	
+	@Autowired
+	private ActivoTributoDaoImpl tributoDaoImpl;
 
 	protected static final Log logger = LogFactory.getLog(MSVSControlTributosProcesar.class);
 
@@ -61,6 +65,7 @@ public class MSVSControlTributosProcesar extends AbstractMSVActualizador impleme
 		static final int COL_NUM_RESULTADO_SOLICITUD = 9;
 		static final int COL_NUM_HAYA_VINCULADO = 10;
 		static final int COL_NUM_ACCION = 11;
+		static final int COL_ID_TRIBUTO = 12;
 	}
 
 	@Override
@@ -99,6 +104,7 @@ public class MSVSControlTributosProcesar extends AbstractMSVActualizador impleme
 		String celdaEmision = exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_EMISION);
 		String celdaSolicitud = exc.dameCelda(fila, COL_NUM.COL_NUM_TIPO_SOLICITUD);
 		String celdaGasto = exc.dameCelda(fila, COL_NUM.COL_NUM_HAYA_VINCULADO);
+		String celdaIdTributo = exc.dameCelda(fila, COL_NUM.COL_ID_TRIBUTO);
 		
 		if(accion.equals(DD_ACM_ADD)) {
 			
@@ -115,7 +121,7 @@ public class MSVSControlTributosProcesar extends AbstractMSVActualizador impleme
 		
 		}else {
 			
-			String idActivoTributo = particularValidator.getIdActivoTributo(celdaActivo, celdaEmision, celdaSolicitud);
+			String idActivoTributo = particularValidator.getIdActivoTributo(celdaActivo, celdaEmision, celdaSolicitud, celdaIdTributo);
 			
 			if(!Checks.esNulo(idActivoTributo)) {
 				Filter filtroIdActivoTributo = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(idActivoTributo));
@@ -160,6 +166,13 @@ public class MSVSControlTributosProcesar extends AbstractMSVActualizador impleme
 			activoTributos.setFechaRecepcionRecursoGestoria(fechaRecepcionRecursoGestoria);
 			activoTributos.setFechaRespuestaRecurso(fechaRespuestaRecurso);
 			activoTributos.setFavorable(resultado);
+						
+			if(Checks.esNulo(celdaIdTributo)) {
+				Long numMaxTributo = tributoDaoImpl.getNumMaxTributo();
+				activoTributos.setNumTributo(numMaxTributo + 1);
+				//activoTributos.setNumTributo(Checks.esNulo(celdaIdTributo) ? null : Long.parseLong(celdaIdTributo));
+			}
+				
 						
 
 		} catch (Exception e) {

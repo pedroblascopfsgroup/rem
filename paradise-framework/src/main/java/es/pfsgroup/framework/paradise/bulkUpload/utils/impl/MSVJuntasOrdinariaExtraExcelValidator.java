@@ -165,8 +165,8 @@ public class MSVJuntasOrdinariaExtraExcelValidator extends MSVExcelValidatorAbst
 			for (Entry<String, List<Integer>> registro : mapaErrores.entrySet()) {
 				if (!registro.getValue().isEmpty()) {
 					dtoValidacionContenido.setFicheroTieneErrores(true);
-					dtoValidacionContenido
-							.setExcelErroresFormato(new FileItem(new File(exc.crearExcelErroresMejorado(mapaErrores))));
+					dtoValidacionContenido.setExcelErroresFormato(new FileItem(new File(exc.crearExcelErroresMejorado(mapaErrores))));
+					break;
 				}
 			}
 		}
@@ -442,14 +442,6 @@ public class MSVJuntasOrdinariaExtraExcelValidator extends MSVExcelValidatorAbst
 		return cadena.trim().equals("@");
 	}
 	
-	private File recuperarPlantilla(Long idTipoOperacion)  {
-		try {
-			FileItem fileItem = proxyFactory.proxy(ExcelRepoApi.class).dameExcelByTipoOperacion(idTipoOperacion);
-			return fileItem.getFile();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+	 
 }
 

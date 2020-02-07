@@ -169,6 +169,9 @@ public class DtoFichaTrabajo {
     
     private String codigoSubpartida;
     
+    private String estadoGasto;
+    
+    private Long gastoProveedor;
 	
     public Long getIdTrabajo() {
 		return idTrabajo;
@@ -817,4 +820,19 @@ public class DtoFichaTrabajo {
 	}
 	
 	
+	public String getEstadoGasto() {
+		return estadoGasto;
+	}
+
+	public void setEstadoGasto(String estadoGasto) {
+		this.estadoGasto = estadoGasto;
+	}
+
+	public Long getGastoProveedor() {
+		return gastoProveedor;
+	}
+
+	public void setGastoProveedor(Long gastoProveedor) {
+		this.gastoProveedor = gastoProveedor;
+	}
 }

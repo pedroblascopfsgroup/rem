@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoOferta;
+import es.pfsgroup.plugin.rem.model.DtoOrigenLead;
 import es.pfsgroup.plugin.rem.model.DtoPlusvaliaVenta;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
@@ -142,8 +144,10 @@ public interface ExpedienteComercialApi {
 	 * @param dto
 	 * @param idExpediente
 	 * @return
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	boolean saveDatosBasicosOferta(DtoDatosBasicosOferta dto, Long idExpediente);
+	boolean saveDatosBasicosOferta(DtoDatosBasicosOferta dto, Long idExpediente) throws IllegalAccessException, InvocationTargetException;
 
 	/**
 	 * Metodo que guarda la informacion de la pestanya Tanteo y Retracto de la oferta
@@ -780,9 +784,10 @@ public interface ExpedienteComercialApi {
 	 * @param activo
 	 * @param codigoColaboracion
 	 * @return
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
 	 */
-	public GastosExpediente creaGastoExpediente(ExpedienteComercial expediente, Oferta oferta, Activo activo,
-			String codigoColaboracion);
+	public List<GastosExpediente> creaGastoExpediente(ExpedienteComercial expediente, Oferta oferta, Activo activo) throws IllegalAccessException, InvocationTargetException;
 
 	/**
 	 * Devuelve los activos de un expediente dado, para mostrarlos en un combo
@@ -1281,7 +1286,7 @@ public interface ExpedienteComercialApi {
 	
 	boolean checkExpedienteFechaCheque(Long idTramite);
 
-	boolean actualizarGastosExpediente(ExpedienteComercial expedienteComercial, Oferta oferta);
+	boolean actualizarGastosExpediente(ExpedienteComercial expedienteComercial, Oferta oferta) throws IllegalAccessException, InvocationTargetException;
 
 	List<GastosExpediente> getListaGastosExpedienteByIdExpediente(Long idExpediente);
 
@@ -1294,6 +1299,8 @@ public interface ExpedienteComercialApi {
 	 * @return boolean
 	 */
 	boolean esOmega(TareaExterna tareaExterna);
+
+	DtoOrigenLead getOrigenLeadList(Long idExpediente);
 
 }
 

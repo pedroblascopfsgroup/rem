@@ -71,6 +71,9 @@ Ext.define('HreRem.model.ActivoTributos', {
     			name:'documentoTributoNombre'
     		},
     		{
+    			name:'numTributo'
+    		},
+    		{
     			name: 'documentoTributoId'
     		}
     ],

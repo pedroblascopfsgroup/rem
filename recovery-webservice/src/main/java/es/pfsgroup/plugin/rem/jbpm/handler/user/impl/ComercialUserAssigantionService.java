@@ -125,12 +125,14 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	public Usuario getUser(TareaExterna tareaExterna) {
 		TareaActivo tareaActivo = (TareaActivo)tareaExterna.getTareaPadre();
 		boolean isFuerzaVentaDirecta = this.isFuerzaVentaDirecta(tareaExterna);
-		boolean isActivoFinanciero = this.isFinanciero(tareaExterna);
+		boolean isActivoFinanciero = this.isFinancieroCajamar(tareaExterna);
 		boolean isActivoConFormalizacion = this.isConFormalizacion(tareaExterna);
 		String codigoTarea = tareaExterna.getTareaProcedimiento().getCodigo();
 		String codigoGestor = null;
 		ActivoLoteComercial loteComercial = this.obtenerLoteComercial(tareaActivo);
 		EXTDDTipoGestor tipoGestor = null;
+		ExpedienteComercial expediente = null;
+		Boolean usaGestorController = usaGestorController(tareaActivo);
 
 		if(this.isTrabajoDeActivoOrLoteRestEntidad01(tareaActivo)) {
 			if(null == loteComercial) {
@@ -150,7 +152,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			boolean isLiberbankResidencial = false;
 			boolean isLiberbankInmobiliaria = false;
 			boolean isLiberbankTerciaria = false;
-			ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByIdTrabajo(tareaActivo.getTramite().getTrabajo().getId());
+			expediente = expedienteComercialDao.getExpedienteComercialByIdTrabajo(tareaActivo.getTramite().getTrabajo().getId());
 			Oferta oferta = expediente.getOferta();
 
 //			DDComiteSancion comiteSancion = ofertaApi.calculoComiteLiberbank(oferta, null);
@@ -195,6 +197,18 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		}else {
 			codigoGestor = this.getMapCodigoTipoGestor(isFuerzaVentaDirecta, isActivoConFormalizacion, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false).get(codigoTarea);
 		}
+		
+		if((CODIGO_T013_CIERRE_ECONOMICO.equals(codigoTarea)
+				|| CODIGO_T017_CIERRE_ECONOMICO.equals(codigoTarea)) && usaGestorController) {
+			
+			Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_CONTROLLER);
+			
+			tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+			
+			if(tipoGestor != null) {
+				return getGestorOrSupervisorExpedienteByCodigo(tareaExterna, tipoGestor.getCodigo());
+			}	
+		}
 			
 		if(CODIGO_T017_RESOLUCION_CES.equals(codigoTarea) || CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea) 
 				|| CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigoTarea) || CODIGO_T017_RATIFICACION_COMITE_CES.equals(codigoTarea)) {
@@ -235,7 +249,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	public Usuario getSupervisor(TareaExterna tareaExterna) {
 		TareaActivo tareaActivo = (TareaActivo)tareaExterna.getTareaPadre();
 		boolean isFuerzaVentaDirecta = this.isFuerzaVentaDirecta(tareaExterna);
-		boolean isActivoFinanciero = this.isFinanciero(tareaExterna);
+		boolean isActivoFinanciero = this.isFinancieroCajamar(tareaExterna);
 		boolean isLiberbank = this.isActivoLiberbank(tareaActivo);
 		boolean isBankia = this.isActivoBankia(tareaActivo);
 		boolean isSareb = this.isActivoSareb(tareaActivo);
@@ -1131,7 +1145,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		return esFdv;
 	}
 	//Comprobar si el activo es de Cajamar y Financiero
-	private boolean isFinanciero(TareaExterna tareaExterna) {
+	private boolean isFinancieroCajamar(TareaExterna tareaExterna) {
 
 		TareaActivo tareaActivo = (TareaActivo) tareaExterna.getTareaPadre();
 		if (!Checks.esNulo(tareaActivo) && !Checks.esNulo(tareaActivo.getTramite())
@@ -1199,4 +1213,38 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		return esConFormalizacion;
 	}
 	
+	private boolean isActivoThirdParties(TareaActivo tareaActivo) {
+		
+		Activo activo = tareaActivo.getActivo();
+		String codCarteraActivo = !Checks.esNulo(activo) ? (!Checks.esNulo(activo.getCartera()) ? activo.getCartera().getCodigo() : null) : null;
+		
+		return !Checks.esNulo(codCarteraActivo) && DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(codCarteraActivo);
+	}
+	
+	/*
+	 * Comprueba si reune las condiciones para usar el Gestor Controller en Cierre económico
+	 */
+	public Boolean usaGestorController(TareaActivo tareaActivo) {
+		return isActivoOmega(tareaActivo) || isActivoBankia(tareaActivo) || isActivoSareb(tareaActivo)
+				|| isTrabajoDeActivoOrLoteRestEntidad01(tareaActivo) || isActivoThirdParties(tareaActivo)
+				|| isActivoDivarian(tareaActivo) || isFinanciero(tareaActivo.getActivo());
+	}
+	
+	/*
+	 * Comprobar si es un activo financiero de cualquier cartera
+	 */
+	private Boolean isFinanciero(Activo activo) {
+		Boolean esFinanciero = false;
+
+		ActivoBancario activoBancario = null;
+		if(activo != null){
+			activoBancario = activoApi.getActivoBancarioByIdActivo(activo.getId());
+		}
+		
+		if (activoBancario != null && activoBancario.getClaseActivo() != null
+				&& activoBancario.getClaseActivo().getCodigo().equals(DDClaseActivoBancario.CODIGO_FINANCIERO)) {
+			esFinanciero = true;
+		}
+		return esFinanciero;
+	}
 }

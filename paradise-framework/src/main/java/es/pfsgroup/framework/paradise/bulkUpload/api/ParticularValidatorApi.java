@@ -902,9 +902,9 @@ public interface ParticularValidatorApi {
 
 	public Boolean esSolicitudValido(String codSolicitud);
 
-	public Boolean existeActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud);
+	public Boolean existeActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud, String idTributo);
 
-	public String getIdActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud);
+	public String getIdActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud, String idTributo);
 
 	public Boolean esNumHayaVinculado(Long numGasto, String numActivo);
 
@@ -974,7 +974,24 @@ public interface ParticularValidatorApi {
 	public Boolean esAgrupacionAlquilerConPrecio(String numAgrupacion);
 	
 	/**
-	 * 
+	 * @param numActivo
+	 * @return Codigo del mediador Api del activo
+	 */
+	String getCodigoMediadorPrimarioByActivo(String numActivo);
+	
+	/**
+	 * @param numActivo
+	 * @return Codigo del mediador Espejo del activo
+	 */
+	String getCodigoMediadorEspejoByActivo(String numActivo);
+	
+	/**
+	 * @param Codigo Proveedor Rem
+	 * @return true si el Codigo Proveedor Rem corresponde a mediador o fuerza venta directa
+	 */
+	Boolean esTipoMediadorCorrecto(String codMediador);
+	
+	/** 
 	 * @param numActivo
 	 * @return true si el activo indicado no es de la cartera bankia
 	 */

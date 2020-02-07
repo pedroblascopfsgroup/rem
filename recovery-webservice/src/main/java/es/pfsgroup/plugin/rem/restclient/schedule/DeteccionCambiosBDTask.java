@@ -170,8 +170,8 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 			Boolean inicializado = false;
 			RestLlamada registro = null;
 			do {
+				registro = new RestLlamada();
 				if (!inicializado) {
-					registro = new RestLlamada();
 					handler.actualizarVistaMaterializada(registro);
 					inicializado = true;
 				}

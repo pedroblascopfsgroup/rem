@@ -59,6 +59,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VActivosAfectosGencatAgrupacion;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VActivosAgrupacionLil;
 import es.pfsgroup.plugin.rem.model.VListaActivosAgrupacionVSCondicionantes;
 import es.pfsgroup.plugin.rem.model.VTramitacionOfertaAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -168,9 +169,9 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		
 		DtoEstadoDisponibilidadComercial dtoEstadoDispcom = new DtoEstadoDisponibilidadComercial();
 		List<DtoVActivosAgrupacion> listaDto = new ArrayList<DtoVActivosAgrupacion>();
-		List<VActivosAgrupacion> lAgrupaActivos =  (List<VActivosAgrupacion>) activoAgrupacionDao.getListActivosAgrupacionById(dto, usuarioLogado,true).getResults();
+		List<VActivosAgrupacionLil> lAgrupaActivos =  (List<VActivosAgrupacionLil>) activoAgrupacionDao.getListActivosAgrupacionById(dto, usuarioLogado,true).getResults();
 		 
-		for(VActivosAgrupacion actAgrup : lAgrupaActivos) {
+		for(VActivosAgrupacionLil actAgrup : lAgrupaActivos) {
 			DtoVActivosAgrupacion dtoVActAgrup = new DtoVActivosAgrupacion();	
 			VListaActivosAgrupacionVSCondicionantes vCondicionante = genericDao.get(VListaActivosAgrupacionVSCondicionantes.class, genericDao.createFilter(FilterType.EQUALS, "activoId",actAgrup.getActivoId()), genericDao.createFilter(FilterType.EQUALS, "agrId", actAgrup.getAgrId()));
 			if(!Checks.esNulo(vCondicionante)) {

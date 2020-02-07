@@ -105,15 +105,15 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivo", dto.getNumActivo());
 
 		if (dto.getEntidadPropietariaCodigo() != null)
-			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo(),true);
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo());
 
-		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigoAvanzado(),true);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigoAvanzado());
 
 		if (dto.getTipoTituloActivoCodigo() != null)
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoTituloActivoCodigo", dto.getTipoTituloActivoCodigo());
 
 		if (dto.getSubtipoActivoCodigo() != null)
-			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.subtipoActivoCodigo", dto.getSubtipoActivoCodigo(), true);
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subtipoActivoCodigo", dto.getSubtipoActivoCodigo());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.refCatastral", dto.getRefCatastral(), true);
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.finca", dto.getFinca(), true);
 		if (dto.getProvinciaCodigo() != null)
@@ -1442,18 +1442,21 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 		return null;
     }
+
 	@Override
 	public boolean isUnidadAlquilable(Long idActivo) {
-		boolean isUnidadAlquilable = false;
-		if (!Checks.esNulo(idActivo)) {
-			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
-			Activo activo = genericDao.get(Activo.class, filtroActivo);
-			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoTitulo()) && DDTipoTituloActivo.UNIDAD_ALQUILABLE.equals(activo.getTipoTitulo().getCodigo())) {
-				isUnidadAlquilable = true;
-			}
+		if (idActivo != null) {
+			Activo activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", idActivo));
+			return isUnidadAlquilable(activo);
 		}
 
-		return isUnidadAlquilable;
+		return false;
+	}
+
+	@Override
+	public boolean isUnidadAlquilable(Activo activo) {
+		return (activo != null && activo.getTipoTitulo() != null)
+				&& DDTipoTituloActivo.UNIDAD_ALQUILABLE.equals(activo.getTipoTitulo().getCodigo());
 	}
 
 	@Override

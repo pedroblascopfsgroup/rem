@@ -2245,9 +2245,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public boolean isPisoPiloto(Activo activo) {
 		boolean pisoPiloto = false;
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activoId", activo.getId());
-		List<VActivosAgrupacion> agrupacionesActivo = genericDao.getList(VActivosAgrupacion.class, filtro);
+		List<VActivosAgrupacionLil> agrupacionesActivo = genericDao.getList(VActivosAgrupacionLil.class, filtro);
 		
-		for(VActivosAgrupacion activoPisoPiloto: agrupacionesActivo) {
+
+		
+		for(VActivosAgrupacionLil activoPisoPiloto: agrupacionesActivo) {
 			if(!Checks.esNulo(activoPisoPiloto) && !Checks.esNulo(activoPisoPiloto.getEsPisoPiloto()) && activoPisoPiloto.getEsPisoPiloto()) {
 				pisoPiloto = true;
 				break;

@@ -2190,12 +2190,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return new DtoPage(listadoActivos, listadoActivos.size());
 	}
 
-	public DtoPage getActivosAgrupacionesVista(Long idActivo) {
-		List<VActivosAgrupacion> listadoActivos = genericDao.getList(VActivosAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "activoId", idActivo));
-
-		return new DtoPage(listadoActivos, listadoActivos.size());
-	}
-
+	
 	/**
 	 * Convierte una entidad Activo a objeto dto.
 	 *

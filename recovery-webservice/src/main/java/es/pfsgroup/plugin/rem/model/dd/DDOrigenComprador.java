@@ -28,9 +28,10 @@ public class DDOrigenComprador implements Serializable, Auditable {
 	private static final long serialVersionUID = 4588953069603608041L;
 	
 	public static final String CODIGO_ORC_HRE = "01";
-	public static final String CODIGO_ORC_API = "02";
+	public static final String CODIGO_ORC_API_PROPIO = "02";
 	public static final String CODIGO_ORC_OFICINA = "03";
 	public static final String CODIGO_ORC_FDV = "04";
+	public static final String CODIGO_ORC_API_AJENO = "05";
 
 	@Id
     @Column(name = "DD_ORC_ID")

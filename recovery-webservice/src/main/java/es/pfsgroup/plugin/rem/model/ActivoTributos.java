@@ -2,7 +2,9 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -12,12 +14,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
@@ -82,7 +86,16 @@ public class ActivoTributos implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "GPV_ID")
     private GastoProveedor gastoProveedor;
+	
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "ACT_NUM_TRIBUTO")
+	private Long numTributo;
 
+	@OneToMany(mappedBy = "activoTributo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_TRI_ID")
+    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    private List<ActivoAdjuntoTributo> adjuntos;
+	
 	@Version   
 	private Long version;
 
@@ -185,6 +198,14 @@ public class ActivoTributos implements Serializable, Auditable {
 		this.gastoProveedor = gastoProveedor;
 	}
 
+	public List<ActivoAdjuntoTributo> getAdjuntos() {
+		return adjuntos;
+	}
+
+	public void setAdjuntos(List<ActivoAdjuntoTributo> adjuntos) {
+		this.adjuntos = adjuntos;
+	}
+
 	public Long getVersion() {
 		return version;
 	}
@@ -200,6 +221,27 @@ public class ActivoTributos implements Serializable, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+
+	public Long getNumTributo() {
+		return numTributo;
+	}
+
+	public void setNumTributo(Long numTributo) {
+		this.numTributo = numTributo;
+	}
+	
+	
+	/**
+     * devuelve el adjunto por Id.
+     * @param id id
+     * @return adjunto
+     */
+    public ActivoAdjuntoTributo getAdjunto(Long id) {
+        for (ActivoAdjuntoTributo adj : getAdjuntos()) {
+            if (adj.getId().equals(id)) { return adj; }
+        }
+        return null;
+    }
 	
 
 }

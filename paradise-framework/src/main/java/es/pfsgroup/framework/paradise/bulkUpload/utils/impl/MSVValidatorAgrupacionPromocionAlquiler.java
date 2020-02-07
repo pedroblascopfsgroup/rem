@@ -178,15 +178,7 @@ public class MSVValidatorAgrupacionPromocionAlquiler extends MSVExcelValidatorAb
 		return resultado;
 	}
 	
-	private File recuperarPlantilla(Long idTipoOperacion)  {
-		try {
-			FileItem fileItem = proxyFactory.proxy(ExcelRepoApi.class).dameExcelByTipoOperacion(idTipoOperacion);
-			return fileItem.getFile();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+	 
 	
 	//----Métodos customizados
 	//----Debido a que es la misma agrupacion en todos los registros de la carga, por tanto se comproba solamente una vez (1,0) en muchos de los siguientes métodos

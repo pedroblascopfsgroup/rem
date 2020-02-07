@@ -52,6 +52,33 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		});
 	},
 	
+	onClickGasto: function(){
+		var me = this;
+		var numGasto = me.getViewModel().get('trabajo.gastoProveedor');
+		if(!Ext.isEmpty(numGasto)){
+		  	var url= $AC.getRemoteUrl('gasto/getGastoExists');
+        	var data;
+    		Ext.Ajax.request({
+    		     url: url,
+    		     params: {numGasto : numGasto},
+    		     success: function(response, opts) {
+    		    	 data = Ext.decode(response.responseText);
+    		    	 if(data.success == "true"){
+    		    		 var titulo = "Gasto " + numGasto;
+        		    	 me.getView().fireEvent('abrirDetalleGastoById', data.data, titulo); 
+    		    	 }else{
+        		    	 me.fireEvent("errorToast", data.error);
+    		    	 }
+    		
+    		     },
+    		     failure: function(response) {
+    		    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    		     }
+    		 });    
+		}
+	},
+	
+	
 	onChangeChainedCombo: function(combo) {
 		var me = this,
     	chainedCombo = me.lookupReference(combo.chainedReference);    	

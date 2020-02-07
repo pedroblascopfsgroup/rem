@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -15,7 +16,6 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.prorroga.model.Prorroga;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.plugin.rem.activo.ActivoTramiteManager;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterServiceFactoryApi;
@@ -29,9 +29,6 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 	
     @Autowired
     private ActivoTareaExternaApi activoTareaExternaManagerApi;
-    
-    @Autowired
-    private ActivoTramiteManager activoTramite;
     
     @Autowired
     private UpdaterServiceFactoryApi updaterServiceFactory;
@@ -183,7 +180,6 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 			result = jbpmMActivoScriptExecutorApi.evaluaScript(getActivoTramite(executionContext).getId(), tareaExterna.getId(), tareaExterna.getTareaProcedimiento().getId(), null, script).toString();
 		} catch (Exception e) {
 			logger.info("Error en el script de decisión [" + script + "]. Trámite [" + getActivoTramite(executionContext).getId() + "], tarea [" + tareaExterna.getId() + "].", e);
-			System.out.println("Error en el script de decisión [" + script + "]. Trámite [" + getActivoTramite(executionContext).getId() + "], tarea [" + tareaExterna.getId() + "]." + e);
 			throw new UserException("bpm.error.script");
 		}
 		return result;
@@ -217,6 +213,14 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 	protected void actualizarEstados(ExecutionContext executionContext){
 		Activo activo = getActivoTramite(executionContext).getActivo();
 		updaterState.updaterStates(activo);
+	}
+	
+	private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+		//empty
+	}
+
+	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+		//empty
 	}
 
 }

@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.api.services.webcom.dto;
 
+import java.util.List;
+
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.BooleanDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DoubleDataType;
@@ -7,6 +9,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.DecimalDataTypeFormat;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.MappedColumn;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.NestedDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
 
 public class StockDto implements WebcomRESTDto{
@@ -349,6 +352,13 @@ public class StockDto implements WebcomRESTDto{
 	
 	@WebcomRequired
 	private String codSubfasePublicacion;
+	
+	@WebcomRequired
+	@NestedDto(groupBy="idActivoHaya", type=PoseedorLlavesDto.class)
+	private List<PoseedorLlavesDto> arrProveedorLlavesRem;
+	
+	@WebcomRequired
+	private LongDataType idProveedorEspejoRem;
 	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
@@ -992,6 +1002,18 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setCodSubfasePublicacion(String codSubfasePublicacion) {
 		this.codSubfasePublicacion = codSubfasePublicacion;
+	}
+	public List<PoseedorLlavesDto> getArrProveedorLlavesRem() {
+		return arrProveedorLlavesRem;
+	}
+	public void setArrProveedorLlavesRem(List<PoseedorLlavesDto> arrProveedorLlavesRem) {
+		this.arrProveedorLlavesRem = arrProveedorLlavesRem;
+	}
+	public LongDataType getIdProveedorEspejoRem() {
+		return idProveedorEspejoRem;
+	}
+	public void setIdProveedorEspejoRem(LongDataType idProveedorEspejoRem) {
+		this.idProveedorEspejoRem = idProveedorEspejoRem;
 	}
 	
 }

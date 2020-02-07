@@ -100,5 +100,7 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	DtoPage getListOfertasCES(DtoOfertasFilter dtoOfertasFilter);
 
 	public Boolean tieneTareaActiva(String tarea, String numOferta);
+	
+	public void guardaRegistroWebcom(final Oferta obj);
 
 }

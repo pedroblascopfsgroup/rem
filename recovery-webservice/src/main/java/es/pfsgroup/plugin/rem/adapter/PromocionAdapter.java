@@ -62,6 +62,7 @@ public class PromocionAdapter {
 	protected static final Log logger = LogFactory.getLog(PromocionAdapter.class);
 	
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
+	public static final String ERROR_PROMOCION_ASOCIADA = "El activo no tiene una promoción asociada";
 	
 	public List<DtoAdjuntoPromocion> getAdjuntosPromocion(Long id)
 			throws GestorDocumentalException, IllegalAccessException, InvocationTargetException {
@@ -123,11 +124,11 @@ public class PromocionAdapter {
 	
 	public String uploadDocumento(WebFileItem webFileItem, Activo activoEntrada, String matricula) throws Exception {
 		Activo activo = activoPromocionApi.get(Long.parseLong(webFileItem.getParameter("idEntidad")));
-		if (activo.getCodigoPromocionPrinex() != null && !activo.getCodigoPromocionPrinex().isEmpty()) {
+		if (activo.getCodigoPromocionPrinex() != null && !activo.getCodigoPromocionPrinex().isEmpty() && !Checks.esNulo(activo.getCartera())) {
 			if (Checks.esNulo(activoEntrada)) {
 				
 				if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-					String codPromo =activo.getCodigoPromocionPrinex()+"_"+activo.getCartera().getCodigo().toString();
+					String codPromo = activo.getCodigoPromocionPrinex()+"_"+activo.getCartera().getCodigo().toString();
 					Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 	
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
@@ -157,6 +158,8 @@ public class PromocionAdapter {
 					activoPromocionApi.uploadDocumento(webFileItem, null, activoEntrada, matricula);
 				}
 			}
+		} else {
+			throw new Exception(ERROR_PROMOCION_ASOCIADA);
 		}
 		return null;
 	}

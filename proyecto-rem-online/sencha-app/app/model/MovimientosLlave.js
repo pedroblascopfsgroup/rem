@@ -34,7 +34,38 @@ Ext.define('HreRem.model.MovimientosLlave', {
     			name:'fechaDevolucion',
     			type:'date',
     			dateFormat: 'c'
-    		}
+    		},
+	        {
+	            name: 'descripcionTipoTenedorPoseedor'
+	        },
+	        {
+	            name: 'nombrePoseedor'
+	        },
+        	{
+	            name: 'descripcionTipoTenedorPedidor'
+	        },
+	        {
+	            name: 'nombrePedidor'
+	        },
+	        {
+	            name: 'envio'
+	        },
+	        {
+	            name: 'fechaEnvio',
+    			type:'date',
+    			dateFormat: 'c'
+	        },
+	        {
+	            name: 'fechaRecepcion',
+    			type:'date',
+    			dateFormat: 'c'
+	        },
+	        {
+	            name: 'observaciones'
+	        },
+	        {
+	            name: 'estado'
+	        }
     ],
     
     proxy: {

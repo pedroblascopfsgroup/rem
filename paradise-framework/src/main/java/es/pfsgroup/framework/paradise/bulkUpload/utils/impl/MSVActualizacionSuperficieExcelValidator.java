@@ -124,6 +124,7 @@ public class MSVActualizacionSuperficieExcelValidator extends MSVExcelValidatorA
 				if(!registros.getValue().isEmpty()) {
 					dtoValidacionContenido.setFicheroTieneErrores(true);
 					dtoValidacionContenido.setExcelErroresFormato(new FileItem(new File(exc.crearExcelErroresMejorado(mapaErrores))));
+					break;
 				}
 			}
 		}
@@ -272,15 +273,7 @@ public class MSVActualizacionSuperficieExcelValidator extends MSVExcelValidatorA
 		return listaFilas;
 	}
 		
-	private File recuperarPlantilla(Long idTipoOperacion)  {
-		try {
-			FileItem fileItem = proxyFactory.proxy(ExcelRepoApi.class).dameExcelByTipoOperacion(idTipoOperacion);
-			return fileItem.getFile();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+	 
 	
 	private boolean esArroba(String cadena) {
 		return cadena.trim().equals("@");

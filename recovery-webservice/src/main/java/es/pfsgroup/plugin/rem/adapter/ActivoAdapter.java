@@ -1521,12 +1521,26 @@ public class ActivoAdapter {
 
 	public List<ActivoFoto> getListFotosActivoById(Long id) {
 
+	
+
+		Activo activo = this.getActivoById(id);
+		if(activo != null && activoDao.isUnidadAlquilable(id)) {
+			ActivoAgrupacion activoAgrupacion = activoDao.getAgrupacionPAByIdActivo(id);
+			if(activoAgrupacion != null) {
+				Activo activoMatriz = activoDao.getActivoById(activoDao.getIdActivoMatriz(activoAgrupacion.getId()));
+				if(activoMatriz != null) {
+					id = activoMatriz.getId();
+					activo = activoMatriz;
+				}
+			}
+		}
+		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", id);
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		Order order = new Order(OrderType.ASC, "orden");
-
+		
 		List<ActivoFoto> listaActivoFoto = genericDao.getListOrdered(ActivoFoto.class, order, filtro, filtroBorrado);
-		Activo activo = this.getActivoById(id);
+		
 
 		if (activo != null) {
 			if (gestorDocumentalFotos.isActive() && (listaActivoFoto == null || listaActivoFoto.isEmpty())) {

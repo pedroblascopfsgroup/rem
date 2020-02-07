@@ -798,8 +798,9 @@ public interface ActivoApi {
 	 *
 	 * @param dto
 	 * @return
+	 * @throws ParseException 
 	 */
-	DtoPage getListLlavesByActivo(DtoLlaves dto);
+	DtoPage getListLlavesByActivo(DtoLlaves dto) throws ParseException;
 
 	/**
 	 * Método que devuelve una lista de movimientos de una llave

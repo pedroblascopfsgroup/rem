@@ -11,6 +11,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.CabeceraObrasNuevasDto;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
+import net.sf.json.JSONObject;
 
 @Component
 public class DetectorWebcomCabecerasObrasNuevas  extends DetectorCambiosBD<CabeceraObrasNuevasDto> {
@@ -39,8 +40,8 @@ public class DetectorWebcomCabecerasObrasNuevas  extends DetectorCambiosBD<Cabec
 	}
 
 	@Override
-	public void invocaServicio(List<CabeceraObrasNuevasDto> data, RestLlamada registro) throws ErrorServicioWebcom {
-		this.serviciosWebcom.webcomRestCabeceraObrasNuevas(data, registro);
+	public JSONObject invocaServicio(List<CabeceraObrasNuevasDto> data, RestLlamada registro) throws ErrorServicioWebcom {
+		return this.serviciosWebcom.webcomRestCabeceraObrasNuevas(data, registro);
 		
 	}
 

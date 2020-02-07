@@ -10,6 +10,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.NotificacionDto;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
+import net.sf.json.JSONObject;
 
 @Component
 public class DetectorWebcomEstadoNotificacion extends DetectorCambiosBD<NotificacionDto> {
@@ -38,8 +39,8 @@ public class DetectorWebcomEstadoNotificacion extends DetectorCambiosBD<Notifica
 	}
 
 	@Override
-	public void invocaServicio(List<NotificacionDto> data, RestLlamada registro) throws ErrorServicioWebcom {
-		this.serviciosWebcom.webcomRestEstadoNotificacion(data, registro);
+	public JSONObject invocaServicio(List<NotificacionDto> data, RestLlamada registro) throws ErrorServicioWebcom {
+		return this.serviciosWebcom.webcomRestEstadoNotificacion(data, registro);
 
 	}
 

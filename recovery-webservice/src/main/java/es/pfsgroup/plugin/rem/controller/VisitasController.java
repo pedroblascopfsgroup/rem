@@ -70,7 +70,7 @@ public class VisitasController {
 	
 
 	/**
-	 * Inserta o actualiza una lista de Visitas Ejem: IP:8080/pfs/rest/clientes
+	 * Inserta o actualiza una lista de Visitas Ejem: IP:8080/pfs/rest/visitas
 	 * HEADERS: Content-Type - application/json signature - sdgsdgsdgsdg
 	 * 
 	 * BODY: {"id":"111111112112","data": [{"idVisitaWebcom": "1",
@@ -78,8 +78,8 @@ public class VisitasController {
 	 * "05","codDetalleEstadoVisita": "07", "fechaAccion":
 	 * "2016-01-01T10:10:10", "idUsuarioRemAccion": "1",
 	 * "idProveedorRemPrescriptor": "5045", "idProveedorRemCustodio": "1010",
-	 * "idProveedorRemResponsable": "1010", "idProveedorRemFdv": "1010" ,
-	 * "idProveedorRemVisita": "1010","codOrigenComprador":"02", "observaciones": "Observaciones" }]}
+	 * "idProveedorRemResponsable": "1010", "idProveedorRemFdv": "4889",
+	 * "idProveedorRemVisita": "1010", "idProveedorPrescriptorOportunidadREM": "1010", "codOrigenComprador":"02", "observaciones": "Observaciones" }]}
 	 * 
 	 * @param model
 	 * @param request

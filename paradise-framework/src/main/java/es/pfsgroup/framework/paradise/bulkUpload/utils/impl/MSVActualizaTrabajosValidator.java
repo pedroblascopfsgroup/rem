@@ -204,7 +204,7 @@ public class MSVActualizaTrabajosValidator extends MSVExcelValidatorAbstract {
 		return resultado;
 	}
 	
-	private File recuperarPlantilla(Long idTipoOperacion)  {
+	public File recuperarPlantilla(Long idTipoOperacion)  {
 		try {
 			FileItem fileItem = proxyFactory.proxy(ExcelRepoApi.class).dameExcelByTipoOperacion(idTipoOperacion);
 			return fileItem.getFile();

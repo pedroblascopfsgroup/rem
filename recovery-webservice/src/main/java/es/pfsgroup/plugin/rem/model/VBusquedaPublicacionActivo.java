@@ -108,6 +108,13 @@ public class VBusquedaPublicacionActivo implements Serializable {
 	
 	@Column(name = "APU_FECHA_INI_ALQUILER")
 	private Date fechaPublicacionAlquiler;
+	
+	@Column(name = "EPV_CODIGO")
+	private String estadoPublicacionVenta;
+	
+	@Column(name = "EPA_CODIGO")
+	private String estadoPublicacionAlquiler;
+	
 
 	public Long getId() {
 		return id;
@@ -356,5 +363,22 @@ public class VBusquedaPublicacionActivo implements Serializable {
 	public void setFechaPublicacionAlquiler(Date fechaPublicacionAlquiler) {
 		this.fechaPublicacionAlquiler = fechaPublicacionAlquiler;
 	}
+
+	public String getEstadoPublicacionVenta() {
+		return estadoPublicacionVenta;
+	}
+
+	public void setEstadoPublicacionVenta(String estadoPublicacionVenta) {
+		this.estadoPublicacionVenta = estadoPublicacionVenta;
+	}
+
+	public String getEstadoPublicacionAlquiler() {
+		return estadoPublicacionAlquiler;
+	}
+
+	public void setEstadoPublicacionAlquiler(String estadoPublicacionAlquiler) {
+		this.estadoPublicacionAlquiler = estadoPublicacionAlquiler;
+	}
+	
     
 }

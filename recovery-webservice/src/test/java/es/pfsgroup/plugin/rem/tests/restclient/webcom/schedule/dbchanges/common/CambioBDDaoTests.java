@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.HibernateExec
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.InfoTablasBD;
 import es.pfsgroup.plugin.rem.tests.restclient.webcom.examples.ExampleDto;
 import es.pfsgroup.plugin.rem.tests.restclient.webcom.examples.ExampleSubDto;
+import net.sf.json.JSONObject;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CambioBDDaoTests {
@@ -95,6 +96,12 @@ public class CambioBDDaoTests {
 
 		@Override
 		public void marcarComoEnviadosMarcadosEspecifico(Date fechaEjecucion) throws Exception {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void procesaResultado(JSONObject resultado) {
 			// TODO Auto-generated method stub
 			
 		}

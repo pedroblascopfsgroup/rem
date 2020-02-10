@@ -4448,33 +4448,31 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		Filter filtroComiteHRE = genericDao.createFilter(FilterType.EQUALS, "codigo",
 				DDComiteSancion.CODIGO_HAYA_LIBERBANK);
 
-
-		DDComiteSancion comiteSeleccionado = null;
 		if (dto.getVta() < IMPORTE_UMBRAL) {
 			if (dto.getPvb() >= dto.getPmin()) {
-				comiteSeleccionado = genericDao.get(DDComiteSancion.class, filtroComiteHRE);
-			} else if (dto.getPvn() >= dto.getVr()) {
-				comiteSeleccionado = genericDao.get(DDComiteSancion.class, filtroGestion);
-			} else if (dto.getPvn() < dto.getVr()) {
-				if (perdida < 0 && perdidaValorAbs <= porcentajeSobreVNC1) {
-					comiteSeleccionado = genericDao.get(DDComiteSancion.class, filtroGestionDir);
-				} else if ((perdida < 0 && perdidaValorAbs > porcentajeSobreVNC1) && perdidaValorAbs <= UMBRAL_PERDIDA) {
-					comiteSeleccionado = genericDao.get(DDComiteSancion.class, filtroInversion);
-				} else if ((perdida < 0 && perdidaValorAbs > porcentajeSobreVNC1) && perdidaValorAbs > UMBRAL_PERDIDA) {
-					comiteSeleccionado = genericDao.get(DDComiteSancion.class, filtroDireccion);
+				return genericDao.get(DDComiteSancion.class, filtroComiteHRE);
+			} else if ((dto.getPvb() < dto.getPmin()) || (dto.getPvn() >= dto.getVr())) {
+				return genericDao.get(DDComiteSancion.class, filtroGestion);
+			} else if (dto.getPvn() < dto.getVr() && perdida < 0) {
+				if (perdidaValorAbs <= porcentajeSobreVNC1) {
+					return genericDao.get(DDComiteSancion.class, filtroGestionDir);
+				} else if (perdidaValorAbs <= UMBRAL_PERDIDA) {
+					return genericDao.get(DDComiteSancion.class, filtroInversion);
+				} else {
+					return genericDao.get(DDComiteSancion.class, filtroDireccion);
 				}
 			}
 		} else if (IMPORTE_UMBRAL <= dto.getVta() && dto.getVta() <= IMPORTE_MAX) {
 			if (perdida > 0 || ((perdidaValorAbs <= porcentajeSobreVNC2) && perdidaValorAbs <= UMBRAL_PERDIDA)) {
-				comiteSeleccionado = genericDao.get(DDComiteSancion.class, filtroInversion);
+				return genericDao.get(DDComiteSancion.class, filtroInversion);
 			} else if (perdidaValorAbs > porcentajeSobreVNC2 || perdidaValorAbs > IMPORTE_UMBRAL) {
-				comiteSeleccionado = genericDao.get(DDComiteSancion.class, filtroDireccion);
+				return genericDao.get(DDComiteSancion.class, filtroDireccion);
 			}
 		} else if (dto.getVta() > IMPORTE_MAX) {
-			comiteSeleccionado = genericDao.get(DDComiteSancion.class, filtroDireccion);
+			return genericDao.get(DDComiteSancion.class, filtroDireccion);
 		}
 		
-		return comiteSeleccionado;
+		return null;
 	}
 	
 	private Boolean saveComiteAgrupadasLbk(DDComiteSancion comiteSeleccionado, Oferta oferta) {

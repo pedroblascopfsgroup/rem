@@ -50,8 +50,6 @@ public class ActivoPropagacionUAsFieldTabMap {
     	    		"latitud",
     	    		"codPostal",
     	    		"paisCodigo",
-    	    		"direccionTerritorialCodigo",
-    	    		
     	    		"selloCalidad",
     	    		"nombreGestorSelloCalidad",
     	    		"fechaRevisionSelloCalidad",

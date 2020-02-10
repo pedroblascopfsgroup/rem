@@ -274,9 +274,6 @@ public class VBusquedaActivos implements Serializable {
 	@Column(name = "GPUBL_USU_USERNAME")
 	private String gestorPublicacionUsername;
 
-	@Column(name = "DD_DRT_CODIGO")
-	private String direccionTerritorialCodigo;
-
 	@Column(name = "ICO_MEDIADOR_ID")
 	private Long apiPrimarioId;
 
@@ -331,7 +328,10 @@ public class VBusquedaActivos implements Serializable {
 	@Column(name = "DD_TPU_A_CODIGO")
 	private String tipoPublicacionAlquilerCodigo;
 	
+	@Column(name ="DD_TDC_DIRECCION_COMERCIAL")
+	private String territorio;
 	
+
 	public Long getId() {
 		return id;
 	}
@@ -694,14 +694,6 @@ public class VBusquedaActivos implements Serializable {
 		this.gestorPublicacionUsername = gestorPublicacionUsername;
 	}
 
-	public String getDireccionTerritorialCodigo() {
-		return direccionTerritorialCodigo;
-	}
-
-	public void setDireccionTerritorialCodigo(String direccionTerritorialCodigo) {
-		this.direccionTerritorialCodigo = direccionTerritorialCodigo;
-	}
-
 	public Long getApiPrimariaId() {
 		return apiPrimarioId;
 	}
@@ -837,4 +829,13 @@ public class VBusquedaActivos implements Serializable {
 	public void setTipoPublicacionAlquilerCodigo(String tipoPublicacionAlquilerCodigo) {
 		this.tipoPublicacionAlquilerCodigo = tipoPublicacionAlquilerCodigo;
 	}
+
+	public String getTerritorio() {
+		return territorio;
+	}
+
+	public void setTerritorio(String territorio) {
+		this.territorio = territorio;
+	}
+	
 }

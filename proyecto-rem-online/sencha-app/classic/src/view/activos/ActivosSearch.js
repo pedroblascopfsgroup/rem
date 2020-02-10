@@ -614,10 +614,10 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							    	},
 							    	{ 
 							    		xtype: 'comboboxfieldbase',
-							    		fieldLabel: HreRem.i18n('fieldlabel.direccion.territorial'),
-							    		name: 'direccionTerritorialCodigo',
+							    		fieldLabel: HreRem.i18n('fieldlabel.direccion.comercial'),
+							    		name: 'territorio',
 							    		bind: {
-							    			store: '{comboDireccionTerritorial}'
+							    			store: '{comboDireccionComercial}'
 							    		}
 							    	},
 							    	{ 

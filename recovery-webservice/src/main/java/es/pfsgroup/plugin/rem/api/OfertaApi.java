@@ -579,6 +579,8 @@ public interface OfertaApi {
 
 	public Double getImporteOferta(Oferta oferta);
 
+	boolean comprobarComiteLiberbankPlantillaPropuesta(TareaExterna tareaExterna);
+
 	Boolean checkProvinciaCompradores(TareaExterna tareaExterna);
 
 	Boolean checkNifConyugueLBB(TareaExterna tareaExterna);
@@ -815,5 +817,4 @@ public interface OfertaApi {
 	 */
 	DDComiteSancion calculoComiteLBK(Oferta oferta, ExpedienteComercial eco);
 
-	boolean comprobarComiteLiberbankPlantillaPropuesta(TareaExterna tareaExterna);
 }

@@ -189,8 +189,6 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 				unidadAlquilable.setTipoAlquiler(activoMatriz.getTipoAlquiler());
 			if (!Checks.esNulo(activoMatriz.getBloqueoTipoComercializacionAutomatico()))
 				unidadAlquilable.setBloqueoTipoComercializacionAutomatico(activoMatriz.getBloqueoTipoComercializacionAutomatico());			
-			if (!Checks.esNulo(activoMatriz.getDireccionTerritorial()))
-				unidadAlquilable.setDireccionTerritorial(activoMatriz.getDireccionTerritorial());
 		}
 		
 		

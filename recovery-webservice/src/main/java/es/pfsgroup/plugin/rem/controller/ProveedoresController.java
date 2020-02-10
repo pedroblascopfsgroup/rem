@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.List;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -697,4 +696,5 @@ public class ProveedoresController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+
 }

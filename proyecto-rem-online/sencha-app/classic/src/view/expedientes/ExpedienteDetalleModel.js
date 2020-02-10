@@ -705,10 +705,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			model: 'HreRem.model.ActivosExpediente',
 	    	proxy: {
 	    		type: 'uxproxy', 
-	    		remoteUrl: 'oferta/activos/listado/{expediente.idOferta}',
-	    		remApi: true,	    		
-		        rootProperty : 'content',
-		        actionMethods: {read: 'GET'}
+	    		remoteUrl: 'expedientecomercial/getActivosExpediente',
+	    		extraParams: {idExpediente: '{expediente.id}'}
 	    	}
     	},
 

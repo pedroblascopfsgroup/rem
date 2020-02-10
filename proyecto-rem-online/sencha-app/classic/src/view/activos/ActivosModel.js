@@ -15,10 +15,10 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 			    	proxy: {
 				        type: 'uxproxy',
 				        localUrl: '/activos.json',
-				        remoteUrl: 'activo/do/busqueda',
-				        remApi: true,
-				        rootProperty : 'content',
-				        actionMethods: {read: 'GET'}
+				        remoteUrl: 'activo/getActivos',
+					    actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'}
+    
+    					
 			    	},
 			    	session: true,
 			    	remoteSort: true,

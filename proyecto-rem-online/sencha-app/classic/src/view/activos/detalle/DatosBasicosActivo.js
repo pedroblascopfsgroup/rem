@@ -361,17 +361,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			            	        '</tpl>'
 			            	)
 						},
-		                {
-							xtype: 'comboboxfieldbase',
-							fieldLabel: HreRem.i18n('fieldlabel.direccionTerritorial'),
-							reference: 'direccionTerritorialCombo',							
-			            	bind: {
-			            		readOnly : '{esUA}',
-			            		store: '{comboDireccionTerritorial}',
-			            		value: '{activo.direccionTerritorialCodigo}'			            		
-			            	}
-		                },
-						
+		          
 		                // fila 4
 		                {
 							fieldLabel:  HreRem.i18n('fieldlabel.escalera'),

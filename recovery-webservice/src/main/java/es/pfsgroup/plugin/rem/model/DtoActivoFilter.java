@@ -105,7 +105,6 @@ public class DtoActivoFilter extends WebDto {
 	private String gestoriaFormalizacion;
 	private String gestorPublicacionUsername;
 	private Long numAgrupacion;
-	private String direccionTerritorialCodigo;
 	private Long apiPrimarioId;
 	private String tipoAlquilerDescripcion;
 	private Date fechaPublicacionVenta;
@@ -123,6 +122,7 @@ public class DtoActivoFilter extends WebDto {
 	private String estadoPublicacionActivoListadoCodigo;
 	private String tipoPublicacionCodigo;
 	private boolean listPage;
+	private String territorio;
 	
 	public String getNumActivo() {
 		return numActivo;
@@ -646,12 +646,6 @@ public class DtoActivoFilter extends WebDto {
 	public void setNumAgrupacion(Long numAgrupacion) {
 		this.numAgrupacion = numAgrupacion;
 	}
-	public String getDireccionTerritorialCodigo() {
-		return direccionTerritorialCodigo;
-	}
-	public void setDireccionTerritorialCodigo(String direccionTerritorialCodigo) {
-		this.direccionTerritorialCodigo = direccionTerritorialCodigo;
-	}
 	public Long getApiPrimarioId() {
 		return apiPrimarioId;
 	}
@@ -771,5 +765,12 @@ public class DtoActivoFilter extends WebDto {
 	}
 	public void setMotivosOcultacionAlquiler(String motivosOcultacionAlquiler) {
 		this.motivosOcultacionAlquiler = motivosOcultacionAlquiler;
+	}
+	public String getTerritorio() {
+		return territorio;
+	}
+	public void setTerritorio(String territorio) {
+		this.territorio = territorio;
 	}	
+	
 }

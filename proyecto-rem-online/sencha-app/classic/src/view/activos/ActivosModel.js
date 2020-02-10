@@ -237,13 +237,13 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 				}
 			},
 
-			comboDireccionTerritorial: {
+			comboDireccionComercial: {
 				model : 'HreRem.model.ComboBase',
 				proxy : {
 					type : 'uxproxy',
 					remoteUrl : 'generic/getDiccionario',
 					extraParams : {
-						diccionario : 'direccionTerritorial'
+						diccionario : 'direccionComercial'
 					}
 				}
 			},			

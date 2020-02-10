@@ -53,8 +53,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String subtipoActivoDescripcionBde;
 	private String latitud;
 	private String longitud;
-	private String direccionTerritorialCodigo;
-	private String direccionTerritorialDescripcion;
 	private String entidadPropietaria;
 	private String entidadPropietariaCodigo;
 	private String entidadPropietariaDescripcion;
@@ -798,22 +796,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setLongitud(String longitud) {
 		this.longitud = longitud;
 	}	
-
-	public String getDireccionTerritorialCodigo() {
-		return direccionTerritorialCodigo;
-	}
-
-	public void setDireccionTerritorialCodigo(String direccionTerritorialCodigo) {
-		this.direccionTerritorialCodigo = direccionTerritorialCodigo;
-	}
-
-	public String getDireccionTerritorialDescripcion() {
-		return direccionTerritorialDescripcion;
-	}
-
-	public void setDireccionTerritorialDescripcion(String direccionTerritorialDescripcion) {
-		this.direccionTerritorialDescripcion = direccionTerritorialDescripcion;
-	}
 
 	public String getInferiorMunicipioCodigo() {
 		return inferiorMunicipioCodigo;

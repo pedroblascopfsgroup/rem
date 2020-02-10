@@ -292,10 +292,6 @@ public interface ProveedoresApi {
 	public Boolean esUsuarioConPerfilProveedor(Usuario usuario);
 	
 	public List<ActivoProveedor> getMediadoresActivos();
-
-	/*List<DDCartera> getCarteraPorProveedor(Long idProveedor);
-
-	List<DDSubcartera> getSubcarteraPorProveedor(Long idProveedor, String codigoCartera);*/
 	
 	/** Este método cambia .el proveedor asociado a un activo por el recibido en pvrCodRem
 	 * 

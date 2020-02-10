@@ -147,8 +147,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		boolean isActivoYubai = this.isActivoYubai(tareaActivo);
 		boolean isActivoArrow = this.isActivoArrow(tareaActivo);
 		boolean isActivoOmega = this.isActivoOmega(tareaActivo);		
-		boolean esActivoRemaining = this.isActivoRemaining(tareaActivo);
-		
+		boolean esActivoRemaining = this.isActivoRemaining(tareaActivo);	
 		boolean isFuerzaVentaDirecta = this.isFuerzaVentaDirecta(tareaExterna);
 		boolean isActivoFinanciero = this.isFinancieroCajamar(tareaExterna);
 		boolean isActivoConFormalizacion = this.isConFormalizacion(tareaExterna);

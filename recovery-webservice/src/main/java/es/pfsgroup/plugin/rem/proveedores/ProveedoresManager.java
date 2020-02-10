@@ -40,7 +40,6 @@ import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
-import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -65,7 +64,6 @@ import es.pfsgroup.plugin.rem.model.DtoMediadorStats;
 import es.pfsgroup.plugin.rem.model.DtoPersonaContacto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.EntidadProveedor;
-import es.pfsgroup.plugin.rem.model.MapeoGestorDocumental;
 import es.pfsgroup.plugin.rem.model.ProveedorTerritorial;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
@@ -78,9 +76,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDOperativa;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivosCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoContenedorProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDireccionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -88,7 +84,6 @@ import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.proveedores.mediadores.dao.MediadoresCarteraDao;
 import es.pfsgroup.plugin.rem.proveedores.mediadores.dao.MediadoresEvaluarDao;
 import es.pfsgroup.plugin.rem.proveedores.mediadores.dao.MediadoresOfertasDao;
-import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 
 @Service("proveedoresManager")
 public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresApi> implements  ProveedoresApi {
@@ -1561,19 +1556,6 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		}
 		return resultado;
 	}
-	
-	/*@Override
-	public List<DDCartera> getCarteraPorProveedor(Long idProveedor){
-		
-		return proveedoresDao.getCarteraPorProveedor(idProveedor);
-	}
-	
-	@Override
-	public List<DDSubcartera> getSubcarteraPorProveedor(Long idProveedor, String codigoCartera){
-
-		return proveedoresDao.getSubcarteraPorProveedor(idProveedor, codigoCartera);
-
-	}*/
 	
 	@Override
 	public Boolean cambiaMediador(String numActivo, String pveCodRem, String userName) {

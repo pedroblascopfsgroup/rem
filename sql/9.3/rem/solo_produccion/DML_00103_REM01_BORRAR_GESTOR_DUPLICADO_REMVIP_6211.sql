@@ -157,6 +157,10 @@ BEGIN
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] Insertados '||SQL%ROWCOUNT||' registros en tabla temporal ');  
 
+
+	EXECUTE IMMEDIATE 'GRANT ALL ON "REM01"."AUX_REMVIP_6211_DUP2" TO "REM_QUERY" WITH GRANT OPTION';
+	DBMS_OUTPUT.PUT_LINE('[INFO] PERMISOS SOBRE LA TABLA AUXILIAR CREADOS '); 
+
 -----------------------------------------------------------------------------------------------------------------
 --Paso 3: Se recorre la tabla temporal
 

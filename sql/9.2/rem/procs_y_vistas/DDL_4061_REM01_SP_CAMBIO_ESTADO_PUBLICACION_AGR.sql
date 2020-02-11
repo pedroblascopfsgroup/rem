@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=José Antonio Gigante Pamplona
---## FECHA_CREACION=20200210
+--## FECHA_CREACION=20200211
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-9265
@@ -1244,16 +1244,7 @@ ELSE
 
         END IF;
         
-
-        /*******************************************************************************************/
-        /*Actualiza los activos de agrupaciones asistidas con fecha vigencia anterior al día actual para esconderlas:*/
-        /**************/
-        PLP$AGR_ASISTIDAS_ESC_ACT( nAGR_ID, vDD_TCO_CODIGO );        
-     
-        
-        -- Solamente historifica cuando NO sea una agrupación restringida:        
-        IF PLP$ES_ASISTIDA_VEN( nAGR_ID ) = 0 THEN -- No es una agrupación asistida ??
-	        /**************/
+          /**************/
 	        /*CANAL DE PUBLICACION*/
 	        /**************/
 	   		V_MSQL := ' SELECT COUNT(AGA.ACT_ID)
@@ -1288,6 +1279,15 @@ ELSE
 		        	END IF;
 		        END IF;
 	        END IF;
+        /*******************************************************************************************/
+        /*Actualiza los activos de agrupaciones asistidas con fecha vigencia anterior al día actual para esconderlas:*/
+        /**************/
+        PLP$AGR_ASISTIDAS_ESC_ACT( nAGR_ID, vDD_TCO_CODIGO );        
+     
+
+        -- Solamente historifica cuando NO sea una agrupación restringida:        
+        IF PLP$ES_ASISTIDA_VEN( nAGR_ID ) = 0 THEN -- No es una agrupación asistida ??
+	      
         
         /**************/
         /*HISTORIFICAR*/

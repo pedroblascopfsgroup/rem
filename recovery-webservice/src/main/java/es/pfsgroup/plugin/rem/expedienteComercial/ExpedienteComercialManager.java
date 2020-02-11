@@ -585,6 +585,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		ExpedienteComercial expedienteComercial = findOne(idExpediente);
 		Oferta oferta = expedienteComercial.getOferta();
 		Visita visitaOferta = oferta.getVisita();
+		
+		Oferta ofertaPrincipal = ofertaApi.getOfertaByNumOfertaRem(dto.getNuevoNumOferPrincipal());
+		
+		if(ofertaPrincipal != null) {
+			compruebaEstadoAnyadirDependiente(ofertaPrincipal);
+		}
 
 		if (!Checks.esNulo(dto.getEstadoCodigo())) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoCodigo());
@@ -10698,5 +10704,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		return null;
+	}
+	
+	private void compruebaEstadoAnyadirDependiente(Oferta ofertaPrincipal) {
+		ExpedienteComercial expedienteOfertaPrincipal = genericDao.get(ExpedienteComercial.class,
+				genericDao.createFilter(FilterType.EQUALS, "oferta", ofertaPrincipal));
+		
+
+		if (expedienteOfertaPrincipal != null
+				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(ofertaPrincipal.getActivoPrincipal().getCartera().getCodigo()) &&
+				DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaPrincipal.getEstadoOferta().getCodigo()) &&
+				(!DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expedienteOfertaPrincipal.getEstado().getCodigo()) 
+						&& !DDEstadosExpedienteComercial.PTE_SANCION.equals(expedienteOfertaPrincipal.getEstado().getCodigo()))) {
+			throw new JsonViewerException("La oferta principal ya está en estado '" + expedienteOfertaPrincipal.getEstado().getDescripcion()
+					+ "', ya no se pueden añadir más dependientes");
+		}
 	}
 }

@@ -60,6 +60,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 
@@ -494,6 +495,10 @@ public class Activo implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TDC_ID")
     private DDTerritorio territorio; 
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TS_ID")
+    private DDTipoSegmento segmento; 
 	
     @Column(name = "ACT_VALOR_LIQUIDEZ")
     private String valorLiquidez;
@@ -1955,6 +1960,14 @@ public class Activo implements Serializable, Auditable {
 
 	public void setValorLiquidez(String valorLiquidez) {
 		this.valorLiquidez = valorLiquidez;
+	}
+
+	public DDTipoSegmento getSegmento() {
+		return segmento;
+	}
+
+	public void setSegmento(DDTipoSegmento segmento) {
+		this.segmento = segmento;
 	}
 	
 	

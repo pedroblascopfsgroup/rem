@@ -1129,6 +1129,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		Usuario usuarioSupervisorReserva = null;
 		Usuario usuarioGestorMinuta = null;
 		Usuario usuarioSupervisorMinuta = null;
+		Usuario usuarioCierreVenta = null;
 		ActivoAgrupacion agrupacion = null;
 		Activo activo = null;
 
@@ -1230,6 +1231,18 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 						usuarioSupervisorFormalizacion = genericDao.get(Usuario.class, genericDao
 								.createFilter(FilterType.EQUALS, "username", usernameSupervisorFormalizacion));
 					}
+					
+				}
+				
+				if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) 
+						&& (DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo())
+								|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo()))) {
+					String usernameCierreVenta = gestorExpedienteComercialDao.getUsuarioGestor(
+							activo.getId(), GestorExpedienteComercialApi.CODIGO_GESTOR_CIERRE_VENTA);
+					if (!Checks.esNulo(usernameCierreVenta)) {
+						usuarioCierreVenta = genericDao.get(Usuario.class, genericDao
+								.createFilter(FilterType.EQUALS, "username", usernameCierreVenta));
+					}					
 				}
 			}
 		}
@@ -1278,9 +1291,19 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				}
 			}
 
-			if (!Checks.esNulo(usuarioGestoriaFormalizacion))
-				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION,
-						usuarioGestoriaFormalizacion.getUsername(), dto);
+			if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) 
+					&& (DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo())
+							|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo()))) {
+				if (!Checks.esNulo(usuarioCierreVenta)) {
+					this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_CIERRE_VENTA, 
+							usuarioCierreVenta.getUsername(), dto);
+				}
+			} else {
+				if (!Checks.esNulo(usuarioGestoriaFormalizacion))
+					this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION,
+							usuarioGestoriaFormalizacion.getUsername(), dto);
+			}
+
 		}
 
 		if (!Checks.esNulo(usuarioGestorComercial))

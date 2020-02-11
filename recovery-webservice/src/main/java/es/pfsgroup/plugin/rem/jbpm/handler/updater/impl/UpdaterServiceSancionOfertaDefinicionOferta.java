@@ -83,20 +83,6 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		ExpedienteComercial expediente = expedienteComercialApi
 				.expedienteComercialPorOferta(ofertaAceptada.getId());
-		/*Integer reservaNecesaria = 0;
-		
-		if(ofertaApi.esOfertaPrincipal(ofertaAceptada)) {
-			//recorremos la lista de dependientes
-				//pillamos la tarea y la avanzamos
-			if (!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getSolicitaReserva())) {
-
-				reservaNecesaria = expediente.getCondicionante().getSolicitaReserva();
-			}
-			
-			
-			for ofertaDependiente
-			expediente.getCondiciona
-		}*/
 		
 		Activo activo = ofertaAceptada.getActivoPrincipal();
 		

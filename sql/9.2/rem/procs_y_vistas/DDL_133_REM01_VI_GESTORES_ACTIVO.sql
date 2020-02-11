@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20190131
+--## FECHA_CREACION=20190210
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-5383
+--## INCIDENCIA_LINK=HREOS-9330
 --## PRODUCTO=NO
 --## Finalidad: Crear vista gestores activo
 --##           
@@ -31,6 +31,7 @@
 --##    0.18 VRO Se modifica el orden de la prioridad de los gestores segun subcartera.
 --##	0.19 VRO Se modifica el orden de la prioridad de los gestores segun subcartera.
 --##	0.20 HREOS-9322
+--##	0.21 HREOS-9330 Añadido Gestor cierre venta para activos Cerberus-Divarian
 --##########################################
 --*/
 
@@ -787,6 +788,32 @@ UNION ALL
             JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
             LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist ON dist.tipo_gestor = ''GCONT'' and dd_cra.dd_cra_codigo = dist.cod_cartera
           WHERE
+            act.borrado = 0
+
+UNION ALL
+/*Gestor cierre venta*/
+        SELECT
+            act.act_id,
+            TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo,
+            TO_NUMBER (dd_scr.dd_scr_codigo) dd_scr_codigo,
+            TO_NUMBER (dd_eac.DD_EAC_CODIGO) dd_eac_codigo,
+            NULL DD_TCR_CODIGO,
+            dist.cod_provincia DD_PRV_CODIGO,
+            dist.cod_municipio DD_LOC_CODIGO,
+            dist.cod_postal cod_postal,
+            dist.tipo_gestor AS tipo_gestor,
+            dist.username username,
+            nombre_usuario nombre_usuario
+        FROM '||V_ESQUEMA||'.act_activo act
+            JOIN '||V_ESQUEMA||'.act_loc_localizacion aloc ON act.act_id = aloc.act_id
+            JOIN '||V_ESQUEMA||'.bie_localizacion loc ON loc.bie_loc_id = aloc.bie_loc_id
+            JOIN '||V_ESQUEMA_M||'.dd_loc_localidad dd_loc ON loc.dd_loc_id = dd_loc.dd_loc_id
+            JOIN '||V_ESQUEMA_M||'.dd_prv_provincia dd_prov ON dd_prov.dd_prv_id = loc.dd_prv_id
+            JOIN '||V_ESQUEMA||'.dd_eac_estado_activo dd_eac ON dd_eac.dd_eac_id = act.dd_eac_id
+            JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
+            JOIN '||V_ESQUEMA||'.dd_scr_subcartera dd_scr ON dd_scr.dd_scr_id = act.dd_scr_id
+            JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist ON dist.tipo_gestor = ''GCV'' and dd_cra.dd_cra_codigo = dist.cod_cartera and dd_scr.dd_scr_codigo = dist.cod_subcartera 
+        WHERE
             act.borrado = 0          
 ) ';
     

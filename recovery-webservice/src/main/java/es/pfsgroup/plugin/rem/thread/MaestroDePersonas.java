@@ -370,8 +370,9 @@ public class MaestroDePersonas implements Runnable {
 
 						if (!Checks.esNulo(personaOutputDto) && !Checks.esNulo(personaOutputDto.getIdIntervinienteHaya()) && !Checks.esNulo(proveedor)) {
 							proveedor.setIdPersonaHaya(personaOutputDto.getIdIntervinienteHaya());
-							genericDao.update(ActivoProveedor.class, proveedor);
-							/* Se realiza un .merge en lugar de un .update debido al error de:
+							//genericDao.update(ActivoProveedor.class, proveedor);
+							
+							/* Se realiza un merge en lugar de un update debido al error de:
 							   "org.springframework.orm.hibernate3.HibernateSystemException: Illegal attempt to associate a collection with two open sessions;" */
 							sessionObj.merge(proveedor);
 							sessionObj.beginTransaction().commit();
@@ -380,6 +381,7 @@ public class MaestroDePersonas implements Runnable {
 						} else if(ID_PERSONA_SIMULACION.equals(personaOutputDto.getResultDescription()) && !Checks.esNulo(proveedor)) {
 							idPersonaSimulado = (int) (Math.random() * 1000000) + 1;
 							proveedor.setIdPersonaHaya(String.valueOf(idPersonaSimulado));
+							//genericDao.update(ActivoProveedor.class, proveedor);
 							sessionObj.merge(proveedor);
 							sessionObj.beginTransaction().commit();
 						}

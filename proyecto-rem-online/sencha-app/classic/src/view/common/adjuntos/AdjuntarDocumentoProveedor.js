@@ -74,33 +74,17 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor', {
 				                        }
 				                    }
 					    		},
-					    		{ 
+						        { 
 									xtype: 'combobox',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
 						        	reference: 'tipo',
 						        	name: 'tipo',
-						        	msgTarget: 'side',
-						        	publishes: 'value',
-						        	width: '100%',
-						        	bind: {
-						        		store: '{comboTipoDocumento}'
-						        	},
-					            	displayField	: 'descripcion',    							
-								    valueField		: 'codigo',
-									allowBlank: false,
-									filtradoEspecial: true
-						        },
-						        { 
-									xtype: 'combobox',
-						        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo'),
-						        	reference: 'subtipo',
-						        	name: 'subtipo',
 						        	editable: true,
 						        	msgTarget: 'side',
 						        	publishes: 'value',
 						        	width: '100%',
 						        	bind: {
-						        		store: '{comboSubTipoDocumento}'
+						        		store: '{comboTipoDocumento}'
 						        	},
 					            	displayField	: 'descripcion',	    							
 								    valueField		: 'codigo',

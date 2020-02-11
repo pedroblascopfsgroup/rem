@@ -78,7 +78,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDOperativa;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivosCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoContenedorProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDireccionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -100,7 +99,8 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	public static final String ERROR_EVALUAR_MEDIADORES_MESSAGE = "Error al evaluar mediadores con calificaciones propuestas";
 	public static final String BAJA_PROVEEDOR_ACTIVOS_ASIGNADOS = "proveedor.baja.proveedor.con.activos";
 	public static final String ERROR_TIPO_DOCUMENTO_PROVEEDOR = "No existe el tipo de documento indicado";
-	public static final String ERROR_SUBTIPO_DOCUMENTO_PROVEEDOR = "No existe el subtipo de documento indicado";
+	public static final String ERROR_TIPO_UNICO_DOCUMENTO_PROVEEDOR = "Ya existe un documento del mismo tipo";
+	public static final String ERROR_NOMBRE_DOCUMENTO_PROVEEDOR = "Ya existe un documento con el mismo nombre";
 
 	public static final Integer comboOK = 1;
 	public static final Integer comboKO = 0;
@@ -972,9 +972,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	@Override
 	@Transactional(readOnly = false)
 	public boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {
-		
-		Boolean borrado = true;
-		
+		boolean borrado = true;
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		
 		ActivoProveedor proveedor = proveedoresDao.get(dtoAdjunto.getIdEntidad());
@@ -985,7 +983,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				adjunto = genericDao.get(ActivoAdjuntoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", dtoAdjunto.getId()));
 				borrado = gestorDocumentalAdapterApi.borrarAdjunto(adjunto.getIdDocRestClient(), usuarioLogado.getUsername());
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		} else {
 			adjunto = genericDao.get(ActivoAdjuntoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoAdjunto.getId()));
@@ -1001,7 +999,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	}
 
 	@Override
-	public List<DtoAdjunto> getAdjuntos(Long id) throws GestorDocumentalException, Exception {
+	public List<DtoAdjunto> getAdjuntos(Long id) throws Exception {
 		
 		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
 		ActivoProveedor proveedor = proveedoresDao.getProveedorById(id);
@@ -1020,9 +1018,6 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 					logger.error(gex.getMessage());
 					throw gex;
 				}
-			} catch (Exception e) {
-				logger.error(e.getMessage());
-				throw e;
 			}
 		} else {		
 			Filter adjuntoFilter = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId());
@@ -1030,26 +1025,13 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			Filter adjuntoLocalFilter = genericDao.createFilter(FilterType.NOTNULL, "adjunto");
 			List<ActivoAdjuntoProveedor> adjuntos = genericDao.getList(ActivoAdjuntoProveedor.class, adjuntoFilter, adjuntoBorradoFilter, adjuntoLocalFilter);
 
-			if(!Checks.estaVacio(adjuntos)){
-				for (ActivoAdjuntoProveedor adjunto : adjuntos) {
-					DtoAdjunto dto = new DtoAdjunto();
-					
-					try {
-						BeanUtils.copyProperties(dto, adjunto);
-						beanUtilNotNull.copyProperty(dto, "idEntidad", adjunto.getProveedor().getId());
-						if (!Checks.esNulo(adjunto.getTipoContenedorProveedor()))
-							beanUtilNotNull.copyProperty(dto, "descripcionTipo", adjunto.getTipoContenedorProveedor().getDescripcion());
-						if (!Checks.esNulo(adjunto.getTipoDocumentoProveedor()))
-						beanUtilNotNull.copyProperty(dto, "descripcionSubtipo", adjunto.getTipoDocumentoProveedor().getDescripcion());
-						beanUtilNotNull.copyProperty(dto, "gestor", adjunto.getAuditoria().getUsuarioCrear());	
-					} catch (IllegalAccessException e) {
-						logger.error(e.getMessage());
-					} catch (InvocationTargetException e) {
-						logger.error(e.getMessage());
-					}								
-					
-					listaAdjuntos.add(dto);
-				}
+			for (ActivoAdjuntoProveedor adjunto : adjuntos) {
+				DtoAdjunto dto = new DtoAdjunto();
+				BeanUtils.copyProperties(dto, adjunto);
+				beanUtilNotNull.copyProperty(dto, "idEntidad", adjunto.getProveedor().getId());
+				beanUtilNotNull.copyProperty(dto, "descripcionTipo", adjunto.getTipoDocumentoProveedor().getDescripcion());
+				beanUtilNotNull.copyProperty(dto, "gestor", adjunto.getAuditoria().getUsuarioCrear());									
+				listaAdjuntos.add(dto);
 			}
 		}
 		
@@ -1083,24 +1065,19 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		ActivoAdjuntoProveedor adjuntoProveedor = new ActivoAdjuntoProveedor();
 		ActivoProveedor proveedor = proveedoresDao.get(Long.parseLong(fileItem.getParameter("idEntidad")));
 		
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
-	   	DDTipoContenedorProveedor tipoContenedor = genericDao.get(DDTipoContenedorProveedor.class, filtro);
-		
-	   	Filter filtroTipoDoc = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("subtipo"));
+	   	Filter filtroTipoDoc = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
 	   	DDTipoDocumentoProveedor tipoDocumentoProveedor = genericDao.get(DDTipoDocumentoProveedor.class, filtroTipoDoc);
 	   	
-	   	if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-	   		idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoProveedor(proveedor, fileItem, usuarioLogado.getUsername(), tipoContenedor, tipoDocumentoProveedor.getMatricula());
-	   		if (!Checks.esNulo(idDocRestClient)) adjuntoProveedor.setIdDocRestClient(idDocRestClient);
-	   	} else {
-	   		adj = uploadAdapter.saveBLOB(fileItem.getFileItem());
-	   		if (!Checks.esNulo(adj)) adjuntoProveedor.setAdjunto(adj);
-	   	}
-	   	
-	   	if (!Checks.esNulo(idDocRestClient) || !Checks.esNulo(adj)) {
-		   if (!Checks.esNulo(tipoContenedor)) {
-				adjuntoProveedor.setTipoContenedorProveedor(tipoContenedor);
-				if(!Checks.esNulo(tipoDocumentoProveedor)) {
+	   	if(!Checks.esNulo(tipoDocumentoProveedor)) {
+		   	if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+		   		idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoProveedor(proveedor, fileItem, usuarioLogado.getUsername(), tipoDocumentoProveedor.getMatricula());
+		   		if (!Checks.esNulo(idDocRestClient)) adjuntoProveedor.setIdDocRestClient(idDocRestClient);
+		   	} else {
+		   		adj = uploadAdapter.saveBLOB(fileItem.getFileItem());
+		   		if (!Checks.esNulo(adj)) adjuntoProveedor.setAdjunto(adj);
+		   	}
+		   	
+		   	if (!Checks.esNulo(idDocRestClient) || !Checks.esNulo(adj)) {
 					adjuntoProveedor.setTipoDocumentoProveedor(tipoDocumentoProveedor);
 					adjuntoProveedor.setProveedor(proveedor);
 					adjuntoProveedor.setContentType(fileItem.getFileItem().getContentType());
@@ -1112,13 +1089,10 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 					adjuntoProveedor.setAdjunto(adj);
 					Auditoria.save(adjuntoProveedor);
 					genericDao.save(ActivoAdjuntoProveedor.class, adjuntoProveedor);
-				} else {
-					throw new Exception(ProveedoresManager.ERROR_SUBTIPO_DOCUMENTO_PROVEEDOR);
-				}
-			} else {
-				throw new Exception(ProveedoresManager.ERROR_TIPO_DOCUMENTO_PROVEEDOR);
-			}
-	   	}
+		   	}
+	   	} else {
+			throw new Exception(ProveedoresManager.ERROR_TIPO_DOCUMENTO_PROVEEDOR);
+		}
 	   	
 	   	return null;
 	}

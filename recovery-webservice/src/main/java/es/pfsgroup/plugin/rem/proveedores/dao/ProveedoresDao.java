@@ -10,7 +10,6 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
-import es.pfsgroup.plugin.rem.model.MapeoGestorDocumental;
 import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 
@@ -91,15 +90,8 @@ public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
 	public ActivoProveedorContacto getActivoProveedorContactoPorIdsUsuario(Long idUsuario);
 
 	public ActivoProveedorContacto getActivoProveedorContactoPorUsernameUsuario(String username);
-
-	List<ActivoProveedor> getMediadoresActivos();
-
-	public List<MapeoGestorDocumental> getCarteraClientesProveedores();
 	
-/*
-	public List<MapeoGestorDocumental> getCarteraClientesProveedores();
-
-	List<MapeoGestorDocumental> getCarteraClientesProveedoresByCarteraYSubcartera(DDCartera cartera, DDSubcartera subcartera);*/
+	List<ActivoProveedor> getMediadoresActivos();
 	
 	/** Este método cambia .el proveedor asociado a un activo por el recibido en pvrCodRem
 	 * 

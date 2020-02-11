@@ -28,7 +28,6 @@ import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoContenedorProveedor;
 
 public interface GestorDocumentalAdapterApi {
 	
@@ -130,9 +129,9 @@ public interface GestorDocumentalAdapterApi {
 	
 	public String getClienteByCarteraySubcarterayPropietario(DDCartera cartera, DDSubcartera subcartera, ActivoPropietario actPro);
 
-	public Long uploadDocumentoProveedor(ActivoProveedor proveedor, WebFileItem webFileItem, String userLogin, DDTipoContenedorProveedor tipoContenedor, String matricula) throws GestorDocumentalException;
+	public Long uploadDocumentoProveedor(ActivoProveedor proveedor, WebFileItem webFileItem, String userLogin, String matricula) throws GestorDocumentalException;
 
-	public List<DtoAdjunto> getAdjuntosProveedor(ActivoProveedor proveedor) throws GestorDocumentalException, Exception;
+	public List<DtoAdjunto> getAdjuntosProveedor(ActivoProveedor proveedor) throws GestorDocumentalException;
 
 	Runnable crearProyecto(Activo activo, ActivoProyecto proyecto, String usuarioLogado, String tipoExpediente) throws GestorDocumentalException;
 }

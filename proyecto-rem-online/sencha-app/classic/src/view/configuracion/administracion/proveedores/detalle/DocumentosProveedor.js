@@ -65,10 +65,6 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Documen
 					        	flex: 1,
 					        	hidden: true
 					        },
-					        {   text: HreRem.i18n('header.subtipo'),
-					        	dataIndex: 'descripcionSubtipo',
-					        	flex: 1
-					        },
 							{
 					            text: HreRem.i18n('header.descripcion'),
 					            dataIndex: 'descripcion',

@@ -10,7 +10,6 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
@@ -25,7 +24,6 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoMediador;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
-import es.pfsgroup.plugin.rem.model.MapeoGestorDocumental;
 import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
@@ -372,21 +370,6 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		hb.appendWhere("proveedor.homologado = 1");
 
 		return HibernateQueryUtils.list(this, hb);
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	@Transactional(readOnly = false)
-	public List<MapeoGestorDocumental> getCarteraClientesProveedores() {
-		
-		List<MapeoGestorDocumental> mapeoGestorDocumental = new ArrayList<MapeoGestorDocumental>();
-		
-		HQLBuilder hb = new HQLBuilder("select mgd from MapeoGestorDocumental mgd");
-		
-		mapeoGestorDocumental = this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();	
-								
-		return mapeoGestorDocumental;
-		
 	}
 	
 	@Override

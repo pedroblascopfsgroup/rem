@@ -26,9 +26,6 @@ Ext.define('HreRem.model.AdjuntoProveedor', {
     			name:'descripcionTipo'
     		},
     		{
-    			name:'descripcionSubtipo'
-    		},
-    		{
     			name:'nombre'
     		},
     		{

@@ -47,7 +47,6 @@ import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearProyectoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearTributoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.RecoveryToGestorExpAssembler;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
-import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalManager;
 import es.pfsgroup.plugin.gestorDocumental.model.DDTdnTipoDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.GestorDocumentalConstants;
 import es.pfsgroup.plugin.gestorDocumental.model.RespuestaGeneral;
@@ -94,7 +93,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoContenedorProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoTributos;
@@ -144,9 +142,6 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
     @Autowired
     private ActivoTributoApi activoTributoApi;
-    
-    @Autowired
-    private GestorDocumentalManager gestorDocumentalManager;
 
     public static final String CODIGO_CLASE_PROYECTO = "09", CODIGO_TIPO_EXPEDIENTE_REO = "AI", CODIGO_CLASE_AGRUPACIONES = "08";
     
@@ -237,65 +232,35 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	}
 
 	@Override
-	public List<DtoAdjunto> getAdjuntosProveedor(ActivoProveedor proveedor) throws GestorDocumentalException, Exception {
+	public List<DtoAdjunto> getAdjuntosProveedor(ActivoProveedor proveedor) throws GestorDocumentalException {
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
-		List<DtoAdjunto> list = new ArrayList<DtoAdjunto>();
-		List<DtoAdjunto> listAdjuntoProveedor;
 		
 		if (!Checks.esNulo(proveedor.getIdPersonaHaya())) {
-			CabeceraPeticionRestClientDto cabeceraComunidades = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
-					proveedor.getIdPersonaHaya(), GestorDocumentalConstants.CODIGO_TIPO_PROVEEDORES, GestorDocumentalConstants.CODIGO_CLASE_PROVEEDORES_COMUNIDAD);
-			CabeceraPeticionRestClientDto cabeceraJuntas = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
-					proveedor.getIdPersonaHaya(), GestorDocumentalConstants.CODIGO_TIPO_PROVEEDORES, GestorDocumentalConstants.CODIGO_CLASE_PROVEEDORES_JUNTAS);
+			CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
+					proveedor.getIdPersonaHaya(), GestorDocumentalConstants.CODIGO_TIPO_PROVEEDORES, GestorDocumentalConstants.CODIGO_CLASE_PROVEEDORES);
 			
 			Usuario userLogin = genericAdapter.getUsuarioLogado();
 			DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
-			RespuestaDocumentosExpedientes respuestaComunidades = new RespuestaDocumentosExpedientes();
-			RespuestaDocumentosExpedientes respuestaJuntas = new RespuestaDocumentosExpedientes();
-			
-			try {
-				respuestaComunidades = gestorDocumentalApi.documentosExpediente(cabeceraComunidades, docExpDto);
-				respuestaJuntas = gestorDocumentalApi.documentosExpediente(cabeceraJuntas, docExpDto);
-			} catch (GestorDocumentalException gex) {
-				if (gestorDocumentalManager.ERROR_SERVER_NOT_RESPONDING.contains(gex.getMessage())) {
-					logger.error(gestorDocumentalManager.ERROR_SERVER_NOT_RESPONDING);
-				} else {						
-					logger.error("No existe contenedor para este proveedor");
-				}
-				throw gex;
-			}
-			
-			if(!Checks.esNulo(respuestaComunidades) && 
-					!(Checks.esNulo(respuestaComunidades.getCodigoError()) && Checks.esNulo(respuestaComunidades.getDocumentos()) && Checks.esNulo(respuestaComunidades.getMensajeError()))) {
-				listAdjuntoProveedor = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuestaComunidades);
-				list.addAll(listAdjuntoProveedor);
-			}
-			
-			if(!Checks.esNulo(respuestaJuntas) && 
-					!(Checks.esNulo(respuestaJuntas.getCodigoError()) && Checks.esNulo(respuestaJuntas.getDocumentos()) && Checks.esNulo(respuestaJuntas.getMensajeError()))) {
-				listAdjuntoProveedor = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuestaJuntas);
-				list.addAll(listAdjuntoProveedor);
-			}
-			
-			if (!Checks.estaVacio(list)) {
-				for (DtoAdjunto adjunto : list) {
-					ActivoAdjuntoProveedor activoAdjuntoProveedor = genericDao.get(ActivoAdjuntoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "proveedor", proveedor), 
-							genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", adjunto.getId()));
-					if (!Checks.esNulo(activoAdjuntoProveedor)) {
-						if(!Checks.esNulo(activoAdjuntoProveedor.getTipoContenedorProveedor()))
-							adjunto.setDescripcionTipo(activoAdjuntoProveedor.getTipoContenedorProveedor().getDescripcion());
-						if(!Checks.esNulo(activoAdjuntoProveedor.getTipoDocumentoProveedor())) 
-							adjunto.setDescripcionSubtipo(activoAdjuntoProveedor.getTipoDocumentoProveedor().getDescripcion());
-						adjunto.setGestor(activoAdjuntoProveedor.getAuditoria().getUsuarioCrear());
-						adjunto.setFechaDocumento(activoAdjuntoProveedor.getAuditoria().getFechaCrear());
-					}
+			RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
+
+			List<DtoAdjunto> list = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuesta);
+
+			for (DtoAdjunto adjunto : list) {
+				ActivoAdjuntoProveedor activoAdjuntoProveedor = genericDao.get(ActivoAdjuntoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "proveedor", proveedor), 
+						genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", adjunto.getId()));
+				if (!Checks.esNulo(activoAdjuntoProveedor)) {
+					if(!Checks.esNulo(activoAdjuntoProveedor.getTipoDocumentoProveedor())) 
+						adjunto.setDescripcionTipo(activoAdjuntoProveedor.getTipoDocumentoProveedor().getDescripcion());
+					adjunto.setGestor(activoAdjuntoProveedor.getAuditoria().getUsuarioCrear());
+					adjunto.setFechaDocumento(activoAdjuntoProveedor.getAuditoria().getFechaCrear());
 				}
 			}
+
+			return list;
+			
 		} else {
 			throw new GestorDocumentalException(GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE);
 		}
-
-		return list;
 	}
 
 	@Override
@@ -720,20 +685,12 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	}
 	
 	@Override
-	public Long uploadDocumentoProveedor(ActivoProveedor proveedor, WebFileItem webFileItem, String userLogin, 
-			DDTipoContenedorProveedor tipoContenedor, String matricula) throws GestorDocumentalException {
+	public Long uploadDocumentoProveedor(ActivoProveedor proveedor, WebFileItem webFileItem, String userLogin, String matricula) throws GestorDocumentalException {
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
 		Long respuesta;
-		String codigoClaseProveedores = "";
-		
-		if(!Checks.esNulo(tipoContenedor) && DDTipoContenedorProveedor.CODIGO_COMUNIDADES_VECINOS.equalsIgnoreCase(tipoContenedor.getCodigo())) {
-			codigoClaseProveedores = GestorDocumentalConstants.CODIGO_CLASE_PROVEEDORES_COMUNIDAD;
-		} else if (!Checks.esNulo(tipoContenedor) && DDTipoContenedorProveedor.CODIGO_JUNTAS_COMPENSACION.equalsIgnoreCase(tipoContenedor.getCodigo())) {
-			codigoClaseProveedores = GestorDocumentalConstants.CODIGO_CLASE_PROVEEDORES_JUNTAS;
-		}
 
 		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
-				proveedor.getIdPersonaHaya(), GestorDocumentalConstants.CODIGO_TIPO_PROVEEDORES, codigoClaseProveedores);
+				proveedor.getIdPersonaHaya(), GestorDocumentalConstants.CODIGO_TIPO_PROVEEDORES, GestorDocumentalConstants.CODIGO_CLASE_PROVEEDORES);
 		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoDto(webFileItem, userLogin, matricula);
 		
 		RespuestaCrearDocumento respuestaCrearDocumento;

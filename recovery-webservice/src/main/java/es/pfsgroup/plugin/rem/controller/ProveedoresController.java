@@ -32,6 +32,7 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -56,6 +57,7 @@ import es.pfsgroup.plugin.rem.model.DtoMediadorOferta;
 import es.pfsgroup.plugin.rem.model.DtoMediadorStats;
 import es.pfsgroup.plugin.rem.model.DtoPersonaContacto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
 import es.pfsgroup.plugin.rem.proveedores.ProveedoresManager;
 
 
@@ -450,9 +452,10 @@ public class ProveedoresController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView upload(HttpServletRequest request, HttpServletResponse response) {
 		ModelMap model = new ModelMap();
+		WebFileItem fileItem = new WebFileItem();
 
 		try {
-			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
+			fileItem = uploadAdapter.getWebFileItem(request);
 
 			String errores = proveedoresApi.upload(fileItem);
 
@@ -462,13 +465,19 @@ public class ProveedoresController extends ParadiseJsonController {
 		} catch (GestorDocumentalException ex) {
 			logger.error("Error en ProveedoresController sobre el Gestor Documental", ex);
 			model.put("success", false);
-			model.put("errorMessage", "Ha habido un problema con la subida del archivo al gestor documental.");
+			if (ex.getMessage().contains("An item with the name '"+fileItem.getFileItem().getFileName()+"' already exists") || ex.getMessage().contains("Ya existe un elemento con el nombre")) {
+				model.put("errorMessage", ProveedoresManager.ERROR_NOMBRE_DOCUMENTO_PROVEEDOR+": "+fileItem.getFileItem().getFileName());
+			} else if (ex.getMessage().contains("Control duplicado, ya existe un documento igual")) {
+			   	DDTipoDocumentoProveedor tipoDocumentoProveedor = genericDao.get(DDTipoDocumentoProveedor.class, 
+			   			genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo")));
+				model.put("errorMessage", ProveedoresManager.ERROR_TIPO_UNICO_DOCUMENTO_PROVEEDOR+": "+tipoDocumentoProveedor.getDescripcion());
+			} else {
+				model.put("errorMessage", "Ha habido un problema con la subida del archivo al gestor documental.");
+			}
 		} catch (Exception e) {
 			logger.error("Error en ProveedoresController", e);
 			if (ProveedoresManager.ERROR_TIPO_DOCUMENTO_PROVEEDOR.equals(e.getMessage())) {
 				model.put("errorMessage", ProveedoresManager.ERROR_TIPO_DOCUMENTO_PROVEEDOR);
-			} else if(ProveedoresManager.ERROR_SUBTIPO_DOCUMENTO_PROVEEDOR.equals(e.getMessage())) {
-				model.put("errorMessage", ProveedoresManager.ERROR_SUBTIPO_DOCUMENTO_PROVEEDOR);
 			}
 			model.put("success", false);
 			model.put("errores", e.getCause());

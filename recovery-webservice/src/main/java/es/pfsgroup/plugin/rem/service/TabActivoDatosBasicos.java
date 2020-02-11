@@ -110,11 +110,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private static final String MSG_ERROR_DESTINO_COMERCIAL_OFERTAS_VIVAS_VENTA = "msg.error.tipo.comercializacion.ofertas.vivas";
 	private static final String MSG_ERROR_DESTINO_COMERCIAL_OFERTAS_VIVAS_ALQUILER = "msg.error.tipo.comercializacion.ofertas.vivas";
 	private static final String ERROR_PORCENTAJE_PARTICIPACION="msg.error.porcentaje.participacion";
-	private static final Integer CHECK_GESTION = 1;
-	private static final Integer CHECK_PUBLICACION = 2;
-	private static final Integer CHECK_COMERCIALIZAR = 3;
-	private static final Integer CHECK_FORMALIZAR = 4;
-	private static final String  CESION_USO_ERROR= "msg.error.activo.patrimonio.en.cesion.uso";
+	private static final String CESION_USO_ERROR= "msg.error.activo.patrimonio.en.cesion.uso";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -851,15 +847,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		if(apc != null) {
 			activoDto.setPazSocial(apc.getPazSocial());
-			if(activoP != null) {
+			if(activoP != null && activoP.getTramiteAlquilerSocial() != null) {
 				activoDto.setCheckFormalizarReadOnly(activoP.getTramiteAlquilerSocial());
 				activoDto.setCheckComercializarReadOnly(activoP.getTramiteAlquilerSocial());
 				activoDto.setCheckPublicacionReadOnly(activoP.getTramiteAlquilerSocial());
-				if(activoP.getTramiteAlquilerSocial()) {
-					activoDto.setAplicaComercializar(false);
-					activoDto.setAplicaFormalizar(false);
-					activoDto.setAplicaPublicar(false);
-				}
 			}else {
 				activoDto.setCheckFormalizarReadOnly(false);
 				activoDto.setCheckComercializarReadOnly(false);

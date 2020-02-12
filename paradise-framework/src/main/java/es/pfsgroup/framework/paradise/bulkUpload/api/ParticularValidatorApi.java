@@ -1131,7 +1131,12 @@ public interface ParticularValidatorApi {
      * @return true si encuentra la tarea en relación con el trabajo.
      */
     Boolean esTareaCompletada(String codTrabajo, String tarea);
-
+    
+    /*
+     * @param codTrabajo (Número de trabajo)
+     * @return true si es multiactivo(que el trabajo tiene asociado más de un activo).
+     */
+    Boolean esTrabajoMultiactivo(String codTrabajo);
 	
 	
 }

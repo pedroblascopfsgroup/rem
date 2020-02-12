@@ -4512,6 +4512,18 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	    return !"0".equals(resultado);
 	}
 	
+	@Override
+	public Boolean esTrabajoMultiactivo(String codTrabajo) {
+	    if (Checks.esNulo(codTrabajo)) return false;
+	    String resultado;
+	    resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+	            +"                 FROM ACT_TBJ_TRABAJO TBJ"
+	            +"                 JOIN ACT_TBJ ACTB ON ACTB.TBJ_ID = TBJ.TBJ_ID"
+	            +"                 WHERE TBJ.TBJ_NUM_TRABAJO = " + codTrabajo);
+	            
+	    return Integer.valueOf(resultado) > 1;
+	}
+	
 
 	private String arrayToString(String[] array) {
 	    /* Retorna un string con los valores del array 

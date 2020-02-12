@@ -59,8 +59,8 @@ public class MSVActualizaTrabajosValidator extends MSVExcelValidatorAbstract {
 	public static final String PERFIL_GESTOR_ERRONEO = "El gestor del activo debe tener el perfil " + PERFIL_GESTOR + ".";
 	public static final String PERFIL_SUPERVISOR_ERRONEO = "El supervisor del activo debe tener el perfil " + PERFIL_SUPERVISOR + ".";
 	public static final String TIPOLOGIA_ERRONEA = "La tipología del proveedor no coincide con una de las indicadas.";
-	public static final String RESPONSABLE_ERRONEO = "El tipo del responsable del trabajo no está entre los permitidos.";
 	public static final String ERROR_TAREA = "El proveedor no se puede modificar, tareas resultado de la actuación completadas.";
+	public static final String TIENE_QUE_SER_MULTIACTIVO = "El responsable del trabajo no puede ser cambiado, el trabajo tiene que ser de tipo multiactivo.";
 	
 	public static final Integer COL_NUM_TRABAJO = 0;
 	public static final Integer COL_CODIGO_PROVEEDOR = 1;
@@ -137,7 +137,7 @@ public class MSVActualizaTrabajosValidator extends MSVExcelValidatorAbstract {
 			mapaErrores.put(PERFIL_GESTOR_ERRONEO, isUserNotInPerfil(exc, COL_GESTOR_ACTIVO, PERFIL_GESTOR));
 			mapaErrores.put(PERFIL_SUPERVISOR_ERRONEO, isUserNotInPerfil(exc, COL_SUPERVISOR_ACTIVO, PERFIL_SUPERVISOR));
 			mapaErrores.put(TIPOLOGIA_ERRONEA, isUserInTipologia(exc));
-			mapaErrores.put(RESPONSABLE_ERRONEO, isUserGestorOrSupervisorMantenimiento(exc));
+			mapaErrores.put(TIENE_QUE_SER_MULTIACTIVO, isTrabajoMultiactivo(exc));
 			mapaErrores.put(ERROR_TAREA, esTareaCompletada(exc));
 
 			if (!mapaErrores.get(TRABAJO_NO_EXISTE).isEmpty() 
@@ -151,7 +151,7 @@ public class MSVActualizaTrabajosValidator extends MSVExcelValidatorAbstract {
 			        || !mapaErrores.get(PERFIL_GESTOR_ERRONEO).isEmpty()
                     || !mapaErrores.get(PERFIL_SUPERVISOR_ERRONEO).isEmpty()
                     || !mapaErrores.get(TIPOLOGIA_ERRONEA).isEmpty()
-                    || !mapaErrores.get(RESPONSABLE_ERRONEO).isEmpty()
+                    || !mapaErrores.get(TIENE_QUE_SER_MULTIACTIVO).isEmpty()
                     || !mapaErrores.get(ERROR_TAREA).isEmpty()){
 			    
 				dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -379,34 +379,29 @@ public class MSVActualizaTrabajosValidator extends MSVExcelValidatorAbstract {
             return listaFilas;   
        }
        
-       private List<Integer> isUserGestorOrSupervisorMantenimiento(MSVHojaExcel exc){
-           List<Integer> listaFilas = new ArrayList<Integer>();
-           
-           try{
-               for(int i=1; i<this.numFilasHoja;i++){
-                   try {
-                       String username= exc.dameCelda(i, COL_RESPONSABLE_TRABAJO);
-                       
-                       if(!Checks.esNulo(username) && 
-                          (!particularValidator.isUserGestorType(username, GESTOR_MANTENIMIENTO)
-                          || !particularValidator.isUserGestorType(username, SUPERVISOR_MANTENIMIENTO))
-                          )
-                           listaFilas.add(i);
-                           
-                   } catch (ParseException e) {
-                       listaFilas.add(i);
-                   }
-               }
-           }catch (IllegalArgumentException e) {
-               listaFilas.add(0);
-               e.printStackTrace();
-           } catch (IOException e) {
-               listaFilas.add(0);
-               e.printStackTrace();
-           }
-           
-           return listaFilas;
-       }
+       private List<Integer> isTrabajoMultiactivo(MSVHojaExcel exc){
+	       List<Integer> listaFilas = new ArrayList<Integer>();
+
+	        try{
+	            for(int i=1; i<this.numFilasHoja;i++){
+	                try {
+	                	String num_trabajo = exc.dameCelda(i, COL_NUM_TRABAJO);
+	                    if(!Checks.esNulo(num_trabajo) 
+	                            && Boolean.FALSE.equals(particularValidator.esTrabajoMultiactivo(num_trabajo)))
+	                        listaFilas.add(i);
+	                } catch (ParseException e) {
+	                    listaFilas.add(i);
+	                }
+	            }
+	            } catch (IllegalArgumentException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            } catch (IOException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            }
+	        return listaFilas;   
+	   }
    
        private List<Integer> esTareaCompletada(MSVHojaExcel exc) {
            List<Integer> listaFilas = new ArrayList<Integer>();

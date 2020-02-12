@@ -65,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VTareaActivoCount;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.VTareaActivoCountDao;
@@ -579,6 +580,11 @@ public class TareaActivoManager implements TareaActivoApi {
 			}
 			
 			for (Oferta comprobarOferta : ofertasDependientes) {
+				if(DDEstadoOferta.CODIGO_CONGELADA.equals(comprobarOferta.getEstadoOferta().getCodigo()) 
+						|| DDEstadoOferta.CODIGO_PENDIENTE.equals(comprobarOferta.getEstadoOferta().getCodigo())) {
+					return "La oferta dependiente " + comprobarOferta.getNumOferta() + " no está tramitada, debe tramitarla"
+							+ " o anularla para poder continuar.";
+				}
 				TareaActivo tareaDependiente = tareaOfertaDependiente(comprobarOferta);
 				if (!Checks.esNulo(tareaDependiente) && !Checks.estaVacio(valores)) {
 					Map<String,String[]> valoresDependientes = valoresTareaDependiente(valores, tareaDependiente, oferta);

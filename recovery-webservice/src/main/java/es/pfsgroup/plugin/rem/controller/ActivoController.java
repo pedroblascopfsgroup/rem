@@ -765,27 +765,6 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-/*
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveOfertaActivo(DtoOfertaActivo ofertaActivoDto, ModelMap model, HttpServletRequest request) {
-		try {
-			boolean success = activoApi.saveOfertaActivo(ofertaActivoDto);
-			model.put(RESPONSE_SUCCESS_KEY, success);
-			trustMe.registrarSuceso(request, ofertaActivoDto.getIdActivo(), ENTIDAD_CODIGO.CODIGO_ACTIVO, "oferta", ACCION_CODIGO.CODIGO_MODIFICAR);
-
-		} catch (JsonViewerException jvex) {
-			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put(RESPONSE_MESSAGE_KEY, jvex.getMessage());
-			trustMe.registrarError(request, ofertaActivoDto.getIdActivo(), ENTIDAD_CODIGO.CODIGO_ACTIVO, "oferta", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
-		} catch (Exception e) {
-			logger.error("error en activoController", e);
-			model.put(RESPONSE_SUCCESS_KEY, false);
-			trustMe.registrarError(request, ofertaActivoDto.getIdActivo(), ENTIDAD_CODIGO.CODIGO_ACTIVO, "oferta", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
-		}
-
-		return createModelAndViewJson(model);
-	}*/
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)

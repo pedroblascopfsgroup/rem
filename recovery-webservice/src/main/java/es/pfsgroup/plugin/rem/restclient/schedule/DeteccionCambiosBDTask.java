@@ -230,12 +230,12 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 		try {
 			resultado = ejecutaTarea(handler, listPendientes, registro);
 			pasarDeBloque(listPendientes);
+			handler.procesaResultado(resultado);
 		} finally {
 			if (!Checks.estaVacio(listPendientes) && registroLlamadas != null) {
 				registro.logTiempoBorrarHistorico();
 				registro.logTiempoInsertarHistorico();
 				registroLlamadas.guardaRegistroLlamada(registro, handler);
-				handler.procesaResultado(resultado);
 
 				llamadas.add(registro);
 			}

@@ -103,7 +103,7 @@ public class DetectorWebcomEstadoOferta extends DetectorCambiosBD<EstadoOfertaDt
 	public void procesaResultado(JSONObject resultado) {
 		restApi.trace("[DETECCIÓN CAMBIOS] Procesando la respuesta");
 
-		if (resultado.getJSONArray("data") instanceof JSONArray) {
+		if (resultado != null && resultado.getJSONArray("data") instanceof JSONArray) {
 			for (int i = 0; i < resultado.getJSONArray("data").size(); i++) {
 				JSONObject oferta = (JSONObject) resultado.getJSONArray("data").get(i);
 				if (oferta.containsKey("idOfertaRem")) {

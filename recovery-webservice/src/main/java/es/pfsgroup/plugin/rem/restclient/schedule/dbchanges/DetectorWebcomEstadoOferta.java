@@ -120,24 +120,27 @@ public class DetectorWebcomEstadoOferta extends DetectorCambiosBD<EstadoOfertaDt
 	private void modificaOferta(JSONObject oferta, Oferta ofertaEntity) {
 		Boolean actualizar = false;
 		if (oferta.containsKey("success") && oferta.getBoolean("success")) {
-			if (oferta.containsKey("idProveedorPrescriptorRemOrigenLead")) {
-				ActivoProveedor proveedor = activoProveedorDao.getProveedorByCodigoRem(oferta.getLong("idProveedorPrescriptorRemOrigenLead"));
+			if (getLong(oferta,"idProveedorPrescriptorRemOrigenLead") != null) {
+				ActivoProveedor proveedor = activoProveedorDao
+						.getProveedorByCodigoRem(getLong(oferta,"idProveedorPrescriptorRemOrigenLead"));
 				if (proveedor != null) {
 					ofertaEntity.setProveedorPrescriptorRemOrigenLead(proveedor);
 					actualizar = true;
 				}
 			}
-			if (oferta.containsKey("fechaOrigenLead")) {
+			if (oferta.containsKey("fechaOrigenLead") && oferta.get("fechaOrigenLead") != null) {
 				ofertaEntity.setFechaOrigenLead(getFechaOrigenLead(oferta));
 				actualizar = true;
 			}
-			if (oferta.containsKey("codTipoProveedorOrigenCliente")) {
+			if (oferta.containsKey("codTipoProveedorOrigenCliente")
+					&& oferta.get("codTipoProveedorOrigenCliente") != null) {
 				ofertaEntity.setCodTipoProveedorOrigenCliente(oferta.getString("codTipoProveedorOrigenCliente"));
 				actualizar = true;
 
 			}
-			if (oferta.containsKey("idProveedorRealizadorRemOrigenLead")) {
-				ActivoProveedor proveedor = activoProveedorDao.getProveedorByCodigoRem(oferta.getLong("idProveedorRealizadorRemOrigenLead"));
+			if (getLong(oferta,"idProveedorRealizadorRemOrigenLead") != null) {
+				ActivoProveedor proveedor = activoProveedorDao
+						.getProveedorByCodigoRem(getLong(oferta,"idProveedorRealizadorRemOrigenLead"));
 				if (proveedor != null) {
 					ofertaEntity.setProveedorRealizadorRemOrigenLead(proveedor);
 					actualizar = true;
@@ -148,6 +151,18 @@ public class DetectorWebcomEstadoOferta extends DetectorCambiosBD<EstadoOfertaDt
 				ofertaDao.guardaRegistroWebcom(ofertaEntity);
 			}
 		}
+	}
+	
+	private Long getLong(JSONObject oferta, String field) {
+		Long result = null;
+		try {
+			if (oferta.containsKey(field)) {
+				result = oferta.getLong(field);
+			}	
+		}catch(Exception e) {
+			logger.info(e.getMessage(), e);
+		}
+		return result;
 	}
 
 	private Date getFechaOrigenLead(JSONObject oferta) {

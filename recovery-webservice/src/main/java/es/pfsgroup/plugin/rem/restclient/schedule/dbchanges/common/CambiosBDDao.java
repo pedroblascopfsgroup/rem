@@ -529,10 +529,10 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 		if (cambios.getPaginacion().getTamanyoBloque() != null) {
 			queryString = "SELECT " + columns + " FROM (SELECT ROWNUM AS CONTADOR,CONSULTA.* FROM(" + queryString
 					+ ") CONSULTA) WHERE CONTADOR >"
-					+ cambios.getPaginacion().getTamanyoBloque() * cambios.getPaginacion().getNumeroBloque()
-					+ " AND CONTADOR <"
-					+ ((cambios.getPaginacion().getNumeroBloque() + 1) * cambios.getPaginacion().getTamanyoBloque())
-					+ 1;
+					+ String.valueOf(
+							cambios.getPaginacion().getTamanyoBloque() * cambios.getPaginacion().getNumeroBloque())
+					+ " AND CONTADOR <" + String.valueOf(((cambios.getPaginacion().getNumeroBloque() + 1)
+							* cambios.getPaginacion().getTamanyoBloque()) + 1);
 		}
 		return queryString;
 	}

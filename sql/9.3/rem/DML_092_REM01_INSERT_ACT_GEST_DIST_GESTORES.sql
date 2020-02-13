@@ -75,6 +75,7 @@ BEGIN
         V_COND1 := 'IS NULL';
 	V_COND2 := 'IS NULL';
         V_COND3 := 'IS NULL';
+ 	V_COND4 := 'IS NULL';
 
         IF (V_TMP_TIPO_DATA(4) is not null)  THEN
 			V_COND1 := '= '''||TRIM(V_TMP_TIPO_DATA(4))||''' ';
@@ -85,6 +86,9 @@ BEGIN
         IF (V_TMP_TIPO_DATA(10) is not null) THEN
 			V_COND3 := '= '''||TRIM(V_TMP_TIPO_DATA(10))||''' ';
         END IF;
+	IF (V_TMP_TIPO_DATA(5) is not null) THEN
+			V_COND4 := '= '''||TRIM(V_TMP_TIPO_DATA(5))||''' ';
+        END IF;
     
         --Comprobamos el dato a insertar
         V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' '||
@@ -92,7 +96,7 @@ BEGIN
 					' AND COD_CARTERA = '''||TRIM(V_TMP_TIPO_DATA(2))||''' '||
 					' AND COD_ESTADO_ACTIVO IS NULL '||
 					' AND COD_TIPO_COMERZIALZACION  '||V_COND1||' '||
-					' AND COD_PROVINCIA = '''||TRIM(V_TMP_TIPO_DATA(5))||''' '||
+					' AND COD_PROVINCIA '||V_COND4||' '||
 					--' AND COD_MUNICIPIO '||V_COND2||' '||
 					' AND COD_POSTAL IS NULL '||
 					' AND COD_SUBCARTERA '||V_COND3||' ';

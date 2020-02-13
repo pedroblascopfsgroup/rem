@@ -1312,4 +1312,6 @@ public interface ActivoApi {
 	Boolean getMostrarEdicionTabFasesPublicacion(Activo activo);
 
 	void actualizarOfertasTrabajosVivos(Long idActivo);
+
+	void propagarTerritorioAgrupacionRestringida(Long idActivo);
 }

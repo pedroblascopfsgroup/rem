@@ -243,7 +243,7 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 					type : 'uxproxy',
 					remoteUrl : 'generic/getDiccionario',
 					extraParams : {
-						diccionario : 'direccionComercial'
+						diccionario : 'tipoDireccionComercial'
 					}
 				}
 			},			

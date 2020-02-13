@@ -1760,6 +1760,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOne(idExpedienteComercial);
 
 		try {
+			expedienteComercial = this.crearCompradores(oferta, expedienteComercial);
 			transactionManager.commit(transaction);
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 			trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);

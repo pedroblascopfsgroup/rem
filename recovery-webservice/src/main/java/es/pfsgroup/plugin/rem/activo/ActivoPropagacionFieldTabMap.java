@@ -53,6 +53,7 @@ public class ActivoPropagacionFieldTabMap {
 	    			"codPostal",
 	    			"codPostalFormateado",
 	    			"nombreVia",
+	    			
 
 	    			// perimetro
 	    			"motivoAplicaGestion",
@@ -533,7 +534,8 @@ public class ActivoPropagacionFieldTabMap {
 					"expedienteComercialVivo",
 					"observaciones",
 					"importeVenta",
-					"puja"
+					"puja",
+	    			"direccionComercial"
     			));
 
     	pmap.put(TAB_ADMINISTRACION,

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20190131
+--## AUTOR=Viorel Remus Ovidiu
+--## FECHA_CREACION=20200213
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-5383
+--## INCIDENCIA_LINK=REMVIP-6381
 --## PRODUCTO=NO
 --## Finalidad: Crear vista gestores activo
 --##           
@@ -31,6 +31,7 @@
 --##    0.18 VRO Se modifica el orden de la prioridad de los gestores segun subcartera.
 --##	0.19 VRO Se modifica el orden de la prioridad de los gestores segun subcartera.
 --##	0.20 HREOS-9322
+--##	0.21 VRO REMVIP-6381 Se corrige el gestor GCONT añadido en la modificacion anterior
 --##########################################
 --*/
 
@@ -201,7 +202,7 @@ SELECT /*+ ALL_ROWS */  act.act_id,
 																					,''GCOIN'',''GCOINM'',''GCODI'',''SUPCOMALQ''
                                                                                     ,''SUPACT'',''HAYASBOINM'',''GGADM'',''GIAADMT'',''GIAFORM''
                                                                                     ,''GFORM'',''SFORM'',''GESTCOMALQ'',''PTEC''
-                                                                                    ,''GCOM'',''SCOM'',''GPUBL'',''SPUBL'', ''GPM'',''GCCLBK''
+                                                                                    ,''GCOM'',''SCOM'',''GPUBL'',''SPUBL'', ''GPM'',''GCCLBK'' 
                                                                                     )
             left JOIN REM01.act_ges_dist_gestores dist0
                ON (dist0.cod_estado_activo IS NULL
@@ -764,7 +765,7 @@ UNION ALL
             act.borrado = 0 AND dist.COD_PROVINCIA IN (''8'',''17'',''43'',''25'')      
 
 UNION ALL
-/* Gestor Controller  */
+
 
         SELECT
             act.act_id,
@@ -785,7 +786,8 @@ UNION ALL
             JOIN '||V_ESQUEMA_M||'.dd_prv_provincia dd_prov ON dd_prov.dd_prv_id = loc.dd_prv_id
             JOIN '||V_ESQUEMA||'.dd_eac_estado_activo dd_eac ON dd_eac.dd_eac_id = act.dd_eac_id
             JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
-            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist ON dist.tipo_gestor = ''GCONT'' and dd_cra.dd_cra_codigo = dist.cod_cartera
+            JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist 
+	    ON dist.tipo_gestor = ''GCONT'' and dd_cra.dd_cra_codigo = dist.cod_cartera 
           WHERE
             act.borrado = 0          
 ) ';

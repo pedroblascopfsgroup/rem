@@ -1783,5 +1783,4 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		StringBuilder sb = new StringBuilder("delete from ActivoOferta actofr where actofr.activo = " + idActivo + " and actofr.oferta = " + idOferta);
 		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
 	}
-
 }

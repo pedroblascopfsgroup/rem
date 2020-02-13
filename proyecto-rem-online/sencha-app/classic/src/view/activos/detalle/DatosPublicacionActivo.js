@@ -298,7 +298,13 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												
 											},
 											{
-												xtype: 'label',
+												xtype: 'comboboxfieldbase',
+												fieldLabel: HreRem.i18n('title.publicaciones.historico.canal.de.publicacion'), 
+												reference: 'canalDePublicacion',
+												bind: {
+													store:'{comboCanalDePublicacion}',
+													value:'{datospublicacionactivo.canalDePublicacion}'
+												},
 												colspan: 1
 											},
 											{
@@ -895,6 +901,67 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								
 							]
 					},
+					
+					
+					{
+						xtype: 'fieldsettable',
+						defaultType: 'textfieldbase',
+						bind: {
+							hidden: '{!activo.incluyeDestinoComercialVenta}'
+						},
+						items:
+						[
+							{
+								xtype: 'fieldsettable',
+								defaultType: 'textfieldbase',
+								title: HreRem.i18n('title.publicacion.minorista'),
+								margin: '0 10px 10px 0',
+								items:
+								[
+									{
+										xtype: 'datefieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.fecha.primera.publicacion'),
+										bind: '{datospublicacionactivo.fechaPrimeraPublicacionMin}',
+										readOnly: true
+									},
+									{
+										xtype: 'datefieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.fecha.ultima.publicacion'),
+										bind: '{datospublicacionactivo.fechaUltimaPublicacionMin}',
+										readOnly: true
+									}
+									
+								]
+							},
+							{
+								xtype: 'fieldsettable',
+								defaultType: 'textfieldbase',
+								title: HreRem.i18n('title.publicacion.mayorista'),
+								items:
+								[
+									{
+										xtype: 'datefieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.fecha.primera.publicacion'),
+										bind: '{datospublicacionactivo.fechaPrimeraPublicacionMay}',
+										readOnly: true
+									},
+									{
+										xtype: 'datefieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.fecha.ultima.publicacion'),
+										bind: '{datospublicacionactivo.fechaUltimaPublicacionMay}',
+										readOnly: true
+									}
+									
+								]
+							},
+							{
+								
+							}
+							
+						]
+					},
+					
+					
 // Histórico de estados de publicación alquiler.
 					{
 						xtype: 'fieldsettable',

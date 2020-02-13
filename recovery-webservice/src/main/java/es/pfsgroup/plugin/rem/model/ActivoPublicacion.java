@@ -124,6 +124,10 @@ public class ActivoPublicacion implements Serializable, Auditable {
 	
 	@Column(name = "APU_FECHA_REVISION_PUB_ALQ")
 	private Date fechaRevisionPublicacionesAlquiler;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_POR_ID")
+	private DDPortal portal;
 
 	@Version
 	private Long version;
@@ -385,6 +389,14 @@ public class ActivoPublicacion implements Serializable, Auditable {
 
 	public void setFechaRevisionPublicacionesAlquiler(Date fechaRevisionPublicacionesAlquiler) {
 		this.fechaRevisionPublicacionesAlquiler = fechaRevisionPublicacionesAlquiler;
+	}
+
+	public DDPortal getPortal() {
+		return portal;
+	}
+
+	public void setPortal(DDPortal portal) {
+		this.portal = portal;
 	}
 
 	

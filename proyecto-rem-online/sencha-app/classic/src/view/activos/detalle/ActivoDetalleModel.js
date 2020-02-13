@@ -1693,6 +1693,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					extraParams: {diccionario: 'motivosOcultacion'}
 				}
     		},
+    		comboCanalDePublicacion:{
+	 			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'canalDePublicacionActivo'}
+				}
+    		},
 
     		comboMotivosOcultacionAlquiler: {
                 model: 'HreRem.model.ComboBase',

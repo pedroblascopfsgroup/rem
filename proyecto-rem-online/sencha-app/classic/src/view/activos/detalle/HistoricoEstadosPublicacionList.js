@@ -8,7 +8,8 @@ Ext.define('HreRem.view.activos.detalle.HistoricoEstadosPublicacionList', {
 
 	initComponent: function () {
 		var me = this;
-
+		var isAlquilerGrid = me.reference === "historicoestadospublicacionalquilerlist";
+		
 		me.columns = [
 			{
 				dataIndex: 'id',
@@ -46,11 +47,20 @@ Ext.define('HreRem.view.activos.detalle.HistoricoEstadosPublicacionList', {
 				dataIndex: 'tipoPublicacion',
 				text: HreRem.i18n('title.publicaciones.historico.tipopublicacion'),
 				flex: 1
-			},
+			},	
 			{
 				dataIndex: 'motivo',
 				text: HreRem.i18n('title.publicaciones.historico.motivo'),
 				flex: 2
+			},
+			{
+				dataIndex: 'canalPublicacion',
+				text: HreRem.i18n('title.publicaciones.historico.canal.publicacion'),
+				flex: 2,
+				bind: {
+					hidden:isAlquilerGrid
+				}
+			
 			},
 			{
 				dataIndex: 'usuario',

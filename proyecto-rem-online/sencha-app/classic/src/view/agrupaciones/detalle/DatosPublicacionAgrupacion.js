@@ -607,6 +607,64 @@ Ext.define('HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', {
 					}
 				]
 			},
+			
+			{
+				xtype: 'fieldsettable',
+				defaultType: 'textfieldbase',
+				bind: {
+					hidden: '{!agrupacionficha.incluyeDestinoComercialVenta}'
+				},
+				items:
+				[
+					{
+						xtype: 'fieldsettable',
+						defaultType: 'textfieldbase',
+						title: HreRem.i18n('title.publicacion.minorista'),
+						margin: '0 10px 10px 0',
+						items:
+						[
+							{
+								xtype: 'datefieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.fecha.primera.publicacion'),
+								bind: '{datospublicacionagrupacion.fechaPrimeraPublicacionMin}',
+								readOnly: true
+							},
+							{
+								xtype: 'datefieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.fecha.ultima.publicacion'),
+								bind: '{datospublicacionagrupacion.fechaUltimaPublicacionMin}',
+								readOnly: true
+							}
+							
+						]
+					},
+					{
+						xtype: 'fieldsettable',
+						defaultType: 'textfieldbase',
+						title: HreRem.i18n('title.publicacion.mayorista'),
+						items:
+						[
+							{
+								xtype: 'datefieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.fecha.primera.publicacion'),
+								bind: '{datospublicacionagrupacion.fechaPrimeraPublicacionMay}',
+								readOnly: true
+							},
+							{
+								xtype: 'datefieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.fecha.ultima.publicacion'),
+								bind: '{datospublicacionagrupacion.fechaUltimaPublicacionMay}',
+								readOnly: true
+							}
+							
+						]
+					},
+					{
+						
+					}
+					
+				]
+			},
 // Histórico de estados de publicación alquiler.
 			{
 				xtype: 'fieldsettable',

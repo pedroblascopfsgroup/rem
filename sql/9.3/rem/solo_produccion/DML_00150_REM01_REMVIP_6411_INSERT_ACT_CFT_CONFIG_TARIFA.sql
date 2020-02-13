@@ -554,7 +554,7 @@ BEGIN
                  DD_CRA_ID,
 		 DD_SCR_ID,
 
-                 TO_NUMBER( REPLACE( ''' || TRIM(V_TMP_TIPO_DATA(5))||''', '','', ''.'' ) ), '''||TRIM(V_TMP_TIPO_DATA(6))||''', 0, '|| V_USU_MODIFICAR ||', SYSDATE, 0 
+                 REPLACE( ''' || TRIM(V_TMP_TIPO_DATA(5))||''', '','', ''.'' ) , '''||TRIM(V_TMP_TIPO_DATA(6))||''', 0, '|| V_USU_MODIFICAR ||', SYSDATE, 0 
 		 FROM REM01.DD_SCR_SUBCARTERA
 	         WHERE DD_SCR_CODIGO IN ( ''138'' )
 		 AND BORRADO = 0 ';
@@ -569,7 +569,7 @@ BEGIN
 
 		V_MSQL := 
 		'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'
-		 SET  	CFT_PRECIO_UNITARIO = TO_NUMBER( REPLACE( ''' || TRIM(V_TMP_TIPO_DATA(5))||''', '','', ''.'' ) ),
+		 SET  	CFT_PRECIO_UNITARIO = REPLACE( ''' || TRIM(V_TMP_TIPO_DATA(5))||''', '','', ''.'' ) ,
 			CFT_UNIDAD_MEDIDA = '''||TRIM(V_TMP_TIPO_DATA(6))||''',
 			USUARIOMODIFICAR = ''REMVIP-6411'',
 			FECHAMODIFICAR = SYSDATE
@@ -618,7 +618,7 @@ BEGIN
                  DD_CRA_ID,
 		 DD_SCR_ID,
 
-                 TO_NUMBER( REPLACE( ''' || TRIM(V_TMP_TIPO_DATA(5))||''', '','', ''.'' ) ), '''||TRIM(V_TMP_TIPO_DATA(6))||''', 0, '|| V_USU_MODIFICAR ||', SYSDATE, 0 
+                 REPLACE( ''' || TRIM(V_TMP_TIPO_DATA(5))||''', '','', ''.'' ) , '''||TRIM(V_TMP_TIPO_DATA(6))||''', 0, '|| V_USU_MODIFICAR ||', SYSDATE, 0 
 		 FROM REM01.DD_SCR_SUBCARTERA
 	         WHERE DD_SCR_CODIGO IN ( ''150'' )
 		 AND BORRADO = 0 ';
@@ -633,7 +633,7 @@ BEGIN
 
 			V_MSQL := 
 		'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'
-		 SET  	CFT_PRECIO_UNITARIO = TO_NUMBER( REPLACE( ''' || TRIM(V_TMP_TIPO_DATA(5))||''', '','', ''.'' ) ),
+		 SET  	CFT_PRECIO_UNITARIO = REPLACE( ''' || TRIM(V_TMP_TIPO_DATA(5))||''', '','', ''.'' ) ,
 			CFT_UNIDAD_MEDIDA = '''||TRIM(V_TMP_TIPO_DATA(6))||''',
 			USUARIOMODIFICAR = ''REMVIP-6411'',
 			FECHAMODIFICAR = SYSDATE

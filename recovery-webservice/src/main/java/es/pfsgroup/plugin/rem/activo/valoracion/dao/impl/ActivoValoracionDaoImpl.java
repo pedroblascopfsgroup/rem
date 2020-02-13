@@ -159,7 +159,7 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 
 	@Override
 	public Double getImporteValoracionRentaWebPorIdActivo(Long idActivo) {
-		Criteria criteria = getSession().createCriteria(ActivoValoraciones.class);
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoValoraciones.class);
 		criteria.setProjection(Projections.property("importe"));
 		criteria.add(Restrictions.eq("activo.id", idActivo)).createCriteria("tipoPrecio").add(Restrictions.eq("codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA));
 

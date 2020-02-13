@@ -1699,7 +1699,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@Override
 	public ActivoPlusvalia getPlusvaliaByIdActivo(Long idActivo) {
-		Criteria criteria = getSession().createCriteria(ActivoPlusvalia.class);
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoPlusvalia.class);
 		criteria.add(Restrictions.eq("activo.id", idActivo));
 
 		return HibernateUtils.castObject(ActivoPlusvalia.class, criteria.uniqueResult());

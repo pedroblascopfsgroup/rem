@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin Bahamonde
---## FECHA_CREACION=20200210
+--## FECHA_CREACION=20200213
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-9039
@@ -32,9 +32,10 @@ DECLARE
     V_TEXT_SCR VARCHAR2(2400 CHAR) := 'DD_SCR_SUBCARTERA';
     V_TEXT_CRA VARCHAR2(2400 CHAR) := 'DD_CRA_CARTERA';
     V_TEXT_TS VARCHAR2(2400 CHAR) := 'DD_TS_TIPO_SEGMENTO';
-    V_INCIDENCIA VARCHAR2(25 CHAR) := 'HREOS-9320';
+    V_INCIDENCIA VARCHAR2(25 CHAR) := 'HREOS-9320'; 
     V_ID_CRA NUMBER(16); --Vble para extraer el ID del registro de la cartera.
-    V_ID_SCR NUMBER(16); --Vble para extraer el ID del registro de la subcartera.
+    V_ID_SCR_ARROW NUMBER(16); --Vble para extraer el ID del registro de la subcartera.
+    V_ID_SCR_REMAINING NUMBER(16); --Vble para extraer el ID del registro de la subcartera.
     V_ID_TS NUMBER(16); --Vble para extraer el ID del registro del diccionario tipo segmento.
     
 
@@ -43,13 +44,13 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('01', '07', '150'),
-        T_TIPO_DATA('02', '07', '150'),
-        T_TIPO_DATA('03', '07', '150'),
-        T_TIPO_DATA('04', '07', '150'),
-        T_TIPO_DATA('05', '07', '150'),
-        T_TIPO_DATA('06', '07', '150'),
-        T_TIPO_DATA('07', '07', '150')
+        T_TIPO_DATA('01', '07', '151','152'),
+        T_TIPO_DATA('02', '07', '151','152'),
+        T_TIPO_DATA('03', '07', '151','152'),
+        T_TIPO_DATA('04', '07', '151','152'),
+        T_TIPO_DATA('05', '07', '151','152'),
+        T_TIPO_DATA('06', '07', '151','152'),
+        T_TIPO_DATA('07', '07', '151','152')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -78,8 +79,10 @@ BEGIN
             EXECUTE IMMEDIATE V_MSQL INTO V_ID_CRA;
 
             V_MSQL := 'SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.'||V_TEXT_SCR||' WHERE DD_SCR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||'''';
-            EXECUTE IMMEDIATE V_MSQL INTO V_ID_SCR;
+            EXECUTE IMMEDIATE V_MSQL INTO V_ID_SCR_ARROW;
             
+            V_MSQL := 'SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.'||V_TEXT_SCR||' WHERE DD_SCR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||'''';
+            EXECUTE IMMEDIATE V_MSQL INTO V_ID_SCR_REMAINING;
        
             V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_TS_ID = (SELECT DD_TS_ID FROM '||V_ESQUEMA||'.'||V_TEXT_TS||' 
             WHERE DD_TS_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''')';
@@ -87,10 +90,21 @@ BEGIN
 
           --Si existe modificamos los valores
             IF V_NUM_TABLAS > 0 THEN
+                --Divarian Arrow  
                 V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
                 'SET DD_TS_ID = '''||V_ID_TS||''''||
                 ', DD_CRA_ID = '''||V_ID_CRA||''''|| 
-                ', DD_SCR_ID = '''||V_ID_SCR||''''||
+                ', DD_SCR_ID = '''||V_ID_SCR_ARROW||''''||
+                ', USUARIOMODIFICAR = '''||V_INCIDENCIA||''' , FECHAMODIFICAR = SYSDATE '||
+                'WHERE DD_TS_ID = (SELECT DD_TS_ID FROM '||V_ESQUEMA||'.'||V_TEXT_TS||' 
+                                    WHERE DD_TS_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''')';
+                EXECUTE IMMEDIATE V_MSQL;
+                
+                --Divarian Remaining
+                 V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
+                'SET DD_TS_ID = '''||V_ID_TS||''''||
+                ', DD_CRA_ID = '''||V_ID_CRA||''''|| 
+                ', DD_SCR_ID = '''||V_ID_SCR_REMAINING||''''||
                 ', USUARIOMODIFICAR = '''||V_INCIDENCIA||''' , FECHAMODIFICAR = SYSDATE '||
                 'WHERE DD_TS_ID = (SELECT DD_TS_ID FROM '||V_ESQUEMA||'.'||V_TEXT_TS||' 
                                     WHERE DD_TS_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''')';
@@ -98,9 +112,14 @@ BEGIN
                 --Si no existe insertamos los registros
             ELSE
                 DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS LOS REGISTROS');   
-                              
+                --Divarian Arrow            
                 V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (DD_TS_ID, DD_CRA_ID, DD_SCR_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) 
-                            VALUES ('''||V_ID_TS||''','''||V_ID_CRA||''','''||V_ID_SCR||''', 0, '''||V_INCIDENCIA||''', SYSDATE, 0)';
+                            VALUES ('''||V_ID_TS||''','''||V_ID_CRA||''','''||V_ID_SCR_ARROW||''', 0, '''||V_INCIDENCIA||''', SYSDATE, 0)';
+                EXECUTE IMMEDIATE V_MSQL;
+                  
+                --Divarian Remaining
+                V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (DD_TS_ID, DD_CRA_ID, DD_SCR_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) 
+                            VALUES ('''||V_ID_TS||''','''||V_ID_CRA||''','''||V_ID_SCR_REMAINING||''', 0, '''||V_INCIDENCIA||''', SYSDATE, 0)';
                 EXECUTE IMMEDIATE V_MSQL;
                 DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTROS INSERTADO CORRECTAMENTE');
             

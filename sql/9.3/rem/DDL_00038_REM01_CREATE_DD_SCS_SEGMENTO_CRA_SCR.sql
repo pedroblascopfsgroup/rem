@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquín Bahamonde
---## FECHA_CREACION=20200210
+--## FECHA_CREACION=20200213
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-9320
@@ -67,13 +67,13 @@ BEGIN
 
         -- Creamos primary key
     
-        EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||''' and CONSTRAINT_TYPE = ''P'''
+        EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and CONSTRAINT_TYPE = ''P'''
 		INTO V_NUM_TABLAS; 
 		
 		IF V_NUM_TABLAS > 0 THEN
 			DBMS_OUTPUT.PUT_LINE('  [INFO] La PK PK_'||V_TEXT_TABLA||'... Ya existe.');                 
 		ELSE    
-            V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (DD_TS_ID))';
+            V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (DD_SCS_ID))';
             EXECUTE IMMEDIATE V_MSQL;
             DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
         END IF;

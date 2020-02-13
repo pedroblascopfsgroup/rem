@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20200213
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-9039
+--## INCIDENCIA_LINK=HREOS-9320
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_SCS_SEGMENTO_CRA_SCR los datos añadidos en T_ARRAY_DATA

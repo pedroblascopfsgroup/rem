@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Rubio
---## FECHA_CREACION=2020213
+--## FECHA_CREACION=20200213
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-9430

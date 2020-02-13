@@ -247,6 +247,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("cesionUso", DDCesionUso.class);
 		mapa.put("DDSiNo", DDSinSiNo.class);
 		mapa.put("tipoDireccionComercial", DDTerritorio.class);
+		mapa.put("canalDePublicacionActivo", DDPortal.class);
+		mapa.put("direccionTerritorial", DDDireccionTerritorial.class);
 		mapa.put("situacionPagoAnterior", DDSociedadPagoAnterior.class);
 		mapa.put("tipoPublicacion", DDTipoPublicacion.class);
 		

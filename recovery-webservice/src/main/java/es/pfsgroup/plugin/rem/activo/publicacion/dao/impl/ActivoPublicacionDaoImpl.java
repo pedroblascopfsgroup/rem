@@ -108,6 +108,9 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 			dto.setTipoPublicacionAlquilerCodigo(entidad.getTipoPublicacionAlquiler().getCodigo());
 			dto.setTipoPublicacionAlquilerDescripcion(entidad.getTipoPublicacionAlquiler().getDescripcion());
 		}
+		if ( entidad.getPortal() != null) {
+			dto.setCanalDePublicacion(entidad.getPortal().getCodigo());
+		}
 
 		return dto;
 	}

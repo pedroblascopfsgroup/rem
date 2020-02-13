@@ -4451,7 +4451,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (dto.getVta() < IMPORTE_UMBRAL) {
 			if (dto.getPvb() >= dto.getPmin()) {
 				return genericDao.get(DDComiteSancion.class, filtroComiteHRE);
-			} else if ((dto.getPvb() < dto.getPmin()) || (dto.getPvn() >= dto.getVr())) {
+			} else if (dto.getPvn() >= dto.getVr()) {
 				return genericDao.get(DDComiteSancion.class, filtroGestion);
 			} else if (dto.getPvn() < dto.getVr() && perdida < 0) {
 				if (perdidaValorAbs <= porcentajeSobreVNC1) {

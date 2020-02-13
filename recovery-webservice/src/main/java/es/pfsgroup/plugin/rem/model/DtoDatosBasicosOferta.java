@@ -119,7 +119,17 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private Double importeContraofertaOfertanteCES;
 	
 	private String ofertaSingular;
+	
+	private Boolean estadoAprobadoLbk;
 
+
+	public Boolean getEstadoAprobadoLbk() {
+		return estadoAprobadoLbk;
+	}
+
+	public void setEstadoAprobadoLbk(Boolean estadoAprobadoLbk) {
+		this.estadoAprobadoLbk = estadoAprobadoLbk;
+	}
 
 	public Long getIdOferta() {
 		return idOferta;

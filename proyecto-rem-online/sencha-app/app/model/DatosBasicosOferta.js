@@ -129,6 +129,9 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     			name:'necesitaFinanciacion'
     		},
     		{
+    			name:'estadoAprobadoLbk'
+    		},
+    		{
     			name: 'permiteProponer',
     			convert: function(value) {
     				if (!Ext.isEmpty(value)) {

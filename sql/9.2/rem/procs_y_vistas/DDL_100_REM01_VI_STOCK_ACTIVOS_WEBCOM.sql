@@ -422,12 +422,12 @@ BEGIN/*Versión 0.8*/
 			JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON (GEE.DD_TGE_ID = TGE.DD_TGE_ID AND DD_TGE_CODIGO = ''HAYAGBOINM'' AND  GEE.BORRADO = 0)
 			JOIN '||V_ESQUEMA_M||'.USU_USUARIOS USU ON USU.USU_ID = GEE.USU_ID
 		) GMO ON GMO.ACT_ID = ACT.ACT_ID
-		LEFT JOIN '||V_ESQUEMA||'.ACT_HFP_HIST_FASES_PUB HFP ON HFP.ACT_ID = act.ACT_ID 
+		LEFT JOIN '||V_ESQUEMA||'.ACT_HFP_HIST_FASES_PUB HFP ON HFP.ACT_ID = act.ACT_ID and (hfp.borrado = 0 or hfp.borrado is null) and hfp.hfp_fecha_fin is null 
 		LEFT JOIN '||V_ESQUEMA||'.DD_FSP_FASE_PUBLICACION FSP ON FSP.DD_FSP_ID = HFP.DD_FSP_ID 
 		LEFT JOIN '||V_ESQUEMA||'.DD_SFP_SUBFASE_PUBLICACION SFP ON SFP.DD_SFP_ID = HFP.DD_SFP_ID  
 		LEFT JOIN '||V_ESQUEMA||'.ACT_LLV_LLAVE LLV ON LLV.ACT_ID = ACT.ACT_ID AND LLV.BORRADO = 0 AND (LLV.LLV_COD_TENEDOR_POSEEDOR IS NOT NULL AND LLV.LLV_COD_TENEDOR_POSEEDOR NOT LIKE ''N/A'' OR LLV.LLV_COD_TENEDOR_NO_PVE IS NOT NULL AND LLV.LLV_COD_TENEDOR_NO_PVE NOT LIKE ''N/A'')
 		LEFT JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE_LLV ON LLV.LLV_COD_TENEDOR_POSEEDOR = PVE_LLV.PVE_ID AND PVE_LLV.BORRADO = 0
-		where act.borrado = 0 and sps.borrado = 0 and ico.borrado = 0 and (hfp.borrado = 0 or hfp.borrado is null) and hfp.hfp_fecha_fin is null ';
+		where act.borrado = 0';
 
 		DBMS_OUTPUT.PUT_LINE('[INFO] Vista materializada : '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'... creada');
 		
@@ -448,7 +448,8 @@ BEGIN/*Versión 0.8*/
 		
 		-- Creamos tabla
 		DBMS_OUTPUT.PUT_LINE('[INFO] Crear nueva tabla : '|| V_ESQUEMA ||'.'|| V_TEXT_TABLA ||' a partir de la vista materializada ');
-		EXECUTE IMMEDIATE 'CREATE TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' AS  (SELECT * FROM '||V_ESQUEMA||'.'||V_TEXT_VISTA||')';	
+		EXECUTE IMMEDIATE 'CREATE TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' AS  (SELECT 
+																					* FROM '||V_ESQUEMA||'.'||V_TEXT_VISTA||')';	
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');	
 
 		-- Creamos indice	

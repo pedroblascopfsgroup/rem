@@ -25,11 +25,6 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDSegmentoCarteraSubcartera implements Auditable {
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 
 	 @Id
 	 @Column(name = "DD_SCS_ID")

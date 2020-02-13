@@ -67,6 +67,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String motivoActivo;
 	private Boolean tieneRegistroContrato;
 	private Integer diasCambioEstadoActivo;
+	private String tipoSegmentoCodigo;
 
 	// Comunidad de propietarios
 	private String tipoCuotaCodigo;
@@ -125,6 +126,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String situacionComercialCodigo;
 	private String situacionComercialDescripcion;
 	private Boolean esSarebProyecto;
+	private Boolean isUA;
 	
 	//Perimetro datos:
 	private Boolean incluidoEnPerimetro;
@@ -2063,6 +2065,22 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setPazSocial(Boolean pazSocial) {
 		this.pazSocial = pazSocial;
+	}
+
+	public String getTipoSegmentoCodigo() {
+		return tipoSegmentoCodigo;
+	}
+
+	public void setTipoSegmentoCodigo(String tipoSegmentoCodigo) {
+		this.tipoSegmentoCodigo = tipoSegmentoCodigo;
+	}
+
+	public Boolean getIsUA() {
+		return isUA;
+	}
+
+	public void setIsUA(Boolean isUA) {
+		this.isUA = isUA;
 	}
 	
 }

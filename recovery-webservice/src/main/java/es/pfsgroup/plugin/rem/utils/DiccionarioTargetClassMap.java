@@ -250,6 +250,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("direccionTerritorial", DDDireccionTerritorial.class);
 		mapa.put("situacionPagoAnterior", DDSociedadPagoAnterior.class);
 		mapa.put("tipoPublicacion", DDTipoPublicacion.class);
+		mapa.put("tipoSegmento", DDTipoSegmento.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

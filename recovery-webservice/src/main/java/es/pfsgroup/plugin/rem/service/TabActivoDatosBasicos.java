@@ -82,6 +82,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivoBDE;
@@ -94,6 +95,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProductoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
@@ -865,6 +867,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 		}
 		
+		if(activo.getTipoSegmento() != null) {
+			activoDto.setTipoSegmentoCodigo(activo.getTipoSegmento().getCodigo());
+		}
+		
+		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));
+		
 		return activoDto;
 	}
 	
@@ -884,6 +892,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto webDto)  throws JsonViewerException {
 		DtoActivoFichaCabecera dto = (DtoActivoFichaCabecera) webDto;
+		
+		validateSaveDatosBasicos(dto, activo);
 		
 		try {
 			beanUtilNotNull.copyProperties(activo, dto);
@@ -1316,6 +1326,16 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}
 			}
 			
+			if(dto.getTipoSegmentoCodigo() != null) {
+				DDTipoSegmento tipoSegmento = (DDTipoSegmento) diccionarioApi.dameValorDiccionarioByCod(DDTipoSegmento.class, dto.getTipoSegmentoCodigo());
+				activo.setTipoSegmento(tipoSegmento);
+				
+				if(DDTipoSegmento.CODIGO_SEGMENTO_MACC.equals(tipoSegmento.getCodigo())) {
+					activo.setPerimetroMacc(1);
+				}else {
+					activo.setPerimetroMacc(0);
+				}
+			}		
 
 			if (!Checks.esNulo(activo)) {
 				boolean isUnidadAlquilable = activoDao.isUnidadAlquilable(activo.getId());
@@ -1369,8 +1389,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		return activo;
 	}
-	
-
 
 	/**
 	 * Acciones al desmarcar check Comercializar
@@ -1573,6 +1591,17 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 			
 		}
+	}
+	
+	private void validateSaveDatosBasicos(DtoActivoFichaCabecera dto, Activo activo) {
+	
+		if(dto != null && dto.getTipoSegmentoCodigo() != null
+				&& DDTipoSegmento.CODIGO_SEGMENTO_MACC.equals(dto.getTipoSegmentoCodigo())
+				&& !DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getTipoComercializacion().getCodigo())) {
+			throw new JsonViewerException("No puede cambiar el segmento a MACC ya que el destino comercial"
+					+ " del activo es '" + activo.getTipoComercializacion().getDescripcion() + "'");
+		}
+		
 	}
 
 }

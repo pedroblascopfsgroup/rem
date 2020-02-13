@@ -498,7 +498,7 @@ public class Activo implements Serializable, Auditable {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TS_ID")
-    private DDTipoSegmento segmento; 
+    private DDTipoSegmento tipoSegmento; 
 	
     @Column(name = "ACT_VALOR_LIQUIDEZ")
     private String valorLiquidez;
@@ -1962,13 +1962,13 @@ public class Activo implements Serializable, Auditable {
 		this.valorLiquidez = valorLiquidez;
 	}
 
-	public DDTipoSegmento getSegmento() {
-		return segmento;
+	public DDTipoSegmento getTipoSegmento() {
+		return tipoSegmento;
 	}
 
-	public void setSegmento(DDTipoSegmento segmento) {
-		this.segmento = segmento;
+	public void setTipoSegmento(DDTipoSegmento tipoSegmento) {
+		this.tipoSegmento = tipoSegmento;
 	}
-	
+
 	
 }

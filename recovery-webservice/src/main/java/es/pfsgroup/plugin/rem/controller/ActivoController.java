@@ -140,7 +140,6 @@ import es.pfsgroup.plugin.rem.model.VActivosAgrupacionLil;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
@@ -273,9 +272,6 @@ public class ActivoController extends ParadiseJsonController {
 		} catch (JsonViewerException jvex) {
 					model.put("success", false);
 					model.put("msgError", jvex.getMessage());
-		/*} catch (JsonViewerException jvex) {
-			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());*/
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);

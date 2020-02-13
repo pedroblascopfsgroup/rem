@@ -53,7 +53,7 @@ public class DDTipoSegmento implements Auditable, Dictionary {
 	 @Column(name = "DD_TS_DESCRIPCION")   
 	 private String descripcion;
 	    
-	 @Column(name = "DD_TTA_DESCRIPCION_LARGA")   
+	 @Column(name = "DD_TS_DESCRIPCION_LARGA")   
 	 private String descripcionLarga;
 	    		    
 	 @Version   

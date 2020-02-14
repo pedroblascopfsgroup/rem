@@ -189,6 +189,11 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						                name:		'idUvem'
 									},
 									{
+							        	fieldLabel: HreRem.i18n('fieldlabel.numero.activo.divarian'),
+							        	labelWidth:	150,
+							        	name: 'numActivoDivarian'
+							        },
+									{
 										fieldLabel: HreRem.i18n('fieldlabel.id.activo.recovery'),
 										labelWidth:	150,
 						                name:		'idRecovery'
@@ -658,69 +663,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							    		bind: {
 							    			store: '{comboDireccionTerritorial}'
 							    		}
-							    	},
-							    	{ 
-							    		xtype: 'comboboxfieldbase',
-							    		fieldLabel: HreRem.i18n('fieldlabel.fase.de.publicacion'),
-							    		name: 'fasePublicacionCodigo',
-							    		bind: {
-							    			store: '{comboFasePublicacion}'
-							    		}
-							    	},
-							    	{
-								        xtype: 'comboboxfieldbase',
-							        	fieldLabel: HreRem.i18n('combolabel.activos.estado.publicacion.venta'),
-							        	name: 'estadoPublicacionVentaCodigo',
-							        	reference: 'estadoPublicacionVenta',
-							        	bind: {
-						            		store: '{comboEstadoPublicacionVenta}'
-							        	},
-										listeners: {
-											change: 'changeComboEstadoPublicacionVenta'
-										}
-									},
-									{
-										xtype: 'comboboxfieldbase',
-							        	fieldLabel: HreRem.i18n('combolabel.activos.estado.publicacion.alquiler'),
-							        	name: 'estadoPublicacionAlquilerCodigo',
-							        	reference: 'estadoPublicacionAlquiler',
-							        	bind: {
-						            		store: '{comboEstadoPublicacionAlquiler}'
-						            	},
-										listeners: {
-											change: 'changeComboEstadoPublicacionAlquiler'
-										}
-							        },
-									{ 
-									   	xtype: 'comboboxfieldbase',
-							        	fieldLabel: HreRem.i18n('combolabel.activos.combo.motivo.ocultacion.venta'),
-							        	name: 'motivosOcultacionVenta',
-							        	reference: 'motivosOcultacionVenta',
-							        	bind: {
-							        		hidden: true,
-						            		store: '{comboMotivoOcultacion}'
-						            	}
-									},
-					        		{ 
-							        	xtype: 'comboboxfieldbase',
-							        	fieldLabel: HreRem.i18n('combolabel.activos.combo.motivo.ocultacion.alquiler'),
-							        	name: 'motivosOcultacionAlquiler',
-							        	reference: 'motivosOcultacionAlquiler',
-							        	bind: {
-							        		hidden: true,
-						            		store: '{comboMotivoOcultacion}'
-						            	}
-					        		},
-							    	{ 
-							        	xtype: 'comboboxfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.tipo.de.publicacion'),
-						            	name: 'tipoPublicacionCodigo',
-						            	reference: 'tipoPublicacionCodigo',
-							        	bind: {
-							        		hidden: true,
-						            		store: '{comboTiposPublicacionActivo}'
-						            	}
-							        }
+							    	}
 								]
 			            }
 		            ]}

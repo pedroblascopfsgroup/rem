@@ -72,6 +72,8 @@ public class VisitaDto implements Serializable {
 	
 	private String idLeadSalesforce;
 	
+	private Date fechaReasignacionRealizadorOportunidad;
+	
 	//Se añaden nuevos atributos petición HREOS-1396
 	@Size(max=14,groups = { Insert.class, Update.class })
 	private String telefonoContactoVisitas;
@@ -214,6 +216,12 @@ public class VisitaDto implements Serializable {
 	}
 	public void setIdProveedorPrescriptorOportunidadREM(Long idProveedorPrescriptorOportunidadREM) {
 		this.idProveedorPrescriptorOportunidadREM = idProveedorPrescriptorOportunidadREM;
+	}
+	public Date getFechaReasignacionRealizadorOportunidad() {
+		return fechaReasignacionRealizadorOportunidad;
+	}
+	public void setFechaReasignacionRealizadorOportunidad(Date fechaReasignacionRealizadorOportunidad) {
+		this.fechaReasignacionRealizadorOportunidad = fechaReasignacionRealizadorOportunidad;
 	}
 	
 }

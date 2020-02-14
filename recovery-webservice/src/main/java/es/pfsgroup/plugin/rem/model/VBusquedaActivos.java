@@ -270,21 +270,9 @@ public class VBusquedaActivos implements Serializable {
 	
 	@Column(name = "DD_ECG_CODIGO")
 	private String estadoComunicacionGencat;
-	
-	@Column(name = "GPUBL_USU_USERNAME")
-	private String gestorPublicacionUsername;
 
 	@Column(name = "ICO_MEDIADOR_ID")
 	private Long apiPrimarioId;
-
-	@Column(name = "DD_TAL_DESCRIPCION")
-	private String tipoAlquilerDescripcion;
-
-	@Column(name = "APU_FECHA_INI_VENTA")
-	private Date fechaPublicacionVenta;
-
-	@Column(name = "APU_FECHA_INI_ALQUILER")
-	private Date fechaPublicacionAlquiler;
 	
 	/*
 	  La variable tipoComercializacionCodigoAuxiliar es utilizada el listado de activos del filtro para saber si tiene que mostrar la
@@ -330,6 +318,9 @@ public class VBusquedaActivos implements Serializable {
 	
 	@Column(name ="DD_TDC_DIRECCION_COMERCIAL")
 	private String territorio;
+	
+	@Column(name = "ACT_NUM_ACTIVO_DIVARIAN")
+	private String numActivoDivarian;
 	
 
 	public Long getId() {
@@ -686,44 +677,12 @@ public class VBusquedaActivos implements Serializable {
 		this.estadoComunicacionGencat = estadoComunicacionGencat;
 	}
 
-	public String getGestorPublicacionUsername() {
-		return gestorPublicacionUsername;
-	}
-
-	public void setGestorPublicacionUsername(String gestorPublicacionUsername) {
-		this.gestorPublicacionUsername = gestorPublicacionUsername;
-	}
-
 	public Long getApiPrimariaId() {
 		return apiPrimarioId;
 	}
 
 	public void setApiPrimariaId(Long apiPrimarioId) {
 		this.apiPrimarioId = apiPrimarioId;
-	}
-
-	public String getTipoAlquilerDescripcion() {
-		return tipoAlquilerDescripcion;
-	}
-
-	public void setTipoAlquilerDescripcion(String tipoAlquilerDescripcion) {
-		this.tipoAlquilerDescripcion = tipoAlquilerDescripcion;
-	}
-
-	public Date getFechaPublicacionVenta() {
-		return fechaPublicacionVenta;
-	}
-
-	public void setFechaPublicacionVenta(Date fechaPublicacionVenta) {
-		this.fechaPublicacionVenta = fechaPublicacionVenta;
-	}
-
-	public Date getFechaPublicacionAlquiler() {
-		return fechaPublicacionAlquiler;
-	}
-
-	public void setFechaPublicacionAlquiler(Date fechaPublicacionAlquiler) {
-		this.fechaPublicacionAlquiler = fechaPublicacionAlquiler;
 	}
 
 	public String getTipoComercializacionCodigo() {
@@ -734,100 +693,12 @@ public class VBusquedaActivos implements Serializable {
 		this.tipoComercializacionCodigoAuxiliar = tipoComercializacionCodigo;
 	}
 
-	public Long getPrecioTasacionActivo() {
-		return precioTasacionActivo;
+	public String getNumActivoDivarian() {
+		return numActivoDivarian;
 	}
 
-	public void setPrecioTasacionActivo(Long precioTasacionActivo) {
-		this.precioTasacionActivo = precioTasacionActivo;
-	}
-
-	public String getEstadoPublicacionVenta() {
-		return estadoPublicacionVenta;
-	}
-
-	public void setEstadoPublicacionVenta(String estadoPublicacionVenta) {
-		this.estadoPublicacionVenta = estadoPublicacionVenta;
-	}
-
-	public String getEstadoPublicacionAlquiler() {
-		return estadoPublicacionAlquiler;
-	}
-
-	public void setEstadoPublicacionAlquiler(String estadoPublicacionAlquiler) {
-		this.estadoPublicacionAlquiler = estadoPublicacionAlquiler;
-	}
-
-	public Long getApiPrimarioId() {
-		return apiPrimarioId;
-	}
-
-	public void setApiPrimarioId(Long apiPrimarioId) {
-		this.apiPrimarioId = apiPrimarioId;
-	}
-
-	public String getFasePublicacionCodigo() {
-		return fasePublicacionCodigo;
-	}
-
-	public void setFasePublicacionCodigo(String fasePublicacionCodigo) {
-		this.fasePublicacionCodigo = fasePublicacionCodigo;
-	}
-
-	public String getFasePublicacionDescripcion() {
-		return fasePublicacionDescripcion;
-	}
-
-	public void setFasePublicacionDescripcion(String fasePublicacionDescripcion) {
-		this.fasePublicacionDescripcion = fasePublicacionDescripcion;
-	}
-
-	public String getSubFasePublicacionCodigo() {
-		return subFasePublicacionCodigo;
-	}
-
-	public void setSubFasePublicacionCodigo(String subFasePublicacionCodigo) {
-		this.subFasePublicacionCodigo = subFasePublicacionCodigo;
-	}
-
-	public String getSubFasePublicacionDescripcion() {
-		return subFasePublicacionDescripcion;
-	}
-
-	public void setSubFasePublicacionDescripcion(String subFasePublicacionDescripcion) {
-		this.subFasePublicacionDescripcion = subFasePublicacionDescripcion;
-	}
-
-	public String getMotivoOcultacionAlquiler() {
-		return motivoOcultacionAlquiler;
-	}
-
-	public void setMotivoOcultacionAlquiler(String motivoOcultacionAlquiler) {
-		this.motivoOcultacionAlquiler = motivoOcultacionAlquiler;
-	}
-
-	public String getMotivoOcultacionVenta() {
-		return motivoOcultacionVenta;
-	}
-
-	public void setMotivoOcultacionVenta(String motivoOcultacionVenta) {
-		this.motivoOcultacionVenta = motivoOcultacionVenta;
-	}
-
-	public String getTipoPublicacionVentaCodigo() {
-		return tipoPublicacionVentaCodigo;
-	}
-
-	public void setTipoPublicacionVentaCodigo(String tipoPublicacionVentaCodigo) {
-		this.tipoPublicacionVentaCodigo = tipoPublicacionVentaCodigo;
-	}
-
-	public String getTipoPublicacionAlquilerCodigo() {
-		return tipoPublicacionAlquilerCodigo;
-	}
-
-	public void setTipoPublicacionAlquilerCodigo(String tipoPublicacionAlquilerCodigo) {
-		this.tipoPublicacionAlquilerCodigo = tipoPublicacionAlquilerCodigo;
+	public void setNumActivoDivarian(String numActivoDivarian) {
+		this.numActivoDivarian = numActivoDivarian;
 	}
 
 	public String getTerritorio() {

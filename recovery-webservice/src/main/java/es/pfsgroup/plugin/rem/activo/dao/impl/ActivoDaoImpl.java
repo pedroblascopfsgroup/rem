@@ -105,15 +105,15 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivo", dto.getNumActivo());
 
 		if (dto.getEntidadPropietariaCodigo() != null)
-			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo(),true);
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo());
 
-		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigoAvanzado(),true);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigoAvanzado());
 
 		if (dto.getTipoTituloActivoCodigo() != null)
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoTituloActivoCodigo", dto.getTipoTituloActivoCodigo());
 
 		if (dto.getSubtipoActivoCodigo() != null)
-			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.subtipoActivoCodigo", dto.getSubtipoActivoCodigo(), true);
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subtipoActivoCodigo", dto.getSubtipoActivoCodigo());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.refCatastral", dto.getRefCatastral(), true);
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.finca", dto.getFinca(), true);
 		if (dto.getProvinciaCodigo() != null)
@@ -190,38 +190,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.apiPrimarioId", dto.getApiPrimarioId());
 		}
 		
-		if (dto.getEstadoPublicacionVentaCodigo() != null) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoPublicacionVenta", dto.getEstadoPublicacionVentaCodigo());
-			List<String> tiposComercializacion = Arrays.asList(DDTipoComercializacion.CODIGOS_VENTA);
-			HQLBuilder.addFiltroWhereInSiNotNull(hb, "act.tipoComercializacion.codigo", tiposComercializacion);
-		}
-		
-		if (dto.getEstadoPublicacionAlquilerCodigo() != null) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoPublicacionAlquiler", dto.getEstadoPublicacionAlquilerCodigo());	
-			List<String> tiposComercializacion = Arrays.asList(DDTipoComercializacion.CODIGOS_ALQUILER);
-			HQLBuilder.addFiltroWhereInSiNotNull(hb, "act.tipoComercializacion.codigo", tiposComercializacion);
-		}
-		
-		if (!Checks.esNulo(dto.getTipoPublicacionCodigo()) 
-				&& !Checks.esNulo(dto.getEstadoPublicacionVentaCodigo()) 
-				&& DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA.equals(dto.getEstadoPublicacionVentaCodigo())) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoPublicacionVentaCodigo", dto.getTipoPublicacionCodigo());
-		}
-		
-		if (!Checks.esNulo(dto.getTipoPublicacionCodigo()) 
-				&& !Checks.esNulo(dto.getEstadoPublicacionAlquilerCodigo()) 
-				&& DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER.equals(dto.getEstadoPublicacionAlquilerCodigo())) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoPublicacionAlquilerCodigo", dto.getTipoPublicacionCodigo());
-		}
-		
-		if(dto.getMotivosOcultacionVenta() != null) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.motivoOcultacionVenta", dto.getMotivosOcultacionVenta());
-		}
-		
-		if(dto.getMotivosOcultacionAlquiler() != null) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.motivoOcultacionAlquiler", dto.getMotivosOcultacionAlquiler());
-		}
-		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "scr.codigo", dto.getSubcarteraCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "scr.codigo", dto.getSubcarteraCodigoAvanzado());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoActivoCodigo", dto.getTipoActivoCodigo());
@@ -273,7 +241,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			hb.appendWhere(" exists (select 1 from ActivoAgrupacionActivo aga where aga.agrupacion.numAgrupRem = " + dto.getNumAgrupacion() + " and act.id = aga.activo.id)");
 		}
 		
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.fasePublicacionCodigo", dto.getFasePublicacionCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoDivarian", dto.getNumActivoDivarian());
 
 		if(!Checks.esNulo(dto.isListPage()) && dto.isListPage())
 			return HibernateQueryUtils.page(this, hb, dto);
@@ -783,6 +751,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.okalquiler", dto.getOkalquiler());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.motivoOcultacionVenta", dto.getMotivosOcultacionCodigo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.motivoOcultacionAlquiler", dto.getMotivosOcultacionAlquilerCodigo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.fasePublicacionCodigo", dto.getFasePublicacionCodigo());
    		if (!Checks.esNulo(dto.getTipoComercializacionCodigo()))HQLBuilder.addFiltroWhereInSiNotNull(hb, "activopubli.tipoComercializacionCodigo", Arrays.asList(dto.getTipoComercializacionCodigo()));
 
 		return HibernateQueryUtils.page(this, hb, dto);
@@ -1442,18 +1411,21 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 		return null;
     }
+
 	@Override
 	public boolean isUnidadAlquilable(Long idActivo) {
-		boolean isUnidadAlquilable = false;
-		if (!Checks.esNulo(idActivo)) {
-			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
-			Activo activo = genericDao.get(Activo.class, filtroActivo);
-			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoTitulo()) && DDTipoTituloActivo.UNIDAD_ALQUILABLE.equals(activo.getTipoTitulo().getCodigo())) {
-				isUnidadAlquilable = true;
-			}
+		if (idActivo != null) {
+			Activo activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", idActivo));
+			return isUnidadAlquilable(activo);
 		}
 
-		return isUnidadAlquilable;
+		return false;
+	}
+
+	@Override
+	public boolean isUnidadAlquilable(Activo activo) {
+		return (activo != null && activo.getTipoTitulo() != null)
+				&& DDTipoTituloActivo.UNIDAD_ALQUILABLE.equals(activo.getTipoTitulo().getCodigo());
 	}
 
 	@Override

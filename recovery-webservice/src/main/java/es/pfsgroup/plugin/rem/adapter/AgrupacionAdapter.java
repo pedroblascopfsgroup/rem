@@ -407,7 +407,7 @@ public class AgrupacionAdapter {
 					Activo act = agrupacion.getActivoPrincipal();
 					if(Checks.esNulo(act)){
 						List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
-						if(!Checks.estaVacio(activos)){
+						if(activos != null && !activos.isEmpty()){
 							act = activos.get(0).getActivo();
 							if(!Checks.esNulo(act.getCartera())){
 								BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera", act.getCartera().getCodigo());

@@ -1281,7 +1281,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				if (!Checks.esNulo(nuevoSupervisorC) && !Checks.esNulo(nuevoSupervisorC.getUsuario())) {
 					usuarioSupervisorComercial = nuevoSupervisorC.getUsuario();// flag
 				}
-				if (!Checks.esNulo(supervisorFormalzacion)) {
+				if (!Checks.esNulo(supervisorFormalzacion) && !Checks.esNulo(supervisorFormalzacion.getUsuario())) {
 					this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION,
 							supervisorFormalzacion.getUsuario().getUsername(), dto);
 				}

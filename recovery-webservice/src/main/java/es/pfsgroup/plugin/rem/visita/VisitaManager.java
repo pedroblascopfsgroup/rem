@@ -351,6 +351,10 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 				visita.setOrigenComprador(origenComprador);
 			}
 			
+			if(!Checks.esNulo(visitaDto.getFechaReasignacionRealizadorOportunidad())) {
+				visita.setFechaReasignacionRealizadorOportunidad(visitaDto.getFechaReasignacionRealizadorOportunidad());
+			}
+			
 			visitaDao.save(visita);
 			
 			//Si Webcom nos envia el idSalesforce despues de crear la visita la asociaremos a su comunicacion de GENCAT
@@ -517,6 +521,10 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			if(!Checks.esNulo(visitaDto.getCodOrigenComprador())) {
 				DDOrigenComprador origenComprador = genericDao.get(DDOrigenComprador.class, genericDao.createFilter(FilterType.EQUALS, "codigo",visitaDto.getCodOrigenComprador()));
 				visita.setOrigenComprador(origenComprador);
+			}
+			
+			if(!Checks.esNulo(visitaDto.getFechaReasignacionRealizadorOportunidad())) {
+				visita.setFechaReasignacionRealizadorOportunidad(visitaDto.getFechaReasignacionRealizadorOportunidad());
 			}
 			
 			visitaDao.saveOrUpdate(visita);

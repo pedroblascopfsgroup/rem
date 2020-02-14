@@ -270,24 +270,12 @@ public class VBusquedaActivos implements Serializable {
 	
 	@Column(name = "DD_ECG_CODIGO")
 	private String estadoComunicacionGencat;
-	
-	@Column(name = "GPUBL_USU_USERNAME")
-	private String gestorPublicacionUsername;
 
 	@Column(name = "DD_DRT_CODIGO")
 	private String direccionTerritorialCodigo;
 
 	@Column(name = "ICO_MEDIADOR_ID")
 	private Long apiPrimarioId;
-
-	@Column(name = "DD_TAL_DESCRIPCION")
-	private String tipoAlquilerDescripcion;
-
-	@Column(name = "APU_FECHA_INI_VENTA")
-	private Date fechaPublicacionVenta;
-
-	@Column(name = "APU_FECHA_INI_ALQUILER")
-	private Date fechaPublicacionAlquiler;
 	
 	/*
 	  La variable tipoComercializacionCodigoAuxiliar es utilizada el listado de activos del filtro para saber si tiene que mostrar la
@@ -298,39 +286,8 @@ public class VBusquedaActivos implements Serializable {
 	@Column(name = "DD_TCO_CODIGO")
 	private String tipoComercializacionCodigoAuxiliar; 
 	
-	@Column(name = "TAS_IMPORTE_TAS_FIN")
-	private Long precioTasacionActivo; 
-		
-	@Column(name = "ESTADO_PUBLICACION_VENTA")
-	private String estadoPublicacionVenta;
-	
-	@Column(name = "ESTADO_PUBLICACION_ALQUILER")
-	private String estadoPublicacionAlquiler;
-	
-	@Column(name = "FASE_PUBLICACION_CODIGO")
-	private String fasePublicacionCodigo;
-	
-	@Column(name = "FASE_PUBLICACION_DESCRIPCION")
-	private String fasePublicacionDescripcion;
-	
-	@Column(name = "SUBFASE_PUBLICACION_CODIGO")
-	private String subFasePublicacionCodigo;
-	
-	@Column(name = "SUBFASE_PUBLICACION_DESCRIPCION")
-	private String subFasePublicacionDescripcion;
-	
-	@Column(name= "MOTIVO_OCULTACION_ALQUILER")
-    private String motivoOcultacionAlquiler;
-    
-    @Column(name= "MOTIVO_OCULTACION_VENTA")
-    private String motivoOcultacionVenta;
-    
-	@Column(name = "DD_TPU_V_CODIGO")
-	private String tipoPublicacionVentaCodigo;
-	
-	@Column(name = "DD_TPU_A_CODIGO")
-	private String tipoPublicacionAlquilerCodigo;
-	
+	@Column(name = "ACT_NUM_ACTIVO_DIVARIAN")
+	private String numActivoDivarian;
 	
 	public Long getId() {
 		return id;
@@ -686,52 +643,12 @@ public class VBusquedaActivos implements Serializable {
 		this.estadoComunicacionGencat = estadoComunicacionGencat;
 	}
 
-	public String getGestorPublicacionUsername() {
-		return gestorPublicacionUsername;
-	}
-
-	public void setGestorPublicacionUsername(String gestorPublicacionUsername) {
-		this.gestorPublicacionUsername = gestorPublicacionUsername;
-	}
-
 	public String getDireccionTerritorialCodigo() {
 		return direccionTerritorialCodigo;
 	}
 
 	public void setDireccionTerritorialCodigo(String direccionTerritorialCodigo) {
 		this.direccionTerritorialCodigo = direccionTerritorialCodigo;
-	}
-
-	public Long getApiPrimariaId() {
-		return apiPrimarioId;
-	}
-
-	public void setApiPrimariaId(Long apiPrimarioId) {
-		this.apiPrimarioId = apiPrimarioId;
-	}
-
-	public String getTipoAlquilerDescripcion() {
-		return tipoAlquilerDescripcion;
-	}
-
-	public void setTipoAlquilerDescripcion(String tipoAlquilerDescripcion) {
-		this.tipoAlquilerDescripcion = tipoAlquilerDescripcion;
-	}
-
-	public Date getFechaPublicacionVenta() {
-		return fechaPublicacionVenta;
-	}
-
-	public void setFechaPublicacionVenta(Date fechaPublicacionVenta) {
-		this.fechaPublicacionVenta = fechaPublicacionVenta;
-	}
-
-	public Date getFechaPublicacionAlquiler() {
-		return fechaPublicacionAlquiler;
-	}
-
-	public void setFechaPublicacionAlquiler(Date fechaPublicacionAlquiler) {
-		this.fechaPublicacionAlquiler = fechaPublicacionAlquiler;
 	}
 
 	public String getTipoComercializacionCodigo() {
@@ -742,30 +659,6 @@ public class VBusquedaActivos implements Serializable {
 		this.tipoComercializacionCodigoAuxiliar = tipoComercializacionCodigo;
 	}
 
-	public Long getPrecioTasacionActivo() {
-		return precioTasacionActivo;
-	}
-
-	public void setPrecioTasacionActivo(Long precioTasacionActivo) {
-		this.precioTasacionActivo = precioTasacionActivo;
-	}
-
-	public String getEstadoPublicacionVenta() {
-		return estadoPublicacionVenta;
-	}
-
-	public void setEstadoPublicacionVenta(String estadoPublicacionVenta) {
-		this.estadoPublicacionVenta = estadoPublicacionVenta;
-	}
-
-	public String getEstadoPublicacionAlquiler() {
-		return estadoPublicacionAlquiler;
-	}
-
-	public void setEstadoPublicacionAlquiler(String estadoPublicacionAlquiler) {
-		this.estadoPublicacionAlquiler = estadoPublicacionAlquiler;
-	}
-
 	public Long getApiPrimarioId() {
 		return apiPrimarioId;
 	}
@@ -774,67 +667,11 @@ public class VBusquedaActivos implements Serializable {
 		this.apiPrimarioId = apiPrimarioId;
 	}
 
-	public String getFasePublicacionCodigo() {
-		return fasePublicacionCodigo;
+	public String getNumActivoDivarian() {
+		return numActivoDivarian;
 	}
 
-	public void setFasePublicacionCodigo(String fasePublicacionCodigo) {
-		this.fasePublicacionCodigo = fasePublicacionCodigo;
-	}
-
-	public String getFasePublicacionDescripcion() {
-		return fasePublicacionDescripcion;
-	}
-
-	public void setFasePublicacionDescripcion(String fasePublicacionDescripcion) {
-		this.fasePublicacionDescripcion = fasePublicacionDescripcion;
-	}
-
-	public String getSubFasePublicacionCodigo() {
-		return subFasePublicacionCodigo;
-	}
-
-	public void setSubFasePublicacionCodigo(String subFasePublicacionCodigo) {
-		this.subFasePublicacionCodigo = subFasePublicacionCodigo;
-	}
-
-	public String getSubFasePublicacionDescripcion() {
-		return subFasePublicacionDescripcion;
-	}
-
-	public void setSubFasePublicacionDescripcion(String subFasePublicacionDescripcion) {
-		this.subFasePublicacionDescripcion = subFasePublicacionDescripcion;
-	}
-
-	public String getMotivoOcultacionAlquiler() {
-		return motivoOcultacionAlquiler;
-	}
-
-	public void setMotivoOcultacionAlquiler(String motivoOcultacionAlquiler) {
-		this.motivoOcultacionAlquiler = motivoOcultacionAlquiler;
-	}
-
-	public String getMotivoOcultacionVenta() {
-		return motivoOcultacionVenta;
-	}
-
-	public void setMotivoOcultacionVenta(String motivoOcultacionVenta) {
-		this.motivoOcultacionVenta = motivoOcultacionVenta;
-	}
-
-	public String getTipoPublicacionVentaCodigo() {
-		return tipoPublicacionVentaCodigo;
-	}
-
-	public void setTipoPublicacionVentaCodigo(String tipoPublicacionVentaCodigo) {
-		this.tipoPublicacionVentaCodigo = tipoPublicacionVentaCodigo;
-	}
-
-	public String getTipoPublicacionAlquilerCodigo() {
-		return tipoPublicacionAlquilerCodigo;
-	}
-
-	public void setTipoPublicacionAlquilerCodigo(String tipoPublicacionAlquilerCodigo) {
-		this.tipoPublicacionAlquilerCodigo = tipoPublicacionAlquilerCodigo;
+	public void setNumActivoDivarian(String numActivoDivarian) {
+		this.numActivoDivarian = numActivoDivarian;
 	}
 }

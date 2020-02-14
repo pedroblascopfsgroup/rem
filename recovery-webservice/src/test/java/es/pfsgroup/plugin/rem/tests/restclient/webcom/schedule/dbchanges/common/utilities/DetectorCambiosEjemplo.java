@@ -6,6 +6,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.tests.restclient.webcom.examples.ExampleDto;
+import net.sf.json.JSONObject;
 
 /**
  * Implementación de detector de cambios para testing.
@@ -63,8 +64,9 @@ public class DetectorCambiosEjemplo extends DetectorCambiosBD<ExampleDto>{
 	}
 
 	@Override
-	public void invocaServicio(List<ExampleDto> data, RestLlamada registro) throws ErrorServicioWebcom {
+	public JSONObject invocaServicio(List<ExampleDto> data, RestLlamada registro) throws ErrorServicioWebcom {
 		// TODO Auto-generated method stub
+		return null;
 		
 	}
 

@@ -27,13 +27,17 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.velocity.runtime.directive.Foreach;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.dto.WebDto;
@@ -62,6 +66,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
@@ -180,6 +185,8 @@ import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
+import es.pfsgroup.plugin.rem.thread.GuardarActivosRestringidasAsync;
+import es.pfsgroup.plugin.rem.thread.TramitacionOfertasAsync;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
@@ -341,6 +348,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Autowired
 	private EXTGrupoUsuariosDao extGrupoUsuariosDao;
+
+	@Autowired
+	private HibernateUtils hibernateUtils;
 
 	@Override
 	public String managerName() {
@@ -1302,9 +1312,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					
 				} catch (IllegalAccessException e) {
 					logger.error("Error en activoManager", e);
+					return false;
 					
 				} catch (InvocationTargetException e) {
 					logger.error("Error en activoManager", e);
+					return false;
 				}
 				
 				genericDao.save(ActivoCondicionEspecifica.class, condicionEspecifica);
@@ -1342,9 +1354,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
+			return false;
 
 		} catch (InvocationTargetException e) {
 			logger.error("Error en activoManager", e);
+			return false;
 		}
 
 		genericDao.save(ActivoCondicionEspecifica.class, condicionEspecifica);
@@ -2248,9 +2262,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public boolean isPisoPiloto(Activo activo) {
 		boolean pisoPiloto = false;
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activoId", activo.getId());
-		List<VActivosAgrupacion> agrupacionesActivo = genericDao.getList(VActivosAgrupacion.class, filtro);
+		List<VActivosAgrupacionLil> agrupacionesActivo = genericDao.getList(VActivosAgrupacionLil.class, filtro);
 		
-		for(VActivosAgrupacion activoPisoPiloto: agrupacionesActivo) {
+
+		
+		for(VActivosAgrupacionLil activoPisoPiloto: agrupacionesActivo) {
 			if(!Checks.esNulo(activoPisoPiloto) && !Checks.esNulo(activoPisoPiloto.getEsPisoPiloto()) && activoPisoPiloto.getEsPisoPiloto()) {
 				pisoPiloto = true;
 				break;
@@ -3473,7 +3489,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				beanUtilNotNull.copyProperty(dto, "observacionesAutoTram", activo.getActivoAutorizacionTramitacionOfertas().getObservacionesAutoTram());
 			}
 			if(!Checks.esNulo(activo.getTerritorio())) {
-				beanUtilNotNull.copyProperty(dto, "direccionComercial", activo.getTerritorio().getCodigo()); 
+				beanUtilNotNull.copyProperty(dto, "direccionComercial", activo.getTerritorio().getCodigo());
+	
 			}
 
 		} catch (IllegalAccessException e) {
@@ -3544,11 +3561,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 			}
 			if(!Checks.esNulo(dto.getDireccionComercial())) {
-				DDTerritorio territorio = (DDTerritorio) utilDiccionarioApi
-						.dameValorDiccionarioByCod(DDTerritorio.class, dto.getDireccionComercial());
-				
+				DDTerritorio territorio = (DDTerritorio) utilDiccionarioApi.dameValorDiccionarioByCod(DDTerritorio.class, dto.getDireccionComercial());
 				activo.setTerritorio(territorio);
-				
+				if(activoDao.isActivoPrincipalAgrupacionRestringida(activo.getId()) != 0){
+					Thread guardadoAsincrono = new Thread(new GuardarActivosRestringidasAsync(activo.getId(), genericAdapter.getUsuarioLogado().getUsername()));
+					guardadoAsincrono.start();
+				}
 			}
 			
 		} catch (IllegalAccessException e) {
@@ -3558,6 +3576,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		} catch (InvocationTargetException e) {
 			logger.error("Error en activoManager", e);
 			return false;
+		} catch (Exception e) {
+			logger.error("Error el hilo activoManager", e);
+			return false;
+
 		}
 		
 		activo.setEstaEnPuja(dto.getPuja());
@@ -6598,4 +6620,31 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		return false;
 	}
+	
+	
+	@Override
+	public void propagarTerritorioAgrupacionRestringida(Long idActivo) {
+
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+		Activo activo = activoDao.getActivoById(idActivo);
+		try {
+			ActivoAgrupacion agrupacion = getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId()).getAgrupacion();
+			if(!Checks.esNulo(agrupacion)) {
+				List<ActivoAgrupacionActivo> agrupacionActivos = agrupacion.getActivos();
+				for (ActivoAgrupacionActivo activoAgrupacionActivo : agrupacionActivos) {	
+					if(activo != activoAgrupacionActivo.getActivo()) {
+						activoAgrupacionActivo.getActivo().setTerritorio(activo.getTerritorio());
+					}
+					
+				}
+			}
+			
+			transactionManager.commit(transaction);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			transactionManager.rollback(transaction);
+		}
+	}
+
 }
+

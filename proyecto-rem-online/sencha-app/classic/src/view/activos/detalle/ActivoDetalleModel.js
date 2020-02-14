@@ -876,12 +876,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     	isCesionUsoEditable: function () {
     		return $AU.userIsRol('GESTALQ') || $AU.userIsRol(CONST.PERFILES['HAYASUPER']);    		
     	},
-    	
-    	esEditableDestinoComercial: function(get){
+		
+		mostrarTitlePerimetroDatosBasicos: function(get){
 			var me = this;
-			var esPazSocial = get('activo.pazSocial');
-			return !me.get('esUA') && !esPazSocial;			
-		}	    
+			var isSubcarteraApple = get('activo.isSubcarteraApple');
+			var isSubcarteraDivarian = get('activo.isSubcarteraDivarian');
+			var title = "";
+			
+			if(isSubcarteraApple){
+				title = HreRem.i18n('title.perimetro.apple');
+			}else if(isSubcarteraDivarian){
+				title = HreRem.i18n('title.perimetro.divarian');
+			}
+			return title;
+		}
 	 }, 
 	 
 	 stores: {

@@ -576,7 +576,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var idGasto = detalle.up().idGasto;
     	var url =  $AC.getRemoteUrl('gastosproveedor/fechaDevengoPosteriorFechaTraspaso');
     	window.mask(HreRem.i18n("msg.mask.loading"));
-
+	
     	if(!Ext.isEmpty(detalle.getBindRecord())){
     		
     		var  viewModelDetalle = btn.up("[xtype=gastodetalle]").lookupViewModel();
@@ -775,7 +775,14 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		detalle.getModelInstance().save({
 			
 			success: function(a, operation, c){
-				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				var data = Ext.decode(operation._response.responseText);
+				window.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
+				window.up('gastodetalle').down('contabilidadgasto').funcionRecargar();
+				if(!Ext.isEmpty(data) && data.success == "true") {
+					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				} else {
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				}
 			},
 			failure: function(a, operation){
 				var data = {};
@@ -1713,6 +1720,62 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			form.down('[name=gastoRefacturadoGrid]').setDisabled(true);
 			form.down('[name=checkboxActivoRefacturable]').setDisabled(true);
 			form.down('[name=checkboxActivoRefacturable]').setValue(false);
+		}
+	},
+	
+	onActivateActionsContabilidadTab: function (target) {
+		var me=this;
+		me.viewBotonesEditar(target);
+		me.viewItemsContabilidad();
+	},
+	
+	viewBotonesEditar: function(target){
+		var me = this;
+		var estadoGasto= me.getViewModel().get('gasto.estadoGastoCodigo');
+		var autorizado = me.getViewModel().get('gasto.autorizado');
+		var rechazado = me.getViewModel().get('gasto.rechazado');
+		var agrupado = me.getViewModel().get('gasto.esGastoAgrupado');
+		var gestoria = me.getViewModel().get('gasto.nombreGestoria')!=null;
+		target.up('tabpanel').down('tabbar').down('button[itemId=botoneditar]')
+			.setVisible(me.botonesEdicionGasto(estadoGasto,autorizado,rechazado,agrupado,gestoria,target));
+	},
+	
+	viewItemsContabilidad: function () {
+		var me = this;
+		var cartera = me.getViewModel().get('gasto.cartera');
+		var subcartera = me.getViewModel().get('gasto.subcartera'); 
+		var isDivarian = CONST.CARTERA['CERBERUS'] === cartera
+						&& (CONST.SUBCARTERA['DIVARIANARROW'] === subcartera
+								|| CONST.SUBCARTERA['DIVARIANREMAINING'] == subcartera || CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcartera);
+		
+		var isEditableDivarian = isDivarian && $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+		
+		var cuentaContable = me.lookupReference('cuentaContable')
+		var partidaPresupuestaria = me.lookupReference('partidaPresupuestaria');
+		var comboSubPartida = me.lookupReference('comboboxfieldSubpartidaPresupuestaria');
+		
+		partidaPresupuestaria.setReadOnly(!isEditableDivarian);	
+		cuentaContable.setReadOnly(!isEditableDivarian);
+		comboSubPartida.setHidden(!isDivarian);
+		
+		if (isDivarian) {
+			partidaPresupuestaria
+				.setFieldLabel(HreRem.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria') + ' **');
+			cuentaContable
+				.setFieldLabel(HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable')	+ ' **');
+		} else if (cartera == CONST.CARTERA['BANKIA'] || cartera == CONST.CARTERA['LIBERBANK']) {
+			cuentaContable
+				.setFieldLabel(HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable'));
+				
+			if (cartera == CONST.CARTERA['LIBERBANK']) {
+				partidaPresupuestaria
+					.setFieldLabel(HreRem.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria'));
+			}
+		} else {
+			partidaPresupuestaria
+				.setFieldLabel(HreRem.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria') + ' *');
+			cuentaContable
+				.setFieldLabel(HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable')	+ ' *');
 		}
 	}
 	

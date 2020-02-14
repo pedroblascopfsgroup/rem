@@ -227,7 +227,6 @@ public class DiccionarioTargetClassMap{
 		mapa.put("estadosCivilesURSUS", DDEstadosCivilesURSUS.class);
 		mapa.put("EstadoPresentacion", DDEstadoPresentacion.class);
 		mapa.put("fasePublicacion", DDFasePublicacion.class);
-		mapa.put("direccionComercial",DDTerritorio.class);
 		mapa.put("tipoDocumentoAgrupacion", DDTipoDocumentoAgrupacion.class);
 		mapa.put("claseOferta", DDClaseOferta.class);
 		mapa.put("servicerActivo", DDServicerActivo.class);
@@ -250,6 +249,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("direccionTerritorial", DDDireccionTerritorial.class);
 		mapa.put("situacionPagoAnterior", DDSociedadPagoAnterior.class);
 		mapa.put("tipoPublicacion", DDTipoPublicacion.class);
+		mapa.put("tipoSegmento", DDTipoSegmento.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

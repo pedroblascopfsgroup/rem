@@ -16,17 +16,8 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 		boxready:'cargarTabData',
 		
 		activate: function(me, eOpts) {
-			var estadoGasto= me.lookupController().getViewModel().get('gasto').get('estadoGastoCodigo');
-			var autorizado = me.lookupController().getViewModel().get('gasto').get('autorizado');
-	    	var rechazado = me.lookupController().getViewModel().get('gasto').get('rechazado');
-	    	var agrupado = me.lookupController().getViewModel().get('gasto').get('esGastoAgrupado');
-	    	var gestoria = me.lookupController().getViewModel().get('gasto').get('nombreGestoria')!=null;
-			if(this.lookupController().botonesEdicionGasto(estadoGasto,autorizado,rechazado,agrupado,gestoria,this)){
-				this.up('tabpanel').down('tabbar').down('button[itemId=botoneditar]').setVisible(true);
-			}
-			else{
-				this.up('tabpanel').down('tabbar').down('button[itemId=botoneditar]').setVisible(false);
-			}
+			var me = this;
+			me.lookupController().onActivateActionsContabilidadTab(me);
 		}
 	},
     
@@ -63,11 +54,8 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 														xtype: 'textfieldbase',
 														reference: 'cuentaContable',
 														labelWidth: 200,
-										                bind: {
-										                	value: '{contabilidad.cuentaContable}',
-										                	fieldLabel: '{marcaObligatorioCuenta}',
-										                	readOnly: '{!esEditableDivarian}'			                 
-										                },
+														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable'),
+										                bind: '{contabilidad.cuentaContable}',
 										                maskRe: /[0-9]/
 													},
 													{
@@ -93,13 +81,9 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 													{ 
 														xtype: 'textfieldbase',
 														reference: 'partidaPresupuestaria',
-														
+														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria'),
 														labelWidth: 200,
-										                bind: {
-										                	value: '{contabilidad.partidaPresupuestaria}',
-										                	fieldLabel: '{marcaObligatorioPartida}',
-										                	readOnly: '{!esEditableDivarian}'			                 
-										                }
+										                bind: '{contabilidad.partidaPresupuestaria}'		                 
 													},																								
 													{ 
 														xtype: 'displayfieldbase',
@@ -119,6 +103,7 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 														fieldLabel:  HreRem.i18n('fieldlabel.gasto.contabilidad.subpartidaPresupuestaria'),
 														labelWidth: 200,
 														reference: 'comboboxfieldSubpartidaPresupuestaria',
+														hidden: true,
 														listeners:{	
 															change:function(){
 																		var campoPartidaPresupuestaria = this.lookupController().lookupReference('partidaPresupuestaria');
@@ -149,8 +134,7 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 														},
 										        		bind: {
 									            			store: '{comboSubpartidaPresupuestaria}',
-									            			value: '{contabilidad.idSubpartidaPresupuestaria}',
-									            			hidden: '{!esCerberusDivarianApple}'
+									            			value: '{contabilidad.idSubpartidaPresupuestaria}'
 									            		},
 									            		displayField	: 'descripcion',  
 														valueField		: 'id'												

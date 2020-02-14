@@ -909,6 +909,33 @@ Ext.define('HreRem.model.Activo', {
     				}
     			},
     			depends: ['checkPublicacionReadOnly', 'isVendido']
+    		},
+    		{
+    			name: 'tipoSegmentoCodigo'
+    		},
+    		{
+    			name: 'isAppleOrDivarian',
+    			calculate: function(data){
+    				return (data.isSubcarteraDivarian || data.isSubcarteraApple);
+    			},
+    			depends: ['isSubcarteraDivarian', 'isSubcarteraApple']
+    		},
+    		{
+    			name: 'isUA',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'esEditableDestinoComercial',
+    			calculate: function(data){
+    				var perimetroMacc;
+    				if(data.perimetroMacc == 1){
+    					perimetroMacc = true;
+    				}else{
+    					perimetroMacc = false;
+    				}
+					return !data.isUA && !data.pazSocial && !perimetroMacc;
+    			},
+    			depends: ['isUA','pazSocial','perimetroMacc']
     		}
     ],
     

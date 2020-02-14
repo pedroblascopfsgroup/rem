@@ -68,6 +68,9 @@ public class VActivosAgrupacionLil implements Serializable {
 	
 	@Column(name="BIE_DREG_SUPERFICIE_CONSTRUIDA")
 	private Float superficieConstruida;
+	
+	@Column(name = "ES_PISO_PILOTO")
+	private Boolean esPisoPiloto;
 		
 
 	public Long getId() {
@@ -204,6 +207,14 @@ public class VActivosAgrupacionLil implements Serializable {
 
 	public void setSuperficieConstruida(Float superficieConstruida) {
 		this.superficieConstruida = superficieConstruida;
+	}
+
+	public Boolean getEsPisoPiloto() {
+		return esPisoPiloto;
+	}
+
+	public void setEsPisoPiloto(Boolean esPisoPiloto) {
+		this.esPisoPiloto = esPisoPiloto;
 	}
    	
 	

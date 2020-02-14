@@ -4505,8 +4505,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			for(OfertasAgrupadasLbk agrupada: ofertasAgrupadas) {
 				eco = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta", agrupada.getOfertaDependiente()));
-				
-				saveComiteExpedienteComercial(eco, comiteSeleccionado);
+				if(eco != null) {
+					saveComiteExpedienteComercial(eco, comiteSeleccionado);
+				}
 			}	
 		}
 		

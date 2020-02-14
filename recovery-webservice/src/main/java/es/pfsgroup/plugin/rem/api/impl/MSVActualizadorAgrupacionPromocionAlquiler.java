@@ -144,6 +144,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		//-----Nueva Unidad alquilable (activo)
 		Activo unidadAlquilable = new Activo(); 
 		if (!Checks.esNulo(activoMatriz)) {    
+				
 			//Insercion de datos Basicos del Activo Matriz a la unidad alquilable
 			if (!Checks.esNulo(activoMatriz.getBien())) {			
 				//Insercion bien
@@ -622,7 +623,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		unidadAlquilable.setConCargas(activoMatriz.getConCargas());
 		unidadAlquilable.setFechaRevisionCarga(activoMatriz.getFechaRevisionCarga());
 		unidadAlquilable.setVpo(activoMatriz.getVpo());
-		
+		unidadAlquilable.setTerritorio(activoMatriz.getTerritorio());
 		
 
 		//-----Insercion de gestores a la Unidad Alquilable

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquín Bahamonde
---## FECHA_CREACION=20200210
+--## FECHA_CREACION=20200213
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-9320
@@ -30,6 +30,7 @@ DECLARE
     V_TEXT_TABLA VARCHAR2(150 CHAR):= 'DD_SCS_SEGMENTO_CRA_SCR'; -- Vble. con el nombre de la tabla.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_TABLE_HAS_DATA NUMBER(16); -- Vble. para validar la existencia de datos en una tabla.  
 
 BEGIN
 
@@ -42,9 +43,17 @@ BEGIN
     -- Comprobamos si existe la tabla   
     V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-    
+
+   -- Verificar si la tabla ya existe
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'... Ya existe. Se borrará.');
+		EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' CASCADE CONSTRAINTS';
+		
+	END IF;
     -- Si existe la tabla no se hace nada
-    IF V_NUM_TABLAS = 0 THEN 	      
+    IF V_NUM_TABLAS = 0  THEN 	      
     	 --Creamos la tabla
          DBMS_OUTPUT.PUT_LINE('[CREAMOS '||V_TEXT_TABLA||']');
     	 V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
@@ -67,13 +76,13 @@ BEGIN
 
         -- Creamos primary key
     
-        EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||''' and CONSTRAINT_TYPE = ''P'''
+        EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and CONSTRAINT_TYPE = ''P'''
 		INTO V_NUM_TABLAS; 
 		
 		IF V_NUM_TABLAS > 0 THEN
 			DBMS_OUTPUT.PUT_LINE('  [INFO] La PK PK_'||V_TEXT_TABLA||'... Ya existe.');                 
 		ELSE    
-            V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (DD_TS_ID))';
+            V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (DD_SCS_ID))';
             EXECUTE IMMEDIATE V_MSQL;
             DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
         END IF;

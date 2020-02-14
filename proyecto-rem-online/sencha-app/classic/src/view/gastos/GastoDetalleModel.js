@@ -279,58 +279,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 
 		},
 
-		marcaObligatorioCuenta : function(get) {
-			var me = this;
-			if (me.getData().gasto != null) {
-				var cartera = me.getData().gasto.get('cartera');
-
-				if (cartera == CONST.CARTERA['BANKIA']
-						|| cartera == CONST.CARTERA['LIBERBANK']) {
-					return HreRem
-							.i18n('fieldlabel.gasto.contabilidad.cuenta.contable');
-
-				} else if (me.get('esCerberusDivarianApple')) {
-					return HreRem
-							.i18n('fieldlabel.gasto.contabilidad.cuenta.contable')
-							+ ' **';
-
-				} else {
-					return HreRem
-							.i18n('fieldlabel.gasto.contabilidad.cuenta.contable')
-							+ ' *';
-				}
-			}
-
-		},
-
-		marcaObligatorioPartida : function(get) {
-			var me = this;
-			if (me.getData().gasto != null) {
-				var cartera = me.getData().gasto.get('cartera');
-
-				if (cartera == CONST.CARTERA['LIBERBANK']) {
-					return HreRem
-							.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria');
-
-				} else if (me.get('esCerberusDivarianApple')) {
-					return HreRem
-							.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria')
-							+ ' **';
-
-				} else {
-					return HreRem
-							.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria')
-							+ ' *';
-				}
-			}
-
-		},
-
-		esEditableDivarian : function(get) {
-			return this.get('esCerberusDivarianApple')
-					&& $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
-		},
-
 		deshabilitarGridGastosRefacturados : function(get) {
 			var me = this;
 

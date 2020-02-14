@@ -7,6 +7,7 @@ var AppConfig  = $AC = (function () {
 	var localDataMode = false;					// En local tenemos la posibilidad de cargar ficheros json locales, si se configura el proxy con la url local
 	var debugMode = null;						// En modo debug veremos por consola los mensajes que hayamos lanzado mediante la funcion log de Controller base 
 	var webPath = '';	// web context // TODO Recuperar de contexto de la aplicación
+	var remApiWebPath = '';
 	var locale = null;							// locale
 	var localDataPath = 'resources/data';		// ruta de archivos json para carga de datos local
 	var urlPattern = 'htm';						// extensión de las urls 
@@ -27,6 +28,13 @@ var AppConfig  = $AC = (function () {
 			webPath = wp;
 		},
 
+		getRemApiWebPath : function () {
+			return remApiWebPath;
+		},
+
+		setRemApiWebPath : function (wp) {
+			remApiWebPath = wp;
+		},
 		
 		getLocale: function () {
 			if(locale === null || locale === '') {
@@ -64,12 +72,15 @@ var AppConfig  = $AC = (function () {
 		setDebugMode: function (mode) {
 			debugMode = mode;
 		},
-		
-		
+
 		getRemoteUrl: function(url) {
 			return [webPath,url,'.',urlPattern].join('');
 		},
-				
+
+		getRemApiRemoteUrl: function(url) {
+			return [remApiWebPath,url].join('');
+		},
+		
 		getLocalUrl: function(url) {
 			
 			return [localDataPath,'/',url].join('');

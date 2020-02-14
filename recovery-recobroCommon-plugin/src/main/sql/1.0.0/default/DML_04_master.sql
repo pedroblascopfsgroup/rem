@@ -1,5 +1,0 @@
---Eliminacion de tipo de gestor erroneo.
-
-DELETE FROM DD_TGE_TIPO_GESTOR TGE WHERE TGE.DD_TGE_CODIGO='GRECOBRO';
-
-COMMIT;

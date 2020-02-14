@@ -1,12 +1,18 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>es.pfsgroup</groupId>
 		<artifactId>recovery</artifactId>
-		<version>9.1-SNAPSHOT</version>
+		<version>3.0.0-REM</version>
 	</parent>
+	<properties>
+		<sonar.projectKey>es.pfsgroup:rem_2</sonar.projectKey>
+		<sonar.sourceEncoding>UTF-8</sonar.sourceEncoding>
+		<sonar.includedmodules>recovery-webservice</sonar.includedmodules>
+	</properties>
 
 	<groupId>es.pfsgroup.plugin</groupId>
 	<artifactId>recovery-webservice</artifactId>
@@ -552,9 +558,9 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi-ooxml</artifactId>
-		    <version>3.7</version>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.7</version>
 		</dependency>
 
 		<!-- Inicio de testing -->
@@ -774,11 +780,17 @@
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-gestordocumentalREM-plugin</artifactId>
 		</dependency>
-		
+
 		<dependency>
-		    <groupId>com.nimbusds</groupId>
-		    <artifactId>nimbus-jose-jwt</artifactId>
-		    <version>4.11.2</version>
+			<groupId>com.nimbusds</groupId>
+			<artifactId>nimbus-jose-jwt</artifactId>
+			<version>4.11.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.1</version>
 		</dependency>
 
 	</dependencies>
@@ -870,6 +882,11 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>3.6.1.1688</version>
 			</plugin>
 		</plugins>
 	</build>

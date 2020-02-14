@@ -48,6 +48,16 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     	
 	     },
 	     
+	     usuarioEditarVentaPlano: function(get){
+				var me = this;
+				var user = $AU.userIsRol("HAYASUPER") || $AU.userIsRol("HAYAGESTCOM");
+				
+				if(user){
+					return false;
+				}
+				return true;
+		},
+	     
 	     esAgrupacionPromocionAlquiler: function(get) {
 	    	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo') ;
 	    	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_ALQUILER'])) {

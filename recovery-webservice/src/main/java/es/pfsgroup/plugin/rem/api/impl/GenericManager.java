@@ -3,16 +3,17 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
+import java.security.Key;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.Resource;
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
 
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -171,58 +172,97 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			Filter filtroGru = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
 			List<GrupoUsuario> gruUsu = genericDao.getList(GrupoUsuario.class, filtroGru);
 
-			
-			if (usuario != null) {
-				List<String> authorities = new ArrayList<String>();
-				List<String> roles = new ArrayList<String>();
-				
-				/**
-				 * Al lanzar este método en un hilo diferente
-				 * al principal da un error lazy. Recargamos en la sesión el usuario logado
-				 */
-				try{
-					usuario.getPerfiles();
-				}catch(LazyInitializationException e){
-					usuario = usuarioApi.get(usuario.getId());
+
+			List<String> authorities = new ArrayList<String>();
+			List<String> roles = new ArrayList<String>();
+
+			/**
+			 * Al lanzar este método en un hilo diferente
+			 * al principal da un error lazy. Recargamos en la sesión el usuario logado
+			 */
+			try{
+				usuario.getPerfiles();
+			}catch(LazyInitializationException e){
+				usuario = usuarioApi.get(usuario.getId());
+			}
+
+
+			for (Perfil perfil : usuario.getPerfiles()) {
+				for (Funcion funcion : perfil.getFunciones()) {
+					authorities.add(funcion.getDescripcion());
 				}
-				
-				
-				for (Perfil perfil : usuario.getPerfiles()) {
+				roles.add(perfil.getCodigo());
+			}
+
+			for(GrupoUsuario usuarioGrupo : gruUsu) {
+				for (Perfil perfil : usuarioGrupo.getGrupo().getPerfiles()) {
 					for (Funcion funcion : perfil.getFunciones()) {
-						authorities.add(funcion.getDescripcion());
-					}
-					roles.add(perfil.getCodigo());
-				}
-				
-				for(GrupoUsuario usuarioGrupo : gruUsu) {
-					for (Perfil perfil : usuarioGrupo.getGrupo().getPerfiles()) {
-						for (Funcion funcion : perfil.getFunciones()) {
-							if(!authorities.contains(funcion.getDescripcion())) {
-								authorities.add(funcion.getDescripcion());
-							}
+						if(!authorities.contains(funcion.getDescripcion())) {
+							authorities.add(funcion.getDescripcion());
 						}
 					}
 				}
-				
-				authData.setUserName(usuario.getApellidoNombre());
-				authData.setAuthorities(authorities);
-				
-				authData.setUserId(usuario.getId());
-				authData.setRoles(roles);
-				authData.setCodigoGestor(gestorEntidad.getCodigoGestorPorUsuario(usuario.getId()));
-	
-				authData.setEsGestorSustituto(esGestorSustituto(usuario));
-				
-				if(!Checks.esNulo(uca)){
-					authData.setCodigoCartera(uca.getCartera().getCodigo());
-				}
 			}
+
+			authData.setUserName(usuario.getApellidoNombre());
+			authData.setAuthorities(authorities);
+
+			authData.setUserId(usuario.getId());
+			authData.setRoles(roles);
+			authData.setCodigoGestor(gestorEntidad.getCodigoGestorPorUsuario(usuario.getId()));
+
+			authData.setEsGestorSustituto(esGestorSustituto(usuario));
+
+			if(!Checks.esNulo(uca)){
+				authData.setCodigoCartera(uca.getCartera().getCodigo());
+			}
+
+			authData.setJwt(createJwtForTheSession(usuario.getUsername(), roles));
+
 		}catch(LazyInitializationException e){
 			logger.info(e.getMessage());
 		}
 
 		return authData;
+	}
 
+	/**
+	 * Este método devuelve un Token basado en JWT con los datos de usuario. Utilizado para obtener una sesión reutilizable en REM3.
+	 *
+	 * @param username nombre de usuario de la sesión iniciada.
+	 * @param roles listado de roles asignados al usuario.
+	 * @return Devuelve un token compactado "url safe" en String.
+	 */
+	private String createJwtForTheSession(String username,List<String> roles) {
+		// Time for the token to be valid
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		calendar.add(Calendar.HOUR_OF_DAY, 8);
+		Date validJwtSignedTime = calendar.getTime();
+
+		//The JWT signature algorithm we will be using to sign the token
+		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+		long nowMillis = System.currentTimeMillis();
+		Date now = new Date(nowMillis);
+
+		//We will sign our JWT with our ApiKey secret
+		byte[] apiKeySecretBytes = DatatypeConverter
+				.parseBase64Binary(appProperties.getProperty("jwt.secret.key", "default_rest_api_key"));
+		Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+
+		//Let's set the JWT Claims
+		JwtBuilder builder = Jwts.builder().setId(UUID.randomUUID().toString())
+				.setIssuedAt(now)
+				.setSubject(username)
+				.setIssuer("REM Legacy")
+				.setIssuedAt(new Date())
+				.setExpiration(validJwtSignedTime)
+				.claim("roles", roles)
+				.signWith(signatureAlgorithm, signingKey);
+
+		//Builds the JWT and serializes it to a compact, URL-safe string
+		return builder.compact();
 	}
 
 	public Integer esGestorSustituto(Usuario usuarioLogado) {

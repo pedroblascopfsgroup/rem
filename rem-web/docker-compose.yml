@@ -1,0 +1,13 @@
+version: '3.7'
+services:
+ rem-web:
+  container_name: rem-web
+  build: .
+  networks:
+   - rem-net
+networks:
+ rem-net:
+  external: true
+  name: rem-tools_rem-net
+volumes:
+ data:

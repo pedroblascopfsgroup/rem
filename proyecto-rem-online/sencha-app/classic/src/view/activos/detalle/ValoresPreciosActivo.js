@@ -398,6 +398,18 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 							   fieldLabel: HreRem.i18n('fieldlabel.valor.renta.haya'),
 							   bind:  '{valoraciones.fsvRenta}'
 							 },
+							  {
+							   xtype: 'currencyfieldbase',
+							   readOnly: true,
+							   fieldLabel: HreRem.i18n('fieldlabel.valor.venta.haya.origen'),
+							   bind:  '{valoraciones.fsvVentaOrigen}'
+							 },
+							 {
+							   xtype: 'currencyfieldbase',
+							   readOnly: true,
+							   fieldLabel: HreRem.i18n('fieldlabel.valor.renta.haya.origen'),
+							   bind:  '{valoraciones.fsvRentaOrigen}'
+							 },
 							 {
 							   xtype: 'currencyfieldbase',
 							   readOnly: true,

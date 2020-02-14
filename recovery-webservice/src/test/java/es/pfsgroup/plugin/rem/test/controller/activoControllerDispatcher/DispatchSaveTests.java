@@ -52,7 +52,7 @@ public class DispatchSaveTests {
 	@Test
 	public void requestNull () {
 		try {
-			dispatcher.dispatchSave(null);
+			dispatcher.dispatchSave(null, null);
 			verifyZeroInteractions(controller);
 		} catch (RuntimeException e) {
 			fail("El método no debería haber fallado (" + e.getMessage() + ")");
@@ -62,7 +62,7 @@ public class DispatchSaveTests {
 	@Test
 	public void requestVacio () {
 		try {
-			dispatcher.dispatchSave(new JSONObject());
+			dispatcher.dispatchSave(new JSONObject(), null);
 			verifyZeroInteractions(controller);
 		} catch (RuntimeException e) {
 			fail("El método no debería haber fallado (" + e.getMessage() + ")");
@@ -77,7 +77,7 @@ public class DispatchSaveTests {
 		
 		JSONObject json = createInputJson(ID_ACTIVO);
 		putModel(json, TAB_DATOS_BASICOS, modelData);
-		dispatcher.dispatchSave(json);
+		dispatcher.dispatchSave(json, null);
 		
 		ArgumentCaptor<DtoActivoFichaCabecera> captor = ArgumentCaptor.forClass(DtoActivoFichaCabecera.class);
 		verify(controller).saveDatosBasicos(captor.capture(), eq(ID_ACTIVO), any(ModelMap.class));
@@ -95,10 +95,10 @@ public class DispatchSaveTests {
 		
 		JSONObject json = createInputJson(ID_ACTIVO);
 		putModel(json, TAB_SIT_POSESORIA, modelData);
-		dispatcher.dispatchSave(json);
+		dispatcher.dispatchSave(json, null);
 		
 		ArgumentCaptor<DtoActivoSituacionPosesoria> captor = ArgumentCaptor.forClass(DtoActivoSituacionPosesoria.class);
-		verify(controller).saveActivoSituacionPosesoria(captor.capture(), eq(ID_ACTIVO), any(ModelMap.class));
+		verify(controller).saveActivoSituacionPosesoria(captor.capture(), eq(ID_ACTIVO), any(ModelMap.class), null);
 		
 		DtoActivoSituacionPosesoria dto = captor.getValue();
 		assertEquals(ABCDE, dto.getTipoTituloPosesorioCodigo());
@@ -116,7 +116,7 @@ public class DispatchSaveTests {
 		JSONObject json = createInputJson(ID_ACTIVO);
 		putModel(json, TAB_CARGAS_ACTIVO, modelCargas);
 		putModel(json, TAB_INFO_ADMINISTRATIVA, modelInfoAdm);
-		dispatcher.dispatchSave(json);
+		dispatcher.dispatchSave(json, null);
 		
 		ArgumentCaptor<DtoActivoCargasTab> captorCargas = ArgumentCaptor.forClass(DtoActivoCargasTab.class);
 		ArgumentCaptor<DtoActivoInformacionAdministrativa> captorInfoAdm = ArgumentCaptor.forClass(DtoActivoInformacionAdministrativa.class);

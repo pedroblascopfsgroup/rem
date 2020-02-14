@@ -277,6 +277,11 @@ public class Trabajo implements Serializable, Auditable {
 	@Column(name="TBJ_FECHA_AUTORIZACION_PROPIET")
     private Date fechaAutorizacionPropietario;	
 	
+	@Column(name="TBJ_CODIGO_PARTIDA")
+    private String codigoPartida;	
+	
+	@Column(name="TBJ_CODIGO_SUBPARTIDA")
+    private String codigoSubpartida;
 	
 	public Long getId() {
 		return id;
@@ -919,4 +924,22 @@ public class Trabajo implements Serializable, Auditable {
         }
         return null;
     }
+
+	public String getCodigoPartida() {
+		return codigoPartida;
+	}
+
+	public void setCodigoPartida(String codigoPartida) {
+		this.codigoPartida = codigoPartida;
+	}
+
+	public String getCodigoSubpartida() {
+		return codigoSubpartida;
+	}
+
+	public void setCodigoSubpartida(String codigoSubpartida) {
+		this.codigoSubpartida = codigoSubpartida;
+	}
+    
+    
 }

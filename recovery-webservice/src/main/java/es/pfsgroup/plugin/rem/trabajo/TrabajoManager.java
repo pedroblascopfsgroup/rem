@@ -1574,6 +1574,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_ACTUALIZA_ESTADOS);
 		}
 
+		
+		//TODO DE MOMENTO EL TIPO DE TRABAJO DE EDIFICACIÓN VA LIGADO CON EL TRAMITE DE ACTUACIÓN TÉCNICA  HREOS-8327
+		if(trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_EDIFICACION)) {
+			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_ACTUACION_TECNICA);
+		}
 		// Módulo de Expediente comercial ----------
 		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA)) {
 			boolean esApple = false;
@@ -1796,6 +1801,28 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setRequerimiento(true);
 		} else {
 			dtoTrabajo.setRequerimiento(false);
+		}
+		
+				
+		if(!Checks.esNulo(trabajo.getActivo())) {
+			
+			Long idAgrupacion = activoApi.activoPerteneceDND(trabajo.getActivo());
+			
+			if(!Checks.esNulo(idAgrupacion) &&  !Checks.esNulo(trabajo.getTipoTrabajo()) && DDTipoTrabajo.CODIGO_EDIFICACION.equals(trabajo.getTipoTrabajo().getCodigo())) {
+				dtoTrabajo.setPerteneceDNDtipoEdificacion(true);
+				ActivoAgrupacion agrupacion = activoAgrupacionDao.getAgrupacionById(idAgrupacion);
+				if(!Checks.esNulo(agrupacion)) {
+					dtoTrabajo.setNumeroDND(agrupacion.getNumAgrupRem());
+					dtoTrabajo.setNombreDND(agrupacion.getNombre());
+					dtoTrabajo.setNumAgrupacion(agrupacion.getNumAgrupRem());
+					dtoTrabajo.setCodigoPartida(trabajo.getCodigoPartida());
+					dtoTrabajo.setCodigoSubpartida(trabajo.getCodigoSubpartida());
+				}else {
+					dtoTrabajo.setPerteneceDNDtipoEdificacion(false);
+				}
+				
+			}
+			
 		}
 
 		return dtoTrabajo;

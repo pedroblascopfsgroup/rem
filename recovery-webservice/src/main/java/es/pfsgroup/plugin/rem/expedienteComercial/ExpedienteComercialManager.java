@@ -1254,6 +1254,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			if (!Checks.esNulo(oferta)) {
 				activo = oferta.getActivoPrincipal();
+				dto.setIdOferta(oferta.getId());
 			}
 
 			dto.setId(expediente.getId());

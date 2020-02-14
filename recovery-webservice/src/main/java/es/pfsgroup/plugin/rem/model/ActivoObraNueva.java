@@ -10,7 +10,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
@@ -23,6 +22,7 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 
 /**
@@ -63,10 +63,19 @@ public class ActivoObraNueva extends ActivoAgrupacion implements Serializable {
 	@Column(name = "ONV_ACREEDOR_PDV")
 	private String acreedorPDV;
 	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ONV_VENTA_PLANO")
+	private DDSinSiNo ventaPlano;
+	
 	@OneToMany(mappedBy = "obraNueva", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "AGR_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<ActivoSubdivision> subdivision;
+	
+	@Column(name = "ACT_ONV_DND")
+	private Boolean isDND =false;
+	
+	
 
 	public DDProvincia getProvincia() {
 		return provincia;
@@ -127,5 +136,20 @@ public class ActivoObraNueva extends ActivoAgrupacion implements Serializable {
 	public Integer getIncluidos() {
 		return Checks.estaVacio(this.getActivos()) ? 0 : this.getActivos().size();
 	}
+	
+	public DDSinSiNo getVentaPlano() {
+		return ventaPlano;
+	}
+	
+	public void setVentaPlano(DDSinSiNo ventaPlano) {
+		this.ventaPlano = ventaPlano;
+	}
 
+	public Boolean getIsDND() {
+		return isDND;
+	}
+	
+	public void setIsDND(Boolean isDND) {
+		this.isDND = isDND;
+	}
 }

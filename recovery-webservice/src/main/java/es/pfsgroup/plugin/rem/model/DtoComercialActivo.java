@@ -1,8 +1,6 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
-
-import es.capgemini.devon.dto.WebDto;
 import es.pfsgroup.plugin.rem.model.dd.DDTerritorio;
 
 public class DtoComercialActivo extends DtoTabActivo{
@@ -21,6 +19,8 @@ public class DtoComercialActivo extends DtoTabActivo{
 	private String motivoAutorizacionTramitacionCodigo;
 	private String observacionesAutoTram;
 	private String direccionComercial;
+	private Boolean ventaSobrePlano;
+
 
 
 	public String getId() {
@@ -117,6 +117,14 @@ public class DtoComercialActivo extends DtoTabActivo{
 
 	public void setDireccionComercial(String direccionComercial) {
 		this.direccionComercial = direccionComercial;
+	}
+	
+	public Boolean getVentaSobrePlano() {
+		return ventaSobrePlano;
+	}
+
+	public void setVentaSobrePlano(Boolean ventaSobrePlano) {
+		this.ventaSobrePlano = ventaSobrePlano;
 	}
 
 }

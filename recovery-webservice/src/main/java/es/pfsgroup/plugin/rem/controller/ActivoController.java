@@ -140,7 +140,6 @@ import es.pfsgroup.plugin.rem.model.VActivosAgrupacionLil;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
@@ -223,13 +222,11 @@ public class ActivoController extends ParadiseJsonController {
 		return activoApi;
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTabActivo(Long id, String tab, ModelMap model, HttpServletRequest request) {
 		try { 
 			model.put(RESPONSE_DATA_KEY, adapter.getTabActivo(id, tab));
-			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, tab, ACCION_CODIGO.CODIGO_VER);
-
 		} catch (AccesoActivoException e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put(RESPONSE_ERROR_KEY, e.getMessage());
@@ -244,7 +241,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getActivos(DtoActivoFilter dtoActivoFiltro, ModelMap model) {
 		dtoActivoFiltro.setListPage(true);
@@ -262,7 +259,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveDatosBasicos(DtoActivoFichaCabecera activoDto, @RequestParam Long id, ModelMap model) {
 		try {
@@ -273,9 +270,6 @@ public class ActivoController extends ParadiseJsonController {
 		} catch (JsonViewerException jvex) {
 					model.put("success", false);
 					model.put("msgError", jvex.getMessage());
-		/*} catch (JsonViewerException jvex) {
-			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());*/
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
@@ -284,7 +278,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveActivoDatosRegistrales(DtoActivoDatosRegistrales activoDto, @RequestParam Long id, ModelMap model) {
 		try {
@@ -304,7 +298,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveActivoCarga(DtoActivoCargas cargaDto, ModelMap model) {
 		try {
@@ -319,7 +313,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveActivoCargaTab(DtoActivoCargasTab cargaDto, ModelMap model) {
 		try {
@@ -334,7 +328,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView updateActivoPropietarioTab(DtoPropietario propietario, ModelMap model) {
 		try {
@@ -349,7 +343,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createActivoPropietarioTab(DtoPropietario propietario, ModelMap model) {
 		try {
@@ -364,7 +358,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteActivoPropietarioTab(DtoPropietario propietario, ModelMap model) {
 		try {
@@ -379,7 +373,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveActivoInformacionAdministrativa(DtoActivoInformacionAdministrativa activoDto, @RequestParam Long id, ModelMap model) {
 		try {
@@ -395,7 +389,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveActivoInformacionComercial(DtoActivoInformacionComercial activoDto, @RequestParam Long id, ModelMap model) {
 		try {
@@ -418,7 +412,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveValoresPreciosActivo(DtoActivoValoraciones valoracionesDto, @RequestParam Long id, ModelMap model) {
 		try {
@@ -433,7 +427,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveActivoAdministracion(DtoActivoAdministracion activoDto, @RequestParam Long id, ModelMap model, HttpServletRequest request) {
 		try {
@@ -451,7 +445,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveActivoSituacionPosesoria(DtoActivoSituacionPosesoria activoDto, @RequestParam Long id, ModelMap model, HttpServletRequest request) {
 		try {
@@ -469,7 +463,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveActivoInformeComercial(DtoActivoInformeComercial activoDto, @RequestParam Long id, ModelMap model, HttpServletRequest request) {
 		try {
@@ -494,7 +488,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveActivoComunidadPropietarios(DtoComunidadpropietariosActivo activoDto, @RequestParam Long id, ModelMap model, HttpServletRequest request) {
 		try {
@@ -524,7 +518,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListCargasById(Long id, WebDto webDto, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, adapter.getListCargasById(id));
@@ -532,7 +526,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListDistribucionesById(Long id, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, adapter.getListDistribucionesById(id));
@@ -540,7 +534,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getNumeroPlantasActivo(Long idActivo, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, adapter.getNumeroPlantasActivo(idActivo));
@@ -548,7 +542,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTipoHabitaculoByNumPlanta(Long idActivo, Integer numPlanta, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, adapter.getTipoHabitaculoByNumPlanta(idActivo, numPlanta));
@@ -556,7 +550,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListAsociadosById(DtoActivoVistaPatrimonioContrato dto, ModelMap model) {
 		try {
@@ -571,7 +565,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListObservacionesById(Long id, ModelMap model,HttpServletRequest request) {
 		model.put(RESPONSE_DATA_KEY, adapter.getListObservacionesById(id));
@@ -581,7 +575,7 @@ public class ActivoController extends ParadiseJsonController {
 	}
 
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListAgrupacionesActivoById(Long id, ModelMap model, HttpServletRequest request) {
 		model.put(RESPONSE_DATA_KEY, adapter.getListAgrupacionesActivoById(id));
@@ -590,7 +584,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListVisitasActivoById(Long id, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, adapter.getListVisitasActivoById(id));
@@ -598,21 +592,21 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListOcupantesLegalesById(Long id, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, adapter.getListOcupantesLegalesById(id));
 
 		return createModelAndViewJson(model);
 	}
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getOrigenActivo(Long id, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, adapter.getOrigenActivo(id));
 
 		return createModelAndViewJson(model);
 	}
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getListLlavesById(DtoLlaves dto, ModelMap model) {
 		try {
@@ -630,7 +624,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveLlave(DtoLlaves dto, ModelMap model, HttpServletRequest request) {
 		try {
@@ -647,7 +641,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteLlave(DtoLlaves dto, ModelMap model) {
 		try {
@@ -662,7 +656,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createLlave(DtoLlaves dto, ModelMap model) {
 		try {
@@ -677,7 +671,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListCatastroById(Long id, ModelMap model, HttpServletRequest request) {
 		model.put(RESPONSE_DATA_KEY, adapter.getListCatastroById(id));
@@ -686,7 +680,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getValoresPreciosActivoById(@RequestParam Long id, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, adapter.getValoresPreciosActivoById(id));
@@ -694,7 +688,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveCatastro(DtoActivoCatastro catastroDto, @RequestParam Long idCatastro, ModelMap model, HttpServletRequest request) {
 		try {
@@ -711,7 +705,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deletePrecioVigente(DtoPrecioVigente precioVigenteDto, ModelMap model) {
 		try {
@@ -726,7 +720,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deletePrecioVigenteSinGuardadoHistorico(DtoPrecioVigente precioVigenteDto, ModelMap model) {
 		try {
@@ -741,7 +735,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView savePrecioVigente(DtoPrecioVigente precioVigenteDto, ModelMap model, HttpServletRequest request) {
 		try {
@@ -765,40 +759,8 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-/*
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveOfertaActivo(DtoOfertaActivo ofertaActivoDto, ModelMap model, HttpServletRequest request) {
-		try {
-			Oferta oferta = ofertaApi.getOfertaById(ofertaActivoDto.getIdOferta());
-			if (!Checks.esNulo(oferta)) {
-				Activo activo = oferta.getActivoPrincipal();
-				
-				if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera()) 
-						&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo()) 
-						&& ofertaApi.faltanDatosCalculo(ofertaActivoDto.getIdOferta())) {
-					model.put("advertencia", FALTAN_DATOS);
-				}
-			}
-			
-			boolean success = activoApi.saveOfertaActivo(ofertaActivoDto);
-			model.put(RESPONSE_SUCCESS_KEY, success);
-			trustMe.registrarSuceso(request, ofertaActivoDto.getIdActivo(), ENTIDAD_CODIGO.CODIGO_ACTIVO, "oferta", ACCION_CODIGO.CODIGO_MODIFICAR);
 
-		} catch (JsonViewerException jvex) {
-			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put(RESPONSE_MESSAGE_KEY, jvex.getMessage());
-			trustMe.registrarError(request, ofertaActivoDto.getIdActivo(), ENTIDAD_CODIGO.CODIGO_ACTIVO, "oferta", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
-		} catch (Exception e) {
-			logger.error("error en activoController", e);
-			model.put(RESPONSE_SUCCESS_KEY, false);
-			trustMe.registrarError(request, ofertaActivoDto.getIdActivo(), ENTIDAD_CODIGO.CODIGO_ACTIVO, "oferta", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
-		}
-
-		return createModelAndViewJson(model);
-	}*/
-
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveDistribucion(DtoDistribucion distribucionDto, @RequestParam Long idDistribucion, ModelMap model) {
 		try {
@@ -814,7 +776,7 @@ public class ActivoController extends ParadiseJsonController {
 	}
 
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createDistribucion(DtoDistribucion distribucionDto, @RequestParam Long idEntidad, ModelMap model) {
 		try {
@@ -830,7 +792,7 @@ public class ActivoController extends ParadiseJsonController {
 	}
 
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createDistribucionFromRem(String numPlanta, String cantidad, String superficie, Long idActivo, String tipoHabitaculoCodigo, ModelMap model) {
 		DtoDistribucion distribucionDto = new DtoDistribucion();
@@ -853,7 +815,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createCatastro(DtoActivoCatastro catastroDto, @RequestParam Long idEntidad, ModelMap model) {
 		try {
@@ -868,7 +830,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createOcupanteLegal(DtoActivoOcupanteLegal dtoOcupanteLegal, @RequestParam Long idEntidad, ModelMap model) {
 		try {
@@ -883,7 +845,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveOcupanteLegal(DtoActivoOcupanteLegal dtoOcupanteLegal, @RequestParam Long idActivoOcupanteLegal, ModelMap model) {
 		try {
@@ -898,7 +860,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteDistribucion(DtoDistribucion distribucionDto, @RequestParam Long idDistribucion, ModelMap model) {
 		try {
@@ -913,7 +875,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteCatastro(DtoActivoCatastro catastroDto, @RequestParam Long idCatastro, ModelMap model) {
 
@@ -930,7 +892,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteOcupanteLegal(DtoActivoOcupanteLegal dtoOcupanteLegal, @RequestParam Long idActivoOcupanteLegal, ModelMap model) {
 		try {
@@ -945,7 +907,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveObservacionesActivo(DtoObservacion dtoObservacion, ModelMap model) {
 		try {
@@ -960,7 +922,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createObservacionesActivo(DtoObservacion dtoObservacion, Long idEntidad, ModelMap model) {
 		try {
@@ -975,7 +937,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteObservacionesActivo(@RequestParam Long id, ModelMap model) {
 		try {
@@ -990,7 +952,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createCondicionHistorico(DtoCondicionHistorico dtoCondicionHistorico, Long idEntidad, ModelMap model) {
 		try {
@@ -1005,7 +967,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListDocumentacionAdministrativaById(Long id, WebDto dto, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, adapter.getListDocumentacionAdministrativaById(id));
@@ -1013,7 +975,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getCargaById(Long id, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, adapter.getCargaById(id));
@@ -1021,7 +983,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTasacionById(Long id, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, adapter.getTasacionById(id));
@@ -1029,7 +991,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboUsuarios(Long idTipoGestor, WebDto webDto, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, adapter.getComboUsuarios(idTipoGestor));
@@ -1037,7 +999,7 @@ public class ActivoController extends ParadiseJsonController {
 		return new ModelAndView("jsonView", model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboUsuariosGestoria(WebDto webDto, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, adapter.getComboUsuariosGestoria());
@@ -1045,7 +1007,7 @@ public class ActivoController extends ParadiseJsonController {
 		return new ModelAndView("jsonView", model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getGestoresActivos(Long idActivo, WebDto webDto, ModelMap model, Boolean incluirGestoresInactivos) {
 		if (incluirGestoresInactivos) {
@@ -1057,7 +1019,7 @@ public class ActivoController extends ParadiseJsonController {
 		return new ModelAndView("jsonView", model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getGestores(Long idActivo, WebDto webDto, ModelMap model, HttpServletRequest request) {
 		model.put(RESPONSE_DATA_KEY, adapter.getGestores(idActivo));
@@ -1105,7 +1067,7 @@ public class ActivoController extends ParadiseJsonController {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	@Transactional()
 	public ModelAndView getFotosById(Long id, String tipoFoto, WebDto webDto, ModelMap model, HttpServletRequest request, HttpServletResponse response) {
@@ -1155,14 +1117,13 @@ public class ActivoController extends ParadiseJsonController {
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
-			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "fotos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 			return null;
 		}
 
 		return new ModelAndView("jsonView", model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView updateFotosById(DtoFoto dto, ModelMap model, HttpServletRequest request, HttpServletResponse response) {
 		try {
@@ -1190,7 +1151,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView updateInformeComercialMSV(@RequestParam Long idActivo, ModelMap model){
 		try {
@@ -1211,7 +1172,7 @@ public class ActivoController extends ParadiseJsonController {
 	}
 
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView insertarGestorAdicional(Long idActivo, Long usuarioGestor, Long tipoGestor, WebDto webDto, ModelMap model) {
 		try {
@@ -1230,7 +1191,7 @@ public class ActivoController extends ParadiseJsonController {
 			if(activoDao.isActivoMatriz(idActivo)) {
 				ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivo(idActivo);
 				if(!Checks.esNulo(agr)) {
-					propagarCambiosGestoresUAs(agr.getId(), idActivo, usuarioGestor, tipoGestor, webDto, model);
+					propagarCambiosGestoresUAs(agr.getId(), usuarioGestor, tipoGestor, webDto, model);
 				}				
 			}
 
@@ -1243,7 +1204,7 @@ public class ActivoController extends ParadiseJsonController {
 		return new ModelAndView("jsonView", model);
 	}
 
-	private void propagarCambiosGestoresUAs(Long idAgrupacionUAS, Long idActivo, Long usuarioGestor, Long tipoGestor,
+	private void propagarCambiosGestoresUAs(Long idAgrupacionUAS, Long usuarioGestor, Long tipoGestor,
 			WebDto webDto, ModelMap model) {
 		List<Activo> listaUAs = activoAgrupacionActivoDao.getListUAsByIdAgrupacion(idAgrupacionUAS);
 		for (Activo activo : listaUAs) {
@@ -1251,7 +1212,7 @@ public class ActivoController extends ParadiseJsonController {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTramites(Long idActivo, WebDto webDto, ModelMap model, HttpServletRequest request) {
 		model.put(RESPONSE_DATA_KEY, adapter.getTramitesActivo(idActivo, webDto));
@@ -1259,7 +1220,7 @@ public class ActivoController extends ParadiseJsonController {
 		return new ModelAndView("jsonView", model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getPreciosVigentesById(Long id, WebDto webDto, ModelMap model, HttpServletRequest request) {
 		model.put(RESPONSE_DATA_KEY, adapter.getPreciosVigentesById(id));
@@ -1268,7 +1229,7 @@ public class ActivoController extends ParadiseJsonController {
 		return new ModelAndView("jsonView", model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListPropietarioById(Long id, ModelMap model, HttpServletRequest request) {
 		model.put(RESPONSE_DATA_KEY, adapter.getListPropietarioById(id));
@@ -1277,7 +1238,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListValoracionesById(Long id, WebDto webDto, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, adapter.getListValoracionesById(id));
@@ -1285,7 +1246,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListTasacionById(Long id, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, adapter.getListTasacionById(id));
@@ -1293,7 +1254,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListTasacionByIdGrid(Long id, ModelMap model, HttpServletRequest request) {
 		model.put(RESPONSE_DATA_KEY, adapter.getListTasacionByIdGrid(id));
@@ -1302,7 +1263,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListAdmisionCheckDocumentos(Long id, WebDto webDto, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, adapter.getListAdmisionCheckDocumentos(id));
@@ -1310,7 +1271,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListOfertasActivos(Long id, Boolean incluirOfertasAnuladas, WebDto webDto, ModelMap model) {
 		if (incluirOfertasAnuladas) {
@@ -1322,7 +1283,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTramite(Long id, ModelMap model, HttpServletRequest request) {
 		model.put(RESPONSE_DATA_KEY, adapter.getTramite(id));
@@ -1331,7 +1292,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboInferiorMunicipio(String codigoMunicipio, WebDto webDto, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, activoApi.getComboInferiorMunicipio(codigoMunicipio));
@@ -1339,7 +1300,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTareasTramite(Long idTramite, WebDto webDto, ModelMap model, HttpServletRequest request) {
 		model.put(RESPONSE_DATA_KEY, adapter.getTareasTramite(idTramite));
@@ -1348,7 +1309,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTareasTramiteHistorico(Long idTramite, WebDto webDto, ModelMap model, HttpServletRequest request) {
 		model.put(RESPONSE_DATA_KEY, adapter.getTareasTramiteHistorico(idTramite));
@@ -1357,7 +1318,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getActivosTramite(Long idTramite, WebDto webDto, ModelMap model, HttpServletRequest request) {
 		List<Activo> listActivos = activoTramiteApi.getActivosTramite(idTramite);
@@ -1369,7 +1330,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView crearTramite(Long idActivo, ModelMap model) {
 		try {
@@ -1397,7 +1358,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView crearTramiteAprobacionInformeComercial(Long idActivo, ModelMap model) {
 		try {
@@ -1423,27 +1384,25 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(new ModelMap(RESPONSE_SUCCESS_KEY, success));
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveAdmisionDocumento(DtoAdmisionDocumento dtoAdmisionDocumento, ModelMap model, HttpServletRequest request) {
 		try {
 			boolean success = adapter.saveAdmisionDocumento(dtoAdmisionDocumento);
 			model.put(RESPONSE_SUCCESS_KEY, success);
-			trustMe.registrarSuceso(request, dtoAdmisionDocumento.getIdActivo(), ENTIDAD_CODIGO.CODIGO_ACTIVO, "admisionDocumento", ACCION_CODIGO.CODIGO_MODIFICAR);
 
 		}
 		catch (RemUserException e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put(RESPONSE_MESSAGE_KEY, e.getMensaje());
-			trustMe.registrarError(request, dtoAdmisionDocumento.getIdActivo(), ENTIDAD_CODIGO.CODIGO_ACTIVO, "admisionDocumento", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView upload(HttpServletRequest request) {
 		ModelMap model = new ModelMap();
@@ -1465,7 +1424,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getLimiteArchivo(HttpServletRequest request, HttpServletResponse response) {
 		String limite = configManager.getConfigByKey("documentos.max.size").getValor();
@@ -1519,7 +1478,7 @@ public class ActivoController extends ParadiseJsonController {
 		}		
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteAdjunto(DtoAdjunto dtoAdjunto, ModelMap model) {
 		try {
@@ -1534,7 +1493,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListAdjuntos(Long id, ModelMap model, HttpServletRequest request) {
 		try {
@@ -1555,7 +1514,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getAvisosActivoById(Long id, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, adapter.getAvisosActivoById(id));
@@ -1563,7 +1522,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView uploadFoto(HttpServletRequest request, HttpServletResponse response) {
 		ModelMap model = new ModelMap();
@@ -1585,7 +1544,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteFotosActivoById(@RequestParam Long[] id, ModelMap model) {
 		try {
@@ -1604,7 +1563,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView refreshCacheFotos(@RequestParam Long id, ModelMap model) {
 		try {
@@ -1623,7 +1582,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView findAllHistoricoPresupuestos(DtoHistoricoPresupuestosFilter dto, ModelMap model) {
 		try {
@@ -1648,7 +1607,7 @@ public class ActivoController extends ParadiseJsonController {
 	 * @param idActivo: ID del activo.
 	 * @return Devuelve los incrementos. Si el idPresupuesto es nulo o 0 devuelve los del último ejercicio del Activo.
 	 */
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView findAllIncrementosPresupuestoById(Long idPresupuesto, Long idActivo, ModelMap model) {
 		try {
@@ -1668,7 +1627,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView findLastPresupuesto(DtoActivosTrabajoFilter dto, ModelMap model) {
 		try {
@@ -1763,11 +1722,9 @@ public class ActivoController extends ParadiseJsonController {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public void generateExcel(DtoActivoFilter dtoActivoFilter, HttpServletRequest request, HttpServletResponse response) throws Exception {
-//		dtoActivoFilter.setStart(excelReportGeneratorApi.getStart());
-//		dtoActivoFilter.setLimit(excelReportGeneratorApi.getLimit());
 		dtoActivoFilter.setListPage(false);
 
 		List<VBusquedaActivos> listaActivos = (List<VBusquedaActivos>) adapter.getActivos(dtoActivoFilter);
@@ -1787,7 +1744,7 @@ public class ActivoController extends ParadiseJsonController {
 		excelReportGeneratorApi.generateAndSend(report, response);
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	@Transactional()
 	public ModelAndView registrarExportacion(DtoActivoFilter dtoActivoFilter, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -1843,7 +1800,7 @@ public class ActivoController extends ParadiseJsonController {
 	    return mapAsString.toString();
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getCondicionantesDisponibilidad(Long id, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, activoApi.getCondicionantesDisponibilidad(id));
@@ -1851,24 +1808,22 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveCondicionantesDisponibilidad(Long idActivo, DtoCondicionantesDisponibilidad dto, ModelMap model, HttpServletRequest request) {
 		try {
 			boolean success = adapter.guardarCondicionantesDisponibilidad(idActivo, dto);
 			model.put(RESPONSE_SUCCESS_KEY, success);
-			trustMe.registrarSuceso(request, idActivo, ENTIDAD_CODIGO.CODIGO_ACTIVO, "condicionantes", ACCION_CODIGO.CODIGO_MODIFICAR);
-
+	
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
-			trustMe.registrarError(request, idActivo, ENTIDAD_CODIGO.CODIGO_ACTIVO, "condicionantes", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getHistoricoValoresPrecios(DtoHistoricoPreciosFilter dto, ModelMap model, HttpServletRequest request) {
 		try {
@@ -1876,18 +1831,15 @@ public class ActivoController extends ParadiseJsonController {
 			model.put(RESPONSE_DATA_KEY, page.getResults());
 			model.put(RESPONSE_TOTALCOUNT_KEY, page.getTotalCount());
 			model.put(RESPONSE_SUCCESS_KEY, true);
-			trustMe.registrarSuceso(request, Long.valueOf(dto.getIdActivo()), ENTIDAD_CODIGO.CODIGO_ACTIVO, "historicoPrecios", ACCION_CODIGO.CODIGO_VER);
-
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
-			trustMe.registrarError(request, Long.valueOf(dto.getIdActivo()), ENTIDAD_CODIGO.CODIGO_ACTIVO, "historicoPrecios", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getPropuestas(DtoPropuestaFilter dtoPropuestaFiltro, ModelMap model, HttpServletRequest request) {
 		try {
@@ -1900,13 +1852,12 @@ public class ActivoController extends ParadiseJsonController {
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
-			trustMe.registrarError(request, Long.valueOf(dtoPropuestaFiltro.getIdActivo()), ENTIDAD_CODIGO.CODIGO_ACTIVO, "propuestas", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getCondicionEspecificaByActivo(Long id, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, activoApi.getCondicionEspecificaByActivo(id));
@@ -1914,7 +1865,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica, ModelMap model) {
 		model.put(RESPONSE_SUCCESS_KEY, activoApi.createCondicionEspecifica(dtoCondicionEspecifica));
@@ -1922,7 +1873,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView darDeBajaCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica, ModelMap model) {
 		model.put(RESPONSE_SUCCESS_KEY, activoApi.darDeBajaCondicionEspecifica(dtoCondicionEspecifica));
@@ -1930,16 +1881,14 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica, ModelMap model, HttpServletRequest request) {
 		model.put(RESPONSE_SUCCESS_KEY, activoApi.saveCondicionEspecifica(dtoCondicionEspecifica));
-		trustMe.registrarSuceso(request, dtoCondicionEspecifica.getIdActivo(), ENTIDAD_CODIGO.CODIGO_ACTIVO, "condicion", ACCION_CODIGO.CODIGO_MODIFICAR);
-
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getHistoricoEstadosPublicacionVentaByIdActivo(DtoPaginadoHistoricoEstadoPublicacion dto, ModelMap model) {
 		DtoPaginadoHistoricoEstadoPublicacion listadoPaginado = activoEstadoPublicacionApi.getHistoricoEstadosPublicacionVentaByIdActivo(dto);
@@ -1950,7 +1899,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getHistoricoEstadosPublicacionAlquilerByIdActivo(DtoPaginadoHistoricoEstadoPublicacion dto, ModelMap model) {
 		DtoPaginadoHistoricoEstadoPublicacion listadoPaginado = activoEstadoPublicacionApi.getHistoricoEstadosPublicacionAlquilerByIdActivo(dto);
@@ -1961,7 +1910,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getEstadoInformeComercialByActivo(Long id, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, activoApi.getEstadoInformeComercialByActivo(id));
@@ -1969,7 +1918,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getHistoricoMediadorByActivo(Long id, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, activoApi.getHistoricoMediadorByActivo(id));
@@ -1981,7 +1930,7 @@ public class ActivoController extends ParadiseJsonController {
 		return activoApi.getHistoricoMediadorByActivo(id);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createHistoricoMediador(DtoHistoricoMediador dto, ModelMap model) {
 		try {
@@ -1995,7 +1944,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getActivosPublicacion(DtoActivosPublicacion dtoActivosPublicacion, ModelMap model) {
 		try {
@@ -2012,7 +1961,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public void generateExcelPublicaciones(DtoActivosPublicacion dtoActivosPublicacion, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		dtoActivosPublicacion.setStart(excelReportGeneratorApi.getStart());
@@ -2024,7 +1973,7 @@ public class ActivoController extends ParadiseJsonController {
 		excelReportGeneratorApi.generateAndSend(report, response);
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	@Transactional()
 	public ModelAndView registrarExportacionPublicaciones(DtoActivosPublicacion dtoActivosPublicacion, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -2065,7 +2014,7 @@ public class ActivoController extends ParadiseJsonController {
 		
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getDatosPublicacionActivo(Long id, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, activoEstadoPublicacionApi.getDatosPublicacionActivo(id));
@@ -2074,7 +2023,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView setDatosPublicacionActivo(DtoDatosPublicacionActivo dto, ModelMap model) {
 		try {
@@ -2089,7 +2038,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createOferta(DtoOfertasFilter dtoOferta, ModelMap model) {
 		try {
@@ -2111,7 +2060,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getPropuestaActivosVinculadosByActivo(DtoPropuestaActivosVinculados dto, ModelMap model) {
 		try {
@@ -2133,7 +2082,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createPropuestaActivosVinculadosByActivo(DtoPropuestaActivosVinculados dto, ModelMap model) {
 		try {
@@ -2148,7 +2097,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deletePropuestaActivosVinculadosByActivo(DtoPropuestaActivosVinculados dto, ModelMap model) {
 		try {
@@ -2163,7 +2112,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView solicitarTasacion(Long idActivo, ModelMap model) {
 		try {
@@ -2181,7 +2130,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getSolicitudTasacionBankia(Long id, ModelMap model) {
 		try {
@@ -2198,7 +2147,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getProveedorByActivo(Long idActivo, ModelMap model) {
 		try {
@@ -2214,7 +2163,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getGastoByActivo(Long idActivo, Long idProveedor, WebDto dto, ModelMap model) {
 		try {
@@ -2234,7 +2183,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getActivoTributosById(Long idActivo, WebDto dto, ModelMap model) {
 		try {
@@ -2251,7 +2200,7 @@ public class ActivoController extends ParadiseJsonController {
 	}
 	
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveOrUpdateActivoTributo(DtoActivoTributos activoTributosDto, @RequestParam Long idEntidad, ModelMap model, HttpServletRequest request) {
 		try {
@@ -2266,7 +2215,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteActivoTributo(DtoActivoTributos activoTributosDto, @RequestParam Long idTributo, ModelMap model, HttpServletRequest request) {
 		try {
@@ -2281,7 +2230,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getReglasPublicacionAutomatica(DtoReglasPublicacionAutomatica dto, ModelMap model) {
 		try {
@@ -2303,7 +2252,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createReglaPublicacionAutomatica(DtoReglasPublicacionAutomatica dto, ModelMap model) {
 		try {
@@ -2318,7 +2267,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteReglaPublicacionAutomatica(DtoReglasPublicacionAutomatica dto, ModelMap model) {
 		try {
@@ -2333,7 +2282,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getProveedoresByActivoIntegrado(DtoActivoIntegrado dtoActivoIntegrado, ModelMap model) {
 		try {
@@ -2355,7 +2304,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createActivoIntegrado(DtoActivoIntegrado dto, ModelMap model) {
 		try {
@@ -2370,7 +2319,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getActivoIntegrado(@RequestParam String id, ModelMap model) {
 		try {
@@ -2385,7 +2334,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView updateActivoIntegrado(DtoActivoIntegrado dto, ModelMap model) {
 		try {
@@ -2400,7 +2349,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getListHistoricoOcupacionesIlegales(ModelMap model, WebDto dto, Long idActivo) {
 
@@ -2420,7 +2369,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getListMovimientosLlaveByLlave(ModelMap model, WebDto dto, Long idLlave, Long idActivo) {
 		try {
@@ -2437,7 +2386,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createMovimientoLlave(DtoMovimientoLlave dtoMovimiento, ModelMap model) {
 		try {
@@ -2452,7 +2401,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveMovimientoLlave(DtoMovimientoLlave dto, ModelMap model) {
 		try {
@@ -2467,7 +2416,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteMovimientoLlave(DtoMovimientoLlave dto, ModelMap model) {
 		try {
@@ -2482,7 +2431,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComercialActivo(DtoComercialActivo dto, ModelMap model, HttpServletRequest request) {
 		try {
@@ -2498,7 +2447,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveComercialActivo(DtoComercialActivo dto, ModelMap model, HttpServletRequest request) {
 		try {
@@ -2519,7 +2468,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteCarga(DtoActivoCargas dtoCarga, ModelMap model) {
 		try {
@@ -2534,7 +2483,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView comprobarActivoFormalizable(Long numActivo, ModelMap model) {
 		try {
@@ -2549,7 +2498,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboUsuariosGestorActivos(WebDto webDto, ModelMap model) {
 		EXTDDTipoGestor tipoGestorActivos = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GACT");
@@ -2559,7 +2508,7 @@ public class ActivoController extends ParadiseJsonController {
 		return new ModelAndView("jsonView", model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboSupervisorActivos(WebDto webDto, ModelMap model) {
 		EXTDDTipoGestor tipoGestorActivos = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "SUPACT");
@@ -2569,7 +2518,7 @@ public class ActivoController extends ParadiseJsonController {
 		return new ModelAndView("jsonView", model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView propagarInformacion(@RequestParam() Long id, @RequestParam() String tab, ModelMap model) {
 		List<String> fields = new ArrayList<String>();
@@ -2590,7 +2539,7 @@ public class ActivoController extends ParadiseJsonController {
 		return new ModelAndView("jsonView", model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveActivo(HttpServletRequest request, ModelMap model) {
 		if (request != null) {
@@ -2617,7 +2566,7 @@ public class ActivoController extends ParadiseJsonController {
 		return new ModelAndView("jsonView", new ModelMap());
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveActivosAgrRestringida(HttpServletRequest request, ModelMap model) {
 		if (request != null) {
@@ -2648,7 +2597,7 @@ public class ActivoController extends ParadiseJsonController {
 		return new ModelAndView("jsonView", model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createTasacionActivo(String importeTasacionFin, String tipoTasacionCodigo, String nomTasador, Date fechaValorTasacion, Long idEntidad, ModelMap model) {
 		try {
@@ -2663,7 +2612,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveTasacionActivo(DtoTasacion tasacionDto, ModelMap model, HttpServletRequest request) {
 		try {
@@ -2680,7 +2629,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveDatosPatrimonio(DtoActivoPatrimonio patrimonioDto, @RequestParam Long id, ModelMap model, HttpServletRequest request) {
 		try {
@@ -2708,7 +2657,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getHistoricoAdecuacionesAlquilerByActivo(DtoActivoPatrimonio dto, @RequestParam Long id, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, activoApi.getHistoricoAdecuacionesAlquilerByActivo(id));
@@ -2716,7 +2665,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getImpuestosByActivo(Long idActivo, ModelMap model) {
 		try {
@@ -2732,7 +2681,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getImpuestos(DtoProveedorFilter dtoProveedorFiltro, ModelMap model) {
 		try {
@@ -2747,7 +2696,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createImpuestos(DtoImpuestosActivo dtoImpuestosFilter, ModelMap model) {
 		try {
@@ -2762,7 +2711,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteImpuestos(DtoImpuestosActivo dtoImpuestosFilter, ModelMap model) {
 		try {
@@ -2777,7 +2726,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView updateImpuestos(DtoImpuestosActivo dtoImpuestosFilter, ModelMap model) {
 		try {
@@ -2792,7 +2741,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView updateCalificacionNegativa(DtoActivoDatosRegistrales dtoActivosDatosRegistrales, ModelMap model) {
 		try {
@@ -2807,7 +2756,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createCalificacionNegativa(@RequestParam Long idEntidadPk, DtoActivoDatosRegistrales dtoActivosDatosRegistrales, ModelMap model) {
 		try {
@@ -2823,7 +2772,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView destroyCalificacionNegativa(DtoActivoDatosRegistrales dtoActivosDatosRegistrales, ModelMap model) {
 		try {
@@ -2838,7 +2787,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getActivosPropagables(String idActivo, ModelMap model){
 		try{
@@ -2858,19 +2807,18 @@ public class ActivoController extends ParadiseJsonController {
 
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getHistoricoDestinoComercialByActivo(@RequestParam Long id, ModelMap model, WebDto dto) {
 
 		List<DtoHistoricoDestinoComercial> data = activoApi.getDtoHistoricoDestinoComercialByActivo(id);
 
-		//model.put("data", data.subList(dto.getStart(), ( ((data.size() - 1 ) + dto.getStart() ) < dto.getLimit() ? data.size() : (dto.getStart() + dto.getLimit() ) ) ));
 		model.put("data", data.subList(dto.getStart(), ( (data.size() < (dto.getStart() + dto.getLimit()) ) ? data.size() : (dto.getStart() + dto.getLimit()) ) ));
 		model.put("totalCount", data.size());
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getActivoExists(String numActivo, ModelMap model) {
 
@@ -2932,7 +2880,7 @@ public class ActivoController extends ParadiseJsonController {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getMotivoAnulacionExpediente(ModelMap model) {
 
@@ -2943,14 +2891,14 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", true);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoController", e);
 			model.put("success", false);
 		}
 
 		return createModelAndViewJson(model);
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getIsUnidadAlquilable(Long idActivo,ModelMap model) {
 		
@@ -2959,13 +2907,13 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", true);
 			
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoController", e);
 			model.put("success", false);
 		}
 		return createModelAndViewJson(model);
 	}
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST) // TODO --> BORRAR
+	
+	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getCalificacionNegativaMotivo( Long idActivo, String idMotivo, ModelMap model) {
 
 		try {
@@ -2976,14 +2924,14 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", true);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoController", e);
 			model.put("success", false);
 		}
 
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getIsActivoMatriz(String idActivo, ModelMap model){
 		try{
@@ -2998,9 +2946,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	@SuppressWarnings("unchecked")
-
-	@RequestMapping(method = RequestMethod.POST) // TODO --> BORRAR
+	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveCalificacionNegativaMotivo(Long idActivo, String idMotivo, String calificacionNegativa, String estadoMotivoCalificacionNegativa, 
 			String responsableSubsanar, String descripcionCalificacionNegativa, String fechaSubsanacion, ModelMap model) {
 		
@@ -3019,7 +2965,7 @@ public class ActivoController extends ParadiseJsonController {
 				Date fecha = format.parse(fechaSubsanacion);
 				dto.setFechaSubsanacion(fecha);
 			} catch (ParseException e) {
-				e.printStackTrace();
+				logger.error("Error en ActivoController", e);
 			}
 			
 		}
@@ -3028,15 +2974,15 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 			model.put("success", activoApi.saveCalificacionNegativoMotivo(dto));
 		}catch(Exception e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoController", e);
 			model.put("success", false);
 		}
 		
 		return createModelAndViewJson(model);
 	}
 	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST) // TODO --> BORRAR ?? 
+	
+	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getMotivosCalificacionNegativaSubsanados( Long idActivo, String idMotivo, ModelMap model) {
 
 		try {
@@ -3047,29 +2993,26 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", true);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoController", e);
 			model.put("success", false);
 		}
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView propagarActivosMatriz(String idActivo, ModelMap model){
-		
-		
-		try{
-			
-		model.put(RESPONSE_DATA_KEY, activoApi.getActivosPropagables(Long.valueOf(idActivo)));
-			
-			
+	public ModelAndView propagarActivosMatriz(String idActivo, ModelMap model) {
+
+		try {
+
+			model.put(RESPONSE_DATA_KEY, activoApi.getActivosPropagables(Long.valueOf(idActivo)));
+
 		} catch (JsonViewerException jvex) {
-						model.put(RESPONSE_SUCCESS_KEY, false);
-						model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
-						logger.error(jvex.getMessage());
-						throw new JsonViewerException(jvex.getMessage());
-		}catch (Exception e) {
-			
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
+			logger.error(jvex.getMessage(),jvex);
+			throw new JsonViewerException(jvex.getMessage());
+		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put(RESPONSE_ERROR_KEY, e.getMessage());
@@ -3078,7 +3021,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getCalificacionNegativa(Long id, ModelMap model) {
 		try {
@@ -3091,7 +3034,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getisActivoUa(String idActivo, ModelMap model){
 		try{
@@ -3109,7 +3052,7 @@ public class ActivoController extends ParadiseJsonController {
 		return activoApi.getActivoCalificacionNegativaCodigos(id);
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getHistoricoTramitacionTitulo(Long id, ModelMap model) {
 		try {
@@ -3122,7 +3065,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto, @RequestParam Long idActivo, ModelMap model) {
 		try {
@@ -3141,7 +3084,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView updateHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto, ModelMap model) {
 		try {
@@ -3163,7 +3106,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getPerimetroAppleCesion(ModelMap model,String codigoServicer) {
 		
@@ -3174,14 +3117,14 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", true);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoController", e);
 			model.put("success", false);
 		}
 		return createModelAndViewJson(model);
 
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveDatosPlusvalia(DtoActivoPlusvalia plusvaliaDto, @RequestParam Long id, ModelMap model, HttpServletRequest request) {
 		try {
@@ -3202,7 +3145,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView destroyHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto,
 			ModelMap model) {
@@ -3216,7 +3159,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView insertarActAutoTram(DtoComercialActivo dto, ModelMap model, HttpServletRequest request) {
 		try {
@@ -3229,7 +3172,7 @@ public class ActivoController extends ParadiseJsonController {
 		return new ModelAndView("jsonView", model);
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListPlusvalia(DtoPlusvaliaFilter dtoPlusvaliaFilter, ModelMap model) {
 		try {
@@ -3245,7 +3188,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboApiPrimario(ModelMap model) {			
 		try{
@@ -3258,7 +3201,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListAdjuntosPlusvalia(Long id, ModelMap model, HttpServletRequest request) {
 		try {
@@ -3295,7 +3238,7 @@ public class ActivoController extends ParadiseJsonController {
 
     }
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView uploadPlusvalia(ModelMap model, HttpServletRequest request, HttpServletResponse response) {
 		try {
@@ -3354,7 +3297,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getDatosActivo(@RequestParam Long idActivo, ModelMap model) {
 
@@ -3369,7 +3312,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getHistoricoDiarioGestion(Long id, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, activoApi.getHistoricoDiarioGestion(id));
@@ -3377,7 +3320,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboImpideVenta(String codEstadoCarga, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, adapter.getComboImpideVenta(codEstadoCarga));
@@ -3385,7 +3328,7 @@ public class ActivoController extends ParadiseJsonController {
 		return new ModelAndView("jsonView", model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView clonateOferta(String idOferta, ModelMap model) {
 		try {
@@ -3405,7 +3348,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveFasePublicacionActivo(DtoFasePublicacionActivo dto, ModelMap model) {
 		try {
@@ -3422,7 +3365,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getFasePublicacionActivo(Long id, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, activoEstadoPublicacionApi.getFasePublicacionActivo(id));
@@ -3431,7 +3374,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getHistoricoFasesDePublicacionActivo(Long id, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, activoEstadoPublicacionApi.getHistoricoFasesDePublicacionActivo(id));
@@ -3440,7 +3383,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getDiccionarioFasePublicacion(ModelMap model) {
 

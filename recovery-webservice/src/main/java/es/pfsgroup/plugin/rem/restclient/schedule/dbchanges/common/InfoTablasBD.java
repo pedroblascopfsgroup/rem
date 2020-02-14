@@ -12,7 +12,7 @@ import net.sf.json.JSONObject;
  * @author bruno
  *
  */
-public interface InfoTablasBD {
+public interface InfoTablasBD{
 	
 	
 

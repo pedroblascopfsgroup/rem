@@ -170,8 +170,8 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 			Boolean inicializado = false;
 			RestLlamada registro = null;
 			do {
+				registro = new RestLlamada();
 				if (!inicializado) {
-					registro = new RestLlamada();
 					handler.actualizarVistaMaterializada(registro);
 					inicializado = true;
 				}
@@ -230,12 +230,12 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 		try {
 			resultado = ejecutaTarea(handler, listPendientes, registro);
 			pasarDeBloque(listPendientes);
+			handler.procesaResultado(resultado);
 		} finally {
 			if (!Checks.estaVacio(listPendientes) && registroLlamadas != null) {
 				registro.logTiempoBorrarHistorico();
 				registro.logTiempoInsertarHistorico();
 				registroLlamadas.guardaRegistroLlamada(registro, handler);
-				handler.procesaResultado(resultado);
 
 				llamadas.add(registro);
 			}
@@ -379,7 +379,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	private void obtenerProperties() {
 		String tamanyoBloqueProperties = !Checks.esNulo(appProperties.getProperty("rest.client.webcom.tamanyobloque"))
 				? appProperties.getProperty("rest.client.webcom.tamanyobloque")
-				: "500";
+				: "10";
 		try {
 			if (tamanyoBloqueProperties != null) {
 				this.tamanyoBloque = Integer.parseInt(tamanyoBloqueProperties);

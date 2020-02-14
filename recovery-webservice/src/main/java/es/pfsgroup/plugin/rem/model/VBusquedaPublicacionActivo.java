@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -80,6 +81,40 @@ public class VBusquedaPublicacionActivo implements Serializable {
     
     @Column(name="MOTIVO_OCULTACION_VENTA")
     private String motivoOcultacionVenta;
+    
+    @Column(name = "GPUBL_USU_USERNAME")
+    private String gestorPublicacionUsername;
+	
+	@Column(name = "FASE_PUBLICACION_CODIGO")
+	private String fasePublicacionCodigo;
+	
+	@Column(name = "FASE_PUBLICACION_DESCRIPCION")
+	private String fasePublicacionDescripcion;
+	
+	@Column(name = "SUBFASE_PUBLICACION_CODIGO")
+	private String subFasePublicacionCodigo;
+	
+	@Column(name = "SUBFASE_PUBLICACION_DESCRIPCION")
+	private String subFasePublicacionDescripcion;
+	
+	@Column(name = "TAS_IMPORTE_TAS_FIN")
+	private Long precioTasacionActivo;
+	
+	@Column(name = "DD_TAL_DESCRIPCION")
+	private String tipoAlquilerDescripcion;
+	
+	@Column(name = "APU_FECHA_INI_VENTA")
+	private Date fechaPublicacionVenta;
+	
+	@Column(name = "APU_FECHA_INI_ALQUILER")
+	private Date fechaPublicacionAlquiler;
+	
+	@Column(name = "EPV_CODIGO")
+	private String estadoPublicacionVenta;
+	
+	@Column(name = "EPA_CODIGO")
+	private String estadoPublicacionAlquiler;
+	
 
 	public Long getId() {
 		return id;
@@ -248,5 +283,102 @@ public class VBusquedaPublicacionActivo implements Serializable {
 	public void setMotivoOcultacionVenta(String motivoOcultacionVenta) {
 		this.motivoOcultacionVenta = motivoOcultacionVenta;
 	}
+
+	public String getFasePublicacionCodigo() {
+		return fasePublicacionCodigo;
+	}
+
+	public void setFasePublicacionCodigo(String fasePublicacionCodigo) {
+		this.fasePublicacionCodigo = fasePublicacionCodigo;
+	}
+
+	public Boolean getInformeComercial() {
+		return informeComercial;
+	}
+
+	public void setInformeComercial(Boolean informeComercial) {
+		this.informeComercial = informeComercial;
+	}
+
+	public String getGestorPublicacionUsername() {
+		return gestorPublicacionUsername;
+	}
+
+	public void setGestorPublicacionUsername(String gestorPublicacionUsername) {
+		this.gestorPublicacionUsername = gestorPublicacionUsername;
+	}
+
+	public String getFasePublicacionDescripcion() {
+		return fasePublicacionDescripcion;
+	}
+
+	public void setFasePublicacionDescripcion(String fasePublicacionDescripcion) {
+		this.fasePublicacionDescripcion = fasePublicacionDescripcion;
+	}
+
+	public String getSubFasePublicacionCodigo() {
+		return subFasePublicacionCodigo;
+	}
+
+	public void setSubFasePublicacionCodigo(String subFasePublicacionCodigo) {
+		this.subFasePublicacionCodigo = subFasePublicacionCodigo;
+	}
+
+	public String getSubFasePublicacionDescripcion() {
+		return subFasePublicacionDescripcion;
+	}
+
+	public void setSubFasePublicacionDescripcion(String subFasePublicacionDescripcion) {
+		this.subFasePublicacionDescripcion = subFasePublicacionDescripcion;
+	}
+
+	public Long getPrecioTasacionActivo() {
+		return precioTasacionActivo;
+	}
+
+	public void setPrecioTasacionActivo(Long precioTasacionActivo) {
+		this.precioTasacionActivo = precioTasacionActivo;
+	}
+
+	public String getTipoAlquilerDescripcion() {
+		return tipoAlquilerDescripcion;
+	}
+
+	public void setTipoAlquilerDescripcion(String tipoAlquilerDescripcion) {
+		this.tipoAlquilerDescripcion = tipoAlquilerDescripcion;
+	}
+
+	public Date getFechaPublicacionVenta() {
+		return fechaPublicacionVenta;
+	}
+
+	public void setFechaPublicacionVenta(Date fechaPublicacionVenta) {
+		this.fechaPublicacionVenta = fechaPublicacionVenta;
+	}
+
+	public Date getFechaPublicacionAlquiler() {
+		return fechaPublicacionAlquiler;
+	}
+
+	public void setFechaPublicacionAlquiler(Date fechaPublicacionAlquiler) {
+		this.fechaPublicacionAlquiler = fechaPublicacionAlquiler;
+	}
+
+	public String getEstadoPublicacionVenta() {
+		return estadoPublicacionVenta;
+	}
+
+	public void setEstadoPublicacionVenta(String estadoPublicacionVenta) {
+		this.estadoPublicacionVenta = estadoPublicacionVenta;
+	}
+
+	public String getEstadoPublicacionAlquiler() {
+		return estadoPublicacionAlquiler;
+	}
+
+	public void setEstadoPublicacionAlquiler(String estadoPublicacionAlquiler) {
+		this.estadoPublicacionAlquiler = estadoPublicacionAlquiler;
+	}
+	
     
 }

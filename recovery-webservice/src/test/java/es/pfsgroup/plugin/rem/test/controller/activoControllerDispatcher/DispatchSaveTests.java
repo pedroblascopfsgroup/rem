@@ -5,6 +5,8 @@ import static org.mockito.Mockito.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import static org.junit.Assert.*;
 import static es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap.*;
 
@@ -38,6 +40,9 @@ public class DispatchSaveTests {
 	@Mock
 	private ActivoController controller;
 	
+	@Mock
+	private HttpServletRequest request;
+	
 	@Before
 	public void before () {
 		dispatcher = new ActivoControllerDispatcher(controller);
@@ -52,7 +57,7 @@ public class DispatchSaveTests {
 	@Test
 	public void requestNull () {
 		try {
-			dispatcher.dispatchSave(null, null);
+			dispatcher.dispatchSave(null,request);
 			verifyZeroInteractions(controller);
 		} catch (RuntimeException e) {
 			fail("El método no debería haber fallado (" + e.getMessage() + ")");
@@ -62,7 +67,7 @@ public class DispatchSaveTests {
 	@Test
 	public void requestVacio () {
 		try {
-			dispatcher.dispatchSave(new JSONObject(), null);
+			dispatcher.dispatchSave(new JSONObject(),request);
 			verifyZeroInteractions(controller);
 		} catch (RuntimeException e) {
 			fail("El método no debería haber fallado (" + e.getMessage() + ")");
@@ -77,7 +82,7 @@ public class DispatchSaveTests {
 		
 		JSONObject json = createInputJson(ID_ACTIVO);
 		putModel(json, TAB_DATOS_BASICOS, modelData);
-		dispatcher.dispatchSave(json, null);
+		dispatcher.dispatchSave(json,request);
 		
 		ArgumentCaptor<DtoActivoFichaCabecera> captor = ArgumentCaptor.forClass(DtoActivoFichaCabecera.class);
 		verify(controller).saveDatosBasicos(captor.capture(), eq(ID_ACTIVO), any(ModelMap.class));
@@ -95,10 +100,10 @@ public class DispatchSaveTests {
 		
 		JSONObject json = createInputJson(ID_ACTIVO);
 		putModel(json, TAB_SIT_POSESORIA, modelData);
-		dispatcher.dispatchSave(json, null);
+		dispatcher.dispatchSave(json,request);
 		
 		ArgumentCaptor<DtoActivoSituacionPosesoria> captor = ArgumentCaptor.forClass(DtoActivoSituacionPosesoria.class);
-		verify(controller).saveActivoSituacionPosesoria(captor.capture(), eq(ID_ACTIVO), any(ModelMap.class), null);
+		verify(controller).saveActivoSituacionPosesoria(captor.capture(), eq(ID_ACTIVO), any(ModelMap.class),request);
 		
 		DtoActivoSituacionPosesoria dto = captor.getValue();
 		assertEquals(ABCDE, dto.getTipoTituloPosesorioCodigo());
@@ -116,7 +121,7 @@ public class DispatchSaveTests {
 		JSONObject json = createInputJson(ID_ACTIVO);
 		putModel(json, TAB_CARGAS_ACTIVO, modelCargas);
 		putModel(json, TAB_INFO_ADMINISTRATIVA, modelInfoAdm);
-		dispatcher.dispatchSave(json, null);
+		dispatcher.dispatchSave(json,request);
 		
 		ArgumentCaptor<DtoActivoCargasTab> captorCargas = ArgumentCaptor.forClass(DtoActivoCargasTab.class);
 		ArgumentCaptor<DtoActivoInformacionAdministrativa> captorInfoAdm = ArgumentCaptor.forClass(DtoActivoInformacionAdministrativa.class);

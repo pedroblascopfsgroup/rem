@@ -815,6 +815,6 @@ public interface OfertaApi {
 	 * @param oferta
 	 * @return DDComiteSancion
 	 */
-	DDComiteSancion calculoComiteLBK(Oferta oferta, ExpedienteComercial eco);
+	DDComiteSancion calculoComiteLBK(Long idOferta, ExpedienteComercial eco);
 
 }

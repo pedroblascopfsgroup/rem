@@ -5,6 +5,8 @@ import static org.mockito.Mockito.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import static org.junit.Assert.*;
 import static es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap.*;
 
@@ -37,6 +39,9 @@ public class DispatchSaveTests {
 	
 	@Mock
 	private ActivoController controller;
+	
+	@Mock
+	private HttpServletRequest request;
 	
 	@Before
 	public void before () {

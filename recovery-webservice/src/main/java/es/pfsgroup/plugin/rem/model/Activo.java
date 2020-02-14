@@ -508,6 +508,9 @@ public class Activo implements Serializable, Auditable {
     @Column(name = "ACT_VALOR_LIQUIDEZ")
     private String valorLiquidez;
     
+    @Column(name = "ACT_NUM_ACTIVO_DIVARIAN")
+	private Long numActivoDivarian;
+    
     // Getters del activo --------------------------------------------
     
     public Long getId() {

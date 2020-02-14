@@ -129,6 +129,9 @@ public class Visita implements Serializable, Auditable {
     @JoinColumn(name = "DD_ORC_ID")
 	private DDOrigenComprador origenComprador;
     
+    @Column(name="VIS_FECHA_REASIG_OPORTUNIDAD")
+    private Date fechaReasignacionRealizadorOportunidad; 
+    
     
 /*    @Column(name="VIS_VISITA_PRESCRIPTOR")
     private Integer realizaVisitaPrescriptor;   
@@ -362,6 +365,14 @@ public class Visita implements Serializable, Auditable {
 
 	public void setProveedorPrescriptorOportunidad(ActivoProveedor proveedorPrescriptorOportunidad) {
 		this.proveedorPrescriptorOportunidad = proveedorPrescriptorOportunidad;
+	}
+
+	public Date getFechaReasignacionRealizadorOportunidad() {
+		return fechaReasignacionRealizadorOportunidad;
+	}
+
+	public void setFechaReasignacionRealizadorOportunidad(Date fechaReasignacionRealizadorOportunidad) {
+		this.fechaReasignacionRealizadorOportunidad = fechaReasignacionRealizadorOportunidad;
 	}
    
 }

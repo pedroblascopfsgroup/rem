@@ -1281,7 +1281,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				if (!Checks.esNulo(nuevoSupervisorC) && !Checks.esNulo(nuevoSupervisorC.getUsuario())) {
 					usuarioSupervisorComercial = nuevoSupervisorC.getUsuario();// flag
 				}
-				if (!Checks.esNulo(supervisorFormalzacion)) {
+				if (!Checks.esNulo(supervisorFormalzacion) && !Checks.esNulo(supervisorFormalzacion.getUsuario())) {
 					this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION,
 							supervisorFormalzacion.getUsuario().getUsername(), dto);
 				}
@@ -1517,7 +1517,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		// Liberbank
 		else if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
 				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(carteraCodigo)) {
-			return ofertaApi.calculoComiteLBK(oferta, expediente);
+			return ofertaApi.calculoComiteLBK(oferta.getId(), expediente);
 		}
 		// El combo "Comité seleccionado" vendrá informado para cartera Cajamar
 		else if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(carteraCodigo)) {
@@ -1760,9 +1760,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOne(idExpedienteComercial);
 
 		try {
-			expedienteComercial = this.crearCompradores(oferta, expedienteComercial);
-			transactionManager.commit(transaction);
-			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 			trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
 			transactionManager.commit(transaction);
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());

@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -120,7 +121,9 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
 				for (Oferta oferta : listaOfertas) {
 					if (!oferta.getId().equals(ofertaAceptada.getId())
-							&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo()) && !ofertaApi.isOfertaPrincipal(oferta) && !ofertaApi.isOfertaDependiente(oferta)) {
+							&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo()) 
+							&& ((!ofertaApi.isOfertaPrincipal(oferta) && !ofertaApi.isOfertaDependiente(oferta)) 
+						|| (DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL.equals(ofertaAceptada.getClaseOferta().getCodigo())))) {
 						ofertaApi.congelarOferta(oferta);
 					}
 				}

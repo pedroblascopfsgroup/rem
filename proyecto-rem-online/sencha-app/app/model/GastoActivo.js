@@ -57,7 +57,7 @@ Ext.define('HreRem.model.GastoActivo', {
             read: '',
             create: 'gastosproveedor/createGastoActivo',
             update: 'gastosproveedor/updateGastoActivo',
-            destroy: 'gastosproveedor/deleteGastoActivo'
+            destroy: ''
         }
 
     }    

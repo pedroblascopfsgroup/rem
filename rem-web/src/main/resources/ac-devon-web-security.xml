@@ -28,14 +28,14 @@
     <global-method-security secured-annotations="enabled" jsr250-annotations="enabled"/>
     
     <!-- Provide an alias for the authenticationManager -->
-    <!-- <authentication-manager alias="authenticationManager"/> -->
+    <authentication-manager alias="authenticationManager"/>
     
     <!-- Allow custom WebAuthenticationDetailsSource
     <beans:bean id="authenticationProcessingFilterEntryPoint" class="org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntryPoint">
         <beans:property name="loginFormUrl" value="${security.loginpage}"/>
         <beans:property name="forceHttps" value="false" />
     </beans:bean> -->
-      <beans:bean id="authenticationManager" class="es.capgemini.pfs.security.PFSProviderManager"></beans:bean>
+    
     <!-- Allow custom WebAuthenticationDetailsSource -->
     <beans:bean id="authenticationProcessingFilterEntryPoint" class="es.pfsgroup.plugin.rem.security.Http401AuthenticationEntryPoint">
         <beans:property name="loginFormUrl" value="${security.loginpage}"/>

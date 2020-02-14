@@ -40,6 +40,16 @@ Ext.define('HreRem.model.BusquedaActivosPublicacion', {
     		},
     		{
     			name: 'okalquiler'
+    		},
+    		{
+    			name: 'fechaPublicacionVenta',
+    			type: 'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name: 'fechaPublicacionAlquiler',
+    			type: 'date',
+    			dateFormat: 'c'
     		}
     ] 
     

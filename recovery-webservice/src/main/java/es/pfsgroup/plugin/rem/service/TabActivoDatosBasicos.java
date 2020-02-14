@@ -538,7 +538,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		activoDto.setEstadoAlquiler(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAlquiler(activo));
 
 		// Datos de activo bancario del activo al Dto de datos basicos
-		boolean esUA = activoDao.isUnidadAlquilable(activo.getId());
+		boolean esUA = activoDao.isUnidadAlquilable(activo);
 		ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(activo.getId());
 		
 		if(esUA) {
@@ -682,12 +682,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		//Cambiamos la forma de obtener si una oferta esta viva, de comprobar si el estado de la oferta es 
 		//Aceptado/tramitada a comprobar si una oferta tiene tareas activas, si tiene alguna tarea activa,
 		//la oferta estara viva, si por el contrario, tiene todas las tareas finalizadas la oferta no estara viva
-		/*for(ActivoOferta activoOferta : activo.getOfertas()) {
-			Oferta oferta = ofertaApi.getOfertaById(activoOferta.getOferta());
-			if(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
-				tieneOfertaAlquilerViva = true;
-			}
-		}*/
 		List<TareaActivo> listaTareas = tareaActivoApi.getTareasActivo(activo.getId(),ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER);
 		if (!Checks.estaVacio(listaTareas)) {
 			for (TareaActivo tarea : listaTareas) {

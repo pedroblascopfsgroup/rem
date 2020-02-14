@@ -1776,18 +1776,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setFechaRespuestaCES(oferta.getFechaRespuestaCES());
 		}
 
-		if(!Checks.esNulo(oferta.getImporteContraofertaPM()) && isCarteraCerberusApple) {
-			dto.setImporteContraofertaPM(oferta.getImporteContraofertaPM());
-		}
-
-		if(!Checks.esNulo(oferta.getFechaRespuestaPM()) && isCarteraCerberusApple) {
-			dto.setFechaRespuestaPM(oferta.getFechaRespuestaPM());
-		}
-
-		if(!Checks.esNulo(oferta.getFechaRespuestaOfertantePM()) && isCarteraCerberusApple) {
-			dto.setFechaRespuestaOfertantePM(oferta.getFechaRespuestaOfertantePM());
-		}
-
 		if(!Checks.esNulo(oferta.getImporteContraofertaCES()) && isCarteraCerberusApple) {
 			dto.setImporteContraofertaCES(oferta.getImporteContraofertaCES());
 		}

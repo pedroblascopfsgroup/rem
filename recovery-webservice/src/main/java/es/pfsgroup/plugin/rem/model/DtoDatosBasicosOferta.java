@@ -95,12 +95,6 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	private Long idGestorComercialPrescriptor;
 
-	private Double importeContraofertaPM;
-
-	private Date fechaRespuestaPM;
-
-	private Date fechaRespuestaOfertantePM;
-
 	private Double importeContraofertaCES;
 
   private Date fechaRespuestaCES;
@@ -426,30 +420,6 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setIdGestorComercialPrescriptor(Long idGestorComercialPrescriptor) {
 		this.idGestorComercialPrescriptor = idGestorComercialPrescriptor;
-	}
-
-	public Double getImporteContraofertaPM() {
-		return importeContraofertaPM;
-	}
-
-	public void setImporteContraofertaPM(Double importeContraofertaPM) {
-		this.importeContraofertaPM = importeContraofertaPM;
-	}
-
-	public Date getFechaRespuestaPM() {
-		return fechaRespuestaPM;
-	}
-
-	public void setFechaRespuestaPM(Date fechaRespuestaPM) {
-		this.fechaRespuestaPM = fechaRespuestaPM;
-	}
-
-	public Date getFechaRespuestaOfertantePM() {
-		return fechaRespuestaOfertantePM;
-	}
-
-	public void setFechaRespuestaOfertantePM(Date fechaRespuestaOfertantePM) {
-		this.fechaRespuestaOfertantePM = fechaRespuestaOfertantePM;
 	}
 
 	public Double getImporteContraofertaCES() {

@@ -585,8 +585,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		ExpedienteComercial expedienteComercial = findOne(idExpediente);
 		Oferta oferta = expedienteComercial.getOferta();
 		Visita visitaOferta = oferta.getVisita();
+		Oferta ofertaPrincipal = null;
 		
-		Oferta ofertaPrincipal = ofertaApi.getOfertaByNumOfertaRem(dto.getNuevoNumOferPrincipal());
+		if(dto.getNuevoNumOferPrincipal() != null) {
+			ofertaPrincipal = ofertaApi.getOfertaByNumOfertaRem(dto.getNuevoNumOferPrincipal());
+		}
 		
 		if(ofertaPrincipal != null) {
 			compruebaEstadoAnyadirDependiente(ofertaPrincipal);
@@ -794,6 +797,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
 						OfertasAgrupadasLbk ofertaAgrupadaLbk = genericDao.get(OfertasAgrupadasLbk.class, filtroId, filtroBorrado);
 						
+						Oferta ofrPrincipal = ofertaAgrupadaLbk.getOfertaPrincipal();
+						
 						//Nos guardamos la oferta principal de la agrupacion de ofertas a la que pertenecia la oferta dependiente para recalcular su comité
 						listaOfertasLBK.add(ofertaAgrupadaLbk.getOfertaPrincipal());
 						
@@ -803,6 +808,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						auditoria.setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
 						ofertaAgrupadaLbk.setAuditoria(auditoria);					
 						genericDao.update(OfertasAgrupadasLbk.class, ofertaAgrupadaLbk);
+						
+						ofertaApi.calculoComiteLBK(ofrPrincipal.getId(), null);
 						
 						//Recalculamos el comite de la oferta que ha salido de la agrupacion
 						listaOfertasLBK.add(oferta);			
@@ -1000,9 +1007,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 				
 		//Se aplica el comité correspondiente a las ofertas añadidas a la lista
-		for(Oferta ofr : listaOfertasLBK) {
-			ofertaApi.calculoComiteLBK(ofr, null);
-		}
+		ofertaApi.calculoComiteLBK(oferta.getId(), null);
 				
 		
 		if (!Checks.esNulo(dto.getTipoOfertaCodigo())) {

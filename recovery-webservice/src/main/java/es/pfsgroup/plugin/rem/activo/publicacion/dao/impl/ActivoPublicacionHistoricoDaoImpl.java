@@ -42,7 +42,7 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 
 	@Override
 	public DtoPaginadoHistoricoEstadoPublicacion getListadoPaginadoHistoricoEstadosPublicacionVentaByIdActivo(DtoPaginadoHistoricoEstadoPublicacion dto) {
-		Criteria criteria = getSession().createCriteria(ActivoPublicacionHistorico.class);
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoPublicacionHistorico.class);
 		Disjunction andFechas = Restrictions.disjunction();
 		criteria.add(Restrictions.eq("activo.id", dto.getIdActivo())).createCriteria("tipoComercializacion").add(Restrictions.in("codigo", DDTipoComercializacion.CODIGOS_VENTA))
 				.setMaxResults(dto.getLimit()).setFirstResult(dto.getStart());
@@ -57,7 +57,7 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 			listaDto.add(this.convertirEntidadTipoVentaToDto(historicoPublicacion));
 		}
 
-		Criteria criteriaCount = getSession().createCriteria(ActivoPublicacionHistorico.class);
+		Criteria criteriaCount = this.getSessionFactory().getCurrentSession().createCriteria(ActivoPublicacionHistorico.class);
 		criteriaCount.setProjection(Projections.rowCount());
 		criteriaCount.add(Restrictions.eq("activo.id", dto.getIdActivo())).createCriteria("tipoComercializacion").add(Restrictions.in("codigo", DDTipoComercializacion.CODIGOS_VENTA));
 		Integer totalCount = HibernateUtils.castObject(Integer.class, criteriaCount.uniqueResult());
@@ -71,7 +71,7 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 
 	@Override
 	public DtoPaginadoHistoricoEstadoPublicacion getListadoHistoricoEstadosPublicacionAlquilerByIdActivo(DtoPaginadoHistoricoEstadoPublicacion dto) {
-		Criteria criteria = getSession().createCriteria(ActivoPublicacionHistorico.class);
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoPublicacionHistorico.class);
 		Disjunction andFechas = Restrictions.disjunction();
 		criteria.add(Restrictions.eq("activo.id", dto.getIdActivo())).createCriteria("tipoComercializacion").add(Restrictions.in("codigo", DDTipoComercializacion.CODIGOS_ALQUILER))
 				.setMaxResults(dto.getLimit()).setFirstResult(dto.getStart());
@@ -86,7 +86,7 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 			listaDto.add(this.convertirEntidadTipoAlquilerToDto(historicoPublicacion));
 		}
 
-		Criteria criteriaCount = getSession().createCriteria(ActivoPublicacionHistorico.class);
+		Criteria criteriaCount = this.getSessionFactory().getCurrentSession().createCriteria(ActivoPublicacionHistorico.class);
 		criteriaCount.setProjection(Projections.rowCount());
 		criteriaCount.add(Restrictions.eq("activo.id", dto.getIdActivo())).createCriteria("tipoComercializacion").add(Restrictions.in("codigo", DDTipoComercializacion.CODIGOS_ALQUILER));
 		Integer totalCount = HibernateUtils.castObject(Integer.class, criteriaCount.uniqueResult());
@@ -188,7 +188,7 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 
 	@Override
 	public Integer getTotalDeDiasEnEstadoPublicadoVentaPorIdActivo(Long idActivo) {
-		Criteria criteria = getSession().createCriteria(ActivoPublicacionHistorico.class);
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoPublicacionHistorico.class);
 		criteria.setProjection(Projections.sqlProjection("NVL(sum(round({alias}.AHP_FECHA_FIN_VENTA - {alias}.AHP_FECHA_INI_VENTA)), 0) as totalDias", new String[]{ "totalDias" }, new Type[]{
 				Hibernate.INTEGER }));
 		criteria.add(Restrictions.eq("activo.id", idActivo)).createCriteria("estadoPublicacionVenta").add(Restrictions.eq("codigo", DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA));
@@ -198,7 +198,7 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 
 	@Override
 	public Integer getTotalDeDiasEnEstadoPublicadoAlquilerPorIdActivo(Long idActivo) {
-		Criteria criteria = getSession().createCriteria(ActivoPublicacionHistorico.class);
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoPublicacionHistorico.class);
 		criteria.setProjection(Projections.sqlProjection("NVL(sum(round({alias}.AHP_FECHA_FIN_ALQUILER - {alias}.AHP_FECHA_INI_ALQUILER)), 0) as totalDias", new String[]{ "totalDias" }, new Type[]{
 				Hibernate.INTEGER }));
 		criteria.add(Restrictions.eq("activo.id", idActivo)).createCriteria("estadoPublicacionVenta").add(Restrictions.eq("codigo", DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER));
@@ -242,7 +242,7 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 	
 	@Override
 	public ActivoPublicacionHistorico getActivoPublicacionHistoricoActualVenta(Long idActivo) {
-		Criteria criteria = getSession().createCriteria(ActivoPublicacionHistorico.class);
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoPublicacionHistorico.class);
 		criteria.add(Restrictions.eq("activo.id", idActivo)).createCriteria("tipoComercializacion").add(Restrictions.in("codigo", DDTipoComercializacion.CODIGOS_VENTA));
 		criteria.add(Restrictions.isNotNull("fechaInicioVenta"));
 		criteria.add(Restrictions.isNull("fechaFinVenta"));
@@ -259,7 +259,7 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 	
 	@Override
 	public ActivoPublicacionHistorico getActivoPublicacionHistoricoActualAlquiler(Long idActivo) {
-		Criteria criteria = getSession().createCriteria(ActivoPublicacionHistorico.class);
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoPublicacionHistorico.class);
 		criteria.add(Restrictions.eq("activo.id", idActivo)).createCriteria("tipoComercializacion").add(Restrictions.in("codigo", DDTipoComercializacion.CODIGOS_ALQUILER));
 		criteria.add(Restrictions.isNotNull("fechaInicioAlquiler"));
 		criteria.add(Restrictions.isNull("fechaFinAlquiler"));

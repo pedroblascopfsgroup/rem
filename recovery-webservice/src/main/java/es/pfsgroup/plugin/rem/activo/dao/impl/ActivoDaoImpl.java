@@ -754,6 +754,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.motivoOcultacionVenta", dto.getMotivosOcultacionCodigo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.motivoOcultacionAlquiler", dto.getMotivosOcultacionAlquilerCodigo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.fasePublicacionCodigo", dto.getFasePublicacionCodigo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.subFasePublicacionCodigo", dto.getSubfasePublicacionCodigo());
    		if (!Checks.esNulo(dto.getTipoComercializacionCodigo()))HQLBuilder.addFiltroWhereInSiNotNull(hb, "activopubli.tipoComercializacionCodigo", Arrays.asList(dto.getTipoComercializacionCodigo()));
 
 		return HibernateQueryUtils.page(this, hb, dto);
@@ -1701,7 +1702,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@Override
 	public ActivoPlusvalia getPlusvaliaByIdActivo(Long idActivo) {
-		Criteria criteria = getSession().createCriteria(ActivoPlusvalia.class);
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoPlusvalia.class);
 		criteria.add(Restrictions.eq("activo.id", idActivo));
 
 		return HibernateUtils.castObject(ActivoPlusvalia.class, criteria.uniqueResult());

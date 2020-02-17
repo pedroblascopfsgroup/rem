@@ -20,8 +20,10 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -43,6 +45,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.thread.EnvioCorreoAsync;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
@@ -108,14 +111,20 @@ public class GenericAdapter {
 //		} catch (NoSuchMethodException e) {
 //			lista = diccionarioApi.dameValoresDiccionarioSinBorrado(clase);
 //		}
+		clase = DiccionarioTargetClassMap.convertToTargetClass(diccionario);
 		
 		//TODO: Para ver que diccionarios no tienen auditoria.
 		if("gestorCommiteLiberbank".equals(diccionario)) {
 			lista = new ArrayList();
 			lista.add(diccionarioApi.dameValorDiccionarioByCod(DiccionarioTargetClassMap.convertToTargetClass("entidadesPropietarias")
 					, DDCartera.CODIGO_CARTERA_LIBERBANK));
+		}else if(clase.equals(DDTipoTrabajo.class)){
+			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "bloqueado", false);
+			Order order = new Order(OrderType.ASC,"descripcion");
+			lista = genericDao.getListOrdered(DDTipoTrabajo.class, order, filtro1, filtro2);
 		}else {
-			clase = DiccionarioTargetClassMap.convertToTargetClass(diccionario);
+			
 			lista = diccionarioApi.dameValoresDiccionario(clase);
 
 			List listaPeriodicidad = new ArrayList();

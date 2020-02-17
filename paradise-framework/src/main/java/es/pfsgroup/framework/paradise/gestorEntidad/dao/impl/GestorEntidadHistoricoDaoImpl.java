@@ -19,7 +19,7 @@ public class GestorEntidadHistoricoDaoImpl extends AbstractEntityDao<GestorEntid
 		hqlList.append(resuelveTipoEntidad(dto.getTipoEntidad(), dto.getIdEntidad()));
 		hqlList.append(" and geh.fechaHasta is null");
 		hqlList.append(" order by geh.tipoGestor.descripcion asc, geh.fechaDesde desc");
-		Query queryList = this.getSession().createQuery(hqlList.toString());
+		Query queryList = this.getSessionFactory().getCurrentSession().createQuery(hqlList.toString());
 
 		
 		return queryList.list();
@@ -31,7 +31,7 @@ public class GestorEntidadHistoricoDaoImpl extends AbstractEntityDao<GestorEntid
 		StringBuilder hqlList = new StringBuilder(" from GestorEntidadHistorico geh ");
 		hqlList.append(resuelveTipoEntidad(dto.getTipoEntidad(), dto.getIdEntidad()));
 		hqlList.append(" order by geh.tipoGestor.descripcion asc, geh.fechaDesde desc");
-		Query queryList = this.getSession().createQuery(hqlList.toString());
+		Query queryList = this.getSessionFactory().getCurrentSession().createQuery(hqlList.toString());
 
 		
 		return queryList.list();
@@ -78,7 +78,7 @@ public class GestorEntidadHistoricoDaoImpl extends AbstractEntityDao<GestorEntid
 		
         hqlUpdate.append(" and gah.tipoGestor.id = :idGestor and gah.fechaHasta is null");
         
-        Query queryUpdate = this.getSession().createQuery(hqlUpdate.toString());
+        Query queryUpdate = this.getSessionFactory().getCurrentSession().createQuery(hqlUpdate.toString());
 
         queryUpdate.setParameter("idGestor", idTipoGestor);
         

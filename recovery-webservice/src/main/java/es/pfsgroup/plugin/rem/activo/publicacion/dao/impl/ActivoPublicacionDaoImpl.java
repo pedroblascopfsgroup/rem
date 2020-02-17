@@ -117,7 +117,7 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 
 	@Override
 	public Integer getDiasEnEstadoActualPublicadoVentaPorIdActivo(Long idActivo) {
-		Criteria criteria = getSession().createCriteria(ActivoPublicacion.class);
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoPublicacion.class);
 		criteria.setProjection(Projections.sqlProjection("NVL(sum(round(sysdate - {alias}.APU_FECHA_INI_VENTA)), 0) as totalDias", new String[]{ "totalDias" }, new Type[]{ Hibernate.INTEGER }));
 		criteria.add(Restrictions.eq("activo.id", idActivo)).createCriteria("estadoPublicacionVenta").add(Restrictions.eq("codigo", DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA));
 
@@ -126,7 +126,7 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 
 	@Override
 	public Integer getDiasEnEstadoActualPublicadoAlquilerPorIdActivo(Long idActivo) {
-		Criteria criteria = getSession().createCriteria(ActivoPublicacion.class);
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoPublicacion.class);
 		criteria.setProjection(Projections.sqlProjection("NVL(sum(round(sysdate - {alias}.APU_FECHA_INI_ALQUILER)), 0) as totalDias", new String[]{ "totalDias" }, new Type[]{ Hibernate.INTEGER }));
 		criteria.add(Restrictions.eq("activo.id", idActivo)).createCriteria("estadoPublicacionAlquiler").add(Restrictions.eq("codigo", DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER));
 
@@ -135,7 +135,7 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 
 	@Override
 	public ActivoPublicacion getActivoPublicacionPorIdActivo(Long idActivo) {
-		Criteria criteria = getSession().createCriteria(ActivoPublicacion.class);
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoPublicacion.class);
 		criteria.add(Restrictions.eq("activo.id", idActivo));
 
 		return HibernateUtils.castObject(ActivoPublicacion.class, criteria.uniqueResult());
@@ -143,7 +143,7 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 
 	@Override
 	public Boolean getCheckSinPrecioVentaPorIdActivo(Long idActivo) {
-		Criteria criteria = getSession().createCriteria(ActivoPublicacion.class);
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoPublicacion.class);
 		criteria.setProjection(Projections.property("checkSinPrecioVenta"));
 		criteria.add(Restrictions.eq("activo.id", idActivo));
 
@@ -152,7 +152,7 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 
 	@Override
 	public Boolean getCheckSinPrecioAlquilerPorIdActivo(Long idActivo) {
-		Criteria criteria = getSession().createCriteria(ActivoPublicacion.class);
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoPublicacion.class);
 		criteria.setProjection(Projections.property("checkSinPrecioAlquiler"));
 		criteria.add(Restrictions.eq("activo.id", idActivo));
 
@@ -161,7 +161,7 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 
 	@Override
 	public Date getFechaInicioEstadoActualPublicacionVenta(Long idActivo) {
-		Criteria criteria = getSession().createCriteria(ActivoPublicacion.class);
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoPublicacion.class);
 		criteria.setProjection(Projections.property("fechaInicioVenta"));
 		criteria.add(Restrictions.eq("activo.id", idActivo)).createCriteria("estadoPublicacionVenta")
 				.add(Restrictions.in("codigo", new String[] {DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA, DDEstadoPublicacionVenta.CODIGO_OCULTO_VENTA}));
@@ -171,7 +171,7 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 	
 	@Override
 	public HistoricoFasePublicacionActivo getFasePublicacionVigentePorIdActivo(Long idActivo) {
-		Criteria criteria = getSession().createCriteria(HistoricoFasePublicacionActivo.class);
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(HistoricoFasePublicacionActivo.class);
 		criteria.add(Restrictions.eq("activo.id", idActivo));
 		criteria.add(Restrictions.isNull("fechaFin"));
 		return HibernateUtils.castObject(HistoricoFasePublicacionActivo.class, criteria.uniqueResult());

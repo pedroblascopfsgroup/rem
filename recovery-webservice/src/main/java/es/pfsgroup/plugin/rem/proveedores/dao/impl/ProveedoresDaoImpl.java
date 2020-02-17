@@ -372,10 +372,9 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 	public List<ActivoProveedor> getMediadoresActivos() {
 		HQLBuilder hb = new HQLBuilder(
 				"select proveedor.id, proveedor.codigoProveedorRem, proveedor.nombre from ActivoProveedor proveedor");
-		hb.appendWhere("proveedor.tipoProveedor.codigo in ('" + DDTipoProveedor.COD_MEDIADOR + "', '" + DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA + "')");
-		hb.appendWhere("proveedor.estadoProveedor.codigo = " + DDEstadoProveedor.ESTADO_BIGENTE);
-		hb.appendWhere("proveedor.homologado = 1");
-
+		hb.appendWhere("(proveedor.tipoProveedor.codigo =" + DDTipoProveedor.COD_MEDIADOR +" and proveedor.homologado = 1) "
+				+ "or (proveedor.tipoProveedor.codigo =" + DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA + " and proveedor.estadoProveedor.codigo = " + DDEstadoProveedor.ESTADO_BIGENTE + ")");
+		
 		return HibernateQueryUtils.list(this, hb);
 	}
 	/*@Override

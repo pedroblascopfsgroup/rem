@@ -98,6 +98,14 @@ Ext.define('HreRem.view.publicacion.PublicacionModel', {
 				type : 'uxproxy',
 				remoteUrl : 'activo/getDiccionarioFasePublicacion'
 			}
+		},
+		
+		comboSubfasePublicacion: {
+			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboSubfaseFiltered'
+				}
 		}
     }
 });

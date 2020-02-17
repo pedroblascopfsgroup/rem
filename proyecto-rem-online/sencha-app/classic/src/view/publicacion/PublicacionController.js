@@ -162,7 +162,43 @@ Ext.define('HreRem.view.publicacion.PublicacionController', {
     	} else {
     		motivosOcultacionAlquiler.setHidden(true);
 	    }	
-    }
+    },
 	
-	
+    onChangeChainedCombo: function(combo) {
+		var me = this,
+		chainedCombo = me.lookupReference(combo.chainedReference);   
+
+		me.getViewModel().notify();
+
+		if(!Ext.isEmpty(chainedCombo.getValue())) {
+			chainedCombo.clearValue();
+		}
+		
+		if(combo.chainedStore == 'comboSubfasePublicacion'){
+			var store=chainedCombo.getStore(); 
+			store.getProxy().setExtraParams({'codFase':combo.getValue()});
+		}
+
+		chainedCombo.getStore().load({ 			
+			callback: function(records, operation, success) {
+					if(!Ext.isEmpty(records) && records.length > 0) {
+						if (chainedCombo.selectFirst == true) {
+							chainedCombo.setSelection(1);
+						};
+						chainedCombo.setDisabled(false);
+					} else {
+						chainedCombo.setDisabled(true);
+					}
+			}
+		});
+
+		if (me.lookupReference(chainedCombo.chainedReference) != null) {
+			var chainedDos = me.lookupReference(chainedCombo.chainedReference);
+			if(!chainedDos.isDisabled()) {
+				chainedDos.clearValue();
+				chainedDos.getStore().removeAll();
+				chainedDos.setDisabled(true);
+			}
+		}
+	}
 });

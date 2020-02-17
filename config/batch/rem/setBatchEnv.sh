@@ -1,6 +1,6 @@
 export JAVA_HOME=DIRECTORIO_JAVA
 export PATH=$JAVA_HOME/bin:$PATH
-export DEVON_HOME=recovery/DIRECTORY_NAME_VALUE/DIRECTORIO_BATCH
+export DEVON_HOME=recovery/DIRECTORY_NAME_VALUE_BATCH/DIRECTORIO_BATCH
 export INSTALL_DIR=/$DEVON_HOME
 export LANG=es_ES.UTF-8
 export ORACLE_HOME=ORACLE_HOME_VALUE
@@ -10,8 +10,8 @@ export PATH=$PATH:$ORACLE_HOME/bin
 export ENTIDAD=2038
 
 # Shells
-export DIR_INPUT_AUX=/recovery/DIRECTORY_NAME_VALUE/transferencia/aprov_auxiliar/
-export DIR_INPUT_TR=/recovery/DIRECTORY_NAME_VALUE/transferencia/aprov_troncal/
+export DIR_INPUT_AUX=/recovery/DIRECTORY_NAME_VALUE_BATCH/transferencia/aprov_auxiliar/
+export DIR_INPUT_TR=/recovery/DIRECTORY_NAME_VALUE_BATCH/transferencia/aprov_troncal/
 export DIR_DESTINO=$INSTALL_DIR/control/etl/input/
 export DIR_SALIDA=$INSTALL_DIR/control/etl/output/
 export DIR_BACKUP=$INSTALL_DIR/control/etl/backup/

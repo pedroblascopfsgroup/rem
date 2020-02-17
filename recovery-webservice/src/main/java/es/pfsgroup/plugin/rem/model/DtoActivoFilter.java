@@ -111,6 +111,8 @@ public class DtoActivoFilter extends WebDto {
 	private boolean listPage;
 	private String territorio;
 	private String numActivoDivarian;
+	private String tipoSegmento;
+	private String perimetroMacc;
 	
 	public String getNumActivo() {
 		return numActivo;
@@ -766,6 +768,18 @@ public class DtoActivoFilter extends WebDto {
 	}
 	public void setNumActivoDivarian(String numActivoDivarian) {
 		this.numActivoDivarian = numActivoDivarian;
-	}	
+	}
+	public String getTipoSegmento() {
+		return tipoSegmento;
+	}
+	public void setTipoSegmento(String tipoSegmento) {
+		this.tipoSegmento = tipoSegmento;
+	}
+	public String getPerimetroMacc() {
+		return perimetroMacc;
+	}
+	public void setPerimetroMacc(String perimetroMacc) {
+		this.perimetroMacc = perimetroMacc;
+	}
 	
 }

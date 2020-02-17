@@ -749,7 +749,10 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckInfoActivo', {
 			                { 
 								xtype:'currencyfieldbase',
 						 		fieldLabel: HreRem.i18n('fieldlabel.valor.adquisicion'),
-						 		bind: '{datosRegistralesAdmision.valorAdquisicion}'
+						 		bind:{
+						 			value: '{datosRegistralesAdmision.valorAdquisicion}',
+						 			hidden: '{activo.isSubcarteraApple}'
+						 		}
 
 							},
 			                { 

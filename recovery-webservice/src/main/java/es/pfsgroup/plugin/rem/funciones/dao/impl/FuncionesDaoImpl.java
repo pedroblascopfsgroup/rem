@@ -29,7 +29,7 @@ public class FuncionesDaoImpl extends AbstractEntityDao<Funcion, Long> implement
 		HQLBuilder hb = new HQLBuilder("select fun.id, fun.descripcionLarga, fun.descripcion from Funcion fun");
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "fun.auditoria.borrado", false);
 
-		Query query = getSession().createQuery(hb.toString());
+		Query query = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 		HQLBuilder.parametrizaQuery(query, hb);
 		List<Object[]> listaQuery =  query.list();
 		

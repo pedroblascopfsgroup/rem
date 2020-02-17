@@ -240,13 +240,7 @@ Ext.define('HreRem.view.activos.ActivosList', {
 		            	if(!Ext.isEmpty(value) && value != 0) 
 		            	return '<div> <img src="resources/images/rating_'+value+'_listado.svg" alt="Rating" width="20px"></div>';	
 		            }
-		        },
-		        {
-		            dataIndex: 'numActivoDivarian',
-		            text: HreRem.i18n('header.numero.activo.divarian'),
-		            flex: 1
 		        }
-		
 		    ];
 		    me.dockedItems = [
 		        {

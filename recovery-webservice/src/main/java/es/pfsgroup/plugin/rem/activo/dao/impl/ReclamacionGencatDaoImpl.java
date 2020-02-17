@@ -16,7 +16,7 @@ public class ReclamacionGencatDaoImpl extends AbstractEntityDao<ReclamacionGenca
 	@Override
 	public ReclamacionGencat getReclamacionByComunicacionGencatId(Long comunicacionId) {
 		
-		Criteria criteria = getSession().createCriteria(ReclamacionGencat.class);
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ReclamacionGencat.class);
 		criteria.createCriteria("comunicacion").add(Restrictions.eq("id", comunicacionId));
 		
 		return HibernateUtils.castObject(ReclamacionGencat.class, criteria.uniqueResult());

@@ -15,7 +15,7 @@ public class HistoricoFasePublicacionActivoDaoImpl extends AbstractEntityDao<His
 
 	@Override
 	public HistoricoFasePublicacionActivo getHistoricoFasesPublicacionActivoActualById(Long idActivo) {
-		Criteria criteria = getSession().createCriteria(HistoricoFasePublicacionActivo.class);
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(HistoricoFasePublicacionActivo.class);
 		criteria.add(Restrictions.eq("activo.id", idActivo));
 		criteria.add(Restrictions.isNotNull("fechaInicio"));
 		criteria.add(Restrictions.isNull("fechaFin"));

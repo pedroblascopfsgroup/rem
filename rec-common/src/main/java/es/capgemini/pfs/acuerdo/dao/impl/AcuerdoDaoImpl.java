@@ -508,7 +508,7 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 			resultado.append(id).append(", ");
 			sql.append("select usu_id_grupo from ${master.schema}.gru_grupos_usuarios where usu_id_usuario=");
 			sql.append(id);
-			List resultados = getSession().createSQLQuery(sql.toString()).list();
+			List resultados = this.getSessionFactory().getCurrentSession().createSQLQuery(sql.toString()).list();
 			for (Object idUsuario : resultados) {
 				resultado.append(idUsuario.toString()).append(", ");
 			}

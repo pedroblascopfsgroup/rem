@@ -146,6 +146,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenDato;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
@@ -172,6 +173,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoSolicitudTributo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
+import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
+import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
@@ -339,6 +343,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
+	
+	@Autowired
+	private NotificationOfertaManager notificationOfertaManager;
 	
 	@Autowired
 	private GestorActivoManager gestorActivoManager;
@@ -3484,6 +3491,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (!Checks.esNulo(activo.getEstaEnPuja())) {
 				beanUtilNotNull.copyProperty(dto, "puja", activo.getEstaEnPuja());
 			}
+			
+			if (!Checks.esNulo(activo.getVentaSobrePlano())){
+				if(DDSinSiNo.CODIGO_SI.equals(activo.getVentaSobrePlano().getCodigo())) {
+					beanUtilNotNull.copyProperty(dto, "ventaSobrePlano", true);
+				}else {
+					beanUtilNotNull.copyProperty(dto, "ventaSobrePlano", false);
+				}		
+				
+			}
+			
 			if (!Checks.esNulo(activo.getActivoAutorizacionTramitacionOfertas())) {
 				beanUtilNotNull.copyProperty(dto, "motivoAutorizacionTramitacionCodigo", activo.getActivoAutorizacionTramitacionOfertas().getMotivoAutorizacionTramitacion().getCodigo());
 				beanUtilNotNull.copyProperty(dto, "observacionesAutoTram", activo.getActivoAutorizacionTramitacionOfertas().getObservacionesAutoTram());
@@ -6463,6 +6480,81 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return activoDto;
+	}
+
+	//Para saber si pertenece a DND comprobar si devuelve un null. De esta forma se evita hacer otra función igual
+	//con otro bucle igual para devolver el número de agrupación dnd
+	//Comprobar si devuelve null o no para saber si pertenece a agrupación DND.
+	@Override
+	public Long activoPerteneceDND(Activo activo) {
+		Long agruacionDND = null;
+		if(!Checks.esNulo(activo)) {
+			List<ActivoAgrupacionActivo> listaAgrupacionesActivo = activo.getAgrupaciones();
+			
+			for (int i = 0; i < listaAgrupacionesActivo.size(); i++) {
+				ActivoAgrupacionActivo activoAgrupacionActivo = listaAgrupacionesActivo.get(i);
+				if(!Checks.esNulo(activoAgrupacionActivo.getAgrupacion()) && !Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion())
+					&& DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+					agruacionDND = activoAgrupacionActivo.getAgrupacion().getId();
+					break;
+				}
+			}
+		}
+		return agruacionDND;
+	}
+
+	
+	@Override
+	public Boolean getVisibilidadTabFasesPublicacion(Activo activo) {
+		Usuario logedUser = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		Usuario gestorPublicacionActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_PUBLICACION);
+		Usuario supervisorPublicacionActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_PUBLICACION);
+		Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+		Usuario supervisorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS);
+		Usuario gestorEdificacion = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+		Usuario supervisorEdificacion = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
+		Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		Filter vigenteFilter = genericDao.createFilter(FilterType.NULL, "fechaHasta");
+		Order order = new Order(OrderType.DESC, "id");
+		
+		List<ActivoInformeComercialHistoricoMediador> listaMediadores = genericDao.getListOrdered(ActivoInformeComercialHistoricoMediador.class, order, activoFilter, vigenteFilter);
+		ActivoInformeComercialHistoricoMediador mediadorVigente = null;
+		if (!Checks.estaVacio(listaMediadores)) {
+			mediadorVigente = listaMediadores.get(0);
+		}
+		
+		if (!Checks.esNulo(gestorPublicacionActivo) && logedUser.equals(gestorPublicacionActivo)) {
+			return true;
+		} else if (!Checks.esNulo(supervisorPublicacionActivo) && logedUser.equals(supervisorPublicacionActivo)) {
+			return true;
+		} else if (!Checks.esNulo(gestorActivo) && logedUser.equals(gestorActivo)) {
+			return true;
+		} else if (!Checks.esNulo(supervisorActivo) && logedUser.equals(supervisorActivo)) {
+			return true;
+		} else if (!Checks.esNulo(gestorEdificacion) && logedUser.equals(gestorEdificacion)) {
+			return true;
+		} else if (!Checks.esNulo(supervisorEdificacion) && logedUser.equals(supervisorEdificacion)) {
+			return true;
+		} else if (!Checks.esNulo(mediadorVigente) && !Checks.esNulo(mediadorVigente.getMediadorInforme())) {
+			Long idProveedor = mediadorVigente.getMediadorInforme().getId();
+			Filter pvcFilter = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", idProveedor);
+			List<ActivoProveedorContacto> listaProveedorContacto = genericDao.getList(ActivoProveedorContacto.class, pvcFilter);
+			if (!Checks.estaVacio(listaProveedorContacto)) {
+				//Puede haber más de un registro en PVC con el mismo PVE_ID
+				//pero por lo que he visto entre esos registro solo puede haber uno con DocIdentificativo
+				//y ese seria el mediador
+				for (ActivoProveedorContacto proveedorContacto : listaProveedorContacto) {
+					if (!Checks.esNulo(proveedorContacto) && !Checks.esNulo(proveedorContacto.getDocIdentificativo())) {
+						Usuario usuMediadorVigente = proveedorContacto.getUsuario();
+						if (!Checks.esNulo(usuMediadorVigente) && usuMediadorVigente.equals(logedUser)) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		
+		return false;
 	}
 	
 	public void deleteActOfr(Long idActivo, Long idOferta) {

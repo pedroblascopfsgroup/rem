@@ -43,7 +43,7 @@ public class TrabajoExcelReport extends AbstractExcelReport implements ExcelRepo
 		for(VBusquedaTrabajos trabajo: listaTrabajos){
 			List<String> fila = new ArrayList<String>();
 			fila.add(trabajo.getNumTrabajo());
-			fila.add(trabajo.getNumActivo().toString());
+			fila.add(trabajo.getNumActivoAgrupacion().toString());
 			fila.add(trabajo.getDescripcionTipo());
 			fila.add(trabajo.getDescripcionSubtipo());
 			fila.add(trabajo.getDescripcionEstado());

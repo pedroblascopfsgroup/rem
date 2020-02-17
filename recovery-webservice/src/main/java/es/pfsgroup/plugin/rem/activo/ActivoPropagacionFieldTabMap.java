@@ -528,7 +528,6 @@ public class ActivoPropagacionFieldTabMap {
 
     	pmap.put(TAB_COMERCIAL,
     			Arrays.asList(
-					//"id", // ID de activo.
 					"situacionComercialCodigo",
 					"fechaVenta",
 					"expedienteComercialVivo",

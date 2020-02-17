@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20190712
+--## AUTOR=RLB
+--## FECHA_CREACION=20191031
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-4784
@@ -60,7 +60,6 @@ BEGIN
 		SELECT /*+ leading(rn act agr) use_hash(act) use_hash(agr) */
 			DISTINCT
 			tbj.tbj_id, 
-			act.act_id AS idactivo, 
 			1 as rango,
 			tbj.tbj_num_trabajo, 
 			tbj.tbj_webcom_id, 
@@ -86,8 +85,7 @@ BEGIN
 			ddprv.dd_prv_codigo, 
 			ddprv.dd_prv_descripcion AS provincia, 
 			bieloc.bie_loc_cod_post AS codpostal, 
-			act.act_num_activo AS numactivo,
-          	agr.agr_num_agrup_rem AS numagrupacion, 
+			agr.agr_num_agrup_rem AS numagrupacion, 
 			cra.dd_cra_codigo AS cartera,
 			scr.dd_scr_codigo AS subcartera,
 			usu.usu_username AS gestor_activo, 
@@ -98,8 +96,7 @@ BEGIN
 			DECODE (gtb.tbj_id, NULL, 0, 1) AS EN_OTRO_GASTO
 
      	FROM ' || V_ESQUEMA || '.act_tbj_trabajo tbj 
-			JOIN ' || V_ESQUEMA || '.act_tbj atj 							ON atj.tbj_id = tbj.tbj_id
-			LEFT JOIN ' || V_ESQUEMA || '.act_activo act 					ON act.act_id = atj.act_id and act.borrado = 0
+			LEFT JOIN ' || V_ESQUEMA || '.act_activo act 					ON act.act_id = tbj.act_id and act.borrado = 0
 			LEFT JOIN ' || V_ESQUEMA || '.act_pac_propietario_activo actpro ON act.act_id = actpro.act_id
 			LEFT JOIN ' || V_ESQUEMA || '.act_agr_agrupacion agr 			ON agr.agr_id = tbj.agr_id and agr.borrado = 0
 			LEFT JOIN ' || V_ESQUEMA || '.gac_gestor_add_activo gac 		ON gac.act_id = act.act_id

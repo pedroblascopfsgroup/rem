@@ -47,6 +47,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 	     	 return geoCodeAddr;
 	     },
+	     
+	     esAgrupacionObraNueva: function(get) {
+	     	var tipoAgrupacion = get('activo.pertenceAgrupacionObraNueva');
+	     	var user = $AU.userIsRol("HAYASUPER") || $AU.userIsRol("HAYAGESTCOM");
+	     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['OBRA_NUEVA']) && user) {
+	     		return true;
+	     	} else {
+	     		return false;
+	     	}
+	     },
 
 	     tieneDivisionHorizontal: function(get) {
 	     	var tieneDivision = Ext.isEmpty(get('activo.divHorizontal')) ? false : get('activo.divHorizontal') === "1";	 
@@ -2344,8 +2354,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
-			    extraParams: {diccionario: 'tipoDireccionComercial'}
-			 }
-		}
+				extraParams: {diccionario: 'tipoDireccionComercial'}
+			}
+		},
+	     	
+ 		comboTipoSegmento: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoSegmento'}
+			}
+ 		}
      }
 });

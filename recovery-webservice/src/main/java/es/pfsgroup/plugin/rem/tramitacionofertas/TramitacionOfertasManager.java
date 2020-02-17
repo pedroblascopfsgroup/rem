@@ -1130,6 +1130,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		Usuario usuarioGestorMinuta = null;
 		Usuario usuarioSupervisorMinuta = null;
 		Usuario usuarioCierreVenta = null;
+		Usuario usuarioGestorController = null;
 		ActivoAgrupacion agrupacion = null;
 		Activo activo = null;
 
@@ -1327,6 +1328,20 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION,
 						usuarioSupervisorFormalizacion.getUsername(), dto);
 		}
+		
+		if(activo != null) {
+			String usernameGestorController = gestorExpedienteComercialDao.getUsuarioGestor(activo.getId(),
+					GestorExpedienteComercialApi.CODIGO_GESTOR_CONTROLLER);
+			if(usernameGestorController != null) {
+				usuarioGestorController = genericDao.get(Usuario.class,
+						genericDao.createFilter(FilterType.EQUALS, "username", usernameGestorController));
+			}
+			
+			if(usuarioGestorController != null) {
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_CONTROLLER, 
+						usuarioGestorController.getUsername(), dto);
+			}
+		}
 	}
 
 	private void agregarTipoGestorYUsuarioEnDto(String codTipoGestor, String username, GestorEntidadDto dto) {
@@ -1517,7 +1532,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		// Liberbank
 		else if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
 				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(carteraCodigo)) {
-			return ofertaApi.calculoComiteLBK(oferta, expediente);
+			return ofertaApi.calculoComiteLBK(oferta.getId(), expediente);
 		}
 		// El combo "Comité seleccionado" vendrá informado para cartera Cajamar
 		else if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(carteraCodigo)) {
@@ -1760,9 +1775,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOne(idExpedienteComercial);
 
 		try {
-			expedienteComercial = this.crearCompradores(oferta, expedienteComercial);
-			transactionManager.commit(transaction);
-			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 			trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
 			transactionManager.commit(transaction);
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());

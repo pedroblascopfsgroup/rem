@@ -295,32 +295,7 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 
 	}
 
-	/*
-	 * @Override public void
-	 * deleteActivoPrincipalByIdActivoAgrupacionActivo(Long id) {
-	 * 
-	 * try {
-	 * 
-	 * HQLBuilder hb = new HQLBuilder(
-	 * "update ActivoAgrupacion set activoPrincipal = null where activoPrincipal = (select activo from ActivoAgrupacionActivo where id = "
-	 * + id + ")");
-	 * 
-	 * Query queryUpdate = this.getSession().createQuery(hb.toString());
-	 * 
-	 * queryUpdate.executeUpdate(); //HQLBuilder hb = new HQLBuilder(
-	 * "update ActivoAgrupacion set activoPrincipal = null where activoPrincipal = (select activo from ActivoAgrupacionActivo where id = "
-	 * + id + ")"); //return ((List<ActivoFoto>)
-	 * getHibernateTemplate().find(hb.toString()));
-	 * 
-	 * } catch (Exception e) { e.printStackTrace(); //return null; }
-	 * 
-	 * //update ACT_AGR_AGRUPACION AGR set AGR_ACT_PRINCIPAL = NULL WHERE
-	 * AGR.AGR_ACT_PRINCIPAL = (SELECT ACT_ID FROM ACT_AGA_AGRUPACION_ACTIVO
-	 * WHERE AGA_ID = 42)
-	 * 
-	 * }
-	 */
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ActivoFoto> getFotosActivosAgrupacionById(Long id) {
@@ -532,5 +507,14 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 			return null;
 		}
 	}
+	
+	@Override
+	public ActivoAgrupacion getAgrupacionById(Long idAgrupacion) {
+		HQLBuilder hb = new HQLBuilder("from ActivoAgrupacion agr");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "id", idAgrupacion);
+
+		return HibernateQueryUtils.uniqueResult(this, hb);
+	}
+
 }
 

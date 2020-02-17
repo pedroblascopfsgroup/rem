@@ -60,6 +60,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
+import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateOfertaApi;
 
@@ -105,6 +106,9 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 	@Autowired
 	private ActivoApi activoApi;
 	
+	@Autowired
+	private NotificationOfertaManager notificationOfertaManager;
+	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionExpediente.class);
 
     private static final String COMBO_PROCEDE = "comboProcede";
@@ -120,6 +124,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 
 		ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+		Boolean mandaCorreo = false;
 		if(!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 			String estadoOriginal = null;
@@ -279,6 +284,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 						expediente.setFechaVenta(null);
 						expediente.setEstado(estado);
 						expediente.setFechaAnulacion(new Date());
+						mandaCorreo=true;
 					}
 					
 					if (!tieneReserva) {
@@ -331,7 +337,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 										if(!Checks.esNulo(estado) && (DDEstadoComunicacionGencat.COD_RECHAZADO.equals(estado.getCodigo()) || DDEstadoComunicacionGencat.COD_ANULADO.equals(estado.getCodigo()))) {
 											comunicacionGencat.setComunicadoAnulacionAGencat(true);
 										}
-										
+										mandaCorreo=true;
 										genericDao.save(ComunicacionGencat.class, comunicacionGencat);
 									}
 									
@@ -353,7 +359,12 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 							}
 						}
 						// --- FIN --- HREOS-5052 ---
-						
+						if (mandaCorreo) {
+							if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getOferta()) && !Checks.esNulo(activo)) {
+								Oferta oferta = expediente.getOferta();
+								notificationOfertaManager.sendNotificationDND(oferta, activo);
+							}
+						}
 						try {
 							ofertaApi.descongelarOfertas(expediente);
 						} catch (Exception e) {

@@ -70,7 +70,10 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 			            	},
 			            	reference: 'comboSubcarteraActivoSearch',
 			            	valueField: 'codigo',
-    						displayField: 'descripcion'
+    						displayField: 'descripcion',
+				        	listeners : {
+				        		change: 'onChangeSubcartera'
+				        	} 
 				        }
 				    ]},
 				    {
@@ -623,6 +626,26 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							    		name: 'territorio',
 							    		bind: {
 							    			store: '{comboDireccionComercial}'
+							    		}
+							    	},
+							    	{ 
+							    		xtype: 'comboboxfieldbase',
+							    		fieldLabel: HreRem.i18n('fieldlabel.tipo.segmento'),
+							    		name: 'tipoSegmento',
+							    		reference: 'tipoSegmentoRef',
+							    		hidden: true,
+							    		bind: {
+							    			store: '{comboTipoSegmento}'
+							    		}
+							    	},
+							    	{ 
+							    		xtype: 'comboboxfieldbase',
+							    		fieldLabel: HreRem.i18n('fieldlabel.perimetro.apple.macc.perimetro'),
+							    		name: 'perimetroMacc',
+							    		reference: 'perimetroMaccRef',
+							    		hidden: true,
+							    		bind: {
+							    			store: '{comboSiNoRemActivo}'
 							    		}
 							    	}
 								]

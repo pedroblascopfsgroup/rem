@@ -3424,7 +3424,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				DDComiteSancion comite = eco.getComiteSancion();
 				
 				if (Checks.esNulo(comite)) {
-					comite = this.calculoComiteLBK(ofertaAceptada, eco);
+					comite = this.calculoComiteLBK(ofertaAceptada.getId(), eco);
 				}
 				ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
 				Double importeOferta = (!Checks.esNulo(ofertaAceptada.getImporteContraOferta()))
@@ -3473,7 +3473,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	
 	@Override
-	public DDComiteSancion calculoComiteLBK(Oferta oferta, ExpedienteComercial eco) {
+	public DDComiteSancion calculoComiteLBK(Long idOferta, ExpedienteComercial eco) {
+		
+		Oferta oferta = getOfertaById(idOferta);
+		
 		if(!cumpleRequisitosCalculoLBK(oferta, eco)) {
 			logger.error("Faltan datos para calcular el comité de Liberbank.");
 			return null;
@@ -4505,7 +4508,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			for(OfertasAgrupadasLbk agrupada: ofertasAgrupadas) {
 				eco = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta", agrupada.getOfertaDependiente()));
-				if(eco != null) {
+				if(eco != null && !agrupada.getAuditoria().isBorrado()) {
 					saveComiteExpedienteComercial(eco, comiteSeleccionado);
 				}
 			}	
@@ -4530,7 +4533,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 				Oferta ofrAgrupada = agrupada.getOfertaDependiente();
 				
-				if(DDEstadoOferta.CODIGO_ACEPTADA.equals(ofrAgrupada.getEstadoOferta().getCodigo())) {
+				if(DDEstadoOferta.CODIGO_ACEPTADA.equals(ofrAgrupada.getEstadoOferta().getCodigo())
+						&& !agrupada.getAuditoria().isBorrado()) {
 					
 					dto = rellenaDtoWithOfertaLBK(dto, ofrAgrupada);
 				}

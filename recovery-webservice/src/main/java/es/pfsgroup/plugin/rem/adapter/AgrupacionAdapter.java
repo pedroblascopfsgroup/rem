@@ -67,6 +67,7 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
+import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -74,6 +75,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionObservacion;
 import es.pfsgroup.plugin.rem.model.ActivoAsistida;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
@@ -125,6 +127,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
@@ -269,6 +272,9 @@ public class AgrupacionAdapter {
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
+	
+	@Autowired
+	private GestorExpedienteComercialDao gestorExpedienteComercialDao;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -470,6 +476,16 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "estadoObraNuevaCodigo",
 								agrupacionTemp.getEstadoObraNueva().getCodigo());
 					}
+					
+					if (!Checks.esNulo(agrupacionTemp.getVentaPlano())){
+						if(DDSinSiNo.CODIGO_SI.equals(agrupacionTemp.getVentaPlano().getCodigo())) {
+							beanUtilNotNull.copyProperty(dtoAgrupacion, "ventaSobrePlano", true);
+						}else {
+							beanUtilNotNull.copyProperty(dtoAgrupacion, "ventaSobrePlano", false);
+						}		
+						
+					}
+					
 					Boolean esYubai = false;
 					if ( ((agrupacion.getActivoPrincipal() != null)  
 						&& DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(agrupacion.getActivoPrincipal().getCartera().getCodigo())
@@ -501,6 +517,7 @@ public class AgrupacionAdapter {
 							dtoAgrupacion.setEsVisitable(agrupacion.isEsVisitable());
 						}
 					}
+					dtoAgrupacion.setEsGestorComercialEnActivo(esGestorComercial(agrupacion));
 					// SI ES TIPO RESTRINGIDA
 				} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 					ActivoRestringida agrupacionTemp = (ActivoRestringida) agrupacion;
@@ -799,6 +816,8 @@ public class AgrupacionAdapter {
 		return dtoAgrupacion;
 
 	}
+
+
 
 	public Long getAgrupacionIdByNumAgrupRem(Long numAgrupRem) {
 		return activoAgrupacionApi.getAgrupacionIdByNumAgrupRem(numAgrupRem);
@@ -3044,6 +3063,33 @@ public class AgrupacionAdapter {
 						agrupacion.setEmpresaComercializadora(dto.getEmpresaComercializadora());
 					}
 					
+					if (!Checks.esNulo(dto.getVentaSobrePlano())){
+						
+						Filter filtroSi = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI);
+						Filter filtroNo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO);
+						
+						if(dto.getVentaSobrePlano()) {
+							obraNueva.setVentaPlano(genericDao.get(DDSinSiNo.class, filtroSi));
+							
+						}else {
+							obraNueva.setVentaPlano(genericDao.get(DDSinSiNo.class, filtroNo));
+						}
+						
+
+						List<ActivoAgrupacionActivo> listaActivos = obraNueva.getActivos();
+						for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivos) {
+							Activo activo=activoAgrupacionActivo.getActivo();
+							if(dto.getVentaSobrePlano()) {
+								activo.setVentaSobrePlano(genericDao.get(DDSinSiNo.class, filtroSi));
+							}else {
+								activo.setVentaSobrePlano(genericDao.get(DDSinSiNo.class, filtroNo));
+							}
+							
+							activoDao.save(activo);
+						}
+						
+					}
+					
 					activoAgrupacionApi.saveOrUpdate(obraNueva);
 				}
 
@@ -4120,6 +4166,24 @@ public class AgrupacionAdapter {
 		}
 
 		return dtoAgrupacion;
+	}
+	
+	private Boolean esGestorComercial(ActivoAgrupacion agrupacion) {
+		final String CODIGO_GESTOR_COMERCIAL = "GCOM";
+		boolean esGestorComercial = false;
+		if (!agrupacion.getActivos().isEmpty()) {
+			Usuario usu = genericAdapter.getUsuarioLogado();
+			for (int i = 0; i < agrupacion.getActivos().size(); i++) {
+				ActivoAgrupacionActivo agrupacionActivo = agrupacion.getActivos().get(i);
+				if (agrupacionActivo != null && agrupacionActivo.getActivo() != null 
+				&& usu.equals(gestorActivoApi
+						.getGestorComercialActual(agrupacionActivo.getActivo(), CODIGO_GESTOR_COMERCIAL))) {
+					esGestorComercial = true;
+					break;
+				}
+			}
+		}
+		return esGestorComercial;
 	}
 	
 	@Transactional(readOnly = false)

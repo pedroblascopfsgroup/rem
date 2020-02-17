@@ -32,7 +32,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 
 @Component
-abstract public class AbstractMSVActualizador implements MSVLiberator {
+public abstract  class AbstractMSVActualizador implements MSVLiberator {
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;

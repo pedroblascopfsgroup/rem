@@ -49,6 +49,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -486,6 +487,10 @@ public class Activo implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_ECA_ID")
     private DDEstadoCargaActivo estadoCargaActivo;  
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_VENTA_PLANO")
+    private DDSinSiNo ventaSobrePlano;
     
     @OneToOne(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_ID")
@@ -1941,6 +1946,14 @@ public class Activo implements Serializable, Auditable {
 		this.activoAutorizacionTramitacionOfertas = activoAutorizacionTramitacionOfertas;
 	}
 
+	public DDSinSiNo getVentaSobrePlano() {
+		return ventaSobrePlano;
+	}
+
+	public void setVentaSobrePlano(DDSinSiNo ventaSobrePlano) {
+		this.ventaSobrePlano = ventaSobrePlano;
+	}
+	
 	public DDDireccionTerritorial getDireccionTerritorial() {
 		return direccionTerritorial;
 	}

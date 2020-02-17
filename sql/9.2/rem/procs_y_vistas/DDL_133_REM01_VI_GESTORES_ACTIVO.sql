@@ -32,6 +32,7 @@
 --##	0.19 VRO Se modifica el orden de la prioridad de los gestores segun subcartera.
 --##	0.20 HREOS-9322
 --##	0.21 HREOS-9330 Añadido Gestor cierre venta para activos Cerberus-Divarian y corrección duplicados
+--##	0.22 VRO REMVIP-6381 Se corrige el gestor GCONT añadido en la modificacion anterior
 --##########################################
 --*/
 
@@ -202,7 +203,7 @@ SELECT /*+ ALL_ROWS */  act.act_id,
 																					,''GCOIN'',''GCOINM'',''GCODI'',''SUPCOMALQ''
                                                                                     ,''SUPACT'',''HAYASBOINM'',''GGADM'',''GIAADMT'',''GIAFORM''
                                                                                     ,''GFORM'',''SFORM'',''GESTCOMALQ'',''PTEC''
-                                                                                    ,''GCOM'',''SCOM'',''GPUBL'',''SPUBL'', ''GPM'',''GCCLBK''
+                                                                                    ,''GCOM'',''SCOM'',''GPUBL'',''SPUBL'', ''GPM'',''GCCLBK'' 
                                                                                     )
             left JOIN REM01.act_ges_dist_gestores dist0
                ON (dist0.cod_estado_activo IS NULL
@@ -766,6 +767,7 @@ UNION ALL
 
 UNION ALL
 /* Gestor Controller  */
+
 
         SELECT
             act.act_id,

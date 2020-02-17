@@ -322,6 +322,11 @@ public class VBusquedaActivos implements Serializable {
 	@Column(name = "ACT_NUM_ACTIVO_DIVARIAN")
 	private String numActivoDivarian;
 	
+	@Column(name = "DD_TS_CODIGO")
+	private String tipoSegmento;
+	
+	@Column(name = "ACT_PERIMETRO_MACC")
+	private String perimetroMacc;
 
 	public Long getId() {
 		return id;
@@ -707,6 +712,22 @@ public class VBusquedaActivos implements Serializable {
 
 	public void setTerritorio(String territorio) {
 		this.territorio = territorio;
+	}
+	
+	public String getTipoSegmento() {
+		return tipoSegmento;
+	}
+
+	public void setTipoSegmento(String tipoSegmento) {
+		this.tipoSegmento = tipoSegmento;
+	}
+
+	public String getPerimetroMacc() {
+		return perimetroMacc;
+	}
+
+	public void setPerimetroMacc(String perimetroMacc) {
+		this.perimetroMacc = perimetroMacc;
 	}
 	
 }

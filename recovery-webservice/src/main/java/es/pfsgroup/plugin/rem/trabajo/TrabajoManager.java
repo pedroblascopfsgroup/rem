@@ -150,6 +150,7 @@ import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
+import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
 
 @Service("trabajoManager")
 public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> implements TrabajoApi {
@@ -273,6 +274,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	
 	@Autowired
 	private ActivoTareaExternaDao activoTareaExternaDao;
+	
+	@Autowired
+	private EXTGrupoUsuariosApi grupoUsuariosApi;
 	
 	@Override
 	public String managerName() {
@@ -838,7 +842,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				Usuario gsue = gestorActivoApi.getGestorByActivoYTipo(activo, "GSUE");
 				Usuario gedi = gestorActivoApi.getGestorByActivoYTipo(activo, "GEDI");
 				Usuario gact = gestorActivoApi.getGestorByActivoYTipo(activo, "GACT");
-
+				Usuario grupoGestorActivos = usuarioDao.getByUsername("grupgact");
 				Usuario solicitante = genericAdapter.getUsuarioLogado();
 
 				if (Checks.esNulo(galq) && Checks.esNulo(gsue) && Checks.esNulo(gedi) && !Checks.esNulo(gact)) {
@@ -846,8 +850,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				} else if ((!Checks.esNulo(galq) && solicitante.equals(galq))
 						|| (!Checks.esNulo(gsue) && solicitante.equals(gsue))
 						|| (!Checks.esNulo(gedi) && solicitante.equals(gedi))
-						|| (!Checks.esNulo(gact) && solicitante.equals(gact))) {
-					trabajo.setUsuarioResponsableTrabajo(solicitante);
+						|| (!Checks.esNulo(gact) && (solicitante.equals(gact) || (gact.equals(grupoGestorActivos) && grupoUsuariosApi.usuarioPerteneceAGrupo(solicitante, gact))))) {
+							if(grupoUsuariosApi.usuarioPerteneceAGrupo(solicitante, gact)) {
+								trabajo.setUsuarioResponsableTrabajo(gact);
+							}else {
+								trabajo.setUsuarioResponsableTrabajo(solicitante);
+							}
 				} else {
 					if (!Checks.esNulo(galq)) {
 						trabajo.setUsuarioResponsableTrabajo(galq);
@@ -1059,7 +1067,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Usuario gedi = gestorActivoApi.getGestorByActivoYTipo(activo, "GEDI");
 		Usuario gact = gestorActivoApi.getGestorByActivoYTipo(activo, "GACT");
 		Usuario solicitante = genericAdapter.getUsuarioLogado();
-
+		Usuario grupoGestorActivos = usuarioDao.getByUsername("grupgact");
+		
 		//Si el trabajo es de limpieza se asigna el usuario responsable del dto,
 		//ya que en UpdaterServicePosicionamiento en crearTrabajoLimpieza()
 		//se calcula si existe doble gestor o no.
@@ -1082,8 +1091,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			} else if ((!Checks.esNulo(galq) && solicitante.equals(galq))
 					|| (!Checks.esNulo(gsue) && solicitante.equals(gsue))
 					|| (!Checks.esNulo(gedi) && solicitante.equals(gedi))
-					|| (!Checks.esNulo(gact) && solicitante.equals(gact))) {
-				trabajo.setUsuarioResponsableTrabajo(solicitante);
+					|| (!Checks.esNulo(gact) && (solicitante.equals(gact) || (gact.equals(grupoGestorActivos) && grupoUsuariosApi.usuarioPerteneceAGrupo(solicitante, gact))))) {
+				if(grupoUsuariosApi.usuarioPerteneceAGrupo(solicitante, gact)) {
+					trabajo.setUsuarioResponsableTrabajo(gact);
+				}else {
+					trabajo.setUsuarioResponsableTrabajo(solicitante);
+				}
 			} else {
 				if (!Checks.esNulo(galq)) {
 					trabajo.setUsuarioResponsableTrabajo(galq);
@@ -1574,6 +1587,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_ACTUALIZA_ESTADOS);
 		}
 
+		
+		//TODO DE MOMENTO EL TIPO DE TRABAJO DE EDIFICACIÓN VA LIGADO CON EL TRAMITE DE ACTUACIÓN TÉCNICA  HREOS-8327
+		if(trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_EDIFICACION)) {
+			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_ACTUACION_TECNICA);
+		}
 		// Módulo de Expediente comercial ----------
 		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA)) {
 			boolean esApple = false;
@@ -1796,6 +1814,28 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setRequerimiento(true);
 		} else {
 			dtoTrabajo.setRequerimiento(false);
+		}
+		
+				
+		if(!Checks.esNulo(trabajo.getActivo())) {
+			
+			Long idAgrupacion = activoApi.activoPerteneceDND(trabajo.getActivo());
+			
+			if(!Checks.esNulo(idAgrupacion) &&  !Checks.esNulo(trabajo.getTipoTrabajo()) && DDTipoTrabajo.CODIGO_EDIFICACION.equals(trabajo.getTipoTrabajo().getCodigo())) {
+				dtoTrabajo.setPerteneceDNDtipoEdificacion(true);
+				ActivoAgrupacion agrupacion = activoAgrupacionDao.getAgrupacionById(idAgrupacion);
+				if(!Checks.esNulo(agrupacion)) {
+					dtoTrabajo.setNumeroDND(agrupacion.getNumAgrupRem());
+					dtoTrabajo.setNombreDND(agrupacion.getNombre());
+					dtoTrabajo.setNumAgrupacion(agrupacion.getNumAgrupRem());
+					dtoTrabajo.setCodigoPartida(trabajo.getCodigoPartida());
+					dtoTrabajo.setCodigoSubpartida(trabajo.getCodigoSubpartida());
+				}else {
+					dtoTrabajo.setPerteneceDNDtipoEdificacion(false);
+				}
+				
+			}
+			
 		}
 
 		return dtoTrabajo;

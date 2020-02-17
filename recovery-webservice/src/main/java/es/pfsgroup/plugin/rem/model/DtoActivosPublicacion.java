@@ -26,8 +26,8 @@ public class DtoActivosPublicacion extends WebDto {
 	private String gestorPublicacionUsername;
 	private String fasePublicacionCodigo;
 	private String fasePublicacionDescripcion;
-	private String subFasePublicacionCodigo;
-	private String subFasePublicacionDescripcion;
+	private String subfasePublicacionCodigo;
+	private String subfasePublicacionDescripcion;
 	private Long precioTasacionActivo;
 	private String tipoAlquilerDescripcion;
 	private Date fechaPublicacionVenta;
@@ -193,20 +193,20 @@ public class DtoActivosPublicacion extends WebDto {
 		this.fasePublicacionDescripcion = fasePublicacionDescripcion;
 	}
 
-	public String getSubFasePublicacionCodigo() {
-		return subFasePublicacionCodigo;
+	public String getSubfasePublicacionCodigo() {
+		return subfasePublicacionCodigo;
 	}
 
-	public void setSubFasePublicacionCodigo(String subFasePublicacionCodigo) {
-		this.subFasePublicacionCodigo = subFasePublicacionCodigo;
+	public void setSubfasePublicacionCodigo(String subfasePublicacionCodigo) {
+		this.subfasePublicacionCodigo = subfasePublicacionCodigo;
 	}
 
-	public String getSubFasePublicacionDescripcion() {
-		return subFasePublicacionDescripcion;
+	public String getSubfasePublicacionDescripcion() {
+		return subfasePublicacionDescripcion;
 	}
 
-	public void setSubFasePublicacionDescripcion(String subFasePublicacionDescripcion) {
-		this.subFasePublicacionDescripcion = subFasePublicacionDescripcion;
+	public void setSubfasePublicacionDescripcion(String subfasePublicacionDescripcion) {
+		this.subfasePublicacionDescripcion = subfasePublicacionDescripcion;
 	}
 
 	public Long getPrecioTasacionActivo() {

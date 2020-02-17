@@ -321,7 +321,14 @@ Ext.define('HreRem.view.activos.ActivosModel', {
     				remoteUrl: 'generic/getDiccionario',
     				extraParams: {diccionario: 'tipoSegmento'}
     			}
-     		}
+     		},
+     		
+     		comboSiNoRemActivo: {
+				data : [
+			        {"codigo":"1", "descripcion":"Si"},
+			        {"codigo":"0", "descripcion":"No"}
+			    ]
+			}
      }
 
 });

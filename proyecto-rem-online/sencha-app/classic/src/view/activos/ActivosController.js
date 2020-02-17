@@ -281,5 +281,19 @@ Ext.define('HreRem.view.activos.ActivosController', {
     		tipoPublicacion.setHidden(true);
     		tipoPublicacion.reset();
     	}
+    },
+    
+    onChangeSubcartera: function(me, nValue, oValue){
+    	var comboTipoSegmento = me.up('activossearch').down('[reference="tipoSegmentoRef"]');
+    	var comboPerimetroMacc = me.up('activossearch').down('[reference="perimetroMaccRef"]');
+    	
+    	if(nValue == CONST.SUBCARTERA['APPLEINMOBILIARIO'] || nValue == CONST.SUBCARTERA['DIVARIANARROW']
+    		|| nValue == CONST.SUBCARTERA['DIVARIANREMAINING']){
+    			comboTipoSegmento.setHidden(false);
+    			comboPerimetroMacc.setHidden(false);
+    	} else {
+    		comboTipoSegmento.setHidden(true);
+    		comboPerimetroMacc.setHidden(true);
+    	}
     }
 });

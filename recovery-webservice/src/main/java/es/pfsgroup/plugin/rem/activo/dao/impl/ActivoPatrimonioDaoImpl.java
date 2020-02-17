@@ -18,17 +18,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 @Repository("ActivoPatrimonioDao")
 public class ActivoPatrimonioDaoImpl extends AbstractEntityDao<ActivoPatrimonio, Long>  implements ActivoPatrimonioDao{
 
-	@Autowired
-	private GenericABMDao genericDao;
-	
-	
-	
-	
-	
-	
+		
 	@Override
 	public ActivoPatrimonio getActivoPatrimonioByActivo(Long idActivo) {
-		Criteria criteria = getSession().createCriteria(ActivoPatrimonio.class);
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoPatrimonio.class);
 		criteria.add(Restrictions.eq("activo.id", idActivo));
 
 		return HibernateUtils.castObject(ActivoPatrimonio.class, criteria.uniqueResult());
@@ -36,7 +29,7 @@ public class ActivoPatrimonioDaoImpl extends AbstractEntityDao<ActivoPatrimonio,
 
 	@Override
 	public DDAdecuacionAlquiler getAdecuacionAlquilerFromPatrimonioByIdActivo(Long idActivo) {
-		Criteria criteria = getSession().createCriteria(ActivoPatrimonio.class);
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoPatrimonio.class);
 		criteria.setProjection(Projections.property("adecuacionAlquiler"));
 		criteria.add(Restrictions.eq("activo.id", idActivo));
 

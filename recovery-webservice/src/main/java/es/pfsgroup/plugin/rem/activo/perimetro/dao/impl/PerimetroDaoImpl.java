@@ -13,7 +13,7 @@ public class PerimetroDaoImpl extends AbstractEntityDao<PerimetroActivo, Long> i
 
 	@Override
 	public PerimetroActivo getPerimetroActivoByIdActivo(Long idActivo) {
-		Criteria criteria = getSession().createCriteria(PerimetroActivo.class);
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(PerimetroActivo.class);
 		criteria.add(Restrictions.eq("activo.id", idActivo));
 
 		return HibernateUtils.castObject(PerimetroActivo.class, criteria.uniqueResult());

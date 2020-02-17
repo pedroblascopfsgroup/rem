@@ -76,7 +76,7 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 	
 	@Override
 	public ExpedienteComercial getExpedienteComercialByIdTrabajo(Long idTrabajo) {
-		Criteria criteria = getSession().createCriteria(ExpedienteComercial.class);
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ExpedienteComercial.class);
 		criteria.add(Restrictions.eq("trabajo.id", idTrabajo));
 
 		return HibernateUtils.castObject(ExpedienteComercial.class, criteria.uniqueResult());
@@ -84,7 +84,7 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 
 	@Override
 	public ExpedienteComercial getExpedienteComercialByNumeroExpediente(Long numeroExpediente) {
-		Criteria criteria = getSession().createCriteria(ExpedienteComercial.class);
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ExpedienteComercial.class);
 		criteria.add(Restrictions.eq("numExpediente", numeroExpediente));
 
 		return HibernateUtils.castObject(ExpedienteComercial.class, criteria.uniqueResult());
@@ -92,7 +92,7 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 
 	@Override
 	public ExpedienteComercial getExpedienteComercialByIdOferta(Long idOferta) {
-		Criteria criteria = getSession().createCriteria(ExpedienteComercial.class);
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ExpedienteComercial.class);
 		criteria.add(Restrictions.eq("oferta.id", idOferta));
 
 		return HibernateUtils.castObject(ExpedienteComercial.class, criteria.uniqueResult());

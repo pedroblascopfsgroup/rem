@@ -112,6 +112,31 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 					        	bind: {
 				            		store: '{comboMotivoOcultacion}'
 				            	}
+					        },
+					        {
+					        	xtype : 'comboboxfieldbase',
+								addUxReadOnlyEditFieldPlugin : false,
+								fieldLabel : HreRem.i18n('combolabel.publicaciones.combo.estado.alquiler'),
+								name : 'estadoPublicacionAlquilerCodigo',
+								reference: 'estadoPublicacionAlquiler',
+								//value : CONST.ESTADO_PUBLICACION_ALQUILER['NO_PUBLICADO'], // Establecido por defecto.								
+								bind : {
+									store : '{comboEstadoPublicacionAlquiler}'
+								},
+								listeners: {
+									change: 'hiddenMotivosOcultacionAlquiler'
+								}
+					        },
+					        {
+					        	xtype: 'comboboxfieldbase',
+					        	addUxReadOnlyEditFieldPlugin: false,
+					        	fieldLabel: HreRem.i18n('combolabel.publicaciones.combo.motivos.ocultacion'),
+					        	name: 'motivosOcultacionAlquilerCodigo',
+					        	hidden: true,
+					        	reference: 'motivosOcultacionAlquiler',
+					        	bind: {
+				            		store: '{comboMotivoOcultacion}'
+				            	}
 					        }
 						]
 			    	},
@@ -144,38 +169,31 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 				            	}
 					        },
 					        {
-					        	xtype : 'comboboxfieldbase',
-								addUxReadOnlyEditFieldPlugin : false,
-								fieldLabel : HreRem.i18n('combolabel.publicaciones.combo.estado.alquiler'),
-								name : 'estadoPublicacionAlquilerCodigo',
-								reference: 'estadoPublicacionAlquiler',
-								//value : CONST.ESTADO_PUBLICACION_ALQUILER['NO_PUBLICADO'], // Establecido por defecto.								
-								bind : {
-									store : '{comboEstadoPublicacionAlquiler}'
-								},
-								listeners: {
-									change: 'hiddenMotivosOcultacionAlquiler'
-								}
-					        },
-					        {
-					        	xtype: 'comboboxfieldbase',
-					        	addUxReadOnlyEditFieldPlugin: false,
-					        	fieldLabel: HreRem.i18n('combolabel.publicaciones.combo.motivos.ocultacion'),
-					        	name: 'motivosOcultacionAlquilerCodigo',
-					        	hidden: true,
-					        	reference: 'motivosOcultacionAlquiler',
-					        	bind: {
-				            		store: '{comboMotivoOcultacion}'
-				            	}
-					        },
-					        {
 					    		xtype: 'comboboxfieldbase',
 					    		addUxReadOnlyEditFieldPlugin: false,
 					    		fieldLabel: HreRem.i18n('fieldlabel.fase.de.publicacion'),
 					    		name: 'fasePublicacionCodigo',
+					    		reference: 'comboFasePublicacionSearch',
 					    		bind: {
 					    			store: '{comboFasePublicacion}'
-					    		}
+					    		},
+				            	publishes: 'value',
+				            	chainedStore: 'comboSubfasePublicacion',
+								chainedReference: 'comboSubfasePublicacionSearch',
+								listeners: {
+									select: 'onChangeChainedCombo'
+								}
+					    	},
+					        {
+					    		xtype: 'comboboxfieldbase',
+					    		addUxReadOnlyEditFieldPlugin: false,
+					    		fieldLabel: HreRem.i18n('fieldlabel.fases.de.publicacion.subfase.de.publicacion'),
+					    		name: 'subfasePublicacionCodigo',
+					    		reference: 'comboSubfasePublicacionSearch',
+					        	bind: {
+				            		store: '{comboSubfasePublicacion}',
+				            		disabled: '{!comboFasePublicacionSearch.value}'
+				            	}
 					    	}
 						]
 			    	}

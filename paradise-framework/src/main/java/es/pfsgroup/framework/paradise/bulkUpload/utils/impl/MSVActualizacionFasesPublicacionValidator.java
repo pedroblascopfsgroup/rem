@@ -1,7 +1,6 @@
 package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -19,8 +18,6 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessCompositeValidators;
@@ -46,7 +43,7 @@ public class MSVActualizacionFasesPublicacionValidator extends MSVExcelValidator
 		static final int ACT_NUM_ACTIVO = 0;
 		static final int FASE_PUBLICACION = 1;
 		static final int SUBFASE_PUBLICACION = 2;
-	};
+	}
 	
 	public static final String ACTIVO_NO_EXISTE = "El activo debe existir.";
 	public static final String FASE_PUBLICACION_NO_EXISTE = "La fase de publicación no existe.";
@@ -70,9 +67,6 @@ public class MSVActualizacionFasesPublicacionValidator extends MSVExcelValidator
 	
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
-	
-	@Autowired
-	private ApiProxyFactory proxyFactory;
 	
 	@Resource
     MessageService messageServices;

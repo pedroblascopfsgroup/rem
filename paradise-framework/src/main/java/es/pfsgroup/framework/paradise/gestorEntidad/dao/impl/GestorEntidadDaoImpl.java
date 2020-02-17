@@ -22,7 +22,7 @@ public class GestorEntidadDaoImpl extends AbstractEntityDao<GestorEntidad, Long>
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "ges.auditoria.borrado", false);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "ges.editableWeb", true);
 		
-		Query query = getSession().createQuery(hb.toString());
+		Query query = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 		HQLBuilder.parametrizaQuery(query, hb);
 		List<EXTDDTipoGestor> listado = query.list();
 		
@@ -38,7 +38,7 @@ public class GestorEntidadDaoImpl extends AbstractEntityDao<GestorEntidad, Long>
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gee.auditoria.borrado", false);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gee.tipoGestor.id", idTipoGestor);
 		
-		Query query = getSession().createQuery(hb.toString());
+		Query query = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 		HQLBuilder.parametrizaQuery(query, hb);
 		List<Usuario> listado = query.list();
 		
@@ -52,7 +52,7 @@ public class GestorEntidadDaoImpl extends AbstractEntityDao<GestorEntidad, Long>
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gee.auditoria.borrado", false);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gee.usuario.id", idUsuario);
 		
-		Query query = getSession().createQuery(hb.toString());
+		Query query = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 		HQLBuilder.parametrizaQuery(query, hb);
 		List<String> listado = query.list();
 		
@@ -69,7 +69,7 @@ public class GestorEntidadDaoImpl extends AbstractEntityDao<GestorEntidad, Long>
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gee.auditoria.borrado", false);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gee.tipoGestor.codigo", codigoTipoGestor);
 		
-		Query query = getSession().createQuery(hb.toString());
+		Query query = this.getSessionFactory().getCurrentSession().createQuery(hb.toString());
 		HQLBuilder.parametrizaQuery(query, hb);
 		List<Usuario> listado = query.list();
 		

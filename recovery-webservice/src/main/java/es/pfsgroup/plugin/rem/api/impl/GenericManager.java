@@ -79,6 +79,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoLocalizacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoGestion;
@@ -1261,7 +1262,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		List<DDSubfasePublicacion> listaSubfase = new ArrayList<DDSubfasePublicacion>();
 		if (!Checks.esNulo(codFase)) {
 			Filter filtroFase = genericDao.createFilter(FilterType.EQUALS, "fasePublicacion.codigo", codFase);
-			listaSubfase = genericDao.getList(DDSubfasePublicacion.class, filtroFase);
+			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			Order order = new Order(OrderType.ASC, "codigo");
+			listaSubfase = genericDao.getListOrdered(DDSubfasePublicacion.class, order, filtroFase, filtroBorrado);
 		}
 
 		return listaSubfase;

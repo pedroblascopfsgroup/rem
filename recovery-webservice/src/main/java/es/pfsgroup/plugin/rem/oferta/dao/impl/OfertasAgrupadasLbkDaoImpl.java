@@ -60,7 +60,7 @@ public class OfertasAgrupadasLbkDaoImpl extends AbstractEntityDao<OfertasAgrupad
 			StringBuilder hqlUpdate = new StringBuilder("update OfertasAgrupadasLbk ogr set ogr.ofertaPrincipal.id ="+nuevoPrincipalId);	
         	hqlUpdate.append(" where ogr.id ='"+ogr_id+"'");
 
-            Query queryUpdate = this.getSession().createQuery(hqlUpdate.toString());
+            Query queryUpdate = this.getSessionFactory().getCurrentSession().createQuery(hqlUpdate.toString());
 
             queryUpdate.executeUpdate();
             

@@ -9,7 +9,6 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.pfs.expediente.model.Expediente;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -21,18 +20,13 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
-import es.pfsgroup.recovery.api.ExpedienteApi;
 
 @Component
 public class MSVActualizadorFasesPublicacionCargaMasiva extends AbstractMSVActualizador implements MSVLiberator {
-	private static final int FILA_CABECERA = 0;
 	private static final int DATOS_PRIMERA_FILA = 1;
 	private static final int ACT_NUM_ACTIVO = 0;
 	private static final int FASE_PUBLICACION = 1;
@@ -53,10 +47,7 @@ public class MSVActualizadorFasesPublicacionCargaMasiva extends AbstractMSVActua
 	@Autowired
 	private GenericAdapter genericAdapter;
 	
-	@Autowired
-	private ExpedienteComercialApi expedienteComercialApi;
 	
-
 	@Override
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
 			throws IOException, ParseException, JsonViewerException, SQLException, Exception {

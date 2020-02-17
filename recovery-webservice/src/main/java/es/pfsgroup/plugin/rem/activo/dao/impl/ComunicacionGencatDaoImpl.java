@@ -17,7 +17,7 @@ public class ComunicacionGencatDaoImpl extends AbstractEntityDao<ComunicacionGen
 	@Override
 	public ComunicacionGencat getComunicacionByActivoIdAndEstadoComunicado(String numHayaActivo) {
 		
-		Criteria criteria = getSession().createCriteria(ComunicacionGencat.class);
+		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ComunicacionGencat.class);
 		
 		criteria.createCriteria("activo")
 				.add(Restrictions.eq("numActivo", Long.parseLong(numHayaActivo)));

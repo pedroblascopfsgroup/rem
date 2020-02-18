@@ -1817,25 +1817,18 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		
 				
-		if(!Checks.esNulo(trabajo.getActivo())) {
+		if(!Checks.esNulo(trabajo.getActivo()) &&  !Checks.esNulo(trabajo.getActivo().getIsDnd()) && trabajo.getActivo().getIsDnd() &&
+			!Checks.esNulo(trabajo.getTipoTrabajo()) && DDTipoTrabajo.CODIGO_EDIFICACION.equals(trabajo.getTipoTrabajo().getCodigo())
+		){		
+			dtoTrabajo.setPerteneceDNDtipoEdificacion(true);
 			
-			Long idAgrupacion = activoApi.activoPerteneceDND(trabajo.getActivo());
-			
-			if(!Checks.esNulo(idAgrupacion) &&  !Checks.esNulo(trabajo.getTipoTrabajo()) && DDTipoTrabajo.CODIGO_EDIFICACION.equals(trabajo.getTipoTrabajo().getCodigo())) {
-				dtoTrabajo.setPerteneceDNDtipoEdificacion(true);
-				ActivoAgrupacion agrupacion = activoAgrupacionDao.getAgrupacionById(idAgrupacion);
-				if(!Checks.esNulo(agrupacion)) {
-					dtoTrabajo.setNumeroDND(agrupacion.getNumAgrupRem());
-					dtoTrabajo.setNombreDND(agrupacion.getNombre());
-					dtoTrabajo.setNumAgrupacion(agrupacion.getNumAgrupRem());
-					dtoTrabajo.setCodigoPartida(trabajo.getCodigoPartida());
-					dtoTrabajo.setCodigoSubpartida(trabajo.getCodigoSubpartida());
-				}else {
-					dtoTrabajo.setPerteneceDNDtipoEdificacion(false);
-				}
-				
-			}
-			
+			dtoTrabajo.setNumeroDND(trabajo.getNumeroDnd());
+			dtoTrabajo.setNombreDND(trabajo.getNombreDnd());
+			dtoTrabajo.setCodigoPartida(trabajo.getCodigoPartida());
+			dtoTrabajo.setCodigoSubpartida(trabajo.getCodigoSubpartida());
+					
+		}else {
+			dtoTrabajo.setPerteneceDNDtipoEdificacion(false);
 		}
 
 		return dtoTrabajo;

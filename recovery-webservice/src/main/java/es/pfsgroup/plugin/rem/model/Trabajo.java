@@ -283,6 +283,12 @@ public class Trabajo implements Serializable, Auditable {
 	@Column(name="TBJ_CODIGO_SUBPARTIDA")
     private String codigoSubpartida;
 	
+	@Column(name="TBJ_NUM_DND")
+    private Long numeroDnd;	
+	
+	@Column(name="TBJ_NOMBRE_DND")
+    private String nombreDnd;
+	
 	public Long getId() {
 		return id;
 	}
@@ -939,6 +945,22 @@ public class Trabajo implements Serializable, Auditable {
 
 	public void setCodigoSubpartida(String codigoSubpartida) {
 		this.codigoSubpartida = codigoSubpartida;
+	}
+
+	public Long getNumeroDnd() {
+		return numeroDnd;
+	}
+
+	public void setNumeroDnd(Long numeroDnd) {
+		this.numeroDnd = numeroDnd;
+	}
+
+	public String getNombreDnd() {
+		return nombreDnd;
+	}
+
+	public void setNombreDnd(String nombreDnd) {
+		this.nombreDnd = nombreDnd;
 	}
     
     

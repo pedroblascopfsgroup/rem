@@ -918,17 +918,9 @@ public class OfertasController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView isActivoEnDND(Long idActivo, ModelMap model) {
 		Activo activo = activoDao.getActivoById(idActivo);
-		Long numAgrupacion = null;
-		try {
-			Long idAgrupacion = activoApi.activoPerteneceDND(activo);
-			if(!Checks.esNulo(idAgrupacion)) {
-				ActivoAgrupacion agrupacion = activoAgrupacionDao.getAgrupacionById(idAgrupacion);
-				if(!Checks.esNulo(agrupacion)) {
-					numAgrupacion = agrupacion.getNumAgrupRem();
-					
-				}
-			}
-			model.put("data",numAgrupacion);
+	
+		try {	
+			model.put("isDND", activo.getIsDnd());
 			model.put("success", true);
 		}catch(Exception e) {
 			model.put("success", false);

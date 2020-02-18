@@ -6485,24 +6485,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	//Para saber si pertenece a DND comprobar si devuelve un null. De esta forma se evita hacer otra función igual
 	//con otro bucle igual para devolver el número de agrupación dnd
 	//Comprobar si devuelve null o no para saber si pertenece a agrupación DND.
-	@Override
-	public Long activoPerteneceDND(Activo activo) {
-		Long agruacionDND = null;
-		if(!Checks.esNulo(activo)) {
-			List<ActivoAgrupacionActivo> listaAgrupacionesActivo = activo.getAgrupaciones();
-			
-			for (int i = 0; i < listaAgrupacionesActivo.size(); i++) {
-				ActivoAgrupacionActivo activoAgrupacionActivo = listaAgrupacionesActivo.get(i);
-				if(!Checks.esNulo(activoAgrupacionActivo.getAgrupacion()) && !Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion())
-					&& DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
-					agruacionDND = activoAgrupacionActivo.getAgrupacion().getId();
-					break;
-				}
-			}
-		}
-		return agruacionDND;
-	}
-
 	
 	@Override
 	public Boolean getVisibilidadTabFasesPublicacion(Activo activo) {

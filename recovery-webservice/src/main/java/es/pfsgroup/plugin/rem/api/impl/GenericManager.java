@@ -665,7 +665,17 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		List<DDTipoTrabajo> tiposTrabajo = new ArrayList<DDTipoTrabajo>();
 		List<DDTipoTrabajo> tiposTrabajoFiltered = new ArrayList<DDTipoTrabajo>();
 		tiposTrabajo.addAll((List<DDTipoTrabajo>) (List) adapter.getDiccionario("tiposTrabajo"));
-
+		List<DDTipoTrabajo> tiposTrabajoNoBloqueados = new ArrayList<DDTipoTrabajo>();
+		
+	
+		for (DDTipoTrabajo ddTipoTrabajo : tiposTrabajo) {
+			if(!Checks.esNulo(ddTipoTrabajo.getBloqueado()) && !ddTipoTrabajo.getBloqueado()) {
+				tiposTrabajoNoBloqueados.add(ddTipoTrabajo);
+			}
+		}
+		
+		tiposTrabajo = tiposTrabajoNoBloqueados;
+		
 		if (idActivo != null && !idActivo.isEmpty() && StringUtils.isNumeric(idActivo)) {
 			Activo act = activoApi.get(Long.parseLong(idActivo));
 			for (DDTipoTrabajo tipoTrabajo : tiposTrabajo) {

@@ -511,6 +511,9 @@ public class Activo implements Serializable, Auditable {
     @Column(name = "ACT_NUM_ACTIVO_DIVARIAN")
 	private Long numActivoDivarian;
     
+    @Column(name = "ACT_DND")
+   	private Boolean isDnd;
+    
     // Getters del activo --------------------------------------------
     
     public Long getId() {
@@ -1986,5 +1989,11 @@ public class Activo implements Serializable, Auditable {
 		this.tipoSegmento = tipoSegmento;
 	}
 
-	
+	public Boolean getIsDnd() {
+		return isDnd;
+	}
+
+	public void setIsDnd(Boolean isDnd) {
+		this.isDnd = isDnd;
+	}	
 }

@@ -32,6 +32,15 @@ public class VBusquedaTrabajos implements Serializable {
     
     @Column(name="NUM_ACTIVO_AGRUPACION")
     private Long numActivoAgrupacion;
+    
+    @Column(name="NUMACTIVO")
+    private Long numActivo;
+    
+    @Column(name="IDACTIVO")
+    private Long idActivo;
+    
+    @Column(name="NUMAGRUPACION")
+    private Long numAgrupacionRem;
 
     @Column(name="TIPO_ENTIDAD")
     private String tipoEntidad;

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 import javax.annotation.Resource;
@@ -15,11 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
@@ -31,7 +33,6 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -40,6 +41,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Component
@@ -57,6 +59,8 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 	@Autowired
 	private ActivoApi activoApi;
 
+	@Autowired
+	private GenericABMDao genericDao;
 
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
@@ -87,18 +91,8 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken, Object[] extraArgs) throws IOException, ParseException, JsonViewerException, SQLException {
 		ResultadoProcesarFila resultado = new ResultadoProcesarFila();
 		try {
-			Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
-
-			ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
-
-			//ActivoInfoRegistral infoRegistral = activo.getInfoRegistral();
-			
-			// Evalua si ha encontrado un registro de perimetro para el activo
-			// dado.
-			// En caso de que no exista, crea uno nuevo relacionado sin datos
-			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
-
 			// Variables temporales para asignar valores de filas excel
+			Long numActivo = Long.parseLong(exc.dameCelda(fila, 0));
 			Integer tmpIncluidoEnPerimetro = getCheckValue(exc.dameCelda(fila, 1));
 			Integer tmpAplicaGestion = getCheckValue(exc.dameCelda(fila, 2));
 			String tmpMotivoAplicaGestion = exc.dameCelda(fila, 3);
@@ -113,8 +107,40 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			Integer tmpAplicaPublicar = getCheckValue(exc.dameCelda(fila, 12));
 			String tmpMotivoAplicaPublicar = exc.dameCelda(fila, 13);
 			String tmpEquipoGestion = exc.dameCelda(fila, 14);
+			String tmpSegmento = exc.dameCelda(fila, 15);
+			Integer tmpPerimetroMacc =  getCheckValue(exc.dameCelda(fila, 16));			
+			
+			Activo activo = activoApi.getByNumActivo(numActivo);
+			ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
 
+			//ActivoInfoRegistral infoRegistral = activo.getInfoRegistral();		
+			
+			// Evalua si ha encontrado un registro de perimetro para el activo
+			// dado.
+			// En caso de que no exista, crea uno nuevo relacionado sin datos
+			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
+			
+			// Perimetro Macc---------------------------
+			if (CHECK_NO_CAMBIAR.equals(tmpPerimetroMacc) 
+					&& DDTipoSegmento.CODIGO_SEGMENTO_MACC.equals(tmpSegmento)  
+						&& (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tmpDestinoComercial)
+								|| Checks.esNulo(tmpDestinoComercial) && !Checks.esNulo(activo.getActivoPublicacion()) && activo.getActivoPublicacion().getTipoComercializacion().getCodigo().equals(DDTipoComercializacion.CODIGO_SOLO_ALQUILER))){
+												
+				activo.setPerimetroMacc(CHECK_VALOR_SI);		
+				
+			}else if (!CHECK_NO_CAMBIAR.equals(tmpPerimetroMacc)) {
+				activo.setPerimetroMacc(tmpPerimetroMacc);			
+			}
+			
+			// Segmento---------------------------			
+			if (!Checks.esNulo(tmpSegmento)) {
+				activo.setTipoSegmento(genericDao.get(DDTipoSegmento.class, genericDao.createFilter(FilterType.EQUALS, "codigo" , tmpSegmento)));
+			}else if(Checks.esNulo(tmpSegmento) && CHECK_VALOR_SI.equals(tmpPerimetroMacc) ) {
+				activo.setTipoSegmento(genericDao.get(DDTipoSegmento.class, genericDao.createFilter(FilterType.EQUALS, "codigo" , DDTipoSegmento.CODIGO_SEGMENTO_MACC)));
+			}
+							
 			perimetroActivo.setActivo(activo);
+			
 			// Incluido en perimetro ---------------------------
 			if (!CHECK_NO_CAMBIAR.equals(tmpIncluidoEnPerimetro))
 				perimetroActivo.setIncluidoEnPerimetro(tmpIncluidoEnPerimetro);

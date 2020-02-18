@@ -1102,6 +1102,15 @@ public interface ParticularValidatorApi {
 
 	Boolean isActivoEnAlquilerSocial(String numActivo);
 
-	
+	public Boolean esSegmentoValido(String codSegmento);
+/**
+ * 
+ * @param codSegmento
+ * @param numActivo
+ * @return true si pertenece al diccionario SEGMENTO CARTERA SUBCARTERA
+ */
+	public Boolean perteneceSegmentoCraScr(String codSegmento, String numActivo);
+
+	public Boolean esSubcarteraDivarian(String numActivo);
 	
 }

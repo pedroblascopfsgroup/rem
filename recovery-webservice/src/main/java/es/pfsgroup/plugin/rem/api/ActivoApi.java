@@ -1298,8 +1298,6 @@ public interface ActivoApi {
 
 	ActivoDto getDatosActivo(Long activoId);
 
-	Long activoPerteneceDND(Activo activo);
-	
 	Boolean getVisibilidadTabFasesPublicacion(Activo activo);
 
 	/**
@@ -1316,4 +1314,6 @@ public interface ActivoApi {
 	Boolean getMostrarEdicionTabFasesPublicacion(Activo activo);
 
 	void actualizarOfertasTrabajosVivos(Long idActivo);
+
+	Long getAgrupacionDnd(Activo activo);
 }

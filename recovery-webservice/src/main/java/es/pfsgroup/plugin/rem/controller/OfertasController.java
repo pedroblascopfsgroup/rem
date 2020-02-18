@@ -919,16 +919,20 @@ public class OfertasController {
 	public ModelAndView isActivoEnDND(Long idActivo, ModelMap model) {
 		Activo activo = activoDao.getActivoById(idActivo);
 		Long numAgrupacion = null;
+		Boolean isDND= false;
 		try {
-			Long idAgrupacion = activoApi.activoPerteneceDND(activo);
-			if(!Checks.esNulo(idAgrupacion)) {
-				ActivoAgrupacion agrupacion = activoAgrupacionDao.getAgrupacionById(idAgrupacion);
-				if(!Checks.esNulo(agrupacion)) {
-					numAgrupacion = agrupacion.getNumAgrupRem();
-					
+			if(!Checks.esNulo(activo.getIsDnd()) && activo.getIsDnd()) {
+				isDND = true;
+				Long idAgrupacion =  activoApi.getAgrupacionDnd(activo);
+					if(!Checks.esNulo(idAgrupacion)) {
+					ActivoAgrupacion agrupacion = activoAgrupacionDao.getAgrupacionById(idAgrupacion);
+					if(!Checks.esNulo(agrupacion)) {
+						numAgrupacion = agrupacion.getNumAgrupRem();	
+					}
 				}
 			}
-			model.put("data",numAgrupacion);
+			model.put("isDND",isDND);
+			model.put("numAgrupacion",numAgrupacion);
 			model.put("success", true);
 		}catch(Exception e) {
 			model.put("success", false);

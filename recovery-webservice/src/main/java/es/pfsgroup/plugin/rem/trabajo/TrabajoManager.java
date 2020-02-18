@@ -1801,13 +1801,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		
 				
-		if(!Checks.esNulo(trabajo.getActivo())) {
-			
-			Long idAgrupacion = activoApi.activoPerteneceDND(trabajo.getActivo());
-			
-			if(!Checks.esNulo(idAgrupacion) &&  !Checks.esNulo(trabajo.getTipoTrabajo()) && DDTipoTrabajo.CODIGO_EDIFICACION.equals(trabajo.getTipoTrabajo().getCodigo())) {
-				dtoTrabajo.setPerteneceDNDtipoEdificacion(true);
-				ActivoAgrupacion agrupacion = activoAgrupacionDao.getAgrupacionById(idAgrupacion);
+		if(!Checks.esNulo(trabajo.getActivo()) &&  !Checks.esNulo(trabajo.getActivo().getIsDnd()) && trabajo.getActivo().getIsDnd() &&
+			!Checks.esNulo(trabajo.getTipoTrabajo()) && DDTipoTrabajo.CODIGO_EDIFICACION.equals(trabajo.getTipoTrabajo().getCodigo())
+		){		
+			dtoTrabajo.setPerteneceDNDtipoEdificacion(true);
+			if(!Checks.esNulo(activoApi.getAgrupacionDnd(trabajo.getActivo()))) {
+				ActivoAgrupacion agrupacion = activoAgrupacionDao.getAgrupacionById(activoApi.getAgrupacionDnd(trabajo.getActivo()));
 				if(!Checks.esNulo(agrupacion)) {
 					dtoTrabajo.setNumeroDND(agrupacion.getNumAgrupRem());
 					dtoTrabajo.setNombreDND(agrupacion.getNombre());
@@ -1817,9 +1816,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				}else {
 					dtoTrabajo.setPerteneceDNDtipoEdificacion(false);
 				}
-				
-			}
-			
+			}	
 		}
 
 		return dtoTrabajo;

@@ -340,8 +340,10 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	    			var data = Ext.decode(response.responseText);
 	    			if (gencat === "true") {
 	    				msg = HreRem.i18n('msg.desea.aceptar.oferta.activos.gencat');
-	    			}else if(data.data != undefined || data.data != null){
-	    				msg = HreRem.i18n("msg.desea.aceptar.oferta.activos.dnd") + " "+  data.data + " " + HreRem.i18n("msg.desea.aceptar.oferta.esta.de.acuerdo");
+	    			}else if(data.numAgrupacion != undefined || data.numAgrupacion != null){
+	    				msg = HreRem.i18n("msg.desea.aceptar.oferta.activos.dnd") + " "+  data.numAgrupacion + " " + HreRem.i18n("msg.desea.aceptar.oferta.esta.de.acuerdo");
+	    			}else if(data.isDND != undefined || data.isDND != null){
+	    				msg = HreRem.i18n("msg.desea.aceptar.oferta.activos.dnd.sin.agrupacion") + HreRem.i18n("msg.desea.aceptar.oferta.esta.de.acuerdo");
 	    			}
 					Ext.Msg.show({
 					   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),

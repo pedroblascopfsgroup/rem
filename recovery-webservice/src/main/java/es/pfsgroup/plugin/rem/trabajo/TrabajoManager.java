@@ -1805,18 +1805,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			!Checks.esNulo(trabajo.getTipoTrabajo()) && DDTipoTrabajo.CODIGO_EDIFICACION.equals(trabajo.getTipoTrabajo().getCodigo())
 		){		
 			dtoTrabajo.setPerteneceDNDtipoEdificacion(true);
-			if(!Checks.esNulo(activoApi.getAgrupacionDnd(trabajo.getActivo()))) {
-				ActivoAgrupacion agrupacion = activoAgrupacionDao.getAgrupacionById(activoApi.getAgrupacionDnd(trabajo.getActivo()));
-				if(!Checks.esNulo(agrupacion)) {
-					dtoTrabajo.setNumeroDND(agrupacion.getNumAgrupRem());
-					dtoTrabajo.setNombreDND(agrupacion.getNombre());
-					dtoTrabajo.setNumAgrupacion(agrupacion.getNumAgrupRem());
-					dtoTrabajo.setCodigoPartida(trabajo.getCodigoPartida());
-					dtoTrabajo.setCodigoSubpartida(trabajo.getCodigoSubpartida());
-				}else {
-					dtoTrabajo.setPerteneceDNDtipoEdificacion(false);
-				}
-			}	
+			
+			dtoTrabajo.setNumeroDND(trabajo.getNumeroDnd());
+			dtoTrabajo.setNombreDND(trabajo.getNombreDnd());
+			dtoTrabajo.setCodigoPartida(trabajo.getCodigoPartida());
+			dtoTrabajo.setCodigoSubpartida(trabajo.getCodigoSubpartida());
+					
+		}else {
+			dtoTrabajo.setPerteneceDNDtipoEdificacion(false);
 		}
 
 		return dtoTrabajo;

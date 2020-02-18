@@ -1314,6 +1314,4 @@ public interface ActivoApi {
 	Boolean getMostrarEdicionTabFasesPublicacion(Activo activo);
 
 	void actualizarOfertasTrabajosVivos(Long idActivo);
-
-	Long getAgrupacionDnd(Activo activo);
 }

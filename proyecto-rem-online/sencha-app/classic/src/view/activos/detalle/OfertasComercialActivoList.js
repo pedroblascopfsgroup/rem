@@ -335,14 +335,11 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			Ext.Ajax.request({
 	    		url: url,
 	    		params: {idActivo: idActivo},
-	    		
 	    		success: function(response, opts){
 	    			var data = Ext.decode(response.responseText);
 	    			if (gencat === "true") {
 	    				msg = HreRem.i18n('msg.desea.aceptar.oferta.activos.gencat');
-	    			}else if(data.numAgrupacion != undefined || data.numAgrupacion != null){
-	    				msg = HreRem.i18n("msg.desea.aceptar.oferta.activos.dnd") + " "+  data.numAgrupacion + " " + HreRem.i18n("msg.desea.aceptar.oferta.esta.de.acuerdo");
-	    			}else if(data.isDND != undefined || data.isDND != null){
+	    			}else if((data.isDND != undefined || data.isDND != null) && data.isDND === "true"){
 	    				msg = HreRem.i18n("msg.desea.aceptar.oferta.activos.dnd.sin.agrupacion") + HreRem.i18n("msg.desea.aceptar.oferta.esta.de.acuerdo");
 	    			}
 					Ext.Msg.show({

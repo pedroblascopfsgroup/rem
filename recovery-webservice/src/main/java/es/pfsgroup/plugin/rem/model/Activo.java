@@ -509,7 +509,7 @@ public class Activo implements Serializable, Auditable {
     private String valorLiquidez;
     
     @Column(name = "ACT_NUM_ACTIVO_DIVARIAN")
-	private Long numActivoDivarian;
+	private String numActivoDivarian;
     
     @Column(name = "ACT_DND")
    	private Boolean isDnd;
@@ -1997,11 +1997,11 @@ public class Activo implements Serializable, Auditable {
 		this.isDnd = isDnd;
 	}
 
-	public Long getNumActivoDivarian() {
+	public String getNumActivoDivarian() {
 		return numActivoDivarian;
 	}
 
-	public void setNumActivoDivarian(Long numActivoDivarian) {
+	public void setNumActivoDivarian(String numActivoDivarian) {
 		this.numActivoDivarian = numActivoDivarian;
 	}	
 	

@@ -47,6 +47,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCargaActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -510,6 +511,13 @@ public class Activo implements Serializable, Auditable {
     
     @Column(name = "ACT_NUM_ACTIVO_DIVARIAN")
 	private String numActivoDivarian;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_OAN_ID")
+    private DDOrigenAnterior origenAnterior;
+    
+    @Column(name = "ACT_FECHA_TITULO_ANTERIOR")
+	private Date fechaTituloAnterior;
     
     @Column(name = "ACT_DND")
    	private Boolean isDnd;
@@ -2003,6 +2011,21 @@ public class Activo implements Serializable, Auditable {
 
 	public void setNumActivoDivarian(String numActivoDivarian) {
 		this.numActivoDivarian = numActivoDivarian;
-	}	
-	
+	}
+
+	public DDOrigenAnterior getOrigenAnterior() {
+		return origenAnterior;
+	}
+
+	public void setOrigenAnterior(DDOrigenAnterior origenAnterior) {
+		this.origenAnterior = origenAnterior;
+	}
+
+	public Date getFechaTituloAnterior() {
+		return fechaTituloAnterior;
+	}
+
+	public void setFechaTituloAnterior(Date fechaTituloAnterior) {
+		this.fechaTituloAnterior = fechaTituloAnterior;
+	}
 }

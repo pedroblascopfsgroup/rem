@@ -72,6 +72,8 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private String propiedadActivoNif;
 	private String propiedadActivoDireccion;
 	private String tipoGradoPropiedadCodigo;
+	private String origenAnteriorActivoCodigo;
+	private Date fechaTituloAnterior;
 	
 	private String estadoTitulo;   
 	
@@ -751,6 +753,18 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	}
 	public void setFechaPresentacionRegistroCN(Date fechaPresentacionRegistroCN) {
 		this.fechaPresentacionRegistroCN = fechaPresentacionRegistroCN;
+	}
+	public String getOrigenAnteriorActivoCodigo() {
+		return origenAnteriorActivoCodigo;
+	}
+	public void setOrigenAnteriorActivoCodigo(String origenAnteriorActivoCodigo) {
+		this.origenAnteriorActivoCodigo = origenAnteriorActivoCodigo;
+	}
+	public Date getFechaTituloAnterior() {
+		return fechaTituloAnterior;
+	}
+	public void setFechaTituloAnterior(Date fechaTituloAnterior) {
+		this.fechaTituloAnterior = fechaTituloAnterior;
 	}
 
 }

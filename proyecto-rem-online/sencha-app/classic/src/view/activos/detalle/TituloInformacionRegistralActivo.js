@@ -330,7 +330,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			    collapsed: false,
 				layout: {
 			        type: 'table',
-			        columns: 4,
+			        columns: 3,
 			        tdAttrs: {width: '25%'}
 				},
 				items :
@@ -363,8 +363,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		            	}
 					},
 				 	{ 
-			        	xtype: 'comboboxfieldbase',			        	
-			        	colspan: 2,
+			        	xtype: 'comboboxfieldbase',
 			        	fieldLabel: HreRem.i18n('fieldlabel.vpo'),
 			        	bind: {
 		            		store: '{comboSiNoRem}',
@@ -373,6 +372,27 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		            	},
 		            	allowBlank: true
 			        },
+			        {
+			        	xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.origen.anterior.activo'),
+						reference: 'comboOrigenAnteriorActivoRef',
+						labelWidth: 200,
+		            	bind: {
+		            		store: '{storeOrigenAnteriorActivo}',
+		            		value: '{datosRegistrales.origenAnteriorActivoCodigo}',
+		            		hidden: '{mostrarCamposDivarian}'
+		            	}
+	            	},
+					{
+						xtype:'datefieldbase',
+						formatter: 'date("d/m/Y")',
+						colspan: 2,
+				        fieldLabel: HreRem.i18n('fieldlabel.fecha.titulo.anterior'),
+				        bind: {
+				        	value: '{datosRegistrales.fechaTituloAnterior}',
+				        	hidden: '{mostrarCamposDivarian}'
+				        }
+					},
 			        {
 						title: 'Listado de Propietarios',
 						itemId: 'listadoPropietarios',
@@ -386,7 +406,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						listeners: {
 							rowdblclick: 'onListadoPropietariosDobleClick'
 						},		
-						colspan: 4,
+						colspan: 3,
 						selModel : {
 			                type : 'checkboxmodel'
 			              },

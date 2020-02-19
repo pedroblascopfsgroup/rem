@@ -1817,17 +1817,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		
 				
-		if(!Checks.esNulo(trabajo.getActivo()) &&  !Checks.esNulo(trabajo.getActivo().getIsDnd()) && trabajo.getActivo().getIsDnd() &&
-			!Checks.esNulo(trabajo.getTipoTrabajo()) && DDTipoTrabajo.CODIGO_EDIFICACION.equals(trabajo.getTipoTrabajo().getCodigo())
-		){		
+		if (DDTipoTrabajo.CODIGO_EDIFICACION.equals(trabajo.getTipoTrabajo().getCodigo())) {
 			dtoTrabajo.setPerteneceDNDtipoEdificacion(true);
-			
+
 			dtoTrabajo.setNumeroDND(trabajo.getNumeroDnd());
 			dtoTrabajo.setNombreDND(trabajo.getNombreDnd());
 			dtoTrabajo.setCodigoPartida(trabajo.getCodigoPartida());
 			dtoTrabajo.setCodigoSubpartida(trabajo.getCodigoSubpartida());
-					
-		}else {
+
+		} else {
 			dtoTrabajo.setPerteneceDNDtipoEdificacion(false);
 		}
 

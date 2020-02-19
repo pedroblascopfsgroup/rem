@@ -510,15 +510,14 @@ public class Activo implements Serializable, Auditable {
     private String valorLiquidez;
     
     @Column(name = "ACT_NUM_ACTIVO_DIVARIAN")
-
+    private String numActivoDivarian;
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_OAN_ID")
     private DDOrigenAnterior origenAnterior;
     
     @Column(name = "ACT_FECHA_TITULO_ANTERIOR")
 	private Date fechaTituloAnterior;
-
-	private String numActivoDivarian;
     
     @Column(name = "ACT_DND")
    	private Boolean isDnd;

@@ -1995,5 +1995,14 @@ public class Activo implements Serializable, Auditable {
 
 	public void setIsDnd(Boolean isDnd) {
 		this.isDnd = isDnd;
+	}
+
+	public Long getNumActivoDivarian() {
+		return numActivoDivarian;
+	}
+
+	public void setNumActivoDivarian(Long numActivoDivarian) {
+		this.numActivoDivarian = numActivoDivarian;
 	}	
+	
 }

@@ -56,9 +56,14 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                },
 			                {
 								xtype: 'displayfieldbase',
+								fieldLabel:  HreRem.i18n('fieldlabel.id.activo.divarian'),
+								bind:		'{activo.numActivoDivarian}'
+							},
+			                {
+								xtype: 'displayfieldbase',
 								fieldLabel:  HreRem.i18n('fieldlabel.id.bien.recovery'),
 								bind:		'{activo.idRecovery}'
-							},
+							},							
 							{
 			                	xtype: 'displayfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.categoria.contable'),

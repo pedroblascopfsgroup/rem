@@ -401,6 +401,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 			if(ofertaApi.isOfertaDependiente(ofertaAceptada)) {
 				OfertasAgrupadasLbk agrupada = genericDao.get(OfertasAgrupadasLbk.class, genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente", ofertaAceptada));
 				genericDao.deleteById(OfertasAgrupadasLbk.class, agrupada.getId());
+				ofertaApi.calculoComiteLBK(agrupada.getOfertaPrincipal().getId(), null);
 			}
 		}
 	}

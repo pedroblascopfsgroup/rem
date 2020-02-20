@@ -4560,10 +4560,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		Double vnc = dto.getVnc() != null ? dto.getVnc() : 0.0;
 		Double vr = dto.getVr() != null ? dto.getVr() : 0.0;
 		Double vta = dto.getVta() != null ? dto.getVta() : 0.0;
+		Double pvbOfertaActual = 0.0;
+		Double ccoOfertaActual = 0.0;
 		ExpedienteComercial eco = null;
 		
 		List<ActivoOferta> listaActivos = oferta.getActivosOferta();
-		pvb += oferta.getImporteOferta();
+		pvbOfertaActual = oferta.getImporteOferta();
+		pvb += pvbOfertaActual;
 		for(ActivoOferta activoActual: listaActivos) {
 			Activo act = activoActual.getPrimaryKey().getActivo();
 			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo", act.getId());
@@ -4583,10 +4586,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			List<GastosExpediente> listaGex = (!Checks.esNulo(eco.getHonorarios()) ? eco.getHonorarios() : expedienteComercialApi.actualizarHonorariosPorExpediente(eco.getId()));
 			
 			for(GastosExpediente gex : listaGex) {
-				cco += (gex.getImporteFinal() * gex.getImporteCalculo());
+				ccoOfertaActual = (gex.getImporteFinal() * gex.getImporteCalculo());
+				cco += ccoOfertaActual;
 			}
 			
-			pvn += (pvb - cco);
+			pvn += (pvbOfertaActual - ccoOfertaActual);
 		}
 		
 		dto.setCco(cco);

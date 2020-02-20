@@ -4466,7 +4466,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					return genericDao.get(DDComiteSancion.class, filtroGestionDir);
 				} else if (perdida < 0 && perdidaValorAbs <= UMBRAL_PERDIDA) {
 					return genericDao.get(DDComiteSancion.class, filtroInversion);
-				} else {
+				} else if (perdida < 0 && perdidaValorAbs > UMBRAL_PERDIDA){
 					return genericDao.get(DDComiteSancion.class, filtroDireccion);
 				}
 			}

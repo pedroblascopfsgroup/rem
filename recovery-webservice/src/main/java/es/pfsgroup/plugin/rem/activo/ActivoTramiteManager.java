@@ -328,7 +328,8 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 			}else if("E".equals(uGestion)){
 				tipoFicheroAdjuntoEC = genericDao.get(DDSubtipoDocumentoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoDocAdjunto));
 			}else if("P".equals(uGestion)){
-				tipoFicheroAdjuntoProveedor = genericDao.get(DDTipoDocumentoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoDocAdjunto));
+				tipoFicheroAdjuntoProveedor = genericDao.get(DDTipoDocumentoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoDocAdjunto), 
+						genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 			}else if("G".equals(uGestion)){
 				tipoFicheroAdjuntoGasto = genericDao.get(DDTipoDocumentoGasto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoDocAdjunto));
 			}

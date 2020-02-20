@@ -1066,7 +1066,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		ActivoProveedor proveedor = proveedoresDao.get(Long.parseLong(fileItem.getParameter("idEntidad")));
 		
 	   	Filter filtroTipoDoc = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
-	   	DDTipoDocumentoProveedor tipoDocumentoProveedor = genericDao.get(DDTipoDocumentoProveedor.class, filtroTipoDoc);
+	   	DDTipoDocumentoProveedor tipoDocumentoProveedor = genericDao.get(DDTipoDocumentoProveedor.class, filtroTipoDoc, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 	   	
 	   	if(!Checks.esNulo(tipoDocumentoProveedor)) {
 		   	if (gestorDocumentalAdapterApi.modoRestClientActivado()) {

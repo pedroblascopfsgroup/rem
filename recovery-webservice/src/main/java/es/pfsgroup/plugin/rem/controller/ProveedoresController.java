@@ -469,7 +469,8 @@ public class ProveedoresController extends ParadiseJsonController {
 				model.put("errorMessage", ProveedoresManager.ERROR_NOMBRE_DOCUMENTO_PROVEEDOR+": "+fileItem.getFileItem().getFileName());
 			} else if (ex.getMessage().contains("Control duplicado, ya existe un documento igual")) {
 			   	DDTipoDocumentoProveedor tipoDocumentoProveedor = genericDao.get(DDTipoDocumentoProveedor.class, 
-			   			genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo")));
+			   			genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo")), 
+			   			genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 				model.put("errorMessage", ProveedoresManager.ERROR_TIPO_UNICO_DOCUMENTO_PROVEEDOR+": "+tipoDocumentoProveedor.getDescripcion());
 			} else {
 				model.put("errorMessage", "Ha habido un problema con la subida del archivo al gestor documental.");

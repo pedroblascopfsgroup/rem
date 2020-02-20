@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquín Bahamonde
---## FECHA_CREACION=20200213
+--## FECHA_CREACION=20200220
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-9320
@@ -43,15 +43,7 @@ BEGIN
     -- Comprobamos si existe la tabla   
     V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-
-   -- Verificar si la tabla ya existe
-	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
-	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
-	IF V_NUM_TABLAS = 1 THEN
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'... Ya existe. Se borrará.');
-		EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' CASCADE CONSTRAINTS';
-		
-	END IF;
+    
     -- Si existe la tabla no se hace nada
     IF V_NUM_TABLAS = 0  THEN 	      
     	 --Creamos la tabla

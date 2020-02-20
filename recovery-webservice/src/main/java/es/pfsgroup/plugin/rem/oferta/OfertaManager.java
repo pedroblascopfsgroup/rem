@@ -4461,10 +4461,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				return genericDao.get(DDComiteSancion.class, filtroComiteHRE);
 			} else if (dto.getPvn() >= dto.getVr()) {
 				return genericDao.get(DDComiteSancion.class, filtroGestion);
-			} else if (dto.getPvn() < dto.getVr() && perdida < 0) {
-				if (perdidaValorAbs <= porcentajeSobreVNC1) {
+			} else if (dto.getPvn() < dto.getVr()) {
+				if (perdida < 0 && perdidaValorAbs <= porcentajeSobreVNC1) {
 					return genericDao.get(DDComiteSancion.class, filtroGestionDir);
-				} else if (perdidaValorAbs <= UMBRAL_PERDIDA) {
+				} else if (perdida < 0 && perdidaValorAbs <= UMBRAL_PERDIDA) {
 					return genericDao.get(DDComiteSancion.class, filtroInversion);
 				} else {
 					return genericDao.get(DDComiteSancion.class, filtroDireccion);

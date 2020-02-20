@@ -118,11 +118,6 @@ public class GenericAdapter {
 			lista = new ArrayList();
 			lista.add(diccionarioApi.dameValorDiccionarioByCod(DiccionarioTargetClassMap.convertToTargetClass("entidadesPropietarias")
 					, DDCartera.CODIGO_CARTERA_LIBERBANK));
-		}else if(clase.equals(DDTipoTrabajo.class)){
-			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "bloqueado", false);
-			Order order = new Order(OrderType.ASC,"descripcion");
-			lista = genericDao.getListOrdered(DDTipoTrabajo.class, order, filtro1, filtro2);
 		}else {
 			
 			lista = diccionarioApi.dameValoresDiccionario(clase);

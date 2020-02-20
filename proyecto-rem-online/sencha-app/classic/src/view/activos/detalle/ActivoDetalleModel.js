@@ -899,6 +899,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				title = HreRem.i18n('title.perimetro.divarian');
 			}
 			return title;
+		},
+		
+		mostrarCamposDivarian: function(get){
+			var isSubcarteraDivarian = get('activo.isSubcarteraDivarian');
+			return !isSubcarteraDivarian;
 		}
 	 }, 
 	 
@@ -2365,6 +2370,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tipoSegmento'}
 			}
- 		}
+ 		},
+ 		
+ 		storeOrigenAnteriorActivo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'origenAnterior'}
+			}
+		}
      }
 });

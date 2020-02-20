@@ -534,9 +534,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				&& !Checks.estaVacio(oferta.getActivosOferta())
 				) {
 			for (ActivoOferta actOfr : oferta.getActivosOferta()) {
-				if (!Checks.esNulo(actOfr.getPrimaryKey().getActivo())	
-						&& !Checks.esNulo(activoApi.activoPerteneceDND(actOfr.getPrimaryKey().getActivo()))
-						) {
+				if (!Checks.esNulo(actOfr.getPrimaryKey().getActivo())&& !Checks.esNulo(actOfr.getPrimaryKey().getActivo().getIsDnd()) && actOfr.getPrimaryKey().getActivo().getIsDnd()) {
 						mandaCorreo=true;
 				}
 			}
@@ -544,7 +542,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		
 		if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getEstadoOferta())
 				&& !Checks.esNulo(activo)
-				&& (!Checks.esNulo(activoApi.activoPerteneceDND(activo)) || mandaCorreo)
+				&& (!Checks.esNulo(activo.getIsDnd()) && activo.getIsDnd() || mandaCorreo)
 				&& !Checks.esNulo(oferta.getEstadoOferta().getCodigo())
 		        && (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo()) 
 		        		|| DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())

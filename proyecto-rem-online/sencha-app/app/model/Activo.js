@@ -936,6 +936,9 @@ Ext.define('HreRem.model.Activo', {
 					return !data.isUA && !data.pazSocial && !perimetroMacc;
     			},
     			depends: ['isUA','pazSocial','perimetroMacc']
+    		},
+    		{
+    			name: 'numActivoDivarian'
     		}
     ],
     

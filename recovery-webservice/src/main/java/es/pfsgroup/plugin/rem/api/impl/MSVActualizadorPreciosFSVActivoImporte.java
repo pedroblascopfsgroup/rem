@@ -98,8 +98,8 @@ public class MSVActualizadorPreciosFSVActivoImporte extends AbstractMSVActualiza
 					exc.dameCelda(fila, 6));
 		}
 		
-		if(!Checks.esNulo(exc.dameCelda(fila, 4))){
-			activo.setValorLiquidez(exc.dameCelda(fila, 4));			
+		if(!Checks.esNulo(exc.dameCelda(fila, 6))){
+			activo.setValorLiquidez(exc.dameCelda(fila, 6));			
 			genericDao.update(Activo.class, activo);
 		}
 		
@@ -127,7 +127,11 @@ public class MSVActualizadorPreciosFSVActivoImporte extends AbstractMSVActualiza
 		dtoActivoValoracion.setIdActivo(activo.getId());
 		dtoActivoValoracion.setCodigoTipoPrecio(codigoTipoPrecio);
 		dtoActivoValoracion.setImporte(importe);
-		dtoActivoValoracion.setFechaVentaHaya(simpleDate.parse(fechaVentaHaya));
+		if(!Checks.esNulo(fechaVentaHaya)){
+			dtoActivoValoracion.setFechaVentaHaya(simpleDate.parse(fechaVentaHaya));
+		}else {
+			dtoActivoValoracion.setFechaVentaHaya(new Date());
+		}
 		if(!Checks.esNulo(liquidez)) {
 			dtoActivoValoracion.setLiquidez(liquidez.toUpperCase());
 		}

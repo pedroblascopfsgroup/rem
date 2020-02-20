@@ -274,6 +274,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean mostrarEditarFasePublicacion;
 	
 	private Boolean pazSocial;
+	private String numActivoDivarian;
+
 	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -2082,5 +2084,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setIsUA(Boolean isUA) {
 		this.isUA = isUA;
 	}
+
+	public String getNumActivoDivarian() {
+		return numActivoDivarian;
+	}
+
+	public void setNumActivoDivarian(String numActivoDivarian) {
+		this.numActivoDivarian = numActivoDivarian;
+	}
+	
 	
 }

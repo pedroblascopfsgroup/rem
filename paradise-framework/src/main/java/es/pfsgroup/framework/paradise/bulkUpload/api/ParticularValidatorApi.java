@@ -1108,7 +1108,6 @@ public interface ParticularValidatorApi {
 	 * @param codUsuario
 	 * @return true si el usuario propuesto no pertenece al perfil
 	 */
-
     public Boolean esPerfilErroneo(String codPerfil, String codUsuario);
 
     /*
@@ -1138,5 +1137,15 @@ public interface ParticularValidatorApi {
      */
     Boolean esTrabajoMultiactivo(String codTrabajo);
 	
+	public Boolean esSegmentoValido(String codSegmento);
+/**
+ * 
+ * @param codSegmento
+ * @param numActivo
+ * @return true si pertenece al diccionario SEGMENTO CARTERA SUBCARTERA
+ */
+	public Boolean perteneceSegmentoCraScr(String codSegmento, String numActivo);
+
+	public Boolean esSubcarteraDivarian(String numActivo);
 	
 }

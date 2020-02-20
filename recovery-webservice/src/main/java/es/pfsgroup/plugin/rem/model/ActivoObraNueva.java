@@ -72,9 +72,6 @@ public class ActivoObraNueva extends ActivoAgrupacion implements Serializable {
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<ActivoSubdivision> subdivision;
 	
-	@Column(name = "ACT_ONV_DND")
-	private Boolean isDND =false;
-	
 	
 
 	public DDProvincia getProvincia() {
@@ -145,11 +142,4 @@ public class ActivoObraNueva extends ActivoAgrupacion implements Serializable {
 		this.ventaPlano = ventaPlano;
 	}
 
-	public Boolean getIsDND() {
-		return isDND;
-	}
-	
-	public void setIsDND(Boolean isDND) {
-		this.isDND = isDND;
-	}
 }

@@ -205,11 +205,16 @@ public class TrabajoController extends ParadiseJsonController {
 			Activo activoM = activoApi.get(activoDao.getIdActivoMatriz(actgagru.getId()));
 			dtoTrabajoFilter.setIdActivo(activoM.getId());
 		}
-		Page page = trabajoApi.findAll(dtoTrabajoFilter, genericAdapter.getUsuarioLogado());
-		
-		model.put("data", page.getResults());
-		model.put("totalCount", page.getTotalCount());
-
+		try {
+			Page page = trabajoApi.findAll(dtoTrabajoFilter, genericAdapter.getUsuarioLogado());
+			
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
+		}catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			model.put("error", e.getMessage());
+			model.put("success", false);
+		}
 		
 		return createModelAndViewJson(model);
 		

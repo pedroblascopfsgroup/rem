@@ -4541,4 +4541,39 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	    return resp;
 	}
 	//-------------------------------------------------------------------------
+
+	@Override
+	public Boolean esSegmentoValido(String codSegmento) {
+		if (Checks.esNulo(codSegmento)) return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM DD_TS_TIPO_SEGMENTO "
+				+ "WHERE DD_TS_CODIGO = '" + codSegmento +"' AND BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean perteneceSegmentoCraScr(String codSegmento , String numActivo) {
+		if (Checks.esNulo(codSegmento) || Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) return false;
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) " +
+				"FROM dd_scs_segmento_cra_scr scs " +
+				"WHERE scs.dd_ts_id = (SELECT dd_ts_id FROM DD_TS_TIPO_SEGMENTO WHERE dd_ts_codigo = '" + codSegmento  + " ') " +
+				"AND scs.dd_cra_id = (SELECT dd_cra_id FROM ACT_ACTIVO WHERE act_num_activo = " + numActivo + ") " +
+				"AND scs.dd_scr_id = (SELECT dd_scr_id FROM ACT_ACTIVO WHERE act_num_activo = " + numActivo + ") " +
+				"AND scs.borrado = 0"
+				);
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esSubcarteraDivarian(String numActivo) {
+		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) return false;
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) " + 
+				"FROM act_activo act " + 
+				"LEFT JOIN dd_scr_subcartera scr ON scr.dd_scr_id = act.dd_scr_id AND dd_scr_codigo IN ('151','152') " + 
+				"WHERE act.act_num_activo = " + numActivo + " AND act.borrado = 0"
+				);
+		return !"0".equals(resultado);
+	}
+	
 }

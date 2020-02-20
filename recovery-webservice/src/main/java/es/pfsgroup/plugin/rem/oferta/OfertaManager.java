@@ -160,6 +160,7 @@ import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
+import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.tramitacionofertas.TramitacionOfertasManager;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
@@ -303,6 +304,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Autowired
 	private ComisionamientoApi comisionamientoApi;
+	
+	@Autowired
+	private TareaActivoDao tareaActivoDao;
 
 	@Override
 	public Oferta getOfertaById(Long id) {
@@ -1575,7 +1579,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 								List<ActivoTramite> tramites = activoTramiteApi
 										.getTramitesActivoTrabajoList(exp.getTrabajo().getId());
 								if (!Checks.estaVacio(tramites)) {
-									Set<TareaActivo> tareasTramite = tramites.get(0).getTareas();
+									//Set<TareaActivo> tareasTramite = tramites.get(0).getTareas();
+									List<TareaActivo> tareasTramite = tareaActivoDao.getTareasActivoTramiteBorrados(tramites.get(0).getId());
 									for (TareaActivo tarea : tareasTramite) {
 										// Si se ha borrado sin acabarse, al
 										// descongelar se vuelven a mostrar.

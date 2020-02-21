@@ -287,10 +287,11 @@ Ext.define('HreRem.view.activos.ActivosController', {
     	var comboTipoSegmento = me.up('activossearch').down('[reference="tipoSegmentoRef"]');
     	var comboPerimetroMacc = me.up('activossearch').down('[reference="perimetroMaccRef"]');
     	
-    	if(nValue == CONST.SUBCARTERA['APPLEINMOBILIARIO'] || nValue == CONST.SUBCARTERA['DIVARIANARROW']
-    		|| nValue == CONST.SUBCARTERA['DIVARIANREMAINING']){
-    			comboTipoSegmento.setHidden(false);
-    			comboPerimetroMacc.setHidden(false);
+    	if(nValue == CONST.SUBCARTERA['APPLEINMOBILIARIO']){
+    		comboPerimetroMacc.setHidden(false);
+    	} else if(nValue == CONST.SUBCARTERA['DIVARIANARROW'] || nValue == CONST.SUBCARTERA['DIVARIANREMAINING']){
+    		comboPerimetroMacc.setHidden(false);
+    		comboTipoSegmento.setHidden(false);
     	} else {
     		comboTipoSegmento.setHidden(true);
     		comboPerimetroMacc.setHidden(true);

@@ -843,22 +843,17 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		if(apc != null) {
 			activoDto.setPazSocial(apc.getPazSocial());
-			if(activoP != null && activoP.getTramiteAlquilerSocial() != null) {
-				activoDto.setCheckFormalizarReadOnly(activoP.getTramiteAlquilerSocial());
-				activoDto.setCheckComercializarReadOnly(activoP.getTramiteAlquilerSocial());
-				activoDto.setCheckPublicacionReadOnly(activoP.getTramiteAlquilerSocial());
+		}
+		
+		if(activoP != null && activoP.getTramiteAlquilerSocial() != null) {
+			activoDto.setCheckFormalizarReadOnly(activoP.getTramiteAlquilerSocial());
+			activoDto.setCheckComercializarReadOnly(activoP.getTramiteAlquilerSocial());
+			activoDto.setCheckPublicacionReadOnly(activoP.getTramiteAlquilerSocial());
 
-				if(!Checks.esNulo(activoP.getTramiteAlquilerSocial()) && activoP.getTramiteAlquilerSocial()) {
-					activoDto.setAplicaComercializar(false);
-					activoDto.setAplicaFormalizar(false);
-					activoDto.setAplicaPublicar(false);
-				}
-
-			}else {
-				activoDto.setCheckFormalizarReadOnly(false);
-				activoDto.setCheckComercializarReadOnly(false);
-				activoDto.setCheckPublicacionReadOnly(false);
-			}
+		}else {
+			activoDto.setCheckFormalizarReadOnly(false);
+			activoDto.setCheckComercializarReadOnly(false);
+			activoDto.setCheckPublicacionReadOnly(false);
 		}
 		
 		if(activo.getTipoSegmento() != null) {

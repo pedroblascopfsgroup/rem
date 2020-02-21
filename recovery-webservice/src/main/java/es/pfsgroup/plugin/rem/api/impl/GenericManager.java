@@ -47,6 +47,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -148,6 +149,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	
 	@Autowired
 	private UsuarioApi usuarioApi;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
 
 	@Override
 	public String managerName() {
@@ -1315,13 +1319,22 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	}
 
 	@Override
-	public List<DDComiteSancion> getComitesResolucionLiberbank() {
-		List<DDComiteSancion> listaComites = new ArrayList<DDComiteSancion>();
+	public List<DDComiteSancion> getComitesResolucionLiberbank(Long idExp) throws Exception {
+		DDComiteSancion comitePropuesto = expedienteComercialApi.comitePropuestoByIdExpediente(idExp);	
+		List<DDComiteSancion> listaComites;
+		List<String> comitesResolucionComiteCodigos = new ArrayList<String>();
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", DDCartera.CODIGO_CARTERA_LIBERBANK);
 		listaComites = genericDao.getListOrdered(DDComiteSancion.class,order,filtro);
 		
-		List<String> comitesResolucionComiteCodigos = new ArrayList<String>(Arrays.asList(new String[] { "34", "35", "36", "37"}));
+		if(!Checks.esNulo(comitePropuesto.getCodigo()) && DDComiteSancion.CODIGO_HAYA_LIBERBANK.equals(comitePropuesto.getCodigo())) {
+			comitesResolucionComiteCodigos.add(DDComiteSancion.CODIGO_HAYA_LIBERBANK);
+		}else {
+			comitesResolucionComiteCodigos.add(DDComiteSancion.CODIGO_GESTION_INMOBILIARIA);
+			comitesResolucionComiteCodigos.add(DDComiteSancion.CODIGO_DIRECTOR_GESTION_INMOBILIARIA);
+			comitesResolucionComiteCodigos.add(DDComiteSancion.CODIGO_COMITE_INVERSION_INMOBILIARIA);
+			comitesResolucionComiteCodigos.add(DDComiteSancion.CODIGO_COMITE_DIRECCION);
+		}
 		
 		if(listaComites != null && !listaComites.isEmpty()) {
 			for (int i = listaComites.size() -1; i >= 0 ; i--) {

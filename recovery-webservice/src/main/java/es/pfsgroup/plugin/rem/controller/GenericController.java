@@ -684,8 +684,8 @@ public class GenericController extends ParadiseJsonController{
 	}
 	
 	@RequestMapping(method= RequestMethod.GET)
-	public ModelAndView getComitesResolucionLiberbank() {
-		return createModelAndViewJson(new ModelMap("data", genericApi.getComitesResolucionLiberbank()));
+	public ModelAndView getComitesResolucionLiberbank(Long idExp) throws Exception {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComitesResolucionLiberbank(idExp)));
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)

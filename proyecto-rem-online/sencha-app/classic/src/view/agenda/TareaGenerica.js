@@ -1458,12 +1458,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.down('[name=numImporteContra]').setReadOnly(false);
 			me.down('[name=fechaRespuesta]').setReadOnly(false);
         }
-        if(CONST.CARTERA['LIBERBANK'] == codigoCartera) {
-        	me.ocultarCampo(comboResolucionComite);
-        }
 		if(CONST.CARTERA['LIBERBANK'] != codigoCartera) {
 			me.down('[name=fechaReunionComite]').hide();
-			me.down('[name=comiteInternoSancionador]').hide();
 			me.ocultarCampo(comitePropuesto);
 			me.ocultarCampo(importeTotalOfertaAgrupada);
 		}else{
@@ -1474,7 +1470,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 													model: 'HreRem.model.DDBase',
 												    autoLoad: true,
 												    proxy: Ext.create('HreRem.ux.data.Proxy',{
-														remoteUrl: 'generic/getComitesResolucionLiberbank'
+														remoteUrl: 'generic/getComitesResolucionLiberbank',
+														extraParams: {idExp: idExp}
 													})
 												})
 											);

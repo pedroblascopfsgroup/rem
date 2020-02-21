@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Lara Pablo 
---## FECHA_CREACION=20190528
+--## AUTOR=José Antonio Gigante Pamplona 
+--## FECHA_CREACION=20200221
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-6547
@@ -14,6 +14,7 @@
 --##        0.2 Versión - HREOS-5136 - Elisa Occhipinti - 20190111 - Añadir columnas CLC_CESION_DATOS, CLC_COMUNI_TERCEROS, CLC_TRANSF_INTER, ADCOM_ID
 --##        0.3 Versión - HREOS-5136 - Elisa Occhipinti - 20190111 - Añadir columnas CLC_CESION_DATOS, CLC_COMUNI_TERCEROS, CLC_TRANSF_INTER, ADCOM_ID
 --##		0.4 Versión - HREOS-5927 - Lara Pablo -	20190422 - Añadir problemas Ursus
+--##		0.5 Version - HREOS-6450 - José Antonio Gigante - Agregar distinct en la consulta de creacion de la vista
 --##########################################
 --*/
 
@@ -54,7 +55,8 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE('CREATING VIEW '|| V_ESQUEMA ||'.V_BUSQUEDA_DATOS_COMPRADOR_EXP...');
   EXECUTE IMMEDIATE 'CREATE VIEW ' || V_ESQUEMA || '.V_BUSQUEDA_DATOS_COMPRADOR_EXP 
 	AS
-		SELECT
+		SELEC
+			DISTINCT
 			COM.COM_ID,
 			CEX.ECO_ID,
 			TPE.DD_TPE_CODIGO AS COD_TIPO_PERSONA,

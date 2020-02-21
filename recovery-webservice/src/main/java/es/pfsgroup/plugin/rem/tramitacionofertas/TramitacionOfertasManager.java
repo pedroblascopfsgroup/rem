@@ -80,7 +80,6 @@ import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
-import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDAdministracion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
@@ -1470,35 +1469,54 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 					}
 				}
 			}
-
+			
+			ActivoValoraciones precioAprVenta =getValoracionAprobadoVenta(oferta.getActivoPrincipal());
 			boolean esFinanciero = false;
 			if (!Checks.esNulo(activoBancario)) {
 				if (!Checks.esNulo(activoBancario.getClaseActivo()) && activoBancario.getClaseActivo().getCodigo()
 						.equals(DDClaseActivoBancario.CODIGO_FINANCIERO)) {
 					esFinanciero = true;
 				}
-
+				
+				String codSubcartera = Checks.esNulo(oferta.getActivoPrincipal().getSubcartera()) ? null : oferta.getActivoPrincipal().getSubcartera().getCodigo();
+				
 				if (DDCartera.CODIGO_CARTERA_TANGO.equals(carteraCodigo)) {
-					filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",
-							DDComiteSancion.CODIGO_HAYA_TANGO);
+					filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_TANGO);
 				} else if (DDCartera.CODIGO_CARTERA_GIANTS.equals(carteraCodigo)) {
-					filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",
-							DDComiteSancion.CODIGO_HAYA_GIANTS);
+					filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_GIANTS);
 				} else if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(carteraCodigo)) {
-					if (DDSubcartera.CODIGO_AGORA_FINANCIERO
-							.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())
-							|| DDSubcartera.CODIGO_AGORA_INMOBILIARIO
-									.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) {
-						filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",
-								DDComiteSancion.CODIGO_CERBERUS);
-					} else if (DDSubcartera.CODIGO_APPLE_INMOBILIARIO
-							.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) {
-						filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",
-								DDComiteSancion.CODIGO_APPLE_CERBERUS);
-					} else {
-						filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",
-								DDComiteSancion.CODIGO_HAYA_CERBERUS);
-					}
+					
+					if (DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(codSubcartera)	|| DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(codSubcartera)) {
+						filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CERBERUS);
+					} else if (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcartera) || DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(codSubcartera)) {
+						ActivoAgrupacion agrupacion = oferta.getAgrupacion();
+						Double umbralAskingPrice=200000.0;
+						String codComiteHaya = DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcartera)? DDComiteSancion.CODIGO_HAYA_APPLE : DDComiteSancion.CODIGO_HAYA_REMAINING;
+						String codComiteCes = DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(codSubcartera)? DDComiteSancion.CODIGO_CES_APPLE : DDComiteSancion.CODIGO_CES_REMAINING;
+						Double importeOferta = Checks.esNulo(oferta.getImporteOferta()) ? 0d : oferta.getImporteOferta();
+						
+						if(Checks.esNulo(agrupacion)) {
+							if (importeOferta <= umbralAskingPrice && (importeOferta >= precioAprVenta.getImporte() * 0.95)) {
+								filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteHaya);
+							} else {
+								filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",codComiteCes);
+							} 
+						}else {
+							Double askingPrice =  calcularAskingPriceAgrupacion(agrupacion);  							
+							if (importeOferta <= umbralAskingPrice && (importeOferta >= askingPrice * 0.95)) {
+								filtroComite =  genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteHaya);
+							} else {
+								filtroComite =  genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteCes);
+							} 
+						}				
+							
+					}else if(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){
+						filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_ARROW);
+							
+					}else {
+						filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_CERBERUS);
+					}				
+					
 				} else {
 					// 1º Clase de activo (financiero/inmobiliario) y sin
 					// formalización.
@@ -1809,6 +1827,38 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			transactionManager.rollback(transaction);
 		}
 
+	}
+	
+	private Double calcularAskingPriceAgrupacion(ActivoAgrupacion agrupacion) {
+		Double askingPrice = 0d;
+		if (Checks.esNulo(agrupacion)) {
+			return askingPrice;
+		}
+		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
+		for (ActivoAgrupacionActivo activoAgrupacionActivo : activos) {
+			List<ActivoValoraciones> valoracion = activoAgrupacionActivo.getActivo().getValoracion();
+			if (!Checks.estaVacio(valoracion)) {
+				for (ActivoValoraciones valor : valoracion) {
+					if (DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(valor.getTipoPrecio().getCodigo())) {
+						askingPrice += valor.getImporte();
+					}
+				}
+			}
+		}
+		return askingPrice;
+	}
+	
+	public ActivoValoraciones getValoracionAprobadoVenta(Activo activo) {
+		List<ActivoValoraciones> listActivoValoracion = activo.getValoracion();
+		if (!Checks.estaVacio(listActivoValoracion)) {
+			for (ActivoValoraciones valoracion : listActivoValoracion) {
+				if (DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(valoracion.getTipoPrecio().getCodigo())) {
+					return valoracion;
+				}
+			}
+		}
+
+		return null;
 	}
 
 }

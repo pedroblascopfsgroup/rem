@@ -9,7 +9,7 @@
 		<version>3.0.0-REM</version>
 	</parent>
 	<properties>
-		<sonar.projectKey>es.pfsgroup:rem_2</sonar.projectKey>
+		<sonar.projectKey>es.pfsgroup.plugin:recovery-webservice</sonar.projectKey>
 		<sonar.sourceEncoding>UTF-8</sonar.sourceEncoding>
 		<sonar.includedmodules>recovery-webservice</sonar.includedmodules>
 	</properties>

@@ -24,7 +24,7 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 
 DECLARE
-    seq_count number(3); -- Vble. para validar la existencia de las Secuencias.
+    seq_count number(3); -- Vble. para validar la existencia de las Secuencias
     table_count number(3); -- Vble. para validar la existencia de las Tablas.
     v_column_count number(3); -- Vble. para validar la existencia de las Columnas.    
     v_constraint_count number(3); -- Vble. para validar la existencia de las Constraints.
@@ -55,7 +55,7 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE('CREATING VIEW '|| V_ESQUEMA ||'.V_BUSQUEDA_DATOS_COMPRADOR_EXP...');
   EXECUTE IMMEDIATE 'CREATE VIEW ' || V_ESQUEMA || '.V_BUSQUEDA_DATOS_COMPRADOR_EXP 
 	AS
-		SELEC
+		SELECT
 			DISTINCT
 			COM.COM_ID,
 			CEX.ECO_ID,

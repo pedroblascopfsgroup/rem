@@ -904,6 +904,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		mostrarCamposDivarian: function(get){
 			var isSubcarteraDivarian = get('activo.isSubcarteraDivarian');
 			return !isSubcarteraDivarian;
+		},
+		
+		esEditablePerimetroMacc: function(get){
+			var codComercializacion = get('activo.tipoComercializacionCodigo');
+			var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+			return CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] === codComercializacion && isSuper;
 		}
 	 }, 
 	 

@@ -935,7 +935,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.apple.macc.perimetro'),
 								reference: 'comboPerimetroAppleMACC',
 								bind:{
-									readOnly : !$AU.userIsRol("HAYASUPER"),
+									readOnly : '{!esEditablePerimetroMacc}',
 									store: '{comboSiNoDatosPerimetroApple}',
 									value: '{activo.perimetroMacc}'	
 								}

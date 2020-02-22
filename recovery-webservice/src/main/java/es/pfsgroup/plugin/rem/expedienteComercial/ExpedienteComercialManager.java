@@ -1787,42 +1787,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setFechaRespuesta(Checks.esNulo(oferta.getFechaRespuesta()) ? null : oferta.getFechaRespuesta());
 			dto.setImporteContraofertaOfertanteCES(Checks.esNulo(oferta.getImporteContraofertaOfertanteCES()) ? null : oferta.getImporteContraofertaOfertanteCES());
 		
-		}
-		
-		
-		/*
-		Boolean isCarteraCerberusApple = false;
-		if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getActivoPrincipal())
-		&& (!Checks.esNulo(oferta.getActivoPrincipal().getCartera())
-		&& !Checks.esNulo(oferta.getActivoPrincipal().getSubcartera()))
-		&& (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) &&
-		DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))) {
-			isCarteraCerberusApple = true;
-		}
-		dto.setIsCarteraCerberusApple(isCarteraCerberusApple);
-		
-		
-		if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getFechaRespuestaCES()) && isCarteraCerberusApple) {
-			dto.setFechaRespuestaCES(oferta.getFechaRespuestaCES());
-		}
-
-		if(!Checks.esNulo(oferta.getImporteContraofertaCES()) && isCarteraCerberusApple) {
-			dto.setImporteContraofertaCES(oferta.getImporteContraofertaCES());
-		}
-
-		if(!Checks.esNulo(oferta.getFechaResolucionCES()) && isCarteraCerberusApple) {
-			dto.setFechaResolucionCES(oferta.getFechaResolucionCES());
-		}
-
-		if(!Checks.esNulo(oferta.getFechaRespuesta()) && isCarteraCerberusApple) {
-			dto.setFechaRespuesta(oferta.getFechaRespuesta());
-		}
-		
-		if(!Checks.esNulo(oferta.getImporteContraofertaOfertanteCES()) && isCarteraCerberusApple) {
-			dto.setImporteContraofertaOfertanteCES(oferta.getImporteContraofertaOfertanteCES());
-		}
-		
-		*/
+		}		
 		
 		if(!Checks.esNulo(expediente.getEstado().getCodigo()) 
 		&& (!DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo()))

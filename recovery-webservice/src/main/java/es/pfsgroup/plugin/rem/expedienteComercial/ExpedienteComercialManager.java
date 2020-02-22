@@ -1765,8 +1765,32 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setRefCircuitoCliente(oferta.getRefCircuitoCliente());
 		} else {
 			dto.setRefCircuitoCliente(null);
+		}				
+		
+		boolean isCerberusAppleOrArrowOrRemaining = 
+				!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getActivoPrincipal()) 						
+				&& !Checks.esNulo(oferta.getActivoPrincipal().getCartera()) 
+				&& !Checks.esNulo(oferta.getActivoPrincipal().getSubcartera())
+				&& DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+				&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())
+						|| DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())
+						|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())); 
+		
+		
+		dto.setIsCarteraCerberusApple(isCerberusAppleOrArrowOrRemaining);
+		
+		if(isCerberusAppleOrArrowOrRemaining) {
+			
+			dto.setFechaRespuestaCES(Checks.esNulo(oferta.getFechaRespuestaCES()) ? null : oferta.getFechaRespuestaCES());
+			dto.setImporteContraofertaCES(Checks.esNulo(oferta.getImporteContraofertaCES()) ? null : oferta.getImporteContraofertaCES());
+			dto.setFechaResolucionCES(Checks.esNulo(oferta.getFechaResolucionCES()) ? null : oferta.getFechaResolucionCES());
+			dto.setFechaRespuesta(Checks.esNulo(oferta.getFechaRespuesta()) ? null : oferta.getFechaRespuesta());
+			dto.setImporteContraofertaOfertanteCES(Checks.esNulo(oferta.getImporteContraofertaOfertanteCES()) ? null : oferta.getImporteContraofertaOfertanteCES());
+		
 		}
-
+		
+		
+		/*
 		Boolean isCarteraCerberusApple = false;
 		if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getActivoPrincipal())
 		&& (!Checks.esNulo(oferta.getActivoPrincipal().getCartera())
@@ -1797,6 +1821,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if(!Checks.esNulo(oferta.getImporteContraofertaOfertanteCES()) && isCarteraCerberusApple) {
 			dto.setImporteContraofertaOfertanteCES(oferta.getImporteContraofertaOfertanteCES());
 		}
+		
+		*/
 		
 		if(!Checks.esNulo(expediente.getEstado().getCodigo()) 
 		&& (!DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo()))

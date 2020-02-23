@@ -3502,12 +3502,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		Oferta ofertaPrincipal = null;
 		
-		if(DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL.equals(oferta.getClaseOferta().getCodigo())) {
+		if(!Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL.equals(oferta.getClaseOferta().getCodigo())) {
 			
 			dto = rellenaNewDtoCalculoLBK(dto, oferta, null);
 			
 			return dto;
-		}else if(DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(oferta.getClaseOferta().getCodigo())) {
+		}else if(!Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(oferta.getClaseOferta().getCodigo())) {
 			
 			ofertaPrincipal = oferta;			
 		}else {
@@ -4397,7 +4397,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if(Checks.esNulo(oferta)) return false;
 		
 		//En caso de que sea una oferta agrupada tiene que cumplir los requisitos todos los activos de todas las ofertas
-		if(oferta.getClaseOferta().equals(DDClaseOferta.CODIGO_OFERTA_PRINCIPAL)) {
+		if(DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(oferta.getClaseOferta())) {
 			Filter filtroDependientes = genericDao.createFilter(FilterType.EQUALS, "ofertaPrincipal.id", oferta.getId());
 			List<OfertasAgrupadasLbk> listaDependientes = genericDao.getList(OfertasAgrupadasLbk.class, filtroDependientes);
 			for(OfertasAgrupadasLbk ogr: listaDependientes) {
@@ -4435,6 +4435,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	private DDComiteSancion seleccionaComite(DtoVariablesCalculoComiteLBK dto) {
+		
+		if(Checks.esNulo(dto.getPvn()) || Checks.esNulo(dto.getVnc())) {
+			return null;
+		}
 		
 		Double perdida = dto.getPvn() - dto.getVnc();
 		Double perdidaValorAbs = Math.abs(perdida);
@@ -4489,26 +4493,24 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		List<OfertasAgrupadasLbk> ofertasAgrupadas = null;
 		ExpedienteComercial eco = null;
 		
-		if(DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL.equals(oferta.getClaseOferta().getCodigo())) {
+		if(!Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL.equals(oferta.getClaseOferta().getCodigo())) {
 			
-			eco = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta", oferta));
-			
-			saveComiteExpedienteComercial(eco, comiteSeleccionado);
-			
+			eco = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta", oferta));			
+			saveComiteExpedienteComercial(eco, comiteSeleccionado);			
 			return true;
-		}else if(DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(oferta.getClaseOferta().getCodigo())) {
 			
-			ofertaPrincipal = oferta;			
+		}else if(!Checks.esNulo(oferta.getClaseOferta()) && DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(oferta.getClaseOferta().getCodigo())) {			
+		
+			ofertaPrincipal = oferta;
+			
 		}else {
 			
 			ofertaPrincipal = getOfertaPrincipalById(oferta.getId());			
 		}
 		
 		if(ofertaPrincipal != null) {
-			ofertasAgrupadas = ofertaPrincipal.getOfertasAgrupadas();
-			
-			eco = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta", ofertaPrincipal));
-			
+			ofertasAgrupadas = ofertaPrincipal.getOfertasAgrupadas();			
+			eco = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta", ofertaPrincipal));			
 			saveComiteExpedienteComercial(eco, comiteSeleccionado);
 			
 			for(OfertasAgrupadasLbk agrupada: ofertasAgrupadas) {
@@ -4519,8 +4521,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}	
 		}
 		
-		return true;
-		
+		return true;		
 	}
 	
 	private void saveComiteExpedienteComercial(ExpedienteComercial eco, DDComiteSancion comite) {

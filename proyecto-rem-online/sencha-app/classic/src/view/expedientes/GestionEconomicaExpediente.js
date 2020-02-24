@@ -252,7 +252,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 					            renderer: function (value, meta, record) {
 						    		var importeOriginal = record.get('importeOriginal');
 						    		if(value){
-							    		if (importeOriginal != null && importeOriginal != value) {
+							    		if (importeOriginal != null && importeOriginal != value && value >= 5000) {
 							    			return '<span style="font-weight: bold;">('+Utils.rendererCurrency(value)+')</span> '
 							    			+ '<span style="color: #DF0101; text-decoration: line-through; font-weight: bold;">'+Utils.rendererCurrency(importeOriginal)+'</span>';
 							    		} else {

@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=MIGUEL LOPEZ
---## FECHA_CREACION=20191128
+--## AUTOR=RAMON LLINARES
+--## FECHA_CREACION=20200225
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-7349
@@ -650,7 +650,7 @@ begin
   ------------------DEFINICION DE OFERTA------------------------------------
   TAP(0).tap_field('TAP_CODIGO') := 'T017_DefinicionOferta';
   TAP(0).tap_field('TAP_VIEW') := NULL;
-  TAP(0).tap_field('TAP_SCRIPT_VALIDACION') := 'checkImporteParticipacion() ? checkCamposComprador() ? checkCompradores() ? checkVendido() ? ''''El activo est&aacute; vendido'''' : checkComercializable() ? null : ''''El activo debe ser comercializable'''' : ''''Los compradores deben sumar el 100%'''' : ''''Es necesario cumplimentar todos los campos obligatorios de los compradores para avanzar la tarea.'''' : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente''''';
+  TAP(0).tap_field('TAP_SCRIPT_VALIDACION') := 'checkReservaInformada() ? checkImporteParticipacion() ? checkCamposComprador() ? checkCompradores() ? checkVendido() ? ''''El activo est&aacute; vendido'''' : checkComercializable() ? null : ''''El activo debe ser comercializable'''' : ''''Los compradores deben sumar el 100%'''' : ''''Es necesario cumplimentar todos los campos obligatorios de los compradores para avanzar la tarea.'''' : ''''El sumatorio de importes de participaci&oacute;n de los activos ha de ser el mismo que el importe total del expediente'''' : ''''En la reserva del expediente se debe marcar si es necesaria o no para poder avanzar.''''';
   TAP(0).tap_field('TAP_SCRIPT_VALIDACION_JBPM') := 'existeAdjuntoUGCarteraValidacion("36", "E", "01") == null ? valores[''''T017_DefinicionOferta''''][''''comboConflicto''''] == DDSiNo.SI || valores[''''T017_DefinicionOferta''''][''''comboRiesgo''''] == DDSiNo.SI ? ''''El estado de la responsabilidad corporativa no es el correcto para poder avanzar.'''' : definicionOfertaT013(valores[''''T017_DefinicionOferta''''][''''comiteSuperior'''']) : existeAdjuntoUGCarteraValidacion("36", "E", "01")';
   TAP(0).tap_field('TAP_SCRIPT_DECISION') := null;
   TAP(0).tap_field('DD_TPO_ID_BPM') := null;

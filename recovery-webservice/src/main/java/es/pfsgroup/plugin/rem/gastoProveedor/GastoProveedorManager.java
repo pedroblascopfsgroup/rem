@@ -2228,38 +2228,47 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public boolean asignarTrabajos(Long idGasto, Long[] trabajos) {
 
 		GastoProveedor gasto = findOne(idGasto);
+		int cont = 0;
 
-		for (Long idTrabajo : trabajos) {
-
-			Trabajo trabajo = trabajoApi.findOne(idTrabajo);
-			// Marcamos la fecha de emisión de factura en el trabajo
-			trabajo.setFechaEmisionFactura(gasto.getFechaEmision());
-			genericDao.save(Trabajo.class, trabajo);
-
-			// Asignamos el trabajo al gasto
-			GastoProveedorTrabajo gastoTrabajo = new GastoProveedorTrabajo();
-			gastoTrabajo.setTrabajo(trabajo);
-			gastoTrabajo.setGastoProveedor(gasto);
-
-			genericDao.save(GastoProveedorTrabajo.class, gastoTrabajo);
-			gasto.getGastoProveedorTrabajos().add(gastoTrabajo);
-
-			// Asignamos los activos del trabajo al gasto
-
-			gasto = asignarActivos(gasto, trabajo);
+		for (Long idTrabajo : trabajos) {			
+			
+			List<GastoProveedorTrabajo> gastosTrabajo = genericDao.getList(GastoProveedorTrabajo.class, 
+					genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId()),
+					genericDao.createFilter(FilterType.EQUALS, "trabajo.id", idTrabajo));
+			
+			if(Checks.estaVacio(gastosTrabajo)) {
+				Trabajo trabajo = trabajoApi.findOne(idTrabajo);
+				// Marcamos la fecha de emisión de factura en el trabajo
+				trabajo.setFechaEmisionFactura(gasto.getFechaEmision());
+				genericDao.save(Trabajo.class, trabajo);
+	
+				// Asignamos el trabajo al gasto
+				GastoProveedorTrabajo gastoTrabajo = new GastoProveedorTrabajo();
+				gastoTrabajo.setTrabajo(trabajo);
+				gastoTrabajo.setGastoProveedor(gasto);
+	
+				genericDao.save(GastoProveedorTrabajo.class, gastoTrabajo);
+				gasto.getGastoProveedorTrabajos().add(gastoTrabajo);
+	
+				// Asignamos los activos del trabajo al gasto
+	
+				gasto = asignarActivos(gasto, trabajo);
+				cont++;
+			}
 		}
-
-		gasto = calcularImportesDetalleEconomicoGasto(gasto);
-
-		gasto = calcularParticipacionActivosGasto(gasto);
-
-		gasto = asignarPropietarioGasto(gasto);
-
-		gasto = asignarCuentaContableYPartidaGasto(gasto);
-
-		updaterStateApi.updaterStates(gasto, null);
-
-		genericDao.save(GastoProveedor.class, gasto);
+		if(cont > 0) {
+			gasto = calcularImportesDetalleEconomicoGasto(gasto);
+	
+			gasto = calcularParticipacionActivosGasto(gasto);
+	
+			gasto = asignarPropietarioGasto(gasto);
+	
+			gasto = asignarCuentaContableYPartidaGasto(gasto);
+	
+			updaterStateApi.updaterStates(gasto, null);
+	
+			genericDao.save(GastoProveedor.class, gasto);
+		}
 
 		return true;
 	}

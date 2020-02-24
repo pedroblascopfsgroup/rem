@@ -4463,7 +4463,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL(
 				"SELECT COUNT(1) " +
 				"FROM dd_scs_segmento_cra_scr scs " +
-				"WHERE scs.dd_ts_id = (SELECT dd_ts_id FROM DD_TS_TIPO_SEGMENTO WHERE dd_ts_codigo = '" + codSegmento  + " ') " +
+				"WHERE scs.dd_ts_id = (SELECT dd_ts_id FROM DD_TS_TIPO_SEGMENTO WHERE dd_ts_codigo = '" + codSegmento  + "') " +
 				"AND scs.dd_cra_id = (SELECT dd_cra_id FROM ACT_ACTIVO WHERE act_num_activo = " + numActivo + ") " +
 				"AND scs.dd_scr_id = (SELECT dd_scr_id FROM ACT_ACTIVO WHERE act_num_activo = " + numActivo + ") " +
 				"AND scs.borrado = 0"

@@ -43,7 +43,7 @@ DECLARE
         T_TIPO_DATA('02', 'Industrial', 'Industrial'),
         T_TIPO_DATA('03', 'MACC', 'MACC'),
         T_TIPO_DATA('04', 'ICE - SPV', 'ICE - SPV'),
-        T_TIPO_DATA('05', 'Sin carterizar', 'Sin segmento'),
+        T_TIPO_DATA('05', 'Sin segmento', 'Sin segmento'),
         T_TIPO_DATA('06', 'ICE', 'ICE'),
         T_TIPO_DATA('07', 'Industrial - SPV', 'Industrial - SPV')
 		); 

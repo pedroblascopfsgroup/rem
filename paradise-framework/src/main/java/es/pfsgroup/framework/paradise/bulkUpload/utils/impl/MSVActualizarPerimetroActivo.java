@@ -892,15 +892,8 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				String celdaActivo = exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);		
 				String celdaSegmento = exc.dameCelda(i, COL_NUM_SEGMENTO);
 				
-				if(particularValidator.existeActivo(celdaActivo) 	
-						&& particularValidator.esSegmentoValido(celdaSegmento) 
-						&& !particularValidator.perteneceSegmentoCraScr(celdaSegmento, celdaActivo)) {
+				if(!particularValidator.perteneceSegmentoCraScr(celdaSegmento, celdaActivo)) {
 					listaFilas.add(i);
-				}else {
-					if(!Checks.esNulo(celdaSegmento)) {
-						//si no existe el activo y está informado el segmento, no se puede verificar cra y scr
-						listaFilas.add(i);						
-					}
 				}
 			} catch (Exception e) {
 				listaFilas.add(i);

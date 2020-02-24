@@ -956,6 +956,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				if (Integer.valueOf(0).equals(dto.getPerimetroMacc())) {
 					activo.setTipoSegmento((DDTipoSegmento) genericDao.get(DDTipoSegmento.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoSegmento.CODIGO_SEGMENTO_SIN_CARTERIZAR)));
+				}else if (Integer.valueOf(1).equals(dto.getPerimetroMacc())){
+					activo.setTipoSegmento((DDTipoSegmento) genericDao.get(DDTipoSegmento.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoSegmento.CODIGO_SEGMENTO_MACC)));
 				}
 				activo.setPerimetroMacc(dto.getPerimetroMacc());
 			}

@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.restclient.schedule.dbchanges;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -102,22 +103,25 @@ public class DetectorWebcomEstadoOferta extends DetectorCambiosBD<EstadoOfertaDt
 	@Override
 	public void procesaResultado(JSONObject resultado) {
 		restApi.trace("[DETECCIÓN CAMBIOS] Procesando la respuesta");
-
-		if (resultado != null && resultado.getJSONArray("data") instanceof JSONArray) {
-			for (int i = 0; i < resultado.getJSONArray("data").size(); i++) {
-				JSONObject oferta = (JSONObject) resultado.getJSONArray("data").get(i);
-				if (oferta.containsKey("idOfertaRem")) {
-					Oferta ofertaEntity = ofertaApi.getOfertaByNumOfertaRem(oferta.getLong("idOfertaRem"));
-					if (ofertaEntity != null) {
-						modificaOferta(oferta, ofertaEntity);
+		
+		try {
+			if (resultado != null && resultado.getJSONArray("data") instanceof JSONArray) {
+				for (int i = 0; i < resultado.getJSONArray("data").size(); i++) {
+					JSONObject oferta = (JSONObject) resultado.getJSONArray("data").get(i);
+					if (oferta.containsKey("idOfertaRem")) {
+						Oferta ofertaEntity = ofertaApi.getOfertaByNumOfertaRem(oferta.getLong("idOfertaRem"));
+						if (ofertaEntity != null) {
+							modificaOferta(oferta, ofertaEntity);
+						}
 					}
 				}
 			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
 		}
-
 	}
 
-	private void modificaOferta(JSONObject oferta, Oferta ofertaEntity) {
+	private void modificaOferta(JSONObject oferta, Oferta ofertaEntity) throws Exception {
 		Boolean actualizar = false;
 		if (oferta.containsKey("success") && oferta.getBoolean("success")) {
 			if (getLong(oferta,"idProveedorPrescriptorRemOrigenLead") != null) {
@@ -153,28 +157,20 @@ public class DetectorWebcomEstadoOferta extends DetectorCambiosBD<EstadoOfertaDt
 		}
 	}
 	
-	private Long getLong(JSONObject oferta, String field) {
+	private Long getLong(JSONObject oferta, String field) throws Exception {
 		Long result = null;
-		try {
-			if (oferta.containsKey(field)) {
-				result = oferta.getLong(field);
-			}	
-		}catch(Exception e) {
-			logger.info(e.getMessage(), e);
+		if (oferta.containsKey(field)) {
+			result = oferta.getLong(field);
 		}
 		return result;
 	}
 
-	private Date getFechaOrigenLead(JSONObject oferta) {
+	private Date getFechaOrigenLead(JSONObject oferta) throws Exception {
 		Date fechaOrigenLead = null;
-		try {
-			String dateStr = oferta.getString("fechaOrigenLead");
-			if (dateStr != null && !dateStr.equals("")) {
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-				fechaOrigenLead = sdf.parse(dateStr);
-			}
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
+		String dateStr = oferta.getString("fechaOrigenLead");
+		if (dateStr != null && !dateStr.equals("")) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+			fechaOrigenLead = sdf.parse(dateStr);
 		}
 		return fechaOrigenLead;
 	}

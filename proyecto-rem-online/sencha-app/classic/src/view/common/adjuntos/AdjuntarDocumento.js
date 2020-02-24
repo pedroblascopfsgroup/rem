@@ -47,14 +47,6 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumento', {
 			}
     	});
 
-		comboTipoDocumento.filter([
-			{
-		    fn: function(record) {
-					return me.tipoTrabajoCodigo == null || record.get('tipoTrabajoCodigos').indexOf(me.tipoTrabajoCodigo) != -1;
-		    },
-		    scope: this
-		  }
-		]);
 		
     	me.buttons = [ { formBind: true, itemId: 'btnGuardar', text: 'Adjuntar', handler: 'onClickBotonAdjuntarDocumento', scope: this},{ itemId: 'btnCancelar', text: 'Cancelar', handler: 'closeWindow', scope: this}];
 

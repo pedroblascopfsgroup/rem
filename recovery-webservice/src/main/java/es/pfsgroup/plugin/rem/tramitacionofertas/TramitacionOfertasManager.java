@@ -1506,7 +1506,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 						Double importeOferta = Checks.esNulo(oferta.getImporteOferta()) ? 0d : oferta.getImporteOferta();
 						
 						if(Checks.esNulo(agrupacion)) {
-							if (importeOferta <= umbralAskingPrice && (importeOferta >= precioAprVenta.getImporte() * 0.95)) {
+							if (precioAprVenta != null && importeOferta <= umbralAskingPrice && (importeOferta >= precioAprVenta.getImporte() * 0.95)) {
 								filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteHaya);
 							} else {
 								filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",codComiteCes);

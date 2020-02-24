@@ -4408,7 +4408,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if(Checks.esNulo(oferta)) return false;
 		
 		//En caso de que sea una oferta agrupada tiene que cumplir los requisitos todos los activos de todas las ofertas
-		if(DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(oferta.getClaseOferta())) {
+		if(oferta.getClaseOferta() != null && DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(oferta.getClaseOferta().getCodigo())) {
 			Filter filtroDependientes = genericDao.createFilter(FilterType.EQUALS, "ofertaPrincipal.id", oferta.getId());
 			List<OfertasAgrupadasLbk> listaDependientes = genericDao.getList(OfertasAgrupadasLbk.class, filtroDependientes);
 			for(OfertasAgrupadasLbk ogr: listaDependientes) {

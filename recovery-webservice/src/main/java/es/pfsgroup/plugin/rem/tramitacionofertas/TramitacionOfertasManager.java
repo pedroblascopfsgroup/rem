@@ -102,6 +102,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 import es.pfsgroup.plugin.rem.oferta.OfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
+import es.pfsgroup.plugin.rem.oferta.dao.OfertasAgrupadasLbkDao;
 import es.pfsgroup.plugin.rem.thread.ContenedorExpComercial;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.thread.TramitacionOfertasAsync;
@@ -198,6 +199,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private OfertasAgrupadasLbkDao ofertasAgrupadasLbkDao;
 
 	@Override
 	@Transactional(readOnly = false)
@@ -454,6 +458,10 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				agrupacion.setFechaBaja(new Date());
 				activoAgrupacionApi.saveOrUpdate(agrupacion);
 			}
+		}
+		
+		if(DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
+			ofertasAgrupadasLbkDao.suprimeOfertaDependiente(oferta.getId());
 		}
 
 		notificatorServiceSancionOfertaAceptacionYRechazo.notificatorFinSinTramite(oferta.getId());
@@ -1583,7 +1591,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			Boolean esAlquiler) {
 
 		if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())
-				&& faltanDatosCalculo(oferta, activo)) {
+				&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo()) &&  faltanDatosCalculo(oferta, activo)) {
 			throw new JsonViewerException(FALTAN_DATOS);
 		}
 

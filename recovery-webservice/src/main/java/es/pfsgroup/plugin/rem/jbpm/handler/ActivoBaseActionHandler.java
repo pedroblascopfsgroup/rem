@@ -68,6 +68,7 @@ import es.pfsgroup.plugin.rem.model.TimerTareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 
 /**
@@ -739,13 +740,16 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 			
 			Boolean esTrabajoValido = trabajoApi.tipoTramiteValidoObtencionDocSolicitudDocumentoGestoria(tareaActivo.getTramite().getTrabajo());
 			
-			if(!Checks.esNulo(tareaActivo) && !Checks.esNulo(tareaActivo.getTramite()) && !Checks.esNulo(tareaActivo.getTramite().getTipoTramite()) && esTrabajoValido
-				&& !Checks.esNulo(tareaActivo.getActivo()) && ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC.equals(tareaActivo.getTramite().getTipoTramite().getCodigo()) 
-				&& (DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()) || DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()))
+			if(!Checks.esNulo(tareaActivo) && !Checks.esNulo(tareaActivo.getTramite()) && !Checks.esNulo(tareaActivo.getTramite().getTipoTramite()) 
+					&& (esTrabajoValido|| DDSubtipoTrabajo.CODIGO_CEDULA_HABITABILIDAD.equals(trabajo.getSubtipoTrabajo().getCodigo()))
+					&& !Checks.esNulo(tareaActivo.getActivo()) && 
+						(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC.equals(tareaActivo.getTramite().getTipoTramite().getCodigo()) ||
+						 ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEDULA.equals(tareaActivo.getTramite().getTipoTramite().getCodigo()))
+					&& (DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()) || DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()))
 			){
 				Usuario destinatario = null;
 				Filter usuarioProveedor = null;
-				if(DDCartera.CODIGO_CARTERA_SAREB.equals(tareaActivo.getActivo().getCartera().getCodigo()) && esTrabajoValido) {
+				if(DDCartera.CODIGO_CARTERA_SAREB.equals(tareaActivo.getActivo().getCartera().getCodigo())) {
 					usuarioProveedor = genericDao.createFilter(FilterType.EQUALS, "username", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_PROVEEDOR_ELECNOR));
 					destinatario= genericDao.get(Usuario.class, usuarioProveedor);
 				}else {

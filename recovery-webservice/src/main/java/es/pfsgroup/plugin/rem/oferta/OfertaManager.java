@@ -4638,10 +4638,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			if(!Checks.estaVacio(listaTareas)) {
 				for(TareaActivo tarea : listaTareas) {
-					if(codigoTarea.equals(tarea.getTareaExterna().getTareaProcedimiento().getCodigo())) {
-						resultado = !Checks.esNulo(tarea.getTareaFinalizada()) ? tarea.getTareaFinalizada() : false;
-
-						if(!resultado || (resultado && T017.equals(tramite.getTipoTramite().getCodigo()))) break;
+					if(tarea.getTareaExterna() != null 
+						&& tarea.getTareaExterna().getTareaProcedimiento() != null 
+						&& codigoTarea.equals(tarea.getTareaExterna().getTareaProcedimiento().getCodigo())) {
+							resultado = !Checks.esNulo(tarea.getTareaFinalizada()) ? tarea.getTareaFinalizada() : false;
+	
+							if(!resultado || (resultado && T017.equals(tramite.getTipoTramite().getCodigo()))) break;
 					}
 				}
 			}

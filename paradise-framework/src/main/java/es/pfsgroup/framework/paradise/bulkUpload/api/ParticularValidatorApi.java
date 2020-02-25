@@ -1076,4 +1076,6 @@ public interface ParticularValidatorApi {
 	
 	public Boolean existenTareasEnTrabajo(String numTrabajo);
 	Boolean esExpedienteValidoAprobado(String numExpediente);
+	
+	Boolean coincideTipoJuzgadoPoblacionJuzgado(String codigoTipoJuzgado, String codigoPoblacionJuzgado);
 }

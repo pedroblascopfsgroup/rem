@@ -4382,5 +4382,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return "1".equals(resultado);
 	}
 	
-	//-------------------------------------------------------------------------
+	@Override
+	public Boolean coincideTipoJuzgadoPoblacionJuzgado(String codigoTipoJuzgado, String codigoPoblacionJuzgado) {
+		if(Checks.esNulo(codigoTipoJuzgado) || Checks.esNulo(codigoPoblacionJuzgado))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM DD_JUZ_JUZGADOS_PLAZA JUZ"
+				+"		JOIN DD_PLA_PLAZAS PLA ON PLA.DD_PLA_ID = JUZ.DD_PLA_ID"
+				+"		WHERE JUZ.DD_JUZ_CODIGO = '"+ codigoTipoJuzgado +"'"
+				+"		AND PLA.DD_PLA_CODIGO = '"+ codigoPoblacionJuzgado +"'");
+
+		return "1".equals(resultado);
+	}
 }

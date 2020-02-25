@@ -6625,17 +6625,23 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							DDEntidadFinanciera entidadFinanciera = (DDEntidadFinanciera) utilDiccionarioApi
 									.dameValorDiccionarioByCod(DDEntidadFinanciera.class, dto.getEntidadFinancieraCodigo());
 							condiciones.setEntidadFinanciera(entidadFinanciera);
-							if(Checks.esNulo(dto.getNumExpedienteRiesgo())) {
-								formalizacion.setNumExpediente(null);
-							}
-							if(Checks.esNulo(dto.getTiposFinanciacionCodigo()) && Checks.esNulo(dto.getTiposFinanciacionCodigoBankia())) {
-								formalizacion.setTipoRiesgoClase(null);
+							if(!Checks.esNulo(formalizacion))
+							{
+								if(Checks.esNulo(dto.getNumExpedienteRiesgo())) {
+									formalizacion.setNumExpediente(null);
+								}
+								if(Checks.esNulo(dto.getTiposFinanciacionCodigo()) && Checks.esNulo(dto.getTiposFinanciacionCodigoBankia())) {
+									formalizacion.setTipoRiesgoClase(null);
+								}
 							}
 						}
 					} else if (!Checks.esNulo(solicitaFinanciacion) && solicitaFinanciacion == 0) {
 						condiciones.setEntidadFinanciera(null);
-						formalizacion.setNumExpediente(null);
-						formalizacion.setTipoRiesgoClase(null);
+						if(!Checks.esNulo(formalizacion))
+						{
+							formalizacion.setNumExpediente(null);
+							formalizacion.setTipoRiesgoClase(null);
+						}
 					}
 
 

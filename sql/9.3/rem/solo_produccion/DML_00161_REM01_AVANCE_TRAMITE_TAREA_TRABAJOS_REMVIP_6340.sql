@@ -333,14 +333,14 @@ BEGIN
 		EXECUTE IMMEDIATE V_SQL;
 	
 		DBMS_OUTPUT.PUT_LINE('[INFO] CREADO NUEVO REGISTRO EN TABLA TAC_TAREAS_ACTIVOS');
-
-		END LOOP;
-
-	ELSE
+        
+   	ELSE
 		
 	DBMS_OUTPUT.PUT_LINE('[INFO] TRABAJO NO EXISTE');
 		
 	END IF; 
+
+   	END LOOP;
 
 	DBMS_OUTPUT.PUT_LINE('********************************************************************');
 

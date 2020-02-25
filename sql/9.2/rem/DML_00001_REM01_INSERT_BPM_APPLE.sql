@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=RAMON LLINARES
---## FECHA_CREACION=20200225
+--## AUTOR=MIGUEL LOPEZ
+--## FECHA_CREACION=20191128
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-7349

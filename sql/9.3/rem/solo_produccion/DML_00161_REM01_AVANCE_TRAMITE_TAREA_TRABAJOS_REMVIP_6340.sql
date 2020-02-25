@@ -336,35 +336,34 @@ BEGIN
 
 		END LOOP;
 
-		DBMS_OUTPUT.PUT_LINE('********************************************************************');
-
-		DBMS_OUTPUT.PUT_LINE('[FIN] Se han updateado en total '||V_COUNT_UPDATE_1||' registros EN ACT_TRA_TRAMITE');
-
-		DBMS_OUTPUT.PUT_LINE('********************************************************************');
-
-		DBMS_OUTPUT.PUT_LINE('[FIN] Se han updateado en total '||V_COUNT_UPDATE_2||' registros EN TAR_TAREAS_NOTIFICACIONES');
-
-		DBMS_OUTPUT.PUT_LINE('********************************************************************');
-
-		DBMS_OUTPUT.PUT_LINE('[FIN] Se han updateado en total '||V_COUNT_UPDATE_3||' registros EN TEX_TAREA_EXTERNA');
-
-		DBMS_OUTPUT.PUT_LINE('[INFO] SE LANZA SP ALTA_BPM_INSTANCES');
-
-		REM01.ALTA_BPM_INSTANCES(V_USR, PL_OUTPUT);
-
-		DBMS_OUTPUT.PUT_LINE('[FIN] FINAL EJECUCION SP ALTA_BPM_INSTANCES');
-
-		DBMS_OUTPUT.PUT_LINE('[FIN] ');
-	
-		COMMIT;
-
 	ELSE
 		
-		DBMS_OUTPUT.PUT_LINE('[INFO] TRABAJO NO EXISTE');
+	DBMS_OUTPUT.PUT_LINE('[INFO] TRABAJO NO EXISTE');
 		
 	END IF; 
 
-	
+	DBMS_OUTPUT.PUT_LINE('********************************************************************');
+
+	DBMS_OUTPUT.PUT_LINE('[FIN] Se han updateado en total '||V_COUNT_UPDATE_1||' registros EN ACT_TRA_TRAMITE');
+
+	DBMS_OUTPUT.PUT_LINE('********************************************************************');
+
+	DBMS_OUTPUT.PUT_LINE('[FIN] Se han updateado en total '||V_COUNT_UPDATE_2||' registros EN TAR_TAREAS_NOTIFICACIONES');
+
+	DBMS_OUTPUT.PUT_LINE('********************************************************************');
+
+	DBMS_OUTPUT.PUT_LINE('[FIN] Se han updateado en total '||V_COUNT_UPDATE_3||' registros EN TEX_TAREA_EXTERNA');
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] SE LANZA SP ALTA_BPM_INSTANCES');
+
+	REM01.ALTA_BPM_INSTANCES(V_USR, PL_OUTPUT);
+
+	DBMS_OUTPUT.PUT_LINE('[FIN] FINAL EJECUCION SP ALTA_BPM_INSTANCES');
+
+	DBMS_OUTPUT.PUT_LINE('[FIN] ');
+
+	COMMIT;
+
 EXCEPTION
      WHEN OTHERS THEN
           ERR_NUM := SQLCODE;

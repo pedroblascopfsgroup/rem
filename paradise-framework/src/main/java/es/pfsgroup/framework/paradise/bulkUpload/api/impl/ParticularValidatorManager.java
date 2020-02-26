@@ -4477,7 +4477,19 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL(
 				"SELECT COUNT(1) " + 
 				"FROM act_activo act " + 
-				"LEFT JOIN dd_scr_subcartera scr ON scr.dd_scr_id = act.dd_scr_id AND dd_scr_codigo IN ('151','152') " + 
+				"INNER JOIN dd_scr_subcartera scr ON scr.dd_scr_id = act.dd_scr_id AND dd_scr_codigo IN ('151','152','138') " + 
+				"WHERE act.act_num_activo = " + numActivo + " AND act.borrado = 0"
+				);
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esSubcarteraApple(String numActivo) {
+		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) return false;
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) " + 
+				"FROM act_activo act " + 
+				"INNER JOIN dd_scr_subcartera scr ON scr.dd_scr_id = act.dd_scr_id AND dd_scr_codigo IN ('138') " + 
 				"WHERE act.act_num_activo = " + numActivo + " AND act.borrado = 0"
 				);
 		return !"0".equals(resultado);

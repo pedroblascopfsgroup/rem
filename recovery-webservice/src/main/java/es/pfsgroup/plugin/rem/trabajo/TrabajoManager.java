@@ -1833,10 +1833,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (DDTipoTrabajo.CODIGO_EDIFICACION.equals(trabajo.getTipoTrabajo().getCodigo())) {
 			dtoTrabajo.setPerteneceDNDtipoEdificacion(true);
 
-			dtoTrabajo.setNumeroDND(trabajo.getNumeroDnd());
-			dtoTrabajo.setNombreDND(trabajo.getNombreDnd());
 			dtoTrabajo.setCodigoPartida(trabajo.getCodigoPartida());
 			dtoTrabajo.setCodigoSubpartida(trabajo.getCodigoSubpartida());
+			dtoTrabajo.setNombreUg(trabajo.getNombreUg());
+			dtoTrabajo.setNombreExpediente(trabajo.getNombreExpedienteTrabajo());
+			dtoTrabajo.setNombreProyecto(trabajo.getNombreProyecto());
 
 		} else {
 			dtoTrabajo.setPerteneceDNDtipoEdificacion(false);

@@ -174,28 +174,28 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 					            	}
 			        			},
 			        			{
-			                   		fieldLabel: HreRem.i18n('fieldlabel.numero.dnd'),
+			                   		fieldLabel: HreRem.i18n('fieldlabel.nombre.ug'),
 			                   		cls: 'cabecera-info-field',
 									bind:{
-										value:'{trabajo.numeroDND}',
+										value:'{trabajo.nombreUg}',
 										hidden:'{!trabajo.perteneceDNDtipoEdificacion}',
-										readOnly: true
+										readOnly: !$AU.userIsRol(CONST.PERFILES['HAYASUPER'])
 									}
 			                   	},
 								{ 
-									fieldLabel: HreRem.i18n('fieldlabel.nombre.dnd'),
+									fieldLabel: HreRem.i18n('fieldlabel.nombre.expediente.trabajo'),
 									cls: 'cabecera-info-field',
 									bind:{
-										value:'{trabajo.nombreDND}',
+										value:'{trabajo.nombreExpediente}',
 										hidden:'{!trabajo.perteneceDNDtipoEdificacion}',
-										readOnly: true
+										readOnly: !$AU.userIsRol(CONST.PERFILES['HAYASUPER'])
 									}
 				                },
 			                   	{
-			                   		fieldLabel: HreRem.i18n('fieldlabel.codigo.partida'),
+			                   		fieldLabel: HreRem.i18n('fieldlabel.nombre.proyecto'),
 			                   		cls: 'cabecera-info-field',
 			                   		bind:{
-										value:'{trabajo.codigoPartida}',
+										value:'{trabajo.nombreProyecto}',
 										hidden:'{!trabajo.perteneceDNDtipoEdificacion}',
 										readOnly: !$AU.userIsRol(CONST.PERFILES['HAYASUPER'])
 									}

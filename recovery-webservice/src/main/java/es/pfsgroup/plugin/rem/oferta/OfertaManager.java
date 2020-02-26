@@ -4430,7 +4430,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			VDatosCalculoLBK datos = genericDao.get(VDatosCalculoLBK.class, filtroActivo);
 			if (Checks.esNulo(datos) 
 					|| (Checks.esNulo(datos.getImporteMinAutorizado()) || datos.getImporteMinAutorizado() <= 0)
-					|| (Checks.esNulo(datos.getTasacionActual()) || datos.getTasacionActual() <= 0)
+					|| (Checks.esNulo(datos.getTasacionActual()))
 					|| (Checks.esNulo(datos.getValorNetoContable()) || datos.getValorNetoContable() <= 0)
 					|| (Checks.esNulo(datos.getValorRazonable()) || datos.getValorRazonable() <= 0)
 					|| (Checks.esNulo(oferta.getImporteOferta()) || oferta.getImporteOferta() <= 0)) {
@@ -4480,7 +4480,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		Filter filtroComiteHRE = genericDao.createFilter(FilterType.EQUALS, "codigo",
 				DDComiteSancion.CODIGO_HAYA_LIBERBANK);
 
-		if (dto.getVta() < IMPORTE_UMBRAL) {
+		if(dto.getVta() == 0) {
+			return genericDao.get(DDComiteSancion.class, filtroGestion);
+		} else if (dto.getVta() < IMPORTE_UMBRAL) {
 			if (dto.getPvb() >= dto.getPmin()) {
 				return genericDao.get(DDComiteSancion.class, filtroComiteHRE);
 			} else if (dto.getPvn() >= dto.getVr()) {

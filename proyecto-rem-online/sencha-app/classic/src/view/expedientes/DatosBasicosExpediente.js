@@ -430,7 +430,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 				        	bind: {
 			            		store: '{comboSiNoRem}',
 								value: '{expediente.estadoPbcR}',
-								hidden:'{!expediente.isSubcarteraApple}'
+								hidden:'{!expediente.mostrarPbcReserva}'
 			            	}
 		                },
 		                {

@@ -135,8 +135,16 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
 	    var editable = false;
 	    
 	    if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){ 
-	    	editable = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
-					 && $AU.userHasFunction('EDITAR_TAB_ACTIVO_COMERCIAL'));
+	    	editable = !(
+	    			($AU.userIsRol(CONST.PERFILES['GESTOPDV']) 
+	    			|| $AU.userIsRol(CONST.PERFILES['HAYASUPER']) 
+	    			|| $AU.userIsRol(CONST.PERFILES['HAYACAL']) 
+	    			|| $AU.userIsRol(CONST.PERFILES['HAYASUPCAL']) 
+	    			|| $AU.userIsRol(CONST.PERFILES['DIRECCION_TERRITORIAL'])) 
+					
+	    			&& $AU.userHasFunction('EDITAR_TAB_ACTIVO_COMERCIAL')
+	    			);
+	    	
 		}else{
 			editable = !$AU.userHasFunction('EDITAR_TAB_ACTIVO_COMERCIAL');
 		}
@@ -173,6 +181,8 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     	me.add({xtype: 'patrimonioactivo', ocultarBotonesEdicion: true});
 
     	me.add({xtype: 'plusvaliaactivo', ocultarBotonesEdicion: !$AU.userHasFunction('EDITAR_TAB_ACTIVO_PLUSVALIA')});
+    	
+    	
     	
     },
    

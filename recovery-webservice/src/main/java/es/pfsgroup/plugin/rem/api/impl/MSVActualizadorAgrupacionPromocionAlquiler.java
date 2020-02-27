@@ -286,6 +286,9 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		if(Checks.esNulo(unidadAlquilable.getNumActivo())) {
 			return falloConexionConMaestro(fila);
 		}
+		
+		unidadAlquilable.setIsDnd(false);
+		
 		genericDao.save(Activo.class, unidadAlquilable);
 		
 		
@@ -624,7 +627,6 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		unidadAlquilable.setFechaRevisionCarga(activoMatriz.getFechaRevisionCarga());
 		unidadAlquilable.setVpo(activoMatriz.getVpo());
 		unidadAlquilable.setTerritorio(activoMatriz.getTerritorio());
-		
 
 		//-----Insercion de gestores a la Unidad Alquilable
 		if (!Checks.esNulo(activoMatriz)) {

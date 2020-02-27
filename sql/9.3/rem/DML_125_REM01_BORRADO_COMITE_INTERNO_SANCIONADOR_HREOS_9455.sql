@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=Vicente Martinez Cifre
---## FECHA_CREACION=20191125
+--## AUTOR=Gabriel De Toni
+--## FECHA_CREACION=20200220
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-8546
+--## INCIDENCIA_LINK=HREOS-9455
 --## PRODUCTO=NO
 --##
---## Finalidad:	Borrar tareas de manera lógica
+--## Finalidad:	Borrado lógico de "comité interno sancionador" en T013_ResolucionComite para LIBERBANK
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
@@ -35,14 +35,15 @@ DECLARE
 	V_ID NUMBER(16); -- Vble. auxiliar para almacenar temporalmente el numero de la sequencia.
 	
 	V_TAP_ID NUMBER(16);
-	V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'TAP_TAREA_PROCEDIMIENTO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-8546';
+	V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'TFI_TAREAS_FORM_ITEMS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-9455';
+	V_TAP_CODIGO VARCHAR2(50 CHAR) := 'T013_ResolucionComite';
 	
 	TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
 	TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
 	V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-		T_TIPO_DATA('T017_AnalisisPM'),
-		T_TIPO_DATA('T017_RespuestaOfertantePM')
+		--           TFI_NOMBRE                   BORRADO
+		T_TIPO_DATA('comiteInternoSancionador', '1')
 	); 
 	V_TMP_TIPO_DATA T_TIPO_DATA;
 
@@ -54,23 +55,27 @@ BEGIN
 	FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
 	LOOP
 		V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+
+		--Comprobar el dato a insertar.
+		V_SQL := 'SELECT TAP_ID FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||TRIM(V_TAP_CODIGO)||'''';
+		EXECUTE IMMEDIATE V_SQL INTO V_TAP_ID;
 		
-		V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE 
-			TAP_CODIGO = '''||V_TMP_TIPO_DATA(1)||'''';
+		V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE 
+			TAP_ID = '''||V_TAP_ID||'''
+			AND TFI_NOMBRE = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
 		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 	
 		IF V_NUM_TABLAS > 0 THEN				
 			-- Si existe se modifica.
-			DBMS_OUTPUT.PUT_LINE('[INFO]: BORRADO DEL CAMPO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''' DE TAP_TAREA_PROCEDIMIENTO');
-			V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.TAP_TAREA_PROCEDIMIENTO SET
-				USUARIOBORRAR = '''||V_USUARIO||''' , 
-				FECHABORRAR = SYSDATE, 
-				BORRADO = 1 
-				WHERE TAP_CODIGO = '''||V_TMP_TIPO_DATA(1)||'''';
+			DBMS_OUTPUT.PUT_LINE('[INFO]: BORRADO LÓGICO DEL CAMPO CON TFI_NOMBRE: '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''' DE '''|| TRIM(V_TAP_CODIGO) ||'''');
+			V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' SET 
+				USUARIOMODIFICAR = '''||TRIM(V_USUARIO)||''' , 
+				FECHAMODIFICAR = SYSDATE, 
+				BORRADO = '''|| TRIM(V_TMP_TIPO_DATA(2)) ||'''
+				WHERE TFI_NOMBRE = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND TAP_ID = '||V_TAP_ID||'';
 			EXECUTE IMMEDIATE V_MSQL;
          
-			DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
-
+			DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO BORRADO CORRECTAMENTE');
 		END IF;
 	END LOOP;
     

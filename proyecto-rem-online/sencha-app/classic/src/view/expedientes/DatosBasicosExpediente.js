@@ -278,7 +278,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 				        	bind: {
 				        		value: '{expediente.fechaEnvioAdvisoryNote}',
 		                		readOnly: true,
-				        		hidden: '{!esCarteraApple}'
+				        		hidden: '{!esCarteraAppleOrArrowOrRemaining}'
 				        	}
 			        },
 			        {
@@ -287,7 +287,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 	                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.recomendacion.ces'),
 			        	bind: {
 			        		value:'{expediente.fechaRecomendacionCes}',
-			        		hidden: '{!esCarteraApple}'
+			        		hidden: '{!esCarteraAppleOrArrowOrRemaining}'
 			        	},
 			        	readOnly: true
 	            	 },
@@ -296,7 +296,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 		               	fieldLabel:  HreRem.i18n('fieldlabel.fecha.aprobacion.pro.manzana'),
 		               	bind:{
 		               		value: '{expediente.fechaAprobacionProManzana}',
-		               		hidden:'{!esCarteraApple}'
+		               		hidden:'{!esCarteraAppleOrArrowOrRemaining}'
 		              	},
 		             	readOnly: true   
 		             },
@@ -430,7 +430,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 				        	bind: {
 			            		store: '{comboSiNoRem}',
 								value: '{expediente.estadoPbcR}',
-								hidden:'{!expediente.isSubcarteraApple}'
+								hidden:'{!expediente.mostrarPbcReserva}'
 			            	}
 		                },
 		                {

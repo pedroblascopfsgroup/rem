@@ -140,39 +140,31 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleCabecera', {
 															bind:		'{trabajo.nombreMediador}'
 									                   	},
 									                   	{
-									                   		fieldLabel: HreRem.i18n('fieldlabel.numero.dnd'),
+									                   		fieldLabel: HreRem.i18n('fieldlabel.nombre.ug'),
 									                   		cls: 'cabecera-info-field',
 															bind:{
-																value:'{trabajo.numeroDND}',
+																value:'{trabajo.nombreUg}',
 																hidden:'{!trabajo.perteneceDNDtipoEdificacion}'
 															}
 									                   	},
 														{ 
-															fieldLabel: HreRem.i18n('fieldlabel.nombre.dnd'),
+															fieldLabel: HreRem.i18n('fieldlabel.nombre.expediente.trabajo'),
 															cls: 'cabecera-info-field',
 															bind:{
-																value:'{trabajo.nombreDND}',
+																value:'{trabajo.nombreExpediente}',
 																hidden:'{!trabajo.perteneceDNDtipoEdificacion}'
 															}
 										                },
 									                   	{
-									                   		fieldLabel: HreRem.i18n('fieldlabel.codigo.partida'),
+									                   		fieldLabel: HreRem.i18n('fieldlabel.nombre.proyecto'),
 									                   		cls: 'cabecera-info-field',
 									                   		bind:{
-																value:'{trabajo.codigoPartida}',
-																hidden:'{!trabajo.perteneceDNDtipoEdificacion}'
-															}
-															
-									                   	},
-									                   	{
-									                   		fieldLabel: HreRem.i18n('fieldlabel.codigo.subpartida'),
-									                   		cls: 'cabecera-info-field',
-									                   		bind:{
-																value:'{trabajo.codigoSubpartida}',
+																value:'{trabajo.nombreProyecto}',
 																hidden:'{!trabajo.perteneceDNDtipoEdificacion}'
 															}
 															
 									                   	}
+									                  
 											]
 										},
 										{

@@ -102,6 +102,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 import es.pfsgroup.plugin.rem.oferta.OfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
+import es.pfsgroup.plugin.rem.oferta.dao.OfertasAgrupadasLbkDao;
 import es.pfsgroup.plugin.rem.thread.ContenedorExpComercial;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.thread.TramitacionOfertasAsync;
@@ -198,6 +199,9 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private OfertasAgrupadasLbkDao ofertasAgrupadasLbkDao;
 
 	@Override
 	@Transactional(readOnly = false)
@@ -455,6 +459,10 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				activoAgrupacionApi.saveOrUpdate(agrupacion);
 			}
 		}
+		
+		if(DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
+			ofertasAgrupadasLbkDao.suprimeOfertaDependiente(oferta.getId());
+		}
 
 		notificatorServiceSancionOfertaAceptacionYRechazo.notificatorFinSinTramite(oferta.getId());
 		return resultado;
@@ -555,6 +563,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		nuevoExpediente.setEstado(estadoExpediente);
 		nuevoExpediente.setNumExpediente(activoDao.getNextNumExpedienteComercial());
 		nuevoExpediente.setTrabajo(trabajo);
+		
+		nuevoExpediente = this.crearCondicionanteYTanteo(activo, oferta, nuevoExpediente);
 
 		// Establecer la fecha de aceptación/alta a ahora.
 		nuevoExpediente.setFechaAlta(new Date());
@@ -1496,7 +1506,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 						Double importeOferta = Checks.esNulo(oferta.getImporteOferta()) ? 0d : oferta.getImporteOferta();
 						
 						if(Checks.esNulo(agrupacion)) {
-							if (importeOferta <= umbralAskingPrice && (importeOferta >= precioAprVenta.getImporte() * 0.95)) {
+							if (precioAprVenta != null && importeOferta <= umbralAskingPrice && (importeOferta >= precioAprVenta.getImporte() * 0.95)) {
 								filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteHaya);
 							} else {
 								filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",codComiteCes);
@@ -1581,7 +1591,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			Boolean esAlquiler) {
 
 		if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())
-				&& faltanDatosCalculo(oferta, activo)) {
+				&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo()) &&  faltanDatosCalculo(oferta, activo)) {
 			throw new JsonViewerException(FALTAN_DATOS);
 		}
 
@@ -1754,7 +1764,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	public ActivoTramite doTramitacion(Activo activo, Oferta oferta, Long idTrabajo, ExpedienteComercial expedienteComercial) 
 			throws IllegalAccessException, InvocationTargetException {
 		ActivoTramite activoTramite = trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
-		expedienteComercial = this.crearCondicionanteYTanteo(activo, oferta, expedienteComercial);
 		expedienteComercial = this.crearExpedienteReserva(expedienteComercial);
 		expedienteComercialApi.crearCondicionesActivoExpediente(activo, expedienteComercial);
 

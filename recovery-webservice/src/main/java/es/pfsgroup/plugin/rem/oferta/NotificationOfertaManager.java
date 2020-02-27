@@ -581,26 +581,27 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 						
 						nombreProvincia = activo.getLocalizacion().getLocalizacionBien().getProvincia().getDescripcion();
 					}
-					if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())){
-						titulo = 
-								String.format("Oferta de venta aprobada de un activo incluido en un DND: %s- %s/%s/%s. ", 
-										nActivo.toString(), nombreCartera, nombreLocalidad, nombreProvincia);
-						contenido = 
-								String.format("Oferta de venta aprobada para el activo incluido en un DND: " +
-										 "%s- %s-%s-%s. Por favor, ponte en contacto con el comercial "
-										 + "para conocer la fecha estimada de escrituración. Antes de producirse "
-										 + "la venta el PM y la constructora debe realizar una valoración y liquidación "
-										 + "de las obras en el estado que se paralizan.", nActivo.toString(),nombreCartera, nombreLocalidad, nombreProvincia 
-								);
-					} else if (DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())){
-						titulo = 
-								String.format("Oferta de venta anulada de un activo incluido en DND: %s- %s/%s/%s. ", 
-										nActivo.toString(), nombreCartera, nombreLocalidad, nombreProvincia);
-						contenido = 
-								String.format("Oferta de venta anulada de un activo incluido en DND: %s- %s/%s/%s. ", 
-										nActivo.toString(), nombreCartera, nombreLocalidad, nombreProvincia);
+					if(!Checks.esNulo(nActivo)){
+						if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())){
+							titulo = 
+									String.format("Oferta de venta aprobada de un activo incluido en un DND: %s- %s/%s/%s. ", 
+											nActivo.toString(), nombreCartera, nombreLocalidad, nombreProvincia);
+							contenido = 
+									String.format("Oferta de venta aprobada para el activo incluido en un DND: " +
+											 "%s- %s-%s-%s. Por favor, ponte en contacto con el comercial "
+											 + "para conocer la fecha estimada de escrituración. Antes de producirse "
+											 + "la venta el PM y la constructora debe realizar una valoración y liquidación "
+											 + "de las obras en el estado que se paralizan.", nActivo.toString(),nombreCartera, nombreLocalidad, nombreProvincia 
+									);
+						} else if (DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())){
+							titulo = 
+									String.format("Oferta de venta anulada de un activo incluido en DND: %s- %s/%s/%s. ", 
+											nActivo.toString(), nombreCartera, nombreLocalidad, nombreProvincia);
+							contenido = 
+									String.format("Oferta de venta anulada de un activo incluido en DND: %s- %s/%s/%s. ", 
+											nActivo.toString(), nombreCartera, nombreLocalidad, nombreProvincia);
+						}
 					}
-			
 					genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 				}
 		} 

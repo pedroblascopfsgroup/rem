@@ -113,7 +113,6 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			Activo activo = activoApi.getByNumActivo(numActivo);
 			ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
 
-			//ActivoInfoRegistral infoRegistral = activo.getInfoRegistral();		
 			
 			// Evalua si ha encontrado un registro de perimetro para el activo
 			// dado.
@@ -258,7 +257,6 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 
 				// Comprobamos si es necesario actualizar el estado de
 				// publicación del activo.
-				// activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 			}
 
 			// Aplica Formalizar ---------------------------

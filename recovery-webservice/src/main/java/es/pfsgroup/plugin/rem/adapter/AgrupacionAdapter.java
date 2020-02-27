@@ -1067,7 +1067,8 @@ public class AgrupacionAdapter {
 		}
 
 		// Si el activo es de Liberbank, además debe ser de la misma subcartera
-		if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())
+		if ((DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())
+				|| DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()))
 				&& !Checks.estaVacio(agrupacion.getActivos())) {
 			if (!Checks.esNulo(activo.getSubcartera())) {
 				if (!agrupacion.getActivos().get(0).getActivo().getSubcartera().equals(activo.getSubcartera())) {

@@ -1,10 +1,10 @@
 --/* 
 --##########################################
---## AUTOR=José Antonio Gigante Pamplona
---## FECHA_CREACION=20200130
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20200224
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-9265
+--## INCIDENCIA_LINK=HREOS-9595
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -20,6 +20,7 @@
 --##		0.8 REMVIP-3306 Cambios en el funcionamiento del historico
 --##    	0.9 David Gonzalez -HREOS-6184- Ajustes joins
 --##		1.0 José A. Gigante - HREOS-8998-9055-9265 Historificación de cambios al cambiar el canal de publicación
+--##		1.1 Daniel Algaba - HREOS-9595 Historificación de cambios al cambiar el canal de publicación
 --##########################################
 --*/
 
@@ -99,6 +100,7 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
     vCondAlquiler     VARCHAR2(1 CHAR);
     V_AUX             VARCHAR2(50 CHAR);
     OutCANAL		  VARCHAR2(4000 CHAR);
+    vRESTRINGIDA	  NUMBER := 0;
     
 
     TYPE CurTyp IS REF CURSOR;
@@ -1117,16 +1119,28 @@ END IF;
         /**************/
         /*CANAL DE PUBLICACION*/
         /**************/
-        V_MSQL := 'SELECT EPV.DD_EPV_CODIGO, POR.DD_POR_CODIGO
-                  FROM '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU 
-                  JOIN ' ||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA EPV ON EPV.DD_EPV_ID = APU.DD_EPV_ID 
-                  LEFT JOIN '||V_ESQUEMA||'.DD_POR_PORTAL POR ON POR.DD_POR_ID = APU.DD_POR_ID
-                  WHERE APU.ACT_ID = '||nACT_ID||'
-                      AND APU.BORRADO = 0';
-        EXECUTE IMMEDIATE V_MSQL INTO cCODIGO_ESTADO_V, cDD_POR_CODIGO;
-        
-        IF cCODIGO_ESTADO_V IN ('03', '04') THEN
-        	#ESQUEMA#.SP_PORTALES_ACTIVO(nACT_ID, null, pUSUARIOMODIFICAR, OutCANAL);
+        V_MSQL := ' SELECT COUNT(*)
+                FROM '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA
+                JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = AGA.ACT_ID
+                JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID
+                JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID
+                WHERE
+                TAG.DD_TAG_CODIGO = ''02'' -- RESTRINGIDA
+                AND AGR.AGR_FIN_VIGENCIA IS NULL
+                AND ACT.ACT_ID = '||nACT_ID;
+        EXECUTE IMMEDIATE V_MSQL INTO vRESTRINGIDA;
+        IF vRESTRINGIDA = 0 THEN
+	        V_MSQL := 'SELECT EPV.DD_EPV_CODIGO, POR.DD_POR_CODIGO
+	                  FROM '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU 
+	                  JOIN ' ||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA EPV ON EPV.DD_EPV_ID = APU.DD_EPV_ID 
+	                  LEFT JOIN '||V_ESQUEMA||'.DD_POR_PORTAL POR ON POR.DD_POR_ID = APU.DD_POR_ID
+	                  WHERE APU.ACT_ID = '||nACT_ID||'
+	                      AND APU.BORRADO = 0';
+	        EXECUTE IMMEDIATE V_MSQL INTO cCODIGO_ESTADO_V, cDD_POR_CODIGO;
+	        
+	        IF cCODIGO_ESTADO_V IN ('03', '04') THEN
+	        	#ESQUEMA#.SP_PORTALES_ACTIVO(nACT_ID, null, pUSUARIOMODIFICAR, OutCANAL);
+	        END IF;
         END IF;
         /**************/
         /*HISTORIFICAR*/

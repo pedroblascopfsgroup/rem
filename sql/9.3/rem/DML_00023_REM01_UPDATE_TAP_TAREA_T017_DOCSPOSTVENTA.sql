@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina
---## FECHA_CREACION=20200107
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20200225
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-6126
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-5128
+--## PRODUCTO=NO
 --##
---## Finalidad: 
+--## Finalidad: Script que modifica la columna TAP_SCRIPT_VALIDACION_JBPM para las tarea T017_DocsPosVenta
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
@@ -29,21 +29,19 @@ DECLARE
 BEGIN	
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
-	
+
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO 
-	SET TAP_SCRIPT_VALIDACION_JBPM = ''valores["T017_AnalisisPM"]["comboResolucion"] == DDResolucionComite.CODIGO_CONTRAOFERTA ? existeAdjuntoUGValidacion("22","E") : null'',
-	USUARIOMODIFICAR = ''REMVIP-6126'', 
-	FECHAMODIFICAR = SYSDATE 
-	WHERE TAP_CODIGO = ''T017_AnalisisPM''';
+	SET TAP_SCRIPT_VALIDACION_JBPM = ''checkExpedienteFechaCheque() ? existeAdjuntoUGValidacion("19,E;17,E;15,E") : ''''Es necesario informar la fecha de ingreso del cheque'''''', 
+	USUARIOMODIFICAR = ''REMVIP-5128'',
+	FECHAMODIFICAR = SYSDATE
+	WHERE TAP_CODIGO = ''T017_DocsPosVenta''';
 
 	EXECUTE IMMEDIATE V_MSQL;
 	      
-  	DBMS_OUTPUT.PUT_LINE('[INFO]:'||SQL%ROWCOUNT||' REGISTROS MODIFICADOS CORRECTAMENTE');
+  	DBMS_OUTPUT.PUT_LINE('	[INFO] REGISTRO MODIFICADO CORRECTAMENTE');
     
     COMMIT;
-    
-    DBMS_OUTPUT.PUT_LINE('[FIN]: TABLA TAP_TAREA_PROCEDIMIENTO ACTUALIZADA CORRECTAMENTE ');
-   			
+    DBMS_OUTPUT.PUT_LINE('[FIN] TABLA TAP_TAREA_PROCEDIMIENTO ACTUALIZADA CORRECTAMENTE ');
 
 EXCEPTION
      WHEN OTHERS THEN

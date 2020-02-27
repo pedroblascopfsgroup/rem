@@ -1,9 +1,9 @@
 --/*
 --##########################################
 --## AUTOR=Adrián Molina
---## FECHA_CREACION=20191017
+--## FECHA_CREACION=20200225
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2.0
+--## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-5476
 --## PRODUCTO=NO
 --## Finalidad: DML

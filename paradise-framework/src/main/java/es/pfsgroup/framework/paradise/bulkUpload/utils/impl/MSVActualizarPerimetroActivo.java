@@ -892,15 +892,8 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				String celdaActivo = exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);		
 				String celdaSegmento = exc.dameCelda(i, COL_NUM_SEGMENTO);
 				
-				if(particularValidator.existeActivo(celdaActivo) 	
-						&& particularValidator.esSegmentoValido(celdaSegmento) 
-						&& !particularValidator.perteneceSegmentoCraScr(celdaSegmento, celdaActivo)) {
+				if(celdaSegmento != null && !celdaSegmento.isEmpty() && !particularValidator.perteneceSegmentoCraScr(celdaSegmento, celdaActivo)) {
 					listaFilas.add(i);
-				}else {
-					if(!Checks.esNulo(celdaSegmento)) {
-						//si no existe el activo y está informado el segmento, no se puede verificar cra y scr
-						listaFilas.add(i);						
-					}
 				}
 			} catch (Exception e) {
 				listaFilas.add(i);
@@ -977,9 +970,11 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			try {
 				String celdaSegmento = exc.dameCelda(i, COL_NUM_SEGMENTO);
 				String celdaMacc = exc.dameCelda(i, COL_NUM_PERIMETRO_MACC);
+				String celdaActivo = exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
 				if (!Checks.esNulo(celdaMacc) 
 						&& Arrays.asList(listaNo).contains(celdaMacc.toUpperCase())
-						&& Checks.esNulo(celdaSegmento)	)
+						&& Checks.esNulo(celdaSegmento)	
+						&& Boolean.FALSE.equals((particularValidator.esSubcarteraApple(celdaActivo))))
 					listaFilas.add(i);
 			} catch (Exception e) {
 				listaFilas.add(i);

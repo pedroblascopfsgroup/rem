@@ -257,16 +257,19 @@ Ext.define('HreRem.model.FichaTrabajo', {
     			type:'boolean'
     		},
     		{
-    			name: 'numeroDND'
-    		},
-    		{
-    			name: 'nombreDND'
-    		},
-    		{
     			name: 'codigoPartida'
     		},
     		{
     			name: 'codigoSubpartida' 
+    		},
+    		{
+    			name: 'nombreUg' 
+    		},
+    		{
+    			name: 'nombreExpediente' 
+    		},
+    		{
+    			name: 'nombreProyecto' 
     		}
     		
     ],

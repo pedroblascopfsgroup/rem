@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Joaquin Bahamonde
---## FECHA_CREACION=20200210
+--## AUTOR=Ramon Llinares
+--## FECHA_CREACION=20200224
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-9320
@@ -43,7 +43,7 @@ DECLARE
         T_TIPO_DATA('02', 'Industrial', 'Industrial'),
         T_TIPO_DATA('03', 'MACC', 'MACC'),
         T_TIPO_DATA('04', 'ICE - SPV', 'ICE - SPV'),
-        T_TIPO_DATA('05', 'Sin carterizar', 'Sin carterizar'),
+        T_TIPO_DATA('05', 'Sin segmento', 'Sin segmento'),
         T_TIPO_DATA('06', 'ICE', 'ICE'),
         T_TIPO_DATA('07', 'Industrial - SPV', 'Industrial - SPV')
 		); 

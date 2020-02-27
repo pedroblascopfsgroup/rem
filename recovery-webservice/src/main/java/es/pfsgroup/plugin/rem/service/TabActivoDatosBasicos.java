@@ -843,22 +843,17 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		if(apc != null) {
 			activoDto.setPazSocial(apc.getPazSocial());
-			if(activoP != null && activoP.getTramiteAlquilerSocial() != null) {
-				activoDto.setCheckFormalizarReadOnly(activoP.getTramiteAlquilerSocial());
-				activoDto.setCheckComercializarReadOnly(activoP.getTramiteAlquilerSocial());
-				activoDto.setCheckPublicacionReadOnly(activoP.getTramiteAlquilerSocial());
+		}
+		
+		if(activoP != null && activoP.getTramiteAlquilerSocial() != null) {
+			activoDto.setCheckFormalizarReadOnly(activoP.getTramiteAlquilerSocial());
+			activoDto.setCheckComercializarReadOnly(activoP.getTramiteAlquilerSocial());
+			activoDto.setCheckPublicacionReadOnly(activoP.getTramiteAlquilerSocial());
 
-				if(!Checks.esNulo(activoP.getTramiteAlquilerSocial()) && activoP.getTramiteAlquilerSocial()) {
-					activoDto.setAplicaComercializar(false);
-					activoDto.setAplicaFormalizar(false);
-					activoDto.setAplicaPublicar(false);
-				}
-
-			}else {
-				activoDto.setCheckFormalizarReadOnly(false);
-				activoDto.setCheckComercializarReadOnly(false);
-				activoDto.setCheckPublicacionReadOnly(false);
-			}
+		}else {
+			activoDto.setCheckFormalizarReadOnly(false);
+			activoDto.setCheckComercializarReadOnly(false);
+			activoDto.setCheckPublicacionReadOnly(false);
 		}
 		
 		if(activo.getTipoSegmento() != null) {
@@ -957,7 +952,14 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				activo.setServicerActivo(servicerNuevo);
 			}
 			
-			if(!Checks.esNulo(dto.getPerimetroMacc())) {
+			if (!Checks.esNulo(dto.getPerimetroMacc())) {
+				if (Integer.valueOf(0).equals(dto.getPerimetroMacc())) {
+					activo.setTipoSegmento((DDTipoSegmento) genericDao.get(DDTipoSegmento.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoSegmento.CODIGO_SEGMENTO_SIN_CARTERIZAR)));
+				}else if (Integer.valueOf(1).equals(dto.getPerimetroMacc())){
+					activo.setTipoSegmento((DDTipoSegmento) genericDao.get(DDTipoSegmento.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoSegmento.CODIGO_SEGMENTO_MACC)));
+				}
 				activo.setPerimetroMacc(dto.getPerimetroMacc());
 			}
 			
@@ -1592,8 +1594,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(dto != null && dto.getTipoSegmentoCodigo() != null
 				&& DDTipoSegmento.CODIGO_SEGMENTO_MACC.equals(dto.getTipoSegmentoCodigo())
 				&& !DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getTipoComercializacion().getCodigo())) {
-			throw new JsonViewerException("No puede cambiar el segmento a MACC ya que el destino comercial"
-					+ " del activo es '" + activo.getTipoComercializacion().getDescripcion() + "'");
+			throw new JsonViewerException("No puede cambiar el segmento a MACC ya que el destino comercial tiene que ser alquiler");
 		}
 		
 	}

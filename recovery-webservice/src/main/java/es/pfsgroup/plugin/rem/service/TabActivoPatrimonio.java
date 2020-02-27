@@ -169,6 +169,7 @@ public class TabActivoPatrimonio implements TabActivoService {
 		ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
 		ActivoSituacionPosesoria activoSituacionPosesoria;
 		ActivoPatrimonioContrato patrimonioContrato = genericDao.get(ActivoPatrimonioContrato.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+		PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
 		
 		activoDao.validateAgrupacion(activo.getId());
 		if(Checks.esNulo(activoPatrimonio)) {
@@ -371,6 +372,9 @@ public class TabActivoPatrimonio implements TabActivoService {
 		if (activoPatrimonioDto.getTramiteAlquilerSocial() != null) {
 			if (DDSinSiNo.CODIGO_SI.equals(activoPatrimonioDto.getTramiteAlquilerSocial())) {
 				this.isActivoConOfertasEnVueloOAlquilado(activo, activoPatrimonio);
+				perimetroActivo.setAplicaFormalizar(0);
+				perimetroActivo.setAplicaPublicar(false);
+				perimetroActivo.setAplicaComercializar(0);
 			}	
 			activoPatrimonio.setTramiteAlquilerSocial(DDSinSiNo.CODIGO_SI.equals(activoPatrimonioDto.getTramiteAlquilerSocial()));
 		}

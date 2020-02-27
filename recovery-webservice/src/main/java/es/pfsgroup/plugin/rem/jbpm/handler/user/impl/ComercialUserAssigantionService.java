@@ -147,15 +147,12 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		boolean isActivoYubai = this.isActivoYubai(tareaActivo);
 		boolean isActivoArrow = this.isActivoArrow(tareaActivo);
 		boolean isActivoOmega = this.isActivoOmega(tareaActivo);		
-		boolean esActivoRemaining = this.isActivoRemaining(tareaActivo);	
-		boolean isFuerzaVentaDirecta = this.isFuerzaVentaDirecta(tareaExterna);
+		boolean esActivoRemaining = this.isActivoRemaining(tareaActivo);
 		boolean isActivoFinanciero = this.isFinancieroCajamar(tareaExterna);
-		boolean isActivoConFormalizacion = this.isConFormalizacion(tareaExterna);
 		String codigoTarea = tareaExterna.getTareaProcedimiento().getCodigo();
 		String codigoGestor; 
 		ActivoLoteComercial loteComercial = this.obtenerLoteComercial(tareaActivo);
 		EXTDDTipoGestor tipoGestor = null;
-		boolean esActivoApple = this.isActivoApple(tareaActivo);
 		ExpedienteComercial expediente = null;
 		Boolean usaGestorController = usaGestorController(tareaActivo);
 		Boolean usaGestorCierreVenta = usaGestorCierreVenta(tareaActivo);
@@ -553,9 +550,9 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		
 		if(isActivoApple || isActivoRemaining) {
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_DEFINICION_OFERTA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);			
-			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);				
+			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);				
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESPUESTA_OFERTANTE_CES, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
-			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RATIFICACION_COMITE_CES, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);		
+			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RATIFICACION_COMITE_CES, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);		
 			if (isActivoRemaining) {
 				mapa.put(ComercialUserAssigantionService.CODIGO_T017_INFORME_JURIDICO, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION); 
 				mapa.put(ComercialUserAssigantionService.CODIGO_T017_OBTENCION_CONTRATO_RESERVA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);

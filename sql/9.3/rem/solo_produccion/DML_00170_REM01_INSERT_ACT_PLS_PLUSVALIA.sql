@@ -52,7 +52,7 @@ DECLARE
 						FECHA_PRESENTACION_PLUSVALIA, 
 						FECHA_PRESENTACION_RECURSO, 
 						FECHA_RESPUESTA_RECURSO, 
-						APERTURA_SEGUIMIENTO_EXPEDIENTE, 
+						APERTURA_SEGUIMIENTO_EXP, 
 						IMPORTE_PAGADO_PLUSVALIA, 
 						GASTO_ASOCIADO,
 						MINUSVALIA, 
@@ -121,16 +121,16 @@ BEGIN
     	-------------------------------------------------------------------------------------------------------------------------------------------------
     	
     	--------------------COMPROBACIÓN APERTURA EXPEDIENTE---------------------------------------------------------------------------------------------
-    	DBMS_OUTPUT.PUT_LINE('[INFO] COMPROBANDO FORMATO DEL CAMPO APERTURA_SEGUIMIENTO_EXPEDIENTE');
-    	IF NCP.APERTURA_SEGUIMIENTO_EXPEDIENTE = 'S' OR NCP.APERTURA_SEGUIMIENTO_EXPEDIENTE = 'N' THEN
+    	DBMS_OUTPUT.PUT_LINE('[INFO] COMPROBANDO FORMATO DEL CAMPO APERTURA_SEGUIMIENTO_EXP');
+    	IF NCP.APERTURA_SEGUIMIENTO_EXP = 'S' OR NCP.APERTURA_SEGUIMIENTO_EXP = 'N' THEN
     		EXECUTE IMMEDIATE 'SELECT DD_SIN_ID
 								FROM '||V_ESQUEMA_M||'.DD_SIN_SINO 
-								WHERE DD_SIN_CODIGO = DECODE('''|| NCP.APERTURA_SEGUIMIENTO_EXPEDIENTE ||''', ''S'', ''01'',
+								WHERE DD_SIN_CODIGO = DECODE('''|| NCP.APERTURA_SEGUIMIENTO_EXP ||''', ''S'', ''01'',
 																									  		  ''N'', ''02'')
 								AND BORRADO = 0' INTO DATO_SEGUIMIENTO;		
     	ELSE
     		CON_ERRORES := 'S';
-    		DBMS_OUTPUT.PUT_LINE('[ERROR] FORMATO INCORRECTO DEL CAMPO APERTURA_SEGUIMIENTO_EXPEDIENTE');
+    		DBMS_OUTPUT.PUT_LINE('[ERROR] FORMATO INCORRECTO DEL CAMPO APERTURA_SEGUIMIENTO_EXP');
     	END IF;
     	-------------------------------------------------------------------------------------------------------------------------------------------------
     	

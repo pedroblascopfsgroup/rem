@@ -1872,6 +1872,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		nuevoExpedienteComercial.setConflictoIntereses(expedienteComercial.getConflictoIntereses());
 		nuevoExpedienteComercial.setRiesgoReputacional(expedienteComercial.getRiesgoReputacional());
 		nuevoExpedienteComercial.setEstadoPbc(expedienteComercial.getEstadoPbc());
+		nuevoExpedienteComercial.setComiteSancion(expedienteComercial.getComiteSancion());
 		
 		this.copiarGestoresNuevaOfertaGENCAT(expedienteComercial, nuevoExpedienteComercial);
 		

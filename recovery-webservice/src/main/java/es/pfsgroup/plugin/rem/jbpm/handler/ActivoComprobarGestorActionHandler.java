@@ -56,22 +56,11 @@ public class ActivoComprobarGestorActionHandler extends ActivoBaseActionHandler 
 		idGrpsUsuario = extGrupoUsuariosDao.buscaGruposUsuario(usuario);
 		
 		if (ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC.equals(tramite.getTipoTramite().getCodigo())) {
-			Boolean esTramiteValido = trabajoApi.tipoTramiteValidoObtencionDocSolicitudDocumentoGestoria(tramite.getTrabajo());
-			
-			if(!Checks.esNulo(tramite.getActivo()) && !Checks.esNulo(tramite.getActivo().getCartera()) && esTramiteValido
-				&& (DDCartera.CODIGO_CARTERA_SAREB.equals(tramite.getActivo().getCartera().getCodigo()) || DDCartera.CODIGO_CARTERA_BANKIA.equals(tramite.getActivo().getCartera().getCodigo()))
-				&& (gestorActivoApi.isGestorMantenimiento(tramite.getActivo(), usuario )|| idGrpsUsuario.contains(gestorMantenimiento.getId())) 
-			) {
-				getExecutionContext().getToken().signal("OKConPagoYSaldo");
-			}else {
-				getExecutionContext().getToken().signal("ConAnalisisPeticion");
-			}
-			/*	
+
 			if (gestorActivoApi.isGestorActivoOAdmision(tramite.getActivo(), usuario))
 				getExecutionContext().getToken().signal("GestorActivo");
 			else
 				getExecutionContext().getToken().signal("OtrosGestores");
-			*/
 
 		} else if (ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEDULA.equals(tramite.getTipoTramite().getCodigo())) {
 			

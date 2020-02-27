@@ -742,9 +742,8 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 			
 			if(!Checks.esNulo(tareaActivo) && !Checks.esNulo(tareaActivo.getTramite()) && !Checks.esNulo(tareaActivo.getTramite().getTipoTramite()) 
 					&& (esTrabajoValido|| DDSubtipoTrabajo.CODIGO_CEDULA_HABITABILIDAD.equals(trabajo.getSubtipoTrabajo().getCodigo()))
-					&& !Checks.esNulo(tareaActivo.getActivo()) && 
-						(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC.equals(tareaActivo.getTramite().getTipoTramite().getCodigo()) ||
-						 ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEDULA.equals(tareaActivo.getTramite().getTipoTramite().getCodigo()))
+					&& !Checks.esNulo(tareaActivo.getActivo()) 
+					&& ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEDULA.equals(tareaActivo.getTramite().getTipoTramite().getCodigo())
 					&& (DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()) || DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()))
 			){
 				Usuario destinatario = null;

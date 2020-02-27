@@ -251,6 +251,25 @@ Ext.define('HreRem.model.FichaTrabajo', {
     		},
     		{
     			name: 'codSubcartera'
+    		},
+    		{
+    			name:'perteneceDNDtipoEdificacion',
+    			type:'boolean'
+    		},
+    		{
+    			name: 'codigoPartida'
+    		},
+    		{
+    			name: 'codigoSubpartida' 
+    		},
+    		{
+    			name: 'nombreUg' 
+    		},
+    		{
+    			name: 'nombreExpediente' 
+    		},
+    		{
+    			name: 'nombreProyecto' 
     		}
     		
     ],

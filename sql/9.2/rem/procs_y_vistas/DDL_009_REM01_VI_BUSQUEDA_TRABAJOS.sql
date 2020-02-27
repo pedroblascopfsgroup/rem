@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20190712
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20200227
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-4784
+--## INCIDENCIA_LINK=HREOS-9586
 --## PRODUCTO=SI
 --## Finalidad: DDL
 --##           
@@ -16,6 +16,8 @@
 --##        0.4 Deshacemos cambios de 0.2 y 0.3
 --##		0.5 Añadimos la subcartera
 --##		0.6 Añadimos columna para saber si un trabajo está en otro gasto
+--##		0.7 Añadimos idActivo, numActivo, numAgrupacion
+--##		0.8 HREOS-9586 Añadimo cruce act_tbj
 --##########################################
 --*/
 
@@ -60,7 +62,7 @@ BEGIN
 		SELECT /*+ leading(rn act agr) use_hash(act) use_hash(agr) */
 			DISTINCT
 			tbj.tbj_id, 
-			act.act_id AS idactivo, 
+			act.act_id AS idactivo,
 			1 as rango,
 			tbj.tbj_num_trabajo, 
 			tbj.tbj_webcom_id, 
@@ -87,7 +89,7 @@ BEGIN
 			ddprv.dd_prv_descripcion AS provincia, 
 			bieloc.bie_loc_cod_post AS codpostal, 
 			act.act_num_activo AS numactivo,
-          	agr.agr_num_agrup_rem AS numagrupacion, 
+			agr.agr_num_agrup_rem AS numagrupacion, 
 			cra.dd_cra_codigo AS cartera,
 			scr.dd_scr_codigo AS subcartera,
 			usu.usu_username AS gestor_activo, 

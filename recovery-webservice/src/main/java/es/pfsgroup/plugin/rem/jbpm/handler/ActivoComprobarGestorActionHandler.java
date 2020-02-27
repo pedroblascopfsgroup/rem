@@ -10,9 +10,12 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
 
 /**
  * Clase que comprueba si el usuario que ha creado el trámite es Gestor de
@@ -28,30 +31,57 @@ public class ActivoComprobarGestorActionHandler extends ActivoBaseActionHandler 
 
 	@Autowired
 	GestorActivoApi gestorActivoApi;
+	
+	@Autowired
+	TrabajoApi trabajoApi;
+	
+	@Autowired
+	private EXTGrupoUsuariosDao extGrupoUsuariosDao;
 
 	@Override
 	public void run(ExecutionContext executionContext) throws Exception {
 
 		ActivoTramite tramite = getActivoTramite(executionContext);
+		Activo activoTramite = tramite.getActivo();
 		Usuario usuario = tramite.getTrabajo().getSolicitante();
+		Usuario gestorMantenimiento = gestorActivoApi.getGestorByActivoYTipo(activoTramite, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+		Usuario gestorAdmision = gestorActivoApi.getGestorByActivoYTipo(activoTramite, GestorActivoApi.CODIGO_GESTOR_ADMISION);
 
 		// Si viene del Trámite documental, se debe comprobar "si es gest.
 		// activo o gest. de admisión".
 		// para el resto de trámites, solo "gestor de activo"
+		
+		List<Long> idGrpsUsuario = null;
+		
+		idGrpsUsuario = extGrupoUsuariosDao.buscaGruposUsuario(usuario);
+		
 		if (ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC.equals(tramite.getTipoTramite().getCodigo())) {
-
+			Boolean esTramiteValido = trabajoApi.tipoTramiteValidoObtencionDocSolicitudDocumentoGestoria(tramite.getTrabajo());
+			
+			if(!Checks.esNulo(tramite.getActivo()) && !Checks.esNulo(tramite.getActivo().getCartera()) && esTramiteValido
+				&& (DDCartera.CODIGO_CARTERA_SAREB.equals(tramite.getActivo().getCartera().getCodigo()) || DDCartera.CODIGO_CARTERA_BANKIA.equals(tramite.getActivo().getCartera().getCodigo()))
+				&& (gestorActivoApi.isGestorMantenimiento(tramite.getActivo(), usuario )|| idGrpsUsuario.contains(gestorMantenimiento.getId())) 
+			) {
+				getExecutionContext().getToken().signal("OKConPagoYSaldo");
+			}else {
+				getExecutionContext().getToken().signal("ConAnalisisPeticion");
+			}
+			/*	
 			if (gestorActivoApi.isGestorActivoOAdmision(tramite.getActivo(), usuario))
 				getExecutionContext().getToken().signal("GestorActivo");
 			else
 				getExecutionContext().getToken().signal("OtrosGestores");
+			*/
 
 		} else if (ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEDULA.equals(tramite.getTipoTramite().getCodigo())) {
 			
 			Activo activo = tramite.getActivo();
 			if (DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo()) || 
 			    DDCartera.CODIGO_CARTERA_TANGO.equals(activo.getCartera().getCodigo()) || 
-			    DDCartera.CODIGO_CARTERA_GIANTS.equals(activo.getCartera().getCodigo())) {
-				if (gestorActivoApi.isUsuarioGestorAdmision(usuario)) {
+			    DDCartera.CODIGO_CARTERA_GIANTS.equals(activo.getCartera().getCodigo())||
+			    DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
+				
+				if (gestorActivoApi.isUsuarioGestorAdmision(usuario) || idGrpsUsuario.contains(gestorAdmision.getId())) {
 					getExecutionContext().getToken().signal("SinAnalisisPeticion");
 				} else {
 					getExecutionContext().getToken().signal("ConAnalisisPeticion");
@@ -102,7 +132,7 @@ public class ActivoComprobarGestorActionHandler extends ActivoBaseActionHandler 
 
 					// Comprobamos gestor de activos con el primer activo
 					boolean esGestorActivos = false;
-					if (!Checks.esNulo(primerActivo) && gestorActivoApi.isGestorActivo(primerActivo, usuario)) {
+					if (!Checks.esNulo(primerActivo) && (gestorActivoApi.isGestorActivo(primerActivo, usuario) || idGrpsUsuario.contains(gestorMantenimiento.getId()))) {
 						esGestorActivos = true;
 					} else {
 						// Si pasa por aqui, el usuario NO es gestor del primer
@@ -110,7 +140,7 @@ public class ActivoComprobarGestorActionHandler extends ActivoBaseActionHandler 
 						// Solo es necesario que sea gestor de activo de 1 del
 						// conjunto
 						for (Activo activo : listaActivos) {
-							if (!Checks.esNulo(activo) && gestorActivoApi.isGestorActivo(activo, usuario)) {
+							if (!Checks.esNulo(activo) && (gestorActivoApi.isGestorActivo(activo, usuario) || idGrpsUsuario.contains(gestorMantenimiento.getId()))) {
 								esGestorActivos = true;
 							}
 						}

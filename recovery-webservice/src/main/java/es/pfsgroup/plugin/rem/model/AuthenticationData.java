@@ -3,21 +3,23 @@ package es.pfsgroup.plugin.rem.model;
 import java.util.List;
 
 public class AuthenticationData {
-	
-	private String userName;	
-	
+	private String userName;
 	private Long userId;
-	
 	private List<String> authorities;
-	
 	private List<String> roles;
-	
 	private String codigoGestor;
-	
 	private Integer esGestorSustituto;
-	
 	private String codigoCartera;
-	
+	private String jwt;
+
+
+	public String getJwt() {
+		return jwt;
+	}
+
+	public void setJwt(String jwt) {
+		this.jwt = jwt;
+	}
 
 	public String getUserName() {
 		return userName;

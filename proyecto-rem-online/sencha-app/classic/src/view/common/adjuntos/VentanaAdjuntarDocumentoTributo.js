@@ -117,12 +117,11 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoTributo', {
 				        	fieldLabel:   HreRem.i18n('fieldlabel.tipo'),
 				        	reference: 'tipoDocumentoTributo',
 				        	name: 'tipo',
-				        	editable: true,
 				        	displayField	: 'descripcion',
 						    valueField		: 'codigo',	
 				        	store: comboTipoDocumentoTributo,
 							allowBlank: false,
-							enableKeyEvents:true,
+							filtradoEspecial: true,
 							listeners: {
 								select: function(combo, record) {
 									if (record.getData().vinculable == "true") {
@@ -138,20 +137,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoTributo', {
 										me.down("gridBase").setDisabled(true);
 										me.down("gridBase").getSelectionModel().deselectAll();
 									}
-								},
-								'keyup': function() {
-									
-									this.getStore().clearFilter();
-									this.getStore().filter({
-										property: 'descripcion',
-										value: this.getRawValue(),
-										anyMatch: true,
-										caseSensitive: false
-									})
-								},
-								'beforequery': function(queryEvent) {
-									queryEvent.combo.onLoad();
-							    }
+								}
 							}
 				        },
 				        {

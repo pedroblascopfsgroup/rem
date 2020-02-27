@@ -82,6 +82,7 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String USU_PROVEEDOR_PACI = "proveedor.paci";
 	public static final String CODIGO_GESTORIA_PLUSVALIA = "GTOPLUS";
 	public static final String CODIGO_GESTOR_CONTROLLER = "GCONT";
+	public static final String CODIGO_GESTOR_CIERRE_VENTA = "GCV";
 	
 	Boolean insertarGestorAdicionalActivo(GestorEntidadDto dto);
 
@@ -186,5 +187,7 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public Usuario usuarioTareaDivarian(String codigoTarea);
 
 	Usuario supervisorTareaDivarian(String codigoTarea);
+
+	Boolean isGestorMantenimiento(Activo activo, Usuario usuario);
 
 }

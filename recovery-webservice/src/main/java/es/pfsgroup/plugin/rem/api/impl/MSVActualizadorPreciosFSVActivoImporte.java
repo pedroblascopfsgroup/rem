@@ -61,8 +61,8 @@ public class MSVActualizadorPreciosFSVActivoImporte extends AbstractMSVActualiza
 					Double.parseDouble(exc.dameCelda(fila, 1)),
 					null,
 					null,
-					exc.dameCelda(fila, 3),
-					exc.dameCelda(fila, 4));
+					exc.dameCelda(fila, 5),
+					exc.dameCelda(fila, 6));
 		}
 		
 		//Si hay Valoracion = Precio FSV Renta
@@ -72,12 +72,34 @@ public class MSVActualizadorPreciosFSVActivoImporte extends AbstractMSVActualiza
 					Double.parseDouble(exc.dameCelda(fila, 2)),
 					null,
 					null,
-					exc.dameCelda(fila, 3),
-					exc.dameCelda(fila, 4));
+					exc.dameCelda(fila, 5),
+					exc.dameCelda(fila, 6));
 		}
 		
+		//Si hay Valoracion = Precio FSV Venta Origen
+		if(!Checks.esNulo(exc.dameCelda(fila, 3))){
+			actualizarCrearValoresPrecios(activo,
+					DDTipoPrecio.CODIGO_TPC_FSV_VENTA_ORIGEN, 
+					Double.parseDouble(exc.dameCelda(fila, 3)),
+					null,
+					null,
+					exc.dameCelda(fila, 5),
+					exc.dameCelda(fila, 6));
+		}
+				
+		//Si hay Valoracion = Precio FSV Renta Origen
 		if(!Checks.esNulo(exc.dameCelda(fila, 4))){
-			activo.setValorLiquidez(exc.dameCelda(fila, 4));			
+			actualizarCrearValoresPrecios(activo,
+					DDTipoPrecio.CODIGO_TPC_FSV_RENTA_ORIGEN, 
+					Double.parseDouble(exc.dameCelda(fila, 4)),
+					null,
+					null,
+					exc.dameCelda(fila, 5),
+					exc.dameCelda(fila, 6));
+		}
+		
+		if(!Checks.esNulo(exc.dameCelda(fila, 6))){
+			activo.setValorLiquidez(exc.dameCelda(fila, 6));			
 			genericDao.update(Activo.class, activo);
 		}
 		
@@ -105,7 +127,11 @@ public class MSVActualizadorPreciosFSVActivoImporte extends AbstractMSVActualiza
 		dtoActivoValoracion.setIdActivo(activo.getId());
 		dtoActivoValoracion.setCodigoTipoPrecio(codigoTipoPrecio);
 		dtoActivoValoracion.setImporte(importe);
-		dtoActivoValoracion.setFechaVentaHaya(simpleDate.parse(fechaVentaHaya));
+		if(!Checks.esNulo(fechaVentaHaya)){
+			dtoActivoValoracion.setFechaVentaHaya(simpleDate.parse(fechaVentaHaya));
+		}else {
+			dtoActivoValoracion.setFechaVentaHaya(new Date());
+		}
 		if(!Checks.esNulo(liquidez)) {
 			dtoActivoValoracion.setLiquidez(liquidez.toUpperCase());
 		}

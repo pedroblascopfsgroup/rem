@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=Ramon llinares
+--## AUTOR=Cristian Montoya
 --## FECHA_CREACION=20190130
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
@@ -15,7 +15,7 @@
 --##	    0.2 Optimizacion APR y MINI - REMVIP-2139
 --##		0.3 Eliminar duplicados - REMVIP-2235
 --##		0.4 Left join a titulo para registros que se perdian - REMVIP-2352
-
+--##		0.5 Se añade OFR_ID en la select para que rem 3.0 pueda buscar por OFR_ID
 --##########################################
 --*/
 
@@ -112,7 +112,7 @@ BEGIN
 		     ELSE 0
 		     END AS CONDICIONES,
 		ACT.ACT_NUM_ACTIVO, TPA.DD_TPA_DESCRIPCION, SAC.DD_SAC_DESCRIPCION, LOC.DD_LOC_DESCRIPCION, PRV.DD_PRV_DESCRIPCION, BDR.BIE_DREG_NUM_FINCA,
-		BIE.BIE_LOC_DIRECCION
+		BIE.BIE_LOC_DIRECCION, ECO.OFR_ID
 		FROM '|| V_ESQUEMA ||'.ECO_EXPEDIENTE_COMERCIAL ECO
 		JOIN '|| V_ESQUEMA ||'.ACT_OFR OFR ON ECO.OFR_ID = OFR.OFR_ID
 		LEFT JOIN APR APR ON APR.ECO_ID = ECO.ECO_ID AND APR.ACT_ID = OFR.ACT_ID

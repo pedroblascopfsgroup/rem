@@ -280,6 +280,9 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @Column (name="ECO_DEVOL_AUTO_NUMBER")
     private Boolean devolAutoNumber;
 
+ 	@Column(name="ECO_FECHA_CONT_VENTA")
+   	private Date fechaContabilizacionVenta;
+
     @Version   
 	private Long version;
 
@@ -851,5 +854,13 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setDevolAutoNumber(Boolean devolAutoNumber) {
 		this.devolAutoNumber = devolAutoNumber;
+	}
+
+	public Date getFechaContabilizacionVenta() {
+		return fechaContabilizacionVenta;
+	}
+
+	public void setFechaContabilizacionVenta(Date fechaContabilizacionVenta) {
+		this.fechaContabilizacionVenta = fechaContabilizacionVenta;
 	}
 }

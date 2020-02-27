@@ -11,6 +11,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
@@ -51,7 +52,16 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 			}
 		}		
 		if (trabajoApi.checkLiberbank(tareaExterna)) {
-			return ofertaApi.isValidateOfertasDependientes(tareaExterna, valores);
+			if(ofertaApi.comprobarComiteLiberbankPlantillaPropuesta(tareaExterna)) {
+				String errores = activoTramiteApi.existeAdjuntoUGCarteraValidacion(tareaExterna,"36","E","08");
+				if(Checks.esNulo(errores)) {
+					return ofertaApi.isValidateOfertasDependientes(tareaExterna, valores);
+				}else {
+					return errores;
+				}
+			}else {
+				return ofertaApi.isValidateOfertasDependientes(tareaExterna, valores);
+			}
 		}
 		return null;
 	}

@@ -172,7 +172,45 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 					            		store: '{comboSiNoRem}',
 										value: '{trabajo.esTarifaPlana}'	            		
 					            	}
-			        			}
+			        			},
+			        			{
+			                   		fieldLabel: HreRem.i18n('fieldlabel.nombre.ug'),
+			                   		cls: 'cabecera-info-field',
+									bind:{
+										value:'{trabajo.nombreUg}',
+										hidden:'{!trabajo.perteneceDNDtipoEdificacion}',
+										readOnly: !$AU.userIsRol(CONST.PERFILES['HAYASUPER'])
+									}
+			                   	},
+								{ 
+									fieldLabel: HreRem.i18n('fieldlabel.nombre.expediente.trabajo'),
+									cls: 'cabecera-info-field',
+									bind:{
+										value:'{trabajo.nombreExpediente}',
+										hidden:'{!trabajo.perteneceDNDtipoEdificacion}',
+										readOnly: !$AU.userIsRol(CONST.PERFILES['HAYASUPER'])
+									}
+				                },
+			                   	{
+			                   		fieldLabel: HreRem.i18n('fieldlabel.nombre.proyecto'),
+			                   		cls: 'cabecera-info-field',
+			                   		bind:{
+										value:'{trabajo.nombreProyecto}',
+										hidden:'{!trabajo.perteneceDNDtipoEdificacion}',
+										readOnly: !$AU.userIsRol(CONST.PERFILES['HAYASUPER'])
+									}
+									
+			                   	},
+			                   	{
+			                   		fieldLabel: HreRem.i18n('fieldlabel.codigo.subpartida'),
+			                   		cls: 'cabecera-info-field',
+			                   		bind:{
+										value:'{trabajo.codigoSubpartida}',
+										hidden:'{!trabajo.perteneceDNDtipoEdificacion}',
+										readOnly: !$AU.userIsRol(CONST.PERFILES['HAYASUPER'])
+									}
+									
+			                   	}
 							]
 		           },
 		           {

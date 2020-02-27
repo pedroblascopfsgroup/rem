@@ -182,8 +182,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 					dto.getComboSelloCalidad().equals(Integer.valueOf(1)) ? true : false);
 		}
 		
-		if (dto.getDireccionTerritorialCodigo() != null) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.direccionTerritorialCodigo", dto.getDireccionTerritorialCodigo());
+		if (dto.getTerritorio() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.territorio", dto.getTerritorio());
 		}
 		
 		if (dto.getApiPrimarioId() != null) {
@@ -242,6 +242,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoDivarian", dto.getNumActivoDivarian());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoSegmento", dto.getTipoSegmento());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.perimetroMacc", dto.getPerimetroMacc());
 
 		if(!Checks.esNulo(dto.isListPage()) && dto.isListPage())
 			return HibernateQueryUtils.page(this, hb, dto);

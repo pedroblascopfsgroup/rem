@@ -507,5 +507,17 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 			return null;
 		}
 	}
+	
+	@Override
+	public ActivoAgrupacion getAgrupacionById(Long idAgrupacion) {
+		if(!Checks.esNulo(idAgrupacion)) {
+			HQLBuilder hb = new HQLBuilder("from ActivoAgrupacion agr");
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "id", idAgrupacion);
+	
+			return HibernateQueryUtils.uniqueResult(this, hb);
+		}
+		return null;
+	}
+
 }
 

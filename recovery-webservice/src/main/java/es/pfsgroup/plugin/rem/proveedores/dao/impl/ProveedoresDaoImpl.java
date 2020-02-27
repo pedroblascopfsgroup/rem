@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
@@ -373,18 +374,11 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		HQLBuilder hb = new HQLBuilder(
 				"select proveedor.id, proveedor.codigoProveedorRem, proveedor.nombre from ActivoProveedor proveedor");
 		hb.appendWhere("(proveedor.tipoProveedor.codigo =" + DDTipoProveedor.COD_MEDIADOR +" and proveedor.homologado = 1) "
-				+ "or (proveedor.tipoProveedor.codigo =" + DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA + " and proveedor.estadoProveedor.codigo = " + DDEstadoProveedor.ESTADO_BIGENTE + ")");
+				+ "or (proveedor.tipoProveedor.codigo =" + DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA + " and proveedor.estadoProveedor.codigo = " + DDEstadoProveedor.ESTADO_BIGENTE + ") "
+				+ "and proveedor.fechaBaja != null");
 		
 		return HibernateQueryUtils.list(this, hb);
 	}
-	/*@Override
-	public List<ActivoProveedorCartera> getProveedoresCarteraById(Long idProveedor) {
-		
-		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(ActivoProveedorCartera.class);
-		criteria.add(Restrictions.eq("proveedor.id", idProveedor));
-			
-		return  HibernateUtils.castList(ActivoProveedorCartera.class, criteria.list());
-	}*/
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -402,21 +396,16 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 	}
 	
 	@Override
-	public List<MapeoGestorDocumental> getCarteraClientesProveedoresByCarteraYSubcartera(DDCartera cartera, DDSubcartera subcartera) {
-		
-		Criteria criteria = this.getSessionFactory().getCurrentSession().createCriteria(MapeoGestorDocumental.class);
-		if(Checks.esNulo(subcartera)) {
-			criteria.add(Restrictions.isNull("subcartera"));
-		} else {
-			criteria.add(Restrictions.eq("subcartera", subcartera));
-		}
-		if(Checks.esNulo(cartera)) {
-			criteria.add(Restrictions.isNull("cartera"));
-		} else {
-			criteria.add(Restrictions.eq("cartera", cartera));
-		}
-			
-		return  HibernateUtils.castList(MapeoGestorDocumental.class, criteria.list());
-		
+	public Boolean cambiaMediador(Long nActivo, String pveCodRem, String userName) {
+		String procedureHQL = "BEGIN CAMBIO_MEDIADOR(:idActivoParam, :pveCodRemParam, :userNameParam, :outputParam);  END;";
+		String output="";
+		Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
+		callProcedureSql.setParameter("idActivoParam", nActivo);
+		callProcedureSql.setParameter("pveCodRemParam", pveCodRem);
+		callProcedureSql.setParameter("userNameParam", userName);
+		callProcedureSql.setParameter("outputParam", output);
+		int resultado = callProcedureSql.executeUpdate();
+
+		return resultado == 1;
 	}
 }

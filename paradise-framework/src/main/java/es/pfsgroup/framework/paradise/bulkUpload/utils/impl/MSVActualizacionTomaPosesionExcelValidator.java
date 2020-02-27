@@ -2,6 +2,7 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,76 +39,75 @@ import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
+import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVControlTributosExcelValidator.COL_NUM;
 
 @Component
 public class MSVActualizacionTomaPosesionExcelValidator extends MSVExcelValidatorAbstract {
 
-	private final String CHECK_ACTIVO_VALIDO = "msg.error.masivo.posesion.err.activo.no.valido";
-	private final String CHECK_TIPO_ADJ = "msg.error.masivo.posesion.err.tipo.adjudicacion.erronea";
-	private final String CHECK_F_TITULO = "msg.error.masivo.posesion.err.fecha.titulo";
-	private final String CHECK_F_FIRMEZA = "msg.error.masivo.posesion.err.fecha.firmeza.titulo";
-	private final String CHECK_VALOR_ADQ = "msg.error.masivo.posesion.err.valor.asquisicion";
-	private final String CHECK_NOMBRE = "msg.error.masivo.posesion.err.nombre";
-	private final String CHECK_NUM_EXP = "msg.error.masivo.posesion.err.numero.expediente";
-	private final String CHECK_EXP_DEFECTOS = "msg.error.masivo.posesion.err.expediente.con.defectos";
-	private final String CHECK_ENT_EJEC_HIPO = "msg.error.masivo.posesion.err.entidad.ejec.hipotecaria";
-	private final String CHECK_EST_ADJ = "msg.error.masivo.posesion.err.estado.adjudicacion"; 
-	private final String CHECK_F_AUTOADJ = "msg.error.masivo.posesion.err.fecha.autoadjudicacion";
-	private final String CHECK_F_FIRMEZA_AUTOADJ = "msg.error.masivo.posesion.err.fecha.firmeza.autoadjudicacion";
-	private final String CHECK_F_SENYAL_ADJ = "msg.error.masivo.posesion.err.fecha.senyal.adjudicacion";
-	private final String CHECK_F_REALIZ_POS = "msg.error.masivo.posesion.err.fecha.realizacion.posesion";
-	private final String CHECK_LANZ_NECESARIO = "msg.error.masivo.posesion.err.lanzamiento.necesario";
-	private final String CHECK_F_SENYAL_LANZ = "msg.error.masivo.posesion.err.fecha.senyal.lanzamiento";
-	private final String CHECK_F_LANZ_EFECTUADO = "msg.error.masivo.posesion.err.fecha.lanzamiento.efectuado";
-	private final String CHECK_F_SOL_MORATORIA = "msg.error.masivo.posesion.err.fecha.solicitud.moratoria";
-	private final String CHECK_RES_MORATORIA = "msg.error.masivo.posesion.err.resolucion.moratoria";
-	private final String CHECK_F_RES_MORATORIA = "msg.error.masivo.posesion.err.fecha.resolucion.moratoria";
-	private final String CHECK_IMPORTE_ADJ = "msg.error.masivo.posesion.err.importe.adjudicacion";
-	private final String CHECK_TIPO_JUZGADO = "msg.error.masivo.posesion.err.tipo.juzgado";
-	private final String CHECK_POBLACION_JUZGADO = "msg.error.masivo.posesion.err.poblacion.juzgado";
-	private final String CHECK_NUM_AUTOS = "msg.error.masivo.posesion.err.numero.autos";
-	private final String CHECK_PROCURADOR = "msg.error.masivo.posesion.err.procurador";
-	private final String CHECK_LETRADO = "msg.error.masivo.posesion.err.letrado";
-	private final String CHECK_ID_ASUNTOS = "msg.error.masivo.posesion.err.id.asuntos";
-	private final String CHECK_EXP_JUD_DEFECTO = "msg.error.masivo.posesion.err.expendiente.judicial.con.defecto";
+	private static final String CHECK_ACTIVO_VALIDO = "msg.error.masivo.posesion.err.activo.no.valido";
+	private static final String CHECK_TIPO_ADJ = "msg.error.masivo.posesion.err.tipo.adjudicacion.erronea";
+	private static final String CHECK_F_TITULO = "msg.error.masivo.posesion.err.fecha.titulo";
+	private static final String CHECK_F_FIRMEZA = "msg.error.masivo.posesion.err.fecha.firmeza.titulo";
+	private static final String CHECK_VALOR_ADQ = "msg.error.masivo.posesion.err.valor.asquisicion";
+	private static final String CHECK_NOMBRE = "msg.error.masivo.posesion.err.nombre";
+	private static final String CHECK_NUM_EXP = "msg.error.masivo.posesion.err.numero.expediente";
+	private static final String CHECK_EXP_DEFECTOS = "msg.error.masivo.posesion.err.expediente.con.defectos";
+	private static final String CHECK_ENT_EJEC_HIPO = "msg.error.masivo.posesion.err.entidad.ejec.hipotecaria";
+	private static final String CHECK_EST_ADJ = "msg.error.masivo.posesion.err.estado.adjudicacion"; 
+	private static final String CHECK_F_AUTOADJ = "msg.error.masivo.posesion.err.fecha.autoadjudicacion";
+	private static final String CHECK_F_FIRMEZA_AUTOADJ = "msg.error.masivo.posesion.err.fecha.firmeza.autoadjudicacion";
+	private static final String CHECK_F_SENYAL_ADJ = "msg.error.masivo.posesion.err.fecha.senyal.adjudicacion";
+	private static final String CHECK_F_REALIZ_POS = "msg.error.masivo.posesion.err.fecha.realizacion.posesion";
+	private static final String CHECK_LANZ_NECESARIO = "msg.error.masivo.posesion.err.lanzamiento.necesario";
+	private static final String CHECK_F_SENYAL_LANZ = "msg.error.masivo.posesion.err.fecha.senyal.lanzamiento";
+	private static final String CHECK_F_LANZ_EFECTUADO = "msg.error.masivo.posesion.err.fecha.lanzamiento.efectuado";
+	private static final String CHECK_F_SOL_MORATORIA = "msg.error.masivo.posesion.err.fecha.solicitud.moratoria";
+	private static final String CHECK_RES_MORATORIA = "msg.error.masivo.posesion.err.resolucion.moratoria";
+	private static final String CHECK_F_RES_MORATORIA = "msg.error.masivo.posesion.err.fecha.resolucion.moratoria";
+	private static final String CHECK_IMPORTE_ADJ = "msg.error.masivo.posesion.err.importe.adjudicacion";
+	private static final String CHECK_TIPO_JUZGADO = "msg.error.masivo.posesion.err.tipo.juzgado";
+	private static final String CHECK_POBLACION_JUZGADO = "msg.error.masivo.posesion.err.poblacion.juzgado";
+	private static final String CHECK_NUM_AUTOS = "msg.error.masivo.posesion.err.numero.autos";
+	private static final String CHECK_PROCURADOR = "msg.error.masivo.posesion.err.procurador";
+	private static final String CHECK_LETRADO = "msg.error.masivo.posesion.err.letrado";
+	private static final String CHECK_ID_ASUNTOS = "msg.error.masivo.posesion.err.id.asuntos";
+	private static final String CHECK_EXP_JUD_DEFECTO = "msg.error.masivo.posesion.err.expendiente.judicial.con.defecto";
 	
-	private final String CHECK_CONTIENE_JUDICIAL = "msg.error.masivo.posesion.err.contiene.judicial";
-	private final String CHECK_CONTIENE_NOTARIAL = "msg.error.masivo.posesion.err.contiene.notarial";
-
+	private static final String CHECK_CONTIENE_JUDICIAL = "msg.error.masivo.posesion.err.contiene.judicial";
+	private static final String CHECK_CONTIENE_NOTARIAL = "msg.error.masivo.posesion.err.contiene.notarial";
 	
-	
-	private final int FILA_DATOS = 1;
+	private static final int FILA_DATOS = 1;
 
-	private final int NUM_COLS = 28;
+	private static final int NUM_COLS = 28;
 
-	private final int COL_ID_ACTIVO = 0;
-	private final int COL_TIPO_ADJ = 1;
-	private final int COL_F_TITULO = 2;
-	private final int COL_F_FIRMEZA_TITULO = 3;
-	private final int COL_VALOR_ADQ = 4;
-	private final int COL_NOMBRE = 5;
-	private final int COL_NUM_EXP = 6;
-	private final int COL_EXP_DEFECTOS = 7;
-	private final int COL_ENT_EJEC_HIPOTECARIA = 8;
-	private final int COL_EST_ADJ = 9;
-	private final int COL_F_AUTOADJ = 10;
-	private final int COL_F_FIRMEZA_AUTOADJ = 11;
-	private final int COL_F_SENYAL_ADJ = 12;
-	private final int COL_F_REALIZ_POS = 13;
-	private final int COL_LANZ_NECESARIO = 14;
-	private final int COL_F_SENYAL_LANZ = 15;
-	private final int COL_F_LANZ_EFECTUADO= 16;
-	private final int COL_F_SOL_MORATORIA = 17;
-	private final int COL_RES_MORATORIA = 18;
-	private final int COL_F_RES_MORATORIA = 19;
-	private final int COL_IMPORTE_ADJ = 20;
-	private final int COL_TIPO_JUZGADO = 21;
-	private final int COL_POBLACION_JUZGADO = 22;
-	private final int COL_NUM_AUTOS = 23;
-	private final int COL_PROCURADOR = 24;
-	private final int COL_LETRADO = 25;
-	private final int COL_ID_ASUNTOS = 26;
-	private final int COL_EXP_JUD_DEFECTO = 27;
+	private static final int COL_ID_ACTIVO = 0;
+	private static final int COL_TIPO_ADJ = 1;
+	private static final int COL_F_TITULO = 2;
+	private static final int COL_F_FIRMEZA_TITULO = 3;
+	private static final int COL_VALOR_ADQ = 4;
+	private static final int COL_NOMBRE = 5;
+	private static final int COL_NUM_EXP = 6;
+	private static final int COL_EXP_DEFECTOS = 7;
+	private static final int COL_ENT_EJEC_HIPOTECARIA = 8;
+	private static final int COL_EST_ADJ = 9;
+	private static final int COL_F_AUTOADJ = 10;
+	private static final int COL_F_FIRMEZA_AUTOADJ = 11;
+	private static final int COL_F_SENYAL_ADJ = 12;
+	private static final int COL_F_REALIZ_POS = 13;
+	private static final int COL_LANZ_NECESARIO = 14;
+	private static final int COL_F_SENYAL_LANZ = 15;
+	private static final int COL_F_LANZ_EFECTUADO= 16;
+	private static final int COL_F_SOL_MORATORIA = 17;
+	private static final int COL_RES_MORATORIA = 18;
+	private static final int COL_F_RES_MORATORIA = 19;
+	private static final int COL_IMPORTE_ADJ = 20;
+	private static final int COL_TIPO_JUZGADO = 21;
+	private static final int COL_POBLACION_JUZGADO = 22;
+	private static final int COL_NUM_AUTOS = 23;
+	private static final int COL_PROCURADOR = 24;
+	private static final int COL_LETRADO = 25;
+	private static final int COL_ID_ASUNTOS = 26;
+	private static final int COL_EXP_JUD_DEFECTO = 27;
 	
 	
 	@Resource
@@ -256,6 +256,7 @@ public class MSVActualizacionTomaPosesionExcelValidator extends MSVExcelValidato
 					case COL_F_SENYAL_LANZ:
 					case COL_F_LANZ_EFECTUADO:
 					case COL_F_SOL_MORATORIA:
+					case COL_F_RES_MORATORIA:
 						valorOK = Checks.esNulo(celda) || esBorrar(celda) || esFechaValida(celda);
 						break;
 						
@@ -451,13 +452,18 @@ public class MSVActualizacionTomaPosesionExcelValidator extends MSVExcelValidato
 	}
 	
 	private boolean esFechaValida(String fecha) {
-		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-		try {
-			formato.parse(fecha);
-		} catch (ParseException e) {
-			return false;
+		Integer yearSize = getLengthOfYear(fecha);
+		return !(!Checks.esNulo(fecha) && (yearSize == null || yearSize > 4));
+	}
+
+	private Integer getLengthOfYear(String date) {
+		Integer yearSize = null;
+		if (date != null) {
+			String[] dateArray = date.split("\\/");
+			String year = dateArray == null ? null : dateArray[dateArray.length - 1];
+			yearSize = year == null ? null : year.length();
 		}
-		return true;
+		return yearSize;
 	}
 	
 	private boolean esNumericoDecimal(String numero) {

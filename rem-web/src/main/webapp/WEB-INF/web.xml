@@ -190,6 +190,10 @@
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
+	
+	<listener>
+    	<listener-class>es.pfsgroup.plugin.rem.listener.RemContextListener</listener-class>
+	</listener>
 
 	<!-- Serves static resource content from .jar files such as spring-faces.jar -->
 	<servlet>

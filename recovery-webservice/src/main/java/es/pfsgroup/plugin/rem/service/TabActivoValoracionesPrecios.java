@@ -124,6 +124,12 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 						if(val.getTipoPrecio() != null && val.getTipoPrecio().getCodigo().equalsIgnoreCase("23")) 
 							beanUtilNotNull.copyProperty(valoracionesDto, "valorRazonable", val.getImporte());
 						
+						if(val.getTipoPrecio() != null && val.getTipoPrecio().getCodigo().equalsIgnoreCase("26"))
+							beanUtilNotNull.copyProperty(valoracionesDto, "fsvVentaOrigen", val.getImporte());
+						
+						if(val.getTipoPrecio() != null && val.getTipoPrecio().getCodigo().equalsIgnoreCase("27"))
+							beanUtilNotNull.copyProperty(valoracionesDto, "fsvRentaOrigen", val.getImporte());
+						
 						if(!Checks.esNulo(val.getFechaVentaHaya())) {
 							beanUtilNotNull.copyProperty(valoracionesDto, "fechaVentaHaya", val.getFechaVentaHaya());
 						}

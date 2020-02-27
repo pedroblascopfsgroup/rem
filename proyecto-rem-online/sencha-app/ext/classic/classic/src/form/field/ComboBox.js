@@ -637,6 +637,12 @@ Ext.define('Ext.form.field.ComboBox', {
      * @param {Number} index The index of the deselected record
      */
 
+    /**
+     * @property {Boolean} filtradoEspecial
+     * True si se quiere poder filtrar con lo que se escriba en el combo. Ignora las mayusculas y las tildes.
+     */
+    filtradoEspecial: false,
+    
     initComponent: function() {
         var me = this,
             isDefined = Ext.isDefined,
@@ -645,6 +651,11 @@ Ext.define('Ext.form.field.ComboBox', {
             transformSelect,
             isLocalMode;
 
+            
+        if(me.filtradoEspecial){
+        	me.anyadirFiltradoEspecial();
+        }
+            
         //<debug>
         if (me.typeAhead && me.multiSelect) {
             Ext.raise('typeAhead and multiSelect are mutually exclusive options -- please remove one of them.');
@@ -2169,5 +2180,45 @@ Ext.define('Ext.form.field.ComboBox', {
      */
     clearValue: function() {
         this.setValue(null);
-    }
+    },
+    
+    /**
+     * @private
+     * Si el booleano filtradoEspecial es True, se ejecutará este método que configura y añade el filtrado sin tener en cuenta las mayúsculas ni tildes.
+     */
+    anyadirFiltradoEspecial: function(){
+    	var me = this;
+		me.enableKeyEvents = true;
+		me.mode = 'local';
+		me.forceSelection = false;
+		me.editable = true;
+		me.minChars = 0;
+		
+		me.addListener('change', function() {
+									if(me.getRawValue().length >= 3)
+									{
+										me.getStore().clearFilter();
+										
+										var myFilter = {
+										    property: me.displayField,
+										    value: me.getRawValue(),
+										    filterFn: function (candidate) {
+										    	var cleanCandidate = candidate.data[this.config.property].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+									            var cleanValue = this.config.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+										        return cleanCandidate.indexOf(cleanValue) !== -1;													        
+									   		}
+										};
+										
+									   	me.getStore().filter(myFilter);
+									   	
+									}else if (me.getRawValue().length < 3 && me.getStore().filters !== null && me.getStore().filters.length > 0) {
+										me.getStore().clearFilter();
+										me.getStore().load();
+									}
+								});
+								
+		me.addListener('beforequery',function(queryEvent) {
+										queryEvent.combo.onLoad();
+									});
+	}
 });

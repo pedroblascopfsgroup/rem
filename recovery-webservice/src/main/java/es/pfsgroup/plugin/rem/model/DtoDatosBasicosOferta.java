@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
-import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -96,12 +95,6 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	private Long idGestorComercialPrescriptor;
 
-	private Double importeContraofertaPM;
-
-	private Date fechaRespuestaPM;
-
-	private Date fechaRespuestaOfertantePM;
-
 	private Double importeContraofertaCES;
 
   private Date fechaRespuestaCES;
@@ -126,6 +119,16 @@ public class DtoDatosBasicosOferta extends WebDto {
 	
 	private Boolean isCarteraCerberusDivarian;
 	
+	private Boolean estadoAprobadoLbk;
+
+	public Boolean getEstadoAprobadoLbk() {
+		return estadoAprobadoLbk;
+	}
+
+	public void setEstadoAprobadoLbk(Boolean estadoAprobadoLbk) {
+		this.estadoAprobadoLbk = estadoAprobadoLbk;
+	}
+
 	public Long getIdOferta() {
 		return idOferta;
 	}
@@ -423,30 +426,6 @@ public class DtoDatosBasicosOferta extends WebDto {
 		this.idGestorComercialPrescriptor = idGestorComercialPrescriptor;
 	}
 
-	public Double getImporteContraofertaPM() {
-		return importeContraofertaPM;
-	}
-
-	public void setImporteContraofertaPM(Double importeContraofertaPM) {
-		this.importeContraofertaPM = importeContraofertaPM;
-	}
-
-	public Date getFechaRespuestaPM() {
-		return fechaRespuestaPM;
-	}
-
-	public void setFechaRespuestaPM(Date fechaRespuestaPM) {
-		this.fechaRespuestaPM = fechaRespuestaPM;
-	}
-
-	public Date getFechaRespuestaOfertantePM() {
-		return fechaRespuestaOfertantePM;
-	}
-
-	public void setFechaRespuestaOfertantePM(Date fechaRespuestaOfertantePM) {
-		this.fechaRespuestaOfertantePM = fechaRespuestaOfertantePM;
-	}
-
 	public Double getImporteContraofertaCES() {
 		return importeContraofertaCES;
 	}
@@ -518,7 +497,7 @@ public class DtoDatosBasicosOferta extends WebDto {
 	public void setImporteContraofertaOfertanteCES(Double importeContraofertaOfertanteCES) {
 		this.importeContraofertaOfertanteCES = importeContraofertaOfertanteCES;
 	}
-
+	
 	public String getOfertaSingular() {
 		return ofertaSingular;
 	}

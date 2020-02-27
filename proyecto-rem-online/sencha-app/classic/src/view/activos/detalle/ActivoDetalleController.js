@@ -4084,7 +4084,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
 
     checkActivosToPropagate: function(idActivo, form, tabData, restringida){
-    	var me = this,		
+    	var me = this,
 		url2 =  $AC.getRemoteUrl('activo/getIsActivoMatriz');
 		Ext.Ajax.request({
 		 	url: url2,

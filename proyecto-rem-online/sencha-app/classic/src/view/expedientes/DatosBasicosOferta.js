@@ -162,8 +162,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							value:'{datosbasicosoferta.idGestorComercialPrescriptor}',
 							hidden: '{!mostrarPrescriptorCajamar}'
 						}
-					},
-						{
+					}, {
 						xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
 						fieldLabel:  HreRem.i18n('fieldlabel.respuesta.pm'),
@@ -254,8 +253,8 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 									reference: 'claseOferta',
 									name: 'claseOferta',
 				                	colspan: 2,
-				                	readOnly: false,
 									bind: {
+										readOnly: '{datosbasicosoferta.estadoAprobadoLbk}',
 										store: '{comboClaseOferta}',
 										value: '{datosbasicosoferta.claseOfertaCodigo}', 
 										hidden: '{!datosbasicosoferta.isCarteraLbkVenta}'

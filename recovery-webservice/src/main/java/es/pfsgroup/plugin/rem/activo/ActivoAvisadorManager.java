@@ -335,6 +335,14 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 				}
 			}
 		}
+		
+		// Aviso 19: Activo perteneciente a agrupacion DND
+		if(!Checks.esNulo(activo.getIsDnd()) && activo.getIsDnd()) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Activo En Curso de Obra por parte de Edificación");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
+		}
 
 		return listaAvisos;
 	}

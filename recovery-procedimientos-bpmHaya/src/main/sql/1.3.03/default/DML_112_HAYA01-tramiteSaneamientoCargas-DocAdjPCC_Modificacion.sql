@@ -1,4 +1,0 @@
---Se REHABILITA validacion de doc adjunto en T.Saneamiento de cargas, validación eliminada en script "DML_82_HAYA01-tramiteSaneamientoCargas_Modificacion.sql"
---comprobarExisteDocumentoPCC() ? null : 'Es necesario adjuntar el documento propuesta de cancelación de las cargas'
---Se eliminó esta validación porque se confundió como requerimiento de doc. adj. duplicado en el t. de elevación sareb adjudicados, tarea 2
-update tap_tarea_procedimiento set tap_script_validacion = 'comprobarExisteDocumentoPCC() ? null : ''Es necesario adjuntar el documento propuesta de cancelación de las cargas''' where tap_codigo = 'H008_PropuestaCancelacionCargas';

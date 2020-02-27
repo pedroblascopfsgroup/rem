@@ -88,7 +88,8 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 						if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(codCartera)
 								|| (Checks.esNulo(expediente.getFechaContabilizacionPropietario())
 										&& DDCartera.CODIGO_CARTERA_BANKIA.equals(codCartera))
-								|| DDCartera.CODIGO_CARTERA_CERBERUS.equals(codCartera)) {
+								|| DDCartera.CODIGO_CARTERA_CERBERUS.equals(codCartera)
+								|| DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codCartera)) {
 							// Si el activo es de la cartera Bankia y no se ha hecho el ingreso de la
 							// compraventa (campo fecha ingreso cheque vacío).
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",

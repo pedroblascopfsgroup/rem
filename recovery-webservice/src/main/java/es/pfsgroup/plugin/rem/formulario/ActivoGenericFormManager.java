@@ -66,7 +66,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
-import es.pfsgroup.plugin.rem.oferta.OfertaManager;
 
 @Service
 public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
@@ -124,9 +123,6 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
     
     @Autowired
     private ResolucionComiteApi resolucionComiteApi;
-    
-    @Autowired
-    private OfertaManager ofertaManager;
     
     @Autowired
 	private TareaActivoApi tareaActivoApi;
@@ -719,9 +715,8 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 										if(!Checks.esNulo(codigoComite))
 											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getCodigo());
 			            			} else if(trabajoApi.checkLiberbank(tareaExterna)) {
-//			            				DDComiteSancion comite = ofertaManager.calculoComiteLiberbank(ofertaAceptada, null);
-			            				DDComiteSancion comite = ofertaManager.calculoComiteLiberbank(ofertaAceptada);
-
+			            				DDComiteSancion comite = expediente.getComiteSancion();
+			            				
 			            				if(!Checks.esNulo(comite)) {
 			            					codigoComite = comite.getCodigo();
 			            				}

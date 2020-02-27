@@ -65,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VTareaActivoCount;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.VTareaActivoCountDao;
@@ -83,7 +84,7 @@ public class TareaActivoManager implements TareaActivoApi {
 	private static final String NOMBRE_CAMPO_RESPUESTA = "comboRespuesta";
 	private static final String T013_DEFINICIONOFERTA = "T013_DefinicionOferta";
 	private static final String T013_RESOLUCIONCOMITE = "T013_ResolucionComite";
-	private static final String MENSAJE_OFERTAS_DEPENDIENTES = "Para sancionar esta oferta, hay que acceder a su Oferta Agrupada (Principal), cuyo enlace se muestra m&aacute;s abajo";
+	private static final String MENSAJE_OFERTAS_DEPENDIENTES = "Para sancionar esta oferta, hay que acceder a su Oferta Agrupada (Principal)";
 	private static final String COMITE_SUPERIOR = "comiteSuperior";
 	
     @Autowired
@@ -580,6 +581,11 @@ public class TareaActivoManager implements TareaActivoApi {
 			}
 			
 			for (Oferta comprobarOferta : ofertasDependientes) {
+				if(DDEstadoOferta.CODIGO_CONGELADA.equals(comprobarOferta.getEstadoOferta().getCodigo()) 
+						|| DDEstadoOferta.CODIGO_PENDIENTE.equals(comprobarOferta.getEstadoOferta().getCodigo())) {
+					return "La oferta dependiente " + comprobarOferta.getNumOferta() + " no está tramitada, debe tramitarla"
+							+ " o anularla para poder continuar.";
+				}
 				TareaActivo tareaDependiente = tareaOfertaDependiente(comprobarOferta);
 				if (!Checks.esNulo(tareaDependiente) && !Checks.estaVacio(valores)) {
 					Map<String,String[]> valoresDependientes = valoresTareaDependiente(valores, tareaDependiente, oferta);

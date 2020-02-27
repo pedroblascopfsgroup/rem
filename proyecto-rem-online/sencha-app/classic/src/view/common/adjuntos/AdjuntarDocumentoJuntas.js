@@ -100,16 +100,14 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoJuntas', {
 						        	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
 						        	reference: 'filtroComboTipoDocumentoJunta',
 						        	name: 'tipo',
-						        	editable: true,
 						        	msgTarget: 'side',
 						        	bind: {
 					            		store: '{comboTipoDocumento}'
 					            	},
-					            	displayField	: 'descripcion',
-								    							
+					            	displayField	: 'descripcion',								    							
 								    valueField		: 'codigo',
 									allowBlank: false,
-									enableKeyEvents:true,
+									filtradoEspecial: true,
 									listeners: {
 										select: function(combo, record) {
 											if (record.getData().vinculable == 1) {
@@ -133,20 +131,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoJuntas', {
 												me.down("gridBase").setDisabled(true);
 												me.down("gridBase").getSelectionModel().deselectAll();
 											}
-										},
-										'keyup': function() {
-											
-											this.getStore().clearFilter();
-											this.getStore().filter({
-												property: 'descripcion',
-												value: this.getRawValue(),
-												anyMatch: true,
-												caseSensitive: false
-											})
-										},
-										'beforequery': function(queryEvent) {
-											queryEvent.combo.onLoad();
-									    }
+										}
 									}
 									
 									

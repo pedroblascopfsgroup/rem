@@ -130,7 +130,10 @@ public class TabActivoPatrimonio implements TabActivoService {
 
 			if(!Checks.esNulo(activoP.getTipoInquilino())) {
 				activoPatrimonioDto.setTipoInquilino(activoP.getTipoInquilino().getCodigo());
-			}			
+			}
+						
+			activoPatrimonioDto.setCesionUso( Checks.esNulo(activoP.getCesionUso())  ? null :  activoP.getCesionUso().getCodigo());
+			activoPatrimonioDto.setTramiteAlquilerSocial(Checks.esNulo(activoP.getTramiteAlquilerSocial()) ?  DDSinSiNo.CODIGO_NO: activoP.getTramiteAlquilerSocial().booleanValue() == true ? DDSinSiNo.CODIGO_SI: DDSinSiNo.CODIGO_NO);
 			
 		}
 		
@@ -142,11 +145,10 @@ public class TabActivoPatrimonio implements TabActivoService {
 			}
 			
 			if(!Checks.esNulo(patrimonioContrato) && !Checks.esNulo(patrimonioContrato.getPazSocial())) {
-				activoPatrimonioDto.setPazSocial(patrimonioContrato.getPazSocial().booleanValue() == true ? DDSinSiNo.CODIGO_SI : DDSinSiNo.CODIGO_NO);
+				activoPatrimonioDto.setPazSocial(patrimonioContrato.getPazSocial() ? DDSinSiNo.CODIGO_SI : DDSinSiNo.CODIGO_NO);
 			}
 			
-			activoPatrimonioDto.setIsCarteraCerberusDivarian(activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN)
-																|| activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB)
+			activoPatrimonioDto.setIsCarteraCerberusDivarian(activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB)
 																|| activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB));
 			
 			if(!Checks.esNulo(activo.getTipoAlquiler())) {
@@ -167,6 +169,7 @@ public class TabActivoPatrimonio implements TabActivoService {
 		ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
 		ActivoSituacionPosesoria activoSituacionPosesoria;
 		ActivoPatrimonioContrato patrimonioContrato = genericDao.get(ActivoPatrimonioContrato.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+		PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
 		
 		activoDao.validateAgrupacion(activo.getId());
 		if(Checks.esNulo(activoPatrimonio)) {
@@ -369,6 +372,9 @@ public class TabActivoPatrimonio implements TabActivoService {
 		if (activoPatrimonioDto.getTramiteAlquilerSocial() != null) {
 			if (DDSinSiNo.CODIGO_SI.equals(activoPatrimonioDto.getTramiteAlquilerSocial())) {
 				this.isActivoConOfertasEnVueloOAlquilado(activo, activoPatrimonio);
+				perimetroActivo.setAplicaFormalizar(0);
+				perimetroActivo.setAplicaPublicar(false);
+				perimetroActivo.setAplicaComercializar(0);
 			}	
 			activoPatrimonio.setTramiteAlquilerSocial(DDSinSiNo.CODIGO_SI.equals(activoPatrimonioDto.getTramiteAlquilerSocial()));
 		}

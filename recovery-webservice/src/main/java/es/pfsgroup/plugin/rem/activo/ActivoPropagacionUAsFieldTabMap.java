@@ -50,11 +50,10 @@ public class ActivoPropagacionUAsFieldTabMap {
     	    		"latitud",
     	    		"codPostal",
     	    		"paisCodigo",
-    	    		"direccionTerritorialCodigo",
-    	    		
     	    		"selloCalidad",
     	    		"nombreGestorSelloCalidad",
     	    		"fechaRevisionSelloCalidad",
+    	    		"direccionComercial",
 
     	    		
     	    		// perimetro
@@ -252,6 +251,13 @@ public class ActivoPropagacionUAsFieldTabMap {
     				"fechaEnvioCarta",
     				"situacionDescripcion"
     			));
+    	
+    	pmap.put(TAB_COMERCIAL,
+    			Arrays.asList(
+					//"id", // ID de activo.
+	    			"direccionComercial"
+    			));
+
 /*
       	pmap.put(TAB_PLUSVALIA_VENTA,
     			Arrays.asList(

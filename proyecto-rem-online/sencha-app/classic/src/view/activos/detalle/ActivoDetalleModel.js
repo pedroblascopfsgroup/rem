@@ -47,6 +47,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 	     	 return geoCodeAddr;
 	     },
+	     
+	     esAgrupacionObraNueva: function(get) {
+	     	var tipoAgrupacion = get('activo.pertenceAgrupacionObraNueva');
+	     	var user = $AU.userIsRol("HAYASUPER") || $AU.userIsRol("HAYAGESTCOM");
+	     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['OBRA_NUEVA']) && user) {
+	     		return true;
+	     	} else {
+	     		return false;
+	     	}
+	     },
 
 	     tieneDivisionHorizontal: function(get) {
 	     	var tieneDivision = Ext.isEmpty(get('activo.divHorizontal')) ? false : get('activo.divHorizontal') === "1";	 
@@ -798,7 +808,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    },
 	    
 	    esSubcarteraDivarian: function(get){
-			return get('activo.subcarteraCodigo') == CONST.SUBCARTERA['DIVARIAN'] || get('activo.subcarteraCodigo') == CONST.SUBCARTERA['DIVARIANARROW'] 
+			return get('activo.subcarteraCodigo') == CONST.SUBCARTERA['DIVARIANARROW'] 
 				|| get('activo.subcarteraCodigo') == CONST.SUBCARTERA['DIVARIANREMAINING'];
 		},
 
@@ -874,14 +884,33 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     		}
     	},
     	isCesionUsoEditable: function () {
-    		return $AU.userIsRol('GESTALQ');
+    		return $AU.userIsRol('GESTALQ') || $AU.userIsRol(CONST.PERFILES['HAYASUPER']);    		
     	},
-    	
-    	esEditableDestinoComercial: function(get){
+		
+		mostrarTitlePerimetroDatosBasicos: function(get){
 			var me = this;
-			var esPazSocial = get('activo.pazSocial');
-			return !me.get('esUA') && !esPazSocial;			
-		}	    
+			var isSubcarteraApple = get('activo.isSubcarteraApple');
+			var isSubcarteraDivarian = get('activo.isSubcarteraDivarian');
+			var title = "";
+			
+			if(isSubcarteraApple){
+				title = HreRem.i18n('title.perimetro.apple');
+			}else if(isSubcarteraDivarian){
+				title = HreRem.i18n('title.perimetro.divarian');
+			}
+			return title;
+		},
+		
+		mostrarCamposDivarian: function(get){
+			var isSubcarteraDivarian = get('activo.isSubcarteraDivarian');
+			return !isSubcarteraDivarian;
+		},
+		
+		esEditablePerimetroMacc: function(get){
+			var codComercializacion = get('activo.tipoComercializacionCodigo');
+			var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+			return CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] === codComercializacion && isSuper;
+		}
 	 }, 
 	 
 	 stores: {
@@ -2336,8 +2365,26 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
-			    extraParams: {diccionario: 'tipoDireccionComercial'}
-			 }
+				extraParams: {diccionario: 'tipoDireccionComercial'}
+			}
+		},
+	     	
+ 		comboTipoSegmento: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoSegmento'}
+			}
+ 		},
+ 		
+ 		storeOrigenAnteriorActivo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'origenAnterior'}
+			}
 		}
      }
 });

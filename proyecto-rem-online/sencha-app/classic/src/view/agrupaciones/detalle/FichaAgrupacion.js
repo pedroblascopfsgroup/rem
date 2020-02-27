@@ -380,6 +380,16 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 								readOnly: false,
 								hidden: '{!esAgrupacionThirdpartiesYubaiObraNueva}'
 							}
+						},
+						{
+							xtype: 'comboboxfieldbase',
+				        	fieldLabel: HreRem.i18n('fieldlabel.venta.sobre.plano'),
+				        	reference: 'ventaPlano',						
+				        	bind: {	
+				        		readOnly: '{!esUsuarioGestorComercialAgrupacionObraNueva}',
+			            		store: '{comboSiNoBoolean}',
+			            		value: '{agrupacionficha.ventaSobrePlano}'
+			            	}
 						}
 				]
           },

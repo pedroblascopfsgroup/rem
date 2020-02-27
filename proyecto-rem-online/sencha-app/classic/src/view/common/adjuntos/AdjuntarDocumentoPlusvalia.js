@@ -94,29 +94,13 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoPlusvalia', {
 									xtype: 'combobox',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
 						        	name: 'tipo',
-						        	editable: true,
 						        	msgTarget: 'side',
 					            	store: comboTipoDocumento,
 					            	displayField	: 'descripcion',
-
 								    valueField		: 'codigo',
 									allowBlank: false,
-									width: '100%',
-									enableKeyEvents:true,
-									listeners: {
-										'keyup': function() {
-											this.getStore().clearFilter();
-											this.getStore().filter({
-												property: 'descripcion',
-												value: this.getRawValue(),
-												anyMatch: true,
-												caseSensitive: false
-											})
-										},
-										'beforequery': function(queryEvent) {
-											queryEvent.combo.onLoad();
-									    }
-									}
+									filtradoEspecial: true,
+									width: '100%'
 						        },
 						        {
 				                	xtype: 'textarea',

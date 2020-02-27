@@ -108,12 +108,12 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 				}
     		},
     		
-    		comboDireccionTerritorial: {
+    		comboDireccionComercial: {
     			model: 'HreRem.model.ComboBase',
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
-					extraParams: {diccionario: 'direccionTerritorial'}
+					extraParams: {diccionario: 'direccionComercial'}
 				}  			
     		},    		
     		

@@ -72,7 +72,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionUso;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
-import es.pfsgroup.plugin.rem.model.dd.DDDireccionTerritorial;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
@@ -83,6 +82,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivoBDE;
@@ -95,6 +95,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProductoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
@@ -111,11 +112,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private static final String MSG_ERROR_DESTINO_COMERCIAL_OFERTAS_VIVAS_VENTA = "msg.error.tipo.comercializacion.ofertas.vivas";
 	private static final String MSG_ERROR_DESTINO_COMERCIAL_OFERTAS_VIVAS_ALQUILER = "msg.error.tipo.comercializacion.ofertas.vivas";
 	private static final String ERROR_PORCENTAJE_PARTICIPACION="msg.error.porcentaje.participacion";
-	private static final Integer CHECK_GESTION = 1;
-	private static final Integer CHECK_PUBLICACION = 2;
-	private static final Integer CHECK_COMERCIALIZAR = 3;
-	private static final Integer CHECK_FORMALIZAR = 4;
-	private static final String  CESION_USO_ERROR= "msg.error.activo.patrimonio.en.cesion.uso";
+	private static final String CESION_USO_ERROR= "msg.error.activo.patrimonio.en.cesion.uso";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -825,12 +822,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(activo.getServicerActivo() != null) {
 			BeanUtils.copyProperty(activoDto, "servicerActivoCodigo", activo.getServicerActivo().getCodigo());
 		}
-		
-		if (!Checks.esNulo(activo.getDireccionTerritorial())){
-			beanUtilNotNull.copyProperty(activoDto, "direccionTerritorialCodigo", activo.getDireccionTerritorial().getCodigo());
-			beanUtilNotNull.copyProperty(activoDto, "direccionTerritorialDescripcion", activo.getDireccionTerritorial().getDescripcion());
-		}	
-		
+			
 		if (!Checks.esNulo(activo.getSociedadDePagoAnterior())) {
 			BeanUtils.copyProperty(activoDto, "sociedadPagoAnterior", activo.getSociedadDePagoAnterior().getCodigo());
 		}
@@ -853,6 +845,23 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setPazSocial(apc.getPazSocial());
 		}
 		
+		if(activoP != null && activoP.getTramiteAlquilerSocial() != null) {
+			activoDto.setCheckFormalizarReadOnly(activoP.getTramiteAlquilerSocial());
+			activoDto.setCheckComercializarReadOnly(activoP.getTramiteAlquilerSocial());
+			activoDto.setCheckPublicacionReadOnly(activoP.getTramiteAlquilerSocial());
+
+		}else {
+			activoDto.setCheckFormalizarReadOnly(false);
+			activoDto.setCheckComercializarReadOnly(false);
+			activoDto.setCheckPublicacionReadOnly(false);
+		}
+		
+		if(activo.getTipoSegmento() != null) {
+			activoDto.setTipoSegmentoCodigo(activo.getTipoSegmento().getCodigo());
+		}
+		
+		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));
+		
 		return activoDto;
 	}
 	
@@ -872,6 +881,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto webDto)  throws JsonViewerException {
 		DtoActivoFichaCabecera dto = (DtoActivoFichaCabecera) webDto;
+		
+		validateSaveDatosBasicos(dto, activo);
 		
 		try {
 			beanUtilNotNull.copyProperties(activo, dto);
@@ -934,20 +945,21 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				DDCesionSaneamiento cesionNuevo = (DDCesionSaneamiento) genericDao.get(DDCesionSaneamiento.class, filtro);
 				activo.setCesionSaneamiento(cesionNuevo);
 			}
-			
-			if (!Checks.esNulo(dto.getDireccionTerritorialCodigo())) {
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getDireccionTerritorialCodigo());
-				DDDireccionTerritorial direccionTerritorial = genericDao.get(DDDireccionTerritorial.class, filtro);
-				activo.setDireccionTerritorial(direccionTerritorial);
-			}
-			
+						
 			if (!Checks.esNulo(dto.getServicerActivoCodigo())) {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getServicerActivoCodigo());
 				DDServicerActivo servicerNuevo = (DDServicerActivo) genericDao.get(DDServicerActivo.class, filtro);
 				activo.setServicerActivo(servicerNuevo);
 			}
 			
-			if(!Checks.esNulo(dto.getPerimetroMacc())) {
+			if (!Checks.esNulo(dto.getPerimetroMacc())) {
+				if (Integer.valueOf(0).equals(dto.getPerimetroMacc())) {
+					activo.setTipoSegmento((DDTipoSegmento) genericDao.get(DDTipoSegmento.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoSegmento.CODIGO_SEGMENTO_SIN_CARTERIZAR)));
+				}else if (Integer.valueOf(1).equals(dto.getPerimetroMacc())){
+					activo.setTipoSegmento((DDTipoSegmento) genericDao.get(DDTipoSegmento.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoSegmento.CODIGO_SEGMENTO_MACC)));
+				}
 				activo.setPerimetroMacc(dto.getPerimetroMacc());
 			}
 			
@@ -1310,6 +1322,16 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}
 			}
 			
+			if(dto.getTipoSegmentoCodigo() != null) {
+				DDTipoSegmento tipoSegmento = (DDTipoSegmento) diccionarioApi.dameValorDiccionarioByCod(DDTipoSegmento.class, dto.getTipoSegmentoCodigo());
+				activo.setTipoSegmento(tipoSegmento);
+				
+				if(DDTipoSegmento.CODIGO_SEGMENTO_MACC.equals(tipoSegmento.getCodigo())) {
+					activo.setPerimetroMacc(1);
+				}else {
+					activo.setPerimetroMacc(0);
+				}
+			}		
 
 			if (!Checks.esNulo(activo)) {
 				boolean isUnidadAlquilable = activoDao.isUnidadAlquilable(activo.getId());
@@ -1363,8 +1385,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		return activo;
 	}
-	
-
 
 	/**
 	 * Acciones al desmarcar check Comercializar
@@ -1567,6 +1587,16 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 			
 		}
+	}
+	
+	private void validateSaveDatosBasicos(DtoActivoFichaCabecera dto, Activo activo) {
+	
+		if(dto != null && dto.getTipoSegmentoCodigo() != null
+				&& DDTipoSegmento.CODIGO_SEGMENTO_MACC.equals(dto.getTipoSegmentoCodigo())
+				&& !DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getTipoComercializacion().getCodigo())) {
+			throw new JsonViewerException("No puede cambiar el segmento a MACC ya que el destino comercial tiene que ser alquiler");
+		}
+		
 	}
 
 }

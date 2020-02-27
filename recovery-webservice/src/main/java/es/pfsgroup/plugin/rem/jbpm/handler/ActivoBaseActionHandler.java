@@ -48,10 +48,12 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
 import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoTramiteDaoImpl;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.adapter.RemUtils;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutorApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.ActivoGenericActionHandler.ConstantesBPMPFS;
@@ -66,6 +68,7 @@ import es.pfsgroup.plugin.rem.model.TimerTareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 
 /**
@@ -148,6 +151,12 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 	
 	@Autowired
 	private UsuarioManager usuarioManager;
+	
+	@Autowired
+	private TrabajoApi trabajoApi;
+	
+	@Autowired
+	private RemUtils remUtils;
 	
     /**
      * Método que recupera el ID del BPM asociado a la ejecución.
@@ -719,7 +728,6 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 								|| DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(subcartera.getCodigo())
 								|| DDSubcartera.CODIGO_EGEO.equals(subcartera.getCodigo())
 								|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(subcartera.getCodigo())
-								|| DDSubcartera.CODIGO_DIVARIAN.equals(subcartera.getCodigo())
 								|| DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(subcartera.getCodigo())
 								|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(subcartera.getCodigo())))
 				   || (DDCartera.CODIGO_CARTERA_EGEO.equals(cartera.getCodigo())
@@ -730,7 +738,28 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 			supervisor = userAssigantionService.getSupervisor(tareaExterna);
 			Usuario gestor = userAssigantionService.getUser(tareaExterna); 
 			
-			if(!Checks.esNulo(gestor) ){
+			Boolean esTrabajoValido = trabajoApi.tipoTramiteValidoObtencionDocSolicitudDocumentoGestoria(tareaActivo.getTramite().getTrabajo());
+			
+			if(!Checks.esNulo(tareaActivo) && !Checks.esNulo(tareaActivo.getTramite()) && !Checks.esNulo(tareaActivo.getTramite().getTipoTramite()) 
+					&& (esTrabajoValido|| DDSubtipoTrabajo.CODIGO_CEDULA_HABITABILIDAD.equals(trabajo.getSubtipoTrabajo().getCodigo()))
+					&& !Checks.esNulo(tareaActivo.getActivo()) && 
+						(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC.equals(tareaActivo.getTramite().getTipoTramite().getCodigo()) ||
+						 ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEDULA.equals(tareaActivo.getTramite().getTipoTramite().getCodigo()))
+					&& (DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()) || DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()))
+			){
+				Usuario destinatario = null;
+				Filter usuarioProveedor = null;
+				if(DDCartera.CODIGO_CARTERA_SAREB.equals(tareaActivo.getActivo().getCartera().getCodigo())) {
+					usuarioProveedor = genericDao.createFilter(FilterType.EQUALS, "username", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_PROVEEDOR_ELECNOR));
+					destinatario= genericDao.get(Usuario.class, usuarioProveedor);
+				}else {
+					usuarioProveedor = genericDao.createFilter(FilterType.EQUALS, "username", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_PROVEEDOR_PACI));
+					destinatario= genericDao.get(Usuario.class, usuarioProveedor);
+				}
+				
+				tareaActivo.setUsuario(destinatario);
+				
+			}else if(!Checks.esNulo(gestor) ){
 				tareaActivo.setUsuario(gestor);
 			} else {
 				// HREOS-1714 Si el asignador de usuarios NO encuentra el gestor correspondiente:
@@ -769,10 +798,9 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 			}else if(!Checks.esNulo(gact)?gact.equals(responsableTrabajo):false){
 				supervisor = gestorActivoApi.getGestorByActivoYTipo(activo, CODIGO_SUPERVISOR_ACTIVOS);
 			}
-			
+			//Seteo de destinatario de las tareas del trabajo
 			if(!Checks.esNulo(solicitante) && !Checks.esNulo(responsableTrabajo)){
-				//Seteo de destinatario de las tareas del trabajo
-				if(solicitante.equals(responsableTrabajo)){ //Cuando el trabajo es recien creado
+				 if(solicitante.equals(responsableTrabajo)){ //Cuando el trabajo es recien creado
 					tareaActivo.setUsuario(solicitante);
 				}else{ //Cuando el solicitante es Proveedor u otro gestor que no sea el Gestor de Activo/Alquileres/Suelos/Edificaciones o Cuando cambias de responsable y avanzas la tarea
 					tareaActivo.setUsuario(responsableTrabajo);

@@ -134,16 +134,25 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 						},		
 						{
 							xtype: 'comboboxfieldbase',
-								fieldLabel: HreRem.i18n('combolabel.patrimonio.combo.cesion.de.uso'),
-									reference: 'cesionDeUsoRef',
-										colspan: 3,
-											bind: {
+							fieldLabel: HreRem.i18n('combolabel.patrimonio.combo.cesion.de.uso'),
+							reference: 'cesionDeUsoRef',
+							colspan: 3,
+							bind: {
 								readOnly: '{!isCesionUsoEditable}',
-									store: '{comboCesionUso}',
-										value: '{patrimonio.cesionUso}'
+								store: '{comboCesionUso}',
+								value: '{patrimonio.cesionUso}',
+								hidden: '{!patrimonio.isCarteraCerberusDivarian}'
 							},
 							listeners: {
 								change: 'comboCesionUsoOnChage'
+							}
+						},
+						{
+							xtype: 'displayfieldbase',
+							colspan: 3,
+							readOnly:true,
+							bind: {
+								hidden: '{patrimonio.isCarteraCerberusDivarian}'
 							}
 						},			
 						{

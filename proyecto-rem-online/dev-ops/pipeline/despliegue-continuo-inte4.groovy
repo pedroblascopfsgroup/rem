@@ -127,9 +127,7 @@ pipeline {
                     """
 
                 // Esto es necesario porque sino no descarga bien los módulos
-                // no se el porqué.
-                sh script: "git rm fwk"
-                
+                // no se el porqué.              
                 echo "Git init Submodules"
                 sh script: "bash ./proyecto-rem-online/dev-ops/common-git-submodule-init.sh ${GIT_USER}"
                 

@@ -65,7 +65,10 @@ Ext.define('HreRem.controller.RootController', {
 		     url: $AC.getRemoteUrl('generic/getAuthenticationData'),
 		
 		     success: function(response, opts) {
-		        var user = new HreRem.model.User(Ext.decode(response.responseText));
+		        var user = new HreRem.model.User(Ext.decode(response.responseText).data);
+
+                // Se obtiene el JWT para adjuntar en todas las cabeceras de las llamadas para comunicación con REM 3 (API SERVICES).
+                Ext.Ajax.setDefaultHeaders({ "Authorization": "Bearer " + user.get('jwt') });
 		        
 		        me.session = new Ext.data.Session({
 					autoDestroy: false,
@@ -80,7 +83,7 @@ Ext.define('HreRem.controller.RootController', {
 		            var storeTop = Ext.create('HreRem.store.MenuTopStore');
 		            storeTop.load({
 		            		callback: function(){		            			
-		            			me.showUI(user.get("data").userName, store, storeTop);
+		            			me.showUI(user.get("userName"), store, storeTop);
 		            		}
 		            });
 		    	}

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200226
+--## FECHA_CREACION=20200227
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-9607
@@ -319,7 +319,21 @@ BEGIN
         
         --1 existe lo modificamos
         IF V_NUM_TABLAS > 0 THEN				
-          DBMS_OUTPUT.PUT_LINE('[INFO]: YA EXISTE EL PROVEEDOR CON NIF: '''||TRIM(V_TMP_TIPO_DATA(2))||'''');   
+          DBMS_OUTPUT.PUT_LINE('[INFO]: YA EXISTE EL PROVEEDOR CON NIF: '''||TRIM(V_TMP_TIPO_DATA(2))||'''');  
+
+          V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE WHERE PVE.PVE_DOCIDENTIF = '''||TRIM(V_TMP_TIPO_DATA(2))||'''
+          AND PVE.DD_TPR_ID = (SELECT TPR.DD_TPR_ID FROM DD_TPR_TIPO_PROVEEDOR TPR WHERE TPR.DD_TPR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(5))||''') AND PVE.PVE_FECHA_BAJA IS NULL
+          AND PVE.DD_EPR_ID IS NULL';
+          EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS; 
+          IF V_NUM_TABLAS > 0 THEN
+            V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE 
+            SET PVE.DD_EPR_ID = (SELECT EPR.DD_EPR_ID FROM '|| V_ESQUEMA ||'.DD_EPR_ESTADO_PROVEEDOR EPR WHERE EPR.DD_EPR_CODIGO = ''04'')
+            WHERE PVE.PVE_DOCIDENTIF = '''||TRIM(V_TMP_TIPO_DATA(2))||'''
+            AND PVE.DD_TPR_ID = (SELECT TPR.DD_TPR_ID FROM DD_TPR_TIPO_PROVEEDOR TPR WHERE TPR.DD_TPR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(5))||''') AND PVE.PVE_FECHA_BAJA IS NULL
+            AND PVE.DD_EPR_ID IS NULL';
+            EXECUTE IMMEDIATE V_MSQL;
+          END IF;
+
         ELSE
        
           DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(2)) ||'''');   
@@ -346,12 +360,13 @@ BEGIN
                       , FECHACREAR
                       , BORRADO
                       , PVE_COD_REM
-                      , PVE_FECHA_ALTA)
+                      , PVE_FECHA_ALTA
+                      , DD_EPR_ID)
                       SELECT '|| V_ID ||'
-                      , (SELECT TPR.DD_TPR_ID FROM DD_TPR_TIPO_PROVEEDOR TPR WHERE TPR.DD_TPR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(5))||''')
+                      , (SELECT TPR.DD_TPR_ID FROM '|| V_ESQUEMA ||'.DD_TPR_TIPO_PROVEEDOR TPR WHERE TPR.DD_TPR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(5))||''')
                       , '''||TRIM(V_TMP_TIPO_DATA(1))||'''
                       , '''||TRIM(V_TMP_TIPO_DATA(1))||'''
-                      , (SELECT TDI.DD_TDI_ID FROM DD_TDI_TIPO_DOCUMENTO_ID TDI WHERE TDI.DD_TDI_CODIGO = ''15'')
+                      , (SELECT TDI.DD_TDI_ID FROM '|| V_ESQUEMA ||'.DD_TDI_TIPO_DOCUMENTO_ID TDI WHERE TDI.DD_TDI_CODIGO = ''15'')
                       , '''||TRIM(V_TMP_TIPO_DATA(2))||''' 
                       , '''||TRIM(V_TMP_TIPO_DATA(3))||''' 
                       , '||TRIM(V_TMP_TIPO_DATA(4))||' 
@@ -361,6 +376,7 @@ BEGIN
                       , 0
                       , '|| V_ID_COD_REM ||'
                       , SYSDATE
+                      , (SELECT EPR.DD_EPR_ID FROM '|| V_ESQUEMA ||'.DD_EPR_ESTADO_PROVEEDOR EPR WHERE EPR.DD_EPR_CODIGO = ''04'')
                       FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE EN PVE');
@@ -380,7 +396,7 @@ BEGIN
                       SELECT 
                       '|| V_ID_PVC ||'
                       , '|| V_ID ||'
-                      , (SELECT TDI.DD_TDI_ID FROM DD_TDI_TIPO_DOCUMENTO_ID TDI WHERE TDI.DD_TDI_CODIGO = ''15'')
+                      , (SELECT TDI.DD_TDI_ID FROM '|| V_ESQUEMA ||'.DD_TDI_TIPO_DOCUMENTO_ID TDI WHERE TDI.DD_TDI_CODIGO = ''15'')
                       , '''||TRIM(V_TMP_TIPO_DATA(2))||'''
                       , '''||TRIM(V_TMP_TIPO_DATA(1))||'''
                       , '''||TRIM(V_TMP_TIPO_DATA(3))||''' 
@@ -408,7 +424,7 @@ BEGIN
                       , ETP_FECHA_INICIO)
                       SELECT 
                       '|| V_ID_ETP ||'
-                      , (SELECT CRA.DD_CRA_ID FROM DD_CRA_CARTERA CRA WHERE CRA.DD_CRA_CODIGO = ''03'')
+                      , (SELECT CRA.DD_CRA_ID FROM '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA WHERE CRA.DD_CRA_CODIGO = ''03'')
                       , '|| V_ID ||'
                       , 0
                       , '''||TRIM(V_ITEM)||'''
@@ -435,7 +451,7 @@ BEGIN
                       , ETP_FECHA_INICIO)
                       SELECT 
                       '|| V_ID_ETP ||'
-                      , (SELECT CRA.DD_CRA_ID FROM DD_CRA_CARTERA CRA WHERE CRA.DD_CRA_CODIGO = ''02'')
+                      , (SELECT CRA.DD_CRA_ID FROM '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA WHERE CRA.DD_CRA_CODIGO = ''02'')
                       , '|| V_ID ||'
                       , 0
                       , '''||TRIM(V_ITEM)||'''
@@ -462,7 +478,7 @@ BEGIN
                       , ETP_FECHA_INICIO)
                       SELECT 
                       '|| V_ID_ETP ||'
-                      , (SELECT CRA.DD_CRA_ID FROM DD_CRA_CARTERA CRA WHERE CRA.DD_CRA_CODIGO = ''01'')
+                      , (SELECT CRA.DD_CRA_ID FROM '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA WHERE CRA.DD_CRA_CODIGO = ''01'')
                       , '|| V_ID ||'
                       , 0
                       , '''||TRIM(V_ITEM)||'''
@@ -489,7 +505,7 @@ BEGIN
                       , ETP_FECHA_INICIO)
                       SELECT 
                       '|| V_ID_ETP ||'
-                      , (SELECT CRA.DD_CRA_ID FROM DD_CRA_CARTERA CRA WHERE CRA.DD_CRA_CODIGO = ''08'')
+                      , (SELECT CRA.DD_CRA_ID FROM '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA WHERE CRA.DD_CRA_CODIGO = ''08'')
                       , '|| V_ID ||'
                       , 0
                       , '''||TRIM(V_ITEM)||'''
@@ -516,7 +532,7 @@ BEGIN
                       , ETP_FECHA_INICIO)
                       SELECT 
                       '|| V_ID_ETP ||'
-                      , (SELECT CRA.DD_CRA_ID FROM DD_CRA_CARTERA CRA WHERE CRA.DD_CRA_CODIGO = ''07'')
+                      , (SELECT CRA.DD_CRA_ID FROM '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA WHERE CRA.DD_CRA_CODIGO = ''07'')
                       , '|| V_ID ||'
                       , 0
                       , '''||TRIM(V_ITEM)||'''

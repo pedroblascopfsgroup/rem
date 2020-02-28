@@ -45,6 +45,16 @@ BEGIN
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
 	
+	 --Comprobamos el dato a insertar
+     V_SQL := 'SELECT COUNT(1) 
+						FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO
+						JOIN  '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_ID = ECO.OFR_ID  AND ECO.BORRADO = 0
+						WHERE OFR.OFR_NUM_OFERTA = '''||V_NUM_OFERTA||'''';
+     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+        
+     --Si existe lo modificamos
+     IF V_NUM_TABLAS = 1 THEN		
+	
 	V_MSQL:= ' MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' T1
 			USING
 			(	SELECT
@@ -103,7 +113,13 @@ BEGIN
 			DBMS_OUTPUT.PUT_LINE('[INFO]: '||V_NUM_TABLAS||' REGISTROS CREADOS');
 		END IF;
 
-    COMMIT;
+    COMMIT;    
+    
+    ELSE       
+          DBMS_OUTPUT.PUT_LINE('[INFO]: NO SE ENCUENTRA LA OFERTA '||V_NUM_OFERTA||'');
+          
+    END IF;
+    
     DBMS_OUTPUT.PUT_LINE('[FIN] ');
 EXCEPTION
      WHEN OTHERS THEN

@@ -741,6 +741,7 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 			Boolean esTrabajoValido = trabajoApi.tipoTramiteValidoObtencionDocSolicitudDocumentoGestoria(tareaActivo.getTramite().getTrabajo());
 			
 			if(!Checks.esNulo(tareaActivo) && !Checks.esNulo(tareaActivo.getTramite()) && !Checks.esNulo(tareaActivo.getTramite().getTipoTramite()) 
+					&& !Checks.esNulo(trabajo) && !Checks.esNulo(trabajo.getSubtipoTrabajo()) 
 					&& (esTrabajoValido|| DDSubtipoTrabajo.CODIGO_CEDULA_HABITABILIDAD.equals(trabajo.getSubtipoTrabajo().getCodigo()))
 					&& !Checks.esNulo(tareaActivo.getActivo()) 
 					&& ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEDULA.equals(tareaActivo.getTramite().getTipoTramite().getCodigo())

@@ -507,15 +507,15 @@ BEGIN
 	EXECUTE IMMEDIATE V_SQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] Se han eliminado '||SQL%ROWCOUNT||' registros');
 
-	V_SQL := 'delete from REM01.TEX_TAREA_EXTERNA where usuariocrear = ''REMVIP-6340_2'''; --tar_id
+	V_SQL := 'delete from REM01.TEX_TAREA_EXTERNA where tar_id in (select tar_id from REM01.TAR_TAREAS_NOTIFICACIONES where usuariocrear = ''REMVIP-6340_2'') and tex_id <> 9721238'; --tar_id
 	EXECUTE IMMEDIATE V_SQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] Se han eliminado '||SQL%ROWCOUNT||' registros'); 
 
-	V_SQL := 'delete from REM01.TAC_TAREAS_ACTIVOS where usuariocrear = ''REMVIP-6340_2'''; --tar_id
+	V_SQL := 'delete from REM01.TAC_TAREAS_ACTIVOS where tar_id in (select tar_id from REM01.TAR_TAREAS_NOTIFICACIONES where usuariocrear = ''REMVIP-6340_2'') and tar_id <> 4985813'; --tar_id
 	EXECUTE IMMEDIATE V_SQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] Se han eliminado '||SQL%ROWCOUNT||' registros');  
 
-	V_SQL := 'delete from REM01.TAR_TAREAS_NOTIFICACIONES where usuariocrear = ''REMVIP-6340_2'''; --tar_id
+	V_SQL := 'delete from REM01.TAR_TAREAS_NOTIFICACIONES where usuariocrear = ''REMVIP-6340_2'' and tar_id <> 4985813'; --tar_id
 	EXECUTE IMMEDIATE V_SQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] Se han eliminado '||SQL%ROWCOUNT||' registros');  
 

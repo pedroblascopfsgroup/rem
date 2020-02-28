@@ -1591,7 +1591,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			Boolean esAlquiler) {
 
 		if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())
-				&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo()) &&  faltanDatosCalculo(oferta, activo)) {
+				&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo()) 
+				&& DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo()) && faltanDatosCalculo(oferta, activo)) {
 			throw new JsonViewerException(FALTAN_DATOS);
 		}
 

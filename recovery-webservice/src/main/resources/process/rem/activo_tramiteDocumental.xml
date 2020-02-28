@@ -3,19 +3,8 @@
 <process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="activo_tramiteDocumental">
 
 	<start-state name="inicio">
-		<transition to="T002_ComprobarCarteraYTipoGestor"></transition>
+		<transition to="T002_AnalisisPeticion"></transition>
 	</start-state>
-	
-	<node name="T002_ComprobarCarteraYTipoGestor">
-		<action name="miTarea" config-type="bean"
-			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>
-				activoComprobarGestorActionHandler
-			</targetBean>
-		</action>
-		<transition to="T002_AnalisisPeticion" name="ConAnalisisPeticion"></transition>
-		<transition to="T002_SolicitudDocumentoGestoria" name="OKConPagoYSaldo"></transition>
-	</node>
 	
 	<state name="T002_AnalisisPeticion">
 		<event type="node-enter">

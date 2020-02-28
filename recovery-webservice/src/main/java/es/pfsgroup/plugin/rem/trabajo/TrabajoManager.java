@@ -1507,37 +1507,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			else {
 				tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC); // Trámite
 																													// de
-				if(this.tipoTramiteValidoObtencionDocSolicitudDocumentoGestoria(trabajo) && (this.checkBankia(trabajo) || this.checkSareb(trabajo))) {
-						//&& gestorActivoApi.isGestorMantenimiento(trabajo.getActivo(), trabajo.getSolicitante()) )	{
-						if(this.checkBankia(trabajo)) {
-							Filter filtroUsuProveedorBankia = genericDao.createFilter(FilterType.EQUALS, "username", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_PROVEEDOR_PACI));
-							Usuario usuProveedorBankia = genericDao.get(Usuario.class, filtroUsuProveedorBankia);
-							if(!Checks.esNulo(usuProveedorBankia)) {
-								Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario",usuProveedorBankia);
-								Filter filtro2 = genericDao.createFilter(FilterType.NULL, "fechaBaja");
-								List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,
-										filtro,filtro2);
-								if(!Checks.estaVacio(listaPVC)){
-									trabajo.setProveedorContacto(listaPVC.get(0));
-									trabajo = genericDao.save(Trabajo.class, trabajo);
-								}
-							}
-						}else if(this.checkSareb(trabajo)) {
-							Filter filtroUsuProveedorSareb = genericDao.createFilter(FilterType.EQUALS, "username", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_PROVEEDOR_ELECNOR));
-							Usuario usuProveedorSareb = genericDao.get(Usuario.class, filtroUsuProveedorSareb);
-							if(!Checks.esNulo(usuProveedorSareb)) {
-								Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario",usuProveedorSareb);
-								Filter filtro2 = genericDao.createFilter(FilterType.NULL, "fechaBaja");
-								List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,
-										filtro,filtro2);
-								if(!Checks.estaVacio(listaPVC)){
-									trabajo.setProveedorContacto(listaPVC.get(0));
-									trabajo = genericDao.save(Trabajo.class, trabajo);
-								}
-							}
-						}
-						//Si el trabajo es Bankia/Sareb/Tango/Giants asignamos proveedorContacto
-					}else if(this.checkBankia(trabajo) /*|| this.checkSareb(trabajo) */|| this.checkTango(trabajo) || this.checkGiants(trabajo)) {
+				if(this.checkBankia(trabajo) /*|| this.checkSareb(trabajo) */|| this.checkTango(trabajo) || this.checkGiants(trabajo)) {
 
 					Usuario gestorAdmision = gestorActivoManager.getGestorByActivoYTipo(trabajo.getActivo(), GestorActivoApi.CODIGO_GESTOR_ADMISION);
 

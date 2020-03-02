@@ -2154,6 +2154,7 @@ public class ActivoAdapter {
 			if(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(tramite.getEstadoTramite().getCodigo())
 				|| DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(tramite.getEstadoTramite().getCodigo())){
 				beanUtilNotNull.copyProperty(dtoTramite, "tramiteAlquilerAnulado", true);	
+				beanUtilNotNull.copyProperty(dtoTramite, "tramiteVentaAnulado", true);
 			}
 				
 				

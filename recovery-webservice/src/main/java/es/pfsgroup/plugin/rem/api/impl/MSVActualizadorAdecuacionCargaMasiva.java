@@ -66,6 +66,9 @@ public class MSVActualizadorAdecuacionCargaMasiva extends AbstractMSVActualizado
 				activoPatrimonio.setAdecuacionAlquiler(
 						(DDAdecuacionAlquiler) utilDiccionarioApi.dameValorDiccionarioByCod(DDAdecuacionAlquiler.class,
 								DDAdecuacionAlquiler.CODIGO_ADA_NO_APLICA));
+			} else if(valorAdecuacion.equalsIgnoreCase("EP")){
+				activoPatrimonio.setAdecuacionAlquiler((DDAdecuacionAlquiler) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDAdecuacionAlquiler.class, DDAdecuacionAlquiler.CODIGO_ADA_EN_PROCESO));
 			} else {
 				activoPatrimonio.setAdecuacionAlquiler((DDAdecuacionAlquiler) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDAdecuacionAlquiler.class, DDAdecuacionAlquiler.CODIGO_ADA_NULO));

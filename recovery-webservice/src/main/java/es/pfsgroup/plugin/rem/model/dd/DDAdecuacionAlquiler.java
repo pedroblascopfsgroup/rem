@@ -34,6 +34,7 @@ public class DDAdecuacionAlquiler implements Auditable, Dictionary {
 	public static final String CODIGO_ADA_NO = "02";
 	public static final String CODIGO_ADA_NO_APLICA = "03";
 	public static final String CODIGO_ADA_NULO = "04";
+	public static final String CODIGO_ADA_EN_PROCESO = "05";
 	
 	private static final long serialVersionUID = 1L;
 

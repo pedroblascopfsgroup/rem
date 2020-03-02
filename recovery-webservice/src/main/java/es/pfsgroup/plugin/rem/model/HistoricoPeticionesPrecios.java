@@ -47,11 +47,16 @@ public class HistoricoPeticionesPrecios implements Serializable,Auditable  {
 	
 	@Id
     @Column(name = "HPP_ID")
+	@GeneratedValue(strategy=GenerationType.SEQUENCE)
     private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_TPP_ID")
 	private DDTipoPeticionPrecio tipoPeticionPrecio;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ACT_ID")
+	private Activo activo;
 	
 	@Column(name = "HPP_FECHA_SOLICITUD")
 	private Date fechaSolicitud;
@@ -82,6 +87,14 @@ public class HistoricoPeticionesPrecios implements Serializable,Auditable  {
 
 	public void setTipoPeticionPrecio(DDTipoPeticionPrecio tipoPeticionPrecio) {
 		this.tipoPeticionPrecio = tipoPeticionPrecio;
+	}
+
+	public Activo getActivo() {
+		return activo;
+	}
+
+	public void setActivo(Activo activo) {
+		this.activo = activo;
 	}
 
 	public Date getFechaSolicitud() {
@@ -123,8 +136,5 @@ public class HistoricoPeticionesPrecios implements Serializable,Auditable  {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
-	
-
-	
 
 }

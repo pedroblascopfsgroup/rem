@@ -162,6 +162,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPeticionPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRolMediador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoSolicitudTributo;
@@ -178,6 +179,7 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
+import es.pfsgroup.plugin.rem.rest.dto.HistoricoPropuestasPreciosDto;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
@@ -6684,6 +6686,135 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			logger.error(e.getMessage(), e);
 			transactionManager.rollback(transaction);
 		}
+	}
+
+	@Override
+	public List<HistoricoPropuestasPreciosDto> getHistoricoSolicitudesPrecios(Long idActivo) {
+		List<HistoricoPeticionesPrecios> listHistorico = activoDao.getHistoricoSolicitudesPrecios(idActivo);
+		List<HistoricoPropuestasPreciosDto> listDto = new ArrayList<HistoricoPropuestasPreciosDto>();
+		Boolean esPrimeroAdvisory = true;
+		Boolean esPrimeroCliente = true;
+		
+		if(listHistorico != null && !listHistorico.isEmpty()) {
+			for(HistoricoPeticionesPrecios historico: listHistorico) {
+				HistoricoPropuestasPreciosDto dto = new HistoricoPropuestasPreciosDto();
+				
+				dto.setIdPeticion(historico.getId());
+				dto.setTipoFecha(historico.getTipoPeticionPrecio().getDescripcion());
+				dto.setObservaciones(historico.getObservaciones());
+				dto.setIdActivo(idActivo);
+				
+				if(historico.getFechaSolicitud() != null) {
+					dto.setFechaSolicitud(historico.getFechaSolicitud().toString());
+				}
+				
+				if(historico.getFechaSancion() != null) {
+					dto.setFechaSancion(historico.getFechaSancion().toString());
+				}
+				
+				if(DDTipoPeticionPrecio.CODIGO_PETICION_ADVISORY.equals(historico.getTipoPeticionPrecio().getCodigo()) 
+						&& esPrimeroAdvisory) {
+					dto.setEsEditable(esPrimeroAdvisory);
+					esPrimeroAdvisory = false;
+				}else if(DDTipoPeticionPrecio.CODIGO_PETICION_ADVISORY.equals(historico.getTipoPeticionPrecio().getCodigo())){
+					dto.setEsEditable(esPrimeroAdvisory);
+				}
+				
+				if(DDTipoPeticionPrecio.CODIGO_PETICION_CLIENTE.equals(historico.getTipoPeticionPrecio().getCodigo()) 
+						&& esPrimeroCliente) {
+					dto.setEsEditable(esPrimeroCliente);
+					esPrimeroCliente = false;
+				}else if(DDTipoPeticionPrecio.CODIGO_PETICION_CLIENTE.equals(historico.getTipoPeticionPrecio().getCodigo())){
+					dto.setEsEditable(esPrimeroCliente);
+				}
+				
+				if(historico.getAuditoria().getUsuarioModificar() != null) {
+					dto.setUsuarioModificar(historico.getAuditoria().getUsuarioModificar());
+				} else {
+					dto.setUsuarioModificar(historico.getAuditoria().getUsuarioCrear());
+				}
+				
+				listDto.add(dto);
+			}
+		}
+		
+		return listDto;
+	}
+
+	@Override
+	@Transactional
+	public Boolean createHistoricoSolicitudPrecios(HistoricoPropuestasPreciosDto historicoPropuestasPreciosDto) throws ParseException {
+		
+		HistoricoPeticionesPrecios peticion = new HistoricoPeticionesPrecios();
+		
+		if(historicoPropuestasPreciosDto != null) {
+			if(historicoPropuestasPreciosDto.getIdActivo() == null) {
+				throw new JsonViewerException("No se ha podido asociar la propuetsa a un activo");
+			}else {
+				Activo activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", historicoPropuestasPreciosDto.getIdActivo()));
+				peticion.setActivo(activo);
+			}
+			
+			if(historicoPropuestasPreciosDto.getTipoFecha() != null) {
+				DDTipoPeticionPrecio tipoPeticion = genericDao.get(DDTipoPeticionPrecio.class, genericDao.createFilter(FilterType.EQUALS, "codigo", historicoPropuestasPreciosDto.getTipoFecha()));
+				peticion.setTipoPeticionPrecio(tipoPeticion);
+			}
+			
+			if(historicoPropuestasPreciosDto.getFechaSancion() != null && !historicoPropuestasPreciosDto.getFechaSancion().isEmpty()) {
+				peticion.setFechaSancion(ft.parse(historicoPropuestasPreciosDto.getFechaSancion()));
+			}
+			
+			if(historicoPropuestasPreciosDto.getFechaSolicitud() != null && !historicoPropuestasPreciosDto.getFechaSolicitud().isEmpty()) {
+				peticion.setFechaSolicitud(ft.parse(historicoPropuestasPreciosDto.getFechaSolicitud()));
+			}
+			
+			if(historicoPropuestasPreciosDto.getObservaciones() != null) {
+				peticion.setObservaciones(historicoPropuestasPreciosDto.getObservaciones());
+			}
+			
+			genericDao.save(HistoricoPeticionesPrecios.class, peticion);
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+	@Transactional
+	public Boolean updateHistoricoSolicitudPrecios(HistoricoPropuestasPreciosDto historicoPropuestasPreciosDto) throws ParseException {
+		
+		HistoricoPeticionesPrecios peticion = null;
+		
+		if(historicoPropuestasPreciosDto != null) {
+			
+			peticion = genericDao.get(HistoricoPeticionesPrecios.class, genericDao.createFilter(FilterType.EQUALS, "id", historicoPropuestasPreciosDto.getIdPeticion()));
+			
+			if(peticion != null) {
+				if(historicoPropuestasPreciosDto.getTipoFecha() != null) {
+					DDTipoPeticionPrecio tipoPeticion = genericDao.get(DDTipoPeticionPrecio.class, genericDao.createFilter(FilterType.EQUALS, "codigo", historicoPropuestasPreciosDto.getTipoFecha()));
+					peticion.setTipoPeticionPrecio(tipoPeticion);
+				}
+				
+				if(historicoPropuestasPreciosDto.getFechaSancion() != null) {
+					peticion.setFechaSancion(ft.parse(historicoPropuestasPreciosDto.getFechaSancion()));
+				}
+				
+				if(historicoPropuestasPreciosDto.getFechaSolicitud() != null) {
+					peticion.setFechaSolicitud(ft.parse(historicoPropuestasPreciosDto.getFechaSolicitud()));
+				}
+				
+				if(historicoPropuestasPreciosDto.getObservaciones() != null) {
+					peticion.setObservaciones(historicoPropuestasPreciosDto.getObservaciones());
+				}
+				
+				genericDao.save(HistoricoPeticionesPrecios.class, peticion);
+				
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 }

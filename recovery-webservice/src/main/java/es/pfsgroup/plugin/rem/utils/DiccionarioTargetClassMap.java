@@ -252,6 +252,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoPublicacion", DDTipoPublicacion.class);
 		mapa.put("tipoSegmento", DDTipoSegmento.class);
 		mapa.put("origenAnterior", DDOrigenAnterior.class);
+		mapa.put("tipoPeticionPrecio", DDTipoPeticionPrecio.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

@@ -59,7 +59,6 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoTramitacionTitulo;
 import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoMotivoAnulacionExpediente;
-import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoPlusvaliaFilter;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropietario;
@@ -68,13 +67,10 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoProveedorMediador;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Reserva;
-import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
@@ -84,6 +80,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
 import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
 import es.pfsgroup.plugin.rem.rest.dto.File;
+import es.pfsgroup.plugin.rem.rest.dto.HistoricoPropuestasPreciosDto;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 
 
@@ -1316,4 +1313,10 @@ public interface ActivoApi {
 	void actualizarOfertasTrabajosVivos(Long idActivo);
 
 	void propagarTerritorioAgrupacionRestringida(Long idActivo);
+	
+	List<HistoricoPropuestasPreciosDto> getHistoricoSolicitudesPrecios(Long idActivo);
+
+	Boolean createHistoricoSolicitudPrecios(HistoricoPropuestasPreciosDto historicoPropuestasPreciosDto) throws ParseException;
+
+	Boolean updateHistoricoSolicitudPrecios(HistoricoPropuestasPreciosDto historicoPropuestasPreciosDto) throws ParseException;
 }

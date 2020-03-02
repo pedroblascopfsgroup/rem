@@ -222,6 +222,7 @@ import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
 import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
+import es.pfsgroup.plugin.rem.rest.dto.HistoricoPropuestasPreciosDto;
 import es.pfsgroup.plugin.rem.restclient.exception.UnknownIdException;
 import es.pfsgroup.plugin.rem.service.TabActivoDatosBasicos;
 import es.pfsgroup.plugin.rem.service.TabActivoDatosRegistrales;

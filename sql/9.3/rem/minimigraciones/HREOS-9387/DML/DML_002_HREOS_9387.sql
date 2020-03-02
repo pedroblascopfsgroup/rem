@@ -1,0 +1,123 @@
+--/*
+--#########################################
+--## AUTOR=Mª José Ponce
+--## FECHA_CREACION=20200219
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-9387
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Actualizacion gestores en las tablas GEE_GESTOR_ENTIDAD y GEH_GESTOR_ENTIDAD_HIST.
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+	
+	V_TABLA_TMP VARCHAR2(30 CHAR) := 'TMP_ASIGNACION_GESTOR_ACTIVO'; -- Variable para tabla de salida para el borrado	
+	V_TABLA_GEE VARCHAR2(40 CHAR):='GEE_GESTOR_ENTIDAD';--Variable para la tabla de volcado
+	V_TABLA_GEH VARCHAR2(40 CHAR):='GEH_GESTOR_ENTIDAD_HIST';--Variable para la tabla de volcado
+	V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01';-- '#ESQUEMA#'; -- Configuracion Esquema
+	V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER';-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+	ERR_NUM NUMBER;-- Numero de errores
+	ERR_MSG VARCHAR2(2048);-- Mensaje de error
+	V_MSQL VARCHAR2(4000 CHAR);--Variable para consultar la existencia de registros en la tabla
+	V_SQL VARCHAR2(4000 CHAR);--Sentencia a ejecutar
+	V_NUM NUMBER(16); --Variable para comprobar si existen registros
+	V_ID NUMBER(16);
+	PL_OUTPUT VARCHAR2(32000 CHAR);
+	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-9387';
+	
+
+BEGIN
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO]'||CHR(10));
+
+	
+	V_MSQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.'||V_TABLA_TMP||'';
+  	EXECUTE IMMEDIATE V_MSQL INTO V_NUM;
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE VOLCADO SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA_GEE||'.');
+
+	-- LOOP para convertir CONTADOR de la tabla TMP_ASIGNACION_GESTOR_ACTIVO en GEE_ID
+    
+    FOR I IN 1..V_NUM
+      LOOP
+
+	   V_SQL := 'SELECT '||V_ESQUEMA||'.S_'||V_TABLA_GEE||'.NEXTVAL FROM DUAL';
+          EXECUTE IMMEDIATE V_SQL INTO V_ID;	
+
+		V_SQL := ('INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_GEE||' (GEE_ID, USU_ID, DD_TGE_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+		SELECT '|| V_ID || '
+		,(SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME=TMP.USUARIO)
+		,(SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO=TMP.GESTOR)
+		, 0, '''||V_USUARIO||''', SYSDATE, 0
+		FROM '||V_ESQUEMA||'.'||V_TABLA_TMP||' TMP
+		WHERE TMP.CONTADOR='||I||''
+		);	
+
+	EXECUTE IMMEDIATE V_SQL; 	
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se han insertado en total '||SQL%ROWCOUNT||' registros en la tabla '||V_TABLA_GEE);
+
+	DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN TMP_ASIGNACION_GESTOR_ACTIVO ');
+
+	V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA_TMP||'
+          SET GEE_ID = '||V_ID||' WHERE CONTADOR = '||I||'';    
+          EXECUTE IMMEDIATE V_SQL; 
+
+    END LOOP; 
+
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE VOLCADO SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA_GEH||'.');
+
+	-- LOOP para convertir CONTADOR de la tabla TMP_ASIGNACION_GESTOR_ACTIVO en GEH_ID
+    
+    FOR I IN 1..V_NUM
+      LOOP
+
+	   V_SQL := 'SELECT '||V_ESQUEMA||'.S_'||V_TABLA_GEH||'.NEXTVAL FROM DUAL';
+          EXECUTE IMMEDIATE V_SQL INTO V_ID;
+
+	V_SQL := ('INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_GEH||' (GEH_ID, USU_ID, DD_TGE_ID, GEH_FECHA_DESDE, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+        SELECT '|| V_ID || '
+		,(SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME=TMP.USUARIO)
+		,(SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO=TMP.GESTOR)
+		, SYSDATE, 0, '''||V_USUARIO||''', SYSDATE, 0
+        FROM '||V_ESQUEMA||'.'||V_TABLA_TMP||' TMP
+		WHERE TMP.CONTADOR='||I||''
+        );
+
+	EXECUTE IMMEDIATE V_SQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se han insertado en total '||SQL%ROWCOUNT||' registros en la tabla '||V_TABLA_GEH);
+
+	DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN TMP_ASIGNACION_GESTOR_ACTIVO ');
+
+	V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA_TMP||'
+          SET GEH_ID = '||V_ID||' WHERE CONTADOR = '||I||'';    
+          EXECUTE IMMEDIATE V_SQL; 	
+
+    END LOOP;
+	
+	COMMIT;
+	
+	PL_OUTPUT := PL_OUTPUT || '[FIN]'||CHR(10);
+	DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
+
+EXCEPTION
+    WHEN OTHERS THEN
+      PL_OUTPUT := PL_OUTPUT ||'[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE)||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||'-----------------------------------------------------------'||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||SQLERRM||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||V_SQL||CHR(10);
+      DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
+      ROLLBACK;
+      RAISE;
+END;
+/
+EXIT;

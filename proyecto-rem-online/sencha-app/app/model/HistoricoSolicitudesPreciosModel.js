@@ -36,7 +36,6 @@ Ext.define('HreRem.model.HistoricoSolicitudesPreciosModel', {
 
 	proxy: {
 		type: 'uxproxy',
-		//localUrl: 'historicosolicitudesprecios.json',
 		api: {
             create: 'activo/createHistoricoSolicitudPrecios',
             update: 'activo/updateHistoricoSolicitudPrecios'

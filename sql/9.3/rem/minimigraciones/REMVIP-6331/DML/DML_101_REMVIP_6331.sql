@@ -44,9 +44,9 @@ BEGIN
     	ON (AUX.ACT_ID = CAT.ACT_ID)
     	WHEN MATCHED THEN
         	UPDATE SET
-            	CAT.CAT_REF_CATASTRAL = NULL,
-				CAT.USUARIOMODIFICAR ='''||V_USUARIO||''',
-				CAT.FECHAMODIFICAR = SYSDATE
+				CAT.BORRADO = 1,
+            	CAT.USUARIOBORRAR = '''||V_USUARIO||''',
+				CAT.FECHABORRAR = SYSDATE
 				';
 		EXECUTE IMMEDIATE V_SQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Se han actualizado en total '||SQL%ROWCOUNT||' registros en la tabla '||V_ESQUEMA||'.'||V_TABLA||'');

@@ -11,12 +11,12 @@ INFILE './CTL/IN/Carterizacion_Onboarding_MidleOffice.csv'
 INFILE './CTL/IN/Carterizacion_Onboarding_Publicaciones.csv'
 BADFILE './CTL/BAD/Carterizacion_Onboarding.bad'
 DISCARDFILE './CTL/REJECTS/Carterizacion_Onboarding.bad'
-INTO TABLE REM01.TMP_ASIGNACION_GESTOR_ACTIVO
+INTO TABLE REM01.TMP_ASIG_GESTOR_ACTIVO
 TRUNCATE
 FIELDS TERMINATED BY '|'
 TRAILING NULLCOLS
 (
 	ID_HAYA "TRIM(:ID_HAYA)",
-    GESTOR "TRIM(:GESTOR)",
+    	GESTOR "TRIM(:GESTOR)",
 	USUARIO	"TRIM(:USUARIO)"    
 )

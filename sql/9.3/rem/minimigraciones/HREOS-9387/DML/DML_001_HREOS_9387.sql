@@ -20,7 +20,7 @@ SET DEFINE OFF;
 
 DECLARE
 	
-	V_TABLA_TMP VARCHAR2(30 CHAR) := 'TMP_ASIGNACION_GESTOR_ACTIVO'; -- Variable para tabla de salida para el borrado	
+	V_TABLA_TMP VARCHAR2(40 CHAR) := 'TMP_ASIG_GESTOR_ACTIVO'; -- Variable para tabla de salida para el borrado	
 	V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01';-- '#ESQUEMA#'; -- Configuracion Esquema
 	V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER';-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
 	ERR_NUM NUMBER;-- Numero de errores
@@ -75,7 +75,6 @@ BEGIN
 	V_SQL := 'MERGE INTO '||V_ESQUEMA||'.'||V_TABLA_TMP||' TMP
 				USING (
 					SELECT
-					ROWNUM CONTADOR,
 					TMP.ID_HAYA,
 					TMP.GESTOR,
 					TMP.USUARIO						
@@ -84,10 +83,9 @@ BEGIN
 				) AUX
 				ON (TMP.ID_HAYA = AUX.ID_HAYA AND TMP.GESTOR=AUX.GESTOR AND TMP.USUARIO=AUX.USUARIO) 
 				WHEN MATCHED THEN UPDATE SET				 
-				 TMP.CONTADOR=AUX.CONTADOR
- 				 , TMP.BORRADO = 0';
+ 				 TMP.BORRADO = 0';
 					
-	DBMS_OUTPUT.PUT_LINE(V_SQL);
+
 	EXECUTE IMMEDIATE V_SQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] Se han mergeado en total '||SQL%ROWCOUNT||' registros en la tabla '||V_TABLA_TMP);
 	COMMIT;

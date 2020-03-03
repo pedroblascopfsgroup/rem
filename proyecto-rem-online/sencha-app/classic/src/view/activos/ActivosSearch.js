@@ -54,6 +54,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 				        	bind: {
 			            		store: '{comboEntidadPropietaria}'
 			            	},
+			            	publishes: 'value',
 			            	reference: 'comboCarteraActivoSearch',
 			            	chainedStore: 'comboSubcarteraFiltered',
 							chainedReference: 'comboSubcarteraActivoSearch',
@@ -66,7 +67,8 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 				        	fieldLabel: HreRem.i18n('fieldlabel.subcartera'),
 				        	name: 'subcarteraCodigo',
 				        	bind: {
-			            		store: '{comboSubcarteraFiltered}'
+			            		store: '{comboSubcarteraFiltered}',
+			            		disabled: '{!comboCarteraActivoSearch.value}'
 			            	},
 			            	reference: 'comboSubcarteraActivoSearch',
 			            	valueField: 'codigo',

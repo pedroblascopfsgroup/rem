@@ -299,4 +299,6 @@ public interface GenericApi {
 	List<DDSubestadoGestion> getComboSubestadoGestionFiltered(String codLocalizacion);
 
 	public DDSubestadoGestion getSubestadoGestion(Long idActivo);
+	
+	List<DDSubtipoActivo> getComboSubtipoActivoFiltered(String codTipoActivo);
 }

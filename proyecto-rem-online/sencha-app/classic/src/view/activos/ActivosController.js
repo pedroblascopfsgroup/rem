@@ -212,6 +212,9 @@ Ext.define('HreRem.view.activos.ActivosController', {
 		if(combo.chainedStore == 'comboSubcarteraFiltered'){
 			var store=chainedCombo.getStore(); 
 			store.getProxy().setExtraParams({'idCartera':combo.getValue()});
+		} else if (combo.chainedStore == 'comboFiltroSubtipoActivo') {
+			var store=chainedCombo.getStore(); 
+			store.getProxy().setExtraParams({'codTipoActivo':combo.getValue()});
 		}
 
 		chainedCombo.getStore().load({ 			

@@ -82,17 +82,26 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 				        	xtype: 'comboboxfieldbase',
 				        	fieldLabel: HreRem.i18n('fieldlabel.tipo.activo'),
 				        	name: 'tipoActivoCodigo',
+				        	reference: 'comboFiltroTipoActivoSearch',
 				        	bind: {
 			            		store: '{comboFiltroTipoActivo}'
 			            	},
-				        	matchFieldWidth: false
+				        	matchFieldWidth: false,
+				        	publishes: 'value',
+				        	chainedStore: 'comboFiltroSubtipoActivo',
+				        	chainedReference: 'comboFiltroSubtipoActivoSearch',
+				        	listeners: {
+								select: 'onChangeChainedCombo'
+							}
 				        },
 				        { 
 				        	xtype: 'comboboxfieldbase',
 				        	fieldLabel: HreRem.i18n('fieldlabel.subtipo.activo'),
 				        	name: 'subtipoActivoCodigo',
+				        	reference: 'comboFiltroSubtipoActivoSearch',
 				        	bind: {
-			            		store: '{comboFiltroSubtipoActivo}'
+			            		store: '{comboFiltroSubtipoActivo}',
+			            		disabled: '{!comboFiltroTipoActivoSearch.value}'
 			            	},
 				        	matchFieldWidth: false
 				        },

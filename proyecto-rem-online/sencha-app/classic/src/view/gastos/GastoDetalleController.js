@@ -1754,8 +1754,10 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var partidaPresupuestaria = me.lookupReference('partidaPresupuestaria');
 		var comboSubPartida = me.lookupReference('comboboxfieldSubpartidaPresupuestaria');
 		
-		partidaPresupuestaria.setReadOnly(!isEditableDivarian);	
-		cuentaContable.setReadOnly(!isEditableDivarian);
+		if(isDivarian){
+			partidaPresupuestaria.setReadOnly(!isEditableDivarian);	
+			cuentaContable.setReadOnly(!isEditableDivarian);
+		}
 		comboSubPartida.setHidden(!isDivarian);
 		
 		if (isDivarian) {

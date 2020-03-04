@@ -108,7 +108,7 @@ pipeline {
 
     tools {
         maven 'Maven 3.2.5'
-        jdk 'Java 1.7'
+        jdk 'Java 1.6'
     }
     
     environment {

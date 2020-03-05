@@ -1150,4 +1150,6 @@ public interface ParticularValidatorApi {
 	
 	public Boolean esSubcarteraApple(String numActivo);
 	
+	public Boolean aCambiadoDestinoComercial(String numActivo, String destinoComercial);
+	
 }

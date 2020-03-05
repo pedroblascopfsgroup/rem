@@ -4588,4 +4588,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 	
+	@Override
+	public Boolean aCambiadoDestinoComercial(String numActivo, String destinoComercial) {
+		if((Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) 
+				&& (Checks.esNulo(destinoComercial) || !!StringUtils.isNumeric(destinoComercial))
+		  ) return false;
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1)"+ 
+				"FROM ACT_ACTIVO ACT "+ 
+				"INNER JOIN DD_TS_TIPO_SEGMENTO TIPO on TIPO.dd_ts_id = act.dd_ts_id and TIPO.dd_ts_codigo = 03 "+
+				"WHERE ACT.DD_TCO_ID = " + destinoComercial +
+				" AND act.act_num_activo = " + numActivo +
+				" and act.ACT_PERIMETRO_MACC = 1" +
+				" AND act.borrado = 0");
+		return "1".equals(resultado);
+	}
+	
 }

@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Cristian Montoya
---## FECHA_CREACION=20200305
+--## AUTOR=RAMON LLINARES
+--## FECHA_CREACION=20200306
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.0
 --## INCIDENCIA_LINK=0
@@ -11,7 +11,6 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
---##        0.2 Controlado que si la tarea/trámite está asociado a un activo, que no esté borrado.
 --##########################################
 --*/
 
@@ -375,8 +374,7 @@ execute immediate
 '--  LEFT JOIN '||V_ESQUEMA_M||'.USU_USUARIOS USU ON USU.USU_ID = TAC.USU_ID '||Chr(13)||Chr(10)||
 '--  LEFT JOIN '||V_ESQUEMA||'.VTAR_TAR_VRE_VIA_PRC VRE_PRC ON TAR.TAR_ID = VRE_PRC.TAR_ID '||Chr(13)||Chr(10)||
 '  LEFT JOIN '||V_ESQUEMA||'.MEJ_IRG_INFO_REGISTRO IRG ON IRG.IRG_VALOR = TAR.TAR_ID AND IRG.IRG_CLAVE = ''ID_NOTIF'' '||Chr(13)||Chr(10)||
-'  LEFT JOIN '||V_ESQUEMA||'.MEJ_IRG_INFO_REGISTRO IRG2 ON IRG2.REG_ID = IRG.REG_ID AND IRG2.IRG_CLAVE = ''NUM_AGR'' '||Chr(13)||Chr(10)||
-'	WHERE ACT.ACT_ID IS NULL OR ACT.BORRADO = 0
+'  LEFT JOIN '||V_ESQUEMA||'.MEJ_IRG_INFO_REGISTRO IRG2 ON IRG2.REG_ID = IRG.REG_ID AND IRG2.IRG_CLAVE = ''NUM_AGR''
 ');
 
 --/* Recompilar nueva vista

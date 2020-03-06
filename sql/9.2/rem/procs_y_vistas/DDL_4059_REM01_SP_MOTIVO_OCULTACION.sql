@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=GUILLEM REY
---## FECHA_CREACION=20200114
+--## AUTOR=Vicente Martinez Cifre
+--## FECHA_CREACION=20200314
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-5469
+--## INCIDENCIA_LINK=HREOS-9509
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -17,6 +17,7 @@
 --##		0.5 HREOS-5562, Ocultación Automática, motivo "Revisión publicación", eliminar el join con la tabla TMP_PUBL_ACT
 --##		0.6 REMVIP-4301 - Cambios ocultación Revisión publicación
 --##		0.7 REMVIP-4622 - Ocultación alquilado
+--##		0.8 HREOS-9509 - Ocultacion Adecuacion DD_ADA 05
 --##########################################
 --*/
 
@@ -89,6 +90,11 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
 								                             FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA
 								                            WHERE DDADA.BORRADO = 0
 								                              AND DDADA.DD_ADA_CODIGO = ''04''
+								                           )
+								          OR PTA.DD_ADA_ID = (SELECT DDADA.DD_ADA_ID
+								                             FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA
+								                            WHERE DDADA.BORRADO = 0
+								                              AND DDADA.DD_ADA_CODIGO = ''05''
 								                           )
 								          OR PTA.DD_ADA_ID IS NULL)
 								          AND (PTA.DD_ADA_ID_ANTERIOR = (SELECT DDADA.DD_ADA_ID
@@ -256,6 +262,11 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                                                                FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA 
                                                                               WHERE DDADA.BORRADO = 0
                                                                                 AND DDADA.DD_ADA_CODIGO = ''02''
+                                                                             )
+                                                          OR PTA.DD_ADA_ID = (SELECT DDADA.DD_ADA_ID
+                                                                               FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA 
+                                                                              WHERE DDADA.BORRADO = 0
+                                                                                AND DDADA.DD_ADA_CODIGO = ''05''
                                                                              )
                                                           OR PTA.DD_ADA_ID IS NULL)
                                                         AND PTA.BORRADO = 0

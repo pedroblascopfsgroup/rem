@@ -55,6 +55,8 @@ public class MSVActualizadorAdecuacionCargaMasiva extends AbstractMSVActualizado
 			Activo activo = activoDao.getActivoByNumActivo(Long.parseLong(exc.dameCelda(fila, COL_NUM_ACTIVO)));
 
 			ActivoPatrimonio activoPatrimonio = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());
+			
+			activoPatrimonio.setAdecuacionAlquilerAnterior(activoPatrimonio.getAdecuacionAlquiler());
 
 			if ((valorAdecuacion.equalsIgnoreCase("S")) || (valorAdecuacion.equalsIgnoreCase("SI"))) {
 				activoPatrimonio.setAdecuacionAlquiler((DDAdecuacionAlquiler) utilDiccionarioApi

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20200304
+--## FECHA_CREACION=20200306
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-6440
@@ -46,7 +46,7 @@ DECLARE
 		T_TIPO_DATA('LIBERBANK','','',			'0','1','1','1','1','0'),
 		T_TIPO_DATA('CERBERUS','DIVARIAN','',		'1','0','1','1','0','1'),
 		T_TIPO_DATA('CERBERUS','APPLE','',		'0','0','1','1','0','0'),
-		T_TIPO_DATA('OTRAS CARTERAS','','',		'0','0','1','1','0','0')
+		T_TIPO_DATA('OTRA CARTERA','','',		'0','0','1','1','0','0')
 
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

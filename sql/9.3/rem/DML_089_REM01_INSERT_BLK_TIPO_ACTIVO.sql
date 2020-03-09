@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Mª José Ponce
---## FECHA_CREACION=20200115
+--## FECHA_CREACION=20200305
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-9210
@@ -39,14 +39,14 @@ DECLARE
         T_TIPO_DATA(  '07'          ,'24'           ,'02'            ,'PARKING & STORE ROOMS'),
         T_TIPO_DATA(  '07'          ,'25'           ,'03'            ,'PARKING & STORE ROOMS'),
         T_TIPO_DATA(  '03'          ,'13'           ,'04'            ,'PREMISES'),
-        T_TIPO_DATA(  '03'          ,'14'           ,'05'            ,'COMMERCIAL'), --OFICINA/S PUEDE SER DEL DD_TAP/DD_SAC 03/14 Y 05/21
+        T_TIPO_DATA(  '03'          ,'14'           ,'05'            ,'COMMERCIAL'), 
         T_TIPO_DATA(  '01'          ,''             ,'06'            ,'LAND'),
         T_TIPO_DATA(  '01'          ,'01'           ,'07'            ,'LAND'),
         T_TIPO_DATA(  '04'          ,''             ,'08'            ,'COMMERCIAL'),
         T_TIPO_DATA(  '03'          ,'15'           ,'09'            ,'COMMERCIAL'),
         T_TIPO_DATA(  '03'          ,'16'           ,'10'            ,'COMMERCIAL'),
-        T_TIPO_DATA(  '05'          ,'22'           ,'11'            ,'COMMERCIAL'), --CENTRO COMERCIAL LO METO EN 05/22 EDIFICIO COMPLETO/COMERCIAL ¿ES CORRECTO?
-        T_TIPO_DATA(  '07'          ,'26'           ,'12'            ,'WIP'), --WIP/OBRA PARADA LO METO EN 07/26 OTROS/OTROS ¿ES CORRECTO?
+        T_TIPO_DATA(  '05'          ,'22'           ,'11'            ,'COMMERCIAL'), 
+        T_TIPO_DATA(  '06'          ,'23'           ,'12'            ,'WIP'), 
         T_TIPO_DATA(  '07'          ,''             ,'13'            ,'COMMERCIAL')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
@@ -70,14 +70,14 @@ BEGIN
           -- Si existe se modifica.
           DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAR EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(3)) ||'''');
           V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' 
-          SET TIPO_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||'''
-          , DD_TPA_ID = (SELECT DD_TPA_ID FROM '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO WHERE DD_TPA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''');
-          , DD_SAC_ID = (SELECT DD_SAC_ID FROM '||V_ESQUEMA||'.DD_SAC_SUBTIPO_ACTIVO WHERE DD_SAC_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||''');
+          SET DD_TPA_ID = (SELECT DD_TPA_ID FROM '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO WHERE DD_TPA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''')          
+          , DD_SAC_ID = (SELECT DD_SAC_ID FROM '||V_ESQUEMA||'.DD_SAC_SUBTIPO_ACTIVO WHERE DD_SAC_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||''')
           , BLK_TIPO_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||''' 
           , BLK_TIPO_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(4))||'''                     
           , USUARIOMODIFICAR = '''|| V_USUARIO ||''' 
           , FECHAMODIFICAR = SYSDATE 
-          WHERE BLK_TIPO_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||'''';
+          WHERE BLK_TIPO_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||'''
+          ';
          
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');

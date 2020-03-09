@@ -460,7 +460,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			}
 		}
 		
-		if(DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
+		if(oferta.getClaseOferta() != null && DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
 			ofertasAgrupadasLbkDao.suprimeOfertaDependiente(oferta.getId());
 		}
 

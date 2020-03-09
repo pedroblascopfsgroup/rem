@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Ramon Llinares
---## FECHA_CREACION=20200108
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20200304
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-8226
+--## INCIDENCIA_LINK=HREOS-9673
 --## PRODUCTO=NO
 --##
 --## Finalidad: insert into DD_TPR_TIPO_PROVEEDOR
@@ -42,7 +42,9 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('39'	,'DUE Diligence'		,'DUE Diligence'		,'03'),
+	-- El código 39 lo pongo porque se machacó anteriormente con este DML
+	T_TIPO_DATA('39'	,'Oficina BBVA'			,'Oficina BBVA'		,'03'),
+    	T_TIPO_DATA('42'	,'DUE Diligence'		,'DUE Diligence'		,'03'),
     	T_TIPO_DATA('40'	,'Proveedores DND'		,'Proveedores DND'		,'03'),
     	T_TIPO_DATA('41'	,'Project Manager'		,'Project Manager'		,'03')
     ); 
@@ -66,9 +68,9 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
            -- Si existe se modifica.
           DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAR EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
        	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
-                    'SET DD_'||V_TEXT_CHARS||'_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
+                    'SET DD_'||V_TEXT_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''', DD_'||V_TEXT_CHARS||'_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
 					', DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
-					', USUARIOMODIFICAR = ''HREOS-7756'' , FECHAMODIFICAR = SYSDATE '||
+					', USUARIOMODIFICAR = ''HREOS-9673'' , FECHAMODIFICAR = SYSDATE '||
 					'WHERE DD_'||V_TEXT_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
@@ -81,7 +83,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
           V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (' ||
                       'DD_'||V_TEXT_CHARS||'_ID, DD_'||V_TEXT_CHARS||'_CODIGO, DD_'||V_TEXT_CHARS||'_DESCRIPCION, DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA, DD_TEP_ID, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
                       'SELECT '|| V_ID || ',  '''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''','||
-                      '(SELECT DD_TEP_ID FROM '||V_ESQUEMA||'.DD_TEP_TIPO_ENTIDAD_PROVEEDOR WHERE DD_TEP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||'''), 0, ''HREOS-8226'',SYSDATE,0 '||
+                      '(SELECT DD_TEP_ID FROM '||V_ESQUEMA||'.DD_TEP_TIPO_ENTIDAD_PROVEEDOR WHERE DD_TEP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||'''), 0, ''HREOS-9673'',SYSDATE,0 '||
 					  ' FROM DUAL';
           DBMS_OUTPUT.PUT_LINE(V_MSQL);
           EXECUTE IMMEDIATE V_MSQL;

@@ -1304,8 +1304,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				ExpedienteComercial expedienteComercial = tramitacionOfertasManager.crearExpediente(oferta, trabajo, null, oferta.getActivoPrincipal());
 				ActivoTramite activoTramite = tramitacionOfertasManager.doTramitacion(oferta.getActivoPrincipal(), oferta, trabajo.getId(), expedienteComercial);
 
-				adapter.saltoInstruccionesReserva(activoTramite.getProcessBPM());
-
 				// Se copiará el valor del campo necesita financiación al campo
 				// asociado del expediente comercial
 				CondicionanteExpediente coe = expedienteComercial.getCondicionante();
@@ -1318,6 +1316,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				expedienteComercial.setFechaSancion(new Date());
 
 				genericDao.update(ExpedienteComercial.class, expedienteComercial);
+				
+				adapter.saltoInstruccionesReserva(activoTramite.getProcessBPM());
 
 			}else{
 				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));

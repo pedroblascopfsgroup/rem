@@ -17,10 +17,16 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.prorroga.model.Prorroga;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterServiceFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler {
@@ -35,6 +41,9 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 
     @Autowired
     private UpdaterStateApi updaterState;
+    
+    @Autowired
+    private ExpedienteComercialApi expedienteComercialApi;
     
 	@Override
 	protected void process(Object delegateTransitionClass, Object delegateSpecificClass, ExecutionContext executionContext) {
@@ -193,6 +202,12 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 		TareaExterna tareaExterna = getTareaExterna(executionContext);
 		ActivoTramite tramite = getActivoTramite(executionContext); 
 		TareaProcedimiento tareaProcedimiento = tareaExterna.getTareaProcedimiento();
+		TareaActivo tareaActivo = (TareaActivo)tareaExterna.getTareaPadre();
+		Activo activo = tareaActivo.getActivo();
+		Trabajo trabajo = tareaActivo.getTramite().getTrabajo();
+		ExpedienteComercial expediente = expedienteComercialApi.findOneByTrabajo(trabajo);
+		Oferta oferta = expediente.getOferta();
+		
 
 		TareaActivo tareaActivo = (TareaActivo)tareaExterna.getTareaPadre();
 		Activo activo = tareaActivo.getActivo();
@@ -207,7 +222,9 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 				
 		UpdaterService dataUpdater = updaterServiceFactory.getService(tareaProcedimiento.getCodigo());
 		
-		if(!Checks.estaVacio(valores)){
+		if(!Checks.estaVacio(valores) || 
+				(activo != null && DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())
+				&& oferta != null && oferta.getOfertaExpress())){
 			dataUpdater.saveValues(tramite, valores);
 		
 			enviaNotificacionFinTareaConValores(tareaExterna.getId(),valores);

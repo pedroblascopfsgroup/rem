@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20200306
+--## FECHA_CREACION=20200308
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-6440

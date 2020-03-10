@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20200306
+--## FECHA_CREACION=20200308
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-6440
@@ -39,14 +39,14 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-		T_TIPO_DATA('BANKIA','','Notarial (dación)',	'0','0','1','1','0','0'),
-		T_TIPO_DATA('BANKIA','','',			'1','1','1','1','0','0'),
-		T_TIPO_DATA('SAREB','','',			'0','0','1','1','0','0'),
-		T_TIPO_DATA('CAJAMAR','','',			'0','0','1','1','0','0'),
-		T_TIPO_DATA('LIBERBANK','','',			'0','1','1','1','1','0'),
-		T_TIPO_DATA('CERBERUS','DIVARIAN','',		'1','0','1','1','0','1'),
-		T_TIPO_DATA('CERBERUS','APPLE','',		'0','0','1','1','0','0'),
-		T_TIPO_DATA('OTRA CARTERA','','',		'0','0','1','1','0','0')
+		T_TIPO_DATA('BANKIA','','Notarial (dación)',	 '0','0','1','1','0','0'),
+		T_TIPO_DATA('BANKIA','','',			 '1','1','1','1','0','0'),
+		T_TIPO_DATA('SAREB','','',			 '0','0','1','1','0','0'),
+		T_TIPO_DATA('CAJAMAR','','',			 '0','0','1','1','0','0'),
+		T_TIPO_DATA('LIBERBANK','','',			 '0','1','1','1','1','0'),
+		T_TIPO_DATA('CERBERUS','DIVARIAN','',		 '1','0','1','1','0','1'),
+		T_TIPO_DATA('CERBERUS','APPLE - INMOBILIARIO','','0','0','1','1','0','0'),
+		T_TIPO_DATA('OTRA CARTERA','','',		 '0','0','1','1','0','0')
 
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

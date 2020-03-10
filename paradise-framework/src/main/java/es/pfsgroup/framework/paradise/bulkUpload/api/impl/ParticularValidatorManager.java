@@ -3482,35 +3482,15 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	@Override
-	public Boolean existeActivoPlusvalia(String numActivo, String fechaPlusvalia) {
+	public Boolean existeActivoPlusvalia(String numActivo) {
 		if(Checks.esNulo(numActivo)) {
 			return false;
 		}
-
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_PLS_PLUSVALIA pls " +
 				"JOIN ACT_ACTIVO act ON pls.act_id = act.act_id " +
 				"WHERE pls.borrado = 0 " +
-				"AND act.ACT_NUM_ACTIVO = '"+numActivo+"' " +
-				"AND TRUNC(pls.ACT_PLS_FECHA_PRESENTACION_PLUSVALIA) = TRUNC(TO_DATE('"+fechaPlusvalia+"','dd/MM/yy'))");
-
+				"AND act.ACT_NUM_ACTIVO = '" + numActivo + "'");
 		return !"0".equals(resultado);
-
-	}
-
-	@Override
-	public String getActivoPlusvalia(String numActivo, String fechaPlusvalia) {
-		if(Checks.esNulo(numActivo)) {
-			return "";
-		}
-
-		String resultado = rawDao.getExecuteSQL("SELECT ACT_PLS_ID FROM ACT_PLS_PLUSVALIA pls " +
-				"JOIN ACT_ACTIVO act ON pls.act_id = act.act_id " +
-				"WHERE pls.borrado = 0 " +
-				"AND act.ACT_NUM_ACTIVO = '"+numActivo+"' " +
-				"AND TRUNC(pls.ACT_PLS_FECHA_PRESENTACION_PLUSVALIA) = TRUNC(TO_DATE('"+fechaPlusvalia+"','dd/MM/yy'))");
-
-		return resultado;
-
 	}
 
 	@Override

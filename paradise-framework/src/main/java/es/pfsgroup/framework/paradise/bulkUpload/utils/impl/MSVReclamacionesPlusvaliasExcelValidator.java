@@ -1,7 +1,6 @@
 package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessCompositeValidators;
@@ -81,9 +79,6 @@ public class MSVReclamacionesPlusvaliasExcelValidator extends MSVExcelValidatorA
 	
 	@Autowired
 	private ParticularValidatorApi particularValidator;
-	
-	@Autowired
-	private ExcelRepoApi excelRepoApi;
 	
 	@Resource
     MessageService messageServices;
@@ -340,20 +335,12 @@ public class MSVReclamacionesPlusvaliasExcelValidator extends MSVExcelValidatorA
 		listaFilasAccionNoValido = new ArrayList<Integer>();
 		listaFilasAccionActivoPlusvaliaExiste = new ArrayList<Integer>();
 		listaFilasAccionActivoPlusvaliaNoExiste = new ArrayList<Integer>();
-		
-		String valorAccion ="";
-		String valorFechaPlusvalia= "";
-		String valorActivo = "";
-
+				 
 		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
-
-			try {
-				
-				valorActivo = exc.dameCelda(i, POSICION_COLUMNA_NUM_ACTIVO_HAYA);
-				valorAccion = exc.dameCelda(i, POSICION_COLUMNA_ACCION);
-				valorFechaPlusvalia = exc.dameCelda(i, POSICION_COLUMNA_FECHA_PLUSVALIA);
-
-				Boolean existeActivoPlusvalia = particularValidator.existeActivoPlusvalia(valorActivo,valorFechaPlusvalia);
+			try {				
+				String valorActivo = exc.dameCelda(i, POSICION_COLUMNA_NUM_ACTIVO_HAYA);
+				String valorAccion = exc.dameCelda(i, POSICION_COLUMNA_ACCION);				
+				Boolean existeActivoPlusvalia = particularValidator.existeActivoPlusvalia(valorActivo);
 
 				if (!particularValidator.esAccionValido(valorAccion)) {
 					listaFilasAccionNoValido.add(i);

@@ -82,7 +82,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
     V_OBTIENE_RESERVA               VARCHAR2(2000 CHAR)  := 'SELECT
                                                             CASE
 							    WHEN DD_CRA_CODIGO = ''01'' THEN	
-                                                            	CASE WHEN EEC.DD_EEC_CODIGO NOT IN (''02'',''08'',''06'',''16'') AND ERE.DD_ERE_CODIGO IN (''01'')
+                                                            	CASE WHEN EEC.DD_EEC_CODIGO NOT IN (''02'',''08'',''16'') AND ERE.DD_ERE_CODIGO IN (''01'')
                                                             		THEN 0
                                                             		ELSE 1
 								END

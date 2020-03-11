@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=José Antonio Gigante Pamplona
---## FECHA_CREACION=20200309
+--## FECHA_CREACION=20200311
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-6566
@@ -42,9 +42,9 @@ DECLARE
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA
     (		
 	--LBK
-       T_TIPO_DATA('GADMT', '8', '', '', '17', '', '', 'pinos02', '', '')
-       ,T_TIPO_DATA('GADMT', '8', '', '', '25', '', '', 'pinos02', '', '')
-       ,T_TIPO_DATA('GADMT', '8', '', '', '52', '', '', 'pinos02', '', '')       
+       T_TIPO_DATA('GIAADMT', '8', '', '', '17', '', '', 'pinos02', '', '')
+       ,T_TIPO_DATA('GIAADMT', '8', '', '', '25', '', '', 'pinos02', '', '')
+       ,T_TIPO_DATA('GIAADMT', '8', '', '', '52', '', '', 'pinos02', '', '')       
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +24,6 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.OfertaGencat;
-import es.pfsgroup.plugin.rem.model.Reserva;
-import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
@@ -47,9 +39,6 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 
 	@Autowired
 	private ActivoTramiteApi activoTramiteApi;
-
-	private static final Integer NUMERO_DIAS_VENCIMIENTO = 45;
-	private static final Integer NUMERO_DIAS_VENCIMIENTO_SAREB = 40;
 
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
@@ -79,6 +68,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+		Integer diasVencimiento = expediente.getCondicionante().getPlazoFirmaReserva();
 		Filter filtro = null;
 		Activo activo = null;
 		
@@ -145,14 +135,12 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 				expediente.getReserva().setEstadoReserva(estadoReserva);
 
 				// Si ningun activo esta sujeto a tanteo, se informa el campo "Fecha vencimiento
-				// reserva" con Fecha firma + 40 dias
+				// reserva" con Fecha firma + plazo para firmar
 				if (!Checks.esNulo(expediente.getReserva().getFechaFirma()) && !ofertaApi.checkDerechoTanteo(tramite.getTrabajo())) {
 					Calendar calendar = Calendar.getInstance();
 					calendar.setTime(expediente.getReserva().getFechaFirma());
-					if (!Checks.esNulo(activo) && DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
-						calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO_SAREB);
-					} else {
-						calendar.add(Calendar.DAY_OF_YEAR, UpdaterServiceSancionOfertaObtencionContrato.NUMERO_DIAS_VENCIMIENTO);
+					if(!Checks.esNulo(diasVencimiento)){
+						calendar.add(Calendar.DAY_OF_YEAR, diasVencimiento);
 					}
 					expediente.getReserva().setFechaVencimiento(calendar.getTime());
 				}

@@ -570,7 +570,7 @@ BEGIN
                     END IF;
 
                     IF COD_RETORNO = 0 THEN
-                    	IF V_ACTIVO_CAJAMAR > 0 THEN
+                    	IF V_ACTIVO_CAJAMAR = 0 THEN
 	                        --PASO 3/4 Actualizar el campo RES_RESERVA.DD_ERE_ID al valor "Firmado"
 	                        V_MSQL := '
 	                        SELECT DD_ERE_ID FROM '||V_ESQUEMA||'.DD_ERE_ESTADOS_RESERVA WHERE DD_ERE_CODIGO = ''02'''; /*FIRMADA*/

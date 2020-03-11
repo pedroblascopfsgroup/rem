@@ -2672,19 +2672,25 @@ public class AgrupacionAdapter {
 		int res = 0;
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
 		
-		if(agrupacion != null && dto.getFechaFinVigencia() != null || dto.getFechaInicioVigencia() != null){
-			if(dto.getFechaFinVigencia().compareTo(dto.getFechaInicioVigencia())<0){
-				res = 2;
-			}else{
-				if(agrupacion.getFechaFinVigencia() != null && dto.getFechaInicioVigencia().compareTo(agrupacion.getFechaFinVigencia())<0){
-					res = 3;
-				}else if(activoAgrupacionApi.estaActivoEnOtraAgrupacionVigente(agrupacion,null)){
-					res = 4;
+		//Se saca fuera del if de abajo debido a sonar.
+		if(agrupacion != null) {
+			if(dto.getFechaFinVigencia() != null || dto.getFechaInicioVigencia() != null){
+				if(dto.getFechaFinVigencia().compareTo(dto.getFechaInicioVigencia())<0){
+					res = 2;
+				}else{
+					if(agrupacion.getFechaFinVigencia() != null && dto.getFechaInicioVigencia().compareTo(agrupacion.getFechaFinVigencia())<0){
+						res = 3;
+					}else if(activoAgrupacionApi.estaActivoEnOtraAgrupacionVigente(agrupacion,null)){
+						res = 4;
+					}
 				}
+			}else{
+				res = 1;
 			}
-		}else{
+		}else {
 			res = 1;
 		}
+		
 		
 		return res;
 	}

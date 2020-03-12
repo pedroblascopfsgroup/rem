@@ -1243,11 +1243,11 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				ActivoInfoComercial.class, "activo.numActivo");
 
 		if (infoAux != null
-				&& (infoAux.getId() != null && infoAux.getTipoActivo() != null && informe.getCodTipoActivo() != null
+				&& ((infoAux.getId() != null && infoAux.getTipoActivo() != null && informe.getCodTipoActivo() != null
 						&& !infoAux.getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()))
 				|| (infoAux.getId() != null && infoAux.getTipoActivo() == null
 						&& !infoAux.getActivo().getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()))
-				|| ((ActivoInfoComercial) objeto).getId() == null) {
+				|| ((ActivoInfoComercial) objeto).getId() == null)) {
 			if (infoAux.getMediadorInforme() != null) {
 				idProveedor = infoAux.getMediadorInforme().getId();
 			}else {

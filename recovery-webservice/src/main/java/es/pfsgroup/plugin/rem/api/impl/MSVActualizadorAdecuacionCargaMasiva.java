@@ -71,6 +71,9 @@ public class MSVActualizadorAdecuacionCargaMasiva extends AbstractMSVActualizado
 			} else if(valorAdecuacion.equalsIgnoreCase("EP")){
 				activoPatrimonio.setAdecuacionAlquiler((DDAdecuacionAlquiler) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDAdecuacionAlquiler.class, DDAdecuacionAlquiler.CODIGO_ADA_EN_PROCESO));
+			} else if(valorAdecuacion.equalsIgnoreCase("AI")){
+				activoPatrimonio.setAdecuacionAlquiler((DDAdecuacionAlquiler) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDAdecuacionAlquiler.class, DDAdecuacionAlquiler.CODIGO_ADA_ADECUADO_INCIDENTADO));
 			} else {
 				activoPatrimonio.setAdecuacionAlquiler((DDAdecuacionAlquiler) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDAdecuacionAlquiler.class, DDAdecuacionAlquiler.CODIGO_ADA_NULO));

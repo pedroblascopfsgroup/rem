@@ -120,6 +120,7 @@ public class MSVValidadorCargaMasivaAdecuacion extends MSVExcelValidatorAbstract
 							|| (exc.dameCelda(i, COL_NUM_ADECUACION).equalsIgnoreCase("NO"))
 							|| (exc.dameCelda(i, COL_NUM_ADECUACION).equalsIgnoreCase("NA"))
 							|| (exc.dameCelda(i, COL_NUM_ADECUACION).equalsIgnoreCase("EP"))
+							|| (exc.dameCelda(i, COL_NUM_ADECUACION).equalsIgnoreCase("AI"))
 							|| (exc.dameCelda(i, COL_NUM_ADECUACION).isEmpty())){}		
 					else {
 						listaFilas.add(i);

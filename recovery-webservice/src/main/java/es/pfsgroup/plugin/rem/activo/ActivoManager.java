@@ -1169,8 +1169,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 		ActivoSituacionPosesoria condicionantesDisponibilidad = genericDao.get(ActivoSituacionPosesoria.class, filtro);
 
-		condicionantesDisponibilidad.setOtro(dtoCondicionanteDisponibilidad.getOtro());
-		condicionantesDisponibilidad.setComboOtro(dtoCondicionanteDisponibilidad.getComboOtro());
+		if(dtoCondicionanteDisponibilidad.getOtro() != null) {
+			condicionantesDisponibilidad.setOtro(dtoCondicionanteDisponibilidad.getOtro());
+		}
+		
+		if(dtoCondicionanteDisponibilidad.getComboOtro() != null) {
+			condicionantesDisponibilidad.setComboOtro(dtoCondicionanteDisponibilidad.getComboOtro());
+		}
 		
 		genericDao.save(ActivoSituacionPosesoria.class, condicionantesDisponibilidad);
 

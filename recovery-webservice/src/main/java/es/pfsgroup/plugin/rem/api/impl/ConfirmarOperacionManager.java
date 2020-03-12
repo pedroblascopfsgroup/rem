@@ -600,7 +600,7 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 
 		// Estas validaciones ya se realizan en el metodo validador del ws
 		Activo activo = activoApi.getByNumActivoUvem(confirmacionOpDto.getActivo());
-		if (Checks.esNulo(activo)) {
+		if (activo == null) {
 			throw new Exception("No existe el activo");
 		}
 
@@ -622,25 +622,25 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 				}
 			}
 		}
-		if (Checks.esNulo(oferta)) {
+		if (oferta == null) {
 			throw new Exception("El activo no tiene ofertas rechazadas.");
 		}
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
-		if (Checks.esNulo(expedienteComercial)) {
+		if (expedienteComercial == null) {
 			throw new Exception("No existe expediente comercial para esta activo.");
 		}
 		Reserva reserva = expedienteComercial.getReserva();
-		if (Checks.esNulo(reserva)) {
+		if (reserva == null) {
 			throw new Exception("El activo no tiene reserva");
 		}
 
 		// Borra de entregas a cuentas la devolución.
 		CondicionanteExpediente condExp = expedienteComercial.getCondicionante();
-		if (!Checks.esNulo(condExp)) {
+		if (condExp != null) {
 			importeReserva = condExp.getImporteReserva();
 		}
 
-		if (!Checks.esNulo(importeReserva)) {
+		if (importeReserva != null) {
 			importeDevuelto = importeReserva * Double.valueOf(-1);
 			listaEntregas = reserva.getEntregas();
 			if (!Checks.esNulo(listaEntregas) && listaEntregas.size() > 0) {
@@ -656,7 +656,7 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 		// Actualiza estado reserva a CODIGO_PENDIENTE_DEVOLUCION,
 		DDEstadosReserva estReserva = reservaApi
 				.getDDEstadosReservaByCodigo(DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION);
-		if (Checks.esNulo(estReserva)) {
+		if (estReserva == null) {
 			throw new Exception("Error al actualizar el estado de la reserva.");
 		}
 		reserva.setEstadoReserva(estReserva);
@@ -664,7 +664,7 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 
 		// Actualiza estado de la oferta CODIGO_ACEPTADA
 		DDEstadoOferta estOferta = ofertaApi.getDDEstadosOfertaByCodigo(DDEstadoOferta.CODIGO_ACEPTADA);
-		if (Checks.esNulo(estOferta)) {
+		if (estOferta == null) {
 			throw new Exception("Error al actualizar el estado de la oferta.");
 		}
 		oferta.setEstadoOferta(estOferta);
@@ -673,7 +673,7 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 		// Actualiza estado del expediente comercial EN_DEVOLUCION
 		DDEstadosExpedienteComercial estadoExpCom = expedienteComercialApi
 				.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.EN_DEVOLUCION);
-		if (Checks.esNulo(estadoExpCom)) {
+		if (estadoExpCom == null) {
 			throw new Exception("Error al actualizar el estado del expediente comercial.");
 		}
 		expedienteComercial.setEstado(estadoExpCom);

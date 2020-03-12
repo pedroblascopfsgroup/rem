@@ -1314,10 +1314,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.APROBADO);
 				expedienteComercial.setEstado(estadoExpCom);
 				expedienteComercial.setFechaSancion(new Date());
-
-				genericDao.update(ExpedienteComercial.class, expedienteComercial);
 				
 				adapter.saltoInstruccionesReserva(activoTramite.getProcessBPM());
+
+				genericDao.update(ExpedienteComercial.class, expedienteComercial);
 
 			}else{
 				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));
@@ -1668,8 +1668,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				ActivoTramite tramite = tramites.get(0);
 
 				Set<TareaActivo> tareasTramite = tramite.getTareas();
-				for (TareaActivo tarea : tareasTramite) {
-					tarea.getAuditoria().setBorrado(true);
+				if(tareasTramite != null && !tareasTramite.isEmpty()) {
+					for (TareaActivo tarea : tareasTramite) {
+						tarea.getAuditoria().setBorrado(true);
+					}
 				}
 			}
 
@@ -3401,7 +3403,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				ActivoOferta activoOferta = actofr.get(i);
 				Oferta ofr = activoOferta.getPrimaryKey().getOferta();
 
-				if (!Checks.esNulo(ofr)) {
+				if (!Checks.esNulo(ofr) && !ofertaExpress.equals(ofr)) {
 					ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(ofr);
 
 					if (!Checks.esNulo(exp)) {

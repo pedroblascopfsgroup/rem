@@ -323,16 +323,22 @@ public class MaestroDePersonas implements Runnable {
 				}
 				
 			// LLAMADA MAESTRO PERSONAS PROVEEDOR
-			} else if (!Checks.esNulo(numDocProveedor) && !Checks.esNulo(codProveedorRem)) {
+			} else if (!Checks.esNulo(codProveedorRem)) {
 				String idPersonaHaya = null;
+				String idPersonaOrigen = null;
 				ActivoProveedor proveedor = llamadaProveedor(sessionObj);
 				if (!Checks.esNulo(proveedor)) {
 					idPersonaHaya = proveedor.getIdPersonaHaya();
 				}
 
-				if (Checks.esNulo(proveedor) || Checks.esNulo(idPersonaHaya) || idPersonaHayaNoExiste.equals(idPersonaHaya)) {
+				if (Checks.esNulo(idPersonaHaya) || idPersonaHayaNoExiste.equals(idPersonaHaya)) {
+					if(!Checks.esNulo(numDocProveedor)) {
+						idPersonaOrigen = numDocProveedor;
+					} else {
+						idPersonaOrigen = String.valueOf(codProveedorRem);
+					}
 					personaDto.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_PERSONA_ORIGEN);
-					personaDto.setIdPersonaOrigen(numDocProveedor);
+					personaDto.setIdPersonaOrigen(idPersonaOrigen);
 					personaDto.setIdIntervinienteHaya(PersonaInputDto.ID_INTERVINIENTE_HAYA);
 					personaDto.setIdCliente(ID_CLIENTE_HAYA);
 					logger.error("[MAESTRO DE PERSONAS] LLAMAMOS A EJECUTAR PERSONA");
@@ -356,7 +362,7 @@ public class MaestroDePersonas implements Runnable {
 						logger.info("[MAESTRO DE PERSONAS] GENERANDO ID PERSONA");
 						personaDto.setEvent(PersonaInputDto.EVENTO_ALTA_PERSONA);
 						personaDto.setIdCliente(ID_CLIENTE_HAYA);
-						personaDto.setIdPersonaOrigen(numDocProveedor);
+						personaDto.setIdPersonaOrigen(idPersonaOrigen);
 						personaDto.setIdMotivoOperacion(MOTIVO_OPERACION_ALTA);
 						personaDto.setIdOrigen(ID_ORIGEN_REM);
 						personaDto.setFechaOperacion(today);
@@ -434,7 +440,9 @@ public class MaestroDePersonas implements Runnable {
 	
 	private ActivoProveedor llamadaProveedor(Session sessionObj) {
 		Criteria criteria = sessionObj.createCriteria(ActivoProveedor.class);
-		criteria.add(Restrictions.eq("docIdentificativo", numDocProveedor));
+		if(!Checks.esNulo(numDocProveedor)) {
+			criteria.add(Restrictions.eq("docIdentificativo", numDocProveedor));
+		}
 		criteria.add(Restrictions.eq("codigoProveedorRem", codProveedorRem));
 		return  HibernateUtils.castObject(ActivoProveedor.class, criteria.uniqueResult());
 	}

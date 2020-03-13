@@ -2716,6 +2716,10 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         	me.down('[name=fechaIngreso]').allowBlank = false;	
 		} else if(Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera && (CONST.CARTERA['CERBERUS'] == codigoCartera && CONST.SUBCARTERA['AGORAINMOBILIARIO'] != codigoSubcartera)) {
 			me.habilitarCampo(me.down('[name=checkboxVentaDirecta]'));
+		}else if(CONST.CARTERA['CERBERUS'] == codigoCartera && CONST.SUBCARTERA['AGORAINMOBILIARIO'] != codigoSubcartera){
+			me.habilitarCampo(me.down('[name=fechaIngreso]'));
+	        me.down('[name=fechaIngreso]').allowBlank = false;
+	        me.down('[name=fechaIngreso]').validate();
 		}
 
 		me.down('[name=checkboxVentaDirecta]').addListener('change', function(checkbox, newValue, oldValue, eOpts) {
@@ -2725,8 +2729,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	            	me.down('[name=fechaIngreso]').allowBlank = false;
 	            	me.down('[name=fechaIngreso]').validate();
 	            } else {
-	            	me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
-	            	me.campoNoObligatorio(me.down('[name=fechaIngreso]'));
 	            	me.down('[name=fechaIngreso]').reset();
 	            }
 			}

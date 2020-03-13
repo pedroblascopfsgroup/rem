@@ -6,28 +6,30 @@
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-5732
 --## PRODUCTO=NO
---## Finalidad: SP que genera el informe de agencias externas.
+--## Finalidad: DML para borrar lógicamente las tareas asociadas a activos borrados lógicamente.
 --## INSTRUCCIONES: 
 --## VERSIONES: 1.0 version inicial
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
-SET SERVEROUTPUT ON;
-create or replace PROCEDURE SP_TAR_ACT_BORRADOS (RESULT_EXE OUT varchar2) AUTHID CURRENT_USER AS
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
 
-  V_SQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar
-  V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
-  V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
-  V_USUARIOBORRAR VARCHAR(100 CHAR):= 'SP_TAR_ACT_BORRADOS';
-  err_num NUMBER;
-  err_msg VARCHAR2(255);
-  
+
+DECLARE
+	V_SQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar
+	V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+	V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+	V_USUARIOBORRAR VARCHAR(100 CHAR):= 'REMVIP-5732';
+	err_num NUMBER;
+	err_msg VARCHAR2(255);
+	  
 	V_TABLA_AUX VARCHAR2(30 CHAR):= 'AUX_TRAMITE_ACTIVOS_BORRADOS'; -- Tabla con los datos de entrada
 	
 	V_NUM_INFORME NUMBER(16); -- Vble. para seleccionar el siguiente número de informe.  
-  
-BEGIN
-
+	  
+BEGIN	
+	
 	DBMS_OUTPUT.put_line('[INICIO] COMIENZA EL PROCESO PARA BORRAR LOS TRÁMITES Y TAREAS RELACIONADOS A ACTIVOS BORRADOS');
 		
 	DBMS_OUTPUT.put_line('[INFO] TRUNCANDO de '||V_TABLA_AUX);
@@ -138,23 +140,25 @@ BEGIN
 				
 	DBMS_OUTPUT.put_line('[FIN] LIMPIEZA DE TAREAS Y TRÁMITES FINALIZADA');
 	
-	RESULT_EXE := '[FIN] LIMPIEZA DE TAREAS Y TRÁMITES FINALIZADA';
 
-COMMIT;
+	COMMIT;
+   
 
 EXCEPTION
-  WHEN OTHERS THEN
-    err_num := SQLCODE;
-    err_msg := SQLERRM;
-    DBMS_OUTPUT.put_line('Error:'||TO_CHAR(err_num));
-    DBMS_OUTPUT.put_line(err_msg);
+     WHEN OTHERS THEN
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
 
-    RESULT_EXE := RESULT_EXE ||'##Error: TOTAL'||TO_CHAR(err_num)||'['||err_msg||']';
-    
-        ROLLBACK;
-        RAISE;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
 
-END SP_TAR_ACT_BORRADOS;
+          ROLLBACK;
+          RAISE;          
+
+END;
+
 /
 
-EXIT;
+EXIT
+

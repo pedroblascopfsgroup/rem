@@ -35,7 +35,7 @@ DECLARE
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-	
+
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
@@ -43,7 +43,7 @@ DECLARE
 	V_TABLA_2 VARCHAR(50 CHAR):='ACT_ECO_INFORME_JURIDICO';
 
 	V_USUARIO VARCHAR(50):='REMVIP-6639';
-    V_NUM_OFERTA NUMBER(25):= 70165761;--90244445;
+    V_NUM_OFERTA NUMBER(25):= 90244445;
 	V_FECHA VARCHAR(10) := '28/02/2020';
     
 BEGIN	

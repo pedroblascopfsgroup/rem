@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Rubio
---## FECHA_CREACION=20200311
+--## FECHA_CREACION=20200312
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=R-Barberina
 --## INCIDENCIA_LINK=HREOS-9744
@@ -29,6 +29,7 @@
 --##		1.08 (20191128) - Viorel Remus Ovidiu - Se añadie filtro de activos Apple para quitar fecha_vencimiento a la hora de devolver la reserva (PASO 3/8, operativa 2)
 --##		1.11 (20200120) - Oscar Diestre - Quitada validación para Cajamar
 --##		1.12 (2020311) - HREOS-9744 - Incidencia Ventas y Reservas Cajamar
+--##		1.13 (2020312) - HREOS-9744 - Incidencia Ventas y Reservas Cajamar añadida condición estado reserva firmada
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -82,7 +83,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
     V_OBTIENE_RESERVA               VARCHAR2(2000 CHAR)  := 'SELECT
                                                             CASE
 							    WHEN DD_CRA_CODIGO = ''01'' THEN	
-                                                            	CASE WHEN EEC.DD_EEC_CODIGO NOT IN (''02'',''08'',''16'') AND ERE.DD_ERE_CODIGO IN (''01'')
+                                                            	CASE WHEN EEC.DD_EEC_CODIGO NOT IN (''02'',''08'',''16'') AND ERE.DD_ERE_CODIGO IN (''01'',''02'')
                                                             		THEN 0
                                                             		ELSE 1
 								END
@@ -258,7 +259,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
     ) IS
 
     BEGIN
-
+--v1.13
     V_MSQL := '
       INSERT INTO '||V_ESQUEMA||'.HLD_HISTORICO_LANZA_PER_DETA (
         HLD_SP_CARGA,

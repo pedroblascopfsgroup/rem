@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=José Antonio Gigante Pamplona
---## FECHA_CREACION=20200312
+--## FECHA_CREACION=20200313
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-6639
@@ -15,6 +15,8 @@
 --##	Cambiando V_NUM_OFERTA podemos modificar los activos de otra oferta,
 --##	insertando en ECO_COND_CONDICIONES los activos que no se encuentran en 
 --##	la tabla y que están vinculados a la oferta.
+--##	En la version 0.2 se actualizan las fechas del informe jurídico o se insertan nuevas en caso de no
+--##	existir en el conjunto de activos pertenecientes a la oferta.
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##		0.2 Se amplia para permitir la actualización del informe jurídico.
@@ -41,7 +43,7 @@ DECLARE
 	V_TABLA_2 VARCHAR(50 CHAR):='ACT_ECO_INFORME_JURIDICO';
 
 	V_USUARIO VARCHAR(50):='REMVIP-6639';
-    V_NUM_OFERTA NUMBER(25):= 90244445;
+    V_NUM_OFERTA NUMBER(25):= 70165761;--90244445;
 	V_FECHA VARCHAR(10) := '28/02/2020';
     
 BEGIN	
@@ -92,19 +94,32 @@ BEGIN
 		
 	   	EXECUTE IMMEDIATE V_MSQL;
 	   	DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS PROCESADOS');
+		V_MSQL := ' MERGE INTO '||V_ESQUEMA||'.'||V_TABLA_2||' T_INFORME 
+			USING
+			(	SELECT
+				ACT.ACT_ID,
+				COND.ECO_ID
+				FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
+				JOIN '||V_ESQUEMA||'.ECO_COND_CONDICIONES_ACTIVO COND ON COND.ACT_ID = ACT.ACT_ID
+				WHERE
+				COND.ECO_ID = (SELECT ECO_ID FROM REM01.ECO_EXPEDIENTE_COMERCIAL WHERE OFR_ID = (SELECT OFR_ID FROM REM01.OFR_OFERTAS WHERE OFR_NUM_OFERTA = '||V_NUM_OFERTA||'))
+			) T2
+			ON (T_INFORME.ACT_ID = T2.ACT_ID)
+			WHEN MATCHED THEN UPDATE
+			SET
+				T_INFORME.ACT_ECO_FECHA_EMISION = TO_DATE('''||V_FECHA||''', ''dd/mm/yyyy''),
+				T_INFORME.USUARIOMODIFICAR = '''||V_USUARIO||''', 
+				T_INFORME.FECHAMODIFICAR = SYSDATE,
+				T_INFORME.VERSION = T_INFORME.VERSION + 1
+			WHEN NOT MATCHED THEN 
+			INSERT 
+				( ACT_ECO_IJ_ID, ECO_ID, ACT_ID, ACT_ECO_FECHA_EMISION, VERSION, BORRADO, USUARIOCREAR, FECHACREAR )
+			VALUES	
+				(S_'||V_TABLA||'.NEXTVAL, T2.ECO_ID, T2.ACT_ID, TO_DATE('''||V_FECHA||''', ''dd/mm/yyyy''), 0, 0, '''||V_USUARIO||''', SYSDATE)
+		';
 
-		V_MSQL := ' UPDATE '||V_ESQUEMA||'.'||V_TABLA_2||' 
- 					SET ACT_ECO_FECHA_EMISION = TO_DATE('''||V_FECHA||''', ''dd/mm/yyyy''),
- 					USUARIOMODIFICAR = '''||V_USUARIO||''', FECHAMODIFICAR = SYSDATE
- 					WHERE ECO_ID IN (
-    				SELECT ECO.ECO_ID
-    					FROM '||V_ESQUEMA||'.ACT_ECO_INFORME_JURIDICO EJU
-    					JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON EJU.ECO_ID = ECO.ECO_ID
-    					JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_ID = ECO.OFR_ID
-    					WHERE OFR.OFR_NUM_OFERTA = '||V_NUM_OFERTA||'
- 					)';
 		EXECUTE IMMEDIATE V_MSQL;
-	   	DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS PROCESADOS');
+	   	DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTROS PROCESADOS EN TOTAL');
 
     	COMMIT;
     DBMS_OUTPUT.PUT_LINE('[FIN] ');

@@ -108,17 +108,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							hidden : '{!esCarteraAppleOrRemaining}'
 						}
 					},
-					{
-						xtype : 'datefieldbase',
-						fieldLabel : HreRem.i18n('fieldlabel.fecha.respuesta'),
-						colspan : 3,
-						bind : {
-							value : '{datosbasicosoferta.fechaRespuesta}',
-							hidden : '{!datosbasicosoferta.isCarteraCerberusApple}'
-						},
-						readOnly : true
-
-					}, {
+						{
 						xtype : 'comboboxfieldbase',
 						fieldLabel : HreRem.i18n('fieldlabel.tipo.alquiler'),
 						bind : {
@@ -217,11 +207,6 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 					}, 
 					{
 						bind : {
-							hidden : '{!datosbasicosoferta.isCarteraCerberusApple}'
-						}
-					}, 
-					{
-						bind : {
 							hidden : '{!esSubcarteraRemainingOAppleOArrow}'
 						}
 					},
@@ -234,11 +219,6 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							hidden : '{!esSubcarteraRemainingOAppleOArrow}'
 						},						
 						readOnly : true
-					},
-					{
-						bind : {
-							hidden : '{!datosbasicosoferta.isCarteraCerberusApple}'
-						}
 					},
 					{
 						xtype : 'fieldsettable',

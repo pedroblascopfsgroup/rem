@@ -35,19 +35,19 @@ DECLARE
 
 	V_JBV T_ARRAY_JBV := T_ARRAY_JBV(
 		  T_JBV(196244)
-		, T_JBV(194408)
-		, T_JBV(195824)
-		, T_JBV(195719)
-		, T_JBV(195111)
-		, T_JBV(195872)
-		, T_JBV(195029)
-		, T_JBV(194846)
-		, T_JBV(196242)
-		, T_JBV(195718)
-		, T_JBV(195724)
-		, T_JBV(195717)
-		, T_JBV(194572)
-		, T_JBV(195721)
+        , T_JBV(194408)
+        , T_JBV(195824)
+        , T_JBV(195719)
+        , T_JBV(195111)
+        , T_JBV(195872)
+        , T_JBV(195029)
+        , T_JBV(194846)
+        , T_JBV(196242)
+        , T_JBV(195718)
+        , T_JBV(195724)
+        , T_JBV(195717)
+        , T_JBV(194572)
+        , T_JBV(195721)
 	);
 V_TMP_JBV T_JBV;
 BEGIN
@@ -61,27 +61,40 @@ BEGIN
 
 
 			EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.COE_CONDICIONANTES_EXPEDIENTE
-								WHERE ECO_ID = '''||ECO_ID||'''' INTO V_COUNT;
+								WHERE ECO_ID = '||ECO_ID||'' INTO V_COUNT;
 
 			IF V_COUNT = 0 THEN
-				V_SQL := 'INSERT INTO '||V_ESQUEMA||'.COE_CONDICIONANTES_EXPEDIENTE (
-				  COE_ID
-				, ECO_ID
-				, FECHACREAR
-				, USUARIOCREAR
-				) VALUES (
-				 '||V_ESQUEMA||'.COE_CONDICIONANTES_EXPEDIENTE
-				, '''||ECO_ID||'''
-				, SYSDATE
-				, '''||V_USUARIO||'''
-				)
-			';
-				EXECUTE IMMEDIATE V_SQL;
 
-			DBMS_OUTPUT.PUT_LINE('Insertado el condicionante para el expediente '''||ECO_ID||'''');
+				EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL
+                								WHERE ECO_ID = '||ECO_ID||'' INTO V_COUNT;
 
+                IF V_COUNT > 0 THEN
+
+					V_SQL := 'INSERT INTO '||V_ESQUEMA||'.COE_CONDICIONANTES_EXPEDIENTE (
+					  COE_ID
+					, ECO_ID
+					, VERSION
+					, FECHACREAR
+					, USUARIOCREAR
+					, BORRADO
+					) VALUES (
+					 '||V_ESQUEMA||'.S_COE_CONDICIONANTES_EXP.NEXTVAL
+					, '||ECO_ID||'
+					, 0
+					, SYSDATE
+					, '''||V_USUARIO||'''
+					, 0
+					)
+				';
+					EXECUTE IMMEDIATE V_SQL;
+
+				DBMS_OUTPUT.PUT_LINE('Insertado el condicionante para el expediente '||ECO_ID||'');
+
+				ELSE
+				DBMS_OUTPUT.PUT_LINE('El expediente '||ECO_ID||' no existe');
+				END IF;
 			ELSE
-				DBMS_OUTPUT.PUT_LINE('El condicionante para el expediente '''||ECO_ID||''' ya existia');
+				DBMS_OUTPUT.PUT_LINE('El condicionante para el expediente '||ECO_ID||' ya existia');
 			END IF;
 
 

@@ -1358,11 +1358,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				BeanUtils.copyProperties(activoPublicacionHistoricoActual, activoPublicacion);	
 			}
 			
-			if (!Checks.esNulo(activoPublicacionHistorico)) {
+			if (activoPublicacionHistorico != null) {
 				activoPublicacionHistoricoDao.saveOrUpdate(activoPublicacionHistorico);
 			}
 			
-			if (!Checks.esNulo(activoPublicacionHistoricoActual)) {
+			if (activoPublicacionHistoricoActual != null) {
 				activoPublicacionHistoricoActual.setAuditoria(null);
 				activoPublicacionHistoricoDao.save(activoPublicacionHistoricoActual);
 			}

@@ -25,6 +25,7 @@ import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
@@ -54,6 +55,8 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	public static final String CODIGO_NUM_ACTIVO= "NUM_ACTIVO";
 	
 
+	@Autowired
+	private MSVRawSQLDao rawDao;
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -413,6 +416,32 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 				"		AND OFR.OFR_NUM_OFERTA = " + numOferta;
 		
 		return "1".equals(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult().toString());
+	}
+	
+	@Override
+	@Transactional
+	public List<String> getTareasActivas(String numOferta) {
+		List<Object> resultados = rawDao.getExecuteSQLList(
+				"		SELECT TAP.TAP_CODIGO" + 
+				"		FROM ECO_EXPEDIENTE_COMERCIAL ECO" + 
+				"		INNER JOIN ACT_OFR ACTOFR ON ACTOFR.OFR_ID = ECO.OFR_ID" + 
+				"		INNER JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = ACTOFR.ACT_ID" + 
+				"		INNER JOIN ACT_TRA_TRAMITE ATR ON ECO.TBJ_ID = ATR.TBJ_ID" + 
+				"		INNER JOIN TAC_TAREAS_ACTIVOS TAC ON ATR.TRA_ID = TAC.TRA_ID" + 
+				"		INNER JOIN TAR_TAREAS_NOTIFICACIONES TAR ON TAR.TAR_ID = TAC.TAR_ID" + 
+				"		INNER JOIN TEX_TAREA_EXTERNA TXT ON TXT.TAR_ID = TAR.TAR_ID" + 
+				"		INNER JOIN TAP_TAREA_PROCEDIMIENTO TAP ON TXT.TAP_ID = TAP.TAP_ID" + 
+				"		INNER JOIN OFR_OFERTAS OFR ON OFR.OFR_ID = ECO.OFR_ID" + 
+				"		WHERE TAR.TAR_TAREA_FINALIZADA = 0" + 
+				"		AND OFR.OFR_NUM_OFERTA = " +numOferta);
+		
+		List<String> listaTareas = new ArrayList<String>();
+
+		for(Object o: resultados){
+			listaTareas.add((String) o);
+		}
+
+		return listaTareas;
 	}
 	
 	@Override

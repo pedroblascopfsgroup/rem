@@ -17,8 +17,9 @@ public class BulkOfertaDaoImpl extends AbstractEntityDao<BulkOferta, Long> imple
 	public BulkOferta findOne(Long idBulk, Long idOferta) {
 		
 		HQLBuilder hql = new HQLBuilder("from BulkOferta");
-		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "bulkAdvisoryNote", idBulk);
-		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "oferta", idOferta);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "bulkAdvisoryNote.id", idBulk);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "oferta.id", idOferta);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "auditoria.borrado", false);
 		
 		Query q = this.getSessionFactory().getCurrentSession().createQuery(hql.toString());
 		HQLBuilder.parametrizaQuery(q, hql);
@@ -32,11 +33,12 @@ public class BulkOfertaDaoImpl extends AbstractEntityDao<BulkOferta, Long> imple
 
 		
 		HQLBuilder hql = new HQLBuilder("from BulkOferta");
-		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "bulkAdvisoryNote", idBulk);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "bulkAdvisoryNote.id", idBulk);
 		
 		Query q = this.getSessionFactory().getCurrentSession().createQuery(hql.toString());
 		HQLBuilder.parametrizaQuery(q, hql);
 		
 		return q.list();
 	}
+	
 }

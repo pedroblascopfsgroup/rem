@@ -1,12 +1,14 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -16,6 +18,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
+import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 
 
@@ -27,17 +30,20 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 @Entity
 @Table(name = "BLK_OFR", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class BulkOferta implements Serializable {
+public class BulkOferta implements Serializable, Auditable {
     private static final long serialVersionUID = 1L;
 
-    @Id
+    @EmbeddedId
     private BulkOfertaPk primaryKey = new BulkOfertaPk();
 
-    @Column(name = "BLK_ID", nullable = false, updatable = false, insertable = false)
-    private Long bulkAdvisoryNote;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "BLK_ID", nullable = false, updatable = false, insertable = false)
+    private BulkAdvisoryNote bulkAdvisoryNote;
 
-    @Column(name = "OFR_ID", nullable = false, updatable = false, insertable = false)
-    private Long oferta;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "OFR_ID", nullable = false, updatable = false, insertable = false)
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private Oferta oferta;
 	
 	@Version
     private Integer version;
@@ -61,26 +67,21 @@ public class BulkOferta implements Serializable {
 		this.primaryKey = primaryKey;
 	}
 
-
-	public Long getBulkAdvisoryNote() {
+	public BulkAdvisoryNote getBulkAdvisoryNote() {
 		return bulkAdvisoryNote;
 	}
 
-
-	public void setBulkAdvisoryNote(Long bulkAdvisoryNote) {
+	public void setBulkAdvisoryNote(BulkAdvisoryNote bulkAdvisoryNote) {
 		this.bulkAdvisoryNote = bulkAdvisoryNote;
 	}
 
-
-	public Long getOferta() {
+	public Oferta getOferta() {
 		return oferta;
 	}
 
-
-	public void setOferta(Long oferta) {
+	public void setOferta(Oferta oferta) {
 		this.oferta = oferta;
 	}
-
 
 	public Integer getVersion() {
 		return version;
@@ -143,14 +144,11 @@ public class BulkOferta implements Serializable {
          */
         private static final long serialVersionUID = 1L;
 
-        @ManyToOne
-        @JoinColumn(name = "BLK_ID")
-        private BulkAdvisoryNote bulkAdvisoryNote;
+        @Column(name = "BLK_ID")
+        private Long bulkAdvisoryNote;
 
-        @ManyToOne
-        @JoinColumn(name = "OFR_ID")
-        @Where(clause = Auditoria.UNDELETED_RESTICTION)
-        private Oferta oferta;
+        @Column(name = "OFR_ID")
+        private Long oferta;
 
         /**
          * default contructor.
@@ -158,20 +156,25 @@ public class BulkOferta implements Serializable {
         public BulkOfertaPk() {
 
         }
-
-		public BulkAdvisoryNote getBulkAdvisoryNote() {
+        
+        public BulkOfertaPk(Long bulkAdvisoryNote, Long oferta) {
+        	this.bulkAdvisoryNote = bulkAdvisoryNote;
+        	this.oferta = oferta;
+        }
+        
+		public Long getBulkAdvisoryNote() {
 			return bulkAdvisoryNote;
 		}
 
-		public void setBulkAdvisoryNote(BulkAdvisoryNote bulkAdvisoryNote) {
+		public void setBulkAdvisoryNote(Long bulkAdvisoryNote) {
 			this.bulkAdvisoryNote = bulkAdvisoryNote;
 		}
 
-		public Oferta getOferta() {
+		public Long getOferta() {
 			return oferta;
 		}
 
-		public void setOferta(Oferta oferta) {
+		public void setOferta(Long oferta) {
 			this.oferta = oferta;
 		}        
      

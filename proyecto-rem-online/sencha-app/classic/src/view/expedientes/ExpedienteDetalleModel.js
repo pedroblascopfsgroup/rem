@@ -477,7 +477,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			var tarea = get('datosbasicosoferta.isAdvisoryNoteEnTareas');
 			return ($AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL_SINGULAR']) || $AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL_BO_INM']) && (tarea == false || tarea == 'false'));
 		},
-
+		
+		requisitosEdicionIdAdvisoryNote: function(get){
+			return ($AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL_BO_INM']));
+		},
 
 		esPerfilPMyCEs: function(get){
 			

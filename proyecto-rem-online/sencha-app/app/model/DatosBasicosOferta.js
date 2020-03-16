@@ -88,6 +88,12 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		{
     			name: 'isAdvisoryNoteEnTareas'
     		},
+    		{
+    			name:'idAdvisoryNote'
+    		},
+    		{
+    			name:'tipoBulkAdvisoryNote'
+    		},
      		{
 			name:'fechaRespuestaCES',
 			convert: function(value) {

@@ -118,6 +118,10 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private Long exclusionBulk;
 	
 	private Boolean isCarteraCerberusDivarian;
+
+	private String idAdvisoryNote;
+	private Long tipoBulkAdvisoryNote;
+	
 	
 	private Boolean estadoAprobadoLbk;
 
@@ -127,6 +131,13 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setEstadoAprobadoLbk(Boolean estadoAprobadoLbk) {
 		this.estadoAprobadoLbk = estadoAprobadoLbk;
+	}
+	public Long getTipoBulkAdvisoryNote() {
+		return tipoBulkAdvisoryNote;
+	}
+
+	public void setTipoBulkAdvisoryNote(Long tipoBulkAdvisoryNote) {
+		this.tipoBulkAdvisoryNote = tipoBulkAdvisoryNote;
 	}
 
 	public Long getIdOferta() {
@@ -528,6 +539,14 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setIsAdvisoryNoteEnTareas(Boolean isAdvisoryNoteEnTareas) {
 		this.isAdvisoryNoteEnTareas = isAdvisoryNoteEnTareas;
+	}
+
+	public String getIdAdvisoryNote() {
+		return idAdvisoryNote;
+	}
+
+	public void setIdAdvisoryNote(String idAdvisoryNote) {
+		this.idAdvisoryNote = idAdvisoryNote;
 	}
 
 }

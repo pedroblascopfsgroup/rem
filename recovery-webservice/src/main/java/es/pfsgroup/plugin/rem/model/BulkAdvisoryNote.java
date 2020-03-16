@@ -1,11 +1,21 @@
 package es.pfsgroup.plugin.rem.model;
 
+import java.io.Serializable;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -26,21 +36,26 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoBulkAdvisoryNote;
 @Table(name = "BLK_BULK_ADVISORY_NOTE", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class BulkAdvisoryNote implements Auditable {
+public class BulkAdvisoryNote implements Auditable, Serializable {
 		    
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "BLK_ID")	
+	@Column(name = "BLK_ID")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;    
 	 
 	@Column(name = "BLK_NUM_BULK_AN")   
-	private Long numeroBulkAdvisoryNote;	    	    
+	private String numeroBulkAdvisoryNote;	    	    
 
 	@ManyToOne
 	@JoinColumn(name = "DD_TBK_ID")
 	private DDTipoBulkAdvisoryNote tipoBulkAdvisoryNote;
-	
+	   
+	@OneToMany(mappedBy = "bulkAdvisoryNote", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "BLK_ID")
+	private List<BulkOferta> bulkOfertas;
+
 	@Version   
 	private Long version;
 
@@ -55,11 +70,11 @@ public class BulkAdvisoryNote implements Auditable {
 		this.id = id;
 	}
 
-	public Long getNumeroBulkAdvisoryNote() {
+	public String getNumeroBulkAdvisoryNote() {
 		return numeroBulkAdvisoryNote;
 	}
 
-	public void setNumeroBulkAdvisoryNote(Long numeroBulkAdvisoryNote) {
+	public void setNumeroBulkAdvisoryNote(String numeroBulkAdvisoryNote) {
 		this.numeroBulkAdvisoryNote = numeroBulkAdvisoryNote;
 	}
 	
@@ -86,5 +101,14 @@ public class BulkAdvisoryNote implements Auditable {
 	public void setTipoBulkAdvisoryNote(DDTipoBulkAdvisoryNote tipoBulkAdvisoryNote) {
 		this.tipoBulkAdvisoryNote = tipoBulkAdvisoryNote;
 	}
+
+	public List<BulkOferta> getBulkOferta() {
+		return bulkOfertas;
+	}
+
+	public void setBulkOferta(List<BulkOferta> bulkOfertas) {
+		this.bulkOfertas = bulkOfertas;
+	}
+	
 
 }

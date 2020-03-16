@@ -158,9 +158,9 @@ public class Oferta implements Serializable, Auditable {
 
     @OneToOne(mappedBy = "ofertaDependiente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
-    private OfertasAgrupadasLbk ofertaDependiente;
-    
-   	@Column(name="OFR_FECHA_RESPUESTA_OFERTANTE_CES")
+    private OfertasAgrupadasLbk ofertaDependiente;   
+
+	@Column(name="OFR_FECHA_RESPUESTA_OFERTANTE_CES")
    	private Date fechaRespuestaCES;
 
     @Column(name = "OFR_ORIGEN")
@@ -323,7 +323,6 @@ public class Oferta implements Serializable, Auditable {
 
 	@Embedded
 	private Auditoria auditoria;
-
 
 	public Long getId() {
 		return id;

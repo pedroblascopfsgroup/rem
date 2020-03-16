@@ -190,7 +190,7 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 				&& !Checks.esNulo(actOfr.getPrimaryKey().getActivo().getSubcartera()) 
 				&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(actOfr.getPrimaryKey().getActivo().getSubcartera().getCodigo())) {
 			
-			listOfertasBulk = bulkOfertaDao.getListBulkOfertasByIdBulk(bulkOferta.getPrimaryKey().getBulkAdvisoryNote().getId());
+			listOfertasBulk = bulkOfertaDao.getListBulkOfertasByIdBulk(bulkOferta.getPrimaryKey().getBulkAdvisoryNote());
 			validaAvanzaOfertasBulk(tapCodigoActual, ofertaActual, listOfertasBulk,valoresTarea,executionContext, tareaExterna, scriptValidacion);
 			
 		}else if(!esOfertaEnBulk) {
@@ -228,7 +228,7 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 				&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(actOfr.getPrimaryKey().getActivo().getSubcartera().getCodigo())
 				&& !Checks.esNulo(bulkOferta) && !Checks.esNulo(bulkOferta.getPrimaryKey().getBulkAdvisoryNote())) {
 
-			listOfertasBulk = bulkOfertaDao.getListBulkOfertasByIdBulk(bulkOferta.getPrimaryKey().getBulkAdvisoryNote().getId());
+			listOfertasBulk = bulkOfertaDao.getListBulkOfertasByIdBulk(bulkOferta.getPrimaryKey().getBulkAdvisoryNote());
 			if(!Checks.estaVacio(listOfertasBulk) && listOfertasBulk.size() > 1) {
 				esOfertaEnbulk=true;
 			}

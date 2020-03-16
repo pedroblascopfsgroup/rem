@@ -109,6 +109,15 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						}
 					},
 						{
+						xtype : 'textfieldbase',
+						fieldLabel : HreRem.i18n('fieldlabel.id.advisory.note'),
+						bind : {
+							value : '{datosbasicosoferta.idAdvisoryNote}',
+							readOnly : '{!requisitosEdicionIdAdvisoryNote}',
+							hidden : '{!esCarteraAppleOrRemaining}'
+						}
+					},
+						{
 						xtype : 'comboboxfieldbase',
 						fieldLabel : HreRem.i18n('fieldlabel.tipo.alquiler'),
 						bind : {

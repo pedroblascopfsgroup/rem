@@ -215,8 +215,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	onSaveFormularioCompleto: function(btn, form) {
 		var me = this;
+		var tipoBulkAdvisoryNote = me.getViewModel().data.datosbasicosoferta.data.tipoBulkAdvisoryNote;
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones
+		
 		if(form.isFormValid() || form.disableValidation) {
+			
 
 			Ext.Array.each(form.query('field[isReadOnlyEdit]'),
 				function (field, index){field.fireEvent('update'); field.fireEvent('save');}
@@ -229,9 +232,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			
 			if (!form.saveMultiple) {
 				if(Ext.isDefined(form.getBindRecord().getProxy().getApi().create) || Ext.isDefined(form.getBindRecord().getProxy().getApi().update)) {
+					
 					// Si la API tiene metodo de escritura (create or update).
 					me.getView().mask(HreRem.i18n("msg.mask.loading"));
 					form.getBindRecord().save({
+						params : {tipoBulkAdvisoryNote: tipoBulkAdvisoryNote},
 						success: function (a, operation, c) {
 							me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 							me.getView().unmask();
@@ -278,6 +283,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	onSaveFormularioCompletoActivoExpediente: function(btn, form) {
 		var me = this;
+		
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones
 		if(form.isFormValid() && form.disableValidation) {
 
@@ -442,12 +448,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			var cloForm = me.getViewModel().data.datosbasicosoferta.data.claseOfertaCodigo;
 			var numOferta = ((numOfertaPrin != null) ? numOfertaPrin : nuevoNumOferta);
 			
+			
 			Ext.Ajax.request({
 			
 			     url: url,
 			     params: { numOferta: numOferta }
 			    ,success: function (response, opts) {
 			         data = Ext.decode(response.responseText);
+			         
 			         if(cloForm == "02"){
 			         if(data.success == "true" && data.error == "false"){
 				    		Ext.Msg.show({
@@ -455,6 +463,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 								   msg: HreRem.i18n('msg.confirmar.oferta.principal'),
 								   buttons: Ext.MessageBox.YESNO,
 								   fn: function(buttonId) {
+								   
 								        if (buttonId == 'yes') {	
 								        	me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
 										}else{
@@ -2919,7 +2928,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	onClickAdvisoryNoteExpediente : function(btn) {
 		var me = this;
-
+		
 		var url =  $AC.getRemoteUrl('expedientecomercial/getAdvisoryNoteExpediente');
 
 		var config = {};

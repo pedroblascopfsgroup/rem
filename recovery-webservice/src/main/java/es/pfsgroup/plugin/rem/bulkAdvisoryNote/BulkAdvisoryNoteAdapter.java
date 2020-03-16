@@ -55,14 +55,16 @@ public class BulkAdvisoryNoteAdapter {
 	public boolean validarTareasOfertasBulk(List<BulkOferta> listOfertasBulk,Map<String,String[]> valoresTarea, String tapCodigoActual) {
 		boolean resultado = false;
 		DtoGenericForm dto;
-		
+		int index = 0;
 		for (BulkOferta ofertaDelBulk : listOfertasBulk) {
 			
+			Oferta ofertaActual = ofertaDao.get(ofertaDelBulk.getPrimaryKey().getOferta());
+			
 			if(!Checks.esNulo(ofertaDelBulk.getPrimaryKey().getOferta()) 
-					&&  (ofertaDao.tieneTareaActiva(tapCodigoActual, ofertaDelBulk.getPrimaryKey().getOferta().getNumOferta().toString())) ){
+					&&  (ofertaDao.tieneTareaActiva(tapCodigoActual,ofertaActual.getNumOferta().toString()))){
 
-				TareaActivo tareaActivoDeOferta = tareaActivoApi.tareaOfertaDependiente(ofertaDelBulk.getPrimaryKey().getOferta());
-				Map<String,String[]> valoresTareaOfertaBulk = tareaActivoApi.valoresTareaDependiente(valoresTarea, tareaActivoDeOferta, ofertaDelBulk.getPrimaryKey().getOferta());
+				TareaActivo tareaActivoDeOferta = tareaActivoApi.tareaOfertaDependiente(ofertaActual);
+				Map<String,String[]> valoresTareaOfertaBulk = tareaActivoApi.valoresTareaDependiente(valoresTarea, tareaActivoDeOferta, ofertaActual);
 				
 				dto = agendaAdapter.convetirValoresToDto(valoresTareaOfertaBulk);
 
@@ -89,6 +91,7 @@ public class BulkAdvisoryNoteAdapter {
 				return false;
 				
 			}
+			index++;
 		}
 		return resultado;
 	}
@@ -98,7 +101,7 @@ public class BulkAdvisoryNoteAdapter {
 		
 		List<Long> listIdsOfertasDelBulk = new ArrayList<Long>();
 		for (BulkOferta bulkOferta : listOfertasBulk) {
-			listIdsOfertasDelBulk.add(bulkOferta.getOferta());
+			listIdsOfertasDelBulk.add(bulkOferta.getOferta().getId());
 		}
 		try {
 			Usuario usuarioLogado = genericAdapter.getUsuarioLogado();

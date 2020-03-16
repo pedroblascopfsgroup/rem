@@ -131,6 +131,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
     evaluarBotonesEdicion: function(tab) {    	
 		var me = this;
 		me.down("[itemId=botoneditar]").setVisible(false);
+	
 		var editionEnabled = function() {
 			var visible = false;
 			var notFechaEjecucionReal = Ext.isEmpty(me.lookupController().getViewModel().get('trabajo').get('fechaEjecucionReal'));
@@ -142,6 +143,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
 			var isRolSupActivo = $AU.userIsRol('HAYASUPACT');
 			var isRolSupAdmision = $AU.userIsRol('HAYASUPADM');
 			var isRolSuper = $AU.userIsRol('HAYASUPER');
+			var tipoTrabajoCod = me.lookupController().getViewModel().get('trabajo').get('tipoTrabajoCodigo');
 			var subtipoTrabajoCod = me.lookupController().getViewModel().get('trabajo').get('subtipoTrabajoCodigo');
 			var subtiposPermitidosSupActivo = ["19", "21", "22", "23", "24", "25"]; //Subtipos de trabajo ODoc. con edicion permitida en gestion eco trabajo para superv. activo
 			var subtiposPermitidosSupAdmision = ["13", "15", "17"]; //Subtipos de trabajo ODoc. con edicion permitida en gestion eco trabajo para superv. admision
@@ -159,6 +161,10 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
 			if((isRolSupAdmision && subtiposPermitidosSupActivo.indexOf(subtipoTrabajoCod) > -1)
 					||(isRolSupActivo && subtiposPermitidosSupAdmision.indexOf(subtipoTrabajoCod) > -1) ){
 				visible = false;
+			}
+			
+			if(tipoTrabajoCod === CONST.TIPOS_TRABAJO['EDIFICACION']){
+				visible = isRolSuper;
 			}
 			
 			me.down("[itemId=botoneditar]").setVisible(visible);

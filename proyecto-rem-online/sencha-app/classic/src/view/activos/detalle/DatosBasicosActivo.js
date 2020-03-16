@@ -56,9 +56,14 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                },
 			                {
 								xtype: 'displayfieldbase',
+								fieldLabel:  HreRem.i18n('fieldlabel.id.activo.divarian'),
+								bind:		'{activo.numActivoDivarian}'
+							},
+			                {
+								xtype: 'displayfieldbase',
 								fieldLabel:  HreRem.i18n('fieldlabel.id.bien.recovery'),
 								bind:		'{activo.idRecovery}'
-							},
+							},							
 							{
 			                	xtype: 'displayfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.categoria.contable'),
@@ -258,6 +263,21 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                	bind:{
 			                		value: '{activo.descripcion}'
 			                	}
+			                },
+			                {
+			                	//Campo para dejar un espacio entre los campos por estetica.
+			                	readOnly: true
+			                },
+			                {
+			                	xtype: 'comboboxfieldbase',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.segmento'),
+			                	name: 'combotipoSegmento',
+			                	reference: 'comboTipoSegmentoRef',
+			                	bind: {
+			                		store: '{comboTipoSegmento}',
+			                		value: '{activo.tipoSegmentoCodigo}',
+			                		hidden: '{!activo.isSubcarteraDivarian}'
+			                	}
 			                }
 						]
 					}]
@@ -361,17 +381,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			            	        '</tpl>'
 			            	)
 						},
-		                {
-							xtype: 'comboboxfieldbase',
-							fieldLabel: HreRem.i18n('fieldlabel.direccionTerritorial'),
-							reference: 'direccionTerritorialCombo',							
-			            	bind: {
-			            		readOnly : '{esUA}',
-			            		store: '{comboDireccionTerritorial}',
-			            		value: '{activo.direccionTerritorialCodigo}'			            		
-			            	}
-		                },
-						
+		          
 		                // fila 4
 		                {
 							fieldLabel:  HreRem.i18n('fieldlabel.escalera'),
@@ -590,7 +600,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.publicacion'),
 								reference: 'chkbxPerimetroPublicar',
 								bind: {
-									readOnly: '{activo.isVendido}',
+									readOnly: '{activo.editableCheckPublicacion}',
 									value: '{activo.aplicaPublicar}'
 								},
 								listeners: {
@@ -620,7 +630,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.comercial'),
 								reference: 'chkbxPerimetroComercializar',
 								bind: {
-									readOnly: '{activo.isVendidoOEntramite}',
+									readOnly: '{activo.editableCheckComercializar}',
 									value: '{activo.aplicaComercializar}'
 								},
 								listeners: {
@@ -659,7 +669,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.formalizar'),
 								reference: 'chkbxPerimetroFormalizar',
 								bind: {
-									value: '{activo.aplicaFormalizar}'
+									value: '{activo.aplicaFormalizar}',
+									readOnly: '{activo.checkFormalizarReadOnly}'
 								},
 								listeners: {
 									change: 'onChkbxPerimetroChange'
@@ -703,7 +714,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										xtype: 'comboboxfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.destino.comercial'),
 										bind: {
-											readOnly : '{esUA}',
+											readOnly : '{!activo.esEditableDestinoComercial}',
 											disabled: '{activo.isPANoDadaDeBaja}',
 											store: '{comboTipoDestinoComercialCreaFiltered}',
 											value: '{activo.tipoComercializacionCodigo}'
@@ -877,12 +888,14 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						
 					}, //Fin activo bancario
 					
-		            {//Per�metro apple    
+		            {//Per�metro e    
 		                
 						xtype:'fieldsettable',
 						defaultType: 'textfieldbase',
-						title: HreRem.i18n('title.perimetro.apple'),
-						bind:{hidden: '{!activo.isSubcarteraApple}'},						
+						bind:{
+							title: '{mostrarTitlePerimetroDatosBasicos}',
+							hidden: '{!activo.isAppleOrDivarian}'
+						},						
 						border: true,
 						colapsible: false,
 						colspan: 3,
@@ -897,7 +910,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								bind: {
 									readOnly : !$AU.userIsRol("HAYASUPER"),
 									store: '{comboServicerActivo}',
-									value: '{activo.servicerActivoCodigo}'
+									value: '{activo.servicerActivoCodigo}',
+									hidden: '{!activo.isSubcarteraApple}'
 								},
 								publishes: 'value',									
 		    					listeners: {
@@ -912,7 +926,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								bind:{
 									readOnly : !$AU.userIsRol("HAYASUPER"),
 									store: '{comboCesionSaneamiento}',									
-									value: '{activo.cesionSaneamientoCodigo}' 
+									value: '{activo.cesionSaneamientoCodigo}',
+									hidden: '{!activo.isSubcarteraApple}' 
 								}
 							},
 							{
@@ -920,7 +935,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.apple.macc.perimetro'),
 								reference: 'comboPerimetroAppleMACC',
 								bind:{
-									readOnly : !$AU.userIsRol("HAYASUPER"),
+									readOnly : '{!esEditablePerimetroMacc}',
 									store: '{comboSiNoDatosPerimetroApple}',
 									value: '{activo.perimetroMacc}'	
 								}
@@ -932,7 +947,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								bind:{
 									readOnly : !$AU.userIsRol("HAYASUPER"),
 									store: '{comboSiNoDatosPerimetroApple}',
-									value: '{activo.perimetroCartera}'	
+									value: '{activo.perimetroCartera}',
+									hidden: '{!activo.isSubcarteraApple}'	
 								}
 							},
 							{
@@ -941,7 +957,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								reference: 'comboPerimetroAppleCarteraNombre',
 								bind: {
 									readOnly : !$AU.userIsRol("HAYASUPER"),									
-									value: '{activo.nombreCarteraPerimetro}'
+									value: '{activo.nombreCarteraPerimetro}',
+									hidden: '{!activo.isSubcarteraApple}'
 								}
 							}
 						]

@@ -233,10 +233,11 @@ public class GenericController extends ParadiseJsonController{
 	public ModelAndView getComboEspecial(String diccionario){
 	
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboEspecial(diccionario)));
-	}	
-	
+	}
+
 	/**
-	 * @return Usuario identificado y sus funciones según perfil
+	 * @return Usuario identificado y sus funciones según perfil. Adaptado para devolver el Token JWT para utilizar el ecosistema
+	 * de REM3.
 	 */
 	@RequestMapping(method = RequestMethod.GET) 
 	public ModelAndView getAuthenticationData(WebDto webDto, ModelMap model){
@@ -685,6 +686,21 @@ public class GenericController extends ParadiseJsonController{
 	@RequestMapping(method= RequestMethod.GET)
 	public ModelAndView getComboSubtipoActivoFiltered(String codTipoActivo) {
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubtipoActivoFiltered(codTipoActivo)));	
+	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComitesResolucionLiberbank(Long idExp) throws Exception {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComitesResolucionLiberbank(idExp)));
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboSubpartidaPresupuestaria(Long idGasto){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubpartidaPresupuestaria(idGasto)));	
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getPartidaPresupuestaria(Long idSubpartida){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getPartidaPresupuestaria(idSubpartida)));	
 	}
  }
 

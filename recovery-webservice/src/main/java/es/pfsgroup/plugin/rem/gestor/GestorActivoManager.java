@@ -47,6 +47,7 @@ import es.pfsgroup.plugin.rem.model.GestorActivoHistorico;
 import es.pfsgroup.plugin.rem.model.GrupoUsuario;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  
  @Component
@@ -56,6 +57,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 	public static final String USERNAME_GRUPO_CES ="grucoces";
 	public static final String USERNAME_PROMONTORIA_MANZANA ="gruproman";
 	public static final String USERNAME_COMITE_ARROW = "grucoarrow";
+	public static final String USERNAME_GRUPO_CES_REMAINING = "grucoces1";
+	public static final String USERNAME_GRUPO_DIVARIAN = "grucodivarian";
  	
  	@Autowired
  	private GenericABMDao genericDao;
@@ -508,16 +511,27 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  	
  	@Override
  	@Transactional(readOnly = false)
-	public Usuario usuarioTareaApple(String codigoTarea) {
+	public Usuario usuarioGrupoTareaT017(String codigoTarea, Boolean esApple, Boolean esArrow, Boolean esRemaining, TareaExterna tareaExterna) {
 		Usuario userTarea = null;
 		Filter filtro = null;
 
-		if (ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES.equals(codigoTarea)  
-			|| ComercialUserAssigantionService.CODIGO_T017_RATIFICACION_COMITE_CES.equals(codigoTarea)
-			|| ComercialUserAssigantionService.CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea)) {
+		if (esApple && (ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES.equals(codigoTarea)  
+				|| ComercialUserAssigantionService.CODIGO_T017_RATIFICACION_COMITE_CES.equals(codigoTarea)
+				|| ComercialUserAssigantionService.CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea))) {
+			
 			filtro = genericDao.createFilter(FilterType.EQUALS, "username", USERNAME_GRUPO_CES);
-		} else if (ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigoTarea)) {
+		} else if(esRemaining && (ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES.equals(codigoTarea)  
+				|| ComercialUserAssigantionService.CODIGO_T017_RATIFICACION_COMITE_CES.equals(codigoTarea)
+				|| ComercialUserAssigantionService.CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea))){ 
+			filtro = genericDao.createFilter(FilterType.EQUALS, "username", USERNAME_GRUPO_CES_REMAINING);
+		} else if(esArrow && (ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_CES.equals(codigoTarea)  
+				|| ComercialUserAssigantionService.CODIGO_T017_RATIFICACION_COMITE_CES.equals(codigoTarea)
+				|| ComercialUserAssigantionService.CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea))) {
+			filtro = genericDao.createFilter(FilterType.EQUALS, "username", USERNAME_COMITE_ARROW);
+		} else if(esApple) {
 			filtro = genericDao.createFilter(FilterType.EQUALS, USERNAME, USERNAME_PROMONTORIA_MANZANA);
+		} else if(esArrow || esRemaining) {
+			filtro = genericDao.createFilter(FilterType.EQUALS, USERNAME, USERNAME_GRUPO_DIVARIAN);
 		}
 		if(!Checks.esNulo(filtro)) {
 			userTarea = genericDao.get(Usuario.class, filtro);
@@ -582,4 +596,16 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 		
 		return userTarea;
 	}
+ 	
+ 	@Override
+ 	@Transactional(readOnly = false)
+ 	public Boolean isGestorMantenimiento(Activo activo, Usuario usuario){
+ 		 
+ 		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_GESTOR_ACTIVO);
+ 		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+ 		
+ 		List<Usuario> usuariosAdmision = ((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipoGestor.getId(),activo);		
+ 		return usuariosAdmision.contains(usuario);
+ 	}
+ 	
  }

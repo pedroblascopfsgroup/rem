@@ -95,6 +95,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
 
 @Controller
@@ -1817,11 +1818,17 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			throws Exception {
 		try {
 			Oferta oferta = ofertaApi.getOfertaByIdExpediente(idExpediente);
-
+			DDSubcartera subcartera = oferta.getActivoPrincipal().getSubcartera();
 			List<VReportAdvisoryNotes> listaAN = expedienteComercialApi.getAdvisoryNotesByOferta(oferta);
-
-			if (!Checks.estaVacio(listaAN)) {
-				File file = excelReportGeneratorApi.getAdvisoryNoteReport(listaAN, request);
+			
+			if(!Checks.estaVacio(listaAN)) {
+				File file = null;
+				if(subcartera.getCodigo().equals(DDSubcartera.CODIGO_APPLE_INMOBILIARIO) || subcartera.getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB)) {
+					file = excelReportGeneratorApi.getAdvisoryNoteReport(listaAN, request);
+				}else if(subcartera.getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB)) {
+					file = excelReportGeneratorApi.getAdvisoryNoteReportArrow(listaAN, request);
+				}
+ 
 				excelReportGeneratorApi.sendReport(file, response);
 			}
 
@@ -2247,6 +2254,19 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		try {
 			List<DtoDiccionario> list = expedienteComercialApi.calcularGestorComercialPrescriptor(idExpediente);
 			model.put(RESPONSE_DATA_KEY, list);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController (getGestorPrescriptor)", e);
+		}
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView doCalculateComiteByExpedienteId(Long idExpediente, ModelMap model) {
+		try {
+			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.doCalculateComiteByExpedienteId(idExpediente));
 			model.put(RESPONSE_SUCCESS_KEY, true);
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);

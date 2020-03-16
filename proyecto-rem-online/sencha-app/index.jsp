@@ -53,11 +53,19 @@
                 // peek at / modify the manifest object
             //};
             --%>
-             <%
+            <%
             java.util.Date currentDate = new java.util.Date();
-            java.lang.Long hoy = new java.util.Date().getTime();      
+            java.lang.Long hoy = new java.util.Date().getTime();
             %>
-            $AC.setWebPath('<c:url value="/"/>');$AC.setCurrentDate(<c:out value="<%= hoy %>"/>);$AC.setVersion('${version}');$AC.setDebugMode(${jsDebug})
+            var remApiHome = "${devonProperties['rem-api.home']}"
+            if(remApiHome ==""){
+            	remApiHome = "http://localhost:8000/"
+            }
+            $AC.setWebPath('<c:url value="/"/>');
+            $AC.setRemApiWebPath(remApiHome);
+            $AC.setCurrentDate(<c:out value="<%= hoy %>"/>);
+            $AC.setVersion('${version}');
+            $AC.setDebugMode(${jsDebug});
             
             
         };

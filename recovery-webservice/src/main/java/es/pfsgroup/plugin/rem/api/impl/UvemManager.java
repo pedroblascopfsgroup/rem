@@ -484,7 +484,7 @@ public class UvemManager implements UvemManagerApi {
 				if (!Checks.esNulo(clienteUrsusRequestDto) && !Checks.esNulo(clienteUrsusRequestDto.getData())) {
 
 					listaClientes = clienteUrsusRequestDto.getData();
-					if (!Checks.esNulo(listaClientes) && listaClientes.isEmpty()) {
+					if (!Checks.esNulo(listaClientes) && !listaClientes.isEmpty()) {
 						String ultimoNumCliente = listaClientes.get(listaClientes.size() - 1).getNumeroClienteUrsus();
 
 						clienteUrsusRequestDto = this.ejecutarNumCliente(nDocumento, tipoDocumento, qcenre,

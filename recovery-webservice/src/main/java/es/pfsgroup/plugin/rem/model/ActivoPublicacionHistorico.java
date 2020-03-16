@@ -25,6 +25,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosOcultacion;
+import es.pfsgroup.plugin.rem.model.dd.DDPortal;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
 
@@ -123,6 +124,10 @@ public class ActivoPublicacionHistorico implements Serializable, Auditable {
 	@Column(name = "AHP_FECHA_FIN_ALQUILER")
 	private Date fechaFinAlquiler;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_POR_ID")
+	private DDPortal portal;
+	
 	@Version
 	private Long version;
 
@@ -335,6 +340,14 @@ public class ActivoPublicacionHistorico implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public DDPortal getPortal() {
+		return portal;
+	}
+
+	public void setPortal(DDPortal portal) {
+		this.portal = portal;
 	}
 
 }

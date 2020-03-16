@@ -1,1 +1,0 @@
-update DD_OPM_OPERACION_MASIVA d set DD_OPM_VALIDACION_FORMATO = 'n,n*,f*,s*,n*' where DD_OPM_CODIGO = 'CRT';

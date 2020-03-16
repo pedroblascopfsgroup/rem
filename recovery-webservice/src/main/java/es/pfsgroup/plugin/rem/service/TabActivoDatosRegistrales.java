@@ -68,6 +68,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresentacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
@@ -227,6 +228,13 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				}
 				if (!Checks.esNulo(activo.getCartera())) {
 					BeanUtils.copyProperty(activoDto, "entidadPropietariaCodigo", activo.getCartera().getCodigo());
+				}
+				
+				if (!Checks.esNulo(activo.getOrigenAnterior())) {
+					BeanUtils.copyProperty(activoDto, "origenAnteriorActivoCodigo", activo.getOrigenAnterior().getCodigo());
+				}
+				if (!Checks.esNulo(activo.getFechaTituloAnterior())) {
+					BeanUtils.copyProperty(activoDto, "fechaTituloAnterior", activo.getFechaTituloAnterior());
 				}
 			}
 		
@@ -575,6 +583,14 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				
 				activo.setSubtipoTitulo(subtipoTitulo);
 				
+			}
+			
+			if (dto.getOrigenAnteriorActivoCodigo() != null) {
+				DDOrigenAnterior origenAnterior = (DDOrigenAnterior) diccionarioApi.dameValorDiccionarioByCod(DDOrigenAnterior.class, dto.getOrigenAnteriorActivoCodigo());
+				activo.setOrigenAnterior(origenAnterior);
+			}
+			if (dto.getFechaTituloAnterior() != null) {
+				activo.setFechaTituloAnterior(dto.getFechaTituloAnterior());
 			}
                      
 			if (activo.getTipoTitulo() != null) {

@@ -62,8 +62,13 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Documen
 					        },
 					        {   text: HreRem.i18n('header.tipo'),
 					        	dataIndex: 'descripcionTipo',
+					        	flex: 1/*,
+					        	hidden: true*/
+					        },
+					        /*{   text: HreRem.i18n('header.subtipo'),
+					        	dataIndex: 'descripcionSubtipo',
 					        	flex: 1
-					        },	
+					        },*/
 							{
 					            text: HreRem.i18n('header.descripcion'),
 					            dataIndex: 'descripcion',
@@ -96,7 +101,6 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Documen
 					        	dataIndex: 'gestor',
 					        	flex: 1					        	
 					        },
-					        //ESTE CODIGO ESTA COMENTADO PARA UN FUTURO DESARROLLO ¡¡NO BORRAR!!
 					        /*{	
 					        	text: HreRem.i18n('header.cartera'),
 					        	dataIndex: 'cartera',

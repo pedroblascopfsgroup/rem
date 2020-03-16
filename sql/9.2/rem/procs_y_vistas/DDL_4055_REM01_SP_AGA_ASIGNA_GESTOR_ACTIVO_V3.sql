@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=GUILLEM REY
---## FECHA_CREACION=20191003
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20200302
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-4927
+--## INCIDENCIA_LINK=HREOS-9611
 --## PRODUCTO=NO
 --## Finalidad: Procedimiento almacenado que asigna Gestores de todos los tipos.
 --##           
@@ -27,6 +27,7 @@
 --##        1.4 HREOS-7039 Se añade el gestor Portfolio Manager (GPM)
 --##		1.5 REMVIP-4927 GUILLEM REY: no asigna gestores publicacion
 --##	    1.6 REMVIP-5383 VIOREL REMUS OVIDIU: añadimos tipo gestor Capa de control Liberbank
+--##	    1.7 HREOS-9611 Gestor Formalización para Omega
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -40,7 +41,7 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_AGA_ASIGNA_GESTOR_ACTIVO_V3 (
     P_ACT_ID        IN #ESQUEMA#.act_activo.act_id%TYPE,
     P_ALL_ACTIVOS   IN NUMBER,
     P_CLASE_ACTIVO  IN VARCHAR2) AS
---v1.2
+--v1.7
 
     V_ESQUEMA VARCHAR2(15 CHAR) := '#ESQUEMA#';
     V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
@@ -53,7 +54,7 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_AGA_ASIGNA_GESTOR_ACTIVO_V3 (
     V_CLASE_ACTIVO_NULL VARCHAR (500 CHAR);
 
     V_GESTOR_FINANCIERO VARCHAR2(4000 CHAR) := ' (''GPUBL'',''SPUBL'',''GCOM'',''SCOM'',''FVDNEG'',''FVDBACKOFR'',''FVDBACKVNT'',''SUPFVD'',''SFORM'',''GCODI'',''GCOINM'',''GCOIN'',''GLIBINVINM'',''GLIBSINTER'',''GLIBRES'',''GESRES'',''SUPRES'',''HAYAGBOINM'',''HAYASBOINM'',''GCCLBK'') ';
-    V_GESTOR_INMOBILIAR VARCHAR2(4000 CHAR) := ' (''GADM'',''SUPADM'',''GACT'',''SUPACT'',''GPREC'',''SPREC'',''GPUBL'',''SPUBL'',''GCOM'',''SCOM'',''FVDNEG'',''FVDBACKOFR'',''FVDBACKVNT'',''SUPFVD'',''SFORM'',''GGADM'',''GIAFORM'',''GTOCED'',''CERT'',''GIAADMT'',''PTEC'', ''GTREE'',''GCODI'',''GCOINM'',''GCOIN'',''GLIBINVINM'',''GLIBSINTER'',''GLIBRES'',''HAYAGBOINM'',''HAYASBOINM'',''SBACKOFFICEINMLIBER'',''GEDI'', ''SUPEDI'', ''GSUE'', ''SUPSUE'',''GALQ'',''SUALQ'',''GESTCOMALQ'',''SUPCOMALQ'',''GFORMADM'',''GPM'',''GCCLBK'')';
+    V_GESTOR_INMOBILIAR VARCHAR2(4000 CHAR) := ' (''GADM'',''SUPADM'',''GACT'',''SUPACT'',''GPREC'',''SPREC'',''GPUBL'',''SPUBL'',''GCOM'',''SCOM'',''FVDNEG'',''FVDBACKOFR'',''FVDBACKVNT'',''SUPFVD'',''SFORM'',''GGADM'',''GIAFORM'',''GTOCED'',''CERT'',''GIAADMT'',''PTEC'', ''GTREE'',''GCODI'',''GCOINM'',''GCOIN'',''GLIBINVINM'',''GLIBSINTER'',''GLIBRES'',''HAYAGBOINM'',''HAYASBOINM'',''SBACKOFFICEINMLIBER'',''GEDI'', ''SUPEDI'', ''GSUE'', ''SUPSUE'',''GALQ'',''SUALQ'',''GESTCOMALQ'',''SUPCOMALQ'',''GFORMADM'',''GPM'',''GCCLBK'',''GFORM'')';
     V_GESTOR            VARCHAR2(4000 CHAR);
 
     CURSOR C_LOG IS
@@ -96,13 +97,19 @@ BEGIN
               SELECT ACT.ACT_ID,ACT.TIPO_GESTOR, ACT.USERNAME
                 FROM '||V_ESQUEMA||'.V_GESTORES_ACTIVO ACT
                WHERE ACT.TIPO_GESTOR IN '||V_GESTOR||'
-               AND NOT EXISTS (SELECT *
+               AND NOT EXISTS (SELECT 1
 								FROM '||V_ESQUEMA||'.ACT_ACTIVO R1
 								JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = R1.DD_CRA_ID
 								JOIN '||V_ESQUEMA||'.DD_TCR_TIPO_COMERCIALIZAR TCR ON TCR.DD_TCR_ID = R1.DD_TCR_ID
 								WHERE TCR.DD_TCR_CODIGO = ''01''
 								AND CRA.DD_CRA_CODIGO IN (''02'',''03'')
 								AND ACT.TIPO_GESTOR IN (''HAYAGBOINM'',''HAYASBOINM'',''SBOINM'',''GCBOINM'')
+								AND R1.ACT_ID = ACT.ACT_ID)
+                AND NOT EXISTS (SELECT 1
+								FROM '||V_ESQUEMA||'.ACT_ACTIVO R1
+								JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = R1.DD_SCR_ID
+								AND SCR.DD_SCR_CODIGO NOT IN (''65'')
+								AND ACT.TIPO_GESTOR IN (''GFORM'')
 								AND R1.ACT_ID = ACT.ACT_ID)'||
                
                V_ACT_ID

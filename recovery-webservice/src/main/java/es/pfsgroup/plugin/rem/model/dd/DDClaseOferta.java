@@ -30,10 +30,6 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDClaseOferta implements Auditable, Dictionary {
 
-	public static final String OFERTA_AGRUPADA_PRINCIPAL = "01";
-	public static final String OFERTA_AGRUPADA_DEPENDIENTE = "02";
-	public static final String OFERTA_INDIVIDUAL = "03";
-
 	private static final long serialVersionUID = 1L;
 	
 	public static final String CODIGO_OFERTA_PRINCIPAL = "01";

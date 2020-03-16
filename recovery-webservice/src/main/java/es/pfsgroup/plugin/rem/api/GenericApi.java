@@ -12,6 +12,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
+import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoLocalidadSimple;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
@@ -301,4 +302,20 @@ public interface GenericApi {
 	public DDSubestadoGestion getSubestadoGestion(Long idActivo);
 	
 	List<DDSubtipoActivo> getComboSubtipoActivoFiltered(String codTipoActivo);
+	
+	List<DDComiteSancion> getComitesResolucionLiberbank(Long idExp)throws Exception;
+
+	/***
+	 * 
+	 * @param codigo
+	 * @return Devuelve un listado con todas las subpartidas presupuestarias
+	 */
+	public List<ConfiguracionSubpartidasPresupuestarias> getComboSubpartidaPresupuestaria(Long idGasto);
+
+	/***
+	 * 
+	 * @param idSubpartida
+	 * @return Devuelve la partida presupuestaria relacionada con la subpartida presupuestaria
+	 */
+	public String getPartidaPresupuestaria(Long idSubpartida);
 }

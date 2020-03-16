@@ -67,7 +67,7 @@ public class DispatchSaveTests {
 	@Test
 	public void requestVacio () {
 		try {
-			dispatcher.dispatchSave(new JSONObject(),request);
+			dispatcher.dispatchSave(new JSONObject(), null);
 			verifyZeroInteractions(controller);
 		} catch (RuntimeException e) {
 			fail("El método no debería haber fallado (" + e.getMessage() + ")");
@@ -121,7 +121,7 @@ public class DispatchSaveTests {
 		JSONObject json = createInputJson(ID_ACTIVO);
 		putModel(json, TAB_CARGAS_ACTIVO, modelCargas);
 		putModel(json, TAB_INFO_ADMINISTRATIVA, modelInfoAdm);
-		dispatcher.dispatchSave(json,request);
+	    dispatcher.dispatchSave(json,request);
 		
 		ArgumentCaptor<DtoActivoCargasTab> captorCargas = ArgumentCaptor.forClass(DtoActivoCargasTab.class);
 		ArgumentCaptor<DtoActivoInformacionAdministrativa> captorInfoAdm = ArgumentCaptor.forClass(DtoActivoInformacionAdministrativa.class);

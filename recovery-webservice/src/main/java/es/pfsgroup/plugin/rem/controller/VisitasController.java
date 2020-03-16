@@ -56,7 +56,7 @@ public class VisitasController {
 
 	@Autowired
 	private UsuarioManager usuarioManager;
-
+	
 	@Autowired
 	private GenericABMDao genericDao;
 	

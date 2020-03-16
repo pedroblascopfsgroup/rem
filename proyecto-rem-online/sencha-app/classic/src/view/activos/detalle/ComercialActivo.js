@@ -143,6 +143,25 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 					     		value: '{comercial.puja}'
 						   },
 						   disabled: !isLogUsuGestComerSupComerSupAdmin
+						},
+						{ 
+							 xtype: 'comboboxfieldbase',
+							 fieldLabel:  HreRem.i18n('fieldlabel.direccion.comercial'),
+							 allowBlank: false,
+							 bind: {
+								readOnly: '{!editableCES}',
+						        store: '{comboDireccionComercial}',
+								value : '{comercial.direccionComercial}'									
+							 }
+						},
+						{				        	
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.venta.sobre.plano'),
+					        bind: {
+				            	store: '{comboSiNoBoolean}',
+				            	value:'{comercial.ventaSobrePlano}',
+				            	readOnly: true  //'{!esAgrupacionObraNueva}'
+				           	}
 						}
 				]
 			}, 

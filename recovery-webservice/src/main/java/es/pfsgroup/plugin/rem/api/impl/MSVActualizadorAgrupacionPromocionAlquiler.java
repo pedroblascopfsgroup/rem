@@ -144,6 +144,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		//-----Nueva Unidad alquilable (activo)
 		Activo unidadAlquilable = new Activo(); 
 		if (!Checks.esNulo(activoMatriz)) {    
+				
 			//Insercion de datos Basicos del Activo Matriz a la unidad alquilable
 			if (!Checks.esNulo(activoMatriz.getBien())) {			
 				//Insercion bien
@@ -189,8 +190,6 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 				unidadAlquilable.setTipoAlquiler(activoMatriz.getTipoAlquiler());
 			if (!Checks.esNulo(activoMatriz.getBloqueoTipoComercializacionAutomatico()))
 				unidadAlquilable.setBloqueoTipoComercializacionAutomatico(activoMatriz.getBloqueoTipoComercializacionAutomatico());			
-			if (!Checks.esNulo(activoMatriz.getDireccionTerritorial()))
-				unidadAlquilable.setDireccionTerritorial(activoMatriz.getDireccionTerritorial());
 		}
 		
 		
@@ -287,6 +286,9 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		if(Checks.esNulo(unidadAlquilable.getNumActivo())) {
 			return falloConexionConMaestro(fila);
 		}
+		
+		unidadAlquilable.setIsDnd(false);
+		
 		genericDao.save(Activo.class, unidadAlquilable);
 		
 		
@@ -624,8 +626,7 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		unidadAlquilable.setConCargas(activoMatriz.getConCargas());
 		unidadAlquilable.setFechaRevisionCarga(activoMatriz.getFechaRevisionCarga());
 		unidadAlquilable.setVpo(activoMatriz.getVpo());
-		
-		
+		unidadAlquilable.setTerritorio(activoMatriz.getTerritorio());
 
 		//-----Insercion de gestores a la Unidad Alquilable
 		if (!Checks.esNulo(activoMatriz)) {

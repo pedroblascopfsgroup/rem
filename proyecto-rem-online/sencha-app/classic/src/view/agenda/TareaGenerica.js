@@ -1383,7 +1383,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.habilitarCampo(me.down('[name=checkboxVentaDirecta]'));
 			me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
 		} else if(CONST.CARTERA['LIBERBANK'] == codigoCartera){
-			me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
+			me.habilitarCampo(me.down('[name=fechaIngreso]'));
 		}
 
 		me.down('[name=checkboxVentaDirecta]').addListener('change', function(checkbox, newValue, oldValue, eOpts) {
@@ -1460,16 +1460,24 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         }
 		if(CONST.CARTERA['LIBERBANK'] != codigoCartera) {
 			me.down('[name=fechaReunionComite]').hide();
-			me.down('[name=comiteInternoSancionador]').hide();
 			me.ocultarCampo(comitePropuesto);
 			me.ocultarCampo(importeTotalOfertaAgrupada);
 		}else{
 			me.desbloquearCampo(comboResolucion);
 			me.bloquearCampo(comitePropuesto);
 			
-			var filters = comboResolucionComite.getStore().getFilters();
-			filters.add({ property: 'carteraCodigo', value: '08' });
+			comboResolucionComite.setStore(new Ext.data.Store({
+													model: 'HreRem.model.DDBase',
+												    autoLoad: true,
+												    proxy: Ext.create('HreRem.ux.data.Proxy',{
+														remoteUrl: 'generic/getComitesResolucionLiberbank',
+														extraParams: {idExp: idExp}
+													})
+												})
+											);
 			
+			comboResolucionComite.allowBlank = false;
+											
 			var url = $AC.getRemoteUrl('ofertas/getClaseOferta');
 	    	Ext.Ajax.request({
 	    			url:url,
@@ -1479,6 +1487,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	    				 if(claseOferta == '03'){
 	    					 me.ocultarCampo(comitePropuesto);
 	    					 me.ocultarCampo(importeTotalOfertaAgrupada);
+	    				 }else if(claseOferta == '01' || claseOferta == '02'){
+	    				 	me.bloquearCampo(importeTotalOfertaAgrupada);
 	    				 }
 	    			}
 	    	});
@@ -2698,7 +2708,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.campoObligatorio(me.down('[name=fechaIngreso]'));
 		}else if(!Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera && (CONST.CARTERA['CERBERUS'] == codigoCartera && CONST.SUBCARTERA['AGORAINMOBILIARIO'] != codigoSubcartera)) {
 			me.deshabilitarCampo(me.down('[name=checkboxVentaDirecta]'));
-			me.bloquearCampo(me.down('[name=fechaIngreso]'));
 		}else if(CONST.CARTERA['SAREB'] == codigoCartera) {
         	me.down('[name=fechaIngreso]').allowBlank = false;
 		}else if(CONST.CARTERA['CAJAMAR'] == codigoCartera) {
@@ -2707,7 +2716,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         	me.down('[name=fechaIngreso]').allowBlank = false;	
 		} else if(Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera && (CONST.CARTERA['CERBERUS'] == codigoCartera && CONST.SUBCARTERA['AGORAINMOBILIARIO'] != codigoSubcartera)) {
 			me.habilitarCampo(me.down('[name=checkboxVentaDirecta]'));
-			me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
+			me.habilitarCampo(me.down('[name=fechaIngreso]'));
+	        me.down('[name=fechaIngreso]').allowBlank = false;
+	        me.down('[name=fechaIngreso]').validate();
 		}
 
 		me.down('[name=checkboxVentaDirecta]').addListener('change', function(checkbox, newValue, oldValue, eOpts) {
@@ -2717,8 +2728,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	            	me.down('[name=fechaIngreso]').allowBlank = false;
 	            	me.down('[name=fechaIngreso]').validate();
 	            } else {
-	            	me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
-	            	me.campoNoObligatorio(me.down('[name=fechaIngreso]'));
 	            	me.down('[name=fechaIngreso]').reset();
 	            }
 			}

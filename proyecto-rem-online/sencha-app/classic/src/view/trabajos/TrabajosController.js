@@ -62,6 +62,7 @@ Ext.define('HreRem.view.trabajos.TrabajosController', {
     
     onEnlaceActivosClick: function(tableView, indiceFila, indiceColumna) {
     	var me = this;
+    	me.getView().mask(HreRem.i18n("msg.mask.loading"));
     	
     	var grid = tableView.up('grid');
 
@@ -69,18 +70,39 @@ Ext.define('HreRem.view.trabajos.TrabajosController', {
 
     	grid.setSelection(record);
     	
+    	var numEntidad = record.getData().numActivoAgrupacion;
+    	
     	if(record.get("tipoEntidad")=='agrupaciones'){
-    		var idAgrupacion = record.get("numAgrupacionRem");
+    		
+    		me.getView().unmask();
     		
     		me.redirectTo('activos', true);
 
-        	me.getView().fireEvent('abrirDetalleAgrupacionByNum', idAgrupacion);
+        	me.getView().fireEvent('abrirDetalleAgrupacionByNum', numEntidad);
     	}else{
-    		var idActivo = record.get("idActivo");
-        	
-        	me.redirectTo('activos', true);
+    		
+    		var url= $AC.getRemoteUrl('activo/getActivoExists');
+    		Ext.Ajax.request({
+    		     url: url,
+    		     params: {numActivo : numEntidad},
+    		     success: function(response, opts) {
+    		    	 var data = Ext.decode(response.responseText);
+    		    	 if(data.success == "true"){
+    		    	 	me.getView().unmask();
+    		    		me.redirectTo('activos', true);
 
-        	me.getView().fireEvent('abrirDetalleActivo', idActivo);
+        				me.getView().fireEvent('abrirDetalleActivo', data.data);
+    		    	 }else{
+        		    	 me.fireEvent("errorToast", data.error);
+    		    	 }
+    		         
+    		     },
+    		     failure: function(response) {
+    		    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    		     }
+    		 });    
+        	
+        	
     	}
     	
     	

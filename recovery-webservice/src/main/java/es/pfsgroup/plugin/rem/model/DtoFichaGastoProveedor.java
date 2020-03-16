@@ -65,6 +65,8 @@ public class DtoFichaGastoProveedor extends WebDto {
    	private String nombreGestoria;
    	private String codigoImpuestoIndirecto;
    	private String cartera;
+   	private String subcartera;
+   	private Long idSubpartidaPresupuestaria;
    	private String identificadorUnico;
    	private Long numeroPrimerGastoSerie;
    	private Date fechaRecPropiedad;
@@ -405,5 +407,17 @@ public class DtoFichaGastoProveedor extends WebDto {
 	}
 	public void setEstadoEmisor(String estadoEmisor) {
 		this.estadoEmisor = estadoEmisor;
+	}
+	public String getSubcartera() {
+		return subcartera;
+	}
+	public void setSubcartera(String subcartera) {
+		this.subcartera = subcartera;
+	}
+	public Long getIdSubpartidaPresupuestaria() {
+		return idSubpartidaPresupuestaria;
+	}
+	public void setIdSubpartidaPresupuestaria(Long idSubpartidaPresupuestaria) {
+		this.idSubpartidaPresupuestaria = idSubpartidaPresupuestaria;
 	}
 }

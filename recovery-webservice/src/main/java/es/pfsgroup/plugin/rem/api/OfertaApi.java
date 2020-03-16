@@ -581,11 +581,6 @@ public interface OfertaApi {
 
 	boolean comprobarComiteLiberbankPlantillaPropuesta(TareaExterna tareaExterna);
 
-	
-	DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada);
-	
-	DDComiteSancion calculoComiteLiberbankActivoSolo(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk) throws IllegalAccessException, InvocationTargetException;
-
 	Boolean checkProvinciaCompradores(TareaExterna tareaExterna);
 
 	Boolean checkNifConyugueLBB(TareaExterna tareaExterna);
@@ -713,12 +708,6 @@ public interface OfertaApi {
 	 */
 	DtoPage getListActivosOfertasAgrupadasLiberbank(DtoVListadoOfertasAgrupadasLbk dtoVListadoOfertasAgrupadasLbk);
 
-	DDComiteSancion calculoComiteLiberbankOfertasDependientes(Oferta ofertaNueva, List<GastosExpediente> gastosExpediente, boolean esLote);
-
-	DDComiteSancion calculoComiteLiberbankLoteActivos(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk) throws IllegalAccessException, InvocationTargetException;
-
-	DDComiteSancion calculoComiteLBK(Oferta ofertaAceptada, List<GastosExpediente> gastosExpediente, OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk) throws IllegalAccessException, InvocationTargetException;
-
 	/**
 	 * Método que comprueba si la oferta es una oferta principal
 	 * @param oferta oferta actual
@@ -802,5 +791,30 @@ public interface OfertaApi {
 	boolean checkReservaInformada(TareaExterna tareaExterna);
 	
 	public Long saveOferta(Oferta oferta);
+
+	/*
+	 * Este método comprueba si están todos los valores necesarios para los cálculos de liberbank.
+	 * Los valores necesarios para el calculo de comite Liberbank son:
+	 * PVB (Precio Valor Bruto) --> El importe de la oferta
+	 * PVN (Precio Valor Neto) --> El importe de la oferta menos los honorarios
+	 * VR (Valor Razonable) 
+	 * VTA (Valor Tasacion Actual) --> El valor de la última tasación del activo
+	 * Pmin (Precio minimo autorizado)
+	 * Cco (Costes de comercialización) --> Honorarios del expediente
+	 *
+	 * @param oferta
+	 * @param eco
+	 * @return boolean
+	 */
+	public boolean cumpleRequisitosCalculoLBK(Oferta oferta, ExpedienteComercial eco);
+
+	/*
+	 * En este metodo se calcula y asigna el comité de una oferta y si tiene ofertas dependientes se calcula y asigna el comité de la agrupacion de ofertas 
+	 * y a las ofertas dependientes se le calcula y asigna su propio comité
+	 *
+	 * @param oferta
+	 * @return DDComiteSancion
+	 */
+	DDComiteSancion calculoComiteLBK(Long idOferta, ExpedienteComercial eco);
 
 }

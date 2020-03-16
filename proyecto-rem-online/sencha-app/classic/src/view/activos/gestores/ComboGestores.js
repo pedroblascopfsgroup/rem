@@ -33,6 +33,7 @@ Ext.define('HreRem.view.activos.gestores.ComboGestores', {
 				chainedReference: 'usuarioGestor',
             	displayField: 'descripcion',
 				valueField: 'id',
+				filtradoEspecial: true,
 				emptyText: HreRem.i18n('gestores.comboGestores.emptyText.combo.gestor'),
 				listeners: {
 					select: 'onChangeChainedCombo'
@@ -50,22 +51,9 @@ Ext.define('HreRem.view.activos.gestores.ComboGestores', {
             	},
             	displayField: 'apellidoNombre',
 				valueField: 'id',
-				mode: 'local',
+				filtradoEspecial: true,
 				emptyText: HreRem.i18n('gestores.comboGestores.emptyText.combo.usuario'),
-				enableKeyEvents:true,
 			    listeners: {
-			    	'keyup': function() {
-			    		this.getStore().clearFilter();
-			    		this.getStore().filter({
-			        	    property: 'apellidoNombre',
-			        	    value: this.getRawValue(),
-			        	    anyMatch: true,
-			        	    caseSensitive: false
-			        	})
-			    	},
-			    	'beforequery': function(queryEvent) {
-			    		queryEvent.combo.onLoad();
-			    	},
 			    	select: 'disableAgregarGestores'
 			    }
             }          

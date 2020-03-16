@@ -235,6 +235,14 @@ Ext.define('HreRem.model.ExpedienteComercial', {
 				depends: 'entidadPropietariaCodigo'
     		},
     		{
+    			name: 'mostrarPbcReserva',
+    			calculate: function(data) { 
+    				return data.entidadPropietariaCodigo == CONST.CARTERA['CERBERUS'] && (data.subcarteraCodigo == CONST.SUBCARTERA['APPLEINMOBILIARIO'] || data.subcarteraCodigo == CONST.SUBCARTERA['DIVARIANARROW'] || data.subcarteraCodigo == CONST.SUBCARTERA['DIVARIANREMAINING']);
+    			},
+				depends: 'subcarteraCodigo',
+				depends: 'entidadPropietariaCodigo'
+    		},
+    		{
     			name:'estaFirmado',
     			type: 'boolean'
 			},
@@ -259,6 +267,11 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		},
     		{
     			name: 'fechaRecomendacionCes',
+    			type:'date', 
+        		dateFormat: 'c'
+    		},
+    		{
+    			name: 'fechaContabilizacionVenta',
     			type:'date', 
         		dateFormat: 'c'
     		},

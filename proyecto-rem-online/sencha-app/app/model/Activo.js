@@ -140,9 +140,6 @@ Ext.define('HreRem.model.Activo', {
     			name:'paisCodigo'
     		},
     		{
-    			name:'direccionTerritorial'
-    		},
-    		{
     			name: 'idufir'
     		},
     		{
@@ -876,18 +873,72 @@ Ext.define('HreRem.model.Activo', {
     			name: 'sociedadPagoAnterior'
     		},
     		{
+    			name: 'pazSocial',
+    			type: 'boolean'
+    		},
+    		{
     			name: 'isSubcarteraDivarian',
     			calculate: function(data) { 
-    				if(data.entidadPropietariaCodigo == CONST.CARTERA['CERBERUS'] && data.subcarteraCodigo == CONST.SUBCARTERA['DIVARIAN']){
-    					return true;
-    				}
-    				return false;
+    				return CONST.CARTERA['CERBERUS'] == data.entidadPropietariaCodigo
+    				&& (	CONST.SUBCARTERA['DIVARIANARROW'] == data.subcarteraCodigo || CONST.SUBCARTERA['DIVARIANREMAINING'] == data.subcarteraCodigo);
     			},
 				depends: ['subcarteraCodigo', 'entidadPropietariaCodigo']
     		},
     		{
     			name: 'mostrarEditarFasePublicacion',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'editableCheckComercializar',
+    			calculate: function(data){
+    				if(data.checkComercializarReadOnly){
+    					return data.checkComercializarReadOnly;
+    				} else{
+    					return data.isVendidoOEntramite;
+    				}
+    			},
+    			depends: ['checkComercializarReadOnly', 'isVendidoOEntramite']
+    		},
+    		{
+    			name: 'editableCheckPublicacion',
+    			calculate: function(data){
+    				if(data.checkPublicacionReadOnly){
+    					return data.checkPublicacionReadOnly;
+    				} else{
+    					return data.isVendido;
+    				}
+    			},
+    			depends: ['checkPublicacionReadOnly', 'isVendido']
+    		},
+    		{
+    			name: 'tipoSegmentoCodigo'
+    		},
+    		{
+    			name: 'isAppleOrDivarian',
+    			calculate: function(data){
+    				return (data.isSubcarteraDivarian || data.isSubcarteraApple);
+    			},
+    			depends: ['isSubcarteraDivarian', 'isSubcarteraApple']
+    		},
+    		{
+    			name: 'isUA',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'esEditableDestinoComercial',
+    			calculate: function(data){
+    				var perimetroMacc;
+    				if(data.perimetroMacc == 1){
+    					perimetroMacc = true;
+    				}else{
+    					perimetroMacc = false;
+    				}
+					return !data.isUA && !data.pazSocial && !perimetroMacc;
+    			},
+    			depends: ['isUA','pazSocial','perimetroMacc']
+    		},
+    		{
+    			name: 'numActivoDivarian'
     		}
     ],
     

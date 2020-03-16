@@ -228,23 +228,8 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 				            	},
 				            	displayField: 'apellidoNombre',
 	    						valueField: 'id',
-	    						mode: 'local',
-	    						emptyText: HreRem.i18n('txt.seleccione.gestor'),
-	    						enableKeyEvents:true,
-    						    listeners: {
-    						     'keyup': function() {
-    						    	   this.getStore().clearFilter();
-    						    	   this.getStore().filter({
-    						        	    property: 'apellidoNombre',
-    						        	    value: this.getRawValue(),
-    						        	    anyMatch: true,
-    						        	    caseSensitive: false
-    						        	})
-    						     },
-    						     'beforequery': function(queryEvent) {
-    						           queryEvent.combo.onLoad();
-    						     }
-    						    }
+	    						filtradoEspecial: true,
+	    						emptyText: HreRem.i18n('txt.seleccione.gestor')
 						    },
 						    {
 								fieldLabel: HreRem.i18n('fieldlabel.num.activo.sareb'),

@@ -23,6 +23,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDAdecuacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDCesionUso;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 
@@ -77,6 +78,13 @@ public class ActivoPatrimonio implements Serializable, Auditable {
 	@ManyToOne
 	@JoinColumn(name = "DD_EAL_ID")
 	private DDTipoEstadoAlquiler tipoEstadoAlquiler;
+	
+	@ManyToOne(fetch= FetchType.LAZY)
+	@JoinColumn(name="DD_CDU_ID")
+	private DDCesionUso cesionUso;
+	
+	@Column(name="PTA_TRAMITE_ALQ_SOCIAL")
+	private Boolean tramiteAlquilerSocial;
 	
 	@Version
 	private Long version;
@@ -146,6 +154,22 @@ public class ActivoPatrimonio implements Serializable, Auditable {
 
 	public void setCheckHPM(Boolean checkHPM) {
 		this.checkHPM = checkHPM;
+	}
+
+	public DDCesionUso getCesionUso() {
+		return cesionUso;
+	}
+
+	public void setCesionUso(DDCesionUso cesionUso) {
+		this.cesionUso = cesionUso;
+	}
+
+	public Boolean getTramiteAlquilerSocial() {
+		return tramiteAlquilerSocial;
+	}
+
+	public void setTramiteAlquilerSocial(Boolean tramiteAlquilerSocial) {
+		this.tramiteAlquilerSocial = tramiteAlquilerSocial;
 	}
 
 	public Long getVersion() {

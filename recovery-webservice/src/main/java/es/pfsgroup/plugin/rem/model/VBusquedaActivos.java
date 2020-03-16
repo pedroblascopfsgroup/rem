@@ -271,9 +271,6 @@ public class VBusquedaActivos implements Serializable {
 	@Column(name = "DD_ECG_CODIGO")
 	private String estadoComunicacionGencat;
 
-	@Column(name = "DD_DRT_CODIGO")
-	private String direccionTerritorialCodigo;
-
 	@Column(name = "ICO_MEDIADOR_ID")
 	private Long apiPrimarioId;
 	
@@ -286,9 +283,51 @@ public class VBusquedaActivos implements Serializable {
 	@Column(name = "DD_TCO_CODIGO")
 	private String tipoComercializacionCodigoAuxiliar; 
 	
+	@Column(name = "TAS_IMPORTE_TAS_FIN")
+	private Long precioTasacionActivo; 
+		
+	@Column(name = "ESTADO_PUBLICACION_VENTA")
+	private String estadoPublicacionVenta;
+	
+	@Column(name = "ESTADO_PUBLICACION_ALQUILER")
+	private String estadoPublicacionAlquiler;
+	
+	@Column(name = "FASE_PUBLICACION_CODIGO")
+	private String fasePublicacionCodigo;
+	
+	@Column(name = "FASE_PUBLICACION_DESCRIPCION")
+	private String fasePublicacionDescripcion;
+	
+	@Column(name = "SUBFASE_PUBLICACION_CODIGO")
+	private String subFasePublicacionCodigo;
+	
+	@Column(name = "SUBFASE_PUBLICACION_DESCRIPCION")
+	private String subFasePublicacionDescripcion;
+	
+	@Column(name= "MOTIVO_OCULTACION_ALQUILER")
+    private String motivoOcultacionAlquiler;
+    
+    @Column(name= "MOTIVO_OCULTACION_VENTA")
+    private String motivoOcultacionVenta;
+    
+	@Column(name = "DD_TPU_V_CODIGO")
+	private String tipoPublicacionVentaCodigo;
+	
+	@Column(name = "DD_TPU_A_CODIGO")
+	private String tipoPublicacionAlquilerCodigo;
+	
+	@Column(name ="DD_TDC_DIRECCION_COMERCIAL")
+	private String territorio;
+	
 	@Column(name = "ACT_NUM_ACTIVO_DIVARIAN")
 	private String numActivoDivarian;
 	
+	@Column(name = "DD_TS_CODIGO")
+	private String tipoSegmento;
+	
+	@Column(name = "ACT_PERIMETRO_MACC")
+	private String perimetroMacc;
+
 	public Long getId() {
 		return id;
 	}
@@ -643,12 +682,12 @@ public class VBusquedaActivos implements Serializable {
 		this.estadoComunicacionGencat = estadoComunicacionGencat;
 	}
 
-	public String getDireccionTerritorialCodigo() {
-		return direccionTerritorialCodigo;
+	public Long getApiPrimariaId() {
+		return apiPrimarioId;
 	}
 
-	public void setDireccionTerritorialCodigo(String direccionTerritorialCodigo) {
-		this.direccionTerritorialCodigo = direccionTerritorialCodigo;
+	public void setApiPrimariaId(Long apiPrimarioId) {
+		this.apiPrimarioId = apiPrimarioId;
 	}
 
 	public String getTipoComercializacionCodigo() {
@@ -659,14 +698,6 @@ public class VBusquedaActivos implements Serializable {
 		this.tipoComercializacionCodigoAuxiliar = tipoComercializacionCodigo;
 	}
 
-	public Long getApiPrimarioId() {
-		return apiPrimarioId;
-	}
-
-	public void setApiPrimarioId(Long apiPrimarioId) {
-		this.apiPrimarioId = apiPrimarioId;
-	}
-
 	public String getNumActivoDivarian() {
 		return numActivoDivarian;
 	}
@@ -674,4 +705,29 @@ public class VBusquedaActivos implements Serializable {
 	public void setNumActivoDivarian(String numActivoDivarian) {
 		this.numActivoDivarian = numActivoDivarian;
 	}
+
+	public String getTerritorio() {
+		return territorio;
+	}
+
+	public void setTerritorio(String territorio) {
+		this.territorio = territorio;
+	}
+	
+	public String getTipoSegmento() {
+		return tipoSegmento;
+	}
+
+	public void setTipoSegmento(String tipoSegmento) {
+		this.tipoSegmento = tipoSegmento;
+	}
+
+	public String getPerimetroMacc() {
+		return perimetroMacc;
+	}
+
+	public void setPerimetroMacc(String perimetroMacc) {
+		this.perimetroMacc = perimetroMacc;
+	}
+	
 }

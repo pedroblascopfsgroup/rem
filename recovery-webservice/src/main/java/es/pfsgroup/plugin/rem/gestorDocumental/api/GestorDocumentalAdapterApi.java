@@ -128,7 +128,7 @@ public interface GestorDocumentalAdapterApi {
 	
 	public String getClienteByCarteraySubcarterayPropietario(DDCartera cartera, DDSubcartera subcartera, ActivoPropietario actPro);
 
-	//Long uploadDocumentoProveedor(ActivoProveedorCartera proveedorCartera, WebFileItem webFileItem, String userLogin, String matricula) throws GestorDocumentalException;
+	//Long uploadDocumentoProveedor(ActivoProveedorCartera proveedorCartera, WebFileItem webFileItem, String userLogin, DDTipoContenedorProveedor tipoContenedor, String matricula) throws GestorDocumentalException;
 
 	//List<DtoAdjunto> getAdjuntosProveedor(ActivoProveedor proveedor) throws GestorDocumentalException;
 

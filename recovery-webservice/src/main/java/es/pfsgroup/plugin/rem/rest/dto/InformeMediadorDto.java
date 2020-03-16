@@ -71,6 +71,7 @@ public class InformeMediadorDto implements Serializable {
  	@Diccionary(clase = ActivoProveedor.class, foreingField="codigoProveedorRem",message = "El idProveedorRem no existe", groups = { Insert.class,
  			Update.class })
  	@EntityDefinition(procesar = false)
+ 	//@EntityDefinition(propertyName = "mediadorInforme", classObj = ActivoProveedor.class, foreingField = "codigoProveedorRem")
 	private Long idProveedorRem;
  	
 	@EntityDefinition(procesar = false)

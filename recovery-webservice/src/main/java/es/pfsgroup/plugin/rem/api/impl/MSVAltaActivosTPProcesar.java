@@ -63,78 +63,79 @@ public class MSVAltaActivosTPProcesar extends AbstractMSVActualizador implements
 		//Comercializacion
 		static final int COD_DESTINO_COMER = 19;
 		static final int COD_TIPO_ALQUILER = 20;
+		static final int COD_TIPO_DE_COMERCIALIZACION = 21;
 		
 		//Inscripción
-		static final int POBL_REGISTRO = 21;
-		static final int NUM_REGISTRO = 22;
-		static final int TOMO = 23;
-		static final int LIBRO = 24;
-		static final int FOLIO = 25;
-		static final int FINCA = 26;
-		static final int IDUFIR_CRU = 27;
-		static final int SUPERFICIE_CONSTRUIDA_M2 = 28;
-		static final int SUPERFICIE_UTIL_M2 = 29;
-		static final int SUPERFICIE_REPERCUSION_EE_CC = 30;
-		static final int PARCELA = 31; // (INCLUIDA OCUPADA EDIFICACION)
-		static final int ES_INTEGRADO_DIV_HORIZONTAL = 32;
+		static final int POBL_REGISTRO = 22;
+		static final int NUM_REGISTRO = 23;
+		static final int TOMO = 24;
+		static final int LIBRO = 25;
+		static final int FOLIO = 26;
+		static final int FINCA = 27;
+		static final int IDUFIR_CRU = 28;
+		static final int SUPERFICIE_CONSTRUIDA_M2 = 29;
+		static final int SUPERFICIE_UTIL_M2 = 30;
+		static final int SUPERFICIE_REPERCUSION_EE_CC = 31;
+		static final int PARCELA = 32; // (INCLUIDA OCUPADA EDIFICACION)
+		static final int ES_INTEGRADO_DIV_HORIZONTAL = 33;
 		
 		//Titulo
-		static final int NIF_PROPIETARIO = 33;
-		static final int GRADO_PROPIEDAD = 34;
-		static final int PERCENT_PROPIEDAD = 35;
-		static final int PROP_ANTERIOR = 36;
+		static final int NIF_PROPIETARIO = 34;
+		static final int GRADO_PROPIEDAD = 35;
+		static final int PERCENT_PROPIEDAD = 36;
+		static final int PROP_ANTERIOR = 37;
 		
 		//
-		static final int REF_CATASTRAL = 37;
-		static final int VPO = 38;
-		static final int CALIFICACION_CEE = 39;
-		static final int CED_HABITABILIDAD = 40;
+		static final int REF_CATASTRAL = 38;
+		static final int VPO = 39;
+		static final int CALIFICACION_CEE = 40;
+		static final int CED_HABITABILIDAD = 41;
 		
 		//Información publicación
-		static final int NIF_MEDIADOR = 41;
-		static final int VIVIENDA_NUM_PLANTAS = 42;
-		static final int VIVIENDA_NUM_BANYOS = 43;
-		static final int VIVIENDA_NUM_ASEOS = 44;
-		static final int VIVIENDA_NUM_DORMITORIOS = 45;
-		static final int TRASTERO_ANEJO = 46;
-		static final int GARAJE_ANEJO = 47;
-		static final int ASCENSOR = 48;
+		static final int NIF_MEDIADOR = 42;
+		static final int VIVIENDA_NUM_PLANTAS = 43;
+		static final int VIVIENDA_NUM_BANYOS = 44;
+		static final int VIVIENDA_NUM_ASEOS = 45;
+		static final int VIVIENDA_NUM_DORMITORIOS = 46;
+		static final int TRASTERO_ANEJO = 47;
+		static final int GARAJE_ANEJO = 48;
+		static final int ASCENSOR = 49;
 		
 		//Información precios
-		static final int PRECIO_MINIMO = 49;
-		static final int PRECIO_VENTA_WEB = 50;
-		static final int VALOR_TASACION = 51;
-		static final int FECHA_TASACION = 52;
+		static final int PRECIO_MINIMO = 50;
+		static final int PRECIO_VENTA_WEB = 51;
+		static final int VALOR_TASACION = 52;
+		static final int FECHA_TASACION = 53;
 		
 		//Gestores del activo
-		static final int GESTOR_COMERCIAL = 53;
-		static final int SUPER_GESTOR_COMERCIAL = 54;
-		static final int GESTOR_FORMALIZACION = 55;
-		static final int SUPER_GESTOR_FORMALIZACION = 56;
-		static final int GESTOR_ADMISION = 57;
-		static final int GESTOR_ACTIVOS = 58;
-		static final int GESTORIA_DE_FORMALIZACION= 59;
+		static final int GESTOR_COMERCIAL = 54;
+		static final int SUPER_GESTOR_COMERCIAL = 55;
+		static final int GESTOR_FORMALIZACION = 56;
+		static final int SUPER_GESTOR_FORMALIZACION = 57;
+		static final int GESTOR_ADMISION = 58;
+		static final int GESTOR_ACTIVOS = 59;
+		static final int GESTORIA_DE_FORMALIZACION= 60;
 		
 		//Datos relevantes admisión
-		static final int FECHA_INSCRIPCION = 60;
-		static final int FECHA_OBT_TITULO = 61;
-		static final int FECHA_TOMA_POSESION = 62;
-		static final int FECHA_LANZAMIENTO = 63;
-		static final int OCUPADO = 64;
-		static final int TIENE_TITULO = 65;
-		static final int LLAVES = 66;
-		static final int CARGAS = 67;
+		static final int FECHA_INSCRIPCION = 61;
+		static final int FECHA_OBT_TITULO = 62;
+		static final int FECHA_TOMA_POSESION = 63;
+		static final int FECHA_LANZAMIENTO = 64;
+		static final int OCUPADO = 65;
+		static final int TIENE_TITULO = 66;
+		static final int LLAVES = 67;
+		static final int CARGAS = 68;
 		
 		//
-		static final int TIPO_ACTIVO = 68;
-		static final int FORMALIZACION = 69;
+		static final int TIPO_ACTIVO = 69;
+		static final int FORMALIZACION = 70;
 		
 		//Datos propietarios
-		static final int NOMBRE_PROPIETARIO = 70;
-		static final int APELLIDO1_PROPIETARIO = 71;
-		static final int APELLIDO2_PROPIETARIO = 72;
-		static final int TIPO_PROPIETARIO = 73;
-		static final int NIF_CIF_PROPIETARIO = 74;
+		static final int NOMBRE_PROPIETARIO = 71;
+		static final int APELLIDO1_PROPIETARIO = 72;
+		static final int APELLIDO2_PROPIETARIO = 73;
+		static final int TIPO_PROPIETARIO = 74;
+		static final int NIF_CIF_PROPIETARIO = 75;
 	};
 	
 	@Override
@@ -187,6 +188,7 @@ public class MSVAltaActivosTPProcesar extends AbstractMSVActualizador implements
 		
 		dtoAATP.setDestinoComercialCodigo(exc.dameCelda(fila, COL_NUM.COD_DESTINO_COMER));
 		dtoAATP.setTipoAlquilerCodigo(exc.dameCelda(fila, COL_NUM.COD_TIPO_ALQUILER));
+		dtoAATP.setTipoDeComercializacion(exc.dameCelda(fila, COL_NUM.COD_TIPO_DE_COMERCIALIZACION));
 		
 		dtoAATP.setPoblacionRegistroCodigo(exc.dameCelda(fila, COL_NUM.POBL_REGISTRO));
 		dtoAATP.setNumRegistro(exc.dameCelda(fila, COL_NUM.NUM_REGISTRO));

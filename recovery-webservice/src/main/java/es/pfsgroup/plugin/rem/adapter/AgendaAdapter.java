@@ -1023,7 +1023,7 @@ public class AgendaAdapter {
 									actGenericFormManager.saveValues(dto);									
 								} catch (Exception e) {
 									logger.error(e.getMessage());
-									throw new Exception(ERROR_TAREA_DEPENDIENTE);
+									throw new Exception(ERROR_TAREA_DEPENDIENTE,e);
 								}
 							}
 						}

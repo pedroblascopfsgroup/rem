@@ -24,87 +24,8 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T017_AnalisisPM" name="avanzaBPM"></transition>
-	</state> <!-- Transicion directa a analisis PM-->
-    <state name="T017_AnalisisPM">
-		<event type="node-enter">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					activoGenericEnterActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					activoGenericLeaveActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<transition to="T017_AnalisisPMDecision" name="avanzaBPM"></transition>
-	</state> <!-- Transicion a Decision  3 caminos-->
-    <decision name ="T017_AnalisisPMDecision" expression="#{T017_AnalisisPMDecision}">
-		<transition to="T017_ResolucionArrow" name="ApruebaArrow"></transition>
-        <transition to="T017_ResolucionCES" name="ApruebaCES"></transition>
-        <transition to="T017_RespuestaOfertantePM" name="Contraoferta"></transition>
-		<transition to="T017_ResolucionExpediente" name="Deniega"></transition>
-	</decision> <!-- Decision de AnalisisPM : "ResolucionCES / Respuesta Ofertante PM-->
-	    <state name="T017_RespuestaOfertantePM">
-		<event type="node-enter">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					activoGenericEnterActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					activoGenericLeaveActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<transition to="T017_RespuestaOfertantePMDecision" name="avanzaBPM"></transition>
-	</state>
-	<decision name ="T017_RespuestaOfertantePMDecision" expression="#{T017_RespuestaOfertantePMDecision}">
-		<transition to="T017_ResolucionArrow" name="ApruebaArrow"></transition>
-        <transition to="T017_ResolucionCES" name="ApruebaCES"></transition>
-	</decision>
-	<state name="T017_ResolucionArrow">
-		<event type="node-enter">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					activoGenericEnterActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					activoGenericLeaveActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<transition to="T017_ResolucionArrowDecision" name="avanzaBPM"></transition>
-	</state>
-	<decision name ="T017_ResolucionArrowDecision" expression="#{T017_ResolucionArrowDecision}">
-        <transition to="forkReservaSi" name="AceptaConReserva"></transition> 
-        <transition to="forkReservaNo" name="AceptaSinReserva"></transition> 
-        <transition to="T017_RespuestaOfertanteCES" name="Contraoferta"></transition>
-		<transition to="T017_ResolucionExpediente" name="Deniega"></transition>
-	</decision>
+		<transition to="T017_ResolucionCES" name="avanzaBPM"></transition>
+	</state> <!-- Transicion directa a resolucion CES-->
 	<state name="T017_ResolucionCES">
 		<event type="node-enter">
 			<action name="miTarea"

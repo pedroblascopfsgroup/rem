@@ -229,6 +229,35 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 		
     },
     
+    onDeleteClick: function(){
+		var me = this;
+		
+		var idGastoActivo = me.selection.data.id;
+		var params = {};
+		params.id = idGastoActivo;
+		var url =  $AC.getRemoteUrl('gastosproveedor/deleteGastoActivo');
+		
+		Ext.Ajax.request({		    			
+		 		url: url,
+		   		params: params,	    		
+		    	success: function(response, opts) {		    		
+					var data = Ext.decode(response.responseText);
+					if(!Ext.isEmpty(data) && data.success == "true") {
+						me.up('form').funcionRecargar();
+						me.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
+						me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+					} else {	
+						me.up('form').funcionRecargar();
+						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					}
+		    	},
+	   			failure: function(response) {
+	   				me.up('form').funcionRecargar();
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    		    }
+		});		
+    },
+    
     deleteSuccessFn: function() {
     	var me = this; 
     	//me.lookupController().updateGastoByPrinexLBK();	

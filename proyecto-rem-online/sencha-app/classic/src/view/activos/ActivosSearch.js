@@ -72,7 +72,10 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 			            	},
 			            	reference: 'comboSubcarteraActivoSearch',
 			            	valueField: 'codigo',
-    						displayField: 'descripcion'
+    						displayField: 'descripcion',
+				        	listeners : {
+				        		change: 'onChangeSubcartera'
+				        	} 
 				        }
 				    ]},
 				    {
@@ -546,23 +549,8 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						            	},
 						            	displayField: 'apellidoNombre',
 			    						valueField: 'id',
-			    						mode: 'local',
-			    						emptyText: 'Introduzca un usuario',
-			    						enableKeyEvents:true,
-		    						    listeners: {
-											'keyup': function() {
-											   this.getStore().clearFilter();
-											   this.getStore().filter({
-												    property: 'apellidoNombre',
-												    value: this.getRawValue(),
-												    anyMatch: true,
-												    caseSensitive: false
-												})
-											},
-											'beforequery': function(queryEvent) {
-												queryEvent.combo.onLoad();
-											}
-		    						    }
+										filtradoEspecial: true,
+			    						emptyText: 'Introduzca un usuario'
 								    },
 							    	{ 
 							    		xtype: 'comboboxfieldbase',
@@ -570,32 +558,8 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							    		name: 'apiPrimarioId',
 							    		valueField : 'id',
 										displayField : 'nombre',
-							    		enableKeyEvents:true,
-							    		mode: 'local',
-							    		forceSelection	: false,
-							    		editable: true,
-							    		minChars: 0,
+										filtradoEspecial: true,
 							    		emptyText: 'Introduzca nombre mediador',
-										listeners: {
-											'keyup': function() {
-												if(this.getRawValue().length >= 3)
-												{
-													this.getStore().clearFilter();
-												   	this.getStore().filter({
-													    property: 'nombre',
-													    value: this.getRawValue(),
-													    anyMatch: true,
-													    caseSensitive: false
-													})
-												}else if (this.getRawValue().length == 0) {
-													this.getStore().clearFilter();
-													this.getStore().load();
-												}
-											},
-											'beforequery': function(queryEvent) {
-											 	queryEvent.combo.onLoad();
-											}
-										},
 							    		bind: {
 							    			store: '{comboApiPrimario}'
 							    		}
@@ -669,10 +633,30 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							    	},
 							    	{ 
 							    		xtype: 'comboboxfieldbase',
-							    		fieldLabel: HreRem.i18n('fieldlabel.direccion.territorial'),
-							    		name: 'direccionTerritorialCodigo',
+							    		fieldLabel: HreRem.i18n('fieldlabel.direccion.comercial'),
+							    		name: 'territorio',
 							    		bind: {
-							    			store: '{comboDireccionTerritorial}'
+							    			store: '{comboDireccionComercial}'
+							    		}
+							    	},
+							    	{ 
+							    		xtype: 'comboboxfieldbase',
+							    		fieldLabel: HreRem.i18n('fieldlabel.tipo.segmento'),
+							    		name: 'tipoSegmento',
+							    		reference: 'tipoSegmentoRef',
+							    		hidden: true,
+							    		bind: {
+							    			store: '{comboTipoSegmento}'
+							    		}
+							    	},
+							    	{ 
+							    		xtype: 'comboboxfieldbase',
+							    		fieldLabel: HreRem.i18n('fieldlabel.perimetro.apple.macc.perimetro'),
+							    		name: 'perimetroMacc',
+							    		reference: 'perimetroMaccRef',
+							    		hidden: true,
+							    		bind: {
+							    			store: '{comboSiNoRemActivo}'
 							    		}
 							    	}
 								]

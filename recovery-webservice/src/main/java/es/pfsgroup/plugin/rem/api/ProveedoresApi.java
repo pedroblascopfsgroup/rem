@@ -20,8 +20,6 @@ import es.pfsgroup.plugin.rem.model.DtoMediadorOferta;
 import es.pfsgroup.plugin.rem.model.DtoMediadorStats;
 import es.pfsgroup.plugin.rem.model.DtoPersonaContacto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 
 public interface ProveedoresApi {
 	
@@ -156,14 +154,11 @@ public interface ProveedoresApi {
 	 * Este método obtiene una lista de documentos asociados al ID del proveedor.
 	 * 
 	 * @param id: ID del proveedor.
-	 * @param cartera: cartera seleccionada en el método upload (documento).
-	 * @param subcartera: subcartera seleccionada en el método upload (documento).
 	 * @return Devuelve una lista de documentos con los resultados obtenidos.
 	 * @throws GestorDocumentalException 
 	 */
-	public Object getAdjuntos(Long id);
-	//ESTE CODIGO ESTA COMENTADO PARA UN FUTURO DESARROLLO ¡¡NO BORRAR!!
-	//public List<DtoAdjunto> getAdjuntos(Long id) throws GestorDocumentalException;
+	//public List<DtoAdjunto> getAdjuntos(Long id, ActivoProveedorCartera actProvCar, String username) throws GestorDocumentalException;
+	public List<DtoAdjunto> getAdjuntos(Long id);
 
 	/**
 	 * Verificación de adjunto existente la lista de proveedores de 1 activo.
@@ -297,5 +292,13 @@ public interface ProveedoresApi {
 	public Boolean esUsuarioConPerfilProveedor(Usuario usuario);
 	
 	public List<ActivoProveedor> getMediadoresActivos();
+	
+	/** Este método cambia .el proveedor asociado a un activo por el recibido en pvrCodRem
+	 * 
+	 * @param numActivo: Número del activo ACT_NUM_ACTIVO (se gestiona histórico).
+	 * @param pvrCodRem: Código de proveedor que sustituirá al actual
+	 * @return Devuelve un Booleano.
+	 */
+	public Boolean cambiaMediador(String numActivo, String pveCodRem, String userName);
 
 }

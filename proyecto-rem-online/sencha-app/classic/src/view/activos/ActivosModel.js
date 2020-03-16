@@ -10,7 +10,6 @@ Ext.define('HreRem.view.activos.ActivosModel', {
     stores: {
     		
     		activos: {
-    				
     				pageSize: $AC.getDefaultPageSize(),
 			    	model: 'HreRem.model.BusquedaActivo',
 			    	proxy: {
@@ -18,6 +17,8 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 				        localUrl: '/activos.json',
 				        remoteUrl: 'activo/getActivos',
 					    actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'}
+    
+    					
 			    	},
 			    	session: true,
 			    	remoteSort: true,
@@ -236,13 +237,13 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 				}
 			},
 
-			comboDireccionTerritorial: {
+			comboDireccionComercial: {
 				model : 'HreRem.model.ComboBase',
 				proxy : {
 					type : 'uxproxy',
 					remoteUrl : 'generic/getDiccionario',
 					extraParams : {
-						diccionario : 'direccionTerritorial'
+						diccionario : 'tipoDireccionComercial'
 					}
 				}
 			},			
@@ -310,6 +311,22 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tipoPublicacion'}
 				}
+			},
+	     	
+     		comboTipoSegmento: {
+    			model: 'HreRem.model.ComboBase',
+    			proxy: {
+    				type: 'uxproxy',
+    				remoteUrl: 'generic/getDiccionario',
+    				extraParams: {diccionario: 'tipoSegmento'}
+    			}
+     		},
+     		
+     		comboSiNoRemActivo: {
+				data : [
+			        {"codigo":"1", "descripcion":"Si"},
+			        {"codigo":"0", "descripcion":"No"}
+			    ]
 			}
      }
 

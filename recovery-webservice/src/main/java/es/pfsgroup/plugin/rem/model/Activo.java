@@ -846,10 +846,13 @@ public class Activo implements Serializable, Auditable {
 				if(localizacionesBien.getTipoVia() != null) {
 					direccion = localizacionesBien.getTipoVia().getDescripcion();
 				}
-
-				direccion = direccion + " " + localizacionesBien.getNombreVia();
-				
-				direccion = direccion + " " + localizacionesBien.getNumeroDomicilio();
+			
+				if(!Checks.esNulo(localizacionesBien.getNombreVia())) {
+					direccion = direccion + " " + localizacionesBien.getNombreVia();
+				}
+				if(!Checks.esNulo(localizacionesBien.getNumeroDomicilio())) {
+					direccion = direccion + " " + localizacionesBien.getNumeroDomicilio();
+				}
 			}
 		}
 

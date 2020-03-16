@@ -460,7 +460,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			}
 		}
 		
-		if(DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
+		if(oferta.getClaseOferta() != null && DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(oferta.getClaseOferta().getCodigo())) {
 			ofertasAgrupadasLbkDao.suprimeOfertaDependiente(oferta.getId());
 		}
 
@@ -1506,7 +1506,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 						Double importeOferta = Checks.esNulo(oferta.getImporteOferta()) ? 0d : oferta.getImporteOferta();
 						
 						if(Checks.esNulo(agrupacion)) {
-							if (importeOferta <= umbralAskingPrice && (importeOferta >= precioAprVenta.getImporte() * 0.95)) {
+							if (precioAprVenta != null && importeOferta <= umbralAskingPrice && (importeOferta >= precioAprVenta.getImporte() * 0.95)) {
 								filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo", codComiteHaya);
 							} else {
 								filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",codComiteCes);
@@ -1591,7 +1591,8 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			Boolean esAlquiler) {
 
 		if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())
-				&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo()) &&  faltanDatosCalculo(oferta, activo)) {
+				&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo()) 
+				&& DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo()) && faltanDatosCalculo(oferta, activo)) {
 			throw new JsonViewerException(FALTAN_DATOS);
 		}
 

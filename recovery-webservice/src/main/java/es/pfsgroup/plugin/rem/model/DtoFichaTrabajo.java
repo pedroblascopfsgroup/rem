@@ -4,185 +4,188 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-
 /**
  * Dto que gestiona la informacion de un trabajo.
- *  
+ * 
  * @author Jose Villel
  *
  */
 public class DtoFichaTrabajo {
-	
+
 	private Long idTrabajo;
-	
-    private String numTrabajo;
-   
-    private Long idTrabajoWebcom;
-    
-    private String nombreProveedor;
-    
-    private Long idProveedor;
-    
-    private String tipoTrabajoCodigo;
-    
-    private String tipoTrabajoDescripcion;
-    
-    private String subtipoTrabajoCodigo;
-    
-    private String subtipoTrabajoDescripcion;
-    
-    private String estadoCodigo;
-    
-    private String estadoDescripcion;
-    
-  	private String descripcion;
-    
-    private Date fechaSolicitud;
 
-   	private Date fechaAprobacion;
-   	
-    private Date fechaInicio;
-       
-   	private Date fechaFin;
-   	
-   	private String continuoObservaciones;
-   	
-   	private Boolean cubreSeguro;
+	private String numTrabajo;
 
-    private String ciaAseguradora;
-    
-    private Long idGestorActivoResponsable;
-    
-    private String gestorActivoResponsable;
-    
-    private Long idSupervisorActivo;
-    
-    private String supervisorActivo;
-    
-    private Long idResponsableTrabajo;
-    
-    private String responsableTrabajo;
-        
-    private Boolean esSolicitudConjunta;
-    
-    private Date fechaConcreta;
-    
-    private Date horaConcreta;
+	private Long idTrabajoWebcom;
 
-    private Date fechaTope;
-    
-    private Boolean urgente;
-    
-    private Boolean riesgoInminenteTerceros;       
+	private String nombreProveedor;
 
-    private String tipoCalidadCodigo;
+	private Long idProveedor;
 
-    private String  terceroNombre;
+	private String tipoTrabajoCodigo;
 
-    private String terceroEmail;
+	private String tipoTrabajoDescripcion;
 
-    private String terceroDireccion;
+	private String subtipoTrabajoCodigo;
 
-    private String terceroContacto;
+	private String subtipoTrabajoDescripcion;
 
-    private String terceroTel1;
+	private String estadoCodigo;
 
-    private String terceroTel2;
-    
-    private Long idSolicitante;
-    
-    private String solicitante;
-    
-    private String propietario;
-    
-    private Long idActivo;
-    
-    private Long idAgrupacion;
-    
+	private String estadoDescripcion;
+
+	private String descripcion;
+
+	private Date fechaSolicitud;
+
+	private Date fechaAprobacion;
+
+	private Date fechaInicio;
+
+	private Date fechaFin;
+
+	private String continuoObservaciones;
+
+	private Boolean cubreSeguro;
+
+	private String ciaAseguradora;
+
+	private Long idGestorActivoResponsable;
+
+	private String gestorActivoResponsable;
+
+	private Long idSupervisorActivo;
+
+	private String supervisorActivo;
+
+	private Long idResponsableTrabajo;
+
+	private String responsableTrabajo;
+
+	private Boolean esSolicitudConjunta;
+
+	private Date fechaConcreta;
+
+	private Date horaConcreta;
+
+	private Date fechaTope;
+
+	private Boolean urgente;
+
+	private Boolean riesgoInminenteTerceros;
+
+	private String tipoCalidadCodigo;
+
+	private String terceroNombre;
+
+	private String terceroEmail;
+
+	private String terceroDireccion;
+
+	private String terceroContacto;
+
+	private String terceroTel1;
+
+	private String terceroTel2;
+
+	private Long idSolicitante;
+
+	private String solicitante;
+
+	private String propietario;
+
+	private Long idActivo;
+
+	private Long idAgrupacion;
+
 	private Long numAgrupacion;
-	
+
 	private String tipoAgrupacionDescripcion;
-	
+
 	private String participacion;
-	
+
 	private int numActivosAgrupacion;
-	
+
 	private String cartera;
-	
+
 	private String codCartera;
-	
+
 	private Date fechaFinCompromiso;
-    
-    private Date fechaRechazo;
 
-    private String motivoRechazo;
+	private Date fechaRechazo;
 
-    private Date fechaEleccionProveedor;
+	private String motivoRechazo;
 
-    private Date fechaEjecucionReal;
-    
-    private Date fechaAnulacion;
-    
-    private Date fechaValidacion;
-    
-    private Date fechaCierreEconomico;
+	private Date fechaEleccionProveedor;
 
-    private Date fechaPago;
-    
-    private String nombreMediador;
-    
-    private Long idMediador;
-    
-    private Long idProceso;
-    
-    private Date fechaEmisionFactura;
-    
-    private String idsActivos;
-    
-    private Integer esTarifaPlana;
-    
-    private String codigoPromocionPrinex;
+	private Date fechaEjecucionReal;
 
-    private Date fechaAutorizacionPropietario;
-    
-    private Boolean bloquearResponsable;
-    
-    private Long idSupervisorAlquileres;
-    
-    private Long idSupervisorSuelos;
-    
-    private Long idSupervisorEdificaciones;
-    
-    private Boolean requerimiento;
-    
-    private Boolean logadoGestorMantenimiento;
-    
-    private String codSubcartera;
-    
-    private Boolean perteneceDNDtipoEdificacion;
-    
-    private Long numeroDND;
-    
-    private String nombreDND;
-    
-    private String codigoPartida;
-    
-    private String codigoSubpartida;
-    
-    private String estadoGasto;
-    
-    private Long gastoProveedor;
-	
-    public Long getIdTrabajo() {
+	private Date fechaAnulacion;
+
+	private Date fechaValidacion;
+
+	private Date fechaCierreEconomico;
+
+	private Date fechaPago;
+
+	private String nombreMediador;
+
+	private Long idMediador;
+
+	private Long idProceso;
+
+	private Date fechaEmisionFactura;
+
+	private String idsActivos;
+
+	private Integer esTarifaPlana;
+
+	private String codigoPromocionPrinex;
+
+	private Date fechaAutorizacionPropietario;
+
+	private Boolean bloquearResponsable;
+
+	private Long idSupervisorAlquileres;
+
+	private Long idSupervisorSuelos;
+
+	private Long idSupervisorEdificaciones;
+
+	private Boolean requerimiento;
+
+	private Boolean logadoGestorMantenimiento;
+
+	private String codSubcartera;
+
+	private Boolean perteneceDNDtipoEdificacion;
+
+	private Long numeroDND;
+
+	private String nombreDND;
+
+	private String codigoPartida;
+
+	private String codigoSubpartida;
+
+	private String estadoGasto;
+
+	private Long gastoProveedor;
+
+	private String nombreUg;
+
+	private String nombreProyecto;
+
+	private String nombreExpediente;
+
+	public Long getIdTrabajo() {
 		return idTrabajo;
 	}
 
 	public void setIdTrabajo(Long idTrabajo) {
 		this.idTrabajo = idTrabajo;
 	}
-	
-	
-    
+
 	public Long getIdResponsableTrabajo() {
 		return idResponsableTrabajo;
 	}
@@ -202,7 +205,7 @@ public class DtoFichaTrabajo {
 	public String getNumTrabajo() {
 		return numTrabajo;
 	}
-	
+
 	public void setNumTrabajo(String numTrabajo) {
 		this.numTrabajo = numTrabajo;
 	}
@@ -238,7 +241,7 @@ public class DtoFichaTrabajo {
 	public void setTipoTrabajoDescripcion(String tipoTrabajoDescripcion) {
 		this.tipoTrabajoDescripcion = tipoTrabajoDescripcion;
 	}
-	
+
 	public Long getIdProveedor() {
 		return idProveedor;
 	}
@@ -384,18 +387,18 @@ public class DtoFichaTrabajo {
 	}
 
 	public Date getFechaHoraConcreta() {
-		
+
 		Date fechaHoraConcreta = null;
-		
-		if(this.horaConcreta!=null && this.fechaConcreta!=null) {
+
+		if (this.horaConcreta != null && this.fechaConcreta != null) {
 			Calendar fecha = new GregorianCalendar();
 			Calendar hora = new GregorianCalendar();
-			
+
 			fecha.setTime(this.fechaConcreta);
 			hora.setTime(this.horaConcreta);
-			fecha.set(Calendar.HOUR,hora.get(Calendar.HOUR_OF_DAY));
-			fecha.set(Calendar.MINUTE,hora.get(Calendar.MINUTE));
-			 
+			fecha.set(Calendar.HOUR, hora.get(Calendar.HOUR_OF_DAY));
+			fecha.set(Calendar.MINUTE, hora.get(Calendar.MINUTE));
+
 			fechaHoraConcreta = fecha.getTime();
 		}
 
@@ -437,7 +440,7 @@ public class DtoFichaTrabajo {
 	public Boolean getRiesgoInminenteTerceros() {
 		return riesgoInminenteTerceros;
 	}
-	
+
 	public void setRiesgoInminenteTerceros(Boolean riesgoInminenteTerceros) {
 		this.riesgoInminenteTerceros = riesgoInminenteTerceros;
 	}
@@ -657,7 +660,7 @@ public class DtoFichaTrabajo {
 	public void setNombreMediador(String nombreMediador) {
 		this.nombreMediador = nombreMediador;
 	}
-	
+
 	public Long getIdMediador() {
 		return idMediador;
 	}
@@ -669,7 +672,7 @@ public class DtoFichaTrabajo {
 	public Long getIdProceso() {
 		return idProceso;
 	}
-	
+
 	public void setIdProceso(Long idProceso) {
 		this.idProceso = idProceso;
 	}
@@ -705,7 +708,7 @@ public class DtoFichaTrabajo {
 	public void setCodigoPromocionPrinex(String codigoPromocionPrinex) {
 		this.codigoPromocionPrinex = codigoPromocionPrinex;
 	}
-	
+
 	public Date getFechaAutorizacionPropietario() {
 		return fechaAutorizacionPropietario;
 	}
@@ -818,8 +821,7 @@ public class DtoFichaTrabajo {
 	public void setCodigoSubpartida(String codigoSubpartida) {
 		this.codigoSubpartida = codigoSubpartida;
 	}
-	
-	
+
 	public String getEstadoGasto() {
 		return estadoGasto;
 	}
@@ -835,4 +837,29 @@ public class DtoFichaTrabajo {
 	public void setGastoProveedor(Long gastoProveedor) {
 		this.gastoProveedor = gastoProveedor;
 	}
+
+	public String getNombreUg() {
+		return nombreUg;
+	}
+
+	public void setNombreUg(String nombreUg) {
+		this.nombreUg = nombreUg;
+	}
+
+	public String getNombreProyecto() {
+		return nombreProyecto;
+	}
+
+	public void setNombreProyecto(String nombreProyecto) {
+		this.nombreProyecto = nombreProyecto;
+	}
+
+	public String getNombreExpediente() {
+		return nombreExpediente;
+	}
+
+	public void setNombreExpediente(String nombreExpediente) {
+		this.nombreExpediente = nombreExpediente;
+	}
+	
 }

@@ -351,7 +351,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	        	codigoCartera == CONST.CARTERA['BANKIA'] ||
 	        	(codigoCartera == CONST.CARTERA['CERBERUS'] && 
 	        		(codigoSubCartera == CONST.SUBCARTERA['APPLEINMOBILIARIO'] || 
-	        		codigoSubCartera == CONST.SUBCARTERA['JAIPURFINANCIERO'])
+	        		codigoSubCartera == CONST.SUBCARTERA['JAIPURFINANCIERO'] ||
+	        		codigoSubCartera == CONST.SUBCARTERA['DIVARIANARROW'] ||
+	        		codigoSubCartera == CONST.SUBCARTERA['DIVARIANREMAINING'])
 	         	) ||
 	        	(codigoCartera == CONST.CARTERA['EGEO'] 
 	        		 && codigoSubCartera == CONST.SUBCARTERA['ZEUS']) ||

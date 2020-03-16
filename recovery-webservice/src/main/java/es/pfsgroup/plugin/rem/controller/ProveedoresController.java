@@ -698,5 +698,20 @@ public class ProveedoresController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getMediadoresActivos() {
+		ModelMap model = new ModelMap();
+
+		try {
+			model.put("data", proveedoresApi.getMediadoresActivos());
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error("Error en ProveedoresController", e);
+			model.put("success", false);
+		}
+		return createModelAndViewJson(model);
+	}
 
 }

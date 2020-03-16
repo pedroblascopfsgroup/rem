@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR= Lara Pablo Flores
---## FECHA_CREACION=20200218
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20200227
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-9459
+--## INCIDENCIA_LINK=HREOS-9586
 --## PRODUCTO=SI
 --## Finalidad: DDL
 --##           
@@ -17,6 +17,7 @@
 --##		0.5 Añadimos la subcartera
 --##		0.6 Añadimos columna para saber si un trabajo está en otro gasto
 --##		0.7 Añadimos idActivo, numActivo, numAgrupacion
+--##		0.8 HREOS-9586 Añadimo cruce act_tbj
 --##########################################
 --*/
 
@@ -99,7 +100,8 @@ BEGIN
 			DECODE (gtb.tbj_id, NULL, 0, 1) AS EN_OTRO_GASTO
 
      	FROM ' || V_ESQUEMA || '.act_tbj_trabajo tbj 
-			LEFT JOIN ' || V_ESQUEMA || '.act_activo act 					ON act.act_id = tbj.act_id and act.borrado = 0
+			JOIN ' || V_ESQUEMA || '.act_tbj atj 							ON atj.tbj_id = tbj.tbj_id
+			LEFT JOIN ' || V_ESQUEMA || '.act_activo act 					ON act.act_id = atj.act_id and act.borrado = 0
 			LEFT JOIN ' || V_ESQUEMA || '.act_pac_propietario_activo actpro ON act.act_id = actpro.act_id
 			LEFT JOIN ' || V_ESQUEMA || '.act_agr_agrupacion agr 			ON agr.agr_id = tbj.agr_id and agr.borrado = 0
 			LEFT JOIN ' || V_ESQUEMA || '.gac_gestor_add_activo gac 		ON gac.act_id = act.act_id

@@ -1719,17 +1719,18 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			cellRangeAddress = new CellRangeAddress(currentRow, currentRow, 2,9);
 			mySheet.addMergedRegion(cellRangeAddress);
 			
-			String numerosActivoConcatenados = "";
+			StringBuilder rellenarNumerosActivoConcatenados = new StringBuilder();
 					
 			for (int i = 0; i < listaAN.size(); i++) {
 				if(!Checks.esNulo(listaAN.get(i).getNumActivo())) {
-					if(numerosActivoConcatenados =="") {
-						numerosActivoConcatenados = numerosActivoConcatenados + listaAN.get(i).getNumActivo().toString();
+					if(rellenarNumerosActivoConcatenados.length() < 1) {
+						rellenarNumerosActivoConcatenados.append(listaAN.get(i).getNumActivo());
 					}else {
-						numerosActivoConcatenados = numerosActivoConcatenados + "," + listaAN.get(i).getNumActivo().toString();
+						rellenarNumerosActivoConcatenados.append("," + listaAN.get(i).getNumActivo());
 					}
 				}
 			}
+			String numerosActivoConcatenados = rellenarNumerosActivoConcatenados.toString();
 			
 			currentRow++;
 			

@@ -1,9 +1,9 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Rubio
---## FECHA_CREACION=20191208
+--## FECHA_CREACION=20200225
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
+--## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-8545
 --## PRODUCTO=NO
 --##

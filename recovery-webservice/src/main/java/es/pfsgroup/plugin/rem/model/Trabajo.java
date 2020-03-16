@@ -251,6 +251,15 @@ public class Trabajo implements Serializable, Auditable {
     @JoinColumn(name="TBJ_RESPONSABLE_TRABAJO")
     private Usuario usuarioResponsableTrabajo;
     
+    @Column(name="TBJ_NOMBRE_UG")
+    private String nombreUg;
+	
+	@Column(name="TBJ_NOMBRE_PROYECTO")
+    private String nombreProyecto;
+	
+	@Column(name="TBJ_NOMBRE_EXPEDIENTE_TRABAJO")
+    private String nombreExpedienteTrabajo;
+    
     public Usuario getUsuarioResponsableTrabajo() {
 		return usuarioResponsableTrabajo;
 	}
@@ -961,6 +970,30 @@ public class Trabajo implements Serializable, Auditable {
 
 	public void setNombreDnd(String nombreDnd) {
 		this.nombreDnd = nombreDnd;
+	}
+
+	public String getNombreUg() {
+		return nombreUg;
+	}
+
+	public void setNombreUg(String nombreUg) {
+		this.nombreUg = nombreUg;
+	}
+
+	public String getNombreProyecto() {
+		return nombreProyecto;
+	}
+
+	public void setNombreProyecto(String nombreProyecto) {
+		this.nombreProyecto = nombreProyecto;
+	}
+
+	public String getNombreExpedienteTrabajo() {
+		return nombreExpedienteTrabajo;
+	}
+
+	public void setNombreExpedienteTrabajo(String nombreExpedienteTrabajo) {
+		this.nombreExpedienteTrabajo = nombreExpedienteTrabajo;
 	}
     
     

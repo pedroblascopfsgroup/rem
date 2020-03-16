@@ -3716,6 +3716,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		if (!Checks.esNulo(cargaSeleccionada) && !Checks.esNulo(cargaSeleccionada.getActivo()) && !Checks.esNulo(cargaSeleccionada.getActivo().getId())) {
 			activoCargasDao.calcularEstadoCargaActivo(cargaSeleccionada.getActivo().getId(), genericAdapter.getUsuarioLogado().getUsername(), true);
+			activoAdapter.actualizarEstadoPublicacionActivo(cargaSeleccionada.getActivo().getId());
 		}
 
 		return true;
@@ -4062,6 +4063,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				genericDao.deleteById(ActivoCargas.class, carga.getId());
 				if (!Checks.esNulo(carga.getActivo()) && !Checks.esNulo(carga.getActivo().getId())) {
 					activoCargasDao.calcularEstadoCargaActivo(carga.getActivo().getId(), genericAdapter.getUsuarioLogado().getUsername(), true);
+					activoAdapter.actualizarEstadoPublicacionActivo(carga.getActivo().getId());
 				}
 			} else {
 				return false;

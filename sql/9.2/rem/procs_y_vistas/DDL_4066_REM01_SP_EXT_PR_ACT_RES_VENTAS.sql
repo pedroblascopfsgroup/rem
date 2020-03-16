@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Oscar Diestre
---## FECHA_CREACION=20200124
+--## AUTOR=Ivan Rubio
+--## FECHA_CREACION=20200312
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.0.19
---## INCIDENCIA_LINK=REMVIP-6169
+--## VERSION_ARTEFACTO=R-Barberina
+--## INCIDENCIA_LINK=HREOS-9744
 --## PRODUCTO=NO
 --## Finalidad: Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación. Liberbank.
 --## Info: https://link-doc.pfsgroup.es/confluence/display/REOS/SP_EXT_PR_ACT_RES_VENTA
@@ -28,6 +28,8 @@
 --##		1.09 (20191107) - Viorel Remus Ovidiu - Se mezclan los cambios de subcartera (1.07) con los filtros de borrado (1.08)
 --##		1.08 (20191128) - Viorel Remus Ovidiu - Se añadie filtro de activos Apple para quitar fecha_vencimiento a la hora de devolver la reserva (PASO 3/8, operativa 2)
 --##		1.11 (20200120) - Oscar Diestre - Quitada validación para Cajamar
+--##		1.12 (2020311) - HREOS-9744 - Incidencia Ventas y Reservas Cajamar
+--##		1.13 (2020312) - HREOS-9744 - Incidencia Ventas y Reservas Cajamar añadida condición estado reserva firmada
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -81,7 +83,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
     V_OBTIENE_RESERVA               VARCHAR2(2000 CHAR)  := 'SELECT
                                                             CASE
 							    WHEN DD_CRA_CODIGO = ''01'' THEN	
-                                                            	CASE WHEN EEC.DD_EEC_CODIGO NOT IN (''02'',''08'',''16'') AND ERE.DD_ERE_CODIGO IN (''01'')
+                                                            	CASE WHEN EEC.DD_EEC_CODIGO NOT IN (''02'',''08'',''16'') AND ERE.DD_ERE_CODIGO IN (''01'',''02'')
                                                             		THEN 0
                                                             		ELSE 1
 								END
@@ -240,6 +242,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
     V_VALOR_NUEVO                   VARCHAR2(50 CHAR);
     V_CODIGO_TO_HLP                 VARCHAR2(50 CHAR);
     V_ACTIVO_APPLE 		    NUMBER(16);
+    V_ACTIVO_CAJAMAR	NUMBER(16);
 
     --Excepciones
     ERR_NEGOCIO EXCEPTION;
@@ -256,7 +259,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
     ) IS
 
     BEGIN
-
+--v1.13
     V_MSQL := '
       INSERT INTO '||V_ESQUEMA||'.HLD_HISTORICO_LANZA_PER_DETA (
         HLD_SP_CARGA,
@@ -443,8 +446,12 @@ BEGIN
                 V_MSQL := '
 		SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_ID = (SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_ID = '||V_ACT_ID||') AND DD_SCR_CODIGO = ''138''';
                 EXECUTE IMMEDIATE V_MSQL INTO V_ACTIVO_APPLE;
+                
+                V_MSQL := '
+		SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_ID = (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_ID = '||V_ACT_ID||') AND DD_CRA_CODIGO = ''01''';
+                EXECUTE IMMEDIATE V_MSQL INTO V_ACTIVO_CAJAMAR;
             
-                IF V_ACTIVO_APPLE = 0 THEN
+                IF (V_ACTIVO_APPLE = 0 AND V_ACTIVO_CAJAMAR = 0) THEN
            
                     V_MSQL := '
                     SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''06'''; /*RESERVADO*/
@@ -564,43 +571,47 @@ BEGIN
                     END IF;
 
                     IF COD_RETORNO = 0 THEN
-                        --PASO 3/4 Actualizar el campo RES_RESERVA.DD_ERE_ID al valor "Firmado"
-                        V_MSQL := '
-                        SELECT DD_ERE_ID FROM '||V_ESQUEMA||'.DD_ERE_ESTADOS_RESERVA WHERE DD_ERE_CODIGO = ''02'''; /*FIRMADA*/
-                        EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_NUEVO;
-                        V_MSQL := '
-                        UPDATE '||V_ESQUEMA||'.RES_RESERVAS
-                        SET DD_ERE_ID = '||V_VALOR_NUEVO||', /*FIRMADA*/
-                        USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
-                        FECHAMODIFICAR = SYSDATE
-                        WHERE RES_ID = '||V_RES_ID||'
-                        AND ECO_ID = '||V_ECO_ID||'
-                        ';
-                        EXECUTE IMMEDIATE V_MSQL;
-
-                        IF SQL%ROWCOUNT > 0 THEN
-                            DBMS_OUTPUT.PUT_LINE('[INFO] PASO 3/4 | El estado de la reserva ha pasado a "Firmado" para la OFERTA '||IDENTIFICACION_COBRO||'.');
-                            V_PASOS := V_PASOS+1;
-                            --Logado en HLD_HIST_LANZA_PER_DETA
-                            --Recuperamos valor actual
-                            V_MSQL := '
-                            SELECT DD_ERE_ID FROM '||V_ESQUEMA||'.RES_RESERVAS WHERE RES_ID = '||V_RES_ID||'
-                            ';
-                            EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_ACTUAL;
-
-                            PARAM1 := 'RES_RESERVAS';
-                            PARAM2 := 'RES_ID';
-                            PARAM3 := 'DD_ERE_ID';
-                            HLD_HISTORICO_LANZA_PER_DETA (TO_CHAR(IDENTIFICACION_COBRO), PARAM1, PARAM2, V_RES_ID, PARAM3, V_VALOR_ACTUAL, V_VALOR_NUEVO);
-                            --Reseteamos el V_VALOR_NUEVO
-                            V_VALOR_NUEVO := '';
-
-                        ELSE
-                            COD_RETORNO := 1;
-                            V_ERROR_DESC := '[ERROR] No se ha podido cambiar el estado de la reserva para la OFERTA '||IDENTIFICACION_COBRO||'. Paramos la ejecución.';
-                            --DBMS_OUTPUT.PUT_LINE(V_ERROR_DESC);
-                        END IF;
-
+                    	IF V_ACTIVO_CAJAMAR = 0 THEN
+	                        --PASO 3/4 Actualizar el campo RES_RESERVA.DD_ERE_ID al valor "Firmado"
+	                        V_MSQL := '
+	                        SELECT DD_ERE_ID FROM '||V_ESQUEMA||'.DD_ERE_ESTADOS_RESERVA WHERE DD_ERE_CODIGO = ''02'''; /*FIRMADA*/
+	                        EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_NUEVO;
+	                        V_MSQL := '
+	                        UPDATE '||V_ESQUEMA||'.RES_RESERVAS
+	                        SET DD_ERE_ID = '||V_VALOR_NUEVO||', /*FIRMADA*/
+	                        USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
+	                        FECHAMODIFICAR = SYSDATE
+	                        WHERE RES_ID = '||V_RES_ID||'
+	                        AND ECO_ID = '||V_ECO_ID||'
+	                        ';
+	                        EXECUTE IMMEDIATE V_MSQL;
+	
+	                        IF SQL%ROWCOUNT > 0 THEN
+	                            DBMS_OUTPUT.PUT_LINE('[INFO] PASO 3/4 | El estado de la reserva ha pasado a "Firmado" para la OFERTA '||IDENTIFICACION_COBRO||'.');
+	                            V_PASOS := V_PASOS+1;
+	                            --Logado en HLD_HIST_LANZA_PER_DETA
+	                            --Recuperamos valor actual
+	                            V_MSQL := '
+	                            SELECT DD_ERE_ID FROM '||V_ESQUEMA||'.RES_RESERVAS WHERE RES_ID = '||V_RES_ID||'
+	                            ';
+	                            EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_ACTUAL;
+	
+	                            PARAM1 := 'RES_RESERVAS';
+	                            PARAM2 := 'RES_ID';
+	                            PARAM3 := 'DD_ERE_ID';
+	                            HLD_HISTORICO_LANZA_PER_DETA (TO_CHAR(IDENTIFICACION_COBRO), PARAM1, PARAM2, V_RES_ID, PARAM3, V_VALOR_ACTUAL, V_VALOR_NUEVO);
+	                            --Reseteamos el V_VALOR_NUEVO
+	                            V_VALOR_NUEVO := '';
+	
+	                        ELSE
+	                            COD_RETORNO := 1;
+	                            V_ERROR_DESC := '[ERROR] No se ha podido cambiar el estado de la reserva para la OFERTA '||IDENTIFICACION_COBRO||'. Paramos la ejecución.';
+	                            --DBMS_OUTPUT.PUT_LINE(V_ERROR_DESC);
+	                        END IF;
+						ELSE
+							V_PASOS := V_PASOS+1;
+						END IF;
+						
                         IF COD_RETORNO = 0 THEN
                             --PASO 4/4 Insertar un registro en ERE_ENTREGAS_RESERVA con el importe de la reserva correspondiente y la fecha recibida en el parámetro FECHA_COBRO_RESERVA
                             V_MSQL := '

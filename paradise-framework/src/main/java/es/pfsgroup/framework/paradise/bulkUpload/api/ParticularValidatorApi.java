@@ -1113,4 +1113,8 @@ public interface ParticularValidatorApi {
 
 	public Boolean esSubcarteraDivarian(String numActivo);
 	
+	public Boolean esSubcarteraApple(String numActivo);
+	
+	public Boolean aCambiadoDestinoComercial(String numActivo, String destinoComercial);
+	
 }

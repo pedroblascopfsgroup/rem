@@ -45,6 +45,7 @@ import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.formulario.dao.ActivoGenericFormItemDao;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutorApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManagerApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.updater.impl.UpdaterServiceSancionOfertaDocumentosPostVenta;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -82,6 +83,10 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 	public static final String TIPO_CAMPO_COMBO_READONLY = "comboboxreadonly";
 	public static final String TIPO_CAMPO_COMBO = "combobox";
 	public static final String TIPO_CAMPO_FECHA_MIN_TO_DAY = "datemintoday";
+	
+	private static final String CODIGO_T013_DOCUMENTOS_POST_VENTA = "T013_DocumentosPostVenta";
+	private static final String CODIGO_T017_DOCUMENTOS_POST_VENTA = "T017_DocsPosVenta";
+	
     protected final Log logger = LogFactory.getLog(getClass());
 
     @Autowired
@@ -473,7 +478,8 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             			}            			
             		}
             		
-            		if(item.getNombre().equals("fechaIngreso") && tareaExterna.getTareaProcedimiento().getCodigo().equals("T013_DocumentosPostVenta")){
+            		if(item.getNombre().equals("fechaIngreso") && (CODIGO_T013_DOCUMENTOS_POST_VENTA.equals(tareaExterna.getTareaProcedimiento().getCodigo())
+            				|| CODIGO_T017_DOCUMENTOS_POST_VENTA.equals(tareaExterna.getTareaProcedimiento().getCodigo()))){
             			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
             			if (!Checks.esNulo(ofertaAceptada)) {
             				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());

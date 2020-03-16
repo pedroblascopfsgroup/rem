@@ -4405,14 +4405,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Override
 	public boolean cumpleRequisitosCalculoLBK(Oferta oferta, ExpedienteComercial eco) {
-		if(Checks.esNulo(oferta)) return false;
+		ExpedienteComercial expediente;
+		
+		if(Checks.esNulo(oferta)) {
+			return false;
+		}
 		
 		//En caso de que sea una oferta agrupada tiene que cumplir los requisitos todos los activos de todas las ofertas
-		if(DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(oferta.getClaseOferta())) {
+		if(oferta.getClaseOferta() != null && DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(oferta.getClaseOferta().getCodigo())) {
 			Filter filtroDependientes = genericDao.createFilter(FilterType.EQUALS, "ofertaPrincipal.id", oferta.getId());
 			List<OfertasAgrupadasLbk> listaDependientes = genericDao.getList(OfertasAgrupadasLbk.class, filtroDependientes);
 			for(OfertasAgrupadasLbk ogr: listaDependientes) {
-				if(!cumpleRequisitosCalculoLBK(ogr.getOfertaDependiente(), null)) return false;
+				if(!cumpleRequisitosCalculoLBK(ogr.getOfertaDependiente(), null)) {
+					return false;
+				}
 			}
 		}
 		
@@ -4424,21 +4430,24 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			VDatosCalculoLBK datos = genericDao.get(VDatosCalculoLBK.class, filtroActivo);
 			if (Checks.esNulo(datos) 
 					|| (Checks.esNulo(datos.getImporteMinAutorizado()) || datos.getImporteMinAutorizado() <= 0)
-					|| (Checks.esNulo(datos.getTasacionActual()) || datos.getTasacionActual() <= 0)
+					|| (Checks.esNulo(datos.getTasacionActual()))
 					|| (Checks.esNulo(datos.getValorNetoContable()) || datos.getValorNetoContable() <= 0)
 					|| (Checks.esNulo(datos.getValorRazonable()) || datos.getValorRazonable() <= 0)
-					|| (Checks.esNulo(oferta.getImporteOferta()) || oferta.getImporteOferta() <= 0))
+					|| (Checks.esNulo(oferta.getImporteOferta()) || oferta.getImporteOferta() <= 0)) {
+				
 				return false;
+			}
 		}
 		
 		//Se comprueba que la oferta tiene los datos necesarios para calcular los honorarios.
-		eco = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId());
+		expediente = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId());
 		
-		if (Checks.esNulo(eco)) {
+		if(Checks.esNulo(expediente)) {
 			return false;
 		}
+		
 		//En caso de que no tenga los honorarios se comprueba si pueden calcularse.
-		if(Checks.esNulo(eco.getHonorarios()) && Checks.esNulo(expedienteComercialApi.actualizarHonorariosPorExpediente(eco.getId()))) {
+		if(Checks.esNulo(expediente.getHonorarios()) && Checks.esNulo(expedienteComercialApi.actualizarHonorariosPorExpediente(expediente.getId()))) {
 			return false;
 		}
 		
@@ -4471,18 +4480,23 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		Filter filtroComiteHRE = genericDao.createFilter(FilterType.EQUALS, "codigo",
 				DDComiteSancion.CODIGO_HAYA_LIBERBANK);
 
-		if (dto.getVta() < IMPORTE_UMBRAL) {
+		if(dto.getVta() == 0) {
+			return genericDao.get(DDComiteSancion.class, filtroGestion);
+		} else if (dto.getVta() < IMPORTE_UMBRAL) {
 			if (dto.getPvb() >= dto.getPmin()) {
 				return genericDao.get(DDComiteSancion.class, filtroComiteHRE);
 			} else if (dto.getPvn() >= dto.getVr()) {
 				return genericDao.get(DDComiteSancion.class, filtroGestion);
 			} else if (dto.getPvn() < dto.getVr()) {
-				if (perdida < 0 && perdidaValorAbs <= porcentajeSobreVNC1) {
+				if (perdida > 0 && perdidaValorAbs <= porcentajeSobreVNC1) {
 					return genericDao.get(DDComiteSancion.class, filtroGestionDir);
-				} else if (perdida < 0 && perdidaValorAbs <= UMBRAL_PERDIDA) {
-					return genericDao.get(DDComiteSancion.class, filtroInversion);
-				} else if (perdida < 0 && perdidaValorAbs > UMBRAL_PERDIDA){
-					return genericDao.get(DDComiteSancion.class, filtroDireccion);
+				} 
+				if(perdidaValorAbs > porcentajeSobreVNC1) {
+					if (perdidaValorAbs <= UMBRAL_PERDIDA) {
+						return genericDao.get(DDComiteSancion.class, filtroInversion);
+					} else {
+						return genericDao.get(DDComiteSancion.class, filtroDireccion);
+					}
 				}
 			}
 		} else if (IMPORTE_UMBRAL <= dto.getVta() && dto.getVta() <= IMPORTE_MAX) {

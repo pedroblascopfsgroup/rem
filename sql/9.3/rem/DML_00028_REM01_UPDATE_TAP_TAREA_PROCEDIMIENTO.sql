@@ -1,9 +1,9 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Serrano
---## FECHA_CREACION=20191128
+--## FECHA_CREACION=20200225
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
+--## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-6666
 --## PRODUCTO=NO
 --##

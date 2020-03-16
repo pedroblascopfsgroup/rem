@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Ivan Rubio Frechina
---## FECHA_CREACION=20191021
+--## FECHA_CREACION=20200313
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-8135

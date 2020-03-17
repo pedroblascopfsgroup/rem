@@ -705,13 +705,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		     	} else {
 		     		return false;
 		     	}
-		}/*,
+		},
 		
-		habilitaPestanyaDocumentos : function (get) {
+		/*habilitaPestanyaDocumentos : function (get) {
 				if (get('agrupacionficha'))
 		}*/
-
-		},
 		    
 		esOtrosotivoAutorizacionTramitacion: function(get){
 			var me = this;
@@ -744,6 +742,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 			}
 			return false;
 		},
+		
+		usuarioEditarAgrupaciones: function(get){
+			return $AU.userHasFunction("EDITAR_LIST_AGRUPACIONES");
+		},
+    },
 				
     stores: {
     	comboCartera: {

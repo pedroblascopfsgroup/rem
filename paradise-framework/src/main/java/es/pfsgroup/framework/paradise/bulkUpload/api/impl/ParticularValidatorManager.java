@@ -2845,7 +2845,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	@Override
 	public Boolean isAgrupacionSinActivoPrincipal(String mumAgrupacionRem) {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)"
-				+ "			FROM ACT_AGR_AGRUPACION agr\n"
+				+ "			FROM ACT_AGR_AGRUPACION agr "
 				+ "			WHERE agr.AGR_NUM_AGRUP_REM = "+ mumAgrupacionRem
 				+ "			AND agr.AGR_ACT_PRINCIPAL IS NOT NULL");
 
@@ -4173,6 +4173,36 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return "01".equals(resultado);
 	}
 	
+    @Override
+    public Boolean isProveedorUnsuscribed(String pveCodRem) {
+            if(Checks.esNulo(pveCodRem)) {
+                    return false;
+            }
+
+            String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+                            + "              FROM ACT_PVE_PROVEEDOR WHERE"
+                            + "              PVE_COD_REM = '" + pveCodRem + "'"
+                            + "              AND PVE_FECHA_BAJA IS NOT NULL"
+                            + "              AND BORRADO = 0"
+                            );
+
+            return !"0".equals(resultado);
+    }
+	
+    @Override
+    public Boolean existeProveedorByCodRem(String pveCodRem) {
+            if(Checks.esNulo(pveCodRem)) {
+                    return false;
+            }
+
+            String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+                            + "              FROM ACT_PVE_PROVEEDOR WHERE"
+                            + "              PVE_COD_REM = '" + pveCodRem + "'"
+                            + "      AND BORRADO = 0"
+                            );
+            return !"0".equals(resultado);
+    }
+
 	@Override
 	public Boolean esExpedienteValidoAprobado(String numExpediente) {
 		if(Checks.esNulo(numExpediente) || !StringUtils.isNumeric(numExpediente))
@@ -4382,5 +4412,103 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return "1".equals(resultado);
 	}
 	
+	@Override
+	public Boolean direccionComercialExiste(String direccionComercial){
+		if(Checks.esNulo(direccionComercial))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		FROM DD_TDC_TERRITORIOS_DIR_COM "
+				+ "		WHERE DD_TDC_CODIGO = '"+ direccionComercial +"'");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean isActivoEnCesionDeUso( String numActivo) {
+		
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT count(1) " + 
+				"FROM ACT_PTA_PATRIMONIO_ACTIVO pta " + 
+				"JOIN DD_CDU_CESION_USO cdu ON pta.DD_CDU_ID = cdu.DD_CDU_ID " + 
+				"AND DD_CDU_CODIGO IN ('01','02','03','04') " + 
+				"JOIN ACT_ACTIVO act ON act.ACT_ID = pta.ACT_ID " + 
+				"AND act.ACT_NUM_ACTIVO = " + numActivo
+				);
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean isActivoEnAlquilerSocial( String numActivo) {
+		
+		String resultado = rawDao.getExecuteSQL(
+				"  SELECT count(1)   "
+				+" FROM ACT_PTA_PATRIMONIO_ACTIVO pta     " 
+				+" JOIN ACT_ACTIVO act ON act.ACT_ID = pta.ACT_ID AND act.ACT_NUM_ACTIVO = " +  numActivo
+				+" WHERE pta.PTA_TRAMITE_ALQ_SOCIAL = 1"
+				);
+		return !"0".equals(resultado); 
+	}
 	//-------------------------------------------------------------------------
+
+	@Override
+	public Boolean esSegmentoValido(String codSegmento) {
+		if (Checks.esNulo(codSegmento)) return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM DD_TS_TIPO_SEGMENTO "
+				+ "WHERE DD_TS_CODIGO = '" + codSegmento +"' AND BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean perteneceSegmentoCraScr(String codSegmento , String numActivo) {
+		if (Checks.esNulo(codSegmento) || Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) return false;
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) " +
+				"FROM dd_scs_segmento_cra_scr scs " +
+				"WHERE scs.dd_ts_id = (SELECT dd_ts_id FROM DD_TS_TIPO_SEGMENTO WHERE dd_ts_codigo = '" + codSegmento  + "') " +
+				"AND scs.dd_cra_id = (SELECT dd_cra_id FROM ACT_ACTIVO WHERE act_num_activo = " + numActivo + ") " +
+				"AND scs.dd_scr_id = (SELECT dd_scr_id FROM ACT_ACTIVO WHERE act_num_activo = " + numActivo + ") " +
+				"AND scs.borrado = 0"
+				);
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esSubcarteraDivarian(String numActivo) {
+		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) return false;
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) " + 
+				"FROM act_activo act " + 
+				"INNER JOIN dd_scr_subcartera scr ON scr.dd_scr_id = act.dd_scr_id AND dd_scr_codigo IN ('151','152','138') " + 
+				"WHERE act.act_num_activo = " + numActivo + " AND act.borrado = 0"
+				);
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esSubcarteraApple(String numActivo) {
+		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) return false;
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) " + 
+				"FROM act_activo act " + 
+				"INNER JOIN dd_scr_subcartera scr ON scr.dd_scr_id = act.dd_scr_id AND dd_scr_codigo IN ('138') " + 
+				"WHERE act.act_num_activo = " + numActivo + " AND act.borrado = 0"
+				);
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean aCambiadoDestinoComercial(String numActivo, String destinoComercial) {
+		if((Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) 
+				&& (Checks.esNulo(destinoComercial) || !!StringUtils.isNumeric(destinoComercial))
+		  ) return false;
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1)"+ 
+				"FROM ACT_ACTIVO ACT "+ 
+				"INNER JOIN DD_TS_TIPO_SEGMENTO TIPO on TIPO.dd_ts_id = act.dd_ts_id and TIPO.dd_ts_codigo = 03 "+
+				"WHERE ACT.DD_TCO_ID = " + destinoComercial +
+				" AND act.act_num_activo = " + numActivo +
+				" and act.ACT_PERIMETRO_MACC = 1" +
+				" AND act.borrado = 0");
+		return "1".equals(resultado);
+	}
+	
 }

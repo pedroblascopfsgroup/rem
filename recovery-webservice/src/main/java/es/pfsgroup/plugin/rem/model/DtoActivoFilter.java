@@ -100,7 +100,6 @@ public class DtoActivoFilter extends WebDto {
 	private String gestoriaAdministracion;
 	private String gestoriaFormalizacion;
 	private Long numAgrupacion;
-	private String direccionTerritorialCodigo;
 	private Long apiPrimarioId;
 	/*tipoComercializacionCodigoAuxiliar la utiliza el listado de activos del filtro para saber si tiene
 	  que mostrar la fecha de publicacion venta o de alquiler en la columna Fecha de publicacion.
@@ -110,7 +109,10 @@ public class DtoActivoFilter extends WebDto {
 	private String estadoPublicacionActivoListadoCodigo;
 	private String tipoPublicacionCodigo;
 	private boolean listPage;
+	private String territorio;
 	private String numActivoDivarian;
+	private String tipoSegmento;
+	private String perimetroMacc;
 	
 	public String getNumActivo() {
 		return numActivo;
@@ -634,12 +636,6 @@ public class DtoActivoFilter extends WebDto {
 	public void setNumAgrupacion(Long numAgrupacion) {
 		this.numAgrupacion = numAgrupacion;
 	}
-	public String getDireccionTerritorialCodigo() {
-		return direccionTerritorialCodigo;
-	}
-	public void setDireccionTerritorialCodigo(String direccionTerritorialCodigo) {
-		this.direccionTerritorialCodigo = direccionTerritorialCodigo;
-	}
 	public Long getApiPrimarioId() {
 		return apiPrimarioId;
 	}
@@ -759,11 +755,31 @@ public class DtoActivoFilter extends WebDto {
 	}
 	public void setMotivosOcultacionAlquiler(String motivosOcultacionAlquiler) {
 		this.motivosOcultacionAlquiler = motivosOcultacionAlquiler;
-	}*/
+	}
+	*/
+	public String getTerritorio() {
+		return territorio;
+	}
+	public void setTerritorio(String territorio) {
+		this.territorio = territorio;
+	}
 	public String getNumActivoDivarian() {
 		return numActivoDivarian;
 	}
 	public void setNumActivoDivarian(String numActivoDivarian) {
 		this.numActivoDivarian = numActivoDivarian;
-	}	
+	}
+	public String getTipoSegmento() {
+		return tipoSegmento;
+	}
+	public void setTipoSegmento(String tipoSegmento) {
+		this.tipoSegmento = tipoSegmento;
+	}
+	public String getPerimetroMacc() {
+		return perimetroMacc;
+	}
+	public void setPerimetroMacc(String perimetroMacc) {
+		this.perimetroMacc = perimetroMacc;
+	}
+	
 }

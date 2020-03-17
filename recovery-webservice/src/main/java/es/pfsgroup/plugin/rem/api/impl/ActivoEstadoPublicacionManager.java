@@ -65,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
+import es.pfsgroup.plugin.rem.model.VFechasPubCanales;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDAdecuacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
@@ -73,6 +74,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosOcultacion;
+import es.pfsgroup.plugin.rem.model.dd.DDPortal;
 import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -203,7 +205,22 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				dto.setDeshabilitarCheckPublicarAlquiler(true);
 				
 			}
-			
+		}
+		
+		VFechasPubCanales canal = genericDao.get(VFechasPubCanales.class, genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo));
+		if ( canal != null ) {
+			if ( canal.getFechaPrimeraPublicacionMin() != null ) {
+				dto.setFechaPrimeraPublicacionMin(canal.getFechaPrimeraPublicacionMin());
+			}
+			if ( canal.getFechaUltimaPublicacionMin() != null ) {
+				dto.setFechaUltimaPublicacionMin(canal.getFechaUltimaPublicacionMin());
+			}
+			if ( canal.getFechaPrimeraPublicacionMay() != null ) {
+				dto.setFechaPrimeraPublicacionMay(canal.getFechaPrimeraPublicacionMay());
+			}
+			if ( canal.getFechaUltimaPublicacionMay() != null ) {
+				dto.setFechaUltimaPublicacionMay(canal.getFechaUltimaPublicacionMay());
+			}
 		}
     	return dto;
 	}
@@ -809,7 +826,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				if(!Checks.esNulo(dto.getFechaRevisionPublicacionesAlquiler())) {
 					activoPublicacion.setFechaRevisionPublicacionesAlquiler(dto.getFechaRevisionPublicacionesAlquiler());
 				}
-
+				if (dto.getCanalDePublicacion() != null) {
+					DDPortal portal = genericDao.get(DDPortal.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCanalDePublicacion()));
+					activoPublicacion.setPortal(portal);
+				}
 
 			}
 		} catch (IllegalAccessException e) {
@@ -1088,7 +1108,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		ActivoPatrimonio activoPatrimonio = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());
 		List<DtoAdmisionDocumento> listDtoAdmisionDocumento = activoAdapter.getListDocumentacionAdministrativaById(activo.getId());
 		boolean conCee = false;
-		boolean esVivienda = DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo());
+		boolean esVivienda = false;
+		
+		if(!Checks.esNulo(activo.getTipoActivo())) esVivienda = DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo());
 
 		for(DtoAdmisionDocumento aListDtoAdmisionDocumento : listDtoAdmisionDocumento) {
 			if (DDTipoDocumentoActivo.CODIGO_CEE_ACTIVO.equals(aListDtoAdmisionDocumento.getCodigoTipoDocumentoActivo())) {

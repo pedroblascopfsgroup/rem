@@ -12,8 +12,8 @@ Ext.define('HreRem.view.trabajos.TrabajosModel', {
 	    	proxy: {
 		        type: 'uxproxy',
 		        localUrl: '/trabajos.json',
-		        remoteUrl: 'trabajo/findAll',
-		        actionMethods: {read: 'POST'} // Necesario para que el filtro no se mande en la URL lo que provoca un problema de encoding
+				remoteUrl: 'trabajo/findAll',
+				actionMethods: {read: 'POST'} // Necesario para que el filtro no se mande en la URL lo que provoca un problema de encoding
 	    	},	    		
 	    	remoteSort: true,
 	    	remoteFilter: true,	    	

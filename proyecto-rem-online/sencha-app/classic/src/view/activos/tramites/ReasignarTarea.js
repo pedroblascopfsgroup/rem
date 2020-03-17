@@ -80,8 +80,8 @@ Ext.define('HreRem.view.activos.tramites.ReasignarTarea', {
 											chainedReference: 'usuarioGestor',
 							            	displayField: 'descripcion',
 				    						valueField: 'id',
-				    						//allowBlank: true,
 				    						emptyText: 'Introduzca un gestor',
+											filtradoEspecial: true,
 											listeners: {
 												select: 'onChangeChainedComboGestores'
 											}
@@ -96,25 +96,8 @@ Ext.define('HreRem.view.activos.tramites.ReasignarTarea', {
 						            	},
 						            	displayField: 'apellidoNombre',
 			    						valueField: 'id',
-			    						mode: 'local',
-			    						emptyText: 'Introduzca un usuario',
-			    						enableKeyEvents:true,
-			    						forceSelection: true,
-			    						//allowBlank: false,
-		    						    listeners: {
-		    						     'keyup': function() {
-		    						    	   this.getStore().clearFilter();
-		    						    	   this.getStore().filter({
-		    						        	    property: 'apellidoNombre',
-		    						        	    value: this.getRawValue(),
-		    						        	    anyMatch: true,
-		    						        	    caseSensitive: false
-		    						        	})
-		    						     },
-		    						     'beforequery': function(queryEvent) {
-		    						           queryEvent.combo.onLoad();
-		    						     }
-		    						    }
+										filtradoEspecial: true,
+			    						emptyText: 'Introduzca un usuario'
 								  },
 									  {
 											xtype: 'displayfieldbase',
@@ -151,6 +134,7 @@ Ext.define('HreRem.view.activos.tramites.ReasignarTarea', {
 				    						valueField: 'id',
 				    						//allowBlank: true,
 				    						emptyText: 'Introduzca un gestor',
+											filtradoEspecial: true,
 											listeners: {
 												select: 'onChangeChainedComboGestores'
 											}
@@ -165,25 +149,8 @@ Ext.define('HreRem.view.activos.tramites.ReasignarTarea', {
 						            	},
 						            	displayField: 'apellidoNombre',
 			    						valueField: 'id',
-			    						mode: 'local',
 			    						valueNotFoundText: me.nombreUsuarioSupervisor,
-			    						enableKeyEvents:true,
-			    						forceSelection: true,
-			    						//allowBlank: false,
-		    						    listeners: {
-		    						     'keyup': function() {
-		    						    	   this.getStore().clearFilter();
-		    						    	   this.getStore().filter({
-		    						        	    property: 'apellidoNombre',
-		    						        	    value: this.getRawValue(),
-		    						        	    anyMatch: true,
-		    						        	    caseSensitive: false
-		    						        	})
-		    						     },
-		    						     'beforequery': function(queryEvent) {
-		    						           queryEvent.combo.onLoad();
-		    						     }
-		    						    }
+										filtradoEspecial: true
 								  },
 								  {
 										xtype: 'displayfieldbase',

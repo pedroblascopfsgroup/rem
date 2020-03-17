@@ -48,7 +48,10 @@ public class DDTipoDocumentoProveedor implements Auditable, Dictionary {
 	private String descripcion;
 	    
 	@Column(name = "DD_TDP_DESCRIPCION_LARGA")   
-	private String descripcionLarga;	    
+	private String descripcionLarga;
+	
+	@Column(name = "DD_TDP_MATRICULA_GD")   
+	private String matricula;	
 
 	@Version   
 	private Long version;
@@ -86,6 +89,14 @@ public class DDTipoDocumentoProveedor implements Auditable, Dictionary {
 
 	public void setDescripcionLarga(String descripcionLarga) {
 		this.descripcionLarga = descripcionLarga;
+	}
+	
+	public String getMatricula() {
+		return matricula;
+	}
+
+	public void setMatricula(String matricula) {
+		this.matricula = matricula;
 	}
 
 	public Long getVersion() {

@@ -49,7 +49,9 @@ Ext.define('HreRem.view.masivo.MasivoMain', {
 				            	displayField	: 'descripcion',							    							
 							    valueField		: 'id',
 								allowBlank: false,
+								filtradoEspecial: true,
 								width: '50%'
+								
 					        },
 				    		{
 						        xtype: 'filefield',

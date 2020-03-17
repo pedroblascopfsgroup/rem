@@ -74,6 +74,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalificacionEnergetica;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
@@ -184,7 +185,8 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 		beanUtilNotNull.copyProperty(activo, "tipoComercializacion",
 				utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, dtoAATP.getDestinoComercialCodigo()));
 		beanUtilNotNull.copyProperty(activo, "tipoAlquiler", utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoAlquiler.class, dtoAATP.getTipoAlquilerCodigo()));
-				
+		beanUtilNotNull.copyProperty(activo, "tipoComercializar", utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializar.class, dtoAATP.getTipoDeComercializacion()));
+		
 		activo = genericDao.save(Activo.class, activo);
 		return activo;
 	}

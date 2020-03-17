@@ -24,6 +24,7 @@ public class NotificatorServiceSancionOfertaSoloRechazo extends NotificatorServi
 	private static final String CODIGO_T017_PBC_RESERVA = "T017_PBCReserva";
 	private static final String CODIGO_T017_RES_EXPEDIENTE = "T017_ResolucionExpediente";
 	private static final String CODIGO_T017_PBC_VENTA = "T017_PBCVenta";
+	private static final String CODIGO_T013_PBC_RESERVA = "T013_PBCReserva";
 	private static final String COMBO_RESOLUCION = "comboRespuesta";
 
 	@Override
@@ -44,7 +45,8 @@ public class NotificatorServiceSancionOfertaSoloRechazo extends NotificatorServi
 				CODIGO_T017_RECOMENDACION_CES,
 				CODIGO_T017_PBC_RESERVA,
 				CODIGO_T017_RES_EXPEDIENTE,
-				CODIGO_T017_PBC_VENTA};
+				CODIGO_T017_PBC_VENTA,
+				CODIGO_T013_PBC_RESERVA};
 	}
 
 
@@ -53,6 +55,7 @@ public class NotificatorServiceSancionOfertaSoloRechazo extends NotificatorServi
 		Boolean correoLlegadaTarea = false;
 		Boolean aprueba = false;
 		String codTareaActual = null;
+		Boolean permiteRechazar = true;
 		
 		if(!Checks.esNulo(valores)) {
 			for (TareaExternaValor valor : valores) {
@@ -68,7 +71,7 @@ public class NotificatorServiceSancionOfertaSoloRechazo extends NotificatorServi
 			}
 		}
 		
-		this.generaNotificacion(tramite, true, false, correoLlegadaTarea, codTareaActual);
+		this.generaNotificacion(tramite, permiteRechazar, false, correoLlegadaTarea, codTareaActual);
 	}
 
 	public void notificatorFinSinTramite(Long idOferta) {

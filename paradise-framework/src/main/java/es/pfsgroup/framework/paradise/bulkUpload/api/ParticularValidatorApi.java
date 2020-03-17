@@ -1048,19 +1048,24 @@ public interface ParticularValidatorApi {
 	Boolean esExpedienteVenta(String numExpediente);
 	
 	/**
+	 * @param pveCodRem
+	 * @return true si el proveedor ha sido dado de baja
+	 */
+	public Boolean isProveedorUnsuscribed(String pveCodRem);
+	
+	/**
+	 * @param pveCodRem 
+	 * @return true si el al menos hay un proveedor con el código rem
+	 */
+
+	public Boolean existeProveedorByCodRem(String pveCodRem);
+
+	/**
 	 * @param codSubFasePublicacion
 	 * @param codFasePublicacion
 	 * @return true si la subfase pertenece a la fase de publicación
 	 */
 	public Boolean perteneceSubfaseAFasePublicacion(String codSubFasePublicacion, String codFasePublicacion);
-
-	Boolean esExpedienteValidoFirmado(String numExpediente);
-
-	Boolean esExpedienteValidoReservado(String numExpediente);
-
-	Boolean esExpedienteValidoVendido(String numExpediente);
-
-	Boolean esExpedienteValidoAnulado(String numExpediente);
 	
 	 /***
      * @param numTrabajo
@@ -1075,5 +1080,41 @@ public interface ParticularValidatorApi {
      */
 	
 	public Boolean existenTareasEnTrabajo(String numTrabajo);
+
+	Boolean esExpedienteValidoFirmado(String numExpediente);
+
+	Boolean esExpedienteValidoReservado(String numExpediente);
+
+	Boolean esExpedienteValidoVendido(String numExpediente);
+
+	Boolean esExpedienteValidoAnulado(String numExpediente);
+	
 	Boolean esExpedienteValidoAprobado(String numExpediente);
+		
+	/**
+	 * 
+	 * @param direccionComercial
+	 * @return true si la dirección comercial Existe
+	 */
+	public Boolean direccionComercialExiste(String direccionComercial);
+
+	Boolean isActivoEnCesionDeUso(String numActivo);
+
+	Boolean isActivoEnAlquilerSocial(String numActivo);
+
+	public Boolean esSegmentoValido(String codSegmento);
+/**
+ * 
+ * @param codSegmento
+ * @param numActivo
+ * @return true si pertenece al diccionario SEGMENTO CARTERA SUBCARTERA
+ */
+	public Boolean perteneceSegmentoCraScr(String codSegmento, String numActivo);
+
+	public Boolean esSubcarteraDivarian(String numActivo);
+	
+	public Boolean esSubcarteraApple(String numActivo);
+	
+	public Boolean aCambiadoDestinoComercial(String numActivo, String destinoComercial);
+	
 }

@@ -68,6 +68,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
 import es.pfsgroup.plugin.rem.model.ConfigCuentaContable;
 import es.pfsgroup.plugin.rem.model.ConfigPdaPresupuestaria;
+import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -316,7 +317,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}else{
 				dto.setCartera(null);
 			}
-			
+			dto.setSubcartera(gasto.getSubcartera() == null ? null : gasto.getSubcartera().getCodigo());
 
 			if (!Checks.esNulo(gasto.getTipoGasto())) {
 				dto.setTipoGastoCodigo(gasto.getTipoGasto().getCodigo());
@@ -1862,6 +1863,15 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				}
 				if (!Checks.esNulo(contabilidadGasto.getCuentaContable())) {
 					dto.setCuentaContable(contabilidadGasto.getCuentaContable());
+					
+					if(contabilidadGasto.getPartidaPresupuestaria() != null) {
+						Filter partidaPresupuestariaFilter = genericDao.createFilter(FilterType.EQUALS, "partidaPresupuestaria", contabilidadGasto.getPartidaPresupuestaria());
+						Filter cuentaContableFilter = genericDao.createFilter(FilterType.EQUALS, "cuentaContable", contabilidadGasto.getCuentaContable());
+						ConfiguracionSubpartidasPresupuestarias csp = genericDao.get(ConfiguracionSubpartidasPresupuestarias.class, partidaPresupuestariaFilter, cuentaContableFilter);
+						if(csp != null) {
+							dto.setIdSubpartidaPresupuestaria(csp.getId());
+						}
+					}
 				}
 
 				dto.setFechaDevengoEspecial(contabilidadGasto.getFechaDevengoEspecial());
@@ -1906,8 +1916,15 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					contabilidadGasto.setEjercicio(ejercicio);
 				}
 
+				if(dtoContabilidadGasto.getIdSubpartidaPresupuestaria() != null) {
+					Filter filtroSubpartidaPresupuestaria = genericDao.createFilter(FilterType.EQUALS, "id", dtoContabilidadGasto.getIdSubpartidaPresupuestaria());
+					ConfiguracionSubpartidasPresupuestarias cps = genericDao.get(ConfiguracionSubpartidasPresupuestarias.class, filtroSubpartidaPresupuestaria);
+					
+					contabilidadGasto.setConfiguracionSubpartidasPresupuestarias(cps);
+				}
+				
 				gasto.setGastoInfoContabilidad(contabilidadGasto);
-			}
+			}			
 			
 			updateEjercicio(gasto);
 			DtoInfoContabilidadGasto dtoFin = infoContabilidadToDtoInfoContabilidad(gasto);
@@ -3167,8 +3184,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					cuentaArrendada= genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaArrendamiento,/*filtroPropietario,*/filtroBorrado, filtroRefacturableCC);
 					cuentaNoArrendada= genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaNoArrendamiento,/*filtroPropietario,*/filtroBorrado, filtroRefacturableCC);
 				}else {
-					cuentaArrendada= genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaArrendamiento/*,filtroPropietario*/,filtroBorrado, filtroRefacturableCC);
-					cuentaNoArrendada= genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaNoArrendamiento/*,filtroPropietario*/,filtroBorrado, filtroRefacturableCC);
+					cuentaArrendada= genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaArrendamiento/*,filtroPropietario*/,filtroBorrado, filtroRefacturableCC, filtroSubcarteraNull);
+					cuentaNoArrendada= genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaNoArrendamiento/*,filtroPropietario*/,filtroBorrado, filtroRefacturableCC, filtroSubcarteraNull);
 				}
 				
 				if(!Checks.esNulo(cuentaArrendada) || !Checks.esNulo(cuentaNoArrendada)){

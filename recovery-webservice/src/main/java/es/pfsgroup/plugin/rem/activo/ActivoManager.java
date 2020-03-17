@@ -33,7 +33,9 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.dto.WebDto;
@@ -138,6 +140,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenDato;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
@@ -146,6 +149,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTerritorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
@@ -177,6 +181,7 @@ import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
+import es.pfsgroup.plugin.rem.thread.GuardarActivosRestringidasAsync;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
@@ -2742,7 +2747,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaAux.getEstadoOferta().getCodigo())) {
 					ExpedienteComercial expediente = expedienteComercialApi
 							.expedienteComercialPorOferta(ofertaAux.getId());
-					if (!Checks.esNulo(expediente)) { // Si el expediente está
+					if (!Checks.esNulo(expediente) && expediente.getEstado() != null) { // Si el expediente está
 														// aprobado (o estados
 														// posteriores).
 						if (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
@@ -3471,9 +3476,23 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (!Checks.esNulo(activo.getEstaEnPuja())) {
 				beanUtilNotNull.copyProperty(dto, "puja", activo.getEstaEnPuja());
 			}
+			
+			if (!Checks.esNulo(activo.getVentaSobrePlano())){
+				if(DDSinSiNo.CODIGO_SI.equals(activo.getVentaSobrePlano().getCodigo())) {
+					beanUtilNotNull.copyProperty(dto, "ventaSobrePlano", true);
+				}else {
+					beanUtilNotNull.copyProperty(dto, "ventaSobrePlano", false);
+				}		
+				
+			}
+			
 			if (!Checks.esNulo(activo.getActivoAutorizacionTramitacionOfertas())) {
 				beanUtilNotNull.copyProperty(dto, "motivoAutorizacionTramitacionCodigo", activo.getActivoAutorizacionTramitacionOfertas().getMotivoAutorizacionTramitacion().getCodigo());
 				beanUtilNotNull.copyProperty(dto, "observacionesAutoTram", activo.getActivoAutorizacionTramitacionOfertas().getObservacionesAutoTram());
+			}
+			if(!Checks.esNulo(activo.getTerritorio())) {
+				beanUtilNotNull.copyProperty(dto, "direccionComercial", activo.getTerritorio().getCodigo());
+	
 			}
 
 		} catch (IllegalAccessException e) {
@@ -3543,6 +3562,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 				}
 			}
+			if(!Checks.esNulo(dto.getDireccionComercial())) {
+				DDTerritorio territorio = (DDTerritorio) utilDiccionarioApi.dameValorDiccionarioByCod(DDTerritorio.class, dto.getDireccionComercial());
+				activo.setTerritorio(territorio);
+				if(activoDao.isActivoPrincipalAgrupacionRestringida(activo.getId()) != 0){
+					Thread guardadoAsincrono = new Thread(new GuardarActivosRestringidasAsync(activo.getId(), genericAdapter.getUsuarioLogado().getUsername()));
+					guardadoAsincrono.start();
+				}
+			}
 			
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
@@ -3551,8 +3578,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		} catch (InvocationTargetException e) {
 			logger.error("Error en activoManager", e);
 			return false;
-		}
+		} catch (Exception e) {
+			logger.error("Error el hilo activoManager", e);
+			return false;
 
+		}
+		
 		activo.setEstaEnPuja(dto.getPuja());
 		activoDao.save(activo);
 
@@ -3683,6 +3714,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		if (!Checks.esNulo(cargaSeleccionada) && !Checks.esNulo(cargaSeleccionada.getActivo()) && !Checks.esNulo(cargaSeleccionada.getActivo().getId())) {
 			activoCargasDao.calcularEstadoCargaActivo(cargaSeleccionada.getActivo().getId(), genericAdapter.getUsuarioLogado().getUsername(), true);
+			activoAdapter.actualizarEstadoPublicacionActivo(cargaSeleccionada.getActivo().getId());
 		}
 
 		return true;
@@ -4029,6 +4061,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				genericDao.deleteById(ActivoCargas.class, carga.getId());
 				if (!Checks.esNulo(carga.getActivo()) && !Checks.esNulo(carga.getActivo().getId())) {
 					activoCargasDao.calcularEstadoCargaActivo(carga.getActivo().getId(), genericAdapter.getUsuarioLogado().getUsername(), true);
+					activoAdapter.actualizarEstadoPublicacionActivo(carga.getActivo().getId());
 				}
 			} else {
 				return false;
@@ -6435,6 +6468,63 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return activoDto;
 	}
+
+	//Para saber si pertenece a DND comprobar si devuelve un null. De esta forma se evita hacer otra función igual
+	//con otro bucle igual para devolver el número de agrupación dnd
+	//Comprobar si devuelve null o no para saber si pertenece a agrupación DND.
+	
+	@Override
+	public Boolean getVisibilidadTabFasesPublicacion(Activo activo) {
+		Usuario logedUser = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		Usuario gestorPublicacionActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_PUBLICACION);
+		Usuario supervisorPublicacionActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_PUBLICACION);
+		Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+		Usuario supervisorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS);
+		Usuario gestorEdificacion = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+		Usuario supervisorEdificacion = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
+		Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		Filter vigenteFilter = genericDao.createFilter(FilterType.NULL, "fechaHasta");
+		Order order = new Order(OrderType.DESC, "id");
+		
+		List<ActivoInformeComercialHistoricoMediador> listaMediadores = genericDao.getListOrdered(ActivoInformeComercialHistoricoMediador.class, order, activoFilter, vigenteFilter);
+		ActivoInformeComercialHistoricoMediador mediadorVigente = null;
+		if (!Checks.estaVacio(listaMediadores)) {
+			mediadorVigente = listaMediadores.get(0);
+		}
+		
+		if (!Checks.esNulo(gestorPublicacionActivo) && logedUser.equals(gestorPublicacionActivo)) {
+			return true;
+		} else if (!Checks.esNulo(supervisorPublicacionActivo) && logedUser.equals(supervisorPublicacionActivo)) {
+			return true;
+		} else if (!Checks.esNulo(gestorActivo) && logedUser.equals(gestorActivo)) {
+			return true;
+		} else if (!Checks.esNulo(supervisorActivo) && logedUser.equals(supervisorActivo)) {
+			return true;
+		} else if (!Checks.esNulo(gestorEdificacion) && logedUser.equals(gestorEdificacion)) {
+			return true;
+		} else if (!Checks.esNulo(supervisorEdificacion) && logedUser.equals(supervisorEdificacion)) {
+			return true;
+		} else if (!Checks.esNulo(mediadorVigente) && !Checks.esNulo(mediadorVigente.getMediadorInforme())) {
+			Long idProveedor = mediadorVigente.getMediadorInforme().getId();
+			Filter pvcFilter = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", idProveedor);
+			List<ActivoProveedorContacto> listaProveedorContacto = genericDao.getList(ActivoProveedorContacto.class, pvcFilter);
+			if (!Checks.estaVacio(listaProveedorContacto)) {
+				//Puede haber más de un registro en PVC con el mismo PVE_ID
+				//pero por lo que he visto entre esos registro solo puede haber uno con DocIdentificativo
+				//y ese seria el mediador
+				for (ActivoProveedorContacto proveedorContacto : listaProveedorContacto) {
+					if (!Checks.esNulo(proveedorContacto) && !Checks.esNulo(proveedorContacto.getDocIdentificativo())) {
+						Usuario usuMediadorVigente = proveedorContacto.getUsuario();
+						if (!Checks.esNulo(usuMediadorVigente) && usuMediadorVigente.equals(logedUser)) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
 	
 	public void deleteActOfr(Long idActivo, Long idOferta) {
 		activoDao.deleteActOfr(idActivo, idOferta);
@@ -6516,7 +6606,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			throw new PlusvaliaActivoException(PlusvaliaActivoException.getErrorNoExisteEstadoDeGestionPorCodigo(codigo));
 		}
 	}
-
+	
 	@Override
 	public Boolean getMostrarEdicionTabFasesPublicacion(Activo activo) {
 		Usuario logedUser = usuarioManager.getUsuarioLogado();
@@ -6570,7 +6660,33 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 			}
 		}
-
 		return false;
 	}
+	
+	
+	@Override
+	public void propagarTerritorioAgrupacionRestringida(Long idActivo) {
+
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+		Activo activo = activoDao.getActivoById(idActivo);
+		try {
+			ActivoAgrupacion agrupacion = getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId()).getAgrupacion();
+			if(!Checks.esNulo(agrupacion)) {
+				List<ActivoAgrupacionActivo> agrupacionActivos = agrupacion.getActivos();
+				for (ActivoAgrupacionActivo activoAgrupacionActivo : agrupacionActivos) {	
+					if(activo != activoAgrupacionActivo.getActivo()) {
+						activoAgrupacionActivo.getActivo().setTerritorio(activo.getTerritorio());
+					}
+					
+				}
+			}
+			
+			transactionManager.commit(transaction);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			transactionManager.rollback(transaction);
+		}
+	}
+
 }
+

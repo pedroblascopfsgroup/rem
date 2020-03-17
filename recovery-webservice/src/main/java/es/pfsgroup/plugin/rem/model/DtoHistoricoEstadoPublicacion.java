@@ -18,6 +18,8 @@ public class DtoHistoricoEstadoPublicacion {
 	private String usuario;
 	private String estadoPublicacion;
 	private Long diasPeriodo;
+	private String canalPublicacion;
+
 
 	public Long getIdActivo() {
 		return idActivo;
@@ -89,6 +91,13 @@ public class DtoHistoricoEstadoPublicacion {
 
 	public void setDiasPeriodo(Long diasPeriodo) {
 		this.diasPeriodo = diasPeriodo;
+	}
+	public String getCanalPublicacion() {
+		return canalPublicacion;
+	}
+
+	public void setCanalPublicacion(String canalPublicacion) {
+		this.canalPublicacion = canalPublicacion;
 	}
 
 }

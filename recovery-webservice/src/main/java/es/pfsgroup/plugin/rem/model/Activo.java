@@ -47,18 +47,22 @@ import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCargaActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDOrigenAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTerritorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 
@@ -485,16 +489,38 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "DD_ECA_ID")
     private DDEstadoCargaActivo estadoCargaActivo;  
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_VENTA_PLANO")
+    private DDSinSiNo ventaSobrePlano;
+    
     @OneToOne(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private ActivoAutorizacionTramitacionOfertas activoAutorizacionTramitacionOfertas;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TDC_ID")
+    private DDTerritorio territorio; 
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TS_ID")
+    private DDTipoSegmento tipoSegmento; 
 	
     @Column(name = "ACT_VALOR_LIQUIDEZ")
     private String valorLiquidez;
     
     @Column(name = "ACT_NUM_ACTIVO_DIVARIAN")
-	private Long numActivoDivarian;
+	private String numActivoDivarian;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_OAN_ID")
+    private DDOrigenAnterior origenAnterior;
+    
+    @Column(name = "ACT_FECHA_TITULO_ANTERIOR")
+	private Date fechaTituloAnterior;
+    
+    @Column(name = "ACT_DND")
+   	private Boolean isDnd;
     
     // Getters del activo --------------------------------------------
     
@@ -820,10 +846,13 @@ public class Activo implements Serializable, Auditable {
 				if(localizacionesBien.getTipoVia() != null) {
 					direccion = localizacionesBien.getTipoVia().getDescripcion();
 				}
-
-				direccion = direccion + " " + localizacionesBien.getNombreVia();
-				
-				direccion = direccion + " " + localizacionesBien.getNumeroDomicilio();
+			
+				if(!Checks.esNulo(localizacionesBien.getNombreVia())) {
+					direccion = direccion + " " + localizacionesBien.getNombreVia();
+				}
+				if(!Checks.esNulo(localizacionesBien.getNumeroDomicilio())) {
+					direccion = direccion + " " + localizacionesBien.getNumeroDomicilio();
+				}
 			}
 		}
 
@@ -1931,6 +1960,14 @@ public class Activo implements Serializable, Auditable {
 		this.activoAutorizacionTramitacionOfertas = activoAutorizacionTramitacionOfertas;
 	}
 
+	public DDSinSiNo getVentaSobrePlano() {
+		return ventaSobrePlano;
+	}
+
+	public void setVentaSobrePlano(DDSinSiNo ventaSobrePlano) {
+		this.ventaSobrePlano = ventaSobrePlano;
+	}
+	
 	public DDDireccionTerritorial getDireccionTerritorial() {
 		return direccionTerritorial;
 	}
@@ -1939,6 +1976,14 @@ public class Activo implements Serializable, Auditable {
 		this.direccionTerritorial = direccionTerritorial;
 	}
 
+	public DDTerritorio getTerritorio() {
+		return territorio;
+	}
+
+	public void setTerritorio(DDTerritorio territorio) {
+		this.territorio = territorio;
+	}
+	
 	public String getValorLiquidez() {
 		return valorLiquidez;
 	}
@@ -1946,6 +1991,44 @@ public class Activo implements Serializable, Auditable {
 	public void setValorLiquidez(String valorLiquidez) {
 		this.valorLiquidez = valorLiquidez;
 	}
-	
-	
+
+	public DDTipoSegmento getTipoSegmento() {
+		return tipoSegmento;
+	}
+
+	public void setTipoSegmento(DDTipoSegmento tipoSegmento) {
+		this.tipoSegmento = tipoSegmento;
+	}
+
+	public Boolean getIsDnd() {
+		return isDnd;
+	}
+
+	public void setIsDnd(Boolean isDnd) {
+		this.isDnd = isDnd;
+	}
+
+	public String getNumActivoDivarian() {
+		return numActivoDivarian;
+	}
+
+	public void setNumActivoDivarian(String numActivoDivarian) {
+		this.numActivoDivarian = numActivoDivarian;
+	}
+
+	public DDOrigenAnterior getOrigenAnterior() {
+		return origenAnterior;
+	}
+
+	public void setOrigenAnterior(DDOrigenAnterior origenAnterior) {
+		this.origenAnterior = origenAnterior;
+	}
+
+	public Date getFechaTituloAnterior() {
+		return fechaTituloAnterior;
+	}
+
+	public void setFechaTituloAnterior(Date fechaTituloAnterior) {
+		this.fechaTituloAnterior = fechaTituloAnterior;
+	}
 }

@@ -53,8 +53,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String subtipoActivoDescripcionBde;
 	private String latitud;
 	private String longitud;
-	private String direccionTerritorialCodigo;
-	private String direccionTerritorialDescripcion;
 	private String entidadPropietaria;
 	private String entidadPropietariaCodigo;
 	private String entidadPropietariaDescripcion;
@@ -69,6 +67,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String motivoActivo;
 	private Boolean tieneRegistroContrato;
 	private Integer diasCambioEstadoActivo;
+	private String tipoSegmentoCodigo;
 
 	// Comunidad de propietarios
 	private String tipoCuotaCodigo;
@@ -127,6 +126,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String situacionComercialCodigo;
 	private String situacionComercialDescripcion;
 	private Boolean esSarebProyecto;
+	private Boolean isUA;
 	
 	//Perimetro datos:
 	private Boolean incluidoEnPerimetro;
@@ -272,6 +272,10 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String nombreMediador;
 	private String sociedadPagoAnterior; 
 	private Boolean mostrarEditarFasePublicacion;
+	
+	private Boolean pazSocial;
+	private String numActivoDivarian;
+
 	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -796,22 +800,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setLongitud(String longitud) {
 		this.longitud = longitud;
 	}	
-
-	public String getDireccionTerritorialCodigo() {
-		return direccionTerritorialCodigo;
-	}
-
-	public void setDireccionTerritorialCodigo(String direccionTerritorialCodigo) {
-		this.direccionTerritorialCodigo = direccionTerritorialCodigo;
-	}
-
-	public String getDireccionTerritorialDescripcion() {
-		return direccionTerritorialDescripcion;
-	}
-
-	public void setDireccionTerritorialDescripcion(String direccionTerritorialDescripcion) {
-		this.direccionTerritorialDescripcion = direccionTerritorialDescripcion;
-	}
 
 	public String getInferiorMunicipioCodigo() {
 		return inferiorMunicipioCodigo;
@@ -2072,5 +2060,38 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setMostrarEditarFasePublicacion(Boolean mostrarEditarFasePublicacion) {
 		this.mostrarEditarFasePublicacion = mostrarEditarFasePublicacion;
 	}
+	
+	public Boolean getPazSocial() {
+		return pazSocial;
+	}
+
+	public void setPazSocial(Boolean pazSocial) {
+		this.pazSocial = pazSocial;
+	}
+
+	public String getTipoSegmentoCodigo() {
+		return tipoSegmentoCodigo;
+	}
+
+	public void setTipoSegmentoCodigo(String tipoSegmentoCodigo) {
+		this.tipoSegmentoCodigo = tipoSegmentoCodigo;
+	}
+
+	public Boolean getIsUA() {
+		return isUA;
+	}
+
+	public void setIsUA(Boolean isUA) {
+		this.isUA = isUA;
+	}
+
+	public String getNumActivoDivarian() {
+		return numActivoDivarian;
+	}
+
+	public void setNumActivoDivarian(String numActivoDivarian) {
+		this.numActivoDivarian = numActivoDivarian;
+	}
+	
 	
 }

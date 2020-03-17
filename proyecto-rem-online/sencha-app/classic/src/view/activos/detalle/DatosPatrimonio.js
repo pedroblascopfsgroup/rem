@@ -49,7 +49,11 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 								store: '{comboTipoAlquiler}',
 								disabled: '{enableComboTipoAlquiler}',
 								value: '{patrimonio.tipoAlquilerCodigo}'
+							},
+							listeners: {
+								change: 'comboTipoAlquilerOnChange'
 							}
+							
 						},
 						{
 							xtype: 'comboboxfieldbase',
@@ -59,14 +63,17 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 								store: '{comboAdecuacionAlquiler}',
 								disabled: '{enableComboAdecuacion}',
 								value: '{patrimonio.codigoAdecuacion}'
-							}
+							},
+							colspan:1
 						}
 						,
 						{
 							xtype: 'checkboxfieldbase',
 							fieldLabel: HreRem.i18n('checkboxfieldbase.patrimonio.subrogado'),
+							reference: 'subrogadoCheckbox',
 							bind: {
-								value: '{patrimonio.chkSubrogado}'								
+								value: '{patrimonio.chkSubrogado}',// Es posible que se vea discordancia con Base de datos. Esto se debe a que este valor cambia en java. En TabActivoPatrimonio.getTabData()
+								readOnly: '{patrimonio.pazSocial}'
 							}
 						},
 						{
@@ -93,17 +100,62 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 							}
 						},
 						//Fila 2
-						{ 	
+						{
 							xtype: 'comboboxfieldbase',
-							fieldLabel: HreRem.i18n('title.patrimonio.rentaAntigua'),
-							bind: {
+								fieldLabel: HreRem.i18n('title.patrimonio.rentaAntigua'),
+									bind: {
 								disabled: '{enableComboRentaAntigua}',
-								store: '{comboSiNoRem}',
-								value: '{patrimonio.comboRentaAntigua}'								
+									store: '{comboSiNoRem}',
+										value: '{patrimonio.comboRentaAntigua}'
 							},
-							colspan: 3
+							colspan: 1
 						},
-							{
+						{
+							xtype: 'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('combolabel.patrimonio.combo.tramite.alquiler.social'),
+									reference: 'tramiteAlquilerSocialRef',
+										colspan: 1,
+											bind: {
+								readOnly: '{!isCesionUsoEditable}',
+									store: '{comboSinSino}',
+										value: '{patrimonio.tramiteAlquilerSocial}'
+							}
+						},
+						{
+							xtype : 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.paz.social'),
+							readOnly: true,
+							colspan: 1,
+							bind: {
+								store: '{comboSinSino}',
+								value: '{patrimonio.pazSocial}',
+								hidden: '{!patrimonio.isCarteraCerberusDivarian}'	
+							}
+						},		
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('combolabel.patrimonio.combo.cesion.de.uso'),
+							reference: 'cesionDeUsoRef',
+							colspan: 3,
+							bind: {
+								readOnly: '{!isCesionUsoEditable}',
+								store: '{comboCesionUso}',
+								value: '{patrimonio.cesionUso}',
+								hidden: '{!patrimonio.isCarteraCerberusDivarian}'
+							},
+							listeners: {
+								change: 'comboCesionUsoOnChage'
+							}
+						},
+						{
+							xtype: 'displayfieldbase',
+							colspan: 3,
+							readOnly:true,
+							bind: {
+								hidden: '{patrimonio.isCarteraCerberusDivarian}'
+							}
+						},			
+						{
 							xtype:'fieldsettable',
 							title:HreRem.i18n('title.grid.historico.adecuaciones'),
 							defaultType: 'textfieldbase',

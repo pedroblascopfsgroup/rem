@@ -3,16 +3,17 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
+import java.security.Key;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.Resource;
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
 
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -22,13 +23,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
-import es.capgemini.pfs.users.dao.UsuarioDao;
 import es.capgemini.pfs.users.domain.Funcion;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -46,6 +47,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -56,12 +58,14 @@ import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.CarteraCondicionesPrecios;
+import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoLocalidadSimple;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.DtoUsuarios;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GastoInfoContabilidad;
 import es.pfsgroup.plugin.rem.model.GestionCCPP;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.GrupoUsuario;
@@ -70,7 +74,6 @@ import es.pfsgroup.plugin.rem.model.LocalizacionSubestadoGestion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
-import es.pfsgroup.plugin.rem.model.VGestoresActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
@@ -146,9 +149,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	
 	@Autowired
 	private UsuarioApi usuarioApi;
-
+	
 	@Autowired
-	private UsuarioDao usuarioDao;
+	private ExpedienteComercialApi expedienteComercialApi;
 
 	@Override
 	public String managerName() {
@@ -167,58 +170,97 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			Filter filtroGru = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
 			List<GrupoUsuario> gruUsu = genericDao.getList(GrupoUsuario.class, filtroGru);
 
-			
-			if (usuario != null) {
-				List<String> authorities = new ArrayList<String>();
-				List<String> roles = new ArrayList<String>();
-				
-				/**
-				 * Al lanzar este método en un hilo diferente
-				 * al principal da un error lazy. Recargamos en la sesión el usuario logado
-				 */
-				try{
-					usuario.getPerfiles();
-				}catch(LazyInitializationException e){
-					usuario = usuarioApi.get(usuario.getId());
+
+			List<String> authorities = new ArrayList<String>();
+			List<String> roles = new ArrayList<String>();
+
+			/**
+			 * Al lanzar este método en un hilo diferente
+			 * al principal da un error lazy. Recargamos en la sesión el usuario logado
+			 */
+			try{
+				usuario.getPerfiles();
+			}catch(LazyInitializationException e){
+				usuario = usuarioApi.get(usuario.getId());
+			}
+
+
+			for (Perfil perfil : usuario.getPerfiles()) {
+				for (Funcion funcion : perfil.getFunciones()) {
+					authorities.add(funcion.getDescripcion());
 				}
-				
-				
-				for (Perfil perfil : usuario.getPerfiles()) {
+				roles.add(perfil.getCodigo());
+			}
+
+			for(GrupoUsuario usuarioGrupo : gruUsu) {
+				for (Perfil perfil : usuarioGrupo.getGrupo().getPerfiles()) {
 					for (Funcion funcion : perfil.getFunciones()) {
-						authorities.add(funcion.getDescripcion());
-					}
-					roles.add(perfil.getCodigo());
-				}
-				
-				for(GrupoUsuario usuarioGrupo : gruUsu) {
-					for (Perfil perfil : usuarioGrupo.getGrupo().getPerfiles()) {
-						for (Funcion funcion : perfil.getFunciones()) {
-							if(!authorities.contains(funcion.getDescripcion())) {
-								authorities.add(funcion.getDescripcion());
-							}
+						if(!authorities.contains(funcion.getDescripcion())) {
+							authorities.add(funcion.getDescripcion());
 						}
 					}
 				}
-				
-				authData.setUserName(usuario.getApellidoNombre());
-				authData.setAuthorities(authorities);
-				
-				authData.setUserId(usuario.getId());
-				authData.setRoles(roles);
-				authData.setCodigoGestor(gestorEntidad.getCodigoGestorPorUsuario(usuario.getId()));
-	
-				authData.setEsGestorSustituto(esGestorSustituto(usuario));
-				
-				if(!Checks.esNulo(uca)){
-					authData.setCodigoCartera(uca.getCartera().getCodigo());
-				}
 			}
+
+			authData.setUserName(usuario.getApellidoNombre());
+			authData.setAuthorities(authorities);
+
+			authData.setUserId(usuario.getId());
+			authData.setRoles(roles);
+			authData.setCodigoGestor(gestorEntidad.getCodigoGestorPorUsuario(usuario.getId()));
+
+			authData.setEsGestorSustituto(esGestorSustituto(usuario));
+
+			if(!Checks.esNulo(uca)){
+				authData.setCodigoCartera(uca.getCartera().getCodigo());
+			}
+
+			authData.setJwt(createJwtForTheSession(usuario.getUsername(), roles));
+
 		}catch(LazyInitializationException e){
 			logger.info(e.getMessage());
 		}
 
 		return authData;
+	}
 
+	/**
+	 * Este método devuelve un Token basado en JWT con los datos de usuario. Utilizado para obtener una sesión reutilizable en REM3.
+	 *
+	 * @param username nombre de usuario de la sesión iniciada.
+	 * @param roles listado de roles asignados al usuario.
+	 * @return Devuelve un token compactado "url safe" en String.
+	 */
+	private String createJwtForTheSession(String username,List<String> roles) {
+		// Time for the token to be valid
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		calendar.add(Calendar.HOUR_OF_DAY, 8);
+		Date validJwtSignedTime = calendar.getTime();
+
+		//The JWT signature algorithm we will be using to sign the token
+		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+		long nowMillis = System.currentTimeMillis();
+		Date now = new Date(nowMillis);
+
+		//We will sign our JWT with our ApiKey secret
+		byte[] apiKeySecretBytes = DatatypeConverter
+				.parseBase64Binary(appProperties.getProperty("jwt.secret.key", "default_rest_api_key"));
+		Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+
+		//Let's set the JWT Claims
+		JwtBuilder builder = Jwts.builder().setId(UUID.randomUUID().toString())
+				.setIssuedAt(now)
+				.setSubject(username)
+				.setIssuer("REM Legacy")
+				.setIssuedAt(new Date())
+				.setExpiration(validJwtSignedTime)
+				.claim("roles", roles)
+				.signWith(signatureAlgorithm, signingKey);
+
+		//Builds the JWT and serializes it to a compact, URL-safe string
+		return builder.compact();
 	}
 
 	public Integer esGestorSustituto(Usuario usuarioLogado) {
@@ -627,7 +669,17 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		List<DDTipoTrabajo> tiposTrabajo = new ArrayList<DDTipoTrabajo>();
 		List<DDTipoTrabajo> tiposTrabajoFiltered = new ArrayList<DDTipoTrabajo>();
 		tiposTrabajo.addAll((List<DDTipoTrabajo>) (List) adapter.getDiccionario("tiposTrabajo"));
-
+		List<DDTipoTrabajo> tiposTrabajoNoBloqueados = new ArrayList<DDTipoTrabajo>();
+		
+	
+		for (DDTipoTrabajo ddTipoTrabajo : tiposTrabajo) {
+			if(!Checks.esNulo(ddTipoTrabajo.getBloqueado()) && !ddTipoTrabajo.getBloqueado()) {
+				tiposTrabajoNoBloqueados.add(ddTipoTrabajo);
+			}
+		}
+		
+		tiposTrabajo = tiposTrabajoNoBloqueados;
+		
 		if (idActivo != null && !idActivo.isEmpty() && StringUtils.isNumeric(idActivo)) {
 			Activo act = activoApi.get(Long.parseLong(idActivo));
 			for (DDTipoTrabajo tipoTrabajo : tiposTrabajo) {
@@ -1264,5 +1316,53 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		}
 		
 		return gestion.getSubestadoGestion();
+	}
+
+	@Override
+	public List<DDComiteSancion> getComitesResolucionLiberbank(Long idExp) throws Exception {
+		DDComiteSancion comitePropuesto = expedienteComercialApi.comitePropuestoByIdExpediente(idExp);	
+		List<DDComiteSancion> listaComites;
+		List<String> comitesResolucionComiteCodigos = new ArrayList<String>();
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", DDCartera.CODIGO_CARTERA_LIBERBANK);
+		listaComites = genericDao.getListOrdered(DDComiteSancion.class,order,filtro);
+		
+		if(!Checks.esNulo(comitePropuesto.getCodigo()) && DDComiteSancion.CODIGO_HAYA_LIBERBANK.equals(comitePropuesto.getCodigo())) {
+			comitesResolucionComiteCodigos.add(DDComiteSancion.CODIGO_HAYA_LIBERBANK);
+		}else {
+			comitesResolucionComiteCodigos.add(DDComiteSancion.CODIGO_GESTION_INMOBILIARIA);
+			comitesResolucionComiteCodigos.add(DDComiteSancion.CODIGO_DIRECTOR_GESTION_INMOBILIARIA);
+			comitesResolucionComiteCodigos.add(DDComiteSancion.CODIGO_COMITE_INVERSION_INMOBILIARIA);
+			comitesResolucionComiteCodigos.add(DDComiteSancion.CODIGO_COMITE_DIRECCION);
+		}
+		
+		if(listaComites != null && !listaComites.isEmpty()) {
+			for (int i = listaComites.size() -1; i >= 0 ; i--) {
+				if(!comitesResolucionComiteCodigos.contains(listaComites.get(i).getCodigo())){
+					listaComites.remove(i);
+				}
+			}
+		}
+		
+		return listaComites;
+	}
+	
+	@Override
+	public List<ConfiguracionSubpartidasPresupuestarias> getComboSubpartidaPresupuestaria(Long idGasto) {	
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);		
+		Filter filtroGpv = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
+		GastoInfoContabilidad gic = genericDao.get(GastoInfoContabilidad.class, filtroGpv, filtroBorrado);
+		
+		Filter filtroCuentaContable = genericDao.createFilter(FilterType.EQUALS, "cuentaContable", gic.getCuentaContable());
+		return (!Checks.esNulo(gic) && !Checks.esNulo(gic.getCuentaContable())) ? genericDao.getList(ConfiguracionSubpartidasPresupuestarias.class, filtroCuentaContable, filtroBorrado) : null; 
+
+	}
+
+	@Override
+	public String getPartidaPresupuestaria(Long idSubpartida) {
+		
+		Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "id", idSubpartida);
+		ConfiguracionSubpartidasPresupuestarias cps = genericDao.get(ConfiguracionSubpartidasPresupuestarias.class, filtroId);
+		return (cps != null) ? cps.getPartidaPresupuestaria() : null;
 	}
 }

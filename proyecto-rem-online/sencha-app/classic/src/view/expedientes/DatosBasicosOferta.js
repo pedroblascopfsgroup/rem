@@ -15,9 +15,10 @@ recordClass: "HreRem.model.DatosBasicosOferta",
     'HreRem.model.OfertasAgrupadasModel', 'HreRem.view.expedientes.OfertasAgrupadasTabPanel'],
     
     listeners: {
-boxready:'cargarTabData',
-beforeedit: 'numVisitaIsEditable'
-},
+		boxready:'cargarTabData',
+		beforeedit: 'numVisitaIsEditable',
+		afterrender: 'doCalculateTitleByComite'
+	},
     
     initComponent: function () {
 
@@ -97,16 +98,6 @@ beforeedit: 'numVisitaIsEditable'
 							hidden : '{esTipoAlquiler}'
 						}
 					}, {
-						xtype : 'datefieldbase',
-						fieldLabel : HreRem.i18n('fieldlabel.fecha.respuesta'),
-						colspan : 3,
-						bind : {
-							value : '{datosbasicosoferta.fechaRespuesta}',
-							hidden : '{!datosbasicosoferta.isCarteraCerberusApple}'
-						},
-						readOnly : true
-
-					}, {
 						xtype : 'comboboxfieldbase',
 						fieldLabel : HreRem.i18n('fieldlabel.tipo.alquiler'),
 						bind : {
@@ -150,77 +141,47 @@ beforeedit: 'numVisitaIsEditable'
 							value:'{datosbasicosoferta.idGestorComercialPrescriptor}',
 							hidden: '{!mostrarPrescriptorCajamar}'
 						}
-					}, {
-						xtype:'datefieldbase',
-						formatter: 'date("d/m/Y")',
-						fieldLabel:  HreRem.i18n('fieldlabel.respuesta.pm'),
-						bind: {
-							value: '{datosbasicosoferta.fechaRespuestaPM}',
-							hidden:'{!datosbasicosoferta.isCarteraCerberusApple}'
-						},
-						readOnly: true
-					}, {
-						xtype : 'currencyfieldbase',
-						fieldLabel : HreRem.i18n('fieldlabel.importe.pm'),
-						bind : {
-							value : '{datosbasicosoferta.importeContraofertaPM}',
-							hidden : '{!datosbasicosoferta.isCarteraCerberusApple}'
-						},
-						readOnly : true
-					}, {
-						xtype : 'datefieldbase',
-						fieldLabel : HreRem
-								.i18n('fieldlabel.fecha.ofertante.pm'),
-						bind : {
-							value : '{datosbasicosoferta.fechaRespuestaOfertantePM}',
-							hidden : '{!datosbasicosoferta.isCarteraCerberusApple}'
-						},
-						readOnly : true
-					}, {
-						xtype : 'datefieldbase',
-						formatter : 'date("d/m/Y")',
-						fieldLabel : HreRem.i18n('fieldlabel.resolucion.ces'),
-						bind : {
-							value : '{datosbasicosoferta.fechaResolucionCES}',
-							hidden : '{!datosbasicosoferta.isCarteraCerberusApple}'
-						},
-						readOnly : true
-					}, {
-						xtype : 'currencyfieldbase',
-						fieldLabel : HreRem.i18n('fieldlabel.importe.ces'),
-						bind : {
-							value : '{datosbasicosoferta.importeContraofertaCES}',
-							hidden : '{!datosbasicosoferta.isCarteraCerberusApple}'
-						},
-						readOnly : true
-					}, {
-						xtype : 'datefieldbase',
-						fieldLabel : HreRem
-								.i18n('fieldlabel.fecha.respuesta.ofertante.CES'),
-						bind : {
-							value : '{datosbasicosoferta.fechaRespuestaCES}',
-							hidden : '{!datosbasicosoferta.isCarteraCerberusApple}'
-						},
-						readOnly : true
-					}, 
-					{
-						bind : {
-							hidden : '{!datosbasicosoferta.isCarteraCerberusApple}'
-						}
-					}, 
-					{
-						xtype : 'currencyfieldbase',
-						fieldLabel : HreRem.i18n('fieldlabel.contraoferta.ofertante.ces'),
-						bind : {
-							value : '{datosbasicosoferta.importeContraofertaOfertanteCES}',
-							hidden : '{!datosbasicosoferta.isCarteraCerberusApple}'
-						},
-						readOnly : true
 					},
 					{
+						xtype : 'datefieldbase',
+						formatter : 'date("d/m/Y")',
+						reference: 'fechaResolucionCES',
 						bind : {
-							hidden : '{!datosbasicosoferta.isCarteraCerberusApple}'
+							value : '{datosbasicosoferta.fechaResolucionCES}',
+							hidden : '{!esSubcarteraRemainingOAppleOArrow}'
+						},						
+						readOnly : true
+					}, {
+						xtype : 'currencyfieldbase',
+						reference: 'importeContraOfertaCES',
+						bind : {
+							value : '{datosbasicosoferta.importeContraofertaCES}',
+							hidden : '{!esSubcarteraRemainingOAppleOArrow}'
+						},						
+						readOnly : true
+					}, {
+						xtype : 'datefieldbase',
+						reference: 'fechaResupuestaCES',
+						bind : {
+							value : '{datosbasicosoferta.fechaRespuestaCES}',
+							hidden : '{!esSubcarteraRemainingOAppleOArrow}'
+						},					
+						readOnly : true
+					}, 
+					{
+						bind : {
+							hidden : '{!esSubcarteraRemainingOAppleOArrow}'
 						}
+					},
+					{
+						xtype : 'currencyfieldbase',
+						reference:'importeContraofertaOfertanteCES',
+						colspan: 2,
+						bind : {
+							value : '{datosbasicosoferta.importeContraofertaOfertanteCES}',
+							hidden : '{!esSubcarteraRemainingOAppleOArrow}'
+						},						
+						readOnly : true
 					},
 					{
 						xtype : 'fieldsettable',
@@ -235,8 +196,8 @@ beforeedit: 'numVisitaIsEditable'
 									reference: 'claseOferta',
 									name: 'claseOferta',
 				                	colspan: 2,
-				                	readOnly: false,
 									bind: {
+										readOnly: '{datosbasicosoferta.estadoAprobadoLbk}',
 										store: '{comboClaseOferta}',
 										value: '{datosbasicosoferta.claseOfertaCodigo}', 
 										hidden: '{!datosbasicosoferta.isCarteraLbkVenta}'
@@ -292,6 +253,9 @@ beforeedit: 'numVisitaIsEditable'
 								hidden : '{esOfertaAlquiler}',
 								fieldLabel : '{expediente.comiteComboboxLabel}'
 
+							},
+							listeners: {
+								change: 'onComiteChange'
 							},
 							// TODO Sobreescribimos la función porque está dando problemas la carga del store. A veces llega null.
 							setStore : function(store) {

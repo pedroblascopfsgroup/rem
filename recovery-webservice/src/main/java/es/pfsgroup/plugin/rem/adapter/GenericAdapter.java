@@ -20,8 +20,10 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -43,6 +45,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.thread.EnvioCorreoAsync;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
@@ -108,6 +111,7 @@ public class GenericAdapter {
 //		} catch (NoSuchMethodException e) {
 //			lista = diccionarioApi.dameValoresDiccionarioSinBorrado(clase);
 //		}
+		clase = DiccionarioTargetClassMap.convertToTargetClass(diccionario);
 		
 		//TODO: Para ver que diccionarios no tienen auditoria.
 		if("gestorCommiteLiberbank".equals(diccionario)) {
@@ -115,7 +119,7 @@ public class GenericAdapter {
 			lista.add(diccionarioApi.dameValorDiccionarioByCod(DiccionarioTargetClassMap.convertToTargetClass("entidadesPropietarias")
 					, DDCartera.CODIGO_CARTERA_LIBERBANK));
 		}else {
-			clase = DiccionarioTargetClassMap.convertToTargetClass(diccionario);
+			
 			lista = diccionarioApi.dameValoresDiccionario(clase);
 
 			List listaPeriodicidad = new ArrayList();
@@ -258,7 +262,8 @@ public class GenericAdapter {
 		Perfil perfilExternoEspecial = genericDao.get(Perfil.class, filtro);
 
 		for (Perfil perfil : usuario.getPerfiles()) {
-			if (perfil.getCodigo().equals(perfilExternoEspecial.getCodigo())) {
+			if (!Checks.esNulo(perfilExternoEspecial) 
+					&& perfil.getCodigo().equals(perfilExternoEspecial.getCodigo())) {
 				return true;
 			}
 		}

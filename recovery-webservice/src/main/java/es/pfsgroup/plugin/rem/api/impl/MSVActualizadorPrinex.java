@@ -95,7 +95,7 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 		if (Checks.esNulo(gasto)) {
 			gasto = new GastoPrinex();
 			gasto.setIdGasto(gastoProveedor.getId());
-			if (!Checks.esNulo(activo)) {
+			if (activo != null) {
 				gasto.setIdActivo(activo.getId());
 			}
 			gastoNuevo = true;

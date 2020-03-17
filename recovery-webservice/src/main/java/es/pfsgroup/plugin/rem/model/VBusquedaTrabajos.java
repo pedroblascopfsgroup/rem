@@ -32,7 +32,7 @@ public class VBusquedaTrabajos implements Serializable {
     
     @Column(name="NUM_ACTIVO_AGRUPACION")
     private Long numActivoAgrupacion;
-
+    
     @Column(name="NUMACTIVO")
     private Long numActivo;
     
@@ -41,7 +41,7 @@ public class VBusquedaTrabajos implements Serializable {
     
     @Column(name="NUMAGRUPACION")
     private Long numAgrupacionRem;
-    
+
     @Column(name="TIPO_ENTIDAD")
     private String tipoEntidad;
 
@@ -282,30 +282,6 @@ public class VBusquedaTrabajos implements Serializable {
 	public void setGestorActivo(String gestorActivo) {
 		this.gestorActivo = gestorActivo;
 	}
-
-	public Long getNumActivo() {
-		return numActivo;
-	}
-
-	public void setNumActivo(Long numActivo) {
-		this.numActivo = numActivo;
-	}
-
-	public Long getIdActivo() {
-		return idActivo;
-	}
-
-	public void setIdActivo(Long idActivo) {
-		this.idActivo = idActivo;
-	}
-
-	public Long getNumAgrupacionRem() {
-		return numAgrupacionRem;
-	}
-
-	public void setNumAgrupacionRem(Long numAgrupacionRem) {
-		this.numAgrupacionRem = numAgrupacionRem;
-	}	
 
 	public Double getImporteTotal() {
 		return importeTotal;

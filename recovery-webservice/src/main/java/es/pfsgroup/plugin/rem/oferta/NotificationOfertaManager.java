@@ -17,17 +17,21 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -72,6 +76,8 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	@Autowired
 	private UsuarioManager usuarioManager;
 
+	@Autowired
+	private ActivoApi activoApi;
 	/**
 	 * Cada vez que llegue una oferta de un activo, 
 	 * se enviará una notificación (correo) al gestor comercial correspondiente, 
@@ -288,6 +294,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		}
 	}
 	
+	
 	/**
 	 * Al proponer una oferta, 
 	 * se enviará una notificación (correo) al gestor comercial correspondiente, 
@@ -501,5 +508,102 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		adjMail.setNombre(name);	
 		return adjMail;
 	}
-	
+	/**
+	 * Al proponer una oferta, 
+	 * se enviará una notificación (correo) al gestor comercial y supervisor correspondiente, 
+	 * indicando si se aprueba o se anula y solo en caso de venta.
+	 * El activo debe pertenecer a una agrupación DND.
+	 * @param oferta
+	 **/
+	public void sendNotificationDND(Oferta oferta, Activo activo) {
+		Usuario usuario = null;
+		Usuario supervisor= null;
+		List<String> mailsPara 		= new ArrayList<String>();
+		List<String> mailsCC 		= new ArrayList<String>();	
+		String titulo = null;
+		Long nActivo = null;
+		
+		String nombreCartera = "";
+		String nombreLocalidad = "";
+		String nombreProvincia = "";
+		
+		Boolean mandaCorreo=false;
+		DtoSendNotificator dtoSendNotificator = new DtoSendNotificator();
+		
+		if (!Checks.esNulo(activo) && !Checks.esNulo(oferta)
+				&& !Checks.estaVacio(oferta.getActivosOferta())
+				) {
+			for (ActivoOferta actOfr : oferta.getActivosOferta()) {
+				if (!Checks.esNulo(actOfr.getPrimaryKey().getActivo())&& !Checks.esNulo(actOfr.getPrimaryKey().getActivo().getIsDnd()) && actOfr.getPrimaryKey().getActivo().getIsDnd()) {
+						mandaCorreo=true;
+				}
+			}
+		}
+		
+		if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getEstadoOferta())
+				&& !Checks.esNulo(activo)
+				&& (!Checks.esNulo(activo.getIsDnd()) && activo.getIsDnd() || mandaCorreo)
+				&& !Checks.esNulo(oferta.getEstadoOferta().getCodigo())
+		        && (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo()) 
+		        		|| DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())
+		        	)
+		) {
+				usuario = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+				supervisor = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);		
+				
+				if ( usuario != null || supervisor != null) {
+
+					dtoSendNotificator.setNumActivo(activo.getNumActivo());
+					dtoSendNotificator.setDireccion(generateDireccion(activo));
+					dtoSendNotificator.setTitulo(titulo);
+
+					if(!Checks.esNulo(oferta.getAgrupacion())) {
+						dtoSendNotificator.setNumAgrupacion(oferta.getAgrupacion().getNumAgrupRem());	
+					}
+
+					if(!Checks.esNulo(usuario)){		
+						usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL, mailsPara, mailsCC, false);
+					}
+					
+					if(!Checks.esNulo(supervisor)){
+						usuarioRemApiImpl.rellenaListaCorreos(activo, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL, mailsPara, mailsCC, false);
+					}
+					
+					String contenido = null;
+					if (!Checks.esNulo(activo.getId())) {
+						nActivo = activo.getNumActivo();
+					}
+					if (!Checks.esNulo(activo.getCartera()) && !Checks.esNulo(activo.getCartera().getDescripcion())) {
+						nombreCartera = activo.getCartera().getDescripcion();
+					}
+					if (!Checks.esNulo(activo.getLocalidad()) && !Checks.esNulo(activo.getProvincia())) {
+						nombreLocalidad = activo.getLocalidad().getDescripcion().toString();
+						
+						nombreProvincia = activo.getLocalizacion().getLocalizacionBien().getProvincia().getDescripcion();
+					}
+					if(!Checks.esNulo(nActivo)){
+						if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())){
+							titulo = 
+									String.format("Oferta de venta aprobada de un activo incluido en un DND: %s- %s/%s/%s. ", 
+											nActivo.toString(), nombreCartera, nombreLocalidad, nombreProvincia);
+							contenido = 
+									String.format("Oferta de venta aprobada para el activo incluido en un DND: " +
+											 "%s- %s-%s-%s. Por favor, ponte en contacto con el comercial "
+											 + "para conocer la fecha estimada de escrituración. Antes de producirse "
+											 + "la venta el PM y la constructora debe realizar una valoración y liquidación "
+											 + "de las obras en el estado que se paralizan.", nActivo.toString(),nombreCartera, nombreLocalidad, nombreProvincia 
+									);
+						} else if (DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())){
+							titulo = 
+									String.format("Oferta de venta anulada de un activo incluido en DND: %s- %s/%s/%s. ", 
+											nActivo.toString(), nombreCartera, nombreLocalidad, nombreProvincia);
+							contenido = 
+									String.format("Oferta de venta anulada de un activo incluido en DND: %s- %s/%s/%s. ", 
+											nActivo.toString(), nombreCartera, nombreLocalidad, nombreProvincia);
+						}
+					}
+					genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
+				}
+		} 
+	}
 }

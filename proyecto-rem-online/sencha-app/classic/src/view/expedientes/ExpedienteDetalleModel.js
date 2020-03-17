@@ -150,12 +150,25 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			 return CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcarteraCodigo ;
 		 },
 		 
+		 esCarteraAppleOrArrowOrRemaining: function(get) {
+			 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+			 var subcarteraCodigo = get('expediente.subcarteraCodigo');
+			 return CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcarteraCodigo || 
+			 	CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['DIVARIANARROW'] == subcarteraCodigo ||
+			 	CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['DIVARIANREMAINING'] == subcarteraCodigo;
+		 },
+		 
 		 esCarteraAppleOAgora: function(get) {
 			 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 			 var subcarteraCodigo = get('expediente.subcarteraCodigo');
 			 return (CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcarteraCodigo) || CONST.CARTERA['CERBERUS'] == carteraCodigo && (CONST.SUBCARTERA['AGORAINMOBILIARIO'] == subcarteraCodigo || CONST.SUBCARTERA['AGORAFINANCIERO'] == subcarteraCodigo) ;
 		 },
 		 
+		 esCarteraAppleoLiberbank: function(get) {
+		 	 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+			 var subcarteraCodigo = get('expediente.subcarteraCodigo');
+			 return CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcarteraCodigo || CONST.CARTERA['LIBERBANK'] == carteraCodigo;
+		 },
 	     esCarteraCajamar: function(get) {
 		     	
 	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
@@ -509,7 +522,22 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	 		}
 	 		
 	 		return false;
+	 	},
+	 	
+	 	esSubcarteraRemainingOAppleOArrow: function(get){
+	 		var me = this;	 	
+	 		var isApple = CONST.SUBCARTERA['APPLEINMOBILIARIO'] === me.get('expediente.subcarteraCodigo');
+	 		var isRemaining = CONST.SUBCARTERA['DIVARIANREMAINING'] === me.get('expediente.subcarteraCodigo');
+	 		var isArrow = CONST.SUBCARTERA['DIVARIANARROW'] === me.get('expediente.subcarteraCodigo');
+	 		
+	 		return isApple == true || isRemaining == true || isArrow == true;	 			
+	 	},
+	 	
+	 	esComiteHaya: function(get){
+	 		var me = this;
+	 		return me.get('expediente.esComiteHaya');
 	 	}
+	 	
 	 },
 	 
 

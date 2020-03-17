@@ -75,7 +75,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevoDocumentoAgrupacion', {
 			        	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
 			        	name:'tipoDocumentoAgrupacion',
 			        	reference: 'tipoDocumentoAgrupacion',
-			        	editable: true,
 			        	msgTarget: 'side',
 			        	bind: {
 							store: '{tiposAdjuntoAgrupacion}'	            		
@@ -83,22 +82,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevoDocumentoAgrupacion', {
 		            	displayField	: 'descripcion',
 					    valueField		: 'codigo',
 						allowBlank: false,
-						width: '100%',
-						enableKeyEvents:true,
-					    listeners: {
-					    	'keyup': function() {
-					    		this.getStore().clearFilter();
-					    	   	this.getStore().filter({
-					        	    property: 'descripcion',
-					        	    value: this.getRawValue(),
-					        	    anyMatch: true,
-					        	    caseSensitive: false
-					        	})
-					    	},
-					    	'beforequery': function(queryEvent) {
-					         	queryEvent.combo.onLoad();
-					    	}
-					    }
+						filtradoEspecial: true,
+						width: '100%'
 			        },
 			        {
 	                	xtype: 'textarea',

@@ -863,6 +863,8 @@ public interface TrabajoApi {
 	@BusinessOperationDefinition("trabajoManager.getListActivoMatrizPresupuesto")
 	Page getActivoMatrizPresupuesto(DtoActivosTrabajoFilter dto);
 
+	Boolean tipoTramiteValidoObtencionDocSolicitudDocumentoGestoria(Trabajo trabajo);
+	
 	public ActivoTramite createTramiteTrabajo(Long idTrabajo, ExpedienteComercial expedienteComercial);
 
 	ActivoTramite createTramiteTrabajo(Trabajo trabajo, ExpedienteComercial expedienteComercial);

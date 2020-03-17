@@ -74,11 +74,11 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleCabecera', {
 						    				xtype:'container',
 					                   		flex: 4,
 					                   		maxWidth: 900,
-											height: 150,
-					                   		margin: '5 10 10 30 ',
+											height: 120,
+					                   		margin: '5 20 10 30 ',
 											defaultType: 'displayfield',
 											defaults: {
-												labelWidth: 80},
+												labelWidth: 90},
 											autoScroll: true,
 											layout: {
 											    type: 'table',
@@ -138,7 +138,33 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleCabecera', {
 									                   		fieldLabel: HreRem.i18n('fieldlabel.mediador'),
 									                   		cls: 'cabecera-info-field',
 															bind:		'{trabajo.nombreMediador}'
+									                   	},
+									                   	{
+									                   		fieldLabel: HreRem.i18n('fieldlabel.nombre.ug'),
+									                   		cls: 'cabecera-info-field',
+															bind:{
+																value:'{trabajo.nombreUg}',
+																hidden:'{!trabajo.perteneceDNDtipoEdificacion}'
+															}
+									                   	},
+														{ 
+															fieldLabel: HreRem.i18n('fieldlabel.nombre.expediente.trabajo'),
+															cls: 'cabecera-info-field',
+															bind:{
+																value:'{trabajo.nombreExpediente}',
+																hidden:'{!trabajo.perteneceDNDtipoEdificacion}'
+															}
+										                },
+									                   	{
+									                   		fieldLabel: HreRem.i18n('fieldlabel.nombre.proyecto'),
+									                   		cls: 'cabecera-info-field',
+									                   		bind:{
+																value:'{trabajo.nombreProyecto}',
+																hidden:'{!trabajo.perteneceDNDtipoEdificacion}'
+															}
+															
 									                   	}
+									                  
 											]
 										},
 										{

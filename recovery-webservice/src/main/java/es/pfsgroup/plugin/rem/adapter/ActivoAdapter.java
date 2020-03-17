@@ -1193,7 +1193,9 @@ public class ActivoAdapter {
 				Activo activoVista = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getActivo()));
 				
 				if(activoVista != null && activoVista.getSubcartera() != null) {
-					dto.setEsDivarian(DDSubcartera.CODIGO_DIVARIAN.equals(activoVista.getSubcartera().getCodigo()));
+					Boolean esDivarian = DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activoVista.getSubcartera().getCodigo())
+							|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activoVista.getSubcartera().getCodigo());
+					dto.setEsDivarian(esDivarian);
 				}
 				
 				page = actPatrimonioDao.getActivosRelacionados(dto);
@@ -2166,8 +2168,10 @@ public class ActivoAdapter {
 				if (!Checks.esNulo(expedienteComercial)) {
 					beanUtilNotNull.copyProperty(dtoTramite, "tieneEC", true);
 					beanUtilNotNull.copyProperty(dtoTramite, "idExpediente", expedienteComercial.getId());
-					beanUtilNotNull.copyProperty(dtoTramite, "descripcionEstadoEC",
-							expedienteComercial.getEstado().getDescripcion());
+					if(expedienteComercial.getEstado() != null) {
+						beanUtilNotNull.copyProperty(dtoTramite, "descripcionEstadoEC",
+								expedienteComercial.getEstado().getDescripcion());
+					}
 					beanUtilNotNull.copyProperty(dtoTramite, "numEC", expedienteComercial.getNumExpediente());
 				}
 				
@@ -3759,10 +3763,11 @@ public class ActivoAdapter {
 
 			List<OfertasAgrupadasLbk> ofertasAgrupadas = new ArrayList<OfertasAgrupadasLbk>();
 
+			Oferta oferPrincipal = null;
 			
 			if (!Checks.esNulo(dto.getNumOferPrincipal()) || (Checks.esNulo(dto.getNumOferPrincipal()) && !Checks.esNulo(dto.getClaseOferta()))){
-				// Se le pasa primero la oferta PRINCIPAL y luego la DEPENDIENTE, siendo la principal la que introduce el usuario y la dependiente la actual que estamos creando
-				Oferta oferPrincipal = null;
+				// Si la oferta que estamos creando va a ser dependiente de otra
+				
 				if (!Checks.esNulo(dto.getNumOferPrincipal())) {
 					oferPrincipal = ofertaApi.getOfertaByNumOfertaRem(dto.getNumOferPrincipal());
 					
@@ -3776,7 +3781,6 @@ public class ActivoAdapter {
 			
 			oferta.setOfertasAgrupadas(ofertasAgrupadas);
 			
-
 			oferta.setOfertaExpress(false);
 			
 			DDOrigenComprador origenComprador = genericDao.get(DDOrigenComprador.class, genericDao.createFilter(FilterType.EQUALS,

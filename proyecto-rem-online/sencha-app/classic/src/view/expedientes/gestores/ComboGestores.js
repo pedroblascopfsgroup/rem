@@ -65,23 +65,8 @@ Ext.define('HreRem.view.expedientes.gestores.ComboGestores', {
 					            	},
 					            	displayField: 'apellidoNombre',
 		    						valueField: 'id',
-		    						mode: 'local',
 		    						emptyText: 'Introduzca un usuario',
-		    						enableKeyEvents:true,
-	    						    listeners: {
-	    						     'keyup': function() {
-	    						    	   this.getStore().clearFilter();
-	    						    	   this.getStore().filter({
-	    						        	    property: 'apellidoNombre',
-	    						        	    value: this.getRawValue(),
-	    						        	    anyMatch: true,
-	    						        	    caseSensitive: false
-	    						        	})
-	    						     },
-	    						     'beforequery': function(queryEvent) {
-	    						           queryEvent.combo.onLoad();
-	    						     }
-	    						    }
+		    						filtradoEspecial: true
 							  }
 				          ]
 		                }

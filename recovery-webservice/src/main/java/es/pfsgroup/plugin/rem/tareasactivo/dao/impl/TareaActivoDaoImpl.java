@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.tareasactivo.dao.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -33,6 +34,17 @@ public class TareaActivoDaoImpl extends AbstractEntityDao<TareaActivo, Long> imp
 		
 		return listaTareas;
 	}
+    
+	@Override
+   	public List<TareaActivo> getTareasActivoTramiteBorrados(Long idTramite){
+    	
+   		HQLBuilder hb = new HQLBuilder(" from TareaActivo tac");
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tac.tramite.id", idTramite);
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tac.auditoria.borrado", true);
+   		hb.orderBy("tac.id", HQLBuilder.ORDER_ASC);
+   		
+   		return HibernateQueryUtils.list(this, hb);
+   	}
 
 	@Override
 	public TareaActivo getUltimaTareaActivoPorIdTramite(Long idTramite) {

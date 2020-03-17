@@ -63,6 +63,11 @@ public class DDComiteSancion implements Auditable, Dictionary {
 	public static final String CODIGO_DIRECTOR_GESTION_INMOBILIARIA = "35";
 	public static final String CODIGO_COMITE_INVERSION_INMOBILIARIA = "36";
 	public static final String CODIGO_COMITE_DIRECCION = "37";
+	public static final String CODIGO_ARROW = "40";
+	public static final String CODIGO_HAYA_REMAINING = "41";
+	public static final String CODIGO_HAYA_APPLE = "42";
+	public static final String CODIGO_CES_REMAINING = "43";
+	public static final String CODIGO_CES_APPLE = "44";
 	
 	private static final long serialVersionUID = 1L;
 

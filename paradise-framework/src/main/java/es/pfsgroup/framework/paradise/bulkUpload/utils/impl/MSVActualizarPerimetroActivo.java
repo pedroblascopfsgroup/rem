@@ -5,9 +5,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
@@ -61,7 +63,20 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final String VALID_ACTIVO_MATRIZ = "msg.error.masivo.actualizar.perimetro.activo.matriz";
 	public static final String VALID_ACTIVO_UA = "msg.error.masivo.actualizar.perimetro.activo.ua";
 	public static final String VALID_EQUIPO_GESTION = "msg.error.masivo.actualizar.perimetro.activo.equipo.gestion";
+	public static final String VALID_CESION_USO = "msg.error.masivo.actualizar.perimetro.activo.cesion.de.uso";
+	public static final String VALID_ALQUILER_SOCIAL = "msg.error.masivo.actualizar.perimetro.activo.alquiler.social";
+	
+	public static final String VALID_SEGMENTO = "msg.error.masivo.actualizar.perimetro.activo.segmento";
+	public static final String VALID_SEGMENTO_CRA_SCR = "msg.error.masivo.actualizar.perimetro.activo.segmento.cartera.subcartera"; 
+	public static final String VALID_SEGMENTO_MACC = "msg.error.masivo.actualizar.perimetro.activo.segmento.macc";
+	public static final String VALID_PERIMETRO_MACC = "msg.error.masivo.actualizar.perimetro.activo.macc";
+	public static final String VALID_PERIMETRO_MACC_SIN_SEGMENTO = "msg.error.masivo.actualizar.perimetro.activo.macc.no.segmento";
+	public static final String VALID_PERIMETRO_MACC_NO_ALQUILER = "msg.error.masivo.actualizar.perimetro.activo.macc.no.alquiler";		
+	public static final String VALID_ACTIVO_NO_DIVARIAN = "msg.error.masivo.actualizar.perimetro.activo.subcartera.no.divarian";
+	public static final String VALID_SEGMENTO_PERIMETRO_MACC = "msg.error.masivo.actualizar.perimetro.activo.macc.no.cambio.destino";
 
+	//Posición de los datos
+	private	static final int DATOS_PRIMERA_FILA = 1;
 	
 	//Posicion fija de Columnas excel, para validaciones especiales de diccionario
 	public static final int COL_NUM_ACTIVO_HAYA = 0;
@@ -76,6 +91,8 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final int COL_NUM_CON_FORMALIZAR_SN = 10;
 	public static final int COL_NUM_CON_PUBLICAR_SN = 12;
 	public static final int COL_NUM_CON_EQUIPO_GESTION = 14;
+	public static final int COL_NUM_SEGMENTO = 15;
+	public static final int COL_NUM_PERIMETRO_MACC = 16;
 
 	// Codigos tipo comercializacion
 	public static final String CODIGO_VENTA = "01";
@@ -86,6 +103,9 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
     private static final Integer CHECK_VALOR_SI = 1;
     private static final Integer CHECK_VALOR_NO = 0;
     private static final Integer CHECK_NO_CAMBIAR = -1;
+    
+    //Codigo para 
+    private static final String CODIGO_DD_TIPO_MACC  = "03";
 
     protected final Log logger = LogFactory.getLog(getClass());
     
@@ -160,37 +180,26 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
  				mapaErrores.put(messageServices.getMessage(VALID_ACTIVO_FINANCIERO), isActivoFinanciero(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_ACTIVO_MATRIZ), isActivoMatriz(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_ACTIVO_UA), isUA(exc));
+				mapaErrores.put(messageServices.getMessage(VALID_CESION_USO), isActivoEnCesionDeUso(exc));
+				mapaErrores.put(messageServices.getMessage(VALID_ALQUILER_SOCIAL), isActivoEnAlquilerSocial(exc));
+				
+				
+				mapaErrores.put(messageServices.getMessage(VALID_SEGMENTO), esSegmentoValido(exc));
+				mapaErrores.put(messageServices.getMessage(VALID_SEGMENTO_CRA_SCR), perteneceSegmentoCraScr(exc));
+				mapaErrores.put(messageServices.getMessage(VALID_SEGMENTO_MACC), esSegmentoMacc(exc));
+				mapaErrores.put(messageServices.getMessage(VALID_PERIMETRO_MACC), esPerimetroValido(exc));
+				mapaErrores.put(messageServices.getMessage(VALID_PERIMETRO_MACC_SIN_SEGMENTO), esSegmentoInformado(exc));
+				mapaErrores.put(messageServices.getMessage(VALID_PERIMETRO_MACC_NO_ALQUILER), esPerimetroMaccDestinoAlquiler(exc));				
+				mapaErrores.put(messageServices.getMessage(VALID_ACTIVO_NO_DIVARIAN), esSubcarteraDivarian(exc));
+				mapaErrores.put(messageServices.getMessage(VALID_SEGMENTO_PERIMETRO_MACC), esPerimetorYSegmentoMACC(exc));
 
-			if (!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_TIPO_COMERCIALIZACION)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(VALID_EQUIPO_GESTION)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_MOTIVO_CON_COMERCIAL)).isEmpty() ||
-					// !mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_MOTIVO_SIN_COMERCIAL)).isEmpty()
-					// ||
-					!mapaErrores.get(VALID_PERIMETRO_RESPUESTA_SN).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_FUERA_RESTO_CHECKS_NO)).isEmpty()
-					|| !mapaErrores.get(VALID_PERIMETRO_FORMALIZAR_SEGUN_COMERCIAL).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_DESTINO_COMERCIAL)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(VALID_DESTINO_COMERCIAL_OFERTAS_VENTA_VIVAS)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(VALID_DESTINO_COMERCIAL_OFERTAS_ALQUILER_VIVAS)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_TIPO_ALQUILER)).isEmpty()
-					|| !mapaErrores.get(VALID_PERIMETRO_FORMALIZAR_ACTIVO_COMERCIALIZABLE).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS))
-							.isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_FORMALIZACION_EXPEDIENTE_VIVO))
-							.isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(VALID_ACTIVO_FINANCIERO)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(VALID_ACTIVO_MATRIZ)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(VALID_ACTIVO_UA)).isEmpty()
-					) {
-
-				dtoValidacionContenido.setFicheroTieneErrores(true);
-				exc = excelParser.getExcel(dtoFile.getRuta());
-				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
-				FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-				dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
-			}
-			
+				for (Entry<String, List<Integer>> registro : mapaErrores.entrySet()) {
+					if (!registro.getValue().isEmpty()) {
+						dtoValidacionContenido.setFicheroTieneErrores(true);
+						dtoValidacionContenido.setExcelErroresFormato(new FileItem(new File(exc.crearExcelErroresMejorado(mapaErrores))));
+						break;
+					}
+				}				
 		}
 		exc.cerrar();
 		
@@ -804,6 +813,202 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			listaFilas.add(0);
 			logger.error(e.getMessage());
 			e.printStackTrace();
+		}
+		return listaFilas;
+	}
+	
+	private List<Integer> isActivoEnCesionDeUso(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if(particularValidator.isActivoEnCesionDeUso(exc.dameCelda(i, 0)))
+						listaFilas.add(i); 
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		} catch (Exception e) {
+			listaFilas.add(0);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return listaFilas;
+	}
+	private List<Integer> isActivoEnAlquilerSocial(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if(particularValidator.isActivoEnAlquilerSocial(exc.dameCelda(i, 0)))
+						listaFilas.add(i);
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		} catch (Exception e) {
+			listaFilas.add(0);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> esSegmentoValido(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+			try {
+				String celda = exc.dameCelda(i, COL_NUM_SEGMENTO);
+				if (!Checks.esNulo(celda) && !particularValidator.esSegmentoValido(celda))
+					listaFilas.add(i);
+			} catch (Exception e) {
+				listaFilas.add(i);
+				logger.error(e.getMessage());
+			}
+		}
+		return listaFilas;
+	}
+
+	private List<Integer> esPerimetroValido(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		String[] listaSN = { "SI", "S", "NO", "N" };
+		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+			try {
+				String celda = exc.dameCelda(i, COL_NUM_PERIMETRO_MACC);
+				if (!Checks.esNulo(celda) && !Arrays.asList(listaSN).contains(celda.toUpperCase()))
+					listaFilas.add(i);
+			} catch (Exception e) {
+				listaFilas.add(i);
+				logger.error(e.getMessage());
+			}
+		}
+		return listaFilas;
+	}
+
+	private List<Integer> perteneceSegmentoCraScr(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+	
+		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+			try {
+				String celdaActivo = exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);		
+				String celdaSegmento = exc.dameCelda(i, COL_NUM_SEGMENTO);
+				
+				if(celdaSegmento != null && !celdaSegmento.isEmpty() && !particularValidator.perteneceSegmentoCraScr(celdaSegmento, celdaActivo)) {
+					listaFilas.add(i);
+				}
+			} catch (Exception e) {
+				listaFilas.add(i);
+				logger.error(e.getMessage());
+			}
+		}
+		return listaFilas;
+	}
+	
+	private List<Integer> esSubcarteraDivarian(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+			try {
+				String celdaActivo = exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
+				String celdaMacc = exc.dameCelda(i, COL_NUM_PERIMETRO_MACC);
+				if (!Checks.esNulo(celdaMacc) && !particularValidator.esSubcarteraDivarian(celdaActivo))
+					listaFilas.add(i);
+			} catch (Exception e) {
+				listaFilas.add(i);
+				logger.error(e.getMessage());
+			}
+		}
+		return listaFilas;
+	}
+	
+	private List<Integer> esSegmentoMacc(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		String[] listaSi = { "SI", "S"};
+		final String DD_TIPO_MACC = "03";
+		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+			try {
+				String celdaSegmento = exc.dameCelda(i, COL_NUM_SEGMENTO);
+				String celdaMacc = exc.dameCelda(i, COL_NUM_PERIMETRO_MACC);
+				if (!Checks.esNulo(celdaMacc) 
+						&& Arrays.asList(listaSi).contains(celdaMacc.toUpperCase())
+						&& !Checks.esNulo(celdaSegmento) && !DD_TIPO_MACC.equals(celdaSegmento)	)
+					listaFilas.add(i);
+			} catch (Exception e) {
+				listaFilas.add(i);
+				logger.error(e.getMessage());
+			}
+		}
+		return listaFilas;
+	}
+	
+	private List<Integer> esPerimetroMaccDestinoAlquiler(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		String[] listaSi = { "SI", "S" };
+		final String DD_DESTINO_ALQUILER = "03";
+		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+			try {
+				String celdaDestinoComercial = exc.dameCelda(i, COL_NUM_DESTINO_COMERCIAL);
+				String celdaMacc = exc.dameCelda(i, COL_NUM_PERIMETRO_MACC);
+				String celdaActivo = exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
+
+				if (!Checks.esNulo(celdaMacc) && Arrays.asList(listaSi).contains(celdaMacc.toUpperCase())
+						&&(!Checks.esNulo(celdaDestinoComercial) && !DD_DESTINO_ALQUILER.equals(celdaDestinoComercial)
+								|| Checks.esNulo(celdaDestinoComercial) && !particularValidator.activoConDestinoComercialAlquiler(celdaActivo))) {
+					listaFilas.add(i);				
+				}
+				
+			} catch (Exception e) {
+				listaFilas.add(i);
+				logger.error(e.getMessage());
+			}
+		}
+		return listaFilas;
+	}
+	
+	private List<Integer> esSegmentoInformado(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		String[] listaNo = { "NO", "N"};	
+		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+			try {
+				String celdaSegmento = exc.dameCelda(i, COL_NUM_SEGMENTO);
+				String celdaMacc = exc.dameCelda(i, COL_NUM_PERIMETRO_MACC);
+				String celdaActivo = exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
+				if (!Checks.esNulo(celdaMacc) 
+						&& Arrays.asList(listaNo).contains(celdaMacc.toUpperCase())
+						&& Checks.esNulo(celdaSegmento)	
+						&& Boolean.FALSE.equals((particularValidator.esSubcarteraApple(celdaActivo))))
+					listaFilas.add(i);
+			} catch (Exception e) {
+				listaFilas.add(i);
+				logger.error(e.getMessage());
+			}
+		}
+		return listaFilas;
+	}
+	
+	private List<Integer> esPerimetorYSegmentoMACC(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		String[] listaSi = { "SI", "S" };
+		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+			try {
+				String celdaDestinoComercial = exc.dameCelda(i, COL_NUM_DESTINO_COMERCIAL);
+				String celdaMacc = exc.dameCelda(i, COL_NUM_PERIMETRO_MACC);
+				String celdaActivo = exc.dameCelda(i, COL_NUM_ACTIVO_HAYA);
+				String celdaSegmento = exc.dameCelda(i, COL_NUM_SEGMENTO);
+				
+				if (!Checks.esNulo(celdaMacc) && Arrays.asList(listaSi).contains(celdaMacc.toUpperCase())
+						&&(!Checks.esNulo(celdaDestinoComercial) && !Checks.esNulo(celdaSegmento) && !Checks.esNulo(celdaActivo)
+						&& CODIGO_DD_TIPO_MACC.equals(celdaSegmento) && !particularValidator.aCambiadoDestinoComercial(celdaActivo,celdaDestinoComercial))
+						){
+					listaFilas.add(i);				
+				}
+				
+			} catch (Exception e) {
+				listaFilas.add(i);
+				logger.error(e.getMessage());
+			}
 		}
 		return listaFilas;
 	}

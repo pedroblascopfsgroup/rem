@@ -357,11 +357,11 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 				//Segun unidad de gestion, Incluye en el mensaje, la descripciÃ³n de documento adjunto.
 				if (("A".equals(uGestion) || "T".equals(uGestion)) && !Checks.esNulo(tipoFicheroAdjunto) ){
 					mensajeValidacion = mensajeValidacion.concat(tipoFicheroAdjunto.getDescripcion());
-				}else if("E".equals(uGestion) && !Checks.esNulo(tipoFicheroAdjuntoEC) ){
+				}else if("E".equals(uGestion) && tipoFicheroAdjuntoEC != null){
 					mensajeValidacion = mensajeValidacion.concat(tipoFicheroAdjuntoEC.getDescripcion());
-				}else if("P".equals(uGestion) && !Checks.esNulo(tipoFicheroAdjuntoProveedor) ){
+				}else if("P".equals(uGestion) && tipoFicheroAdjuntoProveedor != null ){
 					mensajeValidacion = mensajeValidacion.concat(tipoFicheroAdjuntoProveedor.getDescripcion());
-				}else if("G".equals(uGestion) && !Checks.esNulo(tipoFicheroAdjuntoGasto) ){
+				}else if("G".equals(uGestion) && tipoFicheroAdjuntoGasto != null ){
 					mensajeValidacion = mensajeValidacion.concat(tipoFicheroAdjuntoGasto.getDescripcion());
 				}
 								

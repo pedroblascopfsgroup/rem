@@ -2035,7 +2035,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					map.put("codigoAgrupacionComercialRem", errorsList.get("codigoAgrupacionComercialRem"));
 				}
 
-				if(!Checks.esNulo(oferta.getAgrupacion()) && !Checks.esNulo(oferta.getAgrupacion().getNumAgrupRem())
+				if(oferta != null && !Checks.esNulo(oferta.getAgrupacion()) && !Checks.esNulo(oferta.getAgrupacion().getNumAgrupRem())
 						&& (ofertaDto.getOfertaLote() != null  && ofertaDto.getOfertaLote())) {
 					map.put("idAgrupacionComercialRem", oferta.getAgrupacion().getNumAgrupRem());
 				}
@@ -3657,14 +3657,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return listaDto;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public boolean checkPedirDoc(Long idActivo, Long idAgrupacion, Long idExpediente, String dniComprador, String codtipoDoc) {
-		List<ClienteGDPR> clienteGDPR = null; Comprador comprador = null;
-		ClienteComercial clienteCom = null; ActivoAgrupacion agrupacion = null;
-		Activo activo = null; ExpedienteComercial expedienteCom = null;
+		List<ClienteGDPR> clienteGDPR = new ArrayList(); 
+		Comprador comprador = null;
+		ClienteComercial clienteCom = null;
+		ActivoAgrupacion agrupacion = null;
+		Activo activo = null; 
+		ExpedienteComercial expedienteCom = null;
 		boolean esCarteraInternacional = false;
-
-		Filter filterComprador = null, filterCodigoTpoDoc = null;
+		Filter filterComprador = null;
+		Filter filterCodigoTpoDoc = null;
+		
 		if (!Checks.esNulo(dniComprador) && !Checks.esNulo(codtipoDoc)) {
 			filterCodigoTpoDoc = genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo", codtipoDoc);
 
@@ -3698,10 +3703,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 
 		//Se comprueba si es una cartera internacional.
-		if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())
+		if ( activo != null && activo.getCartera() != null && 
+				(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())
 				|| DDCartera.CODIGO_CARTERA_GIANTS.equals(activo.getCartera().getCodigo())
 				|| DDCartera.CODIGO_CARTERA_TANGO.equals(activo.getCartera().getCodigo())
-				|| DDCartera.CODIGO_CARTERA_GALEON.equals(activo.getCartera().getCodigo())) {
+				|| DDCartera.CODIGO_CARTERA_GALEON.equals(activo.getCartera().getCodigo()))) {
 			esCarteraInternacional = true;
 		}
 
@@ -3709,7 +3715,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		// para saber si tiene el documento
 		// True = Tiene documento adjunto, por lo tanto NO hay que pedirlo.
 		// False = NO tiene documento adjunto, por lo tanto hay que pedirlo.
-		if (!Checks.esNulo(clienteGDPR) && !Checks.esNulo(clienteCom)) {
+		if (!Checks.esNulo(clienteGDPR) && clienteCom != null) {
 			if (!Checks.esNulo(clienteGDPR.get(0).getNumDocumento()) && !Checks.esNulo(clienteCom.getDocumento()) && clienteCom.getDocumento().equals(clienteGDPR.get(0).getNumDocumento())) {
 				if (!Checks.esNulo(clienteCom.getCesionDatos()) && clienteCom.getCesionDatos()) {
 					if ((esCarteraInternacional && !Checks.esNulo(clienteCom.getTransferenciasInternacionales()) && clienteCom.getTransferenciasInternacionales()) ||
@@ -3720,7 +3726,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			} else return false;
 		//Si viene de comprador (Expediente Comercial) se comprueban los checks del Comprador
 		// para saber si tiene el documento.
-		} else if (!Checks.esNulo(comprador)) {
+		} else if (comprador != null) {
 			if (!Checks.esNulo(comprador.getDocumento())) {
 				if (!Checks.esNulo(comprador.getCesionDatos()) && comprador.getCesionDatos()) {
 					if ((esCarteraInternacional && !Checks.esNulo(comprador.getTransferenciasInternacionales()) && comprador.getTransferenciasInternacionales()) ||
@@ -3749,12 +3755,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			comprador = genericDao.get(Comprador.class, filterComprador,filterCodigoTpoDoc);
 		}
-		if(!Checks.esNulo(comprador)) {
+		if(comprador != null) {
 			clienteCom = comprador.getClienteComercial();
 		}
 
 		try {
-			if(!Checks.esNulo(clienteCom)) {
+			if(clienteCom != null) {
 				beanUtilNotNull.copyProperties(clienteCom,clienteComercialDto);
 				clienteComercialDto.setApellidosCliente(clienteCom.getApellidos());
 				clienteComercialDto.setNombreCliente(clienteCom.getNombre());
@@ -3780,9 +3786,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error(e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 
 		return clienteComercialDto;
@@ -3817,7 +3823,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			}
 		}
-		if(!Checks.esNulo(clienteGDPR)) {
+		if(clienteGDPR != null) {
 			clienteCom = clienteGDPR.getCliente();
 
 			try {

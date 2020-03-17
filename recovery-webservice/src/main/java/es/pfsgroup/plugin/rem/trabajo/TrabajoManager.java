@@ -2821,14 +2821,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (!Checks.esNulo(trabajo.getActivo()))
 			idUltimoPresupuestoActivo = activoApi.getPresupuestoActual(trabajo.getActivo().getId());
 
-		if (!Checks.esNulo(idUltimoPresupuestoActivo)) {
+		if (idUltimoPresupuestoActivo != null) {
 			Filter filtroUltimoPresupuesto = genericDao.createFilter(FilterType.EQUALS, "id",
 					idUltimoPresupuestoActivo.toString());
 
 			ultimoPresupuestoActivo = genericDao.get(VBusquedaPresupuestosActivo.class, filtroUltimoPresupuesto);
 		}
 
-		if (!Checks.esNulo(ultimoPresupuestoActivo) && !Checks.esNulo(ultimoPresupuestoActivo.getImporteInicial()))
+		if (ultimoPresupuestoActivo != null && !Checks.esNulo(ultimoPresupuestoActivo.getImporteInicial()))
 			if (!Checks.esNulo(ultimoPresupuestoActivo.getSumaIncrementos()))
 				ultimoPresupuestoActivoImporte = ultimoPresupuestoActivo.getImporteInicial()
 						+ ultimoPresupuestoActivo.getSumaIncrementos();

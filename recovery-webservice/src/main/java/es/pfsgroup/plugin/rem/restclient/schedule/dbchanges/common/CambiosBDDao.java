@@ -350,7 +350,10 @@ public class CambiosBDDao extends AbstractEntityDao<CambioBD, Long> {
 				if (pkMdodificadas != null && !pkMdodificadas.equals("(")) {
 					pkMdodificadas = pkMdodificadas.concat(",");
 				}
-				pkMdodificadas = pkMdodificadas.concat(id);
+				
+				if(pkMdodificadas != null) {
+					pkMdodificadas = pkMdodificadas.concat(id);
+				}
 				cambios = true;
 
 			}

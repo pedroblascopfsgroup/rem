@@ -1010,7 +1010,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 										.getAgrupacion().getTipoAgrupacion().getCodigo())))
 					carteraCajaMar = true;
 			}
-			ActivoBancario activoBancario = null;
+			ActivoBancario activoBancario = new ActivoBancario();
 			if(!Checks.esNulo(activo)){
 				activoBancario = activoApi.getActivoBancarioByIdActivo(activo.getId());
 			}
@@ -1025,7 +1025,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			if(!Checks.esNulo(activo)){
 				tipoFormalizacion = activoApi.getCodigoTipoComercializacionFromActivo(activo);
 			}
-			if(!Checks.esNulo(tipoFormalizacion) && tipoFormalizacion.equals(DDTipoComercializar.CODIGO_SINGULAR)){
+			if(!Checks.esNulo(tipoFormalizacion) && DDTipoComercializar.CODIGO_SINGULAR.equals(tipoFormalizacion)){
 				esSingular = true;
 			}
 			
@@ -1069,13 +1069,13 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			if(activo==null && tareaActivo.getTramite().getActivos().size()>0){
 				activo = tareaActivo.getTramite().getActivos().get(0);
 			}
-			ActivoBancario activoBancario = null;
+			ActivoBancario activoBancario = new ActivoBancario();
 			if(activo != null){
 				activoBancario = activoApi.getActivoBancarioByIdActivo(tareaActivo.getActivo().getId());
 			}
 			
 			boolean esFinanciero = false;
-			if (!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getClaseActivo())
+			if (activoBancario != null && !Checks.esNulo(activoBancario.getClaseActivo())
 					&& activoBancario.getClaseActivo().getCodigo().equals(DDClaseActivoBancario.CODIGO_FINANCIERO)) {
 				esFinanciero = true;
 			}
@@ -1098,17 +1098,13 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			if (activo == null && !tareaActivo.getTramite().getActivos().isEmpty()) {
 				activo = tareaActivo.getTramite().getActivos().get(0);
 			}
-			PerimetroActivo perimetro = null;
+			PerimetroActivo perimetro = new PerimetroActivo();
 			if (activo != null) {
 				perimetro = activoApi.getPerimetroByIdActivo(activo.getId());
 			}
 
-			if (!Checks.esNulo(perimetro)) {
-				if (!Checks.esNulo(perimetro.getAplicaFormalizar())) {
-					if (BooleanUtils.toBoolean(perimetro.getAplicaFormalizar())) {
-						esConFormalizacion = true;
-					}
-				}
+			if (perimetro != null && perimetro.getAplicaFormalizar() != null && BooleanUtils.toBoolean(perimetro.getAplicaFormalizar())) {
+				esConFormalizacion = true;
 			}
 
 		}

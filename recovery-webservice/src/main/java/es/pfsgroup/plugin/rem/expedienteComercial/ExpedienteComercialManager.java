@@ -11157,11 +11157,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 	
 	public void cambiarBulkOferta(Oferta oferta, DtoDatosBasicosOferta dto, BulkOferta blkOfr) {
-		//Borrado logico del anterior registro
-		Auditoria.delete(blkOfr);	
-		genericDao.update(BulkOferta.class, blkOfr);				
-		OfertaDto ofertaDto = new OfertaDto();
-		ofertaDto.setNumeroBulkAdvisoryNote(blkOfr.getBulkAdvisoryNote().toString());
+		if(!Checks.esNulo(blkOfr)) {
+			//Borrado logico del anterior registro si procede
+			Auditoria.delete(blkOfr);	
+			genericDao.update(BulkOferta.class, blkOfr);				
+			OfertaDto ofertaDto = new OfertaDto();
+			ofertaDto.setNumeroBulkAdvisoryNote(blkOfr.getBulkAdvisoryNote().toString());
+		}
 		//Nuevo registro idAdvisoryNote
 		if(!ofertaDao.tieneTareaActivaOrFinalizada("T006_AutorizacionPropietario", oferta.getNumOferta().toString())) {
 			BulkOferta blkOfrNew = new BulkOferta();		

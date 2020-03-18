@@ -269,9 +269,9 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
 
 		  IF pDD_MTO_CODIGO = '04' THEN /*Revisión adecuación*/
 		    V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO ACT
-						SET ACT.DD_ADA_ID IN (SELECT ADA.DD_ADA_ID
+						SET ACT.DD_ADA_ID = (SELECT ADA.DD_ADA_ID
 										    					 FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER ADA
-												    			WHERE ADA.DD_ADA_CODIGO IN (''02'', ''05'', ''06'')/*NO, EN PROCESO o Adecuado - incidentado*/
+												    			WHERE ADA.DD_ADA_CODIGO = ''02'' /*NO, EN PROCESO o Adecuado - incidentado*/
 														    	  AND ADA.BORRADO = 0)
 						  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 						  , FECHAMODIFICAR = SYSDATE

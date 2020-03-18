@@ -145,14 +145,14 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 						   disabled: !isLogUsuGestComerSupComerSupAdmin
 						},
 						{ 
-							 xtype: 'comboboxfieldbase',
-							 fieldLabel:  HreRem.i18n('fieldlabel.direccion.comercial'),
-							 allowBlank: false,
-							 bind: {
+							xtype: 'comboboxfieldbase',
+							fieldLabel:	HreRem.i18n('fieldlabel.direccion.comercial'),
+							allowBlank: '{!esSubcarteraAppleDivarian}',
+							bind: {
 								readOnly: '{!editableCES}',
-						        store: '{comboDireccionComercial}',
-								value : '{comercial.direccionComercial}'									
-							 }
+								store: '{comboDireccionComercial}',
+								value: '{comercial.direccionComercial}'									
+							}
 						},
 						{				        	
 							xtype: 'comboboxfieldbase',

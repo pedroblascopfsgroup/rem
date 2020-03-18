@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=José Antonio Gigante
---## FECHA_CREACION=20200317
+--## FECHA_CREACION=20200318
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-6655

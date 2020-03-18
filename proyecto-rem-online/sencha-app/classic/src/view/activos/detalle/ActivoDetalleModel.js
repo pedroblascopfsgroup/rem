@@ -917,7 +917,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var esApple = get('activo.isSubcarteraApple');
 			var esDivarian = get('activo.isSubcarteraDivarian');			
 			
-			return esApple || esDivarian;
+			if (esApple || esDivarian)
+				return true;
+			else
+				return false;
 		}
 	 }, 
 	 

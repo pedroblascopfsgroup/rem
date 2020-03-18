@@ -147,8 +147,8 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 						{ 
 							xtype: 'comboboxfieldbase',
 							fieldLabel:	HreRem.i18n('fieldlabel.direccion.comercial'),
-							allowBlank: '{!esSubcarteraAppleDivarian}',
 							bind: {
+								allowBlank: '{!esSubcarteraAppleDivarian}',
 								readOnly: '{!editableCES}',
 								store: '{comboDireccionComercial}',
 								value: '{comercial.direccionComercial}'									

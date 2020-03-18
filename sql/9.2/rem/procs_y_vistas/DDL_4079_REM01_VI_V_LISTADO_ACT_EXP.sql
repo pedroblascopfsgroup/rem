@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Cristian Montoya
---## FECHA_CREACION=20190317
+--## FECHA_CREACION=20200317
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-3225

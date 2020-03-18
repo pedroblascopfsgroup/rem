@@ -745,7 +745,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		
 		usuarioEditarAgrupaciones: function(get){
 			return $AU.userHasFunction("EDITAR_LIST_AGRUPACIONES");
-		},
+		}
     },
 				
     stores: {

@@ -171,16 +171,22 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 	private void ofertaEnBulkAN(ExecutionContext executionContext, TareaExterna tareaExterna, String scriptValidacion)
 			throws Exception {
 		Oferta ofertaActual = ofertaApi.tareaExternaToOferta(tareaExterna);
-		ActivoOferta actOfr = genericDao.get(ActivoOferta.class, genericDao.createFilter(FilterType.EQUALS, "oferta", ofertaActual.getId()));
+		ActivoOferta actOfr = null;
+		BulkOferta bulkOferta  = null;
+		if(ofertaActual != null) {
+			actOfr = genericDao.get(ActivoOferta.class, genericDao.createFilter(FilterType.EQUALS, "oferta", ofertaActual.getId()));
+			bulkOferta = bulkOfertaDao.findOne(null, ofertaActual.getId());
+		}
+		
 		List<TareaExternaValor> valores = activoTareaExternaManagerApi.obtenerValoresTarea(tareaExterna.getId());
 		Map<String,String[]> valoresTarea = bulkAdvisoryNoteAdapter.insertValoresToHashMap(valores);
 		String tapCodigoActual= tareaExterna.getTareaProcedimiento().getCodigo();
-		BulkOferta bulkOferta = bulkOfertaDao.findOne(null, ofertaActual.getId());
+		
 		List<BulkOferta> listOfertasBulk;
 		
 		Boolean esOfertaEnBulk = ofertaEnBulkOferta(actOfr,tapCodigoActual,bulkOferta);
 		
-		if(esOfertaEnBulk && !Checks.esNulo(actOfr) 
+		if(esOfertaEnBulk && actOfr != null && bulkOferta != null
 				&& ( COD_TAP_TAREA_AUTORIZACION_PROPIEDAD.equals(tapCodigoActual)
 						|| COD_TAP_TAREA_ADVISORY_NOTE.equals(tapCodigoActual)
 						|| COD_TAP_TAREA_RECOM_ADVISORY.equals(tapCodigoActual)
@@ -193,7 +199,7 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 			listOfertasBulk = bulkOfertaDao.getListBulkOfertasByIdBulk(bulkOferta.getPrimaryKey().getBulkAdvisoryNote());
 			validaAvanzaOfertasBulk(tapCodigoActual, ofertaActual, listOfertasBulk,valoresTarea,executionContext, tareaExterna, scriptValidacion);
 			
-		}else if(!esOfertaEnBulk) {
+		}else if(Boolean.FALSE.equals(esOfertaEnBulk)) {
 			avanzaTramiteNormal(executionContext, tareaExterna, scriptValidacion);
 		}
 	}
@@ -226,7 +232,7 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 				&& DDCartera.CODIGO_CARTERA_CERBERUS.equals(actOfr.getPrimaryKey().getActivo().getCartera().getCodigo()) 
 				&& !Checks.esNulo(actOfr.getPrimaryKey().getActivo().getSubcartera()) 
 				&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(actOfr.getPrimaryKey().getActivo().getSubcartera().getCodigo())
-				&& !Checks.esNulo(bulkOferta) && !Checks.esNulo(bulkOferta.getPrimaryKey().getBulkAdvisoryNote())) {
+				&& bulkOferta != null && !Checks.esNulo(bulkOferta.getPrimaryKey().getBulkAdvisoryNote())) {
 
 			listOfertasBulk = bulkOfertaDao.getListBulkOfertasByIdBulk(bulkOferta.getPrimaryKey().getBulkAdvisoryNote());
 			if(!Checks.estaVacio(listOfertasBulk) && listOfertasBulk.size() > 1) {

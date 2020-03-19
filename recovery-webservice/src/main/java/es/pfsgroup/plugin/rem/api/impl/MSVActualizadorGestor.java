@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -34,7 +35,6 @@ import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoInformeComercialHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRolMediador;
@@ -42,8 +42,18 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoRolMediador;
 @Component
 public class MSVActualizadorGestor extends AbstractMSVActualizador implements MSVLiberator {
 
-	protected static final Log logger = LogFactory.getLog(MSVActualizadorGestor.class);
+	private final int COL_TIPO_GESTOR = 0;
+	private final int COL_USERNAME = 1;
+	private final int COL_NUM_ACTIVO = 2;
+	private final int COL_NUM_AGRUPACION = 3;
+	private final int COL_NUM_EXPEDIENTE = 4;
+	private final int COL_COD_API_PRIMARIO = 5;
+	private final int COL_COD_API_ESPEJO = 6;	
+	private final String PONER_NULL_A_APIS = "0";
+	
+	protected static final Log logger = LogFactory.getLog(MSVActualizadorGestor.class);	
 
+	
 	@Autowired
 	ProcessAdapter processAdapter;
 
@@ -62,8 +72,6 @@ public class MSVActualizadorGestor extends AbstractMSVActualizador implements MS
 	@Autowired
 	private GenericABMDao genericDao;
 	
-	public static final String PONER_NULL_A_APIS = "0";
-	
 	@Override
 	public String getValidOperation() {
 		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_GESTORES;
@@ -74,163 +82,162 @@ public class MSVActualizadorGestor extends AbstractMSVActualizador implements MS
 			throws IOException, ParseException, JsonViewerException, SQLException {
 		ResultadoProcesarFila resultado = new ResultadoProcesarFila();
 		try {
-			Activo activo = null;
+			String gestor = exc.dameCelda(fila, COL_TIPO_GESTOR); 				
+			String username = exc.dameCelda(fila, COL_USERNAME);				
+			String numActivo = exc.dameCelda(fila, COL_NUM_ACTIVO);
+			String numAgrupacion = exc.dameCelda(fila, COL_NUM_AGRUPACION);
+			String numExpediente = exc.dameCelda(fila, COL_NUM_EXPEDIENTE);
+			String codApiPrimario = exc.dameCelda(fila, COL_COD_API_PRIMARIO);
+			String codApiEspejo = exc.dameCelda(fila, COL_COD_API_ESPEJO);			
+			
+			Activo activo = Checks.esNulo(numActivo) ? null : activoApi.getByNumActivo(Long.parseLong(numActivo));
+			ExpedienteComercial expediente = Checks.esNulo(numExpediente) ? null : expedienteComercialApi.findOneByNumExpediente(Long.parseLong(numExpediente));
 			ActivoAgrupacion agrupacion = null;
-			ExpedienteComercial expediente = null;
 			Usuario usuario = null;
 			EXTDDTipoGestor tipoGestor = null;
-			DtoHistoricoMediador dtoMediador = null;
-
-			if (!Checks.esNulo(exc.dameCelda(fila, 2))) {
-				activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 2)));
-			}
-			if (!Checks.esNulo(exc.dameCelda(fila, 3))) {
-				Long idAgrupacion = activoAgrupacionApi
-						.getAgrupacionIdByNumAgrupRem(Long.parseLong(exc.dameCelda(fila, 3)));
+			
+			if (!Checks.esNulo(numAgrupacion)) {
+				Long idAgrupacion = activoAgrupacionApi.getAgrupacionIdByNumAgrupRem(Long.parseLong(numAgrupacion));
 				agrupacion = activoAgrupacionApi.get(idAgrupacion);
 			}
 
-			if (!Checks.esNulo(exc.dameCelda(fila, 4))) {
-				expediente = expedienteComercialApi.findOneByNumExpediente(Long.parseLong(exc.dameCelda(fila, 4)));
-			}
-
-			if (!Checks.esNulo(exc.dameCelda(fila, 0))) {
-				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, 0));
+			if (!Checks.esNulo(gestor)) {
+				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", gestor);
 				Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-				tipoGestor = (EXTDDTipoGestor) genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor, filtroBorrado);
+				tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor, filtroBorrado);
 			}
 
-			if (!Checks.esNulo(exc.dameCelda(fila, 1))) {
-				Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "username", exc.dameCelda(fila, 1));
+			if (!Checks.esNulo(username)) {
+				Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "username", username);
 				Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 				usuario = genericDao.get(Usuario.class, filtroUsuario, filtroBorrado);
 			}
 			
-			//Insert y/o Update API Primario
-			if (!Checks.esNulo(exc.dameCelda(fila, 5)) && !PONER_NULL_A_APIS.equals(exc.dameCelda(fila, 5))) {
-				if (!Checks.esNulo(activo)) {
-					Filter codProveedorFilter = genericDao.createFilter(FilterType.EQUALS,"codigoProveedorRem", Long.valueOf(exc.dameCelda(fila, 5)));
+			if (!Checks.esNulo(activo)) {
+				// Insert y/o Update API Primario
+				if (!Checks.esNulo(codApiPrimario) && !PONER_NULL_A_APIS.equals(codApiPrimario)) {
+					Filter codProveedorFilter = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", Long.valueOf(codApiPrimario));
 					ActivoProveedor apiPrimario = genericDao.get(ActivoProveedor.class, codProveedorFilter);
-					
+
 					if (Checks.esNulo(activo.getInfoComercial())) {
 						ActivoInfoComercial infoComercial = new ActivoInfoComercial();
 						infoComercial.setMediadorInforme(apiPrimario);
 						infoComercial.setActivo(activo);
+						infoComercial.setAuditoria(Auditoria.getNewInstance());
 						genericDao.save(ActivoInfoComercial.class, infoComercial);
 					} else {
 						ActivoInfoComercial infoComercial = activo.getInfoComercial();
 						infoComercial.setMediadorInforme(apiPrimario);
 						genericDao.save(ActivoInfoComercial.class, infoComercial);
 					}
-					
-					//Historico
+
+					// Historico
 					Filter codTRLFilter = genericDao.createFilter(FilterType.EQUALS, "tipoRolMediador.codigo", DDTipoRolMediador.CODIGO_TIPO_PRIMARIO);
 					Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 					Filter fechaFilter = genericDao.createFilter(FilterType.NULL, "fechaHasta");
 					ActivoInformeComercialHistoricoMediador historicoMediadorPrimario = genericDao.get(ActivoInformeComercialHistoricoMediador.class, codTRLFilter, activoFilter, fechaFilter);
-					
+
 					if (!Checks.esNulo(historicoMediadorPrimario)) {
 						historicoMediadorPrimario.setFechaHasta(new Date());
 						genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoMediadorPrimario);
-					} 
-					
+					}
+
 					ActivoInformeComercialHistoricoMediador nuevoHistoricoMediadorPrimario = new ActivoInformeComercialHistoricoMediador();
 					nuevoHistoricoMediadorPrimario.setActivo(activo);
 					nuevoHistoricoMediadorPrimario.setMediadorInforme(apiPrimario);
 					nuevoHistoricoMediadorPrimario.setFechaDesde(new Date());
+					nuevoHistoricoMediadorPrimario.setAuditoria(Auditoria.getNewInstance());
 					Filter trlFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoRolMediador.CODIGO_TIPO_PRIMARIO);
 					DDTipoRolMediador tipoRolMediador = genericDao.get(DDTipoRolMediador.class, trlFilter);
 					nuevoHistoricoMediadorPrimario.setTipoRolMediador(tipoRolMediador);
 					genericDao.save(ActivoInformeComercialHistoricoMediador.class, nuevoHistoricoMediadorPrimario);
-				}
-			//Poner a null API Primario
-			} else if (!Checks.esNulo(exc.dameCelda(fila, 5)) && PONER_NULL_A_APIS.equals(exc.dameCelda(fila, 5))) {
-				if (!Checks.esNulo(activo)) {
+
+					// Poner a null API Primario
+				} else if (!Checks.esNulo(codApiPrimario) && PONER_NULL_A_APIS.equals(codApiPrimario)) {
 					if (Checks.esNulo(activo.getInfoComercial())) {
 						ActivoInfoComercial infoComercial = new ActivoInfoComercial();
 						infoComercial.setActivo(activo);
+						infoComercial.setAuditoria(Auditoria.getNewInstance());
 						genericDao.save(ActivoInfoComercial.class, infoComercial);
 					} else {
 						ActivoInfoComercial infoComercial = activo.getInfoComercial();
 						infoComercial.setMediadorInforme(null);
 						genericDao.save(ActivoInfoComercial.class, infoComercial);
 					}
-					
-					//Historico
+
+					// Historico
 					Filter codTRLFilter = genericDao.createFilter(FilterType.EQUALS, "tipoRolMediador.codigo", DDTipoRolMediador.CODIGO_TIPO_PRIMARIO);
 					Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 					Filter fechaFilter = genericDao.createFilter(FilterType.NULL, "fechaHasta");
 					ActivoInformeComercialHistoricoMediador historicoMediadorPrimario = genericDao.get(ActivoInformeComercialHistoricoMediador.class, codTRLFilter, activoFilter, fechaFilter);
-					
+
 					if (!Checks.esNulo(historicoMediadorPrimario)) {
 						historicoMediadorPrimario.setFechaHasta(new Date());
 						genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoMediadorPrimario);
-					} 
-					
+					}
 				}
-			}
-			
-			//Insert y/o Update API Espejo
-			if (!Checks.esNulo(exc.dameCelda(fila, 6)) && !PONER_NULL_A_APIS.equals(exc.dameCelda(fila, 6))) {
-				if (!Checks.esNulo(activo)) {
-					Filter codProveedorFilter = genericDao.createFilter(FilterType.EQUALS,"codigoProveedorRem", Long.valueOf(exc.dameCelda(fila, 6)));
+
+				// Insert y/o Update API Espejo
+				if (!Checks.esNulo(codApiEspejo) && !PONER_NULL_A_APIS.equals(codApiEspejo)) {
+					Filter codProveedorFilter = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", Long.valueOf(codApiEspejo));
 					ActivoProveedor apiEspejo = genericDao.get(ActivoProveedor.class, codProveedorFilter);
-					
+
 					if (Checks.esNulo(activo.getInfoComercial())) {
 						ActivoInfoComercial infoComercial = new ActivoInfoComercial();
 						infoComercial.setMediadorEspejo(apiEspejo);
 						infoComercial.setActivo(activo);
+						infoComercial.setAuditoria(Auditoria.getNewInstance());
 						genericDao.save(ActivoInfoComercial.class, infoComercial);
 					} else {
 						ActivoInfoComercial infoComercial = activo.getInfoComercial();
 						infoComercial.setMediadorEspejo(apiEspejo);
 						genericDao.save(ActivoInfoComercial.class, infoComercial);
 					}
-					
-					//Historico
+
+					// Historico
 					Filter codTRLFilter = genericDao.createFilter(FilterType.EQUALS, "tipoRolMediador.codigo", DDTipoRolMediador.CODIGO_TIPO_ESPEJO);
 					Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 					Filter fechaFilter = genericDao.createFilter(FilterType.NULL, "fechaHasta");
 					ActivoInformeComercialHistoricoMediador historicoMediadorPrimario = genericDao.get(ActivoInformeComercialHistoricoMediador.class, codTRLFilter, activoFilter, fechaFilter);
-					
+
 					if (!Checks.esNulo(historicoMediadorPrimario)) {
 						historicoMediadorPrimario.setFechaHasta(new Date());
 						genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoMediadorPrimario);
-					} 
-					
+					}
+
 					ActivoInformeComercialHistoricoMediador nuevoHistoricoMediadorPrimario = new ActivoInformeComercialHistoricoMediador();
 					nuevoHistoricoMediadorPrimario.setActivo(activo);
 					nuevoHistoricoMediadorPrimario.setMediadorInforme(apiEspejo);
 					nuevoHistoricoMediadorPrimario.setFechaDesde(new Date());
+					nuevoHistoricoMediadorPrimario.setAuditoria(Auditoria.getNewInstance());
 					Filter trlFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoRolMediador.CODIGO_TIPO_ESPEJO);
 					DDTipoRolMediador tipoRolMediador = genericDao.get(DDTipoRolMediador.class, trlFilter);
 					nuevoHistoricoMediadorPrimario.setTipoRolMediador(tipoRolMediador);
 					genericDao.save(ActivoInformeComercialHistoricoMediador.class, nuevoHistoricoMediadorPrimario);
-				}
-			//Poner a null API Espejo
-			} else if (!Checks.esNulo(exc.dameCelda(fila, 6)) && PONER_NULL_A_APIS.equals(exc.dameCelda(fila, 6))) {
-				if (!Checks.esNulo(activo)) {
+
+					// Poner a null API Espejo
+				} else if (!Checks.esNulo(codApiEspejo) && PONER_NULL_A_APIS.equals(codApiEspejo)) {
 					if (Checks.esNulo(activo.getInfoComercial())) {
 						ActivoInfoComercial infoComercial = new ActivoInfoComercial();
 						infoComercial.setActivo(activo);
+						infoComercial.setAuditoria(Auditoria.getNewInstance());
 						genericDao.save(ActivoInfoComercial.class, infoComercial);
 					} else {
 						ActivoInfoComercial infoComercial = activo.getInfoComercial();
 						infoComercial.setMediadorEspejo(null);
 						genericDao.save(ActivoInfoComercial.class, infoComercial);
 					}
-					
-					//Historico
+
+					// Historico
 					Filter codTRLFilter = genericDao.createFilter(FilterType.EQUALS, "tipoRolMediador.codigo", DDTipoRolMediador.CODIGO_TIPO_ESPEJO);
 					Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 					Filter fechaFilter = genericDao.createFilter(FilterType.NULL, "fechaHasta");
 					ActivoInformeComercialHistoricoMediador historicoMediadorPrimario = genericDao.get(ActivoInformeComercialHistoricoMediador.class, codTRLFilter, activoFilter, fechaFilter);
-					
+
 					if (!Checks.esNulo(historicoMediadorPrimario)) {
 						historicoMediadorPrimario.setFechaHasta(new Date());
 						genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoMediadorPrimario);
-					} 
-					
+					}
 				}
 			}
 			

@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200319
+--## AUTOR=Pablo Garcia Pallas
+--## FECHA_CREACION=20200309
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-9700
@@ -40,7 +40,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
         -- DD_SDE_CODIGO  DD_SDE_DESCRIPCION  DD_SDE_DESCRIPCION_LARGA  
-        T_TIPO_DATA('63', 'Advisory Note CES', 'Advisory Note CES')
+        T_TIPO_DATA('63', 'Advisory Note Advisory', 'Advisory Note Advisory')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

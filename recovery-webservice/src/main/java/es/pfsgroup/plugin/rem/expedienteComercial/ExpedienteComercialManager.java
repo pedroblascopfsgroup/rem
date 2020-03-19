@@ -9393,13 +9393,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoExpediente.codigo", valorCombo);
 				listaDDSubtipoDocExp  = genericDao.getList(DDSubtipoDocumentoExpediente.class, filtro);
 				if(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())||
-					DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())) {
+					DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo()) ||
+					DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())
+					) {
 					listDtoTipoDocExpediente = generateListSubtipoExpediente(listaDDSubtipoDocExp);
-				} else if (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())) {
-					listDtoTipoDocExpediente = generateListSubtipoExpedienteApple(listaDDSubtipoDocExp);
-				} else if (DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo()) ||
-						DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())) {
-					listDtoTipoDocExpediente = generateListSubtipoExpedienteDivarian(listaDDSubtipoDocExp);
 				} else {
 					listDtoTipoDocExpediente = generateListSubtipoExpedienteNoAgora(listaDDSubtipoDocExp);
 				}
@@ -9489,54 +9486,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			aux.setDescripcionLarga(tipDocExp.getDescripcionLarga());
 			aux.setVinculable(tipDocExp.getVinculable());
 			listDtoTipoDocExpediente.add(aux);
-		}
-
-		return listDtoTipoDocExpediente;
-	}
-	
-	private List<DtoTipoDocExpedientes> generateListSubtipoExpedienteApple(List <DDSubtipoDocumentoExpediente> listadoDDSubtipoDoc) {
-
-		List <DtoTipoDocExpedientes> listDtoTipoDocExpediente = new ArrayList <DtoTipoDocExpedientes>();
-
-		for (DDSubtipoDocumentoExpediente tipDocExp : listadoDDSubtipoDoc) {
-			DtoTipoDocExpedientes aux= new DtoTipoDocExpedientes();
-			aux.setId(tipDocExp.getId());
-			aux.setCodigo(tipDocExp.getCodigo());
-			if (DDSubtipoDocumentoExpediente.CODIGO_ADVISORY_NOTE_CES.equals(tipDocExp.getCodigo())) {
-				aux.setDescripcion("Advisory Note Advisory");
-				aux.setDescripcionLarga("Advisory Note Advisory");
-			} else {
-				aux.setDescripcion(tipDocExp.getDescripcion());
-				aux.setDescripcionLarga(tipDocExp.getDescripcionLarga());
-			}
-			aux.setVinculable(tipDocExp.getVinculable());
-			listDtoTipoDocExpediente.add(aux);
-		}
-
-		return listDtoTipoDocExpediente;
-	}
-	
-	private List<DtoTipoDocExpedientes> generateListSubtipoExpedienteDivarian(List <DDSubtipoDocumentoExpediente> listadoDDSubtipoDoc) {
-
-		List <DtoTipoDocExpedientes> listDtoTipoDocExpediente = new ArrayList <DtoTipoDocExpedientes>();
-
-		for (DDSubtipoDocumentoExpediente tipDocExp : listadoDDSubtipoDoc) {
-			DtoTipoDocExpedientes aux= new DtoTipoDocExpedientes();
-			aux.setId(tipDocExp.getId());
-			aux.setCodigo(tipDocExp.getCodigo());
-			if (DDSubtipoDocumentoExpediente.CODIGO_ADVISORY_NOTE_CES.equals(tipDocExp.getCodigo())) {
-				aux.setDescripcion("Advisory Note Advisory");
-				aux.setDescripcionLarga("Advisory Note Advisory");
-			} else {
-				aux.setDescripcion(tipDocExp.getDescripcion());
-				aux.setDescripcionLarga(tipDocExp.getDescripcionLarga());
-			}
-			aux.setVinculable(tipDocExp.getVinculable());
-			if(!DDSubtipoDocumentoExpediente.CODIGO_CONTRATO_ARRAS_PENITENCIALES.equals(aux.getCodigo())) {
-				if(!DDSubtipoDocumentoExpediente.CODIGO_DEPOSITO_DESPUBLICACION_ACTIVO.equals(aux.getCodigo())){
-				listDtoTipoDocExpediente.add(aux);
-				}
-			}
 		}
 
 		return listDtoTipoDocExpediente;

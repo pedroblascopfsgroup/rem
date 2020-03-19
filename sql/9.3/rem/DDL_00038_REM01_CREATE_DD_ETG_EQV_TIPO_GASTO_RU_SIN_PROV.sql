@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=José Antonio Gigante Pamplona
---## FECHA_CREACION=20200317
+--## FECHA_CREACION=20200319
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-6606
@@ -68,13 +68,13 @@ DECLARE
   DD_ETG_CODIGO   			          VARCHAR2(20 CHAR)       NOT NULL,
   DD_ETG_DESCRIPCION_POS	        VARCHAR2(100 CHAR),
   DD_ETG_DESCRIPCION_LARGA_POS		VARCHAR2(250 CHAR),
-  DD_TPR_ID                       NUMBER(16,0)            NOT NULL,
-  CORUG_POS                 			NUMBER(16,0),
+  DD_TPR_ID                       NUMBER(16,0),
+  COGRUG_POS                 			NUMBER(16,0),
   COTACA_POS			                NUMBER(16,0),
   COSBAC_POS              				NUMBER(16,0),
   DD_ETG_DESCRIPCION_NEG	        VARCHAR2(100 CHAR),
   DD_ETG_DESCRIPCION_LARGA_NEG		VARCHAR2(250 CHAR),
-  CORUG_NEG                 			NUMBER(16,0),
+  COGRUG_NEG                 			NUMBER(16,0),
   COTACA_NEG			                NUMBER(16,0),
   COSBAC_NEG              				NUMBER(16,0),
   VERSION                         NUMBER(38,0)            DEFAULT 0 NOT NULL ENABLE,
@@ -133,12 +133,13 @@ EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA ||'.'||V_TEXT_TABLA||'.DD_ST
 EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA ||'.'||V_TEXT_TABLA||'.DD_ETG_CODIGO IS ''Código''';
 EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA ||'.'||V_TEXT_TABLA||'.DD_ETG_DESCRIPCION_POS IS ''Descripción corta Positivo''';
 EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA ||'.'||V_TEXT_TABLA||'.DD_ETG_DESCRIPCION_LARGA_POS IS ''Descripción larga Positivo''';
-EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA ||'.'||V_TEXT_TABLA||'.CORUG_POS IS ''Código del grupo positivo''';
+EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA ||'.'||V_TEXT_TABLA||'.DD_TPR_ID IS ''Id tipo de proveedor''';
+EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA ||'.'||V_TEXT_TABLA||'.COGRUG_POS IS ''Código del grupo positivo''';
 EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA ||'.'||V_TEXT_TABLA||'.COTACA_POS IS ''Código del tipo positivo''';
 EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA ||'.'||V_TEXT_TABLA||'.COSBAC_POS IS ''Código del subtipo positivo''';
 EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA ||'.'||V_TEXT_TABLA||'.DD_ETG_DESCRIPCION_NEG IS ''Descripción corta negativo''';
 EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA ||'.'||V_TEXT_TABLA||'.DD_ETG_DESCRIPCION_LARGA_NEG IS ''Descripción larga negativo''';
-EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA ||'.'||V_TEXT_TABLA||'.CORUG_NEG IS ''Código del grupo negativo''';
+EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA ||'.'||V_TEXT_TABLA||'.COGRUG_NEG IS ''Código del grupo negativo''';
 EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA ||'.'||V_TEXT_TABLA||'.COTACA_NEG IS ''Código del tipo negativo''';
 EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA ||'.'||V_TEXT_TABLA||'.COSBAC_NEG IS ''Código del subtipo negativo''';
 

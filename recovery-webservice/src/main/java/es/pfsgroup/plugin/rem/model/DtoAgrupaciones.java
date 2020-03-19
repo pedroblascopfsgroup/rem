@@ -81,7 +81,7 @@ public class DtoAgrupaciones extends WebDto {
 	private String observacionesAutoTram;
 	private Boolean ventaSobrePlano;
 	private Boolean esGestorComercialEnActivo;
-
+	private String codigoOnSareb;
 
 	public Boolean getEstaCaducada() {
 		return estaCaducada;
@@ -506,5 +506,11 @@ public class DtoAgrupaciones extends WebDto {
 	}
 	public void setEsGestorComercialEnActivo(Boolean esGestorComercialEnActivo) {
 		this.esGestorComercialEnActivo = esGestorComercialEnActivo;
+	}
+	public String getCodigoOnSareb() {
+		return codigoOnSareb;
+	}
+	public void setCodigoOnSareb(String codigoOnSareb) {
+		this.codigoOnSareb = codigoOnSareb;
 	}
 }

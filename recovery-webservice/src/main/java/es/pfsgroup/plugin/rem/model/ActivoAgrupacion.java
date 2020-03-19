@@ -172,6 +172,9 @@ public class ActivoAgrupacion implements Serializable, Auditable {
     @JoinColumn(name = "AGR_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private ActivoAutorizacionTramitacionOfertas activoAutorizacionTramitacionOfertas;
+	
+	@Column(name = "AGR_COD_ON_SAREB")
+	private String codigoOnSareb;
 
 	public Long getId() {
 		return id;
@@ -444,6 +447,14 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 	public void setActivoAutorizacionTramitacionOfertas(
 			ActivoAutorizacionTramitacionOfertas activoAutorizacionTramitacionOfertas) {
 		this.activoAutorizacionTramitacionOfertas = activoAutorizacionTramitacionOfertas;
+	}
+
+	public String getCodigoOnSareb() {
+		return codigoOnSareb;
+	}
+
+	public void setCodigoOnSareb(String codigoOnSareb) {
+		this.codigoOnSareb = codigoOnSareb;
 	}
 
 }

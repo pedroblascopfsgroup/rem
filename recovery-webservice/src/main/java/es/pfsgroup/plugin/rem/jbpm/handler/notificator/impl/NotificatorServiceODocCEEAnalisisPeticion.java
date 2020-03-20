@@ -58,83 +58,52 @@ public class NotificatorServiceODocCEEAnalisisPeticion extends AbstractNotificat
 
 	@Override
 	public void notificator(ActivoTramite tramite) {
-		if(!Checks.esNulo(tramite) && !Checks.esNulo(tramite.getTrabajo())) {
-					
-			String correos = null;
-			
-			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
-			final String BUZON_PACI = "paci03";
-			List<String> mailsPara = new ArrayList<String>();
-			List<String> mailsCC = new ArrayList<String>();
-						 
-			Usuario buzonPaci = usuarioManager.getByUsername(BUZON_PACI);	
-			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(tramite.getActivo().getCartera().getCodigo())) {
-				correos = !Checks.esNulo(buzonPaci) ? buzonPaci.getEmail() : "";
-			}else if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto())) {
-				correos = tramite.getTrabajo().getProveedorContacto().getEmail();
-			}
-			
-			if (correos != null) {
-				Collections.addAll(mailsPara, correos.split(";"));
-			}
-			mailsCC.add(this.getCorreoFrom());
 						
-			String descripcionTrabajo = !Checks.esNulo(tramite.getTrabajo().getDescripcion())? (tramite.getTrabajo().getDescripcion() + " - ") : "";
-			String titulo = "Notificación de petición en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
-			String contenido = "<p>Se le ha asignado una actuación técnica del tipo "+dtoSendNotificator.getTipoContrato()+", la cual se ha abierto en REM con "
-	  		  		 + "el número de trabajo " +tramite.getTrabajo().getNumTrabajo() + ".</p>"
-	  		  		 + "<p>El activo objeto de la actuación es el número " +dtoSendNotificator.getNumActivo() + ", situado en "+dtoSendNotificator.getDireccion()+"</p>"
-	  		  		 + "<p>La fecha de finalización del trabajo por su parte es el "+dtoSendNotificator.getFechaFinalizacion()+"</p>"
-	  		  		 + "<p>Por favor, entre en la aplicación REM y compruebe las condiciones del trabajo.</p>"
-	  		  		 + "<p>Gracias.</p>";
-			
-			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));		
-		}				
 	}
 	
 	@Override
 	public void notificatorFinTareaConValores(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		
-		if(!Checks.esNulo(tramite) && !Checks.esNulo(tramite.getTrabajo()) &&
-			!Checks.esNulo(tramite.getTrabajo().getSolicitante()) && !Checks.esNulo(tramite.getTrabajo().getSolicitante().getEmail())
-			&& !tramite.getTrabajo().getSolicitante().equals(genericAdapter.getUsuarioLogado())) {
-
-			//Notificacion al solicitante
-			Usuario peticionario = null;
-			if(!Checks.esNulo(tramite.getTrabajo()))
-				peticionario = tramite.getTrabajo().getSolicitante();
-			
-			//El aviso NO se remite si el peticionario es el gestor del activo
-			if (!Checks.esNulo(peticionario) && !gestorActivoApi.isGestorActivo(tramite.getActivo(), peticionario)){
-				DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
+		String motivo = null;
+		
+		if(DDSiNo.NO.equals(activoTramiteApi.getTareaValorByNombre(valores, "comboTramitar"))) {
+			motivo = activoTramiteApi.getTareaValorByNombre(valores, "motivoDenegacion");
+		}
+		
+		//CORREO DE NOTIFICACIÓN
+		
+		if(motivo == null) {
+			if(!Checks.esNulo(tramite) && !Checks.esNulo(tramite.getTrabajo())) {
 				
+				String correos = null;
+				
+				DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
+				final String BUZON_PACI = "paci03";
 				List<String> mailsPara = new ArrayList<String>();
 				List<String> mailsCC = new ArrayList<String>();
+							 
+				Usuario buzonPaci = usuarioManager.getByUsername(BUZON_PACI);	
+				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(tramite.getActivo().getCartera().getCodigo())) {
+					correos = !Checks.esNulo(buzonPaci) ? buzonPaci.getEmail() : "";
+				}else if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto())) {
+					correos = tramite.getTrabajo().getProveedorContacto().getEmail();
+				}
 				
-				
-			    String correos = peticionario.getEmail();
-			    Collections.addAll(mailsPara, correos.split(";"));
+				if (correos != null) {
+					Collections.addAll(mailsPara, correos.split(";"));
+				}
 				mailsCC.add(this.getCorreoFrom());
-				
-				String contenido = "";
-				String titulo = "";
+							
 				String descripcionTrabajo = !Checks.esNulo(tramite.getTrabajo().getDescripcion())? (tramite.getTrabajo().getDescripcion() + " - ") : "";
+				String titulo = "Notificación de petición en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+				String contenido = "<p>Se le ha asignado una actuación técnica del tipo "+dtoSendNotificator.getTipoContrato()+", la cual se ha abierto en REM con "
+		  		  		 + "el número de trabajo " +tramite.getTrabajo().getNumTrabajo() + ".</p>"
+		  		  		 + "<p>El activo objeto de la actuación es el número " +dtoSendNotificator.getNumActivo() + ", situado en "+dtoSendNotificator.getDireccion()+"</p>"
+		  		  		 + "<p>La fecha de finalización del trabajo por su parte es el "+dtoSendNotificator.getFechaFinalizacion()+"</p>"
+		  		  		 + "<p>Por favor, entre en la aplicación REM y compruebe las condiciones del trabajo.</p>"
+		  		  		 + "<p>Gracias.</p>";
 				
-				String motivo = null;
-				
-				if(DDSiNo.NO.equals(activoTramiteApi.getTareaValorByNombre(valores, "comboTramitar")))
-					motivo = activoTramiteApi.getTareaValorByNombre(valores, "motivoDenegacion");
-	
-				if(motivo == null) {
-					contenido = "<p>El gestor responsable de tramitar su petición la ha aceptado, por lo que se ha analizado la petición del certificado de CEE.</p>";
-					titulo = "Notificación de aceptación de petición en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
-				}
-				else {
-					contenido = "<p>El gestor responsable de tramitar su petición la ha rechazado indicando el siguiente motivo: "+motivo+".</p>";
-					titulo = "Notificación de rechazo de petición en REM(" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
-				}
-					  
-				genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
+				genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));		
 			}
 		}
 	}

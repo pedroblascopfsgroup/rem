@@ -74,10 +74,7 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 				}
 			}
 		}
-		if(!Checks.esNulo(idProveedorParche))
-			guardarEntity(objetoEntitys,jsonFields,null, false);
-		else
-			guardarEntity(objetoEntitys,jsonFields,null, true);
+		guardarEntity(objetoEntitys,jsonFields,null);
 		//persistimos los cambios pendientes
 		genericaRestDaoImp.doFlush();
 		return objetoEntitys.get(0);
@@ -88,7 +85,19 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 			throws Exception {
 		Serializable objetoEntity = null;
 		if (idValue != null) {
-			objetoEntity = genericDao.get(entity, genericDao.createFilter(FilterType.EQUALS, fieldActivo, idValue));
+			objetoEntity = genericDao.get(entity, genericDao.createFilter(FilterType.EQUALS, fieldActivo, idValue));	
+			if(Checks.esNulo(objetoEntity)) {
+				Class padre = entity.getSuperclass();
+				if(padre instanceof Serializable) {
+					objetoEntity = genericDao.get(padre, genericDao.createFilter(FilterType.EQUALS, fieldActivo, idValue));
+					if(!Checks.esNulo(objetoEntity)) {
+						genericaRestDaoImp.delete(objetoEntity);
+						genericaRestDaoImp.doFlush();
+						objetoEntity = null;
+					}
+				}
+				
+			}
 			if (objetoEntity == null) {
 				objetoEntity = (Serializable) entity.newInstance();
 			}
@@ -251,16 +260,12 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 	 * @throws InvocationTargetException
 	 * @throws IntrospectionException
 	 */
-	private void guardarEntity(ArrayList<Serializable> objetoEntitys,JSONObject jsonFields,String fieldName, boolean update) throws Exception{
+	private void guardarEntity(ArrayList<Serializable> objetoEntitys,JSONObject jsonFields,String fieldName) throws Exception{
 		Serializable primaryKey = null;
 		for (Serializable objetoEntity : objetoEntitys) {
 			logger.trace("Guardando..." + objetoEntity.getClass().getName());
-			if(update) {
-				genericaRestDaoImp.update(objetoEntity);
-				primaryKey = objetoEntity;
-			}else {
-				primaryKey = genericaRestDaoImp.save(objetoEntity);
-			}
+			primaryKey = genericaRestDaoImp.save(objetoEntity);
+
 			logger.trace("Exito..." + primaryKey.getClass().getName());
 			String primaryKeFieldName = this.findPrimaryKey(objetoEntity);
 			this.setProperty(primaryKeFieldName, primaryKey.getClass(), null, null, primaryKey, objetoEntity,jsonFields,fieldName);

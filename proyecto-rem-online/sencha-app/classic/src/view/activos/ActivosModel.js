@@ -68,11 +68,10 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 
     		comboFiltroSubtipoActivo: {
 				model: 'HreRem.model.ComboBase',
-					proxy: {
-						type: 'uxproxy',
-						remoteUrl: 'generic/getDiccionario',
-						extraParams: {diccionario: 'subtiposActivo'}
-					}
+	    		proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboSubtipoActivoFiltered'
+				}
     		},
 
     		comboFiltroTipoActivo: {

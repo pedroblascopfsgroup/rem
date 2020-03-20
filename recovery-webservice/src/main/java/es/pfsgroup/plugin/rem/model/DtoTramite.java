@@ -91,6 +91,8 @@ public class DtoTramite extends WebDto {
 	
 	private String codigoSubcartera;
 
+	private Boolean tramiteVentaAnulado;
+	
 	private Boolean tramiteAlquilerAnulado;
 	
 	private Boolean esTareaSolicitudOAutorizacion;
@@ -414,6 +416,14 @@ public class DtoTramite extends WebDto {
 
 	public void setOcultarBotonResolucionAlquiler(Boolean ocultarBotonResolucionAlquiler) {
 		this.ocultarBotonResolucionAlquiler = ocultarBotonResolucionAlquiler;
+	}
+	
+	public Boolean getTramiteVentaAnulado() {
+		return tramiteVentaAnulado;
+	}
+
+	public void setTramiteVentaAnulado(Boolean tramiteVentaAnulado) {
+		this.tramiteVentaAnulado = tramiteVentaAnulado;
 	}
 
 	public Boolean getTramiteAlquilerAnulado() {

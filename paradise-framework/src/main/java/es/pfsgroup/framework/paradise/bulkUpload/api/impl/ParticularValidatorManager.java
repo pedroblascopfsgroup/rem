@@ -4511,4 +4511,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return "1".equals(resultado);
 	}
 	
+	@Override
+	public Boolean existeCodigoPeticion(String codPeticion) {
+		if(Checks.esNulo(codPeticion) || Boolean.FALSE.equals(StringUtils.isNumeric(codPeticion)))
+			return false;
+		
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1)"+ 
+				"FROM HPP_HISTORICO_PETICIONES_PRECIOS HPP "+ 
+				"WHERE HPP.HPP_ID = " + codPeticion +
+				" AND HPP.borrado = 0");
+		return "1".equals(resultado);
+	}
+	
 }

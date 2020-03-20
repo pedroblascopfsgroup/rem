@@ -1110,7 +1110,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		boolean conCee = false;
 		boolean esVivienda = false;
 		
-		if(!Checks.esNulo(activo.getTipoActivo())) esVivienda = DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo());
+		if (activo.getTipoActivo() != null) {
+			esVivienda = DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo());
+		}
 
 		for(DtoAdmisionDocumento aListDtoAdmisionDocumento : listDtoAdmisionDocumento) {
 			if (DDTipoDocumentoActivo.CODIGO_CEE_ACTIVO.equals(aListDtoAdmisionDocumento.getCodigoTipoDocumentoActivo())) {

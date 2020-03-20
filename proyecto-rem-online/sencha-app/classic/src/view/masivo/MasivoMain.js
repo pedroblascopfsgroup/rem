@@ -168,12 +168,12 @@ Ext.define('HreRem.view.masivo.MasivoMain', {
 						        	disabled: true,
 						        	text: 'Procesar'
 						        },
-						        {
+						        /*{
 						        	itemId:'removeButton',
 						        	cls: 'tbar-grid-button',
 						        	text: 'Eliminar',
 						        	hidden: true
-						        },
+						        },*/
 						        {
 						        	itemId:'downloadButton',
 						        	cls: 'tbar-grid-button',

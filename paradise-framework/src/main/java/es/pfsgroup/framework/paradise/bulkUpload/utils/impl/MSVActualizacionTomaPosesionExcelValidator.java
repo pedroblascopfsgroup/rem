@@ -39,6 +39,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
+import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVActualizacionFasesPublicacionValidator.INDICES;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVControlTributosExcelValidator.COL_NUM;
 
 @Component
@@ -75,6 +76,8 @@ public class MSVActualizacionTomaPosesionExcelValidator extends MSVExcelValidato
 	
 	private static final String CHECK_CONTIENE_JUDICIAL = "msg.error.masivo.posesion.err.contiene.judicial";
 	private static final String CHECK_CONTIENE_NOTARIAL = "msg.error.masivo.posesion.err.contiene.notarial";
+	
+	private static final String CHECK_PLAZA_JUZGADO = "msg.error.masivo.posesion.err.plaza.juzgado";
 	
 	private static final int FILA_DATOS = 1;
 
@@ -141,8 +144,7 @@ public class MSVActualizacionTomaPosesionExcelValidator extends MSVExcelValidato
 	private ArrayList<Integer> errAdj = new ArrayList<Integer>();
 	private ArrayList<Integer> errJudicial = new ArrayList<Integer>();
 	private ArrayList<Integer> errNotarial = new ArrayList<Integer>();
-	
-	
+	private ArrayList<Integer> errPlazaJuzgado = new ArrayList<Integer>();
 	
 	private int[] columnasNotariales = {
 			 COL_F_TITULO,
@@ -225,6 +227,7 @@ public class MSVActualizacionTomaPosesionExcelValidator extends MSVExcelValidato
 		errAdj.clear();
 		errJudicial.clear();
 		errNotarial.clear();		
+		errPlazaJuzgado.clear();
 
 		for (int columna = 0; columna < NUM_COLS; columna++) {
 			listasError.add(columna, new ArrayList<Integer>());
@@ -313,6 +316,10 @@ public class MSVActualizacionTomaPosesionExcelValidator extends MSVExcelValidato
 					}
 
 				}
+				
+				if (!isPlazaJuzgadoCorrecto(exc, fila)) {
+					esCorrecto = false;
+				}
 
 			} catch (ParseException e) {
 				esCorrecto = false;
@@ -356,9 +363,10 @@ public class MSVActualizacionTomaPosesionExcelValidator extends MSVExcelValidato
 			
 			mapaErrores.put(messageServices.getMessage(CHECK_TIPO_ADJ), errAdj);
 			mapaErrores.put(messageServices.getMessage(CHECK_CONTIENE_NOTARIAL), errJudicial);
-			mapaErrores.put(messageServices.getMessage(CHECK_CONTIENE_JUDICIAL), errNotarial);
-						
+			mapaErrores.put(messageServices.getMessage(CHECK_CONTIENE_JUDICIAL), errNotarial);						
+			mapaErrores.put(messageServices.getMessage(CHECK_PLAZA_JUZGADO), errPlazaJuzgado);
 		}
+		
 		return esCorrecto;
 	}
 
@@ -452,22 +460,40 @@ public class MSVActualizacionTomaPosesionExcelValidator extends MSVExcelValidato
 	}
 	
 	private boolean esFechaValida(String fecha) {
-		Integer yearSize = getLengthOfYear(fecha);
-		return !(!Checks.esNulo(fecha) && (yearSize == null || yearSize > 4));
-	}
-
-	private Integer getLengthOfYear(String date) {
-		Integer yearSize = null;
-		if (date != null) {
-			String[] dateArray = date.split("\\/");
+		if(!Checks.esNulo(fecha)) {
+			String[] dateArray = fecha.split("\\/");
 			String year = dateArray == null ? null : dateArray[dateArray.length - 1];
-			yearSize = year == null ? null : year.length();
+			Integer yearSize = year == null ? null : year.length();
+			String month = dateArray == null ? null : dateArray[dateArray.length - 2];
+			Integer monthSize = month == null ? null : month.length();
+			String day = dateArray == null ? null : dateArray[dateArray.length - 3];
+			Integer daySize = day == null ? null : day.length();
+			
+			return daySize != null && daySize <= 2 && monthSize != null && monthSize <= 2 && yearSize != null && yearSize <= 4;
 		}
-		return yearSize;
+		
+		return false;
 	}
 	
 	private boolean esNumericoDecimal(String numero) {
 		return  numero.matches("^[-+]?[0-9]*[,.]?[0-9]+");
 	}
 	
+	private Boolean isPlazaJuzgadoCorrecto(MSVHojaExcel exc, int fila){
+		try{
+			if(Boolean.FALSE.equals(Checks.esNulo(exc.dameCelda(fila, COL_TIPO_JUZGADO)))
+					&& Boolean.FALSE.equals(Checks.esNulo(exc.dameCelda(fila, COL_POBLACION_JUZGADO)))
+					&& Boolean.TRUE.equals(particularValidator.existeTipoJuzgado((exc.dameCelda(fila, COL_TIPO_JUZGADO))))
+					&& Boolean.TRUE.equals(particularValidator.existePoblacionJuzgado((exc.dameCelda(fila, COL_POBLACION_JUZGADO))))
+					&& Boolean.FALSE.equals(particularValidator.coincideTipoJuzgadoPoblacionJuzgado(exc.dameCelda(fila, COL_TIPO_JUZGADO), exc.dameCelda(fila, COL_POBLACION_JUZGADO)))
+					) {
+				errPlazaJuzgado.add(fila);
+				return false;
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			return false;
+		}
+		return true;
+	}
 }

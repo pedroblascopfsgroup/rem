@@ -3482,35 +3482,15 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	@Override
-	public Boolean existeActivoPlusvalia(String numActivo, String fechaPlusvalia) {
+	public Boolean existeActivoPlusvalia(String numActivo) {
 		if(Checks.esNulo(numActivo)) {
 			return false;
 		}
-
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_PLS_PLUSVALIA pls " +
 				"JOIN ACT_ACTIVO act ON pls.act_id = act.act_id " +
 				"WHERE pls.borrado = 0 " +
-				"AND act.ACT_NUM_ACTIVO = '"+numActivo+"' " +
-				"AND TRUNC(pls.ACT_PLS_FECHA_PRESENTACION_PLUSVALIA) = TRUNC(TO_DATE('"+fechaPlusvalia+"','dd/MM/yy'))");
-
+				"AND act.ACT_NUM_ACTIVO = '" + numActivo + "'");
 		return !"0".equals(resultado);
-
-	}
-
-	@Override
-	public String getActivoPlusvalia(String numActivo, String fechaPlusvalia) {
-		if(Checks.esNulo(numActivo)) {
-			return "";
-		}
-
-		String resultado = rawDao.getExecuteSQL("SELECT ACT_PLS_ID FROM ACT_PLS_PLUSVALIA pls " +
-				"JOIN ACT_ACTIVO act ON pls.act_id = act.act_id " +
-				"WHERE pls.borrado = 0 " +
-				"AND act.ACT_NUM_ACTIVO = '"+numActivo+"' " +
-				"AND TRUNC(pls.ACT_PLS_FECHA_PRESENTACION_PLUSVALIA) = TRUNC(TO_DATE('"+fechaPlusvalia+"','dd/MM/yy'))");
-
-		return resultado;
-
 	}
 
 	@Override
@@ -4413,6 +4393,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean coincideTipoJuzgadoPoblacionJuzgado(String codigoTipoJuzgado, String codigoPoblacionJuzgado) {
+		if(Checks.esNulo(codigoTipoJuzgado) || Checks.esNulo(codigoPoblacionJuzgado))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM DD_JUZ_JUZGADOS_PLAZA JUZ"
+				+"		JOIN DD_PLA_PLAZAS PLA ON PLA.DD_PLA_ID = JUZ.DD_PLA_ID"
+				+"		WHERE JUZ.DD_JUZ_CODIGO = '"+ codigoTipoJuzgado +"'"
+				+"		AND PLA.DD_PLA_CODIGO = '"+ codigoPoblacionJuzgado +"'");
+
+		return "1".equals(resultado);
+	}
+	
+	@Override
 	public Boolean direccionComercialExiste(String direccionComercial){
 		if(Checks.esNulo(direccionComercial))
 			return false;
@@ -4510,5 +4504,4 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				" AND act.borrado = 0");
 		return "1".equals(resultado);
 	}
-	
 }

@@ -142,22 +142,6 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 					}
 				}
 			}
-
-			if(activo != null){
-				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
-						|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-						|| DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-						|| DDCartera.CODIGO_CARTERA_TANGO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-						|| DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-						|| DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-						|| DDCartera.CODIGO_CARTERA_EGEO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-						|| DDCartera.CODIGO_CARTERA_HYT.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
-					usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
-					if(!Checks.esNulo(usuarioBackOffice)){
-						mailsPara.add(usuarioBackOffice.getEmail());
-					}	
-				}
-			}
 			
 			List<Usuario> usuarios = new ArrayList<Usuario>();
 			if(!Checks.esNulo(gestor)) {
@@ -180,6 +164,24 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 			}
 			
 		    mailsPara = getEmailsNotificacionContraoferta(usuarios);
+		    
+		    if(activo != null){
+				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+						|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_TANGO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_EGEO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_HYT.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
+					usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+					if(!Checks.esNulo(usuarioBackOffice)){
+						mailsPara.add(usuarioBackOffice.getEmail());
+					}	
+				}
+			}
+		    
 		    if(!Checks.esNulo(preescriptor) && !Checks.esNulo(preescriptor.getEmail())){
 		    	mailsPara.add(preescriptor.getEmail());
 		    }
@@ -204,7 +206,7 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 								 .replace("#gestorTarea", gestorNombre)
 								 .replace("#mailGestorTarea", gestorEmail);
 	
-			String titulo = "Contratoferta Activo/Agrupación #numactivo_agrupacion Oferta #numoferta";	
+			String titulo = "Contraoferta Activo/Agrupación #numactivo_agrupacion Oferta #numoferta";	
 			String numactivoagrupacion = Checks.esNulo(oferta.getAgrupacion()) ? activo.getNumActivo().toString() : oferta.getAgrupacion().getNumAgrupRem().toString();
 			titulo = titulo.replace("#numactivo_agrupacion", numactivoagrupacion)
 					 		.replace("#numoferta", oferta.getNumOferta().toString());

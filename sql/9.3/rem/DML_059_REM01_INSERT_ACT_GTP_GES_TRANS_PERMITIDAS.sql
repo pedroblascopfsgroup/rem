@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=Cristian Montoya
---## FECHA_CREACION=20191020
+--## AUTOR=Adrián Molina
+--## FECHA_CREACION=20200319
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-8104
+--## INCIDENCIA_LINK=REMVIP-6495
 --## PRODUCTO=NO
 --## 
 --## Finalidad: 
@@ -28,7 +28,7 @@ DECLARE
     V_COUNT_UPDATE NUMBER(16):= 0; -- Vble. para contar updates
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_USUARIO VARCHAR2(32 CHAR):= 'HREOS-8104';
+    V_USUARIO VARCHAR2(32 CHAR):= 'REMVIP-6495';
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_GTP_GES_TRANS_PERMITIDAS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 
 
@@ -58,6 +58,7 @@ DECLARE
 		, T_JBV('SUPEDI',	NULL,		'24',		'12',			0)	--Supervisor de activo edificación
 		, T_JBV('SUPEDI',	NULL,		'23',		'12',			0)	--Supervisor de activo edificación
 		, T_JBV('SUPEDI',	NULL,		'24',		'12',			0)	--Supervisor de activo edificación
+		, T_JBV('SUPEDI',	NULL,		'27',		'12',			0)	--Supervisor de activo edificación
 		, T_JBV('SUPEDI',	NULL,		'113',		'12',			0)	--Supervisor de activo edificación
 		, T_JBV('SUPEDI',	NULL,		'114',		'12',			0)	--Supervisor de activo edificación
 		, T_JBV('SUPEDI',	NULL,		'03',		'04',			0)	--Supervisor de activo edificación
@@ -80,6 +81,7 @@ DECLARE
 		, T_JBV('GEDI',		NULL,		'24',		'12',			0)	--Gestor de activo edificación
 		, T_JBV('GEDI',		NULL,		'23',		'12',			0)	--Gestor de activo edificación
 		, T_JBV('GEDI',		NULL,		'24',		'12',			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'27',		'12',			0)	--Gestor de activo edificación
 		, T_JBV('GEDI',		NULL,		'03',		'04',			0)	--Gestor de activo edificación
 		, T_JBV('GEDI',		NULL,		'03',		'09',			0)	--Gestor de activo edificación
 		, T_JBV('GEDI',		NULL,		'04',		'08',			0)	--Gestor de activo edificación
@@ -110,6 +112,7 @@ DECLARE
 		, T_JBV('GEDI',		NULL,		'22',		NULL,			0)	--Gestor de activo edificación
 		, T_JBV('GEDI',		NULL,		'23',		NULL,			0)	--Gestor de activo edificación
 		, T_JBV('GEDI',		NULL,		'24',		NULL,			0)	--Gestor de activo edificación
+		, T_JBV('GEDI',		NULL,		'27',		NULL,			0)	--Gestor de activo edificación
 		, T_JBV('GEDI',		NULL,		'113',		NULL,			0)	--Gestor de activo edificación
 		, T_JBV('GEDI',		NULL,		'114',		NULL,			0)	--Gestor de activo edificación	
 		--FIN HREOS-8104		
@@ -128,6 +131,7 @@ DECLARE
 		, T_JBV('GACT',		NULL,		'24',		'12',			0)	--Gestor mantenimiento
 		, T_JBV('GACT',		NULL,		'23',		'12',			0)	--Gestor mantenimiento
 		, T_JBV('GACT',		NULL,		'24',		'12',			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'27',		'12',			0)	--Gestor mantenimiento
 		, T_JBV('GACT',		NULL,		'07',		'08',			0)	--Gestor de mantenimiento
 		, T_JBV('GACT',		NULL,		'07',		'09',			0)	--Gestor de mantenimiento
 		, T_JBV('GACT',		NULL,		'08',		'07',			0)	--Gestor de mantenimiento
@@ -158,6 +162,7 @@ DECLARE
 		, T_JBV('GACT',		NULL,		'22',		NULL,			0)	--Gestor mantenimiento
 		, T_JBV('GACT',		NULL,		'23',		NULL,			0)	--Gestor mantenimiento
 		, T_JBV('GACT',		NULL,		'24',		NULL,			0)	--Gestor mantenimiento
+		, T_JBV('GACT',		NULL,		'27',		NULL,			0)	--Gestor mantenimiento
 		, T_JBV('GACT',		NULL,		'113',		NULL,			0)	--Gestor mantenimiento
 		, T_JBV('GACT',		NULL,		'114',		NULL,			0)	--Gestor mantenimiento	
 		--FIN HREOS-8104		
@@ -176,6 +181,7 @@ DECLARE
 		, T_JBV('SUPACT',	NULL,		'24',		'12',			0)	--Supervisor mantenimiento
 		, T_JBV('SUPACT',	NULL,		'23',		'12',			0)	--Supervisor mantenimiento
 		, T_JBV('SUPACT',	NULL,		'24',		'12',			0)	--Supervisor mantenimiento
+		, T_JBV('SUPACT',	NULL,		'27',		'12',			0)	--Supervisor mantenimiento
 		, T_JBV('SUPACT',	NULL,		'07',		'08',			0)	--Supervisor de mantenimiento
 		, T_JBV('SUPACT',	NULL,		'07',		'09',			0)	--Supervisor de mantenimiento
 		, T_JBV('SUPACT',	NULL,		'08',		'07',			0)	--Supervisor de mantenimiento
@@ -196,6 +202,7 @@ DECLARE
 		, T_JBV('GALQ',		NULL,		'24',		'12',			0)	--Gestor alquiler
 		, T_JBV('GALQ',		NULL,		'23',		'12',			0)	--Gestor alquiler
 		, T_JBV('GALQ',		NULL,		'24',		'12',			0)	--Gestor alquiler
+		, T_JBV('GALQ',		NULL,		'27',		'12',			0)	--Gestor alquiler
 		, T_JBV('GALQ',		NULL,		'07',		'08',			0)	--Gestor de alquiler
 		, T_JBV('GALQ',		NULL,		'07',		'09',			0)	--Gestor de alquiler
 		, T_JBV('GALQ',		NULL,		'08',		'07',			0)	--Gestor de alquiler
@@ -216,6 +223,7 @@ DECLARE
 		, T_JBV('SUALQ',	NULL,		'24',		'12',			0)	--Supervisor alquiler
 		, T_JBV('SUALQ',	NULL,		'23',		'12',			0)	--Supervisor alquiler
 		, T_JBV('SUALQ',	NULL,		'24',		'12',			0)	--Supervisor alquiler
+		, T_JBV('SUALQ',	NULL,		'27',		'12',			0)	--Supervisor alquiler
 		, T_JBV('SUALQ',	NULL,		'07',		'08',			0)	--Supervisor de alquiler
 		, T_JBV('SUALQ',	NULL,		'07',		'09',			0)	--Supervisor de alquiler
 		, T_JBV('SUALQ',	NULL,		'08',		'07',			0)	--Supervisor de alquiler
@@ -236,6 +244,7 @@ DECLARE
 		, T_JBV('GSUE',		NULL,		'24',		'12',			0)	--Gestor suelos
 		, T_JBV('GSUE',		NULL,		'23',		'12',			0)	--Gestor suelos
 		, T_JBV('GSUE',		NULL,		'24',		'12',			0)	--Gestor suelos
+		, T_JBV('GSUE',		NULL,		'27',		'12',			0)	--Gestor suelos
 		, T_JBV('GSUE',		NULL,		'07',		'08',			0)	--Gestor de suelos
 		, T_JBV('GSUE',		NULL,		'07',		'09',			0)	--Gestor de suelos
 		, T_JBV('GSUE',		NULL,		'08',		'07',			0)	--Gestor de suelos
@@ -256,6 +265,7 @@ DECLARE
 		, T_JBV('SUPSUE',	NULL,		'24',		'12',			0)	--Supervisor suelos
 		, T_JBV('SUPSUE',	NULL,		'23',		'12',			0)	--Supervisor suelos
 		, T_JBV('SUPSUE',	NULL,		'24',		'12',			0)	--Supervisor suelos
+		, T_JBV('SUPSUE',	NULL,		'27',		'12',			0)	--Supervisor suelos
 		, T_JBV('SUPSUE',	NULL,		'07',		'08',			0)	--Supervisor de suelos
 		, T_JBV('SUPSUE',	NULL,		'07',		'09',			0)	--Supervisor de suelos
 		, T_JBV('SUPSUE',	NULL,		'08',		'07',			0)	--Supervisor de suelos

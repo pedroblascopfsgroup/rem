@@ -517,8 +517,8 @@ public class Activo implements Serializable, Auditable {
     @Column(name = "ACT_FECHA_TITULO_ANTERIOR")
 	private Date fechaTituloAnterior;
     
-    @Column(name = "ACT_DND")
-   	private Boolean isDnd;
+    @Column(name = "ACT_DND", columnDefinition = "tinyint default false")
+   	private boolean isDnd;
     
     // Getters del activo --------------------------------------------
     
@@ -1998,11 +1998,11 @@ public class Activo implements Serializable, Auditable {
 		this.tipoSegmento = tipoSegmento;
 	}
 
-	public Boolean getIsDnd() {
+	public boolean getIsDnd() {
 		return isDnd;
 	}
 
-	public void setIsDnd(Boolean isDnd) {
+	public void setIsDnd(boolean isDnd) {
 		this.isDnd = isDnd;
 	}
 

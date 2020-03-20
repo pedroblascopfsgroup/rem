@@ -624,6 +624,10 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			List<ClienteGDPR> clienteGDPR = genericDao.getList(ClienteGDPR.class,
 					genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.id", cliente.getTipoDocumento().getId()),
 					genericDao.createFilter(FilterType.EQUALS, "numDocumento", cliente.getDocumento()));
+			if(Checks.estaVacio(clienteGDPR)) {
+				clienteGDPR = genericDao.getList(ClienteGDPR.class,
+						genericDao.createFilter(FilterType.EQUALS, "cliente.id", cliente.getId()));
+			}
 			
 			if (!Checks.estaVacio(clienteGDPR)) {
 				// Primero historificamos los datos de ClienteGDPR en ClienteCompradorGDPR
@@ -651,7 +655,12 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 					if (((JSONObject) jsonFields).containsKey("transferenciasInternacionales")) {
 						clc.setTransferenciasInternacionales(clienteDto.getTransferenciasInternacionales());
 					}				
-
+					if(Checks.esNulo(clc.getTipoDocumento()) && !Checks.esNulo(cliente.getTipoDocumento())) {
+						clc.setTipoDocumento(cliente.getTipoDocumento());
+					}
+					if(Checks.esNulo(clc.getNumDocumento()) && !Checks.esNulo(cliente.getDocumento())) {
+						clc.setNumDocumento(cliente.getDocumento());
+					}
 					genericDao.update(ClienteGDPR.class, clc);					
 				}
 				

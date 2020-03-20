@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 @Component
 public class MSVActualizadorPublicadoVentaExcelValidator extends MSVExcelValidatorAbstract {
@@ -100,9 +101,9 @@ public class MSVActualizadorPublicadoVentaExcelValidator extends MSVExcelValidat
 		
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 			Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
+			mapaErrores.put(ACTIVO_NOT_EXISTS, isActiveNotExistsRows(exc));
 			mapaErrores.put(CAMPO_OCULTAR_PRECIO_FORMATO_NO_VALIDO, isCampoOcultarPrecioFormatoValidoRows(exc));
 			mapaErrores.put(CAMPO_PUBLICAR_SIN_PRECIO_FORMATO_NO_VALIDO, isCampoPublicarSinPrecioFormatoValidoRows(exc));
-			mapaErrores.put(ACTIVO_NOT_EXISTS, isActiveNotExistsRows(exc));
 			mapaErrores.put(ACTIVO_VENDIDO, activosVendidosRows(exc));
 			mapaErrores.put(ACTIVO_OCULTO, isActivoOcultoVentaRows(exc));
 			mapaErrores.put(ACTIVO_PUBLICADO, activoPublicadoRows(exc));
@@ -116,23 +117,15 @@ public class MSVActualizadorPublicadoVentaExcelValidator extends MSVExcelValidat
 			mapaErrores.put(AGRUPACION_DESTINO_COMERCIAL_NO_VENTA, activosAgrupacionDestinoComercialNoVentaRows(exc));
 			mapaErrores.put(AGRUPACION_ACTIVO_SIN_INFORME_NI_PRECIO, activosAgrupacionSinInformeAprobadoNiPrecioOSinPublicarSinPrecioRows(exc));
 			
-			if (!mapaErrores.get(CAMPO_OCULTAR_PRECIO_FORMATO_NO_VALIDO).isEmpty() || !mapaErrores.get(CAMPO_PUBLICAR_SIN_PRECIO_FORMATO_NO_VALIDO).isEmpty()
-					|| !mapaErrores.get(ACTIVO_NOT_EXISTS).isEmpty() || !mapaErrores.get(ACTIVO_SIN_INFORME_NI_PRECIO).isEmpty()
-					|| !mapaErrores.get(ACTIVO_VENDIDO).isEmpty() || !mapaErrores.get(ACTIVO_NO_COMERCIALIZABLE).isEmpty()
-					|| !mapaErrores.get(ACTIVO_NO_PUBLICABLE).isEmpty() || !mapaErrores.get(DESTINO_COMERCIAL_NO_VENTA).isEmpty() || !mapaErrores.get(ACTIVO_PUBLICADO).isEmpty()
-					|| !mapaErrores.get(AGRUPACION_ACTIVO_NO_AGRUPACION_RESTRINGIDA_PRINCIPAL).isEmpty()
-					|| !mapaErrores.get(AGRUPACION_ACTIVO_NO_PUBLICABLE).isEmpty() || !mapaErrores.get(AGRUPACION_ACTIVO_NO_COMERCIALIZABLE).isEmpty()
-					|| !mapaErrores.get(AGRUPACION_DESTINO_COMERCIAL_NO_VENTA).isEmpty() || !mapaErrores.get(AGRUPACION_ACTIVO_SIN_INFORME_NI_PRECIO).isEmpty()
-					|| !mapaErrores.get(ACTIVO_OCULTO).isEmpty()){
-				dtoValidacionContenido.setFicheroTieneErrores(true);
-				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
-				FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-				dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
-			}
-		}
+			for (Entry<String, List<Integer>> registro : mapaErrores.entrySet()) {
+			    if (!registro.getValue().isEmpty()) {
+			        dtoValidacionContenido.setFicheroTieneErrores(true);
+                    dtoValidacionContenido.setExcelErroresFormato(new FileItem(new File(exc.crearExcelErroresMejorado(mapaErrores))));
+                    break;
+                }
+		  }
+		}		
 		exc.cerrar();
-
 		return dtoValidacionContenido;
 	}
 

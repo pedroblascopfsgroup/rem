@@ -87,7 +87,7 @@ Ext.define('HreRem.view.activos.ActivosList', {
 			rowdblclick: 'onActivosListDobleClick',
 			
 			// Listener para el mostrar la imagen del activo en el over del icono
-			itemmouseenter: function( view, rec, item, index, e, eOpts ) {
+			itemmouseup: function( view, rec, item, index, e, eOpts ) {
 				if (e.position.colIdx == 0) {
 					var row = Ext.fly(view.getRow(rec));
 					me.ventanaImagen.down('image').setSrc('/pfs/activo/getFotoPrincipalById.htm?id=' + rec.get("id"));

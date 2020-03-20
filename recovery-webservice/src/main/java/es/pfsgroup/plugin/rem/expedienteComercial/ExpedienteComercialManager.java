@@ -9871,20 +9871,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					avisosFormateados.setDescripcion(avisosFormateados.getDescripcion()
 							+ "<div class='div-aviso red'> Expediente pre-bloqueado por GENCAT </div>");
 				}
-			}
-			Filter bulkOfertaFilter = genericDao.createFilter(FilterType.EQUALS, "oferta",
-					expediente.getOferta().getId());
-			Filter bulkOfertaBorradoFilter = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-			//List<BulkOferta> bulkOfertas = genericDao.getList(BulkOferta.class, bulkOfertaFilter,
-			//		bulkOfertaBorradoFilter);
+			}	
 			
 			BulkOferta blkOfr = bulkOfertaDao.findOne(null, expediente.getOferta().getId());
 			
-			List<BulkOferta> listaBlkOfr = bulkOfertaDao.getListBulkOfertasByIdBulk(blkOfr.getPrimaryKey().getBulkAdvisoryNote());
-
-			if (listaBlkOfr != null && !listaBlkOfr.isEmpty()) {
-				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion()
-						+ "<div class='div-aviso red'> Oferta incluida dentro de Bulk AN </div>");
+			if(!Checks.esNulo(blkOfr)) {
+				List<BulkOferta> listaBlkOfr = bulkOfertaDao.getListBulkOfertasByIdBulk(blkOfr.getPrimaryKey().getBulkAdvisoryNote());
+	
+				if (listaBlkOfr != null && !listaBlkOfr.isEmpty()) {
+					avisosFormateados.setDescripcion(avisosFormateados.getDescripcion()
+							+ "<div class='div-aviso red'> Oferta incluida dentro de Bulk AN </div>");
+				}
 			}
 		}
 		return avisosFormateados;

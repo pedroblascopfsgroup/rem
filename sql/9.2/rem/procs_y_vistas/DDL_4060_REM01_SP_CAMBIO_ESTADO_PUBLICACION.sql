@@ -1,10 +1,10 @@
 --/* 
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200224
+--## AUTOR=Cristian Montoya
+--## FECHA_CREACION=20200318
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-9595
+--## INCIDENCIA_LINK=REMVIP-6642
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -21,6 +21,8 @@
 --##    	0.9 David Gonzalez -HREOS-6184- Ajustes joins
 --##		1.0 José A. Gigante - HREOS-8998-9055-9265 Historificación de cambios al cambiar el canal de publicación
 --##		1.1 Daniel Algaba - HREOS-9595 Historificación de cambios al cambiar el canal de publicación
+--##		1.2 Vicente Martinez - HREOS-9509 - Añadir adecuacion en proceso
+--##		1.3 Cristian Montoya - REMVIP-6642 - Añadir adecuacion Adecuado - incidentado
 --##########################################
 --*/
 
@@ -269,7 +271,7 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
 		    V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO ACT
 						SET ACT.DD_ADA_ID = (SELECT ADA.DD_ADA_ID
 										    					 FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER ADA
-												    			WHERE ADA.DD_ADA_CODIGO = ''02''/*NO*/
+												    			WHERE ADA.DD_ADA_CODIGO = ''02'' /*NO, EN PROCESO o Adecuado - incidentado*/
 														    	  AND ADA.BORRADO = 0)
 						  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 						  , FECHAMODIFICAR = SYSDATE
@@ -359,10 +361,10 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
 
 		IF pDD_MTO_CODIGO IN ('04') THEN /*Revisión adecuación*/
 		  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO PTA
-						SET DD_ADA_ID = (SELECT DDADA.DD_ADA_ID
+						SET DD_ADA_ID IN (SELECT DDADA.DD_ADA_ID
 											 FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA
 											WHERE DDADA.BORRADO = 0
-											  AND DDADA.DD_ADA_CODIGO = ''02'')
+											  AND DDADA.DD_ADA_CODIGO IN (''02'', ''05'', ''06''))
 						  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 						  , FECHAMODIFICAR = SYSDATE
 					  WHERE PTA.ACT_ID = '||nACT_ID||'

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=GUILLEM REY
---## FECHA_CREACION=20200114
+--## AUTOR=Cristian Montoya
+--## FECHA_CREACION=20200318
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-5469
+--## INCIDENCIA_LINK=REMVIP-6642
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -17,6 +17,8 @@
 --##		0.5 HREOS-5562, Ocultación Automática, motivo "Revisión publicación", eliminar el join con la tabla TMP_PUBL_ACT
 --##		0.6 REMVIP-4301 - Cambios ocultación Revisión publicación
 --##		0.7 REMVIP-4622 - Ocultación alquilado
+--##		0.8 HREOS-9509 - Ocultacion Adecuacion DD_ADA 05
+--##		0.9 REMVIP-6642 - Ocultacion Adecuacion DD_ADA 06
 --##########################################
 --*/
 
@@ -36,7 +38,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas.
     V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas.
 
-    V_MSQL VARCHAR2(20000 CHAR); -- Sentencia a ejecutar 
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar 
     vWHERE VARCHAR2(4000 CHAR);
     nORDEN NUMBER;
     
@@ -89,6 +91,16 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
 								                             FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA
 								                            WHERE DDADA.BORRADO = 0
 								                              AND DDADA.DD_ADA_CODIGO = ''04''
+								                           )
+								          OR PTA.DD_ADA_ID = (SELECT DDADA.DD_ADA_ID
+								                             FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA
+								                            WHERE DDADA.BORRADO = 0
+								                              AND DDADA.DD_ADA_CODIGO = ''05''
+								                           )
+								          OR PTA.DD_ADA_ID = (SELECT DDADA.DD_ADA_ID
+								                             FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA
+								                            WHERE DDADA.BORRADO = 0
+								                              AND DDADA.DD_ADA_CODIGO = ''06''
 								                           )
 								          OR PTA.DD_ADA_ID IS NULL)
 								          AND (PTA.DD_ADA_ID_ANTERIOR = (SELECT DDADA.DD_ADA_ID
@@ -256,6 +268,16 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                                                                FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA 
                                                                               WHERE DDADA.BORRADO = 0
                                                                                 AND DDADA.DD_ADA_CODIGO = ''02''
+                                                                             )
+                                                          OR PTA.DD_ADA_ID = (SELECT DDADA.DD_ADA_ID
+                                                                               FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA 
+                                                                              WHERE DDADA.BORRADO = 0
+                                                                                AND DDADA.DD_ADA_CODIGO = ''05''
+                                                                             )
+                                                          OR PTA.DD_ADA_ID = (SELECT DDADA.DD_ADA_ID
+                                                                               FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA 
+                                                                              WHERE DDADA.BORRADO = 0
+                                                                                AND DDADA.DD_ADA_CODIGO = ''06''
                                                                              )
                                                           OR PTA.DD_ADA_ID IS NULL)
                                                         AND PTA.BORRADO = 0

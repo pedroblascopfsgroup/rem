@@ -24,9 +24,14 @@ public class DDSubtipoDocumentoExpedienteDaoImpl extends AbstractEntityDao<DDSub
         criteria.add(Restrictions.eq("auditoria.borrado", AUDITORIA_SIN_BORRAR));
 
         // Debería existir un solo resultado, pero existen casos de matrícula compartida por diferentes documentos.
-        DDSubtipoDocumentoExpediente ddSubtipoDocumentoExpediente = HibernateUtils.castObject(DDSubtipoDocumentoExpediente.class, criteria.list().get(0));
-       
-        return ddSubtipoDocumentoExpediente;
+        if(criteria.list() != null && !criteria.list().isEmpty()) {
+        	DDSubtipoDocumentoExpediente ddSubtipoDocumentoExpediente = HibernateUtils.castObject(DDSubtipoDocumentoExpediente.class, criteria.list().get(0));
+            
+            return ddSubtipoDocumentoExpediente;
+        }
+        
+        return null;
+        
     }
 
     @Override

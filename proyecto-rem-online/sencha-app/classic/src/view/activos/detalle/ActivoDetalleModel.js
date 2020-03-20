@@ -911,6 +911,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var codComercializacion = get('activo.tipoComercializacionCodigo');
 			var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
 			return CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] === codComercializacion && isSuper;
+		},
+		
+		esSubcarteraAppleDivarian: function(get){
+			var me = this;
+			var esApple = get('activo.isSubcarteraApple');
+			var esDivarian = get('activo.isSubcarteraDivarian');			
+			
+			if (esApple || esDivarian)
+				return true;
+			else
+				return false;
 		}
 	 }, 
 	 

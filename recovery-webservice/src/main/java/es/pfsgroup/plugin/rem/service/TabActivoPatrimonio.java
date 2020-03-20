@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -77,7 +79,7 @@ public class TabActivoPatrimonio implements TabActivoService {
 	private ActivoPropagacionApi activoPropagacionApi;
 	
 	@Autowired
-	private ActivoApi activoApi;	
+	private ActivoApi activoApi;
 	
 	@Autowired
 	private UpdaterStateApi updaterState;

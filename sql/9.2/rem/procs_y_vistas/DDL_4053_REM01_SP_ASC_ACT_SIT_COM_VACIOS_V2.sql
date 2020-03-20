@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Carles Molins Pascual
---## FECHA_CREACION=20190621
+--## FECHA_CREACION=20200228
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-4243
@@ -64,7 +64,7 @@ BEGIN
 
 	IF ID_ACTIVO > 0 THEN
 
-		V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||TABLA_ACTIVO||' WHERE ACT_ID = '||ID_ACTIVO||' AND BORRADO = 0 AND DD_SCM_ID IS NULL';
+		V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||TABLA_ACTIVO||' WHERE ACT_ID = '||ID_ACTIVO||' AND BORRADO = 0';
 		EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
 
 		DBMS_OUTPUT.PUT_LINE('[INFO] Se ejecutará el proceso para el Activo '||ID_ACTIVO||'.');

@@ -938,6 +938,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						"codigo", DDOrigenComprador.CODIGO_ORC_HRE));
 				oferta.setOrigenComprador(origenComprador);
 			}
+			
+			DDClaseOferta claseOferta = genericDao.get(DDClaseOferta.class, genericDao.createFilter(FilterType.EQUALS,
+					"codigo", DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL));
+			oferta.setClaseOferta(claseOferta);
 
 			Long idOferta = this.saveOferta(oferta);
 			ofertaDao.flush();
@@ -4098,10 +4102,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			if(!Checks.estaVacio(listaTareas)) {
 				for(TareaActivo tarea : listaTareas) {
-					if(codigoTarea.equals(tarea.getTareaExterna().getTareaProcedimiento().getCodigo())) {
-						resultado = !Checks.esNulo(tarea.getTareaFinalizada()) ? tarea.getTareaFinalizada() : false;
-
-						if(!resultado || (resultado && T017.equals(tramite.getTipoTramite().getCodigo()))) break;
+					if(tarea.getTareaExterna() != null 
+						&& tarea.getTareaExterna().getTareaProcedimiento() != null 
+						&& codigoTarea.equals(tarea.getTareaExterna().getTareaProcedimiento().getCodigo())) {
+							resultado = !Checks.esNulo(tarea.getTareaFinalizada()) ? tarea.getTareaFinalizada() : false;
+	
+							if(!resultado || (resultado && T017.equals(tramite.getTipoTramite().getCodigo()))) break;
 					}
 				}
 			}

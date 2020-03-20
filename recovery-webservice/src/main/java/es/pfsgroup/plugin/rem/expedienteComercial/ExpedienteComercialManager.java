@@ -586,6 +586,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Oferta oferta = expedienteComercial.getOferta();
 		Visita visitaOferta = oferta.getVisita();
 		Oferta ofertaPrincipal = null;
+		Filter f = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOfertaCodigo());
+		DDClaseOferta claseOferta = genericDao.get(DDClaseOferta.class, f);
+		if(!Checks.esNulo(dto.getClaseOfertaCodigo()) && Checks.esNulo(oferta.getClaseOferta())) {
+			if(!Checks.esNulo(claseOferta))
+				oferta.setClaseOferta(claseOferta);
+		}
 		
 		if(dto.getNuevoNumOferPrincipal() != null) {
 			ofertaPrincipal = ofertaApi.getOfertaByNumOfertaRem(dto.getNuevoNumOferPrincipal());
@@ -711,15 +717,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 			}
 		}else if (!Checks.esNulo(dto.getClaseOfertaCodigo())){
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOfertaCodigo());
-			DDClaseOferta dtoClaseOferta = genericDao.get(DDClaseOferta.class, filtro);
+			//Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOfertaCodigo());
+			//DDClaseOferta dtoClaseOferta = genericDao.get(DDClaseOferta.class, filtro);
 			
 			// Si estoy en una oferta individual
 			if (DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL.equals(oferta.getClaseOferta().getCodigo())) {
 				// Si estoy en una oferta individual que pasa a ser a principal
 				if(DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(dto.getClaseOfertaCodigo())) {
 					try {
-						oferta.setClaseOferta(dtoClaseOferta);
+						if(!Checks.esNulo(claseOferta))
+							oferta.setClaseOferta(claseOferta);
 					} catch (Exception ex) {
 						logger.error("Error al intentar cambiar una oferta individual a principal.", ex);
 						return false;
@@ -762,7 +769,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								}
 								
 								// Creamos el nuevo registro en la tabla relacional para insertar la oferta a la otra agrupación.
-								oferta.setClaseOferta(dtoClaseOferta);
+								if(!Checks.esNulo(claseOferta))
+									oferta.setClaseOferta(claseOferta);
 								OfertasAgrupadasLbk nuevaOfertaAgrupadaLbk = new OfertasAgrupadasLbk();
 								nuevaOfertaAgrupadaLbk.setOfertaDependiente(oferta);
 								nuevaOfertaAgrupadaLbk.setOfertaPrincipal(nuevaOfertaPrincipal);							
@@ -790,7 +798,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				//Si estoy en una oferta dependiente que pasa a ser individual
 				if(DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL.equals(dto.getClaseOfertaCodigo())) {
 					try {
-						oferta.setClaseOferta(dtoClaseOferta);
+						if(!Checks.esNulo(claseOferta))
+							oferta.setClaseOferta(claseOferta);
 						
 						// Ponemos borrado a 1 en la tabla relacional para sacarla de la agrupacion actual.
 						Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", oferta.getId());	
@@ -821,7 +830,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				//Si estoy en una oferta dependiente que pasa a ser principal
 				else if(DDClaseOferta.CODIGO_OFERTA_PRINCIPAL.equals(dto.getClaseOfertaCodigo())) {
 					try {
-						oferta.setClaseOferta(dtoClaseOferta);
+						if(!Checks.esNulo(claseOferta))
+							oferta.setClaseOferta(claseOferta);
 						
 						// Ponemos borrado a 1 en la tabla relacional para sacarla de la agrupacion actual.
 						Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "ofertaDependiente.id", oferta.getId());	
@@ -860,7 +870,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							throw new JsonViewerException("La oferta no puede cambiar a individual si tiene ofertas dependientes.");
 						}
 						
-						oferta.setClaseOferta(dtoClaseOferta);						
+						if(!Checks.esNulo(claseOferta))
+							oferta.setClaseOferta(claseOferta);						
 					}catch (Exception ex) {
 						logger.error("Error al intentar cambiar una oferta principal a individual.", ex);
 						return false;
@@ -887,7 +898,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 										nuevaOfertaPrincipal.setClaseOferta(claseOfertaPrincipal);
 										genericDao.update(Oferta.class, nuevaOfertaPrincipal);	
 																			
-										oferta.setClaseOferta(dtoClaseOferta);
+										if(!Checks.esNulo(claseOferta))
+											oferta.setClaseOferta(claseOferta);
 										
 										//Recalculamos el comite de la nueva oferta principal y de la nueva dependiente
 										listaOfertasLBK.add(nuevaOfertaPrincipal);	
@@ -916,12 +928,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 										nuevaOfertaPrincipal.setClaseOferta(claseOfertaPrincipal);
 										genericDao.update(Oferta.class, nuevaOfertaPrincipal);
 										
-										oferta.setClaseOferta(dtoClaseOferta);
+										if(!Checks.esNulo(claseOferta))
+											oferta.setClaseOferta(claseOferta);
 									}
 									// Si la nueva oferta principal es principal, cambiamos la antigua principal a dependiente.
 									else if(nuevaOfertaPrincipal.getClaseOferta().getCodigo().equals(DDClaseOferta.CODIGO_OFERTA_PRINCIPAL)) {
 		
-										oferta.setClaseOferta(dtoClaseOferta);
+										if(!Checks.esNulo(claseOferta))
+											oferta.setClaseOferta(claseOferta);
 										//Recalculamos comite de la agrupacion de ofertas
 										listaOfertasLBK.add(nuevaOfertaPrincipal);	
 
@@ -979,7 +993,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 									genericDao.save(OfertasAgrupadasLbk.class, nuevaOfertaAgrupadaLbk);
 									
 									// Actualizamos la clase de oferta de ambas.
-									oferta.setClaseOferta(dtoClaseOferta);
+									if(!Checks.esNulo(claseOferta))
+										oferta.setClaseOferta(claseOferta);
 									Filter filtroClaseOfertaPrincipal = genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_PRINCIPAL);
 									DDClaseOferta claseOfertaPrincipal = genericDao.get(DDClaseOferta.class, filtroClaseOfertaPrincipal);
 									nuevaOfertaPrincipal.setClaseOferta(claseOfertaPrincipal);
@@ -6625,17 +6640,23 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							DDEntidadFinanciera entidadFinanciera = (DDEntidadFinanciera) utilDiccionarioApi
 									.dameValorDiccionarioByCod(DDEntidadFinanciera.class, dto.getEntidadFinancieraCodigo());
 							condiciones.setEntidadFinanciera(entidadFinanciera);
-							if(Checks.esNulo(dto.getNumExpedienteRiesgo())) {
-								formalizacion.setNumExpediente(null);
-							}
-							if(Checks.esNulo(dto.getTiposFinanciacionCodigo()) && Checks.esNulo(dto.getTiposFinanciacionCodigoBankia())) {
-								formalizacion.setTipoRiesgoClase(null);
+							if(!Checks.esNulo(formalizacion))
+							{
+								if(Checks.esNulo(dto.getNumExpedienteRiesgo())) {
+									formalizacion.setNumExpediente(null);
+								}
+								if(Checks.esNulo(dto.getTiposFinanciacionCodigo()) && Checks.esNulo(dto.getTiposFinanciacionCodigoBankia())) {
+									formalizacion.setTipoRiesgoClase(null);
+								}
 							}
 						}
 					} else if (!Checks.esNulo(solicitaFinanciacion) && solicitaFinanciacion == 0) {
 						condiciones.setEntidadFinanciera(null);
-						formalizacion.setNumExpediente(null);
-						formalizacion.setTipoRiesgoClase(null);
+						if(!Checks.esNulo(formalizacion))
+						{
+							formalizacion.setNumExpediente(null);
+							formalizacion.setTipoRiesgoClase(null);
+						}
 					}
 
 

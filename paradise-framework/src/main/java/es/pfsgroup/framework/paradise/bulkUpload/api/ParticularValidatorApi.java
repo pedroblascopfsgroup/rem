@@ -892,7 +892,7 @@ public interface ParticularValidatorApi {
 	 */
 	public Boolean existeCalificacionEnergetica(String codCE);
 	
-	Boolean existeActivoPlusvalia(String numActivo, String fechaPlusvalia);
+	public Boolean existeActivoPlusvalia(String numActivo);
 
 	public Boolean esActivoUA(String numActivo);
 
@@ -907,8 +907,6 @@ public interface ParticularValidatorApi {
 	public String getIdActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud, String idTributo);
 
 	public Boolean esNumHayaVinculado(Long numGasto, String numActivo);
-
-	String getActivoPlusvalia(String numActivo, String fechaPlusvalia);
 	
 	Boolean existeJunta(String numActivo,  String fechaJunta);
 	
@@ -1090,6 +1088,8 @@ public interface ParticularValidatorApi {
 	Boolean esExpedienteValidoAnulado(String numExpediente);
 	
 	Boolean esExpedienteValidoAprobado(String numExpediente);
+	
+	Boolean coincideTipoJuzgadoPoblacionJuzgado(String codigoTipoJuzgado, String codigoPoblacionJuzgado);
 		
 	/**
 	 * 
@@ -1151,5 +1151,4 @@ public interface ParticularValidatorApi {
 	public Boolean esSubcarteraApple(String numActivo);
 	
 	public Boolean aCambiadoDestinoComercial(String numActivo, String destinoComercial);
-	
 }

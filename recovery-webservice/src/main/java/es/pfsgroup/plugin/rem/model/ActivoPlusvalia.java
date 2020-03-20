@@ -41,12 +41,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 @Entity
 @Table(name = "ACT_PLS_PLUSVALIA", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class ActivoPlusvalia implements Serializable, Auditable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Id

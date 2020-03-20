@@ -1322,6 +1322,20 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		
 		return gestion != null ? gestion.getSubestadoGestion() : null;
 	}
+	
+	@Override
+	public List<DDSubtipoActivo> getComboSubtipoActivoFiltered(String codTipoActivo) {
+
+		List<DDSubtipoActivo> listaSubtipos = new ArrayList<DDSubtipoActivo>();
+		if (!Checks.esNulo(codTipoActivo)) {
+			Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "tipoActivo.codigo", codTipoActivo);
+			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			Order order = new Order(OrderType.ASC, "codigo");
+			listaSubtipos = genericDao.getListOrdered(DDSubtipoActivo.class, order, filtroTipo, filtroBorrado);
+		}
+
+		return listaSubtipos;
+	}
 
 	@Override
 	public List<DDComiteSancion> getComitesResolucionLiberbank(Long idExp) throws Exception {

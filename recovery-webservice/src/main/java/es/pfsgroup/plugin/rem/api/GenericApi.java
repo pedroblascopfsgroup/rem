@@ -301,6 +301,8 @@ public interface GenericApi {
 
 	public DDSubestadoGestion getSubestadoGestion(Long idActivo);
 	
+	List<DDSubtipoActivo> getComboSubtipoActivoFiltered(String codTipoActivo);
+	
 	List<DDComiteSancion> getComitesResolucionLiberbank(Long idExp)throws Exception;
 
 	/***
@@ -316,5 +318,4 @@ public interface GenericApi {
 	 * @return Devuelve la partida presupuestaria relacionada con la subpartida presupuestaria
 	 */
 	public String getPartidaPresupuestaria(Long idSubpartida);
-
 }

@@ -305,6 +305,16 @@ Ext.define('HreRem.model.AgrupacionFicha', {
                 {
                 	name: 'esGestorComercialEnActivo',
                 	type: 'boolean'
+                },
+                {
+	            	name: 'isObraNuevaSareb',
+	            	calculate: function(data) {
+	        			return data.tipoAgrupacionCodigo == CONST.TIPOS_AGRUPACION['OBRA_NUEVA'] && data.codigoCartera == CONST.CARTERA['SAREB'];
+	        		},
+	        		depends: ['tipoAgrupacionCodigo','codigoCartera']
+	            },
+                {
+                	name: 'codigoOnSareb'
                 }
     ],
     

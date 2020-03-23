@@ -11195,7 +11195,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				blkOfrNew.setBulkAdvisoryNote(blkAn);
 				blkOfrNew.setOferta(oferta);
 				blkOfrNew.setPrimaryKey(new BulkOfertaPk(blkAn.getId(),oferta.getId()));
-				blkOfrNew.setAuditoria(Auditoria.getNewInstance());t
+				blkOfrNew.setAuditoria(Auditoria.getNewInstance());
 				List<BulkOferta> bulkOfertas = blkAn.getBulkOferta();
 				if(Checks.esNulo(bulkOfertas)) {
 					bulkOfertas = new ArrayList<BulkOferta>();

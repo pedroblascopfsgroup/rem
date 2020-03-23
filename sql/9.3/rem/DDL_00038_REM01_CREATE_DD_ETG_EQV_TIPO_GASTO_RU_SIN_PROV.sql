@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=José Antonio Gigante Pamplona
---## FECHA_CREACION=20200319
+--## FECHA_CREACION=20200323
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-6606
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Crear tabla para gestionar los gastos con IVA
 --## VERSIONES:
 --##        0.1 Versión inicial 
+--##        0.2 Duplicado de DD_ETG_EQV_TIPO_GASTO_RU
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -60,32 +61,33 @@ DECLARE
 	
 	
   --Creamos la tabla
-  V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'(
-
-  DD_ETG_ID          			        NUMBER(16,0)            NOT NULL,          	
-  DD_TGA_ID			                  NUMBER(16,0)            NOT NULL,
-  DD_STG_ID		  	                NUMBER(16,0)            NOT NULL,
-  DD_ETG_CODIGO   			          VARCHAR2(20 CHAR)       NOT NULL,
-  DD_ETG_DESCRIPCION_POS	        VARCHAR2(100 CHAR),
-  DD_ETG_DESCRIPCION_LARGA_POS		VARCHAR2(250 CHAR),
-  DD_TPR_ID                       NUMBER(16,0),
-  COGRUG_POS                 			NUMBER(16,0),
-  COTACA_POS			                NUMBER(16,0),
-  COSBAC_POS              				NUMBER(16,0),
-  DD_ETG_DESCRIPCION_NEG	        VARCHAR2(100 CHAR),
-  DD_ETG_DESCRIPCION_LARGA_NEG		VARCHAR2(250 CHAR),
-  COGRUG_NEG                 			NUMBER(16,0),
-  COTACA_NEG			                NUMBER(16,0),
-  COSBAC_NEG              				NUMBER(16,0),
-  VERSION                         NUMBER(38,0)            DEFAULT 0 NOT NULL ENABLE,
-  USUARIOCREAR                    VARCHAR2(50 CHAR)       NOT NULL ENABLE,
-  FECHACREAR                      TIMESTAMP(6)            NOT NULL ENABLE,
-  USUARIOMODIFICAR                VARCHAR2(50 CHAR),
-  FECHAMODIFICAR                  TIMESTAMP(6),
-  USUARIOBORRAR                   VARCHAR2(50 CHAR),
-  FECHABORRAR                     TIMESTAMP(6),
-  BORRADO                         NUMBER(1,0)             DEFAULT 0 NOT NULL ENABLE
-  )'; 
+  V_MSQL := ' CREATE TABLE '||V_ESQUEMA||'.DD_ETG_EQV_TIPO_GASTO_RU_SIN_PROV 
+  AS SELECT 
+  DD_ETG_ID,          	
+  DD_TGA_ID,
+  DD_STG_ID,
+  DD_ETG_CODIGO,
+  DD_ETG_DESCRIPCION_POS,
+  DD_ETG_DESCRIPCION_LARGA_POS,
+  DD_TPR_ID,
+  COGRUG_POS,
+  COTACA_POS,
+  COSBAC_POS,
+  DD_ETG_DESCRIPCION_NEG,
+  DD_ETG_DESCRIPCION_LARGA_NEG,
+  COGRUG_NEG,
+  COTACA_NEG,
+  COSBAC_NEG,
+  VERSION,
+  USUARIOCREAR,
+  FECHACREAR,
+  USUARIOMODIFICAR,
+  FECHAMODIFICAR,
+  USUARIOBORRAR,
+  FECHABORRAR,
+  BORRADO
+  FROM '||V_ESQUEMA||'.DD_ETG_EQV_TIPO_GASTO_RU
+  '; 
     
 
 
@@ -118,7 +120,13 @@ DECLARE
 	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_ETQ_STA_SIN_PROV FOREIGN KEY (DD_STG_ID) REFERENCES '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO (DD_STG_ID) ON DELETE SET NULL)';
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_ETQ_TGA... Foreign key creada.');
-	
+
+  -- Creamos foreign key 
+  V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT FK_ETQ_TPR_ FOREIGN KEY (DD_TPR_ID) REFERENCES '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR (DD_TPR_ID)';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_ETQ_TPR_SIN_PROV... Foreign key creada.');
+
+
 	-- Creamos comentario	
 	V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';		
 	EXECUTE IMMEDIATE V_MSQL;

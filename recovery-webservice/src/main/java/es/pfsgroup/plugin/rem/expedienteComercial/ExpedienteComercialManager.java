@@ -11185,7 +11185,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			ofertaDto.setNumeroBulkAdvisoryNote(blkOfr.getBulkAdvisoryNote().toString());
 		}
 		//Nuevo registro idAdvisoryNote
-		if(!ofertaDao.tieneTareaActivaOrFinalizada("T006_AutorizacionPropietario", oferta.getNumOferta().toString())) {
+		if(!ofertaDao.tieneTareaActivaOrFinalizada("T017_ResolucionPROManzana", oferta.getNumOferta().toString())) {
 			BulkOferta blkOfrNew = new BulkOferta();		
 			Filter filtroNumeroBulkAN = genericDao.createFilter(FilterType.EQUALS, "numeroBulkAdvisoryNote", dto.getIdAdvisoryNote());
 			Filter filtroTipoBulk = genericDao.createFilter(FilterType.EQUALS, "tipoBulkAdvisoryNote.id", dto.getTipoBulkAdvisoryNote());
@@ -11195,7 +11195,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				blkOfrNew.setBulkAdvisoryNote(blkAn);
 				blkOfrNew.setOferta(oferta);
 				blkOfrNew.setPrimaryKey(new BulkOfertaPk(blkAn.getId(),oferta.getId()));
-				blkOfrNew.setAuditoria(Auditoria.getNewInstance());
+				blkOfrNew.setAuditoria(Auditoria.getNewInstance());t
 				List<BulkOferta> bulkOfertas = blkAn.getBulkOferta();
 				if(Checks.esNulo(bulkOfertas)) {
 					bulkOfertas = new ArrayList<BulkOferta>();

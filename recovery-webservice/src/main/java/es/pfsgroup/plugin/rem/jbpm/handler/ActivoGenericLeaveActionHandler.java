@@ -171,10 +171,14 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 	private void ofertaEnBulkAN(ExecutionContext executionContext, TareaExterna tareaExterna, String scriptValidacion)
 			throws Exception {
 		Oferta ofertaActual = ofertaApi.tareaExternaToOferta(tareaExterna);
+		List<ActivoOferta> listActOfr = null;
 		ActivoOferta actOfr = null;
 		BulkOferta bulkOferta  = null;
 		if(ofertaActual != null) {
-			actOfr = genericDao.get(ActivoOferta.class, genericDao.createFilter(FilterType.EQUALS, "oferta", ofertaActual.getId()));
+			listActOfr = genericDao.getList(ActivoOferta.class, genericDao.createFilter(FilterType.EQUALS, "oferta", ofertaActual.getId()));
+			if(!listActOfr.isEmpty()) {
+				actOfr = listActOfr.get(0);
+			}
 			bulkOferta = bulkOfertaDao.findOne(null, ofertaActual.getId());
 		}
 		

@@ -668,6 +668,11 @@ public class GenericController extends ParadiseJsonController{
 	}
 	
 	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComboSubtipoActivoFiltered(String codTipoActivo) {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubtipoActivoFiltered(codTipoActivo)));	
+	}
+	
+	@RequestMapping(method= RequestMethod.GET)
 	public ModelAndView getComitesResolucionLiberbank(Long idExp) throws Exception {
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComitesResolucionLiberbank(idExp)));
 	}
@@ -681,6 +686,5 @@ public class GenericController extends ParadiseJsonController{
 	public ModelAndView getPartidaPresupuestaria(Long idSubpartida){
 		return createModelAndViewJson(new ModelMap("data", genericApi.getPartidaPresupuestaria(idSubpartida)));	
 	}
-	
  }
 

@@ -390,6 +390,17 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 			            		store: '{comboSiNoBoolean}',
 			            		value: '{agrupacionficha.ventaSobrePlano}'
 			            	}
+						},
+						{
+							xtype: 'textfieldbase',
+							fieldLabel: HreRem.i18n('fieldLabel.agrupacion.codigo.on.sareb'),
+							name: 'codigoOnSareb',
+							reference: 'codigoOnSareb',
+							bind: {
+								value: '{agrupacionficha.codigoOnSareb}',
+								readOnly: '{!usuarioEditarAgrupaciones}',
+								hidden: '{!agrupacionficha.isObraNuevaSareb}'
+							}
 						}
 				]
           },

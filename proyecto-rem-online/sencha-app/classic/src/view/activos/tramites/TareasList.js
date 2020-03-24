@@ -51,7 +51,7 @@ Ext.define('HreRem.view.activos.tramites.TareasList', {
 	          	 handler: 'saltoResolucionExpediente',
 	          	 bind: {
 	          		 hidden: '{tramite.ocultarBotonResolucion}',
-	          		 disabled: '{tramite.estaEnTareaSiguienteResolucionExpediente}'
+	          		 disabled: '{tramite.deshabilitarBotonResolucion}'
 	          	 }
              },
              {

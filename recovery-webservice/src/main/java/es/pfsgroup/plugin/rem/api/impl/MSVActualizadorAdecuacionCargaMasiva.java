@@ -55,6 +55,8 @@ public class MSVActualizadorAdecuacionCargaMasiva extends AbstractMSVActualizado
 			Activo activo = activoDao.getActivoByNumActivo(Long.parseLong(exc.dameCelda(fila, COL_NUM_ACTIVO)));
 
 			ActivoPatrimonio activoPatrimonio = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());
+			
+			activoPatrimonio.setAdecuacionAlquilerAnterior(activoPatrimonio.getAdecuacionAlquiler());
 
 			if ((valorAdecuacion.equalsIgnoreCase("S")) || (valorAdecuacion.equalsIgnoreCase("SI"))) {
 				activoPatrimonio.setAdecuacionAlquiler((DDAdecuacionAlquiler) utilDiccionarioApi
@@ -66,6 +68,12 @@ public class MSVActualizadorAdecuacionCargaMasiva extends AbstractMSVActualizado
 				activoPatrimonio.setAdecuacionAlquiler(
 						(DDAdecuacionAlquiler) utilDiccionarioApi.dameValorDiccionarioByCod(DDAdecuacionAlquiler.class,
 								DDAdecuacionAlquiler.CODIGO_ADA_NO_APLICA));
+			} else if(valorAdecuacion.equalsIgnoreCase("EP")){
+				activoPatrimonio.setAdecuacionAlquiler((DDAdecuacionAlquiler) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDAdecuacionAlquiler.class, DDAdecuacionAlquiler.CODIGO_ADA_EN_PROCESO));
+			} else if(valorAdecuacion.equalsIgnoreCase("AI")){
+				activoPatrimonio.setAdecuacionAlquiler((DDAdecuacionAlquiler) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDAdecuacionAlquiler.class, DDAdecuacionAlquiler.CODIGO_ADA_ADECUADO_INCIDENTADO));
 			} else {
 				activoPatrimonio.setAdecuacionAlquiler((DDAdecuacionAlquiler) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDAdecuacionAlquiler.class, DDAdecuacionAlquiler.CODIGO_ADA_NULO));

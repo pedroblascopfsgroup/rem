@@ -2016,6 +2016,8 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				, gestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION);
 		Usuario usuarioSupervisorFormalizacion = gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expedienteOrigen
 				, gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION);
+		Usuario usuarioGestorController = gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expedienteOrigen
+				, gestorExpedienteComercialApi.CODIGO_GESTOR_CONTROLLER);
 		if (!Checks.esNulo(usuarioGestorFormalizacion)) {
 			this.agregarTipoGestorYUsuarioEnOfertaGENCAT(gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION, usuarioGestorFormalizacion.getUsername(), dto);
 		}
@@ -2024,7 +2026,10 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		}
 		if (!Checks.esNulo(usuarioSupervisorFormalizacion)) {
 			this.agregarTipoGestorYUsuarioEnOfertaGENCAT(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION, usuarioSupervisorFormalizacion.getUsername(), dto);
-		}		
+		}	
+		if (!Checks.esNulo(usuarioGestorController)) {
+			this.agregarTipoGestorYUsuarioEnOfertaGENCAT(gestorExpedienteComercialApi.CODIGO_GESTOR_CONTROLLER, usuarioGestorController.getUsername(), dto);
+		}
 	}
 	
 	private void agregarTipoGestorYUsuarioEnOfertaGENCAT(String codTipoGestor, String username, GestorEntidadDto dto) {

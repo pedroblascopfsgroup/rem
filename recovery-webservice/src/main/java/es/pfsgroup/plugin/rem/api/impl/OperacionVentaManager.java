@@ -257,7 +257,7 @@ public class OperacionVentaManager implements ParamReportsApi{
 			
 			mapaValores.put("TipoPropiedad",FileUtilsREM.stringify(this.getTipoPropiedadActivo(activo)));
 
-			Double participacion = activoOferta.getPorcentajeParticipacion()/100;
+			Double participacion = ((activoOferta.getImporteActivoOferta() * 100) / oferta.getImporteOferta())/100;
 			
 			Double importeA=new Double(0);
 			if(oferta.getImporteContraOferta() != null) {

@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=RLB
---## FECHA_CREACION=20190909
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20200320
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-5203
@@ -93,7 +93,7 @@ AS
           sin_informe_aprobado, sin_informe_aprobado_REM, revision, procedimiento_judicial, con_cargas, sin_acceso, ocupado_sintitulo, estado_portal_externo, DECODE (est_disp_com_codigo1, ''01'', 1, 0) AS es_condicionado,
           est_disp_com_codigo2,borrado
 
-     FROM (SELECT act.act_id, 
+     FROM (SELECT DISTINCT act.act_id, 
 				CASE WHEN (sps1.dd_sij_id is not null and sij.DD_SIJ_INDICA_POSESION = 0) 
                     THEN 1 
                     ELSE 
@@ -176,7 +176,7 @@ AS
                   LEFT JOIN '||V_ESQUEMA||'.act_reg_info_registral reg2 ON reg2.act_id = act.act_id AND reg2.reg_div_hor_inscrito = 0                                           -- DIVISIÓN HORIZONTAL NO INSCRITA
                   LEFT JOIN '||V_ESQUEMA||'.v_num_propietariosactivo npa ON npa.act_id = act.act_id                                            --PROINDIVISO (VARIOS PROPIETARIOS O 1 PROPIETARIO CON %PROP < 100)
                   LEFT JOIN '||V_ESQUEMA||'.vi_activos_con_cargas vcg ON vcg.act_id = act.act_id
-                  LEFT JOIN '||V_ESQUEMA||'.act_ico_info_comercial ico ON ico.act_id = act.act_id
+                  LEFT JOIN '||V_ESQUEMA||'.act_ico_info_comercial ico ON ico.act_id = act.act_id and ico.borrado = 0
                   LEFT JOIN '||V_ESQUEMA||'.vi_estado_actual_infmed vei ON vei.ico_id = ico.ico_id                                                                                          --SIN_INFORME_APROBADO
             	  LEFT JOIN '||V_ESQUEMA||'.V_ACT_ESTADO_DISP vact on vact.act_id = act.act_id
             WHERE act.borrado = 0)

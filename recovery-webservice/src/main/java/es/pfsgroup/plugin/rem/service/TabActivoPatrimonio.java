@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.rem.model.dd.*;
 import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -49,7 +47,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
-import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Component
 public class TabActivoPatrimonio implements TabActivoService {
@@ -81,8 +78,6 @@ public class TabActivoPatrimonio implements TabActivoService {
 	@Autowired
 	private ActivoApi activoApi;
 	
-	@Autowired
-	private UpdaterStateApi updaterState;
 	
 	@Autowired
 	private ParticularValidatorApi particularValidator;

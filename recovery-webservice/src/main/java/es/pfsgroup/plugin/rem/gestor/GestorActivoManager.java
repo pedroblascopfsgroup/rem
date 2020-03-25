@@ -13,6 +13,7 @@ import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -47,7 +48,6 @@ import es.pfsgroup.plugin.rem.model.GestorActivoHistorico;
 import es.pfsgroup.plugin.rem.model.GrupoUsuario;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  
  @Component
@@ -162,33 +162,28 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  		return inserccionOK;
  	}
  	
- 	@Override
- 	public void actualizarTareas(Long idActivo) {
- 		
- 		List<ActivoTramite> listaTramites = activoTramiteApi.getListaTramitesActivo(idActivo);
- 
- 		for (ActivoTramite tramite : listaTramites) {
- 			List<TareaExterna> listaTareas = activoTareaExternaApi.getActivasByIdTramiteTodas(tramite.getId());
- 			for(TareaExterna tareaExterna : listaTareas){
- 				EXTTareaProcedimiento tareaProcedimiento = (EXTTareaProcedimiento) tareaExterna.getTareaProcedimiento();
- 				
- 				UserAssigantionService userAssigantionService = userAssigantionServiceFactoryApi.getService(tareaProcedimiento.getCodigo());
- 				
- 				if(!(userAssigantionService instanceof TrabajoUserAssigantionService))
- 				{
- 					Usuario gestor = userAssigantionService.getUser(tareaExterna);
- 				
- 					if(!Checks.esNulo(gestor)){
- 						TareaActivo tareaActivo = ((TareaActivo)tareaExterna.getTareaPadre());
- 						tareaActivo.setUsuario(gestor);
- 					}
- 				}
- 			}
- 		}
- 
- 			
- 
- 	}
+	@Override
+	public void actualizarTareas(Long idActivo) {
+		Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		Filter tacBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		List<TareaActivo> listaTac = genericDao.getList(TareaActivo.class, filtroIdActivo, tacBorrado);
+
+		for (TareaActivo tareaActivo : listaTac) {
+			TareaExterna tareaExterna = tareaActivo.getTareaExterna();
+			if (!Checks.esNulo(tareaExterna)) {
+				TareaProcedimiento tareaProcedimiento = tareaExterna.getTareaProcedimiento();
+				if (!Checks.esNulo(tareaProcedimiento)) {
+					UserAssigantionService userAssigantionService = userAssigantionServiceFactoryApi.getService(tareaProcedimiento.getCodigo());
+					if (userAssigantionService != null && !(userAssigantionService instanceof TrabajoUserAssigantionService)) {
+						Usuario gestor = userAssigantionService.getUser(tareaExterna);
+						if (!Checks.esNulo(gestor)) {
+							tareaActivo.setUsuario(gestor);
+						}
+					}
+				}
+			}
+		}
+	}
  	
  	private void guardarHistoricoGestorAdicionalEntidad(GestorEntidad gee, Object obj) {
  		GestorActivoHistorico gah = new GestorActivoHistorico();

@@ -185,6 +185,12 @@ public class VGastosProveedorExcel implements Serializable {
 	
 	@Column(name="PTDA_PRESUPUESTARIA")
 	private String ptdaPresupuestaria;
+		
+	@Column(name="CONCEPTO_CONTABLE")
+	private String conceptoContable;
+	
+	@Column(name="PROVISION_FONDOS")
+	private String provisionFondos;
 	
 	@Transient
 	private boolean esGastoAgrupado; 
@@ -643,6 +649,22 @@ public class VGastosProveedorExcel implements Serializable {
 
 	public void setPtdaPresupuestaria(String ptdaPresupuestaria) {
 		this.ptdaPresupuestaria = ptdaPresupuestaria;
+	}
+
+	public String getConceptoContable() {
+		return conceptoContable;
+	}
+
+	public void setConceptoContable(String conceptoContable) {
+		this.conceptoContable = conceptoContable;
+	}
+
+	public String getProvisionFondos() {
+		return provisionFondos;
+	}
+
+	public void setProvisionFondos(String provisionFondos) {
+		this.provisionFondos = provisionFondos;
 	}	
 	
 	

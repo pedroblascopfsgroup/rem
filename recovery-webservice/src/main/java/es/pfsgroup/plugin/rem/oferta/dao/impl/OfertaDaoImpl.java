@@ -382,7 +382,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	@Override
 	@Transactional
 	public Boolean tieneTareaActivaOrFinalizada(String tarea, String numOferta) {
-		String sql = "SELECT SELECT COUNT(DISTINCT ECO.ECO_ID)" + 
+		String sql = "SELECT COUNT(DISTINCT ECO.ECO_ID)" + 
 				"		FROM ECO_EXPEDIENTE_COMERCIAL ECO" + 
 				"		INNER JOIN ACT_OFR ACTOFR ON ACTOFR.OFR_ID = ECO.OFR_ID" + 
 				"		INNER JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = ACTOFR.ACT_ID" + 

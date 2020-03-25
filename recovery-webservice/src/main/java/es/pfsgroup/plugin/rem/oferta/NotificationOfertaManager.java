@@ -534,7 +534,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				&& !Checks.estaVacio(oferta.getActivosOferta())
 				) {
 			for (ActivoOferta actOfr : oferta.getActivosOferta()) {
-				if (!Checks.esNulo(actOfr.getPrimaryKey().getActivo())&& !Checks.esNulo(actOfr.getPrimaryKey().getActivo().getIsDnd()) && actOfr.getPrimaryKey().getActivo().getIsDnd()) {
+				if (!Checks.esNulo(actOfr.getPrimaryKey().getActivo()) && actOfr.getPrimaryKey().getActivo().getIsDnd()) {
 						mandaCorreo=true;
 				}
 			}

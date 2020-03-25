@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20200308
+--## FECHA_CREACION=20200324
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-6440
@@ -45,8 +45,8 @@ DECLARE
 		T_TIPO_DATA('CAJAMAR','','',			 '0','0','1','1','0','0'),
 		T_TIPO_DATA('LIBERBANK','','',			 '0','1','1','1','1','0'),
 		T_TIPO_DATA('CERBERUS','DIVARIAN','',		 '1','0','1','1','0','1'),
-		T_TIPO_DATA('CERBERUS','APPLE - INMOBILIARIO','','0','0','1','1','0','0'),
-		T_TIPO_DATA('OTRA CARTERA','','',		 '0','0','1','1','0','0')
+		T_TIPO_DATA('CERBERUS','APPLE - INMOBILIARIO','','0','1','1','1','0','0'),
+		T_TIPO_DATA('OTRA CARTERA','','',		 '1','0','1','1','0','0')
 
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
@@ -59,12 +59,13 @@ DECLARE
     -- Comprobamos si existe la tabla   
     V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TABLA||''' and owner = '''||V_ESQUEMA||'''';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-    -- Si existe la tabla avisamos
+    -- Si existe la tabla borramos
     IF V_NUM_TABLAS = 1 THEN 
 
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA||'... Ya existe');  
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA||'... Ya existe. Se borrará.');
+        EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.'||V_TABLA||' ';
 		
-    ELSE
+    END IF;
 	
     --Creamos la tabla
     V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||'(
@@ -135,9 +136,7 @@ DECLARE
 
       END LOOP;
     COMMIT;
-    DBMS_OUTPUT.PUT_LINE('[FIN]: TABLA '||V_TABLA||' ACTUALIZADA CORRECTAMENTE ');
-    
-    END IF;
+    DBMS_OUTPUT.PUT_LINE('[FIN]: TABLA '||V_TABLA||' CREADA CORRECTAMENTE ');
 
 
 EXCEPTION

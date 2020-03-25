@@ -114,6 +114,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
@@ -198,7 +199,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
-import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
@@ -3524,14 +3524,15 @@ public class ActivoAdapter {
 	@Transactional(readOnly = false)
 	public void cambiarResponsableTrabajosActivos(Activo activo) {
 		if (!Checks.esNulo(activo)) {
-			List<ActivoTrabajo> listaTrabajos = activo.getActivoTrabajos();
-			if (DDTipoComercializacion.CODIGO_VENTA.equals(activo.getTipoComercializacion().getCodigo())) {
+			List<ActivoTrabajo> listaTrabajos = activo.getActivoTrabajos();					
+			Filter activoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());		
+			ActivoPublicacion actPublicacion = genericDao.get(ActivoPublicacion.class, activoFilter);			
+			if (DDTipoComercializacion.CODIGO_VENTA.equals(actPublicacion.getTipoComercializacion().getCodigo())) {
 				if (!Checks.estaVacio(listaTrabajos)) {
 					for (ActivoTrabajo activoTrabajo : listaTrabajos) {
 						Usuario usuResponsable = activoTrabajo.getTrabajo().getUsuarioResponsableTrabajo();
 						String estadoTrabajo = Checks.esNulo(activoTrabajo.getTrabajo().getEstado()) ? null : activoTrabajo.getTrabajo().getEstado().getCodigo();
-						Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo,
-								GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+						Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
 						if (DDEstadoTrabajo.ESTADO_SOLICITADO.equals(estadoTrabajo)
 								|| DDEstadoTrabajo.ESTADO_EN_TRAMITE.equals(estadoTrabajo)
 								|| DDEstadoTrabajo.ESTADO_IMPOSIBLE_OBTENCION.equals(estadoTrabajo)
@@ -3555,11 +3556,6 @@ public class ActivoAdapter {
 		}
 	}
  
-
-
-
-
-
 
 	private void borrarGestor(Activo activo, String tipoGestorCodigo) {
 

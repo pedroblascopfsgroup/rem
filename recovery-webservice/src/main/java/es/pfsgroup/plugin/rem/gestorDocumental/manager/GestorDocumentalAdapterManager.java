@@ -158,7 +158,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
 		if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoTitulo()) && DDTipoTituloActivo.UNIDAD_ALQUILABLE.equals(activo.getTipoTitulo().getCodigo())) {
 			codigoEstado = CODIGO_ESTADO_UA;
-		}else if (!Checks.esNulo(codigoEstado)) {
+		}else if (codigoEstado != null) {
 			if (!codigoEstado.equals(DDEstadoActivo.ESTADO_ACTIVO_SUELO) && !codigoEstado.equals(DDEstadoActivo.ESTADO_ACTIVO_EN_CONSTRUCCION_EN_CURSO) &&
 					!codigoEstado.equals(DDEstadoActivo.ESTADO_ACTIVO_TERMINADO)) {
 				codigoEstado = DDEstadoActivo.ESTADO_ACTIVO_TERMINADO;
@@ -270,7 +270,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
 		if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoTitulo()) && DDTipoTituloActivo.UNIDAD_ALQUILABLE.equals(activo.getTipoTitulo().getCodigo())) {
 			codigoEstado = CODIGO_ESTADO_UA;
-		}else if (!Checks.esNulo(codigoEstado)) {
+		}else if (codigoEstado != null) {
 			if (!codigoEstado.equals(DDEstadoActivo.ESTADO_ACTIVO_SUELO) && !codigoEstado.equals(DDEstadoActivo.ESTADO_ACTIVO_EN_CONSTRUCCION_EN_CURSO) &&
 					!codigoEstado.equals(DDEstadoActivo.ESTADO_ACTIVO_TERMINADO)) {
 				codigoEstado = DDEstadoActivo.ESTADO_ACTIVO_TERMINADO;
@@ -386,7 +386,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 			logger.debug(gex.getMessage());
 		}
 
-		return !Checks.esNulo(respuesta) && "".equals(respuesta.getCodigoError());
+		return respuesta != null && "".equals(respuesta.getCodigoError());
 	}
 	
 	@Override	
@@ -582,12 +582,12 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		
 		MapeoPropietarioGestorDocumental mgp = null;
 		
-		if(!Checks.esNulo(propietario)) {
+		if(propietario != null) {
 			mgp = genericDao.get(MapeoPropietarioGestorDocumental.class, 
 					genericDao.createFilter(FilterType.EQUALS, "propietario", propietario));
 		}	
 		
-		if(Checks.esNulo(mgp) || Checks.esNulo(mgp.getClienteGestorDocumental())) return "";
+		if(mgp == null || (mgp != null && mgp.getClienteGestorDocumental() == null)) return "";
 		
 		return mgp.getClienteGestorDocumental();
 	}

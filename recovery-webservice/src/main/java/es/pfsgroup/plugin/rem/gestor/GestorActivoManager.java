@@ -185,16 +185,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 		}
 	}
  	
- 	private void guardarHistoricoGestorAdicionalEntidad(GestorEntidad gee, Object obj) {
- 		GestorActivoHistorico gah = new GestorActivoHistorico();
- 		gah.setUsuario(gee.getUsuario());
- 		gah.setAuditoria(Auditoria.getNewInstance());
- 		gah.setActivo((Activo) obj);
- 		gah.setTipoGestor(gee.getTipoGestor());
- 		gah.setFechaDesde(new Date());
- 		gestorEntidadHistoricoDao.save(gah);
- 	}
- 	
  	private void actualizaFechaHastaHistoricoGestorAdicionalActivo(GestorActivo gac) {
  		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", gac.getActivo().getId() );
  		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "tipoGestor.id", gac.getTipoGestor().getId());
@@ -410,7 +400,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  					break;
  				}
  			}
- 			if (!Checks.esNulo(proveedorTecnico)) {
+ 			if (proveedorTecnico != null) {
  				Filter filterGee = genericDao.createFilter(FilterType.EQUALS, "id", proveedorTecnico.getId());
  				GestorEntidad gestorEntidad = genericDao.get(GestorEntidad.class, filterGee, filterAuditoria);
  				Filter filterPvc = genericDao.createFilter(FilterType.EQUALS, "usuario.id",

@@ -77,13 +77,13 @@ public class NotificatorServiceODocCHABSolicitantePeticion extends AbstractNotif
 			DDCartera cartera = tramite.getActivo().getCartera();
 			Usuario gestorAdmin = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ADMISION);
 			Usuario gestorAct = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
-			if (!Checks.esNulo(peticionario) && peticionario.equals(gestorAdmin) && ( cartera.equals(DDCartera.CODIGO_CARTERA_BANKIA)  ||
+			if (peticionario != null && peticionario.equals(gestorAdmin) && ( cartera.equals(DDCartera.CODIGO_CARTERA_BANKIA)  ||
 																						cartera.equals(DDCartera.CODIGO_CARTERA_SAREB) ||
 																						cartera.equals(DDCartera.CODIGO_CARTERA_TANGO) ||
 																						cartera.equals(DDCartera.CODIGO_CARTERA_GIANTS))) {
 				return;
 			}
-			if (!Checks.esNulo(peticionario) && peticionario.equals(gestorAct) && cartera.equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
+			if (peticionario != null && peticionario.equals(gestorAct) && cartera.equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
 				return;
 			}
 
@@ -97,7 +97,7 @@ public class NotificatorServiceODocCHABSolicitantePeticion extends AbstractNotif
 			}
 
 			// si es gestor interno y el solicitante es igual que el usuario de la tarea actual, no se envia el correo.
-			if (!esProveedorExterno && peticionario.equals(usuarioTareaActivo)) {
+			if (!esProveedorExterno && peticionario != null && peticionario.equals(usuarioTareaActivo)) {
 				return;
 			}
 

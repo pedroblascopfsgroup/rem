@@ -52,9 +52,11 @@ public class NotificatorServiceODocEncargoProveedor extends AbstractNotificatorS
 			List<String> mailsPara = new ArrayList<String>();
 			List<String> mailsCC = new ArrayList<String>();
 
-		    String correos = proveedor.getEmail();
-		    Collections.addAll(mailsPara, correos.split(";"));
-			mailsCC.add(this.getCorreoFrom());
+			if(proveedor != null) {
+				String correos = proveedor.getEmail();
+			    Collections.addAll(mailsPara, correos.split(";"));
+				mailsCC.add(this.getCorreoFrom());
+			}
 
 			String descripcionTrabajo = !Checks.esNulo(tramite.getTrabajo().getDescripcion())? (tramite.getTrabajo().getDescripcion() + " - ") : "";
 

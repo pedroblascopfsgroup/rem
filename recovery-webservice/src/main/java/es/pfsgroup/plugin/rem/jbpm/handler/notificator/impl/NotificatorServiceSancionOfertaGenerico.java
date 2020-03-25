@@ -161,7 +161,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	
 	protected void generaNotificacionReserva(ActivoTramite tramite, Date fechaFirma) {
 
-		if (tramite.getActivo() != null && tramite.getTrabajo() != null) {
+		if (tramite != null && tramite.getActivo() != null && tramite.getTrabajo() != null) {
 			sendNotificationReserva(tramite, getExpComercial(tramite), fechaFirma);
 		}
 
@@ -935,13 +935,16 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			cuerpo = cuerpo
 					+ "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";
 
-			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(oferta,tramite);
-			dtoSendNotificator.setTitulo(asunto);
+			if(oferta != null) {
+				DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(oferta,tramite);
+				dtoSendNotificator.setTitulo(asunto);
 
-			String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
+				String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
 
-			enviaNotificacionGenerico(oferta.getActivoPrincipal(), asunto, cuerpoCorreo, false, oferta,
-					destinatarios);
+				enviaNotificacionGenerico(oferta.getActivoPrincipal(), asunto, cuerpoCorreo, false, oferta,
+						destinatarios);
+			}
+			
 		} catch (Exception e) {
 			logger.error("Error creando segundo mail de aprobacion",e);
 			correoError(oferta, e);

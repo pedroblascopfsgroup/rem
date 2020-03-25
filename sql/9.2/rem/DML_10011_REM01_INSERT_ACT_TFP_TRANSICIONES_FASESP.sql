@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Cristian Montoya
---## FECHA_CREACION=20191017
+--## AUTOR=Adrián Molina
+--## FECHA_CREACION=20200320
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-8104
+--## INCIDENCIA_LINK=REMVIP-6495
 --## PRODUCTO=NO
 --## FINALIDAD: Poblar la tabla ACT_TFP_TRANSICIONES_FASESP, con todas las combinaciones posibles entre origen y destino   
 --## (CROSS JOIN) eliminando las combinaciones en las que TFP_ORIGEN = TFP_DESTINO         
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 Añadidos nulos como origen y destino.
+--##        0.3 Corrección duplicados.
 --##########################################
 --*/
 
@@ -33,7 +34,7 @@ DECLARE
     V_TABLA_DATOS VARCHAR2(150 CHAR):= 'DD_SFP_SUBFASE_PUBLICACION'; -- Vble. con el nombre de la tabla.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_USUARIO_CREAR VARCHAR2(20 CHAR) := 'HREOS-8104'; -- Vble. auxiliar para almacenar el usuario crear	    
+    V_USUARIO_CREAR VARCHAR2(20 CHAR) := 'REMVIP-6495'; -- Vble. auxiliar para almacenar el usuario crear
     
     
 BEGIN	
@@ -55,21 +56,21 @@ BEGIN
             --Si existe lo modificamos
             DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO');
             V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (TFP_ORIGEN, TFP_DESTINO, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
-                SELECT C1.DD_SFP_CODIGO, C2.DD_SFP_CODIGO, 0, '''|| V_USUARIO_CREAR ||''', SYSDATE, 0
-                FROM '||V_ESQUEMA||'.'||V_TABLA_DATOS||' C1 CROSS JOIN '||V_ESQUEMA||'.'||V_TABLA_DATOS||' C2 WHERE C1.DD_SFP_CODIGO != C2.DD_SFP_CODIGO
-                AND NOT EXISTS (SELECT 1 FROM ACT_TFP_TRANSICIONES_FASESP T WHERE T.TFP_ORIGEN = C1.DD_SFP_CODIGO AND T.TFP_DESTINO = C2.DD_SFP_CODIGO)';
+                SELECT C1.DD_SFP_ID, C2.DD_SFP_ID, 0, '''|| V_USUARIO_CREAR ||''', SYSDATE, 0
+                FROM '||V_ESQUEMA||'.'||V_TABLA_DATOS||' C1 CROSS JOIN '||V_ESQUEMA||'.'||V_TABLA_DATOS||' C2 WHERE C1.DD_SFP_ID != C2.DD_SFP_ID
+                AND NOT EXISTS (SELECT 1 FROM ACT_TFP_TRANSICIONES_FASESP T WHERE T.TFP_ORIGEN = C1.DD_SFP_ID AND T.TFP_DESTINO = C2.DD_SFP_ID)';
             EXECUTE IMMEDIATE V_MSQL;
           
             V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (TFP_ORIGEN, TFP_DESTINO, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
-                SELECT NULL, SFP.DD_SFP_CODIGO, 0, '''|| V_USUARIO_CREAR ||''', SYSDATE, 0
+                SELECT NULL, SFP.DD_SFP_ID, 0, '''|| V_USUARIO_CREAR ||''', SYSDATE, 0
                 FROM '||V_ESQUEMA||'.'||V_TABLA_DATOS||' SFP
-                WHERE NOT EXISTS (SELECT 1 FROM ACT_TFP_TRANSICIONES_FASESP T WHERE T.TFP_ORIGEN = NULL AND T.TFP_DESTINO = SFP.DD_SFP_CODIGO)';
+                WHERE NOT EXISTS (SELECT 1 FROM ACT_TFP_TRANSICIONES_FASESP T WHERE T.TFP_ORIGEN IS NULL AND T.TFP_DESTINO = SFP.DD_SFP_ID)';
             EXECUTE IMMEDIATE V_MSQL;
             
             V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (TFP_ORIGEN, TFP_DESTINO, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
-                SELECT SFP.DD_SFP_CODIGO, NULL, 0, '''|| V_USUARIO_CREAR ||''', SYSDATE, 0
+                SELECT SFP.DD_SFP_ID, NULL, 0, '''|| V_USUARIO_CREAR ||''', SYSDATE, 0
                 FROM '||V_ESQUEMA||'.'||V_TABLA_DATOS||' SFP
-                WHERE NOT EXISTS (SELECT 1 FROM ACT_TFP_TRANSICIONES_FASESP T WHERE T.TFP_ORIGEN = SFP.DD_SFP_CODIGO AND T.TFP_DESTINO = NULL)';
+                WHERE NOT EXISTS (SELECT 1 FROM ACT_TFP_TRANSICIONES_FASESP T WHERE T.TFP_ORIGEN = SFP.DD_SFP_ID AND T.TFP_DESTINO IS NULL)';
             EXECUTE IMMEDIATE V_MSQL;
             
             DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');

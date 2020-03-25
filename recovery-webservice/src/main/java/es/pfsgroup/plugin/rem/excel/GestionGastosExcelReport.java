@@ -28,6 +28,9 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 	private static final String CAB_NUM_ACTIVO = "Nº Activo";
 	private static final String CAB_MOTIVO_RECHAZO_PROP = "Motivo Rechazo Prop.";
 	private static final String CAB_PTDA_PRESUPUESTARIA = "Partida Presupuestaria";
+	private static final String CAB_CONCEPTO_CONTABLE = "Concepto Contable";
+	private static final String CAB_PROVISION_FONDOS = "Provisión fondos";
+	
 	private List<VGastosProveedorExcel> listaGastosProveedor;
 
 	public GestionGastosExcelReport(List<VGastosProveedorExcel> listaGastosProveedor2) {
@@ -58,6 +61,8 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 		listaCabeceras.add(CAB_SUBCARTERA);
 		listaCabeceras.add(CAB_MOTIVO_RECHAZO_PROP);
 		listaCabeceras.add(CAB_PTDA_PRESUPUESTARIA);
+		listaCabeceras.add(CAB_CONCEPTO_CONTABLE);
+		listaCabeceras.add(CAB_PROVISION_FONDOS);
 		
 		return listaCabeceras;
 	}
@@ -89,6 +94,8 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 			fila.add(gastoProveedor.getSubentidadPropietariaDescripcion());
 			fila.add(gastoProveedor.getMotivoRechazoProp());
 			fila.add(gastoProveedor.getPtdaPresupuestaria());
+			fila.add(gastoProveedor.getConceptoContable());
+			fila.add(gastoProveedor.getProvisionFondos());
 
 			valores.add(fila);
 		}

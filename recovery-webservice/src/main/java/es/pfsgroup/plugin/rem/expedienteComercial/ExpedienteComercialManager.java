@@ -586,9 +586,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Oferta oferta = expedienteComercial.getOferta();
 		Visita visitaOferta = oferta.getVisita();
 		Oferta ofertaPrincipal = null;
-		Filter f = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOfertaCodigo());
-		DDClaseOferta claseOferta = genericDao.get(DDClaseOferta.class, f);
+		DDClaseOferta claseOferta = null;
+		
 		if(!Checks.esNulo(dto.getClaseOfertaCodigo()) && Checks.esNulo(oferta.getClaseOferta())) {
+			Filter f = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOfertaCodigo());
+			claseOferta = genericDao.get(DDClaseOferta.class, f);
+			
 			if(!Checks.esNulo(claseOferta))
 				oferta.setClaseOferta(claseOferta);
 		}

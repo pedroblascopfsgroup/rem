@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=Mª José Ponce
---## FECHA_CREACION=20200205
+--## AUTOR=Juan Beltrán
+--## FECHA_CREACION=20200319
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-9359
+--## INCIDENCIA_LINK=REMVIP-6604
 --## PRODUCTO=NO
 --## 
 --## Finalidad:  Creación del SP SP_EXT_IN_LLAVE
@@ -15,6 +15,7 @@
 --##        0.2-Modificar parámetros SP HREOS-9065
 --##        0.3-Modificar parámetros de fecha SP HREOS-9344
 --##        0.4-Añadir lógica al SP HREOS-9359
+--##        0.5-Modificar parámetros SP REMVIP-6604
 --#########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -100,7 +101,7 @@ BEGIN
 	
    IF (DD_TTE_CODIGO_POSEEDOR NOT IN('01', '02', '03', '04', '05', '06', '07')) THEN
    
-    V_LLV_COD_TENEDOR_NO_PVE := LLV_COD_TENEDOR_POSEEDOR;
+    V_LLV_COD_TENEDOR_NO_PVE := SUBSTR(LLV_COD_TENEDOR_POSEEDOR, 1,20);
     V_LLV_COD_TENEDOR_POSEEDOR := '';
 
    ELSE

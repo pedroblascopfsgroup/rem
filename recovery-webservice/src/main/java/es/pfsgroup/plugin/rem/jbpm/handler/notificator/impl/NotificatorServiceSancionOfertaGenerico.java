@@ -364,12 +364,18 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		String asunto = null, cuerpo = null;
 		
 		Oferta oferta = expediente.getOferta();
+
+		Activo activo = oferta.getActivoPrincipal();
 		
 		ArrayList<String> destinatarios = getDestinatariosNotificacion(oferta.getActivoPrincipal(), oferta, expediente);
 		
 		Usuario buzonRem = usuarioManager.getByUsername(BUZON_REM);
 		Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
-		Usuario buzonOfertaApple = usuarioManager.getByUsername(BUZON_OFR_APPLE);
+		Usuario buzonOfertaApple = null;
+
+		if(activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_APPLE_INMOBILIARIO)) {
+			buzonOfertaApple = usuarioManager.getByUsername(BUZON_OFR_APPLE);
+		}
 		
 		asunto = "Notificación de reserva de la oferta " + oferta.getNumOferta();
 		
@@ -386,7 +392,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		if (!Checks.esNulo(buzonPfs)) {
 			destinatarios.add(buzonPfs.getEmail());
 		}
-		if(!Checks.esNulo(buzonOfertaApple)) {
+		if(buzonOfertaApple != null) {
 			destinatarios.add(buzonOfertaApple.getEmail());
 		}
 

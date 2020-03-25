@@ -15,16 +15,17 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.dd.DDApruebaDeniega;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 
 @Component
 public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements UpdaterService {
@@ -37,9 +38,6 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
-	
-	@Autowired
-	private UtilDiccionarioApi utilDiccionarioApi;
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaRespuestaOfertanteCES.class);
 	 
@@ -56,6 +54,9 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 	 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 	 		ExpedienteComercial expediente = expedienteComercialApi
 	 				.expedienteComercialPorOferta(ofertaAceptada.getId());
+	 		
+	 		Activo activo = ofertaAceptada.getActivoPrincipal();
+	 		
 	 		for (TareaExternaValor valor : valores) {			
 	 			if (FECHA_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 	 				SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd");
@@ -86,6 +87,14 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 					
 					ofertaAceptada.setImporteContraofertaOfertanteCES(nuevoImporte);
 					ofertaAceptada.setImporteContraOferta(nuevoImporte);
+					
+					if(activo != null && activo.getSubcartera() != null &&
+							(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())
+							|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
+						String codigoBulk = nuevoImporte > 750000d ? DDSinSiNo.CODIGO_SI : DDSinSiNo.CODIGO_NO;
+						
+						ofertaAceptada.setSinoExclusionBulk(genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoBulk)));
+					}
 
 					// Actualizar honorarios para el nuevo importe de contraoferta.
 					expedienteComercialApi.actualizarHonorariosPorExpediente(expediente.getId());

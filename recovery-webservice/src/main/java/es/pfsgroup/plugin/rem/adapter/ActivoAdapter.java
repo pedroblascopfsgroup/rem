@@ -196,6 +196,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
@@ -3784,6 +3785,15 @@ public class ActivoAdapter {
 					"codigo", DDOrigenComprador.CODIGO_ORC_HRE));
 			oferta.setOrigenComprador(origenComprador);
 			oferta.setGestorComercialPrescriptor(ofertaApi.calcularGestorComercialPrescriptorOferta(oferta));
+			
+			if(activo != null && activo.getSubcartera() != null &&
+					(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
+				String codigoBulk = Double.parseDouble(dto.getImporteOferta()) > 750000d 
+						? DDSinSiNo.CODIGO_SI : DDSinSiNo.CODIGO_NO;
+				
+				oferta.setSinoExclusionBulk(genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoBulk)));
+			}
 			
 			ofertaCreada = genericDao.save(Oferta.class, oferta);
 			

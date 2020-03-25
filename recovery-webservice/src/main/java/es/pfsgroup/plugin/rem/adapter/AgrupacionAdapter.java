@@ -2262,7 +2262,7 @@ public class AgrupacionAdapter {
 	public Oferta createOfertaAgrupacion(DtoOfertasFilter dto) throws Exception {
 
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(dto.getIdAgrupacion());
-		
+		Activo activo = null;
 		Oferta ofertaNueva = null;
 
 		// Comprobar tipo oferta compatible con tipo agrupacion
@@ -2292,6 +2292,10 @@ public class AgrupacionAdapter {
 			// activo y contrastar con la oferta.
 			if (!Checks.esNulo(activos.getActivo().getActivoPublicacion()) && !Checks.esNulo(activos.getActivo().getActivoPublicacion().getTipoComercializacion())) {
 				String comercializacion = activos.getActivo().getActivoPublicacion().getTipoComercializacion().getCodigo();
+				
+				if(activo == null) {
+					activo = activos.getActivo();
+				}
 
 				if (DDTipoOferta.CODIGO_VENTA.equals(dto.getTipoOferta())
 						&& DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(comercializacion)) {
@@ -2435,6 +2439,15 @@ public class AgrupacionAdapter {
 			
 
 			oferta.setGestorComercialPrescriptor(ofertaApi.calcularGestorComercialPrescriptorOferta(oferta));
+			
+			if(activo != null && activo.getSubcartera() != null &&
+					(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
+				String codigoBulk = Double.parseDouble(dto.getImporteOferta()) > 750000d 
+						? DDSinSiNo.CODIGO_SI : DDSinSiNo.CODIGO_NO;
+				
+				oferta.setSinoExclusionBulk(genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoBulk)));
+			}
 
 			ofertaNueva = genericDao.save(Oferta.class, oferta);
 

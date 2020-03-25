@@ -392,7 +392,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		if (!Checks.esNulo(buzonPfs)) {
 			destinatarios.add(buzonPfs.getEmail());
 		}
-		if(!Checks.esNulo(buzonOfertaApple)) {
+		if(buzonOfertaApple != null) {
 			destinatarios.add(buzonOfertaApple.getEmail());
 		}
 

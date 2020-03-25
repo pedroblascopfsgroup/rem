@@ -184,7 +184,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				return error;
 			}
 			
-			if(!DDEstadoProvisionGastos.CODIGO_RECHAZADO_SUBSANABLE.equals(codEstadoProvision)) {
+			if(codEstadoProvision == null || !DDEstadoProvisionGastos.CODIGO_RECHAZADO_SUBSANABLE.equals(codEstadoProvision)) {
 				if(Checks.esNulo(gasto.getExisteDocumento()) || !BooleanUtils.toBoolean(gasto.getExisteDocumento())) {
 					error = messageServices.getMessage(VALIDACION_DOCUMENTO_ADJUNTO_GASTO);
 					return error;

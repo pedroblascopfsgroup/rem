@@ -113,7 +113,7 @@ public class MSVActualizadorGestor extends AbstractMSVActualizador implements MS
 				usuario = genericDao.get(Usuario.class, filtroUsuario, filtroBorrado);
 			}
 			
-			if (!Checks.esNulo(activo)) {
+			if (activo != null) {
 				// Insert y/o Update API Primario
 				if (!Checks.esNulo(codApiPrimario) && !PONER_NULL_A_APIS.equals(codApiPrimario)) {
 					Filter codProveedorFilter = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", Long.valueOf(codApiPrimario));
@@ -241,7 +241,7 @@ public class MSVActualizadorGestor extends AbstractMSVActualizador implements MS
 				}
 			}
 			
-			if (!Checks.esNulo(tipoGestor) && !Checks.esNulo(usuario)) {
+			if (tipoGestor != null && !Checks.esNulo(usuario)) {
 				if (!Checks.esNulo(activo)) {
 					GestorEntidadDto dto = new GestorEntidadDto();
 					dto.setIdEntidad(activo.getId());
@@ -255,7 +255,7 @@ public class MSVActualizadorGestor extends AbstractMSVActualizador implements MS
 					ActivoLoteComercial agrupacionTemp = (ActivoLoteComercial) agrupacion;
 					agrupacionTemp.setUsuarioGestorComercial(usuario);
 					activoAgrupacionApi.saveOrUpdate(agrupacionTemp);
-				} else if (!Checks.esNulo(expediente)) {
+				} else if (expediente != null) {
 					GestorEntidadDto dto = new GestorEntidadDto();
 					dto.setIdEntidad(expediente.getId());
 					dto.setIdUsuario(usuario.getId());

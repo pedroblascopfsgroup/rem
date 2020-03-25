@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Carles Molins
---## FECHA_CREACION=20200113
+--## FECHA_CREACION=20200323
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-6048
@@ -230,6 +230,8 @@ BEGIN
 	
 		         -- Suma de totales
 		         v_total := v_total_entorno + v_total_edificio + v_total_interior;
+		         
+		         DBMS_OUTPUT.PUT_LINE('	[INFO] Act_id:'||v_act_id||' | Cálculo total:'||v_total||' = v_total_entorno:'||v_total_entorno||' + v_total_edificio:'||v_total_edificio||' + v_total_interior:'||v_total_interior);
 		      END LOOP;
 		
 		ELSE
@@ -346,6 +348,8 @@ BEGIN
 	
 		         -- Suma de totales
 		         v_total := v_valor_inicial_bankia + v_total_entorno + v_total_edificio + v_total_interior;
+		         
+		         DBMS_OUTPUT.PUT_LINE('	[INFO] Act_id:'||v_act_id||' | Cálculo total:'||v_total||' = v_valor_inicial_bankia:'||v_valor_inicial_bankia||' + v_total_entorno:'||v_total_entorno||' + v_total_edificio:'||v_total_edificio||' + v_total_interior:'||v_total_interior);
 		      END LOOP;
 		    
 		END IF;

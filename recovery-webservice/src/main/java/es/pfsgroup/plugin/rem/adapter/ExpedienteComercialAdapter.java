@@ -379,10 +379,12 @@ public class ExpedienteComercialAdapter {
 		
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			if (!Checks.esNulo(subtipoDocumento)) {
-				if (DDSubtipoDocumentoExpediente.CODIGO_ADVISORY_NOTE.equals(subtipoDocumento.getCodigo()) &&
+				if ((DDSubtipoDocumentoExpediente.CODIGO_ADVISORY_NOTE.equals(subtipoDocumento.getCodigo()) ||
+						DDSubtipoDocumentoExpediente.CODIGO_ADVISORY_NOTE_FIRMADO_ADVISORY.equals(subtipoDocumento.getCodigo()) ||
+								DDSubtipoDocumentoExpediente.CODIGO_ADVISORY_NOTE_FIRMADO_PROPIEDAD.equals(subtipoDocumento.getCodigo())) &&
 						DDCartera.CODIGO_CARTERA_CERBERUS.equals(expedienteComercial.getOferta().getActivoPrincipal().getCartera().getCodigo()) && 
-						DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(expedienteComercial.getOferta().getActivoPrincipal().getSubcartera().getCodigo()) ||
-						DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(expedienteComercial.getOferta().getActivoPrincipal().getSubcartera().getCodigo())) {
+						(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(expedienteComercial.getOferta().getActivoPrincipal().getSubcartera().getCodigo()) ||
+								DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(expedienteComercial.getOferta().getActivoPrincipal().getSubcartera().getCodigo()))) {
 					//Comprobamos que tengan lo subtipos de documentos apropiados.
 					BulkOferta blkOfr = bulkOfertaDao.findOne(null, expedienteComercial.getOferta().getId());
 					//Comprobamos que la oferta pertenezca un Bulk.

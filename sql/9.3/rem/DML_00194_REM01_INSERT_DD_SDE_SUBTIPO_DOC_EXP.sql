@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20200325
+--## FECHA_CREACION=20200326
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-9530
@@ -37,7 +37,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('65','Advisory Note Firmado Propiedad','Advisory Note Firmado Propiedad','OP-09-ACUE-49')
+        T_TIPO_DATA('68','Advisory Note Firmado Propiedad','Advisory Note Firmado Propiedad','OP-09-ACUE-49')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 

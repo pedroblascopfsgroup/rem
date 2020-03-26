@@ -40,7 +40,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
         -- DD_SDE_CODIGO  DD_SDE_DESCRIPCION  DD_SDE_DESCRIPCION_LARGA  
-        T_TIPO_DATA('63', 'Advisory Note Advisory', 'Advisory Note Advisory')
+        T_TIPO_DATA('63', 'Advisory Note Firmado Advisory', 'Advisory Note Firmado Advisory')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

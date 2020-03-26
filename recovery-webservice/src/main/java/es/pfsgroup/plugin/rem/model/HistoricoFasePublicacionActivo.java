@@ -41,7 +41,7 @@ public class HistoricoFasePublicacionActivo implements Serializable, Auditable {
 
 	@Id
     @Column(name = "HFP_ID")
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.SEQUENCE)
     private Long id;
 	
 	@ManyToOne(fetch = FetchType.LAZY)

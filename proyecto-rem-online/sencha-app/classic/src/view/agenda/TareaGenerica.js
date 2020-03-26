@@ -2557,16 +2557,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     T017_RecomendCESValidacion: function(){
     	var me = this;
     	var comboRespuesta = me.down('[name=comboRespuesta]'),
-    		fechaRespuesta = me.down('[name=fechaRespuesta]'),
-    		observaciones = me.down('[name=observaciones]');
+    		fechaRespuesta = me.down('[name=fechaRespuesta]');
     		
     		me.campoObligatorio(comboRespuesta);
     		comboRespuesta.validate();
     		me.campoObligatorio(fechaRespuesta);
-    		me.campoObligatorio(observaciones);
     		me.desbloquearCampo(fechaRespuesta);
-    		me.desbloquearCampo(observaciones);
-    		observaciones.validate();
 			fechaRespuesta.validate();
     },
     T017_ResolucionPROManzanaValidacion: function () {

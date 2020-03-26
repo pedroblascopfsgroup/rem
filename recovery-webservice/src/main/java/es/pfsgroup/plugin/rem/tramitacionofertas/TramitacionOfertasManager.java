@@ -334,22 +334,20 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 					}
 				}
 
-				List<ActivoValoraciones> valoraciones = activo.getValoracion();
-
-				for (ActivoValoraciones valoracion : valoraciones) {
-					String codigoValoracion = valoracion.getTipoPrecio().getCodigo();
-					if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK.equals(codigoValoracion)) {
-						vnc += valoracion.getImporte();
-					} else if (DDTipoPrecio.CODIGO_TPC_VALOR_RAZONABLE_LBK.equals(codigoValoracion)) {
-						vr += valoracion.getImporte();
-					}
-				}
-
 				// Si son ofertas individuales o principales se calculan ellas solas
 			} else {
-				vnc = 0.1;
-				vr = 0.1;
 				cco = 0.1;
+			}
+			
+			List<ActivoValoraciones> valoraciones = activo.getValoracion();
+
+			for (ActivoValoraciones valoracion : valoraciones) {
+				String codigoValoracion = valoracion.getTipoPrecio().getCodigo();
+				if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK.equals(codigoValoracion)) {
+					vnc += valoracion.getImporte();
+				} else if (DDTipoPrecio.CODIGO_TPC_VALOR_RAZONABLE_LBK.equals(codigoValoracion)) {
+					vr += valoracion.getImporte();
+				}
 			}
 
 			pvn = pvb - cco;

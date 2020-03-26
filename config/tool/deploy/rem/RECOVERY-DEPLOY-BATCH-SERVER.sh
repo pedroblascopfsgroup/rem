@@ -56,6 +56,7 @@ chmod a+rx $BASE_DIR/shells/*.sh
 chmod -R 755 $BASE_DIR/shells/ftp
 rm -rf $BASE_DIR/programas/etl/apr_*
 cp etl/* $BASE_DIR/programas/etl/
+cp -r templates/* $BASE_DIR/control/etl/output/templates/
 cd $BASE_DIR/programas/etl/
 for etl in `ls *.zip`
 do

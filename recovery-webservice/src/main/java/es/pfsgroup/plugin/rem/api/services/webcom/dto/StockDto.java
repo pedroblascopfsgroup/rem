@@ -359,7 +359,10 @@ public class StockDto implements WebcomRESTDto{
 	
 	@WebcomRequired
 	private LongDataType idProveedorEspejoRem;
-	
+
+	@WebcomRequired
+	private BooleanDataType perimetroMacc;
+
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
 	}
@@ -1014,6 +1017,13 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setIdProveedorEspejoRem(LongDataType idProveedorEspejoRem) {
 		this.idProveedorEspejoRem = idProveedorEspejoRem;
+	}
+
+	public BooleanDataType getPerimetroMacc() {
+		return perimetroMacc;
+	}
+	public void setPerimetroMacc(BooleanDataType perimetroMacc) {
+		this.perimetroMacc = perimetroMacc;
 	}
 	
 }

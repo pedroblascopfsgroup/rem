@@ -713,7 +713,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					} else {
 						logger.error("La oferta introducida no existe.");
 						return false;
-						}
+					}
 				} catch (Exception ex) {
 					logger.error("Error al intentar cambiar la oferta principal.", ex);
 					return false;
@@ -789,7 +789,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						} else {
 							logger.error("La oferta introducida no existe.");
 							return false;
-							}
+						}
 					} catch (Exception ex) {
 						logger.error("Error al intentar cambiar una oferta individual a dependiente.", ex);
 						return false;

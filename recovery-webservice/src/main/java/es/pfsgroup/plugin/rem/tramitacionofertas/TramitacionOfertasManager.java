@@ -343,9 +343,11 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 			for (ActivoValoraciones valoracion : valoraciones) {
 				String codigoValoracion = valoracion.getTipoPrecio().getCodigo();
-				if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK.equals(codigoValoracion)) {
+				if (DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK.equals(codigoValoracion)
+						&& valoracion.getImporte() != null) {
 					vnc += valoracion.getImporte();
-				} else if (DDTipoPrecio.CODIGO_TPC_VALOR_RAZONABLE_LBK.equals(codigoValoracion)) {
+				} else if (DDTipoPrecio.CODIGO_TPC_VALOR_RAZONABLE_LBK.equals(codigoValoracion)
+						&& valoracion.getImporte() != null) {
 					vr += valoracion.getImporte();
 				}
 			}

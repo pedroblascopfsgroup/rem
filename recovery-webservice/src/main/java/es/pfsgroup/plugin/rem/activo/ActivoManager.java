@@ -624,7 +624,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Transactional(readOnly = false)
-	private boolean saveActivoValoracionHistorico(ActivoValoraciones activoValoracion) {
+	public boolean saveActivoValoracionHistorico(ActivoValoraciones activoValoracion) {
 		ActivoHistoricoValoraciones historicoValoracion = new ActivoHistoricoValoraciones();
 
 		historicoValoracion.setActivo(activoValoracion.getActivo());
@@ -1248,7 +1248,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		ActivoCondicionEspecifica condicionEspecifica = new ActivoCondicionEspecifica();
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoCondicionEspecifica.getIdActivo());
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMddhhmmss");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss");
 		
 		int i = 0;
 		

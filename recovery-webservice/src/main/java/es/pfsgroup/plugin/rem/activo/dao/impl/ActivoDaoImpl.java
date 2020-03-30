@@ -1247,7 +1247,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	@Override
 	public Boolean existenOfertasVentaActivo(Long idActivo) {
 		try {
-			BigDecimal num = new BigDecimal(1);
 			Session session = this.getSessionFactory().getCurrentSession();
 			Query query = session.createSQLQuery(
 					"SELECT count(ofr.*) FROM OFR_OFERTAS ofr " + "JOIN ACT_OFR afr ON  afr.ofr_id = ofr.ofr_id "
@@ -1257,7 +1256,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 			String contador = (String) query.uniqueResult();
 
-			if (num.equals(contador)) {
+			if ("1".equals(contador)) {
 				return true;
 			} else {
 				return false;

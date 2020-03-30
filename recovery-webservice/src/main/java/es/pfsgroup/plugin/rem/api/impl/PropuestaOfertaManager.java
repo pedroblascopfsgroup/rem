@@ -877,7 +877,6 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 				mapaValores.put("ActivoUltPlanta", FileUtilsREM.stringify(null));
 				mapaValores.put("ActivoOcupada", FileUtilsREM.stringify(null));
 				mapaValores.put("ActivoUbicacion", FileUtilsREM.stringify(null));
-				mapaValores.put("ActivoUbicacion", FileUtilsREM.stringify(null));
 				mapaValores.put("ActivoDistrito", FileUtilsREM.stringify(null));
 				mapaValores.put("ActivoAntiguedad", FileUtilsREM.stringify(null));
 				mapaValores.put("ActivoRehabilitacion", FileUtilsREM.stringify(null));

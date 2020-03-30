@@ -3989,7 +3989,7 @@ public class AgrupacionAdapter {
 		}
 		
 			
-		if (!Checks.esNulo(actAgr) && actAgr.getPropietarioPrincipal().getId() != activo.getPropietarioPrincipal().getId()) {
+		if (!Checks.esNulo(actAgr) && !actAgr.getPropietarioPrincipal().getId().equals(activo.getPropietarioPrincipal().getId()) ) {
 			throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_DISTINTO_PROPIETARIO);
 		}
 		

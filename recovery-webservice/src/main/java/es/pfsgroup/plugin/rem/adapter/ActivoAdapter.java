@@ -1211,9 +1211,15 @@ public class ActivoAdapter {
 		} catch (InvocationTargetException e) {
 			logger.error("Error en ActivoAdapter", e);
 		}
-		
-		return new DtoPage(lista,page.getTotalCount());
-		
+		try {
+			if(page == null || lista.isEmpty()) {
+				throw new NullPointerException();
+			}
+			return new DtoPage(lista,page.getTotalCount());
+		}catch(NullPointerException npe){
+			logger.error("Error en ActivoAdapter, page o lista es nula", npe);
+			return null;
+		}
 	}
 
 	public List<DtoAgrupacionesActivo> getListAgrupacionesActivoById(Long id) {
@@ -3028,7 +3034,9 @@ public class ActivoAdapter {
 		}else{
 			if(listaIdActivo != null && !listaIdActivo.isEmpty()){
 				for(Long idActivo : listaIdActivo){
-					return activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(idActivo,true);
+					if(idActivo != null){
+						return activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(idActivo,true);
+					}
 				}
 			}
 		}
@@ -4270,7 +4278,7 @@ public class ActivoAdapter {
 	}
 
 	@Transactional(readOnly = true)
-	private GestorSustituto getGestorSustitutoVigente(GestorEntidadHistorico gestor) {
+	public GestorSustituto getGestorSustitutoVigente(GestorEntidadHistorico gestor) {
 
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal", gestor.getUsuario());
 
@@ -4402,7 +4410,7 @@ public class ActivoAdapter {
 	 * @return booleano true o false
 	 */
 	@Transactional(readOnly = false)
-	private Boolean updateTramitesActivo(Long idActivo) throws JsonViewerException  {
+	public Boolean updateTramitesActivo(Long idActivo) throws JsonViewerException  {
 		Boolean resultado = true;
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		List<ActivoTramite> listActTramites =  activoTramiteDao.getListaTramitesActivo(idActivo);

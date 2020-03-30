@@ -2293,8 +2293,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						boolean esOcupacionDesocupacion = DDTipoDocumentoActivo.MATRICULA_INFORME_OCUPACION_DESOCUPACION.equals(adjunto.getMatricula());
 						Date adjuntoFecha = adjunto.getFechaDocumento();
 
-						if ((Checks.esNulo(adjuntoAux) && esOcupacionDesocupacion) 
-								|| (!Checks.esNulo(adjuntoAux) && !Checks.esNulo(adjuntoAux.getFechaDocumento()) && !Checks.esNulo(adjuntoFecha) && adjuntoFecha.after(adjuntoAux.getFechaDocumento()))) {
+						if ((adjuntoAux == null && esOcupacionDesocupacion) 
+								|| (adjuntoAux != null && adjuntoAux.getFechaDocumento() != null && adjuntoFecha != null && adjuntoFecha.after(adjuntoAux.getFechaDocumento()))) {
 							adjuntoAux = adjunto;
 						}
 					}

@@ -2294,7 +2294,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						Date adjuntoFecha = adjunto.getFechaDocumento();
 
 						if ((Checks.esNulo(adjuntoAux) && esOcupacionDesocupacion) 
-								|| (!Checks.esNulo(adjuntoAux) && !Checks.esNulo(adjuntoAux.getFechaDocumento()) && !Checks.esNulo(adjuntoFecha) && adjuntoFecha.after(adjuntoAux.getFechaDocumento()))) {
+								|| (adjuntoAux != null && !Checks.esNulo(adjuntoAux.getFechaDocumento()) && !Checks.esNulo(adjuntoFecha) && adjuntoFecha.after(adjuntoAux.getFechaDocumento()))) {
 							adjuntoAux = adjunto;
 						}
 					}

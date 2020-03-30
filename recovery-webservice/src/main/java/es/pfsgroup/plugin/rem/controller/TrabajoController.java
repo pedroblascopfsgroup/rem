@@ -1290,7 +1290,9 @@ public class TrabajoController extends ParadiseJsonController {
 		} catch (Exception e) {
 			logger.error("Error trabajo", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
-			model.put("id", jsonFields.get("id"));	
+			if (jsonFields != null) {
+				model.put("id", jsonFields.get("id"));
+			}
 			model.put("data", listaRespuesta);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 			
@@ -1641,26 +1643,11 @@ public class TrabajoController extends ParadiseJsonController {
 			jsonFields = request.getJsonObject();
 			jsonData = (TareaRequestDto) request.getRequestData(TareaRequestDto.class);
 			
-			if(Checks.esNulo(jsonFields)) {
+			if(Checks.esNulo(jsonFields) || jsonFields.isNullObject() || jsonFields.isEmpty() || Checks.esNulo(jsonData) || Checks.esNulo(jsonData.getId()) || Checks.esNulo(jsonData.getData())) {
 				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
 				errorDesc = "Faltan campos";
 				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-			}else if (jsonFields.isNullObject()) {
-				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
-				errorDesc = "Faltan campos";
-				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-			}else if(jsonFields.isEmpty()) {
-				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
-				errorDesc = "Faltan campos";
-				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-			}else if(Checks.esNulo(jsonData)) {
-				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
-				errorDesc = "Faltan campos";
-				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-			} else if(Checks.esNulo(jsonData.getId()) || Checks.esNulo(jsonData.getData())){
-				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
-				errorDesc = "Faltan campos";
-				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
+				
 			}else {
 				
 				id = jsonData.getId();
@@ -1773,9 +1760,7 @@ public class TrabajoController extends ParadiseJsonController {
 							errorDesc = "Error al avanzar la " + codTarea + ".";
 							throw new Exception(RestApi.REST_MSG_VALIDACION_TAREA);
 						}
-						
-		
-						model.put("id", jsonFields.get("id"));
+							
 						model.put("id", id);
 						model.put("data", resultado);
 						model.put("success", true);

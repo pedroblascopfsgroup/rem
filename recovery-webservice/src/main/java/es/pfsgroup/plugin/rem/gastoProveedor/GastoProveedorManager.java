@@ -3280,11 +3280,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		cartera = gasto.getCartera();
 		subtipoGasto = gasto.getSubtipoGasto();
-		if (!Checks.esNulo(gasto.getGastoInfoContabilidad())) {
+		if (gasto.getGastoInfoContabilidad() != null) {
 			ejercicio = gasto.getGastoInfoContabilidad().getEjercicio();
 		}
 
-		if (!Checks.esNulo(ejercicio) && !Checks.esNulo(cartera) && !Checks.esNulo(subtipoGasto)) {
+		if (ejercicio != null && cartera != null && subtipoGasto != null) {
 
 			// filtros para encontrar la cuenta contable y la partida presupuestaria.
 			Filter filtroEjercicio = genericDao.createFilter(FilterType.EQUALS, "ejercicio.id", ejercicio.getId());
@@ -3293,7 +3293,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 			configuracion = genericDao.getList(ConfigPdaPresupuestaria.class, filtroEjercicio, filtroSubtipo, filtroCartera);
 
-			if (!Checks.estaVacio(configuracion) && configuracion.size() == 1) {
+			if (configuracion != null && configuracion.size() == 1) {
 
 				return configuracion.get(0);
 

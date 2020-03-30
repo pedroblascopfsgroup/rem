@@ -36,8 +36,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -49,8 +47,6 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.OfertasExcelReport;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
@@ -67,7 +63,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
-import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaRequestDto;
@@ -127,11 +122,8 @@ public class OfertasController {
 
 	@Autowired
 	private ConfigManager configManager;
-
-	@Autowired
-	private ActivoAgrupacionDao activoAgrupacionDao;
 			
-	private final static String CLIENTE_HAYA = "HAYA";
+	private static final String CLIENTE_HAYA = "HAYA";
 	public static final String ERROR_NO_EXISTE_OFERTA_O_TAREA = "El número de oferta es inválido o no existe la tarea.";
 	
 	private static final String RESPONSE_SUCCESS_KEY = "success";	
@@ -329,13 +321,17 @@ public class OfertasController {
 			}
 
 		} catch (UserException e) {
-			model.put("id", jsonFields.get("id"));
+			if (jsonFields!=null) {
+				model.put("id", jsonFields.get("id"));
+			}
 			model.put("data", listaRespuesta);
 			model.put("error", "null");
 		} catch (Exception e) {
 			logger.error("Error ofertas", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
-			model.put("id", jsonFields.get("id"));
+			if (jsonFields!=null) {
+				model.put("id", jsonFields.get("id"));			
+			}
 			model.put("data", listaRespuesta);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 		}
@@ -718,46 +714,13 @@ public class OfertasController {
 
 			jsonFields = request.getJsonObject();
 			jsonData = (TareaRequestDto) request.getRequestData(TareaRequestDto.class);
-			
-			if(Checks.esNulo(jsonFields)) {
+					
+			if(jsonFields == null || jsonFields.isNullObject() || jsonFields.isEmpty()
+					|| Checks.esNulo(jsonData.getId()) || Checks.esNulo(jsonData.getData())) {
 				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
 				errorDesc = "Faltan campos";
 				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-			}else if (jsonFields.isNullObject()) {
-				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
-				errorDesc = "Faltan campos";
-				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-
-			} else if(jsonFields.isEmpty()) {
-				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
-				errorDesc = "Faltan campos";
-				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-			}else if(Checks.esNulo(jsonData)) {
-				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
-				errorDesc = "Faltan campos";
-				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-			} else if(Checks.esNulo(jsonData.getId()) || Checks.esNulo(jsonData.getData())){
-				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
-				errorDesc = "Faltan campos";
-				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-			}else if (jsonFields.isNullObject()) {
-				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
-				errorDesc = "Faltan campos";
-				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-
-			} else if(jsonFields.isEmpty()) {
-				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
-				errorDesc = "Faltan campos";
-				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-			}else if(Checks.esNulo(jsonData)) {
-				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
-				errorDesc = "Faltan campos";
-				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-			} else if(Checks.esNulo(jsonData.getId()) || Checks.esNulo(jsonData.getData())){
-				error = RestApi.REST_MSG_MISSING_REQUIRED_FIELDS;
-				errorDesc = "Faltan campos";
-			}else {
-				
+			} else {				
 				
 				id = jsonData.getId();
 				datosTarea = jsonData.getData();

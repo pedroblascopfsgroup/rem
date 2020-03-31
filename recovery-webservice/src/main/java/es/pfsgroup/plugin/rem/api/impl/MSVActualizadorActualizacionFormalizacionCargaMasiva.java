@@ -76,14 +76,15 @@ public class MSVActualizadorActualizacionFormalizacionCargaMasiva extends Abstra
 			}
 		}
 		
-		if (!Checks.esNulo(exc.dameCelda(fila, COL_FECHA_POSICIONAMIENTO_PREVISTA))) {
-			if (exc.dameCelda(fila, COL_FECHA_POSICIONAMIENTO_PREVISTA).trim().equals("@")) {
-				expediente.setFechaPosicionamientoPrevista(null);
-			} else {
-				expediente.setFechaPosicionamientoPrevista(new SimpleDateFormat(DateFormat.DATE_FORMAT)
-						.parse(exc.dameCelda(fila, COL_FECHA_POSICIONAMIENTO_PREVISTA)));;
-			}
-		}
+		String fechaPosPrevista = exc.dameCelda(fila, COL_FECHA_POSICIONAMIENTO_PREVISTA);
+		if (Checks.esNulo(fechaPosPrevista) || "@".equals(fechaPosPrevista.trim())) {
+			expediente.setFechaPosicionamientoPrevista(null);
+		} else {
+			fechaPosPrevista = fechaPosPrevista.replaceAll(" ", "").replaceAll("-", "").replaceAll("/", "");
+			SimpleDateFormat df = new SimpleDateFormat("ddMMyyyy");
+			df.setLenient(false);		
+			expediente.setFechaPosicionamientoPrevista(df.parse(fechaPosPrevista));			
+		}		
 
 		// Numero de expediente
 		Formalizacion form = genericDao.get(Formalizacion.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id",expediente.getId()));

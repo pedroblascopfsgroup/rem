@@ -26,5 +26,7 @@ public interface TareaActivoDao extends AbstractDao<TareaActivo, Long>{
 	 * @return List<TareasActivo> lista
 	 */
 	public List<TareaActivo> getTareasActivoTramiteBorrados(Long idTramite);
+	
+	public void doFlush();
 
 }

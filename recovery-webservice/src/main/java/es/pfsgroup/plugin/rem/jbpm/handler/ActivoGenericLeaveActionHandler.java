@@ -19,6 +19,7 @@ import es.capgemini.pfs.prorroga.model.Prorroga;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.bulkAdvisoryNote.BulkAdvisoryNoteAdapter;
@@ -58,6 +59,9 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
     
     @Autowired
     private GenericABMDao genericDao;
+    
+	@Autowired
+	private AgendaAdapter agendaAdapter;
     
     public static final String COD_TAP_TAREA_AUTORIZACION_PROPIEDAD = "T017_ResolucionPROManzana";
 	public static final String COD_TAP_TAREA_ADVISORY_NOTE = "T017_AdvisoryNote";
@@ -148,7 +152,8 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 		if (!BPMContants.TRANSICION_VUELTA_ATRAS.equals(transicion) && !StringUtils.isBlank(scriptValidacion) && !transicionSalto && !transicion.toLowerCase().equals("fin") && !transicion.toLowerCase().equals("saltofin")) {
 			try {
 
-				ofertaEnBulkAN(executionContext, tareaExterna, scriptValidacion);
+				//ofertaEnBulkAN(executionContext, tareaExterna, scriptValidacion);
+				avanzaTramiteNormal(executionContext, tareaExterna, scriptValidacion);
 			} catch (UserException e) {
 				logger.info("No se ha podido validar el formulario correctamente. Trámite [" + getActivoTramite(executionContext).getId() + "], tarea [" + tareaExterna.getId() + "]. Mensaje ["
 						+ e.getMessage() + "]", e);
@@ -168,48 +173,47 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 		logger.debug("\tCaducamos la tarea: " + getNombreNodo(executionContext));
 	}
 
-	private void ofertaEnBulkAN(ExecutionContext executionContext, TareaExterna tareaExterna, String scriptValidacion)
-			throws Exception {
-		Oferta ofertaActual = ofertaApi.tareaExternaToOferta(tareaExterna);
-		List<ActivoOferta> listActOfr = null;
-		ActivoOferta actOfr = null;
-		BulkOferta bulkOferta  = null;
-		if(ofertaActual != null) {
-			listActOfr = genericDao.getList(ActivoOferta.class, genericDao.createFilter(FilterType.EQUALS, "oferta", ofertaActual.getId()));
-			if(!listActOfr.isEmpty()) {
-				actOfr = listActOfr.get(0);
-			}
-			bulkOferta = bulkOfertaDao.findOne(null, ofertaActual.getId());
-		}
-		
-		List<TareaExternaValor> valores = activoTareaExternaManagerApi.obtenerValoresTarea(tareaExterna.getId());
-		Map<String,String[]> valoresTarea = bulkAdvisoryNoteAdapter.insertValoresToHashMap(valores);
-		String tapCodigoActual= tareaExterna.getTareaProcedimiento().getCodigo();
-		
-		List<BulkOferta> listOfertasBulk;
-		
-		Boolean esOfertaEnBulk = ofertaEnBulkOferta(actOfr,tapCodigoActual,bulkOferta);
-		
-		if(esOfertaEnBulk && actOfr != null && bulkOferta != null
-				&& ( COD_TAP_TAREA_AUTORIZACION_PROPIEDAD.equals(tapCodigoActual)
-						|| COD_TAP_TAREA_ADVISORY_NOTE.equals(tapCodigoActual)
-						|| COD_TAP_TAREA_RECOM_ADVISORY.equals(tapCodigoActual)
-					) 
-				&& !Checks.esNulo(actOfr.getPrimaryKey().getActivo().getCartera())
-				&& DDCartera.CODIGO_CARTERA_CERBERUS.equals(actOfr.getPrimaryKey().getActivo().getCartera().getCodigo()) 
-				&& !Checks.esNulo(actOfr.getPrimaryKey().getActivo().getSubcartera()) 
-				&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(actOfr.getPrimaryKey().getActivo().getSubcartera().getCodigo())) {
-			
-			listOfertasBulk = bulkOfertaDao.getListBulkOfertasByIdBulk(bulkOferta.getPrimaryKey().getBulkAdvisoryNote());
-			validaAvanzaOfertasBulk(tapCodigoActual, ofertaActual, listOfertasBulk,valoresTarea,executionContext, tareaExterna, scriptValidacion);
-			
-		}else if(Boolean.FALSE.equals(esOfertaEnBulk)) {
-			avanzaTramiteNormal(executionContext, tareaExterna, scriptValidacion);
-		}
-	}
-
+//	private void ofertaEnBulkAN(ExecutionContext executionContext, TareaExterna tareaExterna, String scriptValidacion)
+//			throws Exception {
+//		Oferta ofertaActual = ofertaApi.tareaExternaToOferta(tareaExterna);
+//		List<ActivoOferta> listActOfr = null;
+//		ActivoOferta actOfr = null;
+//		BulkOferta bulkOferta  = null;
+//		if(ofertaActual != null) {
+//			listActOfr = genericDao.getList(ActivoOferta.class, genericDao.createFilter(FilterType.EQUALS, "oferta", ofertaActual.getId()));
+//			if(!listActOfr.isEmpty()) {
+//				actOfr = listActOfr.get(0);
+//			}
+//			bulkOferta = bulkOfertaDao.findOne(null, ofertaActual.getId());
+//		}
+//		
+//		List<TareaExternaValor> valores = activoTareaExternaManagerApi.obtenerValoresTarea(tareaExterna.getId());
+//		Map<String,String[]> valoresTarea = bulkAdvisoryNoteAdapter.insertValoresToHashMap(valores);
+//		String tapCodigoActual= tareaExterna.getTareaProcedimiento().getCodigo();
+//		
+//		List<BulkOferta> listOfertasBulk;
+//		
+//		Boolean esOfertaEnBulk = ofertaEnBulkOferta(actOfr,tapCodigoActual,bulkOferta);
+//		
+//		if(esOfertaEnBulk && actOfr != null && bulkOferta != null) {
+//			
+//			listOfertasBulk = bulkOfertaDao.getListBulkOfertasByIdBulk(bulkOferta.getPrimaryKey().getBulkAdvisoryNote());
+//			validaAvanzaOfertasBulk(tapCodigoActual, ofertaActual, listOfertasBulk,valoresTarea,tareaExterna);
+//			
+//		}else if(Boolean.FALSE.equals(esOfertaEnBulk)) {
+//			avanzaTramiteNormal(executionContext, tareaExterna, scriptValidacion);
+//		}
+//	}
+//
 	private void avanzaTramiteNormal(ExecutionContext executionContext, TareaExterna tareaExterna,
 			String scriptValidacion) throws Exception {
+		
+		String validacionPrevia = agendaAdapter.getValidacionPrevia(tareaExterna.getTareaPadre().getId());
+
+		if (!Checks.esNulo(validacionPrevia)){
+			throw new UserException((String) validacionPrevia);
+		}
+		
 		Long activoTramite = getActivoTramite(executionContext).getId();
 		Object result = jbpmMActivoScriptExecutorApi.evaluaScript(activoTramite, tareaExterna.getId(), tareaExterna.getTareaProcedimiento().getId(),
 				null, scriptValidacion);
@@ -222,45 +226,39 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 			throw new UserException((String) result);
 		}
 	}
-
-	private Boolean ofertaEnBulkOferta(ActivoOferta actOfr,String tapCodigoActual,BulkOferta bulkOferta) {
-
-		List<BulkOferta> listOfertasBulk;
-		Boolean esOfertaEnbulk = false;
-		if(!Checks.esNulo(actOfr) 
-				&& ( COD_TAP_TAREA_AUTORIZACION_PROPIEDAD.equals(tapCodigoActual)
-						|| COD_TAP_TAREA_ADVISORY_NOTE.equals(tapCodigoActual)
-						|| COD_TAP_TAREA_RECOM_ADVISORY.equals(tapCodigoActual)
-					) 
-				&& !Checks.esNulo(actOfr.getPrimaryKey().getActivo().getCartera())
-				&& DDCartera.CODIGO_CARTERA_CERBERUS.equals(actOfr.getPrimaryKey().getActivo().getCartera().getCodigo()) 
-				&& !Checks.esNulo(actOfr.getPrimaryKey().getActivo().getSubcartera()) 
-				&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(actOfr.getPrimaryKey().getActivo().getSubcartera().getCodigo())
-				&& bulkOferta != null && !Checks.esNulo(bulkOferta.getPrimaryKey().getBulkAdvisoryNote())) {
-
-			listOfertasBulk = bulkOfertaDao.getListBulkOfertasByIdBulk(bulkOferta.getPrimaryKey().getBulkAdvisoryNote());
-			if(!Checks.estaVacio(listOfertasBulk) && listOfertasBulk.size() > 1) {
-				esOfertaEnbulk=true;
-			}
-			
-		}
-		return esOfertaEnbulk;
-	}
-
-	private void validaAvanzaOfertasBulk(String tapCodigoActual, Oferta ofertaActual, List<BulkOferta> listOfertasBulk, Map<String,String[]> valoresTarea,
-			ExecutionContext executionContext, TareaExterna tareaExterna, String scriptValidacion) {
-		
-		if(bulkAdvisoryNoteAdapter.validarTareasOfertasBulk(listOfertasBulk, valoresTarea, tapCodigoActual)) {
-			
-			bulkAdvisoryNoteAdapter.avanzarTareasOfertasBulk(listOfertasBulk,ofertaActual,valoresTarea, tapCodigoActual);
-		}else {
-			try {
-				avanzaTramiteNormal(executionContext, tareaExterna, scriptValidacion);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
+//
+//	private Boolean ofertaEnBulkOferta(ActivoOferta actOfr,String tapCodigoActual,BulkOferta bulkOferta) {
+//
+//		List<BulkOferta> listOfertasBulk;
+//		Boolean esOfertaEnbulk = false;
+//		if(!Checks.esNulo(actOfr) 
+//				&& ( COD_TAP_TAREA_AUTORIZACION_PROPIEDAD.equals(tapCodigoActual)
+//						|| COD_TAP_TAREA_ADVISORY_NOTE.equals(tapCodigoActual)
+//						|| COD_TAP_TAREA_RECOM_ADVISORY.equals(tapCodigoActual)
+//					) 
+//				&& !Checks.esNulo(actOfr.getPrimaryKey().getActivo().getCartera())
+//				&& DDCartera.CODIGO_CARTERA_CERBERUS.equals(actOfr.getPrimaryKey().getActivo().getCartera().getCodigo()) 
+//				&& !Checks.esNulo(actOfr.getPrimaryKey().getActivo().getSubcartera()) 
+//				&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(actOfr.getPrimaryKey().getActivo().getSubcartera().getCodigo())
+//						|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(actOfr.getPrimaryKey().getActivo().getSubcartera().getCodigo()))
+//				&& bulkOferta != null && !Checks.esNulo(bulkOferta.getPrimaryKey().getBulkAdvisoryNote())) {
+//
+//			listOfertasBulk = bulkOfertaDao.getListBulkOfertasByIdBulk(bulkOferta.getPrimaryKey().getBulkAdvisoryNote());
+//			if(listOfertasBulk != null && !listOfertasBulk.isEmpty() && listOfertasBulk.size() > 1) {
+//				esOfertaEnbulk=true;
+//			}
+//			
+//		}
+//		return esOfertaEnbulk;
+//	}
+//
+//	private void validaAvanzaOfertasBulk(String tapCodigoActual, Oferta ofertaActual,
+//			List<BulkOferta> listOfertasBulk, Map<String,String[]> valoresTarea, TareaExterna tareaExterna) throws Exception {
+//		
+//		if(bulkAdvisoryNoteAdapter.validarTareasOfertasBulk(listOfertasBulk, valoresTarea, tapCodigoActual)) {
+//			bulkAdvisoryNoteAdapter.avanzarTareasOfertasBulk(listOfertasBulk,ofertaActual,valoresTarea, tapCodigoActual, tareaExterna);
+//		}
+//	}
 
 	/**
 	 * PONER JAVADOC FO.

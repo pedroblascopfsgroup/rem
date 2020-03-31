@@ -109,9 +109,6 @@ public class BulkAdvisoryNoteAdapter {
     private BulkOfertaDao bulkOfertaDao;
     
     @Autowired
-    private BulkAdvisoryNoteAdapter bulkAdvisoryNoteAdapter;
-    
-    @Autowired
     private GenericABMDao genericDao;
 	
 	private final Log logger = LogFactory.getLog(getClass());

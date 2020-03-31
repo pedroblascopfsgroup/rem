@@ -209,6 +209,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -628,10 +629,13 @@ public class ActivoAdapter {
 			activoDistribucion.setInfoComercial(infoComercial);
 			ActivoDistribucion distribucionNueva = genericDao.save(ActivoDistribucion.class, activoDistribucion);
 
-			if(activo.getInfoComercial() instanceof ActivoVivienda) {
-				ActivoVivienda viviendaTemp = (ActivoVivienda) activo.getInfoComercial();
-				viviendaTemp.getDistribucion().add(distribucionNueva);
-				activo.setInfoComercial(viviendaTemp);
+			if(activo.getInfoComercial() != null) {
+				if(activo.getInfoComercial().getTipoInfoComercial() != null) {
+					ActivoVivienda vivTemp = genericDao.get(ActivoVivienda.class, genericDao.createFilter(FilterType.EQUALS, "informeComercial.id", activo.getInfoComercial().getId()));
+					if(DDTipoInfoComercial.COD_VIVIENDA.equals(activo.getInfoComercial().getTipoInfoComercial().getCodigo()) || vivTemp != null) {					
+						activo.getInfoComercial().getDistribucion().add(distribucionNueva);						
+					}
+				}
 			}			
 			activoApi.saveOrUpdate(activo);
 		} catch (IllegalAccessException e) {
@@ -1052,24 +1056,28 @@ public class ActivoAdapter {
 		List<DtoNumPlantas> listaPlantas = new ArrayList<DtoNumPlantas>();
 		Activo activo = activoApi.get(idActivo);
 		if (activo.getInfoComercial().getTipoActivo().getCodigo().equals(DDTipoActivo.COD_VIVIENDA)) {
-			if(activo.getInfoComercial() != null && activo.getInfoComercial() instanceof ActivoVivienda) {
-				
-			ActivoVivienda vivienda = (ActivoVivienda) activo.getInfoComercial();		
+			if(activo.getInfoComercial() != null) {
+				if(activo.getInfoComercial().getTipoInfoComercial() != null) {
+					if(DDTipoInfoComercial.COD_VIVIENDA.equals(activo.getInfoComercial().getTipoInfoComercial().getCodigo())) {
+						
+						ActivoVivienda vivienda = genericDao.get(ActivoVivienda.class, genericDao.createFilter(FilterType.EQUALS, "informeComercial.id", activo.getInfoComercial().getId()));
+												
+							DtoNumPlantas dtoSotano = new DtoNumPlantas();
+							dtoSotano.setNumPlanta(-1L);
+							dtoSotano.setDescripcionPlanta("Planta -1");
+							dtoSotano.setIdActivo(idActivo);
+							listaPlantas.add(dtoSotano);
 			
-				DtoNumPlantas dtoSotano = new DtoNumPlantas();
-				dtoSotano.setNumPlanta(-1L);
-				dtoSotano.setDescripcionPlanta("Planta -1");
-				dtoSotano.setIdActivo(idActivo);
-				listaPlantas.add(dtoSotano);
-
-			for (int i = 0; i < vivienda.getNumPlantasInter(); i++) {
-				DtoNumPlantas dto = new DtoNumPlantas();
-				dto.setNumPlanta(Long.valueOf(i));
-				if(i==0) dto.setDescripcionPlanta("Planta Baja");
-				else dto.setDescripcionPlanta(i + "ª Planta");
-				dto.setIdActivo(idActivo);
-				listaPlantas.add(dto);
-			}
+						for (int i = 0; i < vivienda.getNumPlantasInter(); i++) {
+							DtoNumPlantas dto = new DtoNumPlantas();
+							dto.setNumPlanta(Long.valueOf(i));
+							if(i==0) dto.setDescripcionPlanta("Planta Baja");
+							else dto.setDescripcionPlanta(i + "ª Planta");
+							dto.setIdActivo(idActivo);
+							listaPlantas.add(dto);
+						}
+					}
+				}
 
 		  }
 		}
@@ -1082,10 +1090,8 @@ public class ActivoAdapter {
 		List<DtoDistribucion> listaNoExistentes = new ArrayList<DtoDistribucion>();
 		Activo activo = activoApi.get(idActivo);
 		if (activo.getInfoComercial().getTipoActivo().getCodigo().equals(DDTipoActivo.COD_VIVIENDA)) {
-			Filter filter = genericDao.createFilter(FilterType.EQUALS, "id", activo.getInfoComercial().getId());
-			ActivoVivienda vivienda = genericDao.get(ActivoVivienda.class, filter);
-			for (int q = 0; q < vivienda.getDistribucion().size(); q++) {
-				ActivoDistribucion activoDistribucion = vivienda.getDistribucion().get(q);
+			for (int q = 0; q < activo.getInfoComercial().getDistribucion().size(); q++) {
+				ActivoDistribucion activoDistribucion = activo.getInfoComercial().getDistribucion().get(q);
 				Integer numPlantaDistro = activoDistribucion.getNumPlanta();
 
 				if ((numPlantaDistro + 1) == (numPlanta + 1)) {

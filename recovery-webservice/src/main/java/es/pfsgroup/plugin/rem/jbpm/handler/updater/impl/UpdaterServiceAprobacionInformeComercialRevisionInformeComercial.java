@@ -97,26 +97,11 @@ public class UpdaterServiceAprobacionInformeComercialRevisionInformeComercial im
 
 		// Acepta / Rechaza el I.C.
 		HistoricoFasePublicacionActivo histFasePub = historicoFasePublicacionActivoDao.getHistoricoFasesPublicacionActivoActualById(activo.getId());
-		
-		if(histFasePub != null) {
-			histFasePub.setFechaFin(new Date());
-			genericDao.save(HistoricoFasePublicacionActivo.class, histFasePub);
-		}
-		
+
 		Filter faseFiltro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDFasePublicacion.CODIGO_FASE_III_PENDIENTE_INFORMACION);
 		DDFasePublicacion faseTres = genericDao.get(DDFasePublicacion.class, faseFiltro);
 		
 		if(checkAcepta){
-			
-			//nueva fase en estado clasificado
-			HistoricoFasePublicacionActivo nuevaFase = new HistoricoFasePublicacionActivo();
-			nuevaFase.setActivo(activo);
-			nuevaFase.setUsuario(genericAdapter.getUsuarioLogado());
-			nuevaFase.setFasePublicacion(faseTres);
-			nuevaFase.setSubFasePublicacion(genericDao.get(DDSubfasePublicacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubfasePublicacion.CODIGO_CLASIFICADO)));
-			nuevaFase.setFechaInicio(new Date());
-			
-			genericDao.save(HistoricoFasePublicacionActivo.class, nuevaFase);
 			
 			//Si acepta el informe comercial, hay que cambiar el informe comercial, aunque no se continue con el proceso de publicación.
 			// Consideracion de datos iguales entre activo e I.C.

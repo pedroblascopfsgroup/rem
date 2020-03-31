@@ -1,0 +1,76 @@
+--/*
+--##########################################
+--## AUTOR=Alberto Flores
+--## FECHA_CREACION=20200327
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-6682
+--## PRODUCTO=SI
+--##
+--## Finalidad: Script que actualiza las condiciones postventa del trámite Posicionamiento y Firma 
+--## INSTRUCCIONES:
+--## VERSIONES:
+--## 		0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+DECLARE
+	V_MSQL VARCHAR2(4000 CHAR);
+	V_SQL VARCHAR2(4000 CHAR);
+	V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+	V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+	V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
+	err_num NUMBER; -- Numero de errores
+	err_msg VARCHAR2(2048); -- Mensaje de error
+	V_USR VARCHAR2(30 CHAR) := 'REMVIP-6682'; -- USUARIOCREAR/USUARIOMODIFICAR.
+
+BEGIN
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] Actualizando el campo "Condiciones Postventa" del trámite...');
+
+	EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.TEV_TAREA_EXTERNA_VALOR TEV 
+	USING(
+		SELECT T1.TEV_ID, T1.TEX_ID FROM REM01.TEV_TAREA_EXTERNA_VALOR T1 
+		JOIN REM01.TEX_TAREA_EXTERNA TEX ON TEX.TEX_ID = T1.TEX_ID
+		JOIN REM01.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = TEX.TAP_ID AND TAP_CODIGO = ''T013_PosicionamientoYFirma''
+		JOIN REM01.TAR_TAREAS_NOTIFICACIONES TAR ON TAR.TAR_ID = TEX.TAR_ID
+		JOIN REM01.TAC_TAREAS_ACTIVOS TAC ON TAR.TAR_ID = TAC.TAR_ID
+		JOIN REM01.ACT_TRA_TRAMITE TRA ON TAC.TRA_ID = TRA.TRA_ID
+		JOIN REM01.ACT_TBJ_TRABAJO TBJ ON TRA.TBJ_ID = TBJ.TBJ_ID
+		JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = TBJ.ACT_ID AND ACT.ACT_NUM_ACTIVO = 7031540
+		JOIN ACT_OFR AUX ON ACT.ACT_ID = AUX.ACT_ID
+		JOIN ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = AUX.OFR_ID AND ECO.ECO_NUM_EXPEDIENTE = 192406 
+		WHERE T1.TEV_NOMBRE = ''comboCondiciones''
+	) T2
+	ON (
+		TEV.TEV_ID = T2.TEV_ID AND
+		TEV.TEX_ID = T2.TEX_ID
+	)
+	WHEN MATCHED THEN UPDATE SET
+		TEV.TEV_VALOR = ''02'',
+		TEV.USUARIOMODIFICAR = '''||V_USR||''',
+		TEV.FECHAMODIFICAR = SYSDATE
+	';
+
+	DBMS_OUTPUT.PUT_LINE('[FIN] Se han actualizado en total '||SQL%ROWCOUNT||' registros en la tabla TEV_TAREA_EXTERNA_VALOR.');
+	--ROLLBACK;
+	COMMIT;
+
+EXCEPTION
+	WHEN OTHERS THEN
+		ERR_NUM := SQLCODE;
+		ERR_MSG := SQLERRM;
+		DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+		DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+		DBMS_OUTPUT.put_line(ERR_MSG);
+		ROLLBACK;
+		RAISE;   
+END;
+
+/
+
+EXIT;

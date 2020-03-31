@@ -78,9 +78,6 @@ public class MSVActualizacionPerimetroAppleExcelValidator extends MSVExcelValida
 	private MSVProcesoApi msvProcesoApi;
 
 	@Autowired
-	private ApiProxyFactory proxyFactory;
-
-	@Autowired
 	private MSVBusinessValidationFactory validationFactory;
 
 	private Integer numFilasHoja;
@@ -98,7 +95,7 @@ public class MSVActualizacionPerimetroAppleExcelValidator extends MSVExcelValida
 
 		List<String> lista = recuperarFormato(idTipoOperacion);
 		MSVBusinessValidators validators = validationFactory.getValidators(getTipoOperacion(idTipoOperacion));
-		MSVBusinessCompositeValidators compositeValidators = validationFactory	.getCompositeValidators(getTipoOperacion(idTipoOperacion));
+		MSVBusinessCompositeValidators compositeValidators = validationFactory.getCompositeValidators(getTipoOperacion(idTipoOperacion));
 		MSVHojaExcel excPlantilla = excelParser.getExcel(recuperarPlantilla(idTipoOperacion));
 		MSVHojaExcel exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 		MSVDtoValidacion dtoValidacionContenido = recorrerFichero(exc, excPlantilla, lista, validators, compositeValidators, true);

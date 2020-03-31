@@ -85,19 +85,7 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 			throws Exception {
 		Serializable objetoEntity = null;
 		if (idValue != null) {
-			objetoEntity = genericDao.get(entity, genericDao.createFilter(FilterType.EQUALS, fieldActivo, idValue));	
-			if(Checks.esNulo(objetoEntity)) {
-				Class padre = entity.getSuperclass();
-				if(padre instanceof Serializable) {
-					objetoEntity = genericDao.get(padre, genericDao.createFilter(FilterType.EQUALS, fieldActivo, idValue));
-					if(!Checks.esNulo(objetoEntity)) {
-						genericaRestDaoImp.delete(objetoEntity);
-						genericaRestDaoImp.doFlush();
-						objetoEntity = null;
-					}
-				}
-				
-			}
+			objetoEntity = genericDao.get(entity, genericDao.createFilter(FilterType.EQUALS, fieldActivo, idValue));			
 			if (objetoEntity == null) {
 				objetoEntity = (Serializable) entity.newInstance();
 			}

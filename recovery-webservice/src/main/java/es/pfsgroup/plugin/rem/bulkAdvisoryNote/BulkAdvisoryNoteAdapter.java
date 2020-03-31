@@ -127,7 +127,9 @@ public class BulkAdvisoryNoteAdapter {
 			
 		Long idTareaActivo = Long.parseLong(String.valueOf(valor));
 		
-		TareaExterna tareaExterna =  activoTareaExternaManagerApi.get(idTareaActivo);
+		TareaActivo tarActivo = tareaActivoDao.get(idTareaActivo);
+		
+		TareaExterna tareaExterna = tarActivo.getTareaExterna(); 
 		
 		Oferta ofertaActual = ofertaApi.tareaExternaToOferta(tareaExterna);
 		List<ActivoOferta> listActOfr = null;
@@ -158,7 +160,9 @@ public class BulkAdvisoryNoteAdapter {
 			
 		Long idTareaActivo = Long.parseLong(String.valueOf(valor));
 		
-		TareaExterna tareaExterna =  activoTareaExternaManagerApi.get(idTareaActivo);
+		TareaActivo tarActivo = tareaActivoDao.get(idTareaActivo);
+		
+		TareaExterna tareaExterna = tarActivo.getTareaExterna(); 
 		
 		Oferta ofertaActual = ofertaApi.tareaExternaToOferta(tareaExterna);
 		List<ActivoOferta> listActOfr = null;
@@ -252,7 +256,9 @@ public class BulkAdvisoryNoteAdapter {
 			
 		Long idTareaActivo = Long.parseLong(String.valueOf(valor));
 		
-		TareaExterna tareaExterna =  activoTareaExternaManagerApi.get(idTareaActivo);
+		TareaActivo tarActivo = tareaActivoDao.get(idTareaActivo);
+		
+		TareaExterna tareaExterna = tarActivo.getTareaExterna(); 
 		
 		Oferta ofertaActual = ofertaApi.tareaExternaToOferta(tareaExterna);
 		List<ActivoOferta> listActOfr = null;

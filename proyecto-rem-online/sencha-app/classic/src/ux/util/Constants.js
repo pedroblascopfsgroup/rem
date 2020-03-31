@@ -437,7 +437,8 @@ Ext.define('HreRem.ux.util.Constants', {
 	SUBTIPOS_TRABAJO: {
 		TRAMITAR_PROPUESTA_PRECIOS: '44',
 		TRAMITAR_PROPUESTA_DESCUENTO: '45',
-		TOMA_POSESION: '57'
+		TOMA_POSESION: '57',
+		OBRA_MENOR_NO_TARIFICADA:'38'
 	},
 
 	TIPO_IMPUESTO: {
@@ -730,5 +731,4 @@ Ext.define('HreRem.ux.util.Constants', {
 		CODIGO_HAYA_REMAINING: '41',
 		CODIGO_HAYA_APPLE: '42'
 	}
-	
 });

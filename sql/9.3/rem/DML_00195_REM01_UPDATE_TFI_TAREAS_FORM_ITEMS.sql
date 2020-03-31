@@ -1,9 +1,9 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200326
+--## AUTOR= Lara Pablo
+--## FECHA_CREACION=20200401
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
+--## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-9946
 --## PRODUCTO=NO
 --##
@@ -32,8 +32,8 @@ BEGIN
 	
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS 
 	SET 
-  	TFI_VALOR_INICIAL = ''02''
-	, TFI_TIPO = ''combobox''
+  	TFI_VALOR_INICIAL = ''01''
+	, TFI_TIPO = ''comboboxinicial''
 	, USUARIOMODIFICAR = ''HREOS-9946''
 	, FECHAMODIFICAR = SYSDATE 
 	WHERE TAP_ID = (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = ''T004_AnalisisPeticion'') 

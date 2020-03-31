@@ -1226,15 +1226,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		
-		if(!Checks.esNulo(dto.getIdAdvisoryNote())) {
-			BulkOferta blkOfr = bulkOfertaDao.findOne(null, expedienteComercial.getOferta().getId());	
-			//Comprobamos que la oferta pertenezca a un Bulk.
-			//Si todas las ofertas se encuentran en la misma tarea se podrá modificar
-			if(ofertasEnLaMismaTarea(blkOfr)) {
-				cambiarBulkOferta(oferta, dto, blkOfr);
-			} else {
-					throw new JsonViewerException("La Oferta de este activo no se encuentra en la misma Tarea que el resto de activos");
-			}	
+		if(dto.getIdAdvisoryNote() != null) {
+			BulkOferta blkOfr = bulkOfertaDao.findOne(null, expedienteComercial.getOferta().getId());
+			if(!StringUtils.isBlank(dto.getIdAdvisoryNote())) {					
+				//Comprobamos que la oferta pertenezca a un Bulk.
+				//Si todas las ofertas se encuentran en la misma tarea se podrá modificar
+				if(ofertasEnLaMismaTarea(blkOfr)) {
+					cambiarBulkOferta(oferta, dto, blkOfr);
+				} else {
+						throw new JsonViewerException("La Oferta de este activo no se encuentra en la misma Tarea que el resto de activos");
+				}
+			}else {
+				//Borrado logico del anterior registro si procede
+				Auditoria.delete(blkOfr);	
+				genericDao.update(BulkOferta.class, blkOfr);
+			}
 		}
 
 		

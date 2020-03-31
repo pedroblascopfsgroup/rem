@@ -4,8 +4,11 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
@@ -28,14 +31,20 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoVivienda;
 @Entity
 @Table(name = "ACT_APR_PLAZA_APARCAMIENTO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@PrimaryKeyJoinColumn(name="ICO_ID")
-public class ActivoPlazaAparcamiento extends ActivoInfoComercial implements Serializable {
+public class ActivoPlazaAparcamiento implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	
+	@Id
+	@Column(name = "ICO_ID")
+	private Long id;
+	
+	@OneToOne
+	@PrimaryKeyJoinColumn
+	private ActivoInfoComercial informeComercial;
 
 	@Column(name = "APR_DESTINO_COCHE")
     private Boolean destinoCoche;
@@ -218,7 +227,17 @@ public class ActivoPlazaAparcamiento extends ActivoInfoComercial implements Seri
 	public void setSubtipoPlazagaraje(DDSubtipoPlazaGaraje subtipoPlazagaraje) {
 		this.subtipoPlazagaraje = subtipoPlazagaraje;
 	}
+	
+	public ActivoInfoComercial getInformeComercial() {
+		return informeComercial;
+	}
 
+	public void setInformeComercial(ActivoInfoComercial informeComercial) {
+		this.id = informeComercial.getId();
+		this.informeComercial = informeComercial;
+	}
 	
-	
+	public Long getId() {
+		return id;
+	}
 }

@@ -347,93 +347,47 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		genericDao.save(ActivoAdmisionDocumento.class, admisionDocumento);
 
 		// ActivoInfoComercial.
-		ActivoVivienda activoVivienda= new ActivoVivienda();
-		ActivoLocalComercial activoLocalComercial= new ActivoLocalComercial();
-		ActivoPlazaAparcamiento activoPlazaAparcamiento= new ActivoPlazaAparcamiento();
-		ActivoInfoComercial activoInfoComercialDos= new ActivoInfoComercial();
+		ActivoInfoComercial info = new ActivoInfoComercial();
+		info.setActivo(activo);
+		info.setTipoActivo(activo.getTipoActivo());			
+		info.setMediadorInforme(this.obtenerMediador(dtoAAF.getNifMediador(),activo.getId()));
 		
+		if (!Checks.esNulo(dtoAAF.getNifMediador())) {
+			Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAAF.getNifMediador());
+			Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_MEDIADOR);
+			ActivoProveedor mediador = genericDao.get(ActivoProveedor.class, f1,f2);
+			if(Checks.esNulo(mediador)){
+				f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA);
+				mediador = genericDao.get(ActivoProveedor.class, f1, f2);
+			}
+			info.setMediadorInforme(mediador);
+		}
+		beanUtilNotNull.copyProperty(info, "planta", dtoAAF.getNumPlantasVivienda());
+		genericDao.save(ActivoInfoComercial.class, info);
 		if(!Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
 			ActivoVivienda vivienda = new ActivoVivienda();
-			vivienda.setActivo(activo);
-			vivienda.setTipoActivo(activo.getTipoActivo());
-			vivienda.setNumPlantasInter(dtoAAF.getNumPlantasVivienda());
-			vivienda.setMediadorInforme(this.obtenerMediador(dtoAAF.getNifMediador(),activo.getId()));
-			if (!Checks.esNulo(dtoAAF.getNifMediador())) {
-				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAAF.getNifMediador());
-				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_MEDIADOR);
-				ActivoProveedor mediador = genericDao.get(ActivoProveedor.class, f1,f2);
-				if(Checks.esNulo(mediador)){
-					f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA);
-					mediador = genericDao.get(ActivoProveedor.class, f1, f2);
-				}
-				vivienda.setMediadorInforme(mediador);
-			}
-			beanUtilNotNull.copyProperty(vivienda, "planta", dtoAAF.getNumPlantasVivienda());
-			activoVivienda= vivienda;
+			vivienda.setNumPlantasInter(dtoAAF.getNumPlantasVivienda());			
+			vivienda.setInformeComercial(info);
 			genericDao.save(ActivoVivienda.class, vivienda);
 		} else if(!Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_COMERCIAL.equals(activo.getTipoActivo().getCodigo())){
 			ActivoLocalComercial localComercial = new ActivoLocalComercial();
-			localComercial.setActivo(activo);
-			localComercial.setTipoActivo(activo.getTipoActivo());
-			localComercial.setMediadorInforme(this.obtenerMediador(dtoAAF.getNifMediador(),activo.getId()));
-			if (!Checks.esNulo(dtoAAF.getNifMediador())) {
-				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAAF.getNifMediador());
-				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_MEDIADOR);
-				ActivoProveedor mediador = genericDao.get(ActivoProveedor.class, f1,f2);
-				if(Checks.esNulo(mediador)){
-					f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA);
-					mediador = genericDao.get(ActivoProveedor.class, f1, f2);
-				}
-				localComercial.setMediadorInforme(mediador);
-			}
-			beanUtilNotNull.copyProperty(localComercial, "planta", dtoAAF.getNumPlantasVivienda());
-			activoLocalComercial= localComercial;
+			localComercial.setInformeComercial(info);
 			genericDao.save(ActivoLocalComercial.class, localComercial);
 		} else if(!Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_OTROS.equals(activo.getTipoActivo().getCodigo())){
 			ActivoPlazaAparcamiento aparcamiento = new ActivoPlazaAparcamiento();
-			aparcamiento.setActivo(activo);
-			aparcamiento.setTipoActivo(activo.getTipoActivo());
-			aparcamiento.setMediadorInforme(this.obtenerMediador(dtoAAF.getNifMediador(),activo.getId()));
-			if (!Checks.esNulo(dtoAAF.getNifMediador())) {
-				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAAF.getNifMediador());
-				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_MEDIADOR);
-				ActivoProveedor mediador = genericDao.get(ActivoProveedor.class, f1,f2);
-				if(Checks.esNulo(mediador)){
-					f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA);
-					mediador = genericDao.get(ActivoProveedor.class, f1, f2);
-				}
-				aparcamiento.setMediadorInforme(mediador);
-			}
-			beanUtilNotNull.copyProperty(aparcamiento, "planta", dtoAAF.getNumPlantasVivienda());
-			activoPlazaAparcamiento= aparcamiento;
+			aparcamiento.setInformeComercial(info);
 			genericDao.save(ActivoPlazaAparcamiento.class, aparcamiento);
 		}
 		else{
-			ActivoInfoComercial activoInfoComercial = new ActivoInfoComercial();
-			activoInfoComercial.setActivo(activo);
-			activoInfoComercial.setTipoActivo(activo.getTipoActivo());
-			activoInfoComercial.setMediadorInforme(this.obtenerMediador(dtoAAF.getNifMediador(),activo.getId()));
-			beanUtilNotNull.copyProperty(activoInfoComercial, "planta", dtoAAF.getNumPlantasVivienda());
-			activoInfoComercialDos= activoInfoComercial;
-			genericDao.save(ActivoInfoComercial.class, activoInfoComercial);
+			info.setMediadorInforme(this.obtenerMediador(dtoAAF.getNifMediador(),activo.getId()));
+			genericDao.save(ActivoInfoComercial.class, info);
 
 		}
 
 		// Baños.
 		if (!Checks.esNulo(dtoAAF.getNumBanyosVivienda()) && dtoAAF.getNumBanyosVivienda() > 0) {
 			ActivoDistribucion banyo = new ActivoDistribucion();	
-			if(DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
-				banyo.setInfoComercial(activoVivienda);
-			}
-			else if(DDTipoActivo.COD_COMERCIAL.equals(activo.getTipoActivo().getCodigo())){
-				banyo.setInfoComercial(activoLocalComercial);
-			}
-			else if(DDTipoActivo.COD_OTROS.equals(activo.getTipoActivo().getCodigo())){
-				banyo.setInfoComercial(activoPlazaAparcamiento);
-			}
-			else{
-				banyo.setInfoComercial(activoInfoComercialDos);
-			}
+			banyo.setInfoComercial(info);
 			banyo.setNumPlanta(0);
 			banyo.setCantidad(dtoAAF.getNumBanyosVivienda());
 			banyo.setTipoHabitaculo((DDTipoHabitaculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoHabitaculo.class, DDTipoHabitaculo.TIPO_HABITACULO_BANYO));
@@ -443,18 +397,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		// Aseos.
 		if (!Checks.esNulo(activo.getTipoActivo()) && !Checks.esNulo(dtoAAF.getNumAseosVivienda()) && dtoAAF.getNumAseosVivienda() > 0) {
 			ActivoDistribucion aseos = new ActivoDistribucion();
-			if(DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
-				aseos.setInfoComercial(activoVivienda);
-			}
-			else if(DDTipoActivo.COD_COMERCIAL.equals(activo.getTipoActivo().getCodigo())){
-				aseos.setInfoComercial(activoLocalComercial);
-			}
-			else if(DDTipoActivo.COD_OTROS.equals(activo.getTipoActivo().getCodigo())){
-				aseos.setInfoComercial(activoPlazaAparcamiento);
-			}
-			else{
-				aseos.setInfoComercial(activoInfoComercialDos);
-			}
+			aseos.setInfoComercial(info);
 			aseos.setNumPlanta(0);
 			aseos.setCantidad(dtoAAF.getNumAseosVivienda());
 			aseos.setTipoHabitaculo((DDTipoHabitaculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoHabitaculo.class, DDTipoHabitaculo.TIPO_HABITACULO_ASEO));
@@ -464,18 +407,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		// Dormitorios.
 		if (!Checks.esNulo(activo.getTipoActivo()) && !Checks.esNulo(dtoAAF.getNumDormitoriosVivienda()) && dtoAAF.getNumDormitoriosVivienda() > 0) {
 			ActivoDistribucion dormitorio = new ActivoDistribucion();
-			if(DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
-				dormitorio.setInfoComercial(activoVivienda);
-			}
-			else if(DDTipoActivo.COD_COMERCIAL.equals(activo.getTipoActivo().getCodigo())){
-				dormitorio.setInfoComercial(activoLocalComercial);
-			}
-			else if(DDTipoActivo.COD_OTROS.equals(activo.getTipoActivo().getCodigo())){
-				dormitorio.setInfoComercial(activoPlazaAparcamiento);
-			}
-			else{
-				dormitorio.setInfoComercial(activoInfoComercialDos);
-			}
+			dormitorio.setInfoComercial(info);			
 			dormitorio.setNumPlanta(0);
 			dormitorio.setCantidad(dtoAAF.getNumDormitoriosVivienda());
 			dormitorio.setTipoHabitaculo((DDTipoHabitaculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoHabitaculo.class, DDTipoHabitaculo.TIPO_HABITACULO_DORMITORIO));
@@ -485,18 +417,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		// Garaje Anejo.
 		if (!Checks.esNulo(activo.getTipoActivo()) && !Checks.esNulo(dtoAAF.getGarajeAnejo()) && dtoAAF.getGarajeAnejo()) {
 			ActivoDistribucion garajeAnejo = new ActivoDistribucion();
-			if(DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
-				garajeAnejo.setInfoComercial(activoVivienda);
-			}
-			else if(DDTipoActivo.COD_COMERCIAL.equals(activo.getTipoActivo().getCodigo())){
-				garajeAnejo.setInfoComercial(activoLocalComercial);
-			}
-			else if(DDTipoActivo.COD_OTROS.equals(activo.getTipoActivo().getCodigo())){
-				garajeAnejo.setInfoComercial(activoPlazaAparcamiento);
-			}
-			else{
-				garajeAnejo.setInfoComercial(activoInfoComercialDos);
-			}
+			garajeAnejo.setInfoComercial(info);
 			garajeAnejo.setNumPlanta(0);
 			garajeAnejo.setCantidad(1);
 			garajeAnejo.setTipoHabitaculo((DDTipoHabitaculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoHabitaculo.class, DDTipoHabitaculo.TIPO_HABITACULO_GARAJE));
@@ -506,18 +427,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		// Trastero Anejo.
 		if (!Checks.esNulo(activo.getTipoActivo()) && !Checks.esNulo(dtoAAF.getTrasteroAnejo()) && dtoAAF.getTrasteroAnejo()) {
 			ActivoDistribucion trasteroAnejo = new ActivoDistribucion();
-			if(DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
-				trasteroAnejo.setInfoComercial(activoVivienda);
-			}
-			else if(DDTipoActivo.COD_COMERCIAL.equals(activo.getTipoActivo().getCodigo())){
-				trasteroAnejo.setInfoComercial(activoLocalComercial);
-			}
-			else if(DDTipoActivo.COD_OTROS.equals(activo.getTipoActivo().getCodigo())){
-				trasteroAnejo.setInfoComercial(activoPlazaAparcamiento);
-			}
-			else{
-				trasteroAnejo.setInfoComercial(activoInfoComercialDos);
-			}
+			trasteroAnejo.setInfoComercial(info);			
 			trasteroAnejo.setNumPlanta(0);
 			trasteroAnejo.setCantidad(1);
 			trasteroAnejo.setTipoHabitaculo((DDTipoHabitaculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoHabitaculo.class, DDTipoHabitaculo.TIPO_HABITACULO_TRASTERO));
@@ -526,21 +436,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 
 		// ActivoEdificio.
 		ActivoEdificio activoEdificio = new ActivoEdificio();
-		if(!Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
-			activoEdificio.setInfoComercial(activoVivienda);
-		}
-		else if(!Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_COMERCIAL.equals(activo.getTipoActivo().getCodigo())){
-			activoEdificio.setInfoComercial(activoLocalComercial);
-		}
-		else if(!Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_OTROS.equals(activo.getTipoActivo().getCodigo())){
-			activoEdificio.setInfoComercial(activoPlazaAparcamiento);
-		}
-		else{
-			activoEdificio.setInfoComercial(activoInfoComercialDos);
-		}
-		if (!Checks.esNulo(dtoAAF.getAscensor())) {
-			activoEdificio.setAscensorEdificio(dtoAAF.getAscensor() ? 1 : 0);
-		}
+		activoEdificio.setInfoComercial(info);
 		genericDao.save(ActivoEdificio.class, activoEdificio);
 
 		// ActivoValoraciones - Precio Mínimo.

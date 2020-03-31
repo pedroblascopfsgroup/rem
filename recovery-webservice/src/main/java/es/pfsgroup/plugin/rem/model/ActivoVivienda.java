@@ -7,9 +7,11 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
@@ -32,14 +34,20 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoVivienda;
 @Entity
 @Table(name = "ACT_VIV_VIVIENDA", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@PrimaryKeyJoinColumn(name="ICO_ID")
-public class ActivoVivienda extends ActivoInfoComercial implements Serializable {
+public class ActivoVivienda implements Serializable {
 				
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	@Id
+	@Column(name = "ICO_ID")
+	private Long id;
+	
+	@OneToOne
+	@PrimaryKeyJoinColumn
+	private ActivoInfoComercial informeComercial;
 	
 	@ManyToOne
     @JoinColumn(name = "DD_TPR_ID")
@@ -234,5 +242,18 @@ public class ActivoVivienda extends ActivoInfoComercial implements Serializable 
 	public void setDistribucion(List<ActivoDistribucion> distribucion) {
 		this.distribucion = distribucion;
 	}  */
+
+	public ActivoInfoComercial getInformeComercial() {
+		return informeComercial;
+	}
+
+	public void setInformeComercial(ActivoInfoComercial informeComercial) {
+		this.id = informeComercial.getId();
+		this.informeComercial = informeComercial;
+	}
+	
+	public Long getId() {
+		return id;
+	}
 
 }

@@ -5,13 +5,13 @@
 package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
@@ -24,8 +24,6 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessCompositeValidators;
@@ -53,7 +51,6 @@ public class MSVActualizacionFormalizacionExcelValidator extends  MSVExcelValida
 	private static final String TIPO_FINANCIACION = "msg.error.masivo.formalizacion.no.existe.expediente.tipo.financiacion";
 	private static final String NUM_EXPEDIENTE_NUMERICO = "msg.error.masivo.formalizacion.numero.expediente.numerico";
 	private static final String ENTIDAD_FINANCIERA_OBLIGATORIA = "msg.error.masivo.formalizacion.financiacion.si.obligatorio.entidad.financiera";
-	
 
 	private String CHECK_VALOR_SI = "SI";
 	private String CHECK_VALOR_NO = "NO";
@@ -80,9 +77,6 @@ public class MSVActualizacionFormalizacionExcelValidator extends  MSVExcelValida
 	private MSVProcesoApi msvProcesoApi;
 	
 	@Autowired
-	private ApiProxyFactory proxyFactory;
-	
-	@Autowired
 	private MSVBusinessValidationFactory validationFactory;		
 	
 	private Integer numFilasHoja;
@@ -91,29 +85,24 @@ public class MSVActualizacionFormalizacionExcelValidator extends  MSVExcelValida
 	
 	@Override
 	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) throws Exception {
-		if (dtoFile.getIdTipoOperacion() == null){
-			throw new IllegalArgumentException("idTipoOperacion no puede ser null");
+		Long idTipoOperacion = dtoFile.getIdTipoOperacion();
+		if (idTipoOperacion == null){
+			throw new IllegalArgumentException("MSVActualizacionFormalizacionExcelValidator::validarContenidoFichero -> idTipoOperacion no puede ser null");
 		}
-		List<String> lista = recuperarFormato(dtoFile.getIdTipoOperacion());
+		
+		List<String> lista = recuperarFormato(idTipoOperacion);
+		MSVBusinessValidators validators = validationFactory.getValidators(getTipoOperacion(idTipoOperacion));
+		MSVBusinessCompositeValidators compositeValidators = validationFactory.getCompositeValidators(getTipoOperacion(idTipoOperacion));
+		MSVHojaExcel excPlantilla = excelParser.getExcel(recuperarPlantilla(idTipoOperacion));
 		MSVHojaExcel exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-		MSVHojaExcel excPlantilla = excelParser.getExcel(recuperarPlantilla(dtoFile.getIdTipoOperacion()));
-		MSVBusinessValidators validators = validationFactory.getValidators(getTipoOperacion(dtoFile.getIdTipoOperacion()));
-		MSVBusinessCompositeValidators compositeValidators = validationFactory.getCompositeValidators(getTipoOperacion(dtoFile.getIdTipoOperacion()));
 		MSVDtoValidacion dtoValidacionContenido = recorrerFichero(exc, excPlantilla, lista, validators, compositeValidators, true);
-		MSVDDOperacionMasiva operacionMasiva = msvProcesoApi.getOperacionMasiva(dtoFile.getIdTipoOperacion());
-		
-		//Validaciones especificas no contenidas en el fichero Excel de validacion
+		MSVDDOperacionMasiva operacionMasiva = msvProcesoApi.getOperacionMasiva(idTipoOperacion);
+		// Validaciones especificas no contenidas en el fichero Excel de validacion
 		exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-		//Obtenemos el numero de filas reales que tiene la hoja excel a examinar
-		try {
-			this.numFilasHoja = exc.getNumeroFilasByHoja(0, operacionMasiva);
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}
+		// Obtenemos el numero de filas reales que tiene la hoja excel a examinar
+		this.numFilasHoja = exc.getNumeroFilasByHoja(0, operacionMasiva);		
 		
-		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
-			
+		if (!dtoValidacionContenido.getFicheroTieneErrores()) {			
 			Map<String, List<Integer>> mapaErrores = new HashMap<String, List<Integer>>();
 			//CAMPOS OBLIGATORIOS FALTAN
 			mapaErrores.put(messageServices.getMessage(NUM_EXPEDIENTE_COMERCIAL_NO_EXISTE), existeNumExpedienteComercial(exc));
@@ -125,28 +114,16 @@ public class MSVActualizacionFormalizacionExcelValidator extends  MSVExcelValida
 			mapaErrores.put(messageServices.getMessage(NUM_EXPEDIENTE_NUMERICO), numExpedienteNumerico(exc));
 			mapaErrores.put(messageServices.getMessage(ENTIDAD_FINANCIERA_OBLIGATORIA), obligatoriedadSiFinanciacion(exc));
 				
-			if (!mapaErrores.get(messageServices.getMessage(NUM_EXPEDIENTE_COMERCIAL_NO_EXISTE)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(FINANCIACION_COMPROBACION)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(ENTIDAD_FINANCIERA)).isEmpty()				
-					|| !mapaErrores.get(messageServices.getMessage(NUM_EXPEDIENTE_NO_PERTENECE_A_ACTIVO_VENTA)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(NUM_EXPEDIENTE_NO_VENDIDO)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(TIPO_FINANCIACION)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(NUM_EXPEDIENTE_NUMERICO)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(ENTIDAD_FINANCIERA_OBLIGATORIA)).isEmpty())
-			
-			{				
-				dtoValidacionContenido.setFicheroTieneErrores(true);
-				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
-				FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-				dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
-			}
-			
+			for (Entry<String, List<Integer>> registros : mapaErrores.entrySet()) {
+				if(!registros.getValue().isEmpty()) {
+					dtoValidacionContenido.setFicheroTieneErrores(true);
+					dtoValidacionContenido.setExcelErroresFormato(new FileItem(new File(exc.crearExcelErroresMejorado(mapaErrores))));
+					break;
+				}
+			}			
 		}
-		exc.cerrar();
-		
-		return dtoValidacionContenido;
-	
+		exc.cerrar();		
+		return dtoValidacionContenido;	
 	}	
 	
 	@Override
@@ -348,4 +325,5 @@ public class MSVActualizacionFormalizacionExcelValidator extends  MSVExcelValida
 			
 			return listaFilas;
 	}
+	
 }

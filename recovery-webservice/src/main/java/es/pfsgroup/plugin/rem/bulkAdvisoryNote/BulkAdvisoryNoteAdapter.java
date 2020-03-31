@@ -173,12 +173,12 @@ public class BulkAdvisoryNoteAdapter {
 		}
 		
 		List<TareaExternaValor> valores = activoTareaExternaManagerApi.obtenerValoresTarea(tareaExterna.getId());
-		Map<String,String[]> valoresTarea = bulkAdvisoryNoteAdapter.insertValoresToHashMap(valores);
+		Map<String,String[]> valoresTarea = insertValoresToHashMap(valores);
 		String tapCodigoActual= tareaExterna.getTareaProcedimiento().getCodigo();
 		
 		List<BulkOferta> listOfertasBulk = bulkOfertaDao.getListBulkOfertasByIdBulk(bulkOferta.getPrimaryKey().getBulkAdvisoryNote());
 		
-		return bulkAdvisoryNoteAdapter.validarTareasOfertasBulk(listOfertasBulk, valoresTarea, tapCodigoActual);
+		return validarTareasOfertasBulk(listOfertasBulk, valoresTarea, tapCodigoActual);
 	}
 	
 	private Boolean ofertaEnBulkOferta(ActivoOferta actOfr,String tapCodigoActual,BulkOferta bulkOferta) {
@@ -267,7 +267,7 @@ public class BulkAdvisoryNoteAdapter {
 		}
 		
 		List<TareaExternaValor> valores = activoTareaExternaManagerApi.obtenerValoresTarea(tareaExterna.getId());
-		Map<String,String[]> valoresTarea = bulkAdvisoryNoteAdapter.insertValoresToHashMap(valores);
+		Map<String,String[]> valoresTarea = insertValoresToHashMap(valores);
 		String tapCodigoActual= tareaExterna.getTareaProcedimiento().getCodigo();
 		
 		List<BulkOferta> listOfertasBulk = bulkOfertaDao.getListBulkOfertasByIdBulk(bulkOfrf.getPrimaryKey().getBulkAdvisoryNote());

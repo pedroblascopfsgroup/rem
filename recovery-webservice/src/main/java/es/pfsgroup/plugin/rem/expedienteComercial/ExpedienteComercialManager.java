@@ -588,11 +588,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Oferta ofertaPrincipal = null;
 		DDClaseOferta claseOferta = null;
 		
-		if(!Checks.esNulo(dto.getClaseOfertaCodigo()) && Checks.esNulo(oferta.getClaseOferta())) {
+		if(!Checks.esNulo(dto.getClaseOfertaCodigo())) {
 			Filter f = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOfertaCodigo());
 			claseOferta = genericDao.get(DDClaseOferta.class, f);
 			
-			if(!Checks.esNulo(claseOferta))
+			if(Checks.esNulo(oferta.getClaseOferta()) && !Checks.esNulo(claseOferta))
 				oferta.setClaseOferta(claseOferta);
 		}
 		
@@ -713,7 +713,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					} else {
 						logger.error("La oferta introducida no existe.");
 						return false;
-						}
+					}
 				} catch (Exception ex) {
 					logger.error("Error al intentar cambiar la oferta principal.", ex);
 					return false;
@@ -789,7 +789,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						} else {
 							logger.error("La oferta introducida no existe.");
 							return false;
-							}
+						}
 					} catch (Exception ex) {
 						logger.error("Error al intentar cambiar una oferta individual a dependiente.", ex);
 						return false;

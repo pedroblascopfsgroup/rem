@@ -325,10 +325,6 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 		genericDao.save(ActivoAdmisionDocumento.class, admisionDocumento);
 		
 		//ActivoInfoComercial
-		ActivoVivienda activoVivienda = new ActivoVivienda();
-		ActivoLocalComercial activoLocalComercial= new ActivoLocalComercial();
-		ActivoPlazaAparcamiento activoPlazaAparcamiento= new ActivoPlazaAparcamiento();
-		ActivoInfoComercial activoInfoComercialDos= new ActivoInfoComercial();
 		ActivoInfoComercial info = new ActivoInfoComercial();
 		info.setActivo(activo);
 		info.setTipoActivo(activo.getTipoActivo());		
@@ -348,21 +344,17 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 			ActivoVivienda vivienda = new ActivoVivienda();
 			vivienda.setNumPlantasInter(dtoAATP.getNumPlantasVivienda());
 			vivienda.setInformeComercial(info);
-			activoVivienda = vivienda;
 			genericDao.save(ActivoVivienda.class, vivienda);
 		} else if(!Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_COMERCIAL.equals(activo.getTipoActivo().getCodigo())){
 			ActivoLocalComercial localComercial = new ActivoLocalComercial();
 			localComercial.setInformeComercial(info);
-			activoLocalComercial = localComercial;
 			genericDao.save(ActivoLocalComercial.class, localComercial);
 		} else if(!Checks.esNulo(activo.getTipoActivo()) && DDTipoActivo.COD_OTROS.equals(activo.getTipoActivo().getCodigo())){
 			ActivoPlazaAparcamiento aparcamiento = new ActivoPlazaAparcamiento();
 			aparcamiento.setInformeComercial(info);
-			activoPlazaAparcamiento = aparcamiento;
 			genericDao.save(ActivoPlazaAparcamiento.class, aparcamiento);
 		}
 		else{
-			activoInfoComercialDos= info;
 			genericDao.save(ActivoInfoComercial.class, info);
 
 		}
@@ -370,18 +362,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 		//Baños
 		if (!Checks.esNulo(dtoAATP.getNumBanyosVivienda()) && dtoAATP.getNumBanyosVivienda() > 0){
 			ActivoDistribucion banyo = new ActivoDistribucion();
-			if(DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
-				banyo.setInfoComercial(activoVivienda.getInformeComercial());
-			}
-			else if(DDTipoActivo.COD_COMERCIAL.equals(activo.getTipoActivo().getCodigo())){
-				banyo.setInfoComercial(activoLocalComercial.getInformeComercial());
-			}
-			else if(DDTipoActivo.COD_OTROS.equals(activo.getTipoActivo().getCodigo())){
-				banyo.setInfoComercial(activoPlazaAparcamiento.getInformeComercial());
-			}
-			else{
-				banyo.setInfoComercial(activoInfoComercialDos);
-			}
+			banyo.setInfoComercial(info);			
 			banyo.setNumPlanta(0);
 			banyo.setCantidad(dtoAATP.getNumBanyosVivienda());
 			banyo.setTipoHabitaculo((DDTipoHabitaculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoHabitaculo.class, DDTipoHabitaculo.TIPO_HABITACULO_BANYO));
@@ -391,18 +372,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 		//Aseos
 		if (!Checks.esNulo(dtoAATP.getNumAseosVivienda()) && dtoAATP.getNumAseosVivienda() > 0) {
 			ActivoDistribucion aseos = new ActivoDistribucion();
-			if(DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
-				aseos.setInfoComercial(activoVivienda.getInformeComercial());
-			}
-			else if (DDTipoActivo.COD_COMERCIAL.equals(activo.getTipoActivo().getCodigo())){
-				aseos.setInfoComercial(activoLocalComercial.getInformeComercial());
-			}
-			else if (DDTipoActivo.COD_OTROS.equals(activo.getTipoActivo().getCodigo())){
-				aseos.setInfoComercial(activoPlazaAparcamiento.getInformeComercial());
-			}
-			else{
-				aseos.setInfoComercial(activoInfoComercialDos);
-			}
+			aseos.setInfoComercial(info);			
 			aseos.setNumPlanta(0);
 			aseos.setCantidad(dtoAATP.getNumAseosVivienda());
 			aseos.setTipoHabitaculo((DDTipoHabitaculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoHabitaculo.class, DDTipoHabitaculo.TIPO_HABITACULO_ASEO));
@@ -412,18 +382,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 		// Dormitorios.
 				if (!Checks.esNulo(dtoAATP.getNumDormitoriosVivienda()) && dtoAATP.getNumDormitoriosVivienda() > 0) {
 					ActivoDistribucion dormitorio = new ActivoDistribucion();
-					if(DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
-						dormitorio.setInfoComercial(activoVivienda.getInformeComercial());
-					}
-					else if(DDTipoActivo.COD_COMERCIAL.equals(activo.getTipoActivo().getCodigo())){
-						dormitorio.setInfoComercial(activoLocalComercial.getInformeComercial());
-					}
-					else if(DDTipoActivo.COD_OTROS.equals(activo.getTipoActivo().getCodigo())){
-						dormitorio.setInfoComercial(activoPlazaAparcamiento.getInformeComercial());
-					}
-					else{
-						dormitorio.setInfoComercial(activoInfoComercialDos);
-					}
+					dormitorio.setInfoComercial(info);					
 					dormitorio.setNumPlanta(0);
 					dormitorio.setCantidad(dtoAATP.getNumDormitoriosVivienda());
 					dormitorio.setTipoHabitaculo((DDTipoHabitaculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoHabitaculo.class, DDTipoHabitaculo.TIPO_HABITACULO_DORMITORIO));
@@ -433,18 +392,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				// Garaje Anejo.
 				if (!Checks.esNulo(dtoAATP.getGarajeAnejo()) && dtoAATP.getGarajeAnejo().equalsIgnoreCase("si")) {
 					ActivoDistribucion garajeAnejo = new ActivoDistribucion();
-					if(DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
-						garajeAnejo.setInfoComercial(activoVivienda.getInformeComercial());
-					}
-					else if(DDTipoActivo.COD_COMERCIAL.equals(activo.getTipoActivo().getCodigo())){
-						garajeAnejo.setInfoComercial(activoLocalComercial.getInformeComercial());
-					}
-					else if(DDTipoActivo.COD_OTROS.equals(activo.getTipoActivo().getCodigo())){
-						garajeAnejo.setInfoComercial(activoPlazaAparcamiento.getInformeComercial());
-					}
-					else{
-						garajeAnejo.setInfoComercial(activoInfoComercialDos);
-					}
+					garajeAnejo.setInfoComercial(info);					
 					garajeAnejo.setNumPlanta(0);
 					garajeAnejo.setCantidad(1);
 					garajeAnejo.setTipoHabitaculo((DDTipoHabitaculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoHabitaculo.class, DDTipoHabitaculo.TIPO_HABITACULO_GARAJE));
@@ -454,18 +402,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				// Trastero Anejo.
 				if (!Checks.esNulo(dtoAATP.getTrasteroAnejo()) && dtoAATP.getTrasteroAnejo().equalsIgnoreCase("si")) {
 					ActivoDistribucion trasteroAnejo = new ActivoDistribucion();
-					if(DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
-						trasteroAnejo.setInfoComercial(activoVivienda.getInformeComercial());
-					}
-					else if(DDTipoActivo.COD_COMERCIAL.equals(activo.getTipoActivo().getCodigo())){
-						trasteroAnejo.setInfoComercial(activoLocalComercial.getInformeComercial());
-					}
-					else if(DDTipoActivo.COD_OTROS.equals(activo.getTipoActivo().getCodigo())){
-						trasteroAnejo.setInfoComercial(activoPlazaAparcamiento.getInformeComercial());
-					}
-					else{
-						trasteroAnejo.setInfoComercial(activoInfoComercialDos);
-					}
+					trasteroAnejo.setInfoComercial(info);					
 					trasteroAnejo.setNumPlanta(0);
 					trasteroAnejo.setCantidad(1);
 					trasteroAnejo.setTipoHabitaculo((DDTipoHabitaculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoHabitaculo.class, DDTipoHabitaculo.TIPO_HABITACULO_TRASTERO));
@@ -474,18 +411,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				
 				// ActivoEdificio.
 				ActivoEdificio activoEdificio = new ActivoEdificio();
-				if(DDTipoActivo.COD_VIVIENDA.equals(activo.getTipoActivo().getCodigo())){
-					activoEdificio.setInfoComercial(activoVivienda.getInformeComercial());
-				}
-				else if(DDTipoActivo.COD_COMERCIAL.equals(activo.getTipoActivo().getCodigo())){
-					activoEdificio.setInfoComercial(activoLocalComercial.getInformeComercial());
-				}
-				else if(DDTipoActivo.COD_OTROS.equals(activo.getTipoActivo().getCodigo())){
-					activoEdificio.setInfoComercial(activoPlazaAparcamiento.getInformeComercial());
-				}
-				else{
-					activoEdificio.setInfoComercial(activoInfoComercialDos);
-				}
+				activoEdificio.setInfoComercial(info);				
 				if (!Checks.esNulo(dtoAATP.getAscensor())) {
 					activoEdificio.setAscensorEdificio(dtoAATP.getAscensor().equalsIgnoreCase("si") ? 1 : 0);
 				}

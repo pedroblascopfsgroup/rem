@@ -207,7 +207,10 @@ public class AgendaController extends TareaController {
 		boolean success = false;
 		try {
 			boolean esBulk = bulkAdvisoryNoteAdapter.ofertaEnBulkAN(request.getParameterMap());
-			boolean cumpleCondiciones = bulkAdvisoryNoteAdapter.validarTareasOfertasBulk(request.getParameterMap());
+			boolean cumpleCondiciones = false;
+			
+			if(esBulk)
+				cumpleCondiciones = bulkAdvisoryNoteAdapter.validarTareasOfertasBulk(request.getParameterMap());
 			
 			if(!esBulk || (esBulk && cumpleCondiciones)) {
 				

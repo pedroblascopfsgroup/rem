@@ -34,6 +34,7 @@ public class BulkOfertaDaoImpl extends AbstractEntityDao<BulkOferta, Long> imple
 		
 		HQLBuilder hql = new HQLBuilder("from BulkOferta");
 		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "bulkAdvisoryNote.id", idBulk);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "auditoria.borrado", false);
 		
 		Query q = this.getSessionFactory().getCurrentSession().createQuery(hql.toString());
 		HQLBuilder.parametrizaQuery(q, hql);

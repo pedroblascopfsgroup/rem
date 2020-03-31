@@ -30,6 +30,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -179,6 +180,9 @@ public class BulkAdvisoryNoteAdapter {
 		List<TareaExternaValor> valores = activoTareaExternaManagerApi.obtenerValoresTarea(tareaExterna.getId());
 		Map<String,String[]> valoresTarea = insertValoresToHashMap(valores);
 		String tapCodigoActual= tareaExterna.getTareaProcedimiento().getCodigo();
+				
+		if(bulkOferta == null)
+			return false;
 		
 		List<BulkOferta> listOfertasBulk = bulkOfertaDao.getListBulkOfertasByIdBulk(bulkOferta.getPrimaryKey().getBulkAdvisoryNote());
 		
@@ -275,11 +279,9 @@ public class BulkAdvisoryNoteAdapter {
 		List<TareaExternaValor> valores = activoTareaExternaManagerApi.obtenerValoresTarea(tareaExterna.getId());
 		Map<String,String[]> valoresTarea = insertValoresToHashMap(valores);
 		String tapCodigoActual= tareaExterna.getTareaProcedimiento().getCodigo();
-		
-		List<BulkOferta> listOfertasBulk = bulkOfertaDao.getListBulkOfertasByIdBulk(bulkOfrf.getPrimaryKey().getBulkAdvisoryNote());
-		
-		TareaActivo actOfrActual = tareaActivoManager.getByIdTareaExterna(tareaExterna.getId());
-		if(actOfrActual != null && actOfrActual.getAuditoria().getUsuarioBorrar() == null){
+
+		if(bulkOfrf != null) {
+			List<BulkOferta> listOfertasBulk = bulkOfertaDao.getListBulkOfertasByIdBulk(bulkOfrf.getPrimaryKey().getBulkAdvisoryNote());
 			List<Long> listIdsOfertasDelBulk = new ArrayList<Long>();
 			for (BulkOferta bulkOferta : listOfertasBulk) {
 				if(ofertaActual != null && !ofertaActual.getNumOferta().equals(bulkOferta.getOferta().getNumOferta()))
@@ -294,6 +296,8 @@ public class BulkAdvisoryNoteAdapter {
 				logger.error("[ERROR] Error en BulkAdvisoryNoteAdapter al intentar avanzar la tarea de la oferta", e);
 				throw e;
 			}
+		}else {
+			throw new  JsonViewerException("No existe el Bulk en esta oferta, no se avanzara la tarea.");
 		}
 	}
 	

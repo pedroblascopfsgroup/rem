@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.dto.WebDto;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoEdificio;
@@ -108,23 +109,25 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				BeanUtils.copyProperty(activoDto, "distribucionTxt", (activo.getInfoComercial()).getInfoDistribucionInterior());
 			}
 			
-			if (activo.getInfoComercial() instanceof ActivoVivienda) {	
+			ActivoVivienda vivTemp = genericDao.get(ActivoVivienda.class, genericDao.createFilter(FilterType.EQUALS, "informeComercial.id", activo.getInfoComercial().getId()));
+			
+			if (vivTemp != null) {	
 				if (!Checks.esNulo(activo.getInfoComercial().getTipoInfoComercial())) {						
 
-					if (!Checks.esNulo(((ActivoVivienda)activo.getInfoComercial()).getTipoVivienda())) {
-						BeanUtils.copyProperty(activoDto, "tipoViviendaCodigo", ((ActivoVivienda)activo.getInfoComercial()).getTipoVivienda().getCodigo());
+					if (!Checks.esNulo(vivTemp.getTipoVivienda())) {
+						BeanUtils.copyProperty(activoDto, "tipoViviendaCodigo", vivTemp.getTipoVivienda().getCodigo());
 					}
 					
-					if (!Checks.esNulo(((ActivoVivienda)activo.getInfoComercial()).getTipoOrientacion())) {
-						BeanUtils.copyProperty(activoDto, "tipoOrientacionCodigo", ((ActivoVivienda)activo.getInfoComercial()).getTipoOrientacion().getCodigo());
+					if (!Checks.esNulo(vivTemp.getTipoOrientacion())) {
+						BeanUtils.copyProperty(activoDto, "tipoOrientacionCodigo", vivTemp.getTipoOrientacion().getCodigo());
 					}
 					
-					if (!Checks.esNulo(((ActivoVivienda)activo.getInfoComercial()).getTipoRenta())) {
-						BeanUtils.copyProperty(activoDto, "tipoRentaCodigo", ((ActivoVivienda)activo.getInfoComercial()).getTipoRenta().getCodigo());
+					if (!Checks.esNulo(vivTemp.getTipoRenta())) {
+						BeanUtils.copyProperty(activoDto, "tipoRentaCodigo", vivTemp.getTipoRenta().getCodigo());
 					}
 					
-					if (!Checks.esNulo(((ActivoVivienda)activo.getInfoComercial()).getDistribucionTxt())) {
-						BeanUtils.copyProperty(activoDto, "distribucionTxt", ((ActivoVivienda)activo.getInfoComercial()).getDistribucionTxt());
+					if (!Checks.esNulo(vivTemp.getDistribucionTxt())) {
+						BeanUtils.copyProperty(activoDto, "distribucionTxt", vivTemp.getDistribucionTxt());
 					}
 				}
 			}
@@ -231,33 +234,29 @@ public class TabActivoInformacionComercial implements TabActivoService {
 	
 				activo.getInfoComercial().getEdificio().setTipoFachada(tipoFachada);
 			}
-				
-			if (activo.getInfoComercial() instanceof ActivoVivienda) {
+			
+			ActivoVivienda vivienda = genericDao.get(ActivoVivienda.class, genericDao.createFilter(FilterType.EQUALS, "informeComercial.id", activo.getInfoComercial().getId()));
+			ActivoPlazaAparcamiento plazaAparcamiento = genericDao.get(ActivoPlazaAparcamiento.class, genericDao.createFilter(FilterType.EQUALS, "informeComercial.id", activo.getInfoComercial().getId()));
+			if (vivienda != null) {
 				if (!Checks.esNulo(dto.getTipoViviendaCodigo())) {
 					DDTipoVivienda tipoVivienda = (DDTipoVivienda) 
 							diccionarioApi.dameValorDiccionarioByCod(DDTipoVivienda.class, dto.getTipoViviendaCodigo());
-		
-					ActivoVivienda vivienda = (ActivoVivienda) activo.getInfoComercial();
 					vivienda.setTipoVivienda(tipoVivienda);
 				}
 				
 				if (!Checks.esNulo(dto.getTipoRentaCodigo())) {
 					DDTipoRenta tipoRenta = (DDTipoRenta) 
 							diccionarioApi.dameValorDiccionarioByCod(DDTipoRenta.class, dto.getTipoRentaCodigo());
-		
-					ActivoVivienda vivienda = (ActivoVivienda) activo.getInfoComercial();
 					vivienda.setTipoRenta(tipoRenta);
 				}
 				
 				if (!Checks.esNulo(dto.getTipoOrientacionCodigo())) {
 					DDTipoOrientacion tipoOrientacion = (DDTipoOrientacion) 
 							diccionarioApi.dameValorDiccionarioByCod(DDTipoOrientacion.class, dto.getTipoOrientacionCodigo());
-		
-					ActivoVivienda vivienda = (ActivoVivienda) activo.getInfoComercial();
 					vivienda.setTipoOrientacion(tipoOrientacion);
 				}
-			} else if (activo.getInfoComercial() instanceof ActivoPlazaAparcamiento) {
-				ActivoPlazaAparcamiento plazaAparcamiento = (ActivoPlazaAparcamiento) activo.getInfoComercial();
+			} 
+			if (plazaAparcamiento != null) {
 				
 				if (!Checks.esNulo(dto.getUbicacionAparcamientoCodigo())) {
 					DDTipoUbicaAparcamiento ubicacionAparcamiento = (DDTipoUbicaAparcamiento) 
@@ -272,8 +271,7 @@ public class TabActivoInformacionComercial implements TabActivoService {
 					
 					plazaAparcamiento.setTipoCalidad(tipoCalidad);
 				}
-				
-				activo.setInfoComercial(plazaAparcamiento);
+
 				
 			} //No hace falta if para ActivoLocalComercial porque tiene diccionarios
 		} catch (IllegalAccessException e) {

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20200324
+--## FECHA_CREACION=20200327
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-6440
@@ -43,8 +43,8 @@ DECLARE
 		T_TIPO_DATA('BANKIA','','',			 '1','1','1','1','0','0'),
 		T_TIPO_DATA('SAREB','','',			 '0','0','1','1','0','0'),
 		T_TIPO_DATA('CAJAMAR','','',			 '0','0','1','1','0','0'),
-		T_TIPO_DATA('LIBERBANK','','',			 '0','1','1','1','1','0'),
-		T_TIPO_DATA('CERBERUS','DIVARIAN','',		 '1','0','1','1','0','1'),
+		T_TIPO_DATA('LIBERBANK','','',			 '0','0','1','1','1','0'),
+		T_TIPO_DATA('CERBERUS','DIVARIAN','',		 '1','1','1','1','0','1'),
 		T_TIPO_DATA('CERBERUS','APPLE - INMOBILIARIO','','0','1','1','1','0','0'),
 		T_TIPO_DATA('OTRA CARTERA','','',		 '1','0','1','1','0','0')
 

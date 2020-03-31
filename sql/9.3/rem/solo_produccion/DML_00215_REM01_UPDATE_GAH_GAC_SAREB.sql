@@ -1,0 +1,78 @@
+--/*
+--##########################################
+--## AUTOR=VIOREL REMUS OVIDIU
+--## FECHA_CREACION=20200325
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-6688
+--## PRODUCTO=SI
+--##
+--## Finalidad: Script borrado registros gestores erroneos
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+DECLARE
+    V_MSQL VARCHAR2(4000 CHAR);
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
+    err_num NUMBER; -- Numero de errores
+    err_msg VARCHAR2(2048); -- Mensaje de error
+    V_USR VARCHAR2(30 CHAR) := 'REMVIP-6688'; -- USUARIOCREAR/USUARIOMODIFICAR.
+
+BEGIN
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
+  
+    	V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.GAH_GESTOR_ACTIVO_HISTORICO WHERE GEH_ID IN (SELECT GAH.GEH_ID FROM '||V_ESQUEMA||'.GEH_GESTOR_ENTIDAD_HIST GEH
+			INNER JOIN '||V_ESQUEMA||'.GAH_GESTOR_ACTIVO_HISTORICO GAH ON GEH.GEH_ID = GAH.GEH_ID 
+			WHERE GEH.USUARIOBORRAR = ''REMVIP-6688_GEH'' AND BORRADO = 1)';
+		
+	EXECUTE IMMEDIATE V_MSQL;  
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se han borrado '||SQL%ROWCOUNT||' registros en la tabla de GAH_GESTOR_ACTIVO_HISTORICO.');
+
+	V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO WHERE GEE_ID IN (SELECT GAC.GEE_ID FROM '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE
+			INNER JOIN '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO GAC ON GEE.GEE_ID = GAC.GEE_ID 
+			WHERE GEE.USUARIOBORRAR = ''REMVIP-6688_GEE1'' AND BORRADO = 1)';
+		
+	EXECUTE IMMEDIATE V_MSQL;  
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se han borrado '||SQL%ROWCOUNT||' registros en la tabla de GAC_GESTOR_ADD_ACTIVO.');
+
+	V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD WHERE USUARIOBORRAR = ''REMVIP-6688_GEE1'' AND BORRADO = 1';
+		
+	EXECUTE IMMEDIATE V_MSQL;  
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se han borrado '||SQL%ROWCOUNT||' registros en la tabla de GEE_GESTOR_ENTIDAD.');
+
+	V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.GEH_GESTOR_ENTIDAD_HIST WHERE USUARIOBORRAR = ''REMVIP-6688_GEH'' AND BORRADO = 1';
+		
+	EXECUTE IMMEDIATE V_MSQL;  
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se han borrado '||SQL%ROWCOUNT||' registros en la tabla de GEH_GESTOR_ENTIDAD_HIST.');
+
+	DBMS_OUTPUT.PUT_LINE('[FIN] ');
+
+	COMMIT;
+
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          ROLLBACK;
+          RAISE;   
+END;
+
+/
+
+EXIT;

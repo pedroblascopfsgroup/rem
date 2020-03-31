@@ -8,21 +8,11 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
-import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
-import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
-import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
-import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.bulkAdvisoryNote.BulkAdvisoryNoteAdapter;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 
 public class AvanzaTareaOfertasBulkAN implements Runnable {
@@ -31,19 +21,7 @@ public class AvanzaTareaOfertasBulkAN implements Runnable {
 	private RestApi restApi;
 	
 	@Autowired
-	private HibernateUtils hibernateUtils;
-	 
-	@Autowired
-	private AgendaAdapter agendaAdapter;
-	
-	@Autowired
-	private ExpedienteComercialDao expedienteComercialDao;
-	
-	@Autowired
-	private ActivoTramiteApi activoTramiteApi;
-	
-	@Autowired
-	private ActivoTareaExternaApi activoTareaExternaApi;
+	private BulkAdvisoryNoteAdapter bulkAdvisoryNoteAdapter;
 	
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -73,34 +51,7 @@ public class AvanzaTareaOfertasBulkAN implements Runnable {
 
 		try {
 			restApi.doSessionConfig(this.userName);
-			Session sessionObj = hibernateUtils.getSessionFactory().openSession();
-			Oferta ofertaDelBulk = null;
-			Oferta ofertaActual = (Oferta) sessionObj.get(Oferta.class, idOfertaActual);
-			String idTarea = null;
-			for (Long idOfertaDelBulk : listIdsOfertasDelBulk) {
-				ofertaDelBulk = (Oferta) sessionObj.get(Oferta.class, idOfertaDelBulk);
-
-				if(!Checks.esNulo(ofertaActual) && !ofertaActual.getNumOferta().toString().equals(ofertaDelBulk.getNumOferta().toString())) {
-					
-					ExpedienteComercial expedienteComercial=  expedienteComercialDao.getExpedienteComercialByIdOferta(idOfertaDelBulk);
-					List<ActivoTramite> listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(expedienteComercial.getTrabajo().getId());
-					List<TareaExterna> tareasTramite = activoTareaExternaApi.getActivasByIdTramiteTodas(listaTramites.get(0).getId());
-					for (TareaExterna tareaExterna : tareasTramite) {
-						if(tapCodigoActual.equals(tareaExterna.getTareaProcedimiento().getCodigo())){
-							idTarea = tareaExterna.getTareaPadre().getId().toString();
-							break;
-						}
-					}
-					valoresTarea.put("idTarea", new String[] { idTarea });
-					agendaAdapter.save(valoresTarea);
-					
-				}
-			}
-			
-			sessionObj.flush();
-			sessionObj.close();
-		}catch(java.lang.NumberFormatException e) {
-			logger.error("[WARNING] Error controlado en AvanzaTareaOfertasBulkAN.");
+			bulkAdvisoryNoteAdapter.avanzaTareasDelBulk(userName,listIdsOfertasDelBulk,idOfertaActual,valoresTarea,tapCodigoActual);
 		}catch (Exception e) {
 			logger.error("[ERROR] Error en AvanzaTareaOfertasBulkAN al intentar avanzar la tarea de la oferta", e);
 		}

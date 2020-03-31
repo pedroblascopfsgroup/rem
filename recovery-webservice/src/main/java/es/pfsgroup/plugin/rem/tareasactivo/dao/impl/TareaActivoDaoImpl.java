@@ -77,4 +77,9 @@ public class TareaActivoDaoImpl extends AbstractEntityDao<TareaActivo, Long> imp
 		return HibernateQueryUtils.list(this, hb);
 	}
 
+	@Override
+	public void doFlush() {
+		getHibernateTemplate().flush();
+	}
+
 }

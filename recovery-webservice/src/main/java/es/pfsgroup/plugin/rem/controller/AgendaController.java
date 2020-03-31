@@ -42,6 +42,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
+import es.pfsgroup.plugin.rem.bulkAdvisoryNote.BulkAdvisoryNoteAdapter;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.TareaExcelReport;
@@ -94,6 +95,9 @@ public class AgendaController extends TareaController {
 
 	@Autowired
 	private UsuarioManager usuarioManager;
+	
+	@Autowired
+	private BulkAdvisoryNoteAdapter bulkAdvisoryNoteAdapter;
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 		
@@ -202,14 +206,26 @@ public class AgendaController extends TareaController {
 
 		boolean success = false;
 		try {
-			success = adapter.save(request.getParameterMap());
+			boolean esBulk = bulkAdvisoryNoteAdapter.ofertaEnBulkAN(request.getParameterMap());
+			boolean cumpleCondiciones = bulkAdvisoryNoteAdapter.validarTareasOfertasBulk(request.getParameterMap());
+			
+			if(!esBulk || (esBulk && cumpleCondiciones)) {
+				
+				success = adapter.save(request.getParameterMap());
+				
+				if(esBulk && cumpleCondiciones) {
+					bulkAdvisoryNoteAdapter.avanzarTareasOfertasBulk(request.getParameterMap());
+				}
+			}else {
+				throw new JsonViewerException("La oferta Bulk no cumple las condiciones para avanzar.");
+			}
 
 		} catch (InvalidDataAccessResourceUsageException e) {
 			// Mensajes concretos para este tipo de excepcion
 			model.put("errorValidacionGuardado", getMensajeInvalidDataAccessExcepcion(e));
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			model.put("errorValidacionGuardado", e.getMessage());
 		}
 

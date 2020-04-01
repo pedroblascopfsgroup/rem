@@ -10,12 +10,9 @@ import javax.annotation.Resource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
-import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.exception.UserException;
@@ -29,9 +26,7 @@ import es.capgemini.pfs.web.genericForm.GenericForm;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
@@ -42,21 +37,17 @@ import es.pfsgroup.plugin.rem.bulkAdvisoryNote.dao.BulkOfertaDao;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.formulario.ActivoGenericFormManager;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutorApi;
-import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterServiceFactoryApi;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.BulkOferta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
-import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
-import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
 import es.pfsgroup.plugin.rem.thread.AvanzaTareaOfertasBulkAN;
-import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Service("bulkAdvisoryNoteAdapter")
 public class BulkAdvisoryNoteAdapter {
@@ -92,13 +83,7 @@ public class BulkAdvisoryNoteAdapter {
 	private PlatformTransactionManager transactionManager;
 	
 	@Autowired
-	private ActivoTramiteDao activoTramiteDao;
-	
-	@Autowired
 	private TareaActivoDao tareaActivoDao;
-	
-	@Autowired
-	private TareaActivoManager tareaActivoManager;
 	
 	@Autowired
     private ActivoTareaExternaApi activoTareaExternaManagerApi;
@@ -240,6 +225,10 @@ public class BulkAdvisoryNoteAdapter {
 				scriptValidacion = dto.getForm().getTareaExterna().getTareaProcedimiento().getScriptValidacionJBPM();
 				result = jbpmMActivoScriptExecutorApi.evaluaScript(tareaActivoDeOferta.getTramite().getId(), dto.getForm().getTareaExterna().getId(),
 						dto.getForm().getTareaExterna().getTareaProcedimiento().getId(),null, scriptValidacion);
+				
+				if (result instanceof Boolean && !(Boolean) result) {
+					throw new UserException("bpm.error.script");
+				}
 				
 				if (result instanceof String && ((String) result).length() > 0 && !"null".equalsIgnoreCase((String) result)) {
 					throw new UserException("Oferta "+ofertaActual.getNumOferta() +": "+ (String)result);

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo
---## FECHA_CREACION=20200403
+--## FECHA_CREACION=20200405
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10007
@@ -51,14 +51,14 @@ BEGIN
   		DBMS_OUTPUT.PUT_LINE('Actualizar descripción de tareas de '||V_TEXT_TABLA);
        
         V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' 
-		WHERE DD_TPO_ID = (SELECT DD_TPO_ID FROM '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO= ''T017'') AND TAP_CODIGO = ''T017_ResolucionCES'' ';
+		WHERE DD_TPO_ID = (SELECT DD_TPO_ID FROM '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO= ''T017'') AND TAP_CODIGO = ''T017_ResolucionPROManzana'' ';
 
     	EXECUTE IMMEDIATE V_MSQL INTO V_NUM;
 
     	IF V_NUM = 1 THEN
 
             V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'
-                    SET TAP_SCRIPT_VALIDACION_JBPM = ''valores["T017_ResolucionPROManzana"]["comboRespuesta"] == DDApruebaDeniega.CODIGO_APRUEBA ? existeAdjuntoUGValidacion("65","E") : null''
+                    SET TAP_SCRIPT_VALIDACION_JBPM = ''valores["T017_ResolucionPROManzana"]["comboRespuesta"] == DDApruebaDeniega.CODIGO_APRUEBA ? existeAdjuntoUGValidacion("68","E") : null''
 					, USUARIOMODIFICAR = '''||V_USUARIO||'''
 					, FECHAMODIFICAR = SYSDATE
             		WHERE DD_TPO_ID = (SELECT DD_TPO_ID FROM '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO= ''T017'') AND  TAP_CODIGO = ''T017_ResolucionPROManzana''';

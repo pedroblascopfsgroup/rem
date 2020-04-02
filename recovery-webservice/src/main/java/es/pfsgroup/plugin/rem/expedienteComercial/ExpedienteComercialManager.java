@@ -586,10 +586,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Oferta oferta = expedienteComercial.getOferta();
 		Visita visitaOferta = oferta.getVisita();
 		Oferta ofertaPrincipal = null;
-		Filter f = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOfertaCodigo());
-		DDClaseOferta claseOferta = genericDao.get(DDClaseOferta.class, f);
-		if(!Checks.esNulo(dto.getClaseOfertaCodigo()) && Checks.esNulo(oferta.getClaseOferta())) {
-			if(!Checks.esNulo(claseOferta))
+		DDClaseOferta claseOferta = null;
+		
+		if(!Checks.esNulo(dto.getClaseOfertaCodigo())) {
+			Filter f = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOfertaCodigo());
+			claseOferta = genericDao.get(DDClaseOferta.class, f);
+			
+			if(Checks.esNulo(oferta.getClaseOferta()) && !Checks.esNulo(claseOferta))
 				oferta.setClaseOferta(claseOferta);
 		}
 		
@@ -710,7 +713,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					} else {
 						logger.error("La oferta introducida no existe.");
 						return false;
-						}
+					}
 				} catch (Exception ex) {
 					logger.error("Error al intentar cambiar la oferta principal.", ex);
 					return false;
@@ -786,7 +789,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						} else {
 							logger.error("La oferta introducida no existe.");
 							return false;
-							}
+						}
 					} catch (Exception ex) {
 						logger.error("Error al intentar cambiar una oferta individual a dependiente.", ex);
 						return false;
@@ -6595,9 +6598,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 
 			}
-			if(!Checks.esNulo(expediente.getFechaPosicionamientoPrevista())) {
-				dto.setFechaPosicionamientoPrevista(expediente.getFechaPosicionamientoPrevista());
-			}
+			dto.setFechaPosicionamientoPrevista(expediente.getFechaPosicionamientoPrevista());			
 		}
 
 		return dto;
@@ -6733,9 +6734,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				genericDao.save(Formalizacion.class, formalizacion);
 			}
 
-			if(!Checks.esNulo(dto.getFechaPosicionamientoPrevista())) {
-				expediente.setFechaPosicionamientoPrevista(dto.getFechaPosicionamientoPrevista());
-			}
+			expediente.setFechaPosicionamientoPrevista(dto.getFechaPosicionamientoPrevista());			
 
 			genericDao.save(ExpedienteComercial.class, expediente);
 		}

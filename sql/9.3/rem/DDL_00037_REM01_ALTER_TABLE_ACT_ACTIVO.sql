@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin Bahamonde
---## FECHA_CREACION=20200210
+--## FECHA_CREACION=20200318
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-9320
@@ -32,7 +32,7 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_ACTIVO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-
+    V_TABLA_FK VARCHAR2(2400 CHAR) := 'DD_TS_TIPO_SEGMENTO';  
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(256);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
@@ -48,33 +48,42 @@ BEGIN
     LOOP      
       V_TMP_TIPO_DATA := V_TIPO_DATA(I);
           
-        -- Comprobamos si existe columna 
-      V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= '''||TRIM(V_TMP_TIPO_DATA(1))||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+      --Comprobacion de la tabla referencia
+      V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = '''||V_TABLA_FK||'''';
       EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
 
-      -- Si existe la columna cambiamos/establecemos solo la FK
-        IF V_NUM_TABLAS = 1 THEN
-            DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||' '||TRIM(V_TMP_TIPO_DATA(1))||'''... Ya existe, la modificamos');
-            V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' DROP CONSTRAINT FK_DD_TS_ID';
-            EXECUTE IMMEDIATE V_MSQL;
-            DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||'... FK Dropeada');
-            
-            V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_DD_TS_ID FOREIGN KEY (DD_TS_ID) REFERENCES '||V_ESQUEMA||'.DD_TS_TIPO_SEGMENTO (DD_TS_ID) ON DELETE SET NULL)';
-            EXECUTE IMMEDIATE V_MSQL;
-            DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||'... FK Modificada');
+      IF V_NUM_TABLAS > 0 THEN
+        -- Comprobamos si existe columna      
+        V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= '''||TRIM(V_TMP_TIPO_DATA(1))||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+        EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
         
-        --Si no existe la columna, la creamos y establecemos la FK
-        ELSE
-            V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD ('||V_TMP_TIPO_DATA(1)||' '||V_TMP_TIPO_DATA(2)||')';
-            EXECUTE IMMEDIATE V_MSQL;
-            DBMS_OUTPUT.PUT_LINE('[INFO] Columna '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||'... Creada');
+        -- Si existe la columna cambiamos/establecemos solo la FK
+          IF V_NUM_TABLAS = 1 THEN
+              DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||' '||TRIM(V_TMP_TIPO_DATA(1))||'''... Ya existe, la modificamos');
+              V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' DROP CONSTRAINT FK_DD_TS_ID';
+              EXECUTE IMMEDIATE V_MSQL;
+              DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||'... FK Dropeada');
+              
+              V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_DD_TS_ID FOREIGN KEY (DD_TS_ID) REFERENCES '||V_ESQUEMA||'.DD_TS_TIPO_SEGMENTO (DD_TS_ID) ON DELETE SET NULL)';
+              EXECUTE IMMEDIATE V_MSQL;
+              DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||'... FK Modificada');
+          
+          --Si no existe la columna, la creamos y establecemos la FK
+          ELSE
+              V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD ('||V_TMP_TIPO_DATA(1)||' '||V_TMP_TIPO_DATA(2)||')';
+              EXECUTE IMMEDIATE V_MSQL;
+              DBMS_OUTPUT.PUT_LINE('[INFO] Columna '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||'... Creada');
 
-            V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_DD_TS_ID FOREIGN KEY (DD_TS_ID) REFERENCES '||V_ESQUEMA||'.DD_TS_TIPO_SEGMENTO (DD_TS_ID) ON DELETE SET NULL)';
-            EXECUTE IMMEDIATE V_MSQL;
-            DBMS_OUTPUT.PUT_LINE('[INFO] Constraint Creada');     
+              V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_DD_TS_ID FOREIGN KEY (DD_TS_ID) REFERENCES '||V_ESQUEMA||'.DD_TS_TIPO_SEGMENTO (DD_TS_ID) ON DELETE SET NULL)';
+              EXECUTE IMMEDIATE V_MSQL;
+              DBMS_OUTPUT.PUT_LINE('[INFO] Constraint Creada');     
 
-          EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||' IS '''||V_TMP_TIPO_DATA(3)||'''';   
-        END IF;
+            EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||' IS '''||V_TMP_TIPO_DATA(3)||'''';   
+          END IF;
+      ELSE
+        DBMS_OUTPUT.PUT_LINE('No se puede añadir el campo porque la tabla a la que hace referencia no existe, hay que lanzar el DDL previo');
+      END IF;
+
     END LOOP;
 	
 EXCEPTION

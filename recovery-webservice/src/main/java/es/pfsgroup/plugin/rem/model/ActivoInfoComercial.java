@@ -52,7 +52,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
 @Table(name = "ACT_ICO_INFO_COMERCIAL", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
-@Inheritance(strategy = InheritanceType.JOINED)
 public class ActivoInfoComercial implements Serializable, Auditable {
 
 	/**
@@ -139,6 +138,15 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@JoinColumn(name = "ICO_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private ActivoZonaComun zonaComun;
+	
+	@OneToOne(mappedBy = "informeComercial")
+	private ActivoVivienda vivienda;
+	
+	@OneToOne(mappedBy = "informeComercial")
+	private ActivoLocalComercial localComercial;
+	
+	@OneToOne(mappedBy = "informeComercial")
+	private ActivoPlazaAparcamiento plazaAparcamiento;
 
 	@Column(name = "ICO_DESCRIPCION")
 	private String descripcionComercial;
@@ -513,6 +521,31 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	public void setZonaComun(ActivoZonaComun zonaComun) {
 		this.zonaComun = zonaComun;
+	}
+
+	
+	public ActivoVivienda getVivienda() {
+		return vivienda;
+	}
+
+	public void setVivienda(ActivoVivienda vivienda) {
+		this.vivienda = vivienda;
+	}
+
+	public ActivoLocalComercial getLocalComercial() {
+		return localComercial;
+	}
+
+	public void setLocalComercial(ActivoLocalComercial localComercial) {
+		this.localComercial = localComercial;
+	}
+
+	public ActivoPlazaAparcamiento getPlazaAparcamiento() {
+		return plazaAparcamiento;
+	}
+
+	public void setPlazaAparcamiento(ActivoPlazaAparcamiento plazaAparcamiento) {
+		this.plazaAparcamiento = plazaAparcamiento;
 	}
 
 	public String getDescripcionComercial() {

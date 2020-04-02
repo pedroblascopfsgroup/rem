@@ -204,7 +204,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			    AND act.ACT_NUM_ACTIVO = "+numActivo+" "
 				+ "			    AND aga.BORRADO  = 0 "
 				+ "			    AND agr.BORRADO  = 0 "
-				+ "			    AND act.BORRADO  = 0 ");
+				+ "			    AND act.BORRADO  = 0 "
+				+ "				AND (agr.AGR_FECHA_BAJA is null OR agr.AGR_FECHA_BAJA  > SYSDATE)");
 		return !"0".equals(resultado);
 	}
 
@@ -1308,7 +1309,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)"
 				+"	FROM ZON_PEF_USU WHERE"
 				+" 	USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME = '" + gestorUsername + "')"
-				+"  AND PEF_ID = (SELECT PEF_ID FROM PEF_PERFILES WHERE PEF_DESCRIPCION = 'Gestor comercial')");
+				+"  AND PEF_ID = (SELECT PEF_ID FROM PEF_PERFILES WHERE PEF_CODIGO = 'HAYAGESTCOM')");
 
 		return !"0".equals(resultado);
 	}
@@ -1320,7 +1321,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)"
 				+"	FROM ZON_PEF_USU WHERE"
 				+"	USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME = '" + supervisorUsername +"')"
-				+"	AND PEF_ID = (SELECT PEF_ID FROM PEF_PERFILES WHERE PEF_DESCRIPCION = 'Supervisor comercial')");
+				+"	AND PEF_ID = (SELECT PEF_ID FROM PEF_PERFILES WHERE PEF_CODIGO = 'HAYASUPCOM')");
 
 		return !"0".equals(resultado);
 	}
@@ -1329,7 +1330,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(Checks.esNulo(gestorUsername)) return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ZON_PEF_USU WHERE USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME = '" + gestorUsername +"')"
-				+" AND PEF_ID = (SELECT PEF_ID FROM PEF_PERFILES WHERE PEF_DESCRIPCION = 'Gestor formalización')");
+				+" AND PEF_ID = (SELECT PEF_ID FROM PEF_PERFILES WHERE PEF_CODIGO = 'HAYAGESTFORM')");
 
 		return !"0".equals(resultado);
 	}
@@ -1338,7 +1339,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(Checks.esNulo(supervisorUsername)) return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ZON_PEF_USU WHERE USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME = '" + supervisorUsername +"')"
-				+" AND PEF_ID = (SELECT PEF_ID FROM PEF_PERFILES WHERE PEF_DESCRIPCION = 'Supervisor formalización')");
+				+" AND PEF_ID = (SELECT PEF_ID FROM PEF_PERFILES WHERE PEF_CODIGO = 'HAYASUPFORM')");
 
 		return !"0".equals(resultado);
 	}
@@ -1347,7 +1348,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(Checks.esNulo(gestorUsername)) return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ZON_PEF_USU WHERE USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME ='" + gestorUsername +"')"
-				+" AND PEF_ID = (SELECT PEF_ID FROM PEF_PERFILES WHERE PEF_DESCRIPCION = 'Gestor de admisión')");
+				+" AND PEF_ID = (SELECT PEF_ID FROM PEF_PERFILES WHERE PEF_CODIGO = 'HAYAGESTADM')");
 
 		return !"0".equals(resultado);
 	}
@@ -1356,7 +1357,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(Checks.esNulo(gestorUsername)) return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ZON_PEF_USU WHERE USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME = '" + gestorUsername +"')"
-				+" AND PEF_ID = (SELECT PEF_ID FROM PEF_PERFILES WHERE PEF_DESCRIPCION = 'Gestor de activos')");
+				+" AND PEF_ID = (SELECT PEF_ID FROM PEF_PERFILES WHERE PEF_CODIGO = 'HAYAGESACT')");
 
 		return !"0".equals(resultado);
 
@@ -1366,7 +1367,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(Checks.esNulo(username)) return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ZON_PEF_USU WHERE USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME = '" + username +"')"
-				+" AND PEF_ID = (SELECT PEF_ID FROM PEF_PERFILES WHERE PEF_DESCRIPCION = 'Gestoría de formalización')");
+				+" AND PEF_ID = (SELECT PEF_ID FROM PEF_PERFILES WHERE PEF_CODIGO = 'GESTIAFORM')");
 
 		return !"0".equals(resultado);
 	}

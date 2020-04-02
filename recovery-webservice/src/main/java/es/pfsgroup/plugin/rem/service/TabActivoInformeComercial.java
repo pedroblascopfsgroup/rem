@@ -732,56 +732,60 @@ public class TabActivoInformeComercial implements TabActivoService {
 	private void getDatosByTipoActivo(Activo activo, DtoActivoInformeComercial activoInformeDto) {
 		try {
 			String codigoTipoActivo = null;
-
-			if (!Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getTipoActivo())
-					&& !Checks.esNulo(activo.getInfoComercial().getTipoActivo().getCodigo())) {
-				codigoTipoActivo = activo.getInfoComercial().getTipoActivo().getCodigo();
-			} else {
-				codigoTipoActivo = activo.getTipoActivo().getCodigo();
-			}
-
-			switch (Integer.parseInt(codigoTipoActivo)) {
-			case 1:
-				break;
-			case 2:
-				if (activo.getInfoComercial() != null && activo.getInfoComercial() instanceof ActivoVivienda) {
-					ActivoVivienda vivienda = (ActivoVivienda) activo.getInfoComercial();
-					beanUtilNotNull.copyProperties(activoInformeDto, vivienda);
+			if(activo.getInfoComercial() != null) {
+				ActivoVivienda vivienda = genericDao.get(ActivoVivienda.class, genericDao.createFilter(FilterType.EQUALS, "informeComercial.id", activo.getInfoComercial().getId()));
+				ActivoLocalComercial localComercial = genericDao.get(ActivoLocalComercial.class, genericDao.createFilter(FilterType.EQUALS, "informeComercial.id", activo.getInfoComercial().getId()));
+				ActivoPlazaAparcamiento plazaAparcamiento = genericDao.get(ActivoPlazaAparcamiento.class, genericDao.createFilter(FilterType.EQUALS, "informeComercial.id", activo.getInfoComercial().getId()));
+				if (!Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getTipoActivo())
+						&& !Checks.esNulo(activo.getInfoComercial().getTipoActivo().getCodigo())) {
+					codigoTipoActivo = activo.getInfoComercial().getTipoActivo().getCodigo();
+				} else {
+					codigoTipoActivo = activo.getTipoActivo().getCodigo();
 				}
-				break;
-			case 3:
-				if (activo.getInfoComercial() instanceof ActivoLocalComercial) {
-					ActivoLocalComercial local = (ActivoLocalComercial) activo.getInfoComercial();
-					beanUtilNotNull.copyProperties(activoInformeDto, local);
-				}
-				beanUtilNotNull.copyProperties(activoInformeDto, activo.getInfoComercial().getInstalacion());
-				break;
-			case 4:
-				break;
-			case 5:
-				ActivoEdificio edificio = activo.getInfoComercial().getEdificio();
-				beanUtilNotNull.copyProperties(activoInformeDto, edificio);
-				break;
-			case 6:
-				break;
-			case 7:
-				if (activo.getInfoComercial() instanceof ActivoPlazaAparcamiento) {
-					ActivoPlazaAparcamiento otros = (ActivoPlazaAparcamiento) activo.getInfoComercial();
-					beanUtilNotNull.copyProperties(activoInformeDto, otros);
-					if (!Checks.esNulo(otros.getTipoCalidad()))
-						beanUtilNotNull.copyProperty(activoInformeDto, "maniobrabilidadCodigo",
-								otros.getTipoCalidad().getCodigo());
-					if (!Checks.esNulo(otros.getSubtipoPlazagaraje()))
-						beanUtilNotNull.copyProperty(activoInformeDto, "subtipoPlazagarajeCodigo",
-								otros.getSubtipoPlazagaraje().getCodigo());
-				}
-				// Instalaciones
-				if (activo.getInfoComercial().getInstalacion() != null) {
+	
+				switch (Integer.parseInt(codigoTipoActivo)) {
+				case 1:
+					break;
+				case 2:
+					if (vivienda != null) {
+						beanUtilNotNull.copyProperties(activoInformeDto, activo.getInfoComercial());
+						beanUtilNotNull.copyProperties(activoInformeDto, vivienda);
+					}
+					break;
+				case 3:
+					if (localComercial != null) {
+						beanUtilNotNull.copyProperties(activoInformeDto, activo.getInfoComercial());
+						beanUtilNotNull.copyProperties(activoInformeDto, localComercial);
+					}
 					beanUtilNotNull.copyProperties(activoInformeDto, activo.getInfoComercial().getInstalacion());
+					break;
+				case 4:
+					break;
+				case 5:
+					ActivoEdificio edificio = activo.getInfoComercial().getEdificio();
+					beanUtilNotNull.copyProperties(activoInformeDto, edificio);
+					break;
+				case 6:
+					break;
+				case 7:
+					if (plazaAparcamiento != null) {
+						beanUtilNotNull.copyProperties(activoInformeDto, activo.getInfoComercial());
+						beanUtilNotNull.copyProperties(activoInformeDto, plazaAparcamiento);
+						if (!Checks.esNulo(plazaAparcamiento.getTipoCalidad()))
+							beanUtilNotNull.copyProperty(activoInformeDto, "maniobrabilidadCodigo",
+									plazaAparcamiento.getTipoCalidad().getCodigo());
+						if (!Checks.esNulo(plazaAparcamiento.getSubtipoPlazagaraje()))
+							beanUtilNotNull.copyProperty(activoInformeDto, "subtipoPlazagarajeCodigo",
+									plazaAparcamiento.getSubtipoPlazagaraje().getCodigo());
+					}
+					// Instalaciones
+					if (activo.getInfoComercial().getInstalacion() != null) {
+						beanUtilNotNull.copyProperties(activoInformeDto, activo.getInfoComercial().getInstalacion());
+					}
+					break;
+				default:
+					break;
 				}
-				break;
-			default:
-				break;
 			}
 
 		} catch (ClassCastException e) {

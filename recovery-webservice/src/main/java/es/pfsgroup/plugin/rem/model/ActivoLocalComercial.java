@@ -4,6 +4,10 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
@@ -20,14 +24,21 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "ACT_LCO_LOCAL_COMERCIAL", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@PrimaryKeyJoinColumn(name = "ICO_ID")
-public class ActivoLocalComercial extends ActivoInfoComercial implements Serializable {
+public class ActivoLocalComercial implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	
+	@Id
+	@Column(name = "ICO_ID")
+	private Long id;
+	
+	@OneToOne
+	@PrimaryKeyJoinColumn
+	private ActivoInfoComercial informeComercial;
+	
 	@Column(name = "LCO_MTS_FACHADA_PPAL")
 	private Float mtsFachadaPpal;
 
@@ -204,4 +215,16 @@ public class ActivoLocalComercial extends ActivoInfoComercial implements Seriali
 		this.comercialNumAseos = comercialNumAseos;
 	}
 
+	public ActivoInfoComercial getInformeComercial() {
+		return informeComercial;
+	}
+
+	public void setInformeComercial(ActivoInfoComercial informeComercial) {
+		this.id = informeComercial.getId();
+		this.informeComercial = informeComercial;
+	}
+	
+	public Long getId() {
+		return id;
+	}
 }

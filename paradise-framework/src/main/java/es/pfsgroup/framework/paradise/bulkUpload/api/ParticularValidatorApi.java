@@ -1118,4 +1118,8 @@ public interface ParticularValidatorApi {
 	public Boolean aCambiadoDestinoComercial(String numActivo, String destinoComercial);
 
 	public Boolean existeCodigoPeticion(String codPeticion);
+
+	public Boolean esPeticionEditable(String codPeticion, String numActivo);
+
+	public Boolean existeTipoPeticion(String codTpoPeticion);
 }

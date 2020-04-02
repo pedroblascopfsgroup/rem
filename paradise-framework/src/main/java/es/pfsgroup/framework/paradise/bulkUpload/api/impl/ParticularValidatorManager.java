@@ -4508,14 +4508,50 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeCodigoPeticion(String codPeticion) {
-		if(Checks.esNulo(codPeticion) || Boolean.FALSE.equals(StringUtils.isNumeric(codPeticion)))
-			return false;
+		
+		 if(codPeticion == null || codPeticion.isEmpty() || Boolean.FALSE.equals(StringUtils.isNumeric(codPeticion)))
+			 return false;
 		
 		String resultado = rawDao.getExecuteSQL(
-				"SELECT COUNT(1)"+ 
+				"SELECT COUNT(1) "+ 
 				"FROM HPP_HISTORICO_PETICIONES_PRECIOS HPP "+ 
 				"WHERE HPP.HPP_ID = " + codPeticion +
 				" AND HPP.borrado = 0");
+		return "1".equals(resultado);
+	}
+	
+	 @Override
+	 public Boolean esPeticionEditable(String codPeticion, String numActivo) {
+		 Boolean resultado = false;
+		 
+		 if(codPeticion == null || codPeticion.isEmpty())
+			 return true;
+		 
+		 if(Boolean.FALSE.equals(StringUtils.isNumeric(codPeticion)) || numActivo == null 
+				 ||  Boolean.FALSE.equals(StringUtils.isNumeric(numActivo)))
+			 return false;
+		 
+		 List<Object> listaHistPeticiones = rawDao.getExecuteSQLList("SELECT HPP.HPP_ID FROM hpp_historico_peticiones_precios HPP " + 
+		"INNER JOIN ACT_ACTIVO ACT ON HPP.ACT_ID = ACT.ACT_ID " + 
+		"WHERE ACT.ACT_NUM_ACTIVO = "+numActivo+" AND " + 
+		"HPP.DD_TPP_ID = (select dd_tpp_id from dd_tpp_tipo_peticion_precio where dd_tpp_id = (" + 
+		"SELECT DD_TPP_ID FROM hpp_historico_peticiones_precios where HPP_ID ="+codPeticion+" )) ORDER BY HPP.FECHACREAR DESC");
+		
+		 if(!listaHistPeticiones.isEmpty() && listaHistPeticiones.get(0).toString().equals(codPeticion)) {
+			 resultado = true;
+		 }
+		 
+		 return resultado;
+	 }
+
+	@Override
+	public Boolean existeTipoPeticion(String codTpoPeticion) {
+		 if((codTpoPeticion == null ||  Boolean.FALSE.equals(StringUtils.isNumeric(codTpoPeticion))))
+			 return false;
+			
+		String resultado = rawDao.getExecuteSQL("SELECT  COUNT(1) FROM DD_TPP_TIPO_PETICION_PRECIO " + 
+				"WHERE DD_TPP_CODIGO = '"+codTpoPeticion+"' AND BORRADO = 0");
+		
 		return "1".equals(resultado);
 	}
 	

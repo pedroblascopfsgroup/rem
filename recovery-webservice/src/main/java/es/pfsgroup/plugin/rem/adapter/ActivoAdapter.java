@@ -3112,7 +3112,7 @@ public class ActivoAdapter {
 						guardamosPatrimonio(agrupacionActivo.getActivo(), dto);
 					}
 				} else {
-					if(activo != null || dto != null) {
+					if(activo != null && dto != null) {
 						guardamosPatrimonio(activo, dto);
 					}
 				}

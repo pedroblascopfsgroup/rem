@@ -1764,7 +1764,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@Override
 	public List<HistoricoPeticionesPrecios> getHistoricoSolicitudesPrecios(Long idActivo) {
-		Order order = new Order(OrderType.DESC,"id");
+		Order order = new Order(OrderType.DESC,"auditoria.fechaCrear");
 		return genericDao.getListOrdered(HistoricoPeticionesPrecios.class, order, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo));
 	}
 }

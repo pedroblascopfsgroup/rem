@@ -1116,4 +1116,10 @@ public interface ParticularValidatorApi {
 	public Boolean esSubcarteraApple(String numActivo);
 	
 	public Boolean aCambiadoDestinoComercial(String numActivo, String destinoComercial);
+
+	public Boolean existeCodigoPeticion(String codPeticion);
+
+	public Boolean esPeticionEditable(String codPeticion, String numActivo);
+
+	public Boolean existeTipoPeticion(String codTpoPeticion);
 }

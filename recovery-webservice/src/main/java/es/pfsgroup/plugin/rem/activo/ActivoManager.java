@@ -6815,6 +6815,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					peticion.setObservaciones(historicoPropuestasPreciosDto.getObservaciones());
 				}
 				
+				if(historicoPropuestasPreciosDto.getEsEditable() != null && historicoPropuestasPreciosDto.getEsEditable()) {
+					peticion.getAuditoria().setFechaCrear(new Date());
+				}
+				
 				genericDao.save(HistoricoPeticionesPrecios.class, peticion);
 				
 				return true;

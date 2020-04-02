@@ -3112,7 +3112,9 @@ public class ActivoAdapter {
 						guardamosPatrimonio(agrupacionActivo.getActivo(), dto);
 					}
 				} else {
-					guardamosPatrimonio(activo, dto);
+					if(activo != null || dto != null) {
+						guardamosPatrimonio(activo, dto);
+					}
 				}
 				//-----------------------------------------------------------
 				activo = tabActivoService.saveTabActivo(activo, dto);

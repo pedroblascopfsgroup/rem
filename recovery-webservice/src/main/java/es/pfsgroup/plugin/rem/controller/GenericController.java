@@ -34,14 +34,10 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
-import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
-import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
-import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UploadApi;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustAcceso;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
@@ -80,19 +76,7 @@ public class GenericController extends ParadiseJsonController{
 	Properties appProperties;
 	
 	@Autowired
-	private ActivoAdapter adapterActivo;
-
-	@Autowired
-	private TrabajoApi trabajoApi;
-
-	@Autowired
-	private ExpedienteComercialAdapter expedienteComercialAdapter;
-	
-	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
-	
-	@Autowired
-	private GastoProveedorApi gastoProveedorApi;
 	
 	@Autowired
 	private UploadApi uploadApi;

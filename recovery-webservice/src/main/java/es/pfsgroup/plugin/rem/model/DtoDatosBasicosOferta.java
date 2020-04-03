@@ -3,7 +3,6 @@ package es.pfsgroup.plugin.rem.model;
 import java.util.Date;
 
 import es.capgemini.devon.dto.WebDto;
-import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 
 /**
@@ -115,7 +114,7 @@ public class DtoDatosBasicosOferta extends WebDto {
 	
 	private String ofertaSingular;
 	
-	private Long exclusionBulk;
+	private String exclusionBulk;
 	
 	private Boolean isCarteraCerberusDivarian;
 
@@ -525,11 +524,11 @@ public class DtoDatosBasicosOferta extends WebDto {
 		this.isCarteraCerberusDivarian = isCarteraCerberusDivarian;
 	}
 
-	public Long getExclusionBulk() {
+	public String getExclusionBulk() {
 		return exclusionBulk;
 	}
 
-	public void setExclusionBulk(Long exclusionBulk) {
+	public void setExclusionBulk(String exclusionBulk) {
 		this.exclusionBulk = exclusionBulk;
 	}
 

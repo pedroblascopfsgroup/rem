@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -10,11 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
@@ -22,10 +26,13 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertaExclusionBulk;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
+import es.pfsgroup.plugin.rem.thread.TransaccionExclusionBulk;
 
 @Component
 public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements UpdaterService {
@@ -38,6 +45,12 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
+	
+	@Autowired
+	private OfertaDao ofertaDao;
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaRespuestaOfertanteCES.class);
 	 
@@ -56,6 +69,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 	 				.expedienteComercialPorOferta(ofertaAceptada.getId());
 	 		
 	 		Activo activo = ofertaAceptada.getActivoPrincipal();
+	 		OfertaExclusionBulk ofertaExclusionBulkNew = null;
 	 		
 	 		for (TareaExternaValor valor : valores) {			
 	 			if (FECHA_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -93,7 +107,35 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 							|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
 						String codigoBulk = nuevoImporte > 750000d ? DDSinSiNo.CODIGO_SI : DDSinSiNo.CODIGO_NO;
 						
-						ofertaAceptada.setSinoExclusionBulk(genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoBulk)));
+						OfertaExclusionBulk ofertaExclusionBulk = genericDao.get(OfertaExclusionBulk.class, 
+								genericDao.createFilter(FilterType.EQUALS, "oferta", ofertaAceptada),
+								genericDao.createFilter(FilterType.NULL, "fechaFin"));
+						
+						Usuario usuarioModificador = genericAdapter.getUsuarioLogado();
+						
+						if(ofertaExclusionBulk != null && ofertaExclusionBulk.getExclusionBulk() != null
+								&& !ofertaExclusionBulk.getExclusionBulk().getCodigo().equals(codigoBulk)) {
+							
+							Thread thread = new Thread(new TransaccionExclusionBulk(ofertaExclusionBulk.getId(),
+									usuarioModificador.getUsername(), usuarioModificador.getId()));
+							thread.start();
+							try {
+								thread.join();
+							} catch (InterruptedException e) {
+								logger.error("Error generando registro exclsion bulk", e);
+							}
+							
+						}
+						
+						if(ofertaExclusionBulk == null || !ofertaExclusionBulk.getExclusionBulk().getCodigo().equals(codigoBulk)) {
+							ofertaExclusionBulkNew = new OfertaExclusionBulk();
+							DDSinSiNo sino = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoBulk));
+							
+							ofertaExclusionBulkNew.setOferta(ofertaAceptada);
+							ofertaExclusionBulkNew.setExclusionBulk(sino);
+							ofertaExclusionBulkNew.setFechaInicio(new Date());
+							ofertaExclusionBulkNew.setUsuarioAccion(usuarioModificador);
+						}
 					}
 
 					// Actualizar honorarios para el nuevo importe de contraoferta.
@@ -104,6 +146,9 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 					expedienteComercialApi.actualizarImporteReservaPorExpediente(expediente);
 	 			}
 	 		}
+	 		if(ofertaExclusionBulkNew != null) {
+				genericDao.save(OfertaExclusionBulk.class, ofertaExclusionBulkNew);
+			}
 	 		genericDao.save(Oferta.class, ofertaAceptada);
 	 		genericDao.save(ExpedienteComercial.class, expediente);
 	 	}catch(ParseException e) {

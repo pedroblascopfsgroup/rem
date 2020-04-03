@@ -46,6 +46,7 @@ import es.capgemini.devon.pagination.PageImpl;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
@@ -106,8 +107,6 @@ import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.impl.UpdaterServiceSancionOfertaResolucionExpediente;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
-import es.pfsgroup.plugin.rem.model.ActivoTrabajo.ActivoTrabajoPk;
 import es.pfsgroup.plugin.rem.model.BulkOferta.BulkOfertaPk;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
@@ -605,6 +604,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Visita visitaOferta = oferta.getVisita();
 		Oferta ofertaPrincipal = null;
 		DDClaseOferta claseOferta = null;
+		Usuario usuarioModificador = genericAdapter.getUsuarioLogado();
 		
 		if(!Checks.esNulo(dto.getClaseOfertaCodigo())) {
 			Filter f = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClaseOfertaCodigo());
@@ -1219,12 +1219,27 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			logger.error("error en expedienteComercialManager", e);
 		}
 
+		OfertaExclusionBulk ofertaExclusionBulkNew = null;
 		
-		if (!Checks.esNulo(dto.getExclusionBulk())) {
-			DDSinSiNo sino = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", (dto.getExclusionBulk() == 1L) ? DDSinSiNo.CODIGO_SI : DDSinSiNo.CODIGO_NO));
-			oferta.setSinoExclusionBulk(sino);
-		}
-		
+		if (dto.getExclusionBulk() != null) {
+			DDSinSiNo sino = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getExclusionBulk()));
+			ofertaExclusionBulkNew = new OfertaExclusionBulk();
+			OfertaExclusionBulk ofertaExclusionBulk = genericDao.get(OfertaExclusionBulk.class, 
+					genericDao.createFilter(FilterType.EQUALS, "oferta", oferta),
+					genericDao.createFilter(FilterType.NULL, "fechaFin"));
+			
+			if(ofertaExclusionBulk != null) {
+				ofertaExclusionBulk.setFechaFin(new Date());
+				genericDao.update(OfertaExclusionBulk.class, ofertaExclusionBulk);
+			}
+			
+			ofertaExclusionBulkNew.setOferta(oferta);
+			ofertaExclusionBulkNew.setExclusionBulk(sino);
+			ofertaExclusionBulkNew.setFechaInicio(new Date());
+			ofertaExclusionBulkNew.setUsuarioAccion(usuarioModificador);
+			
+			
+		}		
 		
 		if(!Checks.esNulo(dto.getIdAdvisoryNote())) {
 			BulkOferta blkOfr = bulkOfertaDao.findOne(null, expedienteComercial.getOferta().getId());	
@@ -1246,6 +1261,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 		ofertaApi.updateStateDispComercialActivosByOferta(oferta);
 
+		if(ofertaExclusionBulkNew != null) {
+			genericDao.save(OfertaExclusionBulk.class, ofertaExclusionBulkNew);
+		}
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		genericDao.save(Oferta.class, oferta);
 		// Si se ha modificado el importe de la oferta o de la contraoferta actualizamos
@@ -1921,8 +1939,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (!Checks.esNulo(oferta.getOfertaSingular())) {
 			dto.setOfertaSingular(oferta.getOfertaSingular() ? "Si" : "No");
 		}
+		
+		OfertaExclusionBulk ofertaExclusionBulk = genericDao.get(OfertaExclusionBulk.class, 
+				genericDao.createFilter(FilterType.EQUALS, "oferta", oferta),
+				genericDao.createFilter(FilterType.NULL, "fechaFin"));
 
-		dto.setExclusionBulk(Checks.esNulo(oferta.getSinoExclusionBulk()) ? 2L : oferta.getSinoExclusionBulk().getId());
+		if(ofertaExclusionBulk != null) {
+			dto.setExclusionBulk(ofertaExclusionBulk.getExclusionBulk().getCodigo());
+		}
 		dto.setIsAdvisoryNoteEnTareas(ofertaDao.tieneTareaActivaOrFinalizada("T017_AdvisoryNote", oferta.getNumOferta().toString()));
 		
 			
@@ -11209,5 +11233,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}else {
 			throw new JsonViewerException("La Oferta de este activo ha avanzado la tarea Autorización Propietario");
 		}
+	}
+	
+	public void guardaExclusionBulk(Long idExclusion, Long idUsuario) {
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
+		OfertaExclusionBulk ofertaExclusionBulk = genericDao.get(OfertaExclusionBulk.class, genericDao.createFilter(FilterType.EQUALS, "id", idExclusion));
+		Usuario user = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", idUsuario));
+		
+		ofertaExclusionBulk.setFechaFin(new Date());
+		ofertaExclusionBulk.setUsuarioAccion(user);
+		genericDao.update(OfertaExclusionBulk.class, ofertaExclusionBulk);
+
+		transactionManager.commit(transaction);
 	}
 }

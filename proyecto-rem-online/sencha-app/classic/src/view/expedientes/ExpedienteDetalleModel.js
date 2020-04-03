@@ -1294,10 +1294,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		},
 
 		comboSiNoExclusionBulk: { 
-			data : [ 
-				{"codigo":"1", "descripcion":"Si"}, 
-				{"codigo":"2", "descripcion":"No"} 
-			] 
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {
+					diccionario: 'DDSiNo'
+				}
+			}
 		},
 		storeOrigenLead: {
 			pageSize: $AC.getDefaultPageSize(),

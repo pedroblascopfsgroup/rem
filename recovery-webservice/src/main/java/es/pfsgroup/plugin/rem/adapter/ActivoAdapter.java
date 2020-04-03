@@ -163,6 +163,7 @@ import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.IncrementoPresupuesto;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertaExclusionBulk;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PresupuestoActivo;
@@ -3792,16 +3793,24 @@ public class ActivoAdapter {
 			oferta.setOrigenComprador(origenComprador);
 			oferta.setGestorComercialPrescriptor(ofertaApi.calcularGestorComercialPrescriptorOferta(oferta));
 			
+			ofertaCreada = genericDao.save(Oferta.class, oferta);
+			
 			if(activo != null && activo.getSubcartera() != null &&
 					(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())
 					|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
 				String codigoBulk = Double.parseDouble(dto.getImporteOferta()) > 750000d 
 						? DDSinSiNo.CODIGO_SI : DDSinSiNo.CODIGO_NO;
 				
-				oferta.setSinoExclusionBulk(genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoBulk)));
+				DDSinSiNo sino = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoBulk));
+				OfertaExclusionBulk ofertaExclusionBulk = new OfertaExclusionBulk();
+				
+				ofertaExclusionBulk.setOferta(ofertaCreada);
+				ofertaExclusionBulk.setExclusionBulk(sino);
+				ofertaExclusionBulk.setFechaInicio(new Date());
+				ofertaExclusionBulk.setUsuarioAccion(genericAdapter.getUsuarioLogado());
+				
+				genericDao.save(OfertaExclusionBulk.class, ofertaExclusionBulk);
 			}
-			
-			ofertaCreada = genericDao.save(Oferta.class, oferta);
 			
 			// Actualizamos la situacion comercial del activo
 			updaterState.updaterStateDisponibilidadComercialAndSave(activo,false);

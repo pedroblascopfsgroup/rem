@@ -22,7 +22,7 @@ DECLARE
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_MSQL VARCHAR2(4000 CHAR);
     V_USUARIO VARCHAR2(20 CHAR) := 'REMVIP-6741';
-    V_NUM_ACTIVO VARCHAR(20 CHAR) := '6971956';
+    V_NUM_ACTIVOS VARCHAR(20 CHAR) := '6971956, 5953163';
     V_COD_GESTOR VARCHAR(20 CHAR) := 'HAYAGBOINM';
     ERR_NUM NUMBER; -- Numero de errores
     ERR_MSG VARCHAR2(2048); -- Mensaje de error
@@ -39,7 +39,7 @@ BEGIN
                 JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_ID = GEE.DD_TGE_ID
                 JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = GAC.ACT_ID
                 WHERE TGE.DD_TGE_CODIGO  = '''||V_COD_GESTOR||'''
-                AND ACT.ACT_NUM_ACTIVO = '||V_NUM_ACTIVO||'
+                AND ACT.ACT_NUM_ACTIVO in ('||V_NUM_ACTIVOS||')
                 AND T1.ACT_ID = GAC.ACT_ID
                 AND T1.GEE_ID = GAC.GEE_ID
             )';

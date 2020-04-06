@@ -3110,10 +3110,22 @@ public class ActivoAdapter {
 						&& !Checks.esNulo(((DtoActivoFichaCabecera) dto).getTipoComercializacionCodigo())) {
 					List<ActivoAgrupacionActivo> agrupacionActivos = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId()).getAgrupacion().getActivos();	
 					for (ActivoAgrupacionActivo agrupacionActivo : agrupacionActivos) {
-						guardamosPatrimonio(agrupacionActivo.getActivo(), dto);
+						if(agrupacionActivo.getActivo() != null && dto != null && 
+							agrupacionActivo.getActivo().getActivoPublicacion() != null && 
+						    agrupacionActivo.getActivo().getActivoPublicacion().getTipoComercializacion() != null) {
+								guardamosPatrimonio(agrupacionActivo.getActivo(), dto);
+						}else {
+							logger.error("El activo no tiene registros de publicación o tipo de comercialización");
+						}
 					}
 				} else {
-					guardamosPatrimonio(activo, dto);
+					if(activo != null && dto != null && 
+							activo.getActivoPublicacion() != null && 
+							activo.getActivoPublicacion().getTipoComercializacion() != null) {
+						guardamosPatrimonio(activo, dto);
+					}else {
+						logger.error("El activo no tiene registros de publicación o tipo de comercialización");
+					}
 				}
 				//-----------------------------------------------------------
 				activo = tabActivoService.saveTabActivo(activo, dto);

@@ -360,25 +360,9 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	public Boolean existsTrabajo(DtoTrabajoFilter dto) {
 		Boolean existe = null;
 		
-		HQLBuilder hb = new HQLBuilder(" from VBusquedaTrabajos tbj");
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.id", dto.getIdTrabajo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numTrabajo", dto.getNumTrabajo());
+		HQLBuilder hb = new HQLBuilder(" from Trabajo tbj");
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.idTrabajoWebcom", dto.getIdTrabajoWebcom());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoTipo", dto.getCodigoTipo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoSubtipo", dto.getCodigoSubtipo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoEstado", dto.getCodigoEstado());
-   		HQLBuilder.addFiltroLikeSiNotNull(hb, "tbj.descripcionPoblacion", dto.getDescripcionPoblacion(), true);
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoProvincia", dto.getCodigoProvincia());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codPostal", dto.getCodPostal());
-   		HQLBuilder.addFiltroLikeSiNotNull(hb, "tbj.solicitante", dto.getSolicitante(), true);
-   		HQLBuilder.addFiltroLikeSiNotNull(hb, "tbj.proveedor", dto.getProveedor(), true);
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numActivoRem", dto.getNumActivoRem());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numAgrupacionRem", dto.getNumAgrupacionRem());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.idActivo", dto.getIdActivo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.cartera", dto.getCartera());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.gestorActivo", dto.getGestorActivo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numActivo", dto.getNumActivo());
-
+   		
    		List<Trabajo> tbjList = HibernateQueryUtils.list(this, hb);
    		if(!Checks.esNulo(tbjList) && tbjList.isEmpty()){
 			existe = false;

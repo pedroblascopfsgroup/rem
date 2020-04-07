@@ -34,7 +34,7 @@ public class BulkOferta implements Serializable, Auditable {
     private static final long serialVersionUID = 1L;
 
     @EmbeddedId
-    private BulkOfertaPk primaryKey = new BulkOfertaPk();
+    private BulkOfertaPk primaryKey;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "BLK_ID", nullable = false, updatable = false, insertable = false)
@@ -51,12 +51,6 @@ public class BulkOferta implements Serializable, Auditable {
 	@Embedded
 	private Auditoria auditoria;
 	
-    /**
-     * defualt constructor.
-     */
-    public BulkOferta() {
-        primaryKey = new BulkOfertaPk();
-    }
 
 	public BulkOfertaPk getPrimaryKey() {
 		return primaryKey;
@@ -144,11 +138,14 @@ public class BulkOferta implements Serializable, Auditable {
          */
         private static final long serialVersionUID = 1L;
 
-        @Column(name = "BLK_ID")
-        private Long bulkAdvisoryNote;
+        @ManyToOne
+        @JoinColumn(name = "BLK_ID")
+        private BulkAdvisoryNote bulkAdvisoryNote;
 
-        @Column(name = "OFR_ID")
-        private Long oferta;
+        @ManyToOne
+        @JoinColumn(name = "OFR_ID")
+        @Where(clause = Auditoria.UNDELETED_RESTICTION)
+        private Oferta oferta;
 
         /**
          * default contructor.
@@ -157,24 +154,24 @@ public class BulkOferta implements Serializable, Auditable {
 
         }
         
-        public BulkOfertaPk(Long bulkAdvisoryNote, Long oferta) {
+        public BulkOfertaPk(BulkAdvisoryNote bulkAdvisoryNote, Oferta oferta) {
         	this.bulkAdvisoryNote = bulkAdvisoryNote;
         	this.oferta = oferta;
         }
         
-		public Long getBulkAdvisoryNote() {
+		public BulkAdvisoryNote getBulkAdvisoryNote() {
 			return bulkAdvisoryNote;
 		}
 
-		public void setBulkAdvisoryNote(Long bulkAdvisoryNote) {
+		public void setBulkAdvisoryNote(BulkAdvisoryNote bulkAdvisoryNote) {
 			this.bulkAdvisoryNote = bulkAdvisoryNote;
 		}
 
-		public Long getOferta() {
+		public Oferta getOferta() {
 			return oferta;
 		}
 
-		public void setOferta(Long oferta) {
+		public void setOferta(Oferta oferta) {
 			this.oferta = oferta;
 		}        
      

@@ -1240,7 +1240,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}else {
 				//Borrado logico del anterior registro si procede
 				Auditoria.delete(blkOfr);	
-				genericDao.update(BulkOferta.class, blkOfr);
+				bulkOfertaDao.update(blkOfr);
 			}
 		}
 
@@ -9886,7 +9886,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			BulkOferta blkOfr = bulkOfertaDao.findOne(null, expediente.getOferta().getId(), false);
 			
 			if(!Checks.esNulo(blkOfr)) {
-				List<BulkOferta> listaBlkOfr = bulkOfertaDao.getListBulkOfertasByIdBulk(blkOfr.getPrimaryKey().getBulkAdvisoryNote());
+				List<BulkOferta> listaBlkOfr = bulkOfertaDao.getListBulkOfertasByIdBulk(blkOfr.getPrimaryKey().getBulkAdvisoryNote().getId());
 	
 				if (listaBlkOfr != null && !listaBlkOfr.isEmpty()) {
 					avisosFormateados.setDescripcion(avisosFormateados.getDescripcion()
@@ -11166,12 +11166,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		boolean ofertasEnLaMismaTarea = true;
 		List<String> tareasOfertaActual;
 		if (!Checks.esNulo(blkOfr)) {
-			List<BulkOferta> listaBlkOfr = bulkOfertaDao.getListBulkOfertasByIdBulk(blkOfr.getPrimaryKey().getBulkAdvisoryNote());		
-			Oferta ofertaActual = ofertaDao.get(blkOfr.getPrimaryKey().getOferta());
+			List<BulkOferta> listaBlkOfr = bulkOfertaDao.getListBulkOfertasByIdBulk(blkOfr.getPrimaryKey().getBulkAdvisoryNote().getId());		
+			Oferta ofertaActual = ofertaDao.get(blkOfr.getPrimaryKey().getOferta().getId());
 			tareasOfertaActual = ofertaDao.getTareasActivas(ofertaActual.getNumOferta().toString());
 							
 			for(int i = 0; i < listaBlkOfr.size() && ofertasEnLaMismaTarea; i++) {
-				Oferta ofertasDelBulk =  ofertaDao.get(listaBlkOfr.get(i).getPrimaryKey().getOferta());
+				Oferta ofertasDelBulk =  ofertaDao.get(listaBlkOfr.get(i).getPrimaryKey().getOferta().getId());
 				List<String> tareasActivas = ofertaDao.getTareasActivas(ofertasDelBulk.getNumOferta().toString());
 				boolean existeTareaActiva = false;	
 				for (int f = 0; f < tareasActivas.size() && !existeTareaActiva; f++) {
@@ -11187,7 +11187,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if(!Checks.esNulo(blkOfr)) {
 			//Borrado logico del anterior registro si procede
 			Auditoria.delete(blkOfr);	
-			genericDao.update(BulkOferta.class, blkOfr);				
+			bulkOfertaDao.update(blkOfr);				
 			OfertaDto ofertaDto = new OfertaDto();
 			ofertaDto.setNumeroBulkAdvisoryNote(blkOfr.getBulkAdvisoryNote().toString());
 		}
@@ -11209,14 +11209,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					blkOfr.getAuditoria().setUsuarioBorrar(null);
 					blkOfr.getAuditoria().setFechaModificar(new Date());
 					blkOfr.getAuditoria().setUsuarioModificar(SecurityUtils.getCurrentUser().getUsername());
-					genericDao.update(BulkOferta.class, blkOfr);
+					bulkOfertaDao.update(blkOfr);
 				}else {
 					blkOfr = new BulkOferta();				
 					blkOfr.setBulkAdvisoryNote(blkAn);
 					blkOfr.setOferta(oferta);
-					blkOfr.setPrimaryKey(new BulkOfertaPk(blkAn.getId(),oferta.getId()));
+					blkOfr.setPrimaryKey(new BulkOfertaPk(blkAn,oferta));
 					blkOfr.setAuditoria(Auditoria.getNewInstance());
-					genericDao.save(BulkOferta.class, blkOfr);
+					bulkOfertaDao.save(blkOfr);
 				}
 				if(!bulkOfertas.contains(blkOfr))
 					bulkOfertas.add(blkOfr);

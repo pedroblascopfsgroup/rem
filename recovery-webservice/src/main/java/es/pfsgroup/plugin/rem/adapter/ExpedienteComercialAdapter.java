@@ -389,7 +389,7 @@ public class ExpedienteComercialAdapter {
 					BulkOferta blkOfr = bulkOfertaDao.findOne(null, expedienteComercial.getOferta().getId(), false);
 					//Comprobamos que la oferta pertenezca un Bulk.
 					if (!Checks.esNulo(blkOfr)) {
-						List<BulkOferta> listaBlkOfr = bulkOfertaDao.getListBulkOfertasByIdBulk(blkOfr.getPrimaryKey().getBulkAdvisoryNote());
+						List<BulkOferta> listaBlkOfr = bulkOfertaDao.getListBulkOfertasByIdBulk(blkOfr.getPrimaryKey().getBulkAdvisoryNote().getId());
 						
 						for(BulkOferta blkOferta : listaBlkOfr) {
 							ExpedienteComercial expComercial = expedienteComercialDao.getExpedienteComercialByIdOferta(blkOferta.getOferta().getId());

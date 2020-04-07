@@ -169,7 +169,7 @@ public class BulkAdvisoryNoteAdapter {
 		if(bulkOferta == null)
 			return false;
 		
-		List<BulkOferta> listOfertasBulk = bulkOfertaDao.getListBulkOfertasByIdBulk(bulkOferta.getPrimaryKey().getBulkAdvisoryNote());
+		List<BulkOferta> listOfertasBulk = bulkOfertaDao.getListBulkOfertasByIdBulk(bulkOferta.getPrimaryKey().getBulkAdvisoryNote().getId());
 		
 		return validarTareasOfertasBulk(listOfertasBulk, valoresTarea, tapCodigoActual);
 	}
@@ -190,7 +190,7 @@ public class BulkAdvisoryNoteAdapter {
 						|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(actOfr.getPrimaryKey().getActivo().getSubcartera().getCodigo()))
 				&& bulkOferta != null && !Checks.esNulo(bulkOferta.getPrimaryKey().getBulkAdvisoryNote())) {
 
-			listOfertasBulk = bulkOfertaDao.getListBulkOfertasByIdBulk(bulkOferta.getPrimaryKey().getBulkAdvisoryNote());
+			listOfertasBulk = bulkOfertaDao.getListBulkOfertasByIdBulk(bulkOferta.getPrimaryKey().getBulkAdvisoryNote().getId());
 			if(listOfertasBulk != null && !listOfertasBulk.isEmpty() && listOfertasBulk.size() > 1) {
 				esOfertaEnbulk=true;
 			}
@@ -204,7 +204,7 @@ public class BulkAdvisoryNoteAdapter {
 		DtoGenericForm dto;
 		for (BulkOferta ofertaDelBulk : listOfertasBulk) {
 			
-			Oferta ofertaActual = ofertaDao.get(ofertaDelBulk.getPrimaryKey().getOferta());
+			Oferta ofertaActual = ofertaDao.get(ofertaDelBulk.getPrimaryKey().getOferta().getId());
 			
 			if(!Checks.esNulo(ofertaActual) 
 					&&  (ofertaDao.tieneTareaActiva(tapCodigoActual,ofertaActual.getNumOferta().toString()))){
@@ -270,7 +270,7 @@ public class BulkAdvisoryNoteAdapter {
 		String tapCodigoActual= tareaExterna.getTareaProcedimiento().getCodigo();
 
 		if(bulkOfrf != null) {
-			List<BulkOferta> listOfertasBulk = bulkOfertaDao.getListBulkOfertasByIdBulk(bulkOfrf.getPrimaryKey().getBulkAdvisoryNote());
+			List<BulkOferta> listOfertasBulk = bulkOfertaDao.getListBulkOfertasByIdBulk(bulkOfrf.getPrimaryKey().getBulkAdvisoryNote().getId());
 			List<Long> listIdsOfertasDelBulk = new ArrayList<Long>();
 			for (BulkOferta bulkOferta : listOfertasBulk) {
 				if(ofertaActual != null && !ofertaActual.getNumOferta().equals(bulkOferta.getOferta().getNumOferta()))

@@ -126,7 +126,7 @@ public class BulkAdvisoryNoteAdapter {
 			if(!listActOfr.isEmpty()) {
 				actOfr = listActOfr.get(0);
 			}
-			bulkOferta = bulkOfertaDao.findOne(null, ofertaActual.getId());
+			bulkOferta = bulkOfertaDao.findOne(null, ofertaActual.getId(), false);
 		}
 		
 		String tapCodigoActual= tareaExterna.getTareaProcedimiento().getCodigo();
@@ -159,7 +159,7 @@ public class BulkAdvisoryNoteAdapter {
 			if(!listActOfr.isEmpty()) {
 				actOfr = listActOfr.get(0);
 			}
-			bulkOferta = bulkOfertaDao.findOne(null, ofertaActual.getId());
+			bulkOferta = bulkOfertaDao.findOne(null, ofertaActual.getId(), false);
 		}
 		
 		List<TareaExternaValor> valores = activoTareaExternaManagerApi.obtenerValoresTarea(tareaExterna.getId());
@@ -262,7 +262,7 @@ public class BulkAdvisoryNoteAdapter {
 			if(!listActOfr.isEmpty()) {
 				actOfr = listActOfr.get(0);
 			}
-			bulkOfrf = bulkOfertaDao.findOne(null, ofertaActual.getId());
+			bulkOfrf = bulkOfertaDao.findOne(null, ofertaActual.getId(), false);
 		}
 		
 		List<TareaExternaValor> valores = activoTareaExternaManagerApi.obtenerValoresTarea(tareaExterna.getId());

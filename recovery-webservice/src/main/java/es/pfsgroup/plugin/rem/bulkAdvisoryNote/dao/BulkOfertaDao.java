@@ -13,7 +13,7 @@ public interface BulkOfertaDao extends AbstractDao<BulkOferta, Long>{
 	 * @param idOferta
 	 * @return un objeto BulkOferta
 	 */
-	public BulkOferta findOne(Long idBulk, Long idOferta);
+	public BulkOferta findOne(Long idBulk, Long idOferta, Boolean borrado);
 	
 	/**
 	 * Devuelve una lista de BulkOferta pasando el idBulk

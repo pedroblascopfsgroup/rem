@@ -14,12 +14,12 @@ import es.pfsgroup.plugin.rem.model.BulkOferta;
 public class BulkOfertaDaoImpl extends AbstractEntityDao<BulkOferta, Long> implements BulkOfertaDao{
 			
 	@Override
-	public BulkOferta findOne(Long idBulk, Long idOferta) {
+	public BulkOferta findOne(Long idBulk, Long idOferta, Boolean borrado) {
 		
 		HQLBuilder hql = new HQLBuilder("from BulkOferta");
 		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "bulkAdvisoryNote.id", idBulk);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "oferta.id", idOferta);
-		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "auditoria.borrado", false);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "auditoria.borrado", borrado);
 		
 		Query q = this.getSessionFactory().getCurrentSession().createQuery(hql.toString());
 		HQLBuilder.parametrizaQuery(q, hql);

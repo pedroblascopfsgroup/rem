@@ -74,7 +74,7 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 				|| trabajoApi.checkGiants(tareaExterna)) {
 			return ofertaApi.isValidateOfertasDependientes(tareaExterna, valores);
 		}
-		return activoTramiteApi.existeAdjuntoUGValidacion(tareaExterna, DDSubtipoDocumentoExpediente.CODIGO_ADVISORY_NOTE_FIRMADO_PROPIEDAD,"E");
+		return activoTramiteApi.existeAdjuntoUGValidacion(tareaExterna, DDSubtipoDocumentoExpediente.CODIGO_APROBACION,"E");
 
 	}	
 	

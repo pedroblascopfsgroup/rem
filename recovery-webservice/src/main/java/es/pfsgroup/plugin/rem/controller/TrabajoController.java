@@ -977,13 +977,15 @@ public class TrabajoController extends ParadiseJsonController {
 		Usuario gestorAlquileres = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
 		Usuario gestorSuelos = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS);
 		Usuario gestorEdificaciones = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
-
+		Usuario responsableTrabajo = trabajo.getUsuarioResponsableTrabajo();
+				
 		List<DtoUsuario> listaResponsables = new ArrayList<DtoUsuario>();
-
+		
 		DtoUsuario dtoGestorActivo = new DtoUsuario();
 		DtoUsuario dtoGestorAlquileres = new DtoUsuario();
 		DtoUsuario dtoGestorSuelos = new DtoUsuario();
 		DtoUsuario dtoGestorEdificaciones = new DtoUsuario();
+		DtoUsuario dtoMultiActivo = new DtoUsuario();
 
 		try {
 			if(!Checks.esNulo(gestorActivo)){
@@ -1001,6 +1003,14 @@ public class TrabajoController extends ParadiseJsonController {
 			if(!Checks.esNulo(gestorEdificaciones)){
 				BeanUtils.copyProperties(dtoGestorEdificaciones, gestorEdificaciones);
 				listaResponsables.add(dtoGestorEdificaciones);
+			}
+			if (responsableTrabajo != null && trabajo.getActivosTrabajo().size() > 1 
+					&& !responsableTrabajo.equals(gestorSuelos)
+					&& !responsableTrabajo.equals(gestorAlquileres)
+					&& !responsableTrabajo.equals(gestorActivo)
+					&& !responsableTrabajo.equals(gestorEdificaciones)) {			
+				BeanUtils.copyProperties(dtoMultiActivo, responsableTrabajo);
+				listaResponsables.add(dtoMultiActivo);
 			}
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();

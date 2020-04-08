@@ -43,6 +43,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.pagination.PageImpl;
+import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -1242,7 +1243,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}		
 		
 		if(dto.getIdAdvisoryNote() != null) {
-			BulkOferta blkOfr = bulkOfertaDao.findOne(null, expedienteComercial.getOferta().getId());
+			BulkOferta blkOfr = bulkOfertaDao.findOne(null, expedienteComercial.getOferta().getId(), false);
 			if(!StringUtils.isBlank(dto.getIdAdvisoryNote())) {					
 				//Comprobamos que la oferta pertenezca a un Bulk.
 				//Si todas las ofertas se encuentran en la misma tarea se podrá modificar
@@ -1254,7 +1255,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}else {
 				//Borrado logico del anterior registro si procede
 				Auditoria.delete(blkOfr);	
-				genericDao.update(BulkOferta.class, blkOfr);
+				bulkOfertaDao.update(blkOfr);
 			}
 		}
 
@@ -1958,7 +1959,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			
 		
 
-		BulkOferta blkOferta = bulkOfertaDao.findOne(null, oferta.getId());
+		BulkOferta blkOferta = bulkOfertaDao.findOne(null, oferta.getId(), false);
 		if(!Checks.esNulo(blkOferta)) {
 			BulkAdvisoryNote blkAn = genericDao.get(BulkAdvisoryNote.class,	genericDao.createFilter(FilterType.EQUALS, "id", blkOferta.getBulkAdvisoryNote().getId()));
 			if (!Checks.esNulo(blkAn)) {
@@ -9906,10 +9907,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 			}	
 			
-			BulkOferta blkOfr = bulkOfertaDao.findOne(null, expediente.getOferta().getId());
+			BulkOferta blkOfr = bulkOfertaDao.findOne(null, expediente.getOferta().getId(), false);
 			
 			if(!Checks.esNulo(blkOfr)) {
-				List<BulkOferta> listaBlkOfr = bulkOfertaDao.getListBulkOfertasByIdBulk(blkOfr.getPrimaryKey().getBulkAdvisoryNote());
+				List<BulkOferta> listaBlkOfr = bulkOfertaDao.getListBulkOfertasByIdBulk(blkOfr.getPrimaryKey().getBulkAdvisoryNote().getId());
 	
 				if (listaBlkOfr != null && !listaBlkOfr.isEmpty()) {
 					avisosFormateados.setDescripcion(avisosFormateados.getDescripcion()
@@ -11189,12 +11190,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		boolean ofertasEnLaMismaTarea = true;
 		List<String> tareasOfertaActual;
 		if (!Checks.esNulo(blkOfr)) {
-			List<BulkOferta> listaBlkOfr = bulkOfertaDao.getListBulkOfertasByIdBulk(blkOfr.getPrimaryKey().getBulkAdvisoryNote());		
-			Oferta ofertaActual = ofertaDao.get(blkOfr.getPrimaryKey().getOferta());
+			List<BulkOferta> listaBlkOfr = bulkOfertaDao.getListBulkOfertasByIdBulk(blkOfr.getPrimaryKey().getBulkAdvisoryNote().getId());		
+			Oferta ofertaActual = ofertaDao.get(blkOfr.getPrimaryKey().getOferta().getId());
 			tareasOfertaActual = ofertaDao.getTareasActivas(ofertaActual.getNumOferta().toString());
 							
 			for(int i = 0; i < listaBlkOfr.size() && ofertasEnLaMismaTarea; i++) {
-				Oferta ofertasDelBulk =  ofertaDao.get(listaBlkOfr.get(i).getPrimaryKey().getOferta());
+				Oferta ofertasDelBulk =  ofertaDao.get(listaBlkOfr.get(i).getPrimaryKey().getOferta().getId());
 				List<String> tareasActivas = ofertaDao.getTareasActivas(ofertasDelBulk.getNumOferta().toString());
 				boolean existeTareaActiva = false;	
 				for (int f = 0; f < tareasActivas.size() && !existeTareaActiva; f++) {
@@ -11210,31 +11211,43 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if(!Checks.esNulo(blkOfr)) {
 			//Borrado logico del anterior registro si procede
 			Auditoria.delete(blkOfr);	
-			genericDao.update(BulkOferta.class, blkOfr);				
+			bulkOfertaDao.update(blkOfr);				
 			OfertaDto ofertaDto = new OfertaDto();
 			ofertaDto.setNumeroBulkAdvisoryNote(blkOfr.getBulkAdvisoryNote().toString());
 		}
 		//Nuevo registro idAdvisoryNote
 		if(!ofertaDao.tieneTareaActivaOrFinalizada("T017_ResolucionPROManzana", oferta.getNumOferta().toString())) {
-			BulkOferta blkOfrNew = new BulkOferta();		
+			
 			Filter filtroNumeroBulkAN = genericDao.createFilter(FilterType.EQUALS, "numeroBulkAdvisoryNote", dto.getIdAdvisoryNote());
-			Filter filtroTipoBulk = genericDao.createFilter(FilterType.EQUALS, "tipoBulkAdvisoryNote.id", dto.getTipoBulkAdvisoryNote());
-			BulkAdvisoryNote blkAn = genericDao.get(BulkAdvisoryNote.class,	filtroNumeroBulkAN, filtroTipoBulk);		
+			BulkAdvisoryNote blkAn = genericDao.get(BulkAdvisoryNote.class,	filtroNumeroBulkAN);		
 			//Si el blkAn es nulo significa que no existe el número de bulk introducido con el tipo de bulk del anterior bulk (debe existir el bulk y que sea del mismo tipo)
 			if(!Checks.esNulo(blkAn)) {
-				blkOfrNew.setBulkAdvisoryNote(blkAn);
-				blkOfrNew.setOferta(oferta);
-				blkOfrNew.setPrimaryKey(new BulkOfertaPk(blkAn.getId(),oferta.getId()));
-				blkOfrNew.setAuditoria(Auditoria.getNewInstance());
 				List<BulkOferta> bulkOfertas = blkAn.getBulkOferta();
 				if(Checks.esNulo(bulkOfertas)) {
 					bulkOfertas = new ArrayList<BulkOferta>();
 				}
-				bulkOfertas.add(blkOfrNew);
+				blkOfr = bulkOfertaDao.findOne(blkAn.getId(), oferta.getId(), true);	
+				if(blkOfr != null) {
+					blkOfr.getAuditoria().setBorrado(false);
+					blkOfr.getAuditoria().setFechaBorrar(null);
+					blkOfr.getAuditoria().setUsuarioBorrar(null);
+					blkOfr.getAuditoria().setFechaModificar(new Date());
+					blkOfr.getAuditoria().setUsuarioModificar(SecurityUtils.getCurrentUser().getUsername());
+					bulkOfertaDao.update(blkOfr);
+				}else {
+					blkOfr = new BulkOferta();				
+					blkOfr.setBulkAdvisoryNote(blkAn);
+					blkOfr.setOferta(oferta);
+					blkOfr.setPrimaryKey(new BulkOfertaPk(blkAn,oferta));
+					blkOfr.setAuditoria(Auditoria.getNewInstance());
+					bulkOfertaDao.save(blkOfr);
+				}
+				if(!bulkOfertas.contains(blkOfr))
+					bulkOfertas.add(blkOfr);
 				blkAn.setBulkOferta(bulkOfertas);
 				genericDao.save(BulkAdvisoryNote.class, blkAn);
 			}else {
-				throw new JsonViewerException("El Bulk no existe o no es del mismo tipo");
+				throw new JsonViewerException("El Bulk con id '"+dto.getIdAdvisoryNote()+"' no existe");
 			}
 		}else {
 			throw new JsonViewerException("La Oferta de este activo ha avanzado la tarea Autorización Propietario");

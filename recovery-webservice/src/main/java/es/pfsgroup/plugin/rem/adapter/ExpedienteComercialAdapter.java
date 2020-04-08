@@ -386,10 +386,10 @@ public class ExpedienteComercialAdapter {
 						(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(expedienteComercial.getOferta().getActivoPrincipal().getSubcartera().getCodigo()) ||
 								DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(expedienteComercial.getOferta().getActivoPrincipal().getSubcartera().getCodigo()))) {
 					//Comprobamos que tengan lo subtipos de documentos apropiados.
-					BulkOferta blkOfr = bulkOfertaDao.findOne(null, expedienteComercial.getOferta().getId());
+					BulkOferta blkOfr = bulkOfertaDao.findOne(null, expedienteComercial.getOferta().getId(), false);
 					//Comprobamos que la oferta pertenezca un Bulk.
 					if (!Checks.esNulo(blkOfr)) {
-						List<BulkOferta> listaBlkOfr = bulkOfertaDao.getListBulkOfertasByIdBulk(blkOfr.getPrimaryKey().getBulkAdvisoryNote());
+						List<BulkOferta> listaBlkOfr = bulkOfertaDao.getListBulkOfertasByIdBulk(blkOfr.getPrimaryKey().getBulkAdvisoryNote().getId());
 						
 						for(BulkOferta blkOferta : listaBlkOfr) {
 							ExpedienteComercial expComercial = expedienteComercialDao.getExpedienteComercialByIdOferta(blkOferta.getOferta().getId());

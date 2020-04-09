@@ -41,11 +41,10 @@ BEGIN
     EXECUTE IMMEDIATE V_SQL;
     
     DBMS_OUTPUT.put_line('[INFO] Se va a lanzar el SP de recálculo de situación comercial para '||SQL%ROWCOUNT||' activos de Divarian.');
+    COMMIT;
     
     V_SQL := 'CALL '||V_ESQUEMA||'.SP_ASC_ACT_SIT_COM_VACIOS_V2 (0)';
     EXECUTE IMMEDIATE V_SQL;
-    
-	COMMIT;
     
     DBMS_OUTPUT.put_line('[FIN]');
  

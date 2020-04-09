@@ -24,14 +24,14 @@ public class EnvioDocumentoGestorDocBulk implements Runnable {
 	private final Log logger = LogFactory.getLog(getClass());
 	private List<Long> listaIdsExpedientesCom = null;
 	private WebFileItem webFileItem = null;
-	private Long idSubtipoDocumento = null;
+	private String codSubtipoDocumento = null;
 	private String username = null;
 
-	public EnvioDocumentoGestorDocBulk(List<Long> listaIdsExpedientesCom, WebFileItem webFileItem, Long idSubtipoDocumento, String username) {
+	public EnvioDocumentoGestorDocBulk(List<Long> listaIdsExpedientesCom, WebFileItem webFileItem, String codSubtipoDocumento, String username) {
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 		this.listaIdsExpedientesCom = listaIdsExpedientesCom;
 		this.webFileItem = webFileItem;
-		this.idSubtipoDocumento = idSubtipoDocumento;
+		this.codSubtipoDocumento = codSubtipoDocumento;
 		this.username = username;
 	}
 
@@ -39,7 +39,7 @@ public class EnvioDocumentoGestorDocBulk implements Runnable {
 	public void run() {
 		try {
 			restApi.doSessionConfig(this.username);
-			expedienteComercialApi.uploadDocumentosBulkGD(listaIdsExpedientesCom, webFileItem, idSubtipoDocumento, username);
+			expedienteComercialApi.uploadDocumentosBulkGD(listaIdsExpedientesCom, webFileItem, codSubtipoDocumento, username);
 		} catch (GestorDocumentalException ex) {
 			logger.error("Error subida documento de ofertas Bulk en Gestor Documental ", ex);
 		} catch (Exception e) {

@@ -2571,11 +2571,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	@Transactional(readOnly = false)
 	public void uploadDocumentosBulkGD(List<Long> listaIdsExpedientesCom, WebFileItem webFileItem,
-			Long idSubtipoDocumento, String username) throws Exception {
+			String codSubtipoDocumento, String username) throws Exception {
 
 		TransactionStatus transaction = null;
 		try {
-			Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "id", idSubtipoDocumento);
+			
+			Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "codigo", codSubtipoDocumento);
 			DDSubtipoDocumentoExpediente sde = genericDao.get(DDSubtipoDocumentoExpediente.class, filtroSubtipo);
 
 			if (!Checks.estaVacio(listaIdsExpedientesCom)) {

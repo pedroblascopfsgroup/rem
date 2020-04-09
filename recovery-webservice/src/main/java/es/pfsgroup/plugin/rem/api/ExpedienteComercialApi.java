@@ -1310,7 +1310,7 @@ public interface ExpedienteComercialApi {
 	public Long uploadDocumentoGestorDocumental(ExpedienteComercial expedienteComercial, WebFileItem webFileItem,
 			DDSubtipoDocumentoExpediente subtipoDocumento, String username) throws Exception;
 
-	public void uploadDocumentosBulkGD(List<Long> listaIdsExpedientesCom, WebFileItem webFileItem, Long idSubtipoDocumento,
+	public void uploadDocumentosBulkGD(List<Long> listaIdsExpedientesCom, WebFileItem webFileItem, String codSubtipoDocumento,
 			String username) throws Exception;
 
 	boolean ofertasEnLaMismaTarea(BulkOferta blkOfr);

@@ -133,9 +133,9 @@ public class ExpedienteComercialAdapter {
 					} catch (GestorDocumentalException gexc) {
 						logger.error(gexc.getMessage(),gexc);
 					}
-					
+				} else {
+					throw gex;
 				}
-				throw gex;
 			}			
 		} else {
 			listaAdjuntos = getAdjuntos(id, listaAdjuntos);
@@ -406,7 +406,7 @@ public class ExpedienteComercialAdapter {
 						
 						if (!Checks.esNulo(idDocRestClient)) {							
 							//Hilo que se utiliza para subir los documentos al resto de ofertas pertenecientes al Bulk correspondiente.
-							Thread envioDocumentoGestorDocBulk = new Thread(new EnvioDocumentoGestorDocBulk(listaExpComercial, webFileItem, subtipoDocumento.getId(), usuarioLogado.getUsername()));
+							Thread envioDocumentoGestorDocBulk = new Thread(new EnvioDocumentoGestorDocBulk(listaExpComercial, webFileItem, subtipoDocumento.getCodigo(), usuarioLogado.getUsername()));
 							envioDocumentoGestorDocBulk.start();
 						} else {
 							return ERROR_SUBIDA_DOCUMENTO_GD;

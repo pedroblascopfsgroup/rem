@@ -119,6 +119,13 @@ Ext.define('HreRem.model.FichaProveedorModel', {
         		depends: 'tipoProveedorCodigo'
             },
             {
+            	name: 'isSociedadTasadora',
+            	calculate: function(data) {
+        			return data.subtipoProveedorCodigo == CONST.SUBTIPOS_PROVEEDOR['SOCIEDAD_TASADORA'];
+        		},
+        		depends: 'subtipoProveedorCodigo'
+            },
+            {
             	name: 'isAdministracion',
             	calculate: function(data) {
         			return data.tipoProveedorCodigo == CONST.TIPOS_PROVEEDOR['ADMINISTRACION'];

@@ -102,6 +102,7 @@ Ext.define('HreRem.ux.util.Constants', {
 	},
 
 	SUBTIPOS_PROVEEDOR: {
+		SOCIEDAD_TASADORA: '02',
 		MEDIADOR: '04'
 	},
 

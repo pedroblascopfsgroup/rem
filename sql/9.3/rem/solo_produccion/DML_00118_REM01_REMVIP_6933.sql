@@ -54,7 +54,7 @@ BEGIN
         V_MSQL :=   'MERGE INTO REM01.ACT_PTA_PATRIMONIO_ACTIVO T1
                      USING (
                          SELECT ACT.ACT_ID, CDU.DD_CDU_ID,
-                             CASE WHEN AUX.ALQUILER_SOCIAL = 'SI' THEN 1
+                             CASE WHEN AUX.ALQUILER_SOCIAL = ''SI'' THEN 1
                                  ELSE 0
                              END ALQUILER_SOCIAL
                          FROM REM01.AUX_REMVIP_6933 AUX

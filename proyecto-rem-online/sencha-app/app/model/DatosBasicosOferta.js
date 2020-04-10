@@ -89,6 +89,9 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     			name: 'isAdvisoryNoteEnTareas'
     		},
     		{
+    			name: 'tareaAdvisoryNoteFinalizada'
+    		},
+    		{
     			name:'idAdvisoryNote'
     		},
     		{

@@ -420,6 +420,26 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	
 	@Override
 	@Transactional
+	public Boolean tieneTareaFinalizada(String tarea, String numOferta) {
+		String sql = "SELECT COUNT(1)" + 
+				"		FROM ECO_EXPEDIENTE_COMERCIAL ECO" + 
+				"		INNER JOIN ACT_OFR ACTOFR ON ACTOFR.OFR_ID = ECO.OFR_ID" + 
+				"		INNER JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = ACTOFR.ACT_ID" + 
+				"		INNER JOIN ACT_TRA_TRAMITE ATR ON ECO.TBJ_ID = ATR.TBJ_ID" + 
+				"		INNER JOIN TAC_TAREAS_ACTIVOS TAC ON ATR.TRA_ID = TAC.TRA_ID" + 
+				"		INNER JOIN TAR_TAREAS_NOTIFICACIONES TAR ON TAR.TAR_ID = TAC.TAR_ID" + 
+				"		INNER JOIN TEX_TAREA_EXTERNA TXT ON TXT.TAR_ID = TAR.TAR_ID" + 
+				"		INNER JOIN TAP_TAREA_PROCEDIMIENTO TAP ON TXT.TAP_ID = TAP.TAP_ID" + 
+				"		INNER JOIN OFR_OFERTAS OFR ON OFR.OFR_ID = ECO.OFR_ID" + 
+				"		WHERE TAR.TAR_TAREA_FINALIZADA = 1" + 
+				"		AND TAP.TAP_CODIGO = '" + tarea + "'" + 
+				"		AND OFR.OFR_NUM_OFERTA = " + numOferta;
+		
+		return "1".equals(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult().toString());
+	}
+	
+	@Override
+	@Transactional
 	public List<String> getTareasActivas(String numOferta) {
 		List<Object> resultados = rawDao.getExecuteSQLList(
 				"		SELECT TAP.TAP_CODIGO" + 

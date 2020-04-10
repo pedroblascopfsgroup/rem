@@ -107,5 +107,7 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	Boolean tieneTareaActivaOrFinalizada(String tarea, String numOferta);
 
 	List<String> getTareasActivas(String numOferta);
+
+	public Boolean tieneTareaFinalizada(String tarea, String numOferta);
 	
 }

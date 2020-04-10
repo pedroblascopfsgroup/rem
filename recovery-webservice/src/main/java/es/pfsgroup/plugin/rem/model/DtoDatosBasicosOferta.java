@@ -120,6 +120,7 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	private String idAdvisoryNote;
 	private Long tipoBulkAdvisoryNote;
+	private Boolean tareaAdvisoryNoteFinalizada;
 	
 	
 	private Boolean estadoAprobadoLbk;
@@ -546,6 +547,14 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setIdAdvisoryNote(String idAdvisoryNote) {
 		this.idAdvisoryNote = idAdvisoryNote;
+	}
+
+	public Boolean getTareaAdvisoryNoteFinalizada() {
+		return tareaAdvisoryNoteFinalizada;
+	}
+
+	public void setTareaAdvisoryNoteFinalizada(Boolean tareaAdvisoryNoteFinalizada) {
+		this.tareaAdvisoryNoteFinalizada = tareaAdvisoryNoteFinalizada;
 	}
 
 }

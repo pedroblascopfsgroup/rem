@@ -1955,6 +1955,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setExclusionBulk(ofertaExclusionBulk.getExclusionBulk().getCodigo());
 		}
 		dto.setIsAdvisoryNoteEnTareas(ofertaDao.tieneTareaActivaOrFinalizada("T017_AdvisoryNote", oferta.getNumOferta().toString()));
+		dto.setTareaAdvisoryNoteFinalizada(ofertaDao.tieneTareaFinalizada("T017_AdvisoryNote", oferta.getNumOferta().toString()));
 		
 			
 		

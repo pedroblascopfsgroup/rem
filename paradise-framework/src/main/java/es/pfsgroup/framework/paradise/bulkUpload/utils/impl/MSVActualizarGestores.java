@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.commons.utils.HQLBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -310,10 +311,12 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 		Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		ZonaUsuarioPerfil usuarioPerfil = genericDao.get(ZonaUsuarioPerfil.class,
 				genericDao.createFilter(FilterType.EQUALS, "usuario", usu),
-				genericDao.createFilter(FilterType.EQUALS, "perfil", perfilSuperPlanif));
+				genericDao.createFilter(FilterType.EQUALS, "perfil", perfilSuperPlanif),
+				genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 		ZonaUsuarioPerfil usuarioSuper = genericDao.get(ZonaUsuarioPerfil.class,
 				genericDao.createFilter(FilterType.EQUALS, "usuario", usu),
-				genericDao.createFilter(FilterType.EQUALS, "perfil", perfilSuper));
+				genericDao.createFilter(FilterType.EQUALS, "perfil", perfilSuper),
+				genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 
 		return usuarioPerfil != null || usuarioSuper != null;
 	}

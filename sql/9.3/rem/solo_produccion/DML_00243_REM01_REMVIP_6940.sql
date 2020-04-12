@@ -39,7 +39,7 @@ DECLARE
     TRA_ID NUMBER(16);
 
 BEGIN
-    /*
+    
     DBMS_OUTPUT.put_line('  [INFO] BORRADO TAREAS T017_RespuestaOfertanteCES');
 
     V_SQL := 'DELETE '||V_ESQUEMA||'.TEV_TAREA_EXTERNA_VALOR TEX 

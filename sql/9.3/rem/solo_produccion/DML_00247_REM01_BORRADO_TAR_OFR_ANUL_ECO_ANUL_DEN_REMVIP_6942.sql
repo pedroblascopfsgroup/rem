@@ -1,7 +1,7 @@
 --/*
 --######################################### 
 --## AUTOR=David Gonzalez
---## FECHA_CREACION=20200412
+--## FECHA_CREACION=20200413
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
 --## INCIDENCIA_LINK=REMVIP-6942

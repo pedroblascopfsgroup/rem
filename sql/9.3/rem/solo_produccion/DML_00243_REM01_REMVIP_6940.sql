@@ -1515,7 +1515,7 @@ BEGIN
         207440,
         207940,
         208469'
-        , 'T017_PBCVenta', NULL, NULL);*/
+        , 'T017_PBCVenta', NULL, NULL);
     
     DBMS_OUTPUT.put_line('  [INFO] BORRADO TRA_PROCESS_BPM');
     

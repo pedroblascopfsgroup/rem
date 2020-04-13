@@ -43,12 +43,7 @@ DECLARE
 		t_tipo_data('Avila', 'gplana'),
 		t_tipo_data('Badajoz', 'alopezr'),
 		t_tipo_data('Baleares', 'jcarbonellm'),
-		t_tipo_data('Barcelona', 'alopezr'),
-		t_tipo_data('Barcelona', 'gplana'),
-		t_tipo_data('Barcelona', 'ebenitezt'),
-		t_tipo_data('Barcelona', 'jmartinezsa'),
-		t_tipo_data('Barcelona', 'jcarbonellm'),
-		t_tipo_data('Barcelona', 'ptranche'),
+		t_tipo_data('Barcelona', 'gestformdivarian'),
 		t_tipo_data('Burgos', 'jmartinezsa'),
 		t_tipo_data('CiudadReal', 'gplana'),
 		t_tipo_data('Cáceres', 'alopezr'),
@@ -58,12 +53,7 @@ DECLARE
 		t_tipo_data('Ceuta', 'alopezr'),
 		t_tipo_data('Córdoba', 'alopezr'),
 		t_tipo_data('Cuenca', 'gplana'),
-		t_tipo_data('Girona', 'alopezr'),
-		t_tipo_data('Girona', 'gplana'),
-		t_tipo_data('Girona', 'ebenitezt'),
-		t_tipo_data('Girona', 'jmartinezsa'),
-		t_tipo_data('Girona', 'jcarbonellm'),
-		t_tipo_data('Girona', 'ptranche'),
+		t_tipo_data('Girona', 'gestformdivarian'),
 		t_tipo_data('Granada', 'ebenitezt'),
 		t_tipo_data('Guadalajara', 'gplana'),
 		t_tipo_data('Guipúzcoa', 'jmartinezsa'),
@@ -74,12 +64,7 @@ DECLARE
 		t_tipo_data('La Rioja', 'jmartinezsa'),
 		t_tipo_data('Las Palmas', 'ptranche'),
 		t_tipo_data('León', 'jmartinezsa'),
-		t_tipo_data('Lleida', 'alopezr'),
-		t_tipo_data('Lleida', 'gplana'),
-		t_tipo_data('Lleida', 'ebenitezt'),
-		t_tipo_data('Lleida', 'jmartinezsa'),
-		t_tipo_data('Lleida', 'jcarbonellm'),
-		t_tipo_data('Lleida', 'ptranche'),
+		t_tipo_data('Lleida', 'gestformdivarian'),
 		t_tipo_data('Lugo', 'jmartinezsa'),
 		t_tipo_data('Madrid', 'gplana'),
 		t_tipo_data('Málaga', 'ebenitezt'),
@@ -95,12 +80,7 @@ DECLARE
 		t_tipo_data('Sevilla', 'alopezr'),
 		t_tipo_data('Soria', 'gplana'),
 		t_tipo_data('Santa C. Tenerife', 'ptranche'),
-		t_tipo_data('Tarragona', 'alopezr'),
-		t_tipo_data('Tarragona', 'gplana'),
-		t_tipo_data('Tarragona', 'ebenitezt'),
-		t_tipo_data('Tarragona', 'jmartinezsa'),
-		t_tipo_data('Tarragona', 'jcarbonellm'),
-		t_tipo_data('Tarragona', 'ptranche'),
+		t_tipo_data('Tarragona', 'gestformdivarian'),
 		t_tipo_data('Teruel', 'jmartinezsa'),
 		t_tipo_data('Toledo', 'gplana'),
 		t_tipo_data('Valencia', 'jcarbonellm'),
@@ -133,7 +113,7 @@ BEGIN
 		
 			--DELETE ACT_GES_DIST_GESTORES: TIPO_GESTOR GFORM, PROVINCIAS Y CARTERA            
 			V_MSQL := 'DELETE FROM '|| V_ESQUEMA ||'.ACT_GES_DIST_GESTORES ' ||
-			  'WHERE TIPO_GESTOR = ''GFORM'' AND COD_CARTERA = ''7'' AND COD_SUBCARTERA = ''151'' AND COD_PROVINCIA = '''||V_DD_PRV_CODIGO||''' AND USERNAME = '''||TRIM(V_TMP_TIPO_DATA(2))||'''';            
+			  'WHERE TIPO_GESTOR = ''GFORM'' AND COD_CARTERA = ''7'' AND COD_SUBCARTERA = ''151'' AND COD_PROVINCIA = '''||V_DD_PRV_CODIGO||'''';            
 			EXECUTE IMMEDIATE V_MSQL;           
 		
 			--1 INSERT ACT_GES_DIST_GESTORES
@@ -145,7 +125,7 @@ BEGIN
 			
 			--DELETE ACT_GES_DIST_GESTORES: TIPO_GESTOR GFORM, PROVINCIAS Y CARTERA            
 			V_MSQL := 'DELETE FROM '|| V_ESQUEMA ||'.ACT_GES_DIST_GESTORES ' ||
-			  'WHERE TIPO_GESTOR = ''GFORM'' AND COD_CARTERA = ''7'' AND COD_SUBCARTERA = ''152'' AND COD_PROVINCIA = '''||V_DD_PRV_CODIGO||''' AND USERNAME = '''||TRIM(V_TMP_TIPO_DATA(2))||'''';         
+			  'WHERE TIPO_GESTOR = ''GFORM'' AND COD_CARTERA = ''7'' AND COD_SUBCARTERA = ''152'' AND COD_PROVINCIA = '''||V_DD_PRV_CODIGO||'''';         
 			EXECUTE IMMEDIATE V_MSQL;      
 		
 			--1 INSERT ACT_GES_DIST_GESTORES

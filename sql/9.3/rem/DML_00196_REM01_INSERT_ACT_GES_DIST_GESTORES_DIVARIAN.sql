@@ -70,7 +70,7 @@ DECLARE
 		t_tipo_data('Huelva', 'alopezr'),
 		t_tipo_data('Huesca', 'jmartinezsa'),
 		t_tipo_data('Jaén', 'ebenitezt'),
-		t_tipo_data('La Coruña', 'jmartinezsa'),
+		t_tipo_data('A Coruña', 'jmartinezsa'),
 		t_tipo_data('La Rioja', 'jmartinezsa'),
 		t_tipo_data('Las Palmas', 'ptranche'),
 		t_tipo_data('León', 'jmartinezsa'),

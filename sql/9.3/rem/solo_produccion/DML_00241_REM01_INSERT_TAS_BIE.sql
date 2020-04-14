@@ -21,8 +21,8 @@ SET DEFINE OFF;
 DECLARE
 	V_MSQL VARCHAR2(4000 CHAR);
 	V_SQL VARCHAR2(4000 CHAR);
-	V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquema
-	V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER'; -- Configuracion Esquema Master
+	V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+	V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
 	V_NUM NUMBER(16); -- Vble. para validar la existencia de un registro.
 	err_num NUMBER; -- Numero de errores
 	err_msg VARCHAR2(2048); -- Mensaje de error

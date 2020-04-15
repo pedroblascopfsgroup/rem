@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Carles Molins
---## FECHA_CREACION=20200320
+--## FECHA_CREACION=20200409
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-5203
+--## INCIDENCIA_LINK=REMVIP-6739
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -102,7 +102,7 @@ AS
 							ELSE 0 
 						END 
                 END AS sin_toma_posesion_inicial,        
-                CASE WHEN (sps1.sps_ocupado = 1 AND TPA.DD_TPA_CODIGO = ''01'' OR ua.act_id is not null) THEN 1 ELSE 0 END AS ocupado_contitulo,
+                CASE WHEN ((sps1.sps_ocupado = 1 AND TPA.DD_TPA_CODIGO = ''01'') OR ua.act_id is not null) THEN 1 ELSE 0 END AS ocupado_contitulo,
                 NVL2 (tit.act_id, 0, 1) AS pendiente_inscripcion,
                 NVL2 (npa.act_id, 1, 0) AS proindiviso,
                 CASE WHEN sps1.sps_acc_tapiado = 1 THEN 1 ELSE 0 END AS tapiado, 
@@ -154,16 +154,21 @@ AS
                   LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps1 ON sps1.act_id = act.act_id                  
 				  LEFT JOIN '||V_ESQUEMA||'.DD_TPA_TIPO_TITULO_ACT TPA ON TPA.DD_TPA_ID = SPS1.DD_TPA_ID
 				  LEFT JOIN '||V_ESQUEMA||'.DD_SIJ_SITUACION_JURIDICA sij on  sij.dd_sij_id =sps1.dd_sij_id                   
-				  LEFT JOIN (select  aga.act_id 
-                      from '||V_ESQUEMA||'.act_aga_agrupacion_activo aga
-                      where AGA.AGA_PRINCIPAL = 1 AND EXISTS
-                       (
-                         select aga2.agr_id from '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO aga2
-                         inner join '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA sps on sps.act_id = aga2.act_id
-                         inner join '||V_ESQUEMA||'.ACT_AGR_AGRUPACION agr on aga2.agr_id = agr.agr_id
-                         inner join '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION tag1 on tag1.dd_tag_id = agr.dd_tag_id 
-                         where TAG1.DD_TAG_CODIGO = ''16'' and SPS.DD_TPA_ID = 1 AND aga.AGA_ID = aga2.AGA_ID
-                        )) ua on ua.act_id = act.act_id
+				  LEFT JOIN (
+					    SELECT DISTINCT ACT.ACT_ID
+					    FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
+					    JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID
+					    WHERE AGA.AGA_PRINCIPAL = 1 AND ACT.BORRADO = 0
+					    AND EXISTS (
+					        SELECT DISTINCT AGA2.AGR_ID, AGR.AGR_NUM_AGRUP_REM
+					        FROM '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA2
+					        JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR ON AGA2.AGR_ID = AGR.AGR_ID AND (AGR.AGR_FECHA_BAJA IS NULL OR AGR.AGR_FECHA_BAJA > SYSDATE)
+					        JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.DD_TAG_CODIGO = ''16''
+					        JOIN '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA SPS ON SPS.ACT_ID = AGA2.ACT_ID AND SPS.SPS_OCUPADO = 1
+					        JOIN '||V_ESQUEMA||'.DD_TPA_TIPO_TITULO_ACT TPA ON TPA.DD_TPA_ID = SPS.DD_TPA_ID AND TPA.DD_TPA_CODIGO = ''01''
+					        WHERE AGA.AGR_ID = AGA2.AGR_ID
+					    )
+				  ) UA ON UA.ACT_ID = ACT.ACT_ID
 				  LEFT JOIN
                   (SELECT act_tit.act_id
                      FROM '||V_ESQUEMA||'.act_reg_info_registral act_reg 

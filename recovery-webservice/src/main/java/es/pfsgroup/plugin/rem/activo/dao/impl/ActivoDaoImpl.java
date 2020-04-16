@@ -50,6 +50,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
+import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
@@ -67,11 +68,8 @@ import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPlusvalia;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.utils.MSVREMUtils;
@@ -1758,4 +1756,92 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		StringBuilder sb = new StringBuilder("delete from ActivoOferta actofr where actofr.activo = " + idActivo + " and actofr.oferta = " + idOferta);
 		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
 	}
+	
+	@Override
+	public Object getBusquedaActivosGrid(DtoActivoGridFilter dto, Usuario usuLogado, boolean devolverPage) {
+		HQLBuilder hb = new HQLBuilder(" select vgrid from VGridBusquedaActivos vgrid ");
+		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraAvanzadaCodigo() != null ?  dto.getCarteraAvanzadaCodigo() : dto.getCarteraCodigo());		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subcarteraCodigo", dto.getSubcarteraAvanzadaCodigo() != null ?  dto.getSubcarteraAvanzadaCodigo() : dto.getSubcarteraCodigo());		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.localidadDescripcion", dto.getLocalidadAvanzadaDescripcion() != null ?  dto.getLocalidadAvanzadaDescripcion() : dto.getLocalidadDescripcion());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.provinciaCodigo", dto.getProvinciaAvanzadaCodigo() != null ?  dto.getProvinciaAvanzadaCodigo() : dto.getProvinciaCodigo());	
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numFinca", dto.getNumFincaAvanzada() != null ?  dto.getNumFincaAvanzada() : dto.getNumFinca());		
+	
+		if(dto.getNumAgrupacion() != null) 
+			hb.appendWhere(" exists (select 1 from ActivoAgrupacionActivo aga where aga.agrupacion.numAgrupRem = " + dto.getNumAgrupacion() + " and vgrid.id = aga.activo.id) ");			
+		if(dto.getRefCatastral() != null) 
+			hb.appendWhere(" exists (select 1 from ActivoCatastro cat where upper(cat.refCatastral) like '%" + dto.getRefCatastral().toUpperCase() + "%' and vgrid.id = cat.activo.id) ");
+		
+		if (dto.getNumActivo() != null && StringUtils.isNumeric(dto.getNumActivo()))
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivo", dto.getNumActivo());						
+		if (dto.getNumActivoPrinex() != null && StringUtils.isNumeric(dto.getNumActivoPrinex()))
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivoPrinex", Long.valueOf(dto.getNumActivoPrinex()));		
+		if (dto.getNumActivoRecovey() != null && StringUtils.isNumeric(dto.getNumActivoRecovey()))
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivoRecovey", Long.valueOf(dto.getNumActivoRecovey()));
+   		if (dto.getNumActivoUvem() != null && StringUtils.isNumeric(dto.getNumActivoUvem()))
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivoUvem", Long.valueOf(dto.getNumActivoUvem()));
+   		   		   		
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivoSareb", dto.getNumActivoSareb());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivoDivarian", dto.getNumActivoDivarian());		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.estadoActivoCodigo", dto.getEstadoActivoCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoUsoDestinoCodigo", dto.getTipoUsoDestinoCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.claseActivoBancarioCodigo", dto.getClaseActivoBancarioCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subclaseActivoBancarioCodigo", dto.getSubclaseActivoBancarioCodigo());
+		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoActivoCodigo", dto.getTipoActivoCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subtipoActivoCodigo", dto.getSubtipoActivoCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.selloCalidad",	dto.getSelloCalidad());		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.codPromoPrinex", dto.getCodPromoPrinex());
+		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoViaCodigo", dto.getTipoViaCodigo());		
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.nombreVia", dto.getNombreVia(), true);
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.codPostal", dto.getCodPostal(), true);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.paisCodigo", dto.getPaisCodigo());
+		
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.localidadRegistroDescripcion", dto.getLocalidadRegistroDescripcion(), true);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numRegistro", dto.getNumRegistro());
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.idufir", dto.getIdufir(), true);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoTituloActivoCodigo", dto.getTipoTituloActivoCodigo());		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subtipoTituloActivoCodigo", dto.getSubtipoTituloActivoCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.divHorizontal", dto.getDivHorizontal());			
+		
+		if (dto.getFechaInscripcionReg() != null) 
+			hb.appendWhere(dto.getFechaInscripcionReg() == 1 ? " vgrid.fechaInscripcionReg IS NOT NULL" : " vgrid.fechaInscripcionReg IS NULL ");		
+								
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.nombrePropietario", dto.getNombrePropietario(), true);
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.docPropietario", dto.getDocPropietario(), true);		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.ocupado", dto.getOcupado());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.conTituloCodigo", dto.getConTituloCodigo());		
+		
+		if (dto.getFechaPosesion() !=null) 		
+			hb.appendWhere(dto.getFechaPosesion() == 1 ? " vgrid.fechaPosesion IS NOT NULL" : " vgrid.fechaPosesion IS NULL ");		
+	
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tapiado", dto.getTapiado());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.antiocupa", dto.getAntiocupa());		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tituloPosesorioCodigo", dto.getTituloPosesorioCodigo());
+		
+		if(dto.getUsuarioGestor() !=null && dto.getTipoGestorCodigo() !=null) {
+			hb.appendWhere(" exists (select 1 from GestorActivo ga where ga.tipoGestor.codigo = '" +  dto.getTipoGestorCodigo() + "' and ga.usuario.id = " +   dto.getUsuarioGestor() + " and vgrid.id = ga.activo.id) ");
+		}else if(dto.getTipoGestorCodigo() !=null) {
+			hb.appendWhere(" exists (select 1 from GestorActivo ga where ga.tipoGestor.codigo = '" +  dto.getTipoGestorCodigo() + "' and vgrid.id = ga.activo.id) ");
+		}			
+		if (dto.getGestoria() != null) 
+			hb.appendWhere(" exists (select 1 from VBusquedaActivosGestorias bag where bag.gestoria = " + dto.getGestoria() + " and vgrid.id = bag.id) ");		
+		if(dto.getApiPrimarioId() !=null)
+			hb.appendWhere(" exists (select 1 from ActivoInfoComercial aic where aic.mediadorInforme.id = " +  dto.getApiPrimarioId() + " and vgrid.id = aic.activo.id) ");
+		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.situacionComercialCodigo", dto.getSituacionComercialCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoComercializacionCodigo", dto.getTipoComercializacionCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.gestion", dto.getGestion());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.flagRatingCodigo", dto.getFlagRatingCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.conCargas", dto.getConCargas());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.estadoComunicacionGencatCodigo", dto.getEstadoComunicacionGencatCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.direccionComercialCodigo", dto.getDireccionComercialCodigo());
+		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoSegmentoCodigo", dto.getTipoSegmentoCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.perimetroMacc", dto.getPerimetroMacc());	
+	
+		return devolverPage ? HibernateQueryUtils.page(this, hb, dto) : HibernateQueryUtils.list(this, hb);	
+	}
+	
 }

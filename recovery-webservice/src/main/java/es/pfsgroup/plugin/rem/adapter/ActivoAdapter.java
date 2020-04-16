@@ -129,6 +129,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
+import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
@@ -1602,6 +1603,20 @@ public class ActivoAdapter {
 		}
 		
 		return activoApi.getListActivos(dtoActivoFiltro, usuarioLogado);
+	}
+	
+	public Object getBusquedaActivosGrid(DtoActivoGridFilter dtoActivoFiltro, boolean devolverPage) {
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		DDIdentificacionGestoria gestoria = gestorActivoApi.isGestoria(usuarioLogado);
+		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+		dtoActivoFiltro.setGestoria(gestoria != null ? gestoria.getId() : null);
+		if (usuarioCartera != null) {
+			dtoActivoFiltro.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
+			if (usuarioCartera.getSubCartera() != null) {			
+				dtoActivoFiltro.setSubcarteraCodigo(usuarioCartera.getSubCartera().getCodigo());
+			}
+		}		
+		return activoDao.getBusquedaActivosGrid(dtoActivoFiltro, usuarioLogado, devolverPage);
 	}
 
 	public List<DtoUsuario> getComboUsuarios(long idTipoGestor) {

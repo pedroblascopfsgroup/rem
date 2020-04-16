@@ -29,6 +29,8 @@ Ext.define('HreRem.view.activos.ActivosController', {
 	onSearchBusquedaDirectaActivos: function(btn){
 		var me = this;
 		var numActivo = btn.up('activossearch').down('[name="numActivo"]').value;
+		var view = me.getView();
+		view.mask(HreRem.i18n("msg.mask.loading"));
 		
 		if(numActivo != ""){
 		  	var url= $AC.getRemoteUrl('activo/getActivoExists');
@@ -39,15 +41,16 @@ Ext.define('HreRem.view.activos.ActivosController', {
     		     success: function(response, opts) {
     		    	 data = Ext.decode(response.responseText);
     		    	 if(data.success == "true"){
-    		    		 var titulo = "Activo " + numActivo;
+    		    		 var titulo = "Activo " + numActivo;    		    		
         		    	 me.getView().fireEvent('abrirDetalleActivoById', data.data, titulo);
     		    	 }else{
         		    	 me.fireEvent("errorToast", data.error);
     		    	 }
-    		         
+    		          view.unmask();
     		     },
     		     failure: function(response) {
     		    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    		    	  view.unmask();
     		     }
     		 });    
 			
@@ -116,7 +119,8 @@ Ext.define('HreRem.view.activos.ActivosController', {
 			});
         }
 		params.buscador = 'activos';
-		config.params = params;		
+		config.params = params;
+		config.method = 'POST';
 		config.url= $AC.getRemoteUrl("activo/generateExcel");
 		var url = $AC.getRemoteUrl("activo/registrarExportacion");
 		Ext.Ajax.request({			

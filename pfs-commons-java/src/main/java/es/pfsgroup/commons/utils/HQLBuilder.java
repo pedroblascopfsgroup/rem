@@ -89,15 +89,12 @@ public class HQLBuilder {
 	 * @param valor
 	 *            valor del parámetro
 	 */
-	public static void addFiltroIgualQueSiNotNull(final HQLBuilder hqlBuilder, final String nombreCampo,
-			final Object valor) {
-		final String nombreParametro = nombraParametro(nombreCampo);
-
+	public static void addFiltroIgualQueSiNotNull(final HQLBuilder hqlBuilder, final String nombreCampo, final Object valor) {
 		if (!Checks.esNulo(valor)) {
+			final String nombreParametro = nombraParametro(nombreCampo);
 			hqlBuilder.appendWhere(nombreCampo.concat(" = :").concat(nombreParametro));
 			hqlBuilder.getParametros().putObject(nombreParametro, valor);
 		}
-
 	}
 	
 
@@ -270,23 +267,18 @@ public class HQLBuilder {
 	 *            sentencia HQL procesando con una función upper() el
 	 *            nombreCampo
 	 */
-	public static void addFiltroLikeSiNotNull(final HQLBuilder hqlBuilder, final String nombreCampo, final Object valor,
-			final boolean ignoreCase) {
-		final String nombreParametro = nombraParametro(nombreCampo);
-
+	public static void addFiltroLikeSiNotNull(final HQLBuilder hqlBuilder, final String nombreCampo, final Object valor, final boolean ignoreCase) {
 		if (!Checks.esNulo(valor)) {
+			final String nombreParametro = nombraParametro(nombreCampo);
 			final String field = ignoreCase ? "upper(".concat(nombreCampo).concat(")") : nombreCampo;
 			hqlBuilder.appendWhere(field.concat(" like '%'|| :").concat(nombreParametro).concat(" ||'%'"));
-			hqlBuilder.getParametros().putObject(nombreParametro,
-					ignoreCase ? valor.toString().toUpperCase() : valor.toString());
+			hqlBuilder.getParametros().putObject(nombreParametro, ignoreCase ? valor.toString().toUpperCase() : valor.toString());
 		}
 	}
 
-	public static void addFiltroLikeSiNotNull(final HQLBuilder hqlBuilder, final String nombreCampo, final Object valor,
-			final boolean ignoreCase, final boolean quiereOr) {
-		final String nombreParametro = nombraParametro(nombreCampo);
-
+	public static void addFiltroLikeSiNotNull(final HQLBuilder hqlBuilder, final String nombreCampo, final Object valor, final boolean ignoreCase, final boolean quiereOr) {
 		if (!Checks.esNulo(valor)) {
+			final String nombreParametro = nombraParametro(nombreCampo);
 			final String field = nombreCampo;
 			hqlBuilder.appendWhere(field.concat(" like '%'|| :").concat(nombreParametro).concat(" ||'%'"), quiereOr);
 			hqlBuilder.getParametros().putObject(nombreParametro, valor.toString());

@@ -2,13 +2,13 @@ Ext.define('HreRem.view.activos.ActivosModel', {
     extend: 'HreRem.view.common.DDViewModel',
     alias: 'viewmodel.activos',
 
-    requires : ['HreRem.ux.data.Proxy', 'HreRem.model.BusquedaActivo', 'HreRem.model.ComboBase', 'HreRem.model.Gestor', 'HreRem.model.Tramite' ],
+    requires : ['HreRem.ux.data.Proxy', 'HreRem.model.BusquedaActivo', 'HreRem.model.ComboBase', 'HreRem.model.Gestor', 'HreRem.model.Tramite' , 'HreRem.model.BusquedaActivoGrid'],
 
     data: {	
     },
     
     stores: {
-    		
+    		/*
     		activos: {
     				pageSize: $AC.getDefaultPageSize(),
 			    	model: 'HreRem.model.BusquedaActivo',
@@ -19,6 +19,24 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 					    actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'}
     
     					
+			    	},
+			    	session: true,
+			    	remoteSort: true,
+			    	remoteFilter: true,
+			    	autoLoad:false,
+			    	listeners : {
+			            beforeload : 'paramLoading'
+			        }
+
+    		},
+    		*/
+    		gridBusquedaActivos: {
+    				pageSize: $AC.getDefaultPageSize(),
+			    	model: 'HreRem.model.BusquedaActivoGrid',
+			    	proxy: {
+				        type: 'uxproxy',				   
+				        remoteUrl: 'activo/getBusquedaActivosGrid',
+					    actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'}
 			    	},
 			    	session: true,
 			    	remoteSort: true,

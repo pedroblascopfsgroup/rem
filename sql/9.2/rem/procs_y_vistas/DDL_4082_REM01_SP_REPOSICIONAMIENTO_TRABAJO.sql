@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Guillem Rey
---## FECHA_CREACION=20200417
+--## FECHA_CREACION=20200418
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-1965

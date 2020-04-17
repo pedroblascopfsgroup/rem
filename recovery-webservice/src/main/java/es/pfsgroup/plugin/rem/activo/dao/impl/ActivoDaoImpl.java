@@ -1822,9 +1822,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
 		if(dto.getUsuarioGestor() !=null && dto.getTipoGestorCodigo() !=null) {
 			hb.appendWhere(" exists (select 1 from GestorActivo ga where ga.tipoGestor.codigo = '" +  dto.getTipoGestorCodigo() + "' and ga.usuario.id = " +   dto.getUsuarioGestor() + " and vgrid.id = ga.activo.id) ");
-		}else if(dto.getTipoGestorCodigo() !=null) {
-			hb.appendWhere(" exists (select 1 from GestorActivo ga where ga.tipoGestor.codigo = '" +  dto.getTipoGestorCodigo() + "' and vgrid.id = ga.activo.id) ");
-		}			
+		}
 		if (dto.getGestoria() != null) 
 			hb.appendWhere(" exists (select 1 from VBusquedaActivosGestorias bag where bag.gestoria = " + dto.getGestoria() + " and vgrid.id = bag.id) ");		
 		if(dto.getApiPrimarioId() !=null)

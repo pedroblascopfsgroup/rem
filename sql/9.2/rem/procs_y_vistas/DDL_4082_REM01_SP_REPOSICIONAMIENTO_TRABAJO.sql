@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Guillem Rey
---## FECHA_CREACION=20200416
+--## FECHA_CREACION=20200417
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-1965
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##		0.2 REMVIP-7036 - mejorado, soporte lista de trabajos
+--##
 --##########################################
 --*/
 

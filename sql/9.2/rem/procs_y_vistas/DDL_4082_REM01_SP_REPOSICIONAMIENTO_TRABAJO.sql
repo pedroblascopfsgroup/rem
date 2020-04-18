@@ -41,10 +41,6 @@ create or replace PROCEDURE       #ESQUEMA#.REPOSICIONAMIENTO_TRABAJO (USUARIO V
       S_TAR NUMBER(16) := 0; -- Vble. para almacenar la secuencia generada para el TAR_ID
       S_TEX NUMBER(16) := 0; -- Vble. para almacenar la secuencia generada para el TEX_ID
 
-      -- Cursor que almacena las secuencias
-      CURSOR CURSOR_TRABAJOS IS
-      SELECT DISTINCT TBJ_ID  FROM #ESQUEMA#.TRABAJOS_REPOSICIONAR;
-
       -- Tablas de volcado
       V_TABLA_TBJ VARCHAR2(30 CHAR) := 'ACT_TBJ_TRABAJO';
       V_TABLA_ACT_TBJ VARCHAR2(30 CHAR) := 'ACT_TBJ';
@@ -60,7 +56,7 @@ BEGIN
       -- INSERT TRABAJOS_REPOSICIONAR --
       ---------------------------------------------------------------------------------------------------------------
 
-      V_MSQL := 'TRUNCATE TABLE '||V_ESQUEMA||'.'||V_TABLA||'';
+      V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.'||V_TABLA||'';
       EXECUTE IMMEDIATE V_MSQL;
 
       V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (TBJ_ID, ACT_ID, TPO_ID, TAP_ID ,TRA_ID ,TRA_PROCES_BPM)
@@ -87,30 +83,10 @@ BEGIN
       ---------------------------------------------------------------------------------------------------------------
       -- UPDATE TRABAJOS_REPOSICIONAR (TBJ_ID, TRA_ID, TAR_ID, TEX_ID) --
       ---------------------------------------------------------------------------------------------------------------
+ 	  V_MSQL := 'UPDATE '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR SET TAR_ID = '||V_ESQUEMA||'.S_TAR_TAREAS_NOTIFICACIONES.NEXTVAL, TEX_ID = '||V_ESQUEMA||'.S_TEX_TAREA_EXTERNA.NEXTVAL
+				WHERE TAR_ID IS NULL';
+      EXECUTE IMMEDIATE V_MSQL;
 
-      OPEN CURSOR_TRABAJOS;
-
-      LOOP
-            FETCH CURSOR_TRABAJOS INTO V_TBJ_ID;
-            EXIT WHEN CURSOR_TRABAJOS%NOTFOUND;
-
-                    V_MSQL := 'SELECT '||V_ESQUEMA||'.S_TAR_TAREAS_NOTIFICACIONES.NEXTVAL FROM DUAL';
-                    
-                    EXECUTE IMMEDIATE V_MSQL INTO S_TAR;
-                    V_MSQL := 'SELECT '||V_ESQUEMA||'.S_TEX_TAREA_EXTERNA.NEXTVAL FROM DUAL';
-                    
-                    EXECUTE IMMEDIATE V_MSQL INTO S_TEX;
-
-                    V_MSQL := 'UPDATE '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR TRA
-                                SET     TRA.TAR_ID = '||S_TAR||'
-                                    ,   TRA.TEX_ID = '||S_TEX||'
-                                WHERE TBJ_ID = '||V_TBJ_ID||' ';
-                                                    
-                    EXECUTE IMMEDIATE V_MSQL;
-
-      END LOOP;
-
-      CLOSE CURSOR_TRABAJOS;
 
 	  --USU_ID SUP_ID
 	  
@@ -121,58 +97,67 @@ BEGIN
       -- FINALIZAR TAREAS ACTIVAS --
       ------------------------------
       
-    V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES SET
+    V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES t1 SET
                         TAR_FECHA_FIN = SYSDATE
                     ,   TAR_TAREA_FINALIZADA  = 1
                     ,   USUARIOBORRAR = '''||V_USUARIO||'''
                     ,   FECHABORRAR = SYSDATE
                     ,   BORRADO = 1
-                    WHERE TAR_ID in (SELECT DISTINCT TAR.TAR_ID 
+                    WHERE exists (SELECT DISTINCT TAR.TAR_ID 
                                         FROM '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR aux
                                         inner join '||V_ESQUEMA||'.ACT_TRA_TRAMITE tra on aux.tra_id = tra.tra_id
                                         inner join '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS TAC on tra.tra_id = tac.tra_id
                                         INNER JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR on tac.tar_id = tar.tar_id
                                         inner join '||V_ESQUEMA||'.TEX_TAREA_EXTERNA tex on tex.tar_id = tar.tar_id
+										where tar.tar_id = t1.tar_id
                                     )';
       
       
       EXECUTE IMMEDIATE V_MSQL;    
       
                             
-      V_MSQL := 'UPDATE '||V_ESQUEMA||'.TEX_TAREA_EXTERNA SET
+      V_MSQL := 'UPDATE '||V_ESQUEMA||'.TEX_TAREA_EXTERNA t1 SET
             USUARIOBORRAR  = '''||V_USUARIO||'''
         ,   FECHABORRAR = SYSDATE
         ,   BORRADO = 1
-        WHERE TAR_ID in (SELECT DISTINCT TEX.TAR_ID 
-                            FROM '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR aux
-                            inner join '||V_ESQUEMA||'.ACT_TRA_TRAMITE tra on aux.tra_id = tra.tra_id
-                            inner join '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS TAC on tra.tra_id = tac.tra_id
-                            INNER JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR on tac.tar_id = tar.tar_id
-                            inner join '||V_ESQUEMA||'.TEX_TAREA_EXTERNA tex on tex.tar_id = tar.tar_id
-                        )';  
-      
-      
-      EXECUTE IMMEDIATE V_MSQL;                        
-                
-      V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS SET       
-                        USUARIOBORRAR = '''||V_USUARIO||'''
-                    ,   FECHABORRAR = SYSDATE
-                    ,   BORRADO = 1
-                    WHERE TAR_ID in (SELECT DISTINCT TAR.TAR_ID 
+        WHERE exists (SELECT DISTINCT tex.TAR_ID 
                                         FROM '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR aux
                                         inner join '||V_ESQUEMA||'.ACT_TRA_TRAMITE tra on aux.tra_id = tra.tra_id
                                         inner join '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS TAC on tra.tra_id = tac.tra_id
                                         INNER JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR on tac.tar_id = tar.tar_id
                                         inner join '||V_ESQUEMA||'.TEX_TAREA_EXTERNA tex on tex.tar_id = tar.tar_id
+										where tar.tar_id = t1.tar_id
+                        )';  
+      
+      
+      EXECUTE IMMEDIATE V_MSQL;                        
+                
+      V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS t1 SET       
+                        USUARIOBORRAR = '''||V_USUARIO||'''
+                    ,   FECHABORRAR = SYSDATE
+                    ,   BORRADO = 1
+                    WHERE exists (SELECT DISTINCT tac.TAR_ID 
+                                        FROM '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR aux
+                                        inner join '||V_ESQUEMA||'.ACT_TRA_TRAMITE tra on aux.tra_id = tra.tra_id
+                                        inner join '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS TAC on tra.tra_id = tac.tra_id
+                                        INNER JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR on tac.tar_id = tar.tar_id
+                                        inner join '||V_ESQUEMA||'.TEX_TAREA_EXTERNA tex on tex.tar_id = tar.tar_id
+										where tar.tar_id = t1.tar_id
                                     )';
       
       
       EXECUTE IMMEDIATE V_MSQL;    
       
       
-      V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_TRA_TRAMITE SET       
+      V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_TRA_TRAMITE t1 SET       
                         TRA_PROCESS_BPM = NULL
-                    WHERE TRA_ID in (SELECT DISTINCT TRA_ID FROM '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR)';
+                    WHERE exists (SELECT DISTINCT tra.tra_id 
+                                        FROM '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR aux
+                                        inner join '||V_ESQUEMA||'.ACT_TRA_TRAMITE tra on aux.tra_id = tra.tra_id
+                                        inner join '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS TAC on tra.tra_id = tac.tra_id
+                                        INNER JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR on tac.tar_id = tar.tar_id
+                                        inner join '||V_ESQUEMA||'.TEX_TAREA_EXTERNA tex on tex.tar_id = tar.tar_id
+										where tra.tra_id = t1.tra_id)';
            
       EXECUTE IMMEDIATE V_MSQL;    
 

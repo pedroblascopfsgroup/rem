@@ -897,6 +897,8 @@ BEGIN
 	916440900001,
 	916440500001'
         , 'T004_ResultadoTarificada');
+        
+        #ESQUEMA#.ALTA_BPM_INSTANCES(''||V_USUARIO||'', PL_OUTPUT);
     
 	COMMIT;
  DBMS_OUTPUT.put_line('[OK]');

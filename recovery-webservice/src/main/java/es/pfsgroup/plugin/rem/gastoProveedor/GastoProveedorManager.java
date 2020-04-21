@@ -648,7 +648,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		} catch (Exception ex) {
 			logger.error(ex.getCause());
 		}
-
+		
 		if (!Checks.esNulo(dto.getCodigoProveedorRem())) {
 			if (!esGastoHijo) {
 				Filter filtroCodigoEmisorRem = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", dto.getCodigoProveedorRem());
@@ -739,6 +739,16 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}else {
 			updaterStateApi.updaterStates(gastoProveedor, null);
 		}
+		
+		if(!Checks.estaVacio(gastoProveedor.getGastoProveedorActivos())
+				&& DDCartera.CODIGO_CARTERA_CERBERUS.equals(gastoProveedor.getGastoProveedorActivos().get(0).getActivo().getCartera().getCodigo())
+				&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(gastoProveedor.getGastoProveedorActivos().get(0).getActivo().getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(gastoProveedor.getGastoProveedorActivos().get(0).getActivo().getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(gastoProveedor.getGastoProveedorActivos().get(0).getActivo().getSubcartera().getCodigo()))) 
+		{
+			gastoProveedor = asignarCuentaContableYPartidaGasto(gastoProveedor);
+		}
+		
 		genericDao.update(GastoProveedor.class, gastoProveedor);
 
 		return true;

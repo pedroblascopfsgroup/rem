@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
@@ -50,7 +51,7 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract {
 	public static final String CARTERA_OBLIGATORIA = "El código de cartera no esta informado.";
 	public static final String ACTIVE_NOT_EXISTS = "El activo no existe.";
 	public static final String ACTIVE_NULL = "El campo número activo no puede estar vacío";
-	public static final String PRECIO_VENTA_NULL = "El campo precio de venta no puede estar vacío";
+	public static final String PRECIO_VENTA_NULL = "El campo precio de venta no es correcto";
 	public static final String OFERTAS_TRAMITADAS = "El activo no tiene ofertas tramitadas";
 	public static final String MAXIMO_AGRUPADOS = "El número máximo de activos que pueden agruparse en una oferta es de 40";
 	public static final String TITULARES_AGRUPACION = "El primer titular de cada grupo debe ser el mismo";
@@ -202,8 +203,7 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract {
 		}
 
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
-			Map<String, List<Integer>> mapaErrores = new HashMap<String, List<Integer>>();
-			if (this.numFilasHoja > COL_NUM.DATOS_PRIMERA_FILA) {
+			Map<String, List<Integer>> mapaErrores = new HashMap<String, List<Integer>>();			
 				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsByRows(exc));
 				mapaErrores.put(ACTIVO_EN_AGRUPACION_RESTRINGIDA, activoEnAgrupacionRestringida(exc));
 				mapaErrores.put(ACTIVE_NULL, esCampoNullByRows(exc, COL_NUM.NUM_ACTIVO_HAYA));
@@ -225,14 +225,12 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract {
 				mapaErrores.put(TIPO_DOCUMENTO_TITULAR_2_NOT_EXISTS, tipoDocumentoNotExistsByrow(exc, 2));
 				mapaErrores.put(TIPO_DOCUMENTO_TITULAR_3_NOT_EXISTS, tipoDocumentoNotExistsByrow(exc, 3));
 				mapaErrores.put(TIPO_DOCUMENTO_TITULAR_4_NOT_EXISTS, tipoDocumentoNotExistsByrow(exc, 4));
-				mapaErrores.put(USER_GESTOR_COMERCIALIZACION_NULL,
-						esCampoNullByRows(exc, COL_NUM.USU_GESTOR_COMERCIALIZACION));
+				mapaErrores.put(USER_GESTOR_COMERCIALIZACION_NULL, esCampoNullByRows(exc, COL_NUM.USU_GESTOR_COMERCIALIZACION));
 				mapaErrores.put(USER_NO_GESTOR_COMERCIALIZACION, userNotGestorComercializacionByRows(exc));
 				mapaErrores.put(CODIGO_PRESCRIPTOR_NULL, esCampoNullByRows(exc, COL_NUM.CODIGO_PRESCRIPTOR));
 				mapaErrores.put(CODIGO_PRESCRIPTOR_NOT_EXISTS, codigoPrescriptorNotExistsByRows(exc));
 				mapaErrores.put(NUMERO_URSUS_TITULAR_NULL, esCampoNullByRows(exc, COL_NUM.NUMERO_URSUS_TITULAR));
-				mapaErrores.put(PORCENTAJE_COMPRA_TITULAR_NULL,
-						esCampoNullByRows(exc, COL_NUM.PORCENTAJE_COMPRA_TITULAR));
+				mapaErrores.put(PORCENTAJE_COMPRA_TITULAR_NULL, esCampoNullByRows(exc, COL_NUM.PORCENTAJE_COMPRA_TITULAR));
 				mapaErrores.put(ACTIVOS_DIFERENTES_SUBCARTERAS, existenActivosDiferentesSubcarterasEnAgrupacion(exc));
 				mapaErrores.put(CARTERA_OBLIGATORIA, esCampoNullByRows(exc, COL_NUM.CODIGO_CARTERA));
 				mapaErrores.put(FECHA_INGRESO_CHEQUE_OBLIGATORIA, existenActivosDeBHSinFechaIngresoCheque(exc));
@@ -257,64 +255,15 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract {
 				// mapaErrores.put(DOC_OBLIGATORIO,
 				// esCampoNullByRows(exc,COL_NUM.DOC_IDENTIFICACION_TITULAR_4));
 
-				if (!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() || !mapaErrores.get(ACTIVE_NULL).isEmpty()
-						|| !mapaErrores.get(PRECIO_VENTA_NULL).isEmpty()
-						|| !mapaErrores.get(OFERTAS_TRAMITADAS).isEmpty()
-						|| !mapaErrores.get(MAXIMO_AGRUPADOS).isEmpty()
-						|| !mapaErrores.get(TITULARES_AGRUPACION).isEmpty()
-						|| !mapaErrores.get(TITULAR_OPCIONAL_2).isEmpty()
-						|| !mapaErrores.get(TITULAR_OPCIONAL_3).isEmpty()
-						|| !mapaErrores.get(TITULAR_OPCIONAL_4).isEmpty()
-						|| !mapaErrores.get(COMITE_SANCIONADOR_NULL).isEmpty()
-						|| !mapaErrores.get(COMITE_SANCIONADOR_NOT_EXISTS).isEmpty()
-						|| !mapaErrores.get(TIPO_IMPUESTO_NULL).isEmpty()
-						|| !mapaErrores.get(TIPO_IMPUESTO_NOT_EXISTS).isEmpty()
-						|| !mapaErrores.get(TIPO_APLICABLE_NULL).isEmpty()
-						|| !mapaErrores.get(FECHA_VENTA_NULL).isEmpty()
-						|| !mapaErrores.get(CODIGO_UNICO_OFERTA_NULL).isEmpty()
-						|| !mapaErrores.get(TIPO_DOCUMENTO_TITULAR_NOT_EXISTS).isEmpty()
-						|| !mapaErrores.get(TIPO_DOCUMENTO_TITULAR_2_NOT_EXISTS).isEmpty()
-						|| !mapaErrores.get(TIPO_DOCUMENTO_TITULAR_3_NOT_EXISTS).isEmpty()
-						|| !mapaErrores.get(TIPO_DOCUMENTO_TITULAR_4_NOT_EXISTS).isEmpty()
-						|| !mapaErrores.get(USER_GESTOR_COMERCIALIZACION_NULL).isEmpty()
-						|| !mapaErrores.get(USER_NO_GESTOR_COMERCIALIZACION).isEmpty()
-						|| !mapaErrores.get(CODIGO_PRESCRIPTOR_NULL).isEmpty()
-						|| !mapaErrores.get(CODIGO_PRESCRIPTOR_NOT_EXISTS).isEmpty()
-						|| !mapaErrores.get(NUMERO_URSUS_TITULAR_NULL).isEmpty()
-						|| !mapaErrores.get(PORCENTAJE_COMPRA_TITULAR_NULL).isEmpty()
-						|| !mapaErrores.get(CARTERA_OBLIGATORIA).isEmpty()
-						|| !mapaErrores.get(ACTIVOS_DIFERENTES_SUBCARTERAS).isEmpty()
-						|| !mapaErrores.get(FECHA_INGRESO_CHEQUE_OBLIGATORIA).isEmpty()
-						|| !mapaErrores.get(TITULARES_DIFERENTES).isEmpty()
-						|| !mapaErrores.get(GESTORES_DIFERENTES).isEmpty()
-						|| !mapaErrores.get(PRESCRIPTORES_DIFERENTES).isEmpty()
-						|| !mapaErrores.get(FORMATO_FECHA_CHEQUE_INVALIDO).isEmpty()
-						|| !mapaErrores.get(FORMATO_FECHA_VENTA_INVALIDO).isEmpty()
-						|| !mapaErrores.get(TIPOS_APLICABLES_DIFERENTES).isEmpty()
-						|| !mapaErrores.get(TIPO_DOC_OBLIGATORIO).isEmpty()
-						|| !mapaErrores.get(DOC_OBLIGATORIO).isEmpty()
-						|| !mapaErrores.get(ACTIVO_EN_AGRUPACION_RESTRINGIDA).isEmpty()) {
-					dtoValidacionContenido.setFicheroTieneErrores(true);
-					exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-					String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
-					FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-					dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
+				for (Entry<String, List<Integer>> registro : mapaErrores.entrySet()) {
+					if (!registro.getValue().isEmpty()) {
+						dtoValidacionContenido.setFicheroTieneErrores(true);
+						dtoValidacionContenido.setExcelErroresFormato(new FileItem(new File(exc.crearExcelErroresMejorado(mapaErrores))));
+						break;
+					}
 				}
-			} else {
-				List<Integer> listaFilas = new ArrayList<Integer>();
-				listaFilas.add(COL_NUM.DATOS_PRIMERA_FILA);
-				mapaErrores.put(FICHERO_VACIO, listaFilas);
-
-				dtoValidacionContenido.setFicheroTieneErrores(true);
-				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
-				FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-				dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
-			}
-
 		}
 		exc.cerrar();
-
 		return dtoValidacionContenido;
 	}
 
@@ -713,21 +662,16 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract {
 
 	private List<Integer> esCampoNullByRows(MSVHojaExcel exc, Integer campo) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
-
+		Double precioVenta;
 		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
 			try {
-				if (Checks.esNulo(exc.dameCelda(i, campo))) {
+				precioVenta = Double.valueOf(exc.dameCelda(i, campo));
+				if (Checks.esNulo(precioVenta)) {
 					listaFilas.add(i);
 				}
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (Exception e) {
+				listaFilas.add(i);
+				logger.error(e.getMessage());
 			}
 		}
 		return listaFilas;

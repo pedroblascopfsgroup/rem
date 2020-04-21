@@ -2073,11 +2073,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var grid = tableView.up('grid');
 	    var record = grid.store.getAt(indiceFila);
 	    grid.setSelection(record);
-	    var idFalsoProv = record.get('idFalso').id;
+	    var idFalso = record.get('idFalso');
+	    var idFalsoProv;
+	    if(idFalso != null){
+	    	idFalsoProv = record.get('idFalso').id;
+	    }
 	    
 	    if(!Ext.isEmpty(record.get('idProveedor'))){
 	    	var idProveedor = record.get("idProveedor");
 	    	record.data.id= idProveedor;
+	    	var codigoProveedor = record.get('codigoProveedorRem');
+	    	record.data.codigo = codigoProveedor;
 	    	me.getView().fireEvent('abrirDetalleProveedor', record);
 	    }else if(!Ext.isEmpty(idFalsoProv)){
 	    	record.data.id= idFalsoProv;
@@ -5960,5 +5966,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 	getVisiblityOfBotons: function(){
 		return this.getViewModel().get('activo.unidadAlquilable');
-	}
+	},
+	
+	validarEdicionHistoricoSolicitudesPrecios: function(editor, grid) {
+    	var me = this;
+    	
+    	if($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_PRECIOS']) || $AU.userIsRol(CONST.PERFILES['GESTOR_PUBLICACION'])) {
+    		return grid.record.data.esEditable;
+    	}
+    	
+    	return false;
+    	
+    }
 });

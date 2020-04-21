@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20200310
+--## AUTOR=Adrián Molina
+--## FECHA_CREACION=20200327
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-9066
+--## INCIDENCIA_LINK=REMVIP-6744
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico del stock de activos enviados a webcom.
 --##           
@@ -19,6 +19,7 @@
 --##		0.7 Versión Cristian Montoya -> HREOS-9115 - Añadimos ID_PROVEEDOR_ESPEJO_REM.
 --##		0.8 Versión Daniel Algaba -> HREOS-9066 - Añadimos ARR_PROVEEDOR_LLAVES_REM.
 --##		0.9 ->REMVIP-6389
+--##		0.9 Versión Adrián Molina -> REMVIP-6744 - Añadimos campo perimetroMACC
 --##########################################
 --*/
 
@@ -280,7 +281,8 @@ BEGIN/*Versión 0.8*/
 		WHEN LLV.LLV_COD_TENEDOR_POSEEDOR IS NULL AND LLV.LLV_COD_TENEDOR_NO_PVE IS NOT NULL AND LLV.LLV_COD_TENEDOR_NO_PVE NOT LIKE ''N/A'' THEN NULL 
 		ELSE NULL 
 		END AS ARR_PROVEEDOR_LLAVES_REM_ID_PROVEEDOR_LLAVES_REM,
-		CAST(PVE_ESPEJO.PVE_COD_REM AS NUMBER(16,0))												AS ID_PROVEEDOR_ESPEJO_REM
+		CAST(PVE_ESPEJO.PVE_COD_REM AS NUMBER(16,0))												AS ID_PROVEEDOR_ESPEJO_REM,
+		CAST(ACT.ACT_PERIMETRO_MACC AS NUMBER(1,0))                                                 AS PERIMETRO_MACC
     	FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
 		INNER JOIN '||V_ESQUEMA||'.ACT_LOC_LOCALIZACION LOC ON LOC.ACT_ID = ACT.ACT_ID
 		INNER JOIN '||V_ESQUEMA||'.BIE_LOCALIZACION BLOC ON BLOC.BIE_LOC_ID = LOC.BIE_LOC_ID

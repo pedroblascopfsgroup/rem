@@ -2,8 +2,7 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasTabPanel', {
 	extend		: 'Ext.tab.Panel',
     xtype		: 'generacionpropuestastabpanel',
 	cls			: 'panel-base shadow-panel, tabPanel-segundo-nivel',
-    requires	: ['HreRem.view.precios.generacion.GeneracionPropuestasManual', 'HreRem.view.precios.generacion.GeneracionPropuestasAutomatica',
-    				'HreRem.view.precios.generacion.GeneracionPropuestasConfiguracion'],
+    requires	: ['HreRem.view.precios.generacion.GeneracionPropuestasManual', 'HreRem.view.precios.generacion.GeneracionPropuestasAutomatica'],
     listeners	: {
     	tabchange: 'onTabChangeGeneracionPropuestasTabPanel',
     	boxready : function (tabPanel) {   		
@@ -20,7 +19,6 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasTabPanel', {
         me.items = [];
         $AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'generacionpropuestasautomatica'})}, ['TAB_INCLUSION_AUTOMATICA_PRECIOS']);
         $AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'generacionpropuestasmanual'})}, ['TAB_SELECCION_MANUAL_PRECIOS']);
-        $AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'generacionpropuestasconfiguracion'})}, ['TAB_CONFIGURACION_PROPUESTA_PRECIO']);
 
         me.callParent();
     }

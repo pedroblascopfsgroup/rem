@@ -204,7 +204,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			    AND act.ACT_NUM_ACTIVO = "+numActivo+" "
 				+ "			    AND aga.BORRADO  = 0 "
 				+ "			    AND agr.BORRADO  = 0 "
-				+ "			    AND act.BORRADO  = 0 ");
+				+ "			    AND act.BORRADO  = 0 "
+				+ "				AND (agr.AGR_FECHA_BAJA is null OR agr.AGR_FECHA_BAJA  > SYSDATE)");
 		return !"0".equals(resultado);
 	}
 

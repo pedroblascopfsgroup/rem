@@ -37,10 +37,10 @@ import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements TrabajoDao{
 	
 	@Autowired
-	ProveedoresDao proveedorDao;
+	private ProveedoresDao proveedorDao;
 	
 	@Autowired
-	GenericABMDao genericDao;
+	private GenericABMDao genericDao;
 	
 	protected static final Log logger = LogFactory.getLog(TrabajoDaoImpl.class);
 	

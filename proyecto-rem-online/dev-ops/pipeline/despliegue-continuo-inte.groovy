@@ -125,10 +125,6 @@ pipeline {
                     hito Link: ${env.hito}
                     entorno: ${entorno}
                     """
-
-                // Esto es necesario porque sino no descarga bien los módulos
-                // no se el porqué.
-                sh script: "git rm fwk"
                 
                 echo "Git init Submodules"
                 sh script: "bash ./proyecto-rem-online/dev-ops/common-git-submodule-init.sh ${GIT_USER}"
@@ -189,7 +185,7 @@ pipeline {
             steps {
 
                 timeout (time:15, unit:'HOURS') {
-                    deployPitertul("ops-bd@iap03", 22)
+                    deployPitertul("ops-bd@iap02.pfsgroup.es", 22)
                     
                 }
             }

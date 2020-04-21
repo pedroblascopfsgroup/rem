@@ -697,14 +697,14 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 			}
 
 			// Todo lo relacionado con la tabla VIVIENDA
-			Filter comercialFilter = genericDao.createFilter(FilterType.EQUALS, "id", infoComercial.getId());
+			Filter comercialFilter = genericDao.createFilter(FilterType.EQUALS, "informeComercial.id", infoComercial.getId());
 			ActivoVivienda vivienda = (ActivoVivienda) genericDao.get(ActivoVivienda.class, comercialFilter);
 			if (!Checks.esNulo(vivienda)) {
 				mapaValores.put("ActivoInterior", FileUtilsREM.stringify(vivienda.getDistribucionTxt()));
 				mapaValores.put("ActivoPlantas", FileUtilsREM.stringify(vivienda.getNumPlantasInter()));
-				if (vivienda.getEstadoConservacion() != null) {
+				if (vivienda.getInformeComercial().getEstadoConservacion() != null) {
 					mapaValores.put("ActivoConservacion",
-							FileUtilsREM.stringify(vivienda.getEstadoConservacion().getDescripcionLarga()));
+							FileUtilsREM.stringify(vivienda.getInformeComercial().getEstadoConservacion().getDescripcionLarga()));
 				} else {
 					mapaValores.put("ActivoConservacion", FileUtilsREM.stringify(null));
 				}
@@ -723,7 +723,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 				Float salon = null;
 				Integer balcon = null;
 				Integer hall = null;
-				List<ActivoDistribucion> distribucion = vivienda.getDistribucion();
+				List<ActivoDistribucion> distribucion = vivienda.getInformeComercial().getDistribucion();
 				if (!Checks.estaVacio(distribucion)) {
 					for (int i = 0; i < distribucion.size(); i++) {
 						ActivoDistribucion dist = distribucion.get(i);
@@ -837,8 +837,8 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 				} else {
 					mapaValores.put("ActivoUltPlanta", FileUtilsREM.stringify(null));
 				}
-				if (vivienda.getOcupado() != null) {
-					if (vivienda.getOcupado().equals(new Integer(1))) {
+				if (vivienda.getInformeComercial().getOcupado() != null) {
+					if (vivienda.getInformeComercial().getOcupado().equals(new Integer(1))) {
 						mapaValores.put("ActivoOcupada", "SI");
 					} else {
 						mapaValores.put("ActivoOcupada", "NO");
@@ -846,15 +846,15 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 				} else {
 					mapaValores.put("ActivoOcupada", FileUtilsREM.stringify(null));
 				}
-				if (vivienda.getUbicacionActivo() != null) {
+				if (vivienda.getInformeComercial().getUbicacionActivo() != null) {
 					mapaValores.put("ActivoUbicacion",
-							FileUtilsREM.stringify(vivienda.getUbicacionActivo().getDescripcionLarga()));
+							FileUtilsREM.stringify(vivienda.getInformeComercial().getUbicacionActivo().getDescripcionLarga()));
 				} else {
 					mapaValores.put("ActivoUbicacion", FileUtilsREM.stringify(null));
 				}
-				mapaValores.put("ActivoDistrito", FileUtilsREM.stringify(vivienda.getDistrito()));
-				mapaValores.put("ActivoAntiguedad", FileUtilsREM.stringify(vivienda.getAnyoConstruccion()));
-				mapaValores.put("ActivoRehabilitacion", FileUtilsREM.stringify(vivienda.getAnyoRehabilitacion()));
+				mapaValores.put("ActivoDistrito", FileUtilsREM.stringify(vivienda.getInformeComercial().getDistrito()));
+				mapaValores.put("ActivoAntiguedad", FileUtilsREM.stringify(vivienda.getInformeComercial().getAnyoConstruccion()));
+				mapaValores.put("ActivoRehabilitacion", FileUtilsREM.stringify(vivienda.getInformeComercial().getAnyoRehabilitacion()));
 				if (vivienda.getTipoVivienda() != null) {
 					mapaValores.put("ActivoTipo",
 							FileUtilsREM.stringify(vivienda.getTipoVivienda().getDescripcionLarga()));

@@ -1355,15 +1355,6 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						if (informeEntity.getActivo() == null) {
 							informeEntity.setActivo(activo);
 						}
-
-						if (!Checks.esNulo(informe.getIdProveedorRem())) {
-							idProveedorParche = informe.getIdProveedorRem();
-							Filter filterPve = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", idProveedorParche);
-							ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filterPve);
-							if (!Checks.esNulo(proveedor)) {
-								informeEntity.setMediadorInforme(proveedor);
-							}
-						}
 						
 						//LOCAL COMERCIAL
 						if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_COMERCIAL)) {

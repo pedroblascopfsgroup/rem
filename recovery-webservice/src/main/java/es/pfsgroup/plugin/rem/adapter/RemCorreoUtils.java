@@ -82,10 +82,12 @@ public class RemCorreoUtils {
 					mailsParaSinNull.add(para);
 				}
 			}
-			
-			for (String cc : direccionesMailCc) {
-				if (cc != null && cc.length() > 0 && !mailsCCSinNull.contains(cc)) {
-					mailsCCSinNull.add(cc);
+
+			if(!Checks.esNulo(direccionesMailCc)) {
+				for (String cc : direccionesMailCc) {
+					if (cc != null && cc.length() > 0 && !mailsCCSinNull.contains(cc)) {
+						mailsCCSinNull.add(cc);
+					}
 				}
 			}
 			

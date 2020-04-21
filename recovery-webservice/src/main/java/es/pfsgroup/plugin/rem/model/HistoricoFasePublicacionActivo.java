@@ -40,8 +40,9 @@ public class HistoricoFasePublicacionActivo implements Serializable, Auditable {
 	private static final long serialVersionUID = -2823931549724879229L;
 
 	@Id
-    @Column(name = "HFP_ID")
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name = "HFP_ID")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "HistoricoFasesPublicacionGenerator")
+    @SequenceGenerator(name = "HistoricoFasesPublicacionGenerator", sequenceName = "S_ACT_HFP_HIST_FASES_PUB")
     private Long id;
 	
 	@ManyToOne(fetch = FetchType.LAZY)

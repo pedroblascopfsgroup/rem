@@ -113,8 +113,8 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 			
 		List<String> mailsPara = new ArrayList<String>();
 		List<String> mailsCC = new ArrayList<String>();
-		mailsCC.add(this.getCorreoFrom());			
-		
+		mailsCC.add(this.getCorreoFrom());
+
 		
 		if(DDResolucionComite.CODIGO_CONTRAOFERTA.equalsIgnoreCase(activoTramiteApi.getTareaValorByNombre(valores, "comboResolucion"))) {
 						
@@ -122,15 +122,20 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 			ActivoProveedor preescriptor= ofertaApi.getPreescriptor(oferta);
 			
 			Usuario gestor = null;
+			Usuario supervisorComercial = null;
 			Usuario supervisor = null;
 			Usuario gestorBackoffice = null;
+			Usuario supervisorBackOffice = null;
+			Usuario gestorFormalizacion = null;
+			Usuario supervisorFormalizacion = null;
 			Usuario usuarioBackOffice = null;
+			Usuario usuarioFormalizacion = null;
 			Usuario buzonRem = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_REM));
 			Usuario buzonPfs = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_PFS));
 			Usuario buzonOfertaApple = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_OFR_APPLE));
 			
 			if(expedienteComercialApi.esApple(valores.get(0).getTareaExterna())){
-				gestor = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);;
+				gestor = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 				gestorBackoffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			} else {
 				for (TareaActivo tareaActivo : tramite.getTareas()) {				
@@ -179,6 +184,39 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 					if(!Checks.esNulo(usuarioBackOffice)){
 						mailsPara.add(usuarioBackOffice.getEmail());
 					}	
+				}
+				if(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){
+					gestorBackoffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+					supervisorBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+					gestorFormalizacion = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
+					supervisorFormalizacion = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
+					gestor = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+					supervisorComercial = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
+
+					if(!Checks.esNulo(gestorBackoffice) && !Checks.esNulo(gestorBackoffice.getEmail())){
+						mailsPara.add(gestorBackoffice.getEmail());
+					}
+
+					if(!Checks.esNulo(supervisorBackOffice) && !Checks.esNulo(supervisorBackOffice.getEmail())){
+						mailsPara.add(supervisorBackOffice.getEmail());
+					}
+
+					if(!Checks.esNulo(gestorFormalizacion) && !Checks.esNulo(gestorFormalizacion.getEmail())){
+						mailsPara.add(gestorFormalizacion.getEmail());
+					}
+
+					if(!Checks.esNulo(supervisorFormalizacion) && !Checks.esNulo(supervisorFormalizacion.getEmail())){
+						mailsPara.add(supervisorFormalizacion.getEmail());
+					}
+
+					if(!Checks.esNulo(gestor) && !Checks.esNulo(gestor.getEmail())){
+						mailsPara.add(gestor.getEmail());
+					}
+
+					if(!Checks.esNulo(supervisorComercial) && !Checks.esNulo(supervisorComercial.getEmail())){
+						mailsPara.add(supervisorComercial.getEmail());
+					}
 				}
 			}
 		    

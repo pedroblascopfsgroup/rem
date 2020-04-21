@@ -839,17 +839,11 @@ public class ActivoAdapter {
 										.equals(activoCarga.getTipoCargaActivo().getCodigo())
 								&& (!Checks.esNulo(activoCarga.getCargaBien().getFechaCancelacion())
 										|| !Checks.esNulo(activoCarga.getFechaCancelacionRegistral()))) {
-							DDSituacionCarga situacionCancelada = (DDSituacionCarga) utilDiccionarioApi
-									.dameValorDiccionarioByCod(DDSituacionCarga.class, DDSituacionCarga.CANCELADA);
 							DDEstadoCarga estadoCarga = (DDEstadoCarga) utilDiccionarioApi
 									.dameValorDiccionarioByCod(DDEstadoCarga.class, DDEstadoCarga.CODIGO_CANCELADA);
 							beanUtilNotNull.copyProperty(cargaDto, "estadoDescripcion",
 									estadoCarga.getDescripcion());
 							beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo", estadoCarga.getCodigo());
-							beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaDescripcion",
-									situacionCancelada.getDescripcion());
-							beanUtilNotNull.copyProperty(cargaDto, "estadoEconomicaCodigo",
-									situacionCancelada.getCodigo());
 
 							// Fecha de cancelacion de una carga economica
 							if (Checks.esNulo(activoCarga.getFechaCancelacionRegistral())) {

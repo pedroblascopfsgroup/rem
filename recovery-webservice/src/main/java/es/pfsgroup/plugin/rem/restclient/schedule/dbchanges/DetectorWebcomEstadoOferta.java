@@ -124,7 +124,9 @@ public class DetectorWebcomEstadoOferta extends DetectorCambiosBD<EstadoOfertaDt
 	private void modificaOferta(JSONObject oferta, Oferta ofertaEntity) throws Exception {
 		Boolean actualizar = false;
 		if (oferta.containsKey("success") && oferta.getBoolean("success")) {
-			if (getLong(oferta,"idProveedorPrescriptorRemOrigenLead") != null) {
+			if (oferta.containsKey("idProveedorPrescriptorRemOrigenLead") 
+					&& oferta.get("idProveedorPrescriptorRemOrigenLead") != null
+					&& getLong(oferta,"idProveedorPrescriptorRemOrigenLead") != null) {
 				ActivoProveedor proveedor = activoProveedorDao
 						.getProveedorByCodigoRem(getLong(oferta,"idProveedorPrescriptorRemOrigenLead"));
 				if (proveedor != null) {
@@ -140,9 +142,10 @@ public class DetectorWebcomEstadoOferta extends DetectorCambiosBD<EstadoOfertaDt
 					&& oferta.get("codTipoProveedorOrigenCliente") != null) {
 				ofertaEntity.setCodTipoProveedorOrigenCliente(oferta.getString("codTipoProveedorOrigenCliente"));
 				actualizar = true;
-
 			}
-			if (getLong(oferta,"idProveedorRealizadorRemOrigenLead") != null) {
+			if (oferta.containsKey("idProveedorRealizadorRemOrigenLead")
+					&& oferta.get("idProveedorRealizadorRemOrigenLead") != null
+					&& getLong(oferta,"idProveedorRealizadorRemOrigenLead") != null) {
 				ActivoProveedor proveedor = activoProveedorDao
 						.getProveedorByCodigoRem(getLong(oferta,"idProveedorRealizadorRemOrigenLead"));
 				if (proveedor != null) {

@@ -42,6 +42,8 @@ public class DtoAdjuntoPromocion implements Serializable {
 	private String tdn2_desc;
 	
 	private String tipoExpediente;
+	
+	private Date fechaDocumentoCategoria;
 
 	public Long getId() {
 		return id;
@@ -187,5 +189,14 @@ public class DtoAdjuntoPromocion implements Serializable {
 	public void setTipoExpediente(String tipoExpediente) {
 		this.tipoExpediente = tipoExpediente;
 	}
+
+	public Date getFechaDocumentoCategoria() {
+		return fechaDocumentoCategoria;
+	}
+
+	public void setFechaDocumentoCategoria(Date fechaDocumentoCategoria) {
+		this.fechaDocumentoCategoria = fechaDocumentoCategoria;
+	}
+	
 	
 }

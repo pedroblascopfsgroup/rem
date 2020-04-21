@@ -62,7 +62,7 @@ public class routerBPMSancionOfertaHandler extends ActivoBaseActionHandler{
 			ExpedienteComercial expediente = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 			if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getCondicionante())) {
 				if (Integer.valueOf(1).equals(expediente.getCondicionante().getSolicitaReserva()) 
-				&& !tareaActivoApi.getSiTareaHaSidoCompletada(tramite.getId(), RESULTADO_PBC) 
+				&& tareaActivoApi.getSiTareaHaSidoCompletada(tramite.getId(), RESULTADO_PBC) 
 				&& Integer.valueOf(2).equals(expediente.getEstadoPbc())) {
 					return INSTRUCCIONES_RESERVA;
 				}else {

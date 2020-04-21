@@ -45,8 +45,6 @@ public class MSVActualizaTrabajosValidator extends MSVExcelValidatorAbstract {
     public static final String GESTOR_MANTENIMIENTO = "GACT";
     public static final String SUPERVISOR_MANTENIMIENTO = "SUPACT";
     
-    public static final String ESTADO_TAREA = "Resultado actuaci%n t%cnica % tarificada";
-			
 	public static final String TRABAJO_NO_EXISTE = "El trabajo no existe.";
 	public static final String PROVEEDOR_NO_EXISTE = "El código del proveedor no existe.";
 	public static final String USUARIO_CONTACTO_VACIO = "Si el campo código proveedor está relleno, el usuario de contacto también debe estarlo.";
@@ -387,7 +385,7 @@ public class MSVActualizaTrabajosValidator extends MSVExcelValidatorAbstract {
 	                try {
 	                	String num_trabajo = exc.dameCelda(i, COL_NUM_TRABAJO);
 	                    if(!Checks.esNulo(num_trabajo) 
-	                            && Boolean.FALSE.equals(particularValidator.esTrabajoMultiactivo(num_trabajo)))
+	                            && Boolean.TRUE.equals(particularValidator.esTrabajoMultiactivo(num_trabajo)))
 	                        listaFilas.add(i);
 	                } catch (ParseException e) {
 	                    listaFilas.add(i);
@@ -412,7 +410,7 @@ public class MSVActualizaTrabajosValidator extends MSVExcelValidatorAbstract {
                        String numTrabajo= exc.dameCelda(i, COL_NUM_TRABAJO);
                        
                        if(!Checks.esNulo(numTrabajo) && 
-                          Boolean.TRUE.equals(particularValidator.esTareaCompletada(numTrabajo, ESTADO_TAREA))
+                          Boolean.TRUE.equals(particularValidator.esTareaCompletadaTarificadaNoTarificada(numTrabajo))
                           )
                            listaFilas.add(i);
                            

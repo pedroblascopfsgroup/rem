@@ -4470,7 +4470,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
                 + "                    WHERE DD_TPR_CODIGO IN ("+tips+"))"
                 + "                 AND PVE_COD_REM = '" + proveedor+"'");
         }
-        return !"0".equals(resultado); 
+        return "0".equals(resultado); 
     }
 	
 	@Override
@@ -4491,19 +4491,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
-	public Boolean esTareaCompletada(String codTrabajo, String tarea) {
-	    if (Checks.esNulo(codTrabajo) || Checks.esNulo(tarea)) return false;
+	public Boolean esTareaCompletadaTarificadaNoTarificada(String codTrabajo) {
+	    if (Checks.esNulo(codTrabajo)) return false;
 	    String resultado;
 	    resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 	            +"                 FROM ACT_TBJ_TRABAJO TBJ"
 	            +"                 JOIN ACT_TRA_TRAMITE TRA ON TRA.TBJ_ID = TBJ.TBJ_ID"
 	            +"                 JOIN TAC_TAREAS_ACTIVOS TAC ON TAC.TRA_ID = TRA.TRA_ID"
 	            +"                 JOIN TAR_TAREAS_NOTIFICACIONES TAR ON TAR.TAR_ID = TAC.TAR_ID"
-	            +"                 WHERE LOWER(TAR.TAR_TAREA) LIKE LOWER('"+tarea+"')"
-	            +"                 AND TAR_TAREA_FINALIZADA = 1" 
-	            +"                 AND TAR.BORRADO = 0"
+	            +"                 JOIN TEX_TAREA_EXTERNA TEX ON TAR.TAR_ID = TEX.TAR_ID"
+	            +"                 JOIN TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = TEX.TAP_ID"
+	            +"                 WHERE TAP.TAP_CODIGO IN ('T004_ResultadoTarificada','T004_ResultadoNoTarificada')"
+	            +"                 AND TAR.TAR_TAREA_FINALIZADA = 1 AND TAR.TAR_FECHA_FIN IS NOT NULL" 
+	            +"                 AND TBJ.BORRADO = 0"
 	            +"                 AND TBJ.TBJ_NUM_TRABAJO = "+ codTrabajo);
-	            
+	                
 	    return !"0".equals(resultado);
 	}
 	

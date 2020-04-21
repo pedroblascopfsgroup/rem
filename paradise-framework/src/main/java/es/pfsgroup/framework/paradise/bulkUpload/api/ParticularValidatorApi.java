@@ -1123,14 +1123,7 @@ public interface ParticularValidatorApi {
      * @return true si el usuario pertenece al tipo de gestor propuesto en codGestor
      */
     Boolean isUserGestorType(String user, String codGestor);
-
-    /*
-     * @param codTrabajo (Número de trabajo)
-     * @param tarea (tarea formateada para búsqueda con like)
-     * @return true si encuentra la tarea en relación con el trabajo.
-     */
-    Boolean esTareaCompletada(String codTrabajo, String tarea);
-    
+ 
     /*
      * @param codTrabajo (Número de trabajo)
      * @return true si es multiactivo(que el trabajo tiene asociado más de un activo).
@@ -1157,4 +1150,6 @@ public interface ParticularValidatorApi {
 	public Boolean esPeticionEditable(String codPeticion, String numActivo);
 
 	public Boolean existeTipoPeticion(String codTpoPeticion);
+
+	Boolean esTareaCompletadaTarificadaNoTarificada(String codTrabajo);
 }

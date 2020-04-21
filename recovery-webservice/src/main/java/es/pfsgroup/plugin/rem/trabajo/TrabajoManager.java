@@ -21,6 +21,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import es.capgemini.pfs.users.UsuarioManager;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -151,6 +152,7 @@ import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
+import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
 
 @Service("trabajoManager")
 public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> implements TrabajoApi {
@@ -277,6 +279,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	
 	@Autowired
 	private EXTGrupoUsuariosApi grupoUsuariosApi;
+
+	@Autowired
+	private EXTGrupoUsuariosDao extGrupoUsuariosDao;
+
+	@Autowired
+	UsuarioManager usuarioManager;
 	
 	@Override
 	public String managerName() {
@@ -1177,6 +1185,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		 * TRAMITE Si es gestor activo (algunos trámites): EN TRAMITE El resto
 		 * de casos: SOLICITADO
 		 */
+		Usuario logedUser = usuarioManager.getUsuarioLogado();
+
+		List<Long> idGrpsUsuario = null;
+
+		idGrpsUsuario = extGrupoUsuariosDao.buscaGruposUsuario(logedUser);
+
+		Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
 
 		Filter filtroSolicitado = genericDao.createFilter(FilterType.EQUALS, "codigo",
 				DDEstadoTrabajo.ESTADO_SOLICITADO);
@@ -1185,7 +1200,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		// Por defecto: Solicitado
 		DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filtroSolicitado);
-		if (gestorActivoManager.isGestorActivo(activo, genericAdapter.getUsuarioLogado())
+		if ((!Checks.esNulo(gestorActivo) && logedUser.equals(gestorActivo)
+			|| idGrpsUsuario.contains(gestorActivo.getId()))
 				&& (dtoTrabajo.getTipoTrabajoCodigo().equals(DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL)
 						|| dtoTrabajo.getTipoTrabajoCodigo().equals(DDTipoTrabajo.CODIGO_TASACION) || dtoTrabajo
 								.getSubtipoTrabajoCodigo().equals(DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS))) {

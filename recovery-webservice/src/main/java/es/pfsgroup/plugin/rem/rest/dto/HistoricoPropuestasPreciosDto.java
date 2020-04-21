@@ -18,6 +18,8 @@ public class HistoricoPropuestasPreciosDto implements Serializable{
 	private String usuarioModificar;
 	private Boolean esEditable;
 	
+	private String tipoPeticion;
+	
 	public Long getIdPeticion() {
 		return idPeticion;
 	}
@@ -80,6 +82,14 @@ public class HistoricoPropuestasPreciosDto implements Serializable{
 	
 	public void setEsEditable(Boolean esEditable) {
 		this.esEditable = esEditable;
+	}
+
+	public String getTipoPeticion() {
+		return tipoPeticion;
+	}
+
+	public void setTipoPeticion(String tipoPeticion) {
+		this.tipoPeticion = tipoPeticion;
 	}
 	
 	

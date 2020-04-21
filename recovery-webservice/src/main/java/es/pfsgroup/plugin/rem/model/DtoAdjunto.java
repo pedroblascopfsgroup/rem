@@ -50,6 +50,8 @@ public class DtoAdjunto implements Serializable, Comparable<DtoAdjunto>{
 	private String cartera;
 	
 	private String subcartera;
+	
+	private Date fechaDocumentoCategoria;
 
 	public Long getId() {
 		return id;
@@ -209,6 +211,14 @@ public class DtoAdjunto implements Serializable, Comparable<DtoAdjunto>{
 
 	public void setSubcartera(String subcartera) {
 		this.subcartera = subcartera;
+	}
+
+	public Date getFechaDocumentoCategoria() {
+		return fechaDocumentoCategoria;
+	}
+
+	public void setFechaDocumentoCategoria(Date fechaDocumentoCategoria) {
+		this.fechaDocumentoCategoria = fechaDocumentoCategoria;
 	}
 
 	@Override

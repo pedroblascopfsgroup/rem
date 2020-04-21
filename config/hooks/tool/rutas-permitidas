@@ -89,3 +89,5 @@ rem_mirror|func-rem-PreMigracionDivarian
 func-rem-paqueteBAUsp|version-2.18.4-rem
 2.19.0-20031301-rem|version-2.18.4-rem
 func-rem-precios|R-Newhall-backup
+HREOS-9492|func-rem-precios
+func-rem-precios|HREOS-9492

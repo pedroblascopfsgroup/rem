@@ -101,17 +101,13 @@ public class GestorDocToRecoveryAssembler {
 				Date fechaDocumento = null;
 				if(!Checks.esNulo(idnDoc.getFechaDocumento())){
 					fechaDocumento = new Timestamp(stringToDate(idnDoc.getFechaDocumento()).getTime());
-				}
-				
+				}				
 				Date createDate = null;
 				if(!Checks.esNulo(idnDoc.getCreatedate())){
 					createDate = new Timestamp(stringToDate(idnDoc.getCreatedate()).getTime());
 				}
-				if(!Checks.esNulo(fechaDocumento)) {
-					dtoAdj.setFechaDocumento(fechaDocumento);
-				}else {
-					dtoAdj.setFechaDocumento(createDate);
-				}
+				dtoAdj.setFechaDocumento(createDate);			
+				dtoAdj.setFechaDocumentoCategoria(fechaDocumento);
 				dtoAdj.setCreateDate(createDate);
 				dtoAdj.setFileSize(idnDoc.getFileSize());
 				dtoAdj.setId_activo(idnDoc.getId_activo());
@@ -149,18 +145,13 @@ public class GestorDocToRecoveryAssembler {
 				Date fechaDocumento = null;
 				if(!Checks.esNulo(idnDoc.getFechaDocumento())){
 					fechaDocumento = new Timestamp(stringToDate(idnDoc.getFechaDocumento()).getTime());
-				    }
-				
+				}
 				Date createDate = null;
 				if(!Checks.esNulo(idnDoc.getCreatedate())){
 					createDate = new Timestamp(stringToDate(idnDoc.getCreatedate()).getTime());
-				    }
-				
-				if(!Checks.esNulo(fechaDocumento)) {
-					dtoAdj.setFechaDocumento(fechaDocumento);
-				}else {
-					dtoAdj.setFechaDocumento(createDate);
-				}
+				}				
+				dtoAdj.setFechaDocumento(createDate);			
+				dtoAdj.setFechaDocumentoCategoria(fechaDocumento);
 				dtoAdj.setCreateDate(createDate);
 				dtoAdj.setFileSize(idnDoc.getFileSize());
 				dtoAdj.setCodPromo(idnDoc.getId_activo());
@@ -198,18 +189,13 @@ public class GestorDocToRecoveryAssembler {
 				Date fechaDocumento = null;
 				if(!Checks.esNulo(idnDoc.getFechaDocumento())){
 					fechaDocumento = new Timestamp(stringToDate(idnDoc.getFechaDocumento()).getTime());
-				    }
-				
+				}				
 				Date createDate = null;
 				if(!Checks.esNulo(idnDoc.getCreatedate())){
 					createDate = new Timestamp(stringToDate(idnDoc.getCreatedate()).getTime());
-				    }
-				
-				if(!Checks.esNulo(fechaDocumento)) {
-					dtoAdj.setFechaDocumento(fechaDocumento);
-				}else {
-					dtoAdj.setFechaDocumento(createDate);
 				}
+				dtoAdj.setFechaDocumento(createDate);			
+				dtoAdj.setFechaDocumentoCategoria(fechaDocumento);
 				dtoAdj.setCreateDate(createDate);
 				dtoAdj.setFileSize(idnDoc.getFileSize());
 				dtoAdj.setCodProyecto(idnDoc.getId_activo()); //@TODO ver que hay que setear en el codProyecto

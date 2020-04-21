@@ -1768,6 +1768,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		} else if (cartera == CONST.CARTERA['BANKIA'] || cartera == CONST.CARTERA['LIBERBANK']) {
 			cuentaContable
 				.setFieldLabel(HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable'));
+			partidaPresupuestaria
+                .setFieldLabel(HreRem.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria') + ' *');
 				
 			if (cartera == CONST.CARTERA['LIBERBANK']) {
 				partidaPresupuestaria

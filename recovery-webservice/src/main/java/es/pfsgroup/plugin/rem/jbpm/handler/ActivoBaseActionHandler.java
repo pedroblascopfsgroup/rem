@@ -30,6 +30,7 @@ import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.utils.BPMUtils;
 import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.BPMContants;
+import es.capgemini.pfs.persona.model.DDTipoGestorEntidad;
 import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.TareaProcedimientoManager;
 import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
@@ -54,6 +55,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutorApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.ActivoGenericActionHandler.ConstantesBPMPFS;
@@ -61,6 +63,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorServiceFactoryApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionServiceFactoryApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
@@ -93,6 +96,8 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
     private static final String CODIGO_T004_RESULTADO_NOTARIFICADA = "T004_ResultadoNoTarificada";
     public static final String CODIGO_FIN = "Fin";
     private static final String CODIGO_T004_SOLICITUD_EXTRAORDINARIA = "T004_SolicitudExtraordinaria";
+    private static final String CODIGO_GESTOR_FORMALIZACION = "GFORM";
+    
     
     protected final Log logger = LogFactory.getLog(getClass());
 
@@ -100,6 +105,9 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
     
     @Autowired
     private GenericABMDao genericDao;
+    
+    @Autowired
+    private GestorActivoDao gestorActivoDao;
     
 	@Autowired
 	private GenericAdapter adapter;
@@ -745,16 +753,24 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 					&& (esTrabajoValido|| DDSubtipoTrabajo.CODIGO_CEDULA_HABITABILIDAD.equals(trabajo.getSubtipoTrabajo().getCodigo()))
 					&& !Checks.esNulo(tareaActivo.getActivo()) 
 					&& ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEDULA.equals(tareaActivo.getTramite().getTipoTramite().getCodigo())
-					&& (DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()) || DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo()))
+					&& (DDCartera.CODIGO_CARTERA_SAREB.equals(cartera.getCodigo()) || DDCartera.CODIGO_CARTERA_BANKIA.equals(cartera.getCodigo())) || DDSubcartera.CODIGO_OMEGA.equals(activo.getSubcartera().getCodigo())
 			){
 				Usuario destinatario = null;
 				Filter usuarioProveedor = null;
 				if(DDCartera.CODIGO_CARTERA_SAREB.equals(tareaActivo.getActivo().getCartera().getCodigo())) {
 					usuarioProveedor = genericDao.createFilter(FilterType.EQUALS, "username", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_PROVEEDOR_ELECNOR));
 					destinatario= genericDao.get(Usuario.class, usuarioProveedor);
-				}else {
+				}else if (DDCartera.CODIGO_CARTERA_BANKIA.equals(tareaActivo.getActivo().getCartera().getCodigo())){
 					usuarioProveedor = genericDao.createFilter(FilterType.EQUALS, "username", remUtils.obtenerUsuarioPorDefecto(GestorActivoApi.USU_PROVEEDOR_PACI));
 					destinatario= genericDao.get(Usuario.class, usuarioProveedor);
+				}else if (DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(tareaActivo.getActivo().getCartera().getCodigo())){
+					if(DDSubcartera.CODIGO_OMEGA.equals(activo.getSubcartera().getCodigo())) {
+						if(ComercialUserAssigantionService.CODIGO_T013_DEFINICION_OFERTA.equals(tareaExterna.getTareaProcedimiento().getCodigo())) {
+							usuarioProveedor = genericDao.createFilter(FilterType.EQUALS, "username", gestorActivoDao.getListUsuariosGestoresActivoBycodigoTipoYActivo(CODIGO_GESTOR_FORMALIZACION, activo).get(0).getUsername());
+							destinatario= genericDao.get(Usuario.class, usuarioProveedor);
+					}else
+							destinatario= userAssigantionService.getUser(tareaExterna);				
+					}
 				}
 				
 				tareaActivo.setUsuario(destinatario);

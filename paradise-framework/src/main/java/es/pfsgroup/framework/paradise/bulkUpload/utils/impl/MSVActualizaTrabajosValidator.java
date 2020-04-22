@@ -383,10 +383,14 @@ public class MSVActualizaTrabajosValidator extends MSVExcelValidatorAbstract {
 	        try{
 	            for(int i=1; i<this.numFilasHoja;i++){
 	                try {
-	                	String num_trabajo = exc.dameCelda(i, COL_NUM_TRABAJO);
-	                    if(!Checks.esNulo(num_trabajo) 
-	                            && Boolean.TRUE.equals(particularValidator.esTrabajoMultiactivo(num_trabajo)))
-	                        listaFilas.add(i);
+	                	String responsableTrabajo = exc.dameCelda(i, COL_RESPONSABLE_TRABAJO);
+	                	if(responsableTrabajo != null && responsableTrabajo != "") {
+		                	String num_trabajo = exc.dameCelda(i, COL_NUM_TRABAJO);
+		                    if(!Checks.esNulo(num_trabajo) 
+		                            && Boolean.FALSE.equals(particularValidator.esTrabajoMultiactivo(num_trabajo))) {
+		                        listaFilas.add(i);
+		                    }
+	                	}
 	                } catch (ParseException e) {
 	                    listaFilas.add(i);
 	                }

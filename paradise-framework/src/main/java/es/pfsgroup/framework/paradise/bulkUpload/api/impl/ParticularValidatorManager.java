@@ -4650,4 +4650,14 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return "1".equals(resultado);
 	}
 	
+	@Override
+	public boolean existeContactoProveedorTipoUsuario(String usrContacto, String codProveedor) {
+		Long codProveedorLong = Long.valueOf(codProveedor);
+		String resultado = rawDao.getExecuteSQL("SELECT  COUNT(1) FROM ACT_PVC_PROVEEDOR_CONTACTO pvc " + 
+				"JOIN ACT_PVE_PROVEEDOR pve ON pve.PVE_ID = pvc.PVE_ID AND PVE_COD_REM ='" +codProveedorLong+"' AND pve.BORRADO = 0" +
+				"JOIN REMMASTER.USU_USUARIOS usu ON usu.USU_ID = pvc.USU_ID AND usu.USU_USERNAME ='" +usrContacto+"' AND usu.BORRADO = 0");
+		
+		return Integer.valueOf(resultado) > 0;
+	}
+	
 }

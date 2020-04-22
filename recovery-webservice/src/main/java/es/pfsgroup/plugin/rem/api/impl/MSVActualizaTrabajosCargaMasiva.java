@@ -3,20 +3,24 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 
@@ -65,8 +69,8 @@ public class MSVActualizaTrabajosCargaMasiva extends AbstractMSVActualizador imp
 		    trabajo.setUsuarioGestorActivoResponsable(gestorActivo);
 		if (supervisorActivo != null)
 		    trabajo.setSupervisorActivoResponsable(supervisorActivo);
-		if (usuarioResponsable != null && codProveedor.length() > 0) {
-		    ActivoProveedorContacto activoProveedorContacto = getProveedorByCodigoAndUser(codProveedor, trabajo, usuarioContacto);
+		if (usuarioContacto != null && codProveedor.length() > 0) {
+		    ActivoProveedorContacto activoProveedorContacto = getProveedorByCodigoAndUser(codProveedor, usuarioContacto);
 		    trabajo.setProveedorContacto(activoProveedorContacto);
 		}
 		
@@ -86,15 +90,20 @@ public class MSVActualizaTrabajosCargaMasiva extends AbstractMSVActualizador imp
 	        return genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", userName));
 	    }
 	}
-	private ActivoProveedorContacto getProveedorByCodigoAndUser(String codProveedor, Trabajo trabajo, Usuario usuario) {
+	private ActivoProveedorContacto getProveedorByCodigoAndUser(String codProveedor, Usuario usuario) {
 	    ActivoProveedorContacto resp = null;
-        if (codProveedor != null && codProveedor.length() >0
-	        && trabajo.getProveedorContacto() != null 
-	        && trabajo.getProveedorContacto().getId() != null
-	        && usuario != null){
-            Filter f1  = genericDao.createFilter(FilterType.EQUALS, "id", trabajo.getProveedorContacto().getId());
-            Filter f2 =  genericDao.createFilter(FilterType.EQUALS, "usuario", usuario);
-            resp = genericDao.get(ActivoProveedorContacto.class, f1, f2); 
+        if (codProveedor != null && codProveedor.length() >0  && usuario != null){
+            Filter filtroActivoProveedor  = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", Long.valueOf(codProveedor));
+        	ActivoProveedor activoProveedor = genericDao.get(ActivoProveedor.class, filtroActivoProveedor);
+        	if(activoProveedor != null) {
+	            Filter f1  = genericDao.createFilter(FilterType.EQUALS, "id", activoProveedor.getId());
+	            Filter f2 =  genericDao.createFilter(FilterType.EQUALS, "usuario", usuario);
+	            Order order = new Order(OrderType.DESC, "id");
+	            List<ActivoProveedorContacto> apList = genericDao.getListOrdered(ActivoProveedorContacto.class, order, f1, f2);
+	            if(apList != null && !apList.isEmpty()) {
+	            	resp = apList.get(0);
+	            }
+	        }
         }
 	       
 	    return resp;

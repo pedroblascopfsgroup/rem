@@ -313,8 +313,9 @@ public class MSVActualizaTrabajosValidator extends MSVExcelValidatorAbstract {
                 for(int i=1; i<this.numFilasHoja;i++){
                     try {
                         String usrContacto = exc.dameCelda(i, COL_USUARIO_CONTACTO);
-                        String codProveedor = exc.dameCelda(i, COL_USUARIO_CONTACTO);
-                        if(Checks.esNulo(usrContacto) && !Checks.esNulo(codProveedor)) 
+                        String codProveedor = exc.dameCelda(i, COL_CODIGO_PROVEEDOR);
+                        if(usrContacto != null &&  codProveedor != null 
+                        	&& Boolean.FALSE.equals(particularValidator.existeContactoProveedorTipoUsuario(usrContacto, codProveedor)))	
                             listaFilas.add(i);
                     } catch (ParseException e) {
                         listaFilas.add(i);

@@ -48,7 +48,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 				        { 
 							xtype: 'comboboxfieldbase',
 				        	fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
-				        	name: 'entidadPropietariaCodigo',
+				        	name: 'carteraCodigo',
 				        	displayField: 'descripcion',
     						valueField: 'codigo',
 				        	bind: {
@@ -114,7 +114,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							xtype : 'comboboxfieldbase',
 							editable: false,
 							fieldLabel: HreRem.i18n('fieldlabel.activosearch.sello.calidad'),
-							name: 'comboSelloCalidad',
+							name: 'selloCalidad',
 							bind: {
 								store : '{comboSiNoRem}'
 							}
@@ -141,7 +141,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 					        },
 					        {
 					        	fieldLabel: HreRem.i18n('fieldlabel.activosearch.codigo.promocion'),
-					        	name: 'codigoPromocionPrinex'
+					        	name: 'codPromoPrinex'
 					        }
 					    ]},
 				    {	
@@ -151,7 +151,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 				    items:[
 				        { 
 				        	fieldLabel: HreRem.i18n('fieldlabel.finca.registral'),
-				        	name: 'finca'
+				        	name: 'numFinca'
 				        },
 				        { 
 				        	fieldLabel: HreRem.i18n('fieldlabel.referencia.catastral'),
@@ -191,16 +191,16 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 									 { 
 							        	fieldLabel: HreRem.i18n('fieldlabel.numero.activo.sareb'),
 										labelWidth:	150,
-							        	name: 'idSareb'
+							        	name: 'numActivoSareb'
 							         },
 									 {
 										fieldLabel: HreRem.i18n('fieldlabel.id.activo.prinex'),
 										labelWidth:	150,
-						            	name:		'idProp'
+						            	name: 'numActivoPrinex'
 									 },
 									 {
 										fieldLabel: HreRem.i18n('fieldlabel.id.activo.uvem'),
-						                name:		'idUvem'
+						                name: 'numActivoUvem'
 									},
 									{
 							        	fieldLabel: HreRem.i18n('fieldlabel.numero.activo.divarian'),
@@ -210,7 +210,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 									{
 										fieldLabel: HreRem.i18n('fieldlabel.id.activo.recovery'),
 										labelWidth:	150,
-						                name:		'idRecovery'
+						                name: 'numActivoRecovey'
 									},
 									{
 							        	xtype: 'comboboxfieldbase',
@@ -274,38 +274,38 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 									{ 
 							        	xtype: 'comboboxfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.tipo.via'),
-						            	name:	'tipoViaCodigo',
+						            	name: 'tipoViaCodigo',
 							        	bind: {
 						            		store: '{comboTipoVia}'
 						            	}
 							        },
 									{
 										fieldLabel: HreRem.i18n('fieldlabel.nombre.via'),
-						                name:		'nombreVia'
+						                name: 'nombreVia'
 						                
 									},
 									{
 										fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
-						                name:		'codPostal'
+						                name: 'codPostal'
 									},
 									{ 
 							        	xtype: 'comboboxfieldbase',
 							        	fieldLabel: HreRem.i18n('fieldlabel.provincia'),
-							        	name: 'provinciaAvanzada',
+							        	name: 'provinciaAvanzadaCodigo',
 							        	bind: {
 						            		store: '{comboFiltroProvincias}'
 						            	}
 							        },
 									{
 										fieldLabel: HreRem.i18n('fieldlabel.municipio'),
-						            	name:		'municipio'
+						            	name: 'localidadAvanzadaDescripcion'
 									},
 									{
 							        	xtype: 'comboboxfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.pais'),
 							        	name: 'paisCodigo',
 							        	bind: {
-						            		store: '{comboPais}'
+						            		store: '{comboCountries}'
 						            	}
 						        	}
 								]
@@ -332,18 +332,18 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 								{
 									fieldLabel: HreRem.i18n('fieldlabel.poblacion.registro'),
 									labelWidth:	150,
-					            	name:		'localidadRegistroDescripcion'
+					            	name: 'localidadRegistroDescripcion'
 								 },
 								{
 									fieldLabel: HreRem.i18n('fieldlabel.numero.registro'),
-					            	name:		'numRegistro'
+					            	name: 'numRegistro'
 								 }, {
 									fieldLabel: HreRem.i18n('fieldlabel.finca.registral'),
-					                name:		'fincaAvanzada'
+					                name: 'numFincaAvanzada'
 								},
 								{
 									fieldLabel: HreRem.i18n('fieldlabel.idufir'),
-					                name:		'idufir'
+					                name: 'idufir'
 								},
 						        {
 						        	xtype: 'comboboxfieldbase',
@@ -366,7 +366,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						        { 
 						        	xtype: 'comboboxfieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.division.horizontal.integrado'),
-					            	name:	'divisionHorizontal',
+					            	name: 'divHorizontal',
 						        	bind: {
 					            		store: '{comboSiNoRem}'
 					            	}
@@ -374,7 +374,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						        { 
 						        	xtype: 'comboboxfieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.inscrito'),
-					            	name:	'inscrito',
+					            	name: 'fechaInscripcionReg',
 						        	bind: {
 					            		store: '{comboSiNoRem}'
 					            	}
@@ -402,7 +402,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 										xtype: 'comboboxfieldbase',
 										addUxReadOnlyEditFieldPlugin: false,
 										fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
-										name: 'entidadPropietariaCodigoAvanzado',
+										name: 'carteraAvanzadaCodigo',
 										bind: {
 											store: '{comboEntidadPropietaria}'
 										}
@@ -411,18 +411,21 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 										xtype: 'comboboxfieldbase',
 										addUxReadOnlyEditFieldPlugin: false,
 										fieldLabel: HreRem.i18n('fieldlabel.subcartera'),
-										name: 'subcarteraCodigoAvanzado',
+										name: 'subcarteraAvanzadaCodigo',
 										bind: {
 											store: '{comboSubcartera}'
-										}
+										},
+										listeners : {
+				        					change: 'onChangeSubcartera'
+				        				} 
 									},
 									{
 										fieldLabel: HreRem.i18n('fieldlabel.nombre.propietario'),
-									    name: 'propietarioNombre'
+									    name: 'nombrePropietario'
 									},
 									{
 										fieldLabel: HreRem.i18n('fieldlabel.nif.propietario'),
-										name: 'propietarioNIF'
+										name: 'docPropietario'
 									}
 								]
 						}
@@ -446,7 +449,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 									{ 
 							        	xtype: 'comboboxfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.ocupado'),
-						            	name:	'ocupado',
+						            	name: 'ocupado',
 							        	bind: {
 						            		store: '{comboSiNoRem}'
 						            	}
@@ -455,8 +458,8 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							        	xtype: 'comboboxfieldbase',
 							        	editable: false,
 										fieldLabel: HreRem.i18n('fieldlabel.con.titulo'),
-						            	name:		'conTitulo',
-						            	reference:	'conTitulo',
+						            	name: 'conTituloCodigo',
+						            	reference: 'conTitulo',
 							        	bind: {
 						            		store: '{comboDDTipoTituloActivo}'
 						            	}
@@ -465,7 +468,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							        	xtype: 'comboboxfieldbase',
 							        	editable: false,
 										fieldLabel: HreRem.i18n('fieldlabel.con.posesion.inicial'),
-						            	name: 'conPosesion',
+						            	name: 'fechaPosesion',
 							        	bind: {
 						            		store: '{comboSiNoRem}'
 						            	}
@@ -474,7 +477,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							        	xtype: 'comboboxfieldbase',
 							        	editable: false,
 										fieldLabel: HreRem.i18n('fieldlabel.tapiado'),
-						            	name: 'accesoTapiado',
+						            	name: 'tapiado',
 							        	bind: {
 						            		store: '{comboSiNoRem}'
 						            	}
@@ -483,7 +486,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							        	xtype: 'comboboxfieldbase',
 							        	editable: false,
 										fieldLabel: HreRem.i18n('fieldlabel.puerta.antiocupa'),
-						            	name: 'accesoAntiocupa',
+						            	name: 'antiocupa',
 							        	bind: {
 						            		store: '{comboSiNoRem}'
 						            	}
@@ -492,7 +495,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							        	xtype: 'comboboxfieldbase',
 							        	editable: false,
 										fieldLabel: HreRem.i18n('fieldlabel.titulo.posesorio'),
-						            	name: 'tipoTituloPosesorio',
+						            	name: 'tituloPosesorioCodigo',
 							        	bind: {
 						            		store: '{comboTipoTituloPosesorio}'
 						            	}
@@ -602,7 +605,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							        { 
 							        	xtype: 'comboboxfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.gestion'),
-						            	name: 'perimetroGestion',
+						            	name: 'gestion',
 							        	bind: {
 						            		store: '{comboSiNoRem}'
 						            	}
@@ -610,7 +613,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							        {
 							        	xtype: 'comboboxfieldbase',
 										fieldLabel: HreRem.i18n('header.rating'),
-						            	name: 'ratingCodigo',
+						            	name: 'flagRatingCodigo',
 							        	bind: {
 						            		store: '{comboRatingActivo}'
 						            	}
@@ -634,7 +637,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							    	{ 
 							    		xtype: 'comboboxfieldbase',
 							    		fieldLabel: HreRem.i18n('fieldlabel.direccion.comercial'),
-							    		name: 'territorio',
+							    		name: 'direccionComercialCodigo',
 							    		bind: {
 							    			store: '{comboDireccionComercial}'
 							    		}
@@ -642,7 +645,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							    	{ 
 							    		xtype: 'comboboxfieldbase',
 							    		fieldLabel: HreRem.i18n('fieldlabel.tipo.segmento'),
-							    		name: 'tipoSegmento',
+							    		name: 'tipoSegmentoCodigo',
 							    		reference: 'tipoSegmentoRef',
 							    		hidden: true,
 							    		bind: {
@@ -656,7 +659,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							    		reference: 'perimetroMaccRef',
 							    		hidden: true,
 							    		bind: {
-							    			store: '{comboSiNoRemActivo}'
+							    			store: '{comboSiNoRem}'
 							    		}
 							    	}
 								]

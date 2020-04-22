@@ -13,7 +13,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -67,7 +66,7 @@ import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
-import es.pfsgroup.plugin.rem.excel.ActivoExcelReport;
+import es.pfsgroup.plugin.rem.excel.ActivoGridExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.PublicacionExcelReport;
@@ -87,6 +86,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
+import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformacionAdministrativa;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformacionComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
@@ -137,11 +137,10 @@ import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacionLil;
-import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
+import es.pfsgroup.plugin.rem.model.VGridBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
-import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
@@ -259,6 +258,20 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getBusquedaActivosGrid(DtoActivoGridFilter dtoActivoFiltro, ModelMap model) {
+		try {
+			Page page = (Page) adapter.getBusquedaActivosGrid(dtoActivoFiltro, true);
+			model.put(RESPONSE_DATA_KEY, page.getResults());
+			model.put(RESPONSE_TOTALCOUNT_KEY, page.getTotalCount());
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		return createModelAndViewJson(model);
+	}
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveDatosBasicos(DtoActivoFichaCabecera activoDto, @RequestParam Long id, ModelMap model) {
@@ -1723,38 +1736,23 @@ public class ActivoController extends ParadiseJsonController {
 	}
 
 	
-	@RequestMapping(method = RequestMethod.GET)
-	public void generateExcel(DtoActivoFilter dtoActivoFilter, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		dtoActivoFilter.setListPage(false);
-
-		List<VBusquedaActivos> listaActivos = (List<VBusquedaActivos>) adapter.getActivos(dtoActivoFilter);
+	@RequestMapping(method = RequestMethod.POST)
+	public void generateExcel(DtoActivoGridFilter dtoActivoFilter, HttpServletRequest request, HttpServletResponse response) throws Exception {		
 		Usuario usuario = usuarioManager.getUsuarioLogado();
+		 List<VGridBusquedaActivos> listaActivos = (List<VGridBusquedaActivos>) adapter.getBusquedaActivosGrid(dtoActivoFilter, false);
 		new EmptyParamDetector().isEmpty(listaActivos.size(), "activos", usuario.getUsername());
-
-		new EmptyParamDetector().isEmpty(listaActivos.size(), "activos", usuarioManager.getUsuarioLogado().getUsername());
-
-		new EmptyParamDetector().isEmpty(listaActivos.size(), "activos", usuarioManager.getUsuarioLogado().getUsername());
-
-		List<DDRatingActivo> listaRating = utilDiccionarioApi.dameValoresDiccionarioSinBorrado(DDRatingActivo.class);
-		Map<String, String> mapRating = new HashMap<String, String>();
-		for (DDRatingActivo rating : listaRating)
-			mapRating.put(rating.getCodigo(), rating.getDescripcion());
-
-		ExcelReport report = new ActivoExcelReport(listaActivos, mapRating, genericDao);
-		excelReportGeneratorApi.generateAndSend(report, response);
-	}
-	
+		ExcelReport report = new ActivoGridExcelReport(listaActivos);
+		excelReportGeneratorApi.generateAndSend(report, response);	
+	}	
 	
 	@RequestMapping(method = RequestMethod.POST)
 	@Transactional()
-	public ModelAndView registrarExportacion(DtoActivoFilter dtoActivoFilter, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ModelMap model = new ModelMap();
-		dtoActivoFilter.setListPage(true);
-		Usuario user = null;
+	public ModelAndView registrarExportacion(DtoActivoGridFilter dtoActivoFilter, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelMap model = new ModelMap();		 
 		Boolean isSuperExport = false;
 		try {
-			int count = ((Page)adapter.getActivos(dtoActivoFilter)).getTotalCount();
-			user = usuarioManager.getUsuarioLogado();
+			Usuario user = usuarioManager.getUsuarioLogado();
+			int count = ((Page)adapter.getBusquedaActivosGrid(dtoActivoFilter, true)).getTotalCount();
 			AuditoriaExportaciones ae = new AuditoriaExportaciones();
 			ae.setBuscador(buscador);
 			ae.setFechaExportacion(new Date());
@@ -1781,10 +1779,9 @@ public class ActivoController extends ParadiseJsonController {
 			}
 		}catch(Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
-			logger.error("error en activoController", e);
+			logger.error("error en activoController::registrarExportacion", e);
 		}
 		return createModelAndViewJson(model);
-		
 	}
 
 	@SuppressWarnings("rawtypes")

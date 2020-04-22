@@ -4604,7 +4604,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	@Override
 	public Boolean existeCodigoPeticion(String codPeticion) {
 		
-		 if(codPeticion == null || codPeticion.isEmpty() || Boolean.FALSE.equals(StringUtils.isNumeric(codPeticion)))
+		 if(codPeticion == null || codPeticion.isEmpty())
+			 return true;// Si codigo peticion viene nula es porque se va a crear nueva peticion.
+		 
+		 if(Boolean.FALSE.equals(StringUtils.isNumeric(codPeticion)))
 			 return false;
 		
 		String resultado = rawDao.getExecuteSQL(
@@ -4615,22 +4618,39 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return "1".equals(resultado);
 	}
 	
-	 @Override
-	 public Boolean esPeticionEditable(String codPeticion, String numActivo) {
-		 Boolean resultado = false;
-		 
+	@Override
+	public Boolean existeCodigoPeticionActivo(String codPeticion, String numActivo) {
+		
 		 if(codPeticion == null || codPeticion.isEmpty())
-			 return true;
+			 return true;// Si codigo peticion viene nula es porque se va a crear nueva peticion.
 		 
 		 if(Boolean.FALSE.equals(StringUtils.isNumeric(codPeticion)) || numActivo == null 
 				 ||  Boolean.FALSE.equals(StringUtils.isNumeric(numActivo)))
 			 return false;
+		
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) "+ 
+				" FROM HPP_HISTORICO_PETICIONES_PRECIOS HPP "+
+				" INNER JOIN ACT_ACTIVO ACT ON HPP.ACT_ID = ACT.ACT_ID "+ 
+				" WHERE HPP.HPP_ID = " + codPeticion +
+				" AND ACT.ACT_NUM_ACTIVO = "+ numActivo +
+				" AND HPP.borrado = 0 AND ACT.BORRADO = 0");
+		return "1".equals(resultado);
+	}
+	
+	 @Override
+	 public Boolean esPeticionEditable(String codPeticion, String numActivo) {
+		 Boolean resultado = false;
+
+		 if(codPeticion == null || codPeticion.isEmpty())
+			 return true;// Si codigo peticion viene nula es porque se va a crear nueva peticion.
 		 
 		 List<Object> listaHistPeticiones = rawDao.getExecuteSQLList("SELECT HPP.HPP_ID FROM hpp_historico_peticiones_precios HPP " + 
 		"INNER JOIN ACT_ACTIVO ACT ON HPP.ACT_ID = ACT.ACT_ID " + 
-		"WHERE ACT.ACT_NUM_ACTIVO = "+numActivo+" AND " + 
-		"HPP.DD_TPP_ID = (select dd_tpp_id from dd_tpp_tipo_peticion_precio where dd_tpp_id = (" + 
-		"SELECT DD_TPP_ID FROM hpp_historico_peticiones_precios where HPP_ID ="+codPeticion+" )) ORDER BY HPP.FECHACREAR DESC");
+		" WHERE ACT.ACT_NUM_ACTIVO = "+numActivo+" AND ACT.BORRADO = 0 AND " + 
+		" HPP.DD_TPP_ID = (select dd_tpp_id from dd_tpp_tipo_peticion_precio where dd_tpp_id = (" + 
+		" SELECT DD_TPP_ID FROM hpp_historico_peticiones_precios where HPP_ID ="+codPeticion+" )) AND HPP.BORRADO = 0"
+		+ " ORDER BY HPP.FECHACREAR DESC");
 		
 		 if(!listaHistPeticiones.isEmpty() && listaHistPeticiones.get(0).toString().equals(codPeticion)) {
 			 resultado = true;

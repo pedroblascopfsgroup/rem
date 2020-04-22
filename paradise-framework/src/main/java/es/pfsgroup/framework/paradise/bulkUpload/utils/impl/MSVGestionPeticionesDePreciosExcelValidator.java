@@ -35,9 +35,10 @@ public class MSVGestionPeticionesDePreciosExcelValidator extends MSVExcelValidat
 	private static final String SEPARATOR = ", ";
 
 	public static final String ACTIVO_INEXISTENTE = "El activo introducido no existe.";
-	public static final String CODIGO_PETICION_NO_EXISTE = "El código de Petición no existe.";
-	public static final String CODIGO_PETICION_NO_EDITABLE = "Petición de Precios no editable";
-	public static final String TIPO_PETICION_NO_EXISTE = "El tipo de petición introducido no existe";
+	public static final String CODIGO_PETICION_NO_EXISTE = "El código de petición no existe.";
+	public static final String CODIGO_PETICION_NO_EDITABLE = "Petición de precios no editable.";
+	public static final String CODIGO_PETICION_NO_EXISTE_EN_ACTIVO = "El código de petición no pertenece al activo insertado.";
+	public static final String TIPO_PETICION_NO_EXISTE = "El tipo de petición introducido no existe.";
 	
 	public static final class COL_NUM {
 		static final int FILA_CABECERA = 2;
@@ -93,12 +94,16 @@ public class MSVGestionPeticionesDePreciosExcelValidator extends MSVExcelValidat
 		if (Boolean.FALSE.equals(dtoValidacionContenido.getFicheroTieneErrores())) {
 			Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
 			
-			List<Integer> activosInextistentes = isActiveExistsRows(exc);
-			mapaErrores.put(ACTIVO_INEXISTENTE, activosInextistentes);
+			mapaErrores.put(ACTIVO_INEXISTENTE, isActiveExistsRows(exc));
+			mapaErrores.put(CODIGO_PETICION_NO_EXISTE, esPeticionNotNullExistente(exc));
+			mapaErrores.put(CODIGO_PETICION_NO_EXISTE_EN_ACTIVO, esPeticionExistenteActivo(exc));
 			mapaErrores.put(CODIGO_PETICION_NO_EDITABLE, esPeticionEditable(exc));
 			mapaErrores.put(TIPO_PETICION_NO_EXISTE, esTipoPeticionExistente(exc));
 			
-			if (!mapaErrores.get(ACTIVO_INEXISTENTE).isEmpty() || !mapaErrores.get(CODIGO_PETICION_NO_EDITABLE).isEmpty() 
+			if (!mapaErrores.get(ACTIVO_INEXISTENTE).isEmpty() 
+					|| !mapaErrores.get(CODIGO_PETICION_NO_EXISTE).isEmpty()  
+					|| !mapaErrores.get(CODIGO_PETICION_NO_EXISTE_EN_ACTIVO).isEmpty()
+					|| !mapaErrores.get(CODIGO_PETICION_NO_EDITABLE).isEmpty() 
 					|| !mapaErrores.get(TIPO_PETICION_NO_EXISTE).isEmpty()) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -173,6 +178,53 @@ public class MSVGestionPeticionesDePreciosExcelValidator extends MSVExcelValidat
 		return listaFilas;
 	}
 	
+	private List<Integer> esPeticionNotNullExistente(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		String codPeticion = "";
+		
+			int i = 0;
+			try {
+				for(i=1; i<this.numFilasHoja;i++){
+					codPeticion = exc.dameCelda(i, COL_NUM.COD_PETICION);
+					if(Boolean.FALSE.equals(particularValidator.existeCodigoPeticion(codPeticion)))
+						listaFilas.add(i);
+				}
+			} catch (Exception e) {
+				if (i != 0) listaFilas.add(i);
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			}
+			
+			return listaFilas;
+		}
+	
+	private List<Integer> esPeticionExistenteActivo(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		String codPeticion = "";
+		String numActivo = "";
+		
+			int i = 0;
+			try {
+				for(i=1; i<this.numFilasHoja;i++){
+					codPeticion = exc.dameCelda(i, COL_NUM.COD_PETICION);
+					numActivo = exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA);
+					
+					if((Boolean.TRUE.equals(particularValidator.existeCodigoPeticion(codPeticion)) && 
+							Boolean.TRUE.equals(particularValidator.existeActivo(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA))))
+						&& Boolean.FALSE.equals(particularValidator.existeCodigoPeticionActivo(codPeticion, numActivo)))
+						listaFilas.add(i);
+				}
+				
+			} catch (Exception e) {
+				if (i != 0) listaFilas.add(i);
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			}
+			
+			return listaFilas;
+			
+		}
+	
 	private List<Integer> esPeticionEditable(MSVHojaExcel exc){
 	List<Integer> listaFilas = new ArrayList<Integer>();
 	String codPeticion = "";
@@ -184,9 +236,11 @@ public class MSVGestionPeticionesDePreciosExcelValidator extends MSVExcelValidat
 				codPeticion = exc.dameCelda(i, COL_NUM.COD_PETICION);
 				numActivo = exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA);
 				
-				if(Boolean.FALSE.equals(particularValidator.esPeticionEditable(codPeticion, numActivo)))
-					listaFilas.add(i);
-					
+				if((Boolean.TRUE.equals(particularValidator.existeCodigoPeticion(codPeticion))
+						&& Boolean.TRUE.equals(particularValidator.existeCodigoPeticionActivo(codPeticion, numActivo)))
+					&& Boolean.FALSE.equals(particularValidator.esPeticionEditable(codPeticion, numActivo))) {
+					listaFilas.add(i);	
+				}
 			}
 		} catch (Exception e) {
 			if (i != 0) listaFilas.add(i);

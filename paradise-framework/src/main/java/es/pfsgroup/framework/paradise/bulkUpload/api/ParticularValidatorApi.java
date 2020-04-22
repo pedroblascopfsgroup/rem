@@ -1152,4 +1152,6 @@ public interface ParticularValidatorApi {
 	public Boolean existeTipoPeticion(String codTpoPeticion);
 
 	Boolean esTareaCompletadaTarificadaNoTarificada(String codTrabajo);
+
+	Boolean existeCodigoPeticionActivo(String codPeticion, String numActivo);
 }

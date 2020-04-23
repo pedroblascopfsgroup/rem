@@ -29,6 +29,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
@@ -191,6 +192,13 @@ public class GastoProveedor implements Serializable, Auditable {
 	
 	@Column(name="GPV_FECHA_REC_HAYA")
 	private Date fechaRecHaya;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="GPV_SUPLIDOS_VINCULADOS")
+	private DDSiNo suplidosVinculados;
+	
+	@Column(name="GPV_NUMERO_FACTURA_PPAL")
+	private String numeroFacturaPrincipal;
     
 	@Version   
 	private Long version;
@@ -553,5 +561,21 @@ public class GastoProveedor implements Serializable, Auditable {
 
 	public void setFechaRecHaya(Date fechaRecHaya) {
 		this.fechaRecHaya = (Date) fechaRecHaya.clone();
+	}
+
+	public DDSiNo getSuplidosVinculados() {
+		return suplidosVinculados;
+	}
+
+	public void setSuplidosVinculados(DDSiNo suplidosVinculados) {
+		this.suplidosVinculados = suplidosVinculados;
+	}
+
+	public String getNumeroFacturaPrincipal() {
+		return numeroFacturaPrincipal;
+	}
+
+	public void setNumeroFacturaPrincipal(String numeroFacturaPrincipal) {
+		this.numeroFacturaPrincipal = numeroFacturaPrincipal;
 	}
 }

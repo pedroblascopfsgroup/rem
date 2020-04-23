@@ -38,7 +38,7 @@ BEGIN
 
 	execute immediate 'MERGE INTO '||V_ESQUEMA||'.ACT_AGR_AGRUPACION T1 USING (
 						    SELECT
-						    DISTINCT OFR.OFR_ID, AGR.AGR_ID, AGR.DD_TAG_ID, AGR.AGR_FECHA_BAJA, AGR.AGR_ELIMINADO
+						    DISTINCT AGR.AGR_ID
 						    FROM '||V_ESQUEMA||'.ofr_ofertas OFR
 						    INNER JOIN '||V_ESQUEMA||'.act_ofr ON  ACT_OFR.OFR_ID = OFR.OFR_ID
 						    INNER JOIN '||V_ESQUEMA||'.act_activo ACT ON ACT.ACT_ID = ACT_OFR.ACT_ID 
@@ -55,7 +55,7 @@ BEGIN
 						T1.USUARIOMODIFICAR = ''REMVIP-7106'',
 						T1.FECHAMODIFICAR = SYSDATE';
 
-						DBMS_OUTPUT.PUT_LINE('[INFO] Actualizados '||SQL%ROWCOUNT||' registros en ACT_AGR_AGRUPACION. Deberian ser 543 ');  
+						DBMS_OUTPUT.PUT_LINE('[INFO] Actualizados '||SQL%ROWCOUNT||' registros en ACT_AGR_AGRUPACION. Deberian ser 542 ');  
 
 						COMMIT;
 

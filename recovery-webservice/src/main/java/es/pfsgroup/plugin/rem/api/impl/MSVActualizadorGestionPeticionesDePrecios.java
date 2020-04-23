@@ -38,6 +38,10 @@ public class MSVActualizadorGestionPeticionesDePrecios extends AbstractMSVActual
 		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 		String codPeticion = exc.dameCelda(fila, 1);
 		String codTipoPeticion = exc.dameCelda(fila, 2);
+		String fechaSolicitud = exc.dameCelda(fila, 3);
+		String fechaSancion = exc.dameCelda(fila, 4);
+		String observaciones = exc.dameCelda(fila, 5);
+		
 		HistoricoPeticionesPrecios peticion = null;
 		if(codPeticion != null && !codPeticion.isEmpty())
 			peticion = genericDao.get(HistoricoPeticionesPrecios.class, genericDao.createFilter(FilterType.EQUALS, "id",Long.parseLong(codPeticion)));
@@ -48,11 +52,19 @@ public class MSVActualizadorGestionPeticionesDePrecios extends AbstractMSVActual
 		if(codPeticion != null && !codPeticion.isEmpty())
 			historicoPropuestasPreciosDto.setIdPeticion(Long.parseLong(codPeticion));
 		
-		historicoPropuestasPreciosDto.setTipoPeticion(codTipoPeticion);
-		historicoPropuestasPreciosDto.setTipoFecha(codTipoPeticion);
-		historicoPropuestasPreciosDto.setFechaSolicitud(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, 3))));
-		historicoPropuestasPreciosDto.setFechaSancion(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, 4))));
-		historicoPropuestasPreciosDto.setObservaciones(exc.dameCelda(fila, 5));
+		if(codTipoPeticion != null && !codTipoPeticion.isEmpty()) {
+			historicoPropuestasPreciosDto.setTipoPeticion(codTipoPeticion);
+			historicoPropuestasPreciosDto.setTipoFecha(codTipoPeticion);
+		}
+		
+		if(fechaSolicitud != null && !fechaSolicitud.isEmpty())
+			historicoPropuestasPreciosDto.setFechaSolicitud(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(new SimpleDateFormat("dd/MM/yyyy").parse(fechaSolicitud)));
+		
+		if(fechaSancion != null && !fechaSancion.isEmpty())
+			historicoPropuestasPreciosDto.setFechaSancion(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(new SimpleDateFormat("dd/MM/yyyy").parse(fechaSancion)));
+		
+		if(observaciones != null && !observaciones.isEmpty())
+			historicoPropuestasPreciosDto.setObservaciones(observaciones);
 		
 		if((peticion != null && peticion.getTipoPeticionPrecio() != null) 
 				|| (peticion != null && peticion.getTipoPeticionPrecio() != null 

@@ -379,7 +379,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	private void obtenerProperties() {
 		String tamanyoBloqueProperties = !Checks.esNulo(appProperties.getProperty("rest.client.webcom.tamanyobloque"))
 				? appProperties.getProperty("rest.client.webcom.tamanyobloque")
-				: "10";
+				: "100";
 		try {
 			if (tamanyoBloqueProperties != null) {
 				this.tamanyoBloque = Integer.parseInt(tamanyoBloqueProperties);

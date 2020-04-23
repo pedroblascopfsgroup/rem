@@ -3683,7 +3683,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			List<ActivoTramite> listaTramites = tramiteDao.getTramitesByTipoAndTrabajo(
 					formalizacion.getExpediente().getTrabajo().getId(), ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA);
 
-			if (listaTramites != null) {
+			if (listaTramites != null && !listaTramites.isEmpty()) {
 				List<TareaExterna> listaTareas = activoTareaExternaApi.getTareasByIdTramite(listaTramites.get(0).getId());
 				TareaExterna tex = null;
 

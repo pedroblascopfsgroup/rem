@@ -36,9 +36,14 @@ BEGIN
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] Se van a dar de baja ACT_ICO_INFO_COMERCIAL > Valor estimado venta desde AUX_VALOR_ESTIMADO_VENTA_REMVIP_7077.');
 
+	/*Lo comento porque lo dividimos en el merge (El valor hay que dividirlo entre 100 porque al cargar la excel lo multiplica x100)
+	execute immediate 'update '||V_ESQUEMA||'.AUX_VALOR_ESTIMADO_VENTA_REMVIP_7077 set valor_estimado_venta = valor_estimado_venta / 100';
+	commit;
+	*/
+
 	execute immediate 'MERGE INTO '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL T1 USING (
 						    SELECT
-						    DISTINCT ICO.ICO_ID, AUX.VALOR_ESTIMADO_VENTA
+						    DISTINCT ICO.ICO_ID, AUX.VALOR_ESTIMADO_VENTA/100 as VALOR_ESTIMADO_VENTA
 						    FROM '||V_ESQUEMA||'.act_activo ACT
 						    INNER JOIN '||V_ESQUEMA||'.AUX_VALOR_ESTIMADO_VENTA_REMVIP_7077 AUX ON AUX.ACT_NUMERO_ACTIVO = ACT.ACT_NUM_ACTIVO
 						    INNER JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO ON ICO.ACT_ID = ACT.ACT_ID

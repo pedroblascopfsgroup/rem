@@ -194,6 +194,15 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 		ActivoTramite tramite = getActivoTramite(executionContext); 
 		TareaProcedimiento tareaProcedimiento = tareaExterna.getTareaProcedimiento();
 
+		TareaActivo tareaActivo = (TareaActivo)tareaExterna.getTareaPadre();
+		Activo activo = tareaActivo.getActivo();
+		Trabajo trabajo = tareaActivo.getTramite().getTrabajo();
+		ExpedienteComercial expediente = expedienteComercialApi.findOneByTrabajo(trabajo);
+		Oferta oferta = null;
+		if(expediente != null) {
+			oferta = expediente.getOferta();
+		}
+		
 		List<TareaExternaValor> valores = activoTareaExternaManagerApi.obtenerValoresTarea(tareaExterna.getId());
 				
 		UpdaterService dataUpdater = updaterServiceFactory.getService(tareaProcedimiento.getCodigo());

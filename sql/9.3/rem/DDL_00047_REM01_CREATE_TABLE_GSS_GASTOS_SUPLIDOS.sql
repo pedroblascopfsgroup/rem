@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alberto Flores
---## FECHA_CREACION=20200422
+--## FECHA_CREACION=20200424
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10134
@@ -47,8 +47,8 @@ DECLARE
 	V_COMMENT T_ARRAY_COMMENT := T_ARRAY_COMMENT(
 	-- 	COLUMN 							COMMENT
 		T_COMMENT('GSS_ID', 			'Código identificador único de gastos suplidos.'), 
-		T_COMMENT('GPV_ID_PADRE', 		''),
-		T_COMMENT('GPV_ID_SUPLIDO', 	''),
+		T_COMMENT('GPV_ID_PADRE', 		'Gasto padre, se relaciona con GPV_ID'),
+		T_COMMENT('GPV_ID_SUPLIDO', 	'Gasto suplido, se relaciona con GPV_ID'),
 		T_COMMENT('VERSION', 			'Indica la version del registro.'),
 		T_COMMENT('USUARIOCREAR', 		'Indica el usuario que creo el registro.'),
 		T_COMMENT('FECHACREAR', 		'Indica la fecha en la que se creo el registro.'),

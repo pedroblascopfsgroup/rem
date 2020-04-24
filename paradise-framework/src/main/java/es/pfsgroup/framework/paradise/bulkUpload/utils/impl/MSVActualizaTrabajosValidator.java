@@ -59,6 +59,7 @@ public class MSVActualizaTrabajosValidator extends MSVExcelValidatorAbstract {
 	public static final String TIPOLOGIA_ERRONEA = "La tipología del proveedor no coincide con una de las indicadas.";
 	public static final String ERROR_TAREA = "El proveedor no se puede modificar, tareas resultado de la actuación completadas.";
 	public static final String TIENE_QUE_SER_MULTIACTIVO = "El responsable del trabajo no puede ser cambiado, el trabajo tiene que ser de tipo multiactivo.";
+	public static final String USUARIO_SIN_COD_PROVEEDOR = "Si el campo proveedor no está relleno, el usuario contacto no debe estarlo";
 	
 	public static final Integer COL_NUM_TRABAJO = 0;
 	public static final Integer COL_CODIGO_PROVEEDOR = 1;
@@ -137,6 +138,7 @@ public class MSVActualizaTrabajosValidator extends MSVExcelValidatorAbstract {
 			mapaErrores.put(TIPOLOGIA_ERRONEA, isUserInTipologia(exc));
 			mapaErrores.put(TIENE_QUE_SER_MULTIACTIVO, isTrabajoMultiactivo(exc));
 			mapaErrores.put(ERROR_TAREA, esTareaCompletada(exc));
+			mapaErrores.put(USUARIO_SIN_COD_PROVEEDOR, usuarioSinProveedor(exc));
 
 			if (!mapaErrores.get(TRABAJO_NO_EXISTE).isEmpty() 
 			        || !mapaErrores.get(PROVEEDOR_NO_EXISTE).isEmpty()
@@ -150,7 +152,8 @@ public class MSVActualizaTrabajosValidator extends MSVExcelValidatorAbstract {
                     || !mapaErrores.get(PERFIL_SUPERVISOR_ERRONEO).isEmpty()
                     || !mapaErrores.get(TIPOLOGIA_ERRONEA).isEmpty()
                     || !mapaErrores.get(TIENE_QUE_SER_MULTIACTIVO).isEmpty()
-                    || !mapaErrores.get(ERROR_TAREA).isEmpty()){
+                    || !mapaErrores.get(ERROR_TAREA).isEmpty()
+                    || !mapaErrores.get(USUARIO_SIN_COD_PROVEEDOR).isEmpty()){
 			    
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -314,7 +317,7 @@ public class MSVActualizaTrabajosValidator extends MSVExcelValidatorAbstract {
                     try {
                         String usrContacto = exc.dameCelda(i, COL_USUARIO_CONTACTO);
                         String codProveedor = exc.dameCelda(i, COL_CODIGO_PROVEEDOR);
-                        if(usrContacto != null &&  codProveedor != null 
+                        if(usrContacto != null &&  usrContacto != "" &&  codProveedor != null && codProveedor != ""
                         	&& Boolean.FALSE.equals(particularValidator.existeContactoProveedorTipoUsuario(usrContacto, codProveedor)))	
                             listaFilas.add(i);
                     } catch (ParseException e) {
@@ -434,4 +437,30 @@ public class MSVActualizaTrabajosValidator extends MSVExcelValidatorAbstract {
            return listaFilas;
        }
 
+       private List<Integer> usuarioSinProveedor(MSVHojaExcel exc){
+    	   List<Integer> listaFilas = new ArrayList<Integer>();
+           
+           try{
+               for(int i=1; i<this.numFilasHoja;i++){
+                   try {
+                       String codProveedor= exc.dameCelda(i, COL_CODIGO_PROVEEDOR);
+                       String contacto = exc.dameCelda(i, COL_USUARIO_CONTACTO);
+                       
+                       if( (codProveedor == null || codProveedor.isEmpty()) && (contacto != null && !contacto.isEmpty()))
+                           listaFilas.add(i);
+                           
+                   } catch (ParseException e) {
+                       listaFilas.add(i);
+                   }
+               }
+           }catch (IllegalArgumentException e) {
+               listaFilas.add(0);
+               e.printStackTrace();
+           } catch (IOException e) {
+               listaFilas.add(0);
+               e.printStackTrace();
+           }
+           
+           return listaFilas;
+       }
 }

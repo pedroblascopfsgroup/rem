@@ -19,6 +19,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorServic
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 
 @Component
 public class NotificatorServiceProveedorCierre extends AbstractNotificatorService implements NotificatorService {
@@ -26,6 +27,8 @@ public class NotificatorServiceProveedorCierre extends AbstractNotificatorServic
 	private static final String CODIGO_T004_CIERRE_ECONOMICO = "T004_CierreEconomico";
 	private static final String BUZON_ELECNOR = "buzonelecnor";
 	private static final String ELECNOR ="---------.29";
+	private static final String BUZON_BANKIA_ASISTA	= "BUZON BANKIA ASISTA";
+	private static final String BANKIA_ASISTA = "---------.5";
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
@@ -63,10 +66,15 @@ public class NotificatorServiceProveedorCierre extends AbstractNotificatorServic
 			    		&& ELECNOR.equals(tramite.getTrabajo().getProveedorContacto().getUsuario().getUsername())) {
 			    	Usuario buzonElecnor = usuarioManager.getByUsername(BUZON_ELECNOR);			    	
 					correos += !Checks.esNulo(buzonElecnor) ? ";" + buzonElecnor.getEmail() : "";
-				}		    
+				}else if(tramite.getActivos() != null && !tramite.getActivos().isEmpty() && tramite.getActivos().get(0).getCartera() != null &&
+	    				DDCartera.CODIGO_CARTERA_BANKIA.equals(tramite.getActivos().get(0).getCartera().getCodigo()) 
+	    				&& BANKIA_ASISTA.equals(tramite.getTrabajo().getProveedorContacto().getUsuario().getUsername())) {
+					Usuario buzonBankiaAsista = usuarioManager.getByUsername(BUZON_BANKIA_ASISTA);
+	    	    	correos = !Checks.esNulo(buzonBankiaAsista) ? buzonBankiaAsista.getEmail() : "";
+				}
 		    }
 			
-			if(correos != null) {
+			if(correos != null && !correos.equals("")) {
 				Collections.addAll(mailsPara, correos.split(";"));
 			}
 				

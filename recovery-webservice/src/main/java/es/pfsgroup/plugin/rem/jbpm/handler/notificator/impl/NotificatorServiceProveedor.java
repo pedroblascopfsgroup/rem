@@ -29,7 +29,7 @@ public class NotificatorServiceProveedor extends AbstractNotificatorService impl
 	private static final String CODIGO_T004_RESULTADO_NOTARIFICADA = "T004_ResultadoNoTarificada";
 	private static final String BUZON_ELECNOR = "buzonelecnor";
 	private static final String ELECNOR ="---------.29";
-	private static final String BUZON_BANKIA_ASISTA	= "BUZON BANKIA ASISTA";
+	private static final String BUZON_BANKIA_ASISTA	= "buzonbankiaasista";
 	private static final String BANKIA_ASISTA = "---------.5";
 	
 	@Autowired
@@ -71,11 +71,13 @@ public class NotificatorServiceProveedor extends AbstractNotificatorService impl
 	    		if(ELECNOR.equals(tramite.getTrabajo().getProveedorContacto().getUsuario().getUsername())) {
 	    			Usuario buzonElecnor = usuarioManager.getByUsername(BUZON_ELECNOR);			    	
 					correos += !Checks.esNulo(buzonElecnor) ? ";" + buzonElecnor.getEmail() : "";
-	    		}else if(tramite.getActivos() != null &&  !tramite.getActivos().isEmpty() && tramite.getActivos().get(0).getCartera() != null &&
+	    		}else {
+	    			if(tramite.getActivos() != null &&  !tramite.getActivos().isEmpty() && tramite.getActivos().get(0).getCartera() != null &&
 	    				DDCartera.CODIGO_CARTERA_BANKIA.equals(tramite.getActivos().get(0).getCartera().getCodigo()) 
 	    				&& BANKIA_ASISTA.equals(tramite.getTrabajo().getProveedorContacto().getUsuario().getUsername())) {
-	    	    	Usuario buzonBankiaAsista = usuarioManager.getByUsername(BUZON_BANKIA_ASISTA);
-	    	    	correos = !Checks.esNulo(buzonBankiaAsista) ? buzonBankiaAsista.getEmail() : "";
+	    				Usuario buzonBankiaAsista = usuarioManager.getByUsername(BUZON_BANKIA_ASISTA);
+	    				correos = !Checks.esNulo(buzonBankiaAsista) ? buzonBankiaAsista.getEmail() : "";
+	    			}
 	    		}
 	    	}		    
 	    }

@@ -1007,17 +1007,19 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			try {
-				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosProveedor(proveedor);
-			} catch (GestorDocumentalException gex) {
-				if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getMessage())) {
-					logger.error("No existe contenedor registrado para este Proveedor");
-					logger.error("Consultando ID de Proveedor. Creando Contenedor.");
+				if (proveedor != null && proveedor.getIdPersonaHaya() == null) {
 					Thread maestroPersona = new Thread( new MaestroDePersonas(proveedor.getDocIdentificativo(), proveedor.getCodigoProveedorRem(), usuarioLogado.getUsername()));
 					maestroPersona.start();
-				} else {
-					logger.error(gex.getMessage());
-					throw gex;
+					int seg = 0;
+					while (proveedor.getIdPersonaHaya() == null && seg<10) {
+						Thread.sleep(1000);
+						seg++;
+					}
 				}
+				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosProveedor(proveedor);
+			} catch (GestorDocumentalException gex) {
+				logger.error(gex.getMessage());
+				throw gex;
 			}
 		} else {		
 			Filter adjuntoFilter = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId());

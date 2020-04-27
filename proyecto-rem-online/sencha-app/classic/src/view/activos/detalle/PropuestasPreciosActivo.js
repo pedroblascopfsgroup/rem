@@ -24,6 +24,28 @@ Ext.define('HreRem.view.activos.detalle.PropuestasPreciosActivo', {
         			{	
         				xtype: 'propuestasactivolist',
         				reference: 'propuestasActivoList'        				
+        			},
+        			{
+        			xtype:'fieldsettable',
+					defaultType: 'textfieldbase',
+					collapsible: false,
+					items :
+						[
+						{
+						xtype:'fieldsettable',
+						defaultType: 'textfieldbase',
+						reference:'historicosolicitudesprecios',
+						hidden: false, 
+						title: HreRem.i18n("title.historico.solicitudes.precios"),
+							items :
+							[
+								{
+			        				xtype: 'historicosolicitudespreciosgrid', 
+									reference: 'historicosolicitudespreciosgridref'
+		        				}
+							]
+		           		}
+						]
         			}
         
         ];

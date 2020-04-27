@@ -392,7 +392,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 * @return Devuelve True si el check de publicar activo para el alquiler debe estar deshabilitado.
 	 */
 	@Transactional(readOnly=false)
-	private Boolean deshabilitarCheckPublicarAlquiler(Long idActivo) {
+	public Boolean deshabilitarCheckPublicarAlquiler(Long idActivo) {
 		Boolean resultado = false;
 		Boolean hagoElRestoComprobaciones = true;
 		try{
@@ -701,7 +701,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 */
 	
 	@Transactional
-	private Boolean actualizarDatosEstadoActualPublicaciones(DtoDatosPublicacionActivo dto, List<ActivoPublicacion> activosPublicacion) { //
+	public Boolean actualizarDatosEstadoActualPublicaciones(DtoDatosPublicacionActivo dto, List<ActivoPublicacion> activosPublicacion) { //
 		try {
 			for(ActivoPublicacion activoPublicacion : activosPublicacion) {
 				if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo())) {
@@ -1360,11 +1360,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				BeanUtils.copyProperties(activoPublicacionHistoricoActual, activoPublicacion);	
 			}
 			
-			if (!Checks.esNulo(activoPublicacionHistorico)) {
+			if (activoPublicacionHistorico != null) {
 				activoPublicacionHistoricoDao.saveOrUpdate(activoPublicacionHistorico);
 			}
 			
-			if (!Checks.esNulo(activoPublicacionHistoricoActual)) {
+			if (activoPublicacionHistoricoActual != null) {
 				activoPublicacionHistoricoActual.setAuditoria(null);
 				activoPublicacionHistoricoDao.save(activoPublicacionHistoricoActual);
 			}

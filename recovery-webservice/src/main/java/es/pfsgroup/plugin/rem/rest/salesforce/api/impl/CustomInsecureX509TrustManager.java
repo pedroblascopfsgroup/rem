@@ -20,7 +20,7 @@ public class CustomInsecureX509TrustManager implements X509TrustManager {
 
 	@Override
 	public X509Certificate[] getAcceptedIssuers() {
-		return null;
+		return  new X509Certificate[0];
 	}
 
 }

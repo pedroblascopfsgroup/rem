@@ -11,16 +11,12 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.mail.MailManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
-import es.capgemini.pfs.users.UsuarioManager;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 
 @Component
 public class NotificatorServiceODocCEECierreEconomico extends AbstractNotificatorService implements NotificatorService {
@@ -30,14 +26,6 @@ public class NotificatorServiceODocCEECierreEconomico extends AbstractNotificato
 
 	@Autowired
 	private GenericAdapter genericAdapter;
-	
-
-	
-	@Autowired
-	private GestorActivoApi gestorActivoApi;
-	
-	@Autowired
-	private UsuarioManager usuarioManager;
 	
 	@Override
 	public String[] getKeys() {

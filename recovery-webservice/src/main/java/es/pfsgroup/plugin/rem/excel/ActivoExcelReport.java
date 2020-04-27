@@ -114,30 +114,37 @@ public class ActivoExcelReport extends AbstractExcelReport implements ExcelRepor
 		return (dato == null) ? null : dato ? "OK" : "";
 	}
 
-	private String mapeoEstadoOcupacion(Activo activo)
-	{
-		ActivoSituacionPosesoria situacion;
-		if(!Checks.esNulo(activo) && !Checks.esNulo(situacion = activo.getSituacionPosesoria()) && !Checks.esNulo(situacion.getOcupado()))
-		{
-			if(situacion.getOcupado() == 0) return "No ocupado";
-			else if(!Checks.esNulo(situacion.getConTitulo()) && situacion.getOcupado() == 1)
-			{
-				if(DDTipoTituloActivoTPA.tipoTituloNo.equals(situacion.getConTitulo().getCodigo())) return "Ocupado sin título";
-				else if(DDTipoTituloActivoTPA.tipoTituloSi.equals(situacion.getConTitulo().getCodigo()))
-				{
-					if(!Checks.esNulo(situacion.getTipoTituloPosesorio())) return "Ocupado con título de " + situacion.getTipoTituloPosesorio().getDescripcion();
-					else return "Ocupado con título";
-				}
+	private String mapeoEstadoOcupacion(Activo activo){
+		String estadoOcupacion = "";		
+		if(activo != null) {
+			ActivoSituacionPosesoria situacion = activo.getSituacionPosesoria();
+			if(situacion != null && situacion.getOcupado() !=null){				
+				if(situacion.getOcupado() == 0) {
+					estadoOcupacion = "No ocupado";
+				} else if(!Checks.esNulo(situacion.getConTitulo()) && situacion.getOcupado() == 1) {					
+						if(DDTipoTituloActivoTPA.tipoTituloNo.equals(situacion.getConTitulo().getCodigo())) {
+							estadoOcupacion = "Ocupado sin título";
+						} else if(DDTipoTituloActivoTPA.tipoTituloSi.equals(situacion.getConTitulo().getCodigo())){					
+								if(!Checks.esNulo(situacion.getTipoTituloPosesorio())) {
+									estadoOcupacion = "Ocupado con título de " + situacion.getTipoTituloPosesorio().getDescripcion();
+								} else {
+									estadoOcupacion = "Ocupado con título";
+								}
+							}
+					} else if(situacion.getOcupado() == 1) {
+							estadoOcupacion = "Ocupado sin título";
+						}
 			}
-			else if(situacion.getOcupado() == 1) return "Ocupado sin título";
 		}
-		return "";
+		
+		return estadoOcupacion;
 	}
 
-	private String mapeoEstadoFisico(Activo activo)
-	{
+	private String mapeoEstadoFisico(Activo activo)	{
 		String descripcion = "";
-		if(!Checks.esNulo(activo.getEstadoActivo()) && !Checks.esNulo(descripcion = activo.getEstadoActivo().getDescripcion())){}
+		if(activo != null && activo.getEstadoActivo() !=null) {
+			descripcion = activo.getEstadoActivo().getDescripcion();
+		}
 		return descripcion;
 	}
 

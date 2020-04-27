@@ -99,8 +99,8 @@ public class UpdaterServiceATCierreEconomico implements UpdaterService {
 					
 					Double ultimoPresupuestoActivoImporte = 0D;
 					Double acumuladoTrabajosActivoImporte = 0D;
-					Long idUltimoPresupuestoActivo = null;
-					VBusquedaPresupuestosActivo ultimoPresupuestoActivo = null;
+					Long idUltimoPresupuestoActivo = 0L;
+					VBusquedaPresupuestosActivo ultimoPresupuestoActivo = new VBusquedaPresupuestosActivo();
 					
 					// Obtiene el presupuesto del activo, si se asigno para el ejercicio actual
 					if (!Checks.esNulo(activo))
@@ -108,7 +108,7 @@ public class UpdaterServiceATCierreEconomico implements UpdaterService {
 			 		
 					if (!Checks.esNulo(idUltimoPresupuestoActivo)){
 						Filter filtroUltimoPresupuesto = genericDao.createFilter(FilterType.EQUALS, "id", idUltimoPresupuestoActivo.toString());
-						ultimoPresupuestoActivo = (VBusquedaPresupuestosActivo) genericDao.get(VBusquedaPresupuestosActivo.class, filtroUltimoPresupuesto);
+						ultimoPresupuestoActivo =  genericDao.get(VBusquedaPresupuestosActivo.class, filtroUltimoPresupuesto);
 					}
 			 		
 					if (!Checks.esNulo(ultimoPresupuestoActivo) && !Checks.esNulo(ultimoPresupuestoActivo.getImporteInicial()))
@@ -120,8 +120,7 @@ public class UpdaterServiceATCierreEconomico implements UpdaterService {
 					// Obtiene el acumulado de presupuestos de trabajos del activo, para el ejercicio actual
 					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", activo.getId().toString());
 					Filter filtroEjercicioActual = genericDao.createFilter(FilterType.EQUALS, "ejercicio", ejercicioActual);
-					List<VBusquedaActivosTrabajoPresupuesto> listaTrabajosActivo = 
-						(List<VBusquedaActivosTrabajoPresupuesto>) genericDao.getList(VBusquedaActivosTrabajoPresupuesto.class, filtroActivo, filtroEjercicioActual);
+					List<VBusquedaActivosTrabajoPresupuesto> listaTrabajosActivo = genericDao.getList(VBusquedaActivosTrabajoPresupuesto.class, filtroActivo, filtroEjercicioActual);
 
 					BigDecimal importeParticipacionTrabajo = new BigDecimal(0);
 					for (VBusquedaActivosTrabajoPresupuesto trabajoActivo : listaTrabajosActivo) {

@@ -135,7 +135,6 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoDireccionProveedor", DDTipoDireccionProveedor.class);
 		mapa.put("cargoProveedor", DDCargoProveedorContacto.class);
 		mapa.put("tipoDocumentoProveedor", DDTipoDocumentoProveedor.class);
-		mapa.put("tipoContenedorProveedor", DDTipoContenedorProveedor.class);
 		mapa.put("motivoAplicaComercializarActivo", DDMotivoComercializacion.class);
 		mapa.put("claseActivoBancario", DDClaseActivoBancario.class);
 		mapa.put("subtipoClaseActivoBancario", DDSubtipoClaseActivoBancario.class);
@@ -252,6 +251,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoPublicacion", DDTipoPublicacion.class);
 		mapa.put("tipoSegmento", DDTipoSegmento.class);
 		mapa.put("origenAnterior", DDOrigenAnterior.class);
+		mapa.put("tipoPeticionPrecio", DDTipoPeticionPrecio.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

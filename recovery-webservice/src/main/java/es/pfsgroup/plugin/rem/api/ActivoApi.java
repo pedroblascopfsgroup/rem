@@ -80,6 +80,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
 import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
 import es.pfsgroup.plugin.rem.rest.dto.File;
+import es.pfsgroup.plugin.rem.rest.dto.HistoricoPropuestasPreciosDto;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 
 
@@ -1312,5 +1313,10 @@ public interface ActivoApi {
 	void actualizarOfertasTrabajosVivos(Long idActivo);
 
 	void propagarTerritorioAgrupacionRestringida(Long idActivo);
+	
+	List<HistoricoPropuestasPreciosDto> getHistoricoSolicitudesPrecios(Long idActivo);
 
+	Boolean createHistoricoSolicitudPrecios(HistoricoPropuestasPreciosDto historicoPropuestasPreciosDto) throws ParseException;
+
+	Boolean updateHistoricoSolicitudPrecios(HistoricoPropuestasPreciosDto historicoPropuestasPreciosDto) throws ParseException;
 }

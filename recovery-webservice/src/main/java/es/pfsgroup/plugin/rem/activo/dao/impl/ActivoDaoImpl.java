@@ -33,6 +33,8 @@ import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
@@ -60,6 +62,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoPeticionesPrecios;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
@@ -1245,7 +1248,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	@Override
 	public Boolean existenOfertasVentaActivo(Long idActivo) {
 		try {
-			BigDecimal num = new BigDecimal(1);
 			Session session = this.getSessionFactory().getCurrentSession();
 			Query query = session.createSQLQuery(
 					"SELECT count(ofr.*) FROM OFR_OFERTAS ofr " + "JOIN ACT_OFR afr ON  afr.ofr_id = ofr.ofr_id "
@@ -1255,7 +1257,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 			String contador = (String) query.uniqueResult();
 
-			if (num.equals(contador)) {
+			if ("1".equals(contador)) {
 				return true;
 			} else {
 				return false;
@@ -1841,5 +1843,10 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 		return devolverPage ? HibernateQueryUtils.page(this, hb, dto) : HibernateQueryUtils.list(this, hb);	
 	}
-	
+
+	@Override
+	public List<HistoricoPeticionesPrecios> getHistoricoSolicitudesPrecios(Long idActivo) {
+		Order order = new Order(OrderType.DESC,"auditoria.fechaCrear");
+		return genericDao.getListOrdered(HistoricoPeticionesPrecios.class, order, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo));
+	}
 }

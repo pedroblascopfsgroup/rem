@@ -325,7 +325,7 @@ public class AgendaAdapter {
 			Filter f1 = genericDao.createFilter(FilterType.EQUALS, "clave", AgendaMultifuncionTipoEventoRegistro.EventoNotificacion.ID_NOTIFICACION);
 			Filter f2 = genericDao.createFilter(FilterType.EQUALS, "valorCorto", idTarea.toString());
 			MEJInfoRegistro infoRegistro = getInfoRegistro(f1, f2);
-			if (!Checks.esNulo(infoRegistro)) {
+			if (infoRegistro != null) {
 				Map<String, String> info = proxyFactory.proxy(MEJRegistroApi.class).getMapaRegistro(infoRegistro.getRegistro().getId());
 				
 				numAgrupacion = info.get("NUM_AGR");

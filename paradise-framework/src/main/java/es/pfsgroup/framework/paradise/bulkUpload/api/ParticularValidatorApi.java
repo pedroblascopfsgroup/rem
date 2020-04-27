@@ -1101,7 +1101,35 @@ public interface ParticularValidatorApi {
 	Boolean isActivoEnCesionDeUso(String numActivo);
 
 	Boolean isActivoEnAlquilerSocial(String numActivo);
+	
+	/**
+	 * 
+	 * @param codPerfil
+	 * @param codUsuario
+	 * @return true si el usuario propuesto no pertenece al perfil
+	 */
+    public Boolean esPerfilErroneo(String codPerfil, String codUsuario);
 
+    /*
+     * @param proveedor (código del proveedor)
+     * @param tipologias (Array con las tipologias a verificar)
+     * @return false si el proveedor no está en el conjunto de tipologías recibidas
+     */
+    Boolean isProveedorInTipologias(String proveedor, String[] tipologias);
+    
+    /*
+     * @param user (código usuario)
+     * @param codGestor (Código del gestor)
+     * @return true si el usuario pertenece al tipo de gestor propuesto en codGestor
+     */
+    Boolean isUserGestorType(String user, String codGestor);
+ 
+    /*
+     * @param codTrabajo (Número de trabajo)
+     * @return true si es multiactivo(que el trabajo tiene asociado más de un activo).
+     */
+    Boolean esTrabajoMultiactivo(String codTrabajo);
+	
 	public Boolean esSegmentoValido(String codSegmento);
 /**
  * 
@@ -1116,4 +1144,17 @@ public interface ParticularValidatorApi {
 	public Boolean esSubcarteraApple(String numActivo);
 	
 	public Boolean aCambiadoDestinoComercial(String numActivo, String destinoComercial);
+
+	public Boolean existeCodigoPeticion(String codPeticion);
+
+	public Boolean esPeticionEditable(String codPeticion, String numActivo);
+
+	public Boolean existeTipoPeticion(String codTpoPeticion);
+
+	Boolean esTareaCompletadaTarificadaNoTarificada(String codTrabajo);
+
+	public boolean existeContactoProveedorTipoUsuario(String usrContacto, String codProveedor);
+
+	Boolean existeCodigoPeticionActivo(String codPeticion, String numActivo);
+
 }

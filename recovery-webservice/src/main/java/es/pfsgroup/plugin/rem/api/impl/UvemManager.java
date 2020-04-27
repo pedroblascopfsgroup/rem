@@ -118,6 +118,8 @@ public class UvemManager implements UvemManagerApi {
 	private static final String LIAVI1_CLCDC4_0414 	  = "Cliente precaución operativa blanqueo capitales (Cancelar).                     ";
 	private static final String LIAVI1_CLCDB4_80		  = "Cliente bloqueado                                                               ";
 	
+	private final Random RANDOM = new Random();
+	
 	private GMPETS07_INS servicioGMPETS07_INS;
 
 	private GMPAJC93_INS servicioGMPAJC93_INS;
@@ -151,7 +153,6 @@ public class UvemManager implements UvemManagerApi {
 	@Autowired
 	private LogTrustWebService trustMe;
 	
-	//private Random rand = null;
 
 	private static final int MASK = (-1) >>> 1; // all ones except the sign bit
 
@@ -216,13 +217,13 @@ public class UvemManager implements UvemManagerApi {
 			servicio.execute();
 		} else {
 			logger.error("UVEM: Servicios desactividos");
-			Random rand = new Random();
+			
 			if (servicio instanceof GMPETS07_INS) {
-				((GMPETS07_INS) servicio).setNumeroIdentificadorDeTasacionlnuita2(rand.nextInt() & MASK);
+				((GMPETS07_INS) servicio).setNumeroIdentificadorDeTasacionlnuita2(this.RANDOM.nextInt() & MASK);
 			} else if (servicio instanceof GMPAJC11_INS) {
 				VectorGMPAJC11_INS_NumeroDeOcurrenciasnumocu vector = new VectorGMPAJC11_INS_NumeroDeOcurrenciasnumocu();
 				StructGMPAJC11_INS_NumeroDeOcurrenciasnumocu struct = new StructGMPAJC11_INS_NumeroDeOcurrenciasnumocu();
-				struct.setIdentificadorClienteOfertaidclow2(rand.nextInt() & MASK);
+				struct.setIdentificadorClienteOfertaidclow2(this.RANDOM.nextInt() & MASK);
 				struct.setDniNifDelTitularDeLaOfertanudnio2("00000000X");
 				struct.setNombreYApellidosTitularDeOfertanotiof("Dummy Dummy Dummy");
 				vector.add(struct);
@@ -272,7 +273,7 @@ public class UvemManager implements UvemManagerApi {
 					((GMPDJB13_INS) servicio).setCodigoDeAgrupacionDeInmueblecoagiw2(
 							((GMPDJB13_INS) servicio).getCodigoDeAgrupacionDeInmueblecoagiw());
 				} else {
-					((GMPDJB13_INS) servicio).setCodigoDeAgrupacionDeInmueblecoagiw2(rand.nextInt() & MASK);
+					((GMPDJB13_INS) servicio).setCodigoDeAgrupacionDeInmueblecoagiw2(this.RANDOM.nextInt() & MASK);
 				}
 
 			} else if (servicio instanceof GMPAJC34_INS) {
@@ -283,28 +284,6 @@ public class UvemManager implements UvemManagerApi {
 		return servicio;
 	}
 	
-	/**
-	 * No compila con java6, lo activamos cuando todos los jovs compilen con java7
-	 * @return
-	 */
-	@SuppressWarnings("unused")
-	private int getRandomInt() {
-		/*if(rand == null) {
-			try {
-				rand = SecureRandom.getInstanceStrong();
-			} catch (NoSuchAlgorithmException e) {
-				logger.error(e.getMessage(),e);
-				return 0;
-			}
-			return rand.nextInt();
-		}else {
-			rand.nextInt();
-		}
-		
-		return 0;*/
-		return 0;
-		
-	}
 
 	/**
 	 * Invoca al servicio GMPETS07_INS de BANKIA para solicitar una Tasación

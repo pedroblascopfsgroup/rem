@@ -334,7 +334,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 		// Si tenemos definido un estado, lo búscamos y modificamos en el gasto
 		
 		if(!Checks.esNulo(codigo)) {
-			if(codigo.equals(DDEstadoGasto.RETENIDO) && !Checks.esNulo(gasto.getEstadoGasto().getCodigo())) {
+			if(DDEstadoGasto.RETENIDO.equals(codigo) && !Checks.esNulo(gasto.getEstadoGasto().getCodigo())) {
 				if(gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.INCOMPLETO)) {
 					cambiarEstadosAutorizacionGasto(gasto,null,null);
 				}else if(gasto.getEstadoGasto().getCodigo().equals(DDEstadoGasto.PENDIENTE)) {

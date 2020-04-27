@@ -328,7 +328,8 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 			}else if("E".equals(uGestion)){
 				tipoFicheroAdjuntoEC = genericDao.get(DDSubtipoDocumentoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoDocAdjunto));
 			}else if("P".equals(uGestion)){
-				tipoFicheroAdjuntoProveedor = genericDao.get(DDTipoDocumentoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoDocAdjunto));
+				tipoFicheroAdjuntoProveedor = genericDao.get(DDTipoDocumentoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoDocAdjunto), 
+						genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 			}else if("G".equals(uGestion)){
 				tipoFicheroAdjuntoGasto = genericDao.get(DDTipoDocumentoGasto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoDocAdjunto));
 			}
@@ -356,11 +357,11 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 				//Segun unidad de gestion, Incluye en el mensaje, la descripciÃ³n de documento adjunto.
 				if (("A".equals(uGestion) || "T".equals(uGestion)) && !Checks.esNulo(tipoFicheroAdjunto) ){
 					mensajeValidacion = mensajeValidacion.concat(tipoFicheroAdjunto.getDescripcion());
-				}else if("E".equals(uGestion) && !Checks.esNulo(tipoFicheroAdjuntoEC) ){
+				}else if("E".equals(uGestion) && tipoFicheroAdjuntoEC != null){
 					mensajeValidacion = mensajeValidacion.concat(tipoFicheroAdjuntoEC.getDescripcion());
-				}else if("P".equals(uGestion) && !Checks.esNulo(tipoFicheroAdjuntoProveedor) ){
+				}else if("P".equals(uGestion) && tipoFicheroAdjuntoProveedor != null ){
 					mensajeValidacion = mensajeValidacion.concat(tipoFicheroAdjuntoProveedor.getDescripcion());
-				}else if("G".equals(uGestion) && !Checks.esNulo(tipoFicheroAdjuntoGasto) ){
+				}else if("G".equals(uGestion) && tipoFicheroAdjuntoGasto != null ){
 					mensajeValidacion = mensajeValidacion.concat(tipoFicheroAdjuntoGasto.getDescripcion());
 				}
 								

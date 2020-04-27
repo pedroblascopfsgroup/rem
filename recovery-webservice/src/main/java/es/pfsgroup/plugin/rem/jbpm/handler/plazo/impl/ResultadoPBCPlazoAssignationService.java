@@ -58,7 +58,7 @@ public class ResultadoPBCPlazoAssignationService implements PlazoAssignationServ
 				}
 				
 			}
-			if(!Checks.esNulo(resultadoTanteo)) {
+			if(resultadoTanteo != null) {
 				return resultadoTanteo.compareTo(new Date()) + 30*24*60*60*1000L;
 			}else {
 				return 30*24*60*60*1000L;

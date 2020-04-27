@@ -18,7 +18,7 @@ public class SalesforceRESTDevonProperties {
 	
 	//Credenciales
 	public static final String USERNAME = "rest.client.salesforce.username";
-	public static final String PASSWORD = "rest.client.salesforce.password";
+	public static final String DEVON_PASS = "rest.client.salesforce.password";
 	public static final String TIMEOUT_CONEXION = "rest.client.salesforce.timeout.seconds";
 	public static final String CLIENT_ID = "rest.client.salesforce.client.id";
 	public static final String CLIENT_SECRET = "rest.client.salesforce.client.secret";

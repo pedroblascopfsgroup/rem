@@ -473,7 +473,7 @@ public class AnotacionManager implements AnotacionApi{
 		try {
 			if(in != null)in.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 
 		return this.emailContentUtil.createContenntWithVelocity(this.velocityEngine,
@@ -584,7 +584,7 @@ public class AnotacionManager implements AnotacionApi{
     		Filter filtroIdTarea=genericDao.createFilter(FilterType.EQUALS, "id", idTarea);
     		EXTTareaNotificacion tarea = genericDao.get(EXTTareaNotificacion.class, filtroIdTarea);	
     		
-    		Date fecha = null;
+    		Date fecha = new Date();
     		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
     		try {
     			fecha = formatter.parse(nuevaFecha);

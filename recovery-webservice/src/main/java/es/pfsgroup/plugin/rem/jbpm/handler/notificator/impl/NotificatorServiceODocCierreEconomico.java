@@ -57,7 +57,7 @@ public class NotificatorServiceODocCierreEconomico extends AbstractNotificatorSe
 			}
 
 			// si es gestor interno y el solicitante es igual que el usuario de la tarea actual, no se envia el correo.
-			if (peticionario.equals(usuarioTareaActivo)) {
+			if (peticionario != null && peticionario.equals(usuarioTareaActivo)) {
 				return;
 			}
 
@@ -66,10 +66,12 @@ public class NotificatorServiceODocCierreEconomico extends AbstractNotificatorSe
 			List<String> mailsPara = new ArrayList<String>();
 			List<String> mailsCC = new ArrayList<String>();
 
-		    String correos = peticionario.getEmail();
-		    Collections.addAll(mailsPara, correos.split(";"));
-			mailsCC.add(this.getCorreoFrom());
-
+			if(peticionario != null) {
+				String correos = peticionario.getEmail();
+			    Collections.addAll(mailsPara, correos.split(";"));
+				mailsCC.add(this.getCorreoFrom());
+			}
+		    
 			String descripcionTrabajo = !Checks.esNulo(tramite.getTrabajo().getDescripcion())? (tramite.getTrabajo().getDescripcion() + " - ") : "";
 
 			dtoSendNotificator.setTitulo("Notificación finalización trabajo de obtención de documento");

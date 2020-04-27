@@ -73,7 +73,7 @@ public class NotificacionesController {
 
 		NotificacionRequestDto jsonData = null;
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
-		Map<String, Object> map = null;
+		Map<String, Object> map = new HashMap<String, Object>();
 		HashMap<String, String> errorsList = null;
 		JSONObject jsonFields = null;
 
@@ -88,7 +88,6 @@ public class NotificacionesController {
 			List<NotificacionDto> notificaciones = jsonData.getData();
 
 			for (NotificacionDto notificacion : notificaciones) {
-				map = new HashMap<String, Object>();
 				errorsList = anotacionApi.validateNotifPostRequestData(notificacion, jsonFields);
 
 				if (!Checks.esNulo(errorsList) && errorsList.size() == 0) {

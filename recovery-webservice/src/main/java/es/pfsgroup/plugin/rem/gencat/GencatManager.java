@@ -414,7 +414,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 			comunicacionGencat = resultComunicacion.get(0);
 		}
 		
-		if (!Checks.esNulo(comunicacionGencat)) {
+		if (comunicacionGencat != null) {
 			
 			//if... gestor documental activado
 			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
@@ -1776,15 +1776,18 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 			comunicacionGencat = resultComunicacion.get(0);
 		}
 		
-		AdjuntoComunicacion adjunto = genericDao.get(AdjuntoComunicacion.class, genericDao.createFilter(FilterType.EQUALS, "comunicacionGencat.id",comunicacionGencat.getId()),genericDao.createFilter(FilterType.EQUALS, "idDocRestClient",dtoAdjunto.getId()));
-		if (!Checks.esNulo(adjunto)){
-			genericDao.deleteById(AdjuntoComunicacion.class, adjunto.getId());
-		}else {
-			adjunto = genericDao.get(AdjuntoComunicacion.class, genericDao.createFilter(FilterType.EQUALS, "comunicacionGencat.id",comunicacionGencat.getId()),genericDao.createFilter(FilterType.EQUALS, "id",dtoAdjunto.getId()));
+		if(comunicacionGencat != null) {
+			AdjuntoComunicacion adjunto = genericDao.get(AdjuntoComunicacion.class, genericDao.createFilter(FilterType.EQUALS, "comunicacionGencat.id",comunicacionGencat.getId()),genericDao.createFilter(FilterType.EQUALS, "idDocRestClient",dtoAdjunto.getId()));
 			if (!Checks.esNulo(adjunto)){
 				genericDao.deleteById(AdjuntoComunicacion.class, adjunto.getId());
+			}else {
+				adjunto = genericDao.get(AdjuntoComunicacion.class, genericDao.createFilter(FilterType.EQUALS, "comunicacionGencat.id",comunicacionGencat.getId()),genericDao.createFilter(FilterType.EQUALS, "id",dtoAdjunto.getId()));
+				if (!Checks.esNulo(adjunto)){
+					genericDao.deleteById(AdjuntoComunicacion.class, adjunto.getId());
+				}
 			}
 		}
+		
 		return true;
 	}
 	

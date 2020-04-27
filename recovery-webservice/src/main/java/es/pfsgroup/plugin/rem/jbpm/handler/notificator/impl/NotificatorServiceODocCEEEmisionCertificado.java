@@ -10,14 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.mail.MailManager;
-import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
@@ -40,9 +36,6 @@ public class NotificatorServiceODocCEEEmisionCertificado extends AbstractNotific
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
-	
-	@Autowired
-	private GenericABMDao genericDao;
 	
 	@Override
 	public String[] getKeys() {
@@ -81,10 +74,11 @@ public class NotificatorServiceODocCEEEmisionCertificado extends AbstractNotific
 				List<String> mailsPara = new ArrayList<String>();
 				List<String> mailsCC = new ArrayList<String>();
 				
-				
-			    String correos = peticionario.getEmail();
-			    Collections.addAll(mailsPara, correos.split(";"));
-				mailsCC.add(this.getCorreoFrom());
+				if(peticionario != null) {
+					String correos = peticionario.getEmail();
+				    Collections.addAll(mailsPara, correos.split(";"));
+					mailsCC.add(this.getCorreoFrom());
+				}
 				
 				String contenido = "";
 				String titulo = "";

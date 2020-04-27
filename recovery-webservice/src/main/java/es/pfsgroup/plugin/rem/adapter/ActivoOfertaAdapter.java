@@ -117,7 +117,7 @@ public class ActivoOfertaAdapter {
 				}
 			}
 			
-			if(!Checks.esNulo(adjuntoComprador)) {
+			if(adjuntoComprador != null) {
 				dtoAdjunto.setId(adjuntoComprador.getId());
 				dtoAdjunto.setMatricula(adjuntoComprador.getMatricula());
 				dtoAdjunto.setNombre(adjuntoComprador.getNombreAdjunto());

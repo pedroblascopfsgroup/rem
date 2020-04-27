@@ -318,9 +318,6 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 					//petición para borrar el campo del registro que lleve una @
 					if(!contenidoCelda.trim().equals("@")) {						
 					
-						if (contenidoCelda.length() > 10) {
-							contenidoCelda = contenidoCelda.substring(0, 10);
-						}
 						contenidoCelda = contenidoCelda.replaceAll(" ", "").replaceAll("-", "").replaceAll("/", "");
 						if (contenidoCelda.length() < 6 || contenidoCelda.length() > 8) {
 							resultado.setValido(false);

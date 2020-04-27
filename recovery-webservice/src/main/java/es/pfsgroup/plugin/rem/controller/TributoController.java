@@ -94,7 +94,9 @@ public class TributoController extends ParadiseJsonController {
 
 		} catch(UserException ex) {
 			try {
-				salida.write(ex.toString().getBytes(Charset.forName("UTF-8")));
+				if (salida != null) {
+					salida.write(ex.toString().getBytes(Charset.forName("UTF-8")));
+				}
 			} catch (IOException e) {
 				logger.error("error en activoController", e);
 			}
@@ -106,8 +108,10 @@ public class TributoController extends ParadiseJsonController {
 			logger.error("error en activoController", e);
 		}finally {
 			try {
-				salida.flush();			
-				salida.close();
+				if (salida != null) {
+					salida.flush();			
+					salida.close();
+				}
 			} catch (IOException e) {
 				logger.error("error en activoController", e);
 			}

@@ -1933,7 +1933,22 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			AND   AGR.AGR_ID = " + numAgrupacion + " ");
 		return !"0".equals(resultado);
 	}
-
+	
+	@Override
+	public Boolean esPerfilErroneo(String codPerfil, String codUsuario){
+	    if(Checks.esNulo(codPerfil) || Checks.esNulo(codUsuario))
+	        return false;
+	    
+	    String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)"
+	            +"         FROM REMMASTER.USU_USUARIOS U"  
+	            +"         JOIN ZON_PEF_USU Z ON Z.USU_ID =  U.USU_ID" 
+	            +"         JOIN PEF_PERFILES P ON P.PEF_ID = Z.PEF_ID"  
+	            +"         WHERE LOWER(P.PEF_CODIGO) = LOWER('"+codPerfil+"')"  
+	            +"         AND LOWER(U.USU_USERNAME) = LOWER('"+codUsuario+"')"
+	            +"         AND P.BORRADO = 0 AND U.BORRADO = 0");
+	    
+        return "0".equals(resultado);
+    }
 	@Override
 	public Boolean isActivoNoComercializableAgrupacion(String numAgrupacion) {
 		if(Checks.esNulo(numAgrupacion))
@@ -4442,6 +4457,86 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				);
 		return !"0".equals(resultado); 
 	}
+	
+	@Override
+    public Boolean isProveedorInTipologias( String proveedor, String[] tipologias) {
+        if (tipologias.length<1 || Checks.esNulo(proveedor)) return false;
+        String tips= null;
+        String resultado = "-1";
+        tips = arrayToString(tipologias);
+        if (!Checks.esNulo(tips)) {
+            resultado = rawDao.getExecuteSQL("  SELECT COUNT(1) FROM ACT_PVE_PROVEEDOR"  
+                + "                 WHERE DD_TPR_ID IN (SELECT DD_TPR_ID FROM DD_TPR_TIPO_PROVEEDOR"
+                + "                    WHERE DD_TPR_CODIGO IN ("+tips+"))"
+                + "                 AND PVE_COD_REM = '" + proveedor+"'");
+        }
+        return "0".equals(resultado); 
+    }
+	
+	@Override
+	public Boolean isUserGestorType(String user, String codGestor) {
+	    if (Checks.esNulo(user) || Checks.esNulo(codGestor)) return false;
+	    String resultado;
+
+	    resultado = rawDao.getExecuteSQL(" SELECT COUNT(1)" 
+	            +"                  FROM REMMASTER.USU_USUARIOS USU" 
+	            +"                 JOIN GEE_GESTOR_ENTIDAD GEE ON GEE.USU_ID = "
+	            +"                (SELECT USU_ID FROM REMMASTER.USU_USUARIOS "
+	            + "                    WHERE LOWER(USU_USERNAME) = LOWER('"+user+"'))"
+	            +"                JOIN REMMASTER.DD_TGE_TIPO_GESTOR TGE "
+	            +"                ON TGE.DD_TGE_ID = GEE.DD_TGE_ID "
+	            + "               WHERE TGE.DD_TGE_CODIGO = '" +codGestor+"'");
+	    
+	    return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esTareaCompletadaTarificadaNoTarificada(String codTrabajo) {
+	    if (Checks.esNulo(codTrabajo)) return false;
+	    String resultado;
+	    resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+	            +"                 FROM ACT_TBJ_TRABAJO TBJ"
+	            +"                 JOIN ACT_TRA_TRAMITE TRA ON TRA.TBJ_ID = TBJ.TBJ_ID"
+	            +"                 JOIN TAC_TAREAS_ACTIVOS TAC ON TAC.TRA_ID = TRA.TRA_ID"
+	            +"                 JOIN TAR_TAREAS_NOTIFICACIONES TAR ON TAR.TAR_ID = TAC.TAR_ID"
+	            +"                 JOIN TEX_TAREA_EXTERNA TEX ON TAR.TAR_ID = TEX.TAR_ID"
+	            +"                 JOIN TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = TEX.TAP_ID"
+	            +"                 WHERE TAP.TAP_CODIGO IN ('T004_ResultadoTarificada','T004_ResultadoNoTarificada')"
+	            +"                 AND TAR.TAR_TAREA_FINALIZADA = 1 AND TAR.TAR_FECHA_FIN IS NOT NULL" 
+	            +"                 AND TBJ.BORRADO = 0"
+	            +"                 AND TBJ.TBJ_NUM_TRABAJO = "+ codTrabajo);
+	                
+	    return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esTrabajoMultiactivo(String codTrabajo) {
+	    if (Checks.esNulo(codTrabajo)) return false;
+	    String resultado;
+	    resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+	            +"                 FROM ACT_TBJ_TRABAJO TBJ"
+	            +"                 JOIN ACT_TBJ ACTB ON ACTB.TBJ_ID = TBJ.TBJ_ID"
+	            +"                 WHERE TBJ.TBJ_NUM_TRABAJO = " + codTrabajo);
+	            
+	    return Integer.valueOf(resultado) > 1;
+	}
+	
+
+	private String arrayToString(String[] array) {
+	    /* Retorna un string con los valores del array 
+	     * entrecomillados y separados por comas
+	     * si el array está vacío retorna null
+	     */
+	    String resp = "";
+	    String comilla = "'";
+	    String separador = "";
+	    if (array.length > 0) 
+	        for (String item : array) { 
+	            resp += separador + comilla+item+comilla;
+	            separador = ", ";
+	        }
+	    return resp;
+	}
 	//-------------------------------------------------------------------------
 
 	@Override
@@ -4505,4 +4600,83 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				" AND act.borrado = 0");
 		return "1".equals(resultado);
 	}
+	
+	@Override
+	public Boolean existeCodigoPeticion(String codPeticion) {
+		
+		 if(codPeticion == null || codPeticion.isEmpty())
+			 return true;// Si codigo peticion viene nula es porque se va a crear nueva peticion.
+		 
+		 if(Boolean.FALSE.equals(StringUtils.isNumeric(codPeticion)))
+			 return false;
+		
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) "+ 
+				"FROM HPP_HISTORICO_PETICIONES_PRECIOS HPP "+ 
+				"WHERE HPP.HPP_ID = " + codPeticion +
+				" AND HPP.borrado = 0");
+		return "1".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeCodigoPeticionActivo(String codPeticion, String numActivo) {
+		
+		 if(codPeticion == null || codPeticion.isEmpty())
+			 return true;// Si codigo peticion viene nula es porque se va a crear nueva peticion.
+		 
+		 if(Boolean.FALSE.equals(StringUtils.isNumeric(codPeticion)) || numActivo == null 
+				 ||  Boolean.FALSE.equals(StringUtils.isNumeric(numActivo)))
+			 return false;
+		
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) "+ 
+				" FROM HPP_HISTORICO_PETICIONES_PRECIOS HPP "+
+				" INNER JOIN ACT_ACTIVO ACT ON HPP.ACT_ID = ACT.ACT_ID "+ 
+				" WHERE HPP.HPP_ID = " + codPeticion +
+				" AND ACT.ACT_NUM_ACTIVO = "+ numActivo +
+				" AND HPP.borrado = 0 AND ACT.BORRADO = 0");
+		return "1".equals(resultado);
+	}
+	
+	 @Override
+	 public Boolean esPeticionEditable(String codPeticion, String numActivo) {
+		 Boolean resultado = false;
+
+		 if(codPeticion == null || codPeticion.isEmpty())
+			 return true;// Si codigo peticion viene nula es porque se va a crear nueva peticion.
+		 
+		 List<Object> listaHistPeticiones = rawDao.getExecuteSQLList("SELECT HPP.HPP_ID FROM hpp_historico_peticiones_precios HPP " + 
+		"INNER JOIN ACT_ACTIVO ACT ON HPP.ACT_ID = ACT.ACT_ID " + 
+		" WHERE ACT.ACT_NUM_ACTIVO = "+numActivo+" AND ACT.BORRADO = 0 AND " + 
+		" HPP.DD_TPP_ID = (select dd_tpp_id from dd_tpp_tipo_peticion_precio where dd_tpp_id = (" + 
+		" SELECT DD_TPP_ID FROM hpp_historico_peticiones_precios where HPP_ID ="+codPeticion+" )) AND HPP.BORRADO = 0"
+		+ " ORDER BY HPP.FECHACREAR DESC");
+		
+		 if(!listaHistPeticiones.isEmpty() && listaHistPeticiones.get(0).toString().equals(codPeticion)) {
+			 resultado = true;
+		 }
+		 
+		 return resultado;
+	 }
+
+	@Override
+	public Boolean existeTipoPeticion(String codTpoPeticion) {
+		 if((codTpoPeticion == null ||  Boolean.FALSE.equals(StringUtils.isNumeric(codTpoPeticion))))
+			 return false;
+			
+		String resultado = rawDao.getExecuteSQL("SELECT  COUNT(1) FROM DD_TPP_TIPO_PETICION_PRECIO " + 
+				"WHERE DD_TPP_CODIGO = '"+codTpoPeticion+"' AND BORRADO = 0");
+		
+		return "1".equals(resultado);
+	}
+	
+	@Override
+	public boolean existeContactoProveedorTipoUsuario(String usrContacto, String codProveedor) {
+		String resultado = rawDao.getExecuteSQL("SELECT  COUNT(1) FROM ACT_PVC_PROVEEDOR_CONTACTO pvc " + 
+				"JOIN ACT_PVE_PROVEEDOR pve ON pve.PVE_ID = pvc.PVE_ID AND PVE_COD_REM ='" +codProveedor+"' AND pve.BORRADO = 0" +
+				"JOIN REMMASTER.USU_USUARIOS usu ON usu.USU_ID = pvc.USU_ID AND usu.USU_USERNAME ='" +usrContacto+"' AND usu.BORRADO = 0");
+		
+		return Integer.valueOf(resultado) > 0;
+	}
+	
 }

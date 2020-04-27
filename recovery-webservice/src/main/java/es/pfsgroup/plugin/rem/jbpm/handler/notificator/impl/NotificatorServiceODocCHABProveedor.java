@@ -92,7 +92,7 @@ public class NotificatorServiceODocCHABProveedor extends AbstractNotificatorServ
 			}
 
 			// si es gestor interno y el solicitante es igual que el usuario de la tarea actual, no se envia el correo.
-			if (!esProveedorExterno && !Checks.esNulo(proveedor) && proveedor.equals(usuarioTareaActivo)) {
+			if (!esProveedorExterno && proveedor != null && proveedor.equals(usuarioTareaActivo)) {
 				return;
 			}
 
@@ -101,10 +101,12 @@ public class NotificatorServiceODocCHABProveedor extends AbstractNotificatorServ
 			List<String> mailsPara = new ArrayList<String>();
 			List<String> mailsCC = new ArrayList<String>();
 
-		    String correos = proveedor.getEmail();
-		    Collections.addAll(mailsPara, correos.split(";"));
-			mailsCC.add(this.getCorreoFrom());
-
+			if(proveedor != null) {
+				String correos = proveedor.getEmail();
+			    Collections.addAll(mailsPara, correos.split(";"));
+				mailsCC.add(this.getCorreoFrom());
+			}
+		    
 			String descripcionTrabajo = !Checks.esNulo(tramite.getTrabajo().getDescripcion())? (tramite.getTrabajo().getDescripcion() + " - ") : "";
 
 			String contenido;

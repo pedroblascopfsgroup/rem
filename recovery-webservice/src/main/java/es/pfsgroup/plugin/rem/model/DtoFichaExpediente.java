@@ -150,8 +150,6 @@ public class DtoFichaExpediente extends WebDto {
 	private Date fechaAprobacionProManzana;
 	
 	private Date fechaContabilizacionVenta;
-	
-	private Boolean perteneceGrupoPBC;
 
 	private Boolean esComiteHaya;
 	
@@ -770,14 +768,6 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setFechaContabilizacionVenta(Date fechaContabilizacionVenta) {
 		this.fechaContabilizacionVenta = fechaContabilizacionVenta;
-	}
-
-	public Boolean getPerteneceGrupoPBC() {
-		return perteneceGrupoPBC;
-	}
-
-	public void setPerteneceGrupoPBC(Boolean perteneceGrupoPBC) {
-		this.perteneceGrupoPBC = perteneceGrupoPBC;
 	}
 	
 	public Boolean getEsComiteHaya() {

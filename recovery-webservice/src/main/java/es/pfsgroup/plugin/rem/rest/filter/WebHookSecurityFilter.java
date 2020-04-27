@@ -37,7 +37,7 @@ public class WebHookSecurityFilter implements Filter {
 			throws IOException, ServletException {
 
 		RestRequestWrapper restRequest = null;
-		PeticionRest peticion = null;
+		PeticionRest peticion = new PeticionRest();
 		try {
 			restApi.doSessionConfig();
 			String ipClient = restApi.getClientIpAddr(request);

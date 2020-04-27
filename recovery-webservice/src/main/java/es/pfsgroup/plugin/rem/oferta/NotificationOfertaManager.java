@@ -17,12 +17,10 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -76,8 +74,6 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	@Autowired
 	private UsuarioManager usuarioManager;
 
-	@Autowired
-	private ActivoApi activoApi;
 	/**
 	 * Cada vez que llegue una oferta de un activo, 
 	 * se enviará una notificación (correo) al gestor comercial correspondiente, 
@@ -85,6 +81,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	 * 
 	 * @param tramite
 	 */
+	@SuppressWarnings("unchecked")
 	public void sendNotification(Oferta oferta) {
 
 		Usuario usuario = null;
@@ -93,7 +90,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		Usuario buzonOfertaApple = null;
 		Activo activo = oferta.getActivoPrincipal();
 		Usuario usuarioBackOffice = null;
-		List<String> mailsSustituto = null;
+		List<String> mailsSustituto = new ArrayList();
 
 		if (!Checks.esNulo(oferta.getAgrupacion()) 
 		        && !Checks.esNulo(oferta.getAgrupacion().getTipoAgrupacion())
@@ -116,8 +113,6 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				supervisor = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
 			}
 		}
-		
-		
 
 		if (activo != null && (usuario != null || supervisor != null)) {
 			
@@ -215,7 +210,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			if (!Checks.esNulo(buzonPfs)) {
 				mailsPara.add(buzonPfs.getEmail());
 			}
-			if(!Checks.esNulo(buzonOfertaApple) && (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
+			if(buzonOfertaApple != null && (!Checks.esNulo(activo.getSubcartera()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
 				mailsPara.add(buzonOfertaApple.getEmail());
 			}
 
@@ -359,7 +354,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				custodio = ofertaAceptada.getActivoPrincipal().getInfoComercial().getMediadorInforme();
 			}
 		}
-		if(!Checks.esNulo(custodio) && !Checks.esNulo(custodio.getEmail())){
+		if(custodio != null && !Checks.esNulo(custodio.getEmail())){
 			mailsPara.add(custodio.getEmail());
 		}
 
@@ -581,7 +576,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 						
 						nombreProvincia = activo.getLocalizacion().getLocalizacionBien().getProvincia().getDescripcion();
 					}
-					if(!Checks.esNulo(nActivo)){
+					if(nActivo != null){
 						if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())){
 							titulo = 
 									String.format("Oferta de venta aprobada de un activo incluido en un DND: %s- %s/%s/%s. ", 

@@ -67,9 +67,11 @@ public class ReintegroController {
 			logger.error("Error reintegro", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
 			if (jsonFields != null) {
-				model.put("id", jsonFields.get("id"));
+				model.put("id", jsonFields.get("id"));				
 			}
-			model.put("ofertaHRE", jsonData.getData().getOfertaHRE());
+			if (jsonData != null) {
+				model.put("ofertaHRE", jsonData.getData().getOfertaHRE());
+			}
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 			
 		}

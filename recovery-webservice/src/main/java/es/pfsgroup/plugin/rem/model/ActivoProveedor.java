@@ -235,7 +235,8 @@ public class ActivoProveedor implements Serializable, Auditable {
 	@Column(name = "PVE_TELF_CONTACTO_VIS")
 	private String telefonoContactoVisitas;
 	
-	
+    @Column(name = "PVE_ID_PERSONA_HAYA")
+    private String idPersonaHaya;
 
 	@Version   
 	private Long version;
@@ -689,5 +690,12 @@ public class ActivoProveedor implements Serializable, Auditable {
 		this.topPropuesto = topPropuesto;
 	}
 	
+	public String getIdPersonaHaya() {
+		return idPersonaHaya;
+	}
+
+	public void setIdPersonaHaya(String idPersonaHaya) {
+		this.idPersonaHaya = idPersonaHaya;
+	}	
 	
 }

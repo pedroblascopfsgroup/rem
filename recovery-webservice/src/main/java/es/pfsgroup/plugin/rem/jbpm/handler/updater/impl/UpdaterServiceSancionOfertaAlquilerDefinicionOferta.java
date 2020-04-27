@@ -14,7 +14,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -31,13 +30,7 @@ public class UpdaterServiceSancionOfertaAlquilerDefinicionOferta implements Upda
     private OfertaApi ofertaApi;
     
     @Autowired
-    private TrabajoApi trabajoApi;
-    
-    @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
-      
-    
-	private static final String FECHA_ENVIO = "fechaEnvio";
 	
 	private static final String CODIGO_T014_DEFINICION_OFERTA = "T014_DefinicionOferta";
 
@@ -45,7 +38,7 @@ public class UpdaterServiceSancionOfertaAlquilerDefinicionOferta implements Upda
 	
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 
-		ExpedienteComercial expedienteComercial = null;
+		ExpedienteComercial expedienteComercial = new ExpedienteComercial();
 		
 		if(ofertaApi.checkAtribuciones(tramite.getTrabajo())){
 			Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());

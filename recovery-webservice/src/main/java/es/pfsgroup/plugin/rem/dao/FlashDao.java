@@ -127,7 +127,9 @@ public class FlashDao extends AbstractEntityDao<Serializable, Serializable> {
 						
 						Class<?> theClass = Class.forName(useField.get(i).getType().getCanonicalName());
 						try{
-							seter.invoke(objetoEntity, theClass.cast(o));
+							if (seter != null) {
+								seter.invoke(objetoEntity, theClass.cast(o));
+							}
 						}catch(ClassCastException castExc){
 							if(theClass.getName().equals("java.lang.String")){
 								seter.invoke(objetoEntity, String.valueOf(o));

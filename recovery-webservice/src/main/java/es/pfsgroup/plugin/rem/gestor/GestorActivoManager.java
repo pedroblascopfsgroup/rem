@@ -58,6 +58,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 	public static final String USERNAME_COMITE_ARROW = "grucoarrow";
 	public static final String USERNAME_GRUPO_CES_REMAINING = "grucoces1";
 	public static final String USERNAME_GRUPO_DIVARIAN = "grucodivarian";
+	public static final String USERNAME_GRUPO_PBC = "gestpbc";
  	
  	@Autowired
  	private GenericABMDao genericDao;
@@ -182,16 +183,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 			}
 		}
 	}
- 	
- 	private void guardarHistoricoGestorAdicionalEntidad(GestorEntidad gee, Object obj) {
- 		GestorActivoHistorico gah = new GestorActivoHistorico();
- 		gah.setUsuario(gee.getUsuario());
- 		gah.setAuditoria(Auditoria.getNewInstance());
- 		gah.setActivo((Activo) obj);
- 		gah.setTipoGestor(gee.getTipoGestor());
- 		gah.setFechaDesde(new Date());
- 		gestorEntidadHistoricoDao.save(gah);
- 	}
  	
  	private void actualizaFechaHastaHistoricoGestorAdicionalActivo(GestorActivo gac) {
  		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", gac.getActivo().getId() );
@@ -408,7 +399,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  					break;
  				}
  			}
- 			if (!Checks.esNulo(proveedorTecnico)) {
+ 			if (proveedorTecnico != null) {
  				Filter filterGee = genericDao.createFilter(FilterType.EQUALS, "id", proveedorTecnico.getId());
  				GestorEntidad gestorEntidad = genericDao.get(GestorEntidad.class, filterGee, filterAuditoria);
  				Filter filterPvc = genericDao.createFilter(FilterType.EQUALS, "usuario.id",
@@ -601,5 +592,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  		List<Usuario> usuariosAdmision = ((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipoGestor.getId(),activo);		
  		return usuariosAdmision.contains(usuario);
  	}
+
+	@Override
+	public Usuario getUsuarioGrupoPBC() {
+		return genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, USERNAME, USERNAME_GRUPO_PBC));
+	}
  	
  }

@@ -359,7 +359,7 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 		if (!Checks.esNulo(resolDto.getFechaComite())) {
 			resol.setFechaResolucion(resolDto.getFechaComite());
 		}
-		if (!Checks.esNulo(ofr)) {
+		if (ofr != null) {
 			if (!Checks.esNulo(resol.getImporteContraoferta())) {
 				ofr.setImporteContraOferta(resol.getImporteContraoferta());
 				genericDao.save(Oferta.class, ofr);

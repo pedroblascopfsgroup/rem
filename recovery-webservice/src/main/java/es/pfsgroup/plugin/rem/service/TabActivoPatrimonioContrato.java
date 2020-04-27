@@ -10,8 +10,6 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.dto.WebDto;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioContratoDao;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -20,9 +18,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 
 @Component
 public class TabActivoPatrimonioContrato implements TabActivoService {
@@ -85,7 +81,7 @@ public class TabActivoPatrimonioContrato implements TabActivoService {
 								if(Checks.esNulo(aux)) {
 									aux = expComercial;
 								} else {
-									if(!Checks.esNulo(aux.getFechaVenta()) && aux.getFechaVenta().before(expComercial.getFechaVenta())) { //Nos quedamos con el más reciente
+									if(aux != null && !Checks.esNulo(aux.getFechaVenta()) && aux.getFechaVenta().before(expComercial.getFechaVenta())) { //Nos quedamos con el más reciente
 										aux = expComercial;
 									}
 								}
@@ -93,7 +89,7 @@ public class TabActivoPatrimonioContrato implements TabActivoService {
 						}
 					}
 				}
-				if(!Checks.esNulo(aux)) {
+				if(aux != null) {
 					activoPatrimonioContratoDto.setOfertaREM(aux.getOferta().getNumOferta());
 					activoPatrimonioContratoDto.setIdExpediente(aux.getId());
 				}

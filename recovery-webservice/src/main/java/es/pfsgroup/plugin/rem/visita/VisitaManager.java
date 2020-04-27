@@ -571,10 +571,11 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 		return listaErrores;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	@Transactional(readOnly = false)
 	public List<String> deleteVisita(VisitaDto visitaDto) {
-		List<String> errorsList = null;
+		List<String> errorsList = new ArrayList();
 		Visita visita = null;
 
 		try {
@@ -593,7 +594,7 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			errorsList.add("Ha ocurrido un error en base de datos al eliminar la visita idVisitaWebcom: "
 					+ visitaDto.getIdVisitaWebcom() + " e idVisitaRem: " + visitaDto.getIdVisitaRem() + ". Traza: "
 					+ e.getMessage());

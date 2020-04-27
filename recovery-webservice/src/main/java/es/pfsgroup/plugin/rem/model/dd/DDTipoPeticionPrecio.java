@@ -19,45 +19,43 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de contenedores en el que se almacenan los documentos para el Proveedor
+ * Modelo que gestiona el diccionario de los tipos de peticion de precio
  * 
- * @author Alejandro Valverde Herrera
+ * @author Joaquin Bahamonde
  *
  */
 @Entity
-@Table(name = "DD_TCP_TIPO_CONTENEDOR_PROV", schema = "${entity.schema}")
+@Table(name = "DD_TPP_TIPO_PETICION_PRECIO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDTipoContenedorProveedor implements Auditable, Dictionary {
-
-	public static final String CODIGO_COMUNIDADES_VECINOS = "01";
-	public static final String CODIGO_JUNTAS_COMPENSACION = "02";
+public class DDTipoPeticionPrecio implements Auditable, Dictionary {
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
-	@Id
-	@Column(name = "DD_TCP_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoContenedorProveedorGenerator")
-	@SequenceGenerator(name = "DDTipoContenedorProveedorGenerator", sequenceName = "S_DD_TCP_TIPO_CONTENEDOR_PROV")
-	private Long id;
-	 
-	@Column(name = "DD_TCP_CODIGO")   
-	private String codigo;
-	 
-	@Column(name = "DD_TCP_DESCRIPCION")   
-	private String descripcion;
+	
+	public static final String CODIGO_PETICION_ADVISORY = "01";
+	public static final String CODIGO_PETICION_CLIENTE = "02";
+	
+	 @Id
+	 @Column(name = "DD_TPP_ID")
+	 private Long id;
 	    
-	@Column(name = "DD_TCP_DESCRIPCION_LARGA")   
-	private String descripcionLarga;
+	 @Column(name = "DD_TPP_CODIGO")   
+	 private String codigo;
+	 
+	 @Column(name = "DD_TPP_DESCRIPCION")   
+	 private String descripcion;
 	    
-	@Version   
-	private Long version;
+	 @Column(name = "DD_TPP_DESCRIPCION_LARGA")   
+	 private String descripcionLarga;
+	    		    
+	 @Version   
+	 private Long version;
 
-	@Embedded
-	private Auditoria auditoria;
+	 @Embedded
+	 private Auditoria auditoria;
 
 	public Long getId() {
 		return id;
@@ -66,7 +64,7 @@ public class DDTipoContenedorProveedor implements Auditable, Dictionary {
 	public void setId(Long id) {
 		this.id = id;
 	}
-
+	
 	public String getCodigo() {
 		return codigo;
 	}
@@ -91,6 +89,7 @@ public class DDTipoContenedorProveedor implements Auditable, Dictionary {
 		this.descripcionLarga = descripcionLarga;
 	}
 
+
 	public Long getVersion() {
 		return version;
 	}
@@ -108,3 +107,6 @@ public class DDTipoContenedorProveedor implements Auditable, Dictionary {
 	}
 
 }
+
+
+

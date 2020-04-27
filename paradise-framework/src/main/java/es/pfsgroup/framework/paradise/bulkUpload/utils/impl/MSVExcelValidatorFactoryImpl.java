@@ -203,6 +203,12 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired
 	private MSVActualizacionDireccionesComercialesValidator direccionesComerciales;
+	
+	@Autowired
+	private MSVActualizaTrabajosValidator actualizaTrabajos;
+
+	@Autowired
+	private MSVGestionPeticionesDePreciosExcelValidator gestionPeticionesDePrecios;
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 
@@ -336,9 +342,14 @@ public class MSVExcelValidatorFactoryImpl {
 			return borradoTrabajosValidator; 
 		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_DIRECCIONES_COMERCIALES.equals(codTipoOperacion)) {
 			return direccionesComerciales;
+		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_TRABAJOS.equals(codTipoOperacion)) {
+            return actualizaTrabajos;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_SUPER_BORRADO_TRABAJOS.equals(codTipoOperacion)) {
 			return borradoTrabajosValidator; 
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_GESTION_PETICIONES_PRECIOS.equals(codTipoOperacion)) {
+			return gestionPeticionesDePrecios;
 		}
+		
 		return null;
 	}
 }

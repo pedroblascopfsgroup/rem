@@ -61,7 +61,7 @@ public class MaestroDeActivos {
 				dto.setIdActivoMatriz(idActivoAM);
 				dto.setNumRemActivoMatriz(numREMActivoAM);
 				dto.setIdUnidadAlquilable(idUnidadAlquilable);
-				SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-YYYY HH:MM:ss");
+				SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy HH:MM:ss");
 				dto.setFechaOperacion(DATE_FORMAT.format(new Date()));
 				dto.setTipoActivo(UNIDAD_ALQUILABLE);
 				dto.setOrigen(ORIGEN);

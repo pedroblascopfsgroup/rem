@@ -89,10 +89,12 @@ public class NotificatorServiceODocAceptacionPeticion extends AbstractNotificato
 			List<String> mailsPara = new ArrayList<String>();
 			List<String> mailsCC = new ArrayList<String>();
 
-		    String correos = peticionario.getEmail();
-		    Collections.addAll(mailsPara, correos.split(";"));
-			mailsCC.add(this.getCorreoFrom());
-
+			if(peticionario != null) {
+				String correos = peticionario.getEmail();
+			    Collections.addAll(mailsPara, correos.split(";"));
+				mailsCC.add(this.getCorreoFrom());
+			}
+		    
 			String descripcionTrabajo = !Checks.esNulo(tramite.getTrabajo().getDescripcion())? (tramite.getTrabajo().getDescripcion() + " - ") : "";
 
 			String contenido;

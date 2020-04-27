@@ -189,7 +189,7 @@ public class LogTrustEvento extends LogTrust {
 				break;
 		}
 		
-		if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera())) {
+		if(activo != null && !Checks.esNulo(activo.getCartera())) {
 			carteraActivo = activo.getCartera().getDescripcion();
 		}
 		

@@ -34,17 +34,21 @@ public class ActivoAgrupacionFactoryImpl implements ActivoAgrupacionFactoryApi {
 		Long numAgrupacionRem = this.getNextNumAgrupacionRemManual();
 		
 		ActivoAgrupacion activoAgrupacion = this.getAgrupacionInstance(tipoAgrupacion);
-
-		activoAgrupacion.setDescripcion(dtoAgrupacion.getDescripcion());
-		activoAgrupacion.setNombre(dtoAgrupacion.getNombre());
-		activoAgrupacion.setTipoAgrupacion(tipoAgrupacion);
-		activoAgrupacion.setFechaAlta(new Date());
-		activoAgrupacion.setNumAgrupRem(numAgrupacionRem);
+		if(activoAgrupacion != null) {
+			activoAgrupacion.setDescripcion(dtoAgrupacion.getDescripcion());
+			activoAgrupacion.setNombre(dtoAgrupacion.getNombre());
+			activoAgrupacion.setTipoAgrupacion(tipoAgrupacion);
+			activoAgrupacion.setFechaAlta(new Date());
+			activoAgrupacion.setNumAgrupRem(numAgrupacionRem);
+				
+			Class clazz = activoAgrupacion.getClass();
+			genericDao.save(clazz, activoAgrupacion);
 			
-		Class clazz = activoAgrupacion.getClass();
-		genericDao.save(clazz, activoAgrupacion);
-
-		return true;
+			return true;
+		} else {
+			return false;
+		}
+		
 	}
 
 	private ActivoAgrupacion getAgrupacionInstance(DDTipoAgrupacion tipoAgrupacion) {

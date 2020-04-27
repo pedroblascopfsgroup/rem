@@ -31,9 +31,6 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDTipoDocumentoProveedor implements Auditable, Dictionary {
 
 	private static final long serialVersionUID = 1L;
-	
-	public static final String CODIGO_JUNTAS_COMPENSACION = "01";
-	public static final String CODIGO_COMUNIDADES_VECINOS = "02";
 
 	@Id
 	@Column(name = "DD_TDP_ID")

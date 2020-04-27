@@ -88,7 +88,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 
         var items = [];
         $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fichaproveedor', funPermEdition: ['EDITAR_TAB_DATOS_PROVEEDORES']})}, ['TAB_DATOS_PROVEEDORES']);
-        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentosproveedor', ocultarBotonesEdicion: true, bind:{disabled: '{proveedor.isAdministracion}'}})}, ['TAB_DOCUMENTOS_PROVEEDORES']);
+        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentosproveedor', ocultarBotonesEdicion: true, bind:{disabled: '{proveedor.isSociedadTasadora}'}})}, ['TAB_DOCUMENTOS_PROVEEDORES']);
 
         me.addPlugin({ptype: 'lazyitems', items: items});
         me.callParent();

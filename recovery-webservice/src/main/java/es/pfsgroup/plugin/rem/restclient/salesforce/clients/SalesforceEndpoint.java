@@ -174,7 +174,7 @@ public class SalesforceEndpoint {
 		String user = SalesforceRESTDevonProperties.extractDevonProperty(appProperties,
 				SalesforceRESTDevonProperties.USERNAME, null);
 		String password = SalesforceRESTDevonProperties.extractDevonProperty(appProperties,
-				SalesforceRESTDevonProperties.PASSWORD, null);
+				SalesforceRESTDevonProperties.DEVON_PASS, null);
 		String clientId = SalesforceRESTDevonProperties.extractDevonProperty(appProperties,
 				SalesforceRESTDevonProperties.CLIENT_ID, null);
 		String clientSecret = SalesforceRESTDevonProperties.extractDevonProperty(appProperties,

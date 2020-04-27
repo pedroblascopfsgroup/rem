@@ -199,7 +199,6 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto webDto) { 
 	
-
 		DtoActivoSituacionPosesoria dto = (DtoActivoSituacionPosesoria) webDto;
 		ActivoSituacionPosesoria activoSituacionPosesoria = activo.getSituacionPosesoria();
 
@@ -208,91 +207,91 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			activo.getSituacionPosesoria().setActivo(activo);
 		}
 		
-		if (!Checks.esNulo(dto.getOcupado())) {
-			activoSituacionPosesoria.setOcupado(dto.getOcupado());
-		}
-		
-		Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "borrado", false);
-		ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, filtroActivoId, filtroBorrado);
-		DDTipoEstadoAlquiler tipoEstadoAlquiler = null;
-		
-		if (!Checks.esNulo(dto.getOcupado()) && !BooleanUtils.toBoolean(dto.getOcupado()) && dto.getOcupado() == 0) {
-			activoSituacionPosesoria.setConTitulo(null);
-			activoSituacionPosesoria.setFechaUltCambioTit(new Date());
-			tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE));
-		} else  if (!Checks.esNulo(dto.getConTitulo())) {
-			Filter tituloActivo = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getConTitulo());
-			DDTipoTituloActivoTPA tituloActivoTPA = genericDao.get(DDTipoTituloActivoTPA.class, tituloActivo);
-			activoSituacionPosesoria.setConTitulo(tituloActivoTPA);
-			activoSituacionPosesoria.setFechaUltCambioTit(new Date());
-			if (DDTipoTituloActivoTPA.tipoTituloSi.equals(tituloActivoTPA.getCodigo())) {
-				tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO));
+		if(activoSituacionPosesoria != null) {
+			if (!Checks.esNulo(dto.getOcupado())) {
+				activoSituacionPosesoria.setOcupado(dto.getOcupado());
 			}
-		}
-		
-		if ((!Checks.esNulo(dto.getOcupado()) && dto.getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloNo.equals(dto.getConTitulo())) ||
-			(!Checks.esNulo(activoSituacionPosesoria.getOcupado()) && activoSituacionPosesoria.getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloNo.equals(dto.getConTitulo()))) {
-			activoApi.crearRegistroFaseHistorico(activo);
-		}		
-		
-		if (!Checks.esNulo(activoPatrimonio) && !Checks.esNulo(tipoEstadoAlquiler)) {
-			activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
-			genericDao.update(ActivoPatrimonio.class, activoPatrimonio);
-		}
+			
+			Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "borrado", false);
+			ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, filtroActivoId, filtroBorrado);
+			DDTipoEstadoAlquiler tipoEstadoAlquiler = null;
+			
+			if (!Checks.esNulo(dto.getOcupado()) && !BooleanUtils.toBoolean(dto.getOcupado()) && dto.getOcupado() == 0) {
+				activoSituacionPosesoria.setConTitulo(null);
+				activoSituacionPosesoria.setFechaUltCambioTit(new Date());
+				tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE));
+			} else  if (!Checks.esNulo(dto.getConTitulo())) {
+				Filter tituloActivo = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getConTitulo());
+				DDTipoTituloActivoTPA tituloActivoTPA = genericDao.get(DDTipoTituloActivoTPA.class, tituloActivo);
+				activoSituacionPosesoria.setConTitulo(tituloActivoTPA);
+				activoSituacionPosesoria.setFechaUltCambioTit(new Date());
+				if (DDTipoTituloActivoTPA.tipoTituloSi.equals(tituloActivoTPA.getCodigo())) {
+					tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO));
+				}
+			}
+			
+			if ((!Checks.esNulo(dto.getOcupado()) && dto.getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloNo.equals(dto.getConTitulo())) ||
+				(!Checks.esNulo(activoSituacionPosesoria.getOcupado()) && activoSituacionPosesoria.getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloNo.equals(dto.getConTitulo()))) {
+				activoApi.crearRegistroFaseHistorico(activo);
+			}		
+			
+			if (!Checks.esNulo(activoPatrimonio) && !Checks.esNulo(tipoEstadoAlquiler)) {
+				activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
+				genericDao.update(ActivoPatrimonio.class, activoPatrimonio);
+			}
 
-		if(!Checks.esNulo(dto.getFechaTomaPosesion())){
-			activoSituacionPosesoria.setEditadoFechaTomaPosesion(true);
-			activoSituacionPosesoria.setFechaUltCambioPos(new Date());
-		}
-//		if(!Checks.esNulo(dto.getIndicaPosesion())){
-//			activo.getSituacionPosesoria().getSitaucionJuridica().setIndicaPosesion(dto.getIndicaPosesion());
-//		}
-		
-		if (dto.getTipoTituloPosesorioCodigo() != null) {
-			
-			DDTipoTituloPosesorio tipoTitulo = (DDTipoTituloPosesorio) 
-					diccionarioApi.dameValorDiccionario(DDTipoTituloPosesorio.class,  new Long(dto.getTipoTituloPosesorioCodigo()));
-			
-			if(!Checks.esNulo(tipoTitulo)) {
-				activoSituacionPosesoria.setTipoTituloPosesorio(tipoTitulo);
+			if(!Checks.esNulo(dto.getFechaTomaPosesion())){
+				activoSituacionPosesoria.setEditadoFechaTomaPosesion(true);
+				activoSituacionPosesoria.setFechaUltCambioPos(new Date());
 			}
+			
+			if (dto.getTipoTituloPosesorioCodigo() != null) {
 				
-		}
-		
-		if(!Checks.esNulo(dto.getFechaVencTitulo())) {
-			activoSituacionPosesoria.setFechaVencTitulo(dto.getFechaVencTitulo());
-		}
-		
-		if(!Checks.esNulo(dto.getRentaMensual())) {
-			activoSituacionPosesoria.setRentaMensual(Float.parseFloat(dto.getRentaMensual()));
-		}
-		
-		if(!Checks.esNulo(dto.getFechaTitulo())) {
-			activoSituacionPosesoria.setFechaTitulo(dto.getFechaTitulo());
-		}
-		
-		if(dto.getFechaAccesoTapiado() != null){
-			activoSituacionPosesoria.setFechaAccesoTapiado(dto.getFechaAccesoTapiado());
-		}
-		
-		if(dto.getFechaAccesoAntiocupa() != null){
-			activoSituacionPosesoria.setFechaAccesoAntiocupa(dto.getFechaAccesoAntiocupa());
-		}
-		
-		if(dto.getAccesoTapiado() != null){
-			activoSituacionPosesoria.setAccesoTapiado(dto.getAccesoTapiado());
-			if(dto.getAccesoTapiado() == 0){
-				activoSituacionPosesoria.setFechaAccesoTapiado(null);
+				DDTipoTituloPosesorio tipoTitulo = (DDTipoTituloPosesorio) 
+						diccionarioApi.dameValorDiccionario(DDTipoTituloPosesorio.class,  new Long(dto.getTipoTituloPosesorioCodigo()));
+				
+				if(!Checks.esNulo(tipoTitulo)) {
+					activoSituacionPosesoria.setTipoTituloPosesorio(tipoTitulo);
+				}
+					
 			}
-			activoSituacionPosesoria.setFechaUltCambioTapiado(new Date());
-		}
-		
-		if(dto.getAccesoAntiocupa() != null){
-			activoSituacionPosesoria.setAccesoAntiocupa(dto.getAccesoAntiocupa());
-			if(dto.getAccesoAntiocupa() == 0){
-				activoSituacionPosesoria.setFechaAccesoAntiocupa(null);
+			
+			if(!Checks.esNulo(dto.getFechaVencTitulo())) {
+				activoSituacionPosesoria.setFechaVencTitulo(dto.getFechaVencTitulo());
 			}
+			
+			if(!Checks.esNulo(dto.getRentaMensual())) {
+				activoSituacionPosesoria.setRentaMensual(Float.parseFloat(dto.getRentaMensual()));
+			}
+			
+			if(!Checks.esNulo(dto.getFechaTitulo())) {
+				activoSituacionPosesoria.setFechaTitulo(dto.getFechaTitulo());
+			}
+			
+			if(dto.getFechaAccesoTapiado() != null){
+				activoSituacionPosesoria.setFechaAccesoTapiado(dto.getFechaAccesoTapiado());
+			}
+			
+			if(dto.getFechaAccesoAntiocupa() != null){
+				activoSituacionPosesoria.setFechaAccesoAntiocupa(dto.getFechaAccesoAntiocupa());
+			}
+			
+			if(dto.getAccesoTapiado() != null){
+				activoSituacionPosesoria.setAccesoTapiado(dto.getAccesoTapiado());
+				if(dto.getAccesoTapiado() == 0){
+					activoSituacionPosesoria.setFechaAccesoTapiado(null);
+				}
+				activoSituacionPosesoria.setFechaUltCambioTapiado(new Date());
+			}
+			
+			if(dto.getAccesoAntiocupa() != null){
+				activoSituacionPosesoria.setAccesoAntiocupa(dto.getAccesoAntiocupa());
+				if(dto.getAccesoAntiocupa() == 0){
+					activoSituacionPosesoria.setFechaAccesoAntiocupa(null);
+				}
+			}
+			
 		}
 		
 		activo.setSituacionPosesoria(genericDao.save(ActivoSituacionPosesoria.class, activoSituacionPosesoria));

@@ -90,7 +90,7 @@ public class NotificatorServiceDesbloqExpCambioSitJuridica extends AbstractNotif
 		List<String> mailsPara = new ArrayList<String>();
 		List<String> mailsCC = new ArrayList<String>();
 		
-		if(!Checks.esNulo(expediente)) {
+		if(expediente != null) {
 		
 		    mailsPara = getEmailsToSend(expediente, expediente.getOferta());
 			mailsCC.add(this.getCorreoFrom());

@@ -161,7 +161,7 @@ public class GestorEntidadManager implements GestorEntidadApi {
 	}
 
 	// Guardamos el hist�rico de cambios de los gestores.
-	private void guardarHistoricoGestorAdicionalEntidad(GestorEntidad gee, Object obj) {
+	protected void guardarHistoricoGestorAdicionalEntidad(GestorEntidad gee, Object obj) {
 		// TODO refactorizar
 		if (gee instanceof GestorExpediente) {
 			GestorExpedienteHistorico gaah = new GestorExpedienteHistorico();

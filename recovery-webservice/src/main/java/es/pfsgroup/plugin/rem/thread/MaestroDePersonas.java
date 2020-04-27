@@ -42,9 +42,6 @@ public class MaestroDePersonas implements Runnable {
 
 	@Autowired
 	private HibernateUtils hibernateUtils;
-	
-	/*@Autowired
-	private ProveedoresDao proveedoresDao;*/
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -52,27 +49,22 @@ public class MaestroDePersonas implements Runnable {
 
 	private String numDocCliente = null;
 	
-	private ActivoProveedor proveedor = null;
+	private String numDocProveedor = null;
 
 	private String userName = null;
 
 	private String cartera = null;
 	
-	/*private DDCartera ddCartera = null;
-	
-	private DDSubcartera subcartera = null;
-	
-	private List<MapeoGestorDocumental> listaMapeoGD = null;*/
+	private Long codProveedorRem = null;
 
 	private String idPersonaHayaNoExiste = "1001";
 
 	private static final String ID_CLIENTE_HAYA = "HAYA";
-	//private static final String ID_HAYA = "ID_HAYA";
 	private static final String MOTIVO_OPERACION_ALTA = "ALTA";
 	private static final String ID_ORIGEN_REM = "REM";
 	private static final String ID_TIPO_IDENTIFICADOR_NIF_CIF = "NIF/CIF";
 	private static final String ID_ROL_16 = "16";
-	//private static final String ID_ROL_PROVEEDOR_29 = "29";
+	private static final String ID_ROL_PROVEEDOR_29 = "29";
 	private static final String ID_PERSONA_SIMULACION = "simulacion";
 
 	private PersonaInputDto personaDto = new PersonaInputDto();
@@ -95,15 +87,13 @@ public class MaestroDePersonas implements Runnable {
 		this.cartera = cartera;
 	}
 	
-	/*public MaestroDePersonas(ActivoProveedor proveedor, String userName, DDCartera ddCartera, DDSubcartera subcartera, List<MapeoGestorDocumental> listaMapeoGD) {
+	public MaestroDePersonas(String numDocProveedor, Long codProveedorRem, String userName) {
 		// imprescindible para poder inyectar componentes
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 		this.userName = userName;
-		this.proveedor = proveedor;
-		this.ddCartera = ddCartera;
-		this.subcartera = subcartera;
-		this.listaMapeoGD = listaMapeoGD;
-	}*/
+		this.numDocProveedor = numDocProveedor;
+		this.codProveedorRem = codProveedorRem;
+	}
 
 	@Transactional(readOnly = false)	
 	public void run() {
@@ -333,173 +323,84 @@ public class MaestroDePersonas implements Runnable {
 				}
 				
 			// LLAMADA MAESTRO PERSONAS PROVEEDOR
-			} else if (!Checks.esNulo(proveedor)) {
-				
-				/*String cliente = null;
-				ActivoProveedorCartera activoProveedorCartera = null;
+			} else if (!Checks.esNulo(codProveedorRem)) {
 				String idPersonaHaya = null;
-				
-				if(!Checks.estaVacio(listaMapeoGD)) {
+				String idPersonaOrigen = null;
+				ActivoProveedor proveedor = llamadaProveedor(sessionObj);
+				if (!Checks.esNulo(proveedor)) {
+					idPersonaHaya = proveedor.getIdPersonaHaya();
+				}
+
+				if (Checks.esNulo(idPersonaHaya) || idPersonaHayaNoExiste.equals(idPersonaHaya)) {
+					if(!Checks.esNulo(numDocProveedor)) {
+						idPersonaOrigen = numDocProveedor;
+					} else {
+						idPersonaOrigen = String.valueOf(codProveedorRem);
+					}
+					personaDto.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_PERSONA_ORIGEN);
+					personaDto.setIdPersonaOrigen(idPersonaOrigen);
+					personaDto.setIdIntervinienteHaya(PersonaInputDto.ID_INTERVINIENTE_HAYA);
+					personaDto.setIdCliente(ID_CLIENTE_HAYA);
+					logger.error("[MAESTRO DE PERSONAS] LLAMAMOS A EJECUTAR PERSONA");
+					logger.error("[MAESTRO DE PERSONAS] Datos de la llamada: ".concat(personaDto.toString()));
+					personaOutputDto = new PersonaOutputDto();
+					BeanUtils.copyProperties(personaOutputDto,gestorDocumentalMaestroManager
+							.ejecutar(personaDto));
+					//PersonaOutputDto personaOutputDto = new PersonaOutputDto();
 					
-					for(MapeoGestorDocumental mgd : listaMapeoGD) {
-						
-						activoProveedorCartera = llamadaActivoProveedorCartera(sessionObj, mgd.getCartera(), mgd.getSubcartera(), mgd.getClienteGestorDocumental());
-						
-						if(!Checks.esNulo(activoProveedorCartera) && !Checks.esNulo(activoProveedorCartera.getIdPersonaHaya())) {
-							idPersonaHaya = activoProveedorCartera.getIdPersonaHaya().toString();
-						}
-						
-						if (Checks.esNulo(activoProveedorCartera) || Checks.esNulo(idPersonaHaya) || idPersonaHayaNoExiste.equals(idPersonaHaya)) {
+					logger.info("[MAESTRO DE PERSONAS] VOLVEMOS DE EJECUTAR PERSONA");
+					logger.info("[MAESTRO DE PERSONAS] Datos de la respuesta: ".concat(!Checks.esNulo(personaOutputDto) ? personaOutputDto.toString() : "NULL"));
+
+					if (Checks.esNulo(personaOutputDto)) {
+						logger.info("[MAESTRO DE PERSONAS] personaOutputDto ES NULO");
+					} else if (Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
+						logger.info("[MAESTRO DE PERSONAS] getIdIntervinienteHaya ES NULO");
+
+						SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+						String today = df.format(new Date());
+
+						logger.info("[MAESTRO DE PERSONAS] GENERANDO ID PERSONA");
+						personaDto.setEvent(PersonaInputDto.EVENTO_ALTA_PERSONA);
+						personaDto.setIdCliente(ID_CLIENTE_HAYA);
+						personaDto.setIdPersonaOrigen(idPersonaOrigen);
+						personaDto.setIdMotivoOperacion(MOTIVO_OPERACION_ALTA);
+						personaDto.setIdOrigen(ID_ORIGEN_REM);
+						personaDto.setFechaOperacion(today);
+						personaDto.setIdTipoIdentificador(ID_TIPO_IDENTIFICADOR_NIF_CIF);
+						personaDto.setIdRol(ID_ROL_PROVEEDOR_29);
+						BeanUtils.copyProperties(gestorDocumentalMaestroManager
+								.ejecutar(personaDto), personaOutputDto);
+						//personaOutputDto.setIdIntervinienteHaya("123456789");
+
+						logger.info("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES " + personaOutputDto.getIdIntervinienteHaya());
+
+						if (!Checks.esNulo(personaOutputDto) && !Checks.esNulo(personaOutputDto.getIdIntervinienteHaya()) && !Checks.esNulo(proveedor)) {
+							proveedor.setIdPersonaHaya(personaOutputDto.getIdIntervinienteHaya());
+							//genericDao.update(ActivoProveedor.class, proveedor);
 							
-							llamadaEjecutarPersona(mgd.getClienteGestorDocumental(), ID_ROL_PROVEEDOR_29);
-		
-							if (!Checks.esNulo(personaOutputDto) && !Checks.esNulo(personaOutputDto.getIdIntervinienteHaya()) && !Checks.esNulo(activoProveedorCartera)) {
-								activoProveedorCartera.setIdPersonaHaya(Long.parseLong(personaOutputDto.getIdIntervinienteHaya()));
-								genericDao.update(ActivoProveedorCartera.class, activoProveedorCartera);						
-							} else if(!Checks.esNulo(personaOutputDto) && !Checks.esNulo(personaOutputDto.getIdIntervinienteHaya()) && Checks.esNulo(activoProveedorCartera)) {
-								activoProveedorCartera = new ActivoProveedorCartera();
-								activoProveedorCartera.setIdPersonaHaya(Long.parseLong(personaOutputDto.getIdIntervinienteHaya()));
-								activoProveedorCartera.setProveedor(proveedor);
-								activoProveedorCartera.setCartera(mgd.getCartera());
-								activoProveedorCartera.setSubcartera(mgd.getSubcartera());
-								activoProveedorCartera.setClienteGestorDocumental(mgd.getClienteGestorDocumental());
-								genericDao.save(ActivoProveedorCartera.class, activoProveedorCartera);
-							} else if(ID_PERSONA_SIMULACION.equals(personaOutputDto.getResultDescription()) && !Checks.esNulo(activoProveedorCartera)) {
-								idPersonaSimulado = (int) (Math.random() * 1000000) + 1;
-								activoProveedorCartera.setIdPersonaHaya(Long.valueOf(idPersonaSimulado));
-								genericDao.update(ActivoProveedorCartera.class, activoProveedorCartera);
-							} else if(ID_PERSONA_SIMULACION.equals(personaOutputDto.getResultDescription()) && Checks.esNulo(activoProveedorCartera)) {
-								idPersonaSimulado = (int) (Math.random() * 1000000) + 1;
-								activoProveedorCartera = new ActivoProveedorCartera();
-								activoProveedorCartera.setIdPersonaHaya(Long.valueOf(idPersonaSimulado));
-								activoProveedorCartera.setProveedor(proveedor);
-								activoProveedorCartera.setCartera(mgd.getCartera());
-								activoProveedorCartera.setSubcartera(mgd.getSubcartera());
-								activoProveedorCartera.setClienteGestorDocumental(mgd.getClienteGestorDocumental());
-								genericDao.save(ActivoProveedorCartera.class, activoProveedorCartera);
-							}
-						}						
-					}
-				} else {
-					
-					List<MapeoGestorDocumental> mapeoGestorDocumental = proveedoresDao.getCarteraClientesProveedores();
-					for(MapeoGestorDocumental mgd : mapeoGestorDocumental) {
-						if(!Checks.esNulo(proveedor) && (!Checks.esNulo(ddCartera) || !Checks.esNulo(subcartera))) {
-							activoProveedorCartera = llamadaActivoProveedorCartera(sessionObj, ddCartera, subcartera, mgd.getClienteGestorDocumental());
-							if(!Checks.esNulo(activoProveedorCartera)) {
-								cliente = activoProveedorCartera.getClienteGestorDocumental();
-								break;
-							}
-						} else if (!Checks.esNulo(proveedor) && Checks.esNulo(ddCartera) && Checks.esNulo(subcartera)) {
-							activoProveedorCartera = llamadaActivoProveedorCartera(sessionObj, null, null, ID_HAYA);
-							if(!Checks.esNulo(activoProveedorCartera)) {
-								cliente = activoProveedorCartera.getClienteGestorDocumental();
-								break;
-							}
-							
+							/* Se realiza un merge en lugar de un update debido al error de:
+							   "org.springframework.orm.hibernate3.HibernateSystemException: Illegal attempt to associate a collection with two open sessions;" */
+							sessionObj.merge(proveedor);
+							sessionObj.beginTransaction().commit();
+						} else if(Checks.esNulo(proveedor)) {
+							logger.error("No existe regsitro de proveedor con el numero identificativo indicado. No se puede almacenar el ID recibido.");
+						} else if(ID_PERSONA_SIMULACION.equals(personaOutputDto.getResultDescription()) && !Checks.esNulo(proveedor)) {
+							idPersonaSimulado = (int) (Math.random() * 1000000) + 1;
+							proveedor.setIdPersonaHaya(String.valueOf(idPersonaSimulado));
+							//genericDao.update(ActivoProveedor.class, proveedor);
+							sessionObj.merge(proveedor);
+							sessionObj.beginTransaction().commit();
 						}
+					} else {
+						logger.info("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES " + personaOutputDto.getIdIntervinienteHaya());
 					}
-					
-					if(!Checks.esNulo(activoProveedorCartera) && !Checks.esNulo(activoProveedorCartera.getIdPersonaHaya())) {
-						idPersonaHaya = activoProveedorCartera.getIdPersonaHaya().toString();
-					}
-	
-					if (Checks.esNulo(activoProveedorCartera) || Checks.esNulo(idPersonaHaya) || idPersonaHayaNoExiste.equals(idPersonaHaya)) {
-						
-						if(!Checks.esNulo(proveedor) && !Checks.esNulo(ddCartera) && !Checks.esNulo(subcartera)) {
-							MapeoGestorDocumental mgd = null;
-							/*
-							 * Parte comentada debido a una recuperacion del cliente de la MGD que no se ha tenido en cuenta.
-							 * A la espera de solución.
-							 * 
-							 * if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(ddCartera.getCodigo()) && DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(subcartera.getCodigo())) {
-								List<ActivoPropietario> listActPro = getActivoPropietarioProveedor(sessionObj, proveedor, ddCartera, subcartera);
-								for(ActivoPropietario actPro : listActPro) {
-									mgd = llamadaMapeoGestorDocumental(sessionObj, ddCartera, subcartera, actPro);
-								}
-								
-							} else {
-								mgd = llamadaMapeoGestorDocumental(sessionObj, ddCartera, subcartera, null);
-							//}
-							
-							if(!Checks.esNulo(mgd)) cliente = mgd.getClienteGestorDocumental();
-						} else if (!Checks.esNulo(proveedor) && Checks.esNulo(ddCartera) && Checks.esNulo(subcartera)){
-							cliente = ID_HAYA;
-						}
-						
-						llamadaEjecutarPersona(cliente, ID_ROL_PROVEEDOR_29);
-	
-						if (!Checks.esNulo(personaOutputDto) && !Checks.esNulo(personaOutputDto.getIdIntervinienteHaya()) && !Checks.esNulo(activoProveedorCartera)) {
-							activoProveedorCartera.setIdPersonaHaya(Long.parseLong(personaOutputDto.getIdIntervinienteHaya()));
-							genericDao.update(ActivoProveedorCartera.class, activoProveedorCartera);						
-						} else if(!Checks.esNulo(personaOutputDto) && !Checks.esNulo(personaOutputDto.getIdIntervinienteHaya()) && Checks.esNulo(activoProveedorCartera)) {
-							activoProveedorCartera = new ActivoProveedorCartera();
-							activoProveedorCartera.setIdPersonaHaya(Long.parseLong(personaOutputDto.getIdIntervinienteHaya()));
-							activoProveedorCartera.setProveedor(proveedor);
-							activoProveedorCartera.setCartera(ddCartera);
-							activoProveedorCartera.setSubcartera(subcartera);
-							activoProveedorCartera.setClienteGestorDocumental(cliente);
-							genericDao.save(ActivoProveedorCartera.class, activoProveedorCartera);
-						} else if(ID_PERSONA_SIMULACION.equals(personaOutputDto.getResultDescription()) && !Checks.esNulo(idPersonaSimulado) && !Checks.esNulo(activoProveedorCartera)) {
-							activoProveedorCartera.setIdPersonaHaya(Long.parseLong(idPersonaSimulado.toString()));
-							genericDao.update(ActivoProveedorCartera.class, activoProveedorCartera);
-						} else if(ID_PERSONA_SIMULACION.equals(personaOutputDto.getResultDescription()) && !Checks.esNulo(idPersonaSimulado) && Checks.esNulo(activoProveedorCartera)) {
-							activoProveedorCartera = new ActivoProveedorCartera();
-							activoProveedorCartera.setIdPersonaHaya(Long.parseLong(idPersonaSimulado.toString()));
-							activoProveedorCartera.setProveedor(proveedor);
-							activoProveedorCartera.setCartera(ddCartera);
-							activoProveedorCartera.setSubcartera(subcartera);
-							activoProveedorCartera.setClienteGestorDocumental(cliente);
-							genericDao.save(ActivoProveedorCartera.class, activoProveedorCartera);
-						}
-					}
-				}*/
+				}
 			}
 			sessionObj.close();
 		} catch (Exception e) {
 			logger.error("Error maestro de personas", e);
 		}
 	}
-	
-	/*private void llamadaEjecutarPersona(String cliente, String rol) {
-		personaDto.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_PERSONA_ORIGEN);
-		personaDto.setIdPersonaOrigen(proveedor.getDocIdentificativo());
-		personaDto.setIdIntervinienteHaya(PersonaInputDto.ID_INTERVINIENTE_HAYA);
-		personaDto.setIdCliente(cliente);
-
-		logger.error("[MAESTRO DE PERSONAS] LLAMAMOS A EJECUTAR PERSONA");
-		logger.error("[MAESTRO DE PERSONAS] Datos de la llamada: ".concat(personaDto.toString()));
-		BeanUtils.copyProperties(personaOutputDto,gestorDocumentalMaestroManager
-				.ejecutar(personaDto));
-		
-		logger.error("[MAESTRO DE PERSONAS] VOLVEMOS DE EJECUTAR PERSONA");
-		logger.error("[MAESTRO DE PERSONAS] Datos de la respuesta: ".concat(!Checks.esNulo(personaOutputDto) ? personaOutputDto.toString() : "NULL"));
-
-		if (Checks.esNulo(personaOutputDto)) {
-			logger.error("[MAESTRO DE PERSONAS] personaOutputDto ES NULO");
-		} else if (Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
-			logger.error("[MAESTRO DE PERSONAS] getIdIntervinienteHaya ES NULO");
-
-			SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-			String today = df.format(new Date());
-
-			logger.error("[MAESTRO DE PERSONAS] GENERANDO ID PERSONA");
-			personaDto.setEvent(PersonaInputDto.EVENTO_ALTA_PERSONA);
-			personaDto.setIdCliente(ID_CLIENTE_HAYA);
-			personaDto.setIdPersonaOrigen(proveedor.getDocIdentificativo());
-			personaDto.setIdMotivoOperacion(MOTIVO_OPERACION_ALTA);
-			personaDto.setIdOrigen(ID_ORIGEN_REM);
-			personaDto.setFechaOperacion(today);
-			personaDto.setIdTipoIdentificador(ID_TIPO_IDENTIFICADOR_NIF_CIF);
-			personaDto.setIdRol(rol);
-			BeanUtils.copyProperties(gestorDocumentalMaestroManager
-					.ejecutar(personaDto), personaOutputDto);
-
-			logger.error("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES " + personaOutputDto.getIdIntervinienteHaya());
-		} else {
-			logger.error("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES " + personaOutputDto.getIdIntervinienteHaya());
-		}
-	}*/
 
 	private ExpedienteComercial llamadaExpedienteComercial(Session sessionObj) {
 		Criteria criteria = sessionObj.createCriteria(ExpedienteComercial.class);
@@ -530,47 +431,6 @@ public class MaestroDePersonas implements Runnable {
 		return  HibernateUtils.castObject(Comprador.class, criteria.uniqueResult());
 	}
 	
-	/*private ActivoProveedorCartera llamadaActivoProveedorCartera(Session sessionObj, DDCartera cartera, DDSubcartera subcartera, String clienteGestorDocumental) {
-		Criteria criteria = sessionObj.createCriteria(ActivoProveedorCartera.class);
-		criteria.add(Restrictions.eq("proveedor", proveedor));
-		if(Checks.esNulo(subcartera)) {
-			criteria.add(Restrictions.isNull("subcartera"));
-		} else {
-			criteria.add(Restrictions.eq("subcartera", subcartera));
-		}
-		if(Checks.esNulo(cartera)) {
-			criteria.add(Restrictions.isNull("cartera"));
-		} else {
-			criteria.add(Restrictions.eq("cartera", cartera));
-		}
-		if(Checks.esNulo(clienteGestorDocumental)) {
-			criteria.add(Restrictions.isNull("clienteGestorDocumental"));
-		} else {
-			criteria.add(Restrictions.eq("clienteGestorDocumental", clienteGestorDocumental));
-		}
-		return  HibernateUtils.castObject(ActivoProveedorCartera.class, criteria.uniqueResult());
-	}
-	
-	private MapeoGestorDocumental llamadaMapeoGestorDocumental(Session sessionObj, DDCartera cartera, DDSubcartera subcartera, ActivoPropietario actPro) {
-		Criteria criteria = sessionObj.createCriteria(MapeoGestorDocumental.class);
-		if(Checks.esNulo(subcartera)) {
-			criteria.add(Restrictions.isNull("subcartera"));
-		} else {
-			criteria.add(Restrictions.eq("subcartera", subcartera));
-		}
-		if(Checks.esNulo(cartera)) {
-			criteria.add(Restrictions.isNull("cartera"));
-		} else {
-			criteria.add(Restrictions.eq("cartera", cartera));
-		}
-		if(Checks.esNulo(actPro)) {
-			criteria.add(Restrictions.isNull("activoPropietario"));
-		} else {
-			criteria.add(Restrictions.eq("activoPropietario", actPro));
-		}
-		return  HibernateUtils.castObject(MapeoGestorDocumental.class, criteria.uniqueResult());
-	}*/
-	
 	@SuppressWarnings("unchecked")
 	private List<ClienteComercial> llamadaClienteComercial(Session sessionObj, String numCliente) {
 		Criteria criteria = sessionObj.createCriteria(ClienteComercial.class);
@@ -578,25 +438,12 @@ public class MaestroDePersonas implements Runnable {
 		return criteria.list();
 	}
 	
-	/*public List<ActivoPropietario> getActivoPropietarioProveedor(Session sessionObj, ActivoProveedor proveedor, DDCartera cartera, DDSubcartera subcartera){
-		List<ActivoPropietario> listActivoPropietario = new ArrayList<ActivoPropietario>();
-		
-		HQLBuilder hb = new HQLBuilder("select actpro from ActivoProveedor pve, ActivoProveedorContacto apc, Trabajo tbj, ActivoTrabajo actj, DDCartera cra, DDSubcartera scr, Activo act, ActivoPropietario actpro, ActivoPropietarioActivo apa ");
-
-		hb.appendWhere("pve.id = apc.proveedor.id");
-		hb.appendWhere("apc.id = tbj.proveedorContacto.id");
-		hb.appendWhere("tbj.id = actj.trabajo.id");
-		hb.appendWhere("actj.activo.id = act.id");
-		hb.appendWhere("act.cartera.id = cra.id");
-		hb.appendWhere("cra.id = " + cartera.getId());
-		hb.appendWhere("act.subcartera.id = scr.id");
-		hb.appendWhere("scr.id = " + subcartera.getId());
-		hb.appendWhere("act.id = apa.activo.id");
-		hb.appendWhere("apa.propietario.id = actpro.id");
-		hb.appendWhere("pve.id = " + proveedor.getId());
-		
-		listActivoPropietario = (List<ActivoPropietario>) sessionObj.createQuery(hb.toString()).list();
-		
-		return listActivoPropietario;
-	}*/
+	private ActivoProveedor llamadaProveedor(Session sessionObj) {
+		Criteria criteria = sessionObj.createCriteria(ActivoProveedor.class);
+		if(!Checks.esNulo(numDocProveedor)) {
+			criteria.add(Restrictions.eq("docIdentificativo", numDocProveedor));
+		}
+		criteria.add(Restrictions.eq("codigoProveedorRem", codProveedorRem));
+		return  HibernateUtils.castObject(ActivoProveedor.class, criteria.uniqueResult());
+	}
 }

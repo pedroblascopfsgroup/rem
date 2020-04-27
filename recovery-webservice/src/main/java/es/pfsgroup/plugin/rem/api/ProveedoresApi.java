@@ -155,10 +155,10 @@ public interface ProveedoresApi {
 	 * 
 	 * @param id: ID del proveedor.
 	 * @return Devuelve una lista de documentos con los resultados obtenidos.
-	 * @throws GestorDocumentalException 
+	 * @throws GestorDocumentalException
+	 * @throws Exception 
 	 */
-	//public List<DtoAdjunto> getAdjuntos(Long id, ActivoProveedorCartera actProvCar, String username) throws GestorDocumentalException;
-	public List<DtoAdjunto> getAdjuntos(Long id);
+	public List<DtoAdjunto> getAdjuntos(Long id) throws GestorDocumentalException, Exception;
 
 	/**
 	 * Verificación de adjunto existente la lista de proveedores de 1 activo.

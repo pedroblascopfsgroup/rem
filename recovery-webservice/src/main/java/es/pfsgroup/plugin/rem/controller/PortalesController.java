@@ -54,7 +54,9 @@ public class PortalesController {
 		} catch (Exception e) {
 			logger.error("Error portales", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
-			model.put("id", jsonFields.get("id"));
+			if (jsonFields!=null) {
+				model.put("id", jsonFields.get("id"));
+			}
 			model.put("data", listaRespuesta);
 			model.put("error", RestApi.REST_MSG_UNEXPECTED_ERROR);
 

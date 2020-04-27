@@ -1,14 +1,9 @@
 package es.pfsgroup.plugin.rem.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletResponse;
-
 import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,15 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import es.capgemini.devon.exception.UserException;
-import es.capgemini.pfs.procesosJudiciales.EXTTareaExternaManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
-import es.pfsgroup.plugin.rem.rest.dto.OfertaRequestDto;
 import es.pfsgroup.plugin.rem.rest.dto.TareaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 
@@ -34,9 +23,6 @@ public class TareasController {
 	@Autowired
 	private AgendaAdapter agendaAdapter;
 	
-	@Autowired
-	private EXTTareaExternaManager tareaManager;
-
 	@Autowired
 	private RestApi restApi;
 	
@@ -95,7 +81,9 @@ public class TareasController {
 		} catch (Exception e) {
 			logger.error("Error avance tarea ", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());
-			model.put("id", jsonFields.get("id"));
+			if (jsonFields != null) {
+				model.put("id", jsonFields.get("id"));
+			}
 			model.put("data", resultado);
 			model.put("error", RestApi.REST_MSG_VALIDACION_TAREA+": "+e.getMessage());
 		}

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20200413
+--## AUTOR=PIER GOTTA
+--## FECHA_CREACION=20200428
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-6956
+--## INCIDENCIA_LINK=REMVIP-7075
 --## PRODUCTO=NO
 --##
 --## Finalidad: Insertar GFORM Divarian
@@ -31,7 +31,7 @@ DECLARE
     V_COUNT NUMBER(16):= 0;
     V_ID NUMBER(16);
     V_DD_PRV_CODIGO VARCHAR2(20 CHAR); -- Vble. aux para codigo de provincia
-    V_USR VARCHAR2(30 CHAR) := 'REMVIP-6956'; -- USUARIOCREAR/USUARIOMODIFICAR.    
+    V_USR VARCHAR2(30 CHAR) := 'REMVIP-7075'; -- USUARIOCREAR/USUARIOMODIFICAR.    
     
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;    
@@ -43,7 +43,12 @@ DECLARE
 		t_tipo_data('Avila', 'gplana'),
 		t_tipo_data('Badajoz', 'alopezr'),
 		t_tipo_data('Baleares', 'jcarbonellm'),
-		t_tipo_data('Barcelona', 'gestformdivarian'),
+		t_tipo_data('Barcelona', 'alopezr'),
+		t_tipo_data('Barcelona', 'gplana'),
+		t_tipo_data('Barcelona', 'ebenitezt'),
+		t_tipo_data('Barcelona', 'jmartinezsa'),
+		t_tipo_data('Barcelona', 'jcarbonellm'),
+		t_tipo_data('Barcelona', 'ptranche'),
 		t_tipo_data('Burgos', 'jmartinezsa'),
 		t_tipo_data('CiudadReal', 'gplana'),
 		t_tipo_data('Cáceres', 'alopezr'),
@@ -53,7 +58,12 @@ DECLARE
 		t_tipo_data('Ceuta', 'alopezr'),
 		t_tipo_data('Córdoba', 'alopezr'),
 		t_tipo_data('Cuenca', 'gplana'),
-		t_tipo_data('Girona', 'gestformdivarian'),
+		t_tipo_data('Girona', 'alopezr'),
+		t_tipo_data('Girona', 'gplana'),
+		t_tipo_data('Girona', 'ebenitezt'),
+		t_tipo_data('Girona', 'jmartinezsa'),
+		t_tipo_data('Girona', 'jcarbonellm'),
+		t_tipo_data('Girona', 'ptranche'),
 		t_tipo_data('Granada', 'ebenitezt'),
 		t_tipo_data('Guadalajara', 'gplana'),
 		t_tipo_data('Guipúzcoa', 'jmartinezsa'),
@@ -64,7 +74,12 @@ DECLARE
 		t_tipo_data('La Rioja', 'jmartinezsa'),
 		t_tipo_data('Las Palmas', 'ptranche'),
 		t_tipo_data('León', 'jmartinezsa'),
-		t_tipo_data('Lleida', 'gestformdivarian'),
+		t_tipo_data('Lleida', 'alopezr'),
+		t_tipo_data('Lleida', 'gplana'),
+		t_tipo_data('Lleida', 'ebenitezt'),
+		t_tipo_data('Lleida', 'jmartinezsa'),
+		t_tipo_data('Lleida', 'jcarbonellm'),
+		t_tipo_data('Lleida', 'ptranche'),
 		t_tipo_data('Lugo', 'jmartinezsa'),
 		t_tipo_data('Madrid', 'gplana'),
 		t_tipo_data('Málaga', 'ebenitezt'),
@@ -80,7 +95,12 @@ DECLARE
 		t_tipo_data('Sevilla', 'alopezr'),
 		t_tipo_data('Soria', 'gplana'),
 		t_tipo_data('Santa C. Tenerife', 'ptranche'),
-		t_tipo_data('Tarragona', 'gestformdivarian'),
+		t_tipo_data('Tarragona', 'alopezr'),
+		t_tipo_data('Tarragona', 'gplana'),
+		t_tipo_data('Tarragona', 'ebenitezt'),
+		t_tipo_data('Tarragona', 'jmartinezsa'),
+		t_tipo_data('Tarragona', 'jcarbonellm'),
+		t_tipo_data('Tarragona', 'ptranche'),
 		t_tipo_data('Teruel', 'jmartinezsa'),
 		t_tipo_data('Toledo', 'gplana'),
 		t_tipo_data('Valencia', 'jcarbonellm'),
@@ -94,6 +114,11 @@ DECLARE
 BEGIN	
 	
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
+
+	V_MSQL := 'DELETE FROM '|| V_ESQUEMA ||'.ACT_GES_DIST_GESTORES WHERE COD_CARTERA = ''7'' AND COD_SUBCARTERA IN (''151'',''152'') AND TIPO_GESTOR = ''GFORM''';
+
+          EXECUTE IMMEDIATE V_MSQL;
+          DBMS_OUTPUT.PUT_LINE('[INFO]: BORRADO CORRECTO');
 	
 	FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
 	LOOP
@@ -111,22 +136,12 @@ BEGIN
 			V_SQL := 'SELECT DD_PRV_CODIGO FROM '||V_ESQUEMA_M||'.DD_PRV_PROVINCIA WHERE DD_PRV_DESCRIPCION= '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
 			EXECUTE IMMEDIATE V_SQL INTO V_DD_PRV_CODIGO;
 		
-			--DELETE ACT_GES_DIST_GESTORES: TIPO_GESTOR GFORM, PROVINCIAS Y CARTERA            
-			V_MSQL := 'DELETE FROM '|| V_ESQUEMA ||'.ACT_GES_DIST_GESTORES ' ||
-			  'WHERE TIPO_GESTOR = ''GFORM'' AND COD_CARTERA = ''7'' AND COD_SUBCARTERA = ''151'' AND COD_PROVINCIA = '''||V_DD_PRV_CODIGO||'''';            
-			EXECUTE IMMEDIATE V_MSQL;           
-		
 			--1 INSERT ACT_GES_DIST_GESTORES
 			V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.ACT_GES_DIST_GESTORES (' || 
 			  'ID, TIPO_GESTOR, COD_CARTERA, COD_PROVINCIA, USERNAME, NOMBRE_USUARIO, USUARIOCREAR, FECHACREAR, BORRADO, COD_SUBCARTERA) ' ||
 			  'SELECT '|| V_ESQUEMA ||'.S_ACT_GES_DIST_GESTORES.NEXTVAL, ''GFORM'', ''7'', '''||V_DD_PRV_CODIGO||''', '''||TRIM(V_TMP_TIPO_DATA(2))||'''
 			  ,(SELECT USU_NOMBRE FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE BORRADO = 0 AND USU_USERNAME = '''||TRIM(V_TMP_TIPO_DATA(2))||''') , '''||V_USR||''', SYSDATE, 0, ''151'' FROM DUAL'; 
-			EXECUTE IMMEDIATE V_MSQL;
-			
-			--DELETE ACT_GES_DIST_GESTORES: TIPO_GESTOR GFORM, PROVINCIAS Y CARTERA            
-			V_MSQL := 'DELETE FROM '|| V_ESQUEMA ||'.ACT_GES_DIST_GESTORES ' ||
-			  'WHERE TIPO_GESTOR = ''GFORM'' AND COD_CARTERA = ''7'' AND COD_SUBCARTERA = ''152'' AND COD_PROVINCIA = '''||V_DD_PRV_CODIGO||'''';         
-			EXECUTE IMMEDIATE V_MSQL;      
+			EXECUTE IMMEDIATE V_MSQL;		    
 		
 			--1 INSERT ACT_GES_DIST_GESTORES
 			V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.ACT_GES_DIST_GESTORES (' || 

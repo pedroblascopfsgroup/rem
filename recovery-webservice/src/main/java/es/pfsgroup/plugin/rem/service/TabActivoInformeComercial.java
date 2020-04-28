@@ -356,7 +356,6 @@ public class TabActivoInformeComercial implements TabActivoService {
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto webDto) {
 		DtoActivoInformeComercial activoInformeDto = (DtoActivoInformeComercial) webDto;
-		DtoActivoInformacionComercial dto = (DtoActivoInformacionComercial) webDto;
 		ActivoInfoComercial actInfoComercial = null;
 		ActivoVivienda vivienda = null;
 		ActivoLocalComercial localComercial = null;

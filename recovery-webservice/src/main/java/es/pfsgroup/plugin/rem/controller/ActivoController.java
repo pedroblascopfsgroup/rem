@@ -260,9 +260,9 @@ public class ActivoController extends ParadiseJsonController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView getBusquedaActivosGrid(DtoActivoGridFilter dtoActivoFiltro, ModelMap model) {
+	public ModelAndView getBusquedaActivosGrid(DtoActivoGridFilter dto, ModelMap model) {
 		try {
-			Page page = (Page) adapter.getBusquedaActivosGrid(dtoActivoFiltro, true);
+			Page page = (Page) adapter.getBusquedaActivosGrid(dto, true);
 			model.put(RESPONSE_DATA_KEY, page.getResults());
 			model.put(RESPONSE_TOTALCOUNT_KEY, page.getTotalCount());
 			model.put(RESPONSE_SUCCESS_KEY, true);
@@ -1748,12 +1748,12 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@RequestMapping(method = RequestMethod.POST)
 	@Transactional()
-	public ModelAndView registrarExportacion(DtoActivoGridFilter dtoActivoFilter, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView registrarExportacion(DtoActivoGridFilter dto, Boolean exportar, String buscador, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelMap model = new ModelMap();		 
 		Boolean isSuperExport = false;
 		try {
 			Usuario user = usuarioManager.getUsuarioLogado();
-			int count = ((Page)adapter.getBusquedaActivosGrid(dtoActivoFilter, true)).getTotalCount();
+			int count = ((Page)adapter.getBusquedaActivosGrid(dto, true)).getTotalCount();
 			AuditoriaExportaciones ae = new AuditoriaExportaciones();
 			ae.setBuscador(buscador);
 			ae.setFechaExportacion(new Date());

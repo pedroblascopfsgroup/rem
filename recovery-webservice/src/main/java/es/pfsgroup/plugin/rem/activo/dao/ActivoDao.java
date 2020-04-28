@@ -334,10 +334,10 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	void deleteActOfr(Long idActivo, Long idOferta);
 	
 /***
- * * Devuelve la busqueda de activos que se cargaran en el grid en formato Page o List<VGridBusquedaActivos> 
+ * Devuelve los objetos que se muestran en el grid de busqueda de activos  
  * @param dto
  * @param usuarioLogado
- * @param devolverPage
+ * @param devolverPage   true:  el objeto retornado será de tipo Page,  false: el objeto retornado será de tipo List
  * @return
  */
 	public Object getBusquedaActivosGrid(DtoActivoGridFilter dto, Usuario usuarioLogado, boolean devolverPage);

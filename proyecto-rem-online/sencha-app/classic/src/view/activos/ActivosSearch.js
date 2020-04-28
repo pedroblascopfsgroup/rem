@@ -45,38 +45,33 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 				        		change: 'onChangeNumActivo'
 				        	} 
 				        },
-				        { 
+				        {
 							xtype: 'comboboxfieldbase',
-				        	fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
-				        	name: 'carteraCodigo',
-				        	displayField: 'descripcion',
-    						valueField: 'codigo',
-				        	bind: {
-			            		store: '{comboEntidadPropietaria}'
-			            	},
-			            	publishes: 'value',
-			            	reference: 'comboCarteraActivoSearch',
-			            	chainedStore: 'comboSubcarteraFiltered',
-							chainedReference: 'comboSubcarteraActivoSearch',
-							listeners: {
-								select: 'onChangeChainedCombo'
-							}
-				        },
-				        { 
-							xtype: 'comboboxfieldbase',
+							name: 'carteraCodigo',
+			              	fieldLabel :  HreRem.i18n('fieldlabel.entidad.propietaria'),
+			              	reference: 'comboCarteraSearch',
+							bind: {
+								store: '{comboCartera}'
+							},
+			            	publishes: 'value'					
+						},
+						{ 
+				        	xtype: 'comboboxfieldbase',
 				        	fieldLabel: HreRem.i18n('fieldlabel.subcartera'),
 				        	name: 'subcarteraCodigo',
 				        	bind: {
-			            		store: '{comboSubcarteraFiltered}',
-			            		disabled: '{!comboCarteraActivoSearch.value}'
-			            	},
-			            	reference: 'comboSubcarteraActivoSearch',
-			            	valueField: 'codigo',
-    						displayField: 'descripcion',
-				        	listeners : {
-				        		change: 'onChangeSubcartera'
-				        	} 
-				        }
+			            		store: '{comboSubcartera}',
+			            		disabled: '{!comboCarteraSearch.selection}',
+			                    filters: {
+			                        property: 'carteraCodigo',
+			                        value: '{comboCarteraSearch.value}'
+			                    },
+							listeners : {
+				        			change: 'onChangeSubcartera'
+				        		} 
+			            	}
+		    						
+						}				      
 				    ]},
 				    {
 				   	defaults: {

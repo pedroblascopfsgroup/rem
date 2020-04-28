@@ -1775,7 +1775,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			hb.appendWhere(" exists (select 1 from ActivoCatastro cat where upper(cat.refCatastral) like '%" + dto.getRefCatastral().toUpperCase() + "%' and vgrid.id = cat.activo.id) ");
 		
 		if (dto.getNumActivo() != null && StringUtils.isNumeric(dto.getNumActivo()))
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivo", dto.getNumActivo());						
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivo", Long.valueOf(dto.getNumActivo()));						
 		if (dto.getNumActivoPrinex() != null && StringUtils.isNumeric(dto.getNumActivoPrinex()))
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivoPrinex", Long.valueOf(dto.getNumActivoPrinex()));		
 		if (dto.getNumActivoRecovey() != null && StringUtils.isNumeric(dto.getNumActivoRecovey()))

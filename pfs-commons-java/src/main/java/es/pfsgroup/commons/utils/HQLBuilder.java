@@ -189,12 +189,14 @@ public class HQLBuilder {
 			final StringBuilder b = new StringBuilder();
 			boolean first = true;
 			for (Object o : valores) {
-				if (!first) {
-					b.append(", ");
-				} else {
-					first = false;
+				if(o !=null) {
+					if (!first) {
+						b.append(", ");
+					} else {
+						first = false;
+					}
+					b.append(o.toString());
 				}
-				b.append(o.toString());
 			}
 			hqlBuilder.appendWhere(nombreCampo.concat(" in (").concat(b.toString()).concat(")"));
 		}

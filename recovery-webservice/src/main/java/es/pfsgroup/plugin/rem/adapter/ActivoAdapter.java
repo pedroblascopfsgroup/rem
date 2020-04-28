@@ -1606,18 +1606,18 @@ public class ActivoAdapter {
 		return activoApi.getListActivos(dtoActivoFiltro, usuarioLogado);
 	}
 	
-	public Object getBusquedaActivosGrid(DtoActivoGridFilter dtoActivoFiltro, boolean devolverPage) {
+	public Object getBusquedaActivosGrid(DtoActivoGridFilter dto, boolean devolverPage) {
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		DDIdentificacionGestoria gestoria = gestorActivoApi.isGestoria(usuarioLogado);
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		dtoActivoFiltro.setGestoria(gestoria != null ? gestoria.getId() : null);
+		dto.setGestoria(gestoria != null ? gestoria.getId() : null);
 		if (usuarioCartera != null) {
-			dtoActivoFiltro.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
+			dto.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
 			if (usuarioCartera.getSubCartera() != null) {			
-				dtoActivoFiltro.setSubcarteraCodigo(usuarioCartera.getSubCartera().getCodigo());
+				dto.setSubcarteraCodigo(usuarioCartera.getSubCartera().getCodigo());
 			}
 		}		
-		return activoDao.getBusquedaActivosGrid(dtoActivoFiltro, usuarioLogado, devolverPage);
+		return activoDao.getBusquedaActivosGrid(dto, usuarioLogado, devolverPage);
 	}
 
 	public List<DtoUsuario> getComboUsuarios(long idTipoGestor) {

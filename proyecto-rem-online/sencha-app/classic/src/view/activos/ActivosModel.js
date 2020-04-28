@@ -26,6 +26,24 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 			        }
 
     		},
+    		
+    		comboCartera: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'entidadesPropietarias'}
+				}
+    		},
+    		
+    		comboSubcartera: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'subentidadesPropietarias'}
+				}
+			},
 
     		comboTipoTitulo: {
 				model: 'HreRem.model.ComboBase',

@@ -34,6 +34,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
@@ -195,7 +196,7 @@ public class GastoProveedor implements Serializable, Auditable {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="GPV_SUPLIDOS_VINCULADOS")
-	private DDSiNo suplidosVinculados;
+	private DDSinSiNo suplidosVinculados;
 	
 	@Column(name="GPV_NUMERO_FACTURA_PPAL")
 	private String numeroFacturaPrincipal;
@@ -563,11 +564,11 @@ public class GastoProveedor implements Serializable, Auditable {
 		this.fechaRecHaya = (Date) fechaRecHaya.clone();
 	}
 
-	public DDSiNo getSuplidosVinculados() {
+	public DDSinSiNo getSuplidosVinculados() {
 		return suplidosVinculados;
 	}
 
-	public void setSuplidosVinculados(DDSiNo suplidosVinculados) {
+	public void setSuplidosVinculados(DDSinSiNo suplidosVinculados) {
 		this.suplidosVinculados = suplidosVinculados;
 	}
 

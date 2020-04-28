@@ -218,7 +218,20 @@ Ext.define('HreRem.model.GastoProveedor', {
    		},
    		{
    			name: 'estadoEmisor'   			
-   		}   		
+   		},
+   		{
+   			name: 'suplidosVinculadosCod'
+   		},
+   		{
+   			name: 'facturaPrincipalSuplido'
+   		},
+    	{
+    		name: 'suplidoVinculadoNo',
+    		calculate: function(data) {
+    			return data.suplidosVinculadosCod == CONST.COMBO_SIN_NO['NO'];
+    		},
+    		depends: 'suplidosVinculadosCod'
+    	}
    		
     ],
     

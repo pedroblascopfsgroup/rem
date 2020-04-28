@@ -196,6 +196,11 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		ActivoProveedor proveedor = proveedoresDao.getProveedorById(id);
 		
 		if(!Checks.esNulo(proveedor)) {
+			if (proveedor.getIdPersonaHaya() == null) {
+				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+				Thread maestroPersona = new Thread( new MaestroDePersonas(proveedor.getDocIdentificativo(), proveedor.getCodigoProveedorRem(), usuarioLogado.getUsername()));
+				maestroPersona.start();
+			}
 			try {
 				beanUtilNotNull.copyProperty(dto, "fechaUltimaActualizacion", proveedor.getAuditoria().getFechaModificar());
 				beanUtilNotNull.copyProperty(dto, "id", proveedor.getId());
@@ -1003,19 +1008,9 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		
 		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
 		ActivoProveedor proveedor = proveedoresDao.getProveedorById(id);
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			try {
-				if (proveedor != null && proveedor.getIdPersonaHaya() == null) {
-					Thread maestroPersona = new Thread( new MaestroDePersonas(proveedor.getDocIdentificativo(), proveedor.getCodigoProveedorRem(), usuarioLogado.getUsername()));
-					maestroPersona.start();
-					int seg = 0;
-					while (proveedor.getIdPersonaHaya() == null && seg<10) {
-						Thread.sleep(1000);
-						seg++;
-					}
-				}
 				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosProveedor(proveedor);
 			} catch (GestorDocumentalException gex) {
 				logger.error(gex.getMessage());

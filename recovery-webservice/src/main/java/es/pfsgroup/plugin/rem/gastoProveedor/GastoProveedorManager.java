@@ -3878,6 +3878,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	private void validacionPreviaSaveUpdateGasto(DtoFichaGastoProveedor dto, Long id) {
 		
+		GastoProveedor gastoProveedor = null;
+		
+		if(id != null) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
+			gastoProveedor = genericDao.get(GastoProveedor.class, filtro);
+		}
+		
 		if(dto.getFacturaPrincipalSuplido() != null) {
 			
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "referenciaEmisor", dto.getFacturaPrincipalSuplido());
@@ -3888,9 +3895,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			} else if(gastosProveedor != null && !gastosProveedor.isEmpty() && gastosProveedor.size() > 1) {
 				throw new JsonViewerException("No se puede dar de alta un 'Suplido vinculado' cuyo numero de factura esta en más de un gasto");
 			} else {
-				GastoProveedor gastoProveedor = gastosProveedor.get(0);
+				gastoProveedor = gastosProveedor.get(0);
 				
-				if(gastoProveedor != null && DDSinSiNo.CODIGO_NO.equals(gastoProveedor.getSuplidosVinculados().getCodigo())) {
+				if(gastoProveedor != null && (gastoProveedor.getSuplidosVinculados() == null || DDSinSiNo.CODIGO_NO.equals(gastoProveedor.getSuplidosVinculados().getCodigo()))) {
 					throw new JsonViewerException("No se puede dar de alta ya que el gasto de la factura indicada tiene 'Suplido vinculado' a 'No'");
 				}
 			}
@@ -3898,13 +3905,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 		
 		if(dto.getSuplidosVinculadosCod() != null) {
-			
-			GastoProveedor gastoProveedor = null;
-			
-			if(id != null) {
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
-				gastoProveedor = genericDao.get(GastoProveedor.class, filtro);
-			}
 			
 			if(DDSinSiNo.CODIGO_SI.equals(dto.getSuplidosVinculadosCod())) {
 				if(gastoProveedor != null && gastoProveedor.getNumeroFacturaPrincipal() != null) {

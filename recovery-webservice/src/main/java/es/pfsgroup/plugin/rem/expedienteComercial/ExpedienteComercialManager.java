@@ -240,6 +240,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	// Tareas
 	private static final String T013_RESOLUCION_COMITE = "T013_ResolucionComite";
+	private static final String T013_DEFINICION_OFERTA = "T013_DefinicionOferta";
 
 	@Resource
 	private MessageService messageServices;
@@ -10859,11 +10860,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta().getClaseOferta())
 				&& DDCartera.CODIGO_CARTERA_LIBERBANK
 						.equals(expedienteComercial.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
-			if (T013_RESOLUCION_COMITE.equals(tareaExterna.getTareaProcedimiento().getCodigo())
-					&& DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE
-							.equals(expedienteComercial.getOferta().getClaseOferta().getCodigo())) {
+			if ((T013_RESOLUCION_COMITE.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
+					|| T013_DEFINICION_OFERTA.equals(tareaExterna.getTareaProcedimiento().getCodigo()))
+				&& DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE.equals(expedienteComercial.getOferta().getClaseOferta().getCodigo())) {
 
-				esOfertaDependiente = !permiteAvanzarOfertaDependiente(expedienteComercial, T013_RESOLUCION_COMITE);
+				esOfertaDependiente = !permiteAvanzarOfertaDependiente(expedienteComercial, tareaExterna.getTareaProcedimiento().getCodigo());
 
 			} else if (DDClaseOferta.CODIGO_OFERTA_DEPENDIENTE
 					.equals(expedienteComercial.getOferta().getClaseOferta().getCodigo())) {

@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,22 +28,22 @@ public class VGridBusquedaActivos implements Serializable {
 	private String longitud;
 	
 	@Column(name = "NUM_ACTIVO")
-	private String numActivo;
+	private Long numActivo;
 	
 	@Column(name = "NUM_ACTIVO_SAREB")
 	private String numActivoSareb;
 	
 	@Column(name = "NUM_ACTIVO_PRINEX")
-	private String numActivoPrinex;
+	private Long numActivoPrinex;
 	
 	@Column(name = "NUM_ACTIVO_UVEM")
-	private String numActivoUvem;
+	private Long numActivoUvem;
 	
 	@Column(name = "NUM_ACTIVO_DIVARIAN")
 	private String numActivoDivarian;
 	
 	@Column(name = "NUM_RECOVERY")
-	private String numActivoRecovey;
+	private Long numActivoRecovery;
 	
 	@Column(name="TIPO_ACTIVO_CODIGO")
 	private String tipoActivoCodigo;
@@ -156,7 +157,7 @@ public class VGridBusquedaActivos implements Serializable {
 	private String idufir;
 	
 	@Column(name = "FECHA_INSCRIPCION_REGISTRO")
-	private String fechaInscripcionReg;
+	private Date fechaInscripcionReg;
 	
 	@Column(name = "DIVISION_HORIZONTAL")
 	private Integer divHorizontal;
@@ -171,7 +172,7 @@ public class VGridBusquedaActivos implements Serializable {
 	private Integer ocupado;
 	
 	@Column(name = "FECHA_TOMA_POSESION")
-	private String fechaPosesion;
+	private Date fechaPosesion;
 	
 	@Column(name = "ACCESO_TAPIADO")
 	private Integer tapiado;
@@ -238,11 +239,11 @@ public class VGridBusquedaActivos implements Serializable {
 		this.longitud = longitud;
 	}
 
-	public String getNumActivo() {
+	public Long getNumActivo() {
 		return numActivo;
 	}
 
-	public void setNumActivo(String numActivo) {
+	public void setNumActivo(Long numActivo) {
 		this.numActivo = numActivo;
 	}
 
@@ -254,19 +255,19 @@ public class VGridBusquedaActivos implements Serializable {
 		this.numActivoSareb = numActivoSareb;
 	}
 
-	public String getNumActivoPrinex() {
+	public Long getNumActivoPrinex() {
 		return numActivoPrinex;
 	}
 
-	public void setNumActivoPrinex(String numActivoPrinex) {
+	public void setNumActivoPrinex(Long numActivoPrinex) {
 		this.numActivoPrinex = numActivoPrinex;
 	}
 
-	public String getNumActivoUvem() {
+	public Long getNumActivoUvem() {
 		return numActivoUvem;
 	}
 
-	public void setNumActivoUvem(String numActivoUvem) {
+	public void setNumActivoUvem(Long numActivoUvem) {
 		this.numActivoUvem = numActivoUvem;
 	}
 
@@ -278,12 +279,12 @@ public class VGridBusquedaActivos implements Serializable {
 		this.numActivoDivarian = numActivoDivarian;
 	}
 
-	public String getNumActivoRecovey() {
-		return numActivoRecovey;
+	public Long getNumActivoRecovery() {
+		return numActivoRecovery;
 	}
 
-	public void setNumActivoRecovey(String numActivoRecovey) {
-		this.numActivoRecovey = numActivoRecovey;
+	public void setNumActivoRecovery(Long numActivoRecovery) {
+		this.numActivoRecovery = numActivoRecovery;
 	}
 
 	public String getTipoActivoCodigo() {
@@ -582,11 +583,11 @@ public class VGridBusquedaActivos implements Serializable {
 		this.idufir = idufir;
 	}
 
-	public String getFechaInscripcionReg() {
+	public Date getFechaInscripcionReg() {
 		return fechaInscripcionReg;
 	}
 
-	public void setFechaInscripcionReg(String fechaInscripcionReg) {
+	public void setFechaInscripcionReg(Date fechaInscripcionReg) {
 		this.fechaInscripcionReg = fechaInscripcionReg;
 	}
 
@@ -622,11 +623,11 @@ public class VGridBusquedaActivos implements Serializable {
 		this.ocupado = ocupado;
 	}
 
-	public String getFechaPosesion() {
+	public Date getFechaPosesion() {
 		return fechaPosesion;
 	}
 
-	public void setFechaPosesion(String fechaPosesion) {
+	public void setFechaPosesion(Date fechaPosesion) {
 		this.fechaPosesion = fechaPosesion;
 	}
 
@@ -717,5 +718,5 @@ public class VGridBusquedaActivos implements Serializable {
 	public void setTipoSegmentoCodigo(String tipoSegmentoCodigo) {
 		this.tipoSegmentoCodigo = tipoSegmentoCodigo;
 	}
-	
+    
 }

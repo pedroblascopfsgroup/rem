@@ -1765,7 +1765,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraAvanzadaCodigo() != null ?  dto.getCarteraAvanzadaCodigo() : dto.getCarteraCodigo());		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subcarteraCodigo", dto.getSubcarteraAvanzadaCodigo() != null ?  dto.getSubcarteraAvanzadaCodigo() : dto.getSubcarteraCodigo());		
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.localidadDescripcion", dto.getLocalidadAvanzadaDescripcion() != null ?  dto.getLocalidadAvanzadaDescripcion() : dto.getLocalidadDescripcion());
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.localidadDescripcion", dto.getLocalidadAvanzadaDescripcion() != null ?  dto.getLocalidadAvanzadaDescripcion() : dto.getLocalidadDescripcion(), true);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.provinciaCodigo", dto.getProvinciaAvanzadaCodigo() != null ?  dto.getProvinciaAvanzadaCodigo() : dto.getProvinciaCodigo());	
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numFinca", dto.getNumFincaAvanzada() != null ?  dto.getNumFincaAvanzada() : dto.getNumFinca());		
 	
@@ -1778,8 +1778,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivo", Long.valueOf(dto.getNumActivo()));						
 		if (dto.getNumActivoPrinex() != null && StringUtils.isNumeric(dto.getNumActivoPrinex()))
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivoPrinex", Long.valueOf(dto.getNumActivoPrinex()));		
-		if (dto.getNumActivoRecovey() != null && StringUtils.isNumeric(dto.getNumActivoRecovey()))
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivoRecovey", Long.valueOf(dto.getNumActivoRecovey()));
+		if (dto.getNumActivoRecovery() != null && StringUtils.isNumeric(dto.getNumActivoRecovery()))
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivoRecovery", Long.valueOf(dto.getNumActivoRecovery()));
    		if (dto.getNumActivoUvem() != null && StringUtils.isNumeric(dto.getNumActivoUvem()))
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivoUvem", Long.valueOf(dto.getNumActivoUvem()));
    		   		   		
@@ -1822,9 +1822,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.antiocupa", dto.getAntiocupa());		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tituloPosesorioCodigo", dto.getTituloPosesorioCodigo());
 		
-		if(dto.getUsuarioGestor() !=null && dto.getTipoGestorCodigo() !=null) {
-			hb.appendWhere(" exists (select 1 from GestorActivo ga where ga.tipoGestor.codigo = '" +  dto.getTipoGestorCodigo() + "' and ga.usuario.id = " +   dto.getUsuarioGestor() + " and vgrid.id = ga.activo.id) ");
-		}
+		if(dto.getUsuarioGestor() !=null && dto.getTipoGestorCodigo() !=null) 
+			hb.appendWhere(" exists (select 1 from GestorActivo ga where ga.tipoGestor.codigo = '" +  dto.getTipoGestorCodigo() + "' and ga.usuario.id = " +   dto.getUsuarioGestor() + " and vgrid.id = ga.activo.id) ");		
 		if (dto.getGestoria() != null) 
 			hb.appendWhere(" exists (select 1 from VBusquedaActivosGestorias bag where bag.gestoria = " + dto.getGestoria() + " and vgrid.id = bag.id) ");		
 		if(dto.getApiPrimarioId() !=null)

@@ -34,7 +34,7 @@ public class DtoActivoGridFilter extends WebDto {
 	private String numActivoPrinex;
 	private String numActivoUvem;
 	private String numActivoDivarian;
-	private String numActivoRecovey;
+	private String numActivoRecovery;
 	private String estadoActivoCodigo;
 	private String tipoUsoDestinoCodigo;
 	private String claseActivoBancarioCodigo;
@@ -247,11 +247,11 @@ public class DtoActivoGridFilter extends WebDto {
 	public void setNumActivoDivarian(String numActivoDivarian) {
 		this.numActivoDivarian = numActivoDivarian;
 	}
-	public String getNumActivoRecovey() {
-		return numActivoRecovey;
+	public String getNumActivoRecovery() {
+		return numActivoRecovery;
 	}
-	public void setNumActivoRecovey(String numActivoRecovey) {
-		this.numActivoRecovey = numActivoRecovey;
+	public void setNumActivoRecovery(String numActivoRecovery) {
+		this.numActivoRecovery = numActivoRecovery;
 	}
 	public String getEstadoActivoCodigo() {
 		return estadoActivoCodigo;

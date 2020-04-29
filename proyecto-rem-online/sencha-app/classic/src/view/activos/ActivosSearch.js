@@ -205,7 +205,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 									{
 										fieldLabel: HreRem.i18n('fieldlabel.id.activo.recovery'),
 										labelWidth:	150,
-						                name: 'numActivoRecovey'
+						                name: 'numActivoRecovery'
 									},
 									{
 							        	xtype: 'comboboxfieldbase',

@@ -786,6 +786,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		if(dto.getSuplidosVinculadosCod() != null) {
 			DDSinSiNo suplidoVinculado = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getSuplidosVinculadosCod()));
 			gastoProveedor.setSuplidosVinculados(suplidoVinculado);
+		}else if(gastoProveedor.getSuplidosVinculados() == null) {
+			DDSinSiNo suplidoVinculado = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO));
+			gastoProveedor.setSuplidosVinculados(suplidoVinculado);
 		}
 		
 		if(dto.getFacturaPrincipalSuplido() != null) {

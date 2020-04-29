@@ -58,7 +58,7 @@ public class ActivoGridExcelReport extends AbstractExcelReport implements ExcelR
 		List<List<String>> valores = new ArrayList<List<String>>();
 		for (VGridBusquedaActivos vGridActivo : listaActivos) {
 			fila = new ArrayList<String>();
-			fila.add(vGridActivo.getNumActivo());
+			fila.add(vGridActivo.getNumActivo().toString());
 			fila.add(vGridActivo.getTipoActivoDescripcion());
 			fila.add(vGridActivo.getSubtipoActivoDescripcion());
 			fila.add(vGridActivo.getCarteraDescripcion());

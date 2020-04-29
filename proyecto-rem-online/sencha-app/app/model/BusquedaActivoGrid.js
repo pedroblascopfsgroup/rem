@@ -112,7 +112,7 @@ Ext.define('HreRem.model.BusquedaActivoGrid', {
           		name:'numActivoDivarian'
         	},
 			{
-          		name:'numActivoRecovey'
+          		name:'numActivoRecovery'
         	},
 			{
           		name:'estadoActivoCodigo'

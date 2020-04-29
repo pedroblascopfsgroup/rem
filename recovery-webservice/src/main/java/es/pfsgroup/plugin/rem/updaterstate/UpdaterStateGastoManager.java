@@ -196,26 +196,6 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				}
 			}
 			
-			if(((gasto.getSuplidosVinculados() != null && DDSinSiNo.CODIGO_NO.equals(gasto.getSuplidosVinculados().getCodigo())) || gasto.getSuplidosVinculados() == null)
-					&& gasto.getNumeroFacturaPrincipal() != null) {
-				
-				GastoSuplido gastoSuplido = genericDao.get(GastoSuplido.class, genericDao.createFilter(FilterType.EQUALS, "gastoProveedorSuplido", gasto));
-				GastoProveedor gastoPrincipal = null;
-				
-				if(gastoSuplido != null) {
-					gastoPrincipal = gastoSuplido.getGastoProveedorPadre();
-				}
-				
-				GastoDetalleEconomico detalleGasto = genericDao.get(GastoDetalleEconomico.class, genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId()));
-				
-				if(detalleGasto != null && gastoPrincipal != null && gastoPrincipal.getProveedor() != null
-						&& ((detalleGasto.getNifTitularCuentaAbonar() != null &&   !detalleGasto.getNifTitularCuentaAbonar().equals(gastoPrincipal.getProveedor().getDocIdentificativo()))
-						|| (gastoPrincipal.getProveedor() == null || detalleGasto == null))) {
-					error = messageServices.getMessage(VALIDACION_SUPLIDOS_NIF_EMISOR_CUENTA);
-					return error;
-				}
-				
-			}
 		}
 		return error;
 	}
@@ -616,4 +596,33 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 		}
 		
 	}*/
+
+	@Override
+	public String validarAutorizacionSuplido(GastoProveedor gasto) {
+		
+		String error = null;
+		
+		if(((gasto.getSuplidosVinculados() != null && DDSinSiNo.CODIGO_NO.equals(gasto.getSuplidosVinculados().getCodigo())) || gasto.getSuplidosVinculados() == null)
+				&& gasto.getNumeroFacturaPrincipal() != null) {
+			
+			GastoSuplido gastoSuplido = genericDao.get(GastoSuplido.class, genericDao.createFilter(FilterType.EQUALS, "gastoProveedorSuplido", gasto));
+			GastoProveedor gastoPrincipal = null;
+			
+			if(gastoSuplido != null) {
+				gastoPrincipal = gastoSuplido.getGastoProveedorPadre();
+			}
+			
+			GastoDetalleEconomico detalleGasto = genericDao.get(GastoDetalleEconomico.class, genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId()));
+			
+			if(detalleGasto != null && gastoPrincipal != null && gastoPrincipal.getProveedor() != null
+					&& ((detalleGasto.getNifTitularCuentaAbonar() != null &&   !detalleGasto.getNifTitularCuentaAbonar().equals(gastoPrincipal.getProveedor().getDocIdentificativo()))
+					|| (gastoPrincipal.getProveedor() == null || detalleGasto == null))) {
+				error = messageServices.getMessage(VALIDACION_SUPLIDOS_NIF_EMISOR_CUENTA);
+			}
+			
+		}
+		
+		return error;
+		
+	}
 }

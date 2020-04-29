@@ -2815,6 +2815,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		if (validarAutorizacion) {
 			String error = updaterStateApi.validarCamposMinimos(gasto);
+			
+			if(error == null) {
+				error = updaterStateApi.validarAutorizacionSuplido(gasto);
+			}
+			
 			if (!Checks.esNulo(error)) {
 				throw new JsonViewerException("El gasto " + gasto.getNumGastoHaya() + " no se puede autorizar: " + error);
 			}

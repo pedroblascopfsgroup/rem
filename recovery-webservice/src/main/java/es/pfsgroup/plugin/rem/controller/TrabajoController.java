@@ -1650,6 +1650,8 @@ public class TrabajoController extends ParadiseJsonController {
 					DtoTrabajoFilter filtro = new DtoTrabajoFilter();
 					filtro.setNumActivo(numActivoL);
 					filtro.setLimit(100);
+					filtro.setIsOrigenActuacionesTecnicas(true);
+					filtro.setProveedor(idProveedorRem);
 					if(Checks.esNulo(activoDao.getActivoByNumActivo(numActivoL))){
 						flagnumActivoNoExiste = true;
 					}else if(Checks.esNulo(proveedoresDao.getActivoProveedorContactoPorUsernameUsuario(idProveedorRem))){
@@ -1660,12 +1662,10 @@ public class TrabajoController extends ParadiseJsonController {
 				
 						
 						TrabajoRespuestaDto actuacion;
-						VBusquedaTrabajos busquedaTrabajo;
 				
 						// Recuperar lista de trabajos por activo
 						for (Object obj : page.getResults()) {
-							busquedaTrabajo = (VBusquedaTrabajos) obj;
-							Trabajo trabajo = trabajoApi.findOne(busquedaTrabajo.getId());
+							Trabajo trabajo = (Trabajo) obj;
 				
 							// Comprobación de criterios y generar listado
 							try {

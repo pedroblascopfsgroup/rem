@@ -1187,7 +1187,11 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 					}
 
 				} else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)
-						|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
+						|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK) || 
+						(activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB)
+						|| activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB)
+						|| activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_APPLE_INMOBILIARIO)) 
+						) {
 					idUsuarioGestorFormalizacion = gestorExpedienteComercialDao
 							.getUsuarioGestorFormalizacion(activo.getId());
 				} else {

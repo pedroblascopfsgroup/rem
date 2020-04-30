@@ -51,6 +51,7 @@ modules.xml
 # Sonarlint plugin
 .idea/sonarlint
 sonarlint-state.xml
+.sonarlint/
 
 
 ### Project specific ###

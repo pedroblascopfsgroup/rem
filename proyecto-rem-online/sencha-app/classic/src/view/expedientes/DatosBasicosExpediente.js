@@ -439,8 +439,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.pbc'),
 				        	bind: {
 			            		store: '{comboAceptadoRechazado}',
-								value: '{expediente.estadoPbc}',
-								readOnly: '{!expediente.perteneceGrupoPBC}'
+								value: '{expediente.estadoPbc}'
 			            	}
 		                }
 		        ]

@@ -232,11 +232,6 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 				return null;
 		}
 		
-		if(CODIGO_T013_RESULTADO_PBC.equals(codigoTarea) || CODIGO_T017_PBC_RESERVA.equals(codigoTarea)
-				|| CODIGO_T013_PBC_RESERVA.equals(codigoTarea) || CODIGO_T017_PBC_VENTA.equals(codigoTarea)) {
-			return gestorActivoApi.getUsuarioGrupoPBC();
-		}
-		
 		if(CODIGO_T017_RESOLUCION_DIVARIAN.equals(codigoTarea) || CODIGO_T017_RESOLUCION_ARROW.equals(codigoTarea)) {
 			return gestorActivoApi.usuarioTareaDivarian(codigoTarea);
 		}

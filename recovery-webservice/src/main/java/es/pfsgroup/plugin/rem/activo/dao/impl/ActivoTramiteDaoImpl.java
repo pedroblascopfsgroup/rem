@@ -39,6 +39,7 @@ public class ActivoTramiteDaoImpl extends AbstractEntityDao<ActivoTramite, Long>
 		
 		HQLBuilder hb = new HQLBuilder(" from ActivoTramite tra");
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.activo.id", idActivo);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.auditoria.borrado", false);
 						
 		return HibernateQueryUtils.page(this, hb, webDto);
 	}
@@ -46,6 +47,7 @@ public class ActivoTramiteDaoImpl extends AbstractEntityDao<ActivoTramite, Long>
 	public List<ActivoTramite> getListaTramitesActivo(Long idActivo){
 		HQLBuilder hb = new HQLBuilder(" from ActivoTramite tra");
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.activo.id", idActivo);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.auditoria.borrado", false);
 		
 		return HibernateQueryUtils.list(this, hb);
 	}
@@ -56,6 +58,7 @@ public class ActivoTramiteDaoImpl extends AbstractEntityDao<ActivoTramite, Long>
 		
 		//Activo activo = activoDao.get(idActivo);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.trabajo.id", idTrabajo);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.auditoria.borrado", false);
 		
 		return HibernateQueryUtils.page(this, hb, webDto);
 		
@@ -67,6 +70,7 @@ public class ActivoTramiteDaoImpl extends AbstractEntityDao<ActivoTramite, Long>
 		
 		//Activo activo = activoDao.get(idActivo);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.trabajo.id", idTrabajo);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.auditoria.borrado", false);
 		
 		return HibernateQueryUtils.list(this, hb);
 		
@@ -94,6 +98,7 @@ public class ActivoTramiteDaoImpl extends AbstractEntityDao<ActivoTramite, Long>
 		HQLBuilder hb = new HQLBuilder(" from ActivoTramite tra");
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.trabajo.id", idTrabajo);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.tipoTramite.codigo", codigoTramite);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tra.auditoria.borrado", false);
 		
 		return HibernateQueryUtils.list(this, hb);
 		

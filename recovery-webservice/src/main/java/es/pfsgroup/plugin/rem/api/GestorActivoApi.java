@@ -190,6 +190,4 @@ public interface GestorActivoApi extends GestorEntidadApi {
 
 	Boolean isGestorMantenimiento(Activo activo, Usuario usuario);
 
-	Usuario getUsuarioGrupoPBC();
-
 }

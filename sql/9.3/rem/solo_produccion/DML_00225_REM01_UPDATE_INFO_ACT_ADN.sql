@@ -121,7 +121,20 @@ BEGIN
 				ADN.ADN_FECHA_TITULO = TO_DATE('||V_TMP_ACT(2)||',''YYYYMMDD''),
 				ADN.USUARIOMODIFICAR = '''||V_USR||''',
 				ADN.FECHAMODIFICAR = SYSDATE
-			';
+			WHEN NOT MATCHED THEN INSERT VALUES (
+			    '||V_ESQUEMA||'.S_ACT_ADN_ADJNOJUDICIAL.NEXTVAL,
+			    T2.ACT_ID,
+			    NULL,
+			    TO_DATE('||V_TMP_ACT(2)||',''YYYYMMDD''),
+			    NULL, NULL,
+			    NULL, NULL,
+			    0,
+			    '''||V_USR||''',
+			    SYSDATE,
+			    NULL, NULL,
+			    NULL, NULL,
+			    0, NULL
+			)';
 	
 			DBMS_OUTPUT.PUT_LINE('	[OK] Campos actualizados.');
 		ELSE

@@ -129,6 +129,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
+import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
@@ -840,12 +841,12 @@ public class ActivoAdapter {
 										.equals(activoCarga.getTipoCargaActivo().getCodigo())
 								&& (!Checks.esNulo(activoCarga.getCargaBien().getFechaCancelacion())
 										|| !Checks.esNulo(activoCarga.getFechaCancelacionRegistral()))) {
-							DDEstadoCarga estadoCarga = (DDEstadoCarga) utilDiccionarioApi
-									.dameValorDiccionarioByCod(DDEstadoCarga.class, DDEstadoCarga.CODIGO_CANCELADA);
+							if (activoCarga.getEstadoCarga() != null) {
 							beanUtilNotNull.copyProperty(cargaDto, "estadoDescripcion",
-									estadoCarga.getDescripcion());
-							beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo", estadoCarga.getCodigo());
-
+									activoCarga.getEstadoCarga().getDescripcion());
+							beanUtilNotNull.copyProperty(cargaDto, "estadoCodigo",
+									activoCarga.getEstadoCarga().getCodigo());
+							}
 							// Fecha de cancelacion de una carga economica
 							if (Checks.esNulo(activoCarga.getFechaCancelacionRegistral())) {
 								beanUtilNotNull.copyProperty(cargaDto, "fechaCancelacion",
@@ -1605,6 +1606,20 @@ public class ActivoAdapter {
 		}
 		
 		return activoApi.getListActivos(dtoActivoFiltro, usuarioLogado);
+	}
+	
+	public Object getBusquedaActivosGrid(DtoActivoGridFilter dto, boolean devolverPage) {
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		DDIdentificacionGestoria gestoria = gestorActivoApi.isGestoria(usuarioLogado);
+		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+		dto.setGestoria(gestoria != null ? gestoria.getId() : null);
+		if (usuarioCartera != null) {
+			dto.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
+			if (usuarioCartera.getSubCartera() != null) {			
+				dto.setSubcarteraCodigo(usuarioCartera.getSubCartera().getCodigo());
+			}
+		}		
+		return activoDao.getBusquedaActivosGrid(dto, usuarioLogado, devolverPage);
 	}
 
 	public List<DtoUsuario> getComboUsuarios(long idTipoGestor) {

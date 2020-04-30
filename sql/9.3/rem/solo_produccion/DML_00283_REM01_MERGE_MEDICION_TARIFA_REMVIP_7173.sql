@@ -37,8 +37,15 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] Se van a actualizar ACT_TCT_TRABAJO_CFGTARIFA DESDE AUX_MEDICION_TARIFA_REMVIP_7173.');
 
 	execute immediate 'merge into '||V_ESQUEMA||'.ACT_TCT_TRABAJO_CFGTARIFA t1 using (
-						    select DISTINCT TCT_ID, 1 AS MEDICION
+						    select DISTINCT TRABAJO, CFG.TCT_ID, 1 as medicion
 						     from '||V_ESQUEMA||'.AUX_MEDICION_TARIFA_REMVIP_7173 AUX 
+                            INNER JOIN '||V_ESQUEMA||'.ACT_TBJ_TRABAJO TBJ ON TBJ.tbj_num_trabajo = aux.trabajo
+                            inner join '||V_ESQUEMA||'.act_tbj on act_tbj.tbj_id = tbj.tbj_id
+                            inner join '||V_ESQUEMA||'.act_activo act on act.act_id = act_tbj.act_id
+                             INNER JOIN '||V_ESQUEMA||'.dd_ttf_tipo_tarifa TTF ON TTF.DD_TTF_CODIGO = AUX.TARIFA 
+                             INNER JOIN '||V_ESQUEMA||'.act_cft_config_tarifa CFT ON  CFT.DD_SCR_ID = act.DD_SCR_ID and cft.dd_ttf_id = TTF.DD_TTF_ID
+						     INNER JOIN '||V_ESQUEMA||'.ACT_TCT_TRABAJO_CFGTARIFA CFG ON CFG.TBJ_ID = act_tbj.TBJ_ID AND CFG.CFT_ID =CFT.CFT_ID
+                             where act.borrado = 0 and tbj.borrado = 0 and cft.borrado = 0 and cfg.borrado = 0
 						) t2
 						on (t2.TCT_ID = t1.TCT_ID)
 						when matched then update set
@@ -46,7 +53,7 @@ BEGIN
 						t1.usuariomodificar = ''REMVIP-7173'',
 						t1.fechamodificar = sysdate';
 
-	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizados '||SQL%ROWCOUNT||' registros en ACT_TCT_TRABAJO_CFGTARIFA. Deberian ser 91.408.');  
+	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizados '||SQL%ROWCOUNT||' registros en ACT_TCT_TRABAJO_CFGTARIFA. Deberian ser 91.411.');  
 
 	COMMIT;
     

@@ -48,7 +48,7 @@ Ext.define('HreRem.view.trabajos.TrabajosSearch', {
 				           	 	},
 				           	 	{ 
 					            	fieldLabel: HreRem.i18n('fieldlabel.numero.agrupacion'),
-					            	name: 'numAgrupacionRem',
+					            	name: 'numAgrupacion',
 						        	width: 		230
 				           	 	}
 					       		
@@ -62,7 +62,7 @@ Ext.define('HreRem.view.trabajos.TrabajosSearch', {
 					        	xtype: 'combo',
 					        	fieldLabel: HreRem.i18n('fieldlabel.tipo'),
 					        	reference: 'filtroComboTipoTrabajo',
-					        	name: 'codigoTipo',
+					        	name: 'tipoTrabajoCodigo',
 					        	bind: {
 				            		store: '{comboTipoTrabajo}',
 				            		filters:{
@@ -79,7 +79,7 @@ Ext.define('HreRem.view.trabajos.TrabajosSearch', {
 					        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo'),
 					        	labelWidth:	150,
 					        	width: 		230,
-					        	name: 'codigoSubtipo',
+					        	name: 'subtipoTrabajoCodigo',
 					        	queryMode: 'remote',
 					        	forceSelection: true,
 					        	bind: {
@@ -98,7 +98,7 @@ Ext.define('HreRem.view.trabajos.TrabajosSearch', {
 					        	fieldLabel:  HreRem.i18n('fieldlabel.estado'),
 					        	labelWidth:	150,
 					        	width: 		230,
-					        	name: 'codigoEstado',
+					        	name: 'estadoTrabajoCodigo',
 					        	bind: {
 				            		store: '{filtroComboEstadoTrabajo}'
 				            	},
@@ -181,12 +181,12 @@ Ext.define('HreRem.view.trabajos.TrabajosSearch', {
 											items :	[
 														{
 															fieldLabel: HreRem.i18n('fieldlabel.municipio'),
-											            	name:		'descripcionPoblacion'
+											            	name:		'localidadDescripcion'
 														 },
 														 {
 												        	xtype: 'comboboxfieldbase',
 												        	fieldLabel: HreRem.i18n('fieldlabel.provincia'),
-												        	name: 'codigoProvincia',
+												        	name: 'provinciaCodigo',
 												        	addUxReadOnlyEditFieldPlugin: false,
 												        	bind: {
 											            		store: '{comboFiltroProvincias}'
@@ -220,7 +220,7 @@ Ext.define('HreRem.view.trabajos.TrabajosSearch', {
 												        	xtype: 'comboboxfieldbase',
 					    									addUxReadOnlyEditFieldPlugin: false,
 												        	fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
-												        	name: 'cartera',
+												        	name: 'carteraCodigo',
 												        	bind: {
 											            		store: '{comboEntidadPropietaria}'
 											            	}

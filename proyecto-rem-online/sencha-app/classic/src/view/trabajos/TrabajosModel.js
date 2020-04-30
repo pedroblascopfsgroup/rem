@@ -2,22 +2,21 @@ Ext.define('HreRem.view.trabajos.TrabajosModel', {
     extend: 'HreRem.view.common.GenericViewModel',
     alias: 'viewmodel.trabajos',
     
-    requires: ['HreRem.ux.data.Proxy', 'HreRem.model.BusquedaTrabajo'],
+    requires: ['HreRem.ux.data.Proxy', 'HreRem.model.BusquedaTrabajoGrid'],
     
  	stores: {
-        
-        trabajos: {
+       
+    	  gridBusquedaTrabajos: {
 			pageSize: $AC.getDefaultPageSize(),
-	    	model: 'HreRem.model.BusquedaTrabajo',
+	    	model: 'HreRem.model.BusquedaTrabajoGrid',
 	    	proxy: {
-		        type: 'uxproxy',
-		        localUrl: '/trabajos.json',
-				remoteUrl: 'trabajo/findAll',
-				actionMethods: {read: 'POST'} // Necesario para que el filtro no se mande en la URL lo que provoca un problema de encoding
+		        type: 'uxproxy',		     
+				remoteUrl: 'trabajo/getBusquedaTrabajosGrid',
+				actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'} 
 	    	},	    		
 	    	remoteSort: true,
 	    	remoteFilter: true,	    	
-	    	autoLoad: true,
+	    	autoLoad: false,
 	        listeners : {
 	            beforeload : 'paramLoading'	        
 	        }

@@ -1,7 +1,7 @@
 --/*
 --######################################### 
 --## AUTOR=David Gonzalez
---## FECHA_CREACION=20200429
+--## FECHA_CREACION=20200430
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
 --## INCIDENCIA_LINK=REMVIP-7173
@@ -45,7 +45,7 @@ END IF;
 EXECUTE IMMEDIATE '
 		CREATE TABLE '||V_ESQUEMA_1||'.'||V_TABLA||'
 		(
-			TRABAJO NUMBER(16), TCT_ID NUMBER(16)
+			TRABAJO NUMBER(16), TARIFA VARCHAR2(30 CHAR)
 		)'
 ;
 

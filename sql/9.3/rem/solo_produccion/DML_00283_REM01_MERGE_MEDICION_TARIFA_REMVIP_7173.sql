@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=REMVIP-7088
 --## PRODUCTO=NO
 --## 
---## Finalidad: Carga masiva. act_hfp_hist_fases_pub.hfp_fecha_fin a NULL
+--## Finalidad: Carga masiva. Medicion en ACT_TCT_TRABAJO_CFGTARIFA
 --##                    
 --## INSTRUCCIONES:  
 --## VERSIONES:
@@ -37,18 +37,16 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] Se van a actualizar ACT_TCT_TRABAJO_CFGTARIFA DESDE AUX_MEDICION_TARIFA_REMVIP_7173.');
 
 	execute immediate 'merge into '||V_ESQUEMA||'.ACT_TCT_TRABAJO_CFGTARIFA t1 using (
-						    select DISTINCT CFG.TCT_ID, AUX.MEDICION/100 AS MEDICION
+						    select DISTINCT TCT_ID, 1 AS MEDICION
 						     from '||V_ESQUEMA||'.AUX_MEDICION_TARIFA_REMVIP_7173 AUX 
-						     INNER JOIN '||V_ESQUEMA||'.ACT_TBJ_TRABAJO TBJ ON TBJ.TBJ_NUM_TRABAJO = AUX.TRABAJO 
-						     INNER JOIN '||V_ESQUEMA||'.ACT_TCT_TRABAJO_CFGTARIFA CFG ON CFG.TBJ_ID = TBJ.TBJ_ID 
 						) t2
 						on (t2.TCT_ID = t1.TCT_ID)
 						when matched then update set
 						t1.TCT_MEDICION = t2.MEDICION,
 						t1.usuariomodificar = ''REMVIP-7173'',
-						t2.fechamodificar = sysdate';
+						t1.fechamodificar = sysdate';
 
-	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizados '||SQL%ROWCOUNT||' registros en ACT_TCT_TRABAJO_CFGTARIFA. Deberian ser 91.688.');  
+	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizados '||SQL%ROWCOUNT||' registros en ACT_TCT_TRABAJO_CFGTARIFA. Deberian ser 91.408.');  
 
 	COMMIT;
     

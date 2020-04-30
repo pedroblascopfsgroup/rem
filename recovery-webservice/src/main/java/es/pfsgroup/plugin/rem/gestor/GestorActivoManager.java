@@ -183,6 +183,16 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 		}
 	}
  	
+ 	protected void guardarHistoricoGestorAdicionalEntidad(GestorEntidad gee, Object obj) {
+ 		GestorActivoHistorico gah = new GestorActivoHistorico();
+ 		gah.setUsuario(gee.getUsuario());
+ 		gah.setAuditoria(Auditoria.getNewInstance());
+ 		gah.setActivo((Activo) obj);
+ 		gah.setTipoGestor(gee.getTipoGestor());
+ 		gah.setFechaDesde(new Date());
+ 		gestorEntidadHistoricoDao.save(gah);
+ 	}
+ 	
  	private void actualizaFechaHastaHistoricoGestorAdicionalActivo(GestorActivo gac) {
  		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", gac.getActivo().getId() );
  		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "tipoGestor.id", gac.getTipoGestor().getId());

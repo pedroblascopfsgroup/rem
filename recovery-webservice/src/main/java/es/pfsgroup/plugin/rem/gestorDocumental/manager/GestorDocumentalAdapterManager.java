@@ -259,7 +259,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 			return list;
 			
 		} else {
-			throw new GestorDocumentalException(GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE);
+			throw new GestorDocumentalException("No existe el contenedor para el proveedor: "+proveedor.getCodigoProveedorRem());
 		}
 	}
 

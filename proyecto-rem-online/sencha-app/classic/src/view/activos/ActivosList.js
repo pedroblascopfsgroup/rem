@@ -4,7 +4,7 @@ Ext.define('HreRem.view.activos.ActivosList', {
 	requires: ['HreRem.ux.panel.GMapPanel'],	
 	
     bind: {
-        store: '{activos}'
+        store: '{gridBusquedaActivos}'
     },
     loadAfterBind: false,
     
@@ -164,7 +164,7 @@ Ext.define('HreRem.view.activos.ActivosList', {
 		            flex: 1
 		        },
 		        {
-		            dataIndex: 'entidadPropietariaDescripcion',
+		            dataIndex: 'carteraDescripcion',
 		            text: HreRem.i18n('header.entidad.propietaria'),
 		            width: 70,
 		            renderer: carteraRenderer
@@ -175,17 +175,9 @@ Ext.define('HreRem.view.activos.ActivosList', {
 		            flex: 1
 		        },
 		        {
-		            dataIndex: 'nombreVia',
+		            dataIndex: 'via',
 		            text: HreRem.i18n('header.via'),
-		            flex: 1,
-		            renderer: function(value, cell, record) {
-
-		            	var tipoVia = record.get("tipoVia");
-		            	if(!Ext.isEmpty(tipoVia)) {
-		            		return value + ", " + Ext.util.Format.capitalize(data.tipoVia.descripcion.toLowerCase())
-		            	}
-		            	return value
-		            }
+		            flex: 1		            
 		        },
 		        {
 		            dataIndex: 'localidadDescripcion',
@@ -203,9 +195,9 @@ Ext.define('HreRem.view.activos.ActivosList', {
 		            flex: 0.5           
 		        },
 		        {
+		            dataIndex: 'situacionComercialDescripcion',
 		            text: HreRem.i18n('header.dpto.comercial'),
-		            flex: 0.5,
-		            dataIndex: 'situacionComercial'
+		            flex: 0.5
 		        },
 		        {
 		            text: HreRem.i18n('header.dpto.admision'),
@@ -232,7 +224,7 @@ Ext.define('HreRem.view.activos.ActivosList', {
 		            }
 		        },	
 		        {
-		        	dataIndex: 'flagRating',
+		        	dataIndex: 'flagRatingCodigo',
 		            text     : HreRem.i18n('header.rating'),
 		            flex     : 0.5,            
 		            align: 'center',
@@ -250,7 +242,7 @@ Ext.define('HreRem.view.activos.ActivosList', {
 		            inputItemWidth: 100,
 		            displayInfo: true,
 		            bind: {
-		                store: '{activos}'
+		                store: '{gridBusquedaActivos}'
 		            }
 		        }
 		    ];

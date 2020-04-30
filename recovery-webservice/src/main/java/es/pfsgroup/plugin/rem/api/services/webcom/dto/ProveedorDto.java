@@ -9,6 +9,7 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.MappedColumn;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.NestedDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.WebcomRequired;
+import es.pfsgroup.plugin.rem.rest.dto.CodigoCarterasDto;
 
 public class ProveedorDto implements WebcomRESTDto {
 
@@ -48,6 +49,10 @@ public class ProveedorDto implements WebcomRESTDto {
 	private StringDataType telefonoContactoVisitas;
 	private LongDataType numeroDelegaciones;
 	private StringDataType nombreComercial;
+
+	@WebcomRequired
+	@NestedDto(groupBy="idProveedorRem", type=CodigoCarterasDto.class)
+	private List<CodigoCarterasDto> arrCodCarteraAmbito;
 	
 	
 
@@ -294,7 +299,13 @@ public class ProveedorDto implements WebcomRESTDto {
 		this.nombreComercial = nombreComercial;
 	}
 
-	
+	public List<CodigoCarterasDto> getArrCodCarteraAmbito() {
+		return arrCodCarteraAmbito;
+	}
+
+	public void setArrCodCarteraAmbito( List<CodigoCarterasDto> arrCodCarteraAmbito) {
+		this.arrCodCarteraAmbito = arrCodCarteraAmbito;
+	}
 	
 	
 }

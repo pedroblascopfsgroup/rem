@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina
---## FECHA_CREACION=20190923
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20200421
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.5.0
---## INCIDENCIA_LINK=REMVIP-5276
+--## VERSION_ARTEFACTO=903
+--## INCIDENCIA_LINK=REMVIP-6974
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade a uno varios perfiles, las funciones añadidas en T_ARRAY_FUNCION
@@ -27,7 +27,7 @@ DECLARE
     ERR_MSG VARCHAR2(2048); -- Mensaje de error
 
     -- EDITAR NÚMERO DE ITEM
-    V_ITEM VARCHAR2(20) := 'REMVIP-5276';
+    V_ITEM VARCHAR2(20) := 'REMVIP-6974';
 
     -- EDITAR: FUNCIONES
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);

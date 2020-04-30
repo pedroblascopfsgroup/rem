@@ -3895,8 +3895,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		if(dto.getFacturaPrincipalSuplido() != null) {
 			
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "referenciaEmisor", dto.getFacturaPrincipalSuplido());
-			List<GastoProveedor> gastosProveedor = genericDao.getList(GastoProveedor.class, filtro);
+			Filter filtroFactura = genericDao.createFilter(FilterType.EQUALS, "referenciaEmisor", dto.getFacturaPrincipalSuplido());
+			Filter filtroSuplidos = genericDao.createFilter(FilterType.EQUALS,"suplidosVinculados.codigo", DDSinSiNo.CODIGO_SI);
+			List<GastoProveedor> gastosProveedor = genericDao.getList(GastoProveedor.class, filtroFactura, filtroSuplidos);
 			
 			if(gastosProveedor == null || gastosProveedor.isEmpty()) {
 				throw new JsonViewerException("No existe ninguna factura " + dto.getFacturaPrincipalSuplido() + " en un gasto con 'Suplido vinculado'");

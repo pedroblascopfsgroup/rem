@@ -18,6 +18,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
+import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
@@ -331,6 +332,15 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	List<ActivoProveedor> getComboApiPrimario();
 
 	void deleteActOfr(Long idActivo, Long idOferta);
+	
+/***
+ * Devuelve los objetos que se muestran en el grid de busqueda de activos  
+ * @param dto
+ * @param usuarioLogado
+ * @param devolverPage   true:  el objeto retornado será de tipo Page,  false: el objeto retornado será de tipo List
+ * @return
+ */
+	public Object getBusquedaActivosGrid(DtoActivoGridFilter dto, Usuario usuarioLogado, boolean devolverPage);
 
 	List<HistoricoPeticionesPrecios> getHistoricoSolicitudesPrecios(Long idActivo);
 }

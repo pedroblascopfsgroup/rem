@@ -196,6 +196,11 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		ActivoProveedor proveedor = proveedoresDao.getProveedorById(id);
 		
 		if(!Checks.esNulo(proveedor)) {
+			if (proveedor.getIdPersonaHaya() == null) {
+				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+				Thread maestroPersona = new Thread( new MaestroDePersonas(proveedor.getDocIdentificativo(), proveedor.getCodigoProveedorRem(), usuarioLogado.getUsername()));
+				maestroPersona.start();
+			}
 			try {
 				beanUtilNotNull.copyProperty(dto, "fechaUltimaActualizacion", proveedor.getAuditoria().getFechaModificar());
 				beanUtilNotNull.copyProperty(dto, "id", proveedor.getId());
@@ -1003,21 +1008,13 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		
 		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
 		ActivoProveedor proveedor = proveedoresDao.getProveedorById(id);
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			try {
 				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosProveedor(proveedor);
 			} catch (GestorDocumentalException gex) {
-				if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getMessage())) {
-					logger.error("No existe contenedor registrado para este Proveedor");
-					logger.error("Consultando ID de Proveedor. Creando Contenedor.");
-					Thread maestroPersona = new Thread( new MaestroDePersonas(proveedor.getDocIdentificativo(), proveedor.getCodigoProveedorRem(), usuarioLogado.getUsername()));
-					maestroPersona.start();
-				} else {
-					logger.error(gex.getMessage());
-					throw gex;
-				}
+				logger.error(gex.getMessage());
+				throw gex;
 			}
 		} else {		
 			Filter adjuntoFilter = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", proveedor.getId());

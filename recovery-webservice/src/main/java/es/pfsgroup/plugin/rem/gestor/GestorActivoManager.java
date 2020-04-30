@@ -58,7 +58,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 	public static final String USERNAME_COMITE_ARROW = "grucoarrow";
 	public static final String USERNAME_GRUPO_CES_REMAINING = "grucoces1";
 	public static final String USERNAME_GRUPO_DIVARIAN = "grucodivarian";
-	public static final String USERNAME_GRUPO_PBC = "gestpbc";
  	
  	@Autowired
  	private GenericABMDao genericDao;
@@ -592,10 +591,5 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  		List<Usuario> usuariosAdmision = ((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipoGestor.getId(),activo);		
  		return usuariosAdmision.contains(usuario);
  	}
-
-	@Override
-	public Usuario getUsuarioGrupoPBC() {
-		return genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, USERNAME, USERNAME_GRUPO_PBC));
-	}
  	
  }

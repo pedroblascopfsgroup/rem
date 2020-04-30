@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Ivan Rubio
---## FECHA_CREACION=20200312
+--## AUTOR=David Gonzalez
+--## FECHA_CREACION=20200422
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=R-Barberina
---## INCIDENCIA_LINK=HREOS-9744
+--## VERSION_ARTEFACTO=version-2.20.1-rem
+--## INCIDENCIA_LINK=REMVIP-7058
 --## PRODUCTO=NO
 --## Finalidad: Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación. Liberbank.
 --## Info: https://link-doc.pfsgroup.es/confluence/display/REOS/SP_EXT_PR_ACT_RES_VENTA
@@ -30,6 +30,7 @@
 --##		1.11 (20200120) - Oscar Diestre - Quitada validación para Cajamar
 --##		1.12 (2020311) - HREOS-9744 - Incidencia Ventas y Reservas Cajamar
 --##		1.13 (2020312) - HREOS-9744 - Incidencia Ventas y Reservas Cajamar añadida condición estado reserva firmada
+--##		1.14 (20200422) - REMVIP-7058 - Se añade subcartera 151 y 152 (Divarian para cartera Cerberus)
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -41,7 +42,7 @@ SET DEFINE OFF;
 create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
 
     --Parametros de entrada
-    NUM_RESERVA                 IN NUMBER,
+    NUM_OFERTA                 IN NUMBER,
     FECHA_COBRO_RESERVA         IN VARCHAR2,
     FECHA_DEVOLUCION_RESERVA    IN VARCHAR2,
     IDENTIFICACION_COBRO        IN NUMBER,
@@ -128,7 +129,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
                                                             ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
                                                             LEFT JOIN REM01.DD_ERE_ESTADOS_RESERVA ERE
                                                             ON ERE.DD_ERE_ID = RES.DD_ERE_ID
-                                                            WHERE (CAR.DD_CRA_CODIGO = ''08'' OR (CAR.DD_CRA_CODIGO = ''07'' AND SCR.DD_SCR_CODIGO = ''138'') OR CAR.DD_CRA_CODIGO = ''01'')
+                                                            WHERE (CAR.DD_CRA_CODIGO = ''08'' OR (CAR.DD_CRA_CODIGO = ''07'' AND SCR.DD_SCR_CODIGO IN (''138'',''151'',''152'')) OR CAR.DD_CRA_CODIGO = ''01'')/*Se anyaden subcarteras de Divarian REMVIP-7058*/
                                                             AND OFR.OFR_NUM_OFERTA = :1 
 							    AND RES.BORRADO = 0';
                                                             
@@ -149,7 +150,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
                                                             ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
                                                             LEFT JOIN REM01.DD_ERE_ESTADOS_RESERVA ERE
                                                             ON ERE.DD_ERE_ID = RES.DD_ERE_ID
-                                                            WHERE (CAR.DD_CRA_CODIGO = ''08'' OR (CAR.DD_CRA_CODIGO = ''07'' AND SCR.DD_SCR_CODIGO = ''138'') OR CAR.DD_CRA_CODIGO = ''01'')
+                                                            WHERE (CAR.DD_CRA_CODIGO = ''08'' OR (CAR.DD_CRA_CODIGO = ''07'' AND SCR.DD_SCR_CODIGO IN (''138'',''151'',''152'')) OR CAR.DD_CRA_CODIGO = ''01'')/*Se anyaden subcarteras de Divarian REMVIP-7058*/
                                                             AND OFR.OFR_NUM_OFERTA = :1
                                                             AND ROWNUM = 1 
 							    AND RES.BORRADO = 0';                                                        
@@ -259,7 +260,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
     ) IS
 
     BEGIN
---v1.13
+--v1.14
     V_MSQL := '
       INSERT INTO '||V_ESQUEMA||'.HLD_HISTORICO_LANZA_PER_DETA (
         HLD_SP_CARGA,
@@ -333,12 +334,12 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
     END;
 
 BEGIN
---v1.04
+--v1.14
 
     COD_RETORNO := 0;
     DBMS_OUTPUT.PUT_LINE('[INICIO] Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación.');
     DBMS_OUTPUT.PUT_LINE('[INICIO] A continuación se mostrarán los parámetros de entrada:');
-    DBMS_OUTPUT.PUT_LINE('NUM_RESERVA: '||NUM_RESERVA);
+    DBMS_OUTPUT.PUT_LINE('NUM_RESERVA: '||NUM_OFERTA);
     DBMS_OUTPUT.PUT_LINE('IDENTIFICACION_COBRO: '||IDENTIFICACION_COBRO);
     DBMS_OUTPUT.PUT_LINE('FECHA_COBRO_RESERVA (Se espera yyyyMMdd): '||FECHA_COBRO_RESERVA);
     DBMS_OUTPUT.PUT_LINE('FECHA_DEVOLUCION_RESERVA (Se espera yyyyMMdd): '||FECHA_DEVOLUCION_RESERVA);
@@ -369,8 +370,8 @@ BEGIN
             THEN V_ERROR_DESC := '[ERROR] No se ha informado IDENTIFICACION_COBRO. Por favor, informe el parámetro. Paramos la ejecución.';
                  COD_RETORNO := 1;
         --Desactivamos la validación que nos prohibe actualizar por reserva y por cobro en una misma ejecución.
-        /*WHEN NUM_RESERVA IS NOT NULL AND IDENTIFICACION_COBRO IS NOT NULL
-            THEN V_ERROR_DESC := '[ERROR] Se ha informado NUM_RESERVA e IDENTIFICACION_COBRO simultáneamente, no es posible realizar dos operativas por ejecución. Por favor, ejecute de manera individual. Paramos la ejecución.';
+        /*WHEN NUM_OFERTA IS NOT NULL AND IDENTIFICACION_COBRO IS NOT NULL
+            THEN V_ERROR_DESC := '[ERROR] Se ha informado NUM_OFERTA e IDENTIFICACION_COBRO simultáneamente, no es posible realizar dos operativas por ejecución. Por favor, ejecute de manera individual. Paramos la ejecución.';
                  COD_RETORNO := 1;*/
         WHEN FECHA_COBRO_RESERVA IS NULL AND FECHA_DEVOLUCION_RESERVA IS NULL AND FECHA_COBRO_VENTA IS NULL
             THEN V_ERROR_DESC := '[ERROR] No se han informado FECHA_COBRO_RESERVA o FECHA_DEVOLUCION_RESERVA o FECHA_COBRO_VENTA. Por favor, ingrese una de las tres fechas. Paramos la ejecución.';

@@ -816,5 +816,8 @@ public interface OfertaApi {
 	 * @return DDComiteSancion
 	 */
 	DDComiteSancion calculoComiteLBK(Long idOferta, ExpedienteComercial eco);
+	
+	//devuelve 1 si tiene la tarea, 2 si la tiene resuelta, 0 si no la tiene o NULL error
+	public Integer tieneTarea(ActivoTramite tramite, String codTarea);
 
 }

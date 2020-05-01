@@ -57,7 +57,11 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 
 	private static final String CODIGO_T013_OBTENCION_CONTRATO_RESERVA = "T013_ObtencionContratoReserva";
 	private static final String CODIGO_T017_OBTENCION_CONTRATO_RESERVA = "T017_ObtencionContratoReserva";
-	private static final String CODIGO_T017_RESOLUCION_PRO_MANZANA = "T017_ResolucionPROManzana";
+	
+	private static final String CODIGO_T017_ADVISORY_NOTE = "T017_AdvisoryNote";
+	private static final String CODIGO_T017_RECOMENDACION_ADVISORY = "T017_RecomendCES";
+	private static final String CODIGO_T017_RESOLUCION_PRO_MANZANA = "T017_ResolucionPROManzana";	
+	
 	private static final String FECHA_FIRMA = "fechaFirma";
 	private static final String T017 = "T017";
 
@@ -71,8 +75,16 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 		Integer diasVencimiento = expediente.getCondicionante().getPlazoFirmaReserva();
 		Filter filtro = null;
 		Activo activo = null;
+		Boolean proManzanaFinalizada = null;
 		
-		Boolean proManzanaFinalizada = ofertaApi.esTareaFinalizada(tramite, CODIGO_T017_RESOLUCION_PRO_MANZANA);
+		if(ofertaApi.tieneTarea(tramite, CODIGO_T017_ADVISORY_NOTE) == 0 
+				&& ofertaApi.tieneTarea(tramite, CODIGO_T017_RECOMENDACION_ADVISORY) == 0 
+				&& ofertaApi.tieneTarea(tramite, CODIGO_T017_RESOLUCION_PRO_MANZANA) == 0) {
+			proManzanaFinalizada = true;
+		}else {				
+			proManzanaFinalizada = ofertaApi.tieneTarea(tramite, CODIGO_T017_RESOLUCION_PRO_MANZANA) == 2;
+		}
+		
 		for (TareaExternaValor valor : valores) {
 
 			if (FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Adrián Molina
---## FECHA_CREACION=20200502
+--## FECHA_CREACION=20200503
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-6744

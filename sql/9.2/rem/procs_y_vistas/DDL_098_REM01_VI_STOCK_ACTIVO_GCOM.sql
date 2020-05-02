@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20170322
+--## FECHA_CREACION=20200502
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-1787

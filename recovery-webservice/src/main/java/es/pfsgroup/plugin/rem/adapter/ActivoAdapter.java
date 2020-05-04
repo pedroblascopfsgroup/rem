@@ -1052,17 +1052,15 @@ public class ActivoAdapter {
 		Activo activo = activoApi.get(idActivo);
 		if (activo.getInfoComercial().getTipoActivo().getCodigo().equals(DDTipoActivo.COD_VIVIENDA)) {
 			if(activo.getInfoComercial() != null) {
-				if(activo.getInfoComercial().getTipoInfoComercial() != null) {
-					if(DDTipoInfoComercial.COD_VIVIENDA.equals(activo.getInfoComercial().getTipoInfoComercial().getCodigo())) {
-						
-						ActivoVivienda vivienda = genericDao.get(ActivoVivienda.class, genericDao.createFilter(FilterType.EQUALS, "informeComercial.id", activo.getInfoComercial().getId()));
-												
-							DtoNumPlantas dtoSotano = new DtoNumPlantas();
-							dtoSotano.setNumPlanta(-1L);
-							dtoSotano.setDescripcionPlanta("Planta -1");
-							dtoSotano.setIdActivo(idActivo);
-							listaPlantas.add(dtoSotano);
-			
+				if(activo.getInfoComercial().getTipoInfoComercial() != null) {						
+					ActivoVivienda vivienda = genericDao.get(ActivoVivienda.class, genericDao.createFilter(FilterType.EQUALS, "informeComercial.id", activo.getInfoComercial().getId()));
+					if(vivienda != null) {							
+						DtoNumPlantas dtoSotano = new DtoNumPlantas();
+						dtoSotano.setNumPlanta(-1L);
+						dtoSotano.setDescripcionPlanta("Planta -1");
+						dtoSotano.setIdActivo(idActivo);
+						listaPlantas.add(dtoSotano);
+		
 						for (int i = 0; i < vivienda.getNumPlantasInter(); i++) {
 							DtoNumPlantas dto = new DtoNumPlantas();
 							dto.setNumPlanta(Long.valueOf(i));
@@ -1071,10 +1069,10 @@ public class ActivoAdapter {
 							dto.setIdActivo(idActivo);
 							listaPlantas.add(dto);
 						}
+						
 					}
 				}
-
-		  }
+			}
 		}
 		return listaPlantas;
 	}

@@ -4122,6 +4122,35 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return resultado;
 	}
 
+	//devuelve 1 si tiene la tarea, 2 si la tiene resuelta, 0 si no la tiene o NULL error
+	@Override
+	public Integer tieneTarea(ActivoTramite tramite, String codTarea) {
+		Boolean resultado = null;
+		if(!Checks.esNulo(codTarea) && !Checks.esNulo(tramite)) {
+
+			Filter filtroTRA = genericDao.createFilter(FilterType.EQUALS, "tramite", tramite);
+
+			List<TareaActivo> listaTareas = genericDao.getList(TareaActivo.class, filtroTRA);
+
+			if(!Checks.estaVacio(listaTareas)) {
+				for(TareaActivo tarea : listaTareas) {
+					if(tarea.getTareaExterna() != null 
+						&& tarea.getTareaExterna().getTareaProcedimiento() != null 
+						&& codTarea.equals(tarea.getTareaExterna().getTareaProcedimiento().getCodigo())) {
+							resultado = !Checks.esNulo(tarea.getTareaFinalizada()) ? tarea.getTareaFinalizada() : false;	
+							break;
+					}
+				}
+			}
+		}else {
+			return null;
+		}
+		if (resultado != null) {
+			return resultado ? 2 : 1;
+		}else {
+			return 0;
+		}
+	}
 	@Override
 	public boolean checkEsYubai(TareaExterna tareaExterna) {
 		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);

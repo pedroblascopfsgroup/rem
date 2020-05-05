@@ -712,13 +712,13 @@ public class ActivoAdapter {
 		if (esUA) {
 			activo = activoMatriz;
 		}
-
-		if (activo.getCargas() != null) {
-
-			for (int i = 0; i < activo.getCargas().size(); i++) {
+		List<ActivoCargas> listaCargas = null;
+		listaCargas = genericDao.getList(ActivoCargas.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()),
+				genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+		if (listaCargas != null) {			
+			for (ActivoCargas activoCarga : listaCargas) {
 				DtoActivoCargas cargaDto = new DtoActivoCargas();
 				try {
-					ActivoCargas activoCarga = activo.getCargas().get(i);
 					beanUtilNotNull.copyProperties(cargaDto, activoCarga);
 					beanUtilNotNull.copyProperties(cargaDto, activoCarga.getCargaBien());
 					beanUtilNotNull.copyProperty(cargaDto, "idActivoCarga", activoCarga.getId());
@@ -1052,15 +1052,16 @@ public class ActivoAdapter {
 		Activo activo = activoApi.get(idActivo);
 		if (activo.getInfoComercial().getTipoActivo().getCodigo().equals(DDTipoActivo.COD_VIVIENDA)) {
 			if(activo.getInfoComercial() != null) {
-				if(activo.getInfoComercial().getTipoInfoComercial() != null) {						
+				if(activo.getInfoComercial().getTipoInfoComercial() != null) {
+						
 					ActivoVivienda vivienda = genericDao.get(ActivoVivienda.class, genericDao.createFilter(FilterType.EQUALS, "informeComercial.id", activo.getInfoComercial().getId()));
-					if(vivienda != null) {							
+					if(vivienda != null){				
 						DtoNumPlantas dtoSotano = new DtoNumPlantas();
 						dtoSotano.setNumPlanta(-1L);
 						dtoSotano.setDescripcionPlanta("Planta -1");
 						dtoSotano.setIdActivo(idActivo);
 						listaPlantas.add(dtoSotano);
-		
+					
 						for (int i = 0; i < vivienda.getNumPlantasInter(); i++) {
 							DtoNumPlantas dto = new DtoNumPlantas();
 							dto.setNumPlanta(Long.valueOf(i));
@@ -1069,7 +1070,6 @@ public class ActivoAdapter {
 							dto.setIdActivo(idActivo);
 							listaPlantas.add(dto);
 						}
-						
 					}
 				}
 			}

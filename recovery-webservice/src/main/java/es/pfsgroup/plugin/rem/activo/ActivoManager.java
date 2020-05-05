@@ -1182,6 +1182,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		if(dtoCondicionanteDisponibilidad.getComboOtro() != null) {
 			condicionantesDisponibilidad.setComboOtro(dtoCondicionanteDisponibilidad.getComboOtro());
+			
+			if(dtoCondicionanteDisponibilidad.getComboOtro() == 0)
+				condicionantesDisponibilidad.setOtro(null);
 		}
 		
 		genericDao.save(ActivoSituacionPosesoria.class, condicionantesDisponibilidad);

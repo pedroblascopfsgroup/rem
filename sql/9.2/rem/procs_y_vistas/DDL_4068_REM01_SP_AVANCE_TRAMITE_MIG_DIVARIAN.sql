@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Carles Molins
---## FECHA_CREACION=20200411
+--## FECHA_CREACION=20200505
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-6940
@@ -12,6 +12,7 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 REMVIP-7219 - GUILLEM REY - CAMBIAR ASIGNACION
 --#########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE

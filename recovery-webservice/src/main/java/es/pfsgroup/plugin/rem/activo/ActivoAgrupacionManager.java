@@ -488,8 +488,8 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	@Override
 	@Transactional(readOnly = false)
 	public List<ActivoFoto> getFotosSubdivision(DtoSubdivisiones subdivision) {
-		List<ActivoFoto> listaFotos = activoAgrupacionDao.getFotosSubdivision(subdivision);
-		if (gestorDocumentalFotos.isActive() && (listaFotos == null || listaFotos.isEmpty())) {
+		List<ActivoFoto> listaFotos = null;
+		if (gestorDocumentalFotos.isActive()) {
 			FileListResponse fileListResponse = null;
 			try {
 				FileSearch fileSearch = new FileSearch();
@@ -508,6 +508,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 						for (es.pfsgroup.plugin.rem.rest.dto.File fileGD : fileListResponse.getData()) {
 							this.uploadFoto(fileGD);
 						}
+						activoAgrupacionDao.doFlush();
 						listaFotos = activoAgrupacionDao.getFotosSubdivision(subdivision);
 					}
 				}
@@ -515,6 +516,8 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				logger.error("Error obteniedno las fotos del CDN", e);
 			}
 
+		}else {
+			listaFotos = activoAgrupacionDao.getFotosSubdivision(subdivision);
 		}
 		return listaFotos;
 	}
@@ -522,9 +525,8 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	@Override
 	@Transactional(readOnly = false)
 	public List<ActivoFoto> getFotosAgrupacionById(Long id) {
-
-		List<ActivoFoto> listaFotos = activoAgrupacionDao.getFotosAgrupacionById(id);
-		if (gestorDocumentalFotos.isActive() && (listaFotos == null || listaFotos.isEmpty())) {
+		List<ActivoFoto> listaFotos = null;
+		if (gestorDocumentalFotos.isActive()) {
 			FileListResponse fileListResponse = null;
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
 			ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
@@ -536,6 +538,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 						for (es.pfsgroup.plugin.rem.rest.dto.File fileGD : fileListResponse.getData()) {
 							this.uploadFoto(fileGD);
 						}
+						activoAgrupacionDao.doFlush();
 						listaFotos = activoAgrupacionDao.getFotosAgrupacionById(id);
 					}
 				}
@@ -543,6 +546,8 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				logger.error("Error obteniedno las fotos del CDN", e);
 			}
 
+		}else {
+			listaFotos = activoAgrupacionDao.getFotosAgrupacionById(id);
 		}
 		return listaFotos;
 

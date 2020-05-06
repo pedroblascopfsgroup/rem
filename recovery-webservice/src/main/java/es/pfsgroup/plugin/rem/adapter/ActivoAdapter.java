@@ -467,7 +467,9 @@ public class ActivoAdapter {
 					if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {
 						es.pfsgroup.plugin.rem.rest.dto.File fileGD = fileListResponse.getData().get(0);
 						activoFoto = activoApi.uploadFoto(fileGD);
-						
+						if(activoFoto != null) {
+							return true;
+						}
 					}
 				} catch (Exception e) {
 					logger.error("Error obteniendo las fotos del CDN", e);

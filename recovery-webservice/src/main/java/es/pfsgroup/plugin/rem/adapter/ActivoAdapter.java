@@ -1558,7 +1558,11 @@ public class ActivoAdapter {
 					if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {
 						listaActivoFoto = new ArrayList<ActivoFoto>();
 						for (es.pfsgroup.plugin.rem.rest.dto.File fileGD : fileListResponse.getData()) {
-							listaActivoFoto.add(fileItemToActivoFoto(fileGD, activo));
+							ActivoFoto af = fileItemToActivoFoto(fileGD, activo);
+							if(af != null) {
+								af.setId(af.getRemoteId());
+								listaActivoFoto.add(af);
+							}
 						}
 					}
 				} catch (Exception e) {
@@ -2819,11 +2823,9 @@ public class ActivoAdapter {
 		boolean resultado = true;
 		
 		for (int i = 0; i < id.length; i++) {
-			ActivoFoto actvFoto = this.getFotoActivoById(id[i]);
-			genericDao.deleteById(ActivoFoto.class, actvFoto.getId());
-			if (actvFoto.getRemoteId() != null) {
+			if (id[i] != null) {
 				try{
-					gestorDocumentalFotos.delete(actvFoto.getRemoteId());
+					gestorDocumentalFotos.delete(id[i]);
 				}catch(UnknownIdException e){
 					logger.error("la foto no existe en el gestor documental");
 				}

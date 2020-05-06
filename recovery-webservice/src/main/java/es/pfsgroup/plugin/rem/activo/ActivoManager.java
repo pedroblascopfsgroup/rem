@@ -808,10 +808,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 
 				if (activoFoto.getOrden() == null) {
-					orden = activoDao.getMaxOrdenFotoById(activo.getId()) + 1;
+					orden = activoDao.getMaxOrdenFotoById(activo.getId());
+					if(orden == null)
+						orden = 0;
+					else
+						orden++;
 
 				} else {
 					orden = activoFoto.getOrden();
+					if(orden == null)
+						orden = 0;
 				}
 
 				activoFoto.setActivo(activo);
@@ -881,7 +887,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		SITUACION situacion;
 		PRINCIPAL principal;
 		Integer orden = activoDao.getMaxOrdenFotoById(Long.parseLong(fileItem.getParameter("idEntidad")));
-		orden++;
+		if(orden == null)
+			orden = 0;
+		else
+			orden++;
 
 		try {
 			if (gestorDocumentalFotos.isActive()) {

@@ -335,7 +335,10 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		FileResponse fileReponse;
 		ActivoFoto activoFoto;
 		Integer orden = activoApi.getMaxOrdenFotoByIdSubdivision(agrupacionId, subdivisionId);
-		orden++;
+		if(orden == null)
+			orden = 0;
+		else
+			orden++;
 		try {
 			//el gestor documental no esta activo en local/inte, para probar negarlo
 			if (gestorDocumentalFotos.isActive()) {
@@ -414,7 +417,10 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 			if (agrupacion != null) {
 				ActivoFoto activoFoto;
 				Integer orden = activoApi.getMaxOrdenFotoByIdSubdivision(agrupacionId, subdivisionId);
-				orden++;
+				if(orden == null)
+					orden = 0;
+				else
+					orden++;
 				activoFoto = activoAdapter.getFotoActivoByRemoteId(fileItem.getId());
 				if (activoFoto == null) {
 					activoFoto = new ActivoFoto(fileItem);
@@ -507,7 +513,11 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 					if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {
 						listaFotos = new ArrayList<ActivoFoto>();
 						for (es.pfsgroup.plugin.rem.rest.dto.File fileGD : fileListResponse.getData()) {
-							listaFotos.add(fileItemToActivoFoto(fileGD));
+							ActivoFoto af = this.fileItemToActivoFoto(fileGD);
+							if(af != null) {
+								af.setId(af.getRemoteId());
+								listaFotos.add(af);
+							}
 						}
 					}
 				}
@@ -536,7 +546,11 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 					if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {
 						listaFotos = new ArrayList<ActivoFoto>();
 						for (es.pfsgroup.plugin.rem.rest.dto.File fileGD : fileListResponse.getData()) {
-							listaFotos.add(this.fileItemToActivoFoto(fileGD));
+							ActivoFoto af = this.fileItemToActivoFoto(fileGD);
+							if(af != null) {
+								af.setId(af.getRemoteId());
+								listaFotos.add(af);
+							}
 						}
 					}
 				}

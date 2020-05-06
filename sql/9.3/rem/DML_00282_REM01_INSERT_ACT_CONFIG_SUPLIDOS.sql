@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20200506
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-6642
+--## INCIDENCIA_LINK=HREOS-10216
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade los datos iniciales a la tabla ACT_CONFIG_SUPLIDOS.

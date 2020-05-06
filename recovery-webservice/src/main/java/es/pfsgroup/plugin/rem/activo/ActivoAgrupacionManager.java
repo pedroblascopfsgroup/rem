@@ -506,6 +506,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 					if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {
 						for (es.pfsgroup.plugin.rem.rest.dto.File fileGD : fileListResponse.getData()) {
+							activoAgrupacionDao.doFlush();
 							this.uploadFoto(fileGD);
 						}
 						activoAgrupacionDao.doFlush();
@@ -536,6 +537,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 					if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {
 						for (es.pfsgroup.plugin.rem.rest.dto.File fileGD : fileListResponse.getData()) {
+							activoAgrupacionDao.doFlush();
 							this.uploadFoto(fileGD);
 						}
 						activoAgrupacionDao.doFlush();

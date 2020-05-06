@@ -3887,10 +3887,25 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	private void validacionPreviaSaveUpdateGasto(DtoFichaGastoProveedor dto, Long id) {
 		
 		GastoProveedor gastoProveedor = null;
+		List<GastoSuplido> gastosSuplidos = null;
+		
+		Filter filtroProveedorPadre = null;
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		
 		if(id != null) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
 			gastoProveedor = genericDao.get(GastoProveedor.class, filtro);
+		}
+		
+		if(gastoProveedor != null && gastoProveedor.getSuplidosVinculados() != null	&& DDSinSiNo.CODIGO_SI.equals(gastoProveedor.getSuplidosVinculados().getCodigo())
+				&& (dto.getReferenciaEmisor() != null || dto.getBuscadorNifEmisor() != null)) {
+			
+			filtroProveedorPadre = genericDao.createFilter(FilterType.EQUALS, "gastoProveedorPadre", gastoProveedor);
+			gastosSuplidos = genericDao.getList(GastoSuplido.class, filtroProveedorPadre, filtroBorrado);
+			
+			if(gastosSuplidos != null && !gastosSuplidos.isEmpty()) {
+				throw new JsonViewerException("No se puede modificar los campos 'Nº Factura / liquidacion' y 'NIF Emisor' mientras el gasto tenga suplidos");
+			}
 		}
 		
 		if(dto.getFacturaPrincipalSuplido() != null) {
@@ -3921,7 +3936,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				}
 			} else {
 				if(gastoProveedor != null) {
-					List<GastoSuplido> gastosSuplidos = genericDao.getList(GastoSuplido.class, genericDao.createFilter(FilterType.EQUALS, "gastoProveedorPadre", gastoProveedor));
+					
+					filtroProveedorPadre = genericDao.createFilter(FilterType.EQUALS, "gastoProveedorPadre", gastoProveedor);;
+					gastosSuplidos = genericDao.getList(GastoSuplido.class, filtroProveedorPadre, filtroBorrado);
 					
 					if(gastosSuplidos != null && !gastosSuplidos.isEmpty()) {
 						throw new JsonViewerException("No se puede actualizar el campo 'Suplidos vinculados' a 'No' si tiene suplidos vinculados");

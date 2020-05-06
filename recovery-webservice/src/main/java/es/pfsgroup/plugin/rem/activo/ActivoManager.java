@@ -3649,7 +3649,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if (!Checks.esNulo(cargaDto.getIdActivoCarga())) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", cargaDto.getIdActivoCarga());
 			cargaSeleccionada = genericDao.get(ActivoCargas.class, filtro);
-
+			cargaBien = cargaSeleccionada.getCargaBien();
 		} else {
 			cargaSeleccionada = new ActivoCargas();
 			cargaBien = new NMBBienCargas();
@@ -3667,7 +3667,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		try {
 			beanUtilNotNull.copyProperties(cargaSeleccionada, cargaDto);
-			beanUtilNotNull.copyProperties(cargaBien, cargaDto);
+			if(cargaBien != null)
+				beanUtilNotNull.copyProperties(cargaBien, cargaDto);
 
 			if (!Checks.esNulo(cargaDto.getEstadoCodigo())) {
 				DDEstadoCarga estadoCarga = (DDEstadoCarga) utilDiccionarioApi
@@ -3683,7 +3684,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (!Checks.esNulo(cargaDto.getEstadoEconomicaCodigo())) {
 				DDSituacionCarga situacionCarga = (DDSituacionCarga) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDSituacionCarga.class, cargaDto.getEstadoEconomicaCodigo());
-				cargaBien.setSituacionCargaEconomica(situacionCarga);
+				if(cargaBien != null)
+					cargaBien.setSituacionCargaEconomica(situacionCarga);
 			}
 
 			if (!Checks.esNulo(cargaDto.getTipoCargaCodigo())) {
@@ -3718,7 +3720,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			logger.error("Error en activoManager", e);
 		}
 		cargaSeleccionada.setCargaBien(cargaBien);
-		genericDao.save(NMBBienCargas.class, cargaBien);
+		if(cargaBien != null)
+			genericDao.save(NMBBienCargas.class, cargaBien);
 		activoCargasApi.saveOrUpdate(cargaSeleccionada);
 		
 		if (!Checks.esNulo(cargaSeleccionada) && !Checks.esNulo(cargaSeleccionada.getActivo()) && !Checks.esNulo(cargaSeleccionada.getActivo().getId())) {

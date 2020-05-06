@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
@@ -226,6 +227,7 @@ import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
+import es.pfsgroup.plugin.rem.rest.dto.FileSearch;
 import es.pfsgroup.plugin.rem.rest.dto.HistoricoPropuestasPreciosDto;
 import es.pfsgroup.plugin.rem.restclient.exception.UnknownIdException;
 import es.pfsgroup.plugin.rem.service.TabActivoDatosBasicos;
@@ -430,10 +432,9 @@ public class ActivoAdapter {
 
 	@Transactional(readOnly = false)
 	public boolean saveFoto(DtoFoto dtoFoto) {
-
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoFoto.getId());
-		ActivoFoto activoFoto = genericDao.get(ActivoFoto.class, filtro);
+		ActivoFoto activoFoto = null;
 		boolean resultado = false;
+		FileResponse fileReponse = null;
 		try {
 
 			if (gestorDocumentalFotos.isActive()) {
@@ -453,18 +454,36 @@ public class ActivoAdapter {
 						situacion = SITUACION.EXTERIOR;
 					}
 				}
-				FileResponse fileReponse = gestorDocumentalFotos.update(activoFoto.getRemoteId(), dtoFoto.getNombre(),
+				fileReponse = gestorDocumentalFotos.update(dtoFoto.getId(), dtoFoto.getNombre(),
 						null, dtoFoto.getDescripcion(), principal, situacion, dtoFoto.getOrden());
 				if (fileReponse.getError() != null && !fileReponse.getError().isEmpty()) {
 					throw new RuntimeException(fileReponse.getError());
 				}
+			
+				FileListResponse fileListResponse = null;
+				try {
+					fileListResponse = gestorDocumentalFotos.get(dtoFoto.getId());
+	
+					if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {
+						es.pfsgroup.plugin.rem.rest.dto.File fileGD = fileListResponse.getData().get(0);
+						activoFoto = activoApi.uploadFoto(fileGD);
+						
+					}
+				} catch (Exception e) {
+					logger.error("Error obteniendo las fotos del CDN", e);
+				}
+			}else {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoFoto.getId());
+				activoFoto = genericDao.get(ActivoFoto.class, filtro);
 			}
+			if(activoFoto == null) 
+				activoFoto = new ActivoFoto();
+
 			beanUtilNotNull.copyProperties(activoFoto, dtoFoto);
 			if(!Checks.esNulo(dtoFoto.getOrden())) {
 				activoFoto.setOrden(dtoFoto.getOrden());
 			}
 			genericDao.save(ActivoFoto.class, activoFoto);
-
 		} catch (Exception e) {
 			logger.error(e);
 			resultado = false;

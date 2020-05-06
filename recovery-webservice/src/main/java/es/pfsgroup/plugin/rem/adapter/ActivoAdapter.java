@@ -208,6 +208,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
@@ -222,6 +223,7 @@ import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
+import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.rest.dto.HistoricoPropuestasPreciosDto;
@@ -1554,12 +1556,10 @@ public class ActivoAdapter {
 					fileListResponse = gestorDocumentalFotos.get(PROPIEDAD.ACTIVO, activo.getNumActivo());
 
 					if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {
+						listaActivoFoto = new ArrayList<ActivoFoto>();
 						for (es.pfsgroup.plugin.rem.rest.dto.File fileGD : fileListResponse.getData()) {
-							activoDao.hibernateFlush();
-							activoApi.uploadFoto(fileGD);
+							listaActivoFoto.add(fileItemToActivoFoto(fileGD, activo));
 						}
-						activoDao.hibernateFlush();
-						listaActivoFoto = genericDao.getListOrdered(ActivoFoto.class, order, filtro);
 					}
 				} catch (Exception e) {
 					logger.error("Error obteniendo las fotos del CDN", e);
@@ -1571,6 +1571,85 @@ public class ActivoAdapter {
 		}
 		return listaActivoFoto;
 
+	}
+	
+	private ActivoFoto fileItemToActivoFoto(File fileItem, Activo activo) throws Exception {
+		ActivoFoto activoFoto = null;
+		try {
+			if (fileItem.getMetadata().get("id_activo_haya") == null) {
+				throw new Exception("La foto no tiene activo");
+			}
+
+			if (fileItem.getMetadata().get("tipo") == null) {
+				throw new Exception("La foto no tiene tipo");
+			}
+
+			if (activo != null) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
+						fileItem.getMetadata().get("tipo"));
+				DDTipoFoto tipoFoto = genericDao.get(DDTipoFoto.class, filtro);
+				if (tipoFoto == null) {
+					throw new Exception("El tipo no existe");
+				}
+				Integer orden = null;
+				activoFoto = new ActivoFoto(fileItem);
+				
+
+				if(fileItem.getMetadata().containsKey("orden")) {
+					activoFoto.setOrden(Integer.valueOf(fileItem.getMetadata().get("orden")));
+				}
+				
+				activoFoto.setActivo(activo);
+				activoFoto.setTipoFoto(tipoFoto);
+				activoFoto.setNombre(fileItem.getBasename());
+
+				if (fileItem.getMetadata().containsKey("descripcion")) {
+					activoFoto.setDescripcion(fileItem.getMetadata().get("descripcion"));
+				}
+
+				if (fileItem.getMetadata().containsKey("principal") && fileItem.getMetadata().get("principal") != null
+						&& fileItem.getMetadata().get("principal").equals("1")) {
+					activoFoto.setPrincipal(true);
+				} else {
+					activoFoto.setPrincipal(false);
+				}
+
+				Date fechaSubida = new Date();
+				if (fileItem.getMetadata().containsKey("fecha_subida")) {
+					try {
+						fechaSubida = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+								.parse(fileItem.getMetadata().get("fecha_subida"));
+
+					} catch (Exception e) {
+						logger.error("El webservice del Gestor documental ha enviado una fecha sin formato");
+					}
+				}
+
+				activoFoto.setFechaDocumento(fechaSubida);
+
+				if (fileItem.getMetadata().containsKey("interior_exterior")
+						&& fileItem.getMetadata().get("interior_exterior") != null) {
+					if (fileItem.getMetadata().get("interior_exterior").equals("1")) {
+						activoFoto.setInteriorExterior(Boolean.TRUE);
+					} else {
+						activoFoto.setInteriorExterior(Boolean.FALSE);
+					}
+				}
+
+				activoFoto.setOrden(orden);
+
+				logger.debug("Foto procesada para el activo " + activo.getNumActivo());
+
+			} else {
+				logger.debug("No existe la unidad organizativa");
+			}
+
+		} catch (Exception e) {
+			logger.error("Error insertando/actualizando foto", e);
+			throw e;
+		}
+
+		return activoFoto;
 	}
 
 	public List<ActivoFoto> getListFotosActivoByIdOrderPrincipal(Long id) {

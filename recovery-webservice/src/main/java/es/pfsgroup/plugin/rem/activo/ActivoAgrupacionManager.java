@@ -505,12 +505,10 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 					fileListResponse = gestorDocumentalFotos.get(fileSearch);
 
 					if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {
+						listaFotos = new ArrayList<ActivoFoto>();
 						for (es.pfsgroup.plugin.rem.rest.dto.File fileGD : fileListResponse.getData()) {
-							activoAgrupacionDao.doFlush();
-							this.uploadFoto(fileGD);
+							listaFotos.add(fileItemToActivoFoto(fileGD));
 						}
-						activoAgrupacionDao.doFlush();
-						listaFotos = activoAgrupacionDao.getFotosSubdivision(subdivision);
 					}
 				}
 			} catch (Exception e) {
@@ -536,12 +534,10 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 					fileListResponse = gestorDocumentalFotos.get(PROPIEDAD.AGRUPACION, agrupacion.getNumAgrupRem());
 
 					if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {
+						listaFotos = new ArrayList<ActivoFoto>();
 						for (es.pfsgroup.plugin.rem.rest.dto.File fileGD : fileListResponse.getData()) {
-							activoAgrupacionDao.doFlush();
-							this.uploadFoto(fileGD);
+							listaFotos.add(this.fileItemToActivoFoto(fileGD));
 						}
-						activoAgrupacionDao.doFlush();
-						listaFotos = activoAgrupacionDao.getFotosAgrupacionById(id);
 					}
 				}
 			} catch (Exception e) {
@@ -553,6 +549,58 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		}
 		return listaFotos;
 
+	}
+	
+	private ActivoFoto fileItemToActivoFoto(File fileItem) throws Exception {
+		ActivoFoto activoFoto = null;
+		if (fileItem.getMetadata().get("id_agrupacion_haya") == null) {
+			throw new Exception("La foto no tiene agrupacion");
+		}
+
+		Long agrupacionId = Long.parseLong(fileItem.getMetadata().get("id_agrupacion_haya"));
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", agrupacionId);
+		ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
+		try {
+			if (agrupacion != null) {
+				activoFoto = new ActivoFoto(fileItem);				
+
+				activoFoto.setAgrupacion(agrupacion);
+				
+				if (fileItem.getMetadata().get("id_subdivision") != null) {
+					activoFoto.setSubdivision(new BigDecimal(fileItem.getMetadata().get("id_subdivision"))); 
+				}
+
+				activoFoto.setNombre(fileItem.getBasename());
+
+				if (fileItem.getMetadata().containsKey("descripcion")) {
+					activoFoto.setDescripcion(fileItem.getMetadata().get("descripcion"));
+				}
+
+				activoFoto.setPrincipal(false);
+
+				Date fechaSubida = new Date();
+				if (fileItem.getMetadata().containsKey("fecha_subida")) {
+					try {
+						fechaSubida = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+								.parse(fileItem.getMetadata().get("fecha_subida"));
+					} catch (Exception e) {
+						logger.error("El webservice del Gestor documental ha enviado una fecha sin formato");
+					}
+				}
+
+				activoFoto.setFechaDocumento(fechaSubida);
+				
+				if(fileItem.getMetadata().containsKey("orden")) {
+					activoFoto.setOrden(Integer.valueOf(fileItem.getMetadata().get("orden")));
+				}
+
+			} else {
+				throw new Exception("La foto esta asociada a una agrupacion inexistente");
+			}
+		} catch (Exception e) {
+			throw new Exception(e.getMessage());
+		}
+		return activoFoto;
 	}
 
 	@Override

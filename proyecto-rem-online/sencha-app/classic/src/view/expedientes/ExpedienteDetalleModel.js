@@ -87,7 +87,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    	 
 	    	 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 	    	 var subCartera = get('expediente.propietario');
-	    	 return (CONST.CARTERA['BANKIA'] == carteraCodigo && CONST.NOMBRE_SUBCARTERA['BANKIA_HABITAT'] != subCartera) || CONST.CARTERA['LIBERBANK'] == carteraCodigo;
+	    	 return (CONST.CARTERA['BANKIA'] == carteraCodigo && CONST.NOMBRE_SUBCARTERA['BANKIA_HABITAT'] != subCartera) 
+	    	 		|| CONST.CARTERA['LIBERBANK'] == carteraCodigo || CONST.CARTERA['CERBERUS'] == carteraCodigo;
 	     },
 	     
 	     fechaContabilizacionReservaReadOnly: function(get) {

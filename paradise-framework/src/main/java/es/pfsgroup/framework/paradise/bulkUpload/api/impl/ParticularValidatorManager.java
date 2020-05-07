@@ -1189,6 +1189,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String query = "SELECT COUNT(1) "
 				+ "	  	FROM VI_OFERTAS_ACTIVOS_AGRUPACION v "
 				+ " 	INNER JOIN ECO_EXPEDIENTE_COMERCIAL eco ON v.ECO_ID = eco.ECO_ID "
+				+ " 	INNER JOIN OFR_OFERTAS ofr ON v.OFR_NUM_OFERTA = ofr.OFR_NUM_OFERTA "
 				+ "  	INNER JOIN ACT_TBJ_TRABAJO tbj ON eco.TBJ_ID = tbj.TBJ_ID "
 				+ "  	INNER JOIN ACT_TRA_TRAMITE tra ON tbj.TBJ_ID = tra.TBJ_ID "
 				+ "  	INNER JOIN TAC_TAREAS_ACTIVOS tac ON tra.TRA_ID = tac.TRA_ID "
@@ -1196,6 +1197,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		INNER JOIN ACT_ACTIVO act ON act.ACT_ID = v.ACT_ID "
 				+ " 	WHERE act.ACT_NUM_ACTIVO ="+numActivo+" "
 				+ "    	AND tar.TAR_FECHA_FIN IS NULL "
+				+ "    	AND ofr.DD_EOF_ID <> 2 "
 				+ "     FETCH FIRST 1 ROWS ONLY ";
 
 		String resultado = rawDao.getExecuteSQL(query);

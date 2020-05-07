@@ -1544,11 +1544,11 @@ public class ActivoAdapter {
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		Order order = new Order(OrderType.ASC, "orden");
 		
-		List<ActivoFoto> listaActivoFoto = null;
+		List<ActivoFoto> listaActivoFoto = genericDao.getListOrdered(ActivoFoto.class, order, filtro, filtroBorrado);
 		
 
 		if (activo != null) {
-			if (gestorDocumentalFotos.isActive()) {
+			if (gestorDocumentalFotos.isActive() && (listaActivoFoto == null || listaActivoFoto.isEmpty())) {
 				FileListResponse fileListResponse = null;
 				try {
 					fileListResponse = gestorDocumentalFotos.get(PROPIEDAD.ACTIVO, activo.getNumActivo());
@@ -1557,15 +1557,12 @@ public class ActivoAdapter {
 						for (es.pfsgroup.plugin.rem.rest.dto.File fileGD : fileListResponse.getData()) {
 							activoApi.uploadFoto(fileGD);
 						}
-						activoDao.hibernateFlush();
 						listaActivoFoto = genericDao.getListOrdered(ActivoFoto.class, order, filtro);
 					}
 				} catch (Exception e) {
 					logger.error("Error obteniendo las fotos del CDN", e);
 				}
 
-			}else {
-				listaActivoFoto = genericDao.getListOrdered(ActivoFoto.class, order, filtro, filtroBorrado);
 			}
 		}
 		return listaActivoFoto;

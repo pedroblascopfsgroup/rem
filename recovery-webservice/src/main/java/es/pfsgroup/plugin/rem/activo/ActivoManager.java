@@ -781,8 +781,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	@Transactional(readOnly = false)
-	public ActivoFoto uploadFoto(File fileItem) throws Exception {
-		ActivoFoto activoFoto = null;
+	public String uploadFoto(File fileItem) throws Exception {
 		try {
 			if (fileItem.getMetadata().get("id_activo_haya") == null) {
 				throw new Exception("La foto no tiene activo");
@@ -803,7 +802,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					throw new Exception("El tipo no existe");
 				}
 				Integer orden = null;
-				activoFoto = activoAdapter.getFotoActivoByRemoteId(fileItem.getId());
+				ActivoFoto activoFoto = activoAdapter.getFotoActivoByRemoteId(fileItem.getId());
 				if (activoFoto == null) {
 					activoFoto = new ActivoFoto(fileItem);
 				}
@@ -859,7 +858,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 
 				activoFoto.setOrden(orden);
-				activoFoto = genericDao.save(ActivoFoto.class, activoFoto);
+				genericDao.save(ActivoFoto.class, activoFoto);
 
 				logger.debug("Foto procesada para el activo " + activo.getNumActivo());
 
@@ -872,7 +871,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			throw e;
 		}
 
-		return activoFoto;
+		return null;
 	}
 
 	@Override

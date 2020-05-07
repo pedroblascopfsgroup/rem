@@ -511,50 +511,24 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	},
 	
 	updateOrdenFotosInterno: function(data, record, store) {
-
-		//store.beginUpdate();
 		var me = this;
-		me.storeGuardado = store;
-		me.ordenGuardado = 0;
-		me.refrescarGuardado = true;
-		var orden = 1;
-		var modificados = new Array();
-		var contadorModificados = 0;
-		for (i=0; i<record.store.getData().items.length;i++) {
-			
-			if (store.getData().items[i].data.orden != orden) {
-				store.getAt(i).data.orden = orden;
-				
-				var url =  $AC.getRemoteUrl('activo/updateFotosById');
-    			Ext.Ajax.request({
-    			
-	    		     url: url,
-	    		     params: {
-	    		     			id: store.getAt(i).data.id,
-	    		     			orden: store.getAt(i).data.orden 	
-	    		     		}
-	    			
-	    		    ,success: function (a, operation, context) {
-	                    if (me.ordenGuardado >= me.storeGuardado.getData().items.length && me.refrescarGuardado) {
-	                    	me.storeGuardado.load();
-	                    	me.refrescarGuardado = false;
-	                    }
-	                    me.getView().down('fotossubdivision').funcionRecargar();
-	                },
-	                
-	                failure: function (a, operation, context) {
-	                	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-						 me.unmask();
-	                }
-    		     
-				});
-				
-				
-			}
-			orden++;
-			me.ordenGuardado++;
-		}
-		
+		 me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		var url =  $AC.getRemoteUrl('activo/updateFotosById');
+		Ext.Ajax.request({		
+		     url: url,
+		     params: {
+		     			data: Ext.encode(store.getData().getIndices())
+		     		}			
+		    ,success: function (a, operation, context) {
+            	store.load();
+            	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				me.getView().unmask();
+            },            
+            failure: function (a, operation, context) {
+            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+            	me.getView().unmask();
+            }	     
+		});		
 	},
 	
 	cargarFotosSubdivision: function (recordSelected) {

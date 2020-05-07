@@ -806,14 +806,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (activoFoto == null) {
 					activoFoto = new ActivoFoto(fileItem);
 				}
-
-				if (activoFoto.getOrden() == null) {
+				if (fileItem.getMetadata().containsKey("orden")) {
+					orden = Integer.valueOf(fileItem.getMetadata().get("orden"));
+				}
+				if (orden == null) {
 					orden = activoDao.getMaxOrdenFotoById(activo.getId()) + 1;
 
-				} else {
-					orden = activoFoto.getOrden();
 				}
-
 				activoFoto.setActivo(activo);
 				activoFoto.setTipoFoto(tipoFoto);
 				activoFoto.setNombre(fileItem.getBasename());
@@ -850,8 +849,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						activoFoto.setInteriorExterior(Boolean.FALSE);
 					}
 				}
-
-				activoFoto.setOrden(orden);
+				if(orden != null)
+					activoFoto.setOrden(orden);
 				genericDao.save(ActivoFoto.class, activoFoto);
 
 				logger.debug("Foto procesada para el activo " + activo.getNumActivo());

@@ -781,7 +781,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	@Transactional(readOnly = false)
-	public String uploadFoto(File fileItem) throws Exception {
+	public ActivoFoto uploadFoto(File fileItem) throws Exception {
+		ActivoFoto activoFoto = null;
 		try {
 			if (fileItem.getMetadata().get("id_activo_haya") == null) {
 				throw new Exception("La foto no tiene activo");
@@ -802,16 +803,22 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					throw new Exception("El tipo no existe");
 				}
 				Integer orden = null;
-				ActivoFoto activoFoto = activoAdapter.getFotoActivoByRemoteId(fileItem.getId());
+				activoFoto = activoAdapter.getFotoActivoByRemoteId(fileItem.getId());
 				if (activoFoto == null) {
 					activoFoto = new ActivoFoto(fileItem);
 				}
 
 				if (activoFoto.getOrden() == null) {
-					orden = activoDao.getMaxOrdenFotoById(activo.getId()) + 1;
+					orden = activoDao.getMaxOrdenFotoById(activo.getId());
+					if(orden == null)
+						orden = 0;
+					else
+						orden++;
 
 				} else {
 					orden = activoFoto.getOrden();
+					if(orden == null)
+						orden = 0;
 				}
 
 				activoFoto.setActivo(activo);
@@ -852,7 +859,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 
 				activoFoto.setOrden(orden);
-				genericDao.save(ActivoFoto.class, activoFoto);
+				activoFoto = genericDao.save(ActivoFoto.class, activoFoto);
 
 				logger.debug("Foto procesada para el activo " + activo.getNumActivo());
 
@@ -865,7 +872,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			throw e;
 		}
 
-		return null;
+		return activoFoto;
 	}
 
 	@Override
@@ -881,7 +888,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		SITUACION situacion;
 		PRINCIPAL principal;
 		Integer orden = activoDao.getMaxOrdenFotoById(Long.parseLong(fileItem.getParameter("idEntidad")));
-		orden++;
+		if(orden == null)
+			orden = 0;
+		else
+			orden++;
 
 		try {
 			if (gestorDocumentalFotos.isActive()) {
@@ -3649,7 +3659,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if (!Checks.esNulo(cargaDto.getIdActivoCarga())) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", cargaDto.getIdActivoCarga());
 			cargaSeleccionada = genericDao.get(ActivoCargas.class, filtro);
-
+			cargaBien = cargaSeleccionada.getCargaBien();
 		} else {
 			cargaSeleccionada = new ActivoCargas();
 			cargaBien = new NMBBienCargas();
@@ -3667,7 +3677,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		try {
 			beanUtilNotNull.copyProperties(cargaSeleccionada, cargaDto);
-			beanUtilNotNull.copyProperties(cargaBien, cargaDto);
+			if(cargaBien != null)
+				beanUtilNotNull.copyProperties(cargaBien, cargaDto);
 
 			if (!Checks.esNulo(cargaDto.getEstadoCodigo())) {
 				DDEstadoCarga estadoCarga = (DDEstadoCarga) utilDiccionarioApi
@@ -3683,7 +3694,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (!Checks.esNulo(cargaDto.getEstadoEconomicaCodigo())) {
 				DDSituacionCarga situacionCarga = (DDSituacionCarga) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDSituacionCarga.class, cargaDto.getEstadoEconomicaCodigo());
-				cargaBien.setSituacionCargaEconomica(situacionCarga);
+				if(cargaBien != null)
+					cargaBien.setSituacionCargaEconomica(situacionCarga);
 			}
 
 			if (!Checks.esNulo(cargaDto.getTipoCargaCodigo())) {
@@ -3718,7 +3730,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			logger.error("Error en activoManager", e);
 		}
 		cargaSeleccionada.setCargaBien(cargaBien);
-		genericDao.save(NMBBienCargas.class, cargaBien);
+		if(cargaBien != null)
+			genericDao.save(NMBBienCargas.class, cargaBien);
 		activoCargasApi.saveOrUpdate(cargaSeleccionada);
 		
 		if (!Checks.esNulo(cargaSeleccionada) && !Checks.esNulo(cargaSeleccionada.getActivo()) && !Checks.esNulo(cargaSeleccionada.getActivo().getId())) {

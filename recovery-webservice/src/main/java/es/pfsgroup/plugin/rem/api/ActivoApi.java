@@ -29,6 +29,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
+import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -130,7 +131,7 @@ public interface ActivoApi {
 	 * @param fileItem
 	 * @return
 	 */
-	String uploadFoto(File fileItem) throws Exception;
+	ActivoFoto uploadFoto(File fileItem) throws Exception;
 
 	/**
 	 * Recupera la lista completa de Activos

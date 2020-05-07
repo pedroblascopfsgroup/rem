@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
@@ -208,6 +209,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
@@ -222,8 +224,10 @@ import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
+import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
+import es.pfsgroup.plugin.rem.rest.dto.FileSearch;
 import es.pfsgroup.plugin.rem.rest.dto.HistoricoPropuestasPreciosDto;
 import es.pfsgroup.plugin.rem.restclient.exception.UnknownIdException;
 import es.pfsgroup.plugin.rem.service.TabActivoDatosBasicos;
@@ -428,10 +432,9 @@ public class ActivoAdapter {
 
 	@Transactional(readOnly = false)
 	public boolean saveFoto(DtoFoto dtoFoto) {
-
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoFoto.getId());
-		ActivoFoto activoFoto = genericDao.get(ActivoFoto.class, filtro);
+		ActivoFoto activoFoto = null;
 		boolean resultado = false;
+		FileResponse fileReponse = null;
 		try {
 
 			if (gestorDocumentalFotos.isActive()) {
@@ -451,18 +454,38 @@ public class ActivoAdapter {
 						situacion = SITUACION.EXTERIOR;
 					}
 				}
-				FileResponse fileReponse = gestorDocumentalFotos.update(activoFoto.getRemoteId(), dtoFoto.getNombre(),
+				fileReponse = gestorDocumentalFotos.update(dtoFoto.getId(), dtoFoto.getNombre(),
 						null, dtoFoto.getDescripcion(), principal, situacion, dtoFoto.getOrden());
 				if (fileReponse.getError() != null && !fileReponse.getError().isEmpty()) {
 					throw new RuntimeException(fileReponse.getError());
 				}
+			
+				FileListResponse fileListResponse = null;
+				try {
+					fileListResponse = gestorDocumentalFotos.get(dtoFoto.getId());
+	
+					if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {
+						es.pfsgroup.plugin.rem.rest.dto.File fileGD = fileListResponse.getData().get(0);
+						activoFoto = activoApi.uploadFoto(fileGD);
+						if(activoFoto != null) {
+							return true;
+						}
+					}
+				} catch (Exception e) {
+					logger.error("Error obteniendo las fotos del CDN", e);
+				}
+			}else {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoFoto.getId());
+				activoFoto = genericDao.get(ActivoFoto.class, filtro);
 			}
+			if(activoFoto == null) 
+				activoFoto = new ActivoFoto();
+
 			beanUtilNotNull.copyProperties(activoFoto, dtoFoto);
 			if(!Checks.esNulo(dtoFoto.getOrden())) {
 				activoFoto.setOrden(dtoFoto.getOrden());
 			}
 			genericDao.save(ActivoFoto.class, activoFoto);
-
 		} catch (Exception e) {
 			logger.error(e);
 			resultado = false;
@@ -712,13 +735,13 @@ public class ActivoAdapter {
 		if (esUA) {
 			activo = activoMatriz;
 		}
-
-		if (activo.getCargas() != null) {
-
-			for (int i = 0; i < activo.getCargas().size(); i++) {
+		List<ActivoCargas> listaCargas = null;
+		listaCargas = genericDao.getList(ActivoCargas.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()),
+				genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+		if (listaCargas != null) {			
+			for (ActivoCargas activoCarga : listaCargas) {
 				DtoActivoCargas cargaDto = new DtoActivoCargas();
 				try {
-					ActivoCargas activoCarga = activo.getCargas().get(i);
 					beanUtilNotNull.copyProperties(cargaDto, activoCarga);
 					beanUtilNotNull.copyProperties(cargaDto, activoCarga.getCargaBien());
 					beanUtilNotNull.copyProperty(cargaDto, "idActivoCarga", activoCarga.getId());
@@ -1052,15 +1075,16 @@ public class ActivoAdapter {
 		Activo activo = activoApi.get(idActivo);
 		if (activo.getInfoComercial().getTipoActivo().getCodigo().equals(DDTipoActivo.COD_VIVIENDA)) {
 			if(activo.getInfoComercial() != null) {
-				if(activo.getInfoComercial().getTipoInfoComercial() != null) {						
+				if(activo.getInfoComercial().getTipoInfoComercial() != null) {
+						
 					ActivoVivienda vivienda = genericDao.get(ActivoVivienda.class, genericDao.createFilter(FilterType.EQUALS, "informeComercial.id", activo.getInfoComercial().getId()));
-					if(vivienda != null) {							
+					if(vivienda != null){				
 						DtoNumPlantas dtoSotano = new DtoNumPlantas();
 						dtoSotano.setNumPlanta(-1L);
 						dtoSotano.setDescripcionPlanta("Planta -1");
 						dtoSotano.setIdActivo(idActivo);
 						listaPlantas.add(dtoSotano);
-		
+					
 						for (int i = 0; i < vivienda.getNumPlantasInter(); i++) {
 							DtoNumPlantas dto = new DtoNumPlantas();
 							dto.setNumPlanta(Long.valueOf(i));
@@ -1069,7 +1093,6 @@ public class ActivoAdapter {
 							dto.setIdActivo(idActivo);
 							listaPlantas.add(dto);
 						}
-						
 					}
 				}
 			}
@@ -1544,29 +1567,114 @@ public class ActivoAdapter {
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		Order order = new Order(OrderType.ASC, "orden");
 		
-		List<ActivoFoto> listaActivoFoto = genericDao.getListOrdered(ActivoFoto.class, order, filtro, filtroBorrado);
+		List<ActivoFoto> listaActivoFoto = null;
 		
 
 		if (activo != null) {
-			if (gestorDocumentalFotos.isActive() && (listaActivoFoto == null || listaActivoFoto.isEmpty())) {
+			if (gestorDocumentalFotos.isActive()) {
 				FileListResponse fileListResponse = null;
 				try {
 					fileListResponse = gestorDocumentalFotos.get(PROPIEDAD.ACTIVO, activo.getNumActivo());
 
 					if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {
+						listaActivoFoto = new ArrayList<ActivoFoto>();
 						for (es.pfsgroup.plugin.rem.rest.dto.File fileGD : fileListResponse.getData()) {
-							activoApi.uploadFoto(fileGD);
+							ActivoFoto af = fileItemToActivoFoto(fileGD, activo);
+							if(af != null) {
+								af.setId(af.getRemoteId());
+								listaActivoFoto.add(af);
+							}
 						}
-						listaActivoFoto = genericDao.getListOrdered(ActivoFoto.class, order, filtro);
 					}
 				} catch (Exception e) {
 					logger.error("Error obteniendo las fotos del CDN", e);
 				}
 
+			}else {
+				listaActivoFoto = genericDao.getListOrdered(ActivoFoto.class, order, filtro, filtroBorrado);
 			}
 		}
 		return listaActivoFoto;
 
+	}
+	
+	private ActivoFoto fileItemToActivoFoto(File fileItem, Activo activo) throws Exception {
+		ActivoFoto activoFoto = null;
+		try {
+			if (fileItem.getMetadata().get("id_activo_haya") == null) {
+				throw new Exception("La foto no tiene activo");
+			}
+
+			if (fileItem.getMetadata().get("tipo") == null) {
+				throw new Exception("La foto no tiene tipo");
+			}
+
+			if (activo != null) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
+						fileItem.getMetadata().get("tipo"));
+				DDTipoFoto tipoFoto = genericDao.get(DDTipoFoto.class, filtro);
+				if (tipoFoto == null) {
+					throw new Exception("El tipo no existe");
+				}
+				Integer orden = null;
+				activoFoto = new ActivoFoto(fileItem);
+				
+
+				if(fileItem.getMetadata().containsKey("orden")) {
+					activoFoto.setOrden(Integer.valueOf(fileItem.getMetadata().get("orden")));
+				}
+				
+				activoFoto.setActivo(activo);
+				activoFoto.setTipoFoto(tipoFoto);
+				activoFoto.setNombre(fileItem.getBasename());
+
+				if (fileItem.getMetadata().containsKey("descripcion")) {
+					activoFoto.setDescripcion(fileItem.getMetadata().get("descripcion"));
+				}
+
+				if (fileItem.getMetadata().containsKey("principal") && fileItem.getMetadata().get("principal") != null
+						&& fileItem.getMetadata().get("principal").equals("1")) {
+					activoFoto.setPrincipal(true);
+				} else {
+					activoFoto.setPrincipal(false);
+				}
+
+				Date fechaSubida = new Date();
+				if (fileItem.getMetadata().containsKey("fecha_subida")) {
+					try {
+						fechaSubida = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+								.parse(fileItem.getMetadata().get("fecha_subida"));
+
+					} catch (Exception e) {
+						logger.error("El webservice del Gestor documental ha enviado una fecha sin formato");
+					}
+				}
+
+				activoFoto.setFechaDocumento(fechaSubida);
+
+				if (fileItem.getMetadata().containsKey("interior_exterior")
+						&& fileItem.getMetadata().get("interior_exterior") != null) {
+					if (fileItem.getMetadata().get("interior_exterior").equals("1")) {
+						activoFoto.setInteriorExterior(Boolean.TRUE);
+					} else {
+						activoFoto.setInteriorExterior(Boolean.FALSE);
+					}
+				}
+
+				activoFoto.setOrden(orden);
+
+				logger.debug("Foto procesada para el activo " + activo.getNumActivo());
+
+			} else {
+				logger.debug("No existe la unidad organizativa");
+			}
+
+		} catch (Exception e) {
+			logger.error("Error insertando/actualizando foto", e);
+			throw e;
+		}
+
+		return activoFoto;
 	}
 
 	public List<ActivoFoto> getListFotosActivoByIdOrderPrincipal(Long id) {
@@ -2736,11 +2844,9 @@ public class ActivoAdapter {
 		boolean resultado = true;
 		
 		for (int i = 0; i < id.length; i++) {
-			ActivoFoto actvFoto = this.getFotoActivoById(id[i]);
-			genericDao.deleteById(ActivoFoto.class, actvFoto.getId());
-			if (actvFoto.getRemoteId() != null) {
+			if (id[i] != null) {
 				try{
-					gestorDocumentalFotos.delete(actvFoto.getRemoteId());
+					gestorDocumentalFotos.delete(id[i]);
 				}catch(UnknownIdException e){
 					logger.error("la foto no existe en el gestor documental");
 				}

@@ -117,7 +117,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  					gac.setAuditoria(Auditoria.getNewInstance());
  					gac.setUsuario(usu);
  					gestorEntidadDao.save(gac);
- 					this.guardarHistoricoGestorAdicionalEntidad(gac, act);
+ 					this.guardarHistoricoGestorAdicionalEntidadActivo(gac, act);
  				} else {
  					//Comprobamos que el activo cumpla las condiciones para poder cambiar de gestor
  					if(gac.getTipoGestor().getCodigo().equals("GPREC")){
@@ -126,7 +126,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  								this.actualizaFechaHastaHistoricoGestorAdicionalActivo(gac);
  								gac.setUsuario(usu);
  								gac.setAuditoria(Auditoria.getNewInstance());
- 								this.guardarHistoricoGestorAdicionalEntidad(gac, act);
+ 								this.guardarHistoricoGestorAdicionalEntidadActivo(gac, act);
  							}
  							gestorEntidadDao.saveOrUpdate(gac);
  							
@@ -141,7 +141,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  							this.actualizaFechaHastaHistoricoGestorAdicionalActivo(gac);
  							gac.setUsuario(usu);
  							gac.setAuditoria(Auditoria.getNewInstance());
- 							this.guardarHistoricoGestorAdicionalEntidad(gac, act);
+ 							this.guardarHistoricoGestorAdicionalEntidadActivo(gac, act);
  						//}
  						gestorEntidadDao.saveOrUpdate(gac);
  						
@@ -182,6 +182,16 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 			}
 		}
 	}
+ 	
+ 	protected void guardarHistoricoGestorAdicionalEntidadActivo(GestorEntidad gee, Object obj) {
+ 		GestorActivoHistorico gah = new GestorActivoHistorico();
+ 		gah.setUsuario(gee.getUsuario());
+ 		gah.setAuditoria(Auditoria.getNewInstance());
+ 		gah.setActivo((Activo) obj);
+ 		gah.setTipoGestor(gee.getTipoGestor());
+ 		gah.setFechaDesde(new Date());
+ 		gestorEntidadHistoricoDao.save(gah);
+ 	}
  	
  	private void actualizaFechaHastaHistoricoGestorAdicionalActivo(GestorActivo gac) {
  		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", gac.getActivo().getId() );

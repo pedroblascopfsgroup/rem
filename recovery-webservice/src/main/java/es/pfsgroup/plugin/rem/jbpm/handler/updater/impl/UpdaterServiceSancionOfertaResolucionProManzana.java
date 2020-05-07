@@ -64,6 +64,8 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 	private static final String COMBO_RESPUESTA = "comboRespuesta";
 	private static final String FECHA_RESPUESTA = "fechaRespuesta";
 	private static final String CODIGO_TRAMITE_FINALIZADO = "11";
+	private static final String CODIGO_T017_PBCRESERVA = "T017_PBCReserva";
+	private static final String CODIGO_T017_INSTRUCCIONES_RESERVA = "T017_InstruccionesReserva";
 	private static final String CODIGO_T017_OBTENCION_CONTRATO_RESERVA = "T017_ObtencionContratoReserva";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -74,9 +76,16 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 			ExpedienteComercial expediente = expedienteComercialApi
 					.expedienteComercialPorOferta(ofertaAceptada.getId());
 			Filter filtro = null;
+			Boolean obtencionReservaFinalizada = null;
 			if (!Checks.esNulo(expediente)) {
 				
-				Boolean obtencionReservaFinalizada = ofertaApi.esTareaFinalizada(tramite, CODIGO_T017_OBTENCION_CONTRATO_RESERVA);
+				if(ofertaApi.tieneTarea(tramite, CODIGO_T017_PBCRESERVA) == 0 
+						&& ofertaApi.tieneTarea(tramite, CODIGO_T017_INSTRUCCIONES_RESERVA) == 0 
+						&& ofertaApi.tieneTarea(tramite, CODIGO_T017_OBTENCION_CONTRATO_RESERVA) == 0) {
+					obtencionReservaFinalizada = true;
+				}else {				
+					obtencionReservaFinalizada = ofertaApi.tieneTarea(tramite, CODIGO_T017_OBTENCION_CONTRATO_RESERVA) == 2;
+				}
 				
 				for (TareaExternaValor valor : valores) {			
 					if (COMBO_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {

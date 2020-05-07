@@ -1357,18 +1357,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this,
 		idActivo = me.getViewModel().get("activo.id");
 		var storeTemp = btn.up('form').down('dataview').getStore();
-		var url =  $AC.getRemoteUrl('activo/refreshCacheFotos');
-		Ext.Ajax.request({
-			url: url,
-			params: {id : idActivo},
-				 success: function (a, operation, context) {
-               		storeTemp.load();
-               	 	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-                 },
-                 failure: function (a, operation, context) {
-	               	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-    	         }		     
-		});
+		if(Ext.isEmpty(storeTemp)){
+			storeTemp.load();
+		}
 	},
 	
 	onDeleteFotoClick: function(btn) {
@@ -4248,12 +4239,35 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 														if (!Ext.isEmpty(tabPropagableData)) {
 															// sacamos el activo actual del listado
 															var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
-							
-															// Abrimos la ventana de selección de activos
-															var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {form: form, activoActual: activo, activos: activosPropagables, tabData: tabData, propagableData: tabPropagableData}).show();
-																me.getView().add(ventanaOpcionesPropagacionCambios);
-																me.getView().unmask();
-																return false;
+															var tieneDatosPropagables = false;
+															if(!Ext.isEmpty(form)) {
+													    		
+													    		var fields = form.getForm().getFields();
+
+													    		fields.each(function(field) {
+													    			
+													    			if (!Ext.isEmpty(field) && !Ext.isEmpty(field.bind) && !Ext.isEmpty(field.bind.value) && !Ext.isEmpty(field.bind.value.stub)  ) {
+													    				var path = field.bind.value.stub.path;
+													    				var indexSeparator = path.indexOf(".");
+													    				var name = path.substring(0,indexSeparator);
+													    				var property = path.substring(indexSeparator+1, path.length);
+													    				
+													    				Ext.Array.each(tabPropagableData.models, function(model,index) {
+													    					if (model.type == name && model.data.hasOwnProperty(property)) {
+													    						tieneDatosPropagables = true;
+													    					}
+													    				});
+													    			}
+													    		});
+													    	}
+															
+															if(tieneDatosPropagables) {
+																// Abrimos la ventana de selección de activos
+																var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {form: form, activoActual: activo, activos: activosPropagables, tabData: tabData, propagableData: tabPropagableData}).show();
+																	me.getView().add(ventanaOpcionesPropagacionCambios);
+																	me.getView().unmask();
+																	return false;
+															}
 														}
 													}
 							

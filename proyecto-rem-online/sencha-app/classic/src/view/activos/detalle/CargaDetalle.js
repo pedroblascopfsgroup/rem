@@ -208,6 +208,7 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
 											        	reference: 'comboImpideVenta',
 											        	name: 'comboImpideVenta',
 											        	editable: false,
+											        	allowBlank: false,
 														fieldLabel: HreRem.i18n('header.impide.venta'),
 											        	bind: {
 															store: '{storeComboImpideVenta}',

@@ -335,7 +335,10 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		FileResponse fileReponse;
 		ActivoFoto activoFoto;
 		Integer orden = activoApi.getMaxOrdenFotoByIdSubdivision(agrupacionId, subdivisionId);
-		orden++;
+		if(orden == null)
+			orden = 0;
+		else
+			orden++;
 		try {
 			//el gestor documental no esta activo en local/inte, para probar negarlo
 			if (gestorDocumentalFotos.isActive()) {
@@ -414,7 +417,10 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 			if (agrupacion != null) {
 				ActivoFoto activoFoto;
 				Integer orden = activoApi.getMaxOrdenFotoByIdSubdivision(agrupacionId, subdivisionId);
-				orden++;
+				if(orden == null)
+					orden = 0;
+				else
+					orden++;
 				activoFoto = activoAdapter.getFotoActivoByRemoteId(fileItem.getId());
 				if (activoFoto == null) {
 					activoFoto = new ActivoFoto(fileItem);
@@ -488,8 +494,8 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	@Override
 	@Transactional(readOnly = false)
 	public List<ActivoFoto> getFotosSubdivision(DtoSubdivisiones subdivision) {
-		List<ActivoFoto> listaFotos = activoAgrupacionDao.getFotosSubdivision(subdivision);
-		if (gestorDocumentalFotos.isActive() && (listaFotos == null || listaFotos.isEmpty())) {
+		List<ActivoFoto> listaFotos = null;
+		if (gestorDocumentalFotos.isActive()) {
 			FileListResponse fileListResponse = null;
 			try {
 				FileSearch fileSearch = new FileSearch();
@@ -505,16 +511,22 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 					fileListResponse = gestorDocumentalFotos.get(fileSearch);
 
 					if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {
+						listaFotos = new ArrayList<ActivoFoto>();
 						for (es.pfsgroup.plugin.rem.rest.dto.File fileGD : fileListResponse.getData()) {
-							this.uploadFoto(fileGD);
+							ActivoFoto af = this.fileItemToActivoFoto(fileGD);
+							if(af != null) {
+								af.setId(af.getRemoteId());
+								listaFotos.add(af);
+							}
 						}
-						listaFotos = activoAgrupacionDao.getFotosSubdivision(subdivision);
 					}
 				}
 			} catch (Exception e) {
 				logger.error("Error obteniedno las fotos del CDN", e);
 			}
 
+		}else {
+			listaFotos = activoAgrupacionDao.getFotosSubdivision(subdivision);
 		}
 		return listaFotos;
 	}
@@ -522,9 +534,8 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	@Override
 	@Transactional(readOnly = false)
 	public List<ActivoFoto> getFotosAgrupacionById(Long id) {
-
-		List<ActivoFoto> listaFotos = activoAgrupacionDao.getFotosAgrupacionById(id);
-		if (gestorDocumentalFotos.isActive() && (listaFotos == null || listaFotos.isEmpty())) {
+		List<ActivoFoto> listaFotos = null;
+		if (gestorDocumentalFotos.isActive()) {
 			FileListResponse fileListResponse = null;
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
 			ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
@@ -533,19 +544,77 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 					fileListResponse = gestorDocumentalFotos.get(PROPIEDAD.AGRUPACION, agrupacion.getNumAgrupRem());
 
 					if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {
+						listaFotos = new ArrayList<ActivoFoto>();
 						for (es.pfsgroup.plugin.rem.rest.dto.File fileGD : fileListResponse.getData()) {
-							this.uploadFoto(fileGD);
+							ActivoFoto af = this.fileItemToActivoFoto(fileGD);
+							if(af != null) {
+								af.setId(af.getRemoteId());
+								listaFotos.add(af);
+							}
 						}
-						listaFotos = activoAgrupacionDao.getFotosAgrupacionById(id);
 					}
 				}
 			} catch (Exception e) {
 				logger.error("Error obteniedno las fotos del CDN", e);
 			}
 
+		}else {
+			listaFotos = activoAgrupacionDao.getFotosAgrupacionById(id);
 		}
 		return listaFotos;
 
+	}
+	
+	private ActivoFoto fileItemToActivoFoto(File fileItem) throws Exception {
+		ActivoFoto activoFoto = null;
+		if (fileItem.getMetadata().get("id_agrupacion_haya") == null) {
+			throw new Exception("La foto no tiene agrupacion");
+		}
+
+		Long agrupacionId = Long.parseLong(fileItem.getMetadata().get("id_agrupacion_haya"));
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", agrupacionId);
+		ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
+		try {
+			if (agrupacion != null) {
+				activoFoto = new ActivoFoto(fileItem);				
+
+				activoFoto.setAgrupacion(agrupacion);
+				
+				if (fileItem.getMetadata().get("id_subdivision") != null) {
+					activoFoto.setSubdivision(new BigDecimal(fileItem.getMetadata().get("id_subdivision"))); 
+				}
+
+				activoFoto.setNombre(fileItem.getBasename());
+
+				if (fileItem.getMetadata().containsKey("descripcion")) {
+					activoFoto.setDescripcion(fileItem.getMetadata().get("descripcion"));
+				}
+
+				activoFoto.setPrincipal(false);
+
+				Date fechaSubida = new Date();
+				if (fileItem.getMetadata().containsKey("fecha_subida")) {
+					try {
+						fechaSubida = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+								.parse(fileItem.getMetadata().get("fecha_subida"));
+					} catch (Exception e) {
+						logger.error("El webservice del Gestor documental ha enviado una fecha sin formato");
+					}
+				}
+
+				activoFoto.setFechaDocumento(fechaSubida);
+				
+				if(fileItem.getMetadata().containsKey("orden")) {
+					activoFoto.setOrden(Integer.valueOf(fileItem.getMetadata().get("orden")));
+				}
+
+			} else {
+				throw new Exception("La foto esta asociada a una agrupacion inexistente");
+			}
+		} catch (Exception e) {
+			throw new Exception(e.getMessage());
+		}
+		return activoFoto;
 	}
 
 	@Override

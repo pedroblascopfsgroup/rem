@@ -327,18 +327,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		var me = this,
 		idAgrupacion = me.getViewModel().get("agrupacionficha.id");
 		var storeTemp = btn.up('form').down('dataview').getStore();
-		var url =  $AC.getRemoteUrl('agrupacion/refreshCacheFotos');
-		Ext.Ajax.request({
-			url: url,
-			params: {id : idAgrupacion},
-				 success: function (a, operation, context) {
-               		storeTemp.load();
-               	 	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-                 },
-                 failure: function (a, operation, context) {
-	               	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-    	         }		     
-		});
+		if(Ext.isEmpty(storeTemp)){
+			storeTemp.load();
+		}
 	},
 	
 	onDeleteFotoClick: function(btn, b, c, d) {

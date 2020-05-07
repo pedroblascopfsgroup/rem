@@ -409,6 +409,12 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 		return lista;
 
 	}
+	
+	@Override
+	public void doFlush() {
+		getHibernateTemplate().flush();
+	}
+	
 
 	@SuppressWarnings("unchecked")
 	@Override

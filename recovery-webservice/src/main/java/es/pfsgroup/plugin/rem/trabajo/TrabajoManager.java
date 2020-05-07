@@ -3116,6 +3116,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 						listaTiposProveedor.add(tipoProveedor);
 					}
+				}else if(DDTipoTrabajo.CODIGO_EDIFICACION.equals(trabajo.getTipoTrabajo().getCodigo())){
+					String codTipoProveedor = trabajo.getProveedorContacto().getProveedor().getTipoProveedor().getCodigo();
+					filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							codTipoProveedor);
+					tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
+
+					listaTiposProveedor.add(tipoProveedor);
 				}
 
 			}

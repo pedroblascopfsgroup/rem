@@ -333,8 +333,7 @@ BEGIN
 			
 		
     END LOOP;
-    --COMMIT;
-      ROLLBACK;
+    COMMIT;
    
 	DBMS_OUTPUT.PUT_LINE('********************************************************************');
 

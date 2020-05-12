@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
@@ -65,6 +66,7 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 	private static final String FECHA_RESPUESTA = "fechaRespuesta";
 	private static final String CODIGO_TRAMITE_FINALIZADO = "11";
 	private static final String CODIGO_T017_PBCRESERVA = "T017_PBCReserva";
+	private static final String CODIGO_T017_PBCVENTA = "T017_PBCVenta";
 	private static final String CODIGO_T017_INSTRUCCIONES_RESERVA = "T017_InstruccionesReserva";
 	private static final String CODIGO_T017_OBTENCION_CONTRATO_RESERVA = "T017_ObtencionContratoReserva";
 
@@ -73,20 +75,22 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {	
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		if (!Checks.esNulo(ofertaAceptada)) {
-			ExpedienteComercial expediente = expedienteComercialApi
-					.expedienteComercialPorOferta(ofertaAceptada.getId());
+			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 			Filter filtro = null;
-			Boolean obtencionReservaFinalizada = null;
+			Boolean solicitaReserva = ofertaApi.checkReserva(ofertaAceptada);
+			Boolean obtencionReservaFinalizada = false;
+			
 			if (!Checks.esNulo(expediente)) {
-				
-				if(ofertaApi.tieneTarea(tramite, CODIGO_T017_PBCRESERVA) == 0 
-						&& ofertaApi.tieneTarea(tramite, CODIGO_T017_INSTRUCCIONES_RESERVA) == 0 
-						&& ofertaApi.tieneTarea(tramite, CODIGO_T017_OBTENCION_CONTRATO_RESERVA) == 0) {
-					obtencionReservaFinalizada = true;
-				}else {				
-					obtencionReservaFinalizada = ofertaApi.tieneTarea(tramite, CODIGO_T017_OBTENCION_CONTRATO_RESERVA) == 2;
+				if(solicitaReserva) {
+					if(ofertaApi.tieneTarea(tramite, CODIGO_T017_PBCRESERVA) == 0 
+							&& ofertaApi.tieneTarea(tramite, CODIGO_T017_INSTRUCCIONES_RESERVA) == 0 
+							&& ofertaApi.tieneTarea(tramite, CODIGO_T017_OBTENCION_CONTRATO_RESERVA) == 0
+							&& ofertaApi.tieneTarea(tramite, CODIGO_T017_PBCVENTA) == 0) {					// este if controla si el tramite es de los migrados de divarian sin parte PBC
+						obtencionReservaFinalizada = true;
+					}else {				
+						obtencionReservaFinalizada = ofertaApi.tieneTarea(tramite, CODIGO_T017_OBTENCION_CONTRATO_RESERVA) == 2;
+					}
 				}
-				
 				for (TareaExternaValor valor : valores) {			
 					if (COMBO_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						if (DDApruebaDeniega.CODIGO_APRUEBA.equals(valor.getValor())) {
@@ -101,7 +105,7 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 									&& !Checks.esNulo(expediente.getReserva().getEstadoReserva())
 									&& !DDEstadosReserva.CODIGO_FIRMADA.equals(expediente.getReserva().getEstadoReserva().getCodigo()))
 									|| Checks.esNulo(expediente.getReserva()) 
-									|| !Checks.esNulo(expediente.getCondicionante().getSolicitaReserva()) && expediente.getCondicionante().getSolicitaReserva() == 0) {
+									|| !solicitaReserva) {
 								expediente.setFechaVenta(null);
 								expediente.setFechaAnulacion(new Date());
 								// Finaliza el trámite
@@ -131,12 +135,10 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 					}
 				}
 				
-				List<ActivoOferta> listActivosOferta = ofertaAceptada.getActivosOferta();
-				
-				Boolean necesitaReserva = ofertaApi.checkReserva(ofertaAceptada);
+				List<ActivoOferta> listActivosOferta = ofertaAceptada.getActivosOferta();				
 				
 				//Revisamos si es afecto a GENCAT para lanzar tramite
-				if(!necesitaReserva || (necesitaReserva && obtencionReservaFinalizada)) {
+				if(!solicitaReserva || (solicitaReserva && obtencionReservaFinalizada)) {
 					for (ActivoOferta activoOferta : listActivosOferta) {
 						ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());
 						if(activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){
@@ -155,9 +157,10 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 						}
 					}
 				}
-				
-				DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-				expediente.setEstado(estado);
+				if(filtro != null) {				
+					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+					expediente.setEstado(estado);
+				}
 				genericDao.update(ExpedienteComercial.class, expediente);
 				genericDao.update(Oferta.class, ofertaAceptada);
 			}

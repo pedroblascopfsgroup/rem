@@ -1600,11 +1600,11 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	public void validartramitacionActivo(DtoOfertaActivo dto, Oferta oferta, DDEstadoOferta estadoOferta, Activo activo,
 			Boolean esAlquiler) {
 
-		if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())
-				&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo()) 
-				&& DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo()) && faltanDatosCalculo(oferta, activo)) {
-			throw new JsonViewerException(FALTAN_DATOS);
-		}
+//		if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())
+//				&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo())
+//				&& DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo()) && faltanDatosCalculo(oferta, activo)) {
+//			throw new JsonViewerException(FALTAN_DATOS);
+//		}
 
 		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
 			comprobarTramitarOferta(oferta, activo, esAlquiler, null);

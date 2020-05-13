@@ -231,6 +231,10 @@ Ext.define('HreRem.model.GastoProveedor', {
     			return data.suplidosVinculadosCod == CONST.COMBO_SIN_NO['NO'];
     		},
     		depends: 'suplidosVinculadosCod'
+    	},
+    	{
+    		name: 'visibleSuplidos',
+    		type: 'boolean'
     	}
    		
     ],

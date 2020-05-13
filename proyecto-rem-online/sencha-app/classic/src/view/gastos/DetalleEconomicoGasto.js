@@ -695,6 +695,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																			{		                
 																			    xtype: 'checkboxfieldbase',
 																			    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.abonar.cuenta'),
+																			    name: 'abonoCuenta',
 																			    bind: {
 																		        	value: '{detalleeconomico.abonoCuenta}'
 															            		},
@@ -729,6 +730,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																							{
 																								xtype: 'textfieldbase',
 																								reference: 'iban1',
+																								name: 'iban1',
 																								maxLength: 4,
 																								minLengthText: 'Debe tener 4 digitos',
 																								bind: {
@@ -742,6 +744,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																							{
 																								xtype: 'textfieldbase',
 																								reference: 'iban2',
+																								name: 'iban2',
 																								maxLength: 4,
 																								bind: {
 																						        	value: '{detalleeconomico.iban2}',
@@ -754,6 +757,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																							{
 																								xtype: 'textfieldbase',
 																								reference: 'iban3',
+																								name: 'iban3',
 																								maxLength: 4,
 																								bind: {
 																						        	value: '{detalleeconomico.iban3}',
@@ -767,6 +771,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																							{
 																								xtype: 'textfieldbase',
 																								reference: 'iban4',
+																								name: 'iban4',
 																								maxLength: 4,
 																								bind: {
 																						        	value: '{detalleeconomico.iban4}',
@@ -776,6 +781,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																							{
 																								xtype: 'textfieldbase',
 																								reference: 'iban5',
+																								name: 'iban5',
 																								maxLength: 4,
 																								bind: {
 																						        	value: '{detalleeconomico.iban5}',
@@ -788,6 +794,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																							{
 																								xtype: 'textfieldbase',
 																								reference: 'iban6',
+																								name: 'iban6',
 																								maxLength: 4,
 																								bind: {
 																						        	value: '{detalleeconomico.iban6}',
@@ -802,6 +809,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																			{		        
 																				xtype: 'textfieldbase',
 																				fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.titular.cuenta'),
+																				name: 'titularCuenta',
 																				bind: {
 																				  	value: '{detalleeconomico.titularCuenta}',
 																				  	disabled: '{!seleccionadoAbonar}',
@@ -814,6 +822,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																			    xtype: 'textfieldbase',
 																			    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.nif.titular.cuenta'),
 																				maxLength: 10,
+																				name: 'nifTitularCuenta',
 																			    bind: {
 																			       	value: '{detalleeconomico.nifTitularCuenta}',
 																			       	disabled: '{!seleccionadoAbonar}',

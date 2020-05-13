@@ -80,6 +80,7 @@ public class DtoFichaGastoProveedor extends WebDto {
    	private String estadoEmisor;
    	private String suplidosVinculadosCod;
    	private String facturaPrincipalSuplido;
+   	private Boolean visibleSuplidos;
 	
 	public Long getIdGasto() {
 		return idGasto;
@@ -433,5 +434,11 @@ public class DtoFichaGastoProveedor extends WebDto {
 	}
 	public void setFacturaPrincipalSuplido(String facturaPrincipalSuplido) {
 		this.facturaPrincipalSuplido = facturaPrincipalSuplido;
+	}
+	public Boolean getVisibleSuplidos() {
+		return visibleSuplidos;
+	}
+	public void setVisibleSuplidos(Boolean visibleSuplidos) {
+		this.visibleSuplidos = visibleSuplidos;
 	}
 }

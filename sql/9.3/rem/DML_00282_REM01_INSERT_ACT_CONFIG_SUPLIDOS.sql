@@ -42,8 +42,8 @@ DECLARE
 			    -- (DD_CRA_CODIGO, DD_SCR_CODIGO, DD_TGA_CODIGO, DD_STG_CODIGO)
 		T_TIPO_DATA('07', '151', '11', NULL),
 		T_TIPO_DATA('07', '152', '11', NULL),
-		T_TIPO_DATA('07', '151', '11', '53'),
-		T_TIPO_DATA('07', '152', '11', '53')
+		T_TIPO_DATA('07', '151', '12', '53'),
+		T_TIPO_DATA('07', '152', '12', '53')
 
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

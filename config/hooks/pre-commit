@@ -290,7 +290,7 @@ function check_ddl_content() {
 function SQL_ddl_rules() {
 	for f in `eval $modified_files | grep -E \/DD.*\.sql$ | grep -v producto | grep -v ^procs_y_vistas/ | grep -v ^reports/ | grep -v migracion | grep -v scripts | grep -v templates | grep -v rutinas | grep -v produccion | grep -v incidencias | grep -v rem_fase1 | grep -v informacional | grep -v convivencia | grep -v tmp | grep -v 9\.2 | grep -v 9\.3 | grep -v 9\.4 |  grep -v no_protocolo | grep -v sincro_f2 `; do
 		check_ddl $f
-		check_ddl_content $f
+		#check_ddl_content $f
 	done
 }
 

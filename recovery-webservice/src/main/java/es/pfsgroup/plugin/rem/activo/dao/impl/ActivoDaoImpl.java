@@ -245,6 +245,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoDivarian", dto.getNumActivoDivarian());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoSegmento", dto.getTipoSegmento());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.perimetroMacc", dto.getPerimetroMacc());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.equipoGestion", dto.getEquipoGestion());
 
 		if(!Checks.esNulo(dto.isListPage()) && dto.isListPage())
 			return HibernateQueryUtils.page(this, hb, dto);
@@ -1838,8 +1839,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.direccionComercialCodigo", dto.getDireccionComercialCodigo());
 		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoSegmentoCodigo", dto.getTipoSegmentoCodigo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.perimetroMacc", dto.getPerimetroMacc());	
-	
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.perimetroMacc", dto.getPerimetroMacc());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.equipoGestion", dto.getEquipoGestion());
+
 		return devolverPage ? HibernateQueryUtils.page(this, hb, dto) : HibernateQueryUtils.list(this, hb);	
 	}
 

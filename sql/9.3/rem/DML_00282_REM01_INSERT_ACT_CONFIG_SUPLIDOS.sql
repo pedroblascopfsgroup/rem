@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Cristian Montoya
---## FECHA_CREACION=20200506
+--## FECHA_CREACION=20200514
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10216
@@ -120,7 +120,6 @@ BEGIN
 				'''||V_USUARIO||''',
 				SYSDATE
 				)';
-      DBMS_OUTPUT.PUT_LINE(V_MSQL);
       
         EXECUTE IMMEDIATE V_MSQL;
         DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');

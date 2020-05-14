@@ -37,7 +37,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	  T_FUNCION('TEP', 'Tactico Esparta publicaciones', 'Tactico Esparta publicaciones','TACTICO_ESPARTA_PUBLICACIONES','n*,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s')
+	  T_FUNCION('TEP', 'Táctico Esparta publicaciones', 'Táctico Esparta publicaciones','TACTICO_ESPARTA_PUBLICACIONES','n*,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_MSQL_1 VARCHAR2(4000 CHAR);

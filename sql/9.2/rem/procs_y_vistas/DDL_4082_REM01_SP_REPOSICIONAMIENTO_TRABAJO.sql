@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Guillem Rey
---## FECHA_CREACION=20200418
+--## FECHA_CREACION=20200514
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-1965
@@ -12,7 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##		0.2 REMVIP-7036 - mejorado, soporte lista de trabajos
---##
+--##		0.3 REMVIP-7295 - soporte trabajos multiactivo
 --##########################################
 --*/
 
@@ -61,7 +61,7 @@ BEGIN
 
       V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (TBJ_ID, ACT_ID, TPO_ID, TAP_ID ,TRA_ID ,TRA_PROCES_BPM)
                     SELECT DISTINCT TBJ.TBJ_ID
-                                    , ACT.ACT_ID
+                                    , TRA.ACT_ID
                                     , TPO.DD_TPO_ID AS DD_TPO_ID
                                     , TAP.TAP_ID AS TAP_ID
                                     , TRA.TRA_ID
@@ -69,8 +69,6 @@ BEGIN
                     FROM '||V_ESQUEMA||'.ACT_TBJ_TRABAJO TBJ
                         LEFT JOIN '||V_ESQUEMA||'.DD_TTR_TIPO_TRABAJO TTR ON TTR.DD_TTR_ID = TBJ.DD_TTR_ID AND TTR.DD_TTR_CODIGO IN (''01'',''02'',''03'',''04'',''05'')
                         LEFT JOIN '||V_ESQUEMA||'.DD_EST_ESTADO_TRABAJO EST ON EST.DD_EST_ID = TBJ.DD_EST_ID AND EST.DD_EST_CODIGO IN (''01'',''04'',''09'',''10'',''11'',''13'')
-                        JOIN '||V_ESQUEMA||'.ACT_TBJ ATB ON ATB.TBJ_ID = TBJ.TBJ_ID
-                        JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = ATB.ACT_ID AND ACT.BORRADO = 0
                         JOIN '||V_ESQUEMA||'.ACT_TRA_TRAMITE TRA ON TBJ.TBJ_ID = TRA.TBJ_ID AND TRA.BORRADO = 0
                         LEFT JOIN '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO TPO ON TPO.DD_TPO_CODIGO = SUBSTR('''||TAREA_TRAMITE||''',1,4)
                         JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_CODIGO = '''||TAREA_TRAMITE||'''

@@ -61,7 +61,7 @@ BEGIN
 
       V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (TBJ_ID, ACT_ID, TPO_ID, TAP_ID ,TRA_ID ,TRA_PROCES_BPM)
                     SELECT DISTINCT TBJ.TBJ_ID
-                                    , TRA.ACT_ID
+                                    , MAX(ATB.ACT_ID) AS ACT_ID
                                     , TPO.DD_TPO_ID AS DD_TPO_ID
                                     , TAP.TAP_ID AS TAP_ID
                                     , TRA.TRA_ID
@@ -69,11 +69,14 @@ BEGIN
                     FROM '||V_ESQUEMA||'.ACT_TBJ_TRABAJO TBJ
                         LEFT JOIN '||V_ESQUEMA||'.DD_TTR_TIPO_TRABAJO TTR ON TTR.DD_TTR_ID = TBJ.DD_TTR_ID AND TTR.DD_TTR_CODIGO IN (''01'',''02'',''03'',''04'',''05'')
                         LEFT JOIN '||V_ESQUEMA||'.DD_EST_ESTADO_TRABAJO EST ON EST.DD_EST_ID = TBJ.DD_EST_ID AND EST.DD_EST_CODIGO IN (''01'',''04'',''09'',''10'',''11'',''13'')
-                        JOIN '||V_ESQUEMA||'.ACT_TRA_TRAMITE TRA ON TBJ.TBJ_ID = TRA.TBJ_ID AND TRA.BORRADO = 0
+						JOIN '||V_ESQUEMA||'.ACT_TBJ ATB ON ATB.TBJ_ID = TBJ.TBJ_ID
+                        JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = ATB.ACT_ID AND ACT.BORRADO = 0                                                 
+						JOIN '||V_ESQUEMA||'.ACT_TRA_TRAMITE TRA ON TBJ.TBJ_ID = TRA.TBJ_ID AND TRA.BORRADO = 0
                         LEFT JOIN '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO TPO ON TPO.DD_TPO_CODIGO = SUBSTR('''||TAREA_TRAMITE||''',1,4)
                         JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_CODIGO = '''||TAREA_TRAMITE||'''
                         LEFT JOIN '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO STR ON STR.DD_STR_ID = TBJ.DD_STR_ID
-                    WHERE TBJ.BORRADO = 0 AND TBJ.TBJ_NUM_TRABAJO IN ('||TRABAJOS||')';
+                    WHERE TBJ.BORRADO = 0 AND TBJ.TBJ_NUM_TRABAJO IN ('||TRABAJOS||')
+					GROUP BY TBJ.TBJ_ID, TPO.DD_TPO_ID, TAP.TAP_ID, TRA.TRA_ID';
 
       EXECUTE IMMEDIATE V_MSQL;
       
@@ -146,8 +149,17 @@ BEGIN
                                     )';
       
       
-      EXECUTE IMMEDIATE V_MSQL;    
+      EXECUTE IMMEDIATE V_MSQL;
       
+      V_MSQL := 'MERGE '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS T1 
+				USING(
+					SELECT DISTINCT TRA_ID, ACT_ID 
+                    FROM '||V_ESQUEMA||'.TRABAJOS_REPOSICIONAR
+				)T2 ON (T1.TRA_ID = T2.TRA_ID)
+				WHEN MATCHED THEN UPDATE SET T1.ACT_ID = T2.ACT_ID
+                WHERE T1.ACT_ID <> T2.ACT_ID';
+                
+      EXECUTE IMMEDIATE V_MSQL; --USAR EL MISMO ACTIVO EN TODAS LAS TAC
       
       V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_TRA_TRAMITE t1 SET       
                         TRA_PROCESS_BPM = NULL

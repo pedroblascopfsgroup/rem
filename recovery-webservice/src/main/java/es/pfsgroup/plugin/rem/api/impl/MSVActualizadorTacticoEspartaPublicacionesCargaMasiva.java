@@ -121,24 +121,32 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 				genericDao.update(ActivoSituacionPosesoria.class, sitPosesoria);
 			}
 			
-			if(activoTitulo != null && !exc.dameCelda(fila, FECHA_DE_INSCRIPCION).isEmpty()) {
+			if(activoTitulo != null && !exc.dameCelda(fila, SITUACION_TITULO).isEmpty()) {
+
 				Filter filtroDDSituacionTitulo  = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, SITUACION_TITULO));
 				DDEstadoTitulo ddSituacionTitulo = genericDao.get(DDEstadoTitulo.class, filtroDDSituacionTitulo);
 
 				activoTitulo.setEstado(ddSituacionTitulo);
 				
 				if(!exc.dameCelda(fila, FECHA_DE_INSCRIPCION).isEmpty()) {
-					Date fechaInscripcion = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, FECHA_DE_INSCRIPCION));
-					activoTitulo.setFechaInscripcionReg(fechaInscripcion);
+					if(esBorrar(exc.dameCelda(fila, FECHA_DE_INSCRIPCION))) {
+						activoTitulo.setFechaInscripcionReg(null);
+					}else {
+						Date fechaInscripcion = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, FECHA_DE_INSCRIPCION));
+						activoTitulo.setFechaInscripcionReg(fechaInscripcion);
+					}
 				}
 				
 				genericDao.update(ActivoTitulo.class, activoTitulo);
 			}
 			
 			if(activoAdjNoJudicial != null && !exc.dameCelda(fila, FECHA_TITULO).isEmpty()) {
-				Date fechaTitulo = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, FECHA_TITULO));
-				activoAdjNoJudicial.setFechaTitulo(fechaTitulo);
-				
+				if(esBorrar(exc.dameCelda(fila, FECHA_TITULO))) {
+					activoAdjNoJudicial.setFechaTitulo(null);
+				}else {
+					Date fechaTitulo = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, FECHA_TITULO));
+					activoAdjNoJudicial.setFechaTitulo(fechaTitulo);
+				}
 				genericDao.update(ActivoAdjudicacionNoJudicial.class, activoAdjNoJudicial);
 			}
 			
@@ -146,14 +154,18 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 			
 			NMBBien bien = activo.getBien();
 			if(bien != null && usuario != null && !exc.dameCelda(fila, FECHA_POSESION).isEmpty()) {
-				Date fechaPosesion = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, FECHA_POSESION));
 				Filter filtroBien  = genericDao.createFilter(FilterType.EQUALS, "bien.id", bien.getId());
 				NMBAdjudicacionBien adjudicacionBien = genericDao.get(NMBAdjudicacionBien.class, filtroBien);
 				
 				if(adjudicacionBien != null) {
-					adjudicacionBien.setFechaRealizacionPosesion(fechaPosesion);
+					if(esBorrar(exc.dameCelda(fila, FECHA_POSESION))) {
+						adjudicacionBien.setFechaRealizacionPosesion(null);
+					}else {
+						Date fechaPosesion = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, FECHA_POSESION));
+						adjudicacionBien.setFechaRealizacionPosesion(fechaPosesion);
+					}
+					
 					genericDao.update(NMBAdjudicacionBien.class, adjudicacionBien);
-
 				}
 				
 
@@ -202,6 +214,10 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 		
 		return 0;
 	}
+	private boolean esBorrar(String cadena) {
+		return cadena.toUpperCase().trim().equals("X");
+	}
+	
 	
 }
 

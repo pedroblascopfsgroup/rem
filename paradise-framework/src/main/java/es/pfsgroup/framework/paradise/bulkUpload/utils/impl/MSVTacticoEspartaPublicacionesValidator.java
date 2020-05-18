@@ -265,42 +265,6 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 		return cadena.toUpperCase().trim().equals("X");
 	}
 	
-	private boolean esFechaValida(String fecha) {
-		if(!Checks.esNulo(fecha)) {
-			
-			if(esBorrar(fecha)) {
-				return true;
-			} else if(!fecha.matches(".*[a-z].*")) {
-							
-				String[] dateArray = fecha.split("\\/");
-				if(dateArray == null || dateArray.length != 3) {
-					return false;
-				}
-				
-				String year = dateArray[dateArray.length - 1];
-				Integer yearSize = year == null ? null : year.length();
-				String month = dateArray[dateArray.length - 2];
-				Integer monthSize = month == null ? null : month.length();
-				String day = dateArray[dateArray.length - 3];
-				Integer daySize = day == null ? null : day.length();
-				Integer intDay = Integer.parseInt(day);
-				Integer intMonth = Integer.parseInt(month);
-				Integer intYear = Integer.parseInt(year);
-				Boolean rangeDayOk = false;
-				
-				
-				if(intDay <= 31 && intDay >= 1 && intMonth <= 12 && intMonth >= 1 && intYear <= 9999 && intYear >= 1000) {
-					rangeDayOk = true;
-				}
-				
-				return rangeDayOk && daySize != null && daySize == 2 && monthSize != null && monthSize == 2 && yearSize != null && yearSize == 4;
-			}
-			return false;
-		}
-		
-		return false;
-	}
-	
 	private boolean esFechaMenorActualValidator(String fecha, Date fechaActual) throws ParseException {
 		Date fechaExcel = null;
 		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
@@ -522,21 +486,26 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
                  try {
                 	String celdaFechaInscripcion = exc.dameCelda(i, colFechaInscripcion);
                 	String celdaFechaTitulo = exc.dameCelda(i, colFechaTitulo);
-                	if(celdaFechaInscripcion != null && !celdaFechaInscripcion.isEmpty() && celdaFechaTitulo != null && !celdaFechaTitulo.isEmpty()) {
+                	
+                	if(esBorrar(celdaFechaInscripcion) || esBorrar(celdaFechaTitulo)) {
+                		 return listaFilas; 
+                	}else {
+                	if(celdaFechaInscripcion != null && !celdaFechaInscripcion.isEmpty() 
+                			&& celdaFechaTitulo != null && !celdaFechaTitulo.isEmpty()
+                			&& !esBorrar(celdaFechaInscripcion) && !esBorrar(celdaFechaTitulo)) {
                 		fechaInscripcion = formato.parse(celdaFechaInscripcion);
                 		fechaTitulo = formato.parse(celdaFechaTitulo);                		
                 	}
                 	
                      
                      if(!Checks.esNulo(celdaFechaInscripcion)
-                             && !esBorrar(celdaFechaInscripcion)
                              && esFechaValida(celdaFechaInscripcion)
                              && !Checks.esNulo(celdaFechaTitulo)
-                             && !esBorrar(celdaFechaTitulo)
                              && esFechaValida(celdaFechaTitulo)
                              && !fechaInscripcion.after(fechaTitulo))
                     	 
                          listaFilas.add(i);
+                	}
                  } catch (ParseException e) {
                      listaFilas.add(i);
                  }
@@ -603,6 +572,21 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
          return listaFilas;   
     }
 	
-	
+	private boolean esFechaValida(String fecha) {
+		if(fecha == null || fecha.isEmpty()) {
+			return false;
+		}
+		if(esBorrar(fecha))
+			return true;
+		try {
+			SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
+			ft.parse(fecha);
+		} catch (ParseException e) {
+			logger.error(e.getMessage());
+			return false;
+		}
+		return true;
+	}
+		
 	
 }

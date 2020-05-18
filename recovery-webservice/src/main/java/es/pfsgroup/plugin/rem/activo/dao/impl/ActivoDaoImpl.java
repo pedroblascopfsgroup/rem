@@ -1848,15 +1848,4 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		Order order = new Order(OrderType.DESC,"auditoria.fechaCrear");
 		return genericDao.getListOrdered(HistoricoPeticionesPrecios.class, order, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo));
 	}
-	
-	@Override
-	public void updateFechaPosesion(Long idBien, Date fechaPosesion, String usuario) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		
-		Session session = this.getSessionFactory().getCurrentSession();
-		Query query = session.createSQLQuery("UPDATE BIE_ADJ_ADJUDICACION SET BIE_ADJ_F_REA_POSESION = '"+ sdf.format(fechaPosesion) + "',"
-		+ " USUARIOMODIFICAR = '"+ usuario + "', FECHAMODIFICAR = TO_CHAR(CURRENT_DATE, 'DD-MON-YYYY HH:MI:SS') WHERE BIE_ID = "+ idBien);
-
-		query.executeUpdate();
-	}
 }

@@ -344,6 +344,4 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public Object getBusquedaActivosGrid(DtoActivoGridFilter dto, Usuario usuarioLogado, boolean devolverPage);
 
 	List<HistoricoPeticionesPrecios> getHistoricoSolicitudesPrecios(Long idActivo);
-
-	public void updateFechaPosesion(Long idBien, Date fechaPosesion, String usuario);
 }

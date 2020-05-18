@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.velocity.runtime.directive.Foreach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,8 +21,8 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdjudicacionBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -68,10 +67,7 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 	
 	@Autowired
 	private UsuarioApi usuarioApi;
-	
-	@Autowired
-	private ActivoDao activoDao;
-	
+		
 	@Autowired
 	private TareaActivoDao tareaActivoDao;
 	
@@ -84,6 +80,9 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
 			throws IOException, ParseException, JsonViewerException, SQLException, Exception {
 		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)));
+		
+		
+		
 		if(activo != null) {
 			Filter filtroActivoSitPosesoria  = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 			ActivoSituacionPosesoria sitPosesoria = genericDao.get(ActivoSituacionPosesoria.class, filtroActivoSitPosesoria);
@@ -148,8 +147,16 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 			NMBBien bien = activo.getBien();
 			if(bien != null && usuario != null && !exc.dameCelda(fila, FECHA_POSESION).isEmpty()) {
 				Date fechaPosesion = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, FECHA_POSESION));
+				Filter filtroBien  = genericDao.createFilter(FilterType.EQUALS, "bien.id", bien.getId());
+				NMBAdjudicacionBien adjudicacionBien = genericDao.get(NMBAdjudicacionBien.class, filtroBien);
 				
-				activoDao.updateFechaPosesion(bien.getId(), fechaPosesion, usuario);
+				if(adjudicacionBien != null) {
+					adjudicacionBien.setFechaRealizacionPosesion(fechaPosesion);
+					genericDao.update(NMBAdjudicacionBien.class, adjudicacionBien);
+
+				}
+				
+
 			}
 			
 			if(traducirSiNo(exc.dameCelda(fila, INFORME_COMERCIAL_APROBADO)) == 1) {

@@ -67,8 +67,8 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 	
 	
 	public static final String CON_TITULO_NO_PUEDE_ESTAR_VACIO = "El campo 'Con título' no puede estar vacío si el campo 'Ocupado' está a si.";
-	public static final String FECHA_TAPIADO_NO_PUEDE_ESTAR_VACIO = "El campo 'Fecha tapiado' tiene que estar rellenado con el formato 'dd/mm/yyyy' si el campo 'Tapiado' está a si.";
-	public static final String FECHA_COLOCACION_PUERTA_ANTIOCUPA_NO_PUEDE_ESTAR_VACIO = "El campo 'Fecha colocación puerta antiocupa' tiene que estar rellenado con el formato 'dd/mm/yyyy' si el campo 'Puerta antiocupa' está a si.";
+	public static final String FECHA_TAPIADO_NO_PUEDE_ESTAR_VACIO = "El campo 'Fecha tapiado' no puede ser borrado si el campo 'Tapiado' está a si.";
+	public static final String FECHA_COLOCACION_PUERTA_ANTIOCUPA_NO_PUEDE_ESTAR_VACIO = "El campo 'Fecha colocación puerta antiocupa' no puede ser borrado si el campo 'Puerta antiocupa' está a si.";
 	public static final String FECHA_TAPIADO_NO_PUEDE_SER_SUPERIOR_A_LA_ACTUAL = "El campo 'Fecha tapiado' no puede ser superior a la fecha actual.";
 	public static final String FECHA_COLOCACION_PUERTA_ANTIOCUPA_NO_PUEDE_SER_SUPERIOR_A_LA_ACTUAL = "El campo 'Fecha colocación puerta antiocupa' no puede ser superior a la fecha actual.";
 	public static final String FECHA_INSCRIPCION_NO_PUEDE_SER_SUPERIOR_A_LA_ACTUAL = "El campo 'Fecha de inscripción' no puede ser superior a la fecha actual.";
@@ -152,8 +152,8 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 			mapaErrores.put(NUM_ACTIVO_NO_PERTENECE_A_SAREB, isActivoSareb(exc));
 			
 			
-			mapaErrores.put(FECHA_TAPIADO_ERROR, isFechaValidator(exc, COL_FECHA_TAPIADO));
-			mapaErrores.put(FECHA_COLOCACION_PUERTA_ANTIOCUPA_ERROR, isFechaValidator(exc, COL_FECHA_COLOCACION_PUERTA_ANTIOCUPA));
+			mapaErrores.put(FECHA_TAPIADO_ERROR, isFechaTapiadoValidator(exc, COL_FECHA_TAPIADO));
+			mapaErrores.put(FECHA_COLOCACION_PUERTA_ANTIOCUPA_ERROR, isFechaAntiocupaValidator(exc, COL_FECHA_COLOCACION_PUERTA_ANTIOCUPA));
 			mapaErrores.put(FECHA_DE_INSCRIPCION_ERROR, isFechaValidator(exc, COL_FECHA_DE_INSCRIPCION));
 			mapaErrores.put(FECHA_POSESION_ERROR, isFechaValidator(exc, COL_FECHA_POSESION));
 			mapaErrores.put(FECHA_TITULO_ERROR, isFechaValidator(exc, COL_FECHA_TITULO));
@@ -182,6 +182,11 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 
 			if (!mapaErrores.get(NUM_ACTIVO_NO_EXISTE).isEmpty() 
 					|| !mapaErrores.get(NUM_ACTIVO_NO_PERTENECE_A_SAREB).isEmpty()
+					|| !mapaErrores.get(FECHA_TAPIADO_ERROR).isEmpty()
+					|| !mapaErrores.get(FECHA_COLOCACION_PUERTA_ANTIOCUPA_ERROR).isEmpty()
+					|| !mapaErrores.get(FECHA_DE_INSCRIPCION_ERROR).isEmpty()
+					|| !mapaErrores.get(FECHA_POSESION_ERROR).isEmpty()
+					|| !mapaErrores.get(FECHA_TITULO_ERROR).isEmpty()
 					|| !mapaErrores.get(ACTIVO_INSCRITO_DIVISION_HORIZONTAL_ERROR).isEmpty()
 					|| !mapaErrores.get(TAPIADO_ERROR).isEmpty()
 					|| !mapaErrores.get(PUERTA_ANTIOCUPA_ERROR).isEmpty()
@@ -343,6 +348,68 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 		return listaFilas;
 	}
 	
+	private List<Integer> isFechaTapiadoValidator(MSVHojaExcel exc, Integer col){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if(!Checks.esNulo(exc.dameCelda(i, col)) 
+							&& (Arrays.asList(listaValidosPositivos).contains(exc.dameCelda(i, COL_TAPIADO).toUpperCase())) 
+							&& !esFechaValidaTapiadoAntiocupa(exc.dameCelda(i, col))) {
+						listaFilas.add(i);
+					} else if (!Checks.esNulo(exc.dameCelda(i, col)) 
+							&& !(Arrays.asList(listaValidosPositivos).contains(exc.dameCelda(i, COL_TAPIADO).toUpperCase())) 
+							&& !esFechaValida(exc.dameCelda(i, col))) {
+						listaFilas.add(i);
+					}
+						
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> isFechaAntiocupaValidator(MSVHojaExcel exc, Integer col){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if(!Checks.esNulo(exc.dameCelda(i, col)) 
+							&& (Arrays.asList(listaValidosPositivos).contains(exc.dameCelda(i, COL_PUERTA_ANTIOCUPA).toUpperCase())) 
+							&& !esFechaValidaTapiadoAntiocupa(exc.dameCelda(i, col))) {
+						listaFilas.add(i);
+					} else if (!Checks.esNulo(exc.dameCelda(i, col)) 
+							&& !(Arrays.asList(listaValidosPositivos).contains(exc.dameCelda(i, COL_PUERTA_ANTIOCUPA).toUpperCase())) 
+							&& !esFechaValida(exc.dameCelda(i, col))) {
+						listaFilas.add(i);
+					}
+						
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
 	private List<Integer> isBooleanValidator(MSVHojaExcel exc, Integer col){
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
@@ -426,7 +493,7 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
              for(int i=1; i<this.numFilasHoja;i++){
                  try {
                      
-                     if(!Checks.esNulo(exc.dameCelda(i, COL_PUERTA_ANTIOCUPA))
+                     if(!Checks.esNulo(exc.dameCelda(i, COL_PUERTA_ANTIOCUPA)) 
                              && Arrays.asList(listaValidosPositivos).contains(exc.dameCelda(i, COL_PUERTA_ANTIOCUPA).toUpperCase())
                              && (Checks.esNulo(exc.dameCelda(i, COL_FECHA_COLOCACION_PUERTA_ANTIOCUPA)) 
                             		 || esBorrar(exc.dameCelda(i, COL_FECHA_COLOCACION_PUERTA_ANTIOCUPA))))
@@ -578,6 +645,20 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 		}
 		if(esBorrar(fecha))
 			return true;
+		try {
+			SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
+			ft.parse(fecha);
+		} catch (ParseException e) {
+			logger.error(e.getMessage());
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean esFechaValidaTapiadoAntiocupa(String fecha) {
+		if(fecha == null || fecha.isEmpty()) {
+			return false;
+		}
 		try {
 			SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
 			ft.parse(fecha);

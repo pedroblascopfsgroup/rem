@@ -27,4 +27,6 @@ public interface TareaActivoDao extends AbstractDao<TareaActivo, Long>{
 	 */
 	public List<TareaActivo> getTareasActivoTramiteBorrados(Long idTramite);
 
+	public void finalizarTareasActivoPorIdActivoAndCodigoTramite(Long idActivo, String codigoTipoTramite);
+
 }

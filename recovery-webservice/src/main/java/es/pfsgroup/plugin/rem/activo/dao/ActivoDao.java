@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.activo.dao;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
@@ -343,4 +344,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public Object getBusquedaActivosGrid(DtoActivoGridFilter dto, Usuario usuarioLogado, boolean devolverPage);
 
 	List<HistoricoPeticionesPrecios> getHistoricoSolicitudesPrecios(Long idActivo);
+
+	public void updateFechaPosesion(Long idBien, Date fechaPosesion, String usuario);
 }

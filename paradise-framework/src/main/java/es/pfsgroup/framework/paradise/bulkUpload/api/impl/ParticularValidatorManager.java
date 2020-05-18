@@ -4681,4 +4681,31 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return Integer.valueOf(resultado) > 0;
 	}
 	
+	@Override
+	public Boolean existeSituacionTitulo(String codigoSituacionTitulo) {
+		if(Checks.esNulo(codigoSituacionTitulo) || !StringUtils.isAlphanumeric(codigoSituacionTitulo)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) FROM DD_ETI_ESTADO_TITULO " 
+				+ "WHERE DD_ETI_CODIGO = '"+ codigoSituacionTitulo +"' "
+		);
+		
+		return !"0".equals(resultado);
+	}
+	
+	public Boolean esActivoSareb(String numActivo) {
+		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
+			return false;
+		}
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+					+"		FROM ACT_ACTIVO ACT "
+					+"		WHERE ACT.DD_CRA_ID IN (SELECT DD_CRA_ID FROM DD_CRA_CARTERA "
+					+"								WHERE DD_CRA_CODIGO = '02' "
+					+"								AND BORRADO = 0) "
+					+"		AND ACT.ACT_NUM_ACTIVO = "+ numActivo +"");
+
+		return !"0".equals(resultado);
+	}
+	
 }

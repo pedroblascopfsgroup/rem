@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.updaterstate;
 
-import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
@@ -10,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -53,6 +53,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	private static final String VALIDACION_PROPIETARIO = "msg.validacion.gasto.propietario";
 	private static final String VALIDACION_TIPO_SUBTIPO = "msg.validacion.gasto.tipo.subtipo";
 	private static final String VALIDACION_SUPLIDOS_NIF_EMISOR_CUENTA = "msg.validacion.gasto.suplidos.nif.emisor.cuenta";
+	private static final String VALIDACION_SUPLIDOS_NIF_ESTADO_GASTO = "msg.validacion.gasto.suplidos.nif.estado.gasto";
 	
 	private static final String COD_DESTINATARIO_HAYA = "02";
 
@@ -620,8 +621,12 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				error = messageServices.getMessage(VALIDACION_SUPLIDOS_NIF_EMISOR_CUENTA);
 			}
 			
+			if(gastoPrincipal != null && gastoPrincipal.getEstadoGasto() != null
+					&& !DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(gastoPrincipal.getEstadoGasto().getCodigo())) {
+				error = messageServices.getMessage(VALIDACION_SUPLIDOS_NIF_ESTADO_GASTO);
+			}
+			
 		}
-		
 		return error;
 		
 	}

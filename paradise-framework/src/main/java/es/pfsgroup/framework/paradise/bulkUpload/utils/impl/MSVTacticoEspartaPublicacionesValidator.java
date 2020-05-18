@@ -164,7 +164,7 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 			mapaErrores.put(PUERTA_ANTIOCUPA_ERROR, isBooleanValidator(exc, COL_PUERTA_ANTIOCUPA));
 			mapaErrores.put(VPO_ERROR, isBooleanValidator(exc, COL_VPO));
 			mapaErrores.put(OCUPADO_ERROR, isBooleanValidator(exc, COL_OCUPADO));
-			mapaErrores.put(CON_TITULO_ERROR, isBooleanValidator(exc, COL_CON_TITULO));
+			mapaErrores.put(CON_TITULO_ERROR, perteneceDiccionarioDDTipoTitulo(exc, COL_CON_TITULO));
 			mapaErrores.put(CON_CARGAS_ERROR, isBooleanValidator(exc, COL_CON_CARGAS));
 			mapaErrores.put(INFORME_COMERCIAL_APROBADO_ERROR, isBooleanValidator(exc, COL_INFORME_COMERCIAL_APROBADO));
 			
@@ -588,5 +588,26 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 		return true;
 	}
 		
+	private List<Integer> perteneceDiccionarioDDTipoTitulo(MSVHojaExcel exc, Integer col) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		 try{
+			for(int i=1; i<this.numFilasHoja;i++){ 
+				try {
+					if(!Checks.esNulo(exc.dameCelda(i, COL_CON_TITULO)) && !particularValidator.perteneceADiccionarioConTitulo(exc.dameCelda(i, COL_CON_TITULO))){
+						 listaFilas.add(i);
+					}
+				} catch (ParseException e) {
+					 listaFilas.add(i);
+				}
+			}
+		 } catch (IllegalArgumentException e) {
+             listaFilas.add(0);
+             e.printStackTrace();
+         } catch (IOException e) {
+             listaFilas.add(0);
+             e.printStackTrace();
+         }
+         return listaFilas;   
+	}
 	
 }

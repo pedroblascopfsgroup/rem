@@ -33,6 +33,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
 
 
@@ -105,7 +106,9 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 			if(sitPosesoria != null ) {
 				sitPosesoria.setAccesoAntiocupa(traducirSiNo(exc.dameCelda(fila, PUERTA_ANTIOCUPA)));
 				sitPosesoria.setOcupado(traducirSiNo(exc.dameCelda(fila, OCUPADO)));
-				sitPosesoria.setSpsConTitulo(traducirSiNo(exc.dameCelda(fila, CON_TITULO)));
+				Filter filtroDDTipoTituloActivoTPA  = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, CON_TITULO));
+				DDTipoTituloActivoTPA ddTipoTituloActivoTPA = genericDao.get(DDTipoTituloActivoTPA.class, filtroDDTipoTituloActivoTPA);
+				sitPosesoria.setConTitulo(ddTipoTituloActivoTPA);
 				sitPosesoria.setAccesoTapiado(traducirSiNo(exc.dameCelda(fila, TAPIADO)));
 				
 				if(sitPosesoria.getAccesoTapiado() == 1 && !exc.dameCelda(fila, FECHA_TAPIADO).isEmpty()) {

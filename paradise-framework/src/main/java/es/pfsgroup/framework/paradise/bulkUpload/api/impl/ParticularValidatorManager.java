@@ -4708,4 +4708,18 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 	
+
+	@Override
+	public Boolean perteneceADiccionarioConTitulo(String conTitulo) {
+		if(Checks.esNulo(conTitulo) || !StringUtils.isAlphanumeric(conTitulo)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) FROM DD_TPA_TIPO_TITULO_ACT " 
+				+ "WHERE DD_TPA_CODIGO = '"+ conTitulo +"' "
+		);
+		
+		return !"0".equals(resultado);
+	}
+	
 }

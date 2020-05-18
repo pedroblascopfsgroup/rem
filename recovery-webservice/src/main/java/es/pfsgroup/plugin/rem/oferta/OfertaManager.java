@@ -3497,11 +3497,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		Oferta oferta = getOfertaById(idOferta);
 		
-//		if(!cumpleRequisitosCalculoLBK(oferta, eco)) {
-//			logger.error("Faltan datos para calcular el comité de Liberbank.");
-//			return null;
-//		}
-		
 		DtoVariablesCalculoComiteLBK dtoVariablesComite = calculoVariablesComiteLBK(oferta);
 		
 		DDComiteSancion comiteSeleccionado = seleccionaComite(dtoVariablesComite);

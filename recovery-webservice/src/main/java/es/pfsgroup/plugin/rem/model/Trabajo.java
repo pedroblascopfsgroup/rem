@@ -298,6 +298,9 @@ public class Trabajo implements Serializable, Auditable {
 	@Column(name="TBJ_NOMBRE_DND")
     private String nombreDnd;
 	
+	@Column(name="TBJ_TRABAJO_DND")
+    private Long trabajoDnd;
+	
 	public Long getId() {
 		return id;
 	}
@@ -994,6 +997,14 @@ public class Trabajo implements Serializable, Auditable {
 
 	public void setNombreExpedienteTrabajo(String nombreExpedienteTrabajo) {
 		this.nombreExpedienteTrabajo = nombreExpedienteTrabajo;
+	}
+
+	public Long getTrabajoDnd() {
+		return trabajoDnd;
+	}
+
+	public void setTrabajoDnd(Long trabajoDnd) {
+		this.trabajoDnd = trabajoDnd;
 	}
     
     

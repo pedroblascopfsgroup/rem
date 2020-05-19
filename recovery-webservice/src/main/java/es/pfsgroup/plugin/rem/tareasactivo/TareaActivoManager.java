@@ -360,6 +360,7 @@ public class TareaActivoManager implements TareaActivoApi {
 		tareaProrroga.setTramite(tareaAsociada.getTramite());
 		tareaProrroga.setAlerta(false);
 		tareaProrroga.setEspera(false);
+		tareaProrroga.setTareaFinalizada(true);
 		//tareaProrroga.setBorrado(false);
 		tareaProrroga.setCodigoTarea(TipoTarea.TIPO_PRORROGA);
 		

@@ -113,6 +113,7 @@ public class DtoActivoFilter extends WebDto {
 	private String numActivoDivarian;
 	private String tipoSegmento;
 	private String perimetroMacc;
+	private String equipoGestion;
 	
 	public String getNumActivo() {
 		return numActivo;
@@ -781,5 +782,10 @@ public class DtoActivoFilter extends WebDto {
 	public void setPerimetroMacc(String perimetroMacc) {
 		this.perimetroMacc = perimetroMacc;
 	}
-	
+	public String getEquipoGestion() {
+		return equipoGestion;
+	}
+	public void setEquipoGestion(String equipoGestion) {
+		this.equipoGestion = equipoGestion;
+	}
 }

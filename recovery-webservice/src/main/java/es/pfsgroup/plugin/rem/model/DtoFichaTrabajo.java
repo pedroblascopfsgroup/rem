@@ -177,6 +177,8 @@ public class DtoFichaTrabajo {
 	private String nombreProyecto;
 
 	private String nombreExpediente;
+	
+	private Long trabajoDnd;
 
 	public Long getIdTrabajo() {
 		return idTrabajo;
@@ -860,6 +862,14 @@ public class DtoFichaTrabajo {
 
 	public void setNombreExpediente(String nombreExpediente) {
 		this.nombreExpediente = nombreExpediente;
+	}
+
+	public Long getTrabajoDnd() {
+		return trabajoDnd;
+	}
+
+	public void setTrabajoDnd(Long trabajoDnd) {
+		this.trabajoDnd = trabajoDnd;
 	}
 	
 }

@@ -10486,7 +10486,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		long numeroOferta;
 		long idEntidad;
-		Boolean esUnaAgrupacion;
+		boolean esUnaAgrupacion;
+		boolean esOfertaPrincipal;
 		try {
 			esUnaAgrupacion = Boolean.parseBoolean(esAgrupacion);
 			
@@ -10495,11 +10496,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			
 			DtoOferta dtoOferta = new DtoOferta();
 			Oferta oferta = ofertaApi.getOfertaByNumOfertaRem(numeroOferta);
+			esOfertaPrincipal = ofertaApi.isOfertaPrincipal(oferta);
 			beanUtilNotNull.copyProperties(dtoOferta, oferta);
 			
 			if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
 				throw new JsonViewerException("La oferta seleccionada es de alquiler, no se puede agrupar con este tipo de ofertas");
 			}
+
+			if(!Checks.esNulo(esOfertaPrincipal) && !esOfertaPrincipal){
+				throw new JsonViewerException("La oferta que buscas no es una oferta principal");
+			}
+
 
 			if(!Checks.esNulo(oferta)){
 				ExpedienteComercial eco = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId());

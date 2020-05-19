@@ -27,6 +27,7 @@ DECLARE
 	err_num NUMBER; -- Numero de errores
 	err_msg VARCHAR2(2048); -- Mensaje de error
 	V_USR VARCHAR2(30 CHAR) := 'REMVIP-6964'; -- USUARIOCREAR/USUARIOMODIFICAR.
+	V_COUNT NUMBER(16) := 0;
 	
 	TYPE T_VAR IS TABLE OF VARCHAR2(100);
 	TYPE T_ARRAY_VAR IS TABLE OF T_VAR; 
@@ -323,7 +324,7 @@ BEGIN
 		V_MSQL := '
 			SELECT COUNT(*) FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE 
 			JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR ON PVE.DD_TPR_ID = TPR.DD_TPR_ID AND TPR.DD_TPR_CODIGO = '''||V_TMP_VAR(3)||'''
-			WHERE PVE.PVE_DOCIDENTIF = '''||V_TMP_VAR(2)||'''
+			WHERE PVE.PVE_DOCIDENTIF = '''||V_TMP_VAR(2)||''' AND PVE.PVE_FECHA_BAJA IS NULL AND DD_EPR_ID = 7
 		';
 		EXECUTE IMMEDIATE V_MSQL INTO V_NUM;
 		
@@ -337,17 +338,18 @@ BEGIN
 				) T2
 				ON (PVE.PVE_ID = T2.PVE_ID)
 				WHEN MATCHED THEN UPDATE SET
-					PVE.BORRADO = TO_NUMBER('||V_TMP_VAR(4)||'),
+					PVE.DD_EPR_ID = 7,
+					PVE.PVE_FECHA_BAJA = SYSDATE,
 					PVE.USUARIOMODIFICAR = '''||V_USR||''',
 					PVE.FECHAMODIFICAR = SYSDATE
 			';
 			
-			DBMS_OUTPUT.PUT_LINE('	[OK] Hecho. '||SQL%ROWCOUNT||' registro/s afectado/s.');
+			V_COUNT := V_COUNT + 1;
 		ELSE
-			DBMS_OUTPUT.PUT_LINE('	[WRN] No existe el mediador.');
+			DBMS_OUTPUT.PUT_LINE('	[WRN] No existe el mediador '||V_TMP_VAR(2)||' o ya está dado de baja');
 		END IF;
-	END LOOP;
-	DBMS_OUTPUT.PUT_LINE('---------------------------------------');
+	END LOOP;		
+	DBMS_OUTPUT.PUT_LINE('	[INFO] '||V_COUNT||' registros actualizados.');
 	DBMS_OUTPUT.PUT_LINE('[FIN] Fin del proceso.');
 	
 	--ROLLBACK;

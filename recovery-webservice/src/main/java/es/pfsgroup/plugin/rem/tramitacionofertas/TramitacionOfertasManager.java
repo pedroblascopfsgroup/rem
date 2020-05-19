@@ -123,7 +123,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	private static final String AGRUPACION_SIN_FORMALIZACION = "agrupacion.sin.formalizacion";
 	private static final String MAESTRO_ORIGEN_WCOM = "WCOM";
 	private static final Integer ES_FORMALIZABLE = new Integer(1);
-	private static final String FALTAN_DATOS = "Faltan datos para proponer";
 
 	@Resource
 	private MessageService messageServices;
@@ -1599,12 +1598,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 	public void validartramitacionActivo(DtoOfertaActivo dto, Oferta oferta, DDEstadoOferta estadoOferta, Activo activo,
 			Boolean esAlquiler) {
-
-//		if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())
-//				&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo())
-//				&& DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo()) && faltanDatosCalculo(oferta, activo)) {
-//			throw new JsonViewerException(FALTAN_DATOS);
-//		}
 
 		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
 			comprobarTramitarOferta(oferta, activo, esAlquiler, null);

@@ -342,7 +342,16 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 			        {"codigo":"1", "descripcion":"Si"},
 			        {"codigo":"0", "descripcion":"No"}
 			    ]
-			}
+			},
+
+            comboEquipoGestion: {
+                model: 'HreRem.model.ComboBase',
+                proxy: {
+                    type: 'uxproxy',
+                    remoteUrl: 'generic/getDiccionario',
+                    extraParams: {diccionario: 'tiposEquipoGestion'}
+                }
+            }
      }
 
 });

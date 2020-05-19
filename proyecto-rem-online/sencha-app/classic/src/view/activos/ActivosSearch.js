@@ -164,7 +164,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
     			xtype: 'panel',
     			collapsed: true,
     			layout: 'column',
-    			reference: 'busquedaAvanzadaActivos',
+    			reference: 'busquedaAvanzadaActivosbusquedaAvanzadaActivos',
     			title: HreRem.i18n('title.busqueda.avanzada'),
     			cls: 'panel-busqueda-avanzada',
     			items: [
@@ -656,7 +656,16 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							    		bind: {
 							    			store: '{comboSiNoRem}'
 							    		}
-							    	}
+							    	},
+                                        {
+                                            xtype: 'comboboxfieldbase',
+                                            fieldLabel: HreRem.i18n('fieldlabel.tipo.equipo.gestion'),
+                                            name: 'equipoGestion',
+                                            reference: 'equipoGestionRef',
+                                            bind: {
+                                                store: '{comboEquipoGestion}'
+                                            }
+                                        }
 								]
 			            }
 		            ]}

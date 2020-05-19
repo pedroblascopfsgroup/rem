@@ -1305,42 +1305,23 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	updateOrdenFotosInterno: function(data, record, store) {
 
 		var me = this;
-		me.storeGuardado = store;
-		me.ordenGuardado = 0;
-		me.refrescarGuardado = true;
-		var orden = 1;
-		var modificados = new Array();
-		var contadorModificados = 0;
-		// FIXME: Â¿Poner mÃ¡scara?
-		// me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		 me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		var url =  $AC.getRemoteUrl('activo/updateFotosById');
-		Ext.Ajax.request({
-		
+		Ext.Ajax.request({		
 		     url: url,
 		     params: {
 		     			data: Ext.encode(store.getData().getIndices())	
-		     		}
-			
+		     		}			
 		    ,success: function (a, operation, context) {
-                	me.storeGuardado.load();
-                	/*
-					 * //FIXME: Â¿Poner mÃ¡scara? Ext.toast({ html: 'LA OPERACIÃN SE HA
-					 * REALIZADO CORRECTAMENTE', width: 360, height: 100, align: 't' });
-					 */
-					// me.getView().unmask();
+                store.load();
+                me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				me.getView().unmask();
 
-            },
-            
+            },            
             failure: function (a, operation, context) {
-            	  Ext.toast({
-				     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÃN',
-				     width: 360,
-				     height: 100,
-				     align: 't'									     
-				 });
-				 me.unmask();
-            }
-	     
+            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+            	me.getView().unmask();
+            }	     
 		});		
 	},
 	
@@ -1357,9 +1338,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this,
 		idActivo = me.getViewModel().get("activo.id");
 		var storeTemp = btn.up('form').down('dataview').getStore();
-		if(Ext.isEmpty(storeTemp)){
-			storeTemp.load();
-		}
+		var url =  $AC.getRemoteUrl('activo/refreshCacheFotos');
+		Ext.Ajax.request({
+			url: url,
+			params: {id : idActivo},
+				 success: function (a, operation, context) {
+               		storeTemp.load();
+               	 	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+                 },
+                 failure: function (a, operation, context) {
+	               	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    	         }		     
+		});
 	},
 	
 	onDeleteFotoClick: function(btn) {

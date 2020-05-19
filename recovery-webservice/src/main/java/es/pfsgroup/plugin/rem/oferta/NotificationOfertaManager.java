@@ -48,6 +48,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	private static final String USUARIO_FICTICIO_OFERTA_CAJAMAR = "ficticioOfertaCajamar";
 	private static final String BUZON_REM = "buzonrem";
 	private static final String BUZON_PFS = "buzonpfs";
+	private static final String BUZON_BOARDING = "buzonboarding";
 	private static final String BUZON_OFR_APPLE = "buzonofrapple";
 	private static final String STR_MISSING_VALUE = "---";
 	public static final String[] DESTINATARIOS_CORREO_APROBACION = {"GESTCOMALQ", "SUPCOMALQ", "SCOM", "GCOM"};
@@ -235,6 +236,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 					String.format("<p>Ha recibido una nueva oferta con número identificador %s, a nombre de %s con identificador %s %s, por importe de %s €. Prescriptor: %s %s.</p>", 
 							oferta.getNumOferta().toString(), oferta.getCliente().getNombreCompleto(),tipoDocIndentificacion,docIdentificacion, NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()),codigoPrescriptor,nombrePrescriptor );
 			if (oferta.getOfertaExpress()) {
+				Usuario buzonBoarding = usuarioManager.getByUsername(BUZON_BOARDING);
 				String asunto = "Notificación de aprobación provisional de la oferta " + oferta.getNumOferta();
 				List<DtoAdjuntoMail> adjuntos = new ArrayList<DtoAdjuntoMail>();
 				FileItem f1 = null;
@@ -258,6 +260,10 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 					adjuntos.add(createAdjunto(f1, "Instrucciones_Reserva_Formalizacion_Cajamar.docx"));
 					adjuntos.add(createAdjunto(f2, "Ficha_cliente.xlsx"));
 					adjuntos.add(createAdjunto(f3, "Manif_Titular_Real.doc"));
+
+					if(!Checks.esNulo(buzonBoarding)){
+						mailsPara.add(buzonBoarding.getEmail());
+					}
 				}
 				//ADJUNTOS SI ES SAREB
 				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)) {

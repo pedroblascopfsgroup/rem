@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Juan Beltran
---## FECHA_CREACION=20200408
+--## AUTOR=Adrián Molina
+--## FECHA_CREACION=20200513
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-10081
+--## INCIDENCIA_LINK=REMVIP-7161
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Crear vista para rellenar el grid de la busqueda de activos
@@ -12,6 +12,7 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 [HREOS-10081] Versión inicial (Creación de la vista)
+--##        0.1 [REMVIP-7161] Añadir campo equipo de gestión
 --#########################################
 --*/
 
@@ -113,7 +114,8 @@ BEGIN
 			ECG.DD_ECG_CODIGO										AS ESTADO_COMUNICACION_GENCAT,
 			DIR_COM.DD_TDC_CODIGO						AS DIRECCION_COMERCIAL,
 			ACT.ACT_PERIMETRO_MACC						AS PERIMETRO_MACC,
-			TIPOSEG.DD_TS_CODIGO 								AS TIPO_SEGMENTO_CODIGO
+			TIPOSEG.DD_TS_CODIGO 								AS TIPO_SEGMENTO_CODIGO,
+            EQG.DD_EQG_CODIGO                           AS DD_EQG_EQUIPO_GESTION
             
 		FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT 
 		LEFT JOIN '|| V_ESQUEMA ||'.ACT_LOC_LOCALIZACION ACT_LOC 							ON ACT_LOC.ACT_ID = ACT.ACT_ID
@@ -151,7 +153,8 @@ BEGIN
 		LEFT JOIN '|| V_ESQUEMA_M ||'.DD_LOC_LOCALIDAD LOC 											ON LOC.DD_LOC_ID = BIE_LOC.DD_LOC_ID		
 		LEFT JOIN '|| V_ESQUEMA_M ||'.DD_LOC_LOCALIDAD LOCREG									ON LOCREG.DD_LOC_ID = BIE_DAT.DD_LOC_ID
 		LEFT JOIN '|| V_ESQUEMA_M ||'.DD_CIC_CODIGO_ISO_CIRBE_BKP BIE_CIC 		ON BIE_LOC.DD_CIC_ID = BIE_CIC.DD_CIC_ID
-		LEFT JOIN '|| V_ESQUEMA_M ||'.DD_PRV_PROVINCIA PRV											ON PRV.DD_PRV_ID = LOC.DD_PRV_ID	  
+		LEFT JOIN '|| V_ESQUEMA_M ||'.DD_PRV_PROVINCIA PRV											ON PRV.DD_PRV_ID = LOC.DD_PRV_ID
+		LEFT JOIN ' || V_ESQUEMA || '.DD_EQG_EQUIPO_GESTION EQG                 ON EQG.DD_EQG_ID = ACT.DD_EQG_ID
  		
 		WHERE ACT.BORRADO = 0';
         

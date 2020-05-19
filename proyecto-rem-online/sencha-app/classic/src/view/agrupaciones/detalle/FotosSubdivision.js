@@ -37,7 +37,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosSubdivision', {
         
         var imageTemplate = new Ext.XTemplate('<tpl for=".">',
         	'<div class="thumb-wrap" id="{nombre}">',
-      		'<div class="thumb"> <img src="'+$AC.getRemoteUrl("activo/getFotoActivoById")+'?idFoto={id}" title="{nombre}"></div>',
+        	'<span>&nbsp;{tituloFoto}</span>',
+      		'<div class="thumb"> <img src="{path}" title="{nombre}"></div>',
          	'<span>{nombre} Orden: {orden} </span></div>',
       		'</tpl>');
 

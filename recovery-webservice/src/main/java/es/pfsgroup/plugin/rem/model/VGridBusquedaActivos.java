@@ -207,6 +207,9 @@ public class VGridBusquedaActivos implements Serializable {
     @Column(name ="TIPO_SEGMENTO_CODIGO")
    	private String tipoSegmentoCodigo;
 
+	@Column(name = "DD_EQG_EQUIPO_GESTION")
+	private String equipoGestion;
+
 	public Long getId() {
 		return id;
 	}
@@ -717,6 +720,14 @@ public class VGridBusquedaActivos implements Serializable {
 
 	public void setTipoSegmentoCodigo(String tipoSegmentoCodigo) {
 		this.tipoSegmentoCodigo = tipoSegmentoCodigo;
+	}
+
+	public String getEquipoGestion() {
+		return equipoGestion;
+	}
+
+	public void setEquipoGestion(String equipoGestion) {
+		this.equipoGestion = equipoGestion;
 	}
     
 }

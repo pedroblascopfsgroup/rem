@@ -551,6 +551,19 @@ public class AgrupacionController extends ParadiseJsonController {
 					BeanUtils.copyProperty(fotoDto, "id", listaFotos.get(i).getId());
 
 					BeanUtils.copyProperties(fotoDto, listaFotos.get(i));
+					if (listaFotos.get(i).getRemoteId() != null) {
+						BeanUtils.copyProperty(fotoDto, "path", listaFotos.get(i).getUrlThumbnail());
+					} else {
+						BeanUtils.copyProperty(fotoDto, "path", "/pfs/activo/getFotoActivoById.htm?idFoto=" + listaFotos.get(i).getId());
+					}
+					if (listaFotos.get(i).getPrincipal() != null && listaFotos.get(i).getPrincipal() && listaFotos.get(i).getInteriorExterior() != null) {
+						if (listaFotos.get(i).getInteriorExterior()) {
+							BeanUtils.copyProperty(fotoDto, "tituloFoto", "Principal INTERIOR");
+
+						} else {
+							BeanUtils.copyProperty(fotoDto, "tituloFoto", "Principal EXTERIOR");
+						}
+					}
 
 					listaDtoFotos.add(fotoDto);
 

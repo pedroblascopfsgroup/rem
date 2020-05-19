@@ -227,7 +227,10 @@ Ext.define('HreRem.model.BusquedaActivoGrid', {
 			{
           		name:'perimetroMacc',
           		type: 'boolean' 
-        	}
+        	},
+            {
+                name:'equipoGestion'
+            }
 	    		
     ],
     

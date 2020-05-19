@@ -328,6 +328,9 @@ public class VBusquedaActivos implements Serializable {
 	@Column(name = "ACT_PERIMETRO_MACC")
 	private String perimetroMacc;
 
+	@Column(name = "DD_EQG_EQUIPO_GESTION")
+	private String equipoGestion;
+
 	public Long getId() {
 		return id;
 	}
@@ -728,6 +731,14 @@ public class VBusquedaActivos implements Serializable {
 
 	public void setPerimetroMacc(String perimetroMacc) {
 		this.perimetroMacc = perimetroMacc;
+	}
+
+	public String getEquipoGestion() {
+		return equipoGestion;
+	}
+
+	public void setEquipoGestion(String equipoGestion) {
+		this.equipoGestion = equipoGestion;
 	}
 	
 }

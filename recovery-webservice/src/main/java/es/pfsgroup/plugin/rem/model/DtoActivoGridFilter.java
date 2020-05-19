@@ -72,6 +72,7 @@ public class DtoActivoGridFilter extends WebDto {
 	private String tipoSegmentoCodigo;
 	private Integer perimetroMacc;	
 	private Long gestoria;
+	private String equipoGestion;
 	
 	public String getNumActivo() {
 		return numActivo;
@@ -474,6 +475,12 @@ public class DtoActivoGridFilter extends WebDto {
 	}
 	public void setGestoria(Long gestoria) {
 		this.gestoria = gestoria;
+	}
+	public String getEquipoGestion() {
+		return equipoGestion;
+	}
+	public void setEquipoGestion(String equipoGestion) {
+		this.equipoGestion = equipoGestion;
 	}
 
 }

@@ -26,7 +26,13 @@ public class DtoVariablesCalculoComiteLBK {
     
     //Importe mínimo autorizado
     private Double pmin;
-	
+
+    //Contiene algún importe 0 o nullo
+	private Boolean importeCero;
+
+	//Es una oferta individual
+	private Boolean esIndividual;
+
     public Double getVta() {
 		return vta;
 	}
@@ -68,6 +74,18 @@ public class DtoVariablesCalculoComiteLBK {
 	}
 	public void setPmin(Double pmin) {
 		this.pmin = pmin;
+	}
+	public Boolean getImporteCero() {
+		return importeCero;
+	}
+	public void setImporteCero(Boolean importeCero) {
+		this.importeCero = importeCero;
+	}
+	public Boolean getEsIndividual() {
+		return esIndividual;
+	}
+	public void setEsIndividual(Boolean esIndividual) {
+		this.esIndividual = esIndividual;
 	}
 	
       	

@@ -260,6 +260,13 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 					}
 
 				}
+
+				if(tieneReserva && DDCartera.CODIGO_CARTERA_CAJAMAR.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())
+					&& Checks.esNulo(expediente.getReserva().getFechaContabilizacionReserva())){
+					DDEstadosReserva estadoReserva =  genericDao.get(DDEstadosReserva.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosReserva.CODIGO_ANULADA));
+					expediente.getReserva().setEstadoReserva(estadoReserva);
+				}
 				
 				if(!Checks.esNulo(dto)) {
 					try {

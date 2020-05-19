@@ -3497,11 +3497,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		Oferta oferta = getOfertaById(idOferta);
 		
-		if(!cumpleRequisitosCalculoLBK(oferta, eco)) {
-			logger.error("Faltan datos para calcular el comité de Liberbank.");
-			return null;
-		}
-		
 		DtoVariablesCalculoComiteLBK dtoVariablesComite = calculoVariablesComiteLBK(oferta);
 		
 		DDComiteSancion comiteSeleccionado = seleccionaComite(dtoVariablesComite);
@@ -3514,6 +3509,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private DtoVariablesCalculoComiteLBK calculoVariablesComiteLBK(Oferta oferta) {
 
 		DtoVariablesCalculoComiteLBK dto = new DtoVariablesCalculoComiteLBK();
+		dto.setEsIndividual(true);
+		dto.setImporteCero(false);
 		
 		Oferta ofertaPrincipal = null;
 		
@@ -3531,6 +3528,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		
 		if(ofertaPrincipal != null) {
+			dto.setEsIndividual(false);
 			dto = rellenaNewDtoCalculoLBK(dto, ofertaPrincipal, ofertaPrincipal.getOfertasAgrupadas());
 		}
 		
@@ -4463,23 +4461,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		
-		//Aqui se comprueba que todos los activos implicados en la oferta tienen los precios informados
-		List<ActivoOferta> listaActivos = oferta.getActivosOferta();
-		for(ActivoOferta activoActual: listaActivos) {
-			Activo act = activoActual.getPrimaryKey().getActivo();
-			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo", act.getId());
-			VDatosCalculoLBK datos = genericDao.get(VDatosCalculoLBK.class, filtroActivo);
-			if (Checks.esNulo(datos) 
-					|| (Checks.esNulo(datos.getImporteMinAutorizado()) || datos.getImporteMinAutorizado() <= 0)
-					|| (Checks.esNulo(datos.getTasacionActual()))
-					|| (Checks.esNulo(datos.getValorNetoContable()) || datos.getValorNetoContable() <= 0)
-					|| (Checks.esNulo(datos.getValorRazonable()) || datos.getValorRazonable() <= 0)
-					|| (Checks.esNulo(oferta.getImporteOferta()) || oferta.getImporteOferta() <= 0)) {
-				
-				return false;
-			}
-		}
-		
 		//Se comprueba que la oferta tiene los datos necesarios para calcular los honorarios.
 		expediente = expedienteComercialDao.getExpedienteComercialByIdOferta(oferta.getId());
 		
@@ -4496,10 +4477,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	private DDComiteSancion seleccionaComite(DtoVariablesCalculoComiteLBK dto) {
-		
-		if(Checks.esNulo(dto.getPvn()) || Checks.esNulo(dto.getVnc())) {
-			return null;
-		}
 		
 		Double perdida = dto.getPvn() - dto.getVnc();
 		Double perdidaValorAbs = Math.abs(perdida);
@@ -4521,10 +4498,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		Filter filtroComiteHRE = genericDao.createFilter(FilterType.EQUALS, "codigo",
 				DDComiteSancion.CODIGO_HAYA_LIBERBANK);
 
-		if(dto.getVta() == 0) {
+		if(dto.getImporteCero() && dto.getEsIndividual()) {
 			return genericDao.get(DDComiteSancion.class, filtroGestion);
 		} else if (dto.getVta() < IMPORTE_UMBRAL) {
-			if (dto.getPvb() >= dto.getPmin()) {
+			if (dto.getPvb() >= dto.getPmin() && !dto.getImporteCero()) {
 				return genericDao.get(DDComiteSancion.class, filtroComiteHRE);
 			} else if (dto.getPvn() >= dto.getVr()) {
 				return genericDao.get(DDComiteSancion.class, filtroGestion);
@@ -4633,16 +4610,23 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		List<ActivoOferta> listaActivos = oferta.getActivosOferta();
 		pvbOfertaActual = oferta.getImporteOferta();
-		pvb += pvbOfertaActual;
+		if(Checks.esNulo(pvbOfertaActual) || pvbOfertaActual == 0){
+			dto.setImporteCero(true);
+		}
+
+		pvb += pvbOfertaActual != null ? pvbOfertaActual : 0.0;
 		for(ActivoOferta activoActual: listaActivos) {
 			Activo act = activoActual.getPrimaryKey().getActivo();
 			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo", act.getId());
 			VDatosCalculoLBK datos = genericDao.get(VDatosCalculoLBK.class, filtroActivo);
-			
-			pmin += datos.getImporteMinAutorizado();
-			vta += datos.getTasacionActual();
-			vnc += datos.getValorNetoContable();
-			vr += datos.getValorRazonable();
+			if(Checks.esNulo(datos.getTasacionActual()) || datos.getTasacionActual() == 0.0 || Checks.esNulo(datos.getValorNetoContable())
+					|| datos.getValorNetoContable() == 0.0 || Checks.esNulo(datos.getValorRazonable()) || datos.getValorRazonable() == 0.0){
+				dto.setImporteCero(true);
+			}
+			pmin += datos.getImporteMinAutorizado() != null ? datos.getImporteMinAutorizado() : 0.0;
+			vta += datos.getTasacionActual() != null ? datos.getTasacionActual() : 0.0;
+			vnc += datos.getValorNetoContable() != null ? datos.getValorNetoContable() : 0.0;
+			vr += datos.getValorRazonable() != null ? datos.getValorRazonable() : 0.0;
 		}
 		
 		//Calculamos los costes de comercialización y el Precio de venta neto asociado
@@ -4654,9 +4638,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			for(GastosExpediente gex : listaGex) {
 				ccoOfertaActual = (gex.getImporteFinal() * gex.getImporteCalculo());
-				cco += ccoOfertaActual;
+				if(Checks.esNulo(ccoOfertaActual) || ccoOfertaActual == 0.0){
+					dto.setImporteCero(true);
+				}
+				cco += ccoOfertaActual != null ? ccoOfertaActual : 0.0;
 			}
-			
+
+			if(Checks.esNulo(pvbOfertaActual - ccoOfertaActual) || (pvbOfertaActual - ccoOfertaActual) == 0.0 ){
+				dto.setImporteCero(true);
+			}
 			pvn += (pvbOfertaActual - ccoOfertaActual);
 		}
 		

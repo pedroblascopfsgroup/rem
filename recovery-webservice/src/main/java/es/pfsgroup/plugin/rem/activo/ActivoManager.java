@@ -781,8 +781,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	@Transactional(readOnly = false)
-	public ActivoFoto uploadFoto(File fileItem) throws Exception {
-		ActivoFoto activoFoto = null;
+	public String uploadFoto(File fileItem) throws Exception {
 		try {
 			if (fileItem.getMetadata().get("id_activo_haya") == null) {
 				throw new Exception("La foto no tiene activo");
@@ -803,24 +802,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					throw new Exception("El tipo no existe");
 				}
 				Integer orden = null;
-				activoFoto = activoAdapter.getFotoActivoByRemoteId(fileItem.getId());
+				ActivoFoto activoFoto = activoAdapter.getFotoActivoByRemoteId(fileItem.getId());
 				if (activoFoto == null) {
 					activoFoto = new ActivoFoto(fileItem);
 				}
-
-				if (activoFoto.getOrden() == null) {
-					orden = activoDao.getMaxOrdenFotoById(activo.getId());
-					if(orden == null)
-						orden = 0;
-					else
-						orden++;
-
-				} else {
-					orden = activoFoto.getOrden();
-					if(orden == null)
-						orden = 0;
+				if (fileItem.getMetadata().containsKey("orden")) {
+					orden = Integer.valueOf(fileItem.getMetadata().get("orden"));
 				}
+				if (orden == null) {
+					orden = activoDao.getMaxOrdenFotoById(activo.getId()) + 1;
 
+				}
 				activoFoto.setActivo(activo);
 				activoFoto.setTipoFoto(tipoFoto);
 				activoFoto.setNombre(fileItem.getBasename());
@@ -857,9 +849,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						activoFoto.setInteriorExterior(Boolean.FALSE);
 					}
 				}
-
-				activoFoto.setOrden(orden);
-				activoFoto = genericDao.save(ActivoFoto.class, activoFoto);
+				if(orden != null)
+					activoFoto.setOrden(orden);
+				genericDao.save(ActivoFoto.class, activoFoto);
 
 				logger.debug("Foto procesada para el activo " + activo.getNumActivo());
 
@@ -872,7 +864,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			throw e;
 		}
 
-		return activoFoto;
+		return null;
 	}
 
 	@Override
@@ -888,10 +880,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		SITUACION situacion;
 		PRINCIPAL principal;
 		Integer orden = activoDao.getMaxOrdenFotoById(Long.parseLong(fileItem.getParameter("idEntidad")));
-		if(orden == null)
-			orden = 0;
-		else
-			orden++;
+		orden++;
 
 		try {
 			if (gestorDocumentalFotos.isActive()) {

@@ -682,7 +682,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		List<TareaActivo> listaTareas = tareaActivoApi.getTareasActivo(activo.getId(),ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER);
 		if (!Checks.estaVacio(listaTareas)) {
 			for (TareaActivo tarea : listaTareas) {
-				if (!tarea.getTareaFinalizada()) {
+				if (!Checks.esNulo(tarea.getTareaFinalizada()) && !tarea.getTareaFinalizada()) {
 					tieneOfertaAlquilerViva = true;
 					break;
 				}

@@ -86,7 +86,10 @@ Ext.define('HreRem.model.BusquedaActivo', {
     		},
     		{
     			name: 'numActivoDivarian'
-    		}
+    		},
+            {
+                name: 'equipoGestion'
+            }
     ] 
     
 

@@ -46,13 +46,14 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 	public static final String NUM_ACTIVO_NO_PERTENECE_A_SAREB = "El número del activo no pertenece a la cartera SAREB.";
 	
 	//Mensajes de errores de los campos de fechas
-	public static final String FECHA_TAPIADO_ERROR = "El formato de la fecha del campo 'Fecha tapiado' debe de ser: dd/mm/yyyy.";
-	public static final String FECHA_COLOCACION_PUERTA_ANTIOCUPA_ERROR = "El formato de la fecha del campo 'Fecha colocación puerta antiocupa' debe de ser: dd/mm/yyyy.";
+	public static final String FECHA_TAPIADO_ERROR = "El formato de la fecha del campo 'Fecha tapiado' debe de ser: dd/mm/yyyy, si se ha indicado tapiado a 'Si'";
+	public static final String FECHA_COLOCACION_PUERTA_ANTIOCUPA_ERROR = "El formato de la fecha del campo 'Fecha colocación puerta antiocupa' debe de ser: dd/mm/yyyy, si se ha indicado puerta antiocupa a 'Si'";
 	public static final String FECHA_DE_INSCRIPCION_ERROR = "El formato de la fecha del campo 'Fecha de inscripción' debe de ser: dd/mm/yyyy.";
 	public static final String FECHA_POSESION_ERROR = "El formato de la fecha del campo 'Fecha de posesión' debe de ser: dd/mm/yyyy.";
 	public static final String FECHA_TITULO_ERROR = "El formato de la fecha del campo 'Fecha de título' debe de ser: dd/mm/yyyy.";
 	
 	//Mensajes de errores de los campos booleanos
+
 	public static final String ACTIVO_INSCRITO_DIVISION_HORIZONTAL_ERROR = "El campo 'Activo inscrito en división horizontal' solo puede estar rellenado con 'S' para sí y 'N' para no.";
 	public static final String TAPIADO_ERROR = "El campo 'Tapiado' solo puede estar rellenado con 'S' para sí y 'N' para no.";
 	public static final String PUERTA_ANTIOCUPA_ERROR = "El campo 'Puerta anti ocupa' solo puede estar rellenado con 'S' para sí y 'N' para no.";
@@ -61,18 +62,21 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 	public static final String CON_TITULO_ERROR = "El campo 'Con título' solo puede estar rellenado con 'S' para sí y 'N' para no.";
 	public static final String CON_CARGAS_ERROR = "El campo 'Con cargas' solo puede estar rellenado con 'S' para sí y 'N' para no.";
 	public static final String INFORME_COMERCIAL_APROBADO_ERROR = "El campo 'Informe comercial aprobado' solo puede estar rellenado con 'S' para sí y 'N' para no.";
+
 	
-	
-	
-	
-	
+	public static final String FECHA_TAPIADO_DEBE_ESTAR_VACIO = "La fecha debe estar vacía o borrada si el campo 'Tapiado' está a no.";
+	public static final String FECHA_COLOCACION_PUERTA_ANTIOCUPA_DEBE_ESTAR_VACIO = "La fecha debe estar vacía o borrada si el campo 'Puerta antiocupa' está a no.";
+	public static final String TITULO_VACIO_SI_OCUPA_NO = "Si el campo 'Ocupado' está vacío o a 'N' el campo 'Con título' deberá ser vacío.";
+
+
 	public static final String CON_TITULO_NO_PUEDE_ESTAR_VACIO = "El campo 'Con título' no puede estar vacío si el campo 'Ocupado' está a sí.";
 	public static final String FECHA_TAPIADO_NO_PUEDE_ESTAR_VACIO = "El campo 'Fecha tapiado' no puede ser borrado si el campo 'Tapiado' está a sí.";
 	public static final String FECHA_COLOCACION_PUERTA_ANTIOCUPA_NO_PUEDE_ESTAR_VACIO = "El campo 'Fecha colocación puerta antiocupa' no puede ser borrado si el campo 'Puerta antiocupa' está a sí.";
+
 	public static final String FECHA_TAPIADO_NO_PUEDE_SER_SUPERIOR_A_LA_ACTUAL = "El campo 'Fecha tapiado' no puede ser superior a la fecha actual.";
 	public static final String FECHA_COLOCACION_PUERTA_ANTIOCUPA_NO_PUEDE_SER_SUPERIOR_A_LA_ACTUAL = "El campo 'Fecha colocación puerta antiocupa' no puede ser superior a la fecha actual.";
 	public static final String FECHA_INSCRIPCION_NO_PUEDE_SER_SUPERIOR_A_LA_ACTUAL = "El campo 'Fecha de inscripción' no puede ser superior a la fecha actual.";
-	public static final String FECHA_INSCRIPCION_TIENE_QUE_SER_SUPERIOR_A_FECHA_TITULO = "El campo 'Fecha de inscripción' tiene que ser superior al campo 'Fecha título'.";
+	public static final String FECHA_INSCRIPCION_TIENE_QUE_SER_SUPERIOR_A_FECHA_TITULO = "El campo 'Fecha de inscripción' tiene que ser superior o igual al campo 'Fecha título'.";
 	public static final String FECHA_TITULO_NO_PUEDE_SER_SUPERIOR_A_LA_ACTUAL = "El campo 'Fecha título' no puede ser superior a la fecha actual.";
 	public static final String ESTADO_FISICO_DEL_ACTIVO_NO_EXISTE = "El código introducido en el campo 'Estado físico del activo' no existe.";
 	public static final String SITUACION_DEL_TITULO_NO_EXISTE = "El código introducido en el campo 'Situación del título' no existe.";
@@ -168,10 +172,13 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 			mapaErrores.put(CON_CARGAS_ERROR, isBooleanValidator(exc, COL_CON_CARGAS));
 			mapaErrores.put(INFORME_COMERCIAL_APROBADO_ERROR, isBooleanValidator(exc, COL_INFORME_COMERCIAL_APROBADO));
 			
+			mapaErrores.put(FECHA_TAPIADO_DEBE_ESTAR_VACIO, tapiadoNoConFecha(exc, COL_FECHA_TAPIADO));
+			mapaErrores.put(FECHA_COLOCACION_PUERTA_ANTIOCUPA_DEBE_ESTAR_VACIO, antiocupaNoConFecha(exc, COL_FECHA_COLOCACION_PUERTA_ANTIOCUPA));
+			mapaErrores.put(TITULO_VACIO_SI_OCUPA_NO, isNotOcupadoAndTitulo(exc, COL_CON_TITULO));
+
+			
 			
 			mapaErrores.put(CON_TITULO_NO_PUEDE_ESTAR_VACIO, isOcupadoAndNotTitulo(exc));
-			mapaErrores.put(FECHA_TAPIADO_NO_PUEDE_ESTAR_VACIO, isTapiadoAndNotFechaTapiado(exc));
-			mapaErrores.put(FECHA_COLOCACION_PUERTA_ANTIOCUPA_NO_PUEDE_ESTAR_VACIO, isPuertaAntiocupaAndNotFechaColocacion(exc));
 			mapaErrores.put(FECHA_TAPIADO_NO_PUEDE_SER_SUPERIOR_A_LA_ACTUAL, isFechaMenorActual(exc, COL_FECHA_TAPIADO));
 			mapaErrores.put(FECHA_COLOCACION_PUERTA_ANTIOCUPA_NO_PUEDE_SER_SUPERIOR_A_LA_ACTUAL, isFechaMenorActual(exc, COL_FECHA_COLOCACION_PUERTA_ANTIOCUPA));
 			mapaErrores.put(FECHA_INSCRIPCION_NO_PUEDE_SER_SUPERIOR_A_LA_ACTUAL, isFechaMenorActual(exc, COL_FECHA_DE_INSCRIPCION));
@@ -196,8 +203,6 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 					|| !mapaErrores.get(CON_CARGAS_ERROR).isEmpty()
 					|| !mapaErrores.get(INFORME_COMERCIAL_APROBADO_ERROR).isEmpty()
 					|| !mapaErrores.get(CON_TITULO_NO_PUEDE_ESTAR_VACIO).isEmpty()
-					|| !mapaErrores.get(FECHA_TAPIADO_NO_PUEDE_ESTAR_VACIO).isEmpty()
-					|| !mapaErrores.get(FECHA_COLOCACION_PUERTA_ANTIOCUPA_NO_PUEDE_ESTAR_VACIO).isEmpty()
 					|| !mapaErrores.get(FECHA_TAPIADO_NO_PUEDE_SER_SUPERIOR_A_LA_ACTUAL).isEmpty()
 					|| !mapaErrores.get(FECHA_COLOCACION_PUERTA_ANTIOCUPA_NO_PUEDE_SER_SUPERIOR_A_LA_ACTUAL).isEmpty()
 					|| !mapaErrores.get(FECHA_INSCRIPCION_NO_PUEDE_SER_SUPERIOR_A_LA_ACTUAL).isEmpty()
@@ -205,6 +210,10 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 					|| !mapaErrores.get(FECHA_TITULO_NO_PUEDE_SER_SUPERIOR_A_LA_ACTUAL).isEmpty()
 					|| !mapaErrores.get(ESTADO_FISICO_DEL_ACTIVO_NO_EXISTE).isEmpty()
 					|| !mapaErrores.get(SITUACION_DEL_TITULO_NO_EXISTE).isEmpty()
+					|| !mapaErrores.get(FECHA_TAPIADO_DEBE_ESTAR_VACIO).isEmpty()
+					|| !mapaErrores.get(FECHA_COLOCACION_PUERTA_ANTIOCUPA_DEBE_ESTAR_VACIO).isEmpty()
+					|| !mapaErrores.get(TITULO_VACIO_SI_OCUPA_NO).isEmpty()
+
 					){
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -214,7 +223,6 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 			}
 		}
 		exc.cerrar();
-		
 		
 		return dtoValidacionContenido;
 	}
@@ -358,11 +366,7 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 							&& (Arrays.asList(listaValidosPositivos).contains(exc.dameCelda(i, COL_TAPIADO).toUpperCase())) 
 							&& !esFechaValidaTapiadoAntiocupa(exc.dameCelda(i, col))) {
 						listaFilas.add(i);
-					} else if (!Checks.esNulo(exc.dameCelda(i, col)) 
-							&& !(Arrays.asList(listaValidosPositivos).contains(exc.dameCelda(i, COL_TAPIADO).toUpperCase())) 
-							&& !esFechaValida(exc.dameCelda(i, col))) {
-						listaFilas.add(i);
-					}
+					} 
 						
 				} catch (ParseException e) {
 					listaFilas.add(i);
@@ -388,10 +392,6 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 					if(!Checks.esNulo(exc.dameCelda(i, col)) 
 							&& (Arrays.asList(listaValidosPositivos).contains(exc.dameCelda(i, COL_PUERTA_ANTIOCUPA).toUpperCase())) 
 							&& !esFechaValidaTapiadoAntiocupa(exc.dameCelda(i, col))) {
-						listaFilas.add(i);
-					} else if (!Checks.esNulo(exc.dameCelda(i, col)) 
-							&& !(Arrays.asList(listaValidosPositivos).contains(exc.dameCelda(i, COL_PUERTA_ANTIOCUPA).toUpperCase())) 
-							&& !esFechaValida(exc.dameCelda(i, col))) {
 						listaFilas.add(i);
 					}
 						
@@ -460,58 +460,6 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
          return listaFilas;   
     }
 	
-	private List<Integer> isTapiadoAndNotFechaTapiado(MSVHojaExcel exc){
-        List<Integer> listaFilas = new ArrayList<Integer>();
-
-         try{
-             for(int i=1; i<this.numFilasHoja;i++){
-                 try {
-                     
-                     if(!Checks.esNulo(exc.dameCelda(i, COL_TAPIADO))
-                             && Arrays.asList(listaValidosPositivos).contains(exc.dameCelda(i, COL_TAPIADO).toUpperCase())
-                             && (Checks.esNulo(exc.dameCelda(i, COL_FECHA_TAPIADO)) 
-                            		 || esBorrar(exc.dameCelda(i, COL_FECHA_TAPIADO))))
-                         listaFilas.add(i);
-                 } catch (ParseException e) {
-                     listaFilas.add(i);
-                 }
-             }
-         } catch (IllegalArgumentException e) {
-             listaFilas.add(0);
-             e.printStackTrace();
-         } catch (IOException e) {
-             listaFilas.add(0);
-             e.printStackTrace();
-         }
-         return listaFilas;   
-    }
-	
-	private List<Integer> isPuertaAntiocupaAndNotFechaColocacion(MSVHojaExcel exc){
-        List<Integer> listaFilas = new ArrayList<Integer>();
-
-         try{
-             for(int i=1; i<this.numFilasHoja;i++){
-                 try {
-                     
-                     if(!Checks.esNulo(exc.dameCelda(i, COL_PUERTA_ANTIOCUPA)) 
-                             && Arrays.asList(listaValidosPositivos).contains(exc.dameCelda(i, COL_PUERTA_ANTIOCUPA).toUpperCase())
-                             && (Checks.esNulo(exc.dameCelda(i, COL_FECHA_COLOCACION_PUERTA_ANTIOCUPA)) 
-                            		 || esBorrar(exc.dameCelda(i, COL_FECHA_COLOCACION_PUERTA_ANTIOCUPA))))
-                         listaFilas.add(i);
-                 } catch (ParseException e) {
-                     listaFilas.add(i);
-                 }
-             }
-             } catch (IllegalArgumentException e) {
-                 listaFilas.add(0);
-                 e.printStackTrace();
-             } catch (IOException e) {
-                 listaFilas.add(0);
-                 e.printStackTrace();
-             }
-         return listaFilas;   
-    }
-	
 	private List<Integer> isFechaMenorActual(MSVHojaExcel exc, Integer col){
         List<Integer> listaFilas = new ArrayList<Integer>();
         Date fechaActual = new Date();
@@ -569,7 +517,7 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
                              && esFechaValida(celdaFechaInscripcion)
                              && !Checks.esNulo(celdaFechaTitulo)
                              && esFechaValida(celdaFechaTitulo)
-                             && !fechaInscripcion.after(fechaTitulo))
+                             && fechaTitulo.after(fechaInscripcion))
                     	 
                          listaFilas.add(i);
                 	}
@@ -713,4 +661,80 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
          return listaFilas;   
 	}
 	
+	private List<Integer> tapiadoNoConFecha(MSVHojaExcel exc, Integer col) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		 try{
+			for(int i=1; i<this.numFilasHoja;i++){ 
+				try {
+					if((!Checks.esNulo(exc.dameCelda(i, COL_TAPIADO))
+						    && !Arrays.asList(listaValidosPositivos).contains(exc.dameCelda(i, COL_TAPIADO).toUpperCase())
+						    && (!Checks.esNulo(exc.dameCelda(i, COL_FECHA_TAPIADO))  && !esBorrar(exc.dameCelda(i, COL_FECHA_TAPIADO))))
+					) {
+						 listaFilas.add(i);
+					}
+				} catch (ParseException e) {
+					 listaFilas.add(i);
+				}
+			}
+		 } catch (IllegalArgumentException e) {
+             listaFilas.add(0);
+             e.printStackTrace();
+         } catch (IOException e) {
+             listaFilas.add(0);
+             e.printStackTrace();
+         }
+         return listaFilas;   
+	}
+	
+	private List<Integer> antiocupaNoConFecha(MSVHojaExcel exc, Integer col) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		 try{
+			for(int i=1; i<this.numFilasHoja;i++){ 
+				try {
+					if(!Checks.esNulo(exc.dameCelda(i, COL_PUERTA_ANTIOCUPA))
+								&& !Arrays.asList(listaValidosPositivos).contains(exc.dameCelda(i, COL_PUERTA_ANTIOCUPA).toUpperCase())
+								&&( !Checks.esNulo(exc.dameCelda(i, COL_FECHA_COLOCACION_PUERTA_ANTIOCUPA))  
+                            	&& !esBorrar(exc.dameCelda(i, COL_FECHA_COLOCACION_PUERTA_ANTIOCUPA)))
+					) {
+
+						 listaFilas.add(i);
+					}
+				} catch (ParseException e) {
+					 listaFilas.add(i);
+				}
+			}
+		 } catch (IllegalArgumentException e) {
+             listaFilas.add(0);
+             e.printStackTrace();
+         } catch (IOException e) {
+             listaFilas.add(0);
+             e.printStackTrace();
+         }
+         return listaFilas;   
+	}
+	
+	
+	private List<Integer> isNotOcupadoAndTitulo(MSVHojaExcel exc, Integer col){
+        List<Integer> listaFilas = new ArrayList<Integer>();
+
+         try{
+             for(int i=1; i<this.numFilasHoja;i++){
+                 try {
+                     if(!Checks.esNulo(exc.dameCelda(i, COL_CON_TITULO)) 
+                             && (Checks.esNulo(exc.dameCelda(i, COL_OCUPADO))
+                             || !Arrays.asList(listaValidosPositivos).contains(exc.dameCelda(i, COL_OCUPADO).toUpperCase())))
+                         listaFilas.add(i);
+                 } catch (ParseException e) {
+                     listaFilas.add(i);
+                 }
+             }
+         } catch (IllegalArgumentException e) {
+             listaFilas.add(0);
+             e.printStackTrace();
+         } catch (IOException e) {
+             listaFilas.add(0);
+             e.printStackTrace();
+         }
+         return listaFilas;   
+    }
 }

@@ -97,20 +97,34 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 			Filter filtroActivoAdjNoJudicial  = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 			ActivoAdjudicacionNoJudicial activoAdjNoJudicial = genericDao.get(ActivoAdjudicacionNoJudicial.class, filtroActivoAdjNoJudicial);
 			
-			
-			activo.setVpo(traducirSiNo(exc.dameCelda(fila, VPO)));
-			activo.setConCargas(traducirSiNo(exc.dameCelda(fila, CON_CARGAS)));
-			activo.setDivHorizontal(traducirSiNo(exc.dameCelda(fila, ACTIVO_INSCRITO_DIVISION_HORIZONTAL)));
-			activo.setEstadoActivo(ddEstadoActivo);
+			if(!exc.dameCelda(fila, VPO).isEmpty()) {
+				activo.setVpo(traducirSiNo(exc.dameCelda(fila, VPO)));
+			}
+			if(!exc.dameCelda(fila, CON_CARGAS).isEmpty()) {
+				activo.setConCargas(traducirSiNo(exc.dameCelda(fila, CON_CARGAS)));
+			}
+			if(!exc.dameCelda(fila, ACTIVO_INSCRITO_DIVISION_HORIZONTAL).isEmpty()) {
+				activo.setDivHorizontal(traducirSiNo(exc.dameCelda(fila, ACTIVO_INSCRITO_DIVISION_HORIZONTAL)));
+			}
+			if(ddEstadoActivo != null) {
+				activo.setEstadoActivo(ddEstadoActivo);
+			}
 			
 			if(sitPosesoria != null ) {
-				sitPosesoria.setAccesoAntiocupa(traducirSiNo(exc.dameCelda(fila, PUERTA_ANTIOCUPA)));
-				sitPosesoria.setOcupado(traducirSiNo(exc.dameCelda(fila, OCUPADO)));
-				Filter filtroDDTipoTituloActivoTPA  = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, CON_TITULO));
-				DDTipoTituloActivoTPA ddTipoTituloActivoTPA = genericDao.get(DDTipoTituloActivoTPA.class, filtroDDTipoTituloActivoTPA);
-				sitPosesoria.setConTitulo(ddTipoTituloActivoTPA);
-				sitPosesoria.setAccesoTapiado(traducirSiNo(exc.dameCelda(fila, TAPIADO)));
-				
+				if(!exc.dameCelda(fila, PUERTA_ANTIOCUPA).isEmpty()) {
+					sitPosesoria.setAccesoAntiocupa(traducirSiNo(exc.dameCelda(fila, PUERTA_ANTIOCUPA)));
+				}
+				if(!exc.dameCelda(fila, OCUPADO).isEmpty()) {
+					sitPosesoria.setOcupado(traducirSiNo(exc.dameCelda(fila, OCUPADO)));
+				}
+				if(!exc.dameCelda(fila, CON_TITULO).isEmpty()) {
+					Filter filtroDDTipoTituloActivoTPA  = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, CON_TITULO));
+					DDTipoTituloActivoTPA ddTipoTituloActivoTPA = genericDao.get(DDTipoTituloActivoTPA.class, filtroDDTipoTituloActivoTPA);
+					sitPosesoria.setConTitulo(ddTipoTituloActivoTPA);
+				}
+				if(!exc.dameCelda(fila, TAPIADO).isEmpty()) {
+					sitPosesoria.setAccesoTapiado(traducirSiNo(exc.dameCelda(fila, TAPIADO)));
+				}
 				if(sitPosesoria.getAccesoTapiado() == 1 && !exc.dameCelda(fila, FECHA_TAPIADO).isEmpty()) {
 					Date fechaTapiado = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, FECHA_TAPIADO));
 					sitPosesoria.setFechaAccesoTapiado(fechaTapiado);
@@ -125,12 +139,13 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 			}
 			
 			if(activoTitulo != null && !exc.dameCelda(fila, SITUACION_TITULO).isEmpty()) {
-
-				Filter filtroDDSituacionTitulo  = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, SITUACION_TITULO));
-				DDEstadoTitulo ddSituacionTitulo = genericDao.get(DDEstadoTitulo.class, filtroDDSituacionTitulo);
-
-				activoTitulo.setEstado(ddSituacionTitulo);
 				
+				if(!exc.dameCelda(fila, SITUACION_TITULO).isEmpty()) {
+					Filter filtroDDSituacionTitulo  = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, SITUACION_TITULO));
+					DDEstadoTitulo ddSituacionTitulo = genericDao.get(DDEstadoTitulo.class, filtroDDSituacionTitulo);
+	
+					activoTitulo.setEstado(ddSituacionTitulo);
+				}
 				if(!exc.dameCelda(fila, FECHA_DE_INSCRIPCION).isEmpty()) {
 					if(esBorrar(exc.dameCelda(fila, FECHA_DE_INSCRIPCION))) {
 						activoTitulo.setFechaInscripcionReg(null);
@@ -174,7 +189,8 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 
 			}
 			
-			if(traducirSiNo(exc.dameCelda(fila, INFORME_COMERCIAL_APROBADO)) == 1) {
+			if(!(exc.dameCelda(fila, INFORME_COMERCIAL_APROBADO)).isEmpty() &&
+					traducirSiNo(exc.dameCelda(fila, INFORME_COMERCIAL_APROBADO)) == 1) {
 				Filter filtroCodigoTipoTramite  = genericDao.createFilter(FilterType.EQUALS, "codigoTipoTramite", ActivoTramiteApi.CODIGO_TRAMITE_APROBACION_INFORME_COMERCIAL);
 				Filter filtroActivoId  = genericDao.createFilter(FilterType.EQUALS, "idActivo", activo.getId());
 				List<VBusquedaTramitesActivo> vBusquedaTramitesActivos = genericDao.getList(VBusquedaTramitesActivo.class, filtroCodigoTipoTramite, filtroActivoId);

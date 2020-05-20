@@ -43,7 +43,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAbstract {
 		
 	public static final String NUM_ACTIVO_NO_EXISTE = "El número del activo no existe.";
-	public static final String NUM_ACTIVO_NO_PERTENECE_A_SAREB = "El número del activo no pertenece a SAREB.";
+	public static final String NUM_ACTIVO_NO_PERTENECE_A_SAREB = "El número del activo no pertenece a la cartera SAREB.";
 	
 	//Mensajes de errores de los campos de fechas
 	public static final String FECHA_TAPIADO_ERROR = "El formato de la fecha del campo 'Fecha tapiado' debe de ser: dd/mm/yyyy.";
@@ -53,29 +53,29 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 	public static final String FECHA_TITULO_ERROR = "El formato de la fecha del campo 'Fecha de título' debe de ser: dd/mm/yyyy.";
 	
 	//Mensajes de errores de los campos booleanos
-	public static final String ACTIVO_INSCRITO_DIVISION_HORIZONTAL_ERROR = "El campo 'Activo inscrito en división horizontal' solo puede estar rellenado con 'S' para si y 'N' para no.";
-	public static final String TAPIADO_ERROR = "El campo 'Tapiado' solo puede estar rellenado con 'S' para si y 'N' para no.";
-	public static final String PUERTA_ANTIOCUPA_ERROR = "El campo 'Puerta anti ocupa' solo puede estar rellenado con 'S' para si y 'N' para no.";
-	public static final String VPO_ERROR = "El campo 'VPO' solo puede estar rellenado con 'S' para si y 'N' para no.";
-	public static final String OCUPADO_ERROR = "El campo 'Ocupado' solo puede estar rellenado con 'S' para si y 'N' para no.";
-	public static final String CON_TITULO_ERROR = "El campo 'Con título' solo puede estar rellenado con 'S' para si y 'N' para no.";
-	public static final String CON_CARGAS_ERROR = "El campo 'Con cargas' solo puede estar rellenado con 'S' para si y 'N' para no.";
-	public static final String INFORME_COMERCIAL_APROBADO_ERROR = "El campo 'Informe comercial aprobado' solo puede estar rellenado con 'S' para si y 'N' para no.";
+	public static final String ACTIVO_INSCRITO_DIVISION_HORIZONTAL_ERROR = "El campo 'Activo inscrito en división horizontal' solo puede estar rellenado con 'S' para sí y 'N' para no.";
+	public static final String TAPIADO_ERROR = "El campo 'Tapiado' solo puede estar rellenado con 'S' para sí y 'N' para no.";
+	public static final String PUERTA_ANTIOCUPA_ERROR = "El campo 'Puerta anti ocupa' solo puede estar rellenado con 'S' para sí y 'N' para no.";
+	public static final String VPO_ERROR = "El campo 'VPO' solo puede estar rellenado con 'S' para sí y 'N' para no.";
+	public static final String OCUPADO_ERROR = "El campo 'Ocupado' solo puede estar rellenado con 'S' para sí y 'N' para no.";
+	public static final String CON_TITULO_ERROR = "El campo 'Con título' solo puede estar rellenado con 'S' para sí y 'N' para no.";
+	public static final String CON_CARGAS_ERROR = "El campo 'Con cargas' solo puede estar rellenado con 'S' para sí y 'N' para no.";
+	public static final String INFORME_COMERCIAL_APROBADO_ERROR = "El campo 'Informe comercial aprobado' solo puede estar rellenado con 'S' para sí y 'N' para no.";
 	
 	
 	
 	
 	
-	public static final String CON_TITULO_NO_PUEDE_ESTAR_VACIO = "El campo 'Con título' no puede estar vacío si el campo 'Ocupado' está a si.";
-	public static final String FECHA_TAPIADO_NO_PUEDE_ESTAR_VACIO = "El campo 'Fecha tapiado' no puede ser borrado si el campo 'Tapiado' está a si.";
-	public static final String FECHA_COLOCACION_PUERTA_ANTIOCUPA_NO_PUEDE_ESTAR_VACIO = "El campo 'Fecha colocación puerta antiocupa' no puede ser borrado si el campo 'Puerta antiocupa' está a si.";
+	public static final String CON_TITULO_NO_PUEDE_ESTAR_VACIO = "El campo 'Con título' no puede estar vacío si el campo 'Ocupado' está a sí.";
+	public static final String FECHA_TAPIADO_NO_PUEDE_ESTAR_VACIO = "El campo 'Fecha tapiado' no puede ser borrado si el campo 'Tapiado' está a sí.";
+	public static final String FECHA_COLOCACION_PUERTA_ANTIOCUPA_NO_PUEDE_ESTAR_VACIO = "El campo 'Fecha colocación puerta antiocupa' no puede ser borrado si el campo 'Puerta antiocupa' está a sí.";
 	public static final String FECHA_TAPIADO_NO_PUEDE_SER_SUPERIOR_A_LA_ACTUAL = "El campo 'Fecha tapiado' no puede ser superior a la fecha actual.";
 	public static final String FECHA_COLOCACION_PUERTA_ANTIOCUPA_NO_PUEDE_SER_SUPERIOR_A_LA_ACTUAL = "El campo 'Fecha colocación puerta antiocupa' no puede ser superior a la fecha actual.";
 	public static final String FECHA_INSCRIPCION_NO_PUEDE_SER_SUPERIOR_A_LA_ACTUAL = "El campo 'Fecha de inscripción' no puede ser superior a la fecha actual.";
 	public static final String FECHA_INSCRIPCION_TIENE_QUE_SER_SUPERIOR_A_FECHA_TITULO = "El campo 'Fecha de inscripción' tiene que ser superior al campo 'Fecha título'.";
 	public static final String FECHA_TITULO_NO_PUEDE_SER_SUPERIOR_A_LA_ACTUAL = "El campo 'Fecha título' no puede ser superior a la fecha actual.";
-	public static final String ESTADO_FISICO_DEL_ACTIVO_NO_EXISTE = "El campo 'Estado físico del activo' no existe.";
-	public static final String SITUACION_DEL_TITULO_NO_EXISTE = "El campo 'Situación del título' no existe.";
+	public static final String ESTADO_FISICO_DEL_ACTIVO_NO_EXISTE = "El código introducido en el campo 'Estado físico del activo' no existe.";
+	public static final String SITUACION_DEL_TITULO_NO_EXISTE = "El código introducido en el campo 'Situación del título' no existe.";
 	
 	public static final Integer COL_NUM_ACTIVO = 0;
 	public static final Integer COL_ESTADO_FISICO_DEL_ACTIVO = 1;

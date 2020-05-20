@@ -299,7 +299,19 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 			    		]*/
 					}
             	]
-            }
+            },{   
+				xtype:'fieldsettable',
+				title: HreRem.i18n('fieldlabel.nombre.auditoria.desbloqueo'),
+				items :
+					[
+						{
+							xtype: 'auditoriaDesbloqueoGrid',
+							reference: 'listaAuditoriaDesbloqueo',
+							margin: '10 40 5 10'
+						}
+					]
+        	}
+            
     	];
     
 	    me.addPlugin({ptype: 'lazyitems', items: items });

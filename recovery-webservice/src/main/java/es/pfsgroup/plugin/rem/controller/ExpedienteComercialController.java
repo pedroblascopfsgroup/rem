@@ -60,6 +60,7 @@ import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoAuditoriaDesbloqueo;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoBloqueosFinalizacion;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
@@ -2285,6 +2286,21 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getAuditoriaDesbloqueo(ModelMap model, Long idExpediente, HttpServletRequest request) {
+		try {
+			List<DtoAuditoriaDesbloqueo> auditoriaDesbloqueo = expedienteComercialApi.getAuditoriaDesbloqueoList(idExpediente);
+			model.put(RESPONSE_DATA_KEY, auditoriaDesbloqueo);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController (getAuditoriaDesbloqueo)", e);
 		}
 
 		return createModelAndViewJson(model);

@@ -1284,6 +1284,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        remoteUrl: 'expedientecomercial/getOrigenLead',
 		        extraParams: {idExpediente: '{expediente.id}'}
 	    	}
+		},
+		storeAuditoriaDesbloqueo: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.AuditoriaDesbloqueo',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getAuditoriaDesbloqueo',
+		        extraParams: {idExpediente: '{expediente.id}'}
+	    	}
 		}
 		
     }

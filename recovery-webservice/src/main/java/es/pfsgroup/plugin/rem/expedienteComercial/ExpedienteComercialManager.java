@@ -170,6 +170,7 @@ import es.pfsgroup.plugin.rem.rest.dto.TitularDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
 import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
+import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Service("expedienteComercialManager")
 public class ExpedienteComercialManager extends BusinessOperationOverrider<ExpedienteComercialApi>
@@ -10722,6 +10723,36 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		return null;
+	}
+	
+	@Override
+	public List<DtoAuditoriaDesbloqueo> getAuditoriaDesbloqueoList(Long idExpediente) {
+		if(idExpediente == null) {
+			return null;
+		}
+		List<DtoAuditoriaDesbloqueo> lAuditoria = new ArrayList<DtoAuditoriaDesbloqueo>();
+		List<AuditoriaDesbloqueo> listaAuditoriaDesbloqueo = genericDao.getList(AuditoriaDesbloqueo.class,
+				genericDao.createFilter(FilterType.EQUALS, "expediente.id",idExpediente));
+		if(listaAuditoriaDesbloqueo != null && !listaAuditoriaDesbloqueo.isEmpty()) {
+			for (AuditoriaDesbloqueo auditoria : listaAuditoriaDesbloqueo) {
+				DtoAuditoriaDesbloqueo auditoriaDesbloqueo = new DtoAuditoriaDesbloqueo();
+				if(auditoria.getId() != null) 
+					auditoriaDesbloqueo.setIdCombo(auditoria.getId().toString());
+				if(auditoria.getExpediente() != null && auditoria.getExpediente().getId() != null)
+					auditoriaDesbloqueo.setIdEco(auditoria.getExpediente().getId().toString());
+				if(auditoria.getUsuario() != null && auditoria.getUsuario().getUsername() != null)
+					auditoriaDesbloqueo.setIdUsuario(auditoria.getUsuario().getUsername());
+				if(auditoria.getMotivoDesbloqueo() != null)
+					auditoriaDesbloqueo.setMotivoDeDesbloqueo(auditoria.getMotivoDesbloqueo());
+				if(auditoria.getMotivoDesbloqueo() != null)
+					auditoriaDesbloqueo.setFechaDeDesbloqueo(auditoria.getFechaDesbloqueo().toString());
+				lAuditoria.add(auditoriaDesbloqueo);
+			}
+		}
+		if(lAuditoria != null && !lAuditoria.isEmpty())
+			return lAuditoria;
+		else
+			return null;
 	}
 	
 	private void compruebaEstadoAnyadirDependiente(Oferta ofertaPrincipal) {

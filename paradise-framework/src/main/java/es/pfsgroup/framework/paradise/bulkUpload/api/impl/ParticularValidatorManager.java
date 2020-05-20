@@ -3466,7 +3466,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(!Checks.esNulo(codigoEstadoActivo)) {
 			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 					+ "FROM DD_EAC_ESTADO_ACTIVO "
-					+ "WHERE DD_EAC_CODIGO =" + codigoEstadoActivo );
+					+ "WHERE DD_EAC_CODIGO = '" + codigoEstadoActivo +"'");
 
 			return  !"0".equals(resultado);
 		}

@@ -646,8 +646,19 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 		if(esBorrar(fecha))
 			return true;
 		try {
+			String[] fechaArray = fecha.split("/");
+			if(fechaArray.length < 3 || 
+					(fechaArray[0].length() != 2 || fechaArray[1].length() != 2 || fechaArray[2].length() != 4)) {
+				return false;
+			}
+			if(Integer.parseInt(fechaArray[0]) > 31 || Integer.parseInt(fechaArray[1]) > 12) {
+				return false;
+			}
 			SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
 			ft.parse(fecha);
+		}catch (IllegalArgumentException e) {
+			logger.error(e.getMessage());
+	         return false;
 		} catch (ParseException e) {
 			logger.error(e.getMessage());
 			return false;
@@ -660,8 +671,19 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 			return false;
 		}
 		try {
+			String[] fechaArray = fecha.split("/");
+			if(fechaArray.length < 3 || 
+					(fechaArray[0].length() != 2 || fechaArray[1].length() != 2 || fechaArray[2].length() != 4)) {
+				return false;
+			}
+			if(Integer.parseInt(fechaArray[0]) > 31 || Integer.parseInt(fechaArray[1]) > 12) {
+				return false;
+			}
 			SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
 			ft.parse(fecha);
+		}catch (IllegalArgumentException e) {
+			 logger.error(e.getMessage());
+	         return false;
 		} catch (ParseException e) {
 			logger.error(e.getMessage());
 			return false;

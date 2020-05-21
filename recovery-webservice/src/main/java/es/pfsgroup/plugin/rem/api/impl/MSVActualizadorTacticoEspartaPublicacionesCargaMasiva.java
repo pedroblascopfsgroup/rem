@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -20,7 +19,6 @@ import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
-import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdjudicacionBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -79,115 +77,14 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 
 	@Override
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
-			throws IOException, ParseException, JsonViewerException, SQLException, Exception {
+			throws Exception {
 		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)));
 		
-		
-		
 		if(activo != null) {
-			Filter filtroActivoSitPosesoria  = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-			ActivoSituacionPosesoria sitPosesoria = genericDao.get(ActivoSituacionPosesoria.class, filtroActivoSitPosesoria);
 			
-			Filter filtroDDEstadoActivo  = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, ESTADO_FISICO_DEL_ACTIVO));
-			DDEstadoActivo ddEstadoActivo = genericDao.get(DDEstadoActivo.class, filtroDDEstadoActivo);
+			rellenaActivo(activo, exc, fila);
 			
-			Filter filtroActivoTitulo  = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-			ActivoTitulo activoTitulo = genericDao.get(ActivoTitulo.class, filtroActivoTitulo);
-			
-			Filter filtroActivoAdjNoJudicial  = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-			ActivoAdjudicacionNoJudicial activoAdjNoJudicial = genericDao.get(ActivoAdjudicacionNoJudicial.class, filtroActivoAdjNoJudicial);
-			
-			if(!exc.dameCelda(fila, VPO).isEmpty()) {
-				activo.setVpo(traducirSiNo(exc.dameCelda(fila, VPO)));
-			}
-			if(!exc.dameCelda(fila, CON_CARGAS).isEmpty()) {
-				activo.setConCargas(traducirSiNo(exc.dameCelda(fila, CON_CARGAS)));
-			}
-			if(!exc.dameCelda(fila, ACTIVO_INSCRITO_DIVISION_HORIZONTAL).isEmpty()) {
-				activo.setDivHorizontal(traducirSiNo(exc.dameCelda(fila, ACTIVO_INSCRITO_DIVISION_HORIZONTAL)));
-			}
-			if(ddEstadoActivo != null) {
-				activo.setEstadoActivo(ddEstadoActivo);
-			}
-			
-			if(sitPosesoria != null ) {
-				if(!exc.dameCelda(fila, PUERTA_ANTIOCUPA).isEmpty()) {
-					sitPosesoria.setAccesoAntiocupa(traducirSiNo(exc.dameCelda(fila, PUERTA_ANTIOCUPA)));
-				}
-				if(!exc.dameCelda(fila, OCUPADO).isEmpty()) {
-					sitPosesoria.setOcupado(traducirSiNo(exc.dameCelda(fila, OCUPADO)));
-				}
-				if(!exc.dameCelda(fila, CON_TITULO).isEmpty()) {
-					Filter filtroDDTipoTituloActivoTPA  = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, CON_TITULO));
-					DDTipoTituloActivoTPA ddTipoTituloActivoTPA = genericDao.get(DDTipoTituloActivoTPA.class, filtroDDTipoTituloActivoTPA);
-					sitPosesoria.setConTitulo(ddTipoTituloActivoTPA);
-				}
-				if(!exc.dameCelda(fila, TAPIADO).isEmpty()) {
-					sitPosesoria.setAccesoTapiado(traducirSiNo(exc.dameCelda(fila, TAPIADO)));
-				}
-				if(sitPosesoria.getAccesoTapiado() == 1 && !exc.dameCelda(fila, FECHA_TAPIADO).isEmpty()) {
-					Date fechaTapiado = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, FECHA_TAPIADO));
-					sitPosesoria.setFechaAccesoTapiado(fechaTapiado);
-				}
-				
-				if(sitPosesoria.getAccesoAntiocupa() == 1 && !exc.dameCelda(fila, FECHA_COLOCACION_PUERTA_ANTIOCUPA).isEmpty()) {
-					Date fechaPuertaAntiocupa = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, FECHA_COLOCACION_PUERTA_ANTIOCUPA));
-					sitPosesoria.setFechaAccesoAntiocupa(fechaPuertaAntiocupa);
-				}
-					
-				genericDao.update(ActivoSituacionPosesoria.class, sitPosesoria);
-			}
-			
-			if(activoTitulo != null && !exc.dameCelda(fila, SITUACION_TITULO).isEmpty()) {
-				
-				if(!exc.dameCelda(fila, SITUACION_TITULO).isEmpty()) {
-					Filter filtroDDSituacionTitulo  = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, SITUACION_TITULO));
-					DDEstadoTitulo ddSituacionTitulo = genericDao.get(DDEstadoTitulo.class, filtroDDSituacionTitulo);
-	
-					activoTitulo.setEstado(ddSituacionTitulo);
-				}
-				if(!exc.dameCelda(fila, FECHA_DE_INSCRIPCION).isEmpty()) {
-					if(esBorrar(exc.dameCelda(fila, FECHA_DE_INSCRIPCION))) {
-						activoTitulo.setFechaInscripcionReg(null);
-					}else {
-						Date fechaInscripcion = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, FECHA_DE_INSCRIPCION));
-						activoTitulo.setFechaInscripcionReg(fechaInscripcion);
-					}
-				}
-				
-				genericDao.update(ActivoTitulo.class, activoTitulo);
-			}
-			
-			if(activoAdjNoJudicial != null && !exc.dameCelda(fila, FECHA_TITULO).isEmpty()) {
-				if(esBorrar(exc.dameCelda(fila, FECHA_TITULO))) {
-					activoAdjNoJudicial.setFechaTitulo(null);
-				}else {
-					Date fechaTitulo = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, FECHA_TITULO));
-					activoAdjNoJudicial.setFechaTitulo(fechaTitulo);
-				}
-				genericDao.update(ActivoAdjudicacionNoJudicial.class, activoAdjNoJudicial);
-			}
-			
-			String usuario = usuarioApi.getUsuarioLogado().getUsername();
-			
-			NMBBien bien = activo.getBien();
-			if(bien != null && usuario != null && !exc.dameCelda(fila, FECHA_POSESION).isEmpty()) {
-				Filter filtroBien  = genericDao.createFilter(FilterType.EQUALS, "bien.id", bien.getId());
-				NMBAdjudicacionBien adjudicacionBien = genericDao.get(NMBAdjudicacionBien.class, filtroBien);
-				
-				if(adjudicacionBien != null) {
-					if(esBorrar(exc.dameCelda(fila, FECHA_POSESION))) {
-						adjudicacionBien.setFechaRealizacionPosesion(null);
-					}else {
-						Date fechaPosesion = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, FECHA_POSESION));
-						adjudicacionBien.setFechaRealizacionPosesion(fechaPosesion);
-					}
-					
-					genericDao.update(NMBAdjudicacionBien.class, adjudicacionBien);
-				}
-				
-
-			}
+			actualizaDependientesActivo(exc, fila, activo);
 			
 			if(!(exc.dameCelda(fila, INFORME_COMERCIAL_APROBADO)).isEmpty() &&
 					traducirSiNo(exc.dameCelda(fila, INFORME_COMERCIAL_APROBADO)) == 1) {
@@ -235,6 +132,123 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 	}
 	private boolean esBorrar(String cadena) {
 		return cadena.toUpperCase().trim().equals("X");
+	}
+	
+	private Activo rellenaActivo(Activo activo, MSVHojaExcel exc, int fila) throws IOException, ParseException {
+		
+		Filter filtroDDEstadoActivo  = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, ESTADO_FISICO_DEL_ACTIVO));
+		DDEstadoActivo ddEstadoActivo = genericDao.get(DDEstadoActivo.class, filtroDDEstadoActivo);
+		
+		if(!exc.dameCelda(fila, VPO).isEmpty()) {
+			activo.setVpo(traducirSiNo(exc.dameCelda(fila, VPO)));
+		}
+		if(!exc.dameCelda(fila, CON_CARGAS).isEmpty()) {
+			activo.setConCargas(traducirSiNo(exc.dameCelda(fila, CON_CARGAS)));
+		}
+		if(!exc.dameCelda(fila, ACTIVO_INSCRITO_DIVISION_HORIZONTAL).isEmpty()) {
+			activo.setDivHorizontal(traducirSiNo(exc.dameCelda(fila, ACTIVO_INSCRITO_DIVISION_HORIZONTAL)));
+		}
+		if(ddEstadoActivo != null) {
+			activo.setEstadoActivo(ddEstadoActivo);
+		}
+		
+		return activo;
+	}
+	
+	private void actualizaDependientesActivo(MSVHojaExcel exc, int fila, Activo activo) throws IOException, ParseException {
+		
+		Filter filtroActivoSitPosesoria  = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoSituacionPosesoria sitPosesoria = genericDao.get(ActivoSituacionPosesoria.class, filtroActivoSitPosesoria);
+		
+		Filter filtroActivoTitulo  = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoTitulo activoTitulo = genericDao.get(ActivoTitulo.class, filtroActivoTitulo);
+		
+		Filter filtroActivoAdjNoJudicial  = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoAdjudicacionNoJudicial activoAdjNoJudicial = genericDao.get(ActivoAdjudicacionNoJudicial.class, filtroActivoAdjNoJudicial);
+		
+		String usuario = usuarioApi.getUsuarioLogado().getUsername();
+		
+		actualizaSituacionPosesoria(exc, fila, sitPosesoria);
+		
+		if(activoTitulo != null && !exc.dameCelda(fila, SITUACION_TITULO).isEmpty()) {
+			
+			if(!exc.dameCelda(fila, SITUACION_TITULO).isEmpty()) {
+				Filter filtroDDSituacionTitulo  = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, SITUACION_TITULO));
+				DDEstadoTitulo ddSituacionTitulo = genericDao.get(DDEstadoTitulo.class, filtroDDSituacionTitulo);
+
+				activoTitulo.setEstado(ddSituacionTitulo);
+			}
+			if(!exc.dameCelda(fila, FECHA_DE_INSCRIPCION).isEmpty()) {
+				if(esBorrar(exc.dameCelda(fila, FECHA_DE_INSCRIPCION))) {
+					activoTitulo.setFechaInscripcionReg(null);
+				}else {
+					Date fechaInscripcion = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, FECHA_DE_INSCRIPCION));
+					activoTitulo.setFechaInscripcionReg(fechaInscripcion);
+				}
+			}
+			
+			genericDao.update(ActivoTitulo.class, activoTitulo);
+		}
+		
+		if(activoAdjNoJudicial != null && !exc.dameCelda(fila, FECHA_TITULO).isEmpty()) {
+			if(esBorrar(exc.dameCelda(fila, FECHA_TITULO))) {
+				activoAdjNoJudicial.setFechaTitulo(null);
+			}else {
+				Date fechaTitulo = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, FECHA_TITULO));
+				activoAdjNoJudicial.setFechaTitulo(fechaTitulo);
+			}
+			genericDao.update(ActivoAdjudicacionNoJudicial.class, activoAdjNoJudicial);
+		}
+		
+		NMBBien bien = activo.getBien();
+		if(bien != null && usuario != null && !exc.dameCelda(fila, FECHA_POSESION).isEmpty()) {
+			Filter filtroBien  = genericDao.createFilter(FilterType.EQUALS, "bien.id", bien.getId());
+			NMBAdjudicacionBien adjudicacionBien = genericDao.get(NMBAdjudicacionBien.class, filtroBien);
+			
+			if(adjudicacionBien != null) {
+				if(esBorrar(exc.dameCelda(fila, FECHA_POSESION))) {
+					adjudicacionBien.setFechaRealizacionPosesion(null);
+				}else {
+					Date fechaPosesion = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, FECHA_POSESION));
+					adjudicacionBien.setFechaRealizacionPosesion(fechaPosesion);
+				}
+				
+				genericDao.update(NMBAdjudicacionBien.class, adjudicacionBien);
+			}
+			
+
+		}
+	}
+	
+	public void actualizaSituacionPosesoria (MSVHojaExcel exc, int fila, ActivoSituacionPosesoria sitPosesoria) throws IOException, ParseException {
+		
+		if(sitPosesoria != null ) {
+			if(!exc.dameCelda(fila, PUERTA_ANTIOCUPA).isEmpty()) {
+				sitPosesoria.setAccesoAntiocupa(traducirSiNo(exc.dameCelda(fila, PUERTA_ANTIOCUPA)));
+			}
+			if(!exc.dameCelda(fila, OCUPADO).isEmpty()) {
+				sitPosesoria.setOcupado(traducirSiNo(exc.dameCelda(fila, OCUPADO)));
+			}
+			if(!exc.dameCelda(fila, CON_TITULO).isEmpty()) {
+				Filter filtroDDTipoTituloActivoTPA  = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, CON_TITULO));
+				DDTipoTituloActivoTPA ddTipoTituloActivoTPA = genericDao.get(DDTipoTituloActivoTPA.class, filtroDDTipoTituloActivoTPA);
+				sitPosesoria.setConTitulo(ddTipoTituloActivoTPA);
+			}
+			if(!exc.dameCelda(fila, TAPIADO).isEmpty()) {
+				sitPosesoria.setAccesoTapiado(traducirSiNo(exc.dameCelda(fila, TAPIADO)));
+			}
+			if(sitPosesoria.getAccesoTapiado() == 1 && !exc.dameCelda(fila, FECHA_TAPIADO).isEmpty()) {
+				Date fechaTapiado = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, FECHA_TAPIADO));
+				sitPosesoria.setFechaAccesoTapiado(fechaTapiado);
+			}
+			
+			if(sitPosesoria.getAccesoAntiocupa() == 1 && !exc.dameCelda(fila, FECHA_COLOCACION_PUERTA_ANTIOCUPA).isEmpty()) {
+				Date fechaPuertaAntiocupa = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, FECHA_COLOCACION_PUERTA_ANTIOCUPA));
+				sitPosesoria.setFechaAccesoAntiocupa(fechaPuertaAntiocupa);
+			}
+				
+			genericDao.update(ActivoSituacionPosesoria.class, sitPosesoria);
+		}
 	}
 	
 	

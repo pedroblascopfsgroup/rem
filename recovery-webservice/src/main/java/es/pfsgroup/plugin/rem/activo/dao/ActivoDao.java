@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.activo.dao;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;

@@ -230,6 +230,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	//Tareas
 	private static final String T013_RESOLUCION_COMITE = "T013_ResolucionComite";
+	private static final String T013_CIERRE_ECONOMICO = "T013_CierreEconomico";
+	private static final String T017_CIERRE_ECONOMICO = "T017_CierreEconomico";
 
 	@Resource
 	private MessageService messageServices;
@@ -1637,6 +1639,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if(!Checks.esNulo(expediente.getReserva()) && !Checks.esNulo(expediente.getReserva().getFechaContabilizacionReserva())) {
 					dto.setFechaContabilizacionReserva(expediente.getReserva().getFechaContabilizacionReserva());
 				}
+				
+				dto.setFinalizadoCierreEconomico(finalizadoCierreEconomico(expediente));
 			}
 		}
 		return dto;
@@ -10768,5 +10772,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			throw new JsonViewerException("La oferta principal ya está en estado '" + expedienteOfertaPrincipal.getEstado().getDescripcion()
 					+ "', ya no se pueden añadir más dependientes");
 		}
+	}
+	
+	@Override
+	public boolean finalizadoCierreEconomico(ExpedienteComercial expediente) {
+		boolean finalizada = false;
+		
+		if (expediente != null && expediente.getTrabajo() != null) {
+			ActivoTramite tramite = genericDao.get(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "trabajo", expediente.getTrabajo()));
+			
+			if(tramite != null && (ofertaApi.esTareaFinalizada(tramite, T013_CIERRE_ECONOMICO) || ofertaApi.esTareaFinalizada(tramite, T017_CIERRE_ECONOMICO))) {
+				finalizada = true;
+			}
+		}
+		
+		return finalizada;
 	}
 }

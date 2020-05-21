@@ -1308,4 +1308,11 @@ public interface ExpedienteComercialApi {
 	
 	List<DtoAuditoriaDesbloqueo> getAuditoriaDesbloqueoList(Long idExpediente);
 
+	/*
+	 * Devuelve si el expediente ha finalizado la tarea Cierre Económico
+	 * @param idOferta
+	 * @return DDComiteSancion
+	 */
+	boolean finalizadoCierreEconomico(ExpedienteComercial expediente);
+
 }

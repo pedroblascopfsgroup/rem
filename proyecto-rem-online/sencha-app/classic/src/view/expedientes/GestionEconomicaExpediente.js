@@ -10,6 +10,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 
     initComponent: function () {
         var me = this;
+        var edicion = me.edicionHabilitada(me);
         var codigoTipoProveedorFilter= null;
         me.codigoTipoProveedorFilter=null;
         var storeProveedores=null;
@@ -43,7 +44,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 					},
                 	{
 					    xtype: 'gridBaseEditableRow',
-					    topBar: $AU.userHasFunction(['EDITAR_TAB_GESTION_ECONOMICA_EXPEDIENTES']),
+					    topBar: edicion,
 					    reference: 'listadohoronarios',
 					    idPrincipal : 'expediente.id',
 						cls	: 'panel-base shadow-panel',
@@ -54,7 +55,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 						listeners: {
 							beforeedit: function(editor){
 								
-								if(!$AU.userHasFunction('EDITAR_GRID_GESTION_ECONOMICA_EXPEDIENTE')){
+								if(!edicion){
 									return false;
 								}
 								// Siempre que se vaya a entrar en modo ediciÃ³n filtrar o limpiar el combo 'Tipo proveedor'.
@@ -318,7 +319,10 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 	    
 	    me.callParent(); 
     },
-    
+    edicionHabilitada: function(me) {
+    	return $AU.userHasFunction(['EDITAR_TAB_GESTION_ECONOMICA_EXPEDIENTES']) && !me.up('expedientedetallemain').getViewModel().get('expediente.finalizadoCierreEconomico') 
+	    || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['PERFGCONTROLLER']);
+    },
     funcionRecargar: function() {
     	var me = this; 
 		me.recargar = false;

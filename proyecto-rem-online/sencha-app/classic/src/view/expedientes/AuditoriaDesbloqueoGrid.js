@@ -38,6 +38,14 @@ Ext.define('HreRem.view.expedientes.AuditoriaDesbloqueoGrid', {
 		    		
 		        },
 		        {
+		            dataIndex: 'idUsuario',
+		            reference: 'idUsuario',
+		            name:'idUsuario',
+		            text: HreRem.i18n('fieldlabel.Usuario.auditoria.desbloqueo'),
+		            flex: 0.7
+		    		
+		        },
+		        {
 		            dataIndex: 'fechaDeDesbloqueo',
 		            reference: 'fechaDeDesbloqueo',
 		            name:'fechaDeDesbloqueo',

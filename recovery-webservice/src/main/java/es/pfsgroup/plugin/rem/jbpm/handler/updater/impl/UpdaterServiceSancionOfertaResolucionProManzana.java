@@ -142,7 +142,7 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 						ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());
 						if(activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){
 							Oferta oferta = expediente.getOferta();	
-							OfertaGencat ofertaGencat = new OfertaGencat();
+							OfertaGencat ofertaGencat = null;
 							if (!Checks.esNulo(comunicacionGencat)) {
 								ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta), genericDao.createFilter(FilterType.EQUALS,"comunicacion", comunicacionGencat));
 							}

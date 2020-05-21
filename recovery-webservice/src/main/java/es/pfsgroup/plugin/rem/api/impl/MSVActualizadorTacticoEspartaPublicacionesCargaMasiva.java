@@ -237,12 +237,12 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 			if(!exc.dameCelda(fila, TAPIADO).isEmpty()) {
 				sitPosesoria.setAccesoTapiado(traducirSiNo(exc.dameCelda(fila, TAPIADO)));
 			}
-			if(sitPosesoria.getAccesoTapiado() == 1 && !exc.dameCelda(fila, FECHA_TAPIADO).isEmpty()) {
+			if(!exc.dameCelda(fila, FECHA_TAPIADO).isEmpty()) {
 				Date fechaTapiado = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, FECHA_TAPIADO));
 				sitPosesoria.setFechaAccesoTapiado(fechaTapiado);
 			}
 			
-			if(sitPosesoria.getAccesoAntiocupa() == 1 && !exc.dameCelda(fila, FECHA_COLOCACION_PUERTA_ANTIOCUPA).isEmpty()) {
+			if(!exc.dameCelda(fila, FECHA_COLOCACION_PUERTA_ANTIOCUPA).isEmpty()) {
 				Date fechaPuertaAntiocupa = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, FECHA_COLOCACION_PUERTA_ANTIOCUPA));
 				sitPosesoria.setFechaAccesoAntiocupa(fechaPuertaAntiocupa);
 			}

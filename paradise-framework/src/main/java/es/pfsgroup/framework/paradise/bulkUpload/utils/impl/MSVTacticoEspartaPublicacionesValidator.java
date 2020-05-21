@@ -59,7 +59,7 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 	public static final String PUERTA_ANTIOCUPA_ERROR = "El campo 'Puerta anti ocupa' solo puede estar rellenado con 'S' para sí y 'N' para no.";
 	public static final String VPO_ERROR = "El campo 'VPO' solo puede estar rellenado con 'S' para sí y 'N' para no.";
 	public static final String OCUPADO_ERROR = "El campo 'Ocupado' solo puede estar rellenado con 'S' para sí y 'N' para no.";
-	public static final String CON_TITULO_ERROR = "El campo 'Con título' solo puede estar rellenado con 'S' para sí y 'N' para no.";
+	public static final String CON_TITULO_ERROR = "El campo 'Con título' solo puede estar rellenado con '01' para sí y '02' para no y '03' para no con indicios.";
 	public static final String CON_CARGAS_ERROR = "El campo 'Con cargas' solo puede estar rellenado con 'S' para sí y 'N' para no.";
 	public static final String INFORME_COMERCIAL_APROBADO_ERROR = "El campo 'Informe comercial aprobado' solo puede estar rellenado con 'S' para sí y 'N' para no.";
 

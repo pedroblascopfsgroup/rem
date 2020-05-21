@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -73,13 +72,13 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {	
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
-		if (!Checks.esNulo(ofertaAceptada)) {
+		if (ofertaAceptada != null) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 			Filter filtro = null;
 			Boolean solicitaReserva = ofertaApi.checkReserva(ofertaAceptada);
 			Boolean obtencionReservaFinalizada = false;
 			
-			if (!Checks.esNulo(expediente)) {
+			if (expediente != null) {
 				if(solicitaReserva) {
 					if(ofertaApi.tieneTarea(tramite, CODIGO_T017_PBCRESERVA) == 0 
 							&& ofertaApi.tieneTarea(tramite, CODIGO_T017_INSTRUCCIONES_RESERVA) == 0 
@@ -91,7 +90,7 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 					}
 				}
 				for (TareaExternaValor valor : valores) {			
-					if (COMBO_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					if (COMBO_RESPUESTA.equals(valor.getNombre()) && valor.getValor() != null) {
 						if (DDApruebaDeniega.CODIGO_APRUEBA.equals(valor.getValor())) {
 							if (obtencionReservaFinalizada) {
 								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.RESERVADO);
@@ -100,10 +99,10 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 							}
 						} else if (DDApruebaDeniega.CODIGO_DENIEGA.equals(valor.getValor())){
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADO_PRO_MANZANA);
-							if(((!Checks.esNulo(expediente.getReserva()))
-									&& !Checks.esNulo(expediente.getReserva().getEstadoReserva())
+							if(((expediente.getReserva() != null)
+									&& expediente.getReserva().getEstadoReserva() != null
 									&& !DDEstadosReserva.CODIGO_FIRMADA.equals(expediente.getReserva().getEstadoReserva().getCodigo()))
-									|| Checks.esNulo(expediente.getReserva()) 
+									|| expediente.getReserva() == null
 									|| !solicitaReserva) {
 								expediente.setFechaVenta(null);
 								expediente.setFechaAnulacion(new Date());
@@ -123,7 +122,7 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 							}
 						}
 					}
-					if (FECHA_RESPUESTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+					if (FECHA_RESPUESTA.equals(valor.getNombre()) && valor.getValor() != null) {
 						try {
 							ofertaAceptada.setFechaRespuesta(ft.parse(valor.getValor()));
 							ofertaAceptada.setFechaAprobacionProManzana(ft.parse(valor.getValor()));
@@ -143,11 +142,11 @@ public class UpdaterServiceSancionOfertaResolucionProManzana implements UpdaterS
 						if(activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){
 							Oferta oferta = expediente.getOferta();	
 							OfertaGencat ofertaGencat = null;
-							if (!Checks.esNulo(comunicacionGencat)) {
+							if (comunicacionGencat != null) {
 								ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta), genericDao.createFilter(FilterType.EQUALS,"comunicacion", comunicacionGencat));
 							}
-							if(!Checks.esNulo(ofertaGencat)) {
-									if(Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getAuditoria().isBorrado()) {
+							if(ofertaGencat != null) {
+									if(ofertaGencat.getIdOfertaAnterior() == null && !ofertaGencat.getAuditoria().isBorrado()) {
 										gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
 									}
 							}else{	

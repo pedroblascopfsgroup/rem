@@ -102,6 +102,9 @@ public class ActivoCargas implements Serializable, Auditable {
     @JoinColumn(name = "CRG_IMPIDE_VENTA")
     private DDSiNo impideVenta;
 
+    @Column(name="CRG_OCULTO_CARGA_MASIVA")
+    private Boolean ocultoPorMasivoEsparta;
+    
 	@Version   
 	private Long version;
 	
@@ -235,5 +238,14 @@ public class ActivoCargas implements Serializable, Auditable {
 	public void setImpideVenta(DDSiNo impideVenta) {
 		this.impideVenta = impideVenta;
 	}
+
+	public Boolean getOcultoPorMasivoEsparta() {
+		return ocultoPorMasivoEsparta;
+	}
+
+	public void setOcultoPorMasivoEsparta(Boolean ocultoPorMasivoEsparta) {
+		this.ocultoPorMasivoEsparta = ocultoPorMasivoEsparta;
+	}
+	
 	
 }

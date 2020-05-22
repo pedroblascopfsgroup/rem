@@ -99,6 +99,7 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 	public static final Integer COL_FECHA_TITULO = 15;
 	private static final String[] listaValidos = { "S", "N", "SI", "NO" };
 	private static final String[] listaValidosPositivos = { "S", "SI" };
+	private static final String[] listaValidosNegativos = { "N", "NO" };
 	
 	
 	
@@ -366,7 +367,14 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 							&& (Arrays.asList(listaValidosPositivos).contains(exc.dameCelda(i, COL_TAPIADO).toUpperCase())) 
 							&& !esFechaValidaTapiadoAntiocupa(exc.dameCelda(i, col))) {
 						listaFilas.add(i);
-					} 
+					}else if(Checks.esNulo(exc.dameCelda(i, col))
+							&& (Arrays.asList(listaValidosPositivos).contains(exc.dameCelda(i, COL_TAPIADO).toUpperCase()))) {
+						listaFilas.add(i);
+					}else if(!Checks.esNulo(exc.dameCelda(i, col))
+							&& (Arrays.asList(listaValidosNegativos).contains(exc.dameCelda(i, COL_TAPIADO).toUpperCase()))
+							&& !esBorrar(exc.dameCelda(i, col))) {
+						listaFilas.add(i);
+					}
 						
 				} catch (ParseException e) {
 					listaFilas.add(i);
@@ -392,6 +400,13 @@ public class MSVTacticoEspartaPublicacionesValidator extends MSVExcelValidatorAb
 					if(!Checks.esNulo(exc.dameCelda(i, col)) 
 							&& (Arrays.asList(listaValidosPositivos).contains(exc.dameCelda(i, COL_PUERTA_ANTIOCUPA).toUpperCase())) 
 							&& !esFechaValidaTapiadoAntiocupa(exc.dameCelda(i, col))) {
+						listaFilas.add(i);
+					}else if(Checks.esNulo(exc.dameCelda(i, col))
+							&& (Arrays.asList(listaValidosPositivos).contains(exc.dameCelda(i, COL_PUERTA_ANTIOCUPA).toUpperCase()))) {
+						listaFilas.add(i);
+					}else if(!Checks.esNulo(exc.dameCelda(i, col))
+							&& (Arrays.asList(listaValidosNegativos).contains(exc.dameCelda(i, COL_PUERTA_ANTIOCUPA).toUpperCase()))
+							&& !esBorrar(exc.dameCelda(i, col))) {
 						listaFilas.add(i);
 					}
 						

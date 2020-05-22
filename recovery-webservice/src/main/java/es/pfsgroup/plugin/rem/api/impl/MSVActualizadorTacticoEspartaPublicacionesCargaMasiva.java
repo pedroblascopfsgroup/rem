@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
+import es.pfsgroup.plugin.rem.model.ActivoCargas;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -130,6 +131,13 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 		
 		return 0;
 	}
+	private Boolean traducirSiNoBoolean(String celda) {
+		if(celda != null && Arrays.asList(listaValidosPositivos).contains(celda.toUpperCase())) {
+			return true;
+		}
+		
+		return false;
+	}
 	private boolean esBorrar(String cadena) {
 		return cadena.toUpperCase().trim().equals("X");
 	}
@@ -143,7 +151,15 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 			activo.setVpo(traducirSiNo(exc.dameCelda(fila, VPO)));
 		}
 		if(!exc.dameCelda(fila, CON_CARGAS).isEmpty()) {
-			activo.setConCargas(traducirSiNo(exc.dameCelda(fila, CON_CARGAS)));
+
+			Filter activoCargasFilter  = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			List<ActivoCargas> activoCargasList = genericDao.getList(ActivoCargas.class, activoCargasFilter);
+			if(activoCargasList != null && !activoCargasList.isEmpty()){
+				for (ActivoCargas activoCarga : activoCargasList) {
+					activoCarga.setOcultoPorMasivoEsparta(traducirSiNoBoolean(exc.dameCelda(fila, CON_CARGAS)));
+					genericDao.update(ActivoCargas.class, activoCarga);
+				}
+			}
 		}
 		if(!exc.dameCelda(fila, ACTIVO_INSCRITO_DIVISION_HORIZONTAL).isEmpty()) {
 			activo.setDivHorizontal(traducirSiNo(exc.dameCelda(fila, ACTIVO_INSCRITO_DIVISION_HORIZONTAL)));
@@ -170,7 +186,7 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 		
 		actualizaSituacionPosesoria(exc, fila, sitPosesoria);
 		
-		if(activoTitulo != null && !exc.dameCelda(fila, SITUACION_TITULO).isEmpty()) {
+		if(activoTitulo != null) {
 			
 			if(!exc.dameCelda(fila, SITUACION_TITULO).isEmpty()) {
 				Filter filtroDDSituacionTitulo  = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, SITUACION_TITULO));
@@ -238,13 +254,21 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 				sitPosesoria.setAccesoTapiado(traducirSiNo(exc.dameCelda(fila, TAPIADO)));
 			}
 			if(!exc.dameCelda(fila, FECHA_TAPIADO).isEmpty()) {
-				Date fechaTapiado = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, FECHA_TAPIADO));
-				sitPosesoria.setFechaAccesoTapiado(fechaTapiado);
+				if(esBorrar(exc.dameCelda(fila, FECHA_TAPIADO))) {
+					sitPosesoria.setFechaAccesoTapiado(null);
+				}else {
+					Date fechaTapiado = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, FECHA_TAPIADO));
+					sitPosesoria.setFechaAccesoTapiado(fechaTapiado);
+				}
 			}
 			
 			if(!exc.dameCelda(fila, FECHA_COLOCACION_PUERTA_ANTIOCUPA).isEmpty()) {
-				Date fechaPuertaAntiocupa = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, FECHA_COLOCACION_PUERTA_ANTIOCUPA));
-				sitPosesoria.setFechaAccesoAntiocupa(fechaPuertaAntiocupa);
+				if(esBorrar(exc.dameCelda(fila, FECHA_TAPIADO))) {
+					sitPosesoria.setFechaAccesoAntiocupa(null);
+				}else {
+					Date fechaPuertaAntiocupa = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, FECHA_COLOCACION_PUERTA_ANTIOCUPA));
+					sitPosesoria.setFechaAccesoAntiocupa(fechaPuertaAntiocupa);
+				}
 			}
 				
 			genericDao.update(ActivoSituacionPosesoria.class, sitPosesoria);

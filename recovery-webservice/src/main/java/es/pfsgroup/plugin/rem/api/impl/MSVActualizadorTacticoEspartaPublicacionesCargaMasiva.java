@@ -263,7 +263,7 @@ public class MSVActualizadorTacticoEspartaPublicacionesCargaMasiva extends Abstr
 			}
 			
 			if(!exc.dameCelda(fila, FECHA_COLOCACION_PUERTA_ANTIOCUPA).isEmpty()) {
-				if(esBorrar(exc.dameCelda(fila, FECHA_TAPIADO))) {
+				if(esBorrar(exc.dameCelda(fila, FECHA_COLOCACION_PUERTA_ANTIOCUPA))) {
 					sitPosesoria.setFechaAccesoAntiocupa(null);
 				}else {
 					Date fechaPuertaAntiocupa = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, FECHA_COLOCACION_PUERTA_ANTIOCUPA));

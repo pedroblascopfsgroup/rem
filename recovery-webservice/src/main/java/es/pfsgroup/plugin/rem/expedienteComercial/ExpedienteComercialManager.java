@@ -4432,29 +4432,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Transactional(readOnly = false)
 	public boolean checkCamposComprador(TareaExterna tareaExterna){
 
-		Oferta oferta;
-		Boolean comprobarCompradoresAgrupacion;
 		Boolean comprobarCompradores;
-		Boolean faltanDatos = false;
-		List<Oferta> ofertasDependientes = null;
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
-		ExpedienteComercial expedienteOfertaAgrupada = null;
-		oferta = expedienteComercial.getOferta();
 
 		comprobarCompradores = this.compruebaCompradores(expedienteComercial);
-
-		if (!Checks.esNulo(oferta) && ofertaApi.isOfertaPrincipal(oferta) && comprobarCompradores) {
-			ofertasDependientes = ofertaApi.ofertasAgrupadasDependientes(oferta);
-
-			for (Oferta ofertaAgrupada : ofertasDependientes) {
-				expedienteOfertaAgrupada = this.expedienteComercialPorOferta(ofertaAgrupada.getId());
-				comprobarCompradoresAgrupacion = this.compruebaCompradores(expedienteOfertaAgrupada);
-				if(!comprobarCompradoresAgrupacion){
-					faltanDatos = true;
-				}
-			}
-			return !faltanDatos;
-		}
 
 		return comprobarCompradores;
 	}

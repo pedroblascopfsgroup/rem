@@ -27,6 +27,8 @@ public interface ActivoCargasApi {
 		public boolean esActivoConCargasNoCanceladasEconomica(Long idActivo);
 
 		boolean esCargasOcultasCargaMasivaEsparta(Long idActivo);
+
+		boolean tieneCargasOcultasCargaMasivaEsparta(Long idActivo);
 	    
     }
 

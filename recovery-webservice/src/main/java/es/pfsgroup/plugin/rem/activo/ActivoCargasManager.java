@@ -87,4 +87,21 @@ public class ActivoCargasManager extends BusinessOperationOverrider<ActivoCargas
 		return ocultoConcargaMasiva;
 	}
 	
+	@Override
+	public boolean tieneCargasOcultasCargaMasivaEsparta(Long idActivo) {
+		Boolean ocultoConcargaMasiva = false;
+		Filter activoCargasFilter  = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		List<ActivoCargas> activoCargasList = genericDao.getList(ActivoCargas.class, activoCargasFilter);
+		if(activoCargasList != null && !activoCargasList.isEmpty()){
+			for (ActivoCargas activoCarga : activoCargasList) {
+				if(!Checks.esNulo(activoCarga.getOcultoPorMasivoEsparta())) {
+					ocultoConcargaMasiva = true;
+					break;
+				}
+			}
+		}		
+		
+		return ocultoConcargaMasiva;
+	}
+	
 }

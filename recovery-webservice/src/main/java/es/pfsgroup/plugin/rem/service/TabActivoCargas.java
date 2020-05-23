@@ -47,8 +47,12 @@ public class TabActivoCargas implements TabActivoService {
 			activoDto.setUnidadAlquilable(true);
 			ActivoAgrupacion actgagru = activoDao.getAgrupacionPAByIdActivo(activo.getId());
 			Activo activoM = activoApi.get(activoDao.getIdActivoMatriz(actgagru.getId()));
-			if(activoCargasApi.esCargasOcultasCargaMasivaEsparta(activoM.getId())) {
-				activoDto.setConCargas(1);
+			if(activoCargasApi.tieneCargasOcultasCargaMasivaEsparta(activoM.getId())) {
+				if(activoCargasApi.esCargasOcultasCargaMasivaEsparta(activoM.getId())) {
+					activoDto.setConCargas(1);
+				} else {
+					activoDto.setConCargas(0);
+				}
 			} else if(activoCargasApi.esActivoConCargasNoCanceladas(activoM.getId())) {
 				activoDto.setConCargas(1);
 			} else {
@@ -57,8 +61,12 @@ public class TabActivoCargas implements TabActivoService {
 		}
 		else {
 			activoDto.setUnidadAlquilable(false);
-			if(activoCargasApi.esCargasOcultasCargaMasivaEsparta(activo.getId())) {
-				activoDto.setConCargas(1);
+			if(activoCargasApi.tieneCargasOcultasCargaMasivaEsparta(activo.getId())) {
+				if(activoCargasApi.esCargasOcultasCargaMasivaEsparta(activo.getId())) {
+					activoDto.setConCargas(1);
+				} else {
+					activoDto.setConCargas(0);
+				}
 			} else if(activoCargasApi.esActivoConCargasNoCanceladas(activo.getId())) {
 				activoDto.setConCargas(1);
 			} else {

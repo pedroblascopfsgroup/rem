@@ -220,42 +220,44 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 		Long idAgrupacion = Long.parseLong(fileItem.getParameter("idEntidad"));
 		ActivoAgrupacion agrupacion = this.get(idAgrupacion);
-
-		ActivoFoto activoFoto = null;
-		FileResponse fileReponse;
-		try {
-			if (gestorDocumentalFotos.isActive()) {
-
-				fileReponse = gestorDocumentalFotos.upload(fileItem.getFileItem().getFile(),
-						fileItem.getFileItem().getFileName(), PROPIEDAD.AGRUPACION, idAgrupacion, null,
-						fileItem.getParameter("descripcion"), null, null, null);
-				activoFoto = new ActivoFoto(fileReponse.getData());
-
-			} else {
-				activoFoto = new ActivoFoto(fileItem.getFileItem());
+		if(agrupacion != null) {
+			Integer orden = activoApi.getMaxOrdenFotoByIdSubdivision(idAgrupacion, null) + 1;
+			ActivoFoto activoFoto = null;
+			FileResponse fileReponse;
+			try {
+				if (gestorDocumentalFotos.isActive()) {
+	
+					fileReponse = gestorDocumentalFotos.upload(fileItem.getFileItem().getFile(),
+							fileItem.getFileItem().getFileName(), PROPIEDAD.AGRUPACION, idAgrupacion, null,
+							fileItem.getParameter("descripcion"), null, null, orden);
+					activoFoto = new ActivoFoto(fileReponse.getData());
+	
+				} else {
+					activoFoto = new ActivoFoto(fileItem.getFileItem());
+					activoFoto.setOrden(orden);
+				}
+	
+				activoFoto.setAgrupacion(agrupacion);
+	
+				activoFoto.setTamanyo(fileItem.getFileItem().getLength());
+	
+				activoFoto.setNombre(fileItem.getFileItem().getFileName());
+	
+				activoFoto.setDescripcion(fileItem.getParameter("descripcion"));
+	
+				activoFoto.setPrincipal(true);
+	
+				activoFoto.setFechaDocumento(new Date());
+	
+				Auditoria.save(activoFoto);
+	
+				agrupacion.getFotos().add(activoFoto);
+	
+				activoAgrupacionDao.save(agrupacion);
+			} catch (Exception e) {
+	
 			}
-
-			activoFoto.setAgrupacion(agrupacion);
-
-			activoFoto.setTamanyo(fileItem.getFileItem().getLength());
-
-			activoFoto.setNombre(fileItem.getFileItem().getFileName());
-
-			activoFoto.setDescripcion(fileItem.getParameter("descripcion"));
-
-			activoFoto.setPrincipal(true);
-
-			activoFoto.setFechaDocumento(new Date());
-
-			Auditoria.save(activoFoto);
-
-			agrupacion.getFotos().add(activoFoto);
-
-			activoAgrupacionDao.save(agrupacion);
-		} catch (Exception e) {
-
 		}
-
 		return "success";
 
 	}
@@ -268,6 +270,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		}
 
 		Long agrupacionId = Long.parseLong(fileItem.getMetadata().get("id_agrupacion_haya"));
+		BigDecimal subdivisionId = null;
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", agrupacionId);
 		ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
 		try {
@@ -280,7 +283,8 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				activoFoto.setAgrupacion(agrupacion);
 				
 				if (fileItem.getMetadata().get("id_subdivision") != null) {
-					activoFoto.setSubdivision(new BigDecimal(fileItem.getMetadata().get("id_subdivision"))); 
+					subdivisionId = new BigDecimal(fileItem.getMetadata().get("id_subdivision"));
+					activoFoto.setSubdivision(subdivisionId); 
 				}
 
 				activoFoto.setNombre(fileItem.getBasename());
@@ -303,10 +307,26 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 				activoFoto.setFechaDocumento(fechaSubida);
 				
-				if(fileItem.getMetadata().containsKey("orden")) {
-					activoFoto.setOrden(Integer.valueOf(fileItem.getMetadata().get("orden")));
+				Integer orden = null;
+				if (fileItem.getMetadata().containsKey("orden") && fileItem.getMetadata().get("orden") != null) {
+					String ordenCadena = fileItem.getMetadata().get("orden");
+					if(ordenCadena.matches("^[-+]?[0-9]+$") ) { 
+						try {
+							orden = Integer.valueOf(ordenCadena);
+						}catch(NumberFormatException ex) {
+							orden = null;
+						}
+						
+					}
 				}
+				if (orden == null && agrupacionId != null) {
+					
+					orden = activoApi.getMaxOrdenFotoByIdSubdivision(agrupacionId, subdivisionId) + 1;
 
+				}else {
+					orden = 0;
+				}
+				activoFoto.setOrden(orden);
 				genericDao.save(ActivoFoto.class, activoFoto);
 
 			} else {
@@ -360,11 +380,12 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				
 				fileReponse = gestorDocumentalFotos.uploadSubdivision(fileItem.getFileItem().getFile(),
 						fileItem.getFileItem().getFileName(), subdivisionId, agrupacion,
-						fileItem.getParameter("descripcion"),tipo,principal,situacion);
+						fileItem.getParameter("descripcion"),tipo,principal,situacion, orden);
 				activoFoto = new ActivoFoto(fileReponse.getData());
 
 			} else {
 				activoFoto = new ActivoFoto(fileItem.getFileItem());
+				activoFoto.setOrden(orden);
 			}
 
 			activoFoto.setSubdivision(subdivisionId);
@@ -383,9 +404,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 			
 			activoFoto.setInteriorExterior(Boolean.valueOf(fileItem.getParameter("interiorExterior")));
 
-			activoFoto.setFechaDocumento(new Date());
-
-			activoFoto.setOrden(orden);
+			activoFoto.setFechaDocumento(new Date());			
 
 			Auditoria.save(activoFoto);
 
@@ -413,8 +432,6 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		try {
 			if (agrupacion != null) {
 				ActivoFoto activoFoto;
-				Integer orden = activoApi.getMaxOrdenFotoByIdSubdivision(agrupacionId, subdivisionId);
-				orden++;
 				activoFoto = activoAdapter.getFotoActivoByRemoteId(fileItem.getId());
 				if (activoFoto == null) {
 					activoFoto = new ActivoFoto(fileItem);
@@ -443,7 +460,25 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				}
 
 				activoFoto.setFechaDocumento(fechaSubida);
+				Integer orden = null;
+				if (fileItem.getMetadata().containsKey("orden") && fileItem.getMetadata().get("orden") != null) {
+					String ordenCadena = fileItem.getMetadata().get("orden");
+					if(ordenCadena.matches("^[-+]?[0-9]+$") ) { 
+						try {
+							orden = Integer.valueOf(ordenCadena);
+						}catch(NumberFormatException ex) {
+							orden = null;
+						}
+						
+					}
+				}
+				if (orden == null && agrupacionId != null) {
+					
+					orden = activoApi.getMaxOrdenFotoByIdSubdivision(agrupacionId, subdivisionId) + 1;
 
+				}else {
+					orden = 0;
+				}
 				activoFoto.setOrden(orden);
 
 				genericDao.save(ActivoFoto.class, activoFoto);

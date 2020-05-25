@@ -206,13 +206,6 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 		Activo activo = tareaActivo.getActivo();
 		Trabajo trabajo = tareaActivo.getTramite().getTrabajo();
 		ExpedienteComercial expediente = expedienteComercialApi.findOneByTrabajo(trabajo);
-		Oferta oferta = expediente.getOferta();
-		
-
-		TareaActivo tareaActivo = (TareaActivo)tareaExterna.getTareaPadre();
-		Activo activo = tareaActivo.getActivo();
-		Trabajo trabajo = tareaActivo.getTramite().getTrabajo();
-		ExpedienteComercial expediente = expedienteComercialApi.findOneByTrabajo(trabajo);
 		Oferta oferta = null;
 		if(expediente != null) {
 			oferta = expediente.getOferta();

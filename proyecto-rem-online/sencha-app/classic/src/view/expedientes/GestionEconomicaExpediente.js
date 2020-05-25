@@ -312,7 +312,18 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 						}
 					]
         	}
-            
+            ,{
+				xtype: 'button',
+				text: HreRem.i18n('btn.editar.auditoria.desbloqueo'),
+				handler: 'editarAuditoriaDesbloqueo',
+				margin: '10 40 5 10',
+				bind:{
+					hidden: '{!visibleBotonAuditoriaDesbloqueo}'
+//					hidden: false
+				}
+			}
+        	
+
     	];
     
 	    me.addPlugin({ptype: 'lazyitems', items: items });
@@ -331,7 +342,8 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 		
 		// FIXME Â¿Â¿Deberiamos cargar la primera pÃ¡gina??
 		listadoHonorarios.getStore().load();	
-		listaOrigenLead.getStore().load();	
+		listaOrigenLead.getStore().load();
+		listaAuditoriaDesbloqueo.getStore().load();
 		
     }
 });

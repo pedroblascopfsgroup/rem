@@ -2305,4 +2305,18 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView insertarRegistroAuditoriaDesbloqueo(ModelMap model, Long expedienteId, String comentario, Long usuId, HttpServletRequest request) {
+		try {
+			expedienteComercialApi.insertarRegistroAuditoriaDesbloqueo(expedienteId, comentario, usuId);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		}catch(Exception e){
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController (getAuditoriaDesbloqueo)", e);
+		}
+		return createModelAndViewJson(model);
+	}
+	
 }

@@ -55,8 +55,8 @@ Ext.define('HreRem.view.expedientes.AuditoriaDesbloqueoGrid', {
 		        },
 		        {
 		            dataIndex: 'motivoDeDesbloqueo',
-		            reference: 'fechaDeDesbloqueo',
-		            name:'fechaDeDesbloqueo',
+		            reference: 'motivoDeDesbloqueo',
+		            name:'motivoDeDesbloqueo',
 		            text: HreRem.i18n('fieldlabel.motivoDesbloqueo.auditoria.desbloqueo'),
 		            flex: 0.7
 		    		

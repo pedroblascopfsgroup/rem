@@ -8114,6 +8114,30 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		return this.update(expedienteComercial,false);
 	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void insertarRegistroAuditoriaDesbloqueo(Long expedienteId, String comentario, Long usuId) {
+		if(usuId == null || expedienteId == null) {
+			return;
+		}
+		Usuario usuario = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id",usuId));
+		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class,
+				genericDao.createFilter(FilterType.EQUALS, "id",expedienteId));//numExpediente
+		AuditoriaDesbloqueo auditoria = new AuditoriaDesbloqueo();
+		Date fechaActual = new Date();
+		if(expediente != null) {
+			auditoria.setExpediente(expediente);
+		}
+		if(usuario != null) {
+			auditoria.setUsuario(usuario);
+		}
+		auditoria.setMotivoDesbloqueo(comentario);
+		auditoria.setFechaDesbloqueo(fechaActual);
+		
+		genericDao.save(AuditoriaDesbloqueo.class, auditoria);
+		
+	}
 
 	@Override
 	@Transactional(readOnly = false)

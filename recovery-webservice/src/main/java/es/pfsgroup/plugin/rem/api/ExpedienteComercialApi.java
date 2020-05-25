@@ -1307,6 +1307,8 @@ public interface ExpedienteComercialApi {
 	DtoOrigenLead getOrigenLeadList(Long idExpediente);
 	
 	List<DtoAuditoriaDesbloqueo> getAuditoriaDesbloqueoList(Long idExpediente);
+	
+	void insertarRegistroAuditoriaDesbloqueo(Long expedienteId, String comentario, Long usuId);
 
 	/*
 	 * Devuelve si el expediente ha finalizado la tarea Cierre Económico

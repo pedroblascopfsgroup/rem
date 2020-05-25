@@ -339,6 +339,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 		me.recargar = false;
 		var listadoHonorarios = me.down("[reference=listadohoronarios]");
 		var listaOrigenLead = me.down("[reference=listaOrigenLead]");
+		var listaAuditoriaDesbloqueo = me.down("[reference=listaAuditoriaDesbloqueo]");
 		
 		// FIXME Â¿Â¿Deberiamos cargar la primera pÃ¡gina??
 		listadoHonorarios.getStore().load();	

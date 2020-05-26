@@ -45,6 +45,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCargaActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoRegistralActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
@@ -519,6 +520,10 @@ public class Activo implements Serializable, Auditable {
     
     @Column(name = "ACT_DND", columnDefinition = "tinyint default false")
    	private boolean isDnd;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ERA_ID")
+    private DDEstadoRegistralActivo estadoRegistral; 
     
     // Getters del activo --------------------------------------------
     
@@ -2028,5 +2033,13 @@ public class Activo implements Serializable, Auditable {
 
 	public void setFechaTituloAnterior(Date fechaTituloAnterior) {
 		this.fechaTituloAnterior = fechaTituloAnterior;
+	}
+
+	public DDEstadoRegistralActivo getEstadoRegistral() {
+		return estadoRegistral;
+	}
+
+	public void setEstadoRegistral(DDEstadoRegistralActivo estadoRegistral) {
+		this.estadoRegistral = estadoRegistral;
 	}
 }

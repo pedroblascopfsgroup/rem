@@ -860,6 +860,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setTipoSegmentoCodigo(activo.getTipoSegmento().getCodigo());
 		}
 		
+		if(activo.getEstadoRegistral() != null) {
+			activoDto.setEstadoRegistralCodigo(activo.getEstadoRegistral().getCodigo());
+		}
+		
 		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));
 		
 		return activoDto;

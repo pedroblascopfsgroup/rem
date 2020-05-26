@@ -68,6 +68,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean tieneRegistroContrato;
 	private Integer diasCambioEstadoActivo;
 	private String tipoSegmentoCodigo;
+	private String estadoRegistralCodigo;
 
 	// Comunidad de propietarios
 	private String tipoCuotaCodigo;
@@ -2091,6 +2092,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setNumActivoDivarian(String numActivoDivarian) {
 		this.numActivoDivarian = numActivoDivarian;
+	}
+
+	public String getEstadoRegistralCodigo() {
+		return estadoRegistralCodigo;
+	}
+
+	public void setEstadoRegistralCodigo(String estadoRegistralCodigo) {
+		this.estadoRegistralCodigo = estadoRegistralCodigo;
 	}
 	
 	

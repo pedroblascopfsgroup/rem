@@ -10,7 +10,6 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 
     initComponent: function () {
         var me = this;
-        var edicion = me.edicionHabilitada(me);
         var codigoTipoProveedorFilter= null;
         me.codigoTipoProveedorFilter=null;
         var storeProveedores=null;
@@ -44,7 +43,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 					},
                 	{
 					    xtype: 'gridBaseEditableRow',
-					    topBar: edicion,
+					    topBar: true,
 					    reference: 'listadohoronarios',
 					    idPrincipal : 'expediente.id',
 						cls	: 'panel-base shadow-panel',
@@ -55,8 +54,8 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 						listeners: {
 							beforeedit: function(editor){
 								
-								if(!edicion){
-									return false;
+								if(!me.edicionHabilitada(me)){
+									return false;									
 								}
 								// Siempre que se vaya a entrar en modo ediciÃ³n filtrar o limpiar el combo 'Tipo proveedor'.
 								if (editor.editing) {
@@ -88,7 +87,24 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 								} else {
 									storeTipoProveedor.clearFilter();
 								}
-							}
+							},
+							containermouseover: function () {
+					    		me.evaluarBotonAdd(me);
+							},
+					    	itemmouseenter: function () {
+					    		me.evaluarBotonAdd(me);
+					    	},
+					    	itemmouseleave: function () {
+					    		me.evaluarBotonAdd(me);
+					        },
+					        selectionchange: function (grid, records) {
+					        	this.onGridBaseSelectionChange(grid, records);
+					    		me.evaluarBotonAdd(me);
+					    		me.evaluarBotonRemove(me);
+					        },
+					        afterbind: function () {
+					        	me.evaluarBotonAdd(me);
+					        }
 						},
 						features: [{
 				            id: 'summary',
@@ -329,6 +345,12 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 	    me.addPlugin({ptype: 'lazyitems', items: items });
 	    
 	    me.callParent(); 
+    },
+    evaluarBotonAdd: function(me){
+ 	   me.down("[itemId=addButton]").setDisabled(!me.edicionHabilitada(me));
+    },
+    evaluarBotonRemove: function(me){
+ 	   me.down("[itemId=removeButton]").setDisabled(!me.edicionHabilitada(me));
     },
     edicionHabilitada: function(me) {
     	return $AU.userHasFunction(['EDITAR_TAB_GESTION_ECONOMICA_EXPEDIENTES']) && !me.up('expedientedetallemain').getViewModel().get('expediente.finalizadoCierreEconomico') 

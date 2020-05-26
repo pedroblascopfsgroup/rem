@@ -29,6 +29,7 @@ import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoPlusvaliaFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoPublicacionGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.HistoricoPeticionesPrecios;
 import es.pfsgroup.plugin.rem.model.HistoricoRequisitosFaseVenta;
@@ -347,7 +348,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public Object getBusquedaActivosGrid(DtoActivoGridFilter dto, Usuario usuarioLogado, boolean devolverPage);
 
 	List<HistoricoPeticionesPrecios> getHistoricoSolicitudesPrecios(Long idActivo);
-
+	
 	List<HistoricoRequisitosFaseVenta> getReqFaseVenta(Long idActivo);
 	
 	/*
@@ -360,4 +361,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	List<ActivoCalificacionNegativaAdicional> getListActivoCalificacionNegativaAdicionalByIdActivo(Long idActivo);
 	
 	public Activo existeActivoUsuarioCarterizado(Long numActivo, Long idCartera, List<Long> idSubcarteras);
+	
+	public Page getBusquedaPublicacionGrid(DtoPublicacionGridFilter dto);
 }

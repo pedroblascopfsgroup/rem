@@ -16,7 +16,7 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionList', {
 	    var estadoRenderer =  function(value) {
         	var src = '',
         	alt = '',
-        	valor = (value == "true");
+        	valor = (value == "true" || value == 1);
         	
         	if (valor) {
         		src = 'icono_OK.svg';
@@ -73,15 +73,17 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionList', {
 		            text: HreRem.i18n('header.activos.publicacion.publicacion.venta'),
 		            renderer: estadoRenderer,	           
 		            flex: 0.5,
-		            dataIndex: 'okventa',
-		            align: 'center'
+		            dataIndex: 'indicadorVenta',
+		            align: 'center',
+		            sortable: false		            
 		        },
 		        {
 		            text: HreRem.i18n('header.activos.publicacion.publicacion.alquiler'),
 		            renderer: estadoRenderer,	           
 		            flex: 0.5,
-		            dataIndex: 'okalquiler',
-		            align: 'center'
+		            dataIndex: 'indicadorAlquiler',
+		            align: 'center',
+		            sortable: false
 		        },
 		        {
 		            text: HreRem.i18n('header.activos.publicacion.precio'),
@@ -119,59 +121,18 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionList', {
 		            flex: 1
 		        },
 		        {
-		            dataIndex: 'tipoComercializacionCodigo',
+		            dataIndex: 'fechaPublicacionActivo',
 		            text: HreRem.i18n('header.fecha.publicacion'),
 		            flex: 1,
-		            renderer: function(value, cell, record) {
-		            	var estadoPublicacionVenta = record.get("estadoPublicacionVenta");
-		            	var estadoPublicacionAlquiler = record.get("estadoPublicacionAlquiler");
-		            	var estadosPublicados;
-		            	if (value == CONST.TIPOS_COMERCIALIZACION['VENTA'] || value == CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA']) {
-		            		estadosPublicados = [CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'],
-						 		 CONST.ESTADO_PUBLICACION_VENTA['PRE_PUBLICADO']];
-		            	} else {
-		            		estadosPublicados = [CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'],
-						 		 CONST.ESTADO_PUBLICACION_ALQUILER['PRE_PUBLICADO']];
-		            	}		
-	            						 		 
-		            	if(((value == CONST.TIPOS_COMERCIALIZACION['VENTA'] || value == CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA']) && estadosPublicados.includes(estadoPublicacionVenta)) 
-		            			|| (value == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] && estadosPublicados.includes(estadoPublicacionAlquiler)))
-            			{		            		
-			            	var myDate = (value == CONST.TIPOS_COMERCIALIZACION['VENTA']
-			            			|| value == CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'])
-			            			? record.get("fechaPublicacionVenta") : record.get("fechaPublicacionAlquiler");
-			            	myDate = Ext.Date.format(myDate, "d/m/Y");
-			            	return myDate;
-		            	}
-						
-		            	return null;
-		            }
+		            sortable: false,
+		            formatter: 'date("d/m/Y")'				           
 		        },
 		        {
-		            dataIndex: 'tipoComercializacionCodigo',
+		            dataIndex: 'fechaDespublicacionActivo',
 		            text: HreRem.i18n('header.fecha.despublicacion'),
 		            flex: 1,
-		            renderer: function(value, cell, record) {
-		            	var estadoPublicacionVenta = record.get("estadoPublicacionVenta");
-		            	var estadoPublicacionAlquiler = record.get("estadoPublicacionAlquiler");
-		            	var estadosPublicados;
-		            	if (value == CONST.TIPOS_COMERCIALIZACION['VENTA'] || value == CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA']) {
-		            		estadosPublicados = [CONST.ESTADO_PUBLICACION_VENTA['OCULTO']];
-		            	} else {
-		            		estadosPublicados = [CONST.ESTADO_PUBLICACION_ALQUILER['OCULTO']];
-		            	}
-		            	if(((value == CONST.TIPOS_COMERCIALIZACION['VENTA'] || value == CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA']) && estadosPublicados.includes(estadoPublicacionVenta)) 
-		            			|| (value == CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] && estadosPublicados.includes(estadoPublicacionAlquiler)))
-            			{		            		
-			            	var myDate = (value == CONST.TIPOS_COMERCIALIZACION['VENTA']
-			            			|| value == CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'])
-			            			? record.get("fechaPublicacionVenta") : record.get("fechaPublicacionAlquiler");
-			            	myDate = Ext.Date.format(myDate, "d/m/Y");
-			            	return myDate;
-		            	}
-						
-		            	return null;
-		            }
+		            sortable: false,
+		            formatter: 'date("d/m/Y")'
 		        }
 	        ];
 	        

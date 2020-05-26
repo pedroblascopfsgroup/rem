@@ -2,29 +2,21 @@ Ext.define('HreRem.view.publicacion.PublicacionController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.publicaciones',
 
-	// Función que se ejecuta al hacer click en el botón Buscar.
-	onSearchClick: function(btn) {
-		
+	onSearchClick: function(btn) {		
 		var me = this;
-		me.getViewModel().data.activospublicacion.load(1);
-		
+		me.getViewModel().data.activospublicacion.load(1);		
 	},
 	
-	// Función que se ejecuta al hacer click en el botón de Limpiar.
 	onCleanFiltersClick: function(btn) {
-		var form = btn.up('panel').getForm();
-		
+		var form = btn.up('panel').getForm();		
 		form.reset();
-
-		form.findField('admision').setValue(false);
-		form.findField('gestion').setValue(false);
-		form.findField('estadoPublicacionCodigo').setValue(null);
-		form.findField('estadoPublicacionAlquilerCodigo').setValue(null);
-		
+		form.findField('checkOkAdmision').setValue(false);
+		form.findField('checkOkGestion').setValue(false);
+		form.findField('estadoPublicacionVentaCodigo').setValue(null);
+		form.findField('estadoPublicacionAlquilerCodigo').setValue(null);		
 	},
 	
-	paramLoading: function(store, operation, opts) {
-		
+	paramLoading: function(store, operation, opts) {		
 		var initialData = {};
 		var searchForm = this.getReferences().ActivosPublicacionSearch;
 		var criteria = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
@@ -35,25 +27,16 @@ Ext.define('HreRem.view.publicacion.PublicacionController', {
 			}
 		});	
 
-		store.getProxy().extraParams = criteria;
-		
+		store.getProxy().extraParams = criteria;		
 		return true;
 
 	},
 	
-	// Función que se ejecuta cuando se realiza doble click en un elemento del grid.
 	onActivosPublicacionListDobleClick: function(grid, record) {       
     	var me = this;    	
-    	me.abrirPestañaPublicacionActivo(record);
+    	me.getView().fireEvent('abrirDetalleActivoPrincipal', record);
 	},
 	
-	// Función que abre la pestaña de Publicación del activo.
-	abrirPestañaPublicacionActivo: function(record)  {
-	   	 var me = this;
-	   	 me.getView().fireEvent('abrirDetalleActivoPrincipal', record);
-   },
-	
-	// Función que se ejecuta al hacer click en el botón de Exportar.
 	onClickDescargarExcel: function(btn) {
 		var me = this,
     	view = me.getView(),
@@ -140,10 +123,7 @@ Ext.define('HreRem.view.publicacion.PublicacionController', {
 		});	
     },
     
-	// Función para que el combo "Motivos de ocultación" del "Estado publicación Venta" 
-	// se oculte cuando se selecciona "Oculto Venta".
     hiddenMotivosOcultacionVenta: function() {
-
 		var me = this;
 		var estadoPublicacionVenta = me.getViewModel().get('estadoPublicacionVenta');
 		var motivosOcultacionVenta = me.lookupReference('motivosOcultacionVenta');
@@ -152,13 +132,11 @@ Ext.define('HreRem.view.publicacion.PublicacionController', {
     		motivosOcultacionVenta.setHidden(false);
     	} else {
     		motivosOcultacionVenta.setHidden(true);
+    		motivosOcultacionVenta.clearValue();
 	    }
 	},
 	
-	// Función para que el combo "Motivos de ocultación" del "Estado publicación Alquiler" 
-	// se oculte cuando se selecciona "Oculto Alquiler".
 	hiddenMotivosOcultacionAlquiler: function() {
-
 		var me = this;
 		var estadoPublicacionAlquiler = me.getViewModel().get('estadoPublicacionAlquiler');
 		var motivosOcultacionAlquiler = me.lookupReference('motivosOcultacionAlquiler');
@@ -167,6 +145,7 @@ Ext.define('HreRem.view.publicacion.PublicacionController', {
     		motivosOcultacionAlquiler.setHidden(false);
     	} else {
     		motivosOcultacionAlquiler.setHidden(true);
+    		motivosOcultacionAlquiler.clearValue();
 	    }	
     },
 	
@@ -190,7 +169,7 @@ Ext.define('HreRem.view.publicacion.PublicacionController', {
 					if(!Ext.isEmpty(records) && records.length > 0) {
 						if (chainedCombo.selectFirst == true) {
 							chainedCombo.setSelection(1);
-						};
+						}
 						chainedCombo.setDisabled(false);
 					} else {
 						chainedCombo.setDisabled(true);

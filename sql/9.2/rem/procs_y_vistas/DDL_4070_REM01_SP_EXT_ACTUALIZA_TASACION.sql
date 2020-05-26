@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20200521
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20181122
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.18
---## INCIDENCIA_LINK=REMVIP-6818
+--## INCIDENCIA_LINK=REMVIP-2501
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -14,7 +14,6 @@
 --##        0.2 Se añaden datos de entrada del SP CARGA_TASACIONES
 --##		1.02 Se modifica el tamaño de los campos de observaciones de 100 a 250
 --##		1.03 Se añaden los campos TAS_ID y TAS_ID_EXTERNO que pasa a ser la clave de la tasación
---##		1.04 Se añade el campo BIE_FECHA_VALOR_TASACION al insertar en la tabla BIE_VALORACIONES 
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -335,14 +334,12 @@ BEGIN
 	                V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.BIE_VALORACIONES BIE (
 	                                  BIE_ID,
 	                                  BIE_VAL_ID,
-					  BIE_FECHA_VALOR_TASACION,
 	                                  USUARIOCREAR,
 	                                  FECHACREAR
 	                                )
 	                                SELECT 
 	                                       (SELECT ACT.BIE_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE ACT.ACT_ID = '||ACT_ID||'),
 	                                       '||BIE_VAL_ID||',
-					       TO_DATE('''||FECHA_TASACION||''',''yyyymmdd'') ,
 	                                       '''||V_NOMBRESP||''',
 	                                       '''||FECHA_HOY||'''
 	                                       FROM DUAL

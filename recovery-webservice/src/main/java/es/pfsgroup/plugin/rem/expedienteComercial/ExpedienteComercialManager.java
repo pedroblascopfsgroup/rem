@@ -1027,7 +1027,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 				
 		//Se aplica el comité correspondiente a las ofertas añadidas a la lista
-		ofertaApi.calculoComiteLBK(oferta.getId(), null);
+		if (!Checks.esNulo(listaOfertasLBK) && !listaOfertasLBK.isEmpty()) {
+			ofertaApi.calculoComiteLBK(oferta.getId(), null);
+		}
 				
 		
 		if (!Checks.esNulo(dto.getTipoOfertaCodigo())) {

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20200527
+--## FECHA_CREACION=20200526
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-7237
@@ -159,7 +159,7 @@ BEGIN
             V_SQL :=    'UPDATE '||V_ESQUEMA||'.'||V_TABLA||'
                         SET 
 			TIT_FECHA_INSC_REG =   TO_DATE(''10/10/2019'', ''DD/MM/YYYY'')
-			, DD_ETI_ID = (SELECT DD_ETI_ID FROM '||V_ESQUEMA||'.DD_ETI_ESTADO_TITULO WHERE DD_ETI_CODIGO  = ''03'')
+			, DD_ETI_ID = (SELECT DD_ETI_ID FROM '||V_ESQUEMA||'.DD_ETI_ESTADO_TITULO WHERE DD_ETI_CODIGO  = ''02'')
                         , USUARIOMODIFICAR = '''||V_USUARIO||'''
 			, FECHAMODIFICAR = SYSDATE 
                         WHERE ACT_ID = '||V_ACT_ID||'						 

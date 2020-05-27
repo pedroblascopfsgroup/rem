@@ -203,12 +203,20 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 		ActivoTramite tramite = getActivoTramite(executionContext); 
 		TareaProcedimiento tareaProcedimiento = tareaExterna.getTareaProcedimiento();
 		TareaActivo tareaActivo = (TareaActivo)tareaExterna.getTareaPadre();
-		Activo activo = tareaActivo.getActivo();
-		Trabajo trabajo = tareaActivo.getTramite().getTrabajo();
-		ExpedienteComercial expediente = expedienteComercialApi.findOneByTrabajo(trabajo);
+		Activo activo = null;
+		Trabajo trabajo = null;
+		ExpedienteComercial expediente = null;
 		Oferta oferta = null;
-		if(expediente != null) {
-			oferta = expediente.getOferta();
+		
+		if(tareaActivo != null) {
+			activo = tareaActivo.getActivo();
+			trabajo = tareaActivo.getTramite().getTrabajo();
+			if(trabajo != null) {
+				expediente = expedienteComercialApi.findOneByTrabajo(trabajo);
+				if(expediente != null) {
+					oferta = expediente.getOferta();
+				}
+			}
 		}
 		
 		List<TareaExternaValor> valores = activoTareaExternaManagerApi.obtenerValoresTarea(tareaExterna.getId());
@@ -219,7 +227,6 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 				(activo != null && DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())
 				&& oferta != null && oferta.getOfertaExpress())){
 			dataUpdater.saveValues(tramite, valores);
-		
 			enviaNotificacionFinTareaConValores(tareaExterna.getId(),valores);
 		}
 			

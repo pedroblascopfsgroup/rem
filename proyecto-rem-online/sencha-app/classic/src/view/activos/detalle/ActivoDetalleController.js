@@ -1287,7 +1287,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		config.params = {};
 		config.params.id=record.get('id');
 		config.params.idActivo=me.getViewModel().get("activo.id");
-		config.params.nombreDocumento=record.get("nombre");
+		config.params.nombreDocumento=record.get("nombre").replace(/,/g, "");
 		me.fireEvent("downloadFile", config);
 	},
 
@@ -1299,7 +1299,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		config.params = {};
 		config.params.id=record.get('id');
 		config.params.idActivo=me.getViewModel().get("activo.id");
-		config.params.nombreDocumento=record.get("nombre");
+		config.params.nombreDocumento=record.get("nombre").replace(/,/g, "");
 		me.fireEvent("downloadFile", config);
 	},
 	updateOrdenFotosInterno: function(data, record, store) {

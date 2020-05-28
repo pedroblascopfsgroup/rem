@@ -119,7 +119,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		config.url= $AC.getWebPath() + "gencat/bajarAdjuntoComunicacion." + $AC.getUrlPattern();
 		config.params = {};
 		config.params.id=record.get('id');
-		config.params.nombreDocumento=record.get("nombre");
+		config.params.nombreDocumento=record.get("nombre").replace(/,/g, "");
 		
 		me.fireEvent("downloadFile", config);
 	},

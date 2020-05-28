@@ -155,7 +155,7 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 
 	@Override
 	public FileResponse uploadSubdivision(File fileToUpload, String name, BigDecimal idSubdivision, ActivoAgrupacion agrupacion,
-			String descripcion,TIPO tipo,PRINCIPAL principal,SITUACION situacion ) throws IOException, RestClientException, HttpClientException {
+			String descripcion,TIPO tipo,PRINCIPAL principal,SITUACION situacion, Integer orden ) throws IOException, RestClientException, HttpClientException {
 		FileUpload file = new FileUpload();
 		file.setFile_base64(FileUtilsREM.base64Encode(fileToUpload));
 		file.setBasename(name);
@@ -196,7 +196,11 @@ public class GestorDocumentalFotos implements GestorDocumentalFotosApi {
 		}
 
 		metadata.put("fecha_subida", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-
+		
+		if (orden != null) {
+			metadata.put("orden", String.valueOf(orden));
+		}
+		
 		file.setMetadata(metadata);
 		return this.upload(file);
 	}

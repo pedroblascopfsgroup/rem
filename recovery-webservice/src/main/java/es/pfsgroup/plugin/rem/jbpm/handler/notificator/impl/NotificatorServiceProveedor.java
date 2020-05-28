@@ -20,6 +20,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorServic
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 
 @Component
 public class NotificatorServiceProveedor extends AbstractNotificatorService implements NotificatorService {
@@ -28,6 +29,8 @@ public class NotificatorServiceProveedor extends AbstractNotificatorService impl
 	private static final String CODIGO_T004_RESULTADO_NOTARIFICADA = "T004_ResultadoNoTarificada";
 	private static final String BUZON_ELECNOR = "buzonelecnor";
 	private static final String ELECNOR ="---------.29";
+	private static final String BUZON_BANKIA_ASISTA	= "buzonbankiaasista";
+	private static final String BANKIA_ASISTA = "---------.5";
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
@@ -62,13 +65,21 @@ public class NotificatorServiceProveedor extends AbstractNotificatorService impl
 		
 	    String correos = "";
 	   
-	    if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto())){
+	    if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto())){   	
 	    	correos = tramite.getTrabajo().getProveedorContacto().getEmail();
-	    	if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto().getUsuario()) 
-	    			&& ELECNOR.equals(tramite.getTrabajo().getProveedorContacto().getUsuario().getUsername())) {
-		    	Usuario buzonElecnor = usuarioManager.getByUsername(BUZON_ELECNOR);			    	
-				correos += !Checks.esNulo(buzonElecnor) ? ";" + buzonElecnor.getEmail() : "";
-			}		    
+	    	if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto().getUsuario())){
+	    		if(ELECNOR.equals(tramite.getTrabajo().getProveedorContacto().getUsuario().getUsername())) {
+	    			Usuario buzonElecnor = usuarioManager.getByUsername(BUZON_ELECNOR);			    	
+					correos += !Checks.esNulo(buzonElecnor) ? ";" + buzonElecnor.getEmail() : "";
+	    		}else {
+	    			if(tramite.getActivos() != null &&  !tramite.getActivos().isEmpty() && tramite.getActivos().get(0).getCartera() != null &&
+	    				DDCartera.CODIGO_CARTERA_BANKIA.equals(tramite.getActivos().get(0).getCartera().getCodigo()) 
+	    				&& BANKIA_ASISTA.equals(tramite.getTrabajo().getProveedorContacto().getUsuario().getUsername())) {
+	    				Usuario buzonBankiaAsista = usuarioManager.getByUsername(BUZON_BANKIA_ASISTA);
+	    				correos = !Checks.esNulo(buzonBankiaAsista) ? buzonBankiaAsista.getEmail() : "";
+	    			}
+	    		}
+	    	}		    
 	    }
 	    
 		if(!Checks.esNulo(correos) && !correos.equals("")) {

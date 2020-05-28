@@ -1003,7 +1003,7 @@ public class AgrupacionController extends ParadiseJsonController {
 	public ModelAndView refreshCacheFotos(@RequestParam Long id, ModelMap model) {
 		try {
 			boolean success = adapter.deleteCacheFotosAgr(id);
-			model.put(success, success);
+			model.put("success", success);
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);

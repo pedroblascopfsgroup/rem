@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=José Antonio Gigante Pamplona 
---## FECHA_CREACION=20200221
+--## AUTOR=Adrián Molina
+--## FECHA_CREACION=20200520
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-6547
+--## INCIDENCIA_LINK=REMVIP-7170
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -15,6 +15,7 @@
 --##        0.3 Versión - HREOS-5136 - Elisa Occhipinti - 20190111 - Añadir columnas CLC_CESION_DATOS, CLC_COMUNI_TERCEROS, CLC_TRANSF_INTER, ADCOM_ID
 --##		0.4 Versión - HREOS-5927 - Lara Pablo -	20190422 - Añadir problemas Ursus
 --##		0.5 Version - HREOS-6450 - José Antonio Gigante - Agregar distinct en la consulta de creacion de la vista
+--##		0.6 Version - REMVIP-7170 - Adrián Molina - Añadir columna
 --##########################################
 --*/
 
@@ -57,6 +58,7 @@ BEGIN
 	AS
 		SELECT
 			DISTINCT
+			CAST(CEX.COM_ID || CEX.ECO_ID AS NUMBER(32,0)) AS VCEX_ID,
 			COM.COM_ID,
 			CEX.ECO_ID,
 			TPE.DD_TPE_CODIGO AS COD_TIPO_PERSONA,

@@ -246,7 +246,7 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		config.params = {};
 		config.params.id=record.get('id');
 		config.params.idJunta=me.getViewModel().get("junta.id");
-		config.params.nombreDocumento=record.get("nombre")
+		config.params.nombreDocumento=record.get("nombre").replace(/,/g, "");
 		
 		me.fireEvent("downloadFile", config);
 	},

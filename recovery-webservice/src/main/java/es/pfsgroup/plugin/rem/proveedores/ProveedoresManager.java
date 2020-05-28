@@ -1099,16 +1099,12 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 		
 		FileItem fileItem = null;
 		
-		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-			Filter adjuntoFilter = genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", dtoAdjunto.getId());
-			ActivoAdjuntoProveedor adjuntoProveedor = genericDao.get(ActivoAdjuntoProveedor.class, adjuntoFilter);
-			if(!Checks.esNulo(adjuntoProveedor)) {
-				try {
-					fileItem = gestorDocumentalAdapterApi.getFileItem(adjuntoProveedor.getIdDocRestClient(), adjuntoProveedor.getNombre());
-				} catch (Exception e) {
-					logger.error(e.getMessage());
-				}
-			}
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {		
+			try {
+				fileItem = gestorDocumentalAdapterApi.getFileItem(dtoAdjunto.getId(), dtoAdjunto.getNombre());
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}			
 		} else {
 			Filter adjuntoFilter = genericDao.createFilter(FilterType.EQUALS, "id", dtoAdjunto.getId());
 			ActivoAdjuntoProveedor adjuntoProveedor = genericDao.get(ActivoAdjuntoProveedor.class, adjuntoFilter);

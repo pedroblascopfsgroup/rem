@@ -18,6 +18,9 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
+	@Column(name = "VCEX_ID")
+	private Long vcexId;
+
 	@Column(name = "COM_ID")
 	private Long id;
 	
@@ -836,7 +839,11 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 		this.numeroClienteUrsusBhConyuge = numeroClienteUrsusBhConyuge;
 	}
 
-	
-	
+	public Long getVcexId() {
+		return vcexId;
+	}
 
+	public void setCexId(Long vcexId) {
+		this.vcexId = vcexId;
+	}
 }

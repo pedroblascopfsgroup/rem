@@ -25,6 +25,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
@@ -806,13 +807,23 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (activoFoto == null) {
 					activoFoto = new ActivoFoto(fileItem);
 				}
-				if (fileItem.getMetadata().containsKey("orden")) {
-					orden = Integer.valueOf(fileItem.getMetadata().get("orden"));
+				
+				if (fileItem.getMetadata().containsKey("orden") && fileItem.getMetadata().get("orden") != null) {
+					String ordenCadena = fileItem.getMetadata().get("orden");
+					if(ordenCadena.matches("^[-+]?[0-9]+$") ) { 
+						try {
+							orden = Integer.valueOf(ordenCadena);
+						}catch(NumberFormatException ex) {
+							orden = null;
+						}
+						
+					}
 				}
 				if (orden == null) {
 					orden = activoDao.getMaxOrdenFotoById(activo.getId()) + 1;
-
 				}
+				
+				activoFoto.setOrden(orden);
 				activoFoto.setActivo(activo);
 				activoFoto.setTipoFoto(tipoFoto);
 				activoFoto.setNombre(fileItem.getBasename());
@@ -849,8 +860,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						activoFoto.setInteriorExterior(Boolean.FALSE);
 					}
 				}
-				if(orden != null)
-					activoFoto.setOrden(orden);
+				
+					
 				genericDao.save(ActivoFoto.class, activoFoto);
 
 				logger.debug("Foto procesada para el activo " + activo.getNumActivo());

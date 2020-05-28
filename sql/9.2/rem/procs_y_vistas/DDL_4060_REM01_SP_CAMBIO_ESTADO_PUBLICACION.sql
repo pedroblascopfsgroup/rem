@@ -1,10 +1,10 @@
 --/* 
 --##########################################
---## AUTOR=Cristian Montoya
---## FECHA_CREACION=20200318
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20200521
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-6642
+--## INCIDENCIA_LINK=REMVIP-5994
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -23,6 +23,7 @@
 --##		1.1 Daniel Algaba - HREOS-9595 Historificación de cambios al cambiar el canal de publicación
 --##		1.2 Vicente Martinez - HREOS-9509 - Añadir adecuacion en proceso
 --##		1.3 Cristian Montoya - REMVIP-6642 - Añadir adecuacion Adecuado - incidentado
+--##		1.4 Carles Molins - REMVIP-5994
 --##########################################
 --*/
 
@@ -267,25 +268,6 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
 		    END IF;		  
 		  END IF;
 
-		  IF pDD_MTO_CODIGO = '04' THEN /*Revisión adecuación*/
-		    V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO ACT
-						SET ACT.DD_ADA_ID = (SELECT ADA.DD_ADA_ID
-										    					 FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER ADA
-												    			WHERE ADA.DD_ADA_CODIGO = ''02'' /*NO, EN PROCESO o Adecuado - incidentado*/
-														    	  AND ADA.BORRADO = 0)
-						  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
-						  , FECHAMODIFICAR = SYSDATE
-					  WHERE ACT_ID = '||nACT_ID||'
-						AND BORRADO = 0
-					'
-					;
-
-		    EXECUTE IMMEDIATE V_MSQL;
-		    IF SQL%ROWCOUNT > 0 THEN
-			  vACTUALIZADO_A := 'S';
-		    END IF;
-		  END IF;
-
 		  IF pDD_MTO_CODIGO = '06' THEN /*Revisión Publicación*/
 		    vACTUALIZAR_COND := 'N';
 		    REM01.SP_CREAR_AVISO (pACT_ID, 'GPUBL', pUSUARIOMODIFICAR, 'Se ha situado en Oculto Alquiler con motivo Revisión Publicación el activo: ', 0);
@@ -358,24 +340,6 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
 			  vACTUALIZADO_V := 'S';
 		    END IF;		  
 		  END IF;
-
-		IF pDD_MTO_CODIGO IN ('04') THEN /*Revisión adecuación*/
-		  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO PTA
-						SET DD_ADA_ID IN (SELECT DDADA.DD_ADA_ID
-											 FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA
-											WHERE DDADA.BORRADO = 0
-											  AND DDADA.DD_ADA_CODIGO IN (''02'', ''05'', ''06''))
-						  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
-						  , FECHAMODIFICAR = SYSDATE
-					  WHERE PTA.ACT_ID = '||nACT_ID||'
-						AND PTA.BORRADO = 0 '
-					;
-
-		  EXECUTE IMMEDIATE V_MSQL;
-		  IF SQL%ROWCOUNT > 0 THEN
-			vACTUALIZADO_V := 'S';
-		  END IF;   
-		END IF;
 
 		IF pDD_MTO_CODIGO IN ('13') THEN /*Vendido*/
       V_MSQL:='UPDATE '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT '||

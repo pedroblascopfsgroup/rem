@@ -889,7 +889,7 @@ public class TrabajoController extends ParadiseJsonController {
 	public ModelAndView refreshCacheFotos(@RequestParam Long id, ModelMap model) {
 		try {
 			boolean success = trabajoAdapter.deleteCacheFotosTrabajo(id);
-			model.put(success, success);
+			model.put("success", success);
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);

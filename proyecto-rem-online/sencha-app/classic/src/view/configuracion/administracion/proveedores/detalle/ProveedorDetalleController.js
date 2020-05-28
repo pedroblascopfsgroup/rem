@@ -368,7 +368,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 		config.url=$AC.getWebPath()+"proveedores/bajarAdjuntoProveedor."+$AC.getUrlPattern();
 		config.params = {};
 		config.params.id=record.get('id');
-		
+		config.params.nombreDocumento=record.get("nombre").replace(/,/g, "");
 		me.fireEvent("downloadFile", config);
 	},
 

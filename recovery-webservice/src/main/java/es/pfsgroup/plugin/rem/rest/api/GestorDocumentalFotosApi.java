@@ -98,7 +98,7 @@ public interface GestorDocumentalFotosApi {
 	 * @throws HttpClientException
 	 */
 	public FileResponse uploadSubdivision(java.io.File fileToUpload, String name, BigDecimal idSubdivision,
-			ActivoAgrupacion agrupacion, String descripcion, TIPO tipo,PRINCIPAL principal,SITUACION situacion) throws IOException, RestClientException, HttpClientException;
+			ActivoAgrupacion agrupacion, String descripcion, TIPO tipo,PRINCIPAL principal,SITUACION situacion, Integer orden) throws IOException, RestClientException, HttpClientException;
 
 	/**
 	 * Actualiza los metadatos de un fichero

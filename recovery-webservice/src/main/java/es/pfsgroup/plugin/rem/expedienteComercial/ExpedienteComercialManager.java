@@ -4623,112 +4623,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean checkCamposComprador(TareaExterna tareaExterna) {
+	public boolean checkCamposComprador(TareaExterna tareaExterna){
 
+		Boolean comprobarCompradores;
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
-		CompradorExpediente cex = null;
 
-		if (!Checks.esNulo(expedienteComercial)) {
-			List<CompradorExpediente> listaCex = expedienteComercial.getCompradores();
-			
-			for(CompradorExpediente compradorExp: listaCex) {
-				if(compradorExp.getTitularContratacion() == 1) {
-					cex = compradorExp;
-					break;
-				}
-			}
-			if(cex != null) {
-				Comprador comprador = cex.getPrimaryKey().getComprador();
+		comprobarCompradores = this.compruebaCompradores(expedienteComercial);
 
-				// Campos comunes sin que dependa del tipo de persona Campos del titular
-				if (cex.getPorcionCompra() != null) { // Porcentaje de compra
-					if (comprador.getTipoDocumento() != null) { // Tipo de documento
-						if (comprador.getDocumento() != null) { // Número de documento
-							if (comprador.getProvincia() != null || (cex.getPais() != null
-									&& !DDPaises.CODIGO_PAIS_ESPANYA.equals(cex.getPais().getCodigo()))) { // Provincia
-								if (cex.getLocalidadRepresentante() != null || (cex.getPais() != null
-										&& !DDPaises.CODIGO_PAIS_ESPANYA.equals(cex.getPais().getCodigo()))) { // Municipio
-									if (!Checks.esNulo(comprador.getDireccion())) { // Dirección
-										if (cex.getPais() != null) { // País de residencia
-
-											// Campos dependientes de si el tipo de persona es física
-											if (comprador.getTipoPersona() != null && DDTiposPersona.CODIGO_TIPO_PERSONA_FISICA
-													.equals(comprador.getTipoPersona().getCodigo())) {
-												if (comprador.getNombre() != null) { // Nombre
-													if (comprador.getApellidos() != null) { // Apellidos
-														if (cex.getEstadoCivil() != null && !Checks.esNulo(DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO
-																.equals(cex.getEstadoCivil().getCodigo()) && // Si está casado
-																											// en
-																											// gananciales
-																cex.getRegimenMatrimonial() != null &&
-																!Checks.esNulo(DDRegimenesMatrimoniales.COD_GANANCIALES
-																		.equals(cex.getRegimenMatrimonial().getCodigo())))) {
-															return true;
-														}
-													}
-												}
-											}
-
-											// Campos dependientes de si el tipo de persona es jurídica
-											else if (comprador.getTipoPersona() != null && DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA
-													.equals(comprador.getTipoPersona().getCodigo())) {
-												if (comprador.getNombre() != null) { // Razón social
-																										// (Titular)
-													if (cex.getNombreRepresentante() != null) { // Nombre del
-																												// representante
-														if (cex.getApellidosRepresentante() != null) { // Apellidos del
-																											// representante
-															if (cex.getTipoDocumentoRepresentante() != null) { // Tipo
-																														// de
-																														// documento
-																														// del
-																														// representante
-																if (cex.getDocumentoRepresentante() != null) { // Número
-																														// de
-																														// documento
-																														// del
-																														// representante
-																	if (cex.getPais() != null && (DDPaises.CODIGO_PAIS_ESPANYA
-																			.equals(cex.getPais().getCodigo()) && // Si el
-																													// país
-																													// del
-																													// titular
-																													// es
-																													// España
-																			!Checks.esNulo(
-																					cex.getProvinciaRepresentante())
-																			&& // Provincia y Municipio del representante
-																			!Checks.esNulo(
-																					cex.getLocalidadRepresentante())
-																			|| !DDPaises.CODIGO_PAIS_ESPANYA
-																					.equals(cex.getPais().getCodigo()))) { // son
-																															// obligatorios
-																		if (cex.getPaisRte() != null) { // País
-																															// de
-																															// residencia
-																															// del
-																															// representante
-																			return true;
-																		}
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-			
-		}
-		return false;
+		return comprobarCompradores;
 	}
 
 	@Override
@@ -11265,5 +11167,66 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		genericDao.update(OfertaExclusionBulk.class, ofertaExclusionBulk);
 
 		transactionManager.commit(transaction);
+	}
+
+	private boolean compruebaCompradores(ExpedienteComercial expedienteComercial){
+		if (!Checks.esNulo(expedienteComercial)) {
+            Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "idExpedienteComercial",expedienteComercial.getId());
+            Filter filtroTitular = genericDao.createFilter(FilterType.EQUALS, "titularContratacion",1);
+
+            VBusquedaDatosCompradorExpediente comprador = genericDao.get(VBusquedaDatosCompradorExpediente.class, filtroId, filtroTitular);
+
+			//Campos comunes sin que dependa del tipo de persona						Campos del titular
+			if (!Checks.esNulo(comprador.getPorcentajeCompra())) {                        //Porcentaje de compra
+				if (!Checks.esNulo(comprador.getCodTipoDocumento())) {                    //Tipo de documento
+					if (!Checks.esNulo(comprador.getNumDocumento())) {                    //Número de documento
+						if (!Checks.esNulo(comprador.getProvinciaCodigo()) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais())) {            //Provincia
+							if (!Checks.esNulo(comprador.getMunicipioCodigo()) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais())) {        //Municipio
+								if (!Checks.esNulo(comprador.getDireccion())) {            //Dirección
+									if (!Checks.esNulo(comprador.getCodigoPais())) {    //País de residencia
+
+										//Campos dependientes de si el tipo de persona es física
+										if (DDTiposPersona.CODIGO_TIPO_PERSONA_FISICA.equals(comprador.getCodTipoPersona())) {
+											if (!Checks.esNulo(comprador.getNombreRazonSocial())) {                                                                        //Nombre
+												if (!Checks.esNulo(comprador.getApellidos())) {                                                                            //Apellidos
+													if (!Checks.esNulo(DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(comprador.getCodEstadoCivil()) &&                //Si está casado en gananciales
+															!Checks.esNulo(DDRegimenesMatrimoniales.COD_GANANCIALES.equals(comprador.getCodigoRegimenMatrimonial())))) {
+														return true;
+													}
+												}
+											}
+										}
+
+										//Campos dependientes de si el tipo de persona es jurídica
+										else if (DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(comprador.getCodTipoPersona())) {
+											if (!Checks.esNulo(comprador.getNombreRazonSocial())) {                                                                        //Razón social (Titular)
+												if (!Checks.esNulo(comprador.getNombreRazonSocialRte())) {                                                                //Nombre del representante
+													if (!Checks.esNulo(comprador.getApellidosRte())) {                                                                    //Apellidos del representante
+														if (!Checks.esNulo(comprador.getCodTipoDocumentoRte())) {                                                        //Tipo de documento del representante
+															if (!Checks.esNulo(comprador.getNumDocumentoRte())) {                                                        //Número de documento del representante
+																if (DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais()) &&                    //Si el país del titular es España
+																		!Checks.esNulo(comprador.getProvinciaRteCodigo()) &&                                                //Provincia y Municipio del representante
+																		!Checks.esNulo(comprador.getMunicipioRteCodigo()) ||
+																		!DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais())) {                                                //son obligatorios
+																	if (!Checks.esNulo(comprador.getCodigoPaisRte())) {                                                    //País de residencia del representante
+																		return true;
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return false;
 	}
 }

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=José Antonio Gigante Pamplona
---## FECHA_CREACION=20200212
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20200521
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-9265
+--## INCIDENCIA_LINK=REMVIP-5994
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -21,6 +21,7 @@
 --##		0.9 REMVIP-3306 Cambios en el funcionamiento del historico
 --##    	0.10 HREOS-6184 Cambio en vista y cambio es_condicionado
 --##		1.1 José A. Gigante - HREOS-8998-9055-9265 - Historificación de cambios al cambiar el canal de publicación
+--##		1.3 Carles Molins - REMVIP-5994
 --##########################################
 --*/
 
@@ -290,28 +291,6 @@ create or replace PROCEDURE #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUM
 		    END IF;		  
 		  END IF;
 
-		  IF pDD_MTO_CODIGO = '04' THEN /*Revisión adecuación*/
-        V_MSQL := '
-          MERGE INTO '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO ACT
-              USING '||vQUERY_SINACT||'
-              ON (ACT.ACT_ID = AUX.ACT_ID)
-            WHEN MATCHED THEN
-              UPDATE
-                SET ACT.DD_ADA_ID = (SELECT ADA.DD_ADA_ID
-                                       FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER ADA
-                                      WHERE ADA.DD_ADA_CODIGO = ''02''/*NO*/
-                                        AND ADA.BORRADO = 0)
-                  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
-                  , FECHAMODIFICAR = SYSDATE
-              WHERE BORRADO = 0
-                  ';
-
-		    EXECUTE IMMEDIATE V_MSQL;
-		    IF SQL%ROWCOUNT > 0 THEN
-			    vACTUALIZADO_A := 'S';
-		    END IF;
-		  END IF;
-
 		  IF pDD_MTO_CODIGO = '06' THEN /*Revisión Publicación*/
 		    vACTUALIZAR_COND := 'N';
 		    #ESQUEMA#.SP_CREAR_AVISO (pAGR_ID, 'GPUBL', pUSUARIOMODIFICAR, 'Se ha situado en Oculto Alquiler con motivo Revisión Publicación la agrupación: ', 1);
@@ -393,29 +372,6 @@ create or replace PROCEDURE #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUM
 			  vACTUALIZADO_V := 'S';
 		    END IF;		  
 		  END IF;
-
-		IF pDD_MTO_CODIGO IN ('04') THEN /*Revisión adecuación*/
-
-			V_MSQL := '
-			  MERGE INTO '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO ACT
-				  USING '||vQUERY_SINACT||'
-				  ON (ACT.ACT_ID = AUX.ACT_ID)
-				WHEN MATCHED THEN
-				  UPDATE
-					SET DD_ADA_ID = (SELECT DDADA.DD_ADA_ID
-										 FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA
-										WHERE DDADA.BORRADO = 0
-										  AND DDADA.DD_ADA_CODIGO = ''02'')
-					  , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
-					  , FECHAMODIFICAR = SYSDATE
-				  WHERE BORRADO = 0
-					  ';
-
-		  EXECUTE IMMEDIATE V_MSQL;
-		  IF SQL%ROWCOUNT > 0 THEN
-			vACTUALIZADO_V := 'S';
-		  END IF;      
-		END IF;
 
 		IF pDD_MTO_CODIGO IN ('13') THEN /*Vendido*/
 			V_MSQL := '

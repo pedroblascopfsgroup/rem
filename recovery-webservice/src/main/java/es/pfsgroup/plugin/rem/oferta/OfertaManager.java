@@ -1304,8 +1304,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				ExpedienteComercial expedienteComercial = tramitacionOfertasManager.crearExpediente(oferta, trabajo, null, oferta.getActivoPrincipal());
 				ActivoTramite activoTramite = tramitacionOfertasManager.doTramitacion(oferta.getActivoPrincipal(), oferta, trabajo.getId(), expedienteComercial);
 
-				adapter.saltoInstruccionesReserva(activoTramite.getProcessBPM());
-
 				// Se copiará el valor del campo necesita financiación al campo
 				// asociado del expediente comercial
 				CondicionanteExpediente coe = expedienteComercial.getCondicionante();
@@ -1316,6 +1314,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.APROBADO);
 				expedienteComercial.setEstado(estadoExpCom);
 				expedienteComercial.setFechaSancion(new Date());
+				
+				adapter.saltoInstruccionesReserva(activoTramite.getProcessBPM());
 
 				genericDao.update(ExpedienteComercial.class, expedienteComercial);
 
@@ -1668,8 +1668,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				ActivoTramite tramite = tramites.get(0);
 
 				Set<TareaActivo> tareasTramite = tramite.getTareas();
-				for (TareaActivo tarea : tareasTramite) {
-					tarea.getAuditoria().setBorrado(true);
+				if(tareasTramite != null && !tareasTramite.isEmpty()) {
+					for (TareaActivo tarea : tareasTramite) {
+						tarea.getAuditoria().setBorrado(true);
+					}
 				}
 			}
 
@@ -3401,7 +3403,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				ActivoOferta activoOferta = actofr.get(i);
 				Oferta ofr = activoOferta.getPrimaryKey().getOferta();
 
-				if (!Checks.esNulo(ofr)) {
+				if (!Checks.esNulo(ofr) && !ofertaExpress.equals(ofr)) {
 					ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(ofr);
 
 					if (!Checks.esNulo(exp)) {

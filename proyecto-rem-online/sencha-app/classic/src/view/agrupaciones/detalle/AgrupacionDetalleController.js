@@ -1279,7 +1279,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 			config.url= $AC.getWebPath() + "agrupacion/bajarAdjuntoAgrupacion." + $AC.getUrlPattern();
 			config.params = {};
 			config.params.id=record.get('id');
-			config.params.nombreDocumento=record.get("nombre");
+			config.params.nombreDocumento=record.get("nombre").replace(/,/g, "");
 			me.fireEvent("downloadFile", config);
 			
 	},

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Vicente Martinez Cifre
---## FECHA_CREACION=20200521
+--## FECHA_CREACION=20200529
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-10318
@@ -44,14 +44,14 @@ DECLARE
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION
-    	T_ALTER(  'ACT_FECHA_CONCESION_LO',			'NUMBER(16)',			'Fecha concesión Licencia de Obra'	),
-    	T_ALTER(  'ACT_FECHA_CONCESION_CH',			'NUMBER(16)',			'Fecha concesión Cédula habitabilidad'	),
-    	T_ALTER(  'ACT_FECHA_CONCESION_ITH',		'NUMBER(16)',			'Fecha concesión Informe técnico habitabilidad'	),
-    	T_ALTER(  'ACT_FECHA_CONCESION_CSCH',		'NUMBER(16)',			'Fecha concesión Certificado sustitutivo de Cedula de Habitabilidad'	),
-    	T_ALTER(  'ACT_FECHA_CONCESION_LAC',		'NUMBER(16)',			'Fecha concesión Licencia de actividad comercial'	),
-    	T_ALTER(  'ACT_FECHA_CONCESION_BT',			'NUMBER(16)',			'Fecha concesión Boletín telecomunicaciones'	),
-    	T_ALTER(  'ACT_FECHA_CONCESION_EON',		'NUMBER(16)',			'Fecha concesión Escritura obra nueva'	),
-    	T_ALTER(  'ACT_FECHA_CONCESION_AFO',		'NUMBER(16)',			'Fecha concesión AFO'	)
+    	T_ALTER(  'ACT_FECHA_CONCESION_LO',			'DATE',						'Fecha concesión Licencia de Obra'	),
+    	T_ALTER(  'ACT_FECHA_CONCESION_CH',			'DATE',						'Fecha concesión Cédula habitabilidad'	),
+    	T_ALTER(  'ACT_FECHA_CONCESION_ITH',		'DATE',						'Fecha concesión Informe técnico habitabilidad'	),
+    	T_ALTER(  'ACT_FECHA_CONCESION_CSCH',		'DATE',						'Fecha concesión Certificado sustitutivo de Cedula de Habitabilidad'	),
+    	T_ALTER(  'ACT_FECHA_CONCESION_LAC',		'DATE',						'Fecha concesión Licencia de actividad comercial'	),
+    	T_ALTER(  'ACT_FECHA_CONCESION_BT',			'DATE',						'Fecha concesión Boletín telecomunicaciones'	),
+    	T_ALTER(  'ACT_FECHA_CONCESION_EON',		'DATE',						'Fecha concesión Escritura obra nueva'	),
+    	T_ALTER(  'ACT_FECHA_CONCESION_AFO',		'DATE',						'Fecha concesión AFO'	)
 		);
     V_T_ALTER T_ALTER;
     

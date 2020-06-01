@@ -13,6 +13,9 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
         var codigoTipoProveedorFilter= null;
         me.codigoTipoProveedorFilter=null;
         var storeProveedores=null;
+       
+
+        
 		me.setTitle(HreRem.i18n('title.gestion.economica'));
         var items= [
         	{   
@@ -88,23 +91,15 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 									storeTipoProveedor.clearFilter();
 								}
 							},
-							containermouseover: function () {
-					    		me.evaluarBotonAdd(me);
-							},
-					    	itemmouseenter: function () {
-					    		me.evaluarBotonAdd(me);
-					    	},
-					    	itemmouseleave: function () {
-					    		me.evaluarBotonAdd(me);
-					        },
 					        selectionchange: function (grid, records) {
 					        	this.onGridBaseSelectionChange(grid, records);
 					    		me.evaluarBotonAdd(me);
 					    		me.evaluarBotonRemove(me);
-					        },
-					        afterbind: function () {
+					        }
+					        ,render: function(){
 					        	me.evaluarBotonAdd(me);
 					        }
+					        
 						},
 						features: [{
 				            id: 'summary',
@@ -335,7 +330,6 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 				margin: '10 40 5 10',
 				bind:{
 					hidden: '{!visibleBotonAuditoriaDesbloqueo}'
-//					hidden: false
 				}
 			}
         	
@@ -347,10 +341,10 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 	    me.callParent(); 
     },
     evaluarBotonAdd: function(me){
- 	   me.down("[itemId=addButton]").setDisabled(!me.edicionHabilitada(me));
+    	me.down("[reference=listadohoronarios]").setDisabledAddBtn(!me.edicionHabilitada(me));
     },
     evaluarBotonRemove: function(me){
- 	   me.down("[itemId=removeButton]").setDisabled(!me.edicionHabilitada(me));
+       me.down("[reference=listadohoronarios]").setDisabledDeleteBtn(!me.edicionHabilitada(me));       
     },
     edicionHabilitada: function(me) {
     	return $AU.userHasFunction(['EDITAR_TAB_GESTION_ECONOMICA_EXPEDIENTES']) && !me.up('expedientedetallemain').getViewModel().get('expediente.finalizadoCierreEconomico') 
@@ -367,6 +361,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 		listadoHonorarios.getStore().load();	
 		listaOrigenLead.getStore().load();
 		listaAuditoriaDesbloqueo.getStore().load();
-		
+
+		listadoHonorarios.setDisabledAddBtn(!me.edicionHabilitada(me));	
     }
 });

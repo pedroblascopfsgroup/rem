@@ -643,6 +643,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this,
 	    activeTab = null,
 	    refrescarTabActiva = Ext.isEmpty(refrescarTabActiva) ? false : refrescarTabActiva;
+		
 	    if(!Ext.isEmpty(me.getView().down("tabpanel"))){
 	         activeTab = me.getView().down("tabpanel").getActiveTab();
 	    }else {

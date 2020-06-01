@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20200527
+--## FECHA_CREACION=20200601
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-7338
@@ -40,7 +40,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-	T_TIPO_DATA('67' ,'Bankia LeaseBack','Bankia LeaseBack','03')
+	T_TIPO_DATA('67' ,'Bankia LeaseBack','Bankia LeaseBack','11')
 
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

@@ -1316,5 +1316,7 @@ public interface ExpedienteComercialApi {
 	 * @return DDComiteSancion
 	 */
 	boolean finalizadoCierreEconomico(ExpedienteComercial expediente);
+	
+	boolean cumpleCondicionesCrearHonorario(Long idEntidad);
 
 }

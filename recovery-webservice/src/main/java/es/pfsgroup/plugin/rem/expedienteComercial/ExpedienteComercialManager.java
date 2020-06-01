@@ -56,6 +56,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
@@ -86,6 +87,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.FuncionesApi;
 import es.pfsgroup.plugin.rem.api.GastosExpedienteApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
@@ -172,7 +174,6 @@ import es.pfsgroup.plugin.rem.rest.dto.TitularDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
 import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
-import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Service("expedienteComercialManager")
 public class ExpedienteComercialManager extends BusinessOperationOverrider<ExpedienteComercialApi>
@@ -235,6 +236,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private static final String T013_CIERRE_ECONOMICO = "T013_CierreEconomico";
 	private static final String T017_CIERRE_ECONOMICO = "T017_CierreEconomico";
 
+	private final String PERFIL_HAYASUPER = "HAYASUPER";
+	private final String PERFIL_PERFGCONTROLLER = "PERFGCONTROLLER";
+	private final String FUNCION_EDITAR_TAB_GESTION = "EDITAR_TAB_GESTION_ECONOMICA_EXPEDIENTES";
+	
 	@Resource
 	private MessageService messageServices;
 	
@@ -333,10 +338,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Autowired
 	private GastosExpedienteApi gastosExpedienteApi;
-	
 
 	@Autowired
 	private NotificationPlusvaliaManager notificationPlusvaliaManager;
+	
+	@Autowired
+	private FuncionesApi funcionApi;
 
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -10820,5 +10827,24 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public boolean cumpleCondicionesCrearHonorario(Long idEntidad) {
+		ExpedienteComercial expediente = findOne(idEntidad);
+		Usuario  usuario = genericAdapter.getUsuarioLogado();
+		List<Perfil> perfiles = usuario.getPerfiles();
+		for (Perfil perfil : perfiles) {
+			if(PERFIL_HAYASUPER.equalsIgnoreCase(perfil.getCodigo())
+					|| PERFIL_PERFGCONTROLLER.equalsIgnoreCase(perfil.getCodigo())){
+				return true;
+			}
+		}
+		
+		if((finalizadoCierreEconomico(expediente) && funcionApi.elUsuarioTieneFuncion(FUNCION_EDITAR_TAB_GESTION, usuario))){
+			return true;	
+		}
+		
+		return false;		
 	}
 }

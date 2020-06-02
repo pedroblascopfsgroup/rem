@@ -166,7 +166,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			    AND tipoAgr.DD_TAG_ID = agr.DD_TAG_ID "
 				+ "			    AND act.ACT_NUM_ACTIVO = "+numActivo+" "
 				+ "			    AND tipoAgr.DD_TAG_CODIGO = '02' "
-				+ "				AND agr.AGR_FECHA_BAJA is null"
+				+ "				AND (agr.AGR_FECHA_BAJA is null OR agr.AGR_FECHA_BAJA  > SYSDATE)"
 				+ "			    AND aga.BORRADO  = 0 "
 				+ "			    AND aga.BORRADO  = 0 "
 				+ "			    AND agr.BORRADO  = 0 "
@@ -184,6 +184,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			    AND ACT.ACT_ID   = AGA.ACT_ID "
 				+ "			    AND ACT.ACT_NUM_ACTIVO = "+numActivo+" "
 				+ "			    AND AGR.AGR_NUM_AGRUP_REM  = "+numAgrupacion+" "
+				+ "				AND (agr.AGR_FECHA_BAJA is null OR agr.AGR_FECHA_BAJA  > SYSDATE)"
 				+ "			    AND AGA.BORRADO  = 0 "
 				+ "			    AND AGR.BORRADO  = 0 "
 				+ "			    AND ACT.BORRADO  = 0 ");
@@ -219,6 +220,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			    AND act.act_id   = aga.act_id "
 				+ "			    AND act.ACT_NUM_ACTIVO = "+numActivo+" "
 				+ "			    AND agr.AGR_NUM_AGRUP_REM  <> "+numAgrupacion+" "
+				+ "				AND (agr.AGR_FECHA_BAJA is null OR agr.AGR_FECHA_BAJA  > SYSDATE)"
 				+ "			    AND aga.BORRADO  = 0 "
 				+ "			    AND agr.BORRADO  = 0 "
 				+ "			    AND act.BORRADO  = 0 ");
@@ -795,7 +797,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "				AND agr.DD_TAG_ID = tag.DD_TAG_ID "
 				+ "			    AND tag.DD_TAG_CODIGO in ("+cadenaCodigosSql+") "
 				+ "			    AND agr.AGR_NUM_AGRUP_REM  <> "+numAgrupacion+" "
-				+ "				AND agr.AGR_FECHA_BAJA IS NULL "
+				+ "				AND (agr.AGR_FECHA_BAJA is null OR agr.AGR_FECHA_BAJA  > SYSDATE)"
 				+ "			    AND aga.BORRADO  = 0 "
 				+ "			    AND agr.BORRADO  = 0 "
 				+ "			    AND act.BORRADO  = 0 "

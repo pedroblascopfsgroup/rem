@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Carles Molins
---## FECHA_CREACION=20200521
+--## FECHA_CREACION=20200601
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-5994
@@ -1203,37 +1203,21 @@ ELSE
           /**************/
 	        /*CANAL DE PUBLICACION*/
 	        /**************/
-	   		V_MSQL := ' SELECT COUNT(AGA.ACT_ID)
-	                    FROM  '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA
-	                    JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0
-	                    JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0                         
-	                  	WHERE AGA.BORRADO = 0
-						AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
-						AND TAG.DD_TAG_CODIGO = ''02''	/*Restringida*/
-	                    AND AGR.AGR_ID = '||nAGR_ID||'
-	                    AND AGR.AGR_ACT_PRINCIPAL = AGA.ACT_ID';
-	        
-	        EXECUTE IMMEDIATE V_MSQL INTO vNUM_RESULTADOS;
-	        /* Si la consulta devuelve mas de un resultado elevamos error*/
-	        IF vNUM_RESULTADOS > 1 THEN
-	        	RAISE e_multiple_results;
-	        ELSE
-	        	nACT_ID := -1;
-	        	V_MSQL := replace(vQUERY_ACTPRIN,'AUX',''); -- Extrae activo principal de la agrupación
-	        	EXECUTE IMMEDIATE V_MSQL INTO nACT_ID;
-	        	IF nACT_ID >= 0 THEN
-		        	V_MSQL := 'SELECT EPV.DD_EPV_CODIGO
-		               			FROM '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU 
-				                JOIN ' ||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA EPV ON EPV.DD_EPV_ID = APU.DD_EPV_ID 
-	    	    		        LEFT JOIN '||V_ESQUEMA||'.DD_POR_PORTAL POR ON POR.DD_POR_ID = APU.DD_POR_ID
-	            	    		WHERE APU.ACT_ID = '||nACT_ID||'
-								AND APU.BORRADO = 0';
-					EXECUTE IMMEDIATE V_MSQL INTO cCODIGO_ESTADO_V;
-			        IF cCODIGO_ESTADO_V IN ('03', '04') THEN
-                #ESQUEMA#.SP_PORTALES_ACTIVO(null, nAGR_ID, pUSUARIOMODIFICAR, OutCANAL);
-		        	END IF;
-		        END IF;
-	        END IF;
+            nACT_ID := -1;
+            V_MSQL := replace(vQUERY_ACTPRIN,'AUX',''); -- Extrae activo principal de la agrupación
+            EXECUTE IMMEDIATE V_MSQL INTO nACT_ID;
+            IF nACT_ID >= 0 THEN
+                V_MSQL := 'SELECT EPV.DD_EPV_CODIGO
+                            FROM '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU
+                            JOIN ' ||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA EPV ON EPV.DD_EPV_ID = APU.DD_EPV_ID
+                            LEFT JOIN '||V_ESQUEMA||'.DD_POR_PORTAL POR ON POR.DD_POR_ID = APU.DD_POR_ID
+                            WHERE APU.ACT_ID = '||nACT_ID||'
+                            AND APU.BORRADO = 0';
+                EXECUTE IMMEDIATE V_MSQL INTO cCODIGO_ESTADO_V;
+                IF cCODIGO_ESTADO_V IN ('03', '04') THEN
+            #ESQUEMA#.SP_PORTALES_ACTIVO(null, nAGR_ID, pUSUARIOMODIFICAR, OutCANAL);
+                END IF;
+            END IF;
         /*******************************************************************************************/
         /*Actualiza los activos de agrupaciones asistidas con fecha vigencia anterior al día actual para esconderlas:*/
         /**************/

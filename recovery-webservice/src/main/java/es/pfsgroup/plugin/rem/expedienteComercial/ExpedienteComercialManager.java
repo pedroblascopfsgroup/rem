@@ -19,8 +19,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import es.pfsgroup.commons.utils.HQLBuilder;
-import es.pfsgroup.plugin.rem.expedienteComercial.dao.impl.ExpedienteComercialDaoImpl;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -1027,7 +1025,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 				
 		//Se aplica el comité correspondiente a las ofertas añadidas a la lista
-		ofertaApi.calculoComiteLBK(oferta.getId(), null);
+		if (!Checks.esNulo(listaOfertasLBK) && !listaOfertasLBK.isEmpty()) {
+			ofertaApi.calculoComiteLBK(oferta.getId(), null);
+		}
 				
 		
 		if (!Checks.esNulo(dto.getTipoOfertaCodigo())) {
@@ -2505,7 +2505,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public VBusquedaDatosCompradorExpediente getDatCompradorById(Long idCom) {
 		Filter filtroCom = genericDao.createFilter(FilterType.EQUALS, "id", idCom);
 
-		return genericDao.get(VBusquedaDatosCompradorExpediente.class, filtroCom);
+		return genericDao.getList(VBusquedaDatosCompradorExpediente.class, filtroCom).get(0);
 	}
 
 	private DtoCondiciones expedienteToDtoCondiciones(ExpedienteComercial expediente) {

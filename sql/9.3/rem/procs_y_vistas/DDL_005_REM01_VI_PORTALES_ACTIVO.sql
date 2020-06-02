@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20190129
+--## AUTOR=Adrián Molina
+--## FECHA_CREACION=20200526
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-9237
+--## INCIDENCIA_LINK=REMVIP-7233
 --## PRODUCTO=NO
 --## Finalidad: vista para portales de activos
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Añadir filtro agrupación dada de baja
 --##########################################
 --*/
 
@@ -107,7 +108,7 @@ BEGIN
                     JOIN '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AUX.ACT_ID = AGA.ACT_ID AND AGA.BORRADO = 0
                     JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0
                     LEFT JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0
-                    WHERE DD_TAG_CODIGO = ''02'' AND AUX.ACT_ID = ACT.ACT_ID)';
+                    WHERE DD_TAG_CODIGO = ''02'' AND AUX.ACT_ID = ACT.ACT_ID AND AGR.AGR_FECHA_BAJA IS NULL)';
 		
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_PORTALES_ACTIVO...Creada OK');

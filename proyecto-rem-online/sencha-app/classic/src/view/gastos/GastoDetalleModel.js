@@ -632,6 +632,17 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 					idGasto : '{gasto.id}'
 				}
 			}
+		},
+		
+		comboSiNoGastos : {
+			model : 'HreRem.model.ComboBase',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'generic/getDiccionario',
+				extraParams : {
+					diccionario : 'DDSiNo'
+				}
+			}
 		}
 	}
 });

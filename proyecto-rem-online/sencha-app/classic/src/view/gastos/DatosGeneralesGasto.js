@@ -112,6 +112,29 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 						                	select: 'onChangeChainedCombo'
 						            	},
 							         	allowBlank: false
+							    	},
+							    	{
+							    		xtype: 'comboboxfieldbase',
+						               	fieldLabel:  HreRem.i18n('fieldlabel.suplidos.vinculados'),
+						               	reference: 'suplidosVinculados',
+						               	name: 'suplidosVinculados',
+								      	bind: {
+							           		store: '{comboSiNoGastos}',
+							           		value: '{gasto.suplidosVinculadosCod}',
+							           		hidden: '{!gasto.visibleSuplidos}'
+							         	},
+							         	allowBlank: false
+							    	},
+							    	{
+							    		xtype: 'textfieldbase',
+						               	fieldLabel:  HreRem.i18n('fieldlabel.numero.factura.principal'),
+						               	reference: 'facturaPrincipalSuplido',
+						               	name: 'facturaPrincipalSuplido',
+								      	bind: {
+							           		value: '{gasto.facturaPrincipalSuplido}',
+							           		disabled: '{!gasto.suplidoVinculadoNo}',
+							           		hidden: '{!gasto.visibleSuplidos}'
+							         	}
 							    	}
 								]
 							},

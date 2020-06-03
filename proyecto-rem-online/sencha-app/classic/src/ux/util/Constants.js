@@ -482,6 +482,11 @@ Ext.define('HreRem.ux.util.Constants', {
 		NO: 0
 	},
 	
+	COMBO_SIN_NO: {
+		SI: '01',
+		NO: '02'
+	},
+	
 	COMBO_TRUE_FALSE: {
 		TRUE: 'true',
 		FALSE: 'false'

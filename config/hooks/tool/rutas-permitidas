@@ -91,3 +91,6 @@ func-rem-paqueteBAUsp|version-2.18.4-rem
 func-rem-precios|R-Newhall-backup
 HREOS-9492|func-rem-precios
 func-rem-precios|HREOS-9492
+rem_mirror|func-rem-gastosSuplidos
+func-rem-gastosSuplidos|R-Tomago
+

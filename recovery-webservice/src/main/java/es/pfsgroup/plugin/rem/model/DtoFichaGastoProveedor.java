@@ -78,6 +78,9 @@ public class DtoFichaGastoProveedor extends WebDto {
    	private Boolean tieneGastosRefacturables;
    	private Boolean bloquearEdicionFechasRecepcion;
    	private String estadoEmisor;
+   	private String suplidosVinculadosCod;
+   	private String facturaPrincipalSuplido;
+   	private Boolean visibleSuplidos;
 	
 	public Long getIdGasto() {
 		return idGasto;
@@ -419,5 +422,23 @@ public class DtoFichaGastoProveedor extends WebDto {
 	}
 	public void setIdSubpartidaPresupuestaria(Long idSubpartidaPresupuestaria) {
 		this.idSubpartidaPresupuestaria = idSubpartidaPresupuestaria;
+	}
+	public String getSuplidosVinculadosCod() {
+		return suplidosVinculadosCod;
+	}
+	public void setSuplidosVinculadosCod(String suplidosVinculadosCod) {
+		this.suplidosVinculadosCod = suplidosVinculadosCod;
+	}
+	public String getFacturaPrincipalSuplido() {
+		return facturaPrincipalSuplido;
+	}
+	public void setFacturaPrincipalSuplido(String facturaPrincipalSuplido) {
+		this.facturaPrincipalSuplido = facturaPrincipalSuplido;
+	}
+	public Boolean getVisibleSuplidos() {
+		return visibleSuplidos;
+	}
+	public void setVisibleSuplidos(Boolean visibleSuplidos) {
+		this.visibleSuplidos = visibleSuplidos;
 	}
 }

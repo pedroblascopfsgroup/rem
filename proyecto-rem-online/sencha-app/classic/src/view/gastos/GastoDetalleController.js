@@ -95,6 +95,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	onSaveFormularioCompleto: function(btn, form, success) {
 		
 		var me = this;
+		var facturaPrincipalSuplido, abonoCuenta;
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones
 		if(form.isFormValid() && !form.disableValidation || form.disableValidation) {
 //			var fechaMax = new Date();
@@ -109,7 +110,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 //
 //			}else{
 //				
-				
+
 				Ext.Array.each(form.query('field[isReadOnlyEdit]'),
 							function (field, index){field.fireEvent('update'); field.fireEvent('save');}
 						);
@@ -137,9 +138,19 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			                    }
 			                    
 				                form.getBindRecord().data.gastoRefacturadoGrid=valoresGrid;
-								
+				                
+				                var params;
+				                
+				                if(form.getXType() == "datosgeneralesgasto"){
+				                	facturaPrincipalSuplido = form.getValues().facturaPrincipalSuplido;
+				                	params = {facturaPrincipalSuplido: facturaPrincipalSuplido};
+				                } else if(form.getXType() == "detalleeconomicogasto"){
+				                	abonoCuenta = form.down('[name="abonoCuenta"]').value;
+				                	params = {abonoCuenta: abonoCuenta};
+				                }
 				               
 								form.getBindRecord().save({
+									params: params,
 									success: success,				            
 						            failure: function (a, operation) {
 						            	var data = {};

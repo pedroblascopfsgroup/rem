@@ -9,19 +9,23 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
+import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.GastoSuplido;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionHaya;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionPropietario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProvisionGastos;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 @Service("updaterStateGastoManager")
 public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
@@ -48,6 +52,8 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	private static final String VALIDACION_TIPO_OPERACION = "msg.validacion.gasto.tipo.operacion";
 	private static final String VALIDACION_PROPIETARIO = "msg.validacion.gasto.propietario";
 	private static final String VALIDACION_TIPO_SUBTIPO = "msg.validacion.gasto.tipo.subtipo";
+	private static final String VALIDACION_SUPLIDOS_NIF_EMISOR_CUENTA = "msg.validacion.gasto.suplidos.nif.emisor.cuenta";
+	private static final String VALIDACION_SUPLIDOS_NIF_ESTADO_GASTO = "msg.validacion.gasto.suplidos.nif.estado.gasto";
 	
 	private static final String COD_DESTINATARIO_HAYA = "02";
 
@@ -190,6 +196,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 					return error;
 				}
 			}
+			
 		}
 		return error;
 	}
@@ -590,4 +597,37 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 		}
 		
 	}*/
+
+	@Override
+	public String validarAutorizacionSuplido(GastoProveedor gasto) {
+		
+		String error = null;
+		
+		if(((gasto.getSuplidosVinculados() != null && DDSinSiNo.CODIGO_NO.equals(gasto.getSuplidosVinculados().getCodigo())) || gasto.getSuplidosVinculados() == null)
+				&& gasto.getNumeroFacturaPrincipal() != null) {
+			
+			GastoSuplido gastoSuplido = genericDao.get(GastoSuplido.class, genericDao.createFilter(FilterType.EQUALS, "gastoProveedorSuplido", gasto));
+			GastoProveedor gastoPrincipal = null;
+			
+			if(gastoSuplido != null) {
+				gastoPrincipal = gastoSuplido.getGastoProveedorPadre();
+			}
+			
+			GastoDetalleEconomico detalleGasto = genericDao.get(GastoDetalleEconomico.class, genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId()));
+			
+			if(detalleGasto != null && gastoPrincipal != null && gastoPrincipal.getProveedor() != null
+					&& ((detalleGasto.getNifTitularCuentaAbonar() != null &&   !detalleGasto.getNifTitularCuentaAbonar().equals(gastoPrincipal.getProveedor().getDocIdentificativo()))
+					|| (gastoPrincipal.getProveedor() == null || detalleGasto == null))) {
+				error = messageServices.getMessage(VALIDACION_SUPLIDOS_NIF_EMISOR_CUENTA);
+			}
+			
+			if(gastoPrincipal != null && gastoPrincipal.getEstadoGasto() != null
+					&& !DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(gastoPrincipal.getEstadoGasto().getCodigo())) {
+				error = messageServices.getMessage(VALIDACION_SUPLIDOS_NIF_ESTADO_GASTO);
+			}
+			
+		}
+		return error;
+		
+	}
 }

@@ -2,12 +2,14 @@ package es.pfsgroup.plugin.rem.perfilAdministracion;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import es.capgemini.pfs.users.domain.Funcion;
 import es.capgemini.pfs.users.domain.Perfil;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -74,6 +76,5 @@ public class PerfilAdministracionManager extends BusinessOperationOverrider<Perf
 	public List<DtoPerfilAdministracionFilter> getFuncionesByPerfilId(Long id, DtoPerfilAdministracionFilter dto) {				
 		return perfilDao.getFuncionesByPerfilId(id, dto);
 	}
-	
 }
 

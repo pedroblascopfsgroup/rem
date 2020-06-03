@@ -21,7 +21,7 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 	removeButton: true,
 	
 	/**
-	 * Indica si este grid puede tener o no el botón de copiar expediente. Luego se calcula si se muestra o no.
+	 * Indica si este grid puede tener o no el botï¿½n de copiar expediente. Luego se calcula si se muestra o no.
 	 * @type Boolean
 	 */
 	cloneExpedienteButton: false,
@@ -50,6 +50,8 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 	
 	// Esta opcion permite no habilitar nunca el boton de borrar.
 	disabledDeleteBtn: false,
+	
+	disabledAddBtn: false,
 	
 	//sortableColumns: false,
 	
@@ -346,7 +348,7 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
     	
     	var me = this;
     	
-    	if (!Ext.isEmpty(me.down('#addButton'))) {
+    	if (!Ext.isEmpty(me.down('#addButton')) && !me.disabledAddBtn) {
     		me.down('#addButton').setDisabled(disabled);    		
     	}
     },
@@ -531,6 +533,38 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
     		me.getSelectionModel().deselectAll();
     		editor.isNew = false;
 		}
+   },
+   
+   setDisabledDeleteBtn: function(disabledDeleteBtn){
+   	var me = this;
+   	me.disabledDeleteBtn = disabledDeleteBtn;
+   		var toolbarDockItem = me.dockedItems.filterBy(
+	    		function (item, key) {
+	    			return item.tipo == "toolbaredicion";
+	    		}
+	    	);
+   		if(!Ext.isEmpty(toolbarDockItem) && toolbarDockItem.items.length > 0 ) {
+   			var botones = toolbarDockItem.items[0].items
+   			if(!Ext.isEmpty(botones) && botones.items.length > 1 ) {
+   				botones.items[1].setDisabled(disabledDeleteBtn);
+   			}
+   		}
+   },
+   	   
+   setDisabledAddBtn: function(disabledAddBtn){
+   	var me = this;
+   	me.disabledAddBtn = disabledAddBtn;
+   		var toolbarDockItem = me.dockedItems.filterBy(
+	    		function (item, key) {
+	    			return item.tipo == "toolbaredicion";
+	    		}
+	    	);
+   		if(!Ext.isEmpty(toolbarDockItem) && toolbarDockItem.items.length > 0 ) {
+   			var botones = toolbarDockItem.items[0].items
+   			if(!Ext.isEmpty(botones) && botones.items.length > 0 ) {
+   				botones.items[0].setDisabled(disabledAddBtn);
+   			}
+   		}
    }
-    
+   
 });

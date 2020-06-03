@@ -643,6 +643,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this,
 	    activeTab = null,
 	    refrescarTabActiva = Ext.isEmpty(refrescarTabActiva) ? false : refrescarTabActiva;
+		
 	    if(!Ext.isEmpty(me.getView().down("tabpanel"))){
 	         activeTab = me.getView().down("tabpanel").getActiveTab();
 	    }else {
@@ -4892,6 +4893,70 @@ comprobarFormatoModificar: function() {
 		    		fechaRespuestaCmp.setFieldLabel( HreRem.i18n('fieldlabel.fecha.respuesta.ofertante.advisory'));
 		    		importeContraofertaOfertanteCmp.setFieldLabel( HreRem.i18n('fieldlabel.importe.contraoferta.ofrtante.advisory'));
 		    	}
+		
+	},
+	
+	editarAuditoriaDesbloqueo: function(){
+		var expediente = this.getViewModel().get("expediente.id");
+		var window = Ext.create("HreRem.view.expedientes.editarAuditoriaDesbloqueo",{expediente: expediente}).show();
+	},
+	
+	onClickBotonCancelarAuditoria: function(btn){
+		var me = this;
+		test = btn.up('window');
+		test.close();
+		test.destroy();
+	},
+	
+	onClickBotonGuardarAuditoria: function(btn){
+		var me =this;
+		var url = $AC.getRemoteUrl('expedientecomercial/insertarRegistroAuditoriaDesbloqueo');
+		test = btn.up('window');
+		var user = $AU.getUser().userId;
+		var comentario = test.items.items[0].items.items[0].value;
+		var expediente = test.expediente;
+		me.getView().mask(HreRem.i18n("msg.mask.espere"));
+		
+		Ext.Ajax.request({
+			url: url,
+		    params:  {
+		    	expedienteId : expediente,
+		    	comentario: comentario,
+		    	usuId: user
+		    },
+		    
+		    success: function(response, opts) {
+		    	
+		    	var data = {};
+		    	try {
+		    		data = Ext.decode(response.responseText);
+		    	}  catch (e){ };
+               
+		    	if(data.success === "true") {
+		    		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok")); 
+		    		me.onClickBotonCancelarAuditoria(btn);
+		    	}else {
+		    		if(data.errorUvem == "true"){
+		    			me.fireEvent("errorToast", data.msg);		
+		    		}
+		    		else{
+		    			Utils.defaultRequestFailure(response, opts);
+		    		}
+		    	}
+		     },
+
+		     failure: function(response, opts) {
+		    	 if(data.errorUvem == "true"){
+		    		 me.fireEvent("errorToast", data.msg);		
+		    	 } else {
+		    		 Utils.defaultRequestFailure(response, opts);
+		    	 }
+		     },
+
+		     callback: function() {
+		    	 me.getView().unmask();
+		     }
+		});	
 		
 	}
 	

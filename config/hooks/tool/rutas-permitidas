@@ -93,4 +93,5 @@ HREOS-9492|func-rem-precios
 func-rem-precios|HREOS-9492
 rem_mirror|func-rem-gastosSuplidos
 func-rem-gastosSuplidos|R-Tomago
-
+rem_mirror|func-rem-comisionamiento-F2
+func-rem-comisionamiento-F2|R-Tomago

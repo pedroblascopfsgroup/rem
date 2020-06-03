@@ -54,6 +54,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
@@ -84,6 +85,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.FuncionesApi;
 import es.pfsgroup.plugin.rem.api.GastosExpedienteApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
@@ -229,7 +231,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	//Tareas
 	private static final String T013_RESOLUCION_COMITE = "T013_ResolucionComite";
+	private static final String T013_CIERRE_ECONOMICO = "T013_CierreEconomico";
+	private static final String T017_CIERRE_ECONOMICO = "T017_CierreEconomico";
 
+	private final String PERFIL_HAYASUPER = "HAYASUPER";
+	private final String PERFIL_PERFGCONTROLLER = "PERFGCONTROLLER";
+	private final String FUNCION_EDITAR_TAB_GESTION = "EDITAR_TAB_GESTION_ECONOMICA_EXPEDIENTES";
+	
 	@Resource
 	private MessageService messageServices;
 	
@@ -328,10 +336,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Autowired
 	private GastosExpedienteApi gastosExpedienteApi;
-	
 
 	@Autowired
 	private NotificationPlusvaliaManager notificationPlusvaliaManager;
+	
+	@Autowired
+	private FuncionesApi funcionApi;
 
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -1638,6 +1648,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if(!Checks.esNulo(expediente.getReserva()) && !Checks.esNulo(expediente.getReserva().getFechaContabilizacionReserva())) {
 					dto.setFechaContabilizacionReserva(expediente.getReserva().getFechaContabilizacionReserva());
 				}
+				
+				dto.setFinalizadoCierreEconomico(finalizadoCierreEconomico(expediente));
 			}
 		}
 		return dto;
@@ -8057,6 +8069,30 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		return this.update(expedienteComercial,false);
 	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void insertarRegistroAuditoriaDesbloqueo(Long expedienteId, String comentario, Long usuId) {
+		if(usuId == null || expedienteId == null) {
+			return;
+		}
+		Usuario usuario = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id",usuId));
+		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class,
+				genericDao.createFilter(FilterType.EQUALS, "id",expedienteId));//numExpediente
+		AuditoriaDesbloqueo auditoria = new AuditoriaDesbloqueo();
+		Date fechaActual = new Date();
+		if(expediente != null) {
+			auditoria.setExpediente(expediente);
+		}
+		if(usuario != null) {
+			auditoria.setUsuario(usuario);
+		}
+		auditoria.setMotivoDesbloqueo(comentario);
+		auditoria.setFechaDesbloqueo(fechaActual);
+		
+		genericDao.save(AuditoriaDesbloqueo.class, auditoria);
+		
+	}
 
 	@Override
 	@Transactional(readOnly = false)
@@ -10672,6 +10708,36 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return null;
 	}
 	
+	@Override
+	public List<DtoAuditoriaDesbloqueo> getAuditoriaDesbloqueoList(Long idExpediente) {
+		if(idExpediente == null) {
+			return null;
+		}
+		List<DtoAuditoriaDesbloqueo> lAuditoria = new ArrayList<DtoAuditoriaDesbloqueo>();
+		List<AuditoriaDesbloqueo> listaAuditoriaDesbloqueo = genericDao.getList(AuditoriaDesbloqueo.class,
+				genericDao.createFilter(FilterType.EQUALS, "expediente.id",idExpediente));
+		if(listaAuditoriaDesbloqueo != null && !listaAuditoriaDesbloqueo.isEmpty()) {
+			for (AuditoriaDesbloqueo auditoria : listaAuditoriaDesbloqueo) {
+				DtoAuditoriaDesbloqueo auditoriaDesbloqueo = new DtoAuditoriaDesbloqueo();
+				if(auditoria.getId() != null) 
+					auditoriaDesbloqueo.setIdCombo(auditoria.getId().toString());
+				if(auditoria.getExpediente() != null && auditoria.getExpediente().getId() != null)
+					auditoriaDesbloqueo.setIdEco(auditoria.getExpediente().getId().toString());
+				if(auditoria.getUsuario() != null && auditoria.getUsuario().getUsername() != null)
+					auditoriaDesbloqueo.setIdUsuario(auditoria.getUsuario().getUsername());
+				if(auditoria.getMotivoDesbloqueo() != null)
+					auditoriaDesbloqueo.setMotivoDeDesbloqueo(auditoria.getMotivoDesbloqueo());
+				if(auditoria.getMotivoDesbloqueo() != null)
+					auditoriaDesbloqueo.setFechaDeDesbloqueo(auditoria.getFechaDesbloqueo().toString());
+				lAuditoria.add(auditoriaDesbloqueo);
+			}
+		}
+		if(lAuditoria != null && !lAuditoria.isEmpty())
+			return lAuditoria;
+		else
+			return null;
+	}
+	
 	private void compruebaEstadoAnyadirDependiente(Oferta ofertaPrincipal) {
 		ExpedienteComercial expedienteOfertaPrincipal = genericDao.get(ExpedienteComercial.class,
 				genericDao.createFilter(FilterType.EQUALS, "oferta", ofertaPrincipal));
@@ -10685,6 +10751,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			throw new JsonViewerException("La oferta principal ya está en estado '" + expedienteOfertaPrincipal.getEstado().getDescripcion()
 					+ "', ya no se pueden añadir más dependientes");
 		}
+	}
+	
+	@Override
+	public boolean finalizadoCierreEconomico(ExpedienteComercial expediente) {
+		boolean finalizada = false;
+		
+		if (expediente != null && expediente.getTrabajo() != null) {
+			ActivoTramite tramite = genericDao.get(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "trabajo", expediente.getTrabajo()));
+			
+			if(tramite != null && (ofertaApi.esTareaFinalizada(tramite, T013_CIERRE_ECONOMICO) || ofertaApi.esTareaFinalizada(tramite, T017_CIERRE_ECONOMICO))) {
+				finalizada = true;
+			}
+		}
+		
+		return finalizada;
 	}
 
 	private boolean compruebaCompradores(ExpedienteComercial expedienteComercial){
@@ -10746,5 +10827,24 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public boolean cumpleCondicionesCrearHonorario(Long idEntidad) {
+		ExpedienteComercial expediente = findOne(idEntidad);
+		Usuario  usuario = genericAdapter.getUsuarioLogado();
+		List<Perfil> perfiles = usuario.getPerfiles();
+		for (Perfil perfil : perfiles) {
+			if(PERFIL_HAYASUPER.equalsIgnoreCase(perfil.getCodigo())
+					|| PERFIL_PERFGCONTROLLER.equalsIgnoreCase(perfil.getCodigo())){
+				return true;
+			}
+		}
+		
+		if((finalizadoCierreEconomico(expediente) && funcionApi.elUsuarioTieneFuncion(FUNCION_EDITAR_TAB_GESTION, usuario))){
+			return true;	
+		}
+		
+		return false;		
 	}
 }

@@ -18,6 +18,7 @@ import es.pfsgroup.plugin.rem.model.CondicionesActivo;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoAuditoriaDesbloqueo;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoBloqueosFinalizacion;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
@@ -1304,5 +1305,18 @@ public interface ExpedienteComercialApi {
 	String doCalculateComiteByExpedienteId(Long idExpediente);
 	
 	DtoOrigenLead getOrigenLeadList(Long idExpediente);
+	
+	List<DtoAuditoriaDesbloqueo> getAuditoriaDesbloqueoList(Long idExpediente);
+	
+	void insertarRegistroAuditoriaDesbloqueo(Long expedienteId, String comentario, Long usuId);
+
+	/*
+	 * Devuelve si el expediente ha finalizado la tarea Cierre Económico
+	 * @param idOferta
+	 * @return DDComiteSancion
+	 */
+	boolean finalizadoCierreEconomico(ExpedienteComercial expediente);
+	
+	boolean cumpleCondicionesCrearHonorario(Long idEntidad);
 
 }

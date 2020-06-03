@@ -60,6 +60,7 @@ import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoAuditoriaDesbloqueo;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoBloqueosFinalizacion;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
@@ -1030,7 +1031,14 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveHonorario(ModelMap model, DtoGastoExpediente dtoGastoExpediente) {
 		try {
-			boolean success = expedienteComercialApi.saveHonorario(dtoGastoExpediente);
+			boolean success = false;
+		
+			if(dtoGastoExpediente.getId() != null) {
+				 success = expedienteComercialApi.cumpleCondicionesCrearHonorario(Long.valueOf(dtoGastoExpediente.getId()));
+				if(success) {
+				 success = expedienteComercialApi.saveHonorario(dtoGastoExpediente);
+				}
+			}
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (JsonViewerException e) {
@@ -1309,7 +1317,11 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createHonorario(ModelMap model, DtoGastoExpediente dto, Long idEntidad) {
 		try {
-			boolean success = expedienteComercialApi.createHonorario(dto, idEntidad);
+			
+			boolean success = expedienteComercialApi.cumpleCondicionesCrearHonorario(idEntidad);
+			if(success) {
+				success = expedienteComercialApi.createHonorario(dto, idEntidad);
+			}
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (JsonViewerException e) {
@@ -2289,4 +2301,33 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getAuditoriaDesbloqueo(ModelMap model, Long idExpediente, HttpServletRequest request) {
+		try {
+			List<DtoAuditoriaDesbloqueo> auditoriaDesbloqueo = expedienteComercialApi.getAuditoriaDesbloqueoList(idExpediente);
+			model.put(RESPONSE_DATA_KEY, auditoriaDesbloqueo);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController (getAuditoriaDesbloqueo)", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView insertarRegistroAuditoriaDesbloqueo(ModelMap model, Long expedienteId, String comentario, Long usuId, HttpServletRequest request) {
+		try {
+			expedienteComercialApi.insertarRegistroAuditoriaDesbloqueo(expedienteId, comentario, usuId);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		}catch(Exception e){
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController (getAuditoriaDesbloqueo)", e);
+		}
+		return createModelAndViewJson(model);
+	}
+	
 }

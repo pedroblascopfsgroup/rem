@@ -311,7 +311,16 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 			    		]*/
 					}
             	]
-            },{   
+            }, {
+				xtype: 'button',
+				text: HreRem.i18n('btn.editar.desbloqueo.honorarios'),
+				handler: 'editarAuditoriaDesbloqueo',
+				margin: '10 40 5 10',
+				bind:{
+					hidden: '{!visibleBotonAuditoriaDesbloqueo}'
+				}
+			},
+            {   
 				xtype:'fieldsettable',
 				title: HreRem.i18n('fieldlabel.nombre.auditoria.desbloqueo'),
 				items :
@@ -323,17 +332,6 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 						}
 					]
         	}
-            ,{
-				xtype: 'button',
-				text: HreRem.i18n('btn.editar.auditoria.desbloqueo'),
-				handler: 'editarAuditoriaDesbloqueo',
-				margin: '10 40 5 10',
-				bind:{
-					hidden: '{!visibleBotonAuditoriaDesbloqueo}'
-				}
-			}
-        	
-
     	];
     
 	    me.addPlugin({ptype: 'lazyitems', items: items });

@@ -334,18 +334,27 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 			if(dto.getCartera() != null && dto.getSubcartera() != null && dto.getTipoGastoCodigo() != null) {
 				
-				Filter filtroSubtipoGasto = null;
+				Boolean filtroSubtipoGasto = true;
 				
-				if(dto.getSubtipoGastoCodigo() != null) {
-					filtroSubtipoGasto = genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.codigo", dto.getSubtipoGastoCodigo());
-				}else {
-					filtroSubtipoGasto = genericDao.createFilter(FilterType.NULL, "subtipoGasto.codigo");
+				if(dto.getSubtipoGastoCodigo() == null || 
+						(dto.getTipoGastoCodigo() != null && DDTipoGasto.CODIGO_SERV_PROF_INDEPENDIENTES.equals(dto.getTipoGastoCodigo()))) {
+					filtroSubtipoGasto = false;
 				}
-				ConfiguracionSuplidos config = genericDao.get(ConfiguracionSuplidos.class, 
-						genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", dto.getCartera()),
-						genericDao.createFilter(FilterType.EQUALS, "subCartera.codigo", dto.getSubcartera()),
-						genericDao.createFilter(FilterType.EQUALS, "tipoGasto.codigo", dto.getTipoGastoCodigo()),
-						filtroSubtipoGasto);
+				
+				ConfiguracionSuplidos config = null;
+				
+				if(filtroSubtipoGasto) {
+					config = genericDao.get(ConfiguracionSuplidos.class,
+							genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", dto.getCartera()),
+							genericDao.createFilter(FilterType.EQUALS, "subCartera.codigo", dto.getSubcartera()),
+							genericDao.createFilter(FilterType.EQUALS, "tipoGasto.codigo", dto.getTipoGastoCodigo()),
+							genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.codigo", dto.getSubtipoGastoCodigo()));
+				} else {
+					config = genericDao.get(ConfiguracionSuplidos.class,
+							genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", dto.getCartera()),
+							genericDao.createFilter(FilterType.EQUALS, "subCartera.codigo", dto.getSubcartera()),
+							genericDao.createFilter(FilterType.EQUALS, "tipoGasto.codigo", dto.getTipoGastoCodigo()));
+				}
 				
 				if(config != null) {
 					dto.setVisibleSuplidos(true);

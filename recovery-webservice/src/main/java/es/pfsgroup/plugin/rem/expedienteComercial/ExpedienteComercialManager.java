@@ -10841,7 +10841,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 		
-		if((finalizadoCierreEconomico(expediente) && funcionApi.elUsuarioTieneFuncion(FUNCION_EDITAR_TAB_GESTION, usuario))){
+		if(!finalizadoCierreEconomico(expediente) && funcionApi.elUsuarioTieneFuncion(FUNCION_EDITAR_TAB_GESTION, usuario)){
 			return true;	
 		}
 		

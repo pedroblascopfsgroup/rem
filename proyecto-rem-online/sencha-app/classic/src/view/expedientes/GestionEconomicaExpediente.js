@@ -345,8 +345,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
        me.down("[reference=listadohoronarios]").setDisabledDeleteBtn(!me.edicionHabilitada(me));       
     },
     edicionHabilitada: function(me) {
-    	return $AU.userHasFunction(['EDITAR_TAB_GESTION_ECONOMICA_EXPEDIENTES']) && !me.up('expedientedetallemain').getViewModel().get('expediente.finalizadoCierreEconomico') 
-	    || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['PERFGCONTROLLER']);
+    	return $AU.userHasFunction(['EDITAR_TAB_GESTION_ECONOMICA_EXPEDIENTES']) && !me.up('expedientedetallemain').getViewModel().get('expediente.finalizadoCierreEconomico');
     },
     funcionRecargar: function() {
     	var me = this; 

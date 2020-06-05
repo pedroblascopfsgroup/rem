@@ -6,18 +6,26 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.hibernate.pagination.PaginationManager;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
 
 @Repository("TareaActivoDao")
 public class TareaActivoDaoImpl extends AbstractEntityDao<TareaActivo, Long> implements TareaActivoDao{
 
+	
+	@Autowired
+	private MSVRawSQLDao rawDao;
+	
 	@Resource
 	private PaginationManager paginationManager;
 
@@ -76,5 +84,28 @@ public class TareaActivoDaoImpl extends AbstractEntityDao<TareaActivo, Long> imp
 
 		return HibernateQueryUtils.list(this, hb);
 	}
+
+	@Override
+	public void finalizarTareasActivoPorIdActivoAndCodigoTramite(Long idActivo, String codigoTipoTramite) {
+			
+		Session session = this.getSessionFactory().getCurrentSession();
+		Query query = session.createSQLQuery("UPDATE TAR_TAREAS_NOTIFICACIONES"
+		 		+ " SET TAR_TAREA_FINALIZADA = 1, TAR_FECHA_FIN = SYSDATE"
+		 		+ " WHERE TAR_ID IN (SELECT TAR.TAR_ID FROM TAR_TAREAS_NOTIFICACIONES TAR"
+				+ " JOIN TEX_TAREA_EXTERNA TEX ON TAR.TAR_ID = TEX.TAR_ID"
+				+ " JOIN TAP_TAREA_PROCEDIMIENTO TAP ON TEX.TAP_ID = TAP.TAP_ID"
+				+ " JOIN TAC_TAREAS_ACTIVOS TAC ON TAR.TAR_ID = TAC.TAR_ID"
+				+ " JOIN ACT_ACTIVO ACT ON TAC.ACT_ID = ACT.ACT_ID"
+				+ " JOIN DD_TPO_TIPO_PROCEDIMIENTO TPO ON TPO.DD_TPO_ID = TAP.DD_TPO_ID"
+				+ " WHERE TPO.DD_TPO_CODIGO = '" + codigoTipoTramite + "'"
+				+ " AND ACT.ACT_ID = " + idActivo + " AND TAR.BORRADO = 0"
+				+ " AND TAR.TAR_TAREA_FINALIZADA = 0)");
+
+		query.executeUpdate();
+	}
+	
+	
+	
+	
 
 }

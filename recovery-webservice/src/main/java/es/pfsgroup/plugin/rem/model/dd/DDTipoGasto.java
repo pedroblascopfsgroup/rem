@@ -29,6 +29,7 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDTipoGasto implements Auditable, Dictionary {
 	
+	public static final String CODIGO_SERV_PROF_INDEPENDIENTES = "11";
 
 	/**
 	 * 

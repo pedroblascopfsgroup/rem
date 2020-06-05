@@ -123,6 +123,9 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 							           		value: '{gasto.suplidosVinculadosCod}',
 							           		hidden: '{!gasto.visibleSuplidos}'
 							         	},
+							         	listeners: {
+						                	select: 'onChangeComboSuplidos'
+						            	},
 							         	allowBlank: false
 							    	},
 							    	{

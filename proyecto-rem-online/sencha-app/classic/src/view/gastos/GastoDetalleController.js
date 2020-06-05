@@ -1792,6 +1792,15 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			cuentaContable
 				.setFieldLabel(HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable')	+ ' *');
 		}
+	},
+	
+	onChangeComboSuplidos: function(combo, values){
+		var me = this;
+		
+		var comboFacturaPrincipal = me.lookupReference('facturaPrincipalSuplido');
+		if(CONST.COMBO_SIN_NO['SI'] == values.getData().codigo){
+			comboFacturaPrincipal.setValue(null)
+		}
 	}
 	
 });

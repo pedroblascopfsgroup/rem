@@ -1304,6 +1304,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				ExpedienteComercial expedienteComercial = tramitacionOfertasManager.crearExpediente(oferta, trabajo, null, oferta.getActivoPrincipal());
 				ActivoTramite activoTramite = tramitacionOfertasManager.doTramitacion(oferta.getActivoPrincipal(), oferta, trabajo.getId(), expedienteComercial);
 
+				adapter.saltoInstruccionesReserva(activoTramite.getProcessBPM());
+
 				// Se copiará el valor del campo necesita financiación al campo
 				// asociado del expediente comercial
 				CondicionanteExpediente coe = expedienteComercial.getCondicionante();
@@ -1314,8 +1316,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.APROBADO);
 				expedienteComercial.setEstado(estadoExpCom);
 				expedienteComercial.setFechaSancion(new Date());
-				
-				adapter.saltoInstruccionesReserva(activoTramite.getProcessBPM());
 
 				genericDao.update(ExpedienteComercial.class, expedienteComercial);
 
@@ -4508,7 +4508,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			} else if (dto.getPvn() >= dto.getVr()) {
 				return genericDao.get(DDComiteSancion.class, filtroGestion);
 			} else if (dto.getPvn() < dto.getVr()) {
-				if (perdida > 0 && perdidaValorAbs <= porcentajeSobreVNC1) {
+				if ((perdida > 0) || (perdidaValorAbs <= porcentajeSobreVNC1)) {
 					return genericDao.get(DDComiteSancion.class, filtroGestionDir);
 				} 
 				if(perdidaValorAbs > porcentajeSobreVNC1) {

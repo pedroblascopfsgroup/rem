@@ -29,4 +29,6 @@ public interface TareaActivoDao extends AbstractDao<TareaActivo, Long>{
 	
 	public void doFlush();
 
+	public void finalizarTareasActivoPorIdActivoAndCodigoTramite(Long idActivo, String codigoTipoTramite);
+
 }

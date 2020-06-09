@@ -166,7 +166,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			    AND tipoAgr.DD_TAG_ID = agr.DD_TAG_ID "
 				+ "			    AND act.ACT_NUM_ACTIVO = "+numActivo+" "
 				+ "			    AND tipoAgr.DD_TAG_CODIGO = '02' "
-				+ "				AND agr.AGR_FECHA_BAJA is null"
+				+ "				AND (agr.AGR_FECHA_BAJA is null OR agr.AGR_FECHA_BAJA  > SYSDATE)"
 				+ "			    AND aga.BORRADO  = 0 "
 				+ "			    AND aga.BORRADO  = 0 "
 				+ "			    AND agr.BORRADO  = 0 "
@@ -184,6 +184,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			    AND ACT.ACT_ID   = AGA.ACT_ID "
 				+ "			    AND ACT.ACT_NUM_ACTIVO = "+numActivo+" "
 				+ "			    AND AGR.AGR_NUM_AGRUP_REM  = "+numAgrupacion+" "
+				+ "				AND (agr.AGR_FECHA_BAJA is null OR agr.AGR_FECHA_BAJA  > SYSDATE)"
 				+ "			    AND AGA.BORRADO  = 0 "
 				+ "			    AND AGR.BORRADO  = 0 "
 				+ "			    AND ACT.BORRADO  = 0 ");
@@ -219,6 +220,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			    AND act.act_id   = aga.act_id "
 				+ "			    AND act.ACT_NUM_ACTIVO = "+numActivo+" "
 				+ "			    AND agr.AGR_NUM_AGRUP_REM  <> "+numAgrupacion+" "
+				+ "				AND (agr.AGR_FECHA_BAJA is null OR agr.AGR_FECHA_BAJA  > SYSDATE)"
 				+ "			    AND aga.BORRADO  = 0 "
 				+ "			    AND agr.BORRADO  = 0 "
 				+ "			    AND act.BORRADO  = 0 ");
@@ -795,7 +797,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "				AND agr.DD_TAG_ID = tag.DD_TAG_ID "
 				+ "			    AND tag.DD_TAG_CODIGO in ("+cadenaCodigosSql+") "
 				+ "			    AND agr.AGR_NUM_AGRUP_REM  <> "+numAgrupacion+" "
-				+ "				AND agr.AGR_FECHA_BAJA IS NULL "
+				+ "				AND (agr.AGR_FECHA_BAJA is null OR agr.AGR_FECHA_BAJA  > SYSDATE)"
 				+ "			    AND aga.BORRADO  = 0 "
 				+ "			    AND agr.BORRADO  = 0 "
 				+ "			    AND act.BORRADO  = 0 "
@@ -3466,7 +3468,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(!Checks.esNulo(codigoEstadoActivo)) {
 			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 					+ "FROM DD_EAC_ESTADO_ACTIVO "
-					+ "WHERE DD_EAC_CODIGO =" + codigoEstadoActivo );
+					+ "WHERE DD_EAC_CODIGO = '" + codigoEstadoActivo +"'");
 
 			return  !"0".equals(resultado);
 		}
@@ -4679,6 +4681,47 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				"JOIN REMMASTER.USU_USUARIOS usu ON usu.USU_ID = pvc.USU_ID AND usu.USU_USERNAME ='" +usrContacto+"' AND usu.BORRADO = 0");
 		
 		return Integer.valueOf(resultado) > 0;
+	}
+	
+	@Override
+	public Boolean existeSituacionTitulo(String codigoSituacionTitulo) {
+		if(Checks.esNulo(codigoSituacionTitulo) || !StringUtils.isAlphanumeric(codigoSituacionTitulo)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) FROM DD_ETI_ESTADO_TITULO " 
+				+ "WHERE DD_ETI_CODIGO = '"+ codigoSituacionTitulo +"' "
+		);
+		
+		return !"0".equals(resultado);
+	}
+	
+	public Boolean esActivoSareb(String numActivo) {
+		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
+			return false;
+		}
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+					+"		FROM ACT_ACTIVO ACT "
+					+"		WHERE ACT.DD_CRA_ID IN (SELECT DD_CRA_ID FROM DD_CRA_CARTERA "
+					+"								WHERE DD_CRA_CODIGO = '02' "
+					+"								AND BORRADO = 0) "
+					+"		AND ACT.ACT_NUM_ACTIVO = "+ numActivo +"");
+
+		return !"0".equals(resultado);
+	}
+	
+
+	@Override
+	public Boolean perteneceADiccionarioConTitulo(String conTitulo) {
+		if(Checks.esNulo(conTitulo) || !StringUtils.isAlphanumeric(conTitulo)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) FROM DD_TPA_TIPO_TITULO_ACT " 
+				+ "WHERE DD_TPA_CODIGO = '"+ conTitulo +"' "
+		);
+		
+		return !"0".equals(resultado);
 	}
 	
 }

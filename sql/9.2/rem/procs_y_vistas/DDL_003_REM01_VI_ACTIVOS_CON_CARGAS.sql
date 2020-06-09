@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20200115
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20200603
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-1868
+--## INCIDENCIA_LINK=HREOS-10362
 --## PRODUCTO=NO
 --## Finalidad: Vista que indica si un activo tiene cargas o no.
 --##           
@@ -14,6 +14,7 @@
 --##		0.2 20171212 HREOS-3334 Disclaimer con cargas aparece sin que el activo tenga cargas HREOS-3334
 --##        0.3 - Se añaden validaciones nuevas dependiendo del campo "Cargas Propias"
 --##		0.4 REMVIP-6184 cambio en el diccionario de cargas
+--##		0.5 Se prioriza el estado de las cargas si viene de la carga masiva de Táctico Esparta Masivo
 --##########################################
 --*/
 
@@ -123,6 +124,38 @@ BEGIN
                   WHERE CRG2.ACT_ID = ACT.ACT_ID AND CRG2.BORRADO = 0 AND CRG2.CRG_CARGAS_PROPIAS = 1
                   )
           )
+      , CARGAS_ESPARTA AS (
+          SELECT
+              ACT.ACT_ID,
+              CASE WHEN AUX_SI.ACT_ID IS NOT NULL THEN 1 
+                    WHEN AUX_NO.ACT_ID IS NOT NULL THEN 0
+                    ELSE NULL END AS CON_CARGAS,
+              ''CAR_CG_ESPARTA'' TAG
+          FROM
+              '||V_ESQUEMA||'.ACT_ACTIVO ACT
+              LEFT JOIN (
+                  SELECT
+                      CRG.ACT_ID
+                  FROM
+                      '||V_ESQUEMA||'.ACT_CRG_CARGAS CRG
+                  WHERE
+                      CRG.BORRADO = 0 AND CRG.CRG_OCULTO_CARGA_MASIVA = 1
+                 GROUP BY
+                      CRG.ACT_ID
+               ) AUX_SI ON AUX_SI.ACT_ID = ACT.ACT_ID
+              LEFT JOIN (
+                  SELECT
+                      CRG.ACT_ID
+                  FROM
+                      '||V_ESQUEMA||'.ACT_CRG_CARGAS CRG
+                  WHERE
+                      CRG.BORRADO = 0 AND CRG.CRG_OCULTO_CARGA_MASIVA = 0
+                 GROUP BY
+                      CRG.ACT_ID
+               ) AUX_NO ON AUX_NO.ACT_ID = ACT.ACT_ID
+          WHERE
+               ACT.BORRADO = 0 AND (AUX_SI.ACT_ID IS NOT NULL OR AUX_NO.ACT_ID IS NOT NULL)
+        )
       , Q_FINAL AS (
           SELECT
               CAR.ACT_ID
@@ -130,10 +163,13 @@ BEGIN
               , CAR.TAG TC
               , CAR_LBK.CON_CARGAS CCL
               , CAR_LBK.TAG TL
+              , CAR_ESP.CON_CARGAS CCE
+              , CAR_ESP.TAG TE
           FROM CARGAS CAR
           LEFT JOIN CARGAS_LBK CAR_LBK ON CAR.ACT_ID = CAR_LBK.ACT_ID
+          LEFT JOIN CARGAS_ESPARTA CAR_ESP ON CAR.ACT_ID = CAR_ESP.ACT_ID
           )
-      SELECT ACT_ID, COALESCE(CCL,CCC) CON_CARGAS
+      SELECT ACT_ID, COALESCE(CCE,CCL,CCC) CON_CARGAS
       FROM Q_FINAL';      
 			
 			

@@ -329,7 +329,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 						|| DDCartera.CODIGO_CARTERA_LIBERBANK.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
 						|| DDCartera.CODIGO_CARTERA_ZEUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
 						|| DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-						|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+						|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
 					this.enviaSegundaNotificacionAceptar(tramite, oferta, expediente, destinatarios.toArray(new String[] {}));
 					destinatarios.clear();
 					if(!Checks.esNulo(buzonBoarding)){

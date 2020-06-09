@@ -5596,8 +5596,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 										.equals(activoTrabajo.getTrabajo().getEstado().getCodigo())
 								|| DDEstadoTrabajo.ESTADO_PENDIENTE_CIERRE_ECONOMICO
 										.equals(activoTrabajo.getTrabajo().getEstado().getCodigo())
-								|| DDEstadoTrabajo.ESTADO_PAGADO
-										.equals(activoTrabajo.getTrabajo().getEstado().getCodigo())
 								|| DDEstadoTrabajo.ESTADO_VALIDADO
 										.equals(activoTrabajo.getTrabajo().getEstado().getCodigo()))) {
 
@@ -5633,7 +5631,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 								&& (DDEstadoTrabajo.ESTADO_EN_TRAMITE.equals(trabajoUA.getEstado().getCodigo())
 								|| DDEstadoTrabajo.ESTADO_CEE_PENDIENTE_ETIQUETA.equals(trabajoUA.getEstado().getCodigo())
 								|| DDEstadoTrabajo.ESTADO_PENDIENTE_CIERRE_ECONOMICO.equals(trabajoUA.getEstado().getCodigo())
-								|| DDEstadoTrabajo.ESTADO_PAGADO.equals(trabajoUA.getEstado().getCodigo()))
+								|| DDEstadoTrabajo.ESTADO_VALIDADO.equals(trabajoUA.getEstado().getCodigo()))
 						) {
 							uaConTrabajosVivos = true;
 							break;
@@ -5662,7 +5660,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							&& (DDEstadoTrabajo.ESTADO_EN_TRAMITE.equals(activoTrabajoAM.getTrabajo().getEstado().getCodigo())
 							|| DDEstadoTrabajo.ESTADO_CEE_PENDIENTE_ETIQUETA.equals(activoTrabajoAM.getTrabajo().getEstado().getCodigo())
 							|| DDEstadoTrabajo.ESTADO_PENDIENTE_CIERRE_ECONOMICO.equals(activoTrabajoAM.getTrabajo().getEstado().getCodigo())
-							|| DDEstadoTrabajo.ESTADO_PAGADO.equals(activoTrabajoAM.getTrabajo().getEstado().getCodigo()))
+							|| DDEstadoTrabajo.ESTADO_VALIDADO.equals(activoTrabajoAM.getTrabajo().getEstado().getCodigo()))
 					) {
 						
 						tieneTrabajosVivos = true;

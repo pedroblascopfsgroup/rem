@@ -1042,7 +1042,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 				
 		//Se aplica el comité correspondiente a las ofertas añadidas a la lista
-		ofertaApi.calculoComiteLBK(oferta.getId(), null);
+		if (!Checks.esNulo(listaOfertasLBK) && !listaOfertasLBK.isEmpty()) {
+			ofertaApi.calculoComiteLBK(oferta.getId(), null);
+		}
 				
 		
 		if (!Checks.esNulo(dto.getTipoOfertaCodigo())) {
@@ -2653,7 +2655,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public VBusquedaDatosCompradorExpediente getDatCompradorById(Long idCom) {
 		Filter filtroCom = genericDao.createFilter(FilterType.EQUALS, "id", idCom);
 
-		return genericDao.get(VBusquedaDatosCompradorExpediente.class, filtroCom);
+		return genericDao.getList(VBusquedaDatosCompradorExpediente.class, filtroCom).get(0);
 	}
 
 	private DtoCondiciones expedienteToDtoCondiciones(ExpedienteComercial expediente) {
@@ -6056,6 +6058,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public boolean createHonorario(DtoGastoExpediente dto, Long idEntidad) {
 		ExpedienteComercial expediente = findOne(idEntidad);
 		GastosExpediente gastoExpediente = new GastosExpediente();
+		Long idActivo = expediente.getOferta().getActivoPrincipal().getId();
 
 		if (!Checks.esNulo(dto.getCodigoTipoComision())) {
 			Filter filtroAccionGasto = genericDao.createFilter(FilterType.EQUALS, "codigo",
@@ -6107,6 +6110,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		gastoExpediente.setObservaciones(dto.getObservaciones());
 		gastoExpediente.setExpediente(expediente);
 		gastoExpediente.setEditado(0);
+
+		if(Checks.esNulo(dto.getIdActivo())){
+			dto.setIdActivo(idActivo);
+		}
 
 		if (!Checks.esNulo(dto.getIdActivo())) {
 			Activo activo = null;

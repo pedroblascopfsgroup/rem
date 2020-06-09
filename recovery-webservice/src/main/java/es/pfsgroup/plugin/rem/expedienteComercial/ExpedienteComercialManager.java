@@ -5893,6 +5893,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public boolean createHonorario(DtoGastoExpediente dto, Long idEntidad) {
 		ExpedienteComercial expediente = findOne(idEntidad);
 		GastosExpediente gastoExpediente = new GastosExpediente();
+		Long idActivo = expediente.getOferta().getActivoPrincipal().getId();
 
 		if (!Checks.esNulo(dto.getCodigoTipoComision())) {
 			Filter filtroAccionGasto = genericDao.createFilter(FilterType.EQUALS, "codigo",
@@ -5942,6 +5943,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		gastoExpediente.setObservaciones(dto.getObservaciones());
 		gastoExpediente.setExpediente(expediente);
 		gastoExpediente.setEditado(0);
+
+		if(Checks.esNulo(dto.getIdActivo())){
+			dto.setIdActivo(idActivo);
+		}
 
 		if (!Checks.esNulo(dto.getIdActivo())) {
 			Activo activo = null;

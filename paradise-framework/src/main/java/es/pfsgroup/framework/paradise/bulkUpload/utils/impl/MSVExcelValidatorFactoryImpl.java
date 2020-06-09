@@ -209,6 +209,9 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired
 	private MSVGestionPeticionesDePreciosExcelValidator gestionPeticionesDePrecios;
+	
+	@Autowired
+	private MSVTacticoEspartaPublicacionesValidator tacticoEspartaPublicaciones;
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 
@@ -344,10 +347,10 @@ public class MSVExcelValidatorFactoryImpl {
 			return direccionesComerciales;
 		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_TRABAJOS.equals(codTipoOperacion)) {
             return actualizaTrabajos;
-		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_SUPER_BORRADO_TRABAJOS.equals(codTipoOperacion)) {
-			return borradoTrabajosValidator; 
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_GESTION_PETICIONES_PRECIOS.equals(codTipoOperacion)) {
 			return gestionPeticionesDePrecios;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_TACTICO_ESPARTA_PUBLICACIONES.equals(codTipoOperacion)) {
+			return tacticoEspartaPublicaciones;
 		}
 		
 		return null;

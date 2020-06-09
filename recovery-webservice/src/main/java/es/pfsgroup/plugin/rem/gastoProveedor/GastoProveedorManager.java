@@ -2859,8 +2859,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		if (validarAutorizacion) {
 			String error = updaterStateApi.validarCamposMinimos(gasto);
 			
-			if(error == null) {
-				error = updaterStateApi.validarAutorizacionSuplido(gasto);
+			if(error == null && updaterStateApi.isGastoSuplido(gasto)) {
+				error = updaterStateApi.validarDatosPagoGastoPrincipal(gasto);//updaterStateApi.validarAutorizacionSuplido(gasto);
 			}
 			
 			if (!Checks.esNulo(error)) {

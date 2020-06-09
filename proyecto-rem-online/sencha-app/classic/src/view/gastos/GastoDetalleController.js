@@ -1346,14 +1346,35 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	onClickAutorizar: function(btn) {
     	var me = this;
     	
-    	Ext.Msg.show({
-		   title: HreRem.i18n('title.mensaje.confirmacion'),
-		   msg: HreRem.i18n('msg.desea.autorizar.gasto'),
-		   buttons: Ext.MessageBox.YESNO,
-		   fn: function(buttonId) {
-		        if (buttonId == 'yes') {
-					var url =  $AC.getRemoteUrl('gastosproveedor/autorizarGasto'),		
-					idGasto = me.getViewModel().get("gasto.id");		
+    	me.getView().mask(HreRem.i18n("msg.mask.loading"));
+    	
+    	var idGasto = idGasto = me.getViewModel().get("gasto.id");
+    	var url = $AC.getRemoteUrl('gastosproveedor/getAvisosSuplidos');	
+    	
+    	Ext.Ajax.request({
+			url: url,
+			params: {idGasto: idGasto},
+			success: function(response, opts) {
+				var data = {};
+				try {
+					data = Ext.decode(response.responseText);
+					}
+				catch (e){ };
+				if(data.error != null){
+					var msg = "Advertencias:<br/>";
+					msg += "<br/>" + data.error + "<br/>";
+					msg += HreRem.i18n('msg.desea.autorizar.gasto');
+				} else {
+					msg = HreRem.i18n('msg.desea.autorizar.gasto');
+				}
+				me.getView().unmask();	
+				Ext.Msg.show({
+				   	title: HreRem.i18n('title.mensaje.confirmacion'),
+				   	msg: msg,
+				   	buttons: Ext.MessageBox.YESNO,
+				   	fn: function(buttonId) {
+				   		if (buttonId == 'yes') {
+					url =  $AC.getRemoteUrl('gastosproveedor/autorizarGasto');		
 	
 					me.getView().mask(HreRem.i18n("msg.mask.loading"));
 	
@@ -1397,7 +1418,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 				    		    
 				    });
 		        }
-		   }
+				   	}});
+						
+			}
 		});
     	
     	

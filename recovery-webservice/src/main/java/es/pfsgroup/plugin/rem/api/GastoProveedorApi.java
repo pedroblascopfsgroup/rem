@@ -391,5 +391,7 @@ public interface GastoProveedorApi {
 
 		void validarGastosARefacturar(String idGasto, String listaGastos);
 
+		String validarAutorizacionSuplido(long idGasto);
+
 }
 

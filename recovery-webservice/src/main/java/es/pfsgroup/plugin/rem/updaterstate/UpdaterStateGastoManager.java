@@ -618,12 +618,18 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			if(detalleGasto != null && gastoPrincipal != null && gastoPrincipal.getProveedor() != null
 					&& ((detalleGasto.getNifTitularCuentaAbonar() != null &&   !detalleGasto.getNifTitularCuentaAbonar().equals(gastoPrincipal.getProveedor().getDocIdentificativo()))
 					|| (gastoPrincipal.getProveedor() == null || detalleGasto == null))) {
-				error = messageServices.getMessage(VALIDACION_SUPLIDOS_NIF_EMISOR_CUENTA);
+				if(error == null) {
+					error = "";
+				}
+				error += "- " + messageServices.getMessage(VALIDACION_SUPLIDOS_NIF_EMISOR_CUENTA) + "<br/>";
 			}
 			
 			if(gastoPrincipal != null && gastoPrincipal.getEstadoGasto() != null
 					&& !DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(gastoPrincipal.getEstadoGasto().getCodigo())) {
-				error = messageServices.getMessage(VALIDACION_SUPLIDOS_NIF_ESTADO_GASTO);
+				if(error == null) {
+					error = "";
+				}
+				error += "- " + messageServices.getMessage(VALIDACION_SUPLIDOS_NIF_ESTADO_GASTO) + "<br/>";
 			}
 			
 		}

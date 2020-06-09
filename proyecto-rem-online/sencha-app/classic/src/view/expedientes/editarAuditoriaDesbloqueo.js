@@ -3,42 +3,18 @@ Ext.define('HreRem.view.expedientes.editarAuditoriaDesbloqueo', {
     xtype		: 'editarAuditoriaDesbloqueo',
     layout	: 'fit',
     width	: Ext.Element.getViewportWidth() / 3,    
-    //height	: Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() - 50 ,
-    //closable: true,		
-    //closeAction: 'hide',
     expediente : null,
-    
+    viewChained : null,
     controller: 'expedientedetalle',
-//    viewModel: {
-//        type: 'viewmodel.expedientedetalle'
-//    },
-    
     requires: ['HreRem.view.expedientes.ExpedienteDetalleModel'],
-    
     listeners: {    
-		boxready: function(window) {
-			
-			var me = this;
-			
-//			Ext.Array.each(window.down('fieldset').query('field[isReadOnlyEdit]'),
-//				function (field, index) 
-//					{ 								
-//						field.fireEvent('edit');
-//						if(index == 0) field.focus();
-//					}
-//			);
-		},
-		
 		show: function() {			
 			var me = this;
 			me.resetWindow();			
 		}
 	},
-    
 	initComponent: function() {
-    	
     	var me = this;
-    	
     	me.buttons = [
     		{ itemId: 'btnGuardar', 
     		  text: 'Aceptar', 
@@ -49,7 +25,6 @@ Ext.define('HreRem.view.expedientes.editarAuditoriaDesbloqueo', {
     		  handler: 'onClickBotonCancelarAuditoria'
     		}
     	];
-    	
     	me.items = [
 					{
 						xtype: 'fieldset', 

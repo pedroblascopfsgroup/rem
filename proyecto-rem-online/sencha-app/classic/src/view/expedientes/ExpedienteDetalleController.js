@@ -4896,9 +4896,9 @@ comprobarFormatoModificar: function() {
 		
 	},
 	
-	editarAuditoriaDesbloqueo: function(){
+	editarAuditoriaDesbloqueo: function(viewChained){
 		var expediente = this.getViewModel().get("expediente.id");
-		var window = Ext.create("HreRem.view.expedientes.editarAuditoriaDesbloqueo",{expediente: expediente}).show();
+		var window = Ext.create("HreRem.view.expedientes.editarAuditoriaDesbloqueo",{expediente: expediente, viewChained: viewChained}).show();
 	},
 	
 	onClickBotonCancelarAuditoria: function(btn){
@@ -4911,10 +4911,10 @@ comprobarFormatoModificar: function() {
 	onClickBotonGuardarAuditoria: function(btn){
 		var me =this;
 		var url = $AC.getRemoteUrl('expedientecomercial/insertarRegistroAuditoriaDesbloqueo');
-		test = btn.up('window');
+		var view = btn.up('window');
 		var user = $AU.getUser().userId;
-		var comentario = test.items.items[0].items.items[0].value;
-		var expediente = test.expediente;
+		var comentario = view.items.items[0].items.items[0].value;
+		var expediente = view.expediente;
 		me.getView().mask(HreRem.i18n("msg.mask.espere"));
 		
 		Ext.Ajax.request({
@@ -4930,10 +4930,13 @@ comprobarFormatoModificar: function() {
 		    	var data = {};
 		    	try {
 		    		data = Ext.decode(response.responseText);
-		    	}  catch (e){ };
+		    	}  catch (e){ 
+		    		console.log( e );
+		    	}
                
 		    	if(data.success === "true") {
-		    		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok")); 
+		    		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		    		view.viewChained.habilitarGrid();
 		    		me.onClickBotonCancelarAuditoria(btn);
 		    	}else {
 		    		if(data.errorUvem == "true"){
@@ -4951,10 +4954,6 @@ comprobarFormatoModificar: function() {
 		    	 } else {
 		    		 Utils.defaultRequestFailure(response, opts);
 		    	 }
-		     },
-
-		     callback: function() {
-		    	 me.getView().unmask();
 		     }
 		});	
 		

@@ -314,9 +314,12 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
             }, {
 				xtype: 'button',
 				text: HreRem.i18n('btn.editar.desbloqueo.honorarios'),
-				handler: 'editarAuditoriaDesbloqueo',
+				handler: function () {
+						var me = this;
+						me.lookupController().editarAuditoriaDesbloqueo(me.up());
+				},
 				margin: '10 40 5 10',
-				bind:{
+				bind:{ 
 					hidden: '{!visibleBotonAuditoriaDesbloqueo}'
 				}
 			},
@@ -345,7 +348,16 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
        me.down("[reference=listadohoronarios]").setDisabledDeleteBtn(!me.edicionHabilitada(me));       
     },
     edicionHabilitada: function(me) {
-    	return $AU.userHasFunction(['EDITAR_TAB_GESTION_ECONOMICA_EXPEDIENTES']) && !me.up('expedientedetallemain').getViewModel().get('expediente.finalizadoCierreEconomico');
+    	var userHasFunction = $AU.userHasFunction(['EDITAR_TAB_GESTION_ECONOMICA_EXPEDIENTES']);
+    	var isFinalizadoCierreEconomico = me.up('expedientedetallemain').getViewModel().get('expediente.finalizadoCierreEconomico');
+    	
+		return  userHasFunction && !isFinalizadoCierreEconomico ; 
+    },
+    habilitarGrid: function() {
+    	var me = this;
+    	var gridHonorarios = me.down("[reference=listadohoronarios]");
+    	gridHonorarios.setDisabledAddBtn(false);
+    	gridHonorarios.setDisabledDeleteBtn(false);
     },
     funcionRecargar: function() {
     	var me = this; 

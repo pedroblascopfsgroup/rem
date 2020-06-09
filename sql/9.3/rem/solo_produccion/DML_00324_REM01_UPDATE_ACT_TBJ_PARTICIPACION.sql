@@ -1,0 +1,113 @@
+--/*
+--##########################################
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20200603
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-7364
+--## PRODUCTO=NO
+--##
+--## Finalidad:
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+
+DECLARE
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_USUARIOMODIFICAR VARCHAR2(25 CHAR):= 'REMVIP-7364'; -- Configuracion Esquema
+
+BEGIN
+
+    DBMS_OUTPUT.PUT_LINE('[INICIO]');
+    
+    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_TBJ T1
+				USING (
+				    SELECT DISTINCT AUX.TBJ_ID, AUX.TBJ_NUM_TRABAJO, AT.ACT_ID, ACT_NUM_ACTIVO
+				    FROM (
+				        SELECT TBJ.TBJ_ID, TBJ.TBJ_NUM_TRABAJO, COUNT(*) 
+				        FROM '||V_ESQUEMA||'.ACT_TBJ_TRABAJO TBJ
+				        JOIN '||V_ESQUEMA||'.ACT_TBJ AT ON TBJ.TBJ_ID = AT.TBJ_ID
+				        WHERE TBJ.USUARIOCREAR = ''UNKNOWN'' AND TBJ.BORRADO = 0 AND TBJ.DD_EST_ID <> 2
+				        GROUP BY TBJ.TBJ_ID, TBJ.TBJ_NUM_TRABAJO
+				        HAVING COUNT(*) = 1
+				    ) AUX
+				    JOIN '||V_ESQUEMA||'.ACT_TBJ AT ON AUX.TBJ_ID = AT.TBJ_ID
+				    JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = AT.ACT_ID
+				) T2
+				ON (T1.ACT_ID = T2.ACT_ID AND T1.TBJ_ID = T2.TBJ_ID)
+				WHEN MATCHED THEN UPDATE SET
+				    T1.ACT_TBJ_PARTICIPACION = 100';
+	EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('	[INFO]	Se han actualizado '||SQL%ROWCOUNT||' participaciones para trabajos de un solo activo.');
+				
+	V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_TBJ T1
+				USING (
+				    SELECT DISTINCT AUX.TBJ_ID, AT.ACT_ID, AUX.TBJ_NUM_TRABAJO, ACT_NUM_ACTIVO, PRECIOS.IMPORTE,
+				        SUM(PRECIOS.IMPORTE) OVER (PARTITION BY TBJ_NUM_TRABAJO) SUMA_IMPORTES_ACTIVOS
+				    FROM (
+				        SELECT TBJ.TBJ_ID, TBJ.TBJ_NUM_TRABAJO, COUNT(*) 
+				        FROM '||V_ESQUEMA||'.ACT_TBJ_TRABAJO TBJ
+				        JOIN '||V_ESQUEMA||'.ACT_TBJ AT ON TBJ.TBJ_ID = AT.TBJ_ID
+				        WHERE TBJ.USUARIOCREAR = ''UNKNOWN'' AND TBJ.BORRADO = 0 AND TBJ.DD_EST_ID <> 2
+				        GROUP BY TBJ.TBJ_ID, TBJ.TBJ_NUM_TRABAJO
+				        HAVING COUNT(*) > 1
+				    ) AUX
+				    JOIN '||V_ESQUEMA||'.ACT_TBJ AT ON AUX.TBJ_ID = AT.TBJ_ID
+				    JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = AT.ACT_ID
+				    JOIN (
+				        SELECT ACT.ACT_ID,
+				        CASE WHEN VNC.VAL_IMPORTE IS NOT NULL THEN VNC.VAL_IMPORTE
+				             WHEN VMIN.VAL_IMPORTE IS NOT NULL THEN VMIN.VAL_IMPORTE
+				             WHEN FSV.VAL_IMPORTE IS NOT NULL THEN FSV.VAL_IMPORTE
+				             WHEN VBE.VAL_IMPORTE IS NOT NULL THEN VBE.VAL_IMPORTE
+				             WHEN PT.VAL_IMPORTE IS NOT NULL THEN PT.VAL_IMPORTE
+				             WHEN VR.VAL_IMPORTE IS NOT NULL THEN VR.VAL_IMPORTE
+				             ELSE NULL
+				        END AS IMPORTE
+				        FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
+				        LEFT JOIN '||V_ESQUEMA||'.ACT_VAL_VALORACIONES VNC ON VNC.ACT_ID = ACT.ACT_ID AND VNC.BORRADO = 0 AND VNC.DD_TPC_ID = 1 --VALOR NETO CONTABLE
+				        LEFT JOIN '||V_ESQUEMA||'.ACT_VAL_VALORACIONES VMIN ON VMIN.ACT_ID = ACT.ACT_ID AND VMIN.BORRADO = 0 AND VMIN.DD_TPC_ID = 4 --VALOR MINIMO
+				        LEFT JOIN '||V_ESQUEMA||'.ACT_VAL_VALORACIONES FSV ON FSV.ACT_ID = ACT.ACT_ID AND FSV.BORRADO = 0 AND FSV.DD_TPC_ID = 27 --FSV
+				        LEFT JOIN '||V_ESQUEMA||'.ACT_VAL_VALORACIONES VBE ON VBE.ACT_ID = ACT.ACT_ID AND VBE.BORRADO = 0 AND VBE.DD_TPC_ID = 25 --VACBE
+				        LEFT JOIN '||V_ESQUEMA||'.ACT_VAL_VALORACIONES PT ON PT.ACT_ID = ACT.ACT_ID AND PT.BORRADO = 0 AND PT.DD_TPC_ID = 23 --PRECIO TRANSFERENCIA
+				        LEFT JOIN '||V_ESQUEMA||'.ACT_VAL_VALORACIONES VR ON VR.ACT_ID = ACT.ACT_ID AND VR.BORRADO = 0 AND VR.DD_TPC_ID = 22 --VALOR REFERENCIA 
+				    ) PRECIOS ON PRECIOS.ACT_ID = ACT.ACT_ID
+				) T2
+				ON (T1.ACT_ID = T2.ACT_ID AND T1.TBJ_ID = T2.TBJ_ID)
+				WHEN MATCHED THEN UPDATE SET
+				    T1.ACT_TBJ_PARTICIPACION = (T2.IMPORTE / T2.SUMA_IMPORTES_ACTIVOS) * 100';
+	EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('	[INFO]	Se han actualizado '||SQL%ROWCOUNT||' participaciones para trabajos multi-activo.');
+
+    COMMIT;
+    DBMS_OUTPUT.PUT_LINE('[FIN]');
+
+EXCEPTION
+	WHEN OTHERS THEN
+	err_num := SQLCODE;
+	err_msg := SQLERRM;
+	
+	DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+	DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+	DBMS_OUTPUT.put_line(err_msg);
+	
+	ROLLBACK;
+	RAISE;          
+
+END;
+/
+EXIT

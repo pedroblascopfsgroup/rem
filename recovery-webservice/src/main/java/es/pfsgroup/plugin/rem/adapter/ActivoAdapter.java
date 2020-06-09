@@ -1623,14 +1623,15 @@ public class ActivoAdapter {
 		List<DtoUsuario> listaUsuariosDto = new ArrayList<DtoUsuario>();
 
 		if (!Checks.estaVacio(listDespachoExterno)) {
-			DespachoExterno despachoExterno = listDespachoExterno.get(0);
-			List<Usuario> listaUsuarios = coreextensionApi.getListAllUsuariosData(despachoExterno.getId(), false);
-
 			try {
-				for (Usuario usuario : listaUsuarios) {
-					DtoUsuario dtoUsuario = new DtoUsuario();
-					BeanUtils.copyProperties(dtoUsuario, usuario);
-					listaUsuariosDto.add(dtoUsuario);
+				for (DespachoExterno despachoExterno : listDespachoExterno) {
+					List<Usuario> listaUsuarios = coreextensionApi.getListAllUsuariosData(despachoExterno.getId(), false);
+					
+					for (Usuario usuario : listaUsuarios) {
+						DtoUsuario dtoUsuario = new DtoUsuario();
+						BeanUtils.copyProperties(dtoUsuario, usuario);
+						listaUsuariosDto.add(dtoUsuario);
+					}
 				}
 			} catch (IllegalAccessException e) {
 				logger.error("Error en ActivoAdapter", e);

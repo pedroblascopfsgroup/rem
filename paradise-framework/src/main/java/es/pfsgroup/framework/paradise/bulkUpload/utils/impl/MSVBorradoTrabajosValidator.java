@@ -41,12 +41,13 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVSuperGestEcoTraba
 public class MSVBorradoTrabajosValidator extends MSVExcelValidatorAbstract {
 		
 	public static final String TRABAJO_NO_EXISTE = "El trabajo no existe.";
-	public static final String TRAMITE_TRABAJO_NO_EXISTE = "El trámite del trabajo no existe";
-	public static final String TRABAJO_SIN_TAREA = "El trabajo no tiene ninguna tarea creada.";
+//	public static final String TRAMITE_TRABAJO_NO_EXISTE = "El trámite del trabajo no existe";
+//	public static final String TRABAJO_SIN_TAREA = "El trabajo no tiene ninguna tarea creada.";
 	public static final String COLUMNA_CON_CODIGO_REPETIDO = "El código del trabajo está duplicado en la columna.";
-	
+	public static final String COL_A_B_INCORRECTA = "La columna ANULAR/BORRAR solo puede ser: 'A' o 'B' (sin las comillas)";
 	public static final int COL_NUM_TRABAJO = 0;
 	public static final int COL_SIN_COD_REPETIDOS = 0;
+	public static final int COL_ANULAR_BORRAR = 1;
 	
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -57,8 +58,8 @@ public class MSVBorradoTrabajosValidator extends MSVExcelValidatorAbstract {
 	@Autowired
 	private MSVBusinessValidationRunner validationRunner;
 	
-	@Autowired
-	private ApiProxyFactory proxyFactory;
+//	@Autowired
+//	private ApiProxyFactory proxyFactory;
 	
 	@Autowired
 	private ParticularValidatorApi particularValidator;
@@ -98,15 +99,15 @@ public class MSVBorradoTrabajosValidator extends MSVExcelValidatorAbstract {
 		if (Boolean.FALSE.equals(dtoValidacionContenido.getFicheroTieneErrores())) {
 			Map<String, List<Integer>> mapaErrores = new HashMap<String, List<Integer>>();
 			mapaErrores.put(TRABAJO_NO_EXISTE, isWorkNotExistsRows(exc));
-			mapaErrores.put(TRAMITE_TRABAJO_NO_EXISTE, existeTramiteTrabajo(exc));
-			mapaErrores.put(TRABAJO_SIN_TAREA, hayTareasEnTrabajo(exc));
+			//mapaErrores.put(TRAMITE_TRABAJO_NO_EXISTE, existeTramiteTrabajo(exc));
+			//mapaErrores.put(TRABAJO_SIN_TAREA, hayTareasEnTrabajo(exc));
 			mapaErrores.put(COLUMNA_CON_CODIGO_REPETIDO, hayCodigosRepetidos(exc));
-			
+			mapaErrores.put(COL_A_B_INCORRECTA, anularBorrarIncorrecto(exc));
 			if (Boolean.FALSE.equals(mapaErrores.get(TRABAJO_NO_EXISTE).isEmpty())
-					|| Boolean.FALSE.equals(mapaErrores.get(TRAMITE_TRABAJO_NO_EXISTE).isEmpty())
-					|| Boolean.FALSE.equals(mapaErrores.get(TRABAJO_SIN_TAREA).isEmpty())
+//					|| Boolean.FALSE.equals(mapaErrores.get(TRAMITE_TRABAJO_NO_EXISTE).isEmpty())
+//					|| Boolean.FALSE.equals(mapaErrores.get(TRABAJO_SIN_TAREA).isEmpty())
 					|| Boolean.FALSE.equals(mapaErrores.get(COLUMNA_CON_CODIGO_REPETIDO).isEmpty())
-					) {
+					|| Boolean.FALSE.equals(mapaErrores.get(COL_A_B_INCORRECTA).isEmpty())) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
@@ -170,16 +171,17 @@ public class MSVBorradoTrabajosValidator extends MSVExcelValidatorAbstract {
                     listaFilas.add(i);
                 }
             }
-            } catch (IllegalArgumentException e) {
-                listaFilas.add(0);
-                logger.error(e);
-            } catch (IOException e) {
-                listaFilas.add(0);
-                logger.error(e);
-            }
+        } catch (IllegalArgumentException e) {
+            listaFilas.add(0);
+            logger.error(e);
+        } catch (IOException e) {
+            listaFilas.add(0);
+            logger.error(e);
+        }
         return listaFilas;
     }
-	
+    
+	/*
 	private List<Integer> existeTramiteTrabajo(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
@@ -227,6 +229,7 @@ public class MSVBorradoTrabajosValidator extends MSVExcelValidatorAbstract {
 			}
 		return listaFilas;
 	}
+	*/
 	
 	private List<Integer> hayCodigosRepetidos(MSVHojaExcel exc){
         List<Integer> listaFilas = new ArrayList<Integer>();
@@ -246,15 +249,39 @@ public class MSVBorradoTrabajosValidator extends MSVExcelValidatorAbstract {
                     listaFilas.add(i);
                 }
             }
-            } catch (IllegalArgumentException e) {
-                listaFilas.add(0);
-                logger.error(e);
-            } catch (IOException e) {
-                listaFilas.add(0);
-                logger.error(e);
-            }
+        } catch (IllegalArgumentException e) {
+            listaFilas.add(0);
+            logger.error(e);
+        } catch (IOException e) {
+            listaFilas.add(0);
+            logger.error(e);
+        }
         return listaFilas;
     }
 
+	private List<Integer> anularBorrarIncorrecto(MSVHojaExcel exc){
+        List<Integer> listaFilas = new ArrayList<Integer>();
+        try{
+            for(int i=1; i<this.numFilasHoja;i++){
+                try {
+                	String valor = exc.dameCelda(i, COL_ANULAR_BORRAR);
+                	if(!"B".equals(valor) && 
+                			!"A".equals(valor) &&
+                			!"b".equals(valor) && 
+                			!"a".equals(valor)) {
+                		listaFilas.add(i);
+                	}
+                } catch (ParseException e) {
+                    listaFilas.add(i);
+                } catch (IOException e) {
+                	listaFilas.add(i);
+				}
+            }
+        } catch (IllegalArgumentException e) {
+            listaFilas.add(0);
+            logger.error(e);
+        }
+        return listaFilas;
+    }
 	
 }

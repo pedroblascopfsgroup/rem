@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Carles Molins
---## FECHA_CREACION=20200605
+--## FECHA_CREACION=20200609
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-7475
+--## INCIDENCIA_LINK=REMVIP-7493
 --## PRODUCTO=NO
 --##
 --## Finalidad:
@@ -28,7 +28,7 @@ DECLARE
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_USUARIOMODIFICAR VARCHAR2(25 CHAR):= 'REMVIP-7475'; -- Configuracion Esquema
+    V_USUARIOMODIFICAR VARCHAR2(25 CHAR):= 'REMVIP-7493'; -- Configuracion Esquema
     V_COUNT NUMBER(16):= 0;
 
 BEGIN
@@ -36,8 +36,8 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INICIO]');
 				    
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA
-				SET SPS_COMBO_OTRO = 1,
-				    SPS_OTRO = ''Vigencia del contrato:La establecida en la Ley 29/1994 de Arrendamientos Urbanos (LAU), la renta se actualizará conforme al IPC,gastos de comunidad e IBI incluidos, fianza: mínima establecida legalmente y tasas municipales excluidas en el precio de renta'',
+				SET SPS_COMBO_OTRO = 0,
+				    SPS_OTRO = NULL,
 				    USUARIOMODIFICAR = '''||V_USUARIOMODIFICAR||''',
 				    FECHAMODIFICAR = SYSDATE
 				WHERE ACT_ID IN (
@@ -1045,8 +1045,8 @@ BEGIN
 	V_COUNT := SQL%ROWCOUNT;
 	
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA
-				SET SPS_COMBO_OTRO = 1,
-				    SPS_OTRO = ''Vigencia del contrato:La establecida en la Ley 29/1994 de Arrendamientos Urbanos (LAU), la renta se actualizará conforme al IPC,gastos de comunidad e IBI incluidos, fianza: mínima establecida legalmente y tasas municipales excluidas en el precio de renta'',
+				SET SPS_COMBO_OTRO = 0,
+				    SPS_OTRO = NULL,
 				    USUARIOMODIFICAR = '''||V_USUARIOMODIFICAR||''',
 				    FECHAMODIFICAR = SYSDATE
 				WHERE ACT_ID IN (

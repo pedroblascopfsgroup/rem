@@ -102,5 +102,10 @@ Ext.define('HreRem.view.common.ComboBoxFieldBase', {
     	// Aqui configuraciones únicas para el CheckBoxFieldBase
    		me.initFieldBase();
    		me.callParent();
+    },
+    
+    isDirty : function() {
+        var me = this;
+        return !me.hidden && !me.disabled && !me.isEqual(me.getValue(), me.originalValue);
     }
 });     

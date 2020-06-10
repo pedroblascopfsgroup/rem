@@ -54,7 +54,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         IF V_NUM_TABLAS = 1 THEN
        	-- Si existe se actualiza.
-        V_MSQL :=   'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' 
+        V_MSQL :=   'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' 
                      SET DD_EQG_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''',
 		     DD_EQG_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(2))||''',
 		     USUARIOMODIFICAR = ''REMVIP-7508'',

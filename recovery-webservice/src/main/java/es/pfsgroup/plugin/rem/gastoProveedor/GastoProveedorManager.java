@@ -837,6 +837,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			Filter filtroSuplidos = genericDao.createFilter(FilterType.EQUALS,"suplidosVinculados.codigo", DDSinSiNo.CODIGO_SI);				
 			GastoProveedor gastoPrincipal = genericDao.get(GastoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "referenciaEmisor", dto.getFacturaPrincipalSuplido()), filtroSuplidos);
 			
+			if(esGastoAutorizado(gastoPrincipal)) {
+				throw new JsonViewerException("No se puede añadir como suplido al gasto "+gastoPrincipal.getNumGastoHaya()+ ", ya que este se encuentra autorizado.");
+			}
+			
 			gastoSuplido.setGastoProveedorPadre(gastoPrincipal);
 			genericDao.save(GastoSuplido.class, gastoSuplido);
 			
@@ -855,7 +859,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		return true;
 	}
-	
+
 	private void updateEjercicio(GastoProveedor gasto) {
 		
 		Filter filtroGIC = genericDao.createFilter(FilterType.EQUALS, "GPV_ID", gasto.getId());
@@ -3998,5 +4002,15 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		GastoProveedor gasto = genericDao.get(GastoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", idGasto));
 		
 		return updaterStateApi.validarAutorizacionSuplido(gasto);
+	}
+	
+	private Boolean esGastoAutorizado(GastoProveedor gasto) {
+		
+		if(gasto != null && gasto.getEstadoGasto() != null) {
+			return DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo()) || DDEstadoGasto.AUTORIZADO_PROPIETARIO.equals(gasto.getEstadoGasto().getCodigo())
+					|| DDEstadoGasto.CONTABILIZADO.equals(gasto.getEstadoGasto().getCodigo()) || DDEstadoGasto.PAGADO.equals(gasto.getEstadoGasto().getCodigo());
+		}
+		
+		return false;
 	}
 }

@@ -139,6 +139,10 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 	@Column(name = "SPS_COMBO_OTRO")
 	private Integer comboOtro = 0;
 	
+	@Column(name = "SPS_CON_TITULO")
+	private Integer spsConTitulo;
+	
+
 	@Version   
 	private Long version;
 
@@ -146,6 +150,13 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 	private Auditoria auditoria;
 	
 	
+	public Integer getSpsConTitulo() {
+		return spsConTitulo;
+	}
+	
+	public void setSpsConTitulo(Integer spsConTitulo) {
+		this.spsConTitulo = spsConTitulo;
+	}
 	
 
 	public Long getId() {

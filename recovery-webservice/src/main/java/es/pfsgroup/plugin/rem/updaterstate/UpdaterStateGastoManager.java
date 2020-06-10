@@ -54,6 +54,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	private static final String VALIDACION_TIPO_SUBTIPO = "msg.validacion.gasto.tipo.subtipo";
 	private static final String VALIDACION_SUPLIDOS_NIF_EMISOR_CUENTA = "msg.validacion.gasto.suplidos.nif.emisor.cuenta";
 	private static final String VALIDACION_SUPLIDOS_NIF_ESTADO_GASTO = "msg.validacion.gasto.suplidos.nif.estado.gasto";
+	private static final String VALIDACION_SUPLIDOS_ABONO_CUENTA = "msg.validacion.gasto.suplidos.abono.cuenta";
 	
 	private static final String COD_DESTINATARIO_HAYA = "02";
 
@@ -603,8 +604,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 		
 		String error = null;
 		
-		if(((gasto.getSuplidosVinculados() != null && DDSinSiNo.CODIGO_NO.equals(gasto.getSuplidosVinculados().getCodigo())) || gasto.getSuplidosVinculados() == null)
-				&& gasto.getNumeroFacturaPrincipal() != null) {
+		if(isGastoSuplido(gasto)) {
 			
 			GastoSuplido gastoSuplido = genericDao.get(GastoSuplido.class, genericDao.createFilter(FilterType.EQUALS, "gastoProveedorSuplido", gasto));
 			GastoProveedor gastoPrincipal = null;
@@ -618,15 +618,59 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			if(detalleGasto != null && gastoPrincipal != null && gastoPrincipal.getProveedor() != null
 					&& ((detalleGasto.getNifTitularCuentaAbonar() != null &&   !detalleGasto.getNifTitularCuentaAbonar().equals(gastoPrincipal.getProveedor().getDocIdentificativo()))
 					|| (gastoPrincipal.getProveedor() == null || detalleGasto == null))) {
-				error = messageServices.getMessage(VALIDACION_SUPLIDOS_NIF_EMISOR_CUENTA);
+				if(error == null) {
+					error = "";
+				}
+				error += "- " + messageServices.getMessage(VALIDACION_SUPLIDOS_NIF_EMISOR_CUENTA) + "<br/>";
 			}
 			
 			if(gastoPrincipal != null && gastoPrincipal.getEstadoGasto() != null
 					&& !DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(gastoPrincipal.getEstadoGasto().getCodigo())) {
-				error = messageServices.getMessage(VALIDACION_SUPLIDOS_NIF_ESTADO_GASTO);
+				if(error == null) {
+					error = "";
+				}
+				error += "- " + messageServices.getMessage(VALIDACION_SUPLIDOS_NIF_ESTADO_GASTO) + "<br/>";
 			}
 			
 		}
+		return error;
+		
+	}
+	
+	@Override
+	public Boolean isGastoSuplido(GastoProveedor gasto) {
+		if(((gasto.getSuplidosVinculados() != null && DDSinSiNo.CODIGO_NO.equals(gasto.getSuplidosVinculados().getCodigo())) || gasto.getSuplidosVinculados() == null)
+				&& gasto.getNumeroFacturaPrincipal() != null) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public String validarDatosPagoGastoPrincipal(GastoProveedor gasto) {
+		
+		String error = null;
+			
+		GastoSuplido gastoSuplido = genericDao.get(GastoSuplido.class,
+				genericDao.createFilter(FilterType.EQUALS, "gastoProveedorSuplido", gasto));
+		GastoProveedor gastoPrincipal = null;
+
+		if (gastoSuplido != null) {
+			gastoPrincipal = gastoSuplido.getGastoProveedorPadre();
+		}
+		
+		if(gastoPrincipal != null) {
+			GastoDetalleEconomico detalleGasto = genericDao.get(GastoDetalleEconomico.class,
+					genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gastoPrincipal.getId()));
+			
+			if(detalleGasto == null || detalleGasto.getAbonoCuenta() == null ||
+					detalleGasto.getAbonoCuenta() == 0)  {
+				error = messageServices.getMessage(VALIDACION_SUPLIDOS_ABONO_CUENTA);
+			}			
+			
+		}
+
 		return error;
 		
 	}

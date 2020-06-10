@@ -154,7 +154,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		ActivoLoteComercial loteComercial = this.obtenerLoteComercial(tareaActivo);
 		EXTDDTipoGestor tipoGestor = null;
 		ExpedienteComercial expediente = null;
-		Boolean usaGestorController = usaGestorController(tareaActivo);
+//		Boolean usaGestorController = usaGestorController(tareaActivo);
 		Boolean usaGestorCierreVenta = usaGestorCierreVenta(tareaActivo);
 
 		if(this.isTrabajoDeActivoOrLoteRestEntidad01(tareaActivo)) {
@@ -179,7 +179,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		}
 		
 		if((CODIGO_T013_CIERRE_ECONOMICO.equals(codigoTarea)
-				|| CODIGO_T017_CIERRE_ECONOMICO.equals(codigoTarea)) && usaGestorController) {
+				|| CODIGO_T017_CIERRE_ECONOMICO.equals(codigoTarea)) /*&& usaGestorController*/) {
 			
 			Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_CONTROLLER);
 			
@@ -1130,13 +1130,13 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	/*
 	 * Comprueba si reune las condiciones para usar el Gestor Controller en Cierre económico
 	 */
-	public Boolean usaGestorController(TareaActivo tareaActivo) {
+/*	public Boolean usaGestorController(TareaActivo tareaActivo) {
 		return isActivoOmega(tareaActivo) || isActivoBankia(tareaActivo) || isActivoSareb(tareaActivo)
 				|| isTrabajoDeActivoOrLoteRestEntidad01(tareaActivo) || isActivoThirdParties(tareaActivo)
 				|| isActivoArrow(tareaActivo) || isActivoRemaining(tareaActivo) 
 				|| isFinanciero(tareaActivo.getActivo());
 	}
-	
+*/
 	/*
 	 * Comprueba si reune las condiciones para usar el Gestor Controller en Cierre económico
 	 */

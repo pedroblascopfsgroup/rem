@@ -2859,8 +2859,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		if (validarAutorizacion) {
 			String error = updaterStateApi.validarCamposMinimos(gasto);
 			
-			if(error == null) {
-				error = updaterStateApi.validarAutorizacionSuplido(gasto);
+			if(error == null && updaterStateApi.isGastoSuplido(gasto)) {
+				error = updaterStateApi.validarDatosPagoGastoPrincipal(gasto);
 			}
 			
 			if (!Checks.esNulo(error)) {
@@ -3990,5 +3990,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 		}
 		
+	}
+	
+	@Override
+	public String validarAutorizacionSuplido(long idGasto) {
+		
+		GastoProveedor gasto = genericDao.get(GastoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", idGasto));
+		
+		return updaterStateApi.validarAutorizacionSuplido(gasto);
 	}
 }

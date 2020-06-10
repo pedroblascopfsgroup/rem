@@ -795,7 +795,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 	},
 	
-	onCompradoresListDobleClick: function(gridView, record) {
+	onCompradoresListDobleClick: function(gridView, record) { 
 		var me = this,
 			codigoEstado = me.getViewModel().get('expediente.codigoEstado'),
 			tipoExpedienteCodigo = me.getViewModel().get('expediente.tipoExpedienteCodigo'),
@@ -804,8 +804,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			viewPortHeight = Ext.Element.getViewportHeight(),
 			tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'],
 			tipoExpedienteVenta = CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'];
+			var editarCompradores;
 
-		if((codigoEstado !== CONST.ESTADOS_EXPEDIENTE['VENDIDO'] && tipoExpedienteCodigo === tipoExpedienteVenta) ||  (tipoExpedienteCodigo === tipoExpedienteAlquiler && Ext.isEmpty(fechaPosicionamiento))) {
+		if (codigoEstado === CONST.ESTADOS_EXPEDIENTE['VENDIDO']) {
+			editarCompradores = !me.getViewModel().get('expediente').data.tieneReserva;
+		} else {
+			editarCompradores = true;
+		}
+
+		if(( editarCompradores && tipoExpedienteCodigo === tipoExpedienteVenta) ||  (tipoExpedienteCodigo === tipoExpedienteAlquiler && Ext.isEmpty(fechaPosicionamiento))) {
 			var idCliente = record.get('id'),
 				expediente= me.getViewModel().get('expediente'),
 				storeProblemasVenta = me.getViewModel().get('storeProblemasVenta'),

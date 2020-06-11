@@ -4915,47 +4915,52 @@ comprobarFormatoModificar: function() {
 		var user = $AU.getUser().userId;
 		var comentario = view.items.items[0].items.items[0].value;
 		var expediente = view.expediente;
-		me.getView().mask(HreRem.i18n("msg.mask.espere"));
 		
-		Ext.Ajax.request({
-			url: url,
-		    params:  {
-		    	expedienteId : expediente,
-		    	comentario: comentario,
-		    	usuId: user
-		    },
-		    
-		    success: function(response, opts) {
-		    	
-		    	var data = {};
-		    	try {
-		    		data = Ext.decode(response.responseText);
-		    	}  catch (e){ 
-		    		console.log( e );
-		    	}
-               
-		    	if(data.success === "true") {
-		    		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-		    		view.viewChained.habilitarGrid();
-		    		me.onClickBotonCancelarAuditoria(btn);
-		    	}else {
-		    		if(data.errorUvem == "true"){
-		    			me.fireEvent("errorToast", data.msg);		
-		    		}
-		    		else{
-		    			Utils.defaultRequestFailure(response, opts);
-		    		}
-		    	}
-		     },
+		if ( comentario.length > 0 ) {
+			me.getView().mask(HreRem.i18n("msg.mask.espere"));
+			
+			Ext.Ajax.request({
+				url: url,
+			    params:  {
+			    	expedienteId : expediente,
+			    	comentario: comentario,
+			    	usuId: user
+			    },
+			    
+			    success: function(response, opts) {
+			    	
+			    	var data = {};
+			    	try {
+			    		data = Ext.decode(response.responseText);
+			    	}  catch (e){ 
+			    		console.log( e );
+			    	}
+	               
+			    	if(data.success === "true") {
+			    		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			    		view.viewChained.habilitarGrid();
+			    		me.onClickBotonCancelarAuditoria(btn);
+			    	}else {
+			    		if(data.errorUvem == "true"){
+			    			me.fireEvent("errorToast", data.msg);		
+			    		}
+			    		else{
+			    			Utils.defaultRequestFailure(response, opts);
+			    		}
+			    	}
+			     },
 
-		     failure: function(response, opts) {
-		    	 if(data.errorUvem == "true"){
-		    		 me.fireEvent("errorToast", data.msg);		
-		    	 } else {
-		    		 Utils.defaultRequestFailure(response, opts);
-		    	 }
-		     }
-		});		
+			     failure: function(response, opts) {
+			    	 if(data.errorUvem == "true"){
+			    		 me.fireEvent("errorToast", data.msg);		
+			    	 } else {
+			    		 Utils.defaultRequestFailure(response, opts);
+			    	 }
+			     }
+			});	
+		} else {
+			 me.fireEvent("errorToast", "El comentario no puede estar vac&iacute;o");
+		}
 	},
 	checkVisibilidadBotonAuditoriaDesbloqueo: function( viewModel ) {
 		var me = this;

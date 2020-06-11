@@ -651,18 +651,10 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	public String validarDatosPagoGastoPrincipal(GastoProveedor gasto) {
 		
 		String error = null;
-			
-		GastoSuplido gastoSuplido = genericDao.get(GastoSuplido.class,
-				genericDao.createFilter(FilterType.EQUALS, "gastoProveedorSuplido", gasto));
-		GastoProveedor gastoPrincipal = null;
-
-		if (gastoSuplido != null) {
-			gastoPrincipal = gastoSuplido.getGastoProveedorPadre();
-		}
 		
-		if(gastoPrincipal != null) {
+		if(gasto != null && isGastoSuplido(gasto)) {
 			GastoDetalleEconomico detalleGasto = genericDao.get(GastoDetalleEconomico.class,
-					genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gastoPrincipal.getId()));
+					genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId()));
 			
 			if(detalleGasto == null || detalleGasto.getAbonoCuenta() == null ||
 					detalleGasto.getAbonoCuenta() == 0)  {

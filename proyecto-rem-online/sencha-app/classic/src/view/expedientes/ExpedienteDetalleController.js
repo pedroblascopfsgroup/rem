@@ -4964,6 +4964,7 @@ comprobarFormatoModificar: function() {
 		var btn = me.lookupReference("botonAuditoriaDesbloqueo");
 		var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION'])
 		|| $AU.userIsRol(CONST.PERFILES['PERFGCONTROLLER']);
+		var listadoHonorarios = me.lookupReference("listadohoronarios");
 		if ( usuariosValidos ){
 			Ext.Ajax.request({
 				url: url,
@@ -4975,6 +4976,8 @@ comprobarFormatoModificar: function() {
 			    	try {
 			    		data = Ext.decode(response.responseText);
 				    	if(data.success === "true" && data.data === "true") {
+				    		listadoHonorarios.setDisabledAddBtn(true);
+				    		listadoHonorarios.setDisabledDeleteBtn(true);
 				    		btn.setVisible(true)
 				    	}
 			    	}  catch (e){ 

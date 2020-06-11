@@ -4969,7 +4969,7 @@ comprobarFormatoModificar: function() {
 				url: url,
 				method: 'GET',
 			    params:  {
-			    	expedienteId : expedienteId,
+			    	expedienteId : expedienteId
 			    },
 			    success: function(response, opts) {
 			    	try {

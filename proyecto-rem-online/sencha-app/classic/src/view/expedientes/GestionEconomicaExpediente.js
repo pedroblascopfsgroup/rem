@@ -11,7 +11,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
     		var me = this;
     		me.lookupController().checkVisibilidadBotonAuditoriaDesbloqueo(me.viewWithModel.getViewModel("expedientedetalle"));
     	}
-    }
+    },
     initComponent: function () {
         var me = this;
         var isGridDesbloqueado = false;
@@ -378,7 +378,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 		listaOrigenLead.getStore().load();
 		listaAuditoriaDesbloqueo.getStore().load();
 		listadoHonorarios.setDisabledAddBtn(!me.edicionHabilitada(me));
-		me.lookupController().checkVisibilidadBotonAuditoriaDesbloqueo(me.viewWithModel.getViewModel("expedientedetalle"))
+		me.lookupController().checkVisibilidadBotonAuditoriaDesbloqueo(me.viewWithModel.getViewModel("expedientedetalle"));
 		
     }
 });

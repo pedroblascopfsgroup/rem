@@ -6,10 +6,15 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
     disableValidation: true,
     reference: 'gestionEconomicaExpediente',
     scrollable	: 'y',
-    
-
+    listeners: {
+    	show: function () {
+    		var me = this;
+    		me.lookupController().checkVisibilidadBotonAuditoriaDesbloqueo(me.viewWithModel.getViewModel("expedientedetalle"));
+    	}
+    }
     initComponent: function () {
         var me = this;
+        var isGridDesbloqueado = false;
         var codigoTipoProveedorFilter= null;
         me.codigoTipoProveedorFilter=null;
         var storeProveedores=null;
@@ -314,6 +319,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
             }, {
 				xtype: 'button',
 				text: HreRem.i18n('btn.editar.desbloqueo.honorarios'),
+				reference:"botonAuditoriaDesbloqueo" ,
 				handler: function () {
 						var me = this;
 						me.lookupController().editarAuditoriaDesbloqueo(me.up());
@@ -351,13 +357,14 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
     	var userHasFunction = $AU.userHasFunction(['EDITAR_TAB_GESTION_ECONOMICA_EXPEDIENTES']);
     	var isFinalizadoCierreEconomico = me.up('expedientedetallemain').getViewModel().get('expediente.finalizadoCierreEconomico');
     	
-		return  userHasFunction && !isFinalizadoCierreEconomico ; 
+		return  (userHasFunction && !isFinalizadoCierreEconomico) || me.isGridDesbloqueado; 
     },
     habilitarGrid: function() {
     	var me = this;
     	var gridHonorarios = me.down("[reference=listadohoronarios]");
     	gridHonorarios.setDisabledAddBtn(false);
     	gridHonorarios.setDisabledDeleteBtn(false);
+    	me.isGridDesbloqueado = true;
     },
     funcionRecargar: function() {
     	var me = this; 
@@ -365,12 +372,13 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 		var listadoHonorarios = me.down("[reference=listadohoronarios]");
 		var listaOrigenLead = me.down("[reference=listaOrigenLead]");
 		var listaAuditoriaDesbloqueo = me.down("[reference=listaAuditoriaDesbloqueo]");
-		
+		var botonAuditoriaDesbloqueo = me.down("[reference=botonAuditoriaDesbloqueo]");
 		// FIXME Â¿Â¿Deberiamos cargar la primera pÃ¡gina??
 		listadoHonorarios.getStore().load();	
 		listaOrigenLead.getStore().load();
 		listaAuditoriaDesbloqueo.getStore().load();
-
-		listadoHonorarios.setDisabledAddBtn(!me.edicionHabilitada(me));	
+		listadoHonorarios.setDisabledAddBtn(!me.edicionHabilitada(me));
+		me.lookupController().checkVisibilidadBotonAuditoriaDesbloqueo(me.viewWithModel.getViewModel("expedientedetalle"))
+		
     }
 });

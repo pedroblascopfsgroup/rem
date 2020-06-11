@@ -2330,4 +2330,18 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getCierreEconomicoFinalizado(ModelMap model, Long expedienteId ,HttpServletRequest request) {
+		try {
+			Boolean isCierreEconomicoFinalizado = expedienteComercialApi.finalizadoCierreEconomico(expedienteId);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+			model.put(RESPONSE_DATA_KEY, isCierreEconomicoFinalizado);
+		}catch(Exception e){
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController (getCierreEconomicoFinalizado)", e);
+		}
+		return createModelAndViewJson(model);
+	}
+	
 }

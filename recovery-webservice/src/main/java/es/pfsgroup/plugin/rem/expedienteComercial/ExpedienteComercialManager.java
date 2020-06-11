@@ -10772,6 +10772,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		return finalizada;
 	}
+	
+	@Override
+	public boolean finalizadoCierreEconomico(Long expedienteId) {
+		Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "id", expedienteId);
+		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtroExpediente);
+		if ( expediente != null ) {
+			return this.finalizadoCierreEconomico(expediente);
+		}
+		return false;
+
+	}
+
 
 	private boolean compruebaCompradores(ExpedienteComercial expedienteComercial){
 		if (!Checks.esNulo(expedienteComercial)) {

@@ -4955,8 +4955,36 @@ comprobarFormatoModificar: function() {
 		    		 Utils.defaultRequestFailure(response, opts);
 		    	 }
 		     }
-		});	
-		
+		});		
+	},
+	checkVisibilidadBotonAuditoriaDesbloqueo: function( viewModel ) {
+		var me = this;
+		var url = $AC.getRemoteUrl('expedientecomercial/getCierreEconomicoFinalizado');
+		var expedienteId = viewModel.get('expediente.id')
+		var btn = me.lookupReference("botonAuditoriaDesbloqueo");
+		var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION'])
+		|| $AU.userIsRol(CONST.PERFILES['PERFGCONTROLLER']);
+		if ( usuariosValidos ){
+			Ext.Ajax.request({
+				url: url,
+				method: 'GET',
+			    params:  {
+			    	expedienteId : expedienteId,
+			    },
+			    success: function(response, opts) {
+			    	try {
+			    		data = Ext.decode(response.responseText);
+				    	if(data.success === "true" && data.data === "true") {
+				    		btn.setVisible(true)
+				    	}
+			    	}  catch (e){ 
+			    		console.log( e );
+			    	}
+			     },
+			     failure: function(response, opts) {
+		    		 Utils.defaultRequestFailure(response, opts);
+			     }
+			});	
+		}
 	}
-	
 });

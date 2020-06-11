@@ -1319,4 +1319,6 @@ public interface ExpedienteComercialApi {
 	
 	boolean cumpleCondicionesCrearHonorario(Long idEntidad);
 
+	boolean finalizadoCierreEconomico(Long expedienteId);
+
 }

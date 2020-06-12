@@ -709,7 +709,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 		}
 		
-		if(DDSinSiNo.CODIGO_SI.equals(gastoProveedor.getSuplidosVinculados().getCodigo()) && 
+		if(gastoProveedor != null && gastoProveedor.getSuplidosVinculados() != null &&
+				DDSinSiNo.CODIGO_SI.equals(gastoProveedor.getSuplidosVinculados().getCodigo()) && 
 				(dto.getReferenciaEmisor() != null && !dto.getReferenciaEmisor().equals(gastoProveedor.getReferenciaEmisor()))) {
 			actualizaSuplidos = true;
 		}
@@ -726,7 +727,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				Filter filtroCodigoEmisorRem = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", dto.getCodigoProveedorRem());
 				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filtroCodigoEmisorRem);
 				gastoProveedor.setProveedor(proveedor);
-				if(DDSinSiNo.CODIGO_SI.equals(gastoProveedor.getSuplidosVinculados().getCodigo())) {
+				if(gastoProveedor != null && gastoProveedor.getSuplidosVinculados() != null &&
+						DDSinSiNo.CODIGO_SI.equals(gastoProveedor.getSuplidosVinculados().getCodigo())) {
 					actualizaSuplidos = true;
 				}
 			} else {

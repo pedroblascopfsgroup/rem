@@ -85,6 +85,8 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 										xtype: 'textfieldbase',
 										fieldLabel:  HreRem.i18n('fieldlabel.gasto.referencia.emisor'),
 						                bind:		'{gasto.referenciaEmisor}',
+						               	reference: 'referenciaEmisor',
+						               	name: 'referenciaEmisor',
 						                allowBlank: false
 									},
 									{ 
@@ -153,6 +155,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 											xtype: 'textfieldbase',
 											fieldLabel: HreRem.i18n('fieldlabel.gasto.nif.emisor'),		
 											reference: 'buscadorNifEmisorField',
+						               		name: 'buscadorNifEmisor',
 											bind: {
 												value:'{gasto.buscadorNifEmisor}',
 												readOnly: '{emisorSoloLectura}'

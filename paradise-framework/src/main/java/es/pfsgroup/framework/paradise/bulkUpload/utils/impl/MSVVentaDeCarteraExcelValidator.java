@@ -662,11 +662,11 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract {
 
 	private List<Integer> esCampoNullByRows(MSVHojaExcel exc, Integer campo) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		Double precioVenta;
+		String celda;
 		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
 			try {
-				precioVenta = Double.valueOf(exc.dameCelda(i, campo));
-				if (Checks.esNulo(precioVenta)) {
+				celda = COL_NUM.PRECIO_VENTA == campo ? Double.valueOf(exc.dameCelda(i, campo)).toString() : exc.dameCelda(i, campo);
+				if (Checks.esNulo(celda)) {
 					listaFilas.add(i);
 				}
 			} catch (Exception e) {

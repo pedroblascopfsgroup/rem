@@ -17,9 +17,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     	 comprobacionCreacionModificacionCompradores: function(get){
     		if(get('esCarteraBankia')){
 				if(get('esExpedienteSinReserva')){
-					if(get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['APROBADO'] || get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['FIRMADO'] || get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['ANULADO'] || get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['VENDIDO']){
-						return false;
-					}
+				    if($AU.userHasFunction(['EDITAR_TAB_COMPRADORES_EXPEDIENTES'])){
+				        if(get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['FIRMADO'] || get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['ANULADO'] || get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['VENDIDO']){
+				            return false;
+				        }
+				    }else{
+                        if(get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['APROBADO'] || get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['FIRMADO'] || get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['ANULADO'] || get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['VENDIDO']){
+                            return false;
+                        }
+				    }
 				}
 				else{
 					if(get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['RESERVADO'] || get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['FIRMADO'] || get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['ANULADO'] || get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['VENDIDO']){

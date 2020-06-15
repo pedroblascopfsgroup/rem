@@ -797,19 +797,23 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	onCompradoresListDobleClick: function(gridView, record) { 
 		var me = this,
-			codigoEstado = me.getViewModel().get('expediente.codigoEstado'),
-			tipoExpedienteCodigo = me.getViewModel().get('expediente.tipoExpedienteCodigo'),
-			fechaPosicionamiento = me.getViewModel().get('expediente.fechaPosicionamiento'),
-			viewPortWidth = Ext.Element.getViewportWidth(),
-			viewPortHeight = Ext.Element.getViewportHeight(),
-			tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'],
-			tipoExpedienteVenta = CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'];
-			var editarCompradores;
+        codigoEstado = me.getViewModel().get('expediente.codigoEstado'),
+        tipoExpedienteCodigo = me.getViewModel().get('expediente.tipoExpedienteCodigo'),
+        fechaPosicionamiento = me.getViewModel().get('expediente.fechaPosicionamiento'),
+        viewPortWidth = Ext.Element.getViewportWidth(),
+        viewPortHeight = Ext.Element.getViewportHeight(),
+        tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'],
+        tipoExpedienteVenta = CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'];
+        var viewModel = me.getViewModel();
 
-		if (codigoEstado === CONST.ESTADOS_EXPEDIENTE['VENDIDO']) {
-			editarCompradores = !me.getViewModel().get('expediente').data.tieneReserva;
-		} else {
+
+        var editarCompradores;
+
+		if (codigoEstado != CONST.ESTADOS_EXPEDIENTE['VENDIDO']
+		        || $AU.userHasFunction(['EDITAR_TAB_COMPRADORES_EXPEDIENTES'])) {
 			editarCompradores = true;
+		} else {
+			editarCompradores = !me.getViewModel().get('expediente').data.tieneReserva;
 		}
 
 		if(( editarCompradores && tipoExpedienteCodigo === tipoExpedienteVenta) ||  (tipoExpedienteCodigo === tipoExpedienteAlquiler && Ext.isEmpty(fechaPosicionamiento))) {
@@ -823,7 +827,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				wizardTitle = HreRem.i18n('title.windows.datos.inquilino');
 			}
 
-			Ext.create('HreRem.view.common.WizardBase',
+			var wizard = Ext.create('HreRem.view.common.WizardBase',
 				{
 					slides: [
 						'slidedatoscomprador',
@@ -845,6 +849,31 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		if (tipoExpedienteCodigo === tipoExpedienteAlquiler && !Ext.isEmpty(fechaPosicionamiento)) {
 			me.fireEvent('errorToast', HreRem.i18n('msg.warning.no.se.puede.editar.inquilino'));
 		}
+
+        var slide = wizard.down("slidedatoscomprador");
+        DatoTipoPersona = slide.lookupReference('tipoPersona');
+        DatoPorcionCompra = slide.lookupReference('porcionCompra');
+        DatoTipoDocumento = slide.lookupReference('tipoDocumento');
+        DatoNumDocumento = slide.lookupReference('numeroDocumento');
+        DatoUrsus = slide.lookupReference('seleccionClienteUrsus');
+        DatoEstadoCivil = slide.lookupReference('estadoCivil');
+        DatoRegimenMatrimonial = slide.lookupReference('regimenMatrimonial');
+        DatoTipoDocConyuge = slide.lookupReference('tipoDocConyuge');
+        DatoNumDocConyuge = slide.lookupReference('numRegConyuge');
+
+        if(viewModel.get('esCarteraBankia') &&
+           ((me.getViewModel().get('expediente').data.tieneReserva && (codigoEstado != CONST.ESTADOS_EXPEDIENTE['EN_TRAMITACION'] && codigoEstado != CONST.ESTADOS_EXPEDIENTE['APROBADO']))
+           || (!me.getViewModel().get('expediente').data.tieneReserva && codigoEstado != CONST.ESTADOS_EXPEDIENTE['EN_TRAMITACION']))){
+                DatoTipoPersona.setDisabled = true;
+                DatoPorcionCompra.setDisabled = true;
+                DatoTipoDocumento.setDisabled = true;
+                DatoNumDocumento.setDisabled = true;
+                DatoUrsus.setDisabled = true;
+                DatoEstadoCivil.setDisabled = true;
+                DatoRegimenMatrimonial.setDisabled = true;
+                DatoTipoDocConyuge.setDisabled = true;
+                DatoNumDocConyuge.setDisabled = true;
+        }
 	}, 
 	
 	esEditableCompradores : function(field){

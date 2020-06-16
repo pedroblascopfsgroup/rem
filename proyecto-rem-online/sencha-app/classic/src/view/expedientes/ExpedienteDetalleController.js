@@ -1460,12 +1460,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	abrirFormularioCrearComprador: function(grid) {
 		var me = this;
 
-		if(me.getViewModel().get('expediente.bloqueado') && !$AU.userIsRol(CONST.PERFILES['HAYASUPER']) && !$AU.userIsRol(CONST.PERFILES['SUPEREDITACOMPRADOR'])) {
+		if(me.getViewModel().get('expediente.bloqueado') && !$AU.userIsRol(CONST.PERFILES['HAYASUPER']) && !$AU.userIsRol(CONST.PERFILES['SUPER_EDITA_COMPRADOR'])) {
 			me.fireEvent('errorToast', HreRem.i18n('msg.warning.expediente.bloqueado'));
 			return;
 		}
 
-		if(CONST.ESTADOS_EXPEDIENTE['VENDIDO'] === me.getViewModel().get('expediente.codigoEstado') && !$AU.userIsRol(CONST.PERFILES['HAYASUPER']) && !$AU.userIsRol(CONST.PERFILES['SUPEREDITACOMPRADOR'])) {
+		if(CONST.ESTADOS_EXPEDIENTE['VENDIDO'] === me.getViewModel().get('expediente.codigoEstado') && !$AU.userIsRol(CONST.PERFILES['HAYASUPER']) && !$AU.userIsRol(CONST.PERFILES['SUPER_EDITA_COMPRADOR'])) {
 			me.fireEvent('errorToast', HreRem.i18n('msg.operacion.ko.expediente.vendido'));
 			return;
 		}

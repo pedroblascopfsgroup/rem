@@ -849,31 +849,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		if (tipoExpedienteCodigo === tipoExpedienteAlquiler && !Ext.isEmpty(fechaPosicionamiento)) {
 			me.fireEvent('errorToast', HreRem.i18n('msg.warning.no.se.puede.editar.inquilino'));
 		}
-
-        var slide = wizard.down("slidedatoscomprador");
-        DatoTipoPersona = slide.lookupReference('tipoPersona');
-        DatoPorcionCompra = slide.lookupReference('porcionCompra');
-        DatoTipoDocumento = slide.lookupReference('tipoDocumento');
-        DatoNumDocumento = slide.lookupReference('numeroDocumento');
-        DatoUrsus = slide.lookupReference('seleccionClienteUrsus');
-        DatoEstadoCivil = slide.lookupReference('estadoCivil');
-        DatoRegimenMatrimonial = slide.lookupReference('regimenMatrimonial');
-        DatoTipoDocConyuge = slide.lookupReference('tipoDocConyuge');
-        DatoNumDocConyuge = slide.lookupReference('numRegConyuge');
-
-        if(viewModel.get('esCarteraBankia') &&
-           ((me.getViewModel().get('expediente').data.tieneReserva && (codigoEstado != CONST.ESTADOS_EXPEDIENTE['EN_TRAMITACION'] && codigoEstado != CONST.ESTADOS_EXPEDIENTE['APROBADO']))
-           || (!me.getViewModel().get('expediente').data.tieneReserva && codigoEstado != CONST.ESTADOS_EXPEDIENTE['EN_TRAMITACION']))){
-                DatoTipoPersona.setDisabled = true;
-                DatoPorcionCompra.setDisabled = true;
-                DatoTipoDocumento.setDisabled = true;
-                DatoNumDocumento.setDisabled = true;
-                DatoUrsus.setDisabled = true;
-                DatoEstadoCivil.setDisabled = true;
-                DatoRegimenMatrimonial.setDisabled = true;
-                DatoTipoDocConyuge.setDisabled = true;
-                DatoNumDocConyuge.setDisabled = true;
-        }
 	}, 
 	
 	esEditableCompradores : function(field){
@@ -1485,12 +1460,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	abrirFormularioCrearComprador: function(grid) {
 		var me = this;
 
-		if(me.getViewModel().get('expediente.bloqueado')) {
+		if(me.getViewModel().get('expediente.bloqueado') && !$AU.userIsRol(CONST.PERFILES['HAYASUPER']) && !$AU.userIsRol(CONST.PERFILES['SUPEREDITACOMPRADOR'])) {
 			me.fireEvent('errorToast', HreRem.i18n('msg.warning.expediente.bloqueado'));
 			return;
 		}
 
-		if(CONST.ESTADOS_EXPEDIENTE['VENDIDO'] === me.getViewModel().get('expediente.codigoEstado')) {
+		if(CONST.ESTADOS_EXPEDIENTE['VENDIDO'] === me.getViewModel().get('expediente.codigoEstado') && !$AU.userIsRol(CONST.PERFILES['HAYASUPER']) && !$AU.userIsRol(CONST.PERFILES['SUPEREDITACOMPRADOR'])) {
 			me.fireEvent('errorToast', HreRem.i18n('msg.operacion.ko.expediente.vendido'));
 			return;
 		}

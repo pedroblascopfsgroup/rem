@@ -106,7 +106,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		
 		var campoTipoPersona = me.lookupReference('tipoPersona'),
 		numeroDocumentoConyuge = me.lookupReference('numRegConyuge'),
-		campoPorcionCompra = me.lookupReference('porcionCompra'),
 		campoTipoDocumentoRte = me.lookupReference('tipoDocumento'),
 		campoNumeroDocumentoRte = me.lookupReference('numeroDocumento'),
 		campoSeleccionClienteUrsus = me.lookupReference('seleccionClienteUrsus'),
@@ -121,7 +120,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 				&& me.esBankia() && (!Ext.isEmpty(campoNumeroUrsus.getValue()) || !Ext.isEmpty(campoNumeroUrsusBh.getValue())) ) {
 
 			campoTipoPersona.disable();
-			campoPorcionCompra.disable();
 			campoTipoDocumentoRte.disable();
 			campoNumeroDocumentoRte.disable();
 			campoSeleccionClienteUrsus.disable();

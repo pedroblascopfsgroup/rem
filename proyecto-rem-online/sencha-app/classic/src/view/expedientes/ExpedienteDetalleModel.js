@@ -17,7 +17,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     	 comprobacionCreacionModificacionCompradores: function(get){
     		if(get('esCarteraBankia')){
 				if(get('esExpedienteSinReserva')){
-				    if($AU.userHasFunction(['EDITAR_TAB_COMPRADORES_EXPEDIENTES'])){
+				    if($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPEREDITACOMPRADOR'])){
 				        if(get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['FIRMADO'] || get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['ANULADO'] || get('expediente.codigoEstado') == CONST.ESTADOS_EXPEDIENTE['VENDIDO']){
 				            return false;
 				        }

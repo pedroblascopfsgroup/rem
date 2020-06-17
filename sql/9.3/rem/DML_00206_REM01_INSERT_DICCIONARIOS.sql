@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alberto Flores
---## FECHA_CREACION=20200615
+--## FECHA_CREACION=20200617
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10391
@@ -37,9 +37,9 @@ DECLARE
 	TYPE T_ARRAY_VAR IS TABLE OF T_VAR;
 	V_VAR T_ARRAY_VAR := T_ARRAY_VAR(
 	-- 			TABLA 							TAG 		CODIGO 		DESCRIPCIÓN
-		T_VAR('DD_ILA_INST_LIB_ARRENDATICIA', 	'ILA',		'SI', 		'Sí'), 
-		T_VAR('DD_ILA_INST_LIB_ARRENDATICIA', 	'ILA',		'NO', 		'No'),
-		T_VAR('DD_ILA_INST_LIB_ARRENDATICIA', 	'ILA',		'NA', 		'No Aplica'),
+		T_VAR('DD_SNA_SI_NO_NA', 				'SNA',		'SI', 		'Sí'), 
+		T_VAR('DD_SNA_SI_NO_NA', 				'SNA',		'NO', 		'No'),
+		T_VAR('DD_SNA_SI_NO_NA', 				'SNA',		'NA', 		'No Aplica'),
 				
 		T_VAR('DD_SII_SIT_INI_INSCRIPCION', 	'SII',		'INS', 		'Inscrita'),
 		T_VAR('DD_SII_SIT_INI_INSCRIPCION', 	'SII',		'PDTE', 	'Pendiente Inscripción'),

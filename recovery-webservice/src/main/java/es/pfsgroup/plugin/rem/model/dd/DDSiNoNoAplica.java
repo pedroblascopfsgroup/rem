@@ -19,7 +19,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de Instancia Libertad Arrendaticia
+ * Modelo que gestiona el diccionario Sí, No, No aplica
  * 
  * SI/Sí
  * NO/No
@@ -29,10 +29,10 @@ import es.capgemini.pfs.diccionarios.Dictionary;
  *
  */
 @Entity
-@Table(name = "DD_ILA_INST_LIB_ARRENDATICIA", schema = "${entity.schema}")
+@Table(name = "DD_SNA_SI_NO_NA", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDInstanciaLibertadArrendaticia implements Auditable, Dictionary {
+public class DDSiNoNoAplica implements Auditable, Dictionary {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -41,18 +41,18 @@ public class DDInstanciaLibertadArrendaticia implements Auditable, Dictionary {
 	public static final String CODIGO_NA ="NA";
 
 	@Id
-	@Column(name = "DD_ILA_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDInstanciaLibertadArrendaticia")
-	@SequenceGenerator(name = "DDInstanciaLibertadArrendaticia", sequenceName = "S_DD_ILA_INST_LIB_ARRENDATICIA")
+	@Column(name = "DD_SNA_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDSiNoNoAplica")
+	@SequenceGenerator(name = "DDSiNoNoAplica", sequenceName = "S_DD_SNA_SI_NO_NA")
 	private Long id;
 
-	@Column(name = "DD_ILA_CODIGO")
+	@Column(name = "DD_SNA_CODIGO")
 	private String codigo;
 
-	@Column(name = "DD_ILA_DESCRIPCION")
+	@Column(name = "DD_SNA_DESCRIPCION")
 	private String descripcion;
 
-	@Column(name = "DD_ILA_DESCRIPCION_LARGA")
+	@Column(name = "DD_SNA_DESCRIPCION_LARGA")
 	private String descripcionLarga;
 
 	@Version

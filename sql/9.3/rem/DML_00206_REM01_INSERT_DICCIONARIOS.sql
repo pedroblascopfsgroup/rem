@@ -58,9 +58,9 @@ DECLARE
 		T_VAR('DD_SIC_SIT_INI_CARGAS', 			'SIC',		'PRE', 		'Título judicial/Preferentes'),
 		T_VAR('DD_SIC_SIT_INI_CARGAS', 			'SIC',		'ANT', 		'Título judicial/Anteriores'),
 				
-		T_VAR('DD_TTI_TIPO_TITULARIDAD', 		'TIT',		'PLD', 		'Pleno dominio'),
-		T_VAR('DD_TTI_TIPO_TITULARIDAD', 		'TIT',		'NPR', 		'Nuda propiedad'),
-		T_VAR('DD_TTI_TIPO_TITULARIDAD', 		'TIT',		'USU', 		'Usufructo'),
+		T_VAR('DD_TTI_TIPO_TITULARIDAD', 		'TTI',		'PLD', 		'Pleno dominio'),
+		T_VAR('DD_TTI_TIPO_TITULARIDAD', 		'TTI',		'NPR', 		'Nuda propiedad'),
+		T_VAR('DD_TTI_TIPO_TITULARIDAD', 		'TTI',		'USU', 		'Usufructo'),
 				
 		T_VAR('DD_AUT_AUTORIZ_TRANSMISION', 	'AUT',		'OBT', 		'Obtenida'),
 		T_VAR('DD_AUT_AUTORIZ_TRANSMISION', 	'AUT',		'PDTE', 	'Pendiente'),

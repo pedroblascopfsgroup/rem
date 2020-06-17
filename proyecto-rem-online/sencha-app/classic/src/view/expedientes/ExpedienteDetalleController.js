@@ -1745,8 +1745,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			var llamada = false;
 
 			if(CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] == tipoExpedienteCodigo) {
-				if(!bloqueado) {
-					if(CONST.ESTADOS_EXPEDIENTE['VENDIDO']!=codigoEstado) {
+				if(!bloqueado || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPER_EDITA_COMPRADOR'])) {
+					if(CONST.ESTADOS_EXPEDIENTE['VENDIDO']!=codigoEstado || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPER_EDITA_COMPRADOR'])) {
 						llamada = true;
 					} else {
 						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.vendido"));

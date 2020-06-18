@@ -21,7 +21,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import es.capgemini.pfs.users.UsuarioManager;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,10 +40,12 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.dao.UsuarioDao;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -53,7 +54,10 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
+import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelManagerApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.impl.MSVProcesoManager;
+import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
+import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
@@ -147,10 +151,12 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
+import es.pfsgroup.plugin.rem.thread.LiberarFicheroTrabajos;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
+import es.pfsgroup.recovery.api.UsuarioApi;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
 import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
 
@@ -285,6 +291,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Autowired
 	UsuarioManager usuarioManager;
+	
+	@Autowired
+	private MSVFicheroDao ficheroDao;
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
 	
 	@Override
 	public String managerName() {
@@ -607,7 +619,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Override
 	@BusinessOperation(overrides = "trabajoManager.create")
-	@Transactional(readOnly = false)
+	//@Transactional(readOnly = false)
 	public Long create(DtoFichaTrabajo dtoTrabajo){
 		/*
 		 * Crear trabajo desde la pantalla de crear trabajos: - Crea un trabajo
@@ -627,11 +639,22 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 
 		if (!Checks.esNulo(dtoTrabajo.getIdProceso())) {
-			List<Trabajo> trabajos = crearTrabajoPorSubidaActivos(dtoTrabajo);
+			MSVDocumentoMasivo document = ficheroDao.findByIdProceso(dtoTrabajo.getIdProceso());
+			MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(document);
+			
+			Integer numFilas;
+			try {
+				numFilas = exc.getNumeroFilasByHoja(0,document.getProcesoMasivo().getTipoOperacion())-1;
+				processAdapter.setStateProcessing(document.getProcesoMasivo().getId(),new Long(numFilas));
+				Usuario usu=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 
-			for (Trabajo trabajoActivo : trabajos) {
-				createTramiteTrabajo(trabajoActivo);
-			}
+				Thread creacionAsincrona = new Thread(new LiberarFicheroTrabajos(usu.getUsername(), dtoTrabajo));
+
+				creacionAsincrona.start();
+				trabajo.setId(-1L);
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}			
 
 		} else {
 			if (dtoTrabajo.getIdActivo() != null) {
@@ -1179,7 +1202,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	}
 
-	private DDEstadoTrabajo getEstadoNuevoTrabajo(DtoFichaTrabajo dtoTrabajo, Activo activo) {
+	public DDEstadoTrabajo getEstadoNuevoTrabajo(DtoFichaTrabajo dtoTrabajo, Activo activo) {
 		/*
 		 * Estados del trabajo - Al crear un trabajo: Si es trámite "Cedula": EN
 		 * TRAMITE Si es gestor activo (algunos trámites): EN TRAMITE El resto
@@ -1237,7 +1260,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return activoTrabajo;
 	}
 
-	private void dtoToTrabajo(DtoFichaTrabajo dtoTrabajo, Trabajo trabajo)
+	public void dtoToTrabajo(DtoFichaTrabajo dtoTrabajo, Trabajo trabajo)
 			throws IllegalAccessException, InvocationTargetException {
 		beanUtilNotNull.copyProperties(trabajo, dtoTrabajo);
 

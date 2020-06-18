@@ -25,6 +25,7 @@ DECLARE
     V_USUARIO VARCHAR2(25 CHAR):= 'REMVIP-7293';
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_MSQL VARCHAR2(24000 CHAR);
 
 BEGIN
 	

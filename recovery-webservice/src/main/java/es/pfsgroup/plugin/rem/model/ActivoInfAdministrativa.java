@@ -23,6 +23,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 
 
@@ -140,6 +141,25 @@ public class ActivoInfAdministrativa implements Serializable, Auditable {
 	@Column(name = "ADM_NO_TITULAR_VIVIENDA")
 	private Integer noTitularOtraVivienda;
     
+	
+	@Column(name = "ADM_FECHA_SOL_CERTIFICADO")
+	private Date fechaSolCertificado;
+	
+	@Column(name = "ADM_FECHA_COM_ADQUISICION")
+	private Date fechaComAdquision;
+	
+	@Column(name = "ADM_FECHA_COM_REG_DEM")
+	private Date fechaComRegDem;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ADM_ACTUALIZA_PRECIO_MAX")
+	private DDSinSiNo actualizaPrecioMax; 
+	
+	@Column(name = "ADM_FECHA_VENCIMIENTO")
+	private Date fechaVencimiento;
+	
+	
+	
     
 	
 	@Version   
@@ -405,6 +425,46 @@ public class ActivoInfAdministrativa implements Serializable, Auditable {
 
 	public void setNoTitularOtraVivienda(Integer noTitularOtraVivienda) {
 		this.noTitularOtraVivienda = noTitularOtraVivienda;
+	}
+
+	public Date getFechaSolCertificado() {
+		return fechaSolCertificado;
+	}
+
+	public void setFechaSolCertificado(Date fechaSolCertificado) {
+		this.fechaSolCertificado = fechaSolCertificado;
+	}
+
+	public Date getFechaComAdquision() {
+		return fechaComAdquision;
+	}
+
+	public void setFechaComAdquision(Date fechaComAdquision) {
+		this.fechaComAdquision = fechaComAdquision;
+	}
+
+	public Date getFechaComRegDem() {
+		return fechaComRegDem;
+	}
+
+	public void setFechaComRegDem(Date fechaComRegDem) {
+		this.fechaComRegDem = fechaComRegDem;
+	}
+
+	public DDSinSiNo getActualizaPrecioMax() {
+		return actualizaPrecioMax;
+	}
+
+	public void setActualizaPrecioMax(DDSinSiNo actualizaPrecioMax) {
+		this.actualizaPrecioMax = actualizaPrecioMax;
+	}
+
+	public Date getFechaVencimiento() {
+		return fechaVencimiento;
+	}
+
+	public void setFechaVencimiento(Date fechaVencimiento) {
+		this.fechaVencimiento = fechaVencimiento;
 	}
 	
 }	

@@ -140,7 +140,6 @@ public class ActivoInfAdministrativa implements Serializable, Auditable {
 	
 	@Column(name = "ADM_NO_TITULAR_VIVIENDA")
 	private Integer noTitularOtraVivienda;
-    
 	
 	@Column(name = "ADM_FECHA_SOL_CERTIFICADO")
 	private Date fechaSolCertificado;
@@ -157,12 +156,11 @@ public class ActivoInfAdministrativa implements Serializable, Auditable {
 	
 	@Column(name = "ADM_FECHA_VENCIMIENTO")
 	private Date fechaVencimiento;
+
+	@Column(name = "ADM_PRECIO_MAX_VENTA")
+	private Double precioMaxVenta;
 	
-	
-	
-    
-	
-	@Version   
+	@Version
 	private Long version;
 	
 	@Embedded
@@ -467,6 +465,14 @@ public class ActivoInfAdministrativa implements Serializable, Auditable {
 		this.fechaVencimiento = fechaVencimiento;
 	}
 	
-}	
+	public Double getPrecioMaxVenta() {
+		return precioMaxVenta;
+	}
+
+	public void setPrecioMaxVenta(Double precioMaxVenta) {
+		this.precioMaxVenta = precioMaxVenta;
+	}
+	
+}
 
 

@@ -88,7 +88,17 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 		Activo activo = ofertaAceptada.getActivoPrincipal();
 		
 		String tipoTramite = tramite.getTipoTramite().getCodigo();
-		
+
+		List<Oferta> ofertasDependientes;
+
+		if (!Checks.esNulo(ofertaAceptada) && ofertaApi.isOfertaPrincipal(ofertaAceptada)) {
+			ofertasDependientes = ofertaApi.ofertasAgrupadasDependientes(ofertaAceptada);
+			if(ofertasDependientes.isEmpty()){
+				ofertaAceptada.setClaseOferta(genericDao.get(DDClaseOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDClaseOferta.CODIGO_OFERTA_INDIVIDUAL)));
+				genericDao.save(Oferta.class, ofertaAceptada);
+			}
+		}
+
 		if (!Checks.esNulo(ofertaAceptada) && !Checks.esNulo(expediente)) {	
 			//Si tiene atribuciones y no es T017 podra entrar (aunque el comité de T017 no deberia entrar de por si)
 			if (ofertaApi.checkAtribuciones(tramite.getTrabajo()) && !T017.equals(tipoTramite)) {
@@ -218,6 +228,8 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				expediente.setComiteSuperior(comite);
 				expediente.setComiteSancion(comite);
 			}
+
+
 		}
 
 		

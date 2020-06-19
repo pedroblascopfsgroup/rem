@@ -2416,6 +2416,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'activoadmisionevolucion/getActivoAgendaEvolucion',
 				extraParams: {id: '{activo.id}'}
 			}
+		},
+		storeAgendaRevisionTitulo: {
+			 pageSize: $AC.getDefaultPageSize(),
+			 model: 'HreRem.model.AgendaRevisionTituloGridModel',
+     	     proxy: {
+     	        type: 'uxproxy',
+     	        remoteUrl: 'admision/getListAgendaRevisionTitulo',
+     	        extraParams: {idActivo: '{activo.id}'}
+         	 }
 		}
      }
 });

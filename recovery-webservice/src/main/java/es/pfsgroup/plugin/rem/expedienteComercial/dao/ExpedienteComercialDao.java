@@ -46,7 +46,7 @@ public interface ExpedienteComercialDao extends AbstractDao<ExpedienteComercial,
 	 * @param idExpediente: ID del expediente.
 	 * @param idComprador: ID del comprador.
 	 */
-	void deleteCompradorExpediente(Long idExpediente, Long idComprador);
+	void deleteCompradorExpediente(Long idExpediente, Long idComprador, String usuarioBorrar);
 
 	/**
 	 * Devuelve el expedienteComercial asociado al trabajo

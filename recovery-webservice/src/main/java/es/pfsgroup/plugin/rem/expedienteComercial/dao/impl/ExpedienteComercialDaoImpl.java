@@ -68,9 +68,12 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 	}
 
 	@Override
-	public void deleteCompradorExpediente(Long idExpediente, Long idComprador) {
-		StringBuilder sb = new StringBuilder("update CompradorExpediente ce set ce.borrado = 1, ce.porcionCompra= 0, ce.fechaBaja= SYSDATE where ce.primaryKey.comprador = " + idComprador
-				+ " and ce.primaryKey.expediente= " + idExpediente);
+	public void deleteCompradorExpediente(Long idExpediente, Long idComprador, String usuarioBorrar) {
+		if(usuarioBorrar == null)
+			usuarioBorrar = "DEFAULT";
+		StringBuilder sb = new StringBuilder("update CompradorExpediente ce set ce.auditoria.borrado = 1, ce.porcionCompra= 0, ce.fechaBaja= SYSDATE,"
+				+ " ce.auditoria.usuarioBorrar = '"+ usuarioBorrar + "', ce.auditoria.fechaBorrar = SYSDATE"
+				+ " where ce.primaryKey.comprador = " + idComprador + " and ce.primaryKey.expediente= " + idExpediente);
 		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
 	}
 	

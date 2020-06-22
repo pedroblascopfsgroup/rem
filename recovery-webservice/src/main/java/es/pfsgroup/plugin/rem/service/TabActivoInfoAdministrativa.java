@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.dto.WebDto;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
@@ -16,7 +18,10 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoInfAdministrativa;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformacionAdministrativa;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
+
+
 
 @Component
 public class TabActivoInfoAdministrativa implements TabActivoService {
@@ -112,6 +117,12 @@ public class TabActivoInfoAdministrativa implements TabActivoService {
 			activoDto.setResidenciaComAutonoma(activo.getInfoAdministrativa().getResidenciaComAutonoma());
 			activoDto.setNoTitularOtraVivienda(activo.getInfoAdministrativa().getNoTitularOtraVivienda());
 			
+			activoDto.setFechaSoliCertificado(activo.getInfoAdministrativa().getFechaSolCertificado());
+			activoDto.setFechaComAdquisicion(activo.getInfoAdministrativa().getFechaComAdquision());
+			activoDto.setFechaComRegDemandantes(activo.getInfoAdministrativa().getFechaComRegDem());
+			activoDto.setActualizaPrecioMax(activo.getInfoAdministrativa().getActualizaPrecioMax().getId());
+			activoDto.setFechaVencimiento(activo.getInfoAdministrativa().getFechaVencimiento());
+			
 		}
 		
 		
@@ -132,15 +143,26 @@ public class TabActivoInfoAdministrativa implements TabActivoService {
 				
 			beanUtilNotNull.copyProperties(activo.getInfoAdministrativa(), dto);
 			
-			activo.setInfoAdministrativa(genericDao.save(ActivoInfAdministrativa.class, activo.getInfoAdministrativa()));
+			
 			
 			if (dto.getTipoVpoCodigo() != null) {
 			
 				DDTipoVpo tipoVpo = (DDTipoVpo) diccionarioApi.dameValorDiccionarioByCod(DDTipoVpo.class, dto.getTipoVpoCodigo());
-	
-				activo.getInfoAdministrativa().setTipoVpo(tipoVpo);
+				ActivoInfAdministrativa infoAdministrativa = activo.getInfoAdministrativa();  
+				infoAdministrativa.setTipoVpo(tipoVpo);
+				
+				infoAdministrativa.setFechaSolCertificado(dto.getFechaSoliCertificado());
+				infoAdministrativa.setFechaComAdquisicion(dto.getFechaComAdquisicion());
+				infoAdministrativa.setFechaComRegDem(dto.getFechaComRegDemandantes());
+				Filter filter = genericDao.createFilter(FilterType.EQUALS, "id", dto.getActualizaPrecioMax());
+				DDSinSiNo mapeadoSinSiNo =genericDao.get(DDSinSiNo.class, filter); 
+				infoAdministrativa.setActualizaPrecioMax(mapeadoSinSiNo);
+				infoAdministrativa.setFechaVencimiento(dto.getFechaVencimiento());
+				
 				
 			}
+			
+			activo.setInfoAdministrativa(genericDao.save(ActivoInfAdministrativa.class, activo.getInfoAdministrativa()));
 			
 			
 		} catch (IllegalAccessException e) {

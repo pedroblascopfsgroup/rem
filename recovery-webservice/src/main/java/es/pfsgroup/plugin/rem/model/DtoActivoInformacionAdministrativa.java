@@ -64,6 +64,13 @@ public class DtoActivoInformacionAdministrativa extends DtoTabActivo {
 	private Integer vpo;
 	
 	
+	// NUEVOS CAMPOS
+	 private Date fechaSoliCertificado;
+	 private Date fechaComAdquisicion;
+	 private Date fechaComRegDemandantes;
+	 private Long actualizaPrecioMax;
+	 private Date fechaVencimiento;
+	//
 	
 	
 	public String getNumeroActivo() {
@@ -265,7 +272,38 @@ public class DtoActivoInformacionAdministrativa extends DtoTabActivo {
 	public void setNoTitularOtraVivienda(Integer noTitularOtraVivienda) {
 		this.noTitularOtraVivienda = noTitularOtraVivienda;
 	}
-	
+	// NUEVOS GETTER Y SETTER
+	public Date getFechaSoliCertificado() {
+		return fechaSoliCertificado;
+	}
+	public void setFechaSoliCertificado(Date fechaSoliCertificado) {
+		this.fechaSoliCertificado = fechaSoliCertificado;
+	}
+	public Date getFechaComAdquisicion() {
+		return fechaComAdquisicion;
+	}
+	public void setFechaComAdquisicion(Date fechaComAdquisicion) {
+		this.fechaComAdquisicion = fechaComAdquisicion;
+	}
+	public Date getFechaComRegDemandantes() {
+		return fechaComRegDemandantes;
+	}
+	public void setFechaComRegDemandantes(Date fechaComRegDemandantes) {
+		this.fechaComRegDemandantes = fechaComRegDemandantes;
+	}
+	public Long getActualizaPrecioMax() {
+		return actualizaPrecioMax;
+	}
+	public void setActualizaPrecioMax(Long actualizaPrecioMax) {
+		this.actualizaPrecioMax = actualizaPrecioMax;
+	}
+	public Date getFechaVencimiento() {
+		return fechaVencimiento;
+	}
+	public void setFechaVencimiento(Date fechaVencimiento) {
+		this.fechaVencimiento = fechaVencimiento;
+	}
+	//
 
 	
 }

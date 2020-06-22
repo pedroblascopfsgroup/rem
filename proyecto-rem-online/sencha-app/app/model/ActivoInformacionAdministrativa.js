@@ -64,6 +64,16 @@ Ext.define('HreRem.model.ActivoInformacionAdministrativa', {
     		{
     			name:'maxPrecioVenta'
     		},
+    		//
+    		{
+    			name:'actualizaPrecioMax'
+    		},
+    		{
+    			name:'fechaVencimiento',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		//
     		{
     			name:'observaciones'
     		},
@@ -117,7 +127,23 @@ Ext.define('HreRem.model.ActivoInformacionAdministrativa', {
     		},
     		{
     			name:'noTitularOtraVivienda'
-    		},    		
+    		},
+    		{
+    			name:'fechaSoliCertificado', //
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name:'fechaComAdquisicion', //
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name:'fechaComRegDemandantes', //
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		
     		
     		
     		{

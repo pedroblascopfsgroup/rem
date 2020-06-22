@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -19,6 +20,8 @@ import javax.persistence.Version;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import es.capgemini.pfs.auditoria.Auditable;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
@@ -41,7 +44,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDUsosActivo;
 @Table(name = "CEX_COMPRADOR_EXPEDIENTE", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Inheritance(strategy=InheritanceType.JOINED)
-public class CompradorExpediente implements Serializable {
+public class CompradorExpediente implements Serializable, Auditable {
     /**
 	 * 
 	 */
@@ -158,9 +161,6 @@ public class CompradorExpediente implements Serializable {
     @Column(name="CEX_FECHA_FACTURA")
     private Date fechaFactura;
     
-    @Column(name="BORRADO")
-    private Boolean borrado;
-    
     @Column(name="CEX_FECHA_BAJA")
     private Date fechaBaja;
     
@@ -190,13 +190,15 @@ public class CompradorExpediente implements Serializable {
     @Column(name="CEX_NUM_URSUS_CONYUGE_REM")
     private Integer numUrsusConyuge;
     
-    @Column(name="CEX_NUM_URSUS_CONYUGE_BH_REM	")
-    private Integer numUrsusConyugeBh;
-    
+    @Column(name="CEX_NUM_URSUS_CONYUGE_BH_REM")
+    private Integer numUrsusConyugeBh;   
 
     
 	@Version   
 	private Long version;
+	
+	@Embedded
+	private Auditoria auditoria;
 
     
     /**
@@ -204,6 +206,7 @@ public class CompradorExpediente implements Serializable {
      */
     public CompradorExpediente() {
         primaryKey = new CompradorExpedientePk();
+        this.auditoria = Auditoria.getNewInstance();
     }
 
 	public Long getComprador() {
@@ -472,10 +475,7 @@ public class CompradorExpediente implements Serializable {
 	public void setFechaFactura(Date fechaFactura) {
 		this.fechaFactura = fechaFactura;
 	}
-
 	
-
-
 	public AdjuntoComprador getDocumentoAdjunto() {
 		return documentoAdjunto;
 	}
@@ -569,14 +569,6 @@ public class CompradorExpediente implements Serializable {
 		}
     }
 
-	public Boolean getBorrado() {
-		return borrado;
-	}
-
-	public void setBorrado(Boolean borrado) {
-		this.borrado = borrado;
-	}
-
 	public Date getFechaBaja() {
 		return fechaBaja;
 	}
@@ -647,6 +639,17 @@ public class CompradorExpediente implements Serializable {
 
 	public void setNumUrsusConyugeBh(Integer numUrsusConyugeBh) {
 		this.numUrsusConyugeBh = numUrsusConyugeBh;
+	}
+
+	@Override
+	public Auditoria getAuditoria() {
+		return this.auditoria;
+	}
+
+	@Override
+	public void setAuditoria(Auditoria auditoria) {
+		this.auditoria = auditoria;
+		
 	}
     
 	

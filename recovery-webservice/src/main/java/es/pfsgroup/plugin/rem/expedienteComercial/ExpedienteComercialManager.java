@@ -4348,7 +4348,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			boolean esNuevo = false;
 			if (Checks.esNulo(compradorExpediente)) {
 				compradorExpediente = new CompradorExpediente();
-				compradorExpediente.setBorrado(false);
+				//compradorExpediente.setBorrado(false);
 
 				CompradorExpedientePk pk = new CompradorExpedientePk();
 				pk.setComprador(comprador);
@@ -4985,7 +4985,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idExpediente);
 		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
 		CompradorExpediente compradorExpediente = new CompradorExpediente();
-		compradorExpediente.setBorrado(false);
+		//compradorExpediente.setBorrado(false);
 
 		if (!Checks.esNulo(compradorBusqueda)) {
 			CompradorExpedientePk pk = new CompradorExpedientePk();
@@ -5017,7 +5017,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				compradorExpediente.setTitularContratacion(0);
 			}
 
-			compradorExpediente.setBorrado(false);
+			//compradorExpediente.setBorrado(false);
 
 			if (!Checks.esNulo(dto.getCodTipoPersona())) {
 				DDTiposPersona tipoPersona = (DDTiposPersona) utilDiccionarioApi
@@ -6340,7 +6340,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(compradorExpediente)) {
 				if (!Checks.esNulo(compradorExpediente.getTitularContratacion())
 						&& compradorExpediente.getTitularContratacion() == 0) {
-					expedienteComercialDao.deleteCompradorExpediente(idExpediente, idComprador);
+					Usuario usuario = genericAdapter.getUsuarioLogado();
+					expedienteComercialDao.deleteCompradorExpediente(idExpediente, idComprador, usuario.getUsername());
 					ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class,
 							genericDao.createFilter(FilterType.EQUALS, "id", idExpediente));
 					ofertaApi.resetPBC(expediente, true);

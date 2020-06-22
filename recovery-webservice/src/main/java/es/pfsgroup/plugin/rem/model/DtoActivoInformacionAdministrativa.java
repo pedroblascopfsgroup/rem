@@ -2,8 +2,6 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
-import es.capgemini.devon.dto.WebDto;
-
 
 
 /**
@@ -63,9 +61,10 @@ public class DtoActivoInformacionAdministrativa extends DtoTabActivo {
 	private String tipoVpoDescripcionLarga;	
 	private Integer vpo;
 	
-	
-	
-	
+	private String tributacionAdq;
+	private Date fechaVencTpoBonificacion;
+	private Date fechaLiqComplementaria;
+
 	public String getNumeroActivo() {
 		return numeroActivo;
 	}
@@ -265,7 +264,24 @@ public class DtoActivoInformacionAdministrativa extends DtoTabActivo {
 	public void setNoTitularOtraVivienda(Integer noTitularOtraVivienda) {
 		this.noTitularOtraVivienda = noTitularOtraVivienda;
 	}
-	
 
+	public Date getFechaVencTpoBonificacion() {
+		return fechaVencTpoBonificacion;
+	}
+	public void setFechaVencTpoBonificacion(Date fechaVencTpoBonificacion) {
+		this.fechaVencTpoBonificacion = fechaVencTpoBonificacion;
+	}
+	public Date getFechaLiqComplementaria() {
+		return fechaLiqComplementaria;
+	}
+	public void setFechaLiqComplementaria(Date fechaLiqComplementaria) {
+		this.fechaLiqComplementaria = fechaLiqComplementaria;
+	}
+	public String getTributacionAdq() {
+		return tributacionAdq;
+	}
+	public void setTributacionAdq(String tributacionAdq) {
+		this.tributacionAdq = tributacionAdq;
+	}
 	
 }

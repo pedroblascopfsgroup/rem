@@ -117,9 +117,20 @@ Ext.define('HreRem.model.ActivoInformacionAdministrativa', {
     		},
     		{
     			name:'noTitularOtraVivienda'
-    		},    		
-    		
-    		
+    		},
+    		{
+    			name:'tributacionAdq'
+    		},
+    		{
+    			name:'fechaVencTpoBonificacion',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name:'fechaLiqComplementaria',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
     		{
     			name:'vpo',
     			convert: function(value) {

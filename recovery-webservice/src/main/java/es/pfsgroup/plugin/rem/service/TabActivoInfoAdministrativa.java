@@ -17,6 +17,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoInfAdministrativa;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformacionAdministrativa;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
+import es.pfsgroup.plugin.rem.model.dd.DDTributacionAdquisicion;
 
 @Component
 public class TabActivoInfoAdministrativa implements TabActivoService {
@@ -111,7 +112,11 @@ public class TabActivoInfoAdministrativa implements TabActivoService {
 			activoDto.setIngresosInfNivel(activo.getInfoAdministrativa().getIngresosInfNivel());
 			activoDto.setResidenciaComAutonoma(activo.getInfoAdministrativa().getResidenciaComAutonoma());
 			activoDto.setNoTitularOtraVivienda(activo.getInfoAdministrativa().getNoTitularOtraVivienda());
-			
+			if(activo.getInfoAdministrativa().getTributacionAdquisicion() != null) {
+				activoDto.setTributacionAdq(activo.getInfoAdministrativa().getTributacionAdquisicion().getCodigo());
+			}
+			activoDto.setFechaLiqComplementaria(activo.getInfoAdministrativa().getFechaLiqComplementaria());
+			activoDto.setFechaVencTpoBonificacion(activo.getInfoAdministrativa().getFechaVencTpoBonificacion());
 		}
 		
 		
@@ -131,6 +136,11 @@ public class TabActivoInfoAdministrativa implements TabActivoService {
 			}
 				
 			beanUtilNotNull.copyProperties(activo.getInfoAdministrativa(), dto);
+			
+			DDTributacionAdquisicion tributacion = (DDTributacionAdquisicion) diccionarioApi.dameValorDiccionarioByCod(DDTributacionAdquisicion.class, dto.getTributacionAdq());
+			activo.getInfoAdministrativa().setTributacionAdquisicion(tributacion);
+			activo.getInfoAdministrativa().setFechaLiqComplementaria(dto.getFechaLiqComplementaria());
+			activo.getInfoAdministrativa().setFechaVencTpoBonificacion(dto.getFechaVencTpoBonificacion());
 			
 			activo.setInfoAdministrativa(genericDao.save(ActivoInfAdministrativa.class, activo.getInfoAdministrativa()));
 			

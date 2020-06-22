@@ -922,6 +922,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				return true;
 			else
 				return false;
+		},
+		
+		esGestorOrSupervisorAdmision: function(get){
+    		return $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']);
 		}
 	 }, 
 	 
@@ -2406,6 +2410,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'activo/getHistoricoSolicitudesPrecios',
 				extraParams: {id: '{activo.id}'}
+			}
+		},
+		comboTributacionAdquisicion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tributacionAdquisicion'}
 			}
 		}
      }

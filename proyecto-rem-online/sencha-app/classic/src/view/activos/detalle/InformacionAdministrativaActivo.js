@@ -661,6 +661,53 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 	            ]
            },
            {
+        	   xtype:'fieldset',
+			   title: HreRem.i18n('fieldlabel.title.regularizacion.pago.impuesto.bonificado'), //Regularizacion del pago del impuesto bonificado
+        	   layout: {
+	                type: 'hbox'
+	            },
+	            items: [
+				        { 
+						    xtype: 'comboboxfieldbase',
+				            fieldLabel: HreRem.i18n('fieldlabel.combo.tributacion.adquisicion'),
+				            labelWidth: '30%',
+				            width: '20%',
+				        	bind: {
+				        		store: '{comboTributacionAdquisicion}',
+				        		readOnly : '{!esGestorOrSupervisorAdmision}',
+				        		value: '{infoAdministrativa.tributacionAdq}'
+				        	},
+				        	listeners: {
+								change: 'onChangeComboTributacionAdqusicion'
+				        	}
+					    },
+					    {
+					    	xtype: 'datefieldbase',
+					    	fieldLabel: HreRem.i18n('fieldlabel.fecha.vencimiento.tipo.bonificacion'),
+					    	formatter: 'date("d/m/Y")',
+					    	width: '20%',
+					    	disabled: true,
+					    	reference: 'fechaVencTpoBonificacion',
+				        	bind: {
+				        		readOnly : '{!esGestorOrSupervisorAdmision}',
+				        		value: '{infoAdministrativa.fechaVencTpoBonificacion}'
+				        	}			
+					    },
+					    {
+					    	xtype: 'datefieldbase',
+					    	fieldLabel: HreRem.i18n('fieldlabel.fecha.liquidacion.complementaria'),
+					    	formatter: 'date("d/m/Y")',
+					    	width: '20%',
+					    	disabled: true,
+					    	reference: 'fechaLiqComplementaria',
+				        	bind: {
+				        		readOnly : '{!esGestorOrSupervisorAdmision}',
+				        		value: '{infoAdministrativa.fechaLiqComplementaria}'
+				        	}			
+					    }
+	            ]
+           },
+           {
            	
 				title: HreRem.i18n('title.documentacion.administrativa'),
 				xtype: 'gridBase',

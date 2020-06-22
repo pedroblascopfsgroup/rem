@@ -5981,5 +5981,25 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	
     	return false;
     	
+    },
+	
+    onChangeComboTributacionAdqusicion: function(combo, newValue, oldValue){
+    	var me = this;
+		var fechaVencTpoBonificacion = me.lookupReference('fechaVencTpoBonificacion');
+		var fechaLiqComplementaria = me.lookupReference('fechaLiqComplementaria');
+		
+		if(newValue == "BON"){
+			fechaVencTpoBonificacion.setDisabled(false);
+			fechaLiqComplementaria.setDisabled(false);
+		}else if(newValue == "ORD" && oldValue != null){
+			fechaVencTpoBonificacion.setDisabled(true);
+			fechaVencTpoBonificacion.setValue("");
+			fechaLiqComplementaria.setDisabled(true);
+			fechaLiqComplementaria.setValue("");
+		}else{
+			fechaVencTpoBonificacion.setDisabled(true);
+			fechaLiqComplementaria.setDisabled(true);
+		}
     }
+	
 });

@@ -25,6 +25,7 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
+import es.pfsgroup.plugin.rem.model.dd.DDTributacionAdquisicion;
 
 
 
@@ -160,14 +161,22 @@ public class ActivoInfAdministrativa implements Serializable, Auditable {
 	@Column(name = "ADM_PRECIO_MAX_VENTA")
 	private Double precioMaxVenta;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TRA_ID")
+	private DDTributacionAdquisicion tributacionAdquisicion; 
+	
+	@Column(name = "ACT_ADM_FECHA_VENC_TIP_BON")
+	private Date fechaVencTpoBonificacion;
+	
+	@Column(name = "ACT_ADM_FECHA_LIQ_COMPLEM")
+	private Date fechaLiqComplementaria;
+	
 	@Version
 	private Long version;
 	
 	@Embedded
 	private Auditoria auditoria;
 
-	
-	
 	public Long getId() {
 		return id;
 	}
@@ -471,6 +480,30 @@ public class ActivoInfAdministrativa implements Serializable, Auditable {
 
 	public void setPrecioMaxVenta(Double precioMaxVenta) {
 		this.precioMaxVenta = precioMaxVenta;
+	}
+
+	public Date getFechaVencTpoBonificacion() {
+		return fechaVencTpoBonificacion;
+	}
+
+	public void setFechaVencTpoBonificacion(Date fechaVencTpoBonificacion) {
+		this.fechaVencTpoBonificacion = fechaVencTpoBonificacion;
+	}
+
+	public Date getFechaLiqComplementaria() {
+		return fechaLiqComplementaria;
+	}
+
+	public void setFechaLiqComplementaria(Date fechaLiqComplementaria) {
+		this.fechaLiqComplementaria = fechaLiqComplementaria;
+	}
+
+	public DDTributacionAdquisicion getTributacionAdquisicion() {
+		return tributacionAdquisicion;
+	}
+
+	public void setTributacionAdquisicion(DDTributacionAdquisicion tributacionAdquisicion) {
+		this.tributacionAdquisicion = tributacionAdquisicion;
 	}
 	
 }

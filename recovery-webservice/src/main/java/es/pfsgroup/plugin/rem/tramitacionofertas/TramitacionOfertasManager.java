@@ -923,7 +923,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			compradorExpedienteNuevo.setTitularReserva(0);
 			compradorExpedienteNuevo.setTitularContratacion(1);
 			compradorExpedienteNuevo.setPorcionCompra(parteCompraPrincipal);
-			compradorExpedienteNuevo.setBorrado(false);
+			//compradorExpedienteNuevo.setBorrado(false);
 			compradorExpedienteNuevo.setEstadoCivil(cliente.getEstadoCivil());
 			compradorExpedienteNuevo.setRegimenMatrimonial(cliente.getRegimenMatrimonial());
 			compradorExpedienteNuevo.setTipoDocumentoConyuge(cliente.getTipoDocumentoConyuge());
@@ -1056,7 +1056,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 					pk.setComprador(compradorBusquedaAdicional);
 					pk.setExpediente(nuevoExpediente);
 					compradorExpedienteAdicionalNuevo.setPrimaryKey(pk);
-					compradorExpedienteAdicionalNuevo.setBorrado(false);
+					//compradorExpedienteAdicionalNuevo.getAuditoria().setBorrado(false);
 					compradorExpedienteAdicionalNuevo.setTitularReserva(1);
 					compradorExpedienteAdicionalNuevo.setTitularContratacion(0);
 					compradorExpedienteAdicionalNuevo.setPorcionCompra(parteCompraAdicionales);

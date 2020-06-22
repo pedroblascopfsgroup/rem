@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina
---## FECHA_CREACION=20200520
+--## AUTOR=GUILLEM REY
+--## FECHA_CREACION=20200612
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-7170
@@ -16,6 +16,7 @@
 --##		0.4 Versión - HREOS-5927 - Lara Pablo -	20190422 - Añadir problemas Ursus
 --##		0.5 Version - HREOS-6450 - José Antonio Gigante - Agregar distinct en la consulta de creacion de la vista
 --##		0.6 Version - REMVIP-7170 - Adrián Molina - Añadir columna
+--##		0.6.1 Versión - REMVIP-7528 - Guillem Rey - columna id no debe ser null
 --##########################################
 --*/
 
@@ -58,7 +59,7 @@ BEGIN
 	AS
 		SELECT
 			DISTINCT
-			CAST(CEX.COM_ID || CEX.ECO_ID AS NUMBER(32,0)) AS VCEX_ID,
+			CAST(NVL2(CEX.ECO_ID,TO_CHAR(COM.COM_ID||CEX.ECO_ID),COM.COM_ID) AS NUMBER(32,0)) AS VCEX_ID,
 			COM.COM_ID,
 			CEX.ECO_ID,
 			TPE.DD_TPE_CODIGO AS COD_TIPO_PERSONA,

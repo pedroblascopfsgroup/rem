@@ -551,7 +551,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  	@Override
 	public DDIdentificacionGestoria isGestoria(Usuario usuario) {
  		if (!genericAdapter.isExternoEspecial(genericAdapter.getUsuarioLogado())) {
-			List<GrupoUsuario> grupos = genericDao.getList(GrupoUsuario.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId()));
+			List<GrupoUsuario> grupos = genericDao.getList(GrupoUsuario.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId()), genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 			if (!Checks.estaVacio(grupos)) {
 				for (GrupoUsuario grupo : grupos) {
 					ConfiguracionAccesoGestoria cag = genericDao.get(ConfiguracionAccesoGestoria.class, genericDao.createFilter(FilterType.EQUALS, "usuarioGrupo.id", grupo.getGrupo().getId()));

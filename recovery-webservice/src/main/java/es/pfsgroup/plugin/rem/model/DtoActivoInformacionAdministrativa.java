@@ -65,6 +65,13 @@ public class DtoActivoInformacionAdministrativa extends DtoTabActivo {
 	private Date fechaVencTpoBonificacion;
 	private Date fechaLiqComplementaria;
 
+	private Date fechaSoliCertificado;
+	private Date fechaComAdquisicion;
+	private Date fechaComRegDemandantes;
+	private Long actualizaPrecioMaxId;
+	private Date fechaVencimiento;
+	
+	
 	public String getNumeroActivo() {
 		return numeroActivo;
 	}
@@ -263,6 +270,36 @@ public class DtoActivoInformacionAdministrativa extends DtoTabActivo {
 	}
 	public void setNoTitularOtraVivienda(Integer noTitularOtraVivienda) {
 		this.noTitularOtraVivienda = noTitularOtraVivienda;
+	}
+	public Date getFechaSoliCertificado() {
+		return fechaSoliCertificado;
+	}
+	public void setFechaSoliCertificado(Date fechaSoliCertificado) {
+		this.fechaSoliCertificado = fechaSoliCertificado;
+	}
+	public Date getFechaComAdquisicion() {
+		return fechaComAdquisicion;
+	}
+	public void setFechaComAdquisicion(Date fechaComAdquisicion) {
+		this.fechaComAdquisicion = fechaComAdquisicion;
+	}
+	public Date getFechaComRegDemandantes() {
+		return fechaComRegDemandantes;
+	}
+	public void setFechaComRegDemandantes(Date fechaComRegDemandantes) {
+		this.fechaComRegDemandantes = fechaComRegDemandantes;
+	}
+	public Date getFechaVencimiento() {
+		return fechaVencimiento;
+	}
+	public void setFechaVencimiento(Date fechaVencimiento) {
+		this.fechaVencimiento = fechaVencimiento;
+	}
+	public Long getActualizaPrecioMaxId() {
+		return actualizaPrecioMaxId;
+	}
+	public void setActualizaPrecioMaxId(Long actualizaPrecioMaxId) {
+		this.actualizaPrecioMaxId = actualizaPrecioMaxId;
 	}
 
 	public Date getFechaVencTpoBonificacion() {

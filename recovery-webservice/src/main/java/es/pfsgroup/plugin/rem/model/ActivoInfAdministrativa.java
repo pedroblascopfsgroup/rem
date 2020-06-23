@@ -446,7 +446,7 @@ public class ActivoInfAdministrativa implements Serializable, Auditable {
 		return fechaComAdquision;
 	}
 
-	public void setFechaComAdquision(Date fechaComAdquision) {
+	public void setFechaComAdquisicion(Date fechaComAdquision) {
 		this.fechaComAdquision = fechaComAdquision;
 	}
 

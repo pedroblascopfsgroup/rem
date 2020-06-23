@@ -923,9 +923,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			else
 				return false;
 		},
-		
-		esGestorOrSupervisorAdmision: function(get){
-    		return $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']);
+		esSupervisionGestorias: function(get){
+			
+			return $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) 
 		}
 	 }, 
 	 

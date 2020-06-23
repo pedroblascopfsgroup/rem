@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.dto.WebDto;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
@@ -16,8 +18,11 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoInfAdministrativa;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformacionAdministrativa;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 import es.pfsgroup.plugin.rem.model.dd.DDTributacionAdquisicion;
+
+
 
 @Component
 public class TabActivoInfoAdministrativa implements TabActivoService {
@@ -117,6 +122,16 @@ public class TabActivoInfoAdministrativa implements TabActivoService {
 			}
 			activoDto.setFechaLiqComplementaria(activo.getInfoAdministrativa().getFechaLiqComplementaria());
 			activoDto.setFechaVencTpoBonificacion(activo.getInfoAdministrativa().getFechaVencTpoBonificacion());
+			
+			activoDto.setFechaSoliCertificado(activo.getInfoAdministrativa().getFechaSolCertificado());
+			activoDto.setFechaComAdquisicion(activo.getInfoAdministrativa().getFechaComAdquision());
+			activoDto.setFechaComRegDemandantes(activo.getInfoAdministrativa().getFechaComRegDem());
+			activoDto.setFechaVencimiento(activo.getInfoAdministrativa().getFechaVencimiento());
+			
+			if(activo.getInfoAdministrativa().getActualizaPrecioMax() != null) {
+				activoDto.setActualizaPrecioMaxId(activo.getInfoAdministrativa().getActualizaPrecioMax().getCodigo().equals(DDSinSiNo.CODIGO_NO) ? 0L : 1L);				
+			}
+			
 		}
 		
 		
@@ -144,13 +159,40 @@ public class TabActivoInfoAdministrativa implements TabActivoService {
 			
 			activo.setInfoAdministrativa(genericDao.save(ActivoInfAdministrativa.class, activo.getInfoAdministrativa()));
 			
+			ActivoInfAdministrativa infoAdministrativa = activo.getInfoAdministrativa();
+			
 			if (dto.getTipoVpoCodigo() != null) {
 			
 				DDTipoVpo tipoVpo = (DDTipoVpo) diccionarioApi.dameValorDiccionarioByCod(DDTipoVpo.class, dto.getTipoVpoCodigo());
-	
-				activo.getInfoAdministrativa().setTipoVpo(tipoVpo);
-				
+				infoAdministrativa.setTipoVpo(tipoVpo);
 			}
+			
+			if(infoAdministrativa.getTipoVpo() != null) {
+				
+				if(dto.getFechaSoliCertificado() != null) {
+					infoAdministrativa.setFechaSolCertificado(dto.getFechaSoliCertificado());					
+				}
+				
+				if(dto.getFechaComAdquisicion() != null) {
+					infoAdministrativa.setFechaComAdquisicion(dto.getFechaComAdquisicion());
+				}
+				
+				if(dto.getFechaComRegDemandantes() != null) {
+					infoAdministrativa.setFechaComRegDem(dto.getFechaComRegDemandantes());					
+				}
+				
+				if(dto.getActualizaPrecioMaxId() != null) {
+					Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", (dto.getActualizaPrecioMaxId() == 0) ? DDSinSiNo.CODIGO_NO : DDSinSiNo.CODIGO_SI);
+					DDSinSiNo mapeadoSinSiNo =genericDao.get(DDSinSiNo.class, filter); 
+					infoAdministrativa.setActualizaPrecioMax(mapeadoSinSiNo);					
+				}
+				
+				if(dto.getFechaVencimiento() != null) {
+					infoAdministrativa.setFechaVencimiento(dto.getFechaVencimiento());					
+				}
+			}
+			
+			activo.setInfoAdministrativa(genericDao.save(ActivoInfAdministrativa.class, activo.getInfoAdministrativa()));
 			
 			
 		} catch (IllegalAccessException e) {

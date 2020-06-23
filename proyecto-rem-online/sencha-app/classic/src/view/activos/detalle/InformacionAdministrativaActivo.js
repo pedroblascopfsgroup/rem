@@ -97,10 +97,38 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 									},
 					                { 
 					                	xtype: 'datefieldbase',     
-								 		fieldLabel: HreRem.i18n('fieldlabel.vigencia'), // Vigencia (NUEVO CAMPO)
+								 		fieldLabel: HreRem.i18n('fieldlabel.vigencia'), // Vigencia
 								 		bind: '{infoAdministrativa.vigencia}',
 								 		maxValue : null
-									}
+									},//
+									
+					                { 
+					                	xtype: 'datefieldbase',     
+								 		fieldLabel: HreRem.i18n('fieldlabel.fechaSoliCertificado'), // fechaSoliCertificado (NUEVO CAMPO)
+								 		bind: {
+								 				readOnly : '{!esSupervisionGestorias}',
+								 				value: '{infoAdministrativa.fechaSoliCertificado}'
+								 			},
+								 		maxValue : null
+									},
+					                { 
+					                	xtype: 'datefieldbase',     
+								 		fieldLabel: HreRem.i18n('fieldlabel.fechaComAdquisicion'), // fechaComAdquisicion (NUEVO CAMPO)
+								 		bind: {
+								 				readOnly : '{!esSupervisionGestorias}',
+								 				value:'{infoAdministrativa.fechaComAdquisicion}'
+								 			},								 		
+								 		maxValue : null
+									},
+					                { 
+					                	xtype: 'datefieldbase',     
+								 		fieldLabel: HreRem.i18n('fieldlabel.fechaComRegDemandantes'), // fechaComRegDemandantes (NUEVO CAMPO)
+								 		bind: { 
+								 				readOnly : '{!esSupervisionGestorias}',
+							 					value:'{infoAdministrativa.fechaComRegDemandantes}'
+								 			},
+								 		maxValue : null
+									}//
 		
 								]
 				        },
@@ -185,6 +213,28 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 													fieldLabel: HreRem.i18n('fieldlabel.precio.maximo.venta.vpo'), 			// Precio m�ximo de venta
 					                				bind: '{infoAdministrativa.maxPrecioVenta}'
 								                },
+								                
+								                //
+								                { 
+								                	xtype: 'comboboxfieldbase',
+								                	fieldLabel: HreRem.i18n('fieldlabel.actualizaPrecioMax'), // Actualizacion precio maximo (NUEVO CAMPO)
+								                	bind: {
+								                			readOnly : '{!esSupervisionGestorias}',
+			            									store: '{comboSiNoRem}',
+			            									value: '{infoAdministrativa.actualizaPrecioMaxId}'
+			            								  }
+								                },
+								                { 
+								                	xtype: 'datefieldbase',     
+											 		fieldLabel: HreRem.i18n('fieldlabel.fechaVencimiento'), // fechaVencimiento (NUEVO CAMPO)
+											 		bind: {
+											 				readOnly : '{!esSupervisionGestorias}',
+											 				value:'{infoAdministrativa.fechaVencimiento}'
+											 			},
+											 		maxValue : null
+												},
+												
+								                //
 								                { 
 													xtype: 'comboboxfieldbase',
 													fieldLabel: HreRem.i18n('fieldlabel.devolucion.ayudas'), 			// Devoluci�n de ayudas

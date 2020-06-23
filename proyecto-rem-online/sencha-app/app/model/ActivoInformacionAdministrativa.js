@@ -64,6 +64,16 @@ Ext.define('HreRem.model.ActivoInformacionAdministrativa', {
     		{
     			name:'maxPrecioVenta'
     		},
+    		//
+    		{
+    			name:'actualizaPrecioMaxId'
+    		},
+    		{
+    			name:'fechaVencimiento',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		//
     		{
     			name:'observaciones'
     		},
@@ -122,7 +132,17 @@ Ext.define('HreRem.model.ActivoInformacionAdministrativa', {
     			name:'tributacionAdq'
     		},
     		{
-    			name:'fechaVencTpoBonificacion',
+				name:'fechaVencTpoBonificacion',
+				type:'date',
+    			dateFormat: 'c'
+			},
+			{
+    			name:'fechaSoliCertificado', //
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name:'fechaComAdquisicion', //
     			type:'date',
     			dateFormat: 'c'
     		},
@@ -130,7 +150,15 @@ Ext.define('HreRem.model.ActivoInformacionAdministrativa', {
     			name:'fechaLiqComplementaria',
     			type:'date',
     			dateFormat: 'c'
+			},
+			{
+    			name:'fechaComRegDemandantes', //
+    			type:'date',
+    			dateFormat: 'c'
     		},
+    		
+    		
+    		
     		{
     			name:'vpo',
     			convert: function(value) {

@@ -4904,6 +4904,23 @@ comprobarFormatoModificar: function() {
 		    		importeContraofertaOfertanteCmp.setFieldLabel( HreRem.i18n('fieldlabel.importe.contraoferta.ofrtante.advisory'));
 		    	}
 		
+	},
+	
+	comprobarProcesoAsincrono: function(tabPanel, view) {			
+		var me= this;
+		var url = $AC.getRemoteUrl('tramitacionofertas/checkProceso');						
+		var idExpediente = me.getViewModel().getData().expediente.id;	
+		Ext.Ajax.request({
+	    		url: url,
+	    		params: {idExpediente: idExpediente},
+	    		success: function(response, opts){
+	    			var data = Ext.decode(response.responseText);
+	    			if((data.conFormalizacion != undefined || data.conFormalizacion != null) && data.conFormalizacion === "true"){
+						view.procesado = true;
+						tabPanel.down("[itemId=botoneditar]").setDisabled(false);
+	    			}					
+	    		}	    		
+	   	});	   	
 	}
 	
 });

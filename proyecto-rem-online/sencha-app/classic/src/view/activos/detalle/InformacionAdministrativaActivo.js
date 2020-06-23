@@ -221,7 +221,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 								                	bind: {
 								                			readOnly : '{!esSupervisionGestorias}',
 			            									store: '{comboSiNoRem}',
-			            									value: '{infoAdministrativa.actualizaPrecioMax}'
+			            									value: '{infoAdministrativa.actualizaPrecioMaxId}'
 			            								  }
 								                },
 								                { 

@@ -68,7 +68,7 @@ public class DtoActivoInformacionAdministrativa extends DtoTabActivo {
 	 private Date fechaSoliCertificado;
 	 private Date fechaComAdquisicion;
 	 private Date fechaComRegDemandantes;
-	 private Long actualizaPrecioMax;
+	 private Long actualizaPrecioMaxId;
 	 private Date fechaVencimiento;
 	//
 	
@@ -291,12 +291,6 @@ public class DtoActivoInformacionAdministrativa extends DtoTabActivo {
 	public void setFechaComRegDemandantes(Date fechaComRegDemandantes) {
 		this.fechaComRegDemandantes = fechaComRegDemandantes;
 	}
-	public Long getActualizaPrecioMax() {
-		return actualizaPrecioMax;
-	}
-	public void setActualizaPrecioMax(Long actualizaPrecioMax) {
-		this.actualizaPrecioMax = actualizaPrecioMax;
-	}
 	public Date getFechaVencimiento() {
 		return fechaVencimiento;
 	}
@@ -304,6 +298,12 @@ public class DtoActivoInformacionAdministrativa extends DtoTabActivo {
 		this.fechaVencimiento = fechaVencimiento;
 	}
 	//
+	public Long getActualizaPrecioMaxId() {
+		return actualizaPrecioMaxId;
+	}
+	public void setActualizaPrecioMaxId(Long actualizaPrecioMaxId) {
+		this.actualizaPrecioMaxId = actualizaPrecioMaxId;
+	}
 
 	
 }

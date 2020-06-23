@@ -66,7 +66,7 @@ Ext.define('HreRem.model.ActivoInformacionAdministrativa', {
     		},
     		//
     		{
-    			name:'actualizaPrecioMax'
+    			name:'actualizaPrecioMaxId'
     		},
     		{
     			name:'fechaVencimiento',

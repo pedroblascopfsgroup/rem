@@ -319,7 +319,6 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
 		// Validacion que evalua si el registro de perimetro tiene un eqipo gestion valido.
-		// Codigos validos 00 (ninguno) 01 (Mayorista) 02 (Minorista) 
 		try{
 			String codigoEquipoGestion = null;
 			for(int i=1; i<this.numFilasHoja;i++){
@@ -332,7 +331,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 					listaFilas.add(i);
 				}
 				
-				if(!(Checks.esNulo(codigoEquipoGestion) || "01".equals(codigoEquipoGestion) || "02".equals(codigoEquipoGestion)) )
+				if(!(Checks.esNulo(codigoEquipoGestion) || particularValidator.perteneceADiccionarioEquipoGestion(codigoEquipoGestion)) )
 					listaFilas.add(i);
 			}
 		} catch (Exception e) {

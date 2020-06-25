@@ -1238,10 +1238,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	       		 model: 'HreRem.model.OfertaActivo',
 	       		 sorters: [
 				 			{
-				        		property: 'estadoOferta',
-				        		direction: 'ASC'	
-				 			},
-				 			{
 				        		property: 'fechaCreacion',
 				        		direction: 'DESC'	
 				 			}

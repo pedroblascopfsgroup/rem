@@ -2027,10 +2027,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onChkbxOfertasAnuladas: function(chkbox, checked){
     	var me = this;
     	var grid = chkbox.up('ofertascomercialactivo').down("ofertascomercialactivolist");
-    	var store = me.getViewModel().get("storeOfertasActivo");
-    	
+    	var _id = me.getViewModel().getData().activo.id;
+    	var store = grid.getStore();
     	var prox = store.getProxy();
-    	var _id = prox.getExtraParams().id;
     	var _incluirOfertasAnuladas = checked;
     	
     	prox.setExtraParams({

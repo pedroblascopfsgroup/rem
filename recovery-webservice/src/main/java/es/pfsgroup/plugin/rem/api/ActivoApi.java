@@ -82,6 +82,7 @@ import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.HistoricoPropuestasPreciosDto;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
+import es.pfsgroup.plugin.rem.rest.dto.ReqFaseVentaDto;
 
 
 public interface ActivoApi {
@@ -1319,4 +1320,10 @@ public interface ActivoApi {
 	Boolean createHistoricoSolicitudPrecios(HistoricoPropuestasPreciosDto historicoPropuestasPreciosDto) throws ParseException;
 
 	Boolean updateHistoricoSolicitudPrecios(HistoricoPropuestasPreciosDto historicoPropuestasPreciosDto) throws ParseException;
+
+	List<ReqFaseVentaDto> getReqFaseVenta(Long idActivo);
+
+	Boolean createReqFaseVenta(ReqFaseVentaDto reqFaseVentaDto) throws ParseException;
+
+	Boolean deleteReqFaseVenta(ReqFaseVentaDto reqFaseVentaDto) throws ParseException;
 }

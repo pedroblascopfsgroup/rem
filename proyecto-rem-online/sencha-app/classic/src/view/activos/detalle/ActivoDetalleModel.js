@@ -2419,6 +2419,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tributacionAdquisicion'}
 			}
+		},
+		
+		storeReqFaseVenta:{
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.ReqFaseVentaModel',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getReqFaseVenta',
+				extraParams: {id: '{activo.id}'}
+			}
 		}
      }
 });

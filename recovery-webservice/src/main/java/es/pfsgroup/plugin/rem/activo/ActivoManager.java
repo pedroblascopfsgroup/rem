@@ -25,7 +25,6 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
@@ -182,6 +181,7 @@ import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.rest.dto.HistoricoPropuestasPreciosDto;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
+import es.pfsgroup.plugin.rem.rest.dto.ReqFaseVentaDto;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
 import es.pfsgroup.plugin.rem.thread.GuardarActivosRestringidasAsync;
@@ -6769,7 +6769,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		if(historicoPropuestasPreciosDto != null) {
 			if(historicoPropuestasPreciosDto.getIdActivo() == null) {
-				throw new JsonViewerException("No se ha podido asociar la propuetsa a un activo");
+				throw new JsonViewerException("No se ha podido asociar la propuesta a un activo");
 			}else {
 				Activo activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", historicoPropuestasPreciosDto.getIdActivo()));
 				peticion.setActivo(activo);
@@ -6836,6 +6836,129 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				
 				return true;
 			}
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public List<ReqFaseVentaDto> getReqFaseVenta(Long idActivo) {
+		List<HistoricoRequisitosFaseVenta> listHistorico = activoDao.getReqFaseVenta(idActivo);
+		List<ReqFaseVentaDto> listDto = new ArrayList<ReqFaseVentaDto>();
+		
+		if(listHistorico != null && !listHistorico.isEmpty()) {
+			for(HistoricoRequisitosFaseVenta reqFaseVenta: listHistorico) {
+				ReqFaseVentaDto dto = new ReqFaseVentaDto();
+				
+				dto.setIdReq(reqFaseVenta.getId());
+				dto.setPreciomaximo(reqFaseVenta.getPrecioMaxVenta());
+				dto.setIdActivo(idActivo);
+				
+				if(reqFaseVenta.getPrecioMaxVenta() != null) {
+					dto.setFechapreciomaximo(reqFaseVenta.getFechaSolicitudPrecioMax().toString());
+				}
+				
+				if(reqFaseVenta.getFechaRespuestaOrganismo() != null) {
+					dto.setFecharespuestaorg(reqFaseVenta.getFechaRespuestaOrganismo().toString());
+				}
+				
+				if(reqFaseVenta.getFechaVencimiento() != null) {
+					dto.setFechavencimiento(reqFaseVenta.getFechaVencimiento().toString());
+				}
+				
+				dto.setUsuariocrear(reqFaseVenta.getAuditoria().getUsuarioCrear());
+				dto.setFechacrear(ft.format(reqFaseVenta.getAuditoria().getFechaCrear()));
+				
+				listDto.add(dto);
+			}
+		}
+		
+		return listDto;
+	}
+	
+	@Override
+	@Transactional
+	public Boolean createReqFaseVenta(ReqFaseVentaDto reqFaseVentaDto) throws ParseException {
+		
+		HistoricoRequisitosFaseVenta requisito = new HistoricoRequisitosFaseVenta();
+		
+		if(reqFaseVentaDto != null) {
+			
+			ActivoInfAdministrativa activoInfo = null;
+			Date fechaVencimiento = null;
+			Double precioMaximo = null;
+			
+			if(reqFaseVentaDto.getIdActivo() == null) {
+				throw new JsonViewerException("No se ha podido asociar el requisito a un activo");
+			}else {
+				activoInfo = genericDao.get(ActivoInfAdministrativa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", reqFaseVentaDto.getIdActivo()));
+				requisito.setActivoInfAdministrativa(activoInfo);
+			}
+			
+			if(reqFaseVentaDto.getFechapreciomaximo() != null && !reqFaseVentaDto.getFechapreciomaximo().isEmpty()) {
+				requisito.setFechaSolicitudPrecioMax(ft.parse(reqFaseVentaDto.getFechapreciomaximo()));
+			}
+			
+			if(reqFaseVentaDto.getFecharespuestaorg() != null && !reqFaseVentaDto.getFecharespuestaorg().isEmpty()) {
+				requisito.setFechaRespuestaOrganismo(ft.parse(reqFaseVentaDto.getFecharespuestaorg()));
+			}
+			
+			if(reqFaseVentaDto.getFechavencimiento() != null && !reqFaseVentaDto.getFechavencimiento().isEmpty()) {
+				fechaVencimiento = ft.parse(reqFaseVentaDto.getFechavencimiento());
+				requisito.setFechaVencimiento(fechaVencimiento);
+			}
+			
+			if(reqFaseVentaDto.getPreciomaximo() != null) {
+				precioMaximo = reqFaseVentaDto.getPreciomaximo();
+				requisito.setPrecioMaxVenta(precioMaximo);
+			}
+			
+			genericDao.save(HistoricoRequisitosFaseVenta.class, requisito);
+			
+			if(fechaVencimiento != null) {
+				activoInfo.setFechaVencimiento(fechaVencimiento);
+			}
+			
+			if(precioMaximo != null) {
+				activoInfo.setPrecioMaxVenta(precioMaximo);
+			}
+			
+			genericDao.save(ActivoInfAdministrativa.class, activoInfo);
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+	@Transactional
+	public Boolean deleteReqFaseVenta(ReqFaseVentaDto reqFaseVentaDto) {
+		
+		if(reqFaseVentaDto != null && reqFaseVentaDto.getIdReq() != null) {
+			
+			HistoricoRequisitosFaseVenta requisito = genericDao.get(HistoricoRequisitosFaseVenta.class, genericDao.createFilter(FilterType.EQUALS, "id", reqFaseVentaDto.getIdReq()));
+			List<ReqFaseVentaDto> listRequisitos = getReqFaseVenta(reqFaseVentaDto.getIdActivo());
+			
+			if(requisito != null) {
+				Auditoria.delete(requisito);
+				
+				genericDao.update(HistoricoRequisitosFaseVenta.class, requisito);
+				
+				if(listRequisitos != null && !listRequisitos.isEmpty() && listRequisitos.size() > 1 
+						&& listRequisitos.get(1) != null && listRequisitos.get(0).getIdReq() == reqFaseVentaDto.getIdReq()) {
+					ActivoInfAdministrativa activoInfo = genericDao.get(ActivoInfAdministrativa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", reqFaseVentaDto.getIdActivo()));
+					HistoricoRequisitosFaseVenta requisito2 = genericDao.get(HistoricoRequisitosFaseVenta.class, genericDao.createFilter(FilterType.EQUALS, "id", listRequisitos.get(1).getIdReq()));
+					
+					activoInfo.setFechaVencimiento(requisito2.getFechaVencimiento());
+					activoInfo.setPrecioMaxVenta(requisito2.getPrecioMaxVenta());
+					
+					genericDao.save(ActivoInfAdministrativa.class, activoInfo);
+					
+				}
+			}
+			
+			return true;
 		}
 		
 		return false;

@@ -50,7 +50,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 						xtype:'container',
 						layout: {
 							type : 'hbox'
-					},
+						},
 
 						items :
 							[
@@ -174,11 +174,10 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 				        
 				        {
 				        	xtype:'fieldsettable',
-				        	height: 300,
 				        	margin: '0 10 10 0',
 							layout: {
 						 			type: 'table',
-				         			columns: 3
+				         			columns: 2
 				        			},
 				        	
 							defaultType: 'textfieldbase',
@@ -275,6 +274,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 			            									value: '{infoAdministrativa.venderPersonaJuridica}'
 			            								  }
 												}
+							
 					
 											]
 							        },
@@ -330,7 +330,20 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 												}				              
 												
 											]
-							        }
+							        },
+									{
+							        	xtype:'fieldset',
+							        	margin: '0 10 10 0',
+										colspan: 2,
+										defaultType: 'textfieldbase',
+							        	items :
+										[
+											{
+						        				xtype: 'reqfaseventagrid', 
+												reference: 'reqfaseventagridref'
+					        				}
+					        			]
+									}
 
 
 

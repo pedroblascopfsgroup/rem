@@ -144,6 +144,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.rest.dto.HistoricoPropuestasPreciosDto;
+import es.pfsgroup.plugin.rem.rest.dto.ReqFaseVentaDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
@@ -3430,6 +3431,50 @@ public class ActivoController extends ParadiseJsonController {
 		
 		try {
 			Boolean success = activoApi.updateHistoricoSolicitudPrecios(historicoPropuestasPreciosDto);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getReqFaseVenta(ModelMap model, Long id) {
+		
+		try {
+			model.put(RESPONSE_DATA_KEY, activoApi.getReqFaseVenta(id));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			logger.error("Error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createReqFaseVenta(ReqFaseVentaDto reqFaseVentaDto,  ModelMap model) { 
+		
+		try {
+			Boolean success = activoApi.createReqFaseVenta(reqFaseVentaDto);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteReqFaseVenta(ReqFaseVentaDto reqFaseVentaDto,  ModelMap model) { 
+		
+		try {
+			Boolean success = activoApi.deleteReqFaseVenta(reqFaseVentaDto);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {

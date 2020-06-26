@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.HistoricoPeticionesPrecios;
+import es.pfsgroup.plugin.rem.model.HistoricoRequisitosFaseVenta;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
@@ -343,4 +344,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public Object getBusquedaActivosGrid(DtoActivoGridFilter dto, Usuario usuarioLogado, boolean devolverPage);
 
 	List<HistoricoPeticionesPrecios> getHistoricoSolicitudesPrecios(Long idActivo);
+
+	List<HistoricoRequisitosFaseVenta> getReqFaseVenta(Long idActivo);
 }

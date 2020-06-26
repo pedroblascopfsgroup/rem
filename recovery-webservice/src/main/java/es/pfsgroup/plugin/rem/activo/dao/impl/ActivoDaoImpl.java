@@ -63,6 +63,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoPeticionesPrecios;
+import es.pfsgroup.plugin.rem.model.HistoricoRequisitosFaseVenta;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
@@ -1850,5 +1851,11 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	public List<HistoricoPeticionesPrecios> getHistoricoSolicitudesPrecios(Long idActivo) {
 		Order order = new Order(OrderType.DESC,"auditoria.fechaCrear");
 		return genericDao.getListOrdered(HistoricoPeticionesPrecios.class, order, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo));
+	}
+	
+	@Override
+	public List<HistoricoRequisitosFaseVenta> getReqFaseVenta(Long idActivo) {
+		Order order = new Order(OrderType.DESC,"auditoria.fechaCrear");
+		return genericDao.getListOrdered(HistoricoRequisitosFaseVenta.class, order, genericDao.createFilter(FilterType.EQUALS, "activoInfAdministrativa.activo.id", idActivo));
 	}
 }

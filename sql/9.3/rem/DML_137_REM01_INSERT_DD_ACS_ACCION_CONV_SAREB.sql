@@ -35,11 +35,11 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('01', 'Actualizar'),
-      T_TIPO_DATA('02', 'Actualizar condicionado'),
-      T_TIPO_DATA('03', 'No actualizar'),
-      T_TIPO_DATA('04', 'Alerta'),
-      T_TIPO_DATA('05', 'Alerta condicionada')
+    	T_TIPO_DATA('ACT', 'Actualizar'),
+      T_TIPO_DATA('ACT_CND', 'Actualizar condicionado'),
+      T_TIPO_DATA('NO_ACT', 'No actualizar'),
+      T_TIPO_DATA('WRN', 'Alerta'),
+      T_TIPO_DATA('WRN_CND', 'Alerta condicionada')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

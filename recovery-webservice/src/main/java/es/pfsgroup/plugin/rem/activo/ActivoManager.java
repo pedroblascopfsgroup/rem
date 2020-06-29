@@ -6945,9 +6945,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				
 				genericDao.update(HistoricoRequisitosFaseVenta.class, requisito);
 				
+				ActivoInfAdministrativa activoInfo = genericDao.get(ActivoInfAdministrativa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", reqFaseVentaDto.getIdActivo()));
+				
 				if(listRequisitos != null && !listRequisitos.isEmpty() && listRequisitos.size() > 1 
-						&& listRequisitos.get(1) != null && listRequisitos.get(0).getIdReq() == reqFaseVentaDto.getIdReq()) {
-					ActivoInfAdministrativa activoInfo = genericDao.get(ActivoInfAdministrativa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", reqFaseVentaDto.getIdActivo()));
+						&& listRequisitos.get(1) != null && listRequisitos.get(0).getIdReq() != reqFaseVentaDto.getIdReq()) {
+					
 					HistoricoRequisitosFaseVenta requisito2 = genericDao.get(HistoricoRequisitosFaseVenta.class, genericDao.createFilter(FilterType.EQUALS, "id", listRequisitos.get(1).getIdReq()));
 					
 					activoInfo.setFechaVencimiento(requisito2.getFechaVencimiento());
@@ -6955,6 +6957,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					
 					genericDao.save(ActivoInfAdministrativa.class, activoInfo);
 					
+				}else {
+					activoInfo.setFechaVencimiento(null);
+					activoInfo.setPrecioMaxVenta(null);
 				}
 			}
 			

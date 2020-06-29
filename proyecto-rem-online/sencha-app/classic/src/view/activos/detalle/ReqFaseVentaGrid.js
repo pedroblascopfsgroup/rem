@@ -120,12 +120,12 @@ Ext.define('HreRem.view.activos.detalle.ReqFaseVentaGrid', {
 		    };
 		    
 		    me.deleteSuccessFn = function(){
-	    		this.getStore().load()
+	    		me.saveSuccessFn();
 	    		this.setSelection(0);
 	    	};
 	     	
 	     	me.deleteFailureFn = function(){
-	    		this.getStore().load()
+	    		me.saveFailureFn();
 	    	};
 
 

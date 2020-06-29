@@ -4724,4 +4724,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 	
+	@Override
+	public Boolean perteneceADiccionarioEquipoGestion(String codEquipoGestion) {
+		if(Checks.esNulo(codEquipoGestion) || !StringUtils.isAlphanumeric(codEquipoGestion)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) FROM DD_EQG_EQUIPO_GESTION " 
+				+ "WHERE DD_EQG_CODIGO = '"+ codEquipoGestion +"' "
+				+ "AND BORRADO = 0"
+		);
+		
+		return !"0".equals(resultado);
+	}
 }

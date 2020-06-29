@@ -6,6 +6,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.api.*;
+import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,36 +27,9 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
-import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.GencatApi;
-import es.pfsgroup.plugin.rem.api.ProveedoresApi;
-import es.pfsgroup.plugin.rem.api.TareaActivoApi;
-import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gencat.GencatManager;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.AdjuntoTrabajo;
-import es.pfsgroup.plugin.rem.model.CompradorExpediente;
-import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
-import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.InformeJuridico;
-import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
-import es.pfsgroup.plugin.rem.model.TareaActivo;
-import es.pfsgroup.plugin.rem.model.Trabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
@@ -113,6 +89,9 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
     
     @Autowired
     private ActivoTareaExternaDao activoTareaExternaDao;
+
+	@Autowired
+	private OfertaApi ofertaApi;
     
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -918,5 +897,21 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		Boolean resManzanaCompletado = tareaActivoApi.getSiTareaHaSidoCompletada(idTramite, ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_PRO_MANZANA);
 		
 		return informeCompletado && resManzanaCompletado;
+	}
+
+	@Override
+	public Boolean esOfertaPrincipalSinDependientes(TareaExterna tareaExterna) {
+
+		Oferta oferta = ofertaApi.tareaExternaToOferta(tareaExterna);
+
+		List<Oferta> ofertasDependientes;
+
+		if (!Checks.esNulo(oferta) && ofertaApi.isOfertaPrincipal(oferta)) {
+			ofertasDependientes = ofertaApi.ofertasAgrupadasDependientes(oferta);
+			return !ofertasDependientes.isEmpty();
+		}else{
+			return true;
+		}
+
 	}
 }

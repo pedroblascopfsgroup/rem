@@ -21,7 +21,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de acción de gastos
+ * Modelo que gestiona el diccionario de Motivo de Baja de Suministro
  */
 @Entity
 @Table(name = "DD_MBS_MOTIVO_BAJA_SUM", schema = "${entity.schema}")
@@ -29,16 +29,21 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDMotivoBajaSuministro implements Auditable, Dictionary {
 
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
+	public static final String CODIGO_MBS_COMUNIDAD_CONSTITUIDA = "CON";
+	public static final String CODIGO_MBS_VENTA= "VEN";
+	public static final String CODIGO_MBS_ALQUILADA= "ALQ";
+	public static final String CODIGO_MBS_BAJA_PISO_PILOTO= "BPP";
+	public static final String CODIGO_MBS_BAJA_SEGURIDAD= "BSE";
+	public static final String CODIGO_MBS_BAJA_MANTENIMIENTO= "BMA";
+	public static final String CODIGO_MBS_BAJA_VIGILANCIA= "BSU";
+	public static final String CODIGO_MBS_OTROS= "OTR";
+	
 	@Id
 	@Column(name = "DD_MBS_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDMotivoBajaSuministroGenerator")
-	@SequenceGenerator(name = "DDMotivoBajaSuministroGenerator", sequenceName = "S_DD_MBS_MOTIVO_BAJA_SUM_")
+	@SequenceGenerator(name = "DDMotivoBajaSuministroGenerator", sequenceName = "S_DD_MBS_MOTIVO_BAJA_SUM")
 	private Long id;
 	    
 	@Column(name = "DD_MBS_CODIGO")   
@@ -50,20 +55,12 @@ public class DDMotivoBajaSuministro implements Auditable, Dictionary {
 	@Column(name = "DD_MBS_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
 	
-	public static final String CODIGO_MBS_COMUNIDAD_CONSTITUIDA = "CON";
-	public static final String CODIGO_MBS_VENTA= "VEN";
-	public static final String CODIGO_MBS_ALQUILADA= "ALQ";
-	public static final String CODIGO_MBS_BAJA_PISO_PILOTO= "BPP";
-	public static final String CODIGO_MBS_BAJA_SEGURIDAD= "BSE";
-	public static final String CODIGO_MBS_BAJA_MANTENIMIENTO= "BMA";
-	public static final String CODIGO_MBS_BAJA_VIGILANCIA= "BSU";
-	public static final String CODIGO_MBS_OTROS= "OTR";
-	
 	@Version   
 	private Long version;
 
 	@Embedded
 	private Auditoria auditoria;
+	
 	
 	
 	public Long getId() {

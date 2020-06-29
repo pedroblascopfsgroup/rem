@@ -1383,4 +1383,21 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		ConfiguracionSubpartidasPresupuestarias cps = genericDao.get(ConfiguracionSubpartidasPresupuestarias.class, filtroId);
 		return (cps != null) ? cps.getPartidaPresupuestaria() : null;
 	}
+	
+	@Override
+	public List<ActivoProveedor> getComboActivoProveedorSuministro(String subtipo, String estado) {
+		List<ActivoProveedor> listaActivoProveedor = new ArrayList<ActivoProveedor>();
+		
+		if (!Checks.esNulo(subtipo) && !Checks.esNulo(estado)) {
+			Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", subtipo);
+			Filter filtroEstado = genericDao.createFilter(FilterType.EQUALS, "estadoProveedor.codigo", estado);
+			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			List<ActivoProveedor> listProveedorSuministroVigente = genericDao.getList(ActivoProveedor.class, filtroSubtipo, filtroEstado, filtroBorrado);
+			
+			for (ActivoProveedor psv : listProveedorSuministroVigente) {
+				listaActivoProveedor.add(psv);
+			}
+		}
+		return listaActivoProveedor;
+	}
 }

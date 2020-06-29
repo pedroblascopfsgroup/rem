@@ -2412,6 +2412,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {id: '{activo.id}'}
 			}
 		},
+
 		comboTributacionAdquisicion: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -2429,6 +2430,103 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'activo/getReqFaseVenta',
 				extraParams: {id: '{activo.id}'}
 			}
+		},
+		
+		storeSuministrosActivo: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.SuministrosActivoModel',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getSuministrosActivo',
+				extraParams: {idActivo: '{activo.id}'}
+			},
+			autoLoad: true
+		},
+		
+		comboDDTipoSuministro: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoSuministro'}
+			},
+			autoLoad: true
+		},
+		
+		comboDDSubtipoSuministro: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'subtipoSuministro'}
+			},
+			autoLoad: true
+		},
+		
+		comboDDCompaniaSuministradora: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboActivoProveedorSuministro',
+				extraParams: {
+					//diccionario: 'companiaSuministradora',
+					//tipoProveedor.codigo: '25',
+					//estadoProveedor.codigo: '04'
+					subtipo: '25',
+					estado: '04'
+				}
+			},
+			autoLoad: true
+		},
+		
+		comboDDDomiciliado: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'domiciliado'}
+			},
+			autoLoad: true
+		},
+		
+		comboDDPeriodicidad: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'periodicidad'}
+			},
+			autoLoad: true
+		},
+		
+		comboDDMotivoAltaSuministro: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivoAltaSuministro'}
+			},
+			autoLoad: true
+		},
+		
+		comboDDMotivoBajaSuministro: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivoBajaSuministro'}
+			},
+			autoLoad: true
+		},
+		
+		comboDDValidado: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'validado'}
+			},
+			autoLoad: true
 		}
-     }
+	}
 });

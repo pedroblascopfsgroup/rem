@@ -253,6 +253,14 @@ public class DiccionarioTargetClassMap{
 		mapa.put("origenAnterior", DDOrigenAnterior.class);
 		mapa.put("tipoPeticionPrecio", DDTipoPeticionPrecio.class);
 		mapa.put("tributacionAdquisicion", DDTributacionAdquisicion.class);
+		mapa.put("tipoSuministro", DDTipoSuministro.class);
+		mapa.put("subtipoSuministro", DDSubtipoSuministro.class);
+		mapa.put("companiaSuministradora", ActivoProveedor.class);
+		mapa.put("domiciliado", DDSinSiNo.class);
+		mapa.put("periodicidad", DDTipoPeriocidad.class);
+		mapa.put("motivoAltaSuministro", DDMotivoAltaSuministro.class);
+		mapa.put("motivoBajaSuministro", DDMotivoBajaSuministro.class);
+		mapa.put("validado", DDSinSiNo.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

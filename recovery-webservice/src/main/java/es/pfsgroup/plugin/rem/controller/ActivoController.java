@@ -95,6 +95,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.DtoActivoSuministros;
 import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoTributos;
 import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
@@ -3460,10 +3461,9 @@ public class ActivoController extends ParadiseJsonController {
 		
 		try {
 			Boolean success = activoApi.createReqFaseVenta(reqFaseVentaDto);
-			model.put(RESPONSE_SUCCESS_KEY, success);
-
+			model.put(RESPONSE_SUCCESS_KEY, true);
 		} catch (Exception e) {
-			logger.error("error en activoController", e);
+			logger.error("Error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 		}
 		
@@ -3476,7 +3476,49 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 			Boolean success = activoApi.deleteReqFaseVenta(reqFaseVentaDto);
 			model.put(RESPONSE_SUCCESS_KEY, success);
-
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getSuministrosActivo(ModelMap model, Long id) {
+		
+		try {
+			model.put(RESPONSE_DATA_KEY, activoApi.getSuministrosActivo(id));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			logger.error("Error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createSuministroActivo(DtoActivoSuministros dtoActivoSuministros,  ModelMap model) { 
+		
+		try {
+			Boolean success = activoApi.createSuministroActivo(dtoActivoSuministros);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	
+	
+	public ModelAndView updateSuministroActivo(DtoActivoSuministros dtoActivoSuministros,  ModelMap model) { 
+		
+		try {
+			Boolean success = activoApi.updateSuministroActivo(dtoActivoSuministros);
+			model.put(RESPONSE_SUCCESS_KEY, success);
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);

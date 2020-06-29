@@ -133,8 +133,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAltaSuministro;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionTramitacion;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoBajaSuministro;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
@@ -148,6 +150,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubestadoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoSuministro;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTerritorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
@@ -6959,6 +6962,178 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 			
 			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public List<DtoActivoSuministros> getSuministrosActivo(Long idActivo) {
+		List<ActivoSuministros> listSuministros = activoDao.getSuministrosByIdActivo(idActivo);
+		List<DtoActivoSuministros> listDto = new ArrayList<DtoActivoSuministros>();
+		
+		if(listSuministros != null && !listSuministros.isEmpty()) {
+			for(ActivoSuministros suministro: listSuministros) {
+				DtoActivoSuministros dto = new DtoActivoSuministros();
+				
+				dto.setIdSuministro(suministro.getId());
+				dto.setIdActivo(suministro.getActivo().getId());
+				
+				if(!Checks.esNulo(suministro.getTipoSuministro())) {
+					dto.setTipoSuministro(suministro.getTipoSuministro());
+				}
+				if(!Checks.esNulo(suministro.getSubtipoSuministro())) {
+					dto.setSubtipoSuministro(suministro.getSubtipoSuministro());
+				}
+				if(!Checks.esNulo(suministro.getCompaniaSuministro())) {
+					dto.setCompaniaSuministro(suministro.getCompaniaSuministro());
+				}
+				if(!Checks.esNulo(suministro.getDomiciliado())) {
+					dto.setDomiciliado(suministro.getDomiciliado());
+				}
+				if(!Checks.esNulo(suministro.getNumContrato())) {
+					dto.setNumContrato(suministro.getNumContrato());
+				}
+				if(!Checks.esNulo(suministro.getNumCups())) {
+					dto.setNumCups(suministro.getNumCups());
+				}
+				if(!Checks.esNulo(suministro.getPeriodicidad())) {
+					dto.setPeriodicidad(suministro.getPeriodicidad());
+				}
+				if(!Checks.esNulo(suministro.getFechaAlta())) {
+					dto.setFechaAlta(suministro.getFechaAlta());
+				}
+				if(!Checks.esNulo(suministro.getMotivoAlta())) {
+					dto.setMotivoAlta(suministro.getMotivoAlta());
+				}
+				if(!Checks.esNulo(suministro.getFechaBaja())) {
+					dto.setFechaBaja(suministro.getFechaBaja());
+				}
+				if(!Checks.esNulo(suministro.getMotivoBaja())) {
+					dto.setMotivoBaja(suministro.getMotivoBaja());
+				}
+				if(!Checks.esNulo(suministro.getValidado())) {
+					dto.setValidado(suministro.getValidado());
+				}
+				
+				listDto.add(dto);
+			}
+		}
+		
+		return listDto;
+	}
+	
+	@Override
+	@Transactional
+	public Boolean createSuministroActivo(DtoActivoSuministros dtoActivoSuministros) throws ParseException {
+		
+		ActivoSuministros peticion = new ActivoSuministros();
+		
+		if(dtoActivoSuministros != null) {
+			if(dtoActivoSuministros.getIdActivo() == null) {
+				throw new JsonViewerException("Error al crear el suministro.");
+			}else {
+				Activo activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "idActivo", dtoActivoSuministros.getIdActivo()));
+				peticion.setActivo(activo);
+			}
+			
+			if(!Checks.esNulo(dtoActivoSuministros.getTipoSuministro())) {
+				peticion.setTipoSuministro(dtoActivoSuministros.getTipoSuministro());
+			}
+			if(!Checks.esNulo(dtoActivoSuministros.getSubtipoSuministro())) {
+				peticion.setSubtipoSuministro(dtoActivoSuministros.getSubtipoSuministro());
+			}
+			if(!Checks.esNulo(dtoActivoSuministros.getCompaniaSuministro())) {
+				peticion.setCompaniaSuministro(dtoActivoSuministros.getCompaniaSuministro());
+			}
+			if(!Checks.esNulo(dtoActivoSuministros.getDomiciliado())) {
+				peticion.setDomiciliado(dtoActivoSuministros.getDomiciliado());
+			}
+			if(!Checks.esNulo(dtoActivoSuministros.getNumContrato())) {
+				peticion.setNumContrato(dtoActivoSuministros.getNumContrato());
+			}
+			if(!Checks.esNulo(dtoActivoSuministros.getNumCups())) {
+				peticion.setNumCups(dtoActivoSuministros.getNumCups());
+			}
+			if(!Checks.esNulo(dtoActivoSuministros.getPeriodicidad())) {
+				peticion.setPeriodicidad(dtoActivoSuministros.getPeriodicidad());
+			}
+			if(!Checks.esNulo(dtoActivoSuministros.getFechaAlta())) {
+				peticion.setFechaAlta(dtoActivoSuministros.getFechaAlta());
+			}
+			if(!Checks.esNulo(dtoActivoSuministros.getMotivoAlta())) {
+				peticion.setMotivoAlta(dtoActivoSuministros.getMotivoAlta());
+			}
+			if(!Checks.esNulo(dtoActivoSuministros.getFechaBaja())) {
+				peticion.setFechaBaja(dtoActivoSuministros.getFechaBaja());
+			}
+			if(!Checks.esNulo(dtoActivoSuministros.getMotivoBaja())) {
+				peticion.setMotivoBaja(dtoActivoSuministros.getMotivoBaja());
+			}
+			if(!Checks.esNulo(dtoActivoSuministros.getValidado())) {
+				peticion.setValidado(dtoActivoSuministros.getValidado());
+			}
+			
+			genericDao.save(ActivoSuministros.class, peticion);
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+	@Transactional
+	public Boolean updateSuministroActivo(DtoActivoSuministros dtoActivoSuministros) throws ParseException {
+		
+		ActivoSuministros peticion = null;
+		
+		if(dtoActivoSuministros != null) {
+			
+			peticion = genericDao.get(ActivoSuministros.class, genericDao.createFilter(FilterType.EQUALS, "idSuministro", dtoActivoSuministros.getIdSuministro()));
+			
+			if(peticion != null) {
+				if(!Checks.esNulo(dtoActivoSuministros.getTipoSuministro())) {
+					peticion.setTipoSuministro(dtoActivoSuministros.getTipoSuministro());
+				}
+				if(!Checks.esNulo(dtoActivoSuministros.getSubtipoSuministro())) {
+					peticion.setSubtipoSuministro(dtoActivoSuministros.getSubtipoSuministro());
+				}
+				if(!Checks.esNulo(dtoActivoSuministros.getCompaniaSuministro())) {
+					peticion.setCompaniaSuministro(dtoActivoSuministros.getCompaniaSuministro());
+				}
+				if(!Checks.esNulo(dtoActivoSuministros.getDomiciliado())) {
+					peticion.setDomiciliado(dtoActivoSuministros.getDomiciliado());
+				}
+				if(!Checks.esNulo(dtoActivoSuministros.getNumContrato())) {
+					peticion.setNumContrato(dtoActivoSuministros.getNumContrato());
+				}
+				if(!Checks.esNulo(dtoActivoSuministros.getNumCups())) {
+					peticion.setNumCups(dtoActivoSuministros.getNumCups());
+				}
+				if(!Checks.esNulo(dtoActivoSuministros.getPeriodicidad())) {
+					peticion.setPeriodicidad(dtoActivoSuministros.getPeriodicidad());
+				}
+				if(!Checks.esNulo(dtoActivoSuministros.getFechaAlta())) {
+					peticion.setFechaAlta(dtoActivoSuministros.getFechaAlta());
+				}
+				if(!Checks.esNulo(dtoActivoSuministros.getMotivoAlta())) {
+					peticion.setMotivoAlta(dtoActivoSuministros.getMotivoAlta());
+				}
+				if(!Checks.esNulo(dtoActivoSuministros.getFechaBaja())) {
+					peticion.setFechaBaja(dtoActivoSuministros.getFechaBaja());
+				}
+				if(!Checks.esNulo(dtoActivoSuministros.getMotivoBaja())) {
+					peticion.setMotivoBaja(dtoActivoSuministros.getMotivoBaja());
+				}
+				if(!Checks.esNulo(dtoActivoSuministros.getValidado())) {
+					peticion.setValidado(dtoActivoSuministros.getValidado());
+				}
+				
+				genericDao.save(ActivoSuministros.class, peticion);
+				
+				return true;
+			}
 		}
 		
 		return false;

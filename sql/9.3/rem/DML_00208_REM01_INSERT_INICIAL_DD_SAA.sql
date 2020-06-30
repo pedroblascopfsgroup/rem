@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Vicente Martinez Cifre
---## FECHA_CREACION=20200629
+--## FECHA_CREACION=20200630
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-10484
@@ -38,10 +38,10 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
             -- CODIGO  			      DESCRIPCION                       DESCRIPCION_LARGA                   CODIGO_DICCIONARIO_REL
-      T_TIPO_DATA('PIN',			'Pendiente inscripción',			         'Pendiente inscripción',              'PET'),
-      T_TIPO_DATA('IIN',			'Incidencia en la inscripción',		     'Incidencia en la inscripción',       'PRT'),
+      T_TIPO_DATA('PIN',			'Pendiente inscripción',			         'Pendiente inscripción',              'PSR'),
+      T_TIPO_DATA('IIN',			'Incidencia en la inscripción',		     'Incidencia en la inscripción',       'PSR'),
       T_TIPO_DATA('PCA',      'Pendiente cargas',                    'Pendiente cargas',                   'PSR'),
-      T_TIPO_DATA('CAC',			'Concurso acreedores',		             'Concurso acreedores',                'SAR')
+      T_TIPO_DATA('CAC',			'Concurso acreedores',		             'Concurso acreedores',                'PSR')
 
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
@@ -68,6 +68,7 @@ BEGIN
         V_MSQL := '
           UPDATE '|| V_ESQUEMA ||'.'||V_TABLA||' 
           SET 
+            DD_'||V_CHARS_SUP||'_ID = (SELECT DD_'||V_CHARS_SUP||'_ID FROM '|| V_ESQUEMA ||'.'||V_TABLA_SUP||' WHERE DD_'||V_CHARS_SUP||'_CODIGO = '''||V_TMP_TIPO_DATA(4)||''' ),
             DD_'||V_CHARS||'_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''',
             DD_'||V_CHARS||'_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''',
 	    USUARIOMODIFICAR = '''||V_USUARIO||''',

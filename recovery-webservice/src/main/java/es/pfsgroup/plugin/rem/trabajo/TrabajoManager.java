@@ -2731,7 +2731,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		List<DtoTarifaTrabajo> listaTarifasTrabajo = getListDtoTarifaTrabajo(filtro, idTrabajo);
 		
-		if(!Checks.esNulo(listaTarifasTrabajo)) {
+		if(!Checks.estaVacio(listaTarifasTrabajo)) {
 			return new DtoPage(listaTarifasTrabajo, listaTarifasTrabajo.get(0).getTotalCount());
 		}else {
 			return new DtoPage(listaTarifasTrabajo, 0);

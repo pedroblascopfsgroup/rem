@@ -473,6 +473,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    }
     	});
     },
+    onClickEstadoAdmision: function (btn) {
+    	//Por programar
+    	var me = this;
+    	var idActivo = me.getViewModel().get("activo.id");
+    	var codSubcartera = me.getViewModel().get("activo.subcarteraCodigo");
+    	var codCartera = me.getViewModel().get("activo.entidadPropietariaCodigo");
+    	me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: idActivo, idAgrupacion: null,codCartera: codCartera, codSubcartera: codSubcartera, logadoGestorMantenimiento: true});
+    },
     
     onClickCrearTrabajo: function (btn) {
     	var me = this;

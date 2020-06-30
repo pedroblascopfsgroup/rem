@@ -2438,7 +2438,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'activo/getSuministrosActivo',
-				extraParams: {idActivo: '{activo.id}'}
+				extraParams: {id: '{activo.id}'}
 			},
 			autoLoad: true
 		},
@@ -2464,17 +2464,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		},
 		
 		comboDDCompaniaSuministradora: {
-			model: 'HreRem.model.ComboBase',
+			model: 'HreRem.model.Proveedor',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getComboActivoProveedorSuministro',
-				extraParams: {
-					//diccionario: 'companiaSuministradora',
-					//tipoProveedor.codigo: '25',
-					//estadoProveedor.codigo: '04'
-					subtipo: '25',
-					estado: '04'
-				}
+				remoteUrl: 'generic/getComboActivoProveedorSuministro'
 			},
 			autoLoad: true
 		},

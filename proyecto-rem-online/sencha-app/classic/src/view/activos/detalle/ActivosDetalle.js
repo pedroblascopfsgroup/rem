@@ -182,7 +182,6 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
 
     	me.add({xtype: 'plusvaliaactivo', ocultarBotonesEdicion: !$AU.userHasFunction('EDITAR_TAB_ACTIVO_PLUSVALIA')});
 
-    	me.add({xtype: 'suministrosactivo', ocultarBotonesEdicion: true});
     	
     	
     	

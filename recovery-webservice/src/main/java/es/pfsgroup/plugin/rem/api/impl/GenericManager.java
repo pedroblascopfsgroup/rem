@@ -1385,18 +1385,16 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	}
 	
 	@Override
-	public List<ActivoProveedor> getComboActivoProveedorSuministro(String subtipo, String estado) {
+	public List<ActivoProveedor> getComboActivoProveedorSuministro() {
 		List<ActivoProveedor> listaActivoProveedor = new ArrayList<ActivoProveedor>();
 		
-		if (!Checks.esNulo(subtipo) && !Checks.esNulo(estado)) {
-			Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", subtipo);
-			Filter filtroEstado = genericDao.createFilter(FilterType.EQUALS, "estadoProveedor.codigo", estado);
-			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-			List<ActivoProveedor> listProveedorSuministroVigente = genericDao.getList(ActivoProveedor.class, filtroSubtipo, filtroEstado, filtroBorrado);
-			
-			for (ActivoProveedor psv : listProveedorSuministroVigente) {
-				listaActivoProveedor.add(psv);
-			}
+		Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_SUMINISTRO);
+		Filter filtroEstado = genericDao.createFilter(FilterType.EQUALS, "estadoProveedor.codigo", DDEstadoProveedor.ESTADO_BIGENTE);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		List<ActivoProveedor> listProveedorSuministroVigente = genericDao.getList(ActivoProveedor.class, filtroSubtipo, filtroEstado, filtroBorrado);
+		
+		for (ActivoProveedor psv : listProveedorSuministroVigente) {
+			listaActivoProveedor.add(psv);
 		}
 		return listaActivoProveedor;
 	}

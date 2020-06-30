@@ -61,7 +61,7 @@ Ext.define('HreRem.model.SuministrosActivoModel', {
 			read: 'activo/getSuministrosActivo',
 			create: 'activo/createSuministroActivo',
 			update: 'activo/updateSuministroActivo',
-			destroy: 'activo/updateSuministroActivo'
+			destroy: 'activo/deleteSuministroActivo'
 		},
 		extraParams: {tab: 'suministros'}
 	

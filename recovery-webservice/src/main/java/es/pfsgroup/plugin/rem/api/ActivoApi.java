@@ -1334,5 +1334,5 @@ public interface ActivoApi {
 	List<DtoActivoSuministros> getSuministrosActivo(Long idActivo);
 	Boolean createSuministroActivo(DtoActivoSuministros dtoActivoSuministros) throws ParseException;
 	Boolean updateSuministroActivo(DtoActivoSuministros dtoActivoSuministros) throws ParseException;
-	
+	Boolean deleteSuministroActivo(DtoActivoSuministros dtoActivoSuministros) throws ParseException;
 }

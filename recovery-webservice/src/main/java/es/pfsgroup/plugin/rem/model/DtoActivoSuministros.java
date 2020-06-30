@@ -2,13 +2,6 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoAltaSuministro;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoBajaSuministro;
-import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoSuministro;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoSuministro;
-
 /**
  * Dto para el tab de activo suministros
  * @author Alberto Flores
@@ -20,18 +13,18 @@ public class DtoActivoSuministros extends DtoTabActivo {
 
 	private Long idSuministro;
 	private Long idActivo;
-	private DDTipoSuministro tipoSuministro; 
-	private DDSubtipoSuministro subtipoSuministro; 
-	private ActivoProveedor companiaSuministro; 
-	private DDSinSiNo domiciliado;
+	private Long tipoSuministro; 
+	private Long subtipoSuministro; 
+	private Long companiaSuministro; 
+	private Long domiciliado;
 	private String numContrato;
 	private String numCups;
-	private DDTipoPeriocidad periodicidad;
+	private Long periodicidad;
 	private Date fechaAlta;
-	private DDMotivoAltaSuministro motivoAlta;
+	private Long motivoAlta;
 	private Date fechaBaja;
-	private DDMotivoBajaSuministro motivoBaja;
-	private DDSinSiNo validado;
+	private Long motivoBaja;
+	private Long validado;
 	
 	
 	public Long getIdSuministro() {
@@ -46,28 +39,28 @@ public class DtoActivoSuministros extends DtoTabActivo {
 	public void setIdActivo(Long idActivo) {
 		this.idActivo = idActivo;
 	}
-	public DDTipoSuministro getTipoSuministro() {
+	public Long getTipoSuministro() {
 		return tipoSuministro;
 	}
-	public void setTipoSuministro(DDTipoSuministro tipoSuministro) {
+	public void setTipoSuministro(Long tipoSuministro) {
 		this.tipoSuministro = tipoSuministro;
 	}
-	public DDSubtipoSuministro getSubtipoSuministro() {
+	public Long getSubtipoSuministro() {
 		return subtipoSuministro;
 	}
-	public void setSubtipoSuministro(DDSubtipoSuministro subtipoSuministro) {
+	public void setSubtipoSuministro(Long subtipoSuministro) {
 		this.subtipoSuministro = subtipoSuministro;
 	}
-	public ActivoProveedor getCompaniaSuministro() {
+	public Long getCompaniaSuministro() {
 		return companiaSuministro;
 	}
-	public void setCompaniaSuministro(ActivoProveedor companiaSuministro) {
+	public void setCompaniaSuministro(Long companiaSuministro) {
 		this.companiaSuministro = companiaSuministro;
 	}
-	public DDSinSiNo getDomiciliado() {
+	public Long getDomiciliado() {
 		return domiciliado;
 	}
-	public void setDomiciliado(DDSinSiNo domiciliado) {
+	public void setDomiciliado(Long domiciliado) {
 		this.domiciliado = domiciliado;
 	}
 	public String getNumContrato() {
@@ -82,10 +75,10 @@ public class DtoActivoSuministros extends DtoTabActivo {
 	public void setNumCups(String numCups) {
 		this.numCups = numCups;
 	}
-	public DDTipoPeriocidad getPeriodicidad() {
+	public Long getPeriodicidad() {
 		return periodicidad;
 	}
-	public void setPeriodicidad(DDTipoPeriocidad periodicidad) {
+	public void setPeriodicidad(Long periodicidad) {
 		this.periodicidad = periodicidad;
 	}
 	public Date getFechaAlta() {
@@ -94,10 +87,10 @@ public class DtoActivoSuministros extends DtoTabActivo {
 	public void setFechaAlta(Date fechaAlta) {
 		this.fechaAlta = fechaAlta;
 	}
-	public DDMotivoAltaSuministro getMotivoAlta() {
+	public Long getMotivoAlta() {
 		return motivoAlta;
 	}
-	public void setMotivoAlta(DDMotivoAltaSuministro motivoAlta) {
+	public void setMotivoAlta(Long motivoAlta) {
 		this.motivoAlta = motivoAlta;
 	}
 	public Date getFechaBaja() {
@@ -106,16 +99,16 @@ public class DtoActivoSuministros extends DtoTabActivo {
 	public void setFechaBaja(Date fechaBaja) {
 		this.fechaBaja = fechaBaja;
 	}
-	public DDMotivoBajaSuministro getMotivoBaja() {
+	public Long getMotivoBaja() {
 		return motivoBaja;
 	}
-	public void setMotivoBaja(DDMotivoBajaSuministro motivoBaja) {
+	public void setMotivoBaja(Long motivoBaja) {
 		this.motivoBaja = motivoBaja;
 	}
-	public DDSinSiNo getValidado() {
+	public Long getValidado() {
 		return validado;
 	}
-	public void setValidado(DDSinSiNo validado) {
+	public void setValidado(Long validado) {
 		this.validado = validado;
 	}
 	

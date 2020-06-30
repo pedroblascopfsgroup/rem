@@ -44,6 +44,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.acuerdo.model.DDPeriodicidadAcuerdo;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
@@ -169,6 +170,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPeticionPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRolMediador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoSolicitudTributo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoSuministro;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
@@ -6980,16 +6982,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				dto.setIdActivo(suministro.getActivo().getId());
 				
 				if(!Checks.esNulo(suministro.getTipoSuministro())) {
-					dto.setTipoSuministro(suministro.getTipoSuministro());
+					DDTipoSuministro tipoSuministro = genericDao.get(DDTipoSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", suministro.getTipoSuministro()));
+					dto.setTipoSuministro(tipoSuministro.getId());
 				}
 				if(!Checks.esNulo(suministro.getSubtipoSuministro())) {
-					dto.setSubtipoSuministro(suministro.getSubtipoSuministro());
+					DDSubtipoSuministro subtipoSuministro = genericDao.get(DDSubtipoSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", suministro.getSubtipoSuministro()));
+					dto.setSubtipoSuministro(subtipoSuministro.getId());
 				}
 				if(!Checks.esNulo(suministro.getCompaniaSuministro())) {
-					dto.setCompaniaSuministro(suministro.getCompaniaSuministro());
+					ActivoProveedor companiaSuministro = genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", suministro.getCompaniaSuministro()));
+					dto.setCompaniaSuministro(companiaSuministro.getId());
 				}
 				if(!Checks.esNulo(suministro.getDomiciliado())) {
-					dto.setDomiciliado(suministro.getDomiciliado());
+					DDSinSiNo domiciliado = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "id", suministro.getDomiciliado()));
+					dto.setDomiciliado(domiciliado.getId());
 				}
 				if(!Checks.esNulo(suministro.getNumContrato())) {
 					dto.setNumContrato(suministro.getNumContrato());
@@ -6998,22 +7004,26 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					dto.setNumCups(suministro.getNumCups());
 				}
 				if(!Checks.esNulo(suministro.getPeriodicidad())) {
-					dto.setPeriodicidad(suministro.getPeriodicidad());
+					DDTipoPeriocidad periodicidad = genericDao.get(DDTipoPeriocidad.class, genericDao.createFilter(FilterType.EQUALS, "id", suministro.getPeriodicidad()));
+					dto.setPeriodicidad(periodicidad.getId());
 				}
 				if(!Checks.esNulo(suministro.getFechaAlta())) {
 					dto.setFechaAlta(suministro.getFechaAlta());
 				}
 				if(!Checks.esNulo(suministro.getMotivoAlta())) {
-					dto.setMotivoAlta(suministro.getMotivoAlta());
+					DDMotivoAltaSuministro motivoAlta = genericDao.get(DDMotivoAltaSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", suministro.getMotivoAlta()));
+					dto.setMotivoAlta(motivoAlta.getId());
 				}
 				if(!Checks.esNulo(suministro.getFechaBaja())) {
 					dto.setFechaBaja(suministro.getFechaBaja());
 				}
 				if(!Checks.esNulo(suministro.getMotivoBaja())) {
-					dto.setMotivoBaja(suministro.getMotivoBaja());
+					DDMotivoBajaSuministro motivoBaja = genericDao.get(DDMotivoBajaSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", suministro.getMotivoBaja()));
+					dto.setMotivoBaja(motivoBaja.getId());
 				}
 				if(!Checks.esNulo(suministro.getValidado())) {
-					dto.setValidado(suministro.getValidado());
+					DDSinSiNo validado = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "id", suministro.getValidado()));
+					dto.setValidado(validado.getId());
 				}
 				
 				listDto.add(dto);
@@ -7038,16 +7048,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 			
 			if(!Checks.esNulo(dtoActivoSuministros.getTipoSuministro())) {
-				peticion.setTipoSuministro(dtoActivoSuministros.getTipoSuministro());
+				peticion.setTipoSuministro(genericDao.get(DDTipoSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getTipoSuministro())));
 			}
 			if(!Checks.esNulo(dtoActivoSuministros.getSubtipoSuministro())) {
-				peticion.setSubtipoSuministro(dtoActivoSuministros.getSubtipoSuministro());
+				peticion.setSubtipoSuministro(genericDao.get(DDSubtipoSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getSubtipoSuministro())));
 			}
 			if(!Checks.esNulo(dtoActivoSuministros.getCompaniaSuministro())) {
-				peticion.setCompaniaSuministro(dtoActivoSuministros.getCompaniaSuministro());
+				peticion.setCompaniaSuministro(genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getCompaniaSuministro())));
 			}
 			if(!Checks.esNulo(dtoActivoSuministros.getDomiciliado())) {
-				peticion.setDomiciliado(dtoActivoSuministros.getDomiciliado());
+				peticion.setDomiciliado(genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getDomiciliado())));
 			}
 			if(!Checks.esNulo(dtoActivoSuministros.getNumContrato())) {
 				peticion.setNumContrato(dtoActivoSuministros.getNumContrato());
@@ -7056,23 +7066,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				peticion.setNumCups(dtoActivoSuministros.getNumCups());
 			}
 			if(!Checks.esNulo(dtoActivoSuministros.getPeriodicidad())) {
-				peticion.setPeriodicidad(dtoActivoSuministros.getPeriodicidad());
+				peticion.setPeriodicidad(genericDao.get(DDTipoPeriocidad.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getPeriodicidad())));
 			}
 			if(!Checks.esNulo(dtoActivoSuministros.getFechaAlta())) {
 				peticion.setFechaAlta(dtoActivoSuministros.getFechaAlta());
 			}
 			if(!Checks.esNulo(dtoActivoSuministros.getMotivoAlta())) {
-				peticion.setMotivoAlta(dtoActivoSuministros.getMotivoAlta());
+				peticion.setMotivoAlta(genericDao.get(DDMotivoAltaSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getMotivoAlta())));
 			}
 			if(!Checks.esNulo(dtoActivoSuministros.getFechaBaja())) {
 				peticion.setFechaBaja(dtoActivoSuministros.getFechaBaja());
 			}
 			if(!Checks.esNulo(dtoActivoSuministros.getMotivoBaja())) {
-				peticion.setMotivoBaja(dtoActivoSuministros.getMotivoBaja());
+				peticion.setMotivoBaja(genericDao.get(DDMotivoBajaSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getMotivoBaja())));
 			}
 			if(!Checks.esNulo(dtoActivoSuministros.getValidado())) {
-				peticion.setValidado(dtoActivoSuministros.getValidado());
+				peticion.setValidado(genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getValidado())));
 			}
+			peticion.getAuditoria().setUsuarioCrear(usuarioApi.getUsuarioLogado().getUsername());
+			peticion.getAuditoria().setFechaCrear(new Date());
 			
 			genericDao.save(ActivoSuministros.class, peticion);
 			
@@ -7094,16 +7106,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			
 			if(peticion != null) {
 				if(!Checks.esNulo(dtoActivoSuministros.getTipoSuministro())) {
-					peticion.setTipoSuministro(dtoActivoSuministros.getTipoSuministro());
+					peticion.setTipoSuministro(genericDao.get(DDTipoSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getTipoSuministro())));
 				}
 				if(!Checks.esNulo(dtoActivoSuministros.getSubtipoSuministro())) {
-					peticion.setSubtipoSuministro(dtoActivoSuministros.getSubtipoSuministro());
+					peticion.setSubtipoSuministro(genericDao.get(DDSubtipoSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getSubtipoSuministro())));
 				}
 				if(!Checks.esNulo(dtoActivoSuministros.getCompaniaSuministro())) {
-					peticion.setCompaniaSuministro(dtoActivoSuministros.getCompaniaSuministro());
+					peticion.setCompaniaSuministro(genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getCompaniaSuministro())));
 				}
 				if(!Checks.esNulo(dtoActivoSuministros.getDomiciliado())) {
-					peticion.setDomiciliado(dtoActivoSuministros.getDomiciliado());
+					peticion.setDomiciliado(genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getDomiciliado())));
 				}
 				if(!Checks.esNulo(dtoActivoSuministros.getNumContrato())) {
 					peticion.setNumContrato(dtoActivoSuministros.getNumContrato());
@@ -7112,23 +7124,26 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					peticion.setNumCups(dtoActivoSuministros.getNumCups());
 				}
 				if(!Checks.esNulo(dtoActivoSuministros.getPeriodicidad())) {
-					peticion.setPeriodicidad(dtoActivoSuministros.getPeriodicidad());
+					peticion.setPeriodicidad(genericDao.get(DDTipoPeriocidad.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getPeriodicidad())));
 				}
 				if(!Checks.esNulo(dtoActivoSuministros.getFechaAlta())) {
 					peticion.setFechaAlta(dtoActivoSuministros.getFechaAlta());
 				}
 				if(!Checks.esNulo(dtoActivoSuministros.getMotivoAlta())) {
-					peticion.setMotivoAlta(dtoActivoSuministros.getMotivoAlta());
+					peticion.setMotivoAlta(genericDao.get(DDMotivoAltaSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getMotivoAlta())));
 				}
 				if(!Checks.esNulo(dtoActivoSuministros.getFechaBaja())) {
 					peticion.setFechaBaja(dtoActivoSuministros.getFechaBaja());
 				}
 				if(!Checks.esNulo(dtoActivoSuministros.getMotivoBaja())) {
-					peticion.setMotivoBaja(dtoActivoSuministros.getMotivoBaja());
+					peticion.setMotivoBaja(genericDao.get(DDMotivoBajaSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getMotivoBaja())));
 				}
 				if(!Checks.esNulo(dtoActivoSuministros.getValidado())) {
-					peticion.setValidado(dtoActivoSuministros.getValidado());
+					peticion.setValidado(genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getValidado())));
 				}
+				
+				peticion.getAuditoria().setUsuarioModificar(usuarioApi.getUsuarioLogado().getUsername());
+				peticion.getAuditoria().setFechaModificar(new Date());
 				
 				genericDao.save(ActivoSuministros.class, peticion);
 				
@@ -7139,5 +7154,28 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return false;
 	}
 
+	@Override
+	@Transactional
+	public Boolean deleteSuministroActivo(DtoActivoSuministros dtoActivoSuministros) throws ParseException {
+		
+		ActivoSuministros peticion = null;
+		
+		if(dtoActivoSuministros != null) {
+			
+			peticion = genericDao.get(ActivoSuministros.class, genericDao.createFilter(FilterType.EQUALS, "idSuministro", dtoActivoSuministros.getIdSuministro()));
+			
+			if(peticion != null) {
+				peticion.getAuditoria().setBorrado(true);
+				peticion.getAuditoria().setUsuarioBorrar(usuarioApi.getUsuarioLogado().getUsername());
+				peticion.getAuditoria().setFechaBorrar(new Date());
+				
+				genericDao.deleteById(ActivoSuministros.class, peticion.getId());
+				
+				return true;
+			}
+		}
+		
+		return false;
+	}
 }
 

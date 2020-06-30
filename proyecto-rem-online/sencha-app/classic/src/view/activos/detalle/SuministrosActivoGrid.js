@@ -2,23 +2,33 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 	extend:'HreRem.view.common.GridBaseEditableRow',
 	xtype:'suministrosactivogrid',
 	reference: 'suministrosactivogridref',
-	topBar:true,
-	removeButton: true,
-	editOnSelect:true,
-	disabledDeletedBtn:false,
-	editable: true,
+	topBar:'{validarEdicionSuministrosActivo}',
+	removeButton: '{validarEdicionSuministrosActivo}',
+	editOnSelect:'{validarEdicionSuministrosActivo}',
+	disabledDeletedBtn:'{!validarEdicionSuministrosActivo}',
+	editable: '{validarEdicionSuministrosActivo}',
 	bind: {
 		store: '{storeSuministrosActivo}'
 	},
 	
-	listeners: {
-		beforeEdit: 'validarEdicionSuministrosActivo'
-	},
+//	listeners: {
+//		beforeEdit: 'validarEdicionSuministrosActivo'
+//	},
 	
 	initComponent: function () {
 		var me = this;
 		
 		me.columns = [
+//			{
+//				dataIndex: 'idSuministro',
+//				hidden: true//,
+//				//valueField: 'idSuministro'
+//			},
+			{
+				dataIndex: 'idActivo',
+				hidden: true,
+				valueField: '{activo.id}'
+			},
 			{
 				text:HreRem.i18n('fieldlabel.suministros.tipoSuministro'),
 				dataIndex: 'tipoSuministro',
@@ -28,8 +38,8 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 					bind: {
 						store: '{comboDDTipoSuministro}'
 					},
-					displayField: 'descripcion'//,
-					//valueField: 'codigo'
+					displayField: 'descripcion',
+					valueField: 'id'
 				}
 			},
 			{
@@ -41,21 +51,21 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 					bind: {
 						store: '{comboDDSubtipoSuministro}'
 					},
-					displayField: 'descripcion'//,
-					//valueField: 'codigo'
+					displayField: 'descripcion',
+					valueField: 'id'
 				}
 			},
 			{
 				text:HreRem.i18n('fieldlabel.suministros.companiaSuministradora'),
-				dataIndex: 'companiaSuministradora',
+				dataIndex: 'companiaSuministro',
 				flex:0.5,
 				editor: {
 					xtype: 'combobox',
 					bind: {
 						store: '{comboDDCompaniaSuministradora}'
 					},
-					displayField: 'descripcion'//,
-					//valueField: 'codigo'
+					displayField: 'nombre',
+					valueField: 'id'
 				}
 			},
 			{
@@ -67,8 +77,8 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 					bind: {
 						store: '{comboDDDomiciliado}'
 					},
-					displayField: 'descripcion'//,
-					//valueField: 'codigo'
+					displayField: 'descripcion',
+					valueField: 'id'
 				}
 			},
 			{
@@ -96,8 +106,8 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 					bind: {
 						store: '{comboDDPeriodicidad}'
 					},
-					displayField: 'descripcion'//,
-					//valueField: 'codigo'
+					displayField: 'descripcion',
+					valueField: 'id'
 				}
 			},
 			{
@@ -120,8 +130,8 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 					bind: {
 						store: '{comboDDMotivoAltaSuministro}'
 					},
-					displayField: 'descripcion'//,
-					//valueField: 'codigo'
+					displayField: 'descripcion',
+					valueField: 'id'
 				}
 			},
 			{
@@ -144,8 +154,8 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 					bind: {
 						store: '{comboDDMotivoBajaSuministro}'
 					},
-					displayField: 'descripcion'//,
-					//valueField: 'codigo'
+					displayField: 'descripcion',
+					valueField: 'id'
 				}
 			},
 			{
@@ -157,8 +167,8 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 					bind: {
 						store: '{comboDDValidado}'
 					},
-					displayField: 'descripcion'//,
-					//valueField: 'codigo'
+					displayField: 'descripcion',
+					valueField: 'id'
 				}
 			}
 			

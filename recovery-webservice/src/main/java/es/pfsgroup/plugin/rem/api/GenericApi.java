@@ -325,5 +325,5 @@ public interface GenericApi {
 	 * @param estado
 	 * @return Devuelve los proveedores de Suministros que están vigentes. Se recibe como parámetro desde ActivoDetalleModel
 	 * */
-	List<ActivoProveedor> getComboActivoProveedorSuministro(String subtipo, String estado);
+	List<ActivoProveedor> getComboActivoProveedorSuministro();
 }

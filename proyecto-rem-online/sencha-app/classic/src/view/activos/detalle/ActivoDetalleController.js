@@ -6007,7 +6007,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this;
 		
 		if($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYAGESTADMT']) || $AU.userIsRol(CONST.PERFILES['HAYAADM']) || $AU.userIsRol(CONST.PERFILES['HAYASADM'])) {
-			return grid.record.data.esEditable;
+			//return grid.record.data.esEditable;
+			return true;
 		}
 		return false;
 	}

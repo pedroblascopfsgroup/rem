@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Rubio
---## FECHA_CREACION=20200617
+--## FECHA_CREACION=20200630
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10433
@@ -65,18 +65,18 @@ BEGIN
     	 V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||' (
     			  SUM_ID                     	NUMBER(16,0)        NOT NULL
 				 ,ACT_ID                     	NUMBER(16,0)        NOT NULL
-				 ,DD_TSU_ID                     NUMBER(16,0)        NOT NULL
-				 ,DD_SSU_ID                     NUMBER(16,0)        NOT NULL
-				 ,SUM_COMPANIA_SUMINISTRO       NUMBER(16,0)        NOT NULL
-				 ,SUM_DOMICILIADO      			NUMBER(16,0)        NOT NULL
+				 ,DD_TSU_ID                     NUMBER(16,0)
+				 ,DD_SSU_ID                     NUMBER(16,0)
+				 ,SUM_COMPANIA_SUMINISTRO       NUMBER(16,0) 
+				 ,SUM_DOMICILIADO      			NUMBER(16,0)
 				 ,SUM_NUMERO_CONTRATO    		VARCHAR2(250 CHAR)
 				 ,SUM_NUMERO_CUPS               VARCHAR2(250 CHAR)
-				 ,SUM_PERIODICIDAD				NUMBER(16,0)		NOT NULL
+				 ,SUM_PERIODICIDAD				NUMBER(16,0)
 				 ,SUM_FECHA_ALTA              	DATE
-				 ,SUM_MOTIVO_ALTA               NUMBER(16,0)        NOT NULL
+				 ,SUM_MOTIVO_ALTA               NUMBER(16,0)
 				 ,SUM_FECHA_BAJA               	DATE
-				 ,SUM_MOTIVO_BAJA               NUMBER(16,0)        NOT NULL
-				 ,SUM_VALIDADO               	NUMBER(16,0)        NOT NULL
+				 ,SUM_MOTIVO_BAJA               NUMBER(16,0)
+				 ,SUM_VALIDADO               	NUMBER(16,0)
 				 ,VERSION                       NUMBER(1,0)         DEFAULT 0
 				 ,USUARIOCREAR                  VARCHAR2(50 CHAR) 
 				 ,FECHACREAR                    TIMESTAMP(6)        DEFAULT SYSTIMESTAMP

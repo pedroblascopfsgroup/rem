@@ -72,6 +72,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 	private static final String CAMPO_COMITE = "comite";
 	private static final String T017 = "T017";
 	private static final String CODIGO_SUBCARTERA_OMEGA = "65";
+	private static final String CODIGO_CARTERA_THIRD_PARTY = "11";
 	
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -157,7 +158,11 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 					expediente.setEstado(estado);
 				}
 			}
-			
+
+			String codCartera = null;
+			if (!Checks.esNulo(activo.getCartera())) {
+				codCartera = activo.getCartera().getCodigo();
+			}
 			boolean aplicaSuperior = false;
 			DDComiteSancion comite = null;
 			for (TareaExternaValor valor : valores) {		
@@ -166,7 +171,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 					expediente.setEstado(estado);
 				}	
-				if (FECHA_ENVIO_COMITE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				if (FECHA_ENVIO_COMITE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()) && CODIGO_CARTERA_THIRD_PARTY.equals(codCartera)) {
 					try {
 						expediente.setFechaSancion(ft.parse(valor.getValor()));
 					} catch (ParseException e) {

@@ -52,7 +52,13 @@ public class DDEstadoTrabajo implements Auditable, Dictionary {
 	public static final String ESTADO_FINALIZADO = "12";
 	public static final String ESTADO_VALIDADO = "13";
 	public static final String ESTADO_PAGADO_TARIFA_PLANA = "14";
-	
+	public static final String CODIGO_ESTADO_EN_CURSO = "CUR";
+	public static final String CODIGO_ESTADO_FINALIZADO = "FIN";
+	public static final String CODIGO_ESTADO_RECHAZADO = "REJ";
+	public static final String CODIGO_ESTADO_CANCELADO = "CAN";
+	public static final String CODIGO_ESTADO_SUBSANADO = "SUB";
+	public static final String CODIGO_ESTADO_PDT_CIERRE = "PCI";
+	public static final String CODIGO_ESTADO_CIERRE = "CIE";
 
 	@Id
 	@Column(name = "DD_EST_ID")
@@ -72,7 +78,9 @@ public class DDEstadoTrabajo implements Auditable, Dictionary {
 	@Column(name="DD_EST_ESTADO_CONTABLE")
 	private boolean estadoContable;	    
 	
-	    
+	@Column(name="FLAG_ACTIVO")
+	private boolean flagActivo;	  
+
 	@Version   
 	private Long version;
 
@@ -136,7 +144,14 @@ public class DDEstadoTrabajo implements Auditable, Dictionary {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
-
+    
+	public boolean isFlagActivo() {
+		return flagActivo;
+	}
+	
+	public void setFlagActivo(boolean flagActivo) {
+		this.flagActivo = flagActivo;
+	}
 }
 
 

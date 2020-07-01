@@ -275,6 +275,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	private Boolean pazSocial;
 	private String numActivoDivarian;
+	
+	private Boolean incluidoEnPerimetroAdmision;
 
 	
 	public Boolean getTieneOfertaAlquilerViva() {
@@ -2091,6 +2093,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setNumActivoDivarian(String numActivoDivarian) {
 		this.numActivoDivarian = numActivoDivarian;
+	}
+
+	public Boolean getIncluidoEnPerimetroAdmision() {
+		return incluidoEnPerimetroAdmision;
+	}
+
+	public void setIncluidoEnPerimetroAdmision(Boolean incluidoEnPerimetroAdmision) {
+		this.incluidoEnPerimetroAdmision = incluidoEnPerimetroAdmision;
 	}
 	
 	

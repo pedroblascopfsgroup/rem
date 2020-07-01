@@ -922,6 +922,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				return true;
 			else
 				return false;
+		},
+		
+		estadoAdmisionVisible : function(get){
+			
+			return get('activo.incluidoEnPerimetroAdmision') == "false" && ($AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
 		}
 	 }, 
 	 

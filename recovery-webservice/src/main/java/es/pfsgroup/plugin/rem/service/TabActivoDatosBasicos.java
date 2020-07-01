@@ -862,6 +862,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));
 		
+		activoDto.setIncluidoEnPerimetroAdmision(false);
+		
 		return activoDto;
 	}
 	

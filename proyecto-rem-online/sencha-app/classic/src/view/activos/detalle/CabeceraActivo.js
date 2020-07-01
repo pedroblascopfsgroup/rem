@@ -146,7 +146,9 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 								tooltip: HreRem.i18n('btn.estado.admision'),
 								handler: 'onClickEstadoAdmision',//
 								secFunPermToShow: 'BOTON_CREAR_TRABAJO',//
-								hidden: (me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false")//
+								bind: {
+									hidden: '{!estadoAdmisionVisible}'
+								}
 							},
 							{
 								xtype: 'button',

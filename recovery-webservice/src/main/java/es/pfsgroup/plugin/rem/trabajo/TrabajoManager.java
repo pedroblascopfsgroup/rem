@@ -619,7 +619,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Override
 	@BusinessOperation(overrides = "trabajoManager.create")
-	//@Transactional(readOnly = false)
+	@Transactional(readOnly = false)
 	public Long create(DtoFichaTrabajo dtoTrabajo){
 		/*
 		 * Crear trabajo desde la pantalla de crear trabajos: - Crea un trabajo

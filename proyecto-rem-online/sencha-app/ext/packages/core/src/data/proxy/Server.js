@@ -112,7 +112,7 @@ Ext.define('Ext.data.proxy.Server', {
          * @cfg {Number} timeout
          * The number of milliseconds to wait for a response. Defaults to 30000 milliseconds (30 seconds).
          */
-        timeout : 30000000,
+        timeout : 30000,
     
         /**
          * @cfg {Object} api

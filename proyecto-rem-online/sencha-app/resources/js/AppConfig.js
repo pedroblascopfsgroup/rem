@@ -12,7 +12,7 @@ var AppConfig  = $AC = (function () {
 	var localDataPath = 'resources/data';		// ruta de archivos json para carga de datos local
 	var urlPattern = 'htm';						// extensión de las urls 
 	var defaultPageSize = 30;
-	var defaultTimeout = 6000000;
+	var defaultTimeout = 60000;
 	var currentDate = null;
 	//var versionDefault = '1.0.3';
 	var version = null;

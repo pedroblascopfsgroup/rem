@@ -106,10 +106,13 @@ Ext.define('HreRem.view.activos.detalle.AdmisionActivo', {
 		 }else{
 			 ocultarAdmisioncheckdocactivo = !$AU.userHasFunction('EDITAR_CHECKING_DOC_ADMISION');
 		 }
-		 var ocultarSaneamientoCheckEdicion =false;
-		 if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
-			 ocultarSaneamientoCheckEdicion = !(($AU.userIsRol(CONST.PERFILES['HAYAGESTADM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])));
-		 }
+		 var ocultarSaneamientoCheckEdicion =!(($AU.userIsRol(CONST.PERFILES['HAYAGESTADM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])));
+//		 if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
+//			 ocultarSaneamientoCheckEdicion = !(($AU.userIsRol(CONST.PERFILES['HAYAGESTADM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])));
+//		 }else{
+//			 //pendiente de ver si se crea una funcion para esta pestaña.
+//			 ocultarSaneamientoCheckEdicion = !(($AU.userIsRol(CONST.PERFILES['HAYAGESTADM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])));
+//		 }
 		 
 	     var items = [];
 	     $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'admisioncheckinfoactivo', ocultarBotonesEdicion: ocultarAdmisioncheckinfoactivo, title: HreRem.i18n('title.admision.check.inf.activo')})}, ['TAB_CHECKING_INFO_ADMISION']);

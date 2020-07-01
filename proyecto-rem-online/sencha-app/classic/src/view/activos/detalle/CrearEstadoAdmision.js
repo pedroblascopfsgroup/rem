@@ -5,9 +5,9 @@ Ext.define('HreRem.view.activos.detalle.CrearEstadoAdmision', {
     width	: Ext.Element.getViewportWidth() /1.2,    
     height	: Ext.Element.getViewportHeight() > 700 ? 700 : Ext.Element.getViewportHeight() - 50,
 	reference: 'crearestadoadmisionwindowref',
-    controller: 'activosdetalle',
+    controller: 'activodetalle',
     viewModel: {
-        type: 'activosdetalle'
+        type: 'activodetalle'
     },
     
     requires: ['HreRem.model.Activo', 'HreRem.view.activos.detalle.ActivoDetalleModel'],
@@ -63,20 +63,55 @@ Ext.define('HreRem.view.activos.detalle.CrearEstadoAdmision', {
     					items: [
     						{ 
 					        	xtype: 'comboboxfieldbase',
-					        	editable: false,
+					        	readOnly: true,
 					        	fieldLabel: HreRem.i18n('fieldlabel.estado.admision.estado.actual'),
-								reference: 'estadoAdmisionEstadoActual',
+								reference: 'estadoAdmisionActual',
 								width: 		'100%',
 								colspan: 1,
 					        	bind: {
-				            		store: '{storeTipoTrabajoCreaFiltered}',
-				            		value: '{trabajo.tipoTrabajoCodigo}'
+				            		store: '{comboEstadoAdmision}',
+				            		value: '{activo.estadoAdmisionCodigo}'
+				            	}
+					        },
+					        { 
+					        	xtype: 'comboboxfieldbase',
+					        	readOnly: true,
+					        	fieldLabel: HreRem.i18n('fieldlabel.estado.admision.subestado.actual'),
+								reference: 'subestadoAdmisionActual',
+								width: 		'100%',
+								colspan: 1,
+					        	bind: {
+				            		store: '{comboSubestadoAdmision}',
+				            		value: '{activo.subestadoAdmisionCodigo}'
+				            	}
+					        },
+					        { 
+					        	xtype: 'comboboxfieldbase',
+					        	fieldLabel: HreRem.i18n('fieldlabel.estado.admision.estado.nuevo'),
+								reference: 'estadoAdmisionNuevo',
+								width: 		'100%',
+								colspan: 1,
+					        	bind: {
+				            		store: '{comboEstadoAdmision}',
+				            		value: '{activo.estadoAdmisionCodigoNuevo}'
 				            	},
 	    						listeners: {
 				                	select: 'onChangeChainedCombo'
 				            	},
-				            	allowBlank: false
+				            	chainedStore: 'comboSubestadoAdmisionNuevoFiltrado',
+								chainedReference: 'subestadoAdmisionNuevo'
 					        },
+					        { 
+					        	xtype : 'comboboxfieldbase',
+								fieldLabel : HreRem.i18n('fieldlabel.estado.admision.subestado.nuevo'),
+								reference: 'subestadoAdmisionNuevo',
+								   bind : {
+								     store : '{comboSubestadoAdmisionNuevoFiltrado}',
+								     value: '{activo.subestadoAdmisionCodigoNuevo}',
+								     disabled: false//'{!activo.estadoAdmisionCodigoNuevo}'
+								   }
+							   
+							}
 					]
     			}
     	]
@@ -90,13 +125,11 @@ Ext.define('HreRem.view.activos.detalle.CrearEstadoAdmision', {
 
 		form.setBindRecord(form.getModelInstance());
 		form.reset();
-
+		/*
 		me.idProceso = null;
 		me.getViewModel().set('idActivo', me.idActivo);
     	me.getViewModel().set('idAgrupacion', me.idAgrupacion);
-		/*me.getViewModel().set('idActivo', me.idActivo);
-		me.getViewModel().set('idAgrupacion', me.idAgrupacion);*/
-		//me.getViewModel().notify();
+	
 		    	
     	me.down("[reference=checkFechaConcreta]").setValue(false);
     	me.down("[reference=checkFechaTope]").setValue(false);
@@ -172,7 +205,7 @@ Ext.define('HreRem.view.activos.detalle.CrearEstadoAdmision', {
     		me.down("[reference=checkEnglobaTodosActivosAgrRef]").setValue(true);
     		me.down("[reference=checkEnglobaTodosActivosAgrRef]").setVisible(true);
     		me.down("[reference=checkEnglobaTodosActivosAgrRef]").setDisabled(false);
-    	}  	
+    	}  */	
 
     }
 

@@ -145,7 +145,7 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 								iconCls: 'ico-crear-trabajo',
 								tooltip: HreRem.i18n('btn.estado.admision'),
 								handler: 'onClickEstadoAdmision',//
-								secFunPermToShow: 'BOTON_CREAR_TRABAJO',//
+								//secFunPermToShow: 'BOTON_CREAR_TRABAJO',//
 								bind: {
 									hidden: '{!estadoAdmisionVisible}'
 								}

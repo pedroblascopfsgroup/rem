@@ -2413,12 +2413,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {id: '{activo.id}'}
 			}
 		},
-		comboEstadoAdmisionEstadoActual: {
-			model: 'HreRem.model.ComboBase',
+		
+		comboEstadoAdmision: {//
+			model: 'HreRem.model.DDBase',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'tiposOfertas'}
+				extraParams: {diccionario: 'estadosAdmision'}
+			}
+		},
+		comboSubestadoAdmision: {//
+			model: 'HreRem.model.DDBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getSubEstadoAdmision',
+				extraParams: {diccionario: 'subEstadosAdmision'}
+			}
+		},
+		comboSubestadoAdmisionNuevoFiltrado: {//
+			model: 'HreRem.model.DDBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/comboSubestadoAdmisionNuevoFiltrado'
 			}
 		} 
      }

@@ -864,6 +864,16 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		activoDto.setIncluidoEnPerimetroAdmision(false);
 		
+		if(activo.getEstadoAdmision() != null) {
+			activoDto.setEstadoAdmisionCodigo(activo.getEstadoAdmision().getCodigo());
+		}
+		if (activo.getSubestadoAdmision() != null) {
+			activoDto.setSubestadoAdmisionCodigo(activo.getSubestadoAdmision().getCodigo());
+		}
+		
+		
+	
+		
 		return activoDto;
 	}
 	

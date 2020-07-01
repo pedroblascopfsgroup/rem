@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
@@ -318,4 +319,11 @@ public interface GenericApi {
 	 * @return Devuelve la partida presupuestaria relacionada con la subpartida presupuestaria
 	 */
 	public String getPartidaPresupuestaria(Long idSubpartida);
+	
+	/***
+	 * 
+	 * @param codEstadoAdmisionNuevo
+	 * @return Devuelve una lista de los subestados de admision relacionado con los estado de admision seleccionados
+	 */
+	public List<DDSubestadoAdmision> getcomboSubestadoAdmisionNuevoFiltrado(String codEstadoAdmisionNuevo);
 }

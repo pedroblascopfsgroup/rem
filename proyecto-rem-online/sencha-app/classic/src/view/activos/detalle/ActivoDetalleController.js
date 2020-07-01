@@ -479,7 +479,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var idActivo = me.getViewModel().get("activo.id");
     	var codSubcartera = me.getViewModel().get("activo.subcarteraCodigo");
     	var codCartera = me.getViewModel().get("activo.entidadPropietariaCodigo");
-    	me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: idActivo, idAgrupacion: null,codCartera: codCartera, codSubcartera: codSubcartera, logadoGestorMantenimiento: true});
+    	me.getView().fireEvent('openModalWindow',"HreRem.view.activos.detalle.CrearEstadoAdmision",{idActivo: idActivo,codCartera:  codCartera});
     },
     //programar
     onClickCrearEstadoAdmision: function (btn){
@@ -648,6 +648,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			var storeSubestadoGestionFiltered = me.getViewModel().get("comboSubestadoGestionFiltered");
 			chainedCombo.bindStore(storeSubestadoGestionFiltered);
 			storeSubestadoGestionFiltered.getProxy().setExtraParams({'codLocalizacion':combo.getValue()});	
+		} else if (combo.chainedStore == 'comboSubestadoAdmisionNuevoFiltrado'){
+			var storeSubestadoAdmisionFiltered = me.getViewModel().data.comboSubestadoAdmisionNuevoFiltrado;
+			chainedCombo.bindStore(storeSubestadoAdmisionFiltered);
+			storeSubestadoAdmisionFiltered.getProxy().setExtraParams({'codEstadoAdmisionNuevo':combo.getValue()});	
 		}
 		
 		chainedCombo.getStore().load({ 			

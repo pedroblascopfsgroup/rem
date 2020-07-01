@@ -2412,6 +2412,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'activo/getHistoricoSolicitudesPrecios',
 				extraParams: {id: '{activo.id}'}
 			}
-		}
+		},
+		comboEstadoAdmisionEstadoActual: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposOfertas'}
+			}
+		} 
      }
 });

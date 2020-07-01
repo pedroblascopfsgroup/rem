@@ -35,14 +35,9 @@ import es.pfsgroup.plugin.rem.model.Activo;
 @Table(name = "ACT_ART_ADMISION_REV_TITULO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
-public class ActArtAdmisionRevTitulo implements Auditable,Serializable {
+public class ActivoAdmisionRevisionTitulo implements Auditable,Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-
-	
 
 	@Id
 	@Column(name = "ART_ID")
@@ -56,144 +51,144 @@ public class ActArtAdmisionRevTitulo implements Auditable,Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_REVISADO")
-	private DDSinSiNo ArtRevisado;
+	private DDSinSiNo revisado;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_INST_LIB_ARRENDATARIA")
-	private DDSiNoNoAplica ArtInstLibArrendataria;
+	private DDSiNoNoAplica instLibArrendataria;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_RATIFICACION")
-	private DDSiNoNoAplica ArtRatificacion;
+	private DDSiNoNoAplica ratificacion;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_SIT_INI_INSCRIPCION")
-	private DDSituacionInicialInscripcion ArtSitIniInscripcion;
+	private DDSituacionInicialInscripcion situacionInicialInscripcion;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_POSESORIA_INI")
-	private DDSituacionPosesoriaInicial ArtPosesoriaIni;
+	private DDSituacionPosesoriaInicial posesoriaInicial;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_SIT_INI_CARGAS")
-	private DDSituacionInicialCargas ArtSitIniCargas;
+	private DDSituacionInicialCargas situacionInicialCargas;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_TIPO_TITULARIDAD")
-	private DDTipoTitularidad ArtTipoTitularidad;
+	private DDTipoTitularidad tipoTitularidad;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_AUTORIZ_TRANSMISION")
-	private DDAutorizacionTransmision ArtAutorizTransmision;
+	private DDAutorizacionTransmision estadoAutorizaTransmision;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_ANOTACION_CONCURSO")
-	private DDAnotacionConcurso ArtAnotacionConcurso;
+	private DDAnotacionConcurso anotacionConcurso;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_EST_GES_CA")
-	private DDEstadoGestion ArtEstGesCa;
+	private DDEstadoGestion estadoGestionCa;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_CONS_FISICA")
-	private DDSinSiNo ArtConsFisica;
+	private DDSinSiNo consFisica;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_CONS_JURIDICA")
-	private DDSinSiNo ArtConsJuridica;
+	private DDSinSiNo consJuridica;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_CERTIFICADO_FIN_OBRA")
-	private DDEstadoGestion ArtCertificadoFinObra;
+	private DDEstadoGestion estadoCertificadoFinObra;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_AFO_ACTA_FIN_OBRA")
-	private DDEstadoGestion ArtAfoActaFinObra;
+	private DDEstadoGestion estadoAfoActaFinObra;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_LIC_PRIMERA_OCIPACION")
-	private DDLicenciaPrimeraOcupacion ArtLicPrimeraOCupacion;
+	private DDLicenciaPrimeraOcupacion licenciaPrimeraOcupacion;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_BOLETINES")
-	private DDBoletines ArtBoletines;
+	private DDBoletines boletines;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_SEGURO_DECENAL")
-	private DDSeguroDecenal ArtSeguroDecenal;
+	private DDSeguroDecenal seguroDecenal;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_CEDULA_HABITABILIDAD")
-	private DDCedulaHabitabilidad ArtCedulaHabitabilidad;
+	private DDCedulaHabitabilidad cedulaHabitibilidad;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_TIPO_ARRENDAMIENTO")
-	private DDTipoArrendamiento ArtTipoArrendamiento;
+	private DDTipoArrendamiento tipoArrendamiento;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_NOTIF_ARRENDATARIOS")
-	private DDSinSiNo ArtNotifArrendatarios;
+	private DDSinSiNo notificarArrendatarios;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_TIPO_EXP_ADM")
-	private DDTipoExpediente ArtTipoExpAdm;
+	private DDTipoExpediente tipoExpediente;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_EST_GES_EA")
-	private DDEstadoGestion ArtEstGesEa;
+	private DDEstadoGestion estadoGestionEa;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_TIPO_INCI_REGISTRAL")
-	private DDTipoIncidenciaRegistral ArtTipoInciRegistral;
+	private DDTipoIncidenciaRegistral tipoIncidenciaRegistral;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_EST_GES_CR")
-	private DDEstadoGestion ArtEstGesCr;
+	private DDEstadoGestion estadoGestionCr;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_TIPO_OCUPACION_LEGAL")
-	private DDTipoOcupacionLegal ArtTipoOcupacionLegal;
+	private DDTipoOcupacionLegal tipoOcupacionLegal;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_EST_GES_IL")
-	private DDEstadoGestion ArtEstGesIl;
+	private DDEstadoGestion estadoGestionIl;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_EST_GES_OT")
-	private DDEstadoGestion ArtEstGesOt;
+	private DDEstadoGestion estadoGestionOt;
 	
 	@Column(name = "ART_FECHA_REVISION_TITULO")
-	private Date artFechaRevisionTitulo;
+	private Date fechaRevisionTitulo;
 	
 	@Column(name = "ART_PORC_PROPIEDAD")
-	private Double artPorcPropiedad;
+	private Double porcentajePropiedad;
 	
 	@Column(name = "ART_OBSERVACIONES")
-	private String artObservaciones;
+	private String observaciones;
 	
 	@Column(name = "ART_PORC_CONS_TASACION_CF")
-	private Double artPorcConsTasacionCf;
+	private Double porcentajeConsTasacionCf;
 	
 	@Column(name = "ART_PORC_CONS_TASACION_CJ")
-	private Double artPorcConsTasacionCj;
+	private Double porcentajeConsTasacionCj;
 	
 	@Column(name = "ART_FECHA_CONTRATO_ALQ")
-	private Date artFechaContratoAlq;
+	private Date fechaContratoAlquiler;
 	
 	@Column(name = "ART_LEGISLACION_APLICABLE_ALQ")
-	private String artLegislacionAplicableAlq;
+	private String legislacionAplicableAlquiler;
 	
 	@Column(name = "ART_DURACION_CONTRATO_ALQ")
-	private String artDuracionContratoAlq;
+	private String duracionContratoAlquiler;
 	
 	@Column(name = "ART_TIPO_INCI_ILOC")
-	private String artTipoInciIloc;
+	private String tipoIncidenciaIloc;
 	
 	@Column(name = "ART_DETERIORO_GRAVE")
-	private String artDeterioroGrave;
+	private String deterioroGrave;
 	
 	@Column(name = "ART_TIPO_INCI_OTROS")
-	private String artTipoInciOtros;
+	private String tipoIncidenciaOtros;
 	
 
 	@Version
@@ -202,6 +197,7 @@ public class ActArtAdmisionRevTitulo implements Auditable,Serializable {
 	@Embedded
 	private Auditoria auditoria;
 
+	
 	public Long getId() {
 		return id;
 	}
@@ -218,308 +214,300 @@ public class ActArtAdmisionRevTitulo implements Auditable,Serializable {
 		this.activo = activo;
 	}
 
-	public DDSinSiNo getArtRevisado() {
-		return ArtRevisado;
+	public DDSinSiNo getRevisado() {
+		return revisado;
 	}
 
-	public void setArtRevisado(DDSinSiNo artRevisado) {
-		ArtRevisado = artRevisado;
+	public void setRevisado(DDSinSiNo revisado) {
+		this.revisado = revisado;
 	}
 
-	public DDSiNoNoAplica getArtInstLibArrendataria() {
-		return ArtInstLibArrendataria;
+	public DDSiNoNoAplica getInstLibArrendataria() {
+		return instLibArrendataria;
 	}
 
-	public void setArtInstLibArrendataria(DDSiNoNoAplica artInstLibArrendataria) {
-		ArtInstLibArrendataria = artInstLibArrendataria;
+	public void setInstLibArrendataria(DDSiNoNoAplica instLibArrendataria) {
+		this.instLibArrendataria = instLibArrendataria;
 	}
 
-	public DDSiNoNoAplica getArtRatificacion() {
-		return ArtRatificacion;
+	public DDSiNoNoAplica getRatificacion() {
+		return ratificacion;
 	}
 
-	public void setArtRatificacion(DDSiNoNoAplica artRatificacion) {
-		ArtRatificacion = artRatificacion;
+	public void setRatificacion(DDSiNoNoAplica ratificacion) {
+		this.ratificacion = ratificacion;
 	}
 
-	public DDSituacionInicialInscripcion getArtSitIniInscripcion() {
-		return ArtSitIniInscripcion;
+	public DDSituacionInicialInscripcion getSituacionInicialInscripcion() {
+		return situacionInicialInscripcion;
 	}
 
-	public void setArtSitIniInscripcion(DDSituacionInicialInscripcion artSitIniInscripcion) {
-		ArtSitIniInscripcion = artSitIniInscripcion;
+	public void setSituacionInicialInscripcion(DDSituacionInicialInscripcion situacionInicialInscripcion) {
+		this.situacionInicialInscripcion = situacionInicialInscripcion;
 	}
 
-	public DDSituacionPosesoriaInicial getArtPosesoriaIni() {
-		return ArtPosesoriaIni;
+	public DDSituacionPosesoriaInicial getPosesoriaInicial() {
+		return posesoriaInicial;
 	}
 
-	public void setArtPosesoriaIni(DDSituacionPosesoriaInicial artPosesoriaIni) {
-		ArtPosesoriaIni = artPosesoriaIni;
+	public void setPosesoriaInicial(DDSituacionPosesoriaInicial posesoriaInicial) {
+		this.posesoriaInicial = posesoriaInicial;
 	}
 
-	public DDSituacionInicialCargas getArtSitIniCargas() {
-		return ArtSitIniCargas;
+	public DDSituacionInicialCargas getSituacionInicialCargas() {
+		return situacionInicialCargas;
 	}
 
-	public void setArtSitIniCargas(DDSituacionInicialCargas artSitIniCargas) {
-		ArtSitIniCargas = artSitIniCargas;
+	public void setSituacionInicialCargas(DDSituacionInicialCargas situacionInicialCargas) {
+		this.situacionInicialCargas = situacionInicialCargas;
 	}
 
-	public DDTipoTitularidad getArtTipoTitularidad() {
-		return ArtTipoTitularidad;
+	public DDTipoTitularidad getTipoTitularidad() {
+		return tipoTitularidad;
 	}
 
-	public void setArtTipoTitularidad(DDTipoTitularidad artTipoTitularidad) {
-		ArtTipoTitularidad = artTipoTitularidad;
+	public void setTipoTitularidad(DDTipoTitularidad tipoTitularidad) {
+		this.tipoTitularidad = tipoTitularidad;
 	}
 
-	public DDAutorizacionTransmision getArtAutorizTransmision() {
-		return ArtAutorizTransmision;
+	public DDAutorizacionTransmision getEstadoAutorizaTransmision() {
+		return estadoAutorizaTransmision;
 	}
 
-	public void setArtAutorizTransmision(DDAutorizacionTransmision artAutorizTransmision) {
-		ArtAutorizTransmision = artAutorizTransmision;
+	public void setEstadoAutorizaTransmision(DDAutorizacionTransmision estadoAutorizaTransmision) {
+		this.estadoAutorizaTransmision = estadoAutorizaTransmision;
 	}
 
-	public DDAnotacionConcurso getArtAnotacionConcurso() {
-		return ArtAnotacionConcurso;
+	public DDAnotacionConcurso getAnotacionConcurso() {
+		return anotacionConcurso;
 	}
 
-	public void setArtAnotacionConcurso(DDAnotacionConcurso artAnotacionConcurso) {
-		ArtAnotacionConcurso = artAnotacionConcurso;
+	public void setAnotacionConcurso(DDAnotacionConcurso anotacionConcurso) {
+		this.anotacionConcurso = anotacionConcurso;
 	}
 
-	public DDEstadoGestion getArtEstGesCa() {
-		return ArtEstGesCa;
+	public DDEstadoGestion getEstadoGestionCa() {
+		return estadoGestionCa;
 	}
 
-	public void setArtEstGesCa(DDEstadoGestion artEstGesCa) {
-		ArtEstGesCa = artEstGesCa;
+	public void setEstadoGestionCa(DDEstadoGestion estadoGestionCa) {
+		this.estadoGestionCa = estadoGestionCa;
 	}
 
-	public DDSinSiNo getArtConsFisica() {
-		return ArtConsFisica;
+	public DDSinSiNo getConsFisica() {
+		return consFisica;
 	}
 
-	public void setArtConsFisica(DDSinSiNo artConsFisica) {
-		ArtConsFisica = artConsFisica;
+	public void setConsFisica(DDSinSiNo consFisica) {
+		this.consFisica = consFisica;
 	}
 
-	public DDSinSiNo getArtConsJuridica() {
-		return ArtConsJuridica;
+	public DDSinSiNo getConsJuridica() {
+		return consJuridica;
 	}
 
-	public void setArtConsJuridica(DDSinSiNo artConsJuridica) {
-		ArtConsJuridica = artConsJuridica;
+	public void setConsJuridica(DDSinSiNo consJuridica) {
+		this.consJuridica = consJuridica;
 	}
 
-	public DDEstadoGestion getArtCertificadoFinObra() {
-		return ArtCertificadoFinObra;
+	public DDEstadoGestion getEstadoAfoActaFinObra() {
+		return estadoAfoActaFinObra;
 	}
 
-	public void setArtCertificadoFinObra(DDEstadoGestion artCertificadoFinObra) {
-		ArtCertificadoFinObra = artCertificadoFinObra;
+	public void setEstadoAfoActaFinObra(DDEstadoGestion estadoAfoActaFinObra) {
+		this.estadoAfoActaFinObra = estadoAfoActaFinObra;
 	}
 
-	public DDEstadoGestion getArtAfoActaFinObra() {
-		return ArtAfoActaFinObra;
+	public DDLicenciaPrimeraOcupacion getLicenciaPrimeraOcupacion() {
+		return licenciaPrimeraOcupacion;
 	}
 
-	public void setArtAfoActaFinObra(DDEstadoGestion artAfoActaFinObra) {
-		ArtAfoActaFinObra = artAfoActaFinObra;
+	public void setLicenciaPrimeraOcupacion(DDLicenciaPrimeraOcupacion licenciaPrimeraOcupacion) {
+		this.licenciaPrimeraOcupacion = licenciaPrimeraOcupacion;
 	}
 
-	public DDLicenciaPrimeraOcupacion getArtLicPrimeraOCupacion() {
-		return ArtLicPrimeraOCupacion;
+	public DDBoletines getBoletines() {
+		return boletines;
 	}
 
-	public void setArtLicPrimeraOCupacion(DDLicenciaPrimeraOcupacion artLicPrimeraOCupacion) {
-		ArtLicPrimeraOCupacion = artLicPrimeraOCupacion;
+	public void setBoletines(DDBoletines boletines) {
+		this.boletines = boletines;
 	}
 
-	public DDBoletines getArtBoletines() {
-		return ArtBoletines;
+	public DDSeguroDecenal getSeguroDecenal() {
+		return seguroDecenal;
 	}
 
-	public void setArtBoletines(DDBoletines artBoletines) {
-		ArtBoletines = artBoletines;
+	public void setSeguroDecenal(DDSeguroDecenal seguroDecenal) {
+		this.seguroDecenal = seguroDecenal;
 	}
 
-	public DDSeguroDecenal getArtSeguroDecenal() {
-		return ArtSeguroDecenal;
+	public DDCedulaHabitabilidad getCedulaHabitibilidad() {
+		return cedulaHabitibilidad;
 	}
 
-	public void setArtSeguroDecenal(DDSeguroDecenal artSeguroDecenal) {
-		ArtSeguroDecenal = artSeguroDecenal;
+	public void setCedulaHabitibilidad(DDCedulaHabitabilidad cedulaHabitibilidad) {
+		this.cedulaHabitibilidad = cedulaHabitibilidad;
 	}
 
-	public DDCedulaHabitabilidad getArtCedulaHabitabilidad() {
-		return ArtCedulaHabitabilidad;
+	public DDTipoArrendamiento getTipoArrendamiento() {
+		return tipoArrendamiento;
 	}
 
-	public void setArtCedulaHabitabilidad(DDCedulaHabitabilidad artCedulaHabitabilidad) {
-		ArtCedulaHabitabilidad = artCedulaHabitabilidad;
+	public void setTipoArrendamiento(DDTipoArrendamiento tipoArrendamiento) {
+		this.tipoArrendamiento = tipoArrendamiento;
 	}
 
-	public DDTipoArrendamiento getArtTipoArrendamiento() {
-		return ArtTipoArrendamiento;
+	public DDSinSiNo getNotificarArrendatarios() {
+		return notificarArrendatarios;
 	}
 
-	public void setArtTipoArrendamiento(DDTipoArrendamiento artTipoArrendamiento) {
-		ArtTipoArrendamiento = artTipoArrendamiento;
+	public void setNotificarArrendatarios(DDSinSiNo notificarArrendatarios) {
+		this.notificarArrendatarios = notificarArrendatarios;
 	}
 
-	public DDSinSiNo getArtNotifArrendatarios() {
-		return ArtNotifArrendatarios;
+	public DDTipoExpediente getTipoExpediente() {
+		return tipoExpediente;
 	}
 
-	public void setArtNotifArrendatarios(DDSinSiNo artNotifArrendatarios) {
-		ArtNotifArrendatarios = artNotifArrendatarios;
+	public void setTipoExpediente(DDTipoExpediente tipoExpediente) {
+		this.tipoExpediente = tipoExpediente;
 	}
 
-	public DDTipoExpediente getArtTipoExpAdm() {
-		return ArtTipoExpAdm;
+	public DDEstadoGestion getEstadoGestionEa() {
+		return estadoGestionEa;
 	}
 
-	public void setArtTipoExpAdm(DDTipoExpediente artTipoExpAdm) {
-		ArtTipoExpAdm = artTipoExpAdm;
+	public void setEstadoGestionEa(DDEstadoGestion estadoGestionEa) {
+		this.estadoGestionEa = estadoGestionEa;
 	}
 
-	public DDEstadoGestion getArtEstGesEa() {
-		return ArtEstGesEa;
+	public DDTipoIncidenciaRegistral getTipoIncidenciaRegistral() {
+		return tipoIncidenciaRegistral;
 	}
 
-	public void setArtEstGesEa(DDEstadoGestion artEstGesEa) {
-		ArtEstGesEa = artEstGesEa;
+	public void setTipoIncidenciaRegistral(DDTipoIncidenciaRegistral tipoIncidenciaRegistral) {
+		this.tipoIncidenciaRegistral = tipoIncidenciaRegistral;
 	}
 
-	public DDTipoIncidenciaRegistral getArtTipoInciRegistral() {
-		return ArtTipoInciRegistral;
+	public DDEstadoGestion getEstadoGestionCr() {
+		return estadoGestionCr;
 	}
 
-	public void setArtTipoInciRegistral(DDTipoIncidenciaRegistral artTipoInciRegistral) {
-		ArtTipoInciRegistral = artTipoInciRegistral;
+	public void setEstadoGestionCr(DDEstadoGestion estadoGestionCr) {
+		this.estadoGestionCr = estadoGestionCr;
 	}
 
-	public DDEstadoGestion getArtEstGesCr() {
-		return ArtEstGesCr;
+	public DDTipoOcupacionLegal getTipoOcupacionLegal() {
+		return tipoOcupacionLegal;
 	}
 
-	public void setArtEstGesCr(DDEstadoGestion artEstGesCr) {
-		ArtEstGesCr = artEstGesCr;
+	public void setTipoOcupacionLegal(DDTipoOcupacionLegal tipoOcupacionLegal) {
+		this.tipoOcupacionLegal = tipoOcupacionLegal;
 	}
 
-	public DDTipoOcupacionLegal getArtTipoOcupacionLegal() {
-		return ArtTipoOcupacionLegal;
+	public DDEstadoGestion getEstadoGestionIl() {
+		return estadoGestionIl;
 	}
 
-	public void setArtTipoOcupacionLegal(DDTipoOcupacionLegal artTipoOcupacionLegal) {
-		ArtTipoOcupacionLegal = artTipoOcupacionLegal;
+	public void setEstadoGestionIl(DDEstadoGestion estadoGestionIl) {
+		this.estadoGestionIl = estadoGestionIl;
 	}
 
-	public DDEstadoGestion getArtEstGesIl() {
-		return ArtEstGesIl;
+	public DDEstadoGestion getEstadoGestionOt() {
+		return estadoGestionOt;
 	}
 
-	public void setArtEstGesIl(DDEstadoGestion artEstGesIl) {
-		ArtEstGesIl = artEstGesIl;
+	public void setEstadoGestionOt(DDEstadoGestion estadoGestionOt) {
+		this.estadoGestionOt = estadoGestionOt;
 	}
 
-	public DDEstadoGestion getArtEstGesOt() {
-		return ArtEstGesOt;
+	public Date getFechaRevisionTitulo() {
+		return fechaRevisionTitulo;
 	}
 
-	public void setArtEstGesOt(DDEstadoGestion artEstGesOt) {
-		ArtEstGesOt = artEstGesOt;
+	public void setFechaRevisionTitulo(Date fechaRevisionTitulo) {
+		this.fechaRevisionTitulo = fechaRevisionTitulo;
 	}
 
-	public Date getArtFechaRevisionTitulo() {
-		return artFechaRevisionTitulo;
+	public Double getPorcentajePropiedad() {
+		return porcentajePropiedad;
 	}
 
-	public void setArtFechaRevisionTitulo(Date artFechaRevisionTitulo) {
-		this.artFechaRevisionTitulo = artFechaRevisionTitulo;
+	public void setPorcentajePropiedad(Double porcentajePropiedad) {
+		this.porcentajePropiedad = porcentajePropiedad;
 	}
 
-	public Double getArtPorcPropiedad() {
-		return artPorcPropiedad;
+	public String getObservaciones() {
+		return observaciones;
 	}
 
-	public void setArtPorcPropiedad(Double artPorcPropiedad) {
-		this.artPorcPropiedad = artPorcPropiedad;
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
 	}
 
-	public String getArtObservaciones() {
-		return artObservaciones;
+	public Double getPorcentajeConsTasacionCf() {
+		return porcentajeConsTasacionCf;
 	}
 
-	public void setArtObservaciones(String artObservaciones) {
-		this.artObservaciones = artObservaciones;
+	public void setPorcentajeConsTasacionCf(Double porcentajeConsTasacionCf) {
+		this.porcentajeConsTasacionCf = porcentajeConsTasacionCf;
 	}
 
-	public Double getArtPorcConsTasacionCf() {
-		return artPorcConsTasacionCf;
+	public Double getPorcentajeConsTasacionCj() {
+		return porcentajeConsTasacionCj;
 	}
 
-	public void setArtPorcConsTasacionCf(Double artPorcConsTasacionCf) {
-		this.artPorcConsTasacionCf = artPorcConsTasacionCf;
+	public void setPorcentajeConsTasacionCj(Double porcentajeConsTasacionCj) {
+		this.porcentajeConsTasacionCj = porcentajeConsTasacionCj;
 	}
 
-	public Double getArtPorcConsTasacionCj() {
-		return artPorcConsTasacionCj;
+	public Date getFechaContratoAlquiler() {
+		return fechaContratoAlquiler;
 	}
 
-	public void setArtPorcConsTasacionCj(Double artPorcConsTasacionCj) {
-		this.artPorcConsTasacionCj = artPorcConsTasacionCj;
+	public void setFechaContratoAlquiler(Date fechaContratoAlquiler) {
+		this.fechaContratoAlquiler = fechaContratoAlquiler;
 	}
 
-	public Date getArtFechaContratoAlq() {
-		return artFechaContratoAlq;
+	public String getLegislacionAplicableAlquiler() {
+		return legislacionAplicableAlquiler;
 	}
 
-	public void setArtFechaContratoAlq(Date artFechaContratoAlq) {
-		this.artFechaContratoAlq = artFechaContratoAlq;
+	public void setLegislacionAplicableAlquiler(String legislacionAplicableAlquiler) {
+		this.legislacionAplicableAlquiler = legislacionAplicableAlquiler;
 	}
 
-	public String getArtLegislacionAplicableAlq() {
-		return artLegislacionAplicableAlq;
+	public String getDuracionContratoAlquiler() {
+		return duracionContratoAlquiler;
 	}
 
-	public void setArtLegislacionAplicableAlq(String artLegislacionAplicableAlq) {
-		this.artLegislacionAplicableAlq = artLegislacionAplicableAlq;
+	public void setDuracionContratoAlquiler(String duracionContratoAlquiler) {
+		this.duracionContratoAlquiler = duracionContratoAlquiler;
 	}
 
-	public String getArtDuracionContratoAlq() {
-		return artDuracionContratoAlq;
+	public String getTipoIncidenciaIloc() {
+		return tipoIncidenciaIloc;
 	}
 
-	public void setArtDuracionContratoAlq(String artDuracionContratoAlq) {
-		this.artDuracionContratoAlq = artDuracionContratoAlq;
+	public void setTipoIncidenciaIloc(String tipoIncidenciaIloc) {
+		this.tipoIncidenciaIloc = tipoIncidenciaIloc;
 	}
 
-	public String getArtTipoInciIloc() {
-		return artTipoInciIloc;
+	public String getDeterioroGrave() {
+		return deterioroGrave;
 	}
 
-	public void setArtTipoInciIloc(String artTipoInciIloc) {
-		this.artTipoInciIloc = artTipoInciIloc;
+	public void setDeterioroGrave(String deterioroGrave) {
+		this.deterioroGrave = deterioroGrave;
 	}
 
-	public String getArtDeterioroGrave() {
-		return artDeterioroGrave;
+	public String getTipoIncidenciaOtros() {
+		return tipoIncidenciaOtros;
 	}
 
-	public void setArtDeterioroGrave(String artDeterioroGrave) {
-		this.artDeterioroGrave = artDeterioroGrave;
-	}
-
-	public String getArtTipoInciOtros() {
-		return artTipoInciOtros;
-	}
-
-	public void setArtTipoInciOtros(String artTipoInciOtros) {
-		this.artTipoInciOtros = artTipoInciOtros;
+	public void setTipoIncidenciaOtros(String tipoIncidenciaOtros) {
+		this.tipoIncidenciaOtros = tipoIncidenciaOtros;
 	}
 
 	public Long getVersion() {
@@ -530,17 +518,25 @@ public class ActArtAdmisionRevTitulo implements Auditable,Serializable {
 		this.version = version;
 	}
 
+	@Override
 	public Auditoria getAuditoria() {
-		return auditoria;
+		return this.auditoria;
 	}
 
+	@Override
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+		
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public DDEstadoGestion getEstadoCertificadoFinObra() {
+		return estadoCertificadoFinObra;
 	}
+
+	public void setEstadoCertificadoFinObra(DDEstadoGestion estadoCertificadoFinObra) {
+		this.estadoCertificadoFinObra = estadoCertificadoFinObra;
+	}
+
 
 	
 

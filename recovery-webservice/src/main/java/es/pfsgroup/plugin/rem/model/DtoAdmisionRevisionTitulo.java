@@ -8,85 +8,57 @@ import es.capgemini.devon.dto.WebDto;
 /**
  * Dto que gestiona la informacion de un activo-gasto.
  *  
- * @author Gabriel De Toni
+ * @author Sergio Salt.
  *
  */
 public class DtoAdmisionRevisionTitulo extends WebDto {
-	
-	
-  
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 3574353502838449106L;
+	private static final long serialVersionUID = 1L;
 	
-
-	private Long id;
+	private Long   id;
 	private Long idActivo;
-	private String revisadoCodigo;
-	private String revisadoDescripcion;
-	private Date fechaRevisado;
-	private Long ratificacion;
-	private String instLibArrendatariaCodigo;
-	private String instLibArrendatariaDescripcion;
-	private String sitIniInscripcionCodigo;
-	private String sitIniInscripcionDescripcion;
-	private String posesoriaIniCodigo;
-	private String posesoriaIniDescripcion;
-	private String sitIniCargasCodigo;
-	private String sitIniCargasDescripcion;
-	private Double porcPropiedad;
-	private String tipoTitularidadCodigo;
-	private String tipoTitularidadDescripcion;
+	private String revisado;
+	private String instLibArrendataria;
+	private String ratificacion;
+	private String situacionInicialInscripcion;
+	private String posesoriaInicial;
+	private String situacionInicialCargas;
+	private String tipoTitularidad;
+	private String estadoAutorizaTransmision;
+	private String anotacionConcurso;
+	private String estadoGestionCa;
+	private String consFisica;
+	private String consJuridica;
+	private String estadoCertificadoFinObra;
+	private String estadoAfoActaFinObra;
+	private String licenciaPrimeraOcupacion;
+	private String boletines;
+	private String seguroDecenal;
+	private String cedulaHabitabilidad;
+	private String tipoArrendamiento;
+	private String notificarArrendatarios;
+	private String tipoExpediente;
+	private String estadoGestionEa;
+	private String tipoIncidenciaRegistral;
+	private String estadoGestionCr;
+	private String tipoOcupacionLegal;
+	private String estadoGestionIl;
+	private String estadoGestionOt;
+	private Date   fechaRevisionTitulo;
+	private Double porcentajePropiedad;
 	private String observaciones;
-	private String autorizTransmisionCodigo;
-	private String autorizTransmisionDescripcion;
-	private String anotacionConcursoCodigo;
-	private String anotacionConcursoDescripcion;
-	private String estadoGestionCaCodigo;
-	private String estadoGestionCaDescripcion;
-	private String consFisicaCodigo;
-	private String consFisicaDescripcion;
-	private Double porcConsTasacionCf;
-	private String consJuridicaCodigo;
-	private String consJuridicaDescripcion;
-	private Double porcConsTasacionCj;
-	private String certificadoFinObraCodigo;
-	private String certificadoFinObraDescripcion;
-	private String afoActaFinObraCodigo;
-	private String afoActaFinObraDescripcion;
-	private String licPrimeraOcupacionCodigo;
-	private String licPrimeraOcupacionDescripcion;
-	private String boletinesCodigo;
-	private String boletinesDescripcion;
-	private String seguroDecenalCodigo;
-	private String seguroDecenalDescripcion;
-	private String cedulaHabitabilidadCodigo;
-	private String cedulaHabitabilidadDescripcion;
-	private Date fechaContratoAlq;
-	private String legislacionAplicableAlq;
-	private String duracionContratoAlq;
-	private String tipoArrendamientoCodigo;
-	private String tipoArrendamientoDescripcion;
-	private String notifArrendatariosCodigo;
-	private String notifArrendatariosDescripcion;
-	private String tipoExpAdmCodigo;
-	private String tipoExpAdmDescripcion;
-	private String estadoGestionEaCodigo;
-	private String estadoGestionEaDescripcion;
-	private String tipoInicioRegistralCodigo;
-	private String tipoInicioRegistralDescripcion;
-	private String estadoGestionCrCodigo;
-	private String estadoGestionCrDescripcion;
-	private String tipoOcupacionLegalCodigo;
-	private String tipoOcupacionLegalDescripcion;
-	private String tipoInciIloc;
-	private String estadoGestionIlCodigo;
-	private String estadoGestionIlDescripcion;
+	private Double porcentajeConsTasacionCf;
+	private Double porcentajeConsTasacionCj;
+	private Date   fechaContratoAlquiler;
+	private String legislacionAplicableAlquiler;
+	private String duracionContratoAlquiler;
+	private String tipoIncidenciaIloc;
 	private String deterioroGrave;
-	private String tipoInciOtros;
-	private String estadoGestionOtCodigo;
-	private String estadoGestionOtDescripcion;
+	private String tipoIncidenciaOtros;
+	private boolean update = false;
 	
 	public Long getId() {
 		return id;
@@ -94,101 +66,179 @@ public class DtoAdmisionRevisionTitulo extends WebDto {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public Long getIdActivo() {
-		return idActivo;
+	public String getRevisado() {
+		return revisado;
 	}
-	public void setIdActivo(Long idActivo) {
-		this.idActivo = idActivo;
+	public void setRevisado(String revisado) {
+		this.revisado = revisado;
 	}
-	public String getRevisadoCodigo() {
-		return revisadoCodigo;
+	public String getInstLibArrendataria() {
+		return instLibArrendataria;
 	}
-	public void setRevisadoCodigo(String revisadoCodigo) {
-		this.revisadoCodigo = revisadoCodigo;
+	public void setInstLibArrendataria(String instLibArrendataria) {
+		this.instLibArrendataria = instLibArrendataria;
 	}
-	public String getRevisadoDescripcion() {
-		return revisadoDescripcion;
-	}
-	public void setRevisadoDescripcion(String revisadoDescripcion) {
-		this.revisadoDescripcion = revisadoDescripcion;
-	}
-	public Date getFechaRevisado() {
-		return fechaRevisado;
-	}
-	public void setFechaRevisado(Date fechaRevisado) {
-		this.fechaRevisado = fechaRevisado;
-	}
-	public Long getRatificacion() {
+	public String getRatificacion() {
 		return ratificacion;
 	}
-	public void setRatificacion(Long ratificacion) {
+	public void setRatificacion(String ratificacion) {
 		this.ratificacion = ratificacion;
 	}
-	public String getInstLibArrendatariaCodigo() {
-		return instLibArrendatariaCodigo;
+	public String getSituacionInicialInscripcion() {
+		return situacionInicialInscripcion;
 	}
-	public void setInstLibArrendatariaCodigo(String instLibArrendatariaCodigo) {
-		this.instLibArrendatariaCodigo = instLibArrendatariaCodigo;
+	public void setSituacionInicialInscripcion(String situacionInicialInscripcion) {
+		this.situacionInicialInscripcion = situacionInicialInscripcion;
 	}
-	public String getInstLibArrendatariaDescripcion() {
-		return instLibArrendatariaDescripcion;
+	public String getPosesoriaInicial() {
+		return posesoriaInicial;
 	}
-	public void setInstLibArrendatariaDescripcion(String instLibArrendatariaDescripcion) {
-		this.instLibArrendatariaDescripcion = instLibArrendatariaDescripcion;
+	public void setPosesoriaInicial(String posesoriaInicial) {
+		this.posesoriaInicial = posesoriaInicial;
 	}
-	public String getSitIniInscripcionCodigo() {
-		return sitIniInscripcionCodigo;
+	public String getSituacionInicialCargas() {
+		return situacionInicialCargas;
 	}
-	public void setSitIniInscripcionCodigo(String sitIniInscripcionCodigo) {
-		this.sitIniInscripcionCodigo = sitIniInscripcionCodigo;
+	public void setSituacionInicialCargas(String situacionInicialCargas) {
+		this.situacionInicialCargas = situacionInicialCargas;
 	}
-	public String getSitIniInscripcionDescripcion() {
-		return sitIniInscripcionDescripcion;
+	public String getTipoTitularidad() {
+		return tipoTitularidad;
 	}
-	public void setSitIniInscripcionDescripcion(String sitIniInscripcionDescripcion) {
-		this.sitIniInscripcionDescripcion = sitIniInscripcionDescripcion;
+	public void setTipoTitularidad(String tipoTitularidad) {
+		this.tipoTitularidad = tipoTitularidad;
 	}
-	public String getPosesoriaIniCodigo() {
-		return posesoriaIniCodigo;
+	public String getEstadoAutorizaTransmision() {
+		return estadoAutorizaTransmision;
 	}
-	public void setPosesoriaIniCodigo(String posesoriaIniCodigo) {
-		this.posesoriaIniCodigo = posesoriaIniCodigo;
+	public void setEstadoAutorizaTransmision(String estadoAutorizaTransmision) {
+		this.estadoAutorizaTransmision = estadoAutorizaTransmision;
 	}
-	public String getPosesoriaIniDescripcion() {
-		return posesoriaIniDescripcion;
+	public String getAnotacionConcurso() {
+		return anotacionConcurso;
 	}
-	public void setPosesoriaIniDescripcion(String posesoriaIniDescripcion) {
-		this.posesoriaIniDescripcion = posesoriaIniDescripcion;
+	public void setAnotacionConcurso(String anotacionConcurso) {
+		this.anotacionConcurso = anotacionConcurso;
 	}
-	public String getSitIniCargasCodigo() {
-		return sitIniCargasCodigo;
+	public String getEstadoGestionCa() {
+		return estadoGestionCa;
 	}
-	public void setSitIniCargasCodigo(String sitIniCargasCodigo) {
-		this.sitIniCargasCodigo = sitIniCargasCodigo;
+	public void setEstadoGestionCa(String estadoGestionCa) {
+		this.estadoGestionCa = estadoGestionCa;
 	}
-	public String getSitIniCargasDescripcion() {
-		return sitIniCargasDescripcion;
+	public String getConsFisica() {
+		return consFisica;
 	}
-	public void setSitIniCargasDescripcion(String sitIniCargasDescripcion) {
-		this.sitIniCargasDescripcion = sitIniCargasDescripcion;
+	public void setConsFisica(String consFisica) {
+		this.consFisica = consFisica;
 	}
-	public Double getPorcPropiedad() {
-		return porcPropiedad;
+	public String getConsJuridica() {
+		return consJuridica;
 	}
-	public void setPorcPropiedad(Double porcPropiedad) {
-		this.porcPropiedad = porcPropiedad;
+	public void setConsJuridica(String consJuridica) {
+		this.consJuridica = consJuridica;
 	}
-	public String getTipoTitularidadCodigo() {
-		return tipoTitularidadCodigo;
+	public String getEstadoCertificadoFinObra() {
+		return estadoCertificadoFinObra;
 	}
-	public void setTipoTitularidadCodigo(String tipoTitularidadCodigo) {
-		this.tipoTitularidadCodigo = tipoTitularidadCodigo;
+	public void getEstadoCertificadoFinObra(String estadoCertificadoFinObra) {
+		this.estadoCertificadoFinObra = estadoCertificadoFinObra;
 	}
-	public String getTipoTitularidadDescripcion() {
-		return tipoTitularidadDescripcion;
+	public String getEstadoAfoActaFinObra() {
+		return estadoAfoActaFinObra;
 	}
-	public void setTipoTitularidadDescripcion(String tipoTitularidadDescripcion) {
-		this.tipoTitularidadDescripcion = tipoTitularidadDescripcion;
+	public void setEstadoAfoActaFinObra(String estadoAfoActaFinObra) {
+		this.estadoAfoActaFinObra = estadoAfoActaFinObra;
+	}
+	public String getLicenciaPrimeraOcupacion() {
+		return licenciaPrimeraOcupacion;
+	}
+	public void setLicenciaPrimeraOcupacion(String licenciaPrimeraOcupacion) {
+		this.licenciaPrimeraOcupacion = licenciaPrimeraOcupacion;
+	}
+	public String getBoletines() {
+		return boletines;
+	}
+	public void setBoletines(String boletines) {
+		this.boletines = boletines;
+	}
+	public String getSeguroDecenal() {
+		return seguroDecenal;
+	}
+	public void setSeguroDecenal(String seguroDecenal) {
+		this.seguroDecenal = seguroDecenal;
+	}
+	public String getCedulaHabitibilidad() {
+		return cedulaHabitabilidad;
+	}
+	public void setCedulaHabitibilidad(String cedulaHabitabilidad) {
+		this.cedulaHabitabilidad = cedulaHabitabilidad;
+	}
+	public String getTipoArrendamiento() {
+		return tipoArrendamiento;
+	}
+	public void setTipoArrendamiento(String tipoArrendamiento) {
+		this.tipoArrendamiento = tipoArrendamiento;
+	}
+	public String getNotificarArrendatarios() {
+		return notificarArrendatarios;
+	}
+	public void setNotificarArrendatarios(String notificarArrendatarios) {
+		this.notificarArrendatarios = notificarArrendatarios;
+	}
+	public String getTipoExpediente() {
+		return tipoExpediente;
+	}
+	public void setTipoExpediente(String tipoExpediente) {
+		this.tipoExpediente = tipoExpediente;
+	}
+	public String getEstadoGestionEa() {
+		return estadoGestionEa;
+	}
+	public void setEstadoGestionEa(String estadoGestionEa) {
+		this.estadoGestionEa = estadoGestionEa;
+	}
+	public String getTipoIncidenciaRegistral() {
+		return tipoIncidenciaRegistral;
+	}
+	public void setTipoIncidenciaRegistral(String tipoIncidenciaRegistral) {
+		this.tipoIncidenciaRegistral = tipoIncidenciaRegistral;
+	}
+	public String getEstadoGestionCr() {
+		return estadoGestionCr;
+	}
+	public void setEstadoGestionCr(String estadoGestionCr) {
+		this.estadoGestionCr = estadoGestionCr;
+	}
+	public String getTipoOcupacionLegal() {
+		return tipoOcupacionLegal;
+	}
+	public void setTipoOcupacionLegal(String tipoOcupacionLegal) {
+		this.tipoOcupacionLegal = tipoOcupacionLegal;
+	}
+	public String getEstadoGestionIl() {
+		return estadoGestionIl;
+	}
+	public void setEstadoGestionIl(String estadoGestionIl) {
+		this.estadoGestionIl = estadoGestionIl;
+	}
+	public String getEstadoGestionOt() {
+		return estadoGestionOt;
+	}
+	public void setEstadoGestionOt(String estadoGestionOt) {
+		this.estadoGestionOt = estadoGestionOt;
+	}
+	public Date getFechaRevisionTitulo() {
+		return fechaRevisionTitulo;
+	}
+	public void setFechaRevisionTitulo(Date fechaRevisionTitulo) {
+		this.fechaRevisionTitulo = fechaRevisionTitulo;
+	}
+	public Double getPorcentajePropiedad() {
+		return porcentajePropiedad;
+	}
+	public void setPorcentajePropiedad(Double porcentajePropiedad) {
+		this.porcentajePropiedad = porcentajePropiedad;
 	}
 	public String getObservaciones() {
 		return observaciones;
@@ -196,269 +246,41 @@ public class DtoAdmisionRevisionTitulo extends WebDto {
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
 	}
-	public String getAutorizTransmisionCodigo() {
-		return autorizTransmisionCodigo;
+	public Double getPorcentajeConsTasacionCf() {
+		return porcentajeConsTasacionCf;
 	}
-	public void setAutorizTransmisionCodigo(String autorizTransmisionCodigo) {
-		this.autorizTransmisionCodigo = autorizTransmisionCodigo;
+	public void setPorcentajeConsTasacionCf(Double porcentajeConsTasacionCf) {
+		this.porcentajeConsTasacionCf = porcentajeConsTasacionCf;
 	}
-	public String getAutorizTransmisionDescripcion() {
-		return autorizTransmisionDescripcion;
+	public Double getPorcentajeConsTasacionCj() {
+		return porcentajeConsTasacionCj;
 	}
-	public void setAutorizTransmisionDescripcion(String autorizTransmisionDescripcion) {
-		this.autorizTransmisionDescripcion = autorizTransmisionDescripcion;
+	public void setPorcentajeConsTasacionCj(Double porcentajeConsTasacionCj) {
+		this.porcentajeConsTasacionCj = porcentajeConsTasacionCj;
 	}
-	public String getAnotacionConcursoCodigo() {
-		return anotacionConcursoCodigo;
+	public Date getFechaContratoAlquiler() {
+		return fechaContratoAlquiler;
 	}
-	public void setAnotacionConcursoCodigo(String anotacionConcursoCodigo) {
-		this.anotacionConcursoCodigo = anotacionConcursoCodigo;
+	public void setFechaContratoAlquiler(Date fechaContratoAlquiler) {
+		this.fechaContratoAlquiler = fechaContratoAlquiler;
 	}
-	public String getAnotacionConcursoDescripcion() {
-		return anotacionConcursoDescripcion;
+	public String getLegislacionAplicableAlquiler() {
+		return legislacionAplicableAlquiler;
 	}
-	public void setAnotacionConcursoDescripcion(String anotacionConcursoDescripcion) {
-		this.anotacionConcursoDescripcion = anotacionConcursoDescripcion;
+	public void setLegislacionAplicableAlquiler(String legislacionAplicableAlquiler) {
+		this.legislacionAplicableAlquiler = legislacionAplicableAlquiler;
 	}
-	public String getEstadoGestionCaCodigo() {
-		return estadoGestionCaCodigo;
+	public String getDuracionContratoAlquiler() {
+		return duracionContratoAlquiler;
 	}
-	public void setEstadoGestionCaCodigo(String estadoGestionCaCodigo) {
-		this.estadoGestionCaCodigo = estadoGestionCaCodigo;
+	public void setDuracionContratoAlquiler(String duracionContratoAlquiler) {
+		this.duracionContratoAlquiler = duracionContratoAlquiler;
 	}
-	public String getEstadoGestionCaDescripcion() {
-		return estadoGestionCaDescripcion;
+	public String getTipoIncidenciaIloc() {
+		return tipoIncidenciaIloc;
 	}
-	public void setEstadoGestionCaDescripcion(String estadoGestionCaDescripcion) {
-		this.estadoGestionCaDescripcion = estadoGestionCaDescripcion;
-	}
-	public String getConsFisicaCodigo() {
-		return consFisicaCodigo;
-	}
-	public void setConsFisicaCodigo(String consFisicaCodigo) {
-		this.consFisicaCodigo = consFisicaCodigo;
-	}
-	public String getConsFisicaDescripcion() {
-		return consFisicaDescripcion;
-	}
-	public void setConsFisicaDescripcion(String consFisicaDescripcion) {
-		this.consFisicaDescripcion = consFisicaDescripcion;
-	}
-	public Double getPorcConsTasacionCf() {
-		return porcConsTasacionCf;
-	}
-	public void setPorcConsTasacionCf(Double porcConsTasacionCf) {
-		this.porcConsTasacionCf = porcConsTasacionCf;
-	}
-	public String getConsJuridicaCodigo() {
-		return consJuridicaCodigo;
-	}
-	public void setConsJuridicaCodigo(String consJuridicaCodigo) {
-		this.consJuridicaCodigo = consJuridicaCodigo;
-	}
-	public String getConsJuridicaDescripcion() {
-		return consJuridicaDescripcion;
-	}
-	public void setConsJuridicaDescripcion(String consJuridicaDescripcion) {
-		this.consJuridicaDescripcion = consJuridicaDescripcion;
-	}
-	public Double getPorcConsTasacionCj() {
-		return porcConsTasacionCj;
-	}
-	public void setPorcConsTasacionCj(Double porcConsTasacionCj) {
-		this.porcConsTasacionCj = porcConsTasacionCj;
-	}
-	public String getCertificadoFinObraCodigo() {
-		return certificadoFinObraCodigo;
-	}
-	public void setCertificadoFinObraCodigo(String certificadoFinObraCodigo) {
-		this.certificadoFinObraCodigo = certificadoFinObraCodigo;
-	}
-	public String getCertificadoFinObraDescripcion() {
-		return certificadoFinObraDescripcion;
-	}
-	public void setCertificadoFinObraDescripcion(String certificadoFinObraDescripcion) {
-		this.certificadoFinObraDescripcion = certificadoFinObraDescripcion;
-	}
-	public String getAfoActaFinObraCodigo() {
-		return afoActaFinObraCodigo;
-	}
-	public void setAfoActaFinObraCodigo(String afoActaFinObraCodigo) {
-		this.afoActaFinObraCodigo = afoActaFinObraCodigo;
-	}
-	public String getAfoActaFinObraDescripcion() {
-		return afoActaFinObraDescripcion;
-	}
-	public void setAfoActaFinObraDescripcion(String afoActaFinObraDescripcion) {
-		this.afoActaFinObraDescripcion = afoActaFinObraDescripcion;
-	}
-	public String getLicPrimeraOcupacionCodigo() {
-		return licPrimeraOcupacionCodigo;
-	}
-	public void setLicPrimeraOcupacionCodigo(String licPrimeraOcupacionCodigo) {
-		this.licPrimeraOcupacionCodigo = licPrimeraOcupacionCodigo;
-	}
-	public String getLicPrimeraOcupacionDescripcion() {
-		return licPrimeraOcupacionDescripcion;
-	}
-	public void setLicPrimeraOcupacionDescripcion(String licPrimeraOcupacionDescripcion) {
-		this.licPrimeraOcupacionDescripcion = licPrimeraOcupacionDescripcion;
-	}
-	public String getBoletinesCodigo() {
-		return boletinesCodigo;
-	}
-	public void setBoletinesCodigo(String boletinesCodigo) {
-		this.boletinesCodigo = boletinesCodigo;
-	}
-	public String getBoletinesDescripcion() {
-		return boletinesDescripcion;
-	}
-	public void setBoletinesDescripcion(String boletinesDescripcion) {
-		this.boletinesDescripcion = boletinesDescripcion;
-	}
-	public String getSeguroDecenalCodigo() {
-		return seguroDecenalCodigo;
-	}
-	public void setSeguroDecenalCodigo(String seguroDecenalCodigo) {
-		this.seguroDecenalCodigo = seguroDecenalCodigo;
-	}
-	public String getSeguroDecenalDescripcion() {
-		return seguroDecenalDescripcion;
-	}
-	public void setSeguroDecenalDescripcion(String seguroDecenalDescripcion) {
-		this.seguroDecenalDescripcion = seguroDecenalDescripcion;
-	}
-	public String getCedulaHabitabilidadCodigo() {
-		return cedulaHabitabilidadCodigo;
-	}
-	public void setCedulaHabitabilidadCodigo(String cedulaHabitabilidadCodigo) {
-		this.cedulaHabitabilidadCodigo = cedulaHabitabilidadCodigo;
-	}
-	public String getCedulaHabitabilidadDescripcion() {
-		return cedulaHabitabilidadDescripcion;
-	}
-	public void setCedulaHabitabilidadDescripcion(String cedulaHabitabilidadDescripcion) {
-		this.cedulaHabitabilidadDescripcion = cedulaHabitabilidadDescripcion;
-	}
-	public Date getFechaContratoAlq() {
-		return fechaContratoAlq;
-	}
-	public void setFechaContratoAlq(Date fechaContratoAlq) {
-		this.fechaContratoAlq = fechaContratoAlq;
-	}
-	public String getLegislacionAplicableAlq() {
-		return legislacionAplicableAlq;
-	}
-	public void setLegislacionAplicableAlq(String legislacionAplicableAlq) {
-		this.legislacionAplicableAlq = legislacionAplicableAlq;
-	}
-	public String getDuracionContratoAlq() {
-		return duracionContratoAlq;
-	}
-	public void setDuracionContratoAlq(String duracionContratoAlq) {
-		this.duracionContratoAlq = duracionContratoAlq;
-	}
-	public String getTipoArrendamientoCodigo() {
-		return tipoArrendamientoCodigo;
-	}
-	public void setTipoArrendamientoCodigo(String tipoArrendamientoCodigo) {
-		this.tipoArrendamientoCodigo = tipoArrendamientoCodigo;
-	}
-	public String getTipoArrendamientoDescripcion() {
-		return tipoArrendamientoDescripcion;
-	}
-	public void setTipoArrendamientoDescripcion(String tipoArrendamientoDescripcion) {
-		this.tipoArrendamientoDescripcion = tipoArrendamientoDescripcion;
-	}
-	public String getNotifArrendatariosCodigo() {
-		return notifArrendatariosCodigo;
-	}
-	public void setNotifArrendatariosCodigo(String notifArrendatariosCodigo) {
-		this.notifArrendatariosCodigo = notifArrendatariosCodigo;
-	}
-	public String getNotifArrendatariosDescripcion() {
-		return notifArrendatariosDescripcion;
-	}
-	public void setNotifArrendatariosDescripcion(String notifArrendatariosDescripcion) {
-		this.notifArrendatariosDescripcion = notifArrendatariosDescripcion;
-	}
-	public String getTipoExpAdmCodigo() {
-		return tipoExpAdmCodigo;
-	}
-	public void setTipoExpAdmCodigo(String tipoExpAdmCodigo) {
-		this.tipoExpAdmCodigo = tipoExpAdmCodigo;
-	}
-	public String getTipoExpAdmDescripcion() {
-		return tipoExpAdmDescripcion;
-	}
-	public void setTipoExpAdmDescripcion(String tipoExpAdmDescripcion) {
-		this.tipoExpAdmDescripcion = tipoExpAdmDescripcion;
-	}
-	public String getEstadoGestionEaCodigo() {
-		return estadoGestionEaCodigo;
-	}
-	public void setEstadoGestionEaCodigo(String estadoGestionEaCodigo) {
-		this.estadoGestionEaCodigo = estadoGestionEaCodigo;
-	}
-	public String getEstadoGestionEaDescripcion() {
-		return estadoGestionEaDescripcion;
-	}
-	public void setEstadoGestionEaDescripcion(String estadoGestionEaDescripcion) {
-		this.estadoGestionEaDescripcion = estadoGestionEaDescripcion;
-	}
-	public String getTipoInicioRegistralCodigo() {
-		return tipoInicioRegistralCodigo;
-	}
-	public void setTipoInicioRegistralCodigo(String tipoInicioRegistralCodigo) {
-		this.tipoInicioRegistralCodigo = tipoInicioRegistralCodigo;
-	}
-	public String getTipoInicioRegistralDescripcion() {
-		return tipoInicioRegistralDescripcion;
-	}
-	public void setTipoInicioRegistralDescripcion(String tipoInicioRegistralDescripcion) {
-		this.tipoInicioRegistralDescripcion = tipoInicioRegistralDescripcion;
-	}
-	public String getEstadoGestionCrCodigo() {
-		return estadoGestionCrCodigo;
-	}
-	public void setEstadoGestionCrCodigo(String estadoGestionCrCodigo) {
-		this.estadoGestionCrCodigo = estadoGestionCrCodigo;
-	}
-	public String getEstadoGestionCrDescripcion() {
-		return estadoGestionCrDescripcion;
-	}
-	public void setEstadoGestionCrDescripcion(String estadoGestionCrDescripcion) {
-		this.estadoGestionCrDescripcion = estadoGestionCrDescripcion;
-	}
-	public String getTipoOcupacionLegalCodigo() {
-		return tipoOcupacionLegalCodigo;
-	}
-	public void setTipoOcupacionLegalCodigo(String tipoOcupacionLegalCodigo) {
-		this.tipoOcupacionLegalCodigo = tipoOcupacionLegalCodigo;
-	}
-	public String getTipoOcupacionLegalDescripcion() {
-		return tipoOcupacionLegalDescripcion;
-	}
-	public void setTipoOcupacionLegalDescripcion(String tipoOcupacionLegalDescripcion) {
-		this.tipoOcupacionLegalDescripcion = tipoOcupacionLegalDescripcion;
-	}
-	public String getTipoInciIloc() {
-		return tipoInciIloc;
-	}
-	public void setTipoInciIloc(String tipoInciIloc) {
-		this.tipoInciIloc = tipoInciIloc;
-	}
-	public String getEstadoGestionIlCodigo() {
-		return estadoGestionIlCodigo;
-	}
-	public void setEstadoGestionIlCodigo(String estadoGestionIlCodigo) {
-		this.estadoGestionIlCodigo = estadoGestionIlCodigo;
-	}
-	public String getEstadoGestionIlDescripcion() {
-		return estadoGestionIlDescripcion;
-	}
-	public void setEstadoGestionIlDescripcion(String estadoGestionIlDescripcion) {
-		this.estadoGestionIlDescripcion = estadoGestionIlDescripcion;
+	public void setTipoIncidenciaIloc(String tipoIncidenciaIloc) {
+		this.tipoIncidenciaIloc = tipoIncidenciaIloc;
 	}
 	public String getDeterioroGrave() {
 		return deterioroGrave;
@@ -466,23 +288,25 @@ public class DtoAdmisionRevisionTitulo extends WebDto {
 	public void setDeterioroGrave(String deterioroGrave) {
 		this.deterioroGrave = deterioroGrave;
 	}
-	public String getTipoInciOtros() {
-		return tipoInciOtros;
+	public String getTipoIncidenciaOtros() {
+		return tipoIncidenciaOtros;
 	}
-	public void setTipoInciOtros(String tipoInciOtros) {
-		this.tipoInciOtros = tipoInciOtros;
+	public void setTipoIncidenciaOtros(String tipoIncidenciaOtros) {
+		this.tipoIncidenciaOtros = tipoIncidenciaOtros;
 	}
-	public String getEstadoGestionOtCodigo() {
-		return estadoGestionOtCodigo;
+	public Long getIdActivo() {
+		return idActivo;
 	}
-	public void setEstadoGestionOtCodigo(String estadoGestionOtCodigo) {
-		this.estadoGestionOtCodigo = estadoGestionOtCodigo;
+	public void setIdActivo(Long idActivo) {
+		this.idActivo = idActivo;
 	}
-	public String getEstadoGestionOtDescripcion() {
-		return estadoGestionOtDescripcion;
+	public boolean isUpdate() {
+		return update;
 	}
-	public void setEstadoGestionOtDescripcion(String estadoGestionOtDescripcion) {
-		this.estadoGestionOtDescripcion = estadoGestionOtDescripcion;
+	public void setUpdate(boolean update) {
+		this.update = update;
 	}
 	
+	
+
 }

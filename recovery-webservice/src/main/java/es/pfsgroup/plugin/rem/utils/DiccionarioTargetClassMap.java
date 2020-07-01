@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.expediente.model.DDTipoExpediente;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.DDFavorable;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
@@ -18,7 +19,6 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBK
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.*;
 
 @Component
@@ -253,7 +253,22 @@ public class DiccionarioTargetClassMap{
 		mapa.put("origenAnterior", DDOrigenAnterior.class);
 		mapa.put("tipoPeticionPrecio", DDTipoPeticionPrecio.class);
 		mapa.put("subtipologias", DDSubtipologiaAgenda.class);
-
+		mapa.put("siNoNoAplica", DDSiNoNoAplica.class);
+		mapa.put("situacionInicialInscripcion",DDSituacionInicialInscripcion.class);
+		mapa.put("situacionPosesoriaInicial",DDSituacionPosesoriaInicial.class);
+		mapa.put("situacionInicialCargas",DDSituacionInicialCargas.class);
+		mapa.put("tipoTitularidad",DDTipoTitularidad.class);
+		mapa.put("autorizacionTransmision",DDAutorizacionTransmision.class);
+		mapa.put("anotacionConcurso",DDAnotacionConcurso.class);
+		mapa.put("estadoGestion",DDEstadoGestion.class);
+		mapa.put("licenciaPrimeraOcupacion",DDLicenciaPrimeraOcupacion.class);
+		mapa.put("boletines",DDBoletines.class);
+		mapa.put("seguroDecenal",DDSeguroDecenal.class);
+		mapa.put("cedulaHabitabilidad",DDCedulaHabitabilidad.class);
+		mapa.put("tipoArrendamiento",DDTipoArrendamiento.class);
+		mapa.put("tipoExpediente",DDTipoExpediente.class);
+		mapa.put("tipoIncidenciaRegistral",DDTipoIncidenciaRegistral.class);
+		mapa.put("tipoOcupacionLegal",DDTipoOcupacionLegal.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

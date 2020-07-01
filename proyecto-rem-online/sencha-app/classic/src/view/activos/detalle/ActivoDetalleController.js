@@ -852,12 +852,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onClickBotonGuardar: function(btn) {
 		var me = this;
 		var form = btn.up('tabpanel').getActiveTab();
-
 		// EjecuciÃ³n especial si la pestaÃ±a es 'Comercial'.
 		if("comercialactivo" == form.getXType()) {
 			me.onSaveFormularioCompletoTabComercial(btn, form);
 		} else if("datospatrimonio" == form.getXType()){
 			me.onSaveFormularioCompletoTabPatrimonio(btn, form);
+		} else if ('admisionrevisiontitulo' === form.getXType()) {
+			me.onSaveFormularioCompletoTabAdmisionTitulo( btn , form);
 		} else {
 			me.onSaveFormularioCompleto(btn, form, false);
 		}
@@ -5982,5 +5983,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	
     	return false;
     	
+    },
+    onSaveFormularioCompletoTabAdmisionTitulo: function(btn , form){
+    	// Redirección al controlador de la vista para mantener todos los métodos ordenados, sin alterar la arquitectura del tab principal. 
+		form.lookupController().saveTabData(btn, form);
     }
 });

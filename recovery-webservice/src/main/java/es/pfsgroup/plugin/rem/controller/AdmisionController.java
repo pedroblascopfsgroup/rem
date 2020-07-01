@@ -1,21 +1,21 @@
 package es.pfsgroup.plugin.rem.controller;
 
-import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
-import es.pfsgroup.framework.paradise.utils.DtoPage;
-import es.pfsgroup.plugin.rem.api.AdmisionApi;
-import es.pfsgroup.plugin.rem.api.GastoApi;
-import es.pfsgroup.plugin.rem.model.DtoActivoAgendaRevisionTitulo;
-import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
+import java.lang.reflect.InvocationTargetException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import es.pfsgroup.commons.utils.Checks;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
+import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
+import es.pfsgroup.plugin.rem.admision.exception.AdmisionException;
+import es.pfsgroup.plugin.rem.api.AdmisionApi;
+import es.pfsgroup.plugin.rem.model.DtoActivoAgendaRevisionTitulo;
+import es.pfsgroup.plugin.rem.model.DtoAdmisionRevisionTitulo;
 
 @Controller
 public class AdmisionController extends ParadiseJsonController {
@@ -28,7 +28,34 @@ public class AdmisionController extends ParadiseJsonController {
 	
 	@Autowired
 	private AdmisionApi admisionApi;
-
+	
+	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getTabDataRevisionTitulo(Long id, ModelMap model) throws IllegalAccessException, InvocationTargetException, AdmisionException {
+		DtoAdmisionRevisionTitulo dto = admisionApi.getTabDataRevisionTitulo(id);
+		model.put(RESPONSE_DATA_KEY, dto);
+		
+		return createModelAndViewJson(model);
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveTabDataRevisionTitulo( DtoAdmisionRevisionTitulo dto, ModelMap model) {
+		try {
+			admisionApi.saveTabDataRevisionTitulo(dto);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		}catch(Exception e) {
+			logger.error(e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListAgendaRevisionTitulo(Long idActivo, ModelMap model) {

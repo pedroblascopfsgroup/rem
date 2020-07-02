@@ -2354,11 +2354,18 @@ public class AgrupacionAdapter {
 				clienteComercial.setComunicacionTerceros(dto.getComunicacionTerceros());
 			}
 			
-			TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class,
-					genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumentoCliente()));
+			Filter filtroAdjunto = genericDao.createFilter(FilterType.NOTNULL, "idAdjunto");
+			List<TmpClienteGDPR> tmpClienteGDPR = genericDao.getList(TmpClienteGDPR.class, 
+					genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumentoCliente()), filtroAdjunto);
+			if (!Checks.estaVacio(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.get(0).getIdPersonaHaya())) {
+				clienteComercial.setIdPersonaHaya(String.valueOf(tmpClienteGDPR.get(0).getIdPersonaHaya()));
+			}else {
+				tmpClienteGDPR = genericDao.getList(TmpClienteGDPR.class, 
+						genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumentoCliente()));			
 			
-			if (!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdPersonaHaya())) {
-				clienteComercial.setIdPersonaHaya(String.valueOf(tmpClienteGDPR.getIdPersonaHaya()));
+				if (!Checks.estaVacio(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.get(0).getIdPersonaHaya())) {
+					clienteComercial.setIdPersonaHaya(String.valueOf(tmpClienteGDPR.get(0).getIdPersonaHaya()));
+				}
 			}
 			
 			genericDao.save(ClienteComercial.class, clienteComercial);
@@ -2526,9 +2533,9 @@ public class AgrupacionAdapter {
 				clienteGDPR.setComunicacionTerceros(dto.getComunicacionTerceros());
 				clienteGDPR.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
 				
-				if(!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
+				if(!Checks.estaVacio(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.get(0).getIdAdjunto())) {
 					docAdjunto = genericDao.get(AdjuntoComprador.class,
-							genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));
+							genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.get(0).getIdAdjunto()));
 				}
 				if (!Checks.esNulo(docAdjunto)) {
 					clienteGDPR.setAdjuntoComprador(docAdjunto);

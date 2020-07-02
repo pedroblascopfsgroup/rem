@@ -245,7 +245,7 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 	@Transactional(readOnly=false)
 	public void saveTabDataRevisionTitulo(DtoAdmisionRevisionTitulo dto) 
 			throws AdmisionException, IllegalAccessException, InvocationTargetException {
-		if ( dto.getIdActivo() == null) {
+		if ( dto.getIdActivo() == null && dto.getId() == null) {
 			throw new AdmisionException(AdmisionException.getActivoNoInformado());
 		}
 		ActivoAdmisionRevisionTitulo revisionTitulo = getAdmisionRevisionTitulo(dto);
@@ -301,16 +301,18 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 	
 	
 	private ActivoAdmisionRevisionTitulo getAdmisionRevisionTitulo(DtoAdmisionRevisionTitulo dto) {
-		ActivoAdmisionRevisionTitulo revisionTitulo = 
-					genericGet(ActivoAdmisionRevisionTitulo.class, "activo.id",	dto.getIdActivo());
+
+		Long id = dto.getIdActivo() != null ? dto.getIdActivo() : dto.getId();
+		if ( id == null) return null;
+		ActivoAdmisionRevisionTitulo revisionTitulo = genericGet(ActivoAdmisionRevisionTitulo.class, "activo.id", id);
 		if (revisionTitulo == null) {
-			Activo activo = genericGet(Activo.class, "id", dto.getIdActivo());
-			if (activo == null ) {
+			Activo activo = genericGet(Activo.class, "id", id);
+			if (activo == null) {
 				revisionTitulo = null;
 			} else {
 				revisionTitulo = new ActivoAdmisionRevisionTitulo();
 				revisionTitulo.setActivo(activo);
-			} 				
+			}
 		} else {
 			dto.setUpdate(true);
 		}
@@ -319,6 +321,7 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 
 
 	private <T extends Serializable> T genericGet(Class<T> clazz, String property, Object value) {
+		if ( value == null ) return null;
 		return genericDao.get(clazz, 
 				genericDao.createFilter(FilterType.EQUALS, property , value));
 	}

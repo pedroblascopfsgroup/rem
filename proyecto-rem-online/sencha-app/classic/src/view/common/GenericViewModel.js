@@ -89,8 +89,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
     		comboSiNoDict: {
     			data : [
 			        {"codigo":"01", "descripcion": eval(String.fromCharCode(34,83,237,34))},
-			        {"codigo":"02", "descripcion":"No"},
-			        {"codigo":undefined, "descripcion":"-"}
+			        {"codigo":"02", "descripcion":"No"}
 			    ]
     		},
     		comboBuenoMaloRem: {

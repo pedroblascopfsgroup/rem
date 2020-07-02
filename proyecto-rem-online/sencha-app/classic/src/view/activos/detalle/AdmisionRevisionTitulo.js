@@ -278,14 +278,8 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 				bind : {
 					value : '{admisionRevisionTitulo.fechaContratoAlquiler}'
 				}
-			}, {
-				xtype : 'textfieldbase',
-				fieldLabel : HreRem
-						.i18n('fieldlabel.admision.revisionTitulo.legislacionAplicable'),
-				bind : {
-					value : '{admisionRevisionTitulo.legislacionAplicableAlquiler}'
-				}
-			}, {
+			},
+			{
 				xtype : 'textfieldbase',
 				fieldLabel : HreRem
 						.i18n('fieldlabel.admision.revisionTitulo.legislacionAplicable'),

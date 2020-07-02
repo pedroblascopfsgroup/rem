@@ -46,7 +46,7 @@ public class ActivoAdmisionRevisionTitulo implements Auditable,Serializable {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ACT_ACTIVO")
+	@JoinColumn(name = "ACT_ID")
 	private Activo activo;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -131,7 +131,7 @@ public class ActivoAdmisionRevisionTitulo implements Auditable,Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_TIPO_EXP_ADM")
-	private DDTipoExpediente tipoExpediente;
+	private DDTipoExpedienteAdministrativo tipoExpediente;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_EST_GES_EA")
@@ -366,11 +366,11 @@ public class ActivoAdmisionRevisionTitulo implements Auditable,Serializable {
 		this.notificarArrendatarios = notificarArrendatarios;
 	}
 
-	public DDTipoExpediente getTipoExpediente() {
+	public DDTipoExpedienteAdministrativo getTipoExpediente() {
 		return tipoExpediente;
 	}
 
-	public void setTipoExpediente(DDTipoExpediente tipoExpediente) {
+	public void setTipoExpediente(DDTipoExpedienteAdministrativo tipoExpediente) {
 		this.tipoExpediente = tipoExpediente;
 	}
 

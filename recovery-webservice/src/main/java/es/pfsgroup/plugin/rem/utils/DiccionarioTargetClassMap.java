@@ -266,7 +266,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("seguroDecenal",DDSeguroDecenal.class);
 		mapa.put("cedulaHabitabilidad",DDCedulaHabitabilidad.class);
 		mapa.put("tipoArrendamiento",DDTipoArrendamiento.class);
-		mapa.put("tipoExpediente",DDTipoExpediente.class);
+		mapa.put("tipoExpedienteAdministrativo",DDTipoExpedienteAdministrativo.class);
 		mapa.put("tipoIncidenciaRegistral",DDTipoIncidenciaRegistral.class);
 		mapa.put("tipoOcupacionLegal",DDTipoOcupacionLegal.class);
 		

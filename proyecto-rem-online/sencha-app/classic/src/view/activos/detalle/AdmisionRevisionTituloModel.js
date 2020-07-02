@@ -115,7 +115,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTituloModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'tipoExpediente'}
+				extraParams: {diccionario: 'tipoExpedienteAdministrativo'}
 			}
     	},
     	comboTipoIncidenciaRegistral: {

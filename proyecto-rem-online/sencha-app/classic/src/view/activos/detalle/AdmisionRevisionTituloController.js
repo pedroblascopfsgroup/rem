@@ -32,6 +32,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTituloController', {
 			success : function(record) {
 				form.unmask();
 				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	
 			},
 			failure : function(record, operation) {
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));

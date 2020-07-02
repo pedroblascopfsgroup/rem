@@ -669,7 +669,8 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 	                      bind : { 
 	                        value : '{cargaTab.estadoCargas}'
 	                      },
-	                      readOnly : true
+	                      readOnly : true,
+	                      hidden: true
 	                  }
 				]
             }

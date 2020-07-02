@@ -181,11 +181,19 @@ public class ExpedienteComercialAdapter {
 					filtroComprador = genericDao.createFilter(FilterType.EQUALS, "numDocumento",
 							comprador.getDocumento());
 				}
-				TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, filtroComprador);
-				if (!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
+				Filter filtroAdjunto = genericDao.createFilter(FilterType.NOTNULL, "idAdjunto");
+				List<TmpClienteGDPR> tmpClienteGDPR = genericDao.getList(TmpClienteGDPR.class, filtroComprador, filtroAdjunto);
+				if (!Checks.estaVacio(tmpClienteGDPR)) {
 					adjuntoComprador = genericDao.get(AdjuntoComprador.class,
-							genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));
+							genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.get(0).getIdAdjunto()));
+				}else {
+					tmpClienteGDPR = genericDao.getList(TmpClienteGDPR.class, filtroComprador);
+					if (!Checks.estaVacio(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.get(0).getIdAdjunto())) {
+						adjuntoComprador = genericDao.get(AdjuntoComprador.class,
+								genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.get(0).getIdAdjunto()));
+					}
 				}
+				
 			}
 
 			if (adjuntoComprador != null) {
@@ -318,12 +326,25 @@ public class ExpedienteComercialAdapter {
 					Auditoria.save(comprador);
 					genericDao.update(Comprador.class, comprador);
 				} else {
-					Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "idAdjunto",
+					Filter filtroAdjunto = genericDao.createFilter(FilterType.EQUALS, "idAdjunto",
 							adjuntoComprador.getId());
-					TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, filtroDocumento);
-					if (!Checks.esNulo(tmpClienteGDPR)) {
-						tmpClienteGDPR.setIdAdjunto(null);
-						genericDao.update(TmpClienteGDPR.class, tmpClienteGDPR);
+					Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "numDocumento",
+							comprador.getDocumento());
+					List<TmpClienteGDPR> tmpClienteGDPRs = genericDao.getList(TmpClienteGDPR.class, filtroAdjunto, filtroDocumento);
+					if (!Checks.estaVacio(tmpClienteGDPRs)) {
+						for(TmpClienteGDPR tmpClienteGDPR : tmpClienteGDPRs){
+							tmpClienteGDPR.setIdAdjunto(null);
+							genericDao.update(TmpClienteGDPR.class, tmpClienteGDPR);
+						}
+						
+					}else {
+						tmpClienteGDPRs = genericDao.getList(TmpClienteGDPR.class, filtroAdjunto);
+						if (!Checks.estaVacio(tmpClienteGDPRs)) {
+							for(TmpClienteGDPR tmpClienteGDPR : tmpClienteGDPRs){
+								tmpClienteGDPR.setIdAdjunto(null);
+								genericDao.update(TmpClienteGDPR.class, tmpClienteGDPR);
+							}
+						}
 					}
 				}
 			}

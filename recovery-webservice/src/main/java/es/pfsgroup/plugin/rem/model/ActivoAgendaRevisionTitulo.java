@@ -20,11 +20,13 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Where;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipologiaAgenda;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 
@@ -36,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
  */
 @Entity
 @Table(name = "ACT_ART_AGENDA_REV_TITULO", schema = "${entity.schema}")
+@Where(clause = Auditoria.UNDELETED_RESTICTION)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class ActivoAgendaRevisionTitulo implements Serializable, Auditable {
 
@@ -48,11 +51,22 @@ public class ActivoAgendaRevisionTitulo implements Serializable, Auditable {
 	private Long id;
 	
 	@ManyToOne
+	@JoinColumn(name = "ACT_ID")
+	private Activo activo;
+	
+	@ManyToOne
 	@JoinColumn(name = "DD_STA_ID")
 	private DDSubtipologiaAgenda subtipologiaAgenda;
 	
 	@Column(name = "ART_OBSERVACIONES")
 	private String observaciones;
+	
+	@ManyToOne
+	@JoinColumn(name = "USU_ID")
+	private Usuario usuario;
+	
+	@Column(name = "FECHA_ALTA")
+	private Date fechaAlta;
 	
 	@Version
 	private Long version;
@@ -69,6 +83,14 @@ public class ActivoAgendaRevisionTitulo implements Serializable, Auditable {
 	public void setId(Long id) {
 		this.id = id;
 	}
+	
+	public Activo getActivo() {
+		return activo;
+	}
+
+	public void setActivo(Activo activo) {
+		this.activo = activo;
+	}
 
 	public DDSubtipologiaAgenda getSubtipologiaAgenda() {
 		return subtipologiaAgenda;
@@ -84,6 +106,22 @@ public class ActivoAgendaRevisionTitulo implements Serializable, Auditable {
 
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
+	}
+	
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+
+	public Date getFechaAlta() {
+		return fechaAlta;
+	}
+
+	public void setFechaAlta(Date fechaAlta) {
+		this.fechaAlta = fechaAlta;
 	}
 
 	public Long getVersion() {

@@ -4132,9 +4132,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(dto.getTransferenciasInternacionales())) {
 				comprador.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
 			}
-
-			TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class,
-					genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumento()));
+			
+			Filter filtroAdjunto = genericDao.createFilter(FilterType.NOTNULL, "idAdjunto");
+			List<TmpClienteGDPR> tmpClienteGDPR = genericDao.getList(TmpClienteGDPR.class, 
+					genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumento()), filtroAdjunto);
 
 			// Historificamos despues del update
 			AdjuntoComprador docAdjunto = null;
@@ -4142,9 +4143,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				docAdjunto = genericDao.get(AdjuntoComprador.class,
 						genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdDocAdjunto()));
 			} else {
-				if (!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
+				if (!Checks.estaVacio(tmpClienteGDPR)) {
 					docAdjunto = genericDao.get(AdjuntoComprador.class,
-							genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));
+							genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.get(0).getIdAdjunto()));
 				}
 			}
 
@@ -4187,7 +4188,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			boolean esNuevo = false;
 			if (Checks.esNulo(compradorExpediente)) {
 				compradorExpediente = new CompradorExpediente();
-				compradorExpediente.setBorrado(false);
+				//compradorExpediente.setBorrado(false);
 
 				CompradorExpedientePk pk = new CompradorExpedientePk();
 				pk.setComprador(comprador);
@@ -4815,7 +4816,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idExpediente);
 		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
 		CompradorExpediente compradorExpediente = new CompradorExpediente();
-		compradorExpediente.setBorrado(false);
+		//compradorExpediente.setBorrado(false);
 
 		if (!Checks.esNulo(compradorBusqueda)) {
 			CompradorExpedientePk pk = new CompradorExpedientePk();
@@ -4847,7 +4848,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				compradorExpediente.setTitularContratacion(0);
 			}
 
-			compradorExpediente.setBorrado(false);
+			//compradorExpediente.setBorrado(false);
 
 			if (!Checks.esNulo(dto.getCodTipoPersona())) {
 				DDTiposPersona tipoPersona = (DDTiposPersona) utilDiccionarioApi
@@ -4862,25 +4863,32 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(dto.getNumeroClienteUrsusBh())) {
 				compradorBusqueda.setIdCompradorUrsusBh(dto.getNumeroClienteUrsusBh());
 			}
-
+			
+			Filter filtroAdjunto = genericDao.createFilter(FilterType.NOTNULL, "idAdjunto");
+			List<TmpClienteGDPR> tmpClienteGDPR = genericDao.getList(TmpClienteGDPR.class, 
+					genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumento()), filtroAdjunto);
+			
+			// Historificamos despues del update
 			AdjuntoComprador docAdjunto = null;
-			TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumento()));
 			if (!Checks.esNulo(dto.getIdDocAdjunto())) {
-				docAdjunto = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdDocAdjunto()));
+				docAdjunto = genericDao.get(AdjuntoComprador.class,
+						genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdDocAdjunto()));
 			} else {
-				if(!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
+				if (!Checks.estaVacio(tmpClienteGDPR)) {
 					docAdjunto = genericDao.get(AdjuntoComprador.class,
-							genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));
+							genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.get(0).getIdAdjunto()));
+				}else {
+					tmpClienteGDPR = genericDao.getList(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumento()));
 				}
 			}
-
+			
 			if(!Checks.esNulo(docAdjunto)) {
 				compradorBusqueda.setAdjunto(docAdjunto);
 				compradorExpediente.setDocumentoAdjunto(docAdjunto);
 			}
 
-			if(!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdPersonaHaya()))
-				compradorBusqueda.setIdPersonaHaya(tmpClienteGDPR.getIdPersonaHaya());
+			if(!Checks.estaVacio(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.get(0).getIdPersonaHaya()))
+				compradorBusqueda.setIdPersonaHaya(tmpClienteGDPR.get(0).getIdPersonaHaya());
 
 			expediente.getCompradores().add(compradorExpediente);
 
@@ -4888,8 +4896,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			ofertaApi.resetPBC(expediente, true);
 
-			if(!Checks.esNulo(tmpClienteGDPR))
-					clienteComercialDao.deleteTmpClienteByDocumento(tmpClienteGDPR.getNumDocumento());
+			if(!Checks.estaVacio(tmpClienteGDPR))
+				clienteComercialDao.deleteTmpClienteByDocumento(tmpClienteGDPR.get(0).getNumDocumento());
 
 			return true;
 		} else {
@@ -5098,17 +5106,29 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				pk.setExpediente(expediente);
 				compradorExpediente.setPrimaryKey(pk);
 
-				TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumento()));
-				// HREOS - 4937
-				// Historificamos
+				Filter filtroAdjunto = genericDao.createFilter(FilterType.NOTNULL, "idAdjunto");
+				Filter filtroPersona = genericDao.createFilter(FilterType.NOTNULL, "idPersonaHaya");
+				List<TmpClienteGDPR> tmpClienteGDPR = genericDao.getList(TmpClienteGDPR.class, 
+						genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumento()), filtroAdjunto, filtroPersona);
+				
+				if(tmpClienteGDPR.size() < 1) {
+					tmpClienteGDPR = genericDao.getList(TmpClienteGDPR.class, 
+							genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumento()), filtroPersona);
+					if(tmpClienteGDPR.size() < 1) {
+						tmpClienteGDPR = genericDao.getList(TmpClienteGDPR.class, 
+								genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumento()));
+					}
+				}					
+
+				// Historificamos despues del update
 				AdjuntoComprador docAdjunto = null;
 				if (!Checks.esNulo(dto.getIdDocAdjunto())) {
 					docAdjunto = genericDao.get(AdjuntoComprador.class,
 							genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdDocAdjunto()));
 				} else {
-					if(tmpClienteGDPR != null && !Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
+					if (!Checks.estaVacio(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.get(0).getIdAdjunto())) {
 						docAdjunto = genericDao.get(AdjuntoComprador.class,
-								genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));
+								genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.get(0).getIdAdjunto()));
 					}
 				}
 
@@ -5117,8 +5137,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					compradorExpediente.setDocumentoAdjunto(docAdjunto);
 				}
 
-				if(!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdPersonaHaya()))
-					comprador.setIdPersonaHaya(tmpClienteGDPR.getIdPersonaHaya());
+				if(!Checks.estaVacio(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.get(0).getIdPersonaHaya()))
+					comprador.setIdPersonaHaya(tmpClienteGDPR.get(0).getIdPersonaHaya());
 
 				ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
 
@@ -5152,9 +5172,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				ofertaApi.resetPBC(expediente, true);
 
-				tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", comprador.getDocumento()));
-				if(!Checks.esNulo(tmpClienteGDPR))
-					clienteComercialDao.deleteTmpClienteByDocumento(tmpClienteGDPR.getNumDocumento());
+				if(!Checks.estaVacio(tmpClienteGDPR))
+					clienteComercialDao.deleteTmpClienteByDocumento(tmpClienteGDPR.get(0).getNumDocumento());
 				return true;
 
 			} catch (Exception e) {
@@ -6161,7 +6180,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(compradorExpediente)) {
 				if (!Checks.esNulo(compradorExpediente.getTitularContratacion())
 						&& compradorExpediente.getTitularContratacion() == 0) {
-					expedienteComercialDao.deleteCompradorExpediente(idExpediente, idComprador);
+					Usuario usuario = genericAdapter.getUsuarioLogado();
+					expedienteComercialDao.deleteCompradorExpediente(idExpediente, idComprador, usuario.getUsername());
 					ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class,
 							genericDao.createFilter(FilterType.EQUALS, "id", idExpediente));
 					ofertaApi.resetPBC(expediente, true);

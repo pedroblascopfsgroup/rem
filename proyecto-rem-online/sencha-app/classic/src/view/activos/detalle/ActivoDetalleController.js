@@ -7,7 +7,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion','HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 
     		'HreRem.view.expedientes.ExpedienteDetalleController', 'HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', 
     		'HreRem.view.activos.detalle.InformeComercialActivo','HreRem.view.activos.detalle.AdministracionActivo',
-    		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias','HreRem.view.activos.detalle.PlusvaliaActivo', 'HreRem.model.ComercialActivoModel'],
+    		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias','HreRem.view.activos.detalle.PlusvaliaActivo', 
+    		'HreRem.model.ComercialActivoModel'],
 
     control: {
          'documentosactivosimple gridBase': {
@@ -972,12 +973,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onClickBotonGuardar: function(btn) {
 		var me = this;
 		var form = btn.up('tabpanel').getActiveTab();
-
 		// EjecuciÃ³n especial si la pestaÃ±a es 'Comercial'.
 		if("comercialactivo" == form.getXType()) {
 			me.onSaveFormularioCompletoTabComercial(btn, form);
 		} else if("datospatrimonio" == form.getXType()){
 			me.onSaveFormularioCompletoTabPatrimonio(btn, form);
+		} else if ('admisionrevisiontitulo' === form.getXType()) {
+			me.onSaveFormularioCompletoTabAdmisionTitulo( btn , form);
 		} else {
 			me.onSaveFormularioCompleto(btn, form, false);
 		}
@@ -1241,7 +1243,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			idEntidad = grid.up('wizardaltacomprador').down('datoscompradorwizard').getRecord().data.idExpedienteComercial;
 			entidad = 'expediente';
 			docCliente = grid.up('window').down("datoscompradorwizard").getForm().getFieldValues().numDocumento;
-		}
+		}grid.up('window').down("datoscompradorwizard").getForm().getFieldValues().numDocumento;
 		Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial",
 		{
 			entidad : entidad,
@@ -6102,5 +6104,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	
     	return false;
     	
+    },
+    onSaveFormularioCompletoTabAdmisionTitulo: function(btn , form){
+    	// Redirección al controlador de la vista para mantener todos los métodos ordenados, sin alterar la arquitectura del tab principal. 
+		form.lookupController().saveTabData(btn, form);
     }
 });

@@ -9,6 +9,27 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTabPanel', {
     viewModel	: {
         type: 'expedientedetalle'
     },
+    
+    procesado: false,
+     
+     listeners	: {
+     	     	
+     	boxready: function (tabPanel) {   
+     		var me = this;
+    		if(!me.procesado){
+					me.checkProceso(tabPanel);
+			}
+    	},
+    	     	
+    	beforetabchange: function (tabPanel, tabNext, tabCurrent) {
+    		var me = this;
+    		if(!me.procesado){
+					me.checkProceso(tabPanel);
+			}
+    	}
+    	
+    },
+    
     tabBar: {
 		items: [
         		{
@@ -19,7 +40,8 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTabPanel', {
         			itemId: 'botoneditar',
         		    handler	: 'onClickBotonEditar',
         		    iconCls: 'edit-button-color',
-        		    bind: {hidden: '{editing}'}
+        		    bind: {hidden: '{editing}'},
+        		    disabled: true
         		},
         		{
         			xtype: 'buttontab',
@@ -82,5 +104,11 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteTabPanel', {
 		var me = this;
 		me.recargar = false;
 		me.getActiveTab().funcionRecargar();
+    },
+    
+    checkProceso: function(tabPanel){  
+    	var me = this;
+		me.lookupController().comprobarProcesoAsincrono(tabPanel, me);    	
     }
+    
 });

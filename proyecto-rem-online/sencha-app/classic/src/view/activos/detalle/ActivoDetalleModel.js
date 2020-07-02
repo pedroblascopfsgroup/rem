@@ -10,7 +10,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados','HreRem.model.CalificacionNegativaModel',
     'HreRem.model.HistoricoTramtitacionTituloModel', 'HreRem.model.HistoricoGestionGrid', 'HreRem.model.ListaActivoGrid', 'HreRem.model.HistoricoFasesDePublicacion',
     'HreRem.model.AdjuntoActivoAgrupacion','HreRem.model.AdjuntoActivoProyecto','HreRem.model.DocumentacionAdministrativa', 'HreRem.model.ActivoPatrimonio',
-    'HreRem.model.DocumentosTributosModel','HreRem.model.HistoricoSolicitudesPreciosModel'],
+    'HreRem.model.DocumentosTributosModel','HreRem.model.HistoricoSolicitudesPreciosModel', 'HreRem.model.ActivoEvolucion'],
 
     data: {
     	activo: null,
@@ -2413,6 +2413,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {id: '{activo.id}'}
 			}
 		},
+
 		
 		comboEstadoAdmision: {//
 			model: 'HreRem.model.DDBase',
@@ -2436,6 +2437,26 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/comboSubestadoAdmisionNuevoFiltrado'
 			}
-		} 
+		}, 
+
+		storeGridEvolucion:{
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.ActivoEvolucion',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activoadmisionevolucion/getActivoAgendaEvolucion',
+				extraParams: {id: '{activo.id}'}
+			}
+		},
+		storeAgendaRevisionTitulo: {
+			 pageSize: $AC.getDefaultPageSize(),
+			 model: 'HreRem.model.AgendaRevisionTituloGridModel',
+     	     proxy: {
+     	        type: 'uxproxy',
+     	        remoteUrl: 'admision/getListAgendaRevisionTitulo',
+     	        extraParams: {idActivo: '{activo.id}'}
+         	 }
+		}
+
      }
 });

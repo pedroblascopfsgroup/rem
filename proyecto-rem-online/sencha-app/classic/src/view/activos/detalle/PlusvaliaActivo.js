@@ -18,7 +18,7 @@ Ext.define('HreRem.view.activos.detalle.PlusvaliaActivo', {
 
     recordClass : 'HreRem.model.PlusvaliaActivoModel',
 
-    requires : [ 'HreRem.model.PlusvaliaActivoModel' ],
+    requires : [ 'HreRem.model.PlusvaliaActivoModel'],
 
     initComponent : function() {
 	    var me = this;

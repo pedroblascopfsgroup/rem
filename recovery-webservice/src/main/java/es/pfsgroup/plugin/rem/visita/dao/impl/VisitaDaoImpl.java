@@ -188,13 +188,13 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 		HQLBuilder hql = new HQLBuilder("from Visita");
 		if(idWebcom != null){
 			HQLBuilder.addFiltroIgualQueSiNotNull(hql, "idVisitaWebcom",idWebcom);
+			
+			try{
+				resultado = HibernateQueryUtils.uniqueResult(this, hql);
+			}catch(Exception e){
+				logger.error("Error obteniendo visita por idwebcom",e);
+			}
 		}
-		try{
-			resultado = HibernateQueryUtils.uniqueResult(this, hql);
-		}catch(Exception e){
-			logger.error("Error obteniendo visita por idwebcom",e);
-		}
-		
 		return resultado;
 	}
 }

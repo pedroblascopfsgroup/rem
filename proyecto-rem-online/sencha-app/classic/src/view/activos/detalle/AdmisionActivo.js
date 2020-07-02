@@ -4,7 +4,8 @@ Ext.define('HreRem.view.activos.detalle.AdmisionActivo', {
 	cls			: 'panel-base shadow-panel tabPanel-tercer-nivel',
     reference	: 'admision',
     layout		: 'fit',
-    requires	: ['HreRem.view.activos.detalle.AdmisionCheckInfoActivo', 'HreRem.view.activos.detalle.AdmisionCheckDocActivo','HreRem.view.activos.detalle.SaneamientoActivoDetalle'],
+    requires	: ['HreRem.view.activos.detalle.AdmisionCheckInfoActivo', 'HreRem.view.activos.detalle.AdmisionCheckDocActivo', 
+    				'HreRem.view.activos.detalle.SaneamientoActivoDetalle', 'HreRem.view.activos.detalle.AdmisionRevisionTitulo', 'HreRem.view.activos.detalle.EvolucionActivoDetalle'],
     listeners	: {
     	boxready: function (tabPanel) {
     		var tab = tabPanel.getActiveTab();
@@ -113,11 +114,18 @@ Ext.define('HreRem.view.activos.detalle.AdmisionActivo', {
 //			 //pendiente de ver si se crea una funcion para esta pestaña.
 //			 ocultarSaneamientoCheckEdicion = !(($AU.userIsRol(CONST.PERFILES['HAYAGESTADM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])));
 //		 }
+		 var ocultarSaneamientoCheckEdicion =false;
+		 if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
+			 ocultarSaneamientoCheckEdicion = !(($AU.userIsRol(CONST.PERFILES['HAYAGESTADM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])));
+		 }
 		 
 	     var items = [];
 	     $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'admisioncheckinfoactivo', ocultarBotonesEdicion: ocultarAdmisioncheckinfoactivo, title: HreRem.i18n('title.admision.check.inf.activo')})}, ['TAB_CHECKING_INFO_ADMISION']);
 	     $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'admisioncheckdocactivo', ocultarBotonesEdicion: ocultarAdmisioncheckdocactivo, title: HreRem.i18n('title.admision.check.doc.activo')})}, ['TAB_CHECKING_DOC_ADMISION']);
 	     $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'saneamientoactivo', ocultarBotonesEdicion: ocultarSaneamientoCheckEdicion, title: HreRem.i18n('title.admision.check.inf.activo')})}, ['TAB_CHECKING_INFO_ADMISION']);
+	     $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'evolucionactivo', ocultarBotonesEdicion: ocultarAdmisioncheckinfoactivo, title: HreRem.i18n('title.admision.check.inf.activo')})}, ['TAB_CHECKING_INFO_ADMISION']);
+	     $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'admisionrevisiontitulo', ocultarBotonesEdicion: ocultarAdmisioncheckdocactivo, title: HreRem.i18n('title.admision.tab.revision.titulo')})}, ['TAB_CHECKING_INFO_ADMISION']);
+	     
 	     me.addPlugin({ptype: 'lazyitems', items: items });
 	     me.callParent();
 	 },

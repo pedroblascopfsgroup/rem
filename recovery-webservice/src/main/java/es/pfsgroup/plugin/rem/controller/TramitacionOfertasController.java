@@ -21,6 +21,7 @@ public class TramitacionOfertasController extends ParadiseJsonController {
 
 	protected static final Log logger = LogFactory.getLog(TramitacionOfertasController.class);
 	private static final String RESPONSE_SUCCESS_KEY = "success";
+	private static final String RESPONSE_ERROR_KEY = "error";
 	private static final String RESPONSE_MESSAGE_KEY = "msg";
 	private static final String ENTIDAD_ARUPACION = "agrupacion";
 	
@@ -43,6 +44,19 @@ public class TramitacionOfertasController extends ParadiseJsonController {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 		}
 
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView checkProceso(Long idExpediente, ModelMap model, HttpServletRequest request) {
+		try {			
+			model.put(RESPONSE_SUCCESS_KEY, true);
+			model.put("conFormalizacion", tramitacionOfertasManager.tieneFormalizacion(idExpediente));
+		} catch (Exception e) {
+			logger.error("error en TramitacionOfertasController::checkProceso", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
 		return createModelAndViewJson(model);
 	}
 

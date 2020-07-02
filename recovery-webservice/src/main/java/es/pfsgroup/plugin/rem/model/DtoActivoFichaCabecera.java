@@ -275,6 +275,13 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	private Boolean pazSocial;
 	private String numActivoDivarian;
+	
+	// Admision
+	private String estadoAdmisionCod;
+	private String estadoAdmisionDesc;
+	private String subestadoAdmisionCod;
+	private String subestadoAdmisionDesc;
+	private Boolean perimetroAdmision;
 
 	
 	public Boolean getTieneOfertaAlquilerViva() {
@@ -2091,6 +2098,46 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setNumActivoDivarian(String numActivoDivarian) {
 		this.numActivoDivarian = numActivoDivarian;
+	}
+
+	public String getEstadoAdmisionCod() {
+		return estadoAdmisionCod;
+	}
+
+	public void setEstadoAdmisionCod(String estadoAdmisionCod) {
+		this.estadoAdmisionCod = estadoAdmisionCod;
+	}
+
+	public String getEstadoAdmisionDesc() {
+		return estadoAdmisionDesc;
+	}
+
+	public void setEstadoAdmisionDesc(String estadoAdmisionDesc) {
+		this.estadoAdmisionDesc = estadoAdmisionDesc;
+	}
+
+	public String getSubestadoAdmisionCod() {
+		return subestadoAdmisionCod;
+	}
+
+	public void setSubestadoAdmisionCod(String subestadoAdmisionCod) {
+		this.subestadoAdmisionCod = subestadoAdmisionCod;
+	}
+
+	public String getSubestadoAdmisionDesc() {
+		return subestadoAdmisionDesc;
+	}
+
+	public void setSubestadoAdmisionDesc(String subestadoAdmisionDesc) {
+		this.subestadoAdmisionDesc = subestadoAdmisionDesc;
+	}
+
+	public Boolean getPerimetroAdmision() {
+		return perimetroAdmision;
+	}
+
+	public void setPerimetroAdmision(Boolean perimetroAdmision) {
+		this.perimetroAdmision = perimetroAdmision;
 	}
 	
 	

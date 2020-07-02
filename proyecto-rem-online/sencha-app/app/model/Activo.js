@@ -939,6 +939,22 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'numActivoDivarian'
+    		},
+    		{
+    			name: 'estadoAdmisionDesc'
+    		},
+    		{
+    			name: 'subestadoAdmisionDesc'
+    		},
+    		{
+    			name: 'estadoAdmisionCod'
+    		},
+    		{
+    			name: 'subestadoAdmisionCod'
+    		},
+    		{
+    			name: 'perimetroAdmision',
+    			type: 'boolean'
     		}
     ],
     

@@ -350,6 +350,18 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 										fieldLabel: HreRem.i18n('fieldlabel.api.primario'),
 										cls: 'cabecera-info-field',
 										bind: '{activo.nombreMediador}'
+									},
+									{
+										fieldLabel: HreRem.i18n('title.estado.admision'),
+										cls: 'cabecera-info-field',
+										bind:{
+											value: '{activo.estadoAdmisionDesc}'
+										}
+									},
+									{
+										fieldLabel: HreRem.i18n('title.subestado.admision'),
+										cls: 'cabecera-info-field',
+										bind: '{activo.subestadoAdmisionDesc}'
 									}
 								]
 							},

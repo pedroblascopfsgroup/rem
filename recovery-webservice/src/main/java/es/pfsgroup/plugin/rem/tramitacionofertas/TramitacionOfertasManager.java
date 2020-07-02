@@ -923,7 +923,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			compradorExpedienteNuevo.setTitularReserva(0);
 			compradorExpedienteNuevo.setTitularContratacion(1);
 			compradorExpedienteNuevo.setPorcionCompra(parteCompraPrincipal);
-			compradorExpedienteNuevo.setBorrado(false);
+			//compradorExpedienteNuevo.setBorrado(false);
 			compradorExpedienteNuevo.setEstadoCivil(cliente.getEstadoCivil());
 			compradorExpedienteNuevo.setRegimenMatrimonial(cliente.getRegimenMatrimonial());
 			compradorExpedienteNuevo.setTipoDocumentoConyuge(cliente.getTipoDocumentoConyuge());
@@ -1056,7 +1056,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 					pk.setComprador(compradorBusquedaAdicional);
 					pk.setExpediente(nuevoExpediente);
 					compradorExpedienteAdicionalNuevo.setPrimaryKey(pk);
-					compradorExpedienteAdicionalNuevo.setBorrado(false);
+					//compradorExpedienteAdicionalNuevo.getAuditoria().setBorrado(false);
 					compradorExpedienteAdicionalNuevo.setTitularReserva(1);
 					compradorExpedienteAdicionalNuevo.setTitularContratacion(0);
 					compradorExpedienteAdicionalNuevo.setPorcionCompra(parteCompraAdicionales);
@@ -1770,12 +1770,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		ActivoTramite activoTramite = trabajoApi.createTramiteTrabajo(idTrabajo,expedienteComercial);
 		expedienteComercial = this.crearExpedienteReserva(expedienteComercial);
 		expedienteComercialApi.crearCondicionesActivoExpediente(activo, expedienteComercial);
-
-		Formalizacion formalizacion = this.crearFormalizacion(expedienteComercial);
-		expedienteComercial.setFormalizacion(formalizacion);
-
 		DDComiteSancion comite = this.devuelveComiteByCartera(activo.getCartera().getCodigo(), oferta, expedienteComercial);
-
 		expedienteComercial.setComiteSancion(comite);
 
 		if (comite != null && comite.getCartera() != null
@@ -1786,10 +1781,12 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 		// Se asigna un gestor de Formalización al crear un nuevo expediente.
 		this.asignarGestorYSupervisorFormalizacionToExpediente(expedienteComercial);
-
+		
+		// Se debe establecer setFormalizacion al final del método. La vista comprobará que ha terminado el proceso mediante el registro creado de formalizacion
+		expedienteComercial.setFormalizacion(this.crearFormalizacion(expedienteComercial));
+		
 		activoManager.actualizarOfertasTrabajosVivos(activo.getId());
 		return activoTramite;
-
 	}
 
 	@Override
@@ -1799,6 +1796,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		// trámites al preguntar por datos de algunos de estos objetos y aún
 		// no esten creados. Para ello creamos los objetos vacios con el
 		// unico fin que se cree la fila.
+		
 		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
 		Activo activo = activoManager.get(idActivo);
@@ -1814,11 +1812,7 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			expedienteComercial = this.crearExpedienteReserva(expedienteComercial);
 			expedienteComercialApi.crearCondicionesActivoExpediente(activo, expedienteComercial);
 
-			Formalizacion formalizacion = this.crearFormalizacion(expedienteComercial);
-			expedienteComercial.setFormalizacion(formalizacion);
-
 			DDComiteSancion comite = this.devuelveComiteByCartera(activo.getCartera().getCodigo(), oferta, expedienteComercial);
-
 			expedienteComercial.setComiteSancion(comite);
 
 			if (comite != null && comite.getCartera() != null
@@ -1829,17 +1823,25 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 			// Se asigna un gestor de Formalización al crear un nuevo expediente.
 			this.asignarGestorYSupervisorFormalizacionToExpediente(expedienteComercial);
-
+		
+			// Se debe establecer setFormalizacion al final del método. La vista comprobará que ha terminado el proceso mediante el registro creado de formalizacion
+			expedienteComercial.setFormalizacion(this.crearFormalizacion(expedienteComercial));
 			transactionManager.commit(transaction);
 
 			if (idActivo != null) {
 				activoManager.actualizarOfertasTrabajosVivos(idActivo);
 			}
+		
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			transactionManager.rollback(transaction);
 		}
-
+	}
+	
+	@Override
+	public Boolean tieneFormalizacion(Long idExpediente) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente);
+		return !Checks.estaVacio(genericDao.getList(Formalizacion.class, filtro));		
 	}
 	
 	private Double calcularAskingPriceAgrupacion(ActivoAgrupacion agrupacion) {

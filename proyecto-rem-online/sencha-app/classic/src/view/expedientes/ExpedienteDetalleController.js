@@ -795,17 +795,28 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 	},
 	
-	onCompradoresListDobleClick: function(gridView, record) {
+	onCompradoresListDobleClick: function(gridView, record) { 
 		var me = this,
-			codigoEstado = me.getViewModel().get('expediente.codigoEstado'),
-			tipoExpedienteCodigo = me.getViewModel().get('expediente.tipoExpedienteCodigo'),
-			fechaPosicionamiento = me.getViewModel().get('expediente.fechaPosicionamiento'),
-			viewPortWidth = Ext.Element.getViewportWidth(),
-			viewPortHeight = Ext.Element.getViewportHeight(),
-			tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'],
-			tipoExpedienteVenta = CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'];
+        codigoEstado = me.getViewModel().get('expediente.codigoEstado'),
+        tipoExpedienteCodigo = me.getViewModel().get('expediente.tipoExpedienteCodigo'),
+        fechaPosicionamiento = me.getViewModel().get('expediente.fechaPosicionamiento'),
+        viewPortWidth = Ext.Element.getViewportWidth(),
+        viewPortHeight = Ext.Element.getViewportHeight(),
+        tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'],
+        tipoExpedienteVenta = CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'];
+        var viewModel = me.getViewModel();
 
-		if((codigoEstado !== CONST.ESTADOS_EXPEDIENTE['VENDIDO'] && tipoExpedienteCodigo === tipoExpedienteVenta) ||  (tipoExpedienteCodigo === tipoExpedienteAlquiler && Ext.isEmpty(fechaPosicionamiento))) {
+
+        var editarCompradores;
+
+		if (codigoEstado != CONST.ESTADOS_EXPEDIENTE['VENDIDO']
+		        || $AU.userHasFunction(['EDITAR_TAB_COMPRADORES_EXPEDIENTES'])) {
+			editarCompradores = true;
+		} else {
+			editarCompradores = !me.getViewModel().get('expediente').data.tieneReserva;
+		}
+
+		if(( editarCompradores && tipoExpedienteCodigo === tipoExpedienteVenta) ||  (tipoExpedienteCodigo === tipoExpedienteAlquiler && Ext.isEmpty(fechaPosicionamiento))) {
 			var idCliente = record.get('id'),
 				expediente= me.getViewModel().get('expediente'),
 				storeProblemasVenta = me.getViewModel().get('storeProblemasVenta'),
@@ -816,7 +827,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				wizardTitle = HreRem.i18n('title.windows.datos.inquilino');
 			}
 
-			Ext.create('HreRem.view.common.WizardBase',
+			var wizard = Ext.create('HreRem.view.common.WizardBase',
 				{
 					slides: [
 						'slidedatoscomprador',
@@ -1222,39 +1233,39 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this;
     	me.gridOrigen = grid;
 		
-		if (rec.data.titularContratacion != 1) {
+		//if (rec.data.titularContratacion != 1) {
 			Ext.Msg.show({
-				   title: HreRem.i18n('title.confirmar.comprador.principal'),
-				   msg: HreRem.i18n('msg.confirmar.comprador.principal'),
-				   buttons: Ext.MessageBox.YESNO,
-				   fn: function(buttonId) {
-				        if (buttonId == 'yes') {	
-							me.getView().mask();
-							var url =  $AC.getRemoteUrl('expedientecomercial/marcarCompradorPrincipal');
-							Ext.Ajax.request({
+			   title: HreRem.i18n('title.confirmar.comprador.principal'),
+			   msg: HreRem.i18n('msg.confirmar.comprador.principal'),
+			   buttons: Ext.MessageBox.YESNO,
+			   fn: function(buttonId) {
+			        if (buttonId == 'yes') {	
+						me.getView().mask();
+						var url =  $AC.getRemoteUrl('expedientecomercial/marcarCompradorPrincipal');
+						Ext.Ajax.request({
+						
+						     url: url,
+						     params: {
+						     			idComprador: rec.data.id,
+						     			idExpedienteComercial: rec.data.idExpediente	
+						     		}
 							
-							     url: url,
-							     params: {
-							     			idComprador: rec.data.id,
-							     			idExpedienteComercial: rec.data.idExpediente	
-							     		}
-								
-							    ,success: function (a, operation, context) {
-					                	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-										me.getView().unmask();
-										me.gridOrigen.getStore().load();
-					            },
-					            
-					            failure: function (a, operation, context) {
-					            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-									 me.getView().unmask();
-					            }
-						     
-							});
-						}
+						    ,success: function (a, operation, context) {
+				                	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+									me.getView().unmask();
+									me.gridOrigen.getStore().load();
+				            },
+				            
+				            failure: function (a, operation, context) {
+				            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+								 me.getView().unmask();
+				            }
+					     
+						});
 					}
-				});
-		}
+				}
+			});
+		//}
 	},
 	
 	onClickConsultaFormalizacionBankia: function(btn) {
@@ -1449,12 +1460,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	abrirFormularioCrearComprador: function(grid) {
 		var me = this;
 
-		if(me.getViewModel().get('expediente.bloqueado')) {
+		if(me.getViewModel().get('expediente.bloqueado') && !$AU.userIsRol(CONST.PERFILES['HAYASUPER']) && !$AU.userIsRol(CONST.PERFILES['SUPER_EDITA_COMPRADOR'])) {
 			me.fireEvent('errorToast', HreRem.i18n('msg.warning.expediente.bloqueado'));
 			return;
 		}
 
-		if(CONST.ESTADOS_EXPEDIENTE['VENDIDO'] === me.getViewModel().get('expediente.codigoEstado')) {
+		if(CONST.ESTADOS_EXPEDIENTE['VENDIDO'] === me.getViewModel().get('expediente.codigoEstado') && !$AU.userIsRol(CONST.PERFILES['HAYASUPER']) && !$AU.userIsRol(CONST.PERFILES['SUPER_EDITA_COMPRADOR'])) {
 			me.fireEvent('errorToast', HreRem.i18n('msg.operacion.ko.expediente.vendido'));
 			return;
 		}
@@ -1734,8 +1745,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			var llamada = false;
 
 			if(CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] == tipoExpedienteCodigo) {
-				if(!bloqueado) {
-					if(CONST.ESTADOS_EXPEDIENTE['VENDIDO']!=codigoEstado) {
+				if(!bloqueado || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPER_EDITA_COMPRADOR'])) {
+					if(CONST.ESTADOS_EXPEDIENTE['VENDIDO']!=codigoEstado || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPER_EDITA_COMPRADOR'])) {
 						llamada = true;
 					} else {
 						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.vendido"));
@@ -4893,6 +4904,23 @@ comprobarFormatoModificar: function() {
 		    		importeContraofertaOfertanteCmp.setFieldLabel( HreRem.i18n('fieldlabel.importe.contraoferta.ofrtante.advisory'));
 		    	}
 		
+	},
+	
+	comprobarProcesoAsincrono: function(tabPanel, view) {			
+		var me= this;
+		var url = $AC.getRemoteUrl('tramitacionofertas/checkProceso');						
+		var idExpediente = me.getViewModel().getData().expediente.id;	
+		Ext.Ajax.request({
+	    		url: url,
+	    		params: {idExpediente: idExpediente},
+	    		success: function(response, opts){
+	    			var data = Ext.decode(response.responseText);
+	    			if((data.conFormalizacion != undefined || data.conFormalizacion != null) && data.conFormalizacion === "true"){
+						view.procesado = true;
+						tabPanel.down("[itemId=botoneditar]").setDisabled(false);
+	    			}					
+	    		}	    		
+	   	});	   	
 	}
 	
 });

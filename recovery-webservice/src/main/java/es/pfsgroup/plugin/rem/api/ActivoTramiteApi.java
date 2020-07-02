@@ -315,5 +315,12 @@ public interface ActivoTramiteApi {
 	 * @return Boolean
 	 */
 	Boolean checkInformeJuridicoYResolucionManzanaCompletadas(Long idTramite);
+
+	/*
+	 * Devuelve false si la oferta es principal y no tiene ninguna dependiente adjuntada a ella
+	 * @param tareaExterna
+	 * @return Boolean
+	 */
+	Boolean esOfertaPrincipalSinDependientes(TareaExterna tareaExterna);
 }
 

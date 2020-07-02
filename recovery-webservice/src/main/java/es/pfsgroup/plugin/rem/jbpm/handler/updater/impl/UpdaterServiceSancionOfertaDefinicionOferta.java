@@ -72,6 +72,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 	private static final String CAMPO_COMITE = "comite";
 	private static final String T017 = "T017";
 	private static final String CODIGO_SUBCARTERA_OMEGA = "65";
+	private static final String CODIGO_CARTERA_THIRD_PARTY = "11";
 	
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -88,7 +89,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 		Activo activo = ofertaAceptada.getActivoPrincipal();
 		
 		String tipoTramite = tramite.getTipoTramite().getCodigo();
-		
+
 		if (!Checks.esNulo(ofertaAceptada) && !Checks.esNulo(expediente)) {	
 			//Si tiene atribuciones y no es T017 podra entrar (aunque el comité de T017 no deberia entrar de por si)
 			if (ofertaApi.checkAtribuciones(tramite.getTrabajo()) && !T017.equals(tipoTramite)) {
@@ -157,7 +158,11 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 					expediente.setEstado(estado);
 				}
 			}
-			
+
+			String codCartera = null;
+			if (!Checks.esNulo(activo.getCartera())) {
+				codCartera = activo.getCartera().getCodigo();
+			}
 			boolean aplicaSuperior = false;
 			DDComiteSancion comite = null;
 			for (TareaExternaValor valor : valores) {		
@@ -166,7 +171,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 					expediente.setEstado(estado);
 				}	
-				if (FECHA_ENVIO_COMITE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				if (FECHA_ENVIO_COMITE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()) && CODIGO_CARTERA_THIRD_PARTY.equals(codCartera)) {
 					try {
 						expediente.setFechaSancion(ft.parse(valor.getValor()));
 					} catch (ParseException e) {
@@ -218,6 +223,8 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				expediente.setComiteSuperior(comite);
 				expediente.setComiteSancion(comite);
 			}
+
+
 		}
 
 		

@@ -6,6 +6,7 @@ Ext.define('HreRem.view.expedientes.OfertaExpediente', {
     layout		: 'fit',
     requires	: ['HreRem.view.expedientes.DatosBasicosOferta'],
     bloqueado: false,
+    procesado: false,
 	listeners	: {
     	boxready: function (tabPanel) {
 			if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
@@ -22,6 +23,10 @@ Ext.define('HreRem.view.expedientes.OfertaExpediente', {
 		},
 
 		beforetabchange: function (tabPanel, tabNext, tabCurrent) {
+			var me = this;
+    		if(!me.procesado){
+					me.checkProceso(tabPanel);
+			}			
 			tabPanel.down("[itemId=botoneditar]").setVisible(false);	            	
         	// Comprobamos si estamos editando para confirmar el cambio de pestaña
         	if (tabCurrent != null) {
@@ -62,7 +67,8 @@ Ext.define('HreRem.view.expedientes.OfertaExpediente', {
 					xtype: 'buttontab',
         			itemId: 'botoneditar',
         		    handler	: 'onClickBotonEditar',
-        		    iconCls: 'edit-button-color'
+        		    iconCls: 'edit-button-color',
+        		    disabled: true
         		},
         		{
         			xtype: 'buttontab',
@@ -130,19 +136,11 @@ Ext.define('HreRem.view.expedientes.OfertaExpediente', {
 		var me = this;
 		me.recargar = false;
 		me.getActiveTab().funcionRecargar();
+    },
+    
+    checkProceso: function(tabPanel){  
+    	var me = this;
+		me.lookupController().comprobarProcesoAsincrono(tabPanel, me);    	
     }
-	
-    /*evaluarBotonesEdicion: function(tab) {
-		var me = this;
-		me.down("[itemId=botoneditar]").setVisible(false);
-		var editionEnabled = function() {
-			me.down("[itemId=botoneditar]").setVisible(true);
-		}			
-		// Si la pestaña recibida no tiene asignados roles de edicion 
-		if(Ext.isEmpty(tab.funPermEdition)) {
-    		editionEnabled();
-    	} else {
-    		$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
-    	}
-	}*/
+   
 });

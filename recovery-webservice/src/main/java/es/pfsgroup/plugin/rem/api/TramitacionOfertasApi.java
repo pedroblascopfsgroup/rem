@@ -25,4 +25,6 @@ public interface TramitacionOfertasApi {
 	public List<GastosExpediente> crearGastosExpediente(Oferta oferta, ExpedienteComercial nuevoExpediente) throws IllegalAccessException, InvocationTargetException;
 
 	void doTramitacionAsincrona(Long idActivo, Long idTrabajo, Long idOferta, Long idExpedienteComercial);
+
+	public Boolean tieneFormalizacion(Long idExpediente);
 }

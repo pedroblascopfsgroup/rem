@@ -1162,5 +1162,7 @@ public interface ParticularValidatorApi {
 	Boolean esActivoSareb(String numActivo);
 
 	Boolean perteneceADiccionarioConTitulo(String conTitulo);
+	
+	Boolean perteneceADiccionarioEquipoGestion(String codEquipoGestion);
 
 }

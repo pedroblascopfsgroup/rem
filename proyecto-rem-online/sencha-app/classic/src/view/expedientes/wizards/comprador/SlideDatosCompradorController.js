@@ -106,7 +106,6 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		
 		var campoTipoPersona = me.lookupReference('tipoPersona'),
 		numeroDocumentoConyuge = me.lookupReference('numRegConyuge'),
-		campoPorcionCompra = me.lookupReference('porcionCompra'),
 		campoTipoDocumentoRte = me.lookupReference('tipoDocumento'),
 		campoNumeroDocumentoRte = me.lookupReference('numeroDocumento'),
 		campoSeleccionClienteUrsus = me.lookupReference('seleccionClienteUrsus'),
@@ -116,20 +115,21 @@ Ext.define('HreRem.view.expedientes.wizards.comprador.SlideDatosCompradorControl
 		campoNumeroDocumentoConyugue = me.lookupReference('numRegConyuge'),
 		campoNumeroUrsus = me.lookupReference('numeroClienteUrsusRef'),
 		campoNumeroUrsusBh = me.lookupReference('numeroClienteUrsusBhRef');
-		if ((estadoExpediente == CONST.ESTADOS_EXPEDIENTE['RESERVADO'] || (estadoExpediente == CONST.ESTADOS_EXPEDIENTE['APROBADO'] && !tieneReserva)) 
+		if (((tieneReserva && (estadoExpediente != CONST.ESTADOS_EXPEDIENTE['EN_TRAMITACION'] && estadoExpediente != CONST.ESTADOS_EXPEDIENTE['APROBADO']))
+                       || (!tieneReserva && estadoExpediente != CONST.ESTADOS_EXPEDIENTE['EN_TRAMITACION']))
 				&& me.esBankia() && (!Ext.isEmpty(campoNumeroUrsus.getValue()) || !Ext.isEmpty(campoNumeroUrsusBh.getValue())) ) {
-			campoTipoPersona.setDisabled(true);
-			campoPorcionCompra.setDisabled(true);
-			campoTipoDocumentoRte.setDisabled(true);
-			campoNumeroDocumentoRte.setDisabled(true);
-			campoSeleccionClienteUrsus.setDisabled(true);
-			campoEstadoCivil.setDisabled(true);
-			campoRegEconomico.setDisabled(true);
-			campoTipoDocumentoConyuge.setDisabled(true);
-			campoNumeroDocumentoConyugue.setDisabled(true);
+
+			campoTipoPersona.disable();
+			campoTipoDocumentoRte.disable();
+			campoNumeroDocumentoRte.disable();
+			campoSeleccionClienteUrsus.disable();
+			campoEstadoCivil.disable();
+			campoRegEconomico.disable();
+			campoTipoDocumentoConyuge.disable();
+			campoNumeroDocumentoConyugue.disable();
 			campoNumeroUrsus.setReadOnly(true);
-			campoNumeroUrsusBh.setReadOnly(true);
-			numeroDocumentoConyuge.setDisabled(true);
+			campoNumeroUrsusBh.setReadOnly(true);			
+			numeroDocumentoConyuge.disable();
 		}
 		if (campoEstadoCivil.getValue() != CONST.TIPOS_ESTADO_CIVIL['CASADO'] && campoRegEconomico.getValue() != CONST.TIPOS_REG_ECONOMICO_MATRIMONIAL['GANANCIALES']) {
 			campoTipoDocumentoConyuge.clearValue;

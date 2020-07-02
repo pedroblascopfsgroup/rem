@@ -774,7 +774,7 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 						defaultType: 'textfieldbase',
 		            	title: HreRem.i18n('title.provisiones.suplidos'),
 						bind: {
-							disabled: '{disablePorCierreEconomico}'
+							disabled: '{disablePorCierreEconomicoSuplidos}'
 						},	
 		            	items: [
 		    	            {

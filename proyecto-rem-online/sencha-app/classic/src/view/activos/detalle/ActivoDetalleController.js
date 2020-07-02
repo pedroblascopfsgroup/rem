@@ -1120,7 +1120,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			idEntidad = grid.up('wizardaltacomprador').down('datoscompradorwizard').getRecord().data.idExpedienteComercial;
 			entidad = 'expediente';
 			docCliente = grid.up('window').down("datoscompradorwizard").getForm().getFieldValues().numDocumento;
-		}
+		}grid.up('window').down("datoscompradorwizard").getForm().getFieldValues().numDocumento;
 		Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial",
 		{
 			entidad : entidad,

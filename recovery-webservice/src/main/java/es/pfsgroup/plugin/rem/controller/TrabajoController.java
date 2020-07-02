@@ -268,7 +268,10 @@ public class TrabajoController extends ParadiseJsonController {
 		try {
 			
 			Long idTrabajo = trabajoApi.create(dtoTrabajo);
-			dtoTrabajo.setIdTrabajo(idTrabajo);
+			if(new Long(-1L).equals(idTrabajo))
+				model.put("warn", "Proceso de creación trabajos en marcha, vaya al apartado de 'Carga Masiva' para ver si ha terminado.");
+			else
+				dtoTrabajo.setIdTrabajo(idTrabajo);
 			success = true;
 			
 		} catch(NonUniqueObjectException e) {

@@ -1,0 +1,179 @@
+--/*
+--##########################################
+--## AUTOR=Viorel Remus Ovidiu
+--## FECHA_CREACION=20200618
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-7529
+--## PRODUCTO=NO
+--##
+--## INSTRUCCIONES: actualizar destinatario de tarea a PROVEEDOR
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF; 
+DECLARE
+
+    PL_OUTPUT VARCHAR2(32000 CHAR);
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
+    V_NUM_FILAS NUMBER(16); -- Vble. para validar la existencia de un registro.
+    V_NUM_FILAS_1 NUMBER(16); -- Vble. para validar la existencia de un registro.
+    V_NUM_FILAS_2 NUMBER(16); -- Vble. para validar la existencia de un registro.
+    V_NUM_FILAS_3 NUMBER(16); -- Vble. para validar la existencia de un registro.
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_USR VARCHAR2(30 CHAR) := 'REMVIP-7529'; -- USUARIOCREAR/USUARIOMODIFICAR.
+    V_ECO_ID NUMBER(16);
+     
+    
+    TRA_ID NUMBER(16);
+    TAR_ID NUMBER(16);
+    TEX_ID NUMBER(16);
+    ACT_ID NUMBER(16);
+    USU_ID NUMBER(16);
+    PRO_ID NUMBER(16);
+    SUP_ID NUMBER(16);
+    NUM_TBJ NUMBER(16);
+    V_USUARIO NUMBER(16) ;
+
+    SEQ_TAR_ID NUMBER(16);
+
+    V_COUNT_UPDATE_1 NUMBER(16):= 0; -- Vble. para contar updates
+    V_COUNT_UPDATE_2 NUMBER(16):= 0; -- Vble. para contar updates
+    V_COUNT_UPDATE_3 NUMBER(16):= 0; -- Vble. para contar updates
+
+    
+    TYPE T_JBV IS TABLE OF VARCHAR2(32000);
+    TYPE T_ARRAY_JBV IS TABLE OF T_JBV; 
+	
+	--TRA_ID , TAR_ID, ACT_ID, USU_ID, PRO_ID, NUM_TBJ
+
+	V_JBV T_ARRAY_JBV := T_ARRAY_JBV(
+
+T_JBV(560127, 5180496, 445901 ,89798 ,89798,916950100939 ),
+T_JBV(563125, 5190889, 446788 ,89630 ,89630,916950103528 ),
+T_JBV(562366, 5186429, 448590 ,89630 ,89630,916950103046 ),
+T_JBV(562195, 5185819, 457236 ,89630 ,89630,916950102952 ),
+T_JBV(562128, 5185258, 472313 ,90033 ,90033,916950102858 ),
+T_JBV(560982, 5177457, 475081 ,89630 ,89630,916950101739 ),
+T_JBV(561613, 5182427, 477249 ,90033 ,90033,916950102424 ),
+T_JBV(562214, 5185979, 487447 ,89630 ,89630,916950102984 ),
+T_JBV(573798, 5248381, 454165 ,90221 ,90221,916964304812 ),
+T_JBV(560989, 5177492, 475111 ,89630 ,89630,916950101745 ),
+T_JBV(568633, 5217663, 477463 ,90221 ,90221,916964300782 ),
+T_JBV(568643, 5217691, 454059 ,90221 ,90221,916964300792 ),
+T_JBV(565870, 5201009, 448492 ,89630 ,89630,916950106002 ),
+T_JBV(560387, 5174372, 455159 ,89777 ,89777,916950101159 ),
+T_JBV(562223, 5186047, 462817 ,89777 ,89777,916950103009 ),
+T_JBV(570675, 5231442, 454196 ,90221 ,90221,916964302442 ),
+T_JBV(569423, 5222830, 448557 ,89631 ,89631,916964301396 ),
+T_JBV(562172, 5185543, 460053 ,89630 ,89630,916950102913 ),
+T_JBV(562139, 5185389, 471226 ,89630 ,89630,916950102874 )
+
+		); 
+	V_TMP_JBV T_JBV;
+    
+BEGIN	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] ACTUALIZACION TRAMITES Y TAREAS');
+
+	FOR I IN V_JBV.FIRST .. V_JBV.LAST
+	
+	LOOP
+ 
+	V_TMP_JBV := V_JBV(I);
+	
+  	TRA_ID := TRIM(V_TMP_JBV(1));
+  	
+  	TAR_ID := TRIM(V_TMP_JBV(2));
+
+	ACT_ID := TRIM(V_TMP_JBV(3));
+
+	USU_ID := TRIM(V_TMP_JBV(4));
+
+	PRO_ID := TRIM(V_TMP_JBV(5));
+  	
+  	NUM_TBJ := TRIM(V_TMP_JBV(6));
+
+
+	--SACAMOS EL ID DEL NUEVO USUARIO DESTINO DE LAS TAREAS
+	
+	V_SQL := 'SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = ''activeobras''';
+
+	EXECUTE IMMEDIATE V_SQL INTO V_USUARIO;
+
+	--COMPROBAMOS SI EXISTE TRABAJO
+
+	V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.ACT_TBJ_TRABAJO WHERE TBJ_NUM_TRABAJO = '||NUM_TBJ;
+	
+	EXECUTE IMMEDIATE V_SQL INTO V_NUM_FILAS;
+	
+	IF V_NUM_FILAS > 0 THEN 
+	
+	--COMPROBAMOS SI EXISTE TAREA
+
+		DBMS_OUTPUT.PUT_LINE('[INFO] ACTUALIZANDO TRAMITE DE TRABAJO '||NUM_TBJ||'');
+
+		V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS WHERE TRA_ID = '||TRA_ID||' AND TAR_ID = '||TAR_ID||' AND ACT_ID = '||ACT_ID||'';
+	
+		EXECUTE IMMEDIATE V_SQL INTO V_NUM_FILAS_1;
+	
+		IF V_NUM_FILAS_1 > 0 THEN
+	
+			V_MSQL := 'UPDATE '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS 
+					   SET USU_ID = '||V_USUARIO||',
+					   USUARIOMODIFICAR = '''||V_USR||''',
+					   FECHAMODIFICAR = SYSDATE 
+					   WHERE TRA_ID = '||TRA_ID||' AND TAR_ID = '||TAR_ID||' AND ACT_ID = '||ACT_ID||'';
+	
+
+			EXECUTE IMMEDIATE V_MSQL;
+	    
+			DBMS_OUTPUT.PUT_LINE('[INFO] REGISTRO CON TRA_ID: '||TRA_ID||' ACTUALIZADO');
+		
+			V_COUNT_UPDATE_1 := V_COUNT_UPDATE_1 + 1;
+		
+		ELSE
+		
+			DBMS_OUTPUT.PUT_LINE('[INFO] REGISTRO NO EXISTE');
+		
+		END IF;
+        
+   	ELSE
+		
+	DBMS_OUTPUT.PUT_LINE('[INFO] TRABAJO NO EXISTE');
+		
+	END IF; 
+
+   	END LOOP;
+
+	COMMIT;
+
+	DBMS_OUTPUT.PUT_LINE('********************************************************************');
+
+	DBMS_OUTPUT.PUT_LINE('[FIN] Se han updateado en total '||V_COUNT_UPDATE_1||' registros EN TAC_TAREAS_ACTIVOS');
+
+	DBMS_OUTPUT.PUT_LINE('********************************************************************');
+
+	DBMS_OUTPUT.PUT_LINE('[FIN] ');
+
+	COMMIT;
+
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          ROLLBACK;
+          RAISE;   
+END;
+/
+EXIT;

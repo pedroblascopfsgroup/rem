@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Rubio
---## FECHA_CREACION=20200630
+--## FECHA_CREACION=20200702
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10433
@@ -56,9 +56,15 @@ BEGIN
     IF V_NUM_TABLAS = 1 THEN
       DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA ||'.S_'||V_TABLA||'... Secuencia BORRADA.');  
       EXECUTE IMMEDIATE 'DROP SEQUENCE '||V_ESQUEMA||'.S_'||V_TABLA||'';
+      
+    ELSE
+     
+    	V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TABLA||'';		
+	    EXECUTE IMMEDIATE V_MSQL;		
+	    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TABLA||' creada');
 
     END IF; 
-
+ 
      
     	 --Creamos la tabla
       DBMS_OUTPUT.PUT_LINE('[CREAMOS '||V_TABLA||']');

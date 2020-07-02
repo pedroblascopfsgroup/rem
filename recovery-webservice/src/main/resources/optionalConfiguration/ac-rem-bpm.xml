@@ -669,6 +669,10 @@
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.fechaReservaPBCReserva(tareaExterna);
             }
+            def esOfertaPrincipalSinDependientes = {
+            	def activoTramiteManager = ctx.getBean("activoTramiteManager");
+				return activoTramiteManager.esOfertaPrincipalSinDependientes(tareaExterna);
+            }
   			 ]]></value>
   		</list>
   	</property>

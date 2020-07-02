@@ -431,7 +431,12 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 				
 		var success = function(record, operation) {
 			me.getView().unmask();
-	    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			var response = Ext.decode(operation.getResponse().responseText);
+			if(response.success === "true" && Ext.isDefined(response.warn)) {
+				me.fireEvent("warnToast", response.warn);
+			}else{
+				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			}
 	    	me.getView().fireEvent("refreshComponentOnActivate", "trabajosmain");
 	    	me.getView().fireEvent("refreshComponentOnActivate", "agendamain");
 	    	me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], idActivo);

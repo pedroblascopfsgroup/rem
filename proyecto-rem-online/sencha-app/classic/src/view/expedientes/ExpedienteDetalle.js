@@ -12,9 +12,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 				'HreRem.view.expedientes.SeguroRentasExpediente', 'HreRem.model.HstcoSeguroRentas','HreRem.model.DatosBasicosOferta',
 				'HreRem.view.expedientes.FormalizacionAlquilerExpediente', 'HreRem.view.expedientes.PlusValiaVentaExpediente'],
 
-
 	bloqueado: false,
-
+	procesado: false,
+	
     listeners	: {
 			boxready: function (tabPanel) {
 				if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
@@ -41,6 +41,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 			    	}
 					
 				}
+								
+				if(!this.procesado){
+						this.checkProceso(tabPanel);
+				}			
+				
+				if(tabNext.getTitle() == HreRem.i18n('title.oferta')){
+					tabNext.down("[itemId=botoneditar]").setDisabled(!this.procesado);
+				}
+				
 	        	tabPanel.down("[itemId=botoneditar]").setVisible(false);	            	
 	        	// Comprobamos si estamos editando para confirmar el cambio de pestaña
 	        	if (tabCurrent != null) {
@@ -81,7 +90,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 						xtype: 'buttontab',
 						itemId: 'botoneditar',
 					    handler	: 'onClickBotonEditar',
-					    iconCls: 'edit-button-color'
+					    iconCls: 'edit-button-color',
+					    disabled: true
 					},
 					{
 						xtype: 'buttontab',
@@ -157,5 +167,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 			}else{
 				me.down("[itemId=botoneditar]").setVisible(false);
 			}
-		}
+		},
+		
+		checkProceso: function(tabPanel){  
+    		var me = this;
+			me.lookupController().comprobarProcesoAsincrono(tabPanel, me);    	
+    	}
 });

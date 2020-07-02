@@ -5,6 +5,7 @@
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-7702
+--## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en la CEX los datos añadidos en T_ARRAY_DATA
 --## INSTRUCCIONES:

@@ -1,15 +1,11 @@
 package es.pfsgroup.plugin.rem.activo.admision.evolucion.manager;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.plugin.rem.activo.admision.evolucion.api.ActivoAdmisionEvolucionApi;
 import es.pfsgroup.plugin.rem.activo.admision.evolucion.dao.ActivoAgendaEvolucionDao;
 import es.pfsgroup.plugin.rem.model.ActivoAgendaEvolucion;
@@ -26,11 +22,10 @@ public class ActivoAdmisionEvolucionManager implements ActivoAdmisionEvolucionAp
 		
 		List<ActivoAgendaEvolucion> listaEvolucion =  activoAgendaEvolucionDao.getListAgendaEvolucionByIdActivo(id);
 		List<DtoActivoAdmisionEvolucion> dtoList = new ArrayList<DtoActivoAdmisionEvolucion>();
-		DtoActivoAdmisionEvolucion dto = new DtoActivoAdmisionEvolucion();
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		
 		if(!listaEvolucion.isEmpty()) {
 			for (ActivoAgendaEvolucion evolucion : listaEvolucion) {
-				
+				DtoActivoAdmisionEvolucion dto = new DtoActivoAdmisionEvolucion();		
 				if(evolucion.getEstadoAdmision() != null) {
 					dto.setEstadoEvolucion(evolucion.getEstadoAdmision().getDescripcion());
 				}

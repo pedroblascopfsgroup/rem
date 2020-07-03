@@ -138,7 +138,7 @@ BEGIN
 		CAST(SOC.PRD_CP AS VARCHAR2(40 CHAR)) 													AS CODIGO_POSTAL,
 		CAST(SOC.PRD_TELEFONO AS VARCHAR2(14 CHAR)) 											AS TELEFONO1,
 		CAST(SOC.PRD_TELEFONO2 AS VARCHAR2(14 CHAR)) 											AS TELEFONO2,
-		CAST(SOC.PRD_EMAIL AS VARCHAR2(100 CHAR)) 												AS EMAIL,
+		CAST(PVE.PVE_EMAIL AS VARCHAR2(100 CHAR)) 												AS EMAIL,
 		CAST(SOC.DD AS VARCHAR2(5 CHAR))                                                		AS DD,
 		CAST(SOC.DZ AS VARCHAR2(5 CHAR))                                                		AS DZ,
 		CAST(SOC.DT AS VARCHAR2(5 CHAR))                                                		AS DT,

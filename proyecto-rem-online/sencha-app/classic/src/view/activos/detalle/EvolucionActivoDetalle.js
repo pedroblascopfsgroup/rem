@@ -1,6 +1,6 @@
 	Ext.define('HreRem.view.activos.detalle.EvolucionActivoDetalle', {
     extend: 'HreRem.view.common.FormBase',
-    xtype: 'evolucionactivo',    
+    xtype: 'evolucionactivo',
     cls	: 'panel-base shadow-panel',
     collapsed: false,
     refreshAfterSave: true,
@@ -24,6 +24,11 @@
 
         var items= [
 
+        	{
+        		xtype: 'button',
+        		text: HreRem.i18n('btn.exportar'),
+        		handler: 'onClickDescargarExcelEvolucion'
+        	},
         	{
                 xtype : 'gridBase',
                 reference : 'gridEvolucionActivo',

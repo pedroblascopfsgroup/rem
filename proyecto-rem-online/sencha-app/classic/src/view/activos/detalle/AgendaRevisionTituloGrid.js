@@ -14,8 +14,8 @@ Ext.define('HreRem.view.activos.detalle.AgendaRevisionTituloGrid', {
 
 
      	var me = this;
-        me.topBar = ($AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']));
-        me.editOnSelect = ($AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']));
+        me.topBar = ($AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
+        me.editOnSelect = ($AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
 
      	me.setTitle(HreRem.i18n('fieldlabel.grid.agenda.revision.titulo'));
      	

@@ -109,13 +109,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     },
 
 	     getIconClsEstadoAdmision: function(get) {
-	     	var estadoAdmision = get('activo.admision');
+	     	var admisionAntiguo = get('activo.admision');
+	     	var estadoAdmision = get('activo.estadoAdmisionCod');
+	     	var subestadoAdmision = get('activo.subestadoAdmisionCod');
+	     	var perimetroAdmision = get('activo.perimetroAdmision');
 	     	
-	     	if(estadoAdmision) {
-	     		return 'app-tbfiedset-ico icono-ok';
-	     	} else {
-	     		return 'app-tbfiedset-ico icono-ko';
+	     	if(perimetroAdmision){
+	     		if(estadoAdmision == CONST.ESTADO_ADMISION['CODIGO_SANEADO_REGISTRALMENTE']){
+	     			return 'app-tbfiedset-ico icono-ok';
+	     		}else if(estadoAdmision == CONST.ESTADO_ADMISION['CODIGO_PENDIENTE_SANEAMIENTO']
+	     			&& subestadoAdmision == CONST.SUBESTADO_ADMISION['CODIGO_PENDIENTE_CARGAS']){
+	     			return 'app-tbfiedset-ico icono-okn';
+	     		}else{
+	     			return 'app-tbfiedset-ico icono-ko-red';
+	     		}
+	     	}else{
+	     		if(admisionAntiguo) {
+		     		return 'app-tbfiedset-ico icono-ok';
+		     	} else {
+		     		return 'app-tbfiedset-ico icono-ko';
+	     		}
 	     	}
+	     	
 	     },
 
 	     getIconClsEstadoSituacionComercial: function(get){

@@ -113,6 +113,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private static final String MSG_ERROR_DESTINO_COMERCIAL_OFERTAS_VIVAS_ALQUILER = "msg.error.tipo.comercializacion.ofertas.vivas";
 	private static final String ERROR_PORCENTAJE_PARTICIPACION="msg.error.porcentaje.participacion";
 	private static final String CESION_USO_ERROR= "msg.error.activo.patrimonio.en.cesion.uso";
+	private static final String NO_GESTIONADO_POR_ADMISION = "msg.no.gestionado.admision";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -229,6 +230,23 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 			
 		}
+		
+		if(activo.getPerimetroAdmision() != null && !activo.getPerimetroAdmision()) {
+			
+			BeanUtils.copyProperty(activoDto, "estadoAdmisionDesc", messageServices.getMessage(NO_GESTIONADO_POR_ADMISION));
+			
+		}else if (activo.getPerimetroAdmision() != null && activo.getPerimetroAdmision()){
+			
+			if(activo.getEstadoAdmision() != null) {
+				BeanUtils.copyProperty(activoDto, "estadoAdmisionCod", activo.getEstadoAdmision().getCodigo());
+				BeanUtils.copyProperty(activoDto, "estadoAdmisionDesc", activo.getEstadoAdmision().getDescripcion());
+			}
+			
+			if(activo.getSubestadoAdmision() != null) {
+				BeanUtils.copyProperty(activoDto, "subestadoAdmisionCod", activo.getSubestadoAdmision().getCodigo());
+				BeanUtils.copyProperty(activoDto, "subestadoAdmisionDesc", activo.getSubestadoAdmision().getDescripcion());
+			}
+		} 
 		
 		if(!Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
 			BeanUtils.copyProperty(activoDto, "nombreMediador", activo.getInfoComercial().getMediadorInforme().getNombre());

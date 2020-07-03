@@ -12,54 +12,68 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de los tipos de solicitud de tributo
+ * Modelo que gestiona el diccionario de lo tipo de tributo
  * 
- * @author Juanjo Arbona
- *
  */
 @Entity
-@Table(name = "DD_TST_TIPO_SOLICITUD_TRIB", schema = "${entity.schema}")
+@Table(name = "DD_TPT_TIPO_TRIBUTO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class DDTipoSolicitudTributo implements Auditable, Dictionary {
-	
-	
-	public static final String COD_DERIVACION_DEUDA ="01";
-	public static final String COD_HIPOTECA_LEGAL ="02";
-	public static final String COD_MULTA_SANCION ="03";
-	public static final String COD_MULTA_COERCITIVA ="04";
-	public static final String COD_SOL_BONIFICACION ="05";
-	public static final String COD_SOL_SUSPENSION ="06";
-	public static final String COD_INGRESOS_INDEBIDOS ="07";
+@Where(clause=Auditoria.UNDELETED_RESTICTION)
+public class DDTipoTributo implements Auditable, Dictionary {
 
-	private static final long serialVersionUID = 2307957295534774606L;
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	
+	
+	public static final String COD_IBI_URBANO ="01";
+	public static final String COD_IBI_RUSTICO ="02";
+	public static final String COD_AGUA ="03";
+	public static final String COD_ALCANTARILLADO ="04";
+	public static final String COD_BASURA ="05";
+	public static final String COD_EXTRACCIONES_MUNICIPALES ="06";
+	public static final String COD_OTRAS_TASAS_MUNICIPALES ="07";
+	public static final String COD_TASA_CANALONES ="08";
+	public static final String COD_TASA_REGULACION_CATASTRAL ="09";
+	public static final String COD_TASAS_ADMINISTRATIVAS ="10";
+	public static final String COD_TRIBUTO_METROPOLITAN_MOVILIDAD ="11";
+	public static final String COD_VADO ="12";
+	public static final String COD_TASA_INCENDIOS ="13";
+
 
 	@Id
-	@Column(name = "DD_TST_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoActivoGenerator")
-	@SequenceGenerator(name = "DDTipoActivoGenerator", sequenceName = "S_DD_TPA_TIPO_ACTIVO")
+	@Column(name = "DD_TPT_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoTributoGenerator")
+	@SequenceGenerator(name = "DDTipoTributoGenerator", sequenceName = "S_DD_TPT_TIPO_TRIBUTO")
 	private Long id;
-	
-	@Column(name = "DD_TST_CODIGO")   
+	    
+	@Column(name = "DD_TPT_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_TST_DESCRIPCION")   
+	@Column(name = "DD_TPT_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_TST_DESCRIPCION_LARGA")   
+	@Column(name = "DD_TPT_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
-	    	    
+	    
+
 	@Version   
 	private Long version;
-	
+
 	@Embedded
 	private Auditoria auditoria;
 
+	
 	
 	public Long getId() {
 		return id;
@@ -67,14 +81,6 @@ public class DDTipoSolicitudTributo implements Auditable, Dictionary {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public String getCodigo() {
-		return codigo;
-	}
-
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
 	}
 
 	public String getDescripcion() {
@@ -93,6 +99,14 @@ public class DDTipoSolicitudTributo implements Auditable, Dictionary {
 		this.descripcionLarga = descripcionLarga;
 	}
 
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+
 	public Long getVersion() {
 		return version;
 	}
@@ -109,8 +123,7 @@ public class DDTipoSolicitudTributo implements Auditable, Dictionary {
 		this.auditoria = auditoria;
 	}
 
-	 
-	
-	
-	
 }
+
+
+

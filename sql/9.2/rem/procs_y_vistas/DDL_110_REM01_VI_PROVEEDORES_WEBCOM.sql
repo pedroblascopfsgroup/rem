@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina
---## FECHA_CREACION=20200404
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20200703
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0

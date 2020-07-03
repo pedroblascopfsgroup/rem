@@ -1,20 +1,18 @@
 Ext.define('HreRem.view.agrupaciones.AgrupacionesModel', {
     extend: 'HreRem.view.common.DDViewModel',
     alias: 'viewmodel.agrupaciones',
-    
-    requires: ['HreRem.ux.data.Proxy', 'HreRem.model.Agrupaciones','HreRem.model.ComboBase'],
+    requires: ['HreRem.ux.data.Proxy', 'HreRem.model.BusquedaAgrupacionGrid','HreRem.model.ComboBase'],
     
  	stores: {
         
         agrupaciones: {
 			pageSize: $AC.getDefaultPageSize(),
-	    	model: 'HreRem.model.Agrupaciones',
+	    	model: 'HreRem.model.BusquedaAgrupacionGrid',
 	    	proxy: {
 		        type: 'uxproxy',
-		        localUrl: '/tareas.json',
-		        remoteUrl: 'agrupacion/getListAgrupaciones'
+		        remoteUrl: 'agrupacion/getBusquedaAgrupacionesGrid'
 	    	},
-	    	autoLoad: true,
+	    	autoLoad: false,
 	    	session: true,
 	    	remoteSort: true,
 	    	remoteFilter: true,
@@ -22,15 +20,13 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesModel', {
 	            beforeload : 'paramLoading'
 	        }
     	},
-
-    	comboTipoAgrupacion: {
-			pageSize: 10,
-	    	model: 'HreRem.model.Agrupaciones',
+    	
+    	comboTipoAgrupacionFiltro: {		
+	    	model: 'HreRem.model.ComboBase',
 	    	proxy: {
 		        type: 'uxproxy',
-		        remoteUrl: 'agrupacion/getComboTipoAgrupacion'
-	    	},
-	    	autoLoad: true
+		        remoteUrl: 'agrupacion/getComboTipoAgrupacionFiltro'
+	    	}
     	},
 
     	comboTodosTipoAgrupacion: {

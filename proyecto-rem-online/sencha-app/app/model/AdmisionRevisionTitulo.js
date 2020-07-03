@@ -14,7 +14,11 @@ Ext.define('HreRem.model.AdmisionRevisionTitulo', {
 						name : 'ratificacion'
 					}, {
 						name : 'situacionInicialInscripcion'
-					}, {
+					}, 
+					{
+						name: 'posesoriaInicial'
+					},
+					{
 						name : 'posesoriaInicial'
 					}, {
 						name : 'situacionInicialCargas'

@@ -75,7 +75,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTituloModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'estadoGestion'}
+				extraParams: {diccionario: 'licenciaPrimeraOcupacion'}
 			}
     	},
     	comboBoletines: {
@@ -91,7 +91,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTituloModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'boletines'}
+				extraParams: {diccionario: 'seguroDecenal'}
 			}
     	},
     	comboCedulaHabitabilidad: {

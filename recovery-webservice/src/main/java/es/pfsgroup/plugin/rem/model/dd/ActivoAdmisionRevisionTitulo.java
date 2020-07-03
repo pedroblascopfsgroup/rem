@@ -119,7 +119,7 @@ public class ActivoAdmisionRevisionTitulo implements Auditable,Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_CEDULA_HABITABILIDAD")
-	private DDCedulaHabitabilidad cedulaHabitibilidad;
+	private DDCedulaHabitabilidad cedulaHabitabilidad;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ART_TIPO_ARRENDAMIENTO")
@@ -342,14 +342,6 @@ public class ActivoAdmisionRevisionTitulo implements Auditable,Serializable {
 		this.seguroDecenal = seguroDecenal;
 	}
 
-	public DDCedulaHabitabilidad getCedulaHabitibilidad() {
-		return cedulaHabitibilidad;
-	}
-
-	public void setCedulaHabitibilidad(DDCedulaHabitabilidad cedulaHabitibilidad) {
-		this.cedulaHabitibilidad = cedulaHabitibilidad;
-	}
-
 	public DDTipoArrendamiento getTipoArrendamiento() {
 		return tipoArrendamiento;
 	}
@@ -517,6 +509,22 @@ public class ActivoAdmisionRevisionTitulo implements Auditable,Serializable {
 	public void setVersion(Long version) {
 		this.version = version;
 	}
+	
+	public DDEstadoGestion getEstadoCertificadoFinObra() {
+		return estadoCertificadoFinObra;
+	}
+
+	public void setEstadoCertificadoFinObra(DDEstadoGestion estadoCertificadoFinObra) {
+		this.estadoCertificadoFinObra = estadoCertificadoFinObra;
+	}
+
+	public DDCedulaHabitabilidad getCedulaHabitabilidad() {
+		return cedulaHabitabilidad;
+	}
+
+	public void setCedulaHabitabilidad(DDCedulaHabitabilidad cedulaHabitabilidad) {
+		this.cedulaHabitabilidad = cedulaHabitabilidad;
+	}
 
 	@Override
 	public Auditoria getAuditoria() {
@@ -528,16 +536,6 @@ public class ActivoAdmisionRevisionTitulo implements Auditable,Serializable {
 		this.auditoria = auditoria;
 		
 	}
-
-	public DDEstadoGestion getEstadoCertificadoFinObra() {
-		return estadoCertificadoFinObra;
-	}
-
-	public void setEstadoCertificadoFinObra(DDEstadoGestion estadoCertificadoFinObra) {
-		this.estadoCertificadoFinObra = estadoCertificadoFinObra;
-	}
-
-
 	
 
 }

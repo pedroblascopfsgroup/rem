@@ -138,12 +138,6 @@ public class DtoAdmisionRevisionTitulo extends WebDto {
 	public void setConsJuridica(String consJuridica) {
 		this.consJuridica = consJuridica;
 	}
-	public String getEstadoCertificadoFinObra() {
-		return estadoCertificadoFinObra;
-	}
-	public void getEstadoCertificadoFinObra(String estadoCertificadoFinObra) {
-		this.estadoCertificadoFinObra = estadoCertificadoFinObra;
-	}
 	public String getEstadoAfoActaFinObra() {
 		return estadoAfoActaFinObra;
 	}
@@ -168,12 +162,7 @@ public class DtoAdmisionRevisionTitulo extends WebDto {
 	public void setSeguroDecenal(String seguroDecenal) {
 		this.seguroDecenal = seguroDecenal;
 	}
-	public String getCedulaHabitibilidad() {
-		return cedulaHabitabilidad;
-	}
-	public void setCedulaHabitibilidad(String cedulaHabitabilidad) {
-		this.cedulaHabitabilidad = cedulaHabitabilidad;
-	}
+
 	public String getTipoArrendamiento() {
 		return tipoArrendamiento;
 	}
@@ -305,6 +294,18 @@ public class DtoAdmisionRevisionTitulo extends WebDto {
 	}
 	public void setUpdate(boolean update) {
 		this.update = update;
+	}
+	public String getCedulaHabitabilidad() {
+		return cedulaHabitabilidad;
+	}
+	public void setCedulaHabitabilidad(String cedulaHabitabilidad) {
+		this.cedulaHabitabilidad = cedulaHabitabilidad;
+	}
+	public String getEstadoCertificadoFinObra() {
+		return estadoCertificadoFinObra;
+	}
+	public void setEstadoCertificadoFinObra(String estadoCertificadoFinObra) {
+		this.estadoCertificadoFinObra = estadoCertificadoFinObra;
 	}
 	
 	

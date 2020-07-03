@@ -74,7 +74,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 						.i18n('fieldlabel.admision.revisionTitulo.instanciaLibertadArrendaticia'),
 				bind : {
 					store : '{comboSiNoNoAplica}',
-					value : '{admisionRevisionTitulo.instLibArrendatariaCodigo}'
+					value : '{admisionRevisionTitulo.instLibArrendataria}'
 				}
 			}, {
 				xtype : 'comboboxfieldbase',
@@ -90,7 +90,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 						.i18n('fieldlabel.admision.revisionTitulo.situacionPosesoriaInicial'),
 				bind : {
 					store : '{comboSituacionPosesoriaInicial}',
-					value : '{admisionRevisionTitulo.situacionPosesoriaInicial}'
+					value : '{admisionRevisionTitulo.posesoriaInicial}'
 				}
 			}, {
 				xtype : 'comboboxfieldbase',
@@ -220,17 +220,19 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 						value : '{admisionRevisionTitulo.porcentajeConsTasacionCj}'
 					}
 				}, {
-					xtype : 'textfieldbase',
+					xtype : 'comboboxfieldbase',
 					fieldLabel : HreRem
 							.i18n('fieldlabel.admision.revisionTitulo.certificadoFinObra'),
 					bind : {
+						store: '{comboEstadoGestion}',
 						value : '{admisionRevisionTitulo.estadoCertificadoFinObra}'
 					}
 				}, {
-					xtype : 'textfieldbase',
+					xtype : 'comboboxfieldbase',
 					fieldLabel : HreRem
 							.i18n('fieldlabel.admision.revisionTitulo.actaFinObraObraNuevaTerminada'),
 					bind : {
+						store: '{comboEstadoGestion}',
 						value : '{admisionRevisionTitulo.estadoAfoActaFinObra}'
 					}
 				}, {

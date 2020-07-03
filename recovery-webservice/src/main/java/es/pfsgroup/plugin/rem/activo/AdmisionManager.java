@@ -44,6 +44,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSituacionInicialInscripcion;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionPosesoriaInicial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipologiaAgenda;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoArrendamiento;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoExpedienteAdministrativo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoIncidenciaRegistral;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOcupacionLegal;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTitularidad;
@@ -188,9 +189,9 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 	@Override
 	public DtoAdmisionRevisionTitulo getTabDataRevisionTitulo(Long idActivo) throws AdmisionException, IllegalAccessException, InvocationTargetException {
 		
-		
-		DtoAdmisionRevisionTitulo dto = new DtoAdmisionRevisionTitulo(); 
-		if ( idActivo == null) {
+		 
+		DtoAdmisionRevisionTitulo dto = new DtoAdmisionRevisionTitulo();   
+		if ( idActivo == null) { 
 			throw new AdmisionException(AdmisionException.getActivoNoInformado());
 		}
 		dto.setIdActivo(idActivo);
@@ -216,7 +217,7 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 		beanUtilNotNull.copyProperty(dto, "licenciaPrimeraOcupacion", getCode(revisionTitulo.getLicenciaPrimeraOcupacion()));
 		beanUtilNotNull.copyProperty(dto, "boletines", getCode(revisionTitulo.getBoletines()));
 		beanUtilNotNull.copyProperty(dto, "seguroDecenal", getCode(revisionTitulo.getSeguroDecenal()));
-		beanUtilNotNull.copyProperty(dto, "cedulaHabitibilidad", getCode(revisionTitulo.getCedulaHabitibilidad()));
+		beanUtilNotNull.copyProperty(dto, "cedulaHabitabilidad", getCode(revisionTitulo.getCedulaHabitabilidad()));
 		beanUtilNotNull.copyProperty(dto, "tipoArrendamiento", getCode(revisionTitulo.getTipoArrendamiento()));
 		beanUtilNotNull.copyProperty(dto, "notificarArrendatarios", getCode(revisionTitulo.getNotificarArrendatarios()));
 		beanUtilNotNull.copyProperty(dto, "tipoExpediente", getCode(revisionTitulo.getTipoExpediente()));
@@ -269,16 +270,16 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 		beanUtilNotNull.copyProperty(revisionTitulo, "licenciaPrimeraOcupacion", genericGet(DDLicenciaPrimeraOcupacion.class, CODE, dto.getLicenciaPrimeraOcupacion()));
 		beanUtilNotNull.copyProperty(revisionTitulo, "boletines", genericGet(DDBoletines.class, CODE, dto.getBoletines()));
 		beanUtilNotNull.copyProperty(revisionTitulo, "seguroDecenal", genericGet(DDSeguroDecenal.class, CODE, dto.getSeguroDecenal()));
-		beanUtilNotNull.copyProperty(revisionTitulo, "cedulaHabitibilidad", genericGet(DDCedulaHabitabilidad.class, CODE, dto.getCedulaHabitibilidad()));
+		beanUtilNotNull.copyProperty(revisionTitulo, "cedulaHabitabilidad", genericGet(DDCedulaHabitabilidad.class, CODE, dto.getCedulaHabitabilidad()));
 		beanUtilNotNull.copyProperty(revisionTitulo, "tipoArrendamiento", genericGet(DDTipoArrendamiento.class, CODE, dto.getTipoArrendamiento()));
 		beanUtilNotNull.copyProperty(revisionTitulo, "notificarArrendatarios", genericGet(DDSinSiNo.class, CODE, dto.getNotificarArrendatarios()));
-		beanUtilNotNull.copyProperty(revisionTitulo, "tipoExpediente", genericGet(DDTipoExpediente.class, CODE, dto.getTipoExpediente()));
+		beanUtilNotNull.copyProperty(revisionTitulo, "tipoExpediente", genericGet(DDTipoExpedienteAdministrativo.class, CODE, dto.getTipoExpediente()));
 		beanUtilNotNull.copyProperty(revisionTitulo, "estadoGestionEa", genericGet(DDEstadoGestion.class, CODE, dto.getEstadoGestionEa()));
 		beanUtilNotNull.copyProperty(revisionTitulo, "tipoIncidenciaRegistral", genericGet(DDTipoIncidenciaRegistral.class, CODE, dto.getTipoIncidenciaRegistral()));
 		beanUtilNotNull.copyProperty(revisionTitulo, "estadoGestionCr", genericGet(DDEstadoGestion.class, CODE, dto.getEstadoGestionCr()));
 		beanUtilNotNull.copyProperty(revisionTitulo, "tipoOcupacionLegal", genericGet(DDTipoOcupacionLegal.class, CODE, dto.getTipoOcupacionLegal()));
-		beanUtilNotNull.copyProperty(revisionTitulo, "estadoGestionIl", genericGet(DDTipoOcupacionLegal.class, CODE, dto.getEstadoGestionIl()));
-		beanUtilNotNull.copyProperty(revisionTitulo, "estadoGestionOt", genericGet(DDTipoOcupacionLegal.class, CODE, dto.getEstadoGestionOt()));
+		beanUtilNotNull.copyProperty(revisionTitulo, "estadoGestionIl", genericGet(DDEstadoGestion.class, CODE, dto.getEstadoGestionIl()));
+		beanUtilNotNull.copyProperty(revisionTitulo, "estadoGestionOt", genericGet(DDEstadoGestion.class, CODE, dto.getEstadoGestionOt()));
 		beanUtilNotNull.copyProperty(revisionTitulo, "fechaRevisionTitulo", dto.getFechaRevisionTitulo());
 		beanUtilNotNull.copyProperty(revisionTitulo, "fechaContratoAlquiler", dto.getFechaContratoAlquiler());
 		beanUtilNotNull.copyProperty(revisionTitulo, "porcentajePropiedad", dto.getPorcentajePropiedad());

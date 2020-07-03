@@ -5984,8 +5984,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	return false;
     	
     },
+
     onSaveFormularioCompletoTabAdmisionTitulo: function(btn , form){
-    	// Redirección al controlador de la vista para mantener todos los métodos ordenados, sin alterar la arquitectura del tab principal. 
+    	// Redireccion al controlador de la vista para mantener todos los mï¿½todos ordenados, sin alterar la arquitectura del tab principal. 
 		form.lookupController().saveTabData(btn, form);
+    },
+
+    onClickDescargarExcelEvolucion: function(btn) {
+
+		var me = this,
+		config = {};
+
+		config.params = {};
+		config.params.id = me.getViewModel().getData().activo.id;
+		config.method = 'POST';
+		config.url=$AC.getWebPath()+"activoadmisionevolucion/generateExcel."+$AC.getUrlPattern();
+		me.fireEvent("downloadFile", config);
     }
+
 });

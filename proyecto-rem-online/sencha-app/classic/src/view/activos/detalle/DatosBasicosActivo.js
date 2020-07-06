@@ -6,13 +6,13 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
     disableValidation: true,
     reference: 'datosbasicosactivo',
     scrollable	: 'y',
-
+    refreshAfterSave : true,
 	recordName: "activo",
 	
 	recordClass: "HreRem.model.Activo",
     
     requires: ['HreRem.model.Activo','HreRem.view.activos.detalle.HistoricoDestinoComercialActivo'],
-
+    
     initComponent: function () {
 
         var me = this;
@@ -494,6 +494,19 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						colspan: 2,
 						bind:		'{activo.trabajosVivos}',
 						readOnly	: true
+					},
+					{
+						xtype: 'comboboxfieldbase',
+						refence: 'perimetroAdmision',
+						fieldLabel: HreRem.i18n('fieldlabel.perimetro.admision'),
+						colspan: 3,
+						bind : {
+						      store : '{comboSiNoBoolean}',
+						      value : '{activo.perimetroAdmision}'
+						},
+						listeners: { 
+							  select: 'onSelectPerimetroAdmision'
+						}
 					},
 					
 		            {    
@@ -983,7 +996,11 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
     me.callParent();    	
 
     },
-    
+    afterLoad: function(){
+    	var me = this;
+    	me.lookupController().checkAdmision();
+    	
+    },
     funcionRecargar: function() {
     	var me = this; 
 		me.recargar = false;

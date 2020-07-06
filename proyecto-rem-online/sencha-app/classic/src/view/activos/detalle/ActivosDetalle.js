@@ -165,7 +165,9 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     	// Si el activo esta en agrupacion asistida, se ocultan estas dos pestanyas
     	//if(me.lookupController().getViewModel().get('activo').get('integradoEnAgrupacionAsistida')=="false") {
     	//Se comenta el IF anterior para que se pueda mostrar el check de calidad
-	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'admisionactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_ADMISION');
+    	var disabled = me.lookupController().getViewModel().get('activo.perimetroAdmision')==false;
+	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'admisionactivo', ocultarBotonesEdicion: true,disabled:disabled})}, 'TAB_ACTIVO_ADMISION');
+    	
 	    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'gestionactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_GESTION');
     	//}
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'preciosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PRECIOS');

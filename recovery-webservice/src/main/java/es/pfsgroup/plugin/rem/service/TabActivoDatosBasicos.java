@@ -880,6 +880,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));
 		
+		if(activo.getPerimetroAdmision() != null) {
+			activoDto.setPerimetroAdmision(activo.getPerimetroAdmision());
+		}
+		
 		return activoDto;
 	}
 	
@@ -1391,7 +1395,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}
 			}
 		
-		
+			if(dto.getPerimetroAdmision() != null) {
+				activo.setPerimetroAdmision(dto.getPerimetroAdmision());
+			}
 
 		} catch(JsonViewerException jve) {
 			throw jve;

@@ -6002,4 +6002,45 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		me.fireEvent("downloadFile", config);
     }
 
+	
+	checkAdmision: function(){
+		var me = this;
+    	var enPerimetroAdmision = me.getViewModel().get('activo.perimetroAdmision') == false;
+    	me.isAdmisionActivo(enPerimetroAdmision);
+    },
+    
+    onSelectPerimetroAdmision: function(combo,record){
+    	var me = this;
+    	var isPerimetroAdmision = record.get('codigo') === 'true';
+    	me.isAdmisionActivo(isPerimetroAdmision);
+    },
+    
+    isAdmisionActivo: function(enPerimetroAdmision){
+    	var me = this;
+    	var component = null;
+    	var detalle = me.getView().down('activosdetalle');
+    	var isDisabled = false;
+    	if (detalle && detalle.items && detalle.items.items){
+			var items = detalle.items.items;
+			for ( var i=0 ; i<items.length; i++){
+				var item = items[i];
+					if("admisionactivo".includes(item.xtype)){
+						component = item;
+						isDisabled = item.isDisabled();
+						break;
+				}
+    		}
+    	}
+    	me.setDisabledTabAdmision(isDisabled,enPerimetroAdmision,component);
+    	
+    },
+    	
+    setDisabledTabAdmision: function(isDisabled,enPerimetroAdmision,component){
+    	if(isDisabled && !enPerimetroAdmision ){
+			component.setDisabled(false);
+		}else if(!isDisabled && enPerimetroAdmision){
+			component.setDisabled(true);
+		}
+    }
+	
 });

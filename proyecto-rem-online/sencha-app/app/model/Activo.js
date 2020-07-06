@@ -955,6 +955,7 @@ Ext.define('HreRem.model.Activo', {
     		{
     			name: 'perimetroAdmision',
     			type: 'boolean'
+
     		}
     ],
     

@@ -275,15 +275,13 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	private Boolean pazSocial;
 	private String numActivoDivarian;
-<<<<<<< Updated upstream
 	
 	// Admision
 	private String estadoAdmisionCod;
 	private String estadoAdmisionDesc;
 	private String subestadoAdmisionCod;
 	private String subestadoAdmisionDesc;
-=======
->>>>>>> Stashed changes
+
 	private Boolean perimetroAdmision;
 
 	
@@ -2103,7 +2101,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.numActivoDivarian = numActivoDivarian;
 	}
 
-<<<<<<< Updated upstream
+
 	public String getEstadoAdmisionCod() {
 		return estadoAdmisionCod;
 	}
@@ -2136,8 +2134,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.subestadoAdmisionDesc = subestadoAdmisionDesc;
 	}
 
-=======
->>>>>>> Stashed changes
+
 	public Boolean getPerimetroAdmision() {
 		return perimetroAdmision;
 	}
@@ -2145,10 +2142,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setPerimetroAdmision(Boolean perimetroAdmision) {
 		this.perimetroAdmision = perimetroAdmision;
 	}
-<<<<<<< Updated upstream
-=======
-	
->>>>>>> Stashed changes
-	
+
 	
 }

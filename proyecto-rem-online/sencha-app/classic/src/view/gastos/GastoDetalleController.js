@@ -1753,7 +1753,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var cuentaContable = me.lookupReference('cuentaContable')
 		var partidaPresupuestaria = me.lookupReference('partidaPresupuestaria');
 		var comboSubPartida = me.lookupReference('comboboxfieldSubpartidaPresupuestaria');
-		var checkActivable = me.lookupReference('chkbxActivable');
+		var comboActivable = me.lookupReference('comboActivable');
 		
 		if(isDivarian){
 			partidaPresupuestaria.setReadOnly(!isEditableDivarian);	
@@ -1784,7 +1784,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		}
 
 		if(cartera == CONST.CARTERA['LIBERBANK']){
-		    checkActivable.setHidden(false);
+		    comboActivable.setHidden(false);
 		}
 	}
 	

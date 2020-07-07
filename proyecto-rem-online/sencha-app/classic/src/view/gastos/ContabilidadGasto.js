@@ -140,10 +140,13 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 														valueField		: 'id'												
 											        },
                                                     {
-                                                        xtype: 'checkboxfieldbase',
+                                                        xtype: 'comboboxfieldbase',
                                                         fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.activable'),
-                                                        reference: 'chkbxActivable',
-                                                        bind: '{contabilidad.checkActivable}',
+                                                        reference: 'comboActivable',
+                                                        bind: {
+                                                            store: '{comboSiNoContabilidad}',
+                                                            value: '{contabilidad.comboActivable}'
+                                                        },
                                                         hidden: true
                                                     }
 										]

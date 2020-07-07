@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -100,29 +101,6 @@ import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosRefacturados;
 import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioPago;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionHaya;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionPropietario;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoProvisionGastos;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionPropietario;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAutorizacionHaya;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencionPago;
-import es.pfsgroup.plugin.rem.model.dd.DDResultadoImpugnacionGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.provisiongastos.dao.ProvisionGastosDao;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateGastoApi;
 
@@ -1900,8 +1878,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				if (!Checks.esNulo(contabilidadGasto.getContabilizadoPor())) {
 					dto.setContabilizadoPorDescripcion(contabilidadGasto.getContabilizadoPor().getDescripcion());
 				}
-				if(!Checks.esNulo(contabilidadGasto.getCheckActivable())){
-					dto.setCheckActivable(contabilidadGasto.getCheckActivable());
+				if(!Checks.esNulo(contabilidadGasto.getActivable())){
+					dto.setComboActivable(contabilidadGasto.getActivable().getCodigo());
 				}
 			}
 
@@ -1915,6 +1893,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public boolean updateGastoContabilidad(DtoInfoContabilidadGasto dtoContabilidadGasto, Long idGasto) {
 		
 		try {
+			DDSinSiNo codSiNo = new DDSinSiNo();
+
 			GastoProveedor gasto = findOne(idGasto);
 			GastoInfoContabilidad contabilidadGasto = gasto.getGastoInfoContabilidad();
 			DtoInfoContabilidadGasto dtoIni = infoContabilidadToDtoInfoContabilidad(gasto);
@@ -1936,8 +1916,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					contabilidadGasto.setConfiguracionSubpartidasPresupuestarias(cps);
 				}
 
-				if(dtoContabilidadGasto.getCheckActivable() != null){
-					contabilidadGasto.setCheckActivable(dtoContabilidadGasto.getCheckActivable());
+				if(!Checks.esNulo(dtoContabilidadGasto.getComboActivable())) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoContabilidadGasto.getComboActivable());
+					codSiNo = (DDSinSiNo) genericDao.get(DDSinSiNo.class, filtro);
+					contabilidadGasto.setActivable(codSiNo);
 				}
 				
 				gasto.setGastoInfoContabilidad(contabilidadGasto);

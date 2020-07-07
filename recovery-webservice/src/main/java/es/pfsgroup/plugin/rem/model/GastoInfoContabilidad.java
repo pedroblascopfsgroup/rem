@@ -16,6 +16,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
@@ -87,8 +88,9 @@ public class GastoInfoContabilidad implements Serializable, Auditable {
     @JoinColumn(name = "CPS_ID")
     private ConfiguracionSubpartidasPresupuestarias configuracionSubpartidasPresupuestarias;
 
-	@Column(name = "GIC_ACTIVABLE")
-	private Boolean checkActivable;
+	@JoinColumn(name = "GIC_ACTIVABLE")
+	@ManyToOne(fetch = FetchType.LAZY)
+	private DDSinSiNo activable;
 
 	@Version   
 	private Long version;
@@ -216,11 +218,11 @@ public class GastoInfoContabilidad implements Serializable, Auditable {
 		this.configuracionSubpartidasPresupuestarias = configuracionSubpartidasPresupuestarias;
 	}
 
-	public Boolean getCheckActivable() {
-		return checkActivable;
+	public DDSinSiNo getActivable() {
+		return activable;
 	}
 
-	public void setCheckActivable(Boolean checkActivable) {
-		this.checkActivable = checkActivable;
+	public void setActivable(DDSinSiNo activable) {
+		this.activable = activable;
 	}
 }

@@ -1,9 +1,7 @@
-/**
- * This view is used to present the details of a single AgendaItem.
- */
 Ext.define('HreRem.model.SuministrosActivoModel', {
 	extend: 'HreRem.model.Base',
-
+	requires: ['HreRem.model.Activo'],
+	idProperty: 'idSuministro',
 	fields: [
 		{
 			name : 'idSuministro'
@@ -15,13 +13,28 @@ Ext.define('HreRem.model.SuministrosActivoModel', {
 			name : 'tipoSuministro'
 		},
 		{
+			name : 'tipoSuministroDescripcion'
+		},
+		{
 			name : 'subtipoSuministro'
+		},
+		{
+			name : 'subtipoSuministroDescripcion'
 		},
 		{
 			name : 'companiaSuministro'
 		},
 		{
+			name : 'companiaSuministroNombre'
+		},
+		{
+			name : 'companiaSuministroCodRem'
+		},
+		{
 			name : 'domiciliado'
+		},
+		{
+			name : 'domiciliadoDescripcion'
 		},
 		{
 			name : 'numContrato'
@@ -33,12 +46,18 @@ Ext.define('HreRem.model.SuministrosActivoModel', {
 			name : 'periodicidad'
 		},
 		{
+			name : 'periodicidadDescripcion'
+		},
+		{
 			name: 'fechaAlta',
 			type : 'date',
 			dateFormat: 'c'
 		},
 		{
 			name : 'motivoAlta'
+		},
+		{
+			name : 'motivoAltaDescripcion'
 		},
 		{
 			name: 'fechaBaja',
@@ -49,9 +68,14 @@ Ext.define('HreRem.model.SuministrosActivoModel', {
 			name: 'motivoBaja'
 		},
 		{
+			name: 'motivoBajaDescripcion'
+		},
+		{
 			name: 'validado'
+		},
+		{
+			name: 'validadoDescripcion'
 		}
-
 	],
 
 	proxy: {
@@ -62,9 +86,7 @@ Ext.define('HreRem.model.SuministrosActivoModel', {
 			create: 'activo/createSuministroActivo',
 			update: 'activo/updateSuministroActivo',
 			destroy: 'activo/deleteSuministroActivo'
-		},
-		extraParams: {tab: 'suministros'}
-	
+		}
 	}
 
 });

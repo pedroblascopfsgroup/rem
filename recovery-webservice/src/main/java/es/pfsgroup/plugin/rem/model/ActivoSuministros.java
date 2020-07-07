@@ -17,7 +17,9 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Where;
 
+import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAltaSuministro;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoBajaSuministro;
@@ -36,7 +38,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoSuministro;
 @Entity
 @Table(name = "ACT_SUM_SUMINISTROS", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class ActivoSuministros implements Serializable {
+@Where(clause = Auditoria.UNDELETED_RESTICTION)
+public class ActivoSuministros implements Serializable, Auditable {
 				
     /**
 	 * 
@@ -89,7 +92,8 @@ public class ActivoSuministros implements Serializable {
 	@Column(name = "SUM_FECHA_BAJA")
 	private Date fechaBaja;
 	
-	@Column(name = "SUM_MOTIVO_BAJA")
+	@ManyToOne
+	@JoinColumn(name = "SUM_MOTIVO_BAJA")
 	private DDMotivoBajaSuministro motivoBaja;
 	
 	@ManyToOne

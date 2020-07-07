@@ -11,7 +11,7 @@ public class DtoActivoSuministros extends DtoTabActivo {
 
 	private static final long serialVersionUID = -7429602301888781560L;
 
-	private Long idSuministro;
+	private String idSuministro;
 	private Long idActivo;
 	private Long tipoSuministro; 
 	private Long subtipoSuministro; 
@@ -26,11 +26,10 @@ public class DtoActivoSuministros extends DtoTabActivo {
 	private Long motivoBaja;
 	private Long validado;
 	
-	
-	public Long getIdSuministro() {
+	public String getIdSuministro() {
 		return idSuministro;
 	}
-	public void setIdSuministro(Long idSuministro) {
+	public void setIdSuministro(String idSuministro) {
 		this.idSuministro = idSuministro;
 	}
 	public Long getIdActivo() {
@@ -111,6 +110,5 @@ public class DtoActivoSuministros extends DtoTabActivo {
 	public void setValidado(Long validado) {
 		this.validado = validado;
 	}
-	
 	
 }

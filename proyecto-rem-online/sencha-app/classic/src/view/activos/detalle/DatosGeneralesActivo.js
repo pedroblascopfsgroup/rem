@@ -7,7 +7,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
     requires	: ['Ext.plugin.LazyItems','HreRem.ux.panel.GMapPanel', 'HreRem.view.activos.detalle.DatosBasicosActivo', 'HreRem.view.activos.detalle.DatosComunidadActivo', 
     	'HreRem.view.activos.detalle.TituloInformacionRegistralActivo', 'HreRem.view.activos.detalle.InformacionAdministrativaActivo', 'HreRem.view.activos.detalle.CargasActivo',
     	'HreRem.view.activos.detalle.ValoracionesActivo','HreRem.view.activos.detalle.SituacionPosesoriaActivo','HreRem.view.activos.detalle.InformacionComercialActivo',
-    	'HreRem.model.SuministrosActivoModel'],
+    	'HreRem.view.activos.detalle.SuministrosActivo'],
     layout: 'fit',
 	listeners: {
     	boxready: function (tabPanel) {   		
@@ -154,7 +154,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
     	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'situacionposesoriaactivo', ocultarBotonesEdicion: ocultarSituacionposesoriaactivo})}, ['TAB_ACTIVO_SITU_POSESORIA']);
     	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informacioncomercialactivo',ocultarBotonesEdicion: true})}, ['TAB_ACTIVO_INFO_COMERCIAL']);
     	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datoscomunidadactivo',ocultarBotonesEdicion: false})}, ['TAB_ACTIVO_DATOS_COMUNIDAD']); 
-    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'suministrosactivo',ocultarBotonesEdicion: true})}, ['EDITAR_TAB_ACTIVO_SUMINISTROS']);
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'suministrosactivo',ocultarBotonesEdicion: true})}, ['TAB_ACTIVO_SUMINISTROS']);
 
     	me.addPlugin({ptype: 'lazyitems', items: items});
      	me.callParent();

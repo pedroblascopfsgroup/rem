@@ -7,11 +7,8 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivo', {
 	reference: 'suministrosactivoref',
 	scrollable	: 'y',
 	layout: 'fit',
-
 	recordName: 'suministros',
-	
 	recordClass: 'HreRem.model.SuministrosActivoModel',
-	
 	requires: ['HreRem.view.common.FieldSetTable', 'HreRem.model.SuministrosActivoModel', 'HreRem.view.activos.detalle.SuministrosActivoGrid'],
 
 	initComponent: function () {

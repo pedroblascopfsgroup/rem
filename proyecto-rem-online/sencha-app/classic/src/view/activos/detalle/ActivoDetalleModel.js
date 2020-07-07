@@ -926,6 +926,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		esSupervisionGestorias: function(get){
 			
 			return $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) 
+		},
+		
+		editarCheckValidado: function(get){
+			//Desactivamos la columna de validado en función del usuario:			
+			return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMINISTRACION']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMINISTRACION']);
 		}
 	 }, 
 	 

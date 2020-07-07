@@ -6001,15 +6001,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			fechaVencTpoBonificacion.setDisabled(true);
 			fechaLiqComplementaria.setDisabled(true);
 		}
-    },
-
-    editarCheckValidado: function(editor, grid){
-		//Desactivamos la columna de validado en función del usuario:
-    	var me = this;
-		
-		me.lookupReference('suministrovalidado').setDisabled(true);
-		me.lookupReference('suministrovalidado').setDisabled( !($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMINISTRACION']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMINISTRACION'])) );
-	}
+    }
 
 
 });

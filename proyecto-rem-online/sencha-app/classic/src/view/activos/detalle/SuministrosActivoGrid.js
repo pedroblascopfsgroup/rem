@@ -237,13 +237,13 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 				editor: {
 					xtype: 'combobox',
 					bind: {
-						store: '{comboDDValidado}'
+						store: '{comboDDValidado}',
+						disabled: '{!editarCheckValidado}'
 					},
 					displayField: 'descripcion',
 					valueField: 'id',
 					allowBlank: false
-				},
-				editable: 'editarCheckValidado'
+				}
 			}
 			
 		];

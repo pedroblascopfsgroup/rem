@@ -75,7 +75,34 @@ Ext.define('HreRem.model.ActivoTributos', {
     		},
     		{
     			name: 'documentoTributoId'
-    		}
+    		},
+    		{
+    			name: 'tipoTributo'
+    		},
+    		{
+    			name: 'fechaRecepcionTributo',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name: 'fechaPagoTributo',
+				type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name: 'importePagado'
+    		},
+    		{
+    			name: 'numExpediente'
+    		},
+    		{
+    			name: 'fechaComunicacionDevolucionIngreso',
+				type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name: 'importeRecuperadoRecurso'
+    		},
     ],
     
     proxy: {

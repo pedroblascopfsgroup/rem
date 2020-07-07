@@ -2429,6 +2429,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'activo/getReqFaseVenta',
 				extraParams: {id: '{activo.id}'}
 			}
+		},
+		
+		comboTipoTributo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoTributo'}
+			},
+			autoLoad: true
 		}
      }
 });

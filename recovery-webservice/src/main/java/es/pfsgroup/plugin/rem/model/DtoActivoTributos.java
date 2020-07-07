@@ -42,6 +42,20 @@ public class DtoActivoTributos implements Serializable{
 	private Long documentoTributoId;
 	
 	private Long numTributo;
+	
+	private String tipoTributo;
+	
+	private Date fechaRecepcionTributo;
+	
+	private Date fechaPagoTributo;
+	
+	private Double importePagado;
+	
+	private Long numExpediente;
+	
+	private Date fechaComunicacionDevolucionIngreso;
+	
+	private Double importeRecuperadoRecurso;
 
 	public String getNumActivo() {
 		return numActivo;
@@ -171,10 +185,61 @@ public class DtoActivoTributos implements Serializable{
 		this.numTributo = numTributo;
 	}
 
-	
+	public String getTipoTributo() {
+		return tipoTributo;
+	}
 
-	
+	public void setTipoTributo(String tipoTributo) {
+		this.tipoTributo = tipoTributo;
+	}
 
-	
+	public Date getFechaRecepcionTributo() {
+		return fechaRecepcionTributo;
+	}
+
+	public void setFechaRecepcionTributo(Date fechaRecepcionTributo) {
+		this.fechaRecepcionTributo = fechaRecepcionTributo;
+	}
+
+	public Date getFechaPagoTributo() {
+		return fechaPagoTributo;
+	}
+
+	public void setFechaPagoTributo(Date fechaPagoTributo) {
+		this.fechaPagoTributo = fechaPagoTributo;
+	}
+
+	public Double getImportePagado() {
+		return importePagado;
+	}
+
+	public void setImportePagado(Double importePagado) {
+		this.importePagado = importePagado;
+	}
+
+	public Long getNumExpediente() {
+		return numExpediente;
+	}
+
+	public void setNumExpediente(Long numExpediente) {
+		this.numExpediente = numExpediente;
+	}
+
+	public Date getFechaComunicacionDevolucionIngreso() {
+		return fechaComunicacionDevolucionIngreso;
+	}
+
+	public void setFechaComunicacionDevolucionIngreso(Date fechaComunicacionDevolucionIngreso) {
+		this.fechaComunicacionDevolucionIngreso = fechaComunicacionDevolucionIngreso;
+	}
+
+	public Double getImporteRecuperadoRecurso() {
+		return importeRecuperadoRecurso;
+	}
+
+	public void setImporteRecuperadoRecurso(Double importeRecuperadoRecurso) {
+		this.importeRecuperadoRecurso = importeRecuperadoRecurso;
+	}
+
 	
 }

@@ -1,11 +1,11 @@
 --##########################################
 --## AUTOR= Lara Pablo
---## FECHA_CREACION=20200705
+--## FECHA_CREACION=20200707
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-10457
 --## PRODUCTO=NO
---## Finalidad: Ampliar la tabla DD_TPT_TIPO_TRIBUTO
+--## Finalidad: Ampliar la tabla ACT_TRI_TRIBUTOS
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE --
 --## VERSIONES:
@@ -54,8 +54,8 @@ DECLARE
     TYPE T_FK IS TABLE OF VARCHAR2(4000);
     TYPE T_ARRAY_FK IS TABLE OF T_FK;
     V_FK T_ARRAY_FK := T_ARRAY_FK(
-    			--NOMBRE FK 							CAMPO FK 						TABLA DESTINO FK 						CAMPO DESTINO FK
-    	T_FK(	'FK_ACT_TRI_ECO_ID',				'ECO_ID',						V_ESQUEMA||'.DD_TPT_TIPO_TRIBUTO',				'ECO_EXPEDIENTE_COMERCIAL') 
+    			--NOMBRE FK 							CAMPO FK 							TABLA DESTINO FK 							CAMPO DESTINO FK
+    	T_FK(	'FK_ACT_TRI_ECO_ID',					'ECO_ID',						V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL',				'ECO_ID') 
     );
     V_T_FK T_FK;
 

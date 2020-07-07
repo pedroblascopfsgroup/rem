@@ -110,6 +110,16 @@ public class ActivoTributos implements Serializable, Auditable {
 	@Column(name = "ACT_TRI_IMPORTE_PAGADO")
 	private Double importePagado;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ECO_ID")
+    private ExpedienteComercial expediente;
+	
+	@Column(name = "ACT_TRI_FECHA_COM_DEV_INGRESO")
+	private Date fechaComunicacionDevolucionIngreso;
+	
+	@Column(name = "ACT_TRI_IMPORTE_REC_RECURSO")
+	private Double importeRecuperadoRecurso;
+	
 	@Version   
 	private Long version;
 
@@ -288,4 +298,29 @@ public class ActivoTributos implements Serializable, Auditable {
 	public void setImportePagado(Double importePagado) {
 		this.importePagado = importePagado;
 	}
+
+	public ExpedienteComercial getExpediente() {
+		return expediente;
+	}
+
+	public void setExpediente(ExpedienteComercial expediente) {
+		this.expediente = expediente;
+	}
+
+	public Date getFechaComunicacionDevolucionIngreso() {
+		return fechaComunicacionDevolucionIngreso;
+	}
+
+	public void setFechaComunicacionDevolucionIngreso(Date fechaComunicacionDevolucionIngreso) {
+		this.fechaComunicacionDevolucionIngreso = fechaComunicacionDevolucionIngreso;
+	}
+
+	public Double getImporteRecuperadoRecurso() {
+		return importeRecuperadoRecurso;
+	}
+
+	public void setImporteRecuperadoRecurso(Double importeRecuperadoRecurso) {
+		this.importeRecuperadoRecurso = importeRecuperadoRecurso;
+	}
+
 }

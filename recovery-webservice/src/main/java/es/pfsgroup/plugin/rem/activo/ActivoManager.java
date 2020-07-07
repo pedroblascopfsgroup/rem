@@ -168,6 +168,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoRolMediador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoSolicitudTributo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTributo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
@@ -2744,7 +2745,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if(!Checks.esNulo(tributo.getNumTributo())) {
 					dtoTributo.setNumTributo(tributo.getNumTributo());
 				}
-
+				
+				if(!Checks.esNulo(tributo.getTipoTributo())) {
+					dtoTributo.setTipoTributo(tributo.getTipoTributo().getCodigo());
+				}
+				dtoTributo.setFechaRecepcionTributo(tributo.getFechaRecepcionTributo());
+				dtoTributo.setFechaPagoTributo(tributo.getFechaPagoTributo());
+				dtoTributo.setImportePagado(tributo.getImportePagado());
+				
+				if(tributo.getExpediente() != null) {
+					dtoTributo.setNumExpediente(tributo.getExpediente().getNumExpediente());
+				}
+				dtoTributo.setFechaComunicacionDevolucionIngreso(tributo.getFechaComunicacionDevolucionIngreso());
+				dtoTributo.setImporteRecuperadoRecurso(tributo.getImporteRecuperadoRecurso());
+				
 				tributos.add(dtoTributo);
 			}
 		}
@@ -5824,6 +5838,37 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					tributo.setNumTributo(numMaxTributo + 1);
 				} else {
 					tributo.setNumTributo(dto.getNumTributo());
+				}
+				
+				if(!Checks.esNulo(dto.getTipoTributo())) {
+					DDTipoTributo tipoTributo = genericDao.get(DDTipoTributo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoTributo()));
+					tributo.setTipoTributo(tipoTributo);
+				}
+
+				if(dto.getFechaRecepcionTributo() != null) {
+					tributo.setFechaRecepcionTributo(dto.getFechaRecepcionTributo());
+				}
+				if(dto.getFechaPagoTributo() != null) {
+					tributo.setFechaPagoTributo(dto.getFechaPagoTributo());
+				}
+				if(dto.getImportePagado() != null) {
+					tributo.setImportePagado(dto.getImportePagado());
+				}
+				if(!Checks.esNulo(dto.getNumExpediente())){
+					Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "numExpediente", dto.getNumExpediente());
+					ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtroExpediente);
+					
+					if(expediente != null){
+						tributo.setExpediente(expediente);
+					}
+				}
+				
+				if(!Checks.esNulo(dto.getFechaComunicacionDevolucionIngreso())){
+					tributo.setFechaComunicacionDevolucionIngreso(dto.getFechaComunicacionDevolucionIngreso());
+				}
+				
+				if(!Checks.esNulo(dto.getImporteRecuperadoRecurso())){
+					tributo.setImporteRecuperadoRecurso(dto.getImporteRecuperadoRecurso());
 				}
 								
 				if(!Checks.esNulo(tributo.getId())){

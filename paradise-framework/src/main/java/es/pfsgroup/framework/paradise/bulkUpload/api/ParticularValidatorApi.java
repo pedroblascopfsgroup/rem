@@ -1165,4 +1165,16 @@ public interface ParticularValidatorApi {
 	
 	Boolean perteneceADiccionarioEquipoGestion(String codEquipoGestion);
 
+	Boolean existeTipoSuministroByCod(String codigo);
+
+	Boolean existeSubtipoSuministroByCod(String codigo);
+
+	Boolean existePeriodicidadByCod(String codigo);
+
+	Boolean existeMotivoAltaSuministroByCod(String codigo);
+
+	Boolean existeMotivoBajaSuministroByCod(String codigo);
+
+	Boolean esMismoTipoGestorActivo(String codigo, String numActivo);
+
 }

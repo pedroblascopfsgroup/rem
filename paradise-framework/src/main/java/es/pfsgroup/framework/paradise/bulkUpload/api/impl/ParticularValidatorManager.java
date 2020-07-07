@@ -4737,4 +4737,92 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+    public Boolean existeTipoSuministroByCod(String codigo) {
+            if(Checks.esNulo(codigo)) {
+                    return false;
+            }
+
+            String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+                            + "              FROM DD_TSU_TIPO_SUMINISTRO WHERE"
+                            + "              DD_TSU_CODIGO = '" + codigo + "'"
+                            + "      AND BORRADO = 0"
+                            );
+            return !"0".equals(resultado);
+    }
+    
+	@Override
+    public Boolean existeSubtipoSuministroByCod(String codigo) {
+        if(Checks.esNulo(codigo)) {
+                return false;
+        }
+
+        String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+                        + "              FROM DD_SSU_SUBTIPO_SUMINISTRO WHERE"
+                        + "              DD_SSU_CODIGO = '" + codigo + "'"
+                        + "      AND BORRADO = 0"
+                        );
+        return !"0".equals(resultado);
+    }
+    
+	@Override
+    public Boolean existePeriodicidadByCod(String codigo) {
+        if(Checks.esNulo(codigo)) {
+                return false;
+        }
+
+        String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+                        + "              FROM DD_PRD_PERIODICIDAD WHERE"
+                        + "              DD_PRD_CODIGO = '" + codigo + "'"
+                        + "      AND BORRADO = 0"
+                        );
+        return !"0".equals(resultado);
+    }
+    
+	@Override
+    public Boolean existeMotivoAltaSuministroByCod(String codigo) {
+        if(Checks.esNulo(codigo)) {
+                return false;
+        }
+
+        String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+                        + "              FROM DD_MAS_MOTIVO_ALTA_SUM WHERE"
+                        + "              DD_MAS_CODIGO = '" + codigo + "'"
+                        + "      AND BORRADO = 0"
+                        );
+        return !"0".equals(resultado);
+    }
+    
+	@Override
+    public Boolean existeMotivoBajaSuministroByCod(String codigo) {
+        if(Checks.esNulo(codigo)) {
+                return false;
+        }
+
+        String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+                        + "              FROM DD_MBS_MOTIVO_BAJA_SUM WHERE"
+                        + "              DD_MBS_CODIGO = '" + codigo + "'"
+                        + "      AND BORRADO = 0"
+                        );
+        return !"0".equals(resultado);
+    }
+	
+	@Override
+    public Boolean esMismoTipoGestorActivo(String codigo, String numActivo) {
+		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo) || Checks.esNulo(codigo)) {
+			return false;
+		}
+
+        String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+                        + "              FROM gah_gestor_activo_historico gah"
+                        + "              join act_activo act on act.act_id = gah.act_id"
+                        + "              join geh_gestor_entidad_hist geh on gah.geh_id = geh.geh_id and geh.borrado = 0"
+                        + "              left join REMMASTER.dd_tge_tipo_gestor tge on tge.dd_tge_id = geh.dd_tge_id and tge.borrado = 0"
+                        + "              where geh.geh_fecha_hasta is null "
+                        + "              and tge.dd_tge_codigo like '" + codigo + "'"
+                        + "              AND act.act_num_activo = " + numActivo +""
+                        );
+        return !"0".equals(resultado);
+    }
 }

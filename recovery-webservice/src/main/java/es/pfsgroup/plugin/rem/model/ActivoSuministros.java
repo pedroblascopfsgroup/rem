@@ -18,6 +18,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAltaSuministro;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoBajaSuministro;
+import es.pfsgroup.plugin.rem.model.dd.DDPeriodicidad;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoSuministro;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
@@ -74,7 +75,7 @@ public class ActivoSuministros implements Serializable {
 	
 	@ManyToOne
 	@JoinColumn(name = "SUM_PERIODICIDAD")
-	private DDTipoPeriocidad periodicidad;
+	private DDPeriodicidad periodicidad;
 	
 	@Column(name = "SUM_FECHA_ALTA")
 	private Date fechaAlta;
@@ -157,11 +158,11 @@ public class ActivoSuministros implements Serializable {
 		this.numCups = numCups;
 	}
 
-	public DDTipoPeriocidad getPeriodicidad() {
+	public DDPeriodicidad getPeriodicidad() {
 		return periodicidad;
 	}
 
-	public void setPeriodicidad(DDTipoPeriocidad periodicidad) {
+	public void setPeriodicidad(DDPeriodicidad periodicidad) {
 		this.periodicidad = periodicidad;
 	}
 

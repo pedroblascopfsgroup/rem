@@ -32,6 +32,7 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	private Date fechaContabilizacion;
 	private String contabilizadoPorDescripcion;
 	private Long idSubpartidaPresupuestaria;
+	private Boolean checkActivable;
 
 	public Long getEjercicioImputaGasto() {
 		return ejercicioImputaGasto;
@@ -102,6 +103,14 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	}
 	public void setIdSubpartidaPresupuestaria(Long idSubpartidaPresupuestaria) {
 		this.idSubpartidaPresupuestaria = idSubpartidaPresupuestaria;
+	}
+
+	public Boolean getCheckActivable() {
+		return checkActivable;
+	}
+
+	public void setCheckActivable(Boolean checkActivable) {
+		this.checkActivable = checkActivable;
 	}
    	
 }

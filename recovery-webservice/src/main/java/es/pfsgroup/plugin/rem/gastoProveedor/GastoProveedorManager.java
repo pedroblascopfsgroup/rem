@@ -1900,6 +1900,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				if (!Checks.esNulo(contabilidadGasto.getContabilizadoPor())) {
 					dto.setContabilizadoPorDescripcion(contabilidadGasto.getContabilizadoPor().getDescripcion());
 				}
+				if(!Checks.esNulo(contabilidadGasto.getCheckActivable())){
+					dto.setCheckActivable(contabilidadGasto.getCheckActivable());
+				}
 			}
 
 		}
@@ -1931,6 +1934,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					ConfiguracionSubpartidasPresupuestarias cps = genericDao.get(ConfiguracionSubpartidasPresupuestarias.class, filtroSubpartidaPresupuestaria);
 					
 					contabilidadGasto.setConfiguracionSubpartidasPresupuestarias(cps);
+				}
+
+				if(dtoContabilidadGasto.getCheckActivable() != null){
+					contabilidadGasto.setCheckActivable(dtoContabilidadGasto.getCheckActivable());
 				}
 				
 				gasto.setGastoInfoContabilidad(contabilidadGasto);

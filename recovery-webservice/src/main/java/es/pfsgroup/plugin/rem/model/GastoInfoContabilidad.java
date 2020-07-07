@@ -86,7 +86,10 @@ public class GastoInfoContabilidad implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CPS_ID")
     private ConfiguracionSubpartidasPresupuestarias configuracionSubpartidasPresupuestarias;
-    
+
+	@Column(name = "GIC_ACTIVABLE")
+	private Boolean checkActivable;
+
 	@Version   
 	private Long version;
 
@@ -212,11 +215,12 @@ public class GastoInfoContabilidad implements Serializable, Auditable {
 			ConfiguracionSubpartidasPresupuestarias configuracionSubpartidasPresupuestarias) {
 		this.configuracionSubpartidasPresupuestarias = configuracionSubpartidasPresupuestarias;
 	}
-    
 
+	public Boolean getCheckActivable() {
+		return checkActivable;
+	}
 
-
-     
-    
-   
+	public void setCheckActivable(Boolean checkActivable) {
+		this.checkActivable = checkActivable;
+	}
 }

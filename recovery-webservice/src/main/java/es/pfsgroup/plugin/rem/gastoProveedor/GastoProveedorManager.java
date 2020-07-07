@@ -533,9 +533,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 			// añadimos los activos de los hijos al padre, solo sareb
 			// añadimos los activos del hijo al padre, solo sareb
-			if (gastoProveedor.getPropietario() != null && gastoProveedor.getPropietario().getCartera() != null
-					&& DDCartera.CODIGO_CARTERA_SAREB
-							.equals(gastoProveedor.getPropietario().getCartera().getCodigo())) {
+//			if (gastoProveedor.getPropietario() != null && gastoProveedor.getPropietario().getCartera() != null
+//					&& DDCartera.CODIGO_CARTERA_SAREB
+//							.equals(gastoProveedor.getPropietario().getCartera().getCodigo())) {
 				for (VBusquedaGastoActivo vGastoActivo : listaActivos) {
 					this.createGastoActivo(gastoProveedor.getId(), vGastoActivo.getNumActivo(), null);
 				}
@@ -543,7 +543,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					gastoProveedor.getGastoDetalleEconomico().setImportePrincipalSujeto(importeGastosRefacturables);
 					genericDao.save(GastoProveedor.class, gastoProveedor);
 				}
-			}
+//			}
 		}
 		
 		return gastoProveedor;

@@ -6000,7 +6000,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		config.method = 'POST';
 		config.url=$AC.getWebPath()+"activoadmisionevolucion/generateExcel."+$AC.getUrlPattern();
 		me.fireEvent("downloadFile", config);
-    }
+    },
 
 	
 	checkAdmision: function(){

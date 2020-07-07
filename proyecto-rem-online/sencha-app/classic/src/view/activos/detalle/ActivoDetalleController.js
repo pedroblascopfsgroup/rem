@@ -7,7 +7,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion','HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 
     		'HreRem.view.expedientes.ExpedienteDetalleController', 'HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', 
     		'HreRem.view.activos.detalle.InformeComercialActivo','HreRem.view.activos.detalle.AdministracionActivo',
-    		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias','HreRem.view.activos.detalle.PlusvaliaActivo', 'HreRem.model.ComercialActivoModel'],
+    		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias','HreRem.view.activos.detalle.PlusvaliaActivo', 'HreRem.model.ComercialActivoModel', 
+    		'HreRem.view.activos.detalle.SuministrosActivo'],
 
     control: {
          'documentosactivosimple gridBase': {
@@ -6000,6 +6001,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			fechaVencTpoBonificacion.setDisabled(true);
 			fechaLiqComplementaria.setDisabled(true);
 		}
-    }
-	
+    },
+
+    editarCheckValidado: function(editor, grid){
+		//Desactivamos la columna de validado en función del usuario:
+    	var me = this;
+		
+		me.lookupReference('suministrovalidado').setDisabled(true);
+		me.lookupReference('suministrovalidado').setDisabled( !($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMINISTRACION']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMINISTRACION'])) );
+	}
+
+
 });

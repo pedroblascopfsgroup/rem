@@ -21,7 +21,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de acción de gastos
+ * Modelo que gestiona el diccionario de Motivo de Alta de Suministro
  */
 @Entity
 @Table(name = "DD_MAS_MOTIVO_ALTA_SUM", schema = "${entity.schema}")
@@ -29,16 +29,19 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDMotivoAltaSuministro implements Auditable, Dictionary {
 
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+	
+	public static final String CODIGO_MAS_NO_EXISTE_COM_CONST = "NO";
+	public static final String CODIGO_MAS_SEGURIDAD= "SEG";
+	public static final String CODIGO_MAS_MANTENIMIENTO= "MAN";
+	public static final String CODIGO_MAS_PISO_PILOTO= "PPI";
+	public static final String CODIGO_MAS_VIGILANCIA= "SUR";
+	public static final String CODIGO_MAS_OTROS= "OTR";
 
 	@Id
 	@Column(name = "DD_MAS_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDMotivoAltaSuministroGenerator")
-	@SequenceGenerator(name = "DDMotivoAltaSuministroGenerator", sequenceName = "S_DD_MAS_MOTIVO_ALTA_SUM_")
+	@SequenceGenerator(name = "DDMotivoAltaSuministroGenerator", sequenceName = "S_DD_MAS_MOTIVO_ALTA_SUM")
 	private Long id;
 	    
 	@Column(name = "DD_MAS_CODIGO")   
@@ -49,13 +52,6 @@ public class DDMotivoAltaSuministro implements Auditable, Dictionary {
 	    
 	@Column(name = "DD_MAS_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
-	
-	public static final String CODIGO_MAS_NO_EXISTE_COM_CONST = "NO";
-	public static final String CODIGO_MAS_SEGURIDAD= "SEG";
-	public static final String CODIGO_MAS_MANTENIMIENTO= "MAN";
-	public static final String CODIGO_MAS_PISO_PILOTO= "PPI";
-	public static final String CODIGO_MAS_VIGILANCIA= "SUR";
-	public static final String CODIGO_MAS_OTROS= "OTR";
 	
 	@Version   
 	private Long version;

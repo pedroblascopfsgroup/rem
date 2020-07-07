@@ -102,7 +102,7 @@ Ext.define('HreRem.model.ActivoTributos', {
     		},
     		{
     			name: 'importeRecuperadoRecurso'
-    		},
+    		}
     ],
     
     proxy: {

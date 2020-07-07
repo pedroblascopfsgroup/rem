@@ -16,6 +16,7 @@ import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoSuministros;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
@@ -346,4 +347,10 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	List<HistoricoPeticionesPrecios> getHistoricoSolicitudesPrecios(Long idActivo);
 
 	List<HistoricoRequisitosFaseVenta> getReqFaseVenta(Long idActivo);
+	
+	/*
+	 * Devuelve los objetos que se muestran en el grid de la pestaña Suministros del Activo
+	 */
+	public List<ActivoSuministros> getSuministrosByIdActivo(Long idActivo);
+
 }

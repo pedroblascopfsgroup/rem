@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,16 +13,19 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Where;
 
+import es.capgemini.pfs.auditoria.Auditable;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAltaSuministro;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoBajaSuministro;
 import es.pfsgroup.plugin.rem.model.dd.DDPeriodicidad;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoSuministro;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoSuministro;
 
 
@@ -34,7 +38,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoSuministro;
 @Entity
 @Table(name = "ACT_SUM_SUMINISTROS", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class ActivoSuministros implements Serializable {
+@Where(clause = Auditoria.UNDELETED_RESTICTION)
+public class ActivoSuministros implements Serializable, Auditable {
 				
     /**
 	 * 
@@ -87,12 +92,20 @@ public class ActivoSuministros implements Serializable {
 	@Column(name = "SUM_FECHA_BAJA")
 	private Date fechaBaja;
 	
-	@Column(name = "SUM_MOTIVO_BAJA")
+	@ManyToOne
+	@JoinColumn(name = "SUM_MOTIVO_BAJA")
 	private DDMotivoBajaSuministro motivoBaja;
 	
 	@ManyToOne
 	@JoinColumn(name = "SUM_VALIDADO")
 	private DDSinSiNo validado;
+	
+	@Version
+	private Long version;
+
+	@Embedded
+	private Auditoria auditoria;
+	
 
 	public Long getId() {
 		return id;
@@ -204,6 +217,22 @@ public class ActivoSuministros implements Serializable {
 
 	public void setValidado(DDSinSiNo validado) {
 		this.validado = validado;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
+	}
+
+	public Auditoria getAuditoria() {
+		return auditoria;
+	}
+
+	public void setAuditoria(Auditoria auditoria) {
+		this.auditoria = auditoria;
 	}
 	
 

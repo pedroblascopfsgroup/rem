@@ -42,6 +42,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.DtoActivoSuministros;
 import es.pfsgroup.plugin.rem.model.DtoActivoTributos;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -1326,4 +1327,12 @@ public interface ActivoApi {
 	Boolean createReqFaseVenta(ReqFaseVentaDto reqFaseVentaDto) throws ParseException;
 
 	Boolean deleteReqFaseVenta(ReqFaseVentaDto reqFaseVentaDto) throws ParseException;
+	
+	/*
+	 * Métodos que gestionan los datos de la pestaña Suministros de un Activo
+	 */
+	List<DtoActivoSuministros> getSuministrosActivo(Long idActivo);
+	Boolean createSuministroActivo(DtoActivoSuministros dtoActivoSuministros) throws ParseException;
+	Boolean updateSuministroActivo(DtoActivoSuministros dtoActivoSuministros) throws ParseException;
+	Boolean deleteSuministroActivo(DtoActivoSuministros dtoActivoSuministros) throws ParseException;
 }

@@ -50,6 +50,7 @@ import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoSuministros;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
@@ -1857,5 +1858,11 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	public List<HistoricoRequisitosFaseVenta> getReqFaseVenta(Long idActivo) {
 		Order order = new Order(OrderType.DESC,"auditoria.fechaCrear");
 		return genericDao.getListOrdered(HistoricoRequisitosFaseVenta.class, order, genericDao.createFilter(FilterType.EQUALS, "activoInfAdministrativa.activo.id", idActivo));
+	}
+
+	@Override
+	public List<ActivoSuministros> getSuministrosByIdActivo(Long idActivo) {
+		Order order = new Order(OrderType.DESC,"auditoria.fechaCrear");
+		return genericDao.getListOrdered(ActivoSuministros.class, order, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo));
 	}
 }

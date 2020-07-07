@@ -21,7 +21,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de acción de gastos
+ * Modelo que gestiona el diccionario de Tipo de Suministros
  */
 @Entity
 @Table(name = "DD_TSU_TIPO_SUMINISTRO", schema = "${entity.schema}")
@@ -29,16 +29,17 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDTipoSuministro implements Auditable, Dictionary {
 
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-
+	
+	public static final String CODIGO_TSU_AGUA = "AGU";
+	public static final String CODIGO_TSU_LUZ= "LUZ";
+	public static final String CODIGO_TSU_GAS = "GAS";
+	public static final String CODIGO_TSU_TELEFONO = "TEL";
+	
 	@Id
 	@Column(name = "DD_TSU_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoSuministroGenerator")
-	@SequenceGenerator(name = "DDTipoSuministroGenerator", sequenceName = "S_DD_TSU_TIPO_SUMINISTRO_")
+	@SequenceGenerator(name = "DDTipoSuministroGenerator", sequenceName = "S_DD_TSU_TIPO_SUMINISTRO")
 	private Long id;
 	    
 	@Column(name = "DD_TSU_CODIGO")   
@@ -49,11 +50,6 @@ public class DDTipoSuministro implements Auditable, Dictionary {
 	    
 	@Column(name = "DD_TSU_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
-	
-	public static final String CODIGO_TSU_AGUA = "AGU";
-	public static final String CODIGO_TSU_LUZ= "LUZ";
-	public static final String CODIGO_TSU_GAS = "GAS";
-	public static final String CODIGO_TSU_TELEFONO = "TEL";
 	    
 	@Version   
 	private Long version;

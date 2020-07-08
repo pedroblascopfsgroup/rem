@@ -7127,8 +7127,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				peticion.setMotivoAlta(genericDao.get(DDMotivoAltaSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getMotivoAlta())));
 			}
 			if(!Checks.esNulo(dtoActivoSuministros.getFechaBaja())) {
-				SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-				Date fecha = formato.parse(dtoActivoSuministros.getFechaBaja());
+				SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
+				Date fecha = formato.parse(dtoActivoSuministros.getFechaBaja().substring(0, 10));
 				peticion.setFechaBaja(fecha);
 			}
 			if(!Checks.esNulo(dtoActivoSuministros.getMotivoBaja())) {
@@ -7187,8 +7187,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						peticion.setMotivoAlta(genericDao.get(DDMotivoAltaSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getMotivoAlta())));
 					}
 					if(!Checks.esNulo(dtoActivoSuministros.getFechaBaja())) {
-						SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-						Date fecha = formato.parse(dtoActivoSuministros.getFechaBaja());
+						SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
+						Date fecha = formato.parse(dtoActivoSuministros.getFechaBaja().substring(0, 10));
 						peticion.setFechaBaja(fecha);
 					}
 					if(!Checks.esNulo(dtoActivoSuministros.getMotivoBaja())) {

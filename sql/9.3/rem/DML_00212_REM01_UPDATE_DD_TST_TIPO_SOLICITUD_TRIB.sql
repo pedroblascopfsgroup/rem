@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo
---## FECHA_CREACION=20200703
+--## FECHA_CREACION=20200708
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-10457
@@ -40,7 +40,7 @@ BEGIN
 
 		EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
 		
-		IF V_COUNT = 1 THEN
+		IF V_COUNT > 0 THEN
 
 	        V_MSQL :=   'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' 
 	                    SET DD_'||V_CHARS||'_DESCRIPCION = ''Multa/Sanción'',

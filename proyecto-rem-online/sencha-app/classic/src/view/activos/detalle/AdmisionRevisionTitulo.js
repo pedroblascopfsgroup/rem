@@ -101,10 +101,6 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 					value : '{admisionRevisionTitulo.situacionInicialCargas}'
 				}
 			}, {
-				xtype : 'textfieldbase',
-				fieldLabel : HreRem
-						.i18n('fieldlabel.admision.revisionTitulo.situacionConstructivaRegistral')
-			}, {
 				xtype : 'numberfieldbase',
 				fieldLabel : HreRem
 						.i18n('fieldlabel.admision.revisionTitulo.porcentajePropiedad'),
@@ -112,7 +108,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 					value : '{admisionRevisionTitulo.porcentajePropiedad}'
 				}
 			}, {
-				xtype : 'comboboxfieldbase',
+				xtype : 'comboboxfieldbase', 
 				fieldLabel : HreRem
 						.i18n('fieldlabel.admision.revisionTitulo.tipoDeTitularidad'),
 				bind : {
@@ -336,12 +332,12 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 			}]
 
 		}, {
-			xtype : 'comboboxfieldbase',
+			xtype : 'fieldsettable',
 			defaultType : 'textfieldbase',
 			title : HreRem
 					.i18n('title.admision.revisionTitulo.contingenciaRegistral'),
 			items : [{
-				xtype : 'textfieldbase',
+				xtype : 'comboboxfieldbase',
 				fieldLabel : HreRem
 						.i18n('fieldlabel.admision.revisionTitulo.tipoIncidenciaRegistral'),
 				bind : {

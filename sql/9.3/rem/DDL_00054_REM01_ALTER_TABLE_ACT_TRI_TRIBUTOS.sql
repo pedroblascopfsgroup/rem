@@ -1,6 +1,6 @@
 --##########################################
 --## AUTOR= Lara Pablo
---## FECHA_CREACION=20200705
+--## FECHA_CREACION=20200708
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-10457
@@ -44,10 +44,13 @@ DECLARE
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO						TIPO CAMPO					DESCRIPCION
-		T_ALTER(  'ECO_ID',								'NUMBER(16)',			'Expediente'	), 
-    	T_ALTER(  'ACT_TRI_FECHA_COM_DEV_INGRESO',		'DATE',					'Fecha de comunicacion devolucion de ingreso'	), 
-    	T_ALTER(  'ACT_TRI_IMPORTE_REC_RECURSO',		'NUMBER(16,2)',			'Importe recuperado recurso'	)
-		);
+		
+		T_ALTER(  'DD_TPT_ID',							'NUMBER(16)',			'Tipo de tributo'	), 
+    	T_ALTER(  'ACT_TRI_FECHA_RECEPCION_TRIBUTO',	'DATE',					'Fecha de recepción de tributo.'), 
+    	T_ALTER(  'ACT_TRI_FECHA_PAGO_TRIBUTO',			'DATE',					'Fecha de pago de tributo'	), 
+    	T_ALTER(  'ACT_TRI_IMPORTE_PAGADO',				'NUMBER(16,2)',			'Importe de pago de tributo')
+    );	
+    
     V_T_ALTER T_ALTER;
     
 	/* -- ARRAY CON NUEVAS FOREIGN KEYS */
@@ -55,7 +58,7 @@ DECLARE
     TYPE T_ARRAY_FK IS TABLE OF T_FK;
     V_FK T_ARRAY_FK := T_ARRAY_FK(
     			--NOMBRE FK 							CAMPO FK 						TABLA DESTINO FK 						CAMPO DESTINO FK
-    	T_FK(	'FK_ACT_TRI_ECO_ID',				'ECO_ID',						V_ESQUEMA||'.DD_TPT_TIPO_TRIBUTO',				'ECO_EXPEDIENTE_COMERCIAL') 
+    	T_FK(	'FK_ACT_TRI_DD_TPT_ID',				'DD_TPT_ID',					V_ESQUEMA||'.DD_TPT_TIPO_TRIBUTO',				'DD_TPT_ID') 
     );
     V_T_FK T_FK;
 

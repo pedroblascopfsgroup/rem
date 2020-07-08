@@ -1,6 +1,6 @@
 --##########################################
 --## AUTOR= Lara Pablo
---## FECHA_CREACION=20200707
+--## FECHA_CREACION=20200708
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-10457

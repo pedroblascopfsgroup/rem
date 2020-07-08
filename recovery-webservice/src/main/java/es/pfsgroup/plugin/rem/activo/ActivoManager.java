@@ -7067,7 +7067,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					dto.setMotivoAlta(motivoAlta.getId());
 				}
 				if(!Checks.esNulo(suministro.getFechaBaja())) {
-					dto.setFechaBaja(suministro.getFechaBaja());
+					dto.setFechaBaja(suministro.getFechaBaja().toString());
 				}
 				if(!Checks.esNulo(suministro.getMotivoBaja())) {
 					DDMotivoBajaSuministro motivoBaja = genericDao.get(DDMotivoBajaSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", suministro.getMotivoBaja().getId()));
@@ -7127,7 +7127,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				peticion.setMotivoAlta(genericDao.get(DDMotivoAltaSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getMotivoAlta())));
 			}
 			if(!Checks.esNulo(dtoActivoSuministros.getFechaBaja())) {
-				peticion.setFechaBaja(dtoActivoSuministros.getFechaBaja());
+				SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+				Date fecha = formato.parse(dtoActivoSuministros.getFechaBaja());
+				peticion.setFechaBaja(fecha);
 			}
 			if(!Checks.esNulo(dtoActivoSuministros.getMotivoBaja())) {
 				peticion.setMotivoBaja(genericDao.get(DDMotivoBajaSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getMotivoBaja())));
@@ -7185,7 +7187,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						peticion.setMotivoAlta(genericDao.get(DDMotivoAltaSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getMotivoAlta())));
 					}
 					if(!Checks.esNulo(dtoActivoSuministros.getFechaBaja())) {
-						peticion.setFechaBaja(dtoActivoSuministros.getFechaBaja());
+						SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+						Date fecha = formato.parse(dtoActivoSuministros.getFechaBaja());
+						peticion.setFechaBaja(fecha);
 					}
 					if(!Checks.esNulo(dtoActivoSuministros.getMotivoBaja())) {
 						peticion.setMotivoBaja(genericDao.get(DDMotivoBajaSuministro.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoActivoSuministros.getMotivoBaja())));

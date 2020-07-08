@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 	extend: 'Ext.container.Container',
 	xtype: 'cabeceraactivo',
-	requires: ['HreRem.view.common.ToolFieldSet', 'HreRem.ux.button.BotonFavorito'],
+	requires: ['HreRem.view.common.ToolFieldSet', 'HreRem.ux.button.BotonFavorito', 'HreRem.view.activos.detalle.CrearEstadoAdmision'],
 	layout: 'fit',
 	initComponent: function () {
 

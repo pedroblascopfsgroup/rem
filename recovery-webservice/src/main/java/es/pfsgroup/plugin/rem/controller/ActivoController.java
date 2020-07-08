@@ -3439,4 +3439,10 @@ public class ActivoController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView crearEstadoAdmision(String activoId, String codEstadoAdmision, String codSubestadoAdmision, String observaciones){
+		
+		return createModelAndViewJson(new ModelMap("data", activoApi.crearEstadoAdmision(activoId, codEstadoAdmision, codSubestadoAdmision, observaciones)));	
+	}
 }

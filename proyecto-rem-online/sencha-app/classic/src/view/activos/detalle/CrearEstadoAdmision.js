@@ -2,8 +2,8 @@ Ext.define('HreRem.view.activos.detalle.CrearEstadoAdmision', {
     extend		: 'HreRem.view.common.WindowBase',
     xtype		: 'crearestadoadmisionwindow',
     layout	: 'fit',
-    width	: Ext.Element.getViewportWidth() /1.2,    
-    height	: Ext.Element.getViewportHeight() > 700 ? 700 : Ext.Element.getViewportHeight() - 50,
+    width	: 500,    
+    height	: 400,
 	reference: 'crearestadoadmisionwindowref',
     controller: 'activodetalle',
     viewModel: {
@@ -15,6 +15,8 @@ Ext.define('HreRem.view.activos.detalle.CrearEstadoAdmision', {
     idActivo: null,
     
     codCartera: null,
+    codEstadoAdmision: null,
+    codSubestadoAdmision: null,
     
     
 	listeners: {
@@ -59,7 +61,9 @@ Ext.define('HreRem.view.activos.detalle.CrearEstadoAdmision', {
 					    recordName: "activo",
 						
 						recordClass: "HreRem.model.Activo",
-					    
+						defaults: {
+									padding: 10
+								},
     					items: [
     						{ 
 					        	xtype: 'comboboxfieldbase',
@@ -70,7 +74,7 @@ Ext.define('HreRem.view.activos.detalle.CrearEstadoAdmision', {
 								colspan: 1,
 					        	bind: {
 				            		store: '{comboEstadoAdmision}',
-				            		value: '{activo.estadoAdmisionCodigo}'
+				            		value: me.codEstadoAdmision
 				            	}
 					        },
 					        { 
@@ -82,7 +86,7 @@ Ext.define('HreRem.view.activos.detalle.CrearEstadoAdmision', {
 								colspan: 1,
 					        	bind: {
 				            		store: '{comboSubestadoAdmision}',
-				            		value: '{activo.subestadoAdmisionCodigo}'
+				            		value: me.codSubestadoAdmision
 				            	}
 					        },
 					        { 
@@ -96,10 +100,12 @@ Ext.define('HreRem.view.activos.detalle.CrearEstadoAdmision', {
 				            		value: '{activo.estadoAdmisionCodigoNuevo}'
 				            	},
 	    						listeners: {
-				                	select: 'onChangeChainedCombo'
+				                	select: 'setSubestadoAdmisionAllowBlank'
+				                	
 				            	},
 				            	chainedStore: 'comboSubestadoAdmisionNuevoFiltrado',
-								chainedReference: 'subestadoAdmisionNuevo'
+								chainedReference: 'subestadoAdmisionNuevo',
+								allowBlank: false
 					        },
 					        { 
 					        	xtype : 'comboboxfieldbase',
@@ -107,15 +113,34 @@ Ext.define('HreRem.view.activos.detalle.CrearEstadoAdmision', {
 								reference: 'subestadoAdmisionNuevo',
 								   bind : {
 								     store : '{comboSubestadoAdmisionNuevoFiltrado}',
-								     value: '{activo.subestadoAdmisionCodigoNuevo}',
-								     disabled: false//'{!activo.estadoAdmisionCodigoNuevo}'
+								     value: '{activo.subestadoAdmisionCodigoNuevo}'//,
 								   }
-							   
+
+
 							}
+							,{
+			                	xtype: 'textareafieldbase',
+			                	fieldLabel: HreRem.i18n('fieldlabel.estado.admision.observaciones'),
+			                	name: 'observacionesAdmision',
+			                	reference: 'observacionesEstadoAdmisionNuevo',
+			                	bind: {
+			                		value: '{activo.observacionesAdmision}'
+			                	},
+			                	width:'100%',
+			                	colspan: 1,
+			                	maxLength: 256
+        	                }
+					        
 					]
     			}
     	]
+
+
+    	
+    	
+    	
     	me.callParent();
+    	
     },
     
     resetWindow: function() {

@@ -476,117 +476,72 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     onClickEstadoAdmision: function (btn) {
     	//Por programar
-    	var me = this;
-    	var idActivo = me.getViewModel().get("activo.id");
-    	var codSubcartera = me.getViewModel().get("activo.subcarteraCodigo");
-    	var codCartera = me.getViewModel().get("activo.entidadPropietariaCodigo");
-    	me.getView().fireEvent('openModalWindow',"HreRem.view.activos.detalle.CrearEstadoAdmision",{idActivo: idActivo,codCartera:  codCartera});
+        var me = this;
+        var idActivo = me.getViewModel().get("activo.id");
+        var codSubcartera = me.getViewModel().get("activo.subcarteraCodigo");
+        var codCartera = me.getViewModel().get("activo.entidadPropietariaCodigo");
+        var codEstadoAdmision = me.getViewModel().get("activo.estadoAdmisionCodigo");
+        var codSubestadoAdmision = me.getViewModel().get("activo.subestadoAdmisionCodigo");
+        
+        
+        me.getView().fireEvent('openModalWindow', "HreRem.view.activos.detalle.CrearEstadoAdmision", {
+            idActivo: idActivo,
+            codCartera: codCartera,
+            codEstadoAdmision: codEstadoAdmision,
+            codSubestadoAdmision: codSubestadoAdmision
+        });
+        
     },
+		
+	setSubestadoAdmisionAllowBlank: function (btn){
+		
+		var me = this;
+		
+		btn.lookupController().onChangeChainedCombo(btn);
+		var comboSubestadoAdmision = me.lookupReference('subestadoAdmisionNuevo');
+		var allowblank = btn.getValue() != "PSR"; 
+		comboSubestadoAdmision.setAllowBlank(allowblank);
+		comboSubestadoAdmision.setDisabled(allowblank);
+	},
+    
     //programar
     onClickCrearEstadoAdmision: function (btn){
     	
-		var me =this;
-		var arraySelection = me.lookupReference('activosagrupaciontrabajo').getActivoIDPersistedSelection();
-		// Comprobar el estado del checkbox para agrupar los activos en un trabajo.
-		var check = me.lookupReference('checkEnglobaTodosActivosRef').getValue();	
-		var codPromo;
-		//Si no se ha seleccionado ningï¿½n activo
-		if(Ext.isEmpty(arraySelection)){
-			var storeListaActivosTrabajo = me.lookupReference('listaActivosSubidaRef').getStore();
-			if(!Ext.isEmpty(storeListaActivosTrabajo) && storeListaActivosTrabajo.data.length != 0){
-				codPromo = me.lookupReference('codigoPromocionPrinex').getValue();
-				var actuacionTecnica = (me.lookupReference('tipoTrabajo').getValue() == CONST.TIPOS_TRABAJO.ACTUACION_TECNICA ? true : false);
-				var propietario = storeListaActivosTrabajo.data.items[0].data.propietarioId;
-				for (var i=0; i < storeListaActivosTrabajo.data.length; i++) {
-					var propietarioAux = storeListaActivosTrabajo.data.items[i].data.propietarioId;
-					if(propietarioAux != propietario && me.lookupReference('checkEnglobaTodosActivosRef').checked != false){
-						Ext.MessageBox.alert(
-								HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),
-								HreRem.i18n("msgbox.multiples.trabajos.seleccionado.diferente.propietario.mensaje")
-						);
-						return false;
-					}
-					if (storeListaActivosTrabajo.data.items[i].data.tienePerimetroGestion != "1"){
-						Ext.MessageBox.alert(
-								HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),
-								HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.mensaje.todos")
-						);
-						return false;
-			        }
-					if (actuacionTecnica && !Ext.isEmpty(codPromo)) {
-						if (storeListaActivosTrabajo.data.items[i].data.codigoCartera == CONST.CARTERA.LIBERBANK) {
-							if (!Ext.isEmpty(codPromo) && storeListaActivosTrabajo.data.items[i].data.codigoPromocionPrinex != codPromo){
-								Ext.MessageBox.alert(
-										HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),
-										HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinCodPromo.mensaje.todos")
-								);
-								return false;
-					        }
-						} else {
-							Ext.MessageBox.alert(
-									HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),
-									HreRem.i18n("msgbox.multiples.trabajos.seleccionado.todosCarteraLiberbank.mensaje.todos")
-							);
-							return false;
-						}
-					}
-					arraySelection.push(storeListaActivosTrabajo.data.items[i].data.idActivo);
-				}
-			}
-			//Si se marca el check y se esta creando desde agrupaciones
-			if(check && Ext.isEmpty(me.getView().idActivo)){
-				Ext.MessageBox.confirm(
-						HreRem.i18n("msgbox.multiples.trabajos.title"),
-						HreRem.i18n("msgbox.multiples.trabajos.seleccionado.check.mensaje"),
-						function(result) {
-			        		if(result === 'yes'){
-			        			me.crearTrabajo(btn,arraySelection,codPromo);
-			        		}
-			    		}
-				);
-			}
-			else if(Ext.isEmpty(me.getView().idActivo)){
-				Ext.MessageBox.confirm(
-						HreRem.i18n("msgbox.multiples.trabajos.title"),
-						HreRem.i18n("msgbox.multiples.trabajos.check.mensaje"),
-						function(result) {
-			        		if(result === 'yes'){
-			        			me.crearTrabajo(btn,arraySelection,codPromo);
-			        		}
-			    		}
-				);
-			}else{
-				me.crearTrabajo(btn,arraySelection,codPromo);
-			}
-		}
-		else{
-			if(check && Ext.isEmpty(me.getView().idActivo)){
-				Ext.MessageBox.confirm(
-						HreRem.i18n("msgbox.multiples.trabajos.title"),
-						HreRem.i18n("msgbox.multiples.trabajos.seleccionados.check.mensaje"),
-						function(result) {
-			        		if(result === 'yes'){
-			        			me.crearTrabajo(btn,arraySelection,codPromo);
-			        		}
-			    		}
-				);
-			}
-			else{
-				Ext.MessageBox.confirm(
-						HreRem.i18n("msgbox.multiples.trabajos.title"),
-						HreRem.i18n("msgbox.multiples.trabajos.checks.mensaje"),
-						function(result) {
-			        		if(result === 'yes'){
-			        			me.crearTrabajo(btn,arraySelection,codPromo);
-			        		}
-			    		}
-				);
-			}
-			
-		}
+ 		var me = this;
+
 		
-	
+    	var url =  $AC.getRemoteUrl('activo/crearEstadoAdmision');
+    	var comboEstadoAdmision = me.lookupReference('estadoAdmisionNuevo');
+    	var comboSubestadoAdmision = me.lookupReference('subestadoAdmisionNuevo');
+    	var observacionesTextLabel = me.lookupReference('observacionesEstadoAdmisionNuevo');
+    	var idActivo = btn.up('crearestadoadmisionwindow').idActivo;
+    	Ext.Ajax.request({
+    		
+    	     url: url,
+    	     params: {activoId: idActivo, 
+    	     		  codEstadoAdmision: comboEstadoAdmision.getValue(),
+    	     		  codSubestadoAdmision: comboSubestadoAdmision.getValue(),
+    	     		  observaciones: observacionesTextLabel.getValue()
+    	     		  },
+
+    	     success: function(response, opts) {
+    	     	me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], idActivo);
+				btn.up('crearestadoadmisionwindow').close();
+    	     	//me.hideWindowCrearActivoAdmision(btn);
+    	     	//me.destroyWindowCrearActivoAdmision(btn);
+    	     },
+
+    	     failure: function (a, operation, context) {
+           	  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+           }
+           
+    	 });
     },
+    destroyWindowCrearActivoAdmision: function (btn){
+    	var me = this;
+    	btn.up('window').destroy();
+    },
+    
     hideWindowCrearActivoAdmision: function(btn) {
     	var me = this;
     	btn.up('window').hide();   	
@@ -600,13 +555,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: idActivo, idAgrupacion: null,codCartera: codCartera, codSubcartera: codSubcartera, logadoGestorMantenimiento: true});
     },
     
-    onAnyadirPropietarioClick: function (btn) {
-    	
+    onAnyadirPropietarioClick: function (btn) {    	
     	var me = this;
     	var idActivo = me.getViewModel().get("activo.id");
-		
-    	me.getView().fireEvent('openModalWindow',"HreRem.view.activos.detalle.AnyadirPropietario");
-  	    	
+		me.getView().fireEvent('openModalWindow',"HreRem.view.activos.detalle.AnyadirPropietario");	
     },
         
     onEliminarPropietarioClick: function (btn) {
@@ -6106,7 +6058,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	
     },
     onSaveFormularioCompletoTabAdmisionTitulo: function(btn , form){
-    	// Redirección al controlador de la vista para mantener todos los métodos ordenados, sin alterar la arquitectura del tab principal. 
+    	// Redirecciï¿½n al controlador de la vista para mantener todos los mï¿½todos ordenados, sin alterar la arquitectura del tab principal. 
 		form.lookupController().saveTabData(btn, form);
     }
 });

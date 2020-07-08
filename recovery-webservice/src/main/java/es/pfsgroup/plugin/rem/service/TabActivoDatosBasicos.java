@@ -862,7 +862,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));
 		
-		activoDto.setIncluidoEnPerimetroAdmision(false);
+		activoDto.setIncluidoEnPerimetroAdmision(activo.getPerimetroAdmision());
 		
 		if(activo.getEstadoAdmision() != null) {
 			activoDto.setEstadoAdmisionCodigo(activo.getEstadoAdmision().getCodigo());

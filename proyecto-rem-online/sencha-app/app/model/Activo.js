@@ -955,7 +955,11 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'subestadoAdmisionCodigoNuevo'
+    		},
+    		{
+    			name: 'observacionesAdmision' //
     		}
+    		
     ],
     
 	proxy: {

@@ -1278,7 +1278,7 @@ public class TrabajoController extends ParadiseJsonController {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST, value = "/trabajo")
+	@RequestMapping(method = RequestMethod.POST)
 	public void saveTrabajosWS(ModelMap model, RestRequestWrapper request,HttpServletResponse response) {		
 		TrabajoRequestDto jsonData = null;
 		ArrayList<Map<String, Object>> listaRespuesta = null;

@@ -1337,5 +1337,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		} else {
 			me.getView().lookupReference('autorizacionTramOfertasAgrupacion').setHidden(true);
 		}
-	}
+	},
+    checkVisibilityOfBtnCrearTrabajo: function () {
+       var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+       var isGestorActivos = $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']);
+	   var isGestorAlquiler = $AU.userGroupHasRole(CONST.PERFILES['GESTOR_ALQUILER_HPM']);
+	   
+       return (!isSuper && !isGestorActivos && !isGestorAlquiler);
+        					 
+       
+    }
 });

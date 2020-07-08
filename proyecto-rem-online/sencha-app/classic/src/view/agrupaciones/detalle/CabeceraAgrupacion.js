@@ -7,6 +7,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
     initComponent: function () {
     
 	    var me = this;
+	    var visibilityBtnCrearTrabajo = me.lookupController().checkVisibilityOfBtnCrearTrabajo()
 	    
 	    me.menu = Ext.create("Ext.menu.Menu", {
 	    	width: 150,
@@ -82,6 +83,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 									cls: 'boton-cabecera',
 									iconCls: 'ico-crear-trabajo',
 				        			tooltip: HreRem.i18n('btn.nueva.peticion.trabajo'),
+				        			hidden: visibilityBtnCrearTrabajo,
 				        			handler: 'onClickCrearTrabajo'
 						    	},
 						    	{

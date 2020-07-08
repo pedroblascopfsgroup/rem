@@ -178,6 +178,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 			List<String> authorities = new ArrayList<String>();
 			List<String> roles = new ArrayList<String>();
+			List<String> groupRoles = new ArrayList<String>();
 
 			/**
 			 * Al lanzar este método en un hilo diferente
@@ -199,6 +200,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 			for(GrupoUsuario usuarioGrupo : gruUsu) {
 				for (Perfil perfil : usuarioGrupo.getGrupo().getPerfiles()) {
+					if ( !groupRoles.contains(perfil.getCodigo())) {
+						groupRoles.add(perfil.getCodigo());
+					}
 					for (Funcion funcion : perfil.getFunciones()) {
 						if(!authorities.contains(funcion.getDescripcion())) {
 							authorities.add(funcion.getDescripcion());
@@ -209,9 +213,10 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 			authData.setUserName(usuario.getApellidoNombre());
 			authData.setAuthorities(authorities);
-
+			
 			authData.setUserId(usuario.getId());
 			authData.setRoles(roles);
+			authData.setGroupRoles(groupRoles);
 			authData.setCodigoGestor(gestorEntidad.getCodigoGestorPorUsuario(usuario.getId()));
 
 			authData.setEsGestorSustituto(esGestorSustituto(usuario));

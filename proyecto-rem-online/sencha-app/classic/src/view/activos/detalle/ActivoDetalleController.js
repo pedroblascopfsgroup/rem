@@ -5981,5 +5981,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	
     	return false;
     	
+    },
+    checkVisibilityOfBtnCrearTrabajo: function () {
+       var me = this;
+       var enPerimetro = me.getViewModel().get('activo.incluidoEnPerimetro') == 'true';
+       var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+       var isGestorActivos = $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']);
+	   var isGestorAlquiler = $AU.userGroupHasRole(CONST.PERFILES['GESTOR_ALQUILER_HPM']);
+	   
+       return !enPerimetro || (!isSuper && !isGestorActivos && !isGestorAlquiler);
+        					 
+       
     }
+    
 });

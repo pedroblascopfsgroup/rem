@@ -38,7 +38,7 @@ public class DDSubtipoSuministro implements Auditable, Dictionary {
 	@Id
 	@Column(name = "DD_SSU_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDSubtipoSuministroGenerator")
-	@SequenceGenerator(name = "DDSubtipoSuministroGenerator", sequenceName = "S_DD_SSU_SUBTIPO_SUMINISTRO_")
+	@SequenceGenerator(name = "DDSubtipoSuministroGenerator", sequenceName = "S_DD_SSU_SUBTIPO_SUMINISTRO")
 	private Long id;
 	    
 	@Column(name = "DD_SSU_CODIGO")   

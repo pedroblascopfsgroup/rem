@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Gabriel De Toni
---## FECHA_CREACION=20200629
+--## FECHA_CREACION=20200630
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10454
@@ -37,7 +37,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	  T_FUNCION('CMS', 'Carga masiva suministros', 'Carga masiva suministros','CARGA_MASIVA_SUMINISTROS','n*,s*,s*,n*,s*,s,s,s,s*s*,s,s,s')
+	  T_FUNCION('CMS', 'Carga masiva suministros', 'Carga masiva suministros','CARGA_MASIVA_SUMINISTROS','n*,s*,s*,n*,s*,s,s,s,s*,s*,s,s,s')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_MSQL_1 VARCHAR2(4000 CHAR);

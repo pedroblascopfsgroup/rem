@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -52,23 +53,23 @@ public class ActivoSuministros implements Serializable, Auditable {
     @SequenceGenerator(name = "ActivoSuministrosGenerator", sequenceName = "S_ACT_SUM_SUMINISTROS")
 	private Long id;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_ID")
 	private Activo activo;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TSU_ID")
     private DDTipoSuministro tipoSuministro; 
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_SSU_ID")
     private DDSubtipoSuministro subtipoSuministro; 
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SUM_COMPANIA_SUMINISTRO")
     private ActivoProveedor companiaSuministro; 
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "SUM_DOMICILIADO")
 	private DDSinSiNo domiciliado;
 	
@@ -78,25 +79,25 @@ public class ActivoSuministros implements Serializable, Auditable {
 	@Column(name = "SUM_NUMERO_CUPS")
 	private String numCups;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "SUM_PERIODICIDAD")
 	private DDPeriodicidad periodicidad;
 	
 	@Column(name = "SUM_FECHA_ALTA")
 	private Date fechaAlta;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "SUM_MOTIVO_ALTA")
 	private DDMotivoAltaSuministro motivoAlta;
 	
 	@Column(name = "SUM_FECHA_BAJA")
 	private Date fechaBaja;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "SUM_MOTIVO_BAJA")
 	private DDMotivoBajaSuministro motivoBaja;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "SUM_VALIDADO")
 	private DDSinSiNo validado;
 	

@@ -2471,6 +2471,36 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
      	        remoteUrl: 'admision/getListAgendaRevisionTitulo',
      	        extraParams: {idActivo: '{activo.id}'}
          	 }
+		},
+		
+		storeSaneamientoAgendaGrid: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.SaneamientoAgenda',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getSaneamientosAgendaByActivo',
+				extraParams: {idActivo: '{activo.id}'}
+			}
+		},
+		
+		storeTipologiaAgendaSaneamiento: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoagendasaneamiento'}
+			}
+		},
+		
+		storeSubtipologiaAgendaSaneamiento: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionarioSubtipologiaAgendaSaneamiento',
+				extraParams: {codTipo: '{comboTipologiaRef.value}'}
+			}
 		}
 
      }

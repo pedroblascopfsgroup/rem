@@ -663,15 +663,9 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 				border: false,
 				items :[
 					{
-	                      xtype : 'textfieldbase',
-	                      fieldLabel : HreRem.i18n('fieldlabel.cargas.estado.cargas'),
-	                      name : 'estadoCargas',
-	                      bind : { 
-	                        value : '{cargaTab.estadoCargas}'
-	                      },
-	                      readOnly : true,
-	                      hidden: true
-	                  }
+						xtype: "saneamientoagendagrid", 
+						reference: "saneamientoagendagridref"
+					}
 				]
             }
      ];

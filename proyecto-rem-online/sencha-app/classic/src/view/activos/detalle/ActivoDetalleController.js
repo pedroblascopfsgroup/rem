@@ -596,8 +596,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     
     onChangeChainedCombo: function(combo) {
     	var me = this,
-    	chainedCombo = me.lookupReference(combo.chainedReference);   
-    	
+    	chainedCombo = me.lookupReference(combo.chainedReference);    	
     	me.getViewModel().notify();
     	if(!Ext.isEmpty(chainedCombo.store) && !Ext.isEmpty(chainedCombo.getValue())) {
 			chainedCombo.clearValue();
@@ -994,6 +993,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		btn.up('window').hide();
 	},
 	
+	onClickBotonCancelarAgendaSaneamiento: function(btn) {		
+		
+		var window = btn.up('window');
+		var padre = window.floatParent;
+		var tab = padre.down('admisionactivo');
+		tab.funcionRecargar();
+		
+		btn.up('window').hide();
+	},
+	
 	onClickBotonGuardarPropietario: function(btn) {		
 		var me = this;	
 		var url =  $AC.getRemoteUrl('activo/updateActivoPropietarioTab');
@@ -1116,6 +1125,38 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}else  {
 			me.fireEvent("errorToast", 'Porfavor, revise los campos obligatorios');
 		}
+		
+	},
+	
+	onClickBotonAnyadirAgendaSaneamiento: function(btn){
+		
+		var me = this;
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		
+		var form = btn.up().up().down("form"),
+		url = $AC.getRemoteUrl("activo/createSaneamientoAgenda"),
+ 		idActivo= btn.up().up().idActivo,
+ 		params = {idActivo: idActivo,
+ 			tipologiaCod: form.items.items[0].getValue(),
+ 			subtipologiacod: form.items.items[1].getValue(),
+ 			observaciones: form.items.items[2].getValue()};
+ 		
+ 		if(form.isValid()){
+ 			form.submit({
+ 				url: url,
+				params: params,
+				success: function(fp, o) {
+					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+					me.getView().unmask();
+					me.onClickBotonCancelarAgendaSaneamiento(btn);
+				},
+				failure: function(record, operation) {
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					me.unmask();
+				}
+ 			});
+ 		}
+		
 		
 	},
 	

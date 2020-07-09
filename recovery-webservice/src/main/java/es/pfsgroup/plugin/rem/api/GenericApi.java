@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoAgendaSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
@@ -326,4 +327,11 @@ public interface GenericApi {
 	 * @return Devuelve una lista de los subestados de admision relacionado con los estado de admision seleccionados
 	 */
 	public List<DDSubestadoAdmision> getcomboSubestadoAdmisionNuevoFiltrado(String codEstadoAdmisionNuevo);
+
+	/***
+	 * 
+	 * @param codTipo
+	 * @return Devuelve una lista de los subtipologias de agenda de saneamiento relacionado con la tipologia de agenda de saneamiento seleccionada
+	 */
+	List<DDSubtipoAgendaSaneamiento> getSubtipologiaAgendaSaneamiento(String codTipo);
 }

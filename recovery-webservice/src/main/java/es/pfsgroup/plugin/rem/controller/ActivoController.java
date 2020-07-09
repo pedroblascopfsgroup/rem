@@ -144,6 +144,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.rest.dto.HistoricoPropuestasPreciosDto;
+import es.pfsgroup.plugin.rem.rest.dto.SaneamientoAgendaDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
@@ -3443,6 +3444,52 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView crearEstadoAdmision(String activoId, String codEstadoAdmision, String codSubestadoAdmision, String observaciones){
 		
-		return createModelAndViewJson(new ModelMap("data", activoApi.crearEstadoAdmision(activoId, codEstadoAdmision, codSubestadoAdmision, observaciones)));	
+		return createModelAndViewJson(new ModelMap("data", activoApi.crearEstadoAdmision(activoId, codEstadoAdmision, codSubestadoAdmision, observaciones)));
+		
+	}
+
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getSaneamientosAgendaByActivo(Long idActivo, ModelMap model) {
+		try {
+			List<SaneamientoAgendaDto> lista = activoApi.getSaneamientosAgendaByActivo(idActivo);
+			model.put(RESPONSE_DATA_KEY, lista);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto,  ModelMap model) { 
+		
+		try {
+			Boolean success = activoApi.createSaneamientoAgenda(saneamientoAgendaDto);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto,  ModelMap model) { 
+		
+		try {
+			Boolean success = activoApi.deleteSaneamientoAgenda(saneamientoAgendaDto);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
 	}
 }

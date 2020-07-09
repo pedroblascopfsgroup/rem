@@ -90,6 +90,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoAgendaSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
@@ -1397,5 +1398,12 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		}
 
 		return listaSubestados;
+	}
+	
+	@Override
+	public List<DDSubtipoAgendaSaneamiento> getSubtipologiaAgendaSaneamiento(String codTipo) {
+		
+		Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "tipoAgendaSaneamiento.codigo", codTipo);
+		return genericDao.getList(DDSubtipoAgendaSaneamiento.class, filtroId);
 	}
 }

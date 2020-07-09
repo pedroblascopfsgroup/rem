@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -65,7 +66,7 @@ public class ActivoAgendaSaneamiento implements Serializable, Auditable {
 	private String observaciones;
 	 
     @Column(name = "ASA_FECHA_ALTA")
-	private String fechaAltaSaneamiento;
+	private Date fechaAltaSaneamiento;
     
 	@Version   
 	private Long version;
@@ -113,11 +114,11 @@ public class ActivoAgendaSaneamiento implements Serializable, Auditable {
 		this.observaciones = observaciones;
 	}
 
-	public String getFechaAltaSaneamiento() {
+	public Date getFechaAltaSaneamiento() {
 		return fechaAltaSaneamiento;
 	}
 
-	public void setFechaAltaSaneamiento(String fechaAltaSaneamiento) {
+	public void setFechaAltaSaneamiento(Date fechaAltaSaneamiento) {
 		this.fechaAltaSaneamiento = fechaAltaSaneamiento;
 	}
 

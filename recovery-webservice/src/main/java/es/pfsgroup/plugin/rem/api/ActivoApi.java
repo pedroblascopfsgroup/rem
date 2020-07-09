@@ -84,6 +84,7 @@ import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.HistoricoPropuestasPreciosDto;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
+import es.pfsgroup.plugin.rem.rest.dto.SaneamientoAgendaDto;
 
 
 public interface ActivoApi {
@@ -1323,4 +1324,10 @@ public interface ActivoApi {
 	Boolean updateHistoricoSolicitudPrecios(HistoricoPropuestasPreciosDto historicoPropuestasPreciosDto) throws ParseException;
 	
 	public Boolean crearEstadoAdmision(String activoId, String codEstadoAdmision, String codSubestadoAdmision, String observaciones);
+
+	List<SaneamientoAgendaDto> getSaneamientosAgendaByActivo(Long idActivo);
+
+	Boolean createSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto);
+
+	Boolean deleteSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto);
 }

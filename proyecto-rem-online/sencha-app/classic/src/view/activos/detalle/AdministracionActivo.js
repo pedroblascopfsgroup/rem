@@ -17,7 +17,7 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
     	}
     },
 	
-	requires: ['HreRem.model.ActivoAdministracion', 'HreRem.view.activos.detalle.ImpuestosActivoGrid', 'HreRem.model.ActivoTributos'],
+	requires: ['HreRem.model.ActivoAdministracion', 'HreRem.view.activos.detalle.ImpuestosActivoGrid'],
 
     recordName: "administracion",
 

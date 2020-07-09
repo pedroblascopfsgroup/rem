@@ -3,7 +3,7 @@ Ext.define('HreRem.view.activos.detalle.TributosGrid', {
     xtype		: 'tributogrid',
 	topBar		: true,
 	targetGrid	: 'tributosGrid',
-	idPrincipal : 'plusvalia.idActivo',
+	idPrincipal : 'activo.id',
 	editOnSelect: true,
     bind: {
         store: '{storeActivoTributos}'

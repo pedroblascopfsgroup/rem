@@ -231,7 +231,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 		}
 		
-		if(activo.getPerimetroAdmision() != null && !activo.getPerimetroAdmision()) {
+		if(activo.getPerimetroAdmision() == null || (activo.getPerimetroAdmision() != null && !activo.getPerimetroAdmision())) {
 			
 			BeanUtils.copyProperty(activoDto, "estadoAdmisionDesc", messageServices.getMessage(NO_GESTIONADO_POR_ADMISION));
 			

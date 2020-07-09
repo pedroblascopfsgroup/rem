@@ -7,9 +7,9 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
-import es.pfsgroup.plugin.rem.api.impl.CreacionTrabajosMasivoAsync;
 import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.trabajo.TrabajoManager;
 
 
 public class LiberarFicheroTrabajos implements Runnable {
@@ -17,7 +17,7 @@ public class LiberarFicheroTrabajos implements Runnable {
 	private RestApi restApi;
 
 	@Autowired
-	private CreacionTrabajosMasivoAsync creacionTrabajos;
+	private TrabajoManager trabajoManager;
 	
 	@Autowired
 	private ProcessAdapter processAdapter;
@@ -37,7 +37,7 @@ public class LiberarFicheroTrabajos implements Runnable {
 		
 		try {
 			restApi.doSessionConfig(this.user.getUsername());
-			creacionTrabajos.doCreacionTrabajosAsync(this.dtoTrabajo, this.user);
+			trabajoManager.doCreacionTrabajosAsync(this.dtoTrabajo, this.user);
 			processAdapter.setStateProcessed(dtoTrabajo.getIdProceso());
 			
 		} catch (Exception e) {

@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR= Lara Pablo
---## FECHA_CREACION=20200703
+--## AUTOR= Pablo Garcia Pallas
+--## FECHA_CREACION=20200708
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-10457
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Se añade un registro nuevo para que la tabla ACT_TRI_TRIBUTOS lo tome por defecto
 --##########################################
 --*/
 
@@ -54,7 +55,8 @@ DECLARE
 		T_TIPO_DATA('10' ,'Tasas administrativas','Tasas administrativas'),
 		T_TIPO_DATA('11' ,'Tributo metropolitan-movilidad','Tributo metropolitan-movilidad'),
 		T_TIPO_DATA('12' ,'Vado','Vado'),
-		T_TIPO_DATA('13' ,'Tasa incendios','Tasa incendios')
+		T_TIPO_DATA('13' ,'Tasa incendios','Tasa incendios'),
+		T_TIPO_DATA('14' ,'Otros','otros')
 	); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

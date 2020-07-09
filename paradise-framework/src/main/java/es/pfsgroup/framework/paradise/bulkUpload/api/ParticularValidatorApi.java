@@ -899,6 +899,8 @@ public interface ParticularValidatorApi {
 	public Boolean esAccionValido(String codAccion);
 
 	public Boolean esResultadoValido(String codResultado);
+	
+	public Boolean esTipoTributoValido(String codTipoTributo);
 
 	public Boolean esSolicitudValido(String codSolicitud);
 
@@ -907,6 +909,8 @@ public interface ParticularValidatorApi {
 	public String getIdActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud, String idTributo);
 
 	public Boolean esNumHayaVinculado(Long numGasto, String numActivo);
+	
+	public Boolean esnNumExpedienteValido(Long expComercial);
 	
 	Boolean existeJunta(String numActivo,  String fechaJunta);
 	

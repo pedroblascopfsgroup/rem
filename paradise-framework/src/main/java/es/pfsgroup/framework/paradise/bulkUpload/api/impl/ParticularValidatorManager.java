@@ -3603,7 +3603,18 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "FROM REMMASTER.DD_FAV_FAVORABLE FAV "
-				+ "WHERE FAV.DD_FAV_CODIGO ='" + codResultado + "'");
+				+ "WHERE FAV.DD_FAV_CODIGO =" + codResultado);
+
+		return !"0".equals(resultado);
+	}
+	
+	public Boolean esTipoTributoValido(String codTipoTributo) {
+		if(Checks.esNulo(codTipoTributo) || !StringUtils.isNumeric(codTipoTributo)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM DD_TPT_TIPO_TRIBUTO TPT "
+				+ "WHERE TPT.DD_TPT_CODIGO =" + codTipoTributo);
 
 		return !"0".equals(resultado);
 	}
@@ -3672,6 +3683,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = GPA.ACT_ID "
 				+ "WHERE GPV.GPV_NUM_GASTO_HAYA = " + numGasto
 				+ " AND ACT.ACT_NUM_ACTIVO = '" + numActivo + "'"
+				);
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esnNumExpedienteValido(Long expComercial){
+		if(Checks.esNulo(expComercial)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM ECO_EXPEDIENTE_COMERCIAL EX "
+				+ "JOIN ACT_TRI_TRIBUTOS TRI ON TRI.ECO_ID = EX.ECO_ID "
+				+ "WHERE TRI.ECO_ID = " + expComercial + "'"
 				);
 
 		return !"0".equals(resultado);

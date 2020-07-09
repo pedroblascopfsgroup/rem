@@ -35,7 +35,7 @@ Ext.define('HreRem.model.SaneamientoAgenda', {
 		type: 'uxproxy',
 		localUrl: 'saneamientoagenda.json',
 		api: {
-			//update: '',
+			update: 'activo/updateSaneamientoAgenda',
             //read: 'activo/getSaneamientosAgendaByActivo',
             create: 'activo/createSaneamientoAgenda',
             destroy: 'activo/deleteSaneamientoAgenda'

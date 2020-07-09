@@ -6897,7 +6897,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		if(saneamientoAgendaDto != null) {
 			if(saneamientoAgendaDto.getIdActivo() == null) {
-				throw new JsonViewerException("No se ha podido asociar la propuetsa a un activo");
+				throw new JsonViewerException("No se ha podido asociar la agenda a un activo");
 			}else {
 				Activo activo = activoDao.get(saneamientoAgendaDto.getIdActivo());
 				agendaSaneamiento.setActivo(activo);
@@ -6936,6 +6936,23 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			agendaSaneamiento = genericDao.get(ActivoAgendaSaneamiento.class, genericDao.createFilter(FilterType.EQUALS, "id", saneamientoAgendaDto.getIdSan()));
 			
 			Auditoria.delete(agendaSaneamiento);
+			
+			genericDao.update(ActivoAgendaSaneamiento.class, agendaSaneamiento);
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+	@Transactional
+	public Boolean updateSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto) {
+		
+		if(saneamientoAgendaDto != null) {
+			ActivoAgendaSaneamiento agendaSaneamiento = genericDao.get(ActivoAgendaSaneamiento.class, genericDao.createFilter(FilterType.EQUALS, "id", saneamientoAgendaDto.getIdSan()));
+			
+			agendaSaneamiento.setObservaciones(saneamientoAgendaDto.getObservaciones());
 			
 			genericDao.update(ActivoAgendaSaneamiento.class, agendaSaneamiento);
 			

@@ -1330,4 +1330,6 @@ public interface ActivoApi {
 	Boolean createSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto);
 
 	Boolean deleteSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto);
+
+	Boolean updateSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto);
 }

@@ -3492,4 +3492,19 @@ public class ActivoController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto,  ModelMap model) { 
+		
+		try {
+			Boolean success = activoApi.updateSaneamientoAgenda(saneamientoAgendaDto);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
 }

@@ -114,12 +114,12 @@ Ext.define('HreRem.view.activos.detalle.CrearEstadoAdmision', {
 								reference: 'subestadoAdmisionNuevo',
 								   bind : {
 								     store : '{comboSubestadoAdmisionNuevoFiltrado}',
-								     value: '{activo.subestadoAdmisionCodigoNuevo}'//,
+								     value: '{activo.subestadoAdmisionCodigoNuevo}'
 								   }
 
 
-							}
-							,{
+							},
+							{
 			                	xtype: 'textareafieldbase',
 			                	fieldLabel: HreRem.i18n('fieldlabel.estado.admision.observaciones'),
 			                	name: 'observacionesAdmision',

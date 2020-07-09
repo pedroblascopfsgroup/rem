@@ -83,9 +83,10 @@ public class CreacionTrabajosMasivoAsync {
 	@Autowired
 	private MSVExcelParser excelParser;
 	
-	
+	@Transactional(readOnly = false)
 	public void doCreacionTrabajosAsync(DtoFichaTrabajo dtoTrabajo) {
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+		TransactionStatus transaction = null;
+		transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		List<Activo> listaActivos = this.getListaActivosProceso(dtoTrabajo.getIdProceso());
 		Trabajo trabajo = new Trabajo();
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
@@ -161,8 +162,10 @@ public class CreacionTrabajosMasivoAsync {
 						trabajo.setEsTarificado(true);
 					}
 				}
-
 				ActivoTrabajo activoTrabajo = trabajoManager.createActivoTrabajo(activo, trabajo, dtoTrabajo.getParticipacion());
+				transactionManager.commit(transaction);
+				transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+				
 				trabajo.getActivosTrabajo().add(activoTrabajo);
 				isFirstLoop = false;
 
@@ -178,10 +181,13 @@ public class CreacionTrabajosMasivoAsync {
 						trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
 					}
 					trabajoDao.saveOrUpdate(trabajo);
+					transactionManager.commit(transaction);
+					transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+					
 					trabajoManager.createTramiteTrabajo(trabajo);
 					transactionManager.commit(transaction);
-					
 					transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+					
 					processAdapter.addFilaProcesada(dtoTrabajo.getIdProceso(), true);
 					
 				}

@@ -205,12 +205,9 @@ public class CreacionTrabajosMasivoAsync {
 				transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 				ficheroMasivoToTrabajo(dtoTrabajo.getIdProceso(), trabajo);	
 				transactionManager.commit(transaction);
-				transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 			}
 			
 			processAdapter.setStateProcessed(dtoTrabajo.getIdProceso());
-			transactionManager.commit(transaction);
-			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 			
 		} catch (Exception e) {
 			processAdapter.addFilaProcesada(dtoTrabajo.getIdProceso(), false);

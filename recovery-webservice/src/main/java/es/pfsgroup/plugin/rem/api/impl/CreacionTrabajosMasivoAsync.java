@@ -83,7 +83,7 @@ public class CreacionTrabajosMasivoAsync {
 	@Autowired
 	private MSVExcelParser excelParser;
 	
-	
+	@Transactional
 	public void doCreacionTrabajosAsync(DtoFichaTrabajo dtoTrabajo, Usuario usuarioLogado) {
 		TransactionStatus transaction = null;
 		transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());

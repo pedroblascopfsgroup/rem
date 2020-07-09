@@ -27,7 +27,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
+//import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.api.impl.MSVProcesoManager;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
@@ -65,8 +65,8 @@ public class CreacionTrabajosMasivoAsync {
 	@Autowired
 	private UpdaterStateApi updaterStateApi;
 	
-	@Autowired
-	private ProcessAdapter processAdapter;
+	//@Autowired
+	//private ProcessAdapter processAdapter;
 	
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -188,7 +188,7 @@ public class CreacionTrabajosMasivoAsync {
 					transactionManager.commit(transaction);
 					transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 					
-					processAdapter.addFilaProcesada(dtoTrabajo.getIdProceso(), true);
+					//processAdapter.addFilaProcesada(dtoTrabajo.getIdProceso(), true);
 					
 				}
 			}
@@ -207,11 +207,11 @@ public class CreacionTrabajosMasivoAsync {
 				transactionManager.commit(transaction);
 			}
 			
-			processAdapter.setStateProcessed(dtoTrabajo.getIdProceso());
+			//processAdapter.setStateProcessed(dtoTrabajo.getIdProceso());
 			
 		} catch (Exception e) {
-			processAdapter.addFilaProcesada(dtoTrabajo.getIdProceso(), false);
-			processAdapter.setStateProcessed(dtoTrabajo.getIdProceso());
+			//processAdapter.addFilaProcesada(dtoTrabajo.getIdProceso(), false);
+			//processAdapter.setStateProcessed(dtoTrabajo.getIdProceso());
 			logger.error(e.getMessage());
 			try {
 				transactionManager.rollback(transaction);

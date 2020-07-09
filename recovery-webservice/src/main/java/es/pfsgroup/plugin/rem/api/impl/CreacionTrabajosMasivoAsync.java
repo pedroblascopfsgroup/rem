@@ -8,16 +8,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
+//import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
+//import org.springframework.transaction.PlatformTransactionManager;
+//import org.springframework.transaction.TransactionStatus;
+//import org.springframework.transaction.annotation.Transactional;
+//import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
@@ -68,8 +68,8 @@ public class CreacionTrabajosMasivoAsync {
 	@Autowired
 	private ProcessAdapter processAdapter;
 	
-	@Resource(name = "entityTransactionManager")
-	private PlatformTransactionManager transactionManager;
+//	@Resource(name = "entityTransactionManager")
+//	private PlatformTransactionManager transactionManager;
 	
 	@Autowired
 	UsuarioManager usuarioManager;
@@ -85,7 +85,7 @@ public class CreacionTrabajosMasivoAsync {
 	
 	
 	public void doCreacionTrabajosAsync(DtoFichaTrabajo dtoTrabajo) {
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+		//TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		List<Activo> listaActivos = this.getListaActivosProceso(dtoTrabajo.getIdProceso());
 		Trabajo trabajo = new Trabajo();
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
@@ -179,9 +179,9 @@ public class CreacionTrabajosMasivoAsync {
 					}
 					trabajoDao.saveOrUpdate(trabajo);
 					trabajoManager.createTramiteTrabajo(trabajo);
-					transactionManager.commit(transaction);
+					//transactionManager.commit(transaction);
 					
-					transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+					//transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 					processAdapter.addFilaProcesada(dtoTrabajo.getIdProceso(), true);
 					
 				}
@@ -197,17 +197,17 @@ public class CreacionTrabajosMasivoAsync {
 			}
 			
 			processAdapter.setStateProcessed(dtoTrabajo.getIdProceso());
-			transactionManager.commit(transaction);
+			//transactionManager.commit(transaction);
 			
 		} catch (Exception e) {
 			processAdapter.addFilaProcesada(dtoTrabajo.getIdProceso(), false);
 			processAdapter.setStateProcessed(dtoTrabajo.getIdProceso());
 			logger.error(e.getMessage());
-			try {
-				transactionManager.rollback(transaction);
-			} catch (Exception ex) {
-				logger.error("error rollback proceso masivo: " + ex.getMessage());
-			}
+//			try {
+//				transactionManager.rollback(transaction);
+//			} catch (Exception ex) {
+//				logger.error("error rollback proceso masivo: " + ex.getMessage());
+//			}
 		}
 	}
 		

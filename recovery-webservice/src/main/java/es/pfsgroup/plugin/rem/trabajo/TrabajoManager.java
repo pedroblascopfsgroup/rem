@@ -1384,19 +1384,19 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(readOnly = false)
 	public ActivoTramite createTramiteTrabajo(Long idTrabajo,ExpedienteComercial expedienteComercial){
 		return this.createTramiteTrabajo(trabajoDao.get(idTrabajo),expedienteComercial);
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(readOnly = false)
 	public ActivoTramite createTramiteTrabajo(Trabajo trabajo) {
 		return createTramiteTrabajo(trabajo,null);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = false)
 	public ActivoTramite createTramiteTrabajo(Trabajo trabajo,ExpedienteComercial expedienteComercial){
 		TipoProcedimiento tipoTramite = new TipoProcedimiento();
 

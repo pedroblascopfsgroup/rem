@@ -648,7 +648,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				processAdapter.setStateProcessing(document.getProcesoMasivo().getId(),new Long(numFilas));
 				Usuario usu=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 
-				Thread creacionAsincrona = new Thread(new LiberarFicheroTrabajos(usu.getUsername(), dtoTrabajo));
+				Thread creacionAsincrona = new Thread(new LiberarFicheroTrabajos(usu, dtoTrabajo));
 
 				creacionAsincrona.start();
 				trabajo.setId(-1L);
@@ -1209,6 +1209,40 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		 * de casos: SOLICITADO
 		 */
 		Usuario logedUser = usuarioManager.getUsuarioLogado();
+
+		List<Long> idGrpsUsuario = null;
+
+		idGrpsUsuario = extGrupoUsuariosDao.buscaGruposUsuario(logedUser);
+
+		Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+
+		Filter filtroSolicitado = genericDao.createFilter(FilterType.EQUALS, "codigo",
+				DDEstadoTrabajo.ESTADO_SOLICITADO);
+		Filter filtroEnTramite = genericDao.createFilter(FilterType.EQUALS, "codigo",
+				DDEstadoTrabajo.ESTADO_EN_TRAMITE);
+
+		// Por defecto: Solicitado
+		DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filtroSolicitado);
+		if ((!Checks.esNulo(gestorActivo) && logedUser.equals(gestorActivo)
+			|| (idGrpsUsuario != null && !idGrpsUsuario.isEmpty() && idGrpsUsuario.contains(gestorActivo.getId())))
+				&& (dtoTrabajo.getTipoTrabajoCodigo().equals(DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL)
+						|| dtoTrabajo.getTipoTrabajoCodigo().equals(DDTipoTrabajo.CODIGO_TASACION) || dtoTrabajo
+								.getSubtipoTrabajoCodigo().equals(DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS))) {
+
+			// Es gestor activo + Obtención documental(menos Cédula) o
+			// Tasación: En Trámite
+			estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filtroEnTramite);
+		}
+
+		return estadoTrabajo;
+	}
+	
+	public DDEstadoTrabajo getEstadoNuevoTrabajoUsuario(DtoFichaTrabajo dtoTrabajo, Activo activo, Usuario logedUser) {
+		/*
+		 * Estados del trabajo - Al crear un trabajo: Si es trámite "Cedula": EN
+		 * TRAMITE Si es gestor activo (algunos trámites): EN TRAMITE El resto
+		 * de casos: SOLICITADO
+		 */
 
 		List<Long> idGrpsUsuario = null;
 

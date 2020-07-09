@@ -84,12 +84,12 @@ public class CreacionTrabajosMasivoAsync {
 	private MSVExcelParser excelParser;
 	
 	@Transactional(readOnly = false)
-	public void doCreacionTrabajosAsync(DtoFichaTrabajo dtoTrabajo) {
+	public void doCreacionTrabajosAsync(DtoFichaTrabajo dtoTrabajo, Usuario usuarioLogado) {
 		TransactionStatus transaction = null;
 		transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		List<Activo> listaActivos = this.getListaActivosProceso(dtoTrabajo.getIdProceso());
 		Trabajo trabajo = new Trabajo();
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		
 		try {
 
 			Boolean isFirstLoop = true;
@@ -137,7 +137,7 @@ public class CreacionTrabajosMasivoAsync {
 						trabajo.setUsuarioResponsableTrabajo(usuarioLogado);
 					}
 
-					trabajo.setEstado(trabajoManager.getEstadoNuevoTrabajo(dtoTrabajo, activo));
+					trabajo.setEstado(trabajoManager.getEstadoNuevoTrabajoUsuario(dtoTrabajo, activo, usuarioLogado));
 
 					// El gestor de activo se salta tareas de estos trámites y
 					// por tanto es necesario settear algunos datos

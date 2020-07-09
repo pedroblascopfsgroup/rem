@@ -17,6 +17,8 @@ Ext.define('HreRem.view.activos.detalle.CrearEstadoAdmision', {
     codCartera: null,
     codEstadoAdmision: null,
     codSubestadoAdmision: null,
+    estadoAdmisionDesc: null,
+    subestadoAdmisionDesc: null,
     
     
 	listeners: {
@@ -56,6 +58,7 @@ Ext.define('HreRem.view.activos.detalle.CrearEstadoAdmision', {
     				{
 	    				xtype: 'formBase', 
 	    				collapsed: false,
+	    				reference: 'formEstadoAdmision',
 	   			 		scrollable	: 'y',
 	    				cls:'',	    				
 					    recordName: "activo",
@@ -66,27 +69,25 @@ Ext.define('HreRem.view.activos.detalle.CrearEstadoAdmision', {
 								},
     					items: [
     						{ 
-					        	xtype: 'comboboxfieldbase',
+					        	xtype: 'textfieldbase',
 					        	readOnly: true,
 					        	fieldLabel: HreRem.i18n('fieldlabel.estado.admision.estado.actual'),
-								reference: 'estadoAdmisionActual',
+								reference: 'estadoAdmisionRef',
 								width: 		'100%',
 								colspan: 1,
 					        	bind: {
-				            		store: '{comboEstadoAdmision}',
-				            		value: me.codEstadoAdmision
+				            		value: me.estadoAdmisionDesc
 				            	}
 					        },
 					        { 
-					        	xtype: 'comboboxfieldbase',
+					        	xtype: 'textfieldbase',
 					        	readOnly: true,
 					        	fieldLabel: HreRem.i18n('fieldlabel.estado.admision.subestado.actual'),
-								reference: 'subestadoAdmisionActual',
+								reference: 'subestadoAdmisionRef',
 								width: 		'100%',
 								colspan: 1,
 					        	bind: {
-				            		store: '{comboSubestadoAdmision}',
-				            		value: me.codSubestadoAdmision
+				            		value: me.subestadoAdmisionDesc
 				            	}
 					        },
 					        { 
@@ -150,6 +151,8 @@ Ext.define('HreRem.view.activos.detalle.CrearEstadoAdmision', {
 
 		form.setBindRecord(form.getModelInstance());
 		form.reset();
+		me.lookupReference('estadoAdmisionActual').setValue(me.estadoAdmisionDesc),
+		me.lookupReference('subestadoAdmisionActual').setValue(me.subestadoAdmisionDesc)
 		/*
 		me.idProceso = null;
 		me.getViewModel().set('idActivo', me.idActivo);

@@ -866,9 +866,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		if(activo.getEstadoAdmision() != null) {
 			activoDto.setEstadoAdmisionCodigo(activo.getEstadoAdmision().getCodigo());
+			activoDto.setEstadoAdmisionDesc(activo.getEstadoAdmision().getDescripcion());
 		}
 		if (activo.getSubestadoAdmision() != null) {
 			activoDto.setSubestadoAdmisionCodigo(activo.getSubestadoAdmision().getCodigo());
+			activoDto.setSubestadoAdmisionDesc(activo.getSubestadoAdmision().getDescripcion());
 		}
 		
 		

@@ -283,6 +283,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String estadoAdmisionCodigoNuevo;
 	private String subestadoAdmisionCodigoNuevo;
 	private String observacionesAdmision;
+	private String estadoAdmisionDesc;
+	private String subestadoAdmisionDesc;
 
 	
 	public Boolean getTieneOfertaAlquilerViva() {
@@ -2147,6 +2149,22 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setObservacionesAdmision(String observacionesAdmision) {
 		this.observacionesAdmision = observacionesAdmision;
+	}
+
+	public String getEstadoAdmisionDesc() {
+		return estadoAdmisionDesc;
+	}
+
+	public void setEstadoAdmisionDesc(String estadoAdmisionDesc) {
+		this.estadoAdmisionDesc = estadoAdmisionDesc;
+	}
+
+	public String getSubestadoAdmisionDesc() {
+		return subestadoAdmisionDesc;
+	}
+
+	public void setSubestadoAdmisionDesc(String subestadoAdmisionDesc) {
+		this.subestadoAdmisionDesc = subestadoAdmisionDesc;
 	}
 
 

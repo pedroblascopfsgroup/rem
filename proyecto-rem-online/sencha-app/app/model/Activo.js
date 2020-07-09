@@ -958,6 +958,12 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'observacionesAdmision' //
+    		},
+    		{
+    			name: 'estadoAdmisionDesc' //
+    		},
+    		{
+    			name: 'subestadoAdmisionDesc'
     		}
     		
     ],

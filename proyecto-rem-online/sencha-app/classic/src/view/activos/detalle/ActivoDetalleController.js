@@ -475,21 +475,27 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	});
     },
     onClickEstadoAdmision: function (btn) {
-    	//Por programar
+    	
         var me = this;
         var idActivo = me.getViewModel().get("activo.id");
         var codSubcartera = me.getViewModel().get("activo.subcarteraCodigo");
         var codCartera = me.getViewModel().get("activo.entidadPropietariaCodigo");
         var codEstadoAdmision = me.getViewModel().get("activo.estadoAdmisionCodigo");
         var codSubestadoAdmision = me.getViewModel().get("activo.subestadoAdmisionCodigo");
+        var estadoAdmisionDesc = me.getViewModel().get("activo.estadoAdmisionDesc");
+        var subestadoAdmisionDesc = me.getViewModel().get("activo.subestadoAdmisionDesc");
+
         
-        
-        me.getView().fireEvent('openModalWindow', "HreRem.view.activos.detalle.CrearEstadoAdmision", {
+                
+	    me.getView().fireEvent('openModalWindow', "HreRem.view.activos.detalle.CrearEstadoAdmision", {
             idActivo: idActivo,
             codCartera: codCartera,
             codEstadoAdmision: codEstadoAdmision,
-            codSubestadoAdmision: codSubestadoAdmision
+            codSubestadoAdmision: codSubestadoAdmision,
+            estadoAdmisionDesc: estadoAdmisionDesc,
+            subestadoAdmisionDesc: subestadoAdmisionDesc
         });
+        
         
     },
 		
@@ -504,7 +510,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		comboSubestadoAdmision.setDisabled(allowblank);
 	},
     
-    //programar
+
     onClickCrearEstadoAdmision: function (btn){
     	
  		var me = this;
@@ -515,7 +521,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var comboSubestadoAdmision = me.lookupReference('subestadoAdmisionNuevo');
     	var observacionesTextLabel = me.lookupReference('observacionesEstadoAdmisionNuevo');
     	var idActivo = btn.up('crearestadoadmisionwindow').idActivo;
-    	Ext.Ajax.request({
+    	var form = btn.up('crearestadoadmisionwindow').lookupReference('formEstadoAdmision').getForm(); // btn.up('formBase')
+    	
+    	if(form.isValid()){
+    		Ext.Ajax.request({
     		
     	     url: url,
     	     params: {activoId: idActivo, 
@@ -525,9 +534,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	     		  },
 
     	     success: function(response, opts) {
+    	     	
     	     	me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], idActivo);
-				btn.up('crearestadoadmisionwindow').close();
-    	     	//me.hideWindowCrearActivoAdmision(btn);
+				//btn.up('crearestadoadmisionwindow').close();
+    	     	me.hideWindowCrearActivoAdmision(btn);
     	     	//me.destroyWindowCrearActivoAdmision(btn);
     	     },
 
@@ -536,6 +546,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
            }
            
     	 });
+    	}
+    	
     },
     destroyWindowCrearActivoAdmision: function (btn){
     	var me = this;

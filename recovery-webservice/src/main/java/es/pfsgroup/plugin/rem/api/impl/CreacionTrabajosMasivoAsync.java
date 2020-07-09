@@ -198,12 +198,19 @@ public class CreacionTrabajosMasivoAsync {
 					trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
 				}
 				trabajoDao.saveOrUpdate(trabajo);
+				transactionManager.commit(transaction);
+				transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 				trabajoManager.createTramiteTrabajo(trabajo);
-				ficheroMasivoToTrabajo(dtoTrabajo.getIdProceso(), trabajo);				
+				transactionManager.commit(transaction);
+				transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+				ficheroMasivoToTrabajo(dtoTrabajo.getIdProceso(), trabajo);	
+				transactionManager.commit(transaction);
+				transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 			}
 			
 			processAdapter.setStateProcessed(dtoTrabajo.getIdProceso());
 			transactionManager.commit(transaction);
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 			
 		} catch (Exception e) {
 			processAdapter.addFilaProcesada(dtoTrabajo.getIdProceso(), false);

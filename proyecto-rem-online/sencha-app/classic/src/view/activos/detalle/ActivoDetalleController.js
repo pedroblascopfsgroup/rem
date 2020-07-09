@@ -496,7 +496,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             subestadoAdmisionDesc: subestadoAdmisionDesc
         });
         
-        
     },
 		
 	setSubestadoAdmisionAllowBlank: function (btn){

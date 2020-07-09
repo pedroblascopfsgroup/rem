@@ -151,8 +151,8 @@ Ext.define('HreRem.view.activos.detalle.CrearEstadoAdmision', {
 
 		form.setBindRecord(form.getModelInstance());
 		form.reset();
-		me.lookupReference('estadoAdmisionActual').setValue(me.estadoAdmisionDesc),
-		me.lookupReference('subestadoAdmisionActual').setValue(me.subestadoAdmisionDesc)
+		me.lookupReference('estadoAdmisionRef').setValue(me.estadoAdmisionDesc),
+		me.lookupReference('subestadoAdmisionRef').setValue(me.subestadoAdmisionDesc)
 		/*
 		me.idProceso = null;
 		me.getViewModel().set('idActivo', me.idActivo);

@@ -941,22 +941,35 @@ Ext.define('HreRem.model.Activo', {
     			name: 'numActivoDivarian'
     		},
     		{
-    			name: 'estadoAdmisionDesc'
+    			name: 'perimetroAdmision',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'incluidoEnPerimetroAdmision'
+    		},
+    		
+    		{
+    			name: 'estadoAdmisionCodigo'
+    		},
+    		{
+    			name: 'subestadoAdmisionCodigo'
+    		},
+    		{
+    			name: 'estadoAdmisionCodigoNuevo'
+    		},
+    		{
+    			name: 'subestadoAdmisionCodigoNuevo'
+    		},
+    		{
+    			name: 'observacionesAdmision' 
+    		},
+    		{
+    			name: 'estadoAdmisionDesc' 
     		},
     		{
     			name: 'subestadoAdmisionDesc'
-    		},
-    		{
-    			name: 'estadoAdmisionCod'
-    		},
-    		{
-    			name: 'subestadoAdmisionCod'
-    		},
-    		{
-    			name: 'perimetroAdmision',
-    			type: 'boolean'
-
     		}
+    		
     ],
     
 	proxy: {

@@ -32,7 +32,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
  */
 @Entity
 @Table(name = "ACT_AEV_AGENDA_EVOLUCION", schema = "${entity.schema}")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class ActivoAgendaEvolucion implements Serializable, Auditable {
 

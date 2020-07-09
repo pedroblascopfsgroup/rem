@@ -474,6 +474,90 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    }
     	});
     },
+    onClickEstadoAdmision: function (btn) {
+    	
+        var me = this;
+        var idActivo = me.getViewModel().get("activo.id");
+        var codSubcartera = me.getViewModel().get("activo.subcarteraCodigo");
+        var codCartera = me.getViewModel().get("activo.entidadPropietariaCodigo");
+        var codEstadoAdmision = me.getViewModel().get("activo.estadoAdmisionCodigo");
+        var codSubestadoAdmision = me.getViewModel().get("activo.subestadoAdmisionCodigo");
+        var estadoAdmisionDesc = me.getViewModel().get("activo.estadoAdmisionDesc");
+        var subestadoAdmisionDesc = me.getViewModel().get("activo.subestadoAdmisionDesc");
+
+        
+                
+	    me.getView().fireEvent('openModalWindow', "HreRem.view.activos.detalle.CrearEstadoAdmision", {
+            idActivo: idActivo,
+            codCartera: codCartera,
+            codEstadoAdmision: codEstadoAdmision,
+            codSubestadoAdmision: codSubestadoAdmision,
+            estadoAdmisionDesc: estadoAdmisionDesc,
+            subestadoAdmisionDesc: subestadoAdmisionDesc
+        });
+        
+        
+    },
+		
+	setSubestadoAdmisionAllowBlank: function (btn){
+		
+		var me = this;
+		
+		btn.lookupController().onChangeChainedCombo(btn);
+		var comboSubestadoAdmision = me.lookupReference('subestadoAdmisionNuevo');
+		var allowblank = btn.getValue() != "PSR"; 
+		comboSubestadoAdmision.setAllowBlank(allowblank);
+		comboSubestadoAdmision.setDisabled(allowblank);
+	},
+    
+
+    onClickCrearEstadoAdmision: function (btn){
+    	
+ 		var me = this;
+
+		
+    	var url =  $AC.getRemoteUrl('activo/crearEstadoAdmision');
+    	var comboEstadoAdmision = me.lookupReference('estadoAdmisionNuevo');
+    	var comboSubestadoAdmision = me.lookupReference('subestadoAdmisionNuevo');
+    	var observacionesTextLabel = me.lookupReference('observacionesEstadoAdmisionNuevo');
+    	var idActivo = btn.up('crearestadoadmisionwindow').idActivo;
+    	var form = btn.up('crearestadoadmisionwindow').lookupReference('formEstadoAdmision').getForm(); // btn.up('formBase')
+    	
+    	if(form.isValid()){
+    		Ext.Ajax.request({
+    		
+    	     url: url,
+    	     params: {activoId: idActivo, 
+    	     		  codEstadoAdmision: comboEstadoAdmision.getValue(),
+    	     		  codSubestadoAdmision: comboSubestadoAdmision.getValue(),
+    	     		  observaciones: observacionesTextLabel.getValue()
+    	     		  },
+
+    	     success: function(response, opts) {
+    	     	
+    	     	me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], idActivo);
+				//btn.up('crearestadoadmisionwindow').close();
+    	     	me.hideWindowCrearActivoAdmision(btn);
+    	     	//me.destroyWindowCrearActivoAdmision(btn);
+    	     },
+
+    	     failure: function (a, operation, context) {
+           	  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+           }
+           
+    	 });
+    	}
+    	
+    },
+    destroyWindowCrearActivoAdmision: function (btn){
+    	var me = this;
+    	btn.up('window').destroy();
+    },
+    
+    hideWindowCrearActivoAdmision: function(btn) {
+    	var me = this;
+    	btn.up('window').hide();   	
+    },
     
     onClickCrearTrabajo: function (btn) {
     	var me = this;
@@ -483,13 +567,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: idActivo, idAgrupacion: null,codCartera: codCartera, codSubcartera: codSubcartera, logadoGestorMantenimiento: true});
     },
     
-    onAnyadirPropietarioClick: function (btn) {
-    	
+    onAnyadirPropietarioClick: function (btn) {    	
     	var me = this;
     	var idActivo = me.getViewModel().get("activo.id");
-		
-    	me.getView().fireEvent('openModalWindow',"HreRem.view.activos.detalle.AnyadirPropietario");
-  	    	
+		me.getView().fireEvent('openModalWindow',"HreRem.view.activos.detalle.AnyadirPropietario");	
     },
         
     onEliminarPropietarioClick: function (btn) {
@@ -532,6 +613,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			var storeSubestadoGestionFiltered = me.getViewModel().get("comboSubestadoGestionFiltered");
 			chainedCombo.bindStore(storeSubestadoGestionFiltered);
 			storeSubestadoGestionFiltered.getProxy().setExtraParams({'codLocalizacion':combo.getValue()});	
+		} else if (combo.chainedStore == 'comboSubestadoAdmisionNuevoFiltrado'){
+			var storeSubestadoAdmisionFiltered = me.getViewModel().data.comboSubestadoAdmisionNuevoFiltrado;
+			chainedCombo.bindStore(storeSubestadoAdmisionFiltered);
+			storeSubestadoAdmisionFiltered.getProxy().setExtraParams({'codEstadoAdmisionNuevo':combo.getValue()});	
 		}
 		
 		chainedCombo.getStore().load({ 			

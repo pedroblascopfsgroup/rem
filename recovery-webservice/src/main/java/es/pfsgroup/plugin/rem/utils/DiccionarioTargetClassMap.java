@@ -252,6 +252,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoSegmento", DDTipoSegmento.class);
 		mapa.put("origenAnterior", DDOrigenAnterior.class);
 		mapa.put("tipoPeticionPrecio", DDTipoPeticionPrecio.class);
+		mapa.put("estadosAdmision", DDEstadoAdmision.class); //
+		mapa.put("subEstadosAdmision", DDSubestadoAdmision.class); //
 		mapa.put("subtipologias", DDSubtipologiaAgenda.class);
 		mapa.put("siNoNoAplica", DDSiNoNoAplica.class);
 		mapa.put("situacionInicialInscripcion",DDSituacionInicialInscripcion.class);

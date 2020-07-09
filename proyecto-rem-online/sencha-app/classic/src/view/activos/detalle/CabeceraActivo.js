@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 	extend: 'Ext.container.Container',
 	xtype: 'cabeceraactivo',
-	requires: ['HreRem.view.common.ToolFieldSet', 'HreRem.ux.button.BotonFavorito'],
+	requires: ['HreRem.view.common.ToolFieldSet', 'HreRem.ux.button.BotonFavorito', 'HreRem.view.activos.detalle.CrearEstadoAdmision'],
 	layout: 'fit',
 	initComponent: function () {
 
@@ -137,6 +137,18 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 							},
 							{
 								xtype: 'tbfill'
+							},
+							//prueba boton: Estado admisión
+							{
+								xtype: 'button',
+								cls: 'boton-cabecera',
+								iconCls: 'ico-crear-trabajo',
+								tooltip: HreRem.i18n('btn.estado.admision'),
+								handler: 'onClickEstadoAdmision',//
+								//secFunPermToShow: 'BOTON_CREAR_TRABAJO',//
+								bind: {
+									hidden: '{!estadoAdmisionVisible}'
+								}
 							},
 							{
 								xtype: 'button',

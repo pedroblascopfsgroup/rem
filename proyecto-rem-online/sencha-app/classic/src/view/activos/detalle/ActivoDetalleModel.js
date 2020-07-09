@@ -937,6 +937,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				return true;
 			else
 				return false;
+		},
+		
+		estadoAdmisionVisible : function(get){
+			
+			return (get('activo.incluidoEnPerimetroAdmision') == "false" || !get('activo.incluidoEnPerimetroAdmision'))  && ($AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
 		}
 	 }, 
 	 
@@ -2423,6 +2428,32 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {id: '{activo.id}'}
 			}
 		},
+
+		
+		comboEstadoAdmision: {//
+			model: 'HreRem.model.DDBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosAdmision'}
+			}
+		},
+		comboSubestadoAdmision: {//
+			model: 'HreRem.model.DDBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getSubEstadoAdmision',
+				extraParams: {diccionario: 'subEstadosAdmision'}
+			}
+		},
+		comboSubestadoAdmisionNuevoFiltrado: {//
+			model: 'HreRem.model.DDBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/comboSubestadoAdmisionNuevoFiltrado'
+			}
+		}, 
+
 		storeGridEvolucion:{
 			pageSize: $AC.getDefaultPageSize(),
 			model: 'HreRem.model.ActivoEvolucion',
@@ -2441,5 +2472,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
      	        extraParams: {idActivo: '{activo.id}'}
          	 }
 		}
+
      }
 });

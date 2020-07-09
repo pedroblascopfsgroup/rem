@@ -120,6 +120,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
@@ -170,6 +171,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoSolicitudTributo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
@@ -6839,6 +6842,59 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return false;
+	}
+
+	@Override
+	@Transactional
+	public Boolean crearEstadoAdmision(String activoId, String codEstadoAdmision, String codSubestadoAdmision, String observaciones) {
+		try {
+			Long idActivo = Long.parseLong(activoId);
+			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+			Filter filtroEstadoAdmision = genericDao.createFilter(FilterType.EQUALS, "codigo", codEstadoAdmision);
+			
+			DDEstadoAdmision estadoAdmision = genericDao.get(DDEstadoAdmision.class, filtroBorrado, filtroEstadoAdmision);
+			DDSubestadoAdmision subestadoAdmision = null;
+			Activo activo = get(idActivo);
+			
+			
+			if (codSubestadoAdmision != null) {
+				
+				Filter filtroSubestadoAdmision = genericDao.createFilter(FilterType.EQUALS, "codigo", codSubestadoAdmision);
+				subestadoAdmision = genericDao.get(DDSubestadoAdmision.class, filtroBorrado, filtroSubestadoAdmision);;
+			}
+			ActivoAgendaEvolucion agendaEvolucion = genericDao.get(ActivoAgendaEvolucion.class, filtroBorrado, filtroActivoId);
+			
+			
+			if(agendaEvolucion!=null) {
+				activo.setEstadoAdmision(estadoAdmision);
+				agendaEvolucion.setEstadoAdmision(estadoAdmision);
+				activo.setSubestadoAdmision(subestadoAdmision);
+				agendaEvolucion.setSubEstadoAdmision(subestadoAdmision);				
+				agendaEvolucion.setObservaciones(observaciones);
+				agendaEvolucion.getAuditoria().setFechaModificar(new Date());
+				agendaEvolucion.getAuditoria().setUsuarioModificar(adapter.getUsuarioLogado().getUsername());
+				genericDao.update(ActivoAgendaEvolucion.class, agendaEvolucion);
+				
+			} else {
+				activo.setEstadoAdmision(estadoAdmision);
+				agendaEvolucion = new ActivoAgendaEvolucion();
+				agendaEvolucion.setActivo(activo);
+				agendaEvolucion.setEstadoAdmision(estadoAdmision);
+				activo.setSubestadoAdmision(subestadoAdmision);
+				agendaEvolucion.setSubEstadoAdmision(subestadoAdmision);
+				agendaEvolucion.setObservaciones(observaciones);
+				genericDao.save(ActivoAgendaEvolucion.class, agendaEvolucion);
+			}
+			
+			genericDao.update(Activo.class, activo);
+			
+			return true;
+		} catch (Exception e) {
+			logger.error("Error en activoManager", e);
+			return false;
+		}
+		
 	}
 
 }

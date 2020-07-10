@@ -618,9 +618,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 			// añadimos los activos de los hijos al padre, solo sareb
 			// añadimos los activos del hijo al padre, solo sareb
-			if (gastoProveedor.getPropietario() != null && gastoProveedor.getPropietario().getCartera() != null
-					&& DDCartera.CODIGO_CARTERA_SAREB
-							.equals(gastoProveedor.getPropietario().getCartera().getCodigo())) {
+//			if (gastoProveedor.getPropietario() != null && gastoProveedor.getPropietario().getCartera() != null
+//					&& DDCartera.CODIGO_CARTERA_SAREB
+//							.equals(gastoProveedor.getPropietario().getCartera().getCodigo())) {
 				for (VBusquedaGastoActivo vGastoActivo : listaActivos) {
 					this.createGastoActivo(gastoProveedor.getId(), vGastoActivo.getNumActivo(), null);
 				}
@@ -628,7 +628,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					gastoProveedor.getGastoDetalleEconomico().setImportePrincipalSujeto(importeGastosRefacturables);
 					genericDao.save(GastoProveedor.class, gastoProveedor);
 				}
-			}
+//			}
 		}
 		
 		return gastoProveedor;
@@ -2023,6 +2023,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				if (!Checks.esNulo(contabilidadGasto.getContabilizadoPor())) {
 					dto.setContabilizadoPorDescripcion(contabilidadGasto.getContabilizadoPor().getDescripcion());
 				}
+				if(!Checks.esNulo(contabilidadGasto.getActivable())){
+					dto.setComboActivable(contabilidadGasto.getActivable().getCodigo());
+				}
 			}
 
 		}
@@ -2035,6 +2038,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public boolean updateGastoContabilidad(DtoInfoContabilidadGasto dtoContabilidadGasto, Long idGasto) {
 		
 		try {
+			DDSinSiNo codSiNo = new DDSinSiNo();
+
 			GastoProveedor gasto = findOne(idGasto);
 			GastoInfoContabilidad contabilidadGasto = gasto.getGastoInfoContabilidad();
 			DtoInfoContabilidadGasto dtoIni = infoContabilidadToDtoInfoContabilidad(gasto);
@@ -2054,6 +2059,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					ConfiguracionSubpartidasPresupuestarias cps = genericDao.get(ConfiguracionSubpartidasPresupuestarias.class, filtroSubpartidaPresupuestaria);
 					
 					contabilidadGasto.setConfiguracionSubpartidasPresupuestarias(cps);
+				}
+
+				if(!Checks.esNulo(dtoContabilidadGasto.getComboActivable())) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoContabilidadGasto.getComboActivable());
+					codSiNo = (DDSinSiNo) genericDao.get(DDSinSiNo.class, filtro);
+					contabilidadGasto.setActivable(codSiNo);
 				}
 				
 				gasto.setGastoInfoContabilidad(contabilidadGasto);

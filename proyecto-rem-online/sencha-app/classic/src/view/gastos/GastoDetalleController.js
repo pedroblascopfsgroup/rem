@@ -1877,6 +1877,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var cuentaContable = me.lookupReference('cuentaContable')
 		var partidaPresupuestaria = me.lookupReference('partidaPresupuestaria');
 		var comboSubPartida = me.lookupReference('comboboxfieldSubpartidaPresupuestaria');
+		var comboActivable = me.lookupReference('comboActivable');
 		
 		if(isDivarian){
 			partidaPresupuestaria.setReadOnly(!isEditableDivarian);	
@@ -1905,6 +1906,10 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			cuentaContable
 				.setFieldLabel(HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable')	+ ' *');
 		}
+
+		if(cartera == CONST.CARTERA['LIBERBANK']){
+		    comboActivable.setHidden(false);
+		}
 	},
 	
 	onChangeComboSuplidos: function(combo, values){
@@ -1914,6 +1919,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		if(CONST.COMBO_SIN_NO['SI'] == values.getData().codigo){
 			comboFacturaPrincipal.setValue(null)
 		}
+		
 	}
 	
 });

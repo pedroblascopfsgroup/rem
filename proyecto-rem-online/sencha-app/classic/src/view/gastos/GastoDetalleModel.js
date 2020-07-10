@@ -643,6 +643,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 					diccionario : 'DDSiNo'
 				}
 			}
-		}
+		},
+
+        comboSiNoContabilidad: {
+            data : [
+                {"codigo":"01", "descripcion":"Si"},
+                {"codigo":"02", "descripcion":"No"}
+            ]
+        }
 	}
 });

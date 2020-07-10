@@ -29,42 +29,43 @@ public class PrefacturaAlbaran implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	@EmbeddedId
+	@Id
 	private PrefacturaAlbaranPk primaryKey = new PrefacturaAlbaranPk();
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="PFA_ID",nullable = false, updatable = false, insertable = false)
+	@Column(name="PFA_ID",nullable = false, updatable = false, insertable = false)
 	private Long prefactura;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="ALB_ID",nullable = false, updatable = false, insertable = false)
+	@Column(name="ALB_ID",nullable = false, updatable = false, insertable = false)
 	private Long albaran;
+	
 	
 	
 	public Long getPrefactura() {
 		return prefactura;
 	}
-
+	
 	public void setPrefactura(Long prefactura) {
 		this.prefactura = prefactura;
 	}
-
+	
 	public Long getAlbaran() {
 		return albaran;
 	}
-
+	
 	public void setAlbaran(Long albaran) {
 		this.albaran = albaran;
 	}
-
+	
 	public PrefacturaAlbaranPk getPrimaryKey() {
 		return primaryKey;
 	}
-
+	
 	public void setPrimaryKey(PrefacturaAlbaranPk primaryKey) {
 		this.primaryKey = primaryKey;
 	}
-
+	
+	@Version
+	private Integer version;
 
 	/**
 	 * defualt contructor.
@@ -117,10 +118,10 @@ public class PrefacturaAlbaran implements Serializable {
 		private static final long serialVersionUID = 1L;
 		
 		@Column(name = "ACT_ID")
-		private Long prefactura;
+		private Prefactura prefactura;
 		
 		@Column(name = "TBJ_ID")
-		private Long albaran;
+		private Albaran albaran;
 		
 		/**
 		 * default contructor.
@@ -129,24 +130,24 @@ public class PrefacturaAlbaran implements Serializable {
 			
 		}
 		
-		public PrefacturaAlbaranPk(Long prefactura, Long albaran) {
+		public PrefacturaAlbaranPk(Prefactura prefactura, Albaran albaran) {
 			this.prefactura = prefactura;
 			this.albaran = albaran;
 		}
 		
-		public Long getPrefactura() {
+		public Prefactura getPrefactura() {
 			return prefactura;
 		}
 		
-		public void setPrefactura(Long prefactura) {
+		public void setPrefactura(Prefactura prefactura) {
 			this.prefactura = prefactura;
 		}
 		
-		public Long getAlbaran() {
+		public Albaran getAlbaran() {
 			return albaran;
 		}
 		
-		public void setAlbaran(Long albaran) {
+		public void setAlbaran(Albaran albaran) {
 			this.albaran = albaran;
 		}
 		

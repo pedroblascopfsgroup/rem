@@ -88,7 +88,8 @@ Ext.define('HreRem.view.activos.detalle.AnyadirAgendaSaneamiento', {
 							publishes: 'value',									
     						listeners: {
 								select: 'onChangeChainedCombo'
-    						}
+    						},
+    						allowBlank: false
 			    		},
 			    		{ 
 							xtype: 'comboboxfieldbase',
@@ -98,12 +99,14 @@ Ext.define('HreRem.view.activos.detalle.AnyadirAgendaSaneamiento', {
 			            	bind: {
 			            		store: '{storeSubtipologiaAgendaSaneamiento}'
 			            	},
+			            	allowBlank: false,
 			            	disabled: true
 			    		},
 			    		{
 		                	xtype: 'textareafieldbase',
 		                	fieldLabel: HreRem.i18n('fieldlabel.agenda.revision.titulo.observaciones'),			                	
 		                	name: 'descripcion',
+		                	allowBlank: false,
 		                	maxLength: 256			                	
 	            		}
 		    	  	]

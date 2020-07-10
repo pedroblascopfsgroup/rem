@@ -315,6 +315,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 						        	   									       {
 						        	   											xtype: 'pagingtoolbar',
 						        	   										    dock: 'bottom',
+						        	   										    inputItemWidth: 50,
 						        	   											displayInfo: true,
 						        	   											bind: {
 						        	   											       store: '{listaActivosSubida}'

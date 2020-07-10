@@ -138,7 +138,17 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 									            		},
 									            		displayField	: 'descripcion',  
 														valueField		: 'id'												
-											        }														
+											        },
+                                                    {
+                                                        xtype: 'comboboxfieldbase',
+                                                        fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.activable'),
+                                                        reference: 'comboActivable',
+                                                        bind: {
+                                                            store: '{comboSiNoContabilidad}',
+                                                            value: '{contabilidad.comboActivable}'
+                                                        },
+                                                        hidden: true
+                                                    }
 										]
 					           }
            

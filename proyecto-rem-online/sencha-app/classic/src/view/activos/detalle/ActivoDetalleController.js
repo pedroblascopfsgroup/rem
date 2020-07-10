@@ -1155,6 +1155,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					me.unmask();
 				}
  			});
+ 		}else{
+ 			me.getView().unmask();
  		}
 		
 		

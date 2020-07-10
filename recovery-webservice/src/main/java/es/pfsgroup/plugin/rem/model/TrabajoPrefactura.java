@@ -126,11 +126,6 @@ public class TrabajoPrefactura implements Serializable {
 			
 		}
 		
-		public TrabajoPrefacturaPk(Trabajo trabajo, Prefactura prefactura) {
-			this.trabajo = trabajo;
-			this.prefactura = prefactura;
-		}
-		
 		public Trabajo getTrabajo() {
 			return trabajo;
 		}

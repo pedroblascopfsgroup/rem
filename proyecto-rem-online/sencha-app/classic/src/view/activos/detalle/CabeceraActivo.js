@@ -367,13 +367,13 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 										fieldLabel: HreRem.i18n('title.estado.admision'),
 										cls: 'cabecera-info-field',
 										bind:{
-											value: '{activo.estadoAdmisionDesc}'
+											value: '{activo.estadoAdmisionDescCabecera}'
 										}
 									},
 									{
 										fieldLabel: HreRem.i18n('title.subestado.admision'),
 										cls: 'cabecera-info-field',
-										bind: '{activo.subestadoAdmisionDesc}'
+										bind: '{activo.subestadoAdmisionDescCabecera}'
 									}
 								]
 							},

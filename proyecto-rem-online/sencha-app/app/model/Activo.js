@@ -947,7 +947,6 @@ Ext.define('HreRem.model.Activo', {
     		{
     			name: 'incluidoEnPerimetroAdmision'
     		},
-    		
     		{
     			name: 'estadoAdmisionCodigo'
     		},
@@ -968,6 +967,18 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'subestadoAdmisionDesc'
+    		},
+    		{
+    			name: 'estadoAdmisionCodCabecera'
+    		},
+    		{
+    			name: 'subestadoAdmisionCodCabecera'
+    		},
+    		{
+    			name: 'estadoAdmisionDescCabecera' 
+    		},
+    		{
+    			name: 'subestadoAdmisionDescCabecera'
     		}
     		
     ],

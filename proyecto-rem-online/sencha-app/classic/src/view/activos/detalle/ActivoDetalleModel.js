@@ -110,8 +110,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 	     getIconClsEstadoAdmision: function(get) {
 	     	var admisionAntiguo = get('activo.admision');
-	     	var estadoAdmision = get('activo.estadoAdmisionCod');
-	     	var subestadoAdmision = get('activo.subestadoAdmisionCod');
+	     	var estadoAdmision = get('activo.estadoAdmisionCodCabecera');
+	     	var subestadoAdmision = get('activo.subestadoAdmisionCodCabecera');
 	     	var perimetroAdmision = get('activo.perimetroAdmision');
 	     	
 	     	if(perimetroAdmision){

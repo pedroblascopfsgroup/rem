@@ -286,6 +286,10 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean perimetroAdmision;
 	private String estadoAdmisionDesc;
 	private String subestadoAdmisionDesc;
+	private String estadoAdmisionCodCabecera;
+	private String subestadoAdmisionCodCabecera;
+	private String estadoAdmisionDescCabecera;
+	private String subestadoAdmisionDescCabecera;
 
 
 	
@@ -2176,6 +2180,38 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setSubestadoAdmisionDesc(String subestadoAdmisionDesc) {
 		this.subestadoAdmisionDesc = subestadoAdmisionDesc;
+	}
+
+	public String getEstadoAdmisionCodCabecera() {
+		return estadoAdmisionCodCabecera;
+	}
+
+	public void setEstadoAdmisionCodCabecera(String estadoAdmisionCodCabecera) {
+		this.estadoAdmisionCodCabecera = estadoAdmisionCodCabecera;
+	}
+
+	public String getSubestadoAdmisionCodCabecera() {
+		return subestadoAdmisionCodCabecera;
+	}
+
+	public void setSubestadoAdmisionCodCabecera(String subestadoAdmisionCodCabecera) {
+		this.subestadoAdmisionCodCabecera = subestadoAdmisionCodCabecera;
+	}
+
+	public String getEstadoAdmisionDescCabecera() {
+		return estadoAdmisionDescCabecera;
+	}
+
+	public void setEstadoAdmisionDescCabecera(String estadoAdmisionDescCabecera) {
+		this.estadoAdmisionDescCabecera = estadoAdmisionDescCabecera;
+	}
+
+	public String getSubestadoAdmisionDescCabecera() {
+		return subestadoAdmisionDescCabecera;
+	}
+
+	public void setSubestadoAdmisionDescCabecera(String subestadoAdmisionDescCabecera) {
+		this.subestadoAdmisionDescCabecera = subestadoAdmisionDescCabecera;
 	}
 
 

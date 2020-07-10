@@ -82,7 +82,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivoBDE;
@@ -233,18 +232,18 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		if(activo.getPerimetroAdmision() == null || (activo.getPerimetroAdmision() != null && !activo.getPerimetroAdmision())) {
 			
-			BeanUtils.copyProperty(activoDto, "estadoAdmisionDesc", messageServices.getMessage(NO_GESTIONADO_POR_ADMISION));
+			BeanUtils.copyProperty(activoDto, "estadoAdmisionDescCabecera", messageServices.getMessage(NO_GESTIONADO_POR_ADMISION));
 			
 		}else if (activo.getPerimetroAdmision() != null && activo.getPerimetroAdmision()){
 			
 			if(activo.getEstadoAdmision() != null) {
-				BeanUtils.copyProperty(activoDto, "estadoAdmisionCod", activo.getEstadoAdmision().getCodigo());
-				BeanUtils.copyProperty(activoDto, "estadoAdmisionDesc", activo.getEstadoAdmision().getDescripcion());
+				BeanUtils.copyProperty(activoDto, "estadoAdmisionCodCabecera", activo.getEstadoAdmision().getCodigo());
+				BeanUtils.copyProperty(activoDto, "estadoAdmisionDescCabecera", activo.getEstadoAdmision().getDescripcion());
 			}
 			
 			if(activo.getSubestadoAdmision() != null) {
-				BeanUtils.copyProperty(activoDto, "subestadoAdmisionCod", activo.getSubestadoAdmision().getCodigo());
-				BeanUtils.copyProperty(activoDto, "subestadoAdmisionDesc", activo.getSubestadoAdmision().getDescripcion());
+				BeanUtils.copyProperty(activoDto, "subestadoAdmisionCodCabecera", activo.getSubestadoAdmision().getCodigo());
+				BeanUtils.copyProperty(activoDto, "subestadoAdmisionDescCabecera", activo.getSubestadoAdmision().getDescripcion());
 			}
 		} 
 		

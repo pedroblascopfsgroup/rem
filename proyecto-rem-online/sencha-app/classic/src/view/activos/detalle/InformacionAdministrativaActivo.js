@@ -350,6 +350,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 										        	fieldLabel:  HreRem.i18n('fieldlabel.estadoVenta'),	// estado venta
 										        	bind: {
 			            									store: '{comboEstadoVenta}',
+			            									readOnly : '{!auComprador}',
 			            									value: '{infoAdministrativa.estadoVentaCodigo}'
 			            								  }
 										        },
@@ -357,7 +358,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 										        	xtype: 'datefieldbase',     
 											 		fieldLabel: HreRem.i18n('fieldlabel.fechaEnvioComunicacionOrganismo'), // fecha de envío comunicación organismo.
 											 		bind: {
-											 				readOnly: $AU.userIsRol(CONST.PERFILES['!GESTOR_FORM'],['!HAYASUPER'],['!SUPERVISOR_FORM'],['!GESTIAFORM']),
+											 				readOnly : '{!auComprador}',
 											 				value:'{infoAdministrativa.fechaEnvioComunicacionOrganismo}'
 											 			},
 											 			maxValue : null
@@ -367,7 +368,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 										        	xtype: 'datefieldbase',     
 											 		fieldLabel: HreRem.i18n('fieldlabel.fechaRecepcionRespuestaOrganismo'), // fecha de recepción organismo.
 											 		bind: {
-											 				readOnly: $AU.userIsRol(CONST.PERFILES['!HAYASUPER'],['!GESTOR_FORM'],['!SUPERVISOR_FORM'],['!GESTIAFORM']),
+											 				readOnly : '{!auComprador}',
 											 				value:'{infoAdministrativa.fechaRecepcionRespuestaOrganismo}'
 											 			},
 											 		   maxValue : null

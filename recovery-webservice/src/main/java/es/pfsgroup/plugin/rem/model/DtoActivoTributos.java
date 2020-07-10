@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * Modelo que gestiona la informacion de los adjuntos.
@@ -15,21 +14,21 @@ public class DtoActivoTributos implements Serializable{
     
     private Long idTributo;
     
-    private Date fechaPresentacion;    
+    private String fechaPresentacion;    
    
-    private Date fechaRecPropietario;
+    private String fechaRecPropietario;
 
-    private Date fechaRecGestoria;
+    private String fechaRecGestoria;
     
     private String tipoSolicitud;   
 
 	private String observaciones;
 
-	private Date fechaRecRecursoPropietario;
+	private String fechaRecRecursoPropietario;
 
-	private Date fechaRecRecursoGestoria;
+	private String fechaRecRecursoGestoria;
 	
-	private Date fechaRespRecurso;
+	private String fechaRespRecurso;
 
 	private String resultadoSolicitud;
 	
@@ -45,15 +44,15 @@ public class DtoActivoTributos implements Serializable{
 	
 	private String tipoTributo;
 	
-	private Date fechaRecepcionTributo;
+	private String fechaRecepcionTributo;
 	
-	private Date fechaPagoTributo;
+	private String fechaPagoTributo;
 	
 	private Double importePagado;
 	
 	private Long numExpediente;
 	
-	private Date fechaComunicacionDevolucionIngreso;
+	private String fechaComunicacionDevolucionIngreso;
 	
 	private Double importeRecuperadoRecurso;
 
@@ -65,27 +64,27 @@ public class DtoActivoTributos implements Serializable{
 		this.numActivo = numActivo;
 	}
 
-	public Date getFechaPresentacion() {
+	public String getFechaPresentacion() {
 		return fechaPresentacion;
 	}
 
-	public void setFechaPresentacion(Date fechaPresentacion) {
+	public void setFechaPresentacion(String fechaPresentacion) {
 		this.fechaPresentacion = fechaPresentacion;
 	}
 
-	public Date getFechaRecPropietario() {
+	public String getFechaRecPropietario() {
 		return fechaRecPropietario;
 	}
 
-	public void setFechaRecPropietario(Date fechaRecPropietario) {
+	public void setFechaRecPropietario(String fechaRecPropietario) {
 		this.fechaRecPropietario = fechaRecPropietario;
 	}
 
-	public Date getFechaRecGestoria() {
+	public String getFechaRecGestoria() {
 		return fechaRecGestoria;
 	}
 
-	public void setFechaRecGestoria(Date fechaRecGestoria) {
+	public void setFechaRecGestoria(String fechaRecGestoria) {
 		this.fechaRecGestoria = fechaRecGestoria;
 	}
 
@@ -105,27 +104,27 @@ public class DtoActivoTributos implements Serializable{
 		this.observaciones = observaciones;
 	}
 
-	public Date getFechaRecRecursoPropietario() {
+	public String getFechaRecRecursoPropietario() {
 		return fechaRecRecursoPropietario;
 	}
 
-	public void setFechaRecRecursoPropietario(Date fechaRecRecursoPropietario) {
+	public void setFechaRecRecursoPropietario(String fechaRecRecursoPropietario) {
 		this.fechaRecRecursoPropietario = fechaRecRecursoPropietario;
 	}
 
-	public Date getFechaRecRecursoGestoria() {
+	public String getFechaRecRecursoGestoria() {
 		return fechaRecRecursoGestoria;
 	}
 
-	public void setFechaRecRecursoGestoria(Date fechaRecRecursoGestoria) {
+	public void setFechaRecRecursoGestoria(String fechaRecRecursoGestoria) {
 		this.fechaRecRecursoGestoria = fechaRecRecursoGestoria;
 	}
 
-	public Date getFechaRespRecurso() {
+	public String getFechaRespRecurso() {
 		return fechaRespRecurso;
 	}
 
-	public void setFechaRespRecurso(Date fechaRespRecurso) {
+	public void setFechaRespRecurso(String fechaRespRecurso) {
 		this.fechaRespRecurso = fechaRespRecurso;
 	}
 
@@ -193,19 +192,19 @@ public class DtoActivoTributos implements Serializable{
 		this.tipoTributo = tipoTributo;
 	}
 
-	public Date getFechaRecepcionTributo() {
+	public String getFechaRecepcionTributo() {
 		return fechaRecepcionTributo;
 	}
 
-	public void setFechaRecepcionTributo(Date fechaRecepcionTributo) {
+	public void setFechaRecepcionTributo(String fechaRecepcionTributo) {
 		this.fechaRecepcionTributo = fechaRecepcionTributo;
 	}
 
-	public Date getFechaPagoTributo() {
+	public String getFechaPagoTributo() {
 		return fechaPagoTributo;
 	}
 
-	public void setFechaPagoTributo(Date fechaPagoTributo) {
+	public void setFechaPagoTributo(String fechaPagoTributo) {
 		this.fechaPagoTributo = fechaPagoTributo;
 	}
 
@@ -225,11 +224,11 @@ public class DtoActivoTributos implements Serializable{
 		this.numExpediente = numExpediente;
 	}
 
-	public Date getFechaComunicacionDevolucionIngreso() {
+	public String getFechaComunicacionDevolucionIngreso() {
 		return fechaComunicacionDevolucionIngreso;
 	}
 
-	public void setFechaComunicacionDevolucionIngreso(Date fechaComunicacionDevolucionIngreso) {
+	public void setFechaComunicacionDevolucionIngreso(String fechaComunicacionDevolucionIngreso) {
 		this.fechaComunicacionDevolucionIngreso = fechaComunicacionDevolucionIngreso;
 	}
 

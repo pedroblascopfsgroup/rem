@@ -1262,7 +1262,7 @@ public interface ActivoApi {
 
 	List<DtoActivoTributos> getActivoTributosByActivo(Long idActivo, WebDto dto) throws GestorDocumentalException;
 	
-	boolean saveOrUpdateActivoTributo(DtoActivoTributos dto, Long idActivo);
+	boolean saveOrUpdateActivoTributo(DtoActivoTributos dto, Long idActivo) throws ParseException;
 	
 	boolean deleteActivoTributo(DtoActivoTributos dto);
 	

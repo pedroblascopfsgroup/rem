@@ -2733,16 +2733,29 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			for(ActivoTributos tributo : listTributos){
 				DtoActivoTributos dtoTributo = new DtoActivoTributos();
 				dtoTributo.setIdTributo(tributo.getId());
-				dtoTributo.setFechaPresentacion(tributo.getFechaPresentacionRecurso());
-				dtoTributo.setFechaRecPropietario(tributo.getFechaRecepcionPropietario());
-				dtoTributo.setFechaRecGestoria(tributo.getFechaRecepcionGestoria());
+				if(tributo.getFechaPresentacionRecurso() != null) {
+					dtoTributo.setFechaPresentacion(tributo.getFechaPresentacionRecurso().toString());
+				}
+				if(tributo.getFechaRecepcionPropietario() != null) {
+					dtoTributo.setFechaRecPropietario(tributo.getFechaRecepcionPropietario().toString());
+				}
+				if(tributo.getFechaRecepcionGestoria() != null) {
+					dtoTributo.setFechaRecGestoria(tributo.getFechaRecepcionGestoria().toString());
+				}
 				if(!Checks.esNulo(tributo.getTipoSolicitudTributo())){
 					dtoTributo.setTipoSolicitud(tributo.getTipoSolicitudTributo().getCodigo());
 				}
 				dtoTributo.setObservaciones(tributo.getObservaciones());
-				dtoTributo.setFechaRecRecursoPropietario(tributo.getFechaRecepcionRecursoPropietario());
-				dtoTributo.setFechaRecRecursoGestoria(tributo.getFechaRecepcionRecursoGestoria());
-				dtoTributo.setFechaRespRecurso(tributo.getFechaRespuestaRecurso());
+				
+				if(tributo.getFechaRecepcionRecursoPropietario() != null) {
+					dtoTributo.setFechaRecRecursoPropietario(tributo.getFechaRecepcionRecursoPropietario().toString());
+				}
+				if(tributo.getFechaRecepcionRecursoGestoria() != null) {
+					dtoTributo.setFechaRecRecursoGestoria(tributo.getFechaRecepcionRecursoGestoria().toString());
+				}
+				if(tributo.getFechaRespuestaRecurso() != null) {
+					dtoTributo.setFechaRespRecurso(tributo.getFechaRespuestaRecurso().toString());
+				}
 				if(!Checks.esNulo(tributo.getFavorable())){
 					dtoTributo.setResultadoSolicitud(tributo.getFavorable().getCodigo());
 				}
@@ -2756,14 +2769,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if(!Checks.esNulo(tributo.getTipoTributo())) {
 					dtoTributo.setTipoTributo(tributo.getTipoTributo().getCodigo());
 				}
-				dtoTributo.setFechaRecepcionTributo(tributo.getFechaRecepcionTributo());
-				dtoTributo.setFechaPagoTributo(tributo.getFechaPagoTributo());
+				
+				if(tributo.getFechaRecepcionTributo() != null) {
+					dtoTributo.setFechaRecepcionTributo(tributo.getFechaRecepcionTributo().toString());
+				}
+				if(tributo.getFechaPagoTributo() != null) {
+					dtoTributo.setFechaPagoTributo(tributo.getFechaPagoTributo().toString());
+				}
 				dtoTributo.setImportePagado(tributo.getImportePagado());
 				
 				if(tributo.getExpediente() != null) {
 					dtoTributo.setNumExpediente(tributo.getExpediente().getNumExpediente());
 				}
-				dtoTributo.setFechaComunicacionDevolucionIngreso(tributo.getFechaComunicacionDevolucionIngreso());
+				if(tributo.getFechaComunicacionDevolucionIngreso() != null) {
+					dtoTributo.setFechaComunicacionDevolucionIngreso(tributo.getFechaComunicacionDevolucionIngreso().toString());
+				}
 				dtoTributo.setImporteRecuperadoRecurso(tributo.getImporteRecuperadoRecurso());
 				
 				tributos.add(dtoTributo);
@@ -5777,7 +5797,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	@Transactional(readOnly = false)
-	public boolean saveOrUpdateActivoTributo(DtoActivoTributos dto, Long idActivo) {
+	public boolean saveOrUpdateActivoTributo(DtoActivoTributos dto, Long idActivo) throws ParseException {
 		ActivoTributos tributo = new ActivoTributos();
 		
 		if(!Checks.esNulo(dto.getIdTributo())){
@@ -5795,13 +5815,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 				}
 				if(!Checks.esNulo(dto.getFechaPresentacion())){
-					tributo.setFechaPresentacionRecurso(dto.getFechaPresentacion());
+					tributo.setFechaPresentacionRecurso(ft.parse(dto.getFechaPresentacion()));
 				}
 				if(!Checks.esNulo(dto.getFechaRecPropietario())){
-					tributo.setFechaRecepcionPropietario(dto.getFechaRecPropietario());
+					tributo.setFechaRecepcionPropietario(ft.parse(dto.getFechaRecPropietario()));
 				}
 				if(!Checks.esNulo(dto.getFechaRecGestoria())){
-					tributo.setFechaRecepcionGestoria(dto.getFechaRecGestoria());
+					tributo.setFechaRecepcionGestoria(ft.parse(dto.getFechaRecGestoria()));
 				}
 				if(!Checks.esNulo(dto.getTipoSolicitud())){
 					Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoSolicitud());
@@ -5815,13 +5835,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					tributo.setObservaciones(dto.getObservaciones());
 				}
 				if(!Checks.esNulo(dto.getFechaRecRecursoPropietario())){
-					tributo.setFechaRecepcionRecursoPropietario(dto.getFechaRecRecursoPropietario());
+					tributo.setFechaRecepcionRecursoPropietario(ft.parse(dto.getFechaRecRecursoPropietario()));
 				}
 				if(!Checks.esNulo(dto.getFechaRecRecursoGestoria())){
-					tributo.setFechaRecepcionRecursoGestoria(dto.getFechaRecRecursoGestoria());
+					tributo.setFechaRecepcionRecursoGestoria(ft.parse(dto.getFechaRecRecursoGestoria()));
 				}
 				if(!Checks.esNulo(dto.getFechaRespRecurso())){
-					tributo.setFechaRespuestaRecurso(dto.getFechaRespRecurso());
+					tributo.setFechaRespuestaRecurso(ft.parse(dto.getFechaRespRecurso()));
 				}
 				if(!Checks.esNulo(dto.getResultadoSolicitud())){
 					Filter filtroResultado = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getResultadoSolicitud());
@@ -5853,10 +5873,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 
 				if(dto.getFechaRecepcionTributo() != null) {
-					tributo.setFechaRecepcionTributo(dto.getFechaRecepcionTributo());
+					tributo.setFechaRecepcionTributo(ft.parse(dto.getFechaRecepcionTributo()));
 				}
 				if(dto.getFechaPagoTributo() != null) {
-					tributo.setFechaPagoTributo(dto.getFechaPagoTributo());
+					tributo.setFechaPagoTributo(ft.parse(dto.getFechaPagoTributo()));
 				}
 				if(dto.getImportePagado() != null) {
 					tributo.setImportePagado(dto.getImportePagado());
@@ -5871,7 +5891,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 				
 				if(!Checks.esNulo(dto.getFechaComunicacionDevolucionIngreso())){
-					tributo.setFechaComunicacionDevolucionIngreso(dto.getFechaComunicacionDevolucionIngreso());
+					tributo.setFechaComunicacionDevolucionIngreso(ft.parse(dto.getFechaComunicacionDevolucionIngreso()));
 				}
 				
 				if(!Checks.esNulo(dto.getImporteRecuperadoRecurso())){

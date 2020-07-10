@@ -111,7 +111,8 @@ Ext.define('HreRem.view.activos.detalle.TributosGrid', {
 	            formatter: 'date("d/m/Y")',
         		editor: {
                	 xtype: 'datefield',
-             	 allowBlank: false
+                 cls: 'grid-no-seleccionable-field-editor',
+             	 allowBlank: true
             	}
 		   	},
 		   	{	  
@@ -121,7 +122,7 @@ Ext.define('HreRem.view.activos.detalle.TributosGrid', {
 	            formatter: 'date("d/m/Y")',
         		editor: {
                	 xtype: 'datefield',
-               	 allowBlank: false
+               	 allowBlank: true
             	}
 		   	},
 		   	{	  
@@ -141,7 +142,7 @@ Ext.define('HreRem.view.activos.detalle.TributosGrid', {
 					addUxReadOnlyEditFieldPlugin: false,
 	        		   labelWidth: '25%',
 			            width: '15%',
-	            		allowBlank: false,
+	            		allowBlank: true,
 		        	
 	        		bind: {
 	            		store: '{comboTipoSolicitud}',
@@ -225,7 +226,7 @@ Ext.define('HreRem.view.activos.detalle.TributosGrid', {
         			hideTrigger: true,
         			keyNavEnable: false,
         			mouseWheelEnable: false,
-        			allowBlank: false
+        			allowBlank: true
    				}
 		   	},	{	  
 	            text: 'ExisteDocumento',

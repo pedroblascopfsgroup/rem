@@ -117,10 +117,12 @@ public class PrefacturaAlbaran implements Serializable {
 		 */
 		private static final long serialVersionUID = 1L;
 		
-		@Column(name = "ACT_ID")
+		@ManyToOne
+		@JoinColumn(name = "ACT_ID")
 		private Prefactura prefactura;
 		
-		@Column(name = "TBJ_ID")
+		@ManyToOne
+		@JoinColumn(name = "TBJ_ID")
 		private Albaran albaran;
 		
 		/**
@@ -128,11 +130,6 @@ public class PrefacturaAlbaran implements Serializable {
 		 */
 		public PrefacturaAlbaranPk() {
 			
-		}
-		
-		public PrefacturaAlbaranPk(Prefactura prefactura, Albaran albaran) {
-			this.prefactura = prefactura;
-			this.albaran = albaran;
 		}
 		
 		public Prefactura getPrefactura() {

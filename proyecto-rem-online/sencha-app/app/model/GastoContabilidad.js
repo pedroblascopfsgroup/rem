@@ -53,7 +53,10 @@ Ext.define('HreRem.model.GastoContabilidad', {
     	},    	
     	{
     		name: 'idSubpartidaPresupuestaria'
-    	}
+    	},
+        {
+            name: 'comboActivable'
+        }
     ],
     
 	proxy: {

@@ -383,8 +383,16 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     			proxy: {
     				type: 'uxproxy',
     				remoteUrl: 'trabajo/getListActivosByProceso',
+    				actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
     				extraParams: {idProceso: 'idProceso'}
-    			}
+    			},
+    			session: true,
+    	    	remoteSort: true,
+    	    	remoteFilter: true,
+    	    	autoLoad:false/*,
+    	    	listeners : {
+    	            beforeload : 'paramLoading'
+    	        }*/
     		},
     		
     		comboProveedorContacto : {

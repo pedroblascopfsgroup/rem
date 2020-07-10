@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20200621
+--## FECHA_CREACION=20200703
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-6440
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##	    0.2 REMVIP-7722 - Se quita tipo alquiler "No definido" de la alerta de ALERTA_TIPO_ALQUILER
 --##########################################
 --*/
 
@@ -77,7 +78,7 @@ BEGIN
              THEN (CASE WHEN SIJ.DD_SIJ_INDICA_POSESION = 1 THEN 0 ELSE 1 END) 
              ELSE (CASE WHEN SPS.SPS_FECHA_TOMA_POSESION IS NOT NULL THEN 0 ELSE 1 END)           
     	END AS ALERTA_POSESION,     
-	CASE WHEN TAL.DD_TAL_CODIGO IN (''02'',''03'',''04'',''05'',''08'',''10'',''11'') THEN 1 ELSE 0 END AS ALERTA_TIPO_ALQUILER,
+	CASE WHEN TAL.DD_TAL_CODIGO IN (''02'',''03'',''04'',''08'',''10'',''11'') THEN 1 ELSE 0 END AS ALERTA_TIPO_ALQUILER,
 	CASE WHEN (SPS.SPS_OCUPADO = 1 AND TPA.DD_TPA_CODIGO = ''01'' OR UA.ACT_ID IS NOT NULL) THEN 1 ELSE 0 END AS ALERTA_ALQUILER, 
 	CASE WHEN TCO.DD_TCO_CODIGO = ''03'' THEN 1 ELSE 0 END AS ALERTA_TCO_ALQUILER, 
 	CASE WHEN (SPS.SPS_OCUPADO = 1 AND (TPA.DD_TPA_CODIGO = ''02'' OR TPA.DD_TPA_CODIGO = ''03'' OR TPA.DD_TPA_CODIGO IS NULL)) THEN 1 ELSE 0 END AS ALERTA_OKUPADO

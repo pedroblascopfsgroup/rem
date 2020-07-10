@@ -2427,6 +2427,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
 		},
 		
+		comboEstadoVenta: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadoVenta'}
+			}
+		},
+		
 		storeReqFaseVenta:{
 			pageSize: $AC.getDefaultPageSize(),
 			model: 'HreRem.model.ReqFaseVentaModel',

@@ -71,6 +71,9 @@ public class DtoActivoInformacionAdministrativa extends DtoTabActivo {
 	private Long actualizaPrecioMaxId;
 	private Date fechaVencimiento;
 	
+	private Date fechaEnvioComunicacionOrganismo;
+	private Date fechaRecepcionRespuestaOrganismo;
+	private String estadoVentaCodigo;
 	
 	public String getNumeroActivo() {
 		return numeroActivo;
@@ -301,7 +304,7 @@ public class DtoActivoInformacionAdministrativa extends DtoTabActivo {
 	public void setActualizaPrecioMaxId(Long actualizaPrecioMaxId) {
 		this.actualizaPrecioMaxId = actualizaPrecioMaxId;
 	}
-
+	
 	public Date getFechaVencTpoBonificacion() {
 		return fechaVencTpoBonificacion;
 	}
@@ -319,6 +322,24 @@ public class DtoActivoInformacionAdministrativa extends DtoTabActivo {
 	}
 	public void setTributacionAdq(String tributacionAdq) {
 		this.tributacionAdq = tributacionAdq;
+	}
+	public Date getFechaEnvioComunicacionOrganismo() {
+		return fechaEnvioComunicacionOrganismo;
+	}
+	public void setFechaEnvioComunicacionOrganismo(Date fechaEnvioComunicacionOrganismo) {
+		this.fechaEnvioComunicacionOrganismo = fechaEnvioComunicacionOrganismo;
+	}
+	public Date getFechaRecepcionRespuestaOrganismo() {
+		return fechaRecepcionRespuestaOrganismo;
+	}
+	public void setFechaRecepcionRespuestaOrganismo(Date fechaRecepcionRespuestaOrganismo) {
+		this.fechaRecepcionRespuestaOrganismo = fechaRecepcionRespuestaOrganismo;
+	}
+	public String getEstadoVentaCodigo() {
+		return estadoVentaCodigo;
+	}
+	public void setEstadoVentaCodigo(String estadoVentaCodigo) {
+		this.estadoVentaCodigo = estadoVentaCodigo;
 	}
 	
 }

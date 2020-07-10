@@ -23,6 +23,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 import es.pfsgroup.plugin.rem.model.dd.DDTributacionAdquisicion;
@@ -170,6 +171,16 @@ public class ActivoInfAdministrativa implements Serializable, Auditable {
 	
 	@Column(name = "ACT_ADM_FECHA_LIQ_COMPLEM")
 	private Date fechaLiqComplementaria;
+	
+	@Column(name = "ADM_FECHA_ENVIO_COM_ORG")
+	private Date fechaEnvioComunicacionOrganismo;
+
+	@Column(name = "ADM_FECHA_RECEPCION_RESP_ORG")
+	private Date fechaRecepcionRespuestaOrganismo;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ADM_ESTADO_VENTA")
+	private DDEstadoVenta estadoVenta; 
 	
 	@Version
 	private Long version;
@@ -505,6 +516,36 @@ public class ActivoInfAdministrativa implements Serializable, Auditable {
 	public void setTributacionAdquisicion(DDTributacionAdquisicion tributacionAdquisicion) {
 		this.tributacionAdquisicion = tributacionAdquisicion;
 	}
+
+	public Date getFechaEnvioComunicacionOrganismo() {
+		return fechaEnvioComunicacionOrganismo;
+	}
+
+	public void setFechaEnvioComunicacionOrganismo(Date fechaEnvioComunicacionOrganismo) {
+		this.fechaEnvioComunicacionOrganismo = fechaEnvioComunicacionOrganismo;
+	}
+
+	public Date getFechaRecepcionRespuestaOrganismo() {
+		return fechaRecepcionRespuestaOrganismo;
+	}
+
+	public void setFechaRecepcionRespuestaOrganismo(Date fechaRecepcionRespuestaOrganismo) {
+		this.fechaRecepcionRespuestaOrganismo = fechaRecepcionRespuestaOrganismo;
+	}
+
+	public DDEstadoVenta getEstadoVenta() {
+		return estadoVenta;
+	}
+
+	public void setEstadoVenta(DDEstadoVenta estadoVenta) {
+		this.estadoVenta = estadoVenta;
+	}
+
+	public void setFechaComAdquision(Date fechaComAdquision) {
+		this.fechaComAdquision = fechaComAdquision;
+	}
+	
+	
 	
 }
 

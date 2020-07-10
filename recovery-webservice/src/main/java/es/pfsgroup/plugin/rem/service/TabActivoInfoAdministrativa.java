@@ -18,6 +18,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoInfAdministrativa;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformacionAdministrativa;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 import es.pfsgroup.plugin.rem.model.dd.DDTributacionAdquisicion;
@@ -131,6 +132,15 @@ public class TabActivoInfoAdministrativa implements TabActivoService {
 			if(activo.getInfoAdministrativa().getActualizaPrecioMax() != null) {
 				activoDto.setActualizaPrecioMaxId(activo.getInfoAdministrativa().getActualizaPrecioMax().getCodigo().equals(DDSinSiNo.CODIGO_NO) ? 0L : 1L);				
 			}
+			if(activo.getInfoAdministrativa().getFechaRecepcionRespuestaOrganismo() != null) {
+				activoDto.setFechaRecepcionRespuestaOrganismo(activo.getInfoAdministrativa().getFechaRecepcionRespuestaOrganismo());
+			}
+			if(activo.getInfoAdministrativa().getFechaEnvioComunicacionOrganismo() != null) {
+				activoDto.setFechaEnvioComunicacionOrganismo(activo.getInfoAdministrativa().getFechaEnvioComunicacionOrganismo());
+			}
+			if(activo.getInfoAdministrativa().getEstadoVenta() != null) {
+				activoDto.setEstadoVentaCodigo(activo.getInfoAdministrativa().getEstadoVenta().getCodigo());
+			}
 			
 		}
 		
@@ -189,6 +199,20 @@ public class TabActivoInfoAdministrativa implements TabActivoService {
 				
 				if(dto.getFechaVencimiento() != null) {
 					infoAdministrativa.setFechaVencimiento(dto.getFechaVencimiento());					
+				}
+				
+				if(dto.getFechaEnvioComunicacionOrganismo() != null) {
+					infoAdministrativa.setFechaEnvioComunicacionOrganismo(dto.getFechaEnvioComunicacionOrganismo());
+				}
+				
+				if(dto.getFechaRecepcionRespuestaOrganismo() != null) {
+					infoAdministrativa.setFechaRecepcionRespuestaOrganismo(dto.getFechaRecepcionRespuestaOrganismo());
+				}
+				
+				if(dto.getEstadoVentaCodigo() != null) {
+					Filter filterEstadoVenta = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoVentaCodigo());
+					DDEstadoVenta ddEstadoVenta = genericDao.get(DDEstadoVenta.class, filterEstadoVenta); 
+					infoAdministrativa.setEstadoVenta(ddEstadoVenta);	
 				}
 			}
 			

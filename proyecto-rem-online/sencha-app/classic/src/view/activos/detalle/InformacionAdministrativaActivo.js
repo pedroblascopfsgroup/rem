@@ -331,10 +331,54 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 												
 											]
 							        },
+						
+							        
+							        {
+							        	xtype:'fieldset',
+							        	colspan: 3,
+							        	margin: '0 10 10 10',
+							        	layout: {
+					 						type: 'table',
+			         						columns: 3
+			        						},
+										defaultType: 'textfieldbase',
+										title: HreRem.i18n("title.autorizacionComprador"), // Autorización
+										items :
+											[								
+												 { 
+										        	xtype: 'comboboxfieldbase',							        	
+										        	fieldLabel:  HreRem.i18n('fieldlabel.estadoVenta'),	// estado venta
+										        	bind: {
+			            									store: '{comboEstadoVenta}',
+			            									value: '{infoAdministrativa.estadoVentaCodigo}'
+			            								  }
+										        },
+										        { 
+										        	xtype: 'datefieldbase',     
+											 		fieldLabel: HreRem.i18n('fieldlabel.fechaEnvioComunicacionOrganismo'), // fecha de envío comunicación organismo.
+											 		bind: {
+											 				readOnly: $AU.userIsRol(CONST.PERFILES['!GESTOR_FORM'],['!HAYASUPER'],['!SUPERVISOR_FORM'],['!GESTIAFORM']),
+											 				value:'{infoAdministrativa.fechaEnvioComunicacionOrganismo}'
+											 			},
+											 			maxValue : null
+											 			
+										        },
+										        { 
+										        	xtype: 'datefieldbase',     
+											 		fieldLabel: HreRem.i18n('fieldlabel.fechaRecepcionRespuestaOrganismo'), // fecha de recepción organismo.
+											 		bind: {
+											 				readOnly: $AU.userIsRol(CONST.PERFILES['!HAYASUPER'],['!GESTOR_FORM'],['!SUPERVISOR_FORM'],['!GESTIAFORM']),
+											 				value:'{infoAdministrativa.fechaRecepcionRespuestaOrganismo}'
+											 			},
+											 		   maxValue : null
+										        }
+											]
+							        },
+							        
 									{
 							        	xtype:'fieldset',
 							        	margin: '0 10 10 0',
-										colspan: 2,
+										colspan: 3,
 										defaultType: 'textfieldbase',
 							        	items :
 										[

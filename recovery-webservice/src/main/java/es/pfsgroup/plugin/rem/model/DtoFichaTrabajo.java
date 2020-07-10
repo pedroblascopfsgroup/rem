@@ -177,6 +177,8 @@ public class DtoFichaTrabajo {
 	private String nombreProyecto;
 
 	private String nombreExpediente;
+	
+	private String gestorActivo;
 
 	public Long getIdTrabajo() {
 		return idTrabajo;
@@ -860,6 +862,14 @@ public class DtoFichaTrabajo {
 
 	public void setNombreExpediente(String nombreExpediente) {
 		this.nombreExpediente = nombreExpediente;
+	}
+
+	public String getGestorActivo() {
+		return gestorActivo;
+	}
+
+	public void setGestorActivo(String gestorActivo) {
+		this.gestorActivo = gestorActivo;
 	}
 	
 }

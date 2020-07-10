@@ -270,6 +270,9 @@ Ext.define('HreRem.model.FichaTrabajo', {
     		},
     		{
     			name: 'nombreProyecto' 
+    		},
+    		{
+    			name: 'gestorActivo'
     		}
     		
     ],

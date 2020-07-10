@@ -1721,6 +1721,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				dtoTrabajo.setSolicitante(trabajo.getMediador().getNombre());
 			}
 		}
+		
+		if(trabajo.getGestorAlta() != null) {
+			dtoTrabajo.setGestorActivo(trabajo.getGestorAlta().getApellidoNombre());
+		}
 
 		dtoTrabajo.setHoraConcreta(trabajo.getFechaHoraConcreta());
 		dtoTrabajo.setFechaConcreta(trabajo.getFechaHoraConcreta());

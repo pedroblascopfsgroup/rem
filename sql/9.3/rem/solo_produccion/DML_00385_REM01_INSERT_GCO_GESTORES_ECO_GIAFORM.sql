@@ -75,7 +75,7 @@ inner join (SELECT distinct eco.* FROM '||V_ESQUEMA||'.eco_expediente_comercial 
    inner join '||V_ESQUEMA||'.act_tra_tramite tra on tra.tbj_id = eco.tbj_id and tra.borrado = 0 and tra.dd_epr_id != 5
    where eco.borrado = 0 and aux.eco_id is null) eco on eco.ofr_id = ofr.ofr_id and eco.borrado = 0
 inner join '||V_ESQUEMA_M||'.dd_tge_tipo_gestor tge on tge.dd_tge_id = geh.dd_tge_id
-where tge.dd_tge_codigo = ''GIAFORM'' and act.borrado = 0 and (cra.dd_cra_codigo in (''01'',''02'',''03'',''08'')or (cra.dd_cra_codigo = ''07'' and scr.dd_Scr_codigo = ''138'')) and eco.fechacrear >= TO_DATE (''26/06/20''))';
+where tge.dd_tge_codigo = ''GIAFORM'' and act.borrado = 0 and (cra.dd_cra_codigo in (''01'',''02'',''03'',''08'')or (cra.dd_cra_codigo = ''07'' and scr.dd_Scr_codigo = ''138'')) and eco.fechacrear >= TO_DATE (''26/06/20'', ''dd/mm/yy''))';
 
     EXECUTE IMMEDIATE V_MSQL;
 

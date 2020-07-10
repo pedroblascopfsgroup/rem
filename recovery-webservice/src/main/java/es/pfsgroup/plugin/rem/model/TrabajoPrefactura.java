@@ -7,6 +7,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -29,15 +30,13 @@ public class TrabajoPrefactura implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
-	@EmbeddedId
+	@Id
 	private TrabajoPrefacturaPk primaryKey = new TrabajoPrefacturaPk();
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="TBJ_ID",nullable = false, updatable = false, insertable = false)
+	@Column(name="TBJ_ID",nullable = false, updatable = false, insertable = false)
 	private Long trabajo;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="PFA_ID",nullable = false, updatable = false, insertable = false)
+	@Column(name="PFA_ID",nullable = false, updatable = false, insertable = false)
 	private Long prefactura;
 	
 	
@@ -50,6 +49,9 @@ public class TrabajoPrefactura implements Serializable {
 		this.primaryKey = primaryKey;
 	}
 	
+	@Version
+	private Integer version;
+	
 	
 	/**
 	 * defualt contructor.
@@ -57,9 +59,6 @@ public class TrabajoPrefactura implements Serializable {
 	public TrabajoPrefactura() {
 		primaryKey = new TrabajoPrefacturaPk();
 	}
-	
-	@Version
-	private Integer version;
 	
 	/**
 	 * clase pk embebida
@@ -114,11 +113,11 @@ public class TrabajoPrefactura implements Serializable {
 		
 		@ManyToOne
 		@JoinColumn(name = "TBJ_ID")
-		private Long trabajo;
+		private Trabajo trabajo;
 		
 		@ManyToOne
 		@JoinColumn(name = "PFA_ID")
-		private Long prefactura;
+		private Prefactura prefactura;
 		
 		/**
 		 * default contructor.
@@ -127,24 +126,24 @@ public class TrabajoPrefactura implements Serializable {
 			
 		}
 		
-		public TrabajoPrefacturaPk(Long trabajo, Long prefactura) {
+		public TrabajoPrefacturaPk(Trabajo trabajo, Prefactura prefactura) {
 			this.trabajo = trabajo;
 			this.prefactura = prefactura;
 		}
 		
-		public Long getTrabajo() {
+		public Trabajo getTrabajo() {
 			return trabajo;
 		}
 		
-		public void setTrabajo(Long trabajo) {
+		public void setTrabajo(Trabajo trabajo) {
 			this.trabajo = trabajo;
 		}
 
-		public Long getPrefactura() {
+		public Prefactura getPrefactura() {
 			return prefactura;
 		}
 
-		public void setPrefactura(Long prefactura) {
+		public void setPrefactura(Prefactura prefactura) {
 			this.prefactura = prefactura;
 		}
 	}

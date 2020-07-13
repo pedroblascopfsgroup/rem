@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.TrabajoUserAssigantionServi
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
+import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ConfiguracionAccesoGestoria;
 import es.pfsgroup.plugin.rem.model.GestorActivo;
@@ -162,24 +163,33 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  	
 	@Override
 	public void actualizarTareas(Long idActivo) {
-		Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
-		Filter tacBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		List<TareaActivo> listaTac = genericDao.getList(TareaActivo.class, filtroIdActivo, tacBorrado);
-
-		for (TareaActivo tareaActivo : listaTac) {
-			TareaExterna tareaExterna = tareaActivo.getTareaExterna();
-			if (!Checks.esNulo(tareaExterna)) {
-				TareaProcedimiento tareaProcedimiento = tareaExterna.getTareaProcedimiento();
-				if (!Checks.esNulo(tareaProcedimiento)) {
-					UserAssigantionService userAssigantionService = userAssigantionServiceFactoryApi.getService(tareaProcedimiento.getCodigo());
-					if (userAssigantionService != null && !(userAssigantionService instanceof TrabajoUserAssigantionService)) {
-						Usuario gestor = userAssigantionService.getUser(tareaExterna);
-						if (!Checks.esNulo(gestor)) {
-							tareaActivo.setUsuario(gestor);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+		Activo activo = genericDao.get(Activo.class, filtroIdActivo, filtroBorrado);
+		if(activo != null) {
+			Filter filtroFechafin = genericDao.createFilter(FilterType.NOTNULL, "fechaFin");
+			filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+			List<ActivoTramite> listaTramites = genericDao.getList(ActivoTramite.class, filtroFechafin, filtroIdActivo, filtroBorrado);
+			for(ActivoTramite tramite : listaTramites) {
+				Filter filtroIdTramite = genericDao.createFilter(FilterType.EQUALS, "tramite.id", tramite.getId());
+				List<TareaActivo> listaTac = genericDao.getList(TareaActivo.class, filtroIdTramite, filtroBorrado);
+				for (TareaActivo tareaActivo : listaTac) {
+					TareaExterna tareaExterna = tareaActivo.getTareaExterna();
+					if (!Checks.esNulo(tareaExterna)) {
+						TareaProcedimiento tareaProcedimiento = tareaExterna.getTareaProcedimiento();
+						if (!Checks.esNulo(tareaProcedimiento)) {
+							UserAssigantionService userAssigantionService = userAssigantionServiceFactoryApi.getService(tareaProcedimiento.getCodigo());
+							if (userAssigantionService != null && !(userAssigantionService instanceof TrabajoUserAssigantionService)) {
+								Usuario gestor = userAssigantionService.getUser(tareaExterna);
+								if (!Checks.esNulo(gestor)) {
+									tareaActivo.setUsuario(gestor);
+								}
+							}
 						}
 					}
 				}
 			}
+			
 		}
 	}
  	

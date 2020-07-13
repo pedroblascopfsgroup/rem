@@ -1244,7 +1244,7 @@ public class TrabajoController extends ParadiseJsonController {
 	}
 		
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListActivosByProceso(Long idProceso, DtoTrabajoListActivos webDto, ModelMap model){
 
 		try {

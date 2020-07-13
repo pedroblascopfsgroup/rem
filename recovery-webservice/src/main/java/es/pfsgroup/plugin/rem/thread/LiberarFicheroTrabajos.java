@@ -5,9 +5,11 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import es.pfsgroup.plugin.rem.api.impl.CreacionTrabajosMasivoAsync;
+import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.trabajo.TrabajoManager;
 
 
 public class LiberarFicheroTrabajos implements Runnable {
@@ -15,15 +17,18 @@ public class LiberarFicheroTrabajos implements Runnable {
 	private RestApi restApi;
 
 	@Autowired
-	private CreacionTrabajosMasivoAsync creacionTrabajos;
+	private TrabajoManager trabajoManager;
+	
+	@Autowired
+	private ProcessAdapter processAdapter;
 	
 	private final Log logger = LogFactory.getLog(getClass());
-	private String userName = null;
+	private Usuario user = null;
 	private DtoFichaTrabajo dtoTrabajo = null;
 
-	public LiberarFicheroTrabajos(String userName, DtoFichaTrabajo dtoTrabajo) {
+	public LiberarFicheroTrabajos(Usuario user, DtoFichaTrabajo dtoTrabajo) {
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
-		this.userName = userName;
+		this.user = user;
 		this.dtoTrabajo = dtoTrabajo;
 	}
 
@@ -31,11 +36,13 @@ public class LiberarFicheroTrabajos implements Runnable {
 	public void run() {
 		
 		try {
-			restApi.doSessionConfig(this.userName);
-			creacionTrabajos.doCreacionTrabajosAsync(this.dtoTrabajo);
-			
+			restApi.doSessionConfig(this.user.getUsername());
+			trabajoManager.doCreacionTrabajosAsync(this.dtoTrabajo, this.user);
+			processAdapter.setStateProcessed(dtoTrabajo.getIdProceso());
 			
 		} catch (Exception e) {
+			processAdapter.addFilaProcesada(dtoTrabajo.getIdProceso(), false);
+			processAdapter.setStateProcessed(dtoTrabajo.getIdProceso());
 			logger.error("error procesando trabajos excel", e);
 		}
 

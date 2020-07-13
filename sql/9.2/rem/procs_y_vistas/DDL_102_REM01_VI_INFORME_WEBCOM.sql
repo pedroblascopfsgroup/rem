@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=RLB
---## FECHA_CREACION=20190530
+--## AUTOR=Adrián Molina
+--## FECHA_CREACION=20200713
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=0
+--## INCIDENCIA_LINK=REMVIP-7586
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico de los informes enviadas a webcom.
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2: 20180525 Gustavo Mora. Se filtra borrado = 0 en dis_distribucion de las subconsultas
+--##        0.3: 20200713 Adrián Molina. Aumentar capacidad del campo codPedania
 --##########################################
 --*/
 
@@ -186,7 +187,7 @@ BEGIN
 			CAST(ICO.ICO_PLANTA AS VARCHAR2(11 CHAR)) AS PLANTA,
 			CAST(ICO.ICO_PUERTA AS VARCHAR2(17 CHAR)) AS PUERTA,
 			CAST(DDLOC.DD_LOC_CODIGO AS VARCHAR2(5 CHAR)) AS COD_MUNICIPIO,
-			CAST(DDUPO.DD_UPO_CODIGO AS VARCHAR2(5 CHAR)) AS COD_PEDANIA,
+			CAST(DDUPO.DD_UPO_CODIGO AS VARCHAR2(25 CHAR)) AS COD_PEDANIA,
 			CAST(DDPRV.DD_PRV_CODIGO AS VARCHAR2(5 CHAR)) AS COD_PROVINCIA,
 			CAST(ICO.ICO_CODIGO_POSTAL AS VARCHAR2(250 CHAR)) AS CODIGO_POSTAL,
 			CAST(ICO.ICO_ZONA AS VARCHAR2(100 CHAR)) AS ZONA,

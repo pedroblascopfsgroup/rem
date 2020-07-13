@@ -27,7 +27,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
+//import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.api.impl.MSVProcesoManager;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
@@ -65,8 +65,8 @@ public class CreacionTrabajosMasivoAsync {
 	@Autowired
 	private UpdaterStateApi updaterStateApi;
 	
-	@Autowired
-	private ProcessAdapter processAdapter;
+	//@Autowired
+	//private ProcessAdapter processAdapter;
 	
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -83,12 +83,13 @@ public class CreacionTrabajosMasivoAsync {
 	@Autowired
 	private MSVExcelParser excelParser;
 	
-	
-	public void doCreacionTrabajosAsync(DtoFichaTrabajo dtoTrabajo) {
-		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+	@Transactional
+	public void doCreacionTrabajosAsync(DtoFichaTrabajo dtoTrabajo, Usuario usuarioLogado) {
+		TransactionStatus transaction = null;
+		transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		List<Activo> listaActivos = this.getListaActivosProceso(dtoTrabajo.getIdProceso());
 		Trabajo trabajo = new Trabajo();
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		
 		try {
 
 			Boolean isFirstLoop = true;
@@ -136,7 +137,7 @@ public class CreacionTrabajosMasivoAsync {
 						trabajo.setUsuarioResponsableTrabajo(usuarioLogado);
 					}
 
-					trabajo.setEstado(trabajoManager.getEstadoNuevoTrabajo(dtoTrabajo, activo));
+					trabajo.setEstado(trabajoManager.getEstadoNuevoTrabajoUsuario(dtoTrabajo, activo, usuarioLogado));
 
 					// El gestor de activo se salta tareas de estos trámites y
 					// por tanto es necesario settear algunos datos
@@ -161,8 +162,10 @@ public class CreacionTrabajosMasivoAsync {
 						trabajo.setEsTarificado(true);
 					}
 				}
-
 				ActivoTrabajo activoTrabajo = trabajoManager.createActivoTrabajo(activo, trabajo, dtoTrabajo.getParticipacion());
+				transactionManager.commit(transaction);
+				transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+				
 				trabajo.getActivosTrabajo().add(activoTrabajo);
 				isFirstLoop = false;
 
@@ -178,11 +181,14 @@ public class CreacionTrabajosMasivoAsync {
 						trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
 					}
 					trabajoDao.saveOrUpdate(trabajo);
+					transactionManager.commit(transaction);
+					transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+					
 					trabajoManager.createTramiteTrabajo(trabajo);
 					transactionManager.commit(transaction);
-					
 					transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-					processAdapter.addFilaProcesada(dtoTrabajo.getIdProceso(), true);
+					
+					//processAdapter.addFilaProcesada(dtoTrabajo.getIdProceso(), true);
 					
 				}
 			}
@@ -192,16 +198,20 @@ public class CreacionTrabajosMasivoAsync {
 					trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
 				}
 				trabajoDao.saveOrUpdate(trabajo);
+				transactionManager.commit(transaction);
+				transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 				trabajoManager.createTramiteTrabajo(trabajo);
-				ficheroMasivoToTrabajo(dtoTrabajo.getIdProceso(), trabajo);				
+				transactionManager.commit(transaction);
+				transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+				ficheroMasivoToTrabajo(dtoTrabajo.getIdProceso(), trabajo);	
+				transactionManager.commit(transaction);
 			}
 			
-			processAdapter.setStateProcessed(dtoTrabajo.getIdProceso());
-			transactionManager.commit(transaction);
+			//processAdapter.setStateProcessed(dtoTrabajo.getIdProceso());
 			
 		} catch (Exception e) {
-			processAdapter.addFilaProcesada(dtoTrabajo.getIdProceso(), false);
-			processAdapter.setStateProcessed(dtoTrabajo.getIdProceso());
+			//processAdapter.addFilaProcesada(dtoTrabajo.getIdProceso(), false);
+			//processAdapter.setStateProcessed(dtoTrabajo.getIdProceso());
 			logger.error(e.getMessage());
 			try {
 				transactionManager.rollback(transaction);

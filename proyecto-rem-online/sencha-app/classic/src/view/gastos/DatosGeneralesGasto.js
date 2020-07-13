@@ -87,17 +87,6 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 						                bind:		'{gasto.referenciaEmisor}',
 						                allowBlank: false
 									},
-									{ 
-										xtype: 'comboboxfieldbase',
-						               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.subtipo.gasto'),
-						               	reference: 'subtipoGastoCombo',
-								      	bind: {
-							           		store: '{comboSubtiposGasto}',
-							           		value: '{gasto.subtipoGastoCodigo}',
-							           		disabled: '{!gasto.tipoGastoCodigo}'
-							         	},
-							         	allowBlank: false
-							    	},
 							    	{ 
 										xtype: 'comboboxfieldbase',
 						               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.tipo.gasto'),

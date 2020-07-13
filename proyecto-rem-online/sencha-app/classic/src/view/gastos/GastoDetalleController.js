@@ -1747,41 +1747,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var isDivarian = CONST.CARTERA['CERBERUS'] === cartera
 						&& (CONST.SUBCARTERA['DIVARIANARROW'] === subcartera
 								|| CONST.SUBCARTERA['DIVARIANREMAINING'] == subcartera || CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcartera);
-		
-		var isEditableDivarian = isDivarian && $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
-		
-		var cuentaContable = me.lookupReference('cuentaContable')
-		var partidaPresupuestaria = me.lookupReference('partidaPresupuestaria');
-		var comboSubPartida = me.lookupReference('comboboxfieldSubpartidaPresupuestaria');
+
 		var comboActivable = me.lookupReference('comboActivable');
-		
-		if(isDivarian){
-			partidaPresupuestaria.setReadOnly(!isEditableDivarian);	
-			cuentaContable.setReadOnly(!isEditableDivarian);
-		}
-		comboSubPartida.setHidden(!isDivarian);
-		
-		if (isDivarian) {
-			partidaPresupuestaria
-				.setFieldLabel(HreRem.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria') + ' **');
-			cuentaContable
-				.setFieldLabel(HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable')	+ ' **');
-		} else if (cartera == CONST.CARTERA['BANKIA'] || cartera == CONST.CARTERA['LIBERBANK']) {
-			cuentaContable
-				.setFieldLabel(HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable'));
-			partidaPresupuestaria
-                .setFieldLabel(HreRem.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria') + ' *');
-				
-			if (cartera == CONST.CARTERA['LIBERBANK']) {
-				partidaPresupuestaria
-					.setFieldLabel(HreRem.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria'));
-			}
-		} else {
-			partidaPresupuestaria
-				.setFieldLabel(HreRem.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria') + ' *');
-			cuentaContable
-				.setFieldLabel(HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable')	+ ' *');
-		}
 
 		if(cartera == CONST.CARTERA['LIBERBANK']){
 		    comboActivable.setHidden(false);

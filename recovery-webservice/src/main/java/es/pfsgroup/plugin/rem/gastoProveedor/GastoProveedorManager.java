@@ -301,10 +301,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setTipoGastoCodigo(gasto.getTipoGasto().getCodigo());
 				dto.setTipoGastoDescripcion(gasto.getTipoGasto().getDescripcion());
 			}
-			if (!Checks.esNulo(gasto.getSubtipoGasto())) {
-				dto.setSubtipoGastoCodigo(gasto.getSubtipoGasto().getCodigo());
-				dto.setSubtipoGastoDescripcion(gasto.getSubtipoGasto().getDescripcion());
-			}
+			
 			if (!Checks.esNulo(gasto.getEstadoGasto())) {
 				dto.setEstadoGastoCodigo(gasto.getEstadoGasto().getCodigo());
 				dto.setEstadoGastoDescripcion(gasto.getEstadoGasto().getDescripcion());
@@ -651,10 +648,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			DDTipoGasto tipoGasto = (DDTipoGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoGasto.class, dto.getTipoGastoCodigo());
 			gastoProveedor.setTipoGasto(tipoGasto);
 		}
-		if (!Checks.esNulo(dto.getSubtipoGastoCodigo())) {
-			DDSubtipoGasto subtipoGasto = (DDSubtipoGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoGasto.class, dto.getSubtipoGastoCodigo());
-			gastoProveedor.setSubtipoGasto(subtipoGasto);
-		}
+		
 		if (!Checks.esNulo(dto.getDestinatario())) {
 			DDDestinatarioGasto destinatario = (DDDestinatarioGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDDestinatarioGasto.class, dto.getDestinatario());
 			gastoProveedor.setDestinatarioGasto(destinatario);
@@ -1846,22 +1840,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				if (!Checks.esNulo(gasto.getTipoPeriocidad())) {
 					dto.setPeriodicidadDescripcion(gasto.getTipoPeriocidad().getDescripcion());
 				}
-				if (!Checks.esNulo(contabilidadGasto.getPartidaPresupuestaria())) {
-					dto.setPartidaPresupuestaria(contabilidadGasto.getPartidaPresupuestaria());
-				}
-				if (!Checks.esNulo(contabilidadGasto.getCuentaContable())) {
-					dto.setCuentaContable(contabilidadGasto.getCuentaContable());
-					
-					if(contabilidadGasto.getPartidaPresupuestaria() != null) {
-						Filter partidaPresupuestariaFilter = genericDao.createFilter(FilterType.EQUALS, "partidaPresupuestaria", contabilidadGasto.getPartidaPresupuestaria());
-						Filter cuentaContableFilter = genericDao.createFilter(FilterType.EQUALS, "cuentaContable", contabilidadGasto.getCuentaContable());
-						ConfiguracionSubpartidasPresupuestarias csp = genericDao.get(ConfiguracionSubpartidasPresupuestarias.class, partidaPresupuestariaFilter, cuentaContableFilter);
-						if(csp != null) {
-							dto.setIdSubpartidaPresupuestaria(csp.getId());
-						}
-					}
-				}
-
+				
 				dto.setFechaDevengoEspecial(contabilidadGasto.getFechaDevengoEspecial());
 				if (!Checks.esNulo(contabilidadGasto.getTipoPeriocidadEspecial())) {
 					dto.setPeriodicidadEspecialDescripcion(contabilidadGasto.getTipoPeriocidadEspecial().getDescripcion());

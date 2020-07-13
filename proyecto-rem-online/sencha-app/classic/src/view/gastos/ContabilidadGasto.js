@@ -40,7 +40,6 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 													{ 
 														xtype:'comboboxfieldbase',
 														fieldLabel:  HreRem.i18n('fieldlabel.gasto.contabilidad.ejercicio.imputa.gasto'),
-														labelWidth: 200,
 														reference: 'comboboxfieldFechaEjercicio',
 										        		bind: {
 									            			store: '{comboEjercicioContabilidad}',
@@ -50,25 +49,15 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 														valueField		: 'id',
 														readOnly: true
 											        },
-													{ 
-														xtype: 'textfieldbase',
-														reference: 'cuentaContable',
-														labelWidth: 200,
-														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable'),
-										                bind: '{contabilidad.cuentaContable}',
-										                maskRe: /[0-9]/
-													},
 													{
 														xtype: 'datefieldbase',
 														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.fecha.contabilizacion'),
-														labelWidth: 200,
 														bind:		'{contabilidad.fechaContabilizacion}',
 														formatter: 'date("d/m/Y")',
 														readOnly: true
 													},
 													{
 														xtype: 'datefieldbase',
-														labelWidth: 200,
 														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.fecha.devengo'),
 														reference: 'fechaDevengoEspecial',
 														bind:		'{contabilidad.fechaDevengoEspecial}',
@@ -77,68 +66,18 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 //										            	},
 //										            	editable: false,
 														formatter: 'date("d/m/Y")'
-													},
-													{ 
-														xtype: 'textfieldbase',
-														reference: 'partidaPresupuestaria',
-														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria'),
-														labelWidth: 200,
-										                bind: '{contabilidad.partidaPresupuestaria}'		                 
 													},																								
 													{ 
 														xtype: 'displayfieldbase',
 														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.contabilizado.por'),
-														labelWidth: 200,
 										                bind: '{contabilidad.contabilizadoPorDescripcion}'
 													},														
 													{ 
 														xtype: 'textfieldbase',
-														labelWidth: 200,
 														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.periodicidad'),
 										                bind: '{contabilidad.periodicidadDescripcion}',
 										                readOnly: true						
 													},
-													{ 
-														xtype:'comboboxfieldbase',
-														fieldLabel:  HreRem.i18n('fieldlabel.gasto.contabilidad.subpartidaPresupuestaria'),
-														labelWidth: 200,
-														reference: 'comboboxfieldSubpartidaPresupuestaria',
-														hidden: true,
-														listeners:{	
-															change:function(){
-																		var campoPartidaPresupuestaria = this.lookupController().lookupReference('partidaPresupuestaria');
-																		var url = $AC.getRemoteUrl('generic/getPartidaPresupuestaria');
-																		var valor = this.value;
-																  		
-																  		Ext.Ajax.request({
-			    			
-															    		     url: url,
-															    		     params: {idSubpartida : valor},
-															    			method: 'GET',
-															    		     success: function (a, operation, context) {												
-												                                	var data = Ext.decode(a.responseText);												                                											                                	
-												                                	
-												                                	if(data){												                                
-												                                		campoPartidaPresupuestaria.setValue(data.data);
-												                                	}
-												                                	
-												                                },
-												                                
-												                                failure: function (a, operation, context) {												
-												                                	
-												                                }
-															    		     
-															    		 });
-																												  		
-    	 													}
-														},
-										        		bind: {
-									            			store: '{comboSubpartidaPresupuestaria}',
-									            			value: '{contabilidad.idSubpartidaPresupuestaria}'
-									            		},
-									            		displayField	: 'descripcion',  
-														valueField		: 'id'												
-											        },
                                                     {
                                                         xtype: 'comboboxfieldbase',
                                                         fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.activable'),

@@ -33,7 +33,7 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGasto', {
 
 		var me = this;
 		
-		me.setTitle(HreRem.i18n('title.gasto.activos.afectados'));
+		me.setTitle(HreRem.i18n('title.gasto.elementos.afectados'));
 		var items = [
 				
 				{   

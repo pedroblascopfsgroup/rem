@@ -29,7 +29,7 @@ Ext.define('HreRem.view.activos.detalle.TabDocumentosActivo', {
 	     var me = this;
 	     me.setTitle(HreRem.i18n('title.documentos'));
 	     
-	     //programar
+	     
 		 var ocultarDocumentosCheckDocsActivo = false;		
 		 if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
 			 ocultarDocumentosCheckDocsActivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
@@ -45,7 +45,7 @@ Ext.define('HreRem.view.activos.detalle.TabDocumentosActivo', {
 		 }else{
 			 ocultarAdmisioncheckdocactivo = !$AU.userHasFunction('EDITAR_CHECKING_DOC_ADMISION');
 		 }
-	     //
+
 		 
 	     var items = [];
 	    

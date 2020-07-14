@@ -8,7 +8,7 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     			'HreRem.view.activos.detalle.FotosActivo','HreRem.view.activos.detalle.TabDocumentosActivo','HreRem.view.activos.detalle.GestionActivo',
     			'HreRem.view.activos.detalle.PreciosActivo','HreRem.view.activos.detalle.Publicacion','HreRem.view.activos.detalle.ComercialActivo',
     			'HreRem.view.activos.detalle.AdministracionActivo', 'HreRem.view.activos.detalle.DocumentosActivoPromocion','HreRem.view.activos.detalle.DocumentosActivoSimple',
-			'HreRem.view.activos.detalle.PatrimonioActivo', 'HreRem.view.activos.detalle.PlusvaliaActivo'/*, 'HreRem.view.activos.detalle.DocumentosActivo'*/],
+			'HreRem.view.activos.detalle.PatrimonioActivo', 'HreRem.view.activos.detalle.PlusvaliaActivo'],
 
 	listeners: {
     	boxready: function (tabPanel) {
@@ -160,7 +160,6 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
 			$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'observacionesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_OBSERVACIONES');
 		}
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'fotosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_FOTOS');
-    	//$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'documentosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_DOCUMENTOS');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'tabdocumentosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_DOCUMENTOS');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'agrupacionesactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_AGRUPACIONES');
     	// Si el activo esta en agrupacion asistida, se ocultan estas dos pestanyas

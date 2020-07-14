@@ -5,15 +5,10 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivo', {
     collapsed	: false,
     saveMultiple: true,
     disableValidation: true,
-    //reference	: 'documentosactivoref',
     scrollable	: 'y',
     requires	: ['HreRem.model.AdjuntoActivo','HreRem.model.AdjuntoActivoPromocion','HreRem.model.AdjuntoActivoAgrupacion','HreRem.model.AdjuntoActivoProyecto','Ext.data.Store','HreRem.model.Activo'],
 	recordsClass: ['HreRem.model.Activo'],
-    //
-    
-    //records: ['activoAdmision','datosRegistralesAdmision'], 
-   
-    //
+
     
     initComponent: function () {
     	var me = this;

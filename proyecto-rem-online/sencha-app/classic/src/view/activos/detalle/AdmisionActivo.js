@@ -121,7 +121,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionActivo', {
 		 
 	     var items = [];
 	     $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'admisioncheckinfoactivo', ocultarBotonesEdicion: ocultarAdmisioncheckinfoactivo, title: HreRem.i18n('title.admision.check.inf.activo')})}, ['TAB_CHECKING_INFO_ADMISION']);
-	     $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'admisioncheckdocactivo', ocultarBotonesEdicion: ocultarAdmisioncheckdocactivo, title: HreRem.i18n('title.admision.check.doc.activo')})}, ['TAB_CHECKING_DOC_ADMISION']);
+	     //$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'admisioncheckdocactivo', ocultarBotonesEdicion: ocultarAdmisioncheckdocactivo, title: HreRem.i18n('title.admision.check.doc.activo')})}, ['TAB_CHECKING_DOC_ADMISION']);
 	     $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'saneamientoactivo', ocultarBotonesEdicion: ocultarSaneamientoCheckEdicion, title: HreRem.i18n('title.admision.check.inf.activo')})}, ['TAB_CHECKING_INFO_ADMISION']);
 	     $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'evolucionactivo', ocultarBotonesEdicion: ocultarAdmisioncheckinfoactivo, title: HreRem.i18n('title.admision.check.inf.activo')})}, ['TAB_CHECKING_INFO_ADMISION']);
 	     $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'admisionrevisiontitulo', ocultarBotonesEdicion: ocultarAdmisioncheckdocactivo, title: HreRem.i18n('title.admision.tab.revision.titulo')})}, ['TAB_CHECKING_INFO_ADMISION']);

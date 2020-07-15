@@ -33,6 +33,9 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDSubestadoAdmision implements Auditable, Dictionary {
 
 	private static final long serialVersionUID = 1L;
+	public static final String CODIGO_PENDIENTE_REVISION_ALTAS = "PRA";
+	public static final String CODIGO_PENDIENTE_INFORMACION = "PEI";
+	public static final String CODIGO_PENDIENTE_DOCUMENTACION = "PDO";
 	public static final String CODIGO_PENDIENTE_INSCRIPCION = "PIN";
 	public static final String CODIGO_INCIDENCIA_INSC = "IIN";
 	public static final String CODIGO_PENDIENTE_CARGAS = "PCA";

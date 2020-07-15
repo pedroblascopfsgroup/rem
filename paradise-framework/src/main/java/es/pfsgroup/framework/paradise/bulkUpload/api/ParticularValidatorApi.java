@@ -1164,5 +1164,15 @@ public interface ParticularValidatorApi {
 	Boolean perteneceADiccionarioConTitulo(String conTitulo);
 	
 	Boolean perteneceADiccionarioEquipoGestion(String codEquipoGestion);
+	
+	public Boolean esActivoIncluidoPerimetroAdmision(String numActivo);
+
+	public Boolean estadoAdmisionValido(String codEstadoAdmision);
+
+	public Boolean subestadoAdmisionValido(String codEstadoAdmision, String codSubestadoAdmision);
+	
+	public Boolean subestadoEnEstadoAdmisionValido(String codEstadoAdmision);
+
+	public Boolean relacionEstadoSubestadoAdmisionValido(String codEstadoAdmision, String codSubestadoAdmision);
 
 }

@@ -30,6 +30,7 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDEstadoAdmision implements Auditable, Dictionary {
 
+	public static final String CODIGO_NUEVA_ENTRADA = "NAN";
 	public static final String CODIGO_PENDIENTE_TITULO = "PET";
 	public static final String CODIGO_PENDIENTE_REVISION = "PRT";
 	public static final String CODIGO_PENDIENTE_SANEAMIENTO = "PSR";

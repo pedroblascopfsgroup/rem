@@ -29,7 +29,8 @@ DECLARE
     V_ESQUEMA_M VARCHAR2(50 CHAR) := '#ESQUEMA_MASTER#';
     V_USUARIOMODIFICAR VARCHAR(100 CHAR):= 'REMVIP-6807';
     V_SQL VARCHAR2(4000 CHAR);
-    V_SUBSQL VARCHAR2(4000 CHAR);
+    V_SUBSQL1 VARCHAR2(200 CHAR);
+    V_SUBSQL2 VARCHAR2(4000 CHAR);
     V_ACTIVOS VARCHAR2(4000 CHAR) := '5961769,
 									5965780,
 									6054372,
@@ -43,8 +44,9 @@ BEGIN
 			
 	DBMS_OUTPUT.PUT_LINE('[INICIO] Actualiza ACT_CMG_COMUNICACION_GENCAT - Borrado lógico ');
 	
-	V_SUBSQL := 'SELECT DISTINCT TAC.ACT_ID
-		FROM '||V_ESQUEMA||'.ACT_TRA_TRAMITE TRA, 
+	V_SUBSQL1 := 'SELECT DISTINCT TAC.ACT_ID';
+	
+	V_SUBSQL2 := ' FROM '||V_ESQUEMA||'.ACT_TRA_TRAMITE TRA, 
 		     '||V_ESQUEMA||'.ACT_ACTIVO ACT,
 		     '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS TAC,
 		     '||V_ESQUEMA||'.TEX_TAREA_EXTERNA TEX,
@@ -75,7 +77,7 @@ BEGIN
 										
 	V_SQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_CMG_COMUNICACION_GENCAT T1
         USING (
-			'||V_SUBSQL||'
+			'||V_SUBSQL1||V_SUBSQL2||'
         ) T2 
         ON (T1.ACT_ID = T2.ACT_ID )
 	WHEN MATCHED THEN UPDATE
@@ -93,10 +95,12 @@ BEGIN
 -----------------------------------------------------------------------------------------------------------------
 
 	DBMS_OUTPUT.PUT_LINE('[INICIO] Actualiza TAR_TAREAS_NOTIFICACIONES - Borrado lógico ');
-										
+	
+	V_SUBSQL1 := 'SELECT DISTINCT TAC.TAR_ID';
+	
 	 V_SQL := 'MERGE INTO '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES T1
         USING (
-			'||V_SUBSQL||'
+			'||V_SUBSQL1||V_SUBSQL2||'
         ) T2 
         ON (T1.TAR_ID = T2.TAR_ID )
 	WHEN MATCHED THEN UPDATE
@@ -115,10 +119,12 @@ BEGIN
 
 
 	DBMS_OUTPUT.PUT_LINE('[INICIO] Actualiza ACT_TRA_TRAMITE - Borrado lógico ');
+	
+	V_SUBSQL1 := 'SELECT DISTINCT TAC.TRA_ID, TAC.ACT_ID';
 										
 	 V_SQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_TRA_TRAMITE T1
         USING (
-			'||V_SUBSQL||'
+			'||V_SUBSQL1||V_SUBSQL2||'
         ) T2 
         ON (T1.TRA_ID = T2.TRA_ID AND T1.ACT_ID = T2.ACT_ID )
 	WHEN MATCHED THEN UPDATE
@@ -136,10 +142,12 @@ BEGIN
 -----------------------------------------------------------------------------------------------------------------
 
 	DBMS_OUTPUT.PUT_LINE('[INICIO] Actualiza TAC_TAREAS_ACTIVOS - Borrado lógico ');
+	
+	V_SUBSQL1 := 'SELECT DISTINCT TAC.TRA_ID, TAC.ACT_ID, TAC.TAR_ID';
 										
 	 V_SQL := 'MERGE INTO '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS T1
         USING (
-			'||V_SUBSQL||'
+			'||V_SUBSQL1||V_SUBSQL2||'
         ) T2 
         ON (T1.TRA_ID = T2.TRA_ID AND T1.ACT_ID = T2.ACT_ID AND T1.TAR_ID = T2.TAR_ID )
 	WHEN MATCHED THEN UPDATE

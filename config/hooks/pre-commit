@@ -237,7 +237,7 @@ function check_esquema_hardcodeado() {
 						[problem]="Se ha detectado un nombre de esquema hardcodeado en un fichero sql."
 						[solution]="Revise que no (contenga BANK01|HAYA0[0-9]|REM01|CM01|ALI01|HAYAMASTER|REMMASTER|ALIMASTER|BANKMASTER|CMMASTER)" )
 
-	existe=`sed "s/--.*$//" $f | grep -iE '(BANK01|HAYA0[0-9]|REM01|CM01|ALI01|ESCO01|SAR01|HAYAMASTER|REMMASTER|ALIMASTER|BANKMASTER|CMMASTER|ESCOMASTER|SARMASTER)' | grep -v WHEN | grep -v THEN | wc -l`
+	existe=`sed "s/--.*$//" $f | grep -iE '(BANK01|HAYA0[0-9]|REM01|CM01|ALI01|ESCO01|SAR01|HAYAMASTER|REMMASTER|ALIMASTER|BANKMASTER|CMMASTER|ESCOMASTER|SARMASTER)' | grep -v WHEN | grep -v THEN | grep -v '=' | wc -l`
 	if [ $existe -gt 0 ]; then
 		paint_error rule
 	    exit 1
@@ -273,23 +273,16 @@ function check_ddl_content() {
 						[problem]="Se han detectado campos o tablas del DDL demasiado largas."
 						[solution]="Modifique la longitud menor o igual a 30." )
 
-	IN1=$(cat $file | awk -F- 'NF<=2' $file | tr ',' ' ' | tr '=' ' ' | tr '(' ' ' | tr ')' ' '| tr -s ' ' | tr '\n' ' ' | sed 's/a/aA/g; s/__/aB/g; s/#/aC/g' | gcc -P -E $file -  | sed 's/aC/#/g; s/aB/__/g; s/aA/a/g' | sed "s/'/\"/g" | tr '""' '"' | sed "s/\"/'/g" )
+	IN1=$(cat $file | awk -F- 'NF<=2' $file | tr ',' ' ' | tr '(' ' ' | tr ')' ' '| tr -s ' ' | tr '\n' ' ' | sed 's/a/aA/g; s/__/aB/g; s/#/aC/g' | gcc -P -E $file -  | sed 's/aC/#/g; s/aB/__/g; s/aA/a/g')
 	IFS=' ' read -ra ADDR1 <<< "$IN1"
 	cons=`echo "${ADDR1[0]}"`
 	
 	for i in "${ADDR1[@]}"; do
 		cons=`echo "$i" | sed 's/[!@#\$%^&*()/;=,:|]//g' | grep -vwE '\w{1,30}' | wc -c`
 
-		if [[ "${cons}" -gt 28 ]]; then
-			cons=`echo "$i" | sed 's/[!@#\$%^&*()/;=,:|]//g'`
-		
-			if [[ "${cons}" =~ ^\'.*\'$ ]]; then
-				o="VAMOS BIEN"
-			else
-				paint_error rule
-			    exit 1
-			fi
-		
+		if [[ ${cons} -gt 28 ]]; then
+			paint_error rule
+		    exit 1
 		fi
 	done
 }
@@ -297,7 +290,7 @@ function check_ddl_content() {
 function SQL_ddl_rules() {
 	for f in `eval $modified_files | grep -E \/DD.*\.sql$ | grep -v producto | grep -v ^procs_y_vistas/ | grep -v ^reports/ | grep -v migracion | grep -v scripts | grep -v templates | grep -v rutinas | grep -v produccion | grep -v incidencias | grep -v rem_fase1 | grep -v informacional | grep -v convivencia | grep -v tmp | grep -v 9\.2 | grep -v 9\.3 | grep -v 9\.4 |  grep -v no_protocolo | grep -v sincro_f2 `; do
 		check_ddl $f
-		check_ddl_content $f
+		#check_ddl_content $f
 	done
 }
 

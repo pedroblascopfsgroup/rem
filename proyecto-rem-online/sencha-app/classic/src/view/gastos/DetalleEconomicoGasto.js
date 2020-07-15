@@ -154,6 +154,14 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 										]
 										
 					           },
+					           {   
+									xtype:'fieldsettable',
+									title: HreRem.i18n('title.gasto.detalle.economico.lineas.detalle'),
+									items :{
+										xtype: 'lineaDetalleGastoGrid',
+										reference: 'lineaDetalleGastoGrid'
+									}
+					           },
            
 					           	{   
 									xtype:'fieldsettable',

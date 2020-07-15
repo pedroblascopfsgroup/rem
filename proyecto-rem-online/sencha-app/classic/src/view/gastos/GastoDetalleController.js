@@ -1753,6 +1753,66 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		if(cartera == CONST.CARTERA['LIBERBANK']){
 		    comboActivable.setHidden(false);
 		}
-	}
+	},
 	
+	onClickGuardarLineaDetalleGasto: function(btn){
+    	var me = this;
+    	
+    	var window = btn.up('[reference=ventanaCrearLineaDetalleGasto]');
+		var form = window.down('[reference=crearLineaDetalleGastoForm]');
+		
+		if(!me.comprobarImportesRellenosLineaDetalleGasto(window)){
+			me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.gasto.linea.detalle.no.importe"));
+			return;
+		}
+		if(form.isValid()){
+		/*	form.submit({                
+				waitMsg: HreRem.i18n('msg.mask.loading'),
+                params: {
+                	idEntidad: window.idGasto,
+                	idLineaDetalleGasto: window.idLineaDetalleGasto
+                },
+
+                success: function(fp, o) {
+                	if(o.result.success == "false") {
+                		window.fireEvent("errorToast", o.result.errorMessage);
+                	}
+                	else {
+                		window.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+                	}
+                	
+                	if(!Ext.isEmpty(window.parent)) {
+                		window.parent.fireEvent("aftercreate", window.parent);
+                	}
+                	window.close();
+                	//window.parent.up('[reference=comercialactivotabpanelref]').funcionRecargar();
+                },
+                failure: function(fp, o) {
+                	window.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+                }
+            });
+		 */
+		}else{
+			
+		}
+    },
+    
+    comprobarImportesRellenosLineaDetalleGasto: function(window){
+    	var hayImporteRelleno = false;
+		
+		var baseSujeta = window.down('[reference=baseSujeta]').getValue();
+		var baseNoSujeta = window.down('[reference=baseNoSujeta]').getValue();
+		var recargo = window.down('[reference=recargo]').getValue();
+		var interes = window.down('[reference=interes]').getValue();
+		var costas = window.down('[reference=costas]').getValue();
+		var otros = window.down('[reference=otros]').getValue();
+		var provSupl = window.down('[reference=provSupl]').getValue();
+		
+		
+		if(!Ext.isEmpty(baseSujeta) || !Ext.isEmpty(baseNoSujeta) || !Ext.isEmpty(recargo) || !Ext.isEmpty(interes)
+				|| !Ext.isEmpty(costas) || !Ext.isEmpty(otros) || !Ext.isEmpty(provSupl)){
+			hayImporteRelleno = true;
+		}
+    	return hayImporteRelleno;
+    }
 });

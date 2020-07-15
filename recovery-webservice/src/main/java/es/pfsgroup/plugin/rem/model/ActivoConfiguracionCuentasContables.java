@@ -22,6 +22,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoImporte;
@@ -61,7 +62,7 @@ public class ActivoConfiguracionCuentasContables implements Serializable, Audita
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="DD_SCR_ID")
-    private Long subCartera;
+    private DDSubcartera subCartera;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PRO_ID")
@@ -134,11 +135,11 @@ public class ActivoConfiguracionCuentasContables implements Serializable, Audita
 		this.cartera = cartera;
 	}
 
-	public Long getSubCartera() {
+	public DDSubcartera getSubCartera() {
 		return subCartera;
 	}
 
-	public void setSubCartera(Long subCartera) {
+	public void setSubCartera(DDSubcartera subCartera) {
 		this.subCartera = subCartera;
 	}
 

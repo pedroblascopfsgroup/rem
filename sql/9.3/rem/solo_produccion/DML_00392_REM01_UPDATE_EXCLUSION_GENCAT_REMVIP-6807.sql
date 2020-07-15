@@ -30,7 +30,9 @@ DECLARE
     V_USUARIOMODIFICAR VARCHAR(100 CHAR):= 'REMVIP-6807';
     V_SQL VARCHAR2(4000 CHAR);
     V_SUBSQL1 VARCHAR2(200 CHAR);
-    V_SUBSQL2 VARCHAR2(4000 CHAR);
+    V_SUBSQL2 VARCHAR2(1000 CHAR);
+    V_SUBSQL3 VARCHAR2(500 CHAR);
+    V_SUBSQL4 VARCHAR2(500 CHAR);
     V_ACTIVOS VARCHAR2(4000 CHAR) := '5961769,
 									5965780,
 									6054372,
@@ -52,16 +54,14 @@ BEGIN
 		     '||V_ESQUEMA||'.TEX_TAREA_EXTERNA TEX,
 		     '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP,
 		     '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR,
-			 '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO TPO
-		WHERE  1=1
+			 '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO TPO';
+			
+	V_SUBSQL3 := ' WHERE 1=1
         	AND TRA.BORRADO = 0
         	AND ACT.BORRADO = 0
-        	AND TAC.BORRADO = 0
-        	AND TEX.BORRADO = 0
-        	AND TAP.BORRADO = 0
-        	AND TAR.BORRADO = 0
-			AND TPO.BORRADO = 0
-		AND ACT_NUM_ACTIVO IN
+        	AND TPO.BORRADO = 0';
+        	
+     V_SUBSQL4 := '	AND ACT_NUM_ACTIVO IN
 		(
 			'||V_ACTIVOS||'
 		)
@@ -77,7 +77,7 @@ BEGIN
 										
 	V_SQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_CMG_COMUNICACION_GENCAT T1
         USING (
-			'||V_SUBSQL1||V_SUBSQL2||'
+			'||V_SUBSQL1||V_SUBSQL2||V_SUBSQL3||V_SUBSQL4||'
         ) T2 
         ON (T1.ACT_ID = T2.ACT_ID )
 	WHEN MATCHED THEN UPDATE
@@ -90,21 +90,60 @@ BEGIN
 	EXECUTE IMMEDIATE V_SQL;
 	
 	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizados '||SQL%ROWCOUNT||' registros en ACT_CMG_COMUNICACION_GENCAT ');  
-
+	
 
 -----------------------------------------------------------------------------------------------------------------
+
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] Actualiza ACT_TRA_TRAMITE - Borrado lógico ');
+	
+	V_SUBSQL1 := 'SELECT DISTINCT TAC.TRA_ID, TAC.ACT_ID';
+	
+	V_SUBSQL3 := ' WHERE 1=1
+        	AND TRA.BORRADO = 0
+        	AND ACT.BORRADO = 0
+        	AND TPO.BORRADO = 0';
+        	
+	 V_SQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_TRA_TRAMITE T1
+        USING (
+			'||V_SUBSQL1||V_SUBSQL2||V_SUBSQL3||V_SUBSQL4||'
+        ) T2 
+        ON (T1.TRA_ID = T2.TRA_ID AND T1.ACT_ID = T2.ACT_ID )
+	WHEN MATCHED THEN UPDATE
+	SET T1.BORRADO = 1,
+	    T1.USUARIOBORRAR = ''' || V_USUARIOMODIFICAR || ''',
+	    T1.FECHABORRAR   = SYSDATE
+
+	';
+
+	EXECUTE IMMEDIATE V_SQL;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizados '||SQL%ROWCOUNT||' registros en ACT_TRA_TRAMITE ');
+	
+
+-----------------------------------------------------------------------------------------------------------------
+
 
 	DBMS_OUTPUT.PUT_LINE('[INICIO] Actualiza TAR_TAREAS_NOTIFICACIONES - Borrado lógico ');
 	
 	V_SUBSQL1 := 'SELECT DISTINCT TAC.TAR_ID';
 	
+	V_SUBSQL3 := ' WHERE 1=1
+        	AND TRA.BORRADO = 0
+        	AND ACT.BORRADO = 0
+        	AND TPO.BORRADO = 0
+        	AND TAP.BORRADO = 0
+        	AND (TAC.BORRADO = 0 OR TAR.BORRADO  = 0 OR TEX.BORRADO = 0 OR TAR.TAR_TAREA_FINALIZADA != 1 OR TAR.TAR_FECHA_FIN IS NULL)';
+	
 	 V_SQL := 'MERGE INTO '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES T1
         USING (
-			'||V_SUBSQL1||V_SUBSQL2||'
+			'||V_SUBSQL1||V_SUBSQL2||V_SUBSQL3||V_SUBSQL4||'
         ) T2 
         ON (T1.TAR_ID = T2.TAR_ID )
 	WHEN MATCHED THEN UPDATE
-	SET T1.BORRADO = 1,
+	SET T1.TAR_TAREA_FINALIZADA = 1,
+		T1.TAR_FECHA_FIN = SYSDATE,
+		T1.BORRADO = 1,
 	    T1.USUARIOBORRAR = ''' || V_USUARIOMODIFICAR || ''',
 	    T1.FECHABORRAR   = SYSDATE
 
@@ -117,61 +156,48 @@ BEGIN
 
 -----------------------------------------------------------------------------------------------------------------
 
-
-	DBMS_OUTPUT.PUT_LINE('[INICIO] Actualiza ACT_TRA_TRAMITE - Borrado lógico ');
 	
-	V_SUBSQL1 := 'SELECT DISTINCT TAC.TRA_ID, TAC.ACT_ID';
-										
-	 V_SQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_TRA_TRAMITE T1
-        USING (
-			'||V_SUBSQL1||V_SUBSQL2||'
-        ) T2 
-        ON (T1.TRA_ID = T2.TRA_ID AND T1.ACT_ID = T2.ACT_ID )
-	WHEN MATCHED THEN UPDATE
-	SET T1.BORRADO = 1,
-	    T1.USUARIOBORRAR = ''' || V_USUARIOMODIFICAR || ''',
-	    T1.FECHABORRAR   = SYSDATE
-
-	';
-
-	EXECUTE IMMEDIATE V_SQL;
-	
-	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizados '||SQL%ROWCOUNT||' registros en ACT_TRA_TRAMITE ');  
-
-
------------------------------------------------------------------------------------------------------------------
-
 	DBMS_OUTPUT.PUT_LINE('[INICIO] Actualiza TAC_TAREAS_ACTIVOS - Borrado lógico ');
-	
-	V_SUBSQL1 := 'SELECT DISTINCT TAC.TRA_ID, TAC.ACT_ID, TAC.TAR_ID';
 										
 	 V_SQL := 'MERGE INTO '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS T1
         USING (
-			'||V_SUBSQL1||V_SUBSQL2||'
+			'||V_SUBSQL1||V_SUBSQL2||V_SUBSQL3||V_SUBSQL4||'
         ) T2 
-        ON (T1.TRA_ID = T2.TRA_ID AND T1.ACT_ID = T2.ACT_ID AND T1.TAR_ID = T2.TAR_ID )
+        ON (T1.TAR_ID = T2.TAR_ID )
 	WHEN MATCHED THEN UPDATE
 	SET T1.BORRADO = 1,
 	    T1.USUARIOBORRAR = ''' || V_USUARIOMODIFICAR || ''',
 	    T1.FECHABORRAR = SYSDATE
-
 	';
 
 	EXECUTE IMMEDIATE V_SQL;
 	
 	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizados '||SQL%ROWCOUNT||' registros en TAC_TAREAS_ACTIVOS ');  
-
+	
 
 -----------------------------------------------------------------------------------------------------------------
---DBMS_OUTPUT.PUT_LINE('[INICIO] BORRADO OFERTA GENCAT 90248386');
---	V_SQL := 'DELETE FROM '||V_ESQUEMA||'.ACT_OFR WHERE OFR_ID = (SELECT OFR_ID FROM '||V_ESQUEMA||'.OFR_OFERTAS WHERE OFR_NUM_OFERTA = 90248386)';
---	EXECUTE IMMEDIATE V_SQL;
---	V_SQL := 'UPDATE '||V_ESQUEMA||'.OFR_OFERTAS SET BORRADO = 1, USUARIOBORRAR = '''||V_USUARIOMODIFICAR||''', FECHABORRAR = SYSDATE WHERE OFR_NUM_OFERTA = 90248386';
---	EXECUTE IMMEDIATE V_SQL;
---	
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] Actualiza TEX_TAREA_EXTERNA - Borrado lógico ');
+										
+	 V_SQL := 'MERGE INTO '||V_ESQUEMA||'.TEX_TAREA_EXTERNA T1
+        USING (
+			'||V_SUBSQL1||V_SUBSQL2||V_SUBSQL3||V_SUBSQL4||'
+        ) T2 
+        ON (T1.TAR_ID = T2.TAR_ID )
+	WHEN MATCHED THEN UPDATE
+	SET T1.BORRADO = 1,
+	    T1.USUARIOBORRAR = ''' || V_USUARIOMODIFICAR || ''',
+	    T1.FECHABORRAR = SYSDATE
+	';
+
+	EXECUTE IMMEDIATE V_SQL;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] Actualizados '||SQL%ROWCOUNT||' registros en TEX_TAREA_EXTERNA ');  
+	
 -----------------------------------------------------------------------------------------------------------------
 
-DBMS_OUTPUT.PUT_LINE('[INICIO] Creación de activos de exclusión GENCAT ');
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO] Creación de activos de exclusión GENCAT ');
 										
 	 V_SQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_EXG_EXCLUSION_GENCAT T1
         USING (

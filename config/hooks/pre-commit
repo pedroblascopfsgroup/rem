@@ -237,7 +237,7 @@ function check_esquema_hardcodeado() {
 						[problem]="Se ha detectado un nombre de esquema hardcodeado en un fichero sql."
 						[solution]="Revise que no (contenga BANK01|HAYA0[0-9]|REM01|CM01|ALI01|HAYAMASTER|REMMASTER|ALIMASTER|BANKMASTER|CMMASTER)" )
 
-	existe=`sed "s/--.*$//" $f | grep -iE '(BANK01|HAYA0[0-9]|REM01|CM01|ALI01|ESCO01|SAR01|HAYAMASTER|REMMASTER|ALIMASTER|BANKMASTER|CMMASTER|ESCOMASTER|SARMASTER)' | grep -v WHEN | grep -v THEN | wc -l`
+	existe=`sed "s/--.*$//" $f | grep -iE '(BANK01|HAYA0[0-9]|REM01|CM01|ALI01|ESCO01|SAR01|HAYAMASTER|REMMASTER|ALIMASTER|BANKMASTER|CMMASTER|ESCOMASTER|SARMASTER)' | grep -v WHEN | grep -v THEN | grep -v '=' | wc -l`
 	if [ $existe -gt 0 ]; then
 		paint_error rule
 	    exit 1

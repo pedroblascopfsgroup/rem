@@ -17,6 +17,7 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -24,7 +25,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 
 @Entity
 @Table(name = "GLD_ENT", schema = "${entity.schema}")
-@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class GastoLineaDetalleEntidad implements Serializable, Auditable{
 
 	private static final long serialVersionUID = 1L;
@@ -37,20 +39,20 @@ public class GastoLineaDetalleEntidad implements Serializable, Auditable{
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "GLD_ID")
-	private GastosLineaDetalle gastoLineaDetalle;
-	
+	private GastoLineaDetalle gastoLineaDetalle;
+
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_ENT_ID")
 	private DDEntidadGasto entidadGasto;
-	
+
 	@Column(name="ENT_ID")
-    private Long entidadId;
+    private Long entidad;
 	
 	@Column(name="GLD_PARTICIPACION_GASTO")
     private Double participacionGasto;
 	
 	@Column(name="GLD_REFERENCIA_CATASTRAL")
-    private Double referenciaCatastral;
+    private String referenciaCatastral;
 	
 	@Version   
 	private Long version;
@@ -66,11 +68,11 @@ public class GastoLineaDetalleEntidad implements Serializable, Auditable{
 		this.id = id;
 	}
 
-	public GastosLineaDetalle getGastoLineaDetalle() {
+	public GastoLineaDetalle getGastoLineaDetalle() {
 		return gastoLineaDetalle;
 	}
 
-	public void setGastoLineaDetalle(GastosLineaDetalle gastoLineaDetalle) {
+	public void setGastoLineaDetalle(GastoLineaDetalle gastoLineaDetalle) {
 		this.gastoLineaDetalle = gastoLineaDetalle;
 	}
 
@@ -82,12 +84,12 @@ public class GastoLineaDetalleEntidad implements Serializable, Auditable{
 		this.entidadGasto = entidadGasto;
 	}
 
-	public Long getEntidadId() {
-		return entidadId;
+	public Long getEntidad() {
+		return entidad;
 	}
 
-	public void setEntidadId(Long entidadId) {
-		this.entidadId = entidadId;
+	public void setEntidad(Long entidad) {
+		this.entidad = entidad;
 	}
 
 	public Double getParticipacionGasto() {
@@ -98,11 +100,11 @@ public class GastoLineaDetalleEntidad implements Serializable, Auditable{
 		this.participacionGasto = participacionGasto;
 	}
 
-	public Double getReferenciaCatastral() {
+	public String getReferenciaCatastral() {
 		return referenciaCatastral;
 	}
 
-	public void setReferenciaCatastral(Double referenciaCatastral) {
+	public void setReferenciaCatastral(String referenciaCatastral) {
 		this.referenciaCatastral = referenciaCatastral;
 	}
 

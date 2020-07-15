@@ -17,6 +17,7 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -24,8 +25,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoEmisorGLD;
 
 @Entity
 @Table(name = "GLD_ENT", schema = "${entity.schema}")
-@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class GastosLineaDetalleTrabajo implements Serializable, Auditable{
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Where(clause = Auditoria.UNDELETED_RESTICTION)
+public class GastoLineaDetalleTrabajo implements Serializable, Auditable{
 
 	private static final long serialVersionUID = 1L;
 	
@@ -37,7 +39,7 @@ public class GastosLineaDetalleTrabajo implements Serializable, Auditable{
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "GLD_ID")
-	private GastosLineaDetalle gastoLineaDetalle;
+	private GastoLineaDetalle gastoLineaDetalle;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TBJ_ID")
@@ -45,7 +47,7 @@ public class GastosLineaDetalleTrabajo implements Serializable, Auditable{
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_TEG_ID")
-	private DDTipoEmisorGLD tipoEmisor;
+	private DDTipoEmisorGLD tipoEmisorGLD;
 	
 	@Version   
 	private Long version;
@@ -61,11 +63,11 @@ public class GastosLineaDetalleTrabajo implements Serializable, Auditable{
 		this.id = id;
 	}
 
-	public GastosLineaDetalle getGastoLineaDetalle() {
+	public GastoLineaDetalle getGastoLineaDetalle() {
 		return gastoLineaDetalle;
 	}
 
-	public void setGastoLineaDetalle(GastosLineaDetalle gastoLineaDetalle) {
+	public void setGastoLineaDetalle(GastoLineaDetalle gastoLineaDetalle) {
 		this.gastoLineaDetalle = gastoLineaDetalle;
 	}
 
@@ -78,11 +80,11 @@ public class GastosLineaDetalleTrabajo implements Serializable, Auditable{
 	}
 
 	public DDTipoEmisorGLD getTipoEmisor() {
-		return tipoEmisor;
+		return tipoEmisorGLD;
 	}
 
-	public void setTipoEmisor(DDTipoEmisorGLD tipoEmisor) {
-		this.tipoEmisor = tipoEmisor;
+	public void setTipoEmisor(DDTipoEmisorGLD tipoEmisorGLD) {
+		this.tipoEmisorGLD = tipoEmisorGLD;
 	}
 
 	public Long getVersion() {

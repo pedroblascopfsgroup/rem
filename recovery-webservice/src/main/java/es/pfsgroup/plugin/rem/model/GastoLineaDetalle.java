@@ -17,6 +17,7 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -27,8 +28,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 
 @Entity
 @Table(name = "GLD_GASTOS_LINEA_DETALLE", schema = "${entity.schema}")
-@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class GastosLineaDetalle implements Serializable, Auditable{
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Where(clause = Auditoria.UNDELETED_RESTICTION)
+public class GastoLineaDetalle implements Serializable, Auditable{
 
 	private static final long serialVersionUID = 1L;
 	
@@ -43,7 +45,7 @@ public class GastosLineaDetalle implements Serializable, Auditable{
 	private GastoProveedor gastoProveedor;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_ACC_ID")
+    @JoinColumn(name = "DD_STG_ID")
 	private DDSubtipoGasto subtipoGasto;
 	
 	@Column(name="GLD_PRINCIPAL_SUJETO")
@@ -76,13 +78,13 @@ public class GastosLineaDetalle implements Serializable, Auditable{
 	private DDTiposImpuesto tipoImpuesto;
 	
 	@Column(name="GLD_IMP_IND_EXENTO")
-	private Integer importeIndirectoExento;
+	private Double importeIndirectoExento;
 	
 	@Column(name="GLD_IMP_IND_RENUNCIA_EXENCION")
-	private Integer importeIndirectoRenunciaExento;
+	private Boolean esImporteIndirectoRenunciaExento;
 	
 	@Column(name="GLD_IMP_IND_TIPO_IMPOSITIVO")
-	private Double importeIndirectoTipoImpositivo;
+	private Boolean esImporteIndirectoTipoImpositivo;
 	
 	@Column(name="GLD_IMP_IND_CUOTA")
 	private Double importeIndirectoCuota;
@@ -222,28 +224,28 @@ public class GastosLineaDetalle implements Serializable, Auditable{
 		this.tipoImpuesto = tipoImpuesto;
 	}
 
-	public Integer getImporteIndirectoExento() {
+	public Double getImporteIndirectoExento() {
 		return importeIndirectoExento;
 	}
 
-	public void setImporteIndirectoExento(Integer importeIndirectoExento) {
+	public void setImporteIndirectoExento(Double importeIndirectoExento) {
 		this.importeIndirectoExento = importeIndirectoExento;
 	}
 
-	public Integer getImporteIndirectoRenunciaExento() {
-		return importeIndirectoRenunciaExento;
+	public Boolean getEsImporteIndirectoRenunciaExento() {
+		return esImporteIndirectoRenunciaExento;
 	}
 
-	public void setImporteIndirectoRenunciaExento(Integer importeIndirectoRenunciaExento) {
-		this.importeIndirectoRenunciaExento = importeIndirectoRenunciaExento;
+	public void setEsImporteIndirectoRenunciaExento(Boolean esImporteIndirectoRenunciaExento) {
+		this.esImporteIndirectoRenunciaExento = esImporteIndirectoRenunciaExento;
 	}
 
-	public Double getImporteIndirectoTipoImpositivo() {
-		return importeIndirectoTipoImpositivo;
+	public Boolean getEsImporteIndirectoTipoImpositivo() {
+		return esImporteIndirectoTipoImpositivo;
 	}
 
-	public void setImporteIndirectoTipoImpositivo(Double importeIndirectoTipoImpositivo) {
-		this.importeIndirectoTipoImpositivo = importeIndirectoTipoImpositivo;
+	public void setEsImporteIndirectoTipoImpositivo(Boolean esImporteIndirectoTipoImpositivo) {
+		this.esImporteIndirectoTipoImpositivo = esImporteIndirectoTipoImpositivo;
 	}
 
 	public Double getImporteIndirectoCuota() {
@@ -357,5 +359,6 @@ public class GastosLineaDetalle implements Serializable, Auditable{
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+
 	
 }

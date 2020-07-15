@@ -17,24 +17,27 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoImporte;
 
 @Entity
 @Table(name = "ACT_CONFIG_CTAS_CONTABLES", schema = "${entity.schema}")
-@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class activoConfiguracionCuentasContables implements Serializable, Auditable{
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Where(clause = Auditoria.UNDELETED_RESTICTION)
+public class ActivoConfiguracionCuentasContables implements Serializable, Auditable{
 
 	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@Column(name = "CCC_CTAS_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "activoConfiguracionCuentasContablesGenerator")
-	@SequenceGenerator(name = "activoConfiguracionCuentasContablesGenerator", sequenceName = "S_ACT_CONFIG_CTAS_CONTABLES")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "ActivoConfiguracionCuentasContablesGenerator")
+	@SequenceGenerator(name = "ActivoConfiguracionCuentasContablesGenerator", sequenceName = "S_ACT_CONFIG_CTAS_CONTABLES")
 	private Long id;
 	
 	@Column(name="CCC_CUENTA_CONTABLE")
@@ -52,18 +55,20 @@ public class activoConfiguracionCuentasContables implements Serializable, Audita
     @JoinColumn(name = "DD_TIM_ID")
 	private DDTipoImporte tipoImporte;
 	
-	@Column(name="DD_CRA_ID")
-    private Long cra_Id;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="DD_CRA_ID")
+    private DDCartera cartera;
 	
-	@Column(name="DD_SCR_ID")
-    private Long src_Id;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="DD_SCR_ID")
+    private Long subCartera;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PRO_ID")
 	private ActivoPropietario activoPropietario;
 	
 	@Column(name="EJE_ID")
-    private Long eje_Id;
+    private Long ejercicio;
 	
 	@Column(name="CCC_ARRENDAMIENTO")
     private Integer arrendamiento;
@@ -117,36 +122,36 @@ public class activoConfiguracionCuentasContables implements Serializable, Audita
 		this.tipoImporte = tipoImporte;
 	}
 
-	public Long getCra_Id() {
-		return cra_Id;
-	}
-
-	public void setCra_Id(Long cra_Id) {
-		this.cra_Id = cra_Id;
-	}
-
-	public Long getSrc_Id() {
-		return src_Id;
-	}
-
-	public void setSrc_Id(Long src_Id) {
-		this.src_Id = src_Id;
-	}
-
 	public ActivoPropietario getActivoPropietario() {
 		return activoPropietario;
 	}
 
+	public DDCartera getCartera() {
+		return cartera;
+	}
+
+	public void setCartera(DDCartera cartera) {
+		this.cartera = cartera;
+	}
+
+	public Long getSubCartera() {
+		return subCartera;
+	}
+
+	public void setSubCartera(Long subCartera) {
+		this.subCartera = subCartera;
+	}
+
+	public Long getEjercicio() {
+		return ejercicio;
+	}
+
+	public void setEjercicio(Long ejercicio) {
+		this.ejercicio = ejercicio;
+	}
+
 	public void setActivoPropietario(ActivoPropietario activoPropietario) {
 		this.activoPropietario = activoPropietario;
-	}
-
-	public Long getEje_Id() {
-		return eje_Id;
-	}
-
-	public void setEje_Id(Long eje_Id) {
-		this.eje_Id = eje_Id;
 	}
 
 	public Integer getArrendamiento() {

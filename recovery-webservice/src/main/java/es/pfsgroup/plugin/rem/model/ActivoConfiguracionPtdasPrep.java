@@ -17,16 +17,20 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoImporte;
 
 @Entity
 @Table(name = "ACT_CONFIG_PTDAS_PREP", schema = "${entity.schema}")
-@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
 
 	private static final long serialVersionUID = 1L;
@@ -52,18 +56,20 @@ public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
     @JoinColumn(name = "DD_TIM_ID")
 	private DDTipoImporte tipoImporte;
 	
-	@Column(name="DD_CRA_ID")
-    private Long cra_Id;
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_CRA_ID")
+    private DDCartera cartera;
 	
-	@Column(name="DD_SCR_ID")
-    private Long src_Id;
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_SCR_ID")
+    private DDSubcartera subCartera;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PRO_ID")
 	private ActivoPropietario activoPropietario;
 	
 	@Column(name="EJE_ID")
-    private Long eje_Id;
+    private Long ejercicio;
 	
 	@Column(name="CPP_ARRENDAMIENTO")
     private Integer arrendamiento;
@@ -72,10 +78,10 @@ public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
     private Integer refacturable;
 	
 	@Version   
-	 private Long version;
+	private Long version;
 
-	 @Embedded
-	 private Auditoria auditoria;
+	@Embedded
+	private Auditoria auditoria;
 
 	public Long getId() {
 		return id;
@@ -117,20 +123,20 @@ public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
 		this.tipoImporte = tipoImporte;
 	}
 
-	public Long getCra_Id() {
-		return cra_Id;
+	public DDCartera getCartera() {
+		return cartera;
 	}
 
-	public void setCra_Id(Long cra_Id) {
-		this.cra_Id = cra_Id;
+	public void setCartera(DDCartera cartera) {
+		this.cartera = cartera;
 	}
 
-	public Long getSrc_Id() {
-		return src_Id;
+	public DDSubcartera getSubCartera() {
+		return subCartera;
 	}
 
-	public void setSrc_Id(Long src_Id) {
-		this.src_Id = src_Id;
+	public void setSubCartera(DDSubcartera subCartera) {
+		this.subCartera = subCartera;
 	}
 
 	public ActivoPropietario getActivoPropietario() {
@@ -141,12 +147,12 @@ public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
 		this.activoPropietario = activoPropietario;
 	}
 
-	public Long getEje_Id() {
-		return eje_Id;
+	public Long getEjercicio() {
+		return ejercicio;
 	}
 
-	public void setEje_Id(Long eje_Id) {
-		this.eje_Id = eje_Id;
+	public void setEjercicio(Long ejercicio) {
+		this.ejercicio = ejercicio;
 	}
 
 	public Integer getArrendamiento() {
@@ -180,7 +186,7 @@ public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
-	 
-	 
+
+	
 	
 }

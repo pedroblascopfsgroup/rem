@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200714
+--## FECHA_CREACION=20200716
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10527
@@ -50,6 +50,7 @@ BEGIN
                 , DD_STG_ID
                 , DD_CRA_ID
                 , DD_SCR_ID
+                , DD_TIM_ID
                 , PRO_ID
                 , EJE_ID
                 , CPP_ARRENDAMIENTO
@@ -66,6 +67,7 @@ BEGIN
                   , AUX.DD_STG_ID
                   , AUX.DD_CRA_ID
                   , AUX.DD_SCR_ID
+                  , AUX.DD_TIM_ID
                   , AUX.PRO_ID
                   , AUX.EJE_ID
                   , AUX.CPP_ARRENDAMIENTO
@@ -78,10 +80,11 @@ BEGIN
                     SELECT
                     DISTINCT
                     CPP.CPP_PARTIDA_PRESUPUESTARIA CPP_PARTIDA_PRESUPUESTARIA
-                    , (SELECT STG.DD_TGA_ID FROM DD_STG_SUBTIPOS_GASTO STG WHERE STG.BORRADO = 0 AND STG.DD_STG_ID = CPP.DD_STG_ID) DD_TGA_ID
+                    , (SELECT STG.DD_TGA_ID FROM '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG WHERE STG.BORRADO = 0 AND STG.DD_STG_ID = CPP.DD_STG_ID) DD_TGA_ID
                     , CPP.DD_STG_ID DD_STG_ID
                     , CPP.DD_CRA_ID DD_CRA_ID
                     , CPP.DD_SCR_ID DD_SCR_ID
+                    , (SELECT DD_TIM_ID FROM '||V_ESQUEMA||'.DD_TIM_TIPO_IMPORTE WHERE DD_TIM_CODIGO = ''BAS'') DD_TIM_ID
                     , CPP.PRO_ID PRO_ID
                     , CPP.EJE_ID EJE_ID
                     , CPP.CPP_ARRENDAMIENTO CPP_ARRENDAMIENTO
@@ -90,7 +93,7 @@ BEGIN
                     , '''||TRIM(V_ITEM)||''' USUARIOCREAR
                     , SYSDATE FECHACREAR
                     , 0 BORRADO
-                    FROM CPP_CONFIG_PTDAS_PREP CPP
+                    FROM '||V_ESQUEMA||'.CPP_CONFIG_PTDAS_PREP CPP
                     WHERE CPP.BORRADO = 0
                   ) AUX';
       EXECUTE IMMEDIATE V_MSQL;

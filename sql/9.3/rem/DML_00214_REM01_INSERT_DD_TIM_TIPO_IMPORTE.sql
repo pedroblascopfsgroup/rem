@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200714
+--## FECHA_CREACION=20200716
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10527
@@ -34,9 +34,10 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('01', 'Tasas', 'Tasas'),
-        T_TIPO_DATA('02', 'Recargos', 'Recargos'),
-        T_TIPO_DATA('03', 'Intereses', 'Intereses')
+        T_TIPO_DATA('BAS', 'Base', 'Importe sujeto a impuesto'),
+        T_TIPO_DATA('TAS', 'Tasas', 'Tasas y costas'),
+        T_TIPO_DATA('REC', 'Recargos', 'Recargos'),
+		T_TIPO_DATA('INT', 'Intereses', 'Intereses de demora')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

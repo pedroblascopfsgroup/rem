@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200714
+--## FECHA_CREACION=20200716
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10527
@@ -50,6 +50,7 @@ BEGIN
                 , DD_STG_ID
                 , DD_CRA_ID
                 , DD_SCR_ID
+                , DD_TIM_ID
                 , PRO_ID
                 , EJE_ID
                 , CCC_ARRENDAMIENTO
@@ -66,6 +67,7 @@ BEGIN
                   , AUX.DD_STG_ID
                   , AUX.DD_CRA_ID
                   , AUX.DD_SCR_ID
+                  , AUX.DD_TIM_ID
                   , AUX.PRO_ID
                   , AUX.EJE_ID
                   , AUX.CCC_ARRENDAMIENTO
@@ -78,10 +80,11 @@ BEGIN
                     SELECT
                     DISTINCT
                     CCC.CCC_CUENTA_CONTABLE CCC_CUENTA_CONTABLE
-                    , (SELECT STG.DD_TGA_ID FROM DD_STG_SUBTIPOS_GASTO STG WHERE STG.BORRADO = 0 AND STG.DD_STG_ID = CCC.DD_STG_ID) DD_TGA_ID
+                    , (SELECT STG.DD_TGA_ID FROM '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG WHERE STG.BORRADO = 0 AND STG.DD_STG_ID = CCC.DD_STG_ID) DD_TGA_ID
                     , CCC.DD_STG_ID DD_STG_ID
                     , CCC.DD_CRA_ID DD_CRA_ID
                     , CCC.DD_SCR_ID DD_SCR_ID
+                    , (SELECT DD_TIM_ID FROM '||V_ESQUEMA||'.DD_TIM_TIPO_IMPORTE WHERE DD_TIM_CODIGO = ''BAS'') DD_TIM_ID
                     , CCC.PRO_ID PRO_ID
                     , CCC.EJE_ID EJE_ID
                     , CCC.CCC_ARRENDAMIENTO CCC_ARRENDAMIENTO
@@ -90,7 +93,7 @@ BEGIN
                     , '''||TRIM(V_ITEM)||''' USUARIOCREAR
                     , SYSDATE FECHACREAR
                     , 0 BORRADO
-                    FROM CCC_CONFIG_CTAS_CONTABLES CCC
+                    FROM '||V_ESQUEMA||'.CCC_CONFIG_CTAS_CONTABLES CCC
                     WHERE CCC.BORRADO = 0
                   ) AUX';
       EXECUTE IMMEDIATE V_MSQL;

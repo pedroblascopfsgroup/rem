@@ -179,6 +179,8 @@ public class DtoFichaTrabajo {
 	private String nombreExpediente;
 	
 	private String gestorActivo;
+	
+	private Boolean tieneTramiteCreado;
 
 	public Long getIdTrabajo() {
 		return idTrabajo;
@@ -870,6 +872,14 @@ public class DtoFichaTrabajo {
 
 	public void setGestorActivo(String gestorActivo) {
 		this.gestorActivo = gestorActivo;
+	}
+
+	public Boolean getTieneTramiteCreado() {
+		return tieneTramiteCreado;
+	}
+
+	public void setTieneTramiteCreado(Boolean tieneTramiteCreado) {
+		this.tieneTramiteCreado = tieneTramiteCreado;
 	}
 	
 }

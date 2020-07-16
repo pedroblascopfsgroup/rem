@@ -273,6 +273,10 @@ Ext.define('HreRem.model.FichaTrabajo', {
     		},
     		{
     			name: 'gestorActivo'
+    		},
+    		{
+    			name: 'tieneTramiteCreado',
+    			type: 'boolean'
     		}
     		
     ],

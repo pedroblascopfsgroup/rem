@@ -45,6 +45,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
 					if(!Ext.isEmpty(tab)) {tab.setDisabled(true);}
 					break;
 			}
+			
 		},
 
         beforetabchange: function (tabPanel, tabNext, tabCurrent) {
@@ -116,13 +117,17 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
     initComponent: function () {
     	var me = this;
     	var items = [];
-    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fichatrabajo', funPermEdition: ['EDITAR_FICHA_TRABAJO']})}, ['TAB_FICHA_TRABAJO']),
-    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'activostrabajo', ocultarBotonesEdicion: true})}, ['TAB_ACTIVOS_TRABAJO']),
-    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'tramitestareastrabajo', ocultarBotonesEdicion: true})}, ['TAB_TRAMITES_TRABAJO']),
-    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'diariogestionestrabajo', ocultarBotonesEdicion: true})}, ['TAB_DIARIO_GESTIONES_TRABAJO']),
-    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fotostrabajo', ocultarBotonesEdicion: true})}, ['TAB_FOTOS_TRABAJO']),
-    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentostrabajo', ocultarBotonesEdicion: true})}, ['TAB_DOCUMENTOS_TRABAJO']),
-    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'gestioneconomicatrabajo', funPermEdition: ['EDITAR_GESTION_ECONOMICA_TRABAJO']})}, ['TAB_GESTION_ECONOMICA_TRABAJO'])
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fichatrabajo', funPermEdition: ['EDITAR_FICHA_TRABAJO']})}, ['TAB_FICHA_TRABAJO']);
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'activostrabajo', ocultarBotonesEdicion: true})}, ['TAB_ACTIVOS_TRABAJO']);
+    	if(me.lookupController().getViewModel().get('trabajo.tieneTramiteCreado')){
+	    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'tramitestareastrabajo', ocultarBotonesEdicion: true})}, ['TAB_TRAMITES_TRABAJO']);    		
+    	}
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'diariogestionestrabajo', ocultarBotonesEdicion: true})}, ['TAB_DIARIO_GESTIONES_TRABAJO']);
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fotostrabajo', ocultarBotonesEdicion: true})}, ['TAB_FOTOS_TRABAJO']);
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentostrabajo', ocultarBotonesEdicion: true})}, ['TAB_DOCUMENTOS_TRABAJO']);
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'gestioneconomicatrabajo', funPermEdition: ['EDITAR_GESTION_ECONOMICA_TRABAJO']})}, ['TAB_GESTION_ECONOMICA_TRABAJO']);
+    	
+    	
 
         me.addPlugin({ptype: 'lazyitems', items: items});
         me.callParent();

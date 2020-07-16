@@ -667,7 +667,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				Double participacion = updaterStateApi.calcularParticipacionPorActivo(dtoTrabajo.getTipoTrabajoCodigo(), null, activo);
 				dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : participacion.toString());
 				trabajo = crearTrabajoPorActivo(activo, dtoTrabajo);
-				createTramiteTrabajo(trabajo);
 
 			}
 
@@ -675,28 +674,19 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				if(!Checks.esNulo(dtoTrabajo.getEsSolicitudConjunta()) && dtoTrabajo.getEsSolicitudConjunta().equals(true)){ //Si se marca el check
 					//Se lanza un trabajo que englobe a todos loas activos de la agrupacion
 					trabajo = crearTrabajoPorAgrupacion(dtoTrabajo, null);
-					createTramiteTrabajo(trabajo);
 				} else {//Si no se marca el check
 					//Se lanza un trabajo por cada activo de la agrupacion
 
-					List<Trabajo> trabajos = crearTrabajoPorActivoAgrupacion(dtoTrabajo, null);
-					for (Trabajo trabajoActivoAgrupacion : trabajos) {
-						createTramiteTrabajo(trabajoActivoAgrupacion);
-					}
+					List<Trabajo> trabajos = crearTrabajoPorActivoAgrupacion(dtoTrabajo, null);					
 				}
 
 			} else {//Si se seleccionan activos
 				if(!Checks.esNulo(dtoTrabajo.getEsSolicitudConjunta()) && dtoTrabajo.getEsSolicitudConjunta().equals(true)){//Si se marca el check
 					//se lanza un trabajo que engloba a todos los activos seleccionados
 					trabajo = crearTrabajoPorAgrupacion(dtoTrabajo, idsActivosSeleccionados);
-					createTramiteTrabajo(trabajo);
 				} else { //Si no se marca el check
 					//Se lanza un trabajo por cada activo seleccionados
 					List<Trabajo> trabajos= crearTrabajoPorActivoAgrupacion(dtoTrabajo,idsActivosSeleccionados);
-
-					for (Trabajo trabajoActivoAgrupacion : trabajos) {
-						createTramiteTrabajo(trabajoActivoAgrupacion);
-					}
 				}
 			}
 		}
@@ -2033,6 +2023,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setPerteneceDNDtipoEdificacion(false);
 		}
 
+		List<ActivoTramite> tramitesTrabajo = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
+		
+		dtoTrabajo.setTieneTramiteCreado(!tramitesTrabajo.isEmpty());
+		
 		return dtoTrabajo;
 	}
 

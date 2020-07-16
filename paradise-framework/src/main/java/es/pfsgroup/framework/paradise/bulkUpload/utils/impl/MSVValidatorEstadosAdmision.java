@@ -131,20 +131,19 @@ public class MSVValidatorEstadosAdmision extends MSVExcelValidatorAbstract {
 						mapaErrores.get(messageServices.getMessage(ESTADO_ADMISION_VALIDO)).add(fila);
 						esCorrecto = false;
 					}
-					if (!particularValidator.subestadoAdmisionValido(estadoAdmision, subestadoAdmision)) {
-						mapaErrores.get(messageServices.getMessage(SUBESTADO_ADMISION_VALIDO)).add(fila);
+					if (!particularValidator.estadoConSubestadosAdmisionValido(estadoAdmision) && (subestadoAdmision != null && subestadoAdmision != "")) {
+						mapaErrores.get(messageServices.getMessage(SUBESTADO_EN_ESTADO_ADMISION_VALIDO)).add(fila);
 						esCorrecto = false;
 					} else {
-						if (!particularValidator.subestadoEnEstadoAdmisionValido(estadoAdmision)) {
-							mapaErrores.get(messageServices.getMessage(SUBESTADO_EN_ESTADO_ADMISION_VALIDO)).add(fila);
-							esCorrecto = false;
-						}
-						if (!particularValidator.relacionEstadoSubestadoAdmisionValido(estadoAdmision, subestadoAdmision)) {
-							mapaErrores.get(messageServices.getMessage(RELACION_ESTADO_SUBESTADO_ADMISION_VALIDO)).add(fila);
+						if (!particularValidator.subestadoAdmisionValido(subestadoAdmision) && (subestadoAdmision != null && subestadoAdmision != "")) {
+							mapaErrores.get(messageServices.getMessage(SUBESTADO_ADMISION_VALIDO)).add(fila);
 							esCorrecto = false;
 						}
 					}
-					
+					if (!particularValidator.relacionEstadoSubestadoAdmisionValido(estadoAdmision, subestadoAdmision)) {
+						mapaErrores.get(messageServices.getMessage(RELACION_ESTADO_SUBESTADO_ADMISION_VALIDO)).add(fila);
+						esCorrecto = false;
+					}
 				} else {
 					mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).add(fila);
 					esCorrecto = false;

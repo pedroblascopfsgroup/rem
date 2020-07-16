@@ -4764,27 +4764,23 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "AND BORRADO = 0"
 		);
 		
-		return !"0".equals(resultado);
+		return "1".equals(resultado);
 	}
 	
 	@Override
-	public Boolean subestadoAdmisionValido(String codEstadoAdmision, String codSubestadoAdmision) {
+	public Boolean subestadoAdmisionValido(String codSubestadoAdmision) {
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) FROM DD_SAA_SUBESTADO_ACT_ADMISION " 
+				+ "WHERE DD_SAA_CODIGO = '"+ codSubestadoAdmision +"' "
+				+ "AND BORRADO = 0"
+		);
 		
-		if(subestadoEnEstadoAdmisionValido(codEstadoAdmision)) {
-			String resultado = rawDao.getExecuteSQL(
-					"SELECT COUNT(1) FROM DD_SAA_SUBESTADO_ACT_ADMISION " 
-					+ "WHERE DD_SAA_CODIGO = '"+ codSubestadoAdmision +"' "
-					+ "AND BORRADO = 0"
-			);
-			
-			return !"0".equals(resultado);
-		} else {
-			return true;
-		}
+		return "1".equals(resultado);
+
 	}
 	
 	@Override
-	public Boolean subestadoEnEstadoAdmisionValido(String codEstadoAdmision) {
+	public Boolean estadoConSubestadosAdmisionValido(String codEstadoAdmision) {
 		if(codEstadoAdmision == null) {
 			return false;
 		}
@@ -4796,21 +4792,27 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		);
 		
 		return !"0".equals(resultado);
+		
 	}
 
 	@Override
 	public Boolean relacionEstadoSubestadoAdmisionValido(String codEstadoAdmision, String codSubestadoAdmision) {
-		if(codEstadoAdmision == null || codSubestadoAdmision == null) {
+		if(codEstadoAdmision == null) {
 			return false;
 		}
-		String resultado = rawDao.getExecuteSQL(
-				"SELECT COUNT(1) FROM DD_SAA_SUBESTADO_ACT_ADMISION SAA "
-				+ "JOIN DD_EAA_ESTADO_ACT_ADMISION EAA ON SAA.DD_EAA_ID = EAA.DD_EAA_ID " 
-				+ "WHERE SAA.DD_SAA_CODIGO = '"+ codSubestadoAdmision +"' "
-				+ "AND EAA.DD_EAA_CODIGO = '"+ codEstadoAdmision +"' "
-				+ "AND EAA.BORRADO = 0 AND SAA.BORRADO = 0"
-		);
 		
-		return !"0".equals(resultado);
+		if(estadoConSubestadosAdmisionValido(codEstadoAdmision)) {
+			String resultado = rawDao.getExecuteSQL(
+					"SELECT COUNT(1) FROM DD_SAA_SUBESTADO_ACT_ADMISION SAA "
+					+ "JOIN DD_EAA_ESTADO_ACT_ADMISION EAA ON SAA.DD_EAA_ID = EAA.DD_EAA_ID " 
+					+ "WHERE SAA.DD_SAA_CODIGO = '"+ codSubestadoAdmision +"' "
+					+ "AND EAA.DD_EAA_CODIGO = '"+ codEstadoAdmision +"' "
+					+ "AND EAA.BORRADO = 0 AND SAA.BORRADO = 0"
+			);
+			
+			return "1".equals(resultado);
+		}
+		
+		return true;
 	}
 }

@@ -1,3 +1,4 @@
+ALTER SESSION SET NLS_NUMERIC_CHARACTERS = ',.';
 --/*
 --#########################################
 --## AUTOR=PIER GOTTA

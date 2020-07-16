@@ -185,83 +185,44 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 		    				cls:'',	    				
 						    
 	    					items: [
-	    						
-	    						{ 
-						        	xtype: 'comboboxfieldbase',
-						        	fieldLabel: HreRem.i18n('fieldlabel.tipo.proveedor'),
-						        	rowspan:	2,
-						        	labelWidth:	150,
-						        	width: 		480,
-									reference: 'comboTipoProveedorGestionEconomica',
-						        	chainedStore: 'comboTipoProveedorGestionEconomica',
-									chainedReference: 'comboProveedorGestionEconomica',
-						        	bind: {
-					            		store: '{comboTipoProveedorFiltered}',
-					            		value: '{gestionEconomica.codigoTipoProveedor}'
-					            	},
-					            	displayField: 'descripcion',
-		    						valueField: 'codigo',
-		    						listeners: {
-					                	select: 'onChangeComboProveedorGE'
-					            	}
-						        },
-			    				
+								{ 
+									xtype: 'combobox',
+									fieldLabel: HreRem.i18n('fieldlabel.nombre'),
+									labelWidth: 150,
+									width: 480,
+									reference: 'comboProveedorGestionEconomica',
+									bind: {
+										store: '{comboProveedorFiltradoManual}',
+										value: '{gestionEconomica.idProveedor}'
+									},
+									displayField: 'nombre',
+									valueField: 'idProveedor',
+									filtradoEspecial: true
+								},
 								{
 									fieldLabel: HreRem.i18n('fieldlabel.usuario.contacto'),
-									width: 		480,
-									bind:		'{proveedor.nombre}',
+									xtype: 'textfieldbase',
+									width: 480,
+									bind: {
+										value: '{gestionEconomica.usuarioProveedorContacto}'
+									},
 									readOnly: true
 								},
 								{
 									fieldLabel: HreRem.i18n('fieldlabel.email.contacto'),
-									width: 		480,
-									bind:		'{proveedor.email}',
+									xtype: 'textfieldbase',
+									width: 480,
+									bind: {
+										value: '{gestionEconomica.emailProveedorContacto}'
+									},
 									readOnly: true
 								},
-								{ 
-						        	xtype: 'comboboxfieldbase',
-						        	fieldLabel: HreRem.i18n('fieldlabel.nombre'),
-						        	rowspan:	2,
-						        	labelWidth:	150,
-						        	width: 		480,
-									reference: 'comboProveedorGestionEconomica',
-						        	chainedStore: 'comboProveedorGestionEconomica',
-									chainedReference: 'proveedorContactoCombo',
-						        	bind: {
-					            		store: '{comboProveedorFiltered}',
-					            		value: '{gestionEconomica.idProveedor}',
-					            		disabled: '{!gestionEconomica.codigoTipoProveedor}'
-					            	},
-					            	displayField: 'nombreComercial',
-		    						valueField: 'idProveedor',
-		    						listeners: {
-					                	select: 'onChangeComboProveedorGE'
-					            	}
-						        },
-			    				
-			    				{ 
-									xtype: 'comboboxfieldbase',
-						        	fieldLabel:  HreRem.i18n('fieldlabel.proveedor.contacto'),
-						        	reference: 'proveedorContactoCombo',
-						        	labelWidth:	150,
-						        	width: 		480,
-						        	bind: {
-					            		store: '{comboProveedorContacto}',
-					            		value: '{gestionEconomica.idProveedorContacto}',
-					            		disabled: '{!gestionEconomica.idProveedor}'
-					            	},
-					            	displayField: 'nombre',
-		    						valueField: 'id',
-		    						allowBlank: true,
-		    						listeners: {
-		    							change: 'onChangeProveedor'
-		    						}
-						        },			      
-			    				
 								{
 									fieldLabel: HreRem.i18n('fieldlabel.telefono.contacto'),
-									width: 		480,
-									bind:		'{proveedor.telefono1}',
+									width: 480,
+									bind: {
+										value: '{gestionEconomica.telefonoProveedorContacto}'
+									},
 									readOnly: true
 								}
 							]

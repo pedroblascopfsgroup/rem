@@ -368,6 +368,16 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 				}
     		},
     		
+			comboProveedorFiltradoManual: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboProveedorFiltradoManual',
+					extraParams: {idTrabajo: '{trabajo.id}'}
+				},
+				autoLoad: true
+			},
+			
     		comboEstadoPresupuesto: {
 	    		model: 'HreRem.model.ComboBase',
 				proxy: {

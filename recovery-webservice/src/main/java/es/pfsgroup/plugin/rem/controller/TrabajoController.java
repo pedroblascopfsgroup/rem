@@ -970,6 +970,26 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboProveedorFiltradoManual(Long idTrabajo, ModelMap model){
+		
+		try {
+			model.put("data", trabajoApi.getComboProveedor(idTrabajo));
+			model.put("success", true);
+		} catch (JsonViewerException e) {
+			model.put("success", false);
+			model.put("msg", e.getMessage());
+			
+		} catch (Exception e) {
+			model.put("success", false);
+			model.put("msg", "Se ha producido un error al ejecutar la petición.");
+			logger.error("error obteniendo proveedores",e);
+		}
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboResponsableTrabajo(Long idTrabajo, ModelMap model) {
 
 		Trabajo trabajo = trabajoDao.get(idTrabajo);

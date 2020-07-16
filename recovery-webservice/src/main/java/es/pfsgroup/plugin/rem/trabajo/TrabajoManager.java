@@ -115,6 +115,7 @@ import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestosTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoProveedorContactoSimple;
+import es.pfsgroup.plugin.rem.model.DtoProveedorFiltradoManual;
 import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
@@ -1547,6 +1548,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 			if(!Checks.esNulo(proveedorContacto))
 				trabajo.setProveedorContacto(proveedorContacto);
+		}else if(dtoGestionEconomica.getIdProveedor() != null) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", dtoGestionEconomica.getIdProveedor());
+			Order order = new Order(OrderType.DESC,"auditoria.fechaCrear");
+			List<ActivoProveedorContacto> proveedorContactos = genericDao.getListOrdered(ActivoProveedorContacto.class, order, filtro);
+
+			if(!proveedorContactos.isEmpty()) {
+				trabajo.setProveedorContacto(proveedorContactos.get(0));
+			}
 		}
 	}
 	
@@ -4510,4 +4519,42 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	 	
 	 	return esTramiteValido;
  	}
+	
+	public List<DtoProveedorFiltradoManual> getComboProveedorFiltradoManual(Long idTrabajo) throws Exception {
+		
+		List<DtoProveedorFiltradoManual> listaDtoProveedoresFiltradoManual = new ArrayList<DtoProveedorFiltradoManual>();
+		
+		if (Checks.esNulo(idTrabajo)) {
+			throw new JsonViewerException("Debe seleccionar antes un proveedor.");
+		} else {
+			Trabajo trabajo = findOne(idTrabajo);
+			Activo activo = trabajo.getActivo();
+			
+			if (!Checks.esNulo(activo)){
+				if(!Checks.esNulo(activo.getCartera())) {
+					Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigoCartera", activo.getCartera().getCodigo());
+					Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "baja", 0);
+					Order orden = new Order(OrderType.ASC,"nombreComercial");
+					List<VProveedores> listaProveedores = genericDao.getListOrdered(VProveedores.class, orden, filtro1, filtro3);
+					
+					for (VProveedores proveedor : listaProveedores) {
+						DtoProveedorFiltradoManual dto = new DtoProveedorFiltradoManual();
+						dto.setIdProveedor(proveedor.getIdProveedor());
+							
+						if (!Checks.esNulo(proveedor.getNombre())) {
+							dto.setNombre(proveedor.getNombre());
+						}else if(!Checks.esNulo(proveedor.getNombreComercial()))
+						if (!Checks.esNulo(proveedor.getNombreComercial())) {
+							dto.setNombre(proveedor.getNombreComercial());
+						}
+						
+						listaDtoProveedoresFiltradoManual.add(dto);
+					}
+				}
+			}
+		}
+		Collections.sort(listaDtoProveedoresFiltradoManual);
+		return listaDtoProveedoresFiltradoManual;
+	}
+	
 }

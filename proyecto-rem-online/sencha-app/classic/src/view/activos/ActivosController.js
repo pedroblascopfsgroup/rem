@@ -200,7 +200,7 @@ Ext.define('HreRem.view.activos.ActivosController', {
 		  		codCartera = selected[0].getData().entidadPropietariaCodigo;
 		  		codSubcartera = selected[0].getData().subcarteraCodigo;
 		  	}
-			 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: idActivo, codCartera: codCartera, codSubcartera: codSubcartera, logadoGestorMantenimiento: true,idAgrupacion: null, idGestor: null});    	
+			 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearPeticionTrabajo",{idActivo: idActivo, codCartera: codCartera, codSubcartera: codSubcartera, logadoGestorMantenimiento: true,idAgrupacion: null, idGestor: null});    	
 		},
 
 	onChangeChainedCombo: function(combo) {

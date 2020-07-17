@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20200715
+--## FECHA_CREACION=20200717
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-7786
@@ -111,7 +111,7 @@ BEGIN
 
 			V_MSQL := ' 
 				UPDATE '||V_ESQUEMA_M||'.USU_USUARIOS SET USU_NOMBRE = ''Grupo de gestores MACC'',
-				USU_MAIL = ''usuariogenericogdmacc@haya.es'',
+				USU_MAIL = ''reservas.macc.alquiler@haya.es'',
 				USUARIOMODIFICAR = ''REMVIP-7786'', 
 				FECHAMODIFICAR = SYSDATE 
 				WHERE USU_USERNAME = ''grupgmacc'' ';

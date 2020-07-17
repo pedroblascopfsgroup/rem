@@ -24,7 +24,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEmisorGLD;
 
 @Entity
-@Table(name = "GLD_ENT", schema = "${entity.schema}")
+@Table(name = "GLD_TBJ", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class GastoLineaDetalleTrabajo implements Serializable, Auditable{
@@ -33,8 +33,8 @@ public class GastoLineaDetalleTrabajo implements Serializable, Auditable{
 	
 	@Id
 	@Column(name = "GLD_TBJ_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "GastoLineaDetalleEntidadGenerator")
-	@SequenceGenerator(name = "GastoLineaDetalleEntidadGenerator", sequenceName = "S_GLD_ENT")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "GastoLineaDetalleTrabajoGenerator")
+	@SequenceGenerator(name = "GastoLineaDetalleTrabajoGenerator", sequenceName = "S_GLD_TBJ")
 	private Long id;
 	
 	@ManyToOne(fetch = FetchType.LAZY)

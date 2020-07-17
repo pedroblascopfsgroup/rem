@@ -184,7 +184,6 @@ public class CreacionTrabajosMasivoAsync {
 					transactionManager.commit(transaction);
 					transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 					
-					trabajoManager.createTramiteTrabajo(trabajo);
 					transactionManager.commit(transaction);
 					transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 					
@@ -200,7 +199,6 @@ public class CreacionTrabajosMasivoAsync {
 				trabajoDao.saveOrUpdate(trabajo);
 				transactionManager.commit(transaction);
 				transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-				trabajoManager.createTramiteTrabajo(trabajo);
 				transactionManager.commit(transaction);
 				transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 				ficheroMasivoToTrabajo(dtoTrabajo.getIdProceso(), trabajo);	

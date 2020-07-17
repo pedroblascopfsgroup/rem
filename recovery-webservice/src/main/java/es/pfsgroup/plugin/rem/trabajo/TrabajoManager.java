@@ -601,10 +601,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			// Crea el trámite relacionado con el nuevo trabajo generado
 			// --------------------
 
-			if (inicializarTramite) {
-				createTramiteTrabajo(trabajo);
-			}
-
 		} catch (Exception e) {
 			String mensaje = "";
 			if (e.getMessage() != null) {
@@ -1011,7 +1007,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					transactionManager.commit(transaction);
 					transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 					
-					this.createTramiteTrabajo(trabajo);
 					transactionManager.commit(transaction);
 					transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 					
@@ -1027,7 +1022,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				trabajoDao.saveOrUpdate(trabajo);
 				transactionManager.commit(transaction);
 				transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-				this.createTramiteTrabajo(trabajo);
 				transactionManager.commit(transaction);
 				transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 				ficheroMasivoToTrabajo(dtoTrabajo.getIdProceso(), trabajo);	

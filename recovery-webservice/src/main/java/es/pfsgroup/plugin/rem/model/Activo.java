@@ -522,9 +522,6 @@ public class Activo implements Serializable, Auditable {
     @Column(name = "ACT_DND", columnDefinition = "tinyint default false")
    	private boolean isDnd;
     
-    @Column(name = "ACT_PERIMETRO_ADMISION")
-    private Boolean perimetroAdmision;
-    
     @ManyToOne
 	@JoinColumn(name = "DD_EAA_ID")
 	private DDEstadoAdmision estadoAdmision;
@@ -2041,14 +2038,6 @@ public class Activo implements Serializable, Auditable {
 
 	public void setFechaTituloAnterior(Date fechaTituloAnterior) {
 		this.fechaTituloAnterior = fechaTituloAnterior;
-	}
-
-	public Boolean getPerimetroAdmision() {
-		return perimetroAdmision;
-	}
-
-	public void setPerimetroAdmision(Boolean perimetroAdmision) {
-		this.perimetroAdmision = perimetroAdmision;
 	}
 	
 	public DDEstadoAdmision getEstadoAdmision() {

@@ -228,24 +228,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 			}
 			
-		}
-		
-		if(activo.getPerimetroAdmision() == null || (activo.getPerimetroAdmision() != null && !activo.getPerimetroAdmision())) {
-			
-			BeanUtils.copyProperty(activoDto, "estadoAdmisionDescCabecera", messageServices.getMessage(NO_GESTIONADO_POR_ADMISION));
-			
-		}else if (activo.getPerimetroAdmision() != null && activo.getPerimetroAdmision()){
-			
-			if(activo.getEstadoAdmision() != null) {
-				BeanUtils.copyProperty(activoDto, "estadoAdmisionCodCabecera", activo.getEstadoAdmision().getCodigo());
-				BeanUtils.copyProperty(activoDto, "estadoAdmisionDescCabecera", activo.getEstadoAdmision().getDescripcion());
-			}
-			
-			if(activo.getSubestadoAdmision() != null) {
-				BeanUtils.copyProperty(activoDto, "subestadoAdmisionCodCabecera", activo.getSubestadoAdmision().getCodigo());
-				BeanUtils.copyProperty(activoDto, "subestadoAdmisionDescCabecera", activo.getSubestadoAdmision().getDescripcion());
-			}
-		} 
+		}	 
 		
 		if(!Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
 			BeanUtils.copyProperty(activoDto, "nombreMediador", activo.getInfoComercial().getMediadorInforme().getNombre());
@@ -879,11 +862,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));
 		
-		if(activo.getPerimetroAdmision() != null) {
-			activoDto.setPerimetroAdmision(activo.getPerimetroAdmision());
+		if(perimetroActivo.getAplicaAdmision() != null) {
+			activoDto.setPerimetroAdmision(perimetroActivo.getAplicaAdmision());
 		}
 		
-		activoDto.setIncluidoEnPerimetroAdmision(activo.getPerimetroAdmision());
+		activoDto.setIncluidoEnPerimetroAdmision(perimetroActivo.getAplicaAdmision());
 		
 		if(activo.getEstadoAdmision() != null) {
 			activoDto.setEstadoAdmisionCodigo(activo.getEstadoAdmision().getCodigo());
@@ -892,6 +875,23 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if (activo.getSubestadoAdmision() != null) {
 			activoDto.setSubestadoAdmisionCodigo(activo.getSubestadoAdmision().getCodigo());
 			activoDto.setSubestadoAdmisionDesc(activo.getSubestadoAdmision().getDescripcion());
+		}
+		
+		if(perimetroActivo.getAplicaAdmision() == null || (perimetroActivo.getAplicaAdmision() != null && !perimetroActivo.getAplicaAdmision())) {
+			
+			BeanUtils.copyProperty(activoDto, "estadoAdmisionDescCabecera", messageServices.getMessage(NO_GESTIONADO_POR_ADMISION));
+			
+		}else if (perimetroActivo.getAplicaAdmision() != null && perimetroActivo.getAplicaAdmision()){
+			
+			if(activo.getEstadoAdmision() != null) {
+				BeanUtils.copyProperty(activoDto, "estadoAdmisionCodCabecera", activo.getEstadoAdmision().getCodigo());
+				BeanUtils.copyProperty(activoDto, "estadoAdmisionDescCabecera", activo.getEstadoAdmision().getDescripcion());
+			}
+			
+			if(activo.getSubestadoAdmision() != null) {
+				BeanUtils.copyProperty(activoDto, "subestadoAdmisionCodCabecera", activo.getSubestadoAdmision().getCodigo());
+				BeanUtils.copyProperty(activoDto, "subestadoAdmisionDescCabecera", activo.getSubestadoAdmision().getDescripcion());
+			}
 		}
 
 		return activoDto;
@@ -1404,9 +1404,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 				}
 			}
-		
+			
+			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
+			
 			if(dto.getPerimetroAdmision() != null) {
-				activo.setPerimetroAdmision(dto.getPerimetroAdmision());
+				perimetroActivo.setAplicaAdmision(dto.getPerimetroAdmision());
 			}
 
 		} catch(JsonViewerException jve) {

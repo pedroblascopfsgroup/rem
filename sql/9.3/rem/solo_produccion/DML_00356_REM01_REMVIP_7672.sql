@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Carles Molins
---## FECHA_CREACION=20200626
+--## FECHA_CREACION=20200713
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-7672
+--## INCIDENCIA_LINK=REMVIP-7783
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
@@ -23,7 +23,7 @@ DECLARE
     ERR_NUM NUMBER(25); -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(10024 CHAR); -- Vble. auxiliar para registrar errores en el script.
    
-    V_USUARIOMODIFICAR VARCHAR(100 CHAR):= 'REMVIP-7672'; -- Vble. para el usuario modificar.
+    V_USUARIOMODIFICAR VARCHAR(100 CHAR):= 'REMVIP-7783'; -- Vble. para el usuario modificar.
     V_MSQL VARCHAR2(32000 CHAR); -- Vble. auxiliar para almacenar la sentencia a ejecutar.
    
 BEGIN
@@ -34,7 +34,7 @@ BEGIN
 				    SELECT GPV.GPV_ID, GPV.GPV_NUM_GASTO_HAYA,
 				        TO_DATE(TMP.FC_TOPE_PAGO, ''MM/DD/YY'') AS FC_TOPE_PAGO
 				    FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV
-				    JOIN REM_EXT.TMP_GASTOS_26062020 TMP ON TMP.ID_GASTO_HAYA = GPV.GPV_NUM_GASTO_HAYA
+				    JOIN REM_EXT.TMP_GASTOS_13072020 TMP ON TMP.ID_GASTO_HAYA = GPV.GPV_NUM_GASTO_HAYA
 				) T2
 				ON (T1.GPV_ID = T2.GPV_ID)
 				WHEN MATCHED THEN UPDATE SET

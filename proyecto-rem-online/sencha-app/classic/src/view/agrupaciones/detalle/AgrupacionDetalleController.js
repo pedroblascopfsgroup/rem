@@ -64,18 +64,19 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	  	var codSubcartera = me.getViewModel().get("agrupacionficha.codSubcartera");
 	  	var url= $AC.getRemoteUrl('trabajo/getSupervisorGestorTrabajo');
     	var tipoAgrupacionCodigo= me.getViewModel().get("agrupacionficha.tipoAgrupacionCodigo");
+    	var gestorActivo = $AU.getUser().userName;
     	
     	var data;
 		Ext.Ajax.request({
 		     url: url,
-		     params: {idActivo : idActivo, idAgrupacion : idAgrupacion},
+		     params: {idActivo : idActivo, idAgrupacion : idAgrupacion, gestorActivo: gestorActivo},
 		     success: function(response, opts) {
 		    	 data = Ext.decode(response.responseText);
-		    	 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: null, idAgrupacion: idAgrupacion, codCartera: codCartera, codSubcartera: codSubcartera, idGestor: data.data.GACT, idSupervisor: data.data.SUPACT, tipoAgrupacionCodigo: tipoAgrupacionCodigo,logadoGestorMantenimiento: true});
+		    	 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearPeticionTrabajo",{idActivo: null, idAgrupacion: idAgrupacion, codCartera: codCartera, codSubcartera: codSubcartera, idGestor: data.data.GACT, idSupervisor: data.data.SUPACT, tipoAgrupacionCodigo: tipoAgrupacionCodigo,logadoGestorMantenimiento: true, gestorActivo: gestorActivo});
 		         
 		     },
 		     failure: function(response) {
-		    	 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: null, idAgrupacion: idAgrupacion, codCartera: codCartera, codSubcartera: codSubcartera, idUsuario: null, tipoAgrupacionCodigo: tipoAgrupacionCodigo,logadoGestorMantenimiento: true});
+		    	 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearPeticionTrabajo",{idActivo: null, idAgrupacion: idAgrupacion, codCartera: codCartera, codSubcartera: codSubcartera, idUsuario: null, tipoAgrupacionCodigo: tipoAgrupacionCodigo,logadoGestorMantenimiento: true, gestorActivo: gestorActivo});
 		     }
 		 });   	    	
     },

@@ -495,20 +495,6 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						bind:		'{activo.trabajosVivos}',
 						readOnly	: true
 					},
-					{
-						xtype: 'comboboxfieldbase',
-						refence: 'perimetroAdmision',
-						fieldLabel: HreRem.i18n('fieldlabel.perimetro.admision'),
-						colspan: 3,
-						bind : {
-						      store : '{comboSiNoBoolean}',
-						      value : '{activo.perimetroAdmision}'
-						},
-						listeners: { 
-							  select: 'onSelectPerimetroAdmision'
-						}
-					},
-					
 		            {    
 		                
 						xtype:'fieldsettable',
@@ -556,7 +542,29 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								bind:		'{activo.motivoAplicaTramiteAdmision}',
 								hidden: true
 							},
-
+							//Fila Admision
+							{
+								xtype: 'checkboxfieldbase',
+								reference: 'perimetroAdmision',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.admision'),
+								bind : {
+									value : '{activo.perimetroAdmision}'
+								}
+							},
+							{
+								xtype: 'datefieldbase',
+								bind: '{activo.fechaPerimetroAdmision}',
+								reference: 'datefieldPerimetroAdmision',
+								readOnly: true
+							},
+							{
+								xtype: 'textfieldbase',
+								reference: 'textFieldPerimetroAdmision',
+								bind:{
+									value: '{activo.motivoPerimetroAdmision}'
+								}
+							},
+							
 							//Fila gestion
 							{
 								xtype:'checkboxfieldbase',

@@ -865,6 +865,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(perimetroActivo.getAplicaAdmision() != null) {
 			activoDto.setPerimetroAdmision(perimetroActivo.getAplicaAdmision());
 		}
+			
+		if(perimetroActivo.getFechaAplicaAdmision() != null) {
+			activoDto.setFechaPerimetroAdmision(perimetroActivo.getFechaAplicaAdmision().toString());
+		}
+		if(perimetroActivo.getMotivoAplicaAdmision() != null) {
+			activoDto.setMotivoPerimetroAdmision(perimetroActivo.getMotivoAplicaAdmision());
+		}
 		
 		activoDto.setIncluidoEnPerimetroAdmision(perimetroActivo.getAplicaAdmision());
 		
@@ -1409,6 +1416,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 			if(dto.getPerimetroAdmision() != null) {
 				perimetroActivo.setAplicaAdmision(dto.getPerimetroAdmision());
+				perimetroActivo.setFechaAplicaAdmision(new Date());
+				perimetroActivo.setMotivoAplicaAdmision(dto.getMotivoPerimetroAdmision());
+				activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
 			}
 
 		} catch(JsonViewerException jve) {

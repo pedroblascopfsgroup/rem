@@ -944,6 +944,14 @@ Ext.define('HreRem.model.Activo', {
     			name: 'perimetroAdmision',
     			type: 'boolean'
     		},
+			{
+				name: 'fechaPerimetroAdmision',
+				type:'date',
+				dateFormat: 'c'
+			},
+			{
+				name: 'motivoPerimetroAdmision'
+			},
     		{
     			name: 'incluidoEnPerimetroAdmision'
     		},

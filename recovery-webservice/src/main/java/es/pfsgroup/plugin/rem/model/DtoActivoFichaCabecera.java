@@ -284,6 +284,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String subestadoAdmisionCodigoNuevo;
 	private String observacionesAdmision;
 	private Boolean perimetroAdmision;
+	private String fechaPerimetroAdmision;
+	private String motivoPerimetroAdmision;
 	private String estadoAdmisionDesc;
 	private String subestadoAdmisionDesc;
 	private String estadoAdmisionCodCabecera;
@@ -2117,6 +2119,22 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.perimetroAdmision = perimetroAdmision;
 	}
 
+
+	public String getFechaPerimetroAdmision() {
+		return fechaPerimetroAdmision;
+	}
+
+	public void setFechaPerimetroAdmision(String fechaPerimetroAdmision) {
+		this.fechaPerimetroAdmision = fechaPerimetroAdmision;
+	}
+
+	public String getMotivoPerimetroAdmision() {
+		return motivoPerimetroAdmision;
+	}
+
+	public void setMotivoPerimetroAdmision(String motivoPerimetroAdmision) {
+		this.motivoPerimetroAdmision = motivoPerimetroAdmision;
+	}
 
 	public Boolean getIncluidoEnPerimetroAdmision() {
 		return incluidoEnPerimetroAdmision;

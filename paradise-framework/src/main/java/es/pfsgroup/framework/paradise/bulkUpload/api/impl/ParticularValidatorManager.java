@@ -4743,12 +4743,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(numActivo == null) {
 			return false;
 		}
-		String resultado = rawDao.getExecuteSQL(
-				"SELECT ACT_ID FROM ACT_ACTIVO " 
-				+ "WHERE ACT_PERIMETRO_ADMISION = 1 "
-				+ "AND ACT_NUM_ACTIVO = '"+ numActivo +"' "
-				+ "AND BORRADO = 0"
-		);
+		
+		String resultado = rawDao.getExecuteSQL("SELECT ACT.ACT_ID "
+				+ "		FROM ACT_ACTIVO ACT "
+				+ "		LEFT JOIN ACT_PAC_PERIMETRO_ACTIVO PAC "
+				+ "		ON ACT.ACT_ID = PAC.ACT_ID "
+				+ "		WHERE PAC.PAC_CHECK_ADMISION = 1"
+				+ "		AND ACT.ACT_NUM_ACTIVO = "+numActivo+" ");
 		
 		return resultado!=null;
 	}

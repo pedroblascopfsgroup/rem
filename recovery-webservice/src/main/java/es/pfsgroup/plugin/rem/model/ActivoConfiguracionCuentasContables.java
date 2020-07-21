@@ -42,7 +42,7 @@ public class ActivoConfiguracionCuentasContables implements Serializable, Audita
 	private Long id;
 	
 	@Column(name="CCC_CUENTA_CONTABLE")
-    private String partidaPresupuestaria;
+    private String cuentaContable;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TGA_ID")
@@ -99,12 +99,12 @@ public class ActivoConfiguracionCuentasContables implements Serializable, Audita
 		this.id = id;
 	}
 
-	public String getPartidaPresupuestaria() {
-		return partidaPresupuestaria;
+	public String getCuentaContable() {
+		return cuentaContable;
 	}
 
-	public void setPartidaPresupuestaria(String partidaPresupuestaria) {
-		this.partidaPresupuestaria = partidaPresupuestaria;
+	public void setCuentaContable(String cuentaContable) {
+		this.cuentaContable = cuentaContable;
 	}
 
 	public DDTipoGasto getTipoGasto() {

@@ -83,10 +83,10 @@ public class GastoLineaDetalle implements Serializable, Auditable{
 	private DDTiposImpuesto tipoImpuesto;
 	
 	@Column(name="GLD_IMP_IND_EXENTO")
-	private Integer esImporteIndirectoExento;
+	private Boolean esImporteIndirectoExento;
 	
 	@Column(name="GLD_IMP_IND_RENUNCIA_EXENCION")
-	private Integer esImporteIndirectoRenunciaExento;
+	private Boolean esImporteIndirectoRenunciaExento;
 	
 	@Column(name="GLD_IMP_IND_TIPO_IMPOSITIVO")
 	private Double importeIndirectoTipoImpositivo;
@@ -239,19 +239,19 @@ public class GastoLineaDetalle implements Serializable, Auditable{
 		this.tipoImpuesto = tipoImpuesto;
 	}
 
-	public Integer getEsImporteIndirectoExento() {
+	public Boolean getEsImporteIndirectoExento() {
 		return esImporteIndirectoExento;
 	}
 
-	public void setEsImporteIndirectoExento(Integer esImporteIndirectoExento) {
+	public void setEsImporteIndirectoExento(Boolean esImporteIndirectoExento) {
 		this.esImporteIndirectoExento = esImporteIndirectoExento;
 	}
 
-	public Integer getEsImporteIndirectoRenunciaExento() {
+	public Boolean getEsImporteIndirectoRenunciaExento() {
 		return esImporteIndirectoRenunciaExento;
 	}
 
-	public void setEsImporteIndirectoRenunciaExento(Integer esImporteIndirectoRenunciaExento) {
+	public void setEsImporteIndirectoRenunciaExento(Boolean esImporteIndirectoRenunciaExento) {
 		this.esImporteIndirectoRenunciaExento = esImporteIndirectoRenunciaExento;
 	}
 

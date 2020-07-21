@@ -395,16 +395,16 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 
 		var operacion = me.lookupReference('cbOperacionExenta');
 		var renuncia = me.lookupReference('cbRenunciaExencion');
-		var tipoImpositivo = me.lookupReference('tipoImpositivo');
+		var esTipoImpositivo = me.lookupReference('esTipoImpositivo');
 		var cuota = me.lookupReference('cbCuota');
 		var importeTotal = me.lookupReference('detalleEconomicoImporteTotal');
 		if(operacion.getValue()){
 			renuncia.setReadOnly(false);
-			tipoImpositivo.setDisabled(true);
+			esTipoImpositivo.setDisabled(true);
 			cuota.setDisabled(true);
 		}else{			
-			tipoImpositivo.setDisabled(false);
-			tipoImpositivo.allowBlank = false;
+			esTipoImpositivo.setDisabled(false);
+			esTipoImpositivo.allowBlank = false;
 			cuota.setDisabled(false);
 			cuota.allowBlank = false;
 			renuncia.setValue(false);
@@ -413,7 +413,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		importeTotal.validate();
 		operacion.validate();
 		renuncia.validate();
-		tipoImpositivo.validate();
+		esTipoImpositivo.validate();
 		cuota.validate();
 
 	},
@@ -423,22 +423,22 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		
 		var operacion = me.lookupReference('cbOperacionExenta');
 		var renuncia = me.lookupReference('cbRenunciaExencion');
-		var tipoImpositivo = me.lookupReference('tipoImpositivo');
+		var esTipoImpositivo = me.lookupReference('esTipoImpositivo');
 		var cuota = me.lookupReference('cbCuota');
 		var importeTotal = me.lookupReference('detalleEconomicoImporteTotal');
 		if(operacion.getValue() && !renuncia.getValue()){
-			tipoImpositivo.setDisabled(true);
+			esTipoImpositivo.setDisabled(true);
 			cuota.setDisabled(true);
 		}else{
-			tipoImpositivo.setDisabled(false);
-			tipoImpositivo.allowBlank = false;
+			esTipoImpositivo.setDisabled(false);
+			esTipoImpositivo.allowBlank = false;
 			cuota.setDisabled(false);
 			cuota.allowBlank = false;
 		}
 		importeTotal.validate();
 		operacion.validate();
 		renuncia.validate();
-		tipoImpositivo.validate();
+		esTipoImpositivo.validate();
 		cuota.validate();
 	},
 	
@@ -1759,18 +1759,29 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var me = this;
     	
     	var window = btn.up('[reference=ventanaCrearLineaDetalleGasto]');
-		var form = window.down('[reference=crearLineaDetalleGastoForm]');
+		var form = window.down('[reference=crearLineaDetalleGastoForm]');	
+		
+		if(window.parent.getStore().data != undefined && 
+			window.parent.lookupController().getViewModel().getData() != undefined &&
+			window.parent.lookupController().getViewModel().getData().esCarteraBakia &&
+			window.parent.getStore().data.length > 0){
+			
+			me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.anyadir.gasto.linea.detalle.bk"));
+			return;
+		}
+		
 		
 		if(!me.comprobarImportesRellenosLineaDetalleGasto(window)){
 			me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.gasto.linea.detalle.no.importe"));
 			return;
 		}
+
 		if(form.isValid()){
-		/*	form.submit({                
+			form.submit({                
 				waitMsg: HreRem.i18n('msg.mask.loading'),
                 params: {
-                	idEntidad: window.idGasto,
-                	idLineaDetalleGasto: window.idLineaDetalleGasto
+                	idGasto: window.idGasto,
+                	id: window.idLineaDetalleGasto
                 },
 
                 success: function(fp, o) {
@@ -1784,16 +1795,16 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
                 	if(!Ext.isEmpty(window.parent)) {
                 		window.parent.fireEvent("aftercreate", window.parent);
                 	}
+                	window.lookupController().getView().down('[reference=lineaDetalleGastoGrid]').getStore().load()
                 	window.close();
-                	//window.parent.up('[reference=comercialactivotabpanelref]').funcionRecargar();
                 },
                 failure: function(fp, o) {
                 	window.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
                 }
             });
-		 */
+		 
 		}else{
-			
+			me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.anyadir.gasto.linea.detalle.campos"));
 		}
     },
     
@@ -1814,5 +1825,83 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			hayImporteRelleno = true;
 		}
     	return hayImporteRelleno;
+    },
+    
+    
+    onChangeValorImporteTotal: function(){
+    	var me=this;
+    	var formulario = me.lookupReference('crearLineaDetalleGastoForm').getForm();
+    	var importeTotal = me.calcularImporteTotal(formulario);
+		
+		formulario.findField('importeTotal').setValue(importeTotal);		
+    },
+    
+    onChangeHabilitarTipoRecargo: function(){
+    	var me=this;
+    	var formulario = me.lookupReference('crearLineaDetalleGastoForm').getForm();
+    	var recargo = formulario.findField('recargo').getValue();
+    	var tipoRecargo = formulario.findField('tipoRecargo');
+    	var importeTotal = me.calcularImporteTotal(formulario);
+
+    	formulario.findField('importeTotal').setValue(importeTotal);
+    	
+    	if(recargo == null || recargo == undefined || parseFloat(recargo) == 0){
+    		tipoRecargo.setDisabled(true);
+    	}else{
+    		tipoRecargo.setDisabled(false);
+    	}
+    	
+    },
+    
+    calcularImporteTotal: function (formulario){
+    	var me=this;
+    	var importeTotal = 0;
+    	
+    	var baseSujeta = formulario.findField('baseSujeta').getValue();
+    	var baseNoSujeta = formulario.findField('baseNoSujeta').getValue();
+		var recargo = formulario.findField('recargo').getValue();
+		var interes = formulario.findField('interes').getValue();
+		var costas = formulario.findField('costas').getValue();
+		var otros = formulario.findField('otros').getValue();
+		var provSupl = formulario.findField('provSupl').getValue();
+		
+		if(baseSujeta != null){
+			importeTotal = importeTotal + baseSujeta;
+		}
+		if(baseNoSujeta != null){
+			importeTotal = importeTotal + baseNoSujeta;
+		}
+		if(recargo != null){
+			importeTotal = importeTotal + recargo;
+		}
+		if(interes != null){
+			importeTotal = importeTotal + interes;
+		}
+		if(costas != null){
+			importeTotal = importeTotal + costas;
+		}
+		if(otros != null){
+			importeTotal = importeTotal + otros;
+		}
+		if(provSupl != null){
+			importeTotal = importeTotal + provSupl;
+		}
+		
+		return importeTotal;
+    },
+    
+    abrirVentanaModificarLineaDetalle: function(grid, record){
+
+    	var me = this;
+    	if(record.getData() == null || record.getData() == undefined){
+    		return;
+    	}
+    	var idGasto = me.getView().getViewModel().get("gasto.id");
+		var idLineaDetalleGasto = record.getData().id;
+		var selection = record.getData();
+		var grid = me.lookupReference('lineaDetalleGastoGrid')
+
+		Ext.create("HreRem.view.gastos.VentanaCrearLineaDetalleGasto",
+				{entidad: 'lineaDetalleGasto', idGasto: idGasto, parent:grid, idLineaDetalleGasto: idLineaDetalleGasto, record:selection}).show();
     }
 });

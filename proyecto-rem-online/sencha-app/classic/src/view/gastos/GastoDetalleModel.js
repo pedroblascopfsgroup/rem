@@ -367,7 +367,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				extraParams : {
 					codigoTipoGasto : '{gasto.tipoGastoCodigo}'
 				}
-			}
+			},
+			autoLoad: true
 		},
 
 		comboSubtiposNuevoGasto : {
@@ -434,7 +435,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				extraParams : {
 					diccionario : 'tiposImpuestos'
 				}
-			}
+			},
+			autoLoad: true
 		},
 
 		storeActivosAfectados : {
@@ -609,7 +611,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				extraParams : {
 					diccionario : 'tiposDeRecargo'
 				}
-			}
+			},
+			autoLoad: true
 		},
 
 		storeGastosRefacturablesExistentes : {
@@ -639,6 +642,24 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
                 {"codigo":"01", "descripcion":"Si"},
                 {"codigo":"02", "descripcion":"No"}
             ]
-        }
+        },
+        
+        storeLineaGastoDetalle : {
+			model : 'HreRem.model.LineaDetalleGastoGridModel',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'gastosproveedor/getGastoLineaDetalle',
+				extraParams : {
+					idGasto : '{gasto.id}'
+				}
+			}
+		},
+		comboSiNoGastoBoolean : {
+			data : [
+                {"codigo":true, "descripcion":"Si"},
+                {"codigo":false, "descripcion":"No"}
+            ],
+			autoLoad: true
+		}
 	}
 });

@@ -218,7 +218,11 @@ Ext.define('HreRem.model.GastoProveedor', {
    		},
    		{
    			name: 'estadoEmisor'   			
-   		}   		
+   		},
+   		{
+   			name:'estadoModificarLineasDetalleGasto',
+   			type:'boolean'
+   		}
    		
     ],
     

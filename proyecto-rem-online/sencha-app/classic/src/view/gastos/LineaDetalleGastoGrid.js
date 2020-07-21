@@ -8,16 +8,19 @@ Ext.define('HreRem.view.gastos.LineaDetalleGastoGrid', {
 	editOnSelect: false,
 	overflowX: 'scroll',
 	bind: { 
-		//store: '{storeAgendaRevisionTitulo}'
+		store: '{storeLineaGastoDetalle}'
+	},
+	listeners:{
+		rowdblclick: 'abrirVentanaModificarLineaDetalle'
 	},
 	
     initComponent: function () {
 
 
      	var me = this;
-        //me.topBar = ($AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']));
-        //me.editOnSelect = ($AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']));
-
+     	
+        me.topBar = me.lookupController().getView().getViewModel().getData().gasto.getData().estadoModificarLineasDetalleGasto;
+     	
      	me.setTitle(HreRem.i18n('title.gasto.detalle.economico.lineas.detalle'));
      	
 		me.columns = [
@@ -32,7 +35,16 @@ Ext.define('HreRem.view.gastos.LineaDetalleGastoGrid', {
 		            reference: 'subtipoGasto',
 		            name:'subtipoGasto',
 		            text: HreRem.i18n('fieldlabel.gasto.linea.detalle.subtipoGasto'),
-		            flex: 0.7  		
+		            flex: 0.7 ,
+		            renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
+		            	var foundedRecord = this.lookupController().getViewModel().getStore('comboSubtiposGasto').findRecord('codigo', value);
+		            	var descripcion;
+		            	
+		        		if(!Ext.isEmpty(foundedRecord)) {
+		        			descripcion = foundedRecord.getData().descripcion;
+		        		}
+		            	return descripcion;
+		        	}
 		        },  {
 		            dataIndex: 'baseSujeta',
 		            reference: 'baseSujeta',
@@ -56,7 +68,16 @@ Ext.define('HreRem.view.gastos.LineaDetalleGastoGrid', {
 		            reference: 'tipoRecargo',
 		            name:'tipoRecargo',
 		            text: HreRem.i18n('fieldlabel.gasto.linea.detalle.tipoRecargo'),
-		            flex: 0.7  		
+		            flex: 0.7 ,
+		            renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
+		            	var foundedRecord = this.lookupController().getViewModel().getStore('comboTipoRecargo').findRecord('codigo', value);
+		            	var descripcion;
+		            	
+		        		if(!Ext.isEmpty(foundedRecord)) {
+		        			descripcion = foundedRecord.getData().descripcion;
+		        		}
+		            	return descripcion;
+		        	}
 		        },  {
 		            dataIndex: 'interes',
 		            reference: 'interes',
@@ -86,25 +107,52 @@ Ext.define('HreRem.view.gastos.LineaDetalleGastoGrid', {
 		            reference: 'tipoImpuesto',
 		            name:'tipoImpuesto',
 		            text: HreRem.i18n('fieldlabel.gasto.linea.detalle.tipoImpuesto'),
-		            flex: 0.7  		
+		            flex: 0.7,
+		            renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
+		            	var foundedRecord = this.lookupController().getViewModel().getStore('comboTipoImpuesto').findRecord('codigo', value);
+		            	var descripcion;
+		            	
+		        		if(!Ext.isEmpty(foundedRecord)) {
+		        			descripcion = foundedRecord.getData().descripcion;
+		        		}
+		            	return descripcion;
+		        	}
 		        },  {
-		            dataIndex: 'operacionExenta',
-		            reference: 'operacionExenta',
-		            name:'operacionExenta',
-		            text: HreRem.i18n('fieldlabel.gasto.linea.detalle.operacionExenta'),
-		            flex: 0.7  		
+		            dataIndex: 'operacionExentaImp',
+		            reference: 'operacionExentaImp',
+		            name:'operacionExentaImp',
+		            text: HreRem.i18n('fieldlabel.gasto.linea.detalle.operacionExentaImp'),
+		            flex: 0.7
 		        },  {
-		            dataIndex: 'renunciaExenta',
-		            reference: 'renunciaExenta',
-		            name:'renunciaExenta',
-		            text: HreRem.i18n('fieldlabel.gasto.linea.detalle.renunciaExenta'),
-		            flex: 0.7  		
+		            dataIndex: 'esRenunciaExenta',
+		            reference: 'esRenunciaExenta',
+		            name:'esRenunciaExenta',
+		            text: HreRem.i18n('fieldlabel.gasto.linea.detalle.esRenunciaExenta'),
+		            flex: 0.7,
+		            renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
+		            	var foundedRecord = this.lookupController().getViewModel().getStore('comboSiNoGastoBoolean').findRecord('codigo', value);
+		            	var descripcion;
+		            	
+		        		if(!Ext.isEmpty(foundedRecord)) {
+		        			descripcion = foundedRecord.getData().descripcion;
+		        		}
+		            	return descripcion;
+		        	}
 		        },  {
-		            dataIndex: 'tipoImpositivo',
-		            reference: 'tipoImpositivo',
-		            name:'tipoImpositivo',
-		            text: HreRem.i18n('fieldlabel.gasto.linea.detalle.tipoImpositivo'),
-		            flex: 0.7  		
+		            dataIndex: 'esTipoImpositivo',
+		            reference: 'esTipoImpositivo',
+		            name:'esTipoImpositivo',
+		            text: HreRem.i18n('fieldlabel.gasto.linea.detalle.esTipoImpositivo'),
+		            flex: 0.7 ,
+		            renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
+		            	var foundedRecord = this.lookupController().getViewModel().getStore('comboSiNoGastoBoolean').findRecord('codigo', value);
+		            	var descripcion;
+		            	
+		        		if(!Ext.isEmpty(foundedRecord)) {
+		        			descripcion = foundedRecord.getData().descripcion;
+		        		}
+		            	return descripcion;
+		        	}
 		        },  {
 		            dataIndex: 'cuota',
 		            reference: 'cuota',
@@ -189,7 +237,7 @@ Ext.define('HreRem.view.gastos.LineaDetalleGastoGrid', {
 		            displayInfo: true,
 		            overflowX: 'scroll',
 		            bind: {
-		                //store: '{storeCalifiacionNegativa}'
+		            	store: '{storeLineaGastoDetalle}'
 		            }
 		        }
 		    ];
@@ -202,10 +250,9 @@ Ext.define('HreRem.view.gastos.LineaDetalleGastoGrid', {
     	var me = this;
     	var idGasto = me.lookupController().getView().getViewModel().get("gasto.id")
 		var grid = me;
-		var idLineaDetalleGasto = null;
 	
 		Ext.create("HreRem.view.gastos.VentanaCrearLineaDetalleGasto",
-				{entidad: 'lineaDetalleGasto', idEntidad: idGasto, idLineaDetalleGasto: idLineaDetalleGasto, parent:grid}).show();
+				{entidad: 'lineaDetalleGasto', idGasto: idGasto, parent:grid, idLineaDetalleGasto: null, record:null}).show();
 
     }, 
     
@@ -215,19 +262,19 @@ Ext.define('HreRem.view.gastos.LineaDetalleGastoGrid', {
     	var grid = me;
     	
     	if(selection.length == 0){
-    		me.fireEvent("errorToast", HreRem.i18n("msg.agenda.revision.titulo.eliminar.no.seleccionado")); 
+    		me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.eliminar.gasto.linea.detalle")); 
     		return;
     	}
     	
     	var idLineaDetalleGasto = me.getSelection()[0].getData().id;
     	Ext.Msg.show({
 			   title: HreRem.i18n('title.mensaje.confirmacion'),
-			   msg: HreRem.i18n('msg.agenda.revision.titulo.eliminar'),
+			   msg: HreRem.i18n('msg.fieldlabel.eliminar.gasto.linea.detalle'),
 			   buttons: Ext.MessageBox.YESNO,
 			   fn: function(buttonId) {
 			        if (buttonId == 'yes') {
 			        	grid.mask(HreRem.i18n("msg.mask.loading"));
-			        	var url = $AC.getRemoteUrl('admision/deleteAgendaRevisionTitulo');
+			        	var url = $AC.getRemoteUrl('gastosproveedor/deleteGastoLineaDetalle');
 		    			Ext.Ajax.request({
 		    	    		url: url,
 		    	    		method : 'GET',

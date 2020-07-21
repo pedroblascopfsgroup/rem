@@ -62,6 +62,8 @@ import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
 import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
+import es.pfsgroup.plugin.rem.model.DtoLineaDetalleGasto;
+import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
@@ -1197,6 +1199,59 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("success", false);		
 		}
 
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getGastoLineaDetalle(Long idGasto) {
+		ModelMap model = new ModelMap();
+		
+		try {			
+			List<DtoLineaDetalleGasto> dtoLineaDetalleGastoLista =gastoProveedorApi.getGastoLineaDetalle(idGasto);
+			model.put("data", dtoLineaDetalleGastoLista);
+			model.put("success", true);			
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveGastoLineaDetalle(HttpServletRequest request, DtoLineaDetalleGasto dtoLineaDetalleGasto) {
+		
+		
+		ModelMap model = new ModelMap();
+		try {
+			model.put("success", gastoProveedorApi.saveGastoLineaDetalle(dtoLineaDetalleGasto));
+			
+		}catch (Exception e) {
+			logger.error("error en GastosProveedorController", e);
+			model.put("success", false);
+			model.put("errorMessage", "Error al crear/modificar LíneaDetalleGasto.");
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView deleteGastoLineaDetalle(Long idLineaDetalleGasto) {
+		
+		
+		ModelMap model = new ModelMap();
+		try {
+			model.put("success", gastoProveedorApi.deleteGastoLineaDetalle(idLineaDetalleGasto));
+			
+		}catch (Exception e) {
+			logger.error("error en GastosProveedorController", e);
+			model.put("success", false);
+			model.put("errorMessage", "Error al borrar LíneaDetalleGasto.");
+		}
+		
 		return createModelAndViewJson(model);
 	}
 	

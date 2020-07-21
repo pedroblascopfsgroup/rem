@@ -78,6 +78,7 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	private Boolean bloquearDestinatarios;
 	private Boolean noAnyadirEliminarGastosRefacturados;
 
+
 	public Long getGastoProveedor() {
 		return gastoProveedor;
 	}
@@ -416,5 +417,5 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	public void setNoAnyadirEliminarGastosRefacturados(Boolean noAnyadirEliminarGastosRefacturados) {
 		this.noAnyadirEliminarGastosRefacturados = noAnyadirEliminarGastosRefacturados;
 	}
-	
+
 }

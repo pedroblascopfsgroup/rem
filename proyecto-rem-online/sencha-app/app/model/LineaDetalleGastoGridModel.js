@@ -37,13 +37,15 @@ Ext.define('HreRem.model.LineaDetalleGastoGridModel', {
     			name:'tipoImpuesto'
     		},
     		{
-    			name:'operacionExenta'
+    			name:'operacionExentaImp'
     		},
     		{
-    			name:'renunciaExenta'
+    			name:'esRenunciaExenta',
+    			type:'boolean'
     		},
     		{
-    			name:'tipoImpositivo'
+    			name:'esTipoImpositivo',
+    			type:'boolean'
     		},
     		{
     			name:'cuota'
@@ -85,9 +87,9 @@ Ext.define('HreRem.model.LineaDetalleGastoGridModel', {
 	proxy: {
 		type: 'uxproxy',
 		localUrl: 'adjuntos.json',
-		remoteUrl: 'activo/getDocumentoTributoById',
+		remoteUrl: 'gastosproveedor/getGastoLineaDetalle',
 		api: {
-            read: 'activo/getDocumentosTributo',
+            read: 'gastosproveedor/getGastoLineaDetalle',
             create: 'activo/createDocumentosTributos',
             update: 'activo/updateDocumentosTributos',
             destroy: 'activo/destroyDocumentosTributos'

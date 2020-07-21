@@ -131,11 +131,11 @@ public class MSVValidatorEstadosAdmision extends MSVExcelValidatorAbstract {
 						mapaErrores.get(messageServices.getMessage(ESTADO_ADMISION_VALIDO)).add(fila);
 						esCorrecto = false;
 					}
-					if (!particularValidator.estadoConSubestadosAdmisionValido(estadoAdmision) && (subestadoAdmision != null && subestadoAdmision != "")) {
+					if (!particularValidator.estadoConSubestadosAdmisionValido(estadoAdmision) && (subestadoAdmision != null && !subestadoAdmision.isEmpty())) {
 						mapaErrores.get(messageServices.getMessage(SUBESTADO_EN_ESTADO_ADMISION_VALIDO)).add(fila);
 						esCorrecto = false;
 					} else {
-						if (!particularValidator.subestadoAdmisionValido(subestadoAdmision) && (subestadoAdmision != null && subestadoAdmision != "")) {
+						if (!particularValidator.subestadoAdmisionValido(subestadoAdmision) && (subestadoAdmision != null && !subestadoAdmision.isEmpty())) {
 							mapaErrores.get(messageServices.getMessage(SUBESTADO_ADMISION_VALIDO)).add(fila);
 							esCorrecto = false;
 						}

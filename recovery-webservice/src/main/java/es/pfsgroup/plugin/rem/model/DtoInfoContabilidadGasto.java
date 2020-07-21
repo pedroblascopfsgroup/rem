@@ -23,12 +23,8 @@ public class DtoInfoContabilidadGasto extends WebDto {
 
 	private Long ejercicioImputaGasto;
 	private String periodicidadDescripcion;
-	private String partidaPresupuestaria;
-	private String cuentaContable;
 	private Date fechaDevengoEspecial;
 	private String periodicidadEspecialDescripcion;
-	private String partidaPresupuestariaEspecial;
-	private String cuentaContableEspecial;
 	private Date fechaContabilizacion;
 	private String contabilizadoPorDescripcion;
 	private Long idSubpartidaPresupuestaria;
@@ -46,19 +42,6 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	public void setPeriodicidadDescripcion(String periodicidadDescripcion) {
 		this.periodicidadDescripcion = periodicidadDescripcion;
 	}
-	public String getPartidaPresupuestaria() {
-		return partidaPresupuestaria;
-	}
-	public void setPartidaPresupuestaria(
-			String partidaPresupuestaria) {
-		this.partidaPresupuestaria = partidaPresupuestaria;
-	}
-	public String getCuentaContable() {
-		return cuentaContable;
-	}
-	public void setCuentaContable(String cuentaContable) {
-		this.cuentaContable = cuentaContable;
-	}
 	public Date getFechaDevengoEspecial() {
 		return fechaDevengoEspecial;
 	}
@@ -71,20 +54,6 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	public void setPeriodicidadEspecialDescripcion(
 			String periodicidadEspecialDescripcion) {
 		this.periodicidadEspecialDescripcion = periodicidadEspecialDescripcion;
-	}
-	public String getPartidaPresupuestariaEspecial() {
-		return partidaPresupuestariaEspecial;
-	}
-	public void setPartidaPresupuestariaEspecial(
-			String partidaPresupuestariaEspecial) {
-		this.partidaPresupuestariaEspecial = partidaPresupuestariaEspecial;
-	}
-	public String getCuentaContableEspecial() {
-		return cuentaContableEspecial;
-	}
-	public void setCuentaContableEspecial(
-			String cuentaContableEspecial) {
-		this.cuentaContableEspecial = cuentaContableEspecial;
 	}
 	public Date getFechaContabilizacion() {
 		return fechaContabilizacion;

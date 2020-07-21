@@ -22,16 +22,8 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	
 
 	private Long gastoProveedor;
-	private Double importePrincipalSujeto;
-	private Double importePrincipalNoSujeto;
-	private Double importeRecargo;
-	private Double importeInteresDemora;
-	private Double importeCostas;
-	private Double importeOtrosIncrementos;
-	private Double importeProvisionesSuplidos;
 	private String impuestoIndirectoTipoCodigo;
 	private Boolean impuestoIndirectoExento;
-	private Boolean renunciaExencionImpuestoIndirecto;
 	private Double impuestoIndirectoTipoImpositivo;
 	private Double impuestoIndirectoCuota;
 	private Double irpfTipoImpositivo;
@@ -68,8 +60,6 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	private Double totalImportePromocion;
 	private Double importeTotalPrinex;
 	private Boolean prorrata;
-	private String existeRecargo;
-	private String tipoRecargo;
 	private Boolean gastoRefacturableB;
 	private Double importeGastosRefacturables;
 	private Long numeroGastoHaya;
@@ -85,48 +75,6 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	public void setGastoProveedor(Long gastoProveedor) {
 		this.gastoProveedor = gastoProveedor;
 	}
-	public Double getImportePrincipalSujeto() {
-		return importePrincipalSujeto;
-	}
-	public void setImportePrincipalSujeto(Double importePrincipalSujeto) {
-		this.importePrincipalSujeto = importePrincipalSujeto;
-	}
-	public Double getImportePrincipalNoSujeto() {
-		return importePrincipalNoSujeto;
-	}
-	public void setImportePrincipalNoSujeto(Double importePrincipalNoSujeto) {
-		this.importePrincipalNoSujeto = importePrincipalNoSujeto;
-	}
-	public Double getImporteRecargo() {
-		return importeRecargo;
-	}
-	public void setImporteRecargo(Double importeRecargo) {
-		this.importeRecargo = importeRecargo;
-	}
-	public Double getImporteInteresDemora() {
-		return importeInteresDemora;
-	}
-	public void setImporteInteresDemora(Double importeInteresDemora) {
-		this.importeInteresDemora = importeInteresDemora;
-	}
-	public Double getImporteCostas() {
-		return importeCostas;
-	}
-	public void setImporteCostas(Double importeCostas) {
-		this.importeCostas = importeCostas;
-	}
-	public Double getImporteOtrosIncrementos() {
-		return importeOtrosIncrementos;
-	}
-	public void setImporteOtrosIncrementos(Double importeOtrosIncrementos) {
-		this.importeOtrosIncrementos = importeOtrosIncrementos;
-	}
-	public Double getImporteProvisionesSuplidos() {
-		return importeProvisionesSuplidos;
-	}
-	public void setImporteProvisionesSuplidos(Double importeProvisionesSuplidos) {
-		this.importeProvisionesSuplidos = importeProvisionesSuplidos;
-	}
 	public String getImpuestoIndirectoTipoCodigo() {
 		return impuestoIndirectoTipoCodigo;
 	}
@@ -138,13 +86,6 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	}
 	public void setImpuestoIndirectoExento(Boolean impuestoIndirectoExento) {
 		this.impuestoIndirectoExento = impuestoIndirectoExento;
-	}
-	public Boolean getRenunciaExencionImpuestoIndirecto() {
-		return renunciaExencionImpuestoIndirecto;
-	}
-	public void setRenunciaExencionImpuestoIndirecto(
-			Boolean renunciaExencionImpuestoIndirecto) {
-		this.renunciaExencionImpuestoIndirecto = renunciaExencionImpuestoIndirecto;
 	}
 	public Double getImpuestoIndirectoTipoImpositivo() {
 		return impuestoIndirectoTipoImpositivo;
@@ -362,18 +303,6 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	}
 	public void setImporteTotalPrinex(Double importeTotalPrinex) {
 		this.importeTotalPrinex = importeTotalPrinex;
-	}
-	public String getExisteRecargo() {
-		return existeRecargo;
-	}
-	public void setExisteRecargo(String existeRecargo) {
-		this.existeRecargo = existeRecargo;
-	}
-	public String getTipoRecargo() {
-		return tipoRecargo;
-	}
-	public void setTipoRecargo(String tipoRecargo) {
-		this.tipoRecargo = tipoRecargo;
 	}
 	public Boolean getGastoRefacturableB() {
 		return gastoRefacturableB;

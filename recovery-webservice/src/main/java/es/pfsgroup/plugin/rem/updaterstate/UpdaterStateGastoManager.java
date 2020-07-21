@@ -102,7 +102,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				error = messageServices.getMessage(VALIDACION_GASTO_SIN_NUM_FACTURA);
 				return error;
 			}
-			if(Checks.esNulo(gasto.getTipoGasto()) || Checks.esNulo(gasto.getSubtipoGasto())) {
+			if(Checks.esNulo(gasto.getTipoGasto()) || Checks.esNulo(gasto.getGastoLineaDetalle().getSubtipoGasto())) {
 				error = messageServices.getMessage(VALIDACION_TIPO_SUBTIPO);
 				return error;
 			}
@@ -137,7 +137,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				error = messageServices.getMessage(VALIDACION_IMPORTE_TOTAL);
 				return error;
 			}
-			if(Checks.esNulo(gasto.getGestoria()) && (Checks.esNulo(gasto.getGastoDetalleEconomico()) || Checks.esNulo(gasto.getGastoDetalleEconomico().getImpuestoIndirectoTipo()))) {
+			if(Checks.esNulo(gasto.getGestoria()) && (Checks.esNulo(gasto.getGastoLineaDetalle()) || Checks.esNulo(gasto.getGastoLineaDetalle().getTipoImpuesto()))) {
 				error = messageServices.getMessage(VALIDACION_GASTO_SIN_TIPO_IMP_INDIRECTO);
 				return error;
 			}
@@ -163,13 +163,13 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 //			}
 			if(!Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(gasto.getPropietario().getCartera()) && !Checks.esNulo(gasto.getPropietario().getCartera().getCodigo())) {
 				if(!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo()) && !DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo())){
-					if(Checks.esNulo(gasto.getGastoInfoContabilidad()) || Checks.esNulo(gasto.getGastoInfoContabilidad().getCuentaContable())) {
+					if(Checks.esNulo(gasto.getGastoLineaDetalle()) || Checks.esNulo(gasto.getGastoLineaDetalle().getCccBase())) {
 						error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
 						return error;
 					}
 				}
-				if(!Checks.esNulo(gasto.getSubtipoGasto().getCodigo()) && !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo()) && !"100".equals(gasto.getSubtipoGasto().getCodigo())) {
-					if(Checks.esNulo(gasto.getGastoInfoContabilidad()) || Checks.esNulo(gasto.getGastoInfoContabilidad().getPartidaPresupuestaria())) {
+				if(!Checks.esNulo(gasto.getGastoLineaDetalle().getSubtipoGasto().getCodigo()) && !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo()) && !"100".equals(gasto.getGastoLineaDetalle().getSubtipoGasto().getCodigo())) {
+					if(Checks.esNulo(gasto.getGastoInfoContabilidad()) || Checks.esNulo(gasto.getGastoLineaDetalle().getCppBase())) {
 						error = messageServices.getMessage(VALIDACION_PARTIDA_PRESUPUESTARIA); 
 						return error;
 					}

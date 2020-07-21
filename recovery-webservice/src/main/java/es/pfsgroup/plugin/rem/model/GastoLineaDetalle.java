@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -9,8 +10,11 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -30,6 +34,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 @Table(name = "GLD_GASTOS_LINEA_DETALLE", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
+@Inheritance(strategy=InheritanceType.JOINED)
 public class GastoLineaDetalle implements Serializable, Auditable{
 
 	private static final long serialVersionUID = 1L;
@@ -40,7 +45,7 @@ public class GastoLineaDetalle implements Serializable, Auditable{
 	@SequenceGenerator(name = "GastoLineaDetalleGenerator", sequenceName = "S_GLD_GASTOS_LINEA_DETALLE")
 	private Long id;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "GPV_ID")
 	private GastoProveedor gastoProveedor;
 	
@@ -78,13 +83,13 @@ public class GastoLineaDetalle implements Serializable, Auditable{
 	private DDTiposImpuesto tipoImpuesto;
 	
 	@Column(name="GLD_IMP_IND_EXENTO")
-	private Double importeIndirectoExento;
+	private Integer esImporteIndirectoExento;
 	
 	@Column(name="GLD_IMP_IND_RENUNCIA_EXENCION")
-	private Boolean esImporteIndirectoRenunciaExento;
+	private Integer esImporteIndirectoRenunciaExento;
 	
 	@Column(name="GLD_IMP_IND_TIPO_IMPOSITIVO")
-	private Boolean esImporteIndirectoTipoImpositivo;
+	private Double importeIndirectoTipoImpositivo;
 	
 	@Column(name="GLD_IMP_IND_CUOTA")
 	private Double importeIndirectoCuota;
@@ -121,6 +126,16 @@ public class GastoLineaDetalle implements Serializable, Auditable{
 	
 	@Column(name="GLD_CPP_INTERESES")
 	private String cppIntereses;
+	
+    @OneToOne(mappedBy = "gastoLineaDetalle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "GLD_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private GastoLineaDetalleEntidad gastoLineaEntidad;    
+    
+    @OneToOne(mappedBy = "gastoLineaDetalle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "GLD_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private GastoLineaDetalleTrabajo gastoLineaTrabajo;    
 	
 	@Version   
 	private Long version;
@@ -224,28 +239,28 @@ public class GastoLineaDetalle implements Serializable, Auditable{
 		this.tipoImpuesto = tipoImpuesto;
 	}
 
-	public Double getImporteIndirectoExento() {
-		return importeIndirectoExento;
+	public Integer getEsImporteIndirectoExento() {
+		return esImporteIndirectoExento;
 	}
 
-	public void setImporteIndirectoExento(Double importeIndirectoExento) {
-		this.importeIndirectoExento = importeIndirectoExento;
+	public void setEsImporteIndirectoExento(Integer esImporteIndirectoExento) {
+		this.esImporteIndirectoExento = esImporteIndirectoExento;
 	}
 
-	public Boolean getEsImporteIndirectoRenunciaExento() {
+	public Integer getEsImporteIndirectoRenunciaExento() {
 		return esImporteIndirectoRenunciaExento;
 	}
 
-	public void setEsImporteIndirectoRenunciaExento(Boolean esImporteIndirectoRenunciaExento) {
+	public void setEsImporteIndirectoRenunciaExento(Integer esImporteIndirectoRenunciaExento) {
 		this.esImporteIndirectoRenunciaExento = esImporteIndirectoRenunciaExento;
 	}
 
-	public Boolean getEsImporteIndirectoTipoImpositivo() {
-		return esImporteIndirectoTipoImpositivo;
+	public Double getImporteIndirectoTipoImpositivo() {
+		return importeIndirectoTipoImpositivo;
 	}
 
-	public void setEsImporteIndirectoTipoImpositivo(Boolean esImporteIndirectoTipoImpositivo) {
-		this.esImporteIndirectoTipoImpositivo = esImporteIndirectoTipoImpositivo;
+	public void setImporteIndirectoTipoImpositivo(Double importeIndirectoTipoImpositivo) {
+		this.importeIndirectoTipoImpositivo = importeIndirectoTipoImpositivo;
 	}
 
 	public Double getImporteIndirectoCuota() {
@@ -344,6 +359,22 @@ public class GastoLineaDetalle implements Serializable, Auditable{
 		this.cppIntereses = cppIntereses;
 	}
 
+	public GastoLineaDetalleEntidad getGastoLineaEntidad() {
+		return gastoLineaEntidad;
+	}
+
+	public void setGastoLineaEntidad(GastoLineaDetalleEntidad gastoLineaEntidad) {
+		this.gastoLineaEntidad = gastoLineaEntidad;
+	}
+
+	public GastoLineaDetalleTrabajo getGastoLineaTrabajo() {
+		return gastoLineaTrabajo;
+	}
+
+	public void setGastoLineaTrabajo(GastoLineaDetalleTrabajo gastoLineaTrabajo) {
+		this.gastoLineaTrabajo = gastoLineaTrabajo;
+	}
+
 	public Long getVersion() {
 		return version;
 	}
@@ -360,5 +391,4 @@ public class GastoLineaDetalle implements Serializable, Auditable{
 		this.auditoria = auditoria;
 	}
 
-	
 }

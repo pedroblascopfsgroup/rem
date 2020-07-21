@@ -91,7 +91,7 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVVentaDeCarteraExcelValidator ventaDeCartera;
 
 	@Autowired
-	private MSVOkTecnicoExcelValidator okTecnicoValidator;
+	private MSVOkTecnicoSelloCalidadExcelValidator okTecnicoValidator;
 
 	@Autowired
 	private MSVActivosGastoPorcentajeValidator activosGastoPorcentajeValidator;
@@ -259,7 +259,7 @@ public class MSVExcelValidatorFactoryImpl {
 			return ocultacionVenta;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ALTA_ACTIVOS_THIRD_PARTY.equals(codTipoOperacion)) {
 			return altaActivosTP;
-		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CENTRAL_TECNICA_OK_TECNICO.equals(codTipoOperacion)) {
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CENTRAL_TECNICA_OK_TECNICO_SELLO_CALIDAD.equals(codTipoOperacion)) {
 			return okTecnicoValidator;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_OCULTACION_ALQUILER.equals(codTipoOperacion)) {
 			return ocultacionAlquiler;

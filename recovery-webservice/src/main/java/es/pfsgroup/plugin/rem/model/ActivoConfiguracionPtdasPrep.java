@@ -81,8 +81,6 @@ public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
     @JoinColumn(name = "SGT_ID")
 	private ActivoSubtipoGastoProveedorTrabajo activoSubtivoGastoProveedorTrabajo;
 	
-	@Column(name="CCC_PRINCIPAL")
-    private Boolean gastosCuentasPrincipal;
 	
 	@Column(name="CPP_PRINCIPAL")
     private Boolean gastosPartidasPresupuestariasPrincipal;
@@ -204,14 +202,6 @@ public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
 	public void setActivoSubtivoGastoProveedorTrabajo(
 			ActivoSubtipoGastoProveedorTrabajo activoSubtivoGastoProveedorTrabajo) {
 		this.activoSubtivoGastoProveedorTrabajo = activoSubtivoGastoProveedorTrabajo;
-	}
-
-	public Boolean getGastosCuentasPrincipal() {
-		return gastosCuentasPrincipal;
-	}
-
-	public void setGastosCuentasPrincipal(Boolean gastosCuentasPrincipal) {
-		this.gastosCuentasPrincipal = gastosCuentasPrincipal;
 	}
 
 	public Boolean getGastosPartidasPresupuestariasPrincipal() {

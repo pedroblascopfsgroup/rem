@@ -84,8 +84,6 @@ public class ActivoConfiguracionCuentasContables implements Serializable, Audita
 	@Column(name="CCC_PRINCIPAL")
     private Boolean gastosCuentasPrincipal;
 	
-	@Column(name="CPP_PRINCIPAL")
-    private Boolean gastosPartidasPresupuestariasPrincipal;
 	
 	@Version   
 	 private Long version;
@@ -213,16 +211,6 @@ public class ActivoConfiguracionCuentasContables implements Serializable, Audita
 	public void setGastosCuentasPrincipal(Boolean gastosCuentasPrincipal) {
 		this.gastosCuentasPrincipal = gastosCuentasPrincipal;
 	}
-
-	public Boolean getGastosPartidasPresupuestariasPrincipal() {
-		return gastosPartidasPresupuestariasPrincipal;
-	}
-
-	public void setGastosPartidasPresupuestariasPrincipal(Boolean gastosPartidasPresupuestariasPrincipal) {
-		this.gastosPartidasPresupuestariasPrincipal = gastosPartidasPresupuestariasPrincipal;
-	}
-	
-	
 	 
 	 
 }

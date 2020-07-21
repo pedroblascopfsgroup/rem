@@ -77,6 +77,16 @@ public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
 	@Column(name="CPP_REFACTURABLE")
     private Integer refacturable;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SGT_ID")
+	private ActivoSubtipoGastoProveedorTrabajo activoSubtivoGastoProveedorTrabajo;
+	
+	@Column(name="CCC_PRINCIPAL")
+    private Boolean gastosCuentasPrincipal;
+	
+	@Column(name="CPP_PRINCIPAL")
+    private Boolean gastosPartidasPresupuestariasPrincipal;
+	
 	@Version   
 	private Long version;
 
@@ -186,6 +196,33 @@ public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+
+	public ActivoSubtipoGastoProveedorTrabajo getActivoSubtivoGastoProveedorTrabajo() {
+		return activoSubtivoGastoProveedorTrabajo;
+	}
+
+	public void setActivoSubtivoGastoProveedorTrabajo(
+			ActivoSubtipoGastoProveedorTrabajo activoSubtivoGastoProveedorTrabajo) {
+		this.activoSubtivoGastoProveedorTrabajo = activoSubtivoGastoProveedorTrabajo;
+	}
+
+	public Boolean getGastosCuentasPrincipal() {
+		return gastosCuentasPrincipal;
+	}
+
+	public void setGastosCuentasPrincipal(Boolean gastosCuentasPrincipal) {
+		this.gastosCuentasPrincipal = gastosCuentasPrincipal;
+	}
+
+	public Boolean getGastosPartidasPresupuestariasPrincipal() {
+		return gastosPartidasPresupuestariasPrincipal;
+	}
+
+	public void setGastosPartidasPresupuestariasPrincipal(Boolean gastosPartidasPresupuestariasPrincipal) {
+		this.gastosPartidasPresupuestariasPrincipal = gastosPartidasPresupuestariasPrincipal;
+	}
+	
+	
 
 	
 	

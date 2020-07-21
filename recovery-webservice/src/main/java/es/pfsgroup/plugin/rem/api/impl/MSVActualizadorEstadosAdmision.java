@@ -69,51 +69,31 @@ public class MSVActualizadorEstadosAdmision extends AbstractMSVActualizador impl
 		final String celdaEstadoAdmision = exc.dameCelda(fila, COL_NUM.ESTADO_ADMISION);
 		final String celdaSubestadoAdmision = exc.dameCelda(fila, COL_NUM.SUBESTADO_ADMISION);
 		try {
-			boolean modificado = false;
-	
-			// Número de Activo
+			
 			Activo activo = activoApi.getByNumActivo(Long.parseLong(celdaActivo));
 			DDEstadoAdmision estadoAdmision = null;
-			DDSubestadoAdmision subestadoAdmision = null;
-			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-			
+			DDSubestadoAdmision subestadoAdmision = null;		
 			
 			// Estado admision
-			if (!Checks.esNulo(celdaEstadoAdmision)) {
+			if (!celdaEstadoAdmision.isEmpty()) {
 				Filter filtroEstadoAdmision = genericDao.createFilter(FilterType.EQUALS, FILTRO_CODIGO, celdaEstadoAdmision.toUpperCase());
 				estadoAdmision = genericDao.get(DDEstadoAdmision.class, filtroEstadoAdmision);
-				modificado = true;
 			}
 			
 			// Subestado admision
-			if (!Checks.esNulo(celdaSubestadoAdmision)) {
+			if (!celdaSubestadoAdmision.isEmpty()) {
 				Filter filtroSubestadoAdmision = genericDao.createFilter(FilterType.EQUALS, FILTRO_CODIGO, celdaSubestadoAdmision.toUpperCase());
 				subestadoAdmision = genericDao.get(DDSubestadoAdmision.class, filtroSubestadoAdmision);
-				modificado = true;
 			}
 			
 			if(estadoAdmision != null) {
-				Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-				ActivoAgendaEvolucion agendaEvolucion = genericDao.get(ActivoAgendaEvolucion.class, filtroBorrado, filtroActivoId);
-				
-				boolean agendaEvolucionNuevo = false;
-				if(agendaEvolucion == null) {
-					agendaEvolucionNuevo = true;
-					agendaEvolucion = new ActivoAgendaEvolucion();
-					agendaEvolucion.setActivo(activo);
-				}
-				
+				ActivoAgendaEvolucion agendaEvolucion = new ActivoAgendaEvolucion();
+				agendaEvolucion.setActivo(activo);			
 				activo.setEstadoAdmision(estadoAdmision);
 				activo.setSubestadoAdmision(subestadoAdmision);
 				agendaEvolucion.setEstadoAdmision(estadoAdmision);
 				agendaEvolucion.setSubEstadoAdmision(subestadoAdmision);
-				
-				
-				if(agendaEvolucionNuevo) {
-					genericDao.save(ActivoAgendaEvolucion.class, agendaEvolucion);				
-				} else {
-					genericDao.update(ActivoAgendaEvolucion.class, agendaEvolucion);				
-				}
+				genericDao.save(ActivoAgendaEvolucion.class, agendaEvolucion);				
 					
 				genericDao.update(Activo.class, activo);
 			}

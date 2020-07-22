@@ -44,7 +44,7 @@ BEGIN
                      (SELECT PTDAS.CPP_PTDAS_ID, SGT.SGT_ID
                      FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' PTDAS
                      JOIN '||V_ESQUEMA||'.ACT_SGT_SUBTIPO_GPV_TBJ SGT ON PTDAS.DD_STG_ID = SGT.DD_STG_ID
-                     LEFT '||V_ESQUEMA||'.JOIN DD_STR_SUBTIPO_TRABAJO STR ON SGT.DD_STR_ID = STR.DD_STR_ID
+                     LEFT JOIN '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO STR ON SGT.DD_STR_ID = STR.DD_STR_ID
                      WHERE STR.DD_STR_CODIGO IN (''28'', ''29'', ''30'', ''31'', ''32'',''121'')) AUX
                      ON (PTDAS.CPP_PTDAS_ID = AUX.CPP_PTDAS_ID)
                      WHEN MATCHED THEN UPDATE SET PTDAS.SGT_ID = AUX.SGT_ID';

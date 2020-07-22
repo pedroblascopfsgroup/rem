@@ -320,6 +320,14 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 		emisorSoloLectura : function(get) {
 			return $AU.userIsRol(CONST.PERFILES['PROVEEDOR'])
 					|| get('gasto.tieneGastosRefacturables');
+		},
+		
+		esLiberbank : function(get) {
+			var cartera = get('detalleeconomico.cartera');
+			if(CONST.CARTERA['LIBERBANK'] == cartera){
+				return true;
+			}
+			return false;
 		}
 
 	},

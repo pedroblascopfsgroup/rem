@@ -142,11 +142,11 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
     @Column(name = "GDE_RET_GAR_BASE")
     private Double retencionGarantiaBase;
     
-    @Column(name = "GDE_RET_GAR_TIPO_IMPOSITIVO")
+   @Column(name = "GDE_RET_GAR_TIPO_IMPOSITIVO")
     private Double retencionGarantiaTipoImpositivo;
     
-    @Column(name = "GDE_RET_GAR_CUOTA")
-    private Double retencionGarantiaCuota;
+   @Column(name = "GDE_RET_GAR_CUOTA")
+   private Double retencionGarantiaCuota;
 
 	@Version   
 	private Long version;
@@ -370,5 +370,54 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
 	public void setGastoRefacturable(Boolean gastoRefacturable) {
 		this.gastoRefacturable = gastoRefacturable;
 	}
+
+	public Double getIrpfBase() {
+		return irpfBase;
+	}
+
+	public void setIrpfBase(Double irpfBase) {
+		this.irpfBase = irpfBase;
+	}
+
+	public String getIrpfClave() {
+		return irpfClave;
+	}
+
+	public void setIrpfClave(String irpfClave) {
+		this.irpfClave = irpfClave;
+	}
+
+	public String getIrpfSubclave() {
+		return irpfSubclave;
+	}
+
+	public void setIrpfSubclave(String irpfSubclave) {
+		this.irpfSubclave = irpfSubclave;
+	}
+
+	public Double getRetencionGarantiaBase() {
+		return retencionGarantiaBase;
+	}
+
+	public void setRetencionGarantiaBase(Double retencionGarantiaBase) {
+		this.retencionGarantiaBase = retencionGarantiaBase;
+	}
+
+	public Double getRetencionGarantiaTipoImpositivo() {
+		return retencionGarantiaTipoImpositivo;
+	}
+
+	public void setRetencionGarantiaTipoImpositivo(Double retencionGarantiaTipoImpositivo) {
+		this.retencionGarantiaTipoImpositivo = retencionGarantiaTipoImpositivo;
+	}
+
+	public Double getRetencionGarantiaCuota() {
+		return retencionGarantiaCuota;
+	}
+
+	public void setRetencionGarantiaCuota(Double retencionGarantiaCuota) {
+		this.retencionGarantiaCuota = retencionGarantiaCuota;
+	}
+	
 	
 }

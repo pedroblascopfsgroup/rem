@@ -286,6 +286,8 @@ Ext.define('HreRem.view.gastos.LineaDetalleGastoGrid', {
 		    	    			grid.getStore().load();
 		    	    			me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok")); 
 		    	    			grid.unmask();
+		    	    			grid.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar()
+
 		    	    		},
 		    			 	failure: function(record, operation) {
 		    			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 

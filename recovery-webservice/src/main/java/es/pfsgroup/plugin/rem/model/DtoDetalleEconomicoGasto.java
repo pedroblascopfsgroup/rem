@@ -67,6 +67,13 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	private Boolean bloquearGridRefacturados;
 	private Boolean bloquearDestinatarios;
 	private Boolean noAnyadirEliminarGastosRefacturados;
+	private Double irpfTipoImpositivoRetG;
+	private Double irpfCuotaRetG;
+	private Double baseRetG;
+	private Double baseImpI;
+	private String clave;
+	private String subclave;
+
 
 
 	public Long getGastoProveedor() {
@@ -346,5 +353,42 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	public void setNoAnyadirEliminarGastosRefacturados(Boolean noAnyadirEliminarGastosRefacturados) {
 		this.noAnyadirEliminarGastosRefacturados = noAnyadirEliminarGastosRefacturados;
 	}
+	public Double getIrpfTipoImpositivoRetG() {
+		return irpfTipoImpositivoRetG;
+	}
+	public void setIrpfTipoImpositivoRetG(Double irpfTipoImpositivoRetG) {
+		this.irpfTipoImpositivoRetG = irpfTipoImpositivoRetG;
+	}
+	public Double getIrpfCuotaRetG() {
+		return irpfCuotaRetG;
+	}
+	public void setIrpfCuotaRetG(Double irpfCuotaRetG) {
+		this.irpfCuotaRetG = irpfCuotaRetG;
+	}
+	public Double getBaseRetG() {
+		return baseRetG;
+	}
+	public void setBaseRetG(Double baseRetG) {
+		this.baseRetG = baseRetG;
+	}
+	public Double getBaseImpI() {
+		return baseImpI;
+	}
+	public void setBaseImpI(Double baseImpI) {
+		this.baseImpI = baseImpI;
+	}
+	public String getClave() {
+		return clave;
+	}
+	public void setClave(String clave) {
+		this.clave = clave;
+	}
+	public String getSubclave() {
+		return subclave;
+	}
+	public void setSubclave(String subclave) {
+		this.subclave = subclave;
+	}
+	
 
 }

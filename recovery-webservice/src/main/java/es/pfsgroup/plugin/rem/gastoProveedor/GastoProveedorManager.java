@@ -400,7 +400,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setGastoSinActivos(BooleanUtils.toBoolean(gasto.getGastoSinActivos()));
 			}
 			
-			Double gastoTotal = 0.0;
+			/*Double gastoTotal = 0.0;
 			List<GastoPrinex> listGastoPrinex = new ArrayList<GastoPrinex>();
 			Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "idGasto",gasto.getId());
 			listGastoPrinex = genericDao.getList(GastoPrinex.class, filtro3);
@@ -420,15 +420,19 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				}else{
 					dto.setImporteTotal(gastoTotal);
 				}
+			}*/
+			
+			if(gasto.getGastoDetalleEconomico() != null) {
+				dto.setImporteTotal(gasto.getGastoDetalleEconomico().getImporteTotal());
 			}
 
 			if (!Checks.esNulo(gasto.getGestoria())) {
 				dto.setNombreGestoria(gasto.getGestoria().getNombre());
 			}
 			
-			if (!Checks.esNulo(gasto.getGastoLineaDetalle().getTipoImpuesto())) {
-				dto.setCodigoImpuestoIndirecto(gasto.getGastoLineaDetalle().getTipoImpuesto().getCodigo());
-			}			
+//			if (gasto.getGastoLineaDetalle() != null && gasto.getGastoLineaDetalle().getTipoImpuesto() != null) {
+//				dto.setCodigoImpuestoIndirecto(gasto.getGastoLineaDetalle().getTipoImpuesto().getCodigo());
+//			}			
 			
 			
 			if(!Checks.esNulo(gasto.getNumeroPrimerGastoSerie())) {
@@ -562,9 +566,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					gastoRefacturable.setGastoProveedorRefacturado(gastoRefacturableHaya.getId());
 					genericDao.save(GastoRefacturable.class, gastoRefacturable);
 					listaActivos.addAll(this.getListActivosGastos(gastoRefacturableHaya.getId()));
-					if( gastoRefacturableHaya.getGastoDetalleEconomico() != null  &&  gastoRefacturableHaya.getGastoLineaDetalle().getPrincipalSujeto() != null) {
-						importeGastosRefacturables += gastoRefacturableHaya.getGastoLineaDetalle().getPrincipalSujeto();
-					}
+					importeGastosRefacturables += calcularPrincipioSujetoLineasDetalle(gastoRefacturableHaya);
 					
 				}	
 			}
@@ -576,10 +578,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				for (VBusquedaGastoActivo vGastoActivo : listaActivos) {
 					this.createGastoActivo(gastoProveedor.getId(), vGastoActivo.getNumActivo(), null);
 				}
-				if( gastoProveedor.getGastoLineaDetalle() != null) {
-					gastoProveedor.getGastoLineaDetalle().setPrincipalSujeto(importeGastosRefacturables);
-					genericDao.save(GastoProveedor.class, gastoProveedor);
-				}
+//				if( gastoProveedor.getGastoLineaDetalle() != null) {
+//					gastoProveedor.getGastoLineaDetalle().setPrincipalSujeto(importeGastosRefacturables);
+//					genericDao.save(GastoProveedor.class, gastoProveedor);
+//				}
 //			}
 		}
 		
@@ -619,10 +621,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			DDTipoGasto tipoGasto = (DDTipoGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoGasto.class, dto.getTipoGastoCodigo());
 			gastoProveedor.setTipoGasto(tipoGasto);
 		}
-		if (!Checks.esNulo(dto.getSubtipoGastoCodigo())) {
-			DDSubtipoGasto subtipoGasto = (DDSubtipoGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoGasto.class, dto.getSubtipoGastoCodigo());
-			gastoProveedor.getGastoLineaDetalle().setSubtipoGasto(subtipoGasto);
-		}
+//		if (!Checks.esNulo(dto.getSubtipoGastoCodigo())) {
+//			DDSubtipoGasto subtipoGasto = (DDSubtipoGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoGasto.class, dto.getSubtipoGastoCodigo());
+//			gastoProveedor.getGastoLineaDetalle().setSubtipoGasto(subtipoGasto);
+//		}
 		
 		if (!Checks.esNulo(dto.getIdentificadorUnico())) {
 			gastoProveedor.setIdentificadorUnico(dto.getIdentificadorUnico());
@@ -1043,6 +1045,16 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 			dto.setIrpfTipoImpositivo(detalleGasto.getIrpfTipoImpositivo());
 			dto.setIrpfCuota(detalleGasto.getIrpfCuota());
+			dto.setBaseImpI(detalleGasto.getIrpfBase());
+			dto.setClave(detalleGasto.getIrpfClave());
+			dto.setSubclave(detalleGasto.getIrpfSubclave());
+			
+			
+			dto.setIrpfTipoImpositivoRetG(detalleGasto.getRetencionGarantiaTipoImpositivo());
+			dto.setBaseRetG(detalleGasto.getRetencionGarantiaBase());
+			dto.setIrpfCuotaRetG(detalleGasto.getRetencionGarantiaCuota());
+			
+		
 			// TIPO IMPUESTO DIRECTO
 
 			dto.setImporteTotal(detalleGasto.getImporteTotal());
@@ -1294,8 +1306,19 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				if(!Checks.esNulo(detalleGasto.getAuditoria())) {
 					detalleGasto.getAuditoria().setUsuarioModificar(usuario.getUsername());
 					detalleGasto.getAuditoria().setFechaModificar(new Date());
-				}
-
+				}	
+				
+				detalleGasto.setIrpfBase(dto.getBaseImpI());
+				detalleGasto.setIrpfClave(dto.getClave());
+				detalleGasto.setIrpfSubclave(dto.getSubclave());
+				detalleGasto.setRetencionGarantiaTipoImpositivo(dto.getIrpfTipoImpositivoRetG());
+				detalleGasto.setRetencionGarantiaBase(dto.getBaseRetG());
+				detalleGasto.setRetencionGarantiaCuota(dto.getIrpfCuotaRetG());
+				
+				
+				Double importeTotal = recalcularImporteTotalGasto(detalleGasto);
+				detalleGasto.setImporteTotal(importeTotal);
+				
 				genericDao.update(GastoDetalleEconomico.class, detalleGasto);
 			}
 			
@@ -2529,7 +2552,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		Double importeGasto = new Double(0);
 		Double importeProvisionesSuplidos = new Double(0);
-
+		
 		for (GastoProveedorTrabajo gastoTrabajo : gasto.getGastoProveedorTrabajos()) {
 			if (!Checks.esNulo(gastoTrabajo.getTrabajo().getImporteTotal())) {
 				importeGasto += gastoTrabajo.getTrabajo().getImporteTotal();
@@ -2539,8 +2562,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 		}
 
-		gasto.getGastoLineaDetalle().setPrincipalSujeto(importeGasto);
-		gasto.getGastoLineaDetalle().setProvSuplidos(importeProvisionesSuplidos);
+		//gasto.getGastoLineaDetalle().setPrincipalSujeto(importeGasto);
+		//gasto.getGastoLineaDetalle().setProvSuplidos(importeProvisionesSuplidos);
 		gasto.getGastoDetalleEconomico().setImporteTotal(importeGasto + importeProvisionesSuplidos);
 
 		return gasto;
@@ -2548,7 +2571,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	private GastoProveedor calcularParticipacionActivosGasto(GastoProveedor gasto) {
 
-		Double importeTotal = gasto.getGastoLineaDetalle().getPrincipalSujeto();
+		Double importeTotal = calcularPrincipioSujetoLineasDetalle(gasto);
 		importeTotal = Checks.esNulo(importeTotal) ? new Double("0L") : importeTotal;
 		Map<Long, Double> mapa = new HashMap<Long, Double>();
 
@@ -3013,7 +3036,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		//ConfigCuentaContable cuenta = buscarCuentaContable(gasto);		
 		//ConfigPdaPresupuestaria partida = buscarPartidaPresupuestaria(gasto);
-		GastoLineaDetalle gastoLineaDetalle = gasto.getGastoLineaDetalle();
+		//GastoLineaDetalle gastoLineaDetalle = gasto.getGastoLineaDetalle();
 		GastoInfoContabilidad gastoInfoContabilidad = gasto.getGastoInfoContabilidad();
 		boolean todosActivoAlquilados= false;
 		DDCartera cartera = null;
@@ -3025,13 +3048,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			cartera = (DDCartera) utilDiccionarioApi.dameValorDiccionarioByCod(DDCartera.class, DDCartera.CODIGO_CARTERA_SAREB);
 		}
 		
-		if (!Checks.esNulo(gastoLineaDetalle) && !Checks.esNulo(cartera) && !Checks.esNulo(gastoInfoContabilidad)) {
+		if (/*!Checks.esNulo(gastoLineaDetalle) &&*/ !Checks.esNulo(cartera) && !Checks.esNulo(gastoInfoContabilidad)) {
 
 			Ejercicio ejercicio = gastoInfoContabilidad.getEjercicio();
 			
 			Filter filtroBorrado= genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 			Filter filtroEjercicioCuentaContable= genericDao.createFilter(FilterType.EQUALS, "ejercicio.id", ejercicio.getId());
-			Filter filtroSubtipoGasto= genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.id", gasto.getGastoLineaDetalle().getSubtipoGasto().getId());
+			//Filter filtroSubtipoGasto= genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.id", gasto.getGastoLineaDetalle().getSubtipoGasto().getId());
 			Filter filtroCartera= genericDao.createFilter(FilterType.EQUALS, "cartera.id", cartera.getId());
 			Filter filtroSubcartera = null;
 			if(!Checks.esNulo(gasto.getSubcartera())) {
@@ -3069,41 +3092,44 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			ActivoConfiguracionPtdasPrep partidaNoArrendada = null;
 				
 				if(!Checks.esNulo(gasto.getSubcartera())) {
-					partidaArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaArrendamiento/*,filtroPropietario*/ ,filtroBorrado, filtroRefacturablePP);
-					partidaNoArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaNoArrendamiento/*,filtroPropietario*/,filtroBorrado, filtroRefacturablePP);
+					partidaArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,/*filtroSubtipoGasto,*/filtroCartera,filtroSubcartera,filtroCuentaArrendamiento/*,filtroPropietario*/ ,filtroBorrado, filtroRefacturablePP);
+					partidaNoArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,/*filtroSubtipoGasto,*/filtroCartera,filtroSubcartera,filtroCuentaNoArrendamiento/*,filtroPropietario*/,filtroBorrado, filtroRefacturablePP);
 				}else {
-					partidaArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaArrendamiento/*,filtroPropietario*/ ,filtroBorrado, filtroRefacturablePP);
-					partidaNoArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaNoArrendamiento/*,filtroPropietario*/,filtroBorrado, filtroRefacturablePP);
+					partidaArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,/*filtroSubtipoGasto,*/filtroCartera,filtroCuentaArrendamiento/*,filtroPropietario*/ ,filtroBorrado, filtroRefacturablePP);
+					partidaNoArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,/*filtroSubtipoGasto,*/filtroCartera,filtroCuentaNoArrendamiento/*,filtroPropietario*/,filtroBorrado, filtroRefacturablePP);
+
 				}
 				
 				if(!Checks.esNulo(partidaArrendada) || !Checks.esNulo(partidaNoArrendada)){
 					if(!todosActivoAlquilados){
 						if(!Checks.esNulo(partidaNoArrendada)){
-							gastoLineaDetalle.setCppBase(partidaNoArrendada.getPartidaPresupuestaria());
+							//gastoLineaDetalle.setCppBase(partidaNoArrendada.getPartidaPresupuestaria());
 						}
 					} else {
 						if(!Checks.esNulo(partidaArrendada)){
-							gastoLineaDetalle.setCppBase(partidaArrendada.getPartidaPresupuestaria());
+							//gastoLineaDetalle.setCppBase(partidaArrendada.getPartidaPresupuestaria());
+
 						}
 					}
 				} else {
 					if(Checks.esNulo(partidaArrendada) || Checks.esNulo(partidaNoArrendada)){
 						if(!todosActivoAlquilados){
 							if(Checks.esNulo(partidaNoArrendada)){
-								partidaNoArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaNoArrendamiento, /*filtroPropietario,*/filtroBorrado, filtroRefacturablePP);
+
+								partidaNoArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,/*filtroSubtipoGasto,*/filtroCartera,filtroSubcarteraNull,filtroCuentaNoArrendamiento, /*filtroPropietario,*/filtroBorrado, filtroRefacturablePP);
 								if(!Checks.esNulo(partidaNoArrendada)){
-									gastoLineaDetalle.setCppBase(partidaNoArrendada.getPartidaPresupuestaria());	
+									//gastoLineaDetalle.setCppBase(partidaNoArrendada.getPartidaPresupuestaria());	
 								} else {
-									gastoLineaDetalle.setCppBase(null);
+									//gastoLineaDetalle.setCppBase(null);
 								}
 							}
 						} else {
 							if(Checks.esNulo(partidaArrendada)){
-								partidaArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaArrendamiento, /*filtroPropietario,*/filtroBorrado, filtroRefacturablePP);
+								partidaArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,/*filtroSubtipoGasto,*/filtroCartera,filtroSubcarteraNull,filtroCuentaArrendamiento, /*filtroPropietario,*/filtroBorrado, filtroRefacturablePP);
 								if(!Checks.esNulo(partidaArrendada)){
-									gastoLineaDetalle.setCppBase(partidaArrendada.getPartidaPresupuestaria());		
+									//gastoLineaDetalle.setCppBase(partidaArrendada.getPartidaPresupuestaria());		
 								} else {
-									gastoLineaDetalle.setCppBase(null);
+									//gastoLineaDetalle.setCppBase(null);
 								}
 							}
 						}			
@@ -3115,53 +3141,55 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				ActivoConfiguracionCuentasContables cuentaNoArrendada= null;
 					
 				if(!Checks.esNulo(gasto.getSubcartera())) {
-					cuentaArrendada= genericDao.get(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaArrendamiento,/*filtroPropietario,*/filtroBorrado, filtroRefacturableCC);
-					cuentaNoArrendada= genericDao.get(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaNoArrendamiento,/*filtroPropietario,*/filtroBorrado, filtroRefacturableCC);
+
+					cuentaArrendada= genericDao.get(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,/*filtroSubtipoGasto,*/filtroCartera,filtroSubcartera,filtroCuentaArrendamiento,/*filtroPropietario,*/filtroBorrado, filtroRefacturableCC);
+					cuentaNoArrendada= genericDao.get(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,/*filtroSubtipoGasto,*/filtroCartera,filtroSubcartera,filtroCuentaNoArrendamiento,/*filtroPropietario,*/filtroBorrado, filtroRefacturableCC);
 				}else {
-					cuentaArrendada= genericDao.get(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaArrendamiento/*,filtroPropietario*/,filtroBorrado, filtroRefacturableCC, filtroSubcarteraNull);
-					cuentaNoArrendada= genericDao.get(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaNoArrendamiento/*,filtroPropietario*/,filtroBorrado, filtroRefacturableCC, filtroSubcarteraNull);
+					cuentaArrendada= genericDao.get(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,/*filtroSubtipoGasto,*/filtroCartera,filtroCuentaArrendamiento/*,filtroPropietario*/,filtroBorrado, filtroRefacturableCC, filtroSubcarteraNull);
+					cuentaNoArrendada= genericDao.get(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,/*filtroSubtipoGasto,*/filtroCartera,filtroCuentaNoArrendamiento/*,filtroPropietario*/,filtroBorrado, filtroRefacturableCC, filtroSubcarteraNull);
 				}
 				
 				if(!Checks.esNulo(cuentaArrendada) || !Checks.esNulo(cuentaNoArrendada)){
 					if(!todosActivoAlquilados){
 						if(!Checks.esNulo(cuentaNoArrendada)){
-							gastoLineaDetalle.setCccBase(cuentaNoArrendada.getCuentaContable());
+							//gastoLineaDetalle.setCccBase(cuentaNoArrendada.getCuentaContable());
 						}
 					} else {
 						if(!Checks.esNulo(cuentaArrendada)){
-							gastoLineaDetalle.setCccBase(cuentaArrendada.getCuentaContable());
+							//gastoLineaDetalle.setCccBase(cuentaArrendada.getCuentaContable());
 						}
 					}
 				} else {
 					if(Checks.esNulo(cuentaArrendada) || Checks.esNulo(cuentaNoArrendada)){
 						if(!todosActivoAlquilados){
 							if(Checks.esNulo(cuentaNoArrendada)){
-								cuentaNoArrendada = genericDao.get(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaNoArrendamiento/*,filtroPropietario*/,filtroBorrado, filtroRefacturableCC);
+								cuentaNoArrendada = genericDao.get(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,/*filtroSubtipoGasto,*/filtroCartera,filtroSubcarteraNull,filtroCuentaNoArrendamiento/*,filtroPropietario*/,filtroBorrado, filtroRefacturableCC);
 								if(!Checks.esNulo(cuentaNoArrendada)){
-									gastoLineaDetalle.setCccBase(cuentaNoArrendada.getCuentaContable());	
+									//gastoLineaDetalle.setCccBase(cuentaNoArrendada.getCuentaContable());	
 								} else {
-									gastoLineaDetalle.setCccBase(null);	
+									//gastoLineaDetalle.setCccBase(null);	
 								}
 							}
 						} else {
 							if(Checks.esNulo(cuentaArrendada)){
-								cuentaArrendada = genericDao.get(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaArrendamiento/*,filtroPropietario*/,filtroBorrado, filtroRefacturableCC);
+								cuentaArrendada = genericDao.get(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,/*filtroSubtipoGasto,*/filtroCartera,filtroSubcarteraNull,filtroCuentaArrendamiento/*,filtroPropietario*/,filtroBorrado, filtroRefacturableCC);
 								if(!Checks.esNulo(cuentaArrendada)){
-									gastoLineaDetalle.setCccBase(cuentaArrendada.getCuentaContable());
+									//gastoLineaDetalle.setCccBase(cuentaArrendada.getCuentaContable());
 								} else {
-									gastoLineaDetalle.setCccBase(null);
+									//gastoLineaDetalle.setCccBase(null);
 								}
 							}
 						}		
 					}
 				}
-			gasto.setGastoLineaDetalle(gastoLineaDetalle);
+			//gasto.setGastoLineaDetalle(gastoLineaDetalle);
 
-		} else if (!Checks.esNulo(gastoLineaDetalle)) {
-			gastoLineaDetalle.setCccBase(null);
-			gastoLineaDetalle.setCppBase(null);
-			gasto.setGastoLineaDetalle(gastoLineaDetalle);;
-		}
+
+		}// else if (!Checks.esNulo(gastoLineaDetalle)) {
+			//gastoLineaDetalle.setCccBase(null);
+			//gastoLineaDetalle.setCppBase(null);
+			//gasto.setGastoLineaDetalle(gastoLineaDetalle);;
+		//}
 		return gasto;
 	}
 
@@ -3172,15 +3200,17 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		DDSubtipoGasto subtipoGasto = null;
 
 		cartera = gasto.getCartera();
-		subtipoGasto = gasto.getGastoLineaDetalle().getSubtipoGasto();
+		//subtipoGasto = gasto.getGastoLineaDetalle().getSubtipoGasto();
 		
 		if (!Checks.esNulo(cartera) && !Checks.esNulo(subtipoGasto)) {
 
 			// filtros para encontrar la cuenta contable y la partida presupuestaria.
-			Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.id", subtipoGasto.getId());
+			//Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.id", subtipoGasto.getId());
 			Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.id", cartera.getId());
 
-			configuracion = genericDao.getList(ActivoConfiguracionCuentasContables.class, filtroSubtipo, filtroCartera);
+
+			configuracion = genericDao.getList(ActivoConfiguracionCuentasContables.class, /*filtroSubtipoGasto,*/ filtroCartera);
+
 
 			if (!Checks.estaVacio(configuracion) && configuracion.size() == 1) {
 
@@ -3204,7 +3234,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		Ejercicio ejercicio = null;
 
 		cartera = gasto.getCartera();
-		subtipoGasto = gasto.getGastoLineaDetalle().getSubtipoGasto();
+		//subtipoGasto = gasto.getGastoLineaDetalle().getSubtipoGasto();
 		if (gasto.getGastoInfoContabilidad() != null) {
 			ejercicio = gasto.getGastoInfoContabilidad().getEjercicio();
 		}
@@ -3213,10 +3243,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 			// filtros para encontrar la cuenta contable y la partida presupuestaria.
 			Filter filtroEjercicio = genericDao.createFilter(FilterType.EQUALS, "ejercicio.id", ejercicio.getId());
-			Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.id", subtipoGasto.getId());
+			//Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.id", subtipoGasto.getId());
 			Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.id", cartera.getId());
 
-			configuracion = genericDao.getList(ConfigPdaPresupuestaria.class, filtroEjercicio, filtroSubtipo, filtroCartera);
+			configuracion = genericDao.getList(ConfigPdaPresupuestaria.class, filtroEjercicio,/* filtroSubtipo.*/ filtroCartera);
 
 			if (configuracion != null && configuracion.size() == 1) {
 
@@ -3525,9 +3555,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		List<VBusquedaGastoActivo> listaActivos = new ArrayList<VBusquedaGastoActivo>();
 		Boolean esSareb = null;
 		Double importeGastosRefacturables = 0.0;
-		if(gastoProveedorPadre != null && gastoProveedorPadre.getGastoDetalleEconomico() != null && gastoProveedorPadre.getGastoLineaDetalle().getPrincipalSujeto() != null) {
-			importeGastosRefacturables = gastoProveedorPadre.getGastoLineaDetalle().getPrincipalSujeto();
-		}
+		
+		importeGastosRefacturables = calcularPrincipioSujetoLineasDetalle(gastoProveedorPadre);
+		
 		for (String gasto : gastosRefacturablesLista) {
 			GastoProveedor gastoProveedorRefacturable = genericDao.get(GastoProveedor.class,
 					genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", Long.parseLong(gasto)));
@@ -3548,9 +3578,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					genericDao.save(GastoRefacturable.class, gastoRefacturableNuevo);
 					
 				}
-				if(!Checks.esNulo(gastoProveedorRefacturable.getGastoDetalleEconomico()) && !Checks.esNulo(gastoProveedorRefacturable.getGastoLineaDetalle().getPrincipalSujeto())) {
-					importeGastosRefacturables += gastoProveedorRefacturable.getGastoLineaDetalle().getPrincipalSujeto();
-				}
+				importeGastosRefacturables += calcularPrincipioSujetoLineasDetalle(gastoProveedorRefacturable);
+				
 			}
 		}
 		// añadimos los activos del hijo al padre, solo sareb
@@ -3561,7 +3590,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 			
 			if(gastoProveedorPadre != null && gastoProveedorPadre.getGastoDetalleEconomico() != null) {
-				gastoProveedorPadre.getGastoLineaDetalle().setPrincipalSujeto(importeGastosRefacturables);
+				//gastoProveedorPadre.getGastoLineaDetalle().setPrincipalSujeto(importeGastosRefacturables);
 				genericDao.save(GastoProveedor.class, gastoProveedorPadre);
 			}
 		}
@@ -3577,10 +3606,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		Double importeGastosRefacturables = 0.0;
 		GastoProveedor gastoProveedorPadre = genericDao.get(GastoProveedor.class,
 				genericDao.createFilter(FilterType.EQUALS, "id", idGasto));
-		if(!Checks.esNulo(gastoProveedorPadre.getGastoDetalleEconomico()) && !Checks.esNulo(gastoProveedorPadre.getGastoLineaDetalle().getPrincipalSujeto())) {
-			importeGastosRefacturables =gastoProveedorPadre.getGastoLineaDetalle().getPrincipalSujeto();
-		}
 		
+		importeGastosRefacturables = calcularPrincipioSujetoLineasDetalle(gastoProveedorPadre);
 		
 		esSareb = gastoProveedorPadre.getPropietario() != null
 				&& gastoProveedorPadre.getPropietario().getCartera() != null
@@ -3617,13 +3644,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				this.deleteGastoActivo(dtoActivoGasto);
 			}
 			
-			if(!Checks.esNulo(gastoProveedor.getGastoDetalleEconomico()) && !Checks.esNulo(gastoProveedor.getGastoLineaDetalle().getPrincipalSujeto())) {
-				importeGastosRefacturables -= gastoProveedor.getGastoLineaDetalle().getPrincipalSujeto();
-				if(importeGastosRefacturables >= 0) {
-					gastoProveedorPadre.getGastoLineaDetalle().setPrincipalSujeto(importeGastosRefacturables);
-					genericDao.save(GastoProveedor.class, gastoProveedorPadre);
-				}
+			importeGastosRefacturables -= calcularPrincipioSujetoLineasDetalle(gastoProveedor);
+			if(importeGastosRefacturables >= 0) {
+				//gastoProveedorPadre.getGastoLineaDetalleList().setPrincipalSujeto(importeGastosRefacturables);
+				genericDao.save(GastoProveedor.class, gastoProveedorPadre);
 			}
+			
 		}
 		
 		listaDeGastosRefacturablesDelGasto = gastoDao.getGastosRefacturablesDelGasto(idGasto);
@@ -3739,6 +3765,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	@Transactional(readOnly = false)
 	public boolean saveGastoLineaDetalle(DtoLineaDetalleGasto dto) throws Exception {
 		GastoLineaDetalle gastoLineaDetalle;
+		GastoProveedor gasto = null;
 		Filter filtro;
 		
 		if(dto.getId() != null) {
@@ -3750,7 +3777,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		if(dto.getIdGasto() != null) {
 			filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdGasto());
-			gastoLineaDetalle.setGastoProveedor(genericDao.get(GastoProveedor.class, filtro));
+			gasto = genericDao.get(GastoProveedor.class, filtro);
+			gastoLineaDetalle.setGastoProveedor(gasto);
 		}
 		
 		if(dto.getSubtipoGasto() != null) {
@@ -3777,9 +3805,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			gastoLineaDetalle.setTipoImpuesto(genericDao.get(DDTiposImpuesto.class, filtro));
 		}
 		
-		/*gastoLineaDetalle.setImporteIndirectoExento(dto.getOperacionExentaImp());
-		gastoLineaDetalle.setEsImporteIndirectoRenunciaExento(dto.getEsRenunciaExenta());
-		gastoLineaDetalle.setEsImporteIndirectoTipoImpositivo(dto.getEsTipoImpositivo());*/
+
+		//gastoLineaDetalle.setImporteIndirectoExento(dto.getOperacionExentaImp());
+		//gastoLineaDetalle.setEsImporteIndirectoRenunciaExento(dto.getEsRenunciaExenta());
+		//gastoLineaDetalle.setEsImporteIndirectoTipoImpositivo(dto.getEsTipoImpositivo());
+
 		gastoLineaDetalle.setImporteIndirectoCuota(dto.getCuota());
 
 			
@@ -3799,11 +3829,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		
 		if(dto.getId() != null) {
-			genericDao.update(GastoLineaDetalle.class, gastoLineaDetalle);
-			
+			genericDao.update(GastoLineaDetalle.class, gastoLineaDetalle);	
 		}else {
 			genericDao.save(GastoLineaDetalle.class, gastoLineaDetalle);
-
+		}
+		
+		if(gasto != null && gasto.getGastoDetalleEconomico() != null) {
+			gasto.getGastoDetalleEconomico().setImporteTotal(recalcularImporteTotalGasto(gasto.getGastoDetalleEconomico()));
+			genericDao.update(GastoDetalleEconomico.class, gasto.getGastoDetalleEconomico());
 		}
 		
 		return true;
@@ -3848,9 +3881,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setTipoImpuesto(gastoLineaDetalle.getTipoImpuesto().getCodigo());
 			}
 			
-			/*dto.setOperacionExentaImp(gastoLineaDetalle.getImporteIndirectoExento());
-			dto.setEsRenunciaExenta(gastoLineaDetalle.getEsImporteIndirectoRenunciaExento());
-			dto.setEsTipoImpositivo(gastoLineaDetalle.getEsImporteIndirectoTipoImpositivo());*/
+
+			//dto.setOperacionExentaImp(gastoLineaDetalle.getImporteIndirectoExento());
+			//dto.setEsRenunciaExenta(gastoLineaDetalle.getEsImporteIndirectoRenunciaExento());
+			//dto.setEsTipoImpositivo(gastoLineaDetalle.getEsImporteIndirectoTipoImpositivo());
+
 			dto.setCuota(gastoLineaDetalle.getImporteIndirectoCuota());
 			
 			dto.setCcBase(gastoLineaDetalle.getCccBase());
@@ -3901,8 +3936,52 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 		}
 		
+		GastoProveedor gasto = gastoLineaDetalle.getGastoProveedor();
+		if( gasto != null && gasto.getGastoDetalleEconomico() != null) {
+			gasto.getGastoDetalleEconomico().setImporteTotal(recalcularImporteTotalGasto(gasto.getGastoDetalleEconomico()));
+			genericDao.update(GastoDetalleEconomico.class, gasto.getGastoDetalleEconomico());
+		}
+		
+		
 		return true;
 	}
 	
+	private Double recalcularImporteTotalGasto(GastoDetalleEconomico gasto) {
+		
+		Double importeTotal = 0.0;
+		
+		if(gasto.getGastoProveedor() != null) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getGastoProveedor().getId());
+			List<GastoLineaDetalle> gastoLineaDetalleList = genericDao.getList(GastoLineaDetalle.class,filtro);
 	
+			if(gastoLineaDetalleList != null && !gastoLineaDetalleList.isEmpty()){
+				for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleList) {
+					importeTotal+= gastoLineaDetalle.getImporteTotal();
+				}
+				if(gasto.getIrpfCuota() != null) {
+					importeTotal = importeTotal - gasto.getIrpfCuota();
+				}
+				if(gasto.getRetencionGarantiaCuota() != null) {
+					importeTotal = importeTotal - gasto.getRetencionGarantiaCuota();
+				}
+			}
+
+		}		
+		return importeTotal;
+	}
+	
+	private Double calcularPrincipioSujetoLineasDetalle(GastoProveedor gasto) {
+		Double importePrincipalSujeto = 0.0;
+		
+		if(gasto != null) {
+			List<GastoLineaDetalle> gastoLineaDetalleList = gasto.getGastoLineaDetalleList();
+			if(gastoLineaDetalleList != null && gastoLineaDetalleList.isEmpty()) {
+				for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleList) {
+					importePrincipalSujeto+=gastoLineaDetalle.getPrincipalSujeto();
+				}
+			}
+		}
+		
+		return importePrincipalSujeto;
+	}
 }

@@ -70,11 +70,30 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 												},
 												items :
 													[
-
+														{ 
+															xtype: 'currencyfieldbase',
+															symbol: HreRem.i18n("symbol.euro"),
+															reference:'baseIRPFImpD',
+															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.irpf.base'),
+															readOnly: false,
+											                bind: '{detalleeconomico.baseImpI}',
+											                listeners: {
+											                	edit: function(){
+										        					if(this.getValue()==0)
+										        						this.setValue('');
+										        				},
+																update: function(){
+																	if(Ext.isEmpty(this.getValue()))
+																		this.setValue(0);
+																},
+														    	change: 'onChangeCuotaImpuestoDirecto'													    		
+														    	
+														    }
+														},
 														{ 
 															xtype: 'numberfieldbase',
 															symbol: HreRem.i18n("symbol.porcentaje"),
-											        		reference: 'tipoImpositivoIRPF',     	
+											        		reference: 'tipoImpositivoIRPFImpD',     	
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.tipo.impositivo.irpf'),
 															readOnly: me.editableSoloPago(),
 											                bind: '{detalleeconomico.irpfTipoImpositivo}',
@@ -86,30 +105,103 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																update: function(){
 																	if(Ext.isEmpty(this.getValue()))
 																		this.setValue(0);
-																}
+																},
+														    	change: 'onChangeCuotaImpuestoDirecto'													    		
 										        			}
 														},
 														{ 
 															xtype: 'currencyfieldbase',
 															symbol: HreRem.i18n("symbol.euro"),
-															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.importe.retencion'),
-															readOnly: true,
-											                bind: '{calcularImpuestoDirecto}',
-											                listeners:{
-											                	change: function(field, value) {
-											                		field.next().setValue(value);
-											                	}
+															reference:'cuotaIRPFImpD',
+															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.cuota'),
+											                bind: '{detalleeconomico.irpfCuota}',
+											                readOnly: true
+														},
+														{ 
+															xtype: 'textfieldbase',
+															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.irpf.clave'),
+											                bind: {
+											                	value:'{detalleeconomico.clave}',
+											                	hidden:'{!esLiberbank}'
 											                }
 														},
 														{ 
-															xtype: 'numberfieldbase',
-															symbol: HreRem.i18n("symbol.euro"),
-															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.importe.retencion'),
-															readOnly: true,
-															hidden: true,
-											                bind: '{detalleeconomico.irpfCuota}'
+															xtype: 'textfieldbase',
+															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.irpf.subclave'),
+															 bind: {
+											                	value:'{detalleeconomico.subclave}',
+											                	hidden:'{!esLiberbank}'
+											                }
 														}
 													
+													]
+											},
+											
+											{   
+												xtype:'fieldsettable',
+												defaultType: 'textfieldbase',
+												colspan: 3,
+				        						reference: 'retencionGarantia',
+												title: HreRem.i18n('title.gasto.detalle.economico.retencion.garantia'),
+												listeners:{												
+													afterrender: function(){
+									         			if(!Ext.isEmpty(me.up('gastodetallemain').getViewModel().get('gasto'))&&
+									         			  CONST.CARTERA['BANKIA'] == me.up('gastodetallemain').getViewModel().get('gasto').get('cartera')){
+									         				this.setHidden(true);
+									         			}else{
+									         				this.setHidden(false);
+									         			}
+													}
+												},
+												items :
+													[	
+														{ 
+															xtype: 'currencyfieldbase',
+															symbol: HreRem.i18n("symbol.euro"),
+															reference:'baseIRPFRetG',
+															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.irpf.base'),
+											                bind: '{detalleeconomico.baseRetG}',
+										                	listeners: {
+										                		edit: function(){
+										        					if(this.getValue()==0)
+										        						this.setValue('');
+										        				},
+																update: function(){
+																	if(Ext.isEmpty(this.getValue()))
+																		this.setValue(0);
+																},
+														    	change: 'onChangeCuotaRetencionGarantia'													    		
+														    	
+														    }
+														},
+														{ 
+															xtype: 'numberfieldbase',
+															symbol: HreRem.i18n("symbol.porcentaje"),
+											        		reference: 'tipoImpositivoIRPFRetG',     	
+															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.tipo.impositivo'),
+											                bind: '{detalleeconomico.irpfTipoImpositivoRetG}',
+										                	listeners: {
+										                		edit: function(){
+										        					if(this.getValue()==0)
+										        						this.setValue('');
+										        				},
+																update: function(){
+																	if(Ext.isEmpty(this.getValue()))
+																		this.setValue(0);
+																},
+														    	change: 'onChangeCuotaRetencionGarantia'													    		
+														    	
+														    }
+											            
+														},
+														{ 
+															xtype: 'currencyfieldbase',
+															symbol: HreRem.i18n("symbol.euro"),
+															reference:'cuotaIRPFRetG',
+															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.cuota'),
+											                bind: '{detalleeconomico.irpfCuotaRetG}',
+											                readOnly: true
+														}
 													]
 											},
 									/*		{
@@ -132,14 +224,11 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 														
 														{
 															cls: 'txt-importe-total',
-															reference: 'importeTotal',
+															reference: 'importeTotalGastoDetalle',
 															readOnly: true,
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.importe.total'),
-														    bind: '{calcularImporteTotalGasto}',
-														    listeners: {
-														    	change: 'onChangeImporteTotal'													    		
-														    	
-														    }
+														    bind: '{detalleeconomico.importeTotal}'
+														   
 														},
 														{
 															reference: 'detalleEconomicoImporteTotal',

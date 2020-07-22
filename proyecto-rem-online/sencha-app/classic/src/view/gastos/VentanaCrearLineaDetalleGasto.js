@@ -333,9 +333,6 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 								    			},
 								    			{
 								    				xtype: "combobox",
-									        		hideTrigger: true,
-									        		keyNavEnable: false,
-									        		mouseWheelEnable: false,
 								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.esTipoImpositivo'),
 								    				reference: 'esTipoImpositivo',
 								    				name: 'esTipoImpositivo',

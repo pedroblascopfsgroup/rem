@@ -1795,8 +1795,11 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
                 	if(!Ext.isEmpty(window.parent)) {
                 		window.parent.fireEvent("aftercreate", window.parent);
                 	}
-                	window.lookupController().getView().down('[reference=lineaDetalleGastoGrid]').getStore().load()
+                	var grid = window.lookupController().getView().down('[reference=lineaDetalleGastoGrid]');
+                	grid.getStore().load();
                 	window.close();
+                	grid.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar()
+
                 },
                 failure: function(fp, o) {
                 	window.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
@@ -1903,5 +1906,82 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 
 		Ext.create("HreRem.view.gastos.VentanaCrearLineaDetalleGasto",
 				{entidad: 'lineaDetalleGasto', idGasto: idGasto, parent:grid, idLineaDetalleGasto: idLineaDetalleGasto, record:selection}).show();
+    },
+    
+    onChangeCuotaRetencionGarantia: function(field, value){
+    	var me = this;
+    	var tipoImpositivo = me.lookupReference('tipoImpositivoIRPFRetG').getValue();
+    	var base = me.lookupReference('baseIRPFRetG').getValue();
+    	var cuotaImpDirecto = me.lookupReference('cuotaIRPFImpD').getValue();
+    	var cuota = 0;
+    	
+    	if(tipoImpositivo != null && base != null){
+    		cuota = (tipoImpositivo * base)/100;
+    	}
+    	
+    	me.lookupReference('cuotaIRPFRetG').setValue(cuota);
+    	
+    	var importeTotal = me.getImporteTotalLineasDetalle(me);
+    	
+    	importeTotal = importeTotal - cuota;
+    	 
+    	if(cuotaImpDirecto != null && cuotaImpDirecto != undefined){
+    		importeTotal = importeTotal - cuotaImpDirecto;
+    	}
+
+    	me.lookupReference('importeTotalGastoDetalle').setValue(importeTotal);
+
+    },
+    
+    onChangeCuotaImpuestoDirecto: function(field, value){
+    	var me = this;
+    	var tipoImpositivo = me.lookupReference('tipoImpositivoIRPFImpD').getValue();
+    	var base = me.lookupReference('baseIRPFImpD').getValue();
+    	var cuotaRetG = me.lookupReference('cuotaIRPFRetG').getValue();
+    	var cuota = 0;
+    	
+    	if(tipoImpositivo != null && base != null){
+    		cuota = (tipoImpositivo * base)/100;
+    	}
+    	
+    	me.lookupReference('cuotaIRPFImpD').setValue(cuota);
+    	
+    	var importeTotal = me.getImporteTotalLineasDetalle(me);
+    	
+		importeTotal = importeTotal - cuota;
+		 
+		if(cuotaRetG != null && cuotaRetG != undefined){
+			importeTotal = importeTotal - cuotaRetG;
+		}
+		
+		me.lookupReference('importeTotalGastoDetalle').setValue(importeTotal);	 
+    },
+    
+    recalcularImporteTotal: function(me){
+    	var cuotaRetG = me.lookupReference('cuotaIRPFRetG').getValue();
+    	var cuotaImpDirecto = me.lookupReference('cuotaIRPFImpD').getValue();
+    	var importeTotal = me.getImporteTotalLineasDetalle(me);
+    	
+    	if(cuotaRetG != null || cuotaRetG != undefined){
+    		importeTotal = importeTotal - cuotaRetG;
+    	}
+    	
+    	if(cuotaImpDirecto != null || cuotaImpDirecto != undefined){
+    		importeTotal = importeTotal - cuotaImpDirecto;
+    	}
+    	
+    	return importeTotal;
+    	
+    },
+    
+    getImporteTotalLineasDetalle: function(me){
+    	var importeTotal = 0;
+    	if(me.lookupReference('lineaDetalleGastoGrid').getStore() != null && me.lookupReference('lineaDetalleGastoGrid').getStore() != undefined){
+    		for(var i = 0; i < me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items.length; i++){
+    			importeTotal+= me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('importeTotal');
+    		}
+    	}
+    	
+    	return importeTotal;
     }
 });

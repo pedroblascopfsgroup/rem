@@ -39,7 +39,7 @@ BEGIN
 	V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET 
 				  USUARIOMODIFICAR = '''||V_USUARIO||'''
 				, FECHAMODIFICAR = SYSDATE
-				, DD_OPM_VALIDACION_FORMATO = ''nD*,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s''
+				, DD_OPM_VALIDACION_FORMATO = ''nD*,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s''
 				WHERE DD_OPM_CODIGO = ''ACPA''
 				';
 

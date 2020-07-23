@@ -22,7 +22,6 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.expediente.model.DDTipoExpediente;
 import es.pfsgroup.plugin.rem.model.Activo;
 
 /**
@@ -189,6 +188,18 @@ public class ActivoAdmisionRevisionTitulo implements Auditable,Serializable {
 	
 	@Column(name = "ART_TIPO_INCI_OTROS")
 	private String tipoIncidenciaOtros;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_SNR_ID")
+	private DDSituacionConstructivaRegistral situacionConstructivaRegistral;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_PTO_ID")
+	private DDProteccionOficial proteccionOficial;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_TDA_ID")
+	private DDTipoIncidencia tipoIncidencia;
 	
 
 	@Version
@@ -535,6 +546,30 @@ public class ActivoAdmisionRevisionTitulo implements Auditable,Serializable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 		
+	}
+
+	public DDSituacionConstructivaRegistral getSituacionConstructivaRegistral() {
+		return situacionConstructivaRegistral;
+	}
+
+	public void setSituacionConstructivaRegistral(DDSituacionConstructivaRegistral situacionConstructivaRegistral) {
+		this.situacionConstructivaRegistral = situacionConstructivaRegistral;
+	}
+
+	public DDProteccionOficial getProteccionOficial() {
+		return proteccionOficial;
+	}
+
+	public void setProteccionOficial(DDProteccionOficial proteccionOficial) {
+		this.proteccionOficial = proteccionOficial;
+	}
+
+	public DDTipoIncidencia getTipoIncidencia() {
+		return tipoIncidencia;
+	}
+
+	public void setTipoIncidencia(DDTipoIncidencia tipoIncidencia) {
+		this.tipoIncidencia = tipoIncidencia;
 	}
 	
 

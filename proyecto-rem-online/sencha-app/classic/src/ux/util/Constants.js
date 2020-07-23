@@ -124,7 +124,6 @@ Ext.define('HreRem.ux.util.Constants', {
 		DOCU:			'documentosactivo',
 		AGRUPACIONES:	'agrupacionesactivo',
 		ADMISION:		'admisionactivo',
-		CHECKINFO:		'admisionactivo.admisioncheckinfoactivo',
 		CHECKDOC:		'admisionactivo.admisioncheckdocactivo',
 		GESTION:		'gestionactivo',
 		HISTORICO:		'gestionactivo.historicopeticionesactivo',

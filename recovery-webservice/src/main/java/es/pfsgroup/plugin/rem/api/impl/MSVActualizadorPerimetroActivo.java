@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 
 import javax.annotation.Resource;
@@ -28,16 +27,20 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.admision.evolucion.dao.ActivoAgendaEvolucionDao;
 import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgendaEvolucion;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
@@ -52,6 +55,8 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
     private static final Integer CHECK_VALOR_SI = 1;
     private static final Integer CHECK_VALOR_NO = 0;
     private static final Integer CHECK_NO_CAMBIAR = -1;
+    private static final String ADMISION_SI = "S";
+    private static final String ADMISION_NO = "N";
 
     @Autowired
     private ActivoAdapter activoAdapter;
@@ -76,6 +81,9 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 	
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
+	
+	@Autowired
+	private ActivoAgendaEvolucionDao activoAgendaEvolucionDao;
 
 	@Override
 	public String getValidOperation() {
@@ -109,6 +117,8 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			String tmpEquipoGestion = exc.dameCelda(fila, 14);
 			String tmpSegmento = exc.dameCelda(fila, 15);
 			Integer tmpPerimetroMacc =  getCheckValue(exc.dameCelda(fila, 16));			
+			String admision = exc.dameCelda(fila, 17);
+			String motivoAdmision = exc.dameCelda(fila, 18);
 			
 			Activo activo = activoApi.getByNumActivo(numActivo);
 			ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
@@ -297,6 +307,26 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			// desmarcamos sus checks
 			if (CHECK_VALOR_NO.equals(perimetroActivo.getIncluidoEnPerimetro()))
 				this.desmarcarChecksFromPerimetro(perimetroActivo);
+			
+			//Actualizar admision del activo
+			if(ADMISION_SI.equals(admision)) {
+				DDEstadoAdmision estadoAdmision =  (DDEstadoAdmision) utilDiccionarioApi.dameValorDiccionarioByCod(
+						DDEstadoAdmision.class, DDEstadoAdmision.CODIGO_NUEVA_ENTRADA);
+				DDSubestadoAdmision subestadoAdmision =  (DDSubestadoAdmision) utilDiccionarioApi.dameValorDiccionarioByCod(
+						DDSubestadoAdmision.class, DDSubestadoAdmision.CODIGO_PENDIENTE_REVISION_ALTAS);
+				perimetroActivo.setAplicaAdmision(true);
+				perimetroActivo.setFechaAplicaAdmision(new Date());
+				perimetroActivo.setMotivoAplicaAdmision(motivoAdmision);
+				activo.setEstadoAdmision(estadoAdmision);
+				activo.setSubestadoAdmision(subestadoAdmision);
+			}
+			
+			if(ADMISION_NO.equals(admision)) {
+				perimetroActivo.setAplicaAdmision(false);
+				activo.setEstadoAdmision(null);
+				perimetroActivo.setMotivoAplicaAdmision("");
+				activo.setSubestadoAdmision(null);
+			}
 
 			activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
 
@@ -305,6 +335,8 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 
 			// Actualizar registro historico destino comercial del activo
 			activoApi.updateHistoricoDestinoComercial(activo, extraArgs);
+			
+			
 
 			activoApi.saveOrUpdate(activo);
 			resultado.setCorrecto(true);

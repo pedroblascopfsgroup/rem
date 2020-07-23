@@ -1,9 +1,9 @@
 --/*
 --##########################################
 --## AUTOR=VIOREL REMUS OVIDIU
---## FECHA_CREACION=20200723
+--## FECHA_CREACION=20200724
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
+--## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-7838
 --## PRODUCTO=NO
 --##
@@ -415,6 +415,13 @@ BEGIN
 					DBMS_OUTPUT.PUT_LINE('[INFO]: EL ACTIVO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''' NO EXISTE');        
 				END IF;			
       END LOOP;
+
+	V_SQL := 'DELETE FROM '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA 
+						WHERE USUARIOBORRAR = '''||V_USUARIO||''' ';
+						 
+	EXECUTE IMMEDIATE V_SQL;
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se han eliminado correctamente '||SQL%ROWCOUNT||' registros');   
 
 
 COMMIT;

@@ -4,8 +4,8 @@ Ext.define('HreRem.view.activos.detalle.TabDocumentosActivo', {
 	cls			: 'panel-base shadow-panel tabPanel-tercer-nivel',
     reference	: 'tabdocumentosactivoref',
     layout		: 'fit',
-    requires	: ['HreRem.view.activos.detalle.AdmisionCheckInfoActivo', 'HreRem.view.activos.detalle.DocumentosActivo'],
-    
+	//requires	: ['HreRem.view.activos.detalle.AdmisionCheckInfoActivo', 'HreRem.view.activos.detalle.DocumentosActivo'],
+	requires	: ['HreRem.view.activos.detalle.DocumentosActivo'],
     listeners	: {
     	boxready: function (tabPanel) {
     		var tab = tabPanel.getActiveTab();

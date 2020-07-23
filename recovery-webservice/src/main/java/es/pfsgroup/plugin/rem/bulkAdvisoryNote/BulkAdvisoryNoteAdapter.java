@@ -19,18 +19,21 @@ import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.web.genericForm.DtoGenericForm;
 import es.capgemini.pfs.web.genericForm.GenericForm;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.bulkAdvisoryNote.dao.BulkOfertaDao;
@@ -43,6 +46,7 @@ import es.pfsgroup.plugin.rem.model.BulkOferta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
@@ -96,6 +100,9 @@ public class BulkAdvisoryNoteAdapter {
     
     @Autowired
     private GenericABMDao genericDao;
+    
+    @Autowired
+    private ExpedienteComercialApi expedienteComercialApi;
 	
 	private final Log logger = LogFactory.getLog(getClass());
 	
@@ -164,14 +171,14 @@ public class BulkAdvisoryNoteAdapter {
 		
 		List<TareaExternaValor> valores = activoTareaExternaManagerApi.obtenerValoresTarea(tareaExterna.getId());
 		Map<String,String[]> valoresTarea = insertValoresToHashMap(valores);
-		String tapCodigoActual= tareaExterna.getTareaProcedimiento().getCodigo();
+		TareaProcedimiento tareaProcedimiento = tareaExterna.getTareaProcedimiento();
 				
 		if(bulkOferta == null)
 			return false;
 		
 		List<BulkOferta> listOfertasBulk = bulkOfertaDao.getListBulkOfertasByIdBulk(bulkOferta.getPrimaryKey().getBulkAdvisoryNote().getId());
 		
-		return validarTareasOfertasBulk(listOfertasBulk, valoresTarea, tapCodigoActual);
+		return validarTareasOfertasBulk(listOfertasBulk, valoresTarea, tareaProcedimiento);
 	}
 	
 	private Boolean ofertaEnBulkOferta(ActivoOferta actOfr,String tapCodigoActual,BulkOferta bulkOferta) {
@@ -199,9 +206,10 @@ public class BulkAdvisoryNoteAdapter {
 	}
 
 	public boolean validarTareasOfertasBulk(List<BulkOferta> listOfertasBulk,
-			Map<String,String[]> valoresTarea, String tapCodigoActual) throws Exception {
+			Map<String,String[]> valoresTarea, TareaProcedimiento tareaProcedimiento) throws Exception {
 		
 		DtoGenericForm dto;
+		String tapCodigoActual = tareaProcedimiento.getCodigo();
 		for (BulkOferta ofertaDelBulk : listOfertasBulk) {
 			
 			Oferta ofertaActual = ofertaDao.get(ofertaDelBulk.getPrimaryKey().getOferta().getId());
@@ -209,7 +217,7 @@ public class BulkAdvisoryNoteAdapter {
 			if(!Checks.esNulo(ofertaActual) 
 					&&  (ofertaDao.tieneTareaActiva(tapCodigoActual,ofertaActual.getNumOferta().toString()))){
 
-				TareaActivo tareaActivoDeOferta = tareaActivoApi.tareaOfertaDependiente(ofertaActual);
+				TareaActivo tareaActivoDeOferta = tareaActivoDeOferta(ofertaActual, tareaProcedimiento);
 				Map<String,String[]> valoresTareaOfertaBulk = tareaActivoApi.valoresTareaDependiente(valoresTarea, tareaActivoDeOferta, ofertaActual);
 				
 				dto = agendaAdapter.convetirValoresToDto(valoresTareaOfertaBulk);
@@ -389,6 +397,25 @@ public class BulkAdvisoryNoteAdapter {
 		} catch (Exception e) {
 			throw e;
 		}
+	}
+	
+	@Transactional
+	public TareaActivo tareaActivoDeOferta(Oferta oferta, TareaProcedimiento tareaProcedimiento) {
+		TareaActivo tarea = null;
+		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
+		if (!Checks.esNulo(expediente)) {
+			Trabajo trabajoAsociadoExpediente = expediente.getTrabajo();
+			if (!Checks.esNulo(trabajoAsociadoExpediente)) {
+				Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajoAsociadoExpediente.getId());
+				ActivoTramite tramite = genericDao.get(ActivoTramite.class, filtroTrabajo);
+				if (!Checks.esNulo(tramite)) {
+					Filter filtroTramite = genericDao.createFilter(FilterType.EQUALS, "tramite.id", tramite.getId());
+					Filter filtroTarea = genericDao.createFilter(FilterType.EQUALS, "tarea", tareaProcedimiento.getDescripcion());
+					tarea = genericDao.get(TareaActivo.class, filtroTramite, filtroTarea);
+				}
+			}
+		}
+		return tarea;
 	}
 
 }

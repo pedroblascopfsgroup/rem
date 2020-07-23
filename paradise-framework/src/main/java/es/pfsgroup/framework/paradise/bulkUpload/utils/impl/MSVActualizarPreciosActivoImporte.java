@@ -71,7 +71,32 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 	//public static final String ACTIVE_PDW_END_DATE_MORE_PAV_END_DATE = "La fecha de fin del precio descuento publicado no puede ser posterior a la fecha fin del precio aprobado venta";
 	public static final String ACTIVE_COMPARE_PRICES_EXCEL_TO_DDBB = "Los precios especificados no cumplen las reglas al ser introducidos junto con los actuales precios";
 	public static final String ACTIVE_COMPARE_DATES_EXCEL_TO_DDBB = "Las fechas especificadas no cumplen las reglas al ser introducidas junto con las actuales fechas";
+	public static final String ACTIVE_APROBACION_DATES_REQUIRED = "Es obligatorio rellenar las fechas de aprobación para la cartera de este activo.";
 
+	//Indicar las posiciones de las columnas en el excel CARGA_DIRECTA_PRECIOS_ACTIVOS.xls
+	public static final Integer COLUMNA_ACTIVO 						= 0;
+	public static final Integer COLUMNA_P_APROBADO_VENTA 			= 1; 		//precioVentaAprobado
+	public static final Integer COLUMNA_F_APROB_P_APROBADO_VENTA 	= 2;
+	public static final Integer COLUMNA_F_INI_PRECIO_APROB_VENTA 	= 3; 		//fechaInicioPAV
+	public static final Integer COLUMNA_F_FIN_PRECIO_APROB_VENTA 	= 4; 		//fechaFinPAV
+	public static final Integer COLUMNA_P_MIN_AUTORIZADO 			= 5; 		//precioMinimoAuth
+	public static final Integer COLUMNA_F_APROB_P_MIN_AUTORIZADO 	= 6;
+	public static final Integer COLUMNA_F_INI_P_MIN_AUTORIZADO 		= 7; 		//fechaInicioPMA
+	public static final Integer COLUMNA_F_FIN_P_MIN_AUTORIZADO 		= 8; 		//fechaFinPMA
+	public static final Integer COLUMNA_P_APROB_RENTA 				= 9; 		//precioRentaAprobado
+	public static final Integer COLUMNA_F_APROB_P_APROBADO_RENTA 	= 10;
+	public static final Integer COLUMNA_F_INI_P_APROBADO_RENTA 		= 11; 		//fechaInicioPAR
+	public static final Integer COLUMNA_F_FIN_P_APROBADO_RENTA 		= 12; 		//fechaFinPAR
+	public static final Integer COLUMNA_P_DESCUENTO_APROBADO 		= 13; 		//precioDescuentoAprobado
+	public static final Integer COLUMNA_F_APROB_P_DESCUENTO_APROB 	= 14;
+	public static final Integer COLUMNA_F_INI_P_DESCUENTO_APROB 	= 15; 		//fechaInicioPDA
+	public static final Integer COLUMNA_F_FIN_P_DESCUENTO_APROB 	= 16; 		//fechaFinPDA
+	public static final Integer COLUMNA_P_DESCUENTO_PUBLICADO 		= 17; 		//precioDescuentoPublicado
+	public static final Integer COLUMNA_F_APROB_P_DESCUENTO_PUB 	= 18;
+	public static final Integer COLUMNA_F_INI_P_DESCUENTO_PUB 		= 19; 		//fechaInicioPDP
+	public static final Integer COLUMNA_F_FIN_P_DESCUENTO_PUB 		= 20; 		//fechaFinPDW
+	
+	public static final String CARTERA_BBVA = "BBVA";
 
 	protected final Log logger = LogFactory.getLog(getClass());
 	
@@ -154,6 +179,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		// Comprobaciones para contrastar datos del excel con los datos actuales en la DB.
 			mapaErrores.put(ACTIVE_COMPARE_PRICES_EXCEL_TO_DDBB, getComparacionDePreciosExcelDDBB(exc));
 			mapaErrores.put(ACTIVE_COMPARE_DATES_EXCEL_TO_DDBB, getComparacionDeFechasExcelDDBB(exc));
+			mapaErrores.put(ACTIVE_APROBACION_DATES_REQUIRED, getFechasAprobacionRellenadas(exc));
 
 			if (!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() || !mapaErrores.get(ACTIVE_PRIZE_NAN).isEmpty()
 					|| !mapaErrores.get(ACTIVE_PRIZES_DESCUENTOS_LIMIT_EXCEEDED).isEmpty()
@@ -179,7 +205,9 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 					|| !mapaErrores.get(ACTIVE_PDW_END_DATE_MORE_PDA_END_DATE).isEmpty()
 					//|| !mapaErrores.get(ACTIVE_PDW_END_DATE_MORE_PAV_END_DATE).isEmpty()
 					|| !mapaErrores.get(ACTIVE_COMPARE_PRICES_EXCEL_TO_DDBB).isEmpty()
-					|| !mapaErrores.get(ACTIVE_COMPARE_DATES_EXCEL_TO_DDBB).isEmpty()) {
+					|| !mapaErrores.get(ACTIVE_COMPARE_DATES_EXCEL_TO_DDBB).isEmpty()
+					|| !mapaErrores.get(ACTIVE_APROBACION_DATES_REQUIRED).isEmpty()
+			) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
@@ -195,14 +223,19 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 	private List<Integer> getComparacionDeFechasExcelDDBB(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
+		Date fechaAprobPAV = null;// Actualmente no tiene reglas que la utilicen.
 		Date fechaInicioPAV = null;
 		Date fechaFinPAV = null;
+		Date fechaAprobPMA = null;// Actualmente no tiene reglas que la utilicen.
 		Date fechaInicioPMA = null;
 		Date fechaFinPMA = null;
+		Date fechaAprobPAR = null;// Actualmente no tiene reglas que la utilicen.
 		Date fechaInicioPAR = null; // Actualmente no tiene reglas que la utilicen.
 		Date fechaFinPAR = null; // Actualmente no tiene reglas que la utilicen.
+		Date fechaAprobPDA = null;// Actualmente no tiene reglas que la utilicen.
 		Date fechaInicioPDA = null;
 		Date fechaFinPDA = null;
+		Date fechaAprobPDP = null;// Actualmente no tiene reglas que la utilicen.
 		Date fechaInicioPDP = null;
 		Date fechaFinPDP = null;
 
@@ -210,51 +243,80 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 			for(int i = 1; i < this.numFilasHoja; i++){
 				try{
 					// Obtener las fechas actuales del activo.
-					List<Date> fechas = particularValidator.getFechasImportesActualesActivo(exc.dameCelda(i, 0));
-					fechaInicioPAV = fechas.get(0);
-					fechaFinPAV = fechas.get(1);
-					fechaInicioPMA = fechas.get(2);
-					fechaFinPMA = fechas.get(3);
-					fechaInicioPAR = fechas.get(4);
-					fechaFinPAR = fechas.get(5);
-					fechaInicioPDA = fechas.get(6);
-					fechaFinPDA = fechas.get(7);
-					fechaInicioPDP = fechas.get(8);
-					fechaFinPDP = fechas.get(9);
+					List<Date> fechas = particularValidator.getFechasImportesActualesActivo(exc.dameCelda(i, COLUMNA_ACTIVO));
+					fechaAprobPAV = fechas.get(0);
+					fechaInicioPAV = fechas.get(1);
+					fechaFinPAV = fechas.get(2);
+					
+					fechaAprobPMA = fechas.get(3);
+					fechaInicioPMA = fechas.get(4);
+					fechaFinPMA = fechas.get(5);
+					
+					fechaAprobPAR = fechas.get(6);
+					fechaInicioPAR = fechas.get(7);
+					fechaFinPAR = fechas.get(8);
+					
+					fechaAprobPDA = fechas.get(9);
+					fechaInicioPDA = fechas.get(10);
+					fechaFinPDA = fechas.get(11);
+					
+					fechaAprobPDP = fechas.get(12);
+					fechaInicioPDP = fechas.get(13);
+					fechaFinPDP = fechas.get(14);
 	
 					//Obtener fechas de importes de la excel y machacar las actuales fechas del activo si est�n definidas.
-					if(!Checks.esNulo(exc.dameCelda(i, 2))) {
-						fechaInicioPAV = ft.parse(exc.dameCelda(i, 2));
+					if(!Checks.esNulo(exc.dameCelda(i, COLUMNA_F_APROB_P_APROBADO_VENTA))) {
+						fechaAprobPAV = ft.parse(exc.dameCelda(i, COLUMNA_F_APROB_P_APROBADO_VENTA));
 					}
-					if(!Checks.esNulo(exc.dameCelda(i, 3))) {
-						fechaFinPAV = ft.parse(exc.dameCelda(i, 3));
+					if(!Checks.esNulo(exc.dameCelda(i, COLUMNA_F_INI_PRECIO_APROB_VENTA))) {
+						fechaInicioPAV = ft.parse(exc.dameCelda(i, COLUMNA_F_INI_PRECIO_APROB_VENTA));
 					}
-					if(!Checks.esNulo(exc.dameCelda(i, 5))) {
-						fechaInicioPMA = ft.parse(exc.dameCelda(i, 5));
+					if(!Checks.esNulo(exc.dameCelda(i, COLUMNA_F_FIN_PRECIO_APROB_VENTA))) {
+						fechaFinPAV = ft.parse(exc.dameCelda(i, COLUMNA_F_FIN_PRECIO_APROB_VENTA));
 					}
-					if(!Checks.esNulo(exc.dameCelda(i, 6))) {
-						fechaFinPMA = ft.parse(exc.dameCelda(i, 6));
+					
+					if(!Checks.esNulo(exc.dameCelda(i, COLUMNA_F_APROB_P_MIN_AUTORIZADO))) {
+						fechaAprobPMA = ft.parse(exc.dameCelda(i, COLUMNA_F_APROB_P_MIN_AUTORIZADO));
 					}
-					if(!Checks.esNulo(exc.dameCelda(i, 8))) {
-						fechaInicioPAR = ft.parse(exc.dameCelda(i, 8));
+					if(!Checks.esNulo(exc.dameCelda(i, COLUMNA_F_INI_P_MIN_AUTORIZADO))) {
+						fechaInicioPMA = ft.parse(exc.dameCelda(i, COLUMNA_F_INI_P_MIN_AUTORIZADO));
 					}
-					if(!Checks.esNulo(exc.dameCelda(i, 9))) {
-						fechaFinPAR = ft.parse(exc.dameCelda(i, 9));
+					if(!Checks.esNulo(exc.dameCelda(i, COLUMNA_F_FIN_P_MIN_AUTORIZADO))) {
+						fechaFinPMA = ft.parse(exc.dameCelda(i, COLUMNA_F_FIN_P_MIN_AUTORIZADO));
 					}
-					if(!Checks.esNulo(exc.dameCelda(i, 11))) {
-						fechaInicioPDA = ft.parse(exc.dameCelda(i, 11));
+					
+					if(!Checks.esNulo(exc.dameCelda(i, COLUMNA_F_APROB_P_APROBADO_RENTA))) {
+						fechaAprobPAR = ft.parse(exc.dameCelda(i, COLUMNA_F_APROB_P_APROBADO_RENTA));
 					}
-					if(!Checks.esNulo(exc.dameCelda(i, 12))) {
-						fechaFinPDA = ft.parse(exc.dameCelda(i, 12));
+					if(!Checks.esNulo(exc.dameCelda(i, COLUMNA_F_INI_P_APROBADO_RENTA))) {
+						fechaInicioPAR = ft.parse(exc.dameCelda(i, COLUMNA_F_INI_P_APROBADO_RENTA));
 					}
-					if(!Checks.esNulo(exc.dameCelda(i, 14))) {
-						fechaInicioPDP = ft.parse(exc.dameCelda(i, 14));
+					if(!Checks.esNulo(exc.dameCelda(i, COLUMNA_F_FIN_P_APROBADO_RENTA))) {
+						fechaFinPAR = ft.parse(exc.dameCelda(i, COLUMNA_F_FIN_P_APROBADO_RENTA));
 					}
-					if(!Checks.esNulo(exc.dameCelda(i, 15))) {
-						fechaFinPDP = ft.parse(exc.dameCelda(i, 15));
+					
+					if(!Checks.esNulo(exc.dameCelda(i, COLUMNA_F_APROB_P_DESCUENTO_APROB))) {
+						fechaAprobPDA = ft.parse(exc.dameCelda(i, COLUMNA_F_APROB_P_DESCUENTO_APROB));
+					}
+					if(!Checks.esNulo(exc.dameCelda(i, COLUMNA_F_INI_P_DESCUENTO_APROB))) {
+						fechaInicioPDA = ft.parse(exc.dameCelda(i, COLUMNA_F_INI_P_DESCUENTO_APROB));
+					}
+					if(!Checks.esNulo(exc.dameCelda(i, COLUMNA_F_FIN_P_DESCUENTO_APROB))) {
+						fechaFinPDA = ft.parse(exc.dameCelda(i, COLUMNA_F_FIN_P_DESCUENTO_APROB));
+					}
+					
+					if(!Checks.esNulo(exc.dameCelda(i, COLUMNA_F_APROB_P_DESCUENTO_PUB))) {
+						fechaAprobPDP = ft.parse(exc.dameCelda(i, COLUMNA_F_APROB_P_DESCUENTO_PUB));
+					}
+					if(!Checks.esNulo(exc.dameCelda(i, COLUMNA_F_INI_P_DESCUENTO_PUB))) {
+						fechaInicioPDP = ft.parse(exc.dameCelda(i, COLUMNA_F_INI_P_DESCUENTO_PUB));
+					}
+					if(!Checks.esNulo(exc.dameCelda(i, COLUMNA_F_FIN_P_DESCUENTO_PUB))) {
+						fechaFinPDP = ft.parse(exc.dameCelda(i, COLUMNA_F_FIN_P_DESCUENTO_PUB));
 					}
 	
 					// Comprobaciones de las reglas en base a las fechas temporales.
+					//TODO Añadir comprobaciones para las fechas de aprobación.
 					// Fecha fechaFinPMA < fechaFinPAV.
 					if(!Checks.esNulo(fechaFinPAV) && !Checks.esNulo(fechaFinPMA) && (fechaFinPAV.after(fechaFinPMA))){
 						if(!listaFilas.contains(i)) {
@@ -349,7 +411,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 
 				try {
 					// Obtener los importes actuales del activo.
-					List<BigDecimal> importes = particularValidator.getImportesActualesActivo(exc.dameCelda(i, 0));
+					List<BigDecimal> importes = particularValidator.getImportesActualesActivo(exc.dameCelda(i, COLUMNA_ACTIVO));
 					importePAV = importes.get(0);
 					importePMA = importes.get(1);
 					importePAR = importes.get(2);
@@ -357,20 +419,20 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 					importePDP = importes.get(4);
 	
 					//Obtener importes de la excel y machacar los actuales importes del activo si est�n definidos.
-					if(!Checks.esNulo(exc.dameCelda(i, 1))) {
-						importePAV = BigDecimal.valueOf(Double.valueOf(exc.dameCelda(i, 1)));
+					if(!Checks.esNulo(exc.dameCelda(i, COLUMNA_P_APROBADO_VENTA))) {
+						importePAV = BigDecimal.valueOf(Double.valueOf(exc.dameCelda(i, COLUMNA_P_APROBADO_VENTA)));
 					}
-					if(!Checks.esNulo(exc.dameCelda(i, 4))) {
-						importePMA = BigDecimal.valueOf(Double.valueOf(exc.dameCelda(i, 4)));
+					if(!Checks.esNulo(exc.dameCelda(i, COLUMNA_P_MIN_AUTORIZADO))) {
+						importePMA = BigDecimal.valueOf(Double.valueOf(exc.dameCelda(i, COLUMNA_P_MIN_AUTORIZADO)));
 					}
-					if(!Checks.esNulo(exc.dameCelda(i, 7))) {
-						importePAR = BigDecimal.valueOf(Double.valueOf(exc.dameCelda(i, 7)));
+					if(!Checks.esNulo(exc.dameCelda(i, COLUMNA_P_APROB_RENTA))) {
+						importePAR = BigDecimal.valueOf(Double.valueOf(exc.dameCelda(i, COLUMNA_P_APROB_RENTA)));
 					}
-					if(!Checks.esNulo(exc.dameCelda(i, 10))) {
-						importePDA = BigDecimal.valueOf(Double.valueOf(exc.dameCelda(i, 10)));
+					if(!Checks.esNulo(exc.dameCelda(i, COLUMNA_P_DESCUENTO_APROBADO))) {
+						importePDA = BigDecimal.valueOf(Double.valueOf(exc.dameCelda(i, COLUMNA_P_DESCUENTO_APROBADO)));
 					}
-					if(!Checks.esNulo(exc.dameCelda(i, 13))) {
-						importePDP = BigDecimal.valueOf(Double.valueOf(exc.dameCelda(i, 13)));
+					if(!Checks.esNulo(exc.dameCelda(i, COLUMNA_P_DESCUENTO_PUBLICADO))) {
+						importePDP = BigDecimal.valueOf(Double.valueOf(exc.dameCelda(i, COLUMNA_P_DESCUENTO_PUBLICADO)));
 					}
 	
 					// Comprobaciones de las reglas en base a los precios temporales.
@@ -457,7 +519,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 	private boolean isActiveExists(MSVHojaExcel exc){
 		try {
 			for(int i=1; i<this.numFilasHoja;i++){
-				if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
+				if(!particularValidator.existeActivo(exc.dameCelda(i, COLUMNA_ACTIVO)))
 					return false;
 			}
 		} catch (Exception e) {
@@ -473,7 +535,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
-					if(!particularValidator.existeActivo(exc.dameCelda(i, 0)))
+					if(!particularValidator.existeActivo(exc.dameCelda(i, COLUMNA_ACTIVO)))
 						listaFilas.add(i);
 				} catch (ParseException e) {
 					listaFilas.add(i);
@@ -495,7 +557,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
-					if(particularValidator.existeBloqueoPreciosActivo(exc.dameCelda(i, 0)))
+					if(particularValidator.existeBloqueoPreciosActivo(exc.dameCelda(i, COLUMNA_ACTIVO)))
 						listaFilas.add(i);
 				} catch (ParseException e) {
 					listaFilas.add(i);
@@ -517,7 +579,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
-					if(particularValidator.existeOfertaAprobadaActivo(exc.dameCelda(i, 0)))
+					if(particularValidator.existeOfertaAprobadaActivo(exc.dameCelda(i, COLUMNA_ACTIVO)))
 						listaFilas.add(i);
 				} catch (ParseException e) {
 					listaFilas.add(i);
@@ -544,11 +606,11 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try {
 			for(int i=1; i<this.numFilasHoja;i++){
 				try{
-					precioVentaAprobado = !Checks.esNulo(exc.dameCelda(i, 1)) ? Double.parseDouble(exc.dameCelda(i, 1)) : null;
-					precioMinimoAuth = !Checks.esNulo(exc.dameCelda(i, 4)) ? Double.parseDouble(exc.dameCelda(i, 4)) : null;
-					precioRentaAprobado = !Checks.esNulo(exc.dameCelda(i, 7)) ? Double.parseDouble(exc.dameCelda(i, 7)) : null;
-					precioDescuentoAprobado = !Checks.esNulo(exc.dameCelda(i, 10)) ? Double.parseDouble(exc.dameCelda(i, 10)) : null;
-					precioDescuentoPublicado = !Checks.esNulo(exc.dameCelda(i, 13)) ? Double.parseDouble(exc.dameCelda(i, 13)) :null ;
+					precioVentaAprobado 		= !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_APROBADO_VENTA)) 		? Double.parseDouble(exc.dameCelda(i, COLUMNA_P_APROBADO_VENTA)) : null;
+					precioMinimoAuth 			= !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_MIN_AUTORIZADO)) 		? Double.parseDouble(exc.dameCelda(i, COLUMNA_P_MIN_AUTORIZADO)) : null;
+					precioRentaAprobado 		= !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_APROB_RENTA)) 			? Double.parseDouble(exc.dameCelda(i, COLUMNA_P_APROB_RENTA)) : null;
+					precioDescuentoAprobado 	= !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_DESCUENTO_APROBADO)) 	? Double.parseDouble(exc.dameCelda(i, COLUMNA_P_DESCUENTO_APROBADO)) : null;
+					precioDescuentoPublicado 	= !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_DESCUENTO_PUBLICADO)) 	? Double.parseDouble(exc.dameCelda(i, COLUMNA_P_DESCUENTO_PUBLICADO)) :null ;
 					
 					// Si alguno de los precios no es un numero
 					if((!Checks.esNulo(precioVentaAprobado) && precioVentaAprobado.isNaN()) ||
@@ -580,8 +642,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try {
 			for(int i=1; i<this.numFilasHoja;i++){
 				try{
-					precioDescuentoAprobado = !Checks.esNulo(exc.dameCelda(i, 10)) ? Double.parseDouble(exc.dameCelda(i, 10)) : null;
-					precioDescuentoPublicado = !Checks.esNulo(exc.dameCelda(i, 13)) ? Double.parseDouble(exc.dameCelda(i, 13)) : null;
+					precioDescuentoAprobado  = !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_DESCUENTO_APROBADO)) ? Double.parseDouble(exc.dameCelda(i, COLUMNA_P_DESCUENTO_APROBADO)) : null;
+					precioDescuentoPublicado = !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_DESCUENTO_PUBLICADO)) ? Double.parseDouble(exc.dameCelda(i, COLUMNA_P_DESCUENTO_PUBLICADO)) : null;
 					
 					// Condiciones Limites: dto<=dto web<=aprobado
 					
@@ -615,8 +677,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try {
 			for(int i=1; i<this.numFilasHoja;i++){
 				try{
-					precioVentaAprobado = !Checks.esNulo(exc.dameCelda(i, 1)) ? Double.parseDouble(exc.dameCelda(i, 1)) : null;
-					precioMinimoAuth = !Checks.esNulo(exc.dameCelda(i, 4)) ? Double.parseDouble(exc.dameCelda(i, 4)) : null;
+					precioVentaAprobado = !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_APROBADO_VENTA)) ? Double.parseDouble(exc.dameCelda(i, COLUMNA_P_APROBADO_VENTA)) : null;
+					precioMinimoAuth 	= !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_MIN_AUTORIZADO)) ? Double.parseDouble(exc.dameCelda(i, COLUMNA_P_MIN_AUTORIZADO)) : null;
 
 				
 					
@@ -653,8 +715,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try {
 			for(int i=1; i<this.numFilasHoja;i++){
 				try{
-					precioVentaAprobado = !Checks.esNulo(exc.dameCelda(i, 1)) ? Double.parseDouble(exc.dameCelda(i, 1)) : null;
-					precioDescuentoPublicado = !Checks.esNulo(exc.dameCelda(i, 13)) ? Double.parseDouble(exc.dameCelda(i, 13)) : null;
+					precioVentaAprobado 	 = !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_APROBADO_VENTA)) 		? Double.parseDouble(exc.dameCelda(i, COLUMNA_P_APROBADO_VENTA)) : null;
+					precioDescuentoPublicado = !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_DESCUENTO_PUBLICADO)) 	? Double.parseDouble(exc.dameCelda(i, COLUMNA_P_DESCUENTO_PUBLICADO)) : null;
 					
 					// Condiciones Limites: dto<=dto web<=aprobado y aprobado>=minimo
 					
@@ -691,11 +753,11 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try {
 			for(int i=1; i<this.numFilasHoja;i++){
 				try{
-					precioVentaAprobado = !Checks.esNulo(exc.dameCelda(i, 1)) ? Double.parseDouble(exc.dameCelda(i, 1)) : null;
-					precioMinimoAuth = !Checks.esNulo(exc.dameCelda(i, 4)) ? Double.parseDouble(exc.dameCelda(i, 4)) : null;
-					precioRentaAprobado = !Checks.esNulo(exc.dameCelda(i, 7)) ? Double.parseDouble(exc.dameCelda(i, 7)) : null;
-					precioDescuentoAprobado = !Checks.esNulo(exc.dameCelda(i, 10)) ? Double.parseDouble(exc.dameCelda(i, 10)) : null;
-					precioDescuentoPublicado = !Checks.esNulo(exc.dameCelda(i, 13)) ? Double.parseDouble(exc.dameCelda(i, 13)) :null ;
+					precioVentaAprobado 	 = !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_APROBADO_VENTA)) 		? Double.parseDouble(exc.dameCelda(i, COLUMNA_P_APROBADO_VENTA)) : null;
+					precioMinimoAuth 		 = !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_MIN_AUTORIZADO)) 		? Double.parseDouble(exc.dameCelda(i, COLUMNA_P_MIN_AUTORIZADO)) : null;
+					precioRentaAprobado 	 = !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_APROB_RENTA)) 			? Double.parseDouble(exc.dameCelda(i, COLUMNA_P_APROB_RENTA)) : null;
+					precioDescuentoAprobado  = !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_DESCUENTO_APROBADO)) 	? Double.parseDouble(exc.dameCelda(i, COLUMNA_P_DESCUENTO_APROBADO)) : null;
+					precioDescuentoPublicado = !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_DESCUENTO_PUBLICADO)) 	? Double.parseDouble(exc.dameCelda(i, COLUMNA_P_DESCUENTO_PUBLICADO)) :null ;
 					
 					if((!Checks.esNulo(precioVentaAprobado) && precioVentaAprobado.compareTo(0.0D) <= 0) ||
 							(!Checks.esNulo(precioMinimoAuth) && precioMinimoAuth.compareTo(0.0D) <= 0) ||
@@ -727,8 +789,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try {
 			for(int i=1; i<this.numFilasHoja;i++){
 				try{
-					fechaInicioPAV = !Checks.esNulo(exc.dameCelda(i, 2)) ? ft.parse(exc.dameCelda(i, 2)) : null;
-					fechaFinPAV = !Checks.esNulo(exc.dameCelda(i, 3)) ? ft.parse(exc.dameCelda(i, 3)) : null;
+					fechaInicioPAV 	= !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_INI_PRECIO_APROB_VENTA)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_INI_PRECIO_APROB_VENTA)) : null;
+					fechaFinPAV 	= !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_FIN_PRECIO_APROB_VENTA)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_FIN_PRECIO_APROB_VENTA)) : null;
 					
 					//Fecha Inicio <= Fecha Fin
 					if(!Checks.esNulo(fechaInicioPAV) && 
@@ -760,8 +822,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try {
 			for(int i=1; i<this.numFilasHoja;i++){
 				try{
-					fechaInicioPAR = !Checks.esNulo(exc.dameCelda(i, 8)) ? ft.parse(exc.dameCelda(i, 8)) : null;
-					fechaFinPAR = !Checks.esNulo(exc.dameCelda(i, 9)) ? ft.parse(exc.dameCelda(i, 9)) : null;
+					fechaInicioPAR 	= !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_INI_P_APROBADO_RENTA)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_INI_P_APROBADO_RENTA)) : null;
+					fechaFinPAR 	= !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_FIN_P_APROBADO_RENTA)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_FIN_P_APROBADO_RENTA)) : null;
 					
 					//Fecha Inicio <= Fecha Fin
 					if(!Checks.esNulo(fechaInicioPAR) && 
@@ -792,7 +854,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try {
 			for(int i=1; i<this.numFilasHoja;i++){
 				try{
-					fechaFinPMA = !Checks.esNulo(exc.dameCelda(i, 6)) ? ft.parse(exc.dameCelda(i, 6)) : null;
+					fechaFinPMA = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_FIN_P_MIN_AUTORIZADO)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_FIN_P_MIN_AUTORIZADO)) : null;
 					
 					// Fecha Fin < hoy
 					if(!Checks.esNulo(fechaFinPMA) && (new Date().after(fechaFinPMA))){
@@ -822,7 +884,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try {
 			for(int i=1; i<this.numFilasHoja;i++){
 				try{
-					fechaInicioPMA = !Checks.esNulo(exc.dameCelda(i, 5)) ? ft.parse(exc.dameCelda(i, 5)) : null;
+					fechaInicioPMA = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_INI_P_MIN_AUTORIZADO)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_INI_P_MIN_AUTORIZADO)) : null;
 					
 					// Fecha Inicio > hoy
 					if(!Checks.esNulo(fechaInicioPMA) && (fechaInicioPMA.after(new Date()))){
@@ -853,8 +915,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try {
 			for(int i=1; i<this.numFilasHoja;i++){
 				try{
-					fechaInicioPMA = !Checks.esNulo(exc.dameCelda(i, 5)) ? ft.parse(exc.dameCelda(i, 5)) : null;
-					fechaFinPMA = !Checks.esNulo(exc.dameCelda(i, 6)) ? ft.parse(exc.dameCelda(i, 6)) : null;
+					fechaInicioPMA  = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_INI_P_MIN_AUTORIZADO)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_INI_P_MIN_AUTORIZADO)) : null;
+					fechaFinPMA 	= !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_FIN_P_MIN_AUTORIZADO)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_FIN_P_MIN_AUTORIZADO)) : null;
 					
 					//Fecha Inicio <= Fecha Fin
 					if(!Checks.esNulo(fechaInicioPMA) && 
@@ -883,8 +945,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try {
 			for(int i = 1; i < this.numFilasHoja; i++){
 				try {
-					if(!Checks.esNulo(exc.dameCelda(i, 10))) { // Si el importe no est� vac�o.
-						if(Checks.esNulo(exc.dameCelda(i, 11))) { // Comprobar que la fecha tampoco.
+					if(!Checks.esNulo(exc.dameCelda(i, COLUMNA_P_DESCUENTO_APROBADO))) { // Si el importe no est� vac�o.
+						if(Checks.esNulo(exc.dameCelda(i, COLUMNA_F_INI_P_DESCUENTO_APROB))) { // Comprobar que la fecha tampoco.
 							listaFilas.add(i);
 						}
 					}
@@ -909,8 +971,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try {
 			for(int i = 1; i < this.numFilasHoja; i++){
 				try {
-					if(!Checks.esNulo(exc.dameCelda(i, 10))) { // Si el importe no est� vac�o.
-						if(Checks.esNulo(exc.dameCelda(i, 12))) { // Comprobar que la fecha tampoco.
+					if(!Checks.esNulo(exc.dameCelda(i, COLUMNA_P_DESCUENTO_APROBADO))) { // Si el importe no est� vac�o.
+						if(Checks.esNulo(exc.dameCelda(i, COLUMNA_F_FIN_P_DESCUENTO_APROB))) { // Comprobar que la fecha tampoco.
 							listaFilas.add(i);
 						}
 					}
@@ -935,8 +997,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try {
 			for(int i = 1; i < this.numFilasHoja; i++){
 				try {
-					if(!Checks.esNulo(exc.dameCelda(i, 13))) { // Si el importe no est� vac�o.
-						if(Checks.esNulo(exc.dameCelda(i, 14))) { // Comprobar que la fecha tampoco.
+					if(!Checks.esNulo(exc.dameCelda(i, COLUMNA_P_DESCUENTO_PUBLICADO))) { // Si el importe no est� vac�o.
+						if(Checks.esNulo(exc.dameCelda(i, COLUMNA_F_INI_P_DESCUENTO_PUB))) { // Comprobar que la fecha tampoco.
 							listaFilas.add(i);
 						}
 					}
@@ -964,8 +1026,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try {
 			for(int i = 1; i < this.numFilasHoja; i++){
 				try {
-					 fechaInicioPAV = !Checks.esNulo(exc.dameCelda(i, 2)) ? ft.parse(exc.dameCelda(i, 2)) : null;
-					 fechaInicioPMA = !Checks.esNulo(exc.dameCelda(i, 5)) ? ft.parse(exc.dameCelda(i, 5)) : null;
+					 fechaInicioPAV = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_INI_PRECIO_APROB_VENTA)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_INI_PRECIO_APROB_VENTA)) : null;
+					 fechaInicioPMA = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_INI_P_MIN_AUTORIZADO)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_INI_P_MIN_AUTORIZADO)) : null;
 
 					// Fecha fechaInicioPAV >= fechaInicioPMA.
 					if(!Checks.esNulo(fechaInicioPAV) && !Checks.esNulo(fechaInicioPMA) && (fechaInicioPMA.after(fechaInicioPAV))){
@@ -997,8 +1059,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try {
 			for(int i = 1; i < this.numFilasHoja; i++){
 				try {
-					fechaFinPAV = !Checks.esNulo(exc.dameCelda(i, 3)) ? ft.parse(exc.dameCelda(i, 3)) : null;
-					fechaFinPDW = !Checks.esNulo(exc.dameCelda(i, 15)) ? ft.parse(exc.dameCelda(i, 15)) : null;
+					fechaFinPAV = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_FIN_PRECIO_APROB_VENTA)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_FIN_PRECIO_APROB_VENTA)) : null;
+					fechaFinPDW = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_FIN_P_DESCUENTO_PUB)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_FIN_P_DESCUENTO_PUB)) : null;
 
 					// Fecha fechaInicioPDW <= fechaInicioPDA.
 					if(!Checks.esNulo(fechaFinPDW) && !Checks.esNulo(fechaFinPAV) && (fechaFinPDW.after(fechaFinPAV))){
@@ -1030,8 +1092,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try {
 			for(int i = 1; i < this.numFilasHoja; i++){
 				try {
-					fechaFinPDA = !Checks.esNulo(exc.dameCelda(i, 12)) ? ft.parse(exc.dameCelda(i, 12)) : null;
-					fechaFinPDW = !Checks.esNulo(exc.dameCelda(i, 15)) ? ft.parse(exc.dameCelda(i, 15)) : null;
+					fechaFinPDA = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_FIN_P_DESCUENTO_APROB)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_FIN_P_DESCUENTO_APROB)) : null;
+					fechaFinPDW = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_FIN_P_DESCUENTO_PUB)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_FIN_P_DESCUENTO_PUB)) : null;
 
 					// Fecha fechaInicioPDW <= fechaInicioPDA.
 					if(!Checks.esNulo(fechaFinPDW) && !Checks.esNulo(fechaFinPDA) && (fechaFinPDW.after(fechaFinPDA))){
@@ -1063,8 +1125,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try {
 			for(int i = 1; i < this.numFilasHoja; i++){
 				try {
-					fechaInicioPAV = !Checks.esNulo(exc.dameCelda(i, 2)) ? ft.parse(exc.dameCelda(i, 2)) : null;
-					fechaInicioPDW = !Checks.esNulo(exc.dameCelda(i, 14)) ? ft.parse(exc.dameCelda(i, 14)) : null;
+					fechaInicioPAV = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_INI_PRECIO_APROB_VENTA)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_INI_PRECIO_APROB_VENTA)) : null;
+					fechaInicioPDW = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_INI_P_DESCUENTO_PUB)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_INI_P_DESCUENTO_PUB)) : null;
 
 					// Fecha fechaInicioPDW <= fechaInicioPDA.
 					if(!Checks.esNulo(fechaInicioPDW) && !Checks.esNulo(fechaInicioPAV) && (fechaInicioPAV.after(fechaInicioPDW))){
@@ -1096,8 +1158,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try {
 			for(int i = 1; i < this.numFilasHoja; i++){
 				try {
-					fechaInicioPDA = !Checks.esNulo(exc.dameCelda(i, 11)) ? ft.parse(exc.dameCelda(i, 11)) : null;
-					fechaInicioPDW = !Checks.esNulo(exc.dameCelda(i, 14)) ? ft.parse(exc.dameCelda(i, 14)) : null;
+					fechaInicioPDA = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_INI_P_DESCUENTO_APROB)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_INI_P_DESCUENTO_APROB)) : null;
+					fechaInicioPDW = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_INI_P_DESCUENTO_PUB)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_INI_P_DESCUENTO_PUB)) : null;
 
 					// Fecha fechaInicioPDW <= fechaInicioPDA.
 					if(!Checks.esNulo(fechaInicioPDW) && !Checks.esNulo(fechaInicioPDA) && (fechaInicioPDA.after(fechaInicioPDW))){
@@ -1129,8 +1191,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try {
 			for(int i = 1; i < this.numFilasHoja; i++){
 				try {
-					fechaInicioPMA = !Checks.esNulo(exc.dameCelda(i, 5)) ? ft.parse(exc.dameCelda(i, 5)) : null;
-					fechaInicioPDA = !Checks.esNulo(exc.dameCelda(i, 11)) ? ft.parse(exc.dameCelda(i, 11)) : null;
+					fechaInicioPMA = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_INI_P_MIN_AUTORIZADO)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_INI_P_MIN_AUTORIZADO)) : null;
+					fechaInicioPDA = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_INI_P_DESCUENTO_APROB)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_INI_P_DESCUENTO_APROB)) : null;
 
 					// Fecha fechaFinPAV <= fechaFinPMA.
 					if(!Checks.esNulo(fechaInicioPDA) && !Checks.esNulo(fechaInicioPMA) && (fechaInicioPMA.after(fechaInicioPDA))){
@@ -1162,8 +1224,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try {
 			for(int i = 1; i < this.numFilasHoja; i++){
 				try {
-					fechaFinPMA = !Checks.esNulo(exc.dameCelda(i, 6)) ? ft.parse(exc.dameCelda(i, 6)) : null;
-					fechaFinPDA = !Checks.esNulo(exc.dameCelda(i, 12)) ? ft.parse(exc.dameCelda(i, 12)) : null;
+					fechaFinPMA = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_FIN_P_MIN_AUTORIZADO)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_FIN_P_MIN_AUTORIZADO)) : null;
+					fechaFinPDA = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_FIN_P_DESCUENTO_APROB)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_FIN_P_DESCUENTO_APROB)) : null;
 
 					// Fecha fechaFinPAV <= fechaFinPMA.
 					if(!Checks.esNulo(fechaFinPDA) && !Checks.esNulo(fechaFinPMA) && (fechaFinPDA.after(fechaFinPMA))){
@@ -1195,8 +1257,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try {
 			for(int i = 1; i < this.numFilasHoja; i++){
 				try {
-					fechaFinPAV = !Checks.esNulo(exc.dameCelda(i, 3)) ? ft.parse(exc.dameCelda(i, 3)) : null;
-					fechaFinPMA = !Checks.esNulo(exc.dameCelda(i, 6)) ? ft.parse(exc.dameCelda(i, 6)) : null;
+					fechaFinPAV = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_FIN_PRECIO_APROB_VENTA)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_FIN_PRECIO_APROB_VENTA)) : null;
+					fechaFinPMA = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_FIN_P_MIN_AUTORIZADO)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_FIN_P_MIN_AUTORIZADO)) : null;
 
 					// Fecha fechaFinPAV <= fechaFinPMA.
 					if(!Checks.esNulo(fechaFinPAV) && !Checks.esNulo(fechaFinPMA) && (fechaFinPAV.after(fechaFinPMA))){
@@ -1225,8 +1287,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try {
 			for(int i = 1; i < this.numFilasHoja; i++){
 				try {
-					if(!Checks.esNulo(exc.dameCelda(i, 13))) { // Si el importe no est� vac�o.
-						if(Checks.esNulo(exc.dameCelda(i, 15))) { // Comprobar que la fecha tampoco.
+					if(!Checks.esNulo(exc.dameCelda(i, COLUMNA_P_DESCUENTO_PUBLICADO))) { // Si el importe no est� vac�o.
+						if(Checks.esNulo(exc.dameCelda(i, COLUMNA_F_FIN_P_DESCUENTO_PUB))) { // Comprobar que la fecha tampoco.
 							listaFilas.add(i);
 						}
 					}
@@ -1254,8 +1316,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try {
 			for(int i=1; i<this.numFilasHoja;i++){
 				try{
-					fechaInicioPDA = !Checks.esNulo(exc.dameCelda(i, 11)) ? ft.parse(exc.dameCelda(i, 11)) : null;
-					fechaFinPDA = !Checks.esNulo(exc.dameCelda(i, 12)) ? ft.parse(exc.dameCelda(i, 12)) : null;
+					fechaInicioPDA = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_INI_P_DESCUENTO_APROB)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_INI_P_DESCUENTO_APROB)) : null;
+					fechaFinPDA = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_FIN_P_DESCUENTO_APROB)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_FIN_P_DESCUENTO_APROB)) : null;
 					
 					//Fecha Inicio <= Fecha Fin
 					if(!Checks.esNulo(fechaInicioPDA) && 
@@ -1287,8 +1349,8 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try {
 			for(int i=1; i<this.numFilasHoja;i++){
 				try{
-					fechaInicioPDP = !Checks.esNulo(exc.dameCelda(i, 14)) ? ft.parse(exc.dameCelda(i, 14)) : null;
-					fechaFinPDP = !Checks.esNulo(exc.dameCelda(i, 15)) ? ft.parse(exc.dameCelda(i, 15)) : null;
+					fechaInicioPDP = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_INI_P_DESCUENTO_PUB)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_INI_P_DESCUENTO_PUB)) : null;
+					fechaFinPDP = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_FIN_P_DESCUENTO_PUB)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_FIN_P_DESCUENTO_PUB)) : null;
 					
 					//Fecha Inicio <= Fecha Fin
 					if(!Checks.esNulo(fechaInicioPDP) && 
@@ -1296,6 +1358,46 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 							(fechaInicioPDP.after(fechaFinPDP))){
 						if (!listaFilas.contains(i))
 							listaFilas.add(i);
+					}
+				} catch (ParseException e) {
+					listaFilas.add(i);
+					logger.error(e.getMessage());
+				}
+			}
+		} catch (Exception e) {
+			listaFilas.add(0);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return listaFilas;
+	}
+	
+	private List<Integer> getFechasAprobacionRellenadas(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
+		Date fechaAprobPAV = null;
+		Date fechaAprobPMA = null;
+		Date fechaAprobPAR = null;
+		Date fechaAprobPDA = null;
+		Date fechaAprobPDP = null;
+		Boolean esBBVA = null;
+		
+		// Validacion que evalua si las fechas de aprobación están rellenadas:
+		try {
+			for(int i=1; i<this.numFilasHoja;i++){
+				try{
+					esBBVA = !Checks.esNulo(exc.dameCelda(i, COLUMNA_ACTIVO)) ? particularValidator.esActivoBBVA(exc.dameCelda(i, COLUMNA_ACTIVO)) : null;
+					fechaAprobPAV = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_INI_P_DESCUENTO_PUB)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_APROB_P_APROBADO_VENTA)) : null;
+					fechaAprobPMA = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_INI_P_DESCUENTO_PUB)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_APROB_P_MIN_AUTORIZADO)) : null;
+					fechaAprobPAR = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_INI_P_DESCUENTO_PUB)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_APROB_P_APROBADO_RENTA)) : null;
+					fechaAprobPDA = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_INI_P_DESCUENTO_PUB)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_APROB_P_DESCUENTO_APROB)) : null;
+					fechaAprobPDP = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_INI_P_DESCUENTO_PUB)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_APROB_P_DESCUENTO_PUB)) : null;
+					
+					if(!Checks.esNulo(esBBVA)) {
+						if( (Checks.esNulo(fechaAprobPAV) || Checks.esNulo(fechaAprobPMA) || Checks.esNulo(fechaAprobPAR) || Checks.esNulo(fechaAprobPDA) || Checks.esNulo(fechaAprobPDP)) && esBBVA){
+							if (!listaFilas.contains(i))
+								listaFilas.add(i);
+						}
 					}
 				} catch (ParseException e) {
 					listaFilas.add(i);

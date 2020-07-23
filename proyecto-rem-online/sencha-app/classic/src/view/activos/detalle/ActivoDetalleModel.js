@@ -922,6 +922,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				return true;
 			else
 				return false;
+		},
+		
+		activarCamposGridPreciosVigentes: function(){
+			var gestorPrecios = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_PRECIOS']);
+			if(gestorPrecios){
+				return true;
+			}
+			return false;
 		}
 	 }, 
 	 

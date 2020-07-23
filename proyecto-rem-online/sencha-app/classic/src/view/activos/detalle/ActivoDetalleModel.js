@@ -1116,17 +1116,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		        extraParams: {id: '{activo.id}'}
 	    	 }
     		},
-    		
-    		storeObservaciones: {    
-    		 pageSize: $AC.getDefaultPageSize(),
-    		 model: 'HreRem.model.Observaciones',
-		     proxy: {
-		        type: 'uxproxy',
-		        remoteUrl: 'activo/getListObservacionesById',
-		        extraParams: {id: '{activo.id}'}
-	    	 }
-    		},
-    		
     		storeAgrupacionesActivo: {    	
     		 pageSize: $AC.getDefaultPageSize(),
     		 model: 'HreRem.model.AgrupacionesActivo',

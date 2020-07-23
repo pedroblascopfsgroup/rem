@@ -71,6 +71,8 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.PublicacionExcelReport;
 import es.pfsgroup.plugin.rem.exception.RemUserException;
+import es.pfsgroup.plugin.rem.factory.observaciones.GridObservacionesApi;
+import es.pfsgroup.plugin.rem.factory.observaciones.GridObservacionesFactory;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
@@ -218,6 +220,8 @@ public class ActivoController extends ParadiseJsonController {
 	@Autowired
 	private UsuarioManager usuarioManager;
 	
+	@Autowired
+	private GridObservacionesFactory gridObservacionesFactory;
 
 	public ActivoApi getActivoApi() {
 		return activoApi;
@@ -582,16 +586,6 @@ public class ActivoController extends ParadiseJsonController {
 	
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListObservacionesById(Long id, ModelMap model,HttpServletRequest request) {
-		model.put(RESPONSE_DATA_KEY, adapter.getListObservacionesById(id));
-		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "observaciones", ACCION_CODIGO.CODIGO_VER);
-
-		return createModelAndViewJson(model);
-	}
-
-
-	
-	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListAgrupacionesActivoById(Long id, ModelMap model, HttpServletRequest request) {
 		model.put(RESPONSE_DATA_KEY, adapter.getListAgrupacionesActivoById(id));
 		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "listadoAgrupaciones", ACCION_CODIGO.CODIGO_VER);
@@ -922,11 +916,27 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListObservaciones(Long id, String tab, ModelMap model, HttpServletRequest request) {
+		
+		GridObservacionesApi observaciones = gridObservacionesFactory.getGridObservacionByCode(tab);
+		try {
+			model.put(RESPONSE_DATA_KEY, observaciones.getObservacionesById(id));
+		}catch(Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error(e);
+		}
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "observaciones", ACCION_CODIGO.CODIGO_VER);
+		return createModelAndViewJson(model);
+		
+	}
+	
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveObservacionesActivo(DtoObservacion dtoObservacion, ModelMap model) {
+	public ModelAndView saveObservacionesActivo(DtoObservacion dtoObservacion, String tab, ModelMap model) {
 		try {
-			boolean success = adapter.saveObservacionesActivo(dtoObservacion);
+			GridObservacionesApi observaciones = gridObservacionesFactory.getGridObservacionByCode(tab);
+			boolean success = observaciones.saveObservacion(dtoObservacion);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {
@@ -939,9 +949,10 @@ public class ActivoController extends ParadiseJsonController {
 
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView createObservacionesActivo(DtoObservacion dtoObservacion, Long idEntidad, ModelMap model) {
+	public ModelAndView createObservacion(DtoObservacion dtoObservacion, Long idEntidad, String tab, ModelMap model) {
 		try {
-			boolean success = adapter.createObservacionesActivo(dtoObservacion, idEntidad);
+			GridObservacionesApi observaciones = gridObservacionesFactory.getGridObservacionByCode(tab);
+			boolean success = observaciones.createObservacion(dtoObservacion, idEntidad);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {
@@ -954,9 +965,10 @@ public class ActivoController extends ParadiseJsonController {
 
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView deleteObservacionesActivo(@RequestParam Long id, ModelMap model) {
+	public ModelAndView deleteObservacionById(@RequestParam Long id, String tab, ModelMap model) {
 		try {
-			boolean success = adapter.deleteObservacion(id);
+			GridObservacionesApi observaciones = gridObservacionesFactory.getGridObservacionByCode(tab);
+			boolean success = observaciones.deleteObservacion(id);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {

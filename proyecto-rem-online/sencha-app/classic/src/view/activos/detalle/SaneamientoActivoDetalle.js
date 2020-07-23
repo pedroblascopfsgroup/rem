@@ -7,6 +7,7 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
     disableValidation: true,
     reference: 'saneamientoactivoref',
     scrollable	: 'y',
+    launch: null,
     listeners: {
 			boxready:'cargarTabData'
 	},
@@ -16,7 +17,7 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 	recordClass: "HreRem.model.ActivoSaneamiento",
 	
 	requires : ['HreRem.model.ActivoCargasTab', 'HreRem.view.common.FieldSetTable','HreRem.model.Catastro', 'HreRem.model.DocumentacionAdministrativa'
-		,'HreRem.model.ActivoInformacionAdministrativa'],
+		,'HreRem.model.ActivoInformacionAdministrativa', 'HreRem.view.activos.detalle.ObservacionesActivo'],
 	
     initComponent: function () {
         var me = this;
@@ -196,7 +197,6 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 										[
 											{
 												xtype: "calificacionnegativagrid", 
-												// TODO Falta una funcion aqui que esta en informeComercialActivo de ese estilo
 												reference: "calificacionnegativagrid", 
 												colspan: 3,
 												bind:{
@@ -667,7 +667,14 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 						reference: "saneamientoagendagridref"
 					}
 				]
-            }
+            },
+    		{
+				xtype: 'fieldsettable',
+				items : [{
+					xtype: 'observacionesactivo',
+					launch: CONST.OBSERVACIONES_TAB_LAUNCH['SANEAMIENTO']
+				}]
+			}
      ];
 		me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();

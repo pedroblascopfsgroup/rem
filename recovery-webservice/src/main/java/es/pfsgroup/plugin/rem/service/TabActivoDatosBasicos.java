@@ -1411,7 +1411,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 				}
 			}
-			
 			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
 			
 			if(dto.getPerimetroAdmision() != null) {
@@ -1420,7 +1419,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				perimetroActivo.setMotivoAplicaAdmision(dto.getMotivoPerimetroAdmision());
 				activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
 			}
-
 		} catch(JsonViewerException jve) {
 			throw jve;
 		} catch (IllegalAccessException e) {

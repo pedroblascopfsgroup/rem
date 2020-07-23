@@ -541,7 +541,44 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 	    			remoteUrl: 'activo/getComboImpideVenta',
 	    			extraParams: {codEstadoCarga: '{comboestadocargaref.value}'}
     			}
+    		},
+    		// Stores para el grid observaciones. Se crean 3 para solucionar problemas de instancia 
+    		/*
+    		 * Valor de la constante 
+    		  	OBSERVACIONES_TAB_LAUNCH: {
+				ACTIVO : 'activo',
+				SANEAMIENTO: 'saneamiento',
+				REVISION_TITULO: 'revisionTitulo'
+			}*/
+    		storeObservaciones_activo: {    
+    		 pageSize: $AC.getDefaultPageSize(),
+    		 model: 'HreRem.model.Observaciones',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'activo/getListObservaciones',
+		        extraParams: {} // Dynamic.
+	    	 },
+	    	 autoLoad: false
+    		},
+    		storeObservaciones_saneamiento: {    
+    		 pageSize: $AC.getDefaultPageSize(),
+    		 model: 'HreRem.model.Observaciones',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'activo/getListObservaciones',
+		        extraParams: {} // Dynamic.
+	    	 },
+	    	 autoLoad: false
+    		},
+    		storeObservaciones_revisionTitulo: {    
+    		 pageSize: $AC.getDefaultPageSize(),
+    		 model: 'HreRem.model.Observaciones',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'activo/getListObservaciones',
+		        extraParams: {} // Dynamic.
+	    	 },
+	    	 autoLoad: false
     		}
-			
      }    
 });

@@ -747,6 +747,20 @@ Ext.define('HreRem.ux.util.Constants', {
 		CODIGO_PENDIENTE_CARGAS: 'PCA',
 		CODIGO_CONCURSO_ACREEDORES: 'CAC'
 
+	},
+	DD_TOB_TIPO_OBSERVACION: {
+		STOCK: '01',
+		POSESION: '02',
+		INSCRIPCION: '03',
+		CARGAS: '04',
+		LLAVES: '05',
+		SANEAMIENTO: '06',
+		REVISION_TITULO: '07'
+	},
+	OBSERVACIONES_TAB_LAUNCH: {
+		ACTIVO : 'activo',
+		SANEAMIENTO: 'saneamiento',
+		REVISION_TITULO: 'revisionTitulo'
 	}
 	
 });

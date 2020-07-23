@@ -6,17 +6,21 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 	disableValidation : true,
 	saveMultiple : false,
 	controller : 'admisionrevisiontitulo',
+	launch: null,
 	viewModel : {
 		type : 'admisionRevisionTitulo'
 	},
 	scrollable : 'y',
 	recordName: 'admisionRevisionTitulo',
 	recordClass:'HreRem.model.AdmisionRevisionTitulo',
-	requires : ['HreRem.model.AdmisionRevisionTitulo'],
+	requires : ['HreRem.model.AdmisionRevisionTitulo', 'HreRem.view.activos.detalle.ObservacionesActivo'],
 	listeners : {
 		boxready : function() {
 			var me = this;
 			me.lookupController().cargarTabData(me);
+		},
+		show: function(){
+			var me = this;
 		}
 	},
 	initComponent : function() {
@@ -425,6 +429,13 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 			items : [{
 						xtype : 'agendaRevisionTituloGrid'
 					}]
+		},
+		{
+			xtype: 'fieldsettable',
+			items : [{
+				xtype: 'observacionesactivo',
+				launch: CONST.OBSERVACIONES_TAB_LAUNCH['REVISION_TITULO']
+			}]
 		}];
 
 		me.callParent();

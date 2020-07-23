@@ -58,6 +58,19 @@ Ext.define('HreRem.view.activos.detalle.DetallePrefacturaGrid', {
 		            text: HreRem.i18n('fieldlabel.albaran.totalAlbaran')
 		        }
 		    ];
+		
+		me.dockedItems = [
+	        {
+	            xtype: 'prefactura.pagingtoolbar',
+	            dock: 'bottom',
+	            //itemId: 'activosPaginationToolbar',
+	            inputItemWidth: 60,
+	            displayInfo: true,
+	            bind: {
+	                //store: '{storeCalifiacionNegativa}'
+	            }
+	        }
+	    ];
 
 		    me.callParent();
     }

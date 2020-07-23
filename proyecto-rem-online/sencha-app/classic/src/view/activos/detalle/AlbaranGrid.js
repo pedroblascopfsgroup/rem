@@ -47,7 +47,21 @@ Ext.define('HreRem.view.activos.detalle.AlbaranGrid', {
 		            reference: 'importeTotalCliente',
 		            text: HreRem.i18n('fieldlabel.albaran.importeTotalCliente')
 		        }
+		        
 		    ];
+		
+		me.dockedItems = [
+	        {
+	            xtype: 'albaran.pagingtoolbar',
+	            dock: 'bottom',
+	            //itemId: 'activosPaginationToolbar',
+	            inputItemWidth: 60,
+	            displayInfo: true,
+	            bind: {
+	                //store: '{storeCalifiacionNegativa}'
+	            }
+	        }
+	    ];
 
 		    me.callParent();
     }

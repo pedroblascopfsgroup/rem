@@ -19,42 +19,36 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de Tipo de Incidencia.
+ * Modelo que gestiona el diccionario de Protección oficial.
  * 
  * @author Gabriel De Toni
  *
  */
 @Entity
-@Table(name = "DD_TDA_TIPO_INCIDENCIA", schema = "${entity.schema}")
+@Table(name = "DD_PTO_PROTECCION_OFICIAL", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDTipoIncidencia implements Auditable, Dictionary {
+public class DDProteccionOficial implements Auditable, Dictionary {
 
-	public static final String CODIGO_DISCREPANCIA_FISICO_JURIDICA_EXCESO_CABIDA_MAYOR_AL_20_PORCIERTO = "01";
-	public static final String CODIGO_DISCREPANCIA_FISICO_JURIDICA_EXCESO_CABIDA_MENOR_AL_20_PORCIERTO = "02";
-	public static final String CODIGO_DISCREPANCIA_FISICO_JURIDICA_SIN_INMATRICULAR = "03";
-	public static final String CODIGO_DISCREPANCIA_FISICO_JURIDICA_CAMBIO_DE_USO = "04";
-	public static final String CODIGO_DISCREPANCIA_FISICO_JURIDICA_CAMBIO_DESCRIPCION_REGISTRAL = "05";
-	public static final String CODIGO_DISCREPANCIA_FISICO_JURIDICA_DIVISION_HORIZONTAL = "06";
-	public static final String CODIGO_CONSTRUCCION_ILEGAL_IRREGULARIDADES_URBANISTICAS = "07";
-	public static final String CODIGO_CONSTRUCCION_ILEGAL_FUERA_DE_ORDENACION = "08";
-	public static final String CODIGO_ACTIVO_IRREGULAR = "09";
+	public static final String CODIGO_TERMINADO = "01";
+	public static final String CODIGO_EN_CONSTRUCCION_JURIDICA = "02";
+	public static final String CODIGO_EN_CONSTRUCCION_FISICA= "03";
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "DD_TDA_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoIncidenciaGenerator")
-	@SequenceGenerator(name = "DDTipoIncidenciaGenerator", sequenceName = "S_DD_TDA_TIPO_INCIDENCIA")
+	@Column(name = "DD_PTO_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDProteccionOficialGenerator")
+	@SequenceGenerator(name = "DDProteccionOficialGenerator", sequenceName = "S_DD_PTO_PROTECCION_OFICIAL")
 	private Long id;
 	 
-	@Column(name = "DD_TDA_CODIGO")   
+	@Column(name = "DD_PTO_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_TDA_DESCRIPCION")   
+	@Column(name = "DD_PTO_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_TDA_DESCRIPCION_LARGA")   
+	@Column(name = "DD_PTO_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
 	
 	    

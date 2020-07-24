@@ -41,7 +41,7 @@ DECLARE
     	T_TIPO_DATA('DTC', 'DT Centro'),
     	T_TIPO_DATA('DTS', 'DT Sur'),
     	T_TIPO_DATA('DTL', 'DT Levante'),
-	T_TIPO_DATA('SUR', 'Sur'),
+	T_TIPO_DATA('SUR', 'Sur')
 	
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

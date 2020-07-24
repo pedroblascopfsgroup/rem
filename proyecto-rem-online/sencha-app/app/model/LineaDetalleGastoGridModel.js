@@ -37,15 +37,15 @@ Ext.define('HreRem.model.LineaDetalleGastoGridModel', {
     			name:'tipoImpuesto'
     		},
     		{
-    			name:'operacionExentaImp'
+    			name:'operacionExentaImp',
+    			type:'boolean'
     		},
     		{
     			name:'esRenunciaExenta',
     			type:'boolean'
     		},
     		{
-    			name:'esTipoImpositivo',
-    			type:'boolean'
+    			name:'tipoImpositivo'	
     		},
     		{
     			name:'cuota'

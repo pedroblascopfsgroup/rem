@@ -38,11 +38,11 @@ public class DtoLineaDetalleGasto extends WebDto {
 
 	 private String tipoImpuesto;  
 
-	 private Double operacionExentaImp;  
+	 private Boolean operacionExentaImp;  
 
 	 private Boolean esRenunciaExenta;  
 
-	 private Boolean esTipoImpositivo;  
+	 private Double tipoImpositivo;  
 
 	 private Double cuota;  
 
@@ -164,11 +164,11 @@ public class DtoLineaDetalleGasto extends WebDto {
 		this.tipoImpuesto = tipoImpuesto;
 	}
 
-	public Double getOperacionExentaImp() {
+	public Boolean getOperacionExentaImp() {
 		return operacionExentaImp;
 	}
 
-	public void setOperacionExentaImp(Double operacionExentaImp) {
+	public void setOperacionExentaImp(Boolean operacionExentaImp) {
 		this.operacionExentaImp = operacionExentaImp;
 	}
 
@@ -180,12 +180,12 @@ public class DtoLineaDetalleGasto extends WebDto {
 		this.esRenunciaExenta = esRenunciaExenta;
 	}
 
-	public Boolean getEsTipoImpositivo() {
-		return esTipoImpositivo;
+	public Double getTipoImpositivo() {
+		return tipoImpositivo;
 	}
 
-	public void setEsTipoImpositivo(Boolean esTipoImpositivo) {
-		this.esTipoImpositivo = esTipoImpositivo;
+	public void setTipoImpositivo(Double tipoImpositivo) {
+		this.tipoImpositivo = tipoImpositivo;
 	}
 
 	public Double getCuota() {

@@ -16,6 +16,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
+import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionHaya;
@@ -65,6 +66,8 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 
 	private static final String VALIDACION_GASTO_SIN_TIPO_IMP_INDIRECTO = "msg.validacion.gasto.sin.tipo.impuesto.indirecto";
 	
+	private static final String VALIDACION_LINEA_DETALLE = "msg.validacion.gasto.sin.tipo.impuesto.indirecto";
+	
 	private DDEstadoProvisionGastos estadoProvision = null;
 	
 	private String codEstadoProvision = null;
@@ -102,10 +105,19 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				error = messageServices.getMessage(VALIDACION_GASTO_SIN_NUM_FACTURA);
 				return error;
 			}
-//			if(Checks.esNulo(gasto.getTipoGasto()) || Checks.esNulo(gasto.getGastoLineaDetalle().getSubtipoGasto())) {
-//				error = messageServices.getMessage(VALIDACION_TIPO_SUBTIPO);
-//				return error;
-//			}
+			if(gasto.getGastoLineaDetalleList() == null || gasto.getGastoLineaDetalleList().isEmpty()) {
+				error = messageServices.getMessage(VALIDACION_LINEA_DETALLE);
+				return error;
+			}
+			
+			for (GastoLineaDetalle gastodetalleLinea : gasto.getGastoLineaDetalleList()){
+				if(gastodetalleLinea.getSubtipoGasto() == null) {
+					error = messageServices.getMessage(VALIDACION_TIPO_SUBTIPO);
+					return error;
+				}
+			}
+
+			
 			if(Checks.esNulo(gasto.getProveedor())) {
 				error = messageServices.getMessage(VALIDACION_GASTO_SIN_EMISOR);
 				return error;
@@ -137,43 +149,47 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				error = messageServices.getMessage(VALIDACION_IMPORTE_TOTAL);
 				return error;
 			}
-//			if(Checks.esNulo(gasto.getGestoria()) && (Checks.esNulo(gasto.getGastoLineaDetalle()) || Checks.esNulo(gasto.getGastoLineaDetalle().getTipoImpuesto()))) {
-//				error = messageServices.getMessage(VALIDACION_GASTO_SIN_TIPO_IMP_INDIRECTO);
-//				return error;
-//			}
 			
-//			if(!Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(gasto.getPropietario().getCartera())){
-//				if(!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo())){
-//					if (Checks.esNulo(gasto.getGastoInfoContabilidad()) ||
-//							(Checks.esNulo(gasto.getGastoInfoContabilidad().getCuentaContable()) &&
-//									(!DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo())))) {
-//						error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
-//						return error;
-//					}
-//				}
-//			}else{
-//				if(!Checks.esNulo(gasto.getPropietario().getCartera())) {
-//					if (Checks.esNulo(gasto.getGastoInfoContabilidad()) ||
-//							(Checks.esNulo(gasto.getGastoInfoContabilidad().getCuentaContable()) &&
-//									(!Checks.esNulo(gasto.getPropietario()) && !DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo())))) {
-//						error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
-//						return error;
-//					}
-//				}
-//			}
+			if(gasto.getGestoria() == null) {
+				for (GastoLineaDetalle gastodetalleLinea : gasto.getGastoLineaDetalleList()){
+					if(gastodetalleLinea.getTipoImpuesto() == null) {
+						error = messageServices.getMessage(VALIDACION_GASTO_SIN_TIPO_IMP_INDIRECTO);
+						return error;
+					}
+				}	
+			}
+
+			
+			if(!Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(gasto.getPropietario().getCartera())){
+				String carteraPropietario = gasto.getPropietario().getCartera().getCodigo();
+				if(!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(carteraPropietario)){
+					for (GastoLineaDetalle gastodetalleLinea : gasto.getGastoLineaDetalleList()){
+						if(!DDCartera.CODIGO_CARTERA_BANKIA.equals(carteraPropietario) && gastodetalleLinea.getCccBase() == null) {
+							error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
+							return error;
+						}
+					}
+				}
+			}
+			
 			if(!Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(gasto.getPropietario().getCartera()) && !Checks.esNulo(gasto.getPropietario().getCartera().getCodigo())) {
 				if(!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo()) && !DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo())){
-//					if(Checks.esNulo(gasto.getGastoLineaDetalle()) || Checks.esNulo(gasto.getGastoLineaDetalle().getCccBase())) {
-//						error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
-//						return error;
-//					}
+				for (GastoLineaDetalle gastodetalleLinea : gasto.getGastoLineaDetalleList()){
+					if(gastodetalleLinea.getCccBase() == null)
+						error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
+						return error;
+					}
 				}
-//				if(!Checks.esNulo(gasto.getGastoLineaDetalle().getSubtipoGasto().getCodigo()) && !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo()) && !"100".equals(gasto.getGastoLineaDetalle().getSubtipoGasto().getCodigo())) {
-//					if(Checks.esNulo(gasto.getGastoInfoContabilidad()) || Checks.esNulo(gasto.getGastoLineaDetalle().getCppBase())) {
-//						error = messageServices.getMessage(VALIDACION_PARTIDA_PRESUPUESTARIA); 
-//						return error;
-//					}
-//				}
+				for (GastoLineaDetalle gastodetalleLinea : gasto.getGastoLineaDetalleList()){
+					String codigoCartera = gastodetalleLinea.getSubtipoGasto().getCodigo();
+					if(!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(codigoCartera) &&!"100".equals(codigoCartera)) {
+						if(gastodetalleLinea.getCppBase() == null) {
+							error = messageServices.getMessage(VALIDACION_PARTIDA_PRESUPUESTARIA); 
+							return error;
+						}
+					}
+				}
+
 			}else {
 				error = messageServices.getMessage(VALIDACION_PROPIETARIO);
 				return error;

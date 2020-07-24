@@ -139,10 +139,10 @@ Ext.define('HreRem.view.gastos.LineaDetalleGastoGrid', {
 		            	return descripcion;
 		        	}
 		        },  {
-		            dataIndex: 'esTipoImpositivo',
-		            reference: 'esTipoImpositivo',
+		            dataIndex: 'tipoImpositivo',
+		            reference: 'tipoImpositivo',
 		            name:'esTipoImpositivo',
-		            text: HreRem.i18n('fieldlabel.gasto.linea.detalle.esTipoImpositivo'),
+		            text: HreRem.i18n('fieldlabel.gasto.linea.detalle.tipoImpositivo'),
 		            flex: 0.7 ,
 		            renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
 		            	var foundedRecord = this.lookupController().getViewModel().getStore('comboSiNoGastoBoolean').findRecord('codigo', value);

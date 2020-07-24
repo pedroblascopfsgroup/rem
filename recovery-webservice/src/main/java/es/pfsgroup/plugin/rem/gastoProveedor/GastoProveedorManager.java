@@ -3806,10 +3806,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 		
 
-		//gastoLineaDetalle.setImporteIndirectoExento(dto.getOperacionExentaImp());
-		//gastoLineaDetalle.setEsImporteIndirectoRenunciaExento(dto.getEsRenunciaExenta());
-		//gastoLineaDetalle.setEsImporteIndirectoTipoImpositivo(dto.getEsTipoImpositivo());
-
+		gastoLineaDetalle.setEsImporteIndirectoExento(dto.getOperacionExentaImp());
+		gastoLineaDetalle.setEsImporteIndirectoRenunciaExento(dto.getEsRenunciaExenta());
+		gastoLineaDetalle.setImporteIndirectoTipoImpositivo(dto.getTipoImpositivo());
+		
 		gastoLineaDetalle.setImporteIndirectoCuota(dto.getCuota());
 
 			
@@ -3847,9 +3847,16 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		List<DtoLineaDetalleGasto> dtoLineaDetalleGastoLista = new ArrayList<DtoLineaDetalleGasto>();
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
 		List<GastoLineaDetalle> gastoLineaDetalleLista = genericDao.getList(GastoLineaDetalle.class,filtro);
+		GastoProveedor gasto = genericDao.get(GastoProveedor.class,genericDao.createFilter(FilterType.EQUALS, "id", idGasto));
 		
 		if(gastoLineaDetalleLista == null || gastoLineaDetalleLista.isEmpty()) {
 			return null;
+		}
+		
+		if(DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getCartera().getCodigo())) {
+			GastoLineaDetalle gld = gastoLineaDetalleLista.get(0);
+			gastoLineaDetalleLista.clear();
+			gastoLineaDetalleLista.add(gld);
 		}
 		
 		for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleLista) {
@@ -3882,9 +3889,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 			
 
-			//dto.setOperacionExentaImp(gastoLineaDetalle.getImporteIndirectoExento());
-			//dto.setEsRenunciaExenta(gastoLineaDetalle.getEsImporteIndirectoRenunciaExento());
-			//dto.setEsTipoImpositivo(gastoLineaDetalle.getEsImporteIndirectoTipoImpositivo());
+			dto.setOperacionExentaImp(gastoLineaDetalle.getEsImporteIndirectoExento());
+			dto.setEsRenunciaExenta(gastoLineaDetalle.getEsImporteIndirectoRenunciaExento());
+			dto.setTipoImpositivo(gastoLineaDetalle.getImporteIndirectoTipoImpositivo());
 
 			dto.setCuota(gastoLineaDetalle.getImporteIndirectoCuota());
 			
@@ -3903,8 +3910,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 			dtoLineaDetalleGastoLista.add(dto);
 		}
-		
-		
 		
 		return dtoLineaDetalleGastoLista;
 	}
@@ -3984,4 +3989,5 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		return importePrincipalSujeto;
 	}
+
 }

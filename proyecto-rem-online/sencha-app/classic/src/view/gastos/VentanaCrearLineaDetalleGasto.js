@@ -2,7 +2,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 	extend		: 'HreRem.view.common.WindowBase',
     xtype		: 'ventanaCrearLineaDetalleGasto',
     layout	: 'fit',
-    width	: Ext.Element.getViewportWidth() / 1.7,
+    width	: Ext.Element.getViewportWidth() / 1.2,
 	reference: 'ventanaCrearLineaDetalleGasto',
     
     idGasto: null,
@@ -19,13 +19,14 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
     	var	idLineaDetalleGasto = null;
     	var deshabilitarRecargo = true;
     	var estadoParaGuardar = me.lookupController().getView().getViewModel().getData().gasto.getData().estadoModificarLineasDetalleGasto;
+    	var disabledSinSubtipoGasto = true;
     	
-	    var subtipoGasto= null,		baseSujeta= null,		baseNoSujeta= null,		recargo= null,
-    	tipoRecargo= null,			interes= null,			costas= null,			otros= null,
+	    var subtipoGasto= null,		baseSujeta= null,		baseNoSujeta= null,			recargo= null,
+    	tipoRecargo= null,			interes= null,			costas= null,				otros= null,
     	provSupl= null,				tipoImpuesto= null,		operacionExentaImp= null,	esRenunciaExenta= null,
-    	esTipoImpositivo= null,		cuota= null,			importeTotal= 0,		ccBase= null,
-    	ppBase= null,				ccEsp= null,			ppEsp= null,			ccTasas= null,
-    	ppTasas= null,				ccRecargo= null,		ppRecargo= null,		ccInteres = null,
+    	tipoImpositivo= null,		cuota= null,			importeTotal= 0,			ccBase= null,
+    	ppBase= null,				ccEsp= null,			ppEsp= null,				ccTasas= null,
+    	ppTasas= null,				ccRecargo= null,		ppRecargo= null,			ccInteres = null,
     	ppInteres = null;
     	
 	   
@@ -38,7 +39,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
             	recargo= data.recargo;					tipoRecargo= data.tipoRecargo;					interes= data.interes;
             	costas= data.costas;					otros= data.otros;								provSupl= data.provSupl;
             	tipoImpuesto= data.tipoImpuesto;		operacionExentaImp= data.operacionExentaImp;	esRenunciaExenta= data.esRenunciaExenta;
-            	esTipoImpositivo= data.esTipoImpositivo;	cuota= data.cuota;							importeTotal= data.importeTotal;
+            	tipoImpositivo= data.tipoImpositivo;	cuota= data.cuota;								importeTotal= data.importeTotal;
             	ccBase= data.ccBase;					ppBase= data.ppBase;							ccEsp= data.ccEsp;
             	ppEsp= data.ppEsp;						ccTasas= data.ccTasas;							ppTasas= data.ppTasas;
             	ccRecargo= data.ccRecargo;				ppRecargo= data.ppRecargo;						ccInteres = data.ccInteres;
@@ -48,6 +49,9 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
             		tipoRecargo = null;
             	}else{
             		deshabilitarRecargo = false;
+            	}
+            	if(subtipoGasto != null){
+            		disabledSinSubtipoGasto = false;
             	}
             		
         	}
@@ -104,6 +108,9 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 											valueField: 'codigo',
 						    				bind: {
 						    					store: '{comboSubtiposGasto}'
+						    				},
+						    				listeners:{
+						    					change: 'onChangeSubtipoGasto'
 						    				}
 						    				
 						    				
@@ -113,10 +120,12 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 						    				title: HreRem.i18n('fieldlabel.gasto.importes.linea.detalle'),
 						    				xtype:'fieldset',		    					
 					    					defaultType: 'textfieldbase',
+					    					reference:'fieldsetImporte',
 						    				cls:'formbase_no_shadow',
 						    				border: true,
 						    				collapsible: false,
 											collapsed: false,
+											disabled: disabledSinSubtipoGasto,
 											height: 330,
 											layout: {
 										        type: 'table',
@@ -141,7 +150,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 										        		return Ext.util.Format.currency(value);
 										        	},
 										        	listeners: {
-				    									change: 'onChangeValorImporteTotal'
+				    									change: 'onChangeCuota'
 				    								}	
 								    			},
 								    			{
@@ -276,9 +285,11 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 						    				title: HreRem.i18n('fieldlabel.gasto.impInd.linea.detalle'),
 						    				xtype:'fieldset',		    					
 					    					defaultType: 'textfieldbase',
+					    					reference:'fieldsetImpInd',
 					    					border: true,
 						    				collapsible: false,
 											collapsed: false,
+											disabled: disabledSinSubtipoGasto,
 											height: 330,
 											layout: {
 										        type: 'table',
@@ -304,16 +315,21 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 								    				
 								    			},
 								    			{
-								    				xtype:'numberfield', 
-									        		hideTrigger: true,
-									        		keyNavEnable: false,
-									        		mouseWheelEnable: false,
+								    				xtype: "combobox",
 								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.operacionExentaImp'),
 								    				reference: 'operacionExentaImp',
 								    				name: 'operacionExentaImp',
 								    				value: operacionExentaImp,
 								    				allowBlank: true,		    			
-								    				colspan: 3
+								    				colspan: 3,
+								    				displayField: 'descripcion',
+													valueField: 'codigo',
+								    				bind: {
+								    					store: '{comboSiNoGastoBoolean}'
+								    				},
+								    				listeners: {
+				    									change: 'onChangeCuota'
+				    								}
 								    				
 								    			},			    						
 								    			{
@@ -332,19 +348,18 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 								    				
 								    			},
 								    			{
-								    				xtype: "combobox",
-								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.esTipoImpositivo'),
-								    				reference: 'esTipoImpositivo',
-								    				name: 'esTipoImpositivo',
-								    				value: esTipoImpositivo,
-								    				allowBlank: true,		    			
-								    				colspan: 3,
-								    				displayField: 'descripcion',
-													valueField: 'codigo',
-								    				bind: {
-								    					store: '{comboSiNoGastoBoolean}'
-								    				}
-								    				
+								    				xtype:'numberfield', 
+									        		hideTrigger: true,
+									        		keyNavEnable: false,
+									        		mouseWheelEnable: false,
+								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.tipoImpositivo'),
+								    				reference: 'tipoImpositivo',
+								    				name: 'tipoImpositivo',
+								    				value: tipoImpositivo,
+								    				allowBlank: true,
+								    				listeners: {
+				    									change: 'onChangeCuota'
+				    								}
 								    			},
 								    			{
 								    				xtype:'numberfield', 
@@ -356,6 +371,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 								    				name: 'cuota',
 								    				value: cuota,
 								    				allowBlank: true,
+								    				readOnly: true,
 								    				renderer: function(value) {
 										        		return Ext.util.Format.currency(value);
 										        	}
@@ -368,10 +384,12 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 						    				title: HreRem.i18n('fieldlabel.gasto.ccPp.linea.detalle'),
 						    				xtype:'fieldset',		    					
 					    					defaultType: 'textfieldbase',
+					    					reference:'fieldsetccpp',
 					    					border: true,
 						    				collapsible: false,
 											collapsed: false,
 											height: 330,
+											disabled: disabledSinSubtipoGasto,
 											layout: {
 										        type: 'table',
 												trAttrs: {height: '30px', width: '90%'},
@@ -513,13 +531,15 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
     		comboTipoImpuesto.getStore().load();
     		comboTipoImpuesto.setValue(tipoImpuesto);
     		
-    		var comboSiNoGastoBoolean = me.down('[reference="crearLineaDetalleGastoForm"]').getForm().findField('esRenunciaExenta');
+    		var comboSiNoGastoBoolean = me.down('[reference="crearLineaDetalleGastoForm"]').getForm().findField('operacionExentaImp');
+    		comboSiNoGastoBoolean.getStore().load();
+    		comboSiNoGastoBoolean.setValue(operacionExentaImp);
+    		
+    		comboSiNoGastoBoolean = me.down('[reference="crearLineaDetalleGastoForm"]').getForm().findField('esRenunciaExenta');
     		comboSiNoGastoBoolean.getStore().load();
     		comboSiNoGastoBoolean.setValue(esRenunciaExenta);
 
-    		comboSiNoGastoBoolean = me.down('[reference="crearLineaDetalleGastoForm"]').getForm().findField('esTipoImpositivo');
-    		comboSiNoGastoBoolean.getStore().load();
-    		comboSiNoGastoBoolean.setValue(esTipoImpositivo);
+    		
     		
     		
     	}

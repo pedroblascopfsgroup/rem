@@ -1770,7 +1770,12 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			return;
 		}
 		
+		var tipoImpositivo = form.getForm().findField('tipoImpositivo').getValue();
 		
+		if(tipoImpositivo > 100){
+			me.fireEvent("errorToast",  HreRem.i18n("msg.operacion.ko.gasto.tipoImpositivo.mayor.cien"));
+    		return;
+		}
 		if(!me.comprobarImportesRellenosLineaDetalleGasto(window)){
 			me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.gasto.linea.detalle.no.importe"));
 			return;
@@ -1856,10 +1861,34 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	
     },
     
+    onChangeCuota: function(){
+    	var me = this;
+    	var formulario = me.lookupReference('crearLineaDetalleGastoForm').getForm();
+    	var baseSujeta = formulario.findField('baseSujeta').getValue();
+    	var tipoImpositivo = formulario.findField('tipoImpositivo').getValue();
+    	var cuota = 0;
+    	
+    	if(tipoImpositivo > 100){
+    		ventana = me.lookupReference('ventanaCrearLineaDetalleGasto');
+    		ventana.fireEvent("errorToast",  HreRem.i18n("msg.operacion.ko.gasto.tipoImpositivo.mayor.cien"));
+    		return;
+    	}
+    	
+    	if(baseSujeta != null && tipoImpositivo != null ){
+    		cuota = (baseSujeta * tipoImpositivo )/ 100;
+    	}
+    	
+    	formulario.findField('cuota').setValue(cuota);
+   
+    	var importeTotal = me.calcularImporteTotal(formulario);
+    	formulario.findField('importeTotal').setValue(importeTotal);
+    	
+    },
+    
     calcularImporteTotal: function (formulario){
     	var me=this;
     	var importeTotal = 0;
-    	
+
     	var baseSujeta = formulario.findField('baseSujeta').getValue();
     	var baseNoSujeta = formulario.findField('baseNoSujeta').getValue();
 		var recargo = formulario.findField('recargo').getValue();
@@ -1867,6 +1896,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var costas = formulario.findField('costas').getValue();
 		var otros = formulario.findField('otros').getValue();
 		var provSupl = formulario.findField('provSupl').getValue();
+		var cuota = formulario.findField('cuota').getValue();
+		var operacionExentaImp = formulario.findField('operacionExentaImp').getValue();
+
 		
 		if(baseSujeta != null){
 			importeTotal = importeTotal + baseSujeta;
@@ -1888,6 +1920,10 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		}
 		if(provSupl != null){
 			importeTotal = importeTotal + provSupl;
+		}
+		
+		if(!operacionExentaImp && cuota != null){
+			importeTotal = importeTotal + cuota;
 		}
 		
 		return importeTotal;
@@ -1939,7 +1975,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var base = me.lookupReference('baseIRPFImpD').getValue();
     	var cuotaRetG = me.lookupReference('cuotaIRPFRetG').getValue();
     	var cuota = 0;
-    	
+ 
     	if(tipoImpositivo != null && base != null){
     		cuota = (tipoImpositivo * base)/100;
     	}
@@ -1983,5 +2019,19 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	}
     	
     	return importeTotal;
+    },
+    
+    onChangeSubtipoGasto: function(){
+    	var me = this;
+    	var formulario = me.lookupReference('crearLineaDetalleGastoForm');
+    	var subtipoGasto = formulario.getForm().findField('subtipoGasto').getValue();
+    	var ventana = formulario.up('[reference=ventanaCrearLineaDetalleGasto]');
+    	
+    	if(subtipoGasto != null && subtipoGasto != undefined){
+    		ventana.down('[reference=fieldsetccpp]').setDisabled(false);
+    		ventana.down('[reference=fieldsetImpInd]').setDisabled(false);
+    		ventana.down('[reference=fieldsetImporte]').setDisabled(false);
+    	}
+    
     }
 });

@@ -1308,12 +1308,24 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					detalleGasto.getAuditoria().setFechaModificar(new Date());
 				}	
 				
-				detalleGasto.setIrpfBase(dto.getBaseImpI());
-				detalleGasto.setIrpfClave(dto.getClave());
-				detalleGasto.setIrpfSubclave(dto.getSubclave());
-				detalleGasto.setRetencionGarantiaTipoImpositivo(dto.getIrpfTipoImpositivoRetG());
-				detalleGasto.setRetencionGarantiaBase(dto.getBaseRetG());
-				detalleGasto.setRetencionGarantiaCuota(dto.getIrpfCuotaRetG());
+				if(dto.getBaseImpI() != null) {
+					detalleGasto.setIrpfBase(dto.getBaseImpI());
+				}
+				if(dto.getClave() !=null) { 
+					detalleGasto.setIrpfClave(dto.getClave());
+				}
+				if( dto.getSubclave() !=null) {
+					detalleGasto.setIrpfSubclave(dto.getSubclave());
+				}
+				if(dto.getIrpfTipoImpositivoRetG() != null) {
+					detalleGasto.setRetencionGarantiaTipoImpositivo(dto.getIrpfTipoImpositivoRetG());
+				}
+				if( dto.getBaseRetG() != null) {
+					detalleGasto.setRetencionGarantiaBase(dto.getBaseRetG());
+				}
+				if(dto.getIrpfCuotaRetG() != null) {
+					detalleGasto.setRetencionGarantiaCuota(dto.getIrpfCuotaRetG());
+				}
 				
 				
 				Double importeTotal = recalcularImporteTotalGasto(detalleGasto);

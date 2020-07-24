@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Viorel Remus OVidiu
---## FECHA_CREACION=20200430
+--## FECHA_CREACION=20200724
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-7079
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
+--##	    0.2 REMVIP-7857 - Añadir codigo 'Sur'
 --##########################################
 --*/
 
@@ -39,7 +40,9 @@ DECLARE
     	T_TIPO_DATA('DTNO', 'DT Noreste'),
     	T_TIPO_DATA('DTC', 'DT Centro'),
     	T_TIPO_DATA('DTS', 'DT Sur'),
-    	T_TIPO_DATA('DTL', 'DT Levante')
+    	T_TIPO_DATA('DTL', 'DT Levante'),
+	T_TIPO_DATA('SUR', 'Sur'),
+	
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN
@@ -76,7 +79,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
 					  '''||TRIM(V_TMP_TIPO_DATA(2))||''',
 					  '''||TRIM(V_TMP_TIPO_DATA(2))||''',
 					  0,
-					  ''REMVIP-7079'',
+					  ''REMVIP-7857'',
 					  SYSDATE,
 					  0
                       )';

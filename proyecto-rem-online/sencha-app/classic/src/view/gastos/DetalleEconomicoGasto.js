@@ -113,7 +113,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 															xtype: 'currencyfieldbase',
 															symbol: HreRem.i18n("symbol.euro"),
 															reference:'cuotaIRPFImpD',
-															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.cuota'),
+															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.irpf.cuota'),
 											                bind: '{detalleeconomico.irpfCuota}',
 											                readOnly: true
 														},
@@ -159,7 +159,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 															xtype: 'currencyfieldbase',
 															symbol: HreRem.i18n("symbol.euro"),
 															reference:'baseIRPFRetG',
-															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.irpf.base'),
+															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.retencion.base'),
 											                bind: '{detalleeconomico.baseRetG}',
 										                	listeners: {
 										                		edit: function(){

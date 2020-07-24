@@ -57,13 +57,21 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 			title : HreRem
 					.i18n('title.admision.revisionTitulo.informacionGeneralTitulo'),
 			items : [{
-				xtype : 'textfieldbase',
+				xtype : 'comboboxfieldbase',
 				fieldLabel : HreRem
-						.i18n('fieldlabel.admision.revisionTitulo.tituloPropiedad')
+						.i18n('fieldlabel.admision.revisionTitulo.tituloPropiedad'),
+				bind : {
+					store : '{storeTituloOrigenActivo}',
+					value : '{admisionRevisionTitulo.tipoTituloCodigo}'
+				}
 			}, {
-				xtype : 'textfieldbase',
+				xtype : 'comboboxfieldbase',
 				fieldLabel : HreRem
-						.i18n('fieldlabel.admision.revisionTitulo.subtipoTitulo')
+						.i18n('fieldlabel.admision.revisionTitulo.subtipoTitulo'),
+				bind : {
+					store : '{comboSubtipoTitulo}',
+					value : '{admisionRevisionTitulo.subtipoTituloCodigo}'
+				}
 			}, {
 				xtype : 'comboboxfieldbase',
 				fieldLabel : HreRem
@@ -105,6 +113,14 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 					value : '{admisionRevisionTitulo.situacionInicialCargas}'
 				}
 			}, {
+				xtype : 'comboboxfieldbase',
+				fieldLabel : HreRem
+						.i18n('fieldlabel.admision.revisionTitulo.situacionConstructivaRegistral'),
+				bind : {
+					store : '{comboSituacionConstructivaRegistral}',
+					value : '{admisionRevisionTitulo.situacionConstructivaRegistral}'
+				}
+			},{
 				xtype : 'numberfieldbase',
 				fieldLabel : HreRem
 						.i18n('fieldlabel.admision.revisionTitulo.porcentajePropiedad'),
@@ -120,9 +136,13 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 					value : '{admisionRevisionTitulo.tipoTitularidad}'
 				}
 			}, {
-				xtype : 'textfieldbase',
+				xtype : 'comboboxfieldbase',
 				fieldLabel : HreRem
-						.i18n('fieldlabel.admision.revisionTitulo.proteccionOficial')
+						.i18n('fieldlabel.admision.revisionTitulo.proteccionOficial'),
+				bind : {
+					store : '{comboProteccionOficial}',
+					value : '{admisionRevisionTitulo.proteccionOficial}'
+				}
 			}, {
 				xtype : 'textfieldbase',
 				fieldLabel : HreRem
@@ -407,11 +427,12 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 			defaultType : 'textfieldbase',
 			title : HreRem.i18n('title.admision.revisionTitulo.otros'),
 			items : [{
-				xtype : 'textfieldbase',
+				xtype : 'comboboxfieldbase',
 				fieldLabel : HreRem
 						.i18n('fieldlabel.admision.revisionTitulo.tipoIncidenciaOtros'),
 				bind : {
-					value : '{admisionRevisionTitulo.tipoIncidenciaOtros}'
+					store: '{comboTipoIncidencia}',
+					value : '{admisionRevisionTitulo.tipoIncidencia}'
 				}
 			}, {
 				xtype : 'comboboxfieldbase',

@@ -273,6 +273,9 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoOcupacionLegal",DDTipoOcupacionLegal.class);
 		mapa.put("tipoagendasaneamiento",DDTipoAgendaSaneamiento.class);
 		mapa.put("subtipoagendasaneamiento", DDSubtipoAgendaSaneamiento.class);
+		mapa.put("situacionConstructivaRegistral", DDSituacionConstructivaRegistral.class);
+		mapa.put("proteccionOficial", DDProteccionOficial.class);
+		mapa.put("tipoIncidencia", DDTipoIncidencia.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

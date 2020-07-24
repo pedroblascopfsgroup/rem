@@ -133,7 +133,52 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTituloModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tipoOcupacionLegal'}
 			}
-    	}
+    	},
+		storeTituloOrigenActivo: {								        		
+    			model: 'HreRem.model.ComboBase',   
+      		     proxy: {
+        		        type: 'uxproxy',
+        		        remoteUrl: 'activo/getOrigenActivo',
+        		        extraParams: {id: '{activo.id}'}
+    	    	},
+    	    	autoLoad: true
+			},    		
+		comboSubtipoTitulo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'subtiposTitulo'}
+			},
+			filters: {
+                property: 'codigoTipoTitulo',
+                value: '{admisionRevisionTitulo.tipoTituloCodigo}'
+			}
+		},
+		comboSituacionConstructivaRegistral: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'situacionConstructivaRegistral'}
+			}
+		},
+		comboProteccionOficial: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'proteccionOficial'}
+			}
+		},
+		comboTipoIncidencia: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoIncidencia'}
+			}
+		}
     }
       
 });

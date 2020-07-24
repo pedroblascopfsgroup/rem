@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
-import es.capgemini.pfs.expediente.model.DDTipoExpediente;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -36,18 +35,22 @@ import es.pfsgroup.plugin.rem.model.dd.DDBoletines;
 import es.pfsgroup.plugin.rem.model.dd.DDCedulaHabitabilidad;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDLicenciaPrimeraOcupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDProteccionOficial;
 import es.pfsgroup.plugin.rem.model.dd.DDSeguroDecenal;
 import es.pfsgroup.plugin.rem.model.dd.DDSiNoNoAplica;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionConstructivaRegistral;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionInicialCargas;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionInicialInscripcion;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionPosesoriaInicial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipologiaAgenda;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoArrendamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoExpedienteAdministrativo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoIncidencia;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoIncidenciaRegistral;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOcupacionLegal;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTitularidad;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 
 
 @Service("admisionManager")
@@ -194,11 +197,16 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 		if ( idActivo == null) { 
 			throw new AdmisionException(AdmisionException.getActivoNoInformado());
 		}
+		Activo activo = activoDao.getActivoById(idActivo);
+		if ( activo == null) {
+			throw new AdmisionException(AdmisionException.getActivoNoExisteError(idActivo.toString()));
+		}
 		dto.setIdActivo(idActivo);
 		ActivoAdmisionRevisionTitulo revisionTitulo = getAdmisionRevisionTitulo(dto);
 		if ( revisionTitulo == null ) {
 			return dto;
 		} 
+		
 		
 		beanUtilNotNull.copyProperty(dto, "revisado", getCode(revisionTitulo.getRevisado()));
 		beanUtilNotNull.copyProperty(dto, "instLibArrendataria", getCode(revisionTitulo.getInstLibArrendataria()));
@@ -238,6 +246,11 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 		beanUtilNotNull.copyProperty(dto, "tipoIncidenciaIloc", revisionTitulo.getTipoIncidenciaIloc());
 		beanUtilNotNull.copyProperty(dto, "deterioroGrave", revisionTitulo.getDeterioroGrave());
 		beanUtilNotNull.copyProperty(dto, "tipoIncidenciaOtros", revisionTitulo.getTipoIncidenciaOtros());
+		beanUtilNotNull.copyProperty(dto, "tipoTituloCodigo", getCode(activo.getTipoTitulo()));
+		beanUtilNotNull.copyProperty(dto, "subtipoTituloCodigo", getCode(activo.getSubtipoTitulo()));
+		beanUtilNotNull.copyProperty(dto, "situacionConstructivaRegistral", getCode(revisionTitulo.getSituacionConstructivaRegistral()));
+		beanUtilNotNull.copyProperty(dto, "proteccionOficial", getCode(revisionTitulo.getProteccionOficial()));
+		beanUtilNotNull.copyProperty(dto, "tipoIncidencia", getCode(revisionTitulo.getTipoIncidencia()));
 		
 		return dto;
 	}
@@ -253,8 +266,14 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 		if ( revisionTitulo == null ) {
 			throw new AdmisionException(AdmisionException.getActivoNoExisteError(dto.getIdActivo().toString()));
 		}
+		Activo activo = activoDao.getActivoById(dto.getId());
+		if ( activo == null) {
+			throw new AdmisionException(AdmisionException.getActivoNoExisteError(dto.getId().toString()));
+		}
 		beanUtilNotNull.copyProperty(revisionTitulo, "revisado", genericGet(DDSinSiNo.class, CODE, dto.getRevisado()));
 		beanUtilNotNull.copyProperty(revisionTitulo, "instLibArrendataria", genericGet(DDSiNoNoAplica.class, CODE, dto.getInstLibArrendataria()));
+		beanUtilNotNull.copyProperty(activo, 		 "tipoTitulo", genericGet(DDTipoTituloActivo.class, CODE, dto.getTipoTituloCodigo()));
+		beanUtilNotNull.copyProperty(activo, 		 "subtipoTitulo", genericGet(DDTipoTituloActivo.class, CODE, dto.getSubtipoTituloCodigo()));
 		beanUtilNotNull.copyProperty(revisionTitulo, "ratificacion", genericGet(DDSiNoNoAplica.class, CODE, dto.getRatificacion()));
 		beanUtilNotNull.copyProperty(revisionTitulo, "situacionInicialInscripcion", genericGet(DDSituacionInicialInscripcion.class, CODE, dto.getSituacionInicialInscripcion()));
 		beanUtilNotNull.copyProperty(revisionTitulo, "posesoriaInicial", genericGet(DDSituacionPosesoriaInicial.class, CODE, dto.getPosesoriaInicial()));
@@ -291,6 +310,9 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 		beanUtilNotNull.copyProperty(revisionTitulo, "tipoIncidenciaIloc", dto.getTipoIncidenciaIloc());
 		beanUtilNotNull.copyProperty(revisionTitulo, "deterioroGrave", dto.getDeterioroGrave());
 		beanUtilNotNull.copyProperty(revisionTitulo, "tipoIncidenciaOtros", dto.getTipoIncidenciaOtros());
+		beanUtilNotNull.copyProperty(revisionTitulo, "situacionConstructivaRegistral", genericGet(DDSituacionConstructivaRegistral.class, CODE, dto.getSituacionConstructivaRegistral()));
+		beanUtilNotNull.copyProperty(revisionTitulo, "proteccionOficial", genericGet(DDProteccionOficial.class, CODE, dto.getProteccionOficial()));
+		beanUtilNotNull.copyProperty(revisionTitulo, "tipoIncidencia",genericGet(DDTipoIncidencia.class, CODE, dto.getTipoIncidencia()));
 		
 		if ( dto.isUpdate() ) {
 			genericDao.update(ActivoAdmisionRevisionTitulo.class, revisionTitulo);

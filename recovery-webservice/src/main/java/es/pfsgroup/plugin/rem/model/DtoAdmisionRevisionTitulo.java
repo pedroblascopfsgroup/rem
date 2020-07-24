@@ -58,6 +58,12 @@ public class DtoAdmisionRevisionTitulo extends WebDto {
 	private String tipoIncidenciaIloc;
 	private String deterioroGrave;
 	private String tipoIncidenciaOtros;
+	private String tipoTituloCodigo;
+	private String subtipoTituloCodigo;
+	private String situacionConstructivaRegistral;
+	private String proteccionOficial;
+	private String tipoIncidencia;
+	
 	private boolean update = false;
 	
 	public Long getId() {
@@ -306,6 +312,36 @@ public class DtoAdmisionRevisionTitulo extends WebDto {
 	}
 	public void setEstadoCertificadoFinObra(String estadoCertificadoFinObra) {
 		this.estadoCertificadoFinObra = estadoCertificadoFinObra;
+	}
+	public String getTipoTituloCodigo() {
+		return tipoTituloCodigo;
+	}
+	public void setTipoTituloCodigo(String tipoTituloCodigo) {
+		this.tipoTituloCodigo = tipoTituloCodigo;
+	}
+	public String getSubtipoTituloCodigo() {
+		return subtipoTituloCodigo;
+	}
+	public void setSubtipoTituloCodigo(String subtipoTituloCodigo) {
+		this.subtipoTituloCodigo = subtipoTituloCodigo;
+	}
+	public String getSituacionConstructivaRegistral() {
+		return situacionConstructivaRegistral;
+	}
+	public void setSituacionConstructivaRegistral(String situacionConstructivaRegistral) {
+		this.situacionConstructivaRegistral = situacionConstructivaRegistral;
+	}
+	public String getProteccionOficial() {
+		return proteccionOficial;
+	}
+	public void setProteccionOficial(String proteccionOficial) {
+		this.proteccionOficial = proteccionOficial;
+	}
+	public String getTipoIncidencia() {
+		return tipoIncidencia;
+	}
+	public void setTipoIncidencia(String tipoIncidencia) {
+		this.tipoIncidencia = tipoIncidencia;
 	}
 	
 	

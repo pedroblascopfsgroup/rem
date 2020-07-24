@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Viorel Remus OVidiu
---## FECHA_CREACION=20200724
+--## FECHA_CREACION=20200725
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-7079
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Version inicial
 --##	    0.2 REMVIP-7857 - Añadir codigo 'Sur'
+--##	    0.3 REMVIP-7860 - Añadir MACC y ARROW
 --##########################################
 --*/
 
@@ -41,7 +42,9 @@ DECLARE
     	T_TIPO_DATA('DTC', 'DT Centro'),
     	T_TIPO_DATA('DTS', 'DT Sur'),
     	T_TIPO_DATA('DTL', 'DT Levante'),
-	T_TIPO_DATA('SUR', 'Sur')
+	T_TIPO_DATA('SUR', 'Sur'),
+	T_TIPO_DATA('MAC', 'MACC'),
+	T_TIPO_DATA('ARW', 'ARROW')
 	
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

@@ -287,10 +287,26 @@ function check_ddl_content() {
 	done
 }
 
+function check_withGrantOptions() {
+	file=$1
+	declare -A rule=(	[name]="Fichero DDL con contenido incorrecto"
+						[file]=$file 
+						[problem]="Se han detectado la sentencia WITH GRANT OPTION en el DDL."
+						[solution]="Revise si es necesario incluir WITH GRANT OPTION" )
+
+	existe=`cat $file | grep -iE "with grant option" | wc -l`
+	if [ $existe -gt 0 ]; then
+		paint_error rule
+	    exit 1
+	fi
+
+}
+
 function SQL_ddl_rules() {
 	for f in `eval $modified_files | grep -E \/DD.*\.sql$ | grep -v producto | grep -v ^procs_y_vistas/ | grep -v ^reports/ | grep -v migracion | grep -v scripts | grep -v templates | grep -v rutinas | grep -v produccion | grep -v incidencias | grep -v rem_fase1 | grep -v informacional | grep -v convivencia | grep -v tmp | grep -v 9\.2 | grep -v 9\.3 | grep -v 9\.4 |  grep -v no_protocolo | grep -v sincro_f2 `; do
 		check_ddl $f
-		#check_ddl_content $f
+		check_ddl_content $f
+		check_withGrantOptions $f
 	done
 }
 

@@ -1,0 +1,129 @@
+--/*
+--##########################################
+--## AUTOR=Viorel Remus Ovidiu
+--## FECHA_CREACION=20200727
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-7861
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Script que actualizar fecha alta ofertas
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+
+DECLARE
+
+    V_SQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar         
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_TABLA VARCHAR2(25 CHAR):= 'OFR_OFERTAS';
+    V_COUNT NUMBER(16); -- Vble. para contar.
+    V_KOUNT NUMBER(16); -- Vble. para kontar.
+    V_COUNT_UPDATE NUMBER(16):= 0; -- Vble. para contar updates
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+
+	NUM_OFERTA NUMBER(16);
+	FECHA_ALTA VARCHAR2(25 CHAR);
+
+    V_USUARIO VARCHAR2(50 CHAR) := 'REMVIP-7861';    
+    
+    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+    			-- NUM_OFERTA	-FECHA_ALTA
+
+T_TIPO_DATA(90229452,'23/11/2019'),
+T_TIPO_DATA(90231466,'02/12/2019'),
+T_TIPO_DATA(90232078,'10/12/2019'),
+T_TIPO_DATA(90233072,'16/12/2019'),
+T_TIPO_DATA(90233080,'16/12/2019'),
+T_TIPO_DATA(90233586,'16/12/2019'),
+T_TIPO_DATA(90248446,'26/03/2020'),
+T_TIPO_DATA(90249985,'31/03/2020'),
+T_TIPO_DATA(90249987,'07/02/2020'),
+T_TIPO_DATA(90250049,'09/01/2020'),
+T_TIPO_DATA(90250094,'09/01/2020'),
+T_TIPO_DATA(90250619,'07/05/2020'),
+T_TIPO_DATA(90250736,'05/03/2020'),
+T_TIPO_DATA(90252105,'21/05/2020'),
+T_TIPO_DATA(90254984,'28/05/2020'),
+T_TIPO_DATA(90257059,'01/06/2020'),
+T_TIPO_DATA(90257876,'22/01/2020'),
+T_TIPO_DATA(90258167,'08/06/2020'),
+T_TIPO_DATA(90258998,'23/06/2020'),
+T_TIPO_DATA(90260914,'04/06/2020'),
+T_TIPO_DATA(90260920,'04/06/2020'),
+T_TIPO_DATA(90260922,'11/06/2020'),
+T_TIPO_DATA(90260925,'11/06/2020'),
+T_TIPO_DATA(90260929,'18/06/2020'),
+T_TIPO_DATA(90260934,'01/06/2020')
+
+
+		); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+    
+BEGIN	
+	
+    DBMS_OUTPUT.PUT_LINE('[INICIO] ');
+
+
+    FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+      LOOP
+      
+        V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+    	NUM_OFERTA := V_TMP_TIPO_DATA(1);
+	FECHA_ALTA := V_TMP_TIPO_DATA(2);
+       	EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.OFR_OFERTAS WHERE OFR_NUM_OFERTA = '||NUM_OFERTA INTO V_KOUNT;
+  			  
+		IF V_KOUNT > 0 THEN 
+	  			 
+			DBMS_OUTPUT.PUT_LINE('UPDATEANDO LA OFERTA '||NUM_OFERTA||' EN '||V_TABLA);
+			
+			V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' 
+				  SET OFR_FECHA_APROBACION_PRO_MANZANA = TO_DATE('''||FECHA_ALTA||''', ''DD/MM/YYYY'')
+				     ,USUARIOMODIFICAR = '''||V_USUARIO||'''
+				     ,FECHAMODIFICAR = SYSDATE
+				  WHERE OFR_NUM_OFERTA = '||NUM_OFERTA||'';
+			EXECUTE IMMEDIATE V_SQL;
+			
+			DBMS_OUTPUT.PUT_LINE('MODIFICANDA LA OFERTA '||NUM_OFERTA||' EN '||V_TABLA);
+			
+			V_COUNT_UPDATE := V_COUNT_UPDATE + 1;
+				
+		ELSE
+			
+			DBMS_OUTPUT.PUT_LINE('[INFO] LA OFERTA '||NUM_OFERTA||' no existe!');
+			
+		END IF;
+		
+      END LOOP;
+    COMMIT;
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] Se han insertado en total '||V_COUNT_UPDATE||' registros en la tabla '||V_TABLA);
+   
+
+EXCEPTION
+     WHEN OTHERS THEN
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
+
+          ROLLBACK;
+          RAISE;          
+
+END;
+/
+EXIT

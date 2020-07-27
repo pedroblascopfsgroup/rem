@@ -18,9 +18,6 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 		boxready : function() {
 			var me = this;
 			me.lookupController().cargarTabData(me);
-		},
-		show: function(){
-			var me = this;
 		}
 	},
 	initComponent : function() {

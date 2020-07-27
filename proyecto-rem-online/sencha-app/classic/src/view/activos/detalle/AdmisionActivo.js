@@ -24,7 +24,16 @@ Ext.define('HreRem.view.activos.detalle.AdmisionActivo', {
 				}
     		}
 		},
-
+		show: function () {
+			var me = this;
+			if ( me.getActiveTab() ) {
+				me.verifyProxyObservaciones(me.getActiveTab());
+			}
+		},
+       tabchange: function (tabPanel, newCard, oldCard, eOpts) {
+       		var me = this;
+       		me.verifyProxyObservaciones(newCard);
+       },
         beforetabchange: function (tabPanel, tabNext, tabCurrent) {
 			tabPanel.down("[itemId=botoneditar]").setVisible(false);	            	
         	// Comprobamos si estamos editando para confirmar el cambio de pestaña
@@ -58,23 +67,6 @@ Ext.define('HreRem.view.activos.detalle.AdmisionActivo', {
         	return true;		            	
         }
         
-       },
-       tabchange: function (tabPanel, newCard, oldCard, eOpts) {
-       		var targetTab = null;
-       		var childs = newCard.items.items;
-       		if ( childs.length > 0 ) {
-	       		for (var i = 0; i < childs.length; i++) {
-	       			var child = childs [i];
-	       			for (var j = 0; j < child.items.items.length; j++ ) {
-	       				if ("observacionesactivo".includes(child.items.items[j].xtype)){
-	       					targetTab = child.items.items[j];
-	       				}
-	       			}
-	       		}
-	       		if ( targetTab  && typeof targetTab.buildStoreWithProxy === 'function') {
-	       			targetTab.buildStoreWithProxy(targetTab);
-	       		}
-       		}
        }
     },
 
@@ -180,5 +172,22 @@ Ext.define('HreRem.view.activos.detalle.AdmisionActivo', {
 	    		$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
 	    	}
 		}
+    },
+    verifyProxyObservaciones: function ( tab ) {
+       		var observacionesGrid = null;
+       		var childs = tab.items.items;
+       		if ( childs.length > 0 ) {
+	       		for (var i = 0; i < childs.length; i++) {
+	       			var child = childs [i];
+	       			for (var j = 0; j < child.items.items.length; j++ ) {
+	       				if ("observacionesactivo".includes(child.items.items[j].xtype)){
+	       					observacionesGrid = child.items.items[j];
+	       				}
+	       			}
+	       		}
+	       		if ( observacionesGrid  && typeof observacionesGrid.buildStoreWithProxy === 'function') {
+	       			observacionesGrid.buildStoreWithProxy(observacionesGrid);
+	       		}
+       		}
     }
 });

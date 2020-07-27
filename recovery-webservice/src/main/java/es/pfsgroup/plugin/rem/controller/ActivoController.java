@@ -924,6 +924,7 @@ public class ActivoController extends ParadiseJsonController {
 			model.put(RESPONSE_DATA_KEY, observaciones.getObservacionesById(id));
 		}catch(Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
 			logger.error(e);
 		}
 		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "observaciones", ACCION_CODIGO.CODIGO_VER);
@@ -933,7 +934,7 @@ public class ActivoController extends ParadiseJsonController {
 	
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveObservacionesActivo(DtoObservacion dtoObservacion, String tab, ModelMap model) {
+	public ModelAndView saveObservacion(DtoObservacion dtoObservacion, String tab, ModelMap model) {
 		try {
 			GridObservacionesApi observaciones = gridObservacionesFactory.getGridObservacionByCode(tab);
 			boolean success = observaciones.saveObservacion(dtoObservacion);
@@ -942,6 +943,7 @@ public class ActivoController extends ParadiseJsonController {
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
 		}
 
 		return createModelAndViewJson(model);
@@ -958,6 +960,7 @@ public class ActivoController extends ParadiseJsonController {
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
 		}
 
 		return createModelAndViewJson(model);
@@ -974,6 +977,7 @@ public class ActivoController extends ParadiseJsonController {
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
 		}
 
 		return createModelAndViewJson(model);

@@ -6,6 +6,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.model.ActivoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
 
@@ -46,7 +49,16 @@ public class ObservacionesRevisionTitulo extends GridObservaciones implements Gr
 	@Transactional(readOnly = false)
 	public boolean saveObservacion(DtoObservacion observacion) {
 		try {
-			if (Arrays.asList(tiposObservacion()).contains(observacion.getTipoObservacionCodigo())) {
+			String codigo =  observacion.getTipoObservacionCodigo();
+			if ( codigo == null ) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(observacion.getId()));
+				ActivoObservacion tipoObservacion = genericDao.get(ActivoObservacion.class, filtro);
+				if ( tipoObservacion != null && tipoObservacion.getTipoObservacion() != null ) {
+					codigo = tipoObservacion.getTipoObservacion().getCodigo();
+				}
+			}
+			
+			if (Arrays.asList(tiposObservacion()).contains(codigo)) {
 				return saveObservacionByDto(observacion);
 			} else {
 				throw new Exception("No se puede modificar ese tipo de observacion en este grid.");

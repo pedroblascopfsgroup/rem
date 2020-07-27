@@ -80,6 +80,9 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
 				           				combo.getStore().clearFilter(true);
 				           				tab.setStoreWithPermittedValues(combo.getStore(), whiteList);
 				           			}
+				           		},
+				           		collapse: function ( combo ) {
+				           			combo.getStore().clearFilter(true);
 				           		}
 				           }
 			           }
@@ -162,12 +165,15 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
     doLoad: function( panel ) {
     	var storeObservaciones = panel.buildStoreWithProxy(panel);
 		// Extraparams en el store para hacer una carga dinamica dependiendo del tab. Utiliza el model Observaciones.
-		storeObservaciones.load({
-			callback: function (records, operation, success) {
-				// Propagar los extraParams para el resto de acciones.
-				this.getModel().getProxy().setExtraParams(this.getProxy().getExtraParams());
-			}
-		}, true);
+    	
+    	if (!storeObservaciones.isLoading()){
+			storeObservaciones.load({
+				callback: function (records, operation, success) {
+					// Propagar los extraParams para el resto de acciones.
+					this.getModel().getProxy().setExtraParams(this.getProxy().getExtraParams());
+				}
+			}, true);
+    	}
     },
   //HREOS-846 Si NO esta dentro del perimetro, ocultamos del grid las opciones de agregar/elminar
     evaluarEdicion: function() {    	

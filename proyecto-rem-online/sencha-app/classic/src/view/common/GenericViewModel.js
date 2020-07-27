@@ -544,6 +544,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
     		},
     		// Stores para el grid observaciones. Se crean 3 para solucionar problemas de instancia 
     		/*
+
     		 * Valor de la constante 
     		  	OBSERVACIONES_TAB_LAUNCH: {
 				ACTIVO : 'activo',
@@ -558,7 +559,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 		        remoteUrl: 'activo/getListObservaciones',
 		        extraParams: {} // Dynamic.
 	    	 },
-	    	 autoLoad: false
+	    	 autoLoad: true
     		},
     		storeObservaciones_saneamiento: {    
     		 pageSize: $AC.getDefaultPageSize(),
@@ -568,7 +569,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 		        remoteUrl: 'activo/getListObservaciones',
 		        extraParams: {} // Dynamic.
 	    	 },
-	    	 autoLoad: false
+	    	 autoLoad: true
     		},
     		storeObservaciones_revisionTitulo: {    
     		 pageSize: $AC.getDefaultPageSize(),
@@ -578,7 +579,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 		        remoteUrl: 'activo/getListObservaciones',
 		        extraParams: {} // Dynamic.
 	    	 },
-	    	 autoLoad: false
+	    	 autoLoad: true
     		}
      }    
 });

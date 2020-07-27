@@ -151,6 +151,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
 			                	xtype:'datefieldbase',
 						 		fieldLabel: HreRem.i18n('fieldlabel.fecha.tope.pago.hasta'),
 						 		name: 'fechaTopePagoHasta',
+						 		maxValue: null,
 						 		formatter: 'date("d/m/Y")'
 							},
 							{

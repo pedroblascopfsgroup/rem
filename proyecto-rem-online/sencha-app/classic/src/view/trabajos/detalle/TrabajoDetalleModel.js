@@ -109,6 +109,15 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    		 return false;
 	    },
 	    
+	    disablePorCierreEconomicoSuplidos: function(get) {
+	    	var fechaCierreEco = get('trabajo.fechaCierreEconomico');
+	    	var esSuperGestorActivos = $AU.userIsRol('SUPERGESTACT');
+	    	if (!Ext.isEmpty(fechaCierreEco) && !esSuperGestorActivos)
+	    		 return true;
+	    	 else
+	    		 return false;
+	    },
+	    
 	    esVisibleFechaAutorizacionPropietario: function(get){
 	    	 me = this;
 			 if(get('trabajo.cartera')=='Liberbank' && CONST.TIPOS_TRABAJO["ACTUACION_TECNICA"] == me.get('trabajo.tipoTrabajoCodigo')) 
@@ -374,8 +383,16 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     			proxy: {
     				type: 'uxproxy',
     				remoteUrl: 'trabajo/getListActivosByProceso',
+    				//actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
     				extraParams: {idProceso: 'idProceso'}
-    			}
+    			},
+    			//session: true,
+    	    	remoteSort: true,
+    	    	remoteFilter: true,
+    	    	autoLoad:false/*,
+    	    	listeners : {
+    	            beforeload : 'paramLoading'
+    	        }*/
     		},
     		
     		comboProveedorContacto : {

@@ -361,7 +361,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM ACT_CPR_COM_PROPIETARIOS WHERE"
-				+ "		 CPR_COD_COM_PROP_UVEM ='"+idPropietarios+"' "
+				+ "		 CPR_NIF = '"+idPropietarios+"' "
 				+ "		 	AND BORRADO = 0");
 		return !"0".equals(resultado);
 	}
@@ -4724,4 +4724,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 	
+	@Override
+	public Boolean perteneceADiccionarioEquipoGestion(String codEquipoGestion) {
+		if(Checks.esNulo(codEquipoGestion) || !StringUtils.isAlphanumeric(codEquipoGestion)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) FROM DD_EQG_EQUIPO_GESTION " 
+				+ "WHERE DD_EQG_CODIGO = '"+ codEquipoGestion +"' "
+				+ "AND BORRADO = 0"
+		);
+		
+		return !"0".equals(resultado);
+	}
 }

@@ -231,16 +231,14 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			calculate: function(data) { 
     				return data.entidadPropietariaCodigo == CONST.CARTERA['CERBERUS'] && data.subcarteraCodigo == CONST.SUBCARTERA['APPLEINMOBILIARIO'];
     			},
-				depends: 'subcarteraCodigo',
-				depends: 'entidadPropietariaCodigo'
+				depends: ['subcarteraCodigo','entidadPropietariaCodigo']
     		},
     		{
     			name: 'mostrarPbcReserva',
     			calculate: function(data) { 
     				return data.entidadPropietariaCodigo == CONST.CARTERA['CERBERUS'] && (data.subcarteraCodigo == CONST.SUBCARTERA['APPLEINMOBILIARIO'] || data.subcarteraCodigo == CONST.SUBCARTERA['DIVARIANARROW'] || data.subcarteraCodigo == CONST.SUBCARTERA['DIVARIANREMAINING']);
     			},
-				depends: 'subcarteraCodigo',
-				depends: 'entidadPropietariaCodigo'
+				depends: ['subcarteraCodigo','entidadPropietariaCodigo']
     		},
     		{
     			name:'estaFirmado',
@@ -329,7 +327,7 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     
 	proxy: {
 		type: 'uxproxy',
-		localUrl: 'expedienteComercial.json',
+		//localUrl: 'expedienteComercial.json',
 		api: {
             read: 'expedientecomercial/getTabExpediente',
             update: 'expedientecomercial/saveFichaExpediente'

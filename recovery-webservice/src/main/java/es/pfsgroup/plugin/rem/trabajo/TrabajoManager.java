@@ -21,13 +21,15 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import es.capgemini.pfs.users.UsuarioManager;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import edu.emory.mathcs.backport.java.util.Collections;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
@@ -41,10 +43,12 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.dao.UsuarioDao;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -53,7 +57,9 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
+import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelManagerApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.impl.MSVProcesoManager;
+import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
@@ -147,10 +153,12 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
+import es.pfsgroup.plugin.rem.thread.LiberarFicheroTrabajos;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
+import es.pfsgroup.recovery.api.UsuarioApi;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
 import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
 
@@ -285,6 +293,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Autowired
 	UsuarioManager usuarioManager;
+	
+	@Autowired
+	private MSVFicheroDao ficheroDao;
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
+	
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 	
 	@Override
 	public String managerName() {
@@ -627,11 +644,22 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 
 		if (!Checks.esNulo(dtoTrabajo.getIdProceso())) {
-			List<Trabajo> trabajos = crearTrabajoPorSubidaActivos(dtoTrabajo);
+			MSVDocumentoMasivo document = ficheroDao.findByIdProceso(dtoTrabajo.getIdProceso());
+			MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(document);
+			
+			Integer numFilas;
+			try {
+				numFilas = exc.getNumeroFilasByHoja(0,document.getProcesoMasivo().getTipoOperacion())-1;
+				processAdapter.setStateProcessing(document.getProcesoMasivo().getId(),new Long(numFilas));
+				Usuario usu=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 
-			for (Trabajo trabajoActivo : trabajos) {
-				createTramiteTrabajo(trabajoActivo);
-			}
+				Thread creacionAsincrona = new Thread(new LiberarFicheroTrabajos(usu, dtoTrabajo));
+
+				creacionAsincrona.start();
+				trabajo.setId(-1L);
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}			
 
 		} else {
 			if (dtoTrabajo.getIdActivo() != null) {
@@ -890,7 +918,145 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return trabajo;
 
 	}
+	
+	@Transactional
+	public void doCreacionTrabajosAsync(DtoFichaTrabajo dtoTrabajo, Usuario usuarioLogado) {
+		TransactionStatus transaction = null;
+		transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+		List<Activo> listaActivos = this.getListaActivosProceso(dtoTrabajo.getIdProceso());
+		Trabajo trabajo = new Trabajo();
+		
+		try {
 
+			Boolean isFirstLoop = true;
+			Double total= 0d;
+			Boolean algunoSinPrecio= false;
+			Map<Long,Double> mapaValores= new HashMap<Long,Double>();
+			for(Activo activo:listaActivos){
+				Double valor= updaterStateApi.calcularParticipacionValorPorActivo(dtoTrabajo.getTipoTrabajoCodigo(), activo);
+				total= total+valor;
+				if(valor.equals(0d)){
+					algunoSinPrecio= true;
+					break;
+				}
+				mapaValores.put(activo.getId(), valor);
+			}
+			for (Activo activo : listaActivos) {
+				Double participacion = null;
+				
+				if (algunoSinPrecio) {
+					participacion = (100d / listaActivos.size());
+				} else {
+					participacion = (mapaValores.get(activo.getId()) / total) * 100;
+				}
+
+				dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : participacion.toString());
+
+				Usuario usuarioGestor = null;
+
+				if(!Checks.esNulo(dtoTrabajo.getIdGestorActivoResponsable())){
+					usuarioGestor = usuarioManager.get(dtoTrabajo.getIdGestorActivoResponsable());
+					if(!Checks.esNulo(usuarioGestor)){
+						trabajo.setUsuarioGestorActivoResponsable(usuarioGestor);
+					}
+				}
+
+				if (isFirstLoop || !dtoTrabajo.getEsSolicitudConjunta()) {
+					trabajo = new Trabajo();
+					this.dtoToTrabajo(dtoTrabajo, trabajo);
+					trabajo.setFechaSolicitud(new Date());
+					trabajo.setNumTrabajo(trabajoDao.getNextNumTrabajo());
+					trabajo.setSolicitante(usuarioLogado);
+					if (!Checks.esNulo(usuarioGestor)) {
+						trabajo.setUsuarioResponsableTrabajo(usuarioGestor);
+					} else {
+						trabajo.setUsuarioResponsableTrabajo(usuarioLogado);
+					}
+
+					trabajo.setEstado(this.getEstadoNuevoTrabajoUsuario(dtoTrabajo, activo, usuarioLogado));
+
+					// El gestor de activo se salta tareas de estos trámites y
+					// por tanto es necesario settear algunos datos
+					// al crear el trabajo.
+					if (gestorActivoManager.isGestorActivo(activo, usuarioLogado)) {
+						if (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo())
+								|| DDTipoTrabajo.CODIGO_TASACION.equals(trabajo.getTipoTrabajo().getCodigo())
+								|| DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS.equals(trabajo.getSubtipoTrabajo().getCodigo())) {
+
+							trabajo.setFechaAprobacion(new Date());
+						}
+					}
+
+					// El trámite de cédula queda aprobado al crearlo, sea o no
+					// sea gestor activo quien lo crea
+					if (DDSubtipoTrabajo.CODIGO_CEDULA_HABITABILIDAD.equals(trabajo.getSubtipoTrabajo().getCodigo())) {
+						trabajo.setFechaAprobacion(new Date());
+					}
+
+					if (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo()) 
+							|| DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS.equals(trabajo.getSubtipoTrabajo().getCodigo())) {
+						trabajo.setEsTarificado(true);
+					}
+				}
+				ActivoTrabajo activoTrabajo = this.createActivoTrabajo(activo, trabajo, dtoTrabajo.getParticipacion());
+				transactionManager.commit(transaction);
+				transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+				
+				trabajo.getActivosTrabajo().add(activoTrabajo);
+				isFirstLoop = false;
+
+				if (!Checks.esNulo(dtoTrabajo.getIdSupervisorActivo())) {
+					Usuario usuarioSupervisor = usuarioManager.get(dtoTrabajo.getIdSupervisorActivo());
+					if (!Checks.esNulo(usuarioSupervisor)) {
+						trabajo.setSupervisorActivoResponsable(usuarioSupervisor);
+					}
+				}
+
+				if (!dtoTrabajo.getEsSolicitudConjunta()) {
+					if (dtoTrabajo.getRequerimiento() != null) {
+						trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
+					}
+					trabajoDao.saveOrUpdate(trabajo);
+					transactionManager.commit(transaction);
+					transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+					
+					this.createTramiteTrabajo(trabajo);
+					transactionManager.commit(transaction);
+					transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+					
+					//processAdapter.addFilaProcesada(dtoTrabajo.getIdProceso(), true);
+					
+				}
+			}
+
+			if (dtoTrabajo.getEsSolicitudConjunta()) {
+				if (dtoTrabajo.getRequerimiento() != null) {
+					trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
+				}
+				trabajoDao.saveOrUpdate(trabajo);
+				transactionManager.commit(transaction);
+				transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+				this.createTramiteTrabajo(trabajo);
+				transactionManager.commit(transaction);
+				transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+				ficheroMasivoToTrabajo(dtoTrabajo.getIdProceso(), trabajo);	
+				transactionManager.commit(transaction);
+			}
+			
+			//processAdapter.setStateProcessed(dtoTrabajo.getIdProceso());
+			
+		} catch (Exception e) {
+			//processAdapter.addFilaProcesada(dtoTrabajo.getIdProceso(), false);
+			//processAdapter.setStateProcessed(dtoTrabajo.getIdProceso());
+			logger.error(e.getMessage());
+			try {
+				transactionManager.rollback(transaction);
+			} catch (Exception ex) {
+				logger.error("error rollback proceso masivo: " + ex.getMessage());
+			}
+		}
+	}
+	
 	private List<Activo> getListaActivosProceso(Long idProceso) {
 
 		List<Activo> listaActivos = new ArrayList<Activo>();
@@ -1179,13 +1345,47 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	}
 
-	private DDEstadoTrabajo getEstadoNuevoTrabajo(DtoFichaTrabajo dtoTrabajo, Activo activo) {
+	public DDEstadoTrabajo getEstadoNuevoTrabajo(DtoFichaTrabajo dtoTrabajo, Activo activo) {
 		/*
 		 * Estados del trabajo - Al crear un trabajo: Si es trámite "Cedula": EN
 		 * TRAMITE Si es gestor activo (algunos trámites): EN TRAMITE El resto
 		 * de casos: SOLICITADO
 		 */
 		Usuario logedUser = usuarioManager.getUsuarioLogado();
+
+		List<Long> idGrpsUsuario = null;
+
+		idGrpsUsuario = extGrupoUsuariosDao.buscaGruposUsuario(logedUser);
+
+		Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+
+		Filter filtroSolicitado = genericDao.createFilter(FilterType.EQUALS, "codigo",
+				DDEstadoTrabajo.ESTADO_SOLICITADO);
+		Filter filtroEnTramite = genericDao.createFilter(FilterType.EQUALS, "codigo",
+				DDEstadoTrabajo.ESTADO_EN_TRAMITE);
+
+		// Por defecto: Solicitado
+		DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filtroSolicitado);
+		if ((!Checks.esNulo(gestorActivo) && logedUser.equals(gestorActivo)
+			|| (idGrpsUsuario != null && !idGrpsUsuario.isEmpty() && idGrpsUsuario.contains(gestorActivo.getId())))
+				&& (dtoTrabajo.getTipoTrabajoCodigo().equals(DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL)
+						|| dtoTrabajo.getTipoTrabajoCodigo().equals(DDTipoTrabajo.CODIGO_TASACION) || dtoTrabajo
+								.getSubtipoTrabajoCodigo().equals(DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS))) {
+
+			// Es gestor activo + Obtención documental(menos Cédula) o
+			// Tasación: En Trámite
+			estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filtroEnTramite);
+		}
+
+		return estadoTrabajo;
+	}
+	
+	public DDEstadoTrabajo getEstadoNuevoTrabajoUsuario(DtoFichaTrabajo dtoTrabajo, Activo activo, Usuario logedUser) {
+		/*
+		 * Estados del trabajo - Al crear un trabajo: Si es trámite "Cedula": EN
+		 * TRAMITE Si es gestor activo (algunos trámites): EN TRAMITE El resto
+		 * de casos: SOLICITADO
+		 */
 
 		List<Long> idGrpsUsuario = null;
 
@@ -1237,7 +1437,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return activoTrabajo;
 	}
 
-	private void dtoToTrabajo(DtoFichaTrabajo dtoTrabajo, Trabajo trabajo)
+	public void dtoToTrabajo(DtoFichaTrabajo dtoTrabajo, Trabajo trabajo)
 			throws IllegalAccessException, InvocationTargetException {
 		beanUtilNotNull.copyProperties(trabajo, dtoTrabajo);
 
@@ -2708,7 +2908,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		List<DtoTarifaTrabajo> listaTarifasTrabajo = getListDtoTarifaTrabajo(filtro, idTrabajo);
 		
-		if(!Checks.esNulo(listaTarifasTrabajo)) {
+		if(!Checks.estaVacio(listaTarifasTrabajo)) {
 			return new DtoPage(listaTarifasTrabajo, listaTarifasTrabajo.get(0).getTotalCount());
 		}else {
 			return new DtoPage(listaTarifasTrabajo, 0);

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=202000616
+--## FECHA_CREACION=202000619
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-6440
@@ -50,7 +50,7 @@ DECLARE
 		T_TIPO_DATA('CERBERUS','JAIPUR - INMOBILIARIO','',	    '0','1','1','1','1','0','1','0'),
 		T_TIPO_DATA('CERBERUS','APPLE - INMOBILIARIO','',	    '0','1','1','1','1','0','1','0'),
 		T_TIPO_DATA('OTRA CARTERA','','',		 	    '1','0','1','1','0','0','0','0'),
-        	T_TIPO_DATA('MACC','','',		 	            '0','1','1','1','1','0','1','0')
+        	T_TIPO_DATA('MACC','','',		 	            '0','0','1','1','1','0','1','0')
 
 
     ); 

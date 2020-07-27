@@ -1,0 +1,106 @@
+--/*
+--######################################### 
+--## AUTOR=Viorel Remus Ovidiu
+--## FECHA_CREACION=20200701
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-7693
+--## PRODUCTO=NO
+--## 
+--## Finalidad:
+--##            
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+alter session set NLS_NUMERIC_CHARACTERS = '.,';
+
+DECLARE
+	V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
+	V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- #ESQUEMA# Configuracion Esquema
+	V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- #ESQUEMA_MASTER# Configuracion Esquema Master 
+	ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+	ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+	V_USUARIOBORRAR VARCHAR2(50 CHAR) := 'REMVIP-7693';
+	
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('[INICIO]');
+	
+
+	V_MSQL := 'UPDATE REM01.ECO_EXPEDIENTE_COMERCIAL SET ECO_FECHA_VENTA = NULL, 
+		USUARIOMODIFICAR = ''REMVIP-7693'',
+		FECHAMODIFICAR = SYSDATE 
+		WHERE ECO_NUM_EXPEDIENTE = 202031';
+
+	EXECUTE IMMEDIATE V_MSQL;
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se han actualizado  '||SQL%ROWCOUNT||' registros .');
+
+	V_MSQL := 'UPDATE REM01.ECO_EXPEDIENTE_COMERCIAL SET ECO_FECHA_VENTA = NULL, 
+		USUARIOMODIFICAR = ''REMVIP-7693'',
+		FECHAMODIFICAR = SYSDATE 
+		WHERE ECO_NUM_EXPEDIENTE = 204132';
+
+	EXECUTE IMMEDIATE V_MSQL;
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se han actualizado  '||SQL%ROWCOUNT||' registros .');
+
+	V_MSQL := 'UPDATE REM01.ECO_EXPEDIENTE_COMERCIAL SET ECO_FECHA_VENTA = NULL, 
+		USUARIOMODIFICAR = ''REMVIP-7693'',
+		FECHAMODIFICAR = SYSDATE 
+		WHERE ECO_NUM_EXPEDIENTE = 208602';
+
+	EXECUTE IMMEDIATE V_MSQL;
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se han actualizado  '||SQL%ROWCOUNT||' registros .');
+
+
+	--OFERTA 6001065
+
+	V_MSQL := 'UPDATE REM01.OFR_OFERTAS SET OFR_IMPORTE = 102300.00,
+		USUARIOMODIFICAR = ''REMVIP-7693'',
+		FECHAMODIFICAR = SYSDATE 
+		WHERE OFR_NUM_OFERTA = 6001065';
+
+	EXECUTE IMMEDIATE V_MSQL;
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se han actualizado  '||SQL%ROWCOUNT||' registros .');
+
+	--OFERTA 6010925
+
+	V_MSQL := 'UPDATE REM01.OFR_OFERTAS SET OFR_IMPORTE = 22000.00,
+		USUARIOMODIFICAR = ''REMVIP-7693'',
+		FECHAMODIFICAR = SYSDATE 
+		WHERE OFR_NUM_OFERTA = 6010925';
+
+	EXECUTE IMMEDIATE V_MSQL;
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se han actualizado  '||SQL%ROWCOUNT||' registros .');
+
+    COMMIT;
+
+	DBMS_OUTPUT.PUT_LINE('[FIN]');
+  
+EXCEPTION
+	WHEN OTHERS THEN 
+	    DBMS_OUTPUT.PUT_LINE('KO!');
+	    ERR_NUM := SQLCODE;
+	    ERR_MSG := SQLERRM;
+	    
+	    DBMS_OUTPUT.PUT_LINE('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+	    DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------'); 
+	    DBMS_OUTPUT.PUT_LINE(err_msg);
+	    
+	    ROLLBACK;
+	    RAISE;          
+
+END;
+/
+EXIT;

@@ -1233,39 +1233,39 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this;
     	me.gridOrigen = grid;
 		
-		if (rec.data.titularContratacion != 1) {
+		//if (rec.data.titularContratacion != 1) {
 			Ext.Msg.show({
-				   title: HreRem.i18n('title.confirmar.comprador.principal'),
-				   msg: HreRem.i18n('msg.confirmar.comprador.principal'),
-				   buttons: Ext.MessageBox.YESNO,
-				   fn: function(buttonId) {
-				        if (buttonId == 'yes') {	
-							me.getView().mask();
-							var url =  $AC.getRemoteUrl('expedientecomercial/marcarCompradorPrincipal');
-							Ext.Ajax.request({
+			   title: HreRem.i18n('title.confirmar.comprador.principal'),
+			   msg: HreRem.i18n('msg.confirmar.comprador.principal'),
+			   buttons: Ext.MessageBox.YESNO,
+			   fn: function(buttonId) {
+			        if (buttonId == 'yes') {	
+						me.getView().mask();
+						var url =  $AC.getRemoteUrl('expedientecomercial/marcarCompradorPrincipal');
+						Ext.Ajax.request({
+						
+						     url: url,
+						     params: {
+						     			idComprador: rec.data.id,
+						     			idExpedienteComercial: rec.data.idExpediente	
+						     		}
 							
-							     url: url,
-							     params: {
-							     			idComprador: rec.data.id,
-							     			idExpedienteComercial: rec.data.idExpediente	
-							     		}
-								
-							    ,success: function (a, operation, context) {
-					                	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-										me.getView().unmask();
-										me.gridOrigen.getStore().load();
-					            },
-					            
-					            failure: function (a, operation, context) {
-					            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-									 me.getView().unmask();
-					            }
-						     
-							});
-						}
+						    ,success: function (a, operation, context) {
+				                	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+									me.getView().unmask();
+									me.gridOrigen.getStore().load();
+				            },
+				            
+				            failure: function (a, operation, context) {
+				            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+								 me.getView().unmask();
+				            }
+					     
+						});
 					}
-				});
-		}
+				}
+			});
+		//}
 	},
 	
 	onClickConsultaFormalizacionBankia: function(btn) {
@@ -4904,6 +4904,23 @@ comprobarFormatoModificar: function() {
 		    		importeContraofertaOfertanteCmp.setFieldLabel( HreRem.i18n('fieldlabel.importe.contraoferta.ofrtante.advisory'));
 		    	}
 		
+	},
+	
+	comprobarProcesoAsincrono: function(tabPanel, view) {			
+		var me= this;
+		var url = $AC.getRemoteUrl('tramitacionofertas/checkProceso');						
+		var idExpediente = me.getViewModel().getData().expediente.id;	
+		Ext.Ajax.request({
+	    		url: url,
+	    		params: {idExpediente: idExpediente},
+	    		success: function(response, opts){
+	    			var data = Ext.decode(response.responseText);
+	    			if((data.conFormalizacion != undefined || data.conFormalizacion != null) && data.conFormalizacion === "true"){
+						view.procesado = true;
+						tabPanel.down("[itemId=botoneditar]").setDisabled(false);
+	    			}					
+	    		}	    		
+	   	});	   	
 	}
 	
 });

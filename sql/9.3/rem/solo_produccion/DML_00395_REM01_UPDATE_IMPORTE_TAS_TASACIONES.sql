@@ -1,0 +1,144 @@
+--/*
+--##########################################
+--## AUTOR=PIER GOTTA
+--## FECHA_CREACION=20200715
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-7794
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Script que añade en ACT_TAS_TASACION los datos añadidos en T_ARRAY_DATA
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+
+DECLARE
+        V_SQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar         
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_TABLA VARCHAR2(25 CHAR):= 'ACT_TAS_TASACION';
+    V_COUNT NUMBER(16); -- Vble. para contar.
+    V_KOUNT NUMBER(16); -- Vble. para kontar.
+    V_COUNT_UPDATE NUMBER(16):= 0; -- Vble. para contar updates
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+
+	ACT_NUM_ACTIVO NUMBER(16);
+	ACT_ID NUMBER(16);
+	NUM_SECUENCIA_VAL NUMBER(16);
+	NUM_SECUENCIA_TAS NUMBER(16);
+	BIE_ID NUMBER(16);
+
+    V_USUARIO VARCHAR2(50 CHAR) := 'REMVIP-7794';    
+    
+    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+    			-- NUM_ACT	TAS_IMPORTE_VALOR_TASACION      TAS_IMPORTE_TAS_FIN
+				T_TIPO_DATA(7282890,0.0,0.0),
+				T_TIPO_DATA(7282891,0.0,0.0),
+				T_TIPO_DATA(7282892,0.0,0.0),
+				T_TIPO_DATA(7282893,0.0,0.0),
+				T_TIPO_DATA(7282894,0.0,0.0),
+				T_TIPO_DATA(7282895,0.0,0.0),
+				T_TIPO_DATA(7282896,0.0,0.0),
+				T_TIPO_DATA(7282897,0.0,0.0),
+				T_TIPO_DATA(7282898,0.0,0.0),
+				T_TIPO_DATA(7282899,0.0,0.0),
+				T_TIPO_DATA(7282900,0.0,0.0),
+				T_TIPO_DATA(7282901,0.0,0.0),
+				T_TIPO_DATA(7282902,0.0,0.0),
+				T_TIPO_DATA(7282903,0.0,0.0),
+				T_TIPO_DATA(7282904,0.0,0.0),
+				T_TIPO_DATA(7282905,0.0,0.0),
+				T_TIPO_DATA(7282906,0.0,0.0),
+				T_TIPO_DATA(7282907,0.0,0.0),
+				T_TIPO_DATA(7282908,0.0,0.0),
+				T_TIPO_DATA(7282909,0.0,0.0),
+				T_TIPO_DATA(7282910,0.0,0.0),
+				T_TIPO_DATA(7282911,0.0,0.0),
+				T_TIPO_DATA(7282912,0.0,0.0),
+				T_TIPO_DATA(7282913,0.0,0.0),
+				T_TIPO_DATA(7282914,0.0,0.0),
+				T_TIPO_DATA(7233988,161500.0,161500.0),
+				T_TIPO_DATA(7233990,172500.0,172500.0),
+				T_TIPO_DATA(7233988,161500.0,161500.0),
+				T_TIPO_DATA(7233987,160500.0,160500.0),
+				T_TIPO_DATA(7233986,162500.0,162500.0)
+
+
+		); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+    
+BEGIN	
+	
+    DBMS_OUTPUT.PUT_LINE('[INICIO] ');
+
+
+    FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+      LOOP
+      
+        V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+    	ACT_NUM_ACTIVO := TRIM(V_TMP_TIPO_DATA(1));
+       	EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '||ACT_NUM_ACTIVO INTO V_KOUNT;
+  			  
+		IF V_KOUNT > 0 THEN 
+	  			  
+			EXECUTE IMMEDIATE 'SELECT ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '||ACT_NUM_ACTIVO INTO ACT_ID;
+	
+			
+			DBMS_OUTPUT.PUT_LINE('UPDATEANDO EL ACTIVO '||ACT_NUM_ACTIVO||' EN '||V_TABLA);
+			
+			V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' 
+				  SET TAS_IMPORTE_TAS_FIN = '''||TRIM(V_TMP_TIPO_DATA(2))||'''
+				     ,USUARIOMODIFICAR = '''||V_USUARIO||'''
+				     ,FECHAMODIFICAR = SYSDATE
+				  WHERE ACT_ID = (SELECT ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '''||TRIM(V_TMP_TIPO_DATA(1))||''')';
+			EXECUTE IMMEDIATE V_SQL;
+
+			V_SQL := 'UPDATE '||V_ESQUEMA||'.BIE_VALORACIONES
+				  SET BIE_IMPORTE_VALOR_TASACION = '''||TRIM(V_TMP_TIPO_DATA(2))||'''
+				     ,USUARIOMODIFICAR = '''||V_USUARIO||'''
+				     ,FECHAMODIFICAR = SYSDATE
+				  WHERE BIE_ID = (SELECT BIE_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '''||TRIM(V_TMP_TIPO_DATA(1))||''')';
+			EXECUTE IMMEDIATE V_SQL;
+			
+			DBMS_OUTPUT.PUT_LINE('MODIFICANDO EL ACTIVO '||ACT_NUM_ACTIVO||' EN '||V_TABLA);
+			
+			V_COUNT_UPDATE := V_COUNT_UPDATE + 1;
+				
+		ELSE
+			
+			DBMS_OUTPUT.PUT_LINE('[INFO] El activo '||ACT_NUM_ACTIVO||' no existe!');
+			
+		END IF;
+		
+      END LOOP;
+    COMMIT;
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] Se han insertado en total '||V_COUNT_UPDATE||' registros en la tabla '||V_TABLA);
+   
+
+EXCEPTION
+     WHEN OTHERS THEN
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
+
+          ROLLBACK;
+          RAISE;          
+
+END;
+/
+EXIT

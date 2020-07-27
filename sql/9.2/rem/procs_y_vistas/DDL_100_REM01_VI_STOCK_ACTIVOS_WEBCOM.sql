@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Adrián Molina
---## FECHA_CREACION=20200608
+--## FECHA_CREACION=20200713
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-6744
+--## INCIDENCIA_LINK=REMVIP-7586
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico del stock de activos enviados a webcom.
 --##           
@@ -19,7 +19,8 @@
 --##		0.7 Versión Cristian Montoya -> HREOS-9115 - Añadimos ID_PROVEEDOR_ESPEJO_REM.
 --##		0.8 Versión Daniel Algaba -> HREOS-9066 - Añadimos ARR_PROVEEDOR_LLAVES_REM.
 --##		0.9 ->REMVIP-6389
---##		0.9 Versión Adrián Molina -> REMVIP-6744 - Añadimos campo perimetroMACC
+--##		0.10 Versión Adrián Molina -> REMVIP-6744 - Añadimos campo perimetroMACC
+--##		0.11 Versión Adrián Molina -> REMVIP-7586 - Aumentar capacidad del campo codPedania
 --##########################################
 --*/
 
@@ -106,7 +107,7 @@ BEGIN/*Versión 0.8*/
 		CAST(BLOC.BIE_LOC_PISO AS VARCHAR2(11 CHAR))										AS PLANTA,
 		CAST(BLOC.BIE_LOC_PUERTA AS VARCHAR2(17 CHAR))										AS PUERTA,
 		CAST(DDLOC.DD_LOC_CODIGO AS VARCHAR2(5 CHAR))										AS COD_MUNICIPIO, 
-		CAST(DDUPO.DD_UPO_CODIGO AS VARCHAR2(5 CHAR))										AS COD_PEDANIA,
+		CAST(DDUPO.DD_UPO_CODIGO AS VARCHAR2(25 CHAR))										AS COD_PEDANIA,
 		CAST(DDPRV.DD_PRV_CODIGO AS VARCHAR2(5 CHAR))										AS COD_PROVINCIA,
 		CAST(BLOC.BIE_LOC_COD_POST AS VARCHAR2(40 CHAR)) 									AS CODIGO_POSTAL,
 		CAST(DDTPA.DD_TPA_CODIGO AS VARCHAR2(5 CHAR))										AS COD_TIPO_INMUEBLE,

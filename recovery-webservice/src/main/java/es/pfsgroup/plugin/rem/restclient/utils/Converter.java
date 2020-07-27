@@ -9,11 +9,11 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.UnknownWebcomDataTypeException;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.WebcomDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.WebcomDataTypeParseException;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.DecimalDataTypeFormat;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.NestedDto;
+import es.pfsgroup.plugin.rem.rest.dto.CodigoCarterasDto;
 
 public class Converter {
 
@@ -49,11 +49,15 @@ public class Converter {
 							} else {
 								if (Iterable.class.isAssignableFrom(val.getClass())) {
 									// Si val es algo iterable.
-									ArrayList<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-									for (Object o : ((Iterable) val)) {
-										list.add(dtoToMap(o));
+									if(f.getName().equals("arrCodCarteraAmbito") && ((CodigoCarterasDto)((ArrayList) val).get(0)).getCodCartera().getValue() == null) {
+										map.put(f.getName(), ((CodigoCarterasDto)((ArrayList) val).get(0)).getCodCartera());
+									}else {
+										ArrayList<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+										for (Object o : ((Iterable) val)) {
+											list.add(dtoToMap(o));
+										}
+										map.put(f.getName(), list);
 									}
-									map.put(f.getName(), list);
 								} else {
 									// Si val es un único objeto
 									map.put(f.getName(), dtoToMap(val));

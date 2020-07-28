@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Jonathan Ovalle
---## FECHA_CREACION=20200727
+--## FECHA_CREACION=20200728
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10725
@@ -50,16 +50,15 @@ BEGIN
 	LOOP
 		V_TMP_TIPO_DATA := V_TIPO_DATA(I);
 		--Comprobar el dato a insertar.
-		V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_OPM_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+		V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' WHERE DD_OPM_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO = 0';
 		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-		IF V_NUM_TABLAS = 1 THEN
-			DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(1))||''' ya existe');
+		IF V_NUM_TABLAS = 0 THEN
+			DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(1))||''' ya está borrado');
 		ELSE
 			V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' SET BORRADO = 1 , USUARIOBORRAR =  '''||V_USUARIO||''' , FECHABORRAR = SYSDATE  WHERE DD_OPM_CODIGO ='''||TRIM(V_TMP_TIPO_DATA(1))||'''';
-			   DBMS_OUTPUT.PUT_LINE(V_MSQL);
-			  EXECUTE IMMEDIATE V_MSQL;
+			EXECUTE IMMEDIATE V_MSQL;
 
-			  DBMS_OUTPUT.PUT_LINE('[INFO]: Se ha actualizado el valor '''||TRIM(V_TMP_TIPO_DATA(1))||'''');
+			DBMS_OUTPUT.PUT_LINE('[INFO]: Se ha actualizado el valor '''||TRIM(V_TMP_TIPO_DATA(1))||'''');
 
 		END IF;
 	END LOOP;

@@ -1,6 +1,7 @@
 #!/bin/bash +x
 
 modified_files="git diff --cached --name-only --diff-filter=ACMRTUXB"
+
 patron="^D[D|M]L_[0-9]{3,5}_(ENTITY0[0-9]|BANK01|HAYA0[0-9]|REM01|CM01|HAYAMASTER|REMMASTER|MASTER|BANKMASTER|CMMASTER|MINIREC|HAYA0[0-9]D15|HAYAMASTERD15|DWH|DS)_.*\.sql"
 
 function paint_error() {

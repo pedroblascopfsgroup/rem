@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -49,7 +50,7 @@ public class ActivoTipoDiario implements Serializable, Auditable {
     @SequenceGenerator(name = "ActivoTipoDiarioGenerator", sequenceName = "S_ACT_TDI_TIPO_DIARIO")
     private Long id;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_TBE_ID")
 	private DDTipoActivoBDE tipoActivoBDE;
 	

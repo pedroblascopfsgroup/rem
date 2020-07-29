@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -47,7 +48,7 @@ public class ActivoProrrataDiario20 implements Serializable, Auditable {
     @SequenceGenerator(name = "ActivoProrrataDiario20Generator", sequenceName = "S_ACT_P20_PRORRATA_DIARIO20")
     private Long id;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "PRO_ID")
 	private ActivoPropietario propietarioId;
 	

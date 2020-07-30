@@ -570,7 +570,7 @@ END IF;
           || ' T1.FECHAMODIFICAR = SYSDATE ' ;  
 
         EXECUTE IMMEDIATE V_SQL;
-       DBMS_OUTPUT.PUT_LINE('[INFO] - Modificados '||SQL%ROWCOUNT||' registro/s en la GDE_GASTOS_DETALLE_ECONOMICO.');
+       DBMS_OUTPUT.PUT_LINE('[INFO] - Modificados '||SQL%ROWCOUNT||' registro/s en la GLD_GASTOS_LINEA_DETALLE.');
 END IF;
 
     --Actualiza GPV_GASTOS_PROVEEDOR ?: 	

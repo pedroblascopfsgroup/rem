@@ -300,7 +300,7 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 
 		if (Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())
 				|| (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())
-					&& ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).doubleValue() != 0.0)) {
+					&& ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).doubleValue() == 0.0)) {
 			sql = "SELECT SUM(PRECIO_WEB) FROM (WITH APROBADO_VENTA AS          " +
 					"				 				     (         " +
 					"				 				         SELECT ACT_ID, VAL_IMPORTE         " +
@@ -446,7 +446,7 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 
 		if (Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())
 			|| (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())
-				&& ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).doubleValue() != 0.0)) {
+				&& ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).doubleValue() == 0.0)) {
 			sql = " SELECT SUM(VAL_IMPORTE) FROM (SELECT VAL_IMPORTE FROM REM01.ACT_VAL_VALORACIONES           " +
 					" WHERE DD_TPC_ID = (SELECT DD_TPC_ID FROM REM01.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO = "+DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA+") " +
 					" AND ACT_ID IN (SELECT ACT_ID FROM REM01.ACT_AGA_AGRUPACION_ACTIVO WHERE AGR_ID = "+idAgrupacion+")) ";

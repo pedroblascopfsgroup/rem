@@ -12,6 +12,8 @@ public class DtoDetallePrefactura {
 	private static final long serialVersionUID = 0L;
 
 	private Long numTrabajo;
+	*private String tipologiaTrabajo;
+	*private String subtipologiaTrabajo;
 	private String descripcion;
 	private Date fechaAlta;
 	private String estadoTrabajo;
@@ -26,6 +28,18 @@ public class DtoDetallePrefactura {
 	}
 	public void setNumTrabajo(Long numTrabajo) {
 		this.numTrabajo = numTrabajo;
+	}
+	public String getTipologiaTrabajo() {
+		return tipologiaTrabajo;
+	}
+	public void setTipologiaTrabajo(String tipologiaTrabajo) {
+		this.tipologiaTrabajo = tipologiaTrabajo;
+	}
+	public String getSubtipologiaTrabajo() {
+		return subtipologiaTrabajo;
+	}
+	public void setSubtipologiaTrabajo(String subtipologiaTrabajo) {
+		this.subtipologiaTrabajo = subtipologiaTrabajo;
 	}
 	public String getDescripcion() {
 		return descripcion;

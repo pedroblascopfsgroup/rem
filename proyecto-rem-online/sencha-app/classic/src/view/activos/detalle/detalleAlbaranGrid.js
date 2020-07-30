@@ -22,16 +22,7 @@ Ext.define('HreRem.view.activos.detalle.detalleAlbaranGrid', {
 		    		reference: 'propietario',
 		    		text: HreRem.i18n('fieldlabel.albaran.propietario')
 	    		},
-		        {
-		            dataIndex: 'tipologiaTrabajo',
-		            reference: 'tipologiaTrabajo',
-		            text: HreRem.i18n('fieldlabel.albaran.tipologiaTrabajo')
-		        },
-		        {
-		            dataIndex: 'subtipologiaTrabajo',
-		            reference: 'subtipologiaTrabajo',
-		            text: HreRem.i18n('fieldlabel.albaran.subtipologiaTrabajo')
-		        },
+	    		//*Eliminados los tipologiaTrabajo y subtipologiaTrabajo
 		        {
 		            dataIndex: 'anyo',
 		            reference: 'anyo',

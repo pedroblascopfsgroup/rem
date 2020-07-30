@@ -6,6 +6,12 @@ Ext.define('HreRem.model.DetallePrefacturaGridModel', {
     			name:'numTrabajo'
     		},
     		{
+    			name:'tipologiaTrabajo'*
+    		},
+    		{
+    			name:'subtipologiaTrabajo'*
+    		},
+    		{
     			name:'descripcion'
     		},
     		{

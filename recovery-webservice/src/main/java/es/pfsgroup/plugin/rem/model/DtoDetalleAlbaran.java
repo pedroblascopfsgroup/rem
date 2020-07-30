@@ -13,8 +13,7 @@ public class DtoDetalleAlbaran {
 
 	private Long numPrefactura;
 	private String propietario;
-	private String tipologiaTrabajo;
-	private String subtipologiaTrabajo;
+	//*Eliminados los tipologiaTrabajo y subtipologiaTrabajo
 	private String anyo;
 	private String estadoAlbaran;
 	private Long numGasto;
@@ -33,18 +32,6 @@ public class DtoDetalleAlbaran {
 	}
 	public void setPropietario(String propietario) {
 		this.propietario = propietario;
-	}
-	public String getTipologiaTrabajo() {
-		return tipologiaTrabajo;
-	}
-	public void setTipologiaTrabajo(String tipologiaTrabajo) {
-		this.tipologiaTrabajo = tipologiaTrabajo;
-	}
-	public String getSubtipologiaTrabajo() {
-		return subtipologiaTrabajo;
-	}
-	public void setSubtipologiaTrabajo(String subtipologiaTrabajo) {
-		this.subtipologiaTrabajo = subtipologiaTrabajo;
 	}
 	public String getAnyo() {
 		return anyo;

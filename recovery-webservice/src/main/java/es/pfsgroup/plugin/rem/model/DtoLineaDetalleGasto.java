@@ -67,6 +67,31 @@ public class DtoLineaDetalleGasto extends WebDto {
 	 private String ccInteres;  
 
 	 private String ppInteres;
+	 
+	 private String subcuentaBase;
+	 
+	 private String apartadoBase;
+	 
+	 private String capituloBase;
+	 
+	 private String subcuentaRecargo;
+	 
+	 private String apartadoRecargo;
+	 
+	 private String capituloRecargo;
+	 
+	 private String subcuentaTasa;
+	 
+	 private String apartadoTasa;
+	 
+	 private String capituloTasa;
+	 
+	 private String subcuentaIntereses;
+	 
+	 private String apartadoIntereses;
+	 
+	 private String capituloIntereses;
+	 
 
 	public Long getId() {
 		return id;
@@ -283,8 +308,103 @@ public class DtoLineaDetalleGasto extends WebDto {
 	public void setPpInteres(String ppInteres) {
 		this.ppInteres = ppInteres;
 	}
+
+	public String getSubcuentaBase() {
+		return subcuentaBase;
+	}
+
+	public void setSubcuentaBase(String subcuentaBase) {
+		this.subcuentaBase = subcuentaBase;
+	}
+
+	public String getApartadoBase() {
+		return apartadoBase;
+	}
+
+	public void setApartadoBase(String apartadoBase) {
+		this.apartadoBase = apartadoBase;
+	}
+
+	public String getCapituloBase() {
+		return capituloBase;
+	}
+
+	public void setCapituloBase(String capituloBase) {
+		this.capituloBase = capituloBase;
+	}
+
+	public String getSubcuentaRecargo() {
+		return subcuentaRecargo;
+	}
+
+	public void setSubcuentaRecargo(String subcuentaRecargo) {
+		this.subcuentaRecargo = subcuentaRecargo;
+	}
+
+	public String getApartadoRecargo() {
+		return apartadoRecargo;
+	}
+
+	public void setApartadoRecargo(String apartadoRecargo) {
+		this.apartadoRecargo = apartadoRecargo;
+	}
+
+	public String getCapituloRecargo() {
+		return capituloRecargo;
+	}
+
+	public void setCapituloRecargo(String capituloRecargo) {
+		this.capituloRecargo = capituloRecargo;
+	}
+
+	public String getSubcuentaTasa() {
+		return subcuentaTasa;
+	}
+
+	public void setSubcuentaTasa(String subcuentaTasa) {
+		this.subcuentaTasa = subcuentaTasa;
+	}
+
+	public String getApartadoTasa() {
+		return apartadoTasa;
+	}
+
+	public void setApartadoTasa(String apartadoTasa) {
+		this.apartadoTasa = apartadoTasa;
+	}
+
+	public String getCapituloTasa() {
+		return capituloTasa;
+	}
+
+	public void setCapituloTasa(String capituloTasa) {
+		this.capituloTasa = capituloTasa;
+	}
+
+	public String getSubcuentaIntereses() {
+		return subcuentaIntereses;
+	}
+
+	public void setSubcuentaIntereses(String subcuentaIntereses) {
+		this.subcuentaIntereses = subcuentaIntereses;
+	}
+
+	public String getApartadoIntereses() {
+		return apartadoIntereses;
+	}
+
+	public void setApartadoIntereses(String apartadoIntereses) {
+		this.apartadoIntereses = apartadoIntereses;
+	}
+
+	public String getCapituloIntereses() {
+		return capituloIntereses;
+	}
+
+	public void setCapituloIntereses(String capituloIntereses) {
+		this.capituloIntereses = capituloIntereses;
+	}
 	 
-	
 	
    	
 }

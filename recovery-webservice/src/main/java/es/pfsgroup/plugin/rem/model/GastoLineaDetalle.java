@@ -129,6 +129,42 @@ public class GastoLineaDetalle implements Serializable, Auditable{
 	@Column(name="GLD_CPP_INTERESES")
 	private String cppIntereses;
 	
+	@Column(name="GLD_SUBCUENTA_BASE")
+	private String subcuentaBase;
+	
+	@Column(name="GLD_APARTADO_BASE")
+	private String apartadoBase;
+	
+	@Column(name="GLD_CAPITULO_BASE")
+	private String capituloBase;
+	
+	@Column(name="GLD_SUBCUENTA_RECARGO")
+	private String subcuentaRecargo;
+	
+	@Column(name="GLD_APARTADO_RECARGO")
+	private String apartadoRecargo;
+	
+	@Column(name="GLD_CAPITULO_RECARGO")
+	private String capituloRecargo;
+	
+	@Column(name="GLD_SUBCUENTA_TASA")
+	private String subcuentaTasa;
+	
+	@Column(name="GLD_APARTADO_TASA")
+	private String apartadoTasa;
+	
+	@Column(name="GLD_CAPITULO_TASA")
+	private String capituloTasa;
+	
+	@Column(name="GLD_SUBCUENTA_INTERESES")
+	private String subcuentaIntereses;
+	
+	@Column(name="GLD_APARTADO_INTERESES")
+	private String apartadoIntereses;
+	
+	@Column(name="GLD_CAPITULO_INTERESES")
+	private String capituloIntereses;
+	
     @OneToMany(mappedBy = "gastoLineaDetalle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "GLD_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
@@ -359,6 +395,103 @@ public class GastoLineaDetalle implements Serializable, Auditable{
 
 	public void setCppIntereses(String cppIntereses) {
 		this.cppIntereses = cppIntereses;
+	}
+	
+
+	public String getSubcuentaBase() {
+		return subcuentaBase;
+	}
+
+	public void setSubcuentaBase(String subcuentaBase) {
+		this.subcuentaBase = subcuentaBase;
+	}
+
+	public String getApartadoBase() {
+		return apartadoBase;
+	}
+
+	public void setApartadoBase(String apartadoBase) {
+		this.apartadoBase = apartadoBase;
+	}
+
+	public String getCapituloBase() {
+		return capituloBase;
+	}
+
+	public void setCapituloBase(String capituloBase) {
+		this.capituloBase = capituloBase;
+	}
+
+	public String getSubcuentaRecargo() {
+		return subcuentaRecargo;
+	}
+
+	public void setSubcuentaRecargo(String subcuentaRecargo) {
+		this.subcuentaRecargo = subcuentaRecargo;
+	}
+
+	public String getApartadoRecargo() {
+		return apartadoRecargo;
+	}
+
+	public void setApartadoRecargo(String apartadoRecargo) {
+		this.apartadoRecargo = apartadoRecargo;
+	}
+
+	public String getCapituloRecargo() {
+		return capituloRecargo;
+	}
+
+	public void setCapituloRecargo(String capituloRecargo) {
+		this.capituloRecargo = capituloRecargo;
+	}
+
+	public String getSubcuentaTasa() {
+		return subcuentaTasa;
+	}
+
+	public void setSubcuentaTasa(String subcuentaTasa) {
+		this.subcuentaTasa = subcuentaTasa;
+	}
+
+	public String getApartadoTasa() {
+		return apartadoTasa;
+	}
+
+	public void setApartadoTasa(String apartadoTasa) {
+		this.apartadoTasa = apartadoTasa;
+	}
+
+	public String getCapituloTasa() {
+		return capituloTasa;
+	}
+
+	public void setCapituloTasa(String capituloTasa) {
+		this.capituloTasa = capituloTasa;
+	}
+
+	public String getSubcuentaIntereses() {
+		return subcuentaIntereses;
+	}
+
+	public void setSubcuentaIntereses(String subcuentaIntereses) {
+		this.subcuentaIntereses = subcuentaIntereses;
+	}
+
+	public String getApartadoIntereses() {
+		return apartadoIntereses;
+	}
+
+	public void setApartadoIntereses(String apartadoIntereses) {
+		this.apartadoIntereses = apartadoIntereses;
+	}
+
+	public String getCapituloIntereses() {
+		return capituloIntereses;
+	}
+
+	public void setCapituloIntereses(String capituloIntereses) {
+		this.capituloIntereses = capituloIntereses;
 	}
 
 	public List<GastoLineaDetalleEntidad> getGastoLineaEntidadList() {

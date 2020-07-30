@@ -126,11 +126,11 @@ public class GastoProveedor implements Serializable, Auditable {
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private GastoInfoContabilidad gastoInfoContabilidad;    
     
-    @OneToMany(mappedBy = "gastoProveedor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "gastoProveedor", fetch = FetchType.LAZY)
     @JoinColumn(name = "GPV_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<GastoLineaDetalle> gastoLineaDetalleList;    
-	
+
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="PRG_ID")
 	private ProvisionGastos provision;
@@ -555,6 +555,5 @@ public class GastoProveedor implements Serializable, Auditable {
 		this.gastoLineaDetalleList = gastoLineaDetalleList;
 	}
 
-	
 	
 }

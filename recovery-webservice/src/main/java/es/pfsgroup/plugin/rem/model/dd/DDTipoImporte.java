@@ -25,6 +25,10 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDTipoImporte implements Auditable, Dictionary{
 
 	private static final long serialVersionUID = 1L;
+	public static final String CODIGO_BASE = "BAS";
+	public static final String CODIGO_TASA = "TAS";
+	public static final String CODIGO_RECARGO = "REC";
+	public static final String CODIGO_INTERES = "INT";
 	
 	@Id
 	@Column(name = "DD_TIM_ID")

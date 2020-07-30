@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,6 +15,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -127,15 +129,15 @@ public class GastoLineaDetalle implements Serializable, Auditable{
 	@Column(name="GLD_CPP_INTERESES")
 	private String cppIntereses;
 	
-    @OneToOne(mappedBy = "gastoLineaDetalle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "gastoLineaDetalle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "GLD_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private GastoLineaDetalleEntidad gastoLineaEntidad;    
+	private List<GastoLineaDetalleEntidad> gastoLineaEntidadList;    
     
-    @OneToOne(mappedBy = "gastoLineaDetalle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "gastoLineaDetalle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "GLD_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private GastoLineaDetalleTrabajo gastoLineaTrabajo;    
+	private List<GastoLineaDetalleTrabajo> gastoLineaTrabajoList;    
 	
 	@Version   
 	private Long version;
@@ -359,20 +361,20 @@ public class GastoLineaDetalle implements Serializable, Auditable{
 		this.cppIntereses = cppIntereses;
 	}
 
-	public GastoLineaDetalleEntidad getGastoLineaEntidad() {
-		return gastoLineaEntidad;
+	public List<GastoLineaDetalleEntidad> getGastoLineaEntidadList() {
+		return gastoLineaEntidadList;
 	}
 
-	public void setGastoLineaEntidad(GastoLineaDetalleEntidad gastoLineaEntidad) {
-		this.gastoLineaEntidad = gastoLineaEntidad;
+	public void setGastoLineaEntidadList(List<GastoLineaDetalleEntidad> gastoLineaEntidadList) {
+		this.gastoLineaEntidadList = gastoLineaEntidadList;
 	}
 
-	public GastoLineaDetalleTrabajo getGastoLineaTrabajo() {
-		return gastoLineaTrabajo;
+	public List<GastoLineaDetalleTrabajo> getGastoLineaTrabajoList() {
+		return gastoLineaTrabajoList;
 	}
 
-	public void setGastoLineaTrabajo(GastoLineaDetalleTrabajo gastoLineaTrabajo) {
-		this.gastoLineaTrabajo = gastoLineaTrabajo;
+	public void setGastoLineaTrabajoList(List<GastoLineaDetalleTrabajo> gastoLineaTrabajoList) {
+		this.gastoLineaTrabajoList = gastoLineaTrabajoList;
 	}
 
 	public Long getVersion() {

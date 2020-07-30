@@ -1866,7 +1866,17 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var formulario = me.lookupReference('crearLineaDetalleGastoForm').getForm();
     	var baseSujeta = formulario.findField('baseSujeta').getValue();
     	var tipoImpositivo = formulario.findField('tipoImpositivo').getValue();
+    	var operacionExenta = formulario.findField('operacionExentaImp').getValue();
+    	var operacionExentaRenuncia = formulario.findField('esRenunciaExenta').getValue();
+    	var disabledOpExenta = false;
     	var cuota = 0;
+    	
+    	if(operacionExenta && !operacionExentaRenuncia){
+    		disabledOpExenta = true;
+    	}
+    	formulario.findField('tipoImpositivo').setDisabled(disabledOpExenta);
+    	formulario.findField('cuota').setDisabled(disabledOpExenta);
+    	
     	
     	if(tipoImpositivo > 100){
     		ventana = me.lookupReference('ventanaCrearLineaDetalleGasto');
@@ -1898,7 +1908,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var provSupl = formulario.findField('provSupl').getValue();
 		var cuota = formulario.findField('cuota').getValue();
 		var operacionExentaImp = formulario.findField('operacionExentaImp').getValue();
-
+		var operacionExentaRenuncia = formulario.findField('esRenunciaExenta').getValue();
 		
 		if(baseSujeta != null){
 			importeTotal = importeTotal + baseSujeta;
@@ -1921,8 +1931,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		if(provSupl != null){
 			importeTotal = importeTotal + provSupl;
 		}
-		
-		if(!operacionExentaImp && cuota != null){
+
+		if(cuota != null && (!operacionExentaImp || (operacionExentaImp && operacionExentaRenuncia))){
 			importeTotal = importeTotal + cuota;
 		}
 		
@@ -2027,10 +2037,69 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var subtipoGasto = formulario.getForm().findField('subtipoGasto').getValue();
     	var ventana = formulario.up('[reference=ventanaCrearLineaDetalleGasto]');
     	
+    	if(ventana.record != null && ventana.record.subtipoGasto != null
+    		&& subtipoGasto === ventana.record.subtipoGasto){
+    		return;
+    	}
+    	if(ventana.record != null && ventana.record.subtipoGasto != null){
+    		ventana.record.subtipoGasto = subtipoGasto;
+    	}
+    	
     	if(subtipoGasto != null && subtipoGasto != undefined){
-    		ventana.down('[reference=fieldsetccpp]').setDisabled(false);
-    		ventana.down('[reference=fieldsetImpInd]').setDisabled(false);
-    		ventana.down('[reference=fieldsetImporte]').setDisabled(false);
+    		ventana.mask(HreRem.i18n("msg.mask.loading"));
+    		var url =  $AC.getRemoteUrl('gastosproveedor/calcularCuentasYPartidas');
+    		
+    		Ext.Ajax.request({		    			
+    	 		url: url,
+    	 		method: 'GET',
+    	   		params: {
+    	   			idGasto: ventana.idGasto,
+    	   			idLineaDetalleGasto: ventana.idLineaDetalleGasto,
+    	   			subtipoGastoCodigo:subtipoGasto
+       			},	    		
+    	    	success: function(response, opts) {
+    	    		
+    	    		var data = {};
+	            	data = Ext.decode(response.responseText);
+	            	
+	            	if(data.data != undefined){
+	            		if(data.data.ccBase != undefined){
+	            			ventana.down('[reference=ccBase]').setValue(data.data.ccBase);
+	            		}
+	            		if(data.data.ppBase != undefined){
+	            			ventana.down('[reference=ppBase]').setValue(data.data.ppBase);
+	            		}
+	            		if(data.data.ccTasas != undefined){
+	            			ventana.down('[reference=ccTasas]').setValue(data.data.ccTasas);
+	            		}
+	            		if(data.data.ppTasas != undefined){
+	            			ventana.down('[reference=ppTasas]').setValue(data.data.ppTasas);
+	            		}
+	            		if(data.data.ccRecargo != undefined){
+	            			ventana.down('[reference=ccRecargo]').setValue(data.data.ccRecargo);
+	            		}
+	            		if(data.data.ppRecargo != undefined){
+	            			ventana.down('[reference=ppRecargo]').setValue(data.data.ppRecargo);
+	            		}
+	            		if(data.data.ccInteres != undefined){
+	            			ventana.down('[reference=ccInteres]').setValue(data.data.ccInteres);
+	            		}
+	            		if(data.data.ppInteres != undefined){
+	            			ventana.down('[reference=ppInteres]').setValue(data.data.ppInteres);
+	            		}
+	            	}
+	            	
+	            	ventana.down('[reference=fieldsetccpp]').setDisabled(false);
+	        		ventana.down('[reference=fieldsetImpInd]').setDisabled(false);
+	        		ventana.down('[reference=fieldsetImporte]').setDisabled(false);
+	        		ventana.unmask();
+    	            	
+    	    	},
+       			failure: function(response) {
+    				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    		    }
+    		});
+
     	}
     
     }

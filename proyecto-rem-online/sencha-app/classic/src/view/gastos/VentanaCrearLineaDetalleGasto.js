@@ -18,8 +18,10 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
     	var idGasto = null;
     	var	idLineaDetalleGasto = null;
     	var deshabilitarRecargo = true;
-    	var estadoParaGuardar = me.lookupController().getView().getViewModel().getData().gasto.getData().estadoModificarLineasDetalleGasto;
     	var disabledSinSubtipoGasto = true;
+    	var estadoParaGuardar = me.lookupController().getView().getViewModel().getData().gasto.getData().estadoModificarLineasDetalleGasto;
+    	var isGastoRefacturado = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPorOtroGasto;
+    	
     	
 	    var subtipoGasto= null,		baseSujeta= null,		baseNoSujeta= null,			recargo= null,
     	tipoRecargo= null,			interes= null,			costas= null,				otros= null,
@@ -65,7 +67,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
     			itemId: 'btnGuardar', 
     			text: 'Guardar', 
     			handler: 'onClickGuardarLineaDetalleGasto',
-    			disabled: !estadoParaGuardar
+    			disabled: (!estadoParaGuardar || isGastoRefacturado)
     		},
     		{ 
     			itemId: 'btnCancelar', 
@@ -344,7 +346,10 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 													valueField: 'codigo',
 								    				bind: {
 								    					store: '{comboSiNoGastoBoolean}'
-								    				}
+								    				},
+								    				listeners: {
+				    									change: 'onChangeCuota'
+				    								}
 								    				
 								    			},
 								    			{
@@ -538,10 +543,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
     		comboSiNoGastoBoolean = me.down('[reference="crearLineaDetalleGastoForm"]').getForm().findField('esRenunciaExenta');
     		comboSiNoGastoBoolean.getStore().load();
     		comboSiNoGastoBoolean.setValue(esRenunciaExenta);
-
-    		
-    		
-    		
+	
     	}
     	
     }

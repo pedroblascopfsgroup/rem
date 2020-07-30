@@ -26,6 +26,12 @@ public class DDEntidadGasto implements Auditable, Dictionary{
 	
 	private static final long serialVersionUID = 1L;
 	
+	public final static String CODIGO_ACTIVO = "ACT";
+	public final static String CODIGO_ACTIVO_GENERICO = "GEN";
+	public final static String CODIGO_PROMOCION = "PRO";
+	public final static String CODIGO_AGRUPACION = "AGR";
+	public final static String CODIGO_SIN_ACTIVOS = "SIN";
+	
 	@Id
 	@Column(name = "DD_ENT_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEntidadGastoGenerator")

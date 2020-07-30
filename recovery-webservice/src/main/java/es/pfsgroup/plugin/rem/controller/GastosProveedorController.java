@@ -38,6 +38,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoAvisadorApi;
+import es.pfsgroup.plugin.rem.api.GastoLineaDetalleApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.excel.ActivosGastoExcelReport;
@@ -107,6 +108,9 @@ public class GastosProveedorController extends ParadiseJsonController {
 
 	@Autowired
 	private ConfigManager configManager;
+	
+	@Autowired
+	private GastoLineaDetalleApi gastoLineaDetalleApi;
 	
 	private static final String RESPONSE_SUCCESS_KEY = "success";	
 	private static final String RESPONSE_DATA_KEY = "data";
@@ -1208,7 +1212,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 		ModelMap model = new ModelMap();
 		
 		try {			
-			List<DtoLineaDetalleGasto> dtoLineaDetalleGastoLista =gastoProveedorApi.getGastoLineaDetalle(idGasto);
+			List<DtoLineaDetalleGasto> dtoLineaDetalleGastoLista =gastoLineaDetalleApi.getGastoLineaDetalle(idGasto);
 			model.put("data", dtoLineaDetalleGastoLista);
 			model.put("success", true);			
 		} catch (Exception e) {
@@ -1226,7 +1230,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 		
 		ModelMap model = new ModelMap();
 		try {
-			model.put("success", gastoProveedorApi.saveGastoLineaDetalle(dtoLineaDetalleGasto));
+			model.put("success", gastoLineaDetalleApi.saveGastoLineaDetalle(dtoLineaDetalleGasto));
 			
 		}catch (Exception e) {
 			logger.error("error en GastosProveedorController", e);
@@ -1244,12 +1248,31 @@ public class GastosProveedorController extends ParadiseJsonController {
 		
 		ModelMap model = new ModelMap();
 		try {
-			model.put("success", gastoProveedorApi.deleteGastoLineaDetalle(idLineaDetalleGasto));
+			model.put("success", gastoLineaDetalleApi.deleteGastoLineaDetalle(idLineaDetalleGasto));
 			
 		}catch (Exception e) {
 			logger.error("error en GastosProveedorController", e);
 			model.put("success", false);
 			model.put("errorMessage", "Error al borrar LíneaDetalleGasto.");
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView calcularCuentasYPartidas(Long idGasto, Long idLineaDetalleGasto, String subtipoGastoCodigo) {
+			
+		ModelMap model = new ModelMap();
+		try {
+			DtoLineaDetalleGasto linea = gastoLineaDetalleApi.calcularCuentasYPartidas(idGasto, idLineaDetalleGasto, subtipoGastoCodigo);
+			model.put("data", linea);
+			model.put("success", true);
+			
+		}catch (Exception e) {
+			logger.error("error en GastosProveedorController", e);
+			model.put("success", false);
+			model.put("errorMessage", "Error encontrar pp y cc.");
 		}
 		
 		return createModelAndViewJson(model);

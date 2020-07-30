@@ -9,6 +9,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
@@ -31,6 +33,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoImporte;
 @Table(name = "ACT_CONFIG_PTDAS_PREP", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
+@Inheritance(strategy=InheritanceType.JOINED)
 public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
 
 	private static final long serialVersionUID = 1L;

@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.DtoLineaDetalleGasto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoProveedorActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
@@ -391,11 +392,10 @@ public interface GastoProveedorApi {
 		public boolean isPosibleRefacturable(GastoProveedor gasto);
 
 		void validarGastosARefacturar(String idGasto, String listaGastos);
+
+		Double recalcularImporteTotalGasto(GastoDetalleEconomico gasto);
+
+		boolean estanTodosActivosAlquilados(GastoProveedor gasto);
 		
-		public boolean saveGastoLineaDetalle(DtoLineaDetalleGasto dtoLineaDetalleGasto) throws Exception;
-
-		public List<DtoLineaDetalleGasto> getGastoLineaDetalle(Long idGasto) throws Exception;
-
-		public boolean deleteGastoLineaDetalle(Long idLineaDetalleGasto) throws Exception;
 }
 

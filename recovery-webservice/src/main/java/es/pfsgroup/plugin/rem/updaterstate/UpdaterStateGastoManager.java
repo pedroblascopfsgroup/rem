@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.updaterstate;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
@@ -93,6 +95,8 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 		String error = null;
 		
 		if(!Checks.esNulo(gasto)) {
+			List<GastoLineaDetalle> gastoListaDetalleList = gasto.getGastoLineaDetalleList();
+			
 			if(Checks.esNulo(gasto.getId())) {
 				error = messageServices.getMessage(VALIDACION_GASTO_SIN_ID);
 				return error;
@@ -105,12 +109,12 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				error = messageServices.getMessage(VALIDACION_GASTO_SIN_NUM_FACTURA);
 				return error;
 			}
-			if(gasto.getGastoLineaDetalleList() == null || gasto.getGastoLineaDetalleList().isEmpty()) {
+			if(gastoListaDetalleList == null || gastoListaDetalleList.isEmpty()) {
 				error = messageServices.getMessage(VALIDACION_LINEA_DETALLE);
 				return error;
 			}
 			
-			for (GastoLineaDetalle gastodetalleLinea : gasto.getGastoLineaDetalleList()){
+			for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
 				if(gastodetalleLinea.getSubtipoGasto() == null) {
 					error = messageServices.getMessage(VALIDACION_TIPO_SUBTIPO);
 					return error;
@@ -151,7 +155,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			}
 			
 			if(gasto.getGestoria() == null) {
-				for (GastoLineaDetalle gastodetalleLinea : gasto.getGastoLineaDetalleList()){
+				for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
 					if(gastodetalleLinea.getTipoImpuesto() == null) {
 						error = messageServices.getMessage(VALIDACION_GASTO_SIN_TIPO_IMP_INDIRECTO);
 						return error;
@@ -163,7 +167,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			if(!Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(gasto.getPropietario().getCartera())){
 				String carteraPropietario = gasto.getPropietario().getCartera().getCodigo();
 				if(!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(carteraPropietario)){
-					for (GastoLineaDetalle gastodetalleLinea : gasto.getGastoLineaDetalleList()){
+					for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
 						if(!DDCartera.CODIGO_CARTERA_BANKIA.equals(carteraPropietario) && gastodetalleLinea.getCccBase() == null) {
 							error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
 							return error;
@@ -174,13 +178,13 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			
 			if(!Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(gasto.getPropietario().getCartera()) && !Checks.esNulo(gasto.getPropietario().getCartera().getCodigo())) {
 				if(!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo()) && !DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo())){
-				for (GastoLineaDetalle gastodetalleLinea : gasto.getGastoLineaDetalleList()){
+				for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
 					if(gastodetalleLinea.getCccBase() == null)
 						error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
 						return error;
 					}
 				}
-				for (GastoLineaDetalle gastodetalleLinea : gasto.getGastoLineaDetalleList()){
+				for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
 					String codigoCartera = gastodetalleLinea.getSubtipoGasto().getCodigo();
 					if(!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(codigoCartera) &&!"100".equals(codigoCartera)) {
 						if(gastodetalleLinea.getCppBase() == null) {

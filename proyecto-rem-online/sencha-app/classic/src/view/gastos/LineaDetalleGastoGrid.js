@@ -19,7 +19,10 @@ Ext.define('HreRem.view.gastos.LineaDetalleGastoGrid', {
 
      	var me = this;
      	
-        me.topBar = me.lookupController().getView().getViewModel().getData().gasto.getData().estadoModificarLineasDetalleGasto;
+     	var estadoModificar = me.lookupController().getView().getViewModel().getData().gasto.getData().estadoModificarLineasDetalleGasto;
+     	var isRefacturado = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPorOtroGasto;
+     	
+        me.topBar = estadoModificar && !isRefacturado;
      	
      	me.setTitle(HreRem.i18n('title.gasto.detalle.economico.lineas.detalle'));
      	
@@ -122,7 +125,16 @@ Ext.define('HreRem.view.gastos.LineaDetalleGastoGrid', {
 		            reference: 'operacionExentaImp',
 		            name:'operacionExentaImp',
 		            text: HreRem.i18n('fieldlabel.gasto.linea.detalle.operacionExentaImp'),
-		            flex: 0.7
+		            flex: 0.7,
+		            renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
+		            	var foundedRecord = this.lookupController().getViewModel().getStore('comboSiNoGastoBoolean').findRecord('codigo', value);
+		            	var descripcion;
+		            	
+		        		if(!Ext.isEmpty(foundedRecord)) {
+		        			descripcion = foundedRecord.getData().descripcion;
+		        		}
+		            	return descripcion;
+		        	}
 		        },  {
 		            dataIndex: 'esRenunciaExenta',
 		            reference: 'esRenunciaExenta',
@@ -143,16 +155,7 @@ Ext.define('HreRem.view.gastos.LineaDetalleGastoGrid', {
 		            reference: 'tipoImpositivo',
 		            name:'esTipoImpositivo',
 		            text: HreRem.i18n('fieldlabel.gasto.linea.detalle.tipoImpositivo'),
-		            flex: 0.7 ,
-		            renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
-		            	var foundedRecord = this.lookupController().getViewModel().getStore('comboSiNoGastoBoolean').findRecord('codigo', value);
-		            	var descripcion;
-		            	
-		        		if(!Ext.isEmpty(foundedRecord)) {
-		        			descripcion = foundedRecord.getData().descripcion;
-		        		}
-		            	return descripcion;
-		        	}
+		            flex: 0.7 
 		        },  {
 		            dataIndex: 'cuota',
 		            reference: 'cuota',

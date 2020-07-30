@@ -27,6 +27,8 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.DDFavorable;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoExento;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoSolicitud;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoSolicitudTributo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTributo;
 
@@ -119,6 +121,17 @@ public class ActivoTributos implements Serializable, Auditable {
 	
 	@Column(name = "ACT_TRI_IMPORTE_REC_RECURSO")
 	private Double importeRecuperadoRecurso;
+	
+	@Column(name = "ACT_TRI_EXENTO")
+	private Boolean tributoExento;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_MOE_ID")
+    private DDMotivoExento motivoExento;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_RES_ID")
+    private DDResultadoSolicitud resultadoSolicitud;
 	
 	@Version   
 	private Long version;
@@ -321,6 +334,30 @@ public class ActivoTributos implements Serializable, Auditable {
 
 	public void setImporteRecuperadoRecurso(Double importeRecuperadoRecurso) {
 		this.importeRecuperadoRecurso = importeRecuperadoRecurso;
+	}
+
+	public Boolean getTributoExento() {
+		return tributoExento;
+	}
+
+	public void setTributoExento(Boolean tributoExento) {
+		this.tributoExento = tributoExento;
+	}
+
+	public DDMotivoExento getMotivoExento() {
+		return motivoExento;
+	}
+
+	public void setMotivoExento(DDMotivoExento motivoExento) {
+		this.motivoExento = motivoExento;
+	}
+
+	public DDResultadoSolicitud getResultadoSolicitud() {
+		return resultadoSolicitud;
+	}
+
+	public void setResultadoSolicitud(DDResultadoSolicitud resultadoSolicitud) {
+		this.resultadoSolicitud = resultadoSolicitud;
 	}
 
 }

@@ -1,6 +1,6 @@
 Ext.define('HreRem.view.activos.detalle.TributosGrid', {
     extend		: 'HreRem.view.common.GridBaseEditableRow',
-    xtype		: 'tributogrid',
+    xtype		: 'tributosgrid',
 	topBar		: true,
 	targetGrid	: 'tributosGrid',
 	idPrincipal : 'activo.id',
@@ -70,6 +70,72 @@ Ext.define('HreRem.view.activos.detalle.TributosGrid', {
                	 xtype: 'datefield',
              	 allowBlank: false
             	}
+		   	},
+		   	{
+		   		text: HreRem.i18n('fieldlabel.exento'),				            
+	            dataIndex: 'estaExento',
+	            flex: 1,
+	            renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
+	            	var foundedRecord = this.up('activosdetallemain').getViewModel().getStore('comboSinSino').findRecord('codigo', value);
+	            	var descripcion;
+	        		if(!Ext.isEmpty(foundedRecord)) {
+	        			descripcion = foundedRecord.getData().descripcion;
+	        		}
+	            	return descripcion;
+	        	},
+        		editor: {
+        			xtype: 'comboboxfieldbase',
+					addUxReadOnlyEditFieldPlugin: false,
+	        		   labelWidth: '25%',
+			            width: '15%',
+	            		allowBlank: false,
+		        	
+	        		bind: {
+	            		store: '{comboSinSino}',
+	            		value: '{estaExento}'
+	            	},
+	            	listeners: {
+	            		change: function(chkBox, nVal, oVal){
+	            			var chkBoxMotivoExento = chkBox.up().up().down('[reference="motivoExentoRef"]');
+	            			
+	            			if(CONST.COMBO_SIN_SINO['SI'] == nVal){
+	            				chkBoxMotivoExento.getEditor().setAllowBlank(false);
+	            			}else{
+	            				chkBoxMotivoExento.getEditor().setAllowBlank(true);
+	            			}
+	            		}
+	            	},
+	            	displayField: 'descripcion',
+					valueField: 'codigo'
+        		}
+		   	},
+		   	{
+		   		text: HreRem.i18n('fieldlabel.motivo.exento'),				            
+	            dataIndex: 'motivoExento',
+	            reference: 'motivoExentoRef',
+	            flex: 1,
+	            renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
+	            	var foundedRecord = this.up('activosdetallemain').getViewModel().getStore('comboMotivoExento').findRecord('codigo', value);
+	            	var descripcion;
+	        		if(!Ext.isEmpty(foundedRecord)) {
+	        			descripcion = foundedRecord.getData().descripcion;
+	        		}
+	            	return descripcion;
+	        	},
+        		editor: {
+        			xtype: 'comboboxfieldbase',
+					addUxReadOnlyEditFieldPlugin: false,
+	        		   labelWidth: '25%',
+			            width: '15%',
+	            		allowBlank: true,
+		        	
+	        		bind: {
+	            		store: '{comboMotivoExento}',
+	            		value: '{motivoExento}'
+	            	},
+	            	displayField: 'descripcion',
+					valueField: 'codigo'
+        		}
 		   	},
 			{	  
 	            text: HreRem.i18n('fieldlabel.administracion.activo.fecha.pago.tributo'),				            

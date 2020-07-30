@@ -140,10 +140,12 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionTramitacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoBajaSuministro;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoExento;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenDato;
 import es.pfsgroup.plugin.rem.model.dd.DDPeriodicidad;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoSolicitud;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -213,6 +215,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String OPERACION_ALTA = "Alta";
 	public static final String ERROR_ANYADIR_PRESTACIONES_EN_REGISTRO = "Ya existe un registro 'Presentación en registro', y está activo";
 	public static final String ERROR_ANYADIR_EN_REGISTRO = "Ya existe un registro '%s', y está activo";
+	private static final String DESC_SI = "Sí";
+	private static final String DESC_NO = "No";
 	
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
@@ -2756,8 +2760,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if(tributo.getFechaRespuestaRecurso() != null) {
 					dtoTributo.setFechaRespRecurso(tributo.getFechaRespuestaRecurso().toString());
 				}
-				if(!Checks.esNulo(tributo.getFavorable())){
-					dtoTributo.setResultadoSolicitud(tributo.getFavorable().getCodigo());
+				if(!Checks.esNulo(tributo.getResultadoSolicitud())){
+					dtoTributo.setResultadoSolicitud(tributo.getResultadoSolicitud().getCodigo());
 				}
 				if(!Checks.esNulo(tributo.getGastoProveedor())){
 					dtoTributo.setNumGastoHaya(tributo.getGastoProveedor().getNumGastoHaya());
@@ -2785,6 +2789,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					dtoTributo.setFechaComunicacionDevolucionIngreso(tributo.getFechaComunicacionDevolucionIngreso().toString());
 				}
 				dtoTributo.setImporteRecuperadoRecurso(tributo.getImporteRecuperadoRecurso());
+				if(tributo.getTributoExento() != null) {
+					if(tributo.getTributoExento()) {
+						dtoTributo.setEstaExento(DDSinSiNo.CODIGO_SI);
+					}else if(!tributo.getTributoExento()){
+						dtoTributo.setEstaExento(DDSinSiNo.CODIGO_NO);
+					}
+				}
+				if(tributo.getMotivoExento() != null) {
+					dtoTributo.setMotivoExento(tributo.getMotivoExento().getCodigo());
+				}
 				
 				tributos.add(dtoTributo);
 			}
@@ -5845,10 +5859,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 				if(!Checks.esNulo(dto.getResultadoSolicitud())){
 					Filter filtroResultado = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getResultadoSolicitud());
-					DDFavorable favorable = genericDao.get(DDFavorable.class, filtroResultado);
+					DDResultadoSolicitud resultadoSolicitud = genericDao.get(DDResultadoSolicitud.class, filtroResultado);
 					
-					if(!Checks.esNulo(favorable)){
-						tributo.setFavorable(favorable);
+					if(!Checks.esNulo(resultadoSolicitud)){
+						tributo.setResultadoSolicitud(resultadoSolicitud);
 					}
 				}
 				if(!Checks.esNulo(dto.getNumGastoHaya())){
@@ -5896,6 +5910,23 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				
 				if(!Checks.esNulo(dto.getImporteRecuperadoRecurso())){
 					tributo.setImporteRecuperadoRecurso(dto.getImporteRecuperadoRecurso());
+				}
+				
+				if(dto.getEstaExento() != null) {
+					if(DDSinSiNo.CODIGO_SI.equals(dto.getEstaExento())) {
+						tributo.setTributoExento(true);
+					}else {
+						tributo.setTributoExento(false);
+					}
+				}
+				
+				if(dto.getMotivoExento() != null) {
+					Filter filtroResultado = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMotivoExento());
+					DDMotivoExento motivoexento = genericDao.get(DDMotivoExento.class, filtroResultado);
+					
+					if(!Checks.esNulo(motivoexento)){
+						tributo.setMotivoExento(motivoexento);
+					}
 				}
 								
 				if(!Checks.esNulo(tributo.getId())){

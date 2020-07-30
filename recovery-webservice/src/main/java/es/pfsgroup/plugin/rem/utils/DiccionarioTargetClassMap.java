@@ -263,6 +263,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("motivoBajaSuministro", DDMotivoBajaSuministro.class);
 		mapa.put("validado", DDSinSiNo.class);
 		mapa.put("estadoVenta", DDEstadoVenta.class);
+		mapa.put("motivoExento", DDMotivoExento.class);
+		mapa.put("resultadoSolicitud", DDResultadoSolicitud.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

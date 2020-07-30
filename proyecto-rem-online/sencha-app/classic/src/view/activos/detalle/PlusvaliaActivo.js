@@ -159,7 +159,7 @@ Ext.define('HreRem.view.activos.detalle.PlusvaliaActivo', {
 	        items : [ 
         		{
         			title: 'Tributos',
-					xtype:'tributogrid',
+					xtype:'tributosgrid',
 					colspan: 3
         		},
         		{

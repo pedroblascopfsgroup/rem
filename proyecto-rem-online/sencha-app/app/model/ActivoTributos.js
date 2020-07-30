@@ -102,6 +102,12 @@ Ext.define('HreRem.model.ActivoTributos', {
     		},
     		{
     			name: 'importeRecuperadoRecurso'
+    		},
+    		{
+    			name: 'estaExento'
+    		},
+    		{
+    			name: 'motivoExento'
     		}
     ],
     

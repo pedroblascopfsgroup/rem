@@ -1642,7 +1642,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
-					extraParams: {diccionario: 'favorableDesfavorable'}
+					extraParams: {diccionario: 'resultadoSolicitud'}
 				},
 				autoLoad: true
     		},
@@ -2383,7 +2383,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'DDSiNo'}
-			}
+			},
+			autoLoad: true
 		},
 
 		comboDireccionComercial: {
@@ -2547,6 +2548,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'validado'}
+			},
+			autoLoad: true
+		},
+				
+		comboMotivoExento: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivoExento'}
 			},
 			autoLoad: true
 		}

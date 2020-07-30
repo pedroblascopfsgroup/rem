@@ -55,6 +55,10 @@ public class DtoActivoTributos implements Serializable{
 	private String fechaComunicacionDevolucionIngreso;
 	
 	private Double importeRecuperadoRecurso;
+	
+	private String estaExento;
+	
+	private String motivoExento;
 
 	public String getNumActivo() {
 		return numActivo;
@@ -238,6 +242,22 @@ public class DtoActivoTributos implements Serializable{
 
 	public void setImporteRecuperadoRecurso(Double importeRecuperadoRecurso) {
 		this.importeRecuperadoRecurso = importeRecuperadoRecurso;
+	}
+
+	public String getEstaExento() {
+		return estaExento;
+	}
+
+	public void setEstaExento(String estaExento) {
+		this.estaExento = estaExento;
+	}
+
+	public String getMotivoExento() {
+		return motivoExento;
+	}
+
+	public void setMotivoExento(String motivoExento) {
+		this.motivoExento = motivoExento;
 	}
 
 	

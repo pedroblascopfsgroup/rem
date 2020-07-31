@@ -6121,7 +6121,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		var me = this,
 		config = {};
-
 		config.params = {};
 		config.params.id = me.getViewModel().getData().activo.id;
 		config.method = 'POST';

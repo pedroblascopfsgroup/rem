@@ -133,9 +133,10 @@ Ext.define('HreRem.view.activos.detalle.AdmisionActivo', {
 		 
 	     var items = [];
 	     //$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'admisioncheckdocactivo', ocultarBotonesEdicion: ocultarAdmisioncheckdocactivo, title: HreRem.i18n('title.admision.check.doc.activo')})}, ['TAB_CHECKING_DOC_ADMISION']);
+	     $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'admisionrevisiontitulo' ,ocultarBotonesEdicion: ocultarAdmisioncheckdocactivo, title: HreRem.i18n('title.admision.tab.revision.titulo')})}, ['TAB_CHECKING_INFO_ADMISION']);
 	     $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'saneamientoactivo',ocultarBotonesEdicion: ocultarSaneamientoCheckEdicion, title: HreRem.i18n('title.admision.check.inf.activo')})}, ['TAB_CHECKING_INFO_ADMISION']);
 	     $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'evolucionactivo', ocultarBotonesEdicion: ocultarAdmisioncheckinfoactivo, title: HreRem.i18n('title.admision.check.inf.activo')})}, ['TAB_CHECKING_INFO_ADMISION']);
-	     $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'admisionrevisiontitulo' ,ocultarBotonesEdicion: ocultarAdmisioncheckdocactivo, title: HreRem.i18n('title.admision.tab.revision.titulo')})}, ['TAB_CHECKING_INFO_ADMISION']);
+	     
 	     
 	     me.addPlugin({ptype: 'lazyitems', items: items });
 	     me.callParent();
@@ -176,14 +177,18 @@ Ext.define('HreRem.view.activos.detalle.AdmisionActivo', {
     verifyProxyObservaciones: function ( tab ) {
        		var observacionesGrid = null;
        		var childs = tab.items.items;
+       		var evolucionactivo = "evolucionactivo";
        		if ( childs.length > 0 ) {
 	       		for (var i = 0; i < childs.length; i++) {
 	       			var child = childs [i];
-	       			for (var j = 0; j < child.items.items.length; j++ ) {
-	       				if ("observacionesactivo".includes(child.items.items[j].xtype)){
-	       					observacionesGrid = child.items.items[j];
+	       			if(!evolucionactivo.includes(tab.config.xtype.valueOf())){
+	       				for (var j = 0; j < child.items.items.length; j++ ) {
+	       					if ("observacionesactivo".includes(child.items.items[j].xtype)){
+	       						observacionesGrid = child.items.items[j];
+	       					}
 	       				}
 	       			}
+
 	       		}
 	       		if ( observacionesGrid  && typeof observacionesGrid.buildStoreWithProxy === 'function') {
 	       			observacionesGrid.buildStoreWithProxy(observacionesGrid);

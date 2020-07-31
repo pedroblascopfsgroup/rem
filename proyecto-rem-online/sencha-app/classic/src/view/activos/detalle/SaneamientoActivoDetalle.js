@@ -667,14 +667,14 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 						reference: "saneamientoagendagridref"
 					}
 				]
-            },
+            }/*,
     		{
 				xtype: 'fieldsettable',
 				items : [{
 					xtype: 'observacionesactivo',
 					launch: CONST.OBSERVACIONES_TAB_LAUNCH['SANEAMIENTO']
 				}]
-			}
+			}*/
      ];
 		me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();

@@ -138,17 +138,17 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 							{
 								xtype: 'tbfill'
 							},
-							//prueba boton: Estado admisión
+							//boton: Estado admisión
 							{
 								xtype: 'button',
 								cls: 'boton-cabecera',
-								iconCls: 'ico-crear-trabajo',
+								iconCls: 'ico-user',
 								tooltip: HreRem.i18n('btn.estado.admision'),
-								handler: 'onClickEstadoAdmision',//
-								//secFunPermToShow: 'BOTON_CREAR_TRABAJO',//
-								bind: {
-									hidden: '{!estadoAdmisionVisible}'
-								}
+								handler: 'onClickEstadoAdmision',
+								bind: 
+									{
+										hidden: '{estadoAdmisionVisible}' //
+									}
 							},
 							{
 								xtype: 'button',

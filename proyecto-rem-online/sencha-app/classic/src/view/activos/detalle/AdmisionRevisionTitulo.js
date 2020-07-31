@@ -447,14 +447,14 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 			items : [{
 						xtype : 'agendaRevisionTituloGrid'
 					}]
-		},
-		{
+		}
+		/*{
 			xtype: 'fieldsettable',
 			items : [{
 				xtype: 'observacionesactivo',
 				launch: CONST.OBSERVACIONES_TAB_LAUNCH['REVISION_TITULO']
 			}]
-		}];
+		}*/];
 
 		me.callParent();
 	},

@@ -39,7 +39,11 @@ public class ActivoAdmisionEvolucionExcelReport extends AbstractExcelReport impl
 			fila = new ArrayList<String>();
 			fila.add(actAdmEvo.getEstadoEvolucion());
 			fila.add(actAdmEvo.getSubestadoEvolucion());
-			fila.add(actAdmEvo.getFechaEvolucion().substring(8, 10)+"/"+actAdmEvo.getFechaEvolucion().substring(5, 7)+"/"+actAdmEvo.getFechaEvolucion().substring(0, 4));
+			if (actAdmEvo.getFechaEvolucion() != null) {
+				fila.add(actAdmEvo.getFechaEvolucion().substring(8, 10)+"/"+actAdmEvo.getFechaEvolucion().substring(5, 7)+"/"+actAdmEvo.getFechaEvolucion().substring(0, 4));
+			}else {
+				fila.add("");
+			}
 			fila.add(actAdmEvo.getObservacionesEvolucion());
 			fila.add(actAdmEvo.getGestorEvolucion());
 			valores.add(fila);

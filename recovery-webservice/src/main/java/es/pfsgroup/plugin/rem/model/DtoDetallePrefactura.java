@@ -12,8 +12,8 @@ public class DtoDetallePrefactura {
 	private static final long serialVersionUID = 0L;
 
 	private Long numTrabajo;
-	*private String tipologiaTrabajo;
-	*private String subtipologiaTrabajo;
+	private String tipologiaTrabajo;
+	private String subtipologiaTrabajo;
 	private String descripcion;
 	private Date fechaAlta;
 	private String estadoTrabajo;

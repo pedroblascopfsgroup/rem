@@ -67,8 +67,8 @@ public class MSVActualizadorOkTecnicoSelloCalidad extends AbstractMSVActualizado
 				activo.setFechaRevisionSelloCalidad(new Date());
 			}else if(comprobacionFalse.contains(selloCalidad)) {
 				activo.setSelloCalidad(false);
-				activo.setGestorSelloCalidad(usuarioLogado);
-				activo.setFechaRevisionSelloCalidad(new Date());
+				activo.setGestorSelloCalidad(null);
+				activo.setFechaRevisionSelloCalidad(null);
 			}
 
 			activoApi.saveOrUpdate(activo);

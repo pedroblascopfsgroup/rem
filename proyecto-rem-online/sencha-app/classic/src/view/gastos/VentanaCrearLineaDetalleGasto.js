@@ -21,7 +21,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
     	var disabledSinSubtipoGasto = true;
     	var estadoParaGuardar = me.lookupController().getView().getViewModel().getData().gasto.getData().estadoModificarLineasDetalleGasto;
     	var isGastoRefacturado = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPorOtroGasto;
-    	
+    	var disabledCuotaTipoImpositivo = false;
     	
 	    var subtipoGasto= null,		baseSujeta= null,		baseNoSujeta= null,			recargo= null,
     	tipoRecargo= null,			interes= null,			costas= null,				otros= null,
@@ -54,6 +54,11 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
             	}
             	if(subtipoGasto != null){
             		disabledSinSubtipoGasto = false;
+            	}
+            	if(operacionExentaImp != null && (!operacionExentaImp || (operacionExentaImp && esRenunciaExenta != null && esRenunciaExenta))){
+            		disabledCuotaTipoImpositivo = false
+            	}else{
+            		disabledCuotaTipoImpositivo = true;
             	}
             		
         	}
@@ -361,6 +366,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 								    				reference: 'tipoImpositivo',
 								    				name: 'tipoImpositivo',
 								    				value: tipoImpositivo,
+								    				disabled: disabledCuotaTipoImpositivo,
 								    				allowBlank: true,
 								    				listeners: {
 				    									change: 'onChangeCuota'
@@ -375,6 +381,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 								    				reference: 'cuota',
 								    				name: 'cuota',
 								    				value: cuota,
+								    				disabled: disabledCuotaTipoImpositivo,
 								    				allowBlank: true,
 								    				readOnly: true,
 								    				renderer: function(value) {

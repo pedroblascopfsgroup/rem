@@ -177,7 +177,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		gastoLineaDetalle.setOtrosIncrementos(dto.getOtros());
 		gastoLineaDetalle.setProvSuplidos(dto.getProvSupl());
 		
-		if(gastoLineaDetalle.getTipoImpuesto() != null) {
+		if(dto.getTipoImpuesto() != null) {
 			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoImpuesto());
 			gastoLineaDetalle.setTipoImpuesto(genericDao.get(DDTiposImpuesto.class, filtro));
 		}
@@ -329,11 +329,8 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 					partidaArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaArrendamiento,filtroBorrado, filtroRefacturablePP);
 					partidaNoArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaNoArrendamiento ,filtroBorrado, filtroRefacturablePP);
 				}else {
-					//Filter filtroIdPruebas = genericDao.createFilter(FilterType.EQUALS, "id", 16941L);
 					partidaArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaArrendamiento  ,filtroBorrado, filtroRefacturablePP);
 					partidaNoArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaNoArrendamiento ,filtroBorrado, filtroRefacturablePP);
-					//partidaNoArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroIdPruebas);
-
 				}
 				
 				if(partidaArrendada !=null || partidaNoArrendada != null){
@@ -489,23 +486,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			
 			for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleList) {
 				if(gastoLineaDetalle.getSubtipoGasto() != null) {
-					tipoGastoImpuestoString = gastoLineaDetalle.getSubtipoGasto().getCodigo();
-					boolean exento = false;
-					if(gastoLineaDetalle.getEsImporteIndirectoExento() != null && gastoLineaDetalle.getEsImporteIndirectoExento()) {
-						exento = true;
-					}
-					if(gastoLineaDetalle.getEsImporteIndirectoRenunciaExento() != null && gastoLineaDetalle.getEsImporteIndirectoRenunciaExento()) {
-						exento = false;
-					}
-					if(gastoLineaDetalle.getTipoImpuesto() != null && !exento) {
-						tipoGastoImpuestoString = tipoGastoImpuestoString + "-" +gastoLineaDetalle.getTipoImpuesto().getCodigo();
-						if(gastoLineaDetalle.getImporteIndirectoTipoImpositivo() != null) {
-							tipoGastoImpuestoString = tipoGastoImpuestoString + "-" + gastoLineaDetalle.getImporteIndirectoTipoImpositivo().toString();
-						}else {
-							tipoGastoImpuestoString = tipoGastoImpuestoString + "-" + "0";
-
-						}
-					}
+					tipoGastoImpuestoString = devolverSubGastoImpuestImpositivo(gastoLineaDetalle);
 
 					tipoGastoImpuestoList.add(tipoGastoImpuestoString);
 				}
@@ -699,5 +680,45 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		
 		return tieneLinea;
 	}
-			
+		
+	@Override 
+	public String devolverSubGastoImpuestImpositivo(GastoLineaDetalle gastoLineaDetalle) {
+		String subGastoImpuestImpositivo = null;
+		
+		if(gastoLineaDetalle.getSubtipoGasto() == null) {
+			return null;
+		
+		}
+		boolean exento = false;
+		subGastoImpuestImpositivo = gastoLineaDetalle.getSubtipoGasto().getCodigo();
+
+		if(gastoLineaDetalle.getEsImporteIndirectoExento() != null && gastoLineaDetalle.getEsImporteIndirectoExento()) {
+			exento = true;
+		}
+		if(gastoLineaDetalle.getEsImporteIndirectoRenunciaExento() != null && gastoLineaDetalle.getEsImporteIndirectoRenunciaExento()) {
+			exento = false;
+		}
+		if(gastoLineaDetalle.getTipoImpuesto() != null && !exento) {
+			subGastoImpuestImpositivo = subGastoImpuestImpositivo + "-" +gastoLineaDetalle.getTipoImpuesto().getCodigo();
+			if(gastoLineaDetalle.getImporteIndirectoTipoImpositivo() != null) {
+				subGastoImpuestImpositivo = subGastoImpuestImpositivo + "-" + gastoLineaDetalle.getImporteIndirectoTipoImpositivo().toString();
+			}else {
+				subGastoImpuestImpositivo = subGastoImpuestImpositivo + "-" + "0";
+
+			}
+		}
+		
+		return subGastoImpuestImpositivo;
+	}
+	
+	@Override
+	public GastoLineaDetalle devolverLineaBk(GastoProveedor gasto) {
+		List<GastoLineaDetalle> gastoLineaDetalleList = gasto.getGastoLineaDetalleList();
+		
+		if(gastoLineaDetalleList == null || gastoLineaDetalleList.isEmpty() || gastoLineaDetalleList.size() > 1) {
+			return null;
+		}
+		
+		return gastoLineaDetalleList.get(0);
+	}
 }

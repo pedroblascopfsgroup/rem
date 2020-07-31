@@ -26,6 +26,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivoBDE;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoImporte;
 
@@ -84,9 +85,21 @@ public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
     @JoinColumn(name = "SGT_ID")
 	private ActivoSubtipoGastoProveedorTrabajo activoSubtivoGastoProveedorTrabajo;
 	
+	@Column(name="CCC_PRINCIPAL")
+    private Boolean gastosCuentasContablesPrincipal;
 	
 	@Column(name="CPP_PRINCIPAL")
     private Boolean gastosPartidasPresupuestariasPrincipal;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="DD_TBE_ID")
+    private DDTipoActivoBDE tipoActivoBDE;
+	
+	@Column(name="CPP_APARTADO")
+    private String cppApartado;
+	
+	@Column(name="CPP_CAPITULO")
+    private String cppCapitulo;
 	
 	@Version   
 	private Long version;
@@ -207,6 +220,14 @@ public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
 		this.activoSubtivoGastoProveedorTrabajo = activoSubtivoGastoProveedorTrabajo;
 	}
 
+	public Boolean getGastosCuentasContablesPrincipal() {
+		return gastosCuentasContablesPrincipal;
+	}
+
+	public void setGastosCuentasContablesPrincipal(Boolean gastosCuentasContablesPrincipal) {
+		this.gastosCuentasContablesPrincipal = gastosCuentasContablesPrincipal;
+	}
+
 	public Boolean getGastosPartidasPresupuestariasPrincipal() {
 		return gastosPartidasPresupuestariasPrincipal;
 	}
@@ -214,9 +235,30 @@ public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
 	public void setGastosPartidasPresupuestariasPrincipal(Boolean gastosPartidasPresupuestariasPrincipal) {
 		this.gastosPartidasPresupuestariasPrincipal = gastosPartidasPresupuestariasPrincipal;
 	}
-	
-	
 
+	public DDTipoActivoBDE getTipoActivoBDE() {
+		return tipoActivoBDE;
+	}
+
+	public void setTipoActivoBDE(DDTipoActivoBDE tipoActivoBDE) {
+		this.tipoActivoBDE = tipoActivoBDE;
+	}
+
+	public String getCppApartado() {
+		return cppApartado;
+	}
+
+	public void setCppApartado(String cppApartado) {
+		this.cppApartado = cppApartado;
+	}
+
+	public String getCppCapitulo() {
+		return cppCapitulo;
+	}
+
+	public void setCppCapitulo(String cppCapitulo) {
+		this.cppCapitulo = cppCapitulo;
+	}
 	
 	
 }

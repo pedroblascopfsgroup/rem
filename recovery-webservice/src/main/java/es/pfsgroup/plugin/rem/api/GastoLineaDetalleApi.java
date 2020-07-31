@@ -28,6 +28,10 @@ public interface GastoLineaDetalleApi {
 			GastoProveedor gastoProveedor);
 
 	boolean tieneLineaDetalle(GastoProveedor gasto);
+
+	String devolverSubGastoImpuestImpositivo(GastoLineaDetalle gastoLineaDetalle);
+
+	GastoLineaDetalle devolverLineaBk(GastoProveedor gasto);
 	
 }
 

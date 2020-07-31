@@ -1092,13 +1092,13 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView getGastosRefacturados(@RequestParam String gastos, String nifPropietario) {
+	public ModelAndView getGastosRefacturados(@RequestParam String gastos, String nifPropietario, String tipoGasto) {
 		ModelMap model = new ModelMap();
 		
 		List<String> gastosRefacturables = new ArrayList<String>();
 		List<String> gastosNoRefacturables = new ArrayList<String>();
 		if(!Checks.esNulo(gastos)) {
-			gastosRefacturables = gastoProveedorApi.getGastosRefacturados(gastos, nifPropietario);
+			gastosRefacturables = gastoProveedorApi.getGastosRefacturados(gastos, nifPropietario, tipoGasto);
 			gastosNoRefacturables = gastoProveedorApi.getGastosNoRefacturados(gastos, gastosRefacturables);
 		}
 		try {			
@@ -1158,9 +1158,11 @@ public class GastosProveedorController extends ParadiseJsonController {
 				//Esta línea de código sirve para validar los gastos a anyadir,
 				//en caso de no cumplir, lanza excepciones visuales para front.
 				gastoProveedorApi.validarGastosARefacturar(idGasto, gastosRefacturables);
+				GastoProveedor gastoProveedor = gastoProveedorApi.findOne(Long.valueOf(idGasto));
 				
-				if(!Checks.esNulo(gastosRefacturables)) {
-					gastosRefacturablesLista = gastoProveedorApi.getGastosRefacturados(gastosRefacturables, nifPropietario);
+				if(gastosRefacturables != null && gastoProveedor != null && gastoProveedor.getTipoGasto() != null) {
+					gastosRefacturablesLista = 
+							gastoProveedorApi.getGastosRefacturados(gastosRefacturables, nifPropietario, gastoProveedor.getTipoGasto().getCodigo());
 				}
 				
 				if(!Checks.estaVacio(gastosRefacturablesLista)){

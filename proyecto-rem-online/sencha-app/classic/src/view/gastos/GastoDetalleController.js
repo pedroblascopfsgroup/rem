@@ -1585,13 +1585,15 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var destinatarioGastoCodigo = me.getView().down('[name=destinatarioGastoCodigo]');
 		var buscadorNifEmisorField = me.lookupReference("buscadorNifEmisorField");
 		var nifEmisor = me.lookupReference("comboProveedores");
+		var tipoGasto = me.lookupReference("tipoGasto").getValue();
 		
 		Ext.Ajax
 		.request({
 			url : url,
 			params : {
 				gastos : gastos,
-				nifPropietario : nifPropietario
+				nifPropietario : nifPropietario,
+				tipoGasto: tipoGasto
 			},
 			success : function(response, opts) {
 				var data = Ext.decode(response.responseText);
@@ -1766,8 +1768,11 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			window.parent.lookupController().getViewModel().getData().esCarteraBakia &&
 			window.parent.getStore().data.length > 0){
 			
-			me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.anyadir.gasto.linea.detalle.bk"));
-			return;
+			if(window.idLineaDetalleGasto == null){
+				me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.anyadir.gasto.linea.detalle.bk"));
+				return;
+			}
+			
 		}
 		
 		var tipoImpositivo = form.getForm().findField('tipoImpositivo').getValue();

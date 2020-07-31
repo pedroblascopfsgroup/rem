@@ -548,7 +548,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 		}
 		
-		//HashSet<String>  tipoGastoImpuestoHash = new HashSet<String>();
+		HashSet<String>  tipoGastoImpuestoHash = new HashSet<String>();
 		List<String> listaNumerosGasto = dto.getGastoRefacturadoGrid();
 		if(listaNumerosGasto != null && !listaNumerosGasto.isEmpty()) {
 			for (String numGasto : listaNumerosGasto) {				
@@ -561,20 +561,20 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					gastoRefacturable.setGastoProveedor(gastoRefacturableHaya.getId());
 					gastoRefacturable.setGastoProveedorRefacturado(gastoRefacturableHaya.getId());
 					genericDao.save(GastoRefacturable.class, gastoRefacturable);
-					/*
+		
 					List<GastoLineaDetalle> gastoLineaDetalleList = gastoRefacturableHaya.getGastoLineaDetalleList();
 	
 					if(gastoLineaDetalleList != null && !gastoLineaDetalleList.isEmpty()) {
 						tipoGastoImpuestoHash = gastoLineaDetalleApi.devolverNumeroLineas(gastoLineaDetalleList, tipoGastoImpuestoHash);
 					}
-					*/
+
 				}	
 			}
-			/*List<String> tipoGastoImpuestoList = new ArrayList<String>(tipoGastoImpuestoHash);
+			List<String> tipoGastoImpuestoList = new ArrayList<String>(tipoGastoImpuestoHash);
 			if(!listaNumerosGasto.isEmpty() && !tipoGastoImpuestoList.isEmpty()) {
 				gastoLineaDetalleApi.createLineasDetalleGastosRefacturados(tipoGastoImpuestoList, listaNumerosGasto, gastoProveedor);
 			}
-			*/
+
 		}
 		return gastoProveedor;
 	}
@@ -3447,24 +3447,35 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	}
 
 	@Override
-	public List<String> getGastosRefacturados(String listaGastos, String nifPropietario) {
+	public List<String> getGastosRefacturados(String listaGastos, String nifPropietario, String tipoGasto) {
 		List<VGastosRefacturados>  listaVistaGastos = new ArrayList<VGastosRefacturados>();
 		List<String> listaGastosFinales = new ArrayList<String>();
 
 		if(!Checks.esNulo(listaGastos)) {
 			listaVistaGastos = gastoDao.getGastosRefacturados(listaGastos);
 			if(!Checks.estaVacio(listaVistaGastos)) {
+				String mismosDatos = null;
 				for (VGastosRefacturados vGastosRefacturado : listaVistaGastos) {
 					GastoProveedor gastoProveedorRefacturable = genericDao.get(GastoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", Long.parseLong(vGastosRefacturado.getNumGastoHaya())));
-					if(gastoLineaDetalleApi.tieneLineaDetalle(gastoProveedorRefacturable)) {
-						if(!Checks.esNulo(nifPropietario)) {
-							if (this.gastoMismoPropietario(nifPropietario, gastoProveedorRefacturable)) {
-								listaGastosFinales.add(vGastosRefacturado.getNumGastoHaya());
+					if(gastoProveedorRefacturable.getTipoGasto() != null 
+						&& tipoGasto.equals(gastoProveedorRefacturable.getTipoGasto().getCodigo())
+						&& gastoLineaDetalleApi.tieneLineaDetalle(gastoProveedorRefacturable)
+						&& nifPropietario != null && this.gastoMismoPropietario(nifPropietario, gastoProveedorRefacturable)
+						&& gastoProveedorRefacturable.getPropietario().getCartera() != null) {
+					
+						if(DDCartera.CODIGO_CARTERA_BANKIA.equals(gastoProveedorRefacturable.getPropietario().getCartera().getCodigo())) {
+							
+							String mismosDatosAux = gastoLineaDetalleApi.devolverSubGastoImpuestImpositivo(gastoLineaDetalleApi.devolverLineaBk(gastoProveedorRefacturable));
+							if(mismosDatos == null) {
+								mismosDatos = mismosDatosAux;
+							}	
+							if(!mismosDatos.equals(mismosDatosAux)) {
+								listaGastosFinales.clear();
+								break;
 							}
-						}else {
-							listaGastosFinales.add(vGastosRefacturado.getNumGastoHaya());
 						}
-					}
+						listaGastosFinales.add(vGastosRefacturado.getNumGastoHaya());
+					}	
 				}
 			}
 		}
@@ -3799,5 +3810,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		return isRefacturado;
 	}
+	
 
 }

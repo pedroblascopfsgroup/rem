@@ -85,15 +85,15 @@ public class ActivoConfiguracionCuentasContables implements Serializable, Audita
 	@Column(name="CCC_PRINCIPAL")
     private Boolean gastosCuentasPrincipal;
 	
+	@Column(name="CPP_PRINCIPAL")
+    private Boolean gastosPartidasPrincipal;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="DD_TBE_ID")
     private DDTipoActivoBDE tipoActivoBDE;
 	
-	@Column(name="CPP_APARTADO")
-    private String cppApartado;
-	
-	@Column(name="CPP_CAPITULO")
-    private String cppCapitulo;
+	@Column(name="CCC_SUBCUENTA_CONTABLE")
+    private String subcuentaContable;
 	
 	@Version   
 	 private Long version;
@@ -221,6 +221,14 @@ public class ActivoConfiguracionCuentasContables implements Serializable, Audita
 	public void setGastosCuentasPrincipal(Boolean gastosCuentasPrincipal) {
 		this.gastosCuentasPrincipal = gastosCuentasPrincipal;
 	}
+	
+	public Boolean getGastosPartidasPrincipal() {
+		return gastosPartidasPrincipal;
+	}
+
+	public void setGastosPartidasPrincipal(Boolean gastosPartidasPrincipal) {
+		this.gastosPartidasPrincipal = gastosPartidasPrincipal;
+	}
 
 	public DDTipoActivoBDE getTipoActivoBDE() {
 		return tipoActivoBDE;
@@ -230,19 +238,13 @@ public class ActivoConfiguracionCuentasContables implements Serializable, Audita
 		this.tipoActivoBDE = tipoActivoBDE;
 	}
 
-	public String getCppApartado() {
-		return cppApartado;
+	public String getSubcuentaContable() {
+		return subcuentaContable;
 	}
 
-	public void setCppApartado(String cppApartado) {
-		this.cppApartado = cppApartado;
+	public void setSubcuentaContable(String subcuentaContable) {
+		this.subcuentaContable = subcuentaContable;
 	}
 
-	public String getCppCapitulo() {
-		return cppCapitulo;
-	}
-
-	public void setCppCapitulo(String cppCapitulo) {
-		this.cppCapitulo = cppCapitulo;
-	}
+	
 }

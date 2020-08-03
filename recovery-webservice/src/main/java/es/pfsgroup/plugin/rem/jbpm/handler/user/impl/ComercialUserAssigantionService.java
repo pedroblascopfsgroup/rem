@@ -287,8 +287,20 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			}
 		}else {
 			codigoSupervisor = this.getMapCodigoTipoSupervisor(isFuerzaVentaDirecta, isLiberbank, isBankia, isSareb, isRetailActivo(tareaActivo), isActivoApple, isActivoTango, isActivoGaleon, isActivoThirdPartiesING, isActivoHYT, isActivoEgeoZeus, isActivoGiants, isActivoDivarian).get(codigoTarea);
-		}	
-		
+		}
+
+		if((CODIGO_T013_CIERRE_ECONOMICO.equals(codigoTarea)
+				|| CODIGO_T017_CIERRE_ECONOMICO.equals(codigoTarea)) /*&& usaGestorController*/) {
+
+			Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_CONTROLLER);
+
+			tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+
+			if(tipoGestor != null) {
+				return getGestorOrSupervisorExpedienteByCodigo(tareaExterna, tipoGestor.getCodigo());
+			}
+		}
+
 		if(CODIGO_T017_RESOLUCION_CES.equals(codigoTarea) || CODIGO_T017_RECOMENDACION_CES.equals(codigoTarea) 
 				|| CODIGO_T017_RESOLUCION_PRO_MANZANA.equals(codigoTarea) || CODIGO_T017_RATIFICACION_COMITE_CES.equals(codigoTarea)) {
 			return gestorActivoApi.supervisorTareaApple(codigoTarea);

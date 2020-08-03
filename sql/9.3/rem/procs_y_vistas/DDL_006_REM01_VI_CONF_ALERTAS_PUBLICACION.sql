@@ -1,17 +1,18 @@
 --/*
 --##########################################
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20200708
+--## FECHA_CREACION=20200721
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-6440
+--## INCIDENCIA_LINK=REMVIP-7837
 --## PRODUCTO=NO
 --## Finalidad: vista CRUCE ALERTAS PUBLICACION Y TABLA CONFIGURACION 
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 REMVIP-6440 - Versión inicial
 --##	    0.2 REMVIP-7759 - Sa cambia orden y reglas de la vista
+--##	    0.3 REMVIP-7837 - Cambia calculo 'APLICA'
 --##########################################
 --*/
 
@@ -69,7 +70,7 @@ BEGIN
 	(T1.ALERTA_POSESION * T2.POSESION) +
 	(T1.ALERTA_TIPO_ALQUILER * T2.TIPO_ALQUILER) +
 	(T1.ALERTA_ALQUILER * T2.ALQUILADO) +
-	(T1.ALERTA_TCO_ALQUILER * T2.TCO_ALQUILER * T1.ALERTA_OKUPADO * T2.OCUPADO ) +
+	(T1.ALERTA_TCO_ALQUILER * T2.TCO_ALQUILER * T1.ALERTA_OKUPADO) +
 	(T1.ALERTA_FECHA_DECRETO * T2.FECHA_DECRETO) +
 	(T1.ALERTA_OKUPADO * T2.OCUPADO) ) > 0 THEN ''APLICA''
 	WHEN ((T1.ALERTA_INSCRIPCION * T2.INSCRIPCION ) +

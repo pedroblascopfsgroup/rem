@@ -5640,23 +5640,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		tieneOfertasVivas = particularValidator.existeActivoConOfertaVivaEstadoExpediente(Long.toString(activo.getNumActivo()));
 		
 		for (ActivoTrabajo activoTrabajo : trabajosDelActivo) {
-			if (activoTrabajo.getTrabajo().getEstado() != null
-					&& activoTrabajo.getTrabajo().getSubtipoTrabajo() != null) {
-				if (!DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA
-						.equals(activoTrabajo.getTrabajo().getSubtipoTrabajo().getCodigo())
-						&& !DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_ALQUILER
-								.equals(activoTrabajo.getTrabajo().getSubtipoTrabajo().getCodigo())
-						&& (DDEstadoTrabajo.ESTADO_EN_TRAMITE.equals(activoTrabajo.getTrabajo().getEstado().getCodigo())
-								|| DDEstadoTrabajo.ESTADO_CEE_PENDIENTE_ETIQUETA
-										.equals(activoTrabajo.getTrabajo().getEstado().getCodigo())
-								|| DDEstadoTrabajo.ESTADO_PENDIENTE_CIERRE_ECONOMICO
-										.equals(activoTrabajo.getTrabajo().getEstado().getCodigo())
-								|| DDEstadoTrabajo.ESTADO_VALIDADO
-										.equals(activoTrabajo.getTrabajo().getEstado().getCodigo()))) {
+			if(activoTrabajo.getTrabajo() != null) {
+				if (activoTrabajo.getTrabajo().getEstado() != null
+						&& activoTrabajo.getTrabajo().getSubtipoTrabajo() != null) {
+					if (!DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA
+							.equals(activoTrabajo.getTrabajo().getSubtipoTrabajo().getCodigo())
+							&& !DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_ALQUILER
+							.equals(activoTrabajo.getTrabajo().getSubtipoTrabajo().getCodigo())
+							&& (DDEstadoTrabajo.ESTADO_EN_TRAMITE.equals(activoTrabajo.getTrabajo().getEstado().getCodigo())
+							|| DDEstadoTrabajo.ESTADO_CEE_PENDIENTE_ETIQUETA
+							.equals(activoTrabajo.getTrabajo().getEstado().getCodigo())
+							|| DDEstadoTrabajo.ESTADO_PENDIENTE_CIERRE_ECONOMICO
+							.equals(activoTrabajo.getTrabajo().getEstado().getCodigo())
+							|| DDEstadoTrabajo.ESTADO_VALIDADO
+							.equals(activoTrabajo.getTrabajo().getEstado().getCodigo()))) {
 
-					tieneTrabajosVivos = true;
+						tieneTrabajosVivos = true;
 
-					break;
+						break;
+					}
 				}
 			}
 		}

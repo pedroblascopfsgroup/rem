@@ -84,7 +84,17 @@ public class ActivoPropagacionUAsFieldTabMap {
     				"productoDescripcion",
     				"estadoExpIncorrienteCodigo",
     				
-    				"admision"
+    				"admision",
+    				
+    				//Activo EPA
+    				"activoEpa",
+    				
+    				//Cuenta de mora
+    				"empresa",
+    				"oficina",
+    				"contrapartida",
+    				"folio",
+    				"cdpen"
     			));
 
 

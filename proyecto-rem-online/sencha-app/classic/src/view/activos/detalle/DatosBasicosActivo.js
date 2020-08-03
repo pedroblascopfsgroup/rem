@@ -923,7 +923,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									xtype:'textfieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.activobbva.empresa'),
 									bind: {
-										readOnly : false,
+										readOnly : '{esUA}',
 										value: '{activo.empresa}'
 									}
 								},
@@ -931,7 +931,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									xtype:'textfieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.activobbva.oficina'),
 									bind: {
-										readOnly : false,
+										readOnly : '{esUA}',
 										value: '{activo.oficina}'
 									}
 								},
@@ -939,7 +939,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									xtype:'textfieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.activobbva.contrapartida'),
 									bind: {
-										readOnly : false,
+										readOnly : '{esUA}',
 										value: '{activo.contrapartida}'
 									}
 								},
@@ -947,7 +947,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									xtype:'textfieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.activobbva.folio'),
 									bind: {
-										readOnly : false,
+										readOnly : '{esUA}',
 										value: '{activo.folio}'
 									}
 								},
@@ -955,7 +955,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									xtype:'textfieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.activobbva.cdpen'),
 									bind: {
-										readOnly : false,
+										readOnly : '{esUA}',
 										value: '{activo.cdpen}'
 									}
 								}

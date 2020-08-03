@@ -78,7 +78,17 @@ public class ActivoPropagacionFieldTabMap {
     				"numExpRiesgo",
     				"estadoExpRiesgoCodigo",
     				"productoDescripcion",
-    				"estadoExpIncorrienteCodigo"
+    				"estadoExpIncorrienteCodigo",
+    				
+    				//Activo EPA
+    				"activoEpa",
+    				
+    				//Cuenta de mora
+    				"empresa",
+    				"oficina",
+    				"contrapartida",
+    				"folio",
+    				"cdpen"
     			));
 
     	pmap.put(TAB_SIT_POSESORIA,

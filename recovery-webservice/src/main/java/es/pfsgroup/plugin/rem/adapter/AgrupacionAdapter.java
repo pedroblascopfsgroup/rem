@@ -4015,30 +4015,11 @@ public class AgrupacionAdapter {
 			Double precioWebAlquiler = 0.0;
 	
 			try {
-				List<ActivoAgrupacionActivo> l_activos = agrupacion.getActivos();
-				
-				for (ActivoAgrupacionActivo aga : l_activos) { // Verificamos que todos los activos tengaun un precio de venta 
-					Double precioAuxVenta = activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId());
-					if (Checks.esNulo(precioAuxVenta) || (!Checks.esNulo(precioAuxVenta) && precioAuxVenta == 0.0)) {
-						precioWebVenta = 0.0;
-						break;
-					} else {
-						precioWebVenta += precioAuxVenta;
-					}
-				}
-				
-				for (ActivoAgrupacionActivo aga : l_activos) { // Verificamos que todos los activos tengaun un precio de alquiler
-					Double precioAuxAlquiler = activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId());
-					if (Checks.esNulo(precioAuxAlquiler) || (!Checks.esNulo(precioAuxAlquiler) && precioAuxAlquiler == 0.0)) {
-						precioWebAlquiler = 0.0;
-						break;
-					} else {
-						precioWebAlquiler += precioAuxAlquiler;
-					}
-				}
+				precioWebVenta = activoValoracionDao.getImporteValoracionVentaWebPorIdAgrupacion(id);
+				precioWebAlquiler = activoValoracionDao.getImporteValoracionRentaWebPorIdAgrupacion(id);
 	
 			} catch (Exception e) {
-				logger.error("error en agrupacionAdapter", e);
+				logger.error("error al calcular precio de agrupacion en agrupacionAdapter", e);
 			}
 	
 			dto.setPrecioWebVenta(precioWebVenta);

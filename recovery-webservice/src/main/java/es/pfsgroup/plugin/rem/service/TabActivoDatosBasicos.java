@@ -52,6 +52,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
@@ -82,6 +83,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
@@ -862,6 +864,22 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));
 		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
+		
+		if(activoBbva != null) {
+			if(DDSinSiNo.CODIGO_SI.equals(activoBbva.getActivoEpa().getCodigo())){
+				activoDto.setActivoEpa(true);
+			}else {
+				activoDto.setActivoEpa(false);
+			}
+			activoDto.setEmpresa(activoBbva.getEmpresa());
+			activoDto.setOficina(activoBbva.getOficina());
+			activoDto.setContrapartida(activoBbva.getContrapartida());
+			activoDto.setFolio(activoBbva.getFolio());
+			activoDto.setCdpen(activoBbva.getCdpen());
+		}
+		
 		return activoDto;
 	}
 	
@@ -1372,6 +1390,47 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 				}
 			}
+			
+			if (activo != null) {
+				
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+				ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
+				
+				if(activoBbva != null) {
+					if(dto.getActivoEpa() != null) {
+						if(dto.getActivoEpa() == true){
+							Filter filtroSi = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI);
+							DDSinSiNo ddSi = genericDao.get(DDSinSiNo.class, filtroSi);
+							activoBbva.setActivoEpa(ddSi);
+						}else {
+							Filter filtroNo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO);
+							DDSinSiNo ddNo = genericDao.get(DDSinSiNo.class, filtroNo);
+							activoBbva.setActivoEpa(ddNo);
+						}
+					}
+					
+					if(dto.getEmpresa() != null) {
+						activoBbva.setEmpresa(dto.getEmpresa());
+					}
+					
+					if(dto.getOficina() !=  null) {
+						activoBbva.setOficina(dto.getOficina());
+					}
+
+					if(dto.getContrapartida() != null) {
+						activoBbva.setContrapartida(dto.getContrapartida());
+					}
+					
+					if(dto.getFolio() != null) {
+						activoBbva.setFolio(dto.getFolio());
+					}
+					
+					if(dto.getCdpen() != null) {
+						activoBbva.setCdpen(dto.getCdpen());
+					}
+				}
+			}
+			
 		
 		
 

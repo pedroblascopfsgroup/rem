@@ -275,6 +275,13 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	private Boolean pazSocial;
 	private String numActivoDivarian;
+	
+    private Boolean activoEpa;
+    private Long empresa;
+    private Long oficina;
+    private Long contrapartida;
+    private Long folio;
+    private Long cdpen;
 
 	
 	public Boolean getTieneOfertaAlquilerViva() {
@@ -2092,6 +2099,53 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setNumActivoDivarian(String numActivoDivarian) {
 		this.numActivoDivarian = numActivoDivarian;
 	}
-	
+
+	public Boolean getActivoEpa() {
+		return activoEpa;
+	}
+
+	public void setActivoEpa(Boolean activoEpa) {
+		this.activoEpa = activoEpa;
+	}
+
+	public Long getEmpresa() {
+		return empresa;
+	}
+
+	public void setEmpresa(Long empresa) {
+		this.empresa = empresa;
+	}
+
+	public Long getOficina() {
+		return oficina;
+	}
+
+	public void setOficina(Long oficina) {
+		this.oficina = oficina;
+	}
+
+	public Long getContrapartida() {
+		return contrapartida;
+	}
+
+	public void setContrapartida(Long contrapartida) {
+		this.contrapartida = contrapartida;
+	}
+
+	public Long getFolio() {
+		return folio;
+	}
+
+	public void setFolio(Long folio) {
+		this.folio = folio;
+	}
+
+	public Long getCdpen() {
+		return cdpen;
+	}
+
+	public void setCdpen(Long cdpen) {
+		this.cdpen = cdpen;
+	}
 	
 }

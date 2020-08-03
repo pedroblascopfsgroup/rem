@@ -887,6 +887,80 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						]
 						
 					}, //Fin activo bancario
+					//Activo EPA
+		            {    
+		                
+						xtype:'fieldsettable',
+						defaultType: 'textfieldbase',
+						title: HreRem.i18n('title.epa'),
+						border: true,
+						colapsible: false,
+						colspan: 3,
+						items :
+							[
+							{
+								xtype:'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.activo.epa'),
+								bind: {
+									readOnly : '{esUA}',
+									store: '{comboSiNoBoolean}',
+									value: '{activo.activoEpa}'
+								}
+							}
+							]
+						},
+						{    
+			                
+							xtype:'fieldsettable',
+							defaultType: 'textfieldbase',
+							title: HreRem.i18n('title.mora'),
+							border: true,
+							colapsible: false,
+							colspan: 3,
+							items :
+								[
+								{
+									xtype:'textfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.activobbva.empresa'),
+									bind: {
+										readOnly : false,
+										value: '{activo.empresa}'
+									}
+								},
+								{
+									xtype:'textfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.activobbva.oficina'),
+									bind: {
+										readOnly : false,
+										value: '{activo.oficina}'
+									}
+								},
+								{
+									xtype:'textfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.activobbva.contrapartida'),
+									bind: {
+										readOnly : false,
+										value: '{activo.contrapartida}'
+									}
+								},
+								{
+									xtype:'textfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.activobbva.folio'),
+									bind: {
+										readOnly : false,
+										value: '{activo.folio}'
+									}
+								},
+								{
+									xtype:'textfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.activobbva.cdpen'),
+									bind: {
+										readOnly : false,
+										value: '{activo.cdpen}'
+									}
+								}
+							]
+					}, //Fin activo EPA
 					
 		            {//Per�metro e    
 		                

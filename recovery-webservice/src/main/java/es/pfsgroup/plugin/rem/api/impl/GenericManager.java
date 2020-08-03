@@ -88,9 +88,11 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoLocalizacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoAgendaSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
@@ -1402,5 +1404,27 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			listaActivoProveedor.add(p);
 		}
 		return listaActivoProveedor;
+
+	}
+
+	@Override
+	public List<DDSubestadoAdmision> getcomboSubestadoAdmisionNuevoFiltrado(String codEstadoAdmisionNuevo) {
+		
+		List<DDSubestadoAdmision> listaSubestados = new ArrayList<DDSubestadoAdmision>();
+		if (!Checks.esNulo(codEstadoAdmisionNuevo)) {
+			Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "estadoAdmision.codigo", codEstadoAdmisionNuevo);
+			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			Order order = new Order(OrderType.ASC, "codigo");
+			listaSubestados = genericDao.getListOrdered(DDSubestadoAdmision.class, order, filtroTipo, filtroBorrado);
+		}
+
+		return listaSubestados;
+	}
+	
+	@Override
+	public List<DDSubtipoAgendaSaneamiento> getSubtipologiaAgendaSaneamiento(String codTipo) {
+		
+		Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "tipoAgendaSaneamiento.codigo", codTipo);
+		return genericDao.getList(DDSubtipoAgendaSaneamiento.class, filtroId);
 	}
 }

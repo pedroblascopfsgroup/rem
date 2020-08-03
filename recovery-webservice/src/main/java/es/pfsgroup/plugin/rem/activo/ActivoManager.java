@@ -120,6 +120,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
@@ -152,12 +153,14 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoAgendaSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoSuministro;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTerritorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgendaSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -179,6 +182,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTributo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
@@ -192,6 +197,7 @@ import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.rest.dto.HistoricoPropuestasPreciosDto;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 import es.pfsgroup.plugin.rem.rest.dto.ReqFaseVentaDto;
+import es.pfsgroup.plugin.rem.rest.dto.SaneamientoAgendaDto;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
 import es.pfsgroup.plugin.rem.thread.GuardarActivosRestringidasAsync;
@@ -6980,6 +6986,49 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return listDto;
 	}
+
+	@Override
+	public List<SaneamientoAgendaDto> getSaneamientosAgendaByActivo(Long idActivo) {
+		
+		List<SaneamientoAgendaDto> listDto = new ArrayList<SaneamientoAgendaDto>();
+		
+		if(idActivo != null) {
+			List<ActivoAgendaSaneamiento> aas = genericDao.getList(ActivoAgendaSaneamiento.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo));
+			
+			if(aas != null && !aas.isEmpty()) {
+				for(ActivoAgendaSaneamiento agendaSaneamiento: aas) {
+					SaneamientoAgendaDto dto = new SaneamientoAgendaDto();
+					
+					dto.setIdActivo(idActivo);
+					dto.setIdSan(agendaSaneamiento.getId());
+					dto.setObservaciones(agendaSaneamiento.getObservaciones());
+					
+					if(agendaSaneamiento.getTipoAgendaSaneamiento() != null) {
+						dto.setTipologiaCod(agendaSaneamiento.getTipoAgendaSaneamiento().getCodigo());
+						dto.setTipologiaDesc(agendaSaneamiento.getTipoAgendaSaneamiento().getDescripcion());
+					}
+					
+					if(agendaSaneamiento.getSubtipoAgendaSaneamiento() != null) {
+						dto.setSubtipologiacod(agendaSaneamiento.getSubtipoAgendaSaneamiento().getCodigo());
+						dto.setSubtipologiaDesc(agendaSaneamiento.getSubtipoAgendaSaneamiento().getDescripcion());
+					}
+					
+					if(agendaSaneamiento.getAuditoria() != null && agendaSaneamiento.getAuditoria().getUsuarioCrear() != null) {
+						dto.setUsuariocrear(agendaSaneamiento.getAuditoria().getUsuarioCrear());
+					}
+					
+					if(agendaSaneamiento.getFechaAltaSaneamiento() != null) {
+						dto.setFechaCrear(agendaSaneamiento.getFechaAltaSaneamiento().toString());
+					}
+					
+					listDto.add(dto);
+				}
+			}
+			
+		}
+		
+		return listDto;
+	}
 	
 	@Override
 	@Transactional
@@ -7029,6 +7078,41 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 			
 			genericDao.save(ActivoInfAdministrativa.class, activoInfo);
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+	@Transactional
+	public Boolean createSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto) {
+		
+		ActivoAgendaSaneamiento agendaSaneamiento = new ActivoAgendaSaneamiento();
+		
+		if(saneamientoAgendaDto != null) {
+			if(saneamientoAgendaDto.getIdActivo() == null) {
+				throw new JsonViewerException("No se ha podido asociar la agenda a un activo");
+			}else {
+				Activo activo = activoDao.get(saneamientoAgendaDto.getIdActivo());
+				agendaSaneamiento.setActivo(activo);
+			}
+			
+			if(saneamientoAgendaDto.getTipologiaCod() != null) {
+				DDTipoAgendaSaneamiento tipoAgenda = genericDao.get(DDTipoAgendaSaneamiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", saneamientoAgendaDto.getTipologiaCod()));
+				agendaSaneamiento.setTipoAgendaSaneamiento(tipoAgenda);
+			}
+			
+			if(saneamientoAgendaDto.getSubtipologiacod() != null) {
+				DDSubtipoAgendaSaneamiento tipoAgenda = genericDao.get(DDSubtipoAgendaSaneamiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", saneamientoAgendaDto.getSubtipologiacod()));
+				agendaSaneamiento.setSubtipoAgendaSaneamiento(tipoAgenda);
+			}
+			
+			agendaSaneamiento.setObservaciones(saneamientoAgendaDto.getObservaciones());
+					
+			agendaSaneamiento.setFechaAltaSaneamiento(new Date());
+			
+			genericDao.save(ActivoAgendaSaneamiento.class, agendaSaneamiento);
 			
 			return true;
 		}
@@ -7067,6 +7151,24 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					activoInfo.setPrecioMaxVenta(null);
 				}
 			}
+			return true;
+		}
+		
+		return false;
+	}
+	@Override
+	@Transactional
+	public Boolean deleteSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto) {
+		
+		ActivoAgendaSaneamiento agendaSaneamiento = null;
+		
+		if(saneamientoAgendaDto != null) {
+			
+			agendaSaneamiento = genericDao.get(ActivoAgendaSaneamiento.class, genericDao.createFilter(FilterType.EQUALS, "id", saneamientoAgendaDto.getIdSan()));
+			
+			Auditoria.delete(agendaSaneamiento);
+			
+			genericDao.update(ActivoAgendaSaneamiento.class, agendaSaneamiento);
 			
 			return true;
 		}
@@ -7192,6 +7294,23 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 			
 			genericDao.save(ActivoSuministros.class, peticion);
+
+			return true;
+		}
+		
+		return false;
+	}
+
+	@Override
+	@Transactional
+	public Boolean updateSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto) {
+		
+		if(saneamientoAgendaDto != null) {
+			ActivoAgendaSaneamiento agendaSaneamiento = genericDao.get(ActivoAgendaSaneamiento.class, genericDao.createFilter(FilterType.EQUALS, "id", saneamientoAgendaDto.getIdSan()));
+			
+			agendaSaneamiento.setObservaciones(saneamientoAgendaDto.getObservaciones());
+			
+			genericDao.update(ActivoAgendaSaneamiento.class, agendaSaneamiento);
 			
 			return true;
 		}
@@ -7259,6 +7378,59 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return false;
+	}
+
+	@Override
+	@Transactional
+	public Boolean crearEstadoAdmision(String activoId, String codEstadoAdmision, String codSubestadoAdmision, String observaciones) {
+		try {
+			Long idActivo = Long.parseLong(activoId);
+			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+			Filter filtroEstadoAdmision = genericDao.createFilter(FilterType.EQUALS, "codigo", codEstadoAdmision);
+			
+			DDEstadoAdmision estadoAdmision = genericDao.get(DDEstadoAdmision.class, filtroBorrado, filtroEstadoAdmision);
+			DDSubestadoAdmision subestadoAdmision = null;
+			Activo activo = get(idActivo);
+			
+			
+			if (codSubestadoAdmision != null) {
+				
+				Filter filtroSubestadoAdmision = genericDao.createFilter(FilterType.EQUALS, "codigo", codSubestadoAdmision);
+				subestadoAdmision = genericDao.get(DDSubestadoAdmision.class, filtroBorrado, filtroSubestadoAdmision);;
+			}
+			ActivoAgendaEvolucion agendaEvolucion = genericDao.get(ActivoAgendaEvolucion.class, filtroBorrado, filtroActivoId);
+			
+			
+			if(agendaEvolucion!=null) {
+				activo.setEstadoAdmision(estadoAdmision);
+				agendaEvolucion.setEstadoAdmision(estadoAdmision);
+				activo.setSubestadoAdmision(subestadoAdmision);
+				agendaEvolucion.setSubEstadoAdmision(subestadoAdmision);				
+				agendaEvolucion.setObservaciones(observaciones);
+				agendaEvolucion.getAuditoria().setFechaModificar(new Date());
+				agendaEvolucion.getAuditoria().setUsuarioModificar(adapter.getUsuarioLogado().getUsername());
+				genericDao.update(ActivoAgendaEvolucion.class, agendaEvolucion);
+				
+			} else {
+				activo.setEstadoAdmision(estadoAdmision);
+				agendaEvolucion = new ActivoAgendaEvolucion();
+				agendaEvolucion.setActivo(activo);
+				agendaEvolucion.setEstadoAdmision(estadoAdmision);
+				activo.setSubestadoAdmision(subestadoAdmision);
+				agendaEvolucion.setSubEstadoAdmision(subestadoAdmision);
+				agendaEvolucion.setObservaciones(observaciones);
+				genericDao.save(ActivoAgendaEvolucion.class, agendaEvolucion);
+			}
+			
+			genericDao.update(Activo.class, activo);
+			
+			return true;
+		} catch (Exception e) {
+			logger.error("Error en activoManager", e);
+			return false;
+		}
+		
 	}
 
 	@Override

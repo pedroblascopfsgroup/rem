@@ -113,7 +113,16 @@ public class PerimetroActivo implements Serializable, Auditable {
     
     @Column(name = "PAC_TRABAJOS_VIVOS")
 	private Boolean trabajosVivos; 
-    
+	
+	@Column(name = "PAC_CHECK_ADMISION")
+	private Boolean aplicaAdmision;
+	
+	@Column(name = "PAC_FECHA_ADMISION")
+	private Date fechaAplicaAdmision;
+	
+	@Column(name = "PAC_MOTIVO_ADMISION")
+	private String motivoAplicaAdmision;
+	
     @Version   
 	private Long version;
 
@@ -289,6 +298,30 @@ public class PerimetroActivo implements Serializable, Auditable {
 
 	public void setTrabajosVivos(Boolean trabajosVivos) {
 		this.trabajosVivos = trabajosVivos;
+	}
+
+	public Boolean getAplicaAdmision() {
+		return aplicaAdmision;
+	}
+
+	public void setAplicaAdmision(Boolean aplicaAdmision) {
+		this.aplicaAdmision = aplicaAdmision;
+	}
+
+	public Date getFechaAplicaAdmision() {
+		return fechaAplicaAdmision;
+	}
+
+	public void setFechaAplicaAdmision(Date fechaAplicaAdmision) {
+		this.fechaAplicaAdmision = fechaAplicaAdmision;
+	}
+
+	public String getMotivoAplicaAdmision() {
+		return motivoAplicaAdmision;
+	}
+
+	public void setMotivoAplicaAdmision(String motivoAplicaAdmision) {
+		this.motivoAplicaAdmision = motivoAplicaAdmision;
 	}
 
 	public Long getVersion() {

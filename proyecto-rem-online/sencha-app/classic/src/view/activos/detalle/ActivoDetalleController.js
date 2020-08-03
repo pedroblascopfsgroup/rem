@@ -474,6 +474,89 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    }
     	});
     },
+    onClickEstadoAdmision: function (btn) {
+    	
+        var me = this;
+        var idActivo = me.getViewModel().get("activo.id");
+        var codSubcartera = me.getViewModel().get("activo.subcarteraCodigo");
+        var codCartera = me.getViewModel().get("activo.entidadPropietariaCodigo");
+        var codEstadoAdmision = me.getViewModel().get("activo.estadoAdmisionCodigo");
+        var codSubestadoAdmision = me.getViewModel().get("activo.subestadoAdmisionCodigo");
+        var estadoAdmisionDesc = me.getViewModel().get("activo.estadoAdmisionDesc");
+        var subestadoAdmisionDesc = me.getViewModel().get("activo.subestadoAdmisionDesc");
+
+        
+                
+	    me.getView().fireEvent('openModalWindow', "HreRem.view.activos.detalle.CrearEstadoAdmision", {
+            idActivo: idActivo,
+            codCartera: codCartera,
+            codEstadoAdmision: codEstadoAdmision,
+            codSubestadoAdmision: codSubestadoAdmision,
+            estadoAdmisionDesc: estadoAdmisionDesc,
+            subestadoAdmisionDesc: subestadoAdmisionDesc
+        });
+        
+    },
+		
+	setSubestadoAdmisionAllowBlank: function (btn){
+		
+		var me = this;
+		
+		btn.lookupController().onChangeChainedCombo(btn);
+		var comboSubestadoAdmision = me.lookupReference('subestadoAdmisionNuevo');
+		var allowblank = btn.getValue() != "PSR"; 
+		comboSubestadoAdmision.setAllowBlank(allowblank);
+		comboSubestadoAdmision.setDisabled(allowblank);
+	},
+    
+
+    onClickCrearEstadoAdmision: function (btn){
+    	
+ 		var me = this;
+
+		
+    	var url =  $AC.getRemoteUrl('activo/crearEstadoAdmision');
+    	var comboEstadoAdmision = me.lookupReference('estadoAdmisionNuevo');
+    	var comboSubestadoAdmision = me.lookupReference('subestadoAdmisionNuevo');
+    	var observacionesTextLabel = me.lookupReference('observacionesEstadoAdmisionNuevo');
+    	var idActivo = btn.up('crearestadoadmisionwindow').idActivo;
+    	var form = btn.up('crearestadoadmisionwindow').lookupReference('formEstadoAdmision').getForm(); // btn.up('formBase')
+    	
+    	if(form.isValid()){
+    		Ext.Ajax.request({
+    		
+    	     url: url,
+    	     params: {activoId: idActivo, 
+    	     		  codEstadoAdmision: comboEstadoAdmision.getValue(),
+    	     		  codSubestadoAdmision: comboSubestadoAdmision.getValue(),
+    	     		  observaciones: observacionesTextLabel.getValue()
+    	     		  },
+
+    	     success: function(response, opts) {
+    	     	
+    	     	me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], idActivo);
+				//btn.up('crearestadoadmisionwindow').close();
+    	     	me.hideWindowCrearActivoAdmision(btn);
+    	     	//me.destroyWindowCrearActivoAdmision(btn);
+    	     },
+
+    	     failure: function (a, operation, context) {
+           	  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+           }
+           
+    	 });
+    	}
+    	
+    },
+    destroyWindowCrearActivoAdmision: function (btn){
+    	var me = this;
+    	btn.up('window').destroy();
+    },
+    
+    hideWindowCrearActivoAdmision: function(btn) {
+    	var me = this;
+    	btn.up('window').hide();   	
+    },
     
     onClickCrearTrabajo: function (btn) {
     	var me = this;
@@ -483,13 +566,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: idActivo, idAgrupacion: null,codCartera: codCartera, codSubcartera: codSubcartera, logadoGestorMantenimiento: true});
     },
     
-    onAnyadirPropietarioClick: function (btn) {
-    	
+    onAnyadirPropietarioClick: function (btn) {    	
     	var me = this;
     	var idActivo = me.getViewModel().get("activo.id");
-		
-    	me.getView().fireEvent('openModalWindow',"HreRem.view.activos.detalle.AnyadirPropietario");
-  	    	
+		me.getView().fireEvent('openModalWindow',"HreRem.view.activos.detalle.AnyadirPropietario");	
     },
         
     onEliminarPropietarioClick: function (btn) {
@@ -516,8 +596,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     
     onChangeChainedCombo: function(combo) {
     	var me = this,
-    	chainedCombo = me.lookupReference(combo.chainedReference);   
-    	
+    	chainedCombo = me.lookupReference(combo.chainedReference);    	
     	me.getViewModel().notify();
     	if(!Ext.isEmpty(chainedCombo.store) && !Ext.isEmpty(chainedCombo.getValue())) {
 			chainedCombo.clearValue();
@@ -532,6 +611,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			var storeSubestadoGestionFiltered = me.getViewModel().get("comboSubestadoGestionFiltered");
 			chainedCombo.bindStore(storeSubestadoGestionFiltered);
 			storeSubestadoGestionFiltered.getProxy().setExtraParams({'codLocalizacion':combo.getValue()});	
+		} else if (combo.chainedStore == 'comboSubestadoAdmisionNuevoFiltrado'){
+			var storeSubestadoAdmisionFiltered = me.getViewModel().data.comboSubestadoAdmisionNuevoFiltrado;
+			chainedCombo.bindStore(storeSubestadoAdmisionFiltered);
+			storeSubestadoAdmisionFiltered.getProxy().setExtraParams({'codEstadoAdmisionNuevo':combo.getValue()});	
 		}
 		
 		chainedCombo.getStore().load({ 			
@@ -852,12 +935,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onClickBotonGuardar: function(btn) {
 		var me = this;
 		var form = btn.up('tabpanel').getActiveTab();
-
 		// Ejecución especial si la pestaña es 'Comercial'.
 		if("comercialactivo" == form.getXType()) {
 			me.onSaveFormularioCompletoTabComercial(btn, form);
 		} else if("datospatrimonio" == form.getXType()){
 			me.onSaveFormularioCompletoTabPatrimonio(btn, form);
+		} else if ('admisionrevisiontitulo' === form.getXType()) {
+			me.onSaveFormularioCompletoTabAdmisionTitulo( btn , form);
 		} else {
 			me.onSaveFormularioCompleto(btn, form, false);
 		}
@@ -904,6 +988,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var window = btn.up('window');
 		var padre = window.floatParent;
 		var tab = padre.down('tituloinformacionregistralactivo');
+		tab.funcionRecargar();
+		
+		btn.up('window').hide();
+	},
+	
+	onClickBotonCancelarAgendaSaneamiento: function(btn) {		
+		
+		var window = btn.up('window');
+		var padre = window.floatParent;
+		var tab = padre.down('admisionactivo');
 		tab.funcionRecargar();
 		
 		btn.up('window').hide();
@@ -1031,6 +1125,40 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}else  {
 			me.fireEvent("errorToast", 'Porfavor, revise los campos obligatorios');
 		}
+		
+	},
+	
+	onClickBotonAnyadirAgendaSaneamiento: function(btn){
+		
+		var me = this;
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		
+		var form = btn.up().up().down("form"),
+		url = $AC.getRemoteUrl("activo/createSaneamientoAgenda"),
+ 		idActivo= btn.up().up().idActivo,
+ 		params = {idActivo: idActivo,
+ 			tipologiaCod: form.items.items[0].getValue(),
+ 			subtipologiacod: form.items.items[1].getValue(),
+ 			observaciones: form.items.items[2].getValue()};
+ 		
+ 		if(form.isValid()){
+ 			form.submit({
+ 				url: url,
+				params: params,
+				success: function(fp, o) {
+					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+					me.getView().unmask();
+					me.onClickBotonCancelarAgendaSaneamiento(btn);
+				},
+				failure: function(record, operation) {
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					me.unmask();
+				}
+ 			});
+ 		}else{
+ 			me.getView().unmask();
+ 		}
+		
 		
 	},
 	
@@ -6001,7 +6129,63 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			fechaVencTpoBonificacion.setDisabled(true);
 			fechaLiqComplementaria.setDisabled(true);
 		}
+    },
+
+    onSaveFormularioCompletoTabAdmisionTitulo: function(btn , form){
+    	// Redireccion al controlador de la vista para mantener todos los m�todos ordenados, sin alterar la arquitectura del tab principal. 
+		form.lookupController().saveTabData(btn, form);
+    },
+
+    onClickDescargarExcelEvolucion: function(btn) {
+
+		var me = this,
+		config = {};
+		config.params = {};
+		config.params.id = me.getViewModel().getData().activo.id;
+		config.method = 'POST';
+		config.url=$AC.getWebPath()+"activoadmisionevolucion/generateExcel."+$AC.getUrlPattern();
+		me.fireEvent("downloadFile", config);
+    },
+
+	
+	checkAdmision: function(){
+		var me = this;
+    	var enPerimetroAdmision = me.getViewModel().get('activo.perimetroAdmision') == false;
+    	me.isAdmisionActivo(enPerimetroAdmision);
+    },
+    
+    onSelectPerimetroAdmision: function(combo,record){
+    	var me = this;
+    	var isPerimetroAdmision = record.get('codigo') === 'true';
+    	me.isAdmisionActivo(isPerimetroAdmision);
+    },
+    
+    isAdmisionActivo: function(enPerimetroAdmision){
+    	var me = this;
+    	var component = null;
+    	var detalle = me.getView().down('activosdetalle');
+    	var isDisabled = false;
+    	if (detalle && detalle.items && detalle.items.items){
+			var items = detalle.items.items;
+			for ( var i=0 ; i<items.length; i++){
+				var item = items[i];
+					if("admisionactivo".includes(item.xtype)){
+						component = item;
+						isDisabled = item.isDisabled();
+						break;
+				}
+    		}
+    	}
+    	me.setDisabledTabAdmision(isDisabled,enPerimetroAdmision,component);
+    	
+    },
+    	
+    setDisabledTabAdmision: function(isDisabled,enPerimetroAdmision,component){
+    	if(isDisabled && !enPerimetroAdmision ){
+			component.setDisabled(false);
+		}else if(!isDisabled && enPerimetroAdmision){
+			component.setDisabled(true);
+		}
     }
-
-
+	
 });

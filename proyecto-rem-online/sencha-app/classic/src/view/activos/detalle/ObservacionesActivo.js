@@ -1,29 +1,34 @@
 Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
     extend: 'HreRem.view.common.FormBase',
     xtype: 'observacionesactivo',    
-    reference: 'observacionesactivoref',
 	layout: 'fit',
-
+	launch: null,
 	listeners: { 	
     	boxready: function (tabPanel) { 
     		tabPanel.evaluarEdicion();
+    	},
+    	show: function(tab){
+    		tab.doLoad(tab);
     	}
     },
 
     initComponent: function () {
+    	
+    	//Configuración de la pestaña
         var me = this;
+        me.reference = "observacionesactivoref_"+me.launch;
+        me.store = me.lookupController().getViewModel().getStore("storeObservaciones_"+me.launch)
         me.setTitle(HreRem.i18n('title.observaciones'));
-
-        var items= [
+        var items = [
 			{
 			    xtype		: 'gridBaseEditableRow',
 			    idPrincipal : 'activo.id',
 			    topBar: true,
 			    disabledDeleteBtn: true,
-			    reference: 'listadoObservaciones',
+			    reference: 'listadoObservaciones_'+me.launch,
 				cls	: 'panel-base shadow-panel',
 				bind: {
-					store: '{storeObservaciones}'
+					store: '{storeObservaciones_'+me.launch+'}'
 				},
 				secButtons: {
 					secFunPermToEnable : 'ACTIVO_OBSERVACIONES_ADD'
@@ -44,8 +49,9 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
 				        renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
 				        	var store =  this.up('activosdetallemain').getViewModel().getStore('storeTipoObservacionActivo');
 				        	if(store.isLoading()) {
-				        		store.on('load', function(store, items){
-	            		       		var grid = me.up('activosdetallemain').lookupReference('listadoObservaciones').getView();
+				        		store.on('load', function(){
+				        			var launch = me.up('activosdetallemain').lookupReference('observacionesactivoref').launch;
+	            		       		var grid = me.up('activosdetallemain').lookupReference('listadoObservaciones_'+launch).getView();
 	            		       		grid.refreshNode(rowIndex);
 	            		       	});
 				        	}
@@ -66,7 +72,19 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
 				           bind: {
 		        	   			store: '{storeTipoObservacionActivo}'
 				           },
-				           reference: 'cbDDColTipoObservacion'
+				           listeners: {
+				           		expand: function( combo ) {
+				           			var tab = combo.up("observacionesactivo")
+				           			var whiteList = tab.getWhiteList(tab.launch);
+				           			if (whiteList.length > 0){
+				           				combo.getStore().clearFilter(true);
+				           				tab.setStoreWithPermittedValues(combo.getStore(), whiteList);
+				           			}
+				           		},
+				           		collapse: function ( combo ) {
+				           			combo.getStore().clearFilter(true);
+				           		}
+				           }
 			           }
 			       },
 			       {   
@@ -125,14 +143,14 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
 			            dock: 'bottom',
 			            displayInfo: true,
 			            bind: {
-			                store: '{storeObservaciones}'
+			                store: '{storeObservaciones_'+me.launch+'}'
 			            }
 			        }
 			    ]
 			}
         ];
-
-		me.addPlugin({ptype: 'lazyitems', items: items });
+        me.items = items;
+     	me.doLoad(me);
     	me.callParent();
     },
 
@@ -143,7 +161,20 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
   			grid.getStore().load();
   		});
     },
-
+    
+    doLoad: function( panel ) {
+    	var storeObservaciones = panel.buildStoreWithProxy(panel);
+		// Extraparams en el store para hacer una carga dinamica dependiendo del tab. Utiliza el model Observaciones.
+    	
+    	if (!storeObservaciones.isLoading()){
+			storeObservaciones.load({
+				callback: function (records, operation, success) {
+					// Propagar los extraParams para el resto de acciones.
+					this.getModel().getProxy().setExtraParams(this.getProxy().getExtraParams());
+				}
+			}, true);
+    	}
+    },
   //HREOS-846 Si NO esta dentro del perimetro, ocultamos del grid las opciones de agregar/elminar
     evaluarEdicion: function() {    	
 		var me = this;
@@ -151,5 +182,51 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
 		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false" || me.lookupController().getViewModel().get('activo').get('isActivoEnTramite')) {
 			me.down('[xtype=gridBaseEditableRow]').setTopBar(false);
 		}
+    },
+    buildStoreWithProxy: function (panel){
+    	var viewModel = panel.lookupController("activosdetallemain").getViewModel();
+        var extraParams = {
+        	id: viewModel.get("activo.id"),
+        	tab: panel.launch
+        };
+		var storeObservaciones = viewModel.getStore("storeObservaciones_"+panel.launch);
+		panel.setExtraParamsToTarget(storeObservaciones, extraParams);
+		
+    	return storeObservaciones;
+    },
+    setExtraParamsToTarget: function( target, extraParams ) {
+    	// Propagacion de extraParams
+    	target.getProxy().setExtraParams(extraParams);
+    	target.getModel().getProxy().setExtraParams(extraParams);
+    },
+    getWhiteList: function (tabLaunch) {
+    		var whiteList =  [];
+   			switch(tabLaunch) {
+			case CONST.OBSERVACIONES_TAB_LAUNCH["ACTIVO"]:
+   				whiteList.push(
+   					CONST.DD_TOB_TIPO_OBSERVACION['STOCK'],
+   					CONST.DD_TOB_TIPO_OBSERVACION['POSESION'],
+   					CONST.DD_TOB_TIPO_OBSERVACION['INSCRIPCION'],
+   					CONST.DD_TOB_TIPO_OBSERVACION['CARGAS'],
+   					CONST.DD_TOB_TIPO_OBSERVACION['LLAVES']
+   				);
+   			break;
+   			
+   			case CONST.OBSERVACIONES_TAB_LAUNCH["SANEAMIENTO"]: 
+   				whiteList.push(CONST.DD_TOB_TIPO_OBSERVACION['SANEAMIENTO'])
+   			break;
+   			
+   			case CONST.OBSERVACIONES_TAB_LAUNCH["REVISION_TITULO"]: 
+   				whiteList.push(CONST.DD_TOB_TIPO_OBSERVACION['REVISION_TITULO']) 
+		}
+		return whiteList;
+    },
+    setStoreWithPermittedValues: function ( store, list) {
+		store.filter({
+			fn: function(record) {
+					return list.includes(record.data.codigo);
+		    },
+		    scope: this
+		});
     }
 });

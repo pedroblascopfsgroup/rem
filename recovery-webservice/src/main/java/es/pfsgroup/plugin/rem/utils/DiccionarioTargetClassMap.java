@@ -265,6 +265,30 @@ public class DiccionarioTargetClassMap{
 		mapa.put("estadoVenta", DDEstadoVenta.class);
 		mapa.put("motivoExento", DDMotivoExento.class);
 		mapa.put("resultadoSolicitud", DDResultadoSolicitud.class);
+		mapa.put("estadosAdmision", DDEstadoAdmision.class); //
+		mapa.put("subEstadosAdmision", DDSubestadoAdmision.class); //
+		mapa.put("subtipologias", DDSubtipologiaAgenda.class);
+		mapa.put("siNoNoAplica", DDSiNoNoAplica.class);
+		mapa.put("situacionInicialInscripcion",DDSituacionInicialInscripcion.class);
+		mapa.put("situacionPosesoriaInicial",DDSituacionPosesoriaInicial.class);
+		mapa.put("situacionInicialCargas",DDSituacionInicialCargas.class);
+		mapa.put("tipoTitularidad",DDTipoTitularidad.class);
+		mapa.put("autorizacionTransmision",DDAutorizacionTransmision.class);
+		mapa.put("anotacionConcurso",DDAnotacionConcurso.class);
+		mapa.put("estadoGestion",DDEstadoGestion.class);
+		mapa.put("licenciaPrimeraOcupacion",DDLicenciaPrimeraOcupacion.class);
+		mapa.put("boletines",DDBoletines.class);
+		mapa.put("seguroDecenal",DDSeguroDecenal.class);
+		mapa.put("cedulaHabitabilidad",DDCedulaHabitabilidad.class);
+		mapa.put("tipoArrendamiento",DDTipoArrendamiento.class);
+		mapa.put("tipoExpedienteAdministrativo",DDTipoExpedienteAdministrativo.class);
+		mapa.put("tipoIncidenciaRegistral",DDTipoIncidenciaRegistral.class);
+		mapa.put("tipoOcupacionLegal",DDTipoOcupacionLegal.class);
+		mapa.put("tipoagendasaneamiento",DDTipoAgendaSaneamiento.class);
+		mapa.put("subtipoagendasaneamiento", DDSubtipoAgendaSaneamiento.class);
+		mapa.put("situacionConstructivaRegistral", DDSituacionConstructivaRegistral.class);
+		mapa.put("proteccionOficial", DDProteccionOficial.class);
+		mapa.put("tipoIncidencia", DDTipoIncidencia.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

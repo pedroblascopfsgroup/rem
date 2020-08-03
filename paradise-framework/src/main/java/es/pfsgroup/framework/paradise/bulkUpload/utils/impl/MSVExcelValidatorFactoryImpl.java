@@ -215,6 +215,9 @@ public class MSVExcelValidatorFactoryImpl {
 	
 	@Autowired
 	private MSVMasivaSuministrosValidator cargaMasivaSuministros;
+	
+	@Autowired
+	private MSVValidatorEstadosAdmision estadosAdmision;
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 
@@ -356,6 +359,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return tacticoEspartaPublicaciones;
 		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_SUMINISTROS.equals(codTipoOperacion)) {
 			return cargaMasivaSuministros;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_ESTADOS_ADMISION.equals(codTipoOperacion)) {
+			return estadosAdmision;
 		}
 		
 		return null;

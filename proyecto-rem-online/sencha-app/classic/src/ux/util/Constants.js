@@ -124,7 +124,6 @@ Ext.define('HreRem.ux.util.Constants', {
 		DOCU:			'documentosactivo',
 		AGRUPACIONES:	'agrupacionesactivo',
 		ADMISION:		'admisionactivo',
-		CHECKINFO:		'admisionactivo.admisioncheckinfoactivo',
 		CHECKDOC:		'admisionactivo.admisioncheckdocactivo',
 		GESTION:		'gestionactivo',
 		HISTORICO:		'gestionactivo.historicopeticionesactivo',
@@ -738,6 +737,35 @@ Ext.define('HreRem.ux.util.Constants', {
 	COMITE_SANCIONADOR: {
 		CODIGO_HAYA_REMAINING: '41',
 		CODIGO_HAYA_APPLE: '42'
+	},
+	
+	ESTADO_ADMISION: {
+		CODIGO_PENDIENTE_TITULO: 'PET',
+		CODIGO_PENDIENTE_REVISION: 'PRT',
+		CODIGO_PENDIENTE_SANEAMIENTO: 'PSR',
+		CODIGO_SANEADO_REGISTRALMENTE: 'SAR'
+	},
+	
+	SUBESTADO_ADMISION: {
+		CODIGO_PENDIENTE_INSCRIPCION: 'PIN',
+		CODIGO_INCIDENCIA_INSC: 'IIN',
+		CODIGO_PENDIENTE_CARGAS: 'PCA',
+		CODIGO_CONCURSO_ACREEDORES: 'CAC'
+
+	},
+	DD_TOB_TIPO_OBSERVACION: {
+		STOCK: '01',
+		POSESION: '02',
+		INSCRIPCION: '03',
+		CARGAS: '04',
+		LLAVES: '05',
+		SANEAMIENTO: '06',
+		REVISION_TITULO: '07'
+	},
+	OBSERVACIONES_TAB_LAUNCH: {
+		ACTIVO : 'activo',
+		SANEAMIENTO: 'saneamiento',
+		REVISION_TITULO: 'revisionTitulo'
 	}
 	
 });

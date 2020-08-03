@@ -82,7 +82,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivoBDE;
@@ -113,6 +112,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private static final String MSG_ERROR_DESTINO_COMERCIAL_OFERTAS_VIVAS_ALQUILER = "msg.error.tipo.comercializacion.ofertas.vivas";
 	private static final String ERROR_PORCENTAJE_PARTICIPACION="msg.error.porcentaje.participacion";
 	private static final String CESION_USO_ERROR= "msg.error.activo.patrimonio.en.cesion.uso";
+	private static final String NO_GESTIONADO_POR_ADMISION = "msg.no.gestionado.admision";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -228,7 +228,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 			}
 			
-		}
+		}	 
 		
 		if(!Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
 			BeanUtils.copyProperty(activoDto, "nombreMediador", activo.getInfoComercial().getMediadorInforme().getNombre());
@@ -862,6 +862,45 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));
 		
+		if(perimetroActivo.getAplicaAdmision() != null) {
+			activoDto.setPerimetroAdmision(perimetroActivo.getAplicaAdmision());
+		}
+			
+		if(perimetroActivo.getFechaAplicaAdmision() != null) {
+			activoDto.setFechaPerimetroAdmision(perimetroActivo.getFechaAplicaAdmision().toString());
+		}
+		if(perimetroActivo.getMotivoAplicaAdmision() != null) {
+			activoDto.setMotivoPerimetroAdmision(perimetroActivo.getMotivoAplicaAdmision());
+		}
+		
+		activoDto.setIncluidoEnPerimetroAdmision(perimetroActivo.getAplicaAdmision());
+		
+		if(activo.getEstadoAdmision() != null) {
+			activoDto.setEstadoAdmisionCodigo(activo.getEstadoAdmision().getCodigo());
+			activoDto.setEstadoAdmisionDesc(activo.getEstadoAdmision().getDescripcion());
+		}
+		if (activo.getSubestadoAdmision() != null) {
+			activoDto.setSubestadoAdmisionCodigo(activo.getSubestadoAdmision().getCodigo());
+			activoDto.setSubestadoAdmisionDesc(activo.getSubestadoAdmision().getDescripcion());
+		}
+		
+		if(perimetroActivo.getAplicaAdmision() == null || (perimetroActivo.getAplicaAdmision() != null && !perimetroActivo.getAplicaAdmision())) {
+			
+			BeanUtils.copyProperty(activoDto, "estadoAdmisionDescCabecera", messageServices.getMessage(NO_GESTIONADO_POR_ADMISION));
+			
+		}else if (perimetroActivo.getAplicaAdmision() != null && perimetroActivo.getAplicaAdmision()){
+			
+			if(activo.getEstadoAdmision() != null) {
+				BeanUtils.copyProperty(activoDto, "estadoAdmisionCodCabecera", activo.getEstadoAdmision().getCodigo());
+				BeanUtils.copyProperty(activoDto, "estadoAdmisionDescCabecera", activo.getEstadoAdmision().getDescripcion());
+			}
+			
+			if(activo.getSubestadoAdmision() != null) {
+				BeanUtils.copyProperty(activoDto, "subestadoAdmisionCodCabecera", activo.getSubestadoAdmision().getCodigo());
+				BeanUtils.copyProperty(activoDto, "subestadoAdmisionDescCabecera", activo.getSubestadoAdmision().getDescripcion());
+			}
+		}
+
 		return activoDto;
 	}
 	
@@ -1372,9 +1411,14 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 				}
 			}
-		
-		
-
+			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
+			
+			if(dto.getPerimetroAdmision() != null) {
+				perimetroActivo.setAplicaAdmision(dto.getPerimetroAdmision());
+				perimetroActivo.setFechaAplicaAdmision(new Date());
+				perimetroActivo.setMotivoAplicaAdmision(dto.getMotivoPerimetroAdmision());
+				activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
+			}
 		} catch(JsonViewerException jve) {
 			throw jve;
 		} catch (IllegalAccessException e) {

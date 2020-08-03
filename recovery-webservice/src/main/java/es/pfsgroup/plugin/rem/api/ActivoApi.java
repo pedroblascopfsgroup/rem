@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.web.servlet.ModelAndView;
+
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
@@ -84,6 +86,7 @@ import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.HistoricoPropuestasPreciosDto;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 import es.pfsgroup.plugin.rem.rest.dto.ReqFaseVentaDto;
+import es.pfsgroup.plugin.rem.rest.dto.SaneamientoAgendaDto;
 
 
 public interface ActivoApi {
@@ -1335,4 +1338,14 @@ public interface ActivoApi {
 	Boolean createSuministroActivo(DtoActivoSuministros dtoActivoSuministros) throws ParseException;
 	Boolean updateSuministroActivo(DtoActivoSuministros dtoActivoSuministros) throws ParseException;
 	Boolean deleteSuministroActivo(DtoActivoSuministros dtoActivoSuministros) throws ParseException;
+	
+	public Boolean crearEstadoAdmision(String activoId, String codEstadoAdmision, String codSubestadoAdmision, String observaciones);
+
+	List<SaneamientoAgendaDto> getSaneamientosAgendaByActivo(Long idActivo);
+
+	Boolean createSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto);
+
+	Boolean deleteSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto);
+
+	Boolean updateSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto);
 }

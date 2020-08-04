@@ -1945,7 +1945,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     },
     
     abrirVentanaModificarLineaDetalle: function(grid, record){
-
     	var me = this;
     	if(record.getData() == null || record.getData() == undefined){
     		return;
@@ -2092,11 +2091,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	            		if(data.data.ppInteres != undefined){
 	            			ventana.down('[reference=ppInteres]').setValue(data.data.ppInteres);
 	            		}
+	            		
 	            	}
 	            	
 	            	ventana.down('[reference=fieldsetccpp]').setDisabled(false);
 	        		ventana.down('[reference=fieldsetImpInd]').setDisabled(false);
 	        		ventana.down('[reference=fieldsetImporte]').setDisabled(false);
+	        		ventana.down('[reference=fieldsetdetallegastolbk]').setDisabled(false);
 	        		ventana.unmask();
     	            	
     	    	},

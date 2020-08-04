@@ -130,7 +130,21 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			dto.setCcInteres(gastoLineaDetalle.getCccIntereses());
 			dto.setPpInteres(gastoLineaDetalle.getCppIntereses());
 			
+			dto.setSubcuentaBase(gastoLineaDetalle.getSubcuentaBase());
+			dto.setApartadoBase(gastoLineaDetalle.getApartadoBase());
+			dto.setCapituloBase(gastoLineaDetalle.getCapituloBase());
+			dto.setSubcuentaRecargo(gastoLineaDetalle.getSubcuentaRecargo());
+			dto.setApartadoRecargo(gastoLineaDetalle.getApartadoRecargo());
+			dto.setCapituloRecargo(gastoLineaDetalle.getCapituloRecargo());
+			dto.setSubcuentaTasa(gastoLineaDetalle.getSubcuentaTasa());
+			dto.setApartadoTasa(gastoLineaDetalle.getApartadoTasa());
+			dto.setCapituloTasa(gastoLineaDetalle.getCapituloTasa());
+			dto.setSubcuentaIntereses(gastoLineaDetalle.getSubcuentaIntereses());
+			dto.setApartadoIntereses(gastoLineaDetalle.getApartadoIntereses());
+			dto.setCapituloIntereses(gastoLineaDetalle.getCapituloIntereses());
+			
 			dto.setImporteTotal(gastoLineaDetalle.getImporteTotal());
+			
 			
 			dtoLineaDetalleGastoLista.add(dto);
 		}
@@ -200,6 +214,19 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		gastoLineaDetalle.setCppRecargo(dto.getPpRecargo());	
 		gastoLineaDetalle.setCccIntereses(dto.getCcInteres());
 		gastoLineaDetalle.setCppIntereses(dto.getPpInteres());
+		
+		gastoLineaDetalle.setSubcuentaBase(dto.getSubcuentaBase());
+		gastoLineaDetalle.setApartadoBase(dto.getApartadoBase());
+		gastoLineaDetalle.setCapituloBase(dto.getCapituloBase());
+		gastoLineaDetalle.setSubcuentaRecargo(dto.getSubcuentaRecargo());
+		gastoLineaDetalle.setApartadoRecargo(dto.getApartadoRecargo());
+		gastoLineaDetalle.setCapituloRecargo(dto.getCapituloRecargo());
+		gastoLineaDetalle.setSubcuentaTasa(dto.getSubcuentaTasa());
+		gastoLineaDetalle.setApartadoTasa(dto.getApartadoTasa());
+		gastoLineaDetalle.setCapituloTasa(dto.getCapituloTasa());
+		gastoLineaDetalle.setSubcuentaIntereses(dto.getSubcuentaIntereses());
+		gastoLineaDetalle.setApartadoIntereses(dto.getApartadoIntereses());
+		gastoLineaDetalle.setCapituloIntereses(dto.getCapituloIntereses());
 		
 		
 		gastoLineaDetalle.setImporteTotal(dto.getImporteTotal());

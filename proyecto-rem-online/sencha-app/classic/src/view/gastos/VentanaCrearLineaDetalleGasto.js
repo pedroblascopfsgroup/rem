@@ -16,6 +16,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
     initComponent: function() {
     	var me = this;
     	var idGasto = null;
+    	var cartera = me.up("gastodetallemain").viewModel.data.detalleeconomico.data.cartera != "08";
     	var	idLineaDetalleGasto = null;
     	var deshabilitarRecargo = true;
     	var disabledSinSubtipoGasto = true;
@@ -29,7 +30,10 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
     	tipoImpositivo= null,		cuota= null,			importeTotal= 0,			ccBase= null,
     	ppBase= null,				ccEsp= null,			ppEsp= null,				ccTasas= null,
     	ppTasas= null,				ccRecargo= null,		ppRecargo= null,			ccInteres = null,
-    	ppInteres = null;
+    	ppInteres = null,			subcuentaBase=null,		apartadoBase=null,			capituloBase=null,
+    	subcuentaRecargo= null,		apartadoRecargo=null,	capituloRecargo=null,		subcuentaTasa=null,
+    	apartadoTasa=null,			capituloTasa=null,		subcuentaIntereses=null,	apartadoIntereses=null,
+    	capituloIntereses=null;
     	
 	   
     	if(!Ext.isEmpty(me.idLineaDetalleGasto)){
@@ -45,7 +49,11 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
             	ccBase= data.ccBase;					ppBase= data.ppBase;							ccEsp= data.ccEsp;
             	ppEsp= data.ppEsp;						ccTasas= data.ccTasas;							ppTasas= data.ppTasas;
             	ccRecargo= data.ccRecargo;				ppRecargo= data.ppRecargo;						ccInteres = data.ccInteres;
-            	ppInteres = data.ppInteres;
+            	ppInteres = data.ppInteres;				subcuentaBase= data.subcuentaBase;				apartadoBase= data.apartadoBase;
+            	capituloBase = data.capituloBase;		subcuentaRecargo= data.subcuentaRecargo;		apartadoRecargo=data.apartadoRecargo;
+            	capituloRecargo= data.capituloRecargo;	subcuentaTasa=data.subcuentaTasa;				apartadoTasa=data.apartadoTasa;
+            	capituloTasa = data.capituloTasa;		subcuentaIntereses = data.subcuentaIntereses;	apartadoIntereses=data.apartadoIntereses;
+            	capituloIntereses = data.capituloIntereses;
 
             	if(recargo == null || recargo == undefined || parseFloat(recargo) == 0){
             		tipoRecargo = null;
@@ -65,7 +73,6 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
     	}else{
     		me.setTitle(HreRem.i18n("fieldlabel.gasto.crear.linea.detalle"));
     	}
-    	
     	me.buttons = [ 
     		{ 
     			formBind: true, 
@@ -498,6 +505,129 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 								    				reference: 'ppInteres',
 								    				name: 'ppInteres',
 								    				value: ppInteres,
+								    				allowBlank: true
+								    				
+								    			}
+					    					]
+						    			},
+						    			///12 CAMPOS
+						    			{
+						    				title: HreRem.i18n('fieldlabel.gasto.lbk.linea.detalle'),
+						    				xtype:'fieldsettable',		    					
+					    					defaultType: 'textfieldbase',
+					    					reference:'fieldsetdetallegastolbk',
+					    					border: true,
+						    				collapsible: true,
+											collapsed: false,
+											colspan: 3,
+											hidden: cartera,
+											disabled: disabledSinSubtipoGasto,				    
+					    					items: [
+					    						{
+								    				xtype: "textfield",
+								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.subcuentaBase'),
+								    				reference: 'subcuentaBase',
+								    				name: 'subcuentaBase',
+								    				value: subcuentaBase,
+								    				allowBlank: false
+								    				
+								    			},
+								    			{
+								    				xtype: "textfield",
+								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.apartadoBase'),
+								    				reference: 'apartadoBase',
+								    				name: 'apartadoBase',
+								    				value: apartadoBase,
+								    				allowBlank: false	    			
+								    				
+								    				
+								    			},
+								    			{
+								    				xtype: "textfield",
+								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.capituloBase'),
+								    				reference: 'capituloBase',
+								    				name: 'capituloBase',
+								    				value: capituloBase,
+								    				allowBlank: true
+								    			},
+								    			{
+								    				xtype: "textfield",
+								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.subcuentaRecargo'),
+								    				reference: 'subcuentaRecargo',
+								    				name: 'subcuentaRecargo',
+								    				value: subcuentaRecargo,
+								    				allowBlank: true
+								    				
+								    			},
+								    			{
+								    				xtype: "textfield",
+								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.apartadoRecargo'),
+								    				reference: 'apartadoRecargo',
+								    				name: 'apartadoRecargo',
+								    				value: apartadoRecargo,
+								    				allowBlank: true
+								    				
+								    			},
+								    			{
+								    				xtype: "textfield",
+								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.capituloRecargo'),
+								    				reference: 'capituloRecargo',
+								    				name: 'capituloRecargo',
+								    				value: capituloRecargo,
+								    				allowBlank: true
+								    				
+								    			},
+								    			{
+								    				xtype: "textfield",
+								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.subcuentaTasa'),
+								    				reference: 'subcuentaTasa',
+								    				name: 'subcuentaTasa',
+								    				value: subcuentaTasa,
+								    				allowBlank: true
+								    				
+								    			},
+								    			{
+								    				xtype: "textfield",
+								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.apartadoTasa'),
+								    				reference: 'apartadoTasa',
+								    				name: 'apartadoTasa',
+								    				value: apartadoTasa,
+								    				allowBlank: true
+								    				
+								    			},
+								    			{
+								    				xtype: "textfield",
+								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.capituloTasa'),
+								    				reference: 'capituloTasa',
+								    				name: 'capituloTasa',
+								    				value: capituloTasa,
+								    				allowBlank: true
+								    				
+								    			},
+								    			{
+								    				xtype: "textfield",
+								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.subcuentaIntereses'),
+								    				reference: 'subcuentaIntereses',
+								    				name: 'subcuentaIntereses',
+								    				value: subcuentaIntereses,
+								    				allowBlank: true
+								    				
+								    			},
+								    			{
+								    				xtype: "textfield",
+								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.apartadoIntereses'),
+								    				reference: 'apartadoIntereses',
+								    				name: 'apartadoIntereses',
+								    				value: apartadoIntereses,
+								    				allowBlank: true
+								    				
+								    			},
+								    			{
+								    				xtype: "textfield",
+								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.capituloIntereses'),
+								    				reference: 'capituloIntereses',
+								    				name: 'capituloIntereses',
+								    				value: capituloIntereses,
 								    				allowBlank: true
 								    				
 								    			}

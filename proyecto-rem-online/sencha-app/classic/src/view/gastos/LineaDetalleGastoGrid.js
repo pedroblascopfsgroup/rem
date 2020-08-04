@@ -18,7 +18,7 @@ Ext.define('HreRem.view.gastos.LineaDetalleGastoGrid', {
 
 
      	var me = this;
-     	
+     	var cartera  = me.up("gastodetallemain").viewModel.data.gasto.data.cartera != "08";
      	var estadoModificar = me.lookupController().getView().getViewModel().getData().gasto.getData().estadoModificarLineasDetalleGasto;
      	var isRefacturado = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPorOtroGasto;
      	
@@ -228,6 +228,105 @@ Ext.define('HreRem.view.gastos.LineaDetalleGastoGrid', {
 		            name:'ppInteres',
 		            text: HreRem.i18n('fieldlabel.gasto.linea.detalle.ppInteres'),
 		            flex: 0.7  		
+		        },
+		        
+		        
+		        
+		        {
+		        	dataIndex: 'subcuentaBase',
+		            reference: 'subcuentaBase',
+		            name:'subcuentaBase',
+		            hidden: cartera,
+		            text: HreRem.i18n('fieldlabel.gasto.linea.detalle.subcuentaBase'),
+		            flex: 0.7  	
+		        },
+		        {
+		        	dataIndex: 'apartadoBase',
+		            reference: 'apartadoBase',
+		            name:'apartadoBase',
+		            hidden: cartera,
+		            text: HreRem.i18n('fieldlabel.gasto.linea.detalle.apartadoBase'),
+		            flex: 0.7  	
+		        },
+		        {
+		        	dataIndex: 'capituloBase',
+		            reference: 'capituloBase',
+		            name:'capituloBase',
+		            hidden: cartera,
+		            text: HreRem.i18n('fieldlabel.gasto.linea.detalle.capituloBase'),
+		            flex: 0.7  	
+		        },
+		        {
+		        	dataIndex: 'subcuentaRecargo',
+		            reference: 'subcuentaRecargo',
+		            name:'subcuentaRecargo',
+		            hidden: cartera,
+		            text: HreRem.i18n('fieldlabel.gasto.linea.detalle.subcuentaRecargo'),
+		            flex: 0.7  	
+		        },
+		        {
+		        	dataIndex: 'apartadoRecargo',
+		            reference: 'apartadoRecargo',
+		            name:'apartadoRecargo',
+		            hidden: cartera,
+		            text: HreRem.i18n('fieldlabel.gasto.linea.detalle.apartadoRecargo'),
+		            flex: 0.7  	
+		        },
+		        {
+		        	dataIndex: 'capituloRecargo',
+		            reference: 'capituloRecargo',
+		            name:'capituloRecargo',
+		            hidden: cartera,
+		            text: HreRem.i18n('fieldlabel.gasto.linea.detalle.capituloRecargo'),
+		            flex: 0.7  	
+		        },
+		        {
+		        	dataIndex: 'subcuentaTasa',
+		            reference: 'subcuentaTasa',
+		            name:'subcuentaTasa',
+		            hidden: cartera,
+		            text: HreRem.i18n('fieldlabel.gasto.linea.detalle.subcuentaTasa'),
+		            flex: 0.7  	
+		        },
+		        {
+		        	dataIndex: 'apartadoTasa',
+		            reference: 'apartadoTasa',
+		            name:'apartadoTasa',
+		            hidden: cartera,
+		            text: HreRem.i18n('fieldlabel.gasto.linea.detalle.apartadoTasa'),
+		            flex: 0.7  	
+		        },
+		        {
+		        	dataIndex: 'capituloTasa',
+		            reference: 'capituloTasa',
+		            name:'capituloTasa',
+		            hidden: cartera,
+		            text: HreRem.i18n('fieldlabel.gasto.linea.detalle.capituloTasa'),
+		            flex: 0.7  	
+		        },
+		        {
+		        	dataIndex: 'subcuentaIntereses',
+		            reference: 'subcuentaIntereses',
+		            name:'subcuentaIntereses',
+		            hidden: cartera,
+		            text: HreRem.i18n('fieldlabel.gasto.linea.detalle.subcuentaIntereses'),
+		            flex: 0.7  	
+		        },
+		        {
+		        	dataIndex: 'apartadoIntereses',
+		            reference: 'apartadoIntereses',
+		            name:'apartadoIntereses',
+		            hidden: cartera,
+		            text: HreRem.i18n('fieldlabel.gasto.linea.detalle.apartadoIntereses'),
+		            flex: 0.7  	
+		        },
+		        {
+		        	dataIndex: 'capituloIntereses',
+		            reference: 'capituloIntereses',
+		            name:'capituloIntereses',
+		            hidden: cartera,
+		            text: HreRem.i18n('fieldlabel.gasto.linea.detalle.capituloIntereses'),
+		            flex: 0.7  	
 		        }
 		    ];
 			

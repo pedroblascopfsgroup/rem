@@ -163,6 +163,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeticionPrecio;
@@ -6896,12 +6897,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public Boolean createSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto) {
 		
 		ActivoAgendaSaneamiento agendaSaneamiento = new ActivoAgendaSaneamiento();
-		
+		Activo activo = activoDao.get(saneamientoAgendaDto.getIdActivo());
 		if(saneamientoAgendaDto != null) {
 			if(saneamientoAgendaDto.getIdActivo() == null) {
 				throw new JsonViewerException("No se ha podido asociar la agenda a un activo");
 			}else {
-				Activo activo = activoDao.get(saneamientoAgendaDto.getIdActivo());
 				agendaSaneamiento.setActivo(activo);
 			}
 			
@@ -6918,8 +6918,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			agendaSaneamiento.setObservaciones(saneamientoAgendaDto.getObservaciones());
 					
 			agendaSaneamiento.setFechaAltaSaneamiento(new Date());
-			
+
 			genericDao.save(ActivoAgendaSaneamiento.class, agendaSaneamiento);
+			
+			ActivoObservacion activoObservacion = new ActivoObservacion();
+			activoObservacion.setObservacion(saneamientoAgendaDto.getObservaciones());
+			activoObservacion.setFecha(new Date());
+			activoObservacion.setUsuario(adapter.getUsuarioLogado());
+			activoObservacion.setActivo(activo);
+			DDTipoObservacionActivo tipoObservacion = genericDao.get(DDTipoObservacionActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoObservacionActivo.CODIGO_SANEAMIENTO));
+			activoObservacion.setTipoObservacion(tipoObservacion);
+			
+			activoObservacion = genericDao.save(ActivoObservacion.class, activoObservacion);
+			
+			agendaSaneamiento.setActivoObservacion(activoObservacion);
+			genericDao.update(ActivoAgendaSaneamiento.class, agendaSaneamiento);
 			
 			return true;
 		}
@@ -6936,10 +6949,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if(saneamientoAgendaDto != null) {
 			
 			agendaSaneamiento = genericDao.get(ActivoAgendaSaneamiento.class, genericDao.createFilter(FilterType.EQUALS, "id", saneamientoAgendaDto.getIdSan()));
+			ActivoObservacion activoObservacion = agendaSaneamiento.getActivoObservacion();
 			
 			Auditoria.delete(agendaSaneamiento);
-			
+			Auditoria.delete(activoObservacion);
+						
 			genericDao.update(ActivoAgendaSaneamiento.class, agendaSaneamiento);
+			genericDao.update(ActivoObservacion.class, activoObservacion);
 			
 			return true;
 		}
@@ -6951,12 +6967,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Transactional
 	public Boolean updateSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto) {
 		
-		if(saneamientoAgendaDto != null) {
+		if(saneamientoAgendaDto != null && saneamientoAgendaDto.getObservaciones() != null) {
 			ActivoAgendaSaneamiento agendaSaneamiento = genericDao.get(ActivoAgendaSaneamiento.class, genericDao.createFilter(FilterType.EQUALS, "id", saneamientoAgendaDto.getIdSan()));
+
+			ActivoObservacion activoObservacion = agendaSaneamiento.getActivoObservacion();
 			
 			agendaSaneamiento.setObservaciones(saneamientoAgendaDto.getObservaciones());
+			activoObservacion.setObservacion(saneamientoAgendaDto.getObservaciones());
 			
 			genericDao.update(ActivoAgendaSaneamiento.class, agendaSaneamiento);
+			genericDao.update(ActivoObservacion.class, activoObservacion);
 			
 			return true;
 		}

@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.rem.admision.exception.AdmisionException;
 import es.pfsgroup.plugin.rem.api.AdmisionApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgendaRevisionTitulo;
+import es.pfsgroup.plugin.rem.model.ActivoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoAgendaRevisionTitulo;
 import es.pfsgroup.plugin.rem.model.DtoAdmisionRevisionTitulo;
 import es.pfsgroup.plugin.rem.model.dd.ActivoAdmisionRevisionTitulo;
@@ -48,6 +49,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoArrendamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoExpedienteAdministrativo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoIncidencia;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoIncidenciaRegistral;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOcupacionLegal;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTitularidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
@@ -121,6 +123,7 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 	public void createAgendaRevisionTitulo(Long idActivo, String subtipologiaCodigo, String observaciones) throws Exception {
 		
 		ActivoAgendaRevisionTitulo agendaRevisionTitulo = new ActivoAgendaRevisionTitulo();
+		Activo activo = activoDao.getActivoById(idActivo);
 		
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", subtipologiaCodigo);
 		DDSubtipologiaAgenda subtipologiaAgenda = genericDao.get(DDSubtipologiaAgenda.class, filter);
@@ -130,7 +133,7 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 		agendaRevisionTitulo.setObservaciones(observaciones);
 		agendaRevisionTitulo.setUsuario(usuarioLogado);
 		agendaRevisionTitulo.setFechaAlta(new Date());
-		agendaRevisionTitulo.setActivo(activoDao.getActivoById(idActivo));
+		agendaRevisionTitulo.setActivo(activo);
 		
 		Auditoria auditoria = new Auditoria();
 		auditoria.setUsuarioCrear(usuarioLogado.getUsername());
@@ -138,9 +141,23 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 		auditoria.setBorrado(false);
 		
 		agendaRevisionTitulo.setAuditoria(auditoria);
-		
+
 		genericDao.save(ActivoAgendaRevisionTitulo.class, agendaRevisionTitulo);
 		
+		ActivoObservacion activoObservacion = new ActivoObservacion();
+		activoObservacion.setObservacion(observaciones);
+		activoObservacion.setFecha(new Date());
+		activoObservacion.setUsuario(usuarioLogado);
+		activoObservacion.setActivo(activo);
+		DDTipoObservacionActivo tipoObservacion = genericDao.get(DDTipoObservacionActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoObservacionActivo.CODIGO_REVISION_TITULO));
+		activoObservacion.setTipoObservacion(tipoObservacion);
+		activoObservacion.setAuditoria(auditoria);
+		
+		activoObservacion = genericDao.save(ActivoObservacion.class, activoObservacion);
+		
+		agendaRevisionTitulo.setActivoObservacion(activoObservacion);
+		genericDao.update(ActivoAgendaRevisionTitulo.class, agendaRevisionTitulo);		
+
 	}
 	
 	@Override
@@ -157,9 +174,13 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 		auditoria.setBorrado(true);
 		
 		agendaRevisionTitulo.setAuditoria(auditoria);
+
+		genericDao.update(ActivoAgendaRevisionTitulo.class, agendaRevisionTitulo);		
 		
-		genericDao.update(ActivoAgendaRevisionTitulo.class, agendaRevisionTitulo);
+		ActivoObservacion activoObservacion = agendaRevisionTitulo.getActivoObservacion();
+		activoObservacion.setAuditoria(auditoria);
 		
+		genericDao.update(ActivoObservacion.class, activoObservacion);		
 	}
 
 	@Override
@@ -175,17 +196,24 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 			agendaRevisionTitulo.setSubtipologiaAgenda(subtipologiaAgenda);
 
 		}
+		
+		ActivoObservacion activoObservacion = agendaRevisionTitulo.getActivoObservacion();
+		
 		if(dto.getObservaciones() != null) {
+			activoObservacion.setObservacion(dto.getObservaciones());
 			agendaRevisionTitulo.setObservaciones(dto.getObservaciones());
+		
+			Auditoria auditoria = agendaRevisionTitulo.getAuditoria();
+			
+			auditoria.setUsuarioModificar(usuarioLogado.getUsername());
+			auditoria.setFechaModificar(new Date());
+			
+			activoObservacion.setAuditoria(auditoria);
+			agendaRevisionTitulo.setAuditoria(auditoria);
+			
+			genericDao.update(ActivoAgendaRevisionTitulo.class, agendaRevisionTitulo);
+			genericDao.update(ActivoObservacion.class, activoObservacion);
 		}
-		Auditoria auditoria = agendaRevisionTitulo.getAuditoria();
-		
-		auditoria.setUsuarioModificar(usuarioLogado.getUsername());
-		auditoria.setFechaModificar(new Date());
-		
-		agendaRevisionTitulo.setAuditoria(auditoria);
-		
-		genericDao.update(ActivoAgendaRevisionTitulo.class, agendaRevisionTitulo);
 		
 	}
 	

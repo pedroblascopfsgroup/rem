@@ -25,6 +25,22 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDEstadoRegistralActivo implements Auditable, Dictionary {
 	
+	
+	public static final String EDIFICACION_TERMINADA = "EDF_TER";
+	public static final String EN_CONSTRUCCION_JURIDICA = "CON_JUR";
+	public static final String EDIFICACION_OBRA_EN_CURSO = "EDF_WIP";
+	public static final String DFJ_EXCESO_CABIDA_MAYOR20 = "EXC_S20";
+	public static final String DFJ_EXCESO_CABIDA_MENOR20 = "EXC_I20";
+	public static final String DFJ_EXCESO_CABIDA_SINMATRICULAR = "EXC_SIM";
+	public static final String DFJ_EXCESO_CABIDA_CAMBIOUSO = "EXC_CDU"; 
+	public static final String DFJ_EXCESO_CABIDA_CAMBIODESCREGISTRAL = "EXC_CDR";
+	public static final String DFJ_EXCESO_CABIDA_DIVHORIZONTAL = "EXC_DHO";
+	public static final String CONSTRUCCION_ILEGAL_IRR_URB = "CIL_IUR";
+	public static final String CONSTRUCCION_ILEGAL_FUE_ORD = "CIL_FOR";
+	public static final String ACTIVO_IRREGULAR = "ACT_IRR";
+	public static final String ACTIVO_TERMINADO = "ACT_TER";
+	public static final String EN_CONSTRUCCION_FISICA = "CON_FIS";
+	
 	private static final long serialVersionUID = 1L;
 
 	@Id

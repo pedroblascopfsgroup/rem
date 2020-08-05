@@ -70,7 +70,7 @@ Ext.define('HreRem.view.activos.detalle.CarpinteriaExteriorInformacionComercial'
 							emptyDisplayText: '-',
 							bind: {
 								store: '{comboBuenoMaloRem}',
-								value: '{infoComercial.ventanasPvc}'
+								value: '{infoComercial.ventanasPVC}'
 							},
 							readOnly: false
 						},

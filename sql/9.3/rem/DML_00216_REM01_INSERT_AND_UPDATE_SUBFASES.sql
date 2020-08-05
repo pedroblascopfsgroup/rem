@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=IVAN REPISO
---## FECHA_CREACION=20200731
+--## FECHA_CREACION=20200805
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-7894
@@ -34,11 +34,11 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
         T_TIPO_DATA('Fase III', 'Gestion APIs', '28'),
-	T_TIPO_DATA('Fase V', 'Revision RAM', '29'),
+	T_TIPO_DATA('Fase I', 'Revision RAM', '29'),
 	T_TIPO_DATA('Fase IV', 'Solicitado al cliente', '30'),
 	T_TIPO_DATA('Fase IV', 'Solicitado Advisory', '31'),
 	T_TIPO_DATA('Fase IV', 'Retirado por el cliente', '32'),
-	T_TIPO_DATA('Fase I', 'Sin valor', '33') -- YA ESTA DENTRO
+	T_TIPO_DATA('Fase V', 'Sin valor', '33')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 
@@ -55,22 +55,33 @@ BEGIN
 		IF V_NUM_COLUMNA = 1 THEN
 
 			DBMS_OUTPUT.PUT_LINE('[INFO] BUSCANDO SUBFASE PENDIENTE DE PRECIOS');
+
+			V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE DD_SFP_DESCRIPCION = ''Pendiente de precios''';
+			EXECUTE IMMEDIATE V_SQL INTO V_NUM_COLUMNA;
+
+			IF V_NUM_COLUMNA = 1 THEN
 			
-			V_SQL := 'SELECT DD_SFP_ID FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE DD_SFP_DESCRIPCION = ''Pendiente de precios''';
-			EXECUTE IMMEDIATE V_SQL INTO V_ID;
+				V_SQL := 'SELECT DD_SFP_ID FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE DD_SFP_DESCRIPCION = ''Pendiente de precios''';
+				EXECUTE IMMEDIATE V_SQL INTO V_ID;
+	
+				IF V_ID != 0 THEN
 
-			IF V_ID != 0 THEN
-
-				V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' 
-		  		SET DD_SFP_DESCRIPCION = ''En analisis''
-				,DD_SFP_DESCRIPCION_LARGA = ''En analisis''
-		     		,USUARIOMODIFICAR = '''||V_USUARIO||'''
-		     		,FECHAMODIFICAR = SYSDATE
-		 		WHERE DD_SFP_ID = '''||V_ID||'''';
+					V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' 
+		  			SET DD_SFP_DESCRIPCION = ''En analisis''
+					,DD_SFP_DESCRIPCION_LARGA = ''En analisis''
+		     			,USUARIOMODIFICAR = '''||V_USUARIO||'''
+		     			,FECHAMODIFICAR = SYSDATE
+		 			WHERE DD_SFP_ID = '''||V_ID||'''';
 				
-				EXECUTE IMMEDIATE V_SQL;
+					EXECUTE IMMEDIATE V_SQL;
 
-				DBMS_OUTPUT.PUT_LINE('[INFO] Se han actualizado correctamente '||SQL%ROWCOUNT||' registros en '''||V_TABLA||''''); 
+					DBMS_OUTPUT.PUT_LINE('[INFO] Se han actualizado correctamente '||SQL%ROWCOUNT||' registros en '''||V_TABLA||''''); 
+
+				ELSE
+
+					DBMS_OUTPUT.PUT_LINE('[INFO] NO EXISTE ESA SUBFASE');
+
+				END IF;
 
 			ELSE 
 
@@ -98,6 +109,7 @@ BEGIN
 			
 			V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE DD_SFP_DESCRIPCION = '''||V_TMP_TIPO_DATA(2)||'''';
 			EXECUTE IMMEDIATE V_SQL INTO V_SUBFASE_EXISTE;
+			
 			IF V_SUBFASE_EXISTE = 0 THEN
 
 				V_SQL := 'SELECT '|| V_ESQUEMA ||'.S_DD_SFP_SUBFASE_PUBLICACION.NEXTVAL FROM DUAL';
@@ -105,13 +117,25 @@ BEGIN
 
 				V_SQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||'(DD_SFP_ID, DD_FSP_ID, DD_SFP_CODIGO, DD_SFP_DESCRIPCION, DD_SFP_DESCRIPCION_LARGA, USUARIOCREAR, FECHACREAR) VALUES
 		  			('''||V_SFP_ID||''', (SELECT DD_FSP_ID FROM '||V_ESQUEMA||'.DD_FSP_FASE_PUBLICACION WHERE DD_FSP_DESCRIPCION LIKE '''||V_TMP_TIPO_DATA(1)||' %''), '''||V_TMP_TIPO_DATA(3)||''', '''||V_TMP_TIPO_DATA(2)||''', '''||V_TMP_TIPO_DATA(2)||''', '''||V_USUARIO||''', SYSDATE)';
-                EXECUTE IMMEDIATE V_SQL;
+                		EXECUTE IMMEDIATE V_SQL;
 
 				DBMS_OUTPUT.PUT_LINE('[INFO] Se ha añadido correctamente '||SQL%ROWCOUNT||' la subfase '''||V_TMP_TIPO_DATA(2)||''''); 
 
 			ELSE 
 
-				DBMS_OUTPUT.PUT_LINE('[INFO] EXISTE ESA SUBFASE');
+				DBMS_OUTPUT.PUT_LINE('[INFO] EXISTE ESA SUBFASE, ACTUALIZAMOS FASE');
+
+				V_SQL := 'SELECT DD_SFP_ID FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE DD_SFP_DESCRIPCION = '''||V_TMP_TIPO_DATA(2)||'''';
+          			EXECUTE IMMEDIATE V_SQL INTO V_SFP_ID;
+
+				V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' 
+		  		SET DD_FSP_ID = (SELECT DD_FSP_ID FROM '||V_ESQUEMA||'.DD_FSP_FASE_PUBLICACION WHERE DD_FSP_DESCRIPCION LIKE '''||V_TMP_TIPO_DATA(1)||' %'')	,USUARIOMODIFICAR = '''||V_USUARIO||'''
+		     		,FECHAMODIFICAR = SYSDATE
+		 		WHERE DD_SFP_ID = '''||V_SFP_ID||'''';
+				
+				EXECUTE IMMEDIATE V_SQL;
+
+				DBMS_OUTPUT.PUT_LINE('[INFO] Se han actualizado correctamente '||SQL%ROWCOUNT||' registros en '''||V_TABLA||''''); 
 
 			END IF;
 		ELSE 

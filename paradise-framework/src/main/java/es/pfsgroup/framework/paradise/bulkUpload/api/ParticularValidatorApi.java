@@ -901,6 +901,8 @@ public interface ParticularValidatorApi {
 	public Boolean esResultadoValido(String codResultado);
 	
 	public Boolean esTipoTributoValido(String codTipoTributo);
+	
+	public Boolean esMotivoExento(String codResultado);
 
 	public Boolean esSolicitudValido(String codSolicitud);
 

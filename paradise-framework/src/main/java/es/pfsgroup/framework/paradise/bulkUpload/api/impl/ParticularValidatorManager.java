@@ -3602,8 +3602,19 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 		}
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
-				+ "FROM REMMASTER.DD_FAV_FAVORABLE FAV "
-				+ "WHERE FAV.DD_FAV_CODIGO =" + codResultado);
+				+ "FROM DD_RES_RESULTADO_SOLICITUD RES "
+				+ "WHERE RES.DD_RES_CODIGO =" + codResultado);
+
+		return !"0".equals(resultado);
+	}
+	
+	public Boolean esMotivoExento(String codResultado) {
+		if(Checks.esNulo(codResultado) || !StringUtils.isNumeric(codResultado)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "FROM DD_MOE_MOTIVO_EXENTO MOE "
+				+ "WHERE MOE.DD_MOE_CODIGO ='" + codResultado + "'");
 
 		return !"0".equals(resultado);
 	}

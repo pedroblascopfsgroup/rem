@@ -51,7 +51,8 @@ public class MSVControlTributosExcelValidator extends MSVExcelValidatorAbstract 
 	private static final String FECHA_NO_VALIDA = "msg.error.masivo.control.tributos.fecha.no.valida";
 	private static final String ID_TIPO_TRIBUTO_NO_VALIDO = "msg.error.masivo.control.tributos.tipo.tributo.no.valido";
 	private static final String EXPEDIENTE_NO_EXISTE = "msg.error.masivo.control.tributos.expediente.no.existe";
-
+	private static final String MOTIVO_EXENTO_MARCADO ="msg.error.masivo.control.tributos.motivo.exento.marcado";
+	private static final String MOTIVO_EXENTO_NO_EXISTE="msg.error.masivo.control.tributos.motivo.exento.no.existe";
 	private static final String FORMATO_FECHA = "dd/MM/yyyy";
 
 	private List<Integer> listaFilasAccionNoValido;
@@ -67,22 +68,24 @@ public class MSVControlTributosExcelValidator extends MSVExcelValidatorAbstract 
 		static final int COL_NUM_ACTIVO = 0;
 		static final int COL_NUM_TIPO_TRIBUTO=1;
 		static final int COL_NUM_FECHA_RECEPCION_TRIBUTO=2;
-		static final int COL_NUM_FECHA_EMISION = 3;
-		static final int COL_NUM_FECHA_RECEPCION_PROPIETARIO = 4;
-		static final int COL_NUM_FECHA_RECEPCION_GESTORIA = 5;
-		static final int COL_NUM_TIPO_SOLICITUD = 6;
-		static final int COL_NUM_OBSERVACIONES = 7;
-		static final int COL_NUM_FECHA_RECEPCION_RECURSO_BANKIA = 8;
-		static final int COL_NUM_FECHA_RECEPCION_RECURSO_GESTORIA = 9;
-		static final int COL_NUM_FECHA_RESPUESTA = 10;
-		static final int COL_NUM_RESULTADO_SOLICITUD = 11;
-		static final int COL_NUM_HAYA_VINCULADO=12;
-		static final int COL_NUM_EXISTE_DOC=13;
-		static final int COL_NUM_NUMERO_EXPEDIENTE=14;
-		static final int COL_NUM_FECHA_COMUNICADO_DEVOLUCION_INGRESO=15;
-		static final int COL_NUM_IMPORTE_RECUPERADO=16;
-		static final int COL_NUM_ACCION = 17;
-		static final int COL_ID_TRIBUTO = 18;
+		static final int COL_NUM_EXENTO=3;
+		static final int COL_NUM_MOTIVO_EXENTO=4;
+		static final int COL_NUM_FECHA_EMISION = 5;
+		static final int COL_NUM_FECHA_RECEPCION_PROPIETARIO = 6;
+		static final int COL_NUM_FECHA_RECEPCION_GESTORIA = 7;
+		static final int COL_NUM_TIPO_SOLICITUD = 8;
+		static final int COL_NUM_OBSERVACIONES = 9;
+		static final int COL_NUM_FECHA_RECEPCION_RECURSO_BANKIA = 10;
+		static final int COL_NUM_FECHA_RECEPCION_RECURSO_GESTORIA = 11;
+		static final int COL_NUM_FECHA_RESPUESTA = 12;
+		static final int COL_NUM_RESULTADO_SOLICITUD = 13;
+		static final int COL_NUM_HAYA_VINCULADO=14;
+		static final int COL_NUM_EXISTE_DOC=15;
+		static final int COL_NUM_NUMERO_EXPEDIENTE=16;
+		static final int COL_NUM_FECHA_COMUNICADO_DEVOLUCION_INGRESO=17;
+		static final int COL_NUM_IMPORTE_RECUPERADO=18;
+		static final int COL_NUM_ACCION = 19;
+		static final int COL_ID_TRIBUTO = 20;
 	}
 
 	@Resource
@@ -151,9 +154,10 @@ public class MSVControlTributosExcelValidator extends MSVExcelValidatorAbstract 
 			mapaErrores.put(messageServices.getMessage(SOLICITUD_NO_VALIDO), esSolicitudValido(exc));
 			mapaErrores.put(messageServices.getMessage(FECHA_NO_VALIDA), esFechaNoValida(exc));
 			mapaErrores.put(messageServices.getMessage(ID_TIPO_TRIBUTO_NO_VALIDO), esTipoTributoValido(exc));
-			mapaErrores.put(messageServices.getMessage(EXPEDIENTE_NO_EXISTE), esExpedienteValido(exc));
+			mapaErrores.put(messageServices.getMessage(EXPEDIENTE_NO_EXISTE), esExpedienteValido(exc));		
+			mapaErrores.put(messageServices.getMessage(MOTIVO_EXENTO_MARCADO), motivoExentoObligatorio(exc));
+			mapaErrores.put(messageServices.getMessage(MOTIVO_EXENTO_NO_EXISTE), motivoExentoExiste(exc));
 			
-
 			
 			for (Entry<String, List<Integer>> registro : mapaErrores.entrySet()) {
 				if (!registro.getValue().isEmpty()) {
@@ -451,5 +455,51 @@ public class MSVControlTributosExcelValidator extends MSVExcelValidatorAbstract 
 		}
 		return yearSize;
 	}
+	
+	
+	
+private List<Integer> motivoExentoObligatorio(MSVHojaExcel exc) {
+		
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+			final String EXENTO = "1";
+			try {
+				if (EXENTO.equals(exc.dameCelda(i, COL_NUM.COL_NUM_EXENTO)) && Checks.esNulo(exc.dameCelda(i, COL_NUM.COL_NUM_MOTIVO_EXENTO)))
+					listaFilas.add(i);
+			} catch (ParseException e) {
+				listaFilas.add(i);
+				logger.error(e.getMessage());
+			} catch (Exception e) {
+				listaFilas.add(0);
+				logger.error(e.getMessage());
+			}
+		}
+		return listaFilas;
+	}	
+	
+
+		
+	private List<Integer> motivoExentoExiste(MSVHojaExcel exc) {
+		
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+			final String EXENTO = "1";
+			try {
+				if (!particularValidator.esMotivoExento(exc.dameCelda(i, COL_NUM.COL_NUM_MOTIVO_EXENTO)) && EXENTO.equals(exc.dameCelda(i, COL_NUM.COL_NUM_EXENTO)))
+					listaFilas.add(i);
+			} catch (ParseException e) {
+				listaFilas.add(i);
+				logger.error(e.getMessage());
+			} catch (Exception e) {
+				listaFilas.add(0);
+				logger.error(e.getMessage());
+			}
+		}
+		return listaFilas;
+	}	
+	
+
 
 }

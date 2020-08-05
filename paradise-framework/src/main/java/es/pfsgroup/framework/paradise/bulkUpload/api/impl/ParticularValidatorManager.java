@@ -4764,14 +4764,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 		}
 		String resultado = rawDao.getExecuteSQL(
-			"SELECT COUNT(1) FROM ACT_ACTIVO ACT "
-			+"	LEFT JOIN DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID"
-			+"	WHERE CRA.DD_CRA_CODIGO = '16' "
-			+"		AND ACT.BORRADO = 0 "
-			+"		AND CRA.BORRADO = 0 "
-			+"		AND ACT.ACT_NUM_ACTIVO = "+ numActivo +""
-		);
-
+				"SELECT COUNT(1) "
+												+"		FROM ACT_ACTIVO ACT "
+												+"		WHERE ACT.DD_CRA_ID IN (SELECT DD_CRA_ID FROM DD_CRA_CARTERA "
+												+"								WHERE DD_CRA_CODIGO = '16' "
+												+"								AND BORRADO = 0) "
+											+"		AND ACT.ACT_NUM_ACTIVO = "+ numActivo +""
+				);
 		return !"0".equals(resultado);
 	}
 }

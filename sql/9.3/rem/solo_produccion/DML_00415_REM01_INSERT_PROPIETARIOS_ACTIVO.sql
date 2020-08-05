@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=IVAN REPISO
---## FECHA_CREACION=20200803
+--## FECHA_CREACION=20200805
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-7443
@@ -115,7 +115,7 @@ DECLARE
 				EXECUTE IMMEDIATE V_SQL INTO V_PROPIETARIO_ID;
 				V_SQL := 'SELECT ACT_ID FROM '||V_ESQUEMA||'.'||V_TABLA_ACT||' WHERE ACT_NUM_ACTIVO = '''||V_TMP_TIPO_DATA(4)||''' AND 			ACT_NUM_ACTIVO_UVEM = '''||V_TMP_TIPO_DATA(3)||'''';
 				EXECUTE IMMEDIATE V_SQL INTO V_ACTIVO_ID;
-				V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_PRO_ACT||' WHERE ACT_ID = '''||V_ACTIVO_ID||''' AND 			PRO_ID = '''||V_PROPIETARIO_ID||'''';
+				V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_PRO_ACT||' WHERE ACT_ID = '''||V_ACTIVO_ID||''' AND 			PRO_ID = '''||V_PROPIETARIO_ID||''' AND BORRADO = 0';
 				EXECUTE IMMEDIATE V_SQL INTO V_PRO_ACTIVO;
 
 				IF V_PRO_ACTIVO = 0 THEN
@@ -124,11 +124,18 @@ DECLARE
 					VALUES ('||V_ESQUEMA||'.S_'||V_TABLA_PRO_ACT||'.NEXTVAL,'''||V_ACTIVO_ID||''', '''||V_PROPIETARIO_ID||''','''||V_USUARIO||''',SYSDATE)'; 
 					EXECUTE IMMEDIATE V_SQL ;
 			
-			DBMS_OUTPUT.put_line('[INFO] Se ha insertado '||SQL%ROWCOUNT||' registro en la tabla '||V_TABLA_PRO_ACT||'');
+					DBMS_OUTPUT.put_line('[INFO] Se ha insertado '||SQL%ROWCOUNT||' registro en la tabla '||V_TABLA_PRO_ACT||'');
 
 				ELSE
 
-					DBMS_OUTPUT.put_line('[INFO] EXISTE EL PROPIETARIO CON NIF '''||V_TMP_TIPO_DATA(1)||''' Y EL ACTIVO DE HAYA '''||V_TMP_TIPO_DATA(4)||''' EN '||V_TABLA_PRO_ACT||'');
+					V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA_PRO_ACT||' 
+					SET PRO_ID = '''||V_PROPIETARIO_ID||''',
+					USUARIOMODIFICAR = '''||V_USUARIO||''',
+					FECHAMODIFICAR = SYSDATE
+					WHERE ACT_ID = '''||V_ACTIVO_ID||''' AND BORRADO = 0'; 
+					EXECUTE IMMEDIATE V_SQL ;
+			
+					DBMS_OUTPUT.put_line('[INFO] Se ha modificado '||SQL%ROWCOUNT||' registro en la tabla '||V_TABLA_PRO_ACT||'');
 
 				END IF;			
 

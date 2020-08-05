@@ -2490,6 +2490,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getDiccionarioSubtipologiaAgendaSaneamiento',
 				extraParams: {codTipo: '{comboTipologiaRef.value}'}
 			}
+		},
+		comboEstadoRegistral: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadoRegistral'}
+			}
 		}
 
      }

@@ -271,9 +271,9 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                	reference: 'comboEstadoRegistralRef',
 			                	bind: {
 			                		store: '{comboEstadoRegistral}',
-			                		value: '{activo.estadoRegistralCodigo}',
-			                		readOnly: '{!activo.esEditableActivoEstadoRegistral}'
-			                	}
+			                		value: '{activo.estadoRegistralCodigo}'
+			                	},
+			                	readOnly: true
 			                },
 			                {
 			                	xtype: 'comboboxfieldbase',

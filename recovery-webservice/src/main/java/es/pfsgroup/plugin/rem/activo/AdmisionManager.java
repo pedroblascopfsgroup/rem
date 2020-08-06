@@ -20,6 +20,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.admision.exception.AdmisionException;
@@ -35,6 +36,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDAutorizacionTransmision;
 import es.pfsgroup.plugin.rem.model.dd.DDBoletines;
 import es.pfsgroup.plugin.rem.model.dd.DDCedulaHabitabilidad;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoRegistralActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDLicenciaPrimeraOcupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDProteccionOficial;
 import es.pfsgroup.plugin.rem.model.dd.DDSeguroDecenal;
@@ -68,6 +70,10 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 	
 	@Autowired
 	private ActivoDao activoDao;
+	
+	@Autowired
+	private UtilDiccionarioApi diccionarioApi;
+	
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -156,7 +162,7 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 		activoObservacion = genericDao.save(ActivoObservacion.class, activoObservacion);
 		
 		agendaRevisionTitulo.setActivoObservacion(activoObservacion);
-		genericDao.update(ActivoAgendaRevisionTitulo.class, agendaRevisionTitulo);		
+		genericDao.update(ActivoAgendaRevisionTitulo.class, agendaRevisionTitulo);
 
 	}
 	
@@ -347,6 +353,21 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 		}else {
 			genericDao.save(ActivoAdmisionRevisionTitulo.class, revisionTitulo);
 		}
+		
+		DDEstadoRegistralActivo ddEstadoReg = new DDEstadoRegistralActivo();
+	
+		if(revisionTitulo.getTipoIncidenciaRegistral() != null) {
+			ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", revisionTitulo.getTipoIncidenciaRegistral().getDescripcion()));
+		}else if(revisionTitulo.getSituacionConstructivaRegistral() != null) {
+			ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", revisionTitulo.getSituacionConstructivaRegistral().getDescripcion()));
+		}
+		
+		if(ddEstadoReg != null) {
+			activo.setEstadoRegistral(ddEstadoReg);	
+		}
+		
+		activoDao.save(activo);
+		
 	}
 	
 	

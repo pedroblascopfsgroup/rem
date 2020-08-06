@@ -59,7 +59,7 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
     private Long numActivo;
     
 	@Column(name = "BBVA_ID_DIVARIAN")
-	private Long idDivarian;
+	private Long idDivarianBbva;
     
     @Column(name = "BBVA_LINEA_FACTURA")
 	private Long lineaFactura;
@@ -145,12 +145,12 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 		this.numActivo = numActivo;
 	}
 
-	public Long getIdDivarian() {
-		return idDivarian;
+	public Long getIdDivarianBbva() {
+		return idDivarianBbva;
 	}
 
-	public void setIdDivarian(Long idDivarian) {
-		this.idDivarian = idDivarian;
+	public void setIdDivarianBbva(Long idDivarianBbva) {
+		this.idDivarianBbva = idDivarianBbva;
 	}
 
 	public Long getLineaFactura() {

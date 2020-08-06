@@ -21,6 +21,7 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -68,6 +69,7 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VTramitacionOfertaActivo;
+import es.pfsgroup.plugin.rem.model.dd.ActivoAdmisionRevisionTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionUso;
@@ -82,6 +84,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivoBDE;
@@ -905,6 +908,36 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 		}
 
+		ActivoAdmisionRevisionTitulo activoAdmisionRevisionTitulo = genericDao.get(ActivoAdmisionRevisionTitulo.class, genericDao.createFilter(FilterType.EQUALS,  "activo.id", activo.getId()));
+		
+		if(activoAdmisionRevisionTitulo != null) {
+						
+
+			String codigoHayaSuper = "HAYASUPER";
+			String codigoGestorEdificacion = "GESTEDI";
+			
+			List<Perfil> perfilesUsuarioLogado = usuarioLogado.getPerfiles();
+			
+			boolean esUsuarioConPermisos = false;
+			boolean revision = activoAdmisionRevisionTitulo.getRevisado().getCodigo().equals(DDSinSiNo.CODIGO_SI);
+			boolean perimetroAdmision = perimetroActivo.getAplicaAdmision();
+			
+			for(Perfil pef : perfilesUsuarioLogado){
+				if(codigoHayaSuper.equals(pef.getCodigo()) || codigoGestorEdificacion.equals(pef.getCodigo())) {
+					esUsuarioConPermisos = true;
+					break;
+				}				
+			}
+			
+			
+			boolean puedeEditar = (esUsuarioConPermisos == true && (perimetroAdmision == false || (perimetroAdmision == true && revision == true)));
+	     
+			
+			activoDto.setEsEditableActivoEstadoRegistral(puedeEditar);
+		}else {
+			activoDto.setEsEditableActivoEstadoRegistral(false);
+		}
+		
 		return activoDto;
 	}
 	

@@ -113,6 +113,12 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
 	   	                    this.editOnSelect = allowEdit;
 	   	                    
    	                	}
+
+   	                	if(!Ext.isEmpty(context.record.data.tipoObservacionCodigo)){
+	   	                	var tipoObservacionCod = context.record.data.tipoObservacionCodigo;
+	   	                	allowEdit = allowEdit && tipoObservacionCod != CONST.DD_TOB_TIPO_OBSERVACION["SANEAMIENTO"] && tipoObservacionCod != CONST.DD_TOB_TIPO_OBSERVACION["REVISION_TITULO"]   	                		
+   	                	}
+   	                	
    	                	return allowEdit;
 	                }
 	            },
@@ -128,11 +134,16 @@ Ext.define('HreRem.view.activos.detalle.ObservacionesActivo', {
             		}
             		else
             		{
-            			var idUsuario = records[0].get("idUsuario");
-            			var allowRemove = $AU.sameUserPermToEnable(idUsuario);
-            			if (!me.down("gridBaseEditableRow").getPlugin("rowEditingPlugin").editing)
-            			{
-            				me.down('#removeButton').setDisabled(!allowRemove);
+            			var tipoObservacionCod = records[0].get("tipoObservacionCodigo");
+            			if(tipoObservacionCod != CONST.DD_TOB_TIPO_OBSERVACION["SANEAMIENTO"] &&
+            				tipoObservacionCod != CONST.DD_TOB_TIPO_OBSERVACION["REVISION_TITULO"]){
+            					
+	            			var idUsuario = records[0].get("idUsuario");
+	            			var allowRemove = $AU.sameUserPermToEnable(idUsuario);
+	            			if (!me.down("gridBaseEditableRow").getPlugin("rowEditingPlugin").editing)
+	            			{
+	            				me.down('#removeButton').setDisabled(!allowRemove);
+	            			}
             			}
             		}
 	            },

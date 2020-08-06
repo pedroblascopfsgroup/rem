@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200805
+--## AUTOR=Vicente Martinez Cifre
+--## FECHA_CREACION=20200520
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-10553
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-10298
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que añade los datos del array en DD_SNR_SITUACION_CONSTRUCTIVA_REGISTRAL
+--## Finalidad: Script que añade los datos del array en DD_ERA_ESTADO_REG_ACTIVO
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -29,16 +29,26 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 	
     V_ID NUMBER(16);
-    V_TABLA VARCHAR2(50 CHAR):= 'DD_SNR_SITUACION_CONSTRUCTIVA_REGISTRAL';
-    V_CHARS VARCHAR2(3 CHAR):= 'SNR';
-    V_USUARIO VARCHAR2(25 CHAR):= 'HREOS-10553';
+    V_TABLA VARCHAR2(50 CHAR):= 'DD_ERA_ESTADO_REG_ACTIVO';
+    V_CHARS VARCHAR2(3 CHAR):= 'ERA';
+    V_USUARIO VARCHAR2(25 CHAR):= 'HREOS-10298';
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-            -- CODIGO  			      DESCRIPCION                       DESCRIPCION_LARGA 
-      T_TIPO_DATA('01',			'Terminado',			                 'Terminado'),
-      T_TIPO_DATA('02',			'En construcción (jurídica)',			 'En construcción (jurídica)'),
-      T_TIPO_DATA('03',			'En construcción física',			     'En construcción física')
+            -- CODIGO  			DESCRIPCION     DESCRIPCION_LARGA
+      T_TIPO_DATA('EDF_TER',		 'Edificación Terminada'),
+      T_TIPO_DATA('CON_JUR',		 'En construcción (jurídica)'),
+      T_TIPO_DATA('EDF_WIP',		 'Edificación obra en curso'),
+      T_TIPO_DATA('EXC_S20',     'Discrepancia físico-jurídica/Exceso cabida > al 20%'),
+      T_TIPO_DATA('EXC_I20',     'Discrepancia físico-jurídica/Exceso cabida < al 20%'),
+      T_TIPO_DATA('EXC_SIM',     'Discrepancia físico-jurídica/Sin inmatricular'),
+      T_TIPO_DATA('EXC_CDU',     'Discrepancia físico-jurídica/Cambio de uso'),
+      T_TIPO_DATA('EXC_CDR',     'Discrepancia físico-jurídica/Cambio descripción registral'),
+      T_TIPO_DATA('EXC_DHO',     'Discrepancia físico-jurídica/División horizontal'),
+      T_TIPO_DATA('CIL_IUR',     'Construcción ilegal/Irregularidades urbanísticas'),
+      T_TIPO_DATA('CIL_FOR',     'Contrucción ilegal/Fuera de ordenación'),
+      T_TIPO_DATA('ACT_IRR',     'Activo irregular')
+
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
    
@@ -65,7 +75,7 @@ BEGIN
           UPDATE '|| V_ESQUEMA ||'.'||V_TABLA||' 
           SET 
             DD_'||V_CHARS||'_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''',
-            DD_'||V_CHARS||'_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''',
+            DD_'||V_CHARS||'_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(2))||''',
 	    USUARIOMODIFICAR = '''||V_USUARIO||''',
             FECHAMODIFICAR = SYSDATE
 			    WHERE DD_'||V_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
@@ -86,7 +96,7 @@ BEGIN
 	            '|| V_ID || ',
 	            '''||V_TMP_TIPO_DATA(1)||''',
 	            '''||V_TMP_TIPO_DATA(2)||''',
-	            '''||TRIM(V_TMP_TIPO_DATA(3))||''',
+	            '''||TRIM(V_TMP_TIPO_DATA(2))||''',
 	            0, '''||V_USUARIO||''', SYSDATE FROM DUAL';
         EXECUTE IMMEDIATE V_MSQL;
         DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');

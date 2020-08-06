@@ -68,6 +68,10 @@ public class ActivoAgendaSaneamiento implements Serializable, Auditable {
     @Column(name = "ASA_FECHA_ALTA")
 	private Date fechaAltaSaneamiento;
     
+    @ManyToOne
+    @JoinColumn(name = "AOB_ID")
+    private ActivoObservacion activoObservacion; 
+    
 	@Version   
 	private Long version;
 
@@ -136,6 +140,14 @@ public class ActivoAgendaSaneamiento implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public ActivoObservacion getActivoObservacion() {
+		return activoObservacion;
+	}
+
+	public void setActivoObservacion(ActivoObservacion activoObservacion) {
+		this.activoObservacion = activoObservacion;
 	}
     
     

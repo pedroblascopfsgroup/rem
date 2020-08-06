@@ -46,6 +46,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCargaActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoRegistralActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
@@ -529,6 +530,10 @@ public class Activo implements Serializable, Auditable {
     @ManyToOne
 	@JoinColumn(name = "DD_SAA_ID")
 	private DDSubestadoAdmision subestadoAdmision;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ERA_ID")
+    private DDEstadoRegistralActivo estadoRegistral; 
     
     // Getters del activo --------------------------------------------
     
@@ -2054,5 +2059,13 @@ public class Activo implements Serializable, Auditable {
 
 	public void setSubestadoAdmision(DDSubestadoAdmision subestadoAdmision) {
 		this.subestadoAdmision = subestadoAdmision;
+	}
+
+	public DDEstadoRegistralActivo getEstadoRegistral() {
+		return estadoRegistral;
+	}
+
+	public void setEstadoRegistral(DDEstadoRegistralActivo estadoRegistral) {
+		this.estadoRegistral = estadoRegistral;
 	}
 }

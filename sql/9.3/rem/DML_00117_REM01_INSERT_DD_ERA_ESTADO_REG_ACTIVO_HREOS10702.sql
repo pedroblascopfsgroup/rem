@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
+--## AUTOR=Sergio Gomez
 --## FECHA_CREACION=20200805
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-10553
+--## INCIDENCIA_LINK=HREOS-10702
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que añade los datos del array en DD_SNR_SITUACION_CONSTRUCTIVA_REGISTRAL
+--## Finalidad: Script que añade los datos del array en DD_ERA_ESTADO_REG_ACTIVO
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -29,16 +29,16 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 	
     V_ID NUMBER(16);
-    V_TABLA VARCHAR2(50 CHAR):= 'DD_SNR_SITUACION_CONSTRUCTIVA_REGISTRAL';
-    V_CHARS VARCHAR2(3 CHAR):= 'SNR';
-    V_USUARIO VARCHAR2(25 CHAR):= 'HREOS-10553';
+    V_TABLA VARCHAR2(50 CHAR):= 'DD_ERA_ESTADO_REG_ACTIVO';
+    V_CHARS VARCHAR2(3 CHAR):= 'ERA';
+    V_USUARIO VARCHAR2(25 CHAR):= 'HREOS-10702';
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
             -- CODIGO  			      DESCRIPCION                       DESCRIPCION_LARGA 
-      T_TIPO_DATA('01',			'Terminado',			                 'Terminado'),
-      T_TIPO_DATA('02',			'En construcción (jurídica)',			 'En construcción (jurídica)'),
-      T_TIPO_DATA('03',			'En construcción física',			     'En construcción física')
+      T_TIPO_DATA('ACT_TER',			'Terminado',			        'Terminado'),
+      T_TIPO_DATA('CON_JUR',			'En construcción (jurídica)',	'En construcción (jurídica)'),
+      T_TIPO_DATA('CON_FIS',			'En construcción física',	    'En construcción física')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
    

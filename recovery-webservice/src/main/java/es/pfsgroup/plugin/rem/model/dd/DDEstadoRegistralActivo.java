@@ -18,54 +18,47 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
-/**
- * Modelo que gestiona el diccionario de Boletines
- * 
- * PDTE/Pendiente
- * OBT/Obtenido
- * 
- * @author Alberto Flores
- *
- */
+
 @Entity
-@Table(name = "DD_BOL_BOLETINES", schema = "${entity.schema}")
+@Table(name = "DD_ERA_ESTADO_REG_ACTIVO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDBoletines implements Auditable, Dictionary {
+public class DDEstadoRegistralActivo implements Auditable, Dictionary {
+	
+	
+	public static final String EDIFICACION_TERMINADA = "EDF_TER";
+	public static final String EN_CONSTRUCCION_JURIDICA = "CON_JUR";
+	public static final String EDIFICACION_OBRA_EN_CURSO = "EDF_WIP";
+	public static final String DFJ_EXCESO_CABIDA_MAYOR20 = "EXC_S20";
+	public static final String DFJ_EXCESO_CABIDA_MENOR20 = "EXC_I20";
+	public static final String DFJ_EXCESO_CABIDA_SINMATRICULAR = "EXC_SIM";
+	public static final String DFJ_EXCESO_CABIDA_CAMBIOUSO = "EXC_CDU"; 
+	public static final String DFJ_EXCESO_CABIDA_CAMBIODESCREGISTRAL = "EXC_CDR";
+	public static final String DFJ_EXCESO_CABIDA_DIVHORIZONTAL = "EXC_DHO";
+	public static final String CONSTRUCCION_ILEGAL_IRR_URB = "CIL_IUR";
+	public static final String CONSTRUCCION_ILEGAL_FUE_ORD = "CIL_FOR";
+	public static final String ACTIVO_IRREGULAR = "ACT_IRR";
+	public static final String ACTIVO_TERMINADO = "ACT_TER";
+	public static final String EN_CONSTRUCCION_FISICA = "CON_FIS";
 	
 	private static final long serialVersionUID = 1L;
-	
-	public static final String CODIGO_PENDIENTE = "PDTE";
-	public static final String CODIGO_OBTENIDO = "OBT";
-	public static final String CODIGO_EDIFICACION_TERMINADA = "EDF_TER";
-	public static final String CODIGO_EN_CONTRUCCION = "CON_JUR";
-	public static final String CODIGO_OBRA_EN_CURSO = "EDF_WIP";
-	public static final String CODIGO_DISCREPANCIA_MAYOR_20 = "EXC_S20";
-	public static final String CODIGO_DISCREPANCIA_MENOR_20 = "EXC_I20";
-	public static final String CODIGO_DISCREPANCIA_SIN_INMATRICULAR = "EXC_SIM";
-	public static final String CODIGO_DISCREPANCIA_CAMBIO_USO = "EXC_CDU";
-	public static final String CODIGO_DISCREPANCIA_CAMBIO_DESC_REGISTRAL = "EXC_CDR";
-	public static final String CODIGO_DISCREPANCIA_DIVISION_HORIZONTAL = "EXC_DHO";
-	public static final String CODIGO_ILEGAL_IRREGU_URBANISTICAS = "CIL_IUR";
-	public static final String CODIGO_ILEGAL_FUERA_ORDENACION = "CIL_FOR";
-	public static final String CODIGO_ACTIVO_IRREGULAR = "ACT_IRR";
 
 	@Id
-	@Column(name = "DD_BOL_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDBoletines")
-	@SequenceGenerator(name = "DDBoletines", sequenceName = "S_DD_BOL_BOLETINES")
+	@Column(name = "DD_ERA_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEstadoRegistralActivoGenerator")
+	@SequenceGenerator(name = "DDEstadoRegistralActivoGenerator", sequenceName = "S_DD_ERA_ESTADO_REG_ACTIVO")
 	private Long id;
-
-	@Column(name = "DD_BOL_CODIGO")
+	 
+	@Column(name = "DD_ERA_CODIGO")   
 	private String codigo;
-
-	@Column(name = "DD_BOL_DESCRIPCION")
+	 
+	@Column(name = "DD_ERA_DESCRIPCION")   
 	private String descripcion;
-
-	@Column(name = "DD_BOL_DESCRIPCION_LARGA")
+	    
+	@Column(name = "DD_ERA_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
-
-	@Version
+	    
+	@Version   
 	private Long version;
 
 	@Embedded

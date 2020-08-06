@@ -197,6 +197,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tud.codigo", dto.getTipoUsoDestinoCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "ca.codigo", dto.getClaseActivoBancarioCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "subca.codigo", dto.getSubClaseActivoBancarioCodigo());
+		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoBbva", dto.getNumActivoBbva());
+		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.idDivarian", dto.getIdDivarianBbva());
+		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "subtipotitulo.codigo", dto.getSubtipoTituloActivoCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.divHorizontal", dto.getDivisionHorizontal());
 
@@ -282,7 +285,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				sb.append(" join ab.subtipoClaseActivo subca ");
 			}
 		}
-
+		
 		if (!Checks.esNulo(dto.getSubtipoTituloActivoCodigo())) {
 			sb.append(" join act.subtipoTitulo subtipotitulo ");
 		}
@@ -1794,6 +1797,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoUsoDestinoCodigo", dto.getTipoUsoDestinoCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.claseActivoBancarioCodigo", dto.getClaseActivoBancarioCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subclaseActivoBancarioCodigo", dto.getSubclaseActivoBancarioCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivoBbva", dto.getNumActivoBbva());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.idDivarianBbva", dto.getIdDivarianBbva());
 		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoActivoCodigo", dto.getTipoActivoCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subtipoActivoCodigo", dto.getSubtipoActivoCodigo());

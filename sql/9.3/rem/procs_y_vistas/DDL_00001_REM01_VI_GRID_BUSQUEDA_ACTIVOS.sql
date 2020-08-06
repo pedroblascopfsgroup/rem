@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina
---## FECHA_CREACION=20200513
+--## AUTOR=Jonathan Ovalle
+--## FECHA_CREACION=20200805
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-7161
+--## INCIDENCIA_LINK=HREOS-10769
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Crear vista para rellenar el grid de la busqueda de activos
@@ -13,6 +13,7 @@
 --## VERSIONES:
 --##        0.1 [HREOS-10081] Versión inicial (Creación de la vista)
 --##        0.1 [REMVIP-7161] Añadir campo equipo de gestión
+--##        0.2 [HREOS-10769] Añadir campos BBVA_NUM_ACTIVO y BBVA_ID_DIVARIAN
 --#########################################
 --*/
 
@@ -115,7 +116,9 @@ BEGIN
 			DIR_COM.DD_TDC_CODIGO						AS DIRECCION_COMERCIAL,
 			ACT.ACT_PERIMETRO_MACC						AS PERIMETRO_MACC,
 			TIPOSEG.DD_TS_CODIGO 								AS TIPO_SEGMENTO_CODIGO,
-            EQG.DD_EQG_CODIGO                           AS DD_EQG_EQUIPO_GESTION
+            EQG.DD_EQG_CODIGO                           AS DD_EQG_EQUIPO_GESTION,
+			BBVA.BBVA_NUM_ACTIVO						AS BBVA_NUM_ACTIVO,
+			BBVA.BBVA_ID_DIVARIAN						AS BBVA_ID_DIVARIAN
             
 		FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT 
 		LEFT JOIN '|| V_ESQUEMA ||'.ACT_LOC_LOCALIZACION ACT_LOC 							ON ACT_LOC.ACT_ID = ACT.ACT_ID
@@ -155,7 +158,7 @@ BEGIN
 		LEFT JOIN '|| V_ESQUEMA_M ||'.DD_CIC_CODIGO_ISO_CIRBE_BKP BIE_CIC 		ON BIE_LOC.DD_CIC_ID = BIE_CIC.DD_CIC_ID
 		LEFT JOIN '|| V_ESQUEMA_M ||'.DD_PRV_PROVINCIA PRV											ON PRV.DD_PRV_ID = LOC.DD_PRV_ID
 		LEFT JOIN ' || V_ESQUEMA || '.DD_EQG_EQUIPO_GESTION EQG                 ON EQG.DD_EQG_ID = ACT.DD_EQG_ID
- 		
+ 		LEFT JOIN ' || V_ESQUEMA || '.ACT_BBVA_ACTIVOS BBVA						ON BBVA.ACT_ID = ACT.ACT_ID
 		WHERE ACT.BORRADO = 0';
         
 DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_GRID_BUSQUEDA_ACTIVOS...Creada OK');

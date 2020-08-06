@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -22,8 +23,12 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoMotivoCalificacionNegativa;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
+import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAlta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
 
 /**
@@ -51,10 +56,10 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
     private Activo activo;
 	
     @Column(name = "BBVA_NUM_ACTIVO")
-    private Long numActivoBbva;
+    private Long numActivo;
     
 	@Column(name = "BBVA_ID_DIVARIAN")
-	private Long idDivarianBbva;
+	private Long idDivarian;
     
     @Column(name = "BBVA_LINEA_FACTURA")
 	private Long lineaFactura;
@@ -68,7 +73,7 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TAL_ID")
-	private DDTipoAlta tipoAlta;
+	private DDTipoAlquiler tipoAlquiler;
 
 	@Column(name = "BBVA_UIC")
   	private String uicBbva;
@@ -131,21 +136,21 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 	public void setActivo(Activo activo) {
 		this.activo = activo;
 	}
-	
-	public Long getNumActivoBbva() {
-		return numActivoBbva;
+
+	public Long getNumActivo() {
+		return numActivo;
 	}
 
-	public void setNumActivoBbva(Long numActivoBbva) {
-		this.numActivoBbva = numActivoBbva;
+	public void setNumActivo(Long numActivo) {
+		this.numActivo = numActivo;
 	}
 
-	public Long getIdDivarianBbva() {
-		return idDivarianBbva;
+	public Long getIdDivarian() {
+		return idDivarian;
 	}
 
-	public void setIdDivarianBbva(Long idDivarianBbva) {
-		this.idDivarianBbva = idDivarianBbva;
+	public void setIdDivarian(Long idDivarian) {
+		this.idDivarian = idDivarian;
 	}
 
 	public Long getLineaFactura() {
@@ -172,12 +177,12 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 		this.tipoTransmision = tipoTransmision;
 	}
 
-	public DDTipoAlta getTipoAlta() {
-		return tipoAlta;
+	public DDTipoAlquiler getTipoAlquiler() {
+		return tipoAlquiler;
 	}
 
-	public void setTipoAlta(DDTipoAlta tipoAlta) {
-		this.tipoAlta = tipoAlta;
+	public void setTipoAlquiler(DDTipoAlquiler tipoAlquiler) {
+		this.tipoAlquiler = tipoAlquiler;
 	}
 
 	public String getUicBbva() {

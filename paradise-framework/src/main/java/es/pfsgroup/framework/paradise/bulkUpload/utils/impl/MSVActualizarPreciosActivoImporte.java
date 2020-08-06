@@ -1386,14 +1386,16 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		try {
 			for(int i=1; i<this.numFilasHoja;i++){
 				try{
-					esBBVA = !Checks.esNulo(exc.dameCelda(i, COLUMNA_ACTIVO)) ? particularValidator.esActivoBBVA(exc.dameCelda(i, COLUMNA_ACTIVO)) : null;
-					fechaAprobPAV = !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_APROBADO_VENTA)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_APROB_P_APROBADO_VENTA)) : null;
-					fechaAprobPMA = !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_MIN_AUTORIZADO)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_APROB_P_MIN_AUTORIZADO)) : null;
-					fechaAprobPAR = !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_APROB_RENTA)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_APROB_P_APROBADO_RENTA)) : null;
-					fechaAprobPDA = !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_DESCUENTO_APROBADO)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_APROB_P_DESCUENTO_APROB)) : null;
-					fechaAprobPDP = !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_DESCUENTO_PUBLICADO)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_APROB_P_DESCUENTO_PUB)) : null;
+					esBBVA =  !particularValidator.esActivoBBVA(exc.dameCelda(i, COLUMNA_ACTIVO));
 					
-					if(!Checks.esNulo(esBBVA)) {
+					
+					if((!esBBVA)) {
+						fechaAprobPAV = !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_APROBADO_VENTA)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_APROB_P_APROBADO_VENTA)) : null;
+						fechaAprobPMA = !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_MIN_AUTORIZADO)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_APROB_P_MIN_AUTORIZADO)) : null;
+						fechaAprobPAR = !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_APROB_RENTA)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_APROB_P_APROBADO_RENTA)) : null;
+						fechaAprobPDA = !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_DESCUENTO_APROBADO)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_APROB_P_DESCUENTO_APROB)) : null;
+						fechaAprobPDP = !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_DESCUENTO_PUBLICADO)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_APROB_P_DESCUENTO_PUB)) : null;
+						
 						if( (Checks.esNulo(fechaAprobPAV) || Checks.esNulo(fechaAprobPMA) || Checks.esNulo(fechaAprobPAR) || Checks.esNulo(fechaAprobPDA) || Checks.esNulo(fechaAprobPDP)) && esBBVA){
 							if (!listaFilas.contains(i))
 								listaFilas.add(i);

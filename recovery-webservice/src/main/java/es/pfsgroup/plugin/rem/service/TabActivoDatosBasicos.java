@@ -21,6 +21,7 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -68,6 +69,7 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VTramitacionOfertaActivo;
+import es.pfsgroup.plugin.rem.model.dd.ActivoAdmisionRevisionTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionUso;
@@ -80,8 +82,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoRegistralActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivoBDE;
@@ -860,7 +864,21 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setTipoSegmentoCodigo(activo.getTipoSegmento().getCodigo());
 		}
 		
-		if(activo.getEstadoRegistral() != null) {
+		ActivoAdmisionRevisionTitulo actRevTitulo = genericDao.get(ActivoAdmisionRevisionTitulo.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+		DDEstadoRegistralActivo ddEstadoReg = new DDEstadoRegistralActivo();
+		boolean perimetroAdmision = perimetroActivo.getAplicaAdmision();
+		if(perimetroAdmision && actRevTitulo != null) {
+			if(actRevTitulo.getTipoIncidenciaRegistral() != null) {
+				ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getTipoIncidenciaRegistral().getDescripcion()));
+			}else if(actRevTitulo.getSituacionConstructivaRegistral() != null) {
+				ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getSituacionConstructivaRegistral().getDescripcion()));
+			}
+			
+			if(ddEstadoReg != null) {
+				activoDto.setEstadoRegistralCodigo(ddEstadoReg.getCodigo());	
+			}
+			
+		}else if(activo.getEstadoRegistral() != null){
 			activoDto.setEstadoRegistralCodigo(activo.getEstadoRegistral().getCodigo());
 		}
 		
@@ -905,6 +923,35 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 		}
 
+		ActivoAdmisionRevisionTitulo activoAdmisionRevisionTitulo = genericDao.get(ActivoAdmisionRevisionTitulo.class, genericDao.createFilter(FilterType.EQUALS,  "activo.id", activo.getId()));
+		
+		if(activoAdmisionRevisionTitulo != null) {
+						
+
+			String codigoHayaSuper = "HAYASUPER";
+			String codigoGestorEdificacion = "GESTEDI";
+			
+			List<Perfil> perfilesUsuarioLogado = usuarioLogado.getPerfiles();
+			
+			boolean esUsuarioConPermisos = false;
+			boolean revision = activoAdmisionRevisionTitulo.getRevisado().getCodigo().equals(DDSinSiNo.CODIGO_SI);
+			
+			for(Perfil pef : perfilesUsuarioLogado){
+				if(codigoHayaSuper.equals(pef.getCodigo()) || codigoGestorEdificacion.equals(pef.getCodigo())) {
+					esUsuarioConPermisos = true;
+					break;
+				}				
+			}
+			
+			
+			boolean puedeEditar = (esUsuarioConPermisos == true && (perimetroAdmision == false || (perimetroAdmision == true && revision == true)));
+	     
+			
+			activoDto.setEsEditableActivoEstadoRegistral(puedeEditar);
+		}else {
+			activoDto.setEsEditableActivoEstadoRegistral(false);
+		}
+		
 		return activoDto;
 	}
 	
@@ -1422,6 +1469,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				perimetroActivo.setFechaAplicaAdmision(new Date());
 				perimetroActivo.setMotivoAplicaAdmision(dto.getMotivoPerimetroAdmision());
 				activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
+			}
+			DDEstadoRegistralActivo ddEstadoReg = (DDEstadoRegistralActivo) diccionarioApi.dameValorDiccionarioByCod(DDEstadoRegistralActivo.class, dto.getEstadoRegistralCodigo());
+			if(ddEstadoReg != null) {
+				activo.setEstadoRegistral(ddEstadoReg);
+				activoDao.save(activo);
 			}
 		} catch(JsonViewerException jve) {
 			throw jve;

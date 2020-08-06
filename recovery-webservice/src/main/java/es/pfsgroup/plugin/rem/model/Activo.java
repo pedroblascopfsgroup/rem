@@ -2068,4 +2068,5 @@ public class Activo implements Serializable, Auditable {
 	public void setEstadoRegistral(DDEstadoRegistralActivo estadoRegistral) {
 		this.estadoRegistral = estadoRegistral;
 	}
+
 }

@@ -6146,7 +6146,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var component = null;
     	var detalle = me.getView().down('activosdetalle');
     	var isDisabled = false;
-    	if (detalle && detalle.items && detsalle.items.items){
+    	if (detalle && detalle.items && detalle.items.items){
 			var items = detalle.items.items;
 			for ( var i=0 ; i<items.length; i++){
 				var item = items[i];

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=IKER ADOT
---## FECHA_CREACION=20190516
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20200807
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-6417
+--## INCIDENCIA_LINK=REMVIP-7943
 --## PRODUCTO=NO
 --## Finalidad: DDL para crear un SP para obtener el usuario que debe ser gestor de formalización (GFORM) de un expediente comercial dado un activo concreto.
 --##           

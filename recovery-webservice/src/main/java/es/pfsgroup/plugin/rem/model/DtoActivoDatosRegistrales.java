@@ -95,6 +95,8 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private String resolucionMoratoriaCodigo;
 	private Date fechaResolucionMoratoria;
 	private String defectosTestimonio;
+	private Long idProcesoOrigen;
+	private String sociedadPagoAnterior;
 	
 	// Mapeados a mano
 	private String tipoJuzgadoCodigo;
@@ -766,5 +768,16 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	public void setFechaTituloAnterior(Date fechaTituloAnterior) {
 		this.fechaTituloAnterior = fechaTituloAnterior;
 	}
-
+	public Long getIdProcesoOrigen() {
+		return idProcesoOrigen;
+	}
+	public void setIdProcesoOrigen(Long idProcesoOrigen) {
+		this.idProcesoOrigen = idProcesoOrigen;
+	}
+	public String getSociedadPagoAnterior() {
+		return sociedadPagoAnterior;
+	}
+	public void setSociedadPagoAnterior(String sociedadPagoAnterior) {
+		this.sociedadPagoAnterior = sociedadPagoAnterior;
+	}
 }

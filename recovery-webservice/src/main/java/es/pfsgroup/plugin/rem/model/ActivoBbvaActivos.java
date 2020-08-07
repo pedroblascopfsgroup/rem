@@ -29,6 +29,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
 
 /**
@@ -56,7 +57,7 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
     private Activo activo;
 	
     @Column(name = "BBVA_NUM_ACTIVO")
-    private Long numActivo;
+    private Long numActivoBbva;
     
 	@Column(name = "BBVA_ID_DIVARIAN")
 	private Long idDivarianBbva;
@@ -73,7 +74,7 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TAL_ID")
-	private DDTipoAlquiler tipoAlquiler;
+	private DDTipoAlta tipoAlta;
 
 	@Column(name = "BBVA_UIC")
   	private String uicBbva;
@@ -109,16 +110,12 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 	@Embedded
 	private Auditoria auditoria;
 
-	@Override
 	public Auditoria getAuditoria() {
-		// TODO Auto-generated method stub
-		return null;
+		return auditoria;
 	}
 
-	@Override
 	public void setAuditoria(Auditoria auditoria) {
-		// TODO Auto-generated method stub
-		
+		this.auditoria = auditoria;
 	}
 
 	public Long getId() {
@@ -137,12 +134,12 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 		this.activo = activo;
 	}
 
-	public Long getNumActivo() {
-		return numActivo;
+	public Long getNumActivoBbva() {
+		return numActivoBbva;
 	}
 
-	public void setNumActivo(Long numActivo) {
-		this.numActivo = numActivo;
+	public void setNumActivoBbva(Long numActivoBbva) {
+		this.numActivoBbva = numActivoBbva;
 	}
 
 	public Long getIdDivarianBbva() {
@@ -177,12 +174,12 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 		this.tipoTransmision = tipoTransmision;
 	}
 
-	public DDTipoAlquiler getTipoAlquiler() {
-		return tipoAlquiler;
+	public DDTipoAlta getTipoAlta() {
+		return tipoAlta;
 	}
 
-	public void setTipoAlquiler(DDTipoAlquiler tipoAlquiler) {
-		this.tipoAlquiler = tipoAlquiler;
+	public void setTipoAlta(DDTipoAlta tipoAlta) {
+		this.tipoAlta = tipoAlta;
 	}
 
 	public String getUicBbva() {

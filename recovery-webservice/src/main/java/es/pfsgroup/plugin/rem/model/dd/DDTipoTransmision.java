@@ -35,6 +35,8 @@ public class DDTipoTransmision implements Auditable, Dictionary {
 	 * 
 	 */
 	private static final long serialVersionUID = 2307957295534774606L;
+	public static final String CODIGO_TR1 = "TR1";
+    public static final String CODIGO_TR2 = "TR2";
 
 	@Id
 	@Column(name = "DD_TTR_ID")

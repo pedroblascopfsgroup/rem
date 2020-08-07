@@ -958,6 +958,36 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'cdpen'
+    		},
+    		{
+    			name: 'numActivoBbva'
+    		},
+    		{
+    			name: 'idDivarianBbva'
+    		},
+    		{
+    			name: 'lineaFactura'
+    		},
+    		{
+    			name: 'idOrigenHre'
+    		},
+    		{
+    			name: 'uicBbva'
+    		},
+    		{
+    			name: 'cexperBbva'
+    		},
+    		{
+    			name: 'tipoTransmisionCodigo'
+    		},
+    		{
+    			name: 'tipoTransmisionDescripcion'
+    		},
+    		{
+    			name: 'tipoAltaCodigo'
+    		},
+    		{
+    			name: 'tipoAltaDescripcion'
     		}
     ],
     

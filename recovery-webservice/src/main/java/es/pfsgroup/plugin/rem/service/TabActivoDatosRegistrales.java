@@ -48,6 +48,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -70,6 +71,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
+import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 
@@ -443,7 +445,20 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				BeanUtils.copyProperty(activoDto, "estadoAdjudicacionCodigo", activoMatriz.getAdjJudicial().getEstadoAdjudicacion().getCodigo());
 			
 			}
-		}	
+		}
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
+		
+		if(activoBbva != null) {
+			activoDto.setIdProcesoOrigen(activoBbva.getIdProcesoOrigen());
+			
+		}
+		
+		if (!Checks.esNulo(activo.getSociedadDePagoAnterior())) {
+			BeanUtils.copyProperty(activoDto, "sociedadPagoAnterior", activo.getSociedadDePagoAnterior().getCodigo());
+		}
+		
 		return activoDto;
 	}
 
@@ -916,6 +931,22 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 						}
 					}
 				}
+			
+			if(activo != null) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+				ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
+				
+				if(activoBbva != null) {
+					if(dto.getIdProcesoOrigen() != null) {
+						activoBbva.setIdProcesoOrigen(dto.getIdProcesoOrigen());
+					}
+				}
+				
+				if (!Checks.esNulo(dto.getSociedadPagoAnterior())) {
+					DDSociedadPagoAnterior sociedaPagoAnterior = (DDSociedadPagoAnterior) diccionarioApi.dameValorDiccionarioByCod(DDSociedadPagoAnterior.class, dto.getSociedadPagoAnterior());
+					activo.setSociedadDePagoAnterior(sociedaPagoAnterior);
+				}
+			}
 			
 		} catch (JsonViewerException jvex) {
 			throw jvex;

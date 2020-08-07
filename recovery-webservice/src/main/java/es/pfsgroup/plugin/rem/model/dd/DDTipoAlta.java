@@ -35,6 +35,11 @@ public class DDTipoAlta implements Auditable, Dictionary {
 	 * 
 	 */
 	private static final long serialVersionUID = 2307957295534774606L;
+	public static final String CODIGO_AUT = "AUT";
+    public static final String CODIGO_MAA = "MAA";
+    public static final String CODIGO_MIA = "MIA";
+    public static final String CODIGO_MDH = "MDH";
+    public static final String CODIGO_MAG = "MAG";
 
 	@Id
 	@Column(name = "DD_TAL_ID")

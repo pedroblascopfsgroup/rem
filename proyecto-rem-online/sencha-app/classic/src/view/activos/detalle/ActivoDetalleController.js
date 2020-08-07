@@ -7,8 +7,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion','HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 
     		'HreRem.view.expedientes.ExpedienteDetalleController', 'HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', 
     		'HreRem.view.activos.detalle.InformeComercialActivo','HreRem.view.activos.detalle.AdministracionActivo',
-    		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias','HreRem.view.activos.detalle.PlusvaliaActivo', 'HreRem.model.ComercialActivoModel', 
-    		'HreRem.view.activos.detalle.SuministrosActivo'],
+    		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias','HreRem.view.activos.detalle.PlusvaliaActivo', 
+    		'HreRem.model.ComercialActivoModel', 'HreRem.view.activos.detalle.CrearEvolucionObservaciones', 'HreRem.view.activos.detalle.SuministrosActivo'],
 
     control: {
          'documentosactivosimple gridBase': {
@@ -6165,7 +6165,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var component = null;
     	var detalle = me.getView().down('activosdetalle');
     	var isDisabled = false;
-    	if (detalle && detalle.items && detalle.items.items){
+    	if (detalle && detalle.items && detsalle.items.items){
 			var items = detalle.items.items;
 			for ( var i=0 ; i<items.length; i++){
 				var item = items[i];
@@ -6186,6 +6186,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}else if(!isDisabled && enPerimetroAdmision){
 			component.setDisabled(true);
 		}
+    },
+    
+    mostrarObservacionesGrid: function(event, target, options) {   	
+    	var me = this;
+    	var observacionesAdmision = target.data.observacionesEvolucion;
+  	
+    	me.getView().fireEvent('openModalWindow', "HreRem.view.activos.detalle.CrearEvolucionObservaciones", {
+            observacionesAdmision: observacionesAdmision
+        });
+        
+    },
+    
+    onClickCerrarObservacionesEvolucion: function(btn) {
+    	var me = this;
+    	btn.up('window').hide();
     }
+    	
 	
 });

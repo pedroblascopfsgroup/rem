@@ -174,6 +174,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionActivo', {
 	    	}
 		}
     },
+    
     verifyProxyObservaciones: function ( tab ) {
        		var observacionesGrid = null;
        		var childs = tab.items.items;
@@ -195,4 +196,6 @@ Ext.define('HreRem.view.activos.detalle.AdmisionActivo', {
 	       		}
        		}
     }
+    
+   
 });

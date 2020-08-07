@@ -949,7 +949,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 			activoDto.setEsEditableActivoEstadoRegistral(puedeEditar);
 		}else {
-			activoDto.setEsEditableActivoEstadoRegistral(false);
+			activoDto.setEsEditableActivoEstadoRegistral(!perimetroAdmision);
 		}
 		
 		return activoDto;

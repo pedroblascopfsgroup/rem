@@ -199,6 +199,14 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					extraParams: {diccionario: 'estadosTitulo'}
 				}/*,autoLoad: true*/
     		},
+    		comboTipoTituloInfoRegistral: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tipoTituloInfoRegistal'}
+				}/*,autoLoad: true*/
+    		},
     		comboCalificacionNegativa: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {

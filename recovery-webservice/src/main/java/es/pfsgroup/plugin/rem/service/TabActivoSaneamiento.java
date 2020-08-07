@@ -8,6 +8,17 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Version;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
@@ -23,6 +34,7 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.DDFavorable;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -56,6 +68,7 @@ import es.pfsgroup.plugin.rem.model.ActivoJuntaPropietarios;
 import es.pfsgroup.plugin.rem.model.ActivoPlanDinVentas;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
+import es.pfsgroup.plugin.rem.model.ActivoTituloAdicional;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformacionAdministrativa;
@@ -71,8 +84,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloAdicional;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 
 @Component
@@ -215,6 +230,41 @@ public class TabActivoSaneamiento implements TabActivoService{
 		if(activoDtoRegistrales.getFechaEntregaGestoria() != null) {
 			activoDto.setFechaEntregaGestoria(activoDtoRegistrales.getFechaEntregaGestoria());
 		}
+		
+		//por programar TITULO ADICIONAL SANEAMIENTO
+		
+		Filter filtroTituloAdicional = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoTituloAdicional actTituloAdicional = genericDao.get(ActivoTituloAdicional.class, filtroTituloAdicional);
+		
+		//BeanUtils.copyProperties(actTituloAdicional, activoDto);
+		//if (!"1".equals(activoDto.getTieneTituloAdicional())) {
+			//activoDto.setTieneTituloAdicional(activoSaneamiento.getTieneTituloAdicional());
+		if (actTituloAdicional.getTituloAdicional() != null) {
+			
+			if (actTituloAdicional.getEstadoTitulo() != null) {
+				activoDto.setEstadoTituloAdicional(actTituloAdicional.getEstadoTitulo().getCodigo());
+			}
+			if (actTituloAdicional.getTipoTitulo() != null) {
+				activoDto.setSituacionTituloAdicional(actTituloAdicional.getTipoTitulo().getCodigo());
+			}
+			if (actTituloAdicional.getFechaInscripcionReg() != null) {
+				activoDto.setFechaInscriptionRegistroAdicional(actTituloAdicional.getFechaInscripcionReg());
+			}
+			if (actTituloAdicional.getFechaRetiradaReg() != null) {
+				activoDto.setFechaRetiradaDefinitivaRegAdicional(actTituloAdicional.getFechaRetiradaReg());
+			}
+			if (actTituloAdicional.getFechaPresentHacienda() != null) {
+				activoDto.setFechaPresentacionHaciendaAdicional(actTituloAdicional.getFechaPresentHacienda());
+			}
+			if (actTituloAdicional.getFechaNotaSimple() != null) {
+				activoDto.setFechaNotaSimpleAdicional(actTituloAdicional.getFechaNotaSimple());
+			}
+			
+		}
+			
+				
+		//}
+		
 		
 		//Parte Proteccion
 		DtoActivoInformacionAdministrativa activoDtoPortect = new DtoActivoInformacionAdministrativa();
@@ -772,7 +822,31 @@ public class TabActivoSaneamiento implements TabActivoService{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		//
+		DtoActivoSaneamiento actSaneamientoDto = (DtoActivoSaneamiento) webDto;
+		ActivoTituloAdicional actTituloAdicional = new ActivoTituloAdicional();
 		
+		try {
+			if (actSaneamientoDto.getTieneTituloAdicional() != null && DDSiNo.SI.equals(actSaneamientoDto.getTieneTituloAdicional())) {
+				
+				
+				actTituloAdicional.setTituloAdicional("1".equals(actSaneamientoDto.getTieneTituloAdicional()));
+				
+				if (actSaneamientoDto.getEstadoTituloAdicional() != null) {
+					//actTituloAdicional.setEstadoTitulo(estadoTitulo); //DD_TTA_ID
+					actTituloAdicional.setActivo(activo);
+				}
+				if (actSaneamientoDto.getSituacionTituloAdicional() != null) {
+					//actTituloAdicional.setTipoTitulo(tipoTitulo); //DD_ETI_ID
+				}
+					
+			}
+		} catch (JsonViewerException jvex) {
+			throw jvex;
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
 		return activo;
 	}
 	

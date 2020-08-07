@@ -2238,6 +2238,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			autoLoad: true
 		},
 		
+		
+		
    		comboDDTipoTituloActivoTPA: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -2644,7 +2646,29 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getDiccionarioSubtipologiaAgendaSaneamiento',
 				extraParams: {codTipo: '{comboTipologiaRef.value}'}
 			}
+		},
+		
+		storeCalifiacionNegativaAdicional:{
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.CalificacionNegativaModel', //
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getCalificacionNegativa', //
+				extraParams: {id: '{activo.id}'}
+			},
+			autoLoad: true
 		}
 
-     }
+     },
+     storeHistoricoTramitacionTituloAdicional:{
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.HistoricoTramitacionTituloAdicionalModel', //
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getHistoricoTramitacionTitulo', //
+				extraParams: {id: '{activo.id}'}
+			},
+
+			autoLoad: true
+		}
 });

@@ -186,6 +186,41 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 			name:'fechaAsignacion',
 			type:'date',
 			dateFormat: 'c'
+		},
+		//por programar
+		{
+			name:'tieneTituloAdicional'
+		},
+		{
+			name:'estadoTituloAdicional'
+		},
+		{
+			name:'situacionTituloAdicional'
+		},
+		{
+			name:'fechaInscriptionRegistroAdicional',
+           	type: 'date',
+    		dateFormat: 'c'
+		},
+		{
+			name:'fechaEntregaTituloGestAdicional',
+           	type: 'date',
+    		dateFormat: 'c'
+		},
+		{
+			name:'fechaRetiradaDefinitivaRegAdicional',
+           	type: 'date',
+    		dateFormat: 'c'
+		},
+		{
+			name:'fechaPresentacionHaciendaAdicional',
+           	type: 'date',
+    		dateFormat: 'c'
+		},
+		{
+			name:'fechaNotaSimpleAdicional',
+           	type: 'date',
+    		dateFormat: 'c'
 		}
 		
     ],
@@ -197,8 +232,8 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 
 		api: {
             read: 'activo/getTabActivo',
-            create: 'activo/saveActivoDatosRegistrales',
-            update: 'activo/saveActivoDatosRegistrales',
+            create: 'activo/saveActivoSaneamiento',
+            update: 'activo/saveActivoSaneamiento',
             destroy: 'activo/getTabActivo'
         },
         extraParams: {tab: 'saneamiento'}

@@ -49,6 +49,17 @@ public class DtoActivoSaneamiento extends DtoTabActivo{
 	private Integer ingresosInfNivel;
 	private Integer residenciaComAutonoma;
 	private Integer noTitularOtraVivienda;
+	
+	
+	// ADMISION/SANEAMIENTO/TRAMITACION TITULO ADICIONAL
+	private String tieneTituloAdicional; 
+	private String estadoTituloAdicional;
+	private String situacionTituloAdicional;
+	private Date fechaInscriptionRegistroAdicional;
+	private Date fechaEntregaTituloGestAdicional;
+	private Date fechaRetiradaDefinitivaRegAdicional;
+	private Date fechaPresentacionHaciendaAdicional;
+	private Date fechaNotaSimpleAdicional;
     
 	public String getGestoriaAsignada() {
 		return gestoriaAsignada;
@@ -277,6 +288,54 @@ public class DtoActivoSaneamiento extends DtoTabActivo{
 	}
 	public void setNoTitularOtraVivienda(Integer noTitularOtraVivienda) {
 		this.noTitularOtraVivienda = noTitularOtraVivienda;
+	}
+	public String getTieneTituloAdicional() {
+		return tieneTituloAdicional;
+	}
+	public void setTieneTituloAdicional(String tieneTituloAdicional) {
+		this.tieneTituloAdicional = tieneTituloAdicional;
+	}
+	public String getEstadoTituloAdicional() {
+		return estadoTituloAdicional;
+	}
+	public void setEstadoTituloAdicional(String estadoTituloAdicional) {
+		this.estadoTituloAdicional = estadoTituloAdicional;
+	}
+	public String getSituacionTituloAdicional() {
+		return situacionTituloAdicional;
+	}
+	public void setSituacionTituloAdicional(String situacionTituloAdicional) {
+		this.situacionTituloAdicional = situacionTituloAdicional;
+	}
+	public Date getFechaInscriptionRegistroAdicional() {
+		return fechaInscriptionRegistroAdicional;
+	}
+	public void setFechaInscriptionRegistroAdicional(Date fechaInscriptionRegistroAdicional) {
+		this.fechaInscriptionRegistroAdicional = fechaInscriptionRegistroAdicional;
+	}
+	public Date getFechaEntregaTituloGestAdicional() {
+		return fechaEntregaTituloGestAdicional;
+	}
+	public void setFechaEntregaTituloGestAdicional(Date fechaEntregaTituloGestAdicional) {
+		this.fechaEntregaTituloGestAdicional = fechaEntregaTituloGestAdicional;
+	}
+	public Date getFechaRetiradaDefinitivaRegAdicional() {
+		return fechaRetiradaDefinitivaRegAdicional;
+	}
+	public void setFechaRetiradaDefinitivaRegAdicional(Date fechaRetiradaDefinitivaRegAdicional) {
+		this.fechaRetiradaDefinitivaRegAdicional = fechaRetiradaDefinitivaRegAdicional;
+	}
+	public Date getFechaPresentacionHaciendaAdicional() {
+		return fechaPresentacionHaciendaAdicional;
+	}
+	public void setFechaPresentacionHaciendaAdicional(Date fechaPresentacionHaciendaAdicional) {
+		this.fechaPresentacionHaciendaAdicional = fechaPresentacionHaciendaAdicional;
+	}
+	public Date getFechaNotaSimpleAdicional() {
+		return fechaNotaSimpleAdicional;
+	}
+	public void setFechaNotaSimpleAdicional(Date fechaNotaSimpleAdicional) {
+		this.fechaNotaSimpleAdicional = fechaNotaSimpleAdicional;
 	}
 
 }

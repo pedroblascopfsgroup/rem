@@ -204,10 +204,150 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 												}
 											}
 										]
-					           		}
+					           		},
+					           		//
+       				           		{ //COMBO SI/NO PARA TITULO ADICIONAL 
+		    					    	xtype: 'comboboxfieldbase',							        	
+			        					fieldLabel:  HreRem.i18n('fieldlabel.titulo.adicional'),
+			        					reference: 'combotituloadicionalref',
+			        					bind: 
+			        						{
+		            							store: '{comboSiNoRem}',
+		            							value: '{saneamiento.tieneTituloAdicional}'
+		            							//readOnly: '{datosRegistrales.unidadAlquilable}'
+	            							},
+										listeners: 
+											{
+		                						change: 'onComboTramitacionTituloAdicional'
+		            						}
+				        			}
 
 								]
-						}		
+
+						},
+						//por programar
+						{
+							xtype:'fieldsettable',
+							defaultType: 'textfieldbase',
+							title: HreRem.i18n('title.tramitacion.titulo.adicional'),
+							hidden:true,
+							reference: 'fieldsettableTituloAdicional',
+							items :
+								[
+									{ 
+				        				xtype: 'comboboxfieldbase',				        	
+								 		fieldLabel: HreRem.i18n('fieldlabel.tipo.titulo.adicional'),
+								 		reference:'tipoTituloAdicional',
+								 		//readOnly: true,
+							        	bind: 
+							        		{
+					            			store: '{comboTipoTituloInfoRegistral}', //DD_TTA_TIPO_TITULO_ADICIONAL
+						            		value: '{saneamiento.estadoTituloAdicional}'						            		
+            								}	            			
+                        			},
+									{ 
+							        	xtype: 'comboboxfieldbase',				        	
+								 		fieldLabel: HreRem.i18n('fieldlabel.situacion.titulo.adicional'),
+								 		reference: 'situacionTituloAdicional',
+								 		//readOnly: true,
+							        	bind: 
+							        		{
+						            		store: '{comboEstadoTitulo}', //DD_ETI_ESTADO_TITULO
+						            		value: '{saneamiento.situacionTituloAdicional}'
+			
+				            				}
+			
+			                        },
+							        {
+										xtype:'datefieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.fecha.inscripcion.registro.adicional'),
+										reference:'fechaInscripcionRegistroAdicional',
+								 		bind: {
+								 			value: '{saneamiento.fechaInscriptionRegistroAdicional}'
+								 			//readOnly: '{datosRegistrales.unidadAlquilable}'
+								 			}
+			                      	},
+									{
+										xtype:'datefieldbase',
+								 		fieldLabel: HreRem.i18n('fielblabel.fecha.entrega.titulo.gestoria.adicional'),
+								 		reference: 'entregaTituloGestoriaAdicional',
+								 		bind: 
+								 			{
+								 			value: '{saneamiento.fechaEntregaTituloGestAdicional}'
+								 			//readOnly: '{datosRegistrales.unidadAlquilable}'
+								 			}
+			
+									},
+									{
+										xtype:'datefieldbase',
+								 		fieldLabel: HreRem.i18n('fielblabel.fecha.retirada.definitiva.registro.adicional'),
+								 		reference:'fechaRetiradaDefinitivaRegistroAdicional',
+								 		bind: 
+								 			{
+								 			value: '{saneamiento.fechaRetiradaDefinitivaRegAdicional}'
+								 			}
+									},
+									{
+										xtype:'datefieldbase',
+								 		fieldLabel: HreRem.i18n('fieldlabel.fecha.presentacion.hacienda.adicional'),
+								 		reference: 'fechaPresentacionHaciendaAdicional',
+								 		bind: 
+								 			{
+								 			value: '{saneamiento.fechaPresentacionHaciendaAdicional}'
+								 			}
+									},
+									{
+										xtype:'datefieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.fecha.nota.simple.adicional'),
+										reference: 'fieldlabelFechaNotaSimpleAdicional',
+								 		bind: 
+								 			{
+								 			value: '{saneamiento.fechaNotaSimpleAdicional}'
+								 			},
+								 		colspan: 3
+									},
+									{
+										xtype:'fieldsettable',
+										defaultType: 'textfieldbase',
+										colspan: 3,
+										reference:'historicotramitaciontituloadicional',
+										hidden: false, 
+										title: HreRem.i18n("title.historico.presentacion.registros"),
+										items :
+										[
+											{
+												xtype: "historicotramitaciontituloadicionalgrid", // historicotramitaciontituloadicionalgrid
+												reference: "historicotramitaciontituloadref", 
+												colspan: 3
+											}
+										]
+					           		},
+					           		{
+										xtype:'fieldsettable',
+										defaultType: 'textfieldbase',
+										colspan: 3,
+										reference:'calificacionNegativaAd',
+										hidden: false, 
+										title: HreRem.i18n("title.calificacion.negativa"),
+										bind:{
+											disabled:'{!datosRegistrales.noEstaInscrito}'
+										},
+										items :
+										[
+											{
+												xtype: "calificacionnegativaadicionalgrid", //calificacionnegativaadicionalgrid
+												// TODO Falta una funcion aqui que esta en informeComercialActivo de ese estilo
+												reference: "calificacionnegativagridad", 
+												colspan: 3,
+												bind:{
+													disabled:'{!datosRegistrales.puedeEditarCalificacionNegativa}'
+													}
+											}
+										]
+					           		}
+			
+								]
+						}
 					]
                 
             }, //Empieza bloque cargas

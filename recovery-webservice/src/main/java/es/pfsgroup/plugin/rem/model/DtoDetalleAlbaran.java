@@ -1,19 +1,18 @@
 package es.pfsgroup.plugin.rem.model;
 
-
+import es.capgemini.devon.dto.WebDto;
 
 /**
  * Dto para el grid de DetalleAlbaran
  * @author Jonathan Ovalle
  *
  */
-public class DtoDetalleAlbaran {
+public class DtoDetalleAlbaran extends WebDto{
 
 	private static final long serialVersionUID = 0L;
 
 	private Long numPrefactura;
 	private String propietario;
-	//*Eliminados los tipologiaTrabajo y subtipologiaTrabajo
 	private String anyo;
 	private String estadoAlbaran;
 	private Long numGasto;

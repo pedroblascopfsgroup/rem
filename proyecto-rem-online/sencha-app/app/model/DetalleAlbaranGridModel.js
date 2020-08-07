@@ -8,7 +8,6 @@ Ext.define('HreRem.model.DetalleAlbaranGridModel', {
     		{
     			name:'propietario'
     		},
-    		//*Eliminados los tipologiaTrabajo y subtipologiaTrabajo
     		{
     			name:'anyo'
     		},

@@ -4,7 +4,13 @@ Ext.define('HreRem.view.activos.detalle.detalleAlbaranGrid', {
 	topBar		: false,
 	editOnSelect: false,
 	disabledDeleteBtn: true,
-
+	bind: {
+		store: '{detalleAlbaranes}'
+	},
+	listeners:{
+		rowclick: 'onPrefacturaClick',
+		deselect: 'deselectPrefactura'
+	},
 	
     initComponent: function () {
 
@@ -22,7 +28,6 @@ Ext.define('HreRem.view.activos.detalle.detalleAlbaranGrid', {
 		    		reference: 'propietario',
 		    		text: HreRem.i18n('fieldlabel.albaran.propietario')
 	    		},
-	    		//*Eliminados los tipologiaTrabajo y subtipologiaTrabajo
 		        {
 		            dataIndex: 'anyo',
 		            reference: 'anyo',
@@ -56,13 +61,13 @@ Ext.define('HreRem.view.activos.detalle.detalleAlbaranGrid', {
 		    ];
 		me.dockedItems = [
 	        {
-	            xtype: 'detalle.pagingtoolbar',
+	            xtype: 'pagingtoolbar',
 	            dock: 'bottom',
-	            //itemId: 'activosPaginationToolbar',
+	            itemId: 'detalleAlbaranesPaginationToolbar',
 	            inputItemWidth: 60,
 	            displayInfo: true,
 	            bind: {
-	                //store: '{storeCalifiacionNegativa}'
+	            	store: '{detalleAlbaranes}'
 	            }
 	        }
 	    ];

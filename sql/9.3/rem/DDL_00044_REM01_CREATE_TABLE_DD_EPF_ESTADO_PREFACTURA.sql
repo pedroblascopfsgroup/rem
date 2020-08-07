@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Pablo Garcia Pallas
---## FECHA_CREACION=20200630
+--## FECHA_CREACION=20200729
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10436
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Se ha corregido un error a la hora de crear la tabla
 --##########################################
 --*/
 
@@ -59,6 +60,7 @@ DECLARE
 			DD_EPF_CODIGO					VARCHAR2(20CHAR) NOT NULL ENABLE,
 			DD_EPF_DESCRIPCION				VARCHAR2(100CHAR),
 			DD_EPF_DESCRIPCION_LARGA		VARCHAR2(250CHAR),
+			VERSION							NUMBER(38,0)  DEFAULT 0 NOT NULL,
 			USUARIOCREAR					VARCHAR2(50 CHAR)	NOT NULL ENABLE, 
 			FECHACREAR						TIMESTAMP (6)		NOT NULL ENABLE, 
 			USUARIOMODIFICAR				VARCHAR2(50 CHAR), 

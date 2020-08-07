@@ -1,10 +1,12 @@
-Ext.define('HreRem.view.activos.detalle.DetallePrefacturaGrid', {
+Ext.define('HreRem.view.activos.detalle.DetallePrefacturasGrid', {
     extend		: 'HreRem.view.common.GridBase',
     xtype		: 'detallePrefacturaGrid',
 	topBar		: false,
 	editOnSelect: false,
 	disabledDeleteBtn: true,
-
+	bind: {
+		store: '{detallePrefactrura}'
+	},
 	
     initComponent: function () {
 
@@ -71,13 +73,13 @@ Ext.define('HreRem.view.activos.detalle.DetallePrefacturaGrid', {
 		
 		me.dockedItems = [
 	        {
-	            xtype: 'prefactura.pagingtoolbar',
+	            xtype: 'pagingtoolbar',
 	            dock: 'bottom',
-	            //itemId: 'activosPaginationToolbar',
+	            itemId: 'detallePrefacturaPaginationToolbar',
 	            inputItemWidth: 60,
 	            displayInfo: true,
 	            bind: {
-	                //store: '{storeCalifiacionNegativa}'
+	                store: '{detallePrefactrura}'
 	            }
 	        }
 	    ];

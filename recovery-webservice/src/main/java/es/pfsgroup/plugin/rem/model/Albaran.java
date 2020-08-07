@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -49,10 +50,10 @@ public class Albaran implements Serializable, Auditable {
 	private Long id;
 	
 	@Column(name = "ALB_NUM_ALBARAN")
-	private String albaran;
+	private Long numAlbaran;
 	
 	@Column(name = "ALB_FECHA_ALBARAN")
-	private String fechaAlbaran;
+	private Date fechaAlbaran;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_ESA_ID")
@@ -72,28 +73,20 @@ public class Albaran implements Serializable, Auditable {
 		this.id = id;
 	}
 
-	public String getAlbaran() {
-		return albaran;
+	public Long getNumAlbaran() {
+		return numAlbaran;
 	}
 
-	public void setAlbaran(String albaran) {
-		this.albaran = albaran;
+	public void setNumAlbaran(Long numAlbaran) {
+		this.numAlbaran = numAlbaran;
 	}
 
-	public String getFechaAlbaran() {
+	public Date getFechaAlbaran() {
 		return fechaAlbaran;
 	}
 
-	public void setFechaAlbaran(String fechaAlbaran) {
+	public void setFechaAlbaran(Date fechaAlbaran) {
 		this.fechaAlbaran = fechaAlbaran;
-	}
-
-	public DDEstadoAlbaran getEstadoAlbaran() {
-		return estadoAlbaran;
-	}
-
-	public void setAdecuacionAlquiler(DDEstadoAlbaran estadoAlbaran) {
-		this.estadoAlbaran = estadoAlbaran;
 	}
 
 	public Long getVersion() {
@@ -110,6 +103,14 @@ public class Albaran implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public DDEstadoAlbaran getEstadoAlbaran() {
+		return estadoAlbaran;
+	}
+
+	public void setEstadoAlbaran(DDEstadoAlbaran estadoAlbaran) {
+		this.estadoAlbaran = estadoAlbaran;
 	}
 	
 }

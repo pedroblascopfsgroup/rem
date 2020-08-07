@@ -1,10 +1,16 @@
 Ext.define('HreRem.view.activos.detalle.AlbaranGrid', {
-    extend		: 'HreRem.view.common.GridBase',
+    extend		: 'HreRem.view.common.GridBaseEditableRow',
     xtype		: 'albaranGrid',
 	topBar		: false,
 	editOnSelect: false,
 	disabledDeleteBtn: true,
-
+	bind: {
+		store: '{albaranes}'
+	},
+	listeners:{
+		rowclick: 'onAlbaranClick',
+		deselect: 'deselectAlbaran'
+	},
 	
     initComponent: function () {
 
@@ -18,8 +24,8 @@ Ext.define('HreRem.view.activos.detalle.AlbaranGrid', {
 					text: HreRem.i18n('fieldlabel.albaran.numAlbaran')
 				},
 				{ 
-		    		dataIndex: 'fechaALbaran',
-		    		reference: 'fechaALbaran',
+		    		dataIndex: 'fechaAlbaran',
+		    		reference: 'fechaAlbaran',
 		    		text: HreRem.i18n('fieldlabel.albaran.fechaAlbaran')
 	    		},
 		        {
@@ -52,13 +58,13 @@ Ext.define('HreRem.view.activos.detalle.AlbaranGrid', {
 		
 		me.dockedItems = [
 	        {
-	            xtype: 'albaran.pagingtoolbar',
+	            xtype: 'pagingtoolbar',
 	            dock: 'bottom',
-	            //itemId: 'activosPaginationToolbar',
+	            itemId: 'albaranesPaginationToolbar',
 	            inputItemWidth: 60,
 	            displayInfo: true,
 	            bind: {
-	                //store: '{storeCalifiacionNegativa}'
+	                store: '{albaranes}'
 	            }
 	        }
 	    ];

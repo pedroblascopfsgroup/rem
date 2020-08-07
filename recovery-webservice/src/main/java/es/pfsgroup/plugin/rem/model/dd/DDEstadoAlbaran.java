@@ -33,6 +33,12 @@ public class DDEstadoAlbaran implements Auditable, Dictionary {
 	private static final long serialVersionUID = 1L;
 	
 	
+	// Puede variar y se tendra que cambiar cuando el diccionario este poblado.
+	public static final String CODIGO_PENDIENTE = "PEN";
+	public static final String CODIGO_VALIDA = "VAL";
+	
+	public static final String DESCRIPCION_VALIDADO = "Validado";
+	public static final String DESCRIPCION_PENDIENTE_VALIDAR = "Pendiente de validar";
 	
 	@Id
 	@Column(name = "DD_ESA_ID")

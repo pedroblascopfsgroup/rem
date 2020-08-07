@@ -78,6 +78,10 @@ public class Trabajo implements Serializable, Auditable {
     private ActivoProveedorContacto proveedorContacto;
     
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PFA_ID")
+    private Prefactura prefactura;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="USU_ID")
     private Usuario solicitante;
     
@@ -1080,6 +1084,14 @@ public class Trabajo implements Serializable, Auditable {
 
 	public void setSiniestro(Boolean siniestro) {
 		this.siniestro = siniestro;
+	}
+
+	public Prefactura getPrefactura() {
+		return prefactura;
+	}
+
+	public void setPrefactura(Prefactura prefactura) {
+		this.prefactura = prefactura;
 	}
     
     

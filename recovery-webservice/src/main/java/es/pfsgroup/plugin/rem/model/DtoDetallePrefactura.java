@@ -1,13 +1,15 @@
 package es.pfsgroup.plugin.rem.model;
 import java.util.Date;
 
+import es.capgemini.devon.dto.WebDto;
+
 
 /**
  * Dto para el grid de DetallePrefactura
  * @author Jonathan Ovalle
  *
  */
-public class DtoDetallePrefactura {
+public class DtoDetallePrefactura extends WebDto{
 
 	private static final long serialVersionUID = 0L;
 
@@ -28,18 +30,6 @@ public class DtoDetallePrefactura {
 	}
 	public void setNumTrabajo(Long numTrabajo) {
 		this.numTrabajo = numTrabajo;
-	}
-	public String getTipologiaTrabajo() {
-		return tipologiaTrabajo;
-	}
-	public void setTipologiaTrabajo(String tipologiaTrabajo) {
-		this.tipologiaTrabajo = tipologiaTrabajo;
-	}
-	public String getSubtipologiaTrabajo() {
-		return subtipologiaTrabajo;
-	}
-	public void setSubtipologiaTrabajo(String subtipologiaTrabajo) {
-		this.subtipologiaTrabajo = subtipologiaTrabajo;
 	}
 	public String getDescripcion() {
 		return descripcion;
@@ -89,14 +79,17 @@ public class DtoDetallePrefactura {
 	public void setTotalAlbaran(Double totalAlbaran) {
 		this.totalAlbaran = totalAlbaran;
 	}
-	
-	
-	
-
-
-
-	
-
-	
+	public String getTipologiaTrabajo() {
+		return tipologiaTrabajo;
+	}
+	public void setTipologiaTrabajo(String tipologiaTrabajo) {
+		this.tipologiaTrabajo = tipologiaTrabajo;
+	}
+	public String getSubtipologiaTrabajo() {
+		return subtipologiaTrabajo;
+	}
+	public void setSubtipologiaTrabajo(String subtipologiaTrabajo) {
+		this.subtipologiaTrabajo = subtipologiaTrabajo;
+	}
 	
 }

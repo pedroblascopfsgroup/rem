@@ -90,7 +90,7 @@ BEGIN
 				 ,BBVA_CONTRAPARTIDA            NUMBER(16,0)
                  ,BBVA_FOLIO                    NUMBER(16,0)
                  ,BBVA_CDPEN                    NUMBER(16,0)
-				 ,VERSION                       NUMBER(1,0)         DEFAULT 0
+				 ,VERSION                       NUMBER(38,0)         DEFAULT 0
 				 ,USUARIOCREAR                  VARCHAR2(50 CHAR) 
 				 ,FECHACREAR                    TIMESTAMP(6)        DEFAULT SYSTIMESTAMP
 				 ,USUARIOMODIFICAR              VARCHAR2(50 CHAR) 

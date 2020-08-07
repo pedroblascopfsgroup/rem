@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.activotrabajo.dao.ActivoTrabajoDao;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -64,6 +65,9 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
+
+	@Autowired
+	private ActivoTrabajoDao activotrabajoDao;
 	
 	private final Log logger = LogFactory.getLog(getClass());
 	
@@ -464,6 +468,10 @@ public class UpdaterStateManager implements UpdaterStateApi{
 			return;
 		}
 
+		Long idActivo = null;
+		Float participacionTotal = null;
+		Boolean isFirstLoop = true;
+
 		try{
 			Trabajo trabajo = trabajoApi.findOne(idTrabajo);
 			String codigoTipoTrabajo = trabajo.getTipoTrabajo().getCodigo();
@@ -485,7 +493,33 @@ public class UpdaterStateManager implements UpdaterStateApi{
 				activoTrabajo.setParticipacion(participacion.floatValue());
 
 				genericDao.update(ActivoTrabajo.class, activoTrabajo);
+
+				if (isFirstLoop) {
+					idActivo = activoTrabajo.getActivo().getId();
+				}
+
+				isFirstLoop = false;
 			}
+
+			participacionTotal = activotrabajoDao.getImporteParticipacionTotal(trabajo.getNumTrabajo());
+
+			if(participacionTotal != 100f) {
+
+				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+
+				ActivoTrabajo activoTrabajoParaActualizar = genericDao.get(ActivoTrabajo.class, f1, f2);
+
+				Float participacionOriginal = activoTrabajoParaActualizar.getParticipacion();
+
+				Float participacionFinal = 100f - participacionTotal + participacionOriginal;
+
+				activoTrabajoParaActualizar.setParticipacion(participacionFinal);
+
+				genericDao.update(ActivoTrabajo.class, activoTrabajoParaActualizar);
+
+			}
+
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);
 		}

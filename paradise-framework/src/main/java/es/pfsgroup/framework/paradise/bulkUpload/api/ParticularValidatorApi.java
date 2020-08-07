@@ -1166,5 +1166,7 @@ public interface ParticularValidatorApi {
 	Boolean perteneceADiccionarioEquipoGestion(String codEquipoGestion);
 
 	Boolean esActivoBBVA(String numActivo);
+	
+	String getValidacionCampoCDC(String codCampo);
 
 }

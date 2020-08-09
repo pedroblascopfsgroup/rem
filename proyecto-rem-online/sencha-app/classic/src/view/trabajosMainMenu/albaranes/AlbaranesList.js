@@ -51,12 +51,24 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesList', {
 					},
 					{ 
 						fieldLabel: HreRem.i18n('fieldlabel.albaran.totalAlbaran'),
-						xtype: 'numberfieldbase',
+						xtype: 'combo',
+						queryMode : 'remote',
+						bind : {
+							store : '{totalAlbaranStore}'
+						},
+						valueField : 'totalAlbaran',
+						displayField : 'totalAlbaran',
 						readOnly: true
 					},
 					{ 
 						fieldLabel: HreRem.i18n('fieldlabel.albaran.totalPrefactura'),
-						xtype: 'numberfieldbase',
+						xtype: 'combo',
+						queryMode : 'remote',
+						bind : {
+							store : '{totalPrefacturaStore}'
+						},
+						valueField : 'totalAlbaran',
+						displayField : 'totalAlbaran',
 						readOnly: true
 					},
 					{

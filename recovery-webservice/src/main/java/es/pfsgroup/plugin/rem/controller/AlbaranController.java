@@ -208,4 +208,36 @@ public class AlbaranController extends ParadiseJsonController{
 
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getTotalAlbaran(Long numAlbaran, ModelMap model) {
+		try {
+			DtoDetallePrefactura page = albaranApi.getTotalAlbaran(numAlbaran);
+			
+			model.put("data", page);
+		}catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			model.put("error", e.getMessage());
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getTotalPrefactura(Long numPrefactura, ModelMap model) {
+		try {
+			DtoDetallePrefactura page = albaranApi.getTotalPrefactura(numPrefactura);
+			
+			model.put("data", page);
+		}catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			model.put("error", e.getMessage());
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
 }

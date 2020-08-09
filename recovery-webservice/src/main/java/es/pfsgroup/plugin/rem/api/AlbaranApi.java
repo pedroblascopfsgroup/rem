@@ -37,4 +37,9 @@ public interface AlbaranApi {
 	
 	public List<DDEstadoTrabajo> getComboEstadoTrabajo();
 	
+	public DtoDetallePrefactura getTotalAlbaran(Long numAlbaran);
+	
+	public DtoDetallePrefactura getTotalPrefactura(Long numPrefactura);
+	
+	
 }

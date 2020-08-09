@@ -68,8 +68,24 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		gridAlbaran.nextSibling("[reference='botonValidarAlbaran']").setDisabled(false);
 		
 		if(!Ext.isEmpty(grid.selection)){
+			var totalAlb = listaDetalleAlbaran.nextSibling().nextSibling().nextSibling();
 			listaDetalleAlbaran.getStore().getProxy().setExtraParams({'numAlbaran':record.data.numAlbaran});
 			listaDetalleAlbaran.getStore().load();
+			if(!Ext.isEmpty(record.data.numAlbaran)){
+    		    var url = $AC.getRemoteUrl('albaran/getTotalAlbaran');
+    		    Ext.Ajax.request({
+    			  url:url,
+    			  params:  {numAlbaran : record.data.numAlbaran},
+    			  success: function(response,opts){
+    				  totalAlb.setValue(null);
+    				  var split = response.responseText.split(',');
+  				  	  var valor = split[2].split(':');
+  				  	  var total = valor[1].replace(/[&\/\\#+()$~%'":*?<>{}]/g, '');
+    				  totalAlb.setValue(total);
+    			  }
+    			  
+    		    });
+			}
 		} else {
 			me.deselectAlbaran(grid);
 		}
@@ -98,8 +114,30 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		gridAlbaran.nextSibling("[reference='botonValidarPrefactura']").setDisabled(false);
 		
 		if(!Ext.isEmpty(grid.selection)){
+			var totalPre = listaDetallePrefactura.nextSibling().nextSibling();
 			listaDetallePrefactura.getStore().getProxy().setExtraParams({'numPrefactura':record.data.numPrefactura});
 			listaDetallePrefactura.getStore().load();
+			if(!Ext.isEmpty(record.data.numPrefactura)){
+    		    var url = $AC.getRemoteUrl('albaran/getTotalPrefactura');
+    		    Ext.Ajax.request({
+    			  url:url,
+    			  params:  {numPrefactura : record.data.numPrefactura},
+    			  success: function(response,opts){
+    				  	totalPre.setValue(null);
+    				  	var split = response.responseText.split(',');
+    				  	var valor = split[1].split(':');
+    				  	var total = valor[1].replace(/[&\/\\#+()$~%'":*?<>{}]/g, '');
+//    				  	totalPre.getStore().getProxy().setExtraParams({'numPrefactura':record.data.numPrefactura});
+//    					totalPre.getStore().load();
+    					totalPre.setValue(total);
+    			  }
+    			  
+    		    });
+			}
+//			totalPre.getStore().removeAll();
+//			totalPre.getStore().getProxy().setExtraParams({'numPrefactura':record.data.numPrefactura});
+//			totalPre.getStore().load();
+//			totalPre.setValue(totalPre.getStore().getData().items[0].data.totalPrefactura);
 		} else {
 			me.deselectPrefactura(grid);
 		}

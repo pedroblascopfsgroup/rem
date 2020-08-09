@@ -13,8 +13,9 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesModel', {
 		        type: 'uxproxy',
 		        localUrl: '/albaran.json',
 				remoteUrl: 'albaran/findAll',
+				timeout: 300000,
 				actionMethods: {read: 'POST'}
-	    	},	    		
+	    	},
 	    	remoteSort: true,
 	    	remoteFilter: true,	    	
 	    	autoLoad: false,
@@ -28,6 +29,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesModel', {
 	    	proxy: {
 		        type: 'uxproxy',
 		        localUrl: '/albaran.json',
+		        timeout: 300000,
 				remoteUrl: 'albaran/findAllDetalles',
 				actionMethods: {read: 'POST'}
 	    	},	    		
@@ -44,6 +46,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesModel', {
 	    	proxy: {
 		        type: 'uxproxy',
 		        localUrl: '/albaran.json',
+		        timeout: 300000,
 				remoteUrl: 'albaran/findPrefectura',
 				actionMethods: {read: 'POST'}
 	    	},	    		
@@ -84,6 +87,26 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesModel', {
 				remoteUrl: 'generic/getDiccionario',
     			extraParams: {diccionario: 'tiposTrabajo'}
 			}
+		},
+		
+		totalAlbaranStore: {
+			model: 'HreRem.model.DetallePrefacturaGridModel',
+	    	proxy: {
+		        type: 'uxproxy',
+		        localUrl: '/albaran.json',
+				remoteUrl: 'albaran/getTotalAlbaran',
+				actionMethods: {read: 'POST'}
+	    	}
+		},
+		
+		totalPrefacturaStore: {
+			model: 'HreRem.model.DetallePrefacturaGridModel',
+	    	proxy: {
+		        type: 'uxproxy',
+		        localUrl: '/albaran.json',
+				remoteUrl: 'albaran/getTotalPrefactura',
+				actionMethods: {read: 'POST'}
+	    	}
 		},
 		
 		comboApiPrimario: {

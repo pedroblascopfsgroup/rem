@@ -67,7 +67,7 @@ public class ActivoCarpinteriaExterior implements Serializable, Auditable {
 	private Integer ventanasMadera;
 	
 	@Column(name = "CRE_PERS_PLASTICO")
-	private Integer persianasPlatico;
+	private Integer persianasPlastico;	
 	
 	@Column(name = "CRE_PERS_ALU")
 	private Integer persianasAluminio;
@@ -155,12 +155,12 @@ public class ActivoCarpinteriaExterior implements Serializable, Auditable {
 		this.ventanasMadera = ventanasMadera;
 	}
 
-	public Integer getPersianasPlatico() {
-		return persianasPlatico;
+	public Integer getPersianasPlastico() {
+		return persianasPlastico;
 	}
 
-	public void setPersianasPlatico(Integer persianasPlatico) {
-		this.persianasPlatico = persianasPlatico;
+	public void setPersianasPlastico(Integer persianasPlastico) {
+		this.persianasPlastico = persianasPlastico;
 	}
 
 	public Integer getPersianasAluminio() {

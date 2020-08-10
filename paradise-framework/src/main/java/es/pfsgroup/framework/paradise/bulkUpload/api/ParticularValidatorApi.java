@@ -1193,4 +1193,5 @@ public interface ParticularValidatorApi {
 
 	Boolean esMismoTipoGestorActivo(String codigo, String numActivo);
 
+	String getValidacionCampoCDC(String codCampo);
 }

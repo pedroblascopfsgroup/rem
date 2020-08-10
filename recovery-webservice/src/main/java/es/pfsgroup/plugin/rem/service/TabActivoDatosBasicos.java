@@ -880,6 +880,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 		}else if(activo.getEstadoRegistral() != null){
 			activoDto.setEstadoRegistralCodigo(activo.getEstadoRegistral().getCodigo());
+		}else {
+			activoDto.setEstadoRegistralCodigo(null);
 		}
 		
 		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));
@@ -934,7 +936,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			List<Perfil> perfilesUsuarioLogado = usuarioLogado.getPerfiles();
 			
 			boolean esUsuarioConPermisos = false;
-			boolean revision = activoAdmisionRevisionTitulo.getRevisado().getCodigo().equals(DDSinSiNo.CODIGO_SI);
+			boolean revision = DDSinSiNo.CODIGO_SI.equals(activoAdmisionRevisionTitulo.getRevisado().getCodigo());
 			
 			for(Perfil pef : perfilesUsuarioLogado){
 				if(codigoHayaSuper.equals(pef.getCodigo()) || codigoGestorEdificacion.equals(pef.getCodigo())) {
@@ -949,7 +951,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 			activoDto.setEsEditableActivoEstadoRegistral(puedeEditar);
 		}else {
-			activoDto.setEsEditableActivoEstadoRegistral(false);
+			activoDto.setEsEditableActivoEstadoRegistral(!perimetroAdmision);
 		}
 		
 		return activoDto;

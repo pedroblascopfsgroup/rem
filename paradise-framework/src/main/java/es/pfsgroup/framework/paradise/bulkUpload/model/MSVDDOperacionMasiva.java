@@ -113,6 +113,7 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 	public static final String CODE_FILE_BULKUPLOAD_TACTICO_ESPARTA_PUBLICACIONES ="TEP";
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_SUMINISTROS ="CMS";
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_ESTADOS_ADMISION="CMESTADOADM";
+	public static final String CODE_FILE_BULKUPLOAD_MASIVO_CALIDAD_DATOS ="MCD";
 	
 
 	private static final long serialVersionUID = 5938440720826995243L;

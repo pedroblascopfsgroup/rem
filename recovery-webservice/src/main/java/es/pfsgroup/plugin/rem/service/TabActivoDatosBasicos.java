@@ -880,8 +880,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 		}else if(activo.getEstadoRegistral() != null){
 			activoDto.setEstadoRegistralCodigo(activo.getEstadoRegistral().getCodigo());
-		}else {
-			activoDto.setEstadoRegistralCodigo(null);
 		}
 		
 		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));

@@ -26,6 +26,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionJuridica;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
@@ -143,6 +144,10 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 	private Integer spsConTitulo;
 	
 
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_SIN_ID")
+	private DDSinSiNo spsPosesionNeg;
+
 	@Version   
 	private Long version;
 
@@ -150,6 +155,8 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 	private Auditoria auditoria;
 	
 	
+	
+
 	public Integer getSpsConTitulo() {
 		return spsConTitulo;
 	}
@@ -395,4 +402,14 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 		this.comboOtro = comboOtro;
 	}
 
+	public DDSinSiNo getSpsPosesionNeg() {
+		return spsPosesionNeg;
+	}
+
+	public void setSpsPosesionNeg(DDSinSiNo spsPosesionNeg) {
+		this.spsPosesionNeg = spsPosesionNeg;
+	}
+
+	
+	
 }

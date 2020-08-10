@@ -4773,4 +4773,16 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				);
 		return !"0".equals(resultado);
 	}
+		
+	@Override
+	public String getValidacionCampoCDC(String codCampo) {
+		if(Checks.esNulo(codCampo) || !StringUtils.isNumeric(codCampo)) {
+			return null;
+		}
+		return rawDao.getExecuteSQL(
+				"SELECT VALIDACION FROM CDC_CALIDAD_DATOS_CONFIG "
+				+ "WHERE COD_CAMPO = '" + codCampo + "' AND BORRADO = 0"
+		);			
+	}
+	
 }

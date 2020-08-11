@@ -192,6 +192,9 @@ public class GastoProveedor implements Serializable, Auditable {
 	@Column(name="GPV_FECHA_REC_HAYA")
 	private Date fechaRecHaya;
     
+	@Column(name="GPV_PLAN_VISITAS")
+	private Boolean gpvPlanVisitas;
+	
 	@Version   
 	private Long version;
 
@@ -555,5 +558,11 @@ public class GastoProveedor implements Serializable, Auditable {
 		this.gastoLineaDetalleList = gastoLineaDetalleList;
 	}
 
-	
+	public Boolean getGpvPlanVisitas() {
+		return gpvPlanVisitas;
+	}
+
+	public void setGpvPlanVisitas(Boolean gpvPlanVisitas) {
+		this.gpvPlanVisitas = gpvPlanVisitas;
+	}
 }

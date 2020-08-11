@@ -101,6 +101,12 @@ public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
 	@Column(name="CPP_CAPITULO")
     private String cppCapitulo;
 	
+	@Column(name="CPP_ACTIVABLE")
+    private Boolean cppActivable;
+	
+	@Column(name="CPP_PLAN_VISITAS")
+    private Boolean cppPlanVisitas;
+	
 	@Version   
 	private Long version;
 
@@ -259,6 +265,20 @@ public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
 	public void setCppCapitulo(String cppCapitulo) {
 		this.cppCapitulo = cppCapitulo;
 	}
-	
-	
+
+	public Boolean getCppActivable() {
+		return cppActivable;
+	}
+
+	public void setCppActivable(Boolean cppActivable) {
+		this.cppActivable = cppActivable;
+	}
+
+	public Boolean getCppPlanVisitas() {
+		return cppPlanVisitas;
+	}
+
+	public void setCppPlanVisitas(Boolean cppPlanVisitas) {
+		this.cppPlanVisitas = cppPlanVisitas;
+	}
 }

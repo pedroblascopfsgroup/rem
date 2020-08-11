@@ -95,6 +95,12 @@ public class ActivoConfiguracionCuentasContables implements Serializable, Audita
 	@Column(name="CCC_SUBCUENTA_CONTABLE")
     private String subcuentaContable;
 	
+	@Column(name="CCC_ACTIVABLE")
+	private Boolean cccActivable;
+	
+	@Column(name="CCC_PLAN_VISITAS")
+	private Boolean cccPlanVisitas;
+	
 	@Version   
 	 private Long version;
 
@@ -246,5 +252,19 @@ public class ActivoConfiguracionCuentasContables implements Serializable, Audita
 		this.subcuentaContable = subcuentaContable;
 	}
 
-	
+	public Boolean getCccActivable() {
+		return cccActivable;
+	}
+
+	public void setCccActivable(Boolean cccActivable) {
+		this.cccActivable = cccActivable;
+	}
+
+	public Boolean getCccPlanVisitas() {
+		return cccPlanVisitas;
+	}
+
+	public void setCccPlanVisitas(Boolean cccPlanVisitas) {
+		this.cccPlanVisitas = cccPlanVisitas;
+	}
 }

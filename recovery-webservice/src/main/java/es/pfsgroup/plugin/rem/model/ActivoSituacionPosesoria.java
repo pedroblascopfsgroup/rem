@@ -145,7 +145,7 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 	
 
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_SIN_ID")
+    @JoinColumn(name = "SPS_POSESION_NEG")
 	private DDSinSiNo spsPosesionNeg;
 
 	@Version   

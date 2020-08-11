@@ -144,9 +144,8 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 	private Integer spsConTitulo;
 	
 
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SPS_POSESION_NEG")
-	private DDSinSiNo spsPosesionNeg;
+	@Column(name = "SPS_POSESION_NEG")
+	private Boolean spsPosesionNeg;
 
 	@Version   
 	private Long version;
@@ -402,13 +401,14 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 		this.comboOtro = comboOtro;
 	}
 
-	public DDSinSiNo getSpsPosesionNeg() {
+	public Boolean getSpsPosesionNeg() {
 		return spsPosesionNeg;
 	}
 
-	public void setSpsPosesionNeg(DDSinSiNo spsPosesionNeg) {
+	public void setSpsPosesionNeg(Boolean spsPosesionNeg) {
 		this.spsPosesionNeg = spsPosesionNeg;
 	}
+
 
 	
 	

@@ -44,18 +44,11 @@ DECLARE
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION           
-    	T_ALTER(  'SPS_POSESION_NEG',			'NUMBER(16,0)',			'Identificador único de Posesion'	)
+    	T_ALTER(  'SPS_POSESION_NEG',			'NUMBER(1,0)',			'Indicador de si el activo tiene Posesion Negociada o no'	,'DEFAULT 0')
 		);
     V_T_ALTER T_ALTER;
     
-	/* -- ARRAY CON NUEVAS FOREIGN KEYS */
-    TYPE T_FK IS TABLE OF VARCHAR2(4000);
-    TYPE T_ARRAY_FK IS TABLE OF T_FK;
-    V_FK T_ARRAY_FK := T_ARRAY_FK(
-    			--NOMBRE FK 						CAMPO FK 				TABLA DESTINO FK 							CAMPO DESTINO FK
-    	T_FK(	'FK_SITPOS_POSESION_NEG',			'SPS_POSESION_NEG',		V_ESQUEMA_M||'.DD_SIN_SINO',				'DD_SIN_ID')
-    );
-    V_T_FK T_FK;
+	
 
 
 BEGIN
@@ -77,7 +70,7 @@ BEGIN
 			--No existe la columna y la creamos
 			DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_ALTER(1)||'] -------------------------------------------');
 			V_MSQL := 'ALTER TABLE '||V_TEXT_TABLA|| ' 
-					   ADD ('||V_T_ALTER(1)||' '||V_T_ALTER(2)||')
+					   ADD ('||V_T_ALTER(1)||' '||V_T_ALTER(2)||' '||V_T_ALTER(4)||')
 			';
 
 			EXECUTE IMMEDIATE V_MSQL;
@@ -92,61 +85,6 @@ BEGIN
 		END IF;
 
 	END LOOP;
-
-
-	
-	-- Solo si esta activo el indicador de creacion FK, el script creara tambien las FK
-	IF V_CREAR_FK = 'SI' THEN
-
-		-- Bucle que CREA las FK de las nuevas columnas del INFORME COMERCIAL
-		FOR I IN V_FK.FIRST .. V_FK.LAST
-		LOOP
-
-			V_T_FK := V_FK(I);	
-
-			-- Verificar si la FK ya existe. Si ya existe la FK, no se hace nada.
-			V_MSQL := 'select count(1) from all_constraints where OWNER = '''||V_ESQUEMA||''' and table_name = '''||V_TEXT_TABLA||''' and constraint_name = '''||V_T_FK(1)||'''';
-			EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
-			IF V_NUM_TABLAS = 0 THEN
-				--No existe la FK y la creamos
-				DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_FK(1)||'] -------------------------------------------');
-				V_MSQL := '
-					ALTER TABLE '||V_TEXT_TABLA||'
-					ADD CONSTRAINT '||V_T_FK(1)||' FOREIGN KEY
-					(
-					  '||V_T_FK(2)||'
-					)
-					REFERENCES '||V_T_FK(3)||'
-					(
-					  '||V_T_FK(4)||' 
-					)
-					ON DELETE SET NULL ENABLE
-				';
-
-				EXECUTE IMMEDIATE V_MSQL;
-
-                --Actualizamos registros
-                V_MSQL := '
-					UPDATE REM01.ACT_SPS_SIT_POSESORIA set SPS_POSESION_NEG = 2 where sps_posesion_neg is NULL
-				';
-
-				EXECUTE IMMEDIATE V_MSQL;
-
-           
-				--DBMS_OUTPUT.PUT_LINE('[3] '||V_MSQL);
-				DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_FK(1)||' creada en tabla: FK en columna '||V_T_FK(2)||' hacia '||V_T_FK(3)||'.'||V_T_FK(4)||'... OK');
-
-			END IF;
-
-		END LOOP;
-
-	END IF;
-	
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||' AMPLIADA CON COLUMNAS NUEVAS Y FKs ... OK *************************************************');
-	COMMIT;
-	DBMS_OUTPUT.PUT_LINE('[INFO] COMMIT');
-	
-
 
 EXCEPTION
      WHEN OTHERS THEN 

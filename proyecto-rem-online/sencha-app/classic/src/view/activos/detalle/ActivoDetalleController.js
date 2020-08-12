@@ -851,7 +851,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onClickBotonGuardar: function(btn) {
 		var me = this;
 		var form = btn.up('tabpanel').getActiveTab();
-
 		// Ejecución especial si la pestaña es 'Comercial'.
 		if("comercialactivo" == form.getXType()) {
 			me.onSaveFormularioCompletoTabComercial(btn, form);

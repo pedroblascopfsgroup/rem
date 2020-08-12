@@ -46,6 +46,7 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	private Integer diasTapiado;
 	private Date fechaRecepcionLlave;
 	private Date fechaPrimerAnillado;
+	private String posesionNegociada;
 		
 	public String getTipoEstadoAlquiler() {
 		return tipoEstadoAlquiler;
@@ -232,6 +233,12 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	}
 	public void setFechaPrimerAnillado(Date fechaPrimerAnillado) {
 		this.fechaPrimerAnillado = fechaPrimerAnillado;
+	}
+	public String getPosesionNegociada() {
+		return posesionNegociada;
+	}
+	public void setPosesionNegociada(String posesionNegociada) {
+		this.posesionNegociada = posesionNegociada;
 	}
 
 	

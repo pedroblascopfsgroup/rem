@@ -930,6 +930,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				return true;
 			}
 			return false;
+		},
+		
+		tienePosesion: function(get){
+			var posesion = get('situacionPosesoria.indicaPosesion') == "1"
+			return posesion;
 		}
 	 }, 
 	 
@@ -2292,7 +2297,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		        {"codigo":"01", "descripcion":"Si"},
 		        {"codigo":"02", "descripcion":"No"}
 		    ]
-		},    		
+		},
+		
+		comboSiNoPosesionNegociada: {
+			data : [
+		        {"codigo":"0", "descripcion":"No"},
+		        {"codigo":"1", "descripcion":"Si"}
+		    ]
+		},
 		
 		storeAdjuntosPlusvalias: {
 			 pageSize: $AC.getDefaultPageSize(),

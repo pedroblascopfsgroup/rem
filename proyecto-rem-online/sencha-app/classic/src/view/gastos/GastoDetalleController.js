@@ -1149,6 +1149,17 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		
 	},
 	
+	onChangeRetencionGarantiaAplica: function(field, checked){
+		var me= this;
+		// Habilitamos/deshabilitamos campos
+		me.lookupReference('baseIRPFRetG').setDisabled(!checked);
+		me.lookupReference('irpfTipoImpositivoRetG').setDisabled(!checked);
+		me.lookupReference('cuotaIRPFRetG').setDisabled(!checked);;
+		me.onChangeCuotaRetencionGarantia(checked);
+		
+		
+	},
+	
 	onChangeAbonoCuenta: function(field, checked){
 		var me= this;
 
@@ -1958,9 +1969,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 				{entidad: 'lineaDetalleGasto', idGasto: idGasto, parent:grid, idLineaDetalleGasto: idLineaDetalleGasto, record:selection}).show();
     },
     
-    onChangeCuotaRetencionGarantia: function(field, value){
+    onChangeCuotaRetencionGarantia: function(checked){
     	var me = this;
-    	var tipoImpositivo = me.lookupReference('tipoImpositivoIRPFRetG').getValue();
+    	var tipoImpositivo = me.lookupReference('irpfTipoImpositivoRetG').getValue();
     	var base = me.lookupReference('baseIRPFRetG').getValue();
     	var cuotaImpDirecto = me.lookupReference('cuotaIRPFImpD').getValue();
     	var cuota = 0;
@@ -1970,17 +1981,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	}
     	
     	me.lookupReference('cuotaIRPFRetG').setValue(cuota);
-    	
-    	var importeTotal = me.getImporteTotalLineasDetalle(me);
-    	
-    	importeTotal = importeTotal - cuota;
-    	 
-    	if(cuotaImpDirecto != null && cuotaImpDirecto != undefined){
-    		importeTotal = importeTotal - cuotaImpDirecto;
-    	}
-
-    	me.lookupReference('importeTotalGastoDetalle').setValue(importeTotal);
-
+    	me.recalcularImporteTotal(me,checked);
     },
     
     onChangeCuotaImpuestoDirecto: function(field, value){
@@ -2007,18 +2008,19 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		me.lookupReference('importeTotalGastoDetalle').setValue(importeTotal);	 
     },
     
-    recalcularImporteTotal: function(me){
+    recalcularImporteTotal: function(me,aplicaRet){
     	var cuotaRetG = me.lookupReference('cuotaIRPFRetG').getValue();
     	var cuotaImpDirecto = me.lookupReference('cuotaIRPFImpD').getValue();
     	var importeTotal = me.getImporteTotalLineasDetalle(me);
     	
-    	if(cuotaRetG != null || cuotaRetG != undefined){
+    	if(aplicaRet && (cuotaRetG != null || cuotaRetG != undefined)){
     		importeTotal = importeTotal - cuotaRetG;
     	}
     	
     	if(cuotaImpDirecto != null || cuotaImpDirecto != undefined){
     		importeTotal = importeTotal - cuotaImpDirecto;
     	}
+    	
     	
     	return importeTotal;
     	

@@ -147,6 +147,9 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
     
    @Column(name = "GDE_RET_GAR_CUOTA")
    private Double retencionGarantiaCuota;
+   
+   @Column(name = "GDE_RET_GAR_APLICA")
+   private Boolean retencionGarantiaAplica;
 
 	@Version   
 	private Long version;
@@ -418,6 +421,16 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
 	public void setRetencionGarantiaCuota(Double retencionGarantiaCuota) {
 		this.retencionGarantiaCuota = retencionGarantiaCuota;
 	}
+
+	public Boolean getRetencionGarantiaAplica() {
+		return retencionGarantiaAplica;
+	}
+
+	public void setRetencionGarantiaAplica(Boolean retencionGarantiaAplica) {
+		this.retencionGarantiaAplica = retencionGarantiaAplica;
+	}
+	
+	
 	
 	
 }

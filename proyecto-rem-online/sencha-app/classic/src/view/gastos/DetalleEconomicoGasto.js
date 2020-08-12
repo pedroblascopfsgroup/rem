@@ -41,11 +41,10 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 		}
 		return false;
 	},
-    
+	
     initComponent: function () {
 
         var me = this;
-        
 		me.setTitle(HreRem.i18n('title.gasto.detalle.economico'));
         var items= [
        
@@ -155,12 +154,26 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 												},
 												items :
 													[	
+														{		
+															//
+														    xtype: 'checkboxfieldbase',
+														    reference: 'retencionGarantiaAplica',
+														    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.retencion.garantia.aplica'),
+														    bind: {
+													        	value: '{detalleeconomico.retencionGarantiaAplica}'
+													        	},
+												       		
+												       		listeners: {
+												       			change: 'onChangeRetencionGarantiaAplica'
+												       		}
+										           		},
 														{ 
 															xtype: 'currencyfieldbase',
 															symbol: HreRem.i18n("symbol.euro"),
 															reference:'baseIRPFRetG',
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.retencion.base'),
-											                bind: '{detalleeconomico.baseRetG}',
+											                bind: {value: '{detalleeconomico.baseRetG}',
+											                	   disabled: '{!detalleeconomico.retencionGarantiaAplica}'},
 										                	listeners: {
 										                		edit: function(){
 										        					if(this.getValue()==0)
@@ -169,17 +182,18 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																update: function(){
 																	if(Ext.isEmpty(this.getValue()))
 																		this.setValue(0);
-																},
-														    	change: 'onChangeCuotaRetencionGarantia'													    		
+																}
+														    													    		
 														    	
 														    }
 														},
 														{ 
 															xtype: 'numberfieldbase',
 															symbol: HreRem.i18n("symbol.porcentaje"),
-											        		reference: 'tipoImpositivoIRPFRetG',     	
+											        		reference: 'irpfTipoImpositivoRetG',     	
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.tipo.impositivo'),
-											                bind: '{detalleeconomico.irpfTipoImpositivoRetG}',
+											                bind: {value :'{detalleeconomico.irpfTipoImpositivoRetG}',
+											                	disabled: '{!detalleeconomico.retencionGarantiaAplica}'},
 										                	listeners: {
 										                		edit: function(){
 										        					if(this.getValue()==0)
@@ -188,8 +202,8 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																update: function(){
 																	if(Ext.isEmpty(this.getValue()))
 																		this.setValue(0);
-																},
-														    	change: 'onChangeCuotaRetencionGarantia'													    		
+																}
+														    														    		
 														    	
 														    }
 											            
@@ -199,7 +213,8 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 															symbol: HreRem.i18n("symbol.euro"),
 															reference:'cuotaIRPFRetG',
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.cuota'),
-											                bind: '{detalleeconomico.irpfCuotaRetG}',
+											                bind: {value:'{detalleeconomico.irpfCuotaRetG}',
+											                	   disabled: '{!detalleeconomico.retencionGarantiaAplica}'},
 											                readOnly: true
 														}
 													]

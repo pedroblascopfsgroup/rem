@@ -1042,6 +1042,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 			dto.setIrpfTipoImpositivoRetG(detalleGasto.getRetencionGarantiaTipoImpositivo());
 			dto.setBaseRetG(detalleGasto.getRetencionGarantiaBase());
+			dto.setRetencionGarantiaAplica(detalleGasto.getRetencionGarantiaAplica());
 			dto.setIrpfCuotaRetG(detalleGasto.getRetencionGarantiaCuota());
 			
 		
@@ -1312,6 +1313,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				}
 				if( dto.getBaseRetG() != null) {
 					detalleGasto.setRetencionGarantiaBase(dto.getBaseRetG());
+				}
+				if( dto.getRetencionGarantiaAplica() != null) {
+					detalleGasto.setRetencionGarantiaAplica(dto.getRetencionGarantiaAplica());
 				}
 				if(dto.getIrpfCuotaRetG() != null) {
 					detalleGasto.setRetencionGarantiaCuota(dto.getIrpfCuotaRetG());
@@ -3785,7 +3789,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				if(gasto.getIrpfCuota() != null) {
 					importeTotal = importeTotal - gasto.getIrpfCuota();
 				}
-				if(gasto.getRetencionGarantiaCuota() != null) {
+				if(gasto.getRetencionGarantiaCuota() != null && gasto.getRetencionGarantiaAplica() != null && gasto.getRetencionGarantiaAplica()) {
 					importeTotal = importeTotal - gasto.getRetencionGarantiaCuota();
 				}
 			}

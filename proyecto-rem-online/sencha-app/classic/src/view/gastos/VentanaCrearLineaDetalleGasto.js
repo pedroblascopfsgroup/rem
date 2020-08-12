@@ -510,7 +510,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 								    			}
 					    					]
 						    			},
-						    			///12 CAMPOS
+						    			///12 CAMPOS Liberbank
 						    			{
 						    				title: HreRem.i18n('fieldlabel.gasto.lbk.linea.detalle'),
 						    				xtype:'fieldsettable',		    					
@@ -528,8 +528,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.subcuentaBase'),
 								    				reference: 'subcuentaBase',
 								    				name: 'subcuentaBase',
-								    				value: subcuentaBase,
-								    				allowBlank: false
+								    				value: subcuentaBase
 								    				
 								    			},
 								    			{
@@ -537,8 +536,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.apartadoBase'),
 								    				reference: 'apartadoBase',
 								    				name: 'apartadoBase',
-								    				value: apartadoBase,
-								    				allowBlank: false	    			
+								    				value: apartadoBase
 								    				
 								    				
 								    			},
@@ -547,16 +545,14 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.capituloBase'),
 								    				reference: 'capituloBase',
 								    				name: 'capituloBase',
-								    				value: capituloBase,
-								    				allowBlank: true
+								    				value: capituloBase
 								    			},
 								    			{
 								    				xtype: "textfield",
 								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.subcuentaRecargo'),
 								    				reference: 'subcuentaRecargo',
 								    				name: 'subcuentaRecargo',
-								    				value: subcuentaRecargo,
-								    				allowBlank: true
+								    				value: subcuentaRecargo
 								    				
 								    			},
 								    			{
@@ -564,8 +560,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.apartadoRecargo'),
 								    				reference: 'apartadoRecargo',
 								    				name: 'apartadoRecargo',
-								    				value: apartadoRecargo,
-								    				allowBlank: true
+								    				value: apartadoRecargo
 								    				
 								    			},
 								    			{
@@ -573,8 +568,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.capituloRecargo'),
 								    				reference: 'capituloRecargo',
 								    				name: 'capituloRecargo',
-								    				value: capituloRecargo,
-								    				allowBlank: true
+								    				value: capituloRecargo
 								    				
 								    			},
 								    			{
@@ -582,8 +576,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.subcuentaTasa'),
 								    				reference: 'subcuentaTasa',
 								    				name: 'subcuentaTasa',
-								    				value: subcuentaTasa,
-								    				allowBlank: true
+								    				value: subcuentaTasa
 								    				
 								    			},
 								    			{
@@ -591,8 +584,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.apartadoTasa'),
 								    				reference: 'apartadoTasa',
 								    				name: 'apartadoTasa',
-								    				value: apartadoTasa,
-								    				allowBlank: true
+								    				value: apartadoTasa
 								    				
 								    			},
 								    			{
@@ -600,8 +592,8 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.capituloTasa'),
 								    				reference: 'capituloTasa',
 								    				name: 'capituloTasa',
-								    				value: capituloTasa,
-								    				allowBlank: true
+								    				value: capituloTasa
+								    				
 								    				
 								    			},
 								    			{
@@ -609,8 +601,8 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.subcuentaIntereses'),
 								    				reference: 'subcuentaIntereses',
 								    				name: 'subcuentaIntereses',
-								    				value: subcuentaIntereses,
-								    				allowBlank: true
+								    				value: subcuentaIntereses
+								    				
 								    				
 								    			},
 								    			{
@@ -618,8 +610,8 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.apartadoIntereses'),
 								    				reference: 'apartadoIntereses',
 								    				name: 'apartadoIntereses',
-								    				value: apartadoIntereses,
-								    				allowBlank: true
+								    				value: apartadoIntereses
+								    				
 								    				
 								    			},
 								    			{
@@ -627,8 +619,8 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.capituloIntereses'),
 								    				reference: 'capituloIntereses',
 								    				name: 'capituloIntereses',
-								    				value: capituloIntereses,
-								    				allowBlank: true
+								    				value: capituloIntereses
+								    				
 								    				
 								    			}
 					    					]

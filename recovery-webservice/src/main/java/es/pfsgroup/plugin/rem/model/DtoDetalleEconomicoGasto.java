@@ -73,6 +73,7 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	private Double baseImpI;
 	private String clave;
 	private String subclave;
+	private Boolean retencionGarantiaAplica;
 
 
 
@@ -389,6 +390,14 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	public void setSubclave(String subclave) {
 		this.subclave = subclave;
 	}
+	public Boolean getRetencionGarantiaAplica() {
+		return retencionGarantiaAplica;
+	}
+	public void setRetencionGarantiaAplica(Boolean retencionGarantiaAplica) {
+		this.retencionGarantiaAplica = retencionGarantiaAplica;
+	}
+	
+	
 	
 
 }

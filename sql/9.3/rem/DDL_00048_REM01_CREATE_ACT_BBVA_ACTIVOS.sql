@@ -45,8 +45,9 @@ BEGIN
     
     -- Si existe la tabla se borra
     IF V_NUM_TABLAS = 1 THEN 
-            DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||'... Tabla YA EXISTE.');    
-            EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.'||V_TABLA||' CASCADE CONSTRAINTS';		
+            DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||'... Tabla YA EXISTE.'); 
+         
+           	
 	  END IF;
 
     -- Comprobamos si existe la secuencia
@@ -68,7 +69,14 @@ BEGIN
 	    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TABLA||' creada');
 
     END IF; 
- 
+
+    V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+    
+    -- Si existe la tabla se borra
+    IF V_NUM_TABLAS = 1 THEN 
+            DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||'... Tabla YA EXISTE.'); 
+            ELSE
      
     	 --Creamos la tabla
       DBMS_OUTPUT.PUT_LINE('[CREAMOS '||V_TABLA||']');
@@ -105,7 +113,7 @@ BEGIN
 				 ,CONSTRAINT FK_BBVA_DD_TTR_ID FOREIGN KEY (DD_TTR_ID) REFERENCES '||V_ESQUEMA||'.DD_TTR_TIPO_TRANSMISION (DD_TTR_ID)
 				 ,CONSTRAINT FK_BBVA_DD_TAL_ID FOREIGN KEY (DD_TAL_ID) REFERENCES '||V_ESQUEMA||'.DD_TAL_TIPO_ALTA (DD_TAL_ID)
 				 ,CONSTRAINT FK_BBVA_ACTIVO_EPA FOREIGN KEY (BBVA_ACTIVO_EPA) REFERENCES '||V_ESQUEMA_M||'.DD_SIN_SINO (DD_SIN_ID)				
-			  )';        	
+			  )';         	
 
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA||'... Tabla creada');
@@ -141,7 +149,7 @@ BEGIN
     COMMIT;
     DBMS_OUTPUT.PUT_LINE('[INFO] COMMIT');
     
-    
+    END IF;
 EXCEPTION
   WHEN OTHERS THEN
     ERR_NUM := SQLCODE;

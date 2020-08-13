@@ -224,13 +224,12 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 												colspan: 2
 											},	*/										
 											{   
-												xtype:'fieldset',
+												xtype:'fieldsettable',
 												border: false,
 												colspan: 3,
+												collapsible: false,
 				        						defaultType: 'currencyfieldbase',
 				        						defaults: {
-				        							style: 'text-align: right',
-											        fieldStyle:'text-align:right;',
 											        labelStyle: 'text-align:left;',
 											        symbol: HreRem.i18n("symbol.euro")
 				        						},
@@ -238,6 +237,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 													[
 														
 														{
+															xtype: 'currencyfieldbase',
 															cls: 'txt-importe-total',
 															reference: 'importeTotalGastoDetalle',
 															readOnly: true,
@@ -246,12 +246,24 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 														   
 														},
 														{
+															xtype: 'currencyfieldbase',
 															reference: 'detalleEconomicoImporteTotal',
-															cls: 'txt-importe-total',															
+															cls: 'txt-importe-total',
 															hidden: true,
 															readOnly: true,
 															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.importe.total'),
 														    bind: '{detalleeconomico.importeTotal}'
+														},
+														{
+															xtype: 'currencyfieldbase',
+															reference: 'detalleEconomicoImporteBruto',
+															cls: 'txt-importe-total',
+															readOnly: true,
+															fieldLabel: HreRem.i18n('fieldlabel.detalle.economico.importe.bruto'),
+															bind: {
+											                	value:'{detalleeconomico.importeBrutoLbk}',
+											                	hidden:'{!esLiberbank}'
+											                }
 														}
 													]
 											}											

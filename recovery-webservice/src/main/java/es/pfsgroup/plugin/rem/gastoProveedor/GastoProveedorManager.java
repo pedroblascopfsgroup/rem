@@ -103,6 +103,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
 import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosRefacturados;
+import es.pfsgroup.plugin.rem.model.VImporteBrutoGastoLBK;
 import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
@@ -1155,6 +1156,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
  					dto.setNoAnyadirEliminarGastosRefacturados(false);
  				}
 			}
+			
+			Filter filtroImporteBruto = genericDao.createFilter(FilterType.EQUALS, "id", gasto.getId());
+			VImporteBrutoGastoLBK importeBrutoLbk = genericDao.get(VImporteBrutoGastoLBK.class, filtroImporteBruto);
+			
+			if(importeBrutoLbk != null && importeBrutoLbk.getImporteBrutoLbk() != null) {
+				dto.setImporteBrutoLbk(importeBrutoLbk.getImporteBrutoLbk());
+			}
+			
 		}
 
 		return dto;

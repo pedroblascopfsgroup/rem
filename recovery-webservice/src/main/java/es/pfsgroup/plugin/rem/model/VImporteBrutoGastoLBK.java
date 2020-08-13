@@ -16,25 +16,26 @@ public class VImporteBrutoGastoLBK implements Serializable {
 	
 	@Id
 	@Column(name= "GPV_ID")
-	private String id;
+	private Long id;
 	
 	@Column(name="IMPORTE_BRUTO")
-	private Double idProvision;
+	private Double importeBrutoLbk;
 
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public Double getIdProvision() {
-		return idProvision;
+	public Double getImporteBrutoLbk() {
+		return importeBrutoLbk;
 	}
 
-	public void setIdProvision(Double idProvision) {
-		this.idProvision = idProvision;
+	public void setImporteBrutoLbk(Double importeBrutoLbk) {
+		this.importeBrutoLbk = importeBrutoLbk;
 	}
+
 	
 }

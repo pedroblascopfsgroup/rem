@@ -255,6 +255,11 @@ Ext.define('HreRem.model.DetalleEconomicoGasto', {
 		},
 		{
 			name: 'subclave'
+		},
+		{
+			name: 'importeBrutoLbk',
+			type: 'number',
+			defaultValue: 0
 		}
 	],
     

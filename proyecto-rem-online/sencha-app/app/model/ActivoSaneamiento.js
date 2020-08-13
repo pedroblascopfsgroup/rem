@@ -197,8 +197,8 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 
 		api: {
             read: 'activo/getTabActivo',
-            create: 'activo/saveActivoDatosRegistrales',
-            update: 'activo/saveActivoDatosRegistrales',
+            create: 'activo/saveActivoSaneamiento',
+            update: 'activo/saveActivoSaneamiento',
             destroy: 'activo/getTabActivo'
         },
         extraParams: {tab: 'saneamiento'}

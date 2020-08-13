@@ -29,6 +29,7 @@ public class ActivoPropagacionFieldTabMap {
     public static final String TAB_CALIFICACION_NEGATIVA = "calificacionNegativa";
     public static final String TAB_PLUSVALIA = "plusvalia";
     public static final String TAB_FASE_PUBLICACION = "fasepublicacionactivo";
+    public static final String TAB_SANEAMIENTO = "saneamiento";
     
 
 

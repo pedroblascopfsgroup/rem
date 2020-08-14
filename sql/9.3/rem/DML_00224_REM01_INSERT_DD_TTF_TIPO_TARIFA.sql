@@ -41,7 +41,7 @@ DECLARE
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA
     (
 T_TIPO_DATA('ANTIOC2'  ,'Instalación de puerta antiocupa'),
-T_TIPO_DATA('ANTIOC3'  ,'Desmontaje de puerta antiocupa'),
+T_TIPO_DATA('ANTIOC3'  ,'Desmontaje de puerta antiocupa')
 		
 	); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

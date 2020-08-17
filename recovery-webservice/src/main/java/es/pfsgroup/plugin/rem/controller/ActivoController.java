@@ -96,6 +96,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoPlusvalia;
+import es.pfsgroup.plugin.rem.model.DtoActivoSaneamiento;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoActivoSuministros;
 import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
@@ -318,8 +319,26 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-
 	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveActivoSaneamiento(DtoActivoSaneamiento activoDto, @RequestParam Long id, ModelMap model) {
+		try {
+			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_SANEAMIENTO);
+			if (success) adapter.actualizarEstadoPublicacionActivo(id);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+		} catch (JsonViewerException jvex) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
+			logger.error(jvex.getMessage());
+			throw new JsonViewerException(jvex.getMessage());
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		} 
+
+		return createModelAndViewJson(model);
+	}
+
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveActivoCarga(DtoActivoCargas cargaDto, ModelMap model) {
 		try {

@@ -68,7 +68,6 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 
 							]
 						},
-						//BLOQUE TRAMITACION TITULO
 						{
 
 							xtype:'fieldsettable',
@@ -209,7 +208,6 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 									   }
 								]
 							},
-				            //***********************BLOQUE CARGAS************************
 				            {
 				            	xtype:'fieldsettable',
 								title:HreRem.i18n('title.cargas'),
@@ -259,8 +257,6 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 						           	}
 								]
 				            },
-            //***********************FIN BLOQUE CARGAS********************************
-            //***********************BLOQUE PROTECCION OFICIAL************************
 				            {
 				         		xtype : 'fieldsettable',
 				         		title : HreRem.i18n('title.admision.protectoficial'),
@@ -268,7 +264,6 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 									type: 'table',
 								    columns: 1
 								},
-								hidden: true,
 								bind: {
 							        	hidden: '{!saneamiento.vpo}',
 							        	disabled: '{!saneamiento.vpo}'
@@ -486,7 +481,6 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 								        }]
 								}]
 				            },
-            //***********************FIN BLOQUE PROTECCION OFICIAL********************
 				            {       	  
 								xtype:'fieldsettable',
 								title:HreRem.i18n('title.admision.agenda'),

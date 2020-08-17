@@ -1,7 +1,6 @@
 #!/bin/bash
 
 operacion="$2"
-
 if [[ "$operacion" == "merge" ]] ; then
 	ramaorigen=`cat $1 | grep Merge | cut -d"'" -f2`
 	echo -e "Intentas mergear desde la rama '$ramaorigen'"

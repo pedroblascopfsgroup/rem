@@ -4,6 +4,11 @@ modified_files="git diff --cached --name-only --diff-filter=ACMRTUXB"
 
 patron="^D[D|M]L_[0-9]{3,5}_(ENTITY0[0-9]|BANK01|HAYA0[0-9]|REM01|CM01|HAYAMASTER|REMMASTER|MASTER|BANKMASTER|CMMASTER|MINIREC|HAYA0[0-9]D15|HAYAMASTERD15|DWH|DS)_.*\.sql"
 
+function mostrar_error() {
+	echo -e "\n$1\n"
+	exit 1
+}
+
 function paint_error() {
 	declare -n error_data=$1
 	echo ""
@@ -410,6 +415,33 @@ function Schema_rules() {
 	done
 }
 
+
+function Commit_rules () {
+
+	rama_actual=`git branch | grep '*' | cut -d' ' -f2`
+	echo "Rama actual: $rama_actual" 
+	dir_txt=$(dirname "$0")
+	ficheroramasbloqueadas=${dir_txt}/tool/ramas-subidas-pro.txt
+
+	for ruta in `cat $ficheroramasbloqueadas` ; do  
+		rama=`echo "$ruta"`
+		merge_bloqueadas $rama_actual $rama
+	done
+
+}
+
+merge_bloqueadas() {
+
+	rama_actual=`echo $1 | sed 's/@/.+/'`
+	ruta_origen=`echo $2 | sed 's/@/.+/'`
+
+	if [[ $ruta_origen =~ $rama_actual ]] ; then
+		mostrar_error "No se puede comitear en la rama $rama_actual ,se encuentra bloqueada porque ya está en PRODUCCIÓN"
+		exit 1
+	fi
+
+}
+
 ########################################################
 ##### MAIN
 ########################################################
@@ -424,5 +456,6 @@ JS_rules
 SQL_rules
 SQL_rules2
 Schema_rules
+Commit_rules
 
 exit 0

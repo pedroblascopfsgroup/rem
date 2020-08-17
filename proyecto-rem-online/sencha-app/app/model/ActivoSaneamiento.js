@@ -7,6 +7,107 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 			name:'idActivo'
 		},
 		{
+			name:'estadoTitulo'
+		},
+		{
+			name:'fechaEntregaGestoria',
+			convert: function(value) {
+				if (!Ext.isEmpty(value)) {
+					if  ((typeof value) == 'string') {
+    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+    				} else {
+    					return value;
+    				}
+				}
+			}
+		},
+		{
+			name:'fechaPresHacienda',
+			convert: function(value) {
+				if (!Ext.isEmpty(value)) {
+					if  ((typeof value) == 'string') {
+    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+    				} else {
+    					return value;
+    				}
+				}
+			}
+		},
+		{
+			name:'fechaPres1Registro',
+			convert: function(value) {
+				if (!Ext.isEmpty(value)) {
+					if  ((typeof value) == 'string') {
+    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+    				} else {
+    					return value;
+    				}
+				}
+			}
+		},
+		{
+			name:'fechaEnvioAuto',
+			convert: function(value) {
+				if (!Ext.isEmpty(value)) {
+					if  ((typeof value) == 'string') {
+    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+    				} else {
+    					return value;
+    				}
+				}
+			}
+		},
+		{
+			name:'fechaPres2Registro',
+			convert: function(value) {
+				if (!Ext.isEmpty(value)) {
+					if  ((typeof value) == 'string') {
+    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+    				} else {
+    					return value;
+    				}
+				}
+			}
+		},
+		{
+			name:'fechaInscripcionReg',
+			convert: function(value) {
+				if (!Ext.isEmpty(value)) {
+					if  ((typeof value) == 'string') {
+    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+    				} else {
+    					return value;
+    				}
+				} else {
+					return value;
+				}
+			}
+		},
+		{
+			name:'fechaRetiradaReg',
+			convert: function(value) {
+				if (!Ext.isEmpty(value)) {
+					if  ((typeof value) == 'string') {
+    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+    				} else {
+    					return value;
+    				}
+				}
+			}
+		},
+		{
+			name:'fechaNotaSimple',
+			convert: function(value) {
+				if (!Ext.isEmpty(value)) {
+					if  ((typeof value) == 'string') {
+    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+    				} else {
+    					return value;
+    				}
+				}
+			}
+		},
+		{
 			name:'numeroActivo'
 		},
 		{
@@ -17,7 +118,6 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 			type:'date',
 			dateFormat: 'c'
 		},
-		//Cargas
 		{
 			name:'conCargas'
 		},
@@ -33,9 +133,17 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 			name: 'unidadAlquilable',
 			type: 'boolean'
 		},
-		//Proteccion Oficial
 		{
-			name:'vpo'
+			name:'vpo',
+			convert: function(value) {
+				if (!Ext.isEmpty(value)) {
+					if  (value == 1 || value == '01') {
+    					return true;
+    				} else {
+    					return false;
+    				}			
+    			}
+			}
 		},
 		{
 			name:'tipoVpoId'
@@ -132,6 +240,26 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 		},
 		{
 			name:'observaciones'
+		},
+		{
+			name:'calificacionNegativa'
+		},
+		{
+			name:'descripcionCalificacionNegativa'
+		},
+  		{
+			name:'estadoMotivoCalificacionNegativa'
+		},
+		{
+			name: 'responsableSubsanar'
+		},
+		{
+			name: 'isCalificacionNegativaEnabled',
+			type: 'boolean'
+		},
+		{
+			name: 'puedeEditarCalificacionNegativa',
+			type: 'boolean'
 		}
     ],
 

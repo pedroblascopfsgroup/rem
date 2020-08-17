@@ -2,8 +2,11 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
     extend: 'HreRem.model.Base',
     idProperty: 'id',
 
-    fields: [ 
-    	{
+    fields: [
+		{
+			name:'idActivo'
+		},
+		{
 			name:'estadoTitulo'
 		},
 		{
@@ -32,6 +35,18 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 		},
 		{
 			name:'fechaPres1Registro',
+			convert: function(value) {
+				if (!Ext.isEmpty(value)) {
+					if  ((typeof value) == 'string') {
+    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+    				} else {
+    					return value;
+    				}
+				}
+			}
+		},
+		{
+			name:'fechaEnvioAuto',
 			convert: function(value) {
 				if (!Ext.isEmpty(value)) {
 					if  ((typeof value) == 'string') {
@@ -93,12 +108,15 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 			}
 		},
 		{
-			name: 'unidadAlquilable',
-			type: 'boolean'
+			name:'numeroActivo'
 		},
 		{
-			name: 'noEstaInscrito',
-			type: 'boolean'
+			name:'gestoriaAsignada'
+		},
+		{
+			name:'fechaAsignacion',
+			type:'date',
+			dateFormat: 'c'
 		},
 		{
 			name:'conCargas'
@@ -108,29 +126,33 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 		},
 		{
 			name:'fechaRevisionCarga',
+			type:'date',
+			dateFormat: 'c'
+		},
+		{
+			name: 'unidadAlquilable',
+			type: 'boolean'
+		},
+		{
+			name:'vpo',
 			convert: function(value) {
 				if (!Ext.isEmpty(value)) {
-					if  ((typeof value) == 'string') {
-    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+					if  (value == 1 || value == '01') {
+    					return true;
     				} else {
-    					return value;
-    				}
-				}
+    					return false;
+    				}			
+    			}
 			}
+		},
+		{
+			name:'tipoVpoId'
 		},
 		{
 			name:'tipoVpoCodigo'
 		},
 		{
-			name:'descalificado'
-		},
-		{
-			name:'fechaCalificacion',
-			type:'date',
-			dateFormat: 'c'
-		},
-		{
-			name:'numExpediente'
+			name:'tipoVpoDescripcion'
 		},
 		{
 			name:'vigencia',
@@ -142,15 +164,6 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 		},
 		{
 			name:'necesarioInscribirVpo'
-		},
-		{
-			name:'obligatorioAutAdmVenta'
-		},
-		{
-			name:'maxPrecioVenta'
-		},
-		{
-			name:'obligatorioSolDevAyuda'
 		},
 		{
 			name:'libertadCesion'
@@ -180,16 +193,76 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 			name:'noTitularOtraVivienda'
 		},
 		{
-			name:'gestoriaAsignada'
+			name:'sueloVpo'
 		},
 		{
-			name:'fechaAsignacion',
+			name:'promocionVpo'
+		},
+		{
+			name:'numExpediente'
+		},
+		{
+			name:'fechaCalificacion',
 			type:'date',
 			dateFormat: 'c'
+		},
+		{
+			name:'obligatorioSolDevAyuda'
+		},
+		{
+			name:'obligatorioAutAdmVenta'
+		},
+		{
+			name:'descalificado'
+		},
+		{
+			name:'sujetoAExpediente'
+		},
+		{
+			name:'organismoExpropiante'
+		},
+		{
+			name:'fechaInicioExpediente',
+			type:'date',
+			dateFormat: 'c'
+		},
+		{
+			name:'refExpedienteAdmin'
+		},
+		{
+			name:'refExpedienteInterno'
+		},
+		{
+			name:'observacionesExpropiacion'
+		},
+		{
+			name:'maxPrecioVenta'
+		},
+		{
+			name:'observaciones'
+		},
+		{
+			name:'calificacionNegativa'
+		},
+		{
+			name:'descripcionCalificacionNegativa'
+		},
+  		{
+			name:'estadoMotivoCalificacionNegativa'
+		},
+		{
+			name: 'responsableSubsanar'
+		},
+		{
+			name: 'isCalificacionNegativaEnabled',
+			type: 'boolean'
+		},
+		{
+			name: 'puedeEditarCalificacionNegativa',
+			type: 'boolean'
 		}
-		
     ],
-    
+
     proxy: {
 		type: 'uxproxy',
 		localUrl: 'activos.json',
@@ -197,8 +270,8 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 
 		api: {
             read: 'activo/getTabActivo',
-            create: 'activo/saveActivoDatosRegistrales',
-            update: 'activo/saveActivoDatosRegistrales',
+            create: 'activo/saveActivoSaneamiento',
+            update: 'activo/saveActivoSaneamiento',
             destroy: 'activo/getTabActivo'
         },
         extraParams: {tab: 'saneamiento'}

@@ -6286,13 +6286,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (htt.getTitulo() != null) {
 				ActivoTitulo titulo = htt.getTitulo();
 				if (titulo != null) {
-					boolean gridConDatos = getHistoricoTramitacionTitulo(titulo.getActivo().getId()).isEmpty();
-					String nuevoEstado = gridConDatos ? DDEstadoTitulo.ESTADO_SUBSANAR : DDEstadoTitulo.ESTADO_EN_TRAMITACION;
-					
-					DDEstadoTitulo estadoTitulo = (DDEstadoTitulo) utilDiccionarioApi
-							.dameValorDiccionarioByCod(DDEstadoTitulo.class, nuevoEstado);
-					titulo.setEstado(estadoTitulo);
-					genericDao.save(ActivoTitulo.class, titulo);
 					
 					List<ActivoCalificacionNegativa> calNegList = genericDao.getList(ActivoCalificacionNegativa.class,
 							genericDao.createFilter(FilterType.EQUALS, "historicoTramitacionTitulo.id", htt.getId()));
@@ -6304,8 +6297,31 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						genericDao.save(ActivoCalificacionNegativa.class, calNeg);
 					}
 				}
-			}
-			genericDao.deleteById(HistoricoTramitacionTitulo.class, htt.getId());
+			
+				genericDao.deleteById(HistoricoTramitacionTitulo.class, htt.getId());
+			
+				Order order = new Order(OrderType.DESC, "id");
+				List<HistoricoTramitacionTitulo> histTraTitList = genericDao.getListOrdered(HistoricoTramitacionTitulo.class,order,
+						genericDao.createFilter(FilterType.EQUALS, "titulo.activo.id", titulo.getActivo().getId()));
+				String codEstadoPres = "";
+				if(!histTraTitList.isEmpty()) {
+					HistoricoTramitacionTitulo histTraTit = histTraTitList.get(0);
+					if(histTraTit.getEstadoPresentacion() != null) {
+						if(DDEstadoPresentacion.CALIFICADO_NEGATIVAMENTE.equals(histTraTit.getEstadoPresentacion().getCodigo())){
+							codEstadoPres  = DDEstadoTitulo.ESTADO_SUBSANAR;
+						}else if(DDEstadoPresentacion.PRESENTACION_EN_REGISTRO.equals(histTraTit.getEstadoPresentacion().getCodigo())){
+							codEstadoPres = DDEstadoTitulo.ESTADO_EN_TRAMITACION;
+						} else if(DDEstadoPresentacion.INSCRITO.equals(histTraTit.getEstadoPresentacion().getCodigo())) {
+							codEstadoPres =	DDEstadoTitulo.ESTADO_INSCRITO;
+						}
+					}
+					DDEstadoTitulo estadoTitulo = (DDEstadoTitulo) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDEstadoTitulo.class, codEstadoPres);
+					titulo.setEstado(estadoTitulo);
+					genericDao.save(ActivoTitulo.class, titulo);
+				}
+			} 
+			
 			return true;
 		}
 		return false;

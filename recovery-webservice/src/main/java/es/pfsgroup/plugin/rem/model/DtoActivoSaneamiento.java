@@ -1,45 +1,28 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
-import es.capgemini.devon.dto.WebDto;
 
-public class DtoActivoSaneamiento extends DtoTabActivo{
+public class DtoActivoSaneamiento extends DtoTabActivo {
 
-	//Datos Registrales Inscripcion
-	private String estadoTitulo;
-	private Boolean unidadAlquilable;
-	private Date fechaEntregaGestoria;
-	private Date fechaPresHacienda;
-	private Date fechaEnvioAuto;
-	private Date fechaPres1Registro;
-	private Date fechaPres2Registro;
-	private Date fechaInscripcionReg;
-	private Date fechaRetiradaReg;
-	private Date fechaNotaSimple;
-	private Boolean noEstaInscrito;
-	private String gestoriaAsignada;
-	private Date fechaAsignacion;
+	private static final long serialVersionUID = 1L;
+	
+    private Long idActivo;
+	private String numeroActivo;
 	
 	//Cargas
-	private String numeroActivo;
     private Integer conCargas;
-    private Date fechaRevisionCarga;
-    private Long idActivo;
-    private Boolean unidadAlquilableCargas;
     private String estadoCargas;
+    private Date fechaRevisionCarga;
+    private Boolean unidadAlquilable;
     
-    
-    //Informacion Administrativa
-    private String tipoVpoCodigo;
-    private Integer descalificado;
-    private Date fechaCalificacion;
-    private String numExpediente;
+    //Proteccion Oficial
+	private Integer vpo;
+	private Long tipoVpoId;
+	private String tipoVpoCodigo;    
+	private String tipoVpoDescripcion;
 	private Date vigencia;
 	private Integer comunicarAdquisicion;
 	private Integer necesarioInscribirVpo;
-	private Integer obligatorioSolDevAyuda;
-	private Integer obligatorioAutAdmVenta;
-	private String maxPrecioVenta;
 	private Integer libertadCesion;
 	private Integer renunciaTanteoRetrac;
 	private Integer visaContratoPriv;
@@ -49,18 +32,27 @@ public class DtoActivoSaneamiento extends DtoTabActivo{
 	private Integer ingresosInfNivel;
 	private Integer residenciaComAutonoma;
 	private Integer noTitularOtraVivienda;
-    
-	public String getGestoriaAsignada() {
-		return gestoriaAsignada;
+    private String sueloVpo;
+	private String promocionVpo;
+	private String numExpediente;
+	private Date fechaCalificacion;
+	private Integer obligatorioSolDevAyuda;
+	private Integer obligatorioAutAdmVenta;
+	private Integer descalificado;
+	private Integer sujetoAExpediente;
+	private String organismoExpropiante;
+	private Date fechaInicioExpediente;
+	private String refExpedienteAdmin;
+	private String refExpedienteInterno;
+	private String observacionesExpropiacion;
+	private String maxPrecioVenta;
+	private String observaciones;
+	
+	public Long getIdActivo() {
+		return idActivo;
 	}
-	public void setGestoriaAsignada(String gestoriaAsignada) {
-		this.gestoriaAsignada = gestoriaAsignada;
-	}
-	public Date getFechaAsignacion() {
-		return fechaAsignacion;
-	}
-	public void setFechaAsignacion(Date fechaAsignacion) {
-		this.fechaAsignacion = fechaAsignacion;
+	public void setIdActivo(Long idActivo) {
+		this.idActivo = idActivo;
 	}
 	public String getNumeroActivo() {
 		return numeroActivo;
@@ -74,17 +66,17 @@ public class DtoActivoSaneamiento extends DtoTabActivo{
 	public void setConCargas(Integer conCargas) {
 		this.conCargas = conCargas;
 	}
+	public String getEstadoCargas() {
+		return estadoCargas;
+	}
+	public void setEstadoCargas(String estadoCargas) {
+		this.estadoCargas = estadoCargas;
+	}
 	public Date getFechaRevisionCarga() {
 		return fechaRevisionCarga;
 	}
 	public void setFechaRevisionCarga(Date fechaRevisionCarga) {
 		this.fechaRevisionCarga = fechaRevisionCarga;
-	}
-	public Long getIdActivo() {
-		return idActivo;
-	}
-	public void setIdActivo(Long idActivo) {
-		this.idActivo = idActivo;
 	}
 	public Boolean getUnidadAlquilable() {
 		return unidadAlquilable;
@@ -92,77 +84,17 @@ public class DtoActivoSaneamiento extends DtoTabActivo{
 	public void setUnidadAlquilable(Boolean unidadAlquilable) {
 		this.unidadAlquilable = unidadAlquilable;
 	}
-	public String getEstadoCargas() {
-		return estadoCargas;
+	public Integer getVpo() {
+		return vpo;
 	}
-	public void setEstadoCargas(String estadoCargas) {
-		this.estadoCargas = estadoCargas;
+	public void setVpo(Integer vpo) {
+		this.vpo = vpo;
 	}
-	public String getEstadoTitulo() {
-		return estadoTitulo;
+	public Long getTipoVpoId() {
+		return tipoVpoId;
 	}
-	public void setEstadoTitulo(String estadoTitulo) {
-		this.estadoTitulo = estadoTitulo;
-	}
-	public Date getFechaEntregaGestoria() {
-		return fechaEntregaGestoria;
-	}
-	public void setFechaEntregaGestoria(Date fechaEntregaGestoria) {
-		this.fechaEntregaGestoria = fechaEntregaGestoria;
-	}
-	public Date getFechaPresHacienda() {
-		return fechaPresHacienda;
-	}
-	public void setFechaPresHacienda(Date fechaPresHacienda) {
-		this.fechaPresHacienda = fechaPresHacienda;
-	}
-	public Date getFechaEnvioAuto() {
-		return fechaEnvioAuto;
-	}
-	public void setFechaEnvioAuto(Date fechaEnvioAuto) {
-		this.fechaEnvioAuto = fechaEnvioAuto;
-	}
-	public Date getFechaPres1Registro() {
-		return fechaPres1Registro;
-	}
-	public void setFechaPres1Registro(Date fechaPres1Registro) {
-		this.fechaPres1Registro = fechaPres1Registro;
-	}
-	public Date getFechaPres2Registro() {
-		return fechaPres2Registro;
-	}
-	public void setFechaPres2Registro(Date fechaPres2Registro) {
-		this.fechaPres2Registro = fechaPres2Registro;
-	}
-	public Date getFechaInscripcionReg() {
-		return fechaInscripcionReg;
-	}
-	public void setFechaInscripcionReg(Date fechaInscripcionReg) {
-		this.fechaInscripcionReg = fechaInscripcionReg;
-	}
-	public Date getFechaRetiradaReg() {
-		return fechaRetiradaReg;
-	}
-	public void setFechaRetiradaReg(Date fechaRetiradaReg) {
-		this.fechaRetiradaReg = fechaRetiradaReg;
-	}
-	public Date getFechaNotaSimple() {
-		return fechaNotaSimple;
-	}
-	public void setFechaNotaSimple(Date fechaNotaSimple) {
-		this.fechaNotaSimple = fechaNotaSimple;
-	}
-	public Boolean getNoEstaInscrito() {
-		return noEstaInscrito;
-	}
-	public void setNoEstaInscrito(Boolean noEstaInscrito) {
-		this.noEstaInscrito = noEstaInscrito;
-	}
-	public Boolean getUnidadAlquilableCargas() {
-		return unidadAlquilableCargas;
-	}
-	public void setUnidadAlquilableCargas(Boolean unidadAlquilableCargas) {
-		this.unidadAlquilableCargas = unidadAlquilableCargas;
+	public void setTipoVpoId(Long tipoVpoId) {
+		this.tipoVpoId = tipoVpoId;
 	}
 	public String getTipoVpoCodigo() {
 		return tipoVpoCodigo;
@@ -170,23 +102,11 @@ public class DtoActivoSaneamiento extends DtoTabActivo{
 	public void setTipoVpoCodigo(String tipoVpoCodigo) {
 		this.tipoVpoCodigo = tipoVpoCodigo;
 	}
-	public Integer getDescalificado() {
-		return descalificado;
+	public String getTipoVpoDescripcion() {
+		return tipoVpoDescripcion;
 	}
-	public void setDescalificado(Integer descalificado) {
-		this.descalificado = descalificado;
-	}
-	public Date getFechaCalificacion() {
-		return fechaCalificacion;
-	}
-	public void setFechaCalificacion(Date fechaCalificacion) {
-		this.fechaCalificacion = fechaCalificacion;
-	}
-	public String getNumExpediente() {
-		return numExpediente;
-	}
-	public void setNumExpediente(String numExpediente) {
-		this.numExpediente = numExpediente;
+	public void setTipoVpoDescripcion(String tipoVpoDescripcion) {
+		this.tipoVpoDescripcion = tipoVpoDescripcion;
 	}
 	public Date getVigencia() {
 		return vigencia;
@@ -205,24 +125,6 @@ public class DtoActivoSaneamiento extends DtoTabActivo{
 	}
 	public void setNecesarioInscribirVpo(Integer necesarioInscribirVpo) {
 		this.necesarioInscribirVpo = necesarioInscribirVpo;
-	}
-	public Integer getObligatorioSolDevAyuda() {
-		return obligatorioSolDevAyuda;
-	}
-	public void setObligatorioSolDevAyuda(Integer obligatorioSolDevAyuda) {
-		this.obligatorioSolDevAyuda = obligatorioSolDevAyuda;
-	}
-	public Integer getObligatorioAutAdmVenta() {
-		return obligatorioAutAdmVenta;
-	}
-	public void setObligatorioAutAdmVenta(Integer obligatorioAutAdmVenta) {
-		this.obligatorioAutAdmVenta = obligatorioAutAdmVenta;
-	}
-	public String getMaxPrecioVenta() {
-		return maxPrecioVenta;
-	}
-	public void setMaxPrecioVenta(String maxPrecioVenta) {
-		this.maxPrecioVenta = maxPrecioVenta;
 	}
 	public Integer getLibertadCesion() {
 		return libertadCesion;
@@ -278,5 +180,94 @@ public class DtoActivoSaneamiento extends DtoTabActivo{
 	public void setNoTitularOtraVivienda(Integer noTitularOtraVivienda) {
 		this.noTitularOtraVivienda = noTitularOtraVivienda;
 	}
-
+	public String getSueloVpo() {
+		return sueloVpo;
+	}
+	public void setSueloVpo(String sueloVpo) {
+		this.sueloVpo = sueloVpo;
+	}
+	public String getPromocionVpo() {
+		return promocionVpo;
+	}
+	public void setPromocionVpo(String promocionVpo) {
+		this.promocionVpo = promocionVpo;
+	}
+	public String getNumExpediente() {
+		return numExpediente;
+	}
+	public void setNumExpediente(String numExpediente) {
+		this.numExpediente = numExpediente;
+	}
+	public Date getFechaCalificacion() {
+		return fechaCalificacion;
+	}
+	public void setFechaCalificacion(Date fechaCalificacion) {
+		this.fechaCalificacion = fechaCalificacion;
+	}
+	public Integer getObligatorioSolDevAyuda() {
+		return obligatorioSolDevAyuda;
+	}
+	public void setObligatorioSolDevAyuda(Integer obligatorioSolDevAyuda) {
+		this.obligatorioSolDevAyuda = obligatorioSolDevAyuda;
+	}
+	public Integer getObligatorioAutAdmVenta() {
+		return obligatorioAutAdmVenta;
+	}
+	public void setObligatorioAutAdmVenta(Integer obligatorioAutAdmVenta) {
+		this.obligatorioAutAdmVenta = obligatorioAutAdmVenta;
+	}
+	public Integer getDescalificado() {
+		return descalificado;
+	}
+	public void setDescalificado(Integer descalificado) {
+		this.descalificado = descalificado;
+	}
+	public Integer getSujetoAExpediente() {
+		return sujetoAExpediente;
+	}
+	public void setSujetoAExpediente(Integer sujetoAExpediente) {
+		this.sujetoAExpediente = sujetoAExpediente;
+	}
+	public String getOrganismoExpropiante() {
+		return organismoExpropiante;
+	}
+	public void setOrganismoExpropiante(String organismoExpropiante) {
+		this.organismoExpropiante = organismoExpropiante;
+	}
+	public Date getFechaInicioExpediente() {
+		return fechaInicioExpediente;
+	}
+	public void setFechaInicioExpediente(Date fechaInicioExpediente) {
+		this.fechaInicioExpediente = fechaInicioExpediente;
+	}
+	public String getRefExpedienteAdmin() {
+		return refExpedienteAdmin;
+	}
+	public void setRefExpedienteAdmin(String refExpedienteAdmin) {
+		this.refExpedienteAdmin = refExpedienteAdmin;
+	}
+	public String getRefExpedienteInterno() {
+		return refExpedienteInterno;
+	}
+	public void setRefExpedienteInterno(String refExpedienteInterno) {
+		this.refExpedienteInterno = refExpedienteInterno;
+	}
+	public String getObservacionesExpropiacion() {
+		return observacionesExpropiacion;
+	}
+	public void setObservacionesExpropiacion(String observacionesExpropiacion) {
+		this.observacionesExpropiacion = observacionesExpropiacion;
+	}
+	public String getMaxPrecioVenta() {
+		return maxPrecioVenta;
+	}
+	public void setMaxPrecioVenta(String maxPrecioVenta) {
+		this.maxPrecioVenta = maxPrecioVenta;
+	}
+	public String getObservaciones() {
+		return observaciones;
+	}
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
+	}
 }

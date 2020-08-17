@@ -460,12 +460,6 @@ public class ActivoPropagacionFieldTabMap {
     				"promocionVpo"
     			));
 
-    	pmap.put(TAB_CARGAS_ACTIVO,
-    			Arrays.asList(
-    				"fechaRevisionCarga",
-    				"conCargas"
-    			));
-
     	pmap.put(TAB_DATOS_PUBLICACION,
     			Arrays.asList(
     				"idActivo",
@@ -565,6 +559,13 @@ public class ActivoPropagacionFieldTabMap {
     				"fechaEscritoAyt",
     				"observaciones"
 
+    			));
+      	
+
+    	pmap.put(TAB_SANEAMIENTO,
+    			Arrays.asList(
+    				"fechaRevisionCarga",
+    				"conCargas"
     			));
 
         map = Collections.unmodifiableMap(pmap);

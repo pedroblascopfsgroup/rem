@@ -2,104 +2,22 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
     extend: 'HreRem.model.Base',
     idProperty: 'id',
 
-    fields: [ 
-    	{
-			name:'estadoTitulo'
+    fields: [
+		{
+			name:'idActivo'
 		},
 		{
-			name:'fechaEntregaGestoria',
-			convert: function(value) {
-				if (!Ext.isEmpty(value)) {
-					if  ((typeof value) == 'string') {
-    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-    				} else {
-    					return value;
-    				}
-				}
-			}
+			name:'numeroActivo'
 		},
 		{
-			name:'fechaPresHacienda',
-			convert: function(value) {
-				if (!Ext.isEmpty(value)) {
-					if  ((typeof value) == 'string') {
-    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-    				} else {
-    					return value;
-    				}
-				}
-			}
+			name:'gestoriaAsignada'
 		},
 		{
-			name:'fechaPres1Registro',
-			convert: function(value) {
-				if (!Ext.isEmpty(value)) {
-					if  ((typeof value) == 'string') {
-    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-    				} else {
-    					return value;
-    				}
-				}
-			}
+			name:'fechaAsignacion',
+			type:'date',
+			dateFormat: 'c'
 		},
-		{
-			name:'fechaPres2Registro',
-			convert: function(value) {
-				if (!Ext.isEmpty(value)) {
-					if  ((typeof value) == 'string') {
-    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-    				} else {
-    					return value;
-    				}
-				}
-			}
-		},
-		{
-			name:'fechaInscripcionReg',
-			convert: function(value) {
-				if (!Ext.isEmpty(value)) {
-					if  ((typeof value) == 'string') {
-    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-    				} else {
-    					return value;
-    				}
-				} else {
-					return value;
-				}
-			}
-		},
-		{
-			name:'fechaRetiradaReg',
-			convert: function(value) {
-				if (!Ext.isEmpty(value)) {
-					if  ((typeof value) == 'string') {
-    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-    				} else {
-    					return value;
-    				}
-				}
-			}
-		},
-		{
-			name:'fechaNotaSimple',
-			convert: function(value) {
-				if (!Ext.isEmpty(value)) {
-					if  ((typeof value) == 'string') {
-    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-    				} else {
-    					return value;
-    				}
-				}
-			}
-		},
-		{
-			name: 'unidadAlquilable',
-			type: 'boolean'
-		},
-		{
-			name: 'noEstaInscrito',
-			type: 'boolean'
-		},
+		//Cargas
 		{
 			name:'conCargas'
 		},
@@ -108,29 +26,25 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 		},
 		{
 			name:'fechaRevisionCarga',
-			convert: function(value) {
-				if (!Ext.isEmpty(value)) {
-					if  ((typeof value) == 'string') {
-    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
-    				} else {
-    					return value;
-    				}
-				}
-			}
+			type:'date',
+			dateFormat: 'c'
+		},
+		{
+			name: 'unidadAlquilable',
+			type: 'boolean'
+		},
+		//Proteccion Oficial
+		{
+			name:'vpo'
+		},
+		{
+			name:'tipoVpoId'
 		},
 		{
 			name:'tipoVpoCodigo'
 		},
 		{
-			name:'descalificado'
-		},
-		{
-			name:'fechaCalificacion',
-			type:'date',
-			dateFormat: 'c'
-		},
-		{
-			name:'numExpediente'
+			name:'tipoVpoDescripcion'
 		},
 		{
 			name:'vigencia',
@@ -142,15 +56,6 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 		},
 		{
 			name:'necesarioInscribirVpo'
-		},
-		{
-			name:'obligatorioAutAdmVenta'
-		},
-		{
-			name:'maxPrecioVenta'
-		},
-		{
-			name:'obligatorioSolDevAyuda'
 		},
 		{
 			name:'libertadCesion'
@@ -180,16 +85,56 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 			name:'noTitularOtraVivienda'
 		},
 		{
-			name:'gestoriaAsignada'
+			name:'sueloVpo'
 		},
 		{
-			name:'fechaAsignacion',
+			name:'promocionVpo'
+		},
+		{
+			name:'numExpediente'
+		},
+		{
+			name:'fechaCalificacion',
 			type:'date',
 			dateFormat: 'c'
+		},
+		{
+			name:'obligatorioSolDevAyuda'
+		},
+		{
+			name:'obligatorioAutAdmVenta'
+		},
+		{
+			name:'descalificado'
+		},
+		{
+			name:'sujetoAExpediente'
+		},
+		{
+			name:'organismoExpropiante'
+		},
+		{
+			name:'fechaInicioExpediente',
+			type:'date',
+			dateFormat: 'c'
+		},
+		{
+			name:'refExpedienteAdmin'
+		},
+		{
+			name:'refExpedienteInterno'
+		},
+		{
+			name:'observacionesExpropiacion'
+		},
+		{
+			name:'maxPrecioVenta'
+		},
+		{
+			name:'observaciones'
 		}
-		
     ],
-    
+
     proxy: {
 		type: 'uxproxy',
 		localUrl: 'activos.json',

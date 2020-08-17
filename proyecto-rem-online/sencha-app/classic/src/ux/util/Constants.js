@@ -110,7 +110,6 @@ Ext.define('HreRem.ux.util.Constants', {
 		FICHA:			'datosgeneralesactivo',
 		INFOREG:		'datosgeneralesactivo.tituloinformacionregistralactivo',
 		INFOADM:		'datosgeneralesactivo.informacionadministrativaactivo',
-		CARGAS:			'datosgeneralesactivo.cargasactivo',
 		POSESORIA:		'datosgeneralesactivo.situacionposesoriaactivo',
 		VALORACION:		'datosgeneralesactivo.valoracionesactivo',
 		INFOCOM:		'datosgeneralesactivo.informacioncomercialactivo',

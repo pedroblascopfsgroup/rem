@@ -41,7 +41,6 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 	
 	public DtoPage getAlbaranes(DtoAlbaranFiltro dtoAlbaranes) {
 		String from = "select albaran from Albaran albaran , Trabajo tbj, Prefactura pfa";
-//		String query = "select albaran from Trabajo tbj join trabajo.prefactura";
 		
 		HQLBuilder hb = new HQLBuilder(from);
 		hb.appendWhere("albaran.id = pfa.albaran.id");
@@ -63,6 +62,8 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 		List<DtoAlbaran> listaAlbaranes = new ArrayList<DtoAlbaran>();
 		for(int i = 0; albaranes.size()> i; i++) {
 			DtoAlbaran albaran = new DtoAlbaran();
+			Double total = 0.0;
+			Double totalPresu = 0.0;
 			albaran.setNumAlbaran(albaranes.get(i).getNumAlbaran());
 			albaran.setFechaAlbaran(albaranes.get(i).getFechaAlbaran());
 			if(albaranes.get(i).getEstadoAlbaran() != null) {
@@ -70,27 +71,25 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 			}
 			List<Prefactura> prefacturas = genericDao.getList(Prefactura.class,
 					genericDao.createFilter(FilterType.EQUALS, "albaran.id", albaranes.get(i).getId()));
-			if(prefacturas != null && !prefacturas.isEmpty()) {
+			if (prefacturas != null && !prefacturas.isEmpty()) {
 				albaran.setNumPrefacturas((long) prefacturas.size());
 				int numGastos = 0;
 				for (Prefactura prefactura : prefacturas) {
 					List<Trabajo> trabajos = genericDao.getList(Trabajo.class,
 							genericDao.createFilter(FilterType.EQUALS, "prefactura.id", prefactura.getId()));
-					if(trabajos != null && !trabajos.isEmpty()) {
+					if (trabajos != null && !trabajos.isEmpty()) {
 						numGastos += trabajos.size();
-					}
-					if(prefactura.getEstadoPrefactura().CODIGO_VALIDA.equals(prefactura.getEstadoPrefactura().getCodigo())) {
-						Double total = 0.0;
-						List<GastoProveedor> gastos = genericDao.getList(GastoProveedor.class,
-								genericDao.createFilter(FilterType.EQUALS, "prefactura.id", prefactura.getId()));
-						if(gastos != null && !gastos.isEmpty()) {
-							for (GastoProveedor gasto : gastos) {
-								total += gasto.getGastoDetalleEconomico().getImporteTotal();
+						for (Trabajo trabajo : trabajos) {
+							if(trabajo.getImporteTotal() != null) {
+								total += trabajo.getImporteTotal();
+							}
+							if(trabajo.getImportePresupuesto() != null) {
+								totalPresu += trabajo.getImportePresupuesto();
 							}
 						}
 						albaran.setImporteTotal(total);
-						albaran.setImporteTotalCliente(total);
-					}else {
+						albaran.setImporteTotalCliente(totalPresu);
+					} else {
 						albaran.setImporteTotal(0.0);
 						albaran.setImporteTotalCliente(0.0);
 					}
@@ -100,7 +99,7 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 			listaAlbaranes.add(albaran);
 		}
 		
-		return new DtoPage(listaAlbaranes, pageAlbaran.getTotalCount());
+		return new DtoPage(listaAlbaranes, listaAlbaranes.size());
 	}
 	
 	

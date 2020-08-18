@@ -30,12 +30,6 @@ Ext.define('HreRem.model.DetallePrefacturaGridModel', {
     		},
     		{
     			name:'checkIncluirTrabajo'
-    		},
-    		{
-    			name:'totalPrefactura'
-    		},
-    		{
-    			name:'totalAlbaran'
     		}
     		
     ]

@@ -25,11 +25,9 @@ public interface AlbaranApi {
 	@BusinessOperationDefinition("albaranManager.findPrefectura")
 	public List<DtoDetallePrefactura> findPrefectura(Long numPrefactura) ;
 	
-	public Boolean validarPrefactura(Long id);
+	public Boolean validarPrefactura(Long id, String listaString);
 	
 	public Boolean validarAlbaran(Long id);
-	
-	public Boolean validarTrabajo(Long id);
 	
 	public List<DDEstadoAlbaran> getComboEstadoAlbaran();
 	
@@ -37,9 +35,9 @@ public interface AlbaranApi {
 	
 	public List<DDEstadoTrabajo> getComboEstadoTrabajo();
 	
-	public DtoDetallePrefactura getTotalAlbaran(Long numAlbaran);
-	
-	public DtoDetallePrefactura getTotalPrefactura(Long numPrefactura);
+//	public DtoDetallePrefactura getTotalAlbaran(Long numAlbaran);
+//	
+//	public DtoDetallePrefactura getTotalPrefactura(Long numPrefactura);
 	
 	
 }

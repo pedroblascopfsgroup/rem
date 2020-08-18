@@ -54,15 +54,17 @@ public class AlbaranController extends ParadiseJsonController{
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView findAllDetalles(DtoDetalleAlbaran detalleAlbaran, Long numAlbaran, ModelMap model) {
-		try {
-			List<DtoDetalleAlbaran> page = albaranApi.findAllDetalle( numAlbaran);
-			
-			model.put("data", page);
-			model.put("totalCount", page.size());
-		}catch(Exception e) {
-			logger.error(e.getMessage(), e);
-			model.put("error", e.getMessage());
-			model.put("success", false);
+		if(numAlbaran != null) {
+			try {
+				List<DtoDetalleAlbaran> page = albaranApi.findAllDetalle( numAlbaran);
+				
+				model.put("data", page);
+				model.put("totalCount", page.size());
+			}catch(Exception e) {
+				logger.error(e.getMessage(), e);
+				model.put("error", e.getMessage());
+				model.put("success", false);
+			}
 		}
 		
 		return createModelAndViewJson(model);
@@ -71,17 +73,18 @@ public class AlbaranController extends ParadiseJsonController{
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView findPrefectura(DtoDetallePrefactura detallePrefectura, Long numPrefactura, ModelMap model) {
-		try {
-			List<DtoDetallePrefactura> page = albaranApi.findPrefectura(numPrefactura);
-			
-			model.put("data", page);
-			model.put("totalCount", page.size());
-		}catch(Exception e) {
-			logger.error(e.getMessage(), e);
-			model.put("error", e.getMessage());
-			model.put("success", false);
+		if(numPrefactura != null) {
+			try {
+				List<DtoDetallePrefactura> page = albaranApi.findPrefectura(numPrefactura);
+				
+				model.put("data", page);
+				model.put("totalCount", page.size());
+			}catch(Exception e) {
+				logger.error(e.getMessage(), e);
+				model.put("error", e.getMessage());
+				model.put("success", false);
+			}
 		}
-		
 		return createModelAndViewJson(model);
 	}
 	
@@ -102,27 +105,10 @@ public class AlbaranController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView comprobarValidarPrefactura(Long id, ModelMap model) {
-		Boolean comprobar = false;
-		Double total = 0.0;
-		try {
-			comprobar = albaranApi.validarPrefactura(id);
-			model.put("success", comprobar);
-			model.put("data",total);
-		}catch(Exception e) {
-			logger.error(e.getMessage(), e);
-			model.put("error", e.getMessage());
-			model.put("success", false);
-		}
-		return createModelAndViewJson(model);
-	}
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView comprobarValidarTrabajo(Long id, ModelMap model) {
+	public ModelAndView comprobarValidarPrefactura(Long id, String lista, ModelMap model) {
 		Boolean comprobar = false;
 		try {
-			comprobar = albaranApi.validarTrabajo(id);
+			comprobar = albaranApi.validarPrefactura(id,lista);
 			model.put("success", comprobar);
 		}catch(Exception e) {
 			logger.error(e.getMessage(), e);
@@ -206,38 +192,6 @@ public class AlbaranController extends ParadiseJsonController{
 
 		return createModelAndViewJson(model);
 
-	}
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView getTotalAlbaran(Long numAlbaran, ModelMap model) {
-		try {
-			DtoDetallePrefactura page = albaranApi.getTotalAlbaran(numAlbaran);
-			
-			model.put("data", page);
-		}catch(Exception e) {
-			logger.error(e.getMessage(), e);
-			model.put("error", e.getMessage());
-			model.put("success", false);
-		}
-		
-		return createModelAndViewJson(model);
-	}
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView getTotalPrefactura(Long numPrefactura, ModelMap model) {
-		try {
-			DtoDetallePrefactura page = albaranApi.getTotalPrefactura(numPrefactura);
-			
-			model.put("data", page);
-		}catch(Exception e) {
-			logger.error(e.getMessage(), e);
-			model.put("error", e.getMessage());
-			model.put("success", false);
-		}
-		
-		return createModelAndViewJson(model);
 	}
 	
 }

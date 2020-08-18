@@ -324,7 +324,7 @@ public class Trabajo implements Serializable, Auditable {
     private String resolucionComiteId;
 	
 	@Column(name="TBJ_IMPORTE_PRESUPUESTO")
-    private Long importePresupuesto;
+    private Double importePresupuesto;
 	
 	@Column(name="TBJ_REF_IMPORTE_PRESUPUESTO")
     private String resolucionImportePresupuesto;
@@ -1062,11 +1062,11 @@ public class Trabajo implements Serializable, Auditable {
 		this.resolucionComiteId = resolucionComiteId;
 	}
 
-	public Long getImportePresupuesto() {
+	public Double getImportePresupuesto() {
 		return importePresupuesto;
 	}
 
-	public void setImportePresupuesto(Long importePresupuesto) {
+	public void setImportePresupuesto(Double importePresupuesto) {
 		this.importePresupuesto = importePresupuesto;
 	}
 

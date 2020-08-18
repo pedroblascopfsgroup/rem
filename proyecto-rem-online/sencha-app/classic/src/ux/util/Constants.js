@@ -737,6 +737,11 @@ Ext.define('HreRem.ux.util.Constants', {
 	
 	BTN: {
 		CREAR_TRABAJO: 'BtnCrearTrabajo'
+	},
+	
+	ESTADOS_PREFACTURAS: {
+		VALIDADO: 'Validada',
+		PENDIENTE: 'Pendiente'
 	}
 	
 });

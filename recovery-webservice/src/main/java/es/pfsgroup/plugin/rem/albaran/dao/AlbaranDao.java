@@ -9,6 +9,7 @@ import es.pfsgroup.plugin.rem.model.Albaran;
 import es.pfsgroup.plugin.rem.model.DtoAlbaran;
 import es.pfsgroup.plugin.rem.model.DtoDetalleAlbaran;
 import es.pfsgroup.plugin.rem.model.DtoDetallePrefactura;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstEstadoPrefactura;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAlbaran;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
@@ -22,5 +23,5 @@ public interface AlbaranDao extends AbstractDao<Albaran, Long>{
 	public List<DDEstEstadoPrefactura> getComboEstadoPrefactura();
 	
 	public List<DDEstadoTrabajo> getComboEstadoTrabajo();
-	
+		
 }

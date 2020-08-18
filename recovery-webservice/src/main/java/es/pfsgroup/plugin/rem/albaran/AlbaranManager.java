@@ -48,34 +48,44 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 
 	public List<DtoDetalleAlbaran> findAllDetalle(Long numAlbaran) {
 		List<DtoDetalleAlbaran> dtos = new ArrayList<DtoDetalleAlbaran>();
-		Double total = 0.0;
 		Albaran alb = genericDao.get(Albaran.class,
 				genericDao.createFilter(FilterType.EQUALS, "numAlbaran", numAlbaran));
 		List<Prefactura> prefacturas = genericDao.getList(Prefactura.class,
 				genericDao.createFilter(FilterType.EQUALS, "albaran.id", alb.getId()));
 		if (!prefacturas.isEmpty()) {
 			for (Prefactura prefactura : prefacturas) {
+				Double total = 0.0;
+				Double totalPresupuesto = 0.0;
 				DtoDetalleAlbaran dto = new DtoDetalleAlbaran();
 				List<GastoProveedor> gastos = genericDao.getList(GastoProveedor.class,
 						genericDao.createFilter(FilterType.EQUALS, "prefactura.id", prefactura.getId()));
-				if(gastos != null && !gastos.isEmpty()) {
-					if(prefactura.getEstadoPrefactura().CODIGO_VALIDA.equals(prefactura.getEstadoPrefactura().getCodigo())) {
-						for(GastoProveedor g : gastos) {
-							total += g.getGastoDetalleEconomico().getImporteTotal();
+				List<Trabajo> trabajos= genericDao.getList(Trabajo.class,
+						genericDao.createFilter(FilterType.EQUALS, "prefactura.id", prefactura.getId()));
+				if(trabajos != null && !trabajos.isEmpty()) {
+					for (Trabajo g : trabajos) {
+						if(g.getImporteTotal() != null) {
+							total += g.getImporteTotal();
+						}
+						if(g.getImportePresupuesto() != null) {
+							totalPresupuesto += g.getImportePresupuesto();
 						}
 					}
+				}
+				if (gastos == null || gastos.isEmpty()) {
+					dto = rellenaDtoDetalleAlbaran(null, prefactura);
+					dto.setImporteTotalClienteDetalle(totalPresupuesto);
+					dto.setImporteTotalDetalle(total);
+					dto.setNumeroTrabajos(trabajos.size());
+					dtos.add(dto);
+				}else {
 					for (GastoProveedor gasto : gastos) {
 						dto = new DtoDetalleAlbaran();
 						dto = rellenaDtoDetalleAlbaran(gasto, prefactura);
-						dto.setImporteTotalClienteDetalle(total);
+						dto.setImporteTotalClienteDetalle(totalPresupuesto);
 						dto.setImporteTotalDetalle(total);
+						dto.setNumeroTrabajos(trabajos.size());
 						dtos.add(dto);
 					}
-				}else {
-					dto = rellenaDtoDetalleAlbaran(null, prefactura);
-					dto.setImporteTotalClienteDetalle(total);
-					dto.setImporteTotalDetalle(total);
-					dtos.add(dto);
 				}
 			}
 		}
@@ -117,6 +127,16 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 				}else {
 					dto.setCheckIncluirTrabajo(false);
 				}
+				if(trabajo.getImporteTotal() != null) {
+					dto.setImporteTotalPrefactura(trabajo.getImporteTotal());
+				}else {
+					dto.setImporteTotalPrefactura(0.0);
+				}
+				if(trabajo.getImportePresupuesto() != null) {
+					dto.setImporteTotalClientePrefactura(trabajo.getImportePresupuesto()); 
+				}else {
+					dto.setImporteTotalClientePrefactura(0.0);
+				}
 				dtos.add(dto);
 			}
 		}
@@ -130,9 +150,12 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 			if (prefactura.getNumPrefactura() != null) {
 				dto.setNumPrefactura(prefactura.getNumPrefactura());
 			}
+			if(prefactura.getProveedor() != null && prefactura.getProveedor().getNombreComercial() != null) {
+				dto.setProveedor(prefactura.getProveedor().getNombreComercial());
+			}	
 			if (prefactura.getPropietario() != null && prefactura.getPropietario().getFullName() != null
 					&& !prefactura.getPropietario().getFullName().isEmpty()) {
-				dto.setPropietario(prefactura.getPropietario().getFullName());
+				dto.setPropietario(prefactura.getPropietario().getCartera().getDescripcion());
 			}
 			if (prefactura.getEstadoPrefactura() != null
 					&& prefactura.getEstadoPrefactura().getDescripcion() != null
@@ -156,6 +179,9 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 			if (prefactura.getNumPrefactura() != null) {
 				dto.setNumPrefactura(prefactura.getNumPrefactura());
 			}
+			if(prefactura.getProveedor() != null && prefactura.getProveedor().getNombreComercial() != null) {
+				dto.setProveedor(prefactura.getProveedor().getNombreComercial());
+			}
 			if (prefactura.getPropietario() != null && prefactura.getPropietario().getFullName() != null
 					&& !prefactura.getPropietario().getFullName().isEmpty()) {
 				dto.setPropietario(prefactura.getPropietario().getFullName());
@@ -172,7 +198,6 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 				dto.setAnyo(String.valueOf(anyo));
 			}
 		}
-		
 		return dto;
 	}
 
@@ -192,29 +217,25 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 	}
 	
 	@Transactional
-	public Boolean validarPrefactura(Long id) {
+	public Boolean validarPrefactura(Long id, String listaString) {
+		List<DtoDetallePrefactura> lista = obtenerDtoDeString(listaString);
+		List<Trabajo> trabajos = new ArrayList<Trabajo>();
 		Prefactura prefactura = genericDao.get(Prefactura.class,
 				genericDao.createFilter(FilterType.EQUALS, "numPrefactura", id));
 		if(prefactura.getEstadoPrefactura() != null && prefactura.getEstadoPrefactura().getCodigo() != null ) {
+			for (DtoDetallePrefactura dto : lista) {
+				if(dto.getCheckIncluirTrabajo()) {
+					Trabajo tbj = genericDao.get(Trabajo.class,
+							genericDao.createFilter(FilterType.EQUALS, "numTrabajo", dto.getNumTrabajo()));
+					tbj.setPrefactura(null);
+					genericDao.update(Trabajo.class, tbj);
+				}
+			}
 			DDEstEstadoPrefactura estadoPrefactura = genericDao.get(DDEstEstadoPrefactura.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstEstadoPrefactura.CODIGO_VALIDA));
 			prefactura.setEstadoPrefactura(estadoPrefactura);
 			genericDao.update(Prefactura.class, prefactura);
-		}else {
-			return false;
-		}
-		return true;
-	}
-	
-	@Transactional
-	public Boolean validarTrabajo(Long id) {
-		Prefactura prefactura = genericDao.get(Prefactura.class,
-				genericDao.createFilter(FilterType.EQUALS, "numPrefactura", id));
-		if(prefactura.getEstadoPrefactura() != null && prefactura.getEstadoPrefactura().getCodigo() != null ) {
-			DDEstEstadoPrefactura estadoPrefactura = genericDao.get(DDEstEstadoPrefactura.class,
-					genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstEstadoPrefactura.CODIGO_VALIDA));
-			prefactura.setEstadoPrefactura(estadoPrefactura);
-			genericDao.update(Prefactura.class, prefactura);
+			
 		}else {
 			return false;
 		}
@@ -236,49 +257,32 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 		return lista;
 	}
 	
-	public DtoDetallePrefactura getTotalAlbaran(Long numAlbaran) {
-		DtoDetallePrefactura dto = new DtoDetallePrefactura();
-		double total = 0L;
-		Albaran alb = genericDao.get(Albaran.class,
-				genericDao.createFilter(FilterType.EQUALS, "numAlbaran", numAlbaran));
-		List<Prefactura> prefacturas = genericDao.getList(Prefactura.class,
-				genericDao.createFilter(FilterType.EQUALS, "albaran.id", alb.getId()));
-		if (!prefacturas.isEmpty()) {
-			for (Prefactura prefactura : prefacturas) {
-				List<GastoProveedor> gastos = genericDao.getList(GastoProveedor.class,
-						genericDao.createFilter(FilterType.EQUALS, "prefactura.id", prefactura.getId()));
-				if(gastos != null && !gastos.isEmpty()) { 
-					for (GastoProveedor gasto : gastos) {
-						if(gasto.getGastoDetalleEconomico() != null) {
-							total += gasto.getGastoDetalleEconomico().getImporteTotal();
-						}
+	private List<DtoDetallePrefactura> obtenerDtoDeString(String listaString){
+		List<DtoDetallePrefactura> lista = new ArrayList<DtoDetallePrefactura>();
+		
+		String l1 = listaString.replace("[","");
+		String[] l2 = l1.split("\\{");
+		for(int i = 0; i< l2.length; i++) {
+			if(!l2[i].isEmpty()) {
+				DtoDetallePrefactura dto = new DtoDetallePrefactura();
+				String l3 = "";
+				l3 = l2[i].replaceAll("[^\\.\\,A-Za-z0-9:-]", "");
+				String[] sep = l3.split("\\,") ;
+				for (String campo : sep) {
+					if(campo.contains("numTrabajo")) {
+						String valor[] = campo.split(":");
+						dto.setNumTrabajo(Long.parseLong(valor[1]));
+					}
+					if(campo.contains("checkIncluirTrabajo")) {
+						String valor[] = campo.split(":");
+						dto.setCheckIncluirTrabajo(Boolean.valueOf(valor[1]));
 					}
 				}
+				lista.add(dto);
 			}
-			dto.setTotalAlbaran(total);
 		}
-		return dto;
-	}
-	
-	public DtoDetallePrefactura getTotalPrefactura(Long numPrefactura) {
-		DtoDetallePrefactura dto = new DtoDetallePrefactura();
-		double total = 0L;
-		Prefactura prefactura = genericDao.get(Prefactura.class,
-				genericDao.createFilter(FilterType.EQUALS, "numPrefactura", numPrefactura));
-		if (prefactura != null) {
-			List<GastoProveedor> gastos = genericDao.getList(GastoProveedor.class,
-					genericDao.createFilter(FilterType.EQUALS, "prefactura.id", prefactura.getId()));
-			if(gastos != null && !gastos.isEmpty()) { 
-				for (GastoProveedor gasto : gastos) {
-					if(gasto.getGastoDetalleEconomico() != null) {
-						total += gasto.getGastoDetalleEconomico().getImporteTotal();
-					}
-				}
-			}
-			
-			dto.setTotalPrefactura(total);
-		}
-		return dto;
+		
+		return lista;
 	}
 
 }

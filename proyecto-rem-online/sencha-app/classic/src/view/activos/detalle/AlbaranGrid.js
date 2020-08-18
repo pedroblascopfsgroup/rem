@@ -4,6 +4,7 @@ Ext.define('HreRem.view.activos.detalle.AlbaranGrid', {
 	topBar		: false,
 	editOnSelect: false,
 	disabledDeleteBtn: true,
+	layout: 'fit',
 	bind: {
 		store: '{albaranes}'
 	},
@@ -20,37 +21,57 @@ Ext.define('HreRem.view.activos.detalle.AlbaranGrid', {
 		me.columns = [
 				{
 					dataIndex: 'numAlbaran',
+					flex: 1,
 					reference: 'numAlbaran',
 					text: HreRem.i18n('fieldlabel.albaran.numAlbaran')
 				},
 				{ 
 		    		dataIndex: 'fechaAlbaran',
+		    		flex: 1,
 		    		reference: 'fechaAlbaran',
+		    		formatter: 'date("d/m/Y")',
 		    		text: HreRem.i18n('fieldlabel.albaran.fechaAlbaran')
 	    		},
 		        {
 		            dataIndex: 'estadoAlbaran',
+		            flex: 1,
 		            reference: 'estadoAlbaran',
 		            text: HreRem.i18n('fieldlabel.albaran.estadoAlbaran')
 		        },
 		        {
 		            dataIndex: 'numPrefacturas',
+		            flex: 1,
 		            reference: 'numPrefacturas',
 		            text: HreRem.i18n('fieldlabel.albaran.numPrefacturas')
 		        },
 		        {
 		            dataIndex: 'numTrabajos',
+		            flex: 1,
 		            reference: 'numTrabajos',
 		            text: HreRem.i18n('fieldlabel.albaran.numTrabajos')
 		        },
 		        {
 		            dataIndex: 'importeTotal',
+		            flex: 1,
 		            reference: 'importeTotal',
+		            renderer: Utils.rendererCurrency,
+//		            editor: {
+//		        		xtype:'currencyfieldbase',
+//		        		minValue: 0,
+//		        		allowBlank: false
+//		        	},
 		            text: HreRem.i18n('fieldlabel.albaran.importeTotal')
 		        },
 		        {
 		            dataIndex: 'importeTotalCliente',
+		            flex: 1,
 		            reference: 'importeTotalCliente',
+		            renderer: Utils.rendererCurrency,
+//		            editor: {
+//		        		xtype:'currencyfieldbase',
+//		        		minValue: 0,
+//		        		allowBlank: false
+//		        	},
 		            text: HreRem.i18n('fieldlabel.albaran.importeTotalCliente')
 		        }
 		        

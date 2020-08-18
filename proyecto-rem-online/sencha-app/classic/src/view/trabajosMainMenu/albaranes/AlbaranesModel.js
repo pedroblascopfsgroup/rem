@@ -89,26 +89,6 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesModel', {
 			}
 		},
 		
-		totalAlbaranStore: {
-			model: 'HreRem.model.DetallePrefacturaGridModel',
-	    	proxy: {
-		        type: 'uxproxy',
-		        localUrl: '/albaran.json',
-				remoteUrl: 'albaran/getTotalAlbaran',
-				actionMethods: {read: 'POST'}
-	    	}
-		},
-		
-		totalPrefacturaStore: {
-			model: 'HreRem.model.DetallePrefacturaGridModel',
-	    	proxy: {
-		        type: 'uxproxy',
-		        localUrl: '/albaran.json',
-				remoteUrl: 'albaran/getTotalPrefactura',
-				actionMethods: {read: 'POST'}
-	    	}
-		},
-		
 		comboApiPrimario: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {

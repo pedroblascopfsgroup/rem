@@ -22,8 +22,6 @@ public class DtoDetallePrefactura extends WebDto{
 	private Double importeTotalPrefactura;
 	private Double importeTotalClientePrefactura;
 	private Boolean checkIncluirTrabajo;
-	private Double totalPrefactura;
-	private Double totalAlbaran;
 	
 	public Long getNumTrabajo() {
 		return numTrabajo;
@@ -66,18 +64,6 @@ public class DtoDetallePrefactura extends WebDto{
 	}
 	public void setCheckIncluirTrabajo(Boolean checkIncluirTrabajo) {
 		this.checkIncluirTrabajo = checkIncluirTrabajo;
-	}
-	public Double getTotalPrefactura() {
-		return totalPrefactura;
-	}
-	public void setTotalPrefactura(Double totalPrefactura) {
-		this.totalPrefactura = totalPrefactura;
-	}
-	public Double getTotalAlbaran() {
-		return totalAlbaran;
-	}
-	public void setTotalAlbaran(Double totalAlbaran) {
-		this.totalAlbaran = totalAlbaran;
 	}
 	public String getTipologiaTrabajo() {
 		return tipologiaTrabajo;

@@ -87,13 +87,10 @@ Ext.define('HreRem.view.activos.detalle.CargasActivoGrid', {
         	}
         ];
 
-        me.listeners = [
-        	{
-        		afterrender : 'onRenderCargasList'
-            }, {
-            	rowdblclick : 'onCargasListDobleClick'
-            }
-        ];
+        me.listeners = {
+        	afterrender : 'onRenderCargasList',
+            rowdblclick : 'onCargasListDobleClick'
+        };
 
         me.callParent();
     }

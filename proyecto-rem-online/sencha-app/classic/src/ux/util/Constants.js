@@ -738,7 +738,7 @@ Ext.define('HreRem.ux.util.Constants', {
 	BTN: {
 		CREAR_TRABAJO: 'BtnCrearTrabajo'
 	},
-	
+
 	ESTADOS_TRABAJO: {
     	EN_CURSO : 'CUR',
     	RECHAZADO: '03',
@@ -746,6 +746,11 @@ Ext.define('HreRem.ux.util.Constants', {
     	FINALIZADO: 'FIN',
     	SUBSANADO: 'SUB',
     	VALIDADO: '13'
-    }
+    },
+    
+	ESTADOS_PREFACTURAS: {
+		VALIDADO: 'Validada',
+		PENDIENTE: 'Pendiente'
+	}
 	
 });

@@ -1,24 +1,24 @@
 package es.pfsgroup.plugin.rem.model;
 
-
+import es.capgemini.devon.dto.WebDto;
 
 /**
  * Dto para el grid de DetalleAlbaran
  * @author Jonathan Ovalle
  *
  */
-public class DtoDetalleAlbaran {
+public class DtoDetalleAlbaran extends WebDto{
 
 	private static final long serialVersionUID = 0L;
 
 	private Long numPrefactura;
+	private String proveedor;
 	private String propietario;
-	private String tipologiaTrabajo;
-	private String subtipologiaTrabajo;
 	private String anyo;
 	private String estadoAlbaran;
 	private Long numGasto;
 	private String estadoGasto;
+	private Integer numeroTrabajos;
 	private Double importeTotalDetalle;
 	private Double importeTotalClienteDetalle;
 	
@@ -28,23 +28,17 @@ public class DtoDetalleAlbaran {
 	public void setNumPrefactura(Long numPrefactura) {
 		this.numPrefactura = numPrefactura;
 	}
+	public String getProveedor() {
+		return proveedor;
+	}
+	public void setProveedor(String proveedor) {
+		this.proveedor = proveedor;
+	}
 	public String getPropietario() {
 		return propietario;
 	}
 	public void setPropietario(String propietario) {
 		this.propietario = propietario;
-	}
-	public String getTipologiaTrabajo() {
-		return tipologiaTrabajo;
-	}
-	public void setTipologiaTrabajo(String tipologiaTrabajo) {
-		this.tipologiaTrabajo = tipologiaTrabajo;
-	}
-	public String getSubtipologiaTrabajo() {
-		return subtipologiaTrabajo;
-	}
-	public void setSubtipologiaTrabajo(String subtipologiaTrabajo) {
-		this.subtipologiaTrabajo = subtipologiaTrabajo;
 	}
 	public String getAnyo() {
 		return anyo;
@@ -82,9 +76,12 @@ public class DtoDetalleAlbaran {
 	public void setImporteTotalClienteDetalle(Double importeTotalClienteDetalle) {
 		this.importeTotalClienteDetalle = importeTotalClienteDetalle;
 	}
-	
-	
-	
+	public int getNumeroTrabajos() {
+		return numeroTrabajos;
+	}
+	public void setNumeroTrabajos(int numeroTrabajos) {
+		this.numeroTrabajos = numeroTrabajos;
+	}
 	
 	
 }

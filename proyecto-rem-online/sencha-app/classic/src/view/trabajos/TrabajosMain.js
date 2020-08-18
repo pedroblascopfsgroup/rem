@@ -1,5 +1,5 @@
 Ext.define('HreRem.view.trabajos.TrabajosMain', {
-    extend: 'Ext.container.Container',
+    extend: 'Ext.panel.Panel',
     xtype: 'trabajosmain',
     layout : {
 					type : 'vbox',
@@ -37,7 +37,7 @@ Ext.define('HreRem.view.trabajos.TrabajosMain', {
 	initComponent: function() {
 		
 		var me = this;
-		
+		me.setTitle(HreRem.i18n("title.trabajos.trabajos"));
 		me.on('activate', me.refresh, me);
 		me.callParent();
 	},

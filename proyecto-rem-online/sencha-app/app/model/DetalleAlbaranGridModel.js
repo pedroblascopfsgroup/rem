@@ -6,13 +6,10 @@ Ext.define('HreRem.model.DetalleAlbaranGridModel', {
     			name:'numPrefactura'
     		},
     		{
+    			name:'proveedor'
+    		},
+    		{
     			name:'propietario'
-    		},
-    		{
-    			name:'tipologiaTrabajo'
-    		},
-    		{
-    			name:'subtipologiaTrabajo'
     		},
     		{
     			name:'anyo'
@@ -31,6 +28,9 @@ Ext.define('HreRem.model.DetalleAlbaranGridModel', {
     		},
     		{
     			name:'importeTotalClienteDetalle'
+    		},
+    		{
+    			name:'numeroTrabajos'
     		}
     		
     ]

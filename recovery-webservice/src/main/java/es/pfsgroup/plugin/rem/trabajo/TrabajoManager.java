@@ -1020,6 +1020,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					transactionManager.commit(transaction);
 					transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 					
+					this.createTramiteTrabajo(trabajo);
 					transactionManager.commit(transaction);
 					transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 					
@@ -1035,6 +1036,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				trabajoDao.saveOrUpdate(trabajo);
 				transactionManager.commit(transaction);
 				transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+				this.createTramiteTrabajo(trabajo);
 				transactionManager.commit(transaction);
 				transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 				ficheroMasivoToTrabajo(dtoTrabajo.getIdProceso(), trabajo);	

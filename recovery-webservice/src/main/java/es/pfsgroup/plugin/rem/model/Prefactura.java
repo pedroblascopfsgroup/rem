@@ -47,7 +47,7 @@ public class Prefactura implements Serializable, Auditable {
 	private Long id;
 
 	@Column(name = "PFA_NUM_PREFACTURA")
-	private String numPrefactura;
+	private Long numPrefactura;
 
 	@Column(name = "PFA_FECHA_PREFACTURA")
 	private Date fechaPrefactura;
@@ -61,20 +61,13 @@ public class Prefactura implements Serializable, Auditable {
 	private ActivoPropietario propietario;
 	
 	@ManyToOne
-	@JoinColumn(name = "DD_TTR_ID")
-	private DDTipoTrabajo tipoTrabajo;
-	
-	@ManyToOne
-	@JoinColumn(name = "DD_STR_ID")
-	private DDSubtipoTrabajo subtipoTrabajo;
-	
-	@ManyToOne
 	@JoinColumn(name = "DD_EPF_ID")
 	private DDEstEstadoPrefactura estadoPrefactura;
 	
+	
 	@ManyToOne
-	@JoinColumn(name = "GPV_ID")
-	private GastoProveedor gastoPrefactura;
+	@JoinColumn(name = "ALB_ID")
+	private Albaran albaran;
 	
 	@Version
 	private Long version;
@@ -92,11 +85,11 @@ public class Prefactura implements Serializable, Auditable {
 		this.id = id;
 	}
 
-	public String getNumPrefactura() {
+	public Long getNumPrefactura() {
 		return numPrefactura;
 	}
 
-	public void setNumPrefactura(String numPrefactura) {
+	public void setNumPrefactura(Long numPrefactura) {
 		this.numPrefactura = numPrefactura;
 	}
 
@@ -124,36 +117,12 @@ public class Prefactura implements Serializable, Auditable {
 		this.propietario = propietario;
 	}
 
-	public DDTipoTrabajo getTipoTrabajo() {
-		return tipoTrabajo;
-	}
-
-	public void setTipoTrabajo(DDTipoTrabajo tipoTrabajo) {
-		this.tipoTrabajo = tipoTrabajo;
-	}
-
-	public DDSubtipoTrabajo getSubtipoTrabajo() {
-		return subtipoTrabajo;
-	}
-
-	public void setSubtipoTrabajo(DDSubtipoTrabajo subtipoTrabajo) {
-		this.subtipoTrabajo = subtipoTrabajo;
-	}
-
 	public DDEstEstadoPrefactura getEstadoPrefactura() {
 		return estadoPrefactura;
 	}
 
 	public void setEstadoPrefactura(DDEstEstadoPrefactura estadoPrefactura) {
 		this.estadoPrefactura = estadoPrefactura;
-	}
-
-	public GastoProveedor getGastoPrefactura() {
-		return gastoPrefactura;
-	}
-
-	public void setGastoPrefactura(GastoProveedor gastoPrefactura) {
-		this.gastoPrefactura = gastoPrefactura;
 	}
 
 	public Long getVersion() {
@@ -171,5 +140,15 @@ public class Prefactura implements Serializable, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+
+	public Albaran getAlbaran() {
+		return albaran;
+	}
+
+	public void setAlbaran(Albaran albaran) {
+		this.albaran = albaran;
+	}
+	
+	
 	
 }

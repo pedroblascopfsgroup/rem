@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20200703
+--## AUTOR=Adrián Molina
+--## FECHA_CREACION=20200713
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=0
+--## INCIDENCIA_LINK=REMVIP-7586
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico de los proveedores enviadas a webcom.
 --##           
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial
 --##        0.2 SHG- Incluyo oficinas Liberbank (38)
 --##        0.3 AMG- Añadir array de código de carteras
+--##        0.4 AMG- Aumentar capacidad del campo codPedania
 --##########################################
 --*/
 
@@ -133,7 +134,7 @@ BEGIN
 		CAST(SOC.PRD_PLANTA AS VARCHAR2(11 CHAR))                                           	AS PLANTA,
 		CAST(SOC.PRD_PTA AS VARCHAR2(17 CHAR))                                           		AS PUERTA,
 		CAST(SOC.DD_LOC_CODIGO AS VARCHAR2(5 CHAR))                                				AS COD_MUNICIPIO,
-		CAST(SOC.DD_UPO_CODIGO AS VARCHAR2(5 CHAR))                                           	AS COD_PEDANIA,
+		CAST(SOC.DD_UPO_CODIGO AS VARCHAR2(25 CHAR))                                           	AS COD_PEDANIA,
 		CAST(SOC.DD_PRV_CODIGO AS VARCHAR2(5 CHAR))                                  			AS COD_PROVINCIA,
 		CAST(SOC.PRD_CP AS VARCHAR2(40 CHAR)) 													AS CODIGO_POSTAL,
 		CAST(SOC.PRD_TELEFONO AS VARCHAR2(14 CHAR)) 											AS TELEFONO1,
@@ -155,7 +156,7 @@ BEGIN
 	    CAST(DEL.PRD_PLANTA AS VARCHAR2(11 CHAR))                                       		AS DELEGACIONES_PLANTA,
 	    CAST(DEL.PRD_PTA AS VARCHAR2(17 CHAR))                                          		AS DELEGACIONES_PUERTA,
 	    CAST(DEL.DD_LOC_CODIGO AS VARCHAR2(5 CHAR))                                   			AS DELEGACIONES_COD_MUNICIPIO,
-	    CAST(DEL.DD_UPO_CODIGO AS VARCHAR2(5 CHAR))                                   			AS DELEGACIONES_COD_PEDANIA,
+	    CAST(DEL.DD_UPO_CODIGO AS VARCHAR2(25 CHAR))                                   			AS DELEGACIONES_COD_PEDANIA,
 	    CAST(DEL.DD_PRV_CODIGO AS VARCHAR2(5 CHAR))                                  			AS DELEGACIONES_COD_PROVINCIA,
 	    CAST(DEL.PRD_CP AS VARCHAR2(40 CHAR))                                           		AS DELEGACIONES_CODIGO_POSTAL,
 	    CAST(DEL.PRD_TELEFONO AS VARCHAR2(14 CHAR))                                     		AS DELEGACIONES_TELEFONO1,

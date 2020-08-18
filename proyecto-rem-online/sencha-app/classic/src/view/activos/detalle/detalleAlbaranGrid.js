@@ -1,10 +1,16 @@
 Ext.define('HreRem.view.activos.detalle.detalleAlbaranGrid', {
-    extend		: 'HreRem.view.common.GridBase',
+    extend		: 'HreRem.view.common.GridBaseEditableRow',
     xtype		: 'detalleAlbaranGrid',
 	topBar		: false,
 	editOnSelect: false,
 	disabledDeleteBtn: true,
-
+	bind: {
+		store: '{detalleAlbaranes}'
+	},
+	listeners:{
+		rowclick: 'onPrefacturaClick',
+		deselect: 'deselectPrefactura'
+	},
 	
     initComponent: function () {
 
@@ -15,63 +21,75 @@ Ext.define('HreRem.view.activos.detalle.detalleAlbaranGrid', {
 				{
 					dataIndex: 'numPrefactura',
 					reference: 'numPrefactura',
+					flex: 1,
 					text: HreRem.i18n('fieldlabel.albaran.numPrefacturas')
+				},
+				{
+					dataIndex: 'proveedor',
+					reference: 'proveedor',
+					flex: 1,
+					text: HreRem.i18n('fieldlabel.proveedor.trabajo')
 				},
 				{ 
 		    		dataIndex: 'propietario',
 		    		reference: 'propietario',
+		    		flex: 1,
 		    		text: HreRem.i18n('fieldlabel.albaran.propietario')
 	    		},
 		        {
-		            dataIndex: 'tipologiaTrabajo',
-		            reference: 'tipologiaTrabajo',
-		            text: HreRem.i18n('fieldlabel.albaran.tipologiaTrabajo')
-		        },
-		        {
-		            dataIndex: 'subtipologiaTrabajo',
-		            reference: 'subtipologiaTrabajo',
-		            text: HreRem.i18n('fieldlabel.albaran.subtipologiaTrabajo')
-		        },
-		        {
 		            dataIndex: 'anyo',
 		            reference: 'anyo',
+		            flex: 1,
 		            text: HreRem.i18n('fieldlabel.albaran.anyo')
 		        },
 		        {
 		            dataIndex: 'estadoAlbaran',
 		            reference: 'estadoAlbaran',
+		            flex: 1,
 		            text: HreRem.i18n('fieldlabel.albaran.estadoAlbaran')
 		        },
 		        {
 		            dataIndex: 'numGasto',
 		            reference: 'numGasto',
+		            flex: 1,
 		            text: HreRem.i18n('fieldlabel.albaran.numGasto')
 		        },
 		        {
 		            dataIndex: 'estadoGasto',
 		            reference: 'estadoGasto',
+		            flex: 1,
 		            text: HreRem.i18n('fieldlabel.albaran.estadoGasto')
+		        },
+		        {
+		            dataIndex: 'numeroTrabajos',
+		            reference: 'numeroTrabajos',
+		            flex: 1,
+		            text: HreRem.i18n('fieldlabel.albaran.numTrabajos')
 		        },
 		        {
 		            dataIndex: 'importeTotalDetalle',
 		            reference: 'importeTotalDetalle',
+		            renderer: Utils.rendererCurrency,
+		            flex: 1,
 		            text: HreRem.i18n('fieldlabel.albaran.importeTotalDetalle')
 		        },
 		        {
 		            dataIndex: 'importeTotalClienteDetalle',
 		            reference: 'importeTotalClienteDetalle',
+		            renderer: Utils.rendererCurrency,
+		            flex: 1,
 		            text: HreRem.i18n('fieldlabel.albaran.importeTotalClienteDetalle')
 		        }
 		    ];
 		me.dockedItems = [
 	        {
-	            xtype: 'detalle.pagingtoolbar',
+	            xtype: 'pagingtoolbar',
 	            dock: 'bottom',
-	            //itemId: 'activosPaginationToolbar',
+	            itemId: 'detalleAlbaranesPaginationToolbar',
 	            inputItemWidth: 60,
 	            displayInfo: true,
 	            bind: {
-	                //store: '{storeCalifiacionNegativa}'
+	            	store: '{detalleAlbaranes}'
 	            }
 	        }
 	    ];

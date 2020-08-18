@@ -94,6 +94,7 @@ import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoRequestDto;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoRespuestaDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import es.pfsgroup.plugin.rem.trabajo.TrabajoManager;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
@@ -171,6 +172,9 @@ public class TrabajoController extends ParadiseJsonController {
 
 	@Autowired
 	private MSVRawSQLDao rawDao;
+	
+	@Autowired
+	private TrabajoManager trabajoManager;
 	
 	private static final String RESPONSE_SUCCESS_KEY = "success";	
 	private static final String RESPONSE_DATA_KEY = "data";
@@ -1451,6 +1455,13 @@ public class TrabajoController extends ParadiseJsonController {
 
 		return new ModelAndView("jsonView", model);
 
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboEstadoSegunEstadoGdaOProveedor(Long idTrabajo, WebDto webDto, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, trabajoApi.getComboEstadoSegunEstadoGdaOProveedor(idTrabajo));
+
+		return new ModelAndView("jsonView", model);
 	}
 
 	/**

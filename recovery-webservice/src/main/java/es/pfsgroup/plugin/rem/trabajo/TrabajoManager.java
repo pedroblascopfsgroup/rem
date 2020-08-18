@@ -40,6 +40,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
@@ -104,6 +105,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTrabajo.ActivoTrabajoPk;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.AdjuntoTrabajo;
 import es.pfsgroup.plugin.rem.model.ConfiguracionTarifa;
+import es.pfsgroup.plugin.rem.model.DerivacionEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
@@ -119,6 +121,7 @@ import es.pfsgroup.plugin.rem.model.DtoProveedorFiltradoManual;
 import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
+import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PresupuestoTrabajo;
@@ -172,6 +175,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	private static final String RELACION_TIPO_DOCUMENTO_EXPEDIENTE = "d-e";
 	private static final String OPERACION_ALTA = "Alta";
+	
+	private static final String CASO1_1 = "1.1";
+	private static final String CASO1_2 = "1.2";
+	private static final String CASO1_3 = "1.3";
+	private static final String CASO2 = "2";
+	private static final String CASO3 = "3";
+	private static final String PERFIL_GESTOR_ACTIVO = "HAYAGESACT";
+	private static final String PERFIL_PROVEEDOR = "HAYAPROV";
+	private static final String PERFIL_SUPER = "HAYASUPER";
+	
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -1969,6 +1982,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Usuario gestorSuelos = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS);
 		Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
 		Usuario responsableTrabajo = trabajo.getUsuarioResponsableTrabajo();
+		
+		String casoActual = esEstadoValidoGDAOProveedor(trabajo, usuariologado);
 
 		if (!Checks.esNulo(responsableTrabajo) ? usuariologado.equals(responsableTrabajo) : false) {
 			dtoTrabajo.setBloquearResponsable(false);
@@ -2025,6 +2040,28 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		} else {
 			dtoTrabajo.setPerteneceDNDtipoEdificacion(false);
 		}
+		
+		if(CASO1_1.equals(casoActual)) {
+			dtoTrabajo.setEsEstadoEditable(true);
+			dtoTrabajo.setEsTarifaPlanaEditable(true);
+			dtoTrabajo.setEsSiniestroEditable(true);
+		} else if (CASO1_2.equals(casoActual)) {
+			dtoTrabajo.setEsEstadoEditable(true);
+			dtoTrabajo.setEsFEjecucionEditable(true);
+			dtoTrabajo.setEsSiniestroEditable(true);
+		} else if (CASO1_3.equals(casoActual)) {
+			dtoTrabajo.setEsEstadoEditable(true);
+			dtoTrabajo.setEsTarifaPlanaEditable(true);
+			dtoTrabajo.setEsFEjecucionEditable(true);
+			dtoTrabajo.setEsSiniestroEditable(true);
+		} else if (CASO2.equals(casoActual)) {
+			dtoTrabajo.setEsEstadoEditable(true);
+			dtoTrabajo.setEsTarifaPlanaEditable(true);
+			dtoTrabajo.setEsSiniestroEditable(true);
+			dtoTrabajo.setEsFEjecucionEditable(false);
+		} else if (CASO3.equals(casoActual)) {
+			dtoTrabajo.setEsEstadoEditable(true);
+		}
 
 		List<ActivoTramite> tramitesTrabajo = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
 		
@@ -2055,6 +2092,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			throws IllegalAccessException, InvocationTargetException {
 
 		DtoGestionEconomicaTrabajo dtoTrabajo = new DtoGestionEconomicaTrabajo();
+		Usuario usuariologado = adapter.getUsuarioLogado();
+		String casoActual = esEstadoValidoGDAOProveedor(trabajo, usuariologado);
 
 		beanUtilNotNull.copyProperties(dtoTrabajo, trabajo);
 		beanUtilNotNull.copyProperty(dtoTrabajo.getNumTrabajo(), "numTrabajo", trabajo.getNumTrabajo());
@@ -2097,6 +2136,19 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			dtoTrabajo.setEmailProveedorContacto(trabajo.getProveedorContacto().getEmail());
 			dtoTrabajo.setTelefonoProveedorContacto(trabajo.getProveedorContacto().getTelefono1());
+		}
+		
+		if(CASO1_1.equals(casoActual) || CASO1_3.equals(casoActual)) {
+			dtoTrabajo.setEsProveedorEditable(true);
+			dtoTrabajo.setEsListadoTarifasEditable(true);
+			dtoTrabajo.setEsListadoPresupuestosEditable(true);
+		} else if (CASO1_2.equals(casoActual)) {
+			dtoTrabajo.setEsListadoTarifasEditable(true);
+			dtoTrabajo.setEsProveedorEditable(false);
+		} else if (CASO2.equals(casoActual)) {
+			dtoTrabajo.setEsListadoTarifasEditable(true);
+			dtoTrabajo.setEsListadoPresupuestosEditable(true);
+			dtoTrabajo.setEsProveedorEditable(false);
 		}
 
 		return dtoTrabajo;
@@ -4549,6 +4601,77 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		Collections.sort(listaDtoProveedoresFiltradoManual);
 		return listaDtoProveedoresFiltradoManual;
+	}
+	
+ 	public String esEstadoValidoGDAOProveedor(Trabajo trabajo, Usuario usuariologado){
+ 		Boolean isProveedor = genericAdapter.isProveedor(usuariologado);
+ 		String resultado = "no";
+ 		String estado = trabajo.getEstado().getCodigo();
+ 		Filter filtroGDA = genericDao.createFilter(FilterType.EQUALS, "codigo", PERFIL_GESTOR_ACTIVO);
+		Perfil perfilGDA = genericDao.get(Perfil.class, filtroGDA);
+		Boolean isGDA = usuariologado.getPerfiles().contains(perfilGDA);
+ 		
+ 		Filter filtroSuper = genericDao.createFilter(FilterType.EQUALS, "codigo", PERFIL_SUPER);
+		Perfil perfilSuper = genericDao.get(Perfil.class, filtroSuper);
+		Boolean isSuper = usuariologado.getPerfiles().contains(perfilSuper);
+ 		
+ 		if(DDEstadoTrabajo.CODIGO_ESTADO_EN_CURSO.equals(estado) || DDEstadoTrabajo.ESTADO_RECHAZADO.equals(estado)) {
+ 			if(isGDA) {
+ 				resultado = CASO1_1;
+ 			}else if(isProveedor) {
+ 				resultado = CASO1_2;
+ 			}else if(isSuper) {
+ 				resultado = CASO1_3;
+ 			}
+ 		}else if(DDEstadoTrabajo.CODIGO_ESTADO_FINALIZADO.equals(estado) || DDEstadoTrabajo.CODIGO_ESTADO_SUBSANADO.equals(estado)) {
+ 			if(isGDA || isSuper) {
+ 				resultado = CASO2;
+ 			}
+ 		}else if(DDEstadoTrabajo.ESTADO_VALIDADO.equals(estado) && (isGDA || isSuper)) {
+ 			resultado = CASO3;
+ 		}
+ 		
+		return resultado;
+	}
+ 	
+ 	@Override
+ 	public List<DDEstadoTrabajo> getComboEstadoSegunEstadoGdaOProveedor(Long idTrabajo) {
+ 		List<DDEstadoTrabajo> listadoEstados = new ArrayList<DDEstadoTrabajo>();
+ 		List<DerivacionEstadoTrabajo> estados = null;
+ 		Filter filtroGestor = null;
+ 		Trabajo trabajo = findOne(idTrabajo);
+ 		Usuario usuariologado = adapter.getUsuarioLogado();
+ 		Boolean isProveedor = genericAdapter.isProveedor(usuariologado);
+ 		
+ 		Filter filtroGDA = genericDao.createFilter(FilterType.EQUALS, "codigo", PERFIL_GESTOR_ACTIVO);
+		Perfil perfilGDA = genericDao.get(Perfil.class, filtroGDA);
+		Boolean isGDA = usuariologado.getPerfiles().contains(perfilGDA);
+		
+		Filter filtroSuper = genericDao.createFilter(FilterType.EQUALS, "codigo", PERFIL_SUPER);
+		Perfil perfilSuper = genericDao.get(Perfil.class, filtroSuper);
+		Boolean isSuper = usuariologado.getPerfiles().contains(perfilSuper);
+ 		
+ 		if(trabajo != null && trabajo.getEstado() != null) {
+ 			if(isGDA) {
+ 				filtroGestor = genericDao.createFilter(FilterType.EQUALS, "perfil.codigo", PERFIL_GESTOR_ACTIVO);
+ 			}else if(isProveedor) {
+ 				filtroGestor = genericDao.createFilter(FilterType.EQUALS, "perfil.codigo", PERFIL_PROVEEDOR);
+ 			}
+ 			
+ 			Filter filtroEstado = genericDao.createFilter(FilterType.EQUALS, "estadoInicial.codigo", trabajo.getEstado().getCodigo());
+ 			if(isSuper) {
+ 				estados = genericDao.getList(DerivacionEstadoTrabajo.class, filtroEstado);
+ 			}else if(isGDA || isProveedor) {
+ 				estados = genericDao.getList(DerivacionEstadoTrabajo.class, filtroEstado, filtroGestor);
+ 			}
+
+ 			listadoEstados.add(trabajo.getEstado());
+ 			for (DerivacionEstadoTrabajo derivacionEstadoTrabajo : estados) {
+ 				listadoEstados.add(derivacionEstadoTrabajo.getEstadoFinal());
+			}
+ 		}
+ 		
+		return listadoEstados;
 	}
 	
 }

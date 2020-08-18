@@ -167,10 +167,10 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 						        	xtype: 'comboboxfieldbase',
 						        	colspan: 2,
 						        	fieldLabel: HreRem.i18n('fieldlabel.tarifa.plana'),
-						        	readOnly: true,
 						        	bind: {
 					            		store: '{comboSiNoRem}',
-										value: '{trabajo.esTarifaPlana}'	            		
+										value: '{trabajo.esTarifaPlana}',
+							        	readOnly: '{!trabajo.esTarifaPlanaEditable}'
 					            	}
 			        			},
 			        			{
@@ -441,14 +441,12 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 								// Fila 1
 								{ 
 						        	xtype: 'comboboxfieldbase',
-						        	editable: false,
 						        	fieldLabel: HreRem.i18n('fieldlabel.estado'),
 						        	bind: {
-					            		store: '{comboEstadoTrabajo}',
-					            		value: '{trabajo.estadoCodigo}'
-					            	},
-					            	readOnly: true
-						        	
+					            		store: '{comboEstadoSegunEstadoGdaOProveedor}',
+					            		value: '{trabajo.estadoCodigo}',
+					            		readOnly: '{!trabajo.esEstadoEditable}'
+					            	}
 						        },
 						        {
 									xtype: 'datefieldbase',
@@ -501,7 +499,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 									bind: {
 										value:'{trabajo.fechaEjecucionReal}',
 										hidden: '{!esVisibleFechaEjecucionReal}',
-										readOnly: true
+										readOnly: '{!trabajo.esFEjecucionEditable}'
 									}
 								},
 								{ 

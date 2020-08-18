@@ -193,7 +193,8 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 									reference: 'comboProveedorGestionEconomica',
 									bind: {
 										store: '{comboProveedorFiltradoManual}',
-										value: '{gestionEconomica.idProveedor}'
+										value: '{gestionEconomica.idProveedor}',
+										readOnly: '{!gestionEconomica.esProveedorEditable}'
 									},
 									displayField: 'nombre',
 									valueField: 'idProveedor',
@@ -204,26 +205,26 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 									xtype: 'textfieldbase',
 									width: 480,
 									bind: {
-										value: '{gestionEconomica.usuarioProveedorContacto}'
-									},
-									readOnly: true
+										value: '{gestionEconomica.usuarioProveedorContacto}',
+										readOnly: '{!gestionEconomica.esProveedorEditable}'
+									}
 								},
 								{
 									fieldLabel: HreRem.i18n('fieldlabel.email.contacto'),
 									xtype: 'textfieldbase',
 									width: 480,
 									bind: {
-										value: '{gestionEconomica.emailProveedorContacto}'
-									},
-									readOnly: true
+										value: '{gestionEconomica.emailProveedorContacto}',
+										readOnly: '{!gestionEconomica.esProveedorEditable}'
+									}
 								},
 								{
 									fieldLabel: HreRem.i18n('fieldlabel.telefono.contacto'),
 									width: 480,
 									bind: {
-										value: '{gestionEconomica.telefonoProveedorContacto}'
-									},
-									readOnly: true
+										value: '{gestionEconomica.telefonoProveedorContacto}',
+										readOnly: '{!gestionEconomica.esProveedorEditable}'
+									}
 								}
 							]
 	    				}

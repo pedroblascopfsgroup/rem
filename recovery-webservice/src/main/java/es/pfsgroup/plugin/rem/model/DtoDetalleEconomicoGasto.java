@@ -389,7 +389,7 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	public void setSubclave(String subclave) {
 		this.subclave = subclave;
 	}
-	
+
 	public Boolean getRetencionGarantiaAplica() {
 		return retencionGarantiaAplica;
 	}
@@ -403,5 +403,5 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	public void setImporteBrutoLbk(Double importeBrutoLbk) {
 		this.importeBrutoLbk = importeBrutoLbk;
 	}
-	
+
 }

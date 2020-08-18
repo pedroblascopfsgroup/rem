@@ -20,12 +20,14 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.admision.exception.AdmisionException;
 import es.pfsgroup.plugin.rem.api.AdmisionApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgendaRevisionTitulo;
+import es.pfsgroup.plugin.rem.model.ActivoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoAgendaRevisionTitulo;
 import es.pfsgroup.plugin.rem.model.DtoAdmisionRevisionTitulo;
 import es.pfsgroup.plugin.rem.model.dd.ActivoAdmisionRevisionTitulo;
@@ -34,6 +36,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDAutorizacionTransmision;
 import es.pfsgroup.plugin.rem.model.dd.DDBoletines;
 import es.pfsgroup.plugin.rem.model.dd.DDCedulaHabitabilidad;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoRegistralActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDLicenciaPrimeraOcupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDProteccionOficial;
 import es.pfsgroup.plugin.rem.model.dd.DDSeguroDecenal;
@@ -48,6 +51,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoArrendamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoExpedienteAdministrativo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoIncidencia;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoIncidenciaRegistral;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOcupacionLegal;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTitularidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
@@ -66,6 +70,10 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 	
 	@Autowired
 	private ActivoDao activoDao;
+	
+	@Autowired
+	private UtilDiccionarioApi diccionarioApi;
+	
 	
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -121,6 +129,7 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 	public void createAgendaRevisionTitulo(Long idActivo, String subtipologiaCodigo, String observaciones) throws Exception {
 		
 		ActivoAgendaRevisionTitulo agendaRevisionTitulo = new ActivoAgendaRevisionTitulo();
+		Activo activo = activoDao.getActivoById(idActivo);
 		
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", subtipologiaCodigo);
 		DDSubtipologiaAgenda subtipologiaAgenda = genericDao.get(DDSubtipologiaAgenda.class, filter);
@@ -130,7 +139,7 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 		agendaRevisionTitulo.setObservaciones(observaciones);
 		agendaRevisionTitulo.setUsuario(usuarioLogado);
 		agendaRevisionTitulo.setFechaAlta(new Date());
-		agendaRevisionTitulo.setActivo(activoDao.getActivoById(idActivo));
+		agendaRevisionTitulo.setActivo(activo);
 		
 		Auditoria auditoria = new Auditoria();
 		auditoria.setUsuarioCrear(usuarioLogado.getUsername());
@@ -138,9 +147,23 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 		auditoria.setBorrado(false);
 		
 		agendaRevisionTitulo.setAuditoria(auditoria);
-		
+
 		genericDao.save(ActivoAgendaRevisionTitulo.class, agendaRevisionTitulo);
 		
+		ActivoObservacion activoObservacion = new ActivoObservacion();
+		activoObservacion.setObservacion(observaciones);
+		activoObservacion.setFecha(new Date());
+		activoObservacion.setUsuario(usuarioLogado);
+		activoObservacion.setActivo(activo);
+		DDTipoObservacionActivo tipoObservacion = genericDao.get(DDTipoObservacionActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoObservacionActivo.CODIGO_REVISION_TITULO));
+		activoObservacion.setTipoObservacion(tipoObservacion);
+		activoObservacion.setAuditoria(auditoria);
+		
+		activoObservacion = genericDao.save(ActivoObservacion.class, activoObservacion);
+		
+		agendaRevisionTitulo.setActivoObservacion(activoObservacion);
+		genericDao.update(ActivoAgendaRevisionTitulo.class, agendaRevisionTitulo);
+
 	}
 	
 	@Override
@@ -157,9 +180,13 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 		auditoria.setBorrado(true);
 		
 		agendaRevisionTitulo.setAuditoria(auditoria);
+
+		genericDao.update(ActivoAgendaRevisionTitulo.class, agendaRevisionTitulo);		
 		
-		genericDao.update(ActivoAgendaRevisionTitulo.class, agendaRevisionTitulo);
+		ActivoObservacion activoObservacion = agendaRevisionTitulo.getActivoObservacion();
+		activoObservacion.setAuditoria(auditoria);
 		
+		genericDao.update(ActivoObservacion.class, activoObservacion);		
 	}
 
 	@Override
@@ -175,17 +202,24 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 			agendaRevisionTitulo.setSubtipologiaAgenda(subtipologiaAgenda);
 
 		}
+		
+		ActivoObservacion activoObservacion = agendaRevisionTitulo.getActivoObservacion();
+		
 		if(dto.getObservaciones() != null) {
+			activoObservacion.setObservacion(dto.getObservaciones());
 			agendaRevisionTitulo.setObservaciones(dto.getObservaciones());
+		
+			Auditoria auditoria = agendaRevisionTitulo.getAuditoria();
+			
+			auditoria.setUsuarioModificar(usuarioLogado.getUsername());
+			auditoria.setFechaModificar(new Date());
+			
+			activoObservacion.setAuditoria(auditoria);
+			agendaRevisionTitulo.setAuditoria(auditoria);
+			
+			genericDao.update(ActivoAgendaRevisionTitulo.class, agendaRevisionTitulo);
+			genericDao.update(ActivoObservacion.class, activoObservacion);
 		}
-		Auditoria auditoria = agendaRevisionTitulo.getAuditoria();
-		
-		auditoria.setUsuarioModificar(usuarioLogado.getUsername());
-		auditoria.setFechaModificar(new Date());
-		
-		agendaRevisionTitulo.setAuditoria(auditoria);
-		
-		genericDao.update(ActivoAgendaRevisionTitulo.class, agendaRevisionTitulo);
 		
 	}
 	
@@ -319,6 +353,21 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 		}else {
 			genericDao.save(ActivoAdmisionRevisionTitulo.class, revisionTitulo);
 		}
+		
+		DDEstadoRegistralActivo ddEstadoReg = new DDEstadoRegistralActivo();
+	
+		if(revisionTitulo.getTipoIncidenciaRegistral() != null) {
+			ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", revisionTitulo.getTipoIncidenciaRegistral().getDescripcion()));
+		}else if(revisionTitulo.getSituacionConstructivaRegistral() != null) {
+			ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", revisionTitulo.getSituacionConstructivaRegistral().getDescripcion()));
+		}
+		
+		if(ddEstadoReg != null) {
+			activo.setEstadoRegistral(ddEstadoReg);	
+		}
+		
+		activoDao.save(activo);
+		
 	}
 	
 	

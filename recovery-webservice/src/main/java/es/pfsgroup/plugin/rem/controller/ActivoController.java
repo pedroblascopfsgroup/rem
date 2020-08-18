@@ -320,7 +320,6 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	//
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveActivoSaneamiento(DtoActivoSaneamiento activoDto, @RequestParam Long id, ModelMap model) {
 		try {
@@ -339,9 +338,7 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-	//
 
-	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveActivoCarga(DtoActivoCargas cargaDto, ModelMap model) {
 		try {

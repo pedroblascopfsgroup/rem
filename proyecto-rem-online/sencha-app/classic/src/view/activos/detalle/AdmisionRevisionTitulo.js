@@ -4,9 +4,8 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 	cls : 'panel-base shadow-panel',
 	reference : 'admisionrevisiontitulo',
 	disableValidation : true,
-	saveMultiple : false,
 	controller : 'admisionrevisiontitulo',
-	launch: null,
+	refreshAfterSave : true,
 	viewModel : {
 		type : 'admisionRevisionTitulo'
 	},
@@ -447,22 +446,15 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 			items : [{
 						xtype : 'agendaRevisionTituloGrid'
 					}]
-		}
-		/*{
-			xtype: 'fieldsettable',
-			items : [{
-				xtype: 'observacionesactivo',
-				launch: CONST.OBSERVACIONES_TAB_LAUNCH['REVISION_TITULO']
-			}]
-		}*/];
+		}];
 
 		me.callParent();
 	},
 
 	funcionRecargar : function() {
 		var me = this;
-		me.recargar = false;
 		me.lookupController().cargarTabData(me);
+		me.lookupController().cargarTabData(me.up('activosdetalle').down('datosbasicosactivo'));
 		Ext.Array.each(me.query('grid'), function(grid) {
 					grid.getStore().load();
 				});

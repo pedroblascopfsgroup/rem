@@ -265,8 +265,15 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                	}
 			                },
 			                {
-			                	//Campo para dejar un espacio entre los campos por estetica.
-			                	readOnly: true
+			                	xtype: 'comboboxfieldbase',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.estado.registral'),
+			                	name: 'comboEstadoRegistral',
+			                	reference: 'comboEstadoRegistralRef',
+			                	bind: {
+			                		store: '{comboEstadoRegistral}',
+			                		value: '{activo.estadoRegistralCodigo}',
+			                		readOnly: '{!activo.esEditableActivoEstadoRegistral}'
+			                	}
 			                },
 			                {
 			                	xtype: 'comboboxfieldbase',

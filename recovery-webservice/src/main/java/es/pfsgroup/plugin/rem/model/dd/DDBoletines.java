@@ -37,6 +37,18 @@ public class DDBoletines implements Auditable, Dictionary {
 	
 	public static final String CODIGO_PENDIENTE = "PDTE";
 	public static final String CODIGO_OBTENIDO = "OBT";
+	public static final String CODIGO_EDIFICACION_TERMINADA = "EDF_TER";
+	public static final String CODIGO_EN_CONTRUCCION = "CON_JUR";
+	public static final String CODIGO_OBRA_EN_CURSO = "EDF_WIP";
+	public static final String CODIGO_DISCREPANCIA_MAYOR_20 = "EXC_S20";
+	public static final String CODIGO_DISCREPANCIA_MENOR_20 = "EXC_I20";
+	public static final String CODIGO_DISCREPANCIA_SIN_INMATRICULAR = "EXC_SIM";
+	public static final String CODIGO_DISCREPANCIA_CAMBIO_USO = "EXC_CDU";
+	public static final String CODIGO_DISCREPANCIA_CAMBIO_DESC_REGISTRAL = "EXC_CDR";
+	public static final String CODIGO_DISCREPANCIA_DIVISION_HORIZONTAL = "EXC_DHO";
+	public static final String CODIGO_ILEGAL_IRREGU_URBANISTICAS = "CIL_IUR";
+	public static final String CODIGO_ILEGAL_FUERA_ORDENACION = "CIL_FOR";
+	public static final String CODIGO_ACTIVO_IRREGULAR = "ACT_IRR";
 
 	@Id
 	@Column(name = "DD_BOL_ID")

@@ -7,8 +7,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion','HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 
     		'HreRem.view.expedientes.ExpedienteDetalleController', 'HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', 
     		'HreRem.view.activos.detalle.InformeComercialActivo','HreRem.view.activos.detalle.AdministracionActivo',
-    		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias','HreRem.view.activos.detalle.PlusvaliaActivo', 'HreRem.model.ComercialActivoModel', 
-    		'HreRem.view.activos.detalle.SuministrosActivo'],
+    		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias','HreRem.view.activos.detalle.PlusvaliaActivo',
+    		'HreRem.model.ComercialActivoModel', 'HreRem.view.activos.detalle.CrearEvolucionObservaciones', 'HreRem.view.activos.detalle.SuministrosActivo', 'HreRem.view.activos.detalle.SaneamientoActivoDetalle'],
 
     control: {
          'documentosactivosimple gridBase': {
@@ -76,7 +76,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
              }
          },
 
-         'cargasactivo gridBase': {
+         'saneamientoactivo cargasactivogrid': {
             abrirFormulario: 'abrirFormularioAnyadirCarga',
          	onClickRemove: 'onClickRemoveCarga',
          	onClickPropagation :  'onClickPropagation'
@@ -284,7 +284,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			var idActivo;
 
             if(	   tabData.models[0].name == "datospublicacion"
-                || tabData.models[0].name == "cargasactivo"
+                || tabData.models[0].name == "activocargas"
                 || tabData.models[0].name == "activocondicionantesdisponibilidad"
                 || tabData.models[0].name == "activotrabajo"
                 || tabData.models[0].name == "activotrabajosubida"
@@ -6231,6 +6231,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}else if(!isDisabled && enPerimetroAdmision){
 			component.setDisabled(true);
 		}
+    },
+    
+    mostrarObservacionesGrid: function(event, target, options) {   	
+    	var me = this;
+    	var observacionesAdmision = target.data.observacionesEvolucion;
+  	
+    	me.getView().fireEvent('openModalWindow', "HreRem.view.activos.detalle.CrearEvolucionObservaciones", {
+            observacionesAdmision: observacionesAdmision
+        });
+        
+    },
+    
+    onClickCerrarObservacionesEvolucion: function(btn) {
+    	var me = this;
+    	btn.up('window').hide();
     }
-	
 });

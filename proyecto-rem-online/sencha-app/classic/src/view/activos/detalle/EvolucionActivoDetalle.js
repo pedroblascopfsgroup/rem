@@ -8,7 +8,7 @@
     reference: 'evolucionactivoref',
     scrollable	: 'y',
     listeners: {
-			boxready:'cargarTabData'
+			boxready:'cargarTabData'		
 	},
 
 	recordName: "evolucion",
@@ -39,11 +39,15 @@
                 },
                 selModel : {
                   type : 'checkboxmodel'
-                },
+                }, 
+                listeners: {
+				  rowdblclick: {fn: 'mostrarObservacionesGrid', extraArg: '{evolucion.observacionesEvolucion}'}
+				},				        
                 columns : [{
                       text : HreRem.i18n('header.evolucion.grid.estado'),
                       dataIndex : 'estadoEvolucion',
                       flex : 1
+                      
                     },{
                       text : HreRem.i18n('header.evolucion.grid.subestado'),
                       dataIndex : 'subestadoEvolucion',
@@ -60,14 +64,16 @@
                     }, {
                       text : HreRem.i18n('header.evolucion.grid.observaciones'),
                       flex : 1,
-                      dataIndex : 'observacionesEvolucion'
-                    }, {
+                      dataIndex : 'observacionesEvolucion',
+                      reference: 'observacionesevolucionref'                
+                    },{
                         text : HreRem.i18n('header.evolucion.grid.gestor'),
                         flex : 1,
                         dataIndex : 'gestorEvolucion'
                     }
 
                 ],
+                
                 dockedItems : [{
                       xtype : 'pagingtoolbar',
                       dock : 'bottom',
@@ -80,6 +86,7 @@
      ];
 		me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();
+    	
     }, 
 
     funcionRecargar: function() {

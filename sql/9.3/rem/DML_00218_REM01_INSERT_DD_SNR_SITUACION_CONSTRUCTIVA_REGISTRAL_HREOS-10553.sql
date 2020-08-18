@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Gabriel De Toni
---## FECHA_CREACION=20200723
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20200805
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10553
@@ -36,9 +36,9 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
             -- CODIGO  			      DESCRIPCION                       DESCRIPCION_LARGA 
-      T_TIPO_DATA('01',			'No',			                         'No'),
-      T_TIPO_DATA('02',			'Si, vigente protección',			     'Si, vigente protección'),
-      T_TIPO_DATA('03',			'Si, protección no vigente',			 'Si, protección no vigente')
+      T_TIPO_DATA('01',			'Terminado',			                 'Terminado'),
+      T_TIPO_DATA('02',			'En construcción (jurídica)',			 'En construcción (jurídica)'),
+      T_TIPO_DATA('03',			'En construcción física',			     'En construcción física')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
    

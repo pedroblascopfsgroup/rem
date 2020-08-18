@@ -987,7 +987,14 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'subestadoAdmisionDescCabecera'
-    		}
+			},
+			{
+	 			name: 'estadoRegistralCodigo'
+			},
+			{
+	 			name: 'esEditableActivoEstadoRegistral',
+    			type: 'boolean'	 			
+			}
     		
     ],
     

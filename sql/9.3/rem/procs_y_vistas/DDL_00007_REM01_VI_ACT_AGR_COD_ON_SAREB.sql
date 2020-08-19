@@ -1,0 +1,76 @@
+--/*
+--##########################################
+--## AUTOR=Juan Beltrán
+--## FECHA_CREACION=20200813
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-7958
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Crear vista para obtener la fecha de posesión de los activos
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 [REMVIP-7958] Versión inicial (Creación de la vista)
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+
+DECLARE    
+    ERR_NUM NUMBER; -- Numero de error
+    ERR_MSG VARCHAR2(2048); -- Mensaje de error
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_MSQL VARCHAR2(4000 CHAR); 
+    CUENTA NUMBER;
+    
+BEGIN
+
+  SELECT COUNT(*) INTO CUENTA FROM ALL_OBJECTS WHERE OBJECT_NAME = 'V_ACT_AGR_COD_ON_SAREB' AND OWNER=V_ESQUEMA AND OBJECT_TYPE='MATERIALIZED VIEW';  
+  IF CUENTA>0 THEN
+    DBMS_OUTPUT.PUT_LINE('DROP MATERIALIZED VIEW '|| V_ESQUEMA ||'.V_ACT_AGR_COD_ON_SAREB...');
+    EXECUTE IMMEDIATE 'DROP MATERIALIZED VIEW ' || V_ESQUEMA || '.V_ACT_AGR_COD_ON_SAREB';  
+    DBMS_OUTPUT.PUT_LINE('DROP MATERIALIZED VIEW '|| V_ESQUEMA ||'.V_ACT_AGR_COD_ON_SAREB... borrada OK');
+  END IF;
+
+  SELECT COUNT(*) INTO CUENTA FROM ALL_OBJECTS WHERE OBJECT_NAME = 'V_ACT_AGR_COD_ON_SAREB' AND OWNER=V_ESQUEMA AND OBJECT_TYPE='VIEW';  
+  IF CUENTA>0 THEN
+    DBMS_OUTPUT.PUT_LINE('DROP VIEW '|| V_ESQUEMA ||'.V_ACT_AGR_COD_ON_SAREB...');
+    EXECUTE IMMEDIATE 'DROP VIEW ' || V_ESQUEMA || '.V_ACT_AGR_COD_ON_SAREB';  
+    DBMS_OUTPUT.PUT_LINE('DROP VIEW '|| V_ESQUEMA ||'.V_ACT_AGR_COD_ON_SAREB... borrada OK');
+  END IF;
+
+    
+  DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_ACT_AGR_COD_ON_SAREB...');
+  EXECUTE IMMEDIATE 'CREATE VIEW ' || V_ESQUEMA || '.V_ACT_AGR_COD_ON_SAREB 
+	AS    
+ 	SELECT
+		ACT.ACT_NUM_ACTIVO,
+		AGR.AGR_COD_ON_SAREB
+	FROM '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA 
+		JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR 					ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0
+		JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT 											ON ACT.ACT_ID = AGA.ACT_ID AND AGA.BORRADO = 0';
+        
+DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_ACT_AGR_COD_ON_SAREB...Creada OK');
+  
+EXCEPTION
+    WHEN OTHERS THEN
+         ERR_NUM := SQLCODE;
+         ERR_MSG := SQLERRM;
+
+         DBMS_OUTPUT.PUT_LINE('KO no modificada');
+         DBMS_OUTPUT.PUT_LINE('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+         DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------'); 
+         DBMS_OUTPUT.PUT_LINE(ERR_MSG);
+
+         ROLLBACK;
+         RAISE;   
+		 
+END;
+/
+
+EXIT;

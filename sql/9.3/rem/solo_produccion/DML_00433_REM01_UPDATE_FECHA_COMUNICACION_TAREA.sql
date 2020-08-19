@@ -1,16 +1,16 @@
 --/*
 --##########################################
 --## AUTOR=Juan Bautista Alfonso Canovas
---## FECHA_CREACION=20200818
+--## FECHA_CREACION=20200819
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-7974
 --## PRODUCTO=NO
 --##
---## Finalidad: Actualizar fecha comunicacion
+--## Finalidad: Actualizar fecha comunicacion correccion
 --## INSTRUCCIONES: 
 --## VERSIONES:
---##        0.1 Version inicial
+--##        0.2 Version inicial
 --##########################################
 --*/
 
@@ -44,7 +44,7 @@ BEGIN
 	IF V_COUNT = 1 THEN
 
 		V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||'
-			SET CMG_FECHA_COMUNICACION = TO_DATE(''20/11/2019'', ''DD/MM/YYYY''),
+			SET CMG_FECHA_COMUNICACION = TO_DATE(''20/11/2020'', ''DD/MM/YYYY''),
 			USUARIOMODIFICAR = '''||V_USUARIO||''',
 			FECHAMODIFICAR = SYSDATE 
 			WHERE ACT_ID=(SELECT ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_NUM_ACTIVO='||V_NUMERO_ACTIVO||')';				

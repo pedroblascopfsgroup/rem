@@ -19,8 +19,7 @@ public class TramiteActuacionTecnicaNodoOcultoHandler extends ActivoBaseActionHa
 		DDSubcartera subcartera = tramite.getActivo().getSubcartera();
 		if(!Checks.esNulo(cartera) && !Checks.esNulo(subcartera)){
 			if((DDCartera.CODIGO_CARTERA_CERBERUS.equals(cartera.getCodigo()) 
-					&& (DDSubcartera.CODIGO_JAIPUR_INMOBILIARIO.equals(subcartera.getCodigo()) 
-							|| DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(subcartera.getCodigo())
+					&& (DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(subcartera.getCodigo())
 							|| DDSubcartera.CODIGO_EGEO.equals(subcartera.getCodigo())))
 			   || (DDCartera.CODIGO_CARTERA_EGEO.equals(cartera.getCodigo())
 					   && (DDSubcartera.CODIGO_ZEUS.equals(subcartera.getCodigo())

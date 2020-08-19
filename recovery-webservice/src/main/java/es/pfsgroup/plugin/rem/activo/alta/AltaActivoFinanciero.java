@@ -136,6 +136,10 @@ public class AltaActivoFinanciero implements AltaActivoService {
 			
 			ActivoSituacionPosesoria actSit = new ActivoSituacionPosesoria();
 			actSit.setActivo(activo);
+			actSit.setAccesoAntiocupa(0);
+			actSit.setAccesoTapiado(0);		
+			actSit.setOcupado(0);		
+			actSit.setComboOtro(0);
 			actSit.setVersion(new Long(0));
 			actSit.setAuditoria(auditoria);
 			
@@ -350,17 +354,18 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		ActivoInfoComercial info = new ActivoInfoComercial();
 		info.setActivo(activo);
 		info.setTipoActivo(activo.getTipoActivo());			
-		info.setMediadorInforme(this.obtenerMediador(dtoAAF.getNifMediador(),activo.getId()));
-		
 		if (!Checks.esNulo(dtoAAF.getNifMediador())) {
 			Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAAF.getNifMediador());
 			Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_MEDIADOR);
-			ActivoProveedor mediador = genericDao.get(ActivoProveedor.class, f1,f2);
+			Filter f3 = genericDao.createFilter(FilterType.NULL, "fechaBaja");
+			ActivoProveedor mediador = genericDao.get(ActivoProveedor.class, f1,f2, f3);
 			if(Checks.esNulo(mediador)){
 				f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA);
-				mediador = genericDao.get(ActivoProveedor.class, f1, f2);
+				mediador = genericDao.get(ActivoProveedor.class, f1, f2, f3);
 			}
 			info.setMediadorInforme(mediador);
+		} else {
+			info.setMediadorInforme(this.obtenerMediador(dtoAAF.getNifMediador(),activo.getId()));
 		}
 		beanUtilNotNull.copyProperty(info, "planta", dtoAAF.getNumPlantasVivienda());
 		genericDao.save(ActivoInfoComercial.class, info);

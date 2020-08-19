@@ -354,7 +354,7 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 			genericDao.save(ActivoAdmisionRevisionTitulo.class, revisionTitulo);
 		}
 		
-		DDEstadoRegistralActivo ddEstadoReg = new DDEstadoRegistralActivo();
+		DDEstadoRegistralActivo ddEstadoReg = null;
 	
 		if(revisionTitulo.getTipoIncidenciaRegistral() != null) {
 			ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", revisionTitulo.getTipoIncidenciaRegistral().getDescripcion()));

@@ -14,8 +14,12 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTituloController', {
 		form.mask(HreRem.i18n("msg.mask.loading"));
 		model.load({
 		    success: function(record,b,c,d) {
+		    	form.setBindRecord(record);		
 		    	me.getViewModel().set(form.recordName, record);			    	
 		    	form.unmask();
+		    	if(Ext.isFunction(form.afterLoad)) {
+		    		form.afterLoad();
+		    	}
 		    },
 		    failure: function(operation) {		    	
 		    	form.up("tabpanel").unmask();

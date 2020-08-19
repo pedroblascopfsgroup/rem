@@ -406,10 +406,10 @@ Ext.define('HreRem.ux.util.Constants', {
     },
 
     SITUACION_CARGA: {
-    	VIEGENTE: 'VIG',
-    	NO_CANCELABLE: 'NCN',
-    	CANCELADA: 'CAN',
-    	EN_SANEAMIENTO: 'SAN'
+    	VIGENTE: '01',
+    	NO_REQUIERE_GESTION: '02',
+    	CANCELADA: '03',
+    	CADUCADA: '04'    	
     },
 
     CLASE_ACTIVO: {

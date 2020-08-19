@@ -98,3 +98,6 @@ func-HREOS-10487|func-rem-nuevasEntradasAdmision
 rem_mirror|func-rem-nuevasEntradasAdmision
 2.20.9-20071001-rem|func-rem-nuevasEntradasAdmision
 func-rem-nuevasEntradasAdmision|R-Ricalate
+rem_mirror|func-rem-BBVA-F1
+func-rem-BBVA-F1|func-rem-BBVA-F2
+func-rem-BBVA-F2|R-Ricalate

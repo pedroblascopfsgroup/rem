@@ -39,6 +39,8 @@ public class DtoActivoGridFilter extends WebDto {
 	private String tipoUsoDestinoCodigo;
 	private String claseActivoBancarioCodigo;
 	private String subclaseActivoBancarioCodigo;
+	private Long   numActivoBbva;
+	private Long   idDivarianBbva;
 	private String tipoViaCodigo;
 	private String provinciaAvanzadaCodigo;
 	private String localidadAvanzadaDescripcion;
@@ -277,6 +279,19 @@ public class DtoActivoGridFilter extends WebDto {
 	}
 	public void setSubclaseActivoBancarioCodigo(String subclaseActivoBancarioCodigo) {
 		this.subclaseActivoBancarioCodigo = subclaseActivoBancarioCodigo;
+	}
+	
+	public Long getNumActivoBbva() {
+		return numActivoBbva;
+	}
+	public void setNumActivoBbva(Long numActivoBbva) {
+		this.numActivoBbva = numActivoBbva;
+	}
+	public Long getIdDivarianBbva() {
+		return idDivarianBbva;
+	}
+	public void setIdDivarianBbva(Long idDivarianBbva) {
+		this.idDivarianBbva = idDivarianBbva;
 	}
 	public String getTipoViaCodigo() {
 		return tipoViaCodigo;

@@ -30,6 +30,12 @@ public class VGridBusquedaActivos implements Serializable {
 	@Column(name = "NUM_ACTIVO")
 	private Long numActivo;
 	
+	@Column(name = "BBVA_NUM_ACTIVO")
+    private Long numActivoBbva;
+    
+	@Column(name = "BBVA_ID_DIVARIAN")
+	private Long idDivarianBbva;
+	
 	@Column(name = "NUM_ACTIVO_SAREB")
 	private String numActivoSareb;
 	
@@ -729,5 +735,23 @@ public class VGridBusquedaActivos implements Serializable {
 	public void setEquipoGestion(String equipoGestion) {
 		this.equipoGestion = equipoGestion;
 	}
+
+	public Long getNumActivoBbva() {
+		return numActivoBbva;
+	}
+
+	public void setNumActivoBbva(Long numActivoBbva) {
+		this.numActivoBbva = numActivoBbva;
+	}
+
+	public Long getIdDivarianBbva() {
+		return idDivarianBbva;
+	}
+
+	public void setIdDivarianBbva(Long idDivarianBbva) {
+		this.idDivarianBbva = idDivarianBbva;
+	}
+	
+	
     
 }

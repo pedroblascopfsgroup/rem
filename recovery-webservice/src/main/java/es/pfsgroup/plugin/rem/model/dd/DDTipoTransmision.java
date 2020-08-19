@@ -19,67 +19,46 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de carteras.
+ * Modelo que gestiona el diccionario de los tipos de transmision.
  * 
- * @author Benjamín Guerrero
+ * @author Ivan Rubio
  *
  */
 @Entity
-@Table(name = "DD_CRA_CARTERA", schema = "${entity.schema}")
+@Table(name = "DD_TTR_TIPO_TRANSMISION", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDCartera implements Auditable, Dictionary {
+public class DDTipoTransmision implements Auditable, Dictionary {
 
-	public static final String CODIGO_CARTERA_CAJAMAR = "01";
-	public static final String CODIGO_CARTERA_SAREB = "02";
-	public static final String CODIGO_CARTERA_BANKIA = "03";
-	public static final String CODIGO_CARTERA_HYT = "06";
-	public static final String CODIGO_CARTERA_TANGO = "10";
-	public static final String CODIGO_CARTERA_THIRD_PARTY = "11";
-	public static final String CODIGO_CARTERA_GIANTS = "12";
-	public static final String CODIGO_CARTERA_ZEUS = "14";
-	public static final String CODIGO_CARTERA_LIBERBANK = "08";
-	public static final String CODIGO_CARTERA_CERBERUS = "07";
-	public static final String CODIGO_CARTERA_GALEON = "15";
-	public static final String DESCRIPCION_CARTERA_BANKIA = "Bankia";
-	public static final String DESCRIPCION_CARTERA_HYT = "Haya Titulizacion";
-	public static final String CODIGO_CARTERA_JAIPUR = "09";
-	public static final String CODIGO_CARTERA_EGEO = "13";
-	public static final String CODIGO_CARTERA_BBVA = "16";
-		/**
+
+	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2307957295534774606L;
+	public static final String CODIGO_TR1 = "TR1";
+    public static final String CODIGO_TR2 = "TR2";
 
 	@Id
-	@Column(name = "DD_CRA_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDCarteraGenerator")
-	@SequenceGenerator(name = "DDCarteraGenerator", sequenceName = "S_DD_CRA_CARTERA")
+	@Column(name = "DD_TTR_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoTransmisionGenerator")
+	@SequenceGenerator(name = "DDTipoTransmisionGenerator", sequenceName = "S_DD_TTR_TIPO_TRANSMISION")
 	private Long id;
-	 
-	@Column(name = "DD_CRA_CODIGO")   
-	private String codigo;
 	
-	@Column(name = "DD_CRA_CIF")   
-	private String cif;
+	@Column(name = "DD_TTR_CODIGO")   
+	private String codigo;
 	 
-	@Column(name = "DD_CRA_DESCRIPCION")   
+	@Column(name = "DD_TTR_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_CRA_DESCRIPCION_LARGA")   
+	@Column(name = "DD_TTR_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
-	    
 	
-	    
 	@Version   
 	private Long version;
-
+	
 	@Embedded
 	private Auditoria auditoria;
-
-	 
-	 
-	 
+	
 	public Long getId() {
 		return id;
 	}
@@ -94,14 +73,6 @@ public class DDCartera implements Auditable, Dictionary {
 
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
-	}
-	
-	public String getCif() {
-		return cif;
-	}
-
-	public void setCif(String cif) {
-		this.cif = cif;
 	}
 
 	public String getDescripcion() {
@@ -120,7 +91,6 @@ public class DDCartera implements Auditable, Dictionary {
 		this.descripcionLarga = descripcionLarga;
 	}
 
-
 	public Long getVersion() {
 		return version;
 	}
@@ -137,4 +107,8 @@ public class DDCartera implements Auditable, Dictionary {
 		this.auditoria = auditoria;
 	}
 
+	 
+	
+	
+	
 }

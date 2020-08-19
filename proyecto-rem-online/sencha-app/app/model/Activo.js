@@ -994,8 +994,56 @@ Ext.define('HreRem.model.Activo', {
 			{
 	 			name: 'esEditableActivoEstadoRegistral',
     			type: 'boolean'	 			
-			}
-    		
+			},
+			{
+    			name: 'activoEpa',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'empresa'
+    		},
+    		{
+    			name: 'oficina'
+    		},
+    		{
+    			name: 'contrapartida'
+    		},
+    		{
+    			name: 'folio'
+    		},
+    		{
+    			name: 'cdpen'
+    		},
+    		{
+    			name: 'numActivoBbva'
+    		},
+    		{
+    			name: 'idDivarianBbva'
+    		},
+    		{
+    			name: 'lineaFactura'
+    		},
+    		{
+    			name: 'idOrigenHre'
+    		},
+    		{
+    			name: 'uicBbva'
+    		},
+    		{
+    			name: 'cexperBbva'
+    		},
+    		{
+    			name: 'tipoTransmisionCodigo'
+    		},
+    		{
+    			name: 'tipoTransmisionDescripcion'
+    		},
+    		{
+    			name: 'tipoAltaCodigo'
+    		},
+    		{
+    			name: 'tipoAltaDescripcion'
+    		}
     ],
     
 	proxy: {

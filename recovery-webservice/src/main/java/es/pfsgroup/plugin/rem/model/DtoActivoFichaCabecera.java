@@ -295,6 +295,23 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String subestadoAdmisionDescCabecera;
 	private Boolean esEditableActivoEstadoRegistral;
 
+	private Boolean activoEpa;
+    private Long empresa;
+    private Long oficina;
+    private Long contrapartida;
+    private Long folio;
+    private Long cdpen;
+    
+	private Long numActivoBbva;
+    private Long idDivarianBbva;
+    private Long lineaFactura;
+    private Long idOrigenHre;
+    private String uicBbva;
+    private String cexperBbva;
+    private String tipoTransmisionCodigo;
+    private String tipoAltaCodigo;
+    private String tipoTransmisionDescripcion;
+    private String tipoAltaDescripcion;
 	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -2249,4 +2266,131 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.esEditableActivoEstadoRegistral = esEditableActivoEstadoRegistral;
 	}	
 	
+	public Boolean getActivoEpa() {
+		return activoEpa;
+	}
+
+	public void setActivoEpa(Boolean activoEpa) {
+		this.activoEpa = activoEpa;
+	}
+
+	public Long getEmpresa() {
+		return empresa;
+	}
+
+	public void setEmpresa(Long empresa) {
+		this.empresa = empresa;
+	}
+
+	public Long getOficina() {
+		return oficina;
+	}
+
+	public void setOficina(Long oficina) {
+		this.oficina = oficina;
+	}
+
+	public Long getContrapartida() {
+		return contrapartida;
+	}
+
+	public void setContrapartida(Long contrapartida) {
+		this.contrapartida = contrapartida;
+	}
+
+	public Long getFolio() {
+		return folio;
+	}
+
+	public void setFolio(Long folio) {
+		this.folio = folio;
+	}
+
+	public Long getCdpen() {
+		return cdpen;
+	}
+
+	public void setCdpen(Long cdpen) {
+		this.cdpen = cdpen;
+	}
+
+	public Long getNumActivoBbva() {
+		return numActivoBbva;
+	}
+
+	public void setNumActivoBbva(Long numActivoBbva) {
+		this.numActivoBbva = numActivoBbva;
+	}
+
+	public Long getIdDivarianBbva() {
+		return idDivarianBbva;
+	}
+
+	public void setIdDivarianBbva(Long idDivarianBbva) {
+		this.idDivarianBbva = idDivarianBbva;
+	}
+
+	public Long getLineaFactura() {
+		return lineaFactura;
+	}
+
+	public void setLineaFactura(Long lineaFactura) {
+		this.lineaFactura = lineaFactura;
+	}
+
+	public Long getIdOrigenHre() {
+		return idOrigenHre;
+	}
+
+	public void setIdOrigenHre(Long idOrigenHre) {
+		this.idOrigenHre = idOrigenHre;
+	}
+
+	public String getUicBbva() {
+		return uicBbva;
+	}
+
+	public void setUicBbva(String uicBbva) {
+		this.uicBbva = uicBbva;
+	}
+
+	public String getCexperBbva() {
+		return cexperBbva;
+	}
+
+	public void setCexperBbva(String cexperBbva) {
+		this.cexperBbva = cexperBbva;
+	}
+
+	public String getTipoTransmisionCodigo() {
+		return tipoTransmisionCodigo;
+	}
+
+	public void setTipoTransmisionCodigo(String tipoTransmisionCodigo) {
+		this.tipoTransmisionCodigo = tipoTransmisionCodigo;
+	}
+
+	public String getTipoAltaCodigo() {
+		return tipoAltaCodigo;
+	}
+
+	public void setTipoAltaCodigo(String tipoAltaCodigo) {
+		this.tipoAltaCodigo = tipoAltaCodigo;
+	}
+
+	public String getTipoTransmisionDescripcion() {
+		return tipoTransmisionDescripcion;
+	}
+
+	public void setTipoTransmisionDescripcion(String tipoTransmisionDescripcion) {
+		this.tipoTransmisionDescripcion = tipoTransmisionDescripcion;
+	}
+
+	public String getTipoAltaDescripcion() {
+		return tipoAltaDescripcion;
+	}
+
+	public void setTipoAltaDescripcion(String tipoAltaDescripcion) {
+		this.tipoAltaDescripcion = tipoAltaDescripcion;
+	}
 }

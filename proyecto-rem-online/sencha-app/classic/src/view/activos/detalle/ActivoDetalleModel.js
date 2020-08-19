@@ -938,7 +938,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			else
 				return false;
 		},
-		
+
 		estadoAdmisionVisible : function(get){
 			
 			return (get('activo.incluidoEnPerimetroAdmision') == "false" || !get('activo.incluidoEnPerimetroAdmision'))  && ($AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
@@ -954,6 +954,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		    }
 
 		    return editarCargasActivo;
+		},
+
+		activarCamposGridPreciosVigentes: function(){
+			var gestorPrecios = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_PRECIOS']);
+			if(gestorPrecios){
+				return true;
+			}
+			return false;
 		}
 	 }, 
 	 

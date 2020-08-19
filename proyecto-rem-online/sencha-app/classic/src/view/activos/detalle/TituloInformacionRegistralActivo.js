@@ -393,6 +393,21 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 				        	hidden: '{mostrarCamposDivarian}'
 				        }
 					},
+					{
+			        	xtype: 'comboboxfieldbase',
+			        	fieldLabel: HreRem.i18n('fieldlabel.sociedad.pago'),
+			        	bind: { 
+			        		value:'{datosRegistrales.sociedadPagoAnterior}',
+			        		store: '{comboSituacionPagoAnterior}',
+			        		readOnly: '{!activo.isSubcarteraDivarian}'
+			        	}
+			        },
+			        {
+			        	readOnly: true
+			        },
+			        {
+			        	readOnly: true
+			        },
 			        {
 						title: 'Listado de Propietarios',
 						itemId: 'listadoPropietarios',
@@ -715,6 +730,15 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	}
 			                	
 			                },
+							{
+								fieldLabel : HreRem
+										.i18n('fieldlabel.id.proceso.origen'),
+								bind : {
+									value : '{datosRegistrales.idProcesoOrigen}',
+									readOnly : '{esUA}'
+								}
+
+							},
 			                {
 			                	xtype: 'numberfieldbase',
 			                	maxLength: 4,
@@ -798,7 +822,16 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
                                 	value: '{datosRegistrales.defectosTestimonio}',
                                 	readOnly: '{datosRegistrales.unidadAlquilable}'
                                 }
-                            }
+                            },
+							{
+								fieldLabel : HreRem
+										.i18n('fieldlabel.id.proceso.origen'),
+								bind : {
+									value : '{datosRegistrales.idProcesoOrigen}',
+									readOnly : '{esUA}'
+								}
+
+							}
 						]
 
         			},

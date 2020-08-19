@@ -277,6 +277,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("proteccionOficial", DDProteccionOficial.class);
 		mapa.put("tipoIncidencia", DDTipoIncidencia.class);
 		mapa.put("estadoRegistral", DDEstadoRegistralActivo.class);
+		mapa.put("tipoTransmision", DDTipoTransmision.class);
+		mapa.put("tipoAlta", DDTipoAlta.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

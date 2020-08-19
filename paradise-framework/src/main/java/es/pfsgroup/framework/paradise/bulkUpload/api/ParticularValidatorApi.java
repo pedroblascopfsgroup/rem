@@ -1175,6 +1175,8 @@ public interface ParticularValidatorApi {
 
 	public Boolean relacionEstadoSubestadoAdmisionValido(String codEstadoAdmision, String codSubestadoAdmision);
 
+	Boolean esActivoBBVA(String numActivo);
+	
 	String getValidacionCampoCDC(String codCampo);
 
 }

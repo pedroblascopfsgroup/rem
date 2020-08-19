@@ -514,6 +514,12 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
 	    				}
     				}
     			}
+    		},
+    		{
+    			name: 'idProcesoOrigen'
+    		},
+    		{
+    			name: 'sociedadPagoAnterior'
     		}
     ],
     

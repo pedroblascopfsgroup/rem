@@ -87,8 +87,8 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 								totalPresu += trabajo.getImportePresupuesto();
 							}
 						}
-						albaran.setImporteTotal(total);
-						albaran.setImporteTotalCliente(totalPresu);
+						albaran.setImporteTotal(totalPresu);
+						albaran.setImporteTotalCliente(total);
 					} else {
 						albaran.setImporteTotal(0.0);
 						albaran.setImporteTotalCliente(0.0);

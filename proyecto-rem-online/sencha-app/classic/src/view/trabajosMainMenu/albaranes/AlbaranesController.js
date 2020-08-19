@@ -250,7 +250,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 
 		var me = this;
 		var iterador = 0;
-		var gridDetalle = button.previousSibling("[reference='detalleAlbaranGrid']");
+		var gridDetalle = me.lookupReference('detalleAlbaranGrid');
 		var numPrefactura = gridDetalle.selection.data.numPrefactura;
 		var itemTrabajos = this.lookupReference('detallePrefacturaGrid').getStore().getData().items;
 		var lista = [];
@@ -288,8 +288,8 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		    				  Ext.MessageBox.alert('Prefactura Validada','Se ha validado la prefactura de forma correcta');
 		    				  win.close();
 		    				  gridDetalle.getStore().load();
-		    				  this.lookupReference('albaranGrid').getStore().load();
-		    				  this.lookupReference('detallePrefacturaGrid').getStore().removeAll();
+		    				  me.lookupReference('albaranGrid').getStore().load();
+		    				  me.lookupReference('detallePrefacturaGrid').getStore().removeAll();
 		    			  }
 		    			  
 		    		    });
@@ -313,9 +313,15 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 	validaTrabajos: function(button) {
 
 		var me = this;
-		var gridDetalle = button.previousSibling("[reference='detalleAlbaranGrid']");
+		var iterador = 0;
+		var gridDetalle = me.lookupReference('detalleAlbaranGrid');
 		var numPrefactura = gridDetalle.selection.data.numPrefactura;
-
+		var itemTrabajos = this.lookupReference('detallePrefacturaGrid').getStore().getData().items;
+		var lista = [];
+		for(iterador = 0; iterador < itemTrabajos.length; iterador++){
+			lista.push(this.lookupReference('detallePrefacturaGrid').getStore().getData().items[iterador].getData())
+		}
+		var listaString = JSON.stringify(lista);
 		var win = new Ext.window.Window({
 			 border: true,
 			 closable: false,
@@ -340,13 +346,14 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		    		    var url = $AC.getRemoteUrl('albaran/comprobarValidarPrefactura');
 		    		    Ext.Ajax.request({
 		    			  url:url,
-		    			  params:  {id : numPrefactura},
+		    			  params:  {id : numPrefactura,
+		    				  		lista : listaString},
 		    			  success: function(response,opts){
 		    				  Ext.MessageBox.alert('Prefactura Validada','Se ha validado la prefactura de forma correcta');
-		    				  gridDetalle.getStore().load();
-		    				  gridDetalle.previousSibling().previousSibling().getStore().load();
-		    				  var listaTrabajos = gridDetalle.nextSibling().nextSibling("[reference='detallePrefacturaGrid']").getStore().removeAll();
 		    				  win.close();
+		    				  gridDetalle.getStore().load();
+		    				  me.lookupReference('albaranGrid').getStore().load();
+		    				  me.lookupReference('detallePrefacturaGrid').getStore().removeAll();
 		    			  }
 		    			  
 		    		    });
@@ -398,5 +405,5 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 			botondos.setDisabled(false);
 		}
 	}
-
+	
 });

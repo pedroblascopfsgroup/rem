@@ -73,16 +73,16 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 				}
 				if (gastos == null || gastos.isEmpty()) {
 					dto = rellenaDtoDetalleAlbaran(null, prefactura);
-					dto.setImporteTotalClienteDetalle(totalPresupuesto);
-					dto.setImporteTotalDetalle(total);
+					dto.setImporteTotalClienteDetalle(total);
+					dto.setImporteTotalDetalle(totalPresupuesto);
 					dto.setNumeroTrabajos(trabajos.size());
 					dtos.add(dto);
 				}else {
 					for (GastoProveedor gasto : gastos) {
 						dto = new DtoDetalleAlbaran();
 						dto = rellenaDtoDetalleAlbaran(gasto, prefactura);
-						dto.setImporteTotalClienteDetalle(totalPresupuesto);
-						dto.setImporteTotalDetalle(total);
+						dto.setImporteTotalClienteDetalle(total);
+						dto.setImporteTotalDetalle(totalPresupuesto);
 						dto.setNumeroTrabajos(trabajos.size());
 						dtos.add(dto);
 					}
@@ -128,14 +128,14 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 					dto.setCheckIncluirTrabajo(false);
 				}
 				if(trabajo.getImporteTotal() != null) {
-					dto.setImporteTotalPrefactura(trabajo.getImporteTotal());
-				}else {
-					dto.setImporteTotalPrefactura(0.0);
-				}
-				if(trabajo.getImportePresupuesto() != null) {
-					dto.setImporteTotalClientePrefactura(trabajo.getImportePresupuesto()); 
+					dto.setImporteTotalClientePrefactura(trabajo.getImporteTotal());
 				}else {
 					dto.setImporteTotalClientePrefactura(0.0);
+				}
+				if(trabajo.getImportePresupuesto() != null) {
+					dto.setImporteTotalPrefactura(trabajo.getImportePresupuesto()); 
+				}else {
+					dto.setImporteTotalPrefactura(0.0);
 				}
 				dtos.add(dto);
 			}

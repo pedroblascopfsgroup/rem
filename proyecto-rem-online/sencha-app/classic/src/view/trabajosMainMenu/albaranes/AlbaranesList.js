@@ -86,7 +86,8 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesList', {
 						            text : 'Validar Prefactura',
 						            disabled: true,
 						            tdAttrs: { style: 'padding: 5px 15px 5px 15px;', align: 'right' },
-						            reference: 'botonValidarTrabajo'
+						            reference: 'botonValidarTrabajo',
+						            handler: 'validaTrabajos'
 						        }
 							]
 						}

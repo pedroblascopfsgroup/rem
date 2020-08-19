@@ -38,6 +38,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoAvisadorApi;
+import es.pfsgroup.plugin.rem.api.GastoLineaDetalleApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.excel.ActivosGastoExcelReport;
@@ -62,6 +63,8 @@ import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
 import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
+import es.pfsgroup.plugin.rem.model.DtoLineaDetalleGasto;
+import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
@@ -105,6 +108,9 @@ public class GastosProveedorController extends ParadiseJsonController {
 
 	@Autowired
 	private ConfigManager configManager;
+	
+	@Autowired
+	private GastoLineaDetalleApi gastoLineaDetalleApi;
 	
 	private static final String RESPONSE_SUCCESS_KEY = "success";	
 	private static final String RESPONSE_DATA_KEY = "data";
@@ -1086,13 +1092,13 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView getGastosRefacturados(@RequestParam String gastos, String nifPropietario) {
+	public ModelAndView getGastosRefacturados(@RequestParam String gastos, String nifPropietario, String tipoGasto) {
 		ModelMap model = new ModelMap();
 		
 		List<String> gastosRefacturables = new ArrayList<String>();
 		List<String> gastosNoRefacturables = new ArrayList<String>();
 		if(!Checks.esNulo(gastos)) {
-			gastosRefacturables = gastoProveedorApi.getGastosRefacturados(gastos, nifPropietario);
+			gastosRefacturables = gastoProveedorApi.getGastosRefacturados(gastos, nifPropietario, tipoGasto);
 			gastosNoRefacturables = gastoProveedorApi.getGastosNoRefacturados(gastos, gastosRefacturables);
 		}
 		try {			
@@ -1152,9 +1158,11 @@ public class GastosProveedorController extends ParadiseJsonController {
 				//Esta línea de código sirve para validar los gastos a anyadir,
 				//en caso de no cumplir, lanza excepciones visuales para front.
 				gastoProveedorApi.validarGastosARefacturar(idGasto, gastosRefacturables);
+				GastoProveedor gastoProveedor = gastoProveedorApi.findOne(Long.valueOf(idGasto));
 				
-				if(!Checks.esNulo(gastosRefacturables)) {
-					gastosRefacturablesLista = gastoProveedorApi.getGastosRefacturados(gastosRefacturables, nifPropietario);
+				if(gastosRefacturables != null && gastoProveedor != null && gastoProveedor.getTipoGasto() != null) {
+					gastosRefacturablesLista = 
+							gastoProveedorApi.getGastosRefacturados(gastosRefacturables, nifPropietario, gastoProveedor.getTipoGasto().getCodigo());
 				}
 				
 				if(!Checks.estaVacio(gastosRefacturablesLista)){
@@ -1197,6 +1205,78 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("success", false);		
 		}
 
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getGastoLineaDetalle(Long idGasto) {
+		ModelMap model = new ModelMap();
+		
+		try {			
+			List<DtoLineaDetalleGasto> dtoLineaDetalleGastoLista =gastoLineaDetalleApi.getGastoLineaDetalle(idGasto);
+			model.put("data", dtoLineaDetalleGastoLista);
+			model.put("success", true);			
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveGastoLineaDetalle(HttpServletRequest request, DtoLineaDetalleGasto dtoLineaDetalleGasto) {
+		
+		
+		ModelMap model = new ModelMap();
+		try {
+			model.put("success", gastoLineaDetalleApi.saveGastoLineaDetalle(dtoLineaDetalleGasto));
+			
+		}catch (Exception e) {
+			logger.error("error en GastosProveedorController", e);
+			model.put("success", false);
+			model.put("errorMessage", "Error al crear/modificar LíneaDetalleGasto.");
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView deleteGastoLineaDetalle(Long idLineaDetalleGasto) {
+		
+		
+		ModelMap model = new ModelMap();
+		try {
+			model.put("success", gastoLineaDetalleApi.deleteGastoLineaDetalle(idLineaDetalleGasto));
+			
+		}catch (Exception e) {
+			logger.error("error en GastosProveedorController", e);
+			model.put("success", false);
+			model.put("errorMessage", "Error al borrar LíneaDetalleGasto.");
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView calcularCuentasYPartidas(Long idGasto, Long idLineaDetalleGasto, String subtipoGastoCodigo) {
+			
+		ModelMap model = new ModelMap();
+		try {
+			DtoLineaDetalleGasto linea = gastoLineaDetalleApi.calcularCuentasYPartidas(idGasto, idLineaDetalleGasto, subtipoGastoCodigo);
+			model.put("data", linea);
+			model.put("success", true);
+			
+		}catch (Exception e) {
+			logger.error("error en GastosProveedorController", e);
+			model.put("success", false);
+			model.put("errorMessage", "Error encontrar pp y cc.");
+		}
+		
 		return createModelAndViewJson(model);
 	}
 	

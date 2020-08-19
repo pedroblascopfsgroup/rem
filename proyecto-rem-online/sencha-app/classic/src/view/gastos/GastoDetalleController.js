@@ -395,16 +395,16 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 
 		var operacion = me.lookupReference('cbOperacionExenta');
 		var renuncia = me.lookupReference('cbRenunciaExencion');
-		var tipoImpositivo = me.lookupReference('tipoImpositivo');
+		var esTipoImpositivo = me.lookupReference('esTipoImpositivo');
 		var cuota = me.lookupReference('cbCuota');
 		var importeTotal = me.lookupReference('detalleEconomicoImporteTotal');
 		if(operacion.getValue()){
 			renuncia.setReadOnly(false);
-			tipoImpositivo.setDisabled(true);
+			esTipoImpositivo.setDisabled(true);
 			cuota.setDisabled(true);
 		}else{			
-			tipoImpositivo.setDisabled(false);
-			tipoImpositivo.allowBlank = false;
+			esTipoImpositivo.setDisabled(false);
+			esTipoImpositivo.allowBlank = false;
 			cuota.setDisabled(false);
 			cuota.allowBlank = false;
 			renuncia.setValue(false);
@@ -413,7 +413,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		importeTotal.validate();
 		operacion.validate();
 		renuncia.validate();
-		tipoImpositivo.validate();
+		esTipoImpositivo.validate();
 		cuota.validate();
 
 	},
@@ -423,22 +423,22 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		
 		var operacion = me.lookupReference('cbOperacionExenta');
 		var renuncia = me.lookupReference('cbRenunciaExencion');
-		var tipoImpositivo = me.lookupReference('tipoImpositivo');
+		var esTipoImpositivo = me.lookupReference('esTipoImpositivo');
 		var cuota = me.lookupReference('cbCuota');
 		var importeTotal = me.lookupReference('detalleEconomicoImporteTotal');
 		if(operacion.getValue() && !renuncia.getValue()){
-			tipoImpositivo.setDisabled(true);
+			esTipoImpositivo.setDisabled(true);
 			cuota.setDisabled(true);
 		}else{
-			tipoImpositivo.setDisabled(false);
-			tipoImpositivo.allowBlank = false;
+			esTipoImpositivo.setDisabled(false);
+			esTipoImpositivo.allowBlank = false;
 			cuota.setDisabled(false);
 			cuota.allowBlank = false;
 		}
 		importeTotal.validate();
 		operacion.validate();
 		renuncia.validate();
-		tipoImpositivo.validate();
+		esTipoImpositivo.validate();
 		cuota.validate();
 	},
 	
@@ -1149,6 +1149,17 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		
 	},
 	
+	onChangeRetencionGarantiaAplica: function(field, checked){
+		var me= this;
+		// Habilitamos/deshabilitamos campos
+		me.lookupReference('baseIRPFRetG').setDisabled(!checked);
+		me.lookupReference('irpfTipoImpositivoRetG').setDisabled(!checked);
+		me.lookupReference('cuotaIRPFRetG').setDisabled(!checked);;
+		me.onChangeCuotaRetencionGarantia(checked);
+		
+		
+	},
+	
 	onChangeAbonoCuenta: function(field, checked){
 		var me= this;
 
@@ -1585,13 +1596,15 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var destinatarioGastoCodigo = me.getView().down('[name=destinatarioGastoCodigo]');
 		var buscadorNifEmisorField = me.lookupReference("buscadorNifEmisorField");
 		var nifEmisor = me.lookupReference("comboProveedores");
+		var tipoGasto = me.lookupReference("tipoGasto").getValue();
 		
 		Ext.Ajax
 		.request({
 			url : url,
 			params : {
 				gastos : gastos,
-				nifPropietario : nifPropietario
+				nifPropietario : nifPropietario,
+				tipoGasto: tipoGasto
 			},
 			success : function(response, opts) {
 				var data = Ext.decode(response.responseText);
@@ -1747,45 +1760,355 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		var isDivarian = CONST.CARTERA['CERBERUS'] === cartera
 						&& (CONST.SUBCARTERA['DIVARIANARROW'] === subcartera
 								|| CONST.SUBCARTERA['DIVARIANREMAINING'] == subcartera || CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcartera);
-		
-		var isEditableDivarian = isDivarian && $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
-		
-		var cuentaContable = me.lookupReference('cuentaContable')
-		var partidaPresupuestaria = me.lookupReference('partidaPresupuestaria');
-		var comboSubPartida = me.lookupReference('comboboxfieldSubpartidaPresupuestaria');
+
 		var comboActivable = me.lookupReference('comboActivable');
-		
-		if(isDivarian){
-			partidaPresupuestaria.setReadOnly(!isEditableDivarian);	
-			cuentaContable.setReadOnly(!isEditableDivarian);
-		}
-		comboSubPartida.setHidden(!isDivarian);
-		
-		if (isDivarian) {
-			partidaPresupuestaria
-				.setFieldLabel(HreRem.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria') + ' **');
-			cuentaContable
-				.setFieldLabel(HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable')	+ ' **');
-		} else if (cartera == CONST.CARTERA['BANKIA'] || cartera == CONST.CARTERA['LIBERBANK']) {
-			cuentaContable
-				.setFieldLabel(HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable'));
-			partidaPresupuestaria
-                .setFieldLabel(HreRem.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria') + ' *');
-				
-			if (cartera == CONST.CARTERA['LIBERBANK']) {
-				partidaPresupuestaria
-					.setFieldLabel(HreRem.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria'));
-			}
-		} else {
-			partidaPresupuestaria
-				.setFieldLabel(HreRem.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria') + ' *');
-			cuentaContable
-				.setFieldLabel(HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable')	+ ' *');
-		}
 
 		if(cartera == CONST.CARTERA['LIBERBANK']){
 		    comboActivable.setHidden(false);
 		}
-	}
+	},
 	
+	onClickGuardarLineaDetalleGasto: function(btn){
+    	var me = this;
+    	
+    	var window = btn.up('[reference=ventanaCrearLineaDetalleGasto]');
+		var form = window.down('[reference=crearLineaDetalleGastoForm]');	
+		
+		if(window.parent.getStore().data != undefined && 
+			window.parent.lookupController().getViewModel().getData() != undefined &&
+			window.parent.lookupController().getViewModel().getData().esCarteraBakia &&
+			window.parent.getStore().data.length > 0){
+			
+			if(window.idLineaDetalleGasto == null){
+				me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.anyadir.gasto.linea.detalle.bk"));
+				return;
+			}
+			
+		}
+		
+		var tipoImpositivo = form.getForm().findField('tipoImpositivo').getValue();
+		
+		if(tipoImpositivo > 100){
+			me.fireEvent("errorToast",  HreRem.i18n("msg.operacion.ko.gasto.tipoImpositivo.mayor.cien"));
+    		return;
+		}
+		if(!me.comprobarImportesRellenosLineaDetalleGasto(window)){
+			me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.gasto.linea.detalle.no.importe"));
+			return;
+		}
+
+		if(form.isValid()){
+			form.submit({                
+				waitMsg: HreRem.i18n('msg.mask.loading'),
+                params: {
+                	idGasto: window.idGasto,
+                	id: window.idLineaDetalleGasto
+                },
+
+                success: function(fp, o) {
+                	if(o.result.success == "false") {
+                		window.fireEvent("errorToast", o.result.errorMessage);
+                	}
+                	else {
+                		window.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+                	}
+                	
+                	if(!Ext.isEmpty(window.parent)) {
+                		window.parent.fireEvent("aftercreate", window.parent);
+                	}
+                	var grid = window.lookupController().getView().down('[reference=lineaDetalleGastoGrid]');
+                	grid.getStore().load();
+                	window.close();
+                	grid.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar()
+
+                },
+                failure: function(fp, o) {
+                	window.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+                }
+            });
+		 
+		}else{
+			me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.anyadir.gasto.linea.detalle.campos"));
+		}
+    },
+    
+    comprobarImportesRellenosLineaDetalleGasto: function(window){
+    	var hayImporteRelleno = false;
+		
+		var baseSujeta = window.down('[reference=baseSujeta]').getValue();
+		var baseNoSujeta = window.down('[reference=baseNoSujeta]').getValue();
+		var recargo = window.down('[reference=recargo]').getValue();
+		var interes = window.down('[reference=interes]').getValue();
+		var costas = window.down('[reference=costas]').getValue();
+		var otros = window.down('[reference=otros]').getValue();
+		var provSupl = window.down('[reference=provSupl]').getValue();
+		
+		
+		if(!Ext.isEmpty(baseSujeta) || !Ext.isEmpty(baseNoSujeta) || !Ext.isEmpty(recargo) || !Ext.isEmpty(interes)
+				|| !Ext.isEmpty(costas) || !Ext.isEmpty(otros) || !Ext.isEmpty(provSupl)){
+			hayImporteRelleno = true;
+		}
+    	return hayImporteRelleno;
+    },
+    
+    
+    onChangeValorImporteTotal: function(){
+    	var me=this;
+    	var formulario = me.lookupReference('crearLineaDetalleGastoForm').getForm();
+    	var importeTotal = me.calcularImporteTotal(formulario);
+		
+		formulario.findField('importeTotal').setValue(importeTotal);		
+    },
+    
+    onChangeHabilitarTipoRecargo: function(){
+    	var me=this;
+    	var formulario = me.lookupReference('crearLineaDetalleGastoForm').getForm();
+    	var recargo = formulario.findField('recargo').getValue();
+    	var tipoRecargo = formulario.findField('tipoRecargo');
+    	var importeTotal = me.calcularImporteTotal(formulario);
+
+    	formulario.findField('importeTotal').setValue(importeTotal);
+    	
+    	if(recargo == null || recargo == undefined || parseFloat(recargo) == 0){
+    		tipoRecargo.setDisabled(true);
+    	}else{
+    		tipoRecargo.setDisabled(false);
+    	}
+    	
+    },
+    
+    onChangeCuota: function(){
+    	var me = this;
+    	var formulario = me.lookupReference('crearLineaDetalleGastoForm').getForm();
+    	var baseSujeta = formulario.findField('baseSujeta').getValue();
+    	var tipoImpositivo = formulario.findField('tipoImpositivo').getValue();
+    	var operacionExenta = formulario.findField('operacionExentaImp').getValue();
+    	var operacionExentaRenuncia = formulario.findField('esRenunciaExenta').getValue();
+    	var disabledOpExenta = false;
+    	var cuota = 0;
+    	
+    	if(operacionExenta && !operacionExentaRenuncia){
+    		disabledOpExenta = true;
+    	}
+    	formulario.findField('tipoImpositivo').setDisabled(disabledOpExenta);
+    	formulario.findField('cuota').setDisabled(disabledOpExenta);
+    	
+    	
+    	if(tipoImpositivo > 100){
+    		ventana = me.lookupReference('ventanaCrearLineaDetalleGasto');
+    		ventana.fireEvent("errorToast",  HreRem.i18n("msg.operacion.ko.gasto.tipoImpositivo.mayor.cien"));
+    		return;
+    	}
+    	
+    	if(baseSujeta != null && tipoImpositivo != null ){
+    		cuota = (baseSujeta * tipoImpositivo )/ 100;
+    	}
+    	
+    	formulario.findField('cuota').setValue(cuota);
+   
+    	var importeTotal = me.calcularImporteTotal(formulario);
+    	formulario.findField('importeTotal').setValue(importeTotal);
+    	
+    },
+    
+    calcularImporteTotal: function (formulario){
+    	var me=this;
+    	var importeTotal = 0;
+
+    	var baseSujeta = formulario.findField('baseSujeta').getValue();
+    	var baseNoSujeta = formulario.findField('baseNoSujeta').getValue();
+		var recargo = formulario.findField('recargo').getValue();
+		var interes = formulario.findField('interes').getValue();
+		var costas = formulario.findField('costas').getValue();
+		var otros = formulario.findField('otros').getValue();
+		var provSupl = formulario.findField('provSupl').getValue();
+		var cuota = formulario.findField('cuota').getValue();
+		var operacionExentaImp = formulario.findField('operacionExentaImp').getValue();
+		var operacionExentaRenuncia = formulario.findField('esRenunciaExenta').getValue();
+		
+		if(baseSujeta != null){
+			importeTotal = importeTotal + baseSujeta;
+		}
+		if(baseNoSujeta != null){
+			importeTotal = importeTotal + baseNoSujeta;
+		}
+		if(recargo != null){
+			importeTotal = importeTotal + recargo;
+		}
+		if(interes != null){
+			importeTotal = importeTotal + interes;
+		}
+		if(costas != null){
+			importeTotal = importeTotal + costas;
+		}
+		if(otros != null){
+			importeTotal = importeTotal + otros;
+		}
+		if(provSupl != null){
+			importeTotal = importeTotal + provSupl;
+		}
+
+		if(cuota != null && (!operacionExentaImp || (operacionExentaImp && operacionExentaRenuncia))){
+			importeTotal = importeTotal + cuota;
+		}
+		
+		return importeTotal;
+    },
+    
+    abrirVentanaModificarLineaDetalle: function(grid, record){
+    	var me = this;
+    	if(record.getData() == null || record.getData() == undefined){
+    		return;
+    	}
+    	var idGasto = me.getView().getViewModel().get("gasto.id");
+		var idLineaDetalleGasto = record.getData().id;
+		var selection = record.getData();
+		var grid = me.lookupReference('lineaDetalleGastoGrid')
+
+		Ext.create("HreRem.view.gastos.VentanaCrearLineaDetalleGasto",
+				{entidad: 'lineaDetalleGasto', idGasto: idGasto, parent:grid, idLineaDetalleGasto: idLineaDetalleGasto, record:selection}).show();
+    },
+    
+    onChangeCuotaRetencionGarantia: function(checked){
+    	var me = this;
+    	var tipoImpositivo = me.lookupReference('irpfTipoImpositivoRetG').getValue();
+    	var base = me.lookupReference('baseIRPFRetG').getValue();
+    	var cuotaImpDirecto = me.lookupReference('cuotaIRPFImpD').getValue();
+    	var cuota = 0;
+    	
+    	if(tipoImpositivo != null && base != null){
+    		cuota = (tipoImpositivo * base)/100;
+    	}
+    	
+    	me.lookupReference('cuotaIRPFRetG').setValue(cuota);
+    	me.recalcularImporteTotal(me,checked);
+    },
+    
+    onChangeCuotaImpuestoDirecto: function(field, value){
+    	var me = this;
+    	var tipoImpositivo = me.lookupReference('tipoImpositivoIRPFImpD').getValue();
+    	var base = me.lookupReference('baseIRPFImpD').getValue();
+    	var cuotaRetG = me.lookupReference('cuotaIRPFRetG').getValue();
+    	var cuota = 0;
+ 
+    	if(tipoImpositivo != null && base != null){
+    		cuota = (tipoImpositivo * base)/100;
+    	}
+    	
+    	me.lookupReference('cuotaIRPFImpD').setValue(cuota);
+    	
+    	var importeTotal = me.getImporteTotalLineasDetalle(me);
+    	
+		importeTotal = importeTotal - cuota;
+		 
+		if(cuotaRetG != null && cuotaRetG != undefined){
+			importeTotal = importeTotal - cuotaRetG;
+		}
+		
+		me.lookupReference('importeTotalGastoDetalle').setValue(importeTotal);	 
+    },
+    
+    recalcularImporteTotal: function(me,aplicaRet){
+    	var cuotaRetG = me.lookupReference('cuotaIRPFRetG').getValue();
+    	var cuotaImpDirecto = me.lookupReference('cuotaIRPFImpD').getValue();
+    	var importeTotal = me.getImporteTotalLineasDetalle(me);
+    	
+    	if(aplicaRet && (cuotaRetG != null || cuotaRetG != undefined)){
+    		importeTotal = importeTotal - cuotaRetG;
+    	}
+    	
+    	if(cuotaImpDirecto != null || cuotaImpDirecto != undefined){
+    		importeTotal = importeTotal - cuotaImpDirecto;
+    	}
+    	
+    	
+    	return importeTotal;
+    	
+    },
+    
+    getImporteTotalLineasDetalle: function(me){
+    	var importeTotal = 0;
+    	if(me.lookupReference('lineaDetalleGastoGrid').getStore() != null && me.lookupReference('lineaDetalleGastoGrid').getStore() != undefined){
+    		for(var i = 0; i < me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items.length; i++){
+    			importeTotal+= me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('importeTotal');
+    		}
+    	}
+    	
+    	return importeTotal;
+    },
+    
+    onChangeSubtipoGasto: function(){
+    	var me = this;
+    	var formulario = me.lookupReference('crearLineaDetalleGastoForm');
+    	var subtipoGasto = formulario.getForm().findField('subtipoGasto').getValue();
+    	var ventana = formulario.up('[reference=ventanaCrearLineaDetalleGasto]');
+    	
+    	if(ventana.record != null && ventana.record.subtipoGasto != null
+    		&& subtipoGasto === ventana.record.subtipoGasto){
+    		return;
+    	}
+    	if(ventana.record != null && ventana.record.subtipoGasto != null){
+    		ventana.record.subtipoGasto = subtipoGasto;
+    	}
+    	
+    	if(subtipoGasto != null && subtipoGasto != undefined){
+    		ventana.mask(HreRem.i18n("msg.mask.loading"));
+    		var url =  $AC.getRemoteUrl('gastosproveedor/calcularCuentasYPartidas');
+    		
+    		Ext.Ajax.request({		    			
+    	 		url: url,
+    	 		method: 'GET',
+    	   		params: {
+    	   			idGasto: ventana.idGasto,
+    	   			idLineaDetalleGasto: ventana.idLineaDetalleGasto,
+    	   			subtipoGastoCodigo:subtipoGasto
+       			},	    		
+    	    	success: function(response, opts) {
+    	    		
+    	    		var data = {};
+	            	data = Ext.decode(response.responseText);
+	            	
+	            	if(data.data != undefined){
+	            		if(data.data.ccBase != undefined){
+	            			ventana.down('[reference=ccBase]').setValue(data.data.ccBase);
+	            		}
+	            		if(data.data.ppBase != undefined){
+	            			ventana.down('[reference=ppBase]').setValue(data.data.ppBase);
+	            		}
+	            		if(data.data.ccTasas != undefined){
+	            			ventana.down('[reference=ccTasas]').setValue(data.data.ccTasas);
+	            		}
+	            		if(data.data.ppTasas != undefined){
+	            			ventana.down('[reference=ppTasas]').setValue(data.data.ppTasas);
+	            		}
+	            		if(data.data.ccRecargo != undefined){
+	            			ventana.down('[reference=ccRecargo]').setValue(data.data.ccRecargo);
+	            		}
+	            		if(data.data.ppRecargo != undefined){
+	            			ventana.down('[reference=ppRecargo]').setValue(data.data.ppRecargo);
+	            		}
+	            		if(data.data.ccInteres != undefined){
+	            			ventana.down('[reference=ccInteres]').setValue(data.data.ccInteres);
+	            		}
+	            		if(data.data.ppInteres != undefined){
+	            			ventana.down('[reference=ppInteres]').setValue(data.data.ppInteres);
+	            		}
+	            		
+	            	}
+	            	
+	            	ventana.down('[reference=fieldsetccpp]').setDisabled(false);
+	        		ventana.down('[reference=fieldsetImpInd]').setDisabled(false);
+	        		ventana.down('[reference=fieldsetImporte]').setDisabled(false);
+	        		ventana.down('[reference=fieldsetdetallegastolbk]').setDisabled(false);
+	        		ventana.unmask();
+    	            	
+    	    	},
+       			failure: function(response) {
+    				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    		    }
+    		});
+
+    	}
+    
+    }
 });

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
+commit_regex='([a-z][a-z]-[0-9]|merge)'
 
-commit_regex='(gc-[0-9]+|recovery-[0-9]+|ali-[0-9]+|hreos-[0-9]+|hrnivdos-[0-9]+|remvip-[0-9]+|merge)'
 error_msg="Abortamos el commit. El mensaje asociado al commit debe cumplir la norma de comenzar con una clave de LINK ('RECOVERY-1111') o con 'Merge'"
 
 if ! grep -iqE "$commit_regex" "$1"; then

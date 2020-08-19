@@ -19,7 +19,9 @@ import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
 import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
+import es.pfsgroup.plugin.rem.model.DtoLineaDetalleGasto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoProveedorActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
@@ -355,7 +357,7 @@ public interface GastoProveedorApi {
 
 		AdjuntoGasto createAdjuntoGasto(WebFileItem fileItem, GastoProveedor gasto, Long idDocRestClient)
 				throws Exception;
-		public List<String> getGastosRefacturados(String listaGastos, String nifPropietario);
+		public List<String> getGastosRefacturados(String listaGastos, String nifPropietario, String tipoGasto);
 
 
 		List<String> getGastosNoRefacturados(String listaGastos, List<String> gastosRefacturables);
@@ -391,5 +393,9 @@ public interface GastoProveedorApi {
 
 		void validarGastosARefacturar(String idGasto, String listaGastos);
 
+		Double recalcularImporteTotalGasto(GastoDetalleEconomico gasto);
+
+		boolean estanTodosActivosAlquilados(GastoProveedor gasto);
+		
 }
 

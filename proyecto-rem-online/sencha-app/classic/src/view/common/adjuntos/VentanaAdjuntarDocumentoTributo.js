@@ -78,7 +78,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoTributo', {
 			 			width: '100%',
 			 			labelWidth: 100,
 			 			msgTarget: 'side',
-			 			addUxReadOnlyEditFieldPlugin: false,
+			 			//addUxReadOnlyEditFieldPlugin: false,
 			 			labelWidth: 100
 			 		},
 						items: [{

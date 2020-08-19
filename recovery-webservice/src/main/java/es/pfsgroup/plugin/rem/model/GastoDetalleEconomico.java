@@ -28,8 +28,6 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioPago;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPago;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 
 
 /**
@@ -59,43 +57,6 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
 	@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "GPV_ID")
     private GastoProveedor gastoProveedor;
-    
-    @Column(name="GDE_PRINCIPAL_SUJETO")
-    private Double importePrincipalSujeto;
-    
-    @Column(name="GDE_PRINCIPAL_NO_SUJETO")
-    private Double importePrincipalNoSujeto;
-    
-    @Column(name="GDE_RECARGO")
-    private Double importeRecargo;
-    
-    @Column(name="GDE_INTERES_DEMORA")
-    private Double importeInteresDemora;
-    
-    @Column(name="GDE_COSTAS")
-    private Double importeCostas;
-    
-    @Column(name="GDE_OTROS_INCREMENTOS")
-    private Double importeOtrosIncrementos;
-    
-    @Column(name="GDE_PROV_SUPLIDOS")
-    private Double importeProvisionesSuplidos;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_TIT_ID")
-    private DDTiposImpuesto impuestoIndirectoTipo;
-    
-    @Column(name="GDE_IMP_IND_EXENTO")
-    private Integer impuestoIndirectoExento;
-    
-    @Column(name="GDE_IMP_IND_RENUNCIA_EXENCION")
-    private Integer renunciaExencionImpuestoIndirecto;
-    
-    @Column(name="GDE_IMP_IND_TIPO_IMPOSITIVO")
-    private Double impuestoIndirectoTipoImpositivo;
-    
-    @Column(name="GDE_IMP_IND_CUOTA")
-    private Double impuestoIndirectoCuota;
     
     @Column(name="GDE_IRPF_TIPO_IMPOSITIVO")
     private Double irpfTipoImpositivo;
@@ -166,15 +127,29 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
 	@Column(name="GDE_FECHA_ANTICIPO")
     private Date fechaAnticipo;
 	
-	@Column (name= "GDE_EXISTE_RECARGO")
-	private Boolean existeRecargo;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_TRG_ID")
-    private DDTipoRecargoGasto tipoRecargoGasto;
-
-    @Column(name = "GDE_GASTO_REFACTURABLE")
+	@Column(name="GDE_GASTO_REFACTURABLE")
     private Boolean gastoRefacturable;
+
+    @Column(name = "GDE_IRPF_BASE")
+    private Double irpfBase;
+    
+    @Column(name = "GDE_IRPF_CLAVE")
+    private String irpfClave;
+    
+    @Column(name = "GDE_IRPF_SUBCLAVE")
+    private String irpfSubclave;
+    
+    @Column(name = "GDE_RET_GAR_BASE")
+    private Double retencionGarantiaBase;
+    
+   @Column(name = "GDE_RET_GAR_TIPO_IMPOSITIVO")
+    private Double retencionGarantiaTipoImpositivo;
+    
+   @Column(name = "GDE_RET_GAR_CUOTA")
+   private Double retencionGarantiaCuota;
+   
+   @Column(name = "GDE_RET_GAR_APLICA")
+   private Boolean retencionGarantiaAplica;
 
 	@Version   
 	private Long version;
@@ -197,104 +172,6 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
 
 	public void setGastoProveedor(GastoProveedor gastoProveedor) {
 		this.gastoProveedor = gastoProveedor;
-	}
-
-	public Double getImportePrincipalSujeto() {
-		return importePrincipalSujeto;
-	}
-
-	public void setImportePrincipalSujeto(Double importePrincipalSujeto) {
-		this.importePrincipalSujeto = importePrincipalSujeto;
-	}
-
-	public Double getImportePrincipalNoSujeto() {
-		return importePrincipalNoSujeto;
-	}
-
-	public void setImportePrincipalNoSujeto(Double importePrincipalNoSujeto) {
-		this.importePrincipalNoSujeto = importePrincipalNoSujeto;
-	}
-
-	public Double getImporteRecargo() {
-		return importeRecargo;
-	}
-
-	public void setImporteRecargo(Double importeRecargo) {
-		this.importeRecargo = importeRecargo;
-	}
-
-	public Double getImporteInteresDemora() {
-		return importeInteresDemora;
-	}
-
-	public void setImporteInteresDemora(Double importeInteresDemora) {
-		this.importeInteresDemora = importeInteresDemora;
-	}
-
-	public Double getImporteCostas() {
-		return importeCostas;
-	}
-
-	public void setImporteCostas(Double importeCostas) {
-		this.importeCostas = importeCostas;
-	}
-
-	public Double getImporteOtrosIncrementos() {
-		return importeOtrosIncrementos;
-	}
-
-	public void setImporteOtrosIncrementos(Double importeOtrosIncrementos) {
-		this.importeOtrosIncrementos = importeOtrosIncrementos;
-	}
-
-	public Double getImporteProvisionesSuplidos() {
-		return importeProvisionesSuplidos;
-	}
-
-	public void setImporteProvisionesSuplidos(Double importeProvisionesSuplidos) {
-		this.importeProvisionesSuplidos = importeProvisionesSuplidos;
-	}
-
-	public DDTiposImpuesto getImpuestoIndirectoTipo() {
-		return impuestoIndirectoTipo;
-	}
-
-	public void setImpuestoIndirectoTipo(DDTiposImpuesto impuestoIndirectoTipo) {
-		this.impuestoIndirectoTipo = impuestoIndirectoTipo;
-	}
-
-	public Integer getImpuestoIndirectoExento() {
-		return impuestoIndirectoExento;
-	}
-
-	public void setImpuestoIndirectoExento(Integer impuestoIndirectoExento) {
-		this.impuestoIndirectoExento = impuestoIndirectoExento;
-	}
-
-	public Integer getRenunciaExencionImpuestoIndirecto() {
-		return renunciaExencionImpuestoIndirecto;
-	}
-
-	public void setRenunciaExencionImpuestoIndirecto(
-			Integer renunciaExencionImpuestoIndirecto) {
-		this.renunciaExencionImpuestoIndirecto = renunciaExencionImpuestoIndirecto;
-	}
-
-	public Double getImpuestoIndirectoTipoImpositivo() {
-		return impuestoIndirectoTipoImpositivo;
-	}
-
-	public void setImpuestoIndirectoTipoImpositivo(
-			Double impuestoIndirectoTipoImpositivo) {
-		this.impuestoIndirectoTipoImpositivo = impuestoIndirectoTipoImpositivo;
-	}
-
-	public Double getImpuestoIndirectoCuota() {
-		return impuestoIndirectoCuota;
-	}
-
-	public void setImpuestoIndirectoCuota(Double impuestoIndirectoCuota) {
-		this.impuestoIndirectoCuota = impuestoIndirectoCuota;
 	}
 
 	public Double getIrpfTipoImpositivo() {
@@ -489,14 +366,6 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
 		this.fechaAnticipo = fechaAnticipo;
 	}
 
-	public Boolean getExisteRecargo() {
-		return existeRecargo;
-	}
-
-	public void setExisteRecargo(Boolean existeRecargo) {
-		this.existeRecargo = existeRecargo;
-	}
-
 	public Boolean getGastoRefacturable() {
 		return gastoRefacturable;
 	}
@@ -505,13 +374,63 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
 		this.gastoRefacturable = gastoRefacturable;
 	}
 
-	public DDTipoRecargoGasto getTipoRecargoGasto() {
-		return tipoRecargoGasto;
+	public Double getIrpfBase() {
+		return irpfBase;
 	}
 
-	public void setTipoRecargoGasto(DDTipoRecargoGasto tipoRecargoGasto) {
-		this.tipoRecargoGasto = tipoRecargoGasto;
+	public void setIrpfBase(Double irpfBase) {
+		this.irpfBase = irpfBase;
 	}
 
+	public String getIrpfClave() {
+		return irpfClave;
+	}
+
+	public void setIrpfClave(String irpfClave) {
+		this.irpfClave = irpfClave;
+	}
+
+	public String getIrpfSubclave() {
+		return irpfSubclave;
+	}
+
+	public void setIrpfSubclave(String irpfSubclave) {
+		this.irpfSubclave = irpfSubclave;
+	}
+
+	public Double getRetencionGarantiaBase() {
+		return retencionGarantiaBase;
+	}
+
+	public void setRetencionGarantiaBase(Double retencionGarantiaBase) {
+		this.retencionGarantiaBase = retencionGarantiaBase;
+	}
+
+	public Double getRetencionGarantiaTipoImpositivo() {
+		return retencionGarantiaTipoImpositivo;
+	}
+
+	public void setRetencionGarantiaTipoImpositivo(Double retencionGarantiaTipoImpositivo) {
+		this.retencionGarantiaTipoImpositivo = retencionGarantiaTipoImpositivo;
+	}
+
+	public Double getRetencionGarantiaCuota() {
+		return retencionGarantiaCuota;
+	}
+
+	public void setRetencionGarantiaCuota(Double retencionGarantiaCuota) {
+		this.retencionGarantiaCuota = retencionGarantiaCuota;
+	}
+
+	public Boolean getRetencionGarantiaAplica() {
+		return retencionGarantiaAplica;
+	}
+
+	public void setRetencionGarantiaAplica(Boolean retencionGarantiaAplica) {
+		this.retencionGarantiaAplica = retencionGarantiaAplica;
+	}
+	
+	
+	
 	
 }

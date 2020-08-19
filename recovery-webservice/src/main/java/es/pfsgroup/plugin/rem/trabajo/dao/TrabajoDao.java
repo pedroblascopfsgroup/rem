@@ -46,4 +46,6 @@ public interface TrabajoDao extends AbstractDao<Trabajo, Long>{
 
 	Page getActivoMatrizPresupuesto(DtoActivosTrabajoFilter dto);
 
+	public void flush();
+
 }

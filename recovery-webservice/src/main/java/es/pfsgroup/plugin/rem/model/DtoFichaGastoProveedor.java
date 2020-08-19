@@ -78,6 +78,8 @@ public class DtoFichaGastoProveedor extends WebDto {
    	private Boolean tieneGastosRefacturables;
    	private Boolean bloquearEdicionFechasRecepcion;
    	private String estadoEmisor;
+	private Boolean estadoModificarLineasDetalleGasto;
+	private Boolean isGastoRefacturadoPorOtroGasto;
 	
 	public Long getIdGasto() {
 		return idGasto;
@@ -420,4 +422,17 @@ public class DtoFichaGastoProveedor extends WebDto {
 	public void setIdSubpartidaPresupuestaria(Long idSubpartidaPresupuestaria) {
 		this.idSubpartidaPresupuestaria = idSubpartidaPresupuestaria;
 	}
+	public Boolean getEstadoModificarLineasDetalleGasto() {
+		return estadoModificarLineasDetalleGasto;
+	}
+	public void setEstadoModificarLineasDetalleGasto(Boolean estadoModificarLineasDetalleGasto) {
+		this.estadoModificarLineasDetalleGasto = estadoModificarLineasDetalleGasto;
+	}
+	public Boolean getIsGastoRefacturadoPorOtroGasto() {
+		return isGastoRefacturadoPorOtroGasto;
+	}
+	public void setIsGastoRefacturadoPorOtroGasto(Boolean isGastoRefacturadoPorOtroGasto) {
+		this.isGastoRefacturadoPorOtroGasto = isGastoRefacturadoPorOtroGasto;
+	}
+	
 }

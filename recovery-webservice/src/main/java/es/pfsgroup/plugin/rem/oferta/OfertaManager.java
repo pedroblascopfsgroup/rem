@@ -2974,6 +2974,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						}
 					}
 				}else {
+
+					contieneActPrincAgrObraNueva = this.perteneceAgrupacionObraNueva(activo.getAgrupaciones());
+
+					if(contieneActPrincAgrObraNueva && !Checks.esNulo(visita)){
+						consultaComisionDto.setComercialType(DD_TCR_CODIGO_OBRA_NUEVA);
+					}
+
 					try {
 						calculoComision = comisionamientoApi.createCommission(consultaComisionDto);
 					} catch (Exception e) {

@@ -65,18 +65,6 @@ public class GastoInfoContabilidad implements Serializable, Auditable {
     @JoinColumn(name = "DD_DEG_ID_CONTABILIZA")
     private DDDestinatarioGasto contabilizadoPor;
     
-    @Column(name="GIC_CUENTA_CONTABLE")
-    private String cuentaContable;
-    
-    @Column(name="GIC_PTDA_PRESUPUESTARIA")
-    private String partidaPresupuestaria;
-    
-    @Column(name="GIC_CUENTA_CONTABLE_ESP")
-    private String cuentaContableEspecial;
-    
-    @Column(name="GIC_PTDA_PRESUPUESTARIA_ESP")
-    private String partidaPresupuestariaEspecial;
-    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TPE_ID_ESPECIAL")
     private DDTipoPeriocidad tipoPeriocidadEspecial;
@@ -154,39 +142,6 @@ public class GastoInfoContabilidad implements Serializable, Auditable {
 
 	public void setFechaDevengoEspecial(Date fechaDevengoEspecial) {
 		this.fechaDevengoEspecial = fechaDevengoEspecial;
-	}
-
-	public String getCuentaContable() {
-		return cuentaContable;
-	}
-
-	public void setCuentaContable(String cuentaContable) {
-		this.cuentaContable = cuentaContable;
-	}
-
-	public String getPartidaPresupuestaria() {
-		return partidaPresupuestaria;
-	}
-
-	public void setPartidaPresupuestaria(String partidaPresupuestaria) {
-		this.partidaPresupuestaria = partidaPresupuestaria;
-	}
-
-	public String getCuentaContableEspecial() {
-		return cuentaContableEspecial;
-	}
-
-	public void setCuentaContableEspecial(String cuentaContableEspecial) {
-		this.cuentaContableEspecial = cuentaContableEspecial;
-	}
-
-	public String getPartidaPresupuestariaEspecial() {
-		return partidaPresupuestariaEspecial;
-	}
-
-	public void setPartidaPresupuestariaEspecial(
-			String partidaPresupuestariaEspecial) {
-		this.partidaPresupuestariaEspecial = partidaPresupuestariaEspecial;
 	}
 
 	public static long getSerialversionuid() {

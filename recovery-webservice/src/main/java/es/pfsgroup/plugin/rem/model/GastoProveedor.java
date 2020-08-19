@@ -34,7 +34,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
@@ -70,10 +69,6 @@ public class GastoProveedor implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TGA_ID")
     private DDTipoGasto tipoGasto;
-	
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_STG_ID")
-    private DDSubtipoGasto subtipoGasto;
 	
 	@Column(name="GPV_CONCEPTO")
 	private String concepto;
@@ -130,7 +125,12 @@ public class GastoProveedor implements Serializable, Auditable {
     @JoinColumn(name = "GPV_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private GastoInfoContabilidad gastoInfoContabilidad;    
-	
+    
+    @OneToMany(mappedBy = "gastoProveedor", fetch = FetchType.LAZY)
+    @JoinColumn(name = "GPV_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private List<GastoLineaDetalle> gastoLineaDetalleList;    
+
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="PRG_ID")
 	private ProvisionGastos provision;
@@ -192,6 +192,9 @@ public class GastoProveedor implements Serializable, Auditable {
 	@Column(name="GPV_FECHA_REC_HAYA")
 	private Date fechaRecHaya;
     
+	@Column(name="GPV_PLAN_VISITAS")
+	private Boolean gpvPlanVisitas;
+	
 	@Version   
 	private Long version;
 
@@ -220,14 +223,6 @@ public class GastoProveedor implements Serializable, Auditable {
 
 	public void setTipoGasto(DDTipoGasto tipoGasto) {
 		this.tipoGasto = tipoGasto;
-	}
-
-	public DDSubtipoGasto getSubtipoGasto() {
-		return subtipoGasto;
-	}
-
-	public void setSubtipoGasto(DDSubtipoGasto subtipoGasto) {
-		this.subtipoGasto = subtipoGasto;
 	}
 
 	public String getConcepto() {
@@ -553,5 +548,21 @@ public class GastoProveedor implements Serializable, Auditable {
 
 	public void setFechaRecHaya(Date fechaRecHaya) {
 		this.fechaRecHaya = (Date) fechaRecHaya.clone();
+	}
+
+	public List<GastoLineaDetalle> getGastoLineaDetalleList() {
+		return gastoLineaDetalleList;
+	}
+
+	public void setGastoLineaDetalleList(List<GastoLineaDetalle> gastoLineaDetalleList) {
+		this.gastoLineaDetalleList = gastoLineaDetalleList;
+	}
+
+	public Boolean getGpvPlanVisitas() {
+		return gpvPlanVisitas;
+	}
+
+	public void setGpvPlanVisitas(Boolean gpvPlanVisitas) {
+		this.gpvPlanVisitas = gpvPlanVisitas;
 	}
 }

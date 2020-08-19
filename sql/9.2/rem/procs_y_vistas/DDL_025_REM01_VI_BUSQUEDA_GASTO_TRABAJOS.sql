@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Kevin Fernández
---## FECHA_CREACION=20171129
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20200723
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-3327
+--## INCIDENCIA_LINK=HREOS-10618
 --## PRODUCTO=NO
 --## Finalidad: Crear la vista VI_BUSQUEDA_GASTO_TRABAJOS.
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 Sin borrado en asociación gasto-trabajo.
+--##        0.3 Adaptación de consulta al nuevo modelo de facturación - Daniel Algaba - HREOS-10618
 --##########################################
 --*/
 
@@ -51,9 +52,9 @@ BEGIN
   EXECUTE IMMEDIATE 'CREATE VIEW ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTO_TRABAJOS 
 	AS
 		SELECT
-				GPVTBJ.GPV_TBJ_ID,
-				GPVTBJ.GPV_ID,
-				GPVTBJ.TBJ_ID,
+				GLDTBJ.GLD_TBJ_ID GPV_TBJ_ID,
+				GLD.GPV_ID,
+				GLDTBJ.TBJ_ID,
 				TBJ.TBJ_NUM_TRABAJO,
 				TBJ.TBJ_CUBRE_SEGURO,
 				TBJ.TBJ_IMPORTE_TOTAL,
@@ -65,15 +66,28 @@ BEGIN
 				STR.DD_STR_CODIGO,
 				STR.DD_STR_DESCRIPCION
 										
-		FROM ' || V_ESQUEMA || '.GPV_TBJ GPVTBJ
-		LEFT JOIN ' || V_ESQUEMA || '.ACT_TBJ_TRABAJO TBJ ON GPVTBJ.TBJ_ID = TBJ.TBJ_ID and tbj.borrado = 0
+		FROM ' || V_ESQUEMA || '.GLD_GASTOS_LINEA_DETALLE GLD
+        INNER JOIN ' || V_ESQUEMA || '.GLD_TBJ GLDTBJ ON GLD.GLD_ID = GLDTBJ.GLD_ID AND GLDTBJ.BORRADO = 0
+		LEFT JOIN ' || V_ESQUEMA || '.ACT_TBJ_TRABAJO TBJ ON GLDTBJ.TBJ_ID = TBJ.TBJ_ID AND TBJ.BORRADO = 0
 		LEFT JOIN ' || V_ESQUEMA || '.DD_TTR_TIPO_TRABAJO TTR ON TTR.DD_TTR_ID = TBJ.DD_TTR_ID
 		LEFT JOIN ' || V_ESQUEMA || '.DD_STR_SUBTIPO_TRABAJO STR ON STR.DD_STR_ID = TBJ.DD_STR_ID
-		WHERE GPVTBJ.BORRADO = 0
+		WHERE GLD.BORRADO = 0
     ';
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.VI_BUSQUEDA_GASTO_TRABAJOS...Creada OK');
-  
+ EXCEPTION
+
+   WHEN OTHERS THEN
+        err_num := SQLCODE;
+        err_msg := SQLERRM;
+
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+        DBMS_OUTPUT.put_line(err_msg);
+
+        ROLLBACK;
+
+        RAISE;  
 END;
 /
 

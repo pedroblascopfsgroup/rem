@@ -69,6 +69,7 @@ import es.pfsgroup.plugin.rem.model.DtoUsuarios;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoInfoContabilidad;
+import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
 import es.pfsgroup.plugin.rem.model.GestionCCPP;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.GrupoUsuario;
@@ -1369,10 +1370,10 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	public List<ConfiguracionSubpartidasPresupuestarias> getComboSubpartidaPresupuestaria(Long idGasto) {	
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);		
 		Filter filtroGpv = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
-		GastoInfoContabilidad gic = genericDao.get(GastoInfoContabilidad.class, filtroGpv, filtroBorrado);
+		GastoLineaDetalle gld = genericDao.get(GastoLineaDetalle.class, filtroGpv, filtroBorrado);
 		
-		Filter filtroCuentaContable = genericDao.createFilter(FilterType.EQUALS, "cuentaContable", gic.getCuentaContable());
-		return (!Checks.esNulo(gic) && !Checks.esNulo(gic.getCuentaContable())) ? genericDao.getList(ConfiguracionSubpartidasPresupuestarias.class, filtroCuentaContable, filtroBorrado) : null; 
+		Filter filtroCuentaContable = genericDao.createFilter(FilterType.EQUALS, "cuentaContable", gld.getCccBase());
+		return (!Checks.esNulo(gld) && !Checks.esNulo(gld.getCccBase())) ? genericDao.getList(ConfiguracionSubpartidasPresupuestarias.class, filtroCuentaContable, filtroBorrado) : null; 
 
 	}
 

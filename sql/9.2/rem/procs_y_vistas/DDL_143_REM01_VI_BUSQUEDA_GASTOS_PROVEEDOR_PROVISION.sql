@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Juanjo Arbona
---## FECHA_CREACION=20180411
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20200723
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-471
+--## INCIDENCIA_LINK=HREOS-10618
 --## PRODUCTO=NO
 --## Finalidad: DDL creación vista VI_BUSQUEDA_GASTOS_PROVISION.
 --##           
@@ -70,9 +70,10 @@ BEGIN
 			EAP.DD_EAP_DESCRIPCION
             
 		FROM ' || V_ESQUEMA || '.GPV_GASTOS_PROVEEDOR GPV
+        INNER JOIN ' || V_ESQUEMA || '.GLD_GASTOS_LINEA_DETALLE GLD ON GPV.GPV_ID = GLD.GPV_ID
 		INNER JOIN ' || V_ESQUEMA || '.PRG_PROVISION_GASTOS PRG ON PRG.PRG_ID = GPV.PRG_ID
 		LEFT JOIN ' || V_ESQUEMA || '.DD_TGA_TIPOS_GASTO TGA ON GPV.DD_TGA_ID = TGA.DD_TGA_ID
-		LEFT JOIN ' || V_ESQUEMA || '.DD_STG_SUBTIPOS_GASTO STG ON GPV.DD_STG_ID = STG.DD_STG_ID
+		LEFT JOIN ' || V_ESQUEMA || '.DD_STG_SUBTIPOS_GASTO STG ON GLD.DD_STG_ID = STG.DD_STG_ID
 		LEFT JOIN ' || V_ESQUEMA || '.DD_EGA_ESTADOS_GASTO EGA ON GPV.DD_EGA_ID = EGA.DD_EGA_ID
 		LEFT JOIN ' || V_ESQUEMA || '.DD_TPE_TIPOS_PERIOCIDAD TPE ON GPV.DD_TPE_ID = TPE.DD_TPE_ID
 		LEFT JOIN ' || V_ESQUEMA || '.DD_DEG_DESTINATARIOS_GASTO DEG ON GPV.DD_DEG_ID = DEG.DD_DEG_ID
@@ -107,7 +108,19 @@ BEGIN
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_BUSQUEDA_GASTOS_PROVISION.DD_EGA_DESCRIPCION IS ''Descripcion de estado del gasto.''';
   
   DBMS_OUTPUT.PUT_LINE('Creados los comentarios en CREATE VIEW '|| V_ESQUEMA ||'.VI_BUSQUEDA_GASTOS_PROVISION...Creada OK');
-  
+     EXCEPTION
+
+   WHEN OTHERS THEN
+        err_num := SQLCODE;
+        err_msg := SQLERRM;
+
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+        DBMS_OUTPUT.put_line(err_msg);
+
+        ROLLBACK;
+
+        RAISE;  
 END;
 /
 

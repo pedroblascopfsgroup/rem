@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=Juan Beltrán
---## FECHA_CREACION=20191030
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20200728
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.15.3-rem
---## INCIDENCIA_LINK=HREOS-5417
+--## INCIDENCIA_LINK=HREOS-10666
 --## PRODUCTO=NO
 --## Finalidad: Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación. Liberbank.
---## Info: https://link-doc.pfsgroup.es/confluence/display/REOS/SP_EXT_PR_ACT_RES_VENTA
+--## Info: https://link-doc.pfsgroup.es/confluence/display/REOS/SP_EXT_PR_ACT_GASTOS
 --##       Mantengamos la documentación al día. Si subimos de versión, reflejemoslo en el SP, en el comentario tras el BEGIN
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
@@ -18,6 +18,7 @@
 --##	    1.02 Se añaden modificaciones segun el item REMVIP-1698.
 --##	    1.03 Se añaden modificaciones según el ítem REMVIP-2891.
 --##	    1.04 Se añaden modificaciones según el ítem REMVIP-5417.
+--##	    1.05 Se añaden modificaciones según el ítem HREOS-10666.
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -34,8 +35,13 @@ create or replace PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_GASTOS (
     FECHA_PAGO                  IN VARCHAR2,   --Obligatorio Opcion1
     FECHA_CONTABILIZACION       IN VARCHAR2,   --Obligatorio Opcion2
     EJERCICIO                   IN VARCHAR2,   --Formato YYYY
-    GIC_CUENTA_CONTABLE         IN VARCHAR2,
-    GIC_PTDA_PRESUPUESTARIA     IN VARCHAR2,
+    GLD_CCC_VALOR               IN VARCHAR2,
+    GLD_CPP_VALOR               IN VARCHAR2,
+    DD_STG_CODIGO				IN VARCHAR2,
+    DD_TIT_CODIGO				IN VARCHAR2,
+    GLD_IMP_IND_TIPO_IMPOSITIVO IN VARCHAR2,
+    DD_TIM_CODIGO				IN VARCHAR2,
+    
 
     --Variables de salida
     COD_RETORNO                 OUT VARCHAR2 -- 0 OK / 1 KO
@@ -55,19 +61,26 @@ create or replace PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_GASTOS (
     V_EGA_CODIGO                    VARCHAR2(10 CHAR) := '';
     V_NUM_FACTUR_UVEM               VARCHAR2(20 CHAR) := '';
     V_GDE_ID                        NUMBER(16) := -1;
+    V_GLD_ID                        NUMBER(16) := -1;
     V_GGE_ID                        NUMBER(16) := -1;
     V_EJE_ID                        NUMBER(16) := -1;
     V_FEC_CONTABILIZACION           VARCHAR2(10 CHAR) := '';
     V_FECHA_PAGO                    VARCHAR2(10 CHAR) := '';
     V_CUENTA_CONTABLE               VARCHAR2(50 CHAR) := '';
+    V_COL_CUENTA_CONTABLE           VARCHAR2(50 CHAR) := '';
     V_PTDA_PRESUPESTARIA            VARCHAR2(50 CHAR) := '';
+    V_COL_PTDA_PRESUPESTARIA        VARCHAR2(50 CHAR) := '';
     V_GPV_NUM_GASTO_HAYA            VARCHAR2(16 CHAR);
-    DD_DEG_ID 			    NUMBER(16) := -1;
-    DD_DEG_ID_CONTABILIZA 	    NUMBER(16) := -1;
-    DD_EAP_ID_ANTERIOR		    NUMBER(16) := -1;
-    DD_EAP_ID_NUEVO		    NUMBER(16) := -1;
-    DD_EAH_ID_ANTERIOR		    NUMBER(16) := -1;
-    DD_EAH_ID_NUEVO		    NUMBER(16) := -1;
+    V_DD_STG_CODIGO                 VARCHAR2(20 CHAR);
+    V_DD_TIT_CODIGO                 VARCHAR2(20 CHAR);
+    V_DD_TIM_CODIGO                 VARCHAR2(20 CHAR);
+    V_GLD_IMP_IND_TIPO_IMPOSITIVO   VARCHAR2(4 CHAR);
+    DD_DEG_ID 			            NUMBER(16) := -1;
+    DD_DEG_ID_CONTABILIZA 	        NUMBER(16) := -1;
+    DD_EAP_ID_ANTERIOR		        NUMBER(16) := -1;
+    DD_EAP_ID_NUEVO		            NUMBER(16) := -1;
+    DD_EAH_ID_ANTERIOR		        NUMBER(16) := -1;
+    DD_EAH_ID_NUEVO		            NUMBER(16) := -1;
 
     --Info
     V_OP_1_DESC                     VARCHAR2(400 CHAR) := '[OPERATORIA] Para todos los registros con FECHA DE CONTABILIZACION relacionado con un gasto cuyo estado no sea "Rechazado administración","Contabilizado","Pagado" "Rechazado propietario" o "Anulado".';
@@ -78,28 +91,43 @@ create or replace PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_GASTOS (
 
     V_COUNT                         VARCHAR2(30 CHAR)   := 'SELECT COUNT(1) ';
 
-    V_SELECT_GASTO                  VARCHAR2(1000 CHAR)  := 'SELECT
+    V_SELECT_GASTO                  VARCHAR2(2000 CHAR)  := 'SELECT
                                                             GPV.GPV_ID,
-                                                            GDE.DD_TIT_ID,
+                                                            GLD.DD_TIT_ID,
                                                             EGA.DD_EGA_CODIGO,
                                                             EGA.DD_EGA_ID,
                                                             GPV.GPV_NUMERO_FACTURA_UVEM,
                                                             GIC.GIC_FECHA_CONTABILIZACION,
                                                             GIC.EJE_ID,
-                                                            GIC.GIC_CUENTA_CONTABLE,
-                                                            GIC.GIC_PTDA_PRESUPUESTARIA,
+                                                            CASE WHEN ''BAS'' = TIM_CODIGO OR TIM_CODIGO IS NULL THEN GLD.GLD_CCC_BASE
+                                                                WHEN ''TAS'' = TIM_CODIGO THEN GLD.GLD_CCC_TASAS
+                                                                WHEN ''REC'' = TIM_CODIGO THEN GLD.GLD_CCC_RECARGO
+                                                                WHEN ''INT'' = TIM_CODIGO THEN GLD.GLD_CCC_INTERESES
+                                                            END GLD_CCC_VALOR,
+                                                            CASE WHEN ''BAS'' = TIM_CODIGO OR TIM_CODIGO IS NULL THEN GLD.GLD_CPP_BASE
+                                                                WHEN ''TAS'' = TIM_CODIGO THEN GLD.GLD_CPP_TASAS
+                                                                WHEN ''REC'' = TIM_CODIGO THEN GLD.GLD_CPP_RECARGO
+                                                                WHEN ''INT'' = TIM_CODIGO THEN GLD.GLD_CPP_INTERESES
+                                                            END GLD_CPP_VALOR,
                                                             GDE.GDE_FECHA_PAGO,
                                                             GIC.GIC_ID,
-                                                            GDE.GDE_ID ';
+                                                            GDE.GDE_ID,
+															GLD.GLD_ID ';
 
     V_FROM_GASTO                    VARCHAR2(2000 CHAR) := 'FROM #ESQUEMA#.GPV_GASTOS_PROVEEDOR GPV
+															LEFT JOIN #ESQUEMA#.GLD_GASTOS_LINEA_DETALLE GLD
+																ON GLD.GPV_ID = GPV.GPV_ID
                                                             LEFT JOIN #ESQUEMA#.GDE_GASTOS_DETALLE_ECONOMICO GDE
                                                                 ON GDE.GPV_ID = GPV.GPV_ID
                                                             LEFT JOIN #ESQUEMA#.GIC_GASTOS_INFO_CONTABILIDAD GIC
                                                                 ON GIC.GPV_ID = GPV.GPV_ID
                                                             LEFT JOIN #ESQUEMA#.DD_EGA_ESTADOS_GASTO EGA
                                                                 ON EGA.DD_EGA_ID = GPV.DD_EGA_ID
-                                                            WHERE GPV.GPV_NUM_GASTO_HAYA = :1';
+                                                            WHERE GPV.GPV_NUM_GASTO_HAYA = :1
+                                                                AND GLD.DD_STG_ID = (SELECT DD_STG_ID FROM #ESQUEMA#.DD_STG_SUBTIPOS_GASTO WHERE DD_STG_CODIGO = :2)
+                                                                AND GLD.DD_TIT_ID = (SELECT DD_TIT_ID FROM #ESQUEMA#.DD_TIT_TIPOS_IMPUESTO WHERE DD_TIT_CODIGO = :3)
+                                                                AND GLD.GLD_IMP_IND_TIPO_IMPOSITIVO = :4
+                                                                AND GLD.BORRADO = 0';
 
     V_LOGAR_HDL                     VARCHAR2(1400 CHAR) := 'HLD_HIST_LANZA_PER_DETA(''SP_EXT_PR_ACT_GASTOS'',:1,:2,:3,:4,:5,:6,:7)'; -- 1 HLD_SP_CARGA, 2 HLD_CODIGO_REG, 3 HLD_TABLA_MODIFICAR, 4 HLD_TABLA_MODIFICAR_CLAVE, 5 HLD_TABLA_MODIFICAR_CLAVE_ID, 6 HLD_CAMPO_MODIFICAR, 7 HLD_VALOR_ORIGINAL, 8 HLD_VALOR_ACTUALIZADO
 
@@ -216,8 +244,12 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('FECHA_PAGO (Se espera yyyyMMdd): '||FECHA_PAGO);
     DBMS_OUTPUT.PUT_LINE('FECHA_CONTABILIZACION (Se espera yyyyMMdd): '||FECHA_CONTABILIZACION);
     DBMS_OUTPUT.PUT_LINE('EJERCICIO: '||EJERCICIO);
-    DBMS_OUTPUT.PUT_LINE('GIC_CUENTA_CONTABLE: '||GIC_CUENTA_CONTABLE);
-    DBMS_OUTPUT.PUT_LINE('GIC_PTDA_PRESUPUESTARIA: '||GIC_PTDA_PRESUPUESTARIA);
+    DBMS_OUTPUT.PUT_LINE('GLD_CCC_VALOR: '||GLD_CCC_VALOR);
+    DBMS_OUTPUT.PUT_LINE('GLD_CPP_VALOR: '||GLD_CPP_VALOR);
+    DBMS_OUTPUT.PUT_LINE('DD_STG_CODIGO: '||DD_STG_CODIGO);
+    DBMS_OUTPUT.PUT_LINE('DD_TIT_CODIGO: '||DD_TIT_CODIGO);
+    DBMS_OUTPUT.PUT_LINE('GLD_IMP_IND_TIPO_IMPOSITIVO: '||GLD_IMP_IND_TIPO_IMPOSITIVO);
+    DBMS_OUTPUT.PUT_LINE('DD_TIM_CODIGO: '||DD_TIM_CODIGO);
 
     --Seteamos la descripción del error correspondiente a la imposibilidad de convertir el parametro de entrada a DATE.
     V_ERROR_DESC := '[ERROR] No se ha podido convertir la fecha a DATE, comprobar máscara. Paramos la ejecución.';
@@ -251,7 +283,10 @@ BEGIN
 
     ELSE
         COD_RETORNO := 0;
-        V_GPV_NUM_GASTO_HAYA := GPV_NUM_GASTO_HAYA;
+        V_GPV_NUM_GASTO_HAYA            := GPV_NUM_GASTO_HAYA;
+        V_DD_STG_CODIGO                 := DD_STG_CODIGO;
+        V_DD_TIT_CODIGO                 := DD_TIT_CODIGO;
+        V_GLD_IMP_IND_TIPO_IMPOSITIVO   := GLD_IMP_IND_TIPO_IMPOSITIVO;
     END CASE;
 
     --1.1 Comprobación de las TABLAS donde vamos a escribir.
@@ -273,14 +308,31 @@ BEGIN
     --Obtenemos todos los datos de valor.
     IF COD_RETORNO = 0 THEN
         DBMS_OUTPUT.PUT_LINE('V_GPV_NUM_GASTO_HAYA: '||V_GPV_NUM_GASTO_HAYA);
+        DBMS_OUTPUT.PUT_LINE('V_DD_STG_CODIGO: '||V_DD_STG_CODIGO);
+        DBMS_OUTPUT.PUT_LINE('V_DD_TIT_CODIGO: '||V_DD_TIT_CODIGO);
+        DBMS_OUTPUT.PUT_LINE('V_GLD_IMP_IND_TIPO_IMPOSITIVO: '||V_GLD_IMP_IND_TIPO_IMPOSITIVO);
         V_MSQL := V_COUNT||V_FROM_GASTO;
-        EXECUTE IMMEDIATE V_MSQL INTO V_NUM USING V_GPV_NUM_GASTO_HAYA;
+        EXECUTE IMMEDIATE V_MSQL INTO V_NUM USING V_GPV_NUM_GASTO_HAYA, V_DD_STG_CODIGO, V_DD_TIT_CODIGO, V_GLD_IMP_IND_TIPO_IMPOSITIVO;
+
+        IF DD_TIM_CODIGO = 'BAS' OR DD_TIM_CODIGO IS NULL THEN
+            V_COL_CUENTA_CONTABLE := 'GLD_CCC_BASE';
+            V_COL_PTDA_PRESUPESTARIA := 'GLD_CPP_BASE';
+        ELSIF DD_TIM_CODIGO = 'TAS' THEN
+            V_COL_CUENTA_CONTABLE := 'GLD_CCC_TASAS';
+            V_COL_PTDA_PRESUPESTARIA := 'GLD_CPP_TASAS';
+        ELSIF DD_TIM_CODIGO = 'REC' THEN
+            V_COL_CUENTA_CONTABLE := 'GLD_CCC_RECARGO';
+            V_COL_PTDA_PRESUPESTARIA := 'GLD_CPP_RECARGO';
+        ELSIF DD_TIM_CODIGO = 'INT' THEN
+            V_COL_CUENTA_CONTABLE := 'GLD_CCC_INTERESES';
+            V_COL_PTDA_PRESUPESTARIA := 'GLD_CPP_INTERESES';
+        END IF;
 
         IF V_NUM > 0 THEN
-            V_MSQL := V_SELECT_GASTO||V_FROM_GASTO;
+            V_MSQL := REPLACE(V_SELECT_GASTO, 'TIM_CODIGO', ''''||DD_TIM_CODIGO||'''')||V_FROM_GASTO;
             EXECUTE IMMEDIATE V_MSQL
-            INTO V_GPV_ID, V_TIT_ID, V_EGA_CODIGO, V_EGA_ID, V_NUM_FACTUR_UVEM, V_FEC_CONTABILIZACION, V_EJE_ID, V_CUENTA_CONTABLE, V_PTDA_PRESUPESTARIA, V_FECHA_PAGO, V_GIC_ID, V_GDE_ID
-            USING V_GPV_NUM_GASTO_HAYA;
+            INTO V_GPV_ID, V_TIT_ID, V_EGA_CODIGO, V_EGA_ID, V_NUM_FACTUR_UVEM, V_FEC_CONTABILIZACION, V_EJE_ID, V_CUENTA_CONTABLE, V_PTDA_PRESUPESTARIA, V_FECHA_PAGO, V_GIC_ID, V_GDE_ID, V_GLD_ID
+            USING V_GPV_NUM_GASTO_HAYA, V_DD_STG_CODIGO, V_DD_TIT_CODIGO, V_GLD_IMP_IND_TIPO_IMPOSITIVO;
         ELSE
             --Si no existe el gasto, asignamos COD_RETORNO = 1 para finalizar el proceso.
             COD_RETORNO := 1;
@@ -555,17 +607,17 @@ BEGIN
         --------------
         -- PASO 6/7 -- OPCIONAL
         --------------
-        IF GIC_CUENTA_CONTABLE IS NOT NULL AND COD_RETORNO = 0 THEN
-            --PASO 5/6 Actualizar la cuenta contable (GIC_GASTOS_INFO_CONTABILIDAD.GIC_CUENTA_CONTABLE) con el dato de Cuenta Contable si llega informado.
+        IF GLD_CCC_VALOR IS NOT NULL AND COD_RETORNO = 0 THEN
+            --PASO 5/6 Actualizar la cuenta contable (GLD_GASTOS_LINEA_DETALLE.GLD_CCC_*) con el dato de Cuenta Contable si llega informado.
             --Recuperamos el NUEVO valor
-            V_VALOR_NUEVO := GIC_CUENTA_CONTABLE;
+            V_VALOR_NUEVO := GLD_CCC_VALOR;
             --Realizamos la actuación
             V_MSQL := '
-            UPDATE '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD
-            SET GIC_CUENTA_CONTABLE = '''||V_VALOR_NUEVO||''',
+            UPDATE '||V_ESQUEMA||'.GLD_GASTOS_LINEA_DETALLE
+            SET '||V_COL_CUENTA_CONTABLE||' = '''||V_VALOR_NUEVO||''',
             USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
             FECHAMODIFICAR = SYSDATE
-            WHERE GIC_ID = '||V_GIC_ID||'
+            WHERE GLD_ID = '||V_GLD_ID||'
             ';
             EXECUTE IMMEDIATE V_MSQL;
             --Comprobamos si se ha actualizado o no
@@ -573,10 +625,10 @@ BEGIN
                 DBMS_OUTPUT.PUT_LINE('[INFO] Se ha actualizado la cuenta contable a '||V_VALOR_NUEVO||' para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Continuamos la ejecución.');
                 V_PASOS := V_PASOS+1;
                 --Logado en HLD_HIST_LANZA_PER_DETA
-                PARAM1 := 'GIC_GASTOS_INFO_CONTABILIDAD';
-                PARAM2 := 'GIC_ID';
-                PARAM3 := 'GIC_CUENTA_CONTABLE';
-                HLD_HIST_LANZA_PER_DETA (TO_CHAR(V_GPV_NUM_GASTO_HAYA), PARAM1, PARAM2, V_GIC_ID, PARAM3, V_CUENTA_CONTABLE, V_VALOR_NUEVO);
+                PARAM1 := 'GLD_GASTOS_LINEA_DETALLE';
+                PARAM2 := 'GLD_ID';
+                PARAM3 := ''||V_COL_CUENTA_CONTABLE||'';
+                HLD_HIST_LANZA_PER_DETA (TO_CHAR(V_GPV_NUM_GASTO_HAYA), PARAM1, PARAM2, V_GLD_ID, PARAM3, V_CUENTA_CONTABLE, V_VALOR_NUEVO);
                 --Reseteamos el V_VALOR_NUEVO
                 V_VALOR_NUEVO := '';
 
@@ -588,18 +640,17 @@ BEGIN
         --------------
         -- PASO 7/7 -- OPCIONAL
         --------------
-        IF GIC_PTDA_PRESUPUESTARIA IS NOT NULL AND COD_RETORNO = 0 THEN
-            --PASO 6/6 Actualizar la partida presupuestaria (GIC_GASTOS_INFO_CONTABILIDAD.GIC_PTDA_PRESUPUESTARIA) con el dato de Partida Presupuestaria si llega informado.
+        IF GLD_CPP_VALOR IS NOT NULL AND COD_RETORNO = 0 THEN
+            --PASO 6/6 Actualizar la partida presupuestaria (GLD_GASTOS_LINEA_DETALLE.GLD_CPP_*) con el dato de Partida Presupuestaria si llega informado.
             --Recuperamos el NUEVO valor
-            /*
-            V_VALOR_NUEVO := GIC_PTDA_PRESUPUESTARIA;
+            V_VALOR_NUEVO := GLD_CPP_VALOR;
             --Realizamos la actuación
             V_MSQL := '
-            UPDATE '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD
-            SET GIC_PTDA_PRESUPUESTARIA = '''||V_VALOR_NUEVO||''',
+            UPDATE '||V_ESQUEMA||'.GLD_GASTOS_LINEA_DETALLE
+            SET '||V_COL_PTDA_PRESUPESTARIA||' = '''||V_VALOR_NUEVO||''',
             USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
             FECHAMODIFICAR = SYSDATE
-            WHERE GIC_ID = '||V_GIC_ID||'
+            WHERE GLD_ID = '||V_GLD_ID||'
             ';
             EXECUTE IMMEDIATE V_MSQL;
             --Comprobamos si se ha actualizado o no
@@ -607,10 +658,10 @@ BEGIN
                 DBMS_OUTPUT.PUT_LINE('[INFO] Se ha actualizado la partida presupuestaria a '||V_VALOR_NUEVO||' para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Continuamos la ejecución.');
                 V_PASOS := V_PASOS+1;
                 --Logado en HLD_HIST_LANZA_PER_DETA
-                PARAM1 := 'GIC_GASTOS_INFO_CONTABILIDAD';
-                PARAM2 := 'GIC_ID';
-                PARAM3 := 'GIC_PTDA_PRESUPUESTARIA';
-                HLD_HIST_LANZA_PER_DETA (TO_CHAR(V_GPV_NUM_GASTO_HAYA), PARAM1, PARAM2, V_GIC_ID, PARAM3, V_PTDA_PRESUPESTARIA, V_VALOR_NUEVO);
+                PARAM1 := 'GLD_GASTOS_LINEA_DETALLE';
+                PARAM2 := 'GLD_ID';
+                PARAM3 := ''||V_COL_PTDA_PRESUPESTARIA||'';
+                HLD_HIST_LANZA_PER_DETA (TO_CHAR(V_GPV_NUM_GASTO_HAYA), PARAM1, PARAM2, V_GLD_ID, PARAM3, V_PTDA_PRESUPESTARIA, V_VALOR_NUEVO);
                 --Reseteamos el V_VALOR_NUEVO
                 V_VALOR_NUEVO := '';
 
@@ -618,7 +669,6 @@ BEGIN
                 COD_RETORNO := 1;
                 V_ERROR_DESC := '[ERROR] No se ha podido actualizar la partida presupuestaria a '||V_VALOR_NUEVO||' para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Paramos la ejecución.';
             END IF;
-            */---> COMENTAMOS ESTE CÓDIGO POR LA MIGRACION DE LIBERBANK - 04-09-2018
             V_PASOS := V_PASOS+1;
         END IF;
 
@@ -629,25 +679,25 @@ BEGIN
         IF COD_RETORNO = 0 THEN
             CASE
                 --Si hemos informado los 6/7 parámetros (Nunca pueden ser 7 ya que informamos FECHA_PAGO o FECHA_CONTABILIZACION).
-                WHEN GPV_NUM_GASTO_HAYA IS NOT NULL AND NUM_GASTO_DESTINATARIO IS NOT NULL AND (FECHA_PAGO IS NOT NULL OR FECHA_CONTABILIZACION IS NOT NULL) AND EJERCICIO IS NOT NULL AND GIC_CUENTA_CONTABLE IS NOT NULL AND GIC_PTDA_PRESUPUESTARIA IS NOT NULL
+                WHEN GPV_NUM_GASTO_HAYA IS NOT NULL AND NUM_GASTO_DESTINATARIO IS NOT NULL AND (FECHA_PAGO IS NOT NULL OR FECHA_CONTABILIZACION IS NOT NULL) AND EJERCICIO IS NOT NULL AND GLD_CCC_VALOR IS NOT NULL AND GLD_CPP_VALOR IS NOT NULL
                 THEN IF V_OP_1_PASOS != V_PASOS THEN
                         COD_RETORNO := 1;
                         V_ERROR_DESC := V_ERROR_DESC||'[ERROR] No se han cumplido todos los pasos de la operatoria. Paramos la ejecución.';
                      END IF;
                 --Si informamos 5/7 parámetros.
-                WHEN GPV_NUM_GASTO_HAYA IS NOT NULL AND NUM_GASTO_DESTINATARIO IS NOT NULL AND (FECHA_PAGO IS NOT NULL OR FECHA_CONTABILIZACION IS NOT NULL) AND EJERCICIO IS NOT NULL AND GIC_CUENTA_CONTABLE IS NOT NULL AND GIC_PTDA_PRESUPUESTARIA IS NULL
+                WHEN GPV_NUM_GASTO_HAYA IS NOT NULL AND NUM_GASTO_DESTINATARIO IS NOT NULL AND (FECHA_PAGO IS NOT NULL OR FECHA_CONTABILIZACION IS NOT NULL) AND EJERCICIO IS NOT NULL AND GLD_CCC_VALOR IS NOT NULL AND GLD_CPP_VALOR IS NULL
                 THEN IF (V_OP_1_PASOS-1) != V_PASOS THEN
                         COD_RETORNO := 1;
                         V_ERROR_DESC := V_ERROR_DESC||'[ERROR] No se han cumplido todos los pasos de la operatoria. Paramos la ejecución.';
                      END IF;
                 --Si informamos 4/7 parámetros.
-                WHEN GPV_NUM_GASTO_HAYA IS NOT NULL AND NUM_GASTO_DESTINATARIO IS NOT NULL AND (FECHA_PAGO IS NOT NULL OR FECHA_CONTABILIZACION IS NOT NULL) AND EJERCICIO IS NOT NULL AND GIC_CUENTA_CONTABLE IS NULL AND GIC_PTDA_PRESUPUESTARIA IS NULL
+                WHEN GPV_NUM_GASTO_HAYA IS NOT NULL AND NUM_GASTO_DESTINATARIO IS NOT NULL AND (FECHA_PAGO IS NOT NULL OR FECHA_CONTABILIZACION IS NOT NULL) AND EJERCICIO IS NOT NULL AND GLD_CCC_VALOR IS NULL AND GLD_CPP_VALOR IS NULL
                 THEN IF (V_OP_1_PASOS-2) != V_PASOS THEN
                         COD_RETORNO := 1;
                         V_ERROR_DESC := V_ERROR_DESC||'[ERROR] No se han cumplido todos los pasos de la operatoria. Paramos la ejecución.';
                      END IF;
                 --Si informamos 3/7 parámetros.
-                WHEN GPV_NUM_GASTO_HAYA IS NOT NULL AND NUM_GASTO_DESTINATARIO IS NOT NULL AND (FECHA_PAGO IS NOT NULL OR FECHA_CONTABILIZACION IS NOT NULL) AND EJERCICIO IS NULL AND GIC_CUENTA_CONTABLE IS NULL AND GIC_PTDA_PRESUPUESTARIA IS NULL
+                WHEN GPV_NUM_GASTO_HAYA IS NOT NULL AND NUM_GASTO_DESTINATARIO IS NOT NULL AND (FECHA_PAGO IS NOT NULL OR FECHA_CONTABILIZACION IS NOT NULL) AND EJERCICIO IS NULL AND GLD_CCC_VALOR IS NULL AND GLD_CPP_VALOR IS NULL
                 THEN IF (V_OP_1_PASOS-3) != V_PASOS THEN
                         COD_RETORNO := 1;
                         V_ERROR_DESC := V_ERROR_DESC||'[ERROR] No se han cumplido todos los pasos de la operatoria. Paramos la ejecución.';
@@ -964,17 +1014,17 @@ BEGIN
         --------------
         -- PASO 7/8 -- OPCIONAL
         --------------
-        IF GIC_CUENTA_CONTABLE IS NOT NULL AND COD_RETORNO = 0 THEN
-            --PASO 5/6 Actualizar la cuenta contable (GIC_GASTOS_INFO_CONTABILIDAD.GIC_CUENTA_CONTABLE) con el dato de Cuenta Contable si llega informado.
+        IF GLD_CCC_VALOR IS NOT NULL AND COD_RETORNO = 0 THEN
+            --PASO 5/6 Actualizar la cuenta contable (GLD_GASTOS_LINEA_DETALLE.GLD_CCC_*) con el dato de Cuenta Contable si llega informado.
             --Recuperamos el NUEVO valor
-            V_VALOR_NUEVO := GIC_CUENTA_CONTABLE;
+            V_VALOR_NUEVO := GLD_CCC_VALOR;
             --Realizamos la actuación
             V_MSQL := '
-            UPDATE '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD
-            SET GIC_CUENTA_CONTABLE = '''||V_VALOR_NUEVO||''',
+            UPDATE '||V_ESQUEMA||'.GLD_GASTOS_LINEA_DETALLE
+            SET '||V_COL_CUENTA_CONTABLE||' = '''||V_VALOR_NUEVO||''',
             USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
             FECHAMODIFICAR = SYSDATE
-            WHERE GIC_ID = '||V_GIC_ID||'
+            WHERE GLD_ID = '||V_GLD_ID||'
             ';
             EXECUTE IMMEDIATE V_MSQL;
             --Comprobamos si se ha actualizado o no
@@ -982,10 +1032,10 @@ BEGIN
                 DBMS_OUTPUT.PUT_LINE('[INFO] Se ha actualizado la cuenta contable a '||V_VALOR_NUEVO||' para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Continuamos la ejecución.');
                 V_PASOS := V_PASOS+1;
                 --Logado en HLD_HIST_LANZA_PER_DETA
-                PARAM1 := 'GIC_GASTOS_INFO_CONTABILIDAD';
-                PARAM2 := 'GIC_ID';
-                PARAM3 := 'GIC_CUENTA_CONTABLE';
-                HLD_HIST_LANZA_PER_DETA (TO_CHAR(V_GPV_NUM_GASTO_HAYA), PARAM1, PARAM2, V_GIC_ID, PARAM3, V_CUENTA_CONTABLE, V_VALOR_NUEVO);
+                PARAM1 := 'GLD_GASTOS_LINEA_DETALLE';
+                PARAM2 := 'GLD_ID';
+                PARAM3 := ''||V_COL_CUENTA_CONTABLE||'';
+                HLD_HIST_LANZA_PER_DETA (TO_CHAR(V_GPV_NUM_GASTO_HAYA), PARAM1, PARAM2, V_GLD_ID, PARAM3, V_CUENTA_CONTABLE, V_VALOR_NUEVO);
                 --Reseteamos el V_VALOR_NUEVO
                 V_VALOR_NUEVO := '';
 
@@ -997,17 +1047,17 @@ BEGIN
         --------------
         -- PASO 8/8 -- OPCIONAL
         --------------
-        IF GIC_PTDA_PRESUPUESTARIA IS NOT NULL AND COD_RETORNO = 0 THEN
-            --PASO 6/6 Actualizar la partida presupuestaria (GIC_GASTOS_INFO_CONTABILIDAD.GIC_PTDA_PRESUPUESTARIA) con el dato de Partida Presupuestaria si llega informado.
+        IF GLD_CPP_VALOR IS NOT NULL AND COD_RETORNO = 0 THEN
+            --PASO 6/6 Actualizar la partida presupuestaria (GLD_GASTOS_LINEA_DETALLE.GLD_CPP_*) con el dato de Partida Presupuestaria si llega informado.
             --Recuperamos el NUEVO valor
-            /*V_VALOR_NUEVO := GIC_PTDA_PRESUPUESTARIA;
+            /*V_VALOR_NUEVO := GLD_CPP_VALOR;
             --Realizamos la actuación
             V_MSQL := '
-            UPDATE '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD
-            SET GIC_PTDA_PRESUPUESTARIA = '''||V_VALOR_NUEVO||''',
+            UPDATE '||V_ESQUEMA||'.GLD_GASTOS_LINEA_DETALLE
+            SET '||V_COL_PTDA_PRESUPESTARIA||' = '''||V_VALOR_NUEVO||''',
             USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
             FECHAMODIFICAR = SYSDATE
-            WHERE GIC_ID = '||V_GIC_ID||'
+            WHERE GLD_ID = '||V_GLD_ID||'
             ';
             EXECUTE IMMEDIATE V_MSQL;
             --Comprobamos si se ha actualizado o no
@@ -1015,10 +1065,10 @@ BEGIN
                 DBMS_OUTPUT.PUT_LINE('[INFO] Se ha actualizado la partida presupuestaria a '||V_VALOR_NUEVO||' para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Continuamos la ejecución.');
                 V_PASOS := V_PASOS+1;
                 --Logado en HLD_HIST_LANZA_PER_DETA
-                PARAM1 := 'GIC_GASTOS_INFO_CONTABILIDAD';
-                PARAM2 := 'GIC_ID';
-                PARAM3 := 'GIC_PTDA_PRESUPUESTARIA';
-                HLD_HIST_LANZA_PER_DETA (TO_CHAR(V_GPV_NUM_GASTO_HAYA), PARAM1, PARAM2, V_GIC_ID, PARAM3, V_PTDA_PRESUPESTARIA, V_VALOR_NUEVO);
+                PARAM1 := 'GLD_GASTOS_LINEA_DETALLE';
+                PARAM2 := 'GLD_ID';
+                PARAM3 := ''||V_COL_PTDA_PRESUPESTARIA||'';
+                HLD_HIST_LANZA_PER_DETA (TO_CHAR(V_GPV_NUM_GASTO_HAYA), PARAM1, PARAM2, V_GLD_ID, PARAM3, V_PTDA_PRESUPESTARIA, V_VALOR_NUEVO);
                 --Reseteamos el V_VALOR_NUEVO
                 V_VALOR_NUEVO := '';
 
@@ -1037,31 +1087,31 @@ BEGIN
         IF COD_RETORNO = 0 THEN
             CASE
                 --Si hemos informado los 7/7 parámetros.
-                WHEN GPV_NUM_GASTO_HAYA IS NOT NULL AND NUM_GASTO_DESTINATARIO IS NOT NULL AND (FECHA_PAGO IS NOT NULL AND FECHA_CONTABILIZACION IS NOT NULL) AND EJERCICIO IS NOT NULL AND GIC_CUENTA_CONTABLE IS NOT NULL AND GIC_PTDA_PRESUPUESTARIA IS NOT NULL
+                WHEN GPV_NUM_GASTO_HAYA IS NOT NULL AND NUM_GASTO_DESTINATARIO IS NOT NULL AND (FECHA_PAGO IS NOT NULL AND FECHA_CONTABILIZACION IS NOT NULL) AND EJERCICIO IS NOT NULL AND GLD_CCC_VALOR IS NOT NULL AND GLD_CPP_VALOR IS NOT NULL
                 THEN IF V_OP_2_PASOS != V_PASOS THEN
                         COD_RETORNO := 1;
                         V_ERROR_DESC := V_ERROR_DESC||'[ERROR] No se han cumplido todos los pasos de la operatoria. Paramos la ejecución.';
                      END IF;
                 --Si informamos 6/7 parámetros.
-                WHEN GPV_NUM_GASTO_HAYA IS NOT NULL AND NUM_GASTO_DESTINATARIO IS NOT NULL AND (FECHA_PAGO IS NOT NULL AND FECHA_CONTABILIZACION IS NOT NULL) AND EJERCICIO IS NOT NULL AND GIC_CUENTA_CONTABLE IS NOT NULL AND GIC_PTDA_PRESUPUESTARIA IS NULL
+                WHEN GPV_NUM_GASTO_HAYA IS NOT NULL AND NUM_GASTO_DESTINATARIO IS NOT NULL AND (FECHA_PAGO IS NOT NULL AND FECHA_CONTABILIZACION IS NOT NULL) AND EJERCICIO IS NOT NULL AND GLD_CCC_VALOR IS NOT NULL AND GLD_CPP_VALOR IS NULL
                 THEN IF (V_OP_2_PASOS-1) != V_PASOS THEN
                         COD_RETORNO := 1;
                         V_ERROR_DESC := V_ERROR_DESC||'[ERROR] No se han cumplido todos los pasos de la operatoria. Paramos la ejecución.';
                      END IF;
                 --Si informamos 5/7 parámetros.
-                WHEN GPV_NUM_GASTO_HAYA IS NOT NULL AND NUM_GASTO_DESTINATARIO IS NOT NULL AND (FECHA_PAGO IS NOT NULL AND FECHA_CONTABILIZACION IS NOT NULL) AND EJERCICIO IS NOT NULL AND GIC_CUENTA_CONTABLE IS NULL AND GIC_PTDA_PRESUPUESTARIA IS NULL
+                WHEN GPV_NUM_GASTO_HAYA IS NOT NULL AND NUM_GASTO_DESTINATARIO IS NOT NULL AND (FECHA_PAGO IS NOT NULL AND FECHA_CONTABILIZACION IS NOT NULL) AND EJERCICIO IS NOT NULL AND GLD_CCC_VALOR IS NULL AND GLD_CPP_VALOR IS NULL
                 THEN IF (V_OP_2_PASOS-2) != V_PASOS THEN
                         COD_RETORNO := 1;
                         V_ERROR_DESC := V_ERROR_DESC||'[ERROR] No se han cumplido todos los pasos de la operatoria. Paramos la ejecución.';
                      END IF;
                 --Si informamos 4/7 parámetros.
-                WHEN GPV_NUM_GASTO_HAYA IS NOT NULL AND NUM_GASTO_DESTINATARIO IS NOT NULL AND (FECHA_PAGO IS NOT NULL AND FECHA_CONTABILIZACION IS NOT NULL) AND EJERCICIO IS NULL AND GIC_CUENTA_CONTABLE IS NULL AND GIC_PTDA_PRESUPUESTARIA IS NULL
+                WHEN GPV_NUM_GASTO_HAYA IS NOT NULL AND NUM_GASTO_DESTINATARIO IS NOT NULL AND (FECHA_PAGO IS NOT NULL AND FECHA_CONTABILIZACION IS NOT NULL) AND EJERCICIO IS NULL AND GLD_CCC_VALOR IS NULL AND GLD_CPP_VALOR IS NULL
                 THEN IF (V_OP_2_PASOS-3) != V_PASOS THEN
                         COD_RETORNO := 1;
                         V_ERROR_DESC := V_ERROR_DESC||'[ERROR] No se han cumplido todos los pasos de la operatoria. Paramos la ejecución.';
                      END IF;
                 --Si informamos 3/7 parámetros.
-                WHEN GPV_NUM_GASTO_HAYA IS NOT NULL AND NUM_GASTO_DESTINATARIO IS NOT NULL AND (FECHA_PAGO IS NOT NULL AND FECHA_CONTABILIZACION IS NULL) AND EJERCICIO IS NULL AND GIC_CUENTA_CONTABLE IS NULL AND GIC_PTDA_PRESUPUESTARIA IS NULL
+                WHEN GPV_NUM_GASTO_HAYA IS NOT NULL AND NUM_GASTO_DESTINATARIO IS NOT NULL AND (FECHA_PAGO IS NOT NULL AND FECHA_CONTABILIZACION IS NULL) AND EJERCICIO IS NULL AND GLD_CCC_VALOR IS NULL AND GLD_CPP_VALOR IS NULL
                 THEN IF (V_OP_2_PASOS-4) != V_PASOS THEN
                         COD_RETORNO := 1;
                         V_ERROR_DESC := V_ERROR_DESC||'[ERROR] No se han cumplido todos los pasos de la operatoria. Paramos la ejecución.';

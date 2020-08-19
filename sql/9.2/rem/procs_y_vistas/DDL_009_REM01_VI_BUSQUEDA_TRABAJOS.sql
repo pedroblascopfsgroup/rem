@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200227
+--## FECHA_CREACION=20200723
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-9586
+--## INCIDENCIA_LINK=HREOS-10618
 --## PRODUCTO=SI
 --## Finalidad: DDL
 --##           
@@ -17,7 +17,8 @@
 --##		0.5 Añadimos la subcartera
 --##		0.6 Añadimos columna para saber si un trabajo está en otro gasto
 --##		0.7 Añadimos idActivo, numActivo, numAgrupacion
---##		0.8 HREOS-9586 Añadimo cruce act_tbj
+--##		0.8 HREOS-9586 Añadimos cruce act_tbj
+--##		0.8 HREOS-10618 Adaptación de consulta al nuevo modelo de facturación
 --##########################################
 --*/
 
@@ -121,7 +122,7 @@ BEGIN
 			LEFT JOIN ' || V_ESQUEMA || '.act_pve_proveedor pve 			ON pve.pve_id = pvc.pve_id
 			LEFT JOIN ' || V_ESQUEMA || '.act_pve_proveedor pve2 			ON pve2.pve_id = tbj.mediador_id
 			LEFT JOIN ' || V_ESQUEMA_MASTER || '.usu_usuarios solic 		ON solic.usu_id = tbj.usu_id
-			LEFT JOIN ' || V_ESQUEMA || '.gpv_tbj gtb                       ON tbj.tbj_id = gtb.tbj_id AND GTB.BORRADO = 0
+			LEFT JOIN ' || V_ESQUEMA || '.gld_tbj gtb                       ON tbj.tbj_id = gtb.tbj_id AND GTB.BORRADO = 0
           where tbj.borrado = 0
           ';
 

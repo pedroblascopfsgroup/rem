@@ -136,8 +136,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                	disabled: true
 							                },
 							                { 
-							                	xtype: 'numberfieldbase',
-										 		symbol: HreRem.i18n("symbol.euro"),
+							                	xtype : 'currencyfieldbase',
 										 		fieldLabel: HreRem.i18n('fieldlabel.importe.reserva'),
 										 		bind: {
 										 			value: '{condiciones.importeReserva}'

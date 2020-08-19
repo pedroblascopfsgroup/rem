@@ -917,12 +917,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			plazoParaFirmar.allowBlank= false;
 			plazoParaFirmar.setDisabled(false);
 		}else{
-			me.getViewModel().get('condiciones').set('importeReserva', null);
-			me.getViewModel().get('condiciones').set('porcentajeReserva', null);
-			me.getViewModel().get('condiciones').set('plazoFirmaReserva', null);
-			importeReserva.setValue(null);
-			porcentajeReserva.setValue(null);
-			plazoParaFirmar.setValue(null);
 			porcentajeReserva.setDisabled(true);
 			plazoParaFirmar.setDisabled(true);
 			importeReserva.setDisabled(true);
@@ -939,10 +933,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		
 		if(CONST.TIPOS_CALCULO['PORCENTAJE'] == tipoCalculo) {
 			importeReserva = importeOferta * value / 100;
+			importeReservaField.setValue(importeReserva);
+			me.getViewModel().get('condiciones').set('importeReserva', importeReserva);
 		}
-		
-		importeReservaField.setValue(importeReserva);
-		me.getViewModel().get('condiciones').set('importeReserva', importeReserva);	
 
 	},
 	

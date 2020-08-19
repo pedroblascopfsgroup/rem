@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Javier Esbrí
---## FECHA_CREACION=20200717
+--## AUTOR=DAP
+--## FECHA_CREACION=20200819
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10730
@@ -43,8 +43,8 @@ DECLARE
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
         T_TIPO_DATA('B84921758',56,44),
         T_TIPO_DATA('A78485752',41, 59),
-        T_TIPO_DATA('A78485752',30, 70),
-        T_TIPO_DATA('A78485752',7, 93)
+        T_TIPO_DATA('A86486461',30, 70),
+        T_TIPO_DATA('A86201993',7, 93)
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

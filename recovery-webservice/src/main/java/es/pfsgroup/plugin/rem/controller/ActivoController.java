@@ -71,6 +71,8 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.PublicacionExcelReport;
 import es.pfsgroup.plugin.rem.exception.RemUserException;
+import es.pfsgroup.plugin.rem.factory.observaciones.GridObservacionesApi;
+import es.pfsgroup.plugin.rem.factory.observaciones.GridObservacionesFactory;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
@@ -94,6 +96,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoPlusvalia;
+import es.pfsgroup.plugin.rem.model.DtoActivoSaneamiento;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoTributos;
@@ -144,6 +147,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.rest.dto.HistoricoPropuestasPreciosDto;
+import es.pfsgroup.plugin.rem.rest.dto.SaneamientoAgendaDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
@@ -217,6 +221,8 @@ public class ActivoController extends ParadiseJsonController {
 	@Autowired
 	private UsuarioManager usuarioManager;
 	
+	@Autowired
+	private GridObservacionesFactory gridObservacionesFactory;
 
 	public ActivoApi getActivoApi() {
 		return activoApi;
@@ -311,8 +317,26 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-
 	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveActivoSaneamiento(DtoActivoSaneamiento activoDto, @RequestParam Long id, ModelMap model) {
+		try {
+			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_SANEAMIENTO);
+			if (success) adapter.actualizarEstadoPublicacionActivo(id);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+		} catch (JsonViewerException jvex) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
+			logger.error(jvex.getMessage());
+			throw new JsonViewerException(jvex.getMessage());
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		} 
+
+		return createModelAndViewJson(model);
+	}
+
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveActivoCarga(DtoActivoCargas cargaDto, ModelMap model) {
 		try {
@@ -579,16 +603,6 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListObservacionesById(Long id, ModelMap model,HttpServletRequest request) {
-		model.put(RESPONSE_DATA_KEY, adapter.getListObservacionesById(id));
-		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "observaciones", ACCION_CODIGO.CODIGO_VER);
-
-		return createModelAndViewJson(model);
-	}
-
-
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListAgrupacionesActivoById(Long id, ModelMap model, HttpServletRequest request) {
@@ -921,16 +935,34 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListObservaciones(Long id, String tab, ModelMap model, HttpServletRequest request) {
+		
+		GridObservacionesApi observaciones = gridObservacionesFactory.getGridObservacionByCode(tab);
+		try {
+			model.put(RESPONSE_DATA_KEY, observaciones.getObservacionesById(id));
+		}catch(Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+			logger.error(e);
+		}
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "observaciones", ACCION_CODIGO.CODIGO_VER);
+		return createModelAndViewJson(model);
+		
+	}
+	
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveObservacionesActivo(DtoObservacion dtoObservacion, ModelMap model) {
+	public ModelAndView saveObservacion(DtoObservacion dtoObservacion, String tab, ModelMap model) {
 		try {
-			boolean success = adapter.saveObservacionesActivo(dtoObservacion);
+			GridObservacionesApi observaciones = gridObservacionesFactory.getGridObservacionByCode(tab);
+			boolean success = observaciones.saveObservacion(dtoObservacion);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
 		}
 
 		return createModelAndViewJson(model);
@@ -938,14 +970,16 @@ public class ActivoController extends ParadiseJsonController {
 
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView createObservacionesActivo(DtoObservacion dtoObservacion, Long idEntidad, ModelMap model) {
+	public ModelAndView createObservacion(DtoObservacion dtoObservacion, Long idEntidad, String tab, ModelMap model) {
 		try {
-			boolean success = adapter.createObservacionesActivo(dtoObservacion, idEntidad);
+			GridObservacionesApi observaciones = gridObservacionesFactory.getGridObservacionByCode(tab);
+			boolean success = observaciones.createObservacion(dtoObservacion, idEntidad);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
 		}
 
 		return createModelAndViewJson(model);
@@ -953,14 +987,16 @@ public class ActivoController extends ParadiseJsonController {
 
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView deleteObservacionesActivo(@RequestParam Long id, ModelMap model) {
+	public ModelAndView deleteObservacionById(@RequestParam Long id, String tab, ModelMap model) {
 		try {
-			boolean success = adapter.deleteObservacion(id);
+			GridObservacionesApi observaciones = gridObservacionesFactory.getGridObservacionByCode(tab);
+			boolean success = observaciones.deleteObservacion(id);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
 		}
 
 		return createModelAndViewJson(model);
@@ -3430,6 +3466,73 @@ public class ActivoController extends ParadiseJsonController {
 		
 		try {
 			Boolean success = activoApi.updateHistoricoSolicitudPrecios(historicoPropuestasPreciosDto);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView crearEstadoAdmision(String activoId, String codEstadoAdmision, String codSubestadoAdmision, String observaciones){
+		
+		return createModelAndViewJson(new ModelMap("data", activoApi.crearEstadoAdmision(activoId, codEstadoAdmision, codSubestadoAdmision, observaciones)));
+		
+	}
+
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getSaneamientosAgendaByActivo(Long idActivo, ModelMap model) {
+		try {
+			List<SaneamientoAgendaDto> lista = activoApi.getSaneamientosAgendaByActivo(idActivo);
+			model.put(RESPONSE_DATA_KEY, lista);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto,  ModelMap model) { 
+		
+		try {
+			Boolean success = activoApi.createSaneamientoAgenda(saneamientoAgendaDto);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto,  ModelMap model) { 
+		
+		try {
+			Boolean success = activoApi.deleteSaneamientoAgenda(saneamientoAgendaDto);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto,  ModelMap model) { 
+		
+		try {
+			Boolean success = activoApi.updateSaneamientoAgenda(saneamientoAgendaDto);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {

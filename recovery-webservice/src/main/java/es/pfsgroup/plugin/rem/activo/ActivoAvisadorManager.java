@@ -19,13 +19,11 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
-import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -340,6 +338,14 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		if(activo.getIsDnd()) {
 			DtoAviso dtoAviso = new DtoAviso();
 			dtoAviso.setDescripcion("Activo En Curso de Obra por parte de Edificación");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
+		}
+		
+		// Aviso 21: Activo pendiente de inscripción
+		if(activo.getTitulo() != null && Checks.esNulo(activo.getTitulo().getFechaInscripcionReg())) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Pendiente de inscripción");
 			dtoAviso.setId(String.valueOf(id));
 			listaAvisos.add(dtoAviso);
 		}

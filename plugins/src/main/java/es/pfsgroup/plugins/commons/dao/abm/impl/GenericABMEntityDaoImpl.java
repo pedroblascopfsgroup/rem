@@ -1,7 +1,11 @@
 package es.pfsgroup.plugins.commons.dao.abm.impl;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.hibernate.SessionFactory;
 import org.springframework.orm.hibernate3.HibernateAccessor;
@@ -13,9 +17,6 @@ import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.Order;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.commons.utils.dao.abm.impl.GenericABMDaoImpl.FilterImpl;
 
 public class GenericABMEntityDaoImpl implements GenericABMDao {
 
@@ -127,6 +128,23 @@ public class GenericABMEntityDaoImpl implements GenericABMDao {
 		return this.getListOrdered(clazz, noOrder(), filters);
 
 	}
+	
+	@Override
+	public <T extends Serializable> List<T> getList(Class<T> clazz,
+			List<Filter> filters) {
+		return this.getListOrdered(clazz, noOrder(), filters);
+
+	}
+	
+	@Override
+	public <T extends Serializable> List<T> getListOrdered(Class<T> clazz,
+			Order order, List<Filter> filters ) {
+		ExtendedDao<T> dao = createExtendedDao(clazz);
+		HQLBuilder b = new HQLBuilder("from " + clazz.getSimpleName());
+		setupFilters(b, filters);
+		setupOrder(b,order);
+		return dao.getList(b);
+	}
 
 	@Override
 	public <T extends Serializable> List<T> getListOrdered(Class<T> clazz, Order order, Filter... filters) {
@@ -210,6 +228,51 @@ public class GenericABMEntityDaoImpl implements GenericABMDao {
 					break;
 				}
 			}
+		}
+	}
+	
+	private void setupFilters(HQLBuilder b, List<Filter> filters) {
+		if (filters != null) {
+			Map<String, Set<String>> similary = new HashMap<String, Set<String>>();
+			for (Filter f : filters) {
+				switch (f.getType()) {
+				case EQUALS:
+					HQLBuilder.addFiltroIgualQue(b, f.getPropertyName(), f.getPropertyValue());
+					break;
+				case NULL:
+					HQLBuilder.addFiltroIsNull(b, f.getPropertyName());
+					break;
+				case NOTNULL:
+					HQLBuilder.addFiltroNotIsNull(b, f.getPropertyName());
+					break;
+				case SIMILARY:
+					this.buildLikeList(f, similary);
+				}
+			}
+			if (!similary.isEmpty()) {
+				this.appendSimilary(b, similary);
+			}
+		}
+	}
+
+	private void appendSimilary(HQLBuilder b, Map<String, Set<String>> similary) {
+		for (Map.Entry<String,Set<String>> entry : similary.entrySet()) {
+			if (entry.getValue() != null) {
+				String [] values = entry.getValue().toArray(new String[entry.getValue().size()]);
+				b.appendWhereIN(entry.getKey(), values , false);
+			}
+		}		
+	}
+	private void buildLikeList(Filter f, Map<String, Set<String>> similary) {
+		if ( similary.get(f.getPropertyName()) != null ) {
+			Set<String> values = similary.get(f.getPropertyName());
+			String v = f.getPropertyValue() == null ? null : f.getPropertyValue().toString();
+			values.add(v);
+		} else {
+			Set<String> list = new HashSet<String>();
+			String v = f.getPropertyValue() == null ? null : f.getPropertyValue().toString();
+			list.add(v);
+			similary.put(f.getPropertyName(), list);
 		}
 	}
 

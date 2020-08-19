@@ -541,7 +541,7 @@ public class ActivoAdapter {
 	}
 
 	@Transactional(readOnly = false)
-	public boolean saveObservacionesActivo(DtoObservacion dtoObservacion) {
+	public boolean saveObservacion(DtoObservacion dtoObservacion) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(dtoObservacion.getId()));
 		ActivoObservacion activoObservacion = genericDao.get(ActivoObservacion.class, filtro);
 
@@ -566,7 +566,7 @@ public class ActivoAdapter {
 	}
 
 	@Transactional(readOnly = false)
-	public boolean createObservacionesActivo(DtoObservacion dtoObservacion, Long idActivo) {
+	public boolean createObservacion(DtoObservacion dtoObservacion, Long idActivo) {
 		ActivoObservacion activoObservacion = new ActivoObservacion();
 		Activo activo = activoApi.get(idActivo);
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();

@@ -5,7 +5,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
 	cls			: 'panel-base shadow-panel tabPanel-tercer-nivel',
     reference	: 'datosGeneralesActivo',
     requires	: ['Ext.plugin.LazyItems','HreRem.ux.panel.GMapPanel', 'HreRem.view.activos.detalle.DatosBasicosActivo', 'HreRem.view.activos.detalle.DatosComunidadActivo', 
-    	'HreRem.view.activos.detalle.TituloInformacionRegistralActivo', 'HreRem.view.activos.detalle.InformacionAdministrativaActivo', 'HreRem.view.activos.detalle.CargasActivo',
+    	'HreRem.view.activos.detalle.TituloInformacionRegistralActivo', 'HreRem.view.activos.detalle.InformacionAdministrativaActivo',
     	'HreRem.view.activos.detalle.ValoracionesActivo','HreRem.view.activos.detalle.SituacionPosesoriaActivo','HreRem.view.activos.detalle.InformacionComercialActivo'],
     layout: 'fit',
 	listeners: {
@@ -116,14 +116,6 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
 	    	ocultarInformacionadministrativaactivo = !$AU.userHasFunction('EDITAR_INFO_ADMINISTRATIVA_ACTIVO');
 	    }
 	    
-	    var ocultarCargasactivo = false;		
-	    if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
-	    	ocultarCargasactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
-	    			&& $AU.userHasFunction('EDITAR_TAB_ACTIVO_CARGAS'));
-	    }else{
-	    	ocultarCargasactivo = !$AU.userHasFunction('EDITAR_TAB_ACTIVO_CARGAS');
-	    }
-	    
 	    var ocultarSituacionposesoriaactivo = false;		
 	    if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
 	    	ocultarSituacionposesoriaactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
@@ -149,7 +141,6 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datosbasicosactivo', ocultarBotonesEdicion:ocultarDatosbasicosactivo })}, ['TAB_DATOS_BASICOS_ACTIVO']);
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'tituloinformacionregistralactivo', ocultarBotonesEdicion:ocultarTituloinformacionregistralactivo})}, ['TAB_ACTIVO_TITULO_INFO_REGISTRAL']);
     	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informacionadministrativaactivo', ocultarBotonesEdicion: ocultarInformacionadministrativaactivo})}, ['TAB_ACTIVO_INFO_ADMINISTRATIVA']);
-    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'cargasactivo',ocultarBotonesEdicion: ocultarCargasactivo})}, ['TAB_ACTIVO_CARGAS']);
     	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'situacionposesoriaactivo', ocultarBotonesEdicion: ocultarSituacionposesoriaactivo})}, ['TAB_ACTIVO_SITU_POSESORIA']);
     	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'informacioncomercialactivo',ocultarBotonesEdicion: true})}, ['TAB_ACTIVO_INFO_COMERCIAL']);
     	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datoscomunidadactivo',ocultarBotonesEdicion: false})}, ['TAB_ACTIVO_DATOS_COMUNIDAD']); 

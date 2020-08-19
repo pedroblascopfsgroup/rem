@@ -686,5 +686,15 @@ public class GenericController extends ParadiseJsonController{
 	public ModelAndView getPartidaPresupuestaria(Long idSubpartida){
 		return createModelAndViewJson(new ModelMap("data", genericApi.getPartidaPresupuestaria(idSubpartida)));	
 	}
+
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView comboSubestadoAdmisionNuevoFiltrado(String codEstadoAdmisionNuevo){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getcomboSubestadoAdmisionNuevoFiltrado(codEstadoAdmisionNuevo)));	
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDiccionarioSubtipologiaAgendaSaneamiento(String codTipo){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getSubtipologiaAgendaSaneamiento(codTipo)));	
+	}
  }
 

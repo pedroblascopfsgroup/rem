@@ -51,6 +51,7 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.CalidadDatosConfig;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
@@ -1854,4 +1855,23 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		Order order = new Order(OrderType.DESC,"auditoria.fechaCrear");
 		return genericDao.getListOrdered(HistoricoPeticionesPrecios.class, order, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo));
 	}
+	
+	@Override
+	public void actualizaDatoCDC(CalidadDatosConfig cdc, String valor, String identificador, String username) {
+		getHibernateTemplate().flush();		
+		Session session = this.getSessionFactory().getCurrentSession();
+		StringBuilder sb = new StringBuilder(				
+				"UPDATE " + cdc.getTabla() 
+				+ " SET " + cdc.getCampo() + "  = " +  valor + " , "
+				+ " USUARIOMODIFICAR = '"  +  username + "', "
+				+ " FECHAMODIFICAR = SYSDATE " 
+				+ " WHERE " + cdc.getCampoId() + " = "
+						+ " (SELECT " + cdc.getCampoId() + " "
+								+ " FROM " + cdc.getTablaAux() + " "
+								+ " WHERE " + cdc.getCampoIdTablaAux() + " = " + identificador + ") "
+				+ " AND BORRADO = 0"				
+			);
+		session.createSQLQuery(sb.toString()).executeUpdate();
+	}
+
 }

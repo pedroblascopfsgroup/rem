@@ -10,7 +10,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados','HreRem.model.CalificacionNegativaModel',
     'HreRem.model.HistoricoTramtitacionTituloModel', 'HreRem.model.HistoricoGestionGrid', 'HreRem.model.ListaActivoGrid', 'HreRem.model.HistoricoFasesDePublicacion',
     'HreRem.model.AdjuntoActivoAgrupacion','HreRem.model.AdjuntoActivoProyecto','HreRem.model.DocumentacionAdministrativa', 'HreRem.model.ActivoPatrimonio',
-    'HreRem.model.DocumentosTributosModel','HreRem.model.HistoricoSolicitudesPreciosModel'],
+    'HreRem.model.DocumentosTributosModel','HreRem.model.HistoricoSolicitudesPreciosModel', 'HreRem.model.ActivoEvolucion', 'HreRem.model.ActivoSaneamiento'],
 
     data: {
     	activo: null,
@@ -109,13 +109,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     },
 
 	     getIconClsEstadoAdmision: function(get) {
-	     	var estadoAdmision = get('activo.admision');
+	     	var admisionAntiguo = get('activo.admision');
+	     	var estadoAdmision = get('activo.estadoAdmisionCodCabecera');
+	     	var subestadoAdmision = get('activo.subestadoAdmisionCodCabecera');
+	     	var perimetroAdmision = get('activo.perimetroAdmision');
 	     	
-	     	if(estadoAdmision) {
-	     		return 'app-tbfiedset-ico icono-ok';
-	     	} else {
-	     		return 'app-tbfiedset-ico icono-ko';
+	     	if(perimetroAdmision){
+	     		if(estadoAdmision == CONST.ESTADO_ADMISION['CODIGO_SANEADO_REGISTRALMENTE']){
+	     			return 'app-tbfiedset-ico icono-ok';
+	     		}else if(estadoAdmision == CONST.ESTADO_ADMISION['CODIGO_PENDIENTE_SANEAMIENTO']
+	     			&& subestadoAdmision == CONST.SUBESTADO_ADMISION['CODIGO_PENDIENTE_CARGAS']){
+	     			return 'app-tbfiedset-ico icono-okn';
+	     		}else{
+	     			return 'app-tbfiedset-ico icono-ko-red';
+	     		}
+	     	}else{
+	     		if(admisionAntiguo) {
+		     		return 'app-tbfiedset-ico icono-ok';
+		     	} else {
+		     		return 'app-tbfiedset-ico icono-ko';
+	     		}
 	     	}
+	     	
 	     },
 
 	     getIconClsEstadoSituacionComercial: function(get){
@@ -922,6 +937,23 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				return true;
 			else
 				return false;
+		},
+		
+		estadoAdmisionVisible : function(get){
+			
+			return (get('activo.incluidoEnPerimetroAdmision') == "false" || !get('activo.incluidoEnPerimetroAdmision'))  && ($AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
+		},
+
+		editarCargasActivo: function(get) {
+	    	var editarCargasActivo = false;
+		    if (get('activo.claseActivoCodigo') == "01") {
+		    	editarCargasActivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL']))
+		    			&& $AU.userHasFunction('EDITAR_TAB_ACTIVO_CARGAS')) && get('saneamiento.unidadAlquilable');
+		    } else {
+		    	editarCargasActivo = !$AU.userHasFunction('EDITAR_TAB_ACTIVO_CARGAS') && get('saneamiento.unidadAlquilable');
+		    }
+
+		    return editarCargasActivo;
 		}
 	 }, 
 	 
@@ -1096,17 +1128,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		        extraParams: {id: '{activo.id}'}
 	    	 }
     		},
-    		
-    		storeObservaciones: {    
-    		 pageSize: $AC.getDefaultPageSize(),
-    		 model: 'HreRem.model.Observaciones',
-		     proxy: {
-		        type: 'uxproxy',
-		        remoteUrl: 'activo/getListObservacionesById',
-		        extraParams: {id: '{activo.id}'}
-	    	 }
-    		},
-    		
     		storeAgrupacionesActivo: {    	
     		 pageSize: $AC.getDefaultPageSize(),
     		 model: 'HreRem.model.AgrupacionesActivo',
@@ -2407,6 +2428,89 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'activo/getHistoricoSolicitudesPrecios',
 				extraParams: {id: '{activo.id}'}
 			}
+		},
+
+		
+		comboEstadoAdmision: {//
+			model: 'HreRem.model.DDBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosAdmision'}
+			}
+		},
+		comboSubestadoAdmision: {//
+			model: 'HreRem.model.DDBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getSubEstadoAdmision',
+				extraParams: {diccionario: 'subEstadosAdmision'}
+			}
+		},
+		comboSubestadoAdmisionNuevoFiltrado: {//
+			model: 'HreRem.model.DDBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/comboSubestadoAdmisionNuevoFiltrado'
+			}
+		}, 
+
+		storeGridEvolucion:{
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.ActivoEvolucion',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activoadmisionevolucion/getActivoAgendaEvolucion',
+				extraParams: {id: '{activo.id}'}
+			}
+		},
+		storeAgendaRevisionTitulo: {
+			 pageSize: $AC.getDefaultPageSize(),
+			 model: 'HreRem.model.AgendaRevisionTituloGridModel',
+     	     proxy: {
+     	        type: 'uxproxy',
+     	        remoteUrl: 'admision/getListAgendaRevisionTitulo',
+     	        extraParams: {idActivo: '{activo.id}'}
+         	 }
+		},
+		
+		storeSaneamientoAgendaGrid: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.SaneamientoAgenda',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getSaneamientosAgendaByActivo',
+				extraParams: {idActivo: '{activo.id}'}
+			}
+		},
+		
+		storeTipologiaAgendaSaneamiento: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoagendasaneamiento'}
+			}
+		},
+		
+		storeSubtipologiaAgendaSaneamiento: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionarioSubtipologiaAgendaSaneamiento',
+				extraParams: {codTipo: '{comboTipologiaRef.value}'}
+			}
+		},
+		comboEstadoRegistral: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadoRegistral'}
+			}
 		}
+
      }
 });

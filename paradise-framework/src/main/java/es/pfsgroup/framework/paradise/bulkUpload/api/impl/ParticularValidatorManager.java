@@ -4737,4 +4737,94 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean esActivoIncluidoPerimetroAdmision(String numActivo) {
+		if(numActivo == null) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL("SELECT ACT.ACT_ID "
+				+ "		FROM ACT_ACTIVO ACT "
+				+ "		LEFT JOIN ACT_PAC_PERIMETRO_ACTIVO PAC "
+				+ "		ON ACT.ACT_ID = PAC.ACT_ID "
+				+ "		WHERE PAC.PAC_CHECK_ADMISION = 1"
+				+ "		AND ACT.ACT_NUM_ACTIVO = "+numActivo+" ");
+		
+		return resultado!=null;
+	}
+	
+	@Override
+	public Boolean estadoAdmisionValido(String codEstadoAdmision) {
+		if(codEstadoAdmision == null) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) FROM DD_EAA_ESTADO_ACT_ADMISION " 
+				+ "WHERE DD_EAA_CODIGO = '"+ codEstadoAdmision +"' "
+				+ "AND BORRADO = 0"
+		);
+		
+		return "1".equals(resultado);
+	}
+	
+	@Override
+	public Boolean subestadoAdmisionValido(String codSubestadoAdmision) {
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) FROM DD_SAA_SUBESTADO_ACT_ADMISION " 
+				+ "WHERE DD_SAA_CODIGO = '"+ codSubestadoAdmision +"' "
+				+ "AND BORRADO = 0"
+		);
+		
+		return "1".equals(resultado);
+
+	}
+	
+	@Override
+	public Boolean estadoConSubestadosAdmisionValido(String codEstadoAdmision) {
+		if(codEstadoAdmision == null) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) FROM DD_SAA_SUBESTADO_ACT_ADMISION SAA "
+				+ "JOIN DD_EAA_ESTADO_ACT_ADMISION EAA ON SAA.DD_EAA_ID = EAA.DD_EAA_ID " 
+				+ "WHERE EAA.DD_EAA_CODIGO = '"+ codEstadoAdmision +"' "
+				+ "AND EAA.BORRADO = 0 AND SAA.BORRADO = 0"
+		);
+		
+		return !"0".equals(resultado);
+		
+	}
+
+	@Override
+	public Boolean relacionEstadoSubestadoAdmisionValido(String codEstadoAdmision, String codSubestadoAdmision) {
+		if(codEstadoAdmision == null) {
+			return false;
+		}
+		
+		if(estadoConSubestadosAdmisionValido(codEstadoAdmision)) {
+			String resultado = rawDao.getExecuteSQL(
+					"SELECT COUNT(1) FROM DD_SAA_SUBESTADO_ACT_ADMISION SAA "
+					+ "JOIN DD_EAA_ESTADO_ACT_ADMISION EAA ON SAA.DD_EAA_ID = EAA.DD_EAA_ID " 
+					+ "WHERE SAA.DD_SAA_CODIGO = '"+ codSubestadoAdmision +"' "
+					+ "AND EAA.DD_EAA_CODIGO = '"+ codEstadoAdmision +"' "
+					+ "AND EAA.BORRADO = 0 AND SAA.BORRADO = 0"
+			);
+			
+			return "1".equals(resultado);
+		}
+		
+		return true;
+	}
+		
+	@Override
+	public String getValidacionCampoCDC(String codCampo) {
+		if(Checks.esNulo(codCampo) || !StringUtils.isNumeric(codCampo)) {
+			return null;
+		}
+		return rawDao.getExecuteSQL(
+				"SELECT VALIDACION FROM CDC_CALIDAD_DATOS_CONFIG "
+				+ "WHERE COD_CAMPO = '" + codCampo + "' AND BORRADO = 0"
+		);			
+	}	
 }

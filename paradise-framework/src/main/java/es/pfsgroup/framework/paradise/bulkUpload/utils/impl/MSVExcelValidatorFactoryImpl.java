@@ -212,6 +212,13 @@ public class MSVExcelValidatorFactoryImpl {
 	
 	@Autowired
 	private MSVTacticoEspartaPublicacionesValidator tacticoEspartaPublicaciones;
+	
+	@Autowired
+	private MSVValidatorEstadosAdmision estadosAdmision;
+
+	@Autowired
+	private MSVActualizarCalidadDatosExcelValidator calidadDatos;
+	
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 
@@ -351,6 +358,10 @@ public class MSVExcelValidatorFactoryImpl {
 			return gestionPeticionesDePrecios;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_TACTICO_ESPARTA_PUBLICACIONES.equals(codTipoOperacion)) {
 			return tacticoEspartaPublicaciones;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_ESTADOS_ADMISION.equals(codTipoOperacion)) {
+			return estadosAdmision;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_MASIVO_CALIDAD_DATOS.equals(codTipoOperacion)) {
+			return calidadDatos;
 		}
 		
 		return null;

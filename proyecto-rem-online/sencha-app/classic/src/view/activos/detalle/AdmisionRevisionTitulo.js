@@ -3,7 +3,6 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 	xtype : 'admisionrevisiontitulo',
 	cls : 'panel-base shadow-panel',
 	reference : 'admisionrevisiontitulo',
-	disableValidation : true,
 	controller : 'admisionrevisiontitulo',
 	refreshAfterSave : true,
 	viewModel : {
@@ -122,7 +121,23 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 						.i18n('fieldlabel.admision.revisionTitulo.porcentajePropiedad'),
 				bind : {
 					value : '{admisionRevisionTitulo.porcentajePropiedad}'
-				}
+				},
+				minValue: 0,
+		        maxValue: 100,
+		        listeners: {
+		            change: function(field, value) {
+		            	if(Ext.isNumeric(value)){
+		            		if(value >100){
+		            			me.form.markInvalid();
+		            			field.setValue(100);
+		            		}else{
+		            			field.setValue(value);
+		            		}
+		            	}else{
+		            		me.form.markInvalid();
+		            	}
+		            }
+		        }
 			}, {
 				xtype : 'comboboxfieldbase', 
 				fieldLabel : HreRem
@@ -213,7 +228,24 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 							.i18n('fieldlabel.admision.revisionTitulo.porcentajeConstruccionSegunTasacionFisica'),
 					bind : {
 						value : '{admisionRevisionTitulo.porcentajeConsTasacionCf}'
-					}
+					},
+					minValue: 0,
+			        maxValue: 100,
+			        listeners: {
+			            change: function(field, value) {
+			            	if(Ext.isNumeric(value)){
+			            		if(value >100){
+			            			me.form.markInvalid();
+			            			field.setValue(100);
+			            		}else{
+			            			field.setValue(value);
+			            		}
+			            		
+			            	}else{
+			            		me.form.markInvalid();
+			            	}
+			            }
+			        }
 				}]
 			}, {
 				xtype : 'fieldsettable',
@@ -234,7 +266,23 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 							.i18n('fieldlabel.admision.revisionTitulo.porcentajeConstruccionSegunTasacionJuridica'),
 					bind : {
 						value : '{admisionRevisionTitulo.porcentajeConsTasacionCj}'
-					}
+					},
+					minValue: 0,
+			        maxValue: 100,
+			        listeners: {
+			            change: function(field, value) {
+			            	if(Ext.isNumeric(value)){
+			            		if(value >100){
+			            			me.form.markInvalid();
+			            			field.setValue(100);
+			            		}else{
+			            			field.setValue(value);
+			            		}
+			            	}else{
+			            		me.form.markInvalid();
+			            	}
+			            }
+			        }
 				}, {
 					xtype : 'comboboxfieldbase',
 					fieldLabel : HreRem
@@ -456,7 +504,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 		me.lookupController().cargarTabData(me);
 		me.lookupController().cargarTabData(me.up('activosdetalle').down('datosbasicosactivo'));
 		Ext.Array.each(me.query('grid'), function(grid) {
-					grid.getStore().load();
-				});
+			grid.getStore().load();
+		});
 	}
 });

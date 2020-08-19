@@ -270,6 +270,29 @@ Ext.define('HreRem.model.FichaTrabajo', {
     		},
     		{
     			name: 'nombreProyecto' 
+    		},
+    		{
+    			name: 'gestorActivo'
+    		},
+    		{
+    			name: 'tieneTramiteCreado',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'esFEjecucionEditable',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'esTarifaPlanaEditable',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'esSiniestroEditable',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'esEstadoEditable',
+    			type: 'boolean'
     		}
     		
     ],

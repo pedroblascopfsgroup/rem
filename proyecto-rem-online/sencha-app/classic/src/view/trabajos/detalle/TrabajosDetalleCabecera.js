@@ -82,7 +82,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleCabecera', {
 											autoScroll: true,
 											layout: {
 											    type: 'table',
-										        columns: 3,
+										        columns: 2,
 										        trAttrs: {width: '100%', pading: 0},
 										        tdAttrs: {width: '33%',  pading: 0},
 										        tableAttrs: {
@@ -99,45 +99,40 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleCabecera', {
 															bind:		'{trabajo.tipoTrabajoDescripcion}'
 														},
 									                   	{
-									                   		fieldLabel: HreRem.i18n('fieldlabel.fecha.solicitud'),
+									                   		fieldLabel: HreRem.i18n('fieldlabel.fecha.alta'),
 									                   		cls: 'cabecera-info-field',
 															bind:		'{trabajo.fechaSolicitud}',
 															renderer: Ext.util.Format.dateRenderer('d/m/Y')
 									                   	},
-									                   	{
-									                   		fieldLabel: HreRem.i18n('fieldlabel.propietario'),
-									                   		cls: 'cabecera-info-field',
-															bind:		'{trabajo.propietario}'
-									                   	}, 
 														{ 
 															fieldLabel: HreRem.i18n('fieldlabel.subtipo'),
 															cls: 'cabecera-info-field',
 										                	bind:		'{trabajo.subtipoTrabajoDescripcion}'
 										                },
 										                { 
-															fieldLabel: HreRem.i18n('fieldlabel.estado'),
+															fieldLabel: HreRem.i18n('fieldlabel.estado.y.fecha'),
 															cls: 'cabecera-info-field',
 															bind:		'{trabajo.estadoDescripcion}'
-														},
-									                   	{
-									                   		fieldLabel: HreRem.i18n('fieldlabel.proveedor'),
-									                   		cls: 'cabecera-info-field',
-															bind:		'{trabajo.nombreProveedor}'
-									                   	},
+														},		
 										                {
 									                   		fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
 									                   		cls: 'cabecera-info-field',
 															bind:		'{trabajo.cartera}'
 									                   	},
-														{ 
-															fieldLabel: HreRem.i18n('fieldlabel.solicitante'),
-															cls: 'cabecera-info-field',
-										                	bind:		'{trabajo.solicitante}'
-										                },
 									                   	{
-									                   		fieldLabel: HreRem.i18n('fieldlabel.mediador'),
+									                   		fieldLabel: HreRem.i18n('fieldlabel.gestor.activo'),
 									                   		cls: 'cabecera-info-field',
-															bind:		'{trabajo.nombreMediador}'
+															bind:		'{trabajo.gestorActivo}'
+									                   	},
+									                   	{
+									                   		fieldLabel: HreRem.i18n('fieldlabel.propietario'),
+									                   		cls: 'cabecera-info-field',
+															bind:		'{trabajo.propietario}'
+									                   	}, 
+					                   					{
+									                   		fieldLabel: HreRem.i18n('fieldlabel.proveedor'),
+									                   		cls: 'cabecera-info-field',
+															bind:		'{trabajo.nombreProveedor}'
 									                   	},
 									                   	{
 									                   		fieldLabel: HreRem.i18n('fieldlabel.nombre.ug'),

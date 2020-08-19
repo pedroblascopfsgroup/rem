@@ -37,10 +37,9 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    },
 	    
 		disableTarificacion: function (get) {
-			 var fechaEjecucionReal = get('trabajo.fechaEjecucionReal');
-			 var fechaCierreEco = get('trabajo.fechaCierreEconomico');
+			 var esProveedorEditable = get('gestionEconomica.esProveedorEditable');
+			 var esListadoTarifasEditable = get('gestionEconomica.esListadoTarifasEditable');
 			 var fechaEmisionFactura = get('trabajo.fechaEmisionFactura');
-	    	 var esTarificado = get('gestionEconomica.esTarificado');
 	    	 var isSupervisorActivo = $AU.userIsRol('HAYASUPACT') || $AU.userIsRol('HAYASUPADM') || $AU.userIsRol('HAYASUPER');
 		     var isGestorActivos = $AU.userIsRol('HAYAGESACT') || $AU.userIsRol('HAYAGESTADM');
 		     var isProveedor = $AU.userIsRol('HAYAPROV') || $AU.userIsRol('HAYACERTI') 
@@ -48,26 +47,15 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 
 		     if(!Ext.isEmpty(fechaEmisionFactura)){
 		    	 return true;	    		
-		     } else if(isSupervisorActivo){
-		    	return false;		    		
-		     } else if(isGestorActivos){
-		    	if (!Ext.isEmpty(fechaCierreEco))
-			    	 return true;
-			    else {
-				   	 if (esTarificado)
-				   		 return false;
-				    else
-				    	 return true;
-			    }	    		
-		    } else if(isProveedor){
-		    	if (Ext.isEmpty(fechaEjecucionReal))
-	    			return false;
-	    		else {
-	    			return true;
-	    		}
-		    } else {
+		     } else if(esProveedorEditable == true || esListadoTarifasEditable == true){
+		    	if(isGestorActivos || isProveedor || isSupervisorActivo){
+		    		return false;
+		    	}	else {
+		    		return true;
+		    	}    		
+		     } else {
 		    	return true;
-		    }
+		     }
 	    	 
 	    	 
 	    	 
@@ -79,17 +67,12 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    },
 	    
 	    disablePresupuesto: function (get) {
+			 var esListadoPresupuestosEditable = get('gestionEconomica.esListadoPresupuestosEditable');
 	    	
-	    	 var fechaCierreEco = get('trabajo.fechaCierreEconomico');
-	    	 var esTarificado = get('gestionEconomica.esTarificado');
-	    	
-	    	 if (!Ext.isEmpty(fechaCierreEco))
+	    	 if(esListadoPresupuestosEditable == true){
+	    		 return false;
+	    	 } else {	    		 
 	    		 return true;
-	    	 else {
-		    	 if (esTarificado || Ext.isEmpty(esTarificado))
-		    		 return true;
-		    	 else
-		    		 return false;
 	    	 }
 	    },
 	    
@@ -151,7 +134,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    		}else
 					return false;
 	    }
-		
     },
     
     stores: {
@@ -368,6 +350,16 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 				}
     		},
     		
+			comboProveedorFiltradoManual: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboProveedorFiltradoManual',
+					extraParams: {idTrabajo: '{trabajo.id}'}
+				},
+				autoLoad: true
+			},
+			
     		comboEstadoPresupuesto: {
 	    		model: 'HreRem.model.ComboBase',
 				proxy: {
@@ -511,6 +503,15 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 						idTrabajo: '{trabajo.id}'
 					}	
 				}
+    		},	    
+    		
+    		comboEstadoSegunEstadoGdaOProveedor: {
+    			model: 'HreRem.model.ComboBase',
+    			proxy: {
+	    			type: 'uxproxy',
+	    			remoteUrl: 'trabajo/getComboEstadoSegunEstadoGdaOProveedor',
+	    			extraParams: {idTrabajo: '{trabajo.id}'}
+    			}
     		}
     }
 

@@ -64,7 +64,13 @@ public class DtoGestionEconomicaTrabajo extends WebDto {
 	private String descripcionTarifaTrabajo;
 	
 	private String subcarteraCodigo;
-
+	
+	private Boolean esProveedorEditable;
+	
+	private Boolean esListadoTarifasEditable;
+	
+	private Boolean esListadoPresupuestosEditable;
+	
 	public Long getIdTrabajo() {
 		return idTrabajo;
 	}
@@ -264,5 +270,29 @@ public class DtoGestionEconomicaTrabajo extends WebDto {
 
 	public void setSubcarteraCodigo(String subcarteraCodigo) {
 		this.subcarteraCodigo = subcarteraCodigo;
+	}
+
+	public Boolean getEsProveedorEditable() {
+		return esProveedorEditable;
+	}
+
+	public void setEsProveedorEditable(Boolean esProveedorEditable) {
+		this.esProveedorEditable = esProveedorEditable;
+	}
+
+	public Boolean getEsListadoTarifasEditable() {
+		return esListadoTarifasEditable;
+	}
+
+	public void setEsListadoTarifasEditable(Boolean esListadoTarifasEditable) {
+		this.esListadoTarifasEditable = esListadoTarifasEditable;
+	}
+
+	public Boolean getEsListadoPresupuestosEditable() {
+		return esListadoPresupuestosEditable;
+	}
+
+	public void setEsListadoPresupuestosEditable(Boolean esListadoPresupuestosEditable) {
+		this.esListadoPresupuestosEditable = esListadoPresupuestosEditable;
 	}
 }

@@ -94,6 +94,7 @@ import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoRequestDto;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoRespuestaDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import es.pfsgroup.plugin.rem.trabajo.TrabajoManager;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
@@ -171,6 +172,9 @@ public class TrabajoController extends ParadiseJsonController {
 
 	@Autowired
 	private MSVRawSQLDao rawDao;
+	
+	@Autowired
+	private TrabajoManager trabajoManager;
 	
 	private static final String RESPONSE_SUCCESS_KEY = "success";	
 	private static final String RESPONSE_DATA_KEY = "data";
@@ -970,6 +974,26 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboProveedorFiltradoManual(Long idTrabajo, ModelMap model){
+		
+		try {
+			model.put("data", trabajoApi.getComboProveedor(idTrabajo));
+			model.put("success", true);
+		} catch (JsonViewerException e) {
+			model.put("success", false);
+			model.put("msg", e.getMessage());
+			
+		} catch (Exception e) {
+			model.put("success", false);
+			model.put("msg", "Se ha producido un error al ejecutar la petición.");
+			logger.error("error obteniendo proveedores",e);
+		}
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboResponsableTrabajo(Long idTrabajo, ModelMap model) {
 
 		Trabajo trabajo = trabajoDao.get(idTrabajo);
@@ -1278,7 +1302,7 @@ public class TrabajoController extends ParadiseJsonController {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST, value = "/trabajo")
+	@RequestMapping(method = RequestMethod.POST)
 	public void saveTrabajosWS(ModelMap model, RestRequestWrapper request,HttpServletResponse response) {		
 		TrabajoRequestDto jsonData = null;
 		ArrayList<Map<String, Object>> listaRespuesta = null;
@@ -1431,6 +1455,13 @@ public class TrabajoController extends ParadiseJsonController {
 
 		return new ModelAndView("jsonView", model);
 
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboEstadoSegunEstadoGdaOProveedor(Long idTrabajo, WebDto webDto, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, trabajoApi.getComboEstadoSegunEstadoGdaOProveedor(idTrabajo));
+
+		return new ModelAndView("jsonView", model);
 	}
 
 	/**

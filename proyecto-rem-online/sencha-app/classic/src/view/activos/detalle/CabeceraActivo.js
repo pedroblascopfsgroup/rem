@@ -4,9 +4,8 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 	requires: ['HreRem.view.common.ToolFieldSet', 'HreRem.ux.button.BotonFavorito'],
 	layout: 'fit',
 	initComponent: function () {
-
 		var me = this;
-
+		var visibilityBtnCrearTrabajo = me.lookupController().checkVisibilityOfBtnCrearTrabajo()
 		me.menu = Ext.create("Ext.menu.Menu", {
 			width: 240,
 			cls: 'menu-favoritos',
@@ -142,10 +141,11 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 								xtype: 'button',
 								cls: 'boton-cabecera',
 								iconCls: 'ico-crear-trabajo',
+								reference: 'btnCrearTrabajo',
 								tooltip: HreRem.i18n('btn.nueva.peticion.trabajo'),
 								handler: 'onClickCrearTrabajo',
 								secFunPermToShow: 'BOTON_CREAR_TRABAJO',
-								hidden: (me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false")
+								hidden: visibilityBtnCrearTrabajo
 							},
 							{
 								xtype: 'button',

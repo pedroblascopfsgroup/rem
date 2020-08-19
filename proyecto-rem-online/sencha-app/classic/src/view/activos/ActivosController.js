@@ -188,6 +188,7 @@ Ext.define('HreRem.view.activos.ActivosController', {
 			var idActivo = null;
 			var codCartera = null;
 			var codSubcartera = null;
+			var gestorActivo = $AU.getUser().userName;
 			var grid = me.getView().down('grid');
 			if(Ext.isEmpty(grid)){ 
 				return true;
@@ -200,7 +201,7 @@ Ext.define('HreRem.view.activos.ActivosController', {
 		  		codCartera = selected[0].getData().entidadPropietariaCodigo;
 		  		codSubcartera = selected[0].getData().subcarteraCodigo;
 		  	}
-			 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: idActivo, codCartera: codCartera, codSubcartera: codSubcartera, logadoGestorMantenimiento: true,idAgrupacion: null, idGestor: null});    	
+			 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearPeticionTrabajo",{idActivo: idActivo, codCartera: codCartera, codSubcartera: codSubcartera, logadoGestorMantenimiento: true,idAgrupacion: null, idGestor: null, gestorActivo: gestorActivo});    	
 		},
 
 	onChangeChainedCombo: function(combo) {

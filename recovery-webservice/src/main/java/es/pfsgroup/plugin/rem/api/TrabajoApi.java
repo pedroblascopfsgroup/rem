@@ -31,6 +31,7 @@ import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestosTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoProveedorContactoSimple;
+import es.pfsgroup.plugin.rem.model.DtoProveedorFiltradoManual;
 import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
@@ -39,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
@@ -868,4 +870,11 @@ public interface TrabajoApi {
 	public ActivoTramite createTramiteTrabajo(Long idTrabajo, ExpedienteComercial expedienteComercial);
 
 	ActivoTramite createTramiteTrabajo(Trabajo trabajo, ExpedienteComercial expedienteComercial);
+	
+	/*Envía una lista de DTOs de proveedores filtrados por cartera siempre con el 'nombre', de manera que,
+	 * ya sea el campo nombre o el campo nombreComercial el seleccionado, se envíe siempre como 'nombre' para
+	 * evitar conflictos*/
+	public List<DtoProveedorFiltradoManual> getComboProveedorFiltradoManual(Long idTrabajo) throws Exception;
+	
+	public List<DDEstadoTrabajo> getComboEstadoSegunEstadoGdaOProveedor(Long idTrabajo);
 }

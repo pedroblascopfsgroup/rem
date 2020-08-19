@@ -7,7 +7,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion','HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 
     		'HreRem.view.expedientes.ExpedienteDetalleController', 'HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', 
     		'HreRem.view.activos.detalle.InformeComercialActivo','HreRem.view.activos.detalle.AdministracionActivo',
-    		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias','HreRem.view.activos.detalle.PlusvaliaActivo', 'HreRem.model.ComercialActivoModel'],
+    		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias','HreRem.view.activos.detalle.PlusvaliaActivo', 
+    		'HreRem.model.ComercialActivoModel','HreRem.view.trabajos.detalle.CrearPeticionTrabajo'],
 
     control: {
          'documentosactivosimple gridBase': {
@@ -479,7 +480,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var idActivo = me.getViewModel().get("activo.id");
     	var codSubcartera = me.getViewModel().get("activo.subcarteraCodigo");
     	var codCartera = me.getViewModel().get("activo.entidadPropietariaCodigo");
-    	me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: idActivo, idAgrupacion: null,codCartera: codCartera, codSubcartera: codSubcartera, logadoGestorMantenimiento: true});
+    	var gestorActivo = $AU.getUser().userName;
+    	
+    	me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearPeticionTrabajo",
+    		{idActivo: idActivo, 
+    		idAgrupacion: null,
+    		codCartera: codCartera, 
+    		codSubcartera: codSubcartera, 
+    		logadoGestorMantenimiento: true,
+    		gestorActivo: gestorActivo});
     },
     
     onAnyadirPropietarioClick: function (btn) {
@@ -5981,5 +5990,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	
     	return false;
     	
+    },
+    checkVisibilityOfBtnCrearTrabajo: function () {
+       var me = this;
+       var enPerimetro = me.getViewModel().get('activo.incluidoEnPerimetro') == 'true';
+       var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+       var isGestorActivos = $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']);
+	   var isGestorAlquiler = $AU.userGroupHasRole(CONST.PERFILES['GESTOR_ALQUILER_HPM']);
+	   
+       return !enPerimetro || (!isSuper && !isGestorActivos && !isGestorAlquiler);
+        					 
+       
     }
+    
 });

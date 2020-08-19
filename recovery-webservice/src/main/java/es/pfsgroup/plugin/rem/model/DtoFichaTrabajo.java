@@ -177,6 +177,18 @@ public class DtoFichaTrabajo {
 	private String nombreProyecto;
 
 	private String nombreExpediente;
+	
+	private String gestorActivo;
+	
+	private Boolean tieneTramiteCreado;
+	
+	private Boolean esFEjecucionEditable;
+	
+	private Boolean esTarifaPlanaEditable;
+	
+	private Boolean esSiniestroEditable;
+	
+	private Boolean esEstadoEditable;
 
 	public Long getIdTrabajo() {
 		return idTrabajo;
@@ -860,6 +872,54 @@ public class DtoFichaTrabajo {
 
 	public void setNombreExpediente(String nombreExpediente) {
 		this.nombreExpediente = nombreExpediente;
+	}
+
+	public String getGestorActivo() {
+		return gestorActivo;
+	}
+
+	public void setGestorActivo(String gestorActivo) {
+		this.gestorActivo = gestorActivo;
+	}
+
+	public Boolean getTieneTramiteCreado() {
+		return tieneTramiteCreado;
+	}
+
+	public void setTieneTramiteCreado(Boolean tieneTramiteCreado) {
+		this.tieneTramiteCreado = tieneTramiteCreado;
+	}
+
+	public Boolean getEsFEjecucionEditable() {
+		return esFEjecucionEditable;
+	}
+
+	public void setEsFEjecucionEditable(Boolean esFEjecucionEditable) {
+		this.esFEjecucionEditable = esFEjecucionEditable;
+	}
+
+	public Boolean getEsTarifaPlanaEditable() {
+		return esTarifaPlanaEditable;
+	}
+
+	public void setEsTarifaPlanaEditable(Boolean esTarifaPlanaEditable) {
+		this.esTarifaPlanaEditable = esTarifaPlanaEditable;
+	}
+
+	public Boolean getEsSiniestroEditable() {
+		return esSiniestroEditable;
+	}
+
+	public void setEsSiniestroEditable(Boolean esSiniestroEditable) {
+		this.esSiniestroEditable = esSiniestroEditable;
+	}
+
+	public Boolean getEsEstadoEditable() {
+		return esEstadoEditable;
+	}
+
+	public void setEsEstadoEditable(Boolean esEstadoEditable) {
+		this.esEstadoEditable = esEstadoEditable;
 	}
 	
 }

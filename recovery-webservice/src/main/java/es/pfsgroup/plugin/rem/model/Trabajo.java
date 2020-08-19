@@ -35,6 +35,7 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.model.dd.DDAcoAprobacionComite;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAdelanto;
@@ -75,6 +76,10 @@ public class Trabajo implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PVC_ID")
     private ActivoProveedorContacto proveedorContacto;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PFA_ID")
+    private Prefactura prefactura;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="USU_ID")
@@ -297,6 +302,35 @@ public class Trabajo implements Serializable, Auditable {
 	
 	@Column(name="TBJ_NOMBRE_DND")
     private String nombreDnd;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="TBJ_GESTOR_ALTA")
+    private Usuario gestorAlta;
+	
+	@Column(name="TBJ_ID_TAREA")
+    private Long idTarea;
+	
+	@Column(name="TBJ_APLICA_COMITE")
+    private Boolean aplicaComite;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ACO_ID")
+    private DDAcoAprobacionComite aprobacionComite;
+	
+	@Column(name="TBJ_FECHA_RES_COMITE")
+    private Date fechaResolucionComite;	
+	
+	@Column(name="TBJ_RES_COMITE_ID")
+    private String resolucionComiteId;
+	
+	@Column(name="TBJ_IMPORTE_PRESUPUESTO")
+    private Double importePresupuesto;
+	
+	@Column(name="TBJ_REF_IMPORTE_PRESUPUESTO")
+    private String resolucionImportePresupuesto;
+	
+	@Column(name="TBJ_SINIESTRO")
+    private Boolean siniestro;
 	
 	public Long getId() {
 		return id;
@@ -994,6 +1028,70 @@ public class Trabajo implements Serializable, Auditable {
 
 	public void setNombreExpedienteTrabajo(String nombreExpedienteTrabajo) {
 		this.nombreExpedienteTrabajo = nombreExpedienteTrabajo;
+	}
+
+	public Usuario getGestorAlta() {
+		return gestorAlta;
+	}
+
+	public void setGestorAlta(Usuario gestorAlta) {
+		this.gestorAlta = gestorAlta;
+	}
+
+	public Long getIdTarea() {
+		return idTarea;
+	}
+
+	public void setIdTarea(Long idTarea) {
+		this.idTarea = idTarea;
+	}
+
+	public Date getFechaResolucionComite() {
+		return fechaResolucionComite;
+	}
+
+	public void setFechaResolucionComite(Date fechaResolucionComite) {
+		this.fechaResolucionComite = fechaResolucionComite;
+	}
+
+	public String getResolucionComiteId() {
+		return resolucionComiteId;
+	}
+
+	public void setResolucionComiteId(String resolucionComiteId) {
+		this.resolucionComiteId = resolucionComiteId;
+	}
+
+	public Double getImportePresupuesto() {
+		return importePresupuesto;
+	}
+
+	public void setImportePresupuesto(Double importePresupuesto) {
+		this.importePresupuesto = importePresupuesto;
+	}
+
+	public String getResolucionImportePresupuesto() {
+		return resolucionImportePresupuesto;
+	}
+
+	public void setResolucionImportePresupuesto(String resolucionImportePresupuesto) {
+		this.resolucionImportePresupuesto = resolucionImportePresupuesto;
+	}
+
+	public Boolean getSiniestro() {
+		return siniestro;
+	}
+
+	public void setSiniestro(Boolean siniestro) {
+		this.siniestro = siniestro;
+	}
+
+	public Prefactura getPrefactura() {
+		return prefactura;
+	}
+
+	public void setPrefactura(Prefactura prefactura) {
+		this.prefactura = prefactura;
 	}
     
     

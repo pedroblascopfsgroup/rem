@@ -73,6 +73,10 @@ public class GastoProveedor implements Serializable, Auditable {
 	@Column(name="GPV_CONCEPTO")
 	private String concepto;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PFA_ID")
+    private Prefactura prefactura;
+	
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TPE_ID")
     private DDTipoPeriocidad tipoPeriocidad;
@@ -565,4 +569,13 @@ public class GastoProveedor implements Serializable, Auditable {
 	public void setGpvPlanVisitas(Boolean gpvPlanVisitas) {
 		this.gpvPlanVisitas = gpvPlanVisitas;
 	}
+
+	public Prefactura getPrefactura() {
+		return prefactura;
+	}
+
+	public void setPrefactura(Prefactura prefactura) {
+		this.prefactura = prefactura;
+	}
+	
 }

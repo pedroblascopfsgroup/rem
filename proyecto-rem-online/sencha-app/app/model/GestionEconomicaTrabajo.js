@@ -142,6 +142,18 @@ Ext.define('HreRem.model.GestionEconomicaTrabajo', {
     		},
     		{
     			name: 'codigoTipoProveedor'
+    		},
+    		{
+    			name: 'esProveedorEditable',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'esListadoTarifasEditable',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'esListadoPresupuestosEditable',
+    			type: 'boolean'
     		}
     ],
     

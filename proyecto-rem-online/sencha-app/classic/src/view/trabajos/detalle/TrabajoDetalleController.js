@@ -297,6 +297,12 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 							});
 	},
 	
+	//Este método habrá que codificarlo en la parte de la funcionalidad
+	onClickBotonCrearPeticionTrabajo: function(btn){
+		
+		
+	},
+	
 	// Este método es llamado cuando se pulsa el botón de 'crear' en la ventana pop-up
 	// de crear trabajo. Comprueba si se ha seleccionado el checkbox de agrupar activos
 	// en un sólo trabajo. Si no se ha seleccionado informa al usuario de que se va a
@@ -403,6 +409,12 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		}
 		
 	},
+	
+	hideWindowCrearPeticionTrabajo: function(btn) {
+    	var me = this;
+    	//me.getView().down("[reference=activosagrupaciontrabajo]").deselectAll();
+    	btn.up('window').hide();   	
+    },
 	
 	hideWindowPeticionTrabajo: function(btn) {
     	var me = this;
@@ -718,7 +730,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		
 		var me = this;
 		
-		var idAgrupacion = Ext.ComponentQuery.query("creartrabajowindow")[0].idAgrupacion;
+		var idAgrupacion = Ext.ComponentQuery.query("crearpeticiontrabajowin")[0].idAgrupacion;
 		store.getProxy().extraParams = {id: idAgrupacion};	
 		return true;		
 	},
@@ -915,7 +927,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	   			
     	   			//btn.up('creartrabajowindow').getViewModel().getData().trabajo.getData().idProceso = idProceso;
     	   			//btn.up('creartrabajowindow').lookupReference('')form.getBindRecord().set("idActivo", idActivo);
-    	   			var window = btn.up('creartrabajowindow');
+    	   			var window = btn.up('crearpeticiontrabajowin');
     	   			window.idProceso = idProceso;
     	   			window.lookupReference('listaActivosSubidaRef').getStore().getProxy().setExtraParams({'idProceso':idProceso});
     	   			window.lookupReference('listaActivosSubidaRef').getStore().load(1);    

@@ -1,0 +1,161 @@
+--/*
+--#########################################
+--## AUTOR=Viorel Remus Ovidiu
+--## FECHA_CREACION=20200812
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-7953
+--## PRODUCTO=NO
+--## 
+--## Finalidad: 
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+   ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+   ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+   V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+   V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+   V_USUARIOMODIFICAR VARCHAR(100 CHAR):= 'REMVIP-7953';
+   V_SQL VARCHAR2(4000 CHAR);	
+   V_PAR VARCHAR( 1024 CHAR );
+   V_RET VARCHAR( 1024 CHAR );  
+  
+BEGIN
+  
+   DBMS_OUTPUT.put_line('[INICIO]');
+
+-----------------------------------------------------------------------------------------------------------------      
+
+   V_PAR := '12089817,
+12139385,
+12089818,
+12148840,
+12148994,
+12148841,
+12148842,
+12148995,
+12139386,
+12148843,
+12166045,
+12148844,
+12148996,
+12139387,
+12148845,
+12139388,
+12089819,
+12148846,
+12148847,
+12148997,
+12148998,
+12148848,
+12153220,
+12148849,
+12153221,
+12148999,
+12148850,
+12148851,
+12148852,
+12148853,
+12171569,
+12148854,
+12139389,
+12149000,
+12153222,
+12153223,
+12153224,
+12148855,
+12148856,
+12148857,
+12148858,
+12149001,
+12153225,
+12148859,
+12153226,
+12153227,
+12148860,
+12148861,
+12148862,
+12148863,
+12153209,
+12148864,
+12149002,
+12148865,
+12089820,
+12153228,
+12153229,
+12089814,
+12148866,
+12148867,
+12148868,
+12148869,
+12148870,
+12148871,
+12153230,
+12148872,
+12148873,
+12148874,
+12148875,
+12148876,
+12153231,
+12148877,
+12148878,
+12149003,
+12148879,
+12089821,
+12166040,
+12148880,
+12148881,
+12148882,
+12089822,
+12149004,
+12148883,
+12153232,
+12139390,
+12148884,
+12149005,
+12153233,
+12148885,
+12166046,
+12148886,
+12149006,
+12148887,
+12139391,
+12139392,
+12148888,
+12097614,
+12139232,
+12149007';	
+
+   REM01.SP_EXT_REENVIO_GASTO ( V_PAR , V_USUARIOMODIFICAR, V_RET );
+
+-----------------------------------------------------------------------------------------------------------------
+
+   DBMS_OUTPUT.PUT_LINE( V_RET );
+   DBMS_OUTPUT.PUT_LINE(' [INFO] Reenviado gastos ');
+   DBMS_OUTPUT.PUT_LINE('[FIN] ');
+    
+   COMMIT;
+
+EXCEPTION
+   WHEN OTHERS THEN
+        ERR_NUM := SQLCODE;
+        ERR_MSG := SQLERRM;
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+        DBMS_OUTPUT.put_line(ERR_MSG);
+        ROLLBACK;
+        RAISE;   
+END;
+/
+EXIT;

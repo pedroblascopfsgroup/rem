@@ -315,6 +315,11 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		}
    		
    		return existe;
-	}  	
+	}
+
+	@Override
+	public void flush() {
+		this.getSessionFactory().getCurrentSession().flush();
+	}
 
 }

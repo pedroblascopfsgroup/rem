@@ -21,6 +21,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import es.pfsgroup.plugin.rem.activotrabajo.dao.ActivoTrabajoDao;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -299,6 +300,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
+
+	@Autowired
+	private ActivoTrabajoDao activotrabajoDao;
 	
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -763,6 +767,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				.getList(VActivosAgrupacionTrabajo.class, filtro);
 		List<VActivosAgrupacionTrabajo> activosAgrupacionTrabajo = new ArrayList<VActivosAgrupacionTrabajo>();
 
+		Long idActivo = null;
+		ActivoTrabajo activoTrabajo = null;
+		Float participacionTotal = null;
+
 		if (!Checks.esNulo(idsActivosSelecionados) && !Checks.esNulo(dtoTrabajo.getEsSolicitudConjunta())
 				&& dtoTrabajo.getEsSolicitudConjunta().equals(true)) {
 			boolean seleccionado;
@@ -835,6 +843,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				// Es necesario revisar la forma de definir estos datos del
 				// trabajo con "Agrupación activos Conjunta" --> "Trabajo"
 				if (isFirstLoop) {
+					idActivo = activo.getId();
 					trabajo.setEstado(getEstadoNuevoTrabajo(dtoTrabajo, activo));
 					trabajo.setActivo(activo); // En caso de ser un trabajo por
 												// agrupación, metemos el primer
@@ -863,7 +872,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 				}
 
-				ActivoTrabajo activoTrabajo = createActivoTrabajo(activo, trabajo, dtoTrabajo.getParticipacion());
+				activoTrabajo = createActivoTrabajo(activo, trabajo, dtoTrabajo.getParticipacion());
 				trabajo.getActivosTrabajo().add(activoTrabajo);
 				isFirstLoop = false;
 			}
@@ -911,6 +920,29 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 			trabajoDao.saveOrUpdate(trabajo);
 
+			trabajoDao.flush();
+
+			//Cuando haya tiempo se debe cambiar el siguiente codigo repetido en varios sitios para meterlo en un mismo metodo.
+
+			participacionTotal = activotrabajoDao.getImporteParticipacionTotal(trabajo.getNumTrabajo());
+
+			if(participacionTotal != 100f) {
+
+				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+
+				ActivoTrabajo activoTrabajoParaActualizar = genericDao.get(ActivoTrabajo.class, f1, f2);
+
+				Float participacionOriginal = activoTrabajoParaActualizar.getParticipacion();
+
+				Float participacionFinal = 100f - participacionTotal + participacionOriginal;
+
+				activoTrabajoParaActualizar.setParticipacion(participacionFinal);
+
+				genericDao.update(ActivoTrabajo.class, activoTrabajoParaActualizar);
+
+			}
+
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -925,6 +957,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		List<Activo> listaActivos = this.getListaActivosProceso(dtoTrabajo.getIdProceso());
 		Trabajo trabajo = new Trabajo();
+		Long idActivo = null;
+		ActivoTrabajo activoTrabajo = null;
+		Float participacionTotal = null;
 		
 		try {
 
@@ -967,6 +1002,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					trabajo.setFechaSolicitud(new Date());
 					trabajo.setNumTrabajo(trabajoDao.getNextNumTrabajo());
 					trabajo.setSolicitante(usuarioLogado);
+					idActivo = activo.getId();
 					if (!Checks.esNulo(usuarioGestor)) {
 						trabajo.setUsuarioResponsableTrabajo(usuarioGestor);
 					} else {
@@ -998,7 +1034,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						trabajo.setEsTarificado(true);
 					}
 				}
-				ActivoTrabajo activoTrabajo = this.createActivoTrabajo(activo, trabajo, dtoTrabajo.getParticipacion());
+				activoTrabajo = this.createActivoTrabajo(activo, trabajo, dtoTrabajo.getParticipacion());
 				transactionManager.commit(transaction);
 				transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 				
@@ -1024,8 +1060,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					transactionManager.commit(transaction);
 					transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 					
-					//processAdapter.addFilaProcesada(dtoTrabajo.getIdProceso(), true);
-					
+
 				}
 			}
 
@@ -1042,12 +1077,26 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				ficheroMasivoToTrabajo(dtoTrabajo.getIdProceso(), trabajo);	
 				transactionManager.commit(transaction);
 			}
-			
-			//processAdapter.setStateProcessed(dtoTrabajo.getIdProceso());
-			
+
+			participacionTotal = activotrabajoDao.getImporteParticipacionTotal(trabajo.getNumTrabajo());
+
+			if(participacionTotal != 100f){
+
+				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+
+				ActivoTrabajo activoTrabajoParaActualizar = genericDao.get(ActivoTrabajo.class, f1, f2);
+
+				Float participacionOriginal = activoTrabajoParaActualizar.getParticipacion();
+
+				Float participacionFinal = 100f - participacionTotal + participacionOriginal;
+
+				activoTrabajoParaActualizar.setParticipacion(participacionFinal);
+
+				genericDao.update(ActivoTrabajo.class, activoTrabajoParaActualizar);
+			}
+
 		} catch (Exception e) {
-			//processAdapter.addFilaProcesada(dtoTrabajo.getIdProceso(), false);
-			//processAdapter.setStateProcessed(dtoTrabajo.getIdProceso());
 			logger.error(e.getMessage());
 			try {
 				transactionManager.rollback(transaction);

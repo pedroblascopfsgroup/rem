@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Gabriel De Toni
---## FECHA_CREACION=20200723
+--## FECHA_CREACION=20200819
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10553
@@ -107,69 +107,74 @@ BEGIN
 	END LOOP;
 	
 	*/
-	
-	-- Bucle que CREA las nuevas columnas 
-	FOR I IN V_ALTER.FIRST .. V_ALTER.LAST
-	LOOP
-
-		V_T_ALTER := V_ALTER(I);
-
-		-- Verificar si la columna ya existe. Si ya existe la columna, no se hace nada con esta (no tiene en cuenta si al existir los tipos coinciden)
-		V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLS WHERE COLUMN_NAME = '''||V_T_ALTER(1)||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
-		EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
-		IF V_NUM_TABLAS = 0 THEN
-			--No existe la columna y la creamos
-			DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_ALTER(1)||'] -------------------------------------------');
-			V_MSQL := 'ALTER TABLE '||V_TEXT_TABLA|| ' 
-					   ADD ('||V_T_ALTER(1)||' '||V_T_ALTER(2)||' )
-			';
-
-			EXECUTE IMMEDIATE V_MSQL;
-			--DBMS_OUTPUT.PUT_LINE('[1] '||V_MSQL);
-			DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_ALTER(1)||' Columna INSERTADA en tabla, con tipo '||V_T_ALTER(2));
-
-			-- Creamos comentario	
-			V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_T_ALTER(1)||' IS '''||V_T_ALTER(3)||'''';		
-			EXECUTE IMMEDIATE V_MSQL;
-			--DBMS_OUTPUT.PUT_LINE('[2] '||V_MSQL);
-			DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario en columna creado.');
-		END IF;
-
-	END LOOP;
-	
-	FOR I IN V_FK.FIRST .. V_FK.LAST
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+	IF V_NUM_TABLAS > 0  THEN
+		--La tabla existe
+		DBMS_OUTPUT.PUT_LINE('[INFO] La tabla '||V_ESQUEMA||'.'||V_TEXT_TABLA||' existe.');
+		-- Bucle que CREA las nuevas columnas 
+		FOR I IN V_ALTER.FIRST .. V_ALTER.LAST
 		LOOP
-		
-	V_T_FK := V_FK(I);	
 
-			-- Verificar si la FK ya existe. Si ya existe la FK, no se hace nada.
-			V_MSQL := 'select count(1) from all_constraints where OWNER = '''||V_ESQUEMA||''' and table_name = '''||V_TEXT_TABLA||''' and constraint_name = '''||V_T_FK(1)||'''';
+			V_T_ALTER := V_ALTER(I);
+
+			-- Verificar si la columna ya existe. Si ya existe la columna, no se hace nada con esta (no tiene en cuenta si al existir los tipos coinciden)
+			V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLS WHERE COLUMN_NAME = '''||V_T_ALTER(1)||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
 			EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
 			IF V_NUM_TABLAS = 0 THEN
-				--No existe la FK y la creamos
-				DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_FK(1)||'] -------------------------------------------');
-				V_MSQL := '
-					ALTER TABLE '||V_TEXT_TABLA||'
-					ADD CONSTRAINT '||V_T_FK(1)||' FOREIGN KEY
-					(
-					  '||V_T_FK(2)||'
-					)
-					REFERENCES '||V_T_FK(3)||'
-					(
-					  '||V_T_FK(4)||' 
-					)
-					ON DELETE SET NULL ENABLE
+				--No existe la columna y la creamos
+				DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_ALTER(1)||'] -------------------------------------------');
+				V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA|| ' 
+						ADD ('||V_T_ALTER(1)||' '||V_T_ALTER(2)||' )
 				';
 
 				EXECUTE IMMEDIATE V_MSQL;
-				--DBMS_OUTPUT.PUT_LINE('[3] '||V_MSQL);
-				DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_FK(1)||' creada en tabla: FK en columna '||V_T_FK(2)||' hacia '||V_T_FK(3)||'.'||V_T_FK(4)||'... OK');
+				--DBMS_OUTPUT.PUT_LINE('[1] '||V_MSQL);
+				DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_ALTER(1)||' Columna INSERTADA en tabla, con tipo '||V_T_ALTER(2));
 
-			ELSE
-				DBMS_OUTPUT.PUT_LINE('[INFO] Ya existe la foreing key '||V_T_FK(1)||'... OK');
+				-- Creamos comentario	
+				V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_T_ALTER(1)||' IS '''||V_T_ALTER(3)||'''';		
+				EXECUTE IMMEDIATE V_MSQL;
+				--DBMS_OUTPUT.PUT_LINE('[2] '||V_MSQL);
+				DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario en columna creado.');
 			END IF;
-	END LOOP;
+
+		END LOOP;
 	
+		FOR I IN V_FK.FIRST .. V_FK.LAST
+			LOOP
+			
+		V_T_FK := V_FK(I);	
+
+				-- Verificar si la FK ya existe. Si ya existe la FK, no se hace nada.
+				V_MSQL := 'select count(1) from all_constraints where OWNER = '''||V_ESQUEMA||''' and table_name = '''||V_TEXT_TABLA||''' and constraint_name = '''||V_T_FK(1)||'''';
+				EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+				IF V_NUM_TABLAS = 0 THEN
+					--No existe la FK y la creamos
+					DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_FK(1)||'] -------------------------------------------');
+					V_MSQL := '
+						ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'
+						ADD CONSTRAINT '||V_T_FK(1)||' FOREIGN KEY
+						(
+						'||V_T_FK(2)||'
+						)
+						REFERENCES '||V_T_FK(3)||'
+						(
+						'||V_T_FK(4)||' 
+						)
+						ON DELETE SET NULL ENABLE
+					';
+
+					EXECUTE IMMEDIATE V_MSQL;
+					--DBMS_OUTPUT.PUT_LINE('[3] '||V_MSQL);
+					DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_FK(1)||' creada en tabla: FK en columna '||V_T_FK(2)||' hacia '||V_T_FK(3)||'.'||V_T_FK(4)||'... OK');
+
+				ELSE
+					DBMS_OUTPUT.PUT_LINE('[INFO] Ya existe la foreing key '||V_T_FK(1)||'... OK');
+				END IF;
+		END LOOP;
+	END IF;
+
 	COMMIT;
 EXCEPTION
      WHEN OTHERS THEN

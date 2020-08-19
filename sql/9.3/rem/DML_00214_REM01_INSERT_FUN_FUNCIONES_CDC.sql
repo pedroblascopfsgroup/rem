@@ -1,15 +1,16 @@
 --/*
 --##########################################
 --## AUTOR=Juan Beltrán
---## FECHA_CREACION=20200722
+--## FECHA_CREACION=20200810
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-7742
+--## INCIDENCIA_LINK=REMVIP-7945
 --## PRODUCTO=NO
 --##
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Otorgar permisos al perfil supervisor de calidad
 --##########################################
 --*/
 
@@ -26,7 +27,7 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     -- EDITAR: NÚMERO DE ITEM
-    V_ITEM VARCHAR2(30 CHAR) := 'REMVIP-7742'; -- USUARIOCREAR/USUARIOMODIFICAR.
+    V_ITEM VARCHAR2(30 CHAR) := 'REMVIP-7945'; -- USUARIOCREAR/USUARIOMODIFICAR.
 
     --EDITAR: DATOS DE LA FUNCION
     V_FUN_CODIGO VARCHAR2(50) := 'MASIVO_CALIDAD_DATOS';
@@ -39,7 +40,8 @@ DECLARE
     TYPE T_PERFIL IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_PERFIL IS TABLE OF T_PERFIL;
     V_PERFIL T_ARRAY_PERFIL := T_ARRAY_PERFIL(
-      T_PERFIL('HAYASUPER')
+      T_PERFIL('HAYASUPER'),
+      T_PERFIL('HAYASUPCAL')
     ); 
     V_TMP_PERFIL T_PERFIL; 
 

@@ -25,11 +25,10 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.Localidad;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.dd.DDCalculoImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
-
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 
 /**
  * Modelo que gestiona la informacion de una oferta
@@ -52,11 +51,11 @@ public class ConfiguracionImpuestosActivo implements Serializable, Auditable {
     private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DD_LOC_ID")
+	@JoinColumn(name = "CIA_LOCALIDAD")
 	private Localidad localidad;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DD_UPO_ID")
+	@JoinColumn(name = "CIA_MUNICIPIO")
 	private DDUnidadPoblacional unidadPoblacional;
 
 	@ManyToOne(fetch = FetchType.LAZY)

@@ -4949,4 +4949,52 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "WHERE COD_CAMPO = '" + codCampo + "' AND BORRADO = 0"
 		);			
 	}	
+	
+	@Override
+	public Boolean relacionPoblacionLocalidad(String columnaPoblacion, String columnaMunicipio) {
+		if(Checks.esNulo(columnaPoblacion) || Checks.esNulo(columnaMunicipio) ) {
+			return false;
+		}
+		
+		
+			String resultado = rawDao.getExecuteSQL(
+					"SELECT COUNT(1) FROM ${master.schema}.dd_loc_localidad loc "
+					+ "JOIN ${master.schema}.dd_upo_unid_poblacional pob  ON pob.dd_loc_ID=loc.DD_LOC_ID " 
+					+ "WHERE loc.DD_LOC_CODIGO = '"+ columnaPoblacion +"' "
+					+ "AND pob.DD_UPO_CODIGO = '"+ columnaMunicipio +"' "
+					+ "and pob.borrado=0 and loc.borrado=0"
+			);
+			
+			
+			return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeMunicipioByDescripcion(String codigoMunicipio) {
+		if(Checks.esNulo(codigoMunicipio)) {
+			return false;
+		}
+
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "		 FROM ${master.schema}.DD_UPO_UNID_POBLACIONAL WHERE"
+				+ "		 DD_UPO_CODIGO = '" + codigoMunicipio + "'"
+				+ "		 AND BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existePoblacionByDescripcion(String codigoPoblacion) {
+		if(Checks.esNulo(codigoPoblacion)) {
+			return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "		 FROM ${master.schema}.DD_LOC_localidad WHERE"
+				+ "		 DD_LOC_CODIGO = '" + codigoPoblacion + "'"
+				+ "		 AND BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
 }

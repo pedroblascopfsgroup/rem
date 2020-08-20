@@ -1194,4 +1194,18 @@ public interface ParticularValidatorApi {
 	Boolean esMismoTipoGestorActivo(String codigo, String numActivo);
 
 	String getValidacionCampoCDC(String codCampo);
+
+	Boolean relacionPoblacionLocalidad(String columnaPoblacion, String columnaMunicipio);
+
+
+	Boolean existeMunicipioByDescripcion(String columnaMunicipio);
+
+	Boolean existePoblacionByDescripcion(String columnaPoblacion);
+
+
+	
+	
+
+	
+	
 }

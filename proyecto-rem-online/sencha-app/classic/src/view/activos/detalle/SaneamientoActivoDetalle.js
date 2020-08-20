@@ -236,9 +236,9 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 					                	xtype : 'datefieldbase',
 					                	fieldLabel : HreRem.i18n('fieldlabel.fecha.revision.cargas'),
 					                	bind : {
-					                		value: '{saneamiento.fechaRevisionCarga}'
-					                    },
-					                    readOnly: '{editarCargasActivo}'
+					                		value: '{saneamiento.fechaRevisionCarga}',
+					                		readOnly: '{saneamiento.unidadAlquilable}'
+					                    }
 					                },
 					                {
 					                	xtype : 'fieldsettable',
@@ -259,6 +259,7 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 				            },
 				            {
 				         		xtype : 'fieldsettable',
+								width:'100%',
 				         		title : HreRem.i18n('title.admision.protectoficial'),
 								layout: {
 									type: 'table',
@@ -270,7 +271,19 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 							    },
 								defaultType : 'textfieldbase',
 								items : [
+								{
+									xtype:'fieldsettable',
+									width:'100%',
+									title: HreRem.i18n('title.informacion.relacionada.vpo'),
+									layout: {
+										 type: 'table',
+								         columns: 1
+								    },
+									defaultType: 'textfieldbase',
+									items :
+										[
 									{
+
 										xtype :'container',
 										layout: {
 											type : 'hbox'
@@ -477,8 +490,9 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 							            						value : '{saneamiento.noTitularOtraVivienda}'
 							            					}
 														}]
-												}]
-								        }]
+													}]
+								        	}]
+										}]
 								}]
 				            },
 				            {       	  

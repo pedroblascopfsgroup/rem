@@ -48,7 +48,7 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoAgendaGrid', {
 					hideable: false
 				},
 				{	  
-		            text: HreRem.i18n('header.patrimonio.contrato.tipologia'),				            
+		            text: HreRem.i18n('title.tipo.de.observacion.agenda'),				            
 		            dataIndex: 'tipologiaDesc',
 		            flex: 1
 				},

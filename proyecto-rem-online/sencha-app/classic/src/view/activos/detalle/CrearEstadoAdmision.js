@@ -151,6 +151,7 @@ Ext.define('HreRem.view.activos.detalle.CrearEstadoAdmision', {
 
 		form.setBindRecord(form.getModelInstance());
 		form.reset();
+		me.lookupReference('subestadoAdmisionNuevo').setDisabled(true);
 		me.lookupReference('estadoAdmisionRef').setValue(me.estadoAdmisionDesc);
 		me.lookupReference('subestadoAdmisionRef').setValue(me.subestadoAdmisionDesc);
     }

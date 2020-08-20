@@ -939,31 +939,25 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				return false;
 		},
 
-		estadoAdmisionVisible : function(get){
-			
-			return (get('activo.incluidoEnPerimetroAdmision') == "false" || !get('activo.incluidoEnPerimetroAdmision'))  && ($AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
-		},
-
-		editarCargasActivo: function(get) {
-	    	var editarCargasActivo = false;
-		    if (get('activo.claseActivoCodigo') == "01") {
-		    	editarCargasActivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL']))
-		    			&& $AU.userHasFunction('EDITAR_TAB_ACTIVO_CARGAS')) && get('saneamiento.unidadAlquilable');
-		    } else {
-		    	editarCargasActivo = !$AU.userHasFunction('EDITAR_TAB_ACTIVO_CARGAS') && get('saneamiento.unidadAlquilable');
-		    }
-
-		    return editarCargasActivo;
-		},
-
 		activarCamposGridPreciosVigentes: function(){
 			var gestorPrecios = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_PRECIOS']);
 			if(gestorPrecios){
 				return true;
 			}
 			return false;
+		},
+
+		estadoAdmisionVisible : function(get){
+
+			var retorno = !($AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION'])
+							|| $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION'])
+							|| $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
+			if (!retorno){
+				retorno = !(get('activo.incluidoEnPerimetroAdmision') == "true");
+			}
+			return retorno;
 		}
-	 }, 
+	 },
 	 
 	 stores: {
     		

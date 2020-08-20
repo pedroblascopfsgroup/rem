@@ -30,7 +30,7 @@ Ext.define('HreRem.view.activos.detalle.AgendaRevisionTituloGrid', {
 		    		dataIndex: 'subtipologiaDescripcion',
 		    		reference: 'subtipologia',
 		    		name:'subtipologia',
-		    		text: HreRem.i18n('fieldlabel.agenda.revision.titulo.subtipologia'),
+		    		text: HreRem.i18n('title.tipo.de.observacion.agenda'),
 		    		allowBlank: false,
 		    		flex: 0.7,
 		    		editor: {

@@ -471,11 +471,9 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 			defaultType : 'textfieldbase',
 			title : HreRem.i18n('title.admision.revisionTitulo.otros'),
 			items : [{
-				xtype : 'comboboxfieldbase',
 				fieldLabel : HreRem
 						.i18n('fieldlabel.admision.revisionTitulo.tipoIncidenciaOtros'),
 				bind : {
-					store: '{comboTipoIncidencia}',
 					value : '{admisionRevisionTitulo.tipoIncidencia}'
 				}
 			}, {

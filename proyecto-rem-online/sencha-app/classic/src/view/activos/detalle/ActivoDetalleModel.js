@@ -941,7 +941,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		
 		estadoAdmisionVisible : function(get){
 			
-			return (get('activo.incluidoEnPerimetroAdmision') == "false" || !get('activo.incluidoEnPerimetroAdmision'))  && ($AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
+			var retorno = !($AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']) 
+							|| $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) 
+							|| $AU.userIsRol(CONST.PERFILES['HAYASUPER']));				
+			if (!retorno){
+				retorno = !(get('activo.incluidoEnPerimetroAdmision') == "true");
+			}
+			return retorno;
 		},
 
 		editarCargasActivo: function(get) {

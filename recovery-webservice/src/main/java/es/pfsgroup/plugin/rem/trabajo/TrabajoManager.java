@@ -1387,7 +1387,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajoDao.saveOrUpdate(trabajo);
 
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(), e);
 		}
 
 		return trabajo;

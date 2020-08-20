@@ -288,7 +288,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 					fieldLabel : HreRem
 							.i18n('fieldlabel.admision.revisionTitulo.certificadoFinObra'),
 					bind : {
-						store: '{comboEstadoGestion}',
+						store: '{comboLicenciaPrimeraOcupacion}',
 						value : '{admisionRevisionTitulo.estadoCertificadoFinObra}'
 					}
 				}, {
@@ -296,7 +296,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 					fieldLabel : HreRem
 							.i18n('fieldlabel.admision.revisionTitulo.actaFinObraObraNuevaTerminada'),
 					bind : {
-						store: '{comboEstadoGestion}',
+						store: '{comboLicenciaPrimeraOcupacion}',
 						value : '{admisionRevisionTitulo.estadoAfoActaFinObra}'
 					}
 				}, {

@@ -514,38 +514,58 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	
  		var me = this;
 
-		
+		var correcto = true;
     	var url =  $AC.getRemoteUrl('activo/crearEstadoAdmision');
     	var comboEstadoAdmision = me.lookupReference('estadoAdmisionNuevo');
     	var comboSubestadoAdmision = me.lookupReference('subestadoAdmisionNuevo');
+    	var comboEstadoAdmisionActual = me.lookupReference('estadoAdmisionRef');
+    	var comboSubEstadoAdmisionActual = me.lookupReference('subestadoAdmisionRef');
     	var observacionesTextLabel = me.lookupReference('observacionesEstadoAdmisionNuevo');
     	var idActivo = btn.up('crearestadoadmisionwindow').idActivo;
     	var form = btn.up('crearestadoadmisionwindow').lookupReference('formEstadoAdmision').getForm(); // btn.up('formBase')
     	
-    	if(form.isValid()){
-    		Ext.Ajax.request({
+    	if(comboEstadoAdmision.getSelection() != null) {
+	    	if(comboEstadoAdmision.getSelection().data != null)
+		    	if (comboEstadoAdmisionActual.getValue() == comboEstadoAdmision.getSelection().data.descripcion) 
+		    		if(comboSubestadoAdmision.getSelection().data != null)
+			    		if(comboSubEstadoAdmisionActual.getValue() == comboSubestadoAdmision.getSelection().data.descripcion){
+			    			me.fireEvent("errorToast", HreRem.i18n("msg.form.info.repetida"));
+			    			correcto = false;
+			    		} 
     		
-    	     url: url,
-    	     params: {activoId: idActivo, 
-    	     		  codEstadoAdmision: comboEstadoAdmision.getValue(),
-    	     		  codSubestadoAdmision: comboSubestadoAdmision.getValue(),
-    	     		  observaciones: observacionesTextLabel.getValue()
-    	     		  },
-
-    	     success: function(response, opts) {
-    	     	
-    	     	me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], idActivo);
-				//btn.up('crearestadoadmisionwindow').close();
-    	     	me.hideWindowCrearActivoAdmision(btn);
-    	     	//me.destroyWindowCrearActivoAdmision(btn);
-    	     },
-
-    	     failure: function (a, operation, context) {
-           	  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-           }
-           
-    	 });
+    	} else {
+    		correcto = false;
+    		me.fireEvent("errorToast", HreRem.i18n("msg.form.info.repetida"));
     	}
+	    	
+    	if(correcto) {
+    		if(form.isValid()){
+		    		Ext.Ajax.request({
+		    		
+		    	     url: url,
+		    	     params: {activoId: idActivo, 
+		    	     		  codEstadoAdmision: comboEstadoAdmision.getValue(),
+		    	     		  codSubestadoAdmision: comboSubestadoAdmision.getValue(),
+		    	     		  observaciones: observacionesTextLabel.getValue()
+		    	     		  },
+		
+		    	     success: function(response, opts) {
+		    	     	
+		    	     	me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], idActivo);
+						//btn.up('crearestadoadmisionwindow').close();
+		    	     	me.hideWindowCrearActivoAdmision(btn);
+		    	     	//me.destroyWindowCrearActivoAdmision(btn);
+		    	     },
+		
+		    	     failure: function (a, operation, context) {
+		           	  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		           }
+		           
+		    	 });
+    	 
+    	}
+    	}
+    	
     	
     },
     destroyWindowCrearActivoAdmision: function (btn){

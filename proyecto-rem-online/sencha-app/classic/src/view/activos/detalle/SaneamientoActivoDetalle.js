@@ -236,9 +236,9 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 					                	xtype : 'datefieldbase',
 					                	fieldLabel : HreRem.i18n('fieldlabel.fecha.revision.cargas'),
 					                	bind : {
-					                		value: '{saneamiento.fechaRevisionCarga}'
-					                    },
-					                    readOnly: '{editarCargasActivo}'
+					                		value: '{saneamiento.fechaRevisionCarga}',
+					                		readOnly: '{saneamiento.unidadAlquilable}'
+					                    }
 					                },
 					                {
 					                	xtype : 'fieldsettable',

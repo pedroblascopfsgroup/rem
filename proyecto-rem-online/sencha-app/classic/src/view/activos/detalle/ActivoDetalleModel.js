@@ -948,18 +948,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				retorno = !(get('activo.incluidoEnPerimetroAdmision') == "true");
 			}
 			return retorno;
-		},
-
-		editarCargasActivo: function(get) {
-	    	var editarCargasActivo = false;
-		    if (get('activo.claseActivoCodigo') == "01") {
-		    	editarCargasActivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL']))
-		    			&& $AU.userHasFunction('EDITAR_TAB_ACTIVO_CARGAS')) && get('saneamiento.unidadAlquilable');
-		    } else {
-		    	editarCargasActivo = !$AU.userHasFunction('EDITAR_TAB_ACTIVO_CARGAS') && get('saneamiento.unidadAlquilable');
-		    }
-
-		    return editarCargasActivo;
 		}
 	 }, 
 	 

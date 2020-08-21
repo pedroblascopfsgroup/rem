@@ -1167,4 +1167,19 @@ public interface ParticularValidatorApi {
 
 	String getValidacionCampoCDC(String codCampo);
 
+	Boolean mismaCarteraLineaDetalleGasto(String numGasto, String tipoElemento);
+
+	Boolean isActivoBankia(String numActivo);
+
+	Boolean tipoDeElemento(String tipoElemento);
+
+	Boolean gastoTieneLineaDetalle(String numGasto);
+
+	Boolean subtipoGastoCorrespondeGasto(String numGasto, String subtipoGasto);
+
+	Boolean lineaSubtipoDeGastoRepetida(String numGasto, String subtipoGasto, String tipoImpositivo,
+			String tipoImpuesto);
+
+	Boolean participaciones(String numGasto);
+
 }

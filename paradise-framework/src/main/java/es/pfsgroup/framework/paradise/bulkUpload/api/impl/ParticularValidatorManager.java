@@ -1423,10 +1423,47 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM GPV_GASTOS_PROVEEDOR WHERE"
-				+ "		 	GPV_NUM_GASTO_HAYA ="+numGasto+" "
+				+ "		 	GPV_NUM_GASTO_HAYA = '"+numGasto+"' "
 				+ "		 	AND BORRADO = 0");
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean gastoTieneLineaDetalle(String numGasto){
+		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM gld_gastos_linea_detalle "
+				+ "where gpv_id = (SELECT gpv_id FROM "
+				+ "gpv_gastos_proveedor where "
+				+ "gpv_num_gasto_haya = '"+numGasto+"')");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean subtipoGastoCorrespondeGasto(String numGasto,String subtipoGasto){
+		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto) || Checks.esNulo(subtipoGasto) || !StringUtils.isNumeric(subtipoGasto))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM gpv_gastos_proveedor "
+				+" where gpv_num_gasto_haya = '" + numGasto + "' and "
+				+" dd_tga_id = (select dd_tga_id from dd_stg_subtipos_gasto where dd_stg_codigo = '" + subtipoGasto + "')");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean lineaSubtipoDeGastoRepetida(String numGasto,String subtipoGasto, String tipoImpositivo, String tipoImpuesto){
+		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto) || Checks.esNulo(subtipoGasto) || !StringUtils.isNumeric(subtipoGasto)
+				|| Checks.esNulo(tipoImpositivo) || !StringUtils.isNumeric(tipoImpositivo)|| Checks.esNulo(tipoImpuesto) || !StringUtils.isAlphanumeric(tipoImpuesto))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM gld_gastos_linea_detalle where " + 
+				"gpv_id in (select gpv_id from gpv_gastos_proveedor where gpv_num_gasto_haya = '"+numGasto+"') and " + 
+				"gpv_id in (select gpv_id from gde_gastos_detalle_economico where gde_irpf_tipo_impositivo = '"+tipoImpositivo+"') and " + 
+				"dd_tit_id in (select dd_tit_id from dd_tit_tipos_impuesto where dd_tit_codigo = '"+tipoImpuesto+"') and " + 
+				"gpv_id in (select gpv_id from gpv_gastos_proveedor  where gpv_num_gasto_haya = '"+numGasto+"' and  " + 
+				"dd_tga_id = (select dd_tga_id from dd_stg_subtipos_gasto where dd_stg_descripcion = ''"+subtipoGasto+"''))");
+		return !"0".equals(resultado);
+	}
+	
+	
 
 	@Override
 	public Boolean esGastoDeLiberbank(String numGasto){
@@ -1436,7 +1473,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 FROM GPV_GASTOS_PROVEEDOR GPV "
 				+ "      JOIN ACT_PRO_PROPIETARIO PRO ON GPV.PRO_ID = PRO.PRO_ID "
 				+ "      JOIN DD_CRA_CARTERA CRA ON PRO.DD_CRA_ID = CRA.DD_CRA_ID "
-				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = "+numGasto+" "
+				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = '"+numGasto+"' "
 				+ "         AND CRA.DD_CRA_CODIGO = '08' "
 				+ "		 	AND GPV.BORRADO = 0");
 		return !"0".equals(resultado);
@@ -3142,6 +3179,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean isActivoBankia(String numActivo) {
+		if(Checks.esNulo(numActivo))
+			return false;
+
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+					+"		FROM ACT_ACTIVO ACT "
+					+"		WHERE ACT.DD_CRA_ID IN (SELECT DD_CRA_ID FROM DD_CRA_CARTERA "
+					+"								WHERE DD_CRA_CODIGO IN ('03')"
+					+"								AND BORRADO = 0) "
+					+"		AND ACT.ACT_NUM_ACTIVO = "+ numActivo +"");
+
+		return !"0".equals(resultado);
+	}
 
 	public Boolean validadorTipoOferta(Long numExpediente) {
 		if(Checks.esNulo(numExpediente))
@@ -3684,7 +3736,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 		}
 
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_JCM_JUNTA_COM_PROPIETARIOS pls " +
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM ACT_JCM_JUNTA_COM_PROPIETARIOS pls " +
 				"JOIN ACT_ACTIVO act ON pls.act_id = act.act_id " +
 				"WHERE pls.borrado = 0 " +
 				"AND act.ACT_NUM_ACTIVO = '"+numActivo+"' " +
@@ -3715,6 +3767,18 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 					+ "FROM DD_TPA_TIPO_TITULO_ACT "
 					+ "WHERE DD_TPA_CODIGO IN ('01','02','03') "
 					+ "AND DD_TPA_CODIGO ='" + codigoTituloTPA + "'");
+
+			return !"0".equals(resultado);
+		}
+		return false;
+	}
+	
+	@Override
+	public Boolean tipoDeElemento(String tipoElemento) {
+		if (!Checks.esNulo(tipoElemento)) {
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) from DD_ENT_ENTIDAD_GASTO \n" + 
+					"WHERE DD_ENT_CODIGO =" + 
+					"'" + tipoElemento + "'");
 
 			return !"0".equals(resultado);
 		}
@@ -3952,6 +4016,32 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean mismaCarteraLineaDetalleGasto(String numGasto, String numElemento) {
+		if(Checks.esNulo(numGasto) || !StringUtils.isAlphanumeric(numGasto))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT count(1) "
+				+ " FROM gpv_gastos_proveedor gpv "
+				+ " join act_pro_propietario pro on gpv.pro_id = pro.pro_id "
+				+ " join act_activo act on pro.dd_cra_id = act.dd_cra_id "
+				+ " where gpv.gpv_num_gasto_haya = '" + numGasto + "' and act.act_num_activo = '" + numElemento + "'");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean participaciones(String numGasto) {
+		if(Checks.esNulo(numGasto) || !StringUtils.isAlphanumeric(numGasto))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT sum (gld_participacion_gasto) participaciones FROM GLD_ENT where gld_id in" + 
+				"(select gld_id from gld_gastos_linea_detalle where gpv_id = " + 
+				"(select gpv_id from gpv_gastos_proveedor where gpv_num_gasto_haya = '"+numGasto+"'))");
+		if(Integer.parseInt(resultado)>100) {
+			return false;
+		}
+		return true;
+	}
+	
 	
 	@Override
 	public Boolean existeFasePublicacion(String fasePublicacion) {

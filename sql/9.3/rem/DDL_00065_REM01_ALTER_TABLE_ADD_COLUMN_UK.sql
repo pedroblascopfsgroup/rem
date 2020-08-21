@@ -1,7 +1,7 @@
 --/*
 --######################################### 
 --## AUTOR=Daniel Albert
---## FECHA_CREACION=20200724
+--## FECHA_CREACION=20200821
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10745
@@ -56,7 +56,9 @@ DECLARE
     T_COL('CREATE_COLUMN', 'ACT_CONFIG_CTAS_CONTABLES', 'CCC_SUBCUENTA_CONTABLE', 'VARCHAR(50 CHAR)', 'Subcuenta contable'),
     T_COL('ADD_CONSTRAINT', 'ACT_CONFIG_CTAS_CONTABLES', 'FK_CCC_DD_TBE', 'DD_TBE_ID','DD_TBE_TIPO_ACTIVO_BDE','DD_TBE_ID'),
     T_COL('DROP_CONSTRAINT', 'GLD_GASTOS_LINEA_DETALLE', 'UK_GLD_GASTOS_LINEA_DETALLE'),
-    T_COL('ADD_UK', 'GLD_GASTOS_LINEA_DETALLE', 'UK_GLD_GASTOS_LINEA_DETALLE','GPV_ID, DD_STG_ID, DD_TIT_ID, GLD_IMP_IND_TIPO_IMPOSITIVO, FECHABORRAR, BORRADO')
+    T_COL('ADD_UK', 'GLD_GASTOS_LINEA_DETALLE', 'UK_GLD_GASTOS_LINEA_DETALLE','GPV_ID, DD_STG_ID, DD_TIT_ID, GLD_IMP_IND_TIPO_IMPOSITIVO, FECHABORRAR, BORRADO'),
+    T_COL('DROP_CONSTRAINT', 'GLD_GASTOS_LINEA_DETALLE', 'CK_GLD_GASTOS_LINEA_DETALLE'),
+    T_COL('ADD_CHECK_CONSTRAINT', 'GLD_GASTOS_LINEA_DETALLE', 'CK_GLD_GASTOS_LINEA_DETALLE','(BORRADO = 0 AND FECHABORRAR IS NULL) OR BORRADO = 1')
   );  
   V_TMP_COL T_COL;
 
@@ -109,7 +111,7 @@ BEGIN
                 V_MSQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE TABLE_NAME = '''||V_TMP_COL(2)||''' AND CONSTRAINT_NAME = '''||V_TMP_COL(3)||'''';
                 EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS; 
                 IF V_NUM_TABLAS = 1 THEN
-                    DBMS_OUTPUT.PUT_LINE('  [INFO] Borrando FK '||V_TMP_COL(3)||'');  
+                    DBMS_OUTPUT.PUT_LINE('  [INFO] Borrando constraint '||V_TMP_COL(3)||'');  
                     EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TMP_COL(2)||' DROP CONSTRAINT '||V_TMP_COL(3)||'';
                 ELSE
                     DBMS_OUTPUT.PUT_LINE('  [INFO] La restricción '||V_TMP_COL(3)||' no existe.');
@@ -151,6 +153,26 @@ BEGIN
                 IF V_NUM_TABLAS = 0 THEN
                     DBMS_OUTPUT.PUT_LINE('  [INFO] Añadiendo UK '||V_TMP_COL(3)||'');  
                     EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TMP_COL(2)||' ADD CONSTRAINT '||V_TMP_COL(3)||' UNIQUE ('||V_TMP_COL(4)||')';
+                ELSE
+                    DBMS_OUTPUT.PUT_LINE('  [INFO] La restricción '||V_TMP_COL(3)||' no existe.');
+                END IF;          
+            ELSE
+                DBMS_OUTPUT.PUT_LINE('  [INFO] La tabla '||V_TMP_COL(2)||'... No existe.');
+            END IF;    
+        END IF;
+
+        IF 'ADD_CHECK_CONSTRAINT' = ''||V_TMP_COL(1)||'' THEN
+            DBMS_OUTPUT.PUT_LINE('  [ADD_CHECK_CONSTRAINT]');
+            --Comprobacion de la tabla
+            V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = '''||V_TMP_COL(2)||'''';
+            EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+            
+            IF V_NUM_TABLAS = 1 THEN              
+                V_MSQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE TABLE_NAME = '''||V_TMP_COL(2)||''' AND CONSTRAINT_NAME = '''||V_TMP_COL(3)||'''';
+                EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS; 
+                IF V_NUM_TABLAS = 0 THEN
+                    DBMS_OUTPUT.PUT_LINE('  [INFO] Añadiendo CK '||V_TMP_COL(3)||'');  
+                    EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TMP_COL(2)||' ADD CONSTRAINT '||V_TMP_COL(3)||' CHECK ('||V_TMP_COL(4)||')';
                 ELSE
                     DBMS_OUTPUT.PUT_LINE('  [INFO] La restricción '||V_TMP_COL(3)||' no existe.');
                 END IF;          

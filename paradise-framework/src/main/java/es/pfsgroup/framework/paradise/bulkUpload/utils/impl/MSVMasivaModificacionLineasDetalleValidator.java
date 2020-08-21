@@ -43,13 +43,13 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 @Component
 public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidatorAbstract{
 	
-	private final String GASTO_NO_EXISTE = "msg.error.modificacion.linea.detalle.no.existe.el.gasto";
-	private final String ELEMENTO_CARTERA_DIFERENTE_GASTO = "msg.error.modificacion.linea.detalle.elementos.gasto.diferente.de.cartera.gasto";
-	private final String ACTIVO_NO_EXISTE = "msg.error.modificacion.linea.detalle.no.existe.el.activo";
-	private final String BANKIA_MAS_DE_UNA_LINEA = "msg.error.modificacion.linea.detalle.bankia.mas.de.una.linea";
-	private final String SUBTIPO_DIFERENTE_GASTO = "msg.error.modificacion.linea.detalle.subtipo.diferente.gasto";
-	private final String YA_EXISTE_UN_SUBTIPO_TIPO_IMPOSITIVO_TIPO_IMPUESTO = "msg.error.modificacion.linea.detalle.mismo.subtipo.gasto.tipo.impositivo.tipo.impuesto";
-	private final String SUMA_100 = "msg.error.masivo.gestores.combinacion.no.valida";
+	private static final String GASTO_NO_EXISTE = "msg.error.modificacion.linea.detalle.no.existe.el.gasto";
+	private static final String ELEMENTO_CARTERA_DIFERENTE_GASTO = "msg.error.modificacion.linea.detalle.elementos.gasto.diferente.de.cartera.gasto";
+	private static final String ACTIVO_NO_EXISTE = "msg.error.modificacion.linea.detalle.no.existe.el.activo";
+	private static final String BANKIA_MAS_DE_UNA_LINEA = "msg.error.modificacion.linea.detalle.bankia.mas.de.una.linea";
+	private static final String SUBTIPO_DIFERENTE_GASTO = "msg.error.modificacion.linea.detalle.subtipo.diferente.gasto";
+	private static final String YA_EXISTE_UN_SUBTIPO_TIPO_IMPOSITIVO_TIPO_IMPUESTO = "msg.error.modificacion.linea.detalle.mismo.subtipo.gasto.tipo.impositivo.tipo.impuesto";
+	private static final String SUMA_100 = "msg.error.masivo.gestores.combinacion.no.valida";
 
 	public static final Integer COL_ID_GASTO = 0;
 	public static final Integer COL_ACCION_LINEA_DETALLE = 1;

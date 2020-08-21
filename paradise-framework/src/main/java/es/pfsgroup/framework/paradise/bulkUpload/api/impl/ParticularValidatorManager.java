@@ -1457,9 +1457,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM gld_gastos_linea_detalle where " + 
 				"gpv_id in (select gpv_id from gpv_gastos_proveedor where gpv_num_gasto_haya = '"+numGasto+"') and " + 
 				"gpv_id in (select gpv_id from gde_gastos_detalle_economico where gde_irpf_tipo_impositivo = '"+tipoImpositivo+"') and " + 
-				"dd_tit_id in (select dd_tit_id from dd_tit_tipos_impuesto where dd_tit_codigo = '"+tipoImpuesto+"') and " + 
-				"gpv_id in (select gpv_id from gpv_gastos_proveedor  where gpv_num_gasto_haya = '"+numGasto+"' and  " + 
-				"dd_tga_id = (select dd_tga_id from dd_stg_subtipos_gasto where dd_stg_descripcion = ''"+subtipoGasto+"''))");
+				"dd_tit_id in (select dd_tit_id from dd_tit_tipos_impuesto where dd_tit_codigo = '"+tipoImpuesto+"')"+ 
+				" and " + 
+				"gpv_id in (select gpv_id from gpv_gastos_proveedor  where gpv_num_gasto_haya = '"+numGasto+"' and " + 
+				"dd_tga_id = (select dd_tga_id from dd_stg_subtipos_gasto where dd_stg_descripcion like '"+subtipoGasto+"'))"
+				);
 		return !"0".equals(resultado);
 	}
 	
@@ -4036,7 +4038,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT sum (gld_participacion_gasto) participaciones FROM GLD_ENT where gld_id in" + 
 				"(select gld_id from gld_gastos_linea_detalle where gpv_id = " + 
 				"(select gpv_id from gpv_gastos_proveedor where gpv_num_gasto_haya = '"+numGasto+"'))");
-		if(Integer.parseInt(resultado)>100) {
+		if(resultado != null) {
+			if(Integer.parseInt(resultado)>100) {
+				return false;
+			}
+		}else {
 			return false;
 		}
 		return true;

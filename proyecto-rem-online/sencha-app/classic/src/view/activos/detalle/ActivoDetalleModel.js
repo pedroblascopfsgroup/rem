@@ -2671,10 +2671,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		
 		storeCalifiacionNegativaAdicional:{
 			pageSize: $AC.getDefaultPageSize(),
-			model: 'HreRem.model.CalificacionNegativaModel', //
+			model: 'HreRem.model.CalificacionNegativaAdicionalModel', //
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'activo/getCalificacionNegativa', //
+				remoteUrl: 'activo/getCalificacionNegativaAdicional', //
 				extraParams: {id: '{activo.id}'}
 			},
 			autoLoad: true
@@ -2682,10 +2682,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 		storeHistoricoTramitacionTituloAdicional:{
 			pageSize: $AC.getDefaultPageSize(),
-			model: 'HreRem.model.HistoricoTramitacionTituloAdicionalModel', //
+			model: 'HreRem.model.HistoricoTramitacionTituloAdicionalModel', 
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'activo/getHistoricoTramitacionTitulo', //
+				remoteUrl: 'activo/getHistoricoTramitacionTituloAdicional', 
 				extraParams: {id: '{activo.id}'}
 			},
 

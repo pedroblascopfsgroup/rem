@@ -49,7 +49,7 @@ public class ActivoTituloAdicional implements Serializable, Auditable{
 	private Activo activo;
 	
 	@Column(name = "TIA_TITULO_ADICIONAL")
-	private Boolean tituloAdicional;
+	private Integer tituloAdicional;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TTA_ID")
@@ -172,11 +172,11 @@ public class ActivoTituloAdicional implements Serializable, Auditable{
 		this.auditoria = auditoria;
 	}
 
-	public Boolean getTituloAdicional() {
+	public Integer getTituloAdicional() {
 		return tituloAdicional;
 	}
 
-	public void setTituloAdicional(Boolean tituloAdicional) {
+	public void setTituloAdicional(Integer tituloAdicional) {
 		this.tituloAdicional = tituloAdicional;
 	}
 	

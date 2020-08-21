@@ -269,7 +269,7 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 			name:'estadoTituloAdicional'
 		},
 		{
-			name:'situacionTituloAdicional'
+			name:'tipoTituloAdicional'
 		},
 		{
 			name:'fechaInscriptionRegistroAdicional',

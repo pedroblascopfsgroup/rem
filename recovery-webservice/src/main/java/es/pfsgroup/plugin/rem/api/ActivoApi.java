@@ -48,6 +48,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoSuministros;
 import es.pfsgroup.plugin.rem.model.DtoActivoTributos;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoCalificacionNegativaAdicional;
 import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
 import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
@@ -59,6 +60,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoDiarioGestion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoTramitacionTitulo;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoTramitacionTituloAdicional;
 import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoMotivoAnulacionExpediente;
@@ -1348,4 +1350,23 @@ public interface ActivoApi {
 	Boolean deleteSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto);
 
 	Boolean updateSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto);
+	
+	boolean createHistoricoTramitacionTituloAdicional(DtoHistoricoTramitacionTituloAdicional tramitacionDto, Long idActivo) throws HistoricoTramitacionException;
+	
+	boolean updateHistoricoTramitacionTituloAdicional(DtoHistoricoTramitacionTituloAdicional tramitacionDto) throws Exception, HistoricoTramitacionException;
+	
+	boolean destroyHistoricoTramitacionTituloAdicional(DtoHistoricoTramitacionTituloAdicional tramitacionDto);
+	
+	List<DtoHistoricoTramitacionTituloAdicional> getHistoricoTramitacionTituloAdicional(Long id);
+	
+	List<DtoCalificacionNegativaAdicional> getActivoCalificacionNegativaAdicional(Long idActivo);
+
+	boolean updateCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto);
+	
+	boolean createCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto) throws JsonViewerException, Exception;
+	
+	boolean destroyCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto);
+	
+	
+	
 }

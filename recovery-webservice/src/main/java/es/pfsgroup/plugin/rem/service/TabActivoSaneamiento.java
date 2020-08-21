@@ -36,6 +36,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoSaneamiento;
 import es.pfsgroup.plugin.rem.model.HistoricoTramitacionTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresentacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloAdicional;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 
 @Component
@@ -293,10 +294,8 @@ public class TabActivoSaneamiento implements TabActivoService{
 		Filter filtroTituloAdicional = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 		ActivoTituloAdicional actTituloAdicional = genericDao.get(ActivoTituloAdicional.class, filtroTituloAdicional);
 		
-		//BeanUtils.copyProperties(actTituloAdicional, activoDto);
-		//if (!"1".equals(activoDto.getTieneTituloAdicional())) {
-			//activoDto.setTieneTituloAdicional(activoSaneamiento.getTieneTituloAdicional());
-		if (actTituloAdicional.getTituloAdicional() != null) {
+
+		if (actTituloAdicional != null && actTituloAdicional.getTituloAdicional() != null) {
 			
 			activoDto.setTieneTituloAdicional(actTituloAdicional.getTituloAdicional());
 			
@@ -304,11 +303,15 @@ public class TabActivoSaneamiento implements TabActivoService{
 				activoDto.setEstadoTituloAdicional(actTituloAdicional.getEstadoTitulo().getCodigo());
 			}
 			if (actTituloAdicional.getTipoTitulo() != null) {
-				activoDto.setSituacionTituloAdicional(actTituloAdicional.getTipoTitulo().getCodigo());
+				activoDto.setTipoTituloAdicional(actTituloAdicional.getTipoTitulo().getCodigo());
 			}
 			if (actTituloAdicional.getFechaInscripcionReg() != null) {
 				activoDto.setFechaInscriptionRegistroAdicional(actTituloAdicional.getFechaInscripcionReg());
 			}
+			if (actTituloAdicional.getFechaEntregaTitulo() != null) {
+				activoDto.setFechaEntregaTituloGestAdicional(actTituloAdicional.getFechaEntregaTitulo());
+			}
+			
 			if (actTituloAdicional.getFechaRetiradaReg() != null) {
 				activoDto.setFechaRetiradaDefinitivaRegAdicional(actTituloAdicional.getFechaRetiradaReg());
 			}
@@ -322,7 +325,6 @@ public class TabActivoSaneamiento implements TabActivoService{
 		}
 			
 				
-		//}
 		 
 		return activoDto;
 	}
@@ -335,7 +337,9 @@ public class TabActivoSaneamiento implements TabActivoService{
 		if(activoDto != null){
 
 			ActivoTitulo  actTitulo = genericDao.get(ActivoTitulo.class, genericDao.createFilter(FilterType.EQUALS,"activo.id", activo.getId()));
-			
+
+			ActivoTituloAdicional actTituloAdicional = genericDao.get(ActivoTituloAdicional.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+
 			if(actTitulo == null) {
 				actTitulo = new ActivoTitulo();
 				actTitulo.setActivo(activo);
@@ -379,6 +383,44 @@ public class TabActivoSaneamiento implements TabActivoService{
 			}
 			
 			genericDao.save(ActivoTitulo.class, actTitulo);
+			
+			
+			if (actTituloAdicional == null) {
+				actTituloAdicional = new ActivoTituloAdicional();
+				actTituloAdicional.setActivo(activo);
+				
+			}
+			if (activoDto.getTipoTituloAdicional() != null) {
+				actTituloAdicional.setTipoTitulo( (DDTipoTituloAdicional) diccionarioApi.dameValorDiccionarioByCod(DDTipoTituloAdicional.class, activoDto.getTipoTituloAdicional()));
+			}
+			if (activoDto.getTieneTituloAdicional() != null) {
+				actTituloAdicional.setTituloAdicional(activoDto.getTieneTituloAdicional());
+			}
+			if (activoDto.getEstadoTituloAdicional() != null) {
+				
+				actTituloAdicional.setEstadoTitulo((DDEstadoTitulo) diccionarioApi.dameValorDiccionarioByCod(DDEstadoTitulo.class, activoDto.getEstadoTituloAdicional()));
+			}
+			if (activoDto.getFechaInscriptionRegistroAdicional() != null) {
+				actTituloAdicional.setFechaInscripcionReg(activoDto.getFechaInscriptionRegistroAdicional());
+				
+			}
+			if (activoDto.getFechaEntregaTituloGestAdicional() != null) {
+				actTituloAdicional.setFechaEntregaTitulo(activoDto.getFechaInscriptionRegistroAdicional());
+			}
+			if(activoDto.getFechaRetiradaDefinitivaRegAdicional() != null) {
+				actTituloAdicional.setFechaRetiradaReg(activoDto.getFechaRetiradaDefinitivaRegAdicional());
+			}
+			if (activoDto.getFechaPresentacionHaciendaAdicional() != null) {
+				actTituloAdicional.setFechaPresentHacienda(activoDto.getFechaPresentacionHaciendaAdicional());
+			}
+			if (activoDto.getFechaNotaSimpleAdicional() != null) {
+				actTituloAdicional.setFechaNotaSimple(activoDto.getFechaNotaSimpleAdicional());
+			}
+			
+			genericDao.save(ActivoTituloAdicional.class, actTituloAdicional);
+			
+			
+			
 			
 		}
 

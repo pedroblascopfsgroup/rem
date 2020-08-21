@@ -71,8 +71,9 @@ public class ActivoCalificacionNegativaAdicional implements Serializable, Audita
 	@JoinColumn(name = "HTA_ID")
 	private ActivoHistoricoTituloAdicional historicoTitulo;
 	
-	@Column(name="CNA_PRINCIPAL")
-	private Long principal;
+	
+	@Column(name="CNA_PRINCIPAL", columnDefinition = "tinyint default false")
+	private boolean principal;
 	
 	@Column(name="CNA_MATRICULA_PROP")
 	private Long matricula;
@@ -155,11 +156,11 @@ public class ActivoCalificacionNegativaAdicional implements Serializable, Audita
 		this.historicoTitulo = historicoTitulo;
 	}
 
-	public Long getPrincipal() {
+	public boolean getPrincipal() {
 		return principal;
 	}
 
-	public void setPrincipal(Long principal) {
+	public void setPrincipal(boolean principal) {
 		this.principal = principal;
 	}
 

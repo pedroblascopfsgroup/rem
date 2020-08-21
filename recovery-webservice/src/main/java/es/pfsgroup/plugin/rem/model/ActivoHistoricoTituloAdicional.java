@@ -62,8 +62,8 @@ public class ActivoHistoricoTituloAdicional implements Serializable, Auditable{
 	@Column(name = "HTA_MATRICULA_PROP")
 	private Long matriculaPropagacion; //
 	
-	@Column(name = "HTA_PRINCIPAL")
-	private Long historicoPrincipal;
+	@Column(name = "HTA_PRINCIPAL", columnDefinition = "tinyint default false")
+	private boolean historicoPrincipal;
 
 	@Version   
 	private Long version;
@@ -135,11 +135,11 @@ public class ActivoHistoricoTituloAdicional implements Serializable, Auditable{
 		this.matriculaPropagacion = matriculaPropagacion;
 	}
 
-	public Long getHistoricoPrincipal() {
+	public boolean getHistoricoPrincipal() {
 		return historicoPrincipal;
 	}
 
-	public void setHistoricoPrincipal(Long historicoPrincipal) {
+	public void setHistoricoPrincipal(boolean historicoPrincipal) {
 		this.historicoPrincipal = historicoPrincipal;
 	}
 

@@ -243,7 +243,7 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 							        	bind: 
 							        		{
 					            			store: '{comboTipoTituloInfoRegistral}', //DD_TTA_TIPO_TITULO_ADICIONAL
-						            		value: '{saneamiento.estadoTituloAdicional}'						            		
+						            		value: '{saneamiento.tipoTituloAdicional}'						            		
             								}	            			
                         			},
 									{ 
@@ -254,7 +254,7 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 							        	bind: 
 							        		{
 						            		store: '{comboEstadoTitulo}', //DD_ETI_ESTADO_TITULO
-						            		value: '{saneamiento.situacionTituloAdicional}'
+						            		value: '{saneamiento.estadoTituloAdicional}'
 			
 				            				}
 			

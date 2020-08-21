@@ -43,9 +43,9 @@ Ext.define('HreRem.model.HistoricoTramitacionTituloAdicionalModel', {
 		type: 'uxproxy',
 		api: {
             // read: 'activo/getActivoCalificacionNegativa',
-            create: 'activo/createHistoricoTramtitacionTitulo', // activo/createHistoricoTramitacionTituloAdicional
-            update: 'activo/updateHistoricoTramtitacionTitulo', //activo/updateHistoricoTramitacionTituloAdicional
-            destroy: 'activo/destroyHistoricoTramtitacionTitulo' //activo/destroyHistoricoTramitacionTituloAdicional
+            create: 'activo/createHistoricoTramitacionTituloAdicional',
+            update: 'activo/updateHistoricoTramitacionTituloAdicional',
+            destroy: 'activo/destroyHistoricoTramitacionTituloAdicional'
         }
     }
 });

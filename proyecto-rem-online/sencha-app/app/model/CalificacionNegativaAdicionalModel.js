@@ -7,13 +7,22 @@ Ext.define('HreRem.model.CalificacionNegativaAdicionalModel', {
     			name:'idActivo'
     		},
     		{
+    			name:'idMotivo'
+    		},
+    		{
     			name:'motivoCalificacionNegativa'
     		},
     		{
     			name:'estadoMotivoCalificacionNegativa'
     		},
     		{
+    			name:'codigoEstadoMotivoCalificacionNegativa'
+    		},
+    		{
     			name:'responsableSubsanar'
+    		},
+    		{
+    			name:'codigoResponsableSubsanar'
     		},
     		{
     			name:'fechaSubsanacion',
@@ -22,6 +31,16 @@ Ext.define('HreRem.model.CalificacionNegativaAdicionalModel', {
     		},
     		{
     			name:'descripcionCalificacionNegativa'
+    		},
+    		{
+    			name:'fechaCalificacionNegativa',
+    			type: 'date',
+        		dateFormat: 'c'
+    		},
+    		{
+    			name:'fechaPresentacionRegistroCN',
+    			type: 'date',
+        		dateFormat: 'c'
     		}
     ],
 
@@ -29,9 +48,9 @@ Ext.define('HreRem.model.CalificacionNegativaAdicionalModel', {
 		type: 'uxproxy',
 		api: {
             // read: 'activo/getActivoCalificacionNegativa',
-            create: 'activo/createCalificacionNegativa', //activo/createCalificacionNegativaAdicional
-            update: 'activo/updateCalificacionNegativa', //activo/updateCalificacionNegativaAdicional
-            destroy: 'activo/destroyCalificacionNegativa' //activo/destroyCalificacionNegativa
+            create: 'activo/createCalificacionNegativaAdicional', 
+            update: 'activo/updateCalificacionNegativaAdicional',  
+            destroy: 'activo/destroyCalificacionNegativaAdicional'
         }
     }
 });

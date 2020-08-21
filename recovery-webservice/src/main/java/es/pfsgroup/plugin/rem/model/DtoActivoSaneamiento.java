@@ -61,15 +61,14 @@ public class DtoActivoSaneamiento extends DtoTabActivo {
 	private String observaciones;
 	
 	// ADMISION/SANEAMIENTO/TRAMITACION TITULO ADICIONAL
-	private Boolean tieneTituloAdicional; 
+	private Integer tieneTituloAdicional; 
+	private String tipoTituloAdicional;
 	private String estadoTituloAdicional;
-	private String situacionTituloAdicional;
 	private Date fechaInscriptionRegistroAdicional;
 	private Date fechaEntregaTituloGestAdicional;
 	private Date fechaRetiradaDefinitivaRegAdicional;
 	private Date fechaPresentacionHaciendaAdicional;
 	private Date fechaNotaSimpleAdicional;
-	
 	public Long getIdActivo() {
 		return idActivo;
 	}
@@ -376,23 +375,23 @@ public class DtoActivoSaneamiento extends DtoTabActivo {
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
 	}
-	public Boolean getTieneTituloAdicional() {
+	public Integer getTieneTituloAdicional() {
 		return tieneTituloAdicional;
 	}
-	public void setTieneTituloAdicional(Boolean tieneTituloAdicional) {
+	public void setTieneTituloAdicional(Integer tieneTituloAdicional) {
 		this.tieneTituloAdicional = tieneTituloAdicional;
+	}
+	public String getTipoTituloAdicional() {
+		return tipoTituloAdicional;
+	}
+	public void setTipoTituloAdicional(String tipoTituloAdicional) {
+		this.tipoTituloAdicional = tipoTituloAdicional;
 	}
 	public String getEstadoTituloAdicional() {
 		return estadoTituloAdicional;
 	}
 	public void setEstadoTituloAdicional(String estadoTituloAdicional) {
 		this.estadoTituloAdicional = estadoTituloAdicional;
-	}
-	public String getSituacionTituloAdicional() {
-		return situacionTituloAdicional;
-	}
-	public void setSituacionTituloAdicional(String situacionTituloAdicional) {
-		this.situacionTituloAdicional = situacionTituloAdicional;
 	}
 	public Date getFechaInscriptionRegistroAdicional() {
 		return fechaInscriptionRegistroAdicional;
@@ -424,5 +423,7 @@ public class DtoActivoSaneamiento extends DtoTabActivo {
 	public void setFechaNotaSimpleAdicional(Date fechaNotaSimpleAdicional) {
 		this.fechaNotaSimpleAdicional = fechaNotaSimpleAdicional;
 	}
+	
+
 
 }

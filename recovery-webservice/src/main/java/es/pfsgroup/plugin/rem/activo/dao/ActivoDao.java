@@ -13,6 +13,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
+import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativaAdicional;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -355,4 +356,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public List<ActivoSuministros> getSuministrosByIdActivo(Long idActivo);
 
 	void actualizaDatoCDC(CalidadDatosConfig cdc, String valor, String identificador, String username);
+
+	List<ActivoCalificacionNegativaAdicional> getListActivoCalificacionNegativaAdicionalByIdActivo(Long idActivo);
 }

@@ -340,57 +340,6 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									value: '{activo.lineaFactura}'
 								}
 							},
-					        {
-					        	xtype: 'comboboxfieldbase',
-					        	fieldLabel: HreRem.i18n('fieldlabel.sociedad.pago'),
-					        	bind: { 
-					        		value:'{activo.sociedadPagoAnterior}',
-					        		store: '{comboSituacionPagoAnterior}',
-					        		readOnly: '{!activo.isSubcarteraDivarian}'
-					        	},
-					        	
-					        	style:'margin-left:10px'
-					        }
-							
-						]
-					},
-					{ // Columna 3 
-						defaultType: 'textfieldbase',
-						flex: 1,
-						items:[
-							{
-			                	xtype: 'textareafieldbase',
-			                	labelWidth: 200,
-			                	rowspan: 5,
-			                	height: 130,
-			                	labelAlign: 'top',
-			                	fieldLabel: HreRem.i18n('fieldlabel.breve.descripcion.activo'),
-			                	bind:{
-			                		value: '{activo.descripcion}'
-			                	}
-			                },
-			                {
-			                	xtype: 'comboboxfieldbase',
-			                	fieldLabel:  HreRem.i18n('fieldlabel.estado.registral'),
-			                	name: 'comboEstadoRegistral',
-			                	reference: 'comboEstadoRegistralRef',
-			                	bind: {
-			                		store: '{comboEstadoRegistral}',
-			                		value: '{activo.estadoRegistralCodigo}',
-			                		readOnly: '{!activo.esEditableActivoEstadoRegistral}'
-			                	}
-			                },
-			                {
-			                	xtype: 'comboboxfieldbase',
-			                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.segmento'),
-			                	name: 'combotipoSegmento',
-			                	reference: 'comboTipoSegmentoRef',
-			                	bind: {
-			                		store: '{comboTipoSegmento}',
-			                		value: '{activo.tipoSegmentoCodigo}',
-			                		hidden: '{!activo.isSubcarteraDivarian}'
-			                	}
-			                },
 			                {
 								xtype:'textfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.activobbva.idOrigenHre'),
@@ -398,7 +347,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									readOnly : '{esUA}',
 									value: '{activo.idOrigenHre}'
 								}
-							}
+							}	
 						]
 					}]
             },

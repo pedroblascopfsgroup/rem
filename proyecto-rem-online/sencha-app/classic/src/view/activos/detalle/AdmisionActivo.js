@@ -103,32 +103,14 @@ Ext.define('HreRem.view.activos.detalle.AdmisionActivo', {
 	initComponent: function () {
 	     var me = this;
 	     me.setTitle(HreRem.i18n('title.admision'));
-	     //HREOS-1964: Restringir los activos financieros (asistidos) para que solo puedan ser editables por los perfiles de IT y Gestor�a PDV
-		 var ocultarAdmisioncheckinfoactivo = false;		
-		 if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
-			 ocultarAdmisioncheckinfoactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
-					 && $AU.userHasFunction('EDITAR_CHECKING_INFO_ADMISION'));
-		 }else{
-			 ocultarAdmisioncheckinfoactivo = !$AU.userHasFunction('EDITAR_CHECKING_INFO_ADMISION');
-		 }
-		 var ocultarSaneamientoCheckEdicion =!(($AU.userIsRol(CONST.PERFILES['HAYAGESTADM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])));
-//		 if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
-//			 ocultarSaneamientoCheckEdicion = !(($AU.userIsRol(CONST.PERFILES['HAYAGESTADM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])));
-//		 }else{
-//			 //pendiente de ver si se crea una funcion para esta pestaña.
-//			 ocultarSaneamientoCheckEdicion = !(($AU.userIsRol(CONST.PERFILES['HAYAGESTADM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])));
-//		 }
-		 var ocultarSaneamientoCheckEdicion =false;
-		 if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
-			 ocultarSaneamientoCheckEdicion = !(($AU.userIsRol(CONST.PERFILES['HAYAGESTADM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])));
-		 }
-		 var ocultarRevisionTituloCheckEdicion = !($AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
+
+		 var ocultarAdmisionCheckEdicion = !($AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
 
 	     var items = [];
 	     //$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'admisioncheckdocactivo', ocultarBotonesEdicion: ocultarAdmisioncheckdocactivo, title: HreRem.i18n('title.admision.check.doc.activo')})}, ['TAB_CHECKING_DOC_ADMISION']);
-	     $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'admisionrevisiontitulo' ,ocultarBotonesEdicion: ocultarRevisionTituloCheckEdicion, title: HreRem.i18n('title.admision.tab.revision.titulo')})}, ['TAB_CHECKING_INFO_ADMISION']);
-	     $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'saneamientoactivo',ocultarBotonesEdicion: ocultarSaneamientoCheckEdicion, title: HreRem.i18n('title.admision.check.inf.activo')})}, ['TAB_CHECKING_INFO_ADMISION']);
-	     $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'evolucionactivo', ocultarBotonesEdicion: ocultarAdmisioncheckinfoactivo, title: HreRem.i18n('title.admision.check.inf.activo')})}, ['TAB_CHECKING_INFO_ADMISION']);
+	     $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'admisionrevisiontitulo' ,ocultarBotonesEdicion: ocultarAdmisionCheckEdicion, title: HreRem.i18n('title.admision.tab.revision.titulo')})}, ['TAB_CHECKING_INFO_ADMISION']);
+	     $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'saneamientoactivo',ocultarBotonesEdicion: ocultarAdmisionCheckEdicion, title: HreRem.i18n('title.admision.check.inf.activo')})}, ['TAB_CHECKING_INFO_ADMISION']);
+	     $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'evolucionactivo', ocultarBotonesEdicion: ocultarAdmisionCheckEdicion, title: HreRem.i18n('title.admision.check.inf.activo')})}, ['TAB_CHECKING_INFO_ADMISION']);
 	     
 	     
 	     me.addPlugin({ptype: 'lazyitems', items: items });

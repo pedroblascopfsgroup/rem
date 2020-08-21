@@ -2658,7 +2658,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'estadoRegistral'}
 			}
+		},
+		comboSubtipoTituloActivo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'subtiposTitulo'}
+			},
+			filters: {
+                property: 'codigoTipoTitulo',
+                value: '{admisionRevisionTitulo.tipoTituloActivo}'
+			}
 		}
+		
 
      }
 });

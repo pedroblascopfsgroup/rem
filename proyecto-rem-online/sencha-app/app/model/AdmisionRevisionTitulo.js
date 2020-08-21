@@ -90,6 +90,10 @@ Ext.define('HreRem.model.AdmisionRevisionTitulo', {
 						name : 'deterioroGrave'
 					}, {
 						name : 'tipoIncidenciaOtros'
+					}, {
+						name : 'tipoTituloActivo'
+					}, {
+						name : 'subtipoTituloActivo'
 					}
 
 			],

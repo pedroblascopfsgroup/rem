@@ -201,6 +201,13 @@ public class ActivoAdmisionRevisionTitulo implements Auditable,Serializable {
 	@JoinColumn(name = "DD_TDA_ID")
 	private DDTipoIncidencia tipoIncidencia;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "TIPO_TITULO_ACTIVO_ENTRADA")
+	private DDTipoTituloActivo tipoTituloActivo;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "SUBTIPO_TITULO_ACTIVO_ENTRADA")
+	private DDSubtipoTituloActivo subtipoTituloActivo;
 
 	@Version
 	private Long version;
@@ -570,6 +577,22 @@ public class ActivoAdmisionRevisionTitulo implements Auditable,Serializable {
 
 	public void setTipoIncidencia(DDTipoIncidencia tipoIncidencia) {
 		this.tipoIncidencia = tipoIncidencia;
+	}
+
+	public DDTipoTituloActivo getTipoTituloActivo() {
+		return tipoTituloActivo;
+	}
+
+	public void setTipoTituloActivo(DDTipoTituloActivo tipoTituloActivo) {
+		this.tipoTituloActivo = tipoTituloActivo;
+	}
+
+	public DDSubtipoTituloActivo getSubtipoTituloActivo() {
+		return subtipoTituloActivo;
+	}
+
+	public void setSubtipoTituloActivo(DDSubtipoTituloActivo subtipoTituloActivo) {
+		this.subtipoTituloActivo = subtipoTituloActivo;
 	}
 	
 

@@ -7,7 +7,7 @@ import es.capgemini.devon.dto.WebDto;
  * @author Jonathan Ovalle
  *
  */
-public class DtoDetalleAlbaran extends WebDto{
+public class DtoDetalleAlbaran extends WebDto implements Comparable<DtoDetalleAlbaran>{
 
 	private static final long serialVersionUID = 0L;
 
@@ -83,5 +83,7 @@ public class DtoDetalleAlbaran extends WebDto{
 		this.numeroTrabajos = numeroTrabajos;
 	}
 	
-	
+	public int compareTo(DtoDetalleAlbaran a) {
+		return this.getNumPrefactura().intValue() - a.getNumPrefactura().intValue();
+	}
 }

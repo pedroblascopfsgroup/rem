@@ -18,6 +18,8 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 				}
 			});
 
+			this.lookupReference('detalleAlbaranGrid').getStore().removeAll();
+			this.lookupReference('detallePrefacturaGrid').getStore().removeAll();
 			this.lookupReference('albaraneslist').down("[reference='albaranGrid']").getStore().loadPage(1);
         }
 	},
@@ -55,6 +57,8 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		btn.up("[reference='albaranessearch']").nextSibling().down("[reference='botonValidarAlbaran']").setDisabled(true);
 		btn.up("[reference='albaranessearch']").nextSibling().down("[reference='botonValidarPrefactura']").setDisabled(true);
 		btn.up("[reference='albaranessearch']").nextSibling().down("[reference='botonValidarTrabajo']").setDisabled(true);
+		this.lookupReference('totalAlbaran').setValue(0);
+		this.lookupReference('totalPrefactura').setValue(0);
 		
 		//Limpia la botonera de filtrado.
 		btn.up('panel').getForm().reset();
@@ -150,45 +154,44 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		var me = this;
 		var valorAlb = 0;
 		var valor = 0;
-		//Se puede modificar el check sin seleccionar la fila , para eso es este codigo
-		if(this.lookupReference('detallePrefacturaGrid').selection == null){
-			this.lookupReference('detallePrefacturaGrid').setSelection(me.lookupReference('detallePrefacturaGrid').getStore().getData().items[rowIndex]);
-		}
-		var rowTrabajo = this.lookupReference('detallePrefacturaGrid').selection;
-		var rowDetalleAlbaran = this.lookupReference('detalleAlbaranGrid').selection;
-		var rowAlbaran = this.lookupReference('albaranGrid').selection;
-		if(checked){
-			rowAlbaran.data.importeTotal = parseFloat(rowAlbaran.data.importeTotal) + parseFloat(rowTrabajo.data.importeTotalPrefactura);
-			rowAlbaran.data.importeTotalCliente = parseFloat(rowAlbaran.data.importeTotalCliente) + parseFloat(rowTrabajo.data.importeTotalClientePrefactura);
-			rowDetalleAlbaran.data.importeTotalDetalle = parseFloat(rowDetalleAlbaran.data.importeTotalDetalle) + parseFloat(rowTrabajo.data.importeTotalPrefactura);
-			rowDetalleAlbaran.data.importeTotalClienteDetalle = parseFloat(rowDetalleAlbaran.data.importeTotalClienteDetalle) + parseFloat(rowTrabajo.data.importeTotalClientePrefactura);
-			rowTrabajo.data.checkIncluirTrabajo = false;
-			me.lookupReference('detallePrefacturaGrid').getStore().getData().items[rowIndex].data.checkIncluirTrabajo = false;
-		}else{
-			rowAlbaran.data.importeTotal = rowAlbaran.data.importeTotal - rowTrabajo.data.importeTotalPrefactura;
-			rowAlbaran.data.importeTotalCliente = rowAlbaran.data.importeTotalCliente - rowTrabajo.data.importeTotalClientePrefactura;
-			rowDetalleAlbaran.data.importeTotalDetalle = rowDetalleAlbaran.data.importeTotalDetalle - rowTrabajo.data.importeTotalPrefactura;
-			rowDetalleAlbaran.data.importeTotalClienteDetalle = rowDetalleAlbaran.data.importeTotalClienteDetalle - rowTrabajo.data.importeTotalClientePrefactura;
-			rowTrabajo.data.checkIncluirTrabajo = true;
-			me.lookupReference('detallePrefacturaGrid').getStore().getData().items[rowIndex].data.checkIncluirTrabajo=true;
-		}
-		if(rowAlbaran.data.importeTotalCliente > 0){
-			valorAlb = rowAlbaran.data.importeTotalCliente;
-		}else{
-			valorAlb = rowAlbaran.data.importeTotal;
-		}
+		var valorAlbC = 0;
+		var valorC = 0;
 		var totalAlb = this.lookupReference('totalAlbaran');
-		totalAlb.setValue(valorAlb);
-		this.lookupReference('albaranGrid').getView().refresh();
-		if(rowDetalleAlbaran.data.importeTotalClienteDetalle > 0){
-			valor = rowDetalleAlbaran.data.importeTotalClienteDetalle;
-		}else{
-			valor = rowDetalleAlbaran.data.importeTotalDetalle;
-		}
 		var totalPre = this.lookupReference('totalPrefactura');
-		totalPre.setValue(valor);
-		this.lookupReference('detalleAlbaranGrid').getView().refresh();
-		
+		//Se puede modificar el check sin seleccionar la fila , para eso es este codigo
+//		if(this.lookupReference('detallePrefacturaGrid').selection == null){
+//			this.lookupReference('detallePrefacturaGrid').setSelection(me.lookupReference('detallePrefacturaGrid').getStore().getData().items[rowIndex]);
+//		}
+//		var rowTrabajo = this.lookupReference('detallePrefacturaGrid').selection;
+		var rowTrabajo = me.lookupReference('detallePrefacturaGrid').getStore().getData().items[rowIndex]
+		if(checked){
+			valorAlb = parseFloat(totalAlb.getValue()) + parseFloat(rowTrabajo.data.importeTotalPrefactura);
+			valorAlbC = parseFloat(totalAlb.getValue()) + parseFloat(rowTrabajo.data.importeTotalClientePrefactura);
+			valor = parseFloat(totalPre.getValue()) + parseFloat(rowTrabajo.data.importeTotalPrefactura);
+			valorC = parseFloat(totalPre.getValue()) + parseFloat(rowTrabajo.data.importeTotalClientePrefactura);
+			rowTrabajo.data.checkIncluirTrabajo = true;
+			me.lookupReference('detallePrefacturaGrid').getStore().getData().items[rowIndex].data.checkIncluirTrabajo = true;
+			me.lookupReference('detallePrefacturaGrid').getView().refresh();
+		}else{
+			valorAlb = totalAlb.getValue() - rowTrabajo.data.importeTotalPrefactura;
+			valorAlbC = totalAlb.getValue() - rowTrabajo.data.importeTotalClientePrefactura;
+			valor = totalPre.getValue() - rowTrabajo.data.importeTotalPrefactura;
+			valorC = totalPre.getValue() - rowTrabajo.data.importeTotalClientePrefactura;
+			rowTrabajo.data.checkIncluirTrabajo = false;
+			me.lookupReference('detallePrefacturaGrid').getStore().getData().items[rowIndex].data.checkIncluirTrabajo=false;
+			me.lookupReference('detallePrefacturaGrid').getView().refresh();
+		}
+		if(rowTrabajo.data.importeTotalPrefactura > 0 ){
+			totalAlb.setValue(valorAlb);
+		}else{
+			totalAlb.setValue(valorAlbC);
+		}
+		if(rowTrabajo.data.importeTotalPrefactura > 0){
+			totalPre.setValue(valor);
+		}else{
+			totalPre.setValue(valorC);
+		}
+
 	},
 	
 	validaAlbaranes: function(button) {
@@ -225,6 +228,10 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		    			  success: function(response,opts){
 		    				  Ext.MessageBox.alert('Albaran Validado','Se ha validado el albaran de forma correcta');
 		    				  gridAlbaran.getStore().load();
+		    				  me.lookupReference('detalleAlbaranGrid').getStore().removeAll();
+		    				  me.lookupReference('detallePrefacturaGrid').getStore().removeAll();
+		    				  me.lookupReference('totalAlbaran').setValue(0);
+		    				  me.lookupReference('totalPrefactura').setValue(0);
 		    			  }
 		    			  
 		    		    });
@@ -290,6 +297,8 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		    				  gridDetalle.getStore().load();
 		    				  me.lookupReference('albaranGrid').getStore().load();
 		    				  me.lookupReference('detallePrefacturaGrid').getStore().removeAll();
+		    				  me.lookupReference('totalAlbaran').setValue(0);
+		    				  me.lookupReference('totalPrefactura').setValue(0);
 		    			  }
 		    			  
 		    		    });
@@ -354,6 +363,8 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		    				  gridDetalle.getStore().load();
 		    				  me.lookupReference('albaranGrid').getStore().load();
 		    				  me.lookupReference('detallePrefacturaGrid').getStore().removeAll();
+		    				  me.lookupReference('totalAlbaran').setValue(0);
+		    				  me.lookupReference('totalPrefactura').setValue(0);
 		    			  }
 		    			  
 		    		    });

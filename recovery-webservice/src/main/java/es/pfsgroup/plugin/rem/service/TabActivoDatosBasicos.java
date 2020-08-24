@@ -934,7 +934,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			List<Perfil> perfilesUsuarioLogado = usuarioLogado.getPerfiles();
 			
 			boolean esUsuarioConPermisos = false;
-			boolean revision = DDSinSiNo.CODIGO_SI.equals(activoAdmisionRevisionTitulo.getRevisado().getCodigo());
+			boolean revision = false;
+			
+			if(activoAdmisionRevisionTitulo.getRevisado() != null) {
+				revision = DDSinSiNo.CODIGO_SI.equals(activoAdmisionRevisionTitulo.getRevisado().getCodigo());	
+			}
 			
 			for(Perfil pef : perfilesUsuarioLogado){
 				if(codigoHayaSuper.equals(pef.getCodigo()) || codigoGestorEdificacion.equals(pef.getCodigo())) {

@@ -18,7 +18,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesModel', {
 	    	},
 	    	remoteSort: true,
 	    	remoteFilter: true,	    	
-	    	autoLoad: false,
+	    	//autoLoad: false,
 	        listeners : {
 	            beforeload : 'paramLoading'	        
 	        }
@@ -34,8 +34,9 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesModel', {
 				actionMethods: {read: 'POST'}
 	    	},	    		
 	    	remoteSort: true,
-	    	remoteFilter: true,	    	
-	    	autoLoad: false
+	    	remoteFilter: true,
+	    	session: true,
+//	    	autoLoad: false
 //	        listeners : {
 //	            beforeload : 'paramLoading'	        
 //	        }
@@ -51,8 +52,9 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesModel', {
 				actionMethods: {read: 'POST'}
 	    	},	    		
 	    	remoteSort: true,
-	    	remoteFilter: true,	    	
-	    	autoLoad: false
+	    	remoteFilter: true,
+	    	session: true,
+//	    	autoLoad: false
 //	        listeners : {
 //	            beforeload : 'paramLoading'	        
 //	        }

@@ -4,6 +4,7 @@ Ext.define('HreRem.view.activos.detalle.detalleAlbaranGrid', {
 	topBar		: false,
 	editOnSelect: false,
 	disabledDeleteBtn: true,
+	scrollable: true,
 	bind: {
 		store: '{detalleAlbaranes}'
 	},

@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.albaran;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +58,7 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 				Double total = 0.0;
 				Double totalPresupuesto = 0.0;
 				DtoDetalleAlbaran dto = new DtoDetalleAlbaran();
-				List<GastoProveedor> gastos = genericDao.getList(GastoProveedor.class,
+				GastoProveedor gasto = genericDao.get(GastoProveedor.class,
 						genericDao.createFilter(FilterType.EQUALS, "prefactura.id", prefactura.getId()));
 				List<Trabajo> trabajos= genericDao.getList(Trabajo.class,
 						genericDao.createFilter(FilterType.EQUALS, "prefactura.id", prefactura.getId()));
@@ -71,24 +72,18 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 						}
 					}
 				}
-				if (gastos == null || gastos.isEmpty()) {
-					dto = rellenaDtoDetalleAlbaran(null, prefactura);
-					dto.setImporteTotalClienteDetalle(total);
-					dto.setImporteTotalDetalle(totalPresupuesto);
-					dto.setNumeroTrabajos(trabajos.size());
-					dtos.add(dto);
+				if (gasto != null) {
+					dto = rellenaDtoDetalleAlbaran(null, prefactura, trabajos.get(0));
 				}else {
-					for (GastoProveedor gasto : gastos) {
-						dto = new DtoDetalleAlbaran();
-						dto = rellenaDtoDetalleAlbaran(gasto, prefactura);
-						dto.setImporteTotalClienteDetalle(total);
-						dto.setImporteTotalDetalle(totalPresupuesto);
-						dto.setNumeroTrabajos(trabajos.size());
-						dtos.add(dto);
-					}
+					dto = rellenaDtoDetalleAlbaran(gasto, prefactura,trabajos.get(0));
 				}
+				dto.setImporteTotalClienteDetalle(total);
+				dto.setImporteTotalDetalle(totalPresupuesto);
+				dto.setNumeroTrabajos(trabajos.size());
+				dtos.add(dto);
 			}
 		}
+		Collections.sort(dtos);
 		return dtos;
 	}
 
@@ -144,7 +139,7 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 		return dtos;
 	}
 	
-	private DtoDetalleAlbaran rellenaDtoDetalleAlbaran(GastoProveedor gasto,Prefactura prefactura) {
+	private DtoDetalleAlbaran rellenaDtoDetalleAlbaran(GastoProveedor gasto,Prefactura prefactura, Trabajo tbj) {
 		DtoDetalleAlbaran dto = new DtoDetalleAlbaran();
 		if(gasto != null) {
 			if (prefactura.getNumPrefactura() != null) {
@@ -164,7 +159,7 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 			}
 			if (prefactura.getFechaPrefactura() != null) {
 				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(prefactura.getFechaPrefactura());
+				calendar.setTime(tbj.getFechaValidacion());
 				int anyo = calendar.get(calendar.YEAR);
 				dto.setAnyo(String.valueOf(anyo));
 			}
@@ -193,7 +188,7 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 			}
 			if (prefactura.getFechaPrefactura() != null) {
 				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(prefactura.getFechaPrefactura());
+				calendar.setTime(tbj.getFechaValidacion());
 				int anyo = calendar.get(calendar.YEAR);
 				dto.setAnyo(String.valueOf(anyo));
 			}
@@ -275,7 +270,9 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 					}
 					if(campo.contains("checkIncluirTrabajo")) {
 						String valor[] = campo.split(":");
-						dto.setCheckIncluirTrabajo(Boolean.valueOf(valor[1]));
+						//Se niega por un tema del front que llegan los valores invertidos
+						Boolean check = Boolean.valueOf(valor[1]);
+						dto.setCheckIncluirTrabajo(!check);
 					}
 				}
 				lista.add(dto);

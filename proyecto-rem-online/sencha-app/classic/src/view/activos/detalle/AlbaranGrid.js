@@ -4,6 +4,7 @@ Ext.define('HreRem.view.activos.detalle.AlbaranGrid', {
 	topBar		: false,
 	editOnSelect: false,
 	disabledDeleteBtn: true,
+	scrollable: true,
 	layout: 'fit',
 	bind: {
 		store: '{albaranes}'
@@ -55,11 +56,6 @@ Ext.define('HreRem.view.activos.detalle.AlbaranGrid', {
 		            flex: 1,
 		            reference: 'importeTotal',
 		            renderer: Utils.rendererCurrency,
-//		            editor: {
-//		        		xtype:'currencyfieldbase',
-//		        		minValue: 0,
-//		        		allowBlank: false
-//		        	},
 		            text: HreRem.i18n('fieldlabel.albaran.importeTotal')
 		        },
 		        {
@@ -67,11 +63,6 @@ Ext.define('HreRem.view.activos.detalle.AlbaranGrid', {
 		            flex: 1,
 		            reference: 'importeTotalCliente',
 		            renderer: Utils.rendererCurrency,
-//		            editor: {
-//		        		xtype:'currencyfieldbase',
-//		        		minValue: 0,
-//		        		allowBlank: false
-//		        	},
 		            text: HreRem.i18n('fieldlabel.albaran.importeTotalCliente')
 		        }
 		        

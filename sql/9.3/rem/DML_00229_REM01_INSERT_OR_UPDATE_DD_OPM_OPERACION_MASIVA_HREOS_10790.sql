@@ -36,7 +36,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	    T_FUNCION('CMMLD', 'Carga masiva de modificación líneas detalle','Carga masiva de modificación líneas detalle','CARGA_MASIVA_MODIFICACION_LINEAS_DETALLE','n*,s*,s*,i,i,s,i,i,i,i,i,s,b,b,n,b,s,n,n')
+	    T_FUNCION('CMMLD', 'Carga masiva de modificación líneas detalle','Carga masiva de modificación líneas detalle','CARGA_MASIVA_MODIFICACION_LINEAS_DETALLE','n*,s*,s*,i,i,s,i,i,i,i,i,s,b,b,n,b,s,s,n')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_MSQL_1 VARCHAR2(4000 CHAR);

@@ -78,6 +78,9 @@ BEGIN
                 FECHABORRAR                 TIMESTAMP(6),
                 BORRADO                     NUMBER(1,0)         DEFAULT 0		
 			  )';
+      EXECUTE IMMEDIATE V_MSQL;
+      DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA||'... Tabla creada');
+
       EXECUTE IMMEDIATE 'COMMENT ON TABLE  ' || V_ESQUEMA || '.'||V_TABLA||' IS ''Tabla histórico título adicional de los activos.''';
       EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TABLA||'.HTA_ID IS ''PK Código identificador único del histórico de tramitación de titulo''';
       EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TABLA||'.TIA_ID IS ''Clave ajena ACT_TIA_TITULO_ADICIONAL''';
@@ -118,7 +121,7 @@ BEGIN
 
     END IF; 
 
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA||'... Tabla creada');
+		
 
     EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE TABLE_NAME = '''||V_TABLA||''' and owner = '''||V_ESQUEMA||''' and CONSTRAINT_TYPE = ''P'''
 		INTO V_NUM_TABLAS; 

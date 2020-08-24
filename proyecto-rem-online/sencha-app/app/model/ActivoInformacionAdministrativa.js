@@ -159,7 +159,11 @@ Ext.define('HreRem.model.ActivoInformacionAdministrativa', {
     			type:'date',
     			dateFormat: 'c'
     		},
-    		
+    		{
+    			name: 'fechaVencimiento',
+    			type: 'date',
+    			dateFormat: 'c'
+    		},
     		{
     			name:'estadoVentaCodigo'
     		},

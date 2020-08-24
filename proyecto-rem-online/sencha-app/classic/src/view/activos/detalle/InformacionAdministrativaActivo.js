@@ -210,7 +210,8 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 												{ 
 													xtype: 'currencyfieldbase',
 													fieldLabel: HreRem.i18n('fieldlabel.precio.maximo.venta.vpo'), 			// Precio m�ximo de venta
-					                				bind: '{infoAdministrativa.maxPrecioVenta}'
+					                				bind: '{infoAdministrativa.maxPrecioVenta}',
+					                				readOnly: true
 								                },
 								                
 								                //
@@ -227,10 +228,10 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 								                	xtype: 'datefieldbase',     
 											 		fieldLabel: HreRem.i18n('fieldlabel.fechaVencimiento'), // fechaVencimiento (NUEVO CAMPO)
 											 		bind: {
-											 				readOnly : '{!esSupervisionGestorias}',
 											 				value:'{infoAdministrativa.fechaVencimiento}'
 											 			},
-											 		maxValue : null
+											 		maxValue : null,
+											 		readOnly: true
 												},
 												
 								                //

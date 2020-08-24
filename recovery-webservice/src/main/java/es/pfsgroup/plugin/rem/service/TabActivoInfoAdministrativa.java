@@ -1,6 +1,9 @@
 package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,20 +11,28 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.dto.WebDto;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoInfAdministrativa;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformacionAdministrativa;
+import es.pfsgroup.plugin.rem.model.HistoricoPeticionesPrecios;
+import es.pfsgroup.plugin.rem.model.HistoricoRequisitosFaseVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 import es.pfsgroup.plugin.rem.model.dd.DDTributacionAdquisicion;
+import es.pfsgroup.plugin.rem.rest.dto.ReqFaseVentaDto;
 
 
 
@@ -36,6 +47,9 @@ public class TabActivoInfoAdministrativa implements TabActivoService {
 	
 	@Autowired
 	private ActivoDao activoDao;
+	
+	@Autowired
+	private ActivoApi activoApi;
 	
 	@Autowired
 	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
@@ -141,7 +155,24 @@ public class TabActivoInfoAdministrativa implements TabActivoService {
 			if(activo.getInfoAdministrativa().getEstadoVenta() != null) {
 				activoDto.setEstadoVentaCodigo(activo.getInfoAdministrativa().getEstadoVenta().getCodigo());
 			}
-			
+			try {
+				List<ReqFaseVentaDto> requisitosVenta = activoApi.getReqFaseVenta(activo.getId());
+						
+				if(requisitosVenta != null && !requisitosVenta.isEmpty()) {
+					for (int i = 0; i < requisitosVenta.size(); i++) {
+						ReqFaseVentaDto req = requisitosVenta.get(i);
+						if(req.getFechavencimiento() != null && req.getPreciomaximo() != null) {
+							activoDto.setMaxPrecioVenta("" + req.getPreciomaximo());
+							String dateStr = req.getFechavencimiento().split(" ")[0];
+						    Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dateStr);  
+							activoDto.setFechaVencimiento(date);
+							break;
+						}
+					}
+				}
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 		

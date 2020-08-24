@@ -46,6 +46,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
+import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativaAdicional;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
@@ -1148,6 +1149,22 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 		return lista;
 		//return  HibernateUtils.castList(ActivoCalificacionNegativa.class, this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list());
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivoCalificacionNegativaAdicional> getListActivoCalificacionNegativaAdicionalByIdActivo(Long idActivo) {
+		String hql = "select acn from ActivoCalificacionNegativaAdicional acn ";
+		HQLBuilder hb = new HQLBuilder(hql);
+		hb.appendWhere(" acn.activo.id =  "+idActivo+" ");
+		hb.appendWhere(" acn.auditoria.borrado = 0 ");
+
+		List<ActivoCalificacionNegativaAdicional> lista = (List<ActivoCalificacionNegativaAdicional>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		if(!Checks.estaVacio(lista)) {
+			return HibernateUtils.castList(ActivoCalificacionNegativaAdicional.class, lista);
+		}
+		return lista;
 
 	}
 

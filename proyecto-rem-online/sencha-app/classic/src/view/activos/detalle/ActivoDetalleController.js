@@ -701,6 +701,51 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		me.lookupReference('estadoDivHorizontalNoInscrita').setValue("");
     	}
     },
+    //Por programar
+    onComboTramitacionTituloAdicional: function(combo, value){
+    	
+    	var me = this,
+    	disabled = value == 0;
+    	
+    	var fieldsettableTituloAdicional =me.lookupReference('fieldsettableTituloAdicional');
+    	var tipoTituloAdicional = me.lookupReference('tipoTituloAdicional');
+    	var situacionTituloAdicional = me.lookupReference('situacionTituloAdicional');
+    	var fechaInscripcionRegistroAdicional = me.lookupReference('fechaInscripcionRegistroAdicional');
+    	var entregaTituloGestoriaAdicional = me.lookupReference('entregaTituloGestoriaAdicional');
+    	var fechaRetiradaDefinitivaRegistroAdicional = me.lookupReference('fechaRetiradaDefinitivaRegistroAdicional');
+    	var fechaPresentacionHaciendaAdicional = me.lookupReference('fechaPresentacionHaciendaAdicional');
+    	var fieldlabelFechaNotaSimpleAdicional = me.lookupReference('fieldlabelFechaNotaSimpleAdicional');
+    	
+    	
+    	fieldsettableTituloAdicional.setDisabled(disabled);
+    	tipoTituloAdicional.setDisabled(disabled);
+    	situacionTituloAdicional.setDisabled(disabled);
+    	fechaInscripcionRegistroAdicional.setDisabled(disabled);
+    	entregaTituloGestoriaAdicional.setDisabled(disabled);
+    	fechaRetiradaDefinitivaRegistroAdicional.setDisabled(disabled);
+    	fechaPresentacionHaciendaAdicional.setDisabled(disabled);
+    	fieldlabelFechaNotaSimpleAdicional.setDisabled(disabled);
+    	
+    	    	
+    	if(disabled){
+    		fieldsettableTituloAdicional.hide();
+    		//fieldsettableTituloAdicional.setVisible(false);
+	    	tipoTituloAdicional.setValue("");
+	    	fechaInscripcionRegistroAdicional.setValue(""); 
+			tipoTituloAdicional.setValue("");
+    		situacionTituloAdicional.setValue("");
+    		fechaInscripcionRegistroAdicional.setValue("");
+    		entregaTituloGestoriaAdicional.setValue("");
+    		fechaRetiradaDefinitivaRegistroAdicional.setValue("");
+    		fechaPresentacionHaciendaAdicional.setValue("");
+    		fieldlabelFechaNotaSimpleAdicional.setValue("");
+    	}else{
+    		fieldsettableTituloAdicional.show();
+    		//fieldsettableTituloAdicional.setVisible(true);
+    	}
+    	
+    	
+    },
     
     onComunidadNoConstituida: function(combo, value) {
     	var me = this,

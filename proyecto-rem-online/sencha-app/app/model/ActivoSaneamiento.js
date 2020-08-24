@@ -260,6 +260,41 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 		{
 			name: 'puedeEditarCalificacionNegativa',
 			type: 'boolean'
+		},
+		//por programar
+		{
+			name:'tieneTituloAdicional'
+		},
+		{
+			name:'estadoTituloAdicional'
+		},
+		{
+			name:'tipoTituloAdicional'
+		},
+		{
+			name:'fechaInscriptionRegistroAdicional',
+           	type: 'date',
+    		dateFormat: 'c'
+		},
+		{
+			name:'fechaEntregaTituloGestAdicional',
+           	type: 'date',
+    		dateFormat: 'c'
+		},
+		{
+			name:'fechaRetiradaDefinitivaRegAdicional',
+           	type: 'date',
+    		dateFormat: 'c'
+		},
+		{
+			name:'fechaPresentacionHaciendaAdicional',
+           	type: 'date',
+    		dateFormat: 'c'
+		},
+		{
+			name:'fechaNotaSimpleAdicional',
+           	type: 'date',
+    		dateFormat: 'c'
 		}
     ],
 

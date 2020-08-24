@@ -2244,6 +2244,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			autoLoad: true
 		},
 		
+		
+		
    		comboDDTipoTituloActivoTPA: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -2651,6 +2653,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {codTipo: '{comboTipologiaRef.value}'}
 			}
 		},
+
 		comboEstadoRegistral: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -2659,6 +2662,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'estadoRegistral'}
 			}
 		},
+
 		comboSubtipoTituloActivo: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -2670,8 +2674,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
                 property: 'codigoTipoTitulo',
                 value: '{admisionRevisionTitulo.tipoTituloActivo}'
 			}
-		}
+		},
 		
+		storeCalifiacionNegativaAdicional:{
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.CalificacionNegativaAdicionalModel', //
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getCalificacionNegativaAdicional', //
+				extraParams: {id: '{activo.id}'}
+			},
+			autoLoad: true
+		},
 
-     }
+		storeHistoricoTramitacionTituloAdicional:{
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.HistoricoTramitacionTituloAdicionalModel', 
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getHistoricoTramitacionTituloAdicional', 
+				extraParams: {id: '{activo.id}'}
+			},
+			autoLoad: true
+		}
+	 }
 });

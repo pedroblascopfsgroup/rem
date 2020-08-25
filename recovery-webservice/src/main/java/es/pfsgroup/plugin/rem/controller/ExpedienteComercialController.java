@@ -2289,4 +2289,18 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView activarCompradorExpediente(ModelMap model, @RequestParam Long idCompradorExpediente, @RequestParam Long idExpediente) {
+		try {
+			boolean success = expedienteComercialApi.activarCompradorExpediente(idCompradorExpediente, idExpediente);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController::activarCompradorExpediente", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
 }

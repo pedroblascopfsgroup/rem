@@ -3065,7 +3065,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+"		FROM DD_TPE_TIPOS_PERIOCIDAD"
-				+"		WHERE DD_TPE_CODIGO = "+codPeriodicidad+""
+				+"		WHERE DD_TPE_CODIGO = '"+codPeriodicidad+"'"
 				+"		AND BORRADO= 0");
 		return !"0".equals(resultado);
 	}
@@ -3077,7 +3077,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+"		FROM DD_CAI_CALCULO_IMPUESTO"
-				+"		WHERE DD_CAI_CODIGO = "+codCalculo+""
+				+"		WHERE DD_CAI_CODIGO = '"+codCalculo+"'"
 				+"		AND BORRADO= 0");
 
 		return !"0".equals(resultado);

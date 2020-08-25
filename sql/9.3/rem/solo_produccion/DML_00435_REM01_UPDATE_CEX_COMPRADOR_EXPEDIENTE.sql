@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Juan Bautista Alfonso Canovas
---## FECHA_CREACION=20200824
+--## FECHA_CREACION=20200825
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-7980
@@ -11,7 +11,7 @@
 --##			
 --## INSTRUCCIONES:  
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.2 Versión inicial
 --#########################################
 --*/
 

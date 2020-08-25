@@ -1465,10 +1465,12 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
-	public Boolean lineaSubtipoDeGastoRepetidaBD(String numGasto,String subtipoGasto, String tipoImpositivo, String tipoImpuesto, Boolean exento , Boolean renunciaExento){
+	public Boolean lineaSubtipoDeGastoRepetidaBD(String numGasto,String subtipoGasto, String tipoImpositivo, String tipoImpuesto, Integer exento , Integer renunciaExento){
 		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto) || Checks.esNulo(subtipoGasto) || !StringUtils.isNumeric(subtipoGasto)
 				|| Checks.esNulo(tipoImpositivo) || !StringUtils.isNumeric(tipoImpositivo)|| Checks.esNulo(tipoImpuesto) || !StringUtils.isAlphanumeric(tipoImpuesto))
 			return false;
+		
+		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM gld_gastos_linea_detalle where " + 
 				"gpv_id in (select gpv_id from gpv_gastos_proveedor where gpv_num_gasto_haya = '"+numGasto+"') and " + 
 				"GLD_IMP_IND_TIPO_IMPOSITIVO = "+tipoImpositivo+" and " + 

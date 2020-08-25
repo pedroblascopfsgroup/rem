@@ -1,9 +1,7 @@
 package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,12 +17,9 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
-import es.capgemini.pfs.utils.FormatUtils;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessCompositeValidators;
@@ -50,6 +45,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	private static final String SUBTIPO_DIFERENTE_GASTO = "El subtipo es de un tipo diferente del gasto";
 	private static final String YA_EXISTE_UN_SUBTIPO_TIPO_IMPOSITIVO_TIPO_IMPUESTO = "Ya existe una línea con el mismo subtipo de gasto, tipo impositivo o tipo impuesto";
 	private static final String SUMA_100 = "La suma de participaciones es superior a 100";
+	private static final String TIPO_IMPUESTO_NO_EXISTE = "El tipo de impuesto no existe";
 
 	public static final Integer COL_ID_GASTO = 0;
 	public static final Integer COL_ACCION_LINEA_DETALLE = 1;
@@ -72,7 +68,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	public static final Integer COL_PARTICIPACION_LINEA_DETALLE = 18;
 	
 
-	private String CHECK_VALOR_SI = "SI";
+	public static final String CHECK_VALOR_SI = "SI";
 	private Integer numFilasHoja;	
 
 	private final Log logger = LogFactory.getLog(getClass());
@@ -125,7 +121,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 		}
 		
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
-			// if (!isActiveExists(exc)){
+
 			Map<String, List<Integer>> mapaErrores = new HashMap<String, List<Integer>>();
 			mapaErrores.put(GASTO_NO_EXISTE, isGastoNotExistsRows(exc));
 			mapaErrores.put(ELEMENTO_CARTERA_DIFERENTE_GASTO, isCarteraDiferenteGasto(exc));
@@ -134,6 +130,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 			mapaErrores.put(SUBTIPO_DIFERENTE_GASTO, subtipoGastoCorrespondeGasto(exc));
 			mapaErrores.put(YA_EXISTE_UN_SUBTIPO_TIPO_IMPOSITIVO_TIPO_IMPUESTO, existeUnsubtipoGastoIgual(exc));
 			mapaErrores.put(SUMA_100, participaciones(exc));
+			mapaErrores.put(TIPO_IMPUESTO_NO_EXISTE, tipoImpuestoNoExiste(exc));
 
 			if (!mapaErrores.get(GASTO_NO_EXISTE).isEmpty() 
 			        || !mapaErrores.get(ELEMENTO_CARTERA_DIFERENTE_GASTO).isEmpty()
@@ -141,7 +138,8 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 					|| !mapaErrores.get(BANKIA_MAS_DE_UNA_LINEA).isEmpty()
 					|| !mapaErrores.get(SUBTIPO_DIFERENTE_GASTO).isEmpty()
 					|| !mapaErrores.get(YA_EXISTE_UN_SUBTIPO_TIPO_IMPOSITIVO_TIPO_IMPUESTO).isEmpty()
-					|| !mapaErrores.get(SUMA_100).isEmpty()) {
+					|| !mapaErrores.get(SUMA_100).isEmpty()
+					|| !mapaErrores.get(TIPO_IMPUESTO_NO_EXISTE).isEmpty()) {
 
 		    
 				dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -344,8 +342,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	       List<Integer> listaFilas = new ArrayList<Integer>();
 	   	   List<String> subtipoGastoImpuestImpositivoList =  new ArrayList <String>();
 	       boolean addString = true;
-	       
-	       boolean masDeUnaVez = false;
+
 	        try{
 	        	
 	            for(int i=1; i<this.numFilasHoja;i++){
@@ -358,15 +355,13 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	                	if(!Checks.estaVacio(subtipoGastoImpuestImpositivoList)) {
 	                		for (String j : subtipoGastoImpuestImpositivoList) {
 								if(j.equals(result)) {
-								
 									 listaFilas.add(i);
 									 addString = false;
-									 break;
-								  
+									 break;	  
 								}
 								
 							}
-	                		
+	                		subtipoGastoImpuestImpositivoList.clear();
 	                	}
 	                	
 	                	if(addString) {
@@ -375,15 +370,21 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 			                   && Boolean.TRUE.equals(particularValidator.lineaSubtipoDeGastoRepetida(separador[0],separador[1],separador[3],separador[2]))) {
 		                		listaFilas.add(i);
 		                	}else {
-		                		Boolean operacionExenta = null;
-		                		Boolean renunciaExenta = null;
-			                	if(!Checks.esNulo(exc.dameCelda(i, COL_OPERANCION_EXENTA))){
-			                		operacionExenta = CHECK_VALOR_SI.equalsIgnoreCase(exc.dameCelda(i, COL_OPERANCION_EXENTA));
+		                		Integer operacionExenta = null;
+		                		Integer renunciaExenta = null;
+		
+			                	if(!Checks.esNulo(exc.dameCelda(i, COL_OPERANCION_EXENTA)) && CHECK_VALOR_SI.equalsIgnoreCase(exc.dameCelda(i, COL_OPERANCION_EXENTA))){
+			                		operacionExenta = 1;
+			                	}else if(!Checks.esNulo(exc.dameCelda(i, COL_OPERANCION_EXENTA))){
+			                		operacionExenta = 0;
 			                	}
 			                	
-			                	if(!Checks.esNulo(exc.dameCelda(i, COL_RENUNCIA_EXENCION))) {
-			                		renunciaExenta = CHECK_VALOR_SI.equalsIgnoreCase(exc.dameCelda(i, COL_RENUNCIA_EXENCION));
+			                	if(!Checks.esNulo(exc.dameCelda(i, COL_RENUNCIA_EXENCION)) && CHECK_VALOR_SI.equalsIgnoreCase(exc.dameCelda(i, COL_RENUNCIA_EXENCION))){
+			                		renunciaExenta = 1;
+			                	}else if(!Checks.esNulo(exc.dameCelda(i, COL_RENUNCIA_EXENCION))){
+			                		renunciaExenta = 0;
 			                	}
+			                
 		                		if(!Checks.esNulo(exc.dameCelda(i, COL_ID_GASTO)) && !Checks.esNulo(exc.dameCelda(i, COL_SUBTIPO_GASTO))
 		 			                   && Boolean.TRUE.equals(particularValidator.lineaSubtipoDeGastoRepetidaBD(exc.dameCelda(i, COL_SUBTIPO_GASTO),exc.dameCelda(i, COL_TIPO_IMPOSITIVO),exc.dameCelda(i, COL_TIPO_IMPUESTO),exc.dameCelda(i, COL_ID_GASTO),operacionExenta,renunciaExenta))){
 		                			listaFilas.add(i);
@@ -392,7 +393,6 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 		                	}
 			                   
 	                	}
-
 	            
 	                } catch (ParseException e) {
 	                    listaFilas.add(i);
@@ -432,8 +432,8 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	            for(int i=1; i<this.numFilasHoja;i++){
 	                try {
 	                	String numGasto = exc.dameCelda(i, COL_ID_GASTO);
-	                	int participacion = 0;
-	                	participacion = participacion +  Integer.parseInt(exc.dameCelda(i, COL_PARTICIPACION_LINEA_DETALLE));
+	                	Double participacion = 0.0;
+	                	participacion = participacion +  Double.parseDouble(exc.dameCelda(i, COL_PARTICIPACION_LINEA_DETALLE));
 	                	if(participacion > 100) {
 	                		listaFilas.add(i);
 	                		break;
@@ -441,7 +441,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
             				
 	                	for (int x = 0 ; x<i ; x++) {
 	                		if (numGasto.equals(exc.dameCelda(x, COL_ID_GASTO))) {
-	                			participacion = participacion +  Integer.parseInt(exc.dameCelda(x, COL_PARTICIPACION_LINEA_DETALLE));
+	                			participacion = participacion +  Double.parseDouble(exc.dameCelda(x, COL_PARTICIPACION_LINEA_DETALLE));
 	                			if(participacion > 100) {
 	                				listaFilas.add(i);
 	                				break;
@@ -466,6 +466,27 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	        return listaFilas;   
 	   }
 	   
-	   
+	   private List<Integer> tipoImpuestoNoExiste(MSVHojaExcel exc){
+	       List<Integer> listaFilas = new ArrayList<Integer>();
+
+	        try{
+	            for(int i=1; i<this.numFilasHoja;i++){
+	                try {
+	                    if(!Checks.esNulo(exc.dameCelda(i, COL_TIPO_IMPUESTO)) 
+	                            && Boolean.FALSE.equals(particularValidator.existeTipoimpuesto(exc.dameCelda(i, COL_TIPO_IMPUESTO))))
+	                        listaFilas.add(i);
+	                } catch (ParseException e) {
+	                    listaFilas.add(i);
+	                }
+	            }
+	            } catch (IllegalArgumentException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            } catch (IOException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            }
+	        return listaFilas;   
+	   }
 	   
 }

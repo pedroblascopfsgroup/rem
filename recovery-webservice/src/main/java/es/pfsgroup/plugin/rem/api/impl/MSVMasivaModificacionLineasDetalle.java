@@ -13,22 +13,21 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
-import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
-import es.pfsgroup.plugin.rem.model.GastoLineaDetalleTrabajo;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
@@ -60,7 +59,7 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 	private static final int PARTICIPACION_LINEA_DETALLE = 18;
 	
 	private static final String ACCION_BORRAR = "Borrar";
-	private static final String ACCION_AÑADIR = "Añadir";
+	private static final String ACCION_ANYADIR = "Añadir";
 	
 	private static final String SI = "SI";
 	private static final String S = "S";
@@ -69,13 +68,14 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
 		
 	@Override
 	public String getValidOperation() {
 		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_MODIFICACION_LINEAS_DE_DETALLE;
 	}
-	@Autowired
-	private TrabajoApi trabajoApi;
 	
 
 	@Override
@@ -86,7 +86,7 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 			
 			String accionRealizar = exc.dameCelda(fila, ACCION_LINIA_DETALLE);
 			
-			if(ACCION_AÑADIR.equals(accionRealizar)) {
+			if(ACCION_ANYADIR.equals(accionRealizar)) {
 				
 				GastoLineaDetalle gastoLineaDetalle = new GastoLineaDetalle();
 				GastoLineaDetalleEntidad gastoLineaDetalleEntidad = new GastoLineaDetalleEntidad();
@@ -203,7 +203,6 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 					gastoLineaDetalleEntidad.setEntidad(Long.parseLong(exc.dameCelda(fila, ID_ELEMENTO)));
 				}
 				if(exc.dameCelda(fila, TIPO_ELEMENTO) != null) {
-					//OJO POR QUE SE SUPONE QUE LLEGA UN NUMERO EN EL TIPO_ELEMENTO ( TIRAR DE ID EN LUGAR DE CODIGO? )
 					Filter filtroTipoRecargo = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, TIPO_ELEMENTO));
 					DDEntidadGasto entidadGasto = genericDao.get(DDEntidadGasto.class, filtroTipoRecargo);
 					
@@ -215,6 +214,7 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 				}
 				
 				genericDao.save(GastoLineaDetalleEntidad.class,gastoLineaDetalleEntidad);
+				
 			}else if(ACCION_BORRAR.equalsIgnoreCase(accionRealizar)) {
 				Double importeTotal = 0.0;
 				Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", Long.parseLong(exc.dameCelda(fila, ID_GASTO)));
@@ -228,6 +228,7 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 				gastoLineaDetalle.getAuditoria().setBorrado(true);
 				Date fechaAhora = new Date();
 				gastoLineaDetalle.getAuditoria().setFechaBorrar(fechaAhora);
+				gastoLineaDetalle.getAuditoria().setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
 				genericDao.update(GastoLineaDetalle.class, gastoLineaDetalle);
 				//Se actualiza el GDE
 				

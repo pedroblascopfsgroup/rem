@@ -1182,7 +1182,6 @@ public interface ParticularValidatorApi {
 
 	Boolean participaciones(String numGasto);
 
-	Boolean lineaSubtipoDeGastoRepetidaBD(String numGasto, String subtipoGasto, String tipoImpositivo,
-			String tipoImpuesto, Boolean exento, Boolean renunciaExento);
+	Boolean lineaSubtipoDeGastoRepetidaBD(String numGasto, String subtipoGasto, String tipoImpositivo, String tipoImpuesto, Integer exento, Integer renunciaExento);
 
 }

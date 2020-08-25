@@ -7019,30 +7019,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				Filter filtroSubestadoAdmision = genericDao.createFilter(FilterType.EQUALS, "codigo", codSubestadoAdmision);
 				subestadoAdmision = genericDao.get(DDSubestadoAdmision.class, filtroBorrado, filtroSubestadoAdmision);;
 			}
-			ActivoAgendaEvolucion agendaEvolucion = genericDao.get(ActivoAgendaEvolucion.class, filtroBorrado, filtroActivoId);
 			
+			ActivoAgendaEvolucion agendaEvolucion;
 			
-			if(agendaEvolucion!=null) {
-				activo.setEstadoAdmision(estadoAdmision);
-				agendaEvolucion.setEstadoAdmision(estadoAdmision);
-				activo.setSubestadoAdmision(subestadoAdmision);
-				agendaEvolucion.setSubEstadoAdmision(subestadoAdmision);				
-				agendaEvolucion.setObservaciones(observaciones);
-				agendaEvolucion.getAuditoria().setFechaModificar(new Date());
-				agendaEvolucion.getAuditoria().setUsuarioModificar(adapter.getUsuarioLogado().getUsername());
-				genericDao.update(ActivoAgendaEvolucion.class, agendaEvolucion);
+			activo.setEstadoAdmision(estadoAdmision);
+			agendaEvolucion = new ActivoAgendaEvolucion();
+			agendaEvolucion.setActivo(activo);
+			agendaEvolucion.setEstadoAdmision(estadoAdmision);
+			activo.setSubestadoAdmision(subestadoAdmision);
+			agendaEvolucion.setSubEstadoAdmision(subestadoAdmision);
+			agendaEvolucion.setObservaciones(observaciones);
+			genericDao.save(ActivoAgendaEvolucion.class, agendaEvolucion);
 				
-			} else {
-				activo.setEstadoAdmision(estadoAdmision);
-				agendaEvolucion = new ActivoAgendaEvolucion();
-				agendaEvolucion.setActivo(activo);
-				agendaEvolucion.setEstadoAdmision(estadoAdmision);
-				activo.setSubestadoAdmision(subestadoAdmision);
-				agendaEvolucion.setSubEstadoAdmision(subestadoAdmision);
-				agendaEvolucion.setObservaciones(observaciones);
-				genericDao.save(ActivoAgendaEvolucion.class, agendaEvolucion);
-			}
-			
 			genericDao.update(Activo.class, activo);
 			
 			return true;

@@ -2865,7 +2865,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Override
 	public Page getListActivosAgrupacion(DtoAgrupacionFilter filtro, Long id) {
-
+		if(id == null)
+			return null;
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		filtro.setAgrupacionId(String.valueOf(id));
 

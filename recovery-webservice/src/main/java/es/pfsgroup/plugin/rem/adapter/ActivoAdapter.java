@@ -1620,18 +1620,30 @@ public class ActivoAdapter {
 	}
 
 	public List<DtoUsuario> getComboUsuarios(long idTipoGestor) {
-		List<DespachoExterno> listDespachoExterno = coreextensionApi.getListAllDespachos(idTipoGestor, false);
+		
+		List<DespachoExterno> listDespachoExterno = null;
+		try {
+			listDespachoExterno = coreextensionApi.getListAllDespachos(idTipoGestor, false);
+		}catch(NullPointerException e) {
+			logger.error("Error en ActivoAdapter - getComboUsuarios - getListAllDespachos (idTipoGestor = "+idTipoGestor+") ", e);
+		}
 		List<DtoUsuario> listaUsuariosDto = new ArrayList<DtoUsuario>();
 
 		if (!Checks.estaVacio(listDespachoExterno)) {
 			try {
 				for (DespachoExterno despachoExterno : listDespachoExterno) {
-					List<Usuario> listaUsuarios = coreextensionApi.getListAllUsuariosData(despachoExterno.getId(), false);
-					
-					for (Usuario usuario : listaUsuarios) {
-						DtoUsuario dtoUsuario = new DtoUsuario();
-						BeanUtils.copyProperties(dtoUsuario, usuario);
-						listaUsuariosDto.add(dtoUsuario);
+					List<Usuario> listaUsuarios = null;
+					try {
+						listaUsuarios = coreextensionApi.getListAllUsuariosData(despachoExterno.getId(), false);
+					}catch(NullPointerException e) {
+						logger.error("Error en ActivoAdapter - getComboUsuarios - getListAllUsuariosData (idTipoGestor = "+idTipoGestor+", despachoExterno.getId() = "+despachoExterno.getId()+") ", e);
+					}
+					if (!Checks.estaVacio(listaUsuarios)) {
+						for (Usuario usuario : listaUsuarios) {
+							DtoUsuario dtoUsuario = new DtoUsuario();
+							BeanUtils.copyProperties(dtoUsuario, usuario);
+							listaUsuariosDto.add(dtoUsuario);
+						}
 					}
 				}
 			} catch (IllegalAccessException e) {

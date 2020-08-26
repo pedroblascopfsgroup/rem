@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina
---## FECHA_CREACION=20200825
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20200826
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-7586
+--## INCIDENCIA_LINK=REMVIP-7935
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico del stock de activos enviados a webcom.
 --##           
@@ -21,6 +21,7 @@
 --##		0.9 ->REMVIP-6389
 --##		0.10 Versión Adrián Molina -> REMVIP-6744 - Añadimos campo perimetroMACC
 --##		0.11 Versión Adrián Molina -> REMVIP-7586 - Aumentar capacidad del campo codPedania
+--##		0.12 Version Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
 --##########################################
 --*/
 
@@ -164,8 +165,8 @@ BEGIN/*Versión 0.8*/
 		CAST(DDCRA.DD_CRA_CODIGO AS VARCHAR2(14 CHAR)) 										AS COD_CARTERA,
 		CAST(DDRTG.DD_RTG_CODIGO AS VARCHAR2(14 CHAR)) 										AS COD_RATIO,
 		CAST(SPS.SPS_RIESGO_OCUPACION AS NUMBER(1,0)) 										AS RIESGO_OCUPACION,    
-		CASE WHEN (SPS.SPS_FECHA_TOMA_POSESION IS NOT NULL) 
-			THEN CAST(TO_CHAR(SPS.SPS_FECHA_TOMA_POSESION,
+		CASE WHEN (FPA.FECHA_POSESION IS NOT NULL) 
+			THEN CAST(TO_CHAR(FPA.FECHA_POSESION,
 					''YYYY-MM-DD"T"HH24:MM:SS'') AS VARCHAR2(50 CHAR))
 			ELSE NULL
 		END 																				FECHA_POSESION,
@@ -316,6 +317,7 @@ BEGIN/*Versión 0.8*/
 		LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA DDCRA ON DDCRA.DD_CRA_ID = ACT.DD_CRA_ID
 
 		LEFT JOIN '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA SPS ON SPS.ACT_ID = ACT.ACT_ID and sps.borrado = 0
+		LEFT JOIN '||V_ESQUEMA||'.V_FECHA_POSESION_ACTIVO FPA ON FPA.ACT_ID = SPS.ACT_ID
 		LEFT JOIN '||V_ESQUEMA||'.ACT_ZCO_ZONA_COMUN ZCO ON ZCO.ICO_ID = ICO.ICO_ID
 		LEFT JOIN '||V_ESQUEMA||'.VI_STOCK_ACTIVO_GCOM GCO ON GCO.ACT_ID = ACT.ACT_ID
 		LEFT JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_ID = ICO.ICO_MEDIADOR_ID

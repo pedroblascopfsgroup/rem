@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Carlos López
---## FECHA_CREACION=20180925
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20200826
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.19
---## INCIDENCIA_LINK=HREOS-4525
+--## INCIDENCIA_LINK=REMVIP-7935
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
 --##########################################
 --*/
 
@@ -72,7 +73,7 @@ BEGIN
 			OBRA_NUEVA.AGR_NOMBRE AS NOMBRE_PROMOCION,
 			(SELECT TIT_FECHA_INSC_REG FROM '||V_ESQUEMA||'.ACT_TIT_TITULO WHERE ACT_ID = ACT.ACT_ID) AS FECHA_INSCRIPCION,
 			ACT.ACT_FECHA_REV_CARGAS AS FECHA_REV_CARGAS,
-			SPS.SPS_FECHA_TOMA_POSESION AS FECHA_TOMA_POSESION,
+			FPA.FECHA_POSESION AS FECHA_TOMA_POSESION,
 			(SELECT DD_SCM_DESCRIPCION FROM '||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL WHERE DD_SCM_ID = ACT.DD_SCM_ID) AS SITUACION_COMERCIAL,
 			TPA.DD_TPA_CODIGO AS TIPO_CODIGO,
 			TPA.DD_TPA_DESCRIPCION AS TIPO_DESCRIPCION,
@@ -119,6 +120,7 @@ BEGIN
 			LEFT JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = PAC.PRO_ID
       		LEFT JOIN OBRA_NUEVA ON OBRA_NUEVA.ACT_ID = ACT.ACT_ID
       		LEFT JOIN '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA SPS ON SPS.ACT_ID = ACT.ACT_ID
+		LEFT JOIN '||V_ESQUEMA||'.V_FECHA_POSESION_ACTIVO FPA ON FPA.ACT_ID = ACT.ACT_ID
       		LEFT JOIN '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_ID = ACT.DD_TPA_ID
 			LEFT JOIN '||V_ESQUEMA||'.DD_SAC_SUBTIPO_ACTIVO SAC ON SAC.DD_SAC_ID = ACT.DD_SAC_ID
       		LEFT JOIN '||V_ESQUEMA||'.BIE_DATOS_REGISTRALES BIE_DAT ON ACT.BIE_ID = BIE_DAT.BIE_ID
@@ -146,6 +148,19 @@ BEGIN
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_DATOS_PROPUESTA_ENTIDAD02...Creada OK');
   
+ EXCEPTION
+     WHEN OTHERS THEN 
+         DBMS_OUTPUT.PUT_LINE('KO!');
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
+
+          ROLLBACK;
+          RAISE;
+		  
 END;
 /
 

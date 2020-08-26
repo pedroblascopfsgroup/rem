@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=SERGIO GOMEZ TORRES
---## FECHA_CREACION=20200629
+--## AUTOR=SERGIO SALT
+--## FECHA_CREACION=20200825
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10488

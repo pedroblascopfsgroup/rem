@@ -96,13 +96,14 @@ Ext.define('HreRem.view.activos.detalle.TributosGrid', {
 	            	},
 	            	listeners: {
 	            		change: function(chkBox, nVal, oVal){
-	            			var chkBoxMotivoExento = chkBox.up().up().down('[reference="motivoExentoRef"]');
-	            			
-	            			if(CONST.COMBO_SIN_SINO['SI'] == nVal){
-	            				chkBoxMotivoExento.getEditor().setAllowBlank(false);
+	            			var chkBoxMotivoExento = chkBox.up('tributosgrid').down('[reference="motivoExentoRef"]');
+
+	            			if(CONST.COMBO_SIN_SINO['SI'] === nVal){
+	            				chkBoxMotivoExento.getEditor().allowBlank = false;
 	            			}else{
-	            				chkBoxMotivoExento.getEditor().setAllowBlank(true);
+	            				chkBoxMotivoExento.getEditor().allowBlank = true;
 	            			}
+	            			chkBox.up().isValid();
 	            		}
 	            	},
 	            	displayField: 'descripcion',
@@ -125,10 +126,9 @@ Ext.define('HreRem.view.activos.detalle.TributosGrid', {
         		editor: {
         			xtype: 'comboboxfieldbase',
 					addUxReadOnlyEditFieldPlugin: false,
-	        		   labelWidth: '25%',
-			            width: '15%',
-	            		allowBlank: true,
-		        	
+	        		labelWidth: '25%',
+			        width: '15%',
+			        allowBlank: true,
 	        		bind: {
 	            		store: '{comboMotivoExento}',
 	            		value: '{motivoExento}'
@@ -137,27 +137,29 @@ Ext.define('HreRem.view.activos.detalle.TributosGrid', {
 					valueField: 'codigo'
         		}
 		   	},
-			{	  
-	            text: HreRem.i18n('fieldlabel.administracion.activo.fecha.pago.tributo'),				            
+			{
+	            text: HreRem.i18n('fieldlabel.administracion.activo.fecha.pago.tributo'),
+	            reference: 'fechaPagoTributo',
 	            dataIndex: 'fechaPagoTributo',
 	            flex: 1,
 	            formatter: 'date("d/m/Y")',
         		editor: {
-               	 xtype: 'datefield',
-             	 allowBlank: false
+        			xtype: 'datefield',
+        			allowBlank: true
             	}
 		   	},
-		   	{	  
-	            text: HreRem.i18n('fieldlabel.administracion.activo.importe.pagado.tributo'),	
+		   	{
+	            text: HreRem.i18n('fieldlabel.administracion.activo.importe.pagado.tributo'),
+	            reference: 'importePagadoTributo',
 	            dataIndex: 'importePagado',
 	            //xtype: 'numbercolumn',  textfield  , numberfieldbase
 	            flex: 1,
         		editor: {
     	            xtype: 'numberfield',
+			        allowBlank: true,
     	            decimalPrecision: 2,
     	            hideTrigger: true,
-    		        decimalSeparation: '.',
-    	            allowBlank: false
+    		        decimalSeparation: '.'
             	}
 		   	},
 				       	{	  
@@ -283,16 +285,32 @@ Ext.define('HreRem.view.activos.detalle.TributosGrid', {
 					valueField: 'codigo'
         		}
 		   	},
-		   	{	  
-	            text: HreRem.i18n('fieldlabel.administracion.activo.num.gasto.vinculado'),           
+		   	{
+	            text: HreRem.i18n('fieldlabel.administracion.activo.num.gasto.vinculado'),
 	            dataIndex: 'numGastoHaya',
 	            flex: 1,
 	            editor: {
-   					xtype:'numberfield', 
+   					xtype:'numberfield',
         			hideTrigger: true,
         			keyNavEnable: false,
         			mouseWheelEnable: false,
-        			allowBlank: true
+        			allowBlank: true,
+        			listeners: {
+        				blur: function() {
+       						var me = this;
+                			var fechaPagoTributo = me.up('tributosgrid').down('[reference="fechaPagoTributo"]');
+                			var importePagadoTributo = me.up('tributosgrid').down('[reference="importePagadoTributo"]');
+
+                			if(me.getValue() != null && me.getValue() !== "") {
+                				fechaPagoTributo.getEditor().allowBlank = false;
+                				importePagadoTributo.getEditor().allowBlank = false;
+                			} else {
+                				fechaPagoTributo.getEditor().allowBlank = true;
+                				importePagadoTributo.getEditor().allowBlank = true;
+                			}
+            				me.up().isValid();
+                		}
+       				}
    				}
 		   	},	{	  
 	            text: 'ExisteDocumento',
@@ -337,6 +355,12 @@ Ext.define('HreRem.view.activos.detalle.TributosGrid', {
     		        decimalSeparation: '.',
     	            allowBlank: true
             	}
+		   	},
+		   	{
+		   		text: HreRem.i18n('fieldlabel.administracion.activo.numero.tributo'),
+	            dataIndex: 'numTributo',
+	            flex: 1,
+	            readOnly: true
 		   	}
 		    ];
 		

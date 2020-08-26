@@ -6090,10 +6090,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					tributo.setTipoTributo(tipoTributo);
 				}
 
-				if(dto.getFechaRecepcionTributo() != null) {
+				if(dto.getFechaRecepcionTributo() != null && !dto.getFechaRecepcionTributo().isEmpty()) {
 					tributo.setFechaRecepcionTributo(ft.parse(dto.getFechaRecepcionTributo()));
 				}
-				if(dto.getFechaPagoTributo() != null) {
+				if(dto.getFechaPagoTributo() != null && !dto.getFechaPagoTributo().isEmpty()) {
 					tributo.setFechaPagoTributo(ft.parse(dto.getFechaPagoTributo()));
 				}
 				if(dto.getImportePagado() != null) {

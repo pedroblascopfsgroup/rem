@@ -1,6 +1,8 @@
 package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +42,7 @@ public class MSVValidatorEstadosAdmision extends MSVExcelValidatorAbstract {
 	private static final String SUBESTADO_ADMISION_VALIDO = "msg.error.masivo.admision.subestado";
 	private static final String SUBESTADO_EN_ESTADO_ADMISION_VALIDO = "msg.error.masivo.admision.subestado.en.estado";
 	private static final String RELACION_ESTADO_SUBESTADO_ADMISION_VALIDO = "msg.error.masivo.admision.relacio.estado.subestado";
+	private static final String ACTIVO_REPETIDO = "msg.error.masivo.admision.activo.repetido";
 	
 	private static final int FILA_CABECERA = 0;
 	private static final int FILA_DATOS = 1;
@@ -123,6 +126,10 @@ public class MSVValidatorEstadosAdmision extends MSVExcelValidatorAbstract {
 						mapaErrores.get(messageServices.getMessage(ACTIVO_FUERA_PERIMETRO_HAYA)).add(fila);
 						esCorrecto = false;
 					}
+					if (activoRepetido(exc, numActivo, fila)) {
+						mapaErrores.get(messageServices.getMessage(ACTIVO_REPETIDO)).add(fila);
+						esCorrecto = false;
+					}
 					if (!particularValidator.esActivoIncluidoPerimetroAdmision(numActivo)) {
 						mapaErrores.get(messageServices.getMessage(ACTIVO_FUERA_PERIMETRO_ADMISION)).add(fila);
 						esCorrecto = false;
@@ -200,6 +207,42 @@ public class MSVValidatorEstadosAdmision extends MSVExcelValidatorAbstract {
 		mapaErrores.put(messageServices.getMessage(SUBESTADO_ADMISION_VALIDO), new ArrayList<Integer>());
 		mapaErrores.put(messageServices.getMessage(SUBESTADO_EN_ESTADO_ADMISION_VALIDO), new ArrayList<Integer>());
 		mapaErrores.put(messageServices.getMessage(RELACION_ESTADO_SUBESTADO_ADMISION_VALIDO), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(ACTIVO_REPETIDO), new ArrayList<Integer>());
+	}
+	
+	private Boolean activoRepetido(MSVHojaExcel exc, String numActivoActual, int fila) {
+		List<String> listaActivos = listadoActivos(exc);
+		Boolean result = false;	
+		listaActivos.remove(fila-1);
+		
+		
+		if(numActivoActual != null 
+				&& !listaActivos.isEmpty()
+				&& listaActivos.contains(numActivoActual)) {
+			result = true;
+		}
+		return result;
+	}
+	
+	private List<String> listadoActivos(MSVHojaExcel exc){
+		List<String> listaActivos = new ArrayList<String>();
+		try {
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if(exc.dameCelda(i, COL_NUM_ACTIVO) != null) {
+						listaActivos.add(exc.dameCelda(i, COL_NUM_ACTIVO));
+					}
+				}catch (ParseException e) {
+					e.printStackTrace();
+	            }
+			}
+		}catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+		
+		return listaActivos;
 	}
 	
 }

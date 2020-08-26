@@ -901,7 +901,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	
 	onClickBotonEditar: function(btn) {
 		var me = this;
-
 		if(btn.up('tabpanel').getActiveTab().xtype === 'comercialactivo') {
 			Ext.Array.each(btn.up('tabpanel').getActiveTab().query(' > container > component[isReadOnlyEdit]'),
 			function (field, index){ 
@@ -920,7 +919,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
  		} else {
  			me.getViewModel().set("editing", true);
  		}
-
+		if ("admisionrevisiontitulo" === btn.up("tabpanel").getActiveTab().xtype) {
+			// Solucion al bug para mostrar los botones la segunda vez que se
+			// hace click en el boton editar
+			var buttons = btn.up("tabbar").items.items;
+			for (var i = 0; i < buttons.length; i++) {
+				button = buttons[i];
+				if ("botoncancelar" === button.itemId
+						|| "botonguardar" === button.itemId) {
+					button.show();
+				}
+			}
+		}
  		btn.hide();
 	},
 

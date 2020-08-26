@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20200807
+--## AUTOR=Juan Beltrán
+--## FECHA_CREACION=20200826
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-7943
+--## INCIDENCIA_LINK=REMVIP-7992
 --## PRODUCTO=NO
 --## Finalidad: DDL para crear un SP para obtener el usuario que debe ser gestor de formalización (GFORM) de un expediente comercial dado un activo concreto.
 --##           
@@ -93,7 +93,7 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_CALCULAR_USUARIO_GFORM (P_ACT_ID IN NUM
 								)
 				) T2
 			ON (T1.DD_CRA_CODIGO = T2.DD_CRA_CODIGO AND NVL(T1.DD_SCR_CODIGO,0) = NVL(T2.DD_SCR_CODIGO,0) 
-				AND T1.DD_PRV_CODIGO = T2.DD_PRV_CODIGO)
+				AND NVL(T1.DD_PRV_CODIGO, 0) = NVL(T2.DD_PRV_CODIGO, 0))
 			WHEN MATCHED THEN UPDATE SET
 				T1.ASIGNADO = 0;
 	 

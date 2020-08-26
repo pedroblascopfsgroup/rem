@@ -309,22 +309,23 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 				this.desmarcarChecksFromPerimetro(perimetroActivo);
 			
 			//Actualizar admision del activo
-			if(ADMISION_SI.equals(admision)) {
+			if(ADMISION_SI.equalsIgnoreCase(admision)) {
 				DDEstadoAdmision estadoAdmision =  (DDEstadoAdmision) utilDiccionarioApi.dameValorDiccionarioByCod(
 						DDEstadoAdmision.class, DDEstadoAdmision.CODIGO_NUEVA_ENTRADA);
 				DDSubestadoAdmision subestadoAdmision =  (DDSubestadoAdmision) utilDiccionarioApi.dameValorDiccionarioByCod(
 						DDSubestadoAdmision.class, DDSubestadoAdmision.CODIGO_PENDIENTE_REVISION_ALTAS);
 				perimetroActivo.setAplicaAdmision(true);
-				perimetroActivo.setFechaAplicaAdmision(new Date());
 				perimetroActivo.setMotivoAplicaAdmision(motivoAdmision);
+				perimetroActivo.setFechaAplicaAdmision(new Date());
+				
 				activo.setEstadoAdmision(estadoAdmision);
 				activo.setSubestadoAdmision(subestadoAdmision);
 			}
 			
-			if(ADMISION_NO.equals(admision)) {
+			if(ADMISION_NO.equalsIgnoreCase(admision)) {
 				perimetroActivo.setAplicaAdmision(false);
 				activo.setEstadoAdmision(null);
-				perimetroActivo.setMotivoAplicaAdmision("");
+				perimetroActivo.setMotivoAplicaAdmision(motivoAdmision);
 				activo.setSubestadoAdmision(null);
 			}
 

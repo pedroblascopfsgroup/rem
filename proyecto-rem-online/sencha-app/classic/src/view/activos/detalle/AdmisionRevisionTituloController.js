@@ -36,13 +36,24 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTituloController', {
 			success : function(record) {
 				form.unmask();
 				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-	
 			},
 			failure : function(record, operation) {
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 				form.unmask();
 			}
 		});
+		if(!Ext.isEmpty(btn)) {
+			btn.hide();
+			btn.up('tabbar').down('button[itemId=botoncancelar]').hide();
+			btn.up('tabbar').down('button[itemId=botoneditar]').show();
+			me.getViewModel().set("editing", false);
+	 		Ext.Array.each(btn.up('tabpanel').getActiveTab()
+							.query('field[isReadOnlyEdit]'), function(
+							field, index) {
+						field.fireEvent('save');
+						field.fireEvent('update');
+					});
+		}
 	},
     comboRevisadoOnSelect: function (combo, record, eOpts) {
     	var me = this;

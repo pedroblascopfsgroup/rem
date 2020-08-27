@@ -261,7 +261,6 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 			name: 'puedeEditarCalificacionNegativa',
 			type: 'boolean'
 		},
-		//por programar
 		{
 			name:'tieneTituloAdicional'
 		},
@@ -295,6 +294,42 @@ Ext.define('HreRem.model.ActivoSaneamiento', {
 			name:'fechaNotaSimpleAdicional',
            	type: 'date',
     		dateFormat: 'c'
+		},
+		{
+			name:'fechaSoliCertificado',
+			type:'date',
+			dateFormat: 'c'
+		},
+		{
+			name:'fechaComAdquisicion',
+			type:'date',
+			dateFormat: 'c'
+		},
+		{
+			name:'fechaComRegDemandantes',
+			type:'date',
+			dateFormat: 'c'
+		},
+		{
+			name: 'actualizaPrecioMaxId'
+		},
+		{
+			name: 'fechaVencimiento',
+			type: 'date',
+			dateFormat: 'c'
+		},
+		{
+			name:'estadoVentaCodigo'
+		},
+		{
+			name:'fechaEnvioComunicacionOrganismo',
+			type:'date',
+			dateFormat: 'c'
+		},
+		{
+			name:'fechaRecepcionRespuestaOrganismo',
+			type:'date',
+			dateFormat: 'c'
 		}
     ],
 

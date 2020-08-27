@@ -69,6 +69,17 @@ public class DtoActivoSaneamiento extends DtoTabActivo {
 	private Date fechaRetiradaDefinitivaRegAdicional;
 	private Date fechaPresentacionHaciendaAdicional;
 	private Date fechaNotaSimpleAdicional;
+	
+	private Date fechaSoliCertificado;
+	private Date fechaComAdquisicion;
+	private Date fechaComRegDemandantes;
+	private Long actualizaPrecioMaxId;
+	private Date fechaVencimiento;
+	
+	private Date fechaEnvioComunicacionOrganismo;
+	private Date fechaRecepcionRespuestaOrganismo;
+	private String estadoVentaCodigo;
+	
 	public Long getIdActivo() {
 		return idActivo;
 	}
@@ -423,7 +434,52 @@ public class DtoActivoSaneamiento extends DtoTabActivo {
 	public void setFechaNotaSimpleAdicional(Date fechaNotaSimpleAdicional) {
 		this.fechaNotaSimpleAdicional = fechaNotaSimpleAdicional;
 	}
-	
-
-
+	public Date getFechaSoliCertificado() {
+		return fechaSoliCertificado;
+	}
+	public void setFechaSoliCertificado(Date fechaSoliCertificado) {
+		this.fechaSoliCertificado = fechaSoliCertificado;
+	}
+	public Date getFechaComAdquisicion() {
+		return fechaComAdquisicion;
+	}
+	public void setFechaComAdquisicion(Date fechaComAdquisicion) {
+		this.fechaComAdquisicion = fechaComAdquisicion;
+	}
+	public Date getFechaComRegDemandantes() {
+		return fechaComRegDemandantes;
+	}
+	public void setFechaComRegDemandantes(Date fechaComRegDemandantes) {
+		this.fechaComRegDemandantes = fechaComRegDemandantes;
+	}
+	public Long getActualizaPrecioMaxId() {
+		return actualizaPrecioMaxId;
+	}
+	public void setActualizaPrecioMaxId(Long actualizaPrecioMaxId) {
+		this.actualizaPrecioMaxId = actualizaPrecioMaxId;
+	}
+	public Date getFechaVencimiento() {
+		return fechaVencimiento;
+	}
+	public void setFechaVencimiento(Date fechaVencimiento) {
+		this.fechaVencimiento = fechaVencimiento;
+	}
+	public Date getFechaEnvioComunicacionOrganismo() {
+		return fechaEnvioComunicacionOrganismo;
+	}
+	public void setFechaEnvioComunicacionOrganismo(Date fechaEnvioComunicacionOrganismo) {
+		this.fechaEnvioComunicacionOrganismo = fechaEnvioComunicacionOrganismo;
+	}
+	public Date getFechaRecepcionRespuestaOrganismo() {
+		return fechaRecepcionRespuestaOrganismo;
+	}
+	public void setFechaRecepcionRespuestaOrganismo(Date fechaRecepcionRespuestaOrganismo) {
+		this.fechaRecepcionRespuestaOrganismo = fechaRecepcionRespuestaOrganismo;
+	}
+	public String getEstadoVentaCodigo() {
+		return estadoVentaCodigo;
+	}
+	public void setEstadoVentaCodigo(String estadoVentaCodigo) {
+		this.estadoVentaCodigo = estadoVentaCodigo;
+	}
 }

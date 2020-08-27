@@ -71,6 +71,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final String VALID_ACTIVO_NO_DIVARIAN = "msg.error.masivo.actualizar.perimetro.activo.subcartera.no.divarian";
 	public static final String VALID_SEGMENTO_PERIMETRO_MACC = "msg.error.masivo.actualizar.perimetro.activo.macc.no.cambio.destino";
 	public static final String VALID_MOTIVO_ADMISION = "msg.error.masivo.actualizar.perimetro.activo.admision.texto.no.relleno";
+	public static final String ADMISION_ERROR = "msg.error.masivo.actualizar.perimetro.activo.admision.texto.no.valido";
 
 	//Posición de los datos
 	private	static final int DATOS_PRIMERA_FILA = 1;
@@ -105,6 +106,9 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
     
     //Codigo para 
     private static final String CODIGO_DD_TIPO_MACC  = "03";
+    
+    private static final String[] listaValidos = { "S", "N", "SI", "NO" };
+    private static final String[] listaValidosPositivos = { "S", "SI" };
 
     protected final Log logger = LogFactory.getLog(getClass());
     
@@ -186,6 +190,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				mapaErrores.put(messageServices.getMessage(VALID_ACTIVO_NO_DIVARIAN), esSubcarteraDivarian(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_SEGMENTO_PERIMETRO_MACC), esPerimetorYSegmentoMACC(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_MOTIVO_ADMISION), estaRellenoCampoAdmision(exc));
+				mapaErrores.put(messageServices.getMessage(ADMISION_ERROR), isBooleanValidator(exc, COL_NUM_ADMISION));
 
 				for (Entry<String, List<Integer>> registro : mapaErrores.entrySet()) {
 					if (!registro.getValue().isEmpty()) {
@@ -1008,13 +1013,12 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	
 	private List<Integer> estaRellenoCampoAdmision(MSVHojaExcel exc){
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		String[] listaS = { "S" };
 		for (int i = DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
 			try {
 				String celdaAdmision = exc.dameCelda(i, COL_NUM_ADMISION);
 				String celdaMotivoAdmision = exc.dameCelda(i, COL_NUM_TXT_MOTIVO_ADMISION);
 				
-				if (!Checks.esNulo(celdaAdmision) && Arrays.asList(listaS).contains(celdaAdmision.toUpperCase())
+				if (!Checks.esNulo(celdaAdmision) && Arrays.asList(listaValidosPositivos).contains(celdaAdmision.toUpperCase())
 						&&(Checks.esNulo(celdaMotivoAdmision))
 					){
 					listaFilas.add(i);				
@@ -1028,7 +1032,30 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		return listaFilas;
 	}
 	
-	
+	private List<Integer> isBooleanValidator(MSVHojaExcel exc, Integer col){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					String celda = exc.dameCelda(i, col);
+					if(!Checks.esNulo(celda) && !Arrays.asList(listaValidos).contains(celda.toUpperCase()))
+						listaFilas.add(i);
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		} catch (IOException e) {
+			listaFilas.add(0);
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
 	
 	
 }

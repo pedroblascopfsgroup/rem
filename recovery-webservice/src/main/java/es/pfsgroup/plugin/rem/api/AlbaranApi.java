@@ -17,13 +17,13 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 public interface AlbaranApi {
 
 	@BusinessOperationDefinition("albaranManager.findAll")
-	public DtoPage findAll(DtoAlbaranFiltro dto);
+	public Page findAll(DtoAlbaranFiltro dto);
 	
 	@BusinessOperationDefinition("albaranManager.findAllDetalle")
-	public List<DtoDetalleAlbaran> findAllDetalle( Long numAlbaran);
+	public Page findAllDetalle( DtoDetalleAlbaran numAlbaran);
 	
 	@BusinessOperationDefinition("albaranManager.findPrefectura")
-	public List<DtoDetallePrefactura> findPrefectura(Long numPrefactura) ;
+	public Page findPrefectura(DtoDetallePrefactura dto) ;
 	
 	public Boolean validarPrefactura(Long id, String listaString);
 	
@@ -34,10 +34,6 @@ public interface AlbaranApi {
 	public List<DDEstEstadoPrefactura> getComboEstadoPrefactura();
 	
 	public List<DDEstadoTrabajo> getComboEstadoTrabajo();
-	
-//	public DtoDetallePrefactura getTotalAlbaran(Long numAlbaran);
-//	
-//	public DtoDetallePrefactura getTotalPrefactura(Long numPrefactura);
-	
+		
 	
 }

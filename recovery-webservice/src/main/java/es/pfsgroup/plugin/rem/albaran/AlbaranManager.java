@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.devon.pagination.Page;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -42,158 +43,17 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 		return "albaranManager";
 	}
 
-	public DtoPage findAll(DtoAlbaranFiltro dto) {
-		DtoPage page = albaranDao.getAlbaranes(dto);
+	public Page findAll(DtoAlbaranFiltro dto) {
+		Page page = albaranDao.getAlbaranes(dto);
 		return page;
 	}
 
-	public List<DtoDetalleAlbaran> findAllDetalle(Long numAlbaran) {
-		List<DtoDetalleAlbaran> dtos = new ArrayList<DtoDetalleAlbaran>();
-		Albaran alb = genericDao.get(Albaran.class,
-				genericDao.createFilter(FilterType.EQUALS, "numAlbaran", numAlbaran));
-		List<Prefactura> prefacturas = genericDao.getList(Prefactura.class,
-				genericDao.createFilter(FilterType.EQUALS, "albaran.id", alb.getId()));
-		if (!prefacturas.isEmpty()) {
-			for (Prefactura prefactura : prefacturas) {
-				Double total = 0.0;
-				Double totalPresupuesto = 0.0;
-				DtoDetalleAlbaran dto = new DtoDetalleAlbaran();
-				GastoProveedor gasto = genericDao.get(GastoProveedor.class,
-						genericDao.createFilter(FilterType.EQUALS, "prefactura.id", prefactura.getId()));
-				List<Trabajo> trabajos= genericDao.getList(Trabajo.class,
-						genericDao.createFilter(FilterType.EQUALS, "prefactura.id", prefactura.getId()));
-				if(trabajos != null && !trabajos.isEmpty()) {
-					for (Trabajo g : trabajos) {
-						if(g.getImporteTotal() != null) {
-							total += g.getImporteTotal();
-						}
-						if(g.getImportePresupuesto() != null) {
-							totalPresupuesto += g.getImportePresupuesto();
-						}
-					}
-				}
-				if (gasto != null) {
-					dto = rellenaDtoDetalleAlbaran(null, prefactura, trabajos.get(0));
-				}else {
-					dto = rellenaDtoDetalleAlbaran(gasto, prefactura,trabajos.get(0));
-				}
-				dto.setImporteTotalClienteDetalle(total);
-				dto.setImporteTotalDetalle(totalPresupuesto);
-				dto.setNumeroTrabajos(trabajos.size());
-				dtos.add(dto);
-			}
-		}
-		Collections.sort(dtos);
-		return dtos;
+	public Page findAllDetalle(DtoDetalleAlbaran numAlbaran) {
+		return albaranDao.getPrefacturas(numAlbaran);
 	}
 
-	public List<DtoDetallePrefactura> findPrefectura(Long numPrefactura) {
-		List<DtoDetallePrefactura> dtos = new ArrayList<DtoDetallePrefactura>();
-		Prefactura pre = genericDao.get(Prefactura.class,
-				genericDao.createFilter(FilterType.EQUALS, "numPrefactura", numPrefactura));
-		List<Trabajo> trabajos = genericDao.getList(Trabajo.class,
-				genericDao.createFilter(FilterType.EQUALS, "prefactura.id", pre.getId()));
-		if (!trabajos.isEmpty()) {
-			for (Trabajo trabajo : trabajos) {
-				DtoDetallePrefactura dto = new DtoDetallePrefactura();
-				if (trabajo.getNumTrabajo() != null) {
-					dto.setNumTrabajo(trabajo.getNumTrabajo());
-				}
-				if (trabajo.getDescripcion() != null && !trabajo.getDescripcion().isEmpty()) {
-					dto.setDescripcion(trabajo.getDescripcion());
-				}
-				if (trabajo.getFechaSolicitud() != null) {
-					dto.setFechaAlta(trabajo.getFechaSolicitud());
-				}
-				if (trabajo.getTipoTrabajo() != null && trabajo.getTipoTrabajo().getDescripcion() != null
-						&& !trabajo.getTipoTrabajo().getDescripcion().isEmpty()) {
-					dto.setTipologiaTrabajo(trabajo.getTipoTrabajo().getDescripcion());
-				}
-				if (trabajo.getSubtipoTrabajo() != null && trabajo.getSubtipoTrabajo().getDescripcion() != null
-						&& !trabajo.getSubtipoTrabajo().getDescripcion().isEmpty()) {
-					dto.setSubtipologiaTrabajo(trabajo.getSubtipoTrabajo().getDescripcion());
-				}
-				if (trabajo.getEstado() != null && trabajo.getEstado().getDescripcion() != null
-						&& !trabajo.getEstado().getDescripcion().isEmpty()) {
-					dto.setEstadoTrabajo(trabajo.getEstado().getDescripcion());
-				}
-				if(pre.getEstadoPrefactura().CODIGO_VALIDA.equals(pre.getEstadoPrefactura().getCodigo())) {
-					dto.setCheckIncluirTrabajo(true);
-				}else {
-					dto.setCheckIncluirTrabajo(false);
-				}
-				if(trabajo.getImporteTotal() != null) {
-					dto.setImporteTotalClientePrefactura(trabajo.getImporteTotal());
-				}else {
-					dto.setImporteTotalClientePrefactura(0.0);
-				}
-				if(trabajo.getImportePresupuesto() != null) {
-					dto.setImporteTotalPrefactura(trabajo.getImportePresupuesto()); 
-				}else {
-					dto.setImporteTotalPrefactura(0.0);
-				}
-				dtos.add(dto);
-			}
-		}
-
-		return dtos;
-	}
-	
-	private DtoDetalleAlbaran rellenaDtoDetalleAlbaran(GastoProveedor gasto,Prefactura prefactura, Trabajo tbj) {
-		DtoDetalleAlbaran dto = new DtoDetalleAlbaran();
-		if(gasto != null) {
-			if (prefactura.getNumPrefactura() != null) {
-				dto.setNumPrefactura(prefactura.getNumPrefactura());
-			}
-			if(prefactura.getProveedor() != null && prefactura.getProveedor().getNombreComercial() != null) {
-				dto.setProveedor(prefactura.getProveedor().getNombreComercial());
-			}	
-			if (prefactura.getPropietario() != null && prefactura.getPropietario().getFullName() != null
-					&& !prefactura.getPropietario().getFullName().isEmpty()) {
-				dto.setPropietario(prefactura.getPropietario().getCartera().getDescripcion());
-			}
-			if (prefactura.getEstadoPrefactura() != null
-					&& prefactura.getEstadoPrefactura().getDescripcion() != null
-					&& !prefactura.getEstadoPrefactura().getDescripcion().isEmpty()) {
-				dto.setEstadoAlbaran(prefactura.getEstadoPrefactura().getDescripcion());
-			}
-			if (prefactura.getFechaPrefactura() != null) {
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(tbj.getFechaValidacion());
-				int anyo = calendar.get(calendar.YEAR);
-				dto.setAnyo(String.valueOf(anyo));
-			}
-			if(gasto.getNumGastoHaya() != null) {
-				dto.setNumGasto(gasto.getNumGastoHaya());
-			}
-			if(gasto.getEstadoGasto() != null && gasto.getEstadoGasto().getDescripcion() != null 
-					&& gasto.getEstadoGasto().getDescripcion().isEmpty()) {
-				dto.setEstadoGasto(gasto.getEstadoGasto().getDescripcion());
-			}
-		}else {
-			if (prefactura.getNumPrefactura() != null) {
-				dto.setNumPrefactura(prefactura.getNumPrefactura());
-			}
-			if(prefactura.getProveedor() != null && prefactura.getProveedor().getNombreComercial() != null) {
-				dto.setProveedor(prefactura.getProveedor().getNombreComercial());
-			}
-			if (prefactura.getPropietario() != null && prefactura.getPropietario().getFullName() != null
-					&& !prefactura.getPropietario().getFullName().isEmpty()) {
-				dto.setPropietario(prefactura.getPropietario().getFullName());
-			}
-			if (prefactura.getEstadoPrefactura() != null
-					&& prefactura.getEstadoPrefactura().getDescripcion() != null
-					&& !prefactura.getEstadoPrefactura().getDescripcion().isEmpty()) {
-				dto.setEstadoAlbaran(prefactura.getEstadoPrefactura().getDescripcion());
-			}
-			if (prefactura.getFechaPrefactura() != null) {
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(tbj.getFechaValidacion());
-				int anyo = calendar.get(calendar.YEAR);
-				dto.setAnyo(String.valueOf(anyo));
-			}
-		}
-		return dto;
+	public Page findPrefectura(DtoDetallePrefactura dto) {
+		return albaranDao.getTrabajos(dto);
 	}
 
 	@Transactional

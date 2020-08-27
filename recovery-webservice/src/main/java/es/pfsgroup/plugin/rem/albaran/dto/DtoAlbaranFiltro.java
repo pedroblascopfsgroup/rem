@@ -32,6 +32,14 @@ public class DtoAlbaranFiltro extends WebDto{
 	private String proveedor;
 	
 	private String solicitante;
+	
+	private Long numPrefacturas;
+	
+	private Long numTrabajos;
+	
+	private Double importeTotal;
+	
+	private Double importeTotalCliente;
 
 	public Long getNumAlbaran() {
 		return numAlbaran;
@@ -128,5 +136,38 @@ public class DtoAlbaranFiltro extends WebDto{
 	public void setSolicitante(String solicitante) {
 		this.solicitante = solicitante;
 	}
+
+	public Long getNumPrefacturas() {
+		return numPrefacturas;
+	}
+
+	public void setNumPrefacturas(Long numPrefacturas) {
+		this.numPrefacturas = numPrefacturas;
+	}
+
+	public Long getNumTrabajos() {
+		return numTrabajos;
+	}
+
+	public void setNumTrabajos(Long numTrabajos) {
+		this.numTrabajos = numTrabajos;
+	}
+
+	public Double getImporteTotal() {
+		return importeTotal;
+	}
+
+	public void setImporteTotal(Double importeTotal) {
+		this.importeTotal = importeTotal;
+	}
+
+	public Double getImporteTotalCliente() {
+		return importeTotalCliente;
+	}
+
+	public void setImporteTotalCliente(Double importeTotalCliente) {
+		this.importeTotalCliente = importeTotalCliente;
+	}
+	
 	
 }

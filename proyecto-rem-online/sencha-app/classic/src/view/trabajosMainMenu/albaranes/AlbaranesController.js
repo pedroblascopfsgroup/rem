@@ -67,13 +67,20 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 	
 	onAlbaranClick: function(grid, record){
 		var me = this;
+		var viewModel = me.getViewModel();
 		var gridAlbaran = this.lookupReference('albaranGrid');
 		var listaDetalleAlbaran = this.lookupReference('detalleAlbaranGrid');
+		var listaTrabajos = this.lookupReference('detallePrefacturaGrid');
 		var boton = me.lookupReference('botonValidarAlbaran');
 		
 		if(!Ext.isEmpty(grid.selection)){
-			listaDetalleAlbaran.getStore().getProxy().setExtraParams({'numAlbaran':record.data.numAlbaran});
+//			viewModel.set("albaran", record);
+//			viewModel.notify();
+			listaDetalleAlbaran.getStore().getProxy().setExtraParams({
+                numAlbaran: record.data.numAlbaran
+            });
 			listaDetalleAlbaran.getStore().load();
+			listaTrabajos.getStore().removeAll();
 			me.calcularTotal(gridAlbaran,"albaranGrid",record);
 			me.habilitarAlbaran(listaDetalleAlbaran,boton,record);
 		} else {
@@ -101,12 +108,17 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 	
 	onPrefacturaClick: function(grid, record){
 		var me = this;
+		var viewModel = me.getViewModel();
 		var gridDetalleAlbaran = this.lookupReference('detalleAlbaranGrid');
 		var listaDetallePrefactura = this.lookupReference('detallePrefacturaGrid');
 		var boton = this.lookupReference('botonValidarPrefactura');
 		
 		if(!Ext.isEmpty(grid.selection)){
-			listaDetallePrefactura.getStore().getProxy().setExtraParams({'numPrefactura':record.data.numPrefactura});
+//			viewModel.set("prefactura", record);
+//			viewModel.notify();
+			listaDetallePrefactura.getStore().getProxy().setExtraParams({
+                numPrefactura: record.data.numPrefactura
+            });
 			listaDetallePrefactura.getStore().load();
 			me.calcularTotal(gridDetalleAlbaran,"detalleAlbaranGrid",record)
 			me.habilitarPrefactura(boton,record);

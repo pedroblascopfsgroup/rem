@@ -2,7 +2,9 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesList', {
     extend: 'HreRem.view.common.FormBase',
     xtype: 'albaraneslist',
     scrollable: 'y',
-
+    
+    requires: ['HreRem.model.AlbaranGridModel','HreRem.model.DetalleAlbaranGridModel','HreRem.model.DetallePrefacturaGridModel'],
+    
     initComponent: function () {
     	
     	var me = this;

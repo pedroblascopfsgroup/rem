@@ -109,10 +109,10 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesSearch', {
 							width : 230
 						},
 						{
-							xtype : 'datefield',
+							xtype : 'textfield',
 							fieldLabel : HreRem.i18n('fieldlabel.albaran.fechaAlta'),
 							name : 'anyoTrabajo',
-							formatter : 'date("d/m/Y")',
+//							formatter : 'date("d/m/Y")',
 							width : 230
 						},
 						{

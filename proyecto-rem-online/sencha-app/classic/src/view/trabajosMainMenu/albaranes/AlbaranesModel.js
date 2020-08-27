@@ -2,8 +2,12 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesModel', {
     extend: 'HreRem.view.common.GenericViewModel',
     alias: 'viewmodel.albaranes',
     
-    requires: ['HreRem.ux.data.Proxy', 'HreRem.model.AlbaranGridModel','HreRem.model.DetalleAlbaranGridModel','HreRem.model.DetalleAlbaranGridModel'],
+    requires: ['HreRem.ux.data.Proxy', 'HreRem.model.AlbaranGridModel','HreRem.model.DetalleAlbaranGridModel','HreRem.model.DetallePrefacturaGridModel'],
     
+    data: {
+    	albaran: null,
+    	prefactura: null
+    },
  	stores: {
         
         albaranes: {
@@ -28,14 +32,14 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesModel', {
 	    	model: 'HreRem.model.DetalleAlbaranGridModel',
 	    	proxy: {
 		        type: 'uxproxy',
-		        localUrl: '/albaran.json',
 		        timeout: 300000,
 				remoteUrl: 'albaran/findAllDetalles',
+//				extraParams: {numAlbaran: '{albaran.numAlbaran}'}
 				actionMethods: {read: 'POST'}
-	    	},	    		
+	    	},
 	    	remoteSort: true,
 	    	remoteFilter: true,
-	    	session: true,
+	    	session: true
 //	    	autoLoad: false
 //	        listeners : {
 //	            beforeload : 'paramLoading'	        
@@ -46,14 +50,14 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesModel', {
 	    	model: 'HreRem.model.DetallePrefacturaGridModel',
 	    	proxy: {
 		        type: 'uxproxy',
-		        localUrl: '/albaran.json',
 		        timeout: 300000,
 				remoteUrl: 'albaran/findPrefectura',
+//				extraParams: {numPrefactura: '{prefactura.numPrefactura}'}
 				actionMethods: {read: 'POST'}
-	    	},	    		
+	    	},	
 	    	remoteSort: true,
 	    	remoteFilter: true,
-	    	session: true,
+	    	session: true
 //	    	autoLoad: false
 //	        listeners : {
 //	            beforeload : 'paramLoading'	        

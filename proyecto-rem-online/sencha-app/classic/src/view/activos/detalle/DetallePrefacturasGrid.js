@@ -4,8 +4,8 @@ Ext.define('HreRem.view.activos.detalle.DetallePrefacturasGrid', {
 	topBar		: false,
 	editOnSelect: false,
 	disabledDeleteBtn: true,
-	scrollable : true,
 	disableSelection: true,
+	plugins: 'pagingselectpersist',
 	bind: {
 		store: '{detallePrefactrura}'
 	},

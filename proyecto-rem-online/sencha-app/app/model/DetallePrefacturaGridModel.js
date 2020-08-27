@@ -1,10 +1,8 @@
 Ext.define('HreRem.model.DetallePrefacturaGridModel', {
     extend: 'HreRem.model.Base',
+    idProperty: 'numTrabajo',
 
     fields: [
-    		{
-    			name:'numTrabajo'
-    		},
     		{
     			name:'tipologiaTrabajo'
     		},

@@ -13,6 +13,7 @@ public class DtoDetallePrefactura extends WebDto{
 
 	private static final long serialVersionUID = 0L;
 
+	private Long numPrefactura;
 	private Long numTrabajo;
 	private String tipologiaTrabajo;
 	private String subtipologiaTrabajo;
@@ -76,6 +77,12 @@ public class DtoDetallePrefactura extends WebDto{
 	}
 	public void setSubtipologiaTrabajo(String subtipologiaTrabajo) {
 		this.subtipologiaTrabajo = subtipologiaTrabajo;
+	}
+	public Long getNumPrefactura() {
+		return numPrefactura;
+	}
+	public void setNumPrefactura(Long numPrefactura) {
+		this.numPrefactura = numPrefactura;
 	}
 	
 }

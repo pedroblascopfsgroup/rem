@@ -37,7 +37,7 @@ public class AlbaranController extends ParadiseJsonController{
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView findAll(DtoAlbaranFiltro dtoAlbaran, ModelMap model){
 		try {
-			DtoPage page = albaranApi.findAll(dtoAlbaran);
+			Page page = albaranApi.findAll(dtoAlbaran);
 			
 			model.put("data", page.getResults());
 			model.put("totalCount", page.getTotalCount());
@@ -52,14 +52,15 @@ public class AlbaranController extends ParadiseJsonController{
 	}
 	
 	@SuppressWarnings("unchecked")
+//	@RequestMapping(method = RequestMethod.GET)
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView findAllDetalles(DtoDetalleAlbaran detalleAlbaran, Long numAlbaran, ModelMap model) {
-		if(numAlbaran != null) {
+	public ModelAndView findAllDetalles(DtoDetalleAlbaran detalleAlbaran, ModelMap model) {
+		if( detalleAlbaran != null && detalleAlbaran.getNumAlbaran() != null) {
 			try {
-				List<DtoDetalleAlbaran> page = albaranApi.findAllDetalle( numAlbaran);
+				Page page = albaranApi.findAllDetalle(detalleAlbaran);
 				
-				model.put("data", page);
-				model.put("totalCount", page.size());
+				model.put("data", page.getResults());
+				model.put("totalCount", page.getTotalCount());
 			}catch(Exception e) {
 				logger.error(e.getMessage(), e);
 				model.put("error", e.getMessage());
@@ -71,14 +72,15 @@ public class AlbaranController extends ParadiseJsonController{
 	}
 	
 	@SuppressWarnings("unchecked")
+//	@RequestMapping(method = RequestMethod.GET)
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView findPrefectura(DtoDetallePrefactura detallePrefectura, Long numPrefactura, ModelMap model) {
-		if(numPrefactura != null) {
+	public ModelAndView findPrefectura(DtoDetallePrefactura detallePrefectura, ModelMap model) {
+		if(detallePrefectura != null && detallePrefectura.getNumPrefactura() != null) {
 			try {
-				List<DtoDetallePrefactura> page = albaranApi.findPrefectura(numPrefactura);
+				Page page = albaranApi.findPrefectura(detallePrefectura);
 				
-				model.put("data", page);
-				model.put("totalCount", page.size());
+				model.put("data", page.getResults());
+				model.put("totalCount", page.getTotalCount());
 			}catch(Exception e) {
 				logger.error(e.getMessage(), e);
 				model.put("error", e.getMessage());

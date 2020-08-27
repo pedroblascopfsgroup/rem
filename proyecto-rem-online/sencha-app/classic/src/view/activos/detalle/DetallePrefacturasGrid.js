@@ -5,15 +5,19 @@ Ext.define('HreRem.view.activos.detalle.DetallePrefacturasGrid', {
 	editOnSelect: false,
 	disabledDeleteBtn: true,
 	disableSelection: true,
-	plugins: 'pagingselectpersist',
 	bind: {
 		store: '{detallePrefactrura}'
 	},
 	
+	//NO TOCAR, SIRVE PARA LA PERSISTENCIA DEL CHECKBOX
+	data: [
+		
+	],
+	
     initComponent: function () {
 
      	var me = this;
-     	
+     	me.data = [];
      	
 		me.columns = [
 				{
@@ -93,5 +97,7 @@ Ext.define('HreRem.view.activos.detalle.DetallePrefacturasGrid', {
 	    ];
 
 		    me.callParent();
+		    
     }
+    
 });

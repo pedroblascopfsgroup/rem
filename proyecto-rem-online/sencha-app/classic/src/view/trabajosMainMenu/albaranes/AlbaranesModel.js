@@ -57,11 +57,11 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesModel', {
 	    	},	
 	    	remoteSort: true,
 	    	remoteFilter: true,
-	    	session: true
+	    	session: true,
 //	    	autoLoad: false
-//	        listeners : {
-//	            beforeload : 'paramLoading'	        
-//	        }
+	        listeners : {
+	            load : 'changeCheckbox'	        
+	        }
     	},
     	comboEstadoAlbaran: {
 			model: 'HreRem.model.ComboBase',

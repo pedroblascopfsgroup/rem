@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 import javax.annotation.Resource;
@@ -33,7 +34,6 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgendaEvolucion;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -55,8 +55,8 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
     private static final Integer CHECK_VALOR_SI = 1;
     private static final Integer CHECK_VALOR_NO = 0;
     private static final Integer CHECK_NO_CAMBIAR = -1;
-    private static final String ADMISION_SI = "S";
-    private static final String ADMISION_NO = "N";
+    private static final String[] listaValidosPositivos = { "S", "SI" };
+	private static final String[] listaValidosNegativos = { "N", "NO" };
 
     @Autowired
     private ActivoAdapter activoAdapter;
@@ -309,22 +309,24 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 				this.desmarcarChecksFromPerimetro(perimetroActivo);
 			
 			//Actualizar admision del activo
-			if(ADMISION_SI.equals(admision)) {
+
+			if(admision != null && Arrays.asList(listaValidosPositivos).contains(admision.toUpperCase())) {
 				DDEstadoAdmision estadoAdmision =  (DDEstadoAdmision) utilDiccionarioApi.dameValorDiccionarioByCod(
 						DDEstadoAdmision.class, DDEstadoAdmision.CODIGO_NUEVA_ENTRADA);
 				DDSubestadoAdmision subestadoAdmision =  (DDSubestadoAdmision) utilDiccionarioApi.dameValorDiccionarioByCod(
 						DDSubestadoAdmision.class, DDSubestadoAdmision.CODIGO_PENDIENTE_REVISION_ALTAS);
 				perimetroActivo.setAplicaAdmision(true);
-				perimetroActivo.setFechaAplicaAdmision(new Date());
 				perimetroActivo.setMotivoAplicaAdmision(motivoAdmision);
+				perimetroActivo.setFechaAplicaAdmision(new Date());
+				
 				activo.setEstadoAdmision(estadoAdmision);
 				activo.setSubestadoAdmision(subestadoAdmision);
 			}
 			
-			if(ADMISION_NO.equals(admision)) {
+			if(admision != null && Arrays.asList(listaValidosNegativos).contains(admision.toUpperCase())) {
 				perimetroActivo.setAplicaAdmision(false);
 				activo.setEstadoAdmision(null);
-				perimetroActivo.setMotivoAplicaAdmision("");
+				perimetroActivo.setMotivoAplicaAdmision(motivoAdmision);
 				activo.setSubestadoAdmision(null);
 			}
 

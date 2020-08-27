@@ -1178,5 +1178,7 @@ public interface ParticularValidatorApi {
 	Boolean esActivoBBVA(String numActivo);
 	
 	String getValidacionCampoCDC(String codCampo);
+	
+	public boolean incluidoActivoIdOrigenBBVA (String numActivo);
 
 }

@@ -3529,7 +3529,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esAccionValido(String codAccion) {
-		if(Checks.esNulo(codAccion) || !StringUtils.isNumeric(codAccion)) {
+		if(Checks.esNulo(codAccion)) {
 			return false;
 		}
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
@@ -3598,18 +3598,18 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	public Boolean esResultadoValido(String codResultado) {
-		if(Checks.esNulo(codResultado) || !StringUtils.isNumeric(codResultado)) {
+		if(Checks.esNulo(codResultado)) {
 			return false;
 		}
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "FROM DD_RES_RESULTADO_SOLICITUD RES "
-				+ "WHERE RES.DD_RES_CODIGO =" + codResultado);
+				+ "WHERE RES.DD_RES_CODIGO ='" + codResultado + "'");
 
 		return !"0".equals(resultado);
 	}
 	
 	public Boolean esMotivoExento(String codResultado) {
-		if(Checks.esNulo(codResultado) || !StringUtils.isNumeric(codResultado)) {
+		if(Checks.esNulo(codResultado)) {
 			return false;
 		}
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
@@ -3620,19 +3620,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	public Boolean esTipoTributoValido(String codTipoTributo) {
-		if(Checks.esNulo(codTipoTributo) || !StringUtils.isNumeric(codTipoTributo)) {
+		if(Checks.esNulo(codTipoTributo)) {
 			return false;
 		}
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "FROM DD_TPT_TIPO_TRIBUTO TPT "
-				+ "WHERE TPT.DD_TPT_CODIGO =" + codTipoTributo);
+				+ "WHERE TPT.DD_TPT_CODIGO = '" + codTipoTributo + "'");
 
 		return !"0".equals(resultado);
 	}
+	
 
 	@Override
 	public Boolean esSolicitudValido(String codSolicitud){
-		if(Checks.esNulo(codSolicitud) || !StringUtils.isNumeric(codSolicitud)) {
+		if(Checks.esNulo(codSolicitud)) {
 			return false;
 		}
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
@@ -3644,7 +3645,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean existeActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud, String idTributo){
-		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo) || Checks.esNulo(tipoSolicitud) || !StringUtils.isNumeric(tipoSolicitud) || !StringUtils.isNumeric(idTributo)) {
+		if(Checks.esNulo(numActivo) || Checks.esNulo(tipoSolicitud) || !StringUtils.isNumeric(idTributo)) {
 			return false;
 		}
 
@@ -3685,7 +3686,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean esNumHayaVinculado(Long numGasto, String numActivo){
-		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
+		if(Checks.esNulo(numActivo)) {
 			return false;
 		}
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
@@ -3707,7 +3708,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "FROM ECO_EXPEDIENTE_COMERCIAL EX "
 				+ "JOIN ACT_TRI_TRIBUTOS TRI ON TRI.ECO_ID = EX.ECO_ID "
-				+ "WHERE TRI.ECO_ID = " + expComercial + "'"
+				+ "WHERE TRI.ECO_ID = '" + expComercial + "'"
 				);
 
 		return !"0".equals(resultado);

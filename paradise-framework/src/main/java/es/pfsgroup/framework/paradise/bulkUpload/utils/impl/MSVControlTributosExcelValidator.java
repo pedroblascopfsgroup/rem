@@ -471,7 +471,7 @@ private List<Integer> motivoExentoObligatorio(MSVHojaExcel exc) {
 				listaFilas.add(i);
 				logger.error(e.getMessage());
 			} catch (Exception e) {
-				listaFilas.add(0);
+				listaFilas.add(i);
 				logger.error(e.getMessage());
 			}
 		}
@@ -499,7 +499,5 @@ private List<Integer> motivoExentoObligatorio(MSVHojaExcel exc) {
 		}
 		return listaFilas;
 	}	
-	
-
 
 }

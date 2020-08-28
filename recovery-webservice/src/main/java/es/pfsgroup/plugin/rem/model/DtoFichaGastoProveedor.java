@@ -80,6 +80,7 @@ public class DtoFichaGastoProveedor extends WebDto {
    	private String estadoEmisor;
 	private Boolean estadoModificarLineasDetalleGasto;
 	private Boolean isGastoRefacturadoPorOtroGasto;
+	private Boolean isGastoRefacturadoPadre;
 	
 	public Long getIdGasto() {
 		return idGasto;
@@ -433,6 +434,12 @@ public class DtoFichaGastoProveedor extends WebDto {
 	}
 	public void setIsGastoRefacturadoPorOtroGasto(Boolean isGastoRefacturadoPorOtroGasto) {
 		this.isGastoRefacturadoPorOtroGasto = isGastoRefacturadoPorOtroGasto;
+	}
+	public Boolean getIsGastoRefacturadoPadre() {
+		return isGastoRefacturadoPadre;
+	}
+	public void setIsGastoRefacturadoPadre(Boolean isGastoRefacturadoPadre) {
+		this.isGastoRefacturadoPadre = isGastoRefacturadoPadre;
 	}
 	
 }

@@ -250,9 +250,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 		getTipoGasto : function(get) {
 
 			var tipoGastoDescripcion = get('gasto.tipoGastoDescripcion');
-			var subtipoGastoDescripcion = get('gasto.subtipoGastoDescripcion');
 			var tipoOperacion = get('gasto.tipoOperacionDescripcion');
-			return tipoGastoDescripcion + ' - ' + subtipoGastoDescripcion;
+			return tipoGastoDescripcion;
 
 		},
 

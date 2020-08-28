@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.List;
 
@@ -32,6 +33,13 @@ public interface GastoLineaDetalleApi {
 	String devolverSubGastoImpuestImpositivo(GastoLineaDetalle gastoLineaDetalle);
 
 	GastoLineaDetalle devolverLineaBk(GastoProveedor gasto);
+
+	void recalcularPorcentajeParticipacion(GastoProveedor gasto);
+
+	List<String> crearLineasRefacturadasAGastosExistentes(Long idGastoPadre, GastoLineaDetalle lineaGastoDetalle, List<String> lineasDetallePadreListString, boolean esSareb)
+			throws IllegalAccessException, InvocationTargetException;
+
+	void eliminarLineasRefacturadas(Long gastoPadre);
 	
 }
 

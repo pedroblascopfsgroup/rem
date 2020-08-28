@@ -21,8 +21,9 @@ Ext.define('HreRem.view.gastos.LineaDetalleGastoGrid', {
      	var cartera  = me.up("gastodetallemain").viewModel.data.gasto.data.cartera != "08";
      	var estadoModificar = me.lookupController().getView().getViewModel().getData().gasto.getData().estadoModificarLineasDetalleGasto;
      	var isRefacturado = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPorOtroGasto;
-     	
-        me.topBar = estadoModificar && !isRefacturado;
+     	var isRefacturadoPadre = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPadre;
+
+        me.topBar = estadoModificar && !isRefacturado && !isRefacturadoPadre;
      	
      	me.setTitle(HreRem.i18n('title.gasto.detalle.economico.lineas.detalle'));
      	

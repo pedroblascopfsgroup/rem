@@ -1657,17 +1657,16 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 
 	    	var gastosRefacturables = me.lookupReference('anyadirGastoRefacturado').getValue();	    	
 	    	var idGasto = me.getView().idGasto;
+	    	var dataModificar = me.getView().grid.lookupController().getView().getViewModel().getData().gasto.getData();
 	    	var nifPropietario = me.getView().nifPropietario;
 	    	var url = $AC.getRemoteUrl('gastosproveedor/anyadirGastoRefacturable');
 	    	
-	    	
-	    	
+	    		
 	    	if(gastosRefacturables == ""){
 	    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.anyadir.gastos.refacturados")); 
 	    	}else{
-	    	
+	    		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 	    		Ext.Ajax.request({
-	    			
 			 		url: url,
 			   		params: {
 			   					idGasto:idGasto,
@@ -1679,18 +1678,22 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 				    	data = Ext.decode(response.responseText);
 				    	if(data.success == 'false') {
 				    		me.fireEvent("errorToast", data.error);
-				    	}	 
+				    	}	
 			    	},
-			    	failure: function(response) {
-						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			    	failure: function(response) {	
+			    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			    		me.getView().unmask();
 			    	},
 			    	callback: function(options, success, response){
 			    		me.getView().grid.getStore().reload();
 			    		var datosGeneralesGastos = me.getView().grid.up("gastodetalle").down("[reference=datosgeneralesgastoref]");
 			    		var datosDetalleEconomico = me.getView().grid.up("gastodetalle").down("[reference=detalleeconomicogastoref]");
+			    		var gridLineaDetalle = me.getView().grid.up("gastodetalle").down("[reference=lineaDetalleGastoGrid]");
+			    		gridLineaDetalle.getStore().reload();
 			    		me.getViewModel().set("gasto.id",me.getView().idGasto);
-			    		me.cargarTabData(datosGeneralesGastos);
+			    		me.cargarTabDataCambiarRefacturables(datosGeneralesGastos, gridLineaDetalle);
 			    		me.cargarTabData(datosDetalleEconomico);
+			    		me.getView().unmask();
 				    	me.closeView();
 					}
 			    		     
@@ -2069,33 +2072,10 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	            	data = Ext.decode(response.responseText);
 	            	
 	            	if(data.data != undefined){
-	            		if(data.data.ccBase != undefined){
-	            			ventana.down('[reference=ccBase]').setValue(data.data.ccBase);
-	            		}
-	            		if(data.data.ppBase != undefined){
-	            			ventana.down('[reference=ppBase]').setValue(data.data.ppBase);
-	            		}
-	            		if(data.data.ccTasas != undefined){
-	            			ventana.down('[reference=ccTasas]').setValue(data.data.ccTasas);
-	            		}
-	            		if(data.data.ppTasas != undefined){
-	            			ventana.down('[reference=ppTasas]').setValue(data.data.ppTasas);
-	            		}
-	            		if(data.data.ccRecargo != undefined){
-	            			ventana.down('[reference=ccRecargo]').setValue(data.data.ccRecargo);
-	            		}
-	            		if(data.data.ppRecargo != undefined){
-	            			ventana.down('[reference=ppRecargo]').setValue(data.data.ppRecargo);
-	            		}
-	            		if(data.data.ccInteres != undefined){
-	            			ventana.down('[reference=ccInteres]').setValue(data.data.ccInteres);
-	            		}
-	            		if(data.data.ppInteres != undefined){
-	            			ventana.down('[reference=ppInteres]').setValue(data.data.ppInteres);
-	            		}
-	            		
+	            		me.setCuentasyPartidas(ventana, data.data);	
 	            	}
-	            	
+
+	            	ventana.down('[reference=btnActualizarCuentasYPartidas]').setDisabled(false);
 	            	ventana.down('[reference=fieldsetccpp]').setDisabled(false);
 	        		ventana.down('[reference=fieldsetImpInd]').setDisabled(false);
 	        		ventana.down('[reference=fieldsetImporte]').setDisabled(false);
@@ -2110,5 +2090,97 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 
     	}
     
-    }
+    },
+    
+    calcularCuentasYPartidas: function(){
+    	var me = this;
+    	var formulario = me.lookupReference('crearLineaDetalleGastoForm');
+    	var subtipoGasto = formulario.getForm().findField('subtipoGasto').getValue();
+    	var ventana = formulario.up('[reference=ventanaCrearLineaDetalleGasto]');
+    	
+    	if(subtipoGasto != null && subtipoGasto != undefined){
+    		ventana.mask(HreRem.i18n("msg.mask.loading"));
+    		var url =  $AC.getRemoteUrl('gastosproveedor/calcularCuentasYPartidas');
+    		
+    		Ext.Ajax.request({		    			
+    	 		url: url,
+    	 		method: 'GET',
+    	   		params: {
+    	   			idGasto: ventana.idGasto,
+    	   			idLineaDetalleGasto: ventana.idLineaDetalleGasto,
+    	   			subtipoGastoCodigo:subtipoGasto
+       			},	    		
+    	    	success: function(response, opts) {
+    	    		
+    	    		var data = {};
+	            	data = Ext.decode(response.responseText);
+	            	
+	            	if(data.data != undefined){
+	            		me.setCuentasyPartidas(ventana, data.data);
+	            	}
+
+	        		ventana.unmask();
+    	            	
+    	    	},
+       			failure: function(response) {
+    				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    		    }
+    		});
+
+    	}
+    },
+    
+    setCuentasyPartidas: function(ventana, data){
+    	if(data.ccBase != undefined){
+			ventana.down('[reference=ccBase]').setValue(data.data.ccBase);
+		}
+		if(data.ppBase != undefined){
+			ventana.down('[reference=ppBase]').setValue(data.data.ppBase);
+		}
+		if(data.ccTasas != undefined){
+			ventana.down('[reference=ccTasas]').setValue(data.data.ccTasas);
+		}
+		if(data.ppTasas != undefined){
+			ventana.down('[reference=ppTasas]').setValue(data.data.ppTasas);
+		}
+		if(data.ccRecargo != undefined){
+			ventana.down('[reference=ccRecargo]').setValue(data.data.ccRecargo);
+		}
+		if(data.ppRecargo != undefined){
+			ventana.down('[reference=ppRecargo]').setValue(data.data.ppRecargo);
+		}
+		if(data.ccInteres != undefined){
+			ventana.down('[reference=ccInteres]').setValue(data.data.ccInteres);
+		}
+		if(data.ppInteres != undefined){
+			ventana.down('[reference=ppInteres]').setValue(data.data.ppInteres);
+		}
+    },
+    
+    cargarTabDataCambiarRefacturables: function (form,grid) {
+		var me = this,
+		id = me.getViewModel().get("gasto.id"),
+		model = form.getModelInstance();
+		form.up("tabpanel").mask(HreRem.i18n("msg.mask.loading"));	
+		
+		model.setId(id);
+		model.load({
+		    success: function(record) {
+		    	
+		    	form.setBindRecord(record);	
+		    	var modificar = false;
+		    	if(record.data.estadoModificarLineasDetalleGasto && !record.data.isGastoRefacturadoPorOtroGasto 
+	    				&& !record.data.isGastoRefacturadoPadre){
+	    			modificar = true;
+	    		}
+		    	
+		    	grid.setTopBar(modificar);
+		    	form.up("tabpanel").unmask();
+		    },
+		    failure: function(operation) {		    	
+		    	form.up("tabpanel").unmask();
+		    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+		    }
+		});
+	}
 });

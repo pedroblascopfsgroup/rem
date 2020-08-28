@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import es.capgemini.devon.files.FileItem;
@@ -376,7 +377,7 @@ public interface GastoProveedorApi {
 		List<GastoProveedor> getGastosRefacturablesGasto(Long id);
 
 
-		public void anyadirGastosRefacturadosAGastoExistente(String idGasto, List<String> gastosRefacturablesLista);
+		public void anyadirGastosRefacturadosAGastoExistente(String idGasto, List<String> gastosRefacturablesLista) throws IllegalAccessException, InvocationTargetException;
 
 
 		public Boolean eliminarGastoRefacturado(Long idGasto, Long numGastoRefacturado);
@@ -396,6 +397,10 @@ public interface GastoProveedorApi {
 		Double recalcularImporteTotalGasto(GastoDetalleEconomico gasto);
 
 		boolean estanTodosActivosAlquilados(GastoProveedor gasto);
+
+		boolean isGastoSareb(GastoProveedor gastoProveedor);
+
+		void anyadirGastosRefacturablesSiCumplenCondiciones(String idGasto, String gastosRefacturables, String nifPropietario) throws IllegalAccessException, InvocationTargetException;
 		
 }
 

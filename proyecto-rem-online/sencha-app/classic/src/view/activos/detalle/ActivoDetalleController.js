@@ -729,7 +729,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	    	
     	if(disabled){
     		fieldsettableTituloAdicional.hide();
-    		//fieldsettableTituloAdicional.setVisible(false);
 	    	tipoTituloAdicional.setValue("");
 	    	fechaInscripcionRegistroAdicional.setValue(""); 
 			tipoTituloAdicional.setValue("");
@@ -741,7 +740,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		fieldlabelFechaNotaSimpleAdicional.setValue("");
     	}else{
     		fieldsettableTituloAdicional.show();
-    		//fieldsettableTituloAdicional.setVisible(true);
     	}
     	
     	

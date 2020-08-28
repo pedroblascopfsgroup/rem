@@ -22,7 +22,6 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 	
     initComponent: function () {
         var me = this;
-
         me.setTitle(HreRem.i18n('title.admision.saneamiento'));
 
         var items= [
@@ -226,7 +225,6 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 								]
 
 						},
-						//por programar
 						{
 							xtype:'fieldsettable',
 							defaultType: 'textfieldbase',
@@ -250,7 +248,7 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 							        	xtype: 'comboboxfieldbase',				        	
 								 		fieldLabel: HreRem.i18n('fieldlabel.situacion.titulo.adicional'),
 								 		reference: 'situacionTituloAdicional',
-								 		//readOnly: true,
+								 		readOnly: true,
 							        	bind: 
 							        		{
 						            		store: '{comboEstadoTitulo}', //DD_ETI_ESTADO_TITULO
@@ -263,6 +261,7 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 										xtype:'datefieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.fecha.inscripcion.registro.adicional'),
 										reference:'fechaInscripcionRegistroAdicional',
+										readOnly: true,
 								 		bind: {
 								 			value: '{saneamiento.fechaInscriptionRegistroAdicional}'
 								 			//readOnly: '{datosRegistrales.unidadAlquilable}'

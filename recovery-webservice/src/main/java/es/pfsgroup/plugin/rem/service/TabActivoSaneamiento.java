@@ -332,7 +332,7 @@ public class TabActivoSaneamiento implements TabActivoService{
 			}
 		}
 		
-		//por programar TITULO ADICIONAL SANEAMIENTO
+		//TITULO ADICIONAL SANEAMIENTO
 		
 		Filter filtroTituloAdicional = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 		ActivoTituloAdicional actTituloAdicional = genericDao.get(ActivoTituloAdicional.class, filtroTituloAdicional);
@@ -365,6 +365,8 @@ public class TabActivoSaneamiento implements TabActivoService{
 				activoDto.setFechaNotaSimpleAdicional(actTituloAdicional.getFechaNotaSimple());
 			}
 			
+		}else {
+			activoDto.setTieneTituloAdicional(0);
 		}
 			
 				

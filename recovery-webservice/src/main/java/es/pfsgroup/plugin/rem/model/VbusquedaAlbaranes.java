@@ -33,7 +33,7 @@ public class VbusquedaAlbaranes implements Serializable{
 	@Column(name = "PFA_NUM_PREFACTURA")
 	private Long numPrefactura;
 	
-	@Column(name = "TBJ_FECHA_VALIDACION")
+	@Column(name = "PFA_FECHA_PREFACTURA")
 	private Date fechaPrefactura;
 	
 	@Column(name = "DD_EPF_CODIGO")
@@ -43,6 +43,9 @@ public class VbusquedaAlbaranes implements Serializable{
 	private String estadoPrefactura;
 	
 	@Column(name = "PVE_NOMBRE")
+	private String proveedorNombre;
+	
+	@Column(name = "PVE_ID")
 	private String proveedor;
 	
 	@Column(name = "PRO_DOCIDENTIF")

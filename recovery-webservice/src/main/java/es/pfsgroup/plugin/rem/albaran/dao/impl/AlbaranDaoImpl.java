@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.albaran.dao.impl;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -41,11 +42,14 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 	private GenericABMDao genericDao;
 	
 	public Page getAlbaranes(DtoAlbaranFiltro dtoAlbaranes) {
-//		String from = "select albaran from Albaran albaran , Trabajo tbj, Prefactura pfa";
 		
-		HQLBuilder hb = new HQLBuilder(" from VbusquedaAlbaranes vba");
-//		hb.appendWhere("albaran.id = pfa.albaran.id");
-//		hb.appendWhere("pfa.id = tbj.prefactura.id");
+		HQLBuilder hb = new HQLBuilder("Select id, numAlbaran" + 
+				" , fechaAlbaran" + 
+				" , estadoAlbaran" + 
+				" , numPrefacturas" + 
+				" , numTrabajos" + 
+				" , importeTotal" + 
+				" , importeTotalCliente from VbusquedaAlbaranes vba");
 		
 		this.rellenaFiltros(hb, dtoAlbaranes);
 		
@@ -140,18 +144,30 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 					sumado.add(Calendar.MILLISECOND, -1);  // numero de días a añadir, o restar en caso de días<0
 					HQLBuilder.addFiltroBetweenSiNotNull(hb, "vba.fechaPrefactura", sumado.getTime(), calendar.getTime());
 				}
-//				if(dto.getAnyoTrabajo() != null) {
+				if(dto.getAnyoTrabajo() != null) {
+					SimpleDateFormat formatter = new SimpleDateFormat("01-01-YYYY");
 //					Date fechaTrabajo = DateFormat.toDate(dto.getAnyoTrabajo());
-//					
-//					Calendar calendar = Calendar.getInstance();
-//					calendar.setTime(fechaTrabajo); // Configuramos la fecha que se recibe
-//					calendar.add(Calendar.DAY_OF_YEAR, 1);  // numero de días a añadir, o restar en caso de días<0
-//					
-//					Calendar sumado = Calendar.getInstance();
-//					sumado.setTime(fechaTrabajo); // Configuramos la fecha que se recibe
-//					sumado.add(Calendar.MILLISECOND, -1);  // numero de días a añadir, o restar en caso de días<0
-//					HQLBuilder.addFiltroBetweenSiNotNull(hb, "vba.fechaSolicitud", sumado.getTime(), calendar.getTime());
-//				}
+					Date fechaTrabajo = formatter.parse(dto.getAnyoTrabajo());
+					
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime(fechaTrabajo); // Configuramos la fecha que se recibe
+					calendar.add(Calendar.DAY_OF_YEAR, 1);  // numero de días a añadir, o restar en caso de días<0
+					
+					Calendar sumado = Calendar.getInstance();
+					sumado.setTime(fechaTrabajo); // Configuramos la fecha que se recibe
+					sumado.add(Calendar.MILLISECOND, -1);  // numero de días a añadir, o restar en caso de días<0
+					HQLBuilder.addFiltroBetweenSiNotNull(hb, "vba.fechaSolicitud", sumado.getTime(), calendar.getTime());
+				}
+				
+				HQLBuilder.appendGroupBy(hb,
+										"ALB_ID",
+										"ALB_NUM_ALBARAN",
+										"ALB_FECHA_ALBARAN",
+										"DD_ESA_DESCRIPCION",
+										"NUMPREFACTURA",
+										"NUMTRABAJO",
+										"SUM_PRESUPUESTO",
+										"SUM_TOTAL");
 			}catch (ParseException e) {
 				logger.error(e);
 			}

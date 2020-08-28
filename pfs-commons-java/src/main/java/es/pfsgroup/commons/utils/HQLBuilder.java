@@ -2,6 +2,7 @@ package es.pfsgroup.commons.utils;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.hibernate.Query;
@@ -389,6 +390,25 @@ public class HQLBuilder {
 		this.stringBuilder.append("))");
 
 	}
+	/**
+	 * Introducir clausula GROUP BY pasando por valor los campos por los que se desea agrupar
+	 * 
+	 *  @param field
+	 *  			campos de la select por los que agrupar
+	 */
+	public static void appendGroupBy(final HQLBuilder hqlBuilder, String... fields) {
+		hqlBuilder.stringBuilder.append(" GROUP BY ");
+		boolean primero = true;
+		for(String g: fields) {
+			if(!primero){
+				hqlBuilder.stringBuilder.append(", ");
+			}else {
+				primero = false;
+			}
+			hqlBuilder.stringBuilder.append(g);
+		}
+	}
+	
 	/**
 	 * añade una clausula WHERE para comprobar si un determinado campo está
 	 * entre unos determinados valores

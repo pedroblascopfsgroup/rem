@@ -1,9 +1,11 @@
 Ext.define('HreRem.model.AlbaranGridModel', {
     extend: 'HreRem.model.Base',
-    idProperty: 'numAlbaran',
+//    idProperty: 'numAlbaran',
 
     fields: [
-    		
+    		{
+    			name:'numAlbaran'
+    		},
     		{
     			name:'fechaAlbaran',
     			type:'date',

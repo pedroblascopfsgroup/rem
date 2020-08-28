@@ -152,13 +152,22 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesSearch', {
 							valueField : 'codigo'
 						}, 
 						{
-							fieldLabel : HreRem.i18n('fieldlabel.solicitante'),
-							name : 'solicitante',
+							fieldLabel : HreRem.i18n('fieldlabel.albaran.propietario'),
+							name: 'solicitante',
 							width : 230
-						}, {
+						}, 
+						{
+							xtype: 'combo',
 							fieldLabel : HreRem.i18n('fieldlabel.proveedor'),
 							name : 'proveedor',
-							width : 230
+				    		valueField : 'id',
+							displayField : 'nombre',
+							filtradoEspecial: true,
+				    		emptyText: 'Introduzca nombre mediador',
+				    		bind: {
+				    			store: '{comboApiPrimario}'
+				    		}
+							
 						}
 					]
 				}

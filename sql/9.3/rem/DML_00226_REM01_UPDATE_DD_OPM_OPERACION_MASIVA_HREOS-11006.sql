@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Jonathan ovalle
---## FECHA_CREACION=20200827
+--## FECHA_CREACION=20200828
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11006
@@ -40,7 +40,7 @@ BEGIN
 	V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET 
 				  USUARIOMODIFICAR = '''||V_USUARIO||'''
 				, FECHAMODIFICAR = SYSDATE    
-				, DD_OPM_VALIDACION_FORMATO = ''s*, s* s*, f*, f* ,s*, s*''
+				, DD_OPM_VALIDACION_FORMATO = ''s*, s*, s*, f*, f* ,s*, s*''
 				WHERE DD_OPM_CODIGO = ''CMCONFPERVOL''
 				';
 

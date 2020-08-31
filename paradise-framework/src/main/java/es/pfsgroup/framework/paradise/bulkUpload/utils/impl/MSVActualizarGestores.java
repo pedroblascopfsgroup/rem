@@ -178,15 +178,16 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 						if (Checks.esNulo(codMediadorPrimario) && !Checks.esNulo(codMediadorEspejo)
 								&& !PONER_NULL_A_APIS.equals(codMediadorEspejo)) {
 							codMediadorPrimario = particularValidator.getCodigoMediadorPrimarioByActivo(numActivo);
+							
+							if (Checks.esNulo(codMediadorPrimario)) {
+								mapaErrores.get(messageServices.getMessage(NO_TIENE_API_PRIMARIO)).add(fila);
+								esCorrecto = false;
+							}
 						} else if (Checks.esNulo(codMediadorEspejo) && !Checks.esNulo(codMediadorPrimario)
 								&& !PONER_NULL_A_APIS.equals(codMediadorPrimario)) {
 							codMediadorEspejo = particularValidator.getCodigoMediadorEspejoByActivo(numActivo);
 						}
 
-						if (Checks.esNulo(codMediadorPrimario)) {
-							mapaErrores.get(messageServices.getMessage(NO_TIENE_API_PRIMARIO)).add(fila);
-							esCorrecto = false;
-						}
 
 						if (!Checks.esNulo(codMediadorPrimario) && !Checks.esNulo(codMediadorEspejo)
 								&& !PONER_NULL_A_APIS.equals(codMediadorPrimario)

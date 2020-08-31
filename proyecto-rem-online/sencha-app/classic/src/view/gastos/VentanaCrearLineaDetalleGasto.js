@@ -22,6 +22,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
     	var disabledSinSubtipoGasto = true;
     	var estadoParaGuardar = me.lookupController().getView().getViewModel().getData().gasto.getData().estadoModificarLineasDetalleGasto;
     	var isGastoRefacturado = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPorOtroGasto;
+    	var isGastoRefacturadoPadre = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPadre;
     	var disabledCuotaTipoImpositivo = false;
     	
 	    var subtipoGasto= null,		baseSujeta= null,		baseNoSujeta= null,			recargo= null,
@@ -76,10 +77,18 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
     	me.buttons = [ 
     		{ 
     			formBind: true, 
+    			itemId: 'btnActualizarCuentasYPartidas',
+    			reference: 'btnActualizarCuentasYPartidas',
+    			text: 'Actualizar cuentas y partidas', 
+    			handler: 'calcularCuentasYPartidas',
+    			disabled: (disabledSinSubtipoGasto)
+    		},
+    		{ 
+    			formBind: true, 
     			itemId: 'btnGuardar', 
     			text: 'Guardar', 
     			handler: 'onClickGuardarLineaDetalleGasto',
-    			disabled: (!estadoParaGuardar || isGastoRefacturado)
+    			disabled: (!estadoParaGuardar || isGastoRefacturado || isGastoRefacturadoPadre)
     		},
     		{ 
     			itemId: 'btnCancelar', 

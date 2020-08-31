@@ -55,7 +55,7 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
 		} else if(noSePuedenAnyadirEliminar == undefined || noSePuedenAnyadirEliminar){
 			me.fireEvent("errorToast", HreRem.i18n("msg.refacturar.refacturable.ko.estado.invalido"));
 		}else{
-			Ext.create('HreRem.view.gastos.AnyadirNuevoGastoRefacturado',{idGasto: gasto.id, grid:this, nifPropietario: gasto.nifPropietario}).show();  
+			Ext.create('HreRem.view.gastos.AnyadirNuevoGastoRefacturado',{idGasto: gasto.id, grid:this, nifPropietario: gasto.nifPropietario, gasto:gasto}).show();  
 		}
     },
     
@@ -93,7 +93,9 @@ Ext.define('HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes', {
 		    	callback: function(options, success, response){
 		    		var datosGeneralesGastos = me.getView().grid.up("gastodetalle").down("[reference=datosgeneralesgastoref]");
 		    		var datosDetalleEconomico = me.getView().grid.up("gastodetalle").down("[reference=detalleeconomicogastoref]");
-		    		datosGeneralesGastos.funcionRecargar();
+		    		var gridLineasDetalle = me.getView().grid.up("gastodetalle").down("[reference=lineaDetalleGastoGrid]");	    		
+		    		gridLineasDetalle.getStore().reload();
+		    		me.lookupController().cargarTabDataCambiarRefacturables(datosGeneralesGastos,gridLineasDetalle);
 		    		datosDetalleEconomico.funcionRecargar();
 				}		     
 		  });		

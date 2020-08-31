@@ -174,6 +174,9 @@ public class GastoLineaDetalle implements Serializable, Auditable{
     @JoinColumn(name = "GLD_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<GastoLineaDetalleTrabajo> gastoLineaTrabajoList;    
+    
+	@Column(name="GLD_MATRICULA_REF")
+    private String matriculaRefacturado;
 	
 	@Version   
 	private Long version;
@@ -508,6 +511,14 @@ public class GastoLineaDetalle implements Serializable, Auditable{
 
 	public void setGastoLineaTrabajoList(List<GastoLineaDetalleTrabajo> gastoLineaTrabajoList) {
 		this.gastoLineaTrabajoList = gastoLineaTrabajoList;
+	}
+	
+	public String getMatriculaRefacturado() {
+		return matriculaRefacturado;
+	}
+
+	public void setMatriculaRefacturado(String matriculaRefacturado) {
+		this.matriculaRefacturado = matriculaRefacturado;
 	}
 
 	public Long getVersion() {

@@ -1,11 +1,11 @@
 package es.pfsgroup.plugin.rem.gasto.linea.detalle;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-import org.aspectj.apache.bcel.generic.NEW;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +25,6 @@ import es.pfsgroup.plugin.rem.gasto.linea.detalle.dao.GastoLineaDetalleDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoConfiguracionCuentasContables;
 import es.pfsgroup.plugin.rem.model.ActivoConfiguracionPtdasPrep;
-import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoLineaDetalleGasto;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
@@ -35,7 +34,6 @@ import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalleTrabajo;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoRefacturable;
-import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
@@ -45,7 +43,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 
 @Service("gastoLineaDetalleManager")
 public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
-
+	
 	@Autowired
 	private GenericAdapter genericAdapter;
 	
@@ -181,7 +179,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		gastoLineaDetalle.setPrincipalNoSujeto(dto.getBaseNoSujeta());
 		gastoLineaDetalle.setRecargo(dto.getRecargo());
 		
-		if(gastoLineaDetalle.getTipoRecargoGasto() != null) {
+		if(dto.getTipoRecargo() != null) {
 			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoRecargo());
 			gastoLineaDetalle.setTipoRecargoGasto(genericDao.get(DDTipoRecargoGasto.class, filtro));
 		}
@@ -507,6 +505,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	}
 	
 	@Override
+	@Transactional(readOnly = false)
 	public HashSet<String> devolverNumeroLineas(List<GastoLineaDetalle> gastoLineaDetalleList, HashSet<String>  tipoGastoImpuestoList) {
 			
 		String tipoGastoImpuestoString;
@@ -514,8 +513,9 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleList) {
 				if(gastoLineaDetalle.getSubtipoGasto() != null) {
 					tipoGastoImpuestoString = devolverSubGastoImpuestImpositivo(gastoLineaDetalle);
-
 					tipoGastoImpuestoList.add(tipoGastoImpuestoString);
+					gastoLineaDetalle.setMatriculaRefacturado(tipoGastoImpuestoString);
+					genericDao.save(GastoLineaDetalle.class, gastoLineaDetalle);
 				}
 				
 			}
@@ -523,6 +523,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	}
 	
 	@Override
+	@Transactional(readOnly = false)
 	public void createLineasDetalleGastosRefacturados(List<String>  tipoGastoImpuestoList, List<String> listaNumerosGasto, GastoProveedor gastoProveedor) {
 		
 		List<Long>  listaIdGastosId = new ArrayList<Long>();
@@ -548,26 +549,33 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 					if(tipoImpuesto != null) {
 						tipoImpuestoId = tipoImpuesto.getId();
 					}
-					tipoImpositivo = Double.parseDouble(partes.get(2));
+					if(partes.size() > 2) {
+						tipoImpositivo = Double.parseDouble(partes.get(2));
+					}
 					
 				}
 				
-				List<GastoLineaDetalle> gastoDetalleLineaList = gastoLineaDetalleDao.getGastoLineaDetalleBySubtipoGastoAndImpuesto(listaIdGastosId, subtipoGasto.getId(), tipoImpuestoId, tipoImpositivo);
+				List<GastoLineaDetalle> gastoDetalleLineaList = gastoLineaDetalleDao.getGastoLineaDetalleBySubtipoGastoAndImpuesto(listaIdGastosId, tipoGastoImporte);
 				GastoLineaDetalle gastoLineaDetalleNueva = new GastoLineaDetalle();
 				
 				gastoLineaDetalleNueva.setGastoProveedor(gastoProveedor);
-				gastoLineaDetalleNueva.setSubtipoGasto(subtipoGasto);
-				gastoLineaDetalleNueva.setTipoImpuesto(tipoImpuesto);
-				gastoLineaDetalleNueva.setImporteIndirectoTipoImpositivo(tipoImpositivo);
-				if(tipoImpuestoId == null) {
-					gastoLineaDetalleNueva.setEsImporteIndirectoExento(true);
-				}else {
+				gastoLineaDetalleNueva.setSubtipoGasto(subtipoGasto); 
+				gastoLineaDetalleNueva.setTipoImpuesto(tipoImpuesto); 
+				
+				if(tipoImpuestoId != null) {
 					gastoLineaDetalleNueva.setEsImporteIndirectoExento(false);
+					gastoLineaDetalleNueva.setImporteIndirectoTipoImpositivo(tipoImpositivo);
+					gastoLineaDetalleNueva.setEsImporteIndirectoRenunciaExento(false);
+				}else {
+					gastoLineaDetalleNueva.setEsImporteIndirectoExento(null);
+					gastoLineaDetalleNueva.setEsImporteIndirectoRenunciaExento(null);
 				}
-				gastoLineaDetalleNueva.setEsImporteIndirectoRenunciaExento(false);
+				
 				DtoLineaDetalleGasto dto= calcularCuentasYPartidas(gastoProveedor.getId(), null, subtipoGasto.getCodigo());
 				gastoLineaDetalleNueva = calcularCamposLineaRefacturada(gastoDetalleLineaList, gastoLineaDetalleNueva, dto);
 				gastoLineaDetalleNueva.setAuditoria(Auditoria.getNewInstance());
+				
+				gastoLineaDetalleNueva.setMatriculaRefacturado(devolverSubGastoImpuestImpositivo(gastoLineaDetalleNueva));
 				
 				genericDao.save(GastoLineaDetalle.class, gastoLineaDetalleNueva);
 
@@ -575,6 +583,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				
 				tipoImpuestoId = null;
 				tipoImpositivo = null;
+				tipoImpuesto = null;
 			}
 		}	
 	}
@@ -590,7 +599,6 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		Double provSuplidos = 0.0;
 		Double importeTotal = 0.0;
 		Double cuota = 0.0;
-		
 		
 		for (GastoLineaDetalle gastoDetalleLinea : gastoDetalleLineaList) {
 			if(gastoDetalleLinea.getPrincipalSujeto() != null) {
@@ -626,6 +634,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			
 		}
 		
+		
 		gastoLineaDetalleNueva.setPrincipalSujeto(principalSujeto);
 		gastoLineaDetalleNueva.setPrincipalNoSujeto(principalNoSujeto);
 		gastoLineaDetalleNueva.setRecargo(recargo);
@@ -659,36 +668,38 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		return gastoLineaDetalleNueva;
 	}
 	
+	@Transactional(readOnly = false)
 	private void crearRelacionGastoActivoRefacturado(List<GastoLineaDetalle> gastoDetalleLineaList, GastoLineaDetalle gastoLineaDetalleNueva) {
-		HashSet<Long> idsActivos = new HashSet<Long>();
+		HashSet<String> idsActivos = new HashSet<String>();
 		GastoProveedor gastoProveedor = gastoLineaDetalleNueva.getGastoProveedor();
-		if (gastoProveedor.getPropietario() != null && gastoProveedor.getPropietario().getCartera() != null	
-				&& DDCartera.CODIGO_CARTERA_SAREB.equals(gastoProveedor.getPropietario().getCartera().getCodigo())) {
-			Filter filtroEntidadActivo = genericDao.createFilter(FilterType.EQUALS, "entidadGasto.codigo", DDEntidadGasto.CODIGO_ACTIVO);
+		if (gastoProveedorApi.isGastoSareb(gastoProveedor)) {
 			for (GastoLineaDetalle gastoLineaDetalle : gastoDetalleLineaList) {
 				Filter filtroIdGastoLinea = genericDao.createFilter(FilterType.EQUALS, "gastoLineaDetalle.id", gastoLineaDetalle.getId());
-				List<GastoLineaDetalleEntidad> listaEntidades= genericDao.getList(GastoLineaDetalleEntidad.class, filtroIdGastoLinea, filtroEntidadActivo);
+				List<GastoLineaDetalleEntidad> listaEntidades= genericDao.getList(GastoLineaDetalleEntidad.class, filtroIdGastoLinea);
 				if(listaEntidades != null && !listaEntidades.isEmpty()) {
 					for (GastoLineaDetalleEntidad entidad : listaEntidades) {
-						idsActivos.add(entidad.getEntidad());
+						if(entidad.getEntidad() != null && entidad.getEntidadGasto() != null )
+						idsActivos.add(entidad.getEntidad().toString() + "-"+ entidad.getEntidadGasto().getCodigo());
 					}
 				}
 			}
 			
-			List<Long> idsActivosList = new ArrayList<Long>(idsActivos);
-			if(!idsActivosList.isEmpty()) {
-				for (Long idActivo : idsActivosList) {
+			List<String> idsEntidadList = new ArrayList<String>(idsActivos);
+			if(!idsEntidadList.isEmpty()) {
+				for (String entidadString : idsEntidadList) {
+					List<String> partes = Arrays.asList(entidadString.split("-"));	
+					
 					GastoLineaDetalleEntidad nuevaRelacionActivoGasto = new GastoLineaDetalleEntidad();
 					nuevaRelacionActivoGasto.setGastoLineaDetalle(gastoLineaDetalleNueva);
-					nuevaRelacionActivoGasto.setEntidad(idActivo);
-					DDEntidadGasto entidad = (DDEntidadGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDEntidadGasto.class, DDEntidadGasto.CODIGO_ACTIVO);
+					nuevaRelacionActivoGasto.setEntidad(Long.valueOf(partes.get(0)));
+					DDEntidadGasto entidad = (DDEntidadGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDEntidadGasto.class, partes.get(1));
 					nuevaRelacionActivoGasto.setEntidadGasto(entidad);
-					//nuevaRelacionActivoGasto.setParticipacionGasto(100.0 / Double.valueOf(idsActivos.size())); => Calcular
+					nuevaRelacionActivoGasto.setParticipacionGasto(100.0 / Double.valueOf(idsActivos.size()));
 					//nuevaRelacionActivoGasto.setReferenciaCatastral(referenciaCatastral);
 					nuevaRelacionActivoGasto.setAuditoria(Auditoria.getNewInstance());
 					
 					
-					genericDao.save(GastoLineaDetalle.class, gastoLineaDetalleNueva);
+					genericDao.save(GastoLineaDetalleEntidad.class, nuevaRelacionActivoGasto);
 				}
 			}
 		}
@@ -725,15 +736,11 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		if(gastoLineaDetalle.getEsImporteIndirectoRenunciaExento() != null && gastoLineaDetalle.getEsImporteIndirectoRenunciaExento()) {
 			exento = false;
 		}
-		if(gastoLineaDetalle.getTipoImpuesto() != null && !exento) {
+		if(gastoLineaDetalle.getTipoImpuesto() != null && !exento && gastoLineaDetalle.getImporteIndirectoTipoImpositivo() != null) {
 			subGastoImpuestImpositivo = subGastoImpuestImpositivo + "-" +gastoLineaDetalle.getTipoImpuesto().getCodigo();
-			if(gastoLineaDetalle.getImporteIndirectoTipoImpositivo() != null) {
-				subGastoImpuestImpositivo = subGastoImpuestImpositivo + "-" + gastoLineaDetalle.getImporteIndirectoTipoImpositivo().toString();
-			}else {
-				subGastoImpuestImpositivo = subGastoImpuestImpositivo + "-" + "0";
-
-			}
+			subGastoImpuestImpositivo = subGastoImpuestImpositivo + "-" + gastoLineaDetalle.getImporteIndirectoTipoImpositivo().toString();
 		}
+		
 		
 		return subGastoImpuestImpositivo;
 	}
@@ -747,5 +754,233 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		}
 		
 		return gastoLineaDetalleList.get(0);
+	}
+	
+	@Override 
+	@Transactional(readOnly = false)
+	public void eliminarLineasRefacturadas(Long idGasto) {
+		GastoProveedor gastoPadre = gastoProveedorApi.findOne(idGasto);
+	
+		List<GastoLineaDetalle> gastoLineaDetalleList  = gastoPadre.getGastoLineaDetalleList();
+		
+		if(gastoLineaDetalleList != null && !gastoLineaDetalleList.isEmpty()) {
+			for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleList) {
+				List<GastoLineaDetalleEntidad> gastoLineaDetalleEntidadList = gastoLineaDetalle.getGastoLineaEntidadList();
+				if(gastoLineaDetalleEntidadList != null && !gastoLineaDetalleEntidadList.isEmpty()) {
+					for (GastoLineaDetalleEntidad gastoLineaDetalleEntidad : gastoLineaDetalleEntidadList) {
+						gastoLineaDetalleEntidad.getAuditoria().setBorrado(true);
+						gastoLineaDetalleEntidad.getAuditoria().setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
+						gastoLineaDetalleEntidad.getAuditoria().setFechaBorrar(new Date());
+						
+						genericDao.save(GastoLineaDetalleEntidad.class, gastoLineaDetalleEntidad);
+					}
+				}
+				
+				gastoLineaDetalle.getAuditoria().setBorrado(true);
+				gastoLineaDetalle.getAuditoria().setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
+				gastoLineaDetalle.getAuditoria().setFechaBorrar(new Date());
+				
+				genericDao.save(GastoLineaDetalle.class, gastoLineaDetalle);
+			}
+		}
+		Filter filtroRefacturable = genericDao.createFilter(FilterType.EQUALS, "idGastoProveedor", gastoPadre.getId());
+		List<GastoRefacturable> listaGastosRefacturables = genericDao.getList(GastoRefacturable.class,filtroRefacturable);
+		List<String> listaGastosHijosNumeros = new ArrayList<String>();
+		HashSet<String>  tipoGastoImpuestoHash = new HashSet<String>();
+		for (GastoRefacturable gastoRefacturable : listaGastosRefacturables) {
+			GastoProveedor  gasto = gastoProveedorApi.findOne(gastoRefacturable.getGastoProveedorRefacturado());
+			if(gasto != null && gasto.getNumGastoHaya() != null) {
+				listaGastosHijosNumeros.add(gasto.getNumGastoHaya().toString());
+				GastoProveedor gastoProveedor = gastoProveedorApi.findOne(gastoRefacturable.getGastoProveedorRefacturado());
+				List<GastoLineaDetalle> gastoLineaDetalleListPorGasto  = gastoProveedor.getGastoLineaDetalleList();
+				if(gastoLineaDetalleListPorGasto != null && !gastoLineaDetalleListPorGasto.isEmpty()) {
+					tipoGastoImpuestoHash = devolverNumeroLineas(gastoLineaDetalleListPorGasto, tipoGastoImpuestoHash);
+				}
+			}
+		}
+		
+		List<String> tipoGastoImpuestoList = new ArrayList<String>(tipoGastoImpuestoHash);
+		if(!listaGastosHijosNumeros.isEmpty() && !tipoGastoImpuestoList.isEmpty()) {
+			createLineasDetalleGastosRefacturados(tipoGastoImpuestoList, listaGastosHijosNumeros, gastoPadre);
+		}
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void recalcularPorcentajeParticipacion(GastoProveedor gasto) {
+		List<GastoLineaDetalle> gastoLineaDetalleList = gasto.getGastoLineaDetalleList();
+		Double porcentajeParticipacion= 0.0;
+		if(gastoLineaDetalleList != null && !gastoLineaDetalleList.isEmpty()) {
+			for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleList) {
+				Filter filtroIdGastoLinea = genericDao.createFilter(FilterType.EQUALS, "gastoLineaDetalle.id", gastoLineaDetalle.getId());
+				List<GastoLineaDetalleEntidad> activoRelacionList = genericDao.getList(GastoLineaDetalleEntidad.class, filtroIdGastoLinea);
+				if(activoRelacionList != null && !activoRelacionList.isEmpty()) {	
+					porcentajeParticipacion = 100.0 / Double.valueOf(activoRelacionList.size());
+					for (GastoLineaDetalleEntidad activoRelacion : activoRelacionList) {
+						activoRelacion.setParticipacionGasto(porcentajeParticipacion);
+						genericDao.save(GastoLineaDetalleEntidad.class, activoRelacion);
+					}
+				}
+
+			}
+		}
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public List<String> crearLineasRefacturadasAGastosExistentes(Long idGastoPadre, GastoLineaDetalle lineaGastoDetalle, List<String> lineasDetallePadreListString, boolean esSareb) throws IllegalAccessException, InvocationTargetException {
+		String tipoLinea = devolverSubGastoImpuestImpositivo(lineaGastoDetalle);
+		List<String> lineasCreadasMatricula = new ArrayList<String>();
+		boolean crearLinea = true;
+		List<Long> idGastoPadreList = new ArrayList<Long>();
+		idGastoPadreList.add(idGastoPadre);
+		GastoProveedor gastoPadre = gastoProveedorApi.findOne(idGastoPadre);
+		
+		for (String lineaDetalleString : lineasDetallePadreListString) {
+			if(lineaDetalleString.equals(tipoLinea)) {
+							
+				List<String> partes = Arrays.asList(lineaDetalleString.split("-"));	
+				if(!partes.isEmpty()) {
+					DDSubtipoGasto subtipoGasto = (DDSubtipoGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoGasto.class, partes.get(0));
+					
+					List<GastoLineaDetalle> lineaDetalleGastoPadreList = gastoLineaDetalleDao.getGastoLineaDetalleBySubtipoGastoAndImpuesto( idGastoPadreList, lineaDetalleString);
+					if(lineaDetalleGastoPadreList != null && !lineaDetalleGastoPadreList.isEmpty()) {
+						GastoLineaDetalle lineaDetalleGastoPadre=lineaDetalleGastoPadreList.get(0);
+						
+						DtoLineaDetalleGasto dto= calcularCuentasYPartidas(gastoPadre.getId(), null, subtipoGasto.getCodigo());
+						lineaDetalleGastoPadreList.add(lineaGastoDetalle);
+						lineaDetalleGastoPadre = calcularCamposLineaRefacturada(lineaDetalleGastoPadreList, lineaDetalleGastoPadreList.get(0), dto);
+						lineaDetalleGastoPadre.setAuditoria(Auditoria.getNewInstance());
+						
+						lineasCreadasMatricula.add(lineaDetalleString);
+						genericDao.save(GastoLineaDetalle.class, lineaDetalleGastoPadre);
+						
+						if(esSareb) {
+							Filter filter = genericDao.createFilter(FilterType.EQUALS, "gastoLineaDetalle.id", lineaDetalleGastoPadre.getId());
+							List<GastoLineaDetalleEntidad> gastoLineaDetalleEntidadPadreList = genericDao.getList(GastoLineaDetalleEntidad.class, filter );
+							Filter filterHijo = genericDao.createFilter(FilterType.EQUALS, "gastoLineaDetalle.id", lineaGastoDetalle.getId());
+							List<GastoLineaDetalleEntidad> gastoLineaDetalleEntidadHijoList = genericDao.getList(GastoLineaDetalleEntidad.class, filterHijo);
+							boolean nuevaRelacion = true;
+							for (GastoLineaDetalleEntidad gastoLineaDetalleEntidadHijo : gastoLineaDetalleEntidadHijoList) {
+								for (GastoLineaDetalleEntidad gastoLineaDetalleEntidadPadre : gastoLineaDetalleEntidadPadreList) {
+									if(gastoLineaDetalleEntidadHijo.getEntidad().equals(gastoLineaDetalleEntidadPadre.getEntidad())){
+										nuevaRelacion = false;
+										break;
+									}
+								}
+								
+								if(nuevaRelacion) {
+									GastoLineaDetalleEntidad gastoLineaDetalleEntidadNueva= new GastoLineaDetalleEntidad();
+									gastoLineaDetalleEntidadNueva = copiarGastoLineaDetalleEntidad(gastoLineaDetalleEntidadNueva, gastoLineaDetalleEntidadHijo);
+									gastoLineaDetalleEntidadNueva.setGastoLineaDetalle(lineaDetalleGastoPadre);
+									gastoLineaDetalleEntidadNueva.setAuditoria(Auditoria.getNewInstance());
+									genericDao.save(GastoLineaDetalleEntidad.class, gastoLineaDetalleEntidadNueva);
+								}
+								nuevaRelacion = true;
+							}
+						}
+					}
+					crearLinea = false;
+					break;
+				
+				}
+			}
+		}
+		if(crearLinea) {
+			GastoLineaDetalle lineaDetalleGastoNueva= new GastoLineaDetalle();
+				
+				lineaDetalleGastoNueva = copiarGastoLineaDetalle( gastoPadre, lineaDetalleGastoNueva, lineaGastoDetalle);
+				lineaDetalleGastoNueva.setGastoProveedor(gastoPadre);
+				lineaDetalleGastoNueva.setAuditoria(Auditoria.getNewInstance());
+				genericDao.save(GastoLineaDetalle.class, lineaDetalleGastoNueva);
+				String nuevasLineasCreadas = devolverSubGastoImpuestImpositivo(lineaDetalleGastoNueva);
+				lineaDetalleGastoNueva.setMatriculaRefacturado(nuevasLineasCreadas);
+				if(nuevasLineasCreadas != null) {
+					lineasCreadasMatricula.add(nuevasLineasCreadas);
+				}
+			if(esSareb) {
+				List<GastoLineaDetalleEntidad> gastoLineaDetalleEntidadList  = lineaGastoDetalle.getGastoLineaEntidadList();
+				if(gastoLineaDetalleEntidadList != null && !gastoLineaDetalleEntidadList.isEmpty()) {
+					for (GastoLineaDetalleEntidad gastoLineaDetalleEntidad : gastoLineaDetalleEntidadList) {
+						GastoLineaDetalleEntidad gastoLineaDetalleEntidadNueva= new GastoLineaDetalleEntidad();
+						gastoLineaDetalleEntidadNueva = copiarGastoLineaDetalleEntidad(gastoLineaDetalleEntidadNueva, gastoLineaDetalleEntidad );
+						gastoLineaDetalleEntidadNueva.setGastoLineaDetalle(lineaDetalleGastoNueva);
+						gastoLineaDetalleEntidadNueva.setAuditoria(Auditoria.getNewInstance());
+						genericDao.save(GastoLineaDetalleEntidad.class, gastoLineaDetalleEntidadNueva);
+						
+					}
+				}
+			}
+		}
+		recalcularPorcentajeParticipacion(gastoPadre);
+		
+		return lineasCreadasMatricula;
+	}
+	
+	@Transactional(readOnly = false)
+	void eliminarLineasDetalleGastoVacias(GastoProveedor gastoPadre) {
+		List<GastoLineaDetalle> gastoLineaDetalleList = gastoPadre.getGastoLineaDetalleList();
+		
+		if(gastoLineaDetalleList != null && !gastoLineaDetalleList.isEmpty()) {
+			for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleList) {
+				if(gastoLineaDetalle.getImporteTotal() != null && gastoLineaDetalle.getImporteTotal() == 0.0) {
+					Filter filter = genericDao.createFilter(FilterType.EQUALS, "gastoLineaDetalle.id", gastoLineaDetalle.getId());
+					List<GastoLineaDetalleEntidad> gastoLineaDetalleEntidadList = genericDao.getList(GastoLineaDetalleEntidad.class, filter);
+					if(gastoLineaDetalleEntidadList != null && !gastoLineaDetalleEntidadList.isEmpty()) {
+						for (GastoLineaDetalleEntidad gastoLineaDetalleEntidad : gastoLineaDetalleEntidadList) {
+							gastoLineaDetalleEntidad.getAuditoria().setBorrado(true);
+							gastoLineaDetalleEntidad.getAuditoria().setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
+							gastoLineaDetalleEntidad.getAuditoria().setFechaBorrar(new Date());
+							
+							genericDao.save(GastoLineaDetalleEntidad.class, gastoLineaDetalleEntidad);
+						}
+					}
+					gastoLineaDetalle.getAuditoria().setBorrado(true);
+					gastoLineaDetalle.getAuditoria().setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
+					gastoLineaDetalle.getAuditoria().setFechaBorrar(new Date());
+					
+					genericDao.save(GastoLineaDetalle.class, gastoLineaDetalle);
+				}
+			}
+		}
+	}
+	
+	GastoLineaDetalle copiarGastoLineaDetalle(GastoProveedor gastoPadre, GastoLineaDetalle gastoLineaDetallePadre, GastoLineaDetalle gastoLineaDetalleHija) {
+		
+		DtoLineaDetalleGasto dto= calcularCuentasYPartidas(gastoPadre.getId(), null, gastoLineaDetalleHija.getSubtipoGasto().getCodigo());
+		
+		gastoLineaDetallePadre.setSubtipoGasto(gastoLineaDetalleHija.getSubtipoGasto());
+		gastoLineaDetallePadre.setPrincipalSujeto(gastoLineaDetalleHija.getPrincipalSujeto());
+		gastoLineaDetallePadre.setPrincipalNoSujeto(gastoLineaDetalleHija.getPrincipalNoSujeto());
+		gastoLineaDetallePadre.setTipoRecargoGasto(gastoLineaDetalleHija.getTipoRecargoGasto());
+		gastoLineaDetallePadre.setRecargo(gastoLineaDetalleHija.getRecargo());
+		gastoLineaDetallePadre.setInteresDemora(gastoLineaDetalleHija.getInteresDemora());
+		gastoLineaDetallePadre.setCostas(gastoLineaDetalleHija.getCostas());
+		gastoLineaDetallePadre.setProvSuplidos(gastoLineaDetalleHija.getProvSuplidos());
+		gastoLineaDetallePadre.setImporteIndirectoCuota(gastoLineaDetalleHija.getImporteIndirectoCuota());
+		gastoLineaDetallePadre.setImporteTotal(gastoLineaDetalleHija.getImporteTotal());
+		
+		gastoLineaDetallePadre.setCccBase(dto.getCcBase());
+		gastoLineaDetallePadre.setCppBase(dto.getPpBase());
+		gastoLineaDetallePadre.setCccEsp(dto.getCcEsp());
+		gastoLineaDetallePadre.setCppEsp(dto.getPpEsp());
+		gastoLineaDetallePadre.setCccTasas(dto.getCcTasas());
+		gastoLineaDetallePadre.setCppTasas(dto.getPpTasas());
+		gastoLineaDetallePadre.setCccRecargo(dto.getCcRecargo());
+		gastoLineaDetallePadre.setCppRecargo(dto.getPpRecargo());
+		gastoLineaDetallePadre.setCccIntereses(dto.getCcInteres());
+		gastoLineaDetallePadre.setCppIntereses(dto.getPpInteres());
+		
+		return gastoLineaDetallePadre;
+	}
+	
+	GastoLineaDetalleEntidad copiarGastoLineaDetalleEntidad(GastoLineaDetalleEntidad gastoLineaDetalleEntidadPadre, GastoLineaDetalleEntidad gastoLineaDetalleEntidadHija) {
+		
+		gastoLineaDetalleEntidadPadre.setEntidadGasto(gastoLineaDetalleEntidadHija.getEntidadGasto());
+		gastoLineaDetalleEntidadPadre.setEntidad(gastoLineaDetalleEntidadHija.getEntidad());
+		gastoLineaDetalleEntidadPadre.setParticipacionGasto(gastoLineaDetalleEntidadHija.getParticipacionGasto());
+		gastoLineaDetalleEntidadPadre.setReferenciaCatastral(gastoLineaDetalleEntidadHija.getReferenciaCatastral());
+		
+		return gastoLineaDetalleEntidadPadre;
 	}
 }

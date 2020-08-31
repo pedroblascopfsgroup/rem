@@ -64,7 +64,6 @@ import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
 import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.DtoLineaDetalleGasto;
-import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
@@ -1153,21 +1152,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 
 		try {
 			if(!Checks.esNulo(idGasto)) {
-				List<String> gastosRefacturablesLista = new ArrayList<String>();
-				
-				//Esta línea de código sirve para validar los gastos a anyadir,
-				//en caso de no cumplir, lanza excepciones visuales para front.
-				gastoProveedorApi.validarGastosARefacturar(idGasto, gastosRefacturables);
-				GastoProveedor gastoProveedor = gastoProveedorApi.findOne(Long.valueOf(idGasto));
-				
-				if(gastosRefacturables != null && gastoProveedor != null && gastoProveedor.getTipoGasto() != null) {
-					gastosRefacturablesLista = 
-							gastoProveedorApi.getGastosRefacturados(gastosRefacturables, nifPropietario, gastoProveedor.getTipoGasto().getCodigo());
-				}
-				
-				if(!Checks.estaVacio(gastosRefacturablesLista)){
-					gastoProveedorApi.anyadirGastosRefacturadosAGastoExistente(idGasto, gastosRefacturablesLista);
-				}
+				gastoProveedorApi.anyadirGastosRefacturablesSiCumplenCondiciones(idGasto, gastosRefacturables, nifPropietario);
 			}		
 			model.put("success", true);			
 		} catch (JsonViewerException jve) {
@@ -1195,6 +1180,9 @@ public class GastosProveedorController extends ParadiseJsonController {
 				noTieneGastosRefacturados = gastoProveedorApi.eliminarGastoRefacturado(idGasto, Long.valueOf(numGastoRefacturado));
 			}
 			
+			if(gastoProveedorApi.isGastoSareb(gastoProveedorApi.findOne(idGasto))){
+				gastoLineaDetalleApi.eliminarLineasRefacturadas(idGasto);
+			}
 		}
 		
 		try {	

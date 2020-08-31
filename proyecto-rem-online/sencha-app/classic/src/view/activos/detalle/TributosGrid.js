@@ -210,7 +210,7 @@ Ext.define('HreRem.view.activos.detalle.TributosGrid', {
 					addUxReadOnlyEditFieldPlugin: false,
 	        		   labelWidth: '25%',
 			            width: '15%',
-	            		allowBlank: true,
+	            		allowBlank: false,
 		        	
 	        		bind: {
 	            		store: '{comboTipoSolicitud}',

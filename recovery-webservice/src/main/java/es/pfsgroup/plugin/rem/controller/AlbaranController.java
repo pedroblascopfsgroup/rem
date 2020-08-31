@@ -54,7 +54,7 @@ public class AlbaranController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getProveedores( ModelMap model) {			
+	public ModelAndView getProveedores(DtoProveedorFilter filtro, ModelMap model) {			
 		try{
 			model.put("data", albaranApi.getProveedores());
 		} catch (Exception e) {

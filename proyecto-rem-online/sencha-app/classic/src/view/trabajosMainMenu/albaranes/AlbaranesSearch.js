@@ -161,7 +161,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesSearch', {
 							fieldLabel : HreRem.i18n('fieldlabel.proveedor'),
 							name : 'proveedor',
 				    		valueField : 'id',
-							displayField : 'nombre',
+							displayField : 'descripcion',
 							filtradoEspecial: true,
 				    		emptyText: 'Introduzca nombre mediador',
 				    		bind: {

@@ -99,12 +99,9 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesModel', {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				timeout: 300000,
-				remoteUrl: 'albaran/getProveedores',
-				extraParams: {estadoProveedorCodigo: '04',
-								tipoProveedorCodigo: '03'}
+				remoteUrl: 'albaran/getProveedores'
 			},
-		    displayField: 'nombre',
+		    displayField: 'descripcion',
 			valueField: 'id'				
 		}
   	

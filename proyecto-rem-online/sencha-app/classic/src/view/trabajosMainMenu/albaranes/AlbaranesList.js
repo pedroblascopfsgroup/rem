@@ -26,8 +26,8 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesList', {
 							align: 'right',
 							items: [{
 					            xtype: 'button',
-					            text : 'Validar Albaran',
-					            margin: '0 0 10 0',
+					            text : HreRem.i18n('fieldlabel.albaran.validar'),
+					            margin: '0 0 20 0',
 					            reference: 'botonValidarAlbaran',
 					            disabled: true,
 					            handler: 'validaAlbaranes'
@@ -38,7 +38,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesList', {
 		        },
 		        {
 		        	xtype: 'panel',
-		        	title: 'Detalle Albaran',
+		        	title: HreRem.i18n('fieldlabel.albaran.detalleAlbaran'),
 		        	bodyPadding: 20,
 		        	items: [
 		        		{

@@ -80,7 +80,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 			listaDetalleAlbaran.getStore().getProxy().setExtraParams({
                 numAlbaran: record.data.numAlbaran
             });
-			listaDetalleAlbaran.getStore().load();
+			listaDetalleAlbaran.getStore().loadPage(1);
 			listaTrabajos.getStore().removeAll();
 			me.calcularTotal(gridAlbaran,"albaranGrid",record);
 			me.habilitarAlbaran(listaDetalleAlbaran,boton,record);
@@ -122,7 +122,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 			listaDetallePrefactura.getStore().getProxy().setExtraParams({
                 numPrefactura: record.data.numPrefactura
             });
-			listaDetallePrefactura.getStore().load();
+			listaDetallePrefactura.getStore().loadPage(1);
 			me.calcularTotal(gridDetalleAlbaran,"detalleAlbaranGrid",record)
 			me.habilitarPrefactura(boton,record);
 		} else {
@@ -141,9 +141,11 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		listaTrabajos.getStore().getProxy().setExtraParams(null);
 		listaTrabajos.getStore().removeAll();
 		listaTrabajos.data = [];
+		listaTrabajos.getColumns()[8].setDisabled(false);
 	},
 	
 	calcularTotal: function(grid,descripcion,record){
+		var v;
 		if(descripcion == "detalleAlbaranGrid"){
 			var valor = 0;
 			if(record.data.importeTotalClienteDetalle > 0){
@@ -152,7 +154,9 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 				valor = record.data.importeTotalDetalle;
 			}
 			var totalPre = this.lookupReference('totalPrefactura');
-			totalPre.setValue(parseFloat(valor).toFixed(2));
+			v = parseFloat(valor).toFixed(2);
+			v = this.millaresConComas(v);
+			totalPre.setValue(v);
 		}
 		if(descripcion == "albaranGrid"){
 			var valorAlb = 0;
@@ -162,7 +166,9 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 				valorAlb = record.data.importeTotal;
 			}
 			var totalAlb = this.lookupReference('totalAlbaran');
-			totalAlb.setValue(parseFloat(valorAlb).toFixed(2));
+			v = parseFloat(valorAlb).toFixed(2);
+			v = this.millaresConComas(v);
+			totalAlb.setValue(v);
 		}
 	},
 	
@@ -178,10 +184,10 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		var rowTrabajo = me.lookupReference('detallePrefacturaGrid').getStore().getData().items[rowIndex];
 		var pos = gridTrabajo.data.indexOf(rowTrabajo.data.numTrabajo);
 		if(checked){
-			valorAlb = parseFloat(totalAlb.getValue()) + parseFloat(rowTrabajo.data.importeTotalPrefactura);
-			valorAlbC = parseFloat(totalAlb.getValue()) + parseFloat(rowTrabajo.data.importeTotalClientePrefactura);
-			valor = parseFloat(totalPre.getValue()) + parseFloat(rowTrabajo.data.importeTotalPrefactura);
-			valorC = parseFloat(totalPre.getValue()) + parseFloat(rowTrabajo.data.importeTotalClientePrefactura);
+			valorAlb = parseFloat(totalAlb.getValue().replace(/[,]/g, '')) + parseFloat(rowTrabajo.data.importeTotalPrefactura);
+			valorAlbC = parseFloat(totalAlb.getValue().replace(/[,]/g, '')) + parseFloat(rowTrabajo.data.importeTotalClientePrefactura);
+			valor = parseFloat(totalPre.getValue().replace(/[,]/g, '')) + parseFloat(rowTrabajo.data.importeTotalPrefactura);
+			valorC = parseFloat(totalPre.getValue().replace(/[,]/g, '')) + parseFloat(rowTrabajo.data.importeTotalClientePrefactura);
 			rowTrabajo.data.checkIncluirTrabajo = true;
 			if( pos >= 0){
 				gridTrabajo.data.splice(pos,1);
@@ -189,24 +195,25 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 			me.lookupReference('detallePrefacturaGrid').getStore().getData().items[rowIndex].data.checkIncluirTrabajo = true;
 			me.lookupReference('detallePrefacturaGrid').getView().refresh();
 		}else{
-			valorAlb = totalAlb.getValue() - rowTrabajo.data.importeTotalPrefactura;
-			valorAlbC = totalAlb.getValue() - rowTrabajo.data.importeTotalClientePrefactura;
-			valor = totalPre.getValue() - rowTrabajo.data.importeTotalPrefactura;
-			valorC = totalPre.getValue() - rowTrabajo.data.importeTotalClientePrefactura;
+			
+			valorAlb = parseFloat(totalAlb.getValue().replace(/[,]/g, '')) - rowTrabajo.data.importeTotalPrefactura;
+			valorAlbC = parseFloat(totalAlb.getValue().replace(/[,]/g, '')) - rowTrabajo.data.importeTotalClientePrefactura;
+			valor = parseFloat(totalPre.getValue().replace(/[,]/g, '')) - rowTrabajo.data.importeTotalPrefactura;
+			valorC = parseFloat(totalPre.getValue().replace(/[,]/g, '')) - rowTrabajo.data.importeTotalClientePrefactura;
 			rowTrabajo.data.checkIncluirTrabajo = false;
 			gridTrabajo.data.push(rowTrabajo.data.numTrabajo);
 			me.lookupReference('detallePrefacturaGrid').getStore().getData().items[rowIndex].data.checkIncluirTrabajo=false;
 			me.lookupReference('detallePrefacturaGrid').getView().refresh();
 		}
 		if(rowTrabajo.data.importeTotalPrefactura > 0 ){
-			totalAlb.setValue(parseFloat(valorAlb).toFixed(2));
+			totalAlb.setValue(me.millaresConComas(parseFloat(valorAlb).toFixed(2)));
 		}else{
-			totalAlb.setValue(parseFloat(valorAlbC).toFixed(2));
+			totalAlb.setValue(me.millaresConComas(parseFloat(valorAlbC).toFixed(2)));
 		}
 		if(rowTrabajo.data.importeTotalPrefactura > 0){
-			totalPre.setValue(parseFloat(valor).toFixed(2));
+			totalPre.setValue(me.millaresConComas(parseFloat(valor).toFixed(2)));
 		}else{
-			totalPre.setValue(parseFloat(valorC).toFixed(2));
+			totalPre.setValue(me.millaresConComas(parseFloat(valorC).toFixed(2)));
 		}
 
 	},
@@ -440,13 +447,22 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 	habilitarPrefactura : function(boton,record){
 		var me = this;
 		var botondos = this.lookupReference('botonValidarTrabajo');
+		var gridTrabajos = this.lookupReference('detallePrefacturaGrid');
 		if(record.data.estadoAlbaran == CONST.ESTADOS_PREFACTURAS['VALIDADO']){
 			boton.setDisabled(true);
 			botondos.setDisabled(true);
-		}else{botondos
+			gridTrabajos.getColumns()[8].setDisabled(true);
+		}else{
 			boton.setDisabled(false);
 			botondos.setDisabled(false);
+			gridTrabajos.getColumns()[8].setDisabled(false);
 		}
+	},
+	
+	millaresConComas: function(num){
+		var partes = num.toString().split(".");
+		partes[0] = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+		return partes.join('.');
 	}
 	
 });

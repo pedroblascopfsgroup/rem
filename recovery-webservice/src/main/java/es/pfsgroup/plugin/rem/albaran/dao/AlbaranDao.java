@@ -5,6 +5,7 @@ import java.util.List;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.plugin.rem.albaran.dto.DtoAlbaranFiltro;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.Albaran;
 import es.pfsgroup.plugin.rem.model.DtoDetalleAlbaran;
 import es.pfsgroup.plugin.rem.model.DtoDetallePrefactura;
@@ -25,5 +26,7 @@ public interface AlbaranDao extends AbstractDao<Albaran, Long>{
 	public Page getPrefacturas(DtoDetalleAlbaran numAlbaran);
 	
 	public Page getTrabajos(DtoDetallePrefactura dto);
+
+	public List<ActivoProveedor> getProveedores();
 		
 }

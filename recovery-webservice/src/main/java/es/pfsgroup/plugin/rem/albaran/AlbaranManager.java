@@ -18,10 +18,12 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.albaran.dao.AlbaranDao;
 import es.pfsgroup.plugin.rem.albaran.dto.DtoAlbaranFiltro;
 import es.pfsgroup.plugin.rem.api.AlbaranApi;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.Albaran;
 import es.pfsgroup.plugin.rem.model.DtoAlbaran;
 import es.pfsgroup.plugin.rem.model.DtoDetalleAlbaran;
 import es.pfsgroup.plugin.rem.model.DtoDetallePrefactura;
+import es.pfsgroup.plugin.rem.model.DtoProveedorMediador;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.Prefactura;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -54,6 +56,23 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 
 	public Page findPrefectura(DtoDetallePrefactura dto) {
 		return albaranDao.getTrabajos(dto);
+	}
+	
+	@Override
+	public List<DtoProveedorMediador> getProveedores() {
+		
+		List<ActivoProveedor> comboApiPrimario = albaranDao.getProveedores();
+		
+		List<DtoProveedorMediador> listaDto = new ArrayList<DtoProveedorMediador>();
+		
+		for (ActivoProveedor activoProveedor : comboApiPrimario) {
+			DtoProveedorMediador dto = new DtoProveedorMediador();
+			dto.setNombre(activoProveedor.getNombre());
+			dto.setId(activoProveedor.getId());
+			listaDto.add(dto);
+		}
+		
+		return listaDto;
 	}
 
 	@Transactional

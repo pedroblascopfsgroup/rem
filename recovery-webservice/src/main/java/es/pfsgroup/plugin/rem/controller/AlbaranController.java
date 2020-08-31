@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.DtoAlbaran;
 import es.pfsgroup.plugin.rem.model.DtoDetalleAlbaran;
 import es.pfsgroup.plugin.rem.model.DtoDetallePrefactura;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
+import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.dd.DDEstEstadoPrefactura;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAlbaran;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
@@ -49,6 +50,19 @@ public class AlbaranController extends ParadiseJsonController{
 		
 		return createModelAndViewJson(model);
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getProveedores( ModelMap model) {			
+		try{
+			model.put("data", albaranApi.getProveedores());
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put("success", false);
+			model.put("error", e.getMessage());
+		}
+		return createModelAndViewJson(model);
 	}
 	
 	@SuppressWarnings("unchecked")

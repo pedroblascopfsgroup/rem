@@ -1,9 +1,9 @@
 --/*
 --##########################################
---## AUTOR=Pablo Garcia Pallás
---## FECHA_CREACION=20200831
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20200701
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
+--## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10987
 --## PRODUCTO=SI
 --## Finalidad: DDL
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Quitamos filtro de proveedores Vigentes
 --##########################################
 --*/
 
@@ -43,8 +44,6 @@ BEGIN
     pve.pve_nombre
 FROM
     act_pve_proveedor         pve
-    LEFT JOIN dd_epr_estado_proveedor   epr ON pve.dd_epr_id = epr.dd_epr_id
-                                             AND epr.borrado = 0
 WHERE
     EXISTS (
         SELECT
@@ -57,7 +56,6 @@ WHERE
             pfa.borrado = 0
             AND pve_aux.pve_id = pve.pve_id
     )
-    AND epr.dd_epr_codigo = ''04''
 		';
 
 

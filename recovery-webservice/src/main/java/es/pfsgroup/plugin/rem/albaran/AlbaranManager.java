@@ -18,13 +18,16 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.albaran.dao.AlbaranDao;
 import es.pfsgroup.plugin.rem.albaran.dto.DtoAlbaranFiltro;
 import es.pfsgroup.plugin.rem.api.AlbaranApi;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.Albaran;
 import es.pfsgroup.plugin.rem.model.DtoAlbaran;
 import es.pfsgroup.plugin.rem.model.DtoDetalleAlbaran;
 import es.pfsgroup.plugin.rem.model.DtoDetallePrefactura;
+import es.pfsgroup.plugin.rem.model.DtoProveedorMediador;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.Prefactura;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.VbusquedaProveedoresCombo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstEstadoPrefactura;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAlbaran;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
@@ -54,6 +57,23 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 
 	public Page findPrefectura(DtoDetallePrefactura dto) {
 		return albaranDao.getTrabajos(dto);
+	}
+	
+	@Override
+	public List<VbusquedaProveedoresCombo> getProveedores() {
+		
+		List<VbusquedaProveedoresCombo> comboApiPrimario = albaranDao.getProveedores();
+		
+		List<DtoProveedorMediador> listaDto = new ArrayList<DtoProveedorMediador>();
+		
+//		for (VbusquedaProveedoresCombo activoProveedor : comboApiPrimario) {
+//			DtoProveedorMediador dto = new DtoProveedorMediador();
+//			dto.setNombre(activoProveedor.getProveedorNombre());
+//			dto.setId(activoProveedor.getId());
+//			listaDto.add(dto);
+//		}
+		
+		return comboApiPrimario;
 	}
 
 	@Transactional

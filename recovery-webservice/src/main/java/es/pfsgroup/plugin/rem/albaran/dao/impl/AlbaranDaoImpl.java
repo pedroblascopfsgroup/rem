@@ -24,16 +24,20 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.albaran.dao.AlbaranDao;
 import es.pfsgroup.plugin.rem.albaran.dto.DtoAlbaranFiltro;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.Albaran;
 import es.pfsgroup.plugin.rem.model.DtoAlbaran;
 import es.pfsgroup.plugin.rem.model.DtoDetalleAlbaran;
 import es.pfsgroup.plugin.rem.model.DtoDetallePrefactura;
+import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.Prefactura;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.VbusquedaProveedoresCombo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstEstadoPrefactura;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAlbaran;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 
 @Repository("AlbaranDao")
 public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements AlbaranDao {
@@ -195,6 +199,23 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 		HQLBuilder hb = new HQLBuilder("from DDEstadoTrabajo estTbj ");
 		lista = getHibernateTemplate().getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 		return lista;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VbusquedaProveedoresCombo> getProveedores() {
+		HQLBuilder hb = new HQLBuilder(" from VbusquedaProveedoresCombo pve");
+//		HQLBuilder hb = new HQLBuilder(
+//				"select distinct pve.id, pve.codigoProveedorRem, pve.tipoProveedorDescripcion, pve.subtipoProveedorDescripcion, pve.nifProveedor, pve.nombreProveedor, pve.nombreComercialProveedor, pve.estadoProveedorDescripcion, pve.observaciones from VBusquedaProveedor pve");
+//		hb.appendWhere("pve.estadoProveedorCodigo = 04 and pve.tipoProveedorCodigo = 03");
+//		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.estadoProveedorCodigo", filtro.getEstadoProveedorCodigo());
+//		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.tipoProveedorCodigo", filtro.getTipoProveedorCodigo());
+//		hb.orderBy("pve.nombreProveedor", "asc");
+		
+		List<VbusquedaProveedoresCombo> mediadores = new ArrayList<VbusquedaProveedoresCombo>();
+		mediadores  = getHibernateTemplate().getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		
+		return mediadores;
 	}
 	
 	public Page getPrefacturas(DtoDetalleAlbaran dto) {

@@ -10,6 +10,9 @@ import es.pfsgroup.plugin.rem.albaran.dto.DtoAlbaranFiltro;
 import es.pfsgroup.plugin.rem.model.DtoAlbaran;
 import es.pfsgroup.plugin.rem.model.DtoDetalleAlbaran;
 import es.pfsgroup.plugin.rem.model.DtoDetallePrefactura;
+import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.DtoProveedorMediador;
+import es.pfsgroup.plugin.rem.model.VbusquedaProveedoresCombo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstEstadoPrefactura;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAlbaran;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
@@ -34,6 +37,8 @@ public interface AlbaranApi {
 	public List<DDEstEstadoPrefactura> getComboEstadoPrefactura();
 	
 	public List<DDEstadoTrabajo> getComboEstadoTrabajo();
+
+	public List<VbusquedaProveedoresCombo> getProveedores();
 		
 	
 }

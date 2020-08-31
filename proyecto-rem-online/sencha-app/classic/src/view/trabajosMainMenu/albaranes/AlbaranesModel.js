@@ -99,9 +99,9 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesModel', {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'activo/getComboApiPrimario'
+				remoteUrl: 'albaran/getProveedores'
 			},
-		    displayField: 'nombre',
+		    displayField: 'descripcion',
 			valueField: 'id'				
 		}
   	

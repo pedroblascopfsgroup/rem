@@ -70,7 +70,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesSearch', {
 					items: [
 						{
 							fieldLabel : HreRem
-									.i18n('fieldlabel.albaran.numPrefacturas'),
+									.i18n('fieldlabel.albaran.numPrefactura'),
 							name : 'numPrefactura',
 							width : 230
 						},
@@ -104,7 +104,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesSearch', {
 					items: [
 						{
 							fieldLabel : HreRem
-									.i18n('fieldlabel.albaran.numTrabajos'),
+									.i18n('fieldlabel.albaran.numTrabajo'),
 							name : 'numTrabajo',
 							width : 230
 						},

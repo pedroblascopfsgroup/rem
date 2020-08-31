@@ -17,6 +17,8 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComisionado;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
@@ -79,6 +81,14 @@ public class GastoInfoContabilidad implements Serializable, Auditable {
 	@JoinColumn(name = "GIC_ACTIVABLE")
 	@ManyToOne(fetch = FetchType.LAZY)
 	private DDSinSiNo activable;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TCH_ID")
+    private DDTipoComisionado tipoComisionadoHre;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "GIC_PLAN_VISITAS")
+	private DDSinSiNo gicPlanVisitas;
 
 	@Version   
 	private Long version;
@@ -180,4 +190,21 @@ public class GastoInfoContabilidad implements Serializable, Auditable {
 	public void setActivable(DDSinSiNo activable) {
 		this.activable = activable;
 	}
+
+	public DDTipoComisionado getTipoComisionadoHre() {
+		return tipoComisionadoHre;
+	}
+
+	public void setTipoComisionadoHre(DDTipoComisionado tipoComisionadoHre) {
+		this.tipoComisionadoHre = tipoComisionadoHre;
+	}
+
+	public DDSinSiNo getGicPlanVisitas() {
+		return gicPlanVisitas;
+	}
+
+	public void setGicPlanVisitas(DDSinSiNo gicPlanVisitas) {
+		this.gicPlanVisitas = gicPlanVisitas;
+	}
+	
 }

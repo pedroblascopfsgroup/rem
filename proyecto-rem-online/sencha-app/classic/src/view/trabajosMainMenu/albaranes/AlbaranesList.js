@@ -12,8 +12,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesList', {
 	    me.items= [
 		        {
 		        	xtype: 'panel',
-		        	title: 'Lista de albaranes',
-		        	layout: 'fit',
+		        	title: HreRem.i18n('title.albaran.listaAlbaran'),
 		        	bodyPadding: 20,
 		        	items: [
 		        		{
@@ -21,17 +20,11 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesList', {
 							reference : 'albaranGrid'
 						},
 						{
-							xtype: 'panel',
-							layout: 'hbox',
-							align: 'right',
-							items: [{
-					            xtype: 'button',
-					            text : HreRem.i18n('fieldlabel.albaran.validar'),
-					            margin: '0 0 20 0',
-					            reference: 'botonValidarAlbaran',
-					            disabled: true,
-					            handler: 'validaAlbaranes'
-					        }]
+				            xtype: 'button',
+				            text : HreRem.i18n('fieldlabel.albaran.validar'),
+				            reference: 'botonValidarAlbaran',
+				            disabled: true,
+				            handler: 'validaAlbaranes'
 						}
 						
 		        	]
@@ -47,7 +40,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesList', {
 						},
 						{
 				            xtype: 'button',
-				            text : 'Validar Prefactura',
+				            text : HreRem.i18n('fieldlabel.albaran.validarPrefactura'),
 				            disabled: true,
 				            reference: 'botonValidarPrefactura',
 				            handler: 'validaPrefacturas'
@@ -56,7 +49,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesList', {
 		        },
 		        {
 		        	xtype: 'panel',
-		        	title: 'Detalle Prefactura',
+		        	title: HreRem.i18n('title.albaran.detallePrefactura'),
 		        	bodyPadding: 20,
 		        	items: [
 		        		{
@@ -73,7 +66,6 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesList', {
 								{ 
 									fieldLabel: HreRem.i18n('fieldlabel.albaran.totalAlbaran'),
 									xtype: 'textfield',
-//									queryMode : 'remote',
 									reference: 'totalAlbaran',
 									readOnly: true
 								},
@@ -85,7 +77,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesList', {
 								},
 								{
 						            xtype: 'button',
-						            text : 'Validar Prefactura',
+						            text : HreRem.i18n('fieldlabel.albaran.validarPrefactura'),
 						            disabled: true,
 						            tdAttrs: { style: 'padding: 5px 15px 5px 15px;', align: 'right' },
 						            reference: 'botonValidarTrabajo',

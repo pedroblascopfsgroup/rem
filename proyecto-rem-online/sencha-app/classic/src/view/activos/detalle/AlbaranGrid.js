@@ -64,6 +64,10 @@ Ext.define('HreRem.view.activos.detalle.AlbaranGrid', {
 		            reference: 'importeTotalCliente',
 		            renderer: Utils.rendererCurrency,
 		            text: HreRem.i18n('fieldlabel.albaran.importeTotalCliente')
+		        },
+		        {
+		            dataIndex: 'validarAlbaran',
+		            hidden: true
 		        }
 		        
 		    ];

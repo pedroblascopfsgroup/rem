@@ -25,6 +25,9 @@ Ext.define('HreRem.model.AlbaranGridModel', {
     		},
     		{
     			name:'importeTotalCliente'
+    		},
+    		{
+    			name:'validarAlbaran'
     		}
     		
     ]

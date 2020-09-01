@@ -149,20 +149,7 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 					sumado.add(Calendar.MILLISECOND, -1);  // numero de días a añadir, o restar en caso de días<0
 					HQLBuilder.addFiltroBetweenSiNotNull(hb, "vba.fechaPrefactura", sumado.getTime(), calendar.getTime());
 				}
-				if(dto.getAnyoTrabajo() != null) {
-					SimpleDateFormat formatter = new SimpleDateFormat("01-01-YYYY");
-//					Date fechaTrabajo = DateFormat.toDate(dto.getAnyoTrabajo());
-					Date fechaTrabajo = formatter.parse(dto.getAnyoTrabajo());
-					
-					Calendar calendar = Calendar.getInstance();
-					calendar.setTime(fechaTrabajo); // Configuramos la fecha que se recibe
-					calendar.add(Calendar.DAY_OF_YEAR, 1);  // numero de días a añadir, o restar en caso de días<0
-					
-					Calendar sumado = Calendar.getInstance();
-					sumado.setTime(fechaTrabajo); // Configuramos la fecha que se recibe
-					sumado.add(Calendar.MILLISECOND, -1);  // numero de días a añadir, o restar en caso de días<0
-					HQLBuilder.addFiltroBetweenSiNotNull(hb, "vba.fechaSolicitud", sumado.getTime(), calendar.getTime());
-				}
+				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vba.anyoTrabajo", dto.getAnyoTrabajo());
 				
 				HQLBuilder.appendGroupBy(hb,
 										"ALB_ID",

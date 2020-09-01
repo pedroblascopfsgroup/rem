@@ -1121,5 +1121,15 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		    }
 	    });
 	 	    
+ 	},
+ 	
+ 	cargarStoreHistoricoDeCampos: function(grid){
+ 		
+ 		var me = this;
+ 		
+ 		var storeHistorificacionDeCampos = me.getViewModel().data.storeHistorificacionDeCampos;
+		storeHistorificacionDeCampos.getProxy().setExtraParams(
+			{'idTrabajo':grid.idTrabajo,'codPestanya':grid.codigoPestanya});
+		
  	}
 });

@@ -11,7 +11,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesModel', {
  	stores: {
         
         albaranes: {
-			pageSize: $AC.getDefaultPageSize(),
+			pageSize: 10,
 	    	model: 'HreRem.model.AlbaranGridModel',
 	    	proxy: {
 		        type: 'uxproxy',
@@ -28,7 +28,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesModel', {
 	        }
     	},
     	detalleAlbaranes: {
-			pageSize: $AC.getDefaultPageSize(),
+			pageSize: 10,
 	    	model: 'HreRem.model.DetalleAlbaranGridModel',
 	    	proxy: {
 		        type: 'uxproxy',
@@ -46,7 +46,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesModel', {
 //	        }
     	},
     	detallePrefactrura: {
-			pageSize: $AC.getDefaultPageSize(),
+			pageSize: 10,
 	    	model: 'HreRem.model.DetallePrefacturaGridModel',
 	    	proxy: {
 		        type: 'uxproxy',

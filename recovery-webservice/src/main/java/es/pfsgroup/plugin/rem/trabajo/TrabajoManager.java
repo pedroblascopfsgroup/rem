@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -98,9 +99,11 @@ import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ActuacionTecnicaUserAssigna
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
+import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo.ActivoTrabajoPk;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -113,6 +116,7 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoConfiguracionTarifa;
 import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoGestionEconomicaTrabajo;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoTramitacionTitulo;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoTrabajo;
@@ -124,6 +128,8 @@ import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoTramitacionTitulo;
+import es.pfsgroup.plugin.rem.model.HistorificadorPestanas;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
@@ -140,6 +146,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresupuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -161,6 +168,7 @@ import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.thread.LiberarFicheroTrabajos;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
+import es.pfsgroup.plugin.rem.trabajo.dto.DtoHistorificadorCampos;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.recovery.api.UsuarioApi;
@@ -4724,5 +4732,35 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
  		
 		return listadoEstados;
 	}
-	
+	@Override
+ 	public List<DtoHistorificadorCampos> getListHistoricoDeCampos(Long idTrabajo, String codPestanya){
+		List<HistorificadorPestanas> listHistPest = null;
+		List<DtoHistorificadorCampos> listDtoHistCamp = new ArrayList<DtoHistorificadorCampos>();
+		try {
+			Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", idTrabajo);
+			Filter filtroPestana = genericDao.createFilter(FilterType.EQUALS, "pestana.codigo", codPestanya);
+			Order order  = new Order(OrderType.DESC, "fechaModificacion");
+			listHistPest = genericDao.getListOrdered(HistorificadorPestanas.class, order, filtroTrabajo, filtroPestana);
+			 
+			if (listHistPest != null && !listHistPest.isEmpty()) {
+				for (HistorificadorPestanas historificadorPestanas : listHistPest) {
+					DtoHistorificadorCampos dto = new DtoHistorificadorCampos();
+					dto.setIdTrabajo(historificadorPestanas.getTrabajo().getId());
+					dto.setCampo(historificadorPestanas.getCampo());
+					dto.setFechaModificacion(historificadorPestanas.getFechaModificacion());
+					dto.setIdHistorico(historificadorPestanas.getId());
+					dto.setUsuarioModificacion(historificadorPestanas.getUsuario().getUsername());
+					dto.setValorAnterior(historificadorPestanas.getValorAnterior());
+					dto.setValorNuevo(historificadorPestanas.getValorNuevo());
+					
+					listDtoHistCamp.add(dto);
+				}
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return listDtoHistCamp;
+
+	}
 }

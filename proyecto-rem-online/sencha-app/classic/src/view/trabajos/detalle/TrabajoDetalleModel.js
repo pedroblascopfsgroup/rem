@@ -3,7 +3,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     alias: 'viewmodel.trabajodetalle',
 
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.ActivoTrabajo', 'HreRem.model.ActivoTrabajoSubida',
-    'HreRem.model.AdjuntoTrabajo', 'HreRem.model.TareaList', 'HreRem.model.ObservacionesTrabajo', 'HreRem.model.Llaves', 'HreRem.model.FichaTrabajo'],
+    'HreRem.model.AdjuntoTrabajo', 'HreRem.model.TareaList', 'HreRem.model.ObservacionesTrabajo', 'HreRem.model.Llaves', 'HreRem.model.FichaTrabajo',
+    'HreRem.model.HistoricoDeCamposModel'],
     
     data: {
     	trabajo: null
@@ -512,6 +513,13 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    			remoteUrl: 'trabajo/getComboEstadoSegunEstadoGdaOProveedor',
 	    			extraParams: {idTrabajo: '{trabajo.id}'}
     			}
+    		},
+    		storeHistorificacionDeCampos: {
+		    	model: 'HreRem.model.HistoricoDeCamposModel',
+		    	proxy: {
+			        type: 'uxproxy',
+			        remoteUrl: 'trabajo/getHistoricoDeCampos'		        	 
+		    	}    			
     		}
     }
 

@@ -1830,4 +1830,18 @@ public class TrabajoController extends ParadiseJsonController {
 		
 	}
 	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoDeCampos(Long idTrabajo, String codPestanya, ModelMap model) {
+
+		try {
+			model.put("data", trabajoApi.getListHistoricoDeCampos(idTrabajo, codPestanya));
+			model.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		return new ModelAndView("jsonView", model);
+	}
+
 }

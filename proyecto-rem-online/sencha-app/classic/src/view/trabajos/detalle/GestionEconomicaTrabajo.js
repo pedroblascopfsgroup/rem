@@ -12,12 +12,13 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 	recordClass	: "HreRem.model.GestionEconomicaTrabajo",
     requires	: ['HreRem.model.GestionEconomicaTrabajo','HreRem.view.trabajos.detalle.SeleccionTarifasTrabajo','HreRem.model.RecargoProveedor',
                		'HreRem.view.trabajos.detalle.AnyadirNuevoPresupuesto','HreRem.view.trabajos.detalle.ModificarPresupuesto',
-               		'HreRem.view.common.FieldSetTable','HreRem.model.PresupuestoTrabajo','HreRem.model.ProvisionSuplido'],
+               		'HreRem.view.common.FieldSetTable','HreRem.model.PresupuestoTrabajo','HreRem.model.ProvisionSuplido', 'HreRem.view.trabajos.detalle.HistorificacionDeCamposGrid'],
 
     initComponent: function () {
     	var me = this;
     	me.setTitle(HreRem.i18n('title.gestion.economica'));
 
+    	me.idTrabajo= me.lookupController().getViewModel().get('trabajo').get('idTrabajo');
     	me.items = [
 	            {
 	            	xtype:'fieldset',
@@ -833,7 +834,26 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 		    				}
 		            
 		    	        ]    	            	
-		            }	
+		            },
+		            {
+							xtype:'fieldsettable',
+							defaultType: 'textfieldbase',
+							colspan: 3,
+							reference:'historificacionCampos',
+							hidden: false, 
+							title: HreRem.i18n("title.historificacion.campos"),
+							
+							items :
+							[
+								{
+									xtype: "historificacioncamposgrid", 
+									reference: "historificacioncamposgrid",
+									idTrabajo: this.lookupController().getViewModel().get('trabajo').get('id'),
+									codigoPestanya: CONST.PES_PESTANYAS['DETALLE_ECONOMICO'],
+									colspan: 3
+								}
+							]
+		           		}
     	];
 
     	me.callParent();

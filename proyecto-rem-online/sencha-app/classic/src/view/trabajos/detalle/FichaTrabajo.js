@@ -4,9 +4,10 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
     cls			: 'panel-base shadow-panel',
     collapsed	: false,
     scrollable	: 'y',
+    reference   : 'fichatrabajo',
     recordName	: "trabajo",
 	recordClass	: "HreRem.model.FichaTrabajo",
-    requires	: ['HreRem.model.FichaTrabajo'],
+    requires	: ['HreRem.model.FichaTrabajo', 'HreRem.view.trabajos.detalle.HistorificacionDeCamposGrid'],
 
     initComponent: function () {
         var me = this;
@@ -23,6 +24,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
         me.idSupervisorEdificaciones = me.lookupController().getViewModel().get('trabajo').get('idSupervisorEdificaciones');
         me.idSupervisorAlquileres = me.lookupController().getViewModel().get('trabajo').get('idSupervisorAlquileres');
         me.idSupervisorSuelos = me.lookupController().getViewModel().get('trabajo').get('idSupervisorSuelos');
+        me.idTrabajo= me.lookupController().getViewModel().get('trabajo').get('id')
         
         var logadoGestorMantenimiento= me.lookupController().getViewModel().get('trabajo').get('logadoGestorMantenimiento');
         var editar = me.lookupController().getViewModel().get('trabajo').get('bloquearResponsable');
@@ -609,8 +611,29 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 				                	bind:		'{trabajo.terceroDireccion}'
 		                		}						
 						]
-		           }
-        ];  
+		           },
+					{
+							xtype:'fieldsettable',
+							defaultType: 'textfieldbase',
+							colspan: 3,
+							
+							reference:'historificacionCampos',
+							hidden: false, 
+							title: HreRem.i18n("title.historificacion.campos"),
+							
+							items :
+							[
+								{
+									xtype: "historificacioncamposgrid", 
+									reference: "historificacioncamposgrid", 
+									colspan: 3,
+									idTrabajo: this.lookupController().getViewModel().get('trabajo').get('id'),
+									codigoPestanya: CONST.PES_PESTANYAS['FICHA']
+								}
+							]
+		           		}
+        ];
+
     	me.callParent();
     	var cartera= me.lookupController().getViewModel().get('trabajo').get('codCartera');
     	var fechatope = me.lookupController().getViewModel().get('trabajo').get('fechaTope');

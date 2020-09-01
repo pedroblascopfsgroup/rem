@@ -751,6 +751,11 @@ Ext.define('HreRem.ux.util.Constants', {
 	ESTADOS_PREFACTURAS: {
 		VALIDADO: 'Validada',
 		PENDIENTE: 'Pendiente'
+	},
+	
+	PES_PESTANYAS: {
+		DETALLE_ECONOMICO: 'DEC',
+		FICHA: 'FIC'
 	}
 	
 });

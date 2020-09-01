@@ -83,6 +83,9 @@ public class VbusquedaAlbaranes implements Serializable{
 	
 	@Column(name = "SUM_TOTAL")
 	private Double importeTotalCliente;
+	
+	@Column(name = "VALIDARALBARAN")
+	private Boolean validarAlbaran;
 
 	public Long getId() {
 		return id;
@@ -258,6 +261,14 @@ public class VbusquedaAlbaranes implements Serializable{
 
 	public void setNombreSolicitante(String nombreSolicitante) {
 		this.nombreSolicitante = nombreSolicitante;
+	}
+
+	public Boolean getValidarAlbaran() {
+		return validarAlbaran;
+	}
+
+	public void setValidarAlbaran(Boolean validarAlbaran) {
+		this.validarAlbaran = validarAlbaran;
 	}
 	
 	

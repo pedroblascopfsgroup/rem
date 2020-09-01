@@ -53,7 +53,8 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 				" , numPrefacturas" + 
 				" , numTrabajos" + 
 				" , importeTotal" + 
-				" , importeTotalCliente from VbusquedaAlbaranes vba");
+				" , importeTotalCliente" +
+				" , validarAlbaran from VbusquedaAlbaranes vba");
 		
 		this.rellenaFiltros(hb, dtoAlbaranes);
 		
@@ -171,7 +172,8 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 										"NUMPREFACTURA",
 										"NUMTRABAJO",
 										"SUM_PRESUPUESTO",
-										"SUM_TOTAL");
+										"SUM_TOTAL",
+										"VALIDARALBARAN");
 			}catch (ParseException e) {
 				logger.error(e);
 			}

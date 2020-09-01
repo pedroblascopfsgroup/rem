@@ -40,6 +40,8 @@ public class DtoAlbaranFiltro extends WebDto{
 	private Double importeTotal;
 	
 	private Double importeTotalCliente;
+	
+	private boolean validarAlbaran;
 
 	public Long getNumAlbaran() {
 		return numAlbaran;
@@ -167,6 +169,14 @@ public class DtoAlbaranFiltro extends WebDto{
 
 	public void setImporteTotalCliente(Double importeTotalCliente) {
 		this.importeTotalCliente = importeTotalCliente;
+	}
+
+	public boolean isValidarAlbaran() {
+		return validarAlbaran;
+	}
+
+	public void setValidarAlbaran(boolean validarAlbaran) {
+		this.validarAlbaran = validarAlbaran;
 	}
 	
 	

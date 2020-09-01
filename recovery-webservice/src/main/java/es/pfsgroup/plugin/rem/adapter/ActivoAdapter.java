@@ -2688,6 +2688,7 @@ public class ActivoAdapter {
 		if(tipoDocumento != null && activoEntrada != null) {
 			DtoActivoSituacionPosesoria dto = new DtoActivoSituacionPosesoria();
 			BeanUtils.copyProperties(dto, activoEntrada.getSituacionPosesoria());
+			dto.setConTitulo(activoEntrada.getSituacionPosesoria().getConTitulo().getCodigo());
 			activoApi.compruebaParaEnviarEmailAvisoOcupacion(dto, activoEntrada.getId());
 		}
 		return null;

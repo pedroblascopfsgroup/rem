@@ -67,7 +67,7 @@ public class MSVMasivaSuministrosValidator extends MSVExcelValidatorAbstract {
 	
 	public static final String MOT_BAJA_SUMINISTRO_NO_RELLENADO = "El campo 'Fecha Baja suministro' solo puede estar rellenado si el campo 'Motivo Baja suministro' está rellenado.";
 	public static final String FECHA_BAJA_SUMINISTRO_NO_RELLENADO = "El campo 'Motivo Baja suministro' solo puede estar rellenado si el campo 'Fecha Baja suministro' está rellenado.";
-	public static final String COMP_SUMINISTRADORA_ERROR = "La compañía suministradora no existe.";
+	public static final String COMP_SUMINISTRADORA_ERROR = "La compañía suministradora no existe o se ha dado de baja.";
 	
 	public static final String C_VAL_SUM_RELLENO_ES_USU_GEST_SUPER = "El campo 'Check Validación suministro' solo puede estar rellenado si el usuario que está realizando la carga masiva es un gestor o supervisor de administración.";
 	public static final String GESTORIA_ADMINISTRACION_ACTIVO_ERROR = "Al ser un usuario con perfil de 'Gestoría de administración' solo puedes modificar activos que su gestoría sea 'Gestoría de administración'";
@@ -404,7 +404,7 @@ public class MSVMasivaSuministrosValidator extends MSVExcelValidatorAbstract {
              for(int i=1; i<this.numFilasHoja;i++){
                  try {
                      if(!Checks.esNulo(exc.dameCelda(i, COL_COMP_SUMINISTRADORA)) 
-                             && Boolean.FALSE.equals(particularValidator.existeCodigoPrescriptor(exc.dameCelda(i, COL_COMP_SUMINISTRADORA))))
+                             && Boolean.FALSE.equals(particularValidator.isProveedorSuministroVigente(exc.dameCelda(i, COL_COMP_SUMINISTRADORA))))
                          listaFilas.add(i);
                  } catch (ParseException e) {
                      listaFilas.add(i);
@@ -566,7 +566,7 @@ public class MSVMasivaSuministrosValidator extends MSVExcelValidatorAbstract {
 						if(perfiles != null && !perfiles.isEmpty()) {
 							Perfil perfilGestAdm = genericDao.get(Perfil.class, genericDao.createFilter(FilterType.EQUALS, "codigo", PEFGESTADM));
 							Perfil perfilSuperAdm = genericDao.get(Perfil.class, genericDao.createFilter(FilterType.EQUALS, "codigo", PEFSUPERADM));
-							if(!perfiles.contains(perfilGestAdm) || !perfiles.contains(perfilSuperAdm)) {
+							if(!perfiles.contains(perfilGestAdm) && !perfiles.contains(perfilSuperAdm)) {
 								 listaFilas.add(i);
 							}
 						}

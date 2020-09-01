@@ -2181,6 +2181,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return !res.equals("0");
 	}
+	@Override
+	public boolean isProveedorSuministroVigente( String codRem ) {
+		String sql = null;
+		if ( codRem != null && codRem.length() > 0) {
+			sql = "select count(1) from act_pve_proveedor pve "
+		+		   "inner join dd_tpr_tipo_proveedor tpr on tpr.dd_tpr_id = pve.dd_tpr_id " 
+		+		   "where pve.pve_cod_rem = "+ codRem
+		+		   " and pve.borrado = 0  " 
+		+		   " and pve.pve_fecha_baja is null " 
+		+		   " and tpr.dd_tpr_codigo = 25 ";
+			
+		}
+		
+		return sql == null ? null : !"0".equals(rawDao.getExecuteSQL(sql));
+	}
 
 	@Override
 	public boolean existeCodigoPrescriptor(String codPrescriptor){

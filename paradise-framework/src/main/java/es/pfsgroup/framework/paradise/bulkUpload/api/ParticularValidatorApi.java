@@ -1202,6 +1202,8 @@ public interface ParticularValidatorApi {
 
 	Boolean existePoblacionByDescripcion(String columnaPoblacion);
 
+	boolean isProveedorSuministroVigente(String codRem);
+
 
 	
 	

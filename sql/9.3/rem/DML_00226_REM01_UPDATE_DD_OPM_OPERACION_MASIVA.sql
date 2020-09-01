@@ -1,7 +1,7 @@
 --/*
 --#########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20200826
+--## AUTOR=Sergio Salt
+--## FECHA_CREACION=20200901
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11008
@@ -40,7 +40,7 @@ BEGIN
   V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET 
           USUARIOMODIFICAR = '''||V_USUARIO||'''
         , FECHAMODIFICAR = SYSDATE
-        , DD_OPM_VALIDACION_FORMATO = ''n*,s*,f*,n*,s*,f*,f,f,s*,s,f,f,f,s,n,n*,n,f,i,s*,n''
+        , DD_OPM_VALIDACION_FORMATO = ''n*,s*,f*,n*,s,f*,f,f,s*,s,f,f,f,s,n,n*,n,f,i,s*,n''
         WHERE DD_OPM_CODIGO = ''MASCT''
         ';
 

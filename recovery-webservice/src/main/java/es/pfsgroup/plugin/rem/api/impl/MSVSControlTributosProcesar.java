@@ -94,7 +94,7 @@ public class MSVSControlTributosProcesar extends AbstractMSVActualizador impleme
 		// PK Número de activo, Fecha presentación recurso o fecha de emisión y tipo de solicitud.
 		Activo activo;
 		DDTipoTributo tipoTributo;
-		Date fechaRecepcionTributo;
+		Date fechaRecepcionTributo; 
 		Date fechaEmision;
 		Date fechaRecepcionPropietario;
 		Date fechaRecepcionGestoria;
@@ -104,7 +104,7 @@ public class MSVSControlTributosProcesar extends AbstractMSVActualizador impleme
 		Date fechaRecepcionRecursoGestoria;
 		Date fechaRespuestaRecurso;
 		DDResultadoSolicitud resultado;
-		Long numGastoHaya;
+		Long numGastoHaya = null;
 		ExpedienteComercial expediente;
 		Date fechaComunicadoDevolucionIngreso;
 		Double importeRecuperado;
@@ -123,7 +123,10 @@ public class MSVSControlTributosProcesar extends AbstractMSVActualizador impleme
 		String celdaActivo = exc.dameCelda(fila, COL_NUM.COL_NUM_ACTIVO);
 		String celdaEmision = exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_EMISION);
 		String celdaSolicitud = exc.dameCelda(fila, COL_NUM.COL_NUM_TIPO_SOLICITUD);
-		numGastoHaya = Long.parseLong(exc.dameCelda(fila, COL_NUM.COL_NUM_HAYA_VINCULADO));
+		if (exc.dameCelda(fila, COL_NUM.COL_NUM_HAYA_VINCULADO) != null
+				&& exc.dameCelda(fila, COL_NUM.COL_NUM_HAYA_VINCULADO).length() > 0  ) {
+			numGastoHaya = Long.parseLong(exc.dameCelda(fila, COL_NUM.COL_NUM_HAYA_VINCULADO));
+		}
 		String celdaIdTributo = exc.dameCelda(fila, COL_NUM.COL_ID_TRIBUTO);
 		String celdaExisteDoc = exc.dameCelda(fila, COL_NUM.COL_NUM_EXISTE_DOC);
 		String celdaTributExento = exc.dameCelda(fila, COL_NUM.COL_NUM_EXENTO);
@@ -195,18 +198,19 @@ public class MSVSControlTributosProcesar extends AbstractMSVActualizador impleme
 			Filter filtroTipoTributo = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(exc.dameCelda(fila, COL_NUM.COL_NUM_TIPO_TRIBUTO)));
 			tipoTributo = genericDao.get(DDTipoTributo.class, filtroTipoTributo);
 			
-			
-			Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya",	numGastoHaya);
-								
-			gastoProveedor = genericDao.get(GastoProveedor.class, filtroGasto);
-			if(celdaExisteDoc != null) {
-				if("S".equalsIgnoreCase(celdaExisteDoc) || "SI".equalsIgnoreCase(celdaExisteDoc)) {
-					gastoProveedor.setExisteDocumento(1);
-				}else {
-					gastoProveedor.setExisteDocumento(0);
+			if ( numGastoHaya != null ) {
+				Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya",	numGastoHaya);
+				gastoProveedor = genericDao.get(GastoProveedor.class, filtroGasto);
+				if(celdaExisteDoc != null) {
+					if("S".equalsIgnoreCase(celdaExisteDoc) || "SI".equalsIgnoreCase(celdaExisteDoc)) {
+						gastoProveedor.setExisteDocumento(1);
+					}else {
+						gastoProveedor.setExisteDocumento(0);
+					}
 				}
+				activoTributos.setGastoProveedor(gastoProveedor);
 			}
-			
+
 			if(celdaTributExento != null) {
 				if(celdaTributExento.equals("1")) {
 					activoTributos.setTributoExento(true);
@@ -214,7 +218,6 @@ public class MSVSControlTributosProcesar extends AbstractMSVActualizador impleme
 					activoTributos.setTributoExento(false);
 				}
 			}
-			activoTributos.setGastoProveedor(gastoProveedor);
 			if(exc.dameCelda(fila, COL_NUM.COL_NUM_IMPORTE_RECUPERADO) != null && !exc.dameCelda(fila, COL_NUM.COL_NUM_IMPORTE_RECUPERADO).isEmpty()) {
 				importeRecuperado = Double.parseDouble(exc.dameCelda(fila, COL_NUM.COL_NUM_IMPORTE_RECUPERADO));
 				activoTributos.setImporteRecuperadoRecurso(importeRecuperado);

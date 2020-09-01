@@ -57,7 +57,7 @@ public class VbusquedaAlbaranes implements Serializable{
 	@Column(name = "TBJ_NUM_TRABAJO")
 	private Long numTrabajo;
 	
-	@Column(name = "TBJ_FECHA_SOLICITUD")
+	@Column(name = "ANYO_TRABAJO")
 	private String anyoTrabajo;
 	
 	@Column(name = "DD_TTR_CODIGO")

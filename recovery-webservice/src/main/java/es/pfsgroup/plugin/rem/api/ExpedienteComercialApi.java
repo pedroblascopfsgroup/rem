@@ -1320,5 +1320,12 @@ public interface ExpedienteComercialApi {
 	boolean cumpleCondicionesCrearHonorario(Long idEntidad);
 
 	boolean finalizadoCierreEconomico(Long expedienteId);
+	/**
+	 * Método para activar compradores de la pestaña 'Compradores' del expediente comercial que están de baja 
+	 * @param idExpediente 
+	 * @param idCompradorExpediente
+	 * @return boolean
+	 */
+	boolean activarCompradorExpediente(Long idCompradorExpediente, Long idExpediente);
 
 }

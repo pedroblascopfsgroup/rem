@@ -1,17 +1,18 @@
  
 --/*
 --##########################################
---## AUTOR=DANIEL GUTIÉRREZ
---## FECHA_CREACION=20170104
+--## AUTOR=Juan Bautista Alfonso Canovas
+--## FECHA_CREACION=20200826
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=0
+--## INCIDENCIA_LINK=REMVIP-7935
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
 --##########################################
 --*/
 
@@ -25,8 +26,8 @@ DECLARE
     table_count number(3); -- Vble. para validar la existencia de las Tablas.
     v_column_count number(3); -- Vble. para validar la existencia de las Columnas.    
     v_constraint_count number(3); -- Vble. para validar la existencia de las Constraints.
-    err_num NUMBER; -- N?mero de errores
-    err_msg VARCHAR2(2048); -- Mensaje de error
+    ERR_NUM NUMBER; -- N?mero de errores
+    ERR_MSG VARCHAR2(2048); -- Mensaje de error
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
     V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
     V_MSQL VARCHAR2(4000 CHAR); 
@@ -70,7 +71,7 @@ BEGIN
     STA.DD_STA_CODIGO AS SUBTIPO_TITULO_CODIGO,
     STA.DD_STA_DESCRIPCION AS SUBTIPO_TITULO_DESCRIPCION,
     NVL2(TIT.TIT_FECHA_INSC_REG, ''1'',''0'') AS INSCRITO,
-    NVL2(ACT_SIT.SPS_FECHA_TOMA_POSESION, ''1'',''0'') AS CON_POSESION,
+    NVL2(FPA.FECHA_POSESION, ''1'',''0'') AS CON_POSESION,
     NVL2(ACT.ACT_FECHA_REV_CARGAS, ''1'',''0'') AS CON_FECHA_REVISION_CARGAS,
     NVL2(ICO.ICO_MEDIADOR_ID,''1'',''0'')  AS TIENE_MEDIADOR,
     NVL2(ICO.ICO_FECHA_EMISION_INFORME, '''', NVL2(ICO.ICO_FECHA_ACEPTACION, ''01'', ''02'')) AS ESTADO_INF_COMERCIAL,
@@ -165,6 +166,7 @@ BEGIN
   LEFT JOIN ' || V_ESQUEMA || '.DD_TTA_TIPO_TITULO_ACTIVO TTA ON TTA.DD_TTA_ID =  ACT.DD_TTA_ID
   LEFT JOIN ' || V_ESQUEMA || '.DD_STA_SUBTIPO_TITULO_ACTIVO STA ON STA.DD_STA_ID =  ACT.DD_STA_ID
   LEFT JOIN ' || V_ESQUEMA || '.ACT_SPS_SIT_POSESORIA ACT_SIT ON ACT.ACT_ID = ACT_SIT.ACT_ID
+  LEFT JOIN ' || V_ESQUEMA || '.V_FECHA_POSESION_ACTIVO FPA ON ACT.ACT_ID = FPA.ACT_ID
   LEFT JOIN ' || V_ESQUEMA || '.ACT_ICO_INFO_COMERCIAL ICO ON ICO.ACT_ID = ACT.ACT_ID
   LEFT JOIN ' || V_ESQUEMA || '.ACT_TIT_TITULO TIT ON TIT.ACT_ID = ACT.ACT_ID
   LEFT JOIN ' || V_ESQUEMA || '.BIE_LOCALIZACION BIE_LOC ON ACT.BIE_ID = BIE_LOC.BIE_ID
@@ -176,6 +178,15 @@ BEGIN
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_BUSQUEDA_ACTIVOS_PRECIOS...Creada OK');
   
+  EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+          ROLLBACK;
+          RAISE; 
 END;
 /
 

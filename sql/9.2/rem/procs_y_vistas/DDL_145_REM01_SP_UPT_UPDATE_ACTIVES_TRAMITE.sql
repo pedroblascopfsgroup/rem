@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20191213
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20200826
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-8737
+--## INCIDENCIA_LINK=REMVIP-7935
 --## PRODUCTO=NO
 --## Finalidad: correción errores SP
 --##           
@@ -19,6 +19,7 @@
 --##    0.7 DAP - Modificado ultimo cambio posesión
 --##    0.8 Daniel Algaba - HREOS-8087 - Modificación cálculo situación del título
 --##    0.9 Daniel Algaba - HREOS-8737 - Se añaden nuevas casuísticas en la actualización/inserción de registros en ACT_AHT_HIST_TRAM_TITULO
+--##    0.10 Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -1173,12 +1174,13 @@ BEGIN
               FROM '||V_ESQUEMA||'.APR_AUX_STOCK_UVEM_TO_REM APR
             )
             SELECT TEMP.*, ACT.SPS_FECHA_TITULO, LINK.ACT_ID
-              , CASE WHEN NVL(TEMP.FEC_REALIZADA_POSESION,TO_DATE(''31/12/2099'',''DD/MM/YYYY'')) = NVL(ACT.SPS_FECHA_TOMA_POSESION,TO_DATE(''31/12/2099'',''DD/MM/YYYY'')) THEN ACT.SPS_FECHA_ULT_CAMBIO_POS
+              , CASE WHEN NVL(TEMP.FEC_REALIZADA_POSESION,TO_DATE(''31/12/2099'',''DD/MM/YYYY'')) = NVL(FPA.FECHA_POSESION,TO_DATE(''31/12/2099'',''DD/MM/YYYY'')) THEN ACT.SPS_FECHA_ULT_CAMBIO_POS
                 ELSE SYSDATE
                 END ULT_CAMBIO
             FROM TEMP
             INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO LINK ON LINK.ACT_NUM_ACTIVO_UVEM = TEMP.ACT_NUMERO_UVEM
             INNER JOIN '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA ACT ON ACT.ACT_ID = LINK.ACT_ID
+            INNER JOIN '||V_ESQUEMA||'.V_FECHA_POSESION_ACTIVO FPA ON FPA.ACT_ID = ACT.ACT_ID
             INNER JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = LINK.DD_CRA_ID
             INNER JOIN '||V_ESQUEMA||'.ACT_ESA_ESTADOS_ACT_UVEM ESA ON ESA.ACT_ID = LINK.ACT_ID
             WHERE TEMP.REM = 1

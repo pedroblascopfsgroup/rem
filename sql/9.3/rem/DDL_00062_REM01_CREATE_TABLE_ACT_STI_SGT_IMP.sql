@@ -1,12 +1,12 @@
 --/*
 --##########################################
---## AUTOR=Jonathan Ovalle
---## FECHA_CREACION=20200715
+--## AUTOR=DAP
+--## FECHA_CREACION=20200901
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10602
 --## PRODUCTO=NO
---## Finalidad: Creación diccionario ACT_STI_SGT_IMP
+--## Finalidad: Creación diccionario ACT_STI_STG_IMP
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -35,8 +35,8 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_STI_SGT_IMP'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_COMMENT_TABLE VARCHAR2(500 CHAR):= ' tabla que tendrá la relación entre una pareja de subtipo de trabajo-gasto, el impuesto y su tipo impositivo a nivel geográfico'; -- Vble. para los comentarios de las tablas
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_STI_STG_IMP'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla que tendrá la relación entre una pareja de subtipo de gasto, el impuesto y su tipo impositivo a nivel geográfico'; -- Vble. para los comentarios de las tablas
 
 BEGIN
 
@@ -56,9 +56,9 @@ BEGIN
 		V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
 		(
 			STI_ID           		     NUMBER(16)                 NOT NULL,
-			SGT_ID             		     NUMBER(16)                 NOT NULL,
-			DD_TIT_ID   		         NUMBER(16)                 NOT NULL,
-			DD_CCA_ID                    NUMBER(16)                 NOT NULL,
+			DD_STG_ID             		 NUMBER(16)                 NOT NULL,
+			DD_TIT_ID   		         NUMBER(16),
+			DD_CCA_ID                    NUMBER(16),
             STI_TIPO_IMPOSITIVO          NUMBER(5,2),
 			VERSION 					 NUMBER(38,0) 		    	DEFAULT 0 NOT NULL ENABLE, 
 			USUARIOCREAR 				 VARCHAR2(50 CHAR) 	    	NOT NULL ENABLE, 
@@ -79,17 +79,17 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');
 		
 		-- Creamos indice	
-		V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.PK_ACT_STI_SGT_IMP ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(STI_ID) TABLESPACE '||V_TABLESPACE_IDX;		
+		V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.PK_ACT_STI_STG_IMP ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(STI_ID) TABLESPACE '||V_TABLESPACE_IDX;		
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.ACT_STI_SGT_IMP... Indice creado.');
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.ACT_STI_STG_IMP... Indice creado.');
 		
 		-- Creamos primary key
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT PK_ACT_STI_SGT_IMP PRIMARY KEY (STI_ID) USING INDEX)';
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT PK_ACT_STI_STG_IMP PRIMARY KEY (STI_ID) USING INDEX)';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.PK_ACT_STI_SGT_IMP... PK creada.');
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.PK_ACT_STI_STG_IMP... PK creada.');
 
 		-- Creamos FK constraint
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT FK_STI_SGT_ID FOREIGN KEY (SGT_ID) REFERENCES '||V_ESQUEMA||'.ACT_SGT_SUBTIPO_GPV_TBJ(SGT_ID)';
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT FK_STI_STG_ID FOREIGN KEY (DD_STG_ID) REFERENCES '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO(DD_STG_ID)';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] FK_STI_SGT_ID... FK creada.');
 
@@ -113,9 +113,9 @@ BEGIN
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna STI_ID creado.');
 
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.SGT_ID IS ''Relaciona con la tabla ACT_SGT_SUBTIPO_GPV_TBJ''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_STG_ID IS ''Relaciona con la tabla DD_STG_SUBTIPOS_GASTO''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna SGT_ID IS creado.');	
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_STG_ID IS creado.');	
 
 		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TIT_ID IS ''Campo para mostrar los tipos de impuesto''';
 		EXECUTE IMMEDIATE V_MSQL;

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandro Valverde
---## FECHA_CREACION=20191218
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20200826
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
---## INCIDENCIA_LINK=HREOS-1787, HREOS-2142, REMVIP-205, REMVIP-972, HREOS-8862
+--## INCIDENCIA_LINK=HREOS-1787, HREOS-2142, REMVIP-205, REMVIP-972, HREOS-8862, REMVIP-7935
 --## PRODUCTO=NO
 --## Finalidad: Vista Materializada exclusiva para Stock que contiene la relación de activos con los condicionantes de venta
 --##           
@@ -15,6 +15,7 @@
 --##		0.3 REMVIP-205 - Cambio de la forma de cálculo de el campo "Pendiente de inscripción"
 --##		0.4 REMVIP-972 - Se añade código 06 al cruce con EAC 
 --##		0.5 HREOS-8862 - Comprobación registros borrados de las tablas joineadas para evitar duplicados.
+--##		0.6 Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
 --##########################################
 --*/
 
@@ -138,7 +139,7 @@ BEGIN
 	    END AS ESTADO
 	  FROM
 	    (SELECT ACT.ACT_ID,CRA.DD_CRA_CODIGO, aba.dd_cla_id, 
-		NVL2 (SPS2.SPS_ID, 0, NVL2 (SPS.SPS_FECHA_TOMA_POSESION, 0, 1))      AS SIN_TOMA_POSESION_INICIAL,
+		NVL2 (SPS2.SPS_ID, 0, NVL2 (FPA.FECHA_POSESION, 0, 1))      AS SIN_TOMA_POSESION_INICIAL,
 		DECODE (SPS.SPS_OCUPADO, 1, DECODE (SPS.SPS_CON_TITULO, 1, 1, 0), 0) AS OCUPADO_CONTITULO,
 		NVL2 (TIT.TIT_FECHA_INSC_REG, 0, 1)                          AS PENDIENTE_INSCRIPCION,
 		NVL2 (NPA.ACT_ID, 1, 0)                                              AS PROINDIVISO,
@@ -157,6 +158,7 @@ BEGIN
 	    FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
 	    LEFT JOIN '||V_ESQUEMA||'.DD_EAC_ESTADO_ACTIVO EAC ON EAC.DD_EAC_ID = ACT.DD_EAC_ID AND EAC.BORRADO = 0
 	    LEFT JOIN '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA SPS ON SPS.ACT_ID = ACT.ACT_ID AND SPS.BORRADO = 0
+	    LEFT JOIN '||V_ESQUEMA||'.V_FECHA_POSESION_ACTIVO FPA ON FPA.ACT_ID = SPS.ACT_ID
 		LEFT JOIN '||V_ESQUEMA||'.DD_SIJ_SITUACION_JURIDICA SIJ ON SPS.DD_SIJ_ID = SIJ.DD_SIJ_ID AND SIJ.BORRADO = 0
       	LEFT JOIN '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA SPS2 ON ACT.ACT_ID = SPS2.ACT_ID AND (SPS2.DD_SIJ_ID IS NOT NULL AND SIJ.DD_SIJ_INDICA_POSESION = 1) AND SPS2.BORRADO = 0
 	    LEFT JOIN '||V_ESQUEMA||'.ACT_TIT_TITULO TIT ON TIT.ACT_ID = ACT.ACT_ID AND TIT.BORRADO = 0

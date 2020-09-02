@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Oscar Diestre
---## FECHA_CREACION=20200207
+--## AUTOR=Juan Beltrán
+--## FECHA_CREACION=20200820
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-6374
+--## INCIDENCIA_LINK=REMVIP-7944
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM - UVEM. Nuevas columnas. Anula DDL_99900087
 --##           
@@ -17,12 +17,13 @@
 --##		0.5 Pablo Meseguer - actualizamos el tipo de activo junto con el subtipo a traves del COTSIN
 --##		0.6 Actualizar DD_SCR_ID en caso que sea COD_ENTRADA_ACTIVO = '02'
 --##		0.7 Viorel Remus Ovidiu - actualizamos siempre el PAC_PORC_PROPIEDAD en REM con lo que hay en la APR_AUX_STOCK_UVEM_TO_REM
---##		0.7 Oscar Diestre - Crea registro en ACT_VIV_VIVIENDA aunque no vengan datos asociados
---##    0.8 Daniel Algaba - HREOS-8087 - Modificación cálculo situación del título
---##    0.9 Daniel Algaba - HREOS-8737 - Se añaden nuevas casuísticas en la actualización/inserción de registros en ACT_AHT_HIST_TRAM_TITULO
---##    0.10 Oscar Diestre - REMVIP-6045 - Modificado merge en ln524 3.1 BIE_DATOS_REGISTRALES por error al hacer la conversión
---##    0.11 Oscar Diestre - REMVIP-6203 - Modificados merges asociados a ACT_ACTIVO para minimizar cambios y comentados merges duplicados ( parte 4 )
---##    0.12 Oscar Diestre - REMVIP-6374 - En el insert de ACT_MLV_MOVIMIENTO_LLAVE informar también MLV_COD_TENEDOR_PED_NO_PVE
+--##		0.8 Oscar Diestre  - Crea registro en ACT_VIV_VIVIENDA aunque no vengan datos asociados
+--## 	    0.9 Daniel Algaba  - HREOS-8087  - Modificación cálculo situación del título
+--##    	0.10 Daniel Algaba - HREOS-8737  - Se añaden nuevas casuísticas en la actualización/inserción de registros en ACT_AHT_HIST_TRAM_TITULO
+--##    	0.11 Oscar Diestre - REMVIP-6045 - Modificado merge en ln524 3.1 BIE_DATOS_REGISTRALES por error al hacer la conversión
+--##    	0.12 Oscar Diestre - REMVIP-6203 - Modificados merges asociados a ACT_ACTIVO para minimizar cambios y comentados merges duplicados ( parte 4 )
+--##    	0.13 Oscar Diestre - REMVIP-6374 - En el insert de ACT_MLV_MOVIMIENTO_LLAVE informar también MLV_COD_TENEDOR_PED_NO_PVE
+--##    	0.14 Juan Beltrán  - REMVIP-7944 - Prevalece el valor del campo ACT_VPO si viene informado desde REM
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -208,8 +209,7 @@ BEGIN
               AND CRA.DD_CRA_CODIGO = ''03''
                and act.borrado = 0
 	      AND  (    ACT.ACT_VPO <> TEMP.REGIMEN_PROTECCION 
-                 OR ( ACT_VPO IS NULL AND TEMP.REGIMEN_PROTECCION IS NOT NULL )
-                 OR ( ACT_VPO IS NOT NULL AND TEMP.REGIMEN_PROTECCION IS NULL ) )
+                 		OR ( ACT_VPO IS NULL AND TEMP.REGIMEN_PROTECCION IS NOT NULL ) )
           ) TMP
           ON (TMP.ACT_ID = ACT.ACT_ID)
           WHEN MATCHED THEN UPDATE SET

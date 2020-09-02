@@ -1,0 +1,68 @@
+--/*
+--#########################################
+--## AUTOR=IVAN REPISO
+--## FECHA_CREACION=20200825
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP_7971
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Creación de tabla 'TMP_REMVIP_7971'
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+
+	V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar  
+	TABLE_COUNT NUMBER(1,0) := 0;
+	V_ESQUEMA_1 VARCHAR2(20 CHAR) := '#ESQUEMA#';
+	V_ESQUEMA_2 VARCHAR2(20 CHAR) := '#ESQUEMA_MASTER#';
+	V_TABLESPACE_IDX VARCHAR2(30 CHAR) := '#TABLESPACE_INDEX#';
+	V_TABLA1 VARCHAR2(40 CHAR) := 'TMP_REMVIP_7971';
+
+
+BEGIN
+
+	SELECT COUNT(1) INTO TABLE_COUNT FROM ALL_TABLES WHERE TABLE_NAME = ''||V_TABLA1||'' AND OWNER= ''||V_ESQUEMA_1||'';
+	IF TABLE_COUNT > 0 THEN
+	    DBMS_OUTPUT.PUT_LINE('[INFO] TABLA '||V_ESQUEMA_1||'.'||V_TABLA1||' YA EXISTENTE. SE PROCEDE A BORRAR Y CREAR DE NUEVO.');
+	    EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA_1||'.'||V_TABLA1||'';
+	END IF;
+	EXECUTE IMMEDIATE 'CREATE TABLE '||V_ESQUEMA_1||'.'||V_TABLA1||'
+          	 (EDI_ID VARCHAR2(16 CHAR),
+             	  EDI_DESCRIPCION VARCHAR2(3000 CHAR))';
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA_1||'.'||V_TABLA1||' CREADA');  
+	
+	
+	IF V_ESQUEMA_2 != V_ESQUEMA_1 THEN
+	
+		EXECUTE IMMEDIATE 'GRANT ALL ON "'||V_ESQUEMA_1||'"."'||V_TABLA1||'" TO "'||V_ESQUEMA_2||'" WITH GRANT OPTION';
+		DBMS_OUTPUT.PUT_LINE('[INFO] PERMISOS SOBRE LA TABLA '||V_ESQUEMA_1||'.'||V_TABLA1||' OTORGADOS A '||V_ESQUEMA_2||''); 
+
+	END IF;
+
+	COMMIT;
+
+EXCEPTION
+
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+        DBMS_OUTPUT.put_line(SQLERRM);
+        ROLLBACK;
+        RAISE;
+END;
+/
+
+EXIT;

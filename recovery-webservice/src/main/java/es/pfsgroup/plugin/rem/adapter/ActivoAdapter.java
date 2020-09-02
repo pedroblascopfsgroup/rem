@@ -132,6 +132,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoVistaPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -1621,18 +1622,30 @@ public class ActivoAdapter {
 	}
 
 	public List<DtoUsuario> getComboUsuarios(long idTipoGestor) {
-		List<DespachoExterno> listDespachoExterno = coreextensionApi.getListAllDespachos(idTipoGestor, false);
+		
+		List<DespachoExterno> listDespachoExterno = null;
+		try {
+			listDespachoExterno = coreextensionApi.getListAllDespachos(idTipoGestor, false);
+		}catch(NullPointerException e) {
+			logger.error("Error en ActivoAdapter - getComboUsuarios - getListAllDespachos (idTipoGestor = "+idTipoGestor+") ", e);
+		}
 		List<DtoUsuario> listaUsuariosDto = new ArrayList<DtoUsuario>();
 
 		if (!Checks.estaVacio(listDespachoExterno)) {
 			try {
 				for (DespachoExterno despachoExterno : listDespachoExterno) {
-					List<Usuario> listaUsuarios = coreextensionApi.getListAllUsuariosData(despachoExterno.getId(), false);
-					
-					for (Usuario usuario : listaUsuarios) {
-						DtoUsuario dtoUsuario = new DtoUsuario();
-						BeanUtils.copyProperties(dtoUsuario, usuario);
-						listaUsuariosDto.add(dtoUsuario);
+					List<Usuario> listaUsuarios = null;
+					try {
+						listaUsuarios = coreextensionApi.getListAllUsuariosData(despachoExterno.getId(), false);
+					}catch(NullPointerException e) {
+						logger.error("Error en ActivoAdapter - getComboUsuarios - getListAllUsuariosData (idTipoGestor = "+idTipoGestor+", despachoExterno.getId() = "+despachoExterno.getId()+") ", e);
+					}
+					if (!Checks.estaVacio(listaUsuarios)) {
+						for (Usuario usuario : listaUsuarios) {
+							DtoUsuario dtoUsuario = new DtoUsuario();
+							BeanUtils.copyProperties(dtoUsuario, usuario);
+							listaUsuariosDto.add(dtoUsuario);
+						}
 					}
 				}
 			} catch (IllegalAccessException e) {
@@ -2646,37 +2659,39 @@ public class ActivoAdapter {
 	}
 
 	public String uploadDocumento(WebFileItem webFileItem, Activo activoEntrada, String matricula) throws Exception {
-
-		if (Checks.esNulo(activoEntrada)) {
-			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-				Activo activo = activoApi.get(Long.parseLong(webFileItem.getParameter("idEntidad")));
-				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
-				DDTipoDocumentoActivo tipoDocumento = (DDTipoDocumentoActivo) genericDao
-						.get(DDTipoDocumentoActivo.class, filtro);
-				Long idDocRestClient = gestorDocumentalAdapterApi.upload(activo, webFileItem,
-						usuarioLogado.getUsername(), tipoDocumento.getMatricula());
-				activoApi.upload2(webFileItem, idDocRestClient);
-			} else {
-				activoApi.upload(webFileItem);
-			}
-		} else {
-			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "matricula", matricula);
-				DDTipoDocumentoActivo tipoDocumento = (DDTipoDocumentoActivo) genericDao
-						.get(DDTipoDocumentoActivo.class, filtro);
-
-				if (!Checks.esNulo(tipoDocumento)) {
-					Long idDocRestClient = gestorDocumentalAdapterApi.upload(activoEntrada, webFileItem,
-							usuarioLogado.getUsername(), tipoDocumento.getMatricula());
-					activoApi.uploadDocumento(webFileItem, idDocRestClient, activoEntrada, matricula);
-				}
-			} else {
-				activoApi.uploadDocumento(webFileItem, null, activoEntrada, matricula);
-			}
+		if(webFileItem == null) return null; //No seguimos
+		
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		Filter filtro = null;
+		DDTipoDocumentoActivo tipoDocumento = null;
+		Long idDocRestClient = null;
+		String username = usuarioLogado != null ? usuarioLogado.getUsername() : "DEFAULT";
+		boolean gestorDocumentalActivado = gestorDocumentalAdapterApi.modoRestClientActivado();
+		
+		if (activoEntrada == null)
+			activoEntrada = activoApi.get(Long.parseLong(webFileItem.getParameter("idEntidad")));
+		
+		if (matricula == null) 
+			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
+		else 
+			filtro = genericDao.createFilter(FilterType.EQUALS, "matricula", matricula);		
+		
+		tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class, filtro);
+		
+		if(tipoDocumento != null && gestorDocumentalActivado)
+			idDocRestClient = gestorDocumentalAdapterApi.upload(activoEntrada, webFileItem,
+					username, tipoDocumento.getMatricula());
+		
+		if (gestorDocumentalActivado) {
+			activoApi.uploadDocumento(webFileItem, idDocRestClient, activoEntrada, matricula);
+		}else {
+			activoApi.uploadDocumento(webFileItem, null, activoEntrada, matricula);
+		}
+		if(tipoDocumento != null && activoEntrada != null) {
+			DtoActivoSituacionPosesoria dto = new DtoActivoSituacionPosesoria();
+			BeanUtils.copyProperties(dto, activoEntrada.getSituacionPosesoria());
+			dto.setConTitulo(activoEntrada.getSituacionPosesoria().getConTitulo().getCodigo());
+			activoApi.compruebaParaEnviarEmailAvisoOcupacion(dto, activoEntrada.getId());
 		}
 		return null;
 	}

@@ -11252,4 +11252,28 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return false;
 	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean activarCompradorExpediente(Long idCompradorExpediente, Long idExpediente) {
+		if (idCompradorExpediente != null && idExpediente != null) {
+			Filter filtroIdCex = genericDao.createFilter(FilterType.EQUALS, "comprador", idCompradorExpediente);
+			Filter filtroIdEx = genericDao.createFilter(FilterType.EQUALS, "expediente", idExpediente);
+			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", true);
+			CompradorExpediente compradorExpediente = genericDao.get(CompradorExpediente.class, filtroIdCex, filtroIdEx, filtroBorrado);
+			if (compradorExpediente != null) {
+				Auditoria auditoria = compradorExpediente.getAuditoria();
+				auditoria.setBorrado(false);
+				auditoria.setFechaModificar(new Date());
+				auditoria.setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
+				compradorExpediente.setAuditoria(auditoria);
+				compradorExpediente.setFechaBaja(null);
+				genericDao.update(CompradorExpediente.class, compradorExpediente);
+				
+				return true;
+			}
+		}
+		return false;
+	}
+	
 }

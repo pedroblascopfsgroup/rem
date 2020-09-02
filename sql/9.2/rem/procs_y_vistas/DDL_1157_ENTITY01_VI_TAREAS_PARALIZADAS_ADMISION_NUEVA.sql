@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=DANIEL GUTIÉRREZ
---## FECHA_CREACION=20160428
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20200826
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=0
+--## INCIDENCIA_LINK=REMVIP-7935
 --## PRODUCTO=NO
 --## Finalidad: Vista que devuelve las tareas paralizadas
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
 --##########################################
 --*/
 
@@ -60,15 +61,29 @@ BEGIN
 		INNER JOIN ' || V_ESQUEMA || '.TAR_TAREAS_NOTIFICACIONES TAR ON TAR.TAR_ID = TAC.TAR_ID and tar.borrado = 0
 		INNER JOIN ' || V_ESQUEMA || '.TEX_TAREA_EXTERNA TEX ON TEX.TAR_ID = TAC.TAR_ID
 		INNER JOIN ' || V_ESQUEMA || '.TAP_TAREA_PROCEDIMIENTO TAP ON TAP.TAP_ID = TEX.TAP_ID
+		INNER JOIN ' || V_ESQUEMA || '.V_FECHA_POSESION_ACTIVO FPA ON FPA.ACT_ID = POS.ACT_ID
 		WHERE TAP.TAP_CODIGO IN (''T001_CheckingDocumentacionAdmision'', ''T001_CheckingDocumentacionGestion'')
 		AND TAR.TAR_FECHA_FIN IS NULL
       	AND TAR.TAR_TAREA_FINALIZADA = 0
       	AND TEX.TEX_DETENIDA = 1
-      	AND POS.SPS_FECHA_TOMA_POSESION IS NOT NULL
+      	AND FPA.FECHA_POSESION IS NOT NULL
         ';
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_TAREAS_PARALIZADAS_ADMISION...Creada OK');
   
+  EXCEPTION
+     WHEN OTHERS THEN 
+         DBMS_OUTPUT.PUT_LINE('KO!');
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
+
+          ROLLBACK;
+          RAISE;   
+          
 END;
 /
 

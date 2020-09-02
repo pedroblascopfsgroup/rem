@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Jonathan Ovalle
---## FECHA_CREACION=20200805
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20200826
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-10769
+--## INCIDENCIA_LINK=REMVIP-7935
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Crear vista para rellenar el grid de la busqueda de activos
@@ -12,8 +12,9 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 [HREOS-10081] Versión inicial (Creación de la vista)
---##        0.1 [REMVIP-7161] Añadir campo equipo de gestión
---##        0.2 [HREOS-10769] Añadir campos BBVA_NUM_ACTIVO y BBVA_ID_DIVARIAN
+--##        0.2 [REMVIP-7161] Añadir campo equipo de gestión
+--##        0.3 [HREOS-10769] Añadir campos BBVA_NUM_ACTIVO y BBVA_ID_DIVARIAN
+--##		0.4 Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
 --#########################################
 --*/
 
@@ -104,7 +105,7 @@ BEGIN
 			PRO.PRO_NOMBRE											AS NOMBRE_PROPIETARIO,
 			PRO.PRO_DOCIDENTIF									AS DOCUMENTO_PROPIETARIO,
 			ACT_SIT.SPS_OCUPADO									AS OCUPADO,
-			ACT_SIT.SPS_FECHA_TOMA_POSESION	AS FECHA_TOMA_POSESION,
+			FPA.FECHA_POSESION	AS FECHA_TOMA_POSESION,
           	ACT_SIT.SPS_ACC_TAPIADO							AS ACCESO_TAPIADO,
 			ACT_SIT.SPS_ACC_ANTIOCUPA					AS ACCESO_ANTIOCUPA,
 			TPO.DD_TPO_CODIGO									AS TITULO_POSESORIO_CODIGO,
@@ -123,6 +124,7 @@ BEGIN
 		FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT 
 		LEFT JOIN '|| V_ESQUEMA ||'.ACT_LOC_LOCALIZACION ACT_LOC 							ON ACT_LOC.ACT_ID = ACT.ACT_ID
 		LEFT JOIN '|| V_ESQUEMA ||'.ACT_SPS_SIT_POSESORIA ACT_SIT 								ON ACT.ACT_ID = ACT_SIT.ACT_ID
+		LEFT JOIN '|| V_ESQUEMA ||'.V_FECHA_POSESION_ACTIVO FPA ON FPA.ACT_ID = ACT.ACT_ID
 		LEFT JOIN '|| V_ESQUEMA ||'.BIE_LOCALIZACION BIE_LOC											ON ACT.BIE_ID = BIE_LOC.BIE_ID
 		LEFT JOIN '|| V_ESQUEMA ||'.BIE_DATOS_REGISTRALES BIE_DAT 								ON ACT.BIE_ID = BIE_DAT.BIE_ID
  		LEFT JOIN '|| V_ESQUEMA ||'.ACT_ABA_ACTIVO_BANCARIO ABA								ON ABA.ACT_ID = ACT.ACT_ID

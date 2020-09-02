@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20190521
+--## AUTOR=Juan Bautista Alfonso Canovas
+--## FECHA_CREACION=20200826
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.11.0
---## INCIDENCIA_LINK=REMVIP-4301
+--## INCIDENCIA_LINK=REMVIP-7935
 --## PRODUCTO=NO
 --##
 --## Finalidad: Crear vista V_ACT_ESTADO_DISP
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
+--##		0.2 Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
 --##########################################
 --*/
 
@@ -33,7 +34,7 @@ BEGIN
 	
 	V_MSQL := 'CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.V_ACT_ESTADO_DISP as (
 	    SELECT act.act_id,
-		    CASE WHEN ( (sps1.sps_fecha_toma_posesion IS NULL AND aba2.dd_cla_id = 2)               -- SIN TOMA POSESION INICIAL
+		    CASE WHEN ( (FPA.FECHA_POSESION IS NULL AND aba2.dd_cla_id = 2)               -- SIN TOMA POSESION INICIAL
 		               OR eac1.dd_eac_codigo=''05''                                                   -- RUINA
 		               OR NVL2 (tit.act_id, 0, 1) = 1
 		               OR NVL2 (eon.dd_eon_id, 1, 0) = 1
@@ -58,6 +59,7 @@ BEGIN
 		LEFT JOIN '||V_ESQUEMA||'.act_aba_activo_bancario aba2 ON aba2.act_id = act.act_id
 		LEFT JOIN '||V_ESQUEMA||'.dd_eac_estado_activo eac1 ON eac1.dd_eac_id = act.dd_eac_id
 		LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps1 ON sps1.act_id = act.act_id
+		LEFT JOIN '||V_ESQUEMA||'.V_FECHA_POSESION_ACTIVO FPA ON FPA.ACT_ID = ACT.ACT_ID
 		LEFT JOIN '||V_ESQUEMA||'.DD_TPA_TIPO_TITULO_ACT TPA ON TPA.DD_TPA_ID = SPS1.DD_TPA_ID
 		LEFT JOIN
 		    (SELECT act_tit.act_id

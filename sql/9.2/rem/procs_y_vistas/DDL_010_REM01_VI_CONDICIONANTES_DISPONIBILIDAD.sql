@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20200409
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20200826
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-6739
+--## INCIDENCIA_LINK=REMVIP-7935
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -32,6 +32,7 @@
 --##        0.19 Adrián Molina - REMVIP-4259 - Se añade la columna del combo otros
 --##        0.20 GUILLEM REY - REMVIP-4606 - Discleimer "Ocupado con título" para Activos Matrices
 --##        0.21 Remus Ovidiu - REMVIP-5203 - Quitamos activos Bankia del calculo de posesion por fecha de posesion, ya que estos se calculan por situacion juridica
+--##        0.22 Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
 --##########################################
 --*/
 
@@ -97,7 +98,7 @@ AS
 				CASE WHEN (sps1.dd_sij_id is not null and sij.DD_SIJ_INDICA_POSESION = 0) 
                     THEN 1 
                     ELSE 
-						CASE WHEN (sps1.sps_fecha_toma_posesion IS NULL AND aba2.dd_cla_id = 2 and act.dd_cra_id <> 21) 
+						CASE WHEN (FPA.FECHA_POSESION IS NULL AND aba2.dd_cla_id = 2 and act.dd_cra_id <> 21) 
 							THEN 1 
 							ELSE 0 
 						END 
@@ -124,7 +125,7 @@ AS
                 DECODE (ico.ico_posible_hacer_inf, 1, 0, 0, 1, 0) AS sin_acceso,                                                                                                            
                 CASE WHEN (sps1.sps_ocupado = 1 AND (TPA.DD_TPA_CODIGO = ''02'' OR TPA.DD_TPA_CODIGO = ''03'')) THEN 1 ELSE 0 END AS ocupado_sintitulo, 
                 CASE WHEN (sps1.sps_estado_portal_externo = 1) THEN 1 ELSE 0 END AS estado_portal_externo,  -- ESTADO PUBLICACION PORTALES EXTERNOS
-                CASE WHEN ( (sps1.sps_fecha_toma_posesion IS NULL AND aba2.dd_cla_id = 2)               -- SIN TOMA POSESION INICIAL
+                CASE WHEN ( (FPA.FECHA_POSESION IS NULL AND aba2.dd_cla_id = 2)               -- SIN TOMA POSESION INICIAL
                            OR eac1.dd_eac_codigo=''05''                                                   -- RUINA
 
                            OR NVL2 (tit.act_id, 0, 1) = 1
@@ -151,7 +152,8 @@ AS
 				  
 				  LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA cra ON cra.dd_cra_id = act.dd_cra_id 	
 				  LEFT JOIN '||V_ESQUEMA||'.dd_eac_estado_activo eac1 ON eac1.dd_eac_id = act.dd_eac_id                  
-                  LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps1 ON sps1.act_id = act.act_id                  
+                  LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps1 ON sps1.act_id = act.act_id   
+				  LEFT JOIN '||V_ESQUEMA||'.V_FECHA_POSESION_ACTIVO FPA ON FPA.ACT_ID = ACT.ACT_ID             
 				  LEFT JOIN '||V_ESQUEMA||'.DD_TPA_TIPO_TITULO_ACT TPA ON TPA.DD_TPA_ID = SPS1.DD_TPA_ID
 				  LEFT JOIN '||V_ESQUEMA||'.DD_SIJ_SITUACION_JURIDICA sij on  sij.dd_sij_id =sps1.dd_sij_id                   
 				  LEFT JOIN (

@@ -42,7 +42,6 @@ public class MSVControlTributosExcelValidator extends MSVExcelValidatorAbstract 
 	private static final String ACTIVO_NO_EXISTE = "msg.error.masivo.control.tributos.activo.no.existe";
 	private static final String ACTIVO_ES_UA = "msg.error.masivo.control.tributos.activo.es.ua";
 	private static final String ACCION_NO_VALIDO = "msg.error.masivo.control.tributos.accion.no.valido";
-	private static final String NUM_HAYA_VINCULADO_NO_EXISTE = "msg.error.masivo.control.tributos.vinculado.no.existe";
 
 	private static final String RESULTADO_NO_VALIDO = "msg.error.masivo.control.tributos.resultado.no.valido";
 	private static final String SOLICITUD_NO_VALIDO = "msg.error.masivo.control.tributos.tipo.solicitud.no.valido";
@@ -50,7 +49,6 @@ public class MSVControlTributosExcelValidator extends MSVExcelValidatorAbstract 
 	private static final String ID_TRIBUTO_VACIO = "msg.error.masivo.control.tributos.id.tributo.vacio";
 	private static final String FECHA_NO_VALIDA = "msg.error.masivo.control.tributos.fecha.no.valida";
 	private static final String ID_TIPO_TRIBUTO_NO_VALIDO = "msg.error.masivo.control.tributos.tipo.tributo.no.valido";
-	private static final String EXPEDIENTE_NO_EXISTE = "msg.error.masivo.control.tributos.expediente.no.existe";
 	private static final String MOTIVO_EXENTO_MARCADO ="msg.error.masivo.control.tributos.motivo.exento.marcado";
 	private static final String MOTIVO_EXENTO_NO_EXISTE="msg.error.masivo.control.tributos.motivo.exento.no.existe";
 	private static final String FORMATO_FECHA = "dd/MM/yyyy";
@@ -149,12 +147,10 @@ public class MSVControlTributosExcelValidator extends MSVExcelValidatorAbstract 
 			mapaErrores.put(messageServices.getMessage(ID_TRIBUTO_VACIO), listaFilasSinIdTributo);
 			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_EXISTE), existeActivo(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_ES_UA), esActivoUA(exc));
-			mapaErrores.put(messageServices.getMessage(NUM_HAYA_VINCULADO_NO_EXISTE), esNumHayaVinculado(exc));
 			mapaErrores.put(messageServices.getMessage(RESULTADO_NO_VALIDO), esResultadoValido(exc));
 			mapaErrores.put(messageServices.getMessage(SOLICITUD_NO_VALIDO), esSolicitudValido(exc));
 			mapaErrores.put(messageServices.getMessage(FECHA_NO_VALIDA), esFechaNoValida(exc));
 			mapaErrores.put(messageServices.getMessage(ID_TIPO_TRIBUTO_NO_VALIDO), esTipoTributoValido(exc));
-			mapaErrores.put(messageServices.getMessage(EXPEDIENTE_NO_EXISTE), esExpedienteValido(exc));		
 			mapaErrores.put(messageServices.getMessage(MOTIVO_EXENTO_MARCADO), motivoExentoObligatorio(exc));
 			mapaErrores.put(messageServices.getMessage(MOTIVO_EXENTO_NO_EXISTE), motivoExentoExiste(exc));
 			
@@ -262,53 +258,6 @@ public class MSVControlTributosExcelValidator extends MSVExcelValidatorAbstract 
 				logger.error(e.getMessage());
 			}
 		}
-	}
-
-	private List<Integer> esNumHayaVinculado(MSVHojaExcel exc) {
-
-		List<Integer> listaFilas = new ArrayList<Integer>();
-
-		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
-			try {
-				String valorGasto = exc.dameCelda(i, COL_NUM.COL_NUM_HAYA_VINCULADO);
-				String valorActivo = exc.dameCelda(i, COL_NUM.COL_NUM_ACTIVO);
-				if (!Checks.esNulo(valorGasto)
-						&& !particularValidator.esNumHayaVinculado(Long.parseLong(valorGasto), valorActivo)) {
-					listaFilas.add(i);
-				}
-
-			} catch (ParseException e) {
-				listaFilas.add(i);
-				logger.error(e.getMessage());
-			} catch (Exception e) {
-				listaFilas.add(0);
-				logger.error(e.getMessage());
-			}
-		}
-		return listaFilas;
-	}
-	
-	private List<Integer> esExpedienteValido(MSVHojaExcel exc) {
-
-		List<Integer> listaFilas = new ArrayList<Integer>();
-
-		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
-			try {
-				String numExpediente = exc.dameCelda(i, COL_NUM.COL_NUM_NUMERO_EXPEDIENTE);
-				if (!Checks.esNulo(numExpediente)
-						&& !particularValidator.esnNumExpedienteValido(Long.parseLong(numExpediente))) {
-					listaFilas.add(i);
-				}
-
-			} catch (ParseException e) {
-				listaFilas.add(i);
-				logger.error(e.getMessage());
-			} catch (Exception e) {
-				listaFilas.add(0);
-				logger.error(e.getMessage());
-			}
-		}
-		return listaFilas;
 	}
 
 	private List<Integer> esActivoUA(MSVHojaExcel exc) {

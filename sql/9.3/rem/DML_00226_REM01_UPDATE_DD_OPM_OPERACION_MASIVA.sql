@@ -40,7 +40,7 @@ BEGIN
   V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET 
           USUARIOMODIFICAR = '''||V_USUARIO||'''
         , FECHAMODIFICAR = SYSDATE
-        , DD_OPM_VALIDACION_FORMATO = ''n*,s*,f*,n*,s,f*,f,f,s*,s,f,f,f,s,n,n*,n,f,i,s*,n''
+        , DD_OPM_VALIDACION_FORMATO = ''n*,s*,f*,n*,s,f*,f,f,s*,s,f,f,f,s,n,n*,s,f,i,s*,n''
         WHERE DD_OPM_CODIGO = ''MASCT''
         ';
 

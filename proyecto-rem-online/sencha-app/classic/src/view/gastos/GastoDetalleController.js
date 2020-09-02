@@ -37,6 +37,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     
 	cargarTabData: function (form) {
 		var me = this,
+		
 		id = me.getViewModel().get("gasto.id"),
 		model = form.getModelInstance();
 		form.up("tabpanel").mask(HreRem.i18n("msg.mask.loading"));	

@@ -94,8 +94,10 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.ProvisionGastos;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
+import es.pfsgroup.plugin.rem.model.VActivosAfectosGencat;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
+import es.pfsgroup.plugin.rem.model.VDiarioCalculoLbk;
 import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosRefacturados;
@@ -1796,12 +1798,36 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public DtoInfoContabilidadGasto infoContabilidadToDtoInfoContabilidad(GastoProveedor gasto) {
 
 		DtoInfoContabilidadGasto dto = new DtoInfoContabilidadGasto();
-
 		if (!Checks.esNulo(gasto)) {
-
+			DDCartera cartera = gasto.getCartera();
+			if(cartera != null) {
+				if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(cartera.getCodigo())) {
+					Filter filtroVista = genericDao.createFilter(FilterType.EQUALS, "id", gasto.getId());
+					VDiarioCalculoLbk diarioCalculoLbk = genericDao.get(VDiarioCalculoLbk.class, filtroVista);
+					if(diarioCalculoLbk != null) {
+						dto.setDiario1(diarioCalculoLbk.getDiario1());
+						dto.setDiario1Base(diarioCalculoLbk.getDiario1Base());
+						dto.setDiario1Tipo(diarioCalculoLbk.getDiario1Tipo());
+						dto.setDiario1Cuota(diarioCalculoLbk.getDiario1Cuota());
+						
+						dto.setDiario2(diarioCalculoLbk.getDiario2());
+						if(diarioCalculoLbk.getDiario2() != null) {
+							dto.setIsEmpty(false);
+						}else {
+							dto.setIsEmpty(true);
+						}
+						dto.setDiario2Base(diarioCalculoLbk.getDiario2Base());
+						dto.setDiario1Tipo(diarioCalculoLbk.getDiario2Tipo());
+						dto.setDiario2Cuota(diarioCalculoLbk.getDiario2Cuota());
+						dto.getIsEmpty();
+					}
+				}
+			}
+			
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
 			GastoInfoContabilidad contabilidadGasto = genericDao.get(GastoInfoContabilidad.class, filtro);
 
+			
 			if (!Checks.esNulo(contabilidadGasto)) {
 				if (!Checks.esNulo(contabilidadGasto.getEjercicio())) {
 					dto.setEjercicioImputaGasto(contabilidadGasto.getEjercicio().getId());
@@ -1819,7 +1845,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				if (!Checks.esNulo(contabilidadGasto.getTipoPeriocidadEspecial())) {
 					dto.setPeriodicidadEspecialDescripcion(contabilidadGasto.getTipoPeriocidadEspecial().getDescripcion());
 				}
-
+				
 				dto.setFechaContabilizacion(contabilidadGasto.getFechaContabilizacion());
 				dto.setFechaDevengoEspecial(contabilidadGasto.getFechaDevengoEspecial());
 				if (!Checks.esNulo(contabilidadGasto.getContabilizadoPor())) {

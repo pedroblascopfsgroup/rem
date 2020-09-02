@@ -1395,7 +1395,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajoDao.saveOrUpdate(trabajo);
 
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(), e);
 		}
 
 		return trabajo;
@@ -2928,7 +2928,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Override
 	public Page getListActivosAgrupacion(DtoAgrupacionFilter filtro, Long id) {
-
+		if(id == null)
+			return null;
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		filtro.setAgrupacionId(String.valueOf(id));
 

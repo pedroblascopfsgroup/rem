@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina
---## FECHA_CREACION=20200513
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20200826
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-7161
+--## INCIDENCIA_LINK=REMVIP-7935
 --## PRODUCTO=NO
 --## Finalidad:
 --##           
@@ -18,6 +18,7 @@
 --##		0.6 Añadido filtro DD_TDC_TERRITORIOS_DIR_COM eliminado filtroDD_DRT_DIRECCION_TERRITORIAL
 --##		0.7 HREOS-9328 - Añadido campos Segmento y Perimetros
 --##		0.8 REMVIP-7161 - Añadido campo Equipo de gestión
+--##		0.9 Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
 --##########################################
 --*/
 
@@ -85,7 +86,7 @@ BEGIN
           	BIE_DAT.BIE_DREG_NUM_REGISTRO,
 			ACT_SIT.SPS_OCUPADO,
           	TIT.DD_TPA_CODIGO,
-          	ACT_SIT.SPS_FECHA_TOMA_POSESION,
+          	FPA.FECHA_POSESION,
           	ACT_SIT.SPS_ACC_TAPIADO,
 			ACT_SIT.SPS_ACC_ANTIOCUPA,
         	RTG.DD_RTG_CODIGO AS FLAG_RATING,
@@ -151,6 +152,7 @@ BEGIN
 		LEFT JOIN ' || V_ESQUEMA || '.BIE_DATOS_REGISTRALES BIE_DAT ON ACT.BIE_ID = BIE_DAT.BIE_ID
 		LEFT JOIN ' || V_ESQUEMA || '.ACT_REG_INFO_REGISTRAL ACT_REG ON ACT.ACT_ID = ACT_REG.ACT_ID
 		LEFT JOIN ' || V_ESQUEMA || '.ACT_SPS_SIT_POSESORIA ACT_SIT ON ACT.ACT_ID = ACT_SIT.ACT_ID
+		LEFT JOIN ' || V_ESQUEMA || '.V_FECHA_POSESION_ACTIVO FPA ON FPA.ACT_ID = ACT.ACT_ID
 		LEFT JOIN ' || V_ESQUEMA || '.DD_TPA_TIPO_TITULO_ACT TIT ON TIT.DD_TPA_ID = ACT_SIT.DD_TPA_ID
 		LEFT JOIN ' || V_ESQUEMA_MASTER || '.DD_TVI_TIPO_VIA TPVIA ON TPVIA.DD_TVI_ID = BIE_LOC.DD_TVI_ID
 		LEFT JOIN ' || V_ESQUEMA_MASTER || '.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_ID = BIE_LOC.DD_LOC_ID

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Cristian Montoya
---## FECHA_CREACION=20200317
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20200826
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-3225
+--## INCIDENCIA_LINK=REMVIP-7935
 
 --## PRODUCTO=NO
 --## Finalidad: DDL
@@ -16,6 +16,7 @@
 --##		0.3 Eliminar duplicados - REMVIP-2235
 --##		0.4 Left join a titulo para registros que se perdian - REMVIP-2352
 --##		0.5 Se añade OFR_ID en la select para que rem 3.0 pueda buscar por OFR_ID
+--##		0.6 Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
 --##########################################
 --*/
 
@@ -63,11 +64,12 @@ BEGIN
 		             WHEN SPS.SPS_OCUPADO IS NOT NULL AND SPS.SPS_OCUPADO = 1 AND SPS.SPS_CON_TITULO IS NOT NULL AND (SPS.SPS_CON_TITULO = 0 OR SPS.SPS_CON_TITULO IS NULL) THEN ''03''
 		             ELSE NULL
 		             END AS SITUACION_POS_COD_I,
-		        CASE WHEN SPS.SPS_FECHA_TOMA_POSESION IS NOT NULL THEN 1
+		        CASE WHEN FPA.FECHA_POSESION IS NOT NULL THEN 1
 		             ELSE 0
 		             END AS POS_INICIAL_I
 		        FROM '|| V_ESQUEMA ||'.ACT_SPS_SIT_POSESORIA SPS
 		        JOIN '|| V_ESQUEMA ||'.ACT_OFR OFR ON SPS.ACT_ID = OFR.ACT_ID
+			JOIN '|| V_ESQUEMA ||'.V_FECHA_POSESION_ACTIVO FPA ON FPA.ACT_ID=SPS.ACT_ID
 		        JOIN '|| V_ESQUEMA ||'.ECO_EXPEDIENTE_COMERCIAL ECO ON OFR.OFR_ID = ECO.OFR_ID
 		),
 		APR AS (

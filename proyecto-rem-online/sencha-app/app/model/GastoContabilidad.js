@@ -56,6 +56,10 @@ Ext.define('HreRem.model.GastoContabilidad', {
     	},
         {
             name: 'comboActivable'
+        },
+        {
+        	name: 'isEmpty',
+        	type: 'boolean'
         }
     ],
     

@@ -23,7 +23,8 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
     
     initComponent: function () {
 
-        var me = this;
+       var me = this;
+        var isCarteraLiberbank = CONST.CARTERA['LIBERBANK'] == me.lookupController().getViewModel().getData().gasto.getData().cartera;
 		me.setTitle(HreRem.i18n('title.gasto.contabilidad'));
         var items= [
        
@@ -89,7 +90,109 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
                                                         hidden: true
                                                     }
 										]
+					           },
+					           {   
+									xtype:'fieldsettable',
+									collapsible: true,
+									collapsable: false,
+									reference: 'liberbankGrids',
+									hidden : !isCarteraLiberbank,
+									title: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank'),
+									colspan: 3,
+									items :
+										[
+													{ 
+														xtype: 'textfieldbase',
+														fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.diario1'),
+														reference : 'diario1',
+										                bind: '{contabilidad.diario1}',
+										                colspan: 3,
+										                readOnly: true						
+													},	
+
+													{ 
+														xtype:'fieldsettable',
+														collapsible: false,
+														refence : 'diario1Grid',
+														colspan : 3,
+														items :
+															[
+																{ 
+																	xtype: 'textfieldbase',
+																	fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.Base'),
+																	reference : 'baseDiario1',
+													                bind: '{contabilidad.diario1Base}',
+													                readOnly: true						
+																},
+																{ 
+																	xtype: 'textfieldbase',
+																	fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.tipo.impositivo'),
+																	reference : 'tipoImpositivoDiario1',
+													                bind: '{contabilidad.diario1Tipo}',
+													                readOnly: true						
+																},
+																{ 
+																	xtype: 'textfieldbase',
+																	fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.cuota'),
+																	reference : 'cuotaDiario1',
+																	bind: '{contabilidad.diario1Cuota}',
+													                readOnly: true						
+																}
+																
+															]
+											        },
+											        { 
+														xtype: 'textfieldbase',
+														fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.diario2'),
+														reference : 'diario2',
+										                bind: {value: '{contabilidad.diario2}',
+										                		hidden : '{contabilidad.isEmpty}'
+										                },
+										                colspan: 3,
+										                readOnly: true						
+													},	
+
+											        { 
+														xtype:'fieldsettable',
+														colspan : 3,
+														refence : 'diario2Grid',
+														bind : {hidden :'{contabilidad.isEmpty}'},
+														collapsible: false,
+														items :
+															[
+																{ 
+																	xtype: 'textfieldbase',
+																	fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.Base'),
+													                bind: {value :'{contabilidad.diario2Base}',
+													                	   hidden :'{contabilidad.isEmpty}'
+													                },
+													                reference : 'baseDiario2',
+													                readOnly: true						
+																},
+																{ 
+																	xtype: 'textfieldbase',
+																	fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.tipo.impositivo'),
+													                bind: { value :'{contabilidad.diario2Tipo}',
+													                		hidden :'{contabilidad.isEmpty}'
+													                },
+													                reference: 'tipoImpositivoDiario2',
+													                readOnly: true						
+																},
+																{ 
+																	xtype: 'textfieldbase',
+																	fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.cuota'),
+																	reference : 'cuotaDiario2',
+													                bind: {value :'{contabilidad.diario2Cuota}',
+													                	   hidden :'{contabilidad.isEmpty}'
+													                },
+													                readOnly: true						
+																}
+																
+															]
+											        }
+										]
 					           }
+					           
            
     	];
     

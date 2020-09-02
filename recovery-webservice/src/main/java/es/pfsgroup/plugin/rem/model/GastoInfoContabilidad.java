@@ -207,4 +207,5 @@ public class GastoInfoContabilidad implements Serializable, Auditable {
 		this.gicPlanVisitas = gicPlanVisitas;
 	}
 	
+
 }

@@ -7028,6 +7028,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			agendaEvolucion.setEstadoAdmision(estadoAdmision);
 			activo.setSubestadoAdmision(subestadoAdmision);
 			agendaEvolucion.setSubEstadoAdmision(subestadoAdmision);
+			agendaEvolucion.setFechaAgendaEv(new Date());
+			agendaEvolucion.setUsuarioId(adapter.getUsuarioLogado());
 			agendaEvolucion.setObservaciones(observaciones);
 			genericDao.save(ActivoAgendaEvolucion.class, agendaEvolucion);
 				

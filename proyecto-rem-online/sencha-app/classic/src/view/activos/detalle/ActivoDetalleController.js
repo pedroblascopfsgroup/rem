@@ -475,7 +475,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	});
     },
     onClickEstadoAdmision: function (btn) {
-    	
         var me = this;
         var idActivo = me.getViewModel().get("activo.id");
         var codSubcartera = me.getViewModel().get("activo.subcarteraCodigo");

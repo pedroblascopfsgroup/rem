@@ -116,7 +116,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     	
 	     	if(perimetroAdmision){
 	     		if(estadoAdmision == CONST.ESTADO_ADMISION['CODIGO_SANEADO_REGISTRALMENTE']){
-	     			return 'app-tbfiedset-ico icono-ok';
+	     			return 'app-tbfiedset-ico icono-ok-green';
 	     		}else if(estadoAdmision == CONST.ESTADO_ADMISION['CODIGO_PENDIENTE_SANEAMIENTO']
 	     			&& subestadoAdmision == CONST.SUBESTADO_ADMISION['CODIGO_PENDIENTE_CARGAS']){
 	     			return 'app-tbfiedset-ico icono-okn';
@@ -125,7 +125,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     		}
 	     	}else{
 	     		if(admisionAntiguo) {
-		     		return 'app-tbfiedset-ico icono-ok';
+		     		return 'app-tbfiedset-ico icono-ok-green';
 		     	} else {
 		     		return 'app-tbfiedset-ico icono-ko';
 	     		}

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20200901
+--## FECHA_CREACION=20200902
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10602
@@ -28,7 +28,7 @@ DECLARE
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-	
+    
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
@@ -97,8 +97,12 @@ DECLARE
         T_TIPO_DATA('35','03','05','7'),
         T_TIPO_DATA('35','04','18','4'),
         T_TIPO_DATA('35','04','19','4'),
+        T_TIPO_DATA('36','01',NULL,'21'),
         T_TIPO_DATA('36','01',NULL,'10'),
+        T_TIPO_DATA('36','03','05','7'),
         T_TIPO_DATA('36','03','05','3'),
+        T_TIPO_DATA('36','04','18','4'),
+        T_TIPO_DATA('36','04','19','4'),
         T_TIPO_DATA('36','04','18','1'),
         T_TIPO_DATA('36','04','19','1'),
         T_TIPO_DATA('37','01',NULL,'21'),
@@ -325,10 +329,10 @@ DECLARE
         T_TIPO_DATA('100',NULL,NULL,'0'),
         T_TIPO_DATA('101',NULL,NULL,'0'),
         T_TIPO_DATA('102',NULL,NULL,'0')
-		); 
+        ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
-BEGIN	
+BEGIN   
 
   -- LOOP para insertar los valores -----------------------------------------------------------------
   DBMS_OUTPUT.PUT_LINE('[START]: INSERCION EN '||V_TEXT_TABLA||' ');
@@ -337,42 +341,50 @@ BEGIN
     
       V_TMP_TIPO_DATA := V_TIPO_DATA(I);
 
+      V_MSQL := NULL;
+
       IF V_TMP_TIPO_DATA(4) IS NULL THEN 
         DBMS_OUTPUT.PUT_LINE('  [INFO]: El registro '''||TRIM(V_TMP_TIPO_DATA(1))||''', '''||TRIM(V_TMP_TIPO_DATA(2))||''', '''||TRIM(V_TMP_TIPO_DATA(3))||''', '''||TRIM(V_TMP_TIPO_DATA(4))||''' no es válido.');
       ELSE
         DBMS_OUTPUT.PUT_LINE('  [INFO]: Insertamos o actualizamos el registro '''||TRIM(V_TMP_TIPO_DATA(1))||''', '''||TRIM(V_TMP_TIPO_DATA(2))||''', '''||TRIM(V_TMP_TIPO_DATA(3))||''', '''||TRIM(V_TMP_TIPO_DATA(4))||'''');   
 
         IF V_TMP_TIPO_DATA(2) IS NOT NULL AND V_TMP_TIPO_DATA(3) IS NOT NULL THEN
-          FILTER_DD_TIT := '(SELECT DD_TIT_ID FROM '||V_ESQUEMA||'.DD_TIT_TIPOS_IMPUESTO WHERE DD_TIT_CODIGO = '''||V_TMP_TIPO_DATA(2)||''')';
-          FILTER_DD_CCA := '(SELECT DD_CCA_ID FROM '||V_ESQUEMA_M||'.DD_CCA_COMUNIDAD WHERE DD_CCA_CODIGO = '''||V_TMP_TIPO_DATA(3)||''')';
-          FILTER_MERGE1 := '= T2.DD_TIT_ID';
-          FILTER_MERGE2 := '= T2.DD_CCA_ID';
+            V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' (STI_ID, DD_STG_ID, DD_TIT_ID, DD_CCA_ID, STI_TIPO_IMPOSITIVO, USUARIOCREAR, FECHACREAR)
+                SELECT '|| V_ESQUEMA ||'.S_'||V_TEXT_TABLA||'.NEXTVAL
+                    , STG.DD_STG_ID
+                    , TIT.DD_TIT_ID
+                    , CCA.DD_CCA_ID
+                    , '||V_TMP_TIPO_DATA(4)||' STI_TIPO_IMPOSITIVO
+                    , '''||V_ITEM||'''
+                    , CURRENT_TIMESTAMP(6)
+                FROM '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG
+                LEFT JOIN '||V_ESQUEMA||'.DD_TIT_TIPOS_IMPUESTO TIT ON TIT.DD_TIT_CODIGO = '''||V_TMP_TIPO_DATA(2)||'''
+                LEFT JOIN '||V_ESQUEMA_M||'.DD_CCA_COMUNIDAD CCA ON CCA.DD_CCA_CODIGO = '''||V_TMP_TIPO_DATA(3)||'''
+                LEFT JOIN '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' STI ON STI.DD_STG_ID = STG.DD_STG_ID 
+                    AND STI.DD_TIT_ID = TIT.DD_TIT_ID
+                    AND STI.DD_CCA_ID = CCA.DD_CCA_ID
+                    AND STI.STI_TIPO_IMPOSITIVO = '||V_TMP_TIPO_DATA(4)||'
+                WHERE STG.DD_STG_CODIGO = '''||V_TMP_TIPO_DATA(1)||'''
+                    AND STI.STI_ID IS NULL';
         ELSE
-          FILTER_DD_TIT := 'NULL';
-          FILTER_DD_CCA := 'NULL';
-          FILTER_MERGE1 := ' IS NULL';
-          FILTER_MERGE2 := ' IS NULL';
+            V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' (STI_ID, DD_STG_ID, STI_TIPO_IMPOSITIVO, USUARIOCREAR, FECHACREAR)
+                SELECT '|| V_ESQUEMA ||'.S_'||V_TEXT_TABLA||'.NEXTVAL
+                    , STG.DD_STG_ID
+                    , '||V_TMP_TIPO_DATA(4)||' STI_TIPO_IMPOSITIVO
+                    , '''||V_ITEM||'''
+                    , CURRENT_TIMESTAMP(6)
+                FROM '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG
+                LEFT JOIN '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' STI ON STI.DD_STG_ID = STG.DD_STG_ID 
+                    AND STI.DD_TIT_ID IS NULL
+                    AND STI.DD_CCA_ID IS NULL
+                    AND STI.STI_TIPO_IMPOSITIVO = '||V_TMP_TIPO_DATA(4)||'
+                WHERE STG.DD_STG_CODIGO = '''||V_TMP_TIPO_DATA(1)||'''
+                    AND STI.STI_ID IS NULL';
         END IF;
-     
-        V_MSQL := 'MERGE INTO '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' T1
-          USING (
-            SELECT
-              DD_STG_ID
-              , '||FILTER_DD_TIT||' DD_TIT_ID
-              , '||FILTER_DD_CCA||' DD_CCA_ID
-              , '||V_TMP_TIPO_DATA(4)||' STI_TIPO_IMPOSITIVO
-            FROM '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG
-            WHERE STG.DD_STG_CODIGO = '''||V_TMP_TIPO_DATA(1)||'''
-          ) T2
-          ON (T1.DD_STG_ID = T2.DD_STG_ID AND T1.DD_TIT_ID '||FILTER_MERGE1||' AND T1.DD_CCA_ID '||FILTER_MERGE2||')
-          WHEN MATCHED THEN UPDATE SET
-            T1.STI_TIPO_IMPOSITIVO = T2.STI_TIPO_IMPOSITIVO
-          WHEN NOT MATCHED THEN INSERT (STI_ID, DD_STG_ID, DD_TIT_ID, DD_CCA_ID, STI_TIPO_IMPOSITIVO, USUARIOCREAR, FECHACREAR)
-            VALUES ('|| V_ESQUEMA ||'.S_'||V_TEXT_TABLA||'.NEXTVAL, T2.DD_STG_ID, T2.DD_TIT_ID, T2.DD_CCA_ID, T2.STI_TIPO_IMPOSITIVO, '''||V_ITEM||''', SYSDATE)';
         
-        DBMS_OUTPUT.PUT_LINE(V_MSQL);
+        --DBMS_OUTPUT.PUT_LINE(V_MSQL);
         EXECUTE IMMEDIATE V_MSQL;
-        DBMS_OUTPUT.PUT_LINE('  [INFO]: REGISTRO INSERTADO CORRECTAMENTE');
+        DBMS_OUTPUT.PUT_LINE('  [INFO]: '||SQL%ROWCOUNT||' REGISTRO/S INSERTADO/S CORRECTAMENTE');
       END IF;
     END LOOP;
   COMMIT;

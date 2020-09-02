@@ -19,7 +19,6 @@
 	
     initComponent: function () {
         var me = this;
-        
         me.setTitle(HreRem.i18n('title.admision.evolucion'));
 
         var items= [

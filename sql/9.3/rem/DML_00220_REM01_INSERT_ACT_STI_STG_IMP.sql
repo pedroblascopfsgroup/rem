@@ -97,7 +97,7 @@ DECLARE
         T_TIPO_DATA('35','03','05','7'),
         T_TIPO_DATA('35','04','18','4'),
         T_TIPO_DATA('35','04','19','4'),
-        T_TIPO_DATA('36','01',NULL,'1'),
+        T_TIPO_DATA('36','01',NULL,'10'),
         T_TIPO_DATA('36','03','05','3'),
         T_TIPO_DATA('36','04','18','1'),
         T_TIPO_DATA('36','04','19','1'),

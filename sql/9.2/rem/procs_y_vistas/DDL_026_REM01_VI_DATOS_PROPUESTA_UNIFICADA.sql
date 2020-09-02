@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=DANIEL ALGABA
---## FECHA_CREACION=20180312
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20200826
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-3890
+--## INCIDENCIA_LINK=REMVIP-7935
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
 --##########################################
 --*/
 
@@ -94,7 +95,7 @@ BEGIN
 			(SELECT COUNT(OFR_ID) FROM '||V_ESQUEMA||'.ACT_OFR AFR WHERE AFR.ACT_ID = ACT.ACT_ID) AS NUM_OFERTAS,
 			(SELECT TIT_FECHA_INSC_REG FROM '||V_ESQUEMA||'.ACT_TIT_TITULO WHERE ACT_ID = ACT.ACT_ID AND BORRADO = 0) AS FECHA_INSCRIPCION,
 			ACT.ACT_FECHA_REV_CARGAS AS FECHA_REV_CARGAS,
-			SPS.SPS_FECHA_TOMA_POSESION AS FECHA_TOMA_POSESION,
+			FPA.FECHA_POSESION AS FECHA_TOMA_POSESION,
 			(CASE SPS.SPS_OCUPADO WHEN 0 THEN ''NO'' WHEN 1 THEN (CASE WHEN SPS.SPS_CON_TITULO = 1 THEN ''Ocupado con título'' ELSE ''Ocupado sin título'' END) END) AS OCUPADO,
 			(SELECT APU.APU_FECHA_INI_ALQUILER 
 				 FROM '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU
@@ -159,6 +160,7 @@ BEGIN
 			LEFT JOIN '||V_ESQUEMA||'.ACT_EDI_EDIFICIO EDI ON EDI.ICO_ID = ICO.ICO_ID AND EDI.BORRADO = 0
 			LEFT JOIN '||V_ESQUEMA||'.DD_ECT_ESTADO_CONSTRUCCION ECT ON ECT.DD_ECT_ID = ICO.DD_ECT_ID AND ECT.BORRADO = 0
 			LEFT JOIN '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA SPS ON SPS.ACT_ID = ACT.ACT_ID AND SPS.BORRADO = 0
+			LEFT JOIN '||V_ESQUEMA||'.V_FECHA_POSESION_ACTIVO FPA ON FPA.ACT_ID = SPS.ACT_ID
 			LEFT JOIN '||V_ESQUEMA||'.V_PIVOT_PRECIOS_ACTIVOS V ON V.ACT_ID = ACT.ACT_ID
 			LEFT JOIN (select act_id, BIE_FECHA_VALOR_TASACION, TAS_IMPORTE_TAS_FIN FROM (
 					select tasacion.act_id,
@@ -171,6 +173,19 @@ BEGIN
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_DATOS_PROPUESTA_UNIFICADA...Creada OK');
   
+EXCEPTION
+     WHEN OTHERS THEN 
+         DBMS_OUTPUT.PUT_LINE('KO!');
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
+
+          ROLLBACK;
+          RAISE;   
+
 END;
 /
 

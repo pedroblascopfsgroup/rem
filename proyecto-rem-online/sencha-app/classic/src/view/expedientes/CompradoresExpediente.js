@@ -91,13 +91,16 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					    topBar		: $AU.userHasFunction(['EDITAR_TAB_COMPRADORES_EXPEDIENTES']),
 					    reference: 'listadoCompradores',
 						cls	: 'panel-base shadow-panel',
+						activateButton: true,
 						bind: {
 							store: '{storeCompradoresExpediente}'
 							,topBar: '{puedeCrearEliminarCompradores}'
 						},									
 						listeners : {
 					    	rowdblclick: 'onCompradoresListDobleClick',
-							beforerender: 'esEditableCompradores'
+							beforerender: 'esEditableCompradores',
+							select: 'onSelectedRow',
+					    	deselect: 'onDeselectedRow'
 					    },
 					    features: [{
 				            id: 'summary',

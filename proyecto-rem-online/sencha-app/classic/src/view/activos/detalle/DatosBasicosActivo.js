@@ -840,6 +840,15 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 											value: '{activo.situacionComercialDescripcion}'
 										}, 
 										readOnly	: true
+									},
+									{
+										xtype: 'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.perimetro.equipo.gestion'),
+										readOnly: true,
+										bind: {
+											store: '{comboEquipoGestion}',
+											value: '{activo.tipoEquipoGestionCodigo}'
+										}
 									}
 									]
 							},

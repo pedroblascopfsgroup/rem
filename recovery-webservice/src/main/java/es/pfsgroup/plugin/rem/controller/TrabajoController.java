@@ -592,8 +592,14 @@ public class TrabajoController extends ParadiseJsonController {
 	public ModelAndView getListActivosAgrupacion(DtoAgrupacionFilter filtro, Long id, ModelMap model){
 
 		Page page = trabajoApi.getListActivosAgrupacion(filtro, id); 
-		model.put("data", page.getResults());
-		model.put("totalCount", page.getTotalCount());
+		
+		if(page == null) {
+			model.put("data", null);
+			model.put("totalCount", 0);
+		}else {
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
+		}
 
 		return createModelAndViewJson(model);
 		

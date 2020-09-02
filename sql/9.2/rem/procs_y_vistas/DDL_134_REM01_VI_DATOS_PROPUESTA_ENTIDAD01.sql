@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Carlos López
---## FECHA_CREACION=20180925
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20200826
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.19
---## INCIDENCIA_LINK=HREOS-4525
+--## INCIDENCIA_LINK=REMVIP-7935
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
 --##########################################
 --*/
 
@@ -84,7 +85,7 @@ BEGIN
 			STA.DD_STA_DESCRIPCION 	AS ORIGEN,
 			(SELECT TIT_FECHA_INSC_REG FROM '||V_ESQUEMA||'.ACT_TIT_TITULO WHERE ACT_ID = ACT.ACT_ID) AS FECHA_INSCRIPCION,
 			ACT.ACT_FECHA_REV_CARGAS AS FECHA_REV_CARGAS,
-			SPS.SPS_FECHA_TOMA_POSESION AS FECHA_TOMA_POSESION,
+			FPA.FECHA_POSESION AS FECHA_TOMA_POSESION,
 			(SELECT APU.APU_FECHA_INI_VENTA
 			  FROM '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU
 			 WHERE APU.ACT_ID = ACT.ACT_ID 
@@ -129,6 +130,7 @@ BEGIN
 			LEFT JOIN '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_ID = ACT.DD_TPA_ID
 			LEFT JOIN '||V_ESQUEMA||'.DD_STA_SUBTIPO_TITULO_ACTIVO STA ON STA.DD_STA_ID = ACT.DD_STA_ID
 			LEFT JOIN '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA SPS ON SPS.ACT_ID = ACT.ACT_ID
+			LEFT JOIN '||V_ESQUEMA||'.V_FECHA_POSESION_ACTIVO FPA ON FPA.ACT_ID = ACT.ACT_ID
 			LEFT JOIN '||V_ESQUEMA||'.V_PIVOT_PRECIOS_ACTIVOS V ON V.ACT_ID = ACT.ACT_ID
 			LEFT JOIN (select act_id, BIE_FECHA_VALOR_TASACION, TAS_IMPORTE_TAS_FIN FROM (
 				select tasacion.act_id,
@@ -143,6 +145,19 @@ BEGIN
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_DATOS_PROPUESTA_ENTIDAD01...Creada OK');
   
+EXCEPTION
+     WHEN OTHERS THEN 
+         DBMS_OUTPUT.PUT_LINE('KO!');
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
+
+          ROLLBACK;
+          RAISE;   
+
 END;
 /
 

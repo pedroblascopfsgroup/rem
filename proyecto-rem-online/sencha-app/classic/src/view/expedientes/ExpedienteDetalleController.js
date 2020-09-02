@@ -24,6 +24,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
         
         'compradoresexpediente gridBase': {
             onClickRemove: 'borrarComprador',
+            onClickActivate: 'activarComprador',
 			download: 'downloadDocumentoAdjuntoGDPR',
             afterdelete: function(grid) {
             	grid.getStore().load();
@@ -916,12 +917,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			plazoParaFirmar.allowBlank= false;
 			plazoParaFirmar.setDisabled(false);
 		}else{
-			me.getViewModel().get('condiciones').set('importeReserva', null);
-			me.getViewModel().get('condiciones').set('porcentajeReserva', null);
-			me.getViewModel().get('condiciones').set('plazoFirmaReserva', null);
-			importeReserva.setValue(null);
-			porcentajeReserva.setValue(null);
-			plazoParaFirmar.setValue(null);
 			porcentajeReserva.setDisabled(true);
 			plazoParaFirmar.setDisabled(true);
 			importeReserva.setDisabled(true);
@@ -938,10 +933,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		
 		if(CONST.TIPOS_CALCULO['PORCENTAJE'] == tipoCalculo) {
 			importeReserva = importeOferta * value / 100;
+			importeReservaField.setValue(importeReserva);
+			me.getViewModel().get('condiciones').set('importeReserva', importeReserva);
 		}
-		
-		importeReservaField.setValue(importeReserva);
-		me.getViewModel().get('condiciones').set('importeReserva', importeReserva);	
 
 	},
 	
@@ -4921,6 +4915,52 @@ comprobarFormatoModificar: function() {
 	    			}					
 	    		}	    		
 	   	});	   	
+	},
+	
+	onSelectedRow: function(grid, record, index){
+		me = this;		
+		if(!Ext.isEmpty(record) && !Ext.isEmpty(me.view.down('[reference=activateButton]'))) {
+			var esCompradorActivo = !record.data.borrado; 
+	    	me.view.down('[reference=activateButton]').setDisabled(esCompradorActivo);		
+		}
+	},
+	
+	onDeselectedRow: function(grid, record, index){
+		me = this;				
+		if (!Ext.isEmpty(me.view.down('[reference=activateButton]'))) {
+    		me.view.down('[reference=activateButton]').setDisabled(true); 
+		}		
+	},
+	
+	activarComprador: function(grid, record) {
+		me = this;		
+		if(!Ext.isEmpty(record)){
+			var url = $AC.getRemoteUrl('expedientecomercial/activarCompradorExpediente');
+			grid.mask();
+			Ext.Ajax.request({
+	  		    url: url,
+	  		    params: {
+	  		    	idCompradorExpediente : record.data.id,
+	  		     	idExpediente : record.data.idExpediente
+	  		     	},	  		
+	  		    success: function(response, opts) {	  		    	
+	  		     	var data = Ext.decode(response.responseText);	  		     	
+	  		     	if(data.success){
+						me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+						me.view.down('[reference=activateButton]').setDisabled(true);
+						grid.getStore().load();
+	  		     	}else{
+	  		     		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	  		     	}	  		     	
+		 			grid.unmask();		 			
+		    	},
+	 		    failure: function (a, operation) {
+	 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	 				grid.unmask();
+	 		    }
+	 		    
+			});		
+		}		
 	}
 	
 });

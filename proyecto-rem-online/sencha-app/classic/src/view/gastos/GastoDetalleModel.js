@@ -667,6 +667,16 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
                 {"codigo":false, "descripcion":"No"}
             ],
 			autoLoad: true
+		},
+		comboTipoComision : {
+			model : 'HreRem.model.ComboBase',
+			proxy : {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {
+					diccionario: 'tipoComision'
+				}
+			}
 		}
 	}
 });

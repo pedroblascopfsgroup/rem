@@ -199,7 +199,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	'11': 'THIRDPARTIES',
     	'12': 'GIANTS',
     	'15': 'GALEON',
-    	'14': 'ZEUS'
+    	'14': 'ZEUS',
+    	'15': 'BBVA'
     },
 
     NOMBRE_CARTERA2: {
@@ -212,7 +213,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	GIANTS: 'GIANTS',
     	LIBERBANK:'LIBERBANK',
     	GALEON:'GALEON',
-    	ZEUS :'ZEUS'
+    	ZEUS :'ZEUS',
+    	BBVA :'BBVA'
     },
 
     SUBCARTERA: {

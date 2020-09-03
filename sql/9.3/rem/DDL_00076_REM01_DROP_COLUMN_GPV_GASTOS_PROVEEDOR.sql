@@ -42,10 +42,6 @@ DECLARE
 
  
 BEGIN
-    	
-    -----------------------
-    ---     CAMPOS      ---
-    -----------------------
 
     DBMS_OUTPUT.PUT_LINE('[INICIO CAMPOS]');
     

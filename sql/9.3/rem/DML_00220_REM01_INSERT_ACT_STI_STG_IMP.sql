@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20200902
+--## FECHA_CREACION=20200903
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10602
@@ -343,10 +343,11 @@ BEGIN
 
       V_MSQL := NULL;
 
-      IF V_TMP_TIPO_DATA(4) IS NULL THEN 
+    IF V_TMP_TIPO_DATA(4) IS NULL THEN 
         DBMS_OUTPUT.PUT_LINE('  [INFO]: El registro '''||TRIM(V_TMP_TIPO_DATA(1))||''', '''||TRIM(V_TMP_TIPO_DATA(2))||''', '''||TRIM(V_TMP_TIPO_DATA(3))||''', '''||TRIM(V_TMP_TIPO_DATA(4))||''' no es válido.');
-      ELSE
-        DBMS_OUTPUT.PUT_LINE('  [INFO]: Insertamos o actualizamos el registro '''||TRIM(V_TMP_TIPO_DATA(1))||''', '''||TRIM(V_TMP_TIPO_DATA(2))||''', '''||TRIM(V_TMP_TIPO_DATA(3))||''', '''||TRIM(V_TMP_TIPO_DATA(4))||'''');   
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('  [INFO]: Insertamos el registro (DD_STG_CODIGO, DD_TIT_CODIGO, DD_CCA_CODIGO, TIPO_IMPOSITIVO):
+             '''||TRIM(V_TMP_TIPO_DATA(1))||''', '''||TRIM(V_TMP_TIPO_DATA(2))||''', '''||TRIM(V_TMP_TIPO_DATA(3))||''', '''||TRIM(V_TMP_TIPO_DATA(4))||'''');   
 
         IF V_TMP_TIPO_DATA(2) IS NOT NULL AND V_TMP_TIPO_DATA(3) IS NOT NULL THEN
             V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' (STI_ID, DD_STG_ID, DD_TIT_ID, DD_CCA_ID, STI_TIPO_IMPOSITIVO, USUARIOCREAR, FECHACREAR)
@@ -366,7 +367,7 @@ BEGIN
                     AND STI.STI_TIPO_IMPOSITIVO = '||V_TMP_TIPO_DATA(4)||'
                 WHERE STG.DD_STG_CODIGO = '''||V_TMP_TIPO_DATA(1)||'''
                     AND STI.STI_ID IS NULL';
-        ELSE
+        ELSIF V_TMP_TIPO_DATA(2) IS NULL AND V_TMP_TIPO_DATA(3) IS NULL THEN
             V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' (STI_ID, DD_STG_ID, STI_TIPO_IMPOSITIVO, USUARIOCREAR, FECHACREAR)
                 SELECT '|| V_ESQUEMA ||'.S_'||V_TEXT_TABLA||'.NEXTVAL
                     , STG.DD_STG_ID
@@ -380,6 +381,22 @@ BEGIN
                     AND STI.STI_TIPO_IMPOSITIVO = '||V_TMP_TIPO_DATA(4)||'
                 WHERE STG.DD_STG_CODIGO = '''||V_TMP_TIPO_DATA(1)||'''
                     AND STI.STI_ID IS NULL';
+        ELSIF V_TMP_TIPO_DATA(2) IS NOT NULL AND V_TMP_TIPO_DATA(3) IS NULL THEN
+            V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' (STI_ID, DD_STG_ID, DD_TIT_ID, STI_TIPO_IMPOSITIVO, USUARIOCREAR, FECHACREAR)
+                SELECT '|| V_ESQUEMA ||'.S_'||V_TEXT_TABLA||'.NEXTVAL
+                    , STG.DD_STG_ID
+                    , TIT.DD_TIT_ID
+                    , '||V_TMP_TIPO_DATA(4)||' STI_TIPO_IMPOSITIVO
+                    , '''||V_ITEM||'''
+                    , CURRENT_TIMESTAMP(6)
+                FROM '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG
+                LEFT JOIN '||V_ESQUEMA||'.DD_TIT_TIPOS_IMPUESTO TIT ON TIT.DD_TIT_CODIGO = '''||V_TMP_TIPO_DATA(2)||'''
+                LEFT JOIN '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' STI ON STI.DD_STG_ID = STG.DD_STG_ID 
+                    AND STI.DD_TIT_ID = TIT.DD_TIT_ID
+                    AND STI.DD_CCA_ID IS NULL
+                    AND STI.STI_TIPO_IMPOSITIVO = '||V_TMP_TIPO_DATA(4)||'
+                WHERE STG.DD_STG_CODIGO = '''||V_TMP_TIPO_DATA(1)||'''
+                    AND STI.STI_ID IS NULL';
         END IF;
         
         --DBMS_OUTPUT.PUT_LINE(V_MSQL);
@@ -389,7 +406,7 @@ BEGIN
     END LOOP;
   COMMIT;
 
-  DBMS_OUTPUT.PUT_LINE('[FIN]: Tabla '||V_TEXT_TABLA||' MODIFICADA CORRECTAMENTE ');
+  DBMS_OUTPUT.PUT_LINE('[FIN]');
    
 
 EXCEPTION

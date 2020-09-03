@@ -1177,11 +1177,27 @@ public interface ParticularValidatorApi {
 
 	Boolean subtipoGastoCorrespondeGasto(String numGasto, String subtipoGasto);
 
-	Boolean lineaSubtipoDeGastoRepetida(String numGasto, String subtipoGasto, String tipoImpositivo,
-			String tipoImpuesto);
+	Boolean lineaSubtipoDeGastoRepetida(String numGasto, String subtipoGasto, String tipoImpositivo, String tipoImpuesto);
 
 	Boolean participaciones(String numGasto);
 
-	Boolean lineaSubtipoDeGastoRepetidaBD(String numGasto, String subtipoGasto, String tipoImpositivo, String tipoImpuesto, Integer exento, Integer renunciaExento);
+	Boolean existeSubtipoGasto(String codSubtipoGasto);
+
+	Boolean perteneceGastoBankia(String numGasto);
+
+	Boolean agrupacionSinActivos(String numAgrupacion);
+
+	Boolean isAgrupacionMismaCarteraGasto(String numAgrupacion, String carteraGasto);
+
+	Boolean isActivoMismaCarteraGasto(String numActivo, String numGastoHaya);
+
+	Boolean existeEntidadGasto(String entidad);
+
+	Boolean esGastoRefacturadoPadre(String numGasto);
+
+	Boolean esGastoRefacturadoHijo(String numGasto);
+
+	Boolean gastoEstadoIncompletoPendienteAutorizado(String numGasto);
+
 
 }

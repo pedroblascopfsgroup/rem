@@ -19,6 +19,8 @@ public class DtoHistorificadorCampos extends WebDto {
 	private Date fechaModificacion;
 	private String valorAnterior;
 	private String valorNuevo;
+	private String tabla;
+	private String columna;
 	
 
 
@@ -64,6 +66,18 @@ public class DtoHistorificadorCampos extends WebDto {
 	}
 	public void setIdHistorico(Long idHistorico) {
 		this.idHistorico = idHistorico;
+	}
+	public String getTabla() {
+		return tabla;
+	}
+	public void setTabla(String tabla) {
+		this.tabla = tabla;
+	}
+	public String getColumna() {
+		return columna;
+	}
+	public void setColumna(String columna) {
+		this.columna = columna;
 	}
 
 	

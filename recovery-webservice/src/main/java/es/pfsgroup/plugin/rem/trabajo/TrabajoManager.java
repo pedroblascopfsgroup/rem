@@ -163,6 +163,7 @@ import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
+import es.pfsgroup.plugin.rem.restclient.webcom.definition.ConstantesTrabajo;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.thread.LiberarFicheroTrabajos;
@@ -174,6 +175,7 @@ import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.recovery.api.UsuarioApi;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
 import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
+import javassist.expr.NewArray;
 
 @Service("trabajoManager")
 public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> implements TrabajoApi {
@@ -435,6 +437,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				dtoTrabajo.setEstadoCodigo(DDEstadoTrabajo.ESTADO_PAGADO);
 			}
 
+			historificarCambiosFicha(dtoTrabajo, trabajo);
+			
 			dtoToTrabajo(dtoTrabajo, trabajo);
 
 			if(!Checks.esNulo(tareaActivo.getTareaExterna()) && !Checks.esNulo(tareaActivo.getTareaExterna().getTareaProcedimiento()) &&
@@ -451,10 +455,372 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
-
+		
 		trabajoDao.saveOrUpdate(trabajo);
 
 		return true;
+	}
+	
+	public void historificarCambiosFicha(DtoFichaTrabajo dtoTrabajo, Trabajo trabajo) {
+		DtoHistorificadorCampos dtoHistorificador = new DtoHistorificadorCampos();
+		dtoHistorificador.setIdTrabajo(trabajo.getId());
+		dtoHistorificador.setTabla(ConstantesTrabajo.NOMBRE_TABLA);
+		
+		if(!Checks.esNulo(dtoTrabajo.getIdResponsableTrabajo())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.RESPONSABLE_TRABAJO);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_RESPONSABLE_TRABAJO);
+			if(!Checks.esNulo(trabajo.getUsuarioResponsableTrabajo())) {
+				dtoHistorificador.setValorAnterior(trabajo.getUsuarioResponsableTrabajo().getApellidoNombre());
+			}
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdResponsableTrabajo());
+			Usuario responsable = genericDao.get(Usuario.class, filtro);
+			dtoHistorificador.setValorNuevo(responsable.getApellidoNombre());
+
+			guardarCambiosHistorificador(dtoHistorificador);
+		}
+		
+		
+		if(!Checks.esNulo(dtoTrabajo.getDescripcion())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.DESCRIPCION);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_DESCRIPCION);
+			if(!Checks.esNulo(trabajo.getDescripcion())) {
+				dtoHistorificador.setValorAnterior(trabajo.getDescripcion());
+			}
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getDescripcion());
+			
+			guardarCambiosHistorificador(dtoHistorificador);
+		}
+		
+		if(!Checks.esNulo(dtoTrabajo.getIdSupervisorActivo())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.SUPERVISOR_ACTUAL);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_SUPERVISOR_ACTUAL);
+			if(!Checks.esNulo(trabajo.getSupervisorActivoResponsable())) {
+				dtoHistorificador.setValorAnterior(trabajo.getSupervisorActivoResponsable().getApellidoNombre());
+			}
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdSupervisorActivo());
+			Usuario supervisor = genericDao.get(Usuario.class, filtro);
+			dtoHistorificador.setValorNuevo(supervisor.getApellidoNombre());
+			
+			guardarCambiosHistorificador(dtoHistorificador);
+		}
+		
+		if(!Checks.esNulo(dtoTrabajo.getIdGestorActivoResponsable())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.GESTOR_ACTUAL);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_GESTOR_ACTUAL);
+			if(!Checks.esNulo(trabajo.getUsuarioGestorActivoResponsable())) {
+				dtoHistorificador.setValorAnterior(trabajo.getUsuarioGestorActivoResponsable().getApellidoNombre());
+			}
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdGestorActivoResponsable());
+			Usuario gestor = genericDao.get(Usuario.class, filtro);
+			dtoHistorificador.setValorNuevo(gestor.getApellidoNombre());
+			
+			guardarCambiosHistorificador(dtoHistorificador);
+		}
+		
+		
+		if(!Checks.esNulo(dtoTrabajo.getCubreSeguro())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.ACTUACION_CUBIERTA);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_ACTUACION_CUBIERTA);
+			if(!Checks.esNulo(trabajo.getCubreSeguro())) {
+				dtoHistorificador.setValorAnterior(trabajo.getCubreSeguro().toString());
+			}
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getCubreSeguro().toString());
+			
+			guardarCambiosHistorificador(dtoHistorificador);
+		}
+		
+		if(!Checks.esNulo(dtoTrabajo.getCiaAseguradora())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.COMPAÑIA_ASEGURADORA);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_COMPAÑIA_ASEGURADORA);
+			if(!Checks.esNulo(trabajo.getCiaAseguradora())) {
+				dtoHistorificador.setValorAnterior(trabajo.getCiaAseguradora());
+			}
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getCiaAseguradora());
+			
+			guardarCambiosHistorificador(dtoHistorificador);
+		}
+		
+		if(!Checks.esNulo(dtoTrabajo.getNombreUg())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.NOMBRE_UG);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_NOMBRE_UG);
+			if(!Checks.esNulo(trabajo.getNombreUg())) {
+				dtoHistorificador.setValorAnterior(trabajo.getNombreUg());
+			}
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getNombreUg());
+			
+			guardarCambiosHistorificador(dtoHistorificador);
+		}
+		
+		if(!Checks.esNulo(dtoTrabajo.getNombreExpediente())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.NOMBRE_EXPEDIENTE_TRABAJO);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_NOMBRE_EXPEDIENTE_TRABAJO);
+			if(!Checks.esNulo(trabajo.getNombreExpedienteTrabajo())) {
+				dtoHistorificador.setValorAnterior(trabajo.getNombreExpedienteTrabajo());
+			}
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getNombreExpediente());
+			
+			guardarCambiosHistorificador(dtoHistorificador);
+		}
+		
+		if(!Checks.esNulo(dtoTrabajo.getNombreProyecto())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.NOMBRE_PROYECTO);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_NOMBRE_PROYECTO);
+			if(!Checks.esNulo(trabajo.getNombreProyecto())) {
+				dtoHistorificador.setValorAnterior(trabajo.getNombreProyecto());
+			}
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getNombreProyecto());
+			
+			guardarCambiosHistorificador(dtoHistorificador);
+		}
+		
+		if(!Checks.esNulo(dtoTrabajo.getCodigoSubpartida())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.SUBPARTIDA);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_SUBPARTIDA);
+			if(!Checks.esNulo(trabajo.getCodigoSubpartida())) {
+				dtoHistorificador.setValorAnterior(trabajo.getCodigoSubpartida());
+			}
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getCodigoSubpartida());
+			
+			guardarCambiosHistorificador(dtoHistorificador);
+		}
+		
+		if(!Checks.esNulo(dtoTrabajo.getFechaConcreta())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_REALIZACION_TRABAJO);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_FECHA_REALIZACION_TRABAJO);
+			if(!Checks.esNulo(trabajo.getFechaHoraConcreta())) {
+				dtoHistorificador.setValorAnterior(trabajo.getFechaHoraConcreta().toString());
+			}
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getFechaConcreta().toString());
+			
+			guardarCambiosHistorificador(dtoHistorificador);
+		}
+		
+		
+		if(!Checks.esNulo(dtoTrabajo.getHoraConcreta())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.HORA_REALIZACION_TRABAJO);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_HORA_REALIZACION_TRABAJO);
+			if(!Checks.esNulo(trabajo.getFechaHoraConcreta())) {
+				dtoHistorificador.setValorAnterior(trabajo.getFechaHoraConcreta().toString());
+			}
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getFechaConcreta().toString());
+			
+			guardarCambiosHistorificador(dtoHistorificador);
+		}
+		
+		if(!Checks.esNulo(dtoTrabajo.getRequerimiento())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.REQUERIMIENTO);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_REQUERIMIENTO);
+			if(!Checks.esNulo(trabajo.getRequerimiento())) {
+				dtoHistorificador.setValorAnterior(trabajo.getRequerimiento().toString());
+			}
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getRequerimiento().toString());
+			
+			guardarCambiosHistorificador(dtoHistorificador);
+		}
+		
+		if(!Checks.esNulo(dtoTrabajo.getFechaTope())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_FINALIZADO);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_FECHA_FINALIZADO);
+			if(!Checks.esNulo(trabajo.getFechaTope())) {
+				dtoHistorificador.setValorAnterior(trabajo.getFechaTope().toString());
+			}
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getFechaTope().toString());
+			
+			guardarCambiosHistorificador(dtoHistorificador);
+		}
+		
+		
+		if(!Checks.esNulo(dtoTrabajo.getUrgente())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.URGENTE);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_URGENTE);
+			if(!Checks.esNulo(trabajo.getUrgente())) {
+				dtoHistorificador.setValorAnterior(trabajo.getUrgente().toString());
+			}
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getUrgente().toString());
+			
+			guardarCambiosHistorificador(dtoHistorificador);
+		}
+		
+		
+		if(!Checks.esNulo(dtoTrabajo.getRiesgoInminenteTerceros())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.CON_RIESGO);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_CON_RIESGO);
+			if(!Checks.esNulo(trabajo.getRiesgoInminenteTerceros())) {
+				dtoHistorificador.setValorAnterior(trabajo.getRiesgoInminenteTerceros().toString());
+			}
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getRiesgoInminenteTerceros().toString());
+			
+			guardarCambiosHistorificador(dtoHistorificador);
+			
+		}
+		
+		
+		if(!Checks.esNulo(dtoTrabajo.getFechaInicio())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_INICIO);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_FECHA_INICIO);
+			if(!Checks.esNulo(trabajo.getFechaInicio())) {
+				dtoHistorificador.setValorAnterior(trabajo.getFechaInicio().toString());
+			}
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getFechaInicio().toString());
+			
+			guardarCambiosHistorificador(dtoHistorificador);
+			
+		}
+		
+		if(!Checks.esNulo(dtoTrabajo.getFechaFin())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_FIN);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_FECHA_FIN);
+			if(!Checks.esNulo(trabajo.getFechaFin())) {
+				dtoHistorificador.setValorAnterior(trabajo.getFechaFin().toString());
+			}
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getFechaFin().toString());
+			
+			guardarCambiosHistorificador(dtoHistorificador);
+			
+		}
+		
+		if(!Checks.esNulo(dtoTrabajo.getContinuoObservaciones())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.OBSERVACIONES);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_OBSERVACIONES);
+			if(!Checks.esNulo(trabajo.getContinuoObservaciones())) {
+				dtoHistorificador.setValorAnterior(trabajo.getContinuoObservaciones());
+			}
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getContinuoObservaciones());
+			
+			guardarCambiosHistorificador(dtoHistorificador);
+			
+		}
+		
+		if(!Checks.esNulo(dtoTrabajo.getTerceroNombre())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.NOMBRE);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_NOMBRE);
+			if(!Checks.esNulo(trabajo.getTerceroNombre())) {
+				dtoHistorificador.setValorAnterior(trabajo.getTerceroNombre());
+			}
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getTerceroNombre());
+			
+			guardarCambiosHistorificador(dtoHistorificador);
+			
+		}
+		
+		
+		if(!Checks.esNulo(dtoTrabajo.getTerceroContacto())) {
+			dtoHistorificador.setCampo(ConstantesTrabajo.PERSONA_CONTACTO);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_PERSONA_CONTACTO);
+			if(!Checks.esNulo(trabajo.getTerceroContacto())) {
+				dtoHistorificador.setValorAnterior(trabajo.getTerceroContacto());
+			}
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getTerceroContacto());
+		
+			guardarCambiosHistorificador(dtoHistorificador);
+		}
+		
+		if(!Checks.esNulo(dtoTrabajo.getTerceroEmail())) {
+			dtoHistorificador.setCampo(ConstantesTrabajo.EMAIL);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_EMAIL);
+			if(!Checks.esNulo(trabajo.getTerceroEmail())) {
+				dtoHistorificador.setValorAnterior(trabajo.getTerceroEmail());
+			}
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getTerceroEmail());
+
+			guardarCambiosHistorificador(dtoHistorificador);
+		}
+		
+		if(!Checks.esNulo(dtoTrabajo.getTerceroTel1())) {
+			dtoHistorificador.setCampo(ConstantesTrabajo.TELEFONO_1);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_TELEFONO_1);
+			if(!Checks.esNulo(trabajo.getTerceroTel1())) {
+				dtoHistorificador.setValorAnterior(trabajo.getTerceroTel1());
+			}
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getTerceroTel1());
+
+			guardarCambiosHistorificador(dtoHistorificador);
+		}
+		
+		if(!Checks.esNulo(dtoTrabajo.getTerceroTel2())) {
+			dtoHistorificador.setCampo(ConstantesTrabajo.TELEFONO_2);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_TELEFONO_2);
+			if(!Checks.esNulo(trabajo.getTerceroTel2())) {
+				dtoHistorificador.setValorAnterior(trabajo.getTerceroTel2());
+			}
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getTerceroTel2());
+
+			guardarCambiosHistorificador(dtoHistorificador);
+		}
+
+		if(!Checks.esNulo(dtoTrabajo.getTerceroDireccion())) {
+			dtoHistorificador.setCampo(ConstantesTrabajo.DIRECCION);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_DIRECCION);
+			if(!Checks.esNulo(trabajo.getTerceroDireccion())) {
+				dtoHistorificador.setValorAnterior(trabajo.getTerceroDireccion());
+			}
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getTerceroDireccion());
+
+			guardarCambiosHistorificador(dtoHistorificador);
+		}
+
+
+		
+	}
+	
+	@Transactional
+	 public void guardarCambiosHistorificador(DtoHistorificadorCampos dtoHistorificador) {
+
+			HistorificadorPestanas historificador = new HistorificadorPestanas();
+			Trabajo trabajo = trabajoDao.get(dtoHistorificador.getIdTrabajo());
+			historificador.setTrabajo(trabajo);
+			historificador.setCampo(dtoHistorificador.getCampo());
+			historificador.setValorAnterior(dtoHistorificador.getValorAnterior());
+			historificador.setValorNuevo(dtoHistorificador.getValorNuevo());
+			historificador.setTabla(dtoHistorificador.getTabla());
+			historificador.setColumna(dtoHistorificador.getColumna());
+			historificador.setUsuario(usuarioManager.getUsuarioLogado());
+			historificador.setFechaModificacion(new Date());
+			
+			genericDao.save(HistorificadorPestanas.class, historificador);
+			dtoHistorificador.setValorNuevo(null);
+			dtoHistorificador.setValorAnterior(null);
+	 }
+	
+	public void historificarCambiosGestionEconomica(DtoGestionEconomicaTrabajo dtoGestionEconomica, Trabajo trabajo) {
+		DtoHistorificadorCampos dtoHistorificador = new DtoHistorificadorCampos();
+		dtoHistorificador.setIdTrabajo(trabajo.getId());
+		dtoHistorificador.setTabla(ConstantesTrabajo.NOMBRE_TABLA);
+		
+		if(!Checks.esNulo(dtoGestionEconomica.getIdProveedor())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.NOMBRE_PROOVEDOR_DETALLE_ECONOMICO);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_NOMBRE_PROOVEDOR_DETALLE_ECONOMICO);
+			if(!Checks.esNulo(trabajo.getProveedorContacto()) && !Checks.esNulo(trabajo.getProveedorContacto().getProveedor())) {
+				dtoHistorificador.setValorAnterior(trabajo.getProveedorContacto().getProveedor().getNombre());
+			}
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", dtoGestionEconomica.getIdProveedor());
+			Order order = new Order(OrderType.DESC,"auditoria.fechaCrear");
+			List<ActivoProveedorContacto> proveedorContactos = genericDao.getListOrdered(ActivoProveedorContacto.class, order, filtro);
+
+			if(!proveedorContactos.isEmpty()) {
+				trabajo.setProveedorContacto(proveedorContactos.get(0));
+				if(!Checks.esNulo(proveedorContactos.get(0).getProveedor())) {
+					dtoHistorificador.setValorNuevo(proveedorContactos.get(0).getProveedor().getNombre());
+				}
+				
+			}
+			
+
+			guardarCambiosHistorificador(dtoHistorificador);
+		}
+		
+		
+		if(!Checks.esNulo(dtoGestionEconomica.getImportePenalizacionDiario())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.IMPORTE_PENALIZACION_DIARIO);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_IMPORTE_PENALIZACION_DIARIO);
+			if(!Checks.esNulo(trabajo.getImportePenalizacionDiario())) {
+				dtoHistorificador.setValorAnterior(trabajo.getImportePenalizacionDiario().toString());
+			}
+			dtoHistorificador.setValorNuevo(dtoGestionEconomica.getImportePenalizacionDiario().toString());
+			
+			guardarCambiosHistorificador(dtoHistorificador);
+		}
 	}
 
 	@Override
@@ -465,7 +831,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Trabajo trabajo = trabajoDao.get(id);
 
 		try {
-
+			
+			historificarCambiosGestionEconomica(dtoGestionEconomica,trabajo);
 			dtoGestionEconomicaToTrabajo(dtoGestionEconomica, trabajo);
 
 		} catch (Exception e) {

@@ -452,12 +452,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
  			List<GastoRefacturable> listaGastosRefacturables = gastoDao.getGastosRefacturablesDelGasto(gasto.getId());
  			
+ 			dto.setIsGastoRefacturadoPadre(false);
 			if (listaGastosRefacturables != null && !listaGastosRefacturables.isEmpty() && dto.getCartera() != null 
-				&& (DDCartera.CODIGO_CARTERA_SAREB.equals(dto.getCartera()) || DDCartera.CODIGO_CARTERA_BANKIA.equals(dto.getCartera()))) {
-					dto.setTieneGastosRefacturables(true);//?
+			&& (DDCartera.CODIGO_CARTERA_SAREB.equals(dto.getCartera()) || DDCartera.CODIGO_CARTERA_BANKIA.equals(dto.getCartera()))) {
+				dto.setTieneGastosRefacturables(true);//?
+				if(DDCartera.CODIGO_CARTERA_SAREB.equals(dto.getCartera())) {
 					dto.setIsGastoRefacturadoPadre(true);
-			}else {
-				dto.setIsGastoRefacturadoPadre(false);
+				}
 			}
 			
 			dto.setBloquearDestinatario(!Checks.estaVacio(this.getGastosRefacturablesGasto(gasto.getId())));

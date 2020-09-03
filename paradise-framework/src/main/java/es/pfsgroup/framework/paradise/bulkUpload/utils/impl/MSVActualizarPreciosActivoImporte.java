@@ -71,7 +71,7 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 	//public static final String ACTIVE_PDW_END_DATE_MORE_PAV_END_DATE = "La fecha de fin del precio descuento publicado no puede ser posterior a la fecha fin del precio aprobado venta";
 	public static final String ACTIVE_COMPARE_PRICES_EXCEL_TO_DDBB = "Los precios especificados no cumplen las reglas al ser introducidos junto con los actuales precios";
 	public static final String ACTIVE_COMPARE_DATES_EXCEL_TO_DDBB = "Las fechas especificadas no cumplen las reglas al ser introducidas junto con las actuales fechas";
-	public static final String ACTIVE_APROBACION_DATES_REQUIRED = "Es obligatorio rellenar las fechas de aprobación para la cartera de este activo.";
+	public static final String ACTIVE_APROBACION_DATES_REQUIRED = "Es obligatorio rellenar la fecha de aprobación de venta para informar el precio de venta de un activo de BBVA";
 
 	//Indicar las posiciones de las columnas en el excel CARGA_DIRECTA_PRECIOS_ACTIVOS.xls
 	public static final Integer COLUMNA_ACTIVO 						= 0;
@@ -1376,30 +1376,18 @@ public class MSVActualizarPreciosActivoImporte extends MSVExcelValidatorAbstract
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
 		Date fechaAprobPAV = null;
-		Date fechaAprobPMA = null;
-		Date fechaAprobPAR = null;
-		Date fechaAprobPDA = null;
-		Date fechaAprobPDP = null;
 		Boolean esBBVA = null;
 		
 		// Validacion que evalua si las fechas de aprobación están rellenadas:
 		try {
 			for(int i=1; i<this.numFilasHoja;i++){
 				try{
-					esBBVA =  !particularValidator.esActivoBBVA(exc.dameCelda(i, COLUMNA_ACTIVO));
-					
-					
-					if((!esBBVA)) {
-						fechaAprobPAV = !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_APROBADO_VENTA)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_APROB_P_APROBADO_VENTA)) : null;
-						fechaAprobPMA = !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_MIN_AUTORIZADO)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_APROB_P_MIN_AUTORIZADO)) : null;
-						fechaAprobPAR = !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_APROB_RENTA)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_APROB_P_APROBADO_RENTA)) : null;
-						fechaAprobPDA = !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_DESCUENTO_APROBADO)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_APROB_P_DESCUENTO_APROB)) : null;
-						fechaAprobPDP = !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_DESCUENTO_PUBLICADO)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_APROB_P_DESCUENTO_PUB)) : null;
+					if(particularValidator.esActivoBBVA(exc.dameCelda(i, COLUMNA_ACTIVO))
+							&& !Checks.esNulo(exc.dameCelda(i, COLUMNA_P_APROBADO_VENTA))) {
+						fechaAprobPAV = !Checks.esNulo(exc.dameCelda(i, COLUMNA_F_APROB_P_APROBADO_VENTA)) ? ft.parse(exc.dameCelda(i, COLUMNA_F_APROB_P_APROBADO_VENTA)) : null;
 						
-						if( (Checks.esNulo(fechaAprobPAV) || Checks.esNulo(fechaAprobPMA) || Checks.esNulo(fechaAprobPAR) || Checks.esNulo(fechaAprobPDA) || Checks.esNulo(fechaAprobPDP)) && esBBVA){
-							if (!listaFilas.contains(i))
-								listaFilas.add(i);
-						}
+						if(Checks.esNulo(fechaAprobPAV) && !listaFilas.contains(i))
+							listaFilas.add(i);
 					}
 				} catch (ParseException e) {
 					listaFilas.add(i);

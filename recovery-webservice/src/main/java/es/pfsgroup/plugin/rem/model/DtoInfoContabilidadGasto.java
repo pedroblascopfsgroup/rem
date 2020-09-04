@@ -167,5 +167,6 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	public void setTipoComisionadoHreDescripcion(String tipoComisionadoHreDescripcion) {
 		this.tipoComisionadoHreDescripcion = tipoComisionadoHreDescripcion;
 	}
+
    	
 }

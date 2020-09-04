@@ -661,6 +661,17 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				}
 			}
 		},
+		
+		storeVImporteGastoLbkGrid : {
+			model : 'HreRem.model.VImporteGastoLbkGrid',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'gastosproveedor/getVImporteGastoLbk',
+				extraParams : {
+					idGasto : '{gasto.id}'
+				}
+			}
+		},
 		comboSiNoGastoBoolean : {
 			data : [
                 {"codigo":true, "descripcion":"Si"},

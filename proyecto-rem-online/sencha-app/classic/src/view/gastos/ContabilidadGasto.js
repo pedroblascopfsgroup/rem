@@ -10,7 +10,7 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 	refreshAfterSave: true,
 	recordClass: "HreRem.model.GastoContabilidad",
     
-    requires: ['HreRem.model.GastoContabilidad'],
+    requires: ['HreRem.model.GastoContabilidad','HreRem.model.VImporteGastoLbkGrid','HreRem.view.gastos.VImporteGastoLbkGrid'],
     
     listeners: {
 		boxready:'cargarTabData',
@@ -211,8 +211,18 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 															]
 											        }
 										]
+					           },
+					           {
+					           xtype:'fieldsettable',
+								title: HreRem.i18n('title.importe.gasto.liberbank'),
+								hidden : !isCarteraLiberbank,
+								items :[
+									{
+										xtype: 'VImporteGastoLbkGrid',
+										reference: 'VImporteGastoLbkGrid'
+									}
+								]
 					           }
-					           
            
     	];
     

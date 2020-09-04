@@ -22,6 +22,7 @@ import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.DtoLineaDetalleGasto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.DtoVImporteGastoLbk;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoProveedorActivo;
@@ -401,6 +402,9 @@ public interface GastoProveedorApi {
 		boolean isGastoSareb(GastoProveedor gastoProveedor);
 
 		void anyadirGastosRefacturablesSiCumplenCondiciones(String idGasto, String gastosRefacturables, String nifPropietario) throws IllegalAccessException, InvocationTargetException;
+
+
+		List<DtoVImporteGastoLbk> getVImporteGastoLbk(Long idGasto);
 		
 }
 

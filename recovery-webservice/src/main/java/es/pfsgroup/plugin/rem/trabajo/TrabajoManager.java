@@ -16,13 +16,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import es.pfsgroup.plugin.rem.activotrabajo.dao.ActivoTrabajoDao;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,7 +40,6 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
@@ -76,6 +73,7 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.activotrabajo.dao.ActivoTrabajoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.RemUtils;
@@ -99,11 +97,9 @@ import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ActuacionTecnicaUserAssigna
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
-import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo.ActivoTrabajoPk;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -116,7 +112,6 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoConfiguracionTarifa;
 import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoGestionEconomicaTrabajo;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoTramitacionTitulo;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoTrabajo;
@@ -126,9 +121,7 @@ import es.pfsgroup.plugin.rem.model.DtoProveedorFiltradoManual;
 import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
-import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.HistoricoTramitacionTitulo;
 import es.pfsgroup.plugin.rem.model.HistorificadorPestanas;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PresupuestoTrabajo;
@@ -146,9 +139,9 @@ import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresupuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDPestanas;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAdelanto;
@@ -175,7 +168,6 @@ import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.recovery.api.UsuarioApi;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
 import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
-import javassist.expr.NewArray;
 
 @Service("trabajoManager")
 public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> implements TrabajoApi {
@@ -465,6 +457,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		DtoHistorificadorCampos dtoHistorificador = new DtoHistorificadorCampos();
 		dtoHistorificador.setIdTrabajo(trabajo.getId());
 		dtoHistorificador.setTabla(ConstantesTrabajo.NOMBRE_TABLA);
+		String codPestana = "FIC";
 		
 		if(!Checks.esNulo(dtoTrabajo.getIdResponsableTrabajo())){
 			dtoHistorificador.setCampo(ConstantesTrabajo.RESPONSABLE_TRABAJO);
@@ -476,7 +469,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			Usuario responsable = genericDao.get(Usuario.class, filtro);
 			dtoHistorificador.setValorNuevo(responsable.getApellidoNombre());
 
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador, codPestana);
 		}
 		
 		
@@ -488,7 +481,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			dtoHistorificador.setValorNuevo(dtoTrabajo.getDescripcion());
 			
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador, codPestana);
 		}
 		
 		if(!Checks.esNulo(dtoTrabajo.getIdSupervisorActivo())){
@@ -502,7 +495,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			Usuario supervisor = genericDao.get(Usuario.class, filtro);
 			dtoHistorificador.setValorNuevo(supervisor.getApellidoNombre());
 			
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
 		
 		if(!Checks.esNulo(dtoTrabajo.getIdGestorActivoResponsable())){
@@ -515,7 +508,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			Usuario gestor = genericDao.get(Usuario.class, filtro);
 			dtoHistorificador.setValorNuevo(gestor.getApellidoNombre());
 			
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
 		
 		
@@ -527,7 +520,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			dtoHistorificador.setValorNuevo(dtoTrabajo.getCubreSeguro().toString());
 			
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
 		
 		if(!Checks.esNulo(dtoTrabajo.getCiaAseguradora())){
@@ -538,7 +531,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			dtoHistorificador.setValorNuevo(dtoTrabajo.getCiaAseguradora());
 			
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
 		
 		if(!Checks.esNulo(dtoTrabajo.getNombreUg())){
@@ -549,7 +542,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			dtoHistorificador.setValorNuevo(dtoTrabajo.getNombreUg());
 			
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
 		
 		if(!Checks.esNulo(dtoTrabajo.getNombreExpediente())){
@@ -560,7 +553,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			dtoHistorificador.setValorNuevo(dtoTrabajo.getNombreExpediente());
 			
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
 		
 		if(!Checks.esNulo(dtoTrabajo.getNombreProyecto())){
@@ -571,7 +564,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			dtoHistorificador.setValorNuevo(dtoTrabajo.getNombreProyecto());
 			
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
 		
 		if(!Checks.esNulo(dtoTrabajo.getCodigoSubpartida())){
@@ -582,7 +575,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			dtoHistorificador.setValorNuevo(dtoTrabajo.getCodigoSubpartida());
 			
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador, codPestana);
 		}
 		
 		if(!Checks.esNulo(dtoTrabajo.getFechaConcreta())){
@@ -593,7 +586,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			dtoHistorificador.setValorNuevo(dtoTrabajo.getFechaConcreta().toString());
 			
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
 		
 		
@@ -605,7 +598,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			dtoHistorificador.setValorNuevo(dtoTrabajo.getFechaConcreta().toString());
 			
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
 		
 		if(!Checks.esNulo(dtoTrabajo.getRequerimiento())){
@@ -616,7 +609,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			dtoHistorificador.setValorNuevo(dtoTrabajo.getRequerimiento().toString());
 			
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
 		
 		if(!Checks.esNulo(dtoTrabajo.getFechaTope())){
@@ -627,7 +620,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			dtoHistorificador.setValorNuevo(dtoTrabajo.getFechaTope().toString());
 			
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
 		
 		
@@ -639,7 +632,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			dtoHistorificador.setValorNuevo(dtoTrabajo.getUrgente().toString());
 			
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
 		
 		
@@ -651,7 +644,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			dtoHistorificador.setValorNuevo(dtoTrabajo.getRiesgoInminenteTerceros().toString());
 			
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 			
 		}
 		
@@ -664,7 +657,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			dtoHistorificador.setValorNuevo(dtoTrabajo.getFechaInicio().toString());
 			
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 			
 		}
 		
@@ -676,7 +669,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			dtoHistorificador.setValorNuevo(dtoTrabajo.getFechaFin().toString());
 			
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 			
 		}
 		
@@ -688,7 +681,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			dtoHistorificador.setValorNuevo(dtoTrabajo.getContinuoObservaciones());
 			
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 			
 		}
 		
@@ -700,7 +693,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			dtoHistorificador.setValorNuevo(dtoTrabajo.getTerceroNombre());
 			
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 			
 		}
 		
@@ -713,7 +706,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			dtoHistorificador.setValorNuevo(dtoTrabajo.getTerceroContacto());
 		
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
 		
 		if(!Checks.esNulo(dtoTrabajo.getTerceroEmail())) {
@@ -724,7 +717,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			dtoHistorificador.setValorNuevo(dtoTrabajo.getTerceroEmail());
 
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
 		
 		if(!Checks.esNulo(dtoTrabajo.getTerceroTel1())) {
@@ -735,7 +728,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			dtoHistorificador.setValorNuevo(dtoTrabajo.getTerceroTel1());
 
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
 		
 		if(!Checks.esNulo(dtoTrabajo.getTerceroTel2())) {
@@ -746,7 +739,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			dtoHistorificador.setValorNuevo(dtoTrabajo.getTerceroTel2());
 
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
 
 		if(!Checks.esNulo(dtoTrabajo.getTerceroDireccion())) {
@@ -757,7 +750,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			dtoHistorificador.setValorNuevo(dtoTrabajo.getTerceroDireccion());
 
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
 
 
@@ -765,12 +758,17 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 	
 	@Transactional
-	 public void guardarCambiosHistorificador(DtoHistorificadorCampos dtoHistorificador) {
+	 public void guardarCambiosHistorificador(DtoHistorificadorCampos dtoHistorificador, String pestana) {
 
 			HistorificadorPestanas historificador = new HistorificadorPestanas();
 			Trabajo trabajo = trabajoDao.get(dtoHistorificador.getIdTrabajo());
 			historificador.setTrabajo(trabajo);
 			historificador.setCampo(dtoHistorificador.getCampo());
+			if ("FIC".equals(pestana)) {
+				historificador.setPestana((DDPestanas) utilDiccionarioApi.dameValorDiccionarioByCod(DDPestanas.class,DDPestanas.CODIGO_FICHA));
+			}else if("DEC".equals(pestana)) {
+				historificador.setPestana((DDPestanas) utilDiccionarioApi.dameValorDiccionarioByCod(DDPestanas.class,DDPestanas.CODIGO_DETALLE_ECONOMICO));
+			}
 			historificador.setValorAnterior(dtoHistorificador.getValorAnterior());
 			historificador.setValorNuevo(dtoHistorificador.getValorNuevo());
 			historificador.setTabla(dtoHistorificador.getTabla());
@@ -787,6 +785,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		DtoHistorificadorCampos dtoHistorificador = new DtoHistorificadorCampos();
 		dtoHistorificador.setIdTrabajo(trabajo.getId());
 		dtoHistorificador.setTabla(ConstantesTrabajo.NOMBRE_TABLA);
+		String codPestana = "DEC";
 		
 		if(!Checks.esNulo(dtoGestionEconomica.getIdProveedor())){
 			dtoHistorificador.setCampo(ConstantesTrabajo.NOMBRE_PROOVEDOR_DETALLE_ECONOMICO);
@@ -807,7 +806,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			
 
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador, codPestana);
 		}
 		
 		
@@ -819,7 +818,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			dtoHistorificador.setValorNuevo(dtoGestionEconomica.getImportePenalizacionDiario().toString());
 			
-			guardarCambiosHistorificador(dtoHistorificador);
+			guardarCambiosHistorificador(dtoHistorificador, codPestana);
 		}
 	}
 
@@ -5120,7 +5119,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					dto.setUsuarioModificacion(historificadorPestanas.getUsuario().getUsername());
 					dto.setValorAnterior(historificadorPestanas.getValorAnterior());
 					dto.setValorNuevo(historificadorPestanas.getValorNuevo());
-					
+					dto.setPestana(historificadorPestanas.getPestana().getDescripcion());
 					listDtoHistCamp.add(dto);
 				}
 			}

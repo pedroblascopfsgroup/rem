@@ -65,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.DtoLineaDetalleGasto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.DtoVImporteGastoLbk;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
@@ -1267,5 +1268,26 @@ public class GastosProveedorController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getVImporteGastoLbk(Long idGasto) {
+			
+		ModelMap model = new ModelMap();
+		
+		try {
+			List<DtoVImporteGastoLbk> linea = gastoProveedorApi.getVImporteGastoLbk(idGasto);
+			model.put("data", linea);
+			model.put("success", true);
+			
+		}catch (Exception e) {
+			logger.error("error en GastosProveedorController", e);
+			model.put("success", false);
+			model.put("errorMessage", "Error encontrar pp y cc.");
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
 	
 }

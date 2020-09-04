@@ -70,6 +70,16 @@ Ext.define('HreRem.model.GastoContabilidad', {
         },
         {
             name: 'tipoComisionadoHreDescripcion'
+        },
+        {
+        	name: 'idElemento'
+        },
+        {
+        	name: 'tipoElemento'
+        },
+        {
+        	name: 'importeGasto'
+
         }
     ],
     

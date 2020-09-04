@@ -21,6 +21,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.velocity.runtime.directive.Foreach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,6 +79,7 @@ import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
 import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.DtoVImporteGastoLbk;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
@@ -102,6 +104,7 @@ import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosRefacturados;
 import es.pfsgroup.plugin.rem.model.VImporteBrutoGastoLBK;
+import es.pfsgroup.plugin.rem.model.VImportesGastoLBK;
 import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
@@ -1811,7 +1814,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						dto.setDiario1Base(diarioCalculoLbk.getDiario1Base());
 						dto.setDiario1Tipo(diarioCalculoLbk.getDiario1Tipo());
 						dto.setDiario1Cuota(diarioCalculoLbk.getDiario1Cuota());
-						
 						dto.setDiario2(diarioCalculoLbk.getDiario2());
 						if(diarioCalculoLbk.getDiario2() != null) {
 							dto.setIsEmpty(false);
@@ -1821,7 +1823,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						dto.setDiario2Base(diarioCalculoLbk.getDiario2Base());
 						dto.setDiario1Tipo(diarioCalculoLbk.getDiario2Tipo());
 						dto.setDiario2Cuota(diarioCalculoLbk.getDiario2Cuota());
-						dto.getIsEmpty();
+
 					}
 				}
 			}
@@ -3555,4 +3557,26 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			this.anyadirGastosRefacturadosAGastoExistente(idGasto, gastosRefacturablesLista);
 		}
 	}
+	
+	@Override
+	public List<DtoVImporteGastoLbk> getVImporteGastoLbk(Long idGasto){
+		List<DtoVImporteGastoLbk> dtoVistaImportesGastoLbk = new ArrayList <DtoVImporteGastoLbk>();
+		
+		Filter filtroVista = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
+		List<VImportesGastoLBK> vistaImportesGastoLBK = genericDao.getList(VImportesGastoLBK.class, filtroVista);
+		
+		if (vistaImportesGastoLBK != null && !vistaImportesGastoLBK.isEmpty()) {
+			for (VImportesGastoLBK vImportesGastoLBK : vistaImportesGastoLBK) {
+				DtoVImporteGastoLbk dto = new DtoVImporteGastoLbk();
+				dto.setIdElemento(vImportesGastoLBK.getIdElemento());
+				dto.setImporteGasto(vImportesGastoLBK.getImporteGasto());
+				dto.setTipoElemento(vImportesGastoLBK.getTipoElemento());
+				dtoVistaImportesGastoLbk.add(dto);
+			}
+		}
+		
+		return dtoVistaImportesGastoLbk;
+		
+	}
+	
 }

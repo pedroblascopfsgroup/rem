@@ -142,12 +142,6 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	public void setDiario2Cuota(Long diario2Cuota) {
 		this.diario2Cuota = diario2Cuota;
 	}
-	public Boolean getGicPlanVisitas() {
-		return gicPlanVisitas;
-	}
-	public void setGicPlanVisitas(Boolean gicPlanVisitas) {
-		this.gicPlanVisitas = gicPlanVisitas;
-	}
 	public Boolean getIsEmpty() {
 		return isEmpty;
 	}

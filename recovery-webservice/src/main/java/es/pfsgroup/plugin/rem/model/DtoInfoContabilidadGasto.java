@@ -37,8 +37,10 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	private Long diario2Base;
 	private Long diario2Tipo;
 	private Long diario2Cuota;
-	private Boolean gicPlanVisitas;
 	private Boolean isEmpty;
+	private Boolean gicPlanVisitasBoolean;
+	private String tipoComisionadoHreCodigo;
+	private String tipoComisionadoHreDescripcion;
 
 	public Long getEjercicioImputaGasto() {
 		return ejercicioImputaGasto;
@@ -91,6 +93,7 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	public void setComboActivable(String comboActivable) {
 		this.comboActivable = comboActivable;
 	}
+	
 	public Long getDiario1() {
 		return diario1;
 	}
@@ -139,12 +142,6 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	public void setDiario2Cuota(Long diario2Cuota) {
 		this.diario2Cuota = diario2Cuota;
 	}
-	public Boolean getGicPlanVisitas() {
-		return gicPlanVisitas;
-	}
-	public void setGicPlanVisitas(Boolean gicPlanVisitas) {
-		this.gicPlanVisitas = gicPlanVisitas;
-	}
 	public Boolean getIsEmpty() {
 		return isEmpty;
 	}
@@ -152,7 +149,23 @@ public class DtoInfoContabilidadGasto extends WebDto {
 		this.isEmpty = isEmpty;
 	}
 
-	
-	
+	public Boolean getGicPlanVisitasBoolean() {
+		return gicPlanVisitasBoolean;
+	}
+	public void setGicPlanVisitasBoolean(Boolean gicPlanVisitasBoolean) {
+		this.gicPlanVisitasBoolean = gicPlanVisitasBoolean;
+	}
+	public String getTipoComisionadoHreCodigo() {
+		return tipoComisionadoHreCodigo;
+	}
+	public void setTipoComisionadoHreCodigo(String tipoComisionadoHreCodigo) {
+		this.tipoComisionadoHreCodigo = tipoComisionadoHreCodigo;
+	}
+	public String getTipoComisionadoHreDescripcion() {
+		return tipoComisionadoHreDescripcion;
+	}
+	public void setTipoComisionadoHreDescripcion(String tipoComisionadoHreDescripcion) {
+		this.tipoComisionadoHreDescripcion = tipoComisionadoHreDescripcion;
+	}
    	
 }

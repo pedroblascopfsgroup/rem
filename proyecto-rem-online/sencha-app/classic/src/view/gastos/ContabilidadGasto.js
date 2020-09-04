@@ -88,7 +88,27 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
                                                             value: '{contabilidad.comboActivable}'
                                                         },
                                                         hidden: true
-                                                    }
+                                                    },														
+													{ 
+														xtype: 'comboboxfieldbase',
+														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.planvisitas'),
+														reference: 'gicPlanVisitas',
+														bind: {
+															store: '{comboSiNoBoolean}',
+															value: '{contabilidad.gicPlanVisitasBoolean}'
+														},
+                                                        hidden: true					
+													},														
+													{ 
+														xtype: 'comboboxfieldbase',
+														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.tipocomision'),
+														reference: 'tipoComisionadoHre',
+														bind: {
+															store: '{comboTipoComision}',
+															value: '{contabilidad.tipoComisionadoHreCodigo}'
+														},
+                                                        hidden: true						
+													}
 										]
 					           },
 					           {   

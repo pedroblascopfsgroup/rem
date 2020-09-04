@@ -195,7 +195,7 @@ public class GastoProveedor implements Serializable, Auditable {
 	
 	@Column(name="GPV_FECHA_REC_HAYA")
 	private Date fechaRecHaya;
-	
+
 	@Version   
 	private Long version;
 

@@ -1766,9 +1766,19 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 								|| CONST.SUBCARTERA['DIVARIANREMAINING'] == subcartera || CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcartera);
 
 		var comboActivable = me.lookupReference('comboActivable');
+		var gicPlanVisitas = me.lookupReference('gicPlanVisitas');
+		var tipoComisionadoHre = me.lookupReference('tipoComisionadoHre');
 
 		if(cartera == CONST.CARTERA['LIBERBANK']){
 		    comboActivable.setHidden(false);
+		    gicPlanVisitas.setHidden(false);
+		    tipoComisionadoHre.setHidden(false);
+		}
+		
+		if(cartera == CONST.CARTERA['BBVA']){
+		    comboActivable.setHidden(false);
+		    gicPlanVisitas.setHidden(false);
+		    tipoComisionadoHre.setHidden(false);
 		}
 	},
 	

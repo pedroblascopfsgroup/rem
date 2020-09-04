@@ -60,6 +60,16 @@ Ext.define('HreRem.model.GastoContabilidad', {
         {
         	name: 'isEmpty',
         	type: 'boolean'
+        },
+        {
+            name: 'gicPlanVisitasBoolean',
+            type: 'boolean'
+        },
+        {
+            name: 'tipoComisionadoHreCodigo'
+        },
+        {
+            name: 'tipoComisionadoHreDescripcion'
         }
     ],
     

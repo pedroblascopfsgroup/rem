@@ -124,6 +124,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComisionado;
 import es.pfsgroup.plugin.rem.provisiongastos.dao.ProvisionGastosDao;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateGastoApi;
 
@@ -452,12 +453,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
  			List<GastoRefacturable> listaGastosRefacturables = gastoDao.getGastosRefacturablesDelGasto(gasto.getId());
  			
+ 			dto.setIsGastoRefacturadoPadre(false);
 			if (listaGastosRefacturables != null && !listaGastosRefacturables.isEmpty() && dto.getCartera() != null 
-				&& (DDCartera.CODIGO_CARTERA_SAREB.equals(dto.getCartera()) || DDCartera.CODIGO_CARTERA_BANKIA.equals(dto.getCartera()))) {
-					dto.setTieneGastosRefacturables(true);//?
+			&& (DDCartera.CODIGO_CARTERA_SAREB.equals(dto.getCartera()) || DDCartera.CODIGO_CARTERA_BANKIA.equals(dto.getCartera()))) {
+				dto.setTieneGastosRefacturables(true);//?
+				if(DDCartera.CODIGO_CARTERA_SAREB.equals(dto.getCartera())) {
 					dto.setIsGastoRefacturadoPadre(true);
-			}else {
-				dto.setIsGastoRefacturadoPadre(false);
+				}
 			}
 			
 			dto.setBloquearDestinatario(!Checks.estaVacio(this.getGastosRefacturablesGasto(gasto.getId())));
@@ -1854,6 +1856,20 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				if(!Checks.esNulo(contabilidadGasto.getActivable())){
 					dto.setComboActivable(contabilidadGasto.getActivable().getCodigo());
 				}
+				
+				if (contabilidadGasto.getGicPlanVisitas() != null) {
+					if(DDSinSiNo.CODIGO_SI.equals(contabilidadGasto.getGicPlanVisitas().getCodigo())){
+						dto.setGicPlanVisitasBoolean(true);
+					}else {
+						dto.setGicPlanVisitasBoolean(false);
+					}
+				}
+				
+				if (contabilidadGasto.getTipoComisionadoHre() != null) {
+					dto.setTipoComisionadoHreCodigo(contabilidadGasto.getTipoComisionadoHre().getCodigo());
+					dto.setTipoComisionadoHreDescripcion(contabilidadGasto.getTipoComisionadoHre().getDescripcion());
+				}
+				
 			}
 
 		}
@@ -1895,6 +1911,25 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					codSiNo = (DDSinSiNo) genericDao.get(DDSinSiNo.class, filtro);
 					contabilidadGasto.setActivable(codSiNo);
 				}
+				
+				if(dtoContabilidadGasto.getGicPlanVisitasBoolean() != null) {
+					if (dtoContabilidadGasto.getGicPlanVisitasBoolean() == true) {
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI);
+						codSiNo = genericDao.get(DDSinSiNo.class, filtro);
+						contabilidadGasto.setGicPlanVisitas(codSiNo);
+					} else {
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO);
+						codSiNo = genericDao.get(DDSinSiNo.class, filtro);
+						contabilidadGasto.setGicPlanVisitas(codSiNo);
+					}
+				}
+				
+				if(dtoContabilidadGasto.getTipoComisionadoHreCodigo() != null) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoContabilidadGasto.getTipoComisionadoHreCodigo());
+					DDTipoComisionado tipoComision = genericDao.get(DDTipoComisionado.class, filtro);
+					contabilidadGasto.setTipoComisionadoHre(tipoComision);
+				}
+				
 				
 				gasto.setGastoInfoContabilidad(contabilidadGasto);
 			}			

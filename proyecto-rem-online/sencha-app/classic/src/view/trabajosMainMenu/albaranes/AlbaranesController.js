@@ -21,6 +21,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 			this.lookupReference('detalleAlbaranGrid').getStore().removeAll();
 			this.lookupReference('detallePrefacturaGrid').getStore().removeAll();
 			this.lookupReference('albaraneslist').down("[reference='albaranGrid']").getStore().loadPage(1);
+			this.lookupReference('albaranGrid').getSelectionModel().deselectAll();
         }
 	},
 	
@@ -338,7 +339,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		    				  me.lookupReference('botonValidarTrabajo').setDisabled(true);
 		    				  me.lookupReference('albaranGrid').getStore().load();
 		    				  me.lookupReference('detallePrefacturaGrid').getStore().removeAll();
-		    				  me.lookupReference('totalAlbaran').setValue(0);
+//		    				  me.lookupReference('totalAlbaran').setValue(0);
 		    				  me.lookupReference('totalPrefactura').setValue(0);
 		    			  }
 		    			  
@@ -406,7 +407,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		    				  me.lookupReference('botonValidarTrabajo').setDisabled(true);
 		    				  me.lookupReference('albaranGrid').getStore().load();
 		    				  me.lookupReference('detallePrefacturaGrid').getStore().removeAll();
-		    				  me.lookupReference('totalAlbaran').setValue(0);
+//		    				  me.lookupReference('totalAlbaran').setValue(0);
 		    				  me.lookupReference('totalPrefactura').setValue(0);
 		    			  }
 		    			  
@@ -452,6 +453,19 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 			botondos.setDisabled(false);
 			gridTrabajos.getColumns()[8].setDisabled(false);
 		}
+	},
+	
+	paginacionAlbaran: function(){
+		var me = this;
+		me.lookupReference('albaranGrid').getSelectionModel().deselectAll();
+		me.lookupReference('detalleAlbaranGrid').getStore().removeAll();
+		me.lookupReference('detallePrefacturaGrid').getStore().removeAll();
+	},
+	
+	paginacionPrefactura: function(){
+		var me = this;
+		me.lookupReference('detalleAlbaranGrid').getSelectionModel().deselectAll();
+		me.lookupReference('detallePrefacturaGrid').getStore().removeAll();
 	},
 	
 	millaresConPuntos: function(num){

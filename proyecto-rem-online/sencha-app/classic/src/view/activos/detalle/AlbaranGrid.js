@@ -79,6 +79,9 @@ Ext.define('HreRem.view.activos.detalle.AlbaranGrid', {
 	            itemId: 'albaranesPaginationToolbar',
 	            inputItemWidth: 60,
 	            displayInfo: true,
+	            listeners: {
+	            	beforechange: 'paginacionAlbaran'
+	            },
 	            bind: {
 	                store: '{albaranes}'
 	            }

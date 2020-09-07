@@ -931,7 +931,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
 			return false;
 		}
-	 }, 
+	 },
+	 isCarteraBbva: function(get){
+			 var isBbva = get('activo.isCarteraBbva');
+			 if(isBbva){
+				 return true;
+			 }
+			 return false;
+	 },
 	 
 	 stores: {
     		

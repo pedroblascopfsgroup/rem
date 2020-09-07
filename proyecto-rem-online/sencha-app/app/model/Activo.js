@@ -988,6 +988,13 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'tipoAltaDescripcion'
+    		},
+    		{
+    			name: 'isCarteraBbva',
+    			calculate: function(data) {
+    				return data.entidadPropietariaCodigo == CONST.CARTERA['BBVA'];
+    			},
+    			depends: 'entidadPropietariaCodigo'
     		}
     ],
     

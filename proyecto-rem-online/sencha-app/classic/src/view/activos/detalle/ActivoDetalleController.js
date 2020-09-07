@@ -7,7 +7,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion','HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 
     		'HreRem.view.expedientes.ExpedienteDetalleController', 'HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', 
     		'HreRem.view.activos.detalle.InformeComercialActivo','HreRem.view.activos.detalle.AdministracionActivo',
-    		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias','HreRem.view.activos.detalle.PlusvaliaActivo', 'HreRem.model.ComercialActivoModel'],
+    		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias','HreRem.view.activos.detalle.PlusvaliaActivo', 
+    		'HreRem.model.ComercialActivoModel'],
 
     control: {
          'documentosactivosimple gridBase': {
@@ -5981,5 +5982,36 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	
     	return false;
     	
+    },
+
+    onActivoEpa: function(combo, value) {
+  
+    	var me = this,
+    	disabled = value == 'false',
+    	activobbvaEmpresa = me.lookupReference('activobbvaEmpresa'),
+    	activobbvaOficina = me.lookupReference('activobbvaOficina'),
+    	activobbvaContrapartida = me.lookupReference('activobbvaContrapartida'),
+    	activobbvaFolio = me.lookupReference('activobbvaFolio'),
+    	activobbvaCdpen = me.lookupReference('activobbvaCdpen');
+
+    	activobbvaEmpresa.setDisabled(disabled);
+    	activobbvaOficina.setDisabled(disabled);
+    	activobbvaContrapartida.setDisabled(disabled);
+    	activobbvaFolio.setDisabled(disabled);
+    	activobbvaCdpen.setDisabled(disabled);
+    	
+    	activobbvaEmpresa.allowBlank = disabled;
+    	activobbvaOficina.allowBlank = disabled;
+    	activobbvaContrapartida.allowBlank = disabled;
+    	activobbvaFolio.allowBlank = disabled;
+    	activobbvaCdpen.allowBlank = disabled;
+    	
+    	if(disabled) {
+    		activobbvaEmpresa.setValue("");
+    		activobbvaOficina.setValue("");
+    		activobbvaContrapartida.setValue("");
+    		activobbvaFolio.setValue("");
+    		activobbvaCdpen.setValue("");
+    	}
     }
 });

@@ -184,7 +184,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	GIANTS: '12',
     	EGEO: '13',
     	GALEON:'15',
-    	ZEUS: '14'
+    	ZEUS: '14',
+    	BBVA: '16'
     },
 
     NOMBRE_CARTERA:	{
@@ -199,7 +200,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	'11': 'THIRDPARTIES',
     	'12': 'GIANTS',
     	'15': 'GALEON',
-    	'14': 'ZEUS'
+    	'14': 'ZEUS',
+    	'16': 'BBVA'
     },
 
     NOMBRE_CARTERA2: {
@@ -212,7 +214,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	GIANTS: 'GIANTS',
     	LIBERBANK:'LIBERBANK',
     	GALEON:'GALEON',
-    	ZEUS :'ZEUS'
+    	ZEUS :'ZEUS',
+    	BBVA :'BBVA'
     },
 
     SUBCARTERA: {
@@ -298,7 +301,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		DIRECCION_TERRITORIAL:'DIRTERRITORIAL',
 		GESTOR_PRECIOS:'HAYAGESTPREC',
 		GESTOR_PUBLICACION:'HAYAGESTPUBL',
-		SUPER_EDITA_COMPRADOR: 'SUPEREDITACOMPRADOR'
+		SUPER_EDITA_COMPRADOR: 'SUPEREDITACOMPRADOR',
+		SUPERVISOR_ADMISION: 'HAYASUPADM'
     },
 
     TIPOS_OFERTA: {

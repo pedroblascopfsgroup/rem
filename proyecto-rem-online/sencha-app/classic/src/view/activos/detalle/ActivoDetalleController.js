@@ -6210,6 +6210,37 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     
     onClickCerrarObservacionesEvolucion: function(btn) {
     	var me = this;
-    	btn.up('window').hide();
+		btn.up('window').hide();
+	},
+	
+    onActivoEpa: function(combo, value) {
+  
+    	var me = this,
+    	disabled = value == 'false',
+    	activobbvaEmpresa = me.lookupReference('activobbvaEmpresa'),
+    	activobbvaOficina = me.lookupReference('activobbvaOficina'),
+    	activobbvaContrapartida = me.lookupReference('activobbvaContrapartida'),
+    	activobbvaFolio = me.lookupReference('activobbvaFolio'),
+    	activobbvaCdpen = me.lookupReference('activobbvaCdpen');
+
+    	activobbvaEmpresa.setDisabled(disabled);
+    	activobbvaOficina.setDisabled(disabled);
+    	activobbvaContrapartida.setDisabled(disabled);
+    	activobbvaFolio.setDisabled(disabled);
+    	activobbvaCdpen.setDisabled(disabled);
+    	
+    	activobbvaEmpresa.allowBlank = disabled;
+    	activobbvaOficina.allowBlank = disabled;
+    	activobbvaContrapartida.allowBlank = disabled;
+    	activobbvaFolio.allowBlank = disabled;
+    	activobbvaCdpen.allowBlank = disabled;
+    	
+    	if(disabled) {
+    		activobbvaEmpresa.setValue("");
+    		activobbvaOficina.setValue("");
+    		activobbvaContrapartida.setValue("");
+    		activobbvaFolio.setValue("");
+    		activobbvaCdpen.setValue("");
+    	}
     }
 });

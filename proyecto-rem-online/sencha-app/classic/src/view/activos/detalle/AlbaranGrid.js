@@ -13,7 +13,7 @@ Ext.define('HreRem.view.activos.detalle.AlbaranGrid', {
 		rowclick: 'onAlbaranClick',
 		deselect: 'deselectAlbaran'
 	},
-	
+
     initComponent: function () {
 
      	var me = this;

@@ -21,6 +21,7 @@ public class DtoHistorificadorCampos extends WebDto {
 	private String valorNuevo;
 	private String tabla;
 	private String columna;
+	private String pestana;
 	
 
 
@@ -78,6 +79,12 @@ public class DtoHistorificadorCampos extends WebDto {
 	}
 	public void setColumna(String columna) {
 		this.columna = columna;
+	}
+	public String getPestana() {
+		return pestana;
+	}
+	public void setPestana(String pestana) {
+		this.pestana = pestana;
 	}
 
 	

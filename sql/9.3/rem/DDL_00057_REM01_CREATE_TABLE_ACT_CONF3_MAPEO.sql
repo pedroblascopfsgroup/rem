@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200629
+--## FECHA_CREACION=20200709
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-10459
+--## INCIDENCIA_LINK=HREOS-10500
 --## PRODUCTO=NO
 --## Finalidad: Creación diccionario ACT_CONF3_MAPEO
 --##           
@@ -56,8 +56,7 @@ BEGIN
 		V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
 		(
 			AC3_ID		           		NUMBER(16,0)                NOT NULL,
-			DD_CCS_ID_ORIGEN        	NUMBER(16,0)                NOT NULL,
-			DD_CCS_ID_DESTINO			NUMBER(16,0)                NOT NULL,
+			DD_CCS_ID		        	NUMBER(16,0)                NOT NULL,
 			AC3_TRANSFORMACION			VARCHAR2(4000 CHAR),
 			VERSION 					NUMBER(38,0) 		    	DEFAULT 0 NOT NULL ENABLE, 
 			USUARIOCREAR 				VARCHAR2(50 CHAR) 	    	NOT NULL ENABLE, 
@@ -88,14 +87,9 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
 
 		-- Creamos FK constraint
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT AC3_DD_CCS_FK_ORIGEN FOREIGN KEY (DD_CCS_ID_ORIGEN) REFERENCES '||V_ESQUEMA||'.DD_CCS_CAMPOS_CONV_SAREB(DD_CCS_ID)';
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT AC3_DD_CCS_FK FOREIGN KEY (DD_CCS_ID) REFERENCES '||V_ESQUEMA||'.DD_CCS_CAMPOS_CONV_SAREB(DD_CCS_ID)';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] AC3_DD_CCS_FK_ORIGEN... FK creada.');
-
-		-- Creamos FK constraint
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT AC3_DD_CCS_FK_DESTINO FOREIGN KEY (DD_CCS_ID_DESTINO) REFERENCES '||V_ESQUEMA||'.DD_CCS_CAMPOS_CONV_SAREB(DD_CCS_ID)';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] AC3_DD_CCS_FK_DESTINO... FK creada.');
+		DBMS_OUTPUT.PUT_LINE('[INFO] AC3_DD_CCS_FK... FK creada.');
 		
 		-- Creamos comentario	
 		V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';		
@@ -106,13 +100,9 @@ BEGIN
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna AC3_ID creado.');
 
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_CCS_ID_ORIGEN IS ''Campo origen del dato, relación DD_CCS_CAMPOS_CONV_SAREB''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_CCS_ID IS ''Campo destino y origen, relación DD_CCS_CAMPOS_CONV_SAREB''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_CCS_ID_ORIGEN creado.');	
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_CCS_ID_DESTINO IS ''Campo destino del dato, relación DD_CCS_CAMPOS_CONV_SAREB''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_CCS_ID_DESTINO creado.');
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_CCS_ID creado.');
 
 		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.AC3_TRANSFORMACION IS ''Si el campo de origen hay que transformarlo antes de escribir en destino, este campo contiene dicha transformación o cálculo. Si está vacío es que se inserta tal cual venga''';
 		EXECUTE IMMEDIATE V_MSQL;

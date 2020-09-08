@@ -6,7 +6,7 @@
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10459
 --## PRODUCTO=NO
---## Finalidad: Creación diccionario DD_ACS_ACCION_CONV_SAREB
+--## Finalidad: Creación diccionario ACT_CONF4_CONDICIONES
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -35,8 +35,8 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_ACS_ACCION_CONV_SAREB'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Diccionario con las acciones a realizar en la convivencia de sareb'; -- Vble. para los comentarios de las tablas
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_CONF4_CONDICIONES'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla que marca la condición del campo'; -- Vble. para los comentarios de las tablas
 
 BEGIN
 
@@ -55,18 +55,17 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
 		V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
 		(
-			DD_ACS_ID           		NUMBER(16,0)                  NOT NULL,
-			DD_ACS_CODIGO        		VARCHAR2(20 CHAR)           NOT NULL,
-			DD_ACS_DESCRIPCION			VARCHAR2(150 CHAR),
-			DD_ACS_DESCRIPCION_LARGA	VARCHAR2(250 CHAR),
-			VERSION 					NUMBER(38,0) 		    	DEFAULT 0 NOT NULL ENABLE, 
-			USUARIOCREAR 				VARCHAR2(50 CHAR) 	    	NOT NULL ENABLE, 
-			FECHACREAR 					TIMESTAMP (6) 		    	NOT NULL ENABLE, 
+			AC4_ID		           		NUMBER(16,0)                NOT NULL,
+			AC2_ID        				NUMBER(16,0)                NOT NULL,
+			AC4_CONDICION				NUMBER(16,0)     	    NOT NULL,
+			VERSION 				NUMBER(38,0)   	    	    DEFAULT 0 NOT NULL ENABLE, 
+			USUARIOCREAR 				VARCHAR2(50 CHAR) 	    NOT NULL ENABLE, 
+			FECHACREAR 				TIMESTAMP (6) 		    NOT NULL ENABLE, 
 			USUARIOMODIFICAR 			VARCHAR2(50 CHAR), 
 			FECHAMODIFICAR 				TIMESTAMP (6), 
 			USUARIOBORRAR 				VARCHAR2(50 CHAR), 
 			FECHABORRAR 				TIMESTAMP (6), 
-			BORRADO 					NUMBER(1,0) 		    	DEFAULT 0 NOT NULL ENABLE
+			BORRADO 				NUMBER(1,0) 		    DEFAULT 0 NOT NULL ENABLE
 		)
 		LOGGING 
 		NOCOMPRESS 
@@ -78,35 +77,41 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');
 		
 		-- Creamos indice	
-		V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(DD_ACS_ID) TABLESPACE '||V_TABLESPACE_IDX;		
+		V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(AC4_ID) TABLESPACE '||V_TABLESPACE_IDX;		
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... Indice creado.');
 		
 		-- Creamos primary key
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (DD_ACS_ID) USING INDEX)';
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (AC4_ID) USING INDEX)';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
+
+		-- Creamos FK constraint
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT AC4_AC2_FK FOREIGN KEY (AC2_ID) REFERENCES '||V_ESQUEMA||'.ACT_CONF2_ACCION(AC2_ID)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] AC4_AC2_FK... FK creada.');
+
+		-- Creamos FK constraint
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT DD_CND_FK FOREIGN KEY (AC4_CONDICION) REFERENCES '||V_ESQUEMA||'.DD_CND_CONDICIONES_CONV_SAREB(DD_CND_ID)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] DD_CND_FK... FK creada.');
 		
 		-- Creamos comentario	
 		V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';		
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');		
 
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_ACS_ID IS ''Identificador único ''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.AC4_ID IS ''Identificador único ''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_ACS_ID creado.');
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna AC4_ID creado.');
 
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_ACS_CODIGO IS ''Código identificador único''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.AC2_ID IS ''Relación con ACT_CONF2_ACCION''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_ACS_CODIGO creado.');	
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna AC2_ID creado.');	
 
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_ACS_DESCRIPCION IS ''Descripción''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.AC4_CONDICION IS ''Condición para alertar o actualizar.''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_ACS_DESCRIPCION creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_ACS_DESCRIPCION_LARGA IS ''Descripción larga''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_ACS_DESCRIPCION_LARGA creado.');	
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna AC4_CONDICION creado.');
 
 		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.VERSION IS ''Indica la versión del registro.''';
 		EXECUTE IMMEDIATE V_MSQL;
@@ -146,15 +151,15 @@ BEGIN
 	V_SQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_'||V_TEXT_TABLA||''' and SEQUENCE_OWNER = '''||V_ESQUEMA||'''';
 	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS; 
 	IF V_NUM_TABLAS = 1 THEN
-		DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA ||'.S_'||V_TEXT_TABLA||'... Ya existe..');  
+		DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA ||'.S_'||V_TEXT_TABLA||'... Ya existe.');  
 	ELSE
 		-- Creamos sequence
 		V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';		
 		EXECUTE IMMEDIATE V_MSQL;		
-		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');	
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');
+		
+	END IF;
 
-	END IF; 
-	
 	COMMIT;
 
 EXCEPTION

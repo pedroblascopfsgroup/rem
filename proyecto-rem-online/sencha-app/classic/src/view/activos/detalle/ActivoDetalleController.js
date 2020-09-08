@@ -6242,5 +6242,81 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		activobbvaFolio.setValue("");
     		activobbvaCdpen.setValue("");
     	}
-    }
+    
+    },
+    
+    cargarStoreComplementoTitulo: function(grid) {
+    	
+    	var me = this;
+    	var storeComplementoTitulo = me.getViewModel().data.storeComplementoTitulo;
+    	storeComplementoTitulo.getProxy().setExtraParams(
+    	{'id':grid.idActivo})
+    	
+    },
+    onClickBotonCancelarVentanaComplementoTitulo: function(btn) {		
+		btn.up('window').hide();
+	},
+	
+	onClickBotonAnyadirComplementoTitulo: function(btn){
+		
+		var me = this;
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		var correcto = true;
+		var form = btn.up().up().down("form");
+		url = $AC.getRemoteUrl("activo/createComplementoTitulo");
+ 		var idActivo= btn.up('anyadircomplementotitulo').idActivo;	
+ 		var comboTipoTitulo = me.lookupReference('comboTipoTituloRef');
+ 		var fechaSolicitud = me.lookupReference('fechaSolicitudRef');
+ 		var fechaTitulo =  me.lookupReference('fechaTituloRef');
+ 		var fechaRecepcion =  me.lookupReference('fechaRecepcionRef');
+ 		var fechaInscripcion =  me.lookupReference('fechaInscripcionRef');
+ 		var observaciones = me.lookupReference('observacionesRef');
+ 		
+ 		if(fechaRecepcion.getValue() != null) {
+ 			if(fechaRecepcion.getValue() < fechaTitulo.getValue()){
+ 				correcto = false;
+ 			}				
+ 		}
+ 		
+ 		if(fechaInscripcion.getValue() != null) {
+ 			if(fechaInscripcion.getValue() < fechaTitulo.getValue()){
+ 				correcto = false;
+ 			}
+ 		}
+ 		if(correcto) { 
+ 			if(form.isValid()){
+ 			form.submit({
+ 				url: url,
+				params : {activoId: idActivo,
+							codTitulo: comboTipoTitulo.getValue(),
+							fechaSolicitud: fechaSolicitud.getValue(),
+							fechaTitulo:fechaTitulo.getValue(),
+							fechaRecepcion:fechaRecepcion.getValue(),
+							fechaInscripcion:fechaInscripcion.getValue(),
+							observaciones:observaciones.getValue()
+							},
+				success: function(fp, o) {
+					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+					me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], idActivo);
+					me.getView().unmask();				
+					me.onClickBotonCancelarVentanaComplementoTitulo(btn);
+					
+				},
+				failure: function(record, operation) {
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					me.unmask();
+				}
+ 			});
+	 		}else{
+	 			me.getView().unmask();
+	 		}
+ 		} else {
+ 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.no.valida"));
+			me.getView().unmask();
+ 		}
+ 		
+		
+		
+	}
+    	
 });

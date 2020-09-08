@@ -18,7 +18,7 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 	
 	requires : ['HreRem.view.common.FieldSetTable','HreRem.model.Catastro', 'HreRem.model.DocumentacionAdministrativa'
 		,'HreRem.model.ActivoInformacionAdministrativa', 'HreRem.view.activos.detalle.ObservacionesActivo', 'HreRem.view.activos.detalle.CalificacionNegativaGrid'
-		, 'HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid'],
+		, 'HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', 'HreRem.model.ActivoComplementoTituloModel', 'HreRem.view.activos.detalle.ComplementoTituloGrid'],
 	
     initComponent: function () {
         var me = this;
@@ -201,10 +201,33 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 												reference: "calificacionnegativagrid", 
 												colspan: 3,
 												bind:{
-													disabled:'{!saneamiento.puedeEditarCalificacionNegativa}'
+													//disabled:'{!saneamiento.puedeEditarCalificacionNegativa}'
 												}
 											}
 										]
+									   },{
+									   	xtype:'fieldsettable',
+										defaultType: 'textfieldbase',
+										colspan: 3,
+										hidden: false, 
+										title: HreRem.i18n("title.complemento.titulo"),
+										bind:{
+											//disabled:'{!saneamiento.noEstaInscrito}'
+										},
+										items :
+										[
+											{
+												xtype: "complementotitulogrid",
+												reference: "complementotitulogridref", 
+												idActivo: this.lookupController().getViewModel().get('activo').get('id'),
+												colspan: 3,
+												bind:{
+													//disabled:'{!saneamiento.puedeEditarCalificacionNegativa}'
+												}
+											}
+										]
+									   	
+									   	
 									   }
 								]
 							},
@@ -503,7 +526,7 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 								items :[
 									{
 										xtype: "saneamientoagendagrid", 
-										reference: "saneamientoagendagridref"
+										reference: "saneamientoagendagridref"										
 									}
 								]
 							}
@@ -520,6 +543,7 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 		Ext.Array.each(me.query('grid'), function(grid) {
 			grid.getStore().load();
   		});
+  		
    }
 
 

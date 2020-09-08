@@ -1879,4 +1879,5 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		session.createSQLQuery(sb.toString()).executeUpdate();
 	}
 
+
 }

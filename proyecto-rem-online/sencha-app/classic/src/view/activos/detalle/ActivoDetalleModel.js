@@ -1040,9 +1040,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				 return true;
 			 }
 			 return false;
-	 },
+	 }
 	 
-	 
+    },
+    
 	 stores: {
     		
     		comboProvincia: {

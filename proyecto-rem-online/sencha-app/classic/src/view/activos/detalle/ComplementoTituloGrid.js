@@ -29,8 +29,8 @@ Ext.define('HreRem.view.activos.detalle.ComplementoTituloGrid', {
     		this.getStore().load()
     	};
     	
-    	me.topBar = ($AU.userIsRol(CONST.PERFILES['HAYAGESTADM']) || $AU.userIsRol(CONST.PERFILES['GESTOADM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPADM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
-    	me.editOnSelect = ($AU.userIsRol(CONST.PERFILES['HAYAGESTADM']) || $AU.userIsRol(CONST.PERFILES['GESTOADM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPADM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
+    	me.topBar = ($AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['GESTORIA_ADMISION']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
+    	me.editOnSelect = ($AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['GESTORIA_ADMISION']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
 		
         me.columns = [
         		{

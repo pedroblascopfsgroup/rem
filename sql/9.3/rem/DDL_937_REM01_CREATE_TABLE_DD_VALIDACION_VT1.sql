@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Dean Ibañez Viño
---## FECHA_CREACION=20200910
+--## FECHA_CREACION=20200911
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11061
@@ -57,6 +57,7 @@ BEGIN
                 DD_VAL_VT1_ID           	NUMBER(16)                  NOT NULL,
                 DD_VAL_VT1_CODIGO        	VARCHAR2(20 CHAR)           NOT NULL,
                 DD_VAL_VT1_DESCRIPCION		VARCHAR2(250 CHAR)          NOT NULL,
+                DD_VAL_VT1_OPERACION		VARCHAR2(1 CHAR)            NOT NULL,
                 DD_VAL_VT1_QUERY            VARCHAR2(4000 CHAR)         NOT NULL,
                 BORRADO 					NUMBER(1,0) 		    	DEFAULT 0 NOT NULL ENABLE
             )

@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivoBDE;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComisionado;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoImporte;
 
@@ -106,6 +107,10 @@ public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
 	
 	@Column(name="CPP_PLAN_VISITAS")
     private Boolean cppPlanVisitas;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="DD_TCH_ID")
+    private DDTipoComisionado cpptipoComisionado;
 	
 	@Version   
 	private Long version;
@@ -281,4 +286,14 @@ public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
 	public void setCppPlanVisitas(Boolean cppPlanVisitas) {
 		this.cppPlanVisitas = cppPlanVisitas;
 	}
+
+	public DDTipoComisionado getCpptipoComisionado() {
+		return cpptipoComisionado;
+	}
+
+	public void setCpptipoComisionado(DDTipoComisionado cpptipoComisionado) {
+		this.cpptipoComisionado = cpptipoComisionado;
+	}
+	
+	
 }

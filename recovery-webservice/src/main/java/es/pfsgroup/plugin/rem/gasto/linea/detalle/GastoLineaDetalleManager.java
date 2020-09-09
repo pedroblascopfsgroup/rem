@@ -36,6 +36,7 @@ import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoRefacturable;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoImporte;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoGasto;
@@ -311,7 +312,6 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		DDCartera cartera = null;
 		DDSubtipoGasto subtipoGasto = (DDSubtipoGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoGasto.class, subtipoGastoCodigo);
 		
-		
 		if (gasto.getPropietario() != null) {
 			cartera = gasto.getPropietario().getCartera();
 		}else{
@@ -342,7 +342,44 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			
 			Filter filtroRefacturablePP = genericDao.createFilter(FilterType.EQUALS, "refacturable", filtrarRefacturar);
 			Filter filtroRefacturableCC = genericDao.createFilter(FilterType.EQUALS, "refacturable", filtrarRefacturar);
-	
+			Filter planVisitasCpp;
+			Filter planVisitasCcc;
+			Filter activableCcc;
+			Filter activableCpp;
+			Filter tipoComisionadoCcc;
+			Filter tipoComisionadoCpp;
+			if(gastoInfoContabilidad.getGicPlanVisitas() != null) {
+				if(DDSinSiNo.CODIGO_NO.equals(gastoInfoContabilidad.getGicPlanVisitas().getCodigo())) {
+					planVisitasCpp = genericDao.createFilter(FilterType.EQUALS, "cppPlanVisitas",false );
+					planVisitasCcc = genericDao.createFilter(FilterType.EQUALS, "cccPlanVisitas",false);
+				}else {
+					planVisitasCpp = genericDao.createFilter(FilterType.EQUALS, "cppPlanVisitas",true);
+					planVisitasCcc = genericDao.createFilter(FilterType.EQUALS, "cccPlanVisitas",true);
+				}
+			}else {
+				planVisitasCpp = genericDao.createFilter(FilterType.NULL, "cppPlanVisitas");
+ 				planVisitasCcc = genericDao.createFilter(FilterType.NULL, "cccPlanVisitas");
+			}
+			if(gastoInfoContabilidad.getActivable() != null) {
+				if(DDSinSiNo.CODIGO_NO.equals(gastoInfoContabilidad.getActivable().getCodigo())) {
+					activableCpp = genericDao.createFilter(FilterType.EQUALS, "cppActivable",false);
+					activableCcc = genericDao.createFilter(FilterType.EQUALS, "cccActivable",false);
+				}else {
+					activableCpp = genericDao.createFilter(FilterType.EQUALS, "cppActivable",true);
+					activableCcc = genericDao.createFilter(FilterType.EQUALS, "cccActivable",true);
+				}
+			}else {
+				activableCpp = genericDao.createFilter(FilterType.NULL, "cppActivable");
+				activableCcc = genericDao.createFilter(FilterType.NULL, "cccActivable");
+			}
+			if(gastoInfoContabilidad.getTipoComisionadoHre() != null) {
+				tipoComisionadoCcc = genericDao.createFilter(FilterType.EQUALS, "ccctipoComisionado.id", gastoInfoContabilidad.getTipoComisionadoHre().getId());
+				tipoComisionadoCpp = genericDao.createFilter(FilterType.EQUALS, "cpptipoComisionado.id", gastoInfoContabilidad.getTipoComisionadoHre().getId());
+			}else {
+				tipoComisionadoCcc = genericDao.createFilter(FilterType.NULL, "ccctipoComisionado.id");
+				tipoComisionadoCpp = genericDao.createFilter(FilterType.NULL, "cpptipoComisionado.id");
+			}
+			
 			if(idLineaDetalleGasto != null) {
 				todosActivoAlquilados = gastoProveedorApi.estanTodosActivosAlquilados(gasto); 
 			}
@@ -351,11 +388,11 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			ActivoConfiguracionPtdasPrep partidaNoArrendada = null;
 				
 				if(!Checks.esNulo(gasto.getSubcartera())) {
-					partidaArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaArrendamiento,filtroBorrado, filtroRefacturablePP);
-					partidaNoArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaNoArrendamiento ,filtroBorrado, filtroRefacturablePP);
+					partidaArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaArrendamiento,filtroBorrado, filtroRefacturablePP, planVisitasCpp,activableCpp,tipoComisionadoCpp);
+					partidaNoArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaNoArrendamiento ,filtroBorrado, filtroRefacturablePP, planVisitasCpp,activableCpp,tipoComisionadoCpp);
 				}else {
-					partidaArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaArrendamiento  ,filtroBorrado, filtroRefacturablePP);
-					partidaNoArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaNoArrendamiento ,filtroBorrado, filtroRefacturablePP);
+					partidaArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaArrendamiento  ,filtroBorrado, filtroRefacturablePP,planVisitasCpp,activableCpp,tipoComisionadoCpp);
+					partidaNoArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaNoArrendamiento ,filtroBorrado, filtroRefacturablePP,planVisitasCpp,activableCpp,tipoComisionadoCpp);
 				}
 				
 				if(partidaArrendada !=null || partidaNoArrendada != null){
@@ -373,14 +410,14 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 					if(partidaArrendada == null || partidaNoArrendada == null){
 						if(!todosActivoAlquilados){
 							if(partidaNoArrendada == null){
-								partidaNoArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaNoArrendamiento,  filtroBorrado, filtroRefacturablePP);
+								partidaNoArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaNoArrendamiento,  filtroBorrado, filtroRefacturablePP,planVisitasCpp,activableCpp,tipoComisionadoCpp);
 								if(partidaNoArrendada != null){
 									setPartidasPresupuestarias(dtoLineaDetalleGasto, partidaNoArrendada);
 								}
 							}
 						} else {
 							if(partidaArrendada == null){
-								partidaArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaArrendamiento,  filtroBorrado, filtroRefacturablePP);
+								partidaArrendada = genericDao.get(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaArrendamiento,  filtroBorrado, filtroRefacturablePP,planVisitasCpp,activableCpp,tipoComisionadoCpp);
 								if(partidaArrendada != null){
 									setPartidasPresupuestarias(dtoLineaDetalleGasto, partidaArrendada);		
 								}
@@ -393,11 +430,11 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				ActivoConfiguracionCuentasContables cuentaNoArrendada= null;
 					
 				if(!Checks.esNulo(gasto.getSubcartera())) {
-					cuentaArrendada= genericDao.get(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaArrendamiento,filtroBorrado, filtroRefacturableCC);
-					cuentaNoArrendada= genericDao.get(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaNoArrendamiento, filtroBorrado, filtroRefacturableCC);
+					cuentaArrendada= genericDao.get(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaArrendamiento,filtroBorrado, filtroRefacturableCC,planVisitasCcc,activableCcc,tipoComisionadoCcc);
+					cuentaNoArrendada= genericDao.get(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaNoArrendamiento, filtroBorrado, filtroRefacturableCC,planVisitasCcc,activableCcc,tipoComisionadoCcc);
 				}else {
-					cuentaArrendada= genericDao.get(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaArrendamiento ,filtroBorrado, filtroRefacturableCC, filtroSubcarteraNull);
-					cuentaNoArrendada= genericDao.get(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaNoArrendamiento ,filtroBorrado, filtroRefacturableCC, filtroSubcarteraNull);
+					cuentaArrendada= genericDao.get(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaArrendamiento ,filtroBorrado, filtroRefacturableCC, filtroSubcarteraNull,planVisitasCcc,activableCcc,tipoComisionadoCcc);
+					cuentaNoArrendada= genericDao.get(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaNoArrendamiento ,filtroBorrado, filtroRefacturableCC, filtroSubcarteraNull,planVisitasCcc,activableCcc,tipoComisionadoCcc);
 				}
 				
 				if(cuentaArrendada != null ||  cuentaNoArrendada != null){
@@ -414,14 +451,14 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 					if(cuentaArrendada == null || cuentaNoArrendada == null){
 						if(!todosActivoAlquilados){
 							if(cuentaNoArrendada == null){
-								cuentaNoArrendada = genericDao.get(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaNoArrendamiento ,filtroBorrado, filtroRefacturableCC);
+								cuentaNoArrendada = genericDao.get(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaNoArrendamiento ,filtroBorrado, filtroRefacturableCC,planVisitasCcc,activableCcc,tipoComisionadoCcc);
 								if(cuentaNoArrendada != null){
 									setCuentasContables(dtoLineaDetalleGasto, cuentaNoArrendada);
 								} 
 							}
 						} else {
 							if(cuentaArrendada == null){
-								cuentaArrendada = genericDao.get(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaArrendamiento ,filtroBorrado, filtroRefacturableCC);
+								cuentaArrendada = genericDao.get(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaArrendamiento ,filtroBorrado, filtroRefacturableCC,planVisitasCcc,activableCcc,tipoComisionadoCcc);
 								if(cuentaArrendada != null){
 									setCuentasContables(dtoLineaDetalleGasto, cuentaArrendada);
 								} 

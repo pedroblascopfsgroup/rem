@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivoBDE;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComisionado;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoImporte;
 
@@ -100,6 +101,10 @@ public class ActivoConfiguracionCuentasContables implements Serializable, Audita
 	
 	@Column(name="CCC_PLAN_VISITAS")
 	private Boolean cccPlanVisitas;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="DD_TCH_ID")
+    private DDTipoComisionado ccctipoComisionado;
 	
 	@Version   
 	 private Long version;
@@ -267,4 +272,14 @@ public class ActivoConfiguracionCuentasContables implements Serializable, Audita
 	public void setCccPlanVisitas(Boolean cccPlanVisitas) {
 		this.cccPlanVisitas = cccPlanVisitas;
 	}
+
+	public DDTipoComisionado getCcctipoComisionado() {
+		return ccctipoComisionado;
+	}
+
+	public void setCcctipoComisionado(DDTipoComisionado ccctipoComisionado) {
+		this.ccctipoComisionado = ccctipoComisionado;
+	}
+	
+	
 }

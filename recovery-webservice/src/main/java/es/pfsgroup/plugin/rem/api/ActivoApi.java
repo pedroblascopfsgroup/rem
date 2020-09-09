@@ -1174,6 +1174,8 @@ public interface ActivoApi {
 	boolean getMotivosCalificacionNegativaSubsanados(Long idActivo, String idMotivo);
 
 	boolean esCerberus(Long idActivo);
+	
+	boolean esBBVA(Long idActivo);
 
 	boolean esEgeo(Long idActivo);
 

@@ -71,6 +71,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				                {
 									xtype: 'displayfieldbase',
 									fieldLabel:  HreRem.i18n('fieldlabel.id.bien.recovery'),
+									reference:'idRecovery',
 									bind:		'{activo.idRecovery}'
 								},							
 								{
@@ -277,7 +278,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									xtype:'comboboxfieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.activobbva.tipoTransmision'),
 									bind: {
-										readOnly : '{esUA}',
+										readOnly : '{!isGestorAdmisionAndSuper}',
 										store: '{comboTipoTransmision}',
 										value: '{activo.tipoTransmisionCodigo}'
 									}
@@ -286,10 +287,14 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									xtype:'comboboxfieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.activobbva.tipoAlta'),
 									bind: {
-										readOnly : '{activo.unidadAlquilable}',
-										store: '{comboTipoAlta}',
+										readOnly : '{!isGestorAdmisionAndSuperComboTipoAltaBlo}',										
+										store: '{comboBBVATipoAlta}',
+										hidden: '{!activo.isCarteraBbva}',
 										value: '{activo.tipoAltaCodigo}'
+									},listener:{
+										afterrender:'{isGestorAdmisionAndSuperComboTipoAlta}'
 									}
+									
 								},
 				                {
 				                	//Campo para dejar un espacio entre los campos por estetica.
@@ -323,6 +328,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype:'textfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.activobbva.numActivoBbva'),
 								bind: {
+									readOnly:true,
 									value: '{activo.numActivoBbva}'
 								}
 							},
@@ -330,7 +336,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype:'textfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.activobbva.idDivarian'),
 								bind: {
-									readOnly : '{esUA}',
+									readOnly : 'true',
 									value: '{activo.idDivarianBbva}'
 								}
 							},
@@ -344,15 +350,26 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							},
 			                {
 								xtype:'textfieldbase',
+								reference:'labelLinkIdOrigenHRE',
 								fieldLabel: HreRem.i18n('fieldlabel.activobbva.idOrigenHre'),
 								bind: {
-									readOnly : '{esUA}',
+									readOnly : '{!isGestorAdmisionAndSuper}',
 									value: '{activo.idOrigenHre}'
+								},
+								cls: 'show-text-as-link',
+								listeners: {
+							        click: {								        	
+							            element: 'el', 
+							            fn:'onClickActivoHRE'									       
+							        }
 								}
-							}	
-						]
-					}]
-            },
+							}
+						]	,
+	                bind:{
+	                	hidden: '{!activo.isCarteraBbva}'
+	                }
+	                }
+				]},
             {    
                 
 				xtype:'fieldsettable',
@@ -987,9 +1004,10 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							},
 							{
 								xtype:'textfieldbase',
-								fieldLabel: HreRem.i18n('fieldlabel.activobbva.uicBbva'),
+								fieldLabel: HreRem.i18n('fieldlabel.activobbva.iucBbva'),
 								bind: {
-									readOnly : '{esUA}',
+									readOnly : '{!isGestorAdmisionAndSuper}',
+									hidden: '{!activo.isCarteraBbva}',
 									value: '{activo.uicBbva}'
 								}
 							},
@@ -997,7 +1015,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype:'textfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.activobbva.cexperBbva'),
 								bind: {
-									readOnly : '{esUA}',
+									readOnly : '{!isGestorAdmisionAndSuper}',
+									hidden: '{!activo.isCarteraBbva}',
 									value: '{activo.cexperBbva}'
 								}
 							}
@@ -1186,6 +1205,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
      ];
 	me.addPlugin({ptype: 'lazyitems', items: items });
     me.callParent();    	
+   
 
     },
     afterLoad: function(){

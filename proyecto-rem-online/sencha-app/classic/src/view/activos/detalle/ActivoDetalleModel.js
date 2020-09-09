@@ -922,6 +922,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			return !isSubcarteraDivarian;
 		},
 		
+		
+		
 		esEditablePerimetroMacc: function(get){
 			var codComercializacion = get('activo.tipoComercializacionCodigo');
 			var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
@@ -938,7 +940,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			else
 				return false;
 		},
-
+		
+		
 		activarCamposGridPreciosVigentes: function(){
 			var gestorPrecios = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_PRECIOS']);
 			if(gestorPrecios){
@@ -961,8 +964,76 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		tienePosesion: function(get){
 			var posesion = get('situacionPosesoria.indicaPosesion') == "1";
 			return posesion;
-		}
-	 },
+		},
+		
+		isGestorAdmisionAndSuper: function(){
+			var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) ||  $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);
+			var me = this; 		
+			
+			if(gestores){			
+				return true;
+				}
+				
+			
+			return false;
+		},
+		
+		isGestorAdmisionAndSuperComboTipoAltaBlo: function(get){
+			var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) ||  $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);
+			var me = this; 		
+			
+			var comboAltaAutomatica = get('activo.tipoAltaCodigo'); 
+			var comboActivoRecovery = get('activo.idRecovery');
+			
+			
+			if(gestores){	
+				if(comboAltaAutomatica == CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']) {
+         			return false;
+         		} else {
+         			return true;
+         			}
+				
+				
+				return true;
+				}
+				
+			
+			return false;
+		},
+		
+		
+		activarCamposGridPreciosVigentesGestorAdmisionYPrecios: function(){
+			var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_PRECIOS']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) ||  $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);
+			var me = this; 		
+			if(gestores){			
+				return true;
+				}
+				
+			
+			return false;
+		},
+
+		
+		isGestorAdmisionAndSuperUA: function(){
+			var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) ||  $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);
+			var me = this; 
+			var esUA = false;
+		
+			
+			if(gestores){			
+				if(me.get('activo.unidadAlquilable') != undefined)
+				esUA = me.get('activo.unidadAlquilable');
+			if(me.get('activo.isVendidoOEntramite') != undefined)
+				vendido = me.get('activo.isVendidoOEntramite');
+			return (vendido === true || esUA === true);
+			return true;
+				}
+				
+			
+			return false;
+		
+	 	},
+
 	 isCarteraBbva: function(get){
 			 var isBbva = get('activo.isCarteraBbva');
 			 if(isBbva){
@@ -970,6 +1041,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 }
 			 return false;
 	 },
+	 
 	 
 	 stores: {
     		
@@ -2559,6 +2631,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tipoTituloComplemento'}
+			}
+		},
+
+		comboBBVATipoAlta:{
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboBBVATipoAlta',
+				extraParams: {idRecovery: '{activo.idRecovery}'}
 			}
 		}
 

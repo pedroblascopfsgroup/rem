@@ -59,6 +59,7 @@ import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
+import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
@@ -121,6 +122,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private static final String ERROR_PORCENTAJE_PARTICIPACION="msg.error.porcentaje.participacion";
 	private static final String CESION_USO_ERROR= "msg.error.activo.patrimonio.en.cesion.uso";
 	private static final String NO_GESTIONADO_POR_ADMISION = "msg.no.gestionado.admision";
+	private static final String ID_HAYA_NO_EXISTE= "msg.error.activo.hre.no.existe";
+	private static final String ACTIVO_VENDIDO= "msg.error.activo.vendido";
+	private static final String ACTIVO_FUERA_DE_PERIMETRO_HAYA= "msg.error.activo.fuera.perimetro";
+	private static final String ACTIVO_NO_COINCIDE_CON_CERBERUS_BBVA= "msg.error.activo.no.bbva.divarian";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -1590,10 +1595,55 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 
 					if (dto.getIdOrigenHre() != null) {
-						activoBbva.setIdOrigenHre(dto.getIdOrigenHre());
+						
+						Activo activoOrigenHRE = activoApi.getByNumActivo(dto.getIdOrigenHre());
+						
+						
+						boolean isOrigenHRE = !activoDao.existeactivoIdHAYA(dto.getIdOrigenHre());
+						boolean isVendido = activoDao.activoEstadoVendido(dto.getIdOrigenHre());
+						boolean isCarteraBBVACERBERUS = !activoDao.activoPerteneceABBVAAndCERBERUS(dto.getIdOrigenHre());
+						boolean isFueraPerimetro = activoDao.activoFueraPerimetroHAYA(dto.getIdOrigenHre());
+												
+						if(isOrigenHRE) {
+							throw new JsonViewerException(messageServices.getMessage(ID_HAYA_NO_EXISTE));
+						}
+						if(isCarteraBBVACERBERUS) {
+							throw new JsonViewerException(messageServices.getMessage(ACTIVO_NO_COINCIDE_CON_CERBERUS_BBVA));
+						}
+						if(isFueraPerimetro) {
+							throw new JsonViewerException(messageServices.getMessage(ACTIVO_FUERA_DE_PERIMETRO_HAYA));
+						}
+						if(isVendido) {
+							throw new JsonViewerException(messageServices.getMessage(ACTIVO_VENDIDO));
+						}
+					
+						if(activoOrigenHRE.getPropietarioPrincipal()!=null) {							
+							
+							List<ActivoPropietarioActivo> actOriginal= activo.getPropietariosActivo();
+							if(!actOriginal.isEmpty()) {
+								ActivoPropietarioActivo actPropAct = actOriginal.get(0);
+								actPropAct.setPropietario(activoOrigenHRE.getPropietarioPrincipal());
+							}
+						}
+							
+							
+						
+						
+						if(activoOrigenHRE.getTipoTitulo()!= null) {
+							activo.setTipoTitulo(activoOrigenHRE.getTipoTitulo());
+						}
+						if(activoOrigenHRE.getFechaTituloAnterior()!=null) {
+							activo.setFechaTituloAnterior(activoOrigenHRE.getFechaTituloAnterior());
+						}
+						if(dto.getIdOrigenHre()==null) {
+							activoBbva.setIdOrigenHre(dto.getIdOrigenHre());
+						}else {
+							activoBbva.setIdOrigenHre(dto.getIdOrigenHre());
+						}
+						
 					}
 
-					if (dto.getUicBbva() != null) {
+				if (dto.getUicBbva() != null) {
 						activoBbva.setUicBbva(dto.getUicBbva());
 					}
 

@@ -245,19 +245,6 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 													reference: 'gastoRefacturadoGrid',
 													name: 'gastoRefacturadoGrid'									
 												},
-												////
-											    { 
-													xtype: 'comboboxfieldbase',
-									               	fieldLabel:  HreRem.i18n('fieldlabel.subtipo'),
-									               	colspan:1,
-									               	reference: 'subtipoGastoCombo',
-											      	bind: {
-										           		store: '{comboSubtiposNuevoGasto}',
-										           		value: '{gastoNuevo.subtipoGastoCodigo}',
-										           		disabled: '{!gastoNuevo.tipoGastoCodigo}'
-										         	},
-										         	allowBlank: false
-											    },
 							            	    {
 							            	    	xtype: 'datefieldbase',
 							            	    	fieldLabel: HreRem.i18n('fieldlabel.fecha.emision'),

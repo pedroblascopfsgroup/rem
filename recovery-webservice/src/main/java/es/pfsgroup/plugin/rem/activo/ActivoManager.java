@@ -4768,6 +4768,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	@Override
+	public boolean esBBVA(Long idActivo){
+		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+		Activo activo = genericDao.get(Activo.class, filterAct);
+		
+		return DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo());
+	}
+	
+	@Override
 	public boolean esSubcarteraJaipurInmobiliario(Long idActivo){
 		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
 		Activo activo = genericDao.get(Activo.class, filterAct);

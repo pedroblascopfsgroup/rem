@@ -53,6 +53,8 @@ import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlanDinVentas;
+import es.pfsgroup.plugin.rem.model.ActivoPropietario;
+import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -455,8 +457,10 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			
 		}
 		
-		if (!Checks.esNulo(activo.getSociedadDePagoAnterior())) {
-			BeanUtils.copyProperty(activoDto, "sociedadPagoAnterior", activo.getSociedadDePagoAnterior().getCodigo());
+		
+		
+		if (!Checks.esNulo(activo.getPropietarioPrincipal())) {
+			activoDto.setSociedadPagoAnterior(activo.getPropietarioPrincipal().getDocIdentificativo());
 		}
 		
 		return activoDto;
@@ -941,10 +945,16 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 						activoBbva.setIdProcesoOrigen(dto.getIdProcesoOrigen());
 					}
 				}
-				
+				//Sociedad Pago Anterior de BBVA que tiene diferente logica al resto.
 				if (!Checks.esNulo(dto.getSociedadPagoAnterior())) {
-					DDSociedadPagoAnterior sociedaPagoAnterior = (DDSociedadPagoAnterior) diccionarioApi.dameValorDiccionarioByCod(DDSociedadPagoAnterior.class, dto.getSociedadPagoAnterior());
-					activo.setSociedadDePagoAnterior(sociedaPagoAnterior);
+				
+				
+				Filter filtroPropietarioAct = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+				Filter filtroPropietario = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo",dto.getSociedadPagoAnterior());
+				ActivoPropietarioActivo activoPropietario = genericDao.get(ActivoPropietarioActivo.class, filtroPropietarioAct);
+				ActivoPropietario propietario = genericDao.get(ActivoPropietario.class, filtroPropietario);
+				activoPropietario.setPropietario(propietario);
+				
 				}
 			}
 			

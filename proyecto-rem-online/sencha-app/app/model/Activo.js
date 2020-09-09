@@ -64,6 +64,7 @@ Ext.define('HreRem.model.Activo', {
     			},
     			depends: 'entidadPropietariaCodigo'
     		},
+    		
     		{
     			name: 'subcarteraCodigo'
     		},

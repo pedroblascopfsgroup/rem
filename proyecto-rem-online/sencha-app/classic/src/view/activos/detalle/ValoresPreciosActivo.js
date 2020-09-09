@@ -526,7 +526,9 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 									text: HreRem.i18n('header.fecha.aprobacion'),
 									dataIndex: 'fechaAprobacion',
 									formatter: 'date("d/m/Y")',
-									flex: 1
+									flex: 1,
+									readOnly: '{datosRegistrales.unidadAlquilable}'
+									
 								   },
 								   {
 									text: HreRem.i18n('header.fecha.carga'),										

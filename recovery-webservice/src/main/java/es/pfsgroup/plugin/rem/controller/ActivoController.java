@@ -2945,6 +2945,65 @@ public class ActivoController extends ParadiseJsonController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getActivoIdHaya(Long idActivo, ModelMap model){
+		try{
+			model.put(RESPONSE_DATA_KEY, activoDao.existeactivoIdHAYA(idActivo));
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getActivoVendido(Long idActivo, ModelMap model){
+		try{
+			model.put(RESPONSE_DATA_KEY, activoDao.activoEstadoVendido(idActivo));
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getPerimetroHaya(Long idActivo, ModelMap model){
+		try{
+			model.put(RESPONSE_DATA_KEY, activoDao.activoFueraPerimetroHAYA(idActivo));
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getActivoBBVAoCERBERUS(Long idActivo, ModelMap model){
+		try{
+			model.put(RESPONSE_DATA_KEY, activoDao.activoPerteneceABBVAAndCERBERUS(idActivo));
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	
+	
+	
+	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveCalificacionNegativaMotivo(Long idActivo, String idMotivo, String calificacionNegativa, String estadoMotivoCalificacionNegativa, 
 			String responsableSubsanar, String descripcionCalificacionNegativa, String fechaSubsanacion, ModelMap model) {
 		
@@ -3439,4 +3498,6 @@ public class ActivoController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 	}
+	
+	
 }

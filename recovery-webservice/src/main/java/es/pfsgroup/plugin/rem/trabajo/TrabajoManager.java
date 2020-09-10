@@ -5130,4 +5130,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return listDtoHistCamp;
 
 	}
+	
+	@Override
+	@BusinessOperation(overrides = "trabajoManager.findBuscadorGastos")
+	public DtoPage findBuscadorGastos(DtoTrabajoFilter dto) {
+		
+		return trabajoDao.findBuscadorGasto(dto);
+
+	}
 }

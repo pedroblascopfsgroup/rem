@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.trabajo.dao;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionEconomicaTrabajo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -47,5 +48,7 @@ public interface TrabajoDao extends AbstractDao<Trabajo, Long>{
 	Page getActivoMatrizPresupuesto(DtoActivosTrabajoFilter dto);
 
 	public void flush();
+	
+	DtoPage findBuscadorGasto (DtoTrabajoFilter dtoTrabajoFiltro);
 
 }

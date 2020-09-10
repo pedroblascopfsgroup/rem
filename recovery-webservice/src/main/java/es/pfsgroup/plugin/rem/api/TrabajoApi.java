@@ -873,6 +873,7 @@ public interface TrabajoApi {
 
 	ActivoTramite createTramiteTrabajo(Trabajo trabajo, ExpedienteComercial expedienteComercial);
 	
+
 	/*Envía una lista de DTOs de proveedores filtrados por cartera siempre con el 'nombre', de manera que,
 	 * ya sea el campo nombre o el campo nombreComercial el seleccionado, se envíe siempre como 'nombre' para
 	 * evitar conflictos*/
@@ -881,4 +882,13 @@ public interface TrabajoApi {
 	public List<DDEstadoTrabajo> getComboEstadoSegunEstadoGdaOProveedor(Long idTrabajo);
 	
 	public List<DtoHistorificadorCampos> getListHistoricoDeCampos(Long idTrabajo, String codPestanya);
+
+	/**
+	 * Recupera la lista completa de Trabajos para el buscador de gastos
+	 * 
+	 * @return List<Trabajo>
+	 */
+	@BusinessOperationDefinition("trabajoManager.findBuscadorGastos")
+	public DtoPage findBuscadorGastos(DtoTrabajoFilter dto);
+
 }

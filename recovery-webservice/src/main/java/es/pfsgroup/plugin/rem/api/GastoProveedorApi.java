@@ -31,6 +31,8 @@ import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
 import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 
 
 public interface GastoProveedorApi {
@@ -405,6 +407,10 @@ public interface GastoProveedorApi {
 
 
 		List<DtoVImporteGastoLbk> getVImporteGastoLbk(Long idGasto);
+		
+		List<DDTipoTrabajo> getTiposTrabajoByIdGasto(Long idGasto);
+		
+		List<DDSubtipoTrabajo> getSubTiposTrabajoByIdGasto(Long idGasto); 
 		
 }
 

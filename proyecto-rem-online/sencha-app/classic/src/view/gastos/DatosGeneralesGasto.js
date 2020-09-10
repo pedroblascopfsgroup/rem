@@ -394,6 +394,11 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 									        hideable: false
 								       },
 								       {
+								    	   text	 : HreRem.i18n('header.elementos.afectados.id.linea'),
+							               flex	 : 1,
+							               dataIndex: 'descripcionLinea'
+								       },
+								       {
 							            	text	 : HreRem.i18n('header.numero.trabajo'),
 							                flex	 : 1,
 							                dataIndex: 'numTrabajo'

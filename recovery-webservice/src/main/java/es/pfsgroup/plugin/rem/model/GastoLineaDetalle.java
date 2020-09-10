@@ -178,6 +178,9 @@ public class GastoLineaDetalle implements Serializable, Auditable{
 	@Column(name="GLD_MATRICULA_REF")
     private String matriculaRefacturado;
 	
+	@Column(name="GLD_LINEA_SIN_ACTIVOS")
+    private Boolean lineaSinActivos;
+	
 	@Version   
 	private Long version;
 
@@ -537,4 +540,17 @@ public class GastoLineaDetalle implements Serializable, Auditable{
 		this.auditoria = auditoria;
 	}
 
+	public Boolean getLineaSinActivos() {
+		return lineaSinActivos;
+	}
+
+	public void setLineaSinActivos(Boolean lineaSinActivos) {
+		this.lineaSinActivos = lineaSinActivos;
+	}
+	
+	public boolean esAutorizadoSinActivos() {
+		if(lineaSinActivos != null)
+			return this.lineaSinActivos;
+		return false;
+	}
 }

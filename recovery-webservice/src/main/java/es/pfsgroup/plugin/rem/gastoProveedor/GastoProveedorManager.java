@@ -397,9 +397,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setEnviado(false);
 			}
 
-			if (!Checks.esNulo(gasto.getGastoSinActivos())) {
-				dto.setGastoSinActivos(BooleanUtils.toBoolean(gasto.getGastoSinActivos()));
-			}
 			
 			/*Double gastoTotal = 0.0;
 			List<GastoPrinex> listGastoPrinex = new ArrayList<GastoPrinex>();
@@ -719,10 +716,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			} else {
 				throw new JsonViewerException("No se puede cambiar el destinatario, este gasto refacturable está incluido en el gasto: "+numGastoPadre);
 			}
-		}
-
-		if (!Checks.esNulo(dto.getGastoSinActivos())) {
-			gastoProveedor.setGastoSinActivos(BooleanUtils.toIntegerObject(dto.getGastoSinActivos()));
 		}
 		
 		if (!Checks.esNulo(dto.getIdentificadorUnico())) {

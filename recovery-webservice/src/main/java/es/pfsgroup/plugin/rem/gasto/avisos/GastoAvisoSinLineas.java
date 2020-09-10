@@ -8,14 +8,13 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.GastoAvisadorApi;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
-import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 
 
-@Service("gastoAvisoSinActivos")
-public class GastoAvisoSinActivos implements GastoAvisadorApi {
+@Service("gastoAvisoSinLineas")
+public class GastoAvisoSinLineas implements GastoAvisadorApi {
 	
-	protected static final Log logger = LogFactory.getLog(GastoAvisoSinActivos.class);
+	protected static final Log logger = LogFactory.getLog(GastoAvisoSinLineas.class);
 	
 
 	@Override
@@ -24,15 +23,11 @@ public class GastoAvisoSinActivos implements GastoAvisadorApi {
 
 		DtoAviso dtoAviso = new DtoAviso();		
 		
-		if(gasto.getGastoLineaDetalleList() != null && !gasto.getGastoLineaDetalleList().isEmpty()) {
-			for (GastoLineaDetalle gastoLineaDetalle : gasto.getGastoLineaDetalleList()) {
-				if(gastoLineaDetalle.getGastoLineaEntidadList().isEmpty() && !gastoLineaDetalle.esAutorizadoSinActivos()) {
-					dtoAviso.setDescripcion("Tiene líneas sin activos");
-					dtoAviso.setId(String.valueOf(gasto.getId()));	
-					break;
-				}
-			}
+		if(gasto.getGastoLineaDetalleList() == null || gasto.getGastoLineaDetalleList().isEmpty()) {	
+			dtoAviso.setDescripcion("El gasto no tiene ninguna línea de detalle");
+			dtoAviso.setId(String.valueOf(gasto.getId()));	
 		}
+
 		
 		return dtoAviso;
 		

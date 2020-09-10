@@ -94,6 +94,7 @@ import es.pfsgroup.plugin.rem.model.GastoProveedorTrabajo;
 import es.pfsgroup.plugin.rem.model.GastoRefacturable;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.ProvisionGastos;
+import es.pfsgroup.plugin.rem.model.SubTipoGpvTrabajo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VActivosAfectosGencat;
@@ -120,6 +121,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencionPago;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
@@ -127,6 +130,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComisionado;
 import es.pfsgroup.plugin.rem.provisiongastos.dao.ProvisionGastosDao;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateGastoApi;
@@ -3570,6 +3574,48 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		return dtoVistaImportesGastoLbk;
 		
+	}
+	
+	@Override
+	public List<DDTipoTrabajo> getTiposTrabajoByIdGasto(Long idGasto){
+		GastoProveedor gastoProveedor = this.findOne(Long.valueOf(idGasto));
+		List<DDTipoTrabajo> listaTipoTrabajo = new ArrayList<DDTipoTrabajo>();
+		
+		Filter filterTipoGasto = genericDao.createFilter(FilterType.EQUALS, "tipoGasto.id", gastoProveedor.getTipoGasto().getId());
+		List <DDSubtipoGasto> subTiposGastos = genericDao.getList(DDSubtipoGasto.class, filterTipoGasto);
+		
+		for(DDSubtipoGasto subTipoGasto : subTiposGastos ) {
+			Filter filterSubTipoGasto = genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.id", subTipoGasto.getId());
+			List <SubTipoGpvTrabajo> ListGpv = genericDao.getList(SubTipoGpvTrabajo.class, filterSubTipoGasto);
+			for(SubTipoGpvTrabajo gpv : ListGpv) {
+				if(!listaTipoTrabajo.contains(gpv.getSubtipoTrabajo().getTipoTrabajo())) {
+					listaTipoTrabajo.add(gpv.getSubtipoTrabajo().getTipoTrabajo());
+				}
+			}
+		}
+		
+		return listaTipoTrabajo;
+	}
+	
+	@Override
+	public List<DDSubtipoTrabajo> getSubTiposTrabajoByIdGasto(Long idGasto){
+		GastoProveedor gastoProveedor = this.findOne(Long.valueOf(idGasto));
+		List<DDSubtipoTrabajo> listaSubTipoTrabajo = new ArrayList<DDSubtipoTrabajo>();
+		
+		Filter filterTipoGasto = genericDao.createFilter(FilterType.EQUALS, "tipoGasto.id", gastoProveedor.getTipoGasto().getId());
+		List <DDSubtipoGasto> subTiposGastos = genericDao.getList(DDSubtipoGasto.class, filterTipoGasto);
+		
+		for(DDSubtipoGasto subTipoGasto : subTiposGastos ) {
+			Filter filterSubTipoGasto = genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.id", subTipoGasto.getId());
+			List <SubTipoGpvTrabajo> ListGpv = genericDao.getList(SubTipoGpvTrabajo.class, filterSubTipoGasto);
+			for(SubTipoGpvTrabajo gpv : ListGpv) {
+				if(!listaSubTipoTrabajo.contains(gpv.getSubtipoTrabajo())) {
+					listaSubTipoTrabajo.add(gpv.getSubtipoTrabajo());
+				}
+			}
+		}
+		
+		return listaSubTipoTrabajo;
 	}
 	
 }

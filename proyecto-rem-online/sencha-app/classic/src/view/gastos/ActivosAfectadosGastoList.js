@@ -37,7 +37,7 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 			var estadoParaGuardar = me.lookupController().getView().getViewModel().getData().gasto.getData().estadoModificarLineasDetalleGasto;
 	    	var isGastoRefacturado = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPorOtroGasto;
 	    	var isGastoRefacturadoPadre = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPadre;
-
+	    	
 			var columnaReferenciaCatastral = referenciaCatastral.getEditor();
 			var columnaParticipacion = participacion.getEditor();
 			if(!me.up('gastodetallemain').getViewModel().get('gasto.asignadoATrabajos') 

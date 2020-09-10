@@ -1805,4 +1805,23 @@ public class TrabajoController extends ParadiseJsonController {
 		
 	}
 	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView findBuscadorGastos(DtoTrabajoFilter dtoTrabajoFilter, ModelMap model){
+		try {
+			DtoPage page = trabajoApi.findBuscadorGastos(dtoTrabajoFilter);
+			
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
+		}catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			model.put("error", e.getMessage());
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
 }

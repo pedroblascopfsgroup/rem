@@ -1198,6 +1198,22 @@ public interface ParticularValidatorApi {
 	Boolean esGastoRefacturadoHijo(String numGasto);
 
 	Boolean gastoEstadoIncompletoPendienteAutorizado(String numGasto);
+	Boolean existeTipoGastoByCod(String codigo);
 
+	Boolean existeDestinatarioByCod(String codigo);
+
+	Boolean existeTipoOperacionGastoByCod(String codigo);
+
+	Boolean existeTipoRecargoByCod(String codigo);
+
+	Boolean existeTipoElementoByCod(String codigo);
+
+	Boolean subtipoPerteneceATipoGasto(String tipoGasto, String subtipoGasto);
+
+	Boolean esPropietarioDeCarteraByCodigo(String docIdentificadorPropietario, String cartera);
+
+	Boolean esPropietarioYActivoMismaCartera(String docIdentificadorPropietario, String numActivo);
+
+	Boolean esPropietarioYAgrupacionMismaCartera(String docIdentificadorPropietario, String numAgrupacion);
 
 }

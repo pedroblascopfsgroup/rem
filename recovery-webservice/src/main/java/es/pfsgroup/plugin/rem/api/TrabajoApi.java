@@ -868,4 +868,13 @@ public interface TrabajoApi {
 	public ActivoTramite createTramiteTrabajo(Long idTrabajo, ExpedienteComercial expedienteComercial);
 
 	ActivoTramite createTramiteTrabajo(Trabajo trabajo, ExpedienteComercial expedienteComercial);
+	
+	
+	/**
+	 * Recupera la lista completa de Trabajos para el buscador de gastos
+	 * 
+	 * @return List<Trabajo>
+	 */
+	@BusinessOperationDefinition("trabajoManager.findBuscadorGastos")
+	public DtoPage findBuscadorGastos(DtoTrabajoFilter dto);
 }

@@ -56,10 +56,5 @@ Ext.define('HreRem.view.gastos.SeleccionTrabajosGasto', {
     	var me = this;
     	me.getViewModel().set('gasto', me.gasto);
     	me.getViewModel().notify();
-    	
-    	Ext.Array.each(me.query('grid'), function(grid) {
-  			grid.getStore().loadPage(1);
-  		});	
-
     }
 });

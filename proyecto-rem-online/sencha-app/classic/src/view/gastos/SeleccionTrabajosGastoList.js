@@ -5,8 +5,8 @@ Ext.define('HreRem.view.gastos.SeleccionTrabajosGastoList', {
 	bind: {
 		store: '{seleccionTrabajosGasto}'
 	},
+	loadAfterBind: false,
 	scrollable: 'y',
-	
 	plugins: 'pagingselectpersist',
 
 	

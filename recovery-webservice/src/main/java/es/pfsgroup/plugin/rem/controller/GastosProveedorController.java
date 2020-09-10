@@ -77,6 +77,8 @@ import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
 import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 
 @Controller
 public class GastosProveedorController extends ParadiseJsonController {
@@ -1295,7 +1297,6 @@ public class GastosProveedorController extends ParadiseJsonController {
 	}
 	
 
-
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getElementosAfectados(Long idLinea, ModelMap model, HttpServletRequest request) {
@@ -1409,5 +1410,46 @@ public class GastosProveedorController extends ParadiseJsonController {
 		
 	}
 
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getTiposTrabajoByIdGasto(Long idGasto) {
+			
+		ModelMap model = new ModelMap();
+		
+		try {
+			List<DDTipoTrabajo> linea = gastoProveedorApi.getTiposTrabajoByIdGasto(idGasto);
+			model.put("data", linea);
+			model.put("success", true);
+			
+		}catch (Exception e) {
+			logger.error("error en GastosProveedorController - getTiposTrabajoByIdGasto", e);
+			model.put("success", false);
+			model.put("errorMessage", "Error al obtener los tipos de trabajo");
+		}
+		
+		return createModelAndViewJson(model);
+	}
+
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getSubTiposTrabajoByIdGasto(Long idGasto) {
+			
+		ModelMap model = new ModelMap();
+		
+		try {
+			List<DDSubtipoTrabajo> linea = gastoProveedorApi.getSubTiposTrabajoByIdGasto(idGasto);
+			model.put("data", linea);
+			model.put("success", true);
+			
+		}catch (Exception e) {
+			logger.error("error en GastosProveedorController - getSubTiposTrabajoByIdGasto", e);
+			model.put("success", false);
+			model.put("errorMessage", "Error al obtener los subtipos de trabajo");
+		}
+		
+		return createModelAndViewJson(model);
+	}
+
 }

@@ -5002,5 +5002,138 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return !"0".equals(resultado);
 	}
-
+	
+	@Override
+    public Boolean existeTipoGastoByCod(String codigo) {
+	    if(Checks.esNulo(codigo)) {
+            return false;
+	    }
+	
+	    String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+	                    + "              FROM DD_TGA_TIPOS_GASTO WHERE"
+	                    + "              DD_TGA_CODIGO = '" + codigo + "'"
+	                    + "      AND BORRADO = 0"
+	                    );
+	    return !"0".equals(resultado);
+    }
+	
+	@Override
+    public Boolean existeDestinatarioByCod(String codigo) {
+	    if(Checks.esNulo(codigo)) {
+            return false;
+	    }
+	
+	    String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+	                    + "              FROM DD_DEG_DESTINATARIOS_GASTO WHERE"
+	                    + "              DD_DEG_CODIGO = '" + codigo + "'"
+	                    + "      AND BORRADO = 0"
+	                    );
+	    return !"0".equals(resultado);
+    }
+	
+	@Override
+    public Boolean existeTipoOperacionGastoByCod(String codigo) {
+	    if(Checks.esNulo(codigo)) {
+            return false;
+	    }
+	
+	    String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+	                    + "              FROM DD_TOG_TIPO_OPERACION_GASTO WHERE"
+	                    + "              DD_TOG_CODIGO = '" + codigo + "'"
+	                    + "      AND BORRADO = 0"
+	                    );
+	    return !"0".equals(resultado);
+    }
+	
+	@Override
+    public Boolean existeTipoRecargoByCod(String codigo) {
+	    if(Checks.esNulo(codigo)) {
+            return false;
+	    }
+	
+	    String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+	                    + "              FROM DD_TRG_TIPO_RECARGO_GASTO WHERE"
+	                    + "              DD_TRG_CODIGO = '" + codigo + "'"
+	                    + "      AND BORRADO = 0"
+	                    );
+	    return !"0".equals(resultado);
+    }
+	
+	@Override
+    public Boolean existeTipoElementoByCod(String codigo) {
+	    if(Checks.esNulo(codigo)) {
+            return false;
+	    }
+	
+	    String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+	                    + "              FROM DD_ENT_ENTIDAD_GASTO WHERE"
+	                    + "              DD_ENT_CODIGO = '" + codigo + "'"
+	                    + "      AND BORRADO = 0"
+	                    );
+	    return !"0".equals(resultado);
+    }
+	
+	@Override
+    public Boolean subtipoPerteneceATipoGasto(String tipoGasto, String subtipoGasto) {
+	    if(Checks.esNulo(tipoGasto) && Checks.esNulo(subtipoGasto)) {
+            return false;
+	    }
+	
+	    String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+	                    + "              FROM DD_TGA_TIPOS_GASTO TGA "
+	                    + "				 JOIN DD_STG_SUBTIPOS_GASTO STG ON TGA.DD_TGA_ID = STG.DD_TGA_ID"
+	                    + "				 WHERE TGA.DD_TGA_CODIGO like '" + tipoGasto + "' AND STG.DD_STG_CODIGO like '" + subtipoGasto + "'"
+	                    );
+	    return !"0".equals(resultado);
+    }
+	
+	@Override
+    public Boolean esPropietarioDeCarteraByCodigo(String docIdentificadorPropietario, String cartera) {
+	    if(Checks.esNulo(docIdentificadorPropietario) && Checks.esNulo(cartera)) {
+            return false;
+	    }
+	
+	    String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+	                    + "              FROM ACT_PRO_PROPIETARIO PRO "
+	                    + "				 JOIN DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID"
+	                    + "				 WHERE PRO.PRO_DOCIDENTIF LIKE '" + docIdentificadorPropietario + "' AND CRA.DD_CRA_CODIGO LIKE '" + cartera + "'"
+	                    );
+	    return !"0".equals(resultado);
+    }
+	
+	@Override
+    public Boolean esPropietarioYActivoMismaCartera(String docIdentificadorPropietario, String numActivo) {
+	    if(Checks.esNulo(docIdentificadorPropietario) && Checks.esNulo(numActivo)) {
+            return false;
+	    }
+	
+	    String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+	    				+ "              FROM ACT_ACTIVO ACT "
+	    				+ "				 WHERE ACT.ACT_NUM_ACTIVO = '" + numActivo + "' AND ACT.DD_CRA_ID = "
+	    						+ "(SELECT CRA.DD_CRA_ID "
+	    						+ "FROM ACT_PRO_PROPIETARIO PRO "
+	    						+ "JOIN DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID	"
+	    						+ "WHERE PRO.PRO_DOCIDENTIF LIKE '" + docIdentificadorPropietario + "')"
+	                    );
+	    return !"0".equals(resultado);
+    }
+	
+	@Override
+    public Boolean esPropietarioYAgrupacionMismaCartera(String docIdentificadorPropietario, String numAgrupacion) {
+	    if(Checks.esNulo(docIdentificadorPropietario) && Checks.esNulo(numAgrupacion)) {
+            return false;
+	    }
+	
+	    String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+	    				+ "              FROM ACT_AGR_AGRUPACION AGR "
+	    				+ "              JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AGR.AGR_ACT_PRINCIPAL "
+	    				+ "              JOIN DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID "
+	    				+ "				 WHERE AGR.AGR_NUM_AGRUP_REM = '" + numAgrupacion + "' AND ACT.DD_CRA_ID = "
+	    						+ "(SELECT CRA.DD_CRA_ID "
+	    						+ "FROM ACT_PRO_PROPIETARIO PRO "
+	    						+ "JOIN DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID	"
+	    						+ "WHERE PRO.PRO_DOCIDENTIF LIKE '" + docIdentificadorPropietario + "')"
+	                    );
+	    return !"0".equals(resultado);
+    }
 }

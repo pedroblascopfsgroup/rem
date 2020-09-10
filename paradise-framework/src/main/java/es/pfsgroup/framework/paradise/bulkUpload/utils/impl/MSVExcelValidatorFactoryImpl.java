@@ -219,6 +219,8 @@ public class MSVExcelValidatorFactoryImpl {
 	@Autowired
 	private MSVMasivaModificacionLineasDetalleValidator modificacionLineasDetalle;
 	
+	@Autowired
+	private MSVMasivaUnicaGastosValidator cargaMasivaUnicaGastos;
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 
@@ -362,6 +364,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return calidadDatos;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_MODIFICACION_LINEAS_DE_DETALLE.equals(codTipoOperacion)) {
 			return modificacionLineasDetalle;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_UNICA_GASTOS.equals(codTipoOperacion)) {
+			return cargaMasivaUnicaGastos;
 		}
 		
 		

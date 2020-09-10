@@ -2837,28 +2837,27 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Override
 	@Transactional(readOnly = false)
 	public boolean saveActivoTrabajo(DtoActivoTrabajo dtoActivoTrabajo) {
-		Float porcentajeParticipacion = 0f;
+		Float porcentajeParticipacion = null;
 
 		if (dtoActivoTrabajo.getParticipacion() != null) {
 			porcentajeParticipacion = Float.valueOf(dtoActivoTrabajo.getParticipacion());
 		}
+		
+		if(porcentajeParticipacion != null) {
+			Filter f1 = genericDao.createFilter(FilterType.EQUALS, "activo.id",
+					Long.valueOf(dtoActivoTrabajo.getIdActivo()));
+			Filter f2 = genericDao.createFilter(FilterType.EQUALS, "trabajo.id",
+					Long.valueOf(dtoActivoTrabajo.getIdTrabajo()));
 
-		Filter f1 = genericDao.createFilter(FilterType.EQUALS, "activo.id",
-				Long.valueOf(dtoActivoTrabajo.getIdActivo()));
-		Filter f2 = genericDao.createFilter(FilterType.EQUALS, "trabajo.id",
-				Long.valueOf(dtoActivoTrabajo.getIdTrabajo()));
-
-		ActivoTrabajo activoTrabajo = genericDao.get(ActivoTrabajo.class, f1, f2);
-
-		activoTrabajo.setParticipacion(porcentajeParticipacion);
-		genericDao.update(ActivoTrabajo.class, activoTrabajo);
-
-		// Si el trabajo está asociado a un gasto actualizar el porcentaje en el
-		// mismo.
-		if (activoTrabajo.getTrabajo().getGastoTrabajo() != null) {
-			gastoProveedorApi.actualizarPorcentajeParticipacionGastoProveedorActivo(activoTrabajo.getActivo().getId(),
-					activoTrabajo.getTrabajo().getGastoTrabajo().getGastoProveedor().getId(), porcentajeParticipacion);
-		}
+			ActivoTrabajo activoTrabajo = genericDao.get(ActivoTrabajo.class, f1, f2);
+			activoTrabajo.setParticipacion(porcentajeParticipacion);
+			genericDao.update(ActivoTrabajo.class, activoTrabajo);
+			// Si el trabajo está asociado a un gasto actualizar el porcentaje en el
+			// mismo.
+			if (activoTrabajo.getTrabajo().getGastoTrabajo() != null) {
+				gastoProveedorApi.calcularParticipacionActivosGasto(activoTrabajo.getTrabajo().getGastoTrabajo().getGastoProveedor());
+			}
+		}	
 
 		return true;
 	}

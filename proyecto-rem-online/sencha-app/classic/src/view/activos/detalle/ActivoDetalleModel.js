@@ -989,12 +989,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var esUA = false;
 		
 			
-			if(gestores){			
-				if(me.get('activo.unidadAlquilable') != undefined)
-				esUA = me.get('activo.unidadAlquilable');
-			if(me.get('activo.isVendidoOEntramite') != undefined)
-				vendido = me.get('activo.isVendidoOEntramite');
-			return (vendido === true || esUA === true);
+			if(gestores){						
 			return true;
 				}
 				

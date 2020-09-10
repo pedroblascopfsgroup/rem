@@ -563,7 +563,9 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 														{
 															xtype : 'currencyfieldbase',
 															fieldLabel : HreRem.i18n('fieldlabel.precio.maximo.venta.vpo'),
-									                		bind : '{saneamiento.maxPrecioVenta}'
+									                		bind : '{saneamiento.maxPrecioVenta}',
+									                		readOnly: true
+									                		
 												        },
 												        {
 										                	xtype: 'comboboxfieldbase',

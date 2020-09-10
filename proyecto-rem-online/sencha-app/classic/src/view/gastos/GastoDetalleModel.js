@@ -48,6 +48,28 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 
 			return true;
 		},
+		
+		esPropietarioBankia : function(get){
+			var me = this;
+			var gasto = me.getData().gasto;
+			if (Ext.isEmpty(gasto)) {
+				return false;
+			} else {
+				var nombrePropietario = gasto.get('nombrePropietario');
+			}
+
+			if ( Ext.isEmpty(nombrePropietario)) {
+				return false;
+			}
+			
+			if(nombrePropietario == CONST.NOMBRE_CARTERA2['BANKIA'] || nombrePropietario == CONST.NOMBRE_SUBCARTERA['BANKIA_HABITAT']){
+				return true;
+			}
+			else{
+				return false;
+			}
+			
+		},
 		ocultarBotonesTrabajos : function(get) {
 			var codigoEstadoCodigo = get('gasto.estadoGastoCodigo');
 
@@ -565,26 +587,39 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				}
 			}
 		},
-
-		filtroComboSubtipoTrabajo : {
+		
+		
+		filtroComboTipoTrabajo : {
 			model : 'HreRem.model.ComboBase',
 			proxy : {
 				type : 'uxproxy',
-				remoteUrl : 'generic/getDiccionario',
+				remoteUrl : 'gastosproveedor/getTiposTrabajoByIdGasto',
 				extraParams : {
-					diccionario : 'subtiposTrabajo'
+					idGasto : '{gasto.id}'
 				}
 			}
 
 		},
 
+		filtroComboSubtipoTrabajo : {
+			model : 'HreRem.model.ComboBase',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'gastosproveedor/getSubTiposTrabajoByIdGasto',
+				extraParams : {
+					idGasto : '{gasto.id}'
+				}
+			}
+
+		},
+		
 		seleccionTrabajosGasto : {
 			pageSize : $AC.getDefaultPageSize(),
-			model : 'HreRem.model.BusquedaTrabajo',
+			model : 'HreRem.model.BusquedaTrabajoGasto',
 			proxy : {
 				type : 'uxproxy',
 				localUrl : '/trabajosgasto.json',
-				remoteUrl : 'trabajo/findAll',
+				remoteUrl : 'trabajo/findBuscadorGastos',
 				actionMethods : {
 					read : 'POST'
 				}

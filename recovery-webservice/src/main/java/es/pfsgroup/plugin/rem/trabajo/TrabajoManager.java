@@ -4562,4 +4562,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	 	
 	 	return esTramiteValido;
  	}
+	
+	
+	@Override
+	@BusinessOperation(overrides = "trabajoManager.findBuscadorGastos")
+	public DtoPage findBuscadorGastos(DtoTrabajoFilter dto) {
+		
+		return trabajoDao.findBuscadorGasto(dto);
+	}
 }

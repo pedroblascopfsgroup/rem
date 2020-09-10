@@ -2193,5 +2193,32 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
 		    }
 		});
+	},
+	
+    onChangeCheckboxCodigoSubtipo: function(chkBox, newValue) {
+    	
+    	var me = this;
+    	var searchButton = me.lookupReference("searchButton");
+
+    	if (newValue) {
+    		searchButton.setDisabled(false)        		
+    	} else {
+    		searchButton.setDisabled(true);
+
+    	}
+    },
+	
+	onChangeNumTrabajo: function(field, value){
+    	var me = this;
+    	var numTrabajo = me.lookupReference('numTrabajo').getValue();
+    	var searchButton = me.lookupReference("searchButton");
+    	if(numTrabajo!= ''){
+    		searchButton.setDisabled(false);    
+    	}
+    	else{
+    		searchButton.setDisabled(true);
+    	}
 	}
+	
+	
 });

@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.trabajo.dao.impl;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -11,6 +12,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.support.destination.DynamicDestinationResolver;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.hibernate.pagination.PageHibernate;
@@ -22,11 +24,16 @@ import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionEconomicaTrabajo;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.VBusquedaTrabajosGastos;
+import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
+import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
@@ -43,6 +50,8 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	private GenericABMDao genericDao;
 	
 	protected static final Log logger = LogFactory.getLog(TrabajoDaoImpl.class);
+	private static final String NIE_HAYA = "A86744349";
+	
 	
 	@Override
 	public Page findAll(DtoTrabajoFilter dto) {
@@ -104,8 +113,13 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	   		if (dto.getCodigoTipo2()!=null) {
 	   			listaTipo.add(dto.getCodigoTipo2());
 	   		}
-	   		HQLBuilder.addFiltroWhereInSiNotNull(hb, "tbj.codigoTipo", listaTipo);   		
-	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoSubtipo", dto.getCodigoSubtipo());
+	   		HQLBuilder.addFiltroWhereInSiNotNull(hb, "tbj.codigoTipo", listaTipo);
+	   		
+	   		Collection<String> listaSubTipo = new ArrayList<String>();
+	   		if (dto.getCodigoSubtipo()!=null) {
+	   			listaSubTipo.add(dto.getCodigoSubtipo());
+	   		}
+	   		HQLBuilder.addFiltroWhereInSiNotNull(hb, "tbj.codigoSubtipo",listaSubTipo );
 	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoEstado", dto.getCodigoEstado());
 	   		HQLBuilder.addFiltroLikeSiNotNull(hb, "tbj.descripcionPoblacion", dto.getDescripcionPoblacion(), true);
 	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoProvincia", dto.getCodigoProvincia());
@@ -321,5 +335,85 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	public void flush() {
 		this.getSessionFactory().getCurrentSession().flush();
 	}
+	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public DtoPage findBuscadorGasto(DtoTrabajoFilter dto) {
+		
+		Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", dto.getNumGasto());
+		GastoProveedor gasto = genericDao.get(GastoProveedor.class, filtroGasto);
+		
+		HQLBuilder hb = new HQLBuilder(" from VBusquedaTrabajosGastos tbj");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numTrabajo", dto.getNumTrabajo());
+
+   		if (dto.getCodigoTipo()!=null) {
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoTipo", dto.getCodigoTipo());
+   		}
+   		else if(dto.getCodigoTipo2()!=null) {
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoTipo", dto.getCodigoTipo2());
+   		}
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.cubreSeguro", dto.getCubreSeguro());
+   		
+   		
+   		if (dto.getCodigoSubtipo()!=null) {
+   			List<String> listaSubTipo = new ArrayList<String>(Arrays.asList(dto.getCodigoSubtipo().split(",")));
+   			HQLBuilder.addFiltroWhereInStringSiNotNull(hb, "tbj.codigoSubtipo",listaSubTipo );
+   		}
+   		
+		
+   		List <String> listaEstadoTrabajo = new ArrayList<String>();
+   		listaEstadoTrabajo.add(DDEstadoTrabajo.ESTADO_PENDIENTE_PAGO);
+   		listaEstadoTrabajo.add(DDEstadoTrabajo.ESTADO_VALIDADO);
+		HQLBuilder.addFiltroWhereInStringSiNotNull(hb, "tbj.codigoEstado",listaEstadoTrabajo);
+		
+		
+		if(gasto.getProveedor().getDocIdentificativo().equals(NIE_HAYA)) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.propietario", gasto.getPropietario().getId());
+			hb.appendWhere("tbj.importeTotal > tbj.importePresupuesto");
+		}
+		else {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.propietario", gasto.getPropietario().getId());
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.idProveedor", gasto.getProveedor().getId());
+			hb.appendWhere("tbj.importeTotal = tbj.importePresupuesto");
+		}
+		
+   		try {
+   			
+
+			if (dto.getFechaPeticionDesde() != null) {
+				Date fechaDesde = DateFormat.toDate(dto.getFechaPeticionDesde());
+				HQLBuilder.addFiltroBetweenSiNotNull(hb, "tbj.fechaSolicitud", fechaDesde, null);
+			}
+			
+			if (dto.getFechaPeticionHasta() != null) {
+				Date fechaHasta = DateFormat.toDate(dto.getFechaPeticionHasta());
+		
+				// Se le añade un día para que encuentre las fechas del día anterior hasta las 23:59
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(fechaHasta); // Configuramos la fecha que se recibe
+				calendar.add(Calendar.DAY_OF_YEAR, 1);  // numero de días a añadir, o restar en caso de días<0
+
+				HQLBuilder.addFiltroBetweenSiNotNull(hb, "tbj.fechaSolicitud", null, calendar.getTime());
+			}
+			
+   		} catch (ParseException e) {
+   			logger.error(e);
+		}
+		
+		hb.orderBy("descripcionSubtipo", HQLBuilder.ORDER_ASC);
+		
+		
+		Page pageTrabajos = HibernateQueryUtils.page(this, hb, dto);
+		List<VBusquedaTrabajosGastos> trabajoGastos = (List<VBusquedaTrabajosGastos>) pageTrabajos.getResults();
+		for(VBusquedaTrabajosGastos trabajoGasto : trabajoGastos) {
+			if(!Checks.esNulo(gasto.getDestinatarioGasto()) && gasto.getDestinatarioGasto().getCodigo().equals(DDDestinatarioGasto.CODIGO_HAYA)) {
+				trabajoGasto.setImporteTotal(trabajoGasto.getImportePresupuesto());
+			}
+		}
+		
+		return new DtoPage(trabajoGastos, pageTrabajos.getTotalCount());
+	}
+	
 
 }

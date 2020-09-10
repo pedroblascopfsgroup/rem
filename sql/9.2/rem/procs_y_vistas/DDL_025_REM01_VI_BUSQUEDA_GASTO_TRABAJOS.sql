@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=DAP
---## FECHA_CREACION=20200907
+--## AUTOR= Lara Pablo
+--## FECHA_CREACION=20200909
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-11041
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial
 --##        0.2 Sin borrado en asociación gasto-trabajo.
 --##        0.3 Adaptación de consulta al nuevo modelo de facturación - Daniel Algaba - HREOS-10618
+--##		0.4 Adaptación de consulta para ver el tipo de línea y los importes - Lara Pablo - HREOS-11041
 --##########################################
 --*/
 
@@ -57,7 +58,10 @@ BEGIN
 				GLDTBJ.TBJ_ID,
 				TBJ.TBJ_NUM_TRABAJO,
 				TBJ.TBJ_CUBRE_SEGURO,
-				TBJ.TBJ_IMPORTE_TOTAL,
+				 CASE WHEN( DEG.DD_DEG_CODIGO = ''02'')
+                    THEN TBJ.TBJ_IMPORTE_PRESUPUESTO
+                    ELSE TBJ.TBJ_IMPORTE_TOTAL 
+                END TBJ_IMPORTE_TOTAL,
 				TBJ.TBJ_FECHA_EJECUTADO,
 				TBJ.TBJ_FECHA_SOLICITUD,
 				TBJ.TBJ_FECHA_CIERRE_ECONOMICO,
@@ -66,7 +70,7 @@ BEGIN
 				STR.DD_STR_CODIGO,
 				STR.DD_STR_DESCRIPCION,
 				GLD.GLD_ID,
-				(STG.DD_STG_DESCRIPCION || '' - '' || NVL(TIT.DD_TIT_DESCRIPCION, '' - '') || '' - '' || NVL2(GLD.GLD_IMP_IND_TIPO_IMPOSITIVO, TO_CHAR(GLD.GLD_IMP_IND_TIPO_IMPOSITIVO) || '' %'', '' - '')) DESCRIPCIONLINEA    
+				(STG.DD_STG_DESCRIPCION || '' '' || NVL(TIT.DD_TIT_DESCRIPCION, '' '') || '' - '' || NVL2(GLD.GLD_IMP_IND_TIPO_IMPOSITIVO, TO_CHAR(GLD.GLD_IMP_IND_TIPO_IMPOSITIVO) || '' %'', '' - '')) DESCRIPCION_LINEA    
 										
 		FROM ' || V_ESQUEMA || '.GLD_GASTOS_LINEA_DETALLE GLD
         JOIN ' || V_ESQUEMA || '.GLD_TBJ GLDTBJ ON GLD.GLD_ID = GLDTBJ.GLD_ID AND GLDTBJ.BORRADO = 0
@@ -75,6 +79,8 @@ BEGIN
 		JOIN ' || V_ESQUEMA || '.DD_STR_SUBTIPO_TRABAJO STR ON STR.DD_STR_ID = TBJ.DD_STR_ID
 		JOIN ' || V_ESQUEMA || '.DD_STG_SUBTIPOS_GASTO STG ON GLD.DD_STG_ID = STG.DD_STG_ID AND STG.BORRADO = 0
 		LEFT JOIN ' || V_ESQUEMA || '.DD_TIT_TIPOS_IMPUESTO TIT ON GLD.DD_TIT_ID = TIT.DD_TIT_ID AND TIT.BORRADO = 0
+ 		JOIN ' || V_ESQUEMA || '.GPV_GASTOS_PROVEEDOR GPV ON GLD.GPV_ID = GPV.GPV_ID AND GPV.BORRADO = 0
+        LEFT JOIN ' || V_ESQUEMA || '.DD_DEG_DESTINATARIOS_GASTO DEG ON DEG.DD_DEG_ID = GPV.DD_DEG_ID AND DEG.BORRADO = 0 
 		WHERE GLD.BORRADO = 0
     ';
 

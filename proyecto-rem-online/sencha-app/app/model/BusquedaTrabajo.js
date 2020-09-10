@@ -87,6 +87,9 @@ Ext.define('HreRem.model.BusquedaTrabajo', {
     		},
     		{
     			name: 'importeTotal'
+    		},
+    		{
+    			name:'descripcionLinea'
     		}
     ] 
     

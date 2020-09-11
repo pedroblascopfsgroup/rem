@@ -52,13 +52,7 @@ Ext.define('HreRem.model.GastoActivo', {
             	name:'idElemento'
             },
             {
-            	name:'tipoElemento',
-            	convert: function(value) {
-            		if(value == -1)
-            			return "";
-    				else
-    					return value;
-    			}
+            	name:'tipoElemento'
             },
             {
             	name:'tipoElementoCodigo'

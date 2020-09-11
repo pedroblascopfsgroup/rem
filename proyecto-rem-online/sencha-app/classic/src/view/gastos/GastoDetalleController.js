@@ -646,6 +646,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
         	var url =  $AC.getRemoteUrl('gastosproveedor/updateLineaSinActivos');
         	Ext.Ajax.request({		    			
                 url: url,
+                method: 'GET',
                 params: {
                 	idLinea: idLinea  
                 },	    		
@@ -2120,9 +2121,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var elementoAnyadir = me.lookupReference('elementoAnyadir').getValue();
     	var comboElementoAAnyadir = me.lookupReference('comboElementoAAnyadir').getValue();
     	var comboLineasRefAnyadir = me.lookupReference('comboLineasDetalleReferenceAnyadir').getValue();
-    	var  botonGuardar = me.lookupReference('btnGuardarGastoActivo');
-    	
-    	if(!Ext.isEmpty(elementoAnyadir) && !Ext.isEmpty(comboElementoAAnyadir) 
+    	var botonGuardar = me.lookupReference('btnGuardarGastoActivo');
+
+    	if(!Ext.isEmpty(comboLineasRefAnyadir) && !Ext.isEmpty(comboElementoAAnyadir) 
     		&& CONST.TIPO_ELEMENTOS_GASTO['CODIGO_SIN_ACTIVOS']  == comboElementoAAnyadir){
     			me.lookupReference('elementoAnyadir').reset();
     			me.lookupReference('elementoAnyadir').setDisabled(true);

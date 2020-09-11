@@ -39,7 +39,7 @@ public class VElementosLineaDetalle implements Serializable{
 	private Long idGasto;
 	
 	@Column(name = "ENTIDAD")
-	private Long idElemento;
+	private String idElemento;
 		
 	@Column(name = "TIPOENTIDAD_DESC")
 	private String tipoElemento;
@@ -105,11 +105,11 @@ public class VElementosLineaDetalle implements Serializable{
 		this.idGasto = idGasto;
 	}
 
-	public Long getIdElemento() {
+	public String getIdElemento() {
 		return idElemento;
 	}
 
-	public void setIdElemento(Long idElemento) {
+	public void setIdElemento(String idElemento) {
 		this.idElemento = idElemento;
 	}
 

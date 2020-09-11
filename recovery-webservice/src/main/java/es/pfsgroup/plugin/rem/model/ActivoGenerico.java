@@ -21,8 +21,6 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 
 
@@ -55,37 +53,22 @@ public class ActivoGenerico implements Serializable, Auditable {
     @JoinColumn(name = "DD_STG_ID")
     private DDSubtipoGasto subtipoGasto;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DD_CRA_ID")
-	private DDCartera cartera;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DD_SCR_ID")
-	private DDSubcartera subcartera;
-	
 	@Column(name = "AGS_ANYO")
     private Integer anyoActivoGenerico;   
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PRO_ID")
+    private ActivoPropietario propietario;
+	
 	@Column(name = "AGS_ACTIVO_GENERICO")
-	private String agsActivoGenerico;
+    private Long numActivoGenerico;
+	
 	
 	@Version   
 	private Long version;
 	
 	@Embedded
 	private Auditoria auditoria;
-
-	@Override
-	public Auditoria getAuditoria() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setAuditoria(Auditoria arg0) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	public Long getId() {
 		return id;
@@ -103,22 +86,6 @@ public class ActivoGenerico implements Serializable, Auditable {
 		this.subtipoGasto = subtipoGasto;
 	}
 
-	public DDCartera getCartera() {
-		return cartera;
-	}
-
-	public void setCartera(DDCartera cartera) {
-		this.cartera = cartera;
-	}
-
-	public DDSubcartera getSubcartera() {
-		return subcartera;
-	}
-
-	public void setSubcartera(DDSubcartera subcartera) {
-		this.subcartera = subcartera;
-	}
-
 	public Integer getAnyoActivoGenerico() {
 		return anyoActivoGenerico;
 	}
@@ -127,12 +94,20 @@ public class ActivoGenerico implements Serializable, Auditable {
 		this.anyoActivoGenerico = anyoActivoGenerico;
 	}
 
-	public String getAgsActivoGenerico() {
-		return agsActivoGenerico;
+	public ActivoPropietario getPropietario() {
+		return propietario;
 	}
 
-	public void setAgsActivoGenerico(String agsActivoGenerico) {
-		this.agsActivoGenerico = agsActivoGenerico;
+	public void setPropietario(ActivoPropietario propietario) {
+		this.propietario = propietario;
+	}
+
+	public Long getNumActivoGenerico() {
+		return numActivoGenerico;
+	}
+
+	public void setNumActivoGenerico(Long numActivoGenerico) {
+		this.numActivoGenerico = numActivoGenerico;
 	}
 
 	public Long getVersion() {
@@ -142,4 +117,15 @@ public class ActivoGenerico implements Serializable, Auditable {
 	public void setVersion(Long version) {
 		this.version = version;
 	}
+
+	public Auditoria getAuditoria() {
+		return auditoria;
+	}
+
+	public void setAuditoria(Auditoria auditoria) {
+		this.auditoria = auditoria;
+	}
+	
+	
 }
+	

@@ -5,7 +5,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import es.capgemini.pfs.users.domain.Usuario;
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.GastoAvisadorApi;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;

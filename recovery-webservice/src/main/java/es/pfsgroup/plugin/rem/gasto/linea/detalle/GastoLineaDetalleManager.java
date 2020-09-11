@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -1053,14 +1054,19 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			elementosLineaDetalleList = genericDao.getList(VElementosLineaDetalle.class, filter);
 			if(elementosLineaDetalleList.isEmpty()) {
 				VElementosLineaDetalle vElementoLineaDetalle  = new VElementosLineaDetalle();	
-				if(gastoLineaDetalle.esAutorizadoSinActivos()) {
+				if(!gastoLineaDetalle.esAutorizadoSinActivos()) {
 					vElementoLineaDetalle.setDescripcionLinea("Línea sin elementos asignados");
+
 				}else {
-					vElementoLineaDetalle.setDescripcionLinea("Línea marcada sin activos");		 
-				}
-				vElementoLineaDetalle.setIdElemento(null);
-				vElementoLineaDetalle.setImporteProporcinalTotal(null);
-				vElementoLineaDetalle.setParticipacion(null);
+					vElementoLineaDetalle.setDescripcionLinea("Línea marcada sin activos");	
+					
+				}		
+				vElementoLineaDetalle.setImporteProporcinalTotal(100.0);
+				vElementoLineaDetalle.setParticipacion(100.0);
+				vElementoLineaDetalle.setImporteProporcinalTotal(0.0);
+				vElementoLineaDetalle.setImporteTotalLinea(0.0);
+				vElementoLineaDetalle.setIdElemento("");
+				
 				elementosLineaDetalleList.add(vElementoLineaDetalle);
 			}
 		}
@@ -1174,10 +1180,26 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 					}
 					gastoLineaDetalleEntidad.setEntidad(activo.getId());
 				}else if(DDEntidadGasto.CODIGO_ACTIVO_GENERICO.contentEquals(dto.getTipoElemento())) {
-					ActivoGenerico activoGenerico =  genericDao.get(ActivoGenerico.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdElemento()));
-					if(activoGenerico == null) {
-						return false;
+					Filter filtroNumActivoGen = genericDao.createFilter(FilterType.EQUALS, "numActivoGenerico", dto.getIdElemento());
+					Filter filtroSubtipoGasto = genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.codigo", gastoLineaDetalle.getSubtipoGasto().getCodigo());
+					Filter filtroPropietario= genericDao.createFilter(FilterType.EQUALS, "propietario.id", gasto.getPropietario().getId());
+					Filter filtroAnyo;
+					if(gasto.getFechaEmision() != null) {
+						SimpleDateFormat fyear = new SimpleDateFormat("yyyy");
+						String year = fyear.format(gasto.getFechaEmision());
+						filtroAnyo = genericDao.createFilter(FilterType.EQUALS, "anyoActivoGenerico", Integer.parseInt(year));
+					}else {
+						filtroAnyo = genericDao.createFilter(FilterType.NULL, "anyoActivoGenerico");
 					}
+					ActivoGenerico activoGenerico =  genericDao.get(ActivoGenerico.class, filtroNumActivoGen, filtroSubtipoGasto,filtroPropietario, filtroAnyo);
+					if(activoGenerico == null) {
+						filtroAnyo = genericDao.createFilter(FilterType.NULL, "anyoActivoGenerico");
+						activoGenerico =  genericDao.get(ActivoGenerico.class, filtroNumActivoGen, filtroSubtipoGasto,filtroPropietario,filtroAnyo);
+						if(activoGenerico == null) {
+							return false;
+						}
+					}
+					gastoLineaDetalleEntidad.setEntidad(activoGenerico.getId());
 				}else {
 					gastoLineaDetalleEntidad.setEntidad(dto.getIdElemento());
 				}

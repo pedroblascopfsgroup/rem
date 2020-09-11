@@ -37,23 +37,24 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 			var estadoParaGuardar = me.lookupController().getView().getViewModel().getData().gasto.getData().estadoModificarLineasDetalleGasto;
 	    	var isGastoRefacturado = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPorOtroGasto;
 	    	var isGastoRefacturadoPadre = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPadre;
+	    	var edicion = true;
+	    	
+	    	if(me.up('gastodetallemain').getViewModel().get('gasto.asignadoATrabajos') || me.up('gastodetallemain').getViewModel().get('gasto.autorizado')){
+	    		edicion = false;
+	    	}
 	    	
 			var columnaReferenciaCatastral = referenciaCatastral.getEditor();
 			var columnaParticipacion = participacion.getEditor();
-			if(!me.up('gastodetallemain').getViewModel().get('gasto.asignadoATrabajos') 
-				&& estadoParaGuardar && !isGastoRefacturado && !isGastoRefacturadoPadre){
+			if( edicion && estadoParaGuardar && !isGastoRefacturado && !isGastoRefacturadoPadre){
 				if(CONST.TIPO_ELEMENTOS_GASTO['CODIGO_ACTIVO'] === record.getData().tipoElementoCodigo){
 					columnaReferenciaCatastral.setDisabled(false);
-
 				}else{
 					columnaReferenciaCatastral.setDisabled(true);
-
 				}
 				columnaParticipacion.setDisabled(false);
 			}else{;
 				columnaReferenciaCatastral.setDisabled(true);
 				columnaParticipacion.setDisabled(true);
-
 			}
 		},
 		
@@ -277,7 +278,12 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
     onDeleteClick: function(record){
 		var me = this;
 		var idElemento = me.selection.data.id;
+		var elementoVacio = me.selection.data.idElemento;
 
+		if(Ext.isEmpty(elementoVacio)){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ok.linea.detalle.informacion"));
+			return;
+		}
 		var url =  $AC.getRemoteUrl('gastosproveedor/desasociarElementosAgastos');
 		
 		me.mask(HreRem.i18n("msg.mask.loading"));
@@ -327,6 +333,12 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
       	var me = this;
     	var url =  $AC.getRemoteUrl('gastosproveedor/updateElementosDetalle');
     	var data = context.newValues;
+    	
+    	if(Ext.isEmpty(data.idElemento)){
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ok.linea.detalle.informacion"));
+			return;
+		}
+ 
     	me.mask(HreRem.i18n("msg.mask.loading"));	
     	Ext.Ajax.request({		    			
             url: url,

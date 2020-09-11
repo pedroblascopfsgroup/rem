@@ -26,10 +26,14 @@ import es.pfsgroup.plugin.rem.model.DtoVImporteGastoLbk;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoProveedorActivo;
+import es.pfsgroup.plugin.rem.model.GastosDiariosLBK;
+import es.pfsgroup.plugin.rem.model.GastosImportesLBK;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
+import es.pfsgroup.plugin.rem.model.VDiarioCalculoLbk;
 import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
+import es.pfsgroup.plugin.rem.model.VImportesGastoLBK;
 import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
@@ -411,6 +415,12 @@ public interface GastoProveedorApi {
 		List<DDTipoTrabajo> getTiposTrabajoByIdGasto(Long idGasto);
 		
 		List<DDSubtipoTrabajo> getSubTiposTrabajoByIdGasto(Long idGasto); 
+		
+		void saveGastosDiariosLbk(Long idGasto);
+
+		void saveGastosImportesLbk(Long idGasto);
+				
+		boolean isEstadosGastosLiberbankParaLecturaDirectaDeTabla(GastoProveedor gasto);
 		
 }
 

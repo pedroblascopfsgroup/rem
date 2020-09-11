@@ -36,6 +36,7 @@ import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -93,7 +94,10 @@ import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoProveedorActivo;
 import es.pfsgroup.plugin.rem.model.GastoProveedorTrabajo;
 import es.pfsgroup.plugin.rem.model.GastoRefacturable;
+import es.pfsgroup.plugin.rem.model.GastosDiariosLBK;
+import es.pfsgroup.plugin.rem.model.GastosImportesLBK;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.ProvisionGastos;
 import es.pfsgroup.plugin.rem.model.SubTipoGpvTrabajo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -111,6 +115,7 @@ import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioPago;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionHaya;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionPropietario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
@@ -1804,24 +1809,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		if (!Checks.esNulo(gasto)) {
 			DDCartera cartera = gasto.getCartera();
 			if(cartera != null) {
-				if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(cartera.getCodigo())) {
-					Filter filtroVista = genericDao.createFilter(FilterType.EQUALS, "id", gasto.getId());
-					VDiarioCalculoLbk diarioCalculoLbk = genericDao.get(VDiarioCalculoLbk.class, filtroVista);
-					if(diarioCalculoLbk != null) {
-						dto.setDiario1(diarioCalculoLbk.getDiario1());
-						dto.setDiario1Base(diarioCalculoLbk.getDiario1Base());
-						dto.setDiario1Tipo(diarioCalculoLbk.getDiario1Tipo());
-						dto.setDiario1Cuota(diarioCalculoLbk.getDiario1Cuota());
-						dto.setDiario2(diarioCalculoLbk.getDiario2());
-						if(diarioCalculoLbk.getDiario2() != null) {
-							dto.setIsEmpty(false);
-						}else {
-							dto.setIsEmpty(true);
-						}
-						dto.setDiario2Base(diarioCalculoLbk.getDiario2Base());
-						dto.setDiario1Tipo(diarioCalculoLbk.getDiario2Tipo());
-						dto.setDiario2Cuota(diarioCalculoLbk.getDiario2Cuota());
-
+				if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(cartera.getCodigo())) {				
+					if(isEstadosGastosLiberbankParaLecturaDirectaDeTabla(gasto)) {
+						//Si el estado pertenece a los indicados se carga directamente de la tabla
+						gastosDiariosLbkToDto(dto, gasto);	
+					} else {
+						//Si el estado no pertenece a los indicados se carga directamente de la vista
+						vGastosDiariosLbkToDto(dto, gasto);			
 					}
 				}
 			}
@@ -2839,16 +2833,23 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				gasto.setGastoDetalleEconomico(gastoDetalleEconomico);
 				gasto.setGastoInfoContabilidad(gastoInfoContabilidad);
 				gasto.setEstadoGasto(pagado);
+				saveGastosDiariosLbk(gasto.getId());
+				saveGastosImportesLbk(gasto.getId());
+				
 			}else if(DDEstadoGasto.SUBSANADO.equals(gasto.getEstadoGasto().getCodigo())){
 				gastoInfoContabilidad.setFechaContabilizacion(miFechaConta);
 				gastoDetalleEconomico.setFechaPago(miFechaPago);
 				gasto.setGastoDetalleEconomico(gastoDetalleEconomico);
 				gasto.setGastoInfoContabilidad(gastoInfoContabilidad);
 				gasto.setEstadoGasto(pagado);
+				saveGastosDiariosLbk(gasto.getId());
+				saveGastosImportesLbk(gasto.getId());
 			}else if(DDEstadoGasto.CONTABILIZADO.equals(gasto.getEstadoGasto().getCodigo())){
 				gastoDetalleEconomico.setFechaPago(miFechaPago);
 				gasto.setGastoDetalleEconomico(gastoDetalleEconomico);
 				gasto.setEstadoGasto(pagado);
+				saveGastosDiariosLbk(gasto.getId());
+				saveGastosDiariosLbk(gasto.getId());
 			}
 		}else if(!Checks.esNulo(miFechaConta) && Checks.esNulo(miFechaPago)){
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoGasto.CONTABILIZADO);
@@ -2859,11 +2860,15 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				gastoInfoContabilidad.setFechaContabilizacion(miFechaConta);
 				gasto.setGastoInfoContabilidad(gastoInfoContabilidad);
 				gasto.setEstadoGasto(contabilizado);
+				saveGastosDiariosLbk(gasto.getId());
+				saveGastosDiariosLbk(gasto.getId());
 			}else if(DDEstadoGasto.SUBSANADO.equals(gasto.getEstadoGasto().getCodigo())){
 				GastoInfoContabilidad gastoInfoContabilidad = gasto.getGastoInfoContabilidad();
 				gastoInfoContabilidad.setFechaContabilizacion(miFechaConta);
 				gasto.setGastoInfoContabilidad(gastoInfoContabilidad);
 				gasto.setEstadoGasto(contabilizado);
+				saveGastosDiariosLbk(gasto.getId());
+				saveGastosDiariosLbk(gasto.getId());
 			}
 		}else if(Checks.esNulo(miFechaConta) && !Checks.esNulo(miFechaPago)){
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoGasto.PAGADO);
@@ -2874,6 +2879,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				gastoDetalleEconomico.setFechaPago(miFechaPago);
 				gasto.setGastoDetalleEconomico(gastoDetalleEconomico);
 				gasto.setEstadoGasto(estadoGasto);
+				saveGastosDiariosLbk(gasto.getId());
+				saveGastosDiariosLbk(gasto.getId());
 			}
 		}
 		
@@ -3566,20 +3573,86 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		List<DtoVImporteGastoLbk> dtoVistaImportesGastoLbk = new ArrayList <DtoVImporteGastoLbk>();
 		
 		Filter filtroVista = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
+		GastoProveedor gasto = genericDao.get(GastoProveedor.class, filtroVista);
+		
+		List<GastosImportesLBK> gastosImportesGastoLBK = genericDao.getList(GastosImportesLBK.class, filtroVista);
 		List<VImportesGastoLBK> vistaImportesGastoLBK = genericDao.getList(VImportesGastoLBK.class, filtroVista);
 		
-		if (vistaImportesGastoLBK != null && !vistaImportesGastoLBK.isEmpty()) {
-			for (VImportesGastoLBK vImportesGastoLBK : vistaImportesGastoLBK) {
-				DtoVImporteGastoLbk dto = new DtoVImporteGastoLbk();
-				dto.setIdElemento(vImportesGastoLBK.getIdElemento());
-				dto.setImporteGasto(vImportesGastoLBK.getImporteGasto());
-				dto.setTipoElemento(vImportesGastoLBK.getTipoElemento());
-				dtoVistaImportesGastoLbk.add(dto);
+		if(isEstadosGastosLiberbankParaLecturaDirectaDeTabla(gasto)) {
+			if (gastosImportesGastoLBK != null && !gastosImportesGastoLBK.isEmpty()) {
+				for (GastosImportesLBK gastoImportesGastoLBK : gastosImportesGastoLBK) {
+					DtoVImporteGastoLbk dto = new DtoVImporteGastoLbk();				
+					Filter idTipoEnt = genericDao.createFilter(FilterType.EQUALS, "id", gastoImportesGastoLBK.getEntidadGasto());
+					DDEntidadGasto tipoEntidad = genericDao.get(DDEntidadGasto.class, idTipoEnt);
+					dto.setIdElemento(gastoImportesGastoLBK.getIdEntidad());
+					dto.setImporteGasto(gastoImportesGastoLBK.getImporteActivo());
+					dto.setTipoElemento(tipoEntidad.getDescripcion());
+					dtoVistaImportesGastoLbk.add(dto);
+				} 
+			} 
+		} else if (vistaImportesGastoLBK != null && !vistaImportesGastoLBK.isEmpty()) {				
+				for (VImportesGastoLBK vImportesGastoLBK : vistaImportesGastoLBK) {
+					DtoVImporteGastoLbk dto = new DtoVImporteGastoLbk();
+					dto.setIdElemento(vImportesGastoLBK.getIdElemento());
+					dto.setImporteGasto(vImportesGastoLBK.getImporteGasto());
+					dto.setTipoElemento(vImportesGastoLBK.getTipoElemento());
+					dtoVistaImportesGastoLbk.add(dto);
+				}
 			}
-		}
-		
 		return dtoVistaImportesGastoLbk;
 		
+	}
+	
+	@Override
+	public void saveGastosDiariosLbk(Long idGasto){
+		Filter filtroVista = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);	
+		Filter filtroTabla = genericDao.createFilter(FilterType.EQUALS, "idGastos", idGasto);
+		
+		VDiarioCalculoLbk vistaGastoDiario = genericDao.get(VDiarioCalculoLbk.class, filtroVista);
+		GastosDiariosLBK tablaGastoDiario = genericDao.get(GastosDiariosLBK.class, filtroTabla);
+
+		if  (tablaGastoDiario != null ) {
+					if(!tablaGastoDiario.getAuditoria().isBorrado()) {
+						//Si ya existe un registro se borra logicamente y se crea uno nuevo
+						Auditoria auditoria = tablaGastoDiario.getAuditoria();
+						auditoria.setBorrado(true);
+						auditoria.setFechaBorrar(new Date());
+						tablaGastoDiario.setAuditoria(auditoria);
+						
+						GastosDiariosLBK gastoDiario = saveGastosDiariosFromVista(vistaGastoDiario);	
+						genericDao.save(GastosDiariosLBK.class, gastoDiario);
+					}
+		} else {
+			//Si existe un registro pero esta borrado o si la tabla esta vacía se crea uno nuevo directamente
+			GastosDiariosLBK gastoDario = saveGastosDiariosFromVista(vistaGastoDiario);
+			genericDao.save(GastosDiariosLBK.class, gastoDario);
+		}	
+	}
+	
+	@Override
+	public void saveGastosImportesLbk(Long idGasto){
+		Filter filtroVista = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
+		Filter filtroTabla = genericDao.createFilter(FilterType.EQUALS, "idGastos", idGasto);
+		
+		VImportesGastoLBK vistaImporteGastoLBK = genericDao.get(VImportesGastoLBK.class, filtroVista);	
+		GastosImportesLBK tablaGastoImportes = genericDao.get(GastosImportesLBK.class, filtroTabla);
+		
+		if (tablaGastoImportes != null ) {
+			//Si ya existe un registro y no está borrado se borra logicamente y se crea uno nuevo
+				if(!tablaGastoImportes.getAuditoria().isBorrado()) {
+					Auditoria auditoria = tablaGastoImportes.getAuditoria();
+					auditoria.setBorrado(true);
+					auditoria.setFechaBorrar(new Date());
+					tablaGastoImportes.setAuditoria(auditoria);
+					
+					GastosImportesLBK gastosImportes = saveImporteGastosFromVista(vistaImporteGastoLBK);
+					genericDao.save(GastosImportesLBK.class, gastosImportes);
+				}
+		} else {
+			//Si existe un registro pero esta borrado o no existe un registro en la tabla se crea uno nuevo directamente
+			GastosImportesLBK gastosImportes = saveImporteGastosFromVista(vistaImporteGastoLBK);
+			genericDao.save(GastosImportesLBK.class, gastosImportes);
+		}
 	}
 	
 	@Override
@@ -3622,6 +3695,92 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 		
 		return listaSubTipoTrabajo;
+	}
+
+	
+	public void gastosDiariosLbkToDto(DtoInfoContabilidadGasto dtoInfoContabilidadGasto, GastoProveedor gasto) {
+				
+		Filter filtroTabla = genericDao.createFilter(FilterType.EQUALS, "id", gasto.getId());		
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+		
+		GastosDiariosLBK tablaGastos = genericDao.get(GastosDiariosLBK.class, filtroTabla, filtroBorrado);
+		//Si la tabla no esta vacía cargamos los datos de la tabla
+		if(tablaGastos != null) {
+			dtoInfoContabilidadGasto.setDiario1(tablaGastos.getDiario1());
+			dtoInfoContabilidadGasto.setDiario1Base(tablaGastos.getDiario1Base());
+			dtoInfoContabilidadGasto.setDiario1Tipo(tablaGastos.getDiario1Tipo());
+			dtoInfoContabilidadGasto.setDiario1Cuota(tablaGastos.getDiario1Cuota());
+			dtoInfoContabilidadGasto.setDiario2(tablaGastos.getDiario2());
+			if(tablaGastos.getDiario2() != null) {
+				dtoInfoContabilidadGasto.setIsEmpty(false);
+			}else {
+				dtoInfoContabilidadGasto.setIsEmpty(true);
+			}
+			dtoInfoContabilidadGasto.setDiario2Base(tablaGastos.getDiario2Base());
+			dtoInfoContabilidadGasto.setDiario2Tipo(tablaGastos.getDiario2Tipo());
+			dtoInfoContabilidadGasto.setDiario2Cuota(tablaGastos.getDiario2Cuota());					
+		} else {
+			//Si la tabla esta vacía cargaremos los datos de la vista
+			vGastosDiariosLbkToDto(dtoInfoContabilidadGasto, gasto);
+		}
+	}
+	
+	public void vGastosDiariosLbkToDto(DtoInfoContabilidadGasto dtoInfoContabilidadGasto, GastoProveedor gasto) {
+		Filter filtroVista = genericDao.createFilter(FilterType.EQUALS, "id", gasto.getId());
+		VDiarioCalculoLbk vDiarioCalculoLbk = genericDao.get(VDiarioCalculoLbk.class, filtroVista);
+		if(vDiarioCalculoLbk != null) {
+			dtoInfoContabilidadGasto.setDiario1(vDiarioCalculoLbk.getDiario1());
+			dtoInfoContabilidadGasto.setDiario1Base(vDiarioCalculoLbk.getDiario1Base());
+			dtoInfoContabilidadGasto.setDiario1Tipo(vDiarioCalculoLbk.getDiario1Tipo());
+			dtoInfoContabilidadGasto.setDiario1Cuota(vDiarioCalculoLbk.getDiario1Cuota());
+			dtoInfoContabilidadGasto.setDiario2(vDiarioCalculoLbk.getDiario2());
+			if(vDiarioCalculoLbk.getDiario2() != null) {
+				dtoInfoContabilidadGasto.setIsEmpty(false);
+			}else {
+				dtoInfoContabilidadGasto.setIsEmpty(true);
+			}
+			dtoInfoContabilidadGasto.setDiario2Base(vDiarioCalculoLbk.getDiario2Base());
+			dtoInfoContabilidadGasto.setDiario2Tipo(vDiarioCalculoLbk.getDiario2Tipo());
+			dtoInfoContabilidadGasto.setDiario2Cuota(vDiarioCalculoLbk.getDiario2Cuota());				
+		}
+	}
+	
+	public boolean isEstadosGastosLiberbankParaLecturaDirectaDeTabla(GastoProveedor gasto) {
+		//True si el estado pertenece a alguno de los siguientes
+		DDEstadoGasto estadoGasto = gasto.getEstadoGasto();
+		return DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(estadoGasto.getCodigo()) || 
+				  DDEstadoGasto.AUTORIZADO_PROPIETARIO.equals(estadoGasto.getCodigo()) ||
+				  DDEstadoGasto.CONTABILIZADO.equals(estadoGasto.getCodigo()) ||
+				  DDEstadoGasto.PAGADO.equals(estadoGasto.getCodigo()) ||
+				  DDEstadoGasto.SUBSANADO.equals(estadoGasto.getCodigo()) ||
+				  DDEstadoGasto.PAGADO_SIN_JUSTIFICACION_DOC.equals(estadoGasto.getCodigo());
+	}
+			
+	public GastosDiariosLBK saveGastosDiariosFromVista(VDiarioCalculoLbk vistaGastoDiario) {
+		GastosDiariosLBK gastosDiarios = new GastosDiariosLBK();
+		gastosDiarios.setDiario1(vistaGastoDiario.getDiario1());
+		gastosDiarios.setDiario1Base(vistaGastoDiario.getDiario1Base());
+		gastosDiarios.setDiario1Cuota((vistaGastoDiario.getDiario1Cuota()));
+		gastosDiarios.setDiario1Tipo(vistaGastoDiario.getDiario1Tipo());
+		gastosDiarios.setDiario2(vistaGastoDiario.getDiario2());
+		gastosDiarios.setDiario2Base(vistaGastoDiario.getDiario2Base());
+		gastosDiarios.setDiario2Cuota((vistaGastoDiario.getDiario2Cuota()));
+		gastosDiarios.setDiario2Tipo(vistaGastoDiario.getDiario2Tipo());
+		
+		return gastosDiarios;
+		
+	}
+	
+	public GastosImportesLBK saveImporteGastosFromVista(VImportesGastoLBK vistaImporteGastoLBK) {
+		Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "descripcion", vistaImporteGastoLBK.getTipoElemento());
+		DDEntidadGasto tipoEntidad = genericDao.get(DDEntidadGasto.class, filtroId);
+		
+		GastosImportesLBK gastosImportes = new GastosImportesLBK();
+		gastosImportes.setIdEntidad(vistaImporteGastoLBK.getIdElemento());
+		gastosImportes.setEntidadGasto(tipoEntidad.getId());
+		gastosImportes.setImporteActivo(vistaImporteGastoLBK.getImporteGasto());
+		
+		return gastosImportes;
 	}
 	
 }

@@ -3,14 +3,18 @@ package es.pfsgroup.plugin.rem.gasto.linea.detalle.dao.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.rem.gasto.linea.detalle.dao.GastoLineaDetalleDao;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 
 @Repository("GastoLineaDetalleDao")
 public class GastoLineaDetalleDaoImpl extends AbstractEntityDao<GastoLineaDetalle, Long> implements GastoLineaDetalleDao {
@@ -69,8 +73,29 @@ public class GastoLineaDetalleDaoImpl extends AbstractEntityDao<GastoLineaDetall
 		return (List<Object[]>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 	}
 	
-//	StringBuilder sb = new StringBuilder("update CompradorExpediente ce set ce.auditoria.borrado = 1, ce.porcionCompra= 0, ce.fechaBaja= SYSDATE,"
-//			+ " ce.auditoria.usuarioBorrar = '"+ usuarioBorrar + "', ce.auditoria.fechaBorrar = SYSDATE"
-//			+ " where ce.primaryKey.comprador = " + idComprador + " and ce.primaryKey.expediente= " + idExpediente);
-//	this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
+	public Double getParticipacionTotalLinea(Long idLinea) {
+		HQLBuilder hb = new HQLBuilder("select SUM(participacionGasto) from GastoLineaDetalleEntidad where gastoLineaDetalle.id = " + idLinea);
+
+		return ((Double) getHibernateTemplate().find(hb.toString()).get(0));
+	}
+	
+	public void updateParticipacionEntidadesLineaDetalle(Long idLinea, Double participacion, String userName) {
+
+		Session session = this.getSessionFactory().getCurrentSession();
+		Query query = session.createQuery("UPDATE GastoLineaDetalleEntidad "
+				+ " SET auditoria.fechaModificar = sysdate"
+				+ " , auditoria.usuarioModificar = :userName "
+				+ " , participacionGasto = :participacion "
+				+ " WHERE gastoLineaDetalle.id = :idLinea");
+		
+		query.setParameter("userName", userName);
+		query.setParameter("idLinea", idLinea);
+		query.setParameter("participacion", participacion);
+		
+
+
+		query.executeUpdate();
+
+	}
+
 }

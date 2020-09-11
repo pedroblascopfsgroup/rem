@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.gasto.avisos;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -11,10 +13,10 @@ import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 
 
-@Service("gastoAvisoSinActivos")
-public class GastoAvisoSinActivos implements GastoAvisadorApi {
+@Service("gastoAvisoSinLineas")
+public class GastoAvisoSinLineas implements GastoAvisadorApi {
 	
-	protected static final Log logger = LogFactory.getLog(GastoAvisoSinActivos.class);
+	protected static final Log logger = LogFactory.getLog(GastoAvisoSinLineas.class);
 	
 
 	@Override
@@ -22,16 +24,12 @@ public class GastoAvisoSinActivos implements GastoAvisadorApi {
 
 
 		DtoAviso dtoAviso = new DtoAviso();		
-		
-		if(gasto.getGastoLineaDetalleList() != null && !gasto.getGastoLineaDetalleList().isEmpty()) {
-			for (GastoLineaDetalle gastoLineaDetalle : gasto.getGastoLineaDetalleList()) {
-				if(gastoLineaDetalle.getGastoLineaEntidadList().isEmpty() && !gastoLineaDetalle.esAutorizadoSinActivos()) {
-					dtoAviso.setDescripcion("Tiene líneas sin activos");
-					dtoAviso.setId(String.valueOf(gasto.getId()));	
-					break;
-				}
-			}
+		List<GastoLineaDetalle> gastoLineaDetalleList = gasto.getGastoLineaDetalleList();
+		if(gastoLineaDetalleList == null || gastoLineaDetalleList.isEmpty()) {	
+			dtoAviso.setDescripcion("El gasto no tiene ninguna línea de detalle");
+			dtoAviso.setId(String.valueOf(gasto.getId()));	
 		}
+
 		
 		return dtoAviso;
 		

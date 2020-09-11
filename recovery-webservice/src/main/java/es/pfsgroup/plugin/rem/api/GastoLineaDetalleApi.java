@@ -5,12 +5,20 @@ import java.util.HashSet;
 import java.util.List;
 
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.DtoComboLineasDetalle;
+import es.pfsgroup.plugin.rem.model.DtoElementosAfectadosLinea;
 import es.pfsgroup.plugin.rem.model.DtoLineaDetalleGasto;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
+import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.VElementosLineaDetalle;
 
 public interface GastoLineaDetalleApi {
 
+	GastoLineaDetalle getLineaDetalleByIdLinea(Long idLinea);
+	
+	GastoLineaDetalleEntidad getLineaDetalleEntidadByIdLineaEntidad(Long idEntidad);
+	
 	List<DtoLineaDetalleGasto> getGastoLineaDetalle(Long idGasto) throws Exception;
 
 	boolean saveGastoLineaDetalle(DtoLineaDetalleGasto dto) throws Exception;
@@ -40,6 +48,22 @@ public interface GastoLineaDetalleApi {
 			throws IllegalAccessException, InvocationTargetException;
 
 	void eliminarLineasRefacturadas(Long gastoPadre);
+
+	List<DtoComboLineasDetalle> getLineasDetalleGastoCombo(Long idGasto);
+
+	boolean asociarElementosAgastos(DtoElementosAfectadosLinea dto);
+
+	boolean desasociarElementosAgastos(Long idElemento);
+
+	boolean updateElementosDetalle(DtoElementosAfectadosLinea dto);
+
+	List<VElementosLineaDetalle> getElementosAfectados(Long idLinea);
+
+	boolean updateLineaSinActivos(Long idLinea);
+
+
+
+	
 	
 }
 

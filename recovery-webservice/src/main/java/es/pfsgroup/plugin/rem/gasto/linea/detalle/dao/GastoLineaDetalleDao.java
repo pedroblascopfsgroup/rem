@@ -13,4 +13,8 @@ public interface GastoLineaDetalleDao extends AbstractDao<GastoLineaDetalle, Lon
 	List<Object[]> getListaEntidadesByGastoProveedor(GastoProveedor gpv);
 
 	List<Object[]> getListaEntidadesByGastoProveedorAndEntidad(GastoProveedor gpv, List<Long> listaActivos);
+	
+	public Double getParticipacionTotalLinea(Long idLinea);
+	
+	public void updateParticipacionEntidadesLineaDetalle(Long idLinea, Double participacion, String userName);
 }

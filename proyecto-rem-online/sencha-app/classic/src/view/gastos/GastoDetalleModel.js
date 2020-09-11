@@ -84,7 +84,16 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 		},
 
 		ocultarBotonesActivos : function(get) {
+			var me = this;
 
+			var estadoParaGuardar = me.getView().getViewModel().getData().gasto.getData().estadoModificarLineasDetalleGasto;
+	    	var isGastoRefacturado = me.getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPorOtroGasto;
+	    	var isGastoRefacturadoPadre = me.getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPadre;
+	    	
+			if(!estadoParaGuardar || isGastoRefacturado || isGastoRefacturadoPadre){
+				return true;
+			}
+			
 			return get('gasto.autorizado') || get('gasto.asignadoATrabajos');
 		},
 
@@ -714,6 +723,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
             ],
 			autoLoad: true
 		},
+
 		comboTipoComision : {
 			model : 'HreRem.model.ComboBase',
 			proxy : {
@@ -721,6 +731,55 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {
 					diccionario: 'tipoComision'
+				}
+			}
+		},
+		
+		storeElementosAfectados : {
+			pageSize : $AC.getDefaultPageSize(),
+			model : 'HreRem.model.GastoProveedor',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'gastosproveedor/getElementosAfectados',
+				extraParams : {
+					idLinea : -1
+				}
+			},
+			
+			autoLoad: false
+		},
+		
+		comboLineasDetallePorGasto : {
+			model : 'HreRem.model.GastoActivo',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'gastosproveedor/getLineasDetalleGastoCombo',
+				extraParams : {
+					idGasto : '{gasto.id}'
+				}
+			},
+			autoLoad: true
+		},
+		storeTipoElemento : {
+			model : 'HreRem.model.ComboBase',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'generic/getDiccionario',
+				extraParams : {
+					diccionario : 'tipoElemento'
+				}
+			},
+			autoLoad: true
+		},
+			
+			
+		storeSubpartidas : {
+			model : 'HreRem.model.ComboBase',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'generic/getComboSubpartidaPresupuestaria',
+				extraParams : {
+					idGasto : '{gasto.id}'
 				}
 			}
 		}

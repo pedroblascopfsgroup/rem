@@ -30,17 +30,19 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	private Long idSubpartidaPresupuestaria;
 	private String comboActivable;
 	private Long diario1;
-	private Long diario1Base;
-	private Long diario1Tipo;
-	private Long diario1Cuota;
+	private Double diario1Base;
+	private Double diario1Tipo;
+	private Double diario1Cuota;
 	private Long diario2;
-	private Long diario2Base;
-	private Long diario2Tipo;
-	private Long diario2Cuota;
+	private Double diario2Base;
+	private Double diario2Tipo;
+	private Double diario2Cuota;
 	private Boolean isEmpty;
 	private Boolean gicPlanVisitasBoolean;
 	private String tipoComisionadoHreCodigo;
 	private String tipoComisionadoHreDescripcion;
+	private Long subPartidas;
+	
 
 	public Long getEjercicioImputaGasto() {
 		return ejercicioImputaGasto;
@@ -100,22 +102,23 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	public void setDiario1(Long diario1) {
 		this.diario1 = diario1;
 	}
-	public Long getDiario1Base() {
+
+	public Double getDiario1Base() {
 		return diario1Base;
 	}
-	public void setDiario1Base(Long diario1Base) {
+	public void setDiario1Base(Double diario1Base) {
 		this.diario1Base = diario1Base;
 	}
-	public Long getDiario1Tipo() {
+	public Double getDiario1Tipo() {
 		return diario1Tipo;
 	}
-	public void setDiario1Tipo(Long diario1Tipo) {
+	public void setDiario1Tipo(Double diario1Tipo) {
 		this.diario1Tipo = diario1Tipo;
 	}
-	public Long getDiario1Cuota() {
+	public Double getDiario1Cuota() {
 		return diario1Cuota;
 	}
-	public void setDiario1Cuota(Long diario1Cuota) {
+	public void setDiario1Cuota(Double diario1Cuota) {
 		this.diario1Cuota = diario1Cuota;
 	}
 	public Long getDiario2() {
@@ -124,22 +127,22 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	public void setDiario2(Long diario2) {
 		this.diario2 = diario2;
 	}
-	public Long getDiario2Base() {
+	public Double getDiario2Base() {
 		return diario2Base;
 	}
-	public void setDiario2Base(Long diario2Base) {
+	public void setDiario2Base(Double diario2Base) {
 		this.diario2Base = diario2Base;
 	}
-	public Long getDiario2Tipo() {
+	public Double getDiario2Tipo() {
 		return diario2Tipo;
 	}
-	public void setDiario2Tipo(Long diario2Tipo) {
+	public void setDiario2Tipo(Double diario2Tipo) {
 		this.diario2Tipo = diario2Tipo;
 	}
-	public Long getDiario2Cuota() {
+	public Double getDiario2Cuota() {
 		return diario2Cuota;
 	}
-	public void setDiario2Cuota(Long diario2Cuota) {
+	public void setDiario2Cuota(Double diario2Cuota) {
 		this.diario2Cuota = diario2Cuota;
 	}
 	public Boolean getIsEmpty() {
@@ -167,6 +170,13 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	public void setTipoComisionadoHreDescripcion(String tipoComisionadoHreDescripcion) {
 		this.tipoComisionadoHreDescripcion = tipoComisionadoHreDescripcion;
 	}
+	public Long getSubPartidas() {
+		return subPartidas;
+	}
+	public void setSubPartidas(Long subPartidas) {
+		this.subPartidas = subPartidas;
+	}
+	
 
    	
 }

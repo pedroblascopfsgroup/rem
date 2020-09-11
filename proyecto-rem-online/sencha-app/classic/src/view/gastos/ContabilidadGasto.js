@@ -25,6 +25,11 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 
        var me = this;
         var isCarteraLiberbank = CONST.CARTERA['LIBERBANK'] == me.lookupController().getViewModel().getData().gasto.getData().cartera;
+        var subCartera = me.lookupController().getViewModel().getData().gasto.getData().subcartera;
+        var isSubcarteraCerberus = false;
+        if (CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subCartera || CONST.SUBCARTERA['DIVARIANREMAINING'] == subCartera || CONST.SUBCARTERA['DIVARIANARROW'] == subCartera){
+        	isSubcarteraCerberus = true;
+        }
 		me.setTitle(HreRem.i18n('title.gasto.contabilidad'));
         var items= [
        
@@ -108,6 +113,18 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 															value: '{contabilidad.tipoComisionadoHreCodigo}'
 														},
                                                         hidden: true						
+													},
+													{ 
+														xtype: 'comboboxfieldbase',
+														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.subpartidas'),
+														reference: 'subPartidas',
+														bind: {
+															store: '{storeSubpartidas}',
+															value: '{contabilidad.subPartidas}'
+														},
+														valueField		: 'id',
+														hidden : !isSubcarteraCerberus
+                                                        						
 													}
 										]
 					           },
@@ -142,12 +159,13 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 																	fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.Base'),
 																	reference : 'baseDiario1',
 													                bind: '{contabilidad.diario1Base}',
+													                renderer: Utils.rendererCurrency,
 													                readOnly: true						
 																},
 																{ 
 																	xtype: 'textfieldbase',
 																	fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.tipo.impositivo'),
-																	reference : 'tipoImpositivoDiario1',
+																	reference : 'diario1Tipo',
 													                bind: '{contabilidad.diario1Tipo}',
 													                readOnly: true						
 																},
@@ -156,6 +174,7 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 																	fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.cuota'),
 																	reference : 'cuotaDiario1',
 																	bind: '{contabilidad.diario1Cuota}',
+																	renderer: Utils.rendererCurrency,
 													                readOnly: true						
 																}
 																
@@ -187,6 +206,7 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 													                	   hidden :'{contabilidad.isEmpty}'
 													                },
 													                reference : 'baseDiario2',
+													                renderer: Utils.rendererCurrency,
 													                readOnly: true						
 																},
 																{ 
@@ -205,6 +225,7 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 													                bind: {value :'{contabilidad.diario2Cuota}',
 													                	   hidden :'{contabilidad.isEmpty}'
 													                },
+													                renderer: Utils.rendererCurrency,
 													                readOnly: true						
 																}
 																

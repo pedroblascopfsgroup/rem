@@ -54,6 +54,9 @@ public class VBusquedaGastoTrabajos implements Serializable {
 	
 	@Column(name="TBJ_FECHA_CIERRE_ECONOMICO")
 	private Date fechaCierreEconomico;
+	
+	@Column(name="DESCRIPCION_LINEA")
+	private String descripcionLinea;
 
 	public Long getId() {
 		return id;
@@ -158,5 +161,14 @@ public class VBusquedaGastoTrabajos implements Serializable {
 	public void setFechaCierreEconomico(Date fechaCierreEconomico) {
 		this.fechaCierreEconomico = fechaCierreEconomico;
 	}
+
+	public String getDescripcionLinea() {
+		return descripcionLinea;
+	}
+
+	public void setDescripcionLinea(String descripcionLinea) {
+		this.descripcionLinea = descripcionLinea;
+	}
+	
 
 }

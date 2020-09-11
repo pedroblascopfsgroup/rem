@@ -35,38 +35,66 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGasto', {
 		
 		me.setTitle(HreRem.i18n('title.gasto.elementos.afectados'));
 		var items = [
-				
-				{   
-					xtype:'fieldset',
-					padding: 10,
-					layout: 'hbox',
-					collapsible: false,
-					bind: {
-						hidden: '{asignadoAActivosPropietarioSareb}'
-					},
-					items :	[
-				                {
-				                	xtype: 'checkboxfieldbase',
-				                	bind:	{
-				                		value:	'{gasto.gastoSinActivos}'
-				                	},
-				                	width: 30
-				                	
-				                }, 
-				                {
-				                	xtype: 'label',
-				                	padding: '4 0 0 0',
-				                	text: HreRem.i18n('fieldlabel.permite.gasto.sin.activos')
-				                }
-				     ]
-				},
-				{
-					xtype : 'activosafectadosgastolist',
-					reference : 'listadoActivosAfectadosRef'					
-
-				}
-
-		];
+			{
+				xtype:'fieldsettable',
+				layout:'hbox',
+				defaultType: 'container',
+		        title: HreRem.i18n('title.identificacion'),
+				items :
+					[{ 
+						defaultType: 'textfieldbase',
+						flex: 1,
+						items:[
+							{   
+								xtype:'fieldset',
+								padding: 10,
+								layout: 'hbox',
+								collapsible: false,
+								bind: {
+									hidden: '{asignadoAActivosPropietarioSareb}'
+								},
+								items :	[
+							                {
+							                	xtype: 'checkboxfieldbase',
+							                	bind:	{
+							                		value:	'{gasto.gastoSinActivos}'
+							                	},
+							                	width: 30
+							                	
+							                }, 
+							                {
+							                	xtype: 'label',
+							                	padding: '4 0 0 0',
+							                	text: HreRem.i18n('fieldlabel.permite.gasto.sin.activos')
+							                }
+							     ]
+							},
+							{
+								xtype: "combobox",
+			    				fieldLabel: HreRem.i18n('title.gasto.detalle.economico.lineas.detalle'),
+			    				reference: 'comboLineasDetalleReference',
+			    				name: 'comboLineaDetalleName',
+			    				width:'30%',	
+			    				colspan: 3,
+			    				flex: 3,
+			    				margin: '10 0 10 0',
+			    				displayField: 'descripcion',
+								valueField: 'codigo',
+			    				bind: {
+			    					store: '{comboLineasDetallePorGasto}'
+			    				},
+			    				listeners:{
+			    					change: 'onChangeLineaDetalleStore'
+			    				}
+							},
+							{
+								xtype : 'activosafectadosgastolist',
+								reference : 'listadoActivosAfectadosRef'					
+			
+							}]
+					}]
+	
+			}];
 
 		me.addPlugin({
 					ptype : 'lazyitems',

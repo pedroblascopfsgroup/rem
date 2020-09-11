@@ -26,25 +26,25 @@ public class VDiarioCalculoLbk implements Serializable {
 	private Long diario1;
 	
 	@Column(name="DIARIO1_BASE")
-	private Long diario1Base;
+	private Double diario1Base;
 	
 	@Column(name="DIARIO1_TIPO")
-	private Long diario1Tipo;
+	private Double diario1Tipo;
 	
 	@Column(name="DIARIO1_CUOTA")
-	private Long diario1Cuota;
+	private Double diario1Cuota;
 	
 	@Column(name="DIARIO2")
 	private Long diario2;
 	
 	@Column(name="DIARIO2_BASE")
-	private Long diario2Base;
+	private Double diario2Base;
 	
 	@Column(name="DIARIO2_TIPO")
-	private Long diario2Tipo;
+	private Double diario2Tipo;
 	
 	@Column(name="DIARIO2_CUOTA")
-	private Long diario2Cuota;
+	private Double diario2Cuota;
 
 	public Long getId() {
 		return id;
@@ -62,27 +62,27 @@ public class VDiarioCalculoLbk implements Serializable {
 		this.diario1 = diario1;
 	}
 
-	public Long getDiario1Base() {
+	public Double getDiario1Base() {
 		return diario1Base;
 	}
 
-	public void setDiario1Base(Long diario1Base) {
+	public void setDiario1Base(Double diario1Base) {
 		this.diario1Base = diario1Base;
 	}
 
-	public Long getDiario1Tipo() {
+	public Double getDiario1Tipo() {
 		return diario1Tipo;
 	}
 
-	public void setDiario1Tipo(Long diario1Tipo) {
+	public void setDiario1Tipo(Double diario1Tipo) {
 		this.diario1Tipo = diario1Tipo;
 	}
 
-	public Long getDiario1Cuota() {
+	public Double getDiario1Cuota() {
 		return diario1Cuota;
 	}
 
-	public void setDiario1Cuota(Long diario1Cuota) {
+	public void setDiario1Cuota(Double diario1Cuota) {
 		this.diario1Cuota = diario1Cuota;
 	}
 
@@ -94,27 +94,27 @@ public class VDiarioCalculoLbk implements Serializable {
 		this.diario2 = diario2;
 	}
 
-	public Long getDiario2Base() {
+	public Double getDiario2Base() {
 		return diario2Base;
 	}
 
-	public void setDiario2Base(Long diario2Base) {
+	public void setDiario2Base(Double diario2Base) {
 		this.diario2Base = diario2Base;
 	}
 
-	public Long getDiario2Tipo() {
+	public Double getDiario2Tipo() {
 		return diario2Tipo;
 	}
 
-	public void setDiario2Tipo(Long diario2Tipo) {
+	public void setDiario2Tipo(Double diario2Tipo) {
 		this.diario2Tipo = diario2Tipo;
 	}
 
-	public Long getDiario2Cuota() {
+	public Double getDiario2Cuota() {
 		return diario2Cuota;
 	}
 
-	public void setDiario2Cuota(Long diario2Cuota) {
+	public void setDiario2Cuota(Double diario2Cuota) {
 		this.diario2Cuota = diario2Cuota;
 	}
 	

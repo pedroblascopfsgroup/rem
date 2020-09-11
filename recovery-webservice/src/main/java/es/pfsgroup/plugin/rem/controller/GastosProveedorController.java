@@ -42,6 +42,7 @@ import es.pfsgroup.plugin.rem.api.GastoLineaDetalleApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.excel.ActivosGastoExcelReport;
+import es.pfsgroup.plugin.rem.excel.ElementosLineasExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.FacturasProveedoresExcelReport;
@@ -57,7 +58,9 @@ import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
+import es.pfsgroup.plugin.rem.model.DtoComboLineasDetalle;
 import es.pfsgroup.plugin.rem.model.DtoDetalleEconomicoGasto;
+import es.pfsgroup.plugin.rem.model.DtoElementosAfectadosLinea;
 import es.pfsgroup.plugin.rem.model.DtoFichaGastoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionGasto;
@@ -69,6 +72,7 @@ import es.pfsgroup.plugin.rem.model.DtoVImporteGastoLbk;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
+import es.pfsgroup.plugin.rem.model.VElementosLineaDetalle;
 import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
@@ -190,11 +194,11 @@ public class GastosProveedorController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public void generateExcelActivosGasto(Long idGasto, ModelMap model, HttpServletRequest request, HttpServletResponse response) throws IOException{
+	public void generateExcelElementosGasto(Long idLinea, ModelMap model, HttpServletRequest request, HttpServletResponse response) throws IOException{
 
-		List<VBusquedaGastoActivo> listaActivos = (List<VBusquedaGastoActivo>) getListActivosGastos(idGasto, model, request).getModel().get("data");
+		List<VElementosLineaDetalle> listaElementos = (List<VElementosLineaDetalle>) getElementosAfectados(idLinea, model, request).getModel().get("data");
 
-		ExcelReport report = new ActivosGastoExcelReport(listaActivos);
+		ExcelReport report = new ElementosLineasExcelReport(listaElementos);
 
 		excelReportGeneratorApi.generateAndSend(report, response);
 	}
@@ -1271,6 +1275,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getVImporteGastoLbk(Long idGasto) {
@@ -1291,6 +1296,121 @@ public class GastosProveedorController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getElementosAfectados(Long idLinea, ModelMap model, HttpServletRequest request) {
+		
+		try {
+			if(idLinea != -1) {
+				List<VElementosLineaDetalle> elementosAfectados = gastoLineaDetalleApi.getElementosAfectados(idLinea);
+				model.put("data", elementosAfectados);
+				model.put("success", true);
+				trustMe.registrarSuceso(request, idLinea, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "elementos", ACCION_CODIGO.CODIGO_VER);
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+			trustMe.registrarError(request, idLinea, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "elementos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+		}
+
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getLineasDetalleGastoCombo(@RequestParam Long idGasto, ModelMap model, HttpServletRequest request) {
+		
+		try {
+			
+			List<DtoComboLineasDetalle> elementosAfectados = gastoLineaDetalleApi.getLineasDetalleGastoCombo(idGasto);
+			model.put("data", elementosAfectados);
+			model.put("success", true);
+			trustMe.registrarSuceso(request, idGasto, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "elementos", ACCION_CODIGO.CODIGO_VER);
+	
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+			trustMe.registrarError(request, idGasto, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "elementos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+		}
+
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView asociarElementosAgastos(DtoElementosAfectadosLinea dto, ModelMap model, HttpServletRequest request) {
+		
+		try {		
+			model.put("success", gastoLineaDetalleApi.asociarElementosAgastos(dto));
+			trustMe.registrarSuceso(request, dto.getIdGasto(), ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "elementos", ACCION_CODIGO.CODIGO_VER);
+	
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+			trustMe.registrarError(request, dto.getIdGasto(), ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "elementos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+		}
+
+		return createModelAndViewJson(model);
+		
+	}
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView desasociarElementosAgastos(@RequestParam Long idElemento, ModelMap model, HttpServletRequest request) {
+		
+		try {		
+			model.put("success", gastoLineaDetalleApi.desasociarElementosAgastos(idElemento));
+			trustMe.registrarSuceso(request, idElemento, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "elementos", ACCION_CODIGO.CODIGO_VER);
+	
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+			trustMe.registrarError(request, idElemento, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "elementos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+		}
+
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateElementosDetalle(@RequestParam Long id, DtoElementosAfectadosLinea dto, ModelMap model, HttpServletRequest request) {
+		
+		try {		
+			model.put("success", gastoLineaDetalleApi.updateElementosDetalle(dto));
+			trustMe.registrarSuceso(request, dto.getId(), ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "elementos", ACCION_CODIGO.CODIGO_VER);
+	
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+			trustMe.registrarError(request, dto.getId(), ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "elementos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+		}
+
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView updateLineaSinActivos(@RequestParam Long idLinea,  ModelMap model, HttpServletRequest request) {
+		
+		try {		
+			model.put("success", gastoLineaDetalleApi.updateLineaSinActivos(idLinea));
+			trustMe.registrarSuceso(request, idLinea, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "elementos", ACCION_CODIGO.CODIGO_VER);
+	
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+			trustMe.registrarError(request, idLinea, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "elementos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+		}
+
+		return createModelAndViewJson(model);
+		
+	}
+
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTiposTrabajoByIdGasto(Long idGasto) {
@@ -1310,6 +1430,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 	}
+
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)

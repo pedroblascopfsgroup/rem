@@ -199,9 +199,11 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				return error;
 			}
 
-			if(Checks.estaVacio(gasto.getGastoProveedorActivos()) && !gasto.esAutorizadoSinActivos()) {
-				error = messageServices.getMessage(VALIDACION_ACTIVOS_ASIGNADOS); 
-				return error;
+			for (GastoLineaDetalle gastoLineaDetalle : gastoListaDetalleList) {
+				if(gastoLineaDetalle.getGastoLineaEntidadList().isEmpty() && !gastoLineaDetalle.esAutorizadoSinActivos()) {
+					error = messageServices.getMessage(VALIDACION_ACTIVOS_ASIGNADOS); 
+					return error;
+				}
 			}
 			
 			if(codEstadoProvision == null || !DDEstadoProvisionGastos.CODIGO_RECHAZADO_SUBSANABLE.equals(codEstadoProvision)) {

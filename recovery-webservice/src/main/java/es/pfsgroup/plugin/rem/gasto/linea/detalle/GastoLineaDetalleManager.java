@@ -1,6 +1,10 @@
 package es.pfsgroup.plugin.rem.gasto.linea.detalle;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -23,8 +27,13 @@ import es.pfsgroup.plugin.rem.api.GastoLineaDetalleApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.gasto.linea.detalle.dao.GastoLineaDetalleDao;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoConfiguracionCuentasContables;
 import es.pfsgroup.plugin.rem.model.ActivoConfiguracionPtdasPrep;
+import es.pfsgroup.plugin.rem.model.ActivoGenerico;
+import es.pfsgroup.plugin.rem.model.DtoComboLineasDetalle;
+import es.pfsgroup.plugin.rem.model.DtoElementosAfectadosLinea;
 import es.pfsgroup.plugin.rem.model.DtoLineaDetalleGasto;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
@@ -34,6 +43,7 @@ import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalleTrabajo;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoRefacturable;
+import es.pfsgroup.plugin.rem.model.VElementosLineaDetalle;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -63,6 +73,18 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	@Autowired
 	private GastoLineaDetalleDao gastoLineaDetalleDao;
 
+	
+	@Override 
+	public GastoLineaDetalle getLineaDetalleByIdLinea(Long idLinea) {
+		GastoLineaDetalle linea =  genericDao.get(GastoLineaDetalle.class, genericDao.createFilter(FilterType.EQUALS, "id", idLinea));
+		return linea;
+	}
+	
+	@Override 
+	public GastoLineaDetalleEntidad getLineaDetalleEntidadByIdLineaEntidad(Long idEntidad) {
+		GastoLineaDetalleEntidad entidad =  genericDao.get(GastoLineaDetalleEntidad.class, genericDao.createFilter(FilterType.EQUALS, "id", idEntidad));
+		return entidad;
+	}
 	
 	@Override
 	public List<DtoLineaDetalleGasto> getGastoLineaDetalle(Long idGasto) throws Exception{
@@ -1019,5 +1041,268 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		gastoLineaDetalleEntidadPadre.setReferenciaCatastral(gastoLineaDetalleEntidadHija.getReferenciaCatastral());
 		
 		return gastoLineaDetalleEntidadPadre;
+	}
+	
+	
+	@Override
+	public List<VElementosLineaDetalle> getElementosAfectados (Long idLinea){
+		
+		List<VElementosLineaDetalle> elementosLineaDetalleList = new ArrayList<VElementosLineaDetalle>();
+		GastoLineaDetalle gastoLineaDetalle = getLineaDetalleByIdLinea(idLinea);
+		if(gastoLineaDetalle != null) {
+			Filter filter = genericDao.createFilter(FilterType.EQUALS, "idLinea", idLinea);	
+			elementosLineaDetalleList = genericDao.getList(VElementosLineaDetalle.class, filter);
+			if(elementosLineaDetalleList.isEmpty()) {
+				VElementosLineaDetalle vElementoLineaDetalle  = new VElementosLineaDetalle();	
+				if(!gastoLineaDetalle.esAutorizadoSinActivos()) {
+					vElementoLineaDetalle.setDescripcionLinea("Línea sin elementos asignados");
+
+				}else {
+					vElementoLineaDetalle.setDescripcionLinea("Línea marcada sin activos");	
+					
+				}		
+				vElementoLineaDetalle.setImporteProporcinalTotal(100.0);
+				vElementoLineaDetalle.setParticipacion(100.0);
+				vElementoLineaDetalle.setImporteProporcinalTotal(0.0);
+				vElementoLineaDetalle.setImporteTotalLinea(0.0);
+				vElementoLineaDetalle.setIdElemento("");
+				
+				elementosLineaDetalleList.add(vElementoLineaDetalle);
+			}
+		}
+		return elementosLineaDetalleList;		
+	}
+	
+	@Override
+	public List<DtoComboLineasDetalle> getLineasDetalleGastoCombo(Long idGasto){
+		List<DtoComboLineasDetalle> comboLineasDetalle = new ArrayList<DtoComboLineasDetalle>();
+		GastoProveedor gasto = gastoProveedorApi.findOne(idGasto);
+		
+		if(gasto != null && gasto.getGastoLineaDetalleList() != null && !gasto.getGastoLineaDetalleList().isEmpty()) {
+			List<GastoLineaDetalle> gastoLineaDetalleList = gasto.getGastoLineaDetalleList();
+			for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleList) {
+				DtoComboLineasDetalle dto = new DtoComboLineasDetalle();
+				dto.setCodigo(gastoLineaDetalle.getId());
+				dto.setId(gastoLineaDetalle.getId());
+				dto.setDescripcion(getDescripcionLineaUsuario(gastoLineaDetalle));
+				
+				comboLineasDetalle.add(dto);		
+			}
+		}else {
+			DtoComboLineasDetalle dto = new DtoComboLineasDetalle();
+			dto.setCodigo(-1L);
+			dto.setId(-1L);
+			dto.setDescripcion("No hay líneas para este gasto");
+			
+			comboLineasDetalle.add(dto);
+		}
+		
+		return comboLineasDetalle;
+	}
+	
+	private String getDescripcionLineaUsuario(GastoLineaDetalle gastoLineaDetalle) {
+		String descripcion ="";
+		
+		descripcion = gastoLineaDetalle.getSubtipoGasto().getDescripcion();
+		if(gastoLineaDetalle.getSubtipoGasto() != null) {
+			descripcion = gastoLineaDetalle.getSubtipoGasto().getDescripcion();
+		}else {
+			descripcion = descripcion + "-";
+		}
+		descripcion = descripcion + " ";
+		if(gastoLineaDetalle.getTipoImpuesto() != null) {
+			descripcion = descripcion + gastoLineaDetalle.getTipoImpuesto().getDescripcion();
+		}else {
+			descripcion = descripcion + "-";
+		}
+		descripcion = descripcion + " ";
+		if(gastoLineaDetalle.getImporteIndirectoTipoImpositivo() != null) {
+			descripcion = descripcion + gastoLineaDetalle.getImporteIndirectoTipoImpositivo() + "%";
+		}else {
+			descripcion = descripcion + "-";
+		}
+		
+		return descripcion;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean asociarElementosAgastos(DtoElementosAfectadosLinea dto){
+		if(dto.getIdElemento() != null && dto.getIdLinea() != null && dto.getTipoElemento() != null) {
+			
+			DDEntidadGasto tipoElemento = (DDEntidadGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDEntidadGasto.class, dto.getTipoElemento());
+			GastoLineaDetalle gastoLineaDetalle = getLineaDetalleByIdLinea(dto.getIdLinea());
+			if(tipoElemento == null || gastoLineaDetalle == null || gastoLineaDetalle.getGastoProveedor() == null ) {
+				return false;
+			}
+			
+			gastoLineaDetalle.setLineaSinActivos(false);
+			genericDao.save(GastoLineaDetalle.class, gastoLineaDetalle);
+
+			
+			GastoProveedor gasto = gastoLineaDetalle.getGastoProveedor();
+			List<GastoLineaDetalleEntidad>  gastoLineaDetalleEntidadList = gastoLineaDetalle.getGastoLineaEntidadList();
+			if(DDEntidadGasto.CODIGO_AGRUPACION.equals(dto.getTipoElemento())){
+				Filter filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", dto.getIdElemento());
+				ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtroAgrupacion);
+				if(agrupacion == null) {
+					return false;
+				}
+				List<ActivoAgrupacionActivo> activosAgrupacionList= agrupacion.getActivos();
+				if(!activosAgrupacionList.isEmpty()) {
+					if(gasto.getPropietario() == null || activosAgrupacionList.get(0).getActivo().getCartera() == null 
+						|| !activosAgrupacionList.get(0).getActivo().getCartera().equals(gasto.getPropietario().getCartera())) {
+						return false;
+					}
+					DDEntidadGasto tipoElementoActivo = (DDEntidadGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDEntidadGasto.class, DDEntidadGasto.CODIGO_ACTIVO);
+					BigDecimal participacion = recalcularParticipacionElementos(dto.getIdLinea(), gastoLineaDetalleEntidadList, activosAgrupacionList.size());
+					for (ActivoAgrupacionActivo activoAgrupacionActivo : activosAgrupacionList) {
+						GastoLineaDetalleEntidad gastoLineaDetalleEntidad = new GastoLineaDetalleEntidad();
+						gastoLineaDetalleEntidad.setGastoLineaDetalle(gastoLineaDetalle);
+						gastoLineaDetalleEntidad.setEntidadGasto(tipoElementoActivo);
+						gastoLineaDetalleEntidad.setEntidad(activoAgrupacionActivo.getActivo().getId());
+						gastoLineaDetalleEntidad.setParticipacionGasto(participacion.doubleValue());
+						gastoLineaDetalleEntidad.setAuditoria(Auditoria.getNewInstance());
+						genericDao.save(GastoLineaDetalleEntidad.class, gastoLineaDetalleEntidad);
+					}
+					return true;
+				}
+			}else{
+				
+				GastoLineaDetalleEntidad gastoLineaDetalleEntidad = new GastoLineaDetalleEntidad();
+				gastoLineaDetalleEntidad.setGastoLineaDetalle(gastoLineaDetalle);
+				gastoLineaDetalleEntidad.setEntidadGasto(tipoElemento);
+				if(DDEntidadGasto.CODIGO_ACTIVO.equals(dto.getTipoElemento())) {
+					Activo activo = activoDao.getActivoByNumActivo(dto.getIdElemento());
+					if(activo == null || gasto.getPropietario() == null || activo.getCartera() == null 
+						|| !activo.getCartera().equals(gasto.getPropietario().getCartera())) {
+						return false;
+					}
+					gastoLineaDetalleEntidad.setEntidad(activo.getId());
+				}else if(DDEntidadGasto.CODIGO_ACTIVO_GENERICO.contentEquals(dto.getTipoElemento())) {
+					Filter filtroNumActivoGen = genericDao.createFilter(FilterType.EQUALS, "numActivoGenerico", dto.getIdElemento());
+					Filter filtroSubtipoGasto = genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.codigo", gastoLineaDetalle.getSubtipoGasto().getCodigo());
+					Filter filtroPropietario= genericDao.createFilter(FilterType.EQUALS, "propietario.id", gasto.getPropietario().getId());
+					Filter filtroAnyo;
+					if(gasto.getFechaEmision() != null) {
+						SimpleDateFormat fyear = new SimpleDateFormat("yyyy");
+						String year = fyear.format(gasto.getFechaEmision());
+						filtroAnyo = genericDao.createFilter(FilterType.EQUALS, "anyoActivoGenerico", Integer.parseInt(year));
+					}else {
+						filtroAnyo = genericDao.createFilter(FilterType.NULL, "anyoActivoGenerico");
+					}
+					ActivoGenerico activoGenerico =  genericDao.get(ActivoGenerico.class, filtroNumActivoGen, filtroSubtipoGasto,filtroPropietario, filtroAnyo);
+					if(activoGenerico == null) {
+						filtroAnyo = genericDao.createFilter(FilterType.NULL, "anyoActivoGenerico");
+						activoGenerico =  genericDao.get(ActivoGenerico.class, filtroNumActivoGen, filtroSubtipoGasto,filtroPropietario,filtroAnyo);
+						if(activoGenerico == null) {
+							return false;
+						}
+					}
+					gastoLineaDetalleEntidad.setEntidad(activoGenerico.getId());
+				}else {
+					gastoLineaDetalleEntidad.setEntidad(dto.getIdElemento());
+				}
+				BigDecimal participacion = recalcularParticipacionElementos(dto.getIdLinea(), gastoLineaDetalleEntidadList, 1);
+				gastoLineaDetalleEntidad.setAuditoria(Auditoria.getNewInstance());
+				gastoLineaDetalleEntidad.setParticipacionGasto(participacion.doubleValue());
+				genericDao.save(GastoLineaDetalleEntidad.class, gastoLineaDetalleEntidad);
+				return true;
+
+			}
+		}
+		
+		return false;
+	}
+	
+	@Transactional(readOnly = false)
+	public BigDecimal recalcularParticipacionElementos(Long idLinea, List<GastoLineaDetalleEntidad> gastoLineaDetalleEntidadList, int numeroEntidades){
+		BigDecimal participacion = BigDecimal.valueOf(100L);
+		
+		if(!gastoLineaDetalleEntidadList.isEmpty()) {
+
+			BigDecimal participacionMedia = BigDecimal.valueOf(100).divide(BigDecimal.valueOf(gastoLineaDetalleEntidadList.size() + numeroEntidades), 2, RoundingMode.HALF_UP);
+			BigDecimal sumaParticipacion = participacionMedia.multiply(BigDecimal.valueOf(gastoLineaDetalleEntidadList.size() + numeroEntidades));
+			BigDecimal participacionConDecimales = null;
+			
+			if(!sumaParticipacion.equals(BigDecimal.valueOf(100))) {
+				BigDecimal decimal = sumaParticipacion.subtract(BigDecimal.valueOf(100));
+				if(decimal.compareTo(BigDecimal.ZERO) < 0) {
+					participacionConDecimales = participacionMedia.add(decimal);
+				}else if(decimal.compareTo(BigDecimal.ZERO) > 0) {
+					participacionConDecimales = participacionMedia.subtract(decimal);
+				}
+			}
+			participacion = participacionMedia;
+			gastoLineaDetalleDao.updateParticipacionEntidadesLineaDetalle(idLinea, participacionMedia.doubleValue(), genericAdapter.getUsuarioLogado().getUsername());
+			
+			if(participacionConDecimales != null) {
+				gastoLineaDetalleEntidadList.get(0).setParticipacionGasto(participacionConDecimales.doubleValue());
+				genericDao.save(GastoLineaDetalleEntidad.class, gastoLineaDetalleEntidadList.get(0));
+			}
+		}
+		
+		return participacion;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean desasociarElementosAgastos(Long idElemento){
+		GastoLineaDetalleEntidad gastoLineaDetalleEntidad = getLineaDetalleEntidadByIdLineaEntidad(idElemento);
+	
+		if(gastoLineaDetalleEntidad != null) {			
+			GastoLineaDetalle gastoLineaDetalle = gastoLineaDetalleEntidad.getGastoLineaDetalle();
+			if(gastoLineaDetalle != null && !gastoLineaDetalle.getGastoLineaEntidadList().isEmpty()) {
+				List<GastoLineaDetalleEntidad> gastoLineaDetalleEntidadList =  gastoLineaDetalle.getGastoLineaEntidadList();
+				int indice = gastoLineaDetalleEntidadList.indexOf(gastoLineaDetalleEntidad);
+				gastoLineaDetalleEntidadList.remove(indice);
+				recalcularParticipacionElementos(gastoLineaDetalle.getId(), gastoLineaDetalleEntidadList, 0);
+			}
+			gastoLineaDetalleEntidad.getAuditoria().setBorrado(true);
+			gastoLineaDetalleEntidad.getAuditoria().setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
+			gastoLineaDetalleEntidad.getAuditoria().setFechaBorrar(new Date());
+			
+			genericDao.save(GastoLineaDetalleEntidad.class, gastoLineaDetalleEntidad);
+			
+			
+		}
+		
+		return false;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean updateElementosDetalle(DtoElementosAfectadosLinea dto){
+		GastoLineaDetalleEntidad gastoLineaDetalleEntidad = getLineaDetalleEntidadByIdLineaEntidad(dto.getId());
+		if(gastoLineaDetalleEntidad == null) {
+			return false;
+		}
+		
+		if(dto.getReferenciaCatastral() == null || dto.getReferenciaCatastral().isEmpty()) {
+			gastoLineaDetalleEntidad.setReferenciaCatastral(null);
+		}else {
+			gastoLineaDetalleEntidad.setReferenciaCatastral(dto.getReferenciaCatastral());
+		}
+		
+		gastoLineaDetalleEntidad.setParticipacionGasto(dto.getParticipacion());
+		gastoLineaDetalleEntidad.getAuditoria().setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
+		gastoLineaDetalleEntidad.getAuditoria().setFechaModificar(new Date());
+		
+		genericDao.save(GastoLineaDetalleEntidad.class, gastoLineaDetalleEntidad);
+		
+		return true;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean updateLineaSinActivos(Long idLinea){
+		GastoLineaDetalle gastoLineaDetalle = getLineaDetalleByIdLinea(idLinea);
+		if(gastoLineaDetalle == null) {
+			return false;
+		}
+		gastoLineaDetalle.setLineaSinActivos(true);
+		genericDao.save(GastoLineaDetalle.class, gastoLineaDetalle);
+		
+		return true;
 	}
 }

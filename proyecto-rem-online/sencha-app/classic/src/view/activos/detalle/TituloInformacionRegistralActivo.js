@@ -383,7 +383,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		            	bind: {
 		            		
 		            		store: '{storeOrigenAnteriorActivo}',
-		            		hidden: '{mostrarCamposDivarian}',
+		            		hidden: '{!mostrarCamposDivarianandBbva}',
 		            		value: '{datosRegistrales.origenAnteriorActivoCodigo}'
 		            		
 		            	
@@ -399,7 +399,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						reference:'fechaTituloAnteriorRef',
 				        fieldLabel: HreRem.i18n('fieldlabel.fecha.titulo.anterior'),
 				        bind: {				        	
-				        	 hidden: '{mostrarCamposDivarian}',
+				        	 hidden: '{!mostrarCamposDivarianandBbva}',
 				        	 value: '{datosRegistrales.fechaTituloAnterior}'
 				        	
 				        	

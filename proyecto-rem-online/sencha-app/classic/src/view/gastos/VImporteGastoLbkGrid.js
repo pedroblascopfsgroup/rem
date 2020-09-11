@@ -30,6 +30,7 @@ Ext.define('HreRem.view.gastos.VImporteGastoLbkGrid', {
 				            {
 					            text: HreRem.i18n('header.gasto.contabilidad.importe'),
 					            dataIndex: 'importeGasto',
+					            renderer: Utils.rendererCurrency,
 								flex	: 3
 					            
 					        }

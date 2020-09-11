@@ -140,6 +140,10 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 			
 			ActivoSituacionPosesoria actSit = new ActivoSituacionPosesoria();
 			actSit.setActivo(activo);
+			actSit.setAccesoAntiocupa(0);
+			actSit.setAccesoTapiado(0);		
+			actSit.setOcupado(0);		
+			actSit.setComboOtro(0);
 			actSit.setVersion(0L);
 			actSit.setAuditoria(auditoria);
 			

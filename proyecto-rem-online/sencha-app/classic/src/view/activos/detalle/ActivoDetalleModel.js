@@ -1012,7 +1012,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			
 			return false;
 		},
-
+		 isCarteraBbva: function(get){
+			 var isBbva = get('activo.isCarteraBbva');
+			 if(isBbva){
+				 return true;
+			 }
+			 return false;
+		 },
+		 mostrarCamposDivarianandBbva: function(get){
+			var isSubcarteraDivarian = get('activo.isSubcarteraDivarian');			
+		    var isBbva = get('activo.isCarteraBbva');
+		    if(isBbva || isSubcarteraDivarian ){
+			return true;
+		    }
+		    return false;
+		 },
 		
 		isGestorAdmisionAndSuperUA: function(){
 			var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) ||  $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);
@@ -1020,12 +1034,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var esUA = false;
 		
 			
-			if(gestores){			
-				if(me.get('activo.unidadAlquilable') != undefined)
-				esUA = me.get('activo.unidadAlquilable');
-			if(me.get('activo.isVendidoOEntramite') != undefined)
-				vendido = me.get('activo.isVendidoOEntramite');
-			return (vendido === true || esUA === true);
+			if(gestores){						
 			return true;
 				}
 				
@@ -1034,13 +1043,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		
 	 	},
 
-	 isCarteraBbva: function(get){
-			 var isBbva = get('activo.isCarteraBbva');
-			 if(isBbva){
-				 return true;
-			 }
-			 return false;
-	 }
+		isCarteraBbva: function(get){
+				var isBbva = get('activo.isCarteraBbva');
+				if(isBbva){
+					return true;
+				}
+				return false;
+		}
 	 
     },
     

@@ -4749,4 +4749,15 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		);			
 	}
 	
+	@Override
+	public Boolean existeCampo(String numCampo){
+		if(Checks.esNulo(numCampo) || !StringUtils.isNumeric(numCampo))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM dd_cos_campos_origen_conv_sareb COS "
+				+ "JOIN dd_ccs_campos_conv_sareb CCS ON CCS.dd_cos_id = COS.dd_cos_id AND CCS.BORRADO = 0"
+				+ "WHERE COS.dd_cos_codigo = '" + numCampo + "' AND COS.BORRADO = 0"
+				);
+		return !"0".equals(resultado);
+	}
 }

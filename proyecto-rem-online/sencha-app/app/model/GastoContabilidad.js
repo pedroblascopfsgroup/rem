@@ -80,6 +80,9 @@ Ext.define('HreRem.model.GastoContabilidad', {
         {
         	name: 'importeGasto'
 
+        },
+        {
+        	name:'subPartidas'
         }
     ],
     

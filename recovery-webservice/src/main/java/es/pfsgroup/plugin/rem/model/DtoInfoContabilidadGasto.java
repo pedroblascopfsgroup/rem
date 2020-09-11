@@ -41,6 +41,8 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	private Boolean gicPlanVisitasBoolean;
 	private String tipoComisionadoHreCodigo;
 	private String tipoComisionadoHreDescripcion;
+	private Long subPartidas;
+	
 
 	public Long getEjercicioImputaGasto() {
 		return ejercicioImputaGasto;
@@ -167,6 +169,13 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	public void setTipoComisionadoHreDescripcion(String tipoComisionadoHreDescripcion) {
 		this.tipoComisionadoHreDescripcion = tipoComisionadoHreDescripcion;
 	}
+	public Long getSubPartidas() {
+		return subPartidas;
+	}
+	public void setSubPartidas(Long subPartidas) {
+		this.subPartidas = subPartidas;
+	}
+	
 
    	
 }

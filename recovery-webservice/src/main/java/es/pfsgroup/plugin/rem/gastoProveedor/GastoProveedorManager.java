@@ -69,6 +69,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
+import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -1827,9 +1828,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId());
 			GastoInfoContabilidad contabilidadGasto = genericDao.get(GastoInfoContabilidad.class, filtro);
-
 			
 			if (!Checks.esNulo(contabilidadGasto)) {
+				if(contabilidadGasto.getConfiguracionSubpartidasPresupuestarias() != null) {
+					dto.setSubPartidas(contabilidadGasto.getConfiguracionSubpartidasPresupuestarias().getId());
+				}
 				if (!Checks.esNulo(contabilidadGasto.getEjercicio())) {
 					dto.setEjercicioImputaGasto(contabilidadGasto.getEjercicio().getId());
 					if(!Checks.esNulo(contabilidadGasto.getFechaDevengoEspecial())) {
@@ -1887,7 +1890,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			GastoInfoContabilidad contabilidadGasto = gasto.getGastoInfoContabilidad();
 			DtoInfoContabilidadGasto dtoIni = infoContabilidadToDtoInfoContabilidad(gasto);
 			if (!Checks.esNulo(contabilidadGasto)) {
-
+				
 				beanUtilNotNull.copyProperties(contabilidadGasto, dtoContabilidadGasto);
 
 				if (!Checks.esNulo(dtoContabilidadGasto.getEjercicioImputaGasto())) {
@@ -1928,8 +1931,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					DDTipoComisionado tipoComision = genericDao.get(DDTipoComisionado.class, filtro);
 					contabilidadGasto.setTipoComisionadoHre(tipoComision);
 				}
-				
-				
+				if(dtoContabilidadGasto.getSubPartidas() != null) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id",dtoContabilidadGasto.getSubPartidas());
+					ConfiguracionSubpartidasPresupuestarias subPartidas = genericDao.get(ConfiguracionSubpartidasPresupuestarias.class,filtro);
+					contabilidadGasto.setConfiguracionSubpartidasPresupuestarias(subPartidas);
+				}
 				gasto.setGastoInfoContabilidad(contabilidadGasto);
 			}			
 			

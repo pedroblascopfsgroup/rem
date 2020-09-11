@@ -770,6 +770,15 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				}
 			},
 			autoLoad: true
+		storeSubpartidas : {
+			model : 'HreRem.model.ComboBase',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'generic/getComboSubpartidaPresupuestaria',
+				extraParams : {
+					idGasto : '{gasto.id}'
+				}
+			}
 		}
 	}
 });

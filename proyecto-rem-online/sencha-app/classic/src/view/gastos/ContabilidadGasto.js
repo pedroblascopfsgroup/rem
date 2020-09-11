@@ -25,6 +25,11 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 
        var me = this;
         var isCarteraLiberbank = CONST.CARTERA['LIBERBANK'] == me.lookupController().getViewModel().getData().gasto.getData().cartera;
+        var subCartera = me.lookupController().getViewModel().getData().gasto.getData().subcartera;
+        var isSubcarteraCerberus = false;
+        if (CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subCartera || CONST.SUBCARTERA['DIVARIANREMAINING'] == subCartera || CONST.SUBCARTERA['DIVARIANARROW'] == subCartera){
+        	isSubcarteraCerberus = true;
+        }
 		me.setTitle(HreRem.i18n('title.gasto.contabilidad'));
         var items= [
        
@@ -108,6 +113,18 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 															value: '{contabilidad.tipoComisionadoHreCodigo}'
 														},
                                                         hidden: true						
+													},
+													{ 
+														xtype: 'comboboxfieldbase',
+														fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.subpartidas'),
+														reference: 'subPartidas',
+														bind: {
+															store: '{storeSubpartidas}',
+															value: '{contabilidad.subPartidas}'
+														},
+														valueField		: 'id',
+														hidden : !isSubcarteraCerberus
+                                                        						
 													}
 										]
 					           },

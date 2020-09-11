@@ -165,6 +165,7 @@ import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.IncrementoPresupuesto;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertaExclusionBulk;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PresupuestoActivo;
@@ -198,6 +199,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDIdentificacionGestoria;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDTareaDestinoSalto;
@@ -3142,10 +3144,22 @@ public class ActivoAdapter {
 						&& !Checks.esNulo(((DtoActivoFichaCabecera) dto).getTipoComercializacionCodigo())) {
 					List<ActivoAgrupacionActivo> agrupacionActivos = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId()).getAgrupacion().getActivos();	
 					for (ActivoAgrupacionActivo agrupacionActivo : agrupacionActivos) {
-						guardamosPatrimonio(agrupacionActivo.getActivo(), dto);
+						if(agrupacionActivo.getActivo() != null && dto != null && 
+							agrupacionActivo.getActivo().getActivoPublicacion() != null && 
+						    agrupacionActivo.getActivo().getActivoPublicacion().getTipoComercializacion() != null) {
+								guardamosPatrimonio(agrupacionActivo.getActivo(), dto);
+						}else {
+							logger.error("El activo no tiene registros de publicación o tipo de comercialización");
+						}
 					}
 				} else {
-					guardamosPatrimonio(activo, dto);
+					if(activo != null && dto != null && 
+							activo.getActivoPublicacion() != null && 
+							activo.getActivoPublicacion().getTipoComercializacion() != null) {
+						guardamosPatrimonio(activo, dto);
+					}else {
+						logger.error("El activo no tiene registros de publicación o tipo de comercialización");
+					}
 				}
 				//-----------------------------------------------------------
 				activo = tabActivoService.saveTabActivo(activo, dto);
@@ -3826,6 +3840,23 @@ public class ActivoAdapter {
 			oferta.setGestorComercialPrescriptor(ofertaApi.calcularGestorComercialPrescriptorOferta(oferta));
 			
 			ofertaCreada = genericDao.save(Oferta.class, oferta);
+			
+			if(activo != null && activo.getSubcartera() != null &&
+					(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
+				String codigoBulk = Double.parseDouble(dto.getImporteOferta()) > 750000d 
+						? DDSinSiNo.CODIGO_SI : DDSinSiNo.CODIGO_NO;
+				
+				DDSinSiNo sino = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoBulk));
+				OfertaExclusionBulk ofertaExclusionBulk = new OfertaExclusionBulk();
+				
+				ofertaExclusionBulk.setOferta(ofertaCreada);
+				ofertaExclusionBulk.setExclusionBulk(sino);
+				ofertaExclusionBulk.setFechaInicio(new Date());
+				ofertaExclusionBulk.setUsuarioAccion(genericAdapter.getUsuarioLogado());
+				
+				genericDao.save(OfertaExclusionBulk.class, ofertaExclusionBulk);
+			}
 			
 			// Actualizamos la situacion comercial del activo
 			updaterState.updaterStateDisponibilidadComercialAndSave(activo,false);

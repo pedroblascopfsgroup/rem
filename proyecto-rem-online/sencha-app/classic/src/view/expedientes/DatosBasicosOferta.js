@@ -97,7 +97,27 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							readOnly : 'true',
 							hidden : '{esTipoAlquiler}'
 						}
-					}, {
+					}, 
+						{
+						xtype : 'comboboxfieldbase',
+						fieldLabel : HreRem.i18n('fieldlabel.exclusion.bulk'),
+						bind : {
+							store: '{comboSiNoExclusionBulk}',
+							value : '{datosbasicosoferta.exclusionBulk}',
+							readOnly : '{!requisitosEdicionExclusionBulk}',
+							hidden : '{!esCarteraAppleOrRemaining}'
+						}
+					},
+						{
+						xtype : 'textfieldbase',
+						fieldLabel : HreRem.i18n('fieldlabel.id.advisory.note'),
+						bind : {
+							value : '{datosbasicosoferta.idAdvisoryNote}',
+							readOnly : '{!requisitosEdicionIdAdvisoryNote}',
+							hidden : '{!esCarteraAppleOrRemaining}'
+						}
+					},
+						{
 						xtype : 'comboboxfieldbase',
 						fieldLabel : HreRem.i18n('fieldlabel.tipo.alquiler'),
 						bind : {
@@ -141,8 +161,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							value:'{datosbasicosoferta.idGestorComercialPrescriptor}',
 							hidden: '{!mostrarPrescriptorCajamar}'
 						}
-					},
-					{
+					},{
 						xtype : 'datefieldbase',
 						formatter : 'date("d/m/Y")',
 						reference: 'fechaResolucionCES',

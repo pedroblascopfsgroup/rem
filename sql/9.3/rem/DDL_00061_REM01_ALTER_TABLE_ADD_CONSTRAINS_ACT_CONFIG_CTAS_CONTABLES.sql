@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Jonathan Ovalle
---## FECHA_CREACION=20200717
+--## FECHA_CREACION=20200718
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-10602

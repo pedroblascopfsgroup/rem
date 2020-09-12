@@ -1,12 +1,12 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200711
+--## FECHA_CREACION=20200712
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-10474
+--## INCIDENCIA_LINK=HREOS-11161
 --## PRODUCTO=NO
---## Finalidad: Creación diccionario CFG_APUNTES_GESTION
+--## Finalidad: Creación diccionario DD_TAT_TIPO_APUNTE
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -35,8 +35,8 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'CFG_APUNTES_GESTION'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla de configuración apuntes gestión'; -- Vble. para los comentarios de las tablas
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_TAT_TIPO_APUNTE'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Diccionario tipo apunte gestión'; -- Vble. para los comentarios de las tablas
 
 BEGIN
 
@@ -55,12 +55,13 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
 		V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
 		(
-			CAG_ID		           		NUMBER(16,0)                NOT NULL,
-			DD_TTR_ID	        		NUMBER(16,0)	            NOT NULL,
-			DD_STR_ID					NUMBER(16,0)				NOT NULL,
-			TIPO_APUNTE					VARCHAR2(50 CHAR)			NOT NULL,
-			DESCRIPCION 				VARCHAR2(100 CHAR), 
-			DESCRIPCION_LARGA			VARCHAR2(1000 CHAR), 
+			DD_TAT_ID	           		NUMBER(16,0)                NOT NULL,
+			/*DD_TTR_ID	        		NUMBER(16,0)	            NOT NULL,
+			DD_STR_ID					NUMBER(16,0)				NOT NULL,*/
+			DD_TAT_CODIGO				VARCHAR2(20 CHAR)			NOT NULL,
+			DD_TAT_DESCRIPCION 			VARCHAR2(100 CHAR), 
+			DD_TAT_DESCRIPCION_LARGA	VARCHAR2(1000 CHAR), 
+			VER_NIVEL_ACTIVO			NUMBER(1,0)					DEFAULT 0 NOT NULL ENABLE, 
 			VERSION 					NUMBER(38,0) 		    	DEFAULT 0 NOT NULL ENABLE, 
 			USUARIOCREAR 				VARCHAR2(50 CHAR) 	    	NOT NULL ENABLE, 
 			FECHACREAR 					TIMESTAMP (6) 		    	NOT NULL ENABLE, 
@@ -80,17 +81,17 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');
 
 		-- Creamos indice	
-		V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(CAG_ID) TABLESPACE '||V_TABLESPACE_IDX;		
+		V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(DD_TAT_ID) TABLESPACE '||V_TABLESPACE_IDX;		
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... Indice creado.');
 		
 		-- Creamos primary key
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (CAG_ID) USING INDEX)';
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (DD_TAT_ID) USING INDEX)';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
 
 		-- Creamos FK constraint
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT CAG_TTR_FK FOREIGN KEY (DD_TTR_ID) REFERENCES '||V_ESQUEMA||'.DD_TTR_TIPO_TRABAJO(DD_TTR_ID)';
+		/*V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT CAG_TTR_FK FOREIGN KEY (DD_TTR_ID) REFERENCES '||V_ESQUEMA||'.DD_TTR_TIPO_TRABAJO(DD_TTR_ID)';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] CAG_TTR_FK... FK creada.');
 
@@ -100,38 +101,42 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] CAG_STR_FK... FK creada.');
 
 		-- Creamos UK constraint
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT UK_CAG_TTR_STR_BORRADO UNIQUE (DD_TTR_ID, DD_STR_ID, TIPO_APUNTE, BORRADO)';
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT UK_DD_TAT_TTR_STR_BORRADO UNIQUE (DD_TTR_ID, DD_STR_ID, TIPO_APUNTE, BORRADO)';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] UK_CAG_TTR_STR_BORRADO... UK creada.');
+		DBMS_OUTPUT.PUT_LINE('[INFO] UK_DD_TAT_TTR_STR_BORRADO... UK creada.');*/
 		
 		-- Creamos comentario	
 		V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';		
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');
 
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CAG_ID IS ''Identificador único ''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TAT_ID IS ''Identificador único ''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna CAG_ID creado.');
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_TAT_ID creado.');
 
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TTR_ID IS ''Relación con tipo de trabajo''';
+		/*V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TTR_ID IS ''Relación con tipo de trabajo''';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_TTR_ID creado.');	
 
 		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_STR_ID IS ''Relación con subtipo de trabajo''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_STR_ID creado.');
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_STR_ID creado.');*/
 
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.TIPO_APUNTE IS ''Tipo de apunte''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TAT_CODIGO IS ''Código Tipo de apunte''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna TIPO_APUNTE creado.');	
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_TAT_CODIGO creado.');	
 
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DESCRIPCION IS ''Descripción''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TAT_DESCRIPCION IS ''Descripción''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DESCRIPCION creado.');	
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_TAT_DESCRIPCION creado.');	
 
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DESCRIPCION_LARGA IS ''Descripción larga''';
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TAT_DESCRIPCION_LARGA IS ''Descripción larga''';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DESCRIPCION_LARGA creado.');	
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_TAT_DESCRIPCION_LARGA creado.');	
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.VER_NIVEL_ACTIVO IS ''Marca si se ve a nivel de activo''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna VER_NIVEL_ACTIVO creado.');	
 
 		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.VERSION IS ''Indica la versión del registro.''';
 		EXECUTE IMMEDIATE V_MSQL;

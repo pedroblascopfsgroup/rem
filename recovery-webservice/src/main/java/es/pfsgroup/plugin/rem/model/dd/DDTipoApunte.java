@@ -1,56 +1,59 @@
-package es.pfsgroup.plugin.rem.model;
-
-import java.io.Serializable;
+package es.pfsgroup.plugin.rem.model.dd;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
+import es.capgemini.pfs.diccionarios.Dictionary;
 
 @Entity
-@Table(name = "CFG_APUNTES_GESTION", schema = "${entity.schema}")
-@Where(clause = Auditoria.UNDELETED_RESTICTION)
-public class CFGApuntesGestion implements Serializable, Auditable {
-
-	private static final long serialVersionUID = 4477763412715784465L;
+@Table(name = "DD_TAT_TIPO_APUNTE", schema = "${entity.schema}")
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Where(clause=Auditoria.UNDELETED_RESTICTION)
+public class DDTipoApunte implements Auditable, Dictionary {
+	
+	public static final String CODIGO_GESTION = "01";
+	public static final String CODIGO_ESTADO_ACTIVO = "02";
+	
+	private static final long serialVersionUID = 1L;
 
 	@Id
-    @Column(name = "CAG_ID")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "ApuntesGestionGenerator")
-    @SequenceGenerator(name = "ApuntesGestionGenerator", sequenceName = "S_CFG_APUNTES_GESTION")
-    private Long id;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
+	@Column(name = "DD_TAT_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoApunteGenerator")
+	@SequenceGenerator(name = "DDTipoApunteGenerator", sequenceName = "S_DD_TAT_TIPO_APUNTE")
+	private Long id;
+	
+    /*@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TTR_ID")
     private DDTipoTrabajo tipoTrabajo;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_STR_ID")
-    private DDSubtipoTrabajo subtipoTrabajo;
-    
-    @Column(name = "TIPO_APUNTE")
-    private String tipoApunte;
-
-    @Column(name = "DESCRIPCION")
-    private String descripcion;
-    
-    @Column(name = "DESCRIPCION_LARGA")
-    private String descripcionLarga;
+    private DDSubtipoTrabajo subtipoTrabajo;*/
+	    
+	@Column(name = "DD_TAT_CODIGO")   
+	private String codigo;
+	 
+	@Column(name = "DD_TAT_DESCRIPCION")   
+	private String descripcion;
+	    
+	@Column(name = "DD_TAT_DESCRIPCION_LARGA")   
+	private String descripcionLarga;
+	
+	@Column(name = "VER_NIVEL_ACTIVO")   
+	private Integer verNivelActivo;
 
 	@Version   
 	private Long version;
@@ -65,8 +68,8 @@ public class CFGApuntesGestion implements Serializable, Auditable {
 	public void setId(Long id) {
 		this.id = id;
 	}
-
-	public DDTipoTrabajo getTipoTrabajo() {
+	
+	/*public DDTipoTrabajo getTipoTrabajo() {
 		return tipoTrabajo;
 	}
 
@@ -80,14 +83,14 @@ public class CFGApuntesGestion implements Serializable, Auditable {
 
 	public void setSubtipoTrabajo(DDSubtipoTrabajo subtipoTrabajo) {
 		this.subtipoTrabajo = subtipoTrabajo;
-	}
-	
-	public String getTipoApunte() {
-		return tipoApunte;
+	}*/
+
+	public String getCodigo() {
+		return codigo;
 	}
 
-	public void setTipoApunte(String tipoApunte) {
-		this.tipoApunte = tipoApunte;
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
 	}
 
 	public String getDescripcion() {
@@ -105,6 +108,14 @@ public class CFGApuntesGestion implements Serializable, Auditable {
 	public void setDescripcionLarga(String descripcionLarga) {
 		this.descripcionLarga = descripcionLarga;
 	}
+	
+	public Integer getVerNivelActivo() {
+		return verNivelActivo;
+	}
+
+	public void setVerNivelActivo(Integer verNivelActivo) {
+		this.verNivelActivo = verNivelActivo;
+	}
 
 	public Long getVersion() {
 		return version;
@@ -120,5 +131,5 @@ public class CFGApuntesGestion implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
-	}	
+	}
 }

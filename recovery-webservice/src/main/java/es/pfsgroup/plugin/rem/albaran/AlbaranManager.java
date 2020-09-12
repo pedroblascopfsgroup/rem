@@ -1,8 +1,6 @@
 package es.pfsgroup.plugin.rem.albaran;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,21 +8,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.pagination.Page;
-import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.albaran.dao.AlbaranDao;
 import es.pfsgroup.plugin.rem.albaran.dto.DtoAlbaranFiltro;
 import es.pfsgroup.plugin.rem.api.AlbaranApi;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.Albaran;
-import es.pfsgroup.plugin.rem.model.DtoAlbaran;
 import es.pfsgroup.plugin.rem.model.DtoDetalleAlbaran;
 import es.pfsgroup.plugin.rem.model.DtoDetallePrefactura;
-import es.pfsgroup.plugin.rem.model.DtoProveedorMediador;
-import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.Prefactura;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VbusquedaProveedoresCombo;
@@ -64,15 +56,6 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 		
 		List<VbusquedaProveedoresCombo> comboApiPrimario = albaranDao.getProveedores();
 		
-		List<DtoProveedorMediador> listaDto = new ArrayList<DtoProveedorMediador>();
-		
-//		for (VbusquedaProveedoresCombo activoProveedor : comboApiPrimario) {
-//			DtoProveedorMediador dto = new DtoProveedorMediador();
-//			dto.setNombre(activoProveedor.getProveedorNombre());
-//			dto.setId(activoProveedor.getId());
-//			listaDto.add(dto);
-//		}
-		
 		return comboApiPrimario;
 	}
 
@@ -94,7 +77,6 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 	@Transactional
 	public Boolean validarPrefactura(Long id, String listaString) {
 		List<DtoDetallePrefactura> lista = obtenerDtoDeString(listaString);
-		List<Trabajo> trabajos = new ArrayList<Trabajo>();
 		Prefactura prefactura = genericDao.get(Prefactura.class,
 				genericDao.createFilter(FilterType.EQUALS, "numPrefactura", id));
 		if(prefactura.getEstadoPrefactura() != null && prefactura.getEstadoPrefactura().getCodigo() != null ) {

@@ -464,11 +464,11 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		if(record.data.estadoAlbaran == CONST.ESTADOS_PREFACTURAS['VALIDADO']){
 			boton.setDisabled(true);
 			botondos.setDisabled(true);
-			gridTrabajos.getColumns()[8].setDisabled(true);
+			gridTrabajos.getColumns()[9].setDisabled(true);
 		}else{
 			boton.setDisabled(false);
 			botondos.setDisabled(false);
-			gridTrabajos.getColumns()[8].setDisabled(false);
+			gridTrabajos.getColumns()[9].setDisabled(false);
 		}
 	},
 	
@@ -489,6 +489,12 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		var partes = num.toString().split(".");
 		partes[0] = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 		return partes.join(',');
+	},
+	
+	onRowDblClickListadoDetallePrefactura: function(view, record) {
+		var me = this;
+		record.set('id', record.get('id'));
+		me.getView().fireEvent('abrirDetalleTrabajo', record);
 	}
 	
 });

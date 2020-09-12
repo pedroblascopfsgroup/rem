@@ -26,14 +26,25 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGasto', {
 			else{
 				this.up('tabpanel').down('tabbar').down('button[itemId=botoneditar]').setVisible(false);
 			}
+
 		}
 	},
     
 	initComponent : function() {
 
 		var me = this;
+		var isCarteraLiberbank = false;
+		var cartera = me.lookupController().getViewModel().get('gasto').get('cartera');
+		if(CONST.CARTERA['LIBERBANK'] == cartera){
+			isCarteraLiberbank = true;
+		}
+		var asignadoTrabajo = me.lookupController().getViewModel().get('gasto').get('asignadoATrabajos');
 		
 		me.setTitle(HreRem.i18n('title.gasto.elementos.afectados'));
+		
+		me.buttons = [ { reference: 'btnRepartoTrabajo' ,itemId: 'btnRepartoTrabajo', text: 'Reparto según importes de trabajo', handler: 'asignarParticipacionActivosTrabajo', hidden:!asignadoTrabajo, disabled: true },
+			{ reference: 'btnReparto' ,itemId: 'btnReparto', text: 'Reparto según valor de adquisición', handler: 'asignarParticipacionActivos', hidden: !isCarteraLiberbank , disabled: true }];
+		
 		var items = [
 			{
 				xtype:'fieldsettable',

@@ -12,6 +12,8 @@ import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VElementosLineaDetalle;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 
 public interface GastoLineaDetalleApi {
 
@@ -61,9 +63,13 @@ public interface GastoLineaDetalleApi {
 
 	boolean updateLineaSinActivos(Long idLinea);
 
+	DDSubcartera getSubcarteraLinea(GastoLineaDetalle gastoLineaDetalle);
 
+	DDCartera getCarteraLinea(GastoLineaDetalle gastoLineaDetalle);
 
-	
+	boolean actualizarReparto(Long idLinea);
+
+	boolean actualizarRepartoTrabajo(Long idLinea);
 	
 }
 

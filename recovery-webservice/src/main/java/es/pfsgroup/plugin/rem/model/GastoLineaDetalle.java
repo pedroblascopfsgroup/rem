@@ -24,9 +24,14 @@ import javax.persistence.Version;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
@@ -40,6 +45,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 public class GastoLineaDetalle implements Serializable, Auditable{
 
 	private static final long serialVersionUID = 1L;
+	
+
+//	@Autowired
+//	private ActivoDao activoDao;
 	
 	@Id
 	@Column(name = "GLD_ID")

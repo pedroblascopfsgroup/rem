@@ -86,9 +86,6 @@ public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
     @JoinColumn(name = "SGT_ID")
 	private ActivoSubtipoGastoProveedorTrabajo activoSubtivoGastoProveedorTrabajo;
 	
-	@Column(name="CCC_PRINCIPAL")
-    private Boolean gastosCuentasContablesPrincipal;
-	
 	@Column(name="CPP_PRINCIPAL")
     private Boolean gastosPartidasPresupuestariasPrincipal;
 	
@@ -103,10 +100,10 @@ public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
     private String cppCapitulo;
 	
 	@Column(name="CPP_ACTIVABLE")
-    private Boolean cppActivable;
+    private Integer cppActivable;
 	
 	@Column(name="CPP_PLAN_VISITAS")
-    private Boolean cppPlanVisitas;
+    private Integer cppPlanVisitas;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="DD_TCH_ID")
@@ -206,22 +203,6 @@ public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
 		this.refacturable = refacturable;
 	}
 
-	public Long getVersion() {
-		return version;
-	}
-
-	public void setVersion(Long version) {
-		this.version = version;
-	}
-
-	public Auditoria getAuditoria() {
-		return auditoria;
-	}
-
-	public void setAuditoria(Auditoria auditoria) {
-		this.auditoria = auditoria;
-	}
-
 	public ActivoSubtipoGastoProveedorTrabajo getActivoSubtivoGastoProveedorTrabajo() {
 		return activoSubtivoGastoProveedorTrabajo;
 	}
@@ -229,14 +210,6 @@ public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
 	public void setActivoSubtivoGastoProveedorTrabajo(
 			ActivoSubtipoGastoProveedorTrabajo activoSubtivoGastoProveedorTrabajo) {
 		this.activoSubtivoGastoProveedorTrabajo = activoSubtivoGastoProveedorTrabajo;
-	}
-
-	public Boolean getGastosCuentasContablesPrincipal() {
-		return gastosCuentasContablesPrincipal;
-	}
-
-	public void setGastosCuentasContablesPrincipal(Boolean gastosCuentasContablesPrincipal) {
-		this.gastosCuentasContablesPrincipal = gastosCuentasContablesPrincipal;
 	}
 
 	public Boolean getGastosPartidasPresupuestariasPrincipal() {
@@ -271,19 +244,19 @@ public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
 		this.cppCapitulo = cppCapitulo;
 	}
 
-	public Boolean getCppActivable() {
+	public Integer getCppActivable() {
 		return cppActivable;
 	}
 
-	public void setCppActivable(Boolean cppActivable) {
+	public void setCppActivable(Integer cppActivable) {
 		this.cppActivable = cppActivable;
 	}
 
-	public Boolean getCppPlanVisitas() {
+	public Integer getCppPlanVisitas() {
 		return cppPlanVisitas;
 	}
 
-	public void setCppPlanVisitas(Boolean cppPlanVisitas) {
+	public void setCppPlanVisitas(Integer cppPlanVisitas) {
 		this.cppPlanVisitas = cppPlanVisitas;
 	}
 
@@ -294,6 +267,23 @@ public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
 	public void setCpptipoComisionado(DDTipoComisionado cpptipoComisionado) {
 		this.cpptipoComisionado = cpptipoComisionado;
 	}
-	
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
+	}
+
+	public Auditoria getAuditoria() {
+		return auditoria;
+	}
+
+	public void setAuditoria(Auditoria auditoria) {
+		this.auditoria = auditoria;
+	}
+
+
 	
 }

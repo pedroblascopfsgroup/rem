@@ -85,10 +85,7 @@ public class ActivoConfiguracionCuentasContables implements Serializable, Audita
 	
 	@Column(name="CCC_PRINCIPAL")
     private Boolean gastosCuentasPrincipal;
-	
-	@Column(name="CPP_PRINCIPAL")
-    private Boolean gastosPartidasPrincipal;
-	
+		
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="DD_TBE_ID")
     private DDTipoActivoBDE tipoActivoBDE;
@@ -97,10 +94,10 @@ public class ActivoConfiguracionCuentasContables implements Serializable, Audita
     private String subcuentaContable;
 	
 	@Column(name="CCC_ACTIVABLE")
-	private Boolean cccActivable;
+	private Integer cccActivable;
 	
 	@Column(name="CCC_PLAN_VISITAS")
-	private Boolean cccPlanVisitas;
+	private Integer cccPlanVisitas;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="DD_TCH_ID")
@@ -152,10 +149,6 @@ public class ActivoConfiguracionCuentasContables implements Serializable, Audita
 		this.tipoImporte = tipoImporte;
 	}
 
-	public ActivoPropietario getActivoPropietario() {
-		return activoPropietario;
-	}
-
 	public DDCartera getCartera() {
 		return cartera;
 	}
@@ -172,16 +165,20 @@ public class ActivoConfiguracionCuentasContables implements Serializable, Audita
 		this.subCartera = subCartera;
 	}
 
+	public ActivoPropietario getActivoPropietario() {
+		return activoPropietario;
+	}
+
+	public void setActivoPropietario(ActivoPropietario activoPropietario) {
+		this.activoPropietario = activoPropietario;
+	}
+
 	public Long getEjercicio() {
 		return ejercicio;
 	}
 
 	public void setEjercicio(Long ejercicio) {
 		this.ejercicio = ejercicio;
-	}
-
-	public void setActivoPropietario(ActivoPropietario activoPropietario) {
-		this.activoPropietario = activoPropietario;
 	}
 
 	public Integer getArrendamiento() {
@@ -200,22 +197,6 @@ public class ActivoConfiguracionCuentasContables implements Serializable, Audita
 		this.refacturable = refacturable;
 	}
 
-	public Long getVersion() {
-		return version;
-	}
-
-	public void setVersion(Long version) {
-		this.version = version;
-	}
-
-	public Auditoria getAuditoria() {
-		return auditoria;
-	}
-
-	public void setAuditoria(Auditoria auditoria) {
-		this.auditoria = auditoria;
-	}
-
 	public ActivoSubtipoGastoProveedorTrabajo getActivoSubtivoGastoProveedorTrabajo() {
 		return activoSubtivoGastoProveedorTrabajo;
 	}
@@ -231,14 +212,6 @@ public class ActivoConfiguracionCuentasContables implements Serializable, Audita
 
 	public void setGastosCuentasPrincipal(Boolean gastosCuentasPrincipal) {
 		this.gastosCuentasPrincipal = gastosCuentasPrincipal;
-	}
-	
-	public Boolean getGastosPartidasPrincipal() {
-		return gastosPartidasPrincipal;
-	}
-
-	public void setGastosPartidasPrincipal(Boolean gastosPartidasPrincipal) {
-		this.gastosPartidasPrincipal = gastosPartidasPrincipal;
 	}
 
 	public DDTipoActivoBDE getTipoActivoBDE() {
@@ -257,19 +230,19 @@ public class ActivoConfiguracionCuentasContables implements Serializable, Audita
 		this.subcuentaContable = subcuentaContable;
 	}
 
-	public Boolean getCccActivable() {
+	public Integer getCccActivable() {
 		return cccActivable;
 	}
 
-	public void setCccActivable(Boolean cccActivable) {
+	public void setCccActivable(Integer cccActivable) {
 		this.cccActivable = cccActivable;
 	}
 
-	public Boolean getCccPlanVisitas() {
+	public Integer getCccPlanVisitas() {
 		return cccPlanVisitas;
 	}
 
-	public void setCccPlanVisitas(Boolean cccPlanVisitas) {
+	public void setCccPlanVisitas(Integer cccPlanVisitas) {
 		this.cccPlanVisitas = cccPlanVisitas;
 	}
 
@@ -280,6 +253,22 @@ public class ActivoConfiguracionCuentasContables implements Serializable, Audita
 	public void setCcctipoComisionado(DDTipoComisionado ccctipoComisionado) {
 		this.ccctipoComisionado = ccctipoComisionado;
 	}
-	
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
+	}
+
+	public Auditoria getAuditoria() {
+		return auditoria;
+	}
+
+	public void setAuditoria(Auditoria auditoria) {
+		this.auditoria = auditoria;
+	}
+
 	
 }

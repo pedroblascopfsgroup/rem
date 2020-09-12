@@ -670,7 +670,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			window.close();
         }
     },
-    
+     
     updateGastoByPrinexLBK: function(){
     	me = this;
     	var url =  $AC.getRemoteUrl('gastosproveedor/updateGastoByPrinexLBK');
@@ -2044,29 +2044,30 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     },
     
     setCuentasyPartidas: function(ventana, data){
-    	if(data.ccBase != undefined){
-			ventana.down('[reference=ccBase]').setValue(data.data.ccBase);
+
+    	if(!Ext.isEmpty(data.ccBase)){
+			ventana.down('[reference=ccBase]').setValue(data.ccBase);
 		}
-		if(data.ppBase != undefined){
-			ventana.down('[reference=ppBase]').setValue(data.data.ppBase);
+		if(!Ext.isEmpty(data.ppBase)){
+			ventana.down('[reference=ppBase]').setValue(data.ppBase);
 		}
-		if(data.ccTasas != undefined){
-			ventana.down('[reference=ccTasas]').setValue(data.data.ccTasas);
+		if(!Ext.isEmpty(data.ccTasas)){
+			ventana.down('[reference=ccTasas]').setValue(data.ccTasas);
 		}
-		if(data.ppTasas != undefined){
-			ventana.down('[reference=ppTasas]').setValue(data.data.ppTasas);
+		if(!Ext.isEmpty(data.ppTasas)){
+			ventana.down('[reference=ppTasas]').setValue(data.ppTasas);
 		}
-		if(data.ccRecargo != undefined){
-			ventana.down('[reference=ccRecargo]').setValue(data.data.ccRecargo);
+		if(!Ext.isEmpty(!data.ccRecargo)){
+			ventana.down('[reference=ccRecargo]').setValue(data.ccRecargo);
 		}
-		if(data.ppRecargo != undefined){
-			ventana.down('[reference=ppRecargo]').setValue(data.data.ppRecargo);
+		if(!Ext.isEmpty(data.ppRecargo)){
+			ventana.down('[reference=ppRecargo]').setValue(data.ppRecargo);
 		}
-		if(data.ccInteres != undefined){
-			ventana.down('[reference=ccInteres]').setValue(data.data.ccInteres);
+		if(!Ext.isEmpty(data.ccInteres)){
+			ventana.down('[reference=ccInteres]').setValue(data.ccInteres);
 		}
-		if(data.ppInteres != undefined){
-			ventana.down('[reference=ppInteres]').setValue(data.data.ppInteres);
+		if(!Ext.isEmpty(data.ppInteres)){
+			ventana.down('[reference=ppInteres]').setValue(data.ppInteres);
 		}
     },
     
@@ -2103,7 +2104,91 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var gridElementos = me.lookupReference('listadoActivosAfectadosRef');
     	gridElementos.getStore().getProxy().setExtraParams({'idLinea':idLinea});
     	gridElementos.getStore().load();
+    	var btnReparto = me.lookupReference('btnReparto');
+    	var btnRepartoTrabajo = me.lookupReference('btnRepartoTrabajo');
+    	if(idLinea!= ''){
+    		btnReparto.setDisabled(false);    
+    		btnRepartoTrabajo.setDisabled(false);
+    	}
+    	else{
+    		btnReparto.setDisabled(true);
+    		btnRepartoTrabajo.setDisabled(true);
+    	}
+    	
     },
+    
+	asignarParticipacionActivos: function(btn) {
+		var me = this;
+		var idLinea = me.lookupReference('comboLineasDetalleReference').getValue();
+		Ext.Msg.show({
+			   title: HreRem.i18n('title.mensaje.confirmacion'),
+			   msg: HreRem.i18n('msg.modificar.reparto.activos'),
+			   buttons: Ext.MessageBox.YESNO,
+			   fn: function(buttonId) {
+			        if (buttonId == 'yes') {
+			        	
+			        	me.getView().mask(HreRem.i18n("msg.mask.loading"));
+			        	var url =  $AC.getRemoteUrl('gastosproveedor/actualizarReparto');
+			    		
+			    		Ext.Ajax.request({		    			
+			    	 		url: url,
+			    	 		method: 'POST',
+			    	 		params: {
+				     			idLinea: idLinea	
+				     		},	    		
+			    	    	success: function(response, opts) {
+			    	    		me.getView().unmask();
+						    	data = Ext.decode(response.responseText);
+						    	if(data.data == 'true') {
+			    	    			var grid = me.lookupReference('listadoActivosAfectadosRef');
+				    	    		grid.getStore().load();
+			    	    		}
+			    	    		else{
+			    	    			me.fireEvent("errorToast", HreRem.i18n("msg.error.adquisicion.noactivo"));
+			    	    		}	
+			    	    	},
+			       			failure: function(response) {
+			    				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			    		    }
+			    		});
+			        	
+			        }
+			   }
+		});
+		
+	},
+	
+	asignarParticipacionActivosTrabajo: function(btn) {
+		//TODO Quitar esta funcion es de prueba para los gastos con trabajos asociados
+		var me = this;
+		var idLinea = me.lookupReference('comboLineasDetalleReference').getValue();
+
+    	me.getView().mask(HreRem.i18n("msg.mask.loading"));
+    	var url =  $AC.getRemoteUrl('gastosproveedor/actualizarRepartoTrabajo');
+		
+		Ext.Ajax.request({		    			
+	 		url: url,
+	 		method: 'POST',
+	 		params: {
+     			idLinea: idLinea	
+     		},	    		
+	    	success: function(response, opts) {
+	    		me.getView().unmask();
+		    	data = Ext.decode(response.responseText);
+		    	if(data.data == 'true') {
+	    			var grid = me.lookupReference('listadoActivosAfectadosRef');
+    	    		grid.getStore().load();
+	    		}
+	    		else{
+	    			me.fireEvent("errorToast", HreRem.i18n("msg.error.adquisicion.noactivo"));
+	    		}	
+	    	},
+   			failure: function(response) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    }
+	    		});
+		
+	},
     
     onEnlaceActivosElementosAfectados: function(tableView, indiceFila, indiceColumna) {
    		var me = this;

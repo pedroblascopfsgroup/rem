@@ -180,6 +180,8 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 					summaryType: function(){
 						var store = this;
 	                    var records = store.getData().items;
+	                    records = records.filter(function(value, index, self) { 
+	                    	  return self.indexOf(value) === index;});
 	                    var field = ['participacion'];
 	                    
 	                    if (this.isGrouped()) {

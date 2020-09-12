@@ -54,6 +54,9 @@ public class VbusquedaAlbaranes implements Serializable{
 	@Column(name = "PRO_NOMBRE")
 	private String nombreSolicitante;
 	
+	@Column(name = "TBJ_ID")
+	private Long idTrabajo;
+	
 	@Column(name = "TBJ_NUM_TRABAJO")
 	private Long numTrabajo;
 	
@@ -173,6 +176,14 @@ public class VbusquedaAlbaranes implements Serializable{
 
 	public void setSolicitante(String solicitante) {
 		this.solicitante = solicitante;
+	}
+
+	public Long getIdTrabajo() {
+		return idTrabajo;
+	}
+
+	public void setIdTrabajo(Long idTrabajo) {
+		this.idTrabajo = idTrabajo;
 	}
 
 	public Long getNumTrabajo() {

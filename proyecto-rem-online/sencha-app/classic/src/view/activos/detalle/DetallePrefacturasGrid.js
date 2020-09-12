@@ -8,7 +8,9 @@ Ext.define('HreRem.view.activos.detalle.DetallePrefacturasGrid', {
 	bind: {
 		store: '{detallePrefactrura}'
 	},
-	
+	listeners: {
+		rowdblclick: 'onRowDblClickListadoDetallePrefactura' 
+	},
 	//NO TOCAR, SIRVE PARA LA PERSISTENCIA DEL CHECKBOX
 	data: [
 		
@@ -20,6 +22,12 @@ Ext.define('HreRem.view.activos.detalle.DetallePrefacturasGrid', {
      	me.data = [];
      	
 		me.columns = [
+				{
+					dataIndex: 'idTrabajo', 
+					reference: 'idTrabajo',
+					flex: 1,
+					hidden:true
+				},
 				{
 					dataIndex: 'numTrabajo',
 					reference: 'numTrabajo',

@@ -12,7 +12,8 @@ import es.capgemini.devon.dto.WebDto;
 public class DtoDetallePrefactura extends WebDto{
 
 	private static final long serialVersionUID = 0L;
-
+	
+	private Long idTrabajo;
 	private Long numPrefactura;
 	private Long numTrabajo;
 	private String tipologiaTrabajo;
@@ -24,6 +25,12 @@ public class DtoDetallePrefactura extends WebDto{
 	private Double importeTotalClientePrefactura;
 	private Boolean checkIncluirTrabajo;
 	
+	public Long getIdTrabajo() {
+		return idTrabajo;
+	}
+	public void setIdTrabajo(Long idTrabajo) {
+		this.idTrabajo = idTrabajo;
+	}
 	public Long getNumTrabajo() {
 		return numTrabajo;
 	}

@@ -1,8 +1,14 @@
 Ext.define('HreRem.model.DetallePrefacturaGridModel', {
     extend: 'HreRem.model.Base',
-    idProperty: 'numTrabajo',
+    idProperty: 'idTrabajo',
 
     fields: [
+			{
+				name:'idTrabajo' 
+			},
+			{
+				name:'numTrabajo'
+			},
     		{
     			name:'tipologiaTrabajo'
     		},
@@ -29,16 +35,5 @@ Ext.define('HreRem.model.DetallePrefacturaGridModel', {
     		{
     			name:'checkIncluirTrabajo'
     		}
-    		
     ]
-
-	/*proxy: {
-		type: 'uxproxy',
-		api: {
-            // read: 'activo/getActivoCalificacionNegativa',
-            create: 'activo/createCalificacionNegativa',
-            update: 'activo/updateCalificacionNegativa',
-            destroy: 'activo/destroyCalificacionNegativa'
-        }
-    }*/
 });

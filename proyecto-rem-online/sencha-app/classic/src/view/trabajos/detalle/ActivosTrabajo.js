@@ -18,7 +18,7 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
 
     initComponent: function () {
     	var me = this;
-    	me.setTitle(HreRem.i18n('title.activos'));
+    	me.setTitle(HreRem.i18n('title.activos.simple'));
 
     	me.items= [
 			{
@@ -91,99 +91,27 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
 				    {   text: HreRem.i18n('header.numero.activo'),
 			        	dataIndex: 'numActivo',
 			        	flex: 1
-			        },
-			        {   
-			        	dataIndex: 'direccion',
-			        	text: HreRem.i18n('header.direccion'),
-			        	flex:1,
-			        	hidden: true
-			        },
-			        {   
-			        	dataIndex: 'localidadDescripcion',
-			        	text: HreRem.i18n('header.municipio'),
-			        	flex:1,
-			        	hidden: true
-			        },
-			        {   
-			        	dataIndex: 'provinciaDescripcion',
-			        	text: HreRem.i18n('header.provincia'),
-			        	flex:1,
-			        	hidden: true
-			        },
-			        {
-			            dataIndex: 'entidadPropietariaDescripcion',
-			            text: HreRem.i18n('header.propietario'),
-			            flex: 1
-			        },		        
+			        },	        
   					{  						
 			            dataIndex: 'tipoActivoDescripcion',
 			            text: HreRem.i18n('header.tipo'),
 			            flex: 1
 			        },
 			        {
-			            dataIndex: 'subtipoActivoDescripcion',
-			            text: HreRem.i18n('header.subtipo'),
+			            dataIndex: 'ultimoTrabajo',
+			            text: HreRem.i18n('header.ultimo.trabajo'),
 			            flex: 1
 			        },
 			        {
-			            dataIndex: 'situacionComercial',
-			            text: HreRem.i18n('header.estado.comercial'),
+			            dataIndex: 'fecha',
+			            text: HreRem.i18n('header.fecha'),
 			            flex: 1
 			        },
-			        			        {
-			            dataIndex: 'situacionPosesoria',
-			            text: HreRem.i18n('header.situacion.posesoria'),
+			        {
+			            dataIndex: 'descripcionEstado',
+			            text: HreRem.i18n('header.estado'),
 			            flex: 1
-			            
-			        },
-			        			        {
-			            dataIndex: 'saldoDisponible',
-			            text: HreRem.i18n('header.saldo.disponible'),
-			            flex: 1,
-			            renderer: function(value) {
-			            	return Ext.util.Format.currency(value);
-			            }
-			        },
-			        {
-			        	dataIndex: 'participacion',
-			        	text: HreRem.i18n('header.porcentaje.participacion'),
-			        	flex:1,
-			        	editor: 'textfield',
-			        	renderer: function(value) {
-			            	return Ext.util.Format.number(value, '0.00%');
-			            },
-			            summaryType: function(){
-			            	var store = this;
-		                    var value = store.sumaParticipacion;
-		                    return value;		                    
-			            },
-			            summaryRenderer: function(value, summaryData, dataIndex) {
-			            	var value2=Ext.util.Format.number(value, '0.00');
-			            	var msg = HreRem.i18n("fieldlabel.participacion.total") + " " + value2 + "%";
-			            	var style = "style= 'color: black'";
-			            	if(parseFloat(value2) != parseFloat('100')) {
-			            		//msg = HreRem.i18n("fieldlabel.participacion.total.error")	
-			            		style = "style= 'color: red'";
-			            	}			            	
-			            	return "<span "+style+ ">"+msg+"</span>"
-			            }
-			        },
-			        {
-			        	dataIndex: 'importeParticipa',
-			            text: HreRem.i18n('header.importe.participa'),
-			            flex: 1,
-			            renderer: function(value) {
-			            	return Ext.util.Format.currency(value);
-			            }
-			        },
-			        {
-			        	dataIndex: 'saldoNecesario',
-			        	text: HreRem.i18n('header.importe.solicitar'),
-			            flex: 1,
-			            renderer: function(value) {
-			            	return Ext.util.Format.currency(value);
-			            }
-			        }       
+			        }      
 			    ],
 
 			    dockedItems : [

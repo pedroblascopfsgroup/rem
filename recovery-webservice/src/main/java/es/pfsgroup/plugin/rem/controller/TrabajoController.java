@@ -408,16 +408,8 @@ public class TrabajoController extends ParadiseJsonController {
 		ModelMap model = new ModelMap();
 		try {
 			Page page = trabajoApi.getListActivos(dto);
-			
-			
 			model.put("data", page.getResults());
 			model.put("totalCount", page.getTotalCount());
-			String result = rawDao.getExecuteSQL("SELECT SUM(ACT_TBJ_PARTICIPACION) FROM ACT_TBJ WHERE TBJ_ID = " + dto.getIdTrabajo());	
-			if(!Checks.esNulo(result)) {
-				model.put("sumaParticipacion", result);
-			}else {
-				model.put("sumaParticipacion", "0");
-			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);
 			model.put("success", false);		

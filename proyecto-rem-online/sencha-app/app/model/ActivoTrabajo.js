@@ -99,6 +99,15 @@ Ext.define('HreRem.model.ActivoTrabajo', {
     				return data.importeNetoContable / data.sumaAgrupacionNetoContable * 100
     			}
     			
+    		},
+    		{
+    			name: 'descripcionEstado'
+    		},
+    		{
+    			name: 'utlimoTrabajo'
+    		},
+    		{
+    			name: 'fecha'
     		}
     		
     ],

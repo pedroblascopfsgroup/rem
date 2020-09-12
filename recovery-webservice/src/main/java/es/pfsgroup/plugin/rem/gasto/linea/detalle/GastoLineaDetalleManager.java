@@ -7,8 +7,11 @@ import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,8 +28,10 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoLineaDetalleApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
+import es.pfsgroup.plugin.rem.gasto.dto.ImportesAcumuladosDto;
 import es.pfsgroup.plugin.rem.gasto.linea.detalle.dao.GastoLineaDetalleDao;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoConfiguracionCuentasContables;
@@ -46,6 +51,7 @@ import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoRefacturable;
 import es.pfsgroup.plugin.rem.model.VElementosLineaDetalle;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -53,6 +59,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoImporte;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
+import javassist.expr.NewArray;
 
 @Service("gastoLineaDetalleManager")
 public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
@@ -1491,4 +1498,99 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		
 		return subcartera;
 	}
+	
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean actualizarReparto(Long idLinea) {
+		Filter filtroGastoLinea = genericDao.createFilter(FilterType.EQUALS, "gastoLineaDetalle.id", idLinea);
+		Filter filtroBorrado= genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+	    BigDecimal totalAdquisicion= new BigDecimal("0.0");
+	    List<GastoLineaDetalleEntidad> gastoLineaDetalleActivoList = genericDao.getList(GastoLineaDetalleEntidad.class, filtroGastoLinea, filtroBorrado);
+		for(GastoLineaDetalleEntidad gastoLinea: gastoLineaDetalleActivoList ){
+			if(gastoLinea.getEntidadGasto().getCodigo().equals(DDEntidadGasto.CODIGO_ACTIVO)){
+				Filter filtroEntidad = genericDao.createFilter(FilterType.EQUALS, "activo.id", gastoLinea.getEntidad());
+				ActivoAdjudicacionNoJudicial actNJ = genericDao.get(ActivoAdjudicacionNoJudicial.class, filtroEntidad, filtroBorrado);
+				if(!Checks.esNulo(actNJ) && !Checks.esNulo(actNJ.getValorAdquisicion()) && (actNJ.getValorAdquisicion() > 0) ) {
+					BigDecimal valorAdquisicion = new BigDecimal(actNJ.getValorAdquisicion());
+					totalAdquisicion = totalAdquisicion.add(valorAdquisicion);
+				}
+				else {
+					return Boolean.FALSE;
+				}
+				
+			}
+			else {
+				return Boolean.FALSE;
+			}
+		}
+		for(GastoLineaDetalleEntidad gastoLinea: gastoLineaDetalleActivoList ){
+			Filter filtroEntidad = genericDao.createFilter(FilterType.EQUALS, "activo.id", gastoLinea.getEntidad());
+			ActivoAdjudicacionNoJudicial actNJ = genericDao.get(ActivoAdjudicacionNoJudicial.class, filtroEntidad, filtroBorrado);
+			BigDecimal valorAdquisicion = new BigDecimal(actNJ.getValorAdquisicion());
+			BigDecimal porcentaje =valorAdquisicion.multiply(new BigDecimal(100)).divide(totalAdquisicion, RoundingMode.HALF_DOWN);
+			gastoLinea.setParticipacionGasto(porcentaje.doubleValue());
+			genericDao.update(GastoLineaDetalleEntidad.class, gastoLinea);
+		}
+		
+		return Boolean.TRUE;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean actualizarRepartoTrabajo(Long idLinea) {
+		GastoLineaDetalle lineaDetalle = getLineaDetalleByIdLinea(idLinea);
+		Filter filtroGastoTrabajo = genericDao.createFilter(FilterType.EQUALS, "gastoLineaDetalle.id", idLinea);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+	    BigDecimal totalTrabajos = new BigDecimal("0.0");
+	    BigDecimal importeTrabajo = new BigDecimal("0.0");
+	    
+	    List <ImportesAcumuladosDto> importes = new ArrayList<ImportesAcumuladosDto>();
+	    List<GastoLineaDetalleTrabajo> gastoLineaDetalleTrabajoList = genericDao.getList(GastoLineaDetalleTrabajo.class, filtroGastoTrabajo, filtroBorrado);
+		for(GastoLineaDetalleTrabajo gastoTrabajo: gastoLineaDetalleTrabajoList ){
+			if(!Checks.esNulo(lineaDetalle.getGastoProveedor().getDestinatarioGasto()) && lineaDetalle.getGastoProveedor().getDestinatarioGasto().getCodigo().equals(DDDestinatarioGasto.CODIGO_HAYA)) {
+				importeTrabajo = new BigDecimal(gastoTrabajo.getTrabajo().getImportePresupuesto());
+			}
+			else{
+				importeTrabajo = new BigDecimal(gastoTrabajo.getTrabajo().getImporteTotal());
+			}
+			totalTrabajos = totalTrabajos.add(importeTrabajo);
+			ImportesAcumuladosDto importeAcumulado = new ImportesAcumuladosDto();
+			importeAcumulado.setId(gastoTrabajo.getTrabajo().getActivo().getId());
+			importeAcumulado.setImporte(importeTrabajo);
+			Boolean yaInsertado = Boolean.FALSE;
+			if(!importes.isEmpty()) {
+				for(ImportesAcumuladosDto importeAcumuladoAux : importes) {
+					if(importeAcumuladoAux.getId().equals(importeAcumulado.getId())) {
+						importeAcumuladoAux.setImporte(importeAcumuladoAux.getImporte().add(importeAcumulado.getImporte()));
+						yaInsertado = Boolean.TRUE;
+						break;
+					}	
+				}
+			}
+			if(importes.isEmpty() || !yaInsertado) {
+				importes.add(importeAcumulado);
+			}
+		}
+		
+		Filter filtroGastoLinea = genericDao.createFilter(FilterType.EQUALS, "gastoLineaDetalle.id", idLinea);
+	    List<GastoLineaDetalleEntidad> gastoLineaDetalleActivoList = genericDao.getList(GastoLineaDetalleEntidad.class, filtroGastoLinea, filtroBorrado);
+	    for(GastoLineaDetalleEntidad gastoLinea: gastoLineaDetalleActivoList ){
+	    	
+	    	if(gastoLinea.getEntidadGasto().getCodigo().equals(DDEntidadGasto.CODIGO_ACTIVO)){
+				for(ImportesAcumuladosDto importeAcumuladoAux : importes) {
+					if(importeAcumuladoAux.getId().equals(gastoLinea.getEntidad())) {
+						BigDecimal importeTotalTrabajos = importeAcumuladoAux.getImporte();
+						BigDecimal porcentaje =importeTotalTrabajos.multiply(new BigDecimal(100)).divide(totalTrabajos, RoundingMode.HALF_DOWN);
+						gastoLinea.setParticipacionGasto(porcentaje.doubleValue());
+						genericDao.update(GastoLineaDetalleEntidad.class, gastoLinea);
+					}
+				}
+	    	}
+	    	
+	    }
+		
+		return Boolean.TRUE;
+	}
+
 }

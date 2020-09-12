@@ -59,6 +59,7 @@ import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
+import es.pfsgroup.plugin.rem.gasto.linea.detalle.GastoLineaDetalleManager;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -88,6 +89,7 @@ import es.pfsgroup.plugin.rem.model.GastoGestion;
 import es.pfsgroup.plugin.rem.model.GastoImpugnacion;
 import es.pfsgroup.plugin.rem.model.GastoInfoContabilidad;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
+import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
 import es.pfsgroup.plugin.rem.model.GastoPrinex;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoProveedorActivo;
@@ -206,6 +208,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Autowired
 	private GastoLineaDetalleApi gastoLineaDetalleApi;
+	
+	@Autowired
+	private GastoLineaDetalleManager gastoLineaDetalleManager;
 	
 
 	@Override
@@ -3622,6 +3627,20 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 		
 		return listaSubTipoTrabajo;
+	}
+	
+	@Override
+	public boolean actualizarReparto(Long idLinea){
+		
+		 return gastoLineaDetalleManager.actualizarReparto(idLinea);
+		
+	}
+	
+	@Override
+	public boolean actualizarRepartoTrabajo(Long idLinea){
+		
+		 return gastoLineaDetalleManager.actualizarRepartoTrabajo(idLinea);
+		
 	}
 	
 }

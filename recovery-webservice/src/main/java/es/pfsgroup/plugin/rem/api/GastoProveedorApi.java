@@ -412,5 +412,8 @@ public interface GastoProveedorApi {
 		
 		List<DDSubtipoTrabajo> getSubTiposTrabajoByIdGasto(Long idGasto); 
 		
+		boolean actualizarReparto(Long idLinea);
+		
+		boolean actualizarRepartoTrabajo(Long idLinea);
 }
 

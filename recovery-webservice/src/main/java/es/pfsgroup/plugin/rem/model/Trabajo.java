@@ -165,6 +165,9 @@ public class Trabajo implements Serializable, Auditable {
     @Column(name = "TBJ_IMPORTE_TOTAL")
    	private Double importeTotal;
     
+    @Column(name = "TBJ_IMPORTE_PRESUPUESTO")
+   	private Double importePresupuesto;
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="MEDIADOR_ID")
     private ActivoProveedor mediador;
@@ -994,6 +997,14 @@ public class Trabajo implements Serializable, Auditable {
 
 	public void setNombreExpedienteTrabajo(String nombreExpedienteTrabajo) {
 		this.nombreExpedienteTrabajo = nombreExpedienteTrabajo;
+	}
+
+	public Double getImportePresupuesto() {
+		return importePresupuesto;
+	}
+
+	public void setImportePresupuesto(Double importePresupuesto) {
+		this.importePresupuesto = importePresupuesto;
 	}
     
     

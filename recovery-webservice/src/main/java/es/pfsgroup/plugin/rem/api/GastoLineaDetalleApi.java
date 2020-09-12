@@ -67,9 +67,9 @@ public interface GastoLineaDetalleApi {
 
 	DDCartera getCarteraLinea(GastoLineaDetalle gastoLineaDetalle);
 
+	boolean actualizarReparto(Long idLinea);
 
-
-	
+	boolean actualizarRepartoTrabajo(Long idLinea);
 	
 }
 

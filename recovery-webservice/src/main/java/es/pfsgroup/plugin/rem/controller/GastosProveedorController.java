@@ -1451,5 +1451,45 @@ public class GastosProveedorController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView actualizarReparto(Long idLinea) {
+			
+		ModelMap model = new ModelMap();
+		
+		try {
+			boolean hayReparto = gastoProveedorApi.actualizarReparto(idLinea);
+			model.put("data", hayReparto);
+			model.put("success", true);
+			
+		}catch (Exception e) {
+			logger.error("error en GastosProveedorController - actualizarReparto", e);
+			model.put("success", false);
+			model.put("errorMessage", "Error al realizar el reparto");
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView actualizarRepartoTrabajo(Long idLinea) {
+			
+		ModelMap model = new ModelMap();
+		
+		try {
+			boolean hayReparto = gastoProveedorApi.actualizarRepartoTrabajo(idLinea);
+			model.put("data", hayReparto);
+			model.put("success", true);
+			
+		}catch (Exception e) {
+			logger.error("error en GastosProveedorController - actualizarRepartoTrabajo", e);
+			model.put("success", false);
+			model.put("errorMessage", "Error al realizar el reparto");
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
 }

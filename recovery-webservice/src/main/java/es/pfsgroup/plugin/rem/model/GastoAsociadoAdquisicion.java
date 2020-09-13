@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -44,6 +45,10 @@ public class GastoAsociadoAdquisicion implements Serializable, Auditable{
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "GastoAsociadoAdquisicionGenerator")
     @SequenceGenerator(name = "GastoAsociadoAdquisicionGenerator", sequenceName = "S_GAA_GASTO_ASOCIADO_ADQ")
     private Long id;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    private Activo activo;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="DD_TGA_TPO_ID")
@@ -132,6 +137,14 @@ public class GastoAsociadoAdquisicion implements Serializable, Auditable{
 
 	public void setImporte(Double importe) {
 		this.importe = importe;
+	}
+
+	public Activo getActivo() {
+		return activo;
+	}
+
+	public void setActivo(Activo activo) {
+		this.activo = activo;
 	}
 
 	public Double getFactura() {

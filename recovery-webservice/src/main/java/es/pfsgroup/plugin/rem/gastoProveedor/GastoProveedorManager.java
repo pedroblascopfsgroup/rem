@@ -1812,7 +1812,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		DtoInfoContabilidadGasto dto = new DtoInfoContabilidadGasto();
 		if (!Checks.esNulo(gasto)) {
-			DDCartera cartera = gasto.getCartera();
+			DDCartera cartera = null;
+			if(gasto.getPropietario() != null && gasto.getPropietario().getCartera() != null){
+				cartera = gasto.getPropietario().getCartera();
+			}else if(gasto.getCartera() != null){
+				cartera = gasto.getCartera();
+			}
 			if(cartera != null) {
 				if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(cartera.getCodigo())) {				
 					if(isEstadosGastosLiberbankParaLecturaDirectaDeTabla(gasto)) {

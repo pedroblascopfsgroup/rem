@@ -581,7 +581,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	@Override
 	public Boolean esActivoIncluidoPerimetro(String numActivo){
 		String resultado = rawDao.getExecuteSQL("SELECT act.ACT_ID "
-				+ "		FROM ACT_ACTIVO act "
+				+ "		FROM ACT_ACTIVO act "	
 				+ "		LEFT JOIN ACT_PAC_PERIMETRO_ACTIVO pac "
 				+ "		ON act.ACT_ID            = pac.ACT_ID "
 				+ "		WHERE "
@@ -4878,4 +4878,54 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 
+	@Override
+	public Boolean estaPerimetroHaya(String activoId) {
+		if (activoId == null || !StringUtils.isNumeric(activoId)) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT act_pac_perimetro_activo.pac_incluido "
+												+"from rem01.act_pac_perimetro_activo"
+												+"		WHERE act_id = "+ activoId +""
+				);
+		return !"0".equals(resultado);
+	}
+
+	@Override
+	public Boolean existeActivoPorId(String activoId) {
+		if(Checks.esNulo(activoId) || !StringUtils.isNumeric(activoId))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_ACTIVO WHERE"
+				+ "		 	ACT_ID ="+activoId+" "
+				+ "		 	AND BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+
+	@Override
+	public Boolean estaPerimetroAdmision(String activoId) {
+		if (activoId == null || !StringUtils.isNumeric(activoId)) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT act_pac_perimetro_activo.pac_check_admision "
+												+"from rem01.act_pac_perimetro_activo"
+												+"		WHERE act_id = "+ activoId +""
+				);
+		return !"0".equals(resultado);
+	}
+
+	@Override
+	public Boolean comprobarCodigoTipoTitulo(String codTipoTitulo) {
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_TTC_TIPO_TITULO_COMPLEM WHERE"
+				+ "		 	DD_TTC_CODIGO = '"+codTipoTitulo+"' "
+				+ "		 	AND BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+
+	
+	
 }

@@ -1181,4 +1181,13 @@ public interface ParticularValidatorApi {
 	
 	public boolean incluidoActivoIdOrigenBBVA (String numActivo);
 
+	Boolean estaPerimetroHaya(String activoId);
+	
+	Boolean estaPerimetroAdmision(String activoId);
+	
+	Boolean existeActivoPorId(String activoId);
+	
+	Boolean comprobarCodigoTipoTitulo(String codTipoTitulo);
+	
+
 }

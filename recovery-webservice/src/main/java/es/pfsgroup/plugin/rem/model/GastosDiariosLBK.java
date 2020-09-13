@@ -162,18 +162,13 @@ public class GastosDiariosLBK implements Serializable, Auditable {
 		this.version = version;
 	}
 	
-	@Override
 	public Auditoria getAuditoria() {
-		// TODO Auto-generated method stub
-		return null;
+		return auditoria;
 	}
 
-	@Override
-	public void setAuditoria(Auditoria arg0) {
-		// TODO Auto-generated method stub
-		
+	public void setAuditoria(Auditoria auditoria) {
+		this.auditoria = auditoria;
 	}
-
 	
 	
 }

@@ -3578,10 +3578,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		List<DtoVImporteGastoLbk> dtoVistaImportesGastoLbk = new ArrayList <DtoVImporteGastoLbk>();
 		
 		Filter filtroVista = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
+		Filter filtroTabla = genericDao.createFilter(FilterType.EQUALS, "idGastos", idGasto);
+		
 		GastoProveedor gasto = genericDao.get(GastoProveedor.class, filtroVista);
 		
-		List<GastosImportesLBK> gastosImportesGastoLBK = genericDao.getList(GastosImportesLBK.class, filtroVista);
-		List<VImportesGastoLBK> vistaImportesGastoLBK = genericDao.getList(VImportesGastoLBK.class, filtroVista);
+		List<GastosImportesLBK> gastosImportesGastoLBK = genericDao.getList(GastosImportesLBK.class, filtroTabla);
+		
 		
 		if(isEstadosGastosLiberbankParaLecturaDirectaDeTabla(gasto)) {
 			if (gastosImportesGastoLBK != null && !gastosImportesGastoLBK.isEmpty()) {
@@ -3595,7 +3597,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					dtoVistaImportesGastoLbk.add(dto);
 				} 
 			} 
-		} else if (vistaImportesGastoLBK != null && !vistaImportesGastoLBK.isEmpty()) {				
+		} else {	
+				List<VImportesGastoLBK> vistaImportesGastoLBK = genericDao.getList(VImportesGastoLBK.class, filtroVista);
 				for (VImportesGastoLBK vImportesGastoLBK : vistaImportesGastoLBK) {
 					DtoVImporteGastoLbk dto = new DtoVImporteGastoLbk();
 					dto.setIdElemento(vImportesGastoLBK.getIdElemento());
@@ -3636,26 +3639,24 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Override
 	public void saveGastosImportesLbk(Long idGasto){
-		Filter filtroVista = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
+		
 		Filter filtroTabla = genericDao.createFilter(FilterType.EQUALS, "idGastos", idGasto);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);	
+		List<GastosImportesLBK> tablaGastoImportes = genericDao.getList(GastosImportesLBK.class, filtroTabla, filtroBorrado);
 		
-		VImportesGastoLBK vistaImporteGastoLBK = genericDao.get(VImportesGastoLBK.class, filtroVista);	
-		GastosImportesLBK tablaGastoImportes = genericDao.get(GastosImportesLBK.class, filtroTabla);
+		for(GastosImportesLBK gastoImporte: tablaGastoImportes) {	
+			Auditoria auditoria = gastoImporte.getAuditoria();
+			auditoria.setBorrado(true);
+			auditoria.setFechaBorrar(new Date());
+			gastoImporte.setAuditoria(auditoria);
+			genericDao.update(GastosImportesLBK.class, gastoImporte);
+			
+		}
 		
-		if (tablaGastoImportes != null ) {
-			//Si ya existe un registro y no está borrado se borra logicamente y se crea uno nuevo
-				if(!tablaGastoImportes.getAuditoria().isBorrado()) {
-					Auditoria auditoria = tablaGastoImportes.getAuditoria();
-					auditoria.setBorrado(true);
-					auditoria.setFechaBorrar(new Date());
-					tablaGastoImportes.setAuditoria(auditoria);
-					
-					GastosImportesLBK gastosImportes = saveImporteGastosFromVista(vistaImporteGastoLBK);
-					genericDao.save(GastosImportesLBK.class, gastosImportes);
-				}
-		} else {
-			//Si existe un registro pero esta borrado o no existe un registro en la tabla se crea uno nuevo directamente
-			GastosImportesLBK gastosImportes = saveImporteGastosFromVista(vistaImporteGastoLBK);
+		Filter filtroVista = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
+		List<VImportesGastoLBK> vistaImporteGastoLBK = genericDao.getList(VImportesGastoLBK.class, filtroVista);
+		for(VImportesGastoLBK vistaImporte : vistaImporteGastoLBK) {
+			GastosImportesLBK gastosImportes = saveImporteGastosFromVista(vistaImporte);
 			genericDao.save(GastosImportesLBK.class, gastosImportes);
 		}
 	}
@@ -3765,12 +3766,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		GastosDiariosLBK gastosDiarios = new GastosDiariosLBK();
 		gastosDiarios.setDiario1(vistaGastoDiario.getDiario1());
 		gastosDiarios.setDiario1Base(vistaGastoDiario.getDiario1Base());
-		gastosDiarios.setDiario1Cuota((vistaGastoDiario.getDiario1Cuota()));
+		gastosDiarios.setDiario1Cuota(vistaGastoDiario.getDiario1Cuota());
 		gastosDiarios.setDiario1Tipo(vistaGastoDiario.getDiario1Tipo());
 		gastosDiarios.setDiario2(vistaGastoDiario.getDiario2());
 		gastosDiarios.setDiario2Base(vistaGastoDiario.getDiario2Base());
-		gastosDiarios.setDiario2Cuota((vistaGastoDiario.getDiario2Cuota()));
+		gastosDiarios.setDiario2Cuota(vistaGastoDiario.getDiario2Cuota());
 		gastosDiarios.setDiario2Tipo(vistaGastoDiario.getDiario2Tipo());
+		gastosDiarios.setIdGastos(vistaGastoDiario.getId());
 		
 		return gastosDiarios;
 		
@@ -3784,7 +3786,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		gastosImportes.setIdEntidad(vistaImporteGastoLBK.getIdElemento());
 		gastosImportes.setEntidadGasto(tipoEntidad.getId());
 		gastosImportes.setImporteActivo(vistaImporteGastoLBK.getImporteGasto());
-		
+		gastosImportes.setIdGastos(vistaImporteGastoLBK.getId());
+
 		return gastosImportes;
 	}
 	

@@ -14,10 +14,11 @@ public class VImportesGastoLBK implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	@Id
+	
 	@Column(name= "GPV_ID")
 	private Long id;
 	
+	@Id
 	@Column(name="ID_ELEMENTO")
 	private Long idElemento;
 	
@@ -58,6 +59,8 @@ public class VImportesGastoLBK implements Serializable {
 	public void setImporteGasto(Double importeGasto) {
 		this.importeGasto = importeGasto;
 	}
+
+
 
 	
 }

@@ -155,26 +155,27 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 														items :
 															[
 																{ 
-																	xtype: 'textfieldbase',
+																	xtype: 'currencyfieldbase',
+																	symbol: HreRem.i18n("symbol.euro"),
 																	fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.Base'),
 																	reference : 'baseDiario1',
 													                bind: '{contabilidad.diario1Base}',
-													                renderer: Utils.rendererCurrency,
 													                readOnly: true						
 																},
 																{ 
-																	xtype: 'textfieldbase',
+																	xtype: 'numberfieldbase',
+																	symbol: HreRem.i18n("symbol.porcentaje"),
 																	fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.tipo.impositivo'),
 																	reference : 'diario1Tipo',
 													                bind: '{contabilidad.diario1Tipo}',
 													                readOnly: true						
 																},
 																{ 
-																	xtype: 'textfieldbase',
+																	xtype: 'currencyfieldbase',
+																	symbol: HreRem.i18n("symbol.euro"),
 																	fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.cuota'),
 																	reference : 'cuotaDiario1',
 																	bind: '{contabilidad.diario1Cuota}',
-																	renderer: Utils.rendererCurrency,
 													                readOnly: true						
 																}
 																
@@ -200,17 +201,18 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 														items :
 															[
 																{ 
-																	xtype: 'textfieldbase',
+																	xtype: 'currencyfieldbase',
+																	symbol: HreRem.i18n("symbol.euro"),
 																	fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.Base'),
 													                bind: {value :'{contabilidad.diario2Base}',
 													                	   hidden :'{contabilidad.isEmpty}'
 													                },
 													                reference : 'baseDiario2',
-													                renderer: Utils.rendererCurrency,
 													                readOnly: true						
 																},
 																{ 
-																	xtype: 'textfieldbase',
+																	xtype: 'numberfieldbase',
+																	symbol: HreRem.i18n("symbol.porcentaje"),
 																	fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.tipo.impositivo'),
 													                bind: { value :'{contabilidad.diario2Tipo}',
 													                		hidden :'{contabilidad.isEmpty}'
@@ -219,13 +221,13 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 													                readOnly: true						
 																},
 																{ 
-																	xtype: 'textfieldbase',
+																	xtype: 'currencyfieldbase',
+																	symbol: HreRem.i18n("symbol.euro"),
 																	fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.cuota'),
 																	reference : 'cuotaDiario2',
 													                bind: {value :'{contabilidad.diario2Cuota}',
 													                	   hidden :'{contabilidad.isEmpty}'
 													                },
-													                renderer: Utils.rendererCurrency,
 													                readOnly: true						
 																}
 																

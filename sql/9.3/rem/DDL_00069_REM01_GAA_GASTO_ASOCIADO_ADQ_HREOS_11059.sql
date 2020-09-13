@@ -1,0 +1,158 @@
+--/*
+--#########################################
+--## AUTOR=Carlos Augusto
+--## FECHA_CREACION=20200913
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-11059
+--## PRODUCTO=NO
+--##
+--## VERSIONES:
+--##	0.1 Versión inicial
+--#########################################
+--*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+
+V_MSQL VARCHAR2(32000 CHAR);
+TABLE_COUNT NUMBER(1,0) := 0;
+V_ESQUEMA VARCHAR2(20 CHAR) := '#ESQUEMA#';
+V_ESQUEMA_M VARCHAR2(20 CHAR) := '#ESQUEMA_MASTER#';
+V_TABLA VARCHAR2(40 CHAR) := 'GAA_GASTO_ASOCIADO_ADQ';
+V_NUM_TABLAS NUMBER(16);
+
+BEGIN
+
+SELECT COUNT(1) INTO TABLE_COUNT FROM ALL_TABLES WHERE TABLE_NAME = ''||V_TABLA||'' AND OWNER= ''||V_ESQUEMA||'';
+
+IF TABLE_COUNT > 0 THEN
+    DBMS_OUTPUT.PUT_LINE('[INFO] TABLA '||V_ESQUEMA||'.'||V_TABLA||' YA EXISTENTE. SE PROCEDE A BORRAR Y CREAR DE NUEVO.');
+    EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.'||V_TABLA||' CASCADE CONSTRAINTS';
+    
+END IF;
+
+V_MSQL := '
+CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||'
+(
+    GAA_ID                     	        	NUMBER(16,2) NOT NULL,
+    DD_TGA_TPO_ID                           NUMBER(16,2),
+    GAA_GESTOR_ALTA                     	NUMBER(16,2) ,
+    GAA_FECHA_ALTA                       	DATE ,
+    GAA_FECHA_SOLICITUD                     DATE ,
+    GAA_FECHA_PAGO                 		    DATE ,
+    GAA_IMPORTE    			                NUMBER(16,2),
+    GAA_FACTURA          			        NUMBER(16,2),
+    GAA_OBSERVACIONES       			VARCHAR2(250 CHAR),
+    USUARIOCREAR    	            VARCHAR2(10),
+    FECHACREAR          	        DATE NOT NULL,
+    USUARIOMODIFICAR    	        VARCHAR2(10),
+    FECHAMODIFICAR      	        DATE,	 
+    VERSION                   	    NUMBER(38,0) DEFAULT 0 NOT NULL,
+    USUARIOBORRAR             	    VARCHAR2(50),
+    FECHABORRAR               	    DATE,
+    BORRADO                  	    NUMBER(1, 0) DEFAULT 0 NOT NULL
+)';
+
+EXECUTE IMMEDIATE V_MSQL;
+DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' CREADA');
+
+V_MSQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_'||V_TABLA||''' AND SEQUENCE_OWNER = '''||V_ESQUEMA||'''';
+EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+
+IF V_NUM_TABLAS = 0 THEN
+    V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TABLA||'';		
+    EXECUTE IMMEDIATE V_MSQL;		
+    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TABLA||'... Secuencia creada');
+END IF;
+
+V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT '||V_TABLA||'_PK PRIMARY KEY (GAA_ID))';
+EXECUTE IMMEDIATE V_MSQL;
+DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||'_PK creada.');
+
+V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT FK_GAA_DD_TGA_TPO_ID FOREIGN KEY (DD_TGA_TPO_ID) REFERENCES '||V_ESQUEMA||'.DD_TGA_TPO_GASTO_ASOCIADO (DD_TGA_ID))';
+EXECUTE IMMEDIATE V_MSQL;
+DBMS_OUTPUT.PUT_LINE('[INFO] FK a DD_TGA_TPO_GASTO_ASOCIADO creada.');
+
+V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT FK_GAA_GESTOR_ALTA  FOREIGN KEY (GAA_GESTOR_ALTA) REFERENCES '||V_ESQUEMA_M||'.USU_USUARIOS (USU_ID))';
+EXECUTE IMMEDIATE V_MSQL;
+DBMS_OUTPUT.PUT_LINE('[INFO] fk a USU_USUARIOS creada.');
+
+
+
+
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.GAA_ID IS ''Indica el código identificador único del registro.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.DD_TGA_TPO_ID IS ''FK con la tabla de DD_TGA_TPO_GASTO_ASOCIADO.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.GAA_GESTOR_ALTA IS ''FK a la tabla USU_USUARIOS.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.GAA_FECHA_ALTA IS ''Fecha alta gasto asociado.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.GAA_FECHA_SOLICITUD IS ''Fecha solicitud gasto asociado.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.GAA_FECHA_PAGO IS ''Fecha pago gasto asociado.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.GAA_IMPORTE IS ''Importe gasto asociado''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.GAA_FACTURA IS ''Factura''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.GAA_OBSERVACIONES IS ''Campo para introducir las observaciones.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.VERSION IS ''Indica la versión de la modificación del registro.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.USUARIOCREAR IS ''Indica el usuario que ha creado el registro.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.FECHACREAR IS ''Indica la fecha en la que se ha creado el registro.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.USUARIOMODIFICAR IS ''Indica el usuario que ha modificado el registro.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.FECHAMODIFICAR IS ''Indica la fecha en la que se ha modificado el registro.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.USUARIOBORRAR IS ''Indica el usuario que ha borrado el registro.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.FECHABORRAR IS ''Indica la fecha en la que se ha borrado el registro.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.BORRADO IS ''Indica la fecha en la que se ha borrado el registro.''';
+EXECUTE IMMEDIATE V_MSQL;
+
+DBMS_OUTPUT.PUT_LINE('[INFO] COMENTARIOS CREADOS');
+
+COMMIT;
+
+EXCEPTION
+
+WHEN OTHERS THEN
+    DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+    DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+    DBMS_OUTPUT.put_line(SQLERRM);
+    ROLLBACK;
+    RAISE;
+
+END;
+/
+
+EXIT;
+
+
+
+

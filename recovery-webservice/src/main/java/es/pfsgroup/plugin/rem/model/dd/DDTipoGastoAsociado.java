@@ -2,16 +2,26 @@ package es.pfsgroup.plugin.rem.model.dd;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import javax.persistence.Version;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
+@Entity
+@Table(name = "DD_TGA_TPO_GASTO_ASOCIADO", schema = "${entity.schema}")
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDTipoGastoAsociado implements Auditable, Dictionary{
 
 	private static final long serialVersionUID = 2307957295534774606L;

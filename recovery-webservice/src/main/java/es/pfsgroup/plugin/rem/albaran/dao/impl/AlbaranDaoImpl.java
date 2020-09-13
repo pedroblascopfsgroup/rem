@@ -218,5 +218,30 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 		
 		return HibernateQueryUtils.page(this, hb, dto);
 	}
+	
+	@Override
+	public Page getTrabajosPrefacturas(DtoAlbaranFiltro dto) {
+		HQLBuilder hb = new HQLBuilder(" from VExportTrabajosAlbaranes veta");
+		Albaran alb = genericDao.get(Albaran.class,
+				genericDao.createFilter(FilterType.EQUALS, "numAlbaran", dto.getNumAlbaran()));
+		if(alb == null) {
+			return new PageHibernate(); 
+		}
+		
+		HQLBuilder.addFiltroIgualQue(hb, "veta.numAlbaran", alb.getNumAlbaran());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.fechaAlbaran", dto.getFechaAlbaran());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.estadoAlbaranCodigo", dto.getEstadoAlbaran());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.numPrefactura", dto.getNumPrefactura());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.fechaPrefactura", dto.getFechaPrefactura());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.estadoPrefacturaCodigo", dto.getEstadoPrefactura());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.numTrabajo", dto.getNumTrabajo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.anyoTrabajo", dto.getAnyoTrabajo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.estadoTrabajoCodigo", dto.getEstadoTrabajo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.tipoTrabajoCodigo", dto.getTipologiaTrabajo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.IdProveedor", dto.getProveedor());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.docPropietario", dto.getSolicitante());
+		
+		return HibernateQueryUtils.page(this, hb, dto);
+	}
 
 }

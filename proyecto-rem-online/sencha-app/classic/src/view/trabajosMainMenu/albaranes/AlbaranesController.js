@@ -54,6 +54,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 	
 	// Funcion que se ejecuta al hacer click en el botón limpiar
 	onCleanFiltersClick: function(btn) {
+		this.lookupReference('btnExportarPrefactura').setDisabled(true);
 		//Limpia los grid
 		btn.up("[reference='albaranessearch']").nextSibling().down("[reference='albaranGrid']").getStore().removeAll();
 		btn.up("[reference='albaranessearch']").nextSibling().down("[reference='detalleAlbaranGrid']").getStore().removeAll();
@@ -81,10 +82,12 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		listaTrabajos.data = [];
 		me.data.acumulador = 0;
 		var boton = me.lookupReference('botonValidarAlbaran');
+		var exportarTrabajosPrefacturas = $AU.userHasFunction('EXPORTAR_BUSQUEDA_TRABAJOS_PREFACTURA');
+		if (exportarTrabajosPrefacturas) {
+			this.lookupReference('btnExportarPrefactura').setDisabled(false);
+		}
 		
 		if(!Ext.isEmpty(grid.selection)){
-//			viewModel.set("albaran", record);
-//			viewModel.notify();
 			listaDetalleAlbaran.getStore().getProxy().setExtraParams({
                 numAlbaran: record.data.numAlbaran
             });
@@ -103,7 +106,11 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		var gridAlbaran = this.lookupReference('albaranGrid');
 		var listaDetalleAlbaran = this.lookupReference('detalleAlbaranGrid');
 		var listaTrabajos = this.lookupReference('detallePrefacturaGrid');
-		
+		var exportarTrabajosPrefacturas = $AU.userHasFunction('EXPORTAR_BUSQUEDA_TRABAJOS_PREFACTURA');
+		if (exportarTrabajosPrefacturas) {
+			this.lookupReference('btnExportarPrefactura').setDisabled(true);
+		}
+
 		this.lookupReference('botonValidarAlbaran').setDisabled(true);
 		this.lookupReference('botonValidarPrefactura').setDisabled(true);
 		this.lookupReference('botonValidarTrabajo').setDisabled(true);
@@ -122,12 +129,11 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		var viewModel = me.getViewModel();
 		var gridDetalleAlbaran = this.lookupReference('detalleAlbaranGrid');
 		var listaDetallePrefactura = this.lookupReference('detallePrefacturaGrid');
+    	
 		listaDetallePrefactura.data = [];
 		var boton = this.lookupReference('botonValidarPrefactura');
 		
 		if(!Ext.isEmpty(grid.selection)){
-//			viewModel.set("prefactura", record);
-//			viewModel.notify();
 			listaDetallePrefactura.getStore().getProxy().setExtraParams({
                 numPrefactura: record.data.numPrefactura
             });
@@ -144,6 +150,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		var me = this;
 		var gridDetalle = this.lookupReference('detalleAlbaranGrid');
 		var listaTrabajos = this.lookupReference('detallePrefacturaGrid');
+
 		this.lookupReference('botonValidarPrefactura').setDisabled(true);
 		this.lookupReference('botonValidarTrabajo').setDisabled(true);
 		this.lookupReference('totalPrefactura').setValue(0);
@@ -495,6 +502,42 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		var me = this;
 		record.set('id', record.get('id'));
 		me.getView().fireEvent('abrirDetalleTrabajo', record);
+	},
+	
+	onClickDescargarExcel: function(btn){
+		var me = this;
+
+		var numAlbaran = this.lookupReference('albaranGrid').selection.data.numAlbaran;
+		var numPrefactura = this.lookupReference('detalleAlbaranGrid').selection
+		if (numPrefactura != null) {
+			numPrefactura = numPrefactura.data.numPrefactura;
+		}
+		
+		var searchForm = this.lookupReference('albaranessearch');
+		var url =  $AC.getRemoteUrl('albaran/generateExcelTrabajosPrefactura');
+		
+		var config = {};
+
+		var params = Ext.apply(searchForm ? searchForm.getValues() : {});
+		
+		if (numAlbaran != undefined && params.numAlbaran == "") {
+			params.numAlbaran = numAlbaran;
+		} 
+		
+		if (numPrefactura != undefined && params.numPrefactura == "") {
+			params.numPrefactura = numPrefactura;
+		}
+
+		Ext.Object.each(params, function(key, val) {
+			if (Ext.isEmpty(val)) {
+				delete params[key];
+			}
+		});
+
+		config.params = params;
+		config.url= url;
+		
+		me.fireEvent("downloadFile", config);		
 	}
 	
 });

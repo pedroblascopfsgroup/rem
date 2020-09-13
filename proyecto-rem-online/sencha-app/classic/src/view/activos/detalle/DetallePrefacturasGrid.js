@@ -32,7 +32,7 @@ Ext.define('HreRem.view.activos.detalle.DetallePrefacturasGrid', {
 					dataIndex: 'numTrabajo',
 					reference: 'numTrabajo',
 					flex: 1,
-					text: HreRem.i18n('fieldlabel.albaran.numTrabajos')
+					text: HreRem.i18n('fieldlabel.albaran.numTrabajo')
 				},
 				{
 					dataIndex: 'tipologiaTrabajo',

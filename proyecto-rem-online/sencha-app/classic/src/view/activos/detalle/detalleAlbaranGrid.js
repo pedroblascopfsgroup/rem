@@ -23,7 +23,7 @@ Ext.define('HreRem.view.activos.detalle.detalleAlbaranGrid', {
 					dataIndex: 'numPrefactura',
 					reference: 'numPrefactura',
 					flex: 1,
-					text: HreRem.i18n('fieldlabel.albaran.numPrefacturas')
+					text: HreRem.i18n('fieldlabel.albaran.numPrefactura')
 				},
 				{
 					dataIndex: 'proveedor',

@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesSearch', {
     extend: 'HreRem.view.common.FormBase',
     xtype: 'albaranessearch',
-    isSearchFormTrabajos: true,
+    isSearchFormTrabajosPrefactura: true,
     cls	: 'panel-base shadow-panel',
     collapsible: true,
     collapsed: false,

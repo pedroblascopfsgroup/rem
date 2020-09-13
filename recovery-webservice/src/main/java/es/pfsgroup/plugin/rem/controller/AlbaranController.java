@@ -1,6 +1,10 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import java.io.IOException;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -9,19 +13,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.pagination.Page;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
-import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.albaran.dto.DtoAlbaranFiltro;
 import es.pfsgroup.plugin.rem.api.AlbaranApi;
-import es.pfsgroup.plugin.rem.model.DtoAlbaran;
+import es.pfsgroup.plugin.rem.excel.ExcelReport;
+import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
+import es.pfsgroup.plugin.rem.excel.TrabajosPrefacturaExcelReport;
 import es.pfsgroup.plugin.rem.model.DtoDetalleAlbaran;
 import es.pfsgroup.plugin.rem.model.DtoDetallePrefactura;
-import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.VExportTrabajosAlbaranes;
 import es.pfsgroup.plugin.rem.model.dd.DDEstEstadoPrefactura;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAlbaran;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
@@ -33,6 +37,9 @@ public class AlbaranController extends ParadiseJsonController{
 	
 	@Autowired
 	private AlbaranApi albaranApi;
+	
+	@Autowired
+	private ExcelReportGeneratorApi excelReportGeneratorApi;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -208,6 +215,20 @@ public class AlbaranController extends ParadiseJsonController{
 
 		return createModelAndViewJson(model);
 
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public void generateExcelTrabajosPrefactura(DtoAlbaranFiltro filtros, ModelMap model, HttpServletRequest request, HttpServletResponse response) throws IOException{
+		
+		filtros.setStart(excelReportGeneratorApi.getStart());
+		filtros.setLimit(excelReportGeneratorApi.getLimit());
+
+		List<VExportTrabajosAlbaranes> listaTrabajos = (List<VExportTrabajosAlbaranes>) albaranApi.obtenerDatosExportarTrabajosPrefactura(filtros).getResults();
+
+		ExcelReport report = new TrabajosPrefacturaExcelReport(listaTrabajos);
+
+		excelReportGeneratorApi.generateAndSend(report, response);
 	}
 	
 }

@@ -2859,7 +2859,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				gasto.setGastoDetalleEconomico(gastoDetalleEconomico);
 				gasto.setEstadoGasto(pagado);
 				saveGastosDiariosLbk(gasto.getId());
-				saveGastosDiariosLbk(gasto.getId());
+				saveGastosImportesLbk(gasto.getId());
 			}
 		}else if(!Checks.esNulo(miFechaConta) && Checks.esNulo(miFechaPago)){
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoGasto.CONTABILIZADO);
@@ -2878,7 +2878,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				gasto.setGastoInfoContabilidad(gastoInfoContabilidad);
 				gasto.setEstadoGasto(contabilizado);
 				saveGastosDiariosLbk(gasto.getId());
-				saveGastosDiariosLbk(gasto.getId());
+				saveGastosImportesLbk(gasto.getId());
 			}
 		}else if(Checks.esNulo(miFechaConta) && !Checks.esNulo(miFechaPago)){
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoGasto.PAGADO);
@@ -2890,7 +2890,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				gasto.setGastoDetalleEconomico(gastoDetalleEconomico);
 				gasto.setEstadoGasto(estadoGasto);
 				saveGastosDiariosLbk(gasto.getId());
-				saveGastosDiariosLbk(gasto.getId());
+				saveGastosImportesLbk(gasto.getId());
 			}
 		}
 		

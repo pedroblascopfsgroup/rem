@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200702
+--## FECHA_CREACION=20200712
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-10982
+--## INCIDENCIA_LINK=HREOS-11156
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial
 --##		0.2 Añadimos el booleano validar albarán para saber cuando tenemos posibilidad de hacerlo
 --##		0.3 Cogemos el año del trabajo para poder filtrarlo
+--##		0.4 Añadimos el id del trabajo par facilitar abrirlo desde JS
 --##########################################
 --*/
 
@@ -67,6 +68,7 @@ BEGIN
 		  PVE.PVE_NOMBRE,
 		  PRO.PRO_NOMBRE,
 		  PRO.PRO_DOCIDENTIF,
+		  TBJ.TBJ_ID,
 		  TBJ.TBJ_NUM_TRABAJO,
 		  TO_CHAR(TBJ.TBJ_FECHA_SOLICITUD,''YYYY'') ANYO_TRABAJO,
 		  PFA.PFA_FECHA_PREFACTURA,

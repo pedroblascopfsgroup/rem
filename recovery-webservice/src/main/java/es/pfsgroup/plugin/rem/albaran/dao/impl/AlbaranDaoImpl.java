@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.albaran.dao.impl;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -9,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -24,20 +22,16 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.albaran.dao.AlbaranDao;
 import es.pfsgroup.plugin.rem.albaran.dto.DtoAlbaranFiltro;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.Albaran;
 import es.pfsgroup.plugin.rem.model.DtoAlbaran;
 import es.pfsgroup.plugin.rem.model.DtoDetalleAlbaran;
 import es.pfsgroup.plugin.rem.model.DtoDetallePrefactura;
-import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
-import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.Prefactura;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VbusquedaProveedoresCombo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstEstadoPrefactura;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAlbaran;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 
 @Repository("AlbaranDao")
 public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements AlbaranDao {
@@ -194,12 +188,6 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 	@Override
 	public List<VbusquedaProveedoresCombo> getProveedores() {
 		HQLBuilder hb = new HQLBuilder(" from VbusquedaProveedoresCombo pve");
-//		HQLBuilder hb = new HQLBuilder(
-//				"select distinct pve.id, pve.codigoProveedorRem, pve.tipoProveedorDescripcion, pve.subtipoProveedorDescripcion, pve.nifProveedor, pve.nombreProveedor, pve.nombreComercialProveedor, pve.estadoProveedorDescripcion, pve.observaciones from VBusquedaProveedor pve");
-//		hb.appendWhere("pve.estadoProveedorCodigo = 04 and pve.tipoProveedorCodigo = 03");
-//		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.estadoProveedorCodigo", filtro.getEstadoProveedorCodigo());
-//		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pve.tipoProveedorCodigo", filtro.getTipoProveedorCodigo());
-//		hb.orderBy("pve.nombreProveedor", "asc");
 		
 		List<VbusquedaProveedoresCombo> mediadores = new ArrayList<VbusquedaProveedoresCombo>();
 		mediadores  = getHibernateTemplate().getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
@@ -227,6 +215,31 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 			return new PageHibernate();
 		}
 		HQLBuilder.addFiltroIgualQue(hb, "vtp.prefacturaID", pre.getId());
+		
+		return HibernateQueryUtils.page(this, hb, dto);
+	}
+	
+	@Override
+	public Page getTrabajosPrefacturas(DtoAlbaranFiltro dto) {
+		HQLBuilder hb = new HQLBuilder(" from VExportTrabajosAlbaranes veta");
+		Albaran alb = genericDao.get(Albaran.class,
+				genericDao.createFilter(FilterType.EQUALS, "numAlbaran", dto.getNumAlbaran()));
+		if(alb == null) {
+			return new PageHibernate(); 
+		}
+		
+		HQLBuilder.addFiltroIgualQue(hb, "veta.numAlbaran", alb.getNumAlbaran());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.fechaAlbaran", dto.getFechaAlbaran());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.estadoAlbaranCodigo", dto.getEstadoAlbaran());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.numPrefactura", dto.getNumPrefactura());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.fechaPrefactura", dto.getFechaPrefactura());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.estadoPrefacturaCodigo", dto.getEstadoPrefactura());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.numTrabajo", dto.getNumTrabajo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.anyoTrabajo", dto.getAnyoTrabajo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.estadoTrabajoCodigo", dto.getEstadoTrabajo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.tipoTrabajoCodigo", dto.getTipologiaTrabajo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.IdProveedor", dto.getProveedor());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.docPropietario", dto.getSolicitante());
 		
 		return HibernateQueryUtils.page(this, hb, dto);
 	}

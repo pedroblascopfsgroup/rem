@@ -230,6 +230,9 @@ Ext.define('HreRem.controller.ActivosController', {
     	
     	'gencatcomercialactivo':{
     		abrirDetalleExpedienteOferta: 'abrirDetalleExpedienteOferta'
+    	},
+    	'albaranesMain': {
+    		abrirDetalleTrabajo: 'abrirDetalleTrabajo'
     	}
 
     },

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Pablo Garcia Pallás
---## FECHA_CREACION=20200827
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20200913
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-10987
+--## INCIDENCIA_LINK=HREOS-11154
 --## PRODUCTO=SI
 --## Finalidad: DDL
 --##           
@@ -61,8 +61,12 @@ BEGIN
 		    tbj.tbj_descripcion,
 		    tbj.tbj_fecha_solicitud,
 		    ttr.dd_ttr_descripcion,
+			ttr.dd_ttr_codigo,
 		    est.dd_est_descripcion,
+			est.dd_est_codigo,
 		    str.dd_str_descripcion,
+			str.dd_str_codigo,
+			TO_CHAR(TBJ.TBJ_FECHA_SOLICITUD,''YYYY'') ANYO_TRABAJO,
 			1 CHECK_TBJ
 		from ' || V_ESQUEMA || '.act_tbj_trabajo tbj
 			join ' || V_ESQUEMA || '.dd_ttr_tipo_trabajo ttr on tbj.dd_ttr_id = ttr.dd_ttr_id

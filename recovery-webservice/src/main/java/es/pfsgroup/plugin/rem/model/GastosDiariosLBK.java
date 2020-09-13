@@ -4,14 +4,31 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Version;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Where;
+
+import es.capgemini.pfs.auditoria.Auditable;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 
 
 @Entity
-@Table(name = "V_DIARIOS_CALCULO_LBK", schema = "${entity.schema}")
-public class VDiarioCalculoLbk implements Serializable {
+@Table(name = "GDL_GASTOS_DIARIOS_LIBERBANK", schema = "${entity.schema}")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Where(clause = Auditoria.UNDELETED_RESTICTION)
+@Inheritance(strategy=InheritanceType.JOINED)
+public class GastosDiariosLBK implements Serializable, Auditable {
 
 	/**
 	 * 
@@ -19,8 +36,13 @@ public class VDiarioCalculoLbk implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	@Column(name="GPV_ID")
+	@Column(name = "GDL_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "GastosDiariosGenerator")
+	@SequenceGenerator(name = "GastosDiariosGenerator", sequenceName = "S_GDL_GASTOS_DIARIOS_LIBERBANK")
 	private Long id;
+	
+	@Column(name="GPV_ID")
+	private Long idGastos;
 	
 	@Column(name="DIARIO1")
 	private String diario1;
@@ -45,6 +67,12 @@ public class VDiarioCalculoLbk implements Serializable {
 	
 	@Column(name="DIARIO2_CUOTA")
 	private Double diario2Cuota;
+	
+	@Version   
+	private Long version;
+
+	@Embedded
+	private Auditoria auditoria;
 
 	public Long getId() {
 		return id;
@@ -52,6 +80,14 @@ public class VDiarioCalculoLbk implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getIdGastos() {
+		return idGastos;
+	}
+
+	public void setIdGastos(Long idGastos) {
+		this.idGastos = idGastos;
 	}
 
 	public String getDiario1() {
@@ -117,6 +153,27 @@ public class VDiarioCalculoLbk implements Serializable {
 	public void setDiario2Cuota(Double diario2Cuota) {
 		this.diario2Cuota = diario2Cuota;
 	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
+	}
+	
+	@Override
+	public Auditoria getAuditoria() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setAuditoria(Auditoria arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 	
 }

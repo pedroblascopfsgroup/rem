@@ -29,11 +29,11 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	private String contabilizadoPorDescripcion;
 	private Long idSubpartidaPresupuestaria;
 	private String comboActivable;
-	private Long diario1;
+	private String diario1;
 	private Double diario1Base;
 	private Double diario1Tipo;
 	private Double diario1Cuota;
-	private Long diario2;
+	private String diario2;
 	private Double diario2Base;
 	private Double diario2Tipo;
 	private Double diario2Cuota;
@@ -96,10 +96,10 @@ public class DtoInfoContabilidadGasto extends WebDto {
 		this.comboActivable = comboActivable;
 	}
 	
-	public Long getDiario1() {
+	public String getDiario1() {
 		return diario1;
 	}
-	public void setDiario1(Long diario1) {
+	public void setDiario1(String diario1) {
 		this.diario1 = diario1;
 	}
 
@@ -121,10 +121,10 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	public void setDiario1Cuota(Double diario1Cuota) {
 		this.diario1Cuota = diario1Cuota;
 	}
-	public Long getDiario2() {
+	public String getDiario2() {
 		return diario2;
 	}
-	public void setDiario2(Long diario2) {
+	public void setDiario2(String diario2) {
 		this.diario2 = diario2;
 	}
 	public Double getDiario2Base() {

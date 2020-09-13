@@ -16,6 +16,8 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
+import es.pfsgroup.plugin.rem.gastoProveedor.GastoProveedorManager;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
@@ -28,6 +30,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoProvisionGastos;
 
 @Service("updaterStateGastoManager")
 public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
+
+	@Autowired
+	private GastoProveedorApi gastoProveedorApi;
 
 	
 	@Autowired
@@ -368,6 +373,10 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
 			DDEstadoGasto estadoGasto = genericDao.get(DDEstadoGasto.class, filtro);
 			gasto.setEstadoGasto(estadoGasto);
+			if(gastoProveedorApi.isEstadosGastosLiberbankParaLecturaDirectaDeTabla(gasto))  {
+				gastoProveedorApi.saveGastosDiariosLbk(gasto.getId());
+				gastoProveedorApi.saveGastosImportesLbk(gasto.getId());	
+			}
 			return true;
 		}
 		

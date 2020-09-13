@@ -123,6 +123,7 @@ import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistorificadorPestanas;
+import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
@@ -139,6 +140,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresupuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDPestanas;
@@ -2299,8 +2301,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setIdProveedor(trabajo.getProveedorContacto().getProveedor().getId());
 		}
 		if(!Checks.esNulo(trabajo.getGastoTrabajo())) {
-			dtoTrabajo.setGastoProveedor(trabajo.getGastoTrabajo().getGastoProveedor().getNumGastoHaya());
-			dtoTrabajo.setEstadoGasto(trabajo.getGastoTrabajo().getGastoProveedor().getEstadoGasto().getCodigo());
+			GastoProveedor gasto = trabajo.getGastoTrabajo().getGastoProveedor();
+			dtoTrabajo.setGastoProveedor(gasto.getNumGastoHaya());
+			dtoTrabajo.setEstadoGasto(gasto.getEstadoGasto().getCodigo());
+			if(gastoProveedorApi.isEstadosGastosLiberbankParaLecturaDirectaDeTabla(gasto)) {
+				gastoProveedorApi.saveGastosDiariosLbk(gasto.getId());
+				gastoProveedorApi.saveGastosImportesLbk(gasto.getId());
+			}
+			
 		}
 
 		if (trabajo.getTipoTrabajo() != null) {

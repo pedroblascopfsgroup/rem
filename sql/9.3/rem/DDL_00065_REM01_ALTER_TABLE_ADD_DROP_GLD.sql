@@ -1,13 +1,13 @@
 --/*
 --######################################### 
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200724
+--## AUTOR=DAP
+--## FECHA_CREACION=20200914
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10574
 --## PRODUCTO=NO
 --## 
---## Finalidad: Añadir constraints a tabla de cuentas contables y partidas presupuestarias.
+--## Finalidad: Migración modelo antiguo a nuevo en administración.
 --##            
 --## INSTRUCCIONES:  
 --## VERSIONES:
@@ -28,6 +28,7 @@ DECLARE
   V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- #ESQUEMA_MASTER# Configuracion Esquema Master
   V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
   V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.    
+  V_TABLA VARCHAR2(30 CHAR); -- Vble. nombre tabla auxiliar.
   ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
   ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
@@ -115,7 +116,7 @@ BEGIN
 	                            LEFT JOIN '||V_ESQUEMA||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV.GPV_ID AND GLD.BORRADO = 0
 	                            WHERE GPV.BORRADO = 0 AND GLD.GLD_ID IS NULL';
 	                EXECUTE IMMEDIATE V_MSQL;
-	                DBMS_OUTPUT.PUT_LINE('	[INFO] Tabla GLD_GASTOS_LINEA_DETALLE informada.');
+	                DBMS_OUTPUT.PUT_LINE('	[INFO] Tabla GLD_GASTOS_LINEA_DETALLE informada con '||SQL%ROWCOUNT||' registros.');
 	            ELSE
 	            	DBMS_OUTPUT.PUT_LINE('	[INFO] Tabla GLD_GASTOS_LINEA_DETALLE rellena previamente.');
 	            END IF;
@@ -133,6 +134,17 @@ BEGIN
 	            EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 	            IF V_NUM_TABLAS = 0 THEN
+
+                    V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = ''GPV_ACT''';
+                    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+                    V_TABLA := NULL;
+
+                    IF V_NUM_TABLAS = 1 THEN
+                        V_TABLA := 'GPV_ACT';
+                    ELSE
+                        V_TABLA := 'GPV_ACT_BACKUP';
+                    END IF;
+
 	                V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.GLD_ENT (GLD_ENT_ID, GLD_ID, DD_ENT_ID, ENT_ID, GLD_PARTICIPACION_GASTO, GLD_REFERENCIA_CATASTRAL, USUARIOCREAR, FECHACREAR)
 	                            SELECT '||V_ESQUEMA||'.S_GLD_ENT.NEXTVAL GLD_ENT, GLD_ID, DD_ENT_ID, ACT_ID, GPV_PARTICIPACION_GASTO, GPV_REFERENCIA_CATASTRAL, ''HREOS-10574'', CURRENT_TIMESTAMP(6)
 	                            FROM 
@@ -140,7 +152,7 @@ BEGIN
 	                                SELECT GLD.GLD_ID, DD_ENT.DD_ENT_ID, GPV_ACT.ACT_ID, GLD.BORRADO, GPV_ACT.GPV_PARTICIPACION_GASTO
 	                                    , GPV_ACT.GPV_REFERENCIA_CATASTRAL
 	                                    , ROW_NUMBER() OVER(PARTITION BY GLD.GLD_ID, GPV_ACT.ACT_ID ORDER BY GPV_ACT.GPV_REFERENCIA_CATASTRAL NULLS LAST) RN
-	                                FROM '||V_ESQUEMA||'.GPV_ACT
+	                                FROM '||V_ESQUEMA||'.'||V_TABLA||' GPV_ACT
 	                                JOIN '||V_ESQUEMA||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV_ACT.GPV_ID AND GLD.BORRADO = 0
 	                                JOIN '||V_ESQUEMA||'.DD_ENT_ENTIDAD_GASTO DD_ENT ON DD_ENT.DD_ENT_CODIGO = ''ACT''
 	                                LEFT JOIN '||V_ESQUEMA||'.GLD_ENT ON GLD_ENT.GLD_ID = GLD.GLD_ID AND GLD_ENT.ENT_ID = GPV_ACT.ACT_ID
@@ -148,7 +160,7 @@ BEGIN
 	                            )
 	                            WHERE RN = 1';
 	                EXECUTE IMMEDIATE V_MSQL;
-	            	DBMS_OUTPUT.PUT_LINE('	[INFO] Tabla GLD_ENT informada.');
+	            	DBMS_OUTPUT.PUT_LINE('	[INFO] Tabla GLD_ENT informada con '||SQL%ROWCOUNT||' registros.');
 	            ELSE
 	            	DBMS_OUTPUT.PUT_LINE('	[INFO] Tabla GLD_ENT rellena previamente.');
 	            END IF;
@@ -166,6 +178,17 @@ BEGIN
 	            EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
 	            IF V_NUM_TABLAS = 0 THEN
+
+                    V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = ''GPV_TBJ''';
+                    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+                    V_TABLA := NULL;
+
+                    IF V_NUM_TABLAS = 1 THEN
+                        V_TABLA := 'GPV_TBJ';
+                    ELSE
+                        V_TABLA := 'GPV_TBJ_BACKUP';
+                    END IF;
+
 	                V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.GLD_TBJ (GLD_TBJ_ID, GLD_ID, TBJ_ID, DD_TEG_ID, USUARIOCREAR, FECHACREAR)
 	                            SELECT '||V_ESQUEMA||'.S_GLD_TBJ.NEXTVAL GLD_TBJ_ID, GLD_ID, TBJ_ID, DD_TEG_ID, ''HREOS-10574'', CURRENT_TIMESTAMP(6)
 	                            FROM (
@@ -174,7 +197,7 @@ BEGIN
 	                                        THEN DD_TEG_.DD_TEG_ID
 	                                        ELSE DD_TEG.DD_TEG_ID
 	                                        END DD_TEG_ID
-	                                FROM '||V_ESQUEMA||'.GPV_TBJ
+	                                FROM '||V_ESQUEMA||'.'||V_TABLA||' GPV_TBJ
 	                                JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GPV_TBJ.GPV_ID AND GPV.BORRADO = 0
 	                                JOIN '||V_ESQUEMA||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV_TBJ.GPV_ID AND GLD.BORRADO = 0
 	                                JOIN '||V_ESQUEMA||'.DD_TEG_TIPO_EMISOR_GLD DD_TEG ON DD_TEG.DD_TEG_CODIGO = ''HAY''
@@ -187,7 +210,7 @@ BEGIN
 	                            )
 	                            WHERE RN = 1';
 	                EXECUTE IMMEDIATE V_MSQL;
-	            	DBMS_OUTPUT.PUT_LINE('	[INFO] Tabla GLD_TBJ informada.');
+	            	DBMS_OUTPUT.PUT_LINE('	[INFO] Tabla GLD_TBJ informada con '||SQL%ROWCOUNT||' registros.');
 	            ELSE
 	            	DBMS_OUTPUT.PUT_LINE('	[INFO] Tabla GLD_TBJ rellena previamente.');
 	            END IF;

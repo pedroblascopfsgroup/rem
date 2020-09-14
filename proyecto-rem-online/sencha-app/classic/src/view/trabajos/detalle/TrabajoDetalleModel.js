@@ -520,7 +520,16 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 			        type: 'uxproxy',
 			        remoteUrl: 'trabajo/getHistoricoDeCampos'		        	 
 		    	}    			
-    		}
+    		},
+    		comboEstadoTrabajo: {    		
+    			model: 'HreRem.model.ComboBase',
+    			proxy: {
+    				type: 'uxproxy',
+    				remoteUrl: 'generic/getDiccionario',
+    				extraParams: {diccionario: 'estadoTrabajo'}
+    			},
+    			autoLoad: true
+        	}
     }
 
 });

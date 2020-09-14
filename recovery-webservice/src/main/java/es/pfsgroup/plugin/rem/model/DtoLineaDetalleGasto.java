@@ -45,6 +45,8 @@ public class DtoLineaDetalleGasto extends WebDto {
 	 private Double tipoImpositivo;  
 
 	 private Double cuota;  
+	 
+	 private Boolean optaCriterio;
 
 	 private Double importeTotal;  
 
@@ -91,6 +93,10 @@ public class DtoLineaDetalleGasto extends WebDto {
 	 private String apartadoIntereses;
 	 
 	 private String capituloIntereses;
+	 
+	 private String subPartidas;
+	 
+	 private Boolean tieneCuentaContable;
 	 
 
 	public Long getId() {
@@ -219,6 +225,14 @@ public class DtoLineaDetalleGasto extends WebDto {
 
 	public void setCuota(Double cuota) {
 		this.cuota = cuota;
+	}
+
+	public Boolean getOptaCriterio() {
+		return optaCriterio;
+	}
+
+	public void setOptaCriterio(Boolean optaCriterio) {
+		this.optaCriterio = optaCriterio;
 	}
 
 	public Double getImporteTotal() {
@@ -404,7 +418,21 @@ public class DtoLineaDetalleGasto extends WebDto {
 	public void setCapituloIntereses(String capituloIntereses) {
 		this.capituloIntereses = capituloIntereses;
 	}
-	 
-	
+
+	public String getSubPartidas() {
+		return subPartidas;
+	}
+
+	public void setSubPartidas(String subPartidas) {
+		this.subPartidas = subPartidas;
+	}
+
+	public Boolean getTieneCuentaContable() {
+		return tieneCuentaContable;
+	}
+
+	public void setTieneCuentaContable(Boolean tieneCuentaContable) {
+		this.tieneCuentaContable = tieneCuentaContable;
+	}
    	
 }

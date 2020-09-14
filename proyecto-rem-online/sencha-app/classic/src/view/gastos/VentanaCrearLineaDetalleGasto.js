@@ -17,9 +17,15 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
     	var me = this;
     	var idGasto = null;
     	var cartera = me.up("gastodetallemain").viewModel.data.detalleeconomico.data.cartera != "08";
+        var subCartera = me.lookupController().getViewModel().getData().gasto.getData().subcartera;
+        var isSubcarteraCerberus = false;
+        if (CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subCartera || CONST.SUBCARTERA['DIVARIANREMAINING'] == subCartera || CONST.SUBCARTERA['DIVARIANARROW'] == subCartera){
+        	isSubcarteraCerberus = true;
+        }
     	var	idLineaDetalleGasto = null;
     	var deshabilitarRecargo = true;
     	var disabledSinSubtipoGasto = true;
+    	var deshabilitaSubpartida = true;
     	var estadoParaGuardar = me.lookupController().getView().getViewModel().getData().gasto.getData().estadoModificarLineasDetalleGasto;
     	var isGastoRefacturado = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPorOtroGasto;
     	var isGastoRefacturadoPadre = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPadre;
@@ -34,7 +40,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
     	ppInteres = null,			subcuentaBase=null,		apartadoBase=null,			capituloBase=null,
     	subcuentaRecargo= null,		apartadoRecargo=null,	capituloRecargo=null,		subcuentaTasa=null,
     	apartadoTasa=null,			capituloTasa=null,		subcuentaIntereses=null,	apartadoIntereses=null,
-    	capituloIntereses=null;
+    	capituloIntereses=null,		optaCriterio=null,		subPartidas=null,           tieneCuentaContable=null;
     	
 	   
     	if(!Ext.isEmpty(me.idLineaDetalleGasto)){
@@ -54,7 +60,8 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
             	capituloBase = data.capituloBase;		subcuentaRecargo= data.subcuentaRecargo;		apartadoRecargo=data.apartadoRecargo;
             	capituloRecargo= data.capituloRecargo;	subcuentaTasa=data.subcuentaTasa;				apartadoTasa=data.apartadoTasa;
             	capituloTasa = data.capituloTasa;		subcuentaIntereses = data.subcuentaIntereses;	apartadoIntereses=data.apartadoIntereses;
-            	capituloIntereses = data.capituloIntereses;
+            	capituloIntereses = data.capituloIntereses; optaCriterio=data.optaCriterio;				subPartidas=data.subPartidas;
+            	tieneCuentaContable = data.tieneCuentaContable;
 
             	if(recargo == null || recargo == undefined || parseFloat(recargo) == 0){
             		tipoRecargo = null;
@@ -68,6 +75,9 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
             		disabledCuotaTipoImpositivo = false
             	}else{
             		disabledCuotaTipoImpositivo = true;
+            	}
+            	if(tieneCuentaContable=="true" && isSubcarteraCerberus){
+            		deshabilitaSubpartida = false;
             	}
             		
         	}
@@ -403,8 +413,23 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 								    				renderer: function(value) {
 										        		return Ext.util.Format.currency(value);
 										        	}
+								    			},
+								    			{
+								    				xtype: "combobox",
+								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.optaPorCriterio'),
+								    				reference: 'optaCriterio',
+								    				name: 'optaCriterio',
+								    				value: optaCriterio,
+								    				allowBlank: true,		    			
+								    				colspan: 3,
+								    				displayField: 'descripcion',
+													valueField: 'codigo',
+								    				bind: {
+								    					store: '{comboSiNoGastoBoolean}'
+								    				}
 								    				
 								    			}
+								    			
 					    					]
 						    			},
 						    			//Columna 3
@@ -446,6 +471,23 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 								    				
 								    				
 								    			},
+												{ 
+													xtype: 'combobox',
+													fieldLabel: HreRem.i18n('fieldlabel.gasto.contabilidad.subpartidas'),
+													reference: 'subPartidas',
+													name: 'subPartidas',
+													value: subPartidas,
+													bind: {
+														store: '{storeSubpartidas}'
+													},
+								    				displayField: 'descripcion',
+													valueField: 'partidaPresupuestaria',
+													hidden : deshabilitaSubpartida,
+								    				listeners: {
+				    									change: 'onChangeSubpartida'
+				    								}
+                                                    						
+												},
 								    			{
 								    				xtype: "textfield",
 								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.ccEsp'),
@@ -681,6 +723,10 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
     		comboSiNoGastoBoolean = me.down('[reference="crearLineaDetalleGastoForm"]').getForm().findField('esRenunciaExenta');
     		comboSiNoGastoBoolean.getStore().load();
     		comboSiNoGastoBoolean.setValue(esRenunciaExenta);
+    		
+    		var comboSubPartidas= me.down('[reference="crearLineaDetalleGastoForm"]').getForm().findField('subPartidas');
+    		comboSubPartidas.getStore().load();
+    		comboSubPartidas.setValue(subPartidas);
 	
     	}
     	

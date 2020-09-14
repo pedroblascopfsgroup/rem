@@ -36,14 +36,26 @@ public class VbusquedaTrabajosPrefactura implements Serializable{
 	@Column(name = "tbj_fecha_solicitud")
 	private Date fechaAlta; 
 	
+	@Column(name = "ANYO_TRABAJO")
+	private String anyoTrabajo;
+	
 	@Column(name = "dd_ttr_descripcion")
 	private String tipologiaTrabajo;
+	
+	@Column(name = "dd_ttr_codigo")
+	private String tipologiaTrabajoCodigo;
 	
 	@Column(name = "dd_str_descripcion")
 	private String subtipologiaTrabajo;
 	
+	@Column(name = "dd_str_codigo")
+	private String subtipologiaTrabajoCodigo;
+	
 	@Column(name = "dd_est_descripcion")
 	private String estadoTrabajo;
+	
+	@Column(name = "dd_est_codigo")
+	private String estadoTrabajoCodigo;
 	
 	@Column(name = "CHECK_TBJ")
 	private Boolean checkIncluirTrabajo;
@@ -95,6 +107,14 @@ public class VbusquedaTrabajosPrefactura implements Serializable{
 	public void setFechaAlta(Date fechaAlta) {
 		this.fechaAlta = fechaAlta;
 	}
+	
+	public String getAnyoTrabajo() {
+		return anyoTrabajo;
+	}
+
+	public void setAnyoTrabajo(String anyoTrabajo) {
+		this.anyoTrabajo = anyoTrabajo;
+	}
 
 	public String getTipologiaTrabajo() {
 		return tipologiaTrabajo;
@@ -135,6 +155,29 @@ public class VbusquedaTrabajosPrefactura implements Serializable{
 	public void setCheckIncluirTrabajo(Boolean checkIncluirTrabajo) {
 		this.checkIncluirTrabajo = checkIncluirTrabajo;
 	}
-	
+
+	public String getTipologiaTrabajoCodigo() {
+		return tipologiaTrabajoCodigo;
+	}
+
+	public void setTipologiaTrabajoCodigo(String tipologiaTrabajoCodigo) {
+		this.tipologiaTrabajoCodigo = tipologiaTrabajoCodigo;
+	}
+
+	public String getSubtipologiaTrabajoCodigo() {
+		return subtipologiaTrabajoCodigo;
+	}
+
+	public void setSubtipologiaTrabajoCodigo(String subtipologiaTrabajoCodigo) {
+		this.subtipologiaTrabajoCodigo = subtipologiaTrabajoCodigo;
+	}
+
+	public String getEstadoTrabajoCodigo() {
+		return estadoTrabajoCodigo;
+	}
+
+	public void setEstadoTrabajoCodigo(String estadoTrabajoCodigo) {
+		this.estadoTrabajoCodigo = estadoTrabajoCodigo;
+	}	
 	
 }

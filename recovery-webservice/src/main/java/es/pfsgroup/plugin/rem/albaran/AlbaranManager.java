@@ -143,5 +143,10 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 		
 		return lista;
 	}
+	
+	@Override
+	public Page obtenerDatosExportarTrabajosPrefactura(DtoAlbaranFiltro dto) {
+		return albaranDao.getTrabajosPrefacturas(dto);
+	}
 
 }

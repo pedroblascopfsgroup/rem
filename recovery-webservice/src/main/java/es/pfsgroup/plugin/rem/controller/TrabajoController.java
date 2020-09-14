@@ -1842,6 +1842,13 @@ public class TrabajoController extends ParadiseJsonController {
 		
 		return new ModelAndView("jsonView", model);
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboAprobacionComite(WebDto webDto, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, trabajoApi.getComboAprobacionComite());
+
+		return new ModelAndView("jsonView", model);
+	}
 
 
 	@SuppressWarnings("unchecked")

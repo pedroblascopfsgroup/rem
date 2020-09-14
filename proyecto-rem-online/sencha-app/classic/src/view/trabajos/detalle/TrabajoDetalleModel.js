@@ -4,7 +4,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.ActivoTrabajo', 'HreRem.model.ActivoTrabajoSubida',
     'HreRem.model.AdjuntoTrabajo', 'HreRem.model.TareaList', 'HreRem.model.ObservacionesTrabajo', 'HreRem.model.Llaves', 'HreRem.model.FichaTrabajo',
-    'HreRem.model.HistoricoDeCamposModel'],
+    'HreRem.model.HistoricoDeCamposModel','HreRem.model.TarifasGridModel'],
     
     data: {
     	trabajo: null
@@ -125,6 +125,11 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 			 else 
 				 return false;
 		},
+		
+	 	mostrarVentanaTrabajoGridActivo: function(get){
+	 		var resultado = me.getView().idActivo == null ? true : false;
+	 		return resultado;
+	 	},
 		
 		esVisibleGasto: function(get){
 	    		me = this;
@@ -520,6 +525,37 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 			        type: 'uxproxy',
 			        remoteUrl: 'trabajo/getHistoricoDeCampos'		        	 
 		    	}    			
+    		},
+    		comboEstadoTrabajo: {    		
+    			model: 'HreRem.model.ComboBase',
+    			proxy: {
+    				type: 'uxproxy',
+    				remoteUrl: 'generic/getDiccionario',
+    				extraParams: {diccionario: 'estadoTrabajo'}
+    			},
+    			autoLoad: true
+        	},
+    		comboApiPrimario: {
+    			model: 'HreRem.model.ComboBase',
+    			proxy: {
+    				type: 'uxproxy',
+    				remoteUrl: 'albaran/getProveedores'
+    			},
+    		    displayField: 'descripcion',
+    			valueField: 'id'				
+    		},
+    		comboAprobacionComite: {    		
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboAprobacionComite'
+				}
+    		},
+    		comboGridTarifa: {    		
+				model: 'HreRem.model.TarifasGridModel',
+				proxy: {
+					type: 'uxproxy'
+				}
     		}
     }
 

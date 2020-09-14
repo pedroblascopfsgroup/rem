@@ -299,8 +299,73 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	
 	//Este método habrá que codificarlo en la parte de la funcionalidad
 	onClickBotonCrearPeticionTrabajo: function(btn){
+		var me = this;
+		var storeListaActivosTrabajo = null;
+		var activo= null;
+		var arraySelection;
+		if(!Ext.isEmpty(me.getView().idActivo)){
+			activo = btn.lookupViewModel().getView().idActivo;
+		}else{
+			storeListaActivosTrabajo = me.lookupReference('listaActivosSubidaRef').getStore();
+		}
+		//Casuistica de lista de activos por Excel
+		if(!Ext.isEmpty(storeListaActivosTrabajo) && storeListaActivosTrabajo.data.length > 0){
+			var actuacionTecnica = (me.lookupReference('tipoTrabajo').getValue() == CONST.TIPOS_TRABAJO.ACTUACION_TECNICA ? true : false);
+			var propietario = storeListaActivosTrabajo.data.items[0].data.propietarioId;
+			for (var i=0; i < storeListaActivosTrabajo.data.length; i++){
+				var propietarioAux = storeListaActivosTrabajo.data.items[i].data.propietarioId;
+				if(propietarioAux != propietario 
+						//Preguntar
+//						&& me.lookupReference('checkEnglobaTodosActivosRef').checked != false
+				){
+					Ext.MessageBox.alert(
+							HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),
+							HreRem.i18n("msgbox.multiples.trabajos.seleccionado.diferente.propietario.mensaje")
+					);
+					return false;
+				}
+				if (storeListaActivosTrabajo.data.items[i].data.tienePerimetroGestion != "1"){
+					Ext.MessageBox.alert(
+							HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),
+							HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.mensaje.todos")
+					);
+					return false;
+		        }
+				//No existe codPromo, por tanto jamas sera diferente de vacio, por tanto esta logica queda descartada. 
+				//Preguntar de todas formas
+				
+//				if (actuacionTecnica /*&& !Ext.isEmpty(codPromo)*/){
+//					if (storeListaActivosTrabajo.data.items[i].data.codigoCartera == CONST.CARTERA.LIBERBANK) {
+//						if (!Ext.isEmpty(codPromo) && storeListaActivosTrabajo.data.items[i].data.codigoPromocionPrinex != codPromo){
+//							Ext.MessageBox.alert(
+//									HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),
+//									HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinCodPromo.mensaje.todos")
+//							);
+//							return false;
+//				        }
+//					} else {
+//						Ext.MessageBox.alert(
+//								HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),
+//								HreRem.i18n("msgbox.multiples.trabajos.seleccionado.todosCarteraLiberbank.mensaje.todos")
+//						);
+//						return false;
+//					}
+//				}
+				arraySelection.push(storeListaActivosTrabajo.data.items[i].data.idActivo);
+			}
+		}
 		
-		
+		//
+		Ext.MessageBox.confirm(
+				HreRem.i18n("msgbox.multiples.trabajos.title"),
+				HreRem.i18n("msgbox.multiples.trabajos.seleccionados.check.mensaje"),
+				function(result) {
+		        	if(result === 'yes'){
+		        		me.crearTrabajo(btn,arraySelection,null);
+		        	}
+		    	}
+		);
+
 	},
 	
 	// Este método es llamado cuando se pulsa el botón de 'crear' en la ventana pop-up
@@ -413,7 +478,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	hideWindowCrearPeticionTrabajo: function(btn) {
     	var me = this;
     	//me.getView().down("[reference=activosagrupaciontrabajo]").deselectAll();
-    	btn.up('window').hide();   	
+    	btn.up('window').cerrar();
     },
 	
 	hideWindowPeticionTrabajo: function(btn) {
@@ -822,6 +887,15 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	
     },
     
+    onSelectedTarifaReturnGridVentana: function(grid,record){
+    	var me = this;
+    	ventanaCrearTarifa = grid.lookupViewModel().getView();
+    	ventanaCrearTrabajo = ventanaCrearTarifa.up();
+    	gridTarifas = ventanaCrearTrabajo.lookupReference('gridListaTarifas');
+    	gridTarifas.getStore().add(record);
+    	ventanaCrearTarifa.closeWindow();
+    },
+    
     onPresupuestosListDobleClick: function(grid, record) {
     	var me = this,
     	parent = grid.up("gestioneconomicatrabajo"),    	
@@ -1131,5 +1205,47 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		storeHistorificacionDeCampos.getProxy().setExtraParams(
 			{'idTrabajo':grid.idTrabajo,'codPestanya':grid.codigoPestanya});
 		
+ 	},
+ 	
+ 	onVentanaTarifasChainedCombos: function(combo){
+ 		var me = this,
+    	chainedCombo = me.lookupReference(combo.chainedReference);    	
+    	me.getViewModel().notify();
+		chainedCombo.clearValue("");
+		chainedCombo.getStore().load({ 			
+			callback: function(records, operation, success) {
+   				if(records.length > 0) {
+   					chainedCombo.setDisabled(false);
+   				} else {
+   					chainedCombo.setDisabled(true);
+   				}
+			}
+		});
+ 	},
+ 	
+ 	onCheckChangeMultiActivo: function(columna,rowIndex,checked,record){
+ 		var me = this;
+ 		if(checked){
+ 			me.lookupReference('fieldSetSubirFichero').setHidden(true);
+ 		}else{
+ 			me.lookupReference('fieldSetSubirFichero').setHidden(false);
+ 		}
+ 	},
+ 	
+ 	onCheckChangeAplicaComite: function(columna,rowIndex,checked,record){
+ 		var me = this;
+ 		if(!checked){
+ 			me.lookupReference('comboResolucionComite').setDisabled(false);
+ 	 		me.lookupReference('fechaResolComite').setDisabled(false);
+ 	 		me.lookupReference('resolComiteId').setDisabled(false);
+ 		}else{
+ 			me.lookupReference('comboResolucionComite').setDisabled(true);
+ 	 		me.lookupReference('fechaResolComite').setDisabled(true);
+ 	 		me.lookupReference('resolComiteId').setDisabled(true);
+ 	 		me.lookupReference('resolComiteId').setValue(null);
+ 	 		me.lookupReference('fechaResolComite').setValue(null);
+ 	 		me.lookupReference('comboResolucionComite').setValue(null);
+ 		}
  	}
+ 	
 });

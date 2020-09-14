@@ -21,88 +21,48 @@ Ext.define('HreRem.model.FichaTrabajo', {
     			name:'numTrabajo'
     		},
     		{
-    			name: 'nombreProveedor'
+    			name: 'descripcionGeneral'
     		},
     		{
-    			name: 'tipoTrabajoCodigo'
+    			name: 'gestorActivoCodigo'
     		},
     		{
-    			name: 'tipoTrabajoDescripcion'
+    			name: 'numAlbaran'
     		},
     		{
-    			name: 'subtipoTrabajoCodigo'
+    			name: 'numGasto'
     		},
     		{
-    			name: 'subtipoTrabajoDescripcion'
+    			name: 'estadoGastoCodigo'
     		},
     		{
-    			name: 'estadoCodigo'
-    		},
-    		{
-    			name: 'estadoDescripcion'
-    		},
-    		{
-    			name: 'descripcion'
-    		},
-    		{
-    			name: 'fechaSolicitud',
-    			type:'date',
-    			dateFormat: 'c'
-    		},
-    		{
-    			name: 'fechaAprobacion',
-    			type:'date',
-    			dateFormat: 'c'		
-    		},
-    		{
-    			name: 'fechaRechazo',
-    			type:'date',
-    			dateFormat: 'c'   			
-    		},
-    		{
-    			name: 'fechaInicio',
-    			type:'date',
-    			dateFormat: 'c'
-    		},
-    		{
-    			name: 'fechaFin',
-    			type:'date',
-    			dateFormat: 'c'
-    		},
-    		{
-    			name: 'fechaEjecucionReal',
-    			type:'date',
-    			dateFormat: 'c'
-    		},
-    		{
-    			name: 'continuoObservaciones'
-    		},
-    		{
-    			name: 'cubreSeguro'
+    			name: 'cubiertoSeguro'
     		},
     		{
     			name: 'ciaAseguradora'
     		},
     		{
-    			name: 'idGestorActivoResponsable'
+    			name: 'importePrecio'
     		},
     		{
-    			name: 'gestorActivoResponsable'
+    			name: 'urgente'
     		},
     		{
-    			name: 'idSupervisorActivo'
+    			name: 'riesgosTerceros'
     		},
     		{
-    			name: 'supervisorActivo'
+    			name: 'aplicaComite'
     		},
     		{
-    			name: 'idSupervisorAlquileres'
+    			name: 'resolucionComiteCodigo'
     		},
     		{
-    			name: 'idSupervisorSuelos'
+    			name: 'fechaResolucionComite',
+    			type:'date',
+    			dateFormat: 'c'
     		},
     		{
-    			name: 'idSupervisorEdificaciones'
+    			name: 'resolucionComiteId'
     		},
     		{
     			name: 'fechaConcreta',
@@ -110,7 +70,7 @@ Ext.define('HreRem.model.FichaTrabajo', {
     			dateFormat: 'c'
     		},
     		{
-    			name: 'horaConcreta',
+    			name: 'fechaConcretaHora',
     			type:'date',
     			dateFormat: 'c'
     		},
@@ -120,179 +80,33 @@ Ext.define('HreRem.model.FichaTrabajo', {
     			dateFormat: 'c'
     		},
     		{
-    			name: 'fechaCierreEconomico',
+    			name: 'estadoTrabajoCodigo'
+    		},
+    		{
+    			name: 'fechaEjecucionTrabajo',
     			type:'date',
     			dateFormat: 'c'
     		},
     		{
-    			name: 'fechaValidacion',
-    			type:'date',
-    			dateFormat: 'c'
+    			name: 'tarifaPlana'
     		},
     		{
-    			name: 'fechaPago',
-    			type:'date',
-    			dateFormat: 'c'
+    			name: 'riesgoSiniestro'
     		},
     		{
-    			name: 'fechaEleccionProveedor',
-    			type:'date',
-    			dateFormat: 'c'
-    		}, 
-    		{
-    			name: 'bloquearResponsable',
-    			type: 'boolean'
+    			name: 'proovedorCodigo'
     		},
     		{
-    			name: 'urgente'
+    			name: 'fechaEjecucionTrabajo'
     		},
     		{
-    			name: 'riesgoInminenteTerceros'
+    			name: 'receptorCodigo'
     		},
     		{
-    			name: 'motivoRechazo'
+    			name: 'llavesNoAplica'
     		},
     		{
-    			name: 'tipoCalidadCodigo'	
-    		},
-    		{
-    			name: 'terceroNombre'
-    		},
-    		{
-    			name: 'terceroEmail'
-    		},
-    		{    			
-    			name: 'terceroDireccion'
-    		},
-    		{
-    			name: 'terceroContacto'
-    		},
-    		{
-    			name: 'terceroTel1'
-    		},
-    		{
-    			name: 'terceroTel1'
-    		},
-    		{
-    			name: 'gastoProveedor'
-    		},
-    		{
-    			name: 'estadoGasto'
-    		},
-    		{
-    			name: 'esSolicitudConjunta',
-    			convert: function(value) {
-    				if(Ext.isEmpty(value))return false;
-    				return value;
-    			}
-    		},
-    		{
-    			name: 'checkFechaConcreta',
-    			calculate: function(data) {
-    				return !Ext.isEmpty(data.fechaConcreta);
-    			}
-    		},
-    		{
-    			name: 'checkFechaTope'
-    		},
-    		{
-    			name: 'checkFechaContinuado',
-    			calculate: function(data) {
-    				return !Ext.isEmpty(data.fechaInicio);
-    			}
-    			
-    		},
-    		{
-    			name: 'checkRequeridoTercero',
-    			calculate: function(data) {
-    				return !Ext.isEmpty(data.terceroNombre);
-    			}
-    			
-    		},
-    		{
-    			name: 'nombreMediador'
-    		},
-    		{
-    			name: 'idProceso'
-    		},
-    		{
-    			name: 'fechaEmisionFactura',
-    			type:'date',
-    			dateFormat: 'c'
-    		},
-    		{
-    			name: 'esTarifaPlana'
-    		},
-    		{
-    			name: 'fechaAutorizacionPropietario',
-    			type:'date',
-        		dateFormat: 'c'
-    		},
-    		{
-    			name: 'cartera'
-    		},
-    		{
-    			name: 'codCartera'
-    		},
-    		{
-    			name: 'requerimiento',
-    			type: 'boolean'
-    		},
-    		{
-    			name: 'esSareb',
-    			calculate: function(data) {
-    				 return data.codCartera == CONST.CARTERA['SAREB'];
-    			}
-    			
-    		},
-    		{
-    			name: 'logadoGestorMantenimiento',
-    			type: 'boolean'
-    		},
-    		{
-    			name: 'codSubcartera'
-    		},
-    		{
-    			name:'perteneceDNDtipoEdificacion',
-    			type:'boolean'
-    		},
-    		{
-    			name: 'codigoPartida'
-    		},
-    		{
-    			name: 'codigoSubpartida' 
-    		},
-    		{
-    			name: 'nombreUg' 
-    		},
-    		{
-    			name: 'nombreExpediente' 
-    		},
-    		{
-    			name: 'nombreProyecto' 
-    		},
-    		{
-    			name: 'gestorActivo'
-    		},
-    		{
-    			name: 'tieneTramiteCreado',
-    			type: 'boolean'
-    		},
-    		{
-    			name: 'esFEjecucionEditable',
-    			type: 'boolean'
-    		},
-    		{
-    			name: 'esTarifaPlanaEditable',
-    			type: 'boolean'
-    		},
-    		{
-    			name: 'esSiniestroEditable',
-    			type: 'boolean'
-    		},
-    		{
-    			name: 'esEstadoEditable',
-    			type: 'boolean'
+    			name: 'llavesMotivo'
     		}
     		
     ],

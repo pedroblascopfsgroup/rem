@@ -1189,5 +1189,6 @@ public interface ParticularValidatorApi {
 	
 	Boolean comprobarCodigoTipoTitulo(String codTipoTitulo);
 	
+	public boolean existeTipoDeGastoAsociadoCMGA(String codTipoGasto);
 
 }

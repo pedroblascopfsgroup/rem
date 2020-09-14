@@ -4877,6 +4877,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 	
+	@Override
+	public boolean existeTipoDeGastoAsociadoCMGA (String codTipoGasto) {
+		if (codTipoGasto == null || !StringUtils.isAlphanumeric(codTipoGasto)) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) FROM  DD_TGA_TPO_GASTO_ASOCIADO TGA " 
+				+ "WHERE TGA.DD_TGA_CODIGO = '"+ codTipoGasto +"' "
+				+ "AND TGA.BORRADO = 0"
+		);
+		
+		return !"0".equals(resultado);
+	}
 
 	@Override
 	public Boolean estaPerimetroHaya(String activoId) {

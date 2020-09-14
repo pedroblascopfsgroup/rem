@@ -38,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.ActivoConfiguracionCuentasContables;
 import es.pfsgroup.plugin.rem.model.ActivoConfiguracionPtdasPrep;
 import es.pfsgroup.plugin.rem.model.ActivoGenerico;
 import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
+import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
 import es.pfsgroup.plugin.rem.model.DtoComboLineasDetalle;
 import es.pfsgroup.plugin.rem.model.DtoElementosAfectadosLinea;
 import es.pfsgroup.plugin.rem.model.DtoLineaDetalleGasto;
@@ -81,7 +82,6 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	
 	@Autowired
 	private GastoLineaDetalleDao gastoLineaDetalleDao;
-
 	
 	@Override 
 	public GastoLineaDetalle getLineaDetalleByIdLinea(Long idLinea) {
@@ -102,6 +102,8 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		List<GastoLineaDetalle> gastoLineaDetalleLista = genericDao.getList(GastoLineaDetalle.class,filtro);
 		GastoProveedor gasto = genericDao.get(GastoProveedor.class,genericDao.createFilter(FilterType.EQUALS, "id", idGasto));
 		
+		
+		
 		if(gastoLineaDetalleLista == null || gastoLineaDetalleLista.isEmpty()) {
 			return dtoLineaDetalleGastoLista;
 		}
@@ -121,6 +123,19 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			
 			if(gastoLineaDetalle.getSubtipoGasto() !=null) {
 				dto.setSubtipoGasto(gastoLineaDetalle.getSubtipoGasto().getCodigo());
+			}
+			
+			dto.setTieneCuentaContable(Boolean.FALSE);
+			
+			if(!Checks.esNulo(gastoLineaDetalle.getCppBase())) {
+				dto.setSubPartidas(gastoLineaDetalle.getCppBase());
+				Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);		
+				Filter filtroGpv = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
+				GastoLineaDetalle gld = genericDao.get(GastoLineaDetalle.class, filtroGpv, filtroBorrado);
+				
+				if(!Checks.esNulo(gld) && !Checks.esNulo(gld.getCccBase())){
+					dto.setTieneCuentaContable(Boolean.TRUE);
+				}
 			}
 			
 			dto.setBaseSujeta(gastoLineaDetalle.getPrincipalSujeto());
@@ -148,6 +163,14 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			dto.setTipoImpositivo(gastoLineaDetalle.getImporteIndirectoTipoImpositivo());
 
 			dto.setCuota(gastoLineaDetalle.getImporteIndirectoCuota());
+			if(!Checks.esNulo(gastoLineaDetalle.getGastoProveedor().getProveedor()) && !Checks.esNulo(gastoLineaDetalle.getGastoProveedor().getProveedor().getCriterioCajaIVA())) {
+				if(gastoLineaDetalle.getGastoProveedor().getProveedor().getCriterioCajaIVA() >= 1) {
+					dto.setOptaCriterio(Boolean.TRUE);
+				}
+				else{
+					dto.setOptaCriterio(Boolean.FALSE);
+				}
+			}
 			
 			dto.setCcBase(gastoLineaDetalle.getCccBase());
 			dto.setPpBase(gastoLineaDetalle.getCppBase());
@@ -232,8 +255,10 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		gastoLineaDetalle.setImporteIndirectoTipoImpositivo(dto.getTipoImpositivo());
 		
 		gastoLineaDetalle.setImporteIndirectoCuota(dto.getCuota());
-
-			
+		
+		if(!Checks.esNulo(dto.getOptaCriterio()) && !Checks.esNulo(gastoLineaDetalle.getGastoProveedor().getProveedor())) {
+			gastoLineaDetalle.getGastoProveedor().getProveedor().setCriterioCajaIVA(Boolean.valueOf(dto.getOptaCriterio()).compareTo( false ));
+		}
 		gastoLineaDetalle.setCccBase(dto.getCcBase());
 		gastoLineaDetalle.setCppBase(dto.getPpBase());
 		gastoLineaDetalle.setCccEsp(dto.getCcEsp());

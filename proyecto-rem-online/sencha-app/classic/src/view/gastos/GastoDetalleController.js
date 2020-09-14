@@ -1827,6 +1827,14 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	
     },
     
+    onChangeSubpartida: function(){
+    	var me = this;
+    	var formulario = me.lookupReference('crearLineaDetalleGastoForm').getForm();
+    	var subPartidas = formulario.findField('subPartidas').getValue();
+    	formulario.findField('ppBase').setValue(subPartidas);
+    },
+    
+    
     calcularImporteTotal: function (formulario){
     	var me=this;
     	var importeTotal = 0;

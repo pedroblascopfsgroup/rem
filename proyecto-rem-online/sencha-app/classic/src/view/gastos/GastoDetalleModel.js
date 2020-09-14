@@ -771,8 +771,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 			},
 			autoLoad: true
 		},
-			
-			
+		
 		storeSubpartidas : {
 			model : 'HreRem.model.ComboBase',
 			proxy : {
@@ -781,7 +780,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				extraParams : {
 					idGasto : '{gasto.id}'
 				}
-			}
+			},
+			autoLoad: true
 		}
 	}
 });

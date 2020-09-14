@@ -647,6 +647,10 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
     funcionRecargar: function() {
     	var me = this; 
 		me.recargar = false;
+		me.lookupController().cargarTabData(me);
+		Ext.Array.each(me.query('grid'), function(grid) {
+  			grid.getStore().load();
+  		});	
     },
 
     getErrorsExtendedFormBase: function() {

@@ -415,9 +415,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Transactional
 	public boolean saveFichaTrabajo(DtoFichaTrabajo dtoTrabajo, Long id) {
 		Trabajo trabajo = trabajoDao.get(id);
+		TareaActivo tareaActivo = null;
 		List<ActivoTramite> activoTramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
-		ActivoTramite activoTramite = activoTramites.get(0);
-		TareaActivo tareaActivo = tareaActivoApi.getUltimaTareaActivoByIdTramite(activoTramite.getId());
+		if (!activoTramites.isEmpty()) {
+			ActivoTramite activoTramite = activoTramites.get(0);
+			tareaActivo = tareaActivoApi.getUltimaTareaActivoByIdTramite(activoTramite.getId());
+		}
+		
 
 		try {
 			// Si estado trabajo = EMITIDO PENDIENTE PAGO y se ha rellenado
@@ -432,19 +436,21 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 
 			historificarCambiosFicha(dtoTrabajo, trabajo);
-			
 			dtoToTrabajo(dtoTrabajo, trabajo);
 
-			if(!Checks.esNulo(tareaActivo.getTareaExterna()) && !Checks.esNulo(tareaActivo.getTareaExterna().getTareaProcedimiento()) &&
-					!Checks.esNulo(dtoTrabajo.getIdResponsableTrabajo()) &&
-					(CODIGO_T004_AUTORIZACION_BANKIA.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) ||
-					(CODIGO_T004_AUTORIZACION_PROPIETARIO.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo()) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(trabajo.getActivo().getCartera().getCodigo()))){
-				// Si las condiciones no se cumplen evitar cambiar el responsable al trámite lanzando excepción.
-				throw new JsonViewerException("No se permite cambiar de responsable para la tarea Autorizacion del propietario");
-			} else if(!Checks.esNulo(dtoTrabajo.getIdResponsableTrabajo())) {
-				// Si las condiciones si se cumplen, comprobar de igual forma si se ha cambiado específicamente el responsable del trabajo.
-				editarTramites(trabajo);
+			if (tareaActivo != null) {
+				if(!Checks.esNulo(tareaActivo.getTareaExterna()) && !Checks.esNulo(tareaActivo.getTareaExterna().getTareaProcedimiento()) &&
+						!Checks.esNulo(dtoTrabajo.getIdResponsableTrabajo()) &&
+						(CODIGO_T004_AUTORIZACION_BANKIA.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) ||
+						(CODIGO_T004_AUTORIZACION_PROPIETARIO.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo()) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(trabajo.getActivo().getCartera().getCodigo()))){
+					// Si las condiciones no se cumplen evitar cambiar el responsable al trámite lanzando excepción.
+					throw new JsonViewerException("No se permite cambiar de responsable para la tarea Autorizacion del propietario");
+				} else if(!Checks.esNulo(dtoTrabajo.getIdResponsableTrabajo())) {
+					// Si las condiciones si se cumplen, comprobar de igual forma si se ha cambiado específicamente el responsable del trabajo.
+					editarTramites(trabajo);
+				}
 			}
+			
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -531,7 +537,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			if(!Checks.esNulo(trabajo.getCiaAseguradora())) {
 				dtoHistorificador.setValorAnterior(trabajo.getCiaAseguradora());
 			}
-			dtoHistorificador.setValorNuevo(dtoTrabajo.getCiaAseguradora());
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dtoTrabajo.getCiaAseguradora()));
+			ActivoProveedor actProv = genericDao.get(ActivoProveedor.class, filtro);
+			dtoHistorificador.setValorNuevo(actProv.getNombre());
 			
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
@@ -586,8 +594,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			if(!Checks.esNulo(trabajo.getFechaHoraConcreta())) {
 				dtoHistorificador.setValorAnterior(trabajo.getFechaHoraConcreta().toString());
 			}
-			dtoHistorificador.setValorNuevo(dtoTrabajo.getFechaConcreta().toString());
-			
+			SimpleDateFormat formatoDelTexto = new SimpleDateFormat("dd/MM/yyyy");
+			String fechaFormateada = null;
+			fechaFormateada = formatoDelTexto.format(dtoTrabajo.getFechaConcreta());
+			dtoHistorificador.setValorNuevo(fechaFormateada);
+
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
 		
@@ -598,7 +609,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			if(!Checks.esNulo(trabajo.getFechaHoraConcreta())) {
 				dtoHistorificador.setValorAnterior(trabajo.getFechaHoraConcreta().toString());
 			}
-			dtoHistorificador.setValorNuevo(dtoTrabajo.getFechaConcreta().toString());
+			
+			SimpleDateFormat horaFormatter = new SimpleDateFormat("HH:mm:ss");
+			String horaFormateada = null;
+			horaFormateada = horaFormatter.format(dtoTrabajo.getFechaHoraConcreta());
+			dtoHistorificador.setValorNuevo(horaFormateada);
+			
 			
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
@@ -620,7 +636,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			if(!Checks.esNulo(trabajo.getFechaTope())) {
 				dtoHistorificador.setValorAnterior(trabajo.getFechaTope().toString());
 			}
-			dtoHistorificador.setValorNuevo(dtoTrabajo.getFechaTope().toString());
+			SimpleDateFormat formatoDelTexto = new SimpleDateFormat("dd/MM/yyyy");
+			String fechaFormateada = null;
+			fechaFormateada = formatoDelTexto.format(dtoTrabajo.getFechaTope());
+			dtoHistorificador.setValorNuevo(fechaFormateada);
+			
 			
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
@@ -657,7 +677,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			if(!Checks.esNulo(trabajo.getFechaInicio())) {
 				dtoHistorificador.setValorAnterior(trabajo.getFechaInicio().toString());
 			}
-			dtoHistorificador.setValorNuevo(dtoTrabajo.getFechaInicio().toString());
+			SimpleDateFormat formatoDelTexto = new SimpleDateFormat("dd/MM/yyyy");
+			String fechaFormateada = null;
+			fechaFormateada = formatoDelTexto.format(dtoTrabajo.getFechaInicio());
+			dtoHistorificador.setValorNuevo(fechaFormateada);
+			
 			
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 			
@@ -669,7 +693,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			if(!Checks.esNulo(trabajo.getFechaFin())) {
 				dtoHistorificador.setValorAnterior(trabajo.getFechaFin().toString());
 			}
-			dtoHistorificador.setValorNuevo(dtoTrabajo.getFechaFin().toString());
+			SimpleDateFormat formatoDelTexto = new SimpleDateFormat("dd/MM/yyyy");
+			String fechaFormateada = null;
+			fechaFormateada = formatoDelTexto.format(dtoTrabajo.getFechaFin());
+			dtoHistorificador.setValorNuevo(fechaFormateada);
+			
 			
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 			
@@ -2507,18 +2535,21 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	private void editarTramites (Trabajo trabajo) {
 
 	 List<ActivoTramite> listActTra = genericDao.getList(ActivoTramite.class,genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-	 for (ActivoTramite actTra : listActTra) {
-		 List<TareaActivo> listaActivo = genericDao.getList(TareaActivo.class,genericDao.createFilter(FilterType.EQUALS, "tramite.id", actTra.getId()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-		 for (TareaActivo tarAct: listaActivo) {
-			 if(!Checks.esNulo(trabajo.getUsuarioResponsableTrabajo())){
-				 tarAct.setUsuario(trabajo.getUsuarioResponsableTrabajo());
-					genericDao.save(TareaActivo.class, tarAct);
+	 if (!listActTra.isEmpty()) {
+		 for (ActivoTramite actTra : listActTra) {
+			 List<TareaActivo> listaActivo = genericDao.getList(TareaActivo.class,genericDao.createFilter(FilterType.EQUALS, "tramite.id", actTra.getId()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+			 for (TareaActivo tarAct: listaActivo) {
+				 if(!Checks.esNulo(trabajo.getUsuarioResponsableTrabajo())){
+					 tarAct.setUsuario(trabajo.getUsuarioResponsableTrabajo());
+						genericDao.save(TareaActivo.class, tarAct);
 
+
+				 }
 
 			 }
-
 		 }
-	 }
+	}
+
 	}
 
 	private DtoGestionEconomicaTrabajo trabajoToDtoGestionEconomicaTrabajo(Trabajo trabajo)

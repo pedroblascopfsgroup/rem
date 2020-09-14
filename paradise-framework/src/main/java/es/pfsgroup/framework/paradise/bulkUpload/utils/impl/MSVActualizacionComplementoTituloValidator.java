@@ -144,8 +144,8 @@ public class MSVActualizacionComplementoTituloValidator extends MSVExcelValidato
 
 					switch (columna) {
 						case COL_ID_ACTIVO:
-							valorOK = celda != null && particularValidator.existeActivoPorId(celda) &&
-							particularValidator.estaPerimetroHaya(celda) && particularValidator.estaPerimetroAdmision(celda);
+							valorOK = celda != null && particularValidator.existeActivo(celda) &&
+							particularValidator.esActivoIncluidoPerimetro(celda) && particularValidator.esActivoIncluidoPerimetroAdmision(celda);
 							break;
 	
 						case COL_TIPO_TITULO:

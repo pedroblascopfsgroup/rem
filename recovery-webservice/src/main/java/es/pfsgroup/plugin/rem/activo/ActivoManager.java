@@ -177,6 +177,7 @@ import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.TIPO;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
+import es.pfsgroup.plugin.rem.rest.dto.ActivoCrearPeticionTrabajoDto;
 import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
@@ -6450,6 +6451,35 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				
 		}
 		return false;
+	}
+	
+	@Override
+	public ActivoCrearPeticionTrabajoDto getActivoParaCrearPeticionTrabajobyId(Long idActivo) {
+		ActivoCrearPeticionTrabajoDto dto = new ActivoCrearPeticionTrabajoDto();
+		Activo activo = activoAdapter.getActivoById(idActivo);
+		
+		if(activo != null) {
+			try {
+				beanUtilNotNull.copyProperties(dto, activo);
+				if(activo.getTipoActivo() != null && activo.getTipoActivo().getDescripcion() != null) {
+					beanUtilNotNull.copyProperty(dto, "tipoActivo", activo.getTipoActivo().getDescripcion());
+				}
+				if(activo.getTipoActivo() != null && activo.getTipoActivo().getCodigo() != null) {
+					beanUtilNotNull.copyProperty(dto, "tipoActivoCodigo", activo.getTipoActivo().getCodigo());
+				}
+				if(activo.getSubtipoActivo() != null && activo.getSubtipoActivo().getDescripcion() != null) {
+					beanUtilNotNull.copyProperty(dto, "subtipoActivo", activo.getSubtipoActivo().getDescripcion());
+				}
+				if(activo.getSubtipoActivo() != null && activo.getSubtipoActivo().getCodigo() != null) {
+					beanUtilNotNull.copyProperty(dto, "subtipoActivoCodigo", activo.getSubtipoActivo().getCodigo());
+				}
+			}catch (IllegalAccessException e) {
+				logger.error(e.getMessage(),e);
+			} catch (InvocationTargetException e) {
+				logger.error(e.getMessage(),e);
+			}
+		}
+		return dto;
 	}
 	
 	@Override

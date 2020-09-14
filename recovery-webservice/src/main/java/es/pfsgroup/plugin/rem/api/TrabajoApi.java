@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.HistorificadorPestanas;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
+import es.pfsgroup.plugin.rem.model.dd.DDAcoAprobacionComite;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
@@ -881,4 +882,6 @@ public interface TrabajoApi {
 	public List<DDEstadoTrabajo> getComboEstadoSegunEstadoGdaOProveedor(Long idTrabajo);
 	
 	public List<DtoHistorificadorCampos> getListHistoricoDeCampos(Long idTrabajo, String codPestanya);
+	
+	public List<DDAcoAprobacionComite> getComboAprobacionComite();
 }

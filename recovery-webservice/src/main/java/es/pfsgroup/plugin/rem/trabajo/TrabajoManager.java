@@ -138,6 +138,7 @@ import es.pfsgroup.plugin.rem.model.VActivosAgrupacionTrabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
+import es.pfsgroup.plugin.rem.model.dd.DDAcoAprobacionComite;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresupuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
@@ -5129,5 +5130,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		return listDtoHistCamp;
 
+	}
+	
+	public List<DDAcoAprobacionComite> getComboAprobacionComite(){
+		List<DDAcoAprobacionComite> list = new ArrayList<DDAcoAprobacionComite>();
+		try {
+			list = genericDao.getList(DDAcoAprobacionComite.class);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 }

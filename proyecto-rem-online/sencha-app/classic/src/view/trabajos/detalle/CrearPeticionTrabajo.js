@@ -306,7 +306,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 													        reference:'subTipoActivo',
 															colspan: 2,
 															padding:'2 2 2 2'
-												       },
+												       }
 													]
 												},
 												{

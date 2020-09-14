@@ -88,109 +88,55 @@ public class MSVValidatorCargaGastosAsociadosAdquisicion extends MSVExcelValidat
 
 	@Override
 	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) throws Exception {
-		Long idTipoOperacion = dtoFile.getIdTipoOperacion();
-
-		if (idTipoOperacion == null) {
-			throw new IllegalArgumentException(
-					"MSVValidatorCargaGastosAsociadosAdquisicion::validarContenidoFichero -> idTipoOperacion no puede ser null");
+		if (dtoFile.getIdTipoOperacion() == null){
+			throw new IllegalArgumentException("idTipoOperacion no puede ser null");
 		}
-
-		List<String> lista = recuperarFormato(idTipoOperacion);
-		MSVBusinessValidators validators = validationFactory.getValidators(getTipoOperacion(idTipoOperacion));
-		MSVBusinessCompositeValidators compositeValidators = validationFactory.getCompositeValidators(getTipoOperacion(idTipoOperacion));
-		MSVHojaExcel excPlantilla = excelParser.getExcel(recuperarPlantilla(idTipoOperacion));
+		List<String> lista = recuperarFormato(dtoFile.getIdTipoOperacion());
 		MSVHojaExcel exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
+		MSVHojaExcel excPlantilla = excelParser.getExcel(recuperarPlantilla(dtoFile.getIdTipoOperacion()));
+		MSVBusinessValidators validators = validationFactory.getValidators(getTipoOperacion(dtoFile.getIdTipoOperacion()));
+		MSVBusinessCompositeValidators compositeValidators = validationFactory.getCompositeValidators(getTipoOperacion(dtoFile.getIdTipoOperacion()));
 		MSVDtoValidacion dtoValidacionContenido = recorrerFichero(exc, excPlantilla, lista, validators, compositeValidators, true);
-		MSVDDOperacionMasiva operacionMasiva = msvProcesoApi.getOperacionMasiva(idTipoOperacion);
-
-		// Validaciones especificas no contenidas en el fichero Excel de validacion
+		MSVDDOperacionMasiva operacionMasiva = msvProcesoApi.getOperacionMasiva(dtoFile.getIdTipoOperacion());
+		
+		//Validaciones especificas no contenidas en el fichero Excel de validacion
 		exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-		// Obtenemos el numero de filas reales que tiene la hoja excel a examinar
+		//Obtenemos el numero de filas reales que tiene la hoja excel a examinar
 		try {
 			this.numFilasHoja = exc.getNumeroFilasByHoja(0, operacionMasiva);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
+			e.printStackTrace();
 		}
+		
+		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
+			Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
+			
+			// Validaciones individuales activo por activo:
+			mapaErrores.put(messageServices.getMessage(CHECK_NUM_ACTIVO_NO_EXISTE), activoExiste(exc));
+			mapaErrores.put(messageServices.getMessage(CHECK_NUM_ACTIVO_FUERA_PERIMETRO_HAYA), activoDentroPerimetroHaya(exc));
+			mapaErrores.put(messageServices.getMessage(CHECK_NUM_ACTIVO_FUERA_PERIMETRO_ADMISION), activoDentroPerimetroAdmision(exc));
+			mapaErrores.put(messageServices.getMessage(CHECK_TIPO_GASTO_INCORRECTO), existeTipoDeGastoAsociado(exc));
+			
 
-		if (!dtoValidacionContenido.getFicheroTieneErrores() && !validarFichero(exc)) {
-			dtoValidacionContenido.setFicheroTieneErrores(true);
-			dtoValidacionContenido.setExcelErroresFormato(new FileItem(new File(exc.crearExcelErroresMejorado(mapaErrores))));
+			if (!mapaErrores.get(messageServices.getMessage(CHECK_NUM_ACTIVO_NO_EXISTE)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(CHECK_NUM_ACTIVO_FUERA_PERIMETRO_HAYA)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(CHECK_NUM_ACTIVO_FUERA_PERIMETRO_ADMISION)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(CHECK_TIPO_GASTO_INCORRECTO)).isEmpty()					
+					) {
+				dtoValidacionContenido.setFicheroTieneErrores(true);
+				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
+				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
+				FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
+				dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
+			}
+
 		}
+			
 		exc.cerrar();
+		
 		return dtoValidacionContenido;
 	}
-
-	private boolean validarFichero(MSVHojaExcel exc) {
-		boolean esCorrecto = true;
-		mapaErrores = new HashMap<String, List<Integer>>();
-		ArrayList<ArrayList<Integer>> listasError = new ArrayList<ArrayList<Integer>>();
-		ArrayList<Integer> errList = null;
-		ArrayList <Integer>listaErroresActivo = new ArrayList<Integer>();
-		String[] listaValidos = { "1", "0" };
-		String celda;
-		boolean validacionActicoFueraPA = true;
-		boolean validacionActivoFueraPH = true;
-		boolean validacionActivo = true;
-
-		for (int columna = 0; columna < NUM_COLS; columna++) {
-			listasError.add(columna, new ArrayList<Integer>());
-		}
-
-		for (int fila = FILA_DATOS; fila < this.numFilasHoja; fila++) {
-			try {
-				
-
-				for (int columna = 0; columna < NUM_COLS; columna++) {
-					errList = listasError.get(columna);
-					celda = exc.dameCelda(fila, columna);
-					boolean valorOK = true;
-											
-					switch (columna) {
-					
-					case COL_NUM_ACTIVO:
-						
-						valorOK = celda!=null && particularValidator.existeActivo(celda);
-						break;
-
-					case COL_TIPO_GASTO:
-						valorOK = celda!=null && particularValidator.existeTipoDeGastoAsociadoCMGA(celda);
-						break;
-
-					case COL_F_SOLICITUD:
-					case COL_F_PAGO:
-					case COL_OBSERVACIONES:
-					}
-
-					if (!valorOK) {
-						errList.add(fila);
-						esCorrecto = false;
-					}
-
-				}
-
-			} catch (ParseException e) {
-				errList.add(fila);
-				logger.error(e.getMessage());
-			} catch (Exception e) {
-				errList.add(0);
-				logger.error(e.getMessage());
-			}
-		}
-		
-		if (!esCorrecto) {
-		
-			mapaErrores.put(messageServices.getMessage(CHECK_NUM_ACTIVO_NO_EXISTE), listasError.get(COL_NUM_ACTIVO));
-			mapaErrores.put(messageServices.getMessage(CHECK_NUM_ACTIVO_FUERA_PERIMETRO_HAYA),activoDentroPerimetroHaya(exc));	
-			mapaErrores.put(messageServices.getMessage(CHECK_NUM_ACTIVO_FUERA_PERIMETRO_ADMISION),activoDentroPerimetroAdmision(exc));				
-			mapaErrores.put(messageServices.getMessage(CHECK_TIPO_GASTO_INCORRECTO), listasError.get(COL_TIPO_GASTO));
-			
-		
-			
-		
-		}
-		return esCorrecto;
-	}
-
 	@Override
 	protected ResultadoValidacion validaContenidoCelda(String nombreColumna, String contenidoCelda,
 			MSVBusinessValidators contentValidators) {
@@ -251,7 +197,53 @@ public class MSVValidatorCargaGastosAsociadosAdquisicion extends MSVExcelValidat
 		int i = 0;
 		try{
 			for(i=1; i<this.numFilasHoja;i++){
-				if(!particularValidator.esActivoIncluidoPerimetroAdmision(exc.dameCelda(i, COL_NUM_ACTIVO))) {
+				if(particularValidator.esActivoIncluidoPerimetroAdmision(exc.dameCelda(i, COL_NUM_ACTIVO))) {
+					listaFilas.add(i);
+				}
+					
+			}
+		} catch (Exception e) {
+			if (i != 0) {
+				listaFilas.add(i);
+			}
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+
+	
+	private List<Integer> activoExiste(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try{
+			for(i=1; i<this.numFilasHoja;i++){
+				if(!particularValidator.existeActivo(exc.dameCelda(i, COL_NUM_ACTIVO))) {
+					listaFilas.add(i);
+				}
+					
+			}
+		} catch (Exception e) {
+			if (i != 0) {
+				listaFilas.add(i);
+			}
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	
+	private List<Integer> existeTipoDeGastoAsociado(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try{
+			for(i=1; i<this.numFilasHoja;i++){
+				if(!particularValidator.existeTipoDeGastoAsociadoCMGA(exc.dameCelda(i, COL_TIPO_GASTO))) {
 					listaFilas.add(i);
 				}
 					
@@ -268,3 +260,6 @@ public class MSVValidatorCargaGastosAsociadosAdquisicion extends MSVExcelValidat
 	}
 
 }
+
+
+

@@ -1,7 +1,7 @@
 --/*
 --######################################### 
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200716
+--## FECHA_CREACION=20200915
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10527
@@ -41,6 +41,8 @@ DECLARE
     T_COL('DROP_INDEX', 'GGE_GASTOS_GESTION', 'GEE_GASTOS_GESTION_IDX2'),
     T_COL('DROP_INDEX', 'GIC_GASTOS_INFO_CONTABILIDAD', 'GIC_GASTON_INFO_CONT_IDX'),
     T_COL('DROP_INDEX', 'GGE_GASTOS_GESTION', 'GGE_GASTOS_GESTION_IDX1'),
+    T_COL('BORRADO_GGE', 'GGE_GASTOS_GESTION'),
+    T_COL('BORRADO_GIC', 'GIC_GASTOS_INFO_CONTABILIDAD'),
     T_COL('DROP_CONSTRAINT', 'GDE_GASTOS_DETALLE_ECONOMICO', 'UK_GDE_GASTOS_DETALLE_ECONOMICO'),
     T_COL('CREATE_CONSTRAINT', 'GDE_GASTOS_DETALLE_ECONOMICO', 'UK_GDE_GASTOS_DETALLE_ECONOMICO','GPV_ID, FECHABORRAR, BORRADO'),
     T_COL('DROP_CONSTRAINT', 'GDE_GASTOS_DETALLE_ECONOMICO', 'CK_GDE_GASTOS_DETALLE_ECONOMICO'),
@@ -161,6 +163,66 @@ BEGIN
                 ELSE
                     DBMS_OUTPUT.PUT_LINE('  [INFO] La restricción '||V_TMP_COL(3)||' ya existe.');
                 END IF;          
+            ELSE
+                DBMS_OUTPUT.PUT_LINE('  [INFO] La tabla '||V_TMP_COL(2)||'... No existe.');
+            END IF;    
+        END IF;
+
+        IF 'BORRADO_GGE' = ''||V_TMP_COL(1)||'' THEN
+            DBMS_OUTPUT.PUT_LINE('  [BORRADO_GGE]');
+            --Comprobacion de la tabla
+            V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = '''||V_TMP_COL(2)||'''';
+            EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+            
+            IF V_NUM_TABLAS = 1 THEN              
+                V_SQL := 'MERGE INTO '||V_ESQUEMA||'.GGE_GASTOS_GESTION T1
+                            USING (
+                                WITH DUPLICADOS AS (
+                                    SELECT GPV_ID
+                                    FROM '||V_ESQUEMA||'.GGE_GASTOS_GESTION
+                                    WHERE BORRADO = 0
+                                    GROUP BY GPV_ID
+                                    HAVING COUNT(1) > 1
+                                )
+                                SELECT GPV.GPV_NUM_GASTO_HAYA, EGA.DD_EGA_DESCRIPCION, GGE.GGE_ID, ROW_NUMBER() OVER(PARTITION BY GPV.GPV_ID ORDER BY GGE.FECHACREAR) RN
+                                FROM '||V_ESQUEMA||'.GGE_GASTOS_GESTION GGE
+                                JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GGE.GPV_ID
+                                JOIN '||V_ESQUEMA||'.DD_EGA_ESTADOS_GASTO EGA ON EGA.DD_EGA_ID = GPV.DD_EGA_ID
+                                JOIN DUPLICADOS DUP ON DUP.GPV_ID = GGE.GPV_ID
+                            ) T2
+                            ON (T1.GGE_ID = T2.GGE_ID AND T2.RN > 1)
+                            WHEN MATCHED THEN UPDATE SET
+                                T1.USUARIOBORRAR = ''HREOS-10527''
+                                , T1.FECHABORRAR = CURRENT_TIMESTAMP(6)
+                                , T1.BORRADO = 1';
+                EXECUTE IMMEDIATE V_SQL;        
+            ELSE
+                DBMS_OUTPUT.PUT_LINE('  [INFO] La tabla '||V_TMP_COL(2)||'... No existe.');
+            END IF;    
+        END IF;
+
+        IF 'BORRADO_GIC' = ''||V_TMP_COL(1)||'' THEN
+            DBMS_OUTPUT.PUT_LINE('  [BORRADO_GIC]');
+            --Comprobacion de la tabla
+            V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = '''||V_TMP_COL(2)||'''';
+            EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+            
+            IF V_NUM_TABLAS = 1 THEN              
+                V_SQL := 'DELETE FROM '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD
+                            WHERE GIC_ID IN (
+                            SELECT AUX.GIC_ID FROM (
+                                SELECT GIC.GIC_ID, ROW_NUMBER() OVER(PARTITION BY GPV.GPV_ID ORDER BY GIC.FECHACREAR) RN
+                                FROM '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD GIC
+                                JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GIC.GPV_ID
+                                JOIN (SELECT AUX_GPV.GPV_ID 
+                                    FROM '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD AUX_GPV
+                                    WHERE AUX_GPV.BORRADO = 1
+                                    GROUP BY AUX_GPV.GPV_ID
+                                    HAVING COUNT(1) > 1) DUP ON DUP.GPV_ID = GIC.GPV_ID
+                                ) AUX
+                                WHERE AUX.RN > 1
+                            )';
+                EXECUTE IMMEDIATE V_SQL;        
             ELSE
                 DBMS_OUTPUT.PUT_LINE('  [INFO] La tabla '||V_TMP_COL(2)||'... No existe.');
             END IF;    

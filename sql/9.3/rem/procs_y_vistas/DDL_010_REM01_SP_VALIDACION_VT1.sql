@@ -1,8 +1,24 @@
-create or replace PROCEDURE SP_VALIDACION_VT1 IS
+--/*
+--##########################################
+--## AUTOR=Dean Ibañez Viño
+--## FECHA_CREACION=20200915
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-11061
+--## PRODUCTO=NO
+--##
+--## Finalidad: 
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
 
-    WHENEVER SQLERROR EXIT SQL.SQLCODE;
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
     SET SERVEROUTPUT ON; 
     SET DEFINE OFF;
+
+create or replace PROCEDURE SP_VALIDACION_VT1 (PL_OUTPUT OUT VARCHAR2) AS
 
     V_SQL VARCHAR2(4000 CHAR); -- Sentencia a ejecutar     
     V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- #ESQUEMA# Configuracion Esquema
@@ -50,18 +66,15 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[FIN]');
 
 EXCEPTION
-  WHEN OTHERS THEN 
-    DBMS_OUTPUT.PUT_LINE('KO!');
-    err_num := SQLCODE;
-    err_msg := SQLERRM;
-
-    DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
-    DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
-    DBMS_OUTPUT.put_line(err_msg);
-
-    ROLLBACK;
-    RAISE;          
-
-END;
+    WHEN NO_DATA_FOUND THEN
+        PL_OUTPUT := PL_OUTPUT || 'OK. Sin cambios que realizar' || CHR(10);
+    WHEN OTHERS THEN
+        PL_OUTPUT := PL_OUTPUT || 'KO. No se ha podido completar la operativa: ' || TO_CHAR(SQLCODE) || CHR(10);
+        PL_OUTPUT := PL_OUTPUT || '-----------------------------------------------------------' || CHR(10);
+        PL_OUTPUT := PL_OUTPUT || SQLERRM || CHR(10);
+        PL_OUTPUT := PL_OUTPUT || V_MSQL || CHR(10);
+        ROLLBACK;
+        RAISE;
+END SP_VALIDACION_VT1;
 /
-EXIT
+EXIT;

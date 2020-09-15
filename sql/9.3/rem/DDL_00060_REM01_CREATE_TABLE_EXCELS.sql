@@ -1,7 +1,7 @@
 --/*
 --######################################### 
 --## AUTOR=Josep Ros
---## FECHA_CREACION=20200908
+--## FECHA_CREACION=20200915
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11054
@@ -57,10 +57,19 @@ LOOP
 		, CAMPO VARCHAR2(3500 CHAR) 
 		, VALOR_ANTERIOR VARCHAR2(3500 CHAR)
 		, VALOR_NUEVO VARCHAR2(3500 CHAR)
-		, DESCRIPCION VARCHAR2(3500 CHAR)
 		, SUBTIPO_REGISTRO VARCHAR2(3500 CHAR)
 		, ID_REGISTRO NUMBER(16)
 		  )';
+	ELSIF contador = 2 THEN
+	V_SQL :='CREATE TABLE '||V_ESQUEMA||'.ESPARTA_EXCEL'||contador||'(      
+                  ACT_NUM_ACTIVO NUMBER(16) NOT NULL
+                , CAMPO VARCHAR2(3500 CHAR) 
+                , VALOR_ACTUAL VARCHAR2(3500 CHAR)
+                , VALOR_NUEVO VARCHAR2(3500 CHAR)
+                , SUBTIPO_REGISTRO VARCHAR2(3500 CHAR)
+                , ID_REGISTRO NUMBER(16)
+                  )';
+
 	ELSE
 	V_SQL :='CREATE TABLE '||V_ESQUEMA||'.ESPARTA_EXCEL'||contador||'(	
 		  ACT_NUM_ACTIVO NUMBER(16) NOT NULL
@@ -88,8 +97,10 @@ LOOP
 		EXECUTE IMMEDIATE V_MSQL;
 		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.ESPARTA_EXCEL'||contador||'.VALOR_NUEVO IS ''Valor nuevo del campo del activo'' ';
 		EXECUTE IMMEDIATE V_MSQL;
+		IF contador > 2 THEN
 		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.ESPARTA_EXCEL'||contador||'.DESCRIPCION IS ''Descripcion del activo o campo'' ';
 		EXECUTE IMMEDIATE V_MSQL;
+		END IF;
 		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.ESPARTA_EXCEL'||contador||'.SUBTIPO_REGISTRO IS ''Tipo de Unidad de Gestión'' ';
 		EXECUTE IMMEDIATE V_MSQL;
 		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.ESPARTA_EXCEL'||contador||'.ID_REGISTRO IS ''Identificador de la Unidad de Gestión'' ';

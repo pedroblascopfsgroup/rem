@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200709
+--## AUTOR=Joaquin Arnal
+--## FECHA_CREACION=20200711
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-10920
+--## INCIDENCIA_LINK=HREOS-10499
 --## PRODUCTO=NO
 --## Finalidad: Creación diccionario DD_CND_CONDICIONES_CONV_SAREB
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Daniel Algaba - HREOS-10920 - Versión inicial
+--## 	    0.2 Joaquin Arnal - HREOS-10499 - Añadimos Campos QUERY_ACT
 --##########################################
 --*/
 
@@ -80,7 +81,8 @@ BEGIN
 		FECHAMODIFICAR 				TIMESTAMP (6), 
 		USUARIOBORRAR 				VARCHAR2(50 CHAR), 
 		FECHABORRAR 				TIMESTAMP (6), 
-		BORRADO 					NUMBER(1,0) 		    	DEFAULT 0 NOT NULL ENABLE
+		BORRADO 					NUMBER(1,0) 		    	DEFAULT 0 NOT NULL ENABLE,
+		QUERY_ACT			        VARCHAR2(4000 CHAR)			
 	)
 	LOGGING 
 	NOCOMPRESS 
@@ -173,6 +175,10 @@ BEGIN
 		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BORRADO IS ''Indicador de borrado.''';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna BORRADO creado.');
+
+		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.QUERY_ACT IS ''Consulta con la condición para descartar todos los activos''';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna QUERY creado.');	
 
 	COMMIT;
 

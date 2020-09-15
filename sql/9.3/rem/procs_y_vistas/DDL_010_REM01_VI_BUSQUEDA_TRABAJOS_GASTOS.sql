@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Angel Sánchez
---## FECHA_CREACION=20200907
+--## FECHA_CREACION=20200914
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10590
@@ -75,6 +75,9 @@ BEGIN
    			INNER JOIN ' || V_ESQUEMA || '.gee_gestor_entidad gee 					ON (gac.gee_id = gee.gee_id AND gee.borrado = 0)
    			INNER JOIN ' || V_ESQUEMA_MASTER || '.dd_tge_tipo_gestor tge 			ON (tge.dd_tge_id = gee.dd_tge_id AND tge.dd_tge_codigo = ''GACT'' AND tge.borrado = 0)
           WHERE tbj.borrado = 0
+          	and nvl(tbj.tbj_importe_total, 0) > 0
+          	and nvl(tbj.TBJ_IMPORTE_PRESUPUESTO, 0) > 0
+          	and nvl(tbj.TBJ_IMPORTE_TOTAL, 0) >= nvl(tbj.TBJ_IMPORTE_PRESUPUESTO, 0)
        	  AND NOT EXISTS (
            	SELECT 1
            	FROM ' || V_ESQUEMA || '.gpv_gastos_proveedor gpv

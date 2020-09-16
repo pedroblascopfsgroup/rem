@@ -2621,7 +2621,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		return gasto;
 	}
 
-	private GastoProveedor calcularParticipacionActivosGasto(GastoProveedor gasto) {
+	public GastoProveedor calcularParticipacionActivosGasto(GastoProveedor gasto) {
 
 		Double importeTotal = gasto.getGastoDetalleEconomico().getImportePrincipalSujeto();
 		importeTotal = Checks.esNulo(importeTotal) ? new Double("0L") : importeTotal;

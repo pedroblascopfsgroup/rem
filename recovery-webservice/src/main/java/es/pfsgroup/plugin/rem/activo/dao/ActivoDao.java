@@ -346,4 +346,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	List<HistoricoPeticionesPrecios> getHistoricoSolicitudesPrecios(Long idActivo);
 
 	void actualizaDatoCDC(CalidadDatosConfig cdc, String valor, String identificador, String username);
+
+	Long getComunidadAutonomaId(Activo activo);
 }

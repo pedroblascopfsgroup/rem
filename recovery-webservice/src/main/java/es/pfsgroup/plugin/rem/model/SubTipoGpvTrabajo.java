@@ -16,6 +16,7 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -31,6 +32,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 @Entity
 @Table(name = "ACT_SGT_SUBTIPO_GPV_TBJ", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class SubTipoGpvTrabajo implements Auditable, Serializable {
 
 	private static final long serialVersionUID = 7594603536051797805L;

@@ -70,6 +70,10 @@ public interface GastoLineaDetalleApi {
 	boolean actualizarReparto(Long idLinea);
 
 	boolean actualizarRepartoTrabajo(Long idLinea);
+
+	boolean asignarTrabajosLineas(Long idGasto, Long[] trabajos);
+
+	boolean eliminarTrabajoLinea(Long idTrabajo, Long idGasto) throws Exception;
 	
 }
 

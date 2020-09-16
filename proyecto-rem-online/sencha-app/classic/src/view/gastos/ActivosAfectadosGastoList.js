@@ -298,8 +298,8 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 		 		},   		
 		    	success: function(response, opts) {		    		
 					me.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
-					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-					
+					me.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar();
+					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));					
 		    	},
 	   			failure: function(response) {
 					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));

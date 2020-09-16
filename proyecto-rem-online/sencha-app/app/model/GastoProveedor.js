@@ -230,6 +230,14 @@ Ext.define('HreRem.model.GastoProveedor', {
    		{
    			name:'isGastoRefacturadoPadre',
    			type:'boolean'
+   		},
+   		{
+   			name:'tieneTrabajos',
+   			type:'boolean'
+   		},
+   		{
+   			name:'lineasNoDeTrabajos',
+   			type:'boolean'
    		}
    		
     ],

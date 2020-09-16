@@ -1874,4 +1874,18 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		session.createSQLQuery(sb.toString()).executeUpdate();
 	}
 
+	@Override
+	public Long getComunidadAutonomaId(Activo activo) {
+		if(activo.getProvincia() == null) {
+			return null;
+		}
+		
+		String sql = " SELECT DD_CCA_ID FROM remmaster.DD_PRV_PROVINCIA prv WHERE DD_PRV_CODIGO = " +activo.getProvincia();
+		
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return Long.valueOf(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult().toString());
+		}
+		return null;
+
+	}
 }

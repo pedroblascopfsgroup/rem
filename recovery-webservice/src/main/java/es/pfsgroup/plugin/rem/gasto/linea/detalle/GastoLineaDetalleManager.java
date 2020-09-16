@@ -2,16 +2,12 @@ package es.pfsgroup.plugin.rem.gasto.linea.detalle;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +24,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoLineaDetalleApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.gasto.dto.ImportesAcumuladosDto;
 import es.pfsgroup.plugin.rem.gasto.linea.detalle.dao.GastoLineaDetalleDao;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -37,8 +34,9 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoConfiguracionCuentasContables;
 import es.pfsgroup.plugin.rem.model.ActivoConfiguracionPtdasPrep;
 import es.pfsgroup.plugin.rem.model.ActivoGenerico;
-import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
-import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
+import es.pfsgroup.plugin.rem.model.ActivoSubtipoGastoProveedorTrabajo;
+import es.pfsgroup.plugin.rem.model.ActivoSubtipoTrabajoGastoImpuesto;
+import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoComboLineasDetalle;
 import es.pfsgroup.plugin.rem.model.DtoElementosAfectadosLinea;
 import es.pfsgroup.plugin.rem.model.DtoLineaDetalleGasto;
@@ -50,6 +48,7 @@ import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalleTrabajo;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoRefacturable;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VElementosLineaDetalle;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
@@ -57,10 +56,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoEmisorGLD;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoImporte;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
-import javassist.expr.NewArray;
 
 @Service("gastoLineaDetalleManager")
 public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
@@ -82,17 +81,19 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	
 	@Autowired
 	private GastoLineaDetalleDao gastoLineaDetalleDao;
+
+	@Autowired
+	private TrabajoApi trabajoApi;
+
 	
 	@Override 
 	public GastoLineaDetalle getLineaDetalleByIdLinea(Long idLinea) {
-		GastoLineaDetalle linea =  genericDao.get(GastoLineaDetalle.class, genericDao.createFilter(FilterType.EQUALS, "id", idLinea));
-		return linea;
+		return genericDao.get(GastoLineaDetalle.class, genericDao.createFilter(FilterType.EQUALS, "id", idLinea));
 	}
 	
 	@Override 
 	public GastoLineaDetalleEntidad getLineaDetalleEntidadByIdLineaEntidad(Long idEntidad) {
-		GastoLineaDetalleEntidad entidad =  genericDao.get(GastoLineaDetalleEntidad.class, genericDao.createFilter(FilterType.EQUALS, "id", idEntidad));
-		return entidad;
+		return genericDao.get(GastoLineaDetalleEntidad.class, genericDao.createFilter(FilterType.EQUALS, "id", idEntidad));
 	}
 	
 	@Override
@@ -1587,7 +1588,12 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				for(ImportesAcumuladosDto importeAcumuladoAux : importes) {
 					if(importeAcumuladoAux.getId().equals(gastoLinea.getEntidad())) {
 						BigDecimal importeTotalTrabajos = importeAcumuladoAux.getImporte();
-						BigDecimal porcentaje =importeTotalTrabajos.multiply(new BigDecimal(100)).divide(totalTrabajos, RoundingMode.HALF_DOWN);
+						BigDecimal porcentaje;
+						if(totalTrabajos.compareTo(BigDecimal.ZERO) != 0) {
+							porcentaje =importeTotalTrabajos.multiply(new BigDecimal(100)).divide(totalTrabajos, RoundingMode.HALF_DOWN);
+						}else {
+							porcentaje = totalTrabajos;
+						}
 						gastoLinea.setParticipacionGasto(porcentaje.doubleValue());
 						genericDao.update(GastoLineaDetalleEntidad.class, gastoLinea);
 					}
@@ -1598,5 +1604,344 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		
 		return Boolean.TRUE;
 	}
+	private String getTipoLineaByTrabajo(Trabajo trabajo) {
+		String stringLinea = null;
+		ActivoSubtipoGastoProveedorTrabajo activoStgProvTrabajo = gastoProveedorApi.getSubtipoGastoBySubtipoTrabajo(trabajo);
+		if(activoStgProvTrabajo != null && activoStgProvTrabajo.getSubtipoGasto() != null) {
+			stringLinea = activoStgProvTrabajo.getSubtipoGasto().getCodigo();
+			Activo activo = null;
+			if(trabajo.getActivosTrabajo() != null && !trabajo.getActivosTrabajo().isEmpty()) {
+				activo = trabajo.getActivosTrabajo().get(0).getActivo();
+			}
+			if(activo != null && activo.getProvincia() != null) {
+				Long comAutonoma = activoDao.getComunidadAutonomaId(activo);
+				
+				if(comAutonoma != null) {
+					Filter activoComunidadFilter = genericDao.createFilter(FilterType.EQUALS, "comunidadAutonoma.id", comAutonoma);
+					Filter activoStgProvTbjFilter = genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.id", activoStgProvTrabajo.getSubtipoGasto().getId());
+					List<ActivoSubtipoTrabajoGastoImpuesto> actStbjGpvImpList = genericDao.getList(ActivoSubtipoTrabajoGastoImpuesto.class, activoStgProvTbjFilter, activoComunidadFilter);
+				
+					if(actStbjGpvImpList == null || actStbjGpvImpList.isEmpty()) {
+						activoComunidadFilter = genericDao.createFilter(FilterType.NULL, "comunidadAutonoma.id");
+						actStbjGpvImpList = genericDao.getList(ActivoSubtipoTrabajoGastoImpuesto.class, activoStgProvTbjFilter, activoComunidadFilter);
 
+					}
+					
+					if(actStbjGpvImpList != null && !actStbjGpvImpList.isEmpty() && actStbjGpvImpList.size() == 1 
+					&& (actStbjGpvImpList.get(0).getTipoImpositivo() != null && actStbjGpvImpList.get(0).getTiposImpuesto() != null)) {
+						stringLinea = stringLinea + "-" + actStbjGpvImpList.get(0).getTiposImpuesto().getCodigo();
+						stringLinea = stringLinea + "-" + actStbjGpvImpList.get(0).getTipoImpositivo();
+					}
+				}
+			}					
+		}
+		
+		return stringLinea;
+	}
+	public boolean trabajoRepetidoEnLinea(Long idTrabajo, Long idLinea) {
+		boolean trabajoRepetido = false;
+		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", idTrabajo);
+		Filter filtroLinea = genericDao.createFilter(FilterType.EQUALS, "gastoLineaDetalle.id", idLinea);
+		GastoLineaDetalleTrabajo relacionLineaTrabajo = genericDao.get(GastoLineaDetalleTrabajo.class, filtroLinea, filtroTrabajo);
+		
+		if(relacionLineaTrabajo != null) {
+			trabajoRepetido = true;
+		}
+		
+		return trabajoRepetido;
+		
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean asignarTrabajosLineas(Long idGasto, Long[] trabajos) {
+		GastoProveedor gasto = gastoProveedorApi.findOne(idGasto);
+		
+		if(gasto == null) {
+			return false;
+		}
+		
+		List<GastoLineaDetalle> gastoLineaDetalleList = gasto.getGastoLineaDetalleList(); 
+		GastoLineaDetalle lineaAnyadirTrabajo = null;
+		String stringLinea = null;
+		for (Long trabajoLong : trabajos) {
+			Trabajo trabajo = trabajoApi.findOne(trabajoLong);
+			if(trabajo != null) {
+				stringLinea = getTipoLineaByTrabajo(trabajo);
+				if(stringLinea != null) {
+					List<String> lineaParte = Arrays.asList(stringLinea.split("-"));
+					if(gastoLineaDetalleList.isEmpty()) {
+						
+						GastoLineaDetalle gastoLineaDetalleNueva = crearGastoLineaDetalleParaTrabajos(gasto, trabajo,lineaParte);
+						if(gastoLineaDetalleNueva.getSubtipoGasto() != null && gastoLineaDetalleNueva.getGastoProveedor() != null) {
+							genericDao.save(GastoLineaDetalle.class, gastoLineaDetalleNueva);
+							gastoLineaDetalleList.add(gastoLineaDetalleNueva);
+							crearRelacionTrabajoLinea(gastoLineaDetalleNueva, trabajo);
+							List<ActivoTrabajo> activoTrabajoList = trabajo.getActivosTrabajo();
+							if(!activoTrabajoList.isEmpty()) {
+								crearRelacionesActivoTrabajoLinea(gastoLineaDetalleNueva,activoTrabajoList, true);
+							}
+						}
+					}else {
+						if(lineaParte.size() == 1) {
+							for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleList) {
+								if(gastoLineaDetalle.getSubtipoGasto().getCodigo().equals(lineaParte.get(0)) && 
+									gastoLineaDetalle.getTipoImpuesto() == null && gastoLineaDetalle.getImporteIndirectoTipoImpositivo() == null) {
+									lineaAnyadirTrabajo = gastoLineaDetalle;
+									break;
+								}
+							}
+						}else {
+							for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleList) {
+								if(gastoLineaDetalle.getTipoImpuesto() != null && gastoLineaDetalle.getImporteIndirectoTipoImpositivo() != null
+									&& gastoLineaDetalle.getSubtipoGasto().getCodigo().equals(lineaParte.get(0))
+									&& gastoLineaDetalle.getTipoImpuesto().getCodigo().equals(lineaParte.get(1)) 
+									&& gastoLineaDetalle.getImporteIndirectoTipoImpositivo().toString().equals(lineaParte.get(2))) {
+									lineaAnyadirTrabajo = gastoLineaDetalle;
+									gastoLineaDetalleList.remove(gastoLineaDetalle);
+									break;
+								}
+							}
+						}
+						
+						if(lineaAnyadirTrabajo == null) {
+							if(gasto.getPropietario() != null && gasto.getPropietario().getCartera() != null
+							&& DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo())) {
+								return false;
+							}
+							GastoLineaDetalle gastoLineaDetalleNueva = crearGastoLineaDetalleParaTrabajos(gasto, trabajo,lineaParte);
+							if(gastoLineaDetalleNueva.getSubtipoGasto() != null && gastoLineaDetalleNueva.getGastoProveedor() != null) {
+								genericDao.save(GastoLineaDetalle.class, gastoLineaDetalleNueva);
+								gastoLineaDetalleList.add(gastoLineaDetalleNueva);
+								crearRelacionTrabajoLinea(gastoLineaDetalleNueva, trabajo);
+								List<ActivoTrabajo> activoTrabajoList = trabajo.getActivosTrabajo();
+								
+								if(!activoTrabajoList.isEmpty()) {
+									crearRelacionesActivoTrabajoLinea(gastoLineaDetalleNueva,activoTrabajoList, true);
+								}
+							}
+							
+							
+						}else {
+							if(!trabajoRepetidoEnLinea(trabajo.getId(), lineaAnyadirTrabajo.getId())){
+								lineaAnyadirTrabajo = updateGastoLineaDetalleParaTrabajos(gasto, trabajo,  lineaAnyadirTrabajo);
+								genericDao.save(GastoLineaDetalle.class, lineaAnyadirTrabajo);
+								gastoLineaDetalleList.add(lineaAnyadirTrabajo);
+								crearRelacionTrabajoLinea(lineaAnyadirTrabajo, trabajo);
+								List<ActivoTrabajo> activoTrabajoList = trabajo.getActivosTrabajo();
+								
+								if(!activoTrabajoList.isEmpty()) {
+									crearRelacionesActivoTrabajoLinea(lineaAnyadirTrabajo,activoTrabajoList, false);
+								}
+							}
+						}
+						lineaAnyadirTrabajo = null;
+					}
+				}
+			}
+		}
+		boolean actualizarParticipacionCorrectamente = true;
+		BigDecimal importeTotalGDE = new BigDecimal(0.0);
+		for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleList) {
+			actualizarParticipacionCorrectamente = actualizarRepartoTrabajo(gastoLineaDetalle.getId()); 
+			if(!actualizarParticipacionCorrectamente) {
+				return false;
+			}
+			if(gastoLineaDetalle.getImporteTotal() != null) {
+				importeTotalGDE = importeTotalGDE.add(new BigDecimal(gastoLineaDetalle.getImporteTotal()));
+			}
+		}
+		
+		if(gasto.getGastoDetalleEconomico() != null) {
+			gasto.getGastoDetalleEconomico().setImporteTotal(importeTotalGDE.doubleValue());
+			genericDao.save(GastoDetalleEconomico.class, gasto.getGastoDetalleEconomico());
+		}
+		
+		return true;
+	}
+	
+	
+	
+	private GastoLineaDetalle updateGastoLineaDetalleParaTrabajos(GastoProveedor gasto, Trabajo trabajo, GastoLineaDetalle lineaAnyadirTrabajo) {
+		BigDecimal baseSujeta = new BigDecimal(0.0);
+		BigDecimal importeTotal = new BigDecimal(0.0);
+		BigDecimal cuota = new BigDecimal(0.0);
+		if(gasto.getDestinatarioGasto() !=  null && DDDestinatarioGasto.CODIGO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo())
+			&& trabajo.getImportePresupuesto() != null) {
+			baseSujeta = new BigDecimal(trabajo.getImportePresupuesto());
+		}else if(trabajo.getImporteTotal() != null){
+			baseSujeta = new BigDecimal(trabajo.getImporteTotal());
+		}
+
+		if(lineaAnyadirTrabajo.getImporteTotal() != null) {
+			importeTotal = importeTotal.add(new BigDecimal(lineaAnyadirTrabajo.getImporteTotal()));
+		}
+		if(lineaAnyadirTrabajo.getPrincipalSujeto() != null) {
+			baseSujeta = baseSujeta.add(new BigDecimal(lineaAnyadirTrabajo.getPrincipalSujeto()));
+			if(baseSujeta.compareTo(BigDecimal.ZERO) != 0 && lineaAnyadirTrabajo.getImporteIndirectoTipoImpositivo() != null
+			&& lineaAnyadirTrabajo.getImporteIndirectoTipoImpositivo() != 0.0) {
+				cuota = (new BigDecimal(lineaAnyadirTrabajo.getImporteIndirectoTipoImpositivo()).multiply(baseSujeta));
+				cuota = cuota.divide(new BigDecimal(100));
+			}
+		}
+		
+		importeTotal = importeTotal.add(cuota);
+		importeTotal = importeTotal.add(baseSujeta);
+		lineaAnyadirTrabajo.setImporteTotal(importeTotal.doubleValue());
+		lineaAnyadirTrabajo.setPrincipalSujeto(baseSujeta.doubleValue());
+		
+		return lineaAnyadirTrabajo;
+	}
+	
+	
+	
+	private GastoLineaDetalle crearGastoLineaDetalleParaTrabajos(GastoProveedor gasto, Trabajo trabajo, List<String> lineaParte) {
+		GastoLineaDetalle gastoLineaDetalleNueva = new GastoLineaDetalle();
+		gastoLineaDetalleNueva.setAuditoria(Auditoria.getNewInstance());
+		gastoLineaDetalleNueva.setGastoProveedor(gasto);
+		
+		if(gasto.getDestinatarioGasto() !=  null && DDDestinatarioGasto.CODIGO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo())
+				&& trabajo.getImportePresupuesto() != null) {
+			gastoLineaDetalleNueva.setPrincipalSujeto(trabajo.getImportePresupuesto());
+		}else if(trabajo.getImporteTotal() != null){
+			gastoLineaDetalleNueva.setPrincipalSujeto(trabajo.getImporteTotal());
+		}else {
+			gastoLineaDetalleNueva.setPrincipalSujeto(0.0);
+		}
+		DDSubtipoGasto subtipoGasto = (DDSubtipoGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoGasto.class, lineaParte.get(0));
+		gastoLineaDetalleNueva.setSubtipoGasto(subtipoGasto);
+		BigDecimal cuota = new BigDecimal (0.0);
+		if(lineaParte.size() > 1) {
+			DDTiposImpuesto tipoImpuesto = (DDTiposImpuesto) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposImpuesto.class, lineaParte.get(1));
+			if(tipoImpuesto != null) {
+				gastoLineaDetalleNueva.setTipoImpuesto(tipoImpuesto);
+				gastoLineaDetalleNueva.setImporteIndirectoTipoImpositivo(Double.valueOf(lineaParte.get(2)));
+				
+				if(gastoLineaDetalleNueva.getPrincipalSujeto() != null && gastoLineaDetalleNueva.getPrincipalSujeto() != 0.0) {
+					cuota = (new BigDecimal(gastoLineaDetalleNueva.getImporteIndirectoTipoImpositivo()).multiply(new BigDecimal(gastoLineaDetalleNueva.getPrincipalSujeto())));
+					cuota = cuota.divide(new BigDecimal(100));
+					gastoLineaDetalleNueva.setImporteIndirectoCuota(cuota.doubleValue());
+				}else {
+					gastoLineaDetalleNueva.setImporteIndirectoCuota(cuota.doubleValue());
+				}
+			}
+		}
+		BigDecimal importeTotal = (new BigDecimal (gastoLineaDetalleNueva.getPrincipalSujeto())).add(cuota);
+		gastoLineaDetalleNueva.setImporteTotal(importeTotal.doubleValue());
+		DtoLineaDetalleGasto dto = calcularCuentasYPartidas(gasto.getId(), null,lineaParte.get(0));
+
+		gastoLineaDetalleNueva.setCccBase(dto.getCcBase());
+		gastoLineaDetalleNueva.setCppBase(dto.getPpBase());
+		gastoLineaDetalleNueva.setCccEsp(dto.getCcEsp());
+		gastoLineaDetalleNueva.setCppEsp(dto.getPpEsp());
+		gastoLineaDetalleNueva.setCccTasas(dto.getCcTasas());
+		gastoLineaDetalleNueva.setCppTasas(dto.getPpTasas());
+		gastoLineaDetalleNueva.setCccRecargo(dto.getCcRecargo());
+		gastoLineaDetalleNueva.setCppRecargo(dto.getPpRecargo());
+		gastoLineaDetalleNueva.setCccIntereses(dto.getCcInteres());
+		gastoLineaDetalleNueva.setCppIntereses(dto.getPpInteres());
+		
+		return gastoLineaDetalleNueva;
+		
+	}
+	
+	@Transactional(readOnly = false)
+	private void crearRelacionTrabajoLinea(GastoLineaDetalle linea, Trabajo trabajo) {
+		GastoLineaDetalleTrabajo gastoLineaDetalleTrabajo = new GastoLineaDetalleTrabajo(); 
+		gastoLineaDetalleTrabajo.setGastoLineaDetalle(linea);
+		gastoLineaDetalleTrabajo.setTrabajo(trabajo);
+		if(trabajo.getImporteTotal() == trabajo.getImportePresupuesto()) { 
+			DDTipoEmisorGLD tipoEmisorGLD = (DDTipoEmisorGLD) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoEmisorGLD.class, DDTipoEmisorGLD.CODIGO_OTROS);
+			gastoLineaDetalleTrabajo.setTipoEmisor(tipoEmisorGLD);
+		}else {
+			DDTipoEmisorGLD tipoEmisorGLD = (DDTipoEmisorGLD) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoEmisorGLD.class, DDTipoEmisorGLD.CODIGO_HAYA);
+			gastoLineaDetalleTrabajo.setTipoEmisor(tipoEmisorGLD);
+		}
+		gastoLineaDetalleTrabajo.setAuditoria(Auditoria.getNewInstance());
+		genericDao.save(GastoLineaDetalleTrabajo.class, gastoLineaDetalleTrabajo);
+	}
+	
+	private void crearRelacionesActivoTrabajoLinea(GastoLineaDetalle linea, List<ActivoTrabajo> activoTrabajoList, boolean lineaNueva) {
+		DDEntidadGasto entidad = (DDEntidadGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDEntidadGasto.class, DDEntidadGasto.CODIGO_ACTIVO);
+		List<Long> idActivosList = new ArrayList();
+		if(!lineaNueva) {
+			List<GastoLineaDetalleEntidad> entidadesLinea = linea.getGastoLineaEntidadList();
+			if(entidadesLinea != null && !entidadesLinea.isEmpty()) {
+				for (GastoLineaDetalleEntidad gastoLineaDetalleEntidad : entidadesLinea) {
+					if(DDEntidadGasto.CODIGO_ACTIVO.equals(gastoLineaDetalleEntidad.getEntidadGasto().getCodigo())){
+						idActivosList.add(gastoLineaDetalleEntidad.getEntidad());
+					}
+				}
+			}
+		}
+		
+		for (ActivoTrabajo activoTrabajo : activoTrabajoList) {
+			if(activoTrabajo.getActivo() != null && !idActivosList.contains(activoTrabajo.getActivo().getId())) {
+				GastoLineaDetalleEntidad gldEnt = new GastoLineaDetalleEntidad();
+				gldEnt.setAuditoria(Auditoria.getNewInstance());
+				gldEnt.setEntidad(activoTrabajo.getActivo().getId());
+				gldEnt.setEntidadGasto(entidad);
+				gldEnt.setGastoLineaDetalle(linea);
+				genericDao.save(GastoLineaDetalleEntidad.class, gldEnt);
+			}
+		}
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean eliminarTrabajoLinea (Long idTrabajo, Long idGasto) throws Exception {
+		
+		Trabajo trabajo = trabajoApi.findOne(idTrabajo);
+		GastoProveedor gasto = gastoProveedorApi.findOne(idGasto);
+		if(trabajo == null || gasto == null) {
+			return false;
+		}
+		
+
+		Filter trabajoLineaFilter = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+		List<GastoLineaDetalleTrabajo> gastoTrabajoList = genericDao.getList(GastoLineaDetalleTrabajo.class,trabajoLineaFilter);
+	
+		if(gastoTrabajoList != null && !gastoTrabajoList.isEmpty()) {
+			for (GastoLineaDetalleTrabajo gastoLineaDetalleTrabajo : gastoTrabajoList) {
+				if(gastoLineaDetalleTrabajo.getGastoLineaDetalle() != null && gasto.equals(gastoLineaDetalleTrabajo.getGastoLineaDetalle().getGastoProveedor())) {	
+					gastoTrabajoList.remove(gastoLineaDetalleTrabajo);
+					List<GastoLineaDetalleTrabajo> gastoLineaTrabajo = gastoLineaDetalleTrabajo.getGastoLineaDetalle().getGastoLineaTrabajoList();
+					gastoLineaTrabajo.remove(gastoLineaDetalleTrabajo);
+					gastoLineaDetalleTrabajo.getAuditoria().setBorrado(true);
+					gastoLineaDetalleTrabajo.getAuditoria().setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
+					gastoLineaDetalleTrabajo.getAuditoria().setFechaBorrar(new Date());
+					if(gastoLineaTrabajo.isEmpty()) {
+						this.deleteGastoLineaDetalle(gastoLineaDetalleTrabajo.getGastoLineaDetalle().getId());
+					}else {
+						GastoLineaDetalle gastoLineaDetalle = gastoLineaDetalleTrabajo.getGastoLineaDetalle();
+						if(gastoLineaDetalle.getPrincipalSujeto() != null && gastoLineaDetalle.getImporteTotal() != null) {
+							BigDecimal principalSujetoLinea = new BigDecimal(gastoLineaDetalle.getPrincipalSujeto());
+							BigDecimal importeTotalLinea = new BigDecimal(gastoLineaDetalle.getImporteTotal());
+							BigDecimal importeTotalTrabajo = null;
+							
+							if(gasto.getDestinatarioGasto() !=  null && DDDestinatarioGasto.CODIGO_HAYA.equals(gasto.getDestinatarioGasto().getCodigo())
+									&& trabajo.getImportePresupuesto() != null) {
+									importeTotalTrabajo = new BigDecimal(trabajo.getImportePresupuesto());
+							}else if(trabajo.getImporteTotal() != null){
+								importeTotalTrabajo = new BigDecimal(trabajo.getImporteTotal());
+							}
+							if(importeTotalTrabajo != null) {
+								principalSujetoLinea = principalSujetoLinea.subtract(importeTotalTrabajo);
+								gastoLineaDetalle.setPrincipalSujeto(principalSujetoLinea.doubleValue());
+								importeTotalLinea = importeTotalLinea.subtract(importeTotalTrabajo);
+								gastoLineaDetalle.setPrincipalSujeto(importeTotalLinea.doubleValue());
+							}
+							
+							genericDao.save(GastoLineaDetalle.class, gastoLineaDetalle);
+						}
+					}
+					break;
+				}
+			}
+		}
+		
+		return true;
+		
+	}
+	
 }

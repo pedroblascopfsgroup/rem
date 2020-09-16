@@ -29,6 +29,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
     	var estadoParaGuardar = me.lookupController().getView().getViewModel().getData().gasto.getData().estadoModificarLineasDetalleGasto;
     	var isGastoRefacturado = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPorOtroGasto;
     	var isGastoRefacturadoPadre = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPadre;
+    	var tieneTrabajos = me.lookupController().getView().getViewModel().getData().gasto.getData().tieneTrabajos;
     	var disabledCuotaTipoImpositivo = false;
     	
 	    var subtipoGasto= null,		baseSujeta= null,		baseNoSujeta= null,			recargo= null,
@@ -179,6 +180,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 								    				name: 'baseSujeta',
 								    				allowBlank: true,
 								    				value: baseSujeta,
+								    				disabled: tieneTrabajos,
 								    				renderer: function(value) {
 										        		return Ext.util.Format.currency(value);
 										        	},
@@ -194,6 +196,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.baseNoSujeta'),
 								    				reference: 'baseNoSujeta',
 								    				value: baseNoSujeta,
+								    				disabled: tieneTrabajos,
 								    				name: 'baseNoSujeta',
 								    				allowBlank: true,	    			
 								    				renderer: function(value) {
@@ -457,8 +460,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.ccBase'),
 								    				reference: 'ccBase',
 								    				name: 'ccBase',
-								    				value: ccBase,
-								    				allowBlank: false
+								    				value: ccBase
 								    				
 								    			},
 								    			{
@@ -466,8 +468,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 								    				fieldLabel: HreRem.i18n('fieldlabel.gasto.linea.detalle.ppBase'),
 								    				reference: 'ppBase',
 								    				name: 'ppBase',
-								    				value: ppBase,
-								    				allowBlank: false	    			
+								    				value: ppBase	    			
 								    				
 								    				
 								    			},

@@ -559,7 +559,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 	public ModelAndView asignarTrabajos(Long idGasto, Long[] trabajos, ModelMap model) {
 		try {		
 			
-			boolean success = gastoProveedorApi.asignarTrabajos(idGasto, trabajos);
+			boolean success =gastoLineaDetalleApi.asignarTrabajosLineas(idGasto, trabajos);
 			model.put("success", success);
 			
 		} catch (Exception e) {
@@ -593,8 +593,8 @@ public class GastosProveedorController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView desasignarTrabajos(Long idGasto, Long[] trabajos, ModelMap model) {
 		try {		
-			
-			boolean success = gastoProveedorApi.desasignarTrabajos(idGasto, trabajos);
+			Long idTrabajo = trabajos[0];
+			boolean success = gastoLineaDetalleApi.eliminarTrabajoLinea(idTrabajo,idGasto);
 			model.put("success", success);
 			
 		} catch (Exception e) {
@@ -1305,11 +1305,13 @@ public class GastosProveedorController extends ParadiseJsonController {
 			if(idLinea != -1) {
 				List<VElementosLineaDetalle> elementosAfectados = gastoLineaDetalleApi.getElementosAfectados(idLinea);
 				model.put("data", elementosAfectados);
-				model.put("success", true);
+				
 				trustMe.registrarSuceso(request, idLinea, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "elementos", ACCION_CODIGO.CODIGO_VER);
 			}
+			model.put("success", true);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
+			logger.error("error cargarElemetnosAfectados");
 			model.put("success", false);
 			trustMe.registrarError(request, idLinea, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "elementos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
@@ -1331,6 +1333,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 		} catch (Exception e) {
 			logger.error(e.getMessage());
+			logger.error("error cargarComboLineas");
 			model.put("success", false);
 			trustMe.registrarError(request, idGasto, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "elementos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}

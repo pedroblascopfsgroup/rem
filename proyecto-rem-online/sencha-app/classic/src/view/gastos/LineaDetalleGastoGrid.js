@@ -353,9 +353,14 @@ Ext.define('HreRem.view.gastos.LineaDetalleGastoGrid', {
     	var me = this;
     	var idGasto = me.lookupController().getView().getViewModel().get("gasto.id")
 		var grid = me;
+    	var tieneTrabajos = me.lookupController().getView().getViewModel().getData().gasto.getData().tieneTrabajos;
 	
-		Ext.create("HreRem.view.gastos.VentanaCrearLineaDetalleGasto",
+    	if(tieneTrabajos){
+    		me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.crear.gasto.linea.detalle.con.trabajos")); 
+    	}else{
+    		Ext.create("HreRem.view.gastos.VentanaCrearLineaDetalleGasto",
 				{entidad: 'lineaDetalleGasto', idGasto: idGasto, parent:grid, idLineaDetalleGasto: null, record:null}).show();
+    	}
 
     }, 
     
@@ -389,8 +394,16 @@ Ext.define('HreRem.view.gastos.LineaDetalleGastoGrid', {
 		    	    			grid.getStore().load();
 		    	    			me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok")); 
 		    	    			grid.unmask();
-		    	    			grid.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar()
-
+		    	    			grid.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar();
+		    	    			grid.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
+		    	    			grid.up('gastodetalle').down('activosafectadosgasto').funcionRecargar();
+		    	    			var comboLineas = grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=comboLineasDetalleReference]');
+		    	   		        comboLineas.getStore().load();
+		    	   		        comboLineas.reset();
+		       		         
+		    	   		        var gridElementos = grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=listadoActivosAfectadosRef]');
+		    	   		        gridElementos.getStore().getProxy().setExtraParams({'idLinea':-1})
+		    	   		        gridElementos.getStore().load();
 		    	    		},
 		    			 	failure: function(record, operation) {
 		    			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 

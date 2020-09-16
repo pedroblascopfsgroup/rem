@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20200826
+--## FECHA_CREACION=20200909
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-7935
@@ -19,6 +19,7 @@
 --##		0.7 HREOS-9328 - Añadido campos Segmento y Perimetros
 --##		0.8 REMVIP-7161 - Añadido campo Equipo de gestión
 --##		0.9 Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
+--##		0.10 Juan Bautista Alfonso -- REMVIP-7935 - Añadido alias para el campo de fecha posesion FPA.FECHA_POSESION
 --##########################################
 --*/
 
@@ -86,7 +87,7 @@ BEGIN
           	BIE_DAT.BIE_DREG_NUM_REGISTRO,
 			ACT_SIT.SPS_OCUPADO,
           	TIT.DD_TPA_CODIGO,
-          	FPA.FECHA_POSESION,
+          	FPA.FECHA_POSESION AS SPS_FECHA_TOMA_POSESION,
           	ACT_SIT.SPS_ACC_TAPIADO,
 			ACT_SIT.SPS_ACC_ANTIOCUPA,
         	RTG.DD_RTG_CODIGO AS FLAG_RATING,

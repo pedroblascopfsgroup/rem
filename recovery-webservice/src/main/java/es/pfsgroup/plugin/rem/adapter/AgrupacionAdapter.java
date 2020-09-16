@@ -22,6 +22,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -75,7 +76,6 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionObservacion;
 import es.pfsgroup.plugin.rem.model.ActivoAsistida;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
-import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
@@ -108,6 +108,7 @@ import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertaExclusionBulk;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
@@ -177,9 +178,6 @@ public class AgrupacionAdapter {
 	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
 
 	@Autowired
-	private ActivoManager activoManager;
-
-	@Autowired
 	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
 
 	@Autowired
@@ -215,9 +213,6 @@ public class AgrupacionAdapter {
 	private AgrupacionValidatorFactoryApi agrupacionValidatorFactory;
 
 	@Autowired
-	private TrabajoApi trabajoApi;
-
-	@Autowired
 	private UpdaterStateApi updaterState;
 
 	@Autowired
@@ -234,9 +229,6 @@ public class AgrupacionAdapter {
 
 	@Resource
 	private MessageService messageServices;
-
-	@Autowired
-	private NotificatorServiceSancionOfertaAceptacionYRechazo notificatorServiceSancionOfertaAceptacionYRechazo;
 
 	@Autowired
 	private ProcessAdapter processAdapter;
@@ -272,9 +264,6 @@ public class AgrupacionAdapter {
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
-	
-	@Autowired
-	private GestorExpedienteComercialDao gestorExpedienteComercialDao;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -286,8 +275,6 @@ public class AgrupacionAdapter {
 	public static final String PUBLICACION_AGRUPACION_BAJA_ERROR_MSG = "No ha sido posible publicar. La agrupación está dada de baja";
 	public static final String AGRUPACION_BAJA_ERROR_OFERTAS_VIVAS = "No ha sido posible dar de baja la agrupación. Existen ofertas vivas";
 	public static final String AGRUPACION_CAMBIO_DEST_COMERCIAL_CON_OFERTAS_VIVAS = "No se puede cambiar el destino comercial de la agrupación porque tiene ofertas vivas";
-	private static final String AVISO_MENSAJE_TIPO_NUMERO_DOCUMENTO = "activo.motivo.oferta.tipo.numero.documento";
-	private static final String AVISO_MENSAJE_CLIENTE_OBLIGATORIO = "activo.motivo.oferta.cliente";
 	private static final Integer NO_ES_FORMALIZABLE = new Integer(0);
 	private static final Integer ES_FORMALIZABLE = new Integer(1);
 	private static final String TIPO_AGRUPACION_RESTRINGIDA = "02";
@@ -2262,7 +2249,7 @@ public class AgrupacionAdapter {
 	public Oferta createOfertaAgrupacion(DtoOfertasFilter dto) throws Exception {
 
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(dto.getIdAgrupacion());
-		
+		Activo activo = null;
 		Oferta ofertaNueva = null;
 
 		// Comprobar tipo oferta compatible con tipo agrupacion
@@ -2292,6 +2279,10 @@ public class AgrupacionAdapter {
 			// activo y contrastar con la oferta.
 			if (!Checks.esNulo(activos.getActivo().getActivoPublicacion()) && !Checks.esNulo(activos.getActivo().getActivoPublicacion().getTipoComercializacion())) {
 				String comercializacion = activos.getActivo().getActivoPublicacion().getTipoComercializacion().getCodigo();
+				
+				if(activo == null) {
+					activo = activos.getActivo();
+				}
 
 				if (DDTipoOferta.CODIGO_VENTA.equals(dto.getTipoOferta())
 						&& DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(comercializacion)) {
@@ -2442,8 +2433,25 @@ public class AgrupacionAdapter {
 			
 
 			oferta.setGestorComercialPrescriptor(ofertaApi.calcularGestorComercialPrescriptorOferta(oferta));
-
+			
 			ofertaNueva = genericDao.save(Oferta.class, oferta);
+			
+			if(activo != null && activo.getSubcartera() != null &&
+					(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()))) {
+				String codigoBulk = Double.parseDouble(dto.getImporteOferta()) > 750000d 
+						? DDSinSiNo.CODIGO_SI : DDSinSiNo.CODIGO_NO;
+				
+				DDSinSiNo sino = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoBulk));
+				OfertaExclusionBulk ofertaExclusionBulk = new OfertaExclusionBulk();
+				
+				ofertaExclusionBulk.setOferta(ofertaNueva);
+				ofertaExclusionBulk.setExclusionBulk(sino);
+				ofertaExclusionBulk.setFechaInicio(new Date());
+				ofertaExclusionBulk.setUsuarioAccion(genericAdapter.getUsuarioLogado());
+				
+				genericDao.save(OfertaExclusionBulk.class, ofertaExclusionBulk);
+			}			
 
 			// Actualizamos la situacion comercial de los activos de la oferta
 			ofertaApi.updateStateDispComercialActivosByOferta(oferta);

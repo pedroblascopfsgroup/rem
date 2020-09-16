@@ -24,8 +24,8 @@ import es.pfsgroup.plugin.rem.model.DtoLineaDetalleGasto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.DtoVImporteGastoLbk;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
+import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
-import es.pfsgroup.plugin.rem.model.GastoProveedorActivo;
 import es.pfsgroup.plugin.rem.model.GastosDiariosLBK;
 import es.pfsgroup.plugin.rem.model.GastosImportesLBK;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
@@ -321,16 +321,16 @@ public interface GastoProveedorApi {
 
 
 
-		public GastoProveedorActivo buscarRelacionPorActivoYGasto(Activo activo, GastoProveedor gasto);
+		public GastoLineaDetalleEntidad buscarRelacionPorActivoYGasto(Activo activo, GastoProveedor gasto);
 		
 		/**
 		 * Método que devuelve el porcenaje de participación del último gasto ajustado para corregir errores de redondeo.
 		 * 
-		 * @param  gastosActivosList: lista de GastoProveedorActivo
+		 * @param  gastosActivosList: lista de GastoLineaDetalleEntidad
 		 * @param ultimoPorcentaje: porcentaje de participación del último gasto
 		 * 
 		 * */
-		public float regulaPorcentajeUltimoGasto(List<GastoProveedorActivo> gastosActivosList, Float ultimoPorcentaje);
+		public float regulaPorcentajeUltimoGasto(List<GastoLineaDetalleEntidad> gastosLineaDetalleEntidad, Float ultimoPorcentaje);
 
 
 		DtoPage getListGastosExcel(DtoGastosFilter dtoGastosFilter);

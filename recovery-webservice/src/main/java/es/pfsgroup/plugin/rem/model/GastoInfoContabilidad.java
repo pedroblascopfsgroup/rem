@@ -76,10 +76,6 @@ public class GastoInfoContabilidad implements Serializable, Auditable {
     
     @Column(name="GIC_FECHA_DEVENGO_ESPECIAL")
     private Date fechaDevengoEspecial;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CPS_ID")
-    private ConfiguracionSubpartidasPresupuestarias configuracionSubpartidasPresupuestarias;
 
 	@JoinColumn(name = "GIC_ACTIVABLE")
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -175,15 +171,6 @@ public class GastoInfoContabilidad implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
-	}
-
-	public ConfiguracionSubpartidasPresupuestarias getConfiguracionSubpartidasPresupuestarias() {
-		return configuracionSubpartidasPresupuestarias;
-	}
-
-	public void setConfiguracionSubpartidasPresupuestarias(
-			ConfiguracionSubpartidasPresupuestarias configuracionSubpartidasPresupuestarias) {
-		this.configuracionSubpartidasPresupuestarias = configuracionSubpartidasPresupuestarias;
 	}
 
 	public DDSinSiNo getActivable() {

@@ -20,8 +20,9 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GastoApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
+import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
-import es.pfsgroup.plugin.rem.model.GastoProveedorActivo;
 
 @Component
 public class MSVActualizadorCargaActivoGastoPorcentaje extends AbstractMSVActualizador implements MSVLiberator {
@@ -52,19 +53,26 @@ public class MSVActualizadorCargaActivoGastoPorcentaje extends AbstractMSVActual
 		try {
 			Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 			GastoProveedor gasto = gastoApi.getByNumGasto(Long.parseLong(exc.dameCelda(fila, 1)));
-			GastoProveedorActivo relacion = gastoProveedorApi.buscarRelacionPorActivoYGasto(activo, gasto);
+			GastoLineaDetalleEntidad relacion = gastoProveedorApi.buscarRelacionPorActivoYGasto(activo, gasto);
 			Float porcentajeParticipacion = this.obtenerFloatExcel(exc.dameCelda(fila, 2));
-			relacion.getGastoProveedor();
+			relacion.getGastoLineaDetalle().getGastoProveedor();
 
 			if (!Checks.esNulo(activo) && !Checks.esNulo(gasto) && !Checks.esNulo(relacion)
 					&& !Checks.esNulo(porcentajeParticipacion)) {
 				if (exc.getNumeroFilas().equals(fila + 1)) {
 					gastoProveedorApi.actualizarPorcentajeParticipacionGastoProveedorActivo(activo.getId(),
 							gasto.getId(), porcentajeParticipacion);
-					List<GastoProveedorActivo> gastosActivosList = gasto.getGastoProveedorActivos();
-					gastoProveedorApi.actualizarPorcentajeParticipacionGastoProveedorActivo(activo.getId(),
-							gasto.getId(),
-							gastoProveedorApi.regulaPorcentajeUltimoGasto(gastosActivosList, porcentajeParticipacion));
+					if(!Checks.estaVacio(gasto.getGastoLineaDetalleList())){
+						for (GastoLineaDetalle gastoLinea: gasto.getGastoLineaDetalleList()) {
+							if (!Checks.esNulo(gastoLinea.getGastoLineaEntidadList()) && !Checks.estaVacio(gastoLinea.getGastoLineaEntidadList())){
+								List<GastoLineaDetalleEntidad> gastosActivosList = gastoLinea.getGastoLineaEntidadList();
+								gastoProveedorApi.actualizarPorcentajeParticipacionGastoProveedorActivo(activo.getId(),
+										gasto.getId(),
+										gastoProveedorApi.regulaPorcentajeUltimoGasto(gastosActivosList, porcentajeParticipacion));
+							}
+						}
+					}
+
 				} else {
 					gastoProveedorApi.actualizarPorcentajeParticipacionGastoProveedorActivo(activo.getId(),
 							gasto.getId(), porcentajeParticipacion);

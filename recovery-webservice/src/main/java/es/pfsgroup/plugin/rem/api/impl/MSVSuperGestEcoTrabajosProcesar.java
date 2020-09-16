@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -18,18 +17,8 @@ import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
-import es.pfsgroup.framework.paradise.utils.JsonViewerException;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.GastoApi;
-import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ConfiguracionTarifa;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.GastoProveedor;
-import es.pfsgroup.plugin.rem.model.GastoProveedorActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.TrabajoConfiguracionTarifa;
-import es.pfsgroup.plugin.rem.trabajo.dao.impl.TrabajoDaoImpl;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 
 @Component
@@ -40,9 +29,6 @@ public class MSVSuperGestEcoTrabajosProcesar extends AbstractMSVActualizador imp
 
 	@Autowired
 	private TrabajoApi trabajoApi;
-
-	@Autowired
-	private TrabajoDaoImpl trabajoDaoImpl;
 
 	@Autowired
 	private GenericABMDao genericDao;

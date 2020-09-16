@@ -91,6 +91,7 @@ import es.pfsgroup.plugin.rem.model.RelacionHistoricoComunicacion;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoAgrupacion;
@@ -434,7 +435,15 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	public Integer crearGasto(GastoProveedor gasto,  String usuarioLogado) throws GestorDocumentalException {
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		String fechaGasto = !Checks.esNulo(gasto.getFechaEmision()) ? formatter.format(gasto.getFechaEmision()) : "";
-		String idReo = !Checks.estaVacio(gasto.getGastoProveedorActivos()) ?  gasto.getGastoProveedorActivos().get(0).getActivo().getNumActivo().toString() : "";		
+		String idReo = "";	
+		if(!Checks.estaVacio(gasto.getGastoLineaDetalleList()) && !Checks.esNulo(gasto.getGastoLineaDetalleList().get(0).getGastoLineaEntidadList()) && !Checks.estaVacio(gasto.getGastoLineaDetalleList().get(0).getGastoLineaEntidadList())) {
+			if(gasto.getGastoLineaDetalleList().get(0).getGastoLineaEntidadList().get(0).getEntidadGasto().getCodigo().equals(DDEntidadGasto.CODIGO_ACTIVO)) {
+				Activo act = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", gasto.getGastoLineaDetalleList().get(0).getGastoLineaEntidadList().get(0).getEntidad()));
+				if (!Checks.esNulo(act)) {
+					idReo= act.getNumActivo().toString();
+				}
+			}
+		}		
 		String cliente = getClienteByMGP(gasto.getPropietario());
 		String descripcionExpediente =  !Checks.esNulo(gasto.getConcepto()) ? gasto.getConcepto() :  "";
 		RecoveryToGestorExpAssembler recoveryToGestorAssembler =  new RecoveryToGestorExpAssembler(appProperties);

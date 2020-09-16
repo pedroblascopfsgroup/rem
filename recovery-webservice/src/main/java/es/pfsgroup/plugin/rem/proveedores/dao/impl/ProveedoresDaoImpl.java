@@ -329,11 +329,14 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 		BigDecimal count = new BigDecimal("0");
 		
 		String queryString = "SELECT COUNT(1) FROM ACT_PVE_PROVEEDOR PVE "
-							+ " JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.PVE_ID_EMISOR = PVE.PVE_ID "
-							+ " JOIN GPV_ACT GPVACT ON GPVACT.GPV_ID = GPV.GPV_ID "
-							+ " JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = GPVACT.ACT_ID AND ACT.BORRADO = 0 "
-							+ " JOIN DD_SCM_SITUACION_COMERCIAL SCM ON SCM.DD_SCM_ID = ACT.DD_SCM_ID AND SCM.DD_SCM_CODIGO NOT IN ('05', '06') "
-							+ " WHERE PVE.PVE_ID = "+idProveedor;
+				+ " INNER JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.PVE_ID_EMISOR = PVE.PVE_ID "
+                + " INNER JOIN GLD_GASTOS_LINEA_DETALLE GLD ON GPV.GPV_ID = GLD.GPV_ID "
+                + " INNER JOIN GLD_TBJ TBJ ON TBJ.GLD_ID = GLD.GLD_ID "
+                + " INNER JOIN GLD_ENT ENT ON ENT.GLD_ID = TBJ.GLD_ID "               
+                + " INNER JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = ENT.ENT_ID AND ACT.BORRADO = 0 " 
+				+ " INNER JOIN DD_SCM_SITUACION_COMERCIAL SCM ON SCM.DD_SCM_ID = ACT.DD_SCM_ID AND SCM.DD_SCM_CODIGO NOT IN ('05', '06') "
+				+ " WHERE PVE.PVE_ID = "+idProveedor
+				+ " AND ENT.DD_ENT_ID = (SELECT DD_ENT_ID FROM DD_ENT_ENTIDAD_GASTO WHERE DD_ENT_CODIGO ='ACT')";
 		
 		SQLQuery sqlQuery = getHibernateTemplate().getSessionFactory()
 				.getCurrentSession().createSQLQuery(queryString);

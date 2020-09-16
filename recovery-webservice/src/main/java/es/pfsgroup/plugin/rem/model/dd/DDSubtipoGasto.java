@@ -34,6 +34,7 @@ import es.pfsgroup.commons.utils.Checks;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDSubtipoGasto implements Auditable, Dictionary {
 	
+    public static final String OTROS = "01";
 
 	/**
 	 * 

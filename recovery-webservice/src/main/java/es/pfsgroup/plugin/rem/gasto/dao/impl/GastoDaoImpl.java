@@ -334,7 +334,7 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 	@Override
 	public void deleteGastoTrabajoById(Long id) {
 
-		StringBuilder sb = new StringBuilder("delete from GastoProveedorTrabajo gpt where gpt.id = " + id);
+		StringBuilder sb = new StringBuilder("delete from GastoLineaDetalleTrabajo gpt where gpt.id = " + id);
 		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
 
 	}

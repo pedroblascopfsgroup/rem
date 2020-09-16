@@ -2330,7 +2330,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setIdProveedor(trabajo.getProveedorContacto().getProveedor().getId());
 		}
 		if(!Checks.esNulo(trabajo.getGastoTrabajo())) {
-			GastoProveedor gasto = trabajo.getGastoTrabajo().getGastoProveedor();
+			GastoProveedor gasto = trabajo.getGastoTrabajo().getGastoLineaDetalle().getGastoProveedor();
 			dtoTrabajo.setGastoProveedor(gasto.getNumGastoHaya());
 			dtoTrabajo.setEstadoGasto(gasto.getEstadoGasto().getCodigo());
 			if(gastoProveedorApi.isEstadosGastosLiberbankParaLecturaDirectaDeTabla(gasto)) {
@@ -2380,9 +2380,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setNumActivosAgrupacion(trabajo.getAgrupacion().getActivos().size());
 			dtoTrabajo.setTipoAgrupacionDescripcion(trabajo.getAgrupacion().getTipoAgrupacion().getDescripcion());
 		}
-
-		if (!Checks.esNulo(trabajo.getGastoTrabajo()) && !Checks.esNulo(trabajo.getGastoTrabajo().getGastoProveedor())) {
-			dtoTrabajo.setFechaEmisionFactura(trabajo.getGastoTrabajo().getGastoProveedor().getFechaEmision());
+		if (!Checks.esNulo(trabajo.getGastoTrabajo()) && !Checks.esNulo(trabajo.getGastoTrabajo().getGastoLineaDetalle().getGastoProveedor())) {
+			dtoTrabajo.setFechaEmisionFactura(trabajo.getGastoTrabajo().getGastoLineaDetalle().getGastoProveedor().getFechaEmision());
 		}
 
 		if(!Checks.esNulo(trabajo.getUsuarioGestorActivoResponsable())){
@@ -3326,7 +3325,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		// mismo.
 		if (activoTrabajo.getTrabajo().getGastoTrabajo() != null) {
 			gastoProveedorApi.actualizarPorcentajeParticipacionGastoProveedorActivo(activoTrabajo.getActivo().getId(),
-					activoTrabajo.getTrabajo().getGastoTrabajo().getGastoProveedor().getId(), porcentajeParticipacion);
+					activoTrabajo.getTrabajo().getGastoTrabajo().getGastoLineaDetalle().getGastoProveedor().getId(), porcentajeParticipacion);
 		}
 
 		return true;

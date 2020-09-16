@@ -93,7 +93,7 @@ public class DtoLineaDetalleGasto extends WebDto {
 	 private String apartadoIntereses;
 	 
 	 private String capituloIntereses;
-	 
+
 	 private String subPartidas;
 	 
 	 private Boolean tieneCuentaContable;
@@ -434,5 +434,6 @@ public class DtoLineaDetalleGasto extends WebDto {
 	public void setTieneCuentaContable(Boolean tieneCuentaContable) {
 		this.tieneCuentaContable = tieneCuentaContable;
 	}
+
    	
 }

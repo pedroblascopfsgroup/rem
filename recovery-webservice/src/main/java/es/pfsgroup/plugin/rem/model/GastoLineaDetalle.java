@@ -46,9 +46,6 @@ public class GastoLineaDetalle implements Serializable, Auditable{
 
 	private static final long serialVersionUID = 1L;
 	
-
-//	@Autowired
-//	private ActivoDao activoDao;
 	
 	@Id
 	@Column(name = "GLD_ID")

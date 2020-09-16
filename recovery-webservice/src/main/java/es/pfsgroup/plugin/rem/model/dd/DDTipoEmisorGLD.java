@@ -19,17 +19,20 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 @Entity
-@Table(name = "DD_ENT_ENTIDAD_GASTO", schema = "${entity.schema}")
+@Table(name = "DD_TEG_TIPO_EMISOR_GLD", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDTipoEmisorGLD implements Auditable, Dictionary {
 
 private static final long serialVersionUID = 1L;
-	
+
+	public final static String CODIGO_HAYA = "HAY";
+	public final static String CODIGO_OTROS = "OTR";
+
 	@Id
 	@Column(name = "DD_TEG_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEntidadGastoGenerator")
-	@SequenceGenerator(name = "DDEntidadGastoGenerator", sequenceName = "S_DD_ENT_ENTIDAD_GASTO")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoEmisorGLDGenerator")
+	@SequenceGenerator(name = "DDTipoEmisorGLDGenerator", sequenceName = "S_DD_TEG_TIPO_EMISOR_GLD")
 	private Long id;
 	
 	@Column(name = "DD_TEG_CODIGO")   

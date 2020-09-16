@@ -48,6 +48,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		    	
 		    	form.setBindRecord(record);		    	
 		    	form.up("tabpanel").unmask();
+		    	me.recargarVisibilidadGrids(form, record);
+	
 		    },
 		    failure: function(operation) {		    	
 		    	form.up("tabpanel").unmask();
@@ -893,6 +895,18 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			     params: {idGasto: idGasto, trabajos: idTrabajos},
 			
 			     success: function(response, opts) {
+			    	
+			    	 grid.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
+			         grid.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar();
+			         grid.up('gastodetalle').down('activosafectadosgasto').funcionRecargar();
+			         
+			         var comboLineas =  grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=comboLineasDetalleReference]');
+			    	 comboLineas.reset();
+			         comboLineas.getStore().load();
+ 	    			 var gridElementos = grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=listadoActivosAfectadosRef]');
+			         gridElementos.getStore().getProxy().setExtraParams({'idLinea':-1})
+			         gridElementos.getStore().load();
+			         
 			         grid.unmask();		         
 			         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 		        	 me.refrescarGasto(true);
@@ -982,7 +996,17 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		     params: {idGasto: idGasto, trabajos: idTrabajos},
 		
 		     success: function(response, opts) {
-		         ventanaSeleccionTrabajos.unmask();		         
+		         ventanaSeleccionTrabajos.unmask();		
+		         var comboLineas = ventanaSeleccionTrabajos.up('gastodetalle').down('activosafectadosgasto').down('[reference=comboLineasDetalleReference]');
+		        
+		         comboLineas.reset();
+		         ventanaSeleccionTrabajos.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
+		         ventanaSeleccionTrabajos.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar();
+		         comboLineas.getStore().load();
+		         var gridElementos = ventanaSeleccionTrabajos.up('gastodetalle').down('activosafectadosgasto').down('[reference=listadoActivosAfectadosRef]');
+		         gridElementos.getStore().getProxy().setExtraParams({'idLinea':-1})
+		         gridElementos.getStore().load();
+		         
 		         ventanaSeleccionTrabajos.destroy();
 		         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 				 me.refrescarGastoAlIncluirTrabajo(ventanaSeleccionTrabajos.up('gastodetallemain'));
@@ -1735,7 +1759,19 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
                 	var grid = window.lookupController().getView().down('[reference=lineaDetalleGastoGrid]');
                 	grid.getStore().load();
                 	window.close();
-                	grid.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar()
+                	var comboLineas = grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=comboLineasDetalleReference]');
+                	comboLineas.reset();
+                	grid.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar();
+                	grid.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
+                	grid.up('gastodetalle').down('activosafectadosgasto').funcionRecargar();
+	   		        comboLineas.getStore().load();
+	   		       
+   		         
+	   		        var gridElementos = grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=listadoActivosAfectadosRef]');
+	   		        gridElementos.getStore().getProxy().setExtraParams({'idLinea':-1})
+	   		        gridElementos.getStore().load();
+                	
+
 
                 },
                 failure: function(fp, o) {
@@ -2284,6 +2320,15 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	else{
     		searchButton.setDisabled(true);
     	}
-	}
+	},
 	
+    recargarVisibilidadGrids: function(form, record){
+    	if(!Ext.isEmpty(record.data.lineasNoDeTrabajos) && !Ext.isEmpty(form)){
+    		var gridT = form.up('gastodetalle').down('datosgeneralesgasto').down('[reference=listadoTrabajosIncluidosFactura]');   	
+    		if(!Ext.isEmpty(gridT)){
+    			gridT.down('[itemId=addButton]').setHidden(record.data.lineasNoDeTrabajos);
+    			gridT.down('[itemId=removeButton]').setHidden(record.data.lineasNoDeTrabajos);
+    		}
+    	}
+    }
 });

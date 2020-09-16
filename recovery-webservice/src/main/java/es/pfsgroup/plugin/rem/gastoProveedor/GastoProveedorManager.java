@@ -69,6 +69,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoSubtipoGastoProveedorTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
 import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
@@ -450,12 +451,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if (!Checks.esNulo(gasto.getGestoria())) {
 				dto.setNombreGestoria(gasto.getGestoria().getNombre());
 			}
-			
-//			if (gasto.getGastoLineaDetalle() != null && gasto.getGastoLineaDetalle().getTipoImpuesto() != null) {
-//				dto.setCodigoImpuestoIndirecto(gasto.getGastoLineaDetalle().getTipoImpuesto().getCodigo());
-//			}			
-			
-			
+						
 			if(!Checks.esNulo(gasto.getNumeroPrimerGastoSerie())) {
 				Filter filtroNumGs = genericDao.createFilter(FilterType.EQUALS, "id",gasto.getNumeroPrimerGastoSerie());
 				GastoProveedor gsPrim = genericDao.get(GastoProveedor.class, filtroNumGs);
@@ -500,6 +496,26 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				dto.setEstadoModificarLineasDetalleGasto(true);
 			}else {
 				dto.setEstadoModificarLineasDetalleGasto(false);
+			}
+			
+			List<GastoLineaDetalle> gastoLineaDetalleList = gasto.getGastoLineaDetalleList();
+			boolean tieneTrabajos = false;
+			boolean tieneLineas = false;
+			if(!gastoLineaDetalleList.isEmpty()) {
+				tieneLineas = true;
+				for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleList) {
+					if(gastoLineaDetalle.getGastoLineaTrabajoList() != null && !gastoLineaDetalle.getGastoLineaTrabajoList().isEmpty()) {
+						tieneTrabajos = true;
+						break;
+					}
+				}
+			}
+			dto.setTieneTrabajos(tieneTrabajos);
+			
+			if((tieneLineas && tieneTrabajos) || (!tieneLineas)) {
+				dto.setLineasNoDeTrabajos(false);
+			}else {
+				dto.setLineasNoDeTrabajos(true);
 			}
 			
 			dto.setIsGastoRefacturadoPorOtroGasto(this.isGastoRefacturadoPorOtroGasto(gasto.getId()));
@@ -3786,6 +3802,19 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		 return gastoLineaDetalleManager.actualizarRepartoTrabajo(idLinea);
 		
+	}
+	
+	@Override
+	public ActivoSubtipoGastoProveedorTrabajo getSubtipoGastoBySubtipoTrabajo(Trabajo trabajo) {
+		if(trabajo == null || trabajo.getSubtipoTrabajo() == null) {
+			return null;
+		}
+		
+		Filter subtipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "subtipoTrabajo.id", trabajo.getSubtipoTrabajo().getId());
+		ActivoSubtipoGastoProveedorTrabajo subtipoGastoTrabajo = genericDao.get(ActivoSubtipoGastoProveedorTrabajo.class,subtipoTrabajo);
+	
+		
+		return subtipoGastoTrabajo;
 	}
 	
 }

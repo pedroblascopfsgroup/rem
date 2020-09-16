@@ -224,15 +224,10 @@ Ext.define('HreRem.view.administracion.gastos.AnyadirNuevoGasto', {
 									               	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
 									               	colspan:1,
 									               	reference: 'tipoGasto',
-					        						chainedStore: 'comboSubtipoGasto',
-													chainedReference: 'subtipoGastoCombo',
 											      	bind: {
 										           		store: '{comboTiposGasto}',
 										           		value: '{gastoNuevo.tipoGastoCodigo}'
 										         	},
-										         	listeners: {
-									                	select: 'onChangeChainedCombo'
-									            	},
 										         	allowBlank: false
 										    	},
 										    	 /////	columna2

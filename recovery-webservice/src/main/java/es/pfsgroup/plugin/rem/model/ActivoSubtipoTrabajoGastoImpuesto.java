@@ -22,10 +22,11 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDComunidadAutonoma;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 
 @Entity
-@Table(name = "ACT_STI_SGT_IMP", schema = "${entity.schema}")
+@Table(name = "ACT_STI_STG_IMP", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class ActivoSubtipoTrabajoGastoImpuesto implements Serializable, Auditable{
@@ -35,12 +36,12 @@ public class ActivoSubtipoTrabajoGastoImpuesto implements Serializable, Auditabl
 	@Id
 	@Column(name = "STI_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "ActivoSubtipoTrabajoGastoImpuestoGenerator")
-	@SequenceGenerator(name = "ActivoSubtipoTrabajoGastoImpuestoGenerator", sequenceName = "S_ACT_STI_SGT_IMP")
+	@SequenceGenerator(name = "ActivoSubtipoTrabajoGastoImpuestoGenerator", sequenceName = "S_ACT_STI_STG_IMP")
 	private Long id;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SGT_ID")
-	private ActivoSubtipoGastoProveedorTrabajo activoSubtipoGastoProveedorTrabajo;
+    @JoinColumn(name = "DD_STG_ID")
+	private DDSubtipoGasto subtipoGasto;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TIT_ID")
@@ -67,13 +68,12 @@ public class ActivoSubtipoTrabajoGastoImpuesto implements Serializable, Auditabl
 		this.id = id;
 	}
 
-	public ActivoSubtipoGastoProveedorTrabajo getActivoSubtipoGastoProveedorTrabajo() {
-		return activoSubtipoGastoProveedorTrabajo;
+	public DDSubtipoGasto getSubtipoGasto() {
+		return subtipoGasto;
 	}
 
-	public void setActivoSubtipoGastoProveedorTrabajo(
-			ActivoSubtipoGastoProveedorTrabajo activoSubtipoGastoProveedorTrabajo) {
-		this.activoSubtipoGastoProveedorTrabajo = activoSubtipoGastoProveedorTrabajo;
+	public void setSubtipoGasto(DDSubtipoGasto subtipoGasto) {
+		this.subtipoGasto = subtipoGasto;
 	}
 
 	public DDTiposImpuesto getTiposImpuesto() {

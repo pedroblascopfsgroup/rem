@@ -20,6 +20,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 public class ValidateJbpmManager implements ValidateJbpmApi {
 
 	private final String FALTA_MARCAR_RESERVA_NECESARIA = "En la reserva del expediente se debe marcar si es necesaria o no para poder avanzar.";
+	public final String FALTAN_DATOS_COMPRADORES = "Es necesario cumplimentar todos los campos obligatorios de los compradores para avanzar la tarea.";
 	
 	@Autowired
 	private TrabajoApi trabajoApi;
@@ -41,6 +42,10 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 			!Checks.esNulo(trabajo) && 
 			expedienteComercialApi.isComiteSancionadorHaya(trabajo)) {
 			return FALTA_MARCAR_RESERVA_NECESARIA;		
+		}
+		
+		if(!expedienteComercialApi.checkCamposComprador(tareaExterna)) {
+			return FALTAN_DATOS_COMPRADORES;
 		}
 		// SELECT TAP_SCRIPT_VALIDACION_JBPM FROM TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = 'T013_DefinicionOferta'
 		//  - (checkFormalizacion() ? (checkDeDerechoTanteo() == false ? (checkBankia() ? altaComiteProcess() : null) : null) : null)				

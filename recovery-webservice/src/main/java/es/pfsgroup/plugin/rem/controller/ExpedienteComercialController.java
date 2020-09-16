@@ -96,6 +96,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteProblemasVentaDto;
 
 @Controller
@@ -694,7 +695,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		try {
 			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
 
-			String errores = expedienteComercialAdapter.uploadDocumento(fileItem, null, null);
+			String errores = expedienteComercialAdapter.uploadDocumento(fileItem);
 			model.put("errores", errores);
 			model.put(RESPONSE_SUCCESS_KEY, errores == null);
 

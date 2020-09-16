@@ -240,7 +240,7 @@ public class Trabajo implements Serializable, Auditable {
     
     @OneToOne(mappedBy = "trabajo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "TBJ_ID")
-    private GastoProveedorTrabajo gastoTrabajo;
+    private GastoLineaDetalleTrabajo gastoTrabajo;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="TBJ_GESTOR_ACTIVO_RESPONSABLE")
@@ -867,11 +867,11 @@ public class Trabajo implements Serializable, Auditable {
 		this.fechaEmisionFactura = fechaEmisionFactura;
 	}
 
-	public GastoProveedorTrabajo getGastoTrabajo() {
+	public GastoLineaDetalleTrabajo getGastoTrabajo() {
 		return gastoTrabajo;
 	}
 
-	public void setGastoTrabajo(GastoProveedorTrabajo gastoTrabajo) {
+	public void setGastoTrabajo(GastoLineaDetalleTrabajo gastoTrabajo) {
 		this.gastoTrabajo = gastoTrabajo;
 	}
 

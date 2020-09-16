@@ -9,8 +9,8 @@ public class GastoActivosHqlHelper {
 
 	
 	public static final String ALIAS = "gastoActivo";
-	public static final String FROM = ",GastoProveedorActivo " + ALIAS;
-	public static final String WHERE_JOIN = " vgasto.id = " + ALIAS + ".gastoProveedor.id";
+	public static final String FROM = ",GastoLineaDetalleEntidad" + ALIAS;
+	public static final String WHERE_JOIN = " vgasto.id = " + ALIAS + ".gastoProveedor.gastoLineaDetalle.id";
 	
 
 	public static String getFrom(DtoGastosFilter dtoGastosFilter) {

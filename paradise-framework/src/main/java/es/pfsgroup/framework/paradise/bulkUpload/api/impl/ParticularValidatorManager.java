@@ -1492,9 +1492,12 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	public Boolean tienenRelacionActivoGasto(String numActivo, String numGasto){
 		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto) || Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo))
 			return false;
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM GPV_ACT "
-				+ "		WHERE GPV_ID = (SELECT GPV_ID FROM GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = '"+numGasto+"')"
-				+ "		AND ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '"+numActivo+"')");
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM GLD_ENT ENT"
+				+ " INNER JOIN GLD_TBJ TBJ ON TBJ.GLD_ID = ENT.GLD_ID"
+				+ "	INNER JOIN GLD_GASTOS_LINEA_DETALLE GLD ON TBJ.GLD_ID = GLD.GLD_ID"
+				+ "	WHERE GLD.GPV_ID = (SELECT GPV_ID FROM GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = '"+numGasto+"')"
+				+ " AND ENT.ENT_ID = (SELECT DD_ENT_ID FROM DD_ENT_ENTIDAD_GASTO WHERE DD_ENT_CODIGO ='ACT')"
+				+ "	AND ENT.DD_ENT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '"+numActivo+"')");
 		return !"0".equals(resultado);
 	}
 
@@ -1502,9 +1505,12 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	public List<Long> getRelacionGastoActivo(String numGasto){
 		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return new ArrayList<Long>();
-		List<Object> listaObj = rawDao.getExecuteSQLList("SELECT ACT_NUM_ACTIVO FROM ACT_ACTIVO "
-				+ "WHERE ACT_ID IN (SELECT ACT_ID FROM GPV_ACT WHERE GPV_ID = "
-				+ "(SELECT GPV_ID FROM GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = "+numGasto+"))");
+		List<Object> listaObj = rawDao.getExecuteSQLList("SELECT DISTINCT ACT.ACT_NUM_ACTIVO FROM ACT_ACTIVO ACT "
+				+ "INNER JOIN GLD_ENT ENT ON ENT.ENT_ID = ACT.ACT_ID AND ENT.DD_ENT_ID = (SELECT DD_ENT_ID FROM DD_ENT_ENTIDAD_GASTO WHERE DD_ENT_CODIGO ='ACT') "
+				+ "INNER JOIN GLD_TBJ TBJ ON TBJ.GLD_ID = ENT.GLD_ID "
+				+ "INNER JOIN GLD_GASTOS_LINEA_DETALLE GLD ON TBJ.GLD_ID = GLD.GLD_ID "
+				+ "INNER JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GLD.GPV_ID "
+				+ "WHERE GPV.GPV_NUM_GASTO_HAYA = " + numGasto);
 		List<Long> listaNumActivos = new ArrayList<Long>();
 		for(Object o: listaObj){
 			String objetoString = o.toString();
@@ -1554,12 +1560,15 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if((Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) || (Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto)))
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
-				+ "		 FROM GPV_ACT gasact "
-				+ "			INNER JOIN GPV_GASTOS_PROVEEDOR gpv on gasact.GPV_ID = gpv.GPV_ID "
-				+ "			INNER JOIN ACT_ACTIVO act on gasact.ACT_ID = act.ACT_ID "
-				+ "			WHERE gpv.GPV_NUM_GASTO_HAYA ="+numGasto+" "
-				+ "			AND act.ACT_NUM_ACTIVO ="+numActivo+" "
-				+ "		 	AND gpv.BORRADO = 0 AND act.BORRADO = 0");
+				+ "	FROM gld_ent ent"
+				+ "	INNER JOIN gld_tbj tbj ON tbj.gld_id = ent.gld_id"
+				+ "	INNER JOIN gld_gastos_linea_detalle gld ON tbj.gld_id = gld.gld_id"
+				+ " INNER JOIN gpv_gastos_proveedor gpv ON gld.gpv_id = gpv.gpv_id"
+				+ " INNER JOIN act_activo act ON ent.ent_id = act.act_id"
+				+ "	WHERE gpv.GPV_NUM_GASTO_HAYA ="+numGasto+" "
+				+ "	AND act.ACT_NUM_ACTIVO ="+numActivo+" "
+				+ " AND ENT.DD_ENT_ID = (SELECT DD_ENT_ID FROM DD_ENT_ENTIDAD_GASTO WHERE DD_ENT_CODIGO ='ACT')"
+				+ "	AND gpv.BORRADO = 0 AND act.BORRADO = 0");
 		return "0".equals(resultado);
 	}
 
@@ -1582,9 +1591,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM GPV_GASTOS_PROVEEDOR gpv "
-				+ "			INNER JOIN GPV_TBJ gpvtbj on gpv.GPV_ID = gpvtbj.GPV_ID "
+				+ "		 INNER JOIN GLD_GASTOS_LINEA_DETALLE GLD ON GPV.GPV_ID = GLD.GPV_ID	"
+				+ "		 INNER JOIN GLD_TBJ TBJ ON TBJ.GLD_ID = GLD.GLD_ID	"
 				+ "			WHERE gpv.GPV_NUM_GASTO_HAYA ="+numGasto+" "
-				+ "		 	AND gpv.BORRADO = 0 and gpvtbj.BORRADO = 0");
+				+ "		 	AND gpv.BORRADO = 0 and TBJ.BORRADO = 0");
 		return "0".equals(resultado);
 	}
 
@@ -2367,9 +2377,12 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	public Boolean esParGastoActivo(String numGasto, String numActivo){
 		if(!StringUtils.isNumeric(numGasto) || !StringUtils.isNumeric(numActivo))
 			return false;
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM GPV_ACT "
-				+ "		WHERE GPV_ID = (SELECT GPV_ID FROM GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = '"+numGasto+"')"
-				+ "		AND ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '"+numActivo+"')");
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM GLD_ENT ENT"
+				+ " INNER JOIN GLD_TBJ TBJ ON TBJ.GLD_ID = ENT.GLD_ID" 
+				+ " INNER JOIN GLD_GASTOS_LINEA_DETALLE GLD ON TBJ.GLD_ID = GLD.GLD_ID" 
+				+ "	WHERE GLD.GPV_ID = (SELECT GPV_ID FROM GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = '"+numGasto+"')"
+				+ " AND ENT.DD_ENT_ID = (SELECT DD_ENT_ID FROM DD_ENT_ENTIDAD_GASTO WHERE DD_ENT_CODIGO ='ACT') "
+				+ "	AND ENT.ENT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '"+numActivo+"')");
 		return !"0".equals(resultado);
 	}
 
@@ -3165,7 +3178,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ " CASE WHEN ( "
 				+ "		SELECT COUNT(*)	"
 				+ "		FROM ACT_TBJ_TRABAJO TBJ "
-				+ "		INNER JOIN GPV_TBJ GPTB ON GPTB.TBJ_ID=TBJ.TBJ_ID AND GPTB.BORRADO=0"
+				+ "		INNER JOIN GLD_TBJ GTBJ ON GTBJ.TBJ_ID = TBJ.TBJ_ID AND GTBJ.BORRADO =0 "
 				+ " 	WHERE TBJ.TBJ_NUM_TRABAJO = " + numTrabajo + " 	AND TBJ.BORRADO=0 "
 				+ "		GROUP BY TBJ.TBJ_NUM_TRABAJO"
 				+ "	) is null THEN 0"
@@ -3729,9 +3742,12 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "FROM GPV_GASTOS_PROVEEDOR GPV "
-				+ "JOIN GPV_ACT GPA ON GPV.GPV_ID = GPA.GPV_ID "
-				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = GPA.ACT_ID "
+				+ "INNER JOIN GLD_GASTOS_LINEA_DETALLE GLD ON GPV.GPV_ID = GLD.GPV_ID "
+				+ "INNER JOIN GLD_TBJ TBJ ON TBJ.GLD_ID = GLD.GLD_ID "
+				+ "INNER JOIN GLD_ENT ENT ON ENT.GLD_ID = TBJ.GLD_ID "
+				+ "INNER JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = ENT.ENT_ID "
 				+ "WHERE GPV.GPV_NUM_GASTO_HAYA = " + numGasto
+				+ " AND ENT.DD_ENT_ID = (SELECT DD_ENT_ID FROM DD_ENT_ENTIDAD_GASTO WHERE DD_ENT_CODIGO ='ACT') "
 				+ " AND ACT.ACT_NUM_ACTIVO = '" + numActivo + "'"
 				);
 

@@ -141,16 +141,7 @@ public class GastoProveedor implements Serializable, Auditable {
     /**
      * Lista de adjuntos que se adjuntan sin servicio del gestor documental
      */
-    private List<AdjuntoGasto> adjuntos;   
-    
-    @OneToMany(mappedBy = "gastoProveedor", fetch = FetchType.LAZY)
-    @JoinColumn(name = "GPV_ID")
-    @Where(clause = Auditoria.UNDELETED_RESTICTION)
-    private List<GastoProveedorTrabajo> gastoProveedorTrabajos;
-    
-    @OneToMany(mappedBy = "gastoProveedor", fetch = FetchType.LAZY)
-    @JoinColumn(name = "GPV_ID")
-    private List<GastoProveedorActivo> gastoProveedorActivos;
+    private List<AdjuntoGasto> adjuntos;
     
     @OneToMany(mappedBy = "gastoProveedor", fetch = FetchType.LAZY)
     @JoinColumn(name = "GPV_ID")
@@ -364,23 +355,6 @@ public class GastoProveedor implements Serializable, Auditable {
 		this.gastoDetalleEconomico = gastoDetalleEconomico;
 	}
 
-	public List<GastoProveedorTrabajo> getGastoProveedorTrabajos() {
-		return gastoProveedorTrabajos;
-	}
-
-	public void setGastoProveedorTrabajos(
-			List<GastoProveedorTrabajo> gastoProveedorTrabajos) {
-		this.gastoProveedorTrabajos = gastoProveedorTrabajos;
-	}
-
-	public List<GastoProveedorActivo> getGastoProveedorActivos() {
-		return gastoProveedorActivos;
-	}
-
-	public void setGastoProveedorActivos(
-			List<GastoProveedorActivo> gastoProveedorActivos) {
-		this.gastoProveedorActivos = gastoProveedorActivos;
-	}
 	public List<AdjuntoGasto> getAdjuntos() {
 		return adjuntos;
 	}
@@ -444,10 +418,9 @@ public class GastoProveedor implements Serializable, Auditable {
 		
 		DDCartera cartera = null;
 		
-		if(!Checks.estaVacio(this.gastoProveedorActivos)) {
-			cartera = this.gastoProveedorActivos.get(0).getActivo().getCartera();			
+		if(this.getPropietario() != null && this.getPropietario().getCartera() != null){
+			cartera= this.getPropietario().getCartera();
 		}
-	
 		return cartera;
 	
 	}
@@ -468,17 +441,7 @@ public class GastoProveedor implements Serializable, Auditable {
 		this.gastoProveedorAvisos = gastoProveedorAvisos;
 	}
 	
-	public DDSubcartera getSubcartera() {
-		
-		DDSubcartera subcartera = null;
-		
-		if(!Checks.estaVacio(this.gastoProveedorActivos)) {
-			subcartera = this.gastoProveedorActivos.get(0).getActivo().getSubcartera();			
-		}
-	
-		return subcartera;
-	
-	}
+
 
 	public String getIdentificadorUnico() {
 		return identificadorUnico;

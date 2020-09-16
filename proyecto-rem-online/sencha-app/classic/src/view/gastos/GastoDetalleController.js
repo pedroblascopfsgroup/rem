@@ -142,6 +142,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 								form.getBindRecord().save({
 									success: success,				            
 						            failure: function (a, operation) {
+						            	
 						            	var data = {};
 			                            try {
 			                            	data = Ext.decode(operation._response.responseText);
@@ -152,11 +153,14 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			                            } else {
 			                            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 			                            }
-										var comboEmisor = me.getView().lookupReference("comboProveedores");
-										var nifEmisor = me.getViewModel().data.gasto.data.nifEmisor;
-										comboEmisor.getStore().getProxy().extraParams.nifProveedor = nifEmisor;	
-										comboEmisor.getStore().load();
-										me.refrescarGasto(form.refreshAfterSave);
+			                            if(me.getView().getXType() != "anyadirnuevogasto"){
+			                            	var comboEmisor = me.getView().lookupReference("comboProveedores");
+											var nifEmisor = me.getViewModel().data.gasto.data.nifEmisor;
+											comboEmisor.getStore().getProxy().extraParams.nifProveedor = nifEmisor;	
+											comboEmisor.getStore().load();
+											me.refrescarGasto(form.refreshAfterSave);
+			                            }
+
 										me.getView().unmask();
 						            }
 								});

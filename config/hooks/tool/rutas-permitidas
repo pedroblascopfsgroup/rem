@@ -81,14 +81,17 @@ rem_mirror|func-rem-supercompradores
 Divarian-F3_HREOS-9082|func-rem-Divarian-F3
 2.17.2-20012401-rem|version-2.17.3-rem
 version-2.17.1-rem|version-2.16.1-sp
-R-Sanguinelli|version-2.17.4-rem
+func-rem-Divarian-F4|func-rem-Divarian-F5
 version-2.17.3-rem|R-Sanguinelli
+func-rem-PreMigracionDivarian|func-rem-Divarian-F5
 rem_mirror|R-Newhall
 rem_mirror|func-rem-precios
 R-Barberina|func-rem-PreMigracionDivarian
 rem_mirror|func-rem-PreMigracionDivarian
 func-rem-paqueteBAUsp|version-2.18.4-rem
 2.19.0-20031301-rem|version-2.18.4-rem
+func-HREOS-9920|func-rem-Divarian-F5
+func-rem-Divarian-F5|parche-rem-Divarian-F5
 func-rem-precios|R-Newhall-backup
 HREOS-9492|func-rem-precios
 func-rem-precios|HREOS-9492
@@ -101,3 +104,6 @@ func-HREOS-10487|func-rem-nuevasEntradasAdmision
 rem_mirror|func-rem-nuevasEntradasAdmision
 2.20.9-20071001-rem|func-rem-nuevasEntradasAdmision
 func-rem-nuevasEntradasAdmision|func-rem-supervisionGestorias-F2
+rem_mirror|parche-rem-Divarian-F5
+rem_mirror|func-rem-spartaMasivo
+2.20.9-20071001-rem|parche-rem-Divarian-F5

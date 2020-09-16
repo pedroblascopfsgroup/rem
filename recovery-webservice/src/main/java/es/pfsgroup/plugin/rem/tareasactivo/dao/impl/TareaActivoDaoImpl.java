@@ -86,6 +86,11 @@ public class TareaActivoDaoImpl extends AbstractEntityDao<TareaActivo, Long> imp
 	}
 
 	@Override
+	public void doFlush() {
+		getHibernateTemplate().flush();
+	}
+
+	@Override
 	public void finalizarTareasActivoPorIdActivoAndCodigoTramite(Long idActivo, String codigoTipoTramite) {
 			
 		Session session = this.getSessionFactory().getCurrentSession();

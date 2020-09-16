@@ -523,6 +523,7 @@ public class TareaActivoManager implements TareaActivoApi {
 		return !tareaCompletada.isEmpty();
 	}
 	
+	@Transactional
 	@Override
 	public TareaActivo tareaOfertaDependiente(Oferta oferta) {
 		TareaActivo tarea = null;
@@ -599,26 +600,26 @@ public class TareaActivoManager implements TareaActivoApi {
 						}
 					}
 					
-					validacionPrevia = agendaAdapter.getValidacionPrevia(dto.getForm().getTareaExterna().getTareaPadre().getId());
+					validacionPrevia = agendaAdapter.getValidacionPrevia(tareaDependiente.getTareaExterna().getTareaPadre().getId());
 					if (!Checks.esNulo(validacionPrevia) && !MENSAJE_OFERTAS_DEPENDIENTES.equals(validacionPrevia)) {
 						return errorSalida += validacionPrevia;
 					}
 					
-					TareaActivo tareaActivo = getByIdTareaExterna(dto.getForm().getTareaExterna().getId());
+					TareaActivo tareaActivo = getByIdTareaExterna(tareaDependiente.getTareaExterna().getId());
 					
-					if (T013_DEFINICIONOFERTA.equals(dto.getForm().getTareaExterna().getTareaProcedimiento().getCodigo())) {
-						errorValidacionTarea = validateJbpmApi.definicionOfertaT013(dto.getForm().getTareaExterna(), comiteSuperior, valoresTareas);
+					if (T013_DEFINICIONOFERTA.equals(tareaDependiente.getTareaExterna().getTareaProcedimiento().getCodigo())) {
+						errorValidacionTarea = validateJbpmApi.definicionOfertaT013(tareaActivo.getTareaExterna(), comiteSuperior, valoresTareas);
 						if (!Checks.esNulo(errorValidacionTarea)) {
 							return errorSalida += errorValidacionTarea;
 						}
-					} else if (T013_RESOLUCIONCOMITE.equals(dto.getForm().getTareaExterna().getTareaProcedimiento().getCodigo())) {
-						errorValidacionTarea = validateJbpmApi.resolucionComiteT013(dto.getForm().getTareaExterna(), valoresTareas);
+					} else if (T013_RESOLUCIONCOMITE.equals(tareaDependiente.getTareaExterna().getTareaProcedimiento().getCodigo())) {
+						errorValidacionTarea = validateJbpmApi.resolucionComiteT013(tareaActivo.getTareaExterna(), valoresTareas);
 						if (!Checks.esNulo(errorValidacionTarea)) {
 							return errorSalida += errorValidacionTarea;
 						}
 					}
 					
-					String scriptValidacion = dto.getForm().getTareaExterna().getTareaProcedimiento().getScriptValidacionJBPM();
+					String scriptValidacion = tareaDependiente.getTareaExterna().getTareaProcedimiento().getScriptValidacionJBPM();
 					Object result = jbpmMActivoScriptExecutorApi.evaluaScript(tareaActivo.getTramite().getId(), dto.getForm().getTareaExterna().getId(), dto.getForm().getTareaExterna().getTareaProcedimiento().getId(),
 							null, scriptValidacion);
 					

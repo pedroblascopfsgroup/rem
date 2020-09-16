@@ -102,6 +102,7 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private Boolean isCarteraLbkVenta;
 	private Boolean isLbkOfertaComercialPrincipal;
 	private Boolean muestraOfertaComercial;
+	private Boolean isAdvisoryNoteEnTareas;
 
 	private Double importeTotal;
 	
@@ -113,8 +114,16 @@ public class DtoDatosBasicosOferta extends WebDto {
 	
 	private String ofertaSingular;
 	
-	private Boolean estadoAprobadoLbk;
+	private String exclusionBulk;
+	
+	private Boolean isCarteraCerberusDivarian;
 
+	private String idAdvisoryNote;
+	private Long tipoBulkAdvisoryNote;
+	private Boolean tareaAdvisoryNoteFinalizada;
+	
+	
+	private Boolean estadoAprobadoLbk;
 
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
@@ -122,6 +131,13 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setEstadoAprobadoLbk(Boolean estadoAprobadoLbk) {
 		this.estadoAprobadoLbk = estadoAprobadoLbk;
+	}
+	public Long getTipoBulkAdvisoryNote() {
+		return tipoBulkAdvisoryNote;
+	}
+
+	public void setTipoBulkAdvisoryNote(Long tipoBulkAdvisoryNote) {
+		this.tipoBulkAdvisoryNote = tipoBulkAdvisoryNote;
 	}
 
 	public Long getIdOferta() {
@@ -499,6 +515,46 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setOfertaSingular(String ofertaSingular) {
 		this.ofertaSingular = ofertaSingular;
+	}
+
+	public Boolean getIsCarteraCerberusDivarian() {
+		return isCarteraCerberusDivarian;
+	}
+
+	public void setIsCarteraCerberusDivarian(Boolean isCarteraCerberusDivarian) {
+		this.isCarteraCerberusDivarian = isCarteraCerberusDivarian;
+	}
+
+	public String getExclusionBulk() {
+		return exclusionBulk;
+	}
+
+	public void setExclusionBulk(String exclusionBulk) {
+		this.exclusionBulk = exclusionBulk;
+	}
+
+	public Boolean getIsAdvisoryNoteEnTareas() {
+		return isAdvisoryNoteEnTareas;
+	}
+
+	public void setIsAdvisoryNoteEnTareas(Boolean isAdvisoryNoteEnTareas) {
+		this.isAdvisoryNoteEnTareas = isAdvisoryNoteEnTareas;
+	}
+
+	public String getIdAdvisoryNote() {
+		return idAdvisoryNote;
+	}
+
+	public void setIdAdvisoryNote(String idAdvisoryNote) {
+		this.idAdvisoryNote = idAdvisoryNote;
+	}
+
+	public Boolean getTareaAdvisoryNoteFinalizada() {
+		return tareaAdvisoryNoteFinalizada;
+	}
+
+	public void setTareaAdvisoryNoteFinalizada(Boolean tareaAdvisoryNoteFinalizada) {
+		this.tareaAdvisoryNoteFinalizada = tareaAdvisoryNoteFinalizada;
 	}
 
 }

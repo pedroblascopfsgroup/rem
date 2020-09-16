@@ -74,6 +74,7 @@ public class OfertaDto implements Serializable {
 	private String codTipoProveedorOrigenCliente;
 	@IsNumber(message = "Debe ser un número")
 	private String idProveedorRealizadorRemOrigenLead;
+	private String numeroBulkAdvisoryNote;
 	
 	public Long getIdOfertaWebcom() {
 		return idOfertaWebcom;
@@ -291,5 +292,12 @@ public class OfertaDto implements Serializable {
 	}
 	public void setIdProveedorRealizadorRemOrigenLead(String idProveedorRealizadorRemOrigenLead) {
 		this.idProveedorRealizadorRemOrigenLead = idProveedorRealizadorRemOrigenLead;
+	}
+
+	public String getNumeroBulkAdvisoryNote() {
+		return numeroBulkAdvisoryNote;
+	}
+	public void setNumeroBulkAdvisoryNote(String numeroBulkAdvisoryNote) {
+		this.numeroBulkAdvisoryNote = numeroBulkAdvisoryNote;
 	}
 }

@@ -390,6 +390,8 @@ public interface GastoProveedorApi {
 		public boolean isPosibleRefacturable(GastoProveedor gasto);
 
 		void validarGastosARefacturar(String idGasto, String listaGastos);
+		
+		GastoProveedor calcularParticipacionActivosGasto(GastoProveedor gasto);
 
 }
 

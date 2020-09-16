@@ -2543,7 +2543,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					// Según item HREOS-2379:
 					// Adjuntar el documento a la tabla de adjuntos del activo, pero sin subir el
 					// documento realmente, sólo insertando la fila.
-					File file = File.createTempFile("idDocRestClient[" + idDocRestClient + "]", ".pdf");
+					File file = File.createTempFile("idDocRestClient_" + idDocRestClient + "_", ".pdf");
 					BufferedWriter out = new BufferedWriter(new FileWriter(file));
 					try {
 						out.write("pfs");
@@ -2551,7 +2551,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						out.close();
 					}
 					FileItem fileItem = new FileItem();
-					fileItem.setFileName("idDocRestClient[" + idDocRestClient + "]");
+					fileItem.setFileName("idDocRestClient_" + idDocRestClient + "_");
 					fileItem.setFile(file);
 					fileItem.setLength(file.length());
 					webFileItem.setFileItem(fileItem);

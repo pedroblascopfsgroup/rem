@@ -1322,6 +1322,15 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 		return HibernateQueryUtils.list(this, hb);
 	}
+	
+	@Override
+	public Page getListActivosPorID(List<Long> activosID, DtoTrabajoListActivos dto) {
+		HQLBuilder hb = new HQLBuilder("from Activo act");
+
+		HQLBuilder.addFiltroWhereInSiNotNull(hb, "id", activosID);
+
+		return HibernateQueryUtils.page(this, hb, dto);
+	}
 
 	@Override
 	public Boolean todasLasOfertasEstanAnuladas(Long idActivo) {

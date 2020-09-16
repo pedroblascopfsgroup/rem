@@ -1284,6 +1284,34 @@ public class TrabajoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getListActivosByID(String idActivo, DtoTrabajoListActivos webDto, ModelMap model) {
+		try {
+			List<Long> listaActivo = new ArrayList<Long>();
+			if (idActivo.contains(",")) {
+				String[] activos = idActivo.split(",");
+				for(int i =0 ; i< activos.length; i++) {
+					listaActivo.add(Long.parseLong(activos[i]));
+				}
+			}else {
+				Long id = Long.parseLong(idActivo);
+				listaActivo.add(id);
+			}
+			
+			Page page = trabajoAdapter.getListActivosById(listaActivo,webDto);
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
 
 	
 	/**

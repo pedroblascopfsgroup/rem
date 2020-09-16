@@ -497,6 +497,33 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		idProceso = window.idProceso;
 		codCartera = window.codCartera;
 		codSubcartera = window.codSubcartera;
+		var idTarifas = me.obtenerIdTarifas(me.lookupReference('gridListaTarifas').getStore().getData());
+		//Nuevos Valores
+		
+		form.getBindRecord().set("idMediador",me.lookupReference('comboProveedor').getSelection().get('id'))
+		if(me.lookupReference('checkAplicaComite').getValue()){
+			form.getBindRecord().set("resolucionComiteId",me.lookupReference('resolComiteId').getValue());
+			form.getBindRecord().set("fechaResolucionComite",me.lookupReference('fechaResolComite').getValue());
+			form.getBindRecord().set("resolucionComiteCodigo",me.lookupReference('comboResolucionComite').getSelectedRecord().get('id'));
+			form.getBindRecord().set("aplicaComite",me.lookupReference('checkAplicaComite').getValue());
+		}else{
+			form.getBindRecord().set("resolucionComiteId",null);
+			form.getBindRecord().set("fechaResolucionComite",null);
+			form.getBindRecord().set("resolucionComiteCodigo",null);
+			form.getBindRecord().set("aplicaComite",me.lookupReference('checkAplicaComite').getValue());
+		}
+		
+		form.getBindRecord().set("idTarea",me.lookupReference('idTarea').getValue());
+		form.getBindRecord().set("fechaConcreta",me.lookupReference('fechaConcretaTrabajo').getValue());
+		form.getBindRecord().set("horaConcreta",me.lookupReference('horaConcretaTrabajo').getValue());
+		form.getBindRecord().set("fechaTope",me.lookupReference('fechaTopeTrabajo').getValue());
+		form.getBindRecord().set("importePresupuesto",me.lookupReference('importePresupuesto').getValue());
+		form.getBindRecord().set("refImportePresupueso",me.lookupReference('referenciaImportePresupuesto').getValue());
+		form.getBindRecord().set("esTarifaPlanaEditable",me.lookupReference('tarifaPlana').getValue());
+		form.getBindRecord().set("riesgoInminenteTerceros",me.lookupReference('riesgoTerceros').getValue());
+		form.getBindRecord().set("urgente",me.lookupReference('urgente').getValue());
+		form.getBindRecord().set("esSiniestroEditable",me.lookupReference('siniestro').getValue());
+		form.getBindRecord().set("idTarifas",idTarifas);
 		
 		form.getBindRecord().set("idActivo", idActivo);
 		form.getBindRecord().set("idAgrupacion", idAgrupacion);
@@ -517,11 +544,26 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	    	me.getView().fireEvent("refreshComponentOnActivate", "trabajosmain");
 	    	me.getView().fireEvent("refreshComponentOnActivate", "agendamain");
 	    	me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], idActivo);
-	    	me.getView().down("[reference=activosagrupaciontrabajo]").deselectAll();
+//	    	me.getView().down("[reference=activosagrupaciontrabajo]").deselectAll();
 	    	window.hide();
 		};
 
 		me.onSaveFormularioCompleto(form, success);
+	},
+	
+	obtenerIdTarifas: function(data){
+		if(data.length < 1){
+			return null;
+		}
+		var aux= "";
+		var ultimo = data.length-1;
+		for(var i = 0; i < data.length; i++){
+			aux = aux.concat(data.items[i].data.id);
+			if(i<ultimo){
+				aux = aux.concat(',');
+			}
+		}
+		return aux;
 	},
 	
 	onClickBotonCancelarTrabajo: function(btn) {		

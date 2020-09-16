@@ -107,6 +107,18 @@ Ext.define('HreRem.model.FichaTrabajo', {
     		},
     		{
     			name: 'llavesMotivo'
+    		},
+    		{
+    			name: 'idTarea'
+    		},
+    		{
+    			name: 'importePresupuesto'
+    		},
+    		{
+    			name: 'refImportePresupueso'
+    		},
+    		{
+    			name: 'idTarifas'
     		}
     		
     ],

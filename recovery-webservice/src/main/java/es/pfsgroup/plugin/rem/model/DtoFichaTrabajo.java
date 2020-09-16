@@ -189,6 +189,22 @@ public class DtoFichaTrabajo {
 	private Boolean esSiniestroEditable;
 	
 	private Boolean esEstadoEditable;
+	
+	private Long idTarea;
+	
+	private String idTarifas;
+	
+	private Long importePresupuesto;
+	
+	private String refImportePresupueso;
+	
+	private String resolucionComiteCodigo;
+	
+	private Date fechaResolucionComite;
+	
+	private String resolucionComiteId;
+	
+	private String aplicaComite;
 
 	public Long getIdTrabajo() {
 		return idTrabajo;
@@ -920,6 +936,70 @@ public class DtoFichaTrabajo {
 
 	public void setEsEstadoEditable(Boolean esEstadoEditable) {
 		this.esEstadoEditable = esEstadoEditable;
+	}
+
+	public Long getIdTarea() {
+		return idTarea;
+	}
+
+	public void setIdTarea(Long idTarea) {
+		this.idTarea = idTarea;
+	}
+
+	public String getIdTarifas() {
+		return idTarifas;
+	}
+
+	public void setIdTarifas(String idTarifas) {
+		this.idTarifas = idTarifas;
+	}
+
+	public Long getImportePresupuesto() {
+		return importePresupuesto;
+	}
+
+	public void setImportePresupuesto(Long importePresupuesto) {
+		this.importePresupuesto = importePresupuesto;
+	}
+
+	public String getRefImportePresupueso() {
+		return refImportePresupueso;
+	}
+
+	public void setRefImportePresupueso(String refImportePresupueso) {
+		this.refImportePresupueso = refImportePresupueso;
+	}
+
+	public String getResolucionComiteCodigo() {
+		return resolucionComiteCodigo;
+	}
+
+	public void setResolucionComiteCodigo(String resolucionComiteCodigo) {
+		this.resolucionComiteCodigo = resolucionComiteCodigo;
+	}
+
+	public String getResolucionComiteId() {
+		return resolucionComiteId;
+	}
+
+	public void setResolucionComiteId(String resolucionComiteId) {
+		this.resolucionComiteId = resolucionComiteId;
+	}
+
+	public String getAplicaComite() {
+		return aplicaComite;
+	}
+
+	public void setAplicaComite(String aplicaComite) {
+		this.aplicaComite = aplicaComite;
+	}
+
+	public Date getFechaResolucionComite() {
+		return fechaResolucionComite;
+	}
+
+	public void setFechaResolucionComite(Date fechaResolucionComite) {
+		this.fechaResolucionComite = fechaResolucionComite;
 	}
 	
 }

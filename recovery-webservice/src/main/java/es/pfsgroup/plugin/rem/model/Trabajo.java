@@ -1093,6 +1093,22 @@ public class Trabajo implements Serializable, Auditable {
 	public void setPrefactura(Prefactura prefactura) {
 		this.prefactura = prefactura;
 	}
+
+	public Boolean getAplicaComite() {
+		return aplicaComite;
+	}
+
+	public void setAplicaComite(Boolean aplicaComite) {
+		this.aplicaComite = aplicaComite;
+	}
+
+	public DDAcoAprobacionComite getAprobacionComite() {
+		return aprobacionComite;
+	}
+
+	public void setAprobacionComite(DDAcoAprobacionComite aprobacionComite) {
+		this.aprobacionComite = aprobacionComite;
+	}
     
     
 }

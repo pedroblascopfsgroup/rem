@@ -7,7 +7,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,6 +83,11 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 	public static final String IRPF_SUBCLAVE_SOLO_LBK= "El campo 'IRPF Subclave' solo se puede rellenar si el gasto es de Liberbank";
 	public static final String PLAN_VISITAS_SOLO_LBK= "El campo 'Plan visitas' solo se puede rellenar si el gasto es de Liberbank";
 	public static final String ACTIVABLE_SOLO_BBVA= "El campo 'Activable' solo se puede rellenar si el gasto es de BBVA";
+	private static final String YA_EXISTE_UN_SUBTIPO_TIPO_IMPOSITIVO_TIPO_IMPUESTO = "Ya existe una línea con el mismo subtipo de gasto, tipo impositivo y tipo impuesto";
+	private static final String ELEMENTO_SIN_PARTICIPACION = "El elemento no tiene participación";
+	private static final String PARTICIPACION_SIN_ELEMENTO = "La participación no tiene ningún elemento";
+	private static final String ELEMENTO_SIN_TIPO = "El elemento no tiene tipo";
+	private static final String TIPO_SIN_ELEMENTO = "El tipo no tiene ningún elemento";
 	
 	public static final Integer COL_ID_AGRUPADOR_GASTO = 0;
 	public static final Integer COL_TIPO_GASTO = 1;
@@ -227,6 +231,12 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 			mapaErrores.put(IRPF_SUBCLAVE_SOLO_LBK, campoSoloParaCarteraByCode(exc, COL_IRPF_SUBCLAVE, COD_LBK));
 			mapaErrores.put(PLAN_VISITAS_SOLO_LBK, campoSoloParaCarteraByCode(exc, COL_PLAN_VISITAS, COD_LBK));
 			mapaErrores.put(ACTIVABLE_SOLO_BBVA, campoSoloParaCarteraByCode(exc, COL_PLAN_VISITAS, COD_BBVA));
+			mapaErrores.put(YA_EXISTE_UN_SUBTIPO_TIPO_IMPOSITIVO_TIPO_IMPUESTO, existeUnsubtipoGastoIgual(exc));
+			mapaErrores.put(TIPO_IMPUESTO_NO_EXISTE, tipoImpuestoNoExiste(exc));
+			mapaErrores.put(ELEMENTO_SIN_PARTICIPACION, participacionSinActivos(exc));
+			mapaErrores.put(PARTICIPACION_SIN_ELEMENTO, activoSinParticipacion(exc));
+			mapaErrores.put(ELEMENTO_SIN_TIPO, elementosSinTipo(exc));
+			mapaErrores.put(TIPO_SIN_ELEMENTO, tipoSinElementos(exc));
 
 
 			if (!mapaErrores.get(TIPO_GASTO_NO_EXISTE).isEmpty() 
@@ -254,8 +264,13 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 					|| !mapaErrores.get(LBK_CLAVE_SUBCLAVE_VACIO).isEmpty()
 					|| !mapaErrores.get(PARTICIPACION_AL_CIEN_PORCIENTO).isEmpty()
 					|| !mapaErrores.get(ELEMENTOS_PERTENECER_MISMA_CARTERA).isEmpty()
+					|| !mapaErrores.get(YA_EXISTE_UN_SUBTIPO_TIPO_IMPOSITIVO_TIPO_IMPUESTO).isEmpty()
+					|| !mapaErrores.get(TIPO_IMPUESTO_NO_EXISTE).isEmpty()
+					|| !mapaErrores.get(ELEMENTO_SIN_PARTICIPACION).isEmpty()
+					|| !mapaErrores.get(PARTICIPACION_SIN_ELEMENTO).isEmpty()
+					|| !mapaErrores.get(ELEMENTO_SIN_TIPO).isEmpty()
+					|| !mapaErrores.get(TIPO_SIN_ELEMENTO).isEmpty()
 					|| !mapaErrores.get(BANKIA_SOLO_UNO).isEmpty()
-
 					){
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -859,5 +874,202 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
              }
          return listaFilas;   
     }
+	
+	private List<Integer> existeUnsubtipoGastoIgual(MSVHojaExcel exc){
+	       List<Integer> listaFilas = new ArrayList<Integer>();
+	   	   List<String> cadenaInformacion =  new ArrayList <String>();
+	      
+
+	        try{
+	        	
+	            for(int i=1; i<this.numFilasHoja;i++){
+	            	
+	                try {
+
+	                	String result = devolverCadenaInformacionCompleta
+	                			(exc.dameCelda(i, COL_SUBTIPO_GASTO)
+	                					,exc.dameCelda(i, COL_TIPO_IMPOSITIVO),exc.dameCelda(i, COL_TIPO_IMPUESTO),exc.dameCelda(i, COL_TIPO_ELEMENTO),exc.dameCelda(i, COL_ID_ELEMENTO));
+
+	                	String[] gastoSubtipoImpuestoActual = result.split(",");
+	                	boolean existenBorradosAnteriores = false;
+	                	boolean existeMatchAnterior = false;
+	                	boolean filaErrorAnyadida = false;
+		                if(!Checks.estaVacio(cadenaInformacion)) {
+	                		for (String cadena : cadenaInformacion) {
+	                			String[] gastoSubtipoImpuesto = cadena.split(",");
+	                			if(gastoSubtipoImpuesto[1].equalsIgnoreCase(gastoSubtipoImpuestoActual[1])) {
+	                				
+	                				if(gastoSubtipoImpuesto[0].equalsIgnoreCase(gastoSubtipoImpuestoActual[0]) 
+	                					&& gastoSubtipoImpuesto.length > 2 && gastoSubtipoImpuestoActual.length > 2
+	                					&& gastoSubtipoImpuesto[2].equalsIgnoreCase(gastoSubtipoImpuestoActual[2])) {
+	                						listaFilas.add(i);
+	                						filaErrorAnyadida = true;
+	                						existeMatchAnterior = true;
+	                						break;
+	                				}
+	                			}
+							}
+		                }
+		                cadenaInformacion.add(result);
+		                if(!filaErrorAnyadida) {
+			                if(existeMatchAnterior &&  !existenBorradosAnteriores) {
+			                	listaFilas.add(i);
+			                }else {
+			                		if(!Checks.esNulo(exc.dameCelda(i, COL_SUBTIPO_GASTO))
+			  			                   && Boolean.TRUE.equals(particularValidator.lineaSubtipoDeGastoRepetida(exc.dameCelda(i, COL_ID_AGRUPADOR_GASTO), exc.dameCelda(i, COL_SUBTIPO_GASTO),exc.dameCelda(i, COL_TIPO_IMPOSITIVO),exc.dameCelda(i, COL_TIPO_IMPUESTO)))){
+			                 			listaFilas.add(i);
+			                 		}
+			                }
+		                }
+	                } catch (ParseException e) {
+	                    listaFilas.add(i);
+	                }
+	            }
+	            } catch (IllegalArgumentException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            } catch (IOException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            }
+	        return listaFilas;   
+	   }
+	
+	public String devolverCadenaInformacionCompleta(String subtipoGasto, String tipoImpositivo, String tipoImpuesto, String tipoElemento, String activo){ 
+		   String cadena = "";
+		   String activoTipo=",vacio";
+		   
+		   String subtipoGastoImpuestImpositivo = gastoSubtipoImpuestoImpositivo(subtipoGasto, tipoImpositivo, tipoImpuesto);
+		   
+
+		   if(!Checks.esNulo(tipoElemento) && !Checks.esNulo(activo)) {
+			   activoTipo = "," + tipoElemento + "-" + activo;
+		   }
+		   
+		   cadena = cadena + subtipoGastoImpuestImpositivo + activoTipo;
+		   return cadena;
+	   }
+	
+	 private String gastoSubtipoImpuestoImpositivo(String subtipoGasto, String tipoImpositivo, String tipoImpuesto) {
+		   String subtipoGastoImpuestImpositivo = subtipoGasto;
+		   
+		   if(!Checks.esNulo(tipoImpuesto) && !Checks.esNulo(tipoImpositivo)) {
+			   subtipoGastoImpuestImpositivo = subtipoGastoImpuestImpositivo + "-" +tipoImpuesto;
+			   subtipoGastoImpuestImpositivo = subtipoGastoImpuestImpositivo + "-" + tipoImpositivo;
+		   }
+		   
+		   return subtipoGastoImpuestImpositivo;
+	   }
+	 
+	 private List<Integer> tipoImpuestoNoExiste(MSVHojaExcel exc){
+	       List<Integer> listaFilas = new ArrayList<Integer>();
+
+	        try{
+	            for(int i=1; i<this.numFilasHoja;i++){
+	                try {
+	                    if(!Checks.esNulo(exc.dameCelda(i, COL_TIPO_IMPUESTO)) 
+	                            && Boolean.FALSE.equals(particularValidator.existeTipoimpuesto(exc.dameCelda(i, COL_TIPO_IMPUESTO))))
+	                        listaFilas.add(i);
+	                } catch (ParseException e) {
+	                    listaFilas.add(i);
+	                }
+	            }
+	            } catch (IllegalArgumentException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            } catch (IOException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            }
+	        return listaFilas;   
+	   }
+	 
+	 private List<Integer> participacionSinActivos(MSVHojaExcel exc){
+	       List<Integer> listaFilas = new ArrayList<Integer>();
+
+	        try{
+	            for(int i=1; i<this.numFilasHoja;i++){
+	                try {
+	                    if(!Checks.esNulo(exc.dameCelda(i, COL_PARTICIPACION_LINEA_DETALLE)) && Checks.esNulo(exc.dameCelda(i, COL_ID_ELEMENTO)))
+	                        listaFilas.add(i);
+	                } catch (ParseException e) {
+	                    listaFilas.add(i);
+	                }
+	            }
+	            } catch (IllegalArgumentException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            } catch (IOException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            }
+	        return listaFilas;   
+	   }
+	 
+	 private List<Integer> activoSinParticipacion(MSVHojaExcel exc){
+	       List<Integer> listaFilas = new ArrayList<Integer>();
+
+	        try{
+	            for(int i=1; i<this.numFilasHoja;i++){
+	                try {
+	                    if(Checks.esNulo(exc.dameCelda(i, COL_PARTICIPACION_LINEA_DETALLE)) && !Checks.esNulo(exc.dameCelda(i, COL_ID_ELEMENTO)))
+	                        listaFilas.add(i);
+	                } catch (ParseException e) {
+	                    listaFilas.add(i);
+	                }
+	            }
+	            } catch (IllegalArgumentException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            } catch (IOException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            }
+	        return listaFilas;   
+	   }
+	 
+	 private List<Integer> elementosSinTipo(MSVHojaExcel exc){
+	       List<Integer> listaFilas = new ArrayList<Integer>();
+
+	        try{
+	            for(int i=1; i<this.numFilasHoja;i++){
+	                try {
+	                    if(Checks.esNulo(exc.dameCelda(i, COL_TIPO_ELEMENTO)) && !Checks.esNulo(exc.dameCelda(i, COL_ID_ELEMENTO)))
+	                        listaFilas.add(i);
+	                } catch (ParseException e) {
+	                    listaFilas.add(i);
+	                }
+	            }
+	            } catch (IllegalArgumentException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            } catch (IOException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            }
+	        return listaFilas;   
+	   }
+	 
+	 private List<Integer> tipoSinElementos(MSVHojaExcel exc){
+	       List<Integer> listaFilas = new ArrayList<Integer>();
+
+	        try{
+	            for(int i=1; i<this.numFilasHoja;i++){
+	                try {
+	                    if(!Checks.esNulo(exc.dameCelda(i, COL_TIPO_ELEMENTO)) && Checks.esNulo(exc.dameCelda(i, COL_ID_ELEMENTO)))
+	                        listaFilas.add(i);
+	                } catch (ParseException e) {
+	                    listaFilas.add(i);
+	                }
+	            }
+	            } catch (IllegalArgumentException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            } catch (IOException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            }
+	        return listaFilas;   
+	   }
 	
 }

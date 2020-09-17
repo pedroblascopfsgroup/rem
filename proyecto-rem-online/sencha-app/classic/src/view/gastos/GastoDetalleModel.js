@@ -223,24 +223,12 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 			var estaRechazadoPropietario = CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO'] == get('gasto.estadoGastoCodigo');
 			var estaAutorizadoAdministracion = CONST.ESTADOS_GASTO['AUTORIZADO'] == get('gasto.estadoGastoCodigo');
 			var estaAutorizadoPropietario = CONST.ESTADOS_GASTO['AUTORIZADO_PROPIETARIO'] == get('gasto.estadoGastoCodigo');
-			var estaInformadoCuentaContable = get('gasto.partidaPresupuestaria');
-			var estaInformadoPartidaPresupuestaria = get('gasto.partidaPresupuestaria');
 
-			if (me.get('esCerberusDivarianApple')) {
-				return !estaEnviado && !estaAutorizado && !estaContabilizado
-						&& !estaAnulado && !estaRetenido && !estaIncompleto
-						&& !estaRechazadoPropietario
-						&& !estaAutorizadoAdministracion
-						&& !estaAutorizadoPropietario
-						&& !estaInformadoCuentaContable
-						&& !estaInformadoPartidaPresupuestaria;
-			} else {
-				return !estaEnviado && !estaAutorizado && !estaContabilizado
-						&& !estaAnulado && !estaRetenido && !estaIncompleto
-						&& !estaRechazadoPropietario
-						&& !estaAutorizadoAdministracion
-						&& !estaAutorizadoPropietario;
-			}
+			return !estaEnviado && !estaAutorizado && !estaContabilizado
+					&& !estaAnulado && !estaRetenido && !estaIncompleto
+					&& !estaRechazadoPropietario
+					&& !estaAutorizadoAdministracion
+					&& !estaAutorizadoPropietario;
 
 		},
 

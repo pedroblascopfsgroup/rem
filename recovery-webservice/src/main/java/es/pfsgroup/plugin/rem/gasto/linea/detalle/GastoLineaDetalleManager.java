@@ -98,11 +98,9 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	
 	@Override
 	public List<DtoLineaDetalleGasto> getGastoLineaDetalle(Long idGasto) throws Exception{
-		List<DtoLineaDetalleGasto> dtoLineaDetalleGastoLista = new ArrayList<DtoLineaDetalleGasto>();
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
-		List<GastoLineaDetalle> gastoLineaDetalleLista = genericDao.getList(GastoLineaDetalle.class,filtro);
+		List<DtoLineaDetalleGasto> dtoLineaDetalleGastoLista = new ArrayList<DtoLineaDetalleGasto>();		
 		GastoProveedor gasto = genericDao.get(GastoProveedor.class,genericDao.createFilter(FilterType.EQUALS, "id", idGasto));
-		
+		List<GastoLineaDetalle> gastoLineaDetalleLista = gasto.getGastoLineaDetalleList();
 		
 		
 		if(gastoLineaDetalleLista == null || gastoLineaDetalleLista.isEmpty()) {
@@ -127,14 +125,10 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			}
 			
 			dto.setTieneCuentaContable(Boolean.FALSE);
-			
-			if(!Checks.esNulo(gastoLineaDetalle.getCppBase())) {
+					
+			if(gastoLineaDetalle.getCppBase() != null) {
 				dto.setSubPartidas(gastoLineaDetalle.getCppBase());
-				Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);		
-				Filter filtroGpv = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", idGasto);
-				GastoLineaDetalle gld = genericDao.get(GastoLineaDetalle.class, filtroGpv, filtroBorrado);
-				
-				if(!Checks.esNulo(gld) && !Checks.esNulo(gld.getCccBase())){
+				if(gastoLineaDetalle.getCccBase() != null){
 					dto.setTieneCuentaContable(Boolean.TRUE);
 				}
 			}
@@ -1219,9 +1213,18 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				gastoLineaDetalleEntidad.setAuditoria(Auditoria.getNewInstance());
 				gastoLineaDetalleEntidad.setParticipacionGasto(participacion.doubleValue());
 				genericDao.save(GastoLineaDetalleEntidad.class, gastoLineaDetalleEntidad);
-				return true;
+				
 
 			}
+		
+			if(DDEntidadGasto.CODIGO_AGRUPACION.equals(dto.getTipoElemento()) || DDEntidadGasto.CODIGO_ACTIVO.equals(dto.getTipoElemento())) {
+				DtoLineaDetalleGasto dtoLineaDetalleGasto = 
+					this.calcularCuentasYPartidas(gastoLineaDetalle.getGastoProveedor().getId(),dto.getIdLinea(), gastoLineaDetalle.getSubtipoGasto().getCodigo());
+					gastoLineaDetalle = this.updatearCuentasYPartidasVacias(dtoLineaDetalleGasto, gastoLineaDetalle);
+					genericDao.save(GastoLineaDetalle.class, gastoLineaDetalle);
+					
+			}
+			return true;
 		}
 		
 		return false;
@@ -1944,4 +1947,39 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		
 	}
 	
+	private GastoLineaDetalle updatearCuentasYPartidasVacias(DtoLineaDetalleGasto dtoLineaDetalleGasto, GastoLineaDetalle gastoLineaDetalle) {
+		if(dtoLineaDetalleGasto != null) {
+			if(gastoLineaDetalle.getCccBase() == null) {
+				gastoLineaDetalle.setCccBase(dtoLineaDetalleGasto.getCcBase());
+			}
+			if(gastoLineaDetalle.getCppBase() == null) {
+				gastoLineaDetalle.setCppBase(dtoLineaDetalleGasto.getPpBase());
+			}
+			if(gastoLineaDetalle.getCccEsp() == null) {
+				gastoLineaDetalle.setCccEsp(dtoLineaDetalleGasto.getCcEsp());
+			}
+			if(gastoLineaDetalle.getCppEsp() == null) {
+				gastoLineaDetalle.setCppEsp(dtoLineaDetalleGasto.getPpEsp());
+			}
+			if(gastoLineaDetalle.getCccTasas() == null) {
+				gastoLineaDetalle.setCccTasas(dtoLineaDetalleGasto.getCcTasas());
+			}
+			if(gastoLineaDetalle.getCppTasas() == null) {
+				gastoLineaDetalle.setCppTasas(dtoLineaDetalleGasto.getPpTasas());
+			}
+			if(gastoLineaDetalle.getCccRecargo() == null) {
+				gastoLineaDetalle.setCccRecargo(dtoLineaDetalleGasto.getCcRecargo());
+			}
+			if(gastoLineaDetalle.getCppRecargo() == null) {
+				gastoLineaDetalle.setCppRecargo(dtoLineaDetalleGasto.getPpRecargo());
+			}
+			if(gastoLineaDetalle.getCccIntereses() == null) {
+				gastoLineaDetalle.setCccIntereses(dtoLineaDetalleGasto.getCcInteres());
+			}
+			if(gastoLineaDetalle.getCppIntereses() == null) {
+				gastoLineaDetalle.setCppIntereses(dtoLineaDetalleGasto.getPpInteres());
+			}
+		}
+		return gastoLineaDetalle;
+	}
 }

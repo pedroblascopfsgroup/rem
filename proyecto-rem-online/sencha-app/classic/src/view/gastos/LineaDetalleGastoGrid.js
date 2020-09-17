@@ -398,8 +398,10 @@ Ext.define('HreRem.view.gastos.LineaDetalleGastoGrid', {
 		    	    			grid.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
 		    	    			grid.up('gastodetalle').down('activosafectadosgasto').funcionRecargar();
 		    	    			var comboLineas = grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=comboLineasDetalleReference]');
-		    	   		        comboLineas.getStore().load();
-		    	   		        comboLineas.reset();
+		    	    			 if (!Ext.isEmpty(comboLineas)) {
+		    			        	 comboLineas.reset();
+		    				         comboLineas.getStore().load();
+		    			         };
 		       		         
 		    	   		        var gridElementos = grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=listadoActivosAfectadosRef]');
 		    	   		        gridElementos.getStore().getProxy().setExtraParams({'idLinea':-1})

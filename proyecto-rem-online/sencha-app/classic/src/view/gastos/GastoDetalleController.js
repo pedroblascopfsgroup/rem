@@ -905,8 +905,11 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			         grid.up('gastodetalle').down('activosafectadosgasto').funcionRecargar();
 			         
 			         var comboLineas =  grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=comboLineasDetalleReference]');
-			    	 comboLineas.reset();
-			         comboLineas.getStore().load();
+			         if (!Ext.isEmpty(comboLineas)) {
+			        	 comboLineas.reset();
+				         comboLineas.getStore().load();
+			         }
+			    	 
  	    			 var gridElementos = grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=listadoActivosAfectadosRef]');
 			         gridElementos.getStore().getProxy().setExtraParams({'idLinea':-1})
 			         gridElementos.getStore().load();
@@ -1002,11 +1005,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		     success: function(response, opts) {
 		         ventanaSeleccionTrabajos.unmask();		
 		         var comboLineas = ventanaSeleccionTrabajos.up('gastodetalle').down('activosafectadosgasto').down('[reference=comboLineasDetalleReference]');
-		        
-		         comboLineas.reset();
 		         ventanaSeleccionTrabajos.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
 		         ventanaSeleccionTrabajos.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar();
-		         comboLineas.getStore().load();
+		         
+		         if (!Ext.isEmpty(comboLineas)) {
+		        	 comboLineas.reset();
+			         comboLineas.getStore().load();
+		         }
 		         var gridElementos = ventanaSeleccionTrabajos.up('gastodetalle').down('activosafectadosgasto').down('[reference=listadoActivosAfectadosRef]');
 		         gridElementos.getStore().getProxy().setExtraParams({'idLinea':-1})
 		         gridElementos.getStore().load();
@@ -1764,11 +1769,14 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
                 	grid.getStore().load();
                 	window.close();
                 	var comboLineas = grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=comboLineasDetalleReference]');
-                	comboLineas.reset();
+                	
                 	grid.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar();
                 	grid.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
                 	grid.up('gastodetalle').down('activosafectadosgasto').funcionRecargar();
-	   		        comboLineas.getStore().load();
+                	 if (!Ext.isEmpty(comboLineas)) {
+			        	 comboLineas.reset();
+				         comboLineas.getStore().load();
+			         }
 	   		       
    		         
 	   		        var gridElementos = grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=listadoActivosAfectadosRef]');
@@ -2288,6 +2296,10 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 				window.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar();
 				window.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
 				window.up('gastodetalle').down('contabilidadgasto').funcionRecargar();
+				var idGasto = window.down('anyadirnuevogastoactivodetalle').up().idGasto;
+				var gridLineas = window.up('gastodetalle').down('detalleeconomicogasto').down('[reference=lineaDetalleGastoGrid]');
+				gridLineas.getStore().getProxy().setExtraParams({'idGasto':idGasto});
+		        gridLineas.getStore().load();
 			},
 			failure: function(a, operation){
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));

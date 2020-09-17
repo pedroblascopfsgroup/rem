@@ -175,22 +175,31 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
           DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(2))||''' y '''||TRIM(V_TMP_TIPO_DATA(4))||''' ya existe');
         ELSE
             V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
-              SGT_ID,
-              DD_STR_ID,
-              DD_STG_ID,
-              VERSION,
-              USUARIOCREAR,
-              FECHACREAR,
-              BORRADO
-              ) VALUES (
-              '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL,
-              (SELECT DD_STR_ID FROM DD_STR_SUBTIPO_TRABAJO WHERE DD_STR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||''' AND DD_TTR_ID = (SELECT DD_TTR_ID FROM DD_TTR_TIPO_TRABAJO WHERE DD_TTR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''')),
-              (SELECT DD_STG_ID FROM DD_STG_SUBTIPOS_GASTO WHERE DD_STG_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||''' AND DD_TGA_ID = (SELECT DD_TGA_ID FROM DD_TGA_TIPOS_GASTO WHERE DD_TGA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||''')),
-              0,
-              ''HREOS-10742'',
-              SYSDATE,
-              0
-                        )';
+                SGT_ID
+                , DD_STR_ID
+                , DD_STG_ID
+                , USUARIOCREAR
+                , FECHACREAR
+              ) 
+              SELECT 
+                '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL
+                , STR.DD_STR_ID
+                , STG.DD_STG_ID
+                , ''HREOS-10742''
+                , SYSDATE
+              FROM '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO STR
+              JOIN '||V_ESQUEMA||'.DD_TTR_TIPO_TRABAJO TTR ON TTR.DD_TTR_ID = STR.DD_STR_ID
+                AND TTR.BORRADO = 0
+              JOIN '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG ON 1 = 1
+                AND STG.BORRADO = 0
+              JOIN '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_ID = STG.DD_TGA_ID
+                AND TGA.BORRADO = 0
+              WHERE STR.BORRADO = 0
+                AND STR.DD_STR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||''' 
+                AND TTR.DD_TTR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''
+                AND STG.DD_STG_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||'''
+                AND TGA.DD_TGA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||'''
+                  ';
             EXECUTE IMMEDIATE V_MSQL;
             DBMS_OUTPUT.PUT_LINE('[INFO]: Se ha insertado el valor '''||TRIM(V_TMP_TIPO_DATA(2))||''' y '''||TRIM(V_TMP_TIPO_DATA(4))||'''');
 

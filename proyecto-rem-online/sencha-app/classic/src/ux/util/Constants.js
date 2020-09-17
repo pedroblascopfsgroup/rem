@@ -149,7 +149,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		FOTOSSOLI:		'fotostrabajo.fotostrabajosolicitante',
 		FOTOSPROV:		'fotostrabajo.fotostrabajoproveedor',
 		DOCU:			'documentostrabajo',
-		GESECO:			'gestioneconomicatrabajo'
+		GESECO:			'gestioneconomicatrabajo',
+		AGENDA:			'agendatrabajo'
 //		INVISIBLE:		Si creamos un registro-enlace-trabajo en TFI y como codigo (en TFI_NOMBRE) damos este valor, ocultara el enlace
 	},
 

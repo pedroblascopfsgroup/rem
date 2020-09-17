@@ -12,6 +12,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
     initComponent: function () {
         var me = this;
         me.setTitle(HreRem.i18n('title.ficha'));
+        me.idTrabajo= me.lookupController().getViewModel().get('trabajo').get('id')
              me.items= [
             	 	{
             	 		xtype:'fieldsettable',
@@ -46,36 +47,39 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 					            	},
 					            	displayField: 'apellidoNombre',
 		    						valueField: 'id',
-		    						readOnly: (Ext.isEmpty(this.idGestorActivoResponsable)),
+		    						readOnly: (Ext.isEmpty(this.gestorActivoCodigo)),
 						        	reference: 'comboGestorActivoResposable'
 					        	},
 							 	{ 
 				                	xtype: 'textfieldbase',
 				                	fieldLabel:  HreRem.i18n('title.general.albaran.numAlbaran'),
-				                	bind:		'{trabajo.numAlbaran}'
+				                	bind:		'{trabajo.numAlbaran}',
+				                	readOnly: true
 				                },
 							 	{ 
 				                	xtype: 'textfieldbase',
 				                	fieldLabel:  HreRem.i18n('title.general.gasto.numGasto'),
-				                	bind:		'{trabajo.numGasto}'
+				                	bind:		'{trabajo.numGasto}',
+				                	readOnly: true
 				                },
-							 	{ 
+							 	{
 				                	xtype: 'comboboxfieldbase',
 				                	fieldLabel:  HreRem.i18n('fieldlabel.gasto.estado.gasto'),
 				                	bind:	{
-				                		store: '{comboEstadoGasto}',
+				                		store: '{comboTiposGastos}',
 				                		value: '{trabajo.estadoGastoCodigo}'
 				                	}
 				                },
 							 	{ 
 				                	xtype: 'checkboxfieldbase',
 				                	fieldLabel:  HreRem.i18n('header.gasto.cubierto.seguro'),
-				                	bind:		'{trabajo.cubiertoSeguro}'
+				                	bind:		'{trabajo.cubreSeguro}'
 				                },
 						        {
 						        	xtype: 'comboboxfieldbase',
 				                	fieldLabel:  HreRem.i18n('title.general.com.aseguradora'),
 						        	bind: {
+						        		disabled: '{!trabajo.cubreSeguro}',
 					            		store: '{comboCiasAseguradoras}',
 					            		value: '{trabajo.ciaAseguradora}'
 					            	},
@@ -85,7 +89,10 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 							 	{ 
 				                	xtype: 'numberfieldbase',
 				                	fieldLabel:  HreRem.i18n('header.listado.precios.importe'),
-				                	bind:		'{trabajo.importePrecio}'
+				                	bind:{
+				                		disabled: '{!trabajo.cubreSeguro}',
+			                			value: '{trabajo.importePrecio}'
+				                		}
 				                },
 							 	{ 
 									xtype: 'checkboxfieldbase',
@@ -124,14 +131,16 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 						items :
 							[
 						        {
+						        	fieldLabel:  HreRem.i18n('fieldlabel.resolucion.comite.trabajo'),
 						        	xtype: 'comboboxfieldbase',
 						        	bind: {
-//					            		store: '{storeComite}',
-//					            		value: '{trabajo.resolucionComiteCodigo}'
+					            		store: '{comboAprobacionComite}',
+					            		value: '{trabajo.resolucionComiteCodigo}'
 					            	},
 						        	reference: 'comboResolucionComite'
 						        },
 								{
+									fieldLabel:  HreRem.i18n('fielblabel.fecha.comite.trabajo'),
 									xtype: 'datefieldbase',
 									bind: {
 											value:  '{trabajo.fechaResolucionComite}'
@@ -155,21 +164,27 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 							[
 								{
 									xtype:'fieldsettable',
-									defaultType: 'datefieldbase',						
 									title: HreRem.i18n('fieldlabel.fecha.concreta.trabajo'),
 									reference: 'fechaConcretaFieldSet',
 									colspan: 3,
 									items : [
 											{
 												fieldLabel: HreRem.i18n('fieldlabel.plazos.fecha.fecha.simple'),
+												xtype: 'datefieldbase',				
+												minValue: $AC.getCurrentDate(),
+												maxValue: null,
 												bind: {
 													value: '{trabajo.fechaConcreta}'
 												}
 											},
 											{
 												fieldLabel: HreRem.i18n('fieldlabel.plazos.fecha.hora.simple'),
+												xtype: 'timefieldbase',
+												//colspan:2,			
+												format: 'H:i',
+												increment: 30,
 												bind: {
-													value:  '{trabajo.fechaConcretaHora}'
+													value:  '{trabajo.horaConcreta}'
 												}
 											}
 									]
@@ -197,7 +212,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 						reference: 'informeSituacionFieldSet',
 						items : [
 					        {
-					        	title: HreRem.i18n('fieldlabel.estado'),
+					        	fieldLabel: HreRem.i18n('fieldlabel.estado.trabajo'),
 					        	xtype: 'comboboxfieldbase',
 					        	bind: {
 				            		store: '{comboEstadoTrabajo}',
@@ -236,12 +251,14 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 						xtype:'fieldsettable',
 						title: HreRem.i18n('title.trabajo.llaves'),
 						reference: 'informeSituacionFieldSet',
+						hidden: '{!trabajo.visualizarLlaves}',
 						items : [
 					        {
 					        	//Combo proovededor. Pdte. de confirmar
 					        	xtype: 'comboboxfieldbase',
+					        	fieldLabel:  HreRem.i18n('fieldlabel.proveedor.llaves.trabajo'),
 					        	bind: {
-//				            		store: '{aquiElStore}',
+				            		store: '{comboApiPrimario}',
 				            		value: '{trabajo.proovedorCodigo}'
 				            	},
 					        	reference: 'comboEstadoTrabajo',
@@ -251,11 +268,12 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 					        	xtype: 'datefieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.trabajo.llaves.fecha.entrega'),
 								bind: {
-									value: '{trabajo.fechaEjecucionTrabajo}'
+									value: '{trabajo.fechaEntregaTrabajo}'
 								}
 							},
 					        {
 					        	//Combo proovededor. Pdte. de confirmar
+					        	fieldLabel: HreRem.i18n('fieldlabel.receptor.llaves.trabajo'),
 					        	xtype: 'comboboxfieldbase',
 					        	bind: {
 //				            		store: '{aquiElStore}',
@@ -276,6 +294,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 			                	xtype: 'textfieldbase',
 			                	fieldLabel:  HreRem.i18n('fieldlabel.calificacion.motivo'),
 			                	bind: {
+			                		disabled: '{!trabajo.llavesNoAplica}',
 			                		value: '{trabajo.llavesMotivo}'
 			                	},
 			                	flex: 3
@@ -305,6 +324,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
         ];
 
     	me.callParent();
+    	
     },
 
     funcionRecargar: function() {
@@ -313,6 +333,6 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 		me.lookupController().cargarTabData(me);
 		Ext.Array.each(me.query('grid'), function(grid) {
   			grid.getStore().load();
-  		});	
+  		});
     }
 });

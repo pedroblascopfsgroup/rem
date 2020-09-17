@@ -254,8 +254,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoPeticionPrecio", DDTipoPeticionPrecio.class);
 		mapa.put("tipoComision", DDTipoComisionado.class);
 		mapa.put("tipoElemento", DDEntidadGasto.class);
-		
-
+		mapa.put("tipoApunte", DDTipoApunte.class);
+		mapa.put("tiposGastos", DDTipoGasto.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

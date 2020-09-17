@@ -36,7 +36,8 @@ Ext.define('HreRem.model.FichaTrabajo', {
     			name: 'estadoGastoCodigo'
     		},
     		{
-    			name: 'cubiertoSeguro'
+    			name: 'cubreSeguro',
+    			type: 'boolean'
     		},
     		{
     			name: 'ciaAseguradora'
@@ -45,13 +46,16 @@ Ext.define('HreRem.model.FichaTrabajo', {
     			name: 'importePrecio'
     		},
     		{
-    			name: 'urgente'
+    			name: 'urgente',
+    			type: 'boolean'
     		},
     		{
-    			name: 'riesgosTerceros'
+    			name: 'riesgosTerceros',
+    			type: 'boolean'
     		},
     		{
-    			name: 'aplicaComite'
+    			name: 'aplicaComite',
+    			type: 'boolean'
     		},
     		{
     			name: 'resolucionComiteCodigo'
@@ -70,7 +74,7 @@ Ext.define('HreRem.model.FichaTrabajo', {
     			dateFormat: 'c'
     		},
     		{
-    			name: 'fechaConcretaHora',
+    			name: 'horaConcreta',
     			type:'date',
     			dateFormat: 'c'
     		},
@@ -88,25 +92,48 @@ Ext.define('HreRem.model.FichaTrabajo', {
     			dateFormat: 'c'
     		},
     		{
-    			name: 'tarifaPlana'
+    			name: 'tarifaPlana',
+    			type: 'boolean'
     		},
     		{
-    			name: 'riesgoSiniestro'
+    			name: 'riesgoSiniestro',
+    			type: 'boolean'
     		},
     		{
     			name: 'proovedorCodigo'
     		},
     		{
-    			name: 'fechaEjecucionTrabajo'
+    			name: 'fechaEntregaTrabajo',
+    			type:'date',
+    			dateFormat: 'c'
     		},
     		{
     			name: 'receptorCodigo'
     		},
     		{
-    			name: 'llavesNoAplica'
+    			name: 'llavesNoAplica',
+    			type: 'boolean'
     		},
     		{
     			name: 'llavesMotivo'
+
+    		},
+    		{
+    			name: 'idTarea'
+    		},
+    		{
+    			name: 'importePresupuesto'
+    		},
+    		{
+    			name: 'refImportePresupueso'
+    		},
+    		{
+    			name: 'idTarifas'
+
+    		},
+    		{
+    			name: 'visualizarLlaves',
+    			type: 'boolean'
     		}
     		
     ],

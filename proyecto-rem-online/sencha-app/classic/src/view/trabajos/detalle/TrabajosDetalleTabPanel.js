@@ -7,7 +7,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
     requires 	: ['HreRem.view.trabajos.detalle.TrabajoDetalleController', 'HreRem.view.trabajos.detalle.TrabajoDetalleModel', 'HreRem.ux.button.BotonFavorito',
     			'HreRem.view.trabajos.detalle.FichaTrabajo', 'HreRem.view.trabajos.detalle.ActivosTrabajo', 'HreRem.view.trabajos.detalle.TramitesTareasTrabajo',
     			'HreRem.view.trabajos.detalle.DocumentosTrabajo', 'HreRem.view.trabajos.detalle.FotosTrabajo', 'HreRem.view.trabajos.detalle.DiarioGestionesTrabajo', 
-    			'HreRem.view.trabajos.detalle.GestionEconomicaTrabajo'],
+    			'HreRem.view.trabajos.detalle.GestionEconomicaTrabajo','HreRem.view.trabajos.detalle.AgendaTrabajo'],
    	listeners: {
 		boxready: function (tabPanel) {
 			if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
@@ -123,6 +123,9 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
 	    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'tramitestareastrabajo', ocultarBotonesEdicion: true})}, ['TAB_TRAMITES_TRABAJO']);    		
     	}
     	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'diariogestionestrabajo', ocultarBotonesEdicion: true})}, ['TAB_DIARIO_GESTIONES_TRABAJO']);
+    	
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'agendatrabajo', ocultarBotonesEdicion: true})}, ['TAB_FICHA_TRABAJO']);
+    	
     	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fotostrabajo', ocultarBotonesEdicion: true})}, ['TAB_FOTOS_TRABAJO']);
     	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentostrabajo', ocultarBotonesEdicion: true})}, ['TAB_DOCUMENTOS_TRABAJO']);
     	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'gestioneconomicatrabajo', funPermEdition: ['EDITAR_GESTION_ECONOMICA_TRABAJO']})}, ['TAB_GESTION_ECONOMICA_TRABAJO']);
@@ -137,6 +140,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
 		var me = this;
 		me.down("[itemId=botoneditar]").setVisible(false);
 	
+		
 		var editionEnabled = function() {
 			var visible = false;
 			var notFechaEjecucionReal = Ext.isEmpty(me.lookupController().getViewModel().get('trabajo').get('fechaEjecucionReal'));

@@ -87,6 +87,7 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.PresupuestoApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.controller.GastosProveedorController;
 import es.pfsgroup.plugin.rem.dao.FlashDao;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
@@ -104,6 +105,9 @@ import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo.ActivoTrabajoPk;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.AdjuntoTrabajo;
+import es.pfsgroup.plugin.rem.model.AgendaTrabajo;
+import es.pfsgroup.plugin.rem.model.Albaran;
+import es.pfsgroup.plugin.rem.model.CFGVisualizarLlaves;
 import es.pfsgroup.plugin.rem.model.ConfiguracionTarifa;
 import es.pfsgroup.plugin.rem.model.DerivacionEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoActivoTrabajo;
@@ -122,9 +126,11 @@ import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+//import es.pfsgroup.plugin.rem.model.GastoProveedorTrabajo;
 import es.pfsgroup.plugin.rem.model.HistorificadorPestanas;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.Prefactura;
 import es.pfsgroup.plugin.rem.model.PresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
@@ -148,6 +154,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDPestanas;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAdelanto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoApunte;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
@@ -165,6 +172,7 @@ import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.thread.LiberarFicheroTrabajos;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
+import es.pfsgroup.plugin.rem.trabajo.dto.DtoAgendaTrabajo;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoHistorificadorCampos;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
@@ -417,12 +425,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public boolean saveFichaTrabajo(DtoFichaTrabajo dtoTrabajo, Long id) {
 		Trabajo trabajo = trabajoDao.get(id);
 		TareaActivo tareaActivo = null;
-		List<ActivoTramite> activoTramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
+
+ 		List<ActivoTramite> activoTramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());		
 		if (!activoTramites.isEmpty()) {
 			ActivoTramite activoTramite = activoTramites.get(0);
 			tareaActivo = tareaActivoApi.getUltimaTareaActivoByIdTramite(activoTramite.getId());
 		}
-		
 
 		try {
 			// Si estado trabajo = EMITIDO PENDIENTE PAGO y se ha rellenado
@@ -452,7 +460,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				}
 			}
 			
-
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -1461,7 +1468,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					transactionManager.commit(transaction);
 					transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 					
-					this.createTramiteTrabajo(trabajo);
+//					this.createTramiteTrabajo(trabajo);
 					transactionManager.commit(transaction);
 					transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 					
@@ -1476,7 +1483,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				trabajoDao.saveOrUpdate(trabajo);
 				transactionManager.commit(transaction);
 				transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-				this.createTramiteTrabajo(trabajo);
+//				this.createTramiteTrabajo(trabajo);
 				transactionManager.commit(transaction);
 				transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 				ficheroMasivoToTrabajo(dtoTrabajo.getIdProceso(), trabajo);	
@@ -1790,6 +1797,24 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 
 			trabajoDao.saveOrUpdate(trabajo);
+			
+			// aqui se guardara las tarifas
+			
+			if(trabajo.getId() != null && dtoTrabajo.getIdTarifas() != null) {
+				String tarifas = dtoTrabajo.getIdTarifas();
+				String[] listaTarifas = tarifas.split(",");
+				for (int i = 0; i < listaTarifas.length; i++) {
+					TrabajoConfiguracionTarifa tarifaTrabajo = new TrabajoConfiguracionTarifa();
+					 ConfiguracionTarifa config =  genericDao.get(ConfiguracionTarifa.class, 
+							 genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(listaTarifas[i])));
+					 tarifaTrabajo.setConfigTarifa(config);
+					 tarifaTrabajo.setTrabajo(trabajo);
+					 //pendiente revision
+//					 tarifaTrabajo.setMedicion(config.getUnidadMedida());
+					 tarifaTrabajo.setPrecioUnitario(config.getPrecioUnitario());
+					 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
+				}
+			}
 
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -1894,7 +1919,33 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public void dtoToTrabajo(DtoFichaTrabajo dtoTrabajo, Trabajo trabajo)
 			throws IllegalAccessException, InvocationTargetException {
 		beanUtilNotNull.copyProperties(trabajo, dtoTrabajo);
+		
+		trabajo.setGestorAlta(genericAdapter.getUsuarioLogado());
+		
+		if(dtoTrabajo.getIdMediador() != null) {
+			ActivoProveedor mediador = genericDao.get(ActivoProveedor.class, 
+					genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdMediador()));
+			trabajo.setMediador(mediador);
+		}
+		
+		if(dtoTrabajo.getResolucionComiteCodigo() != null) {
+			DDAcoAprobacionComite AprobacionComite = genericDao.get(DDAcoAprobacionComite.class, 
+					genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dtoTrabajo.getResolucionComiteCodigo())));
+			trabajo.setAprobacionComite(AprobacionComite);
+		}
 
+		if(dtoTrabajo.getRefImportePresupueso() != null) {
+			trabajo.setResolucionImportePresupuesto(dtoTrabajo.getRefImportePresupueso());
+		}
+		
+		if(dtoTrabajo.getEsTarifaPlanaEditable() != null) {
+			trabajo.setEsTarifaPlana(dtoTrabajo.getEsTarifaPlanaEditable());
+		}
+		
+		if(dtoTrabajo.getEsSiniestroEditable() != null) {
+			trabajo.setSiniestro(dtoTrabajo.getEsSiniestroEditable());
+		}
+		
 		if (Checks.esNulo(dtoTrabajo.getUrgente()))
 			trabajo.setUrgente(false);
 
@@ -2418,11 +2469,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setIdResponsableTrabajo(trabajo.getSolicitante().getId());
 		}
 
-		if (trabajo.getEsTarifaPlana()) {
+		/*if (trabajo.getEsTarifaPlana()) {
 			dtoTrabajo.setEsTarifaPlana(1);
 		} else {
 			dtoTrabajo.setEsTarifaPlana(0);
-		}
+		}*/
 
 		if (!Checks.esNulo(trabajo.getFechaAutorizacionPropietario())) {
 			dtoTrabajo.setFechaAutorizacionPropietario(trabajo.getFechaAutorizacionPropietario());
@@ -2523,6 +2574,84 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		} else if (CASO3.equals(casoActual)) {
 			dtoTrabajo.setEsEstadoEditable(true);
 		}
+		
+		if (trabajo.getDescripcion() != null) {
+			dtoTrabajo.setDescripcionGeneral(trabajo.getDescripcion());
+		}
+		if (trabajo.getGestorAlta() != null) {
+			dtoTrabajo.setGestorActivoCodigo(trabajo.getGestorAlta().getId());
+		}
+		if (trabajo.getCubreSeguro() != null) {//
+			dtoTrabajo.setCubreSeguro(trabajo.getCubreSeguro());
+		}
+		if (trabajo.getImportePresupuesto() != null) {
+			dtoTrabajo.setImportePrecio(trabajo.getImportePresupuesto());
+		}
+		if (trabajo.getUrgente() != null) {
+			dtoTrabajo.setUrgente(trabajo.getUrgente());
+		}
+		if (trabajo.getRiesgoInminenteTerceros() != null) {
+			dtoTrabajo.setRiesgosTerceros(trabajo.getRiesgoInminenteTerceros());
+		}
+		if (trabajo.getAplicaComite() != null) {
+			dtoTrabajo.setAplicaComite(trabajo.getAplicaComite());
+		}
+		if (trabajo.getAprobacionComite() != null) {
+			dtoTrabajo.setResolucionComiteCodigo(trabajo.getAprobacionComite().getCodigo());
+		}
+		if (trabajo.getFechaResolucionComite() != null) {
+			dtoTrabajo.setFechaResolucionComite(trabajo.getFechaResolucionComite());
+		}
+		if (trabajo.getResolucionComiteId() != null) {
+			dtoTrabajo.setResolucionComiteId(trabajo.getResolucionComiteId());
+		}
+		if (trabajo.getFechaTope() != null) {
+			dtoTrabajo.setFechaTope(trabajo.getFechaTope());
+		}
+		
+		if (trabajo.getFechaEjecucionReal()!= null) {
+			dtoTrabajo.setFechaEjecucionTrabajo(trabajo.getFechaEjecucionReal());
+		}
+		if (trabajo.getSiniestro() != null) {
+			dtoTrabajo.setRiesgoSiniestro(trabajo.getSiniestro());
+		}
+		if (trabajo.getEsTarifaPlana() != null) {
+			dtoTrabajo.setTarifaPlana(trabajo.getEsTarifaPlana());
+		}
+		
+		Prefactura prefactura = trabajo.getPrefactura();
+		
+		if (prefactura != null && prefactura.getAlbaran() != null) {
+			Albaran albaran = prefactura.getAlbaran();
+
+			if (albaran.getNumAlbaran() != null) {
+				dtoTrabajo.setNumAlbaran(albaran.getNumAlbaran());
+			}
+		}
+		/*GastoProveedorTrabajo gpvtbj = trabajo.getGastoTrabajo();
+		
+		if (gpvtbj != null) {
+			if (gpvtbj.getGastoProveedor() != null) {
+					dtoTrabajo.setNumGasto(gpvtbj.getGastoProveedor().getNumGastoHaya());
+					dtoTrabajo.setEstadoGastoCodigo(gpvtbj.getGastoProveedor().getTipoGasto().getCodigo());
+			}	
+		}*/
+		
+		Filter filtroTipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.codigo", trabajo.getTipoTrabajo().getCodigo());
+		Filter filtroSubTipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "subtipoTrabajo.codigo", trabajo.getSubtipoTrabajo().getCodigo());
+		CFGVisualizarLlaves visualizaLlaves = genericDao.get(CFGVisualizarLlaves.class, filtroTipoTrabajo, filtroSubTipoTrabajo);
+		// = trabajo.getTi
+		if (visualizaLlaves != null && visualizaLlaves.getVisualizacionLlaves() == 1) {
+			dtoTrabajo.setVisualizarLlaves(true);
+			/*if (trabajo.) {
+				
+			}*/
+		}else {
+			dtoTrabajo.setVisualizarLlaves(false);
+		}
+		
+		
+		
 
 		List<ActivoTramite> tramitesTrabajo = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
 		
@@ -5144,9 +5273,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		List<DtoHistorificadorCampos> listDtoHistCamp = new ArrayList<DtoHistorificadorCampos>();
 		try {
 			Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", idTrabajo);
-			Filter filtroPestana = genericDao.createFilter(FilterType.EQUALS, "pestana.codigo", codPestanya);
+			
 			Order order  = new Order(OrderType.DESC, "fechaModificacion");
-			listHistPest = genericDao.getListOrdered(HistorificadorPestanas.class, order, filtroTrabajo, filtroPestana);
+			if(codPestanya == null || "".equals(codPestanya)){
+				listHistPest = genericDao.getListOrdered(HistorificadorPestanas.class, order, filtroTrabajo);
+			} else {
+				Filter filtroPestana = genericDao.createFilter(FilterType.EQUALS, "pestana.codigo", codPestanya);
+				listHistPest = genericDao.getListOrdered(HistorificadorPestanas.class, order, filtroTrabajo, filtroPestana);
+			}
+			
 			 
 			if (listHistPest != null && !listHistPest.isEmpty()) {
 				for (HistorificadorPestanas historificadorPestanas : listHistPest) {
@@ -5187,4 +5322,89 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		return list;
 	}
+
+	@Override
+	public List<DtoAgendaTrabajo> getListAgendaTrabajo(Long idTrabajo) {
+		List<AgendaTrabajo> listAgenda = null; 
+		List<DtoAgendaTrabajo> listDtoAgenda = new ArrayList<DtoAgendaTrabajo>();
+		try {	
+		
+			Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", idTrabajo);
+			
+			Order order  = new Order(OrderType.DESC, "fecha");
+			
+			listAgenda = genericDao.getListOrdered(AgendaTrabajo.class, order, filtroTrabajo);
+			
+			if (listAgenda != null && !listAgenda.isEmpty()) {
+				for (AgendaTrabajo agendaTrabajo : listAgenda) {
+					DtoAgendaTrabajo dto = new DtoAgendaTrabajo();
+					dto.setIdAgenda(agendaTrabajo.getId());
+					dto.setIdTrabajo(agendaTrabajo.getTrabajo().getId());
+					dto.setGestorAgenda(agendaTrabajo.getGestor().getUsername());
+					dto.setFechaAgenda(agendaTrabajo.getFecha());
+					dto.setTipoGestion(agendaTrabajo.getTipoGestion().getCodigo());
+					dto.setObservacionesAgenda(agendaTrabajo.getObservaciones());
+					listDtoAgenda.add(dto);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return listDtoAgenda;
+	}
+	
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean createAgendaTrabajo(DtoAgendaTrabajo dtoAgendaTrabajo) {
+
+		AgendaTrabajo agenda = new AgendaTrabajo();
+		
+		if(dtoAgendaTrabajo.getIdTrabajo() != null) {
+			Trabajo trabajo = trabajoDao.get(dtoAgendaTrabajo.getIdTrabajo());
+			/*
+			Filter f1 = genericDao.createFilter(FilterType.EQUALS, "trabajo.id",
+					Long.valueOf(dtoAgendaTrabajo.getIdTrabajo()));
+			Trabajo trabajo = genericDao.get(Trabajo.class, f1);*/
+			agenda.setTrabajo(trabajo);
+		}
+		if(dtoAgendaTrabajo.getObservacionesAgenda() != null) {
+			agenda.setObservaciones(dtoAgendaTrabajo.getObservacionesAgenda());
+		}
+		if(dtoAgendaTrabajo.getTipoGestion() != null) {
+			Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo",
+					dtoAgendaTrabajo.getTipoGestion());
+			DDTipoApunte tipoGestion = genericDao.get(DDTipoApunte.class, f1);
+			agenda.setTipoGestion(tipoGestion);
+		}
+		agenda.setGestor(usuarioManager.getUsuarioLogado());
+		agenda.setFecha(new Date());
+		
+		genericDao.save(AgendaTrabajo.class,agenda);
+
+		return true;
+	}
+	
+	@Override
+	@BusinessOperation(overrides = "trabajoManager.deleteAgendaTrabajo")
+	@Transactional(readOnly = false)
+	public boolean deleteAgendaTrabajo(Long id) {
+		try {
+			/*Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(id));
+
+			AgendaTrabajo agendaTrabajo = genericDao.get(AgendaTrabajo.class, filtro);
+*/
+			genericDao.deleteById(AgendaTrabajo.class, Long.valueOf(id));
+
+
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+
+		return true;
+	}
+	
+	
 }

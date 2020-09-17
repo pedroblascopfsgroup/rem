@@ -47,6 +47,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
+import es.pfsgroup.plugin.rem.trabajo.dto.DtoAgendaTrabajo;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoHistorificadorCampos;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 
@@ -894,4 +895,12 @@ public interface TrabajoApi {
 
 	
 	public List<DDAcoAprobacionComite> getComboAprobacionComite();
+	
+	public List<DtoAgendaTrabajo> getListAgendaTrabajo(Long idTrabajo);
+	
+	@BusinessOperationDefinition("trabajoManager.createAgendaTrabajo")
+	public boolean createAgendaTrabajo(DtoAgendaTrabajo agendaTrabajo);
+	
+	@BusinessOperationDefinition("trabajoManager.deleteAgendaTrabajo")
+	public boolean deleteAgendaTrabajo(Long id);
 }

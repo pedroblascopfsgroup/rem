@@ -154,6 +154,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															xtype: 'comboboxfieldbase',
 												        	fieldLabel:  HreRem.i18n('fieldlabel.proveedor.trabajo'),
 												        	colspan: 3,
+												        	reference:'comboProveedor',
 												        	editable: false,
 												        	bind: 
 												        		{
@@ -228,12 +229,14 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 														[
 													        {
 													            xtype : 'numberfieldbase',
+													            reference:'idTarea',
 													            fieldLabel : HreRem.i18n('fieldlabel.id.tarea.trabajo'),
 													            allowBlank: false,
 													            maxLength:10
 				        									}
 													]
 												},
+
 												//datos de un solo activo;
 												{
 													xtype:'fieldsettable',
@@ -309,7 +312,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 												       }
 													]
 												},
-												{
+					{
 									              	xtype: 'fieldset',
 									        	    title: HreRem.i18n('title.subirfichero'),
 									        	    reference: 'fieldSetSubirFichero',
@@ -382,7 +385,14 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															listeners: {
 												                change: 'onCheckChangeMultiActivo'
 												            },
-															colspan: 3
+															colspan: 1
+														},
+														{
+															xtype: 'checkboxfieldbase',
+															boxLabel: HreRem.i18n('title.ejecutar.trabajo.por.agrupacion'),
+															checked: true,
+															reference: 'checkEnglobaTodosActivosRef',
+															colspan: 2
 														},
 										    			{
 														    xtype		: 'gridBase',
@@ -543,6 +553,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															{
 																xtype: 'datefieldbase',
 																fieldLabel: HreRem.i18n('fieldlabel.fecha.concreta.trabajo'),
+																reference: 'fechaConcretaTrabajo',
 																minValue: $AC.getCurrentDate(),
 																maxValue: null,
 																colspan:1,
@@ -551,6 +562,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															{
 																xtype: 'timefieldbase',
 																colspan:2,
+																reference: 'horaConcretaTrabajo',
 																fieldLabel: HreRem.i18n('fieldlabel.hora.concreta.trabajo'),
 																format: 'H:i',
 																increment: 30,
@@ -558,6 +570,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															},	
 															{
 																xtype: 'datefieldbase',
+																reference: 'fechaTopeTrabajo',
 																fieldLabel: HreRem.i18n('fieldlabel.fecha.tope.trabajo'),
 																minValue: $AC.getCurrentDate(),
 																maxValue: null,
@@ -578,10 +591,12 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 														[
 															{ 
 																xtype: 'currencyfieldbase',
+																reference: 'importePresupuesto',
 																fieldLabel: HreRem.i18n('fieldlabel.precio.presupuesto')
 											                },
 											                { 
 																xtype: 'currencyfieldbase',
+																reference: 'referenciaImportePresupuesto',
 																fieldLabel: HreRem.i18n('fieldlabel.referencia.presupuesto')
 											                }
 														]
@@ -599,24 +614,28 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 														[
 															{
 																xtype: 'checkboxfieldbase',
+																reference:'tarifaPlana',
 																boxLabel: HreRem.i18n('fieldlabel.check.tarifaplana'),
 																colspan:2,
 																checked: false
 															},
 															{
 																xtype: 'checkboxfieldbase',
+																reference: 'riesgoTerceros',
 																boxLabel: HreRem.i18n('fieldlabel.check.riesgo.terceros'),
 																colspan:1,
 																checked: false
 															},
 															{
 																xtype: 'checkboxfieldbase',
+																reference: 'urgente',
 																boxLabel: HreRem.i18n('fieldlabel.check.riesgo.urgente'),
 																colspan:2,
 																checked: false
 															},
 															{
 																xtype: 'checkboxfieldbase',
+																reference: 'siniestro',
 																boxLabel: HreRem.i18n('fieldlabel.check.riesgo.siniestro'),
 																colspan:1,
 																checked: false
@@ -665,7 +684,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
     	me.lookupReference('gestorActivo').setValue(me.gestorActivo);
     	
     	if(me.idActivo != null){
-    		var url = $AC.getRemoteUrl('activo/getActivoParaCrearPeticionTrabajo');
+    		var url = $AC.getRemoteUrl('trabajo/getListActivosByID');
 		    Ext.Ajax.request({
 			  url:url,
 			  params:  {idActivo : me.idActivo},
@@ -674,35 +693,8 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 				  var res = response.responseText.replace(/[{}"]/g,"");
 				  res = res.replace(/data:/,"");
 				  res = res.split(',');
-				  for(var i = 0; i < res.length; i++) {
-					separador = null;  
-					if(res[i].includes('numActivo')){
-						separador = res[i].split(':');
-						me.lookupReference('numHaya').setValue(separador[1]);
-					}else{
-						if(res[i].includes('descripcion')){
-							separador = res[i].split(':');
-							me.lookupReference('descripcionActivo').setValue(separador[1]);
-						}else{
-							if(res[i].includes('subtipoActivo:')){
-								separador = res[i].split(':');
-								me.lookupReference('subTipoActivo').setValue(separador[1]);
-							}else{
-								if(res[i].includes('tipoActivo:')){
-									separador = res[i].split(':');
-									me.lookupReference('tipoActivo').setValue(separador[1]);
-								}
-							}
-						}
-					}
-				}
 			  }
 		    });
-    	}else{
-    		me.lookupReference('numHaya').setValue(null);
-    		me.lookupReference('descripcionActivo').setValue(null);
-    		me.lookupReference('subTipoActivo').setValue(null);
-    		me.lookupReference('tipoActivo').setValue(null);
     	}
     },
     

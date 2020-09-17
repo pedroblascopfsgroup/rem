@@ -556,6 +556,14 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 				proxy: {
 					type: 'uxproxy'
 				}
+    		},
+    		storeAgendaTrabajo: {
+		    	model: 'HreRem.model.AgendaTrabajoModel',
+		    	proxy: {
+			        type: 'uxproxy',
+			        remoteUrl: 'trabajo/getAgendaTrabajo',
+			        extraParams: {idTrabajo: '{trabajo.id}'}
+		    	}    			
     		}
     }
 

@@ -8,7 +8,6 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialList', {
     initComponent: function () {
         
         var me = this;
-        
         me.setTitle(HreRem.i18n('title.lista.ofertas'));
        	me.listeners = {	    	
 			rowdblclick: 'onOfertasListDobleClick'

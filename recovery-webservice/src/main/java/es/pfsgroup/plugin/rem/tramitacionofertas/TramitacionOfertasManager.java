@@ -55,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -67,6 +68,7 @@ import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
+import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Formalizacion;
@@ -1875,5 +1877,6 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 
 		return null;
 	}
+	
 
 }

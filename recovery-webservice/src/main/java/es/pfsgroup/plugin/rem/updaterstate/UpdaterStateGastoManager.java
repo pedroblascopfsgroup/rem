@@ -21,7 +21,10 @@ import es.pfsgroup.plugin.rem.gastoProveedor.GastoProveedorManager;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
+import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.VDiarioCalculoLbk;
+import es.pfsgroup.plugin.rem.model.VImportesGastoLBK;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionHaya;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionPropietario;
@@ -74,6 +77,10 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	private static final String VALIDACION_GASTO_SIN_TIPO_IMP_INDIRECTO = "msg.validacion.gasto.sin.tipo.impuesto.indirecto";
 	
 	private static final String VALIDACION_LINEA_DETALLE = "msg.validacion.gasto.sin.tipo.impuesto.indirecto";
+	
+	private static final String VALIDACION_VISTA_DIARIOS_LBK = "msg.validacion.lbk.diarios";
+	
+	private static final String VALIDACION_VISTA_IMPORTES_LBK = "msg.validacion.lbk.importes";
 	
 	private DDEstadoProvisionGastos estadoProvision = null;
 	
@@ -183,22 +190,21 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			
 			if(!Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(gasto.getPropietario().getCartera()) && !Checks.esNulo(gasto.getPropietario().getCartera().getCodigo())) {
 				if(!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo()) && !DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo())){
-				for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
-					if(gastodetalleLinea.getCccBase() == null)
-						error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
-						return error;
-					}
-				}
-				for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
-					String codigoCartera = gastodetalleLinea.getSubtipoGasto().getCodigo();
-					if(!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(codigoCartera) &&!"100".equals(codigoCartera)) {
-						if(gastodetalleLinea.getCppBase() == null) {
-							error = messageServices.getMessage(VALIDACION_PARTIDA_PRESUPUESTARIA); 
+					for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
+						if(gastodetalleLinea.getCccBase() == null) {
+							error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
 							return error;
 						}
 					}
+					if(!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo())) {
+						for(GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
+							if(gastodetalleLinea.getCppBase() == null) {
+								error = messageServices.getMessage(VALIDACION_PARTIDA_PRESUPUESTARIA); 
+								return error;
+							}
+						}
+					}
 				}
-
 			}else {
 				error = messageServices.getMessage(VALIDACION_PROPIETARIO);
 				return error;
@@ -217,6 +223,30 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 					return error;
 				}
 			}
+			
+			if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo())){
+				Filter filtroVista = genericDao.createFilter(FilterType.EQUALS, "id", gasto.getId());	
+				VDiarioCalculoLbk vistaGastoDiario = genericDao.get(VDiarioCalculoLbk.class, filtroVista);
+				if(vistaGastoDiario == null) {
+					error = messageServices.getMessage(VALIDACION_VISTA_DIARIOS_LBK);
+					return error;
+				}
+				
+				
+				List<VImportesGastoLBK> vistaImporteGastoLBK = genericDao.getList(VImportesGastoLBK.class, filtroVista);
+				boolean tieneEntidades = false;
+				for (GastoLineaDetalle gastoLineaDetalle : gastoListaDetalleList) {
+					if(!gastoLineaDetalle.getGastoLineaEntidadList().isEmpty()) {
+						tieneEntidades = true;
+						break;
+					}
+				}
+				if(vistaImporteGastoLBK == null && tieneEntidades) {
+					error = messageServices.getMessage(VALIDACION_VISTA_IMPORTES_LBK);
+					return error;
+				}
+			}
+			
 		}
 		return error;
 	}
@@ -373,7 +403,8 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
 			DDEstadoGasto estadoGasto = genericDao.get(DDEstadoGasto.class, filtro);
 			gasto.setEstadoGasto(estadoGasto);
-			if(gastoProveedorApi.isEstadosGastosLiberbankParaLecturaDirectaDeTabla(gasto))  {
+			if(gastoProveedorApi.isEstadosGastosLiberbankParaLecturaDirectaDeTabla(gasto) && 
+			DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getCartera().getCodigo()))  {
 				gastoProveedorApi.saveGastosDiariosLbk(gasto.getId());
 				gastoProveedorApi.saveGastosImportesLbk(gasto.getId());	
 			}

@@ -140,6 +140,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
 		var me = this;
 		me.down("[itemId=botoneditar]").setVisible(false);
 	
+		
 		var editionEnabled = function() {
 			var visible = false;
 			var notFechaEjecucionReal = Ext.isEmpty(me.lookupController().getViewModel().get('trabajo').get('fechaEjecucionReal'));

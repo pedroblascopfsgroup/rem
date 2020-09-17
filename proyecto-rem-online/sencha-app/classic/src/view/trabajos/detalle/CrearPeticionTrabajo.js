@@ -236,82 +236,83 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 				        									}
 													]
 												},
-//												//datos de un solo activo;
-//												{
-//													xtype:'fieldsettable',
-//													reference: 'fieldActivo',
-//													collapsible: false,
-////													hidden: '{mostrarVentanaTrabajoGridActivo}',
-//													title: HreRem.i18n('title.tarifas.activo.detalle'),
-//													defaultType: 'textfieldbase',
-//													colspan:3,
-//													items :[
-//														{
-//													        xtype: 'comboboxfieldbase',
-//													        readOnly: true,
-//													        fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
-//													        reference:'cartera',
-//															colspan: 1,
-//															padding:'2 2 2 2',
-//													        bind:{
-//													        	store: '{comboEntidadPropietaria}',
-//													            value: me.codCartera
-//												            },
-//												            displayField: 'descripcion',
-//								    						valueField: 'codigo'
-//												       },
-//												       {
-//													        xtype: 'textfieldbase',
-//													        readOnly: true,
-//													        fieldLabel: HreRem.i18n('header.descripcion'),
-//													        reference:'descripcionActivo',
-//															colspan: 2,
-//															padding:'2 2 2 2'
-//												       },
-//												       {
-//													        xtype: 'comboboxfieldbase',
-//													        readOnly: true,
-//													        fieldLabel: HreRem.i18n('header.subcartera'),
-//													        reference:'subCartera',
-//															colspan: 1,
-//															padding:'2 2 2 2',
-//													        bind:{
-//													        	store: '{comboSubentidadPropietaria}',
-//											            		value: me.codSubcartera
-//												            },
-//												            displayField: 'descripcion',
-//								    						valueField: 'codigo'
-//												       },
-//												       {
-//													        xtype: 'textfieldbase',
-//													        readOnly: true,
-////													        fieldLabel: HreRem.i18n('header.evaluacion.mediadores.detail.ofertasvivas.idActivo'),
-//													        fieldLabel: "Numero Activo",
-//													        reference:'numHaya',
-//															colspan: 2,
-//															padding:'2 2 2 2'
-//												       },
-//												       {
-//													        xtype: 'textfieldbase',
-//													        readOnly: true,
-////													        fieldLabel: HreRem.i18n('header.evaluacion.mediadores.detail.ofertasvivas.idActivo'),
-//													        fieldLabel: "Tipo Activo",
-//													        reference:'tipoActivo',
-//															colspan: 1,
-//															padding:'2 2 2 2'
-//												       },
-//												       {
-//													        xtype: 'textfieldbase',
-//													        readOnly: true,
-////													        fieldLabel: HreRem.i18n('header.evaluacion.mediadores.detail.ofertasvivas.idActivo'),
-//													        fieldLabel: "Subtipo Activo",
-//													        reference:'subTipoActivo',
-//															colspan: 2,
-//															padding:'2 2 2 2'
-//												       }
-//													]
-//												},
+
+												//datos de un solo activo;
 												{
+													xtype:'fieldsettable',
+													reference: 'fieldActivo',
+													collapsible: false,
+//													hidden: '{mostrarVentanaTrabajoGridActivo}',
+													title: HreRem.i18n('title.tarifas.activo.detalle'),
+													defaultType: 'textfieldbase',
+													colspan:3,
+													items :[
+														{
+													        xtype: 'comboboxfieldbase',
+													        readOnly: true,
+													        fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
+													        reference:'cartera',
+															colspan: 1,
+															padding:'2 2 2 2',
+													        bind:{
+													        	store: '{comboEntidadPropietaria}',
+													            value: me.codCartera
+												            },
+												            displayField: 'descripcion',
+								    						valueField: 'codigo'
+												       },
+												       {
+													        xtype: 'textfieldbase',
+													        readOnly: true,
+													        fieldLabel: HreRem.i18n('header.descripcion'),
+													        reference:'descripcionActivo',
+															colspan: 2,
+															padding:'2 2 2 2'
+												       },
+												       {
+													        xtype: 'comboboxfieldbase',
+													        readOnly: true,
+													        fieldLabel: HreRem.i18n('header.subcartera'),
+													        reference:'subCartera',
+															colspan: 1,
+															padding:'2 2 2 2',
+													        bind:{
+													        	store: '{comboSubentidadPropietaria}',
+											            		value: me.codSubcartera
+												            },
+												            displayField: 'descripcion',
+								    						valueField: 'codigo'
+												       },
+												       {
+													        xtype: 'textfieldbase',
+													        readOnly: true,
+//													        fieldLabel: HreRem.i18n('header.evaluacion.mediadores.detail.ofertasvivas.idActivo'),
+													        fieldLabel: "Numero Activo",
+													        reference:'numHaya',
+															colspan: 2,
+															padding:'2 2 2 2'
+												       },
+												       {
+													        xtype: 'textfieldbase',
+													        readOnly: true,
+//													        fieldLabel: HreRem.i18n('header.evaluacion.mediadores.detail.ofertasvivas.idActivo'),
+													        fieldLabel: "Tipo Activo",
+													        reference:'tipoActivo',
+															colspan: 1,
+															padding:'2 2 2 2'
+												       },
+												       {
+													        xtype: 'textfieldbase',
+													        readOnly: true,
+//													        fieldLabel: HreRem.i18n('header.evaluacion.mediadores.detail.ofertasvivas.idActivo'),
+													        fieldLabel: "Subtipo Activo",
+													        reference:'subTipoActivo',
+															colspan: 2,
+															padding:'2 2 2 2'
+												       }
+													]
+												},
+					{
 									              	xtype: 'fieldset',
 									        	    title: HreRem.i18n('title.subirfichero'),
 									        	    reference: 'fieldSetSubirFichero',

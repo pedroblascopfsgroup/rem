@@ -104,6 +104,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo.ActivoTrabajoPk;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.AdjuntoTrabajo;
+import es.pfsgroup.plugin.rem.model.AgendaTrabajo;
 import es.pfsgroup.plugin.rem.model.ConfiguracionTarifa;
 import es.pfsgroup.plugin.rem.model.DerivacionEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoActivoTrabajo;
@@ -146,6 +147,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDPestanas;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAdelanto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoApunte;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
@@ -163,6 +165,7 @@ import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.thread.LiberarFicheroTrabajos;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
+import es.pfsgroup.plugin.rem.trabajo.dto.DtoAgendaTrabajo;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoHistorificadorCampos;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
@@ -5149,9 +5152,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		List<DtoHistorificadorCampos> listDtoHistCamp = new ArrayList<DtoHistorificadorCampos>();
 		try {
 			Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", idTrabajo);
-			Filter filtroPestana = genericDao.createFilter(FilterType.EQUALS, "pestana.codigo", codPestanya);
+			
 			Order order  = new Order(OrderType.DESC, "fechaModificacion");
-			listHistPest = genericDao.getListOrdered(HistorificadorPestanas.class, order, filtroTrabajo, filtroPestana);
+			if(codPestanya == null || "".equals(codPestanya)){
+				listHistPest = genericDao.getListOrdered(HistorificadorPestanas.class, order, filtroTrabajo);
+			} else {
+				Filter filtroPestana = genericDao.createFilter(FilterType.EQUALS, "pestana.codigo", codPestanya);
+				listHistPest = genericDao.getListOrdered(HistorificadorPestanas.class, order, filtroTrabajo, filtroPestana);
+			}
+			
 			 
 			if (listHistPest != null && !listHistPest.isEmpty()) {
 				for (HistorificadorPestanas historificadorPestanas : listHistPest) {
@@ -5184,4 +5193,89 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		return list;
 	}
+
+	@Override
+	public List<DtoAgendaTrabajo> getListAgendaTrabajo(Long idTrabajo) {
+		List<AgendaTrabajo> listAgenda = null; 
+		List<DtoAgendaTrabajo> listDtoAgenda = new ArrayList<DtoAgendaTrabajo>();
+		try {	
+		
+			Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", idTrabajo);
+			
+			Order order  = new Order(OrderType.DESC, "fecha");
+			
+			listAgenda = genericDao.getListOrdered(AgendaTrabajo.class, order, filtroTrabajo);
+			
+			if (listAgenda != null && !listAgenda.isEmpty()) {
+				for (AgendaTrabajo agendaTrabajo : listAgenda) {
+					DtoAgendaTrabajo dto = new DtoAgendaTrabajo();
+					dto.setIdAgenda(agendaTrabajo.getId());
+					dto.setIdTrabajo(agendaTrabajo.getTrabajo().getId());
+					dto.setGestorAgenda(agendaTrabajo.getGestor().getUsername());
+					dto.setFechaAgenda(agendaTrabajo.getFecha());
+					dto.setTipoGestion(agendaTrabajo.getTipoGestion().getCodigo());
+					dto.setObservacionesAgenda(agendaTrabajo.getObservaciones());
+					listDtoAgenda.add(dto);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return listDtoAgenda;
+	}
+	
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean createAgendaTrabajo(DtoAgendaTrabajo dtoAgendaTrabajo) {
+
+		AgendaTrabajo agenda = new AgendaTrabajo();
+		
+		if(dtoAgendaTrabajo.getIdTrabajo() != null) {
+			Trabajo trabajo = trabajoDao.get(dtoAgendaTrabajo.getIdTrabajo());
+			/*
+			Filter f1 = genericDao.createFilter(FilterType.EQUALS, "trabajo.id",
+					Long.valueOf(dtoAgendaTrabajo.getIdTrabajo()));
+			Trabajo trabajo = genericDao.get(Trabajo.class, f1);*/
+			agenda.setTrabajo(trabajo);
+		}
+		if(dtoAgendaTrabajo.getObservacionesAgenda() != null) {
+			agenda.setObservaciones(dtoAgendaTrabajo.getObservacionesAgenda());
+		}
+		if(dtoAgendaTrabajo.getTipoGestion() != null) {
+			Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo",
+					dtoAgendaTrabajo.getTipoGestion());
+			DDTipoApunte tipoGestion = genericDao.get(DDTipoApunte.class, f1);
+			agenda.setTipoGestion(tipoGestion);
+		}
+		agenda.setGestor(usuarioManager.getUsuarioLogado());
+		agenda.setFecha(new Date());
+		
+		genericDao.save(AgendaTrabajo.class,agenda);
+
+		return true;
+	}
+	
+	@Override
+	@BusinessOperation(overrides = "trabajoManager.deleteAgendaTrabajo")
+	@Transactional(readOnly = false)
+	public boolean deleteAgendaTrabajo(Long id) {
+		try {
+			/*Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(id));
+
+			AgendaTrabajo agendaTrabajo = genericDao.get(AgendaTrabajo.class, filtro);
+*/
+			genericDao.deleteById(AgendaTrabajo.class, Long.valueOf(id));
+
+
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+
+		return true;
+	}
+	
+	
 }

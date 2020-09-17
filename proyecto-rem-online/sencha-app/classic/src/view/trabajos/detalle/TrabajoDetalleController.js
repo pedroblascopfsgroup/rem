@@ -564,7 +564,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			}
 		}
 		return aux;
-	},
+	},	
 	
 	onClickBotonCancelarTrabajo: function(btn) {		
 		btn.up('window').hide();		
@@ -1288,6 +1288,52 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
  	 		me.lookupReference('fechaResolComite').setValue(null);
  	 		me.lookupReference('comboResolucionComite').setValue(null);
  		}
- 	}
+ 	},
+ 	
+ 	onClickBotonCancelarVentanaAgendaTrabajo: function(btn) {		
+    	btn.up('window').hide();
+    },
+    
+    onClickBotonAnyadirAgendaTrabajo: function(btn){
+    			
+    			var me = this;
+    			me.getView().mask(HreRem.i18n("msg.mask.loading"));
+    			var correcto = true;
+    			var form = btn.up().up().down("form");
+    			url = $AC.getRemoteUrl("trabajo/createAgendaTrabajo");
+    	 		var idTrabajo= btn.up('anyadiragendatrabajo').idTrabajo;	
+    	 		var comboTipoGestion = me.lookupReference('comboTipoGestionRef');
+    	 		var observaciones = me.lookupReference('observacionesRef');
+    	 		
+    	 		if(correcto) { 
+    	 			if(form.isValid()){
+    	 			form.submit({
+    	 				url: url,
+    					params : {idTrabajo: idTrabajo,
+    								tipoGestion: comboTipoGestion.getValue(),
+    								observacionesAgenda:observaciones.getValue()
+    								},
+    					success: function(fp, o) {
+    						me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+    						me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['TRABAJO'], idTrabajo);
+    						me.getView().unmask();				
+    						me.onClickBotonCancelarVentanaAgendaTrabajo(btn);
+    					},
+    					failure: function(record, operation) {
+    						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    						me.unmask();
+    					}
+    	 			});
+    		 		}else{
+    		 			me.getView().unmask();
+    		 		}
+    	 		} else {
+    	 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.no.valida"));
+    				me.getView().unmask();
+    	 		}
+    	 		
+    			
+    			
+    	}
  	
 });

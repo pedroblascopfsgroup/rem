@@ -97,6 +97,7 @@ import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.trabajo.TrabajoManager;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
+import es.pfsgroup.plugin.rem.trabajo.dto.DtoAgendaTrabajo;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
@@ -1875,6 +1876,62 @@ public class TrabajoController extends ParadiseJsonController {
 		model.put(RESPONSE_DATA_KEY, trabajoApi.getComboAprobacionComite());
 
 		return new ModelAndView("jsonView", model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getAgendaTrabajo(Long idTrabajo, WebDto webDto, ModelMap model) {
+		
+		try {
+			model.put("data", trabajoApi.getListAgendaTrabajo(idTrabajo));
+			model.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ModelAndView("jsonView", model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createAgendaTrabajo(DtoAgendaTrabajo agendaTrabajo, Long idTrabajo){
+		
+		ModelMap model = new ModelMap();
+		
+		agendaTrabajo.setIdTrabajo(idTrabajo);
+		
+		try {
+			boolean success = trabajoApi.createAgendaTrabajo(agendaTrabajo);
+			model.put("success", success);			
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteAgendaTrabajo(@RequestParam Long id){
+
+		
+		
+		ModelMap model = new ModelMap();
+		
+		try {
+
+			boolean success = trabajoApi.deleteAgendaTrabajo(id);
+			model.put("success", success);
+		
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		
 	}
 
 }

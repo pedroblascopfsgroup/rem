@@ -1354,7 +1354,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	 		
     			
     			
-    	}
+    	},
  	loadGridSegundo: function(grid){
  		var me = this;
  		var idActivo = me.getView().idActivo;

@@ -3365,6 +3365,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				if (tarifaAplicada.getPrecioUnitario() != null) {
 					BeanUtils.copyProperty(tarifaDto, "precioUnitario", tarifaAplicada.getPrecioUnitario());
 				}
+				if (tarifaAplicada.getPrecioUnitarioCliente() != null) {
+					BeanUtils.copyProperty(tarifaDto, "precioUnitarioCliente", tarifaAplicada.getPrecioUnitarioCliente());
+				}
 				if (tarifaAplicada.getConfigTarifa().getTipoTarifa() != null) {
 					tarifaDto.setCodigoTarifa(tarifaAplicada.getConfigTarifa().getTipoTarifa().getCodigo());
 					tarifaDto.setDescripcion(tarifaAplicada.getConfigTarifa().getTipoTarifa().getDescripcion());
@@ -3524,6 +3527,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		filtro.setLimit(Integer.MAX_VALUE);
 		Page page = trabajoDao.getTarifasTrabajo(filtro, usuarioLogado);
 		BigDecimal sumaTotal = BigDecimal.ZERO;
+		BigDecimal sumaTotalCliente = BigDecimal.ZERO;
 		NumberFormat format = NumberFormat.getNumberInstance(Locale.ENGLISH);
         format.setMinimumFractionDigits(2);
         format.setMaximumFractionDigits(5);
@@ -3534,8 +3538,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		for (TrabajoConfiguracionTarifa trabajoTarifa : lista) {
 			BigDecimal precioUnitario = new BigDecimal(trabajoTarifa.getPrecioUnitario().toString());
+			BigDecimal precioUnitarioCliente = null;
+			if(trabajoTarifa.getPrecioUnitarioCliente() != null) {
+				precioUnitarioCliente = new BigDecimal(trabajoTarifa.getPrecioUnitarioCliente().toString());
+			}
 			BigDecimal medicion = new BigDecimal(trabajoTarifa.getMedicion().toString());
 			sumaTotal = sumaTotal.add(precioUnitario.multiply(medicion));
+			if(precioUnitarioCliente != null) {
+				sumaTotalCliente= sumaTotal.add(precioUnitarioCliente.multiply(medicion));
+			}
 		}
 		
 		for(int i=startOriginal; i<(((startOriginal+limiteOriginal) > lista.size()) ? lista.size() : startOriginal+limiteOriginal); i++) {		
@@ -3543,6 +3554,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			DtoTarifaTrabajo dtoTarifaTrabajo = tarifaAplicadaToDto(lista.get(i));
 			dtoTarifaTrabajo.setTotalCount(page.getTotalCount());
 			dtoTarifaTrabajo.setImporteTotalTarifas(format.format(sumaTotal));
+			if(sumaTotalCliente != BigDecimal.ZERO) {
+				dtoTarifaTrabajo.setImporteTotalCliente(format.format(sumaTotalCliente));
+			}
 			tarifas.add(dtoTarifaTrabajo);
 		}
 

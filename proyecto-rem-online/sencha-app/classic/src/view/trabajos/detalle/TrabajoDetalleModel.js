@@ -62,6 +62,19 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    	 
 	    },
 	    
+	    mostrarTotalProveedor: function(get){
+	    	var isGestorActivos = $AU.userIsRol('HAYAGESACT');
+	    	var isSuper = $AU.userIsRol('HAYASUPER');
+	    	var isProveedor = $AU.userIsRol('HAYAPROV');
+	    	return isGestorActivos || isSuper || isProveedor;
+	    },
+	    
+	    mostrarTotalCliente: function(get){
+	    	var isGestorActivos = $AU.userIsRol('HAYAGESACT');
+	    	var isSuper = $AU.userIsRol('HAYASUPER');
+	    	return isGestorActivos || isSuper;
+	    },
+	    
 	    editableTarificacionProveedor: function (get){
 	    	return true;
 	    	 

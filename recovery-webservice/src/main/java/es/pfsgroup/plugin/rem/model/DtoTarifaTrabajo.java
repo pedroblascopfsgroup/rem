@@ -27,6 +27,9 @@ public class DtoTarifaTrabajo extends WebDto {
 	private String importeTotal;
 	private Integer totalCount;
 	private String importeTotalTarifas;
+	private String precioUnitarioCliente;
+	private String importeCliente;
+	private String importeTotalCliente;
 
 	public String getId() {
 		return id;
@@ -111,6 +114,24 @@ public class DtoTarifaTrabajo extends WebDto {
 	}
 	public void setImporteTotalTarifas(String importeTotalTarifas) {
 		this.importeTotalTarifas = importeTotalTarifas;
+	}
+	public String getPrecioUnitarioCliente() {
+		return precioUnitarioCliente;
+	}
+	public void setPrecioUnitarioCliente(String precioUnitarioCliente) {
+		this.precioUnitarioCliente = precioUnitarioCliente;
+	}
+	public String getImporteTotalCliente() {
+		return importeTotalCliente;
+	}
+	public void setImporteTotalCliente(String importeTotalCliente) {
+		this.importeTotalCliente = importeTotalCliente;
+	}
+	public String getImporteCliente() {
+		return importeCliente;
+	}
+	public void setImporteCliente(String importeCliente) {
+		this.importeCliente = importeCliente;
 	}
 
 }

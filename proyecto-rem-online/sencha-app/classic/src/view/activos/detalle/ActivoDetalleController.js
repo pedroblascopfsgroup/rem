@@ -482,13 +482,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var codCartera = me.getViewModel().get("activo.entidadPropietariaCodigo");
     	var gestorActivo = $AU.getUser().userName;
     	
-    	me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearPeticionTrabajo",
-    		{idActivo: idActivo, 
-    		idAgrupacion: null,
-    		codCartera: codCartera, 
-    		codSubcartera: codSubcartera, 
-    		logadoGestorMantenimiento: true,
-    		gestorActivo: gestorActivo});
+    	var ventana = Ext.create("HreRem.view.trabajos.detalle.CrearPeticionTrabajo", {
+			idActivo: idActivo, 
+			codCartera: codCartera, 
+			codSubcartera: codSubcartera, 
+			logadoGestorMantenimiento: true,
+			idAgrupacion: null,
+			idGestor: null, 
+			gestorActivo: gestorActivo});
+		btn.lookupViewModel().getView().add(ventana);
+		ventana.show();
+
     },
     
     onAnyadirPropietarioClick: function (btn) {

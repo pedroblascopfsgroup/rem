@@ -303,6 +303,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		var storeListaActivosTrabajo = null;
 		var activo= null;
 		var arraySelection;
+		var codPromo = me.lookupReference('activosagrupaciontrabajo').getStore().getData().items[0].get('codigoPromocionPrinex');
 		if(!Ext.isEmpty(me.getView().idActivo)){
 			activo = btn.lookupViewModel().getView().idActivo;
 		}else{
@@ -314,10 +315,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			var propietario = storeListaActivosTrabajo.data.items[0].data.propietarioId;
 			for (var i=0; i < storeListaActivosTrabajo.data.length; i++){
 				var propietarioAux = storeListaActivosTrabajo.data.items[i].data.propietarioId;
-				if(propietarioAux != propietario 
-						//Preguntar
-//						&& me.lookupReference('checkEnglobaTodosActivosRef').checked != false
-				){
+				if(propietarioAux != propietario && me.lookupReference('checkEnglobaTodosActivosRef').checked != false)
+				{
 					Ext.MessageBox.alert(
 							HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),
 							HreRem.i18n("msgbox.multiples.trabajos.seleccionado.diferente.propietario.mensaje")
@@ -924,9 +923,30 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     		}
     		
     	});
-
-    	
-    	
+    },
+    
+    setBindStoreGrid: function(grid){
+    	var me = this;
+    	var storeIdActivo = Ext.create('Ext.data.Store',{
+			pageSize: 12,
+        	model: 'HreRem.model.ActivoTrabajoSubida',
+			 proxy: {
+			    type: 'uxproxy',
+				remoteUrl: 'trabajo/getListActivosByID',
+				actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
+				extraParams: {idActivo: me.getView().idActivo}
+			 },
+			 listeners:{
+		          load:function(){
+		        	  	me.relayEvents(this,['storeloadsuccess']);
+		               this.fireEvent('storeloadsuccess');
+		          }
+		     }
+           
+		});
+		grid.setBind({store: storeIdActivo});
+		grid.setStore(storeIdActivo);
+		grid.getStore().load();
     },
     
     onSelectedTarifaReturnGridVentana: function(grid,record){
@@ -1335,5 +1355,19 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     			
     			
     	}
+ 	loadGridSegundo: function(grid){
+ 		var me = this;
+ 		var idActivo = me.getView().idActivo;
+ 		var idAgrupacion = me.getView().idAgrupacion;
+ 		if(idActivo != null){
+ 			grid.getProxy().setExtraParams({'idActivo':idActivo});
+ 		}else{
+ 			if(idAgrupacion != null){
+ 				
+ 			}
+ 		}
+ 		
+//		grid.load();
+ 	}
  	
 });

@@ -236,83 +236,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 				        									}
 													]
 												},
-
-												//datos de un solo activo;
 												{
-													xtype:'fieldsettable',
-													reference: 'fieldActivo',
-													collapsible: false,
-//													hidden: '{mostrarVentanaTrabajoGridActivo}',
-													title: HreRem.i18n('title.tarifas.activo.detalle'),
-													defaultType: 'textfieldbase',
-													colspan:3,
-													items :[
-														{
-													        xtype: 'comboboxfieldbase',
-													        readOnly: true,
-													        fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
-													        reference:'cartera',
-															colspan: 1,
-															padding:'2 2 2 2',
-													        bind:{
-													        	store: '{comboEntidadPropietaria}',
-													            value: me.codCartera
-												            },
-												            displayField: 'descripcion',
-								    						valueField: 'codigo'
-												       },
-												       {
-													        xtype: 'textfieldbase',
-													        readOnly: true,
-													        fieldLabel: HreRem.i18n('header.descripcion'),
-													        reference:'descripcionActivo',
-															colspan: 2,
-															padding:'2 2 2 2'
-												       },
-												       {
-													        xtype: 'comboboxfieldbase',
-													        readOnly: true,
-													        fieldLabel: HreRem.i18n('header.subcartera'),
-													        reference:'subCartera',
-															colspan: 1,
-															padding:'2 2 2 2',
-													        bind:{
-													        	store: '{comboSubentidadPropietaria}',
-											            		value: me.codSubcartera
-												            },
-												            displayField: 'descripcion',
-								    						valueField: 'codigo'
-												       },
-												       {
-													        xtype: 'textfieldbase',
-													        readOnly: true,
-//													        fieldLabel: HreRem.i18n('header.evaluacion.mediadores.detail.ofertasvivas.idActivo'),
-													        fieldLabel: "Numero Activo",
-													        reference:'numHaya',
-															colspan: 2,
-															padding:'2 2 2 2'
-												       },
-												       {
-													        xtype: 'textfieldbase',
-													        readOnly: true,
-//													        fieldLabel: HreRem.i18n('header.evaluacion.mediadores.detail.ofertasvivas.idActivo'),
-													        fieldLabel: "Tipo Activo",
-													        reference:'tipoActivo',
-															colspan: 1,
-															padding:'2 2 2 2'
-												       },
-												       {
-													        xtype: 'textfieldbase',
-													        readOnly: true,
-//													        fieldLabel: HreRem.i18n('header.evaluacion.mediadores.detail.ofertasvivas.idActivo'),
-													        fieldLabel: "Subtipo Activo",
-													        reference:'subTipoActivo',
-															colspan: 2,
-															padding:'2 2 2 2'
-												       }
-													]
-												},
-					{
 									              	xtype: 'fieldset',
 									        	    title: HreRem.i18n('title.subirfichero'),
 									        	    reference: 'fieldSetSubirFichero',
@@ -369,7 +293,6 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 									        	},
 										        //GRID LISTADO ACTIVOS
 												{    
-				                
 												xtype:'fieldsettable',
 												collapsible: false,
 												title: HreRem.i18n('title.publicaciones.activos.grid'),
@@ -395,10 +318,37 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															colspan: 2
 														},
 										    			{
-														    xtype		: 'gridBase',
+														    xtype: 'gridBase',
 															cls	: 'panel-base shadow-panel',
 															reference: 'listaActivosSubidaRef',
 															colspan:2,
+//															listeners: {
+//																afterrender: function(){
+//																	var me = this;
+////																	var storeIdActivo = Ext.create('Ext.data.Store',{
+////														    			pageSize: 12,
+////														            	model: 'HreRem.model.ActivoTrabajoSubida',
+////														   			 proxy: {
+////														   			    type: 'uxproxy',
+////														   				remoteUrl: 'trabajo/getListActivosByID',
+////														   				actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
+////														   				extraParams: {idActivo: me.up().up().up().up().idActivo}
+////														   			 }
+//////														   			 groupField: 'numPlanta',
+//////														   			 listeners:{
+//////														   		          load:function(){
+//////														   		        	  	me.relayEvents(this,['storeloadsuccess']);
+//////														   		               this.fireEvent('storeloadsuccess');
+//////														   		          }
+//////														   		     }
+////														               
+////														    		});
+////														    		me.setBind({store: storeIdActivo});
+////														    		me.setStore(storeIdActivo);
+////														    		me.getStore().load();
+//																	me.lookupController().setBindStoreGrid(me);
+//																}
+//															},
 															bind: {
 				        	   									store: '{listaActivosSubida}'														
 															},
@@ -455,6 +405,75 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 				        	   											displayInfo: true,
 				        	   											bind: {
 				        	   											       store: '{listaActivosSubida}'
+				        	   											      }
+				        	   											}
+				        	   									      ]	
+														},
+														//NUEVO GRID DUPLOCADP
+														{
+														    xtype: 'gridBase',
+															cls	: 'panel-base shadow-panel',
+															reference: 'activosagrupaciontrabajo',
+															colspan:1,
+															listeners: {
+																beforeload: 'loadGridSegundo'
+															},
+															bind: {
+				        	   									store: '{listaActivosAgrupacion}'														
+															},
+															columns: [
+				        	   									{
+				        	   										dataIndex: 'numActivoHaya',
+				        	   										text: HreRem.i18n('header.numero.activo.haya'),
+				        	   										flex: 1										
+				        	   									},
+				        	   									{
+				        	   										dataIndex: 'numFincaRegistral',
+				        	   										text: HreRem.i18n('header.finca.registral'),
+				        	   										flex: 1										
+				        	   									},
+				        	   									{
+				        	   									     dataIndex: 'tipoActivo',
+				        	   									     text: HreRem.i18n('header.tipo'),
+				        	   									     flex: 1
+				        	   									},
+				        	   									{
+				        	   									     dataIndex: 'subtipoActivo',
+				        	   									     text: HreRem.i18n('header.subtipo'),
+				        	   										 flex: 1													            
+				        	   									},
+				        	   									{
+				        	   										dataIndex: 'cartera',
+				        	   										text: HreRem.i18n('header.cartera'),
+				        	   										flex: 1	 	
+				        	   									},
+				        	   									{
+				        	   									    dataIndex: 'situacionComercial',
+				        	   									    text: HreRem.i18n('header.situacion.comercial'),
+				        	   									    flex: 1
+				        	   									},
+				        	   									{
+				        	   									    dataIndex: 'situacionPosesoria',
+				        	   									    text: HreRem.i18n('header.situacion.posesoria'),
+				        	   									    flex: 1													            
+				        	   									},
+														        {
+														        	dataIndex: 'activoEnPropuestaEnTramitacion',
+														        	text: HreRem.i18n("header.incluido.en.propuesta.tramite"),
+														        	hidden: true,
+														        	renderer: Utils.rendererBooleanToSiNo,
+														        	flex: 1
+														        }
+				        	   										         	        
+				        	   									],
+				        	   							dockedItems : [
+				        	   									       {
+				        	   											xtype: 'pagingtoolbar',
+				        	   										    dock: 'bottom',
+				        	   										    inputItemWidth: 50,
+				        	   											displayInfo: true,
+				        	   											bind: {
+				        	   											       store: '{listaActivosAgrupacion}'
 				        	   											      }
 				        	   											}
 				        	   									      ]	
@@ -682,19 +701,33 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
     	me.getViewModel().set('idAgrupacion', me.idAgrupacion);
 		//PARA CARGAR EL GESTOR DEL ACTIVO AL ABRIR LA VENTANA, DENTRO DE LA FICHA DEL ACTIVO
     	me.lookupReference('gestorActivo').setValue(me.gestorActivo);
+//    	var grid = me.lookupReference('listaActivosSubidaRef');
     	
     	if(me.idActivo != null){
-    		var url = $AC.getRemoteUrl('trabajo/getListActivosByID');
-		    Ext.Ajax.request({
-			  url:url,
-			  params:  {idActivo : me.idActivo},
-			  success: function(response,opts){
-				  var separador;
-				  var res = response.responseText.replace(/[{}"]/g,"");
-				  res = res.replace(/data:/,"");
-				  res = res.split(',');
-			  }
-		    });
+    		var grid = me.lookupReference('activosagrupaciontrabajo');
+    		grid.getStore().load();
+    		
+    		
+//    		grid.getStore().getProxy().extraParams = {'idActivo':me.idActivo};
+//    		grid.getStore().getProxy().url = $AC.getRemoteUrl('trabajo/getListActivosByID');
+//    		grid.getStore().load();
+    		
+//    		var url = $AC.getRemoteUrl('trabajo/getListActivosByID');
+//		    Ext.Ajax.request({
+//			  url:url,
+//			  params:  {idActivo : me.idActivo,
+//				  		page: '1',
+//				  		start: '0',
+//				  		limit: '30'},
+//			  success: function(response,opts){
+//				  var separador;
+//				  var modelo = Ext.create('HreRem.model.ActivoTrabajoSubida');
+//				  var res = response.responseText.replace(/[{}"]/g,"");
+//				  res = res.replace(/data:/,"");
+//				  res = res.split(',');
+//			  }
+//		    });
+    		
     	}
     },
     

@@ -1291,15 +1291,14 @@ public class TrabajoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getListActivosByID(String idActivo, DtoTrabajoListActivos webDto, ModelMap model) {
 		try {
-			List<Long> listaActivo = new ArrayList<Long>();
+			List<String> listaActivo = new ArrayList<String>();
 			if (idActivo.contains(",")) {
 				String[] activos = idActivo.split(",");
 				for(int i =0 ; i< activos.length; i++) {
-					listaActivo.add(Long.parseLong(activos[i]));
+					listaActivo.add(activos[i]);
 				}
 			}else {
-				Long id = Long.parseLong(idActivo);
-				listaActivo.add(id);
+				listaActivo.add(idActivo);
 			}
 			
 			Page page = trabajoAdapter.getListActivosById(listaActivo,webDto);

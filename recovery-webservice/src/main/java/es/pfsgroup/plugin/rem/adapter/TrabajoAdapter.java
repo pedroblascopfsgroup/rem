@@ -349,7 +349,7 @@ public class TrabajoAdapter {
 		return null;
 	}
 	
-	public Page getListActivosById(List<Long> idActivos, DtoTrabajoListActivos webDto) {
+	public Page getListActivosById(List<String> idActivos, DtoTrabajoListActivos webDto) {
 		
 		return activoDao.getListActivosPorID(idActivos, webDto);
 	}

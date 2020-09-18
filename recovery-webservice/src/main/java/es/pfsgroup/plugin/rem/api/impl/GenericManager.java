@@ -112,6 +112,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.sojo.interchange.json.JsonParser;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 @Service("genericManager")
 public class GenericManager extends BusinessOperationOverrider<GenericApi> implements GenericApi {
@@ -220,7 +222,10 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				authData.setCodigoCartera(uca.getCartera().getCodigo());
 			}
 
-			authData.setJwt(createJwtForTheSession(usuario.getUsername(), roles));
+			String jwtToken = createJwtForTheSession(usuario.getUsername(), roles);
+			// El token se traslada a la interfaz, a través del auhtData, y se establece en la sesión de usuario para su uso en el servidor
+			authData.setJwt(jwtToken);
+			RequestContextHolder.getRequestAttributes().setAttribute("token_jwt", jwtToken, RequestAttributes.SCOPE_SESSION);
 
 		}catch(LazyInitializationException e){
 			logger.info(e.getMessage());
@@ -240,7 +245,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		// Time for the token to be valid
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(new Date());
-		calendar.add(Calendar.HOUR_OF_DAY, 8);
+		calendar.add(Calendar.HOUR_OF_DAY, Integer.parseInt(appProperties.getProperty("jwt.valid.signed.time", "12")));
 		Date validJwtSignedTime = calendar.getTime();
 
 		//The JWT signature algorithm we will be using to sign the token
@@ -251,7 +256,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		//We will sign our JWT with our ApiKey secret
 		byte[] apiKeySecretBytes = DatatypeConverter
-				.parseBase64Binary(appProperties.getProperty("jwt.secret.key", "default_rest_api_key"));
+				.parseBase64Binary(appProperties.getProperty("jwt.secret.key", "1234567890"));
 		Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
 		//Let's set the JWT Claims

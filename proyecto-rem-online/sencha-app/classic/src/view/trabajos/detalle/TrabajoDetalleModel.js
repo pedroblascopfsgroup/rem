@@ -400,7 +400,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     				type: 'uxproxy',
     				remoteUrl: 'trabajo/getListActivosByID',
     				actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
-    				extraParams: {idActivo: 'idActivo'}
+    				extraParams: {idActivo: '{idActivo}', idAgrupacion:'{idAgrupacion}'}
     			},
     			//session: true,
     	    	remoteSort: true,

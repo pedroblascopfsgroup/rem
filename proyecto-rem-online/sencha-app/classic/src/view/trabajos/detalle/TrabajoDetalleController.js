@@ -476,8 +476,9 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	
 	hideWindowCrearPeticionTrabajo: function(btn) {
     	var me = this;
-    	//me.getView().down("[reference=activosagrupaciontrabajo]").deselectAll();
+    	me.getView().mask(HreRem.i18n("msg.mask.loading"));
     	btn.up('window').cerrar();
+    	me.getView().unmask();
     },
 	
 	hideWindowPeticionTrabajo: function(btn) {
@@ -496,57 +497,61 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		idProceso = window.idProceso;
 		codCartera = window.codCartera;
 		codSubcartera = window.codSubcartera;
-		var idTarifas = me.obtenerIdTarifas(me.lookupReference('gridListaTarifas').getStore().getData());
-		//Nuevos Valores
 		
-		form.getBindRecord().set("idMediador",me.lookupReference('comboProveedor').getSelection().get('id'))
-		if(me.lookupReference('checkAplicaComite').getValue()){
-			form.getBindRecord().set("resolucionComiteId",me.lookupReference('resolComiteId').getValue());
-			form.getBindRecord().set("fechaResolucionComite",me.lookupReference('fechaResolComite').getValue());
-			form.getBindRecord().set("resolucionComiteCodigo",me.lookupReference('comboResolucionComite').getSelectedRecord().get('id'));
-			form.getBindRecord().set("aplicaComite",me.lookupReference('checkAplicaComite').getValue());
-		}else{
-			form.getBindRecord().set("resolucionComiteId",null);
-			form.getBindRecord().set("fechaResolucionComite",null);
-			form.getBindRecord().set("resolucionComiteCodigo",null);
-			form.getBindRecord().set("aplicaComite",me.lookupReference('checkAplicaComite').getValue());
+		if(form.isValid()){
+			var idTarifas = me.obtenerIdTarifas(me.lookupReference('gridListaTarifas').getStore().getData());
+			//Nuevos Valores
+			
+			form.getBindRecord().set("idMediador",me.lookupReference('comboProveedor').getSelection().get('id'))
+			if(me.lookupReference('checkAplicaComite').getValue()){
+				form.getBindRecord().set("resolucionComiteId",me.lookupReference('resolComiteId').getValue());
+				form.getBindRecord().set("fechaResolucionComite",me.lookupReference('fechaResolComite').getValue());
+				form.getBindRecord().set("resolucionComiteCodigo",me.lookupReference('comboResolucionComite').getSelectedRecord().get('id'));
+				form.getBindRecord().set("aplicaComite",me.lookupReference('checkAplicaComite').getValue());
+			}else{
+				form.getBindRecord().set("resolucionComiteId",null);
+				form.getBindRecord().set("fechaResolucionComite",null);
+				form.getBindRecord().set("resolucionComiteCodigo",null);
+				form.getBindRecord().set("aplicaComite",me.lookupReference('checkAplicaComite').getValue());
+			}
+			
+			form.getBindRecord().set("idTarea",me.lookupReference('idTarea').getValue());
+			form.getBindRecord().set("fechaConcreta",me.lookupReference('fechaConcretaTrabajo').getValue());
+			form.getBindRecord().set("horaConcreta",me.lookupReference('horaConcretaTrabajo').getValue());
+			form.getBindRecord().set("fechaTope",me.lookupReference('fechaTopeTrabajo').getValue());
+			form.getBindRecord().set("importePresupuesto",me.lookupReference('importePresupuesto').getValue());
+			form.getBindRecord().set("refImportePresupueso",me.lookupReference('referenciaImportePresupuesto').getValue());
+			form.getBindRecord().set("esTarifaPlanaEditable",me.lookupReference('tarifaPlana').getValue());
+			form.getBindRecord().set("riesgoInminenteTerceros",me.lookupReference('riesgoTerceros').getValue());
+			form.getBindRecord().set("urgente",me.lookupReference('urgente').getValue());
+			form.getBindRecord().set("esSiniestroEditable",me.lookupReference('siniestro').getValue());
+			form.getBindRecord().set("idTarifas",idTarifas);
+			form.getBindRecord().set("esSolicitudConjunta",me.lookupReference('checkEnglobaTodosActivosRef').getValue());
+			
+			form.getBindRecord().set("idActivo", idActivo);
+			form.getBindRecord().set("idAgrupacion", idAgrupacion);
+			form.getBindRecord().set("idProceso", idProceso);
+			form.getBindRecord().set("idsActivos", arraySelection);
+			form.getBindRecord().set("codigoPromocionPrinex", codigoPromocionPrinex);
+			form.getBindRecord().set("codCartera", codCartera);
+			form.getBindRecord().set("codSubcartera", codSubcartera);
+					
+			var success = function(record, operation) {
+				me.getView().unmask();
+				var response = Ext.decode(operation.getResponse().responseText);
+				if(response.success === "true" && Ext.isDefined(response.warn)) {
+					me.fireEvent("warnToast", response.warn);
+				}else{
+					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				}
+		    	me.getView().fireEvent("refreshComponentOnActivate", "trabajosmain");
+		    	me.getView().fireEvent("refreshComponentOnActivate", "agendamain");
+		    	me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], idActivo);
+	//	    	me.getView().down("[reference=activosagrupaciontrabajo]").deselectAll();
+		    	window.hide();
+			};
 		}
 		
-		form.getBindRecord().set("idTarea",me.lookupReference('idTarea').getValue());
-		form.getBindRecord().set("fechaConcreta",me.lookupReference('fechaConcretaTrabajo').getValue());
-		form.getBindRecord().set("horaConcreta",me.lookupReference('horaConcretaTrabajo').getValue());
-		form.getBindRecord().set("fechaTope",me.lookupReference('fechaTopeTrabajo').getValue());
-		form.getBindRecord().set("importePresupuesto",me.lookupReference('importePresupuesto').getValue());
-		form.getBindRecord().set("refImportePresupueso",me.lookupReference('referenciaImportePresupuesto').getValue());
-		form.getBindRecord().set("esTarifaPlanaEditable",me.lookupReference('tarifaPlana').getValue());
-		form.getBindRecord().set("riesgoInminenteTerceros",me.lookupReference('riesgoTerceros').getValue());
-		form.getBindRecord().set("urgente",me.lookupReference('urgente').getValue());
-		form.getBindRecord().set("esSiniestroEditable",me.lookupReference('siniestro').getValue());
-		form.getBindRecord().set("idTarifas",idTarifas);
-		form.getBindRecord().set("esSolicitudConjunta",me.lookupReference('checkEnglobaTodosActivosRef').getValue());
-		
-		form.getBindRecord().set("idActivo", idActivo);
-		form.getBindRecord().set("idAgrupacion", idAgrupacion);
-		form.getBindRecord().set("idProceso", idProceso);
-		form.getBindRecord().set("idsActivos", arraySelection);
-		form.getBindRecord().set("codigoPromocionPrinex", codigoPromocionPrinex);
-		form.getBindRecord().set("codCartera", codCartera);
-		form.getBindRecord().set("codSubcartera", codSubcartera);
-				
-		var success = function(record, operation) {
-			me.getView().unmask();
-			var response = Ext.decode(operation.getResponse().responseText);
-			if(response.success === "true" && Ext.isDefined(response.warn)) {
-				me.fireEvent("warnToast", response.warn);
-			}else{
-				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-			}
-	    	me.getView().fireEvent("refreshComponentOnActivate", "trabajosmain");
-	    	me.getView().fireEvent("refreshComponentOnActivate", "agendamain");
-	    	me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], idActivo);
-//	    	me.getView().down("[reference=activosagrupaciontrabajo]").deselectAll();
-	    	window.hide();
-		};
 
 		me.onSaveFormularioCompleto(form, success);
 	},
@@ -935,7 +940,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			    type: 'uxproxy',
 				remoteUrl: 'trabajo/getListActivosByID',
 				actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
-				extraParams: {idActivo: me.getView().idActivo}
+				extraParams: {idActivo: me.getView().idActivo, idAgrupacion: me.getView().idAgrupacion}
 			 },
 			 listeners:{
 		          load:function(){
@@ -1364,7 +1369,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
  			grid.getProxy().setExtraParams({'idActivo':idActivo});
  		}else{
  			if(idAgrupacion != null){
- 				
+ 				grid.getProxy().setExtraParams({'idAgrupacion':idAgrupacion});
  			}
  		}
  		

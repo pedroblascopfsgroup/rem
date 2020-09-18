@@ -10,9 +10,6 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
         type: 'trabajodetalle'
     },
     requires: ['HreRem.model.FichaTrabajo','HreRem.view.trabajos.detalle.ActivosAgrupacionTrabajoList','HreRem.view.trabajos.detalle.VentanaTarifasTrabajo'],
-   
-    
-
     
 	listeners: {
 
@@ -36,8 +33,6 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 		}
 
 	},
-	
-	    
     
     idActivo: null,
     
@@ -159,8 +154,6 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 												        	bind: 
 												        		{
 												        		store: '{comboApiPrimario}'
-//											            		store: '{comboGestorActivoResponsable}'
-//											            		value: '{fieldlabel.proveedor.trabajo}'
 											            		},
 															allowBlank: false
 												        }
@@ -322,33 +315,6 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															cls	: 'panel-base shadow-panel',
 															reference: 'listaActivosSubidaRef',
 															colspan:2,
-//															listeners: {
-//																afterrender: function(){
-//																	var me = this;
-////																	var storeIdActivo = Ext.create('Ext.data.Store',{
-////														    			pageSize: 12,
-////														            	model: 'HreRem.model.ActivoTrabajoSubida',
-////														   			 proxy: {
-////														   			    type: 'uxproxy',
-////														   				remoteUrl: 'trabajo/getListActivosByID',
-////														   				actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
-////														   				extraParams: {idActivo: me.up().up().up().up().idActivo}
-////														   			 }
-//////														   			 groupField: 'numPlanta',
-//////														   			 listeners:{
-//////														   		          load:function(){
-//////														   		        	  	me.relayEvents(this,['storeloadsuccess']);
-//////														   		               this.fireEvent('storeloadsuccess');
-//////														   		          }
-//////														   		     }
-////														               
-////														    		});
-////														    		me.setBind({store: storeIdActivo});
-////														    		me.setStore(storeIdActivo);
-////														    		me.getStore().load();
-//																	me.lookupController().setBindStoreGrid(me);
-//																}
-//															},
 															bind: {
 				        	   									store: '{listaActivosSubida}'														
 															},
@@ -701,32 +667,10 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
     	me.getViewModel().set('idAgrupacion', me.idAgrupacion);
 		//PARA CARGAR EL GESTOR DEL ACTIVO AL ABRIR LA VENTANA, DENTRO DE LA FICHA DEL ACTIVO
     	me.lookupReference('gestorActivo').setValue(me.gestorActivo);
-//    	var grid = me.lookupReference('listaActivosSubidaRef');
     	
     	if(me.idActivo != null){
     		var grid = me.lookupReference('activosagrupaciontrabajo');
     		grid.getStore().load();
-    		
-    		
-//    		grid.getStore().getProxy().extraParams = {'idActivo':me.idActivo};
-//    		grid.getStore().getProxy().url = $AC.getRemoteUrl('trabajo/getListActivosByID');
-//    		grid.getStore().load();
-    		
-//    		var url = $AC.getRemoteUrl('trabajo/getListActivosByID');
-//		    Ext.Ajax.request({
-//			  url:url,
-//			  params:  {idActivo : me.idActivo,
-//				  		page: '1',
-//				  		start: '0',
-//				  		limit: '30'},
-//			  success: function(response,opts){
-//				  var separador;
-//				  var modelo = Ext.create('HreRem.model.ActivoTrabajoSubida');
-//				  var res = response.responseText.replace(/[{}"]/g,"");
-//				  res = res.replace(/data:/,"");
-//				  res = res.split(',');
-//			  }
-//		    });
     		
     	}
     },

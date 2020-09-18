@@ -32,6 +32,8 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoFoto;
@@ -78,6 +80,9 @@ public class TrabajoAdapter {
     
     @Autowired
 	private GestorDocumentalFotosApi gestorDocumentalFotos;
+    
+    @Autowired
+    private AgrupacionAdapter agrupacionAdapter;
     
     BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -349,9 +354,38 @@ public class TrabajoAdapter {
 		return null;
 	}
 	
-	public Page getListActivosById(List<String> idActivos, DtoTrabajoListActivos webDto) {
+	public Page getListActivosById(String idActivo, DtoTrabajoListActivos webDto) {
 		
-		return activoDao.getListActivosPorID(idActivos, webDto);
+		List<String> listaActivo = new ArrayList<String>();
+		if (idActivo.contains(",")) {
+			String[] activos = idActivo.split(",");
+			for(int i =0 ; i< activos.length; i++) {
+				listaActivo.add(activos[i]);
+			}
+		}else {
+			listaActivo.add(idActivo);
+		}
+		
+		return activoDao.getListActivosPorID(listaActivo, webDto);
+	}
+	
+	public Page getListActivosCrearTrabajoByAgrupacion(Long idAgrupacion, DtoTrabajoListActivos webDto) {
+		
+		List<String> idActivos = new ArrayList<String>();
+		
+		ActivoAgrupacion agr = agrupacionAdapter.getAgrupacionObjectById(idAgrupacion);
+		
+		if(agr!=null) {
+			
+			for(ActivoAgrupacionActivo aga: agr.getActivos()) {
+				idActivos.add(aga.getActivo().getId().toString());
+			}
+			
+			return activoDao.getListActivosPorID(idActivos, webDto);
+			
+		}
+		
+		return null;
 	}
 
 }

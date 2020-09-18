@@ -129,9 +129,12 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 	public static final Integer COL_RENUNCIA_EXENCION = 37;
 	public static final Integer COL_TIPO_IMPOSITIVO = 38;
 	public static final Integer COL_OPTA_CRITERIO_CAJA_IVA = 39;
-	public static final Integer COL_ID_ELEMENTO = 40;
-	public static final Integer COL_TIPO_ELEMENTO = 41;
-	public static final Integer COL_PARTICIPACION_LINEA_DETALLE = 42;
+	public static final Integer COL_TIPO_COMISIONADO = 40;
+	public static final Integer COL_EJERCICIO = 41;
+	public static final Integer COL_ID_ELEMENTO = 42;
+	public static final Integer COL_TIPO_ELEMENTO = 43;
+	public static final Integer COL_PARTICIPACION_LINEA_DETALLE = 44;
+
 	
 	
 

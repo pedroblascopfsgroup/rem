@@ -1,10 +1,12 @@
 package es.pfsgroup.plugin.rem.gasto.linea.detalle.dao.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
@@ -96,6 +98,29 @@ public class GastoLineaDetalleDaoImpl extends AbstractEntityDao<GastoLineaDetall
 
 		query.executeUpdate();
 
+	}
+	
+	@Override
+	public Long getNextIdGastoLineaDetalle() {
+
+		String sql = "SELECT S_GLD_GASTOS_LINEA_DETALLE.NEXTVAL FROM DUAL ";
+		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())
+				.longValue();
+
+	}
+	
+	@Override
+	public void saveGastoLineaDetalle (GastoLineaDetalle gastoLineaDetalle) {
+		Session session = getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		try {
+			session.save(gastoLineaDetalle);
+			session.getTransaction().commit();
+			session.close();
+		} catch (Exception e) {
+			logger.error("error al persistir el gasto", e);
+			tx.rollback();
+		}
 	}
 
 }

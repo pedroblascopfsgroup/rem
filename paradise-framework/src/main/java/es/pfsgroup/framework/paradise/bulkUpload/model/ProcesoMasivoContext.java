@@ -8,5 +8,6 @@ public class ProcesoMasivoContext extends HashMap<String, Object>{
 	public static String AGRUPACION_FALLIDA = "AGRUPACION_FALLIDA";
 	public static String LISTA_AGRUPACIONES = "AGRUPACION_FALLIDA";
 	public static String ACTIVOS_AGRUPACION = "ACTIVOS_AGRUPACION";
+	public static String LISTA_ASOCIACIONES = "LISTA_ASOCIACIONES";
 
 }

@@ -17,4 +17,8 @@ public interface GastoLineaDetalleDao extends AbstractDao<GastoLineaDetalle, Lon
 	public Double getParticipacionTotalLinea(Long idLinea);
 	
 	public void updateParticipacionEntidadesLineaDetalle(Long idLinea, Double participacion, String userName);
+	
+	public Long getNextIdGastoLineaDetalle();
+
+	void saveGastoLineaDetalle(GastoLineaDetalle gasto);
 }

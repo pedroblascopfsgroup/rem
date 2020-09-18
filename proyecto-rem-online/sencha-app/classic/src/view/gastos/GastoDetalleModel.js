@@ -756,12 +756,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 			model : 'HreRem.model.ComboBase',
 			proxy : {
 				type : 'uxproxy',
-				remoteUrl : 'generic/getDiccionario',
+				remoteUrl : 'generic/getComboTipoElementoGasto',
 				extraParams : {
-					diccionario : 'tipoElemento'
+					idGasto : '{gasto.id}',
+					idLinea : '{comboLineaDetalleName}'
 				}
 			},
-			autoLoad: true
+			autoLoad: false
 		},
 		
 		storeSubpartidas : {

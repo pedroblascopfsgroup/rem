@@ -890,7 +890,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			Ext.Array.each(trabajos, function(trabajo, index) {
 			    idTrabajos.push(trabajo.get("idTrabajo"));
 			});		
-			
 			grid.mask(HreRem.i18n("msg.mask.loading"));
 			
 			Ext.Ajax.request({
@@ -899,24 +898,50 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			     params: {idGasto: idGasto, trabajos: idTrabajos},
 			
 			     success: function(response, opts) {
-			    	
-			    	 grid.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
-			         grid.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar();
-			         grid.up('gastodetalle').down('activosafectadosgasto').funcionRecargar();
-			         
-			         var comboLineas =  grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=comboLineasDetalleReference]');
-			         if (!Ext.isEmpty(comboLineas)) {
-			        	 comboLineas.reset();
-				         comboLineas.getStore().load();
-			         }
-			    	 
- 	    			 var gridElementos = grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=listadoActivosAfectadosRef]');
-			         gridElementos.getStore().getProxy().setExtraParams({'idLinea':-1})
-			         gridElementos.getStore().load();
-			         
-			         grid.unmask();		         
-			         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-		        	 me.refrescarGasto(true);
+			    	 var url2 = $AC.getRemoteUrl('gastosproveedor/actualizarParticipacionTrabajosAfterInsert');
+			    	 Ext.Ajax.request({
+			    			
+					     url: url2,
+					     params: {idGasto: idGasto},
+					
+					     success: function(response, opts) {
+					    	 
+					    	
+					    	 grid.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
+					         grid.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar();
+					         grid.up('gastodetalle').down('activosafectadosgasto').funcionRecargar();
+
+					         var comboLineas =  grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=comboLineasDetalleReference]');
+					         if (!Ext.isEmpty(comboLineas)) {
+					        	 comboLineas.reset();
+						         comboLineas.getStore().load();
+					         }
+		 	    			 var gridElementos = grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=listadoActivosAfectadosRef]');
+
+					         if(!Ext.isEmpty(gridElementos)){
+						         gridElementos.getStore().getProxy().setExtraParams({'idLinea':-1})
+						         gridElementos.getStore().load();
+					         }
+					         grid.unmask();		         
+					         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				        	 me.refrescarGasto(true);
+					     },
+					     
+					     failure: function(response) {
+					     	grid.unmask();
+				     		var data = {};
+			                try {
+			                	data = Ext.decode(operation._response.responseText);
+			                }
+			                catch (e){ };
+			                if (!Ext.isEmpty(data.msg)) {
+			                	me.fireEvent("errorToast", data.msg);
+			                } else {
+			                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			                }
+					     }
+				    		     
+				    });
 			     },
 			     
 			     failure: function(response) {
@@ -995,30 +1020,56 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		    idTrabajos.push(trabajo.get("id"));
 		});
 
-		ventanaSeleccionTrabajos.mask(HreRem.i18n("msg.mask.loading"));
-
-		Ext.Ajax.request({
-	    			
+		ventanaSeleccionTrabajos.mask(HreRem.i18n("msg.mask.loading"));	
+			Ext.Ajax.request({		
 		     url: url,
 		     params: {idGasto: idGasto, trabajos: idTrabajos},
 		
 		     success: function(response, opts) {
-		         ventanaSeleccionTrabajos.unmask();		
-		         var comboLineas = ventanaSeleccionTrabajos.up('gastodetalle').down('activosafectadosgasto').down('[reference=comboLineasDetalleReference]');
-		         ventanaSeleccionTrabajos.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
-		         ventanaSeleccionTrabajos.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar();
+		    	 var url2 = $AC.getRemoteUrl('gastosproveedor/actualizarParticipacionTrabajosAfterInsert');
+		    	 Ext.Ajax.request({
+				     url: url2,
+				     params: {idGasto: idGasto},
+				
+				     success: function(response, opts) {
+				    	 ventanaSeleccionTrabajos.unmask();		
+				         var comboLineas = ventanaSeleccionTrabajos.up('gastodetalle').down('activosafectadosgasto').down('[reference=comboLineasDetalleReference]');
+				         ventanaSeleccionTrabajos.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
+				         ventanaSeleccionTrabajos.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar();
+				         if (!Ext.isEmpty(comboLineas)) {
+				        	 comboLineas.reset();
+					         comboLineas.getStore().load();
+				         }
+
+				         var gridElementos = ventanaSeleccionTrabajos.up('gastodetalle').down('activosafectadosgasto').down('[reference=listadoActivosAfectadosRef]');
+
+				         if(!Ext.isEmpty(gridElementos)){
+					         gridElementos.getStore().getProxy().setExtraParams({'idLinea':-1})
+					         gridElementos.getStore().load();
+				         }
+
+				         
+				         ventanaSeleccionTrabajos.destroy();
+				         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+						 me.refrescarGastoAlIncluirTrabajo(ventanaSeleccionTrabajos.up('gastodetallemain'));
+				     },
+				     
+				     failure: function(response) {
+				     	grid.unmask();
+			     		var data = {};
+		                try {
+		                	data = Ext.decode(operation._response.responseText);
+		                }
+		                catch (e){ };
+		                if (!Ext.isEmpty(data.msg)) {
+		                	me.fireEvent("errorToast", data.msg);
+		                } else {
+		                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		                }
+				     }
+			    		     
+			    });
 		         
-		         if (!Ext.isEmpty(comboLineas)) {
-		        	 comboLineas.reset();
-			         comboLineas.getStore().load();
-		         }
-		         var gridElementos = ventanaSeleccionTrabajos.up('gastodetalle').down('activosafectadosgasto').down('[reference=listadoActivosAfectadosRef]');
-		         gridElementos.getStore().getProxy().setExtraParams({'idLinea':-1})
-		         gridElementos.getStore().load();
-		         
-		         ventanaSeleccionTrabajos.destroy();
-		         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-				 me.refrescarGastoAlIncluirTrabajo(ventanaSeleccionTrabajos.up('gastodetallemain'));
 		     },
 		     failure: function(response) {
 		     	ventanaSeleccionTrabajos.unmask();
@@ -1777,14 +1828,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			        	 comboLineas.reset();
 				         comboLineas.getStore().load();
 			         }
-	   		       
-   		         
-	   		        var gridElementos = grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=listadoActivosAfectadosRef]');
-	   		        gridElementos.getStore().getProxy().setExtraParams({'idLinea':-1})
-	   		        gridElementos.getStore().load();
                 	
+			         var gridElementos = grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=listadoActivosAfectadosRef]');
 
-
+			         if(!Ext.isEmpty(gridElementos)){
+				         gridElementos.getStore().getProxy().setExtraParams({'idLinea':-1})
+				         gridElementos.getStore().load();
+			         }
                 },
                 failure: function(fp, o) {
                 	window.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
@@ -2158,17 +2208,18 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var me = this;
     	var idLinea = me.lookupReference('comboLineasDetalleReference').getValue();
     	var gridElementos = me.lookupReference('listadoActivosAfectadosRef');
-    	gridElementos.getStore().getProxy().setExtraParams({'idLinea':idLinea});
-    	gridElementos.getStore().load();
+    	
+        if(!Ext.isEmpty(gridElementos)){
+        	gridElementos.getStore().getProxy().setExtraParams({'idLinea':idLinea});
+        	gridElementos.getStore().load();
+        }
+    	
     	var btnReparto = me.lookupReference('btnReparto');
-    	var btnRepartoTrabajo = me.lookupReference('btnRepartoTrabajo');
-    	if(idLinea!= ''){
+    	if(idLinea != "-1"){
     		btnReparto.setDisabled(false);    
-    		btnRepartoTrabajo.setDisabled(false);
     	}
     	else{
     		btnReparto.setDisabled(true);
-    		btnRepartoTrabajo.setDisabled(true);
     	}
     	
     },
@@ -2215,7 +2266,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	},
 	
 	asignarParticipacionActivosTrabajo: function(btn) {
-		//TODO Quitar esta funcion es de prueba para los gastos con trabajos asociados
 		var me = this;
 		var idLinea = me.lookupReference('comboLineasDetalleReference').getValue();
 
@@ -2256,6 +2306,22 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		    record.data.numActivo = record.get("idElemento");
 		    me.getView().fireEvent('abrirDetalleActivo', record);
 	    }	
+    },
+    onChangeChainedSeleccionarLineaDetalle: function(){
+    	var me = this;
+    	var elementoAnyadir = me.lookupReference('elementoAnyadir');
+    	var comboElementoAAnyadir = me.lookupReference('comboElementoAAnyadir');
+    	var comboLineasRefAnyadirVal = me.lookupReference('comboLineasDetalleReferenceAnyadir').getValue();
+    	var idGasto = me.getView().idGasto;
+
+    	if(!Ext.isEmpty(comboLineasRefAnyadirVal) && comboLineasRefAnyadirVal != "-1"){
+	    	comboElementoAAnyadir.setDisabled(false);
+	    	elementoAnyadir.setDisabled(false);
+	    	comboElementoAAnyadir.getStore().getProxy().setExtraParams({'idGasto':idGasto, 'idLinea': comboLineasRefAnyadirVal});
+	    	comboElementoAAnyadir.getStore().load();
+    	}
+    	
+    	
     },
     onChangeSeleccionarLineaDetalle: function(){
     	var me = this;

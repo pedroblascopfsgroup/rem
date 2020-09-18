@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200917
+--## FECHA_CREACION=20200918
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10742
@@ -188,7 +188,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
                 , ''HREOS-10742''
                 , SYSDATE
               FROM '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO STR
-              JOIN '||V_ESQUEMA||'.DD_TTR_TIPO_TRABAJO TTR ON TTR.DD_TTR_ID = STR.DD_STR_ID
+              JOIN '||V_ESQUEMA||'.DD_TTR_TIPO_TRABAJO TTR ON TTR.DD_TTR_ID = STR.DD_TTR_ID
                 AND TTR.BORRADO = 0
               JOIN '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG ON 1 = 1
                 AND STG.BORRADO = 0

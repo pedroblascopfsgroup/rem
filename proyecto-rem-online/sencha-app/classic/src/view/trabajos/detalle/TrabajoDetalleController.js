@@ -302,7 +302,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		var me = this;
 		var storeListaActivosTrabajo = null;
 		var activo= null;
-		var arraySelection;
+		var arraySelection= [];
 		var codPromo = me.lookupReference('activosagrupaciontrabajo').getStore().getData().items[0].get('codigoPromocionPrinex');
 		if(!Ext.isEmpty(me.getView().idActivo)){
 			activo = btn.lookupViewModel().getView().idActivo;
@@ -333,23 +333,23 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 				//No existe codPromo, por tanto jamas sera diferente de vacio, por tanto esta logica queda descartada. 
 				//Preguntar de todas formas
 				
-//				if (actuacionTecnica /*&& !Ext.isEmpty(codPromo)*/){
-//					if (storeListaActivosTrabajo.data.items[i].data.codigoCartera == CONST.CARTERA.LIBERBANK) {
-//						if (!Ext.isEmpty(codPromo) && storeListaActivosTrabajo.data.items[i].data.codigoPromocionPrinex != codPromo){
-//							Ext.MessageBox.alert(
-//									HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),
-//									HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinCodPromo.mensaje.todos")
-//							);
-//							return false;
-//				        }
-//					} else {
-//						Ext.MessageBox.alert(
-//								HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),
-//								HreRem.i18n("msgbox.multiples.trabajos.seleccionado.todosCarteraLiberbank.mensaje.todos")
-//						);
-//						return false;
-//					}
-//				}
+				if (actuacionTecnica && !Ext.isEmpty(codPromo)){
+					if (storeListaActivosTrabajo.data.items[i].data.codigoCartera == CONST.CARTERA.LIBERBANK) {
+						if (!Ext.isEmpty(codPromo) && storeListaActivosTrabajo.data.items[i].data.codigoPromocionPrinex != codPromo){
+							Ext.MessageBox.alert(
+									HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),
+									HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinCodPromo.mensaje.todos")
+							);
+							return false;
+				        }
+					} else {
+						Ext.MessageBox.alert(
+								HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),
+								HreRem.i18n("msgbox.multiples.trabajos.seleccionado.todosCarteraLiberbank.mensaje.todos")
+						);
+						return false;
+					}
+				}
 				arraySelection.push(storeListaActivosTrabajo.data.items[i].data.idActivo);
 			}
 		}
@@ -523,6 +523,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		form.getBindRecord().set("urgente",me.lookupReference('urgente').getValue());
 		form.getBindRecord().set("esSiniestroEditable",me.lookupReference('siniestro').getValue());
 		form.getBindRecord().set("idTarifas",idTarifas);
+		form.getBindRecord().set("esSolicitudConjunta",me.lookupReference('checkEnglobaTodosActivosRef').getValue());
 		
 		form.getBindRecord().set("idActivo", idActivo);
 		form.getBindRecord().set("idAgrupacion", idAgrupacion);

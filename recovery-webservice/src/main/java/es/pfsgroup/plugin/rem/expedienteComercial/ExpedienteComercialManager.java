@@ -2283,10 +2283,43 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public DtoPage getActivosExpedienteVista(Long idExpediente) {
-		List<VListadoActivosExpediente> listadoActivos = genericDao.getList(VListadoActivosExpediente.class,
+		List<VListadoActivosExpediente> listadoActivos;
+		List<VListadoActivosExpedienteBBVA> listadoActivosBbva;
+		
+		if (DDCartera.CODIGO_CARTERA_BBVA.equals(getCodigoCarteraExpediente(idExpediente))) {
+			listadoActivosBbva = genericDao.getList(VListadoActivosExpedienteBBVA.class,
+					genericDao.createFilter(FilterType.EQUALS, "idExpediente", idExpediente));
+			
+			return new DtoPage(listadoActivosBbva, listadoActivosBbva.size());
+		} else {
+			listadoActivos = genericDao.getList(VListadoActivosExpediente.class,
 				genericDao.createFilter(FilterType.EQUALS, "idExpediente", idExpediente));
-
+		}
+			
 		return new DtoPage(listadoActivos, listadoActivos.size());
+	}
+	
+	@Override
+	public Boolean getActivoExpedienteEpa(ExpedienteComercial expediente) {
+		
+		List<ActivoOferta> listaActivosOferta = null;
+		
+		if(expediente != null && expediente.getOferta() != null && expediente.getOferta().getActivosOferta() != null) {
+			listaActivosOferta = expediente.getOferta().getActivosOferta();
+			if(listaActivosOferta.get(0) != null && listaActivosOferta.get(0).getPrimaryKey().getActivo() != null
+					&& DDCartera.CODIGO_CARTERA_BBVA.equals(listaActivosOferta.get(0).getPrimaryKey().getActivo().getCartera().getCodigo())) {
+				for (ActivoOferta activosOferta : listaActivosOferta) {
+					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activosOferta.getPrimaryKey().getActivo().getId());
+					ActivoBbvaActivos activoBbva  = genericDao.get(ActivoBbvaActivos.class, filtroActivo);
+					if(activoBbva != null && DDSinSiNo.CODIGO_SI.equals(activoBbva.getActivoEpa().getCodigo())) {
+						return true;
+					}
+				}
+			} else {
+				return false;
+			}
+		}
+		return false;
 	}
 
 	/**

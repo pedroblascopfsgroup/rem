@@ -201,6 +201,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		     	var tipoExpediente = get('expediente.tipoExpedienteCodigo');
 		     	return CONST.CARTERA['LIBERBANK'] == carteraCodigo && CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] == tipoExpediente;
 		 },
+	     
+	     esCarteraBBVA: function(get) {
+		     	
+	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+	     	return CONST.CARTERA['BBVA'] == carteraCodigo;
+		 },
 		 
 		 esReadOnly: function(get) {
 			 var subcarteraCodigo = get('expediente.subcarteraCodigo');

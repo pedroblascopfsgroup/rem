@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoGestion;
@@ -318,4 +319,6 @@ public interface GenericApi {
 	 * @return Devuelve la partida presupuestaria relacionada con la subpartida presupuestaria
 	 */
 	public String getPartidaPresupuestaria(Long idSubpartida);
+
+	List<DDEntidadGasto> getComboTipoElementoGasto(Long idGasto, Long idLinea);
 }

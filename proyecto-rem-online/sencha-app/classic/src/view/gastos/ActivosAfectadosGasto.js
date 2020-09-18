@@ -38,12 +38,10 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGasto', {
 		if(CONST.CARTERA['LIBERBANK'] == cartera){
 			isCarteraLiberbank = true;
 		}
+		
 		var asignadoTrabajo = me.lookupController().getViewModel().get('gasto').get('asignadoATrabajos');
 		
 		me.setTitle(HreRem.i18n('title.gasto.elementos.afectados'));
-		
-		me.buttons = [ { reference: 'btnRepartoTrabajo' ,itemId: 'btnRepartoTrabajo', text: 'Reparto según importes de trabajo', handler: 'asignarParticipacionActivosTrabajo', hidden:!asignadoTrabajo, disabled: true },
-			{ reference: 'btnReparto' ,itemId: 'btnReparto', text: 'Reparto según valor de adquisición', handler: 'asignarParticipacionActivos', hidden: !isCarteraLiberbank , disabled: true }];
 		
 		var items = [
 			{
@@ -56,30 +54,6 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGasto', {
 						defaultType: 'textfieldbase',
 						flex: 1,
 						items:[
-							{   
-								xtype:'fieldset',
-								padding: 10,
-								layout: 'hbox',
-								collapsible: false,
-								bind: {
-									hidden: '{asignadoAActivosPropietarioSareb}'
-								},
-								items :	[
-							                {
-							                	xtype: 'checkboxfieldbase',
-							                	bind:	{
-							                		value:	'{gasto.gastoSinActivos}'
-							                	},
-							                	width: 30
-							                	
-							                }, 
-							                {
-							                	xtype: 'label',
-							                	padding: '4 0 0 0',
-							                	text: HreRem.i18n('fieldlabel.permite.gasto.sin.activos')
-							                }
-							     ]
-							},
 							{
 								xtype: "combobox",
 			    				fieldLabel: HreRem.i18n('title.gasto.detalle.economico.lineas.detalle'),
@@ -97,11 +71,23 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGasto', {
 			    				listeners:{
 			    					change: 'onChangeLineaDetalleStore'
 			    				}
-							},
+							},	
 							{
+				            	colspan: 3,
+				    			flex: 3,
 								xtype : 'activosafectadosgastolist',
 								reference : 'listadoActivosAfectadosRef'					
 			
+							},
+							{
+								xtype: 'button',
+								text: HreRem.i18n('btn.reparto.segun.valor.adquisicion'),
+								reference: 'btnReparto',
+								itemId: 'btnReparto',
+								margin: '10 10 10 10',
+								handler: 'asignarParticipacionActivos',
+								hidden: !isCarteraLiberbank, 
+								disabled: true
 							}]
 					}]
 	

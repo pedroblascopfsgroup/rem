@@ -398,14 +398,16 @@ Ext.define('HreRem.view.gastos.LineaDetalleGastoGrid', {
 		    	    			grid.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
 		    	    			grid.up('gastodetalle').down('activosafectadosgasto').funcionRecargar();
 		    	    			var comboLineas = grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=comboLineasDetalleReference]');
-		    	    			 if (!Ext.isEmpty(comboLineas)) {
-		    			        	 comboLineas.reset();
-		    				         comboLineas.getStore().load();
-		    			         };
-		       		         
+		    	    			if (!Ext.isEmpty(comboLineas)) {
+		    			        	comboLineas.reset();
+		    				        comboLineas.getStore().load();
+		    			        };
+		    			       
 		    	   		        var gridElementos = grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=listadoActivosAfectadosRef]');
-		    	   		        gridElementos.getStore().getProxy().setExtraParams({'idLinea':-1})
-		    	   		        gridElementos.getStore().load();
+			   			        if(!Ext.isEmpty(gridElementos)){
+			    	   		        gridElementos.getStore().getProxy().setExtraParams({'idLinea':-1})
+			    	   		        gridElementos.getStore().load();
+			   			        }
 		    	    		},
 		    			 	failure: function(record, operation) {
 		    			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 

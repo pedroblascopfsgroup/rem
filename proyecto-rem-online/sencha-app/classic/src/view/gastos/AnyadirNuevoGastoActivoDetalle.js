@@ -45,6 +45,8 @@ Ext.define('HreRem.view.gastos.AnyadirNuevoGastoActivoDetalle', {
 					    				fieldLabel: HreRem.i18n('title.gasto.detalle.economico.lineas.detalle'),
 					    				reference: 'comboLineasDetalleReferenceAnyadir',
 					    				name: 'comboLineaDetalleName',
+					    				chainedStore: 'storeTipoElemento',
+										chainedReference: 'comboElementoAAnyadir',
 					    				flex: 3,
 					    				width:'80%',
 					    				margin: '10 0 10 0',
@@ -54,7 +56,7 @@ Ext.define('HreRem.view.gastos.AnyadirNuevoGastoActivoDetalle', {
 					    					store: '{comboLineasDetallePorGasto}'
 					    				},
 					    				listeners:{
-					    					change:'onChangeSeleccionarLineaDetalle'
+					    					select:'onChangeChainedSeleccionarLineaDetalle'
 					    				}
 									},
 									{
@@ -67,6 +69,7 @@ Ext.define('HreRem.view.gastos.AnyadirNuevoGastoActivoDetalle', {
 					    				margin: '10 0 10 0',
 					    				displayField: 'descripcion',
 										valueField: 'codigo',
+										disabled: true,
 					    				bind: {
 					    					store: '{storeTipoElemento}'
 					    				},
@@ -79,6 +82,7 @@ Ext.define('HreRem.view.gastos.AnyadirNuevoGastoActivoDetalle', {
 				            	    	fieldLabel: HreRem.i18n('title.gasto.detalle.economico.id.elemento.linea.detalle'),
 				            	    	name:		'numElemento',
 				            	    	reference:	'elementoAnyadir',
+				            	    	disabled: true,
 				            	    	listeners:{
 				            	    		change: 'onChangeSeleccionarLineaDetalle'
 					    				}

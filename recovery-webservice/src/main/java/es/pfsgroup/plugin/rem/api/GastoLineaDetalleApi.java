@@ -74,6 +74,8 @@ public interface GastoLineaDetalleApi {
 	boolean asignarTrabajosLineas(Long idGasto, Long[] trabajos);
 
 	boolean eliminarTrabajoLinea(Long idTrabajo, Long idGasto) throws Exception;
+
+	void actualizarParticipacionTrabajosAfterInsert(Long idGasto);
 	
 }
 

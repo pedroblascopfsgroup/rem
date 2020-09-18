@@ -77,6 +77,7 @@ import es.pfsgroup.plugin.rem.model.VElementosLineaDetalle;
 import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
+import es.pfsgroup.plugin.rem.model.VParticipacionElementosLinea;
 import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
@@ -1494,5 +1495,25 @@ public class GastosProveedorController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView actualizarParticipacionTrabajosAfterInsert(Long idGasto) {
+			
+		ModelMap model = new ModelMap();
+		
+		try {
+			gastoLineaDetalleApi.actualizarParticipacionTrabajosAfterInsert(idGasto);
+			model.put("success", true);
+			
+		}catch (Exception e) {
+			logger.error("error en GastosProveedorController - actualizarRepartoTrabajo", e);
+			model.put("success", false);
+			model.put("errorMessage", "Error al realizar el reparto");
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
 	
 }

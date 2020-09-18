@@ -51,6 +51,8 @@ import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GastoLineaDetalleApi;
+import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -70,6 +72,7 @@ import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoInfoContabilidad;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
+import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GestionCCPP;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.GrupoUsuario;
@@ -82,6 +85,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoLocalizacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
@@ -158,6 +162,12 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private GastoProveedorApi gastoProveedorApi;
+	
+	@Autowired
+	private GastoLineaDetalleApi gastoLineaDetalleApi;
 
 	@Override
 	public String managerName() {
@@ -1388,5 +1398,23 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "id", idSubpartida);
 		ConfiguracionSubpartidasPresupuestarias cps = genericDao.get(ConfiguracionSubpartidasPresupuestarias.class, filtroId);
 		return (cps != null) ? cps.getPartidaPresupuestaria() : null;
+	}
+	
+	@Override
+	public List<DDEntidadGasto> getComboTipoElementoGasto(Long idGasto, Long idLinea) {
+		GastoProveedor gasto = gastoProveedorApi.findOne(idGasto);
+		GastoLineaDetalle linea = gastoLineaDetalleApi.getLineaDetalleByIdLinea(idLinea);
+		List<DDEntidadGasto> entidades = genericDao.getList(DDEntidadGasto.class);
+		DDEntidadGasto sinActivos = genericDao.get(DDEntidadGasto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEntidadGasto.CODIGO_SIN_ACTIVOS));
+		if(!linea.getGastoLineaEntidadList().isEmpty() || (gasto.getPropietario() != null &&  gasto.getPropietario().getCartera() != null &&
+			(DDCartera.CODIGO_CARTERA_SAREB.equals(gasto.getPropietario().getCartera().getCodigo())
+			|| DDCartera.CODIGO_CARTERA_GIANTS.equals(gasto.getPropietario().getCartera().getCodigo())
+			|| DDCartera.CODIGO_CARTERA_TANGO.equals(gasto.getPropietario().getCartera().getCodigo()))
+		)) {
+			if(entidades.contains(sinActivos)) {
+				entidades.remove(sinActivos);
+			}
+		}
+		return entidades;
 	}
 }

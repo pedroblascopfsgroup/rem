@@ -106,6 +106,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.AdjuntoTrabajo;
 import es.pfsgroup.plugin.rem.model.AgendaTrabajo;
 import es.pfsgroup.plugin.rem.model.Albaran;
+import es.pfsgroup.plugin.rem.model.CFGPlazosTareas;
 import es.pfsgroup.plugin.rem.model.CFGVisualizarLlaves;
 import es.pfsgroup.plugin.rem.model.ConfiguracionTarifa;
 import es.pfsgroup.plugin.rem.model.DerivacionEstadoTrabajo;
@@ -140,6 +141,7 @@ import es.pfsgroup.plugin.rem.model.TrabajoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.TrabajoRecargosProveedor;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacionTrabajo;
+import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoParticipa;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
@@ -1331,6 +1333,22 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajoDao.saveOrUpdate(trabajo);
 
 			trabajoDao.flush();
+			
+			if(trabajo.getId() != null && dtoTrabajo.getIdTarifas() != null) {
+				String tarifas = dtoTrabajo.getIdTarifas();
+				String[] listaTarifas = tarifas.split(",");
+				for (int i = 0; i < listaTarifas.length; i++) {
+					TrabajoConfiguracionTarifa tarifaTrabajo = new TrabajoConfiguracionTarifa();
+					 ConfiguracionTarifa config =  genericDao.get(ConfiguracionTarifa.class, 
+							 genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(listaTarifas[i])));
+					 tarifaTrabajo.setConfigTarifa(config);
+					 tarifaTrabajo.setTrabajo(trabajo);
+					 //pendiente revision
+					 tarifaTrabajo.setMedicion(0F);
+					 tarifaTrabajo.setPrecioUnitario(config.getPrecioUnitario());
+					 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
+				}
+			}
 
 			//Cuando haya tiempo se debe cambiar el siguiente codigo repetido en varios sitios para meterlo en un mismo metodo.
 
@@ -1479,7 +1497,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 							 tarifaTrabajo.setConfigTarifa(config);
 							 tarifaTrabajo.setTrabajo(trabajo);
 							 //pendiente revision
-//							 tarifaTrabajo.setMedicion(config.getUnidadMedida());
+							 tarifaTrabajo.setMedicion(0F);
 							 tarifaTrabajo.setPrecioUnitario(config.getPrecioUnitario());
 							 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
 						}
@@ -1837,7 +1855,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					 tarifaTrabajo.setConfigTarifa(config);
 					 tarifaTrabajo.setTrabajo(trabajo);
 					 //pendiente revision
-//					 tarifaTrabajo.setMedicion(config.getUnidadMedida());
+					 tarifaTrabajo.setMedicion(0F);
 					 tarifaTrabajo.setPrecioUnitario(config.getPrecioUnitario());
 					 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
 				}
@@ -3287,11 +3305,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Override
 	public Page getListActivos(DtoActivosTrabajoFilter dto) throws InstantiationException, IllegalAccessException, Exception {
-
-		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.idTrabajo", dto.getIdTrabajo());
-   		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.idActivo", dto.getIdActivo());
-   		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.estadoContable", dto.getEstadoContable());
-   		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.codigoEstado", dto.getEstadoCodigo());
    		
    		ArrayList<Filter> filtros = new ArrayList<Filter>();
    		if(!Checks.esNulo(dto.getIdTrabajo())){
@@ -3310,7 +3323,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
    			i++;
    		}
    		
-		//flashDao.getList(VBusquedaActivosTrabajoParticipa.class,filtrosArray);
 		return trabajoDao.getListActivosTrabajo(dto);
 	}
 	
@@ -5546,5 +5558,33 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			e.printStackTrace();
 		}
 		return list;
+	}
+	
+	@Override
+	public List<VBusquedaActivosTrabajoParticipa> getListActivosTrabajo(Long id){
+		List<VBusquedaActivosTrabajoParticipa> list = new ArrayList<VBusquedaActivosTrabajoParticipa>();
+		
+		try {
+			list = genericDao.getList(VBusquedaActivosTrabajoParticipa.class, genericDao.createFilter(FilterType.EQUALS, "idTrabajo", id.toString()));
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	public Date getFechaConcretaParametrizada(Long tipoTrabajo, Long subtipoTrabajo,Long cartera, Long subcartera) {
+		Date fechaAlta = new Date();
+		Date fechaMod = new Date();
+		Filter filtroTipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.id", tipoTrabajo);
+		Filter filtroSubTipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "subtipoTrabajo.id", subtipoTrabajo);
+		Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.id", cartera);
+		Filter filtroSubCartera = genericDao.createFilter(FilterType.EQUALS, "subcartera.id", subcartera);
+		CFGPlazosTareas plazos = genericDao.get(CFGPlazosTareas.class, filtroTipoTrabajo,filtroSubTipoTrabajo,filtroCartera,filtroSubCartera);
+		if(plazos != null) {
+			
+		}else {
+			return fechaAlta;
+		}
+		return fechaMod;
 	}
 }

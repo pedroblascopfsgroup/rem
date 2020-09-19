@@ -39,6 +39,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistorificadorPestanas;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoParticipa;
 import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDAcoAprobacionComite;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -907,4 +908,9 @@ public interface TrabajoApi {
 	
 	public List<DDEstadoTrabajo>getComboEstadoTrabajo();
 	public List<DDEstadoGasto> getComboEstadoGasto();
+
+	List<VBusquedaActivosTrabajoParticipa> getListActivosTrabajo(Long id);
+
+	public Date getFechaConcretaParametrizada(Long tipoTrabajo, Long subtipoTrabajo,Long cartera, Long subCartera);
+
 }

@@ -900,4 +900,7 @@ public interface TrabajoApi {
 	public List<DDEstadoGasto> getComboEstadoGasto();
 
 	List<VBusquedaActivosTrabajoParticipa> getListActivosTrabajo(Long id);
+
+	public Date getFechaConcretaParametrizada(Long tipoTrabajo, Long subtipoTrabajo,Long cartera, Long subCartera);
+
 }

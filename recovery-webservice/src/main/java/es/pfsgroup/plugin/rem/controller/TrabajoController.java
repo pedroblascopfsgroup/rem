@@ -1958,5 +1958,17 @@ public class TrabajoController extends ParadiseJsonController {
 
 		excelReportGeneratorApi.generateAndSend(report, response);
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getPlazoEjecucion(Long tipoTrabajo, Long subtipoTrabajo,Long cartera, Long subCartera, WebDto webDto, ModelMap model) {
+		
+		try {
+			model.put("data", trabajoApi.getFechaConcretaParametrizada(tipoTrabajo,subtipoTrabajo,cartera,subCartera));
+			model.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ModelAndView("jsonView", model);
+	}
 
 }

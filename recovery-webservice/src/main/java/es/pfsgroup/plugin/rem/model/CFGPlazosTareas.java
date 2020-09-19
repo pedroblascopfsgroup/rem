@@ -19,6 +19,8 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 
@@ -45,6 +47,14 @@ public class CFGPlazosTareas implements Serializable, Auditable {
 
     @Column(name = "PLAZO_EJECUCION")
     private Long plazoEjecucion;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_CRA_ID")
+    private DDCartera cartera;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_SCR_ID")
+    private DDSubcartera subcartera;
 
 	@Version   
 	private Long version;
@@ -74,6 +84,22 @@ public class CFGPlazosTareas implements Serializable, Auditable {
 
 	public void setSubtipoTrabajo(DDSubtipoTrabajo subtipoTrabajo) {
 		this.subtipoTrabajo = subtipoTrabajo;
+	}
+
+	public DDCartera getCartera() {
+		return cartera;
+	}
+
+	public void setCartera(DDCartera cartera) {
+		this.cartera = cartera;
+	}
+
+	public DDSubcartera getSubcartera() {
+		return subcartera;
+	}
+
+	public void setSubcartera(DDSubcartera subcartera) {
+		this.subcartera = subcartera;
 	}
 
 	public Long getPlazoEjecucion() {

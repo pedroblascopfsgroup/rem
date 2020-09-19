@@ -893,4 +893,6 @@ public interface TrabajoApi {
 	
 	@BusinessOperationDefinition("trabajoManager.deleteAgendaTrabajo")
 	public boolean deleteAgendaTrabajo(Long id);
+	
+	public Date getFechaConcretaParametrizada(Long tipoTrabajo, Long subtipoTrabajo,Long cartera, Long subCartera);
 }

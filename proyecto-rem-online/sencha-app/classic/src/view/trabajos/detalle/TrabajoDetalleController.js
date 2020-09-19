@@ -159,6 +159,17 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			  }
 		    });
 		}
+    	var urlCfg = $AC.getRemoteUrl('trabajo/getAdvertenciaCrearTrabajo');
+    	Ext.Ajax.request({
+			  url:url,
+			  params:  {idActivo : combo.up("window").idActivo, 
+			  			codigoSubtipoTrabajo : combo.getValue()},
+			  success: function(response,opts){
+			  
+				  advertencia = Ext.JSON.decode(response.responseText).advertencia;
+				  me.lookupReference("textAdvertenciaCrearTrabajo").setText(advertencia);
+			  }
+		});
     	
     	if(combo.getValue() == CONST.SUBTIPOS_TRABAJO['TRAMITAR_PROPUESTA_PRECIOS'] 
     		|| combo.getValue() == CONST.SUBTIPOS_TRABAJO['TRAMITAR_PROPUESTA_DESCUENTO']) {
@@ -303,9 +314,10 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		var storeListaActivosTrabajo = null;
 		var activo= null;
 		var arraySelection= [];
-		var codPromo = me.lookupReference('activosagrupaciontrabajo').getStore().getData().items[0].get('codigoPromocionPrinex');
+		var codPromo;
 		if(!Ext.isEmpty(me.getView().idActivo)){
 			activo = btn.lookupViewModel().getView().idActivo;
+			codPromo = me.lookupReference('activosagrupaciontrabajo').getStore().getData().items[0].get('codigoPromocionPrinex');
 		}else{
 			storeListaActivosTrabajo = me.lookupReference('listaActivosSubidaRef').getStore();
 		}

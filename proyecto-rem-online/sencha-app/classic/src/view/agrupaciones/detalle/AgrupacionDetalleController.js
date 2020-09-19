@@ -58,6 +58,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     onClickCrearTrabajo: function (btn) {
     	
     	var me = this;
+    	
+    	me.getView().mask(HreRem.i18n("msg.mask.loading"));	
+    	
     	var idActivo = me.getViewModel().get("activo.id");
 	  	var idAgrupacion = me.getViewModel().get("agrupacionficha.id");
 	  	var codCartera = me.getViewModel().get("agrupacionficha.codigoCartera");
@@ -71,12 +74,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		     url: url,
 		     params: {idActivo : idActivo, idAgrupacion : idAgrupacion, gestorActivo: gestorActivo},
 		     success: function(response, opts) {
-		    	 data = Ext.decode(response.responseText);
-		    	 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearPeticionTrabajo",{idActivo: null, idAgrupacion: idAgrupacion, codCartera: codCartera, codSubcartera: codSubcartera, idGestor: data.data.GACT, idSupervisor: data.data.SUPACT, tipoAgrupacionCodigo: tipoAgrupacionCodigo,logadoGestorMantenimiento: true, gestorActivo: gestorActivo});
-		         
+		    	data = Ext.decode(response.responseText);
+		    	me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearPeticionTrabajo",{idActivo: null, idAgrupacion: idAgrupacion, codCartera: codCartera, codSubcartera: codSubcartera, idGestor: data.data.GACT, idSupervisor: data.data.SUPACT, tipoAgrupacionCodigo: tipoAgrupacionCodigo,logadoGestorMantenimiento: true, gestorActivo: gestorActivo});
+		        me.getView().unmask();
+		        
 		     },
 		     failure: function(response) {
-		    	 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearPeticionTrabajo",{idActivo: null, idAgrupacion: idAgrupacion, codCartera: codCartera, codSubcartera: codSubcartera, idUsuario: null, tipoAgrupacionCodigo: tipoAgrupacionCodigo,logadoGestorMantenimiento: true, gestorActivo: gestorActivo});
+		    	me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearPeticionTrabajo",{idActivo: null, idAgrupacion: idAgrupacion, codCartera: codCartera, codSubcartera: codSubcartera, idUsuario: null, tipoAgrupacionCodigo: tipoAgrupacionCodigo,logadoGestorMantenimiento: true, gestorActivo: gestorActivo});
+		     	me.getView().unmask();
 		     }
 		 });   	    	
     },

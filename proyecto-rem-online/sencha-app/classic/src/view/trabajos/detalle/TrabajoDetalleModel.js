@@ -62,6 +62,19 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    	 
 	    },
 	    
+	    mostrarTotalProveedor: function(get){
+	    	var isGestorActivos = $AU.userIsRol('HAYAGESACT');
+	    	var isSuper = $AU.userIsRol('HAYASUPER');
+	    	var isProveedor = $AU.userIsRol('HAYAPROV');
+	    	return isGestorActivos || isSuper || isProveedor;
+	    },
+	    
+	    mostrarTotalCliente: function(get){
+	    	var isGestorActivos = $AU.userIsRol('HAYAGESACT');
+	    	var isSuper = $AU.userIsRol('HAYASUPER');
+	    	return isGestorActivos || isSuper;
+	    },
+	    
 	    editableTarificacionProveedor: function (get){
 	    	return true;
 	    	 
@@ -393,6 +406,24 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     	        }*/
     		},
     		
+    		listaActivosAgrupacion: {
+    			pageSize: 10,
+    			model:'HreRem.model.ActivoTrabajoSubida',
+    			proxy: {
+    				type: 'uxproxy',
+    				remoteUrl: 'trabajo/getListActivosByID',
+    				actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
+    				extraParams: {idActivo: '{idActivo}', idAgrupacion:'{idAgrupacion}'}
+    			},
+    			//session: true,
+    	    	remoteSort: true,
+    	    	remoteFilter: true,
+    	    	autoLoad:false,
+    	    	listeners : {
+    	            beforeload : 'loadGridSegundo'
+    	        }
+    		},
+    		
     		comboProveedorContacto : {
     			model: 'HreRem.model.ComboBase',
 				proxy: {
@@ -564,7 +595,22 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 			        remoteUrl: 'trabajo/getAgendaTrabajo',
 			        extraParams: {idTrabajo: '{trabajo.id}'}
 		    	}    			
+    		},
+    		comboEstadoTrabajoFicha:{
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboEstadoTrabajo'
+				}
+    		},
+    		comboEstadoGastosFicha:{
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboEstadoGasto'
+				}
     		}
+    		
     }
 
 });

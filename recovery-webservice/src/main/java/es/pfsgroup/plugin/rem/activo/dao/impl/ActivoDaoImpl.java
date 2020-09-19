@@ -1324,11 +1324,10 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 	
 	@Override
-	public Page getListActivosPorID(List<Long> activosID, DtoTrabajoListActivos dto) {
-		HQLBuilder hb = new HQLBuilder("from Activo act");
+	public Page getListActivosPorID(List<String> activosID, DtoTrabajoListActivos dto) {
+		HQLBuilder hb = new HQLBuilder("from VBusquedaActivosCrearTrabajo");
 
-		HQLBuilder.addFiltroWhereInSiNotNull(hb, "id", activosID);
-
+		HQLBuilder.addFiltroWhereInSiNotNull(hb, "idActivo", activosID);
 		return HibernateQueryUtils.page(this, hb, dto);
 	}
 

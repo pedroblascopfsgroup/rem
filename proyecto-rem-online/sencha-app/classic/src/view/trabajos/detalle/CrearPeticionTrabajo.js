@@ -10,9 +10,6 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
         type: 'trabajodetalle'
     },
     requires: ['HreRem.model.FichaTrabajo','HreRem.view.trabajos.detalle.ActivosAgrupacionTrabajoList','HreRem.view.trabajos.detalle.VentanaTarifasTrabajo'],
-   
-    
-
     
 	listeners: {
 
@@ -36,8 +33,6 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 		}
 
 	},
-	
-	    
     
     idActivo: null,
     
@@ -159,8 +154,6 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 												        	bind: 
 												        		{
 												        		store: '{comboApiPrimario}'
-//											            		store: '{comboGestorActivoResponsable}'
-//											            		value: '{fieldlabel.proveedor.trabajo}'
 											            		},
 															allowBlank: false
 												        }
@@ -236,83 +229,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 				        									}
 													]
 												},
-
-												//datos de un solo activo;
 												{
-													xtype:'fieldsettable',
-													reference: 'fieldActivo',
-													collapsible: false,
-//													hidden: '{mostrarVentanaTrabajoGridActivo}',
-													title: HreRem.i18n('title.tarifas.activo.detalle'),
-													defaultType: 'textfieldbase',
-													colspan:3,
-													items :[
-														{
-													        xtype: 'comboboxfieldbase',
-													        readOnly: true,
-													        fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
-													        reference:'cartera',
-															colspan: 1,
-															padding:'2 2 2 2',
-													        bind:{
-													        	store: '{comboEntidadPropietaria}',
-													            value: me.codCartera
-												            },
-												            displayField: 'descripcion',
-								    						valueField: 'codigo'
-												       },
-												       {
-													        xtype: 'textfieldbase',
-													        readOnly: true,
-													        fieldLabel: HreRem.i18n('header.descripcion'),
-													        reference:'descripcionActivo',
-															colspan: 2,
-															padding:'2 2 2 2'
-												       },
-												       {
-													        xtype: 'comboboxfieldbase',
-													        readOnly: true,
-													        fieldLabel: HreRem.i18n('header.subcartera'),
-													        reference:'subCartera',
-															colspan: 1,
-															padding:'2 2 2 2',
-													        bind:{
-													        	store: '{comboSubentidadPropietaria}',
-											            		value: me.codSubcartera
-												            },
-												            displayField: 'descripcion',
-								    						valueField: 'codigo'
-												       },
-												       {
-													        xtype: 'textfieldbase',
-													        readOnly: true,
-//													        fieldLabel: HreRem.i18n('header.evaluacion.mediadores.detail.ofertasvivas.idActivo'),
-													        fieldLabel: "Numero Activo",
-													        reference:'numHaya',
-															colspan: 2,
-															padding:'2 2 2 2'
-												       },
-												       {
-													        xtype: 'textfieldbase',
-													        readOnly: true,
-//													        fieldLabel: HreRem.i18n('header.evaluacion.mediadores.detail.ofertasvivas.idActivo'),
-													        fieldLabel: "Tipo Activo",
-													        reference:'tipoActivo',
-															colspan: 1,
-															padding:'2 2 2 2'
-												       },
-												       {
-													        xtype: 'textfieldbase',
-													        readOnly: true,
-//													        fieldLabel: HreRem.i18n('header.evaluacion.mediadores.detail.ofertasvivas.idActivo'),
-													        fieldLabel: "Subtipo Activo",
-													        reference:'subTipoActivo',
-															colspan: 2,
-															padding:'2 2 2 2'
-												       }
-													]
-												},
-					{
 									              	xtype: 'fieldset',
 									        	    title: HreRem.i18n('title.subirfichero'),
 									        	    reference: 'fieldSetSubirFichero',
@@ -369,7 +286,6 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 									        	},
 										        //GRID LISTADO ACTIVOS
 												{    
-				                
 												xtype:'fieldsettable',
 												collapsible: false,
 												title: HreRem.i18n('title.publicaciones.activos.grid'),
@@ -395,7 +311,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															colspan: 2
 														},
 										    			{
-														    xtype		: 'gridBase',
+														    xtype: 'gridBase',
 															cls	: 'panel-base shadow-panel',
 															reference: 'listaActivosSubidaRef',
 															colspan:2,
@@ -455,6 +371,75 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 				        	   											displayInfo: true,
 				        	   											bind: {
 				        	   											       store: '{listaActivosSubida}'
+				        	   											      }
+				        	   											}
+				        	   									      ]	
+														},
+														//NUEVO GRID DUPLOCADP
+														{
+														    xtype: 'gridBase',
+															cls	: 'panel-base shadow-panel',
+															reference: 'activosagrupaciontrabajo',
+															colspan:1,
+															listeners: {
+																beforeload: 'loadGridSegundo'
+															},
+															bind: {
+				        	   									store: '{listaActivosAgrupacion}'														
+															},
+															columns: [
+				        	   									{
+				        	   										dataIndex: 'numActivoHaya',
+				        	   										text: HreRem.i18n('header.numero.activo.haya'),
+				        	   										flex: 1										
+				        	   									},
+				        	   									{
+				        	   										dataIndex: 'numFincaRegistral',
+				        	   										text: HreRem.i18n('header.finca.registral'),
+				        	   										flex: 1										
+				        	   									},
+				        	   									{
+				        	   									     dataIndex: 'tipoActivo',
+				        	   									     text: HreRem.i18n('header.tipo'),
+				        	   									     flex: 1
+				        	   									},
+				        	   									{
+				        	   									     dataIndex: 'subtipoActivo',
+				        	   									     text: HreRem.i18n('header.subtipo'),
+				        	   										 flex: 1													            
+				        	   									},
+				        	   									{
+				        	   										dataIndex: 'cartera',
+				        	   										text: HreRem.i18n('header.cartera'),
+				        	   										flex: 1	 	
+				        	   									},
+				        	   									{
+				        	   									    dataIndex: 'situacionComercial',
+				        	   									    text: HreRem.i18n('header.situacion.comercial'),
+				        	   									    flex: 1
+				        	   									},
+				        	   									{
+				        	   									    dataIndex: 'situacionPosesoria',
+				        	   									    text: HreRem.i18n('header.situacion.posesoria'),
+				        	   									    flex: 1													            
+				        	   									},
+														        {
+														        	dataIndex: 'activoEnPropuestaEnTramitacion',
+														        	text: HreRem.i18n("header.incluido.en.propuesta.tramite"),
+														        	hidden: true,
+														        	renderer: Utils.rendererBooleanToSiNo,
+														        	flex: 1
+														        }
+				        	   										         	        
+				        	   									],
+				        	   							dockedItems : [
+				        	   									       {
+				        	   											xtype: 'pagingtoolbar',
+				        	   										    dock: 'bottom',
+				        	   										    inputItemWidth: 50,
+				        	   											displayInfo: true,
+				        	   											bind: {
+				        	   											       store: '{listaActivosAgrupacion}'
 				        	   											      }
 				        	   											}
 				        	   									      ]	
@@ -684,17 +669,9 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
     	me.lookupReference('gestorActivo').setValue(me.gestorActivo);
     	
     	if(me.idActivo != null){
-    		var url = $AC.getRemoteUrl('trabajo/getListActivosByID');
-		    Ext.Ajax.request({
-			  url:url,
-			  params:  {idActivo : me.idActivo},
-			  success: function(response,opts){
-				  var separador;
-				  var res = response.responseText.replace(/[{}"]/g,"");
-				  res = res.replace(/data:/,"");
-				  res = res.split(',');
-			  }
-		    });
+    		var grid = me.lookupReference('activosagrupaciontrabajo');
+    		grid.getStore().load();
+    		
     	}
     },
     

@@ -66,7 +66,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 				                	xtype: 'comboboxfieldbase',
 				                	fieldLabel:  HreRem.i18n('fieldlabel.gasto.estado.gasto'),
 				                	bind:	{
-				                		store: '{comboTiposGastos}',
+				                		store: '{comboEstadoGastos}',
 				                		value: '{trabajo.estadoGastoCodigo}'
 				                	}
 				                },
@@ -147,7 +147,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 									}
 								},
 							 	{ 
-				                	xtype: 'displayfieldbase',
+				                	xtype: 'numberfieldbase',
 				                	fieldLabel:  HreRem.i18n('title.resolucion.comite.id'),
 				                	bind: {
 				                		value: '{trabajo.resolucionComiteId}'
@@ -215,7 +215,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 					        	fieldLabel: HreRem.i18n('fieldlabel.estado.trabajo'),
 					        	xtype: 'comboboxfieldbase',
 					        	bind: {
-				            		store: '{comboEstadoTrabajo}',
+				            		store: '{comboEstadoTrabajoFicha}',
 				            		value: '{trabajo.estadoTrabajoCodigo}'
 				            	},
 					        	reference: 'comboEstadoTrabajo',

@@ -302,7 +302,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		var me = this;
 		var storeListaActivosTrabajo = null;
 		var activo= null;
-		var arraySelection;
+		var arraySelection= [];
+		var codPromo = me.lookupReference('activosagrupaciontrabajo').getStore().getData().items[0].get('codigoPromocionPrinex');
 		if(!Ext.isEmpty(me.getView().idActivo)){
 			activo = btn.lookupViewModel().getView().idActivo;
 		}else{
@@ -314,10 +315,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			var propietario = storeListaActivosTrabajo.data.items[0].data.propietarioId;
 			for (var i=0; i < storeListaActivosTrabajo.data.length; i++){
 				var propietarioAux = storeListaActivosTrabajo.data.items[i].data.propietarioId;
-				if(propietarioAux != propietario 
-						//Preguntar
-//						&& me.lookupReference('checkEnglobaTodosActivosRef').checked != false
-				){
+				if(propietarioAux != propietario && me.lookupReference('checkEnglobaTodosActivosRef').checked != false)
+				{
 					Ext.MessageBox.alert(
 							HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),
 							HreRem.i18n("msgbox.multiples.trabajos.seleccionado.diferente.propietario.mensaje")
@@ -334,23 +333,23 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 				//No existe codPromo, por tanto jamas sera diferente de vacio, por tanto esta logica queda descartada. 
 				//Preguntar de todas formas
 				
-//				if (actuacionTecnica /*&& !Ext.isEmpty(codPromo)*/){
-//					if (storeListaActivosTrabajo.data.items[i].data.codigoCartera == CONST.CARTERA.LIBERBANK) {
-//						if (!Ext.isEmpty(codPromo) && storeListaActivosTrabajo.data.items[i].data.codigoPromocionPrinex != codPromo){
-//							Ext.MessageBox.alert(
-//									HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),
-//									HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinCodPromo.mensaje.todos")
-//							);
-//							return false;
-//				        }
-//					} else {
-//						Ext.MessageBox.alert(
-//								HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),
-//								HreRem.i18n("msgbox.multiples.trabajos.seleccionado.todosCarteraLiberbank.mensaje.todos")
-//						);
-//						return false;
-//					}
-//				}
+				if (actuacionTecnica && !Ext.isEmpty(codPromo)){
+					if (storeListaActivosTrabajo.data.items[i].data.codigoCartera == CONST.CARTERA.LIBERBANK) {
+						if (!Ext.isEmpty(codPromo) && storeListaActivosTrabajo.data.items[i].data.codigoPromocionPrinex != codPromo){
+							Ext.MessageBox.alert(
+									HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),
+									HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinCodPromo.mensaje.todos")
+							);
+							return false;
+				        }
+					} else {
+						Ext.MessageBox.alert(
+								HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"),
+								HreRem.i18n("msgbox.multiples.trabajos.seleccionado.todosCarteraLiberbank.mensaje.todos")
+						);
+						return false;
+					}
+				}
 				arraySelection.push(storeListaActivosTrabajo.data.items[i].data.idActivo);
 			}
 		}
@@ -477,8 +476,9 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	
 	hideWindowCrearPeticionTrabajo: function(btn) {
     	var me = this;
-    	//me.getView().down("[reference=activosagrupaciontrabajo]").deselectAll();
+    	me.getView().mask(HreRem.i18n("msg.mask.loading"));
     	btn.up('window').cerrar();
+    	me.getView().unmask();
     },
 	
 	hideWindowPeticionTrabajo: function(btn) {
@@ -497,56 +497,61 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		idProceso = window.idProceso;
 		codCartera = window.codCartera;
 		codSubcartera = window.codSubcartera;
-		var idTarifas = me.obtenerIdTarifas(me.lookupReference('gridListaTarifas').getStore().getData());
-		//Nuevos Valores
 		
-		form.getBindRecord().set("idMediador",me.lookupReference('comboProveedor').getSelection().get('id'))
-		if(me.lookupReference('checkAplicaComite').getValue()){
-			form.getBindRecord().set("resolucionComiteId",me.lookupReference('resolComiteId').getValue());
-			form.getBindRecord().set("fechaResolucionComite",me.lookupReference('fechaResolComite').getValue());
-			form.getBindRecord().set("resolucionComiteCodigo",me.lookupReference('comboResolucionComite').getSelectedRecord().get('id'));
-			form.getBindRecord().set("aplicaComite",me.lookupReference('checkAplicaComite').getValue());
-		}else{
-			form.getBindRecord().set("resolucionComiteId",null);
-			form.getBindRecord().set("fechaResolucionComite",null);
-			form.getBindRecord().set("resolucionComiteCodigo",null);
-			form.getBindRecord().set("aplicaComite",me.lookupReference('checkAplicaComite').getValue());
+		if(form.isValid()){
+			var idTarifas = me.obtenerIdTarifas(me.lookupReference('gridListaTarifas').getStore().getData());
+			//Nuevos Valores
+			
+			form.getBindRecord().set("idMediador",me.lookupReference('comboProveedor').getSelection().get('id'))
+			if(me.lookupReference('checkAplicaComite').getValue()){
+				form.getBindRecord().set("resolucionComiteId",me.lookupReference('resolComiteId').getValue());
+				form.getBindRecord().set("fechaResolucionComite",me.lookupReference('fechaResolComite').getValue());
+				form.getBindRecord().set("resolucionComiteCodigo",me.lookupReference('comboResolucionComite').getSelectedRecord().get('id'));
+				form.getBindRecord().set("aplicaComite",me.lookupReference('checkAplicaComite').getValue());
+			}else{
+				form.getBindRecord().set("resolucionComiteId",null);
+				form.getBindRecord().set("fechaResolucionComite",null);
+				form.getBindRecord().set("resolucionComiteCodigo",null);
+				form.getBindRecord().set("aplicaComite",me.lookupReference('checkAplicaComite').getValue());
+			}
+			
+			form.getBindRecord().set("idTarea",me.lookupReference('idTarea').getValue());
+			form.getBindRecord().set("fechaConcreta",me.lookupReference('fechaConcretaTrabajo').getValue());
+			form.getBindRecord().set("horaConcreta",me.lookupReference('horaConcretaTrabajo').getValue());
+			form.getBindRecord().set("fechaTope",me.lookupReference('fechaTopeTrabajo').getValue());
+			form.getBindRecord().set("importePresupuesto",me.lookupReference('importePresupuesto').getValue());
+			form.getBindRecord().set("refImportePresupueso",me.lookupReference('referenciaImportePresupuesto').getValue());
+			form.getBindRecord().set("esTarifaPlanaEditable",me.lookupReference('tarifaPlana').getValue());
+			form.getBindRecord().set("riesgoInminenteTerceros",me.lookupReference('riesgoTerceros').getValue());
+			form.getBindRecord().set("urgente",me.lookupReference('urgente').getValue());
+			form.getBindRecord().set("esSiniestroEditable",me.lookupReference('siniestro').getValue());
+			form.getBindRecord().set("idTarifas",idTarifas);
+			form.getBindRecord().set("esSolicitudConjunta",me.lookupReference('checkEnglobaTodosActivosRef').getValue());
+			
+			form.getBindRecord().set("idActivo", idActivo);
+			form.getBindRecord().set("idAgrupacion", idAgrupacion);
+			form.getBindRecord().set("idProceso", idProceso);
+			form.getBindRecord().set("idsActivos", arraySelection);
+			form.getBindRecord().set("codigoPromocionPrinex", codigoPromocionPrinex);
+			form.getBindRecord().set("codCartera", codCartera);
+			form.getBindRecord().set("codSubcartera", codSubcartera);
+					
+			var success = function(record, operation) {
+				me.getView().unmask();
+				var response = Ext.decode(operation.getResponse().responseText);
+				if(response.success === "true" && Ext.isDefined(response.warn)) {
+					me.fireEvent("warnToast", response.warn);
+				}else{
+					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				}
+		    	me.getView().fireEvent("refreshComponentOnActivate", "trabajosmain");
+		    	me.getView().fireEvent("refreshComponentOnActivate", "agendamain");
+		    	me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], idActivo);
+	//	    	me.getView().down("[reference=activosagrupaciontrabajo]").deselectAll();
+		    	window.hide();
+			};
 		}
 		
-		form.getBindRecord().set("idTarea",me.lookupReference('idTarea').getValue());
-		form.getBindRecord().set("fechaConcreta",me.lookupReference('fechaConcretaTrabajo').getValue());
-		form.getBindRecord().set("horaConcreta",me.lookupReference('horaConcretaTrabajo').getValue());
-		form.getBindRecord().set("fechaTope",me.lookupReference('fechaTopeTrabajo').getValue());
-		form.getBindRecord().set("importePresupuesto",me.lookupReference('importePresupuesto').getValue());
-		form.getBindRecord().set("refImportePresupueso",me.lookupReference('referenciaImportePresupuesto').getValue());
-		form.getBindRecord().set("esTarifaPlanaEditable",me.lookupReference('tarifaPlana').getValue());
-		form.getBindRecord().set("riesgoInminenteTerceros",me.lookupReference('riesgoTerceros').getValue());
-		form.getBindRecord().set("urgente",me.lookupReference('urgente').getValue());
-		form.getBindRecord().set("esSiniestroEditable",me.lookupReference('siniestro').getValue());
-		form.getBindRecord().set("idTarifas",idTarifas);
-		
-		form.getBindRecord().set("idActivo", idActivo);
-		form.getBindRecord().set("idAgrupacion", idAgrupacion);
-		form.getBindRecord().set("idProceso", idProceso);
-		form.getBindRecord().set("idsActivos", arraySelection);
-		form.getBindRecord().set("codigoPromocionPrinex", codigoPromocionPrinex);
-		form.getBindRecord().set("codCartera", codCartera);
-		form.getBindRecord().set("codSubcartera", codSubcartera);
-				
-		var success = function(record, operation) {
-			me.getView().unmask();
-			var response = Ext.decode(operation.getResponse().responseText);
-			if(response.success === "true" && Ext.isDefined(response.warn)) {
-				me.fireEvent("warnToast", response.warn);
-			}else{
-				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-			}
-	    	me.getView().fireEvent("refreshComponentOnActivate", "trabajosmain");
-	    	me.getView().fireEvent("refreshComponentOnActivate", "agendamain");
-	    	me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], idActivo);
-//	    	me.getView().down("[reference=activosagrupaciontrabajo]").deselectAll();
-	    	window.hide();
-		};
 
 		me.onSaveFormularioCompleto(form, success);
 	},
@@ -924,9 +929,30 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     		}
     		
     	});
-
-    	
-    	
+    },
+    
+    setBindStoreGrid: function(grid){
+    	var me = this;
+    	var storeIdActivo = Ext.create('Ext.data.Store',{
+			pageSize: 12,
+        	model: 'HreRem.model.ActivoTrabajoSubida',
+			 proxy: {
+			    type: 'uxproxy',
+				remoteUrl: 'trabajo/getListActivosByID',
+				actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
+				extraParams: {idActivo: me.getView().idActivo, idAgrupacion: me.getView().idAgrupacion}
+			 },
+			 listeners:{
+		          load:function(){
+		        	  	me.relayEvents(this,['storeloadsuccess']);
+		               this.fireEvent('storeloadsuccess');
+		          }
+		     }
+           
+		});
+		grid.setBind({store: storeIdActivo});
+		grid.setStore(storeIdActivo);
+		grid.getStore().load();
     },
     
     onSelectedTarifaReturnGridVentana: function(grid,record){
@@ -1334,6 +1360,20 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	 		
     			
     			
-    	}
+    	},
+ 	loadGridSegundo: function(grid){
+ 		var me = this;
+ 		var idActivo = me.getView().idActivo;
+ 		var idAgrupacion = me.getView().idAgrupacion;
+ 		if(idActivo != null){
+ 			grid.getProxy().setExtraParams({'idActivo':idActivo});
+ 		}else{
+ 			if(idAgrupacion != null){
+ 				grid.getProxy().setExtraParams({'idAgrupacion':idAgrupacion});
+ 			}
+ 		}
+ 		
+//		grid.load();
+ 	}
  	
 });

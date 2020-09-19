@@ -577,7 +577,22 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 			        remoteUrl: 'trabajo/getAgendaTrabajo',
 			        extraParams: {idTrabajo: '{trabajo.id}'}
 		    	}    			
+    		},
+    		comboEstadoTrabajoFicha:{
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboEstadoTrabajo'
+				}
+    		},
+    		comboEstadoGastosFicha:{
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboEstadoGasto'
+				}
     		}
+    		
     }
 
 });

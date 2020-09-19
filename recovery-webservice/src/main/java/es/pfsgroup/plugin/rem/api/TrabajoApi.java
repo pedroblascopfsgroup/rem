@@ -42,6 +42,7 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDAcoAprobacionComite;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -893,4 +894,7 @@ public interface TrabajoApi {
 	
 	@BusinessOperationDefinition("trabajoManager.deleteAgendaTrabajo")
 	public boolean deleteAgendaTrabajo(Long id);
+	
+	public List<DDEstadoTrabajo>getComboEstadoTrabajo();
+	public List<DDEstadoGasto> getComboEstadoGasto();
 }

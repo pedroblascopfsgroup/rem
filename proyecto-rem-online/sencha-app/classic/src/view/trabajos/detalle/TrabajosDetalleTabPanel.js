@@ -142,6 +142,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
 	
 		
 		var editionEnabled = function() {
+			
 			var visible = false;
 			var notFechaEjecucionReal = Ext.isEmpty(me.lookupController().getViewModel().get('trabajo').get('fechaEjecucionReal'));
 			var notFechaCierreEconomico = Ext.isEmpty(me.lookupController().getViewModel().get('trabajo').get('fechaCierreEconomico'));
@@ -175,7 +176,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
 			if(tipoTrabajoCod === CONST.TIPOS_TRABAJO['EDIFICACION']){
 				visible = isRolSuper;
 			}
-			
+			visible=true;
 			me.down("[itemId=botoneditar]").setVisible(visible);
 		}
 

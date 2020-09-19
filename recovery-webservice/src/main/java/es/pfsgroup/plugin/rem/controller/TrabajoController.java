@@ -1932,5 +1932,12 @@ public class TrabajoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 		
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboEstadoTrabajo(WebDto webDto, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, trabajoApi.getComboEstadoTrabajo());
+
+		return new ModelAndView("jsonView", model);
+	}
 
 }

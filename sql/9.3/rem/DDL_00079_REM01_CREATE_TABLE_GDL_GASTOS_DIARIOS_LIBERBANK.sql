@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Joaquin Bahamonde
---## FECHA_CREACION=20200916
+--## FECHA_CREACION=20200919
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11053
@@ -43,14 +43,14 @@ IF TABLE_COUNT = 0 THEN
         DIARIO2_BASE          			NUMBER(16,2),
         DIARIO2_TIPO       			    NUMBER(5,2),
         DIARIO2_CUOTA     		        NUMBER(16,2),  
-        USUARIOCREAR    	            VARCHAR2(10),
-        FECHACREAR          	        DATE NOT NULL,
-        USUARIOMODIFICAR    	        VARCHAR2(10),
+        USUARIOCREAR    	            VARCHAR2(50 CHAR),
+        FECHACREAR          	        DATE DEFAULT SYSDATE NOT NULL,
+        USUARIOMODIFICAR    	        VARCHAR2(50 CHAR),
         FECHAMODIFICAR      	        DATE,	 
-        VERSION                   	    NUMBER(38,0) DEFAULT 0 NOT NULL,
-        USUARIOBORRAR             	    VARCHAR2(50),
+        VERSION                   	    NUMBER(16) DEFAULT 0 NOT NULL,
+        USUARIOBORRAR             	    VARCHAR2(50 CHAR),
         FECHABORRAR               	    DATE,
-        BORRADO                  	    NUMBER(1, 0) DEFAULT 0 NOT NULL
+        BORRADO                  	    NUMBER(1) DEFAULT 0 NOT NULL
     )';
 
     EXECUTE IMMEDIATE V_MSQL;

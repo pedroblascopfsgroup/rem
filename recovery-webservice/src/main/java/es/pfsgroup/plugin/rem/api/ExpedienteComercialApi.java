@@ -1315,7 +1315,7 @@ public interface ExpedienteComercialApi {
 	boolean activarCompradorExpediente(Long idCompradorExpediente, Long idExpediente);
 	
 	public Boolean getActivoExpedienteEpa(ExpedienteComercial expediente);
-
+	public Boolean getActivoExpedienteAlquilado(ExpedienteComercial expediente);
 	public Long uploadDocumentoGestorDocumental(ExpedienteComercial expedienteComercial, WebFileItem webFileItem,
 			DDSubtipoDocumentoExpediente subtipoDocumento, String username) throws Exception;
 

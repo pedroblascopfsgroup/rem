@@ -2321,6 +2321,28 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return false;
 	}
+	
+	@Override
+	public Boolean getActivoExpedienteAlquilado(ExpedienteComercial expediente) {
+		
+		List<ActivoOferta> listaActivosOferta = null;
+		
+		if(expediente != null && expediente.getOferta() != null && expediente.getOferta().getActivosOferta() != null) {
+			listaActivosOferta = expediente.getOferta().getActivosOferta();
+			if(listaActivosOferta.get(0) != null && listaActivosOferta.get(0).getPrimaryKey().getActivo() != null
+					&& DDCartera.CODIGO_CARTERA_BBVA.equals(listaActivosOferta.get(0).getPrimaryKey().getActivo().getCartera().getCodigo())) {
+				for (ActivoOferta activosOferta : listaActivosOferta) {
+					Activo activo = activosOferta.getPrimaryKey().getActivo();
+					if(activo != null && activo.getSituacionPosesoria().getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloSi.contentEquals(activo.getSituacionPosesoria().getConTitulo().getCodigo())){
+						return true;
+					}
+				}
+			} else {
+				return false;
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Convierte una entidad Activo a objeto dto.

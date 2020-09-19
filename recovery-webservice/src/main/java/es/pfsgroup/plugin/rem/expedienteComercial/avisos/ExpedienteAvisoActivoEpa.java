@@ -25,10 +25,20 @@ public class ExpedienteAvisoActivoEpa implements ExpedienteAvisadorApi {
 
 
 		DtoAviso dtoAviso = new DtoAviso();
-		
-		if (expedienteComercialApi.getActivoExpedienteEpa(expediente)) {			
-			dtoAviso.setDescripcion("Esta oferta incluye activos EPA");
+		if(expedienteComercialApi.getActivoExpedienteEpa(expediente) && expedienteComercialApi.getActivoExpedienteAlquilado(expediente)) {
+			dtoAviso.setDescripcion("Expediente con activos EPA/Alquilados");
 			dtoAviso.setId(String.valueOf(expediente.getId()));			
+		}else {
+			if (expedienteComercialApi.getActivoExpedienteEpa(expediente)) {			
+				dtoAviso.setDescripcion("Esta oferta incluye activos EPA");
+				dtoAviso.setId(String.valueOf(expediente.getId()));			
+			}
+			if(expedienteComercialApi.getActivoExpedienteAlquilado(expediente)) {
+				dtoAviso.setDescripcion("Expediente con activos alquilados");
+				dtoAviso.setId(String.valueOf(expediente.getId()));			
+			
+			}
+
 		}
 
 		return dtoAviso;

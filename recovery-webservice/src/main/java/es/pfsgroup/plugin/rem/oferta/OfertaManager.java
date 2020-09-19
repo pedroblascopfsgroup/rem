@@ -147,6 +147,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
@@ -4705,13 +4706,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if(listaAgrupacionActivos.get(0).getActivo() != null 
 				&& DDCartera.CODIGO_CARTERA_BBVA.equals(listaAgrupacionActivos.get(0).getActivo().getCartera().getCodigo())){
 			for (ActivoAgrupacionActivo activoAgrupacionActivo : listaAgrupacionActivos) {
+				Activo activo = activoAgrupacionActivo.getActivo();
 				if(activoAgrupacionActivo.getActivo() != null) {
 					Filter filtroactivo = genericDao.createFilter(FilterType.EQUALS ,"activo.id", activoAgrupacionActivo.getActivo().getId());
 					ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtroactivo);
-					if(DDSituacionComercial.CODIGO_ALQUILADO.equals(activoAgrupacionActivo.getActivo().getSituacionComercial().getCodigo()) && DDSinSiNo.CODIGO_SI.equals(activoBbva.getActivoEpa().getCodigo())) {
+					if(activo.getSituacionPosesoria().getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloSi.contentEquals(activo.getSituacionPosesoria().getConTitulo().getCodigo()) && DDSinSiNo.CODIGO_SI.equals(activoBbva.getActivoEpa().getCodigo())) {
 						return 3;
 					}
-					if(DDSituacionComercial.CODIGO_ALQUILADO.equals(activoAgrupacionActivo.getActivo().getSituacionComercial().getCodigo())){
+					if(activo.getSituacionPosesoria().getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloSi.contentEquals(activo.getSituacionPosesoria().getConTitulo().getCodigo())){
 						return 2;
 					}
 					if(DDSinSiNo.CODIGO_SI.equals(activoBbva.getActivoEpa().getCodigo())) {

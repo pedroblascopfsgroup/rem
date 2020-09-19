@@ -63,7 +63,7 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 						xtype: 'textfieldbase',
 						width: 480,
 						bind: {
-							value: '{gestionEconomica.usuarioProveedorContacto}',
+							value: '{gestionEconomica.usuarioProveedorContacto}'
 							//readOnly: '{!gestionEconomica.esProveedorEditable}'
 						},
 						readOnly: true
@@ -73,7 +73,7 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 						xtype: 'textfieldbase',
 						width: 480,
 						bind: {
-							value: '{gestionEconomica.emailProveedorContacto}',
+							value: '{gestionEconomica.emailProveedorContacto}'
 							//readOnly: '{!gestionEconomica.esProveedorEditable}'
 						},
 						readOnly: true
@@ -82,7 +82,7 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 						fieldLabel: HreRem.i18n('fieldlabel.telefono.contacto'),
 						width: 480,
 						bind: {
-							value: '{gestionEconomica.telefonoProveedorContacto}',
+							value: '{gestionEconomica.telefonoProveedorContacto}'
 							//readOnly: '{!gestionEconomica.esProveedorEditable}'
 						},
 						readOnly: true

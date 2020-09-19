@@ -406,6 +406,24 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     	        }*/
     		},
     		
+    		listaActivosAgrupacion: {
+    			pageSize: 10,
+    			model:'HreRem.model.ActivoTrabajoSubida',
+    			proxy: {
+    				type: 'uxproxy',
+    				remoteUrl: 'trabajo/getListActivosByID',
+    				actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
+    				extraParams: {idActivo: '{idActivo}', idAgrupacion:'{idAgrupacion}'}
+    			},
+    			//session: true,
+    	    	remoteSort: true,
+    	    	remoteFilter: true,
+    	    	autoLoad:false,
+    	    	listeners : {
+    	            beforeload : 'loadGridSegundo'
+    	        }
+    		},
+    		
     		comboProveedorContacto : {
     			model: 'HreRem.model.ComboBase',
 				proxy: {

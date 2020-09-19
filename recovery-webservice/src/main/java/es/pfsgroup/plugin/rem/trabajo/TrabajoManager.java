@@ -1490,7 +1490,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						 tarifaTrabajo.setConfigTarifa(config);
 						 tarifaTrabajo.setTrabajo(trabajo);
 						 //pendiente revision
-//						 tarifaTrabajo.setMedicion(config.getUnidadMedida());
+						 tarifaTrabajo.setMedicion(0F);
 						 tarifaTrabajo.setPrecioUnitario(config.getPrecioUnitario());
 						 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
 					}

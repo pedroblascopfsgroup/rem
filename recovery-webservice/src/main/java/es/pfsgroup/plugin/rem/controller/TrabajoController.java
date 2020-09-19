@@ -1289,28 +1289,34 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView getListActivosByID(String idActivo, DtoTrabajoListActivos webDto, ModelMap model) {
-		try {
-			List<String> listaActivo = new ArrayList<String>();
-			if (idActivo.contains(",")) {
-				String[] activos = idActivo.split(",");
-				for(int i =0 ; i< activos.length; i++) {
-					listaActivo.add(activos[i]);
-				}
+	public ModelAndView getListActivosByID(String idActivo, Long idAgrupacion, DtoTrabajoListActivos webDto, ModelMap model) {
+		
+		if(idActivo == null && idAgrupacion == null) {
+			return createModelAndViewJson(model);
+		}else {
+			if(idAgrupacion != null) {
+				Page page = trabajoAdapter.getListActivosCrearTrabajoByAgrupacion(idAgrupacion, webDto);
+				
+				model.put("data", page.getResults());
+				model.put("totalCount", page.getTotalCount());
+				model.put("success", true);
 			}else {
-				listaActivo.add(idActivo);
+				try {
+					
+					Page page = trabajoAdapter.getListActivosById(idActivo,webDto);
+					model.put("data", page.getResults());
+					model.put("totalCount", page.getTotalCount());
+					model.put("success", true);
+				} catch (Exception e) {
+					logger.error(e.getMessage());
+					model.put("success", false);
+				}
 			}
 			
-			Page page = trabajoAdapter.getListActivosById(listaActivo,webDto);
-			model.put("data", page.getResults());
-			model.put("totalCount", page.getTotalCount());
-			model.put("success", true);
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			model.put("success", false);
-		}
 
-		return createModelAndViewJson(model);
+			return createModelAndViewJson(model);
+		}
+		
 	}
 
 	

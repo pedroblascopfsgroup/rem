@@ -146,6 +146,9 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	var idActivo = combo.up("window").idActivo;
     	var codigoSubtipoTrabajo = combo.getValue();
     	var advertencia;
+    	var codCartera;
+    	var codSubcartera;
+    	var parametrico=false;
     	if (Ext.isDefined(idActivo) && idActivo != null){
 		    var url = $AC.getRemoteUrl('trabajo/getAdvertenciaCrearTrabajo');
 		    Ext.Ajax.request({
@@ -159,9 +162,21 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			  }
 		    });
 		}
-//    	var urlCfg = $AC.getRemoteUrl('trabajo/getAdvertenciaCrearTrabajo');
+    	var urlCfg = $AC.getRemoteUrl('trabajo/getPlazoEjecucion');
+    	if(me.getView().codCartera != null){
+    		codCartera = me.getView().codCartera;
+    		codSubcartera = mew.getView().codSubcartera;
+    		parametrico = true;
+    	}else{
+    		if(me.lookupReference('listaActivosSubidaRef').getStore().getData() != null 
+    				&& me.lookupReference('listaActivosSubidaRef').getStore().getData().length > 0){
+//    			me.lookupReference('listaActivosSubidaRef').getStore().getData().items[0].data.codCartera;
+    			
+    			parametrico = true;
+    		}
+    	}
 //    	Ext.Ajax.request({
-//			  url:url,
+//			  url:urlCfg,
 //			  params:  {idActivo : combo.up("window").idActivo, 
 //			  			codigoSubtipoTrabajo : combo.getValue()},
 //			  success: function(response,opts){
@@ -170,12 +185,12 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 //				  me.lookupReference("textAdvertenciaCrearTrabajo").setText(advertencia);
 //			  }
 //		});
-//    	
+    	
     	if(combo.getValue() == CONST.SUBTIPOS_TRABAJO['TRAMITAR_PROPUESTA_PRECIOS'] 
     		|| combo.getValue() == CONST.SUBTIPOS_TRABAJO['TRAMITAR_PROPUESTA_DESCUENTO']) {
-    		me.lookupReference("checkEnglobaTodosActivosAgrRef").setValue(true);
+//    		me.lookupReference("checkEnglobaTodosActivosAgrRef").setValue(true);
     		me.lookupReference("checkEnglobaTodosActivosRef").setValue(true);
-    		me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(true);
+//    		me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(true);
     		me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(true);
     		
     		me.lookupReference("listaActivosSubidaRef").getColumnManager().getHeaderByDataIndex("activoEnPropuestaEnTramitacion").setVisible(true);
@@ -187,7 +202,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     		me.lookupReference("listaActivosSubidaRef").getColumnManager().getHeaderByDataIndex("activoEnPropuestaEnTramitacion").setVisible(false);
     		
     		if(me.lookupReference("tipoTrabajo").getValue() != CONST.TIPOS_TRABAJO['OBTENCION_DOCUMENTACION']){
-    			me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(false);
+//    			me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(false);
     			me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(false);
     		}
     	}

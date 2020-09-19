@@ -98,10 +98,11 @@ public abstract  class AbstractMSVActualizador implements MSVLiberator {
 						resultProcesaFila = this.procesaFila(exc, fila, token, context);
 					} else {
 						transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-						
-						if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PERIMETRO_ACTIVO
-								.equals(file.getProcesoMasivo().getTipoOperacion().getCodigo())) {
+						if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PERIMETRO_ACTIVO.equals(file.getProcesoMasivo().getTipoOperacion().getCodigo())) {
 							resultProcesaFila = this.procesaFila(exc, fila, token, file.getExtraArgs());
+						}
+						else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_UNICA_GASTOS.equals(file.getProcesoMasivo().getTipoOperacion().getCodigo())) {
+							resultProcesaFila = this.procesaFila(exc, fila, token, context);
 						} else {
 							resultProcesaFila = this.procesaFila(exc, fila, token);
 						}

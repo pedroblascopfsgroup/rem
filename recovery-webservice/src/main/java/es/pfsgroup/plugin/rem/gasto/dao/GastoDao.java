@@ -14,6 +14,8 @@ public interface GastoDao extends AbstractDao<GastoProveedor, Long> {
     DtoPage getListGastos(DtoGastosFilter dtoGastosFilter);
 
     Long getNextNumGasto();
+    
+    Long getNextIdGasto();
 
     void deleteGastoTrabajoById(Long id);
 
@@ -45,5 +47,7 @@ public interface GastoDao extends AbstractDao<GastoProveedor, Long> {
 	List<GastoRefacturable> getGastosRefacturablesDelGasto(Long id);
 
 	Boolean updateGastosRefacturablesSiExiste(Long id, Long idPadre, String usuario);
+
+	void saveGasto(GastoProveedor gasto);
 	
 }

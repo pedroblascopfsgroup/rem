@@ -12,11 +12,13 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
@@ -26,6 +28,7 @@ import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoRefacturable;
@@ -330,6 +333,15 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 				.longValue();
 
 	}
+	
+	@Override
+	public Long getNextIdGasto() {
+
+		String sql = "SELECT S_GPV_GASTOS_PROVEEDOR.NEXTVAL FROM DUAL ";
+		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())
+				.longValue();
+
+	}
 
 	@Override
 	public void deleteGastoTrabajoById(Long id) {
@@ -446,4 +458,19 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		
 		return existeGasto;
 	}
+	
+	@Override
+	public void saveGasto(GastoProveedor gasto) {
+		Session session = getSessionFactory().openSession();
+		Transaction tx = session.beginTransaction();
+		try {
+			session.save(gasto);
+			session.getTransaction().commit();
+			session.close();
+		} catch (Exception e) {
+			logger.error("error al persistir el gasto", e);
+			tx.rollback();
+		}
+	}
+	
 }

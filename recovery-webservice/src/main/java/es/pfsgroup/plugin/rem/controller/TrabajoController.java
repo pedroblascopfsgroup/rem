@@ -53,6 +53,7 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoAvisadorApi;
+import es.pfsgroup.plugin.rem.excel.ActivosTrabajoExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.TrabajoExcelReport;
@@ -84,6 +85,7 @@ import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.TrabajoFoto;
+import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoParticipa;
 import es.pfsgroup.plugin.rem.model.VBusquedaTrabajos;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.propuestaprecios.service.GenerarPropuestaPreciosService;
@@ -1944,6 +1946,17 @@ public class TrabajoController extends ParadiseJsonController {
 		model.put(RESPONSE_DATA_KEY, trabajoApi.getComboEstadoTrabajo());
 
 		return new ModelAndView("jsonView", model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public void generateExcelActivosTrabajo(Long idTrabajo, HttpServletRequest request, HttpServletResponse response) throws IOException{
+
+		List<VBusquedaActivosTrabajoParticipa> listaActivos = trabajoApi.getListActivosTrabajo(idTrabajo);
+
+		ExcelReport report = new ActivosTrabajoExcelReport(listaActivos);
+
+		excelReportGeneratorApi.generateAndSend(report, response);
 	}
 
 }

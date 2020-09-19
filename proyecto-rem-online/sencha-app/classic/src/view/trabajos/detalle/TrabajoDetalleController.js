@@ -1374,6 +1374,29 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
  		}
  		
 //		grid.load();
- 	}
+ 	},
+ 	
+ 	onExportListActivosTrabajo: function(btn){
+    	var me = this;
+    	
+    	var idTrabajo = me.getViewModel().get("trabajo.id");
+		var url =  $AC.getRemoteUrl('trabajo/generateExcelActivosTrabajo');
+		
+		var config = {};
+
+		var initialData = {idTrabajo: idTrabajo};
+		var params = Ext.apply(initialData);
+
+		Ext.Object.each(params, function(key, val) {
+			if (Ext.isEmpty(val)) {
+				delete params[key];
+			}
+		});
+
+		config.params = params;
+		config.url= url;
+		
+		me.fireEvent("downloadFile", config);		
+    }
  	
 });

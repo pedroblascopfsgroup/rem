@@ -143,6 +143,7 @@ import es.pfsgroup.plugin.rem.model.TrabajoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.TrabajoRecargosProveedor;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacionTrabajo;
+import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoParticipa;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
@@ -3260,11 +3261,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Override
 	public Page getListActivos(DtoActivosTrabajoFilter dto) throws InstantiationException, IllegalAccessException, Exception {
-
-		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.idTrabajo", dto.getIdTrabajo());
-   		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.idActivo", dto.getIdActivo());
-   		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.estadoContable", dto.getEstadoContable());
-   		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.codigoEstado", dto.getEstadoCodigo());
    		
    		ArrayList<Filter> filtros = new ArrayList<Filter>();
    		if(!Checks.esNulo(dto.getIdTrabajo())){
@@ -3283,7 +3279,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
    			i++;
    		}
    		
-		//flashDao.getList(VBusquedaActivosTrabajoParticipa.class,filtrosArray);
 		return trabajoDao.getListActivosTrabajo(dto);
 	}
 	
@@ -5506,6 +5501,18 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		try {
 			list = genericDao.getList(DDEstadoGasto.class);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
+	@Override
+	public List<VBusquedaActivosTrabajoParticipa> getListActivosTrabajo(Long id){
+		List<VBusquedaActivosTrabajoParticipa> list = new ArrayList<VBusquedaActivosTrabajoParticipa>();
+		
+		try {
+			list = genericDao.getList(VBusquedaActivosTrabajoParticipa.class, genericDao.createFilter(FilterType.EQUALS, "idTrabajo", id.toString()));
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

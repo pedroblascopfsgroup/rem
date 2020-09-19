@@ -22,7 +22,7 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
 
     	me.items= [
 			{
-			    xtype		: 'gridBaseEditableRow',
+			    xtype		: 'gridBaseEditableRowSinEdicion',
 			    idPrincipal	: 'trabajo.id',
 			    reference: 'listadoActivosTrabajo',
 				cls	: 'panel-base shadow-panel',
@@ -30,7 +30,14 @@ Ext.define('HreRem.view.trabajos.detalle.ActivosTrabajo', {
 					title: '{tituloActivosTrabajo}',
 					store: '{activosTrabajo}'
 				},
-				secFunToEdit: 'EDITAR_LIST_ACTIVOS_TRABAJO',
+				tbar: {
+					xtype: 'toolbar',
+					dock: 'top',
+					items: [
+							{itemId: 'downloadButton', iconCls:'x-fa fa-download', handler: 'onExportListActivosTrabajo'}
+					]
+				},		
+				//secFunToEdit: 'EDITAR_LIST_ACTIVOS_TRABAJO',
 				features: [{
 				            id: 'summary',
 				            ftype: 'summary',

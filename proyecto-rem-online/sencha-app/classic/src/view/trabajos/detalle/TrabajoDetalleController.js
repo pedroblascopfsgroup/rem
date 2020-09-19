@@ -159,18 +159,18 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			  }
 		    });
 		}
-    	var urlCfg = $AC.getRemoteUrl('trabajo/getAdvertenciaCrearTrabajo');
-    	Ext.Ajax.request({
-			  url:url,
-			  params:  {idActivo : combo.up("window").idActivo, 
-			  			codigoSubtipoTrabajo : combo.getValue()},
-			  success: function(response,opts){
-			  
-				  advertencia = Ext.JSON.decode(response.responseText).advertencia;
-				  me.lookupReference("textAdvertenciaCrearTrabajo").setText(advertencia);
-			  }
-		});
-    	
+//    	var urlCfg = $AC.getRemoteUrl('trabajo/getAdvertenciaCrearTrabajo');
+//    	Ext.Ajax.request({
+//			  url:url,
+//			  params:  {idActivo : combo.up("window").idActivo, 
+//			  			codigoSubtipoTrabajo : combo.getValue()},
+//			  success: function(response,opts){
+//			  
+//				  advertencia = Ext.JSON.decode(response.responseText).advertencia;
+//				  me.lookupReference("textAdvertenciaCrearTrabajo").setText(advertencia);
+//			  }
+//		});
+//    	
     	if(combo.getValue() == CONST.SUBTIPOS_TRABAJO['TRAMITAR_PROPUESTA_PRECIOS'] 
     		|| combo.getValue() == CONST.SUBTIPOS_TRABAJO['TRAMITAR_PROPUESTA_DESCUENTO']) {
     		me.lookupReference("checkEnglobaTodosActivosAgrRef").setValue(true);

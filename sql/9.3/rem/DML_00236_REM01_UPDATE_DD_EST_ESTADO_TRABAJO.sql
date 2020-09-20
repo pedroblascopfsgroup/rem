@@ -45,7 +45,7 @@ DECLARE
     	-- DD_TPO_CODIGO	DESCRIPCION						       DESCRIPCION LARGA					
      
         T_TIPO_DATA('12' ,'Finalizado' ,'Finalizado'),
-	T_TIPO_DATA('13' ,'Validado' ,'Finalizado')
+	T_TIPO_DATA('13' ,'Validado' ,'Validado')
         
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;  

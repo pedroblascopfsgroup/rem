@@ -252,26 +252,24 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 						xtype:'fieldsettable',
 						title: HreRem.i18n('title.trabajo.llaves'),
 						reference: 'informeSituacionFieldSet',
-						//hidden: '{!trabajo.visualizarLlaves}',
+						hidden: '{!trabajo.visualizarLlaves}',
 						items : [
-					        {
-					        
-					        	
+							{
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.proveedor.llaves.trabajo'),
+					        	colspan: 2,
+								reference: 'comboProveedorLlave',
+					        	chainedStore: 'comboProveedorLlave',
+								chainedReference: 'comboReceptorLlave',
 					        	bind: {
-				            		store: '{comboProveedorFiltered}',
+				            		store: '{comboProveedorFilteredLlaves}',
 				            		value: '{trabajo.idProveedorLlave}'
-				            		},
-			            	 	//chainedStore: 'comboProveedorGestionEconomica',
-								chainedReference: 'comboIdProveedorReceptor',	
-			            		displayField: 'nombreComercial',
-			            		valueField: 'idProveedor',
-						    	listeners: {
-					                select: 'onChangeComboProveedorGE'
-							            },
-					        	reference: 'comboProveedorCodigo',
-					        	colspan: 2
+				            	},
+				            	displayField: 'nombreComercial',
+	    						valueField: 'idProveedor',
+	    						listeners: {
+				                	select: 'onChangeComboProveedorGE'
+				            	}
 					        },
 							{
 					        	xtype: 'datefieldbase',
@@ -280,21 +278,21 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 									value: '{trabajo.fechaEntregaTrabajo}'
 								}
 							},
-					        {
-					        	fieldLabel: HreRem.i18n('fieldlabel.receptor.llaves.trabajo'),
-					        	xtype: 'comboboxfieldbase',
+							{
+								xtype: 'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.receptor.llaves.trabajo'),
+					        	reference: 'comboReceptorLlave',
+					        	colspan: 2,
 					        	bind: {
 				            		store: '{comboProveedorReceptor}',
 				            		value: '{trabajo.idProveedorReceptor}'
 				            	},
 				            	displayField: 'nombre',
-				            	valueField: 'id',
-					        	reference: 'comboIdProveedorReceptor',
-					        	colspan: 2,
-							    allowBlank: true,
-							    listeners: {
-								    change: 'onChangeProveedor'
-								    }
+	    						valueField: 'id',
+	    						allowBlank: true,
+	    						listeners: {
+	    							change: 'onChangeProveedor'
+	    						}
 					        },
 						 	{ 
 			                	xtype: 'checkboxfieldbase',

@@ -2088,21 +2088,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			
 		}
 		
-		
-		if((dtoTrabajo.getIdProveedorLlave() != null)) {
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdProveedorLlave());
-			ActivoProveedorContacto proveedorContactoLlaves = genericDao.get(ActivoProveedorContacto.class, filtro);
-
-			if(proveedorContactoLlaves != null)
-				trabajo.setProveedorContactoLlaves(proveedorContactoLlaves);
-		}
-		
 		 if(dtoTrabajo.getIdProveedorReceptor() != null) {
 			 Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdProveedorReceptor());
 			 ActivoProveedorContacto proveedorContactoRecep = genericDao.get(ActivoProveedorContacto.class, filtro);
 
 			 if(proveedorContactoRecep != null) {
-				 trabajo.setProveedorContacto(proveedorContactoRecep); 
+				 trabajo.setProveedorContactoLlaves(proveedorContactoRecep); 
 			 }
 			 
 		 }

@@ -466,6 +466,18 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 				},
 				autoLoad: false
     		},
+    		comboProveedorFilteredLlaves : {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboProveedorFiltered',
+					extraParams: {
+						idTrabajo: '{trabajo.id}',
+						codigoTipoProveedor: '05'
+					}
+				},
+				autoLoad: false
+    		},
     		comboTipoProveedorFilteredA : {
     			model: 'HreRem.model.ComboBase',
 				proxy: {
@@ -564,7 +576,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 		    	model: 'HreRem.model.HistoricoDeCamposModel',
 		    	proxy: {
 			        type: 'uxproxy',
-			        remoteUrl: 'trabajo/getHistoricoDeCampos'		        	 
+			        remoteUrl: 'trabajo/getHistoricoDeCampos'
 		    	}
     		},
     		comboEstadoTrabajo: {    		

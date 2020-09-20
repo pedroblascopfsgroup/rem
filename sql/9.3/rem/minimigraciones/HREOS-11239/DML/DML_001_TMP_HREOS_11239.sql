@@ -1,0 +1,87 @@
+--/*
+--#########################################
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20200919
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-11239
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Insertado de plazos de tareas
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+	
+	V_TABLA_TMP VARCHAR2(30 CHAR) := 'TMP_HREOS_11239'; -- Variable para tabla de salida para el borrado	
+	V_TABLA VARCHAR2(30 CHAR) := 'CFG_PVE_PREDETERMINADO'; -- Variable para tabla de salida para el borrado	
+	V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01';-- '#ESQUEMA#'; -- Configuracion Esquema
+	V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER';-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+	ERR_NUM NUMBER;-- Numero de errores
+	ERR_MSG VARCHAR2(2048);-- Mensaje de error	
+	V_SQL VARCHAR2(4000 CHAR);--Sentencia a ejecutar	
+	PL_OUTPUT VARCHAR2(32000 CHAR);
+	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-11239';
+	
+
+BEGIN
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO]'||CHR(10));	
+	DBMS_OUTPUT.PUT_LINE('[INFO] INSERTANDO LOS DATOS DE LA TABLA '||V_ESQUEMA||'.'||V_TABLA_TMP||' EN '||V_TABLA||'');
+
+	V_SQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' CPP
+				(
+					CPP_ID
+					, DD_CRA_ID
+					, DD_SCR_ID
+					, DD_TTR_ID
+					, PVE_ID
+					, DD_PRV_ID
+					, VERSION
+					, USUARIOCREAR
+					, FECHACREAR
+					, BORRADO
+				)
+				SELECT 
+					'||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL
+					, CRA.DD_CRA_ID
+					, SCR.DD_SCR_ID
+					, TTR.DD_TTR_ID
+					, PVE.PVE_ID
+					, PRV.DD_PRV_ID
+					, 0
+					, ''HREOS-11239''
+					, SYSDATE
+					, 0
+				FROM '||V_ESQUEMA||'.'||V_TABLA_TMP||' TMP
+				LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON TMP.CARTERA = CRA.DD_CRA_CODIGO AND CRA.BORRADO = 0
+				LEFT JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON (TMP.SUBCARTERA = SCR.DD_SCR_CODIGO) OR (TMP.SUBCARTERA IS NULL AND CRA.DD_CRA_ID = SCR.DD_CRA_ID) AND SCR.BORRADO = 0
+				LEFT JOIN '||V_ESQUEMA||'.DD_TTR_TIPO_TRABAJO TTR ON TMP.TIPO_TRABAJO = TTR.DD_TTR_DESCRIPCION AND TTR.BORRADO = 0
+				LEFT JOIN '||V_ESQUEMA_M||'.DD_PRV_PROVINCIA PRV ON TMP.PROVINCIA = PRV.DD_PRV_DESCRIPCION AND PRV.BORRADO = 0
+				JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON TMP.PVE_COD_REM = PVE.PVE_COD_REM AND PVE.BORRADO = 0';
+	EXECUTE IMMEDIATE V_SQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se han insertado en total '||SQL%ROWCOUNT||' registros en la tabla '||V_TABLA);
+	COMMIT;
+	
+	PL_OUTPUT := PL_OUTPUT || '[FIN]'||CHR(10);
+	DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
+
+EXCEPTION
+    WHEN OTHERS THEN
+      PL_OUTPUT := PL_OUTPUT ||'[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE)||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||'-----------------------------------------------------------'||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||SQLERRM||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||V_SQL||CHR(10);
+      DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
+      ROLLBACK;
+      RAISE;
+END;
+/
+EXIT;

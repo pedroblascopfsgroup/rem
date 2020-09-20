@@ -54,7 +54,8 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 	
 	// Funcion que se ejecuta al hacer click en el botón limpiar
 	onCleanFiltersClick: function(btn) {
-		this.lookupReference('btnExportarPrefactura').setDisabled(true);
+		var me = this;
+		me.lookupReference('btnExportarPrefactura').setDisabled(true);
 		//Limpia los grid
 		btn.up("[reference='albaranessearch']").nextSibling().down("[reference='albaranGrid']").getStore().removeAll();
 		btn.up("[reference='albaranessearch']").nextSibling().down("[reference='detalleAlbaranGrid']").getStore().removeAll();
@@ -64,9 +65,9 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		btn.up("[reference='albaranessearch']").nextSibling().down("[reference='botonValidarAlbaran']").setDisabled(true);
 		btn.up("[reference='albaranessearch']").nextSibling().down("[reference='botonValidarPrefactura']").setDisabled(true);
 		btn.up("[reference='albaranessearch']").nextSibling().down("[reference='botonValidarTrabajo']").setDisabled(true);
-		this.lookupReference('totalAlbaran').setValue(0);
-		this.lookupReference('totalPrefactura').setValue(0);
-		this.lookupReference('detallePrefacturaGrid').data = [];
+		me.lookupReference('totalAlbaran').setValue(0);
+		me.lookupReference('totalPrefactura').setValue(0);
+		me.lookupReference('detallePrefacturaGrid').data = [];
 		me.data.acumulador = 0;
 		//Limpia la botonera de filtrado.
 		btn.up('panel').getForm().reset();
@@ -76,9 +77,15 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 	onAlbaranClick: function(grid, record){
 		var me = this;
 		var viewModel = me.getViewModel();
-		var gridAlbaran = this.lookupReference('albaranGrid');
-		var listaDetalleAlbaran = this.lookupReference('detalleAlbaranGrid');
-		var listaTrabajos = this.lookupReference('detallePrefacturaGrid');
+		var gridAlbaran = me.lookupReference('albaranGrid');
+		var listaDetalleAlbaran = me.lookupReference('detalleAlbaranGrid');
+		var listaTrabajos = me.lookupReference('detallePrefacturaGrid');
+		var numPrefactura = me.lookupReference('numPrefacturaSearch').value;
+		var fechaPrefactura= Ext.Date.format( me.lookupReference('fechaPrefacturaSearch').value , 'd/m/Y');
+		var estadoPrefactura = this.lookupReference('estadoPrefacturaSearch').value;
+		var numTrabajo = this.lookupReference('numTrabajoSearch').value;
+		var estadoTrabajo = this.lookupReference('estadoTrabajoSearch').value;
+		var anyoTrabajo = this.lookupReference('anyoTrabajoSearch').value;
 		listaTrabajos.data = [];
 		me.data.acumulador = 0;
 		var boton = me.lookupReference('botonValidarAlbaran');
@@ -89,7 +96,13 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		
 		if(!Ext.isEmpty(grid.selection)){
 			listaDetalleAlbaran.getStore().getProxy().setExtraParams({
-                numAlbaran: record.data.numAlbaran
+                numAlbaran: record.data.numAlbaran,
+                numPrefactura: numPrefactura,
+                fechaPrefactura: fechaPrefactura,
+                estadoAlbaran: estadoPrefactura,
+                numTrabajo: numTrabajo,
+                estadoTrabajo: estadoTrabajo,
+                anyoTrabajo: anyoTrabajo
             });
 			listaDetalleAlbaran.getStore().loadPage(1);
 			listaTrabajos.getStore().removeAll();
@@ -132,14 +145,32 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
     	
 		listaDetallePrefactura.data = [];
 		var boton = this.lookupReference('botonValidarPrefactura');
+		var numTrabajo = this.lookupReference('numTrabajoSearch').value;
+		var estadoTrabajo = this.lookupReference('estadoTrabajoSearch').value;
+		var anyoTrabajo = this.lookupReference('anyoTrabajoSearch').value;
 		
 		if(!Ext.isEmpty(grid.selection)){
 			listaDetallePrefactura.getStore().getProxy().setExtraParams({
-                numPrefactura: record.data.numPrefactura
+                numPrefactura: record.data.numPrefactura,
+                numTrabajo: numTrabajo,
+                estadoTrabajo: estadoTrabajo,
+                anyoTrabajo: anyoTrabajo
             });
 			listaDetallePrefactura.getStore().loadPage(1);
-			me.calcularTotal(gridDetalleAlbaran,"detalleAlbaranGrid",record)
-			me.habilitarPrefactura(boton,record);
+			me.calcularTotal(gridDetalleAlbaran,"detalleAlbaranGrid",record);	
+			var numPrefactura = this.lookupReference('numPrefacturaSearch').value;
+			var fechaPrefactura= Ext.Date.format( me.lookupReference('fechaPrefacturaSearch').value , 'd/m/Y');
+			var estadoPrefactura = this.lookupReference('estadoPrefacturaSearch').value;
+			if((numPrefactura!= null && numPrefactura!= "") || (fechaPrefactura != null && fechaPrefactura !="") 
+					|| ( estadoPrefactura!= null && estadoPrefactura!= "") || (numTrabajo != null && numTrabajo != "") 
+					|| (estadoTrabajo != null && estadoTrabajo != "") || (anyoTrabajo!= null && anyoTrabajo!= "")){
+				me.lookupReference('botonValidarPrefactura').setDisabled(true);
+				me.lookupReference('botonValidarTrabajo').setDisabled(true);
+			}
+			else{
+				me.habilitarPrefactura(boton,record);				
+			}
+			
 		} else {
 			me.deselectPrefactura(grid);
 		}

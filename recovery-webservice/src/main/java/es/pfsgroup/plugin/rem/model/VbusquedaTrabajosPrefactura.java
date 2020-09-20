@@ -59,7 +59,7 @@ public class VbusquedaTrabajosPrefactura implements Serializable{
 	
 	@Column(name = "CHECK_TBJ")
 	private Boolean checkIncluirTrabajo;
-
+	
 	public Long getId() {
 		return id;
 	}

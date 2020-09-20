@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200913
+--## AUTOR=Juan Angel Sanchez
+--## FECHA_CREACION=20200920
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-11154
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-10987
 --## PRODUCTO=SI
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - Pablo Garcia Pallás (HREOS-10987)
+--## 		0.2 Añadir campo anyo_trabajo
 --##########################################
 --*/
 
@@ -68,6 +69,7 @@ BEGIN
 			str.dd_str_codigo,
 			TO_CHAR(TBJ.TBJ_FECHA_SOLICITUD,''YYYY'') ANYO_TRABAJO,
 			1 CHECK_TBJ
+
 		from ' || V_ESQUEMA || '.act_tbj_trabajo tbj
 			join ' || V_ESQUEMA || '.dd_ttr_tipo_trabajo ttr on tbj.dd_ttr_id = ttr.dd_ttr_id
 			join ' || V_ESQUEMA || '.dd_est_estado_trabajo est on tbj.dd_est_id = est.dd_est_id

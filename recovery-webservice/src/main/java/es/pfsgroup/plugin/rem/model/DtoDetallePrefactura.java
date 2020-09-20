@@ -24,6 +24,7 @@ public class DtoDetallePrefactura extends WebDto{
 	private Double importeTotalPrefactura;
 	private Double importeTotalClientePrefactura;
 	private Boolean checkIncluirTrabajo;
+	private String anyoTrabajo;
 	
 	public Long getIdTrabajo() {
 		return idTrabajo;
@@ -90,6 +91,12 @@ public class DtoDetallePrefactura extends WebDto{
 	}
 	public void setNumPrefactura(Long numPrefactura) {
 		this.numPrefactura = numPrefactura;
+	}
+	public String getAnyoTrabajo() {
+		return anyoTrabajo;
+	}
+	public void setAnyoTrabajo(String anyoTrabajo) {
+		this.anyoTrabajo = anyoTrabajo;
 	}
 	
 }

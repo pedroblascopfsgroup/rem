@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -46,6 +47,9 @@ public class VbusquedaPrefacturas implements Serializable{
 	
 	@Column(name = "NUM_GASTOS")
 	private Long numGasto;
+	
+	@Column(name = "PFA_FECHA_PREFACTURA")
+	private Date fechaPrefactura;
 
 	public Long getId() {
 		return id;
@@ -125,6 +129,14 @@ public class VbusquedaPrefacturas implements Serializable{
 
 	public void setNumGasto(Long numGasto) {
 		this.numGasto = numGasto;
+	}
+
+	public Date getFechaPrefactura() {
+		return fechaPrefactura;
+	}
+
+	public void setFechaPrefactura(Date fechaPrefactura) {
+		this.fechaPrefactura = fechaPrefactura;
 	}
 	
 }

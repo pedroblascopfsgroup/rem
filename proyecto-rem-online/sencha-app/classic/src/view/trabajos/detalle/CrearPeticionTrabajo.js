@@ -17,6 +17,8 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 			
 			var me = this;
 			
+			me.lookupReference('checkMultiActivo').fireEvent('change');
+			
 			Ext.Array.each(window.down('form').query('field[isReadOnlyEdit]'),
 				function (field, index) 
 					{ 								
@@ -34,6 +36,8 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 
 	},
     
+	datos: [],
+	
     idActivo: null,
     
     idAgrupacion: null,
@@ -314,7 +318,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 														    xtype: 'gridBase',
 															cls	: 'panel-base shadow-panel',
 															reference: 'listaActivosSubidaRef',
-															colspan:2,
+															colspan:3,
 															bind: {
 				        	   									store: '{listaActivosSubida}'														
 															},
@@ -380,7 +384,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 														    xtype: 'gridBase',
 															cls	: 'panel-base shadow-panel',
 															reference: 'activosagrupaciontrabajo',
-															colspan:1,
+															colspan:3,
 															listeners: {
 																beforeload: 'loadGridSegundo'
 															},
@@ -388,6 +392,16 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 				        	   									store: '{listaActivosAgrupacion}'														
 															},
 															columns: [
+																{
+														        	xtype: 'checkcolumn',
+														            dataIndex: 'checkIncluirActivo',
+														            reference: 'checkIncluirActivo',
+														            flex: 1,
+														            listeners: {
+														                checkchange: 'onCheckChangeIncluirActivo'
+														            },
+														            text: HreRem.i18n('Incluir Activo')
+														        },
 				        	   									{
 				        	   										dataIndex: 'numActivoHaya',
 				        	   										text: HreRem.i18n('header.numero.activo.haya'),
@@ -677,6 +691,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
     
     cerrar: function(){
     	var me = this;
+    	me.unmask();
     	me.close();
     	me.destroy();
     }

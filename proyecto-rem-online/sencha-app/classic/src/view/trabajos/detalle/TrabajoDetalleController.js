@@ -165,7 +165,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	var urlCfg = $AC.getRemoteUrl('trabajo/getPlazoEjecucion');
     	if(me.getView().codCartera != null){
     		codCartera = me.getView().codCartera;
-    		codSubcartera = mew.getView().codSubcartera;
+    		codSubcartera = me.getView().codSubcartera;
     		parametrico = true;
     	}else{
     		if(me.lookupReference('listaActivosSubidaRef').getStore().getData() != null 
@@ -330,6 +330,9 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		var activo= null;
 		var arraySelection= [];
 		var codPromo;
+		if(!Ext.isEmpty(me.getView().idAgrupacion)){
+			arraySelection = me.getView().datos;
+		}
 		if(!Ext.isEmpty(me.getView().idActivo)){
 			activo = btn.lookupViewModel().getView().idActivo;
 			codPromo = me.lookupReference('activosagrupaciontrabajo').getStore().getData().items[0].get('codigoPromocionPrinex');
@@ -505,7 +508,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	var me = this;
     	me.getView().mask(HreRem.i18n("msg.mask.loading"));
     	btn.up('window').cerrar();
-    	me.getView().unmask();
     },
 	
 	hideWindowPeticionTrabajo: function(btn) {
@@ -1324,8 +1326,12 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
  		var me = this;
  		if(checked){
  			me.lookupReference('fieldSetSubirFichero').setHidden(true);
+ 			me.lookupReference('listaActivosSubidaRef').setHidden(true);
+ 			me.lookupReference('activosagrupaciontrabajo').setHidden(false);
  		}else{
  			me.lookupReference('fieldSetSubirFichero').setHidden(false);
+ 			me.lookupReference('listaActivosSubidaRef').setHidden(false);
+ 			me.lookupReference('activosagrupaciontrabajo').setHidden(true);
  		}
  	},
  	
@@ -1403,6 +1409,23 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
  		}
  		
 //		grid.load();
+ 	},
+ 	
+ 	onCheckChangeIncluirActivo: function(columna,rowIndex,checked,record){
+ 		var idAct;
+ 		idAct = me.getView().datos;
+ 		gridStore = me.getView().lookupReference('activosagrupaciontrabajo').getStore().getData();
+ 		for(var i = 0; i< idAct.length;i++){
+ 			if(gridStore.items[rowIndex].data.idActivo == idAct[i]){
+ 				if(!checked){
+ 					idAct.splice(i,1);
+ 					return;
+ 				}
+ 			}
+ 		}
+ 		if(checked){
+ 			idAct.push(gridStore.items[rowIndex].data.idActivo);
+ 		}		
  	},
  	
  	onExportListActivosTrabajo: function(btn){

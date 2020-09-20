@@ -72,7 +72,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    mostrarTotalCliente: function(get){
 	    	var isGestorActivos = $AU.userIsRol('HAYAGESACT');
 	    	var isSuper = $AU.userIsRol('HAYASUPER');
-	    	return isGestorActivos || isSuper;
+	    	var isUsuarioCliente = get('gestionEconomica.esUsuarioCliente');
+	    	return isGestorActivos || isSuper || isUsuarioCliente;
 	    },
 	    
 	    editableTarificacionProveedor: function (get){

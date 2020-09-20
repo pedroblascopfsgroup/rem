@@ -21,6 +21,7 @@ import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.albaran.dao.AlbaranDao;
@@ -182,10 +183,15 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 	}
 	
 	public List<DDEstadoTrabajo> getComboEstadoTrabajo(){
-		List<DDEstadoTrabajo> lista = new ArrayList<DDEstadoTrabajo>();
-		HQLBuilder hb = new HQLBuilder("from DDEstadoTrabajo estTbj ");
-		lista = getHibernateTemplate().getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
-		return lista;
+		List<DDEstadoTrabajo> list = new ArrayList<DDEstadoTrabajo>();
+		boolean identificadorFlag = true;
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "flagActivo", identificadorFlag);
+		try {
+			list = genericDao.getList(DDEstadoTrabajo.class, filtro);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 	
 	@SuppressWarnings("unchecked")

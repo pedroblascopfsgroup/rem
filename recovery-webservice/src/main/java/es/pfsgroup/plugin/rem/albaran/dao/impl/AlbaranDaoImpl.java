@@ -8,12 +8,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.hibernate.pagination.PageHibernate;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
@@ -116,32 +119,33 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vba.codigoEstadoPrefactura", dto.getEstadoPrefactura());
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vba.codigoTipologiaTrabajo", dto.getTipologiaTrabajo());
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vba.numTrabajo", dto.getNumTrabajo());
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vba.codigoEstadoTrabajo", dto.getEstadoTrabajo());
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vba.solicitante", dto.getSolicitante());
 			HQLBuilder.addFiltroLikeSiNotNull(hb, "vba.proveedor", dto.getProveedor());
+			if(!Checks.esNulo(dto.getEstadoTrabajo())) {
+				DDEstadoTrabajo estado = genericDao.get(DDEstadoTrabajo.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoTrabajo()));
+				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vba.estadoTrabajo", estado.getDescripcion());
+			}
 			try {
 				if(dto.getFechaAlbaran() != null) {
 					Date fechaAlb = DateFormat.toDate(dto.getFechaAlbaran());
 					Calendar calendar = Calendar.getInstance();
 					calendar.setTime(fechaAlb); // Configuramos la fecha que se recibe
-					calendar.add(Calendar.DAY_OF_YEAR, 1);  // numero de días a añadir, o restar en caso de días<0
-					
 					Calendar sumado = Calendar.getInstance();
 					sumado.setTime(fechaAlb); // Configuramos la fecha que se recibe
+					sumado.add(Calendar.DAY_OF_YEAR, 1); 
 					sumado.add(Calendar.MILLISECOND, -1);  // numero de días a añadir, o restar en caso de días<0
-					HQLBuilder.addFiltroBetweenSiNotNull(hb, "vba.fechaAlbaran", sumado.getTime(), calendar.getTime());
+					HQLBuilder.addFiltroBetweenSiNotNull(hb, "vba.fechaAlbaran", calendar.getTime(), sumado.getTime());
 				}
 				if(dto.getFechaPrefactura() != null){
 					Date fechaPfa = DateFormat.toDate(dto.getFechaPrefactura());
-					
 					Calendar calendar = Calendar.getInstance();
 					calendar.setTime(fechaPfa); // Configuramos la fecha que se recibe
-					calendar.add(Calendar.DAY_OF_YEAR, 1);  // numero de días a añadir, o restar en caso de días<0
-					
 					Calendar sumado = Calendar.getInstance();
 					sumado.setTime(fechaPfa); // Configuramos la fecha que se recibe
+					sumado.add(Calendar.DAY_OF_YEAR, 1);  
 					sumado.add(Calendar.MILLISECOND, -1);  // numero de días a añadir, o restar en caso de días<0
-					HQLBuilder.addFiltroBetweenSiNotNull(hb, "vba.fechaPrefactura", sumado.getTime(), calendar.getTime());
+					HQLBuilder.addFiltroBetweenSiNotNull(hb, "vba.fechaPrefactura",  calendar.getTime(), sumado.getTime());
 				}
 				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vba.anyoTrabajo", dto.getAnyoTrabajo());
 				
@@ -196,6 +200,22 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 	}
 	
 	public Page getPrefacturas(DtoDetalleAlbaran dto) {
+		List<Long> numPrefacturaList = null;
+		
+		if(!Checks.esNulo(dto.getEstadoTrabajo()) || !Checks.esNulo(dto.getAnyoTrabajo()) || !Checks.esNulo(dto.getNumTrabajo())) {
+			HQLBuilder hq = new HQLBuilder("select distinct vtp.prefacturaID from VbusquedaTrabajosPrefactura vtp");
+			HQLBuilder.addFiltroIgualQueSiNotNull(hq, "vtp.anyoTrabajo", dto.getAnyoTrabajo());
+			HQLBuilder.addFiltroIgualQueSiNotNull(hq, "vtp.numTrabajo", dto.getNumTrabajo());
+			if(!Checks.esNulo(dto.getEstadoTrabajo())) {
+				DDEstadoTrabajo estado = genericDao.get(DDEstadoTrabajo.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoTrabajo()));
+				HQLBuilder.addFiltroIgualQueSiNotNull(hq, "vtp.estadoTrabajo", estado.getDescripcion());
+			}
+			Query query = this.getSessionFactory().getCurrentSession().createQuery(hq.toString());
+			HQLBuilder.parametrizaQuery(query, hq);
+			numPrefacturaList = query.list();
+		}
+		
 		HQLBuilder hb = new HQLBuilder(" from VbusquedaPrefacturas vbp");
 		Albaran alb = genericDao.get(Albaran.class,
 				genericDao.createFilter(FilterType.EQUALS, "numAlbaran", dto.getNumAlbaran()));
@@ -203,6 +223,35 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 			return new PageHibernate(); 
 		}
 		HQLBuilder.addFiltroIgualQue(hb, "vbp.albaranId", alb.getId());
+		
+		if(!Checks.esNulo(dto.getEstadoAlbaran())) {
+			DDEstEstadoPrefactura estado = genericDao.get(DDEstEstadoPrefactura.class,
+				genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoAlbaran()));
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vbp.estadoAlbaran", estado.getDescripcion());
+		}
+		if(dto.getFechaPrefactura() != null && !dto.getFechaPrefactura().equals("")){
+			try {
+			
+				Date fechaPfa = DateFormat.toDate(dto.getFechaPrefactura());
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(fechaPfa); 
+				Calendar sumado = Calendar.getInstance();
+				sumado.setTime(fechaPfa); 
+				sumado.add(Calendar.DAY_OF_YEAR, 1);
+				sumado.add(Calendar.MILLISECOND, -1);
+				HQLBuilder.addFiltroBetweenSiNotNull(hb, "vbp.fechaPrefactura", calendar.getTime(), sumado.getTime());
+			
+			}catch (ParseException e) {
+				logger.error(e);
+			}
+		}
+			
+		if(!Checks.esNulo(numPrefacturaList) && !numPrefacturaList.isEmpty()) {
+				HQLBuilder.addFiltroWhereInSiNotNull(hb,"vbp.numPrefactura",numPrefacturaList);
+		}
+		else {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vbp.numPrefactura", dto.getNumPrefactura());
+		}
 		
 		return HibernateQueryUtils.page(this, hb, dto);
 	}
@@ -215,6 +264,13 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 			return new PageHibernate();
 		}
 		HQLBuilder.addFiltroIgualQue(hb, "vtp.prefacturaID", pre.getId());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vtp.anyoTrabajo", dto.getAnyoTrabajo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vtp.numTrabajo", dto.getNumTrabajo());
+		if(!Checks.esNulo(dto.getEstadoTrabajo())) {
+			DDEstadoTrabajo estado = genericDao.get(DDEstadoTrabajo.class,
+				genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoTrabajo()));
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vtp.estadoTrabajo", estado.getDescripcion());
+		}
 		
 		return HibernateQueryUtils.page(this, hb, dto);
 	}

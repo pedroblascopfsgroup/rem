@@ -1884,7 +1884,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
 
 		Filter filtroSolicitado = genericDao.createFilter(FilterType.EQUALS, "codigo",
-				DDEstadoTrabajo.ESTADO_SOLICITADO);
+				DDEstadoTrabajo.CODIGO_ESTADO_EN_CURSO);
 		Filter filtroEnTramite = genericDao.createFilter(FilterType.EQUALS, "codigo",
 				DDEstadoTrabajo.ESTADO_EN_TRAMITE);
 
@@ -1918,11 +1918,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
 
 		Filter filtroSolicitado = genericDao.createFilter(FilterType.EQUALS, "codigo",
-				DDEstadoTrabajo.ESTADO_SOLICITADO);
+				DDEstadoTrabajo.CODIGO_ESTADO_EN_CURSO);
 		Filter filtroEnTramite = genericDao.createFilter(FilterType.EQUALS, "codigo",
 				DDEstadoTrabajo.ESTADO_EN_TRAMITE);
 
-		// Por defecto: Solicitado
+		// Por defecto: en Curso
 		DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filtroSolicitado);
 		if ((!Checks.esNulo(gestorActivo) && logedUser.equals(gestorActivo)
 			|| (idGrpsUsuario != null && !idGrpsUsuario.isEmpty() && idGrpsUsuario.contains(gestorActivo.getId())))

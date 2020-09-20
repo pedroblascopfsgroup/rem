@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
+import java.util.Date;
+
 import es.capgemini.devon.dto.WebDto;
 
 /**
@@ -22,6 +24,11 @@ public class DtoDetalleAlbaran extends WebDto implements Comparable<DtoDetalleAl
 	private Integer numeroTrabajos;
 	private Double importeTotalDetalle;
 	private Double importeTotalClienteDetalle;
+	private String fechaPrefactura;
+	private String anyoTrabajo;
+	private Long numTrabajo;
+	private String estadoTrabajo;
+	
 	
 	public Long getNumPrefactura() {
 		return numPrefactura;
@@ -94,5 +101,29 @@ public class DtoDetalleAlbaran extends WebDto implements Comparable<DtoDetalleAl
 	}
 	public int compareTo(DtoDetalleAlbaran a) {
 		return this.getNumPrefactura().intValue() - a.getNumPrefactura().intValue();
+	}
+	public String getFechaPrefactura() {
+		return fechaPrefactura;
+	}
+	public void setFechaPrefactura(String fechaPrefactura) {
+		this.fechaPrefactura = fechaPrefactura;
+	}
+	public Long getNumTrabajo() {
+		return numTrabajo;
+	}
+	public void setNumTrabajo(Long numTrabajo) {
+		this.numTrabajo = numTrabajo;
+	}
+	public String getAnyoTrabajo() {
+		return anyoTrabajo;
+	}
+	public void setAnyoTrabajo(String anyoTrabajo) {
+		this.anyoTrabajo = anyoTrabajo;
+	}
+	public String getEstadoTrabajo() {
+		return estadoTrabajo;
+	}
+	public void setEstadoTrabajo(String estadoTrabajo) {
+		this.estadoTrabajo = estadoTrabajo;
 	}
 }

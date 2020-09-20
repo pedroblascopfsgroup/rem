@@ -72,6 +72,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesSearch', {
 							fieldLabel : HreRem
 									.i18n('fieldlabel.albaran.numPrefactura'),
 							name : 'numPrefactura',
+							reference : 'numPrefacturaSearch',
 							width : 230
 						},
 						{
@@ -80,6 +81,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesSearch', {
 									.i18n('fieldlabel.albaran.fechaPrefacturas'),
 							width : 230,
 							name : 'fechaPrefactura',
+							reference: 'fechaPrefacturaSearch',
 							formatter : 'date("d/m/Y")'
 						},
 						{
@@ -90,6 +92,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesSearch', {
 							labelWidth : 150,
 							width : 230,
 							name : 'estadoPrefactura',
+							reference : 'estadoPrefacturaSearch',
 							queryMode : 'remote',
 							bind : {
 								store : '{comboEstadoPrefactura}',
@@ -106,12 +109,14 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesSearch', {
 							fieldLabel : HreRem
 									.i18n('fieldlabel.albaran.numTrabajo'),
 							name : 'numTrabajo',
+							reference: 'numTrabajoSearch',
 							width : 230
 						},
 						{
 							xtype : 'textfield',
 							fieldLabel : HreRem.i18n('fieldlabel.albaran.fechaAlta'),
 							name : 'anyoTrabajo',
+							reference : 'anyoTrabajoSearch',
 //							formatter : 'date("d/m/Y")',
 							width : 230
 						},
@@ -123,6 +128,7 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesSearch', {
 							labelWidth : 150,
 							width : 230,
 							name : 'estadoTrabajo',
+							reference : 'estadoTrabajoSearch',
 							queryMode : 'remote',
 							bind : {
 								store : '{filtroComboEstadoTrabajo}',

@@ -30,6 +30,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionEconomicaTrabajo;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.HistorificadorPestanas;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaTrabajosGastos;
 import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
@@ -38,6 +39,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
+import es.pfsgroup.plugin.rem.trabajo.dto.DtoHistorificadorCampos;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 
 @Repository("TrabajoDao")
@@ -271,6 +273,19 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "traCfgTar.trabajo.id", filtro.getIdTrabajo());
 		
 		return HibernateQueryUtils.page(this, hb, filtro);
+	}
+	
+	@Override
+	public Page getHistTrabajo(Long filtro)
+	{
+		
+		DtoHistorificadorCampos dto = new DtoHistorificadorCampos();
+		
+		dto.setIdTrabajo(filtro);
+		HQLBuilder hb = new HQLBuilder(" from HistorificadorPestanas histPest");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "histPest.trabajo.id", dto.getIdTrabajo());
+		
+		return HibernateQueryUtils.page(this, hb, dto);
 	}
 	
 	@Override

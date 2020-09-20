@@ -126,6 +126,8 @@ import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
+import es.pfsgroup.plugin.rem.model.GastoLineaDetalleTrabajo;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.HistorificadorPestanas;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -475,13 +477,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		dtoHistorificador.setTabla(ConstantesTrabajo.NOMBRE_TABLA);
 		String codPestana = "FIC";
 		
-		if(!Checks.esNulo(dtoTrabajo.getIdResponsableTrabajo())){
+		if(!Checks.esNulo(dtoTrabajo.getGestorActivoCodigo())){
 			dtoHistorificador.setCampo(ConstantesTrabajo.RESPONSABLE_TRABAJO);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_RESPONSABLE_TRABAJO);
-			if(!Checks.esNulo(trabajo.getUsuarioResponsableTrabajo())) {
-				dtoHistorificador.setValorAnterior(trabajo.getUsuarioResponsableTrabajo().getApellidoNombre());
+			if(!Checks.esNulo(trabajo.getGestorAlta())) {
+				dtoHistorificador.setValorAnterior(trabajo.getGestorAlta().getApellidoNombre());
 			}
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdResponsableTrabajo());
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getGestorActivoCodigo());
 			Usuario responsable = genericDao.get(Usuario.class, filtro);
 			dtoHistorificador.setValorNuevo(responsable.getApellidoNombre());
 
@@ -489,13 +491,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		
 		
-		if(!Checks.esNulo(dtoTrabajo.getDescripcion())){
+		if(!Checks.esNulo(dtoTrabajo.getDescripcionGeneral())){
 			dtoHistorificador.setCampo(ConstantesTrabajo.DESCRIPCION);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_DESCRIPCION);
 			if(!Checks.esNulo(trabajo.getDescripcion())) {
 				dtoHistorificador.setValorAnterior(trabajo.getDescripcion());
 			}
-			dtoHistorificador.setValorNuevo(dtoTrabajo.getDescripcion());
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getDescripcionGeneral());
 			
 			guardarCambiosHistorificador(dtoHistorificador, codPestana);
 		}
@@ -531,13 +533,30 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if(!Checks.esNulo(dtoTrabajo.getCubreSeguro())){
 			dtoHistorificador.setCampo(ConstantesTrabajo.ACTUACION_CUBIERTA);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_ACTUACION_CUBIERTA);
+			
 			if(!Checks.esNulo(trabajo.getCubreSeguro())) {
 				dtoHistorificador.setValorAnterior(trabajo.getCubreSeguro().toString());
 			}
-			dtoHistorificador.setValorNuevo(dtoTrabajo.getCubreSeguro().toString());
+			if (!dtoTrabajo.getCubreSeguro()) {
+				dtoHistorificador.setValorNuevo(ConstantesTrabajo.VALOR_BOL_NO);
+			}else {
+				dtoHistorificador.setValorNuevo(ConstantesTrabajo.VALOR_BOL_SI);
+			}
 			
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
+		
+		if (dtoTrabajo.getImportePrecio() != null) {
+			dtoHistorificador.setCampo(ConstantesTrabajo.IMPORTE_TOTAL);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_IMPORTE_TOTAL);
+			if (trabajo.getImporteTotal() != null) {
+				dtoHistorificador.setValorAnterior(trabajo.getImporteTotal().toString());
+			}
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getImportePrecio().toString());
+			
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
+		}
+		
 		
 		if(!Checks.esNulo(dtoTrabajo.getCiaAseguradora())){
 			dtoHistorificador.setCampo(ConstantesTrabajo.COMPAÑIA_ASEGURADORA);
@@ -552,49 +571,32 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
 		
-		if(!Checks.esNulo(dtoTrabajo.getNombreUg())){
-			dtoHistorificador.setCampo(ConstantesTrabajo.NOMBRE_UG);
-			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_NOMBRE_UG);
-			if(!Checks.esNulo(trabajo.getNombreUg())) {
-				dtoHistorificador.setValorAnterior(trabajo.getNombreUg());
+		if(!Checks.esNulo(dtoTrabajo.getResolucionComiteCodigo())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.DD_ACO_ID);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_DD_ACO_ID);
+			if(!Checks.esNulo(trabajo.getAprobacionComite())) {
+				dtoHistorificador.setValorAnterior(trabajo.getAprobacionComite().getDescripcion());
 			}
-			dtoHistorificador.setValorNuevo(dtoTrabajo.getNombreUg());
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getResolucionComiteCodigo());
+			DDAcoAprobacionComite aprobacionComite = genericDao.get(DDAcoAprobacionComite.class, filtro);
+			dtoHistorificador.setValorNuevo(aprobacionComite.getDescripcion());
 			
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
 		
-		if(!Checks.esNulo(dtoTrabajo.getNombreExpediente())){
-			dtoHistorificador.setCampo(ConstantesTrabajo.NOMBRE_EXPEDIENTE_TRABAJO);
-			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_NOMBRE_EXPEDIENTE_TRABAJO);
-			if(!Checks.esNulo(trabajo.getNombreExpedienteTrabajo())) {
-				dtoHistorificador.setValorAnterior(trabajo.getNombreExpedienteTrabajo());
+		if(!Checks.esNulo(dtoTrabajo.getEstadoTrabajoCodigo())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.DD_EST_ID);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_DD_EST_ID);
+			if(!Checks.esNulo(trabajo.getEstado().getDescripcion())) {
+				dtoHistorificador.setValorAnterior(trabajo.getEstado().getDescripcion());
 			}
-			dtoHistorificador.setValorNuevo(dtoTrabajo.getNombreExpediente());
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getEstadoTrabajoCodigo());
+			DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filtro);
+			dtoHistorificador.setValorNuevo(estadoTrabajo.getDescripcion());
 			
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
 		
-		if(!Checks.esNulo(dtoTrabajo.getNombreProyecto())){
-			dtoHistorificador.setCampo(ConstantesTrabajo.NOMBRE_PROYECTO);
-			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_NOMBRE_PROYECTO);
-			if(!Checks.esNulo(trabajo.getNombreProyecto())) {
-				dtoHistorificador.setValorAnterior(trabajo.getNombreProyecto());
-			}
-			dtoHistorificador.setValorNuevo(dtoTrabajo.getNombreProyecto());
-			
-			guardarCambiosHistorificador(dtoHistorificador,codPestana);
-		}
-		
-		if(!Checks.esNulo(dtoTrabajo.getCodigoSubpartida())){
-			dtoHistorificador.setCampo(ConstantesTrabajo.SUBPARTIDA);
-			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_SUBPARTIDA);
-			if(!Checks.esNulo(trabajo.getCodigoSubpartida())) {
-				dtoHistorificador.setValorAnterior(trabajo.getCodigoSubpartida());
-			}
-			dtoHistorificador.setValorNuevo(dtoTrabajo.getCodigoSubpartida());
-			
-			guardarCambiosHistorificador(dtoHistorificador, codPestana);
-		}
 		
 		if(!Checks.esNulo(dtoTrabajo.getFechaConcreta())){
 			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_REALIZACION_TRABAJO);
@@ -627,17 +629,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
 		
-		if(!Checks.esNulo(dtoTrabajo.getRequerimiento())){
-			dtoHistorificador.setCampo(ConstantesTrabajo.REQUERIMIENTO);
-			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_REQUERIMIENTO);
-			if(!Checks.esNulo(trabajo.getRequerimiento())) {
-				dtoHistorificador.setValorAnterior(trabajo.getRequerimiento().toString());
-			}
-			dtoHistorificador.setValorNuevo(dtoTrabajo.getRequerimiento().toString());
-			
-			guardarCambiosHistorificador(dtoHistorificador,codPestana);
-		}
-		
 		if(!Checks.esNulo(dtoTrabajo.getFechaTope())){
 			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_FINALIZADO);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_FECHA_FINALIZADO);
@@ -660,24 +651,141 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			if(!Checks.esNulo(trabajo.getUrgente())) {
 				dtoHistorificador.setValorAnterior(trabajo.getUrgente().toString());
 			}
-			dtoHistorificador.setValorNuevo(dtoTrabajo.getUrgente().toString());
+			if (!dtoTrabajo.getUrgente()) {
+				dtoHistorificador.setValorNuevo(ConstantesTrabajo.VALOR_BOL_NO);
+			}else {
+				dtoHistorificador.setValorNuevo(ConstantesTrabajo.VALOR_BOL_SI);
+			}
+			//dtoHistorificador.setValorNuevo(dtoTrabajo.getUrgente().toString());
 			
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
 		
 		
-		if(!Checks.esNulo(dtoTrabajo.getRiesgoInminenteTerceros())){
+		if(!Checks.esNulo(dtoTrabajo.getRiesgosTerceros())){
 			dtoHistorificador.setCampo(ConstantesTrabajo.CON_RIESGO);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_CON_RIESGO);
 			if(!Checks.esNulo(trabajo.getRiesgoInminenteTerceros())) {
 				dtoHistorificador.setValorAnterior(trabajo.getRiesgoInminenteTerceros().toString());
 			}
-			dtoHistorificador.setValorNuevo(dtoTrabajo.getRiesgoInminenteTerceros().toString());
+			if (!dtoTrabajo.getRiesgosTerceros()) {
+				dtoHistorificador.setValorNuevo(ConstantesTrabajo.VALOR_BOL_NO);
+			}else {
+				dtoHistorificador.setValorNuevo(ConstantesTrabajo.VALOR_BOL_SI);
+			}
+			//dtoHistorificador.setValorNuevo(dtoTrabajo.getRiesgoInminenteTerceros().toString());
 			
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 			
 		}
+		if (dtoTrabajo.getAplicaComite() != null) {
+			dtoHistorificador.setCampo(ConstantesTrabajo.APLICA_COMITE);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_APLICA_COMITE);
+			if (trabajo.getAplicaComite() != null) {
+				dtoHistorificador.setValorAnterior(trabajo.getAplicaComite().toString());
+			}
+			if (!dtoTrabajo.getAplicaComite()) {
+				dtoHistorificador.setValorNuevo(ConstantesTrabajo.VALOR_BOL_NO);
+			}else {
+				dtoHistorificador.setValorNuevo(ConstantesTrabajo.VALOR_BOL_SI);
+			}
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
+		}
+		if(dtoTrabajo.getFechaResolucionComite() != null){
+			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_RES_COMITE);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_FECHA_RES_COMITE);
+			if(!Checks.esNulo(trabajo.getFechaResolucionComite())) {
+				dtoHistorificador.setValorAnterior(trabajo.getFechaResolucionComite().toString());
+			}
+			SimpleDateFormat formatoDelTexto = new SimpleDateFormat("dd/MM/yyyy");
+			String fechaFormateada = null;
+			fechaFormateada = formatoDelTexto.format(dtoTrabajo.getFechaResolucionComite());
+			dtoHistorificador.setValorNuevo(fechaFormateada);
+			
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
+		}
 		
+		if (dtoTrabajo.getResolucionComiteId() != null) {
+			dtoHistorificador.setCampo(ConstantesTrabajo.RES_COMITE_ID);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_RES_COMITE_ID);
+			if (trabajo.getResolucionComiteId() != null) {
+				dtoHistorificador.setValorAnterior(trabajo.getResolucionComiteId());
+			}
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getResolucionComiteId());
+			
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
+		}
+		
+		if(!Checks.esNulo(dtoTrabajo.getFechaEjecucionTrabajo())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_EJECUTADO);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_FECHA_EJECUTADO);
+			if(!Checks.esNulo(trabajo.getFechaEjecucionReal())) {
+				dtoHistorificador.setValorAnterior(trabajo.getFechaEjecucionReal().toString());
+			}
+			SimpleDateFormat formatoDelTexto = new SimpleDateFormat("dd/MM/yyyy");
+			String fechaFormateada = null;
+			fechaFormateada = formatoDelTexto.format(dtoTrabajo.getFechaEjecucionTrabajo());
+			dtoHistorificador.setValorNuevo(fechaFormateada);
+			
+			
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
+		}
+		if (dtoTrabajo.getTarifaPlana() != null) {
+			dtoHistorificador.setCampo(ConstantesTrabajo.TARIFA_PLANA);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_TARIFA_PLANA);
+			if (trabajo.getEsTarifaPlana() != null) {
+				dtoHistorificador.setValorAnterior(trabajo.getEsTarifaPlana().toString());
+			}
+			if (!dtoTrabajo.getTarifaPlana()) {
+				dtoHistorificador.setValorNuevo(ConstantesTrabajo.VALOR_BOL_NO);
+			}else {
+				dtoHistorificador.setValorNuevo(ConstantesTrabajo.VALOR_BOL_SI);
+			}
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
+		}
+		if (dtoTrabajo.getRiesgoSiniestro() != null) {
+			dtoHistorificador.setCampo(ConstantesTrabajo.SINIESTRO);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_SINIESTRO);
+			if (trabajo.getSiniestro() != null) {
+				dtoHistorificador.setValorAnterior(trabajo.getSiniestro().toString());
+			}
+			if (!dtoTrabajo.getRiesgoSiniestro()) {
+				dtoHistorificador.setValorNuevo(ConstantesTrabajo.VALOR_BOL_NO);
+			}else {
+				dtoHistorificador.setValorNuevo(ConstantesTrabajo.VALOR_BOL_SI);
+			}
+			
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
+		}
+		
+		if(!Checks.esNulo(dtoTrabajo.getFechaEntregaTrabajo())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_ENTREGA_LLAVES);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_FECHA_ENTREGA_LLAVES);
+			if(!Checks.esNulo(trabajo.getFechaEntregaLlaves())) {
+				dtoHistorificador.setValorAnterior(trabajo.getFechaEntregaLlaves().toString());
+			}
+			SimpleDateFormat formatoDelTexto = new SimpleDateFormat("dd/MM/yyyy");
+			String fechaFormateada = null;
+			fechaFormateada = formatoDelTexto.format(dtoTrabajo.getFechaEntregaTrabajo());
+			dtoHistorificador.setValorNuevo(fechaFormateada);
+			
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
+			
+		}
+		if (dtoTrabajo.getLlavesNoAplica() != null) {
+			dtoHistorificador.setCampo(ConstantesTrabajo.NO_APLICA_LLAVES);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_NO_APLICA_LLAVES);
+			if (trabajo.getNoAplicaLlaves() != null) {
+				dtoHistorificador.setValorAnterior(trabajo.getNoAplicaLlaves().toString());
+			}
+			if (!dtoTrabajo.getLlavesNoAplica()) {
+				dtoHistorificador.setValorNuevo(ConstantesTrabajo.VALOR_BOL_NO);
+			}else {
+				dtoHistorificador.setValorNuevo(ConstantesTrabajo.VALOR_BOL_SI);
+			}
+			
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
+		}
 		
 		if(!Checks.esNulo(dtoTrabajo.getFechaInicio())){
 			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_INICIO);
@@ -695,6 +803,17 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			
 		}
 		
+		if(!Checks.esNulo(dtoTrabajo.getLlavesMotivo())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.MOTIVO_LLAVES);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_MOTIVO_LLAVES);
+			if(!Checks.esNulo(trabajo.getMotivoLlaves())) {
+				dtoHistorificador.setValorAnterior(trabajo.getMotivoLlaves());
+			}
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getLlavesMotivo());
+			
+			guardarCambiosHistorificador(dtoHistorificador, codPestana);
+		}
+		
 		if(!Checks.esNulo(dtoTrabajo.getFechaFin())){
 			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_FIN);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_FECHA_FIN);
@@ -706,93 +825,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			fechaFormateada = formatoDelTexto.format(dtoTrabajo.getFechaFin());
 			dtoHistorificador.setValorNuevo(fechaFormateada);
 			
-			
-			guardarCambiosHistorificador(dtoHistorificador,codPestana);
-			
-		}
-		
-		if(!Checks.esNulo(dtoTrabajo.getContinuoObservaciones())){
-			dtoHistorificador.setCampo(ConstantesTrabajo.OBSERVACIONES);
-			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_OBSERVACIONES);
-			if(!Checks.esNulo(trabajo.getContinuoObservaciones())) {
-				dtoHistorificador.setValorAnterior(trabajo.getContinuoObservaciones());
-			}
-			dtoHistorificador.setValorNuevo(dtoTrabajo.getContinuoObservaciones());
-			
-			guardarCambiosHistorificador(dtoHistorificador,codPestana);
-			
-		}
-		
-		if(!Checks.esNulo(dtoTrabajo.getTerceroNombre())){
-			dtoHistorificador.setCampo(ConstantesTrabajo.NOMBRE);
-			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_NOMBRE);
-			if(!Checks.esNulo(trabajo.getTerceroNombre())) {
-				dtoHistorificador.setValorAnterior(trabajo.getTerceroNombre());
-			}
-			dtoHistorificador.setValorNuevo(dtoTrabajo.getTerceroNombre());
-			
-			guardarCambiosHistorificador(dtoHistorificador,codPestana);
-			
-		}
-		
-		
-		if(!Checks.esNulo(dtoTrabajo.getTerceroContacto())) {
-			dtoHistorificador.setCampo(ConstantesTrabajo.PERSONA_CONTACTO);
-			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_PERSONA_CONTACTO);
-			if(!Checks.esNulo(trabajo.getTerceroContacto())) {
-				dtoHistorificador.setValorAnterior(trabajo.getTerceroContacto());
-			}
-			dtoHistorificador.setValorNuevo(dtoTrabajo.getTerceroContacto());
-		
-			guardarCambiosHistorificador(dtoHistorificador,codPestana);
-		}
-		
-		if(!Checks.esNulo(dtoTrabajo.getTerceroEmail())) {
-			dtoHistorificador.setCampo(ConstantesTrabajo.EMAIL);
-			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_EMAIL);
-			if(!Checks.esNulo(trabajo.getTerceroEmail())) {
-				dtoHistorificador.setValorAnterior(trabajo.getTerceroEmail());
-			}
-			dtoHistorificador.setValorNuevo(dtoTrabajo.getTerceroEmail());
-
-			guardarCambiosHistorificador(dtoHistorificador,codPestana);
-		}
-		
-		if(!Checks.esNulo(dtoTrabajo.getTerceroTel1())) {
-			dtoHistorificador.setCampo(ConstantesTrabajo.TELEFONO_1);
-			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_TELEFONO_1);
-			if(!Checks.esNulo(trabajo.getTerceroTel1())) {
-				dtoHistorificador.setValorAnterior(trabajo.getTerceroTel1());
-			}
-			dtoHistorificador.setValorNuevo(dtoTrabajo.getTerceroTel1());
-
-			guardarCambiosHistorificador(dtoHistorificador,codPestana);
-		}
-		
-		if(!Checks.esNulo(dtoTrabajo.getTerceroTel2())) {
-			dtoHistorificador.setCampo(ConstantesTrabajo.TELEFONO_2);
-			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_TELEFONO_2);
-			if(!Checks.esNulo(trabajo.getTerceroTel2())) {
-				dtoHistorificador.setValorAnterior(trabajo.getTerceroTel2());
-			}
-			dtoHistorificador.setValorNuevo(dtoTrabajo.getTerceroTel2());
-
-			guardarCambiosHistorificador(dtoHistorificador,codPestana);
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);		
 		}
 
-		if(!Checks.esNulo(dtoTrabajo.getTerceroDireccion())) {
-			dtoHistorificador.setCampo(ConstantesTrabajo.DIRECCION);
-			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_DIRECCION);
-			if(!Checks.esNulo(trabajo.getTerceroDireccion())) {
-				dtoHistorificador.setValorAnterior(trabajo.getTerceroDireccion());
-			}
-			dtoHistorificador.setValorNuevo(dtoTrabajo.getTerceroDireccion());
-
-			guardarCambiosHistorificador(dtoHistorificador,codPestana);
-		}
-
-
-		
 	}
 	
 	@Transactional
@@ -1975,37 +2010,24 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (dtoTrabajo.getGestorActivoCodigo() != null) {					
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getGestorActivoCodigo());
 			Usuario usuario = genericDao.get(Usuario.class, filtro);
-			trabajo.setUsuarioResponsableTrabajo(usuario);		
+			trabajo.setGestorAlta(usuario);
+			//trabajo.setUsuarioResponsableTrabajo(usuario);		
 		}
-		/*if (dtoTrabajo.getEstadoGastoCodigo() != null) {
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getEstadoGastoCodigo());
-			DDEstadoGasto estadoGasto = genericDao.get(DDEstadoGasto.class, filtro);
-			GastoProveedorTrabajo gpv = trabajo.getGastoTrabajo();
-			GastoProveedor gastoProv = gpv.getGastoProveedor();
-			//gastoProv.setEstadoGasto(estadoGasto);
-			//gpv.setGastoProveedor(gastoProv);
-			//trabajo.setGastoTrabajo(gpv);
-		}*/
+
 		if (dtoTrabajo.getCubreSeguro() != null) {
 			trabajo.setCubreSeguro(dtoTrabajo.getCubreSeguro());
-		}else {
-			trabajo.setCubreSeguro(false);		
 		}
 		if (dtoTrabajo.getCiaAseguradora() != null) {
 			trabajo.setCiaAseguradora(dtoTrabajo.getCiaAseguradora());
 		}
 		if (dtoTrabajo.getImportePrecio() != null) {
-			trabajo.setImportePresupuesto(dtoTrabajo.getImportePrecio());
+			trabajo.setImporteTotal(dtoTrabajo.getImportePrecio());
 		}
 		if (dtoTrabajo.getUrgente() != null) {
 			trabajo.setUrgente(dtoTrabajo.getUrgente());
-		}else {
-			trabajo.setUrgente(false);
 		}
 		if (dtoTrabajo.getRiesgosTerceros() != null) {
 			trabajo.setRiesgoInminenteTerceros(dtoTrabajo.getRiesgosTerceros());
-		}else {
-			trabajo.setRiesgoInminenteTerceros(false);
 		}
 		
 		if (dtoTrabajo.getResolucionComiteCodigo() != null) {
@@ -2052,17 +2074,48 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		if(dtoTrabajo.getTarifaPlana() != null) {
 			trabajo.setEsTarifaPlana(dtoTrabajo.getTarifaPlana());
-		}else {
-			trabajo.setEsTarifaPlana(false);
 		}
 		if (dtoTrabajo.getRiesgoSiniestro() != null) {
 			trabajo.setSiniestro(dtoTrabajo.getRiesgoSiniestro());
-		}else {
-			trabajo.setSiniestro(false);
 		}
-		//
+		if (dtoTrabajo.getEstadoGastoCodigo() != null) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getEstadoGastoCodigo());
+			DDEstadoGasto estadoGasto = genericDao.get(DDEstadoGasto.class, filtro);
+			trabajo.getGastoTrabajo().getGastoLineaDetalle().getGastoProveedor().setEstadoGasto(estadoGasto);
+			
+		}
 		
 		
+		if((dtoTrabajo.getIdProveedorLlave() != null)) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdProveedorLlave());
+			ActivoProveedorContacto proveedorContactoLlaves = genericDao.get(ActivoProveedorContacto.class, filtro);
+
+			if(proveedorContactoLlaves != null)
+				trabajo.setProveedorContactoLlaves(proveedorContactoLlaves);
+		}
+		
+		 if(dtoTrabajo.getIdProveedorReceptor() != null) {
+			 Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdProveedorReceptor());
+			 ActivoProveedorContacto proveedorContactoRecep = genericDao.get(ActivoProveedorContacto.class, filtro);
+
+			 if(proveedorContactoRecep != null) {
+				 trabajo.setProveedorContacto(proveedorContactoRecep); 
+			 }
+			 
+		 }
+		 
+		if (dtoTrabajo.getFechaEntregaTrabajo() != null) {
+			trabajo.setFechaEntregaLlaves(dtoTrabajo.getFechaEntregaTrabajo());
+		}
+		
+		if (dtoTrabajo.getLlavesNoAplica() != null) {
+			trabajo.setNoAplicaLlaves(dtoTrabajo.getLlavesNoAplica());
+		}
+		if (dtoTrabajo.getLlavesMotivo() != null) {
+			trabajo.setMotivoLlaves(dtoTrabajo.getLlavesMotivo());
+		}
+		
+
 		if(dtoTrabajo.getIdMediador() != null) {
 			ActivoProveedor mediador = genericDao.get(ActivoProveedor.class, 
 					genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdMediador()));
@@ -2089,21 +2142,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajo.setSiniestro(dtoTrabajo.getEsSiniestroEditable());
 		}
 		
-		/*if (Checks.esNulo(dtoTrabajo.getUrgente()))
-			trabajo.setUrgente(false);
-		 */
-	/*	if (Checks.esNulo(dtoTrabajo.getRiesgoInminenteTerceros()))
-			trabajo.setRiesgoInminenteTerceros(false);
-
-		if (Checks.esNulo(dtoTrabajo.getCubreSeguro()))
-			trabajo.setCubreSeguro(false);
-
-		if (dtoTrabajo.getEstadoCodigo() != null) {
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getEstadoCodigo());
-			DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filtro);
-
-			trabajo.setEstado(estadoTrabajo);
-		}*/
 
 		if (dtoTrabajo.getTipoCalidadCodigo() != null) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getTipoCalidadCodigo());
@@ -2516,10 +2554,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			GastoProveedor gasto = trabajo.getGastoTrabajo().getGastoLineaDetalle().getGastoProveedor();
 			dtoTrabajo.setGastoProveedor(gasto.getNumGastoHaya());
 			dtoTrabajo.setEstadoGasto(gasto.getEstadoGasto().getCodigo());
-			if(gastoProveedorApi.isEstadosGastosLiberbankParaLecturaDirectaDeTabla(gasto)) {
+			/*if(gastoProveedorApi.isEstadosGastosLiberbankParaLecturaDirectaDeTabla(gasto)) {
 				gastoProveedorApi.saveGastosDiariosLbk(gasto.getId());
 				gastoProveedorApi.saveGastosImportesLbk(gasto.getId());
-			}
+			}*/
 			
 		}
 
@@ -2716,8 +2754,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (trabajo.getCubreSeguro() != null) {//
 			dtoTrabajo.setCubreSeguro(trabajo.getCubreSeguro());
 		}
-		if (trabajo.getImportePresupuesto() != null) {
-			dtoTrabajo.setImportePrecio(trabajo.getImportePresupuesto());
+		if (trabajo.getImporteTotal() != null) {
+			dtoTrabajo.setImportePrecio(trabajo.getImporteTotal());
 		}
 		if (trabajo.getUrgente() != null) {
 			dtoTrabajo.setUrgente(trabajo.getUrgente());
@@ -2738,7 +2776,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setResolucionComiteId(trabajo.getResolucionComiteId());
 		}
 		if (trabajo.getEstado() != null) {
-			dtoTrabajo.setEstadoCodigo(trabajo.getEstado().getCodigo());
+			dtoTrabajo.setEstadoTrabajoCodigo(trabajo.getEstado().getCodigo());
 		}
 		if (trabajo.getFechaTope() != null) {
 			dtoTrabajo.setFechaTope(trabajo.getFechaTope());
@@ -2763,18 +2801,43 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				dtoTrabajo.setNumAlbaran(albaran.getNumAlbaran());
 			}
 		}
+		if (trabajo.getGastoTrabajo() != null 
+				&& trabajo.getGastoTrabajo().getGastoLineaDetalle() != null 
+				&& trabajo.getGastoTrabajo().getGastoLineaDetalle().getGastoProveedor() != null) {
+			dtoTrabajo.setNumGasto(trabajo.getGastoTrabajo().getGastoLineaDetalle().getGastoProveedor().getNumGastoHaya());
+			if (trabajo.getGastoTrabajo().getGastoLineaDetalle().getGastoProveedor().getEstadoGasto() != null) {
+				dtoTrabajo.setEstadoGastoCodigo(trabajo.getGastoTrabajo().getGastoLineaDetalle().getGastoProveedor().getEstadoGasto().getCodigo());
+			}
+		}
 		
+		if (trabajo.getProveedorContactoLlaves() != null) {
+			dtoTrabajo.setIdProveedorReceptor(trabajo.getProveedorContactoLlaves().getId());
+
+			if (trabajo.getProveedorContactoLlaves().getProveedor() != null) {
+				dtoTrabajo.setIdProveedorLlave(trabajo.getProveedorContactoLlaves().getProveedor().getId());
+				
+			}
+		}
+		if (trabajo.getFechaEntregaLlaves() != null) {
+			dtoTrabajo.setFechaEntregaTrabajo(trabajo.getFechaEntregaLlaves());
+		}
+		if (trabajo.getNoAplicaLlaves() != null) {
+			dtoTrabajo.setLlavesNoAplica(trabajo.getNoAplicaLlaves());
+		}
+
+		if (trabajo.getMotivoLlaves() != null) {
+			dtoTrabajo.setLlavesMotivo(trabajo.getMotivoLlaves());
+		}
 		Filter filtroTipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.codigo", trabajo.getTipoTrabajo().getCodigo());
 		Filter filtroSubTipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "subtipoTrabajo.codigo", trabajo.getSubtipoTrabajo().getCodigo());
+		
 		CFGVisualizarLlaves visualizaLlaves = genericDao.get(CFGVisualizarLlaves.class, filtroTipoTrabajo, filtroSubTipoTrabajo);
 		if (visualizaLlaves != null && visualizaLlaves.getVisualizacionLlaves() == 1) {
 			dtoTrabajo.setVisualizarLlaves(true);
+			
 		}else {
 			dtoTrabajo.setVisualizarLlaves(false);
 		}
-		
-		
-		
 
 		List<ActivoTramite> tramitesTrabajo = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
 		
@@ -5399,12 +5462,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return listadoEstados;
 	}
 	@Override
- 	public List<DtoHistorificadorCampos> getListHistoricoDeCampos(Long idTrabajo, String codPestanya){
+ 	public DtoPage getListHistoricoDeCampos(Long idTrabajo, String codPestanya){
 		List<HistorificadorPestanas> listHistPest = null;
 		List<DtoHistorificadorCampos> listDtoHistCamp = new ArrayList<DtoHistorificadorCampos>();
 		try {
 			Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", idTrabajo);
 			
+			Page page = trabajoDao.getHistTrabajo(idTrabajo);
 			Order order  = new Order(OrderType.DESC, "fechaModificacion");
 			if(codPestanya == null || "".equals(codPestanya)){
 				listHistPest = genericDao.getListOrdered(HistorificadorPestanas.class, order, filtroTrabajo);
@@ -5425,6 +5489,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					dto.setValorAnterior(historificadorPestanas.getValorAnterior());
 					dto.setValorNuevo(historificadorPestanas.getValorNuevo());
 					dto.setPestana(historificadorPestanas.getPestana().getDescripcion());
+					dto.setTotalCount(page.getTotalCount());
 					listDtoHistCamp.add(dto);
 				}
 			}
@@ -5432,7 +5497,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return listDtoHistCamp;
+//		DtoPage = 
+		if (!listDtoHistCamp.isEmpty()) {
+			return new DtoPage(listDtoHistCamp, listDtoHistCamp.get(0).getTotalCount());
+		}
+		else {
+			return new DtoPage(listDtoHistCamp, 0);
+		}
 
 	}
 	

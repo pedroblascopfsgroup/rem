@@ -100,7 +100,7 @@ Ext.define('HreRem.model.FichaTrabajo', {
     			type: 'boolean'
     		},
     		{
-    			name: 'proovedorCodigo'
+    			name: 'idProveedorLlave'
     		},
     		{
     			name: 'fechaEntregaTrabajo',
@@ -108,7 +108,7 @@ Ext.define('HreRem.model.FichaTrabajo', {
     			dateFormat: 'c'
     		},
     		{
-    			name: 'receptorCodigo'
+    			name: 'idProveedorReceptor'
     		},
     		{
     			name: 'llavesNoAplica',

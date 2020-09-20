@@ -100,6 +100,7 @@ import es.pfsgroup.plugin.rem.trabajo.TrabajoManager;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoAgendaTrabajo;
+import es.pfsgroup.plugin.rem.trabajo.dto.DtoHistorificadorCampos;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.utils.EmptyParamDetector;
@@ -1866,10 +1867,18 @@ public class TrabajoController extends ParadiseJsonController {
 	
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getHistoricoDeCampos(Long idTrabajo, String codPestanya, ModelMap model) {
+	//public ModelAndView getHistoricoDeCampos(DtoHistorificadorCampos dto, ModelMap model) {
+	public ModelAndView getHistoricoDeCampos(Long idTrabajo, String codPestanya, ModelMap model) {	
 
+		
+		/*ModelMap model = new ModelMap();
+		model.put("data", page.getResults());
+		model.put("totalCount", page.getTotalCount());*/
 		try {
-			model.put("data", trabajoApi.getListHistoricoDeCampos(idTrabajo, codPestanya));
+
+			DtoPage page = trabajoApi.getListHistoricoDeCampos(idTrabajo, codPestanya);
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
 			model.put("success", true);
 		} catch (Exception e) {
 			e.printStackTrace();

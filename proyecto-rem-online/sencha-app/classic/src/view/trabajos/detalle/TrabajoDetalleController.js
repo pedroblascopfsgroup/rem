@@ -1292,6 +1292,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	 	    
  	},
  	
+ 	
+ 	
  	cargarStoreHistoricoDeCampos: function(grid){
  		
  		var me = this;

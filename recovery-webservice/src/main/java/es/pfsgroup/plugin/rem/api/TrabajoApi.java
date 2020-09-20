@@ -885,7 +885,7 @@ public interface TrabajoApi {
 	
 	public List<DDEstadoTrabajo> getComboEstadoSegunEstadoGdaOProveedor(Long idTrabajo);
 	
-	public List<DtoHistorificadorCampos> getListHistoricoDeCampos(Long idTrabajo, String codPestanya);
+	public DtoPage getListHistoricoDeCampos(Long idTrabajo, String codPestanya);
 
 	/**
 	 * Recupera la lista completa de Trabajos para el buscador de gastos

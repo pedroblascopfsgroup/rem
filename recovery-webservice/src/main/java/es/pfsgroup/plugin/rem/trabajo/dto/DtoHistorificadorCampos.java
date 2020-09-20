@@ -22,6 +22,7 @@ public class DtoHistorificadorCampos extends WebDto {
 	private String tabla;
 	private String columna;
 	private String pestana;
+	private Integer totalCount;
 	
 
 
@@ -85,6 +86,12 @@ public class DtoHistorificadorCampos extends WebDto {
 	}
 	public void setPestana(String pestana) {
 		this.pestana = pestana;
+	}
+	public Integer getTotalCount() {
+		return totalCount;
+	}
+	public void setTotalCount(Integer totalCount) {
+		this.totalCount = totalCount;
 	}
 
 	

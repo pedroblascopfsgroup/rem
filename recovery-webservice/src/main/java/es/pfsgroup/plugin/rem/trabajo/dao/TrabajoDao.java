@@ -8,6 +8,7 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoGestionEconomicaTrabajo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
+import es.pfsgroup.plugin.rem.trabajo.dto.DtoHistorificadorCampos;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 
 public interface TrabajoDao extends AbstractDao<Trabajo, Long>{
@@ -50,5 +51,7 @@ public interface TrabajoDao extends AbstractDao<Trabajo, Long>{
 	public void flush();
 	
 	DtoPage findBuscadorGasto (DtoTrabajoFilter dtoTrabajoFiltro);
+	
+	Page getHistTrabajo(Long filtro);
 
 }

@@ -47,7 +47,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 					            	},
 					            	displayField: 'apellidoNombre',
 		    						valueField: 'id',
-		    						readOnly: (Ext.isEmpty(this.gestorActivoCodigo)),
+		    						//readOnly: (Ext.isEmpty(this.gestorActivoCodigo)),
 						        	reference: 'comboGestorActivoResposable'
 					        	},
 							 	{ 
@@ -68,7 +68,8 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 				                	bind:	{
 				                		store: '{comboEstadoGastos}',
 				                		value: '{trabajo.estadoGastoCodigo}'
-				                	}
+				                	},
+				                	readOnly: true
 				                },
 							 	{ 
 				                	xtype: 'checkboxfieldbase',
@@ -251,17 +252,25 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 						xtype:'fieldsettable',
 						title: HreRem.i18n('title.trabajo.llaves'),
 						reference: 'informeSituacionFieldSet',
-						hidden: '{!trabajo.visualizarLlaves}',
+						//hidden: '{!trabajo.visualizarLlaves}',
 						items : [
 					        {
-					        	//Combo proovededor. Pdte. de confirmar
+					        
+					        	
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.proveedor.llaves.trabajo'),
 					        	bind: {
-				            		store: '{comboApiPrimario}',
-				            		value: '{trabajo.proovedorCodigo}'
-				            	},
-					        	reference: 'comboEstadoTrabajo',
+				            		store: '{comboProveedorFiltered}',
+				            		value: '{trabajo.idProveedorLlave}'
+				            		},
+			            	 	//chainedStore: 'comboProveedorGestionEconomica',
+								chainedReference: 'comboIdProveedorReceptor',	
+			            		displayField: 'nombreComercial',
+			            		valueField: 'idProveedor',
+						    	listeners: {
+					                select: 'onChangeComboProveedorGE'
+							            },
+					        	reference: 'comboProveedorCodigo',
 					        	colspan: 2
 					        },
 							{
@@ -272,15 +281,20 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 								}
 							},
 					        {
-					        	//Combo proovededor. Pdte. de confirmar
 					        	fieldLabel: HreRem.i18n('fieldlabel.receptor.llaves.trabajo'),
 					        	xtype: 'comboboxfieldbase',
 					        	bind: {
-//				            		store: '{aquiElStore}',
-				            		value: '{trabajo.receptorCodigo}'
+				            		store: '{comboProveedorReceptor}',
+				            		value: '{trabajo.idProveedorReceptor}'
 				            	},
-					        	reference: 'comboEstadoTrabajo',
-					        	colspan: 2
+				            	displayField: 'nombre',
+				            	valueField: 'id',
+					        	reference: 'comboIdProveedorReceptor',
+					        	colspan: 2,
+							    allowBlank: true,
+							    listeners: {
+								    change: 'onChangeProveedor'
+								    }
 					        },
 						 	{ 
 			                	xtype: 'checkboxfieldbase',

@@ -332,6 +332,20 @@ public class Trabajo implements Serializable, Auditable {
 	@Column(name="TBJ_SINIESTRO")
     private Boolean siniestro;
 	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PVC_ID_LLAVES")
+    private ActivoProveedorContacto proveedorContactoLlaves;
+   
+    @Column(name="TBJ_FECHA_ENTREGA_LLAVES")
+    private Date fechaEntregaLlaves;
+   
+    @Column(name="TBJ_NO_APLICA_LLAVES")
+    private Boolean noAplicaLlaves;  
+   
+    @Column(name="TBJ_MOTIVO_LLAVES")
+    private String motivoLlaves;  
+	
+    
 	public Long getId() {
 		return id;
 	}
@@ -1107,6 +1121,38 @@ public class Trabajo implements Serializable, Auditable {
 
 	public void setAprobacionComite(DDAcoAprobacionComite aprobacionComite) {
 		this.aprobacionComite = aprobacionComite;
+	}
+
+	public ActivoProveedorContacto getProveedorContactoLlaves() {
+		return proveedorContactoLlaves;
+	}
+
+	public void setProveedorContactoLlaves(ActivoProveedorContacto proveedorContactoLlaves) {
+		this.proveedorContactoLlaves = proveedorContactoLlaves;
+	}
+
+	public Date getFechaEntregaLlaves() {
+		return fechaEntregaLlaves;
+	}
+
+	public void setFechaEntregaLlaves(Date fechaEntregaLlaves) {
+		this.fechaEntregaLlaves = fechaEntregaLlaves;
+	}
+
+	public Boolean getNoAplicaLlaves() {
+		return noAplicaLlaves;
+	}
+
+	public void setNoAplicaLlaves(Boolean noAplicaLlaves) {
+		this.noAplicaLlaves = noAplicaLlaves;
+	}
+
+	public String getMotivoLlaves() {
+		return motivoLlaves;
+	}
+
+	public void setMotivoLlaves(String motivoLlaves) {
+		this.motivoLlaves = motivoLlaves;
 	}
     
 }

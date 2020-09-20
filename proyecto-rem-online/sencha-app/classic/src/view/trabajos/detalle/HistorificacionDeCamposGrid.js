@@ -92,13 +92,16 @@ Ext.define('HreRem.view.trabajos.detalle.HistorificacionDeCamposGrid', {
 		        {
 		            xtype: 'pagingtoolbar',
 		            dock: 'bottom',
-		            inputItemWidth: 60,
+		            inputItemWidth: 10,
 		            displayInfo: true,
 		            bind: {
 		                store: '{storeHistorificacionDeCampos}' 
 		            }
 		        }
 		    ];
+		    
+
+       
 		    
     		me.lookupController().cargarStoreHistoricoDeCampos(me);	
 

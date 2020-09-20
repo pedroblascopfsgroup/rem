@@ -239,6 +239,9 @@ public class DtoFichaTrabajo {
 	
 	private String llavesMotivo;
 	
+	private Long idProveedorReceptor;
+	private Long idProveedorLlave;
+	
 	//
 	private Boolean llavesNoAplicaTrabajo;
 	private Boolean riesgoSiniestroTrabajo;
@@ -1256,6 +1259,22 @@ public class DtoFichaTrabajo {
 
 	public void setVisualizarLlaves(Boolean visualizarLlaves) {
 		this.visualizarLlaves = visualizarLlaves;
+	}
+
+	public Long getIdProveedorReceptor() {
+		return idProveedorReceptor;
+	}
+
+	public void setIdProveedorReceptor(Long idProveedorReceptor) {
+		this.idProveedorReceptor = idProveedorReceptor;
+	}
+
+	public Long getIdProveedorLlave() {
+		return idProveedorLlave;
+	}
+
+	public void setIdProveedorLlave(Long idProveedorLlave) {
+		this.idProveedorLlave = idProveedorLlave;
 	}
 	
 }

@@ -147,6 +147,7 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 	public static final String DEUDOR_ACREDITADO_CAMPOS_OB4 = "Revise los campos del deudor acreditado 4 si esta informado un campo de Tipo Documento, Nº Documento o Nombre/Razón social deben estar incluidos todos los campos.";
 	public static final String DEUDOR_ACREDITADO_CAMPOS_OB5 = "Revise los campos del deudor acreditado 5 si esta informado un campo de Tipo Documento, Nº Documento o Nombre/Razón social deben estar incluidos todos los campos.";
 	public static final String NUM_ACTIVO_BBVA_REPETIDO = "El campo Número Activo BBVA tiene un valor que ya se ha introducido anteriormente";
+	public static final String COD_COMERCIALIZACION_INCORRECTO="El campo Destino comercial es incorrecto.";
 	
 	// Posicion fija de Columnas excel, para cualquier referencia por posicion
 	public static final class COL_NUM {
@@ -463,6 +464,7 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 			mapaErrores.put(DEUDOR_ACREDITADO_CAMPOS_OB4, bloquesDeudorAcreditadoRellenos4(exc));
 			mapaErrores.put(DEUDOR_ACREDITADO_CAMPOS_OB5, bloquesDeudorAcreditadoRellenos5(exc));
 			mapaErrores.put(NUM_ACTIVO_BBVA_REPETIDO, numeroActivoBBVAIntroducidoAnteriormente(exc, COL_NUM.ACTIVO_BBVA));
+			mapaErrores.put(COD_COMERCIALIZACION_INCORRECTO, codigoComercializacionIncorrecto(exc, COL_NUM.COD_DESTINO_COMER));
 			
 			if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(SUBCARTERA_IS_NULL).isEmpty() //ok
 					|| !mapaErrores.get(SUBCARTERA_NOT_EXISTS).isEmpty()
@@ -486,7 +488,7 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 					|| !mapaErrores.get(DESTINO_COMERCIAL_IS_NULL).isEmpty()
 					|| !mapaErrores.get(TIPO_DE_COMERCIALIZACION_INCORRECTO).isEmpty()
 					|| !mapaErrores.get(POBL_REGISTRO_IS_NULL).isEmpty()
-					|| !mapaErrores.get(NUM_REGISTRO_IS_NULL).isEmpty()
+					|| !mapaErrores.get(COD_COMERCIALIZACION_INCORRECTO).isEmpty()
 
 					|| !mapaErrores.get(DEUDOR_ACREDITADO_CAMPOS_OB).isEmpty()						
 					|| !mapaErrores.get(DEUDOR_ACREDITADO_CAMPOS_OB2).isEmpty()
@@ -1707,6 +1709,30 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 			try{
 				if((exc.dameCelda(i, columnNumber) != null) && !exc.dameCelda(i, columnNumber).isEmpty()) {
 				if(particularValidator.esActivoRepetidoNumActivoBBVA(exc.dameCelda(i, columnNumber)))
+					listaFilas.add(i);
+				}
+			} catch (IllegalArgumentException e){
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (IOException e){
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (ParseException e){
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			}
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> codigoComercializacionIncorrecto(MSVHojaExcel exc, int columnNumber){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++){
+			try{
+				if((exc.dameCelda(i, columnNumber) != null) && !exc.dameCelda(i, columnNumber).isEmpty()) {
+				if(!particularValidator.codigoComercializacionIncorrecto(exc.dameCelda(i, columnNumber)))
 					listaFilas.add(i);
 				}
 			} catch (IllegalArgumentException e){

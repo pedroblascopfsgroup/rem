@@ -1885,14 +1885,17 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				String[] listaTarifas = tarifas.split(",");
 				for (int i = 0; i < listaTarifas.length; i++) {
 					TrabajoConfiguracionTarifa tarifaTrabajo = new TrabajoConfiguracionTarifa();
-					 ConfiguracionTarifa config =  genericDao.get(ConfiguracionTarifa.class, 
-							 genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(listaTarifas[i])));
-					 tarifaTrabajo.setConfigTarifa(config);
-					 tarifaTrabajo.setTrabajo(trabajo);
-					 //pendiente revision
-					 tarifaTrabajo.setMedicion(0F);
-					 tarifaTrabajo.setPrecioUnitario(config.getPrecioUnitario());
-					 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
+					String tarifa = listaTarifas[i];
+					if(!tarifa.isEmpty()) {
+						ConfiguracionTarifa config =  genericDao.get(ConfiguracionTarifa.class, 
+								 genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(listaTarifas[i])));
+						 tarifaTrabajo.setConfigTarifa(config);
+						 tarifaTrabajo.setTrabajo(trabajo);
+						 //pendiente revision
+						 tarifaTrabajo.setMedicion(0F);
+						 tarifaTrabajo.setPrecioUnitario(config.getPrecioUnitario());
+						 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
+					}
 				}
 			}
 

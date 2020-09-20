@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -88,7 +87,6 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.PresupuestoApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
-import es.pfsgroup.plugin.rem.controller.GastosProveedorController;
 import es.pfsgroup.plugin.rem.dao.FlashDao;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
@@ -128,8 +126,6 @@ import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.GastoProveedor;
-import es.pfsgroup.plugin.rem.model.GastoProveedorTrabajo;
 import es.pfsgroup.plugin.rem.model.HistorificadorPestanas;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Prefactura;
@@ -1830,14 +1826,17 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				String[] listaTarifas = tarifas.split(",");
 				for (int i = 0; i < listaTarifas.length; i++) {
 					TrabajoConfiguracionTarifa tarifaTrabajo = new TrabajoConfiguracionTarifa();
-					 ConfiguracionTarifa config =  genericDao.get(ConfiguracionTarifa.class, 
-							 genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(listaTarifas[i])));
-					 tarifaTrabajo.setConfigTarifa(config);
-					 tarifaTrabajo.setTrabajo(trabajo);
-					 //pendiente revision
-					 tarifaTrabajo.setMedicion(0F);
-					 tarifaTrabajo.setPrecioUnitario(config.getPrecioUnitario());
-					 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
+					String tarifa = listaTarifas[i];
+					if(!tarifa.isEmpty()) {
+						ConfiguracionTarifa config =  genericDao.get(ConfiguracionTarifa.class, 
+								 genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(listaTarifas[i])));
+						 tarifaTrabajo.setConfigTarifa(config);
+						 tarifaTrabajo.setTrabajo(trabajo);
+						 //pendiente revision
+						 tarifaTrabajo.setMedicion(0F);
+						 tarifaTrabajo.setPrecioUnitario(config.getPrecioUnitario());
+						 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
+					}
 				}
 			}
 

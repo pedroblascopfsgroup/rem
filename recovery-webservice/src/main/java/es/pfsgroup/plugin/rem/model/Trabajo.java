@@ -592,6 +592,7 @@ public class Trabajo implements Serializable, Auditable {
 	}
 
 	public void setActivo(Activo activo) {
+		this.activo = activo;
 	}
 
 	public ActivoAgrupacion getAgrupacion() {

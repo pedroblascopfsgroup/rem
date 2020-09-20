@@ -1216,4 +1216,6 @@ public interface ParticularValidatorApi {
 
 	Boolean esPropietarioYAgrupacionMismaCartera(String docIdentificadorPropietario, String numAgrupacion);
 
+	Boolean existeEmisor(String emisorNIF);
+
 }

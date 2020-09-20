@@ -1322,8 +1322,12 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
  		var me = this;
  		if(checked){
  			me.lookupReference('fieldSetSubirFichero').setHidden(true);
+ 			me.lookupReference('listaActivosSubidaRef').setHidden(true);
+ 			me.lookupReference('activosagrupaciontrabajo').setHidden(false);
  		}else{
  			me.lookupReference('fieldSetSubirFichero').setHidden(false);
+ 			me.lookupReference('listaActivosSubidaRef').setHidden(false);
+ 			me.lookupReference('activosagrupaciontrabajo').setHidden(true);
  		}
  	},
  	

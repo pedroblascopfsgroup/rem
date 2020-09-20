@@ -24,6 +24,7 @@ public class DtoConfiguracionTarifa extends WebDto {
 	private String cuentaContable;
 	private String partidaPresupuestaria;
 	private String importeTotal;
+	private String precioUnitarioCliente;
 
 	public String getId() {
 		return id;
@@ -90,6 +91,12 @@ public class DtoConfiguracionTarifa extends WebDto {
 	}
 	public void setImporteTotal(String importeTotal) {
 		this.importeTotal = importeTotal;
+	}
+	public String getPrecioUnitarioCliente() {
+		return precioUnitarioCliente;
+	}
+	public void setPrecioUnitarioCliente(String precioUnitarioCliente) {
+		this.precioUnitarioCliente = precioUnitarioCliente;
 	}
 
 }

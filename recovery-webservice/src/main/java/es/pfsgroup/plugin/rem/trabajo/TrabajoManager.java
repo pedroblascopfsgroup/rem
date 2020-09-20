@@ -863,62 +863,40 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Transactional
 	public Trabajo actualizarImporteTotalTrabajo(Long idTrabajo) {
 
-		Double importeA = new Double("0.0");
+		Double importePresupuestosTrabajo = new Double("0.0");
+		Double importeTarifasTotalProveedor = new Double("0.0");
+		Double importeTarifasTotalCliente = new Double("0.0");
+		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", idTrabajo);
 
 		Trabajo trabajo = findOne(idTrabajo);
 
-		if (!Checks.esNulo(trabajo.getEsTarificado()) && trabajo.getEsTarificado()) {
-			List<TrabajoConfiguracionTarifa> cfgTarifas = genericDao.getList(TrabajoConfiguracionTarifa.class, filtro);
-
-			for (TrabajoConfiguracionTarifa tarifa : cfgTarifas) {
-
-				if (!tarifa.getAuditoria().isBorrado() && !Checks.esNulo(tarifa.getPrecioUnitario())
-						&& !Checks.esNulo(tarifa.getMedicion())) {
-					importeA += tarifa.getPrecioUnitario() * tarifa.getMedicion();
-				}
-			}
-		} else if (!Checks.esNulo(trabajo.getEsTarificado()) && !trabajo.getEsTarificado()) {
-			List<PresupuestoTrabajo> presupuestos = genericDao.getList(PresupuestoTrabajo.class, filtro);
-
+		List<PresupuestoTrabajo> presupuestos = genericDao.getList(PresupuestoTrabajo.class, filtro);
+		
+		List<TrabajoConfiguracionTarifa> cfgTarifas = genericDao.getList(TrabajoConfiguracionTarifa.class, filtro);
+		if(!presupuestos.isEmpty()) {
 			for (PresupuestoTrabajo presupuesto : presupuestos) {
-				if (!presupuesto.getAuditoria().isBorrado() && !Checks.esNulo(presupuesto.getImporte())
-						&& presupuesto.getEstadoPresupuesto() != null
-						&& "02".equalsIgnoreCase(presupuesto.getEstadoPresupuesto().getCodigo())) {
-					importeA += presupuesto.getImporte();
+				if(presupuesto.getImporte() != null) {
+					importePresupuestosTrabajo += presupuesto.getImporte();
 				}
 			}
 		}
-
-		Double importeB = trabajo.getImportePenalizacionTotal();
-
-		Double importeC = new Double("0.0");
-		if (!Checks.estaVacio(trabajo.getRecargosProveedor())) {
-
-			for (TrabajoRecargosProveedor recargo : trabajo.getRecargosProveedor()) {
-
-				if (!recargo.getAuditoria().isBorrado()) {
-					if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(recargo.getTipoCalculo().getCodigo())) {
-						if (!Checks.esNulo(recargo.getImporteCalculo())) {
-							recargo.setImporteFinal(importeA * recargo.getImporteCalculo() / 100);
-						}
-					} else if (DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO.equals(recargo.getTipoCalculo().getCodigo())) {
-						recargo.setImporteFinal(recargo.getImporteCalculo());
-					}
-
-					genericDao.save(TrabajoRecargosProveedor.class, recargo);
-
-					if (!Checks.esNulo(recargo.getImporteFinal())) {
-						importeC += recargo.getImporteFinal();
-					}
+		if(!cfgTarifas.isEmpty()) {
+			for (TrabajoConfiguracionTarifa tarifa : cfgTarifas) {
+				if(tarifa.getPrecioUnitario() != null) {
+					importeTarifasTotalProveedor += tarifa.getPrecioUnitario() * tarifa.getMedicion();
+				}
+				if(tarifa.getPrecioUnitarioCliente() != null) {
+					importeTarifasTotalCliente += tarifa.getPrecioUnitarioCliente() * tarifa.getMedicion();
 				}
 			}
-
 		}
-
-		Double importeTotal = importeA - importeB + importeC;
-
-		trabajo.setImporteTotal(importeTotal);
+		
+		importeTarifasTotalCliente += importePresupuestosTrabajo;
+		importeTarifasTotalProveedor += importePresupuestosTrabajo;
+		
+		trabajo.setImporteTotal(importeTarifasTotalCliente);
+		trabajo.setImportePresupuesto(importeTarifasTotalProveedor);
 
 		genericDao.save(Trabajo.class, trabajo);
 
@@ -2782,11 +2760,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		DtoGestionEconomicaTrabajo dtoTrabajo = new DtoGestionEconomicaTrabajo();
 		Usuario usuariologado = adapter.getUsuarioLogado();
 		String casoActual = esEstadoValidoGDAOProveedor(trabajo, usuariologado);
+		
+		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS,"usuario.id" , usuariologado.getId()));
 
 		beanUtilNotNull.copyProperties(dtoTrabajo, trabajo);
 		beanUtilNotNull.copyProperty(dtoTrabajo.getNumTrabajo(), "numTrabajo", trabajo.getNumTrabajo());
 		if (trabajo.getImporteTotal() != null) {
 			BeanUtils.copyProperty(dtoTrabajo.getImporteTotal(), "importeTotal", trabajo.getImporteTotal());
+		}
+		if(trabajo.getImportePresupuesto() != null) {
+			BeanUtils.copyProperty(dtoTrabajo.getImportePresupuesto(), "importePresupuesto", trabajo.getImportePresupuesto());
 		}
 
 		dtoTrabajo.setIdTrabajo(trabajo.getId());
@@ -2837,6 +2820,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setEsListadoTarifasEditable(true);
 			dtoTrabajo.setEsListadoPresupuestosEditable(true);
 			dtoTrabajo.setEsProveedorEditable(false);
+		}
+		
+		if(usuarioCartera != null) {
+			dtoTrabajo.setEsUsuarioCliente(true);
+		}else {
+			dtoTrabajo.setEsUsuarioCliente(false);
 		}
 
 		return dtoTrabajo;
@@ -3634,7 +3623,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			BigDecimal medicion = new BigDecimal(trabajoTarifa.getMedicion().toString());
 			sumaTotal = sumaTotal.add(precioUnitario.multiply(medicion));
 			if(precioUnitarioCliente != null) {
-				sumaTotalCliente= sumaTotal.add(precioUnitarioCliente.multiply(medicion));
+				sumaTotalCliente= sumaTotalCliente.add(precioUnitarioCliente.multiply(medicion));
 			}
 		}
 		

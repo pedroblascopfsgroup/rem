@@ -71,6 +71,10 @@ public class DtoGestionEconomicaTrabajo extends WebDto {
 	
 	private Boolean esListadoPresupuestosEditable;
 	
+	private Boolean esUsuarioCliente;
+	
+	private Double importePresupuesto;
+	
 	public Long getIdTrabajo() {
 		return idTrabajo;
 	}
@@ -294,5 +298,21 @@ public class DtoGestionEconomicaTrabajo extends WebDto {
 
 	public void setEsListadoPresupuestosEditable(Boolean esListadoPresupuestosEditable) {
 		this.esListadoPresupuestosEditable = esListadoPresupuestosEditable;
+	}
+
+	public Boolean getEsUsuarioCliente() {
+		return esUsuarioCliente;
+	}
+
+	public void setEsUsuarioCliente(Boolean esUsuarioCliente) {
+		this.esUsuarioCliente = esUsuarioCliente;
+	}
+
+	public Double getImportePresupuesto() {
+		return importePresupuesto;
+	}
+
+	public void setImportePresupuesto(Double importePresupuesto) {
+		this.importePresupuesto = importePresupuesto;
 	}
 }

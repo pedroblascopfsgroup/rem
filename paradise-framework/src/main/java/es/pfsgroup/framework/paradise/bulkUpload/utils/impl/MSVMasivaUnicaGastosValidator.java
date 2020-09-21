@@ -953,7 +953,7 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
             	 try {
             		 if(!Checks.esNulo(exc.dameCelda(i, COL_NIF_PROPIETARIO)) 
             				 && !Checks.esNulo(exc.dameCelda(i, campo))
-            				 && Boolean.TRUE.equals(particularValidator.esPropietarioDeCarteraByCodigo(exc.dameCelda(i, campo), cartera))) {
+            				 && Boolean.FALSE.equals(particularValidator.esPropietarioDeCarteraByCodigo(exc.dameCelda(i, COL_NIF_PROPIETARIO), cartera))) {
             			 listaFilas.add(i);
            			 }	
                          

@@ -154,6 +154,13 @@ Ext.define('HreRem.model.GestionEconomicaTrabajo', {
     		{
     			name: 'esListadoPresupuestosEditable',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'esUsuarioCliente',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'importePresupuesto'
     		}
     ],
     

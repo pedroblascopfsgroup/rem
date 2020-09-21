@@ -181,7 +181,18 @@ Ext.define('HreRem.view.trabajos.detalle.SeleccionTarifasTrabajo', {
 				        {   text: HreRem.i18n('header.precio.unitario'),
 				        	dataIndex: 'precioUnitario',
 				        	editable: false,
-				        	flex: 1 
+				        	flex: 1,
+				        	bind: {
+				            	hidden: '{!mostrarTotalProveedor}'
+				            }
+				        },	
+				        {   text: HreRem.i18n('header.precio.unitario.cliente'),
+				        	dataIndex: 'precioUnitarioCliente',
+				        	editable: false,
+				        	flex: 1,
+				        	bind: {
+				            	hidden: '{!mostrarTotalCliente}'
+				            }
 				        }
 				    ],
 				    dockedItems : [

@@ -36,6 +36,8 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 
 	},
     
+	datos: [],
+	
     idActivo: null,
     
     idAgrupacion: null,
@@ -390,6 +392,16 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 				        	   									store: '{listaActivosAgrupacion}'														
 															},
 															columns: [
+																{
+														        	xtype: 'checkcolumn',
+														            dataIndex: 'checkIncluirActivo',
+														            reference: 'checkIncluirActivo',
+														            flex: 1,
+														            listeners: {
+														                checkchange: 'onCheckChangeIncluirActivo'
+														            },
+														            text: HreRem.i18n('Incluir Activo')
+														        },
 				        	   									{
 				        	   										dataIndex: 'numActivoHaya',
 				        	   										text: HreRem.i18n('header.numero.activo.haya'),
@@ -679,6 +691,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
     
     cerrar: function(){
     	var me = this;
+    	me.unmask();
     	me.close();
     	me.destroy();
     }

@@ -1,10 +1,10 @@
   --/*
 --##########################################
---## AUTOR=Sergio Salt Moya
---## FECHA_CREACION=20200912
+--## AUTOR=Juan Angel Sánchez
+--## FECHA_CREACION=20200921
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-10502
+--## INCIDENCIA_LINK=HREOS-11284
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 Cambio para UA's (el presupuesto depende delactivo Matriz)
+--##        0.3 Correcion mandar campo tbj_num_trabajo en vez de tbj_id en campo último trabajo 
 --##########################################
 --*/
 
@@ -83,7 +84,7 @@ BEGIN
       DD_SCM_DESCRIPCION AS SITUACION_COMERCIAL,
       EJE.EJE_ANYO,
       PTO.PTO_ID,
-      ULTIMO_TRABAJO.TBJ_ID as ULTIMO_TRABAJO,
+      ULTIMO_TRABAJO.TBJ_NUM_TRABAJO as ULTIMO_TRABAJO,
       to_char(tbj.fechacrear, ''DD/MM/YYYY'') as fecha
 
       FROM REM01.ACT_TBJ ACTTBJ

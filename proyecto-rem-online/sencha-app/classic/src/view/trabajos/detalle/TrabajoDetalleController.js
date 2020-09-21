@@ -334,8 +334,10 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		var arraySelection= [];
 		var codPromo;
 		if(!Ext.isEmpty(me.getView().idAgrupacion)){
-			arraySelection = me.getView().datos;
+			//arraySelection = me.getView().datos;
+			arraySelection = me.lookupReference('activosagrupaciontrabajo').getActivoIDPersistedSelection();
 		}
+		
 		if(!Ext.isEmpty(me.getView().idActivo)){
 			activo = btn.lookupViewModel().getView().idActivo;
 			codPromo = me.lookupReference('activosagrupaciontrabajo').getStore().getData().items[0].get('codigoPromocionPrinex');

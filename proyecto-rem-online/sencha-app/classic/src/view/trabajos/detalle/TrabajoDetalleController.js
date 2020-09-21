@@ -44,6 +44,9 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		    	
 		    	form.setBindRecord(record);		    	
 		    	form.up("tabpanel").unmask();
+		    	if(Ext.isFunction(form.afterLoad)) {
+		    		form.afterLoad();
+		    	}
 		    },
 		    failure: function(operation) {		    	
 		    	form.up("tabpanel").unmask();
@@ -1428,6 +1431,34 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		config.url= url;
 		
 		me.fireEvent("downloadFile", config);		
+    },
+    filterStoreEstadoTrabajo: function ( store ) {
+    	var me = this;
+    	var estadoActual = me.getViewModel().get("trabajo.estadoCodigo");
+    	var data;
+    	Ext.Ajax.request({
+    		url: $AC.getRemoteUrl('trabajo/getTransicionesEstadoTrabajo'),
+    		params: {estadoActual : estadoActual},
+    		async: false,
+    		method: 'GET',
+    		success: function ( response , opts ) {
+    			data = Ext.decode(response.responseText);
+    			store.filter([{
+                    filterFn: function(rec){
+                    	return data.data.includes(rec.getData().codigo);
+                    }
+                }]);
+    		},
+    		failure: function () {
+    			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    		}
+    	});
+    	
+    },
+    bloqueaCamposSegunEstadoTrabajo: function () {
+    	var me = this;
+    	var estadoTrabajo = me.getViewModel().get("trabajo.estadoTrabajo");
+    	//TODO: bloquear campos según estado.
     }
  	
 });

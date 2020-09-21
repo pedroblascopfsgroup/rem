@@ -903,4 +903,6 @@ public interface TrabajoApi {
 
 	public Date getFechaConcretaParametrizada(Long tipoTrabajo, Long subtipoTrabajo,Long cartera, Long subCartera);
 
+	public List<String> getTransicionesEstadoTrabajoByCodigoEstado(String estadoActual);
+
 }

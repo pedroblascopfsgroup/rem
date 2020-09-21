@@ -100,6 +100,7 @@ import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoConfigDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoCopropietarioActivo;
+import es.pfsgroup.plugin.rem.model.ActivoDeudoresAcreditados;
 import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
@@ -127,6 +128,7 @@ import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
 import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
+import es.pfsgroup.plugin.rem.model.DtoActivoDeudoresAcreditados;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
@@ -1944,6 +1946,28 @@ public class ActivoAdapter {
 		}
 
 		return listaDtoPropietarios;
+
+	}
+	
+	public List<DtoActivoDeudoresAcreditados> getListDeudoresById(Long id) {
+
+		List<DtoActivoDeudoresAcreditados> listaDtoDeudores = new ArrayList<DtoActivoDeudoresAcreditados>();
+		List<ActivoDeudoresAcreditados> listaDeudores = new ArrayList<ActivoDeudoresAcreditados>();
+		listaDeudores = genericDao.getList(ActivoDeudoresAcreditados.class, 
+				genericDao.createFilter(FilterType.EQUALS, "idActivo.id", id));
+		for (ActivoDeudoresAcreditados deudor : listaDeudores) {
+			DtoActivoDeudoresAcreditados dto = new DtoActivoDeudoresAcreditados();
+			try {
+				BeanUtils.copyProperties(dto,deudor);
+			}catch (IllegalAccessException e) {
+				logger.error("Error en ActivoAdapter", e);
+			} catch (InvocationTargetException e) {
+				logger.error("Error en ActivoAdapter", e);
+			}
+			listaDtoDeudores.add(dto);
+		}
+
+		return listaDtoDeudores;
 
 	}
 

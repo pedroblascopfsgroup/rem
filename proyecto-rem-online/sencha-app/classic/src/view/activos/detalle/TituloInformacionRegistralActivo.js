@@ -550,6 +550,111 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							}					 	    				    	
 					 	}
 					},
+					//Se añade el grid de deudores
+//					{
+//			        	readOnly: true
+//			        },
+//			        {
+//			        	readOnly: true
+//			        },
+			        {
+						title: 'Listado de Deudores/Acreditados',
+						itemId: 'listadoDeudores',
+					    xtype: 'gridBaseEditableRow',
+					    topBar : true,
+						cls	: 'panel-base shadow-panel',
+						bind: {
+							store: '{storeDeudores}',
+							//Se tienen que cambiar, veremos en el futuro a que
+							topBar: '{!datosRegistrales.unidadAlquilable}'
+						},
+						listeners: {
+							//Se tiene que cambiar
+							rowdblclick: 'onListadoPropietariosDobleClick'
+						},		
+						colspan: 3,
+						selModel : {
+			                type : 'checkboxmodel'
+			              },
+			              features: [{
+					            id: 'summary',
+					            ftype: 'summary',
+					            hideGroupedHeader: true,
+					            enableGroupingMenu: false,
+					            dock: 'bottom'
+						    }],
+						columns: [
+						    {   text: 'Fecha Alta', 
+					        	dataIndex: 'fechaAlta',
+					        	flex:1 
+					        },
+					        {   text: 'Gestor alta', 
+					        	dataIndex: 'gestorAlta',
+					        	flex:1 
+					        },
+					        {   text: 'Tipo Doc.', 
+					        	dataIndex: 'tipoDocIdentificativoDesc',
+					        	flex:1 
+					        },	
+					        {   text: 'Doc. Identificativo', 
+					        	dataIndex: 'docIdentificativo',
+					        	flex:1 
+					        },	
+					        {   text: 'Nombre/Razón social', 
+					        	dataIndex: 'nombre',
+					        	flex:2
+					        },
+					        {   text: 'Primer apellido', 
+					        	dataIndex: 'apellido1',
+					        	flex:2
+					        },
+					        {   text: 'Segundo apellido', 
+					        	dataIndex: 'apellido2',
+					        	flex:2 
+					        }	               	        
+					    ],
+
+					    onAddClick: function (btn) {
+					 		var me = this;
+					 		var activo = me.lookupController().getViewModel().get('activo'),
+					 		idActivo= activo.get('id'),
+					 		numActivo= activo.get('numActivo');
+					 		
+					 		var ventana = Ext.create("HreRem.view.activos.detalle.AnyadirDeudor", {activo: activo});
+					 		me.up('activosdetallemain').add(ventana);
+							ventana.show();
+					 	    				    	
+					 	},
+					 	onDeleteClick: function (btn) {		
+					 		var me = this;	
+							var url =  $AC.getRemoteUrl('activo/deleteActivoPropietarioTab');
+							var propietario = me.up().down('grid').getSelection();
+							var activo = me.lookupController().getViewModel().get('activo');
+							if (propietario[0].get('tipoPropietario') == "Principal"){
+								me.fireEvent("errorToast",'No se puede eliminar el propietario principal' );
+							}else {
+								var params={};
+								params["idActivo"]=activo.get('id');
+								params["idPropietario"]= propietario[0].get('id');		
+								Ext.Ajax.request({
+								     url: url,
+								     params:params,
+								     success: function (a, operation, context) {
+								    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+								    	me.up().down('grid').getStore().load();
+						           },
+						           failure: function (a, operation, context) {
+						           	  Ext.toast({
+										 html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÓN',
+										 width: 360,
+										 height: 100,
+										 align: 't'									     
+									  });
+						           }
+							    });			
+							}					 	    				    	
+					 	}
+					},
 					{
 						xtype:'fieldsettable',
 						defaultType: 'textfieldbase',

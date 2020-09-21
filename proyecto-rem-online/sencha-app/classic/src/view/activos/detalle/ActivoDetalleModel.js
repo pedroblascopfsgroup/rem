@@ -1420,6 +1420,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				 }
     		},
     		
+    		storeDeudores: {
+				 model: 'HreRem.model.ActivoDeudorAcreditador',
+				 proxy: {
+				    type: 'uxproxy',
+					remoteUrl: 'activo/getListDeudoresById',
+					extraParams: {id: '{activo.id}'}
+				 }
+    		},
+    		
     		storeValoraciones: {
 				 model: 'HreRem.model.ActivoValoraciones',
 				 proxy: {

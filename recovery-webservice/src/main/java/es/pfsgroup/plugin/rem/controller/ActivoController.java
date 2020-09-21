@@ -1288,6 +1288,14 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListDeudoresById(Long id, ModelMap model, HttpServletRequest request) {
+		model.put(RESPONSE_DATA_KEY, adapter.getListDeudoresById(id));
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "deudores", ACCION_CODIGO.CODIGO_VER);
+
+		return createModelAndViewJson(model);
+	}
 
 	
 	@RequestMapping(method = RequestMethod.GET)

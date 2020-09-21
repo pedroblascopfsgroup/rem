@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Dean Ibañez VIño
---## FECHA_CREACION=20200907
+--## FECHA_CREACION=20200908
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10918
@@ -56,7 +56,7 @@ BEGIN
                 ACT_NUM_ACTIVO               NUMBER(16,0)
                 ,FECHA_PROCESADO             TIMESTAMP (6)
                 ,OPERACION                   VARCHAR(1)
-                ,COD_ERROR                   VARCHAR(2)
+                ,COD_ERROR                   VARCHAR(6)
                 ,DESC_ERROR                  VARCHAR(200)
             )
             ';

@@ -8,7 +8,9 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
     recordName	: "trabajo",
 	recordClass	: "HreRem.model.FichaTrabajo",
     requires	: ['HreRem.model.FichaTrabajo', 'HreRem.view.trabajos.detalle.HistorificacionDeCamposGrid'],
-
+    afterLoad: function () {
+    	this.lookupController().bloqueaCamposSegunEstadoTrabajo();
+    },
     initComponent: function () {
         var me = this;
         me.setTitle(HreRem.i18n('title.ficha'));
@@ -218,6 +220,11 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 					        	bind: {
 				            		store: '{comboEstadoTrabajoFicha}',
 				            		value: '{trabajo.estadoTrabajoCodigo}'
+				            	},
+				            	listeners: {
+				            		expand: function (combo) {
+				            			this.lookupController().filterStoreEstadoTrabajo( combo.getStore() );
+				            		}
 				            	},
 					        	reference: 'comboEstadoTrabajo',
 					        	colspan: 2

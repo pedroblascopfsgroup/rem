@@ -1980,7 +1980,16 @@ public class TrabajoController extends ParadiseJsonController {
 		}
 		return new ModelAndView("jsonView", model);
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getTransicionesEstadoTrabajo(String estadoActual, ModelMap model) {
+		
+		model.put("data", trabajoApi.getTransicionesEstadoTrabajoByCodigoEstado(estadoActual));
+		model.put("success", true);
+		
+		return new ModelAndView("jsonView", model);
+	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -2001,3 +2010,4 @@ public class TrabajoController extends ParadiseJsonController {
 	}
 
 }
+

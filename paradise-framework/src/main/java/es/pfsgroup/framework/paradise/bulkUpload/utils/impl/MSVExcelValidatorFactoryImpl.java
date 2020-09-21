@@ -225,6 +225,10 @@ public class MSVExcelValidatorFactoryImpl {
 	@Autowired
 	private MSVValidatorCargaGastosAsociadosAdquisicion cargaGastosAsociadosAdquisicion;
 
+	@Autowired
+	private MSVMasivaAltaBBVAValidator altaActivosBBVA;
+	
+
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 
 		if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPATION_RESTRICTED.equals(codTipoOperacion)) {
@@ -371,6 +375,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return complementoTitulo;
 		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_GASTOS_ASOCIADOS_ADQUISICION.equals(codTipoOperacion)) {
 			return cargaGastosAsociadosAdquisicion;
+		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_ALTA_ACTIVOS_BBVA.equals(codTipoOperacion)) {
+			return altaActivosBBVA;
 		}
 		return null;
 	}

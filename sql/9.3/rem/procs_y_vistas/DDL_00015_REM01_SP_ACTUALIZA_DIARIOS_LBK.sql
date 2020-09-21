@@ -61,8 +61,26 @@ BEGIN
         EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
         
         IF V_COUNT = 0 THEN
-            
-            COD_RETORNO := '[KO] El gasto no tiene distribución por activos.';
+
+            V_SQL := 'MERGE INTO '||V_ESQUEMA||'.GIL_GASTOS_IMPORTES_LIBERBANK T1
+                USING (
+                    SELECT GIL.GIL_ID
+                    FROM '||V_ESQUEMA||'.GIL_GASTOS_IMPORTES_LIBERBANK GIL
+                    WHERE GIL.BORRADO = 0
+                        AND GIL.GPV_ID = '||GPV_ID||'
+                ) T2
+                ON (T1.GIL_ID = T2.GIL_ID)
+                WHEN MATCHED THEN
+                    UPDATE SET T1.IMPORTE_ACTIVO = NULL
+                        , T1.USUARIOMODIFICAR = '''||V_USUARIO||'''
+                        , T1.FECHAMODIFICAR = CURRENT_TIMESTAMP(6)
+                        , T1.USUARIOBORRAR = '''||V_USUARIO||'''
+                        , T1.FECHABORRAR = CURRENT_TIMESTAMP(6)
+                        , T1.BORRADO = 1';
+            EXECUTE IMMEDIATE V_SQL;
+            COMMIT;
+
+            COD_RETORNO := '[KO] El gasto no tiene distribución por activos o han sido eliminados.';
             RETURN;
         
         ELSE

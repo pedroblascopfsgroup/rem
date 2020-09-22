@@ -23,7 +23,7 @@ Ext.define('HreRem.view.activos.detalle.PlusvaliaActivo', {
     initComponent : function() {
 	    var me = this;
 
-	    me.setTitle(HreRem.i18n('title.plusvalia.activo'));
+	    me.setTitle(HreRem.i18n('title.tributos.activo'));
 
 	    var items = [
 

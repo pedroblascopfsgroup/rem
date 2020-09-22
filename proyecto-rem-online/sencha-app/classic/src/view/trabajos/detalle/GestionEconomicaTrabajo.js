@@ -15,7 +15,9 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
                		'HreRem.view.common.FieldSetTable','HreRem.model.PresupuestoTrabajo','HreRem.model.ProvisionSuplido', 'HreRem.view.trabajos.detalle.HistorificacionDeCamposGrid'],
     totalProv	: null,
     totalCli	: null,
-
+    afterLoad: function () {
+    	this.lookupController().bloqueaCamposSegunEstadoTrabajo();
+    },
     initComponent: function () {
     	var me = this;
     	me.setTitle(HreRem.i18n('title.gestion.economica'));

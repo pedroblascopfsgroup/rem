@@ -202,7 +202,7 @@ public class HQLBuilder {
 			hqlBuilder.appendWhere(nombreCampo.concat(" in (").concat(b.toString()).concat(")"));
 		}
 	}
-	
+
 	
 	/**
 	 * Ayuda a crear una cláusula WHERE campo IN (valor1, valor2 ...) en dónde
@@ -220,6 +220,7 @@ public class HQLBuilder {
 	 *            Conjunto de valores entre los que se debe encontrar el valor
 	 *            del campo
 	 */
+
 	@SuppressWarnings("unchecked")
 	public static void addFiltroWhereInStringSiNotNull(final HQLBuilder hqlBuilder, final String nombreCampo,
 			final Collection valores) {
@@ -229,7 +230,28 @@ public class HQLBuilder {
 			for (Object o : valores) {
 				if(o !=null) {
 					if (!first) {
-						b.append("', '");
+						b.append(", ");
+
+					} else {
+						first = false;
+					}
+					b.append(o.toString());
+				}
+			}
+			hqlBuilder.appendWhere(nombreCampo.concat(" in ('").concat(b.toString()).concat("')"));
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static void addFiltroWhereInSiNotNullForceString(final HQLBuilder hqlBuilder, final String nombreCampo,
+			final Collection valores) {
+		if (!Checks.estaVacio(valores)) {
+			final StringBuilder b = new StringBuilder();
+			boolean first = true;
+			for (Object o : valores) {
+				if(o !=null) {
+					if (!first) {
+						b.append(", '");
 					} else {
 						first = false;
 					}

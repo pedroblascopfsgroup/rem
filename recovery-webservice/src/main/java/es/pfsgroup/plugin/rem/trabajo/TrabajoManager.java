@@ -172,6 +172,7 @@ import es.pfsgroup.plugin.rem.restclient.webcom.definition.ConstantesTrabajo;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.thread.LiberarFicheroTrabajos;
+import es.pfsgroup.plugin.rem.trabajo.dao.DerivacionEstadoTrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoAgendaTrabajo;
@@ -332,6 +333,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Autowired
 	private ActivoTrabajoDao activotrabajoDao;
+	
+	@Autowired
+	private DerivacionEstadoTrabajoDao derivacionEstadoTrabajoDao;
 	
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -5640,5 +5644,36 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			return fechaAlta;
 		}
 		return fechaMod;
+	}
+
+	@Override
+	public List<String> getTransicionesEstadoTrabajoByCodigoEstado(String estadoActual) {
+		List<String> posiblesEstados = new ArrayList<String>();
+		List<String> clauseInPerfiles = this.buildClauseInValues();
+		
+		if (!clauseInPerfiles.isEmpty() && !estadoActual.isEmpty()) {
+			posiblesEstados = derivacionEstadoTrabajoDao.getPosiblesEstados( estadoActual, clauseInPerfiles);
+		}
+		
+		return posiblesEstados;
+	}
+	
+	private List<String> buildClauseInValues() {
+		List<String> clauseIn = new ArrayList<String>();
+		List<String> listPerfilesValidos = derivacionEstadoTrabajoDao.getListOfPerfilesValidosForDerivacionEstadoTrabajo();
+		Usuario user = usuarioManager.getUsuarioLogado();
+		if (user != null) {
+			List<Perfil> perfiles = user.getPerfiles();
+			if (!perfiles.isEmpty() && !listPerfilesValidos.isEmpty()) {
+				for (int i = 0; i < perfiles.size(); i++) {
+					if (listPerfilesValidos.contains(perfiles.get(i).getCodigo())) {
+						clauseIn.add(perfiles.get(i).getCodigo());
+					}
+				}
+			}
+		}
+
+		return clauseIn;
+
 	}
 }

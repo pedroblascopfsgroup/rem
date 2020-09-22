@@ -75,7 +75,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirComplementoTitulo', {
 					
 						{ 
 							xtype: 'comboboxfieldbase',
-				        	fieldLabel:  HreRem.i18n('header.complemento.titulo.tipo'),
+				        	fieldLabel:  HreRem.i18n('title.gastos.asociados.adquisicion.linea.total'),
 				        	reference: 'comboTipoTituloRef',
 				        	name: 'comboTipoTituloComplemento',
 			            	bind: {

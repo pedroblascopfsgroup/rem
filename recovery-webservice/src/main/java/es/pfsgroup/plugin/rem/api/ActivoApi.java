@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
@@ -53,6 +54,7 @@ import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.DtoGastoAsociadoAdquisicion;
 import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDiarioGestion;
@@ -1368,5 +1370,13 @@ public interface ActivoApi {
 	Boolean createComplementoTitulo(String activoId, String codTitulo, String fechaSolicitud,
 			String fechaTitulo, String fechaRecepcion, String fechaInscripcion, String observaciones);
 	
+	List<DtoGastoAsociadoAdquisicion> getListGastosAsociadosAdquisicion(Long id);
+	
+	Boolean deleteGastoAsociadoAdquisicion(DtoGastoAsociadoAdquisicion cargaDto);
+	
+	Boolean updateGastoAsociadoAdquisicion(DtoGastoAsociadoAdquisicion cargaDto);
+	
+	Boolean createGastoAsociadoAdquisicion(String activoId, String gastoAsociado, String fechaSolicitudGastoAsociado,
+			String fechaPagoGastoAsociado, String importe, String observaciones);
 	
 }

@@ -2651,6 +2651,24 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getComboBBVATipoAlta',
 				extraParams: {idRecovery: '{activo.idRecovery}'}
 			}
+		},
+		
+		storeTipoGastoAsociado: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoGastoAsociado'}
+			}
+		},
+		storeGastosAsociadosAdquisicion: {    	
+			 model : 'HreRem.model.GastoAsociadoAdquisicionModel',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'activo/getListGastosAsociadosAdquisicion',
+		        extraParams: {id: '{activo.id}'}
+	    	 }
+	    	
 		}
 
      }

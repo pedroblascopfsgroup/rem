@@ -162,6 +162,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocPlusvalias;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoGastoAsociado;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -7400,8 +7401,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			String fechaTitulo, String fechaRecepcion, String fechaInscripcion, String observaciones) {
 		
 		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		
-		//ajjaja
+
 		
 		
 		try {			
@@ -7443,6 +7443,166 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			return false;
 		}
 	}
+
+	@Override
+	public List<DtoGastoAsociadoAdquisicion> getListGastosAsociadosAdquisicion(Long id) {
+		List<DtoGastoAsociadoAdquisicion> listDto = new ArrayList<DtoGastoAsociadoAdquisicion>();
+		
+		if (id != null) {
+			
+			
+			
+			List<GastoAsociadoAdquisicion> act = genericDao.getListOrdered(GastoAsociadoAdquisicion.class,
+					new Order(OrderType.DESC, "fechaAltaGastoAsociado"), 
+					genericDao.createFilter(FilterType.EQUALS, "activo.id", id));
+			
+			
+			
+
+			if (act != null && !act.isEmpty()) {
+				for (GastoAsociadoAdquisicion gaa : act) {
+					DtoGastoAsociadoAdquisicion dto = new DtoGastoAsociadoAdquisicion();
+
+					dto.setActivo(id);
+					dto.setId(gaa.getId());
+					
+					if(gaa.getGastoAsociado() != null) {
+						dto.setGastoAsociado(gaa.getGastoAsociado().getDescripcion());
+					}
+					
+					if(gaa.getUsuarioGestordeAlta() != null) {
+						dto.setUsuarioGestordeAlta(gaa.getUsuarioGestordeAlta().getUsername());
+					}
+					
+					if (gaa.getFechaAltaGastoAsociado() != null) {
+						dto.setFechaAltaGastoAsociado(gaa.getFechaAltaGastoAsociado());
+					}
+
+					if (gaa.getFechaSolicitudGastoAsociado() != null) {
+						dto.setFechaSolicitudGastoAsociado(gaa.getFechaSolicitudGastoAsociado());
+					}
+
+					if (gaa.getFechaPagoGastoAsociado() != null) {
+						dto.setFechaPagoGastoAsociado(gaa.getFechaPagoGastoAsociado());
+					}
+
+					if (gaa.getImporte() != null) {
+						dto.setImporte(gaa.getImporte());
+					}
+
+					if (gaa.getObservaciones() != null) {
+						dto.setObservaciones(gaa.getObservaciones());
+					}
+					
+					listDto.add(dto);
+				}
+			}
+
+		}
+
+		return listDto;
+	}
+	
+	@Transactional
+	@Override
+	public Boolean deleteGastoAsociadoAdquisicion(DtoGastoAsociadoAdquisicion cargaDto) {
+		if (cargaDto.getId() != null) {
+			genericDao.deleteById(GastoAsociadoAdquisicion.class, cargaDto.getId());
+
+			return true;
+		}
+
+		return false;
+	}
+
+	@Transactional
+	@Override
+	public Boolean updateGastoAsociadoAdquisicion(DtoGastoAsociadoAdquisicion cargaDto) {
+		GastoAsociadoAdquisicion gas = null;
+
+		if (cargaDto != null) {
+
+			gas = genericDao.get(GastoAsociadoAdquisicion.class,
+					genericDao.createFilter(FilterType.EQUALS, "id", cargaDto.getId()));
+
+			if (gas != null) {
+				if (cargaDto.getGastoAsociado() != null) {
+					DDTipoGastoAsociado ddTipo = genericDao.get(DDTipoGastoAsociado.class, genericDao
+							.createFilter(FilterType.EQUALS, "codigo", cargaDto.getGastoAsociado()));
+					gas.setGastoAsociado(ddTipo);
+				}
+
+				if (cargaDto.getFechaSolicitudGastoAsociado() != null) {
+					gas.setFechaSolicitudGastoAsociado(cargaDto.getFechaSolicitudGastoAsociado());
+				}
+
+				if (cargaDto.getFechaPagoGastoAsociado() != null) {
+					gas.setFechaPagoGastoAsociado(cargaDto.getFechaPagoGastoAsociado());
+				}
+
+				if (cargaDto.getImporte() != null) {
+					gas.setImporte(cargaDto.getImporte());
+				}
+
+				if (cargaDto.getObservaciones() != null) {
+					gas.setObservaciones(cargaDto.getObservaciones());
+				}
+
+				genericDao.save(GastoAsociadoAdquisicion.class, gas);
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+
+	@Transactional
+	@Override
+	public Boolean createGastoAsociadoAdquisicion(String activoId, String gastoAsociado,
+			String fechaSolicitudGastoAsociado, String fechaPagoGastoAsociado, String importe,
+			String observaciones) {
+		
+		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		String importeSinComas = importe.replaceAll(",", ".");
+		
+		
+		try {			
+			Date fechaSolicitudF = ft.parse(fechaSolicitudGastoAsociado);
+			Date fechaPagoF = ft.parse(fechaPagoGastoAsociado);
+					
+			Long idActivo = Long.parseLong(activoId);
+			
+			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+			Filter filtroCodGasto = genericDao.createFilter(FilterType.EQUALS, "codigo", gastoAsociado);
+			DDTipoGastoAsociado ddt =  genericDao.get(DDTipoGastoAsociado.class, filtroBorrado,
+					filtroCodGasto);
+
+			Activo activo = get(idActivo);
+			
+			GastoAsociadoAdquisicion gasto = new GastoAsociadoAdquisicion();
+			
+			gasto.setActivo(activo);
+			gasto.setGastoAsociado(ddt);
+			if(fechaSolicitudGastoAsociado != null)
+				gasto.setFechaSolicitudGastoAsociado(df.parse(df.format(fechaSolicitudF)));
+			if(fechaPagoGastoAsociado != null)
+				gasto.setFechaPagoGastoAsociado(df.parse(df.format(fechaPagoF)));
+			gasto.setObservaciones(observaciones);
+			gasto.setFechaAltaGastoAsociado(df.parse(df.format(new Date())));
+			gasto.setUsuarioGestordeAlta(adapter.getUsuarioLogado());
+			gasto.setImporte(Double.parseDouble(importeSinComas));
+			genericDao.save(GastoAsociadoAdquisicion.class, gasto);
+			
+			return true;
+		} catch (Exception e) {
+			logger.error("Error en activoManager", e);
+			return false;
+		}
+	}
+
 
 
 }

@@ -3016,7 +3016,7 @@ public class ActivoAdapter {
 
 		TabActivoService tabActivoService = tabActivoFactory.getService(tab);
 		Activo activo = activoApi.get(id);
-
+		
 		return tabActivoService.getTabData(activo);
 
 	}

@@ -71,8 +71,8 @@ public class GastoAsociadoAdquisicion implements Serializable, Auditable{
 	@Column(name = "GAA_IMPORTE")
 	private Double importe;
 	
-	@Column(name = "GAA_FACTURA")
-	private Double factura;
+	@Column(name = "GAA_NUM_GASTO_ASOCIADO")
+	private Long numGastoAsociado;
 	
 	@Column(name = "GAA_OBSERVACIONES")
 	private String observaciones;
@@ -147,13 +147,6 @@ public class GastoAsociadoAdquisicion implements Serializable, Auditable{
 		this.activo = activo;
 	}
 
-	public Double getFactura() {
-		return factura;
-	}
-
-	public void setFactura(Double factura) {
-		this.factura = factura;
-	}
 
 	public String getObservaciones() {
 		return observaciones;
@@ -177,6 +170,14 @@ public class GastoAsociadoAdquisicion implements Serializable, Auditable{
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public Long getNumGastoAsociado() {
+		return numGastoAsociado;
+	}
+
+	public void setNumGastoAsociado(Long numGastoAsociado) {
+		this.numGastoAsociado = numGastoAsociado;
 	}
 	
 }

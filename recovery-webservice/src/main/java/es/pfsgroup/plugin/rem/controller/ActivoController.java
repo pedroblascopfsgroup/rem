@@ -116,6 +116,7 @@ import es.pfsgroup.plugin.rem.model.DtoDistribucion;
 import es.pfsgroup.plugin.rem.model.DtoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoFoto;
+import es.pfsgroup.plugin.rem.model.DtoGastoAsociadoAdquisicion;
 import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
@@ -3664,4 +3665,68 @@ public class ActivoController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListGastosAsociadosAdquisicion(Long id,  ModelMap model) { 
+		
+		try {
+			List<DtoGastoAsociadoAdquisicion> listSuccess = activoApi.getListGastosAsociadosAdquisicion(id);
+			model.put(RESPONSE_DATA_KEY, listSuccess);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteGastoAsociadoAdquisicion(DtoGastoAsociadoAdquisicion cargaDto,  ModelMap model) { 
+		
+		try {
+			Boolean success = activoApi.deleteGastoAsociadoAdquisicion(cargaDto);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateGastoAsociadoAdquisicion(DtoGastoAsociadoAdquisicion cargaDto,  ModelMap model) { 
+		
+		try {
+			Boolean success = activoApi.updateGastoAsociadoAdquisicion(cargaDto);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createGastoAsociadoAdquisicion(String activoId, String gastoAsociado, String fechaSolicitudGastoAsociado,
+			String fechaPagoGastoAsociado, String importe, String observaciones, ModelMap model) {
+		try {
+			Boolean success = activoApi.createGastoAsociadoAdquisicion(activoId,  gastoAsociado,  fechaSolicitudGastoAsociado,
+					fechaPagoGastoAsociado,  importe,  observaciones);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	
+
 }

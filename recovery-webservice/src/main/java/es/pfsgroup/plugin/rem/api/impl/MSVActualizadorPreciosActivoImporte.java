@@ -194,10 +194,6 @@ public class MSVActualizadorPreciosActivoImporte extends AbstractMSVActualizador
 		if(!Checks.esNulo(fechaAprobacionExcel)){
 			Date fechaAprobacion = simpleDate.parse(fechaAprobacionExcel);
 			dtoActivoValoracion.setFechaAprobacion(fechaAprobacion);
-		} else {
-			if(DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo())) {
-				dtoActivoValoracion.setFechaAprobacion(new Date());
-			}
 		}
 		
 		//El metodo saveActivoValoracion actualizara el importe y las fechas del precio existente (encontrado en activoValoracion

@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200918
+--## AUTOR=DAP
+--## FECHA_CREACION=20200922
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10742
@@ -66,7 +66,7 @@ DECLARE
       T_TIPO_DATA('03','32','15','76'),
       T_TIPO_DATA('03','33','14','57'),
       T_TIPO_DATA('03','34','16','85'),
-      T_TIPO_DATA('03','35','15','77'),
+      T_TIPO_DATA('03','35','16','85'),
       T_TIPO_DATA('03','36','15','78'),
       T_TIPO_DATA('03','37','15','79'),
       T_TIPO_DATA('03','38','15','79'),
@@ -167,46 +167,69 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
       LOOP
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
         --Comprobar el dato a insertar.
-        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' 
-					WHERE DD_STR_ID = (SELECT DD_STR_ID FROM DD_STR_SUBTIPO_TRABAJO WHERE DD_STR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||''' AND DD_TTR_ID = (SELECT DD_TTR_ID FROM DD_TTR_TIPO_TRABAJO WHERE DD_TTR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''')) 
-          AND DD_STG_ID = (SELECT DD_STG_ID FROM DD_STG_SUBTIPOS_GASTO WHERE DD_STG_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||''' AND DD_TGA_ID = (SELECT DD_TGA_ID FROM DD_TGA_TIPOS_GASTO WHERE DD_TGA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||''')) AND BORRADO = 0';
+        V_SQL := 'SELECT COUNT(1) 
+            FROM '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO STR
+            JOIN '||V_ESQUEMA||'.DD_TTR_TIPO_TRABAJO TTR ON TTR.DD_TTR_ID = STR.DD_TTR_ID
+              AND TTR.BORRADO = 0
+            JOIN '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG ON 1 = 1
+              AND STG.BORRADO = 0
+            JOIN '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_ID = STG.DD_TGA_ID
+              AND TGA.BORRADO = 0
+            WHERE STR.BORRADO = 0
+              AND STR.DD_STR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||'''
+              AND TTR.DD_TTR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''
+              AND STG.DD_STG_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||'''
+              AND TGA.DD_TGA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||'''
+            ';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
         IF V_NUM_TABLAS = 1 THEN
-          DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(2))||''' y '''||TRIM(V_TMP_TIPO_DATA(4))||''' ya existe');
-        ELSE
-            V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
-                SGT_ID
-                , DD_STR_ID
-                , DD_STG_ID
-                , USUARIOCREAR
-                , FECHACREAR
-              ) 
-              SELECT 
-                '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL
-                , STR.DD_STR_ID
-                , STG.DD_STG_ID
-                , ''HREOS-10742''
-                , SYSDATE
-              FROM '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO STR
-              JOIN '||V_ESQUEMA||'.DD_TTR_TIPO_TRABAJO TTR ON TTR.DD_TTR_ID = STR.DD_TTR_ID
-                AND TTR.BORRADO = 0
-              JOIN '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG ON 1 = 1
-                AND STG.BORRADO = 0
-              JOIN '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_ID = STG.DD_TGA_ID
-                AND TGA.BORRADO = 0
-              WHERE STR.BORRADO = 0
-                AND STR.DD_STR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||''' 
-                AND TTR.DD_TTR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''
-                AND STG.DD_STG_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||'''
-                AND TGA.DD_TGA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(3))||'''
-                  ';
+
+            V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' T1
+              USING (
+                SELECT STR.DD_STR_ID
+                  , STG.DD_STG_ID
+                FROM '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO STR
+                JOIN '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG ON 1 = 1
+                  AND STG.BORRADO = 0
+                WHERE STR.BORRADO = 0
+                  AND STR.DD_STR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||'''
+                  AND STG.DD_STG_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||''' 
+              ) T2
+              ON (T1.DD_STR_ID = T2.DD_STR_ID)
+              WHEN MATCHED THEN
+                UPDATE SET
+                  T1.DD_STG_ID = T2.DD_STG_ID
+                  , T1.USUARIOMODIFICAR = ''HREOS-10742''
+                  , T1.FECHAMODIFICAR = SYSDATE
+              WHERE T1.DD_STG_ID <> T2.DD_STG_ID
+              WHEN NOT MATCHED THEN
+                INSERT (
+                  T1.SGT_ID
+                  , T1.DD_STR_ID
+                  , T1.DD_STG_ID
+                  , T1.USUARIOCREAR
+                  , T1.FECHACREAR
+                )
+                VALUES (
+                  '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL
+                  , T2.DD_STR_ID
+                  , T2.DD_STG_ID
+                  , ''HREOS-10742''
+                  , SYSDATE
+                )
+              ';
             EXECUTE IMMEDIATE V_MSQL;
-            DBMS_OUTPUT.PUT_LINE('[INFO]: Se ha insertado el valor '''||TRIM(V_TMP_TIPO_DATA(2))||''' y '''||TRIM(V_TMP_TIPO_DATA(4))||'''');
+            DBMS_OUTPUT.PUT_LINE('[INFO]: Se ha fusionado el valor '''||TRIM(V_TMP_TIPO_DATA(2))||''' y '''||TRIM(V_TMP_TIPO_DATA(4))||'''');
+
+        ELSE
+
+            DBMS_OUTPUT.PUT_LINE('[KO]: No existe el tipo de trabajo ('''||TRIM(V_TMP_TIPO_DATA(1))||'''), o subtipo de trabajo ('''||TRIM(V_TMP_TIPO_DATA(2))||'''), o tipo de gasto ('''||TRIM(V_TMP_TIPO_DATA(3))||''') o subtipo de gasto ('''||TRIM(V_TMP_TIPO_DATA(4))||''')');
 
         END IF;
       END LOOP;
     COMMIT;
-    DBMS_OUTPUT.PUT_LINE('[FIN]: TABLA '||V_TEXT_TABLA||' ACTUALIZADO CORRECTAMENTE ');
+    DBMS_OUTPUT.PUT_LINE('[FIN]: TABLA '||V_TEXT_TABLA||' ACTUALIZADA.');
 
 EXCEPTION
      WHEN OTHERS THEN

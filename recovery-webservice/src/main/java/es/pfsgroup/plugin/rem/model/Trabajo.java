@@ -332,6 +332,9 @@ public class Trabajo implements Serializable, Auditable {
 	@Column(name="TBJ_SINIESTRO")
     private Boolean siniestro;
 	
+	@Column(name="TBJ_PRIM_TOMA_POS")
+    private Boolean tomaPosesion;
+	
 	public Long getId() {
 		return id;
 	}
@@ -1108,6 +1111,14 @@ public class Trabajo implements Serializable, Auditable {
 
 	public void setAprobacionComite(DDAcoAprobacionComite aprobacionComite) {
 		this.aprobacionComite = aprobacionComite;
+	}
+
+	public Boolean getTomaPosesion() {
+		return tomaPosesion;
+	}
+
+	public void setTomaPosesion(Boolean tomaPosesion) {
+		this.tomaPosesion = tomaPosesion;
 	}
     
     

@@ -21,4 +21,6 @@ public interface GastoLineaDetalleDao extends AbstractDao<GastoLineaDetalle, Lon
 	public Long getNextIdGastoLineaDetalle();
 
 	void saveGastoLineaDetalle(GastoLineaDetalle gasto);
+
+	void actualizarDiariosLbk(Long idGasto, String userName);
 }

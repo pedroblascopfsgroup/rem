@@ -32,9 +32,14 @@ V_COUNT_IMPORTES NUMBER(16); -- Variable para informar de importes actualizados.
 V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema.
 COD_RETORNO VARCHAR2(4000 CHAR);
 RESULTADO VARCHAR2(4000 CHAR);
+V_FECHA VARCHAR2(19 CHAR);
 ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
 
 BEGIN
+
+    V_SQL := 'SELECT TO_CHAR(SYSDATE,''DD/MM/YYYY HH24:MI:SS'') 
+        FROM DUAL';
+    EXECUTE IMMEDIATE V_SQL INTO V_FECHA;
 
     V_SQL := 'SELECT COUNT(1)
         FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR
@@ -44,7 +49,7 @@ BEGIN
     IF V_COUNT = 0 THEN
 
         RESULTADO := 'KO';
-        COD_RETORNO := 'No existe el gasto.';
+        COD_RETORNO := 'No existe el gasto. (Información actualizada el '||V_FECHA||')';
 
     ELSE
 
@@ -81,7 +86,7 @@ BEGIN
             EXECUTE IMMEDIATE V_SQL;
 
             RESULTADO := 'KO';
-            COD_RETORNO := 'El gasto no tiene distribución por activos o han sido eliminados.';
+            COD_RETORNO := 'El gasto no tiene distribución por activos o han sido eliminados. (Información actualizada el '||V_FECHA||')';
 
         ELSE
 
@@ -101,7 +106,7 @@ BEGIN
             IF V_COUNT = 0 THEN
 
                 RESULTADO := 'KO';
-                COD_RETORNO := 'Sin información de tipos de diario para los activos del gasto.';
+                COD_RETORNO := 'Sin información de tipos de diario para los activos del gasto. (Información actualizada el '||V_FECHA||')';
 
             ELSE
 
@@ -214,19 +219,19 @@ BEGIN
                     IF V_COUNT_IMPORTES > 0 THEN
 
                         RESULTADO := 'OK';
-                        COD_RETORNO := 'La información de diarios ('||V_COUNT_DIARIOS||') y repartos ('||V_COUNT_IMPORTES||') del gasto '||GPV_ID||', se ha fusionado.';
+                        COD_RETORNO := 'La información de diarios ('||V_COUNT_DIARIOS||') y repartos ('||V_COUNT_IMPORTES||') del gasto '||GPV_ID||', se ha fusionado. (Información actualizada el '||V_FECHA||')';
 
                     ELSE
 
                         RESULTADO := 'KO';
-                        COD_RETORNO := 'Se ha fusionado la información de diarios ('||V_COUNT_DIARIOS||') del gasto '||GPV_ID||', pero no ha podido fusionarse la de repartos ('||V_COUNT_IMPORTES||').';
+                        COD_RETORNO := 'Se ha fusionado la información de diarios ('||V_COUNT_DIARIOS||') del gasto '||GPV_ID||', pero no ha podido fusionarse la de repartos ('||V_COUNT_IMPORTES||'). (Información actualizada el '||V_FECHA||')';
 
                     END IF;
 
                 ELSE
-                
+
                     RESULTADO := 'KO';
-                    COD_RETORNO := 'No ha sido posible fusionar la información de los diarios del gasto '||GPV_ID||'.';
+                    COD_RETORNO := 'No ha sido posible fusionar la información de los diarios del gasto '||GPV_ID||'. (Información actualizada el '||V_FECHA||')';
 
                 END IF;
 
@@ -235,11 +240,11 @@ BEGIN
         END IF;
 
     END IF;
-    
+
     V_SQL := 'MERGE INTO '||V_ESQUEMA||'.MSG_CALC_DIARIOS T1
             USING (SELECT '||GPV_ID||' GPV_ID
                     , '''||RESULTADO||''' RESULTADO
-                    , '''||COD_RETORNO||''' COD_RETORNO 
+                    , '''||COD_RETORNO||''' COD_RETORNO
                 FROM DUAL) T2
             ON (T1.GPV_ID = T2.GPV_ID)
             WHEN MATCHED THEN UPDATE SET
@@ -259,7 +264,6 @@ EXCEPTION
    WHEN OTHERS THEN
       ROLLBACK;
       ERR_NUM := SQLCODE;
-      COD_RETORNO := V_SQL;
       RAISE;
 END SP_ACTUALIZA_DIARIOS;
 /

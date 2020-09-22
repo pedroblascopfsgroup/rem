@@ -168,9 +168,7 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 														xtype: 'textfieldbase',
 														fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.diario2'),
 														reference : 'diario2',
-										                bind: {value: '{contabilidad.diario2}',
-										                		hidden : '{contabilidad.isEmpty}'
-										                },
+										                bind: {value: '{contabilidad.diario2}'},
 										                colspan: 3,
 										                readOnly: true						
 													},	
@@ -219,15 +217,33 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 										]
 					           },
 					           {
-					           xtype:'fieldsettable',
-								title: HreRem.i18n('title.importe.gasto.liberbank'),
-								hidden : !isCarteraLiberbank,
-								items :[
-									{
-										xtype: 'VImporteGastoLbkGrid',
-										reference: 'VImporteGastoLbkGrid'
-									}
-								]
+						        	xtype:'fieldsettable',
+									title: HreRem.i18n('title.importe.gasto.liberbank'),
+									hidden : !isCarteraLiberbank,
+									width: '100%',
+									colspan: 3,
+					                flex: 3,
+									items :[
+										{ 
+											xtype: 'label',
+											fieldLabel: HreRem.i18n('title.gasto.contabiliadad.error.diarios'),
+											reference : 'errorDiariosRef',
+											style: ' font-weight: bold; font-size: 13px;',
+											margin: '10 10 10 10',
+							                bind: '{contabilidad.errorDiarios}',
+							                colspan: 3,
+							                flex: 3,
+							                readOnly: true,
+							                width: '100%'
+										},	
+										
+										{
+											xtype: 'vImporteGastoLbkGrid',
+											reference: 'vImporteGastoLbkGrid',
+											colspan: 3,
+							                flex: 3
+										}
+									]
 					           }
            
     	];

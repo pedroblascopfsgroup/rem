@@ -109,6 +109,7 @@ public class GastoLineaDetalleDaoImpl extends AbstractEntityDao<GastoLineaDetall
 
 	}
 	
+	// FUERZA EL COMMIT.
 	@Override
 	public void saveGastoLineaDetalle (GastoLineaDetalle gastoLineaDetalle) {
 		Session session = getSessionFactory().openSession();
@@ -123,4 +124,19 @@ public class GastoLineaDetalleDaoImpl extends AbstractEntityDao<GastoLineaDetall
 		}
 	}
 
+	@Override
+	public void actualizarDiariosLbk(Long idGasto, String userName) {
+		String procedureHQL = "BEGIN SP_ACTUALIZA_DIARIOS(:idGasto,:usernameParam); END;";
+
+		try {
+			Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
+			callProcedureSql.setParameter("idGasto", idGasto);
+			callProcedureSql.setParameter("usernameParam", userName);
+			callProcedureSql.executeUpdate();
+
+		} catch (Exception e) {
+			logger.error("Error en el SP_ACTUALIZA_DIARIOS para el AGR_ID "+idGasto.toString(), e);
+		}
+
+	}
 }

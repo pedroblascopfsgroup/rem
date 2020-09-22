@@ -41,6 +41,8 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	private Boolean gicPlanVisitasBoolean;
 	private String tipoComisionadoHreCodigo;
 	private String tipoComisionadoHreDescripcion;
+	private String errorDiarios;
+	private boolean resultadoDiarios;
 	
 
 	public Long getEjercicioImputaGasto() {
@@ -169,4 +171,18 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	public void setTipoComisionadoHreDescripcion(String tipoComisionadoHreDescripcion) {
 		this.tipoComisionadoHreDescripcion = tipoComisionadoHreDescripcion;
 	}
+	public String getErrorDiarios() {
+		return errorDiarios;
+	}
+	public void setErrorDiarios(String errorDiarios) {
+		this.errorDiarios = errorDiarios;
+	}
+	public boolean isResultadoDiarios() {
+		return resultadoDiarios;
+	}
+	public void setResultadoDiarios(boolean resultadoDiarios) {
+		this.resultadoDiarios = resultadoDiarios;
+	}
+	
+	
 }

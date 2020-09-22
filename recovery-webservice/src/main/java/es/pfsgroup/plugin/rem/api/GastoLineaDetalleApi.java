@@ -76,6 +76,8 @@ public interface GastoLineaDetalleApi {
 	boolean eliminarTrabajoLinea(Long idTrabajo, Long idGasto) throws Exception;
 
 	void actualizarParticipacionTrabajosAfterInsert(Long idGasto);
+
+	void actualizarDiariosLbk(Long idGasto);
 	
 }
 

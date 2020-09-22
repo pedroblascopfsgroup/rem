@@ -79,11 +79,42 @@ Ext.define('HreRem.model.GastoContabilidad', {
         },
         {
         	name: 'importeGasto'
-
         },
         {
         	name:'subPartidas'
+        },
+        {
+        	name:'diario1'
+        },
+        {
+        	name: 'diario1Base'
+        },
+        {
+        	name: 'diario1Tipo'
+        },
+        {
+        	name: 'diario1Cuota'
+        },
+        {
+        	name:'diario2'
+        },
+        {
+        	name:'diario2Base'
+        },
+        {
+        	name: 'diario2Tipo'
+        },
+        {
+        	name: 'diario2Cuota'
+        },
+        {
+        	name:'errorDiarios'
+        },
+        {
+        	name:'resultadoDiarios',
+        	type:'boolean'
         }
+
     ],
     
 	proxy: {

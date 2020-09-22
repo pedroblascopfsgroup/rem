@@ -431,7 +431,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     			//session: true,
     	    	remoteSort: true,
     	    	remoteFilter: true,
-    	    	autoLoad:false,
+    	    	autoLoad:true,
     	    	listeners : {
     	            beforeload : 'loadGridSegundo'
     	        }

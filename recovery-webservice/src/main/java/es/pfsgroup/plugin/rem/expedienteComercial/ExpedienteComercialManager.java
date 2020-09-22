@@ -1969,6 +1969,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 		
+		dto.setRecomendacionRc(oferta.getRecomendacionRc() != null ? oferta.getRecomendacionRc().getDescripcion() : null);
+		dto.setFechaRecomendacionRc(oferta.getFechaRecomendacionRc());
+		dto.setRecomendacionDc(oferta.getRecomendacionDc() != null ? oferta.getRecomendacionDc().getDescripcion() : null);
+		dto.setFechaRecomendacionDc(oferta.getFechaRecomendacionDc());
 		
 		return dto;
 	}

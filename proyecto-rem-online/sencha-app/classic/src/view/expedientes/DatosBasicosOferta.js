@@ -445,7 +445,59 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						}
 
 						]
-					}, {
+					},
+					{
+						xtype : 'fieldsettable',
+						title : HreRem.i18n('expediente.oferta.recomendacion.title'),						
+						colspan : 3,
+						items : [
+							{
+								xtype : "textfieldbase",
+								fieldLabel : HreRem.i18n('expediente.oferta.recomendacion.rc.respuesta'),
+								bind : {
+									value : '{datosbasicosoferta.recomendacionRc}'								
+								},
+								readOnly : true,
+								width : 410
+							},
+							{
+								xtype : 'datefieldbase',
+								fieldLabel: HreRem.i18n('expediente.oferta.recomendacion.rc.fecha'),
+								formatter : 'date("d/m/Y")',							
+								bind: {
+									value: '{datosbasicosoferta.fechaRecomendacionRc}'
+								},
+			    				readOnly: true,
+		    					width: 410
+		    				},
+		    				{	// Campo para ajustar las columnas
+		    					xtype : 'textfieldbase',
+		    					//hidden: true,
+		    					readOnly: true,
+		    					width: 410
+		    				},
+		    				{
+								xtype : "textfieldbase",
+								fieldLabel : HreRem.i18n('expediente.oferta.recomendacion.dc.respuesta'),
+								bind : {
+									value : '{datosbasicosoferta.recomendacionDc}'								
+								},
+								readOnly : true,
+								width : 410
+							},
+							{
+								xtype : 'datefieldbase',
+								fieldLabel: HreRem.i18n('expediente.oferta.recomendacion.dc.fecha'),
+								formatter : 'date("d/m/Y")',							
+								bind: {
+									value: '{datosbasicosoferta.fechaRecomendacionDc}'
+								},
+		    					readOnly: true,
+		    					width: 410
+		    				}
+		    			]
+					},							
+					{
 						xtype : 'ofertasagrupadastabpanel',
 						colspan : 3
 					}, {

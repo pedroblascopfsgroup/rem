@@ -305,6 +305,9 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															listeners: {
 												                change: 'onCheckChangeMultiActivo'
 												            },
+												            bind: {
+												            	disabled: '{deshabilitarCheckMultiactivo}'
+												            },
 															colspan: 1
 														},
 														{

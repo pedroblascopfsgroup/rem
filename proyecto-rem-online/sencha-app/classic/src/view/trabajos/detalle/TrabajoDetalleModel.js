@@ -153,6 +153,18 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    			return true;
 	    		}else
 					return false;
+	    },
+	    
+	    deshabilitarCheckMultiactivo: function(get){
+	    	me = this;
+	    	var deshabilitar = me.getView().idActivo != null || me.getView().idAgrupacion != null;
+	    	var checkboxMultiActivo = me.getView().lookupReference('checkMultiActivo');
+	    	if(checkboxMultiActivo != null) {
+	    		checkboxMultiActivo.checked = !deshabilitar;
+	    		checkboxMultiActivo.setValue(!deshabilitar);
+	    		checkboxMultiActivo.fireEvent('change', null, !deshabilitar, deshabilitar, null);
+	    	}
+	    	return true;
 	    }
     },
     

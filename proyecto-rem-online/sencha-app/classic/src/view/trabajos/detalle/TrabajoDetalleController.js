@@ -1325,16 +1325,16 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		});
  	},
  	
- 	onCheckChangeMultiActivo: function(columna,rowIndex,checked,record){
+ 	onCheckChangeMultiActivo: function(columna,newValue,oldValue,record){
  		var me = this;
- 		if(checked){
- 			me.lookupReference('fieldSetSubirFichero').setHidden(true);
- 			me.lookupReference('listaActivosSubidaRef').setHidden(true);
- 			me.lookupReference('activosagrupaciontrabajo').setHidden(false);
- 		}else{
+ 		if(newValue){
  			me.lookupReference('fieldSetSubirFichero').setHidden(false);
  			me.lookupReference('listaActivosSubidaRef').setHidden(false);
  			me.lookupReference('activosagrupaciontrabajo').setHidden(true);
+ 		}else{
+ 			me.lookupReference('fieldSetSubirFichero').setHidden(true);
+ 			me.lookupReference('listaActivosSubidaRef').setHidden(true);
+ 			me.lookupReference('activosagrupaciontrabajo').setHidden(false);
  		}
  	},
  	

@@ -145,13 +145,13 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 	}
 	
 	@Override
-	public boolean isUniqueAgrupacionActivo(Long idActivo, String codigoTipoAgrupacion) {
+	public boolean isUniqueAgrupacionActivo(Long idActivo, String codigoTipoAgrupacion, Long numAgrupacion) {
 		
     	HQLBuilder hb = new HQLBuilder(" from ActivoAgrupacionActivo aa");
     	hb.appendWhere("aa.agrupacion.fechaBaja IS NULL");
+    	hb.appendWhere("aa.agrupacion.numAgrupRem != " + numAgrupacion);
    	  	HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aa.activo.id", idActivo);
    	  	HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aa.agrupacion.tipoAgrupacion.codigo", codigoTipoAgrupacion);
-
    	  	
    	    List<ActivoAgrupacionActivo> list = HibernateQueryUtils.list(this, hb);
    	    

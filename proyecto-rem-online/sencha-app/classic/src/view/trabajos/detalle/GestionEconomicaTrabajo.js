@@ -66,7 +66,6 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 						width: 480,
 						bind: {
 							value: '{gestionEconomica.emailProveedorContacto}'
-							//readOnly: '{!gestionEconomica.esProveedorEditable}'
 						},
 						readOnly: true
 					},
@@ -76,7 +75,6 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 						width: 480,
 						bind: {
 							value: '{gestionEconomica.usuarioProveedorContacto}'
-							//readOnly: '{!gestionEconomica.esProveedorEditable}'
 						},
 						readOnly: true
 					},
@@ -85,7 +83,6 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 						width: 480,
 						bind: {
 							value: '{gestionEconomica.telefonoProveedorContacto}'
-							//readOnly: '{!gestionEconomica.esProveedorEditable}'
 						},
 						readOnly: true
 					}
@@ -108,10 +105,8 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 					},
 				    collapsible: true,
 				    collapsed: false,
-					hidden: true,
 					bind: {
-						hidden: '{!showTarificacion}',
-						disabled: '{disableTarificacion}'
+						disabled: '{!disableTarificacion}'
 					},	
 					reference: 'fieldsettarifasref',
 					defaultType: 'textfieldbase',
@@ -231,19 +226,6 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 	    				            bind: {
 	    				            	hidden: '{!mostrarTotalProveedor}'
 	    				            }
-	    				            /*summaryType: function(){ 
-	    								var store = this;
-	    			                    var records = store.getData().items;
-	    			                    
-	    			                    if(!Ext.isEmpty(records) || !Ext.isEmpty(records[0])){
-	    			                    	me.up().up().lookupReference('importetotalref').setValue(records[0].get('importeTotalTarifas'));
-	    			                    	return records[0].get('importeTotalTarifas');
-	    			                    }
-	    			                   return 0; 
-	    							},
-	    				            summaryRenderer: function(value, summaryData, dataIndex) {
-	    				            	return "<span>"+Ext.util.Format.currency(value)+"</span>"
-	    				            }*/
 	    						},	
 	    						{
 	    				        	text: HreRem.i18n('header.importe.total.cliente'),
@@ -255,19 +237,6 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 	    				            bind: {
 	    				            	hidden: '{!mostrarTotalCliente}'
 	    				            }
-	    				            /*summaryType: function(){
-	    								var store = this;
-	    			                    var records = store.getData().items;
-	    			                    
-	    			                    if(!Ext.isEmpty(records) || !Ext.isEmpty(records[0])){
-	    			                    	me.up().up().lookupReference('importetotalcliref').setValue(records[0].get('importeTotalCliente'));
-	    			                    	return records[0].get('importeTotalCliente');
-	    			                    }
-	    			                   return 0; 
-	    							},
-	    				            summaryRenderer: function(value, summaryData, dataIndex) {
-	    				            	return "<span>"+Ext.util.Format.currency(value)+"</span>"
-	    				            }*/
 	    						}
 	    				    ],
 	    				    dockedItems : [
@@ -334,10 +303,8 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 	    				        }
 	    					},
 	    					defaultType: 'textfieldbase',
-	    					hidden: true,
 	    					bind: {
-	    						hidden: '{!showPresupuesto}',
-	    						disabled: '{disablePresupuesto}'
+	    						disabled: '{!disablePresupuesto}'
 	    					},	
 	    					reference: 'fieldsetpresupuestoref',
 	    	            	title: HreRem.i18n('title.listado.presupuestos.presentados.proveedores'),
@@ -350,11 +317,9 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 			    					colspan:	2,
 			    					topBar: true,
 			    					cls	: 'panel-base shadow-panel',
-			    					//height: '100%',
 			    					reference: 'gridpresupuestostrabajo',
 			    					bind: {
-			    						store: '{storePresupuestosTrabajo}',
-			    						//topBar: '{enableAddPresupuesto}'
+			    						store: '{storePresupuestosTrabajo}'
 			    					},
 			    					
 			    					secFunToEdit: 'EDITAR_LIST_PRESUPUESTOS_TRABAJO',
@@ -451,7 +416,6 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 								readOnly: true,
 								fieldLabel:  HreRem.i18n('header.importe.total'),
 								width: 		350,
-								//value: 0,
 								bind: {
 									hidden: '{!mostrarTotalProveedor}',
 									value: '{gestionEconomica.importePresupuesto}'
@@ -465,7 +429,6 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 								readOnly: true,
 								fieldLabel:  HreRem.i18n('header.importe.total.cliente'),
 								width: 		350,
-								//value: 0,
 								bind: {
 									hidden: '{!mostrarTotalCliente}',
 									value: '{gestionEconomica.importeTotal}'

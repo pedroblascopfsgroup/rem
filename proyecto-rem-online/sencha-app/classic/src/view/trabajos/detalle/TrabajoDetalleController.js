@@ -144,20 +144,23 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     },
 	
 	onChangeSubtipoTrabajoCombo: function(combo) {
-
 		var me = this;
     	var idActivo = combo.up("window").idActivo;
+    	var idAgrupacion = combo.up("window").idAgrupacion
     	var codigoSubtipoTrabajo = combo.getValue();
     	var advertencia;
     	var codCartera;
     	var codSubcartera;
     	var parametrico=false;
-    	if (Ext.isDefined(idActivo) && idActivo != null){
+    	if ((Ext.isDefined(idActivo) && idActivo != null) || Ext.isDefined(idAgrupacion) && idAgrupacion != null){
 		    var url = $AC.getRemoteUrl('trabajo/getAdvertenciaCrearTrabajo');
 		    Ext.Ajax.request({
 			  url:url,
-			  params:  {idActivo : combo.up("window").idActivo, 
-			  			codigoSubtipoTrabajo : combo.getValue()},
+			  params:  {
+				  		idActivo : idActivo,
+				  		idAgrupacion : idAgrupacion, 
+			  			codigoSubtipoTrabajo : combo.getValue()
+			  			},
 			  success: function(response,opts){
 			  
 				  advertencia = Ext.JSON.decode(response.responseText).advertencia;
@@ -334,8 +337,10 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		var arraySelection= [];
 		var codPromo;
 		if(!Ext.isEmpty(me.getView().idAgrupacion)){
-			arraySelection = me.getView().datos;
+			//arraySelection = me.getView().datos;
+			arraySelection = me.lookupReference('activosagrupaciontrabajo').getActivoIDPersistedSelection();
 		}
+		
 		if(!Ext.isEmpty(me.getView().idActivo)){
 			activo = btn.lookupViewModel().getView().idActivo;
 			codPromo = me.lookupReference('activosagrupaciontrabajo').getStore().getData().items[0].get('codigoPromocionPrinex');
@@ -1325,16 +1330,16 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		});
  	},
  	
- 	onCheckChangeMultiActivo: function(columna,rowIndex,checked,record){
+ 	onCheckChangeMultiActivo: function(columna,newValue,oldValue,record){
  		var me = this;
- 		if(checked){
- 			me.lookupReference('fieldSetSubirFichero').setHidden(true);
- 			me.lookupReference('listaActivosSubidaRef').setHidden(true);
- 			me.lookupReference('activosagrupaciontrabajo').setHidden(false);
- 		}else{
+ 		if(newValue){
  			me.lookupReference('fieldSetSubirFichero').setHidden(false);
  			me.lookupReference('listaActivosSubidaRef').setHidden(false);
  			me.lookupReference('activosagrupaciontrabajo').setHidden(true);
+ 		}else{
+ 			me.lookupReference('fieldSetSubirFichero').setHidden(true);
+ 			me.lookupReference('listaActivosSubidaRef').setHidden(true);
+ 			me.lookupReference('activosagrupaciontrabajo').setHidden(false);
  		}
  	},
  	

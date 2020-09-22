@@ -38,27 +38,11 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    },
 	    
 		disableTarificacion: function (get) {
-			 var esProveedorEditable = get('gestionEconomica.esProveedorEditable');
-			 var esListadoTarifasEditable = get('gestionEconomica.esListadoTarifasEditable');
-			 var fechaEmisionFactura = get('trabajo.fechaEmisionFactura');
-	    	 var isSupervisorActivo = $AU.userIsRol('HAYASUPACT') || $AU.userIsRol('HAYASUPADM') || $AU.userIsRol('HAYASUPER');
-		     var isGestorActivos = $AU.userIsRol('HAYAGESACT') || $AU.userIsRol('HAYAGESTADM');
-		     var isProveedor = $AU.userIsRol('HAYAPROV') || $AU.userIsRol('HAYACERTI') 
-		     				   || $AU.userIsRol('GESTOCED') || $AU.userIsRol('GESTOADM');
+	    	 var isSupervisorActivo = $AU.userIsRol('HAYASUPER');
+		     var isGestorActivos = $AU.userIsRol('HAYAGESACT');
+		     var isProveedor = $AU.userIsRol('HAYAPROV');
 
-		     if(!Ext.isEmpty(fechaEmisionFactura)){
-		    	 return true;	    		
-		     } else if(esProveedorEditable == true || esListadoTarifasEditable == true){
-		    	if(isGestorActivos || isProveedor || isSupervisorActivo){
-		    		return false;
-		    	}	else {
-		    		return true;
-		    	}    		
-		     } else {
-		    	return true;
-		     }
-	    	 
-	    	 
+		     return isSupervisorActivo || isGestorActivos || isProveedor;
 	    	 
 	    },
 	    
@@ -82,13 +66,11 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    },
 	    
 	    disablePresupuesto: function (get) {
-			 var esListadoPresupuestosEditable = get('gestionEconomica.esListadoPresupuestosEditable');
-	    	
-	    	 if(esListadoPresupuestosEditable == true){
-	    		 return false;
-	    	 } else {	    		 
-	    		 return true;
-	    	 }
+    		var isSupervisorActivo = $AU.userIsRol('HAYASUPER');
+		    var isGestorActivos = $AU.userIsRol('HAYAGESACT');
+		    var isProveedor = $AU.userIsRol('HAYAPROV');
+
+		    return isSupervisorActivo || isGestorActivos || isProveedor;
 	    },
 	    
 	    enableAddPresupuesto: function(get) {
@@ -153,6 +135,18 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    			return true;
 	    		}else
 					return false;
+	    },
+	    
+	    deshabilitarCheckMultiactivo: function(get){
+	    	me = this;
+	    	var deshabilitar = me.getView().idActivo != null || me.getView().idAgrupacion != null;
+	    	var checkboxMultiActivo = me.getView().lookupReference('checkMultiActivo');
+	    	if(checkboxMultiActivo != null) {
+	    		checkboxMultiActivo.checked = !deshabilitar;
+	    		checkboxMultiActivo.setValue(!deshabilitar);
+	    		checkboxMultiActivo.fireEvent('change', null, !deshabilitar, deshabilitar, null);
+	    	}
+	    	return true;
 	    }
     },
     
@@ -419,7 +413,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     			//session: true,
     	    	remoteSort: true,
     	    	remoteFilter: true,
-    	    	autoLoad:false,
+    	    	autoLoad:true,
     	    	listeners : {
     	            beforeload : 'loadGridSegundo'
     	        }

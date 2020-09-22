@@ -9,7 +9,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
     viewModel: {
         type: 'trabajodetalle'
     },
-    requires: ['HreRem.model.FichaTrabajo','HreRem.view.trabajos.detalle.ActivosAgrupacionTrabajoList','HreRem.view.trabajos.detalle.VentanaTarifasTrabajo'],
+    requires: ['HreRem.model.FichaTrabajo','HreRem.view.trabajos.detalle.ActivosAgrupacionTrabajoList','HreRem.view.trabajos.detalle.VentanaTarifasTrabajo','HreRem.view.trabajos.detalle.listaActivosAgrupacionGrid'],
     
 	listeners: {
 
@@ -233,6 +233,13 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 				        									}
 													]
 												},
+										        {
+								                	xtype: 'label',
+								                	reference: 'textAdvertenciaCrearTrabajo',
+								                	style: 'color: red; font-weight: bolder;',
+								                	width: 		'100%',
+								                	colspan: 3
+						                		},
 												{
 									              	xtype: 'fieldset',
 									        	    title: HreRem.i18n('title.subirfichero'),
@@ -304,6 +311,9 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															reference: 'checkMultiActivo',
 															listeners: {
 												                change: 'onCheckChangeMultiActivo'
+												            },
+												            bind: {
+												            	disabled: '{deshabilitarCheckMultiactivo}'
 												            },
 															colspan: 1
 														},
@@ -381,83 +391,14 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 														},
 														//NUEVO GRID DUPLOCADP
 														{
-														    xtype: 'gridBase',
-															cls	: 'panel-base shadow-panel',
-															reference: 'activosagrupaciontrabajo',
+															xtype: 'listaactivosagrupaciongrid',
+															reference : 'activosagrupaciontrabajo',
 															colspan:3,
-															listeners: {
-																beforeload: 'loadGridSegundo'
-															},
-															bind: {
-				        	   									store: '{listaActivosAgrupacion}'														
-															},
-															columns: [
-																{
-														        	xtype: 'checkcolumn',
-														            dataIndex: 'checkIncluirActivo',
-														            reference: 'checkIncluirActivo',
-														            flex: 1,
-														            listeners: {
-														                checkchange: 'onCheckChangeIncluirActivo'
-														            },
-														            text: HreRem.i18n('Incluir Activo')
-														        },
-				        	   									{
-				        	   										dataIndex: 'numActivoHaya',
-				        	   										text: HreRem.i18n('header.numero.activo.haya'),
-				        	   										flex: 1										
-				        	   									},
-				        	   									{
-				        	   										dataIndex: 'numFincaRegistral',
-				        	   										text: HreRem.i18n('header.finca.registral'),
-				        	   										flex: 1										
-				        	   									},
-				        	   									{
-				        	   									     dataIndex: 'tipoActivo',
-				        	   									     text: HreRem.i18n('header.tipo'),
-				        	   									     flex: 1
-				        	   									},
-				        	   									{
-				        	   									     dataIndex: 'subtipoActivo',
-				        	   									     text: HreRem.i18n('header.subtipo'),
-				        	   										 flex: 1													            
-				        	   									},
-				        	   									{
-				        	   										dataIndex: 'cartera',
-				        	   										text: HreRem.i18n('header.cartera'),
-				        	   										flex: 1	 	
-				        	   									},
-				        	   									{
-				        	   									    dataIndex: 'situacionComercial',
-				        	   									    text: HreRem.i18n('header.situacion.comercial'),
-				        	   									    flex: 1
-				        	   									},
-				        	   									{
-				        	   									    dataIndex: 'situacionPosesoria',
-				        	   									    text: HreRem.i18n('header.situacion.posesoria'),
-				        	   									    flex: 1													            
-				        	   									},
-														        {
-														        	dataIndex: 'activoEnPropuestaEnTramitacion',
-														        	text: HreRem.i18n("header.incluido.en.propuesta.tramite"),
-														        	hidden: true,
-														        	renderer: Utils.rendererBooleanToSiNo,
-														        	flex: 1
-														        }
-				        	   										         	        
-				        	   									],
-				        	   							dockedItems : [
-				        	   									       {
-				        	   											xtype: 'pagingtoolbar',
-				        	   										    dock: 'bottom',
-				        	   										    inputItemWidth: 50,
-				        	   											displayInfo: true,
-				        	   											bind: {
-				        	   											       store: '{listaActivosAgrupacion}'
-				        	   											      }
-				        	   											}
-				        	   									      ]	
+															cls	: 'panel-base shadow-panel'
+															
 														}
+														
+														
 													]
 												},
 												//GRID LISTADO TARIFAS

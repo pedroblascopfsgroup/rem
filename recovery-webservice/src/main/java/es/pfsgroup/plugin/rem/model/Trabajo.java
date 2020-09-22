@@ -345,7 +345,10 @@ public class Trabajo implements Serializable, Auditable {
     @Column(name="TBJ_MOTIVO_LLAVES")
     private String motivoLlaves;  
 	
-    
+	@Column(name="TBJ_PRIM_TOMA_POS")
+    private Boolean tomaPosesion;
+	
+
 	public Long getId() {
 		return id;
 	}
@@ -1155,5 +1158,14 @@ public class Trabajo implements Serializable, Auditable {
 	public void setMotivoLlaves(String motivoLlaves) {
 		this.motivoLlaves = motivoLlaves;
 	}
+
+	public Boolean getTomaPosesion() {
+		return tomaPosesion;
+	}
+
+	public void setTomaPosesion(Boolean tomaPosesion) {
+		this.tomaPosesion = tomaPosesion;
+	}
+
     
 }

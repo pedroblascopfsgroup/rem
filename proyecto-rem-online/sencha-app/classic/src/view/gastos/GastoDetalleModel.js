@@ -758,11 +758,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				type : 'uxproxy',
 				remoteUrl : 'generic/getComboTipoElementoGasto',
 				extraParams : {
-					idGasto : '{gasto.id}',
-					idLinea : '{comboLineaDetalleName}'
+					//cargaDinamica
 				}
-			},
-			autoLoad: false
+			}
 		},
 		
 		storeSubpartidas : {

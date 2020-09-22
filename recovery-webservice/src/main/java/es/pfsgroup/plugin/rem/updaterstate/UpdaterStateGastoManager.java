@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.updaterstate;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -11,20 +10,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
-import es.pfsgroup.plugin.rem.gastoProveedor.GastoProveedorManager;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
-import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
-import es.pfsgroup.plugin.rem.model.VDiarioCalculoLbk;
-import es.pfsgroup.plugin.rem.model.VImportesGastoLBK;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionHaya;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionPropietario;
@@ -35,16 +30,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoProvisionGastos;
 public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 
 	@Autowired
-	private GastoProveedorApi gastoProveedorApi;
-
-	
-	@Autowired
 	private GenericABMDao genericDao;
 	
 	protected final Log logger = LogFactory.getLog(getClass());
-	
-//	@Autowired
-//	private GenericAdapter genericAdapter;
 	
 	@Resource
     MessageService messageServices;
@@ -77,10 +65,6 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	private static final String VALIDACION_GASTO_SIN_TIPO_IMP_INDIRECTO = "msg.validacion.gasto.sin.tipo.impuesto.indirecto";
 	
 	private static final String VALIDACION_LINEA_DETALLE = "msg.validacion.gasto.sin.tipo.impuesto.indirecto";
-	
-	private static final String VALIDACION_VISTA_DIARIOS_LBK = "msg.validacion.lbk.diarios";
-	
-	private static final String VALIDACION_VISTA_IMPORTES_LBK = "msg.validacion.lbk.importes";
 	
 	private DDEstadoProvisionGastos estadoProvision = null;
 	
@@ -220,29 +204,6 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			if(codEstadoProvision == null || !DDEstadoProvisionGastos.CODIGO_RECHAZADO_SUBSANABLE.equals(codEstadoProvision)) {
 				if(Checks.esNulo(gasto.getExisteDocumento()) || !BooleanUtils.toBoolean(gasto.getExisteDocumento())) {
 					error = messageServices.getMessage(VALIDACION_DOCUMENTO_ADJUNTO_GASTO);
-					return error;
-				}
-			}
-			
-			if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo())){
-				Filter filtroVista = genericDao.createFilter(FilterType.EQUALS, "id", gasto.getId());	
-				VDiarioCalculoLbk vistaGastoDiario = genericDao.get(VDiarioCalculoLbk.class, filtroVista);
-				if(vistaGastoDiario == null) {
-					error = messageServices.getMessage(VALIDACION_VISTA_DIARIOS_LBK);
-					return error;
-				}
-				
-				
-				List<VImportesGastoLBK> vistaImporteGastoLBK = genericDao.getList(VImportesGastoLBK.class, filtroVista);
-				boolean tieneEntidades = false;
-				for (GastoLineaDetalle gastoLineaDetalle : gastoListaDetalleList) {
-					if(!gastoLineaDetalle.getGastoLineaEntidadList().isEmpty()) {
-						tieneEntidades = true;
-						break;
-					}
-				}
-				if(vistaImporteGastoLBK == null && tieneEntidades) {
-					error = messageServices.getMessage(VALIDACION_VISTA_IMPORTES_LBK);
 					return error;
 				}
 			}
@@ -403,11 +364,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
 			DDEstadoGasto estadoGasto = genericDao.get(DDEstadoGasto.class, filtro);
 			gasto.setEstadoGasto(estadoGasto);
-			if(gastoProveedorApi.isEstadosGastosLiberbankParaLecturaDirectaDeTabla(gasto) && 
-			DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getCartera().getCodigo()))  {
-				gastoProveedorApi.saveGastosDiariosLbk(gasto.getId());
-				gastoProveedorApi.saveGastosImportesLbk(gasto.getId());	
-			}
+		
 			return true;
 		}
 		

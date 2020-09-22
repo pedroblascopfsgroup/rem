@@ -25,7 +25,6 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoLineaDetalleApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
-import es.pfsgroup.plugin.rem.gasto.dto.ImportesAcumuladosDto;
 import es.pfsgroup.plugin.rem.gasto.linea.detalle.dao.GastoLineaDetalleDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
@@ -294,6 +293,10 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			genericDao.update(GastoDetalleEconomico.class, gasto.getGastoDetalleEconomico());
 		}
 		
+		if(gasto != null && gasto.getPropietario() != null && gasto.getPropietario().getCartera() != null &&
+		DDCartera.CODIGO_CARTERA_LIBERBANK.equalsIgnoreCase(gasto.getPropietario().getCartera().getCodigo())) {
+			actualizarDiariosLbk(gasto.getId());
+		}
 		return true;
 	}
 	
@@ -303,6 +306,9 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idLineaDetalleGasto);
 		GastoLineaDetalle gastoLineaDetalle = genericDao.get(GastoLineaDetalle.class, filtro);
 		
+		if(gastoLineaDetalle == null || gastoLineaDetalle.getGastoProveedor() == null) {
+			return false;
+		}
 		gastoLineaDetalle.getAuditoria().setBorrado(true);
 		gastoLineaDetalle.getAuditoria().setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
 		gastoLineaDetalle.getAuditoria().setFechaBorrar(new Date());
@@ -339,6 +345,11 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			genericDao.update(GastoDetalleEconomico.class, gasto.getGastoDetalleEconomico());
 		}
 		
+		if(gasto != null && gasto.getPropietario() != null && gasto.getPropietario().getCartera() != null &&
+		DDCartera.CODIGO_CARTERA_LIBERBANK.equalsIgnoreCase(gasto.getPropietario().getCartera().getCodigo())) {
+			actualizarDiariosLbk(gasto.getId());
+		}
+	
 		
 		return true;
 	}
@@ -371,7 +382,6 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		
 		GastoInfoContabilidad gastoInfoContabilidad = gasto.getGastoInfoContabilidad();
 		boolean todosActivoAlquilados= false;
-		boolean isLbk = false;
 		DDSubtipoGasto subtipoGasto = (DDSubtipoGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoGasto.class, subtipoGastoCodigo);
 
 		if (gastoInfoContabilidad !=null) {
@@ -761,7 +771,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 					DDEntidadGasto entidad = (DDEntidadGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDEntidadGasto.class, partes.get(1));
 					nuevaRelacionActivoGasto.setEntidadGasto(entidad);
 					nuevaRelacionActivoGasto.setParticipacionGasto(100.0 / Double.valueOf(idsActivos.size()));
-					//nuevaRelacionActivoGasto.setReferenciaCatastral(referenciaCatastral);
+
 					nuevaRelacionActivoGasto.setAuditoria(Auditoria.getNewInstance());
 					
 					
@@ -1225,6 +1235,12 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 					genericDao.save(GastoLineaDetalle.class, gastoLineaDetalle);
 					
 			}
+			
+			if(gasto != null && gasto.getPropietario() != null && gasto.getPropietario().getCartera() != null &&
+			DDCartera.CODIGO_CARTERA_LIBERBANK.equalsIgnoreCase(gasto.getPropietario().getCartera().getCodigo())) {
+				actualizarDiariosLbk(gasto.getId());
+			}
+			
 			return true;
 		}
 		
@@ -1266,7 +1282,8 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	public boolean desasociarElementosAgastos(Long idElemento){
 		GastoLineaDetalleEntidad gastoLineaDetalleEntidad = getLineaDetalleEntidadByIdLineaEntidad(idElemento);
 	
-		if(gastoLineaDetalleEntidad != null) {			
+		if(gastoLineaDetalleEntidad != null && gastoLineaDetalleEntidad.getGastoLineaDetalle()  != null
+		&& gastoLineaDetalleEntidad.getGastoLineaDetalle().getGastoProveedor() != null) {			
 			GastoLineaDetalle gastoLineaDetalle = gastoLineaDetalleEntidad.getGastoLineaDetalle();
 			if(gastoLineaDetalle != null && !gastoLineaDetalle.getGastoLineaEntidadList().isEmpty()) {
 				List<GastoLineaDetalleEntidad> gastoLineaDetalleEntidadList =  gastoLineaDetalle.getGastoLineaEntidadList();
@@ -1280,7 +1297,14 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			
 			genericDao.save(GastoLineaDetalleEntidad.class, gastoLineaDetalleEntidad);
 			
-			
+			if(gastoLineaDetalleEntidad.getGastoLineaDetalle() != null) {
+				GastoProveedor gasto = gastoLineaDetalleEntidad.getGastoLineaDetalle().getGastoProveedor();
+				if(gasto != null && gasto.getPropietario() != null && gasto.getPropietario().getCartera() != null &&
+					DDCartera.CODIGO_CARTERA_LIBERBANK.equalsIgnoreCase(gasto.getPropietario().getCartera().getCodigo())) {
+						actualizarDiariosLbk(gasto.getId());
+				}
+			}
+		
 		}
 		
 		return false;
@@ -1290,7 +1314,8 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	@Transactional(readOnly = false)
 	public boolean updateElementosDetalle(DtoElementosAfectadosLinea dto){
 		GastoLineaDetalleEntidad gastoLineaDetalleEntidad = getLineaDetalleEntidadByIdLineaEntidad(dto.getId());
-		if(gastoLineaDetalleEntidad == null) {
+		if(gastoLineaDetalleEntidad == null || gastoLineaDetalleEntidad.getGastoLineaDetalle()  == null
+		|| gastoLineaDetalleEntidad.getGastoLineaDetalle().getGastoProveedor() == null) {
 			return false;
 		}
 		
@@ -1306,6 +1331,15 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		
 		genericDao.save(GastoLineaDetalleEntidad.class, gastoLineaDetalleEntidad);
 		
+		if(gastoLineaDetalleEntidad.getGastoLineaDetalle() != null) {
+			GastoProveedor gasto = gastoLineaDetalleEntidad.getGastoLineaDetalle().getGastoProveedor();
+			if(gasto != null && gasto.getPropietario() != null && gasto.getPropietario().getCartera() != null &&
+				DDCartera.CODIGO_CARTERA_LIBERBANK.equalsIgnoreCase(gasto.getPropietario().getCartera().getCodigo())) {
+					actualizarDiariosLbk(gasto.getId());
+			}
+		}
+		
+		
 		return true;
 	}
 	
@@ -1313,12 +1347,18 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	@Transactional(readOnly = false)
 	public boolean updateLineaSinActivos(Long idLinea){
 		GastoLineaDetalle gastoLineaDetalle = getLineaDetalleByIdLinea(idLinea);
-		if(gastoLineaDetalle == null) {
+		if(gastoLineaDetalle == null || gastoLineaDetalle.getGastoProveedor() == null) {
 			return false;
 		}
 		gastoLineaDetalle.setLineaSinActivos(true);
 		genericDao.save(GastoLineaDetalle.class, gastoLineaDetalle);
 		
+		GastoProveedor gasto = gastoLineaDetalle.getGastoProveedor();
+		if(gasto.getPropietario() != null && gasto.getPropietario().getCartera() != null &&
+		DDCartera.CODIGO_CARTERA_LIBERBANK.equalsIgnoreCase(gasto.getPropietario().getCartera().getCodigo())) {
+			actualizarDiariosLbk(gasto.getId());
+		}
+
 		return true;
 	}
 
@@ -1558,6 +1598,11 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			this.actualizarParticipacionTrabajos(linea.getGastoProveedor(), vParticipacionElementosLineaList);
 		}
 		
+		GastoProveedor gasto = linea.getGastoProveedor();
+		if(gasto.getPropietario() != null && gasto.getPropietario().getCartera() != null &&
+				DDCartera.CODIGO_CARTERA_LIBERBANK.equalsIgnoreCase(gasto.getPropietario().getCartera().getCodigo())) {
+					actualizarDiariosLbk(gasto.getId());
+		}
 		return Boolean.TRUE;
 	}
 	
@@ -1713,6 +1758,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			gasto.getGastoDetalleEconomico().setImporteTotal(importeTotalGDE.doubleValue());
 			genericDao.save(GastoDetalleEconomico.class, gasto.getGastoDetalleEconomico());
 		}
+		
 		
 		return true;
 	}
@@ -1897,7 +1943,9 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				}
 			}
 		}
-		
+
+	
+
 		return true;
 		
 	}
@@ -2000,4 +2048,11 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		
 	}
 	
+	
+	@Override 
+	@Transactional(readOnly = false)
+	public void actualizarDiariosLbk(Long idGasto) {
+		activoDao.hibernateFlush();
+		gastoLineaDetalleDao.actualizarDiariosLbk(idGasto, genericAdapter.getUsuarioLogado().getUsername());
+	}
 }

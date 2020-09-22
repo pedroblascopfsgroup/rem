@@ -425,10 +425,6 @@ public interface GastoProveedorApi {
 		
 		boolean actualizarRepartoTrabajo(Long idLinea);
 
-		void saveGastosDiariosLbk(Long idGasto);
-
-		void saveGastosImportesLbk(Long idGasto);
-				
 		boolean isEstadosGastosLiberbankParaLecturaDirectaDeTabla(GastoProveedor gasto);
 
 		ActivoSubtipoGastoProveedorTrabajo getSubtipoGastoBySubtipoTrabajo(Trabajo trabajo);

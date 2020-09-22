@@ -373,7 +373,7 @@ Ext.define('HreRem.view.gastos.LineaDetalleGastoGrid', {
     		me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.error.eliminar.gasto.linea.detalle")); 
     		return;
     	}
-    	
+    	var idGasto  =  me.lookupController().getView().getViewModel().get("gasto.id");
     	var idLineaDetalleGasto = me.getSelection()[0].getData().id;
     	Ext.Msg.show({
 			   title: HreRem.i18n('title.mensaje.confirmacion'),
@@ -397,17 +397,25 @@ Ext.define('HreRem.view.gastos.LineaDetalleGastoGrid', {
 		    	    			grid.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar();
 		    	    			grid.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
 		    	    			grid.up('gastodetalle').down('activosafectadosgasto').funcionRecargar();
+		    	    			grid.up('gastodetalle').down('contabilidadgasto').funcionRecargar();
+		    	    			
 		    	    			var comboLineas = grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=comboLineasDetalleReference]');
-		    	    			if (!Ext.isEmpty(comboLineas)) {
+		    	    			if (comboLineas && comboLineas.getStore()) {
 		    			        	comboLineas.reset();
 		    				        comboLineas.getStore().load();
 		    			        };
 		    			       
 		    	   		        var gridElementos = grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=listadoActivosAfectadosRef]');
-			   			        if(!Ext.isEmpty(gridElementos)){
-			    	   		        gridElementos.getStore().getProxy().setExtraParams({'idLinea':-1})
+			   			        if(gridElementos && gridElementos.getStore()){
+			    	   		        gridElementos.getStore().getProxy().setExtraParams({'idLinea':-1});
 			    	   		        gridElementos.getStore().load();
 			   			        }
+			   			        
+				 		        var gridActivosLbk = grid.up('gastodetalle').down('contabilidadgasto').down('[reference=vImporteGastoLbkGrid]');
+				 		        if(gridActivosLbk && gridActivosLbk.getStore()){
+				 		        	gridActivosLbk.getStore().getProxy().setExtraParams({'idGasto':idGasto});
+				 		        	gridActivosLbk.getStore().load();
+				 		        }
 		    	    		},
 		    			 	failure: function(record, operation) {
 		    			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 

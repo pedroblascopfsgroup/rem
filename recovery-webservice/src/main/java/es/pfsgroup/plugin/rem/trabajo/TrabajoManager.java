@@ -1921,12 +1921,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if(!Checks.esNulo(trabajo.getGastoTrabajo())) {
 			GastoProveedor gasto = trabajo.getGastoTrabajo().getGastoLineaDetalle().getGastoProveedor();
 			dtoTrabajo.setGastoProveedor(gasto.getNumGastoHaya());
-			dtoTrabajo.setEstadoGasto(gasto.getEstadoGasto().getCodigo());
-			if(gastoProveedorApi.isEstadosGastosLiberbankParaLecturaDirectaDeTabla(gasto)) {
-				gastoProveedorApi.saveGastosDiariosLbk(gasto.getId());
-				gastoProveedorApi.saveGastosImportesLbk(gasto.getId());
-			}
-			
+			dtoTrabajo.setEstadoGasto(gasto.getEstadoGasto().getCodigo());	
 		}
 
 		if (trabajo.getTipoTrabajo() != null) {

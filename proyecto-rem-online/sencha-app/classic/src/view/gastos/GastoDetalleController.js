@@ -910,18 +910,25 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 					    	 grid.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
 					         grid.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar();
 					         grid.up('gastodetalle').down('activosafectadosgasto').funcionRecargar();
-
+					         grid.up('gastodetalle').down('contabilidadgasto').funcionRecargar();
+					         
 					         var comboLineas =  grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=comboLineasDetalleReference]');
-					         if (!Ext.isEmpty(comboLineas)) {
+					         if (comboLineas && comboLineas.getStore()) {
 					        	 comboLineas.reset();
 						         comboLineas.getStore().load();
 					         }
 		 	    			 var gridElementos = grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=listadoActivosAfectadosRef]');
-
-					         if(!Ext.isEmpty(gridElementos)){
-						         gridElementos.getStore().getProxy().setExtraParams({'idLinea':-1})
+					         if(gridElementos && gridElementos.getStore()){
+						         gridElementos.getStore().getProxy().setExtraParams({'idLinea':-1});
 						         gridElementos.getStore().load();
 					         }
+					         
+					         var gridActivosLbk = grid.up('gastodetalle').down('contabilidadgasto').down('[reference=vImporteGastoLbkGrid]');
+					         if(gridActivosLbk && gridActivosLbk.getStore()){
+					        	 gridActivosLbk.getStore().getProxy().setExtraParams({'idGasto':idGasto});
+					        	 gridActivosLbk.getStore().load();
+					         }
+					         
 					         grid.unmask();		         
 					         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 				        	 me.refrescarGasto(true);
@@ -1036,18 +1043,25 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 				         var comboLineas = ventanaSeleccionTrabajos.up('gastodetalle').down('activosafectadosgasto').down('[reference=comboLineasDetalleReference]');
 				         ventanaSeleccionTrabajos.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
 				         ventanaSeleccionTrabajos.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar();
-				         if (!Ext.isEmpty(comboLineas)) {
+				         ventanaSeleccionTrabajos.up('gastodetalle').down('contabilidadgasto').funcionRecargar();
+				         
+				         if (comboLineas && comboLineas.getStore()) {
 				        	 comboLineas.reset();
 					         comboLineas.getStore().load();
 				         }
 
 				         var gridElementos = ventanaSeleccionTrabajos.up('gastodetalle').down('activosafectadosgasto').down('[reference=listadoActivosAfectadosRef]');
 
-				         if(!Ext.isEmpty(gridElementos)){
-					         gridElementos.getStore().getProxy().setExtraParams({'idLinea':-1})
+				         if(gridElementos &&  gridElementos.getStore()){
+					         gridElementos.getStore().getProxy().setExtraParams({'idLinea':-1});
 					         gridElementos.getStore().load();
 				         }
-
+				        
+				         var gridActivosLbk = ventanaSeleccionTrabajos.up('gastodetalle').down('contabilidadgasto').down('[reference=vImporteGastoLbkGrid]');
+				         if(gridActivosLbk &&  gridActivosLbk.getStore()){
+				        	 gridActivosLbk.getStore().getProxy().setExtraParams({'idGasto':idGasto});
+				        	 gridActivosLbk.getStore().load();
+				         }
 				         
 				         ventanaSeleccionTrabajos.destroy();
 				         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
@@ -1819,21 +1833,29 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
                 	var grid = window.lookupController().getView().down('[reference=lineaDetalleGastoGrid]');
                 	grid.getStore().load();
                 	window.close();
-                	var comboLineas = grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=comboLineasDetalleReference]');
                 	
+                	var comboLineas = grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=comboLineasDetalleReference]');
                 	grid.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar();
                 	grid.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
                 	grid.up('gastodetalle').down('activosafectadosgasto').funcionRecargar();
-                	 if (!Ext.isEmpty(comboLineas)) {
+                	grid.up('gastodetalle').down('contabilidadgasto').funcionRecargar();
+                	
+                	 if (comboLineas &&  comboLineas.getStore()) {
 			        	 comboLineas.reset();
 				         comboLineas.getStore().load();
 			         }
                 	
 			         var gridElementos = grid.up('gastodetalle').down('activosafectadosgasto').down('[reference=listadoActivosAfectadosRef]');
 
-			         if(!Ext.isEmpty(gridElementos)){
-				         gridElementos.getStore().getProxy().setExtraParams({'idLinea':-1})
+			         if(gridElementos && gridElementos.getStore()){
+				         gridElementos.getStore().getProxy().setExtraParams({'idLinea':-1});
 				         gridElementos.getStore().load();
+			         }
+			         
+			         var gridActivosLbk = grid.up('gastodetalle').down('contabilidadgasto').down('[reference=vImporteGastoLbkGrid]');
+			         if(gridActivosLbk && gridActivosLbk.getStore()){
+			        	 gridActivosLbk.getStore().getProxy().setExtraParams({'idGasto':window.idGasto});
+			        	 gridActivosLbk.getStore().load();
 			         }
                 },
                 failure: function(fp, o) {
@@ -2313,7 +2335,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var comboElementoAAnyadir = me.lookupReference('comboElementoAAnyadir');
     	var comboLineasRefAnyadirVal = me.lookupReference('comboLineasDetalleReferenceAnyadir').getValue();
     	var idGasto = me.getView().idGasto;
-
+    
     	if(!Ext.isEmpty(comboLineasRefAnyadirVal) && comboLineasRefAnyadirVal != "-1"){
 	    	comboElementoAAnyadir.setDisabled(false);
 	    	elementoAnyadir.setDisabled(false);
@@ -2362,10 +2384,18 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 				window.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar();
 				window.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
 				window.up('gastodetalle').down('contabilidadgasto').funcionRecargar();
+				window.up('gastodetalle').down('contabilidadgasto').funcionRecargar();
+				
 				var idGasto = window.down('anyadirnuevogastoactivodetalle').up().idGasto;
 				var gridLineas = window.up('gastodetalle').down('detalleeconomicogasto').down('[reference=lineaDetalleGastoGrid]');
 				gridLineas.getStore().getProxy().setExtraParams({'idGasto':idGasto});
 		        gridLineas.getStore().load();
+		        
+		        var gridActivosLbk = window.up('gastodetalle').down('contabilidadgasto').down('[reference=vImporteGastoLbkGrid]');
+		        if(gridActivosLbk && gridActivosLbk.getStore()){
+		        	gridActivosLbk.getStore().getProxy().setExtraParams({'idGasto':idGasto});
+		        	gridActivosLbk.getStore().load();
+		        }
 			},
 			failure: function(a, operation){
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));

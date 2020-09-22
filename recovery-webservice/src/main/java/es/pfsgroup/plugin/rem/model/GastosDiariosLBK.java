@@ -6,11 +6,14 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -41,8 +44,9 @@ public class GastosDiariosLBK implements Serializable, Auditable {
 	@SequenceGenerator(name = "GastosDiariosGenerator", sequenceName = "S_GDL_GASTOS_DIARIOS_LIBERBANK")
 	private Long id;
 	
-	@Column(name="GPV_ID")
-	private Long idGastos;
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "GPV_ID")
+	private GastoProveedor gastoProveedor;
 	
 	@Column(name="DIARIO1")
 	private String diario1;
@@ -82,12 +86,12 @@ public class GastosDiariosLBK implements Serializable, Auditable {
 		this.id = id;
 	}
 
-	public Long getIdGastos() {
-		return idGastos;
+	public GastoProveedor getGastoProveedor() {
+		return gastoProveedor;
 	}
 
-	public void setIdGastos(Long idGastos) {
-		this.idGastos = idGastos;
+	public void setGastoProveedor(GastoProveedor gastoProveedor) {
+		this.gastoProveedor = gastoProveedor;
 	}
 
 	public String getDiario1() {

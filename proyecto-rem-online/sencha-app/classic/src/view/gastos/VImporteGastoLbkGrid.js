@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.gastos.VImporteGastoLbkGrid', {
     extend		: 'HreRem.view.common.GridBase',
-    xtype		: 'VImporteGastoLbkGrid',
-	reference	: 'VImporteGastoLbkGridRef',
+    xtype		: 'vImporteGastoLbkGrid',
+	reference	: 'vImporteGastoLbkGridRef',
 	overflowX: 'scroll',
 	requires: ['HreRem.model.VImporteGastoLbkGrid'],
 	bind: { 
@@ -41,7 +41,7 @@ Ext.define('HreRem.view.gastos.VImporteGastoLbkGrid', {
 		        {
 		            xtype: 'pagingtoolbar',
 		            dock: 'bottom',
-		            itemId: 'VImporteGastoLbkGridPaginationToolbar',
+		            itemId: 'vImporteGastoLbkGridPaginationToolbar',
 		            inputItemWidth: 60,
 		            displayInfo: true,
 		            overflowX: 'scroll',

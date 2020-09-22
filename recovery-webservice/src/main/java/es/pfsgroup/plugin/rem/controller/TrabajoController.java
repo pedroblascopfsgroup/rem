@@ -910,12 +910,12 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView getAdvertenciaCrearTrabajo(@RequestParam Long idActivo, @RequestParam String codigoSubtipoTrabajo, ModelMap model){
+	public ModelAndView getAdvertenciaCrearTrabajo(@RequestParam Long idActivo, @RequestParam Long idAgrupacion, @RequestParam String codigoSubtipoTrabajo, ModelMap model){
 		
 		String advertencia="";
 		
 		
-		advertencia = trabajoAdapter.getAdvertenciaCrearTrabajo(idActivo, codigoSubtipoTrabajo, null);			
+		advertencia = trabajoAdapter.getAdvertenciaCreacionTrabajo(idActivo, idAgrupacion, codigoSubtipoTrabajo);			
 
 		model.put("advertencia", advertencia);
 		model.put("success", true);

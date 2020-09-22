@@ -233,6 +233,13 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 				        									}
 													]
 												},
+										        {
+								                	xtype: 'label',
+								                	reference: 'textAdvertenciaCrearTrabajo',
+								                	style: 'color: red; font-weight: bolder;',
+								                	width: 		'100%',
+								                	colspan: 3
+						                		},
 												{
 									              	xtype: 'fieldset',
 									        	    title: HreRem.i18n('title.subirfichero'),

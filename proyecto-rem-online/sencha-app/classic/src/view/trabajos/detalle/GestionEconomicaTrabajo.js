@@ -105,10 +105,8 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 					},
 				    collapsible: true,
 				    collapsed: false,
-					hidden: true,
 					bind: {
-						hidden: '{!showTarificacion}',
-						disabled: '{disableTarificacion}'
+						disabled: '{!disableTarificacion}'
 					},	
 					reference: 'fieldsettarifasref',
 					defaultType: 'textfieldbase',
@@ -305,10 +303,8 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 	    				        }
 	    					},
 	    					defaultType: 'textfieldbase',
-	    					hidden: true,
 	    					bind: {
-	    						hidden: '{!showPresupuesto}',
-	    						disabled: '{disablePresupuesto}'
+	    						disabled: '{!disablePresupuesto}'
 	    					},	
 	    					reference: 'fieldsetpresupuestoref',
 	    	            	title: HreRem.i18n('title.listado.presupuestos.presentados.proveedores'),

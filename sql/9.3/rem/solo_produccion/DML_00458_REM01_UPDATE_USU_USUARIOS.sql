@@ -1,7 +1,7 @@
 --/*
 --######################################### 
 --## AUTOR=Juan Bautista Alfonso
---## FECHA_CREACION=20200918
+--## FECHA_CREACION=20200922
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-8085
@@ -10,6 +10,7 @@
 --## INSTRUCCIONES:  Actualizar telefono de usuarios que son gestores
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Modificacion filtro por numero de telefonos nulos
 --#########################################
 --*/
 
@@ -294,7 +295,7 @@ BEGIN
         FROM '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO GAC 
 		JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE ON GEE.GEE_ID = GAC.GEE_ID
 		JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON (GEE.DD_TGE_ID = TGE.DD_TGE_ID AND DD_TGE_CODIGO = ''GCOM'' AND  GEE.BORRADO = 0)
-		JOIN '||V_ESQUEMA_M||'.'||V_TABLA||' USU ON USU.USU_ID = GEE.USU_ID WHERE USU.USU_USERNAME='''|| TRIM(V_TMP_TIPO_DATA(1)) ||''' AND USU.USU_TELEFONO !='''|| TRIM(V_TMP_TIPO_DATA(2)) ||''' ';
+		JOIN '||V_ESQUEMA_M||'.'||V_TABLA||' USU ON USU.USU_ID = GEE.USU_ID WHERE USU.USU_USERNAME='''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''  AND (USU.USU_TELEFONO IS NULL OR USU.USU_TELEFONO!='''|| TRIM(V_TMP_TIPO_DATA(2)) ||''')';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
         IF V_NUM_TABLAS > 0 THEN
@@ -305,7 +306,7 @@ BEGIN
                     FROM '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO GAC 
                     JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE ON GEE.GEE_ID = GAC.GEE_ID
                     JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON (GEE.DD_TGE_ID = TGE.DD_TGE_ID AND DD_TGE_CODIGO = ''GCOM'' AND  GEE.BORRADO = 0)
-                    JOIN '||V_ESQUEMA_M||'.'||V_TABLA||' USU ON USU.USU_ID = GEE.USU_ID WHERE USU.USU_USERNAME='''|| TRIM(V_TMP_TIPO_DATA(1)) ||''' AND USU.USU_TELEFONO !='''|| TRIM(V_TMP_TIPO_DATA(2)) ||''' ';
+                    JOIN '||V_ESQUEMA_M||'.'||V_TABLA||' USU ON USU.USU_ID = GEE.USU_ID WHERE USU.USU_USERNAME='''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''  AND (USU.USU_TELEFONO IS NULL OR USU.USU_TELEFONO!='''|| TRIM(V_TMP_TIPO_DATA(2)) ||''') ';
             
             EXECUTE IMMEDIATE V_SQL INTO V_ID;
             

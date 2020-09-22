@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20200921
+--## FECHA_CREACION=20200922
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11250
@@ -23,7 +23,6 @@ SET DEFINE OFF;
 CREATE OR REPLACE PROCEDURE       SP_ACTUALIZA_DIARIOS (
     GPV_ID          IN NUMBER
     , V_USUARIO     IN VARCHAR2
-    , COD_RETORNO   OUT VARCHAR2
 ) AS
 
 V_SQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar.
@@ -31,23 +30,25 @@ V_COUNT NUMBER(25); -- Variable para validaciones
 V_COUNT_DIARIOS NUMBER(1); -- Variable para informar de diarios actualizados.
 V_COUNT_IMPORTES NUMBER(16); -- Variable para informar de importes actualizados.
 V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema.
+COD_RETORNO VARCHAR2(4000 CHAR);
+RESULTADO VARCHAR2(4000 CHAR);
 ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
 
 BEGIN
-    
+
     V_SQL := 'SELECT COUNT(1)
         FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR
         WHERE GPV_ID = '||GPV_ID;
     EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
-    
+
     IF V_COUNT = 0 THEN
-    
-        COD_RETORNO := '[KO] No existe el gasto.';
-        RETURN;
-        
+
+        RESULTADO := 'KO';
+        COD_RETORNO := 'No existe el gasto.';
+
     ELSE
-    
-        V_SQL := 'SELECT COUNT(1) 
+
+        V_SQL := 'SELECT COUNT(1)
             FROM '||V_ESQUEMA||'.GLD_ENT GEN
             JOIN '||V_ESQUEMA||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GLD_ID = GEN.GLD_ID
                 AND GLD.BORRADO = 0
@@ -59,7 +60,7 @@ BEGIN
                 AND ENT.DD_ENT_CODIGO = ''ACT''
                 AND GLD.GPV_ID = '||GPV_ID;
         EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
-        
+
         IF V_COUNT = 0 THEN
 
             V_SQL := 'MERGE INTO '||V_ESQUEMA||'.GIL_GASTOS_IMPORTES_LIBERBANK T1
@@ -78,13 +79,12 @@ BEGIN
                         , T1.FECHABORRAR = CURRENT_TIMESTAMP(6)
                         , T1.BORRADO = 1';
             EXECUTE IMMEDIATE V_SQL;
-            COMMIT;
 
-            COD_RETORNO := '[KO] El gasto no tiene distribución por activos o han sido eliminados.';
-            RETURN;
-        
+            RESULTADO := 'KO';
+            COD_RETORNO := 'El gasto no tiene distribución por activos o han sido eliminados.';
+
         ELSE
-            
+
             V_SQL := 'SELECT COUNT(1)
                 FROM '||V_ESQUEMA||'.ACT_ETD_ENT_TDI ETD
                 JOIN '||V_ESQUEMA||'.DD_ENT_ENTIDAD_GASTO ENT ON ENT.DD_ENT_ID = ETD.DD_ENT_ID
@@ -97,14 +97,14 @@ BEGIN
                     AND ETD.BORRADO = 0
                     AND GLD.GPV_ID = '||GPV_ID;
             EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
-            
+
             IF V_COUNT = 0 THEN
-            
-                COD_RETORNO := '[KO] Sin información de tipos de diario para los activos del gasto.';
-                RETURN;
-                
+
+                RESULTADO := 'KO';
+                COD_RETORNO := 'Sin información de tipos de diario para los activos del gasto.';
+
             ELSE
-            
+
                 V_SQL := 'MERGE INTO '||V_ESQUEMA||'.GDL_GASTOS_DIARIOS_LIBERBANK T1
                     USING (
                         SELECT GPV_ID
@@ -115,14 +115,14 @@ BEGIN
                             , DIARIO2
                             , DIARIO2_BASE
                             , DIARIO2_TIPO
-                            , DIARIO2_CUOTA 
+                            , DIARIO2_CUOTA
                         FROM '||V_ESQUEMA||'.V_DIARIOS_CALCULO_LBK
                         WHERE DIARIO1 IS NOT NULL
                             AND GPV_ID = '||GPV_ID||'
                     )T2
                     ON (T1.GPV_ID = T2.GPV_ID
                         AND T1.BORRADO = 0)
-                    WHEN MATCHED THEN 
+                    WHEN MATCHED THEN
                         UPDATE SET
                             T1.DIARIO1 = T2.DIARIO1
                             , T1.DIARIO1_BASE = T2.DIARIO1_BASE
@@ -134,8 +134,8 @@ BEGIN
                             , T1.DIARIO2_CUOTA = T2.DIARIO2_CUOTA
                             , T1.USUARIOMODIFICAR = '''||V_USUARIO||'''
                             , T1.FECHAMODIFICAR = CURRENT_TIMESTAMP(6)
-                    WHEN NOT MATCHED THEN 
-                        INSERT 
+                    WHEN NOT MATCHED THEN
+                        INSERT
                             (T1.GDL_ID
                             , T1.GPV_ID
                             , T1.DIARIO1
@@ -162,9 +162,9 @@ BEGIN
                             )';
                 EXECUTE IMMEDIATE V_SQL;
                 V_COUNT_DIARIOS := SQL%ROWCOUNT;
-                
+
                 IF V_COUNT_DIARIOS = 1 THEN
-                    
+
                     V_SQL := 'MERGE INTO '||V_ESQUEMA||'.GIL_GASTOS_IMPORTES_LIBERBANK T1
                         USING (
                             SELECT GIL.GIL_ID
@@ -181,12 +181,12 @@ BEGIN
                             UPDATE SET T1.IMPORTE_ACTIVO = T2.IMPORTE_ACTIVO
                                 , T1.USUARIOMODIFICAR = '''||V_USUARIO||'''
                                 , T1.FECHAMODIFICAR = CURRENT_TIMESTAMP(6)
-                                , T1.USUARIOBORRAR = CASE WHEN T2.IMPORTE_ACTIVO IS NULL THEN '''||V_USUARIO||''' END 
+                                , T1.USUARIOBORRAR = CASE WHEN T2.IMPORTE_ACTIVO IS NULL THEN '''||V_USUARIO||''' END
                                 , T1.FECHABORRAR = CASE WHEN T2.IMPORTE_ACTIVO IS NULL THEN CURRENT_TIMESTAMP(6) END
                                 , T1.BORRADO = CASE WHEN T2.IMPORTE_ACTIVO IS NULL THEN 1 ELSE 0 END';
                     EXECUTE IMMEDIATE V_SQL;
                     V_COUNT_IMPORTES := SQL%ROWCOUNT;
-                    
+
                     V_SQL := 'INSERT INTO '||V_ESQUEMA||'.GIL_GASTOS_IMPORTES_LIBERBANK (
                             GIL_ID
                             , GPV_ID
@@ -210,30 +210,48 @@ BEGIN
                             AND VIL.GPV_ID = '||GPV_ID;
                     EXECUTE IMMEDIATE V_SQL;
                     V_COUNT_IMPORTES := V_COUNT_IMPORTES + SQL%ROWCOUNT;
-                    
+
                     IF V_COUNT_IMPORTES > 0 THEN
-                    
-                        COD_RETORNO := '[OK] La información de diarios ('||V_COUNT_DIARIOS||') y repartos ('||V_COUNT_IMPORTES||') del gasto '||GPV_ID||', se ha fusionado.';
-                        
+
+                        RESULTADO := 'OK';
+                        COD_RETORNO := 'La información de diarios ('||V_COUNT_DIARIOS||') y repartos ('||V_COUNT_IMPORTES||') del gasto '||GPV_ID||', se ha fusionado.';
+
                     ELSE
-                        
-                        COD_RETORNO := '[WARNING] Se ha fusionado la información de diarios ('||V_COUNT_DIARIOS||') del gasto '||GPV_ID||', pero no ha podido fusionarse la de repartos ('||V_COUNT_IMPORTES||').';
-                        
+
+                        RESULTADO := 'KO';
+                        COD_RETORNO := 'Se ha fusionado la información de diarios ('||V_COUNT_DIARIOS||') del gasto '||GPV_ID||', pero no ha podido fusionarse la de repartos ('||V_COUNT_IMPORTES||').';
+
                     END IF;
-                
+
                 ELSE
                 
-                    COD_RETORNO := '[KO] No ha sido posible fusionar la información de los diarios del gasto '||GPV_ID||'.';
-                    RETURN;
-                    
+                    RESULTADO := 'KO';
+                    COD_RETORNO := 'No ha sido posible fusionar la información de los diarios del gasto '||GPV_ID||'.';
+
                 END IF;
-                
+
             END IF;
-            
-        END IF; 
-        
+
+        END IF;
+
     END IF;
     
+    V_SQL := 'MERGE INTO '||V_ESQUEMA||'.MSG_CALC_DIARIOS T1
+            USING (SELECT '||GPV_ID||' GPV_ID
+                    , '''||RESULTADO||''' RESULTADO
+                    , '''||COD_RETORNO||''' COD_RETORNO 
+                FROM DUAL) T2
+            ON (T1.GPV_ID = T2.GPV_ID)
+            WHEN MATCHED THEN UPDATE SET
+                T1.RESULTADO = T2.RESULTADO
+                , T1.ERR_MSG = T2.COD_RETORNO
+            WHEN NOT MATCHED THEN INSERT (T1.GPV_ID, T1.RESULTADO, T1.ERR_MSG)
+            VALUES (
+                T2.GPV_ID
+                , T2.RESULTADO
+                , T2.COD_RETORNO
+            )';
+    EXECUTE IMMEDIATE V_SQL;
     COMMIT;
 
 

@@ -234,11 +234,12 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 				            		store: '{comboEstadoTrabajoFicha}',
 				            		value: '{trabajo.estadoTrabajoCodigo}'
 				            	},
-				            	listeners: {
+				            	//NO BORRAR - REVISAR 11287
+				            	/*listeners: {
 				            		expand: function (combo) {
 				            			this.lookupController().filterStoreEstadoTrabajo( combo.getStore() );
 				            		}
-				            	},
+				            	},*/
 					        	reference: 'comboEstadoTrabajo',
 					        	colspan: 2
 					        },

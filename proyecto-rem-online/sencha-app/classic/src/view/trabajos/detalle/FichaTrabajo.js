@@ -185,9 +185,10 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 									items : [
 											{
 												fieldLabel: HreRem.i18n('fieldlabel.plazos.fecha.fecha.simple'),
-												xtype: 'datefieldbase',	
+												xtype: 'datefieldbase',
+												name: 'fechaConcreta',
 												reference: 'fechaConcreta',
-												//minValue: $AC.getCurrentDate(),
+												minValue: $AC.getCurrentDate(),
 												maxValue: null,
 												bind: {
 													value: '{trabajo.fechaConcreta}'
@@ -203,6 +204,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 											{
 												fieldLabel: HreRem.i18n('fieldlabel.plazos.fecha.hora.simple'),
 												xtype: 'timefieldbase',
+												name: 'horaConcreta',
 												//colspan:2,			
 												format: 'H:i',
 												increment: 30,
@@ -270,6 +272,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 						 	{ 
 			                	xtype: 'checkboxfieldbase',
 			                	fieldLabel:  HreRem.i18n('fieldlabel.tarifa.plana'),
+			                	name: 'checkTarifaPlana',
 			                	bind: {
 			                		value : '{trabajo.tarifaPlana}' 
 			                	},
@@ -279,6 +282,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 						 	{ 
 			                	xtype: 'checkboxfieldbase',
 			                	fieldLabel:  HreRem.i18n('fieldlabel.check.riesgo.siniestro'),
+			                	name: 'checkSiniestro',
 			                	bind: {
 			                		value : '{trabajo.riesgoSiniestro}' 
 			                	}

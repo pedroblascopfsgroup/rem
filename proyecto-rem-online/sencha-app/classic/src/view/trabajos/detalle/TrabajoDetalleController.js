@@ -176,27 +176,14 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	}else{
     		if(me.lookupReference('listaActivosSubidaRef').getStore().getData() != null 
     				&& me.lookupReference('listaActivosSubidaRef').getStore().getData().length > 0){
-//    			me.lookupReference('listaActivosSubidaRef').getStore().getData().items[0].data.codCartera;
     			
     			parametrico = true;
     		}
     	}
-//    	Ext.Ajax.request({
-//			  url:urlCfg,
-//			  params:  {idActivo : combo.up("window").idActivo, 
-//			  			codigoSubtipoTrabajo : combo.getValue()},
-//			  success: function(response,opts){
-//			  
-//				  advertencia = Ext.JSON.decode(response.responseText).advertencia;
-//				  me.lookupReference("textAdvertenciaCrearTrabajo").setText(advertencia);
-//			  }
-//		});
     	
     	if(combo.getValue() == CONST.SUBTIPOS_TRABAJO['TRAMITAR_PROPUESTA_PRECIOS'] 
     		|| combo.getValue() == CONST.SUBTIPOS_TRABAJO['TRAMITAR_PROPUESTA_DESCUENTO']) {
-//    		me.lookupReference("checkEnglobaTodosActivosAgrRef").setValue(true);
     		me.lookupReference("checkEnglobaTodosActivosRef").setValue(true);
-//    		me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(true);
     		me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(true);
     		
     		me.lookupReference("listaActivosSubidaRef").getColumnManager().getHeaderByDataIndex("activoEnPropuestaEnTramitacion").setVisible(true);
@@ -208,7 +195,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     		me.lookupReference("listaActivosSubidaRef").getColumnManager().getHeaderByDataIndex("activoEnPropuestaEnTramitacion").setVisible(false);
     		
     		if(me.lookupReference("tipoTrabajo").getValue() != CONST.TIPOS_TRABAJO['OBTENCION_DOCUMENTACION']){
-//    			me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(false);
     			me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(false);
     		}
     	}
@@ -229,11 +215,20 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		record = form.getBindRecord();
 		success = success || function() {me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));};  
 		
+		var checkTarifaPlana = form.getValues().checkTarifaPlana == "on";
+		var checkSiniestro = form.getValues().checkSiniestro == "on";
+		
 		if(form.isFormValid()) {
 
 			form.mask(HreRem.i18n("msg.mask.espere"));
    
 			record.save({
+				params:{
+					fechaConcretaString: form.getValues().fechaConcreta,
+					horaConcretaString: form.getValues().horaConcreta,
+					tarifaPlana: checkTarifaPlana,
+					riesgoSiniestro: checkSiniestro
+				},
 			    success: success,
 			 	failure: function(record, operation) {
 			 		var response = Ext.decode(operation.getResponse().responseText);
@@ -242,7 +237,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 						if(me.getView().down("[reference=activosagrupaciontrabajo]") != null){
 			 				me.getView().down("[reference=activosagrupaciontrabajo]").deselectAll();
 			 			}
-						//me.fireEvent("errorToast", operation.getError());
 			 		}else{
 			 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 			 			if(me.getView().down("[reference=activosagrupaciontrabajo]") != null){
@@ -287,9 +281,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		
 		var success = function() {
 			me.getViewModel().set("editing", false);
-			/*btn.hide();
-			btn.up('tabbar').down('button[itemId=botoncancelar]').hide();
-			btn.up('tabbar').down('button[itemId=botoneditar]').show();*/
 			
 			Ext.Array.each(btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]'),
 							function (field, index) 
@@ -318,10 +309,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			activeTab.getBindRecord().reject();
 		}		
 		me.getViewModel().set("editing", false);
-		/*btn.hide();
-		btn.up('tabbar').down('button[itemId=botonguardar]').hide();
-		btn.up('tabbar').down('button[itemId=botoneditar]').show();*/
-		
 		Ext.Array.each(activeTab.query('field[isReadOnlyEdit]'),
 						function (field, index) 
 							{ 
@@ -337,7 +324,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		var arraySelection= [];
 		var codPromo;
 		if(!Ext.isEmpty(me.getView().idAgrupacion)){
-			//arraySelection = me.getView().datos;
 			arraySelection = me.lookupReference('activosagrupaciontrabajo').getActivoIDPersistedSelection();
 		}
 		

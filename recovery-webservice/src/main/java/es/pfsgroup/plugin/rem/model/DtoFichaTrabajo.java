@@ -65,8 +65,12 @@ public class DtoFichaTrabajo {
 	private Boolean esSolicitudConjunta;
 
 	private Date fechaConcreta;
+	
+	private String fechaConcretaString;
 
 	private Date horaConcreta;
+	
+	private String horaConcretaString;
 
 	private Date fechaTope;
 
@@ -487,12 +491,28 @@ public class DtoFichaTrabajo {
 		this.fechaConcreta = fechaConcreta;
 	}
 
+	public String getFechaConcretaString() {
+		return fechaConcretaString;
+	}
+
+	public void setFechaConcretaString(String fechaConcretaString) {
+		this.fechaConcretaString = fechaConcretaString;
+	}
+
 	public Date getHoraConcreta() {
 		return horaConcreta;
 	}
 
 	public void setHoraConcreta(Date horaConcreta) {
 		this.horaConcreta = horaConcreta;
+	}
+
+	public String getHoraConcretaString() {
+		return horaConcretaString;
+	}
+
+	public void setHoraConcretaString(String horaConcretaString) {
+		this.horaConcretaString = horaConcretaString;
 	}
 
 	public Date getFechaTope() {

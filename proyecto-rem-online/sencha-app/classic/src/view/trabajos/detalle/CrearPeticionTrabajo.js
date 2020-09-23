@@ -128,6 +128,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 								    						listeners: 
 								    							{
 											                		select: 'onChangeChainedCombo'
+											                		
 											            		},
 											            	allowBlank: false
 												        },
@@ -145,7 +146,8 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 											            		},
 								    						listeners: 
 								    							{
-											                		select: 'onChangeSubtipoTrabajoCombo'
+											                		select: 'onChangeSubtipoTrabajoCombo',
+											                		change: 'valorComboSubtipo'
 											            		},
 															allowBlank: false
 												        },
@@ -214,7 +216,8 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 																maxLength: 10
 													       }
 														]
-												},				
+												},
+								                
 												{    
 				                
 													xtype:'fieldsettable',
@@ -230,6 +233,23 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 													            fieldLabel : HreRem.i18n('fieldlabel.id.tarea.trabajo'),
 													            allowBlank: false,
 													            maxLength:10
+				        									},
+				        									{ 
+						        								xtype: 'comboboxfieldbase',
+						        								fieldLabel: HreRem.i18n('fieldlabel.primera.actuacion.toma.posesion'),
+						        								collapsible: false,
+						        								padding: '0 10 0 10',
+																border:0, 
+																reference: 'tomaDePosesion',
+						        								bind: {
+					            										store: '{comboSiNoRem}',
+					            										hidden: true,
+					            	    								value: '{trabajo.tomaPosesion}'
+					            									},
+					            								
+					            								displayField: 'descripcion',
+							    								valueField: 'codigo'
+			            									
 				        									}
 													]
 												},

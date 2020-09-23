@@ -1485,6 +1485,41 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	var me = this;
     	var estadoTrabajo = me.getViewModel().get("trabajo.estadoTrabajo");
     	//TODO: bloquear campos según estado.
-    }
+    },
+ 	valorComboSubtipo: function (){
+ 		var me = this;
+ 		var tipoTrabajo = me.lookupReference('tipoTrabajo').getValue();
+ 		var subTipoTrabajo = me.lookupReference('subtipoTrabajoCombo').getValue();
+ 		var comboTomaPosesion = me.lookupReference('tomaDePosesion')
+ 		if (tipoTrabajo == CONST.TIPOS_TRABAJO['ACTUACION_TECNICA'] && subTipoTrabajo == CONST.SUBTIPOS_TRABAJO['TOMA_POSESION']) {
+
+ 			comboTomaPosesion.allowBlank= false;
+ 			comboTomaPosesion.setHidden(false);
+ 			comboTomaPosesion.setVisible(true);
+ 		}else{
+
+ 			comboTomaPosesion.allowBlank= true;
+ 			comboTomaPosesion.setHidden(true);
+ 		}
+ 		 
+ 	},
+ 	hiddenComboTomaPosesion: function(){
+ 		var me = this;
+ 		
+ 		var tipoTrabajoCodigo = me.getViewModel().get('trabajo').data.tipoTrabajoCodigo;
+ 		var subtipoTrabajoCodigo = me.getViewModel().get('trabajo').data.subtipoTrabajoCodigo;
+ 		var comboTomaPosesion = me.lookupReference('tomaDePosesion');
+ 		if (tipoTrabajoCodigo == CONST.TIPOS_TRABAJO['ACTUACION_TECNICA'] && subtipoTrabajoCodigo == CONST.SUBTIPOS_TRABAJO['TOMA_POSESION']) {
+ 		
+ 			comboTomaPosesion.allowBlank= false;
+ 			comboTomaPosesion.setHidden(false);
+ 			comboTomaPosesion.setVisible(true);
+ 		}else{
+ 		
+ 			comboTomaPosesion.allowBlank= true;
+ 			comboTomaPosesion.setHidden(true);
+ 		}
+ 		
+ 	}
  	
 });

@@ -2063,6 +2063,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (dtoTrabajo.getRiesgoSiniestro() != null) {
 			trabajo.setSiniestro(dtoTrabajo.getRiesgoSiniestro());
 		}
+		
 		if (dtoTrabajo.getEstadoGastoCodigo() != null) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getEstadoGastoCodigo());
 			DDEstadoGasto estadoGasto = genericDao.get(DDEstadoGasto.class, filtro);
@@ -2083,6 +2084,19 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (dtoTrabajo.getFechaEntregaTrabajo() != null) {
 			trabajo.setFechaEntregaLlaves(dtoTrabajo.getFechaEntregaTrabajo());
 		}
+
+		if (DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(dtoTrabajo.getTipoTrabajoCodigo()) 
+				&& DDSubtipoTrabajo.CODIGO_TOMA_DE_POSESION.equals(dtoTrabajo.getSubtipoTrabajoCodigo())) {
+			if (dtoTrabajo.getTomaPosesion() != null) {
+				if (dtoTrabajo.getTomaPosesion() == 1) {
+					trabajo.setTomaPosesion(true);
+				}else {
+					trabajo.setTomaPosesion(false);
+				}			
+			}	
+		}
+		//
+
 		
 		if (dtoTrabajo.getLlavesNoAplica() != null) {
 			trabajo.setNoAplicaLlaves(dtoTrabajo.getLlavesNoAplica());
@@ -2117,6 +2131,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if(dtoTrabajo.getEsSiniestroEditable() != null) {
 			trabajo.setSiniestro(dtoTrabajo.getEsSiniestroEditable());
 		}
+				
 		
 
 		if (dtoTrabajo.getTipoCalidadCodigo() != null) {
@@ -2811,6 +2826,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}else {
 			dtoTrabajo.setVisualizarLlaves(false);
 		}
+
+		if (trabajo.getTomaPosesion() != null) {
+			if (!trabajo.getTomaPosesion()) {
+				dtoTrabajo.setTomaPosesion(0);
+			}else {
+				dtoTrabajo.setTomaPosesion(1);
+			}
+		}
+
 
 		List<ActivoTramite> tramitesTrabajo = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
 		

@@ -1,16 +1,15 @@
 package es.pfsgroup.plugin.rem.albaran.dao;
 
+import java.text.ParseException;
 import java.util.List;
 
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.plugin.rem.albaran.dto.DtoAlbaranFiltro;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.Albaran;
 import es.pfsgroup.plugin.rem.model.DtoDetalleAlbaran;
 import es.pfsgroup.plugin.rem.model.DtoDetallePrefactura;
 import es.pfsgroup.plugin.rem.model.VbusquedaProveedoresCombo;
-import es.pfsgroup.plugin.rem.model.VbusquedaTrabajosPrefactura;
 import es.pfsgroup.plugin.rem.model.dd.DDEstEstadoPrefactura;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAlbaran;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
@@ -31,6 +30,6 @@ public interface AlbaranDao extends AbstractDao<Albaran, Long>{
 
 	public List<VbusquedaProveedoresCombo> getProveedores();
 
-	public Page getTrabajosPrefacturas(DtoAlbaranFiltro dto);
+	public Page getTrabajosPrefacturas(DtoAlbaranFiltro dto) throws ParseException;
 		
 }

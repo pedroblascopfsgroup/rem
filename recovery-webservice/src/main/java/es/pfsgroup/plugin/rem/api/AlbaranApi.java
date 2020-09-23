@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.text.ParseException;
 import java.util.List;
 
 import es.capgemini.devon.pagination.Page;
@@ -41,5 +42,5 @@ public interface AlbaranApi {
 
 	public List<VbusquedaProveedoresCombo> getProveedores();
 
-	public Page obtenerDatosExportarTrabajosPrefactura(DtoAlbaranFiltro dto);	
+	public Page obtenerDatosExportarTrabajosPrefactura(DtoAlbaranFiltro dto) throws ParseException;	
 }

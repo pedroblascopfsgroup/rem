@@ -69,6 +69,9 @@ Ext.define('HreRem.model.FichaTrabajo', {
     			name: 'resolucionComiteId'
     		},
     		{
+    			name: 'tomaPosesion'
+    		},
+    		{
     			name: 'fechaConcreta',
     			type:'date',
     			dateFormat: 'c'

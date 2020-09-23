@@ -19,6 +19,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
@@ -53,8 +54,13 @@ public class CFGProveedorPredeterminado implements Serializable, Auditable {
     @JoinColumn(name = "DD_STR_ID")
     private DDSubtipoTrabajo subtipoTrabajo;
 
-    @Column(name = "PROVEEDOR_DEFECTO")
-    private Integer proveedorDefecto;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PRV_ID")
+    private DDProvincia provincia;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PVE_ID")
+    private ActivoProveedor proveedor;
 
 	@Version   
 	private Long version;
@@ -102,14 +108,6 @@ public class CFGProveedorPredeterminado implements Serializable, Auditable {
 		this.subtipoTrabajo = subtipoTrabajo;
 	}
 
-	public Integer getProveedorDefecto() {
-		return proveedorDefecto;
-	}
-
-	public void setProveedorDefecto(Integer proveedorDefecto) {
-		this.proveedorDefecto = proveedorDefecto;
-	}
-
 	public Long getVersion() {
 		return version;
 	}
@@ -124,5 +122,21 @@ public class CFGProveedorPredeterminado implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
-	}	
+	}
+
+	public DDProvincia getProvincia() {
+		return provincia;
+	}
+
+	public void setProvincia(DDProvincia provincia) {
+		this.provincia = provincia;
+	}
+
+	public ActivoProveedor getProveedor() {
+		return proveedor;
+	}
+
+	public void setProveedor(ActivoProveedor proveedor) {
+		this.proveedor = proveedor;
+	}		
 }

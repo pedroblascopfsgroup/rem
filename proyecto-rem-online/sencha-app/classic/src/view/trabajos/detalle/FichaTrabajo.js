@@ -52,6 +52,19 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 		    						//readOnly: (Ext.isEmpty(this.gestorActivoCodigo)),
 						        	reference: 'comboGestorActivoResposable'
 					        	},
+					        	 { 
+    								xtype: 'comboboxfieldbase',
+    								fieldLabel: HreRem.i18n('fieldlabel.primera.actuacion.toma.posesion'),
+    								reference: 'tomaDePosesion',
+    								bind: {
+										store: '{comboSiNoRem}',
+	    								value: '{trabajo.tomaPosesion}'
+	    								
+	    									},
+									listeners: {
+										afterrender: 'hiddenComboTomaPosesion'
+									}
+        						},
 							 	{ 
 				                	xtype: 'textfieldbase',
 				                	fieldLabel:  HreRem.i18n('title.general.albaran.numAlbaran'),

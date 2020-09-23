@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.controller;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -219,7 +220,7 @@ public class AlbaranController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public void generateExcelTrabajosPrefactura(DtoAlbaranFiltro filtros, ModelMap model, HttpServletRequest request, HttpServletResponse response) throws IOException{
+	public void generateExcelTrabajosPrefactura(DtoAlbaranFiltro filtros, ModelMap model, HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException{
 		
 		filtros.setStart(excelReportGeneratorApi.getStart());
 		filtros.setLimit(excelReportGeneratorApi.getLimit());

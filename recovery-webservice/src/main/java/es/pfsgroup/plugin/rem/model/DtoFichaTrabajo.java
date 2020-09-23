@@ -251,6 +251,9 @@ public class DtoFichaTrabajo {
 	
 	private Boolean visualizarLlaves;
 	
+	private Integer tomaPosesion;
+	
+	
 	
 	public Long getIdTrabajo() {
 		return idTrabajo;
@@ -1275,6 +1278,15 @@ public class DtoFichaTrabajo {
 
 	public void setIdProveedorLlave(Long idProveedorLlave) {
 		this.idProveedorLlave = idProveedorLlave;
+	}
+	
+	public Integer getTomaPosesion() {
+		return tomaPosesion;
+	}
+
+	public void setTomaPosesion(Integer tomaPosesion) {
+		this.tomaPosesion = tomaPosesion;
+
 	}
 	
 }

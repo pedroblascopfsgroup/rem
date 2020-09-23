@@ -1,6 +1,9 @@
 package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,15 +11,30 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.dto.WebDto;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoInfAdministrativa;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformacionAdministrativa;
+import es.pfsgroup.plugin.rem.model.HistoricoPeticionesPrecios;
+import es.pfsgroup.plugin.rem.model.HistoricoRequisitosFaseVenta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoVenta;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
+import es.pfsgroup.plugin.rem.model.dd.DDTributacionAdquisicion;
+import es.pfsgroup.plugin.rem.rest.dto.ReqFaseVentaDto;
+
+
 
 @Component
 public class TabActivoInfoAdministrativa implements TabActivoService {
@@ -29,6 +47,9 @@ public class TabActivoInfoAdministrativa implements TabActivoService {
 	
 	@Autowired
 	private ActivoDao activoDao;
+	
+	@Autowired
+	private ActivoApi activoApi;
 	
 	@Autowired
 	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
@@ -111,7 +132,47 @@ public class TabActivoInfoAdministrativa implements TabActivoService {
 			activoDto.setIngresosInfNivel(activo.getInfoAdministrativa().getIngresosInfNivel());
 			activoDto.setResidenciaComAutonoma(activo.getInfoAdministrativa().getResidenciaComAutonoma());
 			activoDto.setNoTitularOtraVivienda(activo.getInfoAdministrativa().getNoTitularOtraVivienda());
+			if(activo.getInfoAdministrativa().getTributacionAdquisicion() != null) {
+				activoDto.setTributacionAdq(activo.getInfoAdministrativa().getTributacionAdquisicion().getCodigo());
+			}
+			activoDto.setFechaLiqComplementaria(activo.getInfoAdministrativa().getFechaLiqComplementaria());
+			activoDto.setFechaVencTpoBonificacion(activo.getInfoAdministrativa().getFechaVencTpoBonificacion());
 			
+			activoDto.setFechaSoliCertificado(activo.getInfoAdministrativa().getFechaSolCertificado());
+			activoDto.setFechaComAdquisicion(activo.getInfoAdministrativa().getFechaComAdquision());
+			activoDto.setFechaComRegDemandantes(activo.getInfoAdministrativa().getFechaComRegDem());
+			activoDto.setFechaVencimiento(activo.getInfoAdministrativa().getFechaVencimiento());
+			
+			if(activo.getInfoAdministrativa().getActualizaPrecioMax() != null) {
+				activoDto.setActualizaPrecioMaxId(activo.getInfoAdministrativa().getActualizaPrecioMax().getCodigo().equals(DDSinSiNo.CODIGO_NO) ? 0L : 1L);				
+			}
+			if(activo.getInfoAdministrativa().getFechaRecepcionRespuestaOrganismo() != null) {
+				activoDto.setFechaRecepcionRespuestaOrganismo(activo.getInfoAdministrativa().getFechaRecepcionRespuestaOrganismo());
+			}
+			if(activo.getInfoAdministrativa().getFechaEnvioComunicacionOrganismo() != null) {
+				activoDto.setFechaEnvioComunicacionOrganismo(activo.getInfoAdministrativa().getFechaEnvioComunicacionOrganismo());
+			}
+			if(activo.getInfoAdministrativa().getEstadoVenta() != null) {
+				activoDto.setEstadoVentaCodigo(activo.getInfoAdministrativa().getEstadoVenta().getCodigo());
+			}
+			try {
+				List<ReqFaseVentaDto> requisitosVenta = activoApi.getReqFaseVenta(activo.getId());
+						
+				if(requisitosVenta != null && !requisitosVenta.isEmpty()) {
+					for (int i = 0; i < requisitosVenta.size(); i++) {
+						ReqFaseVentaDto req = requisitosVenta.get(i);
+						if(req.getFechavencimiento() != null && req.getPreciomaximo() != null) {
+							activoDto.setMaxPrecioVenta("" + req.getPreciomaximo());
+							String dateStr = req.getFechavencimiento().split(" ")[0];
+						    Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dateStr);  
+							activoDto.setFechaVencimiento(date);
+							break;
+						}
+					}
+				}
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 		
@@ -132,15 +193,61 @@ public class TabActivoInfoAdministrativa implements TabActivoService {
 				
 			beanUtilNotNull.copyProperties(activo.getInfoAdministrativa(), dto);
 			
+			DDTributacionAdquisicion tributacion = (DDTributacionAdquisicion) diccionarioApi.dameValorDiccionarioByCod(DDTributacionAdquisicion.class, dto.getTributacionAdq());
+			activo.getInfoAdministrativa().setTributacionAdquisicion(tributacion);
+			activo.getInfoAdministrativa().setFechaLiqComplementaria(dto.getFechaLiqComplementaria());
+			activo.getInfoAdministrativa().setFechaVencTpoBonificacion(dto.getFechaVencTpoBonificacion());
+			
 			activo.setInfoAdministrativa(genericDao.save(ActivoInfAdministrativa.class, activo.getInfoAdministrativa()));
+			
+			ActivoInfAdministrativa infoAdministrativa = activo.getInfoAdministrativa();
 			
 			if (dto.getTipoVpoCodigo() != null) {
 			
 				DDTipoVpo tipoVpo = (DDTipoVpo) diccionarioApi.dameValorDiccionarioByCod(DDTipoVpo.class, dto.getTipoVpoCodigo());
-	
-				activo.getInfoAdministrativa().setTipoVpo(tipoVpo);
-				
+				infoAdministrativa.setTipoVpo(tipoVpo);
 			}
+			
+			if(infoAdministrativa.getTipoVpo() != null) {
+				
+				if(dto.getFechaSoliCertificado() != null) {
+					infoAdministrativa.setFechaSolCertificado(dto.getFechaSoliCertificado());					
+				}
+				
+				if(dto.getFechaComAdquisicion() != null) {
+					infoAdministrativa.setFechaComAdquisicion(dto.getFechaComAdquisicion());
+				}
+				
+				if(dto.getFechaComRegDemandantes() != null) {
+					infoAdministrativa.setFechaComRegDem(dto.getFechaComRegDemandantes());					
+				}
+				
+				if(dto.getActualizaPrecioMaxId() != null) {
+					Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", (dto.getActualizaPrecioMaxId() == 0) ? DDSinSiNo.CODIGO_NO : DDSinSiNo.CODIGO_SI);
+					DDSinSiNo mapeadoSinSiNo =genericDao.get(DDSinSiNo.class, filter); 
+					infoAdministrativa.setActualizaPrecioMax(mapeadoSinSiNo);					
+				}
+				
+				if(dto.getFechaVencimiento() != null) {
+					infoAdministrativa.setFechaVencimiento(dto.getFechaVencimiento());					
+				}
+				
+				if(dto.getFechaEnvioComunicacionOrganismo() != null) {
+					infoAdministrativa.setFechaEnvioComunicacionOrganismo(dto.getFechaEnvioComunicacionOrganismo());
+				}
+				
+				if(dto.getFechaRecepcionRespuestaOrganismo() != null) {
+					infoAdministrativa.setFechaRecepcionRespuestaOrganismo(dto.getFechaRecepcionRespuestaOrganismo());
+				}
+				
+				if(dto.getEstadoVentaCodigo() != null) {
+					Filter filterEstadoVenta = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoVentaCodigo());
+					DDEstadoVenta ddEstadoVenta = genericDao.get(DDEstadoVenta.class, filterEstadoVenta); 
+					infoAdministrativa.setEstadoVenta(ddEstadoVenta);	
+				}
+			}
+			
+			activo.setInfoAdministrativa(genericDao.save(ActivoInfAdministrativa.class, activo.getInfoAdministrativa()));
 			
 			
 		} catch (IllegalAccessException e) {

@@ -1,13 +1,17 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * Vista que recoge los datos necesario para el calculo comité liberbank.
+ * 
+ * @author Jonathan Ovalle
+ */
 
 @Entity
 @Table(name = "V_DIARIOS_CALCULO_LBK", schema = "${entity.schema}")
@@ -17,6 +21,7 @@ public class VDiarioCalculoLbk implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
 	
 	@Id
 	@Column(name="GPV_ID")
@@ -117,6 +122,8 @@ public class VDiarioCalculoLbk implements Serializable {
 	public void setDiario2Cuota(Double diario2Cuota) {
 		this.diario2Cuota = diario2Cuota;
 	}
-	
+
 	
 }
+	
+

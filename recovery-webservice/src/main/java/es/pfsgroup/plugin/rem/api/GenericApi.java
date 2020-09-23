@@ -11,6 +11,8 @@ import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorReducido;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
@@ -24,9 +26,11 @@ import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoAgendaSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
@@ -320,5 +324,26 @@ public interface GenericApi {
 	 */
 	public String getPartidaPresupuestaria(Long idSubpartida);
 
+
 	List<DDEntidadGasto> getComboTipoElementoGasto(Long idGasto, Long idLinea);
+
+	/*
+	 * Devuelve los proveedores de Suministros que están vigentes.
+	 */
+	List<ActivoProveedorReducido> getComboActivoProveedorSuministro();
+	
+	/***
+	 * 
+	 * @param codEstadoAdmisionNuevo
+	 * @return Devuelve una lista de los subestados de admision relacionado con los estado de admision seleccionados
+	 */
+	public List<DDSubestadoAdmision> getcomboSubestadoAdmisionNuevoFiltrado(String codEstadoAdmisionNuevo);
+
+	/***
+	 * 
+	 * @param codTipo
+	 * @return Devuelve una lista de los subtipologias de agenda de saneamiento relacionado con la tipologia de agenda de saneamiento seleccionada
+	 */
+	List<DDSubtipoAgendaSaneamiento> getSubtipologiaAgendaSaneamiento(String codTipo);
+
 }

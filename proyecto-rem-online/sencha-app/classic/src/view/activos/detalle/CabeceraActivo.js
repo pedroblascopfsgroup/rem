@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 	extend: 'Ext.container.Container',
 	xtype: 'cabeceraactivo',
-	requires: ['HreRem.view.common.ToolFieldSet', 'HreRem.ux.button.BotonFavorito'],
+	requires: ['HreRem.view.common.ToolFieldSet', 'HreRem.ux.button.BotonFavorito', 'HreRem.view.activos.detalle.CrearEstadoAdmision'],
 	layout: 'fit',
 	initComponent: function () {
 		var me = this;
@@ -136,6 +136,18 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 							},
 							{
 								xtype: 'tbfill'
+							},
+							//boton: Estado admisión
+							{
+								xtype: 'button',
+								cls: 'boton-cabecera',
+								iconCls: 'ico-user',
+								tooltip: HreRem.i18n('btn.estado.admision'),
+								handler: 'onClickEstadoAdmision',
+								bind: 
+									{
+										hidden: '{estadoAdmisionVisible}' //
+									}
 							},
 							{
 								xtype: 'button',
@@ -350,6 +362,18 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 										fieldLabel: HreRem.i18n('fieldlabel.api.primario'),
 										cls: 'cabecera-info-field',
 										bind: '{activo.nombreMediador}'
+									},
+									{
+										fieldLabel: HreRem.i18n('title.estado.admision'),
+										cls: 'cabecera-info-field',
+										bind:{
+											value: '{activo.estadoAdmisionDescCabecera}'
+										}
+									},
+									{
+										fieldLabel: HreRem.i18n('title.subestado.admision'),
+										cls: 'cabecera-info-field',
+										bind: '{activo.subestadoAdmisionDescCabecera}'
 									}
 								]
 							},

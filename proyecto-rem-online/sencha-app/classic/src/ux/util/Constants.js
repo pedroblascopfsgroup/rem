@@ -110,7 +110,6 @@ Ext.define('HreRem.ux.util.Constants', {
 		FICHA:			'datosgeneralesactivo',
 		INFOREG:		'datosgeneralesactivo.tituloinformacionregistralactivo',
 		INFOADM:		'datosgeneralesactivo.informacionadministrativaactivo',
-		CARGAS:			'datosgeneralesactivo.cargasactivo',
 		POSESORIA:		'datosgeneralesactivo.situacionposesoriaactivo',
 		VALORACION:		'datosgeneralesactivo.valoracionesactivo',
 		INFOCOM:		'datosgeneralesactivo.informacioncomercialactivo',
@@ -124,7 +123,6 @@ Ext.define('HreRem.ux.util.Constants', {
 		DOCU:			'documentosactivo',
 		AGRUPACIONES:	'agrupacionesactivo',
 		ADMISION:		'admisionactivo',
-		CHECKINFO:		'admisionactivo.admisioncheckinfoactivo',
 		CHECKDOC:		'admisionactivo.admisioncheckdocactivo',
 		GESTION:		'gestionactivo',
 		HISTORICO:		'gestionactivo.historicopeticionesactivo',
@@ -303,7 +301,9 @@ Ext.define('HreRem.ux.util.Constants', {
 		GESTOR_PRECIOS:'HAYAGESTPREC',
 		GESTOR_PUBLICACION:'HAYAGESTPUBL',
 		SUPER_EDITA_COMPRADOR: 'SUPEREDITACOMPRADOR',
-		GESTOR_ALQUILER_HPM: 'GESTALQ'
+		GESTOR_ALQUILER_HPM: 'GESTALQ',
+		SUPERVISOR_ADMISION:'HAYASUPADM'
+
     },
 
     TIPOS_OFERTA: {
@@ -487,6 +487,11 @@ Ext.define('HreRem.ux.util.Constants', {
 	COMBO_SI_NO: {
 		SI: 1,
 		NO: 0
+	},
+	
+	COMBO_SIN_SINO: {
+		SI: '01',
+		NO: '02'
 	},
 	
 	COMBO_TRUE_FALSE: {
@@ -740,6 +745,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		CODIGO_HAYA_APPLE: '42'
 	},
 	
+
 	BTN: {
 		CREAR_TRABAJO: 'BtnCrearTrabajo'
 	},
@@ -769,5 +775,34 @@ Ext.define('HreRem.ux.util.Constants', {
 		CODIGO_ACTIVO_GENERICO:  'GEN',
 		CODIGO_PROMOCION: 'PRO',
 		CODIGO_SIN_ACTIVOS: 'SIN'
+	},
+	
+	ESTADO_ADMISION: {
+		CODIGO_PENDIENTE_TITULO: 'PET',
+		CODIGO_PENDIENTE_REVISION: 'PRT',
+		CODIGO_PENDIENTE_SANEAMIENTO: 'PSR',
+		CODIGO_SANEADO_REGISTRALMENTE: 'SAR'
+	},
+	
+	SUBESTADO_ADMISION: {
+		CODIGO_PENDIENTE_INSCRIPCION: 'PIN',
+		CODIGO_INCIDENCIA_INSC: 'IIN',
+		CODIGO_PENDIENTE_CARGAS: 'PCA',
+		CODIGO_CONCURSO_ACREEDORES: 'CAC'
+
+	},
+	DD_TOB_TIPO_OBSERVACION: {
+		STOCK: '01',
+		POSESION: '02',
+		INSCRIPCION: '03',
+		CARGAS: '04',
+		LLAVES: '05',
+		SANEAMIENTO: '06',
+		REVISION_TITULO: '07'
+	},
+	OBSERVACIONES_TAB_LAUNCH: {
+		ACTIVO : 'activo',
+		SANEAMIENTO: 'saneamiento',
+		REVISION_TITULO: 'revisionTitulo'
 	}
 });

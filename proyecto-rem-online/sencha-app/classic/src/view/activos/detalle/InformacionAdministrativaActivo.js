@@ -50,7 +50,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 						xtype:'container',
 						layout: {
 							type : 'hbox'
-					},
+						},
 
 						items :
 							[
@@ -97,10 +97,38 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 									},
 					                { 
 					                	xtype: 'datefieldbase',     
-								 		fieldLabel: HreRem.i18n('fieldlabel.vigencia'), // Vigencia (NUEVO CAMPO)
+								 		fieldLabel: HreRem.i18n('fieldlabel.vigencia'), // Vigencia
 								 		bind: '{infoAdministrativa.vigencia}',
 								 		maxValue : null
-									}
+									},//
+									
+					                { 
+					                	xtype: 'datefieldbase',     
+								 		fieldLabel: HreRem.i18n('fieldlabel.fechaSoliCertificado'), // fechaSoliCertificado (NUEVO CAMPO)
+								 		bind: {
+								 				readOnly : '{!esSupervisionGestorias}',
+								 				value: '{infoAdministrativa.fechaSoliCertificado}'
+								 			},
+								 		maxValue : null
+									},
+					                { 
+					                	xtype: 'datefieldbase',     
+								 		fieldLabel: HreRem.i18n('fieldlabel.fechaComAdquisicion'), // fechaComAdquisicion (NUEVO CAMPO)
+								 		bind: {
+								 				readOnly : '{!esSupervisionGestorias}',
+								 				value:'{infoAdministrativa.fechaComAdquisicion}'
+								 			},								 		
+								 		maxValue : null
+									},
+					                { 
+					                	xtype: 'datefieldbase',     
+								 		fieldLabel: HreRem.i18n('fieldlabel.fechaComRegDemandantes'), // fechaComRegDemandantes (NUEVO CAMPO)
+								 		bind: { 
+								 				readOnly : '{!esSupervisionGestorias}',
+							 					value:'{infoAdministrativa.fechaComRegDemandantes}'
+								 			},
+								 		maxValue : null
+									}//
 		
 								]
 				        },
@@ -146,11 +174,10 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 				        
 				        {
 				        	xtype:'fieldsettable',
-				        	height: 300,
 				        	margin: '0 10 10 0',
 							layout: {
 						 			type: 'table',
-				         			columns: 3
+				         			columns: 2
 				        			},
 				        	
 							defaultType: 'textfieldbase',
@@ -183,8 +210,31 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 												{ 
 													xtype: 'currencyfieldbase',
 													fieldLabel: HreRem.i18n('fieldlabel.precio.maximo.venta.vpo'), 			// Precio m�ximo de venta
-					                				bind: '{infoAdministrativa.maxPrecioVenta}'
+					                				bind: '{infoAdministrativa.maxPrecioVenta}',
+					                				readOnly: true
 								                },
+								                
+								                //
+								                { 
+								                	xtype: 'comboboxfieldbase',
+								                	fieldLabel: HreRem.i18n('fieldlabel.actualizaPrecioMax'), // Actualizacion precio maximo (NUEVO CAMPO)
+								                	bind: {
+								                			readOnly : '{!esSupervisionGestorias}',
+			            									store: '{comboSiNoRem}',
+			            									value: '{infoAdministrativa.actualizaPrecioMaxId}'
+			            								  }
+								                },
+								                { 
+								                	xtype: 'datefieldbase',     
+											 		fieldLabel: HreRem.i18n('fieldlabel.fechaVencimiento'), // fechaVencimiento (NUEVO CAMPO)
+											 		bind: {
+											 				value:'{infoAdministrativa.fechaVencimiento}'
+											 			},
+											 		maxValue : null,
+											 		readOnly: true
+												},
+												
+								                //
 								                { 
 													xtype: 'comboboxfieldbase',
 													fieldLabel: HreRem.i18n('fieldlabel.devolucion.ayudas'), 			// Devoluci�n de ayudas
@@ -225,6 +275,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 			            									value: '{infoAdministrativa.venderPersonaJuridica}'
 			            								  }
 												}
+							
 					
 											]
 							        },
@@ -280,7 +331,65 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 												}				              
 												
 											]
-							        }
+							        },
+						
+							        
+							        {
+							        	xtype:'fieldset',
+							        	colspan: 3,
+							        	margin: '0 10 10 10',
+							        	layout: {
+					 						type: 'table',
+			         						columns: 3
+			        						},
+										defaultType: 'textfieldbase',
+										title: HreRem.i18n("title.autorizacionComprador"), // Autorización
+										items :
+											[								
+												 { 
+										        	xtype: 'comboboxfieldbase',							        	
+										        	fieldLabel:  HreRem.i18n('fieldlabel.estadoVenta'),	// estado venta
+										        	bind: {
+			            									store: '{comboEstadoVenta}',
+			            									readOnly : '{!auComprador}',
+			            									value: '{infoAdministrativa.estadoVentaCodigo}'
+			            								  }
+										        },
+										        { 
+										        	xtype: 'datefieldbase',     
+											 		fieldLabel: HreRem.i18n('fieldlabel.fechaEnvioComunicacionOrganismo'), // fecha de envío comunicación organismo.
+											 		bind: {
+											 				readOnly : '{!auComprador}',
+											 				value:'{infoAdministrativa.fechaEnvioComunicacionOrganismo}'
+											 			},
+											 			maxValue : null
+											 			
+										        },
+										        { 
+										        	xtype: 'datefieldbase',     
+											 		fieldLabel: HreRem.i18n('fieldlabel.fechaRecepcionRespuestaOrganismo'), // fecha de recepción organismo.
+											 		bind: {
+											 				readOnly : '{!auComprador}',
+											 				value:'{infoAdministrativa.fechaRecepcionRespuestaOrganismo}'
+											 			},
+											 		   maxValue : null
+										        }
+											]
+							        },
+							        
+									{
+							        	xtype:'fieldset',
+							        	margin: '0 10 10 0',
+										colspan: 3,
+										defaultType: 'textfieldbase',
+							        	items :
+										[
+											{
+						        				xtype: 'reqfaseventagrid', 
+												reference: 'reqfaseventagridref'
+					        				}
+					        			]
+									}
 
 
 
@@ -658,6 +767,53 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 								    }
 							    ]
 						 }
+	            ]
+           },
+           {
+        	   xtype:'fieldset',
+			   title: HreRem.i18n('fieldlabel.title.regularizacion.pago.impuesto.bonificado'), //Regularizacion del pago del impuesto bonificado
+        	   layout: {
+	                type: 'hbox'
+	            },
+	            items: [
+				        { 
+						    xtype: 'comboboxfieldbase',
+				            fieldLabel: HreRem.i18n('fieldlabel.combo.tributacion.adquisicion'),
+				            labelWidth: '30%',
+				            width: '20%',
+				        	bind: {
+				        		store: '{comboTributacionAdquisicion}',
+				        		readOnly : '{!esGestorOrSupervisorAdmision}',
+				        		value: '{infoAdministrativa.tributacionAdq}'
+				        	},
+				        	listeners: {
+								change: 'onChangeComboTributacionAdqusicion'
+				        	}
+					    },
+					    {
+					    	xtype: 'datefieldbase',
+					    	fieldLabel: HreRem.i18n('fieldlabel.fecha.vencimiento.tipo.bonificacion'),
+					    	formatter: 'date("d/m/Y")',
+					    	width: '20%',
+					    	disabled: true,
+					    	reference: 'fechaVencTpoBonificacion',
+				        	bind: {
+				        		readOnly : '{!esGestorOrSupervisorAdmision}',
+				        		value: '{infoAdministrativa.fechaVencTpoBonificacion}'
+				        	}			
+					    },
+					    {
+					    	xtype: 'datefieldbase',
+					    	fieldLabel: HreRem.i18n('fieldlabel.fecha.liquidacion.complementaria'),
+					    	formatter: 'date("d/m/Y")',
+					    	width: '20%',
+					    	disabled: true,
+					    	reference: 'fechaLiqComplementaria',
+				        	bind: {
+				        		readOnly : '{!esGestorOrSupervisorAdmision}',
+				        		value: '{infoAdministrativa.fechaLiqComplementaria}'
+				        	}			
+					    }
 	            ]
            },
            {

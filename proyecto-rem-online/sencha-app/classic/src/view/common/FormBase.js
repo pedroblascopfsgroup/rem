@@ -305,7 +305,6 @@
      * @return {}
      */
     setBindRecord: function(record) {
-
     	var me = this;
     	me.viewWithModel.getViewModel().set(me.recordName, record);
     },

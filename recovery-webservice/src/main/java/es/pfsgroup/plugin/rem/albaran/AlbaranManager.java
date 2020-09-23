@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.albaran;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -145,7 +146,7 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 	}
 	
 	@Override
-	public Page obtenerDatosExportarTrabajosPrefactura(DtoAlbaranFiltro dto) {
+	public Page obtenerDatosExportarTrabajosPrefactura(DtoAlbaranFiltro dto) throws ParseException {
 		return albaranDao.getTrabajosPrefacturas(dto);
 	}
 

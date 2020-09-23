@@ -15,7 +15,6 @@ import org.springframework.stereotype.Repository;
 import es.capgemini.devon.hibernate.pagination.PageHibernate;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
@@ -282,7 +281,7 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 	}
 	
 	@Override
-	public Page getTrabajosPrefacturas(DtoAlbaranFiltro dto) {
+	public Page getTrabajosPrefacturas(DtoAlbaranFiltro dto) throws ParseException {
 		HQLBuilder hb = new HQLBuilder(" from VExportTrabajosAlbaranes veta");
 		Albaran alb = genericDao.get(Albaran.class,
 				genericDao.createFilter(FilterType.EQUALS, "numAlbaran", dto.getNumAlbaran()));
@@ -291,10 +290,8 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 		}
 		
 		HQLBuilder.addFiltroIgualQue(hb, "veta.numAlbaran", alb.getNumAlbaran());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.fechaAlbaran", dto.getFechaAlbaran());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.estadoAlbaranCodigo", dto.getEstadoAlbaran());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.numPrefactura", dto.getNumPrefactura());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.fechaPrefactura", dto.getFechaPrefactura());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.estadoPrefacturaCodigo", dto.getEstadoPrefactura());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.numTrabajo", dto.getNumTrabajo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.anyoTrabajo", dto.getAnyoTrabajo());
@@ -302,6 +299,27 @@ public class AlbaranDaoImpl extends AbstractEntityDao<Albaran, Long> implements 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.tipoTrabajoCodigo", dto.getTipologiaTrabajo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.IdProveedor", dto.getProveedor());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "veta.docPropietario", dto.getSolicitante());
+		
+		if(dto.getFechaAlbaran() != null) {
+			Date fechaAlb = DateFormat.toDate(dto.getFechaAlbaran());
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(fechaAlb); // Configuramos la fecha que se recibe
+			Calendar sumado = Calendar.getInstance();
+			sumado.setTime(fechaAlb); // Configuramos la fecha que se recibe
+			sumado.add(Calendar.DAY_OF_YEAR, 1); 
+			sumado.add(Calendar.MILLISECOND, -1);  // numero de días a añadir, o restar en caso de días<0
+			HQLBuilder.addFiltroBetweenSiNotNull(hb, "veta.fechaAlbaran", calendar.getTime(), sumado.getTime());
+		}
+		if(dto.getFechaPrefactura() != null){
+			Date fechaPfa = DateFormat.toDate(dto.getFechaPrefactura());
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(fechaPfa); // Configuramos la fecha que se recibe
+			Calendar sumado = Calendar.getInstance();
+			sumado.setTime(fechaPfa); // Configuramos la fecha que se recibe
+			sumado.add(Calendar.DAY_OF_YEAR, 1);  
+			sumado.add(Calendar.MILLISECOND, -1);  // numero de días a añadir, o restar en caso de días<0
+			HQLBuilder.addFiltroBetweenSiNotNull(hb, "veta.fechaPrefactura",  calendar.getTime(), sumado.getTime());
+		}
 		
 		return HibernateQueryUtils.page(this, hb, dto);
 	}

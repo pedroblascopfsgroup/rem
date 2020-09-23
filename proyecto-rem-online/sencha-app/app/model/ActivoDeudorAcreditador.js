@@ -4,7 +4,7 @@
 Ext.define('HreRem.model.ActivoDeudorAcreditador', {
     extend: 'HreRem.model.Base',
     idProperty: 'id',
-
+	requires: ['HreRem.model.Activo'],
     fields: [    
 
     		{
@@ -38,17 +38,18 @@ Ext.define('HreRem.model.ActivoDeudorAcreditador', {
     		}
     ],
     
+    
 	proxy: {
-		type: 'uxproxy',
+		type: 'uxproxy',	
 		localUrl: 'activos.json',
-		remoteUrl: 'activo/getListDeudoresById',
-		api: {
-            read: 'activo/getListDeudoresById',
-            create: 'activo/saveActivoPropietarioTab',
-            update: 'activo/updateActivoPropietarioTab',
-            destroy: 'activo/getListDeudoresById'
+		remoteUrl: 'activo/getActivoById',
+		api: {        
+            create: 'activo/createDeudorAcreditado',
+            update: 'activo/updateDeudorAcreditado',
+            destroy: 'activo/destroyDeudorById'
 
-        }
+        }/*,
+		extraParams: {idActivo: '{activo.id}'}*/
     }
     
     

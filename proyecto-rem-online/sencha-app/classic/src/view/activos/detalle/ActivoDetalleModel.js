@@ -969,7 +969,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		isGestorAdmisionAndSuper: function(){
 			var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) ||  $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);
 			var me = this; 		
-			
 			if(gestores){			
 				return true;
 				}
@@ -1425,7 +1424,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				 proxy: {
 				    type: 'uxproxy',
 					remoteUrl: 'activo/getListDeudoresById',
-					extraParams: {id: '{activo.id}'}
+					extraParams: {id: '{activo.id}'} 
 				 }
     		},
     		

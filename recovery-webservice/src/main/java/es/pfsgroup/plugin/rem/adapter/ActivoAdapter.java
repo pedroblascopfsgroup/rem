@@ -1950,15 +1950,37 @@ public class ActivoAdapter {
 	}
 	
 	public List<DtoActivoDeudoresAcreditados> getListDeudoresById(Long id) {
-
+				
+	
 		List<DtoActivoDeudoresAcreditados> listaDtoDeudores = new ArrayList<DtoActivoDeudoresAcreditados>();
-		List<ActivoDeudoresAcreditados> listaDeudores = new ArrayList<ActivoDeudoresAcreditados>();
-		listaDeudores = genericDao.getList(ActivoDeudoresAcreditados.class, 
-				genericDao.createFilter(FilterType.EQUALS, "idActivo.id", id));
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", id);
+		List<ActivoDeudoresAcreditados> listaDeudores =(List<ActivoDeudoresAcreditados>)genericDao.getList(ActivoDeudoresAcreditados.class,filtro);
+	
 		for (ActivoDeudoresAcreditados deudor : listaDeudores) {
 			DtoActivoDeudoresAcreditados dto = new DtoActivoDeudoresAcreditados();
 			try {
 				BeanUtils.copyProperties(dto,deudor);
+				if(deudor.getFechaAlta()!=null) {
+				BeanUtils.copyProperty(dto,"fechaAlta",deudor.getFechaAlta());
+				}
+				if(deudor.getUsuario().getApellidoNombre()!=null) {
+				BeanUtils.copyProperty(dto, "gestorAlta",deudor.getUsuario().getApellidoNombre());
+				}
+				if(deudor.getTipoDocumento().getDescripcion()!=null) {
+					BeanUtils.copyProperty(dto, "tipoDocIdentificativoDesc",deudor.getTipoDocumento().getDescripcion());
+				}
+				if(deudor.getNumeroDocumentoDeudor()!=null) {
+					BeanUtils.copyProperty(dto,"docIdentificativo",deudor.getNumeroDocumentoDeudor());
+				}
+				if(deudor.getNombreDeudor()!=null) {
+					BeanUtils.copyProperty(dto,"nombre",deudor.getNombreDeudor());
+				}
+				if(deudor.getApellido1Deudor()!=null) {
+				BeanUtils.copyProperty(dto,"apellido1",deudor.getApellido1Deudor());
+				}
+				if(deudor.getApellido2Deudor()!=null) {
+				BeanUtils.copyProperty(dto,"apellido2",deudor.getApellido2Deudor());
+				}
 			}catch (IllegalAccessException e) {
 				logger.error("Error en ActivoAdapter", e);
 			} catch (InvocationTargetException e) {
@@ -1966,7 +1988,7 @@ public class ActivoAdapter {
 			}
 			listaDtoDeudores.add(dto);
 		}
-
+		
 		return listaDtoDeudores;
 
 	}

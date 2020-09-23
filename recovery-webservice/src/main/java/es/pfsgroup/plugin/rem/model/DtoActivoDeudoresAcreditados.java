@@ -20,6 +20,7 @@ public class DtoActivoDeudoresAcreditados extends WebDto {
 	private String docIdentificativo;
 	
 	
+	
 	public long getId() {
 		return id;
 	}

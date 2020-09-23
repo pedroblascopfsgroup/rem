@@ -24,14 +24,14 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
     initComponent: function () {
         var me = this;   
         me.setTitle(HreRem.i18n('title.titulo.informacion.registral'));
-        me.getViewModel().data.nClicks=0;
+        me.getViewModel().data.nClicks=0;      
         var items= [
 
 			{    
                 
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',
-				title: HreRem.i18n('title.datos.inscripcion'),
+				title: HreRem.i18n('title.datos.inscripcion'),				
 				items :
 					[
 						{
@@ -551,109 +551,91 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					 	}
 					},
 					//Se añade el grid de deudores
-//					{
-//			        	readOnly: true
-//			        },
-//			        {
-//			        	readOnly: true
-//			        },
 			        {
-						title: 'Listado de Deudores/Acreditados',
-						itemId: 'listadoDeudores',
-					    xtype: 'gridBaseEditableRow',
+						title: HreRem.i18n('fieldlabel.listado.deudores'),
+						itemId: 'listadoDeudores',	
+					    xtype: 'gridBaseEditableRow',					    
 					    topBar : true,
-						cls	: 'panel-base shadow-panel',
+						cls	: 'panel-base shadow-panel',					
 						bind: {
 							store: '{storeDeudores}',
-							//Se tienen que cambiar, veremos en el futuro a que
-							topBar: '{!datosRegistrales.unidadAlquilable}'
+							topBar: '{isGestorAdmisionAndSuper}'						
 						},
-						listeners: {
-							//Se tiene que cambiar
-							rowdblclick: 'onListadoPropietariosDobleClick'
-						},		
-						colspan: 3,
-						selModel : {
-			                type : 'checkboxmodel'
-			              },
-			              features: [{
+						colspan: 3,						
+			              features: [{			              	
 					            id: 'summary',
 					            ftype: 'summary',
 					            hideGroupedHeader: true,
-					            enableGroupingMenu: false,
-					            dock: 'bottom'
+					            enableGroupingMenu: false,					           
+					            dock: 'bottom'			            
+					           
 						    }],
 						columns: [
-						    {   text: 'Fecha Alta', 
-					        	dataIndex: 'fechaAlta',
+						    {   text: HreRem.i18n('header.listado.deudores.fecha.alta'),						    
+						    	dataIndex:'fechaAlta',						    	
+								formatter: 'date("d/m/Y")',								
 					        	flex:1 
 					        },
-					        {   text: 'Gestor alta', 
+					        {   text:  HreRem.i18n('fieldlabel.listado.deudores.gestor.alta'), 
 					        	dataIndex: 'gestorAlta',
 					        	flex:1 
 					        },
-					        {   text: 'Tipo Doc.', 
-					        	dataIndex: 'tipoDocIdentificativoDesc',
+					        {   text: HreRem.i18n('fieldlabel.listado.deudores.tipo.doc'), 
+					        	dataIndex: 'tipoDocIdentificativoDesc',					        	
+					        	reference:	'tipoDocDeudor',
+					        	editor: {		                   					                  		 	 
+			        			xtype: 'comboboxfieldbase',
+								addUxReadOnlyEditFieldPlugin: false,
+				        		   labelWidth: '65%',
+						            width: '40%',
+				            		allowBlank: false,					        	
+				        		bind: {
+				            		store: '{comboTipoDocumento}',				            		
+				            		value: '{tipoDocIdentificativoDesc}',
+				            		readOnly: '{!isGestorAdmisionAndSuper}'
+				            	},
+				            	displayField: 'descripcion',
+								valueField: 'codigo'
+			        		
+		                	},
 					        	flex:1 
 					        },	
-					        {   text: 'Doc. Identificativo', 
-					        	dataIndex: 'docIdentificativo',
+					        {   text: HreRem.i18n('fieldlabel.listado.deudores.doc.identificativo'), 
+					        	dataIndex: 'docIdentificativo',					       
+					        	reference:	'tipoNumeroDocumentoDeudor',
+					        	editor: {										 
+										  cls: 'grid-no-seleccionable-field-editor',
+										  allowBlank: false
+										  },										 
 					        	flex:1 
 					        },	
-					        {   text: 'Nombre/Razón social', 
-					        	dataIndex: 'nombre',
+					        {   text: HreRem.i18n('fieldlabel.listado.deudores.nombre.razon.social'), 
+					        	dataIndex: 'nombre',				        
+					        	reference:	'razonSocialDeudor',
+					        	editor: {										 
+										  cls: 'grid-no-seleccionable-field-editor',
+										  allowBlank: false
+										  },
 					        	flex:2
 					        },
-					        {   text: 'Primer apellido', 
+					        {   text: HreRem.i18n('fieldlabel.listado.deudores.apellido.1'), 
 					        	dataIndex: 'apellido1',
+					        	reference:	'apellido1Deudor',
+					        	editor: {										 
+										  cls: 'grid-no-seleccionable-field-editor'
+					        	},
 					        	flex:2
 					        },
-					        {   text: 'Segundo apellido', 
+					        {   text: HreRem.i18n('fieldlabel.listado.deudores.apellido.2'), 
 					        	dataIndex: 'apellido2',
+					        	reference:	'apellido2Deudor',
+					        	editor: {										 
+										  cls: 'grid-no-seleccionable-field-editor'										  
+										  },
 					        	flex:2 
-					        }	               	        
-					    ],
-
-					    onAddClick: function (btn) {
-					 		var me = this;
-					 		var activo = me.lookupController().getViewModel().get('activo'),
-					 		idActivo= activo.get('id'),
-					 		numActivo= activo.get('numActivo');
-					 		
-					 		var ventana = Ext.create("HreRem.view.activos.detalle.AnyadirDeudor", {activo: activo});
-					 		me.up('activosdetallemain').add(ventana);
-							ventana.show();
-					 	    				    	
-					 	},
-					 	onDeleteClick: function (btn) {		
-					 		var me = this;	
-							var url =  $AC.getRemoteUrl('activo/deleteActivoPropietarioTab');
-							var propietario = me.up().down('grid').getSelection();
-							var activo = me.lookupController().getViewModel().get('activo');
-							if (propietario[0].get('tipoPropietario') == "Principal"){
-								me.fireEvent("errorToast",'No se puede eliminar el propietario principal' );
-							}else {
-								var params={};
-								params["idActivo"]=activo.get('id');
-								params["idPropietario"]= propietario[0].get('id');		
-								Ext.Ajax.request({
-								     url: url,
-								     params:params,
-								     success: function (a, operation, context) {
-								    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-								    	me.up().down('grid').getStore().load();
-						           },
-						           failure: function (a, operation, context) {
-						           	  Ext.toast({
-										 html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÓN',
-										 width: 360,
-										 height: 100,
-										 align: 't'									     
-									  });
-						           }
-							    });			
-							}					 	    				    	
-					 	}
+					        }         	        
+					    ]
+		 	    				    						 	
 					},
 					{
 						xtype:'fieldsettable',

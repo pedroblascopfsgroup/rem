@@ -6370,6 +6370,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			}else{
 				combo.setReadOnly(false);
 			}
+							  
 							
    	}
    	 

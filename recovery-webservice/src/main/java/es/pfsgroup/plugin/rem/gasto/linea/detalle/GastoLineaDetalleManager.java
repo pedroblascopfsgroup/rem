@@ -133,6 +133,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				}
 			}
 			
+			
 			dto.setBaseSujeta(gastoLineaDetalle.getPrincipalSujeto());
 			dto.setBaseNoSujeta(gastoLineaDetalle.getPrincipalNoSujeto());
 			dto.setRecargo(gastoLineaDetalle.getRecargo());
@@ -225,8 +226,12 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			gastoLineaDetalle.setSubtipoGasto(genericDao.get(DDSubtipoGasto.class, filtro));
 		}
 		
-		gastoLineaDetalle.setPrincipalSujeto(dto.getBaseSujeta());
-		gastoLineaDetalle.setPrincipalNoSujeto(dto.getBaseNoSujeta());
+		if(dto.getBaseSujeta() != null) {
+			gastoLineaDetalle.setPrincipalSujeto(dto.getBaseSujeta());
+		}
+		if(dto.getBaseNoSujeta() != null) {
+			gastoLineaDetalle.setPrincipalNoSujeto(dto.getBaseNoSujeta());
+		}
 		gastoLineaDetalle.setRecargo(dto.getRecargo());
 		
 		if(dto.getTipoRecargo() != null) {
@@ -289,7 +294,11 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		}
 		
 		if(gasto != null && gasto.getGastoDetalleEconomico() != null) {
-			gasto.getGastoDetalleEconomico().setImporteTotal(gastoProveedorApi.recalcularImporteTotalGasto(gasto.getGastoDetalleEconomico()));
+			Double importeTotal = gastoProveedorApi.recalcularImporteTotalGasto(gasto.getGastoDetalleEconomico());
+			if(dto.getId() == null) {
+				importeTotal = importeTotal+ dto.getImporteTotal();
+			}
+			gasto.getGastoDetalleEconomico().setImporteTotal(importeTotal);
 			genericDao.update(GastoDetalleEconomico.class, gasto.getGastoDetalleEconomico());
 		}
 		
@@ -305,10 +314,11 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	public boolean deleteGastoLineaDetalle(Long idLineaDetalleGasto) throws Exception{
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idLineaDetalleGasto);
 		GastoLineaDetalle gastoLineaDetalle = genericDao.get(GastoLineaDetalle.class, filtro);
-		
+		Double importeLinea;
 		if(gastoLineaDetalle == null || gastoLineaDetalle.getGastoProveedor() == null) {
 			return false;
 		}
+		importeLinea = gastoLineaDetalle.getImporteTotal();
 		gastoLineaDetalle.getAuditoria().setBorrado(true);
 		gastoLineaDetalle.getAuditoria().setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
 		gastoLineaDetalle.getAuditoria().setFechaBorrar(new Date());
@@ -341,7 +351,9 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		
 		GastoProveedor gasto = gastoLineaDetalle.getGastoProveedor();
 		if( gasto != null && gasto.getGastoDetalleEconomico() != null) {
-			gasto.getGastoDetalleEconomico().setImporteTotal(gastoProveedorApi.recalcularImporteTotalGasto(gasto.getGastoDetalleEconomico()));
+			Double importeTotal = gastoProveedorApi.recalcularImporteTotalGasto(gasto.getGastoDetalleEconomico());
+			importeTotal = importeTotal - importeLinea;
+			gasto.getGastoDetalleEconomico().setImporteTotal(importeTotal);
 			genericDao.update(GastoDetalleEconomico.class, gasto.getGastoDetalleEconomico());
 		}
 		

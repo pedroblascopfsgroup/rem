@@ -1,499 +1,603 @@
-Cartera|Subcartera|CCAA|Zona (provincia)|Tipo de trabajo|Codigo proveedor|Proveedor por defecto (0/1)
-07|138|Andalucía|Cádiz|Actuación técnica|B23657521|10009594
-07|138|Andalucía|Córdoba|Actuación técnica|B23657521|10009594
-07|138|Andalucía|Granada|Actuación técnica|B23657521|10009594
-07|138|Andalucía|Huelva|Actuación técnica|B23657521|10009594
-07|138|Andalucía|Jaén|Actuación técnica|B23657521|10009594
-07|138|Andalucía|Málaga|Actuación técnica|B23657521|10009594
-07|138|Andalucía|Sevilla|Actuación técnica|B23657521|10009594
-07|138|Andalucía|Almería|Actuación técnica|B23657521|10009594
-07|138|Aragón|Huesca|Actuación técnica|B23657521|10009594
-07|138|Aragón|Teruel|Actuación técnica|B23657521|10009594
-07|138|Aragón|Zaragoza|Actuación técnica|B23657521|10009594
-07|138|Asturias, Principado de|Asturias|Actuación técnica|B23657521|10009594
-07|138|Baleares|Baleares|Actuación técnica|B23657521|10009594
-07|138|Canarias|Las Palmas|Actuación técnica|B23657521|10009594
-07|138|Canarias|Santa C. Tenerife|Actuación técnica|B23657521|10009594
-07|138|Cantabria|Cantabria|Actuación técnica|B23657521|10009594
-07|138|Castilla y León|Avila|Actuación técnica|B23657521|10009594
-07|138|Castilla y León|Burgos|Actuación técnica|B23657521|10009594
-07|138|Castilla y León|León|Actuación técnica|B23657521|10009594
-07|138|Castilla y León|Palencia|Actuación técnica|B23657521|10009594
-07|138|Castilla y León|Salamanca|Actuación técnica|B23657521|10009594
-07|138|Castilla y León|Segovia|Actuación técnica|B23657521|10009594
-07|138|Castilla y León|Soria|Actuación técnica|B23657521|10009594
-07|138|Castilla y León|Valladolid|Actuación técnica|B23657521|10009594
-07|138|Castilla y León|Zamora|Actuación técnica|B23657521|10009594
-07|138|Castilla-La Mancha|Albacete|Actuación técnica|B98493190|24
-07|138|Castilla-La Mancha|CiudadReal|Actuación técnica|B98493190|24
-07|138|Castilla-La Mancha|Cuenca|Actuación técnica|B98493190|24
-07|138|Castilla-La Mancha|Guadalajara|Actuación técnica|B98493190|24
-07|138|Castilla-La Mancha|Toledo|Actuación técnica|B98493190|24
-07|138|Cataluña|Barcelona|Actuación técnica|B60546611|10007315
-07|138|Cataluña|Girona|Actuación técnica|B60546611|10007315
-07|138|Cataluña|Lleida|Actuación técnica|B60546611|10007315
-07|138|Cataluña|Tarragona|Actuación técnica|B60546611|10007315
-07|138|Comunitat Valenciana|Alicante|Actuación técnica|B98493190|24
-07|138|Comunitat Valenciana|Castellón|Actuación técnica|B98493190|24
-07|138|Comunitat Valenciana|Valencia|Actuación técnica|B98493190|24
-07|138|Extremadura|Badajoz|Actuación técnica|B23657521|10009594
-07|138|Extremadura|Cáceres|Actuación técnica|B23657521|10009594
-07|138|Galicia|A Coruña|Actuación técnica|B23657521|10009594
-07|138|Galicia|Lugo|Actuación técnica|B23657521|10009594
-07|138|Galicia|Ourense|Actuación técnica|B23657521|10009594
-07|138|Galicia|Pontevedra|Actuación técnica|B23657521|10009594
-07|138|Madrid, Comunidad de|Madrid|Actuación técnica|B23657521|10009594
-07|138|Murcia, Región de|Murcia|Actuación técnica|B98493190|24
-07|138|Navarra, Comunidad Foral de|Navarra|Actuación técnica|B23657521|10009594
-07|138|País Vasco|Álava|Actuación técnica|B23657521|10009594
-07|138|País Vasco|Vizcaya|Actuación técnica|B23657521|10009594
-07|138|País Vasco|Guipúzcoa|Actuación técnica|B23657521|10009594
-07|138|La Rioja|La Rioja|Actuación técnica|B23657521|10009594
-07|138|Ceuta|Ceuta|Actuación técnica|B23657521|10009594
-07|138|Melilla|Melilla|Actuación técnica|B23657521|10009594
-07|138|Andalucía|Cádiz|Obtención documentación|B23657521|110061009
-07|138|Andalucía|Córdoba|Obtención documentación|B23657521|110061009
-07|138|Andalucía|Granada|Obtención documentación|B23657521|110061009
-07|138|Andalucía|Huelva|Obtención documentación|B23657521|110061009
-07|138|Andalucía|Jaén|Obtención documentación|B23657521|110061009
-07|138|Andalucía|Málaga|Obtención documentación|B23657521|110061009
-07|138|Andalucía|Sevilla|Obtención documentación|B23657521|110061009
-07|138|Andalucía|Almería|Obtención documentación|B23657521|110061009
-07|138|Aragón|Huesca|Obtención documentación|B23657521|110061009
-07|138|Aragón|Teruel|Obtención documentación|B23657521|110061009
-07|138|Aragón|Zaragoza|Obtención documentación|B23657521|110061009
-07|138|Asturias, Principado de|Asturias|Obtención documentación|B23657521|110061009
-07|138|Baleares|Baleares|Obtención documentación|B23657521|110061009
-07|138|Canarias|Las Palmas|Obtención documentación|B23657521|110061009
-07|138|Canarias|Santa C. Tenerife|Obtención documentación|B23657521|110061009
-07|138|Cantabria|Cantabria|Obtención documentación|B23657521|110061009
-07|138|Castilla y León|Avila|Obtención documentación|B23657521|110061009
-07|138|Castilla y León|Burgos|Obtención documentación|B23657521|110061009
-07|138|Castilla y León|León|Obtención documentación|B23657521|110061009
-07|138|Castilla y León|Palencia|Obtención documentación|B23657521|110061009
-07|138|Castilla y León|Salamanca|Obtención documentación|B23657521|110061009
-07|138|Castilla y León|Segovia|Obtención documentación|B23657521|110061009
-07|138|Castilla y León|Soria|Obtención documentación|B23657521|110061009
-07|138|Castilla y León|Valladolid|Obtención documentación|B23657521|110061009
-07|138|Castilla y León|Zamora|Obtención documentación|B23657521|110061009
-07|138|Castilla-La Mancha|Albacete|Obtención documentación|B98493190|24
-07|138|Castilla-La Mancha|CiudadReal|Obtención documentación|B98493190|24
-07|138|Castilla-La Mancha|Cuenca|Obtención documentación|B98493190|24
-07|138|Castilla-La Mancha|Guadalajara|Obtención documentación|B98493190|24
-07|138|Castilla-La Mancha|Toledo|Obtención documentación|B98493190|24
-07|138|Cataluña|Barcelona|Obtención documentación|B60546611|10007315
-07|138|Cataluña|Girona|Obtención documentación|B60546611|10007315
-07|138|Cataluña|Lleida|Obtención documentación|B60546611|10007315
-07|138|Cataluña|Tarragona|Obtención documentación|B60546611|10007315
-07|138|Comunitat Valenciana|Alicante|Obtención documentación|B98493190|24
-07|138|Comunitat Valenciana|Castellón|Obtención documentación|B98493190|24
-07|138|Comunitat Valenciana|Valencia|Obtención documentación|B98493190|24
-07|138|Extremadura|Badajoz|Obtención documentación|B23657521|110061009
-07|138|Extremadura|Cáceres|Obtención documentación|B23657521|110061009
-07|138|Galicia|A Coruña|Obtención documentación|B23657521|110061009
-07|138|Galicia|Lugo|Obtención documentación|B23657521|110061009
-07|138|Galicia|Ourense|Obtención documentación|B23657521|110061009
-07|138|Galicia|Pontevedra|Obtención documentación|B23657521|110061009
-07|138|Madrid, Comunidad de|Madrid|Obtención documentación|B23657521|110061009
-07|138|Murcia, Región de|Murcia|Obtención documentación|B98493190|24
-07|138|Navarra, Comunidad Foral de|Navarra|Obtención documentación|B23657521|110061009
-07|138|País Vasco|Álava|Obtención documentación|B23657521|110061009
-07|138|País Vasco|Vizcaya|Obtención documentación|B23657521|110061009
-07|138|País Vasco|Guipúzcoa|Obtención documentación|B23657521|110061009
-07|138|La Rioja|La Rioja|Obtención documentación|B23657521|110061009
-07|138|Ceuta|Ceuta|Obtención documentación|B23657521|110061009
-07|138|Melilla|Melilla|Obtención documentación|B23657521|110061009
-07|151|Andalucía|Almería|Actuación técnica|A28346054|110115587
-07|151|Andalucía|Cádiz|Actuación técnica|B91586412|110107826
-07|151|Andalucía|Córdoba|Actuación técnica|B91586412|110107826
-07|151|Andalucía|Granada|Actuación técnica|A28346054|110115587
-07|151|Andalucía|Huelva|Actuación técnica|B91586412|110107826
-07|151|Andalucía|Jaén|Actuación técnica|A28346054|110115587
-07|151|Andalucía|Málaga|Actuación técnica|A28346054|110115587
-07|151|Andalucía|Sevilla|Actuación técnica|B91586412|110107826
-07|151|Aragón|Huesca|Actuación técnica|B19504851|29
-07|151|Aragón|Teruel|Actuación técnica|B19504851|29
-07|151|Aragón|Zaragoza|Actuación técnica|B19504851|29
-07|151|Asturias, Principado de|Asturias|Actuación técnica|A28346054|110115587
-07|151|Baleares|Baleares|Actuación técnica|B50919604|36
-07|151|Canarias|Las Palmas|Actuación técnica|A28346054|110115587
-07|151|Canarias|Santa C. Tenerife|Actuación técnica|A28346054|110115587
-07|151|Cantabria|Cantabria|Actuación técnica|B19504851|29
-07|151|Castilla y León|Avila|Actuación técnica|A28346054|110115587
-07|151|Castilla y León|Burgos|Actuación técnica|A28346054|110115587
-07|151|Castilla y León|León|Actuación técnica|A28346054|110115587
-07|151|Castilla y León|Palencia|Actuación técnica|A28346054|110115587
-07|151|Castilla y León|Salamanca|Actuación técnica|A28346054|110115587
-07|151|Castilla y León|Segovia|Actuación técnica|A28346054|110115587
-07|151|Castilla y León|Soria|Actuación técnica|A28346054|110115587
-07|151|Castilla y León|Valladolid|Actuación técnica|A28346054|110115587
-07|151|Castilla y León|Zamora|Actuación técnica|A28346054|110115587
-07|151|Castilla-La Mancha|Albacete|Actuación técnica|A78773710|110184639
-07|151|Castilla-La Mancha|CiudadReal|Actuación técnica|A78773710|110184639
-07|151|Castilla-La Mancha|Cuenca|Actuación técnica|A78773710|110184639
-07|151|Castilla-La Mancha|Guadalajara|Actuación técnica|A78773710|110184639
-07|151|Castilla-La Mancha|Toledo|Actuación técnica|A78773710|110184639
-07|151|Cataluña|Barcelona|Actuación técnica|B64216666|110184449
-07|151|Cataluña|Girona|Actuación técnica|B61425682|170
-07|151|Cataluña|Lleida|Actuación técnica|B61425682|170
-07|151|Cataluña|Tarragona|Actuación técnica|B61425682|170
-07|151|Comunitat Valenciana|Alicante|Actuación técnica|B50919604|36
-07|151|Comunitat Valenciana|Castellón|Actuación técnica|B50919604|36
-07|151|Comunitat Valenciana|Valencia|Actuación técnica|B50919604|36
-07|151|Extremadura|Badajoz|Actuación técnica|B91586412|110107826
-07|151|Extremadura|Cáceres|Actuación técnica|B91586412|110107826
-07|151|Galicia|A Coruña|Actuación técnica|A28346054|110115587
-07|151|Galicia|Lugo|Actuación técnica|A28346054|110115587
-07|151|Galicia|Ourense|Actuación técnica|A28346054|110115587
-07|151|Galicia|Pontevedra|Actuación técnica|A28346054|110115587
-07|151|Madrid, Comunidad de|Madrid|Actuación técnica|B40165920|110165264
-07|151|Murcia, Región de|Murcia|Actuación técnica|B50919604|36
-07|151|Navarra, Comunidad Foral de|Navarra|Actuación técnica|B19504851|29
-07|151|País Vasco|Álava|Actuación técnica|B19504851|29
-07|151|País Vasco|Vizcaya|Actuación técnica|B19504851|29
-07|151|País Vasco|Guipúzcoa|Actuación técnica|B19504851|29
-07|151|La Rioja|La Rioja|Actuación técnica|B19504851|29
-07|151|Ceuta|Ceuta|Actuación técnica|A28346054|110115587
-07|151|Melilla|Melilla|Actuación técnica|A28346054|110115587
-07|152|Andalucía|Almería|Actuación técnica|A28346054|110115587
-07|152|Andalucía|Cádiz|Actuación técnica|B91586412|110107826
-07|152|Andalucía|Córdoba|Actuación técnica|B91586412|110107826
-07|152|Andalucía|Granada|Actuación técnica|A28346054|110115587
-07|152|Andalucía|Huelva|Actuación técnica|B91586412|110107826
-07|152|Andalucía|Jaén|Actuación técnica|A28346054|110115587
-07|152|Andalucía|Málaga|Actuación técnica|A28346054|110115587
-07|152|Andalucía|Sevilla|Actuación técnica|B91586412|110107826
-07|152|Aragón|Huesca|Actuación técnica|B19504851|29
-07|152|Aragón|Teruel|Actuación técnica|B19504851|29
-07|152|Aragón|Zaragoza|Actuación técnica|B19504851|29
-07|152|Asturias, Principado de|Asturias|Actuación técnica|A28346054|110115587
-07|152|Baleares|Baleares|Actuación técnica|B50919604|36
-07|152|Canarias|Las Palmas|Actuación técnica|A28346054|110115587
-07|152|Canarias|Santa C. Tenerife|Actuación técnica|A28346054|110115587
-07|152|Cantabria|Cantabria|Actuación técnica|B19504851|29
-07|152|Castilla y León|Avila|Actuación técnica|A28346054|110115587
-07|152|Castilla y León|Burgos|Actuación técnica|A28346054|110115587
-07|152|Castilla y León|León|Actuación técnica|A28346054|110115587
-07|152|Castilla y León|Palencia|Actuación técnica|A28346054|110115587
-07|152|Castilla y León|Salamanca|Actuación técnica|A28346054|110115587
-07|152|Castilla y León|Segovia|Actuación técnica|A28346054|110115587
-07|152|Castilla y León|Soria|Actuación técnica|A28346054|110115587
-07|152|Castilla y León|Valladolid|Actuación técnica|A28346054|110115587
-07|152|Castilla y León|Zamora|Actuación técnica|A28346054|110115587
-07|152|Castilla-La Mancha|Albacete|Actuación técnica|A78773710|110184639
-07|152|Castilla-La Mancha|CiudadReal|Actuación técnica|A78773710|110184639
-07|152|Castilla-La Mancha|Cuenca|Actuación técnica|A78773710|110184639
-07|152|Castilla-La Mancha|Guadalajara|Actuación técnica|A78773710|110184639
-07|152|Castilla-La Mancha|Toledo|Actuación técnica|A78773710|110184639
-07|152|Cataluña|Barcelona|Actuación técnica|B64216666|110184449
-07|152|Cataluña|Girona|Actuación técnica|B61425682|170
-07|152|Cataluña|Lleida|Actuación técnica|B61425682|170
-07|152|Cataluña|Tarragona|Actuación técnica|B61425682|170
-07|152|Comunitat Valenciana|Alicante|Actuación técnica|B50919604|36
-07|152|Comunitat Valenciana|Castellón|Actuación técnica|B50919604|36
-07|152|Comunitat Valenciana|Valencia|Actuación técnica|B50919604|36
-07|152|Extremadura|Badajoz|Actuación técnica|B91586412|110107826
-07|152|Extremadura|Cáceres|Actuación técnica|B91586412|110107826
-07|152|Galicia|A Coruña|Actuación técnica|A28346054|110115587
-07|152|Galicia|Lugo|Actuación técnica|A28346054|110115587
-07|152|Galicia|Ourense|Actuación técnica|A28346054|110115587
-07|152|Galicia|Pontevedra|Actuación técnica|A28346054|110115587
-07|152|Madrid, Comunidad de|Madrid|Actuación técnica|B40165920|110165264
-07|152|Murcia, Región de|Murcia|Actuación técnica|B50919604|36
-07|152|Navarra, Comunidad Foral de|Navarra|Actuación técnica|B19504851|29
-07|152|País Vasco|Álava|Actuación técnica|B19504851|29
-07|152|País Vasco|Vizcaya|Actuación técnica|B19504851|29
-07|152|País Vasco|Guipúzcoa|Actuación técnica|B19504851|29
-07|152|La Rioja|La Rioja|Actuación técnica|B19504851|29
-07|152|Ceuta|Ceuta|Actuación técnica|A28346054|110115587
-07|152|Melilla|Melilla|Actuación técnica|A28346054|110115587
-01||Andalucía|Almería|Actuación técnica|B04485686|164
-01||Andalucía|Cádiz|Actuación técnica|B92418524|10009093
-01||Andalucía|Córdoba|Actuación técnica|B92418524|10009093
-01||Andalucía|Granada|Actuación técnica|B92418524|10009093
-01||Andalucía|Huelva|Actuación técnica|B92418524|10009093
-01||Andalucía|Jaén|Actuación técnica|B92418524|10009093
-01||Andalucía|Málaga|Actuación técnica|B92418524|10009093
-01||Andalucía|Sevilla|Actuación técnica|B92418524|10009093
-01||Aragón|Huesca|Actuación técnica|B45684677|160
-01||Aragón|Teruel|Actuación técnica|B23657521|10009594
-01||Aragón|Zaragoza|Actuación técnica|B23657521|10009594
-01||Asturias, Principado de|Asturias|Actuación técnica|B45684677|160
-01||Baleares|Baleares|Actuación técnica|B23657521|10009594
-01||Canarias|Las Palmas|Actuación técnica|B23657521|10009594
-01||Canarias|Santa C. Tenerife|Actuación técnica|B23657521|10009594
-01||Castilla y León|Avila|Actuación técnica|B45684677|160
-01||Castilla y León|Burgos|Actuación técnica|B45684677|160
-01||Castilla y León|León|Actuación técnica|B45684677|160
-01||Castilla y León|Palencia|Actuación técnica|B45684677|160
-01||Castilla y León|Segovia|Actuación técnica|B23657521|10009594
-01||Castilla y León|Soria|Actuación técnica|B23657521|10009594
-01||Castilla y León|Valladolid|Actuación técnica|B45684677|160
-01||Castilla-La Mancha|Albacete|Actuación técnica|B45684677|160
-01||Castilla-La Mancha|CiudadReal|Actuación técnica|B45684677|160
-01||Castilla-La Mancha|Cuenca|Actuación técnica|B45684677|160
-01||Castilla-La Mancha|Guadalajara|Actuación técnica|B45684677|160
-01||Castilla-La Mancha|Toledo|Actuación técnica|B23657521|10009594
-01||Cataluña|Barcelona|Actuación técnica|B23657521|10009594
-01||Cataluña|Girona|Actuación técnica|B23657521|10009594
-01||Cataluña|Lleida|Actuación técnica|B23657521|10009594
-01||Cataluña|Tarragona|Actuación técnica|B23657521|10009594
-01||Comunitat Valenciana|Alicante|Actuación técnica|B23657521|10009594
-01||Comunitat Valenciana|Castellón|Actuación técnica|B23657521|10009594
-01||Comunitat Valenciana|Valencia|Actuación técnica|B23657521|10009594
-01||Extremadura|Badajoz|Actuación técnica|B45684677|160
-01||Extremadura|Cáceres|Actuación técnica|B45684677|160
-01||Galicia|A Coruña|Actuación técnica|B45684677|160
-01||Galicia|Lugo|Actuación técnica|B45684677|160
-01||Galicia|Ourense|Actuación técnica|B45684677|160
-01||Galicia|Pontevedra|Actuación técnica|B45684677|160
-01||Madrid, Comunidad de|Madrid|Actuación técnica|B45684677|160
-01||Murcia, Región de|Murcia|Actuación técnica|B45684677|160
-01||Navarra, Comunidad Foral de|Navarra|Actuación técnica|B45684677|160
-01||País Vasco|Álava|Actuación técnica|B45684677|160
-01||País Vasco|Vizcaya|Actuación técnica|B45684677|160
-01||País Vasco|Guipúzcoa|Actuación técnica|B45684677|160
-01||La Rioja|La Rioja|Actuación técnica|B45684677|160
-01||Melilla|Melilla|Actuación técnica|B23657521|10009594
-16||Andalucía|Almería|Actuación técnica|B85343721|110097914
-16||Andalucía|Cádiz|Actuación técnica|B85343721|110097914
-16||Andalucía|Córdoba|Actuación técnica|B85343721|110097914
-16||Andalucía|Granada|Actuación técnica|B85343721|110097914
-16||Andalucía|Huelva|Actuación técnica|B85343721|110097914
-16||Andalucía|Jaén|Actuación técnica|B85343721|110097914
-16||Andalucía|Málaga|Actuación técnica|B85343721|110097914
-16||Andalucía|Sevilla|Actuación técnica|B85343721|110097914
-16||Aragón|Huesca|Actuación técnica|A28346054|110115587
-16||Aragón|Teruel|Actuación técnica|A28346054|110115587
-16||Aragón|Zaragoza|Actuación técnica|A28346054|110115587
-16||Asturias, Principado de|Asturias|Actuación técnica|A28346054|110115587
-16||Baleares|Baleares|Actuación técnica|B97600001|10007550
-16||Canarias|Las Palmas|Actuación técnica|B85687499|110186397
-16||Canarias|Santa C. Tenerife|Actuación técnica|B85687499|110186397
-16||Cantabria|Cantabria|Actuación técnica|A28346054|110115587
-16||Castilla y León|Avila|Actuación técnica|A28346054|110115587
-16||Castilla y León|Burgos|Actuación técnica|A28346054|110115587
-16||Castilla y León|León|Actuación técnica|A28346054|110115587
-16||Castilla y León|Palencia|Actuación técnica|A28346054|110115587
-16||Castilla y León|Salamanca|Actuación técnica|A28346054|110115587
-16||Castilla y León|Segovia|Actuación técnica|A28346054|110115587
-16||Castilla y León|Soria|Actuación técnica|A28346054|110115587
-16||Castilla y León|Valladolid|Actuación técnica|A28346054|110115587
-16||Castilla y León|Zamora|Actuación técnica|A28346054|110115587
-16||Castilla-La Mancha|Albacete|Actuación técnica|A28346054|110115587
-16||Castilla-La Mancha|CiudadReal|Actuación técnica|A28346054|110115587
-16||Castilla-La Mancha|Cuenca|Actuación técnica|A28346054|110115587
-16||Castilla-La Mancha|Guadalajara|Actuación técnica|A28346054|110115587
-16||Castilla-La Mancha|Toledo|Actuación técnica|A28346054|110115587
-16||Cataluña|Barcelona|Actuación técnica|B40165920|110165264
-16||Cataluña|Girona|Actuación técnica|B97600001|10007550
-16||Cataluña|Lleida|Actuación técnica|B85343721|110097914
-16||Cataluña|Tarragona|Actuación técnica|B85343721|110097914
-16||Comunitat Valenciana|Alicante|Actuación técnica|B97600001|10007550
-16||Comunitat Valenciana|Castellón|Actuación técnica|B97600001|10007550
-16||Comunitat Valenciana|Valencia|Actuación técnica|B97600001|10007550
-16||Extremadura|Badajoz|Actuación técnica|B85343721|110097914
-16||Extremadura|Cáceres|Actuación técnica|B85343721|110097914
-16||Galicia|A Coruña|Actuación técnica|A28346054|110115587
-16||Galicia|Lugo|Actuación técnica|A28346054|110115587
-16||Galicia|Ourense|Actuación técnica|A28346054|110115587
-16||Galicia|Pontevedra|Actuación técnica|A28346054|110115587
-16||Madrid, Comunidad de|Madrid|Actuación técnica|A28346054|110115587
-16||Murcia, Región de|Murcia|Actuación técnica|B97600001|10007550
-16||Navarra, Comunidad Foral de|Navarra|Actuación técnica|A28346054|110115587
-16||País Vasco|Álava|Actuación técnica|A28346054|110115587
-16||País Vasco|Vizcaya|Actuación técnica|A28346054|110115587
-16||País Vasco|Guipúzcoa|Actuación técnica|A28346054|110115587
-16||La Rioja|La Rioja|Actuación técnica|A28346054|110115587
-16||Ceuta|Ceuta|Actuación técnica|B97600001|10007550
-16||Melilla|Melilla|Actuación técnica|B97600001|10007550
-03||Andalucía|Cádiz|Actuación técnica|B85343721|110097914
-03||Andalucía|Córdoba|Actuación técnica|B85343721|110097914
-03||Andalucía|Granada|Actuación técnica|B85343721|110097914
-03||Andalucía|Huelva|Actuación técnica|B85343721|110097914
-03||Andalucía|Jaén|Actuación técnica|B85343721|110097914
-03||Andalucía|Málaga|Actuación técnica|B85343721|110097914
-03||Andalucía|Sevilla|Actuación técnica|B85343721|110097914
-03||Andalucía|Almería|Actuación técnica|B85343721|110097914
-03||Aragón|Huesca|Actuación técnica|A28346054|110115587
-03||Aragón|Teruel|Actuación técnica|A28346054|110115587
-03||Aragón|Zaragoza|Actuación técnica|A28346054|110115587
-03||Asturias, Principado de|Asturias|Actuación técnica|A28346054|110115587
-03||Baleares|Baleares|Actuación técnica|B97600001|10007550
-03||Canarias|Las Palmas|Actuación técnica|B35680149|4491
-03||Canarias|Santa C. Tenerife|Actuación técnica|B35680149|4491
-03||Cantabria|Cantabria|Actuación técnica|A28346054|110115587
-03||Castilla y León|Avila|Actuación técnica|A28346054|110115587
-03||Castilla y León|Burgos|Actuación técnica|A28346054|110115587
-03||Castilla y León|León|Actuación técnica|A28346054|110115587
-03||Castilla y León|Palencia|Actuación técnica|A28346054|110115587
-03||Castilla y León|Salamanca|Actuación técnica|A28346054|110115587
-03||Castilla y León|Segovia|Actuación técnica|A28346054|110115587
-03||Castilla y León|Soria|Actuación técnica|A28346054|110115587
-03||Castilla y León|Valladolid|Actuación técnica|A28346054|110115587
-03||Castilla y León|Zamora|Actuación técnica|A28346054|110115587
-03||Castilla-La Mancha|Albacete|Actuación técnica|A28346054|110115587
-03||Castilla-La Mancha|CiudadReal|Actuación técnica|A28346054|110115587
-03||Castilla-La Mancha|Cuenca|Actuación técnica|A28346054|110115587
-03||Castilla-La Mancha|Guadalajara|Actuación técnica|A28346054|110115587
-03||Castilla-La Mancha|Toledo|Actuación técnica|A28346054|110115587
-03||Cataluña|Barcelona|Actuación técnica|B40165920|110165264
-03||Cataluña|Girona|Actuación técnica|B97600001|10007550
-03||Cataluña|Lleida|Actuación técnica|B85343721|110097914
-03||Cataluña|Tarragona|Actuación técnica|B85343721|110097914
-03||Comunitat Valenciana|Alicante|Actuación técnica|B97600001|10007550
-03||Comunitat Valenciana|Castellón|Actuación técnica|B97600001|10007550
-03||Comunitat Valenciana|Valencia|Actuación técnica|B97600001|10007550
-03||Extremadura|Badajoz|Actuación técnica|B85343721|110097914
-03||Extremadura|Cáceres|Actuación técnica|B85343721|110097914
-03||Galicia|A Coruña|Actuación técnica|A28346054|110115587
-03||Galicia|Lugo|Actuación técnica|A28346054|110115587
-03||Galicia|Ourense|Actuación técnica|A28346054|110115587
-03||Galicia|Pontevedra|Actuación técnica|A28346054|110115587
-03||Madrid, Comunidad de|Madrid|Actuación técnica|A28346054|110115587
-03||Murcia, Región de|Murcia|Actuación técnica|B97600001|10007550
-03||Navarra, Comunidad Foral de|Navarra|Actuación técnica|A28346054|110115587
-03||País Vasco|Álava|Actuación técnica|A28346054|110115587
-03||País Vasco|Vizcaya|Actuación técnica|A28346054|110115587
-03||País Vasco|Guipúzcoa|Actuación técnica|A28346054|110115587
-03||La Rioja|La Rioja|Actuación técnica|A28346054|110115587
-03||Ceuta|Ceuta|Actuación técnica|B85343721|110097914
-03||Melilla|Melilla|Actuación técnica|B85343721|110097914
-08||Andalucía|Cádiz|Actuación técnica|B60546611|10007315
-08||Andalucía|Córdoba|Actuación técnica|B60546611|10007315
-08||Andalucía|Granada|Actuación técnica|B60546611|10007315
-08||Andalucía|Huelva|Actuación técnica|B60546611|10007315
-08||Andalucía|Jaén|Actuación técnica|B60546611|10007315
-08||Andalucía|Málaga|Actuación técnica|B60546611|10007315
-08||Andalucía|Sevilla|Actuación técnica|B60546611|10007315
-08||Andalucía|Almería|Actuación técnica|B60546611|10007315
-08||Aragón|Huesca|Actuación técnica|A28346054|110115587
-08||Aragón|Teruel|Actuación técnica|A28346054|110115587
-08||Aragón|Zaragoza|Actuación técnica|A28346054|110115587
-08||Asturias, Principado de|Asturias|Actuación técnica|A28346054|110115587
-08||Canarias|Las Palmas|Actuación técnica|A28346054|110115587
-08||Canarias|Santa C. Tenerife|Actuación técnica|A28346054|110115587
-08||Cantabria|Cantabria|Actuación técnica|A28346054|110115587
-08||Castilla y León|Avila|Actuación técnica|A28346054|110115587
-08||Castilla y León|Burgos|Actuación técnica|A28346054|110115587
-08||Castilla y León|León|Actuación técnica|A28346054|110115587
-08||Castilla y León|Palencia|Actuación técnica|A28346054|110115587
-08||Castilla y León|Salamanca|Actuación técnica|A28346054|110115587
-08||Castilla y León|Segovia|Actuación técnica|A28346054|110115587
-08||Castilla y León|Soria|Actuación técnica|A28346054|110115587
-08||Castilla y León|Valladolid|Actuación técnica|A28346054|110115587
-08||Castilla-La Mancha|Albacete|Actuación técnica|B98493190|24
-08||Castilla-La Mancha|CiudadReal|Actuación técnica|B98493190|24
-08||Castilla-La Mancha|Cuenca|Actuación técnica|B98493190|24
-08||Castilla-La Mancha|Guadalajara|Actuación técnica|B98493190|24
-08||Castilla-La Mancha|Toledo|Actuación técnica|B98493190|24
-08||Comunitat Valenciana|Alicante|Actuación técnica|B98493190|24
-08||Comunitat Valenciana|Castellón|Actuación técnica|B98493190|24
-08||Comunitat Valenciana|Valencia|Actuación técnica|B98493190|24
-08||Extremadura|Badajoz|Actuación técnica|A28346054|110115587
-08||Extremadura|Cáceres|Actuación técnica|A28346054|110115587
-08||Galicia|A Coruña|Actuación técnica|A28346054|110115587
-08||Galicia|Lugo|Actuación técnica|A28346054|110115587
-08||Galicia|Ourense|Actuación técnica|A28346054|110115587
-08||Galicia|Pontevedra|Actuación técnica|A28346054|110115587
-08||Madrid, Comunidad de|Madrid|Actuación técnica|B85884336|26
-08||Murcia, Región de|Murcia|Actuación técnica|B98493190|24
-08||País Vasco|Álava|Actuación técnica|A28346054|110115587
-08||País Vasco|Vizcaya|Actuación técnica|A28346054|110115587
-08||País Vasco|Guipúzcoa|Actuación técnica|A28346054|110115587
-08||La Rioja|La Rioja|Actuación técnica|A28346054|110115587
-08||Andalucía|Cádiz|Obtención documentación|B60546611|10007315
-08||Andalucía|Córdoba|Obtención documentación|B60546611|10007315
-08||Andalucía|Granada|Obtención documentación|B60546611|10007315
-08||Andalucía|Huelva|Obtención documentación|B60546611|10007315
-08||Andalucía|Jaén|Obtención documentación|B60546611|10007315
-08||Andalucía|Málaga|Obtención documentación|B60546611|10007315
-08||Andalucía|Sevilla|Obtención documentación|B60546611|10007315
-08||Andalucía|Almería|Obtención documentación|B60546611|10007315
-08||Aragón|Huesca|Obtención documentación|A28346054|110115587
-08||Aragón|Teruel|Obtención documentación|A28346054|110115587
-08||Aragón|Zaragoza|Obtención documentación|A28346054|110115587
-08||Asturias, Principado de|Asturias|Obtención documentación|A28346054|110115587
-08||Canarias|Las Palmas|Obtención documentación|A28346054|110115587
-08||Canarias|Santa C. Tenerife|Obtención documentación|A28346054|110115587
-08||Cantabria|Cantabria|Obtención documentación|A28346054|110115587
-08||Castilla y León|Avila|Obtención documentación|A28346054|110115587
-08||Castilla y León|Burgos|Obtención documentación|A28346054|110115587
-08||Castilla y León|León|Obtención documentación|A28346054|110115587
-08||Castilla y León|Palencia|Obtención documentación|A28346054|110115587
-08||Castilla y León|Salamanca|Obtención documentación|A28346054|110115587
-08||Castilla y León|Segovia|Obtención documentación|A28346054|110115587
-08||Castilla y León|Soria|Obtención documentación|A28346054|110115587
-08||Castilla y León|Valladolid|Obtención documentación|A28346054|110115587
-08||Castilla-La Mancha|Albacete|Obtención documentación|B98493190|24
-08||Castilla-La Mancha|CiudadReal|Obtención documentación|B98493190|24
-08||Castilla-La Mancha|Cuenca|Obtención documentación|B98493190|24
-08||Castilla-La Mancha|Guadalajara|Obtención documentación|B98493190|24
-08||Castilla-La Mancha|Toledo|Obtención documentación|B98493190|24
-08||Comunitat Valenciana|Alicante|Obtención documentación|B98493190|24
-08||Comunitat Valenciana|Castellón|Obtención documentación|B98493190|24
-08||Comunitat Valenciana|Valencia|Obtención documentación|B98493190|24
-08||Extremadura|Badajoz|Obtención documentación|A28346054|110115587
-08||Extremadura|Cáceres|Obtención documentación|A28346054|110115587
-08||Galicia|A Coruña|Obtención documentación|A28346054|110115587
-08||Galicia|Lugo|Obtención documentación|A28346054|110115587
-08||Galicia|Ourense|Obtención documentación|A28346054|110115587
-08||Galicia|Pontevedra|Obtención documentación|A28346054|110115587
-08||Madrid, Comunidad de|Madrid|Obtención documentación|B85884336|26
-08||Murcia, Región de|Murcia|Obtención documentación|B98493190|24
-08||País Vasco|Álava|Obtención documentación|A28346054|110115587
-08||País Vasco|Vizcaya|Obtención documentación|A28346054|110115587
-08||País Vasco|Guipúzcoa|Obtención documentación|A28346054|110115587
-08||La Rioja|La Rioja|Obtención documentación|A28346054|110115587
-08||Andalucía|Cádiz|Obtención documentación|A28842045|110105928
-08||Andalucía|Córdoba|Obtención documentación|A28842045|110105928
-08||Andalucía|Granada|Obtención documentación|A28842045|110105928
-08||Andalucía|Huelva|Obtención documentación|A28842045|110105928
-08||Andalucía|Jaén|Obtención documentación|A28842045|110105928
-08||Andalucía|Málaga|Obtención documentación|A28842045|110105928
-08||Andalucía|Sevilla|Obtención documentación|A28842045|110105928
-08||Andalucía|Almería|Obtención documentación|A28842045|110105928
-08||Aragón|Huesca|Obtención documentación|A82838350|110106925
-08||Aragón|Teruel|Obtención documentación|A82838350|110106925
-08||Aragón|Zaragoza|Obtención documentación|A82838350|110106925
-08||Asturias, Principado de|Asturias|Obtención documentación|A82838350|110106925
-08||Baleares|Baleares|Obtención documentación|A82838350|110106925
-08||Canarias|Las Palmas|Obtención documentación|A28842045|110105928
-08||Canarias|Santa C. Tenerife|Obtención documentación|A28842045|110105928
-08||Cantabria|Cantabria|Obtención documentación|A82838350|110106925
-08||Castilla y León|Avila|Obtención documentación|A82838350|110106925
-08||Castilla y León|Burgos|Obtención documentación|A82838350|110106925
-08||Castilla y León|León|Obtención documentación|A82838350|110106925
-08||Castilla y León|Palencia|Obtención documentación|A82838350|110106925
-08||Castilla y León|Salamanca|Obtención documentación|A82838350|110106925
-08||Castilla y León|Segovia|Obtención documentación|A82838350|110106925
-08||Castilla y León|Soria|Obtención documentación|A82838350|110106925
-08||Castilla y León|Valladolid|Obtención documentación|A82838350|110106925
-08||Castilla y León|Zamora|Obtención documentación|A82838350|110106925
-08||Castilla-La Mancha|Albacete|Obtención documentación|A82838350|110106925
-08||Castilla-La Mancha|CiudadReal|Obtención documentación|A82838350|110106925
-08||Castilla-La Mancha|Cuenca|Obtención documentación|A82838350|110106925
-08||Castilla-La Mancha|Guadalajara|Obtención documentación|A82838350|110106925
-08||Castilla-La Mancha|Toledo|Obtención documentación|A28842045|110105928
-08||Cataluña|Barcelona|Obtención documentación|A82838350|110106925
-08||Cataluña|Girona|Obtención documentación|A82838350|110106925
-08||Cataluña|Lleida|Obtención documentación|A82838350|110106925
-08||Cataluña|Tarragona|Obtención documentación|A82838350|110106925
-08||Comunitat Valenciana|Alicante|Obtención documentación|A28842045|110105928
-08||Comunitat Valenciana|Castellón|Obtención documentación|A28842045|110105928
-08||Comunitat Valenciana|Valencia|Obtención documentación|A28842045|110105928
-08||Extremadura|Badajoz|Obtención documentación|A28842045|110105928
-08||Extremadura|Cáceres|Obtención documentación|A28842045|110105928
-08||Galicia|A Coruña|Obtención documentación|A82838350|110106925
-08||Galicia|Lugo|Obtención documentación|A82838350|110106925
-08||Galicia|Ourense|Obtención documentación|A82838350|110106925
-08||Galicia|Pontevedra|Obtención documentación|A82838350|110106925
-08||Madrid, Comunidad de|Madrid|Obtención documentación|A82838350|110106925
-08||Murcia, Región de|Murcia|Obtención documentación|A28842045|110105928
-08||Navarra, Comunidad Foral de|Navarra|Obtención documentación|A82838350|110106925
-08||País Vasco|Álava|Obtención documentación|A82838350|110106925
-08||País Vasco|Vizcaya|Obtención documentación|A82838350|110106925
-08||País Vasco|Guipúzcoa|Obtención documentación|A82838350|110106925
-08||La Rioja|La Rioja|Obtención documentación|A82838350|110106925
-08||Ceuta|Ceuta|Obtención documentación|A82838350|110106925
-08||Melilla|Melilla|Obtención documentación|A82838350|110106925
+Cartera|Subcartera|Zona (provincia)|Tipo de trabajo|Subtipo de trabajo|Codigo proveedor|Proveedor por defecto (0/1)
+07|138|Cádiz|Actuación técnica||B23657521|10004312
+07|138|Córdoba|Actuación técnica||B23657521|10004312
+07|138|Granada|Actuación técnica||B23657521|10004312
+07|138|Huelva|Actuación técnica||B23657521|10004312
+07|138|Jaén|Actuación técnica||B23657521|10004312
+07|138|Málaga|Actuación técnica||B23657521|10004312
+07|138|Sevilla|Actuación técnica||B23657521|10004312
+07|138|Almería|Actuación técnica||B23657521|10004312
+07|138|Huesca|Actuación técnica||B23657521|10004312
+07|138|Teruel|Actuación técnica||B23657521|10004312
+07|138|Zaragoza|Actuación técnica||B23657521|10004312
+07|138|Asturias|Actuación técnica||B23657521|10004312
+07|138|Baleares|Actuación técnica||B23657521|10004312
+07|138|Las Palmas|Actuación técnica||B23657521|10004312
+07|138|Santa C. Tenerife|Actuación técnica||B23657521|10004312
+07|138|Cantabria|Actuación técnica||B23657521|10004312
+07|138|Avila|Actuación técnica||B23657521|10004312
+07|138|Burgos|Actuación técnica||B23657521|10004312
+07|138|León|Actuación técnica||B23657521|10004312
+07|138|Palencia|Actuación técnica||B23657521|10004312
+07|138|Salamanca|Actuación técnica||B23657521|10004312
+07|138|Segovia|Actuación técnica||B23657521|10004312
+07|138|Soria|Actuación técnica||B23657521|10004312
+07|138|Valladolid|Actuación técnica||B23657521|10004312
+07|138|Zamora|Actuación técnica||B23657521|10004312
+07|138|Albacete|Actuación técnica||B98493190|24
+07|138|CiudadReal|Actuación técnica||B98493190|24
+07|138|Cuenca|Actuación técnica||B98493190|24
+07|138|Guadalajara|Actuación técnica||B98493190|24
+07|138|Toledo|Actuación técnica||B98493190|24
+07|138|Barcelona|Actuación técnica||B60546611|10007315
+07|138|Girona|Actuación técnica||B60546611|10007315
+07|138|Lleida|Actuación técnica||B60546611|10007315
+07|138|Tarragona|Actuación técnica||B60546611|10007315
+07|138|Alicante|Actuación técnica||B98493190|24
+07|138|Castellón|Actuación técnica||B98493190|24
+07|138|Valencia|Actuación técnica||B98493190|24
+07|138|Badajoz|Actuación técnica||B23657521|10004312
+07|138|Cáceres|Actuación técnica||B23657521|10004312
+07|138|A Coruña|Actuación técnica||B23657521|10004312
+07|138|Lugo|Actuación técnica||B23657521|10004312
+07|138|Ourense|Actuación técnica||B23657521|10004312
+07|138|Pontevedra|Actuación técnica||B23657521|10004312
+07|138|Madrid|Actuación técnica||B23657521|10004312
+07|138|Murcia|Actuación técnica||B98493190|24
+07|138|Navarra|Actuación técnica||B23657521|10004312
+07|138|Álava|Actuación técnica||B23657521|10004312
+07|138|Vizcaya|Actuación técnica||B23657521|10004312
+07|138|Guipúzcoa|Actuación técnica||B23657521|10004312
+07|138|La Rioja|Actuación técnica||B23657521|10004312
+07|138|Ceuta|Actuación técnica||B23657521|10004312
+07|138|Melilla|Actuación técnica||B23657521|10004312
+07|138|Cádiz|Obtención documentación||B23657521|10026352
+07|138|Córdoba|Obtención documentación||B23657521|10026352
+07|138|Granada|Obtención documentación||B23657521|10026352
+07|138|Huelva|Obtención documentación||B23657521|10026352
+07|138|Jaén|Obtención documentación||B23657521|10026352
+07|138|Málaga|Obtención documentación||B23657521|10026352
+07|138|Sevilla|Obtención documentación||B23657521|10026352
+07|138|Almería|Obtención documentación||B23657521|10026352
+07|138|Huesca|Obtención documentación||B23657521|10026352
+07|138|Teruel|Obtención documentación||B23657521|10026352
+07|138|Zaragoza|Obtención documentación||B23657521|10026352
+07|138|Asturias|Obtención documentación||B23657521|10026352
+07|138|Baleares|Obtención documentación||B23657521|10026352
+07|138|Las Palmas|Obtención documentación||B23657521|10026352
+07|138|Santa C. Tenerife|Obtención documentación||B23657521|10026352
+07|138|Cantabria|Obtención documentación||B23657521|10026352
+07|138|Avila|Obtención documentación||B23657521|10026352
+07|138|Burgos|Obtención documentación||B23657521|10026352
+07|138|León|Obtención documentación||B23657521|10026352
+07|138|Palencia|Obtención documentación||B23657521|10026352
+07|138|Salamanca|Obtención documentación||B23657521|10026352
+07|138|Segovia|Obtención documentación||B23657521|10026352
+07|138|Soria|Obtención documentación||B23657521|10026352
+07|138|Valladolid|Obtención documentación||B23657521|10026352
+07|138|Zamora|Obtención documentación||B23657521|10026352
+07|138|Albacete|Obtención documentación||B98493190|24
+07|138|CiudadReal|Obtención documentación||B98493190|24
+07|138|Cuenca|Obtención documentación||B98493190|24
+07|138|Guadalajara|Obtención documentación||B98493190|24
+07|138|Toledo|Obtención documentación||B98493190|24
+07|138|Barcelona|Obtención documentación||B60546611|10007315
+07|138|Girona|Obtención documentación||B60546611|10007315
+07|138|Lleida|Obtención documentación||B60546611|10007315
+07|138|Tarragona|Obtención documentación||B60546611|10007315
+07|138|Alicante|Obtención documentación||B98493190|24
+07|138|Castellón|Obtención documentación||B98493190|24
+07|138|Valencia|Obtención documentación||B98493190|24
+07|138|Badajoz|Obtención documentación||B23657521|10026352
+07|138|Cáceres|Obtención documentación||B23657521|10026352
+07|138|A Coruña|Obtención documentación||B23657521|10026352
+07|138|Lugo|Obtención documentación||B23657521|10026352
+07|138|Ourense|Obtención documentación||B23657521|10026352
+07|138|Pontevedra|Obtención documentación||B23657521|10026352
+07|138|Madrid|Obtención documentación||B23657521|10026352
+07|138|Murcia|Obtención documentación||B98493190|24
+07|138|Navarra|Obtención documentación||B23657521|10026352
+07|138|Álava|Obtención documentación||B23657521|10026352
+07|138|Vizcaya|Obtención documentación||B23657521|10026352
+07|138|Guipúzcoa|Obtención documentación||B23657521|10026352
+07|138|La Rioja|Obtención documentación||B23657521|10026352
+07|138|Ceuta|Obtención documentación||B23657521|10026352
+07|138|Melilla|Obtención documentación||B23657521|10026352
+07|151|Almería|Actuación técnica||A28346054|10004312
+07|151|Cádiz|Actuación técnica||B91586412|110107826
+07|151|Córdoba|Actuación técnica||B91586412|110107826
+07|151|Granada|Actuación técnica||A28346054|10004312
+07|151|Huelva|Actuación técnica||B91586412|110107826
+07|151|Jaén|Actuación técnica||A28346054|10004312
+07|151|Málaga|Actuación técnica||A28346054|10004312
+07|151|Sevilla|Actuación técnica||B91586412|110107826
+07|151|Huesca|Actuación técnica||B19504851|29
+07|151|Teruel|Actuación técnica||B19504851|29
+07|151|Zaragoza|Actuación técnica||B19504851|29
+07|151|Asturias|Actuación técnica||A28346054|10004312
+07|151|Baleares|Actuación técnica||B50919604|36
+07|151|Las Palmas|Actuación técnica||A28346054|10004312
+07|151|Santa C. Tenerife|Actuación técnica||A28346054|10004312
+07|151|Cantabria|Actuación técnica||B19504851|29
+07|151|Avila|Actuación técnica||A28346054|10004312
+07|151|Burgos|Actuación técnica||A28346054|10004312
+07|151|León|Actuación técnica||A28346054|10004312
+07|151|Palencia|Actuación técnica||A28346054|10004312
+07|151|Salamanca|Actuación técnica||A28346054|10004312
+07|151|Segovia|Actuación técnica||A28346054|10004312
+07|151|Soria|Actuación técnica||A28346054|10004312
+07|151|Valladolid|Actuación técnica||A28346054|10004312
+07|151|Zamora|Actuación técnica||A28346054|10004312
+07|151|Albacete|Actuación técnica||A78773710|110184639
+07|151|CiudadReal|Actuación técnica||A78773710|110184639
+07|151|Cuenca|Actuación técnica||A78773710|110184639
+07|151|Guadalajara|Actuación técnica||A78773710|110184639
+07|151|Toledo|Actuación técnica||A78773710|110184639
+07|151|Barcelona|Actuación técnica||B64216666|110184449
+07|151|Girona|Actuación técnica||B61425682|170
+07|151|Lleida|Actuación técnica||B61425682|170
+07|151|Tarragona|Actuación técnica||B61425682|170
+07|151|Alicante|Actuación técnica||B50919604|36
+07|151|Castellón|Actuación técnica||B50919604|36
+07|151|Valencia|Actuación técnica||B50919604|36
+07|151|Badajoz|Actuación técnica||B91586412|110107826
+07|151|Cáceres|Actuación técnica||B91586412|110107826
+07|151|A Coruña|Actuación técnica||A28346054|10004312
+07|151|Lugo|Actuación técnica||A28346054|10004312
+07|151|Ourense|Actuación técnica||A28346054|10004312
+07|151|Pontevedra|Actuación técnica||A28346054|10004312
+07|151|Madrid|Actuación técnica||B40165920|110165264
+07|151|Murcia|Actuación técnica||B50919604|36
+07|151|Navarra|Actuación técnica||B19504851|29
+07|151|Álava|Actuación técnica||B19504851|29
+07|151|Vizcaya|Actuación técnica||B19504851|29
+07|151|Guipúzcoa|Actuación técnica||B19504851|29
+07|151|La Rioja|Actuación técnica||B19504851|29
+07|151|Ceuta|Actuación técnica||A28346054|10004312
+07|151|Melilla|Actuación técnica||A28346054|10004312
+07|152|Almería|Actuación técnica||A28346054|10004312
+07|152|Cádiz|Actuación técnica||B91586412|110107826
+07|152|Córdoba|Actuación técnica||B91586412|110107826
+07|152|Granada|Actuación técnica||A28346054|10004312
+07|152|Huelva|Actuación técnica||B91586412|110107826
+07|152|Jaén|Actuación técnica||A28346054|10004312
+07|152|Málaga|Actuación técnica||A28346054|10004312
+07|152|Sevilla|Actuación técnica||B91586412|110107826
+07|152|Huesca|Actuación técnica||B19504851|29
+07|152|Teruel|Actuación técnica||B19504851|29
+07|152|Zaragoza|Actuación técnica||B19504851|29
+07|152|Asturias|Actuación técnica||A28346054|10004312
+07|152|Baleares|Actuación técnica||B50919604|36
+07|152|Las Palmas|Actuación técnica||A28346054|10004312
+07|152|Santa C. Tenerife|Actuación técnica||A28346054|10004312
+07|152|Cantabria|Actuación técnica||B19504851|29
+07|152|Avila|Actuación técnica||A28346054|10004312
+07|152|Burgos|Actuación técnica||A28346054|10004312
+07|152|León|Actuación técnica||A28346054|10004312
+07|152|Palencia|Actuación técnica||A28346054|10004312
+07|152|Salamanca|Actuación técnica||A28346054|10004312
+07|152|Segovia|Actuación técnica||A28346054|10004312
+07|152|Soria|Actuación técnica||A28346054|10004312
+07|152|Valladolid|Actuación técnica||A28346054|10004312
+07|152|Zamora|Actuación técnica||A28346054|10004312
+07|152|Albacete|Actuación técnica||A78773710|110184639
+07|152|CiudadReal|Actuación técnica||A78773710|110184639
+07|152|Cuenca|Actuación técnica||A78773710|110184639
+07|152|Guadalajara|Actuación técnica||A78773710|110184639
+07|152|Toledo|Actuación técnica||A78773710|110184639
+07|152|Barcelona|Actuación técnica||B64216666|110184449
+07|152|Girona|Actuación técnica||B61425682|170
+07|152|Lleida|Actuación técnica||B61425682|170
+07|152|Tarragona|Actuación técnica||B61425682|170
+07|152|Alicante|Actuación técnica||B50919604|36
+07|152|Castellón|Actuación técnica||B50919604|36
+07|152|Valencia|Actuación técnica||B50919604|36
+07|152|Badajoz|Actuación técnica||B91586412|110107826
+07|152|Cáceres|Actuación técnica||B91586412|110107826
+07|152|A Coruña|Actuación técnica||A28346054|10004312
+07|152|Lugo|Actuación técnica||A28346054|10004312
+07|152|Ourense|Actuación técnica||A28346054|10004312
+07|152|Pontevedra|Actuación técnica||A28346054|10004312
+07|152|Madrid|Actuación técnica||B40165920|110165264
+07|152|Murcia|Actuación técnica||B50919604|36
+07|152|Navarra|Actuación técnica||B19504851|29
+07|152|Álava|Actuación técnica||B19504851|29
+07|152|Vizcaya|Actuación técnica||B19504851|29
+07|152|Guipúzcoa|Actuación técnica||B19504851|29
+07|152|La Rioja|Actuación técnica||B19504851|29
+07|152|Ceuta|Actuación técnica||A28346054|10004312
+07|152|Melilla|Actuación técnica||A28346054|10004312
+01||Almería|Actuación técnica||B04485686|164
+01||Cádiz|Actuación técnica||B92418524|10009093
+01||Córdoba|Actuación técnica||B92418524|10009093
+01||Granada|Actuación técnica||B92418524|10009093
+01||Huelva|Actuación técnica||B92418524|10009093
+01||Jaén|Actuación técnica||B92418524|10009093
+01||Málaga|Actuación técnica||B92418524|10009093
+01||Sevilla|Actuación técnica||B92418524|10009093
+01||Huesca|Actuación técnica||B45684677|160
+01||Teruel|Actuación técnica||B23657521|10004312
+01||Zaragoza|Actuación técnica||B23657521|10004312
+01||Asturias|Actuación técnica||B45684677|160
+01||Baleares|Actuación técnica||B23657521|10004312
+01||Las Palmas|Actuación técnica||B23657521|10004312
+01||Santa C. Tenerife|Actuación técnica||B23657521|10004312
+01||Avila|Actuación técnica||B45684677|160
+01||Burgos|Actuación técnica||B45684677|160
+01||León|Actuación técnica||B45684677|160
+01||Palencia|Actuación técnica||B45684677|160
+01||Segovia|Actuación técnica||B23657521|10004312
+01||Soria|Actuación técnica||B23657521|10004312
+01||Valladolid|Actuación técnica||B45684677|160
+01||Albacete|Actuación técnica||B45684677|160
+01||CiudadReal|Actuación técnica||B45684677|160
+01||Cuenca|Actuación técnica||B45684677|160
+01||Guadalajara|Actuación técnica||B45684677|160
+01||Toledo|Actuación técnica||B23657521|10004312
+01||Barcelona|Actuación técnica||B23657521|10004312
+01||Girona|Actuación técnica||B23657521|10004312
+01||Lleida|Actuación técnica||B23657521|10004312
+01||Tarragona|Actuación técnica||B23657521|10004312
+01||Alicante|Actuación técnica||B23657521|10004312
+01||Castellón|Actuación técnica||B23657521|10004312
+01||Valencia|Actuación técnica||B23657521|10004312
+01||Badajoz|Actuación técnica||B45684677|160
+01||Cáceres|Actuación técnica||B45684677|160
+01||A Coruña|Actuación técnica||B45684677|160
+01||Lugo|Actuación técnica||B45684677|160
+01||Ourense|Actuación técnica||B45684677|160
+01||Pontevedra|Actuación técnica||B45684677|160
+01||Madrid|Actuación técnica||B45684677|160
+01||Murcia|Actuación técnica||B45684677|160
+01||Navarra|Actuación técnica||B45684677|160
+01||Álava|Actuación técnica||B45684677|160
+01||Vizcaya|Actuación técnica||B45684677|160
+01||Guipúzcoa|Actuación técnica||B45684677|160
+01||La Rioja|Actuación técnica||B45684677|160
+01||Melilla|Actuación técnica||B23657521|10004312
+16||Almería|Actuación técnica||B85343721|10007348
+16||Cádiz|Actuación técnica||B85343721|10007348
+16||Córdoba|Actuación técnica||B85343721|10007348
+16||Granada|Actuación técnica||B85343721|10007348
+16||Huelva|Actuación técnica||B85343721|10007348
+16||Jaén|Actuación técnica||B85343721|10007348
+16||Málaga|Actuación técnica||B85343721|10007348
+16||Sevilla|Actuación técnica||B85343721|10007348
+16||Huesca|Actuación técnica||A28346054|10004312
+16||Teruel|Actuación técnica||A28346054|10004312
+16||Zaragoza|Actuación técnica||A28346054|10004312
+16||Asturias|Actuación técnica||A28346054|10004312
+16||Baleares|Actuación técnica||B97600001|10007550
+16||Las Palmas|Actuación técnica||B85687499|110186397
+16||Santa C. Tenerife|Actuación técnica||B85687499|110186397
+16||Cantabria|Actuación técnica||A28346054|10004312
+16||Avila|Actuación técnica||A28346054|10004312
+16||Burgos|Actuación técnica||A28346054|10004312
+16||León|Actuación técnica||A28346054|10004312
+16||Palencia|Actuación técnica||A28346054|10004312
+16||Salamanca|Actuación técnica||A28346054|10004312
+16||Segovia|Actuación técnica||A28346054|10004312
+16||Soria|Actuación técnica||A28346054|10004312
+16||Valladolid|Actuación técnica||A28346054|10004312
+16||Zamora|Actuación técnica||A28346054|10004312
+16||Albacete|Actuación técnica||A28346054|10004312
+16||CiudadReal|Actuación técnica||A28346054|10004312
+16||Cuenca|Actuación técnica||A28346054|10004312
+16||Guadalajara|Actuación técnica||A28346054|10004312
+16||Toledo|Actuación técnica||A28346054|10004312
+16||Barcelona|Actuación técnica||B40165920|110165264
+16||Girona|Actuación técnica||B97600001|10007550
+16||Lleida|Actuación técnica||B85343721|10007348
+16||Tarragona|Actuación técnica||B85343721|10007348
+16||Alicante|Actuación técnica||B97600001|10007550
+16||Castellón|Actuación técnica||B97600001|10007550
+16||Valencia|Actuación técnica||B97600001|10007550
+16||Badajoz|Actuación técnica||B85343721|10007348
+16||Cáceres|Actuación técnica||B85343721|10007348
+16||A Coruña|Actuación técnica||A28346054|10004312
+16||Lugo|Actuación técnica||A28346054|10004312
+16||Ourense|Actuación técnica||A28346054|10004312
+16||Pontevedra|Actuación técnica||A28346054|10004312
+16||Madrid|Actuación técnica||A28346054|10004312
+16||Murcia|Actuación técnica||B97600001|10007550
+16||Navarra|Actuación técnica||A28346054|10004312
+16||Álava|Actuación técnica||A28346054|10004312
+16||Vizcaya|Actuación técnica||A28346054|10004312
+16||Guipúzcoa|Actuación técnica||A28346054|10004312
+16||La Rioja|Actuación técnica||A28346054|10004312
+16||Ceuta|Actuación técnica||B97600001|10007550
+16||Melilla|Actuación técnica||B97600001|10007550
+03||Cádiz|Actuación técnica||B85343721|10007348
+03||Córdoba|Actuación técnica||B85343721|10007348
+03||Granada|Actuación técnica||B85343721|10007348
+03||Huelva|Actuación técnica||B85343721|10007348
+03||Jaén|Actuación técnica||B85343721|10007348
+03||Málaga|Actuación técnica||B85343721|10007348
+03||Sevilla|Actuación técnica||B85343721|10007348
+03||Almería|Actuación técnica||B85343721|10007348
+03||Huesca|Actuación técnica||A28346054|10004312
+03||Teruel|Actuación técnica||A28346054|10004312
+03||Zaragoza|Actuación técnica||A28346054|10004312
+03||Asturias|Actuación técnica||A28346054|10004312
+03||Baleares|Actuación técnica||B97600001|10007550
+03||Las Palmas|Actuación técnica||B35680149|4491
+03||Santa C. Tenerife|Actuación técnica||B35680149|4491
+03||Cantabria|Actuación técnica||A28346054|10004312
+03||Avila|Actuación técnica||A28346054|10004312
+03||Burgos|Actuación técnica||A28346054|10004312
+03||León|Actuación técnica||A28346054|10004312
+03||Palencia|Actuación técnica||A28346054|10004312
+03||Salamanca|Actuación técnica||A28346054|10004312
+03||Segovia|Actuación técnica||A28346054|10004312
+03||Soria|Actuación técnica||A28346054|10004312
+03||Valladolid|Actuación técnica||A28346054|10004312
+03||Zamora|Actuación técnica||A28346054|10004312
+03||Albacete|Actuación técnica||A28346054|10004312
+03||CiudadReal|Actuación técnica||A28346054|10004312
+03||Cuenca|Actuación técnica||A28346054|10004312
+03||Guadalajara|Actuación técnica||A28346054|10004312
+03||Toledo|Actuación técnica||A28346054|10004312
+03||Barcelona|Actuación técnica||B40165920|110165264
+03||Girona|Actuación técnica||B97600001|10007550
+03||Lleida|Actuación técnica||B85343721|10007348
+03||Tarragona|Actuación técnica||B85343721|10007348
+03||Alicante|Actuación técnica||B97600001|10007550
+03||Castellón|Actuación técnica||B97600001|10007550
+03||Valencia|Actuación técnica||B97600001|10007550
+03||Badajoz|Actuación técnica||B85343721|10007348
+03||Cáceres|Actuación técnica||B85343721|10007348
+03||A Coruña|Actuación técnica||A28346054|10004312
+03||Lugo|Actuación técnica||A28346054|10004312
+03||Ourense|Actuación técnica||A28346054|10004312
+03||Pontevedra|Actuación técnica||A28346054|10004312
+03||Madrid|Actuación técnica||A28346054|10004312
+03||Murcia|Actuación técnica||B97600001|10007550
+03||Navarra|Actuación técnica||A28346054|10004312
+03||Álava|Actuación técnica||A28346054|10004312
+03||Vizcaya|Actuación técnica||A28346054|10004312
+03||Guipúzcoa|Actuación técnica||A28346054|10004312
+03||La Rioja|Actuación técnica||A28346054|10004312
+03||Ceuta|Actuación técnica||B85343721|10007348
+03||Melilla|Actuación técnica||B85343721|10007348
+03||Cádiz|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Córdoba|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Granada|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Huelva|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Jaén|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Málaga|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Sevilla|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Almería|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Huesca|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Teruel|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Zaragoza|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Asturias|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Baleares|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Las Palmas|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Santa C. Tenerife|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Cantabria|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Avila|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Burgos|Obtención documentación|Cédula de Habitabilidad||10009469
+03||León|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Palencia|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Salamanca|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Segovia|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Soria|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Valladolid|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Zamora|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Albacete|Obtención documentación|Cédula de Habitabilidad||10009469
+03||CiudadReal|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Cuenca|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Guadalajara|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Toledo|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Barcelona|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Girona|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Lleida|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Tarragona|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Alicante|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Castellón|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Valencia|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Badajoz|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Cáceres|Obtención documentación|Cédula de Habitabilidad||10009469
+03||A Coruña|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Lugo|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Ourense|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Pontevedra|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Madrid|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Murcia|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Navarra|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Álava|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Vizcaya|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Guipúzcoa|Obtención documentación|Cédula de Habitabilidad||10009469
+03||La Rioja|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Ceuta|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Melilla|Obtención documentación|Cédula de Habitabilidad||10009469
+03||Cádiz|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Córdoba|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Granada|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Huelva|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Jaén|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Málaga|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Sevilla|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Almería|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Huesca|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Teruel|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Zaragoza|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Asturias|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Baleares|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Las Palmas|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Santa C. Tenerife|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Cantabria|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Avila|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Burgos|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||León|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Palencia|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Salamanca|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Segovia|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Soria|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Valladolid|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Zamora|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Albacete|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||CiudadReal|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Cuenca|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Guadalajara|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Toledo|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Barcelona|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Girona|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Lleida|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Tarragona|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Alicante|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Castellón|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Valencia|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Badajoz|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Cáceres|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||A Coruña|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Lugo|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Ourense|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Pontevedra|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Madrid|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Murcia|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Navarra|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Álava|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Vizcaya|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Guipúzcoa|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||La Rioja|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Ceuta|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+03||Melilla|Obtención documentación|Certificado Eficiencia Energética (CEE)|B62529425|110157123
+08||Cádiz|Actuación técnica||B60546611|10007315
+08||Córdoba|Actuación técnica||B60546611|10007315
+08||Granada|Actuación técnica||B60546611|10007315
+08||Huelva|Actuación técnica||B60546611|10007315
+08||Jaén|Actuación técnica||B60546611|10007315
+08||Málaga|Actuación técnica||B60546611|10007315
+08||Sevilla|Actuación técnica||B60546611|10007315
+08||Almería|Actuación técnica||B60546611|10007315
+08||Huesca|Actuación técnica||A28346054|10004312
+08||Teruel|Actuación técnica||A28346054|10004312
+08||Zaragoza|Actuación técnica||A28346054|10004312
+08||Asturias|Actuación técnica||A28346054|10004312
+08||Las Palmas|Actuación técnica||A28346054|10004312
+08||Santa C. Tenerife|Actuación técnica||A28346054|10004312
+08||Cantabria|Actuación técnica||A28346054|10004312
+08||Avila|Actuación técnica||A28346054|10004312
+08||Burgos|Actuación técnica||A28346054|10004312
+08||León|Actuación técnica||A28346054|10004312
+08||Palencia|Actuación técnica||A28346054|10004312
+08||Salamanca|Actuación técnica||A28346054|10004312
+08||Segovia|Actuación técnica||A28346054|10004312
+08||Soria|Actuación técnica||A28346054|10004312
+08||Valladolid|Actuación técnica||A28346054|10004312
+08||Albacete|Actuación técnica||B98493190|24
+08||CiudadReal|Actuación técnica||B98493190|24
+08||Cuenca|Actuación técnica||B98493190|24
+08||Guadalajara|Actuación técnica||B98493190|24
+08||Toledo|Actuación técnica||B98493190|24
+08||Alicante|Actuación técnica||B98493190|24
+08||Castellón|Actuación técnica||B98493190|24
+08||Valencia|Actuación técnica||B98493190|24
+08||Badajoz|Actuación técnica||A28346054|10004312
+08||Cáceres|Actuación técnica||A28346054|10004312
+08||A Coruña|Actuación técnica||A28346054|10004312
+08||Lugo|Actuación técnica||A28346054|10004312
+08||Ourense|Actuación técnica||A28346054|10004312
+08||Pontevedra|Actuación técnica||A28346054|10004312
+08||Madrid|Actuación técnica||B85884336|26
+08||Murcia|Actuación técnica||B98493190|24
+08||Álava|Actuación técnica||A28346054|10004312
+08||Vizcaya|Actuación técnica||A28346054|10004312
+08||Guipúzcoa|Actuación técnica||A28346054|10004312
+08||La Rioja|Actuación técnica||A28346054|10004312
+08||Cádiz|Obtención documentación|Cédula de Habitabilidad|B60546611|10007315
+08||Córdoba|Obtención documentación|Cédula de Habitabilidad|B60546611|10007315
+08||Granada|Obtención documentación|Cédula de Habitabilidad|B60546611|10007315
+08||Huelva|Obtención documentación|Cédula de Habitabilidad|B60546611|10007315
+08||Jaén|Obtención documentación|Cédula de Habitabilidad|B60546611|10007315
+08||Málaga|Obtención documentación|Cédula de Habitabilidad|B60546611|10007315
+08||Sevilla|Obtención documentación|Cédula de Habitabilidad|B60546611|10007315
+08||Almería|Obtención documentación|Cédula de Habitabilidad|B60546611|10007315
+08||Huesca|Obtención documentación|Cédula de Habitabilidad|A28346054|10004312
+08||Teruel|Obtención documentación|Cédula de Habitabilidad|A28346054|10004312
+08||Zaragoza|Obtención documentación|Cédula de Habitabilidad|A28346054|10004312
+08||Asturias|Obtención documentación|Cédula de Habitabilidad|A28346054|10004312
+08||Las Palmas|Obtención documentación|Cédula de Habitabilidad|A28346054|10004312
+08||Santa C. Tenerife|Obtención documentación|Cédula de Habitabilidad|A28346054|10004312
+08||Cantabria|Obtención documentación|Cédula de Habitabilidad|A28346054|10004312
+08||Avila|Obtención documentación|Cédula de Habitabilidad|A28346054|10004312
+08||Burgos|Obtención documentación|Cédula de Habitabilidad|A28346054|10004312
+08||León|Obtención documentación|Cédula de Habitabilidad|A28346054|10004312
+08||Palencia|Obtención documentación|Cédula de Habitabilidad|A28346054|10004312
+08||Salamanca|Obtención documentación|Cédula de Habitabilidad|A28346054|10004312
+08||Segovia|Obtención documentación|Cédula de Habitabilidad|A28346054|10004312
+08||Soria|Obtención documentación|Cédula de Habitabilidad|A28346054|10004312
+08||Valladolid|Obtención documentación|Cédula de Habitabilidad|A28346054|10004312
+08||Albacete|Obtención documentación|Cédula de Habitabilidad|B98493190|24
+08||CiudadReal|Obtención documentación|Cédula de Habitabilidad|B98493190|24
+08||Cuenca|Obtención documentación|Cédula de Habitabilidad|B98493190|24
+08||Guadalajara|Obtención documentación|Cédula de Habitabilidad|B98493190|24
+08||Toledo|Obtención documentación|Cédula de Habitabilidad|B98493190|24
+08||Alicante|Obtención documentación|Cédula de Habitabilidad|B98493190|24
+08||Castellón|Obtención documentación|Cédula de Habitabilidad|B98493190|24
+08||Valencia|Obtención documentación|Cédula de Habitabilidad|B98493190|24
+08||Badajoz|Obtención documentación|Cédula de Habitabilidad|A28346054|10004312
+08||Cáceres|Obtención documentación|Cédula de Habitabilidad|A28346054|10004312
+08||A Coruña|Obtención documentación|Cédula de Habitabilidad|A28346054|10004312
+08||Lugo|Obtención documentación|Cédula de Habitabilidad|A28346054|10004312
+08||Ourense|Obtención documentación|Cédula de Habitabilidad|A28346054|10004312
+08||Pontevedra|Obtención documentación|Cédula de Habitabilidad|A28346054|10004312
+08||Madrid|Obtención documentación|Cédula de Habitabilidad|B85884336|26
+08||Murcia|Obtención documentación|Cédula de Habitabilidad|B98493190|24
+08||Álava|Obtención documentación|Cédula de Habitabilidad|A28346054|10004312
+08||Vizcaya|Obtención documentación|Cédula de Habitabilidad|A28346054|10004312
+08||Guipúzcoa|Obtención documentación|Cédula de Habitabilidad|A28346054|10004312
+08||La Rioja|Obtención documentación|Cédula de Habitabilidad|A28346054|10004312
+08||Cádiz|Obtención documentación|Certificado Eficiencia Energética (CEE)|A28842045|110105928
+08||Córdoba|Obtención documentación|Certificado Eficiencia Energética (CEE)|A28842045|110105928
+08||Granada|Obtención documentación|Certificado Eficiencia Energética (CEE)|A28842045|110105928
+08||Huelva|Obtención documentación|Certificado Eficiencia Energética (CEE)|A28842045|110105928
+08||Jaén|Obtención documentación|Certificado Eficiencia Energética (CEE)|A28842045|110105928
+08||Málaga|Obtención documentación|Certificado Eficiencia Energética (CEE)|A28842045|110105928
+08||Sevilla|Obtención documentación|Certificado Eficiencia Energética (CEE)|A28842045|110105928
+08||Almería|Obtención documentación|Certificado Eficiencia Energética (CEE)|A28842045|110105928
+08||Huesca|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Teruel|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Zaragoza|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Asturias|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Baleares|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Las Palmas|Obtención documentación|Certificado Eficiencia Energética (CEE)|A28842045|110105928
+08||Santa C. Tenerife|Obtención documentación|Certificado Eficiencia Energética (CEE)|A28842045|110105928
+08||Cantabria|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Avila|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Burgos|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||León|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Palencia|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Salamanca|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Segovia|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Soria|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Valladolid|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Zamora|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Albacete|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||CiudadReal|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Cuenca|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Guadalajara|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Toledo|Obtención documentación|Certificado Eficiencia Energética (CEE)|A28842045|110105928
+08||Barcelona|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Girona|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Lleida|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Tarragona|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Alicante|Obtención documentación|Certificado Eficiencia Energética (CEE)|A28842045|110105928
+08||Castellón|Obtención documentación|Certificado Eficiencia Energética (CEE)|A28842045|110105928
+08||Valencia|Obtención documentación|Certificado Eficiencia Energética (CEE)|A28842045|110105928
+08||Badajoz|Obtención documentación|Certificado Eficiencia Energética (CEE)|A28842045|110105928
+08||Cáceres|Obtención documentación|Certificado Eficiencia Energética (CEE)|A28842045|110105928
+08||A Coruña|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Lugo|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Ourense|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Pontevedra|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Madrid|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Murcia|Obtención documentación|Certificado Eficiencia Energética (CEE)|A28842045|110105928
+08||Navarra|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Álava|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Vizcaya|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Guipúzcoa|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||La Rioja|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Ceuta|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925
+08||Melilla|Obtención documentación|Certificado Eficiencia Energética (CEE)|A82838350|110106925

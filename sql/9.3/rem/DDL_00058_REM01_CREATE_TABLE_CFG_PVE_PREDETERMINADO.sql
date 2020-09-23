@@ -59,7 +59,7 @@ BEGIN
 			DD_CRA_ID					NUMBER(16,0)                NOT NULL,
 			DD_SCR_ID					NUMBER(16,0)                NOT NULL,
 			DD_TTR_ID	        		NUMBER(16,0)	            NOT NULL,
-			DD_STR_ID					NUMBER(16,0)				NOT NULL,
+			DD_STR_ID					NUMBER(16,0),
 			PVE_ID						NUMBER(16,0)                NOT NULL,
 			PROVEEDOR_DEFECTO			NUMBER(1,0)					DEFAULT 0 NOT NULL ENABLE,
 			VERSION 					NUMBER(38,0) 		    	DEFAULT 0 NOT NULL ENABLE, 

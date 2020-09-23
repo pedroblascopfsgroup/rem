@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algba
---## FECHA_CREACION=20200921
+--## FECHA_CREACION=20200922
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11239
@@ -48,7 +48,8 @@ DECLARE
     TYPE T_ARRAY_ALTER IS TABLE OF T_ALTER;
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
     			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION
-    	T_ALTER(  'DD_PRV_ID',			'NUMBER(16,0) NOT NULL',			'Identificador único de la provincia'	)
+    	T_ALTER(  'DD_PRV_ID',			'NUMBER(16,0) NOT NULL',			'Identificador único de la provincia'	),
+	T_ALTER(  'DD_STR_ID',			'NUMBER(16,0)',			'Identificador único de subtipo de trabajo'	)
 		);
     V_T_ALTER T_ALTER;
 
@@ -57,8 +58,7 @@ DECLARE
     TYPE T_ARRAY_DROP IS TABLE OF T_DROP;
     V_DROP T_ARRAY_DROP := T_ARRAY_DROP(
     			-- NOMBRE CAMPO
-    	T_DROP(  'DD_STR_ID'),
-		T_DROP(  'PROVEEDOR_DEFECTO')
+	T_DROP(  'PROVEEDOR_DEFECTO')
 		);
     V_T_DROP T_DROP;
     
@@ -67,7 +67,8 @@ DECLARE
     TYPE T_ARRAY_FK IS TABLE OF T_FK;
     V_FK T_ARRAY_FK := T_ARRAY_FK(
     			--NOMBRE FK 						CAMPO FK 				TABLA DESTINO FK 							CAMPO DESTINO FK
-    	T_FK(	'FK_CPP_PRV',			'DD_PRV_ID',		V_ESQUEMA_M||'.DD_PRV_PROVINCIA',				'DD_PRV_ID')
+    	T_FK(	'FK_CPP_PRV',			'DD_PRV_ID',		V_ESQUEMA_M||'.DD_PRV_PROVINCIA',				'DD_PRV_ID'),
+	T_FK(	'CPP_STR_FK',			'DD_STR_ID',		V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO',				'DD_STR_ID')
     );
     V_T_FK T_FK;
 
@@ -78,7 +79,8 @@ DECLARE
     			--NOMBRE UK 
     	T_BUK(	'CPP_STR_FK'),
 		T_BUK(	'UK_CPP_CRA_SCR_TTR_STR_PVE_BORRADO'),
-		T_BUK(	'UK_CPP_CRA_SCR_TTR_PRV_PVE_BORRADO')
+		T_BUK(	'UK_CPP_CRA_SCR_TTR_PRV_PVE_BORRADO'),
+		T_BUK(	'UK_CPP_CRA_SCR_TTR_PRV_STR_PVE_BORRADO')
     );
     V_T_BUK T_BUK;
 
@@ -87,7 +89,7 @@ DECLARE
     TYPE T_ARRAY_UK IS TABLE OF T_UK;
     V_UK T_ARRAY_UK := T_ARRAY_UK(
     			--NOMBRE FK 						CAMPOS UK
-    	T_UK(	'UK_CPP_CRA_SCR_TTR_PRV_PVE_BORRADO',	'DD_TTR_ID, PVE_ID, DD_PRV_ID, DD_CRA_ID, DD_SCR_ID, BORRADO')
+    	T_UK(	'UK_CPP_CRA_SCR_TTR_PRV_STR_PVE_BORRADO',	'DD_TTR_ID, DD_STR_ID, PVE_ID, DD_PRV_ID, DD_CRA_ID, DD_SCR_ID, BORRADO')
     );
     V_T_UK T_UK;
 
@@ -132,7 +134,35 @@ BEGIN
 		END IF;
 
 	END LOOP;
-	
+
+
+	IF V_BORRAR_UK = 'SI' THEN
+
+		-- Bucle que CREA las FK de las nuevas columnas del INFORME COMERCIAL
+		FOR I IN V_BUK.FIRST .. V_BUK.LAST
+		LOOP
+
+			V_T_BUK := V_BUK(I);	
+
+			-- Verificar si la FK ya existe. Si ya existe la FK, no se hace nada.
+			V_MSQL := 'select count(1) from all_constraints where OWNER = '''||V_ESQUEMA||''' and table_name = '''||V_TEXT_TABLA||''' and constraint_name = '''||V_T_BUK(1)||'''';
+			EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+			IF V_NUM_TABLAS = 1 THEN
+				--No existe la FK y la creamos
+				DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_BUK(1)||'] -------------------------------------------');
+				V_MSQL := '
+					ALTER TABLE '||V_TEXT_TABLA||'
+					DROP CONSTRAINT '||V_T_BUK(1)||'';
+
+				EXECUTE IMMEDIATE V_MSQL;
+				--DBMS_OUTPUT.PUT_LINE('[3] '||V_MSQL);
+				DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_BUK(1)||' borrada UK... OK');
+			END IF;
+
+		END LOOP;
+
+	END IF;
+
 	-- Solo si esta activo el indicador de creacion FK, el script creara tambien las FK
 	IF V_CREAR_FK = 'SI' THEN
 
@@ -165,33 +195,6 @@ BEGIN
 				--DBMS_OUTPUT.PUT_LINE('[3] '||V_MSQL);
 				DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_FK(1)||' creada en tabla: FK en columna '||V_T_FK(2)||' hacia '||V_T_FK(3)||'.'||V_T_FK(4)||'... OK');
 
-			END IF;
-
-		END LOOP;
-
-	END IF;
-
-	IF V_BORRAR_UK = 'SI' THEN
-
-		-- Bucle que CREA las FK de las nuevas columnas del INFORME COMERCIAL
-		FOR I IN V_BUK.FIRST .. V_BUK.LAST
-		LOOP
-
-			V_T_BUK := V_BUK(I);	
-
-			-- Verificar si la FK ya existe. Si ya existe la FK, no se hace nada.
-			V_MSQL := 'select count(1) from all_constraints where OWNER = '''||V_ESQUEMA||''' and table_name = '''||V_TEXT_TABLA||''' and constraint_name = '''||V_T_BUK(1)||'''';
-			EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
-			IF V_NUM_TABLAS = 1 THEN
-				--No existe la FK y la creamos
-				DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_BUK(1)||'] -------------------------------------------');
-				V_MSQL := '
-					ALTER TABLE '||V_TEXT_TABLA||'
-					DROP CONSTRAINT '||V_T_BUK(1)||'';
-
-				EXECUTE IMMEDIATE V_MSQL;
-				--DBMS_OUTPUT.PUT_LINE('[3] '||V_MSQL);
-				DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_BUK(1)||' borrada UK... OK');
 			END IF;
 
 		END LOOP;

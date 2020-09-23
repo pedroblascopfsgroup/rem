@@ -19,7 +19,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 	recordClass: "HreRem.model.ActivoDatosRegistrales",
 
     requires: ['HreRem.model.ActivoDatosRegistrales', 'HreRem.view.common.FieldSetTable', 'HreRem.view.common.TextFieldBase', 'HreRem.view.common.ComboBoxFieldBase', 'HreRem.model.ActivoPropietario',
-    	'HreRem.view.activos.detalle.CalificacionNegativaGrid', 'HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid'],
+    	'HreRem.view.activos.detalle.CalificacionNegativaGrid', 'HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid','HreRem.model.ActivoDeudorAcreditador'],
 
     initComponent: function () {
         var me = this;   
@@ -554,12 +554,21 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			        {
 						title: HreRem.i18n('fieldlabel.listado.deudores'),
 						itemId: 'listadoDeudores',	
-					    xtype: 'gridBaseEditableRow',					    
+					    xtype: 'gridBaseEditableRow',	
+					    idPrincipal:'idActivo',
 					    topBar : true,
+					    editOnSelect: '{isGestorAdmisionAndSuper}',
 						cls	: 'panel-base shadow-panel',					
 						bind: {
 							store: '{storeDeudores}',
 							topBar: '{isGestorAdmisionAndSuper}'						
+						},
+						listeners:{
+							afterrender:function(a,b,v,c){
+								var me = this;
+								var idAct= me.lookupController().getViewModel().data.activo.id;
+								me.lookupController().getViewModel().data.idActivo = idAct;
+							}
 						},
 						colspan: 3,						
 			              features: [{			              	
@@ -567,7 +576,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					            ftype: 'summary',
 					            hideGroupedHeader: true,
 					            enableGroupingMenu: false,					           
-					            dock: 'bottom'			            
+					            dock: 'bottom'						       
 					           
 						    }],
 						columns: [

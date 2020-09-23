@@ -3704,10 +3704,10 @@ public class ActivoController extends ParadiseJsonController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView createDeudorAcreditado(String idActivo, String docIdentificativo,
+	public ModelAndView createDeudorAcreditado(Long idEntidad, String docIdentificativo,
 			String nombre, String apellido1, String apellido2, String tipoDocIdentificativoDesc, ModelMap model) {
 		try {
-			Boolean success = activoApi.createDeudorAcreditado(idActivo,  docIdentificativo,  nombre,
+			Boolean success = activoApi.createDeudorAcreditado(idEntidad,  docIdentificativo,  nombre,
 					apellido1,  apellido2,  tipoDocIdentificativoDesc);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 

@@ -7496,7 +7496,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Transactional
 	@Override
-	public Boolean createDeudorAcreditado(String idActivo, String docIdentificativo,
+	public Boolean createDeudorAcreditado(Long idEntidad, String docIdentificativo,
 			String nombre, String apellido1, String apellido2, String tipoDocIdentificativoDesc) {
 		
 		try {					
@@ -7506,24 +7506,28 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			Filter filtroCodTipoDocIdentif = genericDao.createFilter(FilterType.EQUALS, "codigo", tipoDocIdentificativoDesc);
 			DDTipoDeDocumento ddt =  genericDao.get(DDTipoDeDocumento.class, filtroBorrado,
 					filtroCodTipoDocIdentif);
-			Activo activo = get(Long.valueOf(idActivo));
+			Activo activo = get(idEntidad);
 			ActivoDeudoresAcreditados actDeudores = new ActivoDeudoresAcreditados();
-			actDeudores.setActivo(activo);
+			if(activo!=null) {
+				actDeudores.setActivo(activo);
+				
+			}
 			actDeudores.setFechaAlta(new Date());
 			actDeudores.setUsuario(adapter.getUsuarioLogado());
+		
 			if(tipoDocIdentificativoDesc!=null) {
 				actDeudores.setTipoDocumento(ddt);
 			}
 			if(docIdentificativo!=null) {
 				actDeudores.setNumeroDocumentoDeudor(docIdentificativo);
 			}
-			if(nombre!=null) {
+			if(nombre!=null && !nombre.isEmpty()) {
 				actDeudores.setNombreDeudor(nombre);
 			}
-			if(apellido1!=null) {
+			if(apellido1!=null && !apellido1.isEmpty()) {
 				actDeudores.setApellido1Deudor(apellido1);
 			}
-			if(apellido2!=null) {
+			if(apellido2!=null && !apellido2.isEmpty()) {
 				actDeudores.setApellido1Deudor(apellido2);
 			}
 			genericDao.save(ActivoDeudoresAcreditados.class, actDeudores);

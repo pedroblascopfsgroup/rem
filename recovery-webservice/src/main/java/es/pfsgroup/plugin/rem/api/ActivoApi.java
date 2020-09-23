@@ -1373,7 +1373,7 @@ public interface ActivoApi {
 	
 	Boolean updateDeudorAcreditado(DtoActivoDeudoresAcreditados dto);
 	
-	Boolean createDeudorAcreditado(String idActivo, String docIdentificativo,
+	Boolean createDeudorAcreditado(Long idEntidad, String docIdentificativo,
 			String nombre, String apellido1, String apellido2, String tipoDocIdentificativoDesc);
 	
 	//Boolean createDeudorAcreditado(DtoActivoDeudoresAcreditados dto);

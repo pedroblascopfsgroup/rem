@@ -48,8 +48,7 @@ Ext.define('HreRem.model.ActivoDeudorAcreditador', {
             update: 'activo/updateDeudorAcreditado',
             destroy: 'activo/destroyDeudorById'
 
-        }/*,
-		extraParams: {idActivo: '{activo.id}'}*/
+        }
     }
     
     

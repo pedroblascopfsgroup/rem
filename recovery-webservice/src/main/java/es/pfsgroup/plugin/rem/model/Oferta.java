@@ -37,7 +37,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
-import es.pfsgroup.plugin.rem.model.dd.DDRecomendacion;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
@@ -304,20 +303,15 @@ public class Oferta implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="OFR_ID_REALIZA_ORI_LEAD")
 	private ActivoProveedor proveedorRealizadorRemOrigenLead;
-			
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "OFR_RECOMENDACION_RC")
-	private DDRecomendacion recomendacionRc;	
-	
-	@Column(name="OFR_FECHA_RECOMENDACION_RC")
-	private Date fechaRecomendacionRc;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "OFR_RECOMENDACION_DC")
-	private DDRecomendacion recomendacionDc;
-	
-	@Column(name="OFR_FECHA_RECOMENDACION_DC")
-	private Date fechaRecomendacionDc;	
+
+
+	public Date getFechaAlta() {
+		return fechaAlta;
+	}
+
+	public void setFechaAlta(Date fechaAlta) {
+		this.fechaAlta = fechaAlta;
+	}
 
 	@Version
 	private Long version;
@@ -325,14 +319,6 @@ public class Oferta implements Serializable, Auditable {
 	@Embedded
 	private Auditoria auditoria;
 
-	public Date getFechaAlta() {
-		return fechaAlta;
-	}
-	
-	public void setFechaAlta(Date fechaAlta) {
-		this.fechaAlta = fechaAlta;
-	}
-	
 	public Long getId() {
 		return id;
 	}
@@ -927,37 +913,4 @@ public class Oferta implements Serializable, Auditable {
 	public void setProveedorRealizadorRemOrigenLead(ActivoProveedor proveedorRealizadorRemOrigenLead) {
 		this.proveedorRealizadorRemOrigenLead = proveedorRealizadorRemOrigenLead;
 	}
-
-	public DDRecomendacion getRecomendacionRc() {
-		return recomendacionRc;
-	}
-
-	public void setRecomendacionRc(DDRecomendacion recomendacionRc) {
-		this.recomendacionRc = recomendacionRc;
-	}
-
-	public Date getFechaRecomendacionRc() {
-		return fechaRecomendacionRc;
-	}
-
-	public void setFechaRecomendacionRc(Date fechaRecomendacionRc) {
-		this.fechaRecomendacionRc = fechaRecomendacionRc;
-	}
-
-	public DDRecomendacion getRecomendacionDc() {
-		return recomendacionDc;
-	}
-
-	public void setRecomendacionDc(DDRecomendacion recomendacionDc) {
-		this.recomendacionDc = recomendacionDc;
-	}
-
-	public Date getFechaRecomendacionDc() {
-		return fechaRecomendacionDc;
-	}
-
-	public void setFechaRecomendacionDc(Date fechaRecomendacionDc) {
-		this.fechaRecomendacionDc = fechaRecomendacionDc;
-	}	
-	
 }

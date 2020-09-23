@@ -28,11 +28,6 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	private LongDataType idExpedienteRem;
 	private DateDataType fechaVenta;
 	
-	private StringDataType codRecomendacionRc;
-	private DateDataType fechaRecomendacionRc;
-	private StringDataType codRecomendacionDc;
-	private DateDataType fechaRecomendacionDc;
-	
 	public LongDataType getIdUsuarioRemAccion() {
 		return idUsuarioRemAccion;
 	}
@@ -111,29 +106,6 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	public void setFechaVenta(DateDataType fechaVenta) {
 		this.fechaVenta = fechaVenta;
 	}
-	public StringDataType getCodRecomendacionRc() {
-		return codRecomendacionRc;
-	}
-	public void setCodRecomendacionRc(StringDataType codRecomendacionRc) {
-		this.codRecomendacionRc = codRecomendacionRc;
-	}
-	public DateDataType getFechaRecomendacionRc() {
-		return fechaRecomendacionRc;
-	}
-	public void setFechaRecomendacionRc(DateDataType fechaRecomendacionRc) {
-		this.fechaRecomendacionRc = fechaRecomendacionRc;
-	}
-	public StringDataType getCodRecomendacionDc() {
-		return codRecomendacionDc;
-	}
-	public void setCodRecomendacionDc(StringDataType codRecomendacionDc) {
-		this.codRecomendacionDc = codRecomendacionDc;
-	}
-	public DateDataType getFechaRecomendacionDc() {
-		return fechaRecomendacionDc;
-	}
-	public void setFechaRecomendacionDc(DateDataType fechaRecomendacionDc) {
-		this.fechaRecomendacionDc = fechaRecomendacionDc;
-	}
+	
 
 }

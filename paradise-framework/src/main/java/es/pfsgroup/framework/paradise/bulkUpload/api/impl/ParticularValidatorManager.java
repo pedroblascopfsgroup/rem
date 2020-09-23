@@ -4785,4 +4785,147 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		);			
 	}
 	
+	
+	
+
+	@Override
+	public Boolean esTipoRegimenProteccion(String codCampo) {
+		if(Checks.esNulo(codCampo) || !StringUtils.isAlphanumeric(codCampo)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) FROM DD_TVP_TIPO_VPO "
+						+ "WHERE DD_TVP_CODIGO = '" + codCampo + "' AND BORRADO = 0"
+		);
+		
+		return !"0".equals(resultado);
+	}
+	
+	
+	@Override
+	public Boolean esTipoAltaBBVAMenosAltaAutamatica(String codCampo) {
+		if(Checks.esNulo(codCampo) || !StringUtils.isAlphanumeric(codCampo)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) FROM DD_TAL_TIPO_ALTA "
+						+ "WHERE DD_TAL_CODIGO = '" + codCampo + "' AND BORRADO = 0 "
+								+ "AND DD_TAL_CODIGO <> 'AUT' "
+		);
+		
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esTipoDeTransmisionBBVA(String codCampo) {
+		if(Checks.esNulo(codCampo) || !StringUtils.isAlphanumeric(codCampo)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) FROM DD_TTR_TIPO_TRANSMISION "
+						+ "WHERE DD_TTR_CODIGO = '" + codCampo + "' AND BORRADO = 0 "
+		);
+		
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esTipoDeTituloBBVA(String codCampo) {
+		if(Checks.esNulo(codCampo) || !StringUtils.isAlphanumeric(codCampo)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) FROM DD_TTA_TIPO_TITULO_ACTIVO "
+						+ "WHERE DD_TTA_CODIGO = '" + codCampo + "' AND BORRADO = 0 "
+		);
+		
+		return !"0".equals(resultado);
+	}
+	
+	
+
+	@Override
+	public Boolean existeActivoParaCMBBVA(String codCampo) {
+		if(Checks.esNulo(codCampo) || !StringUtils.isNumeric(codCampo)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) FROM REM01.ACT_ACTIVO "
+						+ "WHERE ACT_NUM_ACTIVO = '" + codCampo + "' AND BORRADO = 0 "
+		);
+		
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean activoesDeCarteraCerberusBbvaCMBBVA(String codCampo) {
+		if(Checks.esNulo(codCampo) || !StringUtils.isNumeric(codCampo)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) FROM REM01.ACT_ACTIVO "
+						+ "WHERE ACT_NUM_ACTIVO = '" + codCampo + "'AND DD_CRA_ID IN ('162','42') AND BORRADO = 0 "
+		);
+		
+		return !"0".equals(resultado);
+	}
+	
+	
+	@Override
+	public Boolean esActivoVendidoParaCMBBVA(String numActivo){
+		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(act.act_id) "
+				+ "			FROM DD_SCM_SITUACION_COMERCIAL scm, "
+				+ "			  ACT_ACTIVO act "
+				+ "			WHERE scm.dd_scm_id   = act.dd_scm_id "
+				+ "			  AND scm.dd_scm_codigo = '05' "
+				+ "			  AND act.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "			  AND act.borrado       = 0");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esActivoIncluidoPerimetroParaCMBBVA(String numActivo){
+		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT act.ACT_ID "
+				+ "		FROM ACT_ACTIVO act "
+				+ "		LEFT JOIN ACT_PAC_PERIMETRO_ACTIVO pac "
+				+ "		ON act.ACT_ID            = pac.ACT_ID "
+				+ "		WHERE "
+				+ "		(pac.PAC_INCLUIDO = 1 or pac.PAC_ID is null)"
+				+ "		AND act.ACT_NUM_ACTIVO = "+numActivo+" ");
+		return !Checks.esNulo(resultado);
+	}
+	
+	@Override
+	public Boolean esActivoRepetidoNumActivoBBVA(String numActivo){
+		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "			FROM ACT_BBVA_ACTIVOS act "
+				+ "			WHERE act.BBVA_NUM_ACTIVO = "+numActivo+" "
+				+ "			  AND act.borrado       = 0");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean codigoComercializacionIncorrecto(String codCampo) {
+		if(Checks.esNulo(codCampo) || !StringUtils.isAlphanumeric(codCampo)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) FROM REM01.DD_TCO_TIPO_COMERCIALIZACION "
+						+ "WHERE DD_TCO_CODIGO = '" + codCampo + "'AND DD_TCO_CODIGO <> '04' AND BORRADO = 0 "
+		);
+		
+		return !"0".equals(resultado);
+	}
+	
 }

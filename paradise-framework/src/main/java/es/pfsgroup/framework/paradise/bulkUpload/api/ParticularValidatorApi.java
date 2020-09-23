@@ -1169,4 +1169,24 @@ public interface ParticularValidatorApi {
 	
 	String getValidacionCampoCDC(String codCampo);
 
+	public Boolean esTipoAltaBBVAMenosAltaAutamatica(String codCampo);
+
+	public Boolean esTipoRegimenProteccion(String codCampo);
+
+	public Boolean esTipoDeTransmisionBBVA(String dameCelda);
+	
+	public Boolean esTipoDeTituloBBVA(String dameCelda);
+	
+	public Boolean existeActivoParaCMBBVA(String dameCelda);
+	
+	public Boolean activoesDeCarteraCerberusBbvaCMBBVA(String dameCelda);
+	
+	public Boolean esActivoVendidoParaCMBBVA(String numActivo);
+
+	public Boolean esActivoIncluidoPerimetroParaCMBBVA(String numActivo);
+
+	public Boolean esActivoRepetidoNumActivoBBVA(String numActivo);
+
+	public Boolean codigoComercializacionIncorrecto(String codCampo);
+	
 }

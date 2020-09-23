@@ -756,6 +756,11 @@ Ext.define('HreRem.ux.util.Constants', {
 		PENDIENTE: 'Pendiente'
 	},
 	
+	ESTADOS_ALBARANES: {
+		VALIDADO: 'Validado',
+		PENDIENTE: 'Pendiente'
+    },
+	
 	PES_PESTANYAS: {
 		DETALLE_ECONOMICO: 'DEC',
 		FICHA: 'FIC'

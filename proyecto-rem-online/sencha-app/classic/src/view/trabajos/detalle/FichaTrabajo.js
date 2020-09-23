@@ -272,7 +272,9 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 						xtype:'fieldsettable',
 						title: HreRem.i18n('title.trabajo.llaves'),
 						reference: 'informeSituacionFieldSet',
-						hidden: '{!trabajo.visualizarLlaves}',
+						bind : {
+							hidden: '{!trabajo.visualizarLlaves}'
+						},
 						items : [
 							{
 					        	xtype: 'comboboxfieldbase',
@@ -295,7 +297,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 					        	xtype: 'datefieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.trabajo.llaves.fecha.entrega'),
 								bind: {
-									value: '{trabajo.fechaEntregaTrabajo}'
+									value: '{trabajo.fechaEntregaLlaves}'
 								}
 							},
 							{

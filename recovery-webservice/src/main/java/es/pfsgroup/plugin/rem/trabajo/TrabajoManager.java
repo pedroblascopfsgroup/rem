@@ -126,8 +126,6 @@ import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
-import es.pfsgroup.plugin.rem.model.GastoLineaDetalleTrabajo;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.HistorificadorPestanas;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -762,7 +760,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
 		
-		if(!Checks.esNulo(dtoTrabajo.getFechaEntregaTrabajo())){
+		if(!Checks.esNulo(dtoTrabajo.getFechaEntregaLlaves())){
 			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_ENTREGA_LLAVES);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_FECHA_ENTREGA_LLAVES);
 			if(!Checks.esNulo(trabajo.getFechaEntregaLlaves())) {
@@ -770,7 +768,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			SimpleDateFormat formatoDelTexto = new SimpleDateFormat("dd/MM/yyyy");
 			String fechaFormateada = null;
-			fechaFormateada = formatoDelTexto.format(dtoTrabajo.getFechaEntregaTrabajo());
+			fechaFormateada = formatoDelTexto.format(dtoTrabajo.getFechaEntregaLlaves());
 			dtoHistorificador.setValorNuevo(fechaFormateada);
 			
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
@@ -2081,8 +2079,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			 
 		 }
 		 
-		if (dtoTrabajo.getFechaEntregaTrabajo() != null) {
-			trabajo.setFechaEntregaLlaves(dtoTrabajo.getFechaEntregaTrabajo());
+		if (dtoTrabajo.getFechaEntregaLlaves() != null) {
+			trabajo.setFechaEntregaLlaves(dtoTrabajo.getFechaEntregaLlaves());
 		}
 
 		if (DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(dtoTrabajo.getTipoTrabajoCodigo()) 
@@ -2132,6 +2130,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajo.setSiniestro(dtoTrabajo.getEsSiniestroEditable());
 		}
 				
+		
+		if (dtoTrabajo.isRiesgosTerceros() != null) {
+			trabajo.setRiesgoInminenteTerceros(dtoTrabajo.isRiesgosTerceros());
+		}
 		
 
 		if (dtoTrabajo.getTipoCalidadCodigo() != null) {
@@ -2807,7 +2809,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 		}
 		if (trabajo.getFechaEntregaLlaves() != null) {
-			dtoTrabajo.setFechaEntregaTrabajo(trabajo.getFechaEntregaLlaves());
+			dtoTrabajo.setFechaEntregaLlaves(trabajo.getFechaEntregaLlaves());
 		}
 		if (trabajo.getNoAplicaLlaves() != null) {
 			dtoTrabajo.setLlavesNoAplica(trabajo.getNoAplicaLlaves());

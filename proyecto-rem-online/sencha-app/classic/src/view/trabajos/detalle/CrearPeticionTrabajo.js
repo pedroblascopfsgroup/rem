@@ -581,7 +581,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															},
 															{
 																xtype: 'checkboxfieldbase',
-																reference: 'riesgoTerceros',
+																reference: 'riesgosTerceros',
 																boxLabel: HreRem.i18n('fieldlabel.check.riesgo.terceros'),
 																colspan:1,
 																checked: false
@@ -636,7 +636,6 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 
 		form.setBindRecord(form.getModelInstance());
 		form.reset();
-
 		me.idProceso = null;
 		me.getViewModel().set('idActivo', me.idActivo);
     	me.getViewModel().set('idAgrupacion', me.idAgrupacion);

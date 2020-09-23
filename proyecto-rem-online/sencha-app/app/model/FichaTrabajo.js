@@ -106,7 +106,7 @@ Ext.define('HreRem.model.FichaTrabajo', {
     			name: 'idProveedorLlave'
     		},
     		{
-    			name: 'fechaEntregaTrabajo',
+    			name: 'fechaEntregaLlaves',
     			type:'date',
     			dateFormat: 'c'
     		},

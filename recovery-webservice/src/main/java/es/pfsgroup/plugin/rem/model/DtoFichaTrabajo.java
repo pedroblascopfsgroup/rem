@@ -231,7 +231,7 @@ public class DtoFichaTrabajo {
 	
 	private String proovedorCodigo;
 	
-	private Date fechaEntregaTrabajo;
+	private Date fechaEntregaLlaves;
 	
 	private String receptorCodigo;
 	
@@ -1152,14 +1152,6 @@ public class DtoFichaTrabajo {
 		this.proovedorCodigo = proovedorCodigo;
 	}
 
-	public Date getFechaEntregaTrabajo() {
-		return fechaEntregaTrabajo;
-	}
-
-	public void setFechaEntregaTrabajo(Date fechaEntregaTrabajo) {
-		this.fechaEntregaTrabajo = fechaEntregaTrabajo;
-	}
-
 	public String getReceptorCodigo() {
 		return receptorCodigo;
 	}
@@ -1278,6 +1270,14 @@ public class DtoFichaTrabajo {
 
 	public void setIdProveedorLlave(Long idProveedorLlave) {
 		this.idProveedorLlave = idProveedorLlave;
+	}
+
+	public Date getFechaEntregaLlaves() {
+		return fechaEntregaLlaves;
+	}
+
+	public void setFechaEntregaLlaves(Date fechaEntregaLlaves) {
+		this.fechaEntregaLlaves = fechaEntregaLlaves;
 	}
 	
 	public Integer getTomaPosesion() {

@@ -559,7 +559,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			form.getBindRecord().set("importePresupuesto",me.lookupReference('importePresupuesto').getValue());
 			form.getBindRecord().set("refImportePresupueso",me.lookupReference('referenciaImportePresupuesto').getValue());
 			form.getBindRecord().set("esTarifaPlanaEditable",me.lookupReference('tarifaPlana').getValue());
-			form.getBindRecord().set("riesgoInminenteTerceros",me.lookupReference('riesgoTerceros').getValue());
+			form.getBindRecord().set("riesgosTerceros",me.lookupReference('riesgosTerceros').getValue());
 			form.getBindRecord().set("urgente",me.lookupReference('urgente').getValue());
 			form.getBindRecord().set("esSiniestroEditable",me.lookupReference('siniestro').getValue());
 			form.getBindRecord().set("idTarifas",idTarifas);
@@ -894,7 +894,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	
 	onChangeProveedor: function(combo, value) {
 		var me = this;		
-		
 		me.getViewModel().set('proveedor', combo.getSelection());
 		//combo.validate();
 	},
@@ -1103,7 +1102,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
         		params: params,
     	   		success: function(fp, o){
     	   			idProceso = Ext.JSON.decode(o.response.responseText).idProceso;
-    	   			
     	   			//btn.up('creartrabajowindow').getViewModel().getData().trabajo.getData().idProceso = idProceso;
     	   			//btn.up('creartrabajowindow').lookupReference('')form.getBindRecord().set("idActivo", idActivo);
     	   			var window = btn.up('crearpeticiontrabajowin');

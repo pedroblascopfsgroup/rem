@@ -1973,7 +1973,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (dtoTrabajo.getResolucionComiteId() != null) {
 			trabajo.setResolucionComiteId(dtoTrabajo.getResolucionComiteId());
 		}		
-		if (dtoTrabajo.getFechaConcretaString() != null) {		
+		if (dtoTrabajo.getFechaConcretaString() != null && !dtoTrabajo.getFechaConcretaString().equals("")) {		
 			//
 			SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
 			SimpleDateFormat formatoFechaString = new SimpleDateFormat("dd/MM/yyyy");

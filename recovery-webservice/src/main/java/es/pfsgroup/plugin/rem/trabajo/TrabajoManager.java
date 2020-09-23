@@ -2021,6 +2021,17 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}else {
 			trabajo.setSiniestro(false);
 		}
+		
+		if (DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(dtoTrabajo.getTipoTrabajoCodigo()) 
+				&& DDSubtipoTrabajo.CODIGO_TOMA_DE_POSESION.equals(dtoTrabajo.getSubtipoTrabajoCodigo())) {
+			if (dtoTrabajo.getTomaPosesion() != null) {
+				if (dtoTrabajo.getTomaPosesion() == 1) {
+					trabajo.setTomaPosesion(true);
+				}else {
+					trabajo.setTomaPosesion(false);
+				}			
+			}	
+		}
 		//
 		
 		
@@ -2049,6 +2060,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if(dtoTrabajo.getEsSiniestroEditable() != null) {
 			trabajo.setSiniestro(dtoTrabajo.getEsSiniestroEditable());
 		}
+				
 		
 		/*if (Checks.esNulo(dtoTrabajo.getUrgente()))
 			trabajo.setUrgente(false);
@@ -2729,7 +2741,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}else {
 			dtoTrabajo.setVisualizarLlaves(false);
 		}
-		
+		if (trabajo.getTomaPosesion() != null) {
+			if (!trabajo.getTomaPosesion()) {
+				dtoTrabajo.setTomaPosesion(0);
+			}else {
+				dtoTrabajo.setTomaPosesion(1);
+			}
+		}
 		
 		
 

@@ -466,6 +466,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			
 		} catch (Exception e) {
 			logger.error(e.getMessage());
+			e.printStackTrace();
 		}
 		
 		trabajoDao.saveOrUpdate(trabajo);
@@ -600,33 +601,27 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		
 		
-		if(!Checks.esNulo(dtoTrabajo.getFechaConcreta())){
+		if(dtoTrabajo.getFechaConcretaString() != null){
 			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_REALIZACION_TRABAJO);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_FECHA_REALIZACION_TRABAJO);
 			if(!Checks.esNulo(trabajo.getFechaHoraConcreta())) {
 				dtoHistorificador.setValorAnterior(trabajo.getFechaHoraConcreta().toString());
 			}
-			SimpleDateFormat formatoDelTexto = new SimpleDateFormat("dd/MM/yyyy");
-			String fechaFormateada = null;
-			fechaFormateada = formatoDelTexto.format(dtoTrabajo.getFechaConcreta());
-			dtoHistorificador.setValorNuevo(fechaFormateada);
+
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getFechaConcretaString());
 
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
 		
 		
-		if(!Checks.esNulo(dtoTrabajo.getHoraConcreta())){
+		if(dtoTrabajo.getHoraConcretaString() != null){
 			dtoHistorificador.setCampo(ConstantesTrabajo.HORA_REALIZACION_TRABAJO);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_HORA_REALIZACION_TRABAJO);
 			if(!Checks.esNulo(trabajo.getFechaHoraConcreta())) {
 				dtoHistorificador.setValorAnterior(trabajo.getFechaHoraConcreta().toString());
 			}
 			
-			SimpleDateFormat horaFormatter = new SimpleDateFormat("HH:mm:ss");
-			String horaFormateada = null;
-			horaFormateada = horaFormatter.format(dtoTrabajo.getFechaHoraConcreta());
-			dtoHistorificador.setValorNuevo(horaFormateada);
-			
+			dtoHistorificador.setValorNuevo(dtoTrabajo.getHoraConcretaString());
 			
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
@@ -1634,7 +1629,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 	}
 
-	private List<Trabajo> crearTrabajoPorSubidaActivos(DtoFichaTrabajo dtoTrabajo) {
+	private List<Trabajo> crearTrabajoPorSubidaActivos(DtoFichaTrabajo dtoTrabajo) throws ParseException {
 		List<Activo> listaActivos = this.getListaActivosProceso(dtoTrabajo.getIdProceso());
 		Trabajo trabajo = new Trabajo();
 		List<Trabajo> listaTrabajos = new ArrayList<Trabajo>();
@@ -1980,7 +1975,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 
 	public void dtoToTrabajo(DtoFichaTrabajo dtoTrabajo, Trabajo trabajo)
-			throws IllegalAccessException, InvocationTargetException {
+			throws IllegalAccessException, InvocationTargetException, ParseException {
 		beanUtilNotNull.copyProperties(trabajo, dtoTrabajo);
 		
 		trabajo.setGestorAlta(genericAdapter.getUsuarioLogado());
@@ -2025,14 +2020,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (dtoTrabajo.getResolucionComiteId() != null) {
 			trabajo.setResolucionComiteId(dtoTrabajo.getResolucionComiteId());
 		}		
-		if (dtoTrabajo.getFechaConcreta() != null) {		
+		if (dtoTrabajo.getFechaConcretaString() != null && !dtoTrabajo.getFechaConcretaString().equals("")) {		
 			//
 			SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+			SimpleDateFormat formatoFechaString = new SimpleDateFormat("dd/MM/yyyy");
 			SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm");
 			SimpleDateFormat formatoFechaHora = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-			String fecha = formatoFecha.format(dtoTrabajo.getFechaConcreta());
-			String hora = formatoHora.format(dtoTrabajo.getHoraConcreta());
+			String fecha = formatoFecha.format(formatoFechaString.parse(dtoTrabajo.getFechaConcretaString()));
+			String hora = formatoHora.format(formatoHora.parse(dtoTrabajo.getHoraConcretaString()));
 
 			Date fechaHoraConcreta = null;
 			try {
@@ -2109,7 +2105,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdMediador()));
 			trabajo.setMediador(mediador);
 		}
-		if(dtoTrabajo.getAplicaComite()) {
+		if(dtoTrabajo.getAplicaComite() != null && dtoTrabajo.getAplicaComite()) {
 			if(dtoTrabajo.getResolucionComiteCodigo() != null) {
 				DDAcoAprobacionComite AprobacionComite = genericDao.get(DDAcoAprobacionComite.class, 
 						genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dtoTrabajo.getResolucionComiteCodigo())));
@@ -2129,12 +2125,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if(dtoTrabajo.getEsSiniestroEditable() != null) {
 			trabajo.setSiniestro(dtoTrabajo.getEsSiniestroEditable());
 		}
-				
-		
+
 		if (dtoTrabajo.isRiesgosTerceros() != null) {
 			trabajo.setRiesgoInminenteTerceros(dtoTrabajo.isRiesgosTerceros());
 		}
-		
 
 		if (dtoTrabajo.getTipoCalidadCodigo() != null) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getTipoCalidadCodigo());

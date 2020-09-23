@@ -1324,4 +1324,6 @@ public interface ExpedienteComercialApi {
 
 	boolean ofertasEnLaMismaTarea(BulkOferta blkOfr);
 
+	boolean esBBVA(TareaExterna tareaExterna);
+
 }

@@ -1844,6 +1844,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA)) {
 			boolean esApple = false;
 			boolean esDivarian = false;
+			boolean esBBVA = false;
 			if(expedienteComercial == null) {
 				expedienteComercial = expedienteComercialApi.findOneByTrabajo(trabajo);
 			}
@@ -1861,7 +1862,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 									|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo()))) {
 						esDivarian = true;
 					}
-					if (!esApple && !esDivarian) {
+					if (DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo()) &&
+							(DDSubcartera.CODIGO_BBVA.equals(activo.getSubcartera().getCodigo()))) {
+						esBBVA = true;
+					}
+					
+					if (!esApple && !esDivarian && !esBBVA) {
 						tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA);
 					}else {
 						tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA_APPLE);

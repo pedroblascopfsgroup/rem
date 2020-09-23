@@ -1589,6 +1589,10 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 				&& DDSubcartera.CODIGO_YUBAI.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) {
 			filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",
 					DDComiteSancion.CODIGO_THIRD_PARTIES_YUBAI);
+		}else if(DDCartera.CODIGO_CARTERA_BBVA.equals(carteraCodigo)
+				&& DDSubcartera.CODIGO_BBVA.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) {
+			filtroComite = genericDao.createFilter(FilterType.EQUALS, "codigo",
+					DDComiteSancion.CODIGO_CES_APPLE); //TODO PARA CAMBIAR, ESTA DE FORMA TEMPORAL, CREAR AQUI EL METODO CALCULO COMITE BBVA
 		}
 
 		if (filtroComite != null) {

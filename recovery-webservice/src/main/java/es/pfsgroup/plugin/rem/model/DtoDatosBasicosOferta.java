@@ -121,11 +121,9 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private String idAdvisoryNote;
 	private Long tipoBulkAdvisoryNote;
 	private Boolean tareaAdvisoryNoteFinalizada;
+	
+	
 	private Boolean estadoAprobadoLbk;
-	private String recomendacionRc;
-	private Date fechaRecomendacionRc;
-	private String recomendacionDc;
-	private Date fechaRecomendacionDc;	
 
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
@@ -559,36 +557,4 @@ public class DtoDatosBasicosOferta extends WebDto {
 		this.tareaAdvisoryNoteFinalizada = tareaAdvisoryNoteFinalizada;
 	}
 
-	public String getRecomendacionRc() {
-		return recomendacionRc;
-	}
-
-	public void setRecomendacionRc(String recomendacionRc) {
-		this.recomendacionRc = recomendacionRc;
-	}
-
-	public Date getFechaRecomendacionRc() {
-		return fechaRecomendacionRc;
-	}
-
-	public void setFechaRecomendacionRc(Date fechaRecomendacionRc) {
-		this.fechaRecomendacionRc = fechaRecomendacionRc;
-	}
-
-	public String getRecomendacionDc() {
-		return recomendacionDc;
-	}
-
-	public void setRecomendacionDc(String recomendacionDc) {
-		this.recomendacionDc = recomendacionDc;
-	}
-
-	public Date getFechaRecomendacionDc() {
-		return fechaRecomendacionDc;
-	}
-
-	public void setFechaRecomendacionDc(Date fechaRecomendacionDc) {
-		this.fechaRecomendacionDc = fechaRecomendacionDc;
-	}
-	
 }

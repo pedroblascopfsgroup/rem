@@ -90,6 +90,9 @@ Ext.define('HreRem.model.BusquedaTrabajo', {
     		},
     		{
     			name:'descripcionLinea'
+    		},
+    		{
+    			name:'idLinea'
     		}
     ] 
     

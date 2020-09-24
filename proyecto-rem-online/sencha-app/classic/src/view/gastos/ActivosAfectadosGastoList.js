@@ -94,9 +94,10 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 					hideable : false
 				},
 				{
+					text: HreRem.i18n('header.elementos.afectados.id.linea.id'),
 					dataIndex : 'idLinea',
 					flex : 1,
-					hidden : true,
+					hidden : false,
 					hideable : false
 				},
 				{

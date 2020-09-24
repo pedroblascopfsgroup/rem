@@ -348,7 +348,9 @@ public class Trabajo implements Serializable, Auditable {
 	@Column(name="TBJ_PRIM_TOMA_POS")
     private Boolean tomaPosesion;
 	
-
+	@Column(name="TBJ_FECHA_CAMBIO_ESTADO")
+	private Date fechaCambioEstado;
+	
 	public Long getId() {
 		return id;
 	}
@@ -1167,5 +1169,13 @@ public class Trabajo implements Serializable, Auditable {
 		this.tomaPosesion = tomaPosesion;
 	}
 
+	public Date getFechaCambioEstado() {
+		return fechaCambioEstado;
+	}
+
+	public void setFechaCambioEstado(Date fechaCambioEstado) {
+		this.fechaCambioEstado = fechaCambioEstado;
+	}
+    
     
 }

@@ -1344,6 +1344,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			if (dtoTrabajo.getRequerimiento() != null) {
 				trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
 			}
+			
+			trabajo.setFechaCambioEstado(new Date());
 
 			trabajoDao.saveOrUpdate(trabajo);
 
@@ -1855,6 +1857,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 				trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
 			}
+			
+			trabajo.setFechaCambioEstado(new Date());
 
 			trabajoDao.saveOrUpdate(trabajo);
 			
@@ -2057,6 +2061,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getEstadoTrabajoCodigo());
 			DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filtro);
 			trabajo.setEstado(estadoTrabajo);
+			trabajo.setFechaCambioEstado(new Date());
+			if(DDEstadoTrabajo.ESTADO_VALIDADO.equals(dtoTrabajo.getEstadoTrabajoCodigo())) {
+				trabajo.setFechaValidacion(new Date());
+			}
 		}
 		
 		if (dtoTrabajo.getFechaEjecucionTrabajo() != null) {
@@ -2581,6 +2589,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (trabajo.getEstado() != null) {
 			dtoTrabajo.setEstadoCodigo(trabajo.getEstado().getCodigo());
 			dtoTrabajo.setEstadoDescripcion(trabajo.getEstado().getDescripcion());
+			if(trabajo.getFechaCambioEstado() != null) {
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+				dtoTrabajo.setEstadoDescripcionyFecha(trabajo.getEstado().getDescripcion() + " " + sdf.format(trabajo.getFechaCambioEstado()));
+			}
+			else {
+				dtoTrabajo.setEstadoDescripcionyFecha(trabajo.getEstado().getDescripcion());
+			}
 		}
 
 		if (trabajo.getTipoCalidad() != null)

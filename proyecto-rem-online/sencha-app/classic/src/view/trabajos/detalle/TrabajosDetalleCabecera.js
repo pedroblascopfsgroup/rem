@@ -112,7 +112,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleCabecera', {
 										                { 
 															fieldLabel: HreRem.i18n('fieldlabel.estado.y.fecha'),
 															cls: 'cabecera-info-field',
-															bind:		'{trabajo.estadoDescripcion}'
+															bind:		'{trabajo.estadoDescripcionyFecha}'
 														},		
 										                {
 									                   		fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),

@@ -258,6 +258,8 @@ public class DtoFichaTrabajo {
 	private Integer tomaPosesion;
 	
 	private Long proveedorContact;
+	private String estadoDescripcionyFecha;
+	
 	
 	public Long getIdTrabajo() {
 		return idTrabajo;
@@ -1314,6 +1316,14 @@ public class DtoFichaTrabajo {
 
 	public void setProveedorContact(Long proveedorContact) {
 		this.proveedorContact = proveedorContact;
+	}
+
+	public String getEstadoDescripcionyFecha() {
+		return estadoDescripcionyFecha;
+	}
+
+	public void setEstadoDescripcionyFecha(String estadoDescripcionyFecha) {
+		this.estadoDescripcionyFecha = estadoDescripcionyFecha;
 	}
 	
 	

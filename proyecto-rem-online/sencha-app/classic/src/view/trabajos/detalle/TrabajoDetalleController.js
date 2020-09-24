@@ -378,10 +378,15 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			}
 		}
 		
+		var titleConfirm = HreRem.i18n("msgbox.multiples.trabajos.title");
+		var textConfirm = HreRem.i18n("msgbox.multiples.trabajos.seleccionados.check.mensaje");
+		if(!btn.up().up().down("[reference='checkEnglobaTodosActivosRef']").value){
+			textConfirm = HreRem.i18n("msgbox.multiples.trabajos.seleccionados.check.mensaje.multiples");
+		}
 		//
 		Ext.MessageBox.confirm(
-				HreRem.i18n("msgbox.multiples.trabajos.title"),
-				HreRem.i18n("msgbox.multiples.trabajos.seleccionados.check.mensaje"),
+				titleConfirm,
+				textConfirm,
 				function(result) {
 		        	if(result === 'yes'){
 		        		me.crearTrabajo(btn,arraySelection,null);

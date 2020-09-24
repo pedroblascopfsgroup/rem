@@ -32,21 +32,6 @@ public class DDMotivoAnulacionOferta implements Auditable, Dictionary {
 	
 	private static final long serialVersionUID = 1L;
 	
-	public final static String COD_MOTIVO_ANULACION_TIEMPO_TRAMITACION = "01";
-	public final static String COD_MOTIVO_ANULACION_PERDIDA_INTERES_INMUEBLE = "02";
-	public final static String COD_MOTIVO_ANULACION_NO_ACEPTACION_CLIENTE = "03";
-	public final static String COD_MOTIVO_ANULACION_INCUMPLIMIENTO_PLAZO = "04";
-	public final static String COD_MOTIVO_ANULACION_ORDEN_PROPIEDAD = "05";
-	public final static String COD_MOTIVO_ANULACION_DESESTIMIENTO_COMPRADOR = "06";
-	public final static String COD_MOTIVO_ANULACION_3_MESES_SIN_FORMALIZAR = "07";
-	public final static String COD_MOTIVO_ANULACION_SIN_NOTICIAS_COMPRADOR = "08";
-	public final static String COD_MOTIVO_ANULACION_FINANCIACION_RECHAZADA = "09";
-	public final static String COD_MOTIVO_ANULACION_SIN_DOC_PBC = "10";
-	public final static String COD_MOTIVO_ANULACION_PBC_RECHAZADO = "11";
-	public final static String COD_MOTIVO_ANULACION_EJERCE_GENCAT = "12";
-	public final static String COD_MOTIVO_ANULACION_VPO_DENEGADA = "13";
-	public final static String COD_MOTIVO_ANULACION_INCIDENCIA_JURIDICA_TECNICA = "14";
-	public final static String COD_MOTIVO_ANULACION_ALTA_OFERTA_ESPEJO = "15";
 
 	@Id
 	@Column(name = "DD_MAO_ID")

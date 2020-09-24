@@ -1977,7 +1977,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 
 	public void dtoToTrabajo(DtoFichaTrabajo dtoTrabajo, Trabajo trabajo)
-			throws IllegalAccessException, InvocationTargetException, ParseException {
+			throws IllegalAccessException, InvocationTargetException, ParseException {		
 		beanUtilNotNull.copyProperties(trabajo, dtoTrabajo);
 		
 		trabajo.setGestorAlta(genericAdapter.getUsuarioLogado());
@@ -2051,7 +2051,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		
 		if (dtoTrabajo.getFechaEjecucionTrabajo() != null) {
-			trabajo.setFechaEjecucionReal(dtoTrabajo.getFechaEjecucionTrabajo());
+			if (!"1970-01-01".equals(groovyft.format(dtoTrabajo.getFechaEjecucionTrabajo()))) {
+				trabajo.setFechaEjecucionReal(dtoTrabajo.getFechaEjecucionTrabajo());
+			}else {
+				trabajo.setFechaEjecucionReal(null);
+			}
+			
 		}
 		if(dtoTrabajo.getTarifaPlana() != null) {
 			trabajo.setEsTarifaPlana(dtoTrabajo.getTarifaPlana());
@@ -2078,7 +2083,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		 }
 		 
 		if (dtoTrabajo.getFechaEntregaLlaves() != null) {
-			trabajo.setFechaEntregaLlaves(dtoTrabajo.getFechaEntregaLlaves());
+			if (dtoTrabajo.getFechaEntregaLlaves() != null) {
+				if (!"1970-01-01".equals(groovyft.format(dtoTrabajo.getFechaEntregaLlaves()))) {
+					trabajo.setFechaEntregaLlaves(dtoTrabajo.getFechaEntregaLlaves());
+				}else {
+					trabajo.setFechaEntregaLlaves(null);
+				}
+				
+			}
 		}
 
 		if (DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(dtoTrabajo.getTipoTrabajoCodigo()) 

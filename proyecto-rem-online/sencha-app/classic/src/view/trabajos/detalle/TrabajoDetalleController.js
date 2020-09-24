@@ -575,6 +575,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			form.getBindRecord().set("codigoPromocionPrinex", codigoPromocionPrinex);
 			form.getBindRecord().set("codCartera", codCartera);
 			form.getBindRecord().set("codSubcartera", codSubcartera);
+			form.getBindRecord().set("fechaEjecucionTrabajo", null);
+			form.getBindRecord().set("fechaEntregaLlaves", null);
 					
 			var success = function(record, operation) {
 				me.getView().unmask();

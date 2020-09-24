@@ -107,7 +107,9 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.AdjuntoTrabajo;
 import es.pfsgroup.plugin.rem.model.AgendaTrabajo;
 import es.pfsgroup.plugin.rem.model.Albaran;
+import es.pfsgroup.plugin.rem.model.CFGComiteSancionador;
 import es.pfsgroup.plugin.rem.model.CFGPlazosTareas;
+import es.pfsgroup.plugin.rem.model.CFGProveedorPredeterminado;
 import es.pfsgroup.plugin.rem.model.CFGVisualizarLlaves;
 import es.pfsgroup.plugin.rem.model.ConfiguracionTarifa;
 import es.pfsgroup.plugin.rem.model.DerivacionEstadoTrabajo;
@@ -123,6 +125,7 @@ import es.pfsgroup.plugin.rem.model.DtoPresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestosTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoProveedorContactoSimple;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFiltradoManual;
+import es.pfsgroup.plugin.rem.model.DtoProveedorMediador;
 import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
@@ -1930,6 +1933,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		beanUtilNotNull.copyProperties(trabajo, dtoTrabajo);
 		
 		trabajo.setGestorAlta(genericAdapter.getUsuarioLogado());
+		
+		if(dtoTrabajo.getProveedorContact() != null) {
+			Filter filtroPVC = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getProveedorContact());
+			ActivoProveedorContacto pvc = genericDao.get(ActivoProveedorContacto.class, filtroPVC);
+			trabajo.setProveedorContacto(pvc);
+		}
 		
 		//
 		if (dtoTrabajo.getDescripcionGeneral() != null) {
@@ -5549,20 +5558,37 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return list;
 	}
 
-	public Date getFechaConcretaParametrizada(Long tipoTrabajo, Long subtipoTrabajo,Long cartera, Long subcartera) {
-		Date fechaAlta = new Date();
+	public Date getFechaConcretaParametrizada(String tipoTrabajo, String subtipoTrabajo,String cartera, String subcartera) {
 		Date fechaMod = new Date();
-		Filter filtroTipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.id", tipoTrabajo);
-		Filter filtroSubTipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "subtipoTrabajo.id", subtipoTrabajo);
-		Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.id", cartera);
-		Filter filtroSubCartera = genericDao.createFilter(FilterType.EQUALS, "subcartera.id", subcartera);
-		CFGPlazosTareas plazos = genericDao.get(CFGPlazosTareas.class, filtroTipoTrabajo,filtroSubTipoTrabajo,filtroCartera,filtroSubCartera);
-		if(plazos != null) {
-			
-		}else {
-			return fechaAlta;
+		if(tipoTrabajo != null && subtipoTrabajo != null && cartera != null && subcartera != null) {
+			Filter filtroTipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.codigo", tipoTrabajo);
+			Filter filtroSubTipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "subtipoTrabajo.codigo", subtipoTrabajo);
+			Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", cartera);
+			Filter filtroSubCartera = genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", subcartera);
+			CFGPlazosTareas plazos = genericDao.get(CFGPlazosTareas.class, filtroTipoTrabajo,filtroSubTipoTrabajo,filtroCartera,filtroSubCartera);
+			if(plazos != null) {
+				Calendar calendario = Calendar.getInstance();
+				calendario.setTime(fechaMod);
+				calendario.add(Calendar.DAY_OF_YEAR, plazos.getPlazoEjecucion().intValue());
+				fechaMod = calendario.getTime();
+			}
 		}
 		return fechaMod;
+	}
+	
+	public Boolean getAplicaComiteParametrizado(String tipoTrabajo, String subtipoTrabajo,String cartera, String subcartera) {
+		Boolean resultado = false;
+		if(tipoTrabajo != null && subtipoTrabajo != null && cartera != null && subcartera != null) {
+			Filter filtroTipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.codigo", tipoTrabajo);
+			Filter filtroSubTipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "subtipoTrabajo.codigo", subtipoTrabajo);
+			Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", cartera);
+			Filter filtroSubCartera = genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", subcartera);
+			CFGComiteSancionador comite = genericDao.get(CFGComiteSancionador.class, filtroTipoTrabajo,filtroSubTipoTrabajo,filtroCartera,filtroSubCartera);
+			if(comite != null) {
+				resultado = true;
+			}
+		}
+		return resultado;
 	}
 
 	@Override
@@ -5594,5 +5620,110 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		return clauseIn;
 
+	}
+	
+	@Override
+	public List<DDTipoProveedor> getComboTipoProveedorFilteredCreaTrabajo(Long idActivo, String tipoTrabajo, String subtipoTrabajo) {
+
+		Activo activo = activoDao.get(idActivo);
+		List<DDTipoProveedor> listaTiposProveedor = new ArrayList<DDTipoProveedor>();
+
+		if (!Checks.esNulo(activo)) {
+			if (!Checks.esNulo(activo.getCartera())) {
+				Filter filtroTipoProveedor = null;
+				DDTipoProveedor tipoProveedor = null;
+				if (DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(tipoTrabajo)) {
+					filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							DDTipoProveedor.COD_MANTENIMIENTO_TECNICO);
+					tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
+					listaTiposProveedor.add(tipoProveedor);
+					filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							DDTipoProveedor.COD_ASEGURADORA);
+					tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
+					listaTiposProveedor.add(tipoProveedor);
+
+				} else if (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(tipoTrabajo)) {
+					if (!DDSubtipoTrabajo.CODIGO_CEE.equals(subtipoTrabajo)) {
+						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								DDTipoProveedor.COD_MANTENIMIENTO_TECNICO);
+						tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
+						listaTiposProveedor.add(tipoProveedor);
+						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								DDTipoProveedor.COD_GESTORIA);
+						tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
+						listaTiposProveedor.add(tipoProveedor);
+						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								DDTipoProveedor.COD_CERTIFICADORA);
+						tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
+						listaTiposProveedor.add(tipoProveedor);
+						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								DDTipoProveedor.COD_ASEGURADORA);
+						tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
+						listaTiposProveedor.add(tipoProveedor);
+					} else {
+						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								DDTipoProveedor.COD_CERTIFICADORA);
+						tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
+						listaTiposProveedor.add(tipoProveedor);
+						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								DDTipoProveedor.COD_MANTENIMIENTO_TECNICO);
+						tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
+
+						listaTiposProveedor.add(tipoProveedor);
+					}
+				}/*else if(DDTipoTrabajo.CODIGO_EDIFICACION.equals(tipoTrabajo)){
+					String codTipoProveedor = trabajo.getProveedorContacto().getProveedor().getTipoProveedor().getCodigo();
+					filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							codTipoProveedor);
+					tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
+
+					listaTiposProveedor.add(tipoProveedor);
+				}*/
+
+			}
+		}
+		return listaTiposProveedor;
+	}
+	
+	@Override
+	public List<VProveedores> getComboProveedorFilteredCreaTrabajo(Long idActivo, String codigoTipoProveedor) {
+
+		Activo activo = activoDao.get(idActivo);
+
+		if(!Checks.esNulo(activo)){
+			if(!Checks.esNulo(activo.getCartera())) {
+				return proveedoresDao.getProveedoresFilteredByTiposTrabajo(codigoTipoProveedor,activo.getCartera().getCodigo());
+			}
+		}
+		return new ArrayList<VProveedores>();
+	}
+	
+	public DtoProveedorMediador getProveedorParametrizado(Long idActivo, String tipoTrabajo, String subtipoTrabajo,String cartera, String subcartera) {
+		CFGProveedorPredeterminado pvePredeterminado = new CFGProveedorPredeterminado();
+		CFGProveedorPredeterminado segundo = new CFGProveedorPredeterminado();
+		DtoProveedorMediador dto = new DtoProveedorMediador();
+		Activo activo = activoDao.get(idActivo);
+		if(activo != null) {
+			Filter filtroTipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.codigo", tipoTrabajo);
+			Filter filtroSubTipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "subtipoTrabajo.codigo", subtipoTrabajo);
+			Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", activo.getCartera().getCodigo());
+			Filter filtroSubCartera = genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", activo.getSubcartera().getCodigo());
+			Filter filtroProvincia = genericDao.createFilter(FilterType.EQUALS, "provincia.codigo", activo.getProvincia());
+			pvePredeterminado = genericDao.get(CFGProveedorPredeterminado.class, filtroTipoTrabajo,filtroSubTipoTrabajo,filtroCartera,filtroSubCartera,filtroProvincia);
+			if(pvePredeterminado != null) {
+				dto.setNombre(pvePredeterminado.getProveedor().getNombre());
+				dto.setId(pvePredeterminado.getProveedor().getId());
+				return dto;
+			}else {
+				segundo = genericDao.get(CFGProveedorPredeterminado.class, filtroTipoTrabajo,filtroCartera,filtroSubCartera,filtroProvincia);
+				if(segundo != null) {
+					dto.setId(segundo.getProveedor().getId());
+					dto.setNombre(segundo.getProveedor().getNombre());
+					return dto;
+				}
+			}
+		}
+		
+		return null;
 	}
 }

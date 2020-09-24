@@ -32,11 +32,11 @@ import es.pfsgroup.plugin.rem.model.DtoPresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestosTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoProveedorContactoSimple;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFiltradoManual;
+import es.pfsgroup.plugin.rem.model.DtoProveedorMediador;
 import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.HistorificadorPestanas;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoParticipa;
@@ -901,8 +901,16 @@ public interface TrabajoApi {
 
 	List<VBusquedaActivosTrabajoParticipa> getListActivosTrabajo(Long id);
 
-	public Date getFechaConcretaParametrizada(Long tipoTrabajo, Long subtipoTrabajo,Long cartera, Long subCartera);
+	public Date getFechaConcretaParametrizada(String tipoTrabajo, String subtipoTrabajo,String cartera, String subCartera);
+	
+	public Boolean getAplicaComiteParametrizado(String tipoTrabajo, String subtipoTrabajo,String cartera, String subCartera);
 
 	public List<String> getTransicionesEstadoTrabajoByCodigoEstado(String estadoActual);
+	
+	public List<DDTipoProveedor> getComboTipoProveedorFilteredCreaTrabajo(Long idActivo, String tipoTrabajo, String subtipoTrabajo);
+	
+	public List<VProveedores> getComboProveedorFilteredCreaTrabajo(Long idActivo, String codigoTipoProveedor);
+	
+	public DtoProveedorMediador getProveedorParametrizado(Long idActivo, String tipoTrabajo, String subtipoTrabajo,String cartera, String subcartera);
 
 }

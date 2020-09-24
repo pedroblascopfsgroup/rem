@@ -139,7 +139,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleCabecera', {
 									                   		cls: 'cabecera-info-field',
 									                   		hidden: true,
 															bind:{
-																value:'{trabajo.nombreUg}',
+																value:'{trabajo.nombreUg}'
 																//hidden:'{!trabajo.perteneceDNDtipoEdificacion}'
 															}
 									                   	},
@@ -148,7 +148,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleCabecera', {
 															cls: 'cabecera-info-field',
 															hidden: true,
 															bind:{
-																value:'{trabajo.nombreExpediente}',
+																value:'{trabajo.nombreExpediente}'
 																//hidden:'{!trabajo.perteneceDNDtipoEdificacion}'
 															}
 										                },
@@ -157,7 +157,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleCabecera', {
 									                   		cls: 'cabecera-info-field',
 									                   		hidden: true,
 									                   		bind:{
-																value:'{trabajo.nombreProyecto}',
+																value:'{trabajo.nombreProyecto}'
 																//hidden:'{!trabajo.perteneceDNDtipoEdificacion}'
 															}
 															

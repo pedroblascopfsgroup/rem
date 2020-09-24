@@ -254,7 +254,7 @@ public class DtoFichaTrabajo {
 	
 	private Integer tomaPosesion;
 	
-	
+	private Long proveedorContact;
 	
 	public Long getIdTrabajo() {
 		return idTrabajo;
@@ -1288,5 +1288,14 @@ public class DtoFichaTrabajo {
 	public void setTomaPosesion(Integer tomaPosesion) {
 		this.tomaPosesion = tomaPosesion;
 	}
+	public Long getProveedorContact() {
+		return proveedorContact;
+	}
+
+	public void setProveedorContact(Long proveedorContact) {
+		this.proveedorContact = proveedorContact;
+	}
+	
+	
 	
 }

@@ -7683,7 +7683,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				actDeudores.setApellido1Deudor(apellido1);
 			}
 			if(apellido2!=null && !apellido2.isEmpty()) {
-				actDeudores.setApellido1Deudor(apellido2);
+				actDeudores.setApellido2Deudor(apellido2);
 			}
 			genericDao.save(ActivoDeudoresAcreditados.class, actDeudores);
 			

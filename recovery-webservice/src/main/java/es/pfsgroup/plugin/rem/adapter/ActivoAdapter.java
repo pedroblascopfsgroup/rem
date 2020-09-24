@@ -1954,7 +1954,8 @@ public class ActivoAdapter {
 	
 		List<DtoActivoDeudoresAcreditados> listaDtoDeudores = new ArrayList<DtoActivoDeudoresAcreditados>();
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", id);
-		List<ActivoDeudoresAcreditados> listaDeudores =(List<ActivoDeudoresAcreditados>)genericDao.getList(ActivoDeudoresAcreditados.class,filtro);
+		Order order = new Order(OrderType.ASC, "fechaAlta");
+		List<ActivoDeudoresAcreditados> listaDeudores =(List<ActivoDeudoresAcreditados>)genericDao.getListOrdered(ActivoDeudoresAcreditados.class, order, filtro);
 	
 		for (ActivoDeudoresAcreditados deudor : listaDeudores) {
 			DtoActivoDeudoresAcreditados dto = new DtoActivoDeudoresAcreditados();

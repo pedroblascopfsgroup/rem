@@ -191,10 +191,12 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 													        	editable: false,
 													        	disabled: true,
 													        	reference: 'comboResolucionComite',
+													        	listeners: {
+													        		change : 'requiredDateResolucionComite'
+													        	},
 													        	bind : {
 													        		store: '{comboAprobacionComite}'
-													        	},
-																allowBlank: false
+													        	}
 										        			},
 
 															{

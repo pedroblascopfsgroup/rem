@@ -767,6 +767,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		DETALLE_ECONOMICO: 'DEC',
 		FICHA: 'FIC'
 	},
+
 	
 	TIPO_ELEMENTOS_GASTO:{
 		CODIGO_ACTIVO: 'ACT',
@@ -774,5 +775,11 @@ Ext.define('HreRem.ux.util.Constants', {
 		CODIGO_ACTIVO_GENERICO:  'GEN',
 		CODIGO_PROMOCION: 'PRO',
 		CODIGO_SIN_ACTIVOS: 'SIN'
+	},
+	
+	APROBACION_COMITE: {
+		SOLICITADO: 'SOL',
+		APROBADO: 'APR',
+		RECHAZADO: 'REC'
 	}
 });

@@ -87,6 +87,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
 import es.pfsgroup.plugin.rem.model.DtoActivoComplementoTitulo;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
+import es.pfsgroup.plugin.rem.model.DtoActivoDeudoresAcreditados;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
@@ -1287,6 +1288,15 @@ public class ActivoController extends ParadiseJsonController {
 		model.put(RESPONSE_DATA_KEY, adapter.getListPropietarioById(id));
 		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "propietarios", ACCION_CODIGO.CODIGO_VER);
 
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListDeudoresById(Long id, ModelMap model, HttpServletRequest request) {
+		model.put(RESPONSE_DATA_KEY, adapter.getListDeudoresById(id));
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "deudores", ACCION_CODIGO.CODIGO_VER);
+
+		
 		return createModelAndViewJson(model);
 	}
 
@@ -3707,7 +3717,35 @@ public class ActivoController extends ParadiseJsonController {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 		}
+
+			return createModelAndViewJson(model);
+	}
 		
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView destroyDeudorById(DtoActivoDeudoresAcreditados dto, ModelMap model) {
+		try {
+			boolean success = activoApi.destroyDeudorById(dto);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("error en destroyDeudorById", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateDeudorAcreditado(DtoActivoDeudoresAcreditados dto, ModelMap model) {
+		try {
+			boolean success = activoApi.updateDeudorAcreditado(dto);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("error en updateDeudorAcreditado", e);
+		}
+
 		return createModelAndViewJson(model);
 	}
 	
@@ -3727,6 +3765,19 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createDeudorAcreditado(Long idEntidad, String docIdentificativo,
+			String nombre, String apellido1, String apellido2, String tipoDocIdentificativoDesc, ModelMap model) {
+		try {
+			Boolean success = activoApi.createDeudorAcreditado(idEntidad,  docIdentificativo,  nombre,
+					apellido1,  apellido2,  tipoDocIdentificativoDesc);
+			model.put(RESPONSE_SUCCESS_KEY, success);
 
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("error en createDeudorAcreditado", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
 }

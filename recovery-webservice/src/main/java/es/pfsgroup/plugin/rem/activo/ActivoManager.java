@@ -176,6 +176,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloComplemento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDeDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
@@ -7443,6 +7444,58 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			return false;
 		}
 	}
+	
+	
+	@Transactional
+	@Override
+	public Boolean destroyDeudorById(DtoActivoDeudoresAcreditados dto) {
+		if (!Checks.esNulo(dto.getId())) {
+			genericDao.deleteById(ActivoDeudoresAcreditados.class, Long.valueOf(dto.getId()));
+			return true;
+		}
+
+		return false;
+	}
+	
+	@Transactional
+	@Override
+	public Boolean updateDeudorAcreditado(DtoActivoDeudoresAcreditados dto) {
+		
+		ActivoDeudoresAcreditados act = null;
+
+		if (dto != null) {
+			act = genericDao.get(ActivoDeudoresAcreditados.class,
+					genericDao.createFilter(FilterType.EQUALS, "id", dto.getId()));
+
+			if (act != null) {
+				if (dto.getTipoDocIdentificativoDesc() != null) {
+					DDTipoDeDocumento ddTipo = genericDao.get(DDTipoDeDocumento.class, genericDao
+							.createFilter(FilterType.EQUALS, "codigo", dto.getTipoDocIdentificativoDesc()));
+					act.setTipoDocumento(ddTipo);
+				}
+				if(dto.getDocIdentificativo()!=null) {
+					act.setNumeroDocumentoDeudor(dto.getDocIdentificativo());
+				}
+
+				if (dto.getNombre() != null) {
+					act.setNombreDeudor(dto.getNombre());
+				}
+
+				if (dto.getApellido1()!= null) {
+					act.setApellido1Deudor(dto.getApellido1());
+				}
+				if (dto.getApellido2()!= null) {
+					act.setApellido2Deudor(dto.getApellido2());
+				}
+				
+				genericDao.save(ActivoDeudoresAcreditados.class, act);
+
+				return true;
+			}
+		}
+		
+		return false;
+	}
 
 	@Override
 	public List<DtoGastoAsociadoAdquisicion> getListGastosAsociadosAdquisicion(Long id) {
@@ -7450,14 +7503,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		if (id != null) {
 			
-			
-			
 			List<GastoAsociadoAdquisicion> act = genericDao.getListOrdered(GastoAsociadoAdquisicion.class,
 					new Order(OrderType.DESC, "fechaAltaGastoAsociado"), 
 					genericDao.createFilter(FilterType.EQUALS, "activo.id", id));
-			
-			
-			
 
 			if (act != null && !act.isEmpty()) {
 				for (GastoAsociadoAdquisicion gaa : act) {
@@ -7567,7 +7615,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		String importeSinComas = importe.replaceAll(",", ".");
 		
-		
 		try {			
 			Date fechaSolicitudF = ft.parse(fechaSolicitudGastoAsociado);
 			Date fechaPagoF = ft.parse(fechaPagoGastoAsociado);
@@ -7595,6 +7642,50 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			gasto.setUsuarioGestordeAlta(adapter.getUsuarioLogado());
 			gasto.setImporte(Double.parseDouble(importeSinComas));
 			genericDao.save(GastoAsociadoAdquisicion.class, gasto);
+
+			return true;
+		} catch (Exception e) {
+			logger.error("Error en activoManager", e);
+			return false;
+		}
+	}
+	
+	@Transactional
+	@Override
+	public Boolean createDeudorAcreditado(Long idEntidad, String docIdentificativo,
+			String nombre, String apellido1, String apellido2, String tipoDocIdentificativoDesc) {
+		
+		try {					
+			
+			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);			
+			Filter filtroCodTipoDocIdentif = genericDao.createFilter(FilterType.EQUALS, "codigo", tipoDocIdentificativoDesc);
+			DDTipoDeDocumento ddt =  genericDao.get(DDTipoDeDocumento.class, filtroBorrado,
+					filtroCodTipoDocIdentif);
+			Activo activo = get(idEntidad);
+			ActivoDeudoresAcreditados actDeudores = new ActivoDeudoresAcreditados();
+			if(activo!=null) {
+				actDeudores.setActivo(activo);
+				
+			}
+			actDeudores.setFechaAlta(new Date());
+			actDeudores.setUsuario(adapter.getUsuarioLogado());
+		
+			if(tipoDocIdentificativoDesc!=null) {
+				actDeudores.setTipoDocumento(ddt);
+			}
+			if(docIdentificativo!=null) {
+				actDeudores.setNumeroDocumentoDeudor(docIdentificativo);
+			}
+			if(nombre!=null && !nombre.isEmpty()) {
+				actDeudores.setNombreDeudor(nombre);
+			}
+			if(apellido1!=null && !apellido1.isEmpty()) {
+				actDeudores.setApellido1Deudor(apellido1);
+			}
+			if(apellido2!=null && !apellido2.isEmpty()) {
+				actDeudores.setApellido1Deudor(apellido2);
+			}
+			genericDao.save(ActivoDeudoresAcreditados.class, actDeudores);
 			
 			return true;
 		} catch (Exception e) {
@@ -7602,7 +7693,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			return false;
 		}
 	}
-
 
 
 }

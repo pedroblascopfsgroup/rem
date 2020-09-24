@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
 import es.pfsgroup.plugin.rem.model.DtoActivoComplementoTitulo;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
+import es.pfsgroup.plugin.rem.model.DtoActivoDeudoresAcreditados;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
@@ -1378,5 +1379,12 @@ public interface ActivoApi {
 	
 	Boolean createGastoAsociadoAdquisicion(String activoId, String gastoAsociado, String fechaSolicitudGastoAsociado,
 			String fechaPagoGastoAsociado, String importe, String observaciones);
+
+	Boolean destroyDeudorById(DtoActivoDeudoresAcreditados dto);
+	
+	Boolean updateDeudorAcreditado(DtoActivoDeudoresAcreditados dto);
+	
+	Boolean createDeudorAcreditado(Long idEntidad, String docIdentificativo,
+			String nombre, String apellido1, String apellido2, String tipoDocIdentificativoDesc);
 	
 }

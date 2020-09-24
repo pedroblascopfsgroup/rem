@@ -130,6 +130,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAutorizacionHaya;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencionPago;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
@@ -3085,36 +3086,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	}
 	
 	@Override
-	public boolean estanTodosActivosAlquilados(GastoProveedor gasto) {
-		boolean todosActivoAlquilados = false;
-		boolean auxiliarSalir = true;
-		
-		List<Activo> activos = gastoLineaDetalleApi.devolverActivosDeLineasDeGasto(gasto);
-
-		if(activos != null && !activos.isEmpty()) {
-			for (Activo activo : activos) {
-				
-				if(activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getOcupado() != null
-						&& activo.getSituacionPosesoria().getConTitulo() != null &&  activo.getSituacionPosesoria().getOcupado() == 1
-						&& DDTipoTituloActivoTPA.tipoTituloSi.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo())
-						&& activo.getSituacionPosesoria().getTipoTituloPosesorio() != null 
-						&&  DDTipoTituloPosesorio.CODIGO_ARRENDAMIENTO.equals(activo.getSituacionPosesoria().getTipoTituloPosesorio().getCodigo())) {
-							todosActivoAlquilados = true;
-							auxiliarSalir = false;
-				}
-				if(auxiliarSalir) {
-					todosActivoAlquilados = false;
-					break;
-				}
-				
-				auxiliarSalir = true;
-			}
-		}
-
-		return todosActivoAlquilados;
-	}
-
-	@Override
 	public List<DtoActivoProveedor> searchProveedoresByNif(DtoProveedorFilter dto) {
 		List<DtoActivoProveedor> lista = null;
 		lista = proveedores.getProveedoresByNif(dto.getNifProveedor());
@@ -3755,5 +3726,4 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		return subtipoGastoTrabajo;
 	}
 
-	
 }

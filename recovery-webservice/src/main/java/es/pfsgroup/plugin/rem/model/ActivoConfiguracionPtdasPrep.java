@@ -30,6 +30,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoActivoBDE;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComisionado;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoImporte;
+import es.pfsgroup.plugin.rem.model.dd.DDTributosTerceros;
 
 @Entity
 @Table(name = "ACT_CONFIG_PTDAS_PREP", schema = "${entity.schema}")
@@ -108,6 +109,13 @@ public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="DD_TCH_ID")
     private DDTipoComisionado cpptipoComisionado;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="DD_TRT_ID")
+    private DDTributosTerceros tributosTerceros;
+	
+	@Column(name="CPP_VENDIDO")
+    private Integer cppVendido;
 	
 	@Version   
 	private Long version;
@@ -284,6 +292,20 @@ public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 
+	public DDTributosTerceros getTributosTerceros() {
+		return tributosTerceros;
+	}
 
-	
+	public void setTributosTerceros(DDTributosTerceros tributosTerceros) {
+		this.tributosTerceros = tributosTerceros;
+	}
+
+	public Integer getCppVendido() {
+		return cppVendido;
+	}
+
+	public void setCppVendido(Integer cppVendido) {
+		this.cppVendido = cppVendido;
+	}
+
 }

@@ -32,6 +32,7 @@ public class DDTipoObservacionActivo implements Auditable, Dictionary {
 	public static final String CODIGO_INSCRIPCION = "03";
 	public static final String CODIGO_CARGAS = "04";
 	public static final String CODIGO_LLAVES = "05";
+	public static final String CODIGO_TRABAJOS = "08";
 	
 	/**
 	 * 

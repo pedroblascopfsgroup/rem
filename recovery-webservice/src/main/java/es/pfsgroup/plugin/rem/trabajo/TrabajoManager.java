@@ -97,6 +97,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ActuacionTecnicaUserAssigna
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoObservacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
@@ -157,6 +158,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoApunte;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
@@ -5439,30 +5441,45 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Override
 	@Transactional(readOnly = false)
 	public boolean createAgendaTrabajo(DtoAgendaTrabajo dtoAgendaTrabajo) {
-
 		AgendaTrabajo agenda = new AgendaTrabajo();
-		
+		Trabajo trabajo = null;
 		if(dtoAgendaTrabajo.getIdTrabajo() != null) {
-			Trabajo trabajo = trabajoDao.get(dtoAgendaTrabajo.getIdTrabajo());
-			/*
-			Filter f1 = genericDao.createFilter(FilterType.EQUALS, "trabajo.id",
-					Long.valueOf(dtoAgendaTrabajo.getIdTrabajo()));
-			Trabajo trabajo = genericDao.get(Trabajo.class, f1);*/
+			trabajo = trabajoDao.get(dtoAgendaTrabajo.getIdTrabajo());
 			agenda.setTrabajo(trabajo);
 		}
 		if(dtoAgendaTrabajo.getObservacionesAgenda() != null) {
 			agenda.setObservaciones(dtoAgendaTrabajo.getObservacionesAgenda());
 		}
 		if(dtoAgendaTrabajo.getTipoGestion() != null) {
-			Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo",
-					dtoAgendaTrabajo.getTipoGestion());
+			Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoAgendaTrabajo.getTipoGestion());
 			DDTipoApunte tipoGestion = genericDao.get(DDTipoApunte.class, f1);
 			agenda.setTipoGestion(tipoGestion);
 		}
 		agenda.setGestor(usuarioManager.getUsuarioLogado());
-		agenda.setFecha(new Date());
-		
+		agenda.setFecha(new Date());		
 		genericDao.save(AgendaTrabajo.class,agenda);
+		
+		if (DDTipoApunte.CODIGO_ESTADO_ACTIVO.equals(dtoAgendaTrabajo.getTipoGestion())) {
+			dtoAgendaTrabajo.setTipoGestion(DDTipoObservacionActivo.CODIGO_TRABAJOS);
+			if (DDTipoObservacionActivo.CODIGO_TRABAJOS.equals(dtoAgendaTrabajo.getTipoGestion())) {
+				ActivoObservacion activoObservacion = new ActivoObservacion();
+				Activo activo = trabajo.getActivo();
+				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+				activoObservacion.setObservacion(dtoAgendaTrabajo.getObservacionesAgenda());
+				activoObservacion.setFecha(new Date());
+				activoObservacion.setUsuario(usuarioLogado);
+				activoObservacion.setActivo(activo);
+
+				if(dtoAgendaTrabajo.getObservacionesAgenda() != null) {
+					Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoAgendaTrabajo.getTipoGestion());
+					DDTipoObservacionActivo tipoObservacion = genericDao.get(DDTipoObservacionActivo.class, f1);
+					if(tipoObservacion != null) {
+						activoObservacion.setTipoObservacion(tipoObservacion);
+					}
+				}
+				genericDao.save(ActivoObservacion.class, activoObservacion);
+			}
+		}
 
 		return true;
 	}
@@ -5471,14 +5488,24 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@BusinessOperation(overrides = "trabajoManager.deleteAgendaTrabajo")
 	@Transactional(readOnly = false)
 	public boolean deleteAgendaTrabajo(Long id) {
-		try {
-			/*Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(id));
-
+	
+		try {	
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(id));
 			AgendaTrabajo agendaTrabajo = genericDao.get(AgendaTrabajo.class, filtro);
-*/
-			genericDao.deleteById(AgendaTrabajo.class, Long.valueOf(id));
-
-
+	
+			if (agendaTrabajo.getTrabajo() != null 
+					&& agendaTrabajo.getTrabajo().getActivo() != null 
+					&& agendaTrabajo.getTrabajo().getActivo().getId() != null) {
+				Filter filtroActivoObservacion = genericDao.createFilter(FilterType.EQUALS, "activo.id", agendaTrabajo.getTrabajo().getActivo().getId());
+				Filter filtroActivoObservacion2 = genericDao.createFilter(FilterType.EQUALS, "observacion", agendaTrabajo.getObservaciones());
+				ActivoObservacion actObs = genericDao.get(ActivoObservacion.class, filtroActivoObservacion, filtroActivoObservacion2);
+					
+				if (actObs != null) {
+					genericDao.deleteById(ActivoObservacion.class, actObs.getId());
+				}
+				
+			}
+			genericDao.deleteById(AgendaTrabajo.class, agendaTrabajo.getId());
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());

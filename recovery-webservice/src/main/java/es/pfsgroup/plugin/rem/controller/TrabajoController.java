@@ -1921,8 +1921,6 @@ public class TrabajoController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteAgendaTrabajo(@RequestParam Long id){
-
-		
 		
 		ModelMap model = new ModelMap();
 		

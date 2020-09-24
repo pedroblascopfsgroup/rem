@@ -535,6 +535,11 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "DD_ERA_ID")
     private DDEstadoRegistralActivo estadoRegistral; 
     
+    @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private List<GastoAsociadoAdquisicion> gastosAsociados;
+    
     // Getters del activo --------------------------------------------
     
     public Long getId() {
@@ -2011,6 +2016,14 @@ public class Activo implements Serializable, Auditable {
 
 	public void setTipoSegmento(DDTipoSegmento tipoSegmento) {
 		this.tipoSegmento = tipoSegmento;
+	}
+
+	public List<GastoAsociadoAdquisicion> getGastosAsociados() {
+		return gastosAsociados;
+	}
+
+	public void setGastosAsociados(List<GastoAsociadoAdquisicion> gastosAsociados) {
+		this.gastosAsociados = gastosAsociados;
 	}
 
 	public boolean getIsDnd() {

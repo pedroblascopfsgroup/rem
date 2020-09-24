@@ -80,14 +80,21 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 									        	},
 												flex: 1
 											   },
-											   {
-												text: HreRem.i18n('header.fecha.aprobacion'),
-												cls: 'grid-no-seleccionable-col',
-								        		tdCls: 'grid-no-seleccionable-td',
-												dataIndex: 'fechaAprobacion',
-												formatter: 'date("d/m/Y")',
-												flex: 1
-											   },
+												{
+													text: HreRem.i18n('header.fecha.aprobacion'),
+													cls: 'grid-no-seleccionable-col',
+													tdCls: 'grid-no-seleccionable-td',
+													dataIndex: 'fechaAprobacion',
+													formatter: 'date("d/m/Y")',
+													flex: 1,
+													bind: {
+														enabled: false
+													},
+													editor: {
+														xtype:'datefield',
+														enabled: '{activarCamposGridPreciosVigentes}'
+													}
+												},
 											   {
 												text: HreRem.i18n('header.fecha.carga'),
 												cls: 'grid-no-seleccionable-col',
@@ -519,7 +526,9 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 									text: HreRem.i18n('header.fecha.aprobacion'),
 									dataIndex: 'fechaAprobacion',
 									formatter: 'date("d/m/Y")',
-									flex: 1
+									flex: 1,
+									readOnly: '{datosRegistrales.unidadAlquilable}'
+									
 								   },
 								   {
 									text: HreRem.i18n('header.fecha.carga'),										

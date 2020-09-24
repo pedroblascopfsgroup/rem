@@ -10,7 +10,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados','HreRem.model.CalificacionNegativaModel',
     'HreRem.model.HistoricoTramtitacionTituloModel', 'HreRem.model.HistoricoGestionGrid', 'HreRem.model.ListaActivoGrid', 'HreRem.model.HistoricoFasesDePublicacion',
     'HreRem.model.AdjuntoActivoAgrupacion','HreRem.model.AdjuntoActivoProyecto','HreRem.model.DocumentacionAdministrativa', 'HreRem.model.ActivoPatrimonio',
-    'HreRem.model.DocumentosTributosModel','HreRem.model.HistoricoSolicitudesPreciosModel','HreRem.model.SuministrosActivoModel', 'HreRem.model.ActivoEvolucion', 'HreRem.model.ActivoSaneamiento'],
+    'HreRem.model.DocumentosTributosModel','HreRem.model.HistoricoSolicitudesPreciosModel','HreRem.model.SuministrosActivoModel', 'HreRem.model.ActivoEvolucion', 
+    'HreRem.model.ActivoSaneamiento','HreRem.model.ActivoComplementoTituloModel'],
+
 
     data: {
     	activo: null,
@@ -922,6 +924,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			return !isSubcarteraDivarian;
 		},
 		
+		
+		
 		esEditablePerimetroMacc: function(get){
 			var codComercializacion = get('activo.tipoComercializacionCodigo');
 			var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
@@ -953,18 +957,118 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMINISTRACION']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMINISTRACION']);
 		},
 		
+		
+		activarCamposGridPreciosVigentes: function(){
+			var gestorPrecios = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_PRECIOS']);
+			if(gestorPrecios){
+				return true;
+			}
+			return false;
+		},
+
 		estadoAdmisionVisible : function(get){
-			
-			var retorno = !($AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']) 
-							|| $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) 
-							|| $AU.userIsRol(CONST.PERFILES['HAYASUPER']));				
+
+			var retorno = !($AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION'])
+							|| $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION'])
+							|| $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
 			if (!retorno){
 				retorno = !(get('activo.incluidoEnPerimetroAdmision') == "true");
 			}
 			return retorno;
+		},
+		
+		tienePosesion: function(get){
+			var posesion = get('situacionPosesoria.indicaPosesion') == "1";
+			return posesion;
+		},
+		
+		isGestorAdmisionAndSuper: function(){
+			var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) ||  $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);
+			var me = this; 		
+			
+			if(gestores){			
+				return true;
+				}
+				
+			
+			return false;
+		},
+		
+		isGestorAdmisionAndSuperComboTipoAltaBlo: function(get){
+			var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) ||  $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);
+			var me = this; 		
+			
+			var comboAltaAutomatica = get('activo.tipoAltaCodigo'); 
+			var comboActivoRecovery = get('activo.idRecovery');
+			
+			
+			if(gestores){	
+				if(comboAltaAutomatica == CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']) {
+         			return false;
+         		} else {
+         			return true;
+         			}
+				
+				
+				return true;
+				}
+				
+			
+			return false;
+		},
+		
+		
+		activarCamposGridPreciosVigentesGestorAdmisionYPrecios: function(){
+			var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_PRECIOS']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) ||  $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);
+			var me = this; 		
+			if(gestores){			
+				return true;
+				}
+				
+			
+			return false;
+		},
+		 isCarteraBbva: function(get){
+			 var isBbva = get('activo.isCarteraBbva');
+			 if(isBbva){
+				 return true;
+			 }
+			 return false;
+		 },
+		 mostrarCamposDivarianandBbva: function(get){
+			var isSubcarteraDivarian = get('activo.isSubcarteraDivarian');			
+		    var isBbva = get('activo.isCarteraBbva');
+		    if(isBbva || isSubcarteraDivarian ){
+			return true;
+		    }
+		    return false;
+		 },
+		
+		isGestorAdmisionAndSuperUA: function(){
+			var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) ||  $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);
+			var me = this; 
+			var esUA = false;
+		
+			
+			if(gestores){						
+			return true;
+				}
+				
+			
+			return false;
+		
+	 	},
+
+		isCarteraBbva: function(get){
+				var isBbva = get('activo.isCarteraBbva');
+				if(isBbva){
+					return true;
+				}
+				return false;
 		}
-	 }, 
 	 
+    },
+    
 	 stores: {
     		
     		comboProvincia: {
@@ -2315,7 +2419,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		        {"codigo":"01", "descripcion":"Si"},
 		        {"codigo":"02", "descripcion":"No"}
 		    ]
-		},    		
+		},
+		
+		comboSiNoPosesionNegociada: {
+			data : [
+		        {"codigo":"0", "descripcion":"No"},
+		        {"codigo":"1", "descripcion":"Si"}
+		    ]
+		},
 		
 		storeAdjuntosPlusvalias: {
 			 pageSize: $AC.getDefaultPageSize(),
@@ -2685,6 +2796,50 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {id: '{activo.id}'}
 			},
 			autoLoad: true
+		},
+		storeComplementoTitulo: {    	
+			 model : 'HreRem.model.ActivoComplementoTituloModel',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'activo/getListComplementoTituloById'//,
+		        //extraParams: {id: '{activo.id}'}
+	    	 }
+	    	
+		},
+		storeTipoTituloComplemento: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoTituloComplemento'}
+			}
+		},
+
+		comboBBVATipoAlta:{
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboBBVATipoAlta',
+				extraParams: {idRecovery: '{activo.idRecovery}'}
+			}
+		},
+		
+		storeTipoGastoAsociado: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoGastoAsociado'}
+			}
+		},
+		storeGastosAsociadosAdquisicion: {    	
+			 model : 'HreRem.model.GastoAsociadoAdquisicionModel',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'activo/getListGastosAsociadosAdquisicion',
+		        extraParams: {id: '{activo.id}'}
+	    	 }
+	    	
 		},
 
 		storeHistoricoTramitacionTituloAdicional:{

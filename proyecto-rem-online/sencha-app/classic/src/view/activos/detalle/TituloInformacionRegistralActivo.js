@@ -360,6 +360,9 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		            		store: '{comboSubtipoTitulo}',
 		            		value: '{datosRegistrales.subtipoTituloCodigo}',
 		            		readOnly: '{datosRegistrales.unidadAlquilable}'
+		            	},
+		            	listeners:{
+		            		change:'gestoresEstadoNotarialAndIDHayaNotNull'
 		            	}
 					},
 				 	{ 
@@ -376,28 +379,56 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			        	xtype: 'comboboxfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.origen.anterior.activo'),
 						reference: 'comboOrigenAnteriorActivoRef',
-						labelWidth: 200,
+						labelWidth: 200,					
 		            	bind: {
+		            		
 		            		store: '{storeOrigenAnteriorActivo}',
-		            		value: '{datosRegistrales.origenAnteriorActivoCodigo}',
-		            		hidden: '{mostrarCamposDivarian}'
+		            		hidden: '{!mostrarCamposDivarianandBbva}',
+		            		value: '{datosRegistrales.origenAnteriorActivoCodigo}'
+		            		
+		            	
+		            		
+		            		
+		            		
 		            	}
 	            	},
 					{
 						xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
 						colspan: 2,
+						reference:'fechaTituloAnteriorRef',
 				        fieldLabel: HreRem.i18n('fieldlabel.fecha.titulo.anterior'),
-				        bind: {
-				        	value: '{datosRegistrales.fechaTituloAnterior}',
-				        	hidden: '{mostrarCamposDivarian}'
+				        bind: {				        	
+				        	 hidden: '{!mostrarCamposDivarianandBbva}',
+				        	 value: '{datosRegistrales.fechaTituloAnterior}'
+				        	
+				        	
 				        }
+				       
 					},
+					{
+			        	xtype: 'comboboxfieldbase',
+			        	fieldLabel: HreRem.i18n('fieldlabel.sociedad.pago'),
+			        	colspan: 3,
+			        	reference:'sociedadPagoAnteriorRef',
+			        	
+			        	bind: {			        		
+			        		 store: '{comboSociedadAnteriorBBVA}',
+			        		 hidden: '{!isCarteraBbva}',			        		
+			        		 value:'{datosRegistrales.sociedadPagoAnterior}'
+			        		
+			        		 
+			        	}
+			        	
+			        	
+			        },
+			        
 			        {
 						title: 'Listado de Propietarios',
 						itemId: 'listadoPropietarios',
 					    xtype: 'gridBaseEditableRow',
 					    topBar : true,
+					    colspan:4,
 						cls	: 'panel-base shadow-panel',
 						bind: {
 							store: '{storePropietario}',
@@ -715,6 +746,15 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	}
 			                	
 			                },
+							{
+								fieldLabel : HreRem
+										.i18n('fieldlabel.id.proceso.origen'),
+								bind : {
+									value : '{datosRegistrales.idProcesoOrigen}',
+									readOnly : '{esUA}'
+								}
+
+							},
 			                {
 			                	xtype: 'numberfieldbase',
 			                	maxLength: 4,
@@ -798,7 +838,16 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
                                 	value: '{datosRegistrales.defectosTestimonio}',
                                 	readOnly: '{datosRegistrales.unidadAlquilable}'
                                 }
-                            }
+                            },
+							{
+								fieldLabel : HreRem
+										.i18n('fieldlabel.id.proceso.origen'),
+								bind : {
+									value : '{datosRegistrales.idProcesoOrigen}',
+									readOnly : '{esUA}'
+								}
+
+							}
 						]
 
         			},

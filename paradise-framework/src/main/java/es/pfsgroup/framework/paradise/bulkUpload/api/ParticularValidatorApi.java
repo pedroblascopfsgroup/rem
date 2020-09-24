@@ -1181,6 +1181,7 @@ public interface ParticularValidatorApi {
 
 	public Boolean relacionEstadoSubestadoAdmisionValido(String codEstadoAdmision, String codSubestadoAdmision);
 
+
 	Boolean existeTipoSuministroByCod(String codigo);
 
 	Boolean existeSubtipoSuministroByCod(String codigo);
@@ -1193,7 +1194,25 @@ public interface ParticularValidatorApi {
 
 	Boolean esMismoTipoGestorActivo(String codigo, String numActivo);
 
+	Boolean esActivoBBVA(String numActivo);
+	
 	String getValidacionCampoCDC(String codCampo);
+	
+	public boolean incluidoActivoIdOrigenBBVA (String numActivo);
+
+	Boolean estaPerimetroHaya(String activoId);
+	
+	Boolean estaPerimetroAdmision(String activoId);
+	
+	Boolean existeActivoPorId(String activoId);
+	
+	Boolean comprobarCodigoTipoTitulo(String codTipoTitulo);
+	
+	public boolean existeTipoDeGastoAsociadoCMGA(String codTipoGasto);
+
+	public Boolean esTipoAltaBBVAMenosAltaAutamatica(String codCampo);
+
+	public Boolean esTipoRegimenProteccion(String codCampo);
 
 
 	Boolean mismaCarteraLineaDetalleGasto(String numGasto, String tipoElemento);
@@ -1258,5 +1277,21 @@ public interface ParticularValidatorApi {
 
 	boolean isProveedorSuministroVigente(String codRem);
 
+	public Boolean esTipoDeTransmisionBBVA(String dameCelda);
+	
+	public Boolean esTipoDeTituloBBVA(String dameCelda);
+	
+	public Boolean existeActivoParaCMBBVA(String dameCelda);
+	
+	public Boolean activoesDeCarteraCerberusBbvaCMBBVA(String dameCelda);
+	
+	public Boolean esActivoVendidoParaCMBBVA(String numActivo);
+
+	public Boolean esActivoIncluidoPerimetroParaCMBBVA(String numActivo);
+
+	public Boolean esActivoRepetidoNumActivoBBVA(String numActivo);
+
+	public Boolean codigoComercializacionIncorrecto(String codCampo);
+	
 
 }

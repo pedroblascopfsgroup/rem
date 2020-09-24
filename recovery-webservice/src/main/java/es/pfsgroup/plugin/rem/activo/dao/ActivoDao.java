@@ -20,6 +20,7 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoSuministros;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.CalidadDatosConfig;
+import es.pfsgroup.plugin.rem.model.DtoActivoComplementoTitulo;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
@@ -362,5 +363,13 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	Long getComunidadAutonomaId(Activo activo);
 	
 	List<ActivoCalificacionNegativaAdicional> getListActivoCalificacionNegativaAdicionalByIdActivo(Long idActivo);
+
+	boolean existeactivoIdHAYA(Long idActivo);
+
+	boolean activoPerteneceABBVAAndCERBERUS(Long idActivo);
+
+	boolean activoEstadoVendido(Long idActivo);
+
+	boolean activoFueraPerimetroHAYA(Long idActivo);
 
 }

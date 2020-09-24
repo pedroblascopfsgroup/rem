@@ -599,6 +599,22 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 		        extraParams: {} // Dynamic.
 	    	 },
 	    	 autoLoad: true
+    		},
+    		comboTipoTransmision: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tipoTransmision'}
+				}/*,autoLoad: true*/
+    		},
+    		comboTipoAlta: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tipoAlta'}
+				}/*,autoLoad: true*/
     		}
      }    
 });

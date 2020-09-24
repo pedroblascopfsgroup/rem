@@ -69,6 +69,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoProveedorReducido;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoLocalidadSimple;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
+import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoUsuarios;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -104,6 +105,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -114,6 +116,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoRolMediador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
+import es.pfsgroup.plugin.rem.propietario.dao.ActivoPropietarioDao;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
 import es.pfsgroup.plugin.rem.trabajo.dao.DDSubtipoTrabajoDao;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
@@ -121,6 +125,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.sojo.interchange.json.JsonParser;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 @Service("genericManager")
 public class GenericManager extends BusinessOperationOverrider<GenericApi> implements GenericApi {
@@ -167,11 +173,16 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
 	
+
 	@Autowired
 	private GastoProveedorApi gastoProveedorApi;
 	
 	@Autowired
 	private GastoLineaDetalleApi gastoLineaDetalleApi;
+
+	@Autowired 
+	private ActivoPropietarioDao activoPropietarioDao;
+
 
 	@Override
 	public String managerName() {
@@ -240,7 +251,10 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				authData.setCodigoCartera(uca.getCartera().getCodigo());
 			}
 
-			authData.setJwt(createJwtForTheSession(usuario.getUsername(), roles));
+			String jwtToken = createJwtForTheSession(usuario.getUsername(), roles);
+			// El token se traslada a la interfaz, a través del auhtData, y se establece en la sesión de usuario para su uso en el servidor
+			authData.setJwt(jwtToken);
+			RequestContextHolder.getRequestAttributes().setAttribute("token_jwt", jwtToken, RequestAttributes.SCOPE_SESSION);
 
 		}catch(LazyInitializationException e){
 			logger.info(e.getMessage());
@@ -260,7 +274,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		// Time for the token to be valid
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(new Date());
-		calendar.add(Calendar.HOUR_OF_DAY, 8);
+		calendar.add(Calendar.HOUR_OF_DAY, Integer.parseInt(appProperties.getProperty("jwt.valid.signed.time", "12")));
 		Date validJwtSignedTime = calendar.getTime();
 
 		//The JWT signature algorithm we will be using to sign the token
@@ -271,7 +285,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		//We will sign our JWT with our ApiKey secret
 		byte[] apiKeySecretBytes = DatatypeConverter
-				.parseBase64Binary(appProperties.getProperty("jwt.secret.key", "default_rest_api_key"));
+				.parseBase64Binary(appProperties.getProperty("jwt.secret.key", "1234567890"));
 		Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
 		//Let's set the JWT Claims
@@ -1460,6 +1474,44 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		
 		Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "tipoAgendaSaneamiento.codigo", codTipo);
 		return genericDao.getList(DDSubtipoAgendaSaneamiento.class, filtroId);
+
+	}
+	
+	@Override
+	public List<DDTipoAlta> getComboBBVATipoAlta(Long idRecovery) {
+		
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
+		List<DDTipoAlta> listaDD = genericDao.getListOrdered(DDTipoAlta.class, order);
+		List<DDTipoAlta> listaTiposFiltered = new ArrayList<DDTipoAlta>();
+	
+		
+		for (DDTipoAlta tipo : listaDD) {
+			if (!DDTipoAlta.CODIGO_AUT.equals(tipo.getCodigo()) && idRecovery==null){
+				listaTiposFiltered.add(tipo);
+			} else if(idRecovery!=null && DDTipoAlta.CODIGO_AUT.equals(tipo.getCodigo())){	
+					listaTiposFiltered.add(tipo);
+			}
+								
+			
+		}
+
+		return listaTiposFiltered;
+	}
+
+	public List<DtoPropietario> getcomboSociedadAnteriorBBVA() {
+	
+		List<ActivoPropietario> listaDD= activoPropietarioDao.getPropietarioIdDescripcionCodigo();
+		List<DtoPropietario> listaDto = new ArrayList<DtoPropietario>();
+		
+		for (ActivoPropietario activoPropietario : listaDD) {
+			DtoPropietario dtop = new DtoPropietario();	
+			dtop.setId(activoPropietario.getId());
+			dtop.setDescripcion(activoPropietario.getNombre());
+			dtop.setCodigo(activoPropietario.getDocIdentificativo());		
+			listaDto.add(dtop);
+		}
+	return listaDto;
+		
 
 	}
 }

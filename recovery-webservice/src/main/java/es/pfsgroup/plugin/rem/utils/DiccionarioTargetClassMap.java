@@ -295,6 +295,10 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoIncidencia", DDTipoIncidencia.class);
 		mapa.put("tipoTituloInfoRegistal", DDTipoTituloAdicional.class);
 		mapa.put("estadoRegistral", DDEstadoRegistralActivo.class);
+		mapa.put("tipoTransmision", DDTipoTransmision.class);
+		mapa.put("tipoAlta", DDTipoAlta.class);
+		mapa.put("tipoTituloComplemento", DDTipoTituloComplemento.class);
+		mapa.put("tipoGastoAsociado", DDTipoGastoAsociado.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

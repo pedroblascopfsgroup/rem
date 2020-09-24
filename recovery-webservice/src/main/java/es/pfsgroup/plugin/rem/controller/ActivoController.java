@@ -85,6 +85,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
+import es.pfsgroup.plugin.rem.model.DtoActivoComplementoTitulo;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
@@ -117,6 +118,7 @@ import es.pfsgroup.plugin.rem.model.DtoDistribucion;
 import es.pfsgroup.plugin.rem.model.DtoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoFoto;
+import es.pfsgroup.plugin.rem.model.DtoGastoAsociadoAdquisicion;
 import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
@@ -2997,6 +2999,65 @@ public class ActivoController extends ParadiseJsonController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getActivoIdHaya(Long idActivo, ModelMap model){
+		try{
+			model.put(RESPONSE_DATA_KEY, activoDao.existeactivoIdHAYA(idActivo));
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getActivoVendido(Long idActivo, ModelMap model){
+		try{
+			model.put(RESPONSE_DATA_KEY, activoDao.activoEstadoVendido(idActivo));
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getPerimetroHaya(Long idActivo, ModelMap model){
+		try{
+			model.put(RESPONSE_DATA_KEY, activoDao.activoFueraPerimetroHAYA(idActivo));
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getActivoBBVAoCERBERUS(Long idActivo, ModelMap model){
+		try{
+			model.put(RESPONSE_DATA_KEY, activoDao.activoPerteneceABBVAAndCERBERUS(idActivo));
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	
+	
+	
+	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveCalificacionNegativaMotivo(Long idActivo, String idMotivo, String calificacionNegativa, String estadoMotivoCalificacionNegativa, 
 			String responsableSubsanar, String descripcionCalificacionNegativa, String fechaSubsanacion, ModelMap model) {
 		
@@ -3776,4 +3837,130 @@ public class ActivoController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListComplementoTituloById(Long id,  ModelMap model) { 
+		
+		try {
+			List<DtoActivoComplementoTitulo> listSuccess = activoApi.getListComplementoTituloById(id);
+			model.put(RESPONSE_DATA_KEY, listSuccess);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateActivoComplementoTitulo(DtoActivoComplementoTitulo cargaDto,  ModelMap model) { 
+		
+		try {
+			Boolean success = activoApi.updateActivoComplementoTitulo(cargaDto);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteActivoComplementoTitulo(DtoActivoComplementoTitulo cargaDto,  ModelMap model) { 
+		
+		try {
+			Boolean success = activoApi.deleteActivoComplementoTitulo(cargaDto);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createComplementoTitulo(String activoId, String codTitulo, String fechaSolicitud,
+			String fechaTitulo, String fechaRecepcion, String fechaInscripcion, String observaciones, ModelMap model) {
+		try {
+			Boolean success = activoApi.createComplementoTitulo(activoId,  codTitulo,  fechaSolicitud,
+					 fechaTitulo,  fechaRecepcion,  fechaInscripcion,  observaciones);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListGastosAsociadosAdquisicion(Long id,  ModelMap model) { 
+		
+		try {
+			List<DtoGastoAsociadoAdquisicion> listSuccess = activoApi.getListGastosAsociadosAdquisicion(id);
+			model.put(RESPONSE_DATA_KEY, listSuccess);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteGastoAsociadoAdquisicion(DtoGastoAsociadoAdquisicion cargaDto,  ModelMap model) { 
+		
+		try {
+			Boolean success = activoApi.deleteGastoAsociadoAdquisicion(cargaDto);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateGastoAsociadoAdquisicion(DtoGastoAsociadoAdquisicion cargaDto,  ModelMap model) { 
+		
+		try {
+			Boolean success = activoApi.updateGastoAsociadoAdquisicion(cargaDto);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createGastoAsociadoAdquisicion(String activoId, String gastoAsociado, String fechaSolicitudGastoAsociado,
+			String fechaPagoGastoAsociado, String importe, String observaciones, ModelMap model) {
+		try {
+			Boolean success = activoApi.createGastoAsociadoAdquisicion(activoId,  gastoAsociado,  fechaSolicitudGastoAsociado,
+					fechaPagoGastoAsociado,  importe,  observaciones);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	
+
 }

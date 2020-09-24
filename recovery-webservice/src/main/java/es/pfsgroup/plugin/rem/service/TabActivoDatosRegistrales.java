@@ -48,10 +48,13 @@ import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlanDinVentas;
+import es.pfsgroup.plugin.rem.model.ActivoPropietario;
+import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -70,6 +73,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
+import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 
@@ -443,7 +447,22 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				BeanUtils.copyProperty(activoDto, "estadoAdjudicacionCodigo", activoMatriz.getAdjJudicial().getEstadoAdjudicacion().getCodigo());
 			
 			}
-		}	
+		}
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
+		
+		if(activoBbva != null) {
+			activoDto.setIdProcesoOrigen(activoBbva.getIdProcesoOrigen());
+			
+		}
+		
+		
+		
+		if (!Checks.esNulo(activo.getPropietarioPrincipal())) {
+			activoDto.setSociedadPagoAnterior(activo.getPropietarioPrincipal().getDocIdentificativo());
+		}
+		
 		return activoDto;
 	}
 
@@ -916,6 +935,28 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 						}
 					}
 				}
+			
+			if(activo != null) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+				ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
+				
+				if(activoBbva != null) {
+					if(dto.getIdProcesoOrigen() != null) {
+						activoBbva.setIdProcesoOrigen(dto.getIdProcesoOrigen());
+					}
+				}
+				//Sociedad Pago Anterior de BBVA que tiene diferente logica al resto.
+				if (!Checks.esNulo(dto.getSociedadPagoAnterior())) {
+				
+				
+				Filter filtroPropietarioAct = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+				Filter filtroPropietario = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo",dto.getSociedadPagoAnterior());
+				ActivoPropietarioActivo activoPropietario = genericDao.get(ActivoPropietarioActivo.class, filtroPropietarioAct);
+				ActivoPropietario propietario = genericDao.get(ActivoPropietario.class, filtroPropietario);
+				activoPropietario.setPropietario(propietario);
+				
+				}
+			}
 			
 		} catch (JsonViewerException jvex) {
 			throw jvex;

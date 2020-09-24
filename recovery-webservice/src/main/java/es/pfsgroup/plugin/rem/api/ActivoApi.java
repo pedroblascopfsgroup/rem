@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
@@ -38,6 +39,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
+import es.pfsgroup.plugin.rem.model.DtoActivoComplementoTitulo;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
@@ -54,6 +56,7 @@ import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.DtoGastoAsociadoAdquisicion;
 import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDiarioGestion;
@@ -1178,6 +1181,8 @@ public interface ActivoApi {
 	boolean getMotivosCalificacionNegativaSubsanados(Long idActivo, String idMotivo);
 
 	boolean esCerberus(Long idActivo);
+	
+	boolean esBBVA(Long idActivo);
 
 	boolean esEgeo(Long idActivo);
 
@@ -1369,5 +1374,47 @@ public interface ActivoApi {
 	boolean createCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto) throws JsonViewerException, Exception;
 	
 	boolean destroyCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto);
+
+	
+	/**
+	 * Devuelve la Lista de Dtos para rellenar un grid
+	 * 
+	 * @param dto
+	 * @return
+	 */
+	List<DtoActivoComplementoTitulo> getListComplementoTituloById(Long id);
+
+	
+	/**
+	 * Borrado de un complemento titulo
+	 * @param cargaDto
+	 * @return
+	 */
+	Boolean deleteActivoComplementoTitulo(DtoActivoComplementoTitulo cargaDto);
+	
+	/**
+	 * 
+	 * @param cargaDto
+	 * @return
+	 */
+	Boolean updateActivoComplementoTitulo(DtoActivoComplementoTitulo cargaDto);
+	
+	/**
+	 * Anyade un Complemento titulo
+	 * @param cargaDto
+	 * @return
+	 */
+	Boolean createComplementoTitulo(String activoId, String codTitulo, String fechaSolicitud,
+			String fechaTitulo, String fechaRecepcion, String fechaInscripcion, String observaciones);
+	
+	List<DtoGastoAsociadoAdquisicion> getListGastosAsociadosAdquisicion(Long id);
+	
+	Boolean deleteGastoAsociadoAdquisicion(DtoGastoAsociadoAdquisicion cargaDto);
+	
+	Boolean updateGastoAsociadoAdquisicion(DtoGastoAsociadoAdquisicion cargaDto);
+	
+	Boolean createGastoAsociadoAdquisicion(String activoId, String gastoAsociado, String fechaSolicitudGastoAsociado,
+			String fechaPagoGastoAsociado, String importe, String observaciones);
+
 	
 }

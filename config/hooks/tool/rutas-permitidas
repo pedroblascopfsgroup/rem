@@ -109,6 +109,15 @@ func-HREOS-10487|func-rem-nuevasEntradasAdmision
 rem_mirror|func-rem-nuevasEntradasAdmision
 2.20.9-20071001-rem|func-rem-nuevasEntradasAdmision
 func-rem-nuevasEntradasAdmision|func-rem-supervisionGestorias-F2
+func-rem-nuevasEntradasAdmision|R-Ricalate
+rem_mirror|func-rem-BBVA-F1
+func-rem-BBVA-F1|func-rem-BBVA-F2
+func-rem-BBVA-F2|R-Ricalate
+func-rem-alaskaIntegracion|R-Ricalate
+rem_mirror|func-rem-alaskaIntegracion
+rem_mirror|parche-rem-Divarian-F5
+rem_mirror|func-rem-spartaMasivo
+2.20.9-20071001-rem|parche-rem-Divarian-F5
 rem_mirror|parche-rem-Divarian-F5
 rem_mirror|func-rem-spartaMasivo
 2.20.9-20071001-rem|parche-rem-Divarian-F5

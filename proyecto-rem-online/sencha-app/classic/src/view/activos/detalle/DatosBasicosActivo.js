@@ -16,279 +16,360 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
     initComponent: function () {
 
         var me = this;
+        var isCarteraBbva = me.lookupController().getViewModel().getData().activo.getData().isCarteraBbva;
+        var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']);
 		me.setTitle(HreRem.i18n('title.datos.basicos'));
         var items= [
 			{   
 				xtype:'fieldsettable',
-				layout:'hbox',
+				layout: {
+					type: 'table',
+					columns: 1
+				},
 				defaultType: 'container',
 		        title: HreRem.i18n('title.identificacion'),
 				items :
-					[{  // Columna 1
+					[{
+						xtype:'fieldsettable',
+						defaultType: 'container',
+						items :
+							[{ // Columna 1
+							defaultType: 'textfieldbase',
+							flex: 1,
+							items:[
+								{
+				                	xtype: 'displayfieldbase',
+				                	fieldLabel:  HreRem.i18n('fieldlabel.id.activo.haya'),
+				                	bind:		'{activo.numActivo}'
+	
+				                },
+				                {
+									xtype: 'displayfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.id.activo.prinex'),
+									bind:		'{activo.idProp}'
+								},
+								{
+									xtype: 'displayfieldbase',
+									fieldLabel:  HreRem.i18n('fieldlabel.id.activo.sareb'),
+					                bind:		'{activo.idSareb}'
+								},
+								{
+									xtype: 'displayfieldbase',
+									fieldLabel:  HreRem.i18n('fieldlabel.id.activo.uvem'),
+				                	bind:		'{activo.numActivoUvem}'
+				                },
+				                {
+				                	xtype: 'displayfieldbase',
+				                	fieldLabel:  HreRem.i18n('fieldlabel.id.activo.rem'),
+				                	bind:		'{activo.numActivoRem}'
+				                },
+				                {
+									xtype: 'displayfieldbase',
+									fieldLabel:  HreRem.i18n('fieldlabel.id.activo.divarian'),
+									bind:		'{activo.numActivoDivarian}'
+								},
+				                {
+									xtype: 'displayfieldbase',
+									fieldLabel:  HreRem.i18n('fieldlabel.id.bien.recovery'),
+									reference:'idRecovery',
+									bind:		'{activo.idRecovery}'
+								},							
+								{
+				                	xtype: 'displayfieldbase',
+						        	fieldLabel:  HreRem.i18n('fieldlabel.categoria.contable'),
+						        	bind:{	value: '{activo.catContableDescripcion}',
+						        			hidden: '{!activo.isCarteraLiberbank}'
+						        		}
+				                },
+				                {
+				                	xtype: 'displayfieldbase',
+						        	fieldLabel:  HreRem.i18n('fieldlabel.codigo.promocion.final'),
+						        	bind:{	value: '{activo.codPromocionFinal}',
+						        			hidden: '{!activo.isCarteraLiberbank}'
+						        	}
+				                },
+				                {
+				                	xtype: 'textfieldbase',
+						        	fieldLabel:  HreRem.i18n('fieldlabel.numero.activo.prinex'),
+						        	name:'idPrinexHPM',
+						        	bind:{	
+						        		value: '{activo.idPrinexHPM}',
+						        		readOnly : '{!esUA}',
+						        		hidden: '{!esUA}'
+						        	}
+				                }
+							]
+						},
+						{	// Columna 2
+							defaultType: 'textfieldbase',
+							flex: 1,
+							items:[
+								{
+				                	fieldLabel: HreRem.i18n('fieldlabel.activosearch.codigo.promocion'),
+									bind:{
+										readOnly: '{!esEditableCodigoPromocion}',
+										hidden: '{!activo.isVisibleCodPrinex}',
+										value:'{activo.codigoPromocionPrinex}'
+									}
+								},
+								{
+						        	xtype: 'comboboxfieldbase',
+						        	fieldLabel: HreRem.i18n('fieldlabel.tipo.activo'),
+									reference: 'tipoActivo',
+						        	chainedStore: 'comboSubtipoActivo',
+									chainedReference: 'subtipoActivoCombo',
+						        	bind: {
+					            		store: '{comboTipoActivo}',
+					            		value: '{activo.tipoActivoCodigo}'
+					            	},
+		    						listeners: {
+					                	select: 'onChangeChainedCombo'
+					            	},
+					            	allowBlank: false,
+					            	style:'margin-left:10px'
+						        },
+						        {
+									xtype: 'comboboxfieldbase',
+						        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.activo'),
+						        	reference: 'subtipoActivoCombo',
+						        	bind: {
+					            		store: '{comboSubtipoActivo}',
+					            		value: '{activo.subtipoActivoCodigo}',
+					            		disabled: '{!activo.tipoActivoCodigo}'
+					            	},
+		    						allowBlank: false,
+					            	style:'margin-left:10px'
+						        },
+						        {
+									xtype: 'comboboxfieldbase',
+						        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.activo.bde'),
+						        	reference: 'tipoActivoBde',
+						        	bind: {
+						        		readOnly : '{esUA}',
+					            		store: '{comboTipoActivoBde}',
+					            		value: '{activo.tipoActivoCodigoBde}',
+					            		hidden: '{!activo.isCarteraLiberbank}'
+					            	},
+					            	style:'margin-left:10px'
+						        },
+						        {
+						        	xtype: 'comboboxfieldbase',
+						        	fieldLabel: HreRem.i18n('fieldlabel.subtipo.activo.bde'),
+									reference: 'subtipoActivoComboBde',
+						        	bind: {
+						        		readOnly : '{esUA}',
+					            		store: '{comboSubtipoActivoBde}',
+					            		value: '{activo.subtipoActivoCodigoBde}',
+					            		hidden: '{!activo.isCarteraLiberbank}'
+					            	}
+						        },
+						        {
+				                	xtype: 'comboboxfieldbase',
+						        	fieldLabel:  HreRem.i18n('fieldlabel.uso.dominante'),
+						        	name: 'tipoUsoDestinoCodigo',
+				                	bind: {
+				                		readOnly : '{esUA}',
+					            		store: '{comboTipoUsoDestino}',
+					            		value: '{activo.tipoUsoDestinoCodigo}'
+					            	},
+					            	style:'margin-left:10px'
+				                },
+				                {
+				                	xtype: 'textfieldbase',
+				                	fieldLabel: HreRem.i18n('fieldlabel.motivorechazoform.motivo'),
+				                	name: 'motivoActivo',
+				                	bind: {
+				                		readOnly : '{esUA}',
+				                		value: '{activo.motivoActivo}'
+				                	},
+				                	maxLength: 50,
+				                	style:'margin-left:10px'
+				                },
+				                {
+				                	xtype: 'textfieldbase',
+						        	fieldLabel:  HreRem.i18n('fieldlabel.porcentaje.participacion'),
+						        	name: 'porcentajeParticipacion',
+						        	bind:{	
+						        		value: '{activo.porcentajeParticipacion}',
+						        		readOnly : '{!esUA}',
+						        		hidden: '{!esUA}'
+						        	},
+						        	handler: 'checkVerificarPorcentajeParticipacion',
+				                	maxLength: 50,
+				                	style:'margin-left:10px'
+				                },
+				                
+								{
+						        	xtype:'fieldset',
+						        	height: '100%',
+						        	border: false,
+									layout: {
+									        type: 'table',
+									        // The total column count must be specified here
+									        columns: 1,
+									        trAttrs: {height: '30px', width: '100%'},
+									        tdAttrs: {width: '100%'},
+									        tableAttrs: {
+									            style: {
+									                width: '100%'
+													}
+									        }
+									},
+						        	defaultType: 'textfieldbase',
+									rowspan: 1,
+									items: [
+										{ 	// Este campo es necesario para corregir lo que parece un BUG. 
+											// TODO Investigar porqu� al quitar este campo, el valor del siguiente campo se manda siempre al guardar, aunque no se haya modificado.
+							            	hidden: true
+										},
+										
+								        {
+								        	xtype: 'comboboxfieldbase',
+								        	fieldLabel:  HreRem.i18n('fieldlabel.estado.fisico.activo'),
+								        	name: 'estadoActivoCodigo',
+								        	bind: {
+							            		store: '{comboEstadoActivo}',
+							            		value: '{activo.estadoActivoCodigo}'
+								        	}
+								        },
+						                {
+						                	xtype: 'textfieldbase',
+						                	fieldLabel: HreRem.i18n('fieldlabel.ultima.modificacion'),
+						                	name: 'ultimaModEstAct',
+						                	readOnly: true,
+						                	bind: {
+						                		value: '{activo.diasCambioEstadoActivo}',
+						                		hidden: '{!activo.isCarteraBankia}',
+						                		readOnly: true
+						                	}
+						                }
+									]
+								},
+						        {
+						        	xtype: 'comboboxfieldbase',
+						        	fieldLabel: HreRem.i18n('fieldlabel.sociedad.pago'),
+						        	bind: { 
+						        		value:'{activo.sociedadPagoAnterior}',
+						        		store: '{comboSituacionPagoAnterior}',
+						        		readOnly: '{!activo.isSubcarteraDivarian}'
+						        	},
+						        	
+						        	style:'margin-left:10px'
+						        }
+								
+							]
+						},
+						{ // Columna 3 
+							defaultType: 'textfieldbase',
+							flex: 1,
+							items:[
+								{
+				                	xtype: 'textareafieldbase',
+				                	labelWidth: 200,
+				                	rowspan: 5,
+				                	height: 130,
+				                	labelAlign: 'top',
+				                	fieldLabel: HreRem.i18n('fieldlabel.breve.descripcion.activo'),
+				                	bind:{
+				                		value: '{activo.descripcion}'
+				                	}
+				                },
+				                {
+									xtype:'comboboxfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.activobbva.tipoTransmision'),
+									bind: {
+										readOnly : '{!isGestorAdmisionAndSuper}',
+										store: '{comboTipoTransmision}',
+										value: '{activo.tipoTransmisionCodigo}'
+									}
+								},
+								{
+									xtype:'comboboxfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.activobbva.tipoAlta'),
+									bind: {
+										readOnly : '{!isGestorAdmisionAndSuperComboTipoAltaBlo}',										
+										store: '{comboBBVATipoAlta}',
+										hidden: '{!activo.isCarteraBbva}',
+										value: '{activo.tipoAltaCodigo}'
+									},listener:{
+										afterrender:'{isGestorAdmisionAndSuperComboTipoAlta}'
+									}
+									
+								},
+				                {
+				                	//Campo para dejar un espacio entre los campos por estetica.
+				                	readOnly: true
+				                },
+				                {
+				                	xtype: 'comboboxfieldbase',
+				                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.segmento'),
+				                	name: 'combotipoSegmento',
+				                	reference: 'comboTipoSegmentoRef',
+				                	bind: {
+				                		store: '{comboTipoSegmento}',
+				                		value: '{activo.tipoSegmentoCodigo}',
+				                		hidden: '{!activo.isSubcarteraDivarian}'
+				                	}
+				                }
+				            ]
+						}
+					]},
+	                {    
+		                //BBVA
+						xtype:'fieldsettable',
 						defaultType: 'textfieldbase',
-						flex: 1,
-						items:[
+						title: HreRem.i18n('title.bbva'),
+						border: true,
+						colapsible: false,
+						flex: 3,
+						items :
+							[
 							{
-			                	xtype: 'displayfieldbase',
-			                	fieldLabel:  HreRem.i18n('fieldlabel.id.activo.haya'),
-			                	bind:		'{activo.numActivo}'
-
-			                },
-			                {
-								xtype: 'displayfieldbase',
-								fieldLabel: HreRem.i18n('fieldlabel.id.activo.prinex'),
-								bind:		'{activo.idProp}'
-							},
-							{
-								xtype: 'displayfieldbase',
-								fieldLabel:  HreRem.i18n('fieldlabel.id.activo.sareb'),
-				                bind:		'{activo.idSareb}'
-							},
-							{
-								xtype: 'displayfieldbase',
-								fieldLabel:  HreRem.i18n('fieldlabel.id.activo.uvem'),
-			                	bind:		'{activo.numActivoUvem}'
-			                },
-			                {
-			                	xtype: 'displayfieldbase',
-			                	fieldLabel:  HreRem.i18n('fieldlabel.id.activo.rem'),
-			                	bind:		'{activo.numActivoRem}'
-			                },
-			                {
-								xtype: 'displayfieldbase',
-								fieldLabel:  HreRem.i18n('fieldlabel.id.activo.divarian'),
-								bind:		'{activo.numActivoDivarian}'
-							},
-			                {
-								xtype: 'displayfieldbase',
-								fieldLabel:  HreRem.i18n('fieldlabel.id.bien.recovery'),
-								bind:		'{activo.idRecovery}'
-							},							
-							{
-			                	xtype: 'displayfieldbase',
-					        	fieldLabel:  HreRem.i18n('fieldlabel.categoria.contable'),
-					        	bind:{	value: '{activo.catContableDescripcion}',
-					        			hidden: '{!activo.isCarteraLiberbank}'
-					        		}
-			                },
-			                {
-			                	xtype: 'displayfieldbase',
-					        	fieldLabel:  HreRem.i18n('fieldlabel.codigo.promocion.final'),
-					        	bind:{	value: '{activo.codPromocionFinal}',
-					        			hidden: '{!activo.isCarteraLiberbank}'
-					        	}
-			                },
-			                {
-			                	xtype: 'textfieldbase',
-					        	fieldLabel:  HreRem.i18n('fieldlabel.numero.activo.prinex'),
-					        	name:'idPrinexHPM',
-					        	bind:{	
-					        		value: '{activo.idPrinexHPM}',
-					        		readOnly : '{!esUA}',
-					        		hidden: '{!esUA}'
-					        	}
-			                }
-						]
-					},
-					{	// Columna 2
-						defaultType: 'textfieldbase',
-						flex: 1,
-						items:[
-							{
-			                	fieldLabel: HreRem.i18n('fieldlabel.activosearch.codigo.promocion'),
-								bind:{
-									readOnly: '{!esEditableCodigoPromocion}',
-									hidden: '{!activo.isVisibleCodPrinex}',
-									value:'{activo.codigoPromocionPrinex}'
+								xtype:'textfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.activobbva.numActivoBbva'),
+								bind: {
+									readOnly:true,
+									value: '{activo.numActivoBbva}'
 								}
 							},
 							{
-					        	xtype: 'comboboxfieldbase',
-					        	fieldLabel: HreRem.i18n('fieldlabel.tipo.activo'),
-								reference: 'tipoActivo',
-					        	chainedStore: 'comboSubtipoActivo',
-								chainedReference: 'subtipoActivoCombo',
-					        	bind: {
-				            		store: '{comboTipoActivo}',
-				            		value: '{activo.tipoActivoCodigo}'
-				            	},
-	    						listeners: {
-				                	select: 'onChangeChainedCombo'
-				            	},
-				            	allowBlank: false,
-				            	style:'margin-left:10px'
-					        },
-					        {
-								xtype: 'comboboxfieldbase',
-					        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.activo'),
-					        	reference: 'subtipoActivoCombo',
-					        	bind: {
-				            		store: '{comboSubtipoActivo}',
-				            		value: '{activo.subtipoActivoCodigo}',
-				            		disabled: '{!activo.tipoActivoCodigo}'
-				            	},
-	    						allowBlank: false,
-				            	style:'margin-left:10px'
-					        },
-					        {
-								xtype: 'comboboxfieldbase',
-					        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.activo.bde'),
-					        	reference: 'tipoActivoBde',
-					        	bind: {
-					        		readOnly : '{esUA}',
-				            		store: '{comboTipoActivoBde}',
-				            		value: '{activo.tipoActivoCodigoBde}',
-				            		hidden: '{!activo.isCarteraLiberbank}'
-				            	},
-				            	style:'margin-left:10px'
-					        },
-					        {
-					        	xtype: 'comboboxfieldbase',
-					        	fieldLabel: HreRem.i18n('fieldlabel.subtipo.activo.bde'),
-								reference: 'subtipoActivoComboBde',
-					        	bind: {
-					        		readOnly : '{esUA}',
-				            		store: '{comboSubtipoActivoBde}',
-				            		value: '{activo.subtipoActivoCodigoBde}',
-				            		hidden: '{!activo.isCarteraLiberbank}'
-				            	}
-					        },
-					        {
-			                	xtype: 'comboboxfieldbase',
-					        	fieldLabel:  HreRem.i18n('fieldlabel.uso.dominante'),
-					        	name: 'tipoUsoDestinoCodigo',
-			                	bind: {
-			                		readOnly : '{esUA}',
-				            		store: '{comboTipoUsoDestino}',
-				            		value: '{activo.tipoUsoDestinoCodigo}'
-				            	},
-				            	style:'margin-left:10px'
-			                },
-			                {
-			                	xtype: 'textfieldbase',
-			                	fieldLabel: HreRem.i18n('fieldlabel.motivorechazoform.motivo'),
-			                	name: 'motivoActivo',
-			                	bind: {
-			                		readOnly : '{esUA}',
-			                		value: '{activo.motivoActivo}'
-			                	},
-			                	maxLength: 50,
-			                	style:'margin-left:10px'
-			                },
-			                {
-			                	xtype: 'textfieldbase',
-					        	fieldLabel:  HreRem.i18n('fieldlabel.porcentaje.participacion'),
-					        	name: 'porcentajeParticipacion',
-					        	bind:{	
-					        		value: '{activo.porcentajeParticipacion}',
-					        		readOnly : '{!esUA}',
-					        		hidden: '{!esUA}'
-					        	},
-					        	handler: 'checkVerificarPorcentajeParticipacion',
-			                	maxLength: 50,
-			                	style:'margin-left:10px'
-			                },
-			                
-							{
-					        	xtype:'fieldset',
-					        	height: '100%',
-					        	border: false,
-								layout: {
-								        type: 'table',
-								        // The total column count must be specified here
-								        columns: 1,
-								        trAttrs: {height: '30px', width: '100%'},
-								        tdAttrs: {width: '100%'},
-								        tableAttrs: {
-								            style: {
-								                width: '100%'
-												}
-								        }
-								},
-					        	defaultType: 'textfieldbase',
-								rowspan: 1,
-								items: [
-									{ 	// Este campo es necesario para corregir lo que parece un BUG. 
-										// TODO Investigar porqu� al quitar este campo, el valor del siguiente campo se manda siempre al guardar, aunque no se haya modificado.
-						            	hidden: true
-									},
-									
-							        {
-							        	xtype: 'comboboxfieldbase',
-							        	fieldLabel:  HreRem.i18n('fieldlabel.estado.fisico.activo'),
-							        	name: 'estadoActivoCodigo',
-							        	bind: {
-						            		store: '{comboEstadoActivo}',
-						            		value: '{activo.estadoActivoCodigo}'
-							        	}
-							        },
-					                {
-					                	xtype: 'textfieldbase',
-					                	fieldLabel: HreRem.i18n('fieldlabel.ultima.modificacion'),
-					                	name: 'ultimaModEstAct',
-					                	readOnly: true,
-					                	bind: {
-					                		value: '{activo.diasCambioEstadoActivo}',
-					                		hidden: '{!activo.isCarteraBankia}',
-					                		readOnly: true
-					                	}
-					                }
-								]
+								xtype:'textfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.activobbva.idDivarian'),
+								bind: {
+									readOnly : 'true',
+									value: '{activo.idDivarianBbva}'
+								}
 							},
-					        {
-					        	xtype: 'comboboxfieldbase',
-					        	fieldLabel: HreRem.i18n('fieldlabel.sociedad.pago'),
-					        	bind: { 
-					        		value:'{activo.sociedadPagoAnterior}',
-					        		store: '{comboSituacionPagoAnterior}',
-					        		readOnly: '{!activo.isSubcarteraDivarian}'
-					        	},
-					        	
-					        	style:'margin-left:10px'
-					        }
-							
-						]
-					},
-					{ // Columna 3 
-						defaultType: 'textfieldbase',
-						flex: 1,
-						items:[
 							{
-			                	xtype: 'textareafieldbase',
-			                	labelWidth: 200,
-			                	rowspan: 5,
-			                	height: 130,
-			                	labelAlign: 'top',
-			                	fieldLabel: HreRem.i18n('fieldlabel.breve.descripcion.activo'),
-			                	bind:{
-			                		value: '{activo.descripcion}'
-			                	}
-			                },
+								xtype:'textfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.activobbva.lineaFactura'),
+								bind: {
+									readOnly : '{esUA}',
+									value: '{activo.lineaFactura}'
+								}
+							},
 			                {
-			                	xtype: 'comboboxfieldbase',
-			                	fieldLabel:  HreRem.i18n('fieldlabel.estado.registral'),
-			                	name: 'comboEstadoRegistral',
-			                	reference: 'comboEstadoRegistralRef',
-			                	bind: {
-			                		store: '{comboEstadoRegistral}',
-			                		value: '{activo.estadoRegistralCodigo}',
-			                		readOnly: '{!activo.esEditableActivoEstadoRegistral}'
-			                	}
-			                },
-			                {
-			                	xtype: 'comboboxfieldbase',
-			                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.segmento'),
-			                	name: 'combotipoSegmento',
-			                	reference: 'comboTipoSegmentoRef',
-			                	bind: {
-			                		store: '{comboTipoSegmento}',
-			                		value: '{activo.tipoSegmentoCodigo}',
-			                		hidden: '{!activo.isSubcarteraDivarian}'
-			                	}
-			                }
-						]
-					}]
-            },
+								xtype:'textfieldbase',
+								reference:'labelLinkIdOrigenHRE',
+								fieldLabel: HreRem.i18n('fieldlabel.activobbva.idOrigenHre'),
+								bind: {
+									readOnly : '{!isGestorAdmisionAndSuper}',
+									value: '{activo.idOrigenHre}'
+								},
+								cls: 'show-text-as-link',
+								listeners: {
+							        click: {								        	
+							            element: 'el', 
+							            fn:'onClickActivoHRE'									       
+							        }
+								}
+							}
+						]	,
+	                bind:{
+	                	hidden: '{!activo.isCarteraBbva}'
+	                }
+	                }
+				]},
             {    
                 
 				xtype:'fieldsettable',
@@ -920,10 +1001,116 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									hidden: '{!activo.isCarteraBankia}',
 									value: '{activo.entradaActivoBankiaCodigo}'
 								}
+							},
+							{
+								xtype:'textfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.activobbva.iucBbva'),
+								bind: {
+									readOnly : '{!isGestorAdmisionAndSuper}',
+									hidden: '{!activo.isCarteraBbva}',
+									value: '{activo.uicBbva}'
+								}
+							},
+							{
+								xtype:'textfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.activobbva.cexperBbva'),
+								bind: {
+									readOnly : '{!isGestorAdmisionAndSuper}',
+									hidden: '{!activo.isCarteraBbva}',
+									value: '{activo.cexperBbva}'
+								}
 							}
 						]
 						
 					}, //Fin activo bancario
+					//Activo EPA
+		            {
+						xtype:'fieldsettable',
+						defaultType: 'textfieldbase',
+						title: HreRem.i18n('title.epa'),
+						border: true,
+						colapsible: false,
+						hidden: !isCarteraBbva,
+						readOnly : usuariosValidos,
+						colspan: 3,
+						items :
+							[
+							{
+								xtype:'comboboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.activo.epa'),
+								colspan: 4,
+								bind: {
+									readOnly : '{esUA}',
+									store: '{comboSiNoBoolean}',
+									value: '{activo.activoEpa}'
+								},
+	    						listeners: {
+				                	change:  'onActivoEpa'
+				            	}
+							},
+							{    
+				                
+								xtype:'fieldsettable',
+								defaultType: 'textfieldbase',
+								title: HreRem.i18n('title.mora'),
+								border: true,
+								colapsible: false,
+								colspan: 3,
+								items :
+									[
+									{
+										xtype:'textfieldbase',
+										disabled: true,
+										fieldLabel: HreRem.i18n('fieldlabel.activobbva.empresa'),
+										reference: 'activobbvaEmpresa',
+										bind: {
+											readOnly : '{esUA}',
+											value: '{activo.empresa}'
+										}
+									},
+									{
+										xtype:'textfieldbase',
+										disabled: true,
+										fieldLabel: HreRem.i18n('fieldlabel.activobbva.oficina'),
+										reference: 'activobbvaOficina',
+										bind: {
+											readOnly : '{esUA}',
+											value: '{activo.oficina}'
+										}
+									},
+									{
+										xtype:'textfieldbase',
+										disabled: true,
+										fieldLabel: HreRem.i18n('fieldlabel.activobbva.contrapartida'),
+										reference: 'activobbvaContrapartida',
+										bind: {
+											readOnly : '{esUA}',
+											value: '{activo.contrapartida}'
+										}
+									},
+									{
+										xtype:'textfieldbase',
+										disabled: true,
+										fieldLabel: HreRem.i18n('fieldlabel.activobbva.folio'),
+										reference: 'activobbvaFolio',
+										bind: {
+											readOnly : '{esUA}',
+											value: '{activo.folio}'
+										}
+									},
+									{
+										xtype:'textfieldbase',
+										disabled: true,
+										fieldLabel: HreRem.i18n('fieldlabel.activobbva.cdpen'),
+										reference: 'activobbvaCdpen',
+										bind: {
+											readOnly : '{esUA}',
+											value: '{activo.cdpen}'
+										}
+									}
+								]
+						}]
+					}, //Fin activo EPA
 					
 		            {//Per�metro e    
 		                
@@ -1018,6 +1205,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
      ];
 	me.addPlugin({ptype: 'lazyitems', items: items });
     me.callParent();    	
+   
 
     },
     afterLoad: function(){

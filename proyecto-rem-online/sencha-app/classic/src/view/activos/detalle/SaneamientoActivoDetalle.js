@@ -18,7 +18,8 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 	
 	requires : ['HreRem.view.common.FieldSetTable','HreRem.model.Catastro', 'HreRem.model.DocumentacionAdministrativa'
 		,'HreRem.model.ActivoInformacionAdministrativa', 'HreRem.view.activos.detalle.ObservacionesActivo', 'HreRem.view.activos.detalle.CalificacionNegativaGrid'
-		, 'HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid'],
+		, 'HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', 'HreRem.model.ActivoComplementoTituloModel', 'HreRem.view.activos.detalle.ComplementoTituloGrid',
+		'HreRem.view.activos.detalle.GastosAsociadosAdquisicionGrid'],
 	
     initComponent: function () {
         var me = this;
@@ -200,7 +201,7 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 												reference: "calificacionnegativagrid", 
 												colspan: 3,
 												bind:{
-													disabled:'{!saneamiento.puedeEditarCalificacionNegativa}'
+													//disabled:'{!saneamiento.puedeEditarCalificacionNegativa}'
 												}
 											}
 										]
@@ -331,6 +332,16 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 										title: HreRem.i18n("title.calificacion.negativa"),
 										bind:{
 											disabled:'{!datosRegistrales.noEstaInscrito}'
+										}
+					           		},
+					           		{
+									   	xtype:'fieldsettable',
+										defaultType: 'textfieldbase',
+										colspan: 3,
+										hidden: false, 
+										title: HreRem.i18n("title.complemento.titulo"),
+										bind:{
+											//disabled:'{!saneamiento.noEstaInscrito}'
 										},
 										items :
 										[
@@ -342,12 +353,88 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 												bind:{
 													disabled:'{!datosRegistrales.puedeEditarCalificacionNegativa}'
 													}
+											},
+											{
+												xtype: "complementotitulogrid",
+												reference: "complementotitulogridref", 
+												colspan: 3,
+												bind:{
+													//disabled:'{!saneamiento.puedeEditarCalificacionNegativa}'
+												}
 											}
-										]
-					           		}
-			
+										]  	
+									   }
 								]
-							},
+							
+							},{
+							
+							
+							xtype:'fieldsettable',
+							defaultType: 'textfieldbase',
+							title: HreRem.i18n('title.gastos.asociados.adquisicion'),
+							items :
+								[
+									{
+										title:HreRem.i18n('title.gastos.asociados.adquisicion.linea.total'),
+							        	xtype: "fieldsettable", 
+										reference: "gastosasociadoslineatotalref",
+										colspan: 3,
+										/*ipt : null,
+										plusvaliaAdquisicion : null,
+										notaria : null,
+										registro : null,
+										otrosGastos: null,*/
+										items : [
+									        {
+												xtype: 'numberfieldbase',
+												reference: 'iptRef',
+												fieldLabel: HreRem.i18n('header.gastos.asociados.adquisicion.ipt'),					
+												readOnly: true,
+												itemId: 'itp',
+												value: 1
+									        },
+									        {
+									        	xtype:'numberfieldbase',
+									        	reference: 'plusvaliaAdquisicionRef',
+									        	fieldLabel: HreRem.i18n('header.gastos.asociados.adquisicion.plusvalia'),
+									        	readOnly: true,
+									        	itemId: 'plusvaliaAdquisicion',
+									        	value: 1
+									        },
+									        {
+									        	xtype:'numberfieldbase',
+									        	reference: 'notariaRef',
+									        	fieldLabel: HreRem.i18n('header.gastos.asociados.adquisicion.notaria'),
+									        	readOnly: true,
+									        	itemId: 'notaria',
+									        	value: 1
+									        },
+									        {
+									        	xtype:'numberfieldbase',
+									        	reference: 'registroRef',
+									        	fieldLabel: HreRem.i18n('header.gastos.asociados.adquisicion.registro'),
+									        	readOnly: true,
+									        	itemId: 'registro',
+									        	value: 1
+									        },
+									        {
+									        	xtype:'numberfieldbase',
+									        	reference: 'otrosGastosRef',
+									        	fieldLabel: HreRem.i18n('header.gastos.asociados.adquisicion.otros.gastos'),
+									        	readOnly: true,
+									        	itemId: 'otrosGastos',
+									        	value: 1
+									        }		
+								
+										]
+									
+									},{
+					                	title : HreRem.i18n('title.gastos.asociados.adquisicion'),	
+					                	xtype: "gastosasociadosadquisiciongrid", 
+										reference: "gastosasociadosadquisiciongridref"
+
+									}
+								]},
 				            {
 				            	xtype:'fieldsettable',
 								title:HreRem.i18n('title.cargas'),
@@ -739,6 +826,7 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 		Ext.Array.each(me.query('grid'), function(grid) {
 			grid.getStore().load();
   		});
+  		
    }
 
 

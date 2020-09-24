@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20200218
+--## AUTOR=Viorel Remus Ovidiu
+--## FECHA_CREACION=20200915
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-6339
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##	    0.2 REMVIP-8073 - Añadidos mas valores al diccionario
 --##########################################
 --*/
 
@@ -44,7 +45,16 @@ DECLARE
         T_TIPO_DATA('07', 'Permuta materializada'),
         T_TIPO_DATA('08', 'Leasing'),
         T_TIPO_DATA('09', 'Resto contenciosos'),
-        T_TIPO_DATA('10', 'Por Proc. Recuperat.')
+        T_TIPO_DATA('10', 'Por Proc. Recuperat.'),
+	T_TIPO_DATA('11', 'Especial'),
+	T_TIPO_DATA('12', 'Por Proc. Judicial'),
+	T_TIPO_DATA('13', 'Otros'),
+	T_TIPO_DATA('14', 'Desarrollo propio'),
+	T_TIPO_DATA('15', 'Permuta sin materializar'),
+	T_TIPO_DATA('16', 'Subastas'),
+	T_TIPO_DATA('17', 'Renting'),
+	T_TIPO_DATA('18', 'Compra 100% participada')
+
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

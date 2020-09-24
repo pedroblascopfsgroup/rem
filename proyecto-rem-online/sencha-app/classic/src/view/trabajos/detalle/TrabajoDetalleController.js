@@ -217,7 +217,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		
 		var checkTarifaPlana = form.getValues().checkTarifaPlana == "on";
 		var checkSiniestro = form.getValues().checkSiniestro == "on";
-		
+
 		if(form.isFormValid()) {
 
 			form.mask(HreRem.i18n("msg.mask.espere"));
@@ -323,6 +323,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		var activo= null;
 		var arraySelection= [];
 		var codPromo;
+
 		if(!Ext.isEmpty(me.getView().idAgrupacion)){
 			arraySelection = me.lookupReference('activosagrupaciontrabajo').getActivoIDPersistedSelection();
 		}
@@ -378,11 +379,22 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			}
 		}
 		
+
 		var titleConfirm = HreRem.i18n("msgbox.multiples.trabajos.title");
 		var textConfirm = HreRem.i18n("msgbox.multiples.trabajos.seleccionados.check.mensaje");
 		if(!btn.up().up().down("[reference='checkEnglobaTodosActivosRef']").value){
 			textConfirm = HreRem.i18n("msgbox.multiples.trabajos.seleccionados.check.mensaje.multiples");
 		}
+		
+		if(Ext.isEmpty(me.getView().idAgrupacion) && Ext.isEmpty(me.getView().idActivo) && (Ext.isEmpty(storeListaActivosTrabajo) || storeListaActivosTrabajo.data.length == 0)){
+			Ext.MessageBox.alert(
+					HreRem.i18n("msgbox.multiples.trabajos.seleccionado.activo.no.seleccionado.titulo"),
+					HreRem.i18n("msgbox.multiples.trabajos.seleccionado.activo.no.seleccionado.mensaje")
+			);
+			return false;
+			
+		}
+
 		//
 		Ext.MessageBox.confirm(
 				titleConfirm,
@@ -1346,6 +1358,24 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
  	 		me.lookupReference('fechaResolComite').setValue(null);
  	 		me.lookupReference('comboResolucionComite').setValue(null);
  		}
+ 	},
+ 	
+ 	requiredDateResolucionComite: function(){
+ 		var me = this;
+		var comboResolucion = me.lookupReference('comboResolucionComite').getValue();
+		if(comboResolucion != null && comboResolucion != '' ){
+			if (comboResolucion == CONST.APROBACION_COMITE['SOLICITADO']){
+				me.lookupReference('fechaResolComite').setAllowBlank(true);
+			}
+			else{
+				me.lookupReference('fechaResolComite').setAllowBlank(false);
+			}
+			
+		}
+		else {
+			me.lookupReference('fechaResolComite').setAllowBlank(true);
+		}
+ 	 	
  	},
  	
  	onClickBotonCancelarVentanaAgendaTrabajo: function(btn) {		

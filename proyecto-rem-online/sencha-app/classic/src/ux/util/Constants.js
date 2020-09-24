@@ -764,5 +764,10 @@ Ext.define('HreRem.ux.util.Constants', {
 	PES_PESTANYAS: {
 		DETALLE_ECONOMICO: 'DEC',
 		FICHA: 'FIC'
+	},
+	APROBACION_COMITE: {
+		SOLICITADO: 'SOL',
+		APROBADO: 'APR',
+		RECHAZADO: 'REC'
 	}
 });

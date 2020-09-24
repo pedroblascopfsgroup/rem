@@ -107,9 +107,18 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 			listaDetalleAlbaran.getStore().loadPage(1);
 			listaTrabajos.getStore().removeAll();
 			me.calcularTotal(gridAlbaran,"albaranGrid",record);
-			me.habilitarAlbaran(listaDetalleAlbaran,boton,record);
+			
 		} else {
 			me.deselectAlbaran(grid);
+		}
+		
+		if((numPrefactura!= null && numPrefactura!= "") || (fechaPrefactura != null && fechaPrefactura !="") 
+				|| ( estadoPrefactura!= null && estadoPrefactura!= "") || (numTrabajo != null && numTrabajo != "") 
+				|| (estadoTrabajo != null && estadoTrabajo != "") || (anyoTrabajo!= null && anyoTrabajo!= "")){
+			 me.lookupReference('botonValidarAlbaran').setDisabled(true);
+		}
+		else{
+			me.habilitarAlbaran(listaDetalleAlbaran,boton,record);
 		}
 		
 	},
@@ -148,6 +157,9 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		var numTrabajo = this.lookupReference('numTrabajoSearch').value;
 		var estadoTrabajo = this.lookupReference('estadoTrabajoSearch').value;
 		var anyoTrabajo = this.lookupReference('anyoTrabajoSearch').value;
+		var numPrefactura = this.lookupReference('numPrefacturaSearch').value;
+		var fechaPrefactura= Ext.Date.format( me.lookupReference('fechaPrefacturaSearch').value , 'd/m/Y');
+		var estadoPrefactura = this.lookupReference('estadoPrefacturaSearch').value;
 		
 		if(!Ext.isEmpty(grid.selection)){
 			listaDetallePrefactura.getStore().getProxy().setExtraParams({
@@ -158,18 +170,21 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
             });
 			listaDetallePrefactura.getStore().loadPage(1);
 			me.calcularTotal(gridDetalleAlbaran,"detalleAlbaranGrid",record);	
-			var numPrefactura = this.lookupReference('numPrefacturaSearch').value;
-			var fechaPrefactura= Ext.Date.format( me.lookupReference('fechaPrefacturaSearch').value , 'd/m/Y');
-			var estadoPrefactura = this.lookupReference('estadoPrefacturaSearch').value;
+
 			if((numPrefactura!= null && numPrefactura!= "") || (fechaPrefactura != null && fechaPrefactura !="") 
 					|| ( estadoPrefactura!= null && estadoPrefactura!= "") || (numTrabajo != null && numTrabajo != "") 
 					|| (estadoTrabajo != null && estadoTrabajo != "") || (anyoTrabajo!= null && anyoTrabajo!= "")){
 				me.lookupReference('botonValidarPrefactura').setDisabled(true);
-				me.lookupReference('botonValidarTrabajo').setDisabled(true);
+				
 			}
 			else{
 				me.habilitarPrefactura(boton,record);				
 			}
+			
+			if((numTrabajo != null && numTrabajo != "") || (estadoTrabajo != null && estadoTrabajo != "") || (anyoTrabajo!= null && anyoTrabajo!= "")){
+				me.lookupReference('botonValidarTrabajo').setDisabled(true);
+			}
+			
 			
 		} else {
 			me.deselectPrefactura(grid);
@@ -485,9 +500,8 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
    
 	habilitarAlbaran : function(grid,boton,record){
 		var me = this; 
-
 		var habilitar = false;
-		if(record.data.validarAlbaran == 'true' || record.data.validarAlbaran == "true"){
+		if(record.data.estadoAlbaran != CONST.ESTADOS_ALBARANES['VALIDADO']){
 			habilitar = true;
 		}
 		

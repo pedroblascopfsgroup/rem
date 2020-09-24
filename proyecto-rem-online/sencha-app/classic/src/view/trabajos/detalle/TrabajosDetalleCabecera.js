@@ -137,25 +137,28 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleCabecera', {
 									                   	{
 									                   		fieldLabel: HreRem.i18n('fieldlabel.nombre.ug'),
 									                   		cls: 'cabecera-info-field',
+									                   		hidden: true,
 															bind:{
 																value:'{trabajo.nombreUg}',
-																hidden:'{!trabajo.perteneceDNDtipoEdificacion}'
+																//hidden:'{!trabajo.perteneceDNDtipoEdificacion}'
 															}
 									                   	},
 														{ 
 															fieldLabel: HreRem.i18n('fieldlabel.nombre.expediente.trabajo'),
 															cls: 'cabecera-info-field',
+															hidden: true,
 															bind:{
 																value:'{trabajo.nombreExpediente}',
-																hidden:'{!trabajo.perteneceDNDtipoEdificacion}'
+																//hidden:'{!trabajo.perteneceDNDtipoEdificacion}'
 															}
 										                },
 									                   	{
 									                   		fieldLabel: HreRem.i18n('fieldlabel.nombre.proyecto'),
 									                   		cls: 'cabecera-info-field',
+									                   		hidden: true,
 									                   		bind:{
 																value:'{trabajo.nombreProyecto}',
-																hidden:'{!trabajo.perteneceDNDtipoEdificacion}'
+																//hidden:'{!trabajo.perteneceDNDtipoEdificacion}'
 															}
 															
 									                   	}

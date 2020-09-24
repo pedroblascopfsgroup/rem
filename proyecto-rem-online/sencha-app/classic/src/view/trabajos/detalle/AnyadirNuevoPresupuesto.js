@@ -205,18 +205,18 @@ Ext.define('HreRem.view.trabajos.detalle.AnyadirNuevoPresupuesto', {
 											}
 										}
 									},
-									{
-										xtype: 'comboboxfieldbase',
-	    					        	fieldLabel:  HreRem.i18n('fieldlabel.estado'),
-	    					        	itemId: 'comboEstadoPresupuesto',
-	    					        	flex:	1,
-	    					        	bind: {
-	    				            		store: '{comboEstadoPresupuesto}',
-	    				            		value: '{presupuesto.estadoPresupuestoCodigo}'	    				            		
-	    				            	},
-	    				            	displayField: 'descripcion',
-	    	    						valueField: 'codigo'
-									},
+//									{
+//										xtype: 'comboboxfieldbase',
+//	    					        	fieldLabel:  HreRem.i18n('fieldlabel.estado'),
+//	    					        	itemId: 'comboEstadoPresupuesto',
+//	    					        	flex:	1,
+//	    					        	bind: {
+//	    				            		store: '{comboEstadoPresupuesto}',
+//	    				            		value: '{presupuesto.estadoPresupuestoCodigo}'	    				            		
+//	    				            	},
+//	    				            	displayField: 'descripcion',
+//	    	    						valueField: 'codigo'
+//									},
 									{
 										fieldLabel: HreRem.i18n('fieldlabel.referencia.presupuesto.proveedor'),
 										flex: 		1,
@@ -236,14 +236,14 @@ Ext.define('HreRem.view.trabajos.detalle.AnyadirNuevoPresupuesto', {
 										flex: 		1,
 										name:		'importe',
 										bind:		'{presupuesto.importe}'
-									},
-									{
-										xtype: 		'textareafieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.comentarios'),
-										flex: 		1,
-										name:		'comentarios',
-										bind:		'{presupuesto.comentarios}'
 									}
+//									{
+//										xtype: 		'textareafieldbase',
+//										fieldLabel: HreRem.i18n('fieldlabel.comentarios'),
+//										flex: 		1,
+//										name:		'comentarios',
+//										bind:		'{presupuesto.comentarios}'
+//									}
 				            	]
 		    			   }
 		    		]
@@ -262,7 +262,7 @@ Ext.define('HreRem.view.trabajos.detalle.AnyadirNuevoPresupuesto', {
     	
 		me.down('button[itemId=btnGuardar]').setVisible(!me.modoEdicion);
 		me.down('button[itemId=btnActualizar]').setVisible(me.modoEdicion);
-		me.down('comboboxfieldbase[itemId=comboEstadoPresupuesto]').setVisible(me.modoEdicion);
+		//me.down('comboboxfieldbase[itemId=comboEstadoPresupuesto]').setVisible(me.modoEdicion);
 		me.lookupReference('comboTipoProveedorGestionEconomica2').setVisible(!me.modoEdicion);
 		me.lookupReference('comboProveedorGestionEconomica2').setVisible(!me.modoEdicion);
 		me.lookupReference('proveedorContactoCombo2').setVisible(!me.modoEdicion);

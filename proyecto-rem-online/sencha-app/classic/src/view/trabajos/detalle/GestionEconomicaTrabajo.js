@@ -330,12 +330,16 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 			    					},	
 			    					
 			    					columns: [
-			    					    {   text: HreRem.i18n('header.documento'),
-			    				        	dataIndex: '',
-			    				        	flex: 1
-			    				        },
+//			    					    {   text: HreRem.i18n('header.documento'),
+//			    				        	dataIndex: '',
+//			    				        	flex: 1
+//			    				        },
 			    					    {   text: HreRem.i18n('header.id.presupuesto'),
 			    				        	dataIndex: 'id',
+			    				        	flex: 1
+			    				        },
+			    				        {   text: HreRem.i18n('fieldlabel.referencia.presupuesto.proveedor'),
+			    				        	dataIndex: 'refPresupuestoProveedor',
 			    				        	flex: 1
 			    				        },
 			    				        {   text: HreRem.i18n('header.proveedor'),
@@ -346,11 +350,11 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 			    				        	dataIndex: 'fecha',
 			    				        	flex: 1
 			    				        },		
-			    						{
-			    				        	text: HreRem.i18n('header.estado'),
-			    				            dataIndex: 'estadoPresupuestoDescripcion',
-			    				            flex: 1
-			    				        },
+//			    						{
+//			    				        	text: HreRem.i18n('header.estado'),
+//			    				            dataIndex: 'estadoPresupuestoDescripcion',
+//			    				            flex: 1
+//			    				        },
 			    				        {   text: HreRem.i18n('header.importe'),
 			    				        	dataIndex: 'importe',
 			    				        	renderer: function(value) {
@@ -377,7 +381,13 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 			    				    	subtipoTrabajoDescripcion = me.up('gestioneconomicatrabajo').getBindRecord().get('subtipoTrabajoDescripcion'),
 			    				    	parent = me.up('gestioneconomicatrabajo'),
 			    				    	modoEdicion = false;
-			    						presupuesto = Ext.create('HreRem.model.PresupuestosTrabajo', {tipoTrabajoDescripcion: tipoTrabajoDescripcion, subtipoTrabajoDescripcion: subtipoTrabajoDescripcion});
+			    						codigoTipoProveedor = parent.getBindRecord().get('codigoTipoProveedor');
+			    						idProveedor = parent.getBindRecord().get('idProveedor');
+			    				    	idProveedorContacto = parent.getBindRecord().get('idProveedorContacto');
+			    				    	emailProveedorContacto = parent.getBindRecord().get('emailProveedorContacto');
+			    				    	nombreProveedorContacto = parent.getBindRecord().get('nombreProveedorContacto');
+			    				    	usuarioProveedorContacto = parent.getBindRecord().get('usuarioProveedorContacto');
+			    						presupuesto = Ext.create('HreRem.model.PresupuestosTrabajo', {tipoTrabajoDescripcion: tipoTrabajoDescripcion, subtipoTrabajoDescripcion: subtipoTrabajoDescripcion, codigoTipoProveedor: codigoTipoProveedor, idProveedor: idProveedor, idProveedorContacto: idProveedorContacto, emailProveedorContacto: emailProveedorContacto, nombreProveedorContacto: nombreProveedorContacto, usuarioProveedorContacto: usuarioProveedorContacto});
 			    						
 			    				    	var window=Ext.create("HreRem.view.trabajos.detalle.AnyadirNuevoPresupuesto", {presupuesto: presupuesto, idTrabajo: idTrabajo, parent: parent, modoEdicion: modoEdicion}).show();
 			    				    	window.getViewModel().set('trabajo',me.lookupController().getViewModel().get('trabajo'));

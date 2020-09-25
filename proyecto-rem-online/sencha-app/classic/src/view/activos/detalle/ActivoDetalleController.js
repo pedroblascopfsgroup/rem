@@ -4697,22 +4697,25 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         }
 
     },
-
+	
     esEditableChkYcombo: function(change, newValue, oldValue, eOpts){
         var me = this;
         var comboEstadoAlquiler = me.lookupReference('comboEstadoAlquilerRef');
         var chkPerimetroAlquiler = me.lookupReference('chkPerimetroAlquilerRef');
         var comboTipoInquilino = me.lookupReference('comboTipoInquilinoRef');
-
+        var  tipoComercializacion = me.getViewModel().get('activo.tipoComercializacionCodigo');
         var comboValue = comboEstadoAlquiler.value;
-        chkPerimetroAlquiler.setDisabled(true);
+        
         if(!Ext.isEmpty(comboEstadoAlquiler)){
-            if(comboValue == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] || comboValue == CONST.COMBO_ESTADO_ALQUILER["CON_DEMANDAS"]){
+            if(comboValue == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"]){
                 chkPerimetroAlquiler.setValue(true);
-                chkPerimetroAlquiler.setDisabled(true);
-                comboTipoInquilino.setDisabled(false);
-            } else {
-            	chkPerimetroAlquiler.setDisabled(false);
+                comboTipoInquilino.enable();
+            } else if(CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'] != tipoComercializacion){
+            	if(CONST.TIPOS_COMERCIALIZACION['VENTA'] == tipoComercializacion){
+            		chkPerimetroAlquiler.setValue(false);
+            	}else if(CONST.TIPOS_COMERCIALIZACION['ALQUILER'] == tipoComercializacion){
+            		chkPerimetroAlquiler.setValue(true);
+            	}
             }
         }
     },
@@ -4793,10 +4796,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				   }
 			 }
 			 
-			 if((tipoTituloCodigo == CONST.TIPO_TITULO_ACTIVO['UNIDAD_ALQUILABLE'] && incluidoEnPerimetro) || (tieneOfertaAlquilerViva === true && (estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] || estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["CON_DEMANDAS"]))){
+			 if((tipoTituloCodigo == CONST.TIPO_TITULO_ACTIVO['UNIDAD_ALQUILABLE'] && incluidoEnPerimetro) || (tieneOfertaAlquilerViva === true && (estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"]))){
 				return true;
 			} else {
-				return undefined;
+				return false;
 			}
 		 }else{
 			 return true;
@@ -4809,17 +4812,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		 var comboTipoAlquiler = me.lookupReference('comboTipoAlquilerRef');
 		 var comboAdecuacion = me.lookupReference('comboAdecuacionRef');
 
-	   	 checkbox.setReadOnly(this.enableChkPerimetroAlquiler());
-		 
-	   	 if (!checkbox.checked) {
-		    		comboTipoAlquiler.setValue("");
-		            comboAdecuacion.setValue("");
+	   	 if (!newValue) {
+		    		comboTipoAlquiler.setValue(null);
+		            comboAdecuacion.setValue(null);
 	   	 } 
-	},
-	
-	onRenderCheckPerimetroAlquiler: function(checkbox) {
-	   	 checkbox.setReadOnly(this.enableChkPerimetroAlquiler());
-		
 	},
 
     onChangeCalificacionNegativa: function(me, nValue, oValue){

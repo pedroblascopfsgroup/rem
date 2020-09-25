@@ -14,9 +14,9 @@ public class AgrupacionValidatorCommonImpl implements AgrupacionValidatorCommon 
     private ActivoAgrupacionActivoApi agrupacionActivoApi;
 	
 	@Override
-	public boolean existsActiveInAgrupation(Activo activo,ActivoAgrupacion agrupacion ) {
+	public boolean existsActiveInAgrupation(Activo activo,ActivoAgrupacion agrupacion) {
 		ActivoAgrupacionActivo agrupacionActivo = agrupacionActivoApi.getByIdActivoAndIdAgrupacion(activo.getId(), agrupacion.getId());
-		return (agrupacionActivo != null);
+		return (agrupacionActivoApi.isUniqueRestrictedActive(activo) && agrupacionActivo != null);
 	}
 	
 	@Override

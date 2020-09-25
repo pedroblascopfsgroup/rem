@@ -808,20 +808,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 								// Seteamos la agrupación a la oferta
 								agrupacion = agrAct.getAgrupacion();
 								oferta.setAgrupacion(agrupacion);
+								esLoteComercial = true;
 							}
 						}
 
 						if (!Checks.esNulo(agrupacion)) {
 							// Oferta sobre 1 lote restringido de n activos
 							buildListaActOfr = buildListaActivoOferta(null, agrupacion, oferta);
-							listaActOfr.addAll(buildListaActOfr);
-							if(esLoteComercial) break;
+							listaActOfr.addAll(buildListaActOfr);							
 						} else {
 							// Oferta sobre 1 único activo
 							buildListaActOfr = buildListaActivoOferta(activo, null, oferta);
 							listaActOfr.addAll(buildListaActOfr);
-							if(esLoteComercial) break;
 						}
+						if(esLoteComercial) break;
 					}
 				}
 

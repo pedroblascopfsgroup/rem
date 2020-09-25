@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Roman Romanchuk
---## FECHA_CREACION=20190805
+--## AUTOR=Juan Beltrán
+--## FECHA_CREACION=20200615
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-7226
+--## INCIDENCIA_LINK=HREOS-10349
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico de las agrupaciones de Obra Nueva enviadas a webcom. HREOS-1551 - Se añaden agrupaciones Asistidas.
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial RLB
 --##        0.2 Versión Roman Romanchuk
+--##        0.3: 20200610 Juan Beltrán. Optimización Vistas WEBCOM 
 --##########################################
 --*/
 
@@ -140,9 +141,7 @@ BEGIN/*Versión 0.2*/
 		CAST(AGR.AGR_GESTOR_ID AS NUMBER(16,0))                             					AS ID_GESTOR_COMERCIAL,
 		CAST(IAG.PVE_COD_REM AS NUMBER(16,0))                           						AS ID_PROVEEDOR_REM,
 		CAST(AGR.AGR_DESCRIPCION AS VARCHAR2(500 CHAR))                     					AS DESCRIPCION,
-		CAST((SELECT COUNT(*) 
-	        FROM '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA 
-	        WHERE AGA.AGR_ID = AGR.AGR_ID) AS NUMBER(16,0))  	                        		AS ASOCIADOS_ACTIVOS,
+		CAST(ASOC_ACT.CUENTA AS NUMBER(16,0))         	                        		AS ASOCIADOS_ACTIVOS,
 		CAST(IAG.DD_SCR_CODIGO AS VARCHAR2(5 CHAR))                     						AS COD_SUB_CARTERA,
 		CAST(TO_CHAR(NVL(AGR.FECHAMODIFICAR, AGR.FECHACREAR), 
 					''YYYY-MM-DD"T"HH24:MM:SS'') AS VARCHAR2 (50 CHAR)) 						AS FECHA_ACCION,
@@ -153,12 +152,13 @@ BEGIN/*Versión 0.2*/
 		CAST(AGR.AGR_EXISTE_PISO_PILOTO AS NUMBER(1,0))										AS AGR_EXISTE_PISO_PILOTO,
 		CAST(AGR.AGR_COMERCIALIZABLE_CONS_PLANO AS NUMBER(1,0))									AS AGR_COMERCIALIZABLE_CONS_PLANO
 		FROM '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR
-		LEFT JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION DDTAG ON DDTAG.DD_TAG_ID = AGR.DD_TAG_ID 
+		JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION DDTAG ON DDTAG.DD_TAG_ID = AGR.DD_TAG_ID AND DDTAG.DD_TAG_CODIGO IN (''01'', ''13'',''14'',''15'',''16'')  
 		LEFT JOIN INFO_ACTIVO_AGRUPACION IAG ON IAG.AGR_ID = AGR.AGR_ID
 		LEFT JOIN DIRECCION_AGRUPA DIR ON DIR.AGR_ID = AGR.AGR_ID
+		LEFT JOIN (SELECT COUNT(*) CUENTA, AGR_ID
+	    				    FROM '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO GROUP BY AGR_ID)  ASOC_ACT  ON ASOC_ACT.AGR_ID = AGR.AGR_ID
 		WHERE agr.borrado = 0
-		and (AGR.AGR_NUM_AGRUP_REM IS NOT NULL AND DDTAG.DD_TAG_CODIGO IS NOT NULL AND (DDTAG.DD_TAG_CODIGO = ''01'' OR  DDTAG.DD_TAG_CODIGO = ''13'' OR DDTAG.DD_TAG_CODIGO = ''14'' OR  DDTAG.DD_TAG_CODIGO = ''15'' OR  DDTAG.DD_TAG_CODIGO = ''16''))';
-		
+		AND AGR.AGR_NUM_AGRUP_REM IS NOT NULL';		
 		   
    	 	
  		DBMS_OUTPUT.PUT_LINE('[INFO] Vista materializada : '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'... creada');

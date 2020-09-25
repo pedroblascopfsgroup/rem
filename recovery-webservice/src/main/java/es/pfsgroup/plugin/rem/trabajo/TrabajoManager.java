@@ -1470,7 +1470,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 //					this.createTramiteTrabajo(trabajo);
 					transactionManager.commit(transaction);
 					transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-					if(trabajo.getId() != null && dtoTrabajo.getIdTarifas() != null) {
+					if(trabajo.getId() != null && dtoTrabajo.getIdTarifas() != null && !dtoTrabajo.getIdTarifas().equals("")) {
 						String tarifas = dtoTrabajo.getIdTarifas();
 						String[] listaTarifas = tarifas.split(",");
 						for (int i = 0; i < listaTarifas.length; i++) {
@@ -1501,7 +1501,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 				ficheroMasivoToTrabajo(dtoTrabajo.getIdProceso(), trabajo);	
 				transactionManager.commit(transaction);
-				if(trabajo.getId() != null && dtoTrabajo.getIdTarifas() != null) {
+				if(trabajo.getId() != null && dtoTrabajo.getIdTarifas() != null && !dtoTrabajo.getIdTarifas().equals("")) {
 					String tarifas = dtoTrabajo.getIdTarifas();
 					String[] listaTarifas = tarifas.split(",");
 					for (int i = 0; i < listaTarifas.length; i++) {

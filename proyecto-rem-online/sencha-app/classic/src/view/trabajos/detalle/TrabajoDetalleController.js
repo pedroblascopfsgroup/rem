@@ -1535,7 +1535,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     			data = Ext.decode(response.responseText);
     			store.filter([{
                     filterFn: function(rec){
-                    	return data.data.includes(rec.getData().codigo);
+                    	return data.data.includes(rec.getData().codigo) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
                     }
                 }]);
     		},
@@ -1545,10 +1545,106 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	});
     	
     },
-    bloqueaCamposSegunEstadoTrabajo: function () {
+    desbloqueaCamposSegunEstadoTrabajo: function (pestanya) {
     	var me = this;
-    	var estadoTrabajo = me.getViewModel().get("trabajo.estadoTrabajo");
-    	//TODO: bloquear campos según estado.
+    	var estadoTrabajo = me.getViewModel().get("trabajo.estadoCodigo");
+    	var esGestorActivo = $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']);
+    	var esProvActivo = $AU.userIsRol(CONST.PERFILES['PROVEEDOR']);
+    	var esFichaTrabajo = pestanya.getReference() == "fichatrabajo";
+    	
+    	me.bloqueaCamposTrabajo(esFichaTrabajo)
+    	
+    	if($AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
+    	
+    		me.desbloqueaCamposTrabajo(esFichaTrabajo);
+    		
+    	} else if(esGestorActivo){
+    		
+    		if(esFichaTrabajo){
+    			me.lookupReference('comboGestorActivoResposable').setReadOnly(false);	
+    		}
+    		
+    		if(estadoTrabajo == "CUR" || estadoTrabajo == "REJ"){
+    			
+    			if(esFichaTrabajo){
+    				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
+		    		me.lookupReference('checkTarifaPlanaRef').setReadOnly(false);
+		    		me.lookupReference('checkSiniestroRef').setReadOnly(false);
+    			} else {
+    				me.lookupReference('comboProveedorGestionEconomica').setReadOnly(false);
+		    		me.lookupReference('gridtarifastrabajo').setTopBar(false)
+		    		me.lookupReference('gridpresupuestostrabajo').setTopBar(false)
+    			}
+    			
+	    	}else if(estadoTrabajo == "FIN" || estadoTrabajo == "SUB"){
+	    		
+	    		if(esFichaTrabajo){
+    				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
+		    		me.lookupReference('checkTarifaPlanaRef').setReadOnly(false);
+		    		me.lookupReference('checkSiniestroRef').setReadOnly(false);
+    			} else {
+		    		me.lookupReference('gridtarifastrabajo').setTopBar(false)
+		    		me.lookupReference('gridpresupuestostrabajo').setTopBar(false)
+    			}
+	    		
+	    	}else if(estadoTrabajo == "REJ" || estadoTrabajo == "12"){
+	    		
+	    		if(esFichaTrabajo){
+    				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
+    			} 
+	    		
+	    	}
+    		
+	    } else if(esProvActivo){
+	    	
+	    	if(esFichaTrabajo){
+    			me.lookupReference('comboGestorActivoResposable').setReadOnly(false);	
+    		}
+	    	
+	    	if(estadoTrabajo == "CUR" || estadoTrabajo == "REJ"){
+	    		
+	    		if(esFichaTrabajo){
+    				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
+		    		me.lookupReference('fechaEjecucionRef').setReadOnly(false);
+		    		me.lookupReference('checkSiniestroRef').setReadOnly(false);
+    			} else {
+		    		me.lookupReference('gridtarifastrabajo').setTopBar(false)
+    			}
+	    		
+	    	}
+	    	
+	    }
+    	
+    },
+    bloqueaCamposTrabajo: function (esFichaTrabajo) {
+    	var me = this;
+    	
+		if(esFichaTrabajo){
+			me.lookupReference('comboGestorActivoResposable').setReadOnly(true);
+    		me.lookupReference('comboEstadoTrabajoRef').setReadOnly(true);
+    		me.lookupReference('fechaEjecucionRef').setReadOnly(true);
+			me.lookupReference('checkTarifaPlanaRef').setReadOnly(true);
+			me.lookupReference('checkSiniestroRef').setReadOnly(true);
+    	} else {
+    		me.lookupReference('comboProveedorGestionEconomica').setReadOnly(true);
+			me.lookupReference('gridtarifastrabajo').setTopBar(true)
+		    me.lookupReference('gridpresupuestostrabajo').setTopBar(true)
+    	}
+	},
+    desbloqueaCamposTrabajo: function (esFichaTrabajo){
+    	var me = this;
+    	
+    	if(esFichaTrabajo){
+    		me.lookupReference('comboGestorActivoResposable').setReadOnly(false);
+    		me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
+    		me.lookupReference('fechaEjecucionRef').setReadOnly(false);
+			me.lookupReference('checkTarifaPlanaRef').setReadOnly(false);
+			me.lookupReference('checkSiniestroRef').setReadOnly(false);
+    	} else {
+    		me.lookupReference('comboProveedorGestionEconomica').setReadOnly(false);
+			me.lookupReference('gridtarifastrabajo').setTopBar(false)
+		    me.lookupReference('gridpresupuestostrabajo').setTopBar(false)
+    	}
     },
  	valorComboSubtipo: function (){
  		var me = this;

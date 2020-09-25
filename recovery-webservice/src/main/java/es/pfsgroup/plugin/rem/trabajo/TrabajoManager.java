@@ -2052,6 +2052,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajo.setEstado(estadoTrabajo);
 		}
 		
+		if (dtoTrabajo.getEstadoCodigo() != null) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getEstadoCodigo());
+			DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filtro);
+			trabajo.setEstado(estadoTrabajo);
+		}
+		
 		if (dtoTrabajo.getFechaEjecucionTrabajo() != null) {
 			trabajo.setFechaEjecucionReal(dtoTrabajo.getFechaEjecucionTrabajo());
 		}

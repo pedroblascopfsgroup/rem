@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Mª José Ponce
---## FECHA_CREACION=20200325
+--## FECHA_CREACION=20200923
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-9381
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##	    0.2 REMVIP-8099 - Ampliar campo de comentarios
 --##########################################
 --*/
 
@@ -70,7 +71,7 @@ BEGIN
 	PRECIO_INICIAL NUMBER(16,2),
 	PRECIO_OFERTA NUMBER(16,2),
 	NOMBRE_LICITADOR VARCHAR2(100 CHAR),
-	COMENTARIOS VARCHAR2(1500 CHAR),
+	COMENTARIOS VARCHAR2(2048 CHAR),
 	TARIFA_API NUMBER(16,2),
 	SERVICIO_VENTA_ADM VARCHAR2(10 CHAR),
 	COSTE_TOTAL NUMBER(16,2),

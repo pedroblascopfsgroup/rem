@@ -4366,7 +4366,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				.getHistoricoAdecuacionesAlquilerByActivo(idActivo);
 		List<DtoActivoPatrimonio> listActPatrimonioDto = new ArrayList<DtoActivoPatrimonio>();
 
-		if (!Checks.esNulo(listActHistPatrimonio)) {
+		if (!Checks.estaVacio(listActHistPatrimonio)) {
 			for (ActivoHistoricoPatrimonio activoHistPatrimonio : listActHistPatrimonio) {
 				try {
 					DtoActivoPatrimonio actPatrimonioDto = new DtoActivoPatrimonio();

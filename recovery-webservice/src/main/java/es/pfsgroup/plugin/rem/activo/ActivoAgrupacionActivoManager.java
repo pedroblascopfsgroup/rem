@@ -152,7 +152,7 @@ public class ActivoAgrupacionActivoManager extends BusinessOperationOverrider<Ac
 	
 	@Override
 	public boolean isUniqueAgrupacionActivo(Activo activo, ActivoAgrupacion agrupacionActivo){
-		return activoAgrupacionActivoDao.isUniqueAgrupacionActivo(activo.getId(), agrupacionActivo.getTipoAgrupacion().getCodigo());
+		return activoAgrupacionActivoDao.isUniqueAgrupacionActivo(activo.getId(), agrupacionActivo.getTipoAgrupacion().getCodigo(), agrupacionActivo.getNumAgrupRem());
 	}
 	
 	@Override

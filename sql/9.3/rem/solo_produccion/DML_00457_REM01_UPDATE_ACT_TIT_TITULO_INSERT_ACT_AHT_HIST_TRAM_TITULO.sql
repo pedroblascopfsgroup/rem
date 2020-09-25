@@ -1,0 +1,470 @@
+--/*
+--######################################### 
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20200917
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-8092
+--## PRODUCTO=NO
+--##            
+--## INSTRUCCIONES:  Actualizar titulo de activos
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+
+DECLARE
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    V_NUM_TABLAS_2 NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_USUARIO VARCHAR2(100 CHAR):='REMVIP-8092'; --Vble. auxiliar para almacenar el usuario
+
+    V_TABLA VARCHAR2(100 CHAR) :='ACT_TIT_TITULO'; --Vble. auxiliar para almacenar la tabla a insertar
+    V_TABLA_ESTADO VARCHAR2(100 CHAR):='DD_ETI_ESTADO_TITULO'; --Vble. auxiliar para almacenar la tabla de los estados
+    V_TABLA_ACTIVO VARCHAR2(100 CHAR):='ACT_ACTIVO'; --Vble. para almacenar la tabla de los activos
+    V_TABLA_HIST VARCHAR2(100 CHAR):='ACT_AHT_HIST_TRAM_TITULO'; --Vble para alamacenar la tabla del historico de tramitacion
+    V_TABLA_DD_ESTADO VARCHAR2(100 CHAR):='DD_ESP_ESTADO_PRESENTACION'; --Vble para almacenar la tabla del diccionario del estado de presentacion
+	
+    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
+    V_ENTIDAD_ID NUMBER(16);
+    V_ID NUMBER(16);
+    V_FECHA_PRESENTACION VARCHAR2(100 CHAR):='01/01/1900';
+    V_CODIGO_ESTADO_PRESENTACION NUMBER(16):='03';
+
+    V_COUNT NUMBER(16):=0;
+    V_COUNT2 NUMBER(16):=0;
+    
+    
+    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA
+    (
+    	-- ##NUMERO ACTIVO##  ##NUMERO ACTIVO PRINEX##  ##FECHA INSCRIPCION##
+        T_TIPO_DATA('6727624','31003','13/08/2015'),
+        T_TIPO_DATA('6741664','31004','13/08/2015'),
+        T_TIPO_DATA('6742869','31005','13/08/2015'),
+        T_TIPO_DATA('6727463','31006','13/08/2015'),
+        T_TIPO_DATA('6729702','31007','13/08/2015'),
+        T_TIPO_DATA('6740721','31008','13/08/2015'),
+        T_TIPO_DATA('6725150','31009','13/08/2015'),
+        T_TIPO_DATA('6733852','31010','13/08/2015'),
+        T_TIPO_DATA('6720620','31011','13/08/2015'),
+        T_TIPO_DATA('6737159','31012','13/08/2015'),
+        T_TIPO_DATA('6714696','31013','13/08/2015'),
+        T_TIPO_DATA('6716780','31014','13/08/2015'),
+        T_TIPO_DATA('6734585','31015','13/08/2015'),
+        T_TIPO_DATA('6715307','31016','13/08/2015'),
+        T_TIPO_DATA('6736298','31017','13/08/2015'),
+        T_TIPO_DATA('6713981','31018','13/08/2015'),
+        T_TIPO_DATA('6732913','31019','13/08/2015'),
+        T_TIPO_DATA('6729370','31020','13/08/2015'),
+        T_TIPO_DATA('6723361','31021','13/08/2015'),
+        T_TIPO_DATA('6721769','31022','13/08/2015'),
+        T_TIPO_DATA('6711705','31023','13/08/2015'),
+        T_TIPO_DATA('6732215','31024','13/08/2015'),
+        T_TIPO_DATA('6712621','31025','13/08/2015'),
+        T_TIPO_DATA('6738110','31026','13/08/2015'),
+        T_TIPO_DATA('6731010','31027','13/08/2015'),
+        T_TIPO_DATA('6738522','31028','13/08/2015'),
+        T_TIPO_DATA('6729277','31029','13/08/2015'),
+        T_TIPO_DATA('6744386','31030','13/08/2015'),
+        T_TIPO_DATA('6721981','31031','13/08/2015'),
+        T_TIPO_DATA('6724521','31032','13/08/2015'),
+        T_TIPO_DATA('6721081','31033','13/08/2015'),
+        T_TIPO_DATA('6741934','31034','13/08/2015'),
+        T_TIPO_DATA('6723556','31035','13/08/2015'),
+        T_TIPO_DATA('6713015','31036','13/08/2015'),
+        T_TIPO_DATA('6728543','31037','13/08/2015'),
+        T_TIPO_DATA('6716411','31038','13/08/2015'),
+        T_TIPO_DATA('6743015','31039','13/08/2015'),
+        T_TIPO_DATA('6742252','31040','13/08/2015'),
+        T_TIPO_DATA('6736052','31041','13/08/2015'),
+        T_TIPO_DATA('6716461','31042','13/08/2015'),
+        T_TIPO_DATA('6742796','31043','13/08/2015'),
+        T_TIPO_DATA('6730925','31044','13/08/2015'),
+        T_TIPO_DATA('6719771','31045','13/08/2015'),
+        T_TIPO_DATA('6727120','31046','13/08/2015'),
+        T_TIPO_DATA('6716168','31047','13/08/2015'),
+        T_TIPO_DATA('6723186','31048','13/08/2015'),
+        T_TIPO_DATA('6721149','31049','13/08/2015'),
+        T_TIPO_DATA('6722632','31050','13/08/2015'),
+        T_TIPO_DATA('6740313','31051','13/08/2015'),
+        T_TIPO_DATA('6712870','31052','13/08/2015'),
+        T_TIPO_DATA('6737063','31053','13/08/2015'),
+        T_TIPO_DATA('6712532','31054','13/08/2015'),
+        T_TIPO_DATA('6730145','31055','13/08/2015'),
+        T_TIPO_DATA('6742596','31056','13/08/2015'),
+        T_TIPO_DATA('6723380','31057','13/08/2015'),
+        T_TIPO_DATA('6722107','31058','13/08/2015'),
+        T_TIPO_DATA('6729621','31059','13/08/2015'),
+        T_TIPO_DATA('6734597','31060','13/08/2015'),
+        T_TIPO_DATA('6734016','31061','13/08/2015'),
+        T_TIPO_DATA('6737311','31062','13/08/2015'),
+        T_TIPO_DATA('6729436','31063','13/08/2015'),
+        T_TIPO_DATA('6742777','31064','13/08/2015'),
+        T_TIPO_DATA('6714393','31065','13/08/2015'),
+        T_TIPO_DATA('6734927','31066','13/08/2015'),
+        T_TIPO_DATA('6728475','31067','13/08/2015'),
+        T_TIPO_DATA('6723518','31068','13/08/2015'),
+        T_TIPO_DATA('6724406','31069','13/08/2015'),
+        T_TIPO_DATA('6713772','31070','13/08/2015'),
+        T_TIPO_DATA('6726324','31071','13/08/2015'),
+        T_TIPO_DATA('6734775','31072','13/08/2015'),
+        T_TIPO_DATA('6713306','31073','13/08/2015'),
+        T_TIPO_DATA('6721985','31074','13/08/2015'),
+        T_TIPO_DATA('6733648','31075','13/08/2015'),
+        T_TIPO_DATA('6727981','31076','13/08/2015'),
+        T_TIPO_DATA('6712169','31077','13/08/2015'),
+        T_TIPO_DATA('6744008','31078','13/08/2015'),
+        T_TIPO_DATA('6735950','31079','13/08/2015'),
+        T_TIPO_DATA('6729619','31080','13/08/2015'),
+        T_TIPO_DATA('6737183','31081','13/08/2015'),
+        T_TIPO_DATA('6727012','31082','13/08/2015'),
+        T_TIPO_DATA('6740324','31083','13/08/2015'),
+        T_TIPO_DATA('6740264','31084','13/08/2015'),
+        T_TIPO_DATA('6740576','31085','13/08/2015'),
+        T_TIPO_DATA('6719237','31086','13/08/2015'),
+        T_TIPO_DATA('6721808','31087','13/08/2015'),
+        T_TIPO_DATA('6723059','31088','13/08/2015'),
+        T_TIPO_DATA('6724308','31089','13/08/2015'),
+        T_TIPO_DATA('6714975','31090','13/08/2015'),
+        T_TIPO_DATA('6720352','31091','13/08/2015'),
+        T_TIPO_DATA('6735036','31092','13/08/2015'),
+        T_TIPO_DATA('6714167','31093','13/08/2015'),
+        T_TIPO_DATA('6725189','31094','13/08/2015'),
+        T_TIPO_DATA('6726042','31095','13/08/2015'),
+        T_TIPO_DATA('6721638','31096','13/08/2015'),
+        T_TIPO_DATA('6737107','31097','13/08/2015'),
+        T_TIPO_DATA('6732635','31098','13/08/2015'),
+        T_TIPO_DATA('6736467','31099','13/08/2015'),
+        T_TIPO_DATA('6714856','31100','13/08/2015'),
+        T_TIPO_DATA('6719589','31101','13/08/2015'),
+        T_TIPO_DATA('6725816','31102','13/08/2015'),
+        T_TIPO_DATA('6730421','31103','13/08/2015'),
+        T_TIPO_DATA('6731834','31104','13/08/2015'),
+        T_TIPO_DATA('6741202','31105','13/08/2015'),
+        T_TIPO_DATA('6714631','31106','13/08/2015'),
+        T_TIPO_DATA('6741516','31107','13/08/2015'),
+        T_TIPO_DATA('6733288','31108','13/08/2015'),
+        T_TIPO_DATA('6716561','31109','13/08/2015'),
+        T_TIPO_DATA('6720131','31110','13/08/2015'),
+        T_TIPO_DATA('6742792','31111','13/08/2015'),
+        T_TIPO_DATA('6744608','31112','13/08/2015'),
+        T_TIPO_DATA('6732131','31113','13/08/2015'),
+        T_TIPO_DATA('6727288','31114','13/08/2015'),
+        T_TIPO_DATA('6724252','31115','13/08/2015'),
+        T_TIPO_DATA('6734584','31116','13/08/2015'),
+        T_TIPO_DATA('6733904','31117','13/08/2015'),
+        T_TIPO_DATA('6722241','31118','13/08/2015'),
+        T_TIPO_DATA('6732865','31119','13/08/2015'),
+        T_TIPO_DATA('6739283','31120','13/08/2015'),
+        T_TIPO_DATA('6724526','31121','13/08/2015'),
+        T_TIPO_DATA('6741770','31122','13/08/2015'),
+        T_TIPO_DATA('6723349','31123','13/08/2015'),
+        T_TIPO_DATA('6721127','31124','13/08/2015'),
+        T_TIPO_DATA('6743750','31125','13/08/2015'),
+        T_TIPO_DATA('6739320','31126','13/08/2015'),
+        T_TIPO_DATA('6720889','31127','13/08/2015'),
+        T_TIPO_DATA('6743427','31128','13/08/2015'),
+        T_TIPO_DATA('6725668','36348','07/03/2012'),
+        T_TIPO_DATA('6713057','36349','07/03/2012'),
+        T_TIPO_DATA('6743893','36350','07/03/2012'),
+        T_TIPO_DATA('6716907','36351','07/03/2012'),
+        T_TIPO_DATA('6743090','36352','07/03/2012'),
+        T_TIPO_DATA('6742587','36353','07/03/2012'),
+        T_TIPO_DATA('6720325','36354','07/03/2012'),
+        T_TIPO_DATA('6744312','36355','07/03/2012'),
+        T_TIPO_DATA('6725650','36356','07/03/2012'),
+        T_TIPO_DATA('6711776','36357','07/03/2012'),
+        T_TIPO_DATA('6734879','36358','07/03/2012'),
+        T_TIPO_DATA('6741995','36359','07/03/2012'),
+        T_TIPO_DATA('6743421','36360','07/03/2012'),
+        T_TIPO_DATA('6740024','36361','07/03/2012'),
+        T_TIPO_DATA('6721773','36767','03/06/2011'),
+        T_TIPO_DATA('6742533','36769','03/06/2011'),
+        T_TIPO_DATA('6724577','36770','03/06/2011'),
+        T_TIPO_DATA('6735075','36774','03/06/2011'),
+        T_TIPO_DATA('6715394','36775','03/06/2011'),
+        T_TIPO_DATA('6733167','36776','03/06/2011'),
+        T_TIPO_DATA('6738395','36777','03/06/2011'),
+        T_TIPO_DATA('6719848','36778','03/06/2011'),
+        T_TIPO_DATA('6722856','36779','03/06/2011'),
+        T_TIPO_DATA('6740908','36780','03/06/2011'),
+        T_TIPO_DATA('6740844','36781','03/06/2011'),
+        T_TIPO_DATA('6724330','36782','03/06/2011'),
+        T_TIPO_DATA('6736581','36783','03/06/2011'),
+        T_TIPO_DATA('6740934','36784','03/06/2011'),
+        T_TIPO_DATA('6742667','36785','03/06/2011'),
+        T_TIPO_DATA('6719422','36786','03/06/2011'),
+        T_TIPO_DATA('6737492','36787','03/06/2011'),
+        T_TIPO_DATA('6736586','36788','03/06/2011'),
+        T_TIPO_DATA('6724040','36789','03/06/2011'),
+        T_TIPO_DATA('6729868','36790','03/06/2011'),
+        T_TIPO_DATA('6728508','36791','03/06/2011'),
+        T_TIPO_DATA('6713399','36792','03/06/2011'),
+        T_TIPO_DATA('6743084','44192','24/03/2015'),
+        T_TIPO_DATA('6716381','47642','15/01/2016'),
+        T_TIPO_DATA('6740669','47645','15/01/2016'),
+        T_TIPO_DATA('6738712','47648','15/01/2016'),
+        T_TIPO_DATA('6724661','47651','15/01/2016'),
+        T_TIPO_DATA('6725237','47654','15/01/2016'),
+        T_TIPO_DATA('6729604','47657','15/01/2016'),
+        T_TIPO_DATA('6741151','47660','15/01/2016'),
+        T_TIPO_DATA('6730611','47663','15/01/2016'),
+        T_TIPO_DATA('6713196','51607','06/10/2015'),
+        T_TIPO_DATA('6738239','51608','06/10/2015'),
+        T_TIPO_DATA('6711863','51609','06/10/2015'),
+        T_TIPO_DATA('6734392','51610','06/10/2015'),
+        T_TIPO_DATA('6742387','51611','06/10/2015'),
+        T_TIPO_DATA('6736273','51612','06/10/2015'),
+        T_TIPO_DATA('6738109','51613','06/10/2015'),
+        T_TIPO_DATA('6735495','56896','19/05/2016'),
+        T_TIPO_DATA('6727484','56897','19/05/2016'),
+        T_TIPO_DATA('6727261','56898','19/05/2016'),
+        T_TIPO_DATA('6718795','56899','19/05/2016'),
+        T_TIPO_DATA('6742184','56900','19/05/2016'),
+        T_TIPO_DATA('6715538','56901','19/05/2016'),
+        T_TIPO_DATA('6735481','56902','19/05/2016'),
+        T_TIPO_DATA('6743092','56903','19/05/2016'),
+        T_TIPO_DATA('6713336','60768','17/09/2015'),
+        T_TIPO_DATA('6726870','60769','17/09/2015'),
+        T_TIPO_DATA('6722061','60770','17/09/2015'),
+        T_TIPO_DATA('6738473','60771','17/09/2015'),
+        T_TIPO_DATA('6743603','60772','17/09/2015'),
+        T_TIPO_DATA('6714243','60773','17/09/2015'),
+        T_TIPO_DATA('6712110','60774','17/09/2015'),
+        T_TIPO_DATA('6721246','60775','17/09/2015'),
+        T_TIPO_DATA('6715064','60776','17/09/2015'),
+        T_TIPO_DATA('6735843','60777','17/09/2015'),
+        T_TIPO_DATA('6732122','60778','17/09/2015'),
+        T_TIPO_DATA('6726451','60779','17/09/2015'),
+        T_TIPO_DATA('6713881','60780','17/09/2015'),
+        T_TIPO_DATA('6716364','60781','17/09/2015'),
+        T_TIPO_DATA('6737329','60782','17/09/2015'),
+        T_TIPO_DATA('6718861','60783','17/09/2015'),
+        T_TIPO_DATA('6719409','60784','17/09/2015'),
+        T_TIPO_DATA('6741321','60785','17/09/2015'),
+        T_TIPO_DATA('6739821','60786','17/09/2015'),
+        T_TIPO_DATA('6712472','60787','17/09/2015'),
+        T_TIPO_DATA('6742439','60788','17/09/2015'),
+        T_TIPO_DATA('6719726','60789','17/09/2015'),
+        T_TIPO_DATA('6725978','60790','17/09/2015'),
+        T_TIPO_DATA('6714912','60791','17/09/2015'),
+        T_TIPO_DATA('6729865','60796','17/09/2015'),
+        T_TIPO_DATA('6736777','60797','17/09/2015'),
+        T_TIPO_DATA('6728189','60801','17/09/2015'),
+        T_TIPO_DATA('6712648','60804','17/09/2015'),
+        T_TIPO_DATA('6743886','60862','14/04/2016'),
+        T_TIPO_DATA('6726378','60863','14/04/2016'),
+        T_TIPO_DATA('6738327','60864','14/04/2016'),
+        T_TIPO_DATA('6722682','60865','14/04/2016'),
+        T_TIPO_DATA('6740939','60866','14/04/2016'),
+        T_TIPO_DATA('6722892','60867','14/04/2016'),
+        T_TIPO_DATA('6732718','60868','14/04/2016'),
+        T_TIPO_DATA('6723139','60869','14/04/2016'),
+        T_TIPO_DATA('6740431','60870','14/04/2016'),
+        T_TIPO_DATA('6732479','60871','14/04/2016'),
+        T_TIPO_DATA('6720188','60872','14/04/2016'),
+        T_TIPO_DATA('6739754','60873','14/04/2016'),
+        T_TIPO_DATA('6737462','60874','14/04/2016'),
+        T_TIPO_DATA('6733124','60875','14/04/2016'),
+        T_TIPO_DATA('6719655','60876','14/04/2016'),
+        T_TIPO_DATA('6713908','60877','14/04/2016'),
+        T_TIPO_DATA('6723384','64493','26/07/2016'),
+        T_TIPO_DATA('6736302','64494','26/07/2016'),
+        T_TIPO_DATA('6733303','64495','26/07/2016'),
+        T_TIPO_DATA('6729644','64496','26/07/2016'),
+        T_TIPO_DATA('6736184','64497','26/07/2016'),
+        T_TIPO_DATA('6734957','64498','26/07/2016'),
+        T_TIPO_DATA('6725757','64499','26/07/2016'),
+        T_TIPO_DATA('6731100','64500','26/07/2016'),
+        T_TIPO_DATA('6735634','64501','26/07/2016'),
+        T_TIPO_DATA('6716081','64502','26/07/2016'),
+        T_TIPO_DATA('6715226','64503','26/07/2016'),
+        T_TIPO_DATA('6744335','64504','26/07/2016'),
+        T_TIPO_DATA('6741824','64505','26/07/2016'),
+        T_TIPO_DATA('6740179','64506','26/07/2016'),
+        T_TIPO_DATA('6728460','64507','26/07/2016'),
+        T_TIPO_DATA('6730228','64508','26/07/2016'),
+        T_TIPO_DATA('6730323','64509','26/07/2016'),
+        T_TIPO_DATA('6726209','64510','26/07/2016'),
+        T_TIPO_DATA('6734354','64511','26/07/2016'),
+        T_TIPO_DATA('6743550','64512','26/07/2016'),
+        T_TIPO_DATA('6730965','64513','26/07/2016'),
+        T_TIPO_DATA('6721660','64514','26/07/2016'),
+        T_TIPO_DATA('6723856','64515','26/07/2016'),
+        T_TIPO_DATA('6742378','64516','26/07/2016'),
+        T_TIPO_DATA('6720125','64517','26/07/2016'),
+        T_TIPO_DATA('6716649','68781','28/03/2017'),
+        T_TIPO_DATA('6715368','68782','28/03/2017'),
+        T_TIPO_DATA('6713024','68783','28/03/2017'),
+        T_TIPO_DATA('6728259','68784','28/03/2017'),
+        T_TIPO_DATA('6721524','68785','28/03/2017'),
+        T_TIPO_DATA('6721881','68786','28/03/2017'),
+        T_TIPO_DATA('6732464','68787','28/03/2017'),
+        T_TIPO_DATA('6713231','68788','28/03/2017'),
+        T_TIPO_DATA('6743280','68789','28/03/2017'),
+        T_TIPO_DATA('7295260','88421','13/11/2019'),
+        T_TIPO_DATA('7298220','89062','14/06/2019'),
+        T_TIPO_DATA('7298696','89305','04/09/2019'),
+        T_TIPO_DATA('7298782','89343','09/07/2019'),
+        T_TIPO_DATA('7298774','89347','07/10/2019'),
+        T_TIPO_DATA('7298759','89352','19/03/2019'),
+        T_TIPO_DATA('7298919','89377','22/01/2020'),
+        T_TIPO_DATA('7298991','89385','06/05/2019'),
+        T_TIPO_DATA('7298992','89386','06/05/2019'),
+        T_TIPO_DATA('7299558','89504','16/01/2018'),
+        T_TIPO_DATA('7299570','89505','16/01/2018'),
+        T_TIPO_DATA('7299565','89506','03/04/2006'),
+        T_TIPO_DATA('7299566','89507','03/04/2006'),
+        T_TIPO_DATA('7300511','89688','05/05/2010'),
+        T_TIPO_DATA('7300957','89881','27/12/2019'),
+        T_TIPO_DATA('7300997','89885','20/09/2019'),
+        T_TIPO_DATA('7300990','89886','30/09/2019'),
+        T_TIPO_DATA('7301034','89914','10/01/2020'),
+        T_TIPO_DATA('7301033','89915','10/01/2020'),
+        T_TIPO_DATA('7301886','89946','09/05/2019'),
+        T_TIPO_DATA('7301893','89947','14/01/2009'),
+        T_TIPO_DATA('7301910','89952','28/05/2019'),
+        T_TIPO_DATA('7301934','89962','30/01/2020'),
+        T_TIPO_DATA('7301980','89980','01/08/2019'),
+        T_TIPO_DATA('7301985','89981','01/08/2019'),
+        T_TIPO_DATA('7302827','90344','04/06/2012'),
+        T_TIPO_DATA('7302824','90345','04/06/2012'),
+        T_TIPO_DATA('7302904','90349','19/03/2019'),
+        T_TIPO_DATA('7302940','90355','04/12/2019'),
+        T_TIPO_DATA('7302933','90356','04/12/2019'),
+        T_TIPO_DATA('7302983','90380','11/12/2018'),
+        T_TIPO_DATA('7303226','90582','21/05/2020'),
+        T_TIPO_DATA('7330071','90732','13/12/2015'),
+        T_TIPO_DATA('7330139','90757','23/06/2020')
+
+    ); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+    
+BEGIN	
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
+ 
+    -- LOOP para insertar los valores en OFR_OFERTAS
+    DBMS_OUTPUT.PUT_LINE('[INFO]: ACTUALIZACION EN ACT_TIT_TITULO ');
+        
+    FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+      LOOP
+      
+        V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+    
+        --Comprobamos si existe el activo
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_ACTIVO||' WHERE ACT_NUM_ACTIVO = '||TRIM(V_TMP_TIPO_DATA(1))||'';
+        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+        
+        --Si existe activo
+        IF V_NUM_TABLAS > 0 THEN	
+
+               --Comprobamos si existe el titulo
+          V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO='||TRIM(V_TMP_TIPO_DATA(1))||') ';
+          EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+          --Si existe el titulo, se actualiza
+          IF V_NUM_TABLAS > 0 then
+                DBMS_OUTPUT.PUT_LINE('[INFO]: ACTUALIZAMOS EL TITULO DEL ACTIVO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
+                
+                V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET 
+                        TIT_FECHA_INSC_REG = TO_DATE('''||TRIM(V_TMP_TIPO_DATA(3))||''',''DD/MM/YYYY''),             
+                        USUARIOMODIFICAR = '''||V_USUARIO||''', 
+                        FECHAMODIFICAR = SYSDATE
+                        WHERE ACT_ID=(SELECT ACT_ID FROM '||V_ESQUEMA||'.'||V_TABLA_ACTIVO||' WHERE ACT_NUM_ACTIVO='''||TRIM(V_TMP_TIPO_DATA(1))||''')';
+
+                EXECUTE IMMEDIATE V_SQL;
+                DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO ACTUALIZADO CORRECTAMENTE');
+
+                
+
+                V_SQL:='SELECT TIT_ID FROM '||V_ESQUEMA||'.'||V_TABLA||' TIT
+                JOIN '||V_ESQUEMA||'.'||V_TABLA_ACTIVO||' ACT ON ACT.ACT_ID=TIT.ACT_ID
+                WHERE ACT.ACT_NUM_ACTIVO='||TRIM(V_TMP_TIPO_DATA(1))||'';
+                EXECUTE IMMEDIATE V_SQL INTO V_ENTIDAD_ID;
+
+                V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_HIST||' WHERE TIT_ID ='||V_ENTIDAD_ID||' ';
+                EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+                --Si no existe lo insertamos
+                if V_NUM_TABLAS < 1 THEN
+                    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS REGISTRO  EN TABLA HISTORICA');
+
+                    V_SQL := 'SELECT '|| V_ESQUEMA ||'.S_'||V_TABLA_HIST||'.NEXTVAL FROM DUAL';
+                    EXECUTE IMMEDIATE V_SQL INTO V_ID;
+
+                    V_SQL := 'INSERT INTO '|| V_ESQUEMA ||'.'||V_TABLA_HIST||' (' ||
+                      	'AHT_ID, TIT_ID, AHT_FECHA_PRES_REGISTRO, AHT_FECHA_INSCRIPCION, DD_ESP_ID, USUARIOCREAR, FECHACREAR) VALUES (
+                      	'|| V_ID ||',
+                          '||V_ENTIDAD_ID||',
+                          TO_DATE('''||V_FECHA_PRESENTACION||''', ''DD/MM/YYYY''),
+                          TO_DATE('''||TRIM(V_TMP_TIPO_DATA(3))||''', ''DD/MM/YYYY''),
+                          (SELECT DD_ESP_ID FROM '||V_ESQUEMA||'.'||V_TABLA_DD_ESTADO||' WHERE DD_ESP_CODIGO='||V_CODIGO_ESTADO_PRESENTACION||'),
+						'''||V_USUARIO||''',
+                        SYSDATE)';
+
+                   
+                    EXECUTE IMMEDIATE V_SQL;
+
+                     DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTADO EN TABLA HISTORICA CORRECTAMENTE');
+                     V_COUNT:=V_COUNT+1;
+                  
+                ELSE
+                  DBMS_OUTPUT.PUT_LINE('[INFO]: ### YA EXISTE EL REGISTRO EN LA HISTORICA PARA EL NUMERO ACTIVO '||TRIM(V_TMP_TIPO_DATA(1))||'');
+                END IF;
+                ELSE
+                    DBMS_OUTPUT.PUT_LINE('[INFO]: ### NO EXISTE TITULO PARA EL NUMERO DE ACTIVO '||TRIM(V_TMP_TIPO_DATA(1))||'');
+                END IF;
+
+            ELSE
+            --Si no existe el codigo del diccionario no se hace nada
+                 DBMS_OUTPUT.PUT_LINE('[INFO]: ### NO EXISTE EL ACTIVO CON EL CODIGO: '''||TRIM(V_TMP_TIPO_DATA(1))||''' ');
+            END IF;
+            V_COUNT2:=V_COUNT2+1;
+      END LOOP;
+      DBMS_OUTPUT.PUT_LINE('################## ');
+      DBMS_OUTPUT.PUT_LINE('[INFO] INSERTADOS: '|| V_COUNT ||' REGISTROS CORRECTAMENTE ');
+      DBMS_OUTPUT.PUT_LINE('################## ');
+      V_COUNT:=V_COUNT2-V_COUNT;
+
+      if V_COUNT>0 then
+        DBMS_OUTPUT.PUT_LINE('################## ');
+        DBMS_OUTPUT.PUT_LINE('[INFO] ### INSERTADOS: '|| V_COUNT ||' REGISTROS INCORRECTAMENTE ');  
+        DBMS_OUTPUT.PUT_LINE('################## ');
+      end if;
+      
+
+    COMMIT;
+    
+    DBMS_OUTPUT.PUT_LINE('[FIN]');
+    
+    
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(ERR_MSG);
+
+          ROLLBACK;
+          RAISE;          
+
+END;
+/
+EXIT

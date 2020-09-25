@@ -523,6 +523,47 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				return true;
 			}
 		 },
+		 
+		 enableEdicionCheckHpm: function(get){
+			 var esGestorAlquiler = get('activo.esGestorAlquiler');
+			 var estadoAlquiler = get('patrimonio.estadoAlquiler');
+			 var tieneOfertaAlquilerViva = get('activo.tieneOfertaAlquilerViva');
+			 var incluidoEnPerimetro = get('activo.incluidoEnPerimetro');
+			 var tipoTituloCodigo = get('activo.tipoTituloCodigo');
+			 if($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || (esGestorAlquiler == true || esGestorAlquiler == "true")){
+				 var isAM = get('activo.activoMatriz'); /*Si el activo no es Activo Matriz devolverá undefined*/
+				 var dadaDeBaja = get('activo.agrupacionDadaDeBaja');
+				 
+				 if(isAM == true) {
+					 /*Comprobar si su PA está dada de baja*/
+					 if(dadaDeBaja == "true") {
+					   	return false; //El checkbox será editable.
+					   } else {
+					   	return true; //El checkbox no será editable.
+					   }
+				 }
+				 
+				 if((tipoTituloCodigo == CONST.TIPO_TITULO_ACTIVO['UNIDAD_ALQUILABLE'] && incluidoEnPerimetro) || (tieneOfertaAlquilerViva === true && (estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] || estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["CON_DEMANDAS"]))){
+					return true;
+				} else {
+					return false;
+				}
+			 }else{
+				 return true;
+			 }
+		 },
+		 
+		 disableCheckHpm: function(get){
+			var estadoAlquiler = get('patrimonio.estadoAlquiler');
+			var codComercializacion = get('activo.tipoComercializacionCodigo');
+			
+	        if((!Ext.isEmpty(estadoAlquiler) && estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"]) 
+	        	|| (!Ext.isEmpty(estadoAlquiler) && CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'] != codComercializacion)){
+	        	return true;
+	        } else {
+	            return false;
+	        }
+		 },
 
 		 enableComboAdecuacion: function(get){
 			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');

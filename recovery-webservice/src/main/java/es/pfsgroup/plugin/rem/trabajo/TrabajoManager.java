@@ -2030,7 +2030,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajo.setAprobacionComite(aprobacionComite);
 		}
 		if (dtoTrabajo.getFechaResolucionComite() != null) {
-			trabajo.setFechaResolucionComite(dtoTrabajo.getFechaResolucionComite());
+			if (!"1970-01-01".equals(groovyft.format(dtoTrabajo.getFechaResolucionComite()))) {
+				trabajo.setFechaResolucionComite(dtoTrabajo.getFechaResolucionComite());
+			}else {
+				trabajo.setFechaResolucionComite(null);
+			}
+			
 		}
 		if (dtoTrabajo.getResolucionComiteId() != null) {
 			trabajo.setResolucionComiteId(dtoTrabajo.getResolucionComiteId());

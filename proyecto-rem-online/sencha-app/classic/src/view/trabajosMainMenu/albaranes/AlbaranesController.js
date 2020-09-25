@@ -171,20 +171,13 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 			listaDetallePrefactura.getStore().loadPage(1);
 			me.calcularTotal(gridDetalleAlbaran,"detalleAlbaranGrid",record);	
 
-			if((numPrefactura!= null && numPrefactura!= "") || (fechaPrefactura != null && fechaPrefactura !="") 
-					|| ( estadoPrefactura!= null && estadoPrefactura!= "") || (numTrabajo != null && numTrabajo != "") 
-					|| (estadoTrabajo != null && estadoTrabajo != "") || (anyoTrabajo!= null && anyoTrabajo!= "")){
+			if((numTrabajo != null && numTrabajo != "") || (estadoTrabajo != null && estadoTrabajo != "") || (anyoTrabajo!= null && anyoTrabajo!= "")){
 				me.lookupReference('botonValidarPrefactura').setDisabled(true);
-				
+				me.lookupReference('botonValidarTrabajo').setDisabled(true);
 			}
 			else{
 				me.habilitarPrefactura(boton,record);				
 			}
-			
-			if((numTrabajo != null && numTrabajo != "") || (estadoTrabajo != null && estadoTrabajo != "") || (anyoTrabajo!= null && anyoTrabajo!= "")){
-				me.lookupReference('botonValidarTrabajo').setDisabled(true);
-			}
-			
 			
 		} else {
 			me.deselectPrefactura(grid);

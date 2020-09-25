@@ -4114,7 +4114,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			 		" FROM ACT_ICO_INFO_COMERCIAL ico  " +
 			 		" INNER JOIN ACT_PVE_PROVEEDOR pve ON pve.PVE_ID = ico.ICO_MEDIADOR_ID " +
 			 		" INNER JOIN ACT_ACTIVO act ON act.ACT_ID = ico.ACT_ID " +
-			 		" WHERE act.ACT_NUM_ACTIVO = " + numActivo);
+			 		" WHERE ico.BORRADO = 0 AND act.ACT_NUM_ACTIVO = " + numActivo);
 		}
 		return resultado;
 	}
@@ -4127,7 +4127,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			 		" FROM ACT_ICO_INFO_COMERCIAL ico  " +
 			 		" INNER JOIN ACT_PVE_PROVEEDOR pve ON pve.PVE_ID = ico.ICO_MEDIADOR_ESPEJO_ID " +
 			 		" INNER JOIN ACT_ACTIVO act ON act.ACT_ID = ico.ACT_ID " +
-			 		" WHERE act.ACT_NUM_ACTIVO = " + numActivo);
+			 		" WHERE ico.BORRADO = 0 AND act.ACT_NUM_ACTIVO = " + numActivo);
 		}
 		return resultado;
 	}

@@ -623,7 +623,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 													collapsible: false,
 													colspan: 3,
 													title: HreRem.i18n('title.peticion.presupuesto.trabajo'),
-													defaultType: 'textfieldbase',
+													defaultType: 'displayfieldbase',
 													items :
 														[
 															{ 
@@ -632,7 +632,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 																fieldLabel: HreRem.i18n('fieldlabel.precio.presupuesto')
 											                },
 											                { 
-																xtype: 'currencyfieldbase',
+																xtype: 'textfieldbase',
 																reference: 'referenciaImportePresupuesto',
 																fieldLabel: HreRem.i18n('fieldlabel.referencia.presupuesto')
 											                }

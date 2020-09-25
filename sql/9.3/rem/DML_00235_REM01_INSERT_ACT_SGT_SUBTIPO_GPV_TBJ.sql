@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20200922
+--## FECHA_CREACION=20200925
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10742
@@ -150,9 +150,9 @@ DECLARE
       T_TIPO_DATA('07','138','15','84'),
       T_TIPO_DATA('07','139','18','91'),
       T_TIPO_DATA('07','140','18','91'),
-      T_TIPO_DATA('07','141','14','63'),
+      T_TIPO_DATA('07','141','15','80'),
       T_TIPO_DATA('07','142','14','57'),
-      T_TIPO_DATA('07','143','14','68'),
+      T_TIPO_DATA('07','143','14','57'),
       T_TIPO_DATA('07','144','11','52'),
       T_TIPO_DATA('07','145','14','57')
     ); 

@@ -487,7 +487,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		},
 		
 		requisitosEdicionExclusionBulk: function(get){
-			var tarea = get('datosbasicosoferta.isAdvisoryNoteEnTareas');
+			var tarea = get('datosbasicosoferta.tareaAdvisoryNoteFinalizada');
 			return ($AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL_SINGULAR']) || $AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL_BO_INM']) && (tarea == false || tarea == 'false'));
 		},
 		

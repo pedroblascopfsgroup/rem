@@ -32,7 +32,7 @@ public interface ActivoAgrupacionActivoDao extends AbstractDao<ActivoAgrupacionA
 	
 	public boolean isUniqueNewBuildingActive(Activo activo);
 	
-	public boolean isUniqueAgrupacionActivo(Long idActivo, String codigoTipoAgrupacion);
+	public boolean isUniqueAgrupacionActivo(Long idActivo, String codigoTipoAgrupacion, Long numAgrupacion);
 	
 	public boolean estaAgrupacionActivoConFechaBaja(Activo activo);
 	

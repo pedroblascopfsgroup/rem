@@ -1334,6 +1334,25 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				genericDao.update(ActivoTrabajo.class, activoTrabajoParaActualizar);
 
 			}
+			
+			if(dtoTrabajo.getImportePresupuesto() != null) {
+				PresupuestoTrabajo presupuesto = new PresupuestoTrabajo();
+				DDEstadoPresupuesto estadoPresupuesto = genericDao.get(DDEstadoPresupuesto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "03"));
+				
+				presupuesto.setTrabajo(trabajo);
+				if(trabajo.getProveedorContacto() != null) {
+					presupuesto.setProveedorContacto(trabajo.getProveedorContacto());
+					presupuesto.setProveedor(trabajo.getProveedorContacto().getProveedor());
+				}
+				presupuesto.setEstadoPresupuesto(estadoPresupuesto);
+				presupuesto.setImporte((float)dtoTrabajo.getImportePresupuesto());
+				if(dtoTrabajo.getRefImportePresupueso() != null) {
+					presupuesto.setRefPresupuestoProveedor(dtoTrabajo.getRefImportePresupueso());
+				}
+				
+				genericDao.save(PresupuestoTrabajo.class, presupuesto);
+			}
+			actualizarImporteTotalTrabajo(trabajo.getId());
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -1823,10 +1842,31 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						 //pendiente revision
 						 tarifaTrabajo.setMedicion(0F);
 						 tarifaTrabajo.setPrecioUnitario(config.getPrecioUnitario());
+						 tarifaTrabajo.setPrecioUnitarioCliente(config.getPrecioUnitarioCliente());
 						 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
 					}
 				}
 			}
+			
+			if(dtoTrabajo.getImportePresupuesto() != null) {
+				PresupuestoTrabajo presupuesto = new PresupuestoTrabajo();
+				DDEstadoPresupuesto estadoPresupuesto = genericDao.get(DDEstadoPresupuesto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "03"));
+				
+				presupuesto.setTrabajo(trabajo);
+				
+				if(trabajo.getProveedorContacto() != null) {
+					presupuesto.setProveedorContacto(trabajo.getProveedorContacto());
+					presupuesto.setProveedor(trabajo.getProveedorContacto().getProveedor());
+				}
+				presupuesto.setEstadoPresupuesto(estadoPresupuesto);
+				presupuesto.setImporte((float)dtoTrabajo.getImportePresupuesto());
+				if(dtoTrabajo.getRefImportePresupueso() != null) {
+					presupuesto.setRefPresupuestoProveedor(dtoTrabajo.getRefImportePresupueso());
+				}
+				
+				genericDao.save(PresupuestoTrabajo.class, presupuesto);
+			}
+			actualizarImporteTotalTrabajo(trabajo.getId());
 
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -2900,6 +2940,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			if (tarifaDto.getPrecioUnitario() != null && !tarifaDto.getPrecioUnitario().isEmpty()) {
 				traCfgTarifa.setPrecioUnitario(Float.valueOf(tarifaDto.getPrecioUnitario()));
+			}
+			if (tarifaDto.getPrecioUnitarioCliente() != null && !tarifaDto.getPrecioUnitarioCliente().isEmpty()) {
+				traCfgTarifa.setPrecioUnitarioCliente(Double.valueOf(tarifaDto.getPrecioUnitarioCliente()));
 			}
 			genericDao.save(TrabajoConfiguracionTarifa.class, traCfgTarifa);
 			actualizarImporteTotalTrabajo(idTrabajo);

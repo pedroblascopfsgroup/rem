@@ -2982,6 +2982,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			presupuesto.setEstadoPresupuesto(estadoPresupuesto);
 			beanUtilNotNull.copyProperties(presupuesto, presupuestoDto);
 			genericDao.save(PresupuestoTrabajo.class, presupuesto);
+			actualizarImporteTotalTrabajo(idTrabajo);
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());

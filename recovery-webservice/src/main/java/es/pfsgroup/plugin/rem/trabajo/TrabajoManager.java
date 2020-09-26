@@ -592,13 +592,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
 		
-		if(!Checks.esNulo(dtoTrabajo.getEstadoTrabajoCodigo())){
+		if(!Checks.esNulo(dtoTrabajo.getEstadoCodigo())){
 			dtoHistorificador.setCampo(ConstantesTrabajo.DD_EST_ID);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_DD_EST_ID);
 			if(!Checks.esNulo(trabajo.getEstado().getDescripcion())) {
 				dtoHistorificador.setValorAnterior(trabajo.getEstado().getDescripcion());
 			}
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getEstadoTrabajoCodigo());
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getEstadoCodigo());
 			DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filtro);
 			dtoHistorificador.setValorNuevo(estadoTrabajo.getDescripcion());
 			
@@ -2102,20 +2102,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (dtoTrabajo.getFechaTope() != null) {
 			trabajo.setFechaTope(dtoTrabajo.getFechaTope());
 		}
-		if (dtoTrabajo.getEstadoTrabajoCodigo() != null) {
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getEstadoTrabajoCodigo());
-			DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filtro);
-			trabajo.setEstado(estadoTrabajo);
-			trabajo.setFechaCambioEstado(new Date());
-			if(DDEstadoTrabajo.ESTADO_VALIDADO.equals(dtoTrabajo.getEstadoTrabajoCodigo())) {
-				trabajo.setFechaValidacion(new Date());
-			}
-		}
 		
 		if (dtoTrabajo.getEstadoCodigo() != null) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getEstadoCodigo());
 			DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filtro);
 			trabajo.setEstado(estadoTrabajo);
+			trabajo.setFechaCambioEstado(new Date());
+			if(DDEstadoTrabajo.ESTADO_VALIDADO.equals(dtoTrabajo.getEstadoCodigo())) {
+				trabajo.setFechaValidacion(new Date());
+			}
 		}
 		
 		if (dtoTrabajo.getFechaEjecucionTrabajo() != null) {

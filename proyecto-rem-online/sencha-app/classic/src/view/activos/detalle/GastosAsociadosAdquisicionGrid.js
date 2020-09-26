@@ -40,8 +40,8 @@ Ext.define('HreRem.view.activos.detalle.GastosAsociadosAdquisicionGrid', {
     initComponent: function () {
     	
     	var me = this;
-    	
-        me.store.load();
+    	if(!Ext.isEmpty(me.getStore()))
+        	me.getStore().load();
     	
      	me.deleteSuccessFn = function(){
     		this.getStore().load()

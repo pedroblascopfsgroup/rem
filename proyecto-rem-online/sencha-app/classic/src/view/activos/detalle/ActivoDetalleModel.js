@@ -11,7 +11,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.HistoricoTramtitacionTituloModel', 'HreRem.model.HistoricoGestionGrid', 'HreRem.model.ListaActivoGrid', 'HreRem.model.HistoricoFasesDePublicacion',
     'HreRem.model.AdjuntoActivoAgrupacion','HreRem.model.AdjuntoActivoProyecto','HreRem.model.DocumentacionAdministrativa', 'HreRem.model.ActivoPatrimonio',
     'HreRem.model.DocumentosTributosModel','HreRem.model.HistoricoSolicitudesPreciosModel', 'HreRem.model.ActivoEvolucion', 'HreRem.model.ActivoSaneamiento','HreRem.model.ActivoComplementoTituloModel',
-    'HreRem.model.GastoAsociadoAdquisicionModel'],
+    'HreRem.model.GastoAsociadoAdquisicionModel','HreRem.model.AgendaRevisionTituloGridModel','HreRem.model.SaneamientoAgenda'],
 
     data: {
     	activo: null,

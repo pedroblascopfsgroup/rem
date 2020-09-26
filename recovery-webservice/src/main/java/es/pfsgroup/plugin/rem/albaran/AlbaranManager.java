@@ -44,8 +44,8 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 		return page;
 	}
 
-	public Page findAllDetalle(DtoDetalleAlbaran numAlbaran) {
-		return albaranDao.getPrefacturas(numAlbaran);
+	public Page findAllDetalle(DtoDetalleAlbaran detalleAlbaran) {
+		return albaranDao.getPrefacturas(detalleAlbaran);
 	}
 
 	public Page findPrefectura(DtoDetallePrefactura dto) {

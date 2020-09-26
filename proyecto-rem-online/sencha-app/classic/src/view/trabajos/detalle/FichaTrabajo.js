@@ -8,8 +8,9 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
     recordName	: "trabajo",
 	recordClass	: "HreRem.model.FichaTrabajo",
     requires	: ['HreRem.model.FichaTrabajo', 'HreRem.view.trabajos.detalle.HistorificacionDeCamposGrid'],
+    refreshaftersave: true,
     afterLoad: function () {
-    	this.lookupController().bloqueaCamposSegunEstadoTrabajo();
+    	this.lookupController().desbloqueaCamposSegunEstadoTrabajo(this);
     },
     initComponent: function () {
         var me = this;
@@ -253,20 +254,20 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 					        	xtype: 'comboboxfieldbase',
 					        	bind: {
 				            		store: '{comboEstadoTrabajoFicha}',
-				            		value: '{trabajo.estadoTrabajoCodigo}'
+				            		value: '{trabajo.estadoCodigo}'
 				            	},
-				            	//NO BORRAR - REVISAR 11287
-				            	/*listeners: {
-				            		expand: function (combo) {
-				            			this.lookupController().filterStoreEstadoTrabajo( combo.getStore() );
+				            	listeners: {
+				            		afterrender: function (combo){
+				            			this.lookupController().filterStoreEstadoTrabajo(combo.getStore());
 				            		}
-				            	},*/
-					        	reference: 'comboEstadoTrabajo',
+				            	},
+					        	reference: 'comboEstadoTrabajoRef',
 					        	colspan: 2
 					        },
 							{
 					        	xtype: 'datefieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.fecha.ejecucion.simple'),
+								reference: 'fechaEjecucionRef',
 								bind: {
 									value: '{trabajo.fechaEjecucionTrabajo}'
 								}
@@ -275,6 +276,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 			                	xtype: 'checkboxfieldbase',
 			                	fieldLabel:  HreRem.i18n('fieldlabel.tarifa.plana'),
 			                	name: 'checkTarifaPlana',
+			                	reference: 'checkTarifaPlanaRef',
 			                	bind: {
 			                		value : '{trabajo.tarifaPlana}' 
 			                	},
@@ -285,6 +287,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 			                	xtype: 'checkboxfieldbase',
 			                	fieldLabel:  HreRem.i18n('fieldlabel.check.riesgo.siniestro'),
 			                	name: 'checkSiniestro',
+			                	reference: 'checkSiniestroRef',
 			                	bind: {
 			                		value : '{trabajo.riesgoSiniestro}' 
 			                	}

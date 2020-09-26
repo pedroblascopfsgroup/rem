@@ -15,8 +15,9 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
                		'HreRem.view.common.FieldSetTable','HreRem.model.PresupuestoTrabajo','HreRem.model.ProvisionSuplido', 'HreRem.view.trabajos.detalle.HistorificacionDeCamposGrid'],
     totalProv	: null,
     totalCli	: null,
+    refreshaftersave: true,
     afterLoad: function () {
-    	this.lookupController().bloqueaCamposSegunEstadoTrabajo();
+    	this.lookupController().desbloqueaCamposSegunEstadoTrabajo(this);
     },
     initComponent: function () {
     	var me = this;
@@ -343,6 +344,7 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 			    				        	flex: 1
 			    				        },
 			    				        {   text: HreRem.i18n('header.proveedor'),
+			    				        	reference: 'proveedorDescripcionRef',
 			    				        	dataIndex: 'proveedorDescripcion',
 			    				        	flex: 1 
 			    				        },	

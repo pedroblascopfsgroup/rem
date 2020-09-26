@@ -1814,6 +1814,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	if (comboProveedor.getSelection() != null && comboProveedor.getSelection().getData().idProveedor != undefined) {
         	me.loadComboProveedorContacto(comboProveedor.getSelection().getData().idProveedor);
     	}
+    },
     selectFechaTope: function(fecha){
     	var me = this;
     	me.lookupReference('fechaConcretaTrabajo').setValue(null);

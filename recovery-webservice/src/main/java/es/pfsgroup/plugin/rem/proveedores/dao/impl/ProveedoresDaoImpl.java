@@ -388,4 +388,17 @@ public class ProveedoresDaoImpl extends AbstractEntityDao<ActivoProveedor, Long>
 
 		return resultado == 1;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VProveedores> getProveedoresCarterizados(String codCartera) {
+		HQLBuilder hb = new HQLBuilder(" from VProveedores v");
+
+		hb.appendWhere("v.codigoCartera = '" + codCartera + "'");
+		hb.appendWhere("v.baja = 0");
+
+		hb.orderBy("v.nombreComercial", HQLBuilder.ORDER_ASC);
+
+		return (List<VProveedores>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+	}
 }

@@ -266,16 +266,16 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 			me.lookupReference('detallePrefacturaGrid').getView().refresh();
 		}
 		if(rowTrabajo.data.importeTotalPrefactura > 0 ){
-			totalAlb.setValue(me.millaresConPuntos(parseFloat(valorAlb).toFixed(2)));
+			totalAlb.setValue(me.millaresConPuntos(parseFloat(valorAlbC).toFixed(2)));
 			me.data.acumulador = parseFloat(valorAlb).toFixed(2);
 		}else{
-			totalAlb.setValue(me.millaresConPuntos(parseFloat(valorAlbC).toFixed(2)));
+			totalAlb.setValue(me.millaresConPuntos(parseFloat(valorAlb).toFixed(2)));
 			me.data.acumulador = parseFloat(valorAlbC).toFixed(2);
 		}
 		if(rowTrabajo.data.importeTotalPrefactura > 0){
-			totalPre.setValue(me.millaresConPuntos(parseFloat(valor).toFixed(2)));
-		}else{
 			totalPre.setValue(me.millaresConPuntos(parseFloat(valorC).toFixed(2)));
+		}else{
+			totalPre.setValue(me.millaresConPuntos(parseFloat(valor).toFixed(2)));
 		}
 
 	},

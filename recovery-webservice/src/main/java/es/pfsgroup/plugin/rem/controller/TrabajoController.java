@@ -945,12 +945,13 @@ public class TrabajoController extends ParadiseJsonController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboProveedorFilteredCreaTrabajo(Long idActivo, String codigoTipoProveedor, ModelMap model) {
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getComboProveedorFilteredCreaTrabajo(String cartera, WebDto webDto, ModelMap model) {
 		
-		model.put("data", trabajoApi.getComboProveedorFilteredCreaTrabajo(idActivo, codigoTipoProveedor));
-		
-		return createModelAndViewJson(model);
+		model.put("data", trabajoApi.getComboProveedorFilteredCreaTrabajo(cartera));
+		model.put("success", true);
+
+		return new ModelAndView("jsonView", model);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -963,33 +964,20 @@ public class TrabajoController extends ParadiseJsonController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboTipoProveedorCreaTrabajo(Long idActivo,String tipoTrabajo, String subtipoTrabajo, ModelMap model) {
-		
-		model.put("data", trabajoApi.getComboTipoProveedorFilteredCreaTrabajo(idActivo, tipoTrabajo, subtipoTrabajo));
-		
-		return createModelAndViewJson(model);
-	}
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboProveedorContactoCreaTrabajo(Long idProveedor, ModelMap model) {
-		try{
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getComboProveedorContactoCreaTrabajo(Long idProveedor, WebDto webDto, ModelMap model) {
 			
-			model.put("data", trabajoApi.getComboProveedorContacto(idProveedor));
+			try {
+				model.put("data", trabajoApi.getComboProveedorContacto(idProveedor));
+				model.put("success", true);
+			} catch (Exception e) {
+				model.put("success", false);
+				model.put("msg", "Se ha producido un error al ejecutar la petición.");
+				logger.error("error obteniendo contactos",e);
+			}
 			model.put("success", true);
-			
-		} catch (JsonViewerException e) {
-			model.put("success", false);
-			model.put("msg", e.getMessage());
-			
-		} catch (Exception e) {
-			model.put("success", false);
-			model.put("msg", "Se ha producido un error al ejecutar la petición.");
-			logger.error("error obteniendo contactos",e);
-		}
-		return createModelAndViewJson(model);
-		
+
+			return new ModelAndView("jsonView", model);
 	}
 	
 	@SuppressWarnings("unchecked")

@@ -96,7 +96,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
    				}
 			}
 		});
-		if(combo.getValue() == "02"){
+		/*if(combo.getValue() == "02"){
 //			me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(true);
 //			me.lookupReference('checkEnglobaTodosActivosAgrRef').setValue(false);
 			me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(true);
@@ -129,7 +129,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		} else {
 			me.lookupReference("codigoPromocionPrinex").setDisabled(true);
 			me.lookupReference("codigoPromocionPrinex").setValue(null);
-		}
+		}*/
 
 		me.lookupReference("listaActivosSubidaRef").getColumnManager().getHeaderByDataIndex("activoEnPropuestaEnTramitacion").setVisible(false);  	
 		
@@ -233,7 +233,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     				  var result = decode["data"];
     				  if(result.length > 0){
 						me.lookupReference('comboProveedorGestionEconomica2').setStore(new Ext.data.Store({
-						model: 'HreRem.model.comboboxfieldbase',
+						model: 'HreRem.model.ComboBase',
 							    data: result
 						}));
 						me.onAfterLoadProveedor();
@@ -1798,7 +1798,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
   				  var result = decode["data"];
   				  if(result.length > 0){
 					  me.lookupReference('proveedorContactoCombo2').setStore(new Ext.data.Store({
-						  	model: 'HreRem.model.comboboxfieldbase',
+						  	model: 'HreRem.model.ComboBase',
 						    data: result
 					  }));
 	  				  me.lookupReference('proveedorContactoCombo2').setDisabled(false);

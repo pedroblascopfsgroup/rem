@@ -196,10 +196,11 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 													value: '{trabajo.fechaConcreta}'
 												},
 												listeners:{
-    				        						change: function(x, y, z){
+    				        						select: function(x, y, z){
     				        							var field = this;
     				        							field.up("[reference='plazosFieldSet']").down("[reference='fechaTope']").setMinValue(field.value);
     				        							field.up("[reference='plazosFieldSet']").down("[reference='fechaTope']").validate();
+    				        							field.up().nextSibling().items.items[0].setValue(null);
     				        							}
 	    				        					}
 											},
@@ -207,6 +208,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 												fieldLabel: HreRem.i18n('fieldlabel.plazos.fecha.hora.simple'),
 												xtype: 'timefieldbase',
 												name: 'horaConcreta',
+												reference: 'horaConcreta',
 												//colspan:2,			
 												format: 'H:i',
 												increment: 30,
@@ -232,11 +234,12 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 												value: '{trabajo.fechaTope}'
 											},
 											listeners:{
-	    				        					change: 
+	    				        					select: 
 	    				        					function(x, y, z){
 	    				        						var field = this;
 	    				        						field.setMinValue(field.up().up().down("[reference='fechaConcreta']").value);
-	    				        						
+	    				        						field.up().up().down("[reference='fechaConcreta']").setValue(null);
+	    				        						field.up().up().down("[reference='horaConcreta']").setValue(null);
 	    				        					}
 												}
 										}

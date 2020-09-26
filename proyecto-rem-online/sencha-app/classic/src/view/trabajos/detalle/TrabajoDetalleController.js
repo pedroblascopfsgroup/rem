@@ -96,7 +96,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
    				}
 			}
 		});
-		if(combo.getValue() == "02"){
+		/*if(combo.getValue() == "02"){
 //			me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(true);
 //			me.lookupReference('checkEnglobaTodosActivosAgrRef').setValue(false);
 			me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(true);
@@ -129,7 +129,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		} else {
 			me.lookupReference("codigoPromocionPrinex").setDisabled(true);
 			me.lookupReference("codigoPromocionPrinex").setValue(null);
-		}
+		}*/
 
 		me.lookupReference("listaActivosSubidaRef").getColumnManager().getHeaderByDataIndex("activoEnPropuestaEnTramitacion").setVisible(false);  	
 		
@@ -201,6 +201,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 				  }else{
 					  me.lookupReference('horaConcretaTrabajo').setSelection(prehora[0]*2);
 				  }
+				  me.lookupReference('fechaTopeTrabajo').allowBlank = true;
 			  }
         	});
         	
@@ -232,7 +233,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     				  var result = decode["data"];
     				  if(result.length > 0){
 						me.lookupReference('comboProveedorGestionEconomica2').setStore(new Ext.data.Store({
-						model: 'HreRem.model.comboboxfieldbase',
+						model: 'HreRem.model.ComboBase',
 							    data: result
 						}));
 						me.onAfterLoadProveedor();
@@ -389,7 +390,17 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		var activo= null;
 		var arraySelection= [];
 		var codPromo;
-
+		if(me.lookupReference('fechaTopeTrabajo').getValue() == null){
+			if(me.lookupReference('horaConcretaTrabajo').getValue() == null || me.lookupReference('horaConcretaTrabajo').getValue() == null){
+				Ext.MessageBox.alert("Error","La fecha concreta y la hora concreta no puede ser null cuando no hay fecha tope");
+				return false;
+			}
+		}else{
+			if(me.lookupReference('horaConcretaTrabajo').getValue() != null || me.lookupReference('horaConcretaTrabajo').getValue() != null){
+				Ext.MessageBox.alert("Error","La fecha concreta y la hora concreta tienen que ser null cuando hay fecha tope");
+				return false;
+			}
+		}
 		if(!Ext.isEmpty(me.getView().idAgrupacion)){
 			arraySelection = me.lookupReference('activosagrupaciontrabajo').getActivoIDPersistedSelection();
 		}
@@ -1790,7 +1801,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
   				  var result = decode["data"];
   				  if(result.length > 0){
 					  me.lookupReference('proveedorContactoCombo2').setStore(new Ext.data.Store({
-						  	model: 'HreRem.model.comboboxfieldbase',
+						  	model: 'HreRem.model.ComboBase',
 						    data: result
 					  }));
 	  				  me.lookupReference('proveedorContactoCombo2').setDisabled(false);
@@ -1806,6 +1817,18 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	if (comboProveedor.getSelection() != null && comboProveedor.getSelection().getData().idProveedor != undefined) {
         	me.loadComboProveedorContacto(comboProveedor.getSelection().getData().idProveedor);
     	}
+    selectFechaTope: function(fecha){
+    	var me = this;
+    	me.lookupReference('fechaConcretaTrabajo').setValue(null);
+    	me.lookupReference('horaConcretaTrabajo').setSelection(null);
+    	me.lookupReference('fechaConcretaTrabajo').allowBlank = true;
+    	me.lookupReference('horaConcretaTrabajo').allowBlank = true;
+    },
+    
+    selectFechaConcreta: function(){
+    	var me = this;
+    	me.lookupReference('fechaTopeTrabajo').setValue(null)
+    	me.lookupReference('fechaTopeTrabajo').allowBlank = true;
     }
  	
 });

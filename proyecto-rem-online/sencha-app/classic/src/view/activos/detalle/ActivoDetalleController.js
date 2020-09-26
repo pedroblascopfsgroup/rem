@@ -7359,32 +7359,25 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		
 	},
 
-	cargarStoreComplementoTitulo : function(grid) {
-
-		var me = this;
-		var storeComplementoTitulo = me.getViewModel().data.storeComplementoTitulo;
-		storeComplementoTitulo.getProxy().setExtraParams({
-					'id' : grid.idActivo
-				})
-	},
 	onClickBotonCancelarVentanaComplementoTitulo : function(btn) {
 		btn.up('window').hide();
 	},
 
 	onClickBotonAnyadirComplementoTitulo : function(btn) {
 
-		var me = this;
+		var me = this;		
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		var correcto = true;
 		var form = btn.up().up().down("form");
-		url = $AC.getRemoteUrl("activo/createComplementoTitulo");
-		var idActivo = btn.up('anyadircomplementotitulo').idActivo;
+		url = $AC.getRemoteUrl("activo/createComplementoTitulo");		
+		var idActivo =  me.getViewModel().data.activo;
 		var comboTipoTitulo = me.lookupReference('comboTipoTituloRef');
 		var fechaSolicitud = me.lookupReference('fechaSolicitudRef');
 		var fechaTitulo = me.lookupReference('fechaTituloRef');
 		var fechaRecepcion = me.lookupReference('fechaRecepcionRef');
 		var fechaInscripcion = me.lookupReference('fechaInscripcionRef');
 		var observaciones = me.lookupReference('observacionesRef');
+		
 
 		if (fechaRecepcion.getValue() != null) {
 			if (fechaRecepcion.getValue() < fechaTitulo.getValue()) {

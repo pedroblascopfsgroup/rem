@@ -6,10 +6,16 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
     refreshAfterSave: true,
     disableValidation: true,
     reference: 'saneamientoactivoref',
-    scrollable	: 'y',
+    scrollable	: 'y',  
     launch: null,
     listeners: {
-			boxready:'cargarTabData'
+			boxready:'cargarTabData',
+			
+    		afterrender:function(a,b,c,d){
+					var me = this;
+					var idAct= me.lookupController().getViewModel().data.activo.id;
+					me.lookupController().getViewModel().data.idActivo = idAct;   	
+    }
 	},
 
 	recordName: "saneamiento",
@@ -224,6 +230,7 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 												bind:{
 													//disabled:'{!saneamiento.puedeEditarCalificacionNegativa}'
 												}
+												
 											}
 										]
 									   	

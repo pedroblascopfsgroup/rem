@@ -2680,8 +2680,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 model : 'HreRem.model.ActivoComplementoTituloModel',
 		     proxy: {
 		        type: 'uxproxy',
-		        remoteUrl: 'activo/getListComplementoTituloById'//,
-		        //extraParams: {id: '{activo.id}'}
+		        remoteUrl: 'activo/getListComplementoTituloById',
+		       extraParams: {id: '{activo.id}'}
 	    	 }
 	    	
 		},

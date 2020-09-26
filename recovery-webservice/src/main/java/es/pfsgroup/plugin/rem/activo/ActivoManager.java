@@ -7338,10 +7338,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public List<DtoActivoComplementoTitulo> getListComplementoTituloById(Long id) {
 		List<DtoActivoComplementoTitulo> listDto = new ArrayList<DtoActivoComplementoTitulo>();
 		
-		if (id != null) {
-			
-			
-			
+		if (id != null) {			
 			List<ActivoComplementoTitulo> act = genericDao.getListOrdered(ActivoComplementoTitulo.class,
 					new Order(OrderType.DESC, "fechaAlta"), 
 					genericDao.createFilter(FilterType.EQUALS, "activo.id", id));
@@ -7425,13 +7422,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			
 			activoComTitulo.setActivo(activo);
 			activoComTitulo.setTituloComplemento(ddt);
-			if(fechaSolicitud != null)
+			if(fechaSolicitud != null && !fechaSolicitud.isEmpty())
 				activoComTitulo.setFechaSolicitud(df.parse(df.format(fechaSolicitudF)));
-			if(fechaTitulo != null)
+			if(fechaTitulo != null && !fechaTitulo.isEmpty())
 				activoComTitulo.setFechaComplementoTitulo(df.parse(df.format(fechaTituloF)));
-			if(fechaRecepcion != null)
+			if(fechaRecepcion != null && !fechaRecepcion.isEmpty())
 				activoComTitulo.setFechaRecepcion(df.parse(df.format(fechaRecepcionF)));
-			if(fechaInscripcion != null)
+			if(fechaInscripcion != null && !fechaInscripcion.isEmpty())
 				activoComTitulo.setFechaInscripcion(df.parse(df.format(fechaInscripcionF)));
 			activoComTitulo.setObservaciones(observaciones);
 			activoComTitulo.setFechaAlta(df.parse(df.format(new Date())));

@@ -5,7 +5,7 @@ Ext.define('HreRem.view.activos.detalle.ComplementoTituloGrid', {
     topBar		: true,
     addButton	: true,
     requires	: ['HreRem.model.ActivoComplementoTituloModel', 'HreRem.view.activos.detalle.AnyadirComplementoTitulo'],
-    idActivo : null,
+   // idActivo : null,
     editOnSelect: true,
     
     controller: 'activodetalle',
@@ -15,7 +15,7 @@ Ext.define('HreRem.view.activos.detalle.ComplementoTituloGrid', {
 
     bind : {
     	store : '{storeComplementoTitulo}'
-    },			
+    },	
     initComponent: function () {
     	
     	var me = this;
@@ -114,31 +114,16 @@ Ext.define('HreRem.view.activos.detalle.ComplementoTituloGrid', {
 		        	}
                  }
 
-        ];
-        
-        
-        
-
-        me.dockedItems = [
-        	{
-        		xtype : 'pagingtoolbar',
-                dock : 'bottom',
-                displayInfo : true,
-                bind : {
-                	store : '{storeComplementoTitulo}'
-                }
-        	}
-        ];
-
-        me.lookupController().cargarStoreComplementoTitulo(me);
+        ];        
         me.callParent();
+
         
     },
     
     onAddClick: function(btn){
 		
-		var me = this;
- 		var idActivo = me.idActivo;
+		var me = this;	
+		var idActivo = me.lookupController().getViewModel().data.idActivo;
  		Ext.create("HreRem.view.activos.detalle.AnyadirComplementoTitulo", {idActivo: idActivo}).show();
 
    },

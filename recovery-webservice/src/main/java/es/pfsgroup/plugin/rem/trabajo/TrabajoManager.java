@@ -2112,6 +2112,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 		}
 		
+		if (dtoTrabajo.getEstadoCodigo() != null) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getEstadoCodigo());
+			DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filtro);
+			trabajo.setEstado(estadoTrabajo);
+		}
+		
 		if (dtoTrabajo.getFechaEjecucionTrabajo() != null) {
 			if (!"1970-01-01".equals(groovyft.format(dtoTrabajo.getFechaEjecucionTrabajo()))) {
 				trabajo.setFechaEjecucionReal(dtoTrabajo.getFechaEjecucionTrabajo());

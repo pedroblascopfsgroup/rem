@@ -4,7 +4,6 @@
 Ext.define('HreRem.model.GastoAsociadoAdquisicionModel', {
     extend: 'HreRem.model.Base',
 	idProperty: 'id',
-	requires: ['HreRem.model.Activo'],
 	
     fields: [    
    			{

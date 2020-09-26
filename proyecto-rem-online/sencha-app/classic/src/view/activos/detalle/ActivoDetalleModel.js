@@ -10,7 +10,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados','HreRem.model.CalificacionNegativaModel',
     'HreRem.model.HistoricoTramtitacionTituloModel', 'HreRem.model.HistoricoGestionGrid', 'HreRem.model.ListaActivoGrid', 'HreRem.model.HistoricoFasesDePublicacion',
     'HreRem.model.AdjuntoActivoAgrupacion','HreRem.model.AdjuntoActivoProyecto','HreRem.model.DocumentacionAdministrativa', 'HreRem.model.ActivoPatrimonio',
-    'HreRem.model.DocumentosTributosModel','HreRem.model.HistoricoSolicitudesPreciosModel', 'HreRem.model.ActivoEvolucion', 'HreRem.model.ActivoSaneamiento','HreRem.model.ActivoComplementoTituloModel'],
+    'HreRem.model.DocumentosTributosModel','HreRem.model.HistoricoSolicitudesPreciosModel', 'HreRem.model.ActivoEvolucion', 'HreRem.model.ActivoSaneamiento','HreRem.model.ActivoComplementoTituloModel',
+    'HreRem.model.GastoAsociadoAdquisicionModel'],
 
     data: {
     	activo: null,

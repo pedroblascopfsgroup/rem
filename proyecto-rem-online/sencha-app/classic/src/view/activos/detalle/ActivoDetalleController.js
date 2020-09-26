@@ -7334,34 +7334,29 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 
 	onActivoEpa : function(combo, value) {
+		var me = this,
+			activoEpa = me.lookupReference('activoEpa'),
+			activobbvaEmpresa = me.lookupReference('activobbvaEmpresa'), 
+			activobbvaOficina = me.lookupReference('activobbvaOficina'), 
+			activobbvaContrapartida = me.lookupReference('activobbvaContrapartida'), 
+			activobbvaFolio = me.lookupReference('activobbvaFolio'), 
+			activobbvaCdpen = me.lookupReference('activobbvaCdpen');
 
-		var me = this, disabled = value == 'false', activobbvaEmpresa = me
-				.lookupReference('activobbvaEmpresa'), activobbvaOficina = me
-				.lookupReference('activobbvaOficina'), activobbvaContrapartida = me
-				.lookupReference('activobbvaContrapartida'), activobbvaFolio = me
-				.lookupReference('activobbvaFolio'), activobbvaCdpen = me
-				.lookupReference('activobbvaCdpen');
-
-		activobbvaEmpresa.setDisabled(disabled);
-		activobbvaOficina.setDisabled(disabled);
-		activobbvaContrapartida.setDisabled(disabled);
-		activobbvaFolio.setDisabled(disabled);
-		activobbvaCdpen.setDisabled(disabled);
-
-		activobbvaEmpresa.allowBlank = disabled;
-		activobbvaOficina.allowBlank = disabled;
-		activobbvaContrapartida.allowBlank = disabled;
-		activobbvaFolio.allowBlank = disabled;
-		activobbvaCdpen.allowBlank = disabled;
-
-		if (disabled) {
-			activobbvaEmpresa.setValue("");
-			activobbvaOficina.setValue("");
-			activobbvaContrapartida.setValue("");
-			activobbvaFolio.setValue("");
-			activobbvaCdpen.setValue("");
+		if(activoEpa.value == "true"|| activobbvaEmpresa.value != null || activobbvaOficina.value != null 
+				|| activobbvaContrapartida.value != null || activobbvaFolio.value != null || activobbvaCdpen.value != null) {
+			activobbvaEmpresa.allowBlank = false;
+			activobbvaOficina.allowBlank = false;
+			activobbvaContrapartida.allowBlank = false;
+			activobbvaFolio.allowBlank = false;
+			activobbvaCdpen.allowBlank = false;
+		} else {
+			activobbvaEmpresa.allowBlank = true;
+			activobbvaOficina.allowBlank = true;
+			activobbvaContrapartida.allowBlank = true;
+			activobbvaFolio.allowBlank = true;
+			activobbvaCdpen.allowBlank = true;
 		}
-
+		
 	},
 
 	cargarStoreComplementoTitulo : function(grid) {

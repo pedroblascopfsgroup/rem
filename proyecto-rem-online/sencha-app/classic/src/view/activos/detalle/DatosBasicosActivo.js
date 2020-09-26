@@ -3,7 +3,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
     xtype: 'datosbasicosactivo',    
     cls	: 'panel-base shadow-panel',
     collapsed: false,
-    disableValidation: true,
+    disableValidation: false,
     reference: 'datosbasicosactivo',
     scrollable	: 'y',
     refreshAfterSave : true,
@@ -1038,6 +1038,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							{
 								xtype:'comboboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.activo.epa'),
+								reference: 'activoEpa',
 								colspan: 4,
 								bind: {
 									readOnly : '{esUA}',
@@ -1059,54 +1060,84 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								items :
 									[
 									{
-										xtype:'textfieldbase',
-										disabled: true,
+										xtype:'numberfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.empresa'),
 										reference: 'activobbvaEmpresa',
 										bind: {
 											readOnly : '{esUA}',
 											value: '{activo.empresa}'
-										}
+										},
+										listeners: {
+						                	change:  'onActivoEpa',
+							            	update: function(){
+												if(Ext.isEmpty(this.getValue()))
+													this.setValue(-1);
+											}
+						            	}
 									},
 									{
-										xtype:'textfieldbase',
-										disabled: true,
+										xtype:'numberfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.oficina'),
 										reference: 'activobbvaOficina',
 										bind: {
 											readOnly : '{esUA}',
 											value: '{activo.oficina}'
-										}
+										},
+										listeners: {
+						                	change:  'onActivoEpa',
+							            	update: function(){
+												if(Ext.isEmpty(this.getValue()))
+													this.setValue(-1);
+											}
+						            	}
 									},
 									{
-										xtype:'textfieldbase',
-										disabled: true,
+										xtype:'numberfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.contrapartida'),
 										reference: 'activobbvaContrapartida',
 										bind: {
 											readOnly : '{esUA}',
 											value: '{activo.contrapartida}'
-										}
+										},
+										listeners: {
+						                	change:  'onActivoEpa',
+							            	update: function(){
+												if(Ext.isEmpty(this.getValue()))
+													this.setValue(-1);
+											}
+						            	}
 									},
 									{
-										xtype:'textfieldbase',
-										disabled: true,
+										xtype:'numberfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.folio'),
 										reference: 'activobbvaFolio',
 										bind: {
 											readOnly : '{esUA}',
 											value: '{activo.folio}'
-										}
+										},
+										listeners: {
+						                	change:  'onActivoEpa',
+							            	update: function(){
+												if(Ext.isEmpty(this.getValue()))
+													this.setValue(-1);
+											}
+						            	}
 									},
 									{
-										xtype:'textfieldbase',
-										disabled: true,
+										xtype:'numberfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.activobbva.cdpen'),
 										reference: 'activobbvaCdpen',
 										bind: {
 											readOnly : '{esUA}',
 											value: '{activo.cdpen}'
-										}
+										},
+										listeners: {
+						                	change:  'onActivoEpa',
+							            	update: function(){
+												if(Ext.isEmpty(this.getValue()))
+													this.setValue(-1);
+											}
+						            	}
 									}
 								]
 						}]

@@ -907,10 +907,8 @@ public interface TrabajoApi {
 
 	public List<String> getTransicionesEstadoTrabajoByCodigoEstado(String estadoActual);
 	
-	public List<DDTipoProveedor> getComboTipoProveedorFilteredCreaTrabajo(Long idActivo, String tipoTrabajo, String subtipoTrabajo);
-	
-	public List<VProveedores> getComboProveedorFilteredCreaTrabajo(Long idActivo, String codigoTipoProveedor);
-	
 	public DtoProveedorMediador getProveedorParametrizado(Long idActivo, String tipoTrabajo, String subtipoTrabajo,String cartera, String subcartera);
+
+	public List<VProveedores> getComboProveedorFilteredCreaTrabajo(String codCartera);
 
 }

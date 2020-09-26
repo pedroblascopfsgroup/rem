@@ -604,43 +604,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 					type: 'uxproxy',
 					remoteUrl: 'trabajo/getComboEstadoGasto'
 				}
-    		},
-    		
-    		comboTipoProveedorFilteredCreaTrabajo : {
-    			model: 'HreRem.model.ComboBase',
-				proxy: {
-					type: 'uxproxy',
-					remoteUrl: 'trabajo/getComboTipoProveedorCreaTrabajo',
-					extraParams: {idActivo: '{idActivo}'}
-				},
-				listeners : {
-    	            beforeload : 'onBeforeLoadTipoProveedor'
-    	        }
-    		},
-    		comboProveedorFilteredCreaTrabajo : {
-    			model: 'HreRem.model.ComboBase',
-				proxy: {
-					type: 'uxproxy',
-					remoteUrl: 'trabajo/getComboProveedorFilteredCreaTrabajo',
-					extraParams: {
-						idActivo: '{idActivo}',
-						codigoTipoProveedor: '{comboTipoProveedorGestionEconomica2.selection.codigo}'
-					}
-				},
-				listeners : {
-    	            beforeload : 'onBeforeLoadProveedor',
-    	            load : 'onAfterLoadProveedor'
-    	        },
-				autoLoad: false
-    		},
-    		comboProveedorContactoCreaTrabajo : {
-    			model: 'HreRem.model.ComboBase',
-				proxy: {
-					type: 'uxproxy',
-					remoteUrl: 'trabajo/getComboProveedorContacto',
-					extraParams: {idProveedor: '{comboProveedorGestionEconomica2.selection.idProveedor}'}
-				}, 
-				autoLoad: false
     		}
     		
     }

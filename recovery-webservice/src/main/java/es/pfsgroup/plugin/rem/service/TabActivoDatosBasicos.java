@@ -123,6 +123,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private static final String CESION_USO_ERROR= "msg.error.activo.patrimonio.en.cesion.uso";
 	private static final String NO_GESTIONADO_POR_ADMISION = "msg.no.gestionado.admision";
 	private static final String ID_HAYA_NO_EXISTE= "msg.error.activo.hre.no.existe";
+	private static final String ACTIVO_NO_BBVA = "msg.error.activo.hre.bbva.no.existe";
 	private static final String ACTIVO_VENDIDO= "msg.error.activo.vendido";
 	private static final String ACTIVO_FUERA_DE_PERIMETRO_HAYA= "msg.error.activo.fuera.perimetro";
 	private static final String ACTIVO_NO_COINCIDE_CON_CERBERUS_BBVA= "msg.error.activo.no.bbva.divarian";
@@ -1616,11 +1617,19 @@ public class TabActivoDatosBasicos implements TabActivoService {
 						
 						Activo activoOrigenHRE = activoApi.getByNumActivo(dto.getIdOrigenHre());
 						
+						boolean isOrigenHRE = false;
+						boolean isVendido =  false;
+						boolean isCarteraBBVACERBERUS =  false;
+						boolean isFueraPerimetro =  false;
 						
-						boolean isOrigenHRE = !activoDao.existeactivoIdHAYA(dto.getIdOrigenHre());
-						boolean isVendido = activoDao.activoEstadoVendido(dto.getIdOrigenHre());
-						boolean isCarteraBBVACERBERUS = !activoDao.activoPerteneceABBVAAndCERBERUS(dto.getIdOrigenHre());
-						boolean isFueraPerimetro = activoDao.activoFueraPerimetroHAYA(dto.getIdOrigenHre());
+						if(activoOrigenHRE != null) {
+							isOrigenHRE = !activoDao.existeactivoIdHAYA(activoOrigenHRE.getNumActivo());
+							isVendido = activoDao.activoEstadoVendido(activoOrigenHRE.getNumActivo());
+							isCarteraBBVACERBERUS = !activoDao.activoPerteneceABBVAAndCERBERUS(activoOrigenHRE.getNumActivo());
+							isFueraPerimetro = activoDao.activoFueraPerimetroHAYA(activoOrigenHRE.getNumActivo());
+						}else {
+							throw new JsonViewerException(messageServices.getMessage(ID_HAYA_NO_EXISTE));
+						}
 												
 						if(isOrigenHRE) {
 							throw new JsonViewerException(messageServices.getMessage(ID_HAYA_NO_EXISTE));
@@ -1668,6 +1677,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					if (dto.getCexperBbva() != null) {
 						activoBbva.setCexperBbva(dto.getCexperBbva());
 					}
+				}else {
+					throw new JsonViewerException(messageServices.getMessage(ACTIVO_NO_BBVA));
 				}
 			}
 		} catch(JsonViewerException jve) {

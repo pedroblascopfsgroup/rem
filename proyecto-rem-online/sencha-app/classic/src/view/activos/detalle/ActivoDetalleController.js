@@ -7461,7 +7461,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				|| $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION'])
 				|| $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);
 		var comboActivoRecovery = me.lookupReference('idRecovery');
-		if (comboActivoRecovery != null && gestores) {
+		if (comboActivoRecovery != null && !gestores) {
 			combo.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
 			combo.setReadOnly(true);
 		} else {

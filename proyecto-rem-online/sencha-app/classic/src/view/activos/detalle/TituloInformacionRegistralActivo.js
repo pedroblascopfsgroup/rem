@@ -385,42 +385,31 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		            		store: '{storeOrigenAnteriorActivo}',
 		            		hidden: '{!mostrarCamposDivarianandBbva}',
 		            		value: '{datosRegistrales.origenAnteriorActivoCodigo}'
-		            		
-		            	
-		            		
-		            		
-		            		
 		            	}
 	            	},
 					{
 						xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
-						colspan: 2,
+						colspan: 1,
 						reference:'fechaTituloAnteriorRef',
 				        fieldLabel: HreRem.i18n('fieldlabel.fecha.titulo.anterior'),
 				        bind: {				        	
 				        	 hidden: '{!mostrarCamposDivarianandBbva}',
 				        	 value: '{datosRegistrales.fechaTituloAnterior}'
-				        	
-				        	
 				        }
 				       
 					},
 					{
 			        	xtype: 'comboboxfieldbase',
 			        	fieldLabel: HreRem.i18n('fieldlabel.sociedad.pago'),
-			        	colspan: 3,
+			        	colspan: 2,
 			        	reference:'sociedadPagoAnteriorRef',
 			        	
 			        	bind: {			        		
 			        		 store: '{comboSociedadAnteriorBBVA}',
 			        		 hidden: '{!isCarteraBbva}',			        		
 			        		 value:'{datosRegistrales.sociedadPagoAnterior}'
-			        		
-			        		 
 			        	}
-			        	
-			        	
 			        },
 			        
 			        {

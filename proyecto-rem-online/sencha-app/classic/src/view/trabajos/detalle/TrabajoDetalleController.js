@@ -941,10 +941,16 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	},
 	
 	onChangeProveedor: function(combo, value) {
-		var me = this;		
+		var me = this;
 		
 		me.getViewModel().set('proveedor', combo.getSelection());
 		//combo.validate();
+	},
+	onChangeProveedorGestionEconomica: function(combo, value){
+		var me = this;		
+		if (combo.store != null && combo.store.data != null && combo.store.data.items.length == 0) {
+			me.fireEvent("errorToastLong", HreRem.i18n("msg.combo.sin.contacto.proveedor"));
+		}
 	},
 
 	onListadoTramitesTareasTrabajoDobleClick : function(gridView,record) {

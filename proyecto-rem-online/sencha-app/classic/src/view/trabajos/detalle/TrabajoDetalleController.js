@@ -1605,14 +1605,33 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     		
     		if(esFichaTrabajo){
     			me.lookupReference('comboGestorActivoResposable').setReadOnly(false);	
+    			me.lookupReference('checkboxUrgente').setReadOnly(false);
+    			me.lookupReference('estadoGastoRef').setReadOnly(false);
+    			me.lookupReference('descripcionGeneralRef').setReadOnly(false);
+    			me.lookupReference('fechaConcreta').setReadOnly(false);
+    			me.lookupReference('horaConcreta').setReadOnly(false);
+    			me.lookupReference('fechaTope').setReadOnly(false);
+    			me.lookupReference('comboProveedorLlave').setReadOnly(false);	
+    			me.lookupReference('fechaEntregaTrabajoRef').setReadOnly(false);
+    			me.lookupReference('comboReceptorLlave').setReadOnly(false);
+    			me.lookupReference('llavesNoAplicaRef').setReadOnly(false);
+    			me.lookupReference('llavesMotivoRef').setReadOnly(false);
     		}
     		
-    		if(estadoTrabajo == "CUR" || estadoTrabajo == "REJ"){
+    		if(estadoTrabajo == "CUR" /*|| estadoTrabajo == "REJ"*/){
     			
     			if(esFichaTrabajo){
     				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
+    				me.lookupReference('fechaEjecucionRef').setReadOnly(false);
 		    		me.lookupReference('checkTarifaPlanaRef').setReadOnly(false);
 		    		me.lookupReference('checkSiniestroRef').setReadOnly(false);
+		    		me.lookupReference('checkboxCubreSeguroRef').setReadOnly(false);
+					me.lookupReference('comboCiaAseguradora').setReadOnly(false);
+					me.lookupReference('importePrecioAseguradoRef').setReadOnly(false);
+					me.lookupReference('aplicaComiteRef').setReadOnly(false);
+		    		me.lookupReference('comboResolucionComite').setReadOnly(false);
+					me.lookupReference('fechaResolucionComiteRef').setReadOnly(false);
+					me.lookupReference('resolucionComiteIdRef').setReadOnly(false);
     			} else {
     				me.lookupReference('comboProveedorGestionEconomica').setReadOnly(false);
     				me.lookupReference('proveedorContactoCombo').setReadOnly(false);
@@ -1644,10 +1663,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     		
 	    } else if(esProvActivo){
 	    	
-	    	if(esFichaTrabajo){
-    			me.lookupReference('comboGestorActivoResposable').setReadOnly(false);	
-    		}
-	    	
 	    	if(estadoTrabajo == "CUR" || estadoTrabajo == "REJ"){
 	    		
 	    		if(esFichaTrabajo){
@@ -1672,6 +1687,25 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     		me.lookupReference('fechaEjecucionRef').setReadOnly(true);
 			me.lookupReference('checkTarifaPlanaRef').setReadOnly(true);
 			me.lookupReference('checkSiniestroRef').setReadOnly(true);
+    		me.lookupReference('checkboxCubreSeguroRef').setReadOnly(true);
+			me.lookupReference('comboCiaAseguradora').setReadOnly(true);
+			me.lookupReference('importePrecioAseguradoRef').setReadOnly(true);
+			me.lookupReference('aplicaComiteRef').setReadOnly(true);
+    		me.lookupReference('comboResolucionComite').setReadOnly(true);
+			me.lookupReference('fechaResolucionComiteRef').setReadOnly(true);
+			me.lookupReference('resolucionComiteIdRef').setReadOnly(true);
+			me.lookupReference('riesgosTercerosRef').setReadOnly(true);
+			me.lookupReference('checkboxUrgente').setReadOnly(true);	
+			me.lookupReference('estadoGastoRef').setReadOnly(true);	
+			me.lookupReference('descripcionGeneralRef').setReadOnly(true);
+			me.lookupReference('fechaConcreta').setReadOnly(true);
+			me.lookupReference('horaConcreta').setReadOnly(true);
+			me.lookupReference('fechaTope').setReadOnly(true);
+			me.lookupReference('comboProveedorLlave').setReadOnly(true);	
+			me.lookupReference('fechaEntregaTrabajoRef').setReadOnly(true);
+			me.lookupReference('comboReceptorLlave').setReadOnly(true);
+			me.lookupReference('llavesNoAplicaRef').setReadOnly(true);
+			me.lookupReference('llavesMotivoRef').setReadOnly(true);
     	} else {
     		me.lookupReference('comboProveedorGestionEconomica').setReadOnly(true);
     		me.lookupReference('proveedorContactoCombo').setReadOnly(true);
@@ -1688,6 +1722,25 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     		me.lookupReference('fechaEjecucionRef').setReadOnly(false);
 			me.lookupReference('checkTarifaPlanaRef').setReadOnly(false);
 			me.lookupReference('checkSiniestroRef').setReadOnly(false);
+    		me.lookupReference('checkboxCubreSeguroRef').setReadOnly(false);
+			me.lookupReference('comboCiaAseguradora').setReadOnly(false);
+			me.lookupReference('importePrecioAseguradoRef').setReadOnly(false);
+			me.lookupReference('aplicaComiteRef').setReadOnly(false);
+    		me.lookupReference('comboResolucionComite').setReadOnly(false);
+			me.lookupReference('fechaResolucionComiteRef').setReadOnly(false);
+			me.lookupReference('resolucionComiteIdRef').setReadOnly(false);
+			me.lookupReference('riesgosTercerosRef').setReadOnly(false);
+			me.lookupReference('checkboxUrgente').setReadOnly(false);	
+			me.lookupReference('estadoGastoRef').setReadOnly(false);	
+			me.lookupReference('descripcionGeneralRef').setReadOnly(false);
+			me.lookupReference('fechaConcreta').setReadOnly(false);
+			me.lookupReference('horaConcreta').setReadOnly(false);
+			me.lookupReference('fechaTope').setReadOnly(false);
+			me.lookupReference('comboProveedorLlave').setReadOnly(false);	
+			me.lookupReference('fechaEntregaTrabajoRef').setReadOnly(false);
+			me.lookupReference('comboReceptorLlave').setReadOnly(false);
+			me.lookupReference('llavesNoAplicaRef').setReadOnly(false);
+			me.lookupReference('llavesMotivoRef').setReadOnly(false);
     	} else {
     		me.lookupReference('comboProveedorGestionEconomica').setReadOnly(false);
     		me.lookupReference('proveedorContactoCombo').setReadOnly(false);

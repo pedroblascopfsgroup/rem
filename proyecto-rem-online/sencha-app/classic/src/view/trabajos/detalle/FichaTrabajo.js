@@ -38,7 +38,8 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 				                	rowspan: 2,
 				                	bind: {
 				                		value: '{trabajo.descripcionGeneral}'
-				                	}
+				                	},
+				                	reference: 'descripcionGeneralRef'
 				                },
 						        {
 						        	xtype: 'comboboxfieldbase',
@@ -84,12 +85,14 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 				                	bind:	{
 				                		store: '{comboEstadoGastos}',
 				                		value: '{trabajo.estadoGastoCodigo}'
-				                	}
+				                	},
+				                	reference: 'estadoGastoRef'
 				                },
 							 	{ 
 				                	xtype: 'checkboxfieldbase',
 				                	fieldLabel:  HreRem.i18n('header.gasto.cubierto.seguro'),
-				                	bind:		'{trabajo.cubreSeguro}'
+				                	bind:		'{trabajo.cubreSeguro}',
+				                	reference: 'checkboxCubreSeguroRef'
 				                },
 						        {
 						        	xtype: 'comboboxfieldbase',
@@ -108,7 +111,8 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 				                	bind:{
 				                		disabled: '{!trabajo.cubreSeguro}',
 			                			value: '{trabajo.importePrecio}'
-				                		}
+				                	},
+				                	reference: 'importePrecioAseguradoRef'
 				                },
 							 	{ 
 									xtype: 'checkboxfieldbase',
@@ -116,14 +120,15 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 									fieldLabel: HreRem.i18n('fieldlabel.check.riesgo.urgente'),
 									bind: {
 										value: '{trabajo.urgente}'		
-									}													
+									}
 								},
 							 	{ 
 				                	xtype: 'checkboxfieldbase',
 				                	fieldLabel:  HreRem.i18n('title.general.con.riesgos.terceros'),
 				                	bind: {
 				                		value : '{trabajo.riesgosTerceros}' 
-				                	}
+				                	},
+				                	reference: 'riesgosTercerosRef'
 				                		
 				                },
 							 	{ 
@@ -131,7 +136,8 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 				                	fieldLabel:  HreRem.i18n('fieldlabel.aplica.comite.trabajo'),
 				                	bind:{
 				                		value: '{trabajo.aplicaComite}'
-				                	}
+				                	},
+				                	reference: 'aplicaComiteRef'
 				                	
 				                }
 						]
@@ -160,14 +166,16 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 									xtype: 'datefieldbase',
 									bind: {
 											value:  '{trabajo.fechaResolucionComite}'
-									}
+									},
+									reference: 'fechaResolucionComiteRef'
 								},
 							 	{ 
 				                	xtype: 'numberfieldbase',
 				                	fieldLabel:  HreRem.i18n('title.resolucion.comite.id'),
 				                	bind: {
 				                		value: '{trabajo.resolucionComiteId}'
-				                	}
+				                	},
+				                	reference: 'resolucionComiteIdRef'
 				                }
 							]
         			},
@@ -306,7 +314,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 				            		store: '{comboApiPrimario}',
 				            		value: '{trabajo.proovedorCodigo}'
 				            	},
-					        	reference: 'comboEstadoTrabajo',
+				            	reference: 'comboProveedorLlave',
 					        	colspan: 2
 					        },
 							{
@@ -314,7 +322,8 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 								fieldLabel: HreRem.i18n('fieldlabel.trabajo.llaves.fecha.entrega'),
 								bind: {
 									value: '{trabajo.fechaEntregaTrabajo}'
-								}
+								},
+								reference: 'fechaEntregaTrabajoRef',
 							},
 					        {
 					        	//Combo proovededor. Pdte. de confirmar
@@ -324,7 +333,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 //				            		store: '{aquiElStore}',
 				            		value: '{trabajo.receptorCodigo}'
 				            	},
-					        	reference: 'comboEstadoTrabajo',
+				            	reference: 'comboReceptorLlave',
 					        	colspan: 2
 					        },
 						 	{ 
@@ -332,7 +341,8 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 			                	fieldLabel:  HreRem.i18n('fieldlabel.trabajo.llaves.no.aplica'),
 			                	bind: {
 			                		value : '{trabajo.llavesNoAplica}' 
-			                	}
+			                	},
+			                	reference: 'llavesNoAplicaRef',
 			                		
 			                },
 			                {
@@ -342,7 +352,8 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 			                		disabled: '{!trabajo.llavesNoAplica}',
 			                		value: '{trabajo.llavesMotivo}'
 			                	},
-			                	flex: 3
+			                	flex: 3,
+			                	reference: 'llavesMotivoRef',
 			                }
 						]
 					},

@@ -480,6 +480,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 	
 	public void historificarCambiosFicha(DtoFichaTrabajo dtoTrabajo, Trabajo trabajo) {
+		SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm");
+		SimpleDateFormat formatoFechaString = new SimpleDateFormat("dd/MM/yyyy");
 		DtoHistorificadorCampos dtoHistorificador = new DtoHistorificadorCampos();
 		dtoHistorificador.setIdTrabajo(trabajo.getId());
 		dtoHistorificador.setTabla(ConstantesTrabajo.NOMBRE_TABLA);
@@ -606,11 +608,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		
 		
-		if(dtoTrabajo.getFechaConcretaString() != null){
+		if(dtoTrabajo.getFechaConcretaString() != null && (trabajo.getFechaHoraConcreta() == null || !dtoTrabajo.getFechaConcretaString().equals(formatoFechaString.format(trabajo.getFechaHoraConcreta())))){
 			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_REALIZACION_TRABAJO);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_FECHA_REALIZACION_TRABAJO);
 			if(!Checks.esNulo(trabajo.getFechaHoraConcreta())) {
-				dtoHistorificador.setValorAnterior(trabajo.getFechaHoraConcreta().toString());
+				dtoHistorificador.setValorAnterior(formatoFechaString.format(trabajo.getFechaHoraConcreta()));
 			}
 
 			dtoHistorificador.setValorNuevo(dtoTrabajo.getFechaConcretaString());
@@ -619,11 +621,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		
 		
-		if(dtoTrabajo.getHoraConcretaString() != null){
+		if(dtoTrabajo.getHoraConcretaString() != null && (trabajo.getFechaHoraConcreta() == null || !dtoTrabajo.getHoraConcretaString().equals(formatoHora.format(trabajo.getFechaHoraConcreta())))){
 			dtoHistorificador.setCampo(ConstantesTrabajo.HORA_REALIZACION_TRABAJO);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_HORA_REALIZACION_TRABAJO);
 			if(!Checks.esNulo(trabajo.getFechaHoraConcreta())) {
-				dtoHistorificador.setValorAnterior(trabajo.getFechaHoraConcreta().toString());
+				dtoHistorificador.setValorAnterior(formatoHora.format(trabajo.getFechaHoraConcreta()));
 			}
 			
 			dtoHistorificador.setValorNuevo(dtoTrabajo.getHoraConcretaString());
@@ -732,11 +734,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
-		if (dtoTrabajo.getTarifaPlana() != null) {
+		if (dtoTrabajo.getTarifaPlana() != null &&(trabajo.getEsTarifaPlana() == null || !dtoTrabajo.getTarifaPlana().equals(trabajo.getEsTarifaPlana()))) {
 			dtoHistorificador.setCampo(ConstantesTrabajo.TARIFA_PLANA);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_TARIFA_PLANA);
 			if (trabajo.getEsTarifaPlana() != null) {
-				dtoHistorificador.setValorAnterior(trabajo.getEsTarifaPlana().toString());
+				if (!trabajo.getEsTarifaPlana()) {
+					dtoHistorificador.setValorAnterior(ConstantesTrabajo.VALOR_BOL_NO);
+				}else {
+					dtoHistorificador.setValorAnterior(ConstantesTrabajo.VALOR_BOL_SI);
+				}
 			}
 			if (!dtoTrabajo.getTarifaPlana()) {
 				dtoHistorificador.setValorNuevo(ConstantesTrabajo.VALOR_BOL_NO);
@@ -745,11 +751,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
-		if (dtoTrabajo.getRiesgoSiniestro() != null) {
+		if (dtoTrabajo.getRiesgoSiniestro() != null && (trabajo.getSiniestro() == null || !dtoTrabajo.getRiesgoSiniestro().equals(trabajo.getSiniestro()))) {
 			dtoHistorificador.setCampo(ConstantesTrabajo.SINIESTRO);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_SINIESTRO);
 			if (trabajo.getSiniestro() != null) {
-				dtoHistorificador.setValorAnterior(trabajo.getSiniestro().toString());
+				if (!trabajo.getSiniestro()) {
+					dtoHistorificador.setValorAnterior(ConstantesTrabajo.VALOR_BOL_NO);
+				}else {
+					dtoHistorificador.setValorAnterior(ConstantesTrabajo.VALOR_BOL_SI);
+				}
 			}
 			if (!dtoTrabajo.getRiesgoSiniestro()) {
 				dtoHistorificador.setValorNuevo(ConstantesTrabajo.VALOR_BOL_NO);

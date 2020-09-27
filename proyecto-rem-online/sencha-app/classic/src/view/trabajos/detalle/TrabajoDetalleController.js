@@ -988,6 +988,19 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		}
 	},
 
+	onChangeComboProveedorLlave: function(combo) {
+		var me = this;
+		var proveedorContactoCombo = combo.getValue();
+		if(proveedorContactoCombo != null && proveedorContactoCombo !== '' ){
+			me.lookupReference('comboReceptorLlave').setAllowBlank(false);
+		} else {
+			me.lookupReference('comboReceptorLlave').setAllowBlank(true);
+		}
+
+		me.lookupReference('comboReceptorLlave').validate();
+
+	},
+
 	onListadoTramitesTareasTrabajoDobleClick : function(gridView,record) {
 		var me = this;
 		

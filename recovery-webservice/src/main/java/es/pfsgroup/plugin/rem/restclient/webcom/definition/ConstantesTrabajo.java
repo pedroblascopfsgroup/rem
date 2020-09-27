@@ -71,6 +71,9 @@ public class ConstantesTrabajo {
 	public static final String TARIFA_PLANA ="Tarifa plana";
 	public static final String COLUMNA_SINIESTRO ="TBJ_SINIESTRO";
 	public static final String SINIESTRO ="Siniestro";
+	public static final String COLUMNA_RECEPTOR_LLAVES ="PVC_ID_LLAVES";
+	public static final String PROVEEDOR_ENTREGA_LLAVES ="Proveedor entrega llaves";
+	public static final String RECEPTOR_ENTREGA_LLAVES ="Preceptor entrega llaves";
 	public static final String COLUMNA_FECHA_ENTREGA_LLAVES ="TBJ_FECHA_ENTREGA_LLAVES";
 	public static final String FECHA_ENTREGA_LLAVES ="Fecha de entrega de las llaves";
 	public static final String COLUMNA_NO_APLICA_LLAVES ="TBJ_NO_APLICA_LLAVES";

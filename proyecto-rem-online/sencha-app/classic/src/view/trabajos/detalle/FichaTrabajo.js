@@ -307,22 +307,22 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 						},
 						items : [
 							{
-					        	xtype: 'comboboxfieldbase',
-					        	fieldLabel:  HreRem.i18n('fieldlabel.proveedor.llaves.trabajo'),
-					        	colspan: 2,
+								xtype: 'comboboxfieldbase',
+								fieldLabel:  HreRem.i18n('fieldlabel.proveedor.llaves.trabajo'),
+								colspan: 2,
 								reference: 'comboProveedorLlave',
-					        	chainedStore: 'comboProveedorLlave',
 								chainedReference: 'comboReceptorLlave',
-					        	bind: {
-				            		store: '{comboProveedorFilteredLlaves}',
-				            		value: '{trabajo.idProveedorLlave}'
-				            	},
-				            	displayField: 'nombreComercial',
+								bind: {
+									store: '{comboProveedorFiltradoManual}',
+									value: '{trabajo.idProveedorLlave}'
+								},
+								displayField: 'nombreComercial',
 	    						valueField: 'idProveedor',
-	    						listeners: {
-				                	select: 'onChangeComboProveedorGE'
+								filtradoEspecial: true,
+								listeners: {
+				                	change: 'onChangeComboProveedorLlave'
 				            	}
-					        },
+							},
 							{
 					        	xtype: 'datefieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.trabajo.llaves.fecha.entrega'),
@@ -340,19 +340,17 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 				            		value: '{trabajo.idProveedorReceptor}'
 				            	},
 				            	displayField: 'nombre',
-	    						valueField: 'id',
-	    						allowBlank: true,
-	    						listeners: {
-	    							change: 'onChangeProveedor'
-	    						}
+								valueField: 'id',
+								listeners: {
+									change: 'onChangeProveedor'
+								}
 					        },
-						 	{ 
+						 	{
 			                	xtype: 'checkboxfieldbase',
 			                	fieldLabel:  HreRem.i18n('fieldlabel.trabajo.llaves.no.aplica'),
 			                	bind: {
-			                		value : '{trabajo.llavesNoAplica}' 
+			                		value : '{trabajo.llavesNoAplica}'
 			                	}
-			                		
 			                },
 			                {
 			                	xtype: 'textfieldbase',

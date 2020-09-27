@@ -1397,6 +1397,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					 //pendiente revision
 					 tarifaTrabajo.setMedicion(0F);
 					 tarifaTrabajo.setPrecioUnitario(config.getPrecioUnitario());
+					 tarifaTrabajo.setPrecioUnitarioCliente(config.getPrecioUnitarioCliente());
 					 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
 				}
 			}
@@ -1569,6 +1570,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 							 //pendiente revision
 							 tarifaTrabajo.setMedicion(0F);
 							 tarifaTrabajo.setPrecioUnitario(config.getPrecioUnitario());
+							 tarifaTrabajo.setPrecioUnitarioCliente(config.getPrecioUnitarioCliente());
 							 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
 						}
 					}
@@ -1600,6 +1602,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						 //pendiente revision
 						 tarifaTrabajo.setMedicion(0F);
 						 tarifaTrabajo.setPrecioUnitario(config.getPrecioUnitario());
+						 tarifaTrabajo.setPrecioUnitarioCliente(config.getPrecioUnitarioCliente());
 						 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
 					}
 				}

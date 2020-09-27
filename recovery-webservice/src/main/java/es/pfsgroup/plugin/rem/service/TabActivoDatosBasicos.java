@@ -1623,7 +1623,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 						if (activoOrigenHRE != null) {
 							isCarteraBBVADivarian = activoDao.isActivoBBVADivarian(activoOrigenHRE.getId());
 							isVendido = activoApi.isVendido(activoOrigenHRE.getId());
-							isFueraPerimetro = activoApi.isActivoIncluidoEnPerimetro(activoOrigenHRE.getId());
+							isFueraPerimetro = !activoApi.isActivoIncluidoEnPerimetro(activoOrigenHRE.getId());
 						} else {
 							throw new JsonViewerException(messageServices.getMessage(ID_HAYA_NO_EXISTE));
 						}
@@ -1631,7 +1631,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 						if (!isCarteraBBVADivarian) {
 							throw new JsonViewerException(messageServices.getMessage(ACTIVO_NO_DIVARIAN_BBVA));
 						}
-						if (!isVendido || !isFueraPerimetro) {
+						if (!isVendido && !isFueraPerimetro) {
 							throw new JsonViewerException(messageServices.getMessage(ACTIVO_VENDIDO_FUERA_DE_PERIMETRO_HAYA));
 						}
 					
@@ -1649,9 +1649,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 							activo.setTipoTitulo(activoOrigenHRE.getTipoTitulo());
 						}
 						
-						if (DDTipoTituloActivo.tipoTituloNoJudicial.equals(activo.getTipoTitulo().getCodigo())
-								&& activo.getAdjNoJudicial() != null) {
-							activo.setFechaTituloAnterior(activo.getAdjNoJudicial().getFechaTitulo());
+						if (DDTipoTituloActivo.tipoTituloNoJudicial.equals(activoOrigenHRE.getTipoTitulo().getCodigo())
+								&& activoOrigenHRE.getAdjNoJudicial() != null) {
+							activo.setFechaTituloAnterior(activoOrigenHRE.getAdjNoJudicial().getFechaTitulo());
 						}
 					}
 

@@ -222,8 +222,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 																maxValue: null,
 																reference: 'fechaResolComite',
 																colspan: 3,
-																disabled: true,
-																allowBlank: false
+																disabled: true
 															},
 										        			{
 														        xtype: 'textfieldbase',

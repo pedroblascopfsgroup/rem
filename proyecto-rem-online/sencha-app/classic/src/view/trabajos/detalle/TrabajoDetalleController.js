@@ -1454,12 +1454,12 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			else{
 				me.lookupReference('fechaResolComite').setAllowBlank(false);
 			}
-			
 		}
 		else {
 			me.lookupReference('fechaResolComite').setAllowBlank(true);
 		}
- 	 	
+
+		me.lookupReference('fechaResolComite').validate();
  	},
  	
  	onClickBotonCancelarVentanaAgendaTrabajo: function(btn) {		

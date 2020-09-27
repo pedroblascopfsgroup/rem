@@ -390,7 +390,6 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					{
 						xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
-						colspan: 1,
 						reference:'fechaTituloAnteriorRef',
 				        fieldLabel: HreRem.i18n('fieldlabel.fecha.titulo.anterior'),
 				        bind: {				        	
@@ -402,7 +401,6 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					{
 			        	xtype: 'comboboxfieldbase',
 			        	fieldLabel: HreRem.i18n('fieldlabel.sociedad.pago'),
-			        	colspan: 2,
 			        	reference:'sociedadPagoAnteriorRef',
 			        	
 			        	bind: {			        		
@@ -411,13 +409,16 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			        		 value:'{datosRegistrales.sociedadPagoAnterior}'
 			        	}
 			        },
-			        
+			        {
+			        	bind: {	
+			        		hidden: '{!esSubcarteraDivarian}'
+			        	}
+			        },
 			        {
 						title: 'Listado de Propietarios',
 						itemId: 'listadoPropietarios',
 					    xtype: 'gridBaseEditableRow',
 					    topBar : true,
-					    colspan:4,
 						cls	: 'panel-base shadow-panel',
 						bind: {
 							store: '{storePropietario}',

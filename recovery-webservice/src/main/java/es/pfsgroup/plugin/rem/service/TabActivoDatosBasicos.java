@@ -124,9 +124,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private static final String NO_GESTIONADO_POR_ADMISION = "msg.no.gestionado.admision";
 	private static final String ID_HAYA_NO_EXISTE= "msg.error.activo.hre.no.existe";
 	private static final String ACTIVO_NO_BBVA = "msg.error.activo.hre.bbva.no.existe";
-	private static final String ACTIVO_VENDIDO= "msg.error.activo.vendido";
-	private static final String ACTIVO_FUERA_DE_PERIMETRO_HAYA= "msg.error.activo.fuera.perimetro";
-	private static final String ACTIVO_NO_COINCIDE_CON_CERBERUS_BBVA= "msg.error.activo.no.bbva.divarian";
+	private static final String ACTIVO_VENDIDO_FUERA_DE_PERIMETRO_HAYA= "msg.error.activo.vendido.perimetro";
+	private static final String ACTIVO_NO_DIVARIAN_BBVA= "msg.error.activo.no.bbva.divarian";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -1617,60 +1616,46 @@ public class TabActivoDatosBasicos implements TabActivoService {
 						
 						Activo activoOrigenHRE = activoApi.getByNumActivo(dto.getIdOrigenHre());
 						
-						boolean isOrigenHRE = false;
 						boolean isVendido =  false;
-						boolean isCarteraBBVACERBERUS =  false;
+						boolean isCarteraBBVADivarian =  false;
 						boolean isFueraPerimetro =  false;
 						
-						if(activoOrigenHRE != null) {
-							isOrigenHRE = !activoDao.existeactivoIdHAYA(activoOrigenHRE.getNumActivo());
-							isVendido = activoDao.activoEstadoVendido(activoOrigenHRE.getNumActivo());
-							isCarteraBBVACERBERUS = !activoDao.activoPerteneceABBVAAndCERBERUS(activoOrigenHRE.getNumActivo());
-							isFueraPerimetro = activoDao.activoFueraPerimetroHAYA(activoOrigenHRE.getNumActivo());
-						}else {
+						if (activoOrigenHRE != null) {
+							isCarteraBBVADivarian = activoDao.isActivoBBVADivarian(activoOrigenHRE.getId());
+							isVendido = activoApi.isVendido(activoOrigenHRE.getId());
+							isFueraPerimetro = activoApi.isActivoIncluidoEnPerimetro(activoOrigenHRE.getId());
+						} else {
 							throw new JsonViewerException(messageServices.getMessage(ID_HAYA_NO_EXISTE));
 						}
-												
-						if(isOrigenHRE) {
-							throw new JsonViewerException(messageServices.getMessage(ID_HAYA_NO_EXISTE));
+						
+						if (!isCarteraBBVADivarian) {
+							throw new JsonViewerException(messageServices.getMessage(ACTIVO_NO_DIVARIAN_BBVA));
 						}
-						if(isCarteraBBVACERBERUS) {
-							throw new JsonViewerException(messageServices.getMessage(ACTIVO_NO_COINCIDE_CON_CERBERUS_BBVA));
-						}
-						if(isFueraPerimetro) {
-							throw new JsonViewerException(messageServices.getMessage(ACTIVO_FUERA_DE_PERIMETRO_HAYA));
-						}
-						if(isVendido) {
-							throw new JsonViewerException(messageServices.getMessage(ACTIVO_VENDIDO));
+						if (!isVendido || !isFueraPerimetro) {
+							throw new JsonViewerException(messageServices.getMessage(ACTIVO_VENDIDO_FUERA_DE_PERIMETRO_HAYA));
 						}
 					
-						if(activoOrigenHRE.getPropietarioPrincipal()!=null) {							
-							
+						activoBbva.setIdOrigenHre(dto.getIdOrigenHre());
+						
+						if (activoOrigenHRE.getPropietarioPrincipal() != null) {
 							List<ActivoPropietarioActivo> actOriginal= activo.getPropietariosActivo();
-							if(!actOriginal.isEmpty()) {
+							if (!actOriginal.isEmpty()) {
 								ActivoPropietarioActivo actPropAct = actOriginal.get(0);
 								actPropAct.setPropietario(activoOrigenHRE.getPropietarioPrincipal());
 							}
 						}
-							
-							
-						
 						
 						if(activoOrigenHRE.getTipoTitulo()!= null) {
 							activo.setTipoTitulo(activoOrigenHRE.getTipoTitulo());
 						}
-						if(activoOrigenHRE.getFechaTituloAnterior()!=null) {
-							activo.setFechaTituloAnterior(activoOrigenHRE.getFechaTituloAnterior());
-						}
-						if(dto.getIdOrigenHre()==null) {
-							activoBbva.setIdOrigenHre(dto.getIdOrigenHre());
-						}else {
-							activoBbva.setIdOrigenHre(dto.getIdOrigenHre());
-						}
 						
+						if (DDTipoTituloActivo.tipoTituloNoJudicial.equals(activo.getTipoTitulo().getCodigo())
+								&& activo.getAdjNoJudicial() != null) {
+							activo.setFechaTituloAnterior(activo.getAdjNoJudicial().getFechaTitulo());
+						}
 					}
 
-				if (dto.getUicBbva() != null) {
+					if (dto.getUicBbva() != null) {
 						activoBbva.setUicBbva(dto.getUicBbva());
 					}
 

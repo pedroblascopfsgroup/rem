@@ -2082,9 +2082,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}		
 		if (dtoTrabajo.getFechaConcretaString() != null && !dtoTrabajo.getFechaConcretaString().equals("")) {		
 			//
-			if(!"1970-01-01".equals(groovyft.format(dtoTrabajo.getFechaConcretaString()))) {
+			SimpleDateFormat formatoFechaString = new SimpleDateFormat("dd/MM/yyyy");
+			if(!"1970-01-01".equals(groovyft.format(formatoFechaString.parse(dtoTrabajo.getFechaConcretaString())))) {
 				SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
-				SimpleDateFormat formatoFechaString = new SimpleDateFormat("dd/MM/yyyy");
+				
 				SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm");
 				SimpleDateFormat formatoFechaHora = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 

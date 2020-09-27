@@ -350,6 +350,9 @@ public class Trabajo implements Serializable, Auditable {
 	
 	@Column(name="TBJ_FECHA_CAMBIO_ESTADO")
 	private Date fechaCambioEstado;
+
+	@Column(name = "TBJ_IMPORTE_ASEGURADO")
+   	private Double importeAsegurado;
 	
 	public Long getId() {
 		return id;
@@ -1175,6 +1178,14 @@ public class Trabajo implements Serializable, Auditable {
 
 	public void setFechaCambioEstado(Date fechaCambioEstado) {
 		this.fechaCambioEstado = fechaCambioEstado;
+	}
+
+	public Double getImporteAsegurado() {
+		return importeAsegurado;
+	}
+
+	public void setImporteAsegurado(Double importeAsegurado) {
+		this.importeAsegurado = importeAsegurado;
 	}
     
     

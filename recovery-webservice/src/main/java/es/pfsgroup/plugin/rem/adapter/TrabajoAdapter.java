@@ -305,7 +305,9 @@ public class TrabajoAdapter {
 				HashSet<String> listaActivos = new HashSet<String>();
 				
 				for (ActivoTrabajo activoTrabajo : listaActivoTrabajo){
-					listaEstadosTrabajos.add(activoTrabajo.getTrabajo().getEstado().getDescripcion());
+					if(!activoTrabajo.getTrabajo().getEstado().getCodigo().equals(DDEstadoTrabajo.ESTADO_VALIDADO)){
+						listaEstadosTrabajos.add(activoTrabajo.getTrabajo().getEstado().getDescripcion());
+					}
 					listaActivos.add(activoTrabajo.getActivo().getNumActivo().toString());
 				}
 				

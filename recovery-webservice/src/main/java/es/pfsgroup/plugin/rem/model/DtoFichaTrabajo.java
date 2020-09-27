@@ -198,7 +198,7 @@ public class DtoFichaTrabajo {
 	
 	private String idTarifas;
 	
-	private Long importePresupuesto;
+	private Double importePresupuesto;
 	
 	private String refImportePresupueso;
 	private Boolean riesgosTerceros;
@@ -1026,11 +1026,11 @@ public class DtoFichaTrabajo {
 		this.idTarifas = idTarifas;
 	}
 
-	public Long getImportePresupuesto() {
+	public Double getImportePresupuesto() {
 		return importePresupuesto;
 	}
 
-	public void setImportePresupuesto(Long importePresupuesto) {
+	public void setImportePresupuesto(Double importePresupuesto) {
 		this.importePresupuesto = importePresupuesto;
 	}
 

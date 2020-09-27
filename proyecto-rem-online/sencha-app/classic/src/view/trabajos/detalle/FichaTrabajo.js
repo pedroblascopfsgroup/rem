@@ -256,13 +256,8 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 					        	fieldLabel: HreRem.i18n('fieldlabel.estado.trabajo'),
 					        	xtype: 'comboboxfieldbase',
 					        	bind: {
-				            		store: '{comboEstadoTrabajoFicha}',
+				            		store: '{comboEstadoSegunEstadoGdaOProveedor}',
 				            		value: '{trabajo.estadoCodigo}'
-				            	},
-				            	listeners: {
-				            		afterrender: function (combo){
-				            			this.lookupController().filterStoreEstadoTrabajo(combo.getStore());
-				            		}
 				            	},
 					        	reference: 'comboEstadoTrabajoRef',
 					        	colspan: 2

@@ -51,6 +51,8 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
     logadoGestorMantenimiento: null,
     
     gestorActivo: null,
+    
+    trabajoDesdeActivo: false,
 	
     initComponent: function() {
     	
@@ -222,8 +224,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 																maxValue: null,
 																reference: 'fechaResolComite',
 																colspan: 3,
-																disabled: true,
-																allowBlank: false
+																disabled: true
 															},
 										        			{
 														        xtype: 'textfieldbase',

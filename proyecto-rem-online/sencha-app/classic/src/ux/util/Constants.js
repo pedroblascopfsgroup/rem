@@ -746,7 +746,7 @@ Ext.define('HreRem.ux.util.Constants', {
 
 	ESTADOS_TRABAJO: {
     	EN_CURSO : 'CUR',
-    	RECHAZADO: '03',
+    	RECHAZADO: 'REJ',
     	CANCELADO: 'CAN',
     	FINALIZADO: 'FIN',
     	SUBSANADO: 'SUB',

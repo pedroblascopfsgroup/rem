@@ -410,7 +410,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
             }
             for(var i = 0; i < datosComprobarPerimetro.length; i++){
 	            if(datosComprobarPerimetro[i].data.tienePerimetroGestion != "1"){
-	                Ext.MessageBox.alert(HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"), HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.mensaje.todos"));
+	            	Ext.MessageBox.alert(HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"), HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.mensaje.todos.agrupacion"));
 	                return false;
 	            }
             }

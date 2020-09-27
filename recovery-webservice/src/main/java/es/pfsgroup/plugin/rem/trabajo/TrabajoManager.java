@@ -1345,7 +1345,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					presupuesto.setProveedor(trabajo.getProveedorContacto().getProveedor());
 				}
 				presupuesto.setEstadoPresupuesto(estadoPresupuesto);
-				presupuesto.setImporte((float)dtoTrabajo.getImportePresupuesto());
+				presupuesto.setImporte(dtoTrabajo.getImportePresupuesto().floatValue());
 				if(dtoTrabajo.getRefImportePresupueso() != null) {
 					presupuesto.setRefPresupuestoProveedor(dtoTrabajo.getRefImportePresupueso());
 				}
@@ -1859,7 +1859,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					presupuesto.setProveedor(trabajo.getProveedorContacto().getProveedor());
 				}
 				presupuesto.setEstadoPresupuesto(estadoPresupuesto);
-				presupuesto.setImporte((float)dtoTrabajo.getImportePresupuesto());
+				presupuesto.setImporte(dtoTrabajo.getImportePresupuesto().floatValue());
 				if(dtoTrabajo.getRefImportePresupueso() != null) {
 					presupuesto.setRefPresupuestoProveedor(dtoTrabajo.getRefImportePresupueso());
 				}
@@ -1999,7 +1999,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajo.setCiaAseguradora(dtoTrabajo.getCiaAseguradora());
 		}
 		if (dtoTrabajo.getImportePrecio() != null) {
-			trabajo.setImportePresupuesto(dtoTrabajo.getImportePrecio());
+			trabajo.setImporteAsegurado(dtoTrabajo.getImportePrecio());
+			//trabajo.setImportePresupuesto(dtoTrabajo.getImportePrecio());
 		}
 		if (dtoTrabajo.getUrgente() != null) {
 			trabajo.setUrgente(dtoTrabajo.getUrgente());
@@ -2726,7 +2727,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setCubreSeguro(trabajo.getCubreSeguro());
 		}
 		if (trabajo.getImportePresupuesto() != null) {
-			dtoTrabajo.setImportePrecio(trabajo.getImportePresupuesto());
+			dtoTrabajo.setImportePresupuesto(trabajo.getImportePresupuesto());
 		}
 		if (trabajo.getUrgente() != null) {
 			dtoTrabajo.setUrgente(trabajo.getUrgente());
@@ -2761,6 +2762,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		if (trabajo.getEsTarifaPlana() != null) {
 			dtoTrabajo.setTarifaPlana(trabajo.getEsTarifaPlana());
+		}
+		if(trabajo.getImporteAsegurado() != null) {
+			dtoTrabajo.setImportePrecio(trabajo.getImporteAsegurado());
 		}
 		
 		Prefactura prefactura = trabajo.getPrefactura();

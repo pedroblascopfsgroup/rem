@@ -38,7 +38,8 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 				                	rowspan: 2,
 				                	bind: {
 				                		value: '{trabajo.descripcionGeneral}'
-				                	}
+				                	},
+				                	reference: 'descripcionGeneralRef'
 				                },
 						        {
 						        	xtype: 'comboboxfieldbase',
@@ -81,6 +82,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 							 	{
 				                	xtype: 'comboboxfieldbase',
 				                	fieldLabel:  HreRem.i18n('fieldlabel.gasto.estado.gasto'),
+				                	reference: 'estadoGastoRef',
 				                	bind:	{
 				                		store: '{comboEstadoGastos}',
 				                		value: '{trabajo.estadoGastoCodigo}'
@@ -90,7 +92,8 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 							 	{ 
 				                	xtype: 'checkboxfieldbase',
 				                	fieldLabel:  HreRem.i18n('header.gasto.cubierto.seguro'),
-				                	bind:		'{trabajo.cubreSeguro}'
+				                	bind:		'{trabajo.cubreSeguro}',
+				                	reference: 'checkboxCubreSeguroRef'
 				                },
 						        {
 						        	xtype: 'comboboxfieldbase',
@@ -109,7 +112,8 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 				                	bind:{
 				                		disabled: '{!trabajo.cubreSeguro}',
 			                			value: '{trabajo.importePrecio}'
-				                		}
+				                	},
+				                	reference: 'importePrecioAseguradoRef'
 				                },
 							 	{ 
 									xtype: 'checkboxfieldbase',
@@ -117,14 +121,15 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 									fieldLabel: HreRem.i18n('fieldlabel.check.riesgo.urgente'),
 									bind: {
 										value: '{trabajo.urgente}'		
-									}													
+									}
 								},
 							 	{ 
 				                	xtype: 'checkboxfieldbase',
 				                	fieldLabel:  HreRem.i18n('title.general.con.riesgos.terceros'),
 				                	bind: {
 				                		value : '{trabajo.riesgosTerceros}' 
-				                	}
+				                	},
+				                	reference: 'riesgosTercerosRef'
 				                		
 				                },
 							 	{ 
@@ -132,7 +137,8 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 				                	fieldLabel:  HreRem.i18n('fieldlabel.aplica.comite.trabajo'),
 				                	bind:{
 				                		value: '{trabajo.aplicaComite}'
-				                	}
+				                	},
+				                	reference: 'aplicaComiteRef'
 				                	
 				                }
 						]
@@ -161,14 +167,16 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 									xtype: 'datefieldbase',
 									bind: {
 											value:  '{trabajo.fechaResolucionComite}'
-									}
+									},
+									reference: 'fechaResolucionComiteRef'
 								},
 							 	{ 
 				                	xtype: 'numberfieldbase',
 				                	fieldLabel:  HreRem.i18n('title.resolucion.comite.id'),
 				                	bind: {
 				                		value: '{trabajo.resolucionComiteId}'
-				                	}
+				                	},
+				                	reference: 'resolucionComiteIdRef'
 				                }
 							]
         			},
@@ -321,6 +329,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 							{
 					        	xtype: 'datefieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.trabajo.llaves.fecha.entrega'),
+								reference: 'fechaEntregaTrabajoRef',
 								bind: {
 									value: '{trabajo.fechaEntregaLlaves}'
 								}
@@ -343,6 +352,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 						 	{
 			                	xtype: 'checkboxfieldbase',
 			                	fieldLabel:  HreRem.i18n('fieldlabel.trabajo.llaves.no.aplica'),
+			                	reference: 'llavesNoAplicaRef',
 			                	bind: {
 			                		value : '{trabajo.llavesNoAplica}'
 			                	}
@@ -350,6 +360,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 			                {
 			                	xtype: 'textfieldbase',
 			                	fieldLabel:  HreRem.i18n('fieldlabel.calificacion.motivo'),
+			                	reference: 'llavesMotivoRef',
 			                	bind: {
 			                		disabled: '{!trabajo.llavesNoAplica}',
 			                		value: '{trabajo.llavesMotivo}'

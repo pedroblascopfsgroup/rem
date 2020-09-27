@@ -144,6 +144,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
@@ -158,8 +159,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDeDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocPlusvalias;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGastoAsociado;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGastoAsociado;
@@ -175,9 +178,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloComplemento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDeDocumento;
-import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
@@ -774,6 +774,43 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				activoDao.save(activo);
 			} else {
 				throw new UserException("No se ha encontrado activo o tipo para relacionar adjunto");
+			}
+
+		} catch (Exception e) {
+			logger.error("Error en activoManager", e);
+		}
+
+		return null;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public String uploadFactura(WebFileItem webFileItem, Long idDocRestClient, GastoAsociadoAdquisicion gas, DDTipoDocumentoGastoAsociado tipoDocGastoAsociado)
+			throws UserException {
+
+		try {
+			if (!Checks.esNulo(gas)) {
+
+				Adjunto adj = uploadAdapter.saveBLOB(webFileItem.getFileItem());
+
+				AdjuntoGastoAsociado adjuntoGas = new AdjuntoGastoAsociado();
+				adjuntoGas.setAdjunto(adj);
+				adjuntoGas.setTipoDocumentoGastoAsociado(tipoDocGastoAsociado);
+				adjuntoGas.setGastoAsociadoAdquisicion(gas);
+				adjuntoGas.setIdentificadorGestorDocumental(idDocRestClient);
+				adjuntoGas.setTipoContenidoDocumento(webFileItem.getFileItem().getContentType());
+				adjuntoGas.setTamanyoDocumento(webFileItem.getFileItem().getLength());
+				adjuntoGas.setNombreAdjuntoGastoAsociado(webFileItem.getFileItem().getFileName());
+				adjuntoGas.setDescripcionDocumento(webFileItem.getParameter("descripcion"));
+				adjuntoGas.setFechaSubidaDocumento(new Date());
+
+				Auditoria.save(adjuntoGas);
+
+				gas.setFactura(adjuntoGas);
+
+				genericDao.save(GastoAsociadoAdquisicion.class, gas);
+			} else {
+				throw new UserException("No se ha encontrado gasto asociado para relacionar con la factura");
 			}
 
 		} catch (Exception e) {
@@ -7542,6 +7579,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 					if (gaa.getObservaciones() != null) {
 						dto.setObservaciones(gaa.getObservaciones());
+					}
+					if(gaa.getFactura() != null) {
+						dto.setIdFactura(gaa.getFactura().getId());
+						dto.setFactura(gaa.getFactura().getNombreAdjuntoGastoAsociado());
+						dto.setTipoFactura(gaa.getFactura().getTipoDocumentoGastoAsociado().getDescripcion().replace("Factura gasto Admision", "F.G.A."));
 					}
 					
 					listDto.add(dto);

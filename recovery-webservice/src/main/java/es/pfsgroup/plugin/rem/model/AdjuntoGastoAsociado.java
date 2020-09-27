@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -12,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -20,6 +22,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
+import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGastoAsociado;
@@ -47,10 +50,10 @@ private static final long serialVersionUID = 1L;
 	@Id
     @Column(name = "ADG_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "AdjuntoGastoAsociadoGenerator")
-    @SequenceGenerator(name = "AdjuntoGastoAsociadoGenerator", sequenceName = "SADG_ADJUNTO_GASTO_ASOCIADO")
+    @SequenceGenerator(name = "AdjuntoGastoAsociadoGenerator", sequenceName = "S_ADG_ADJUNTO_GASTO_ASOCIADO")
     private Long id;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@OneToOne
     @JoinColumn(name = "GAA_ID")
     private GastoAsociadoAdquisicion gastoAsociadoAdquisicion;
 	
@@ -58,10 +61,9 @@ private static final long serialVersionUID = 1L;
 	@JoinColumn(name="DD_TPG_ID")
 	private DDTipoDocumentoGastoAsociado tipoDocumentoGastoAsociado;
 	
-	//Esta columna contendrá el ID de ADJ_ADJUNTOS pero no tiene una Clave Foranea como tal
-    // ya que puede ser null dependiendo de si el Gestor Documental esta activado (esta columna a null) o no (esta columna deberia rellenarse).
-	@Column(name = "ADJ_ID")
-	private Long adjunto;
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "ADJ_ID")
+    private Adjunto adjunto;
 	
 	@Column(name="ADG_NOMBRE")
 	private String nombreAdjuntoGastoAsociado;
@@ -111,11 +113,11 @@ private static final long serialVersionUID = 1L;
 		this.tipoDocumentoGastoAsociado = tipoDocumentoGastoAsociado;
 	}
 
-	public Long getAdjunto() {
+	public Adjunto getAdjunto() {
 		return adjunto;
 	}
 
-	public void setAdjunto(Long adjunto) {
+	public void setAdjunto(Adjunto adjunto) {
 		this.adjunto = adjunto;
 	}
 

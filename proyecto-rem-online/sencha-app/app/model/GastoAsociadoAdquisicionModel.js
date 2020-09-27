@@ -34,7 +34,13 @@ Ext.define('HreRem.model.GastoAsociadoAdquisicionModel', {
     			name: 'importe'
     		},
     		{
+    			name: 'idFactura'
+    		},
+    		{
     			name: 'factura'
+    		},
+    		{
+    			name: 'tipoFactura'
     		},
     		{
     			name:'observaciones'

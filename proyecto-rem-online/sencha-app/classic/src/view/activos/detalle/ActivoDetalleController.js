@@ -7551,6 +7551,67 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		me.previousSibling().getComponent("registro").setValue(registro);
 		me.previousSibling().getComponent("otrosGastos").setValue(otrosGastos);
 
+	},
+	
+	onClickDescargarFacturaGastoAsociado: function(view, rowIndex, colIndex, item, e, record, row) {
+		var me = this, config = {};
+		if(!Ext.isEmpty(record) && !Ext.isEmpty(record.get('idFactura'))){
+			config.url = $AC.getWebPath() + "activo/descargarFacturaGastoAsociado."	+ $AC.getUrlPattern();
+			config.params = {};
+			config.params.id = record.get('idFactura');
+			config.params.nombreDocumento = record.get("factura").replace(/,/g, "");
+			me.fireEvent("downloadFile", config);
+		}
+	},
+	
+	onClickCargarFacturaGastoAsociado: function(view, rowIndex, colIndex, item, e, record, row) {
+		var me = this,
+		idEntidad = null,
+		parent = null;
+
+		if(!Ext.isEmpty(record) && !Ext.isEmpty(record.get('id'))){
+			idEntidad = record.get('id');
+		}
+		if(!Ext.isEmpty(view) && !Ext.isEmpty(view.up('grid'))){
+			parent = view.up('grid');
+		}
+        var ventana = Ext.create('HreRem.view.common.adjuntos.AdjuntarFactura',{idEntidad: idEntidad, parent: parent});
+        ventana.show();
+	},
+	
+	onClickBorrarFacturaGastoAsociado: function(view, rowIndex, colIndex, item, e, record, row) {
+		var me = this,
+		url = null,
+		idEntidad = null,
+		grid = null;
+
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+
+		if(!Ext.isEmpty(record) && !Ext.isEmpty(record.get('idFactura'))){
+			idEntidad = record.get('idFactura');
+		}
+
+		if(!Ext.isEmpty(view) && !Ext.isEmpty(view.up('grid'))){
+			grid = view.up('grid');
+		}
+		
+		url = $AC.getRemoteUrl('activo/deleteFacturaGastoAsociado');
+		Ext.Ajax.request({
+					url : url,
+					params : {
+						idFactura : idEntidad
+					},
+					success : function(response, opts) {
+						me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+						grid.getStore().load();
+					},
+					failure : function(record, operation) {
+						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					},
+					callback : function(record, operation) {
+						me.getView().unmask();
+					}
+				});
 	}
 
 });

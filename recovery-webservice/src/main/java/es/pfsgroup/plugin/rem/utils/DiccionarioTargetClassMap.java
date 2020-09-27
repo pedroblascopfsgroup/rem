@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
-import es.capgemini.pfs.expediente.model.DDTipoExpediente;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.DDFavorable;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
@@ -281,6 +280,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoAlta", DDTipoAlta.class);
 		mapa.put("tipoTituloComplemento", DDTipoTituloComplemento.class);
 		mapa.put("tipoGastoAsociado", DDTipoGastoAsociado.class);
+		mapa.put("tipoDocGastoAsociado", DDTipoDocumentoGastoAsociado.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

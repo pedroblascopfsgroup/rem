@@ -51,6 +51,8 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
     logadoGestorMantenimiento: null,
     
     gestorActivo: null,
+    
+    trabajoDesdeActivo: false,
 	
     initComponent: function() {
     	

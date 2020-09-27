@@ -472,16 +472,20 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			
 		}
 
+		if(me.getView().trabajoDesdeActivo){
+			me.crearTrabajo(btn,arraySelection,null);
+		}else{
 		//
-		Ext.MessageBox.confirm(
-				titleConfirm,
-				textConfirm,
-				function(result) {
-		        	if(result === 'yes'){
-		        		me.crearTrabajo(btn,arraySelection,null);
-		        	}
-		    	}
-		);
+			Ext.MessageBox.confirm(
+					titleConfirm,
+					textConfirm,
+					function(result) {
+			        	if(result === 'yes'){
+			        		me.crearTrabajo(btn,arraySelection,null);
+			        	}
+			    	}
+			);
+		}
 
 	},
 	

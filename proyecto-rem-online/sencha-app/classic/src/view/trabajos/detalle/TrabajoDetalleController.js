@@ -403,6 +403,17 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		}
 		if(!Ext.isEmpty(me.getView().idAgrupacion)){
 			arraySelection = me.lookupReference('activosagrupaciontrabajo').getActivoIDPersistedSelection();
+			var datosComprobarPerimetro = me.lookupReference('activosagrupaciontrabajo').getStore().getData().items;
+            
+            if(arraySelection.length > 0){
+            	datosComprobarPerimetro = me.lookupReference('activosagrupaciontrabajo').getSelection();   
+            }
+            for(var i = 0; i < datosComprobarPerimetro.length; i++){
+	            if(datosComprobarPerimetro[i].data.tienePerimetroGestion != "1"){
+	                Ext.MessageBox.alert(HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"), HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.mensaje.todos"));
+	                return false;
+	            }
+            }
 		}
 		
 		if(!Ext.isEmpty(me.getView().idActivo)){
@@ -1452,10 +1463,14 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
  		var me = this;
  		if(!checked){
  			me.lookupReference('comboResolucionComite').setDisabled(false);
+ 			me.lookupReference('comboResolucionComite').setAllowBlank(false);
+ 			me.lookupReference('comboResolucionComite').validate();
  	 		me.lookupReference('fechaResolComite').setDisabled(false);
  	 		me.lookupReference('resolComiteId').setDisabled(false);
  		}else{
  			me.lookupReference('comboResolucionComite').setDisabled(true);
+ 			me.lookupReference('comboResolucionComite').setAllowBlank(true);
+ 			me.lookupReference('comboResolucionComite').validate();
  	 		me.lookupReference('fechaResolComite').setDisabled(true);
  	 		me.lookupReference('resolComiteId').setDisabled(true);
  	 		me.lookupReference('resolComiteId').setValue(null);

@@ -36,7 +36,7 @@ public class DerivacionEstadoTrabajo implements Serializable, Auditable {
 	private static final long serialVersionUID = 4477763412715784465L;
 	
 	//Estados iniciales
-	public static final String RECHAZADO = "03";
+	public static final String RECHAZADO = "REJ";
 	public static final String EN_CURSO = "CUR";
 	public static final String FINALIZADO = "FIN";
 	public static final String SUBSANADO = "SUB";

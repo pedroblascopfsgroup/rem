@@ -7399,40 +7399,45 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			String fechaTitulo, String fechaRecepcion, String fechaInscripcion, String observaciones) {
 		
 		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-
+		Date fechaSolicitudF = null;
+		Date fechaTituloF = null;
+		Date fechaRecepcionF = null;
+		Date fechaInscripcionF = null;
 		
 		
 		try {			
-			Date fechaSolicitudF = ft.parse(fechaSolicitud);
-			Date fechaTituloF = ft.parse(fechaTitulo);
-			Date fechaRecepcionF = ft.parse(fechaRecepcion);
-			Date fechaInscripcionF = ft.parse(fechaInscripcion);
+			if(fechaSolicitud != null && !fechaSolicitud.isEmpty())
+				fechaSolicitudF = df.parse(df.format(ft.parse(fechaSolicitud)));
+			
+			if(fechaTitulo != null && !fechaTitulo.isEmpty())
+				fechaTituloF = df.parse(df.format(ft.parse(fechaTitulo)));
+			
+			if(fechaRecepcion != null && !fechaRecepcion.isEmpty())
+				fechaRecepcionF = df.parse(df.format(ft.parse(fechaRecepcion)));
+			
+			if(fechaInscripcion != null && !fechaInscripcion.isEmpty())
+				fechaInscripcionF = df.parse(df.format(ft.parse(fechaInscripcion)));
 					
 			Long idActivo = Long.parseLong(activoId);
 			
 			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-			Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 			Filter filtroCodTitulo = genericDao.createFilter(FilterType.EQUALS, "codigo", codTitulo);
+			
 			DDTipoTituloComplemento ddt =  genericDao.get(DDTipoTituloComplemento.class, filtroBorrado,
 					filtroCodTitulo);
-
 			Activo activo = get(idActivo);
-			
 			ActivoComplementoTitulo activoComTitulo = new ActivoComplementoTitulo();
 			
 			activoComTitulo.setActivo(activo);
 			activoComTitulo.setTituloComplemento(ddt);
-			if(fechaSolicitud != null && !fechaSolicitud.isEmpty())
-				activoComTitulo.setFechaSolicitud(df.parse(df.format(fechaSolicitudF)));
-			if(fechaTitulo != null && !fechaTitulo.isEmpty())
-				activoComTitulo.setFechaComplementoTitulo(df.parse(df.format(fechaTituloF)));
-			if(fechaRecepcion != null && !fechaRecepcion.isEmpty())
-				activoComTitulo.setFechaRecepcion(df.parse(df.format(fechaRecepcionF)));
-			if(fechaInscripcion != null && !fechaInscripcion.isEmpty())
-				activoComTitulo.setFechaInscripcion(df.parse(df.format(fechaInscripcionF)));
+			activoComTitulo.setFechaSolicitud(fechaSolicitudF);
+			activoComTitulo.setFechaComplementoTitulo(fechaTituloF);
+			activoComTitulo.setFechaRecepcion(fechaRecepcionF);
+			activoComTitulo.setFechaInscripcion(fechaInscripcionF);
 			activoComTitulo.setObservaciones(observaciones);
 			activoComTitulo.setFechaAlta(df.parse(df.format(new Date())));
 			activoComTitulo.setGestorAlta(adapter.getUsuarioLogado());
+			
 			genericDao.save(ActivoComplementoTitulo.class, activoComTitulo);
 			
 			return true;

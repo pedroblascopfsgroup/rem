@@ -1638,10 +1638,17 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	@Override
 	public FileItem getFileItemFactura(Long id, String nombreDocumento) {
 		if(id == null) return null;
+		FileItem fileItem = null;
 		AdjuntoGastoAsociado adjunto = genericDao.get(AdjuntoGastoAsociado.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
 		if(adjunto == null) return null;
-		if(adjunto.getIdentificadorGestorDocumental() == null) return adjunto.getAdjunto().getFileItem();
-		return this.getFileItem(adjunto.getIdentificadorGestorDocumental(), nombreDocumento);
+		if(adjunto.getIdentificadorGestorDocumental() == null) {
+			fileItem = adjunto.getAdjunto().getFileItem();
+			fileItem.setContentType(adjunto.getTipoContenidoDocumento());
+			fileItem.setFileName(adjunto.getNombreAdjuntoGastoAsociado());
+		}else {
+			fileItem = this.getFileItem(adjunto.getIdentificadorGestorDocumental(), nombreDocumento);
+		}
+		return fileItem;
 	}
 	
 }

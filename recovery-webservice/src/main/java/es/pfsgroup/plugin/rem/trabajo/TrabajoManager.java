@@ -2000,15 +2000,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		if (dtoTrabajo.getImportePrecio() != null) {
 			trabajo.setImporteAsegurado(dtoTrabajo.getImportePrecio());
-			//trabajo.setImportePresupuesto(dtoTrabajo.getImportePrecio());
 		}
 		if (dtoTrabajo.getUrgente() != null) {
 			trabajo.setUrgente(dtoTrabajo.getUrgente());
 		}else {
 			trabajo.setUrgente(false);
 		}
-		if (dtoTrabajo.getRiesgosTerceros() != null) {
-			trabajo.setRiesgoInminenteTerceros(dtoTrabajo.getRiesgosTerceros());
+		if (dtoTrabajo.getRiesgoInminenteTerceros() != null) {
+			trabajo.setRiesgoInminenteTerceros(dtoTrabajo.getRiesgoInminenteTerceros());
 		}else {
 			trabajo.setRiesgoInminenteTerceros(false);
 		}
@@ -2135,14 +2134,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getSubtipoTrabajoCodigo());
 			DDSubtipoTrabajo subtipoTrabajo = genericDao.get(DDSubtipoTrabajo.class, filtro);
 			trabajo.setSubtipoTrabajo(subtipoTrabajo);
-
-			// Seteo del flag esTarifaPlana
-			if (!Checks.esNulo(dtoTrabajo.getIdActivo())) {
-				Activo activoAux = activoApi.get(dtoTrabajo.getIdActivo());
-				if (!Checks.esNulo(activoAux)) {
-					trabajo.setEsTarifaPlana(this.esTrabajoTarifaPlana(activoAux, subtipoTrabajo, new Date()));
-				}
-			}
 		}
 		if (dtoTrabajo.getIdMediador() != null) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdMediador());

@@ -1605,17 +1605,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     		
     		if(esFichaTrabajo){
     			me.lookupReference('comboGestorActivoResposable').setReadOnly(false);	
-    			me.lookupReference('checkboxUrgente').setReadOnly(false);
-    			me.lookupReference('estadoGastoRef').setReadOnly(false);
-    			me.lookupReference('descripcionGeneralRef').setReadOnly(false);
-    			me.lookupReference('fechaConcreta').setReadOnly(false);
-    			me.lookupReference('horaConcreta').setReadOnly(false);
-    			me.lookupReference('fechaTope').setReadOnly(false);
-    			me.lookupReference('comboProveedorLlave').setReadOnly(false);	
-    			me.lookupReference('fechaEntregaTrabajoRef').setReadOnly(false);
-    			me.lookupReference('comboReceptorLlave').setReadOnly(false);
-    			me.lookupReference('llavesNoAplicaRef').setReadOnly(false);
-    			me.lookupReference('llavesMotivoRef').setReadOnly(false);
     		}
     		
     		if(estadoTrabajo == "CUR" /*|| estadoTrabajo == "REJ"*/){
@@ -1628,10 +1617,14 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		    		me.lookupReference('checkboxCubreSeguroRef').setReadOnly(false);
 					me.lookupReference('comboCiaAseguradora').setReadOnly(false);
 					me.lookupReference('importePrecioAseguradoRef').setReadOnly(false);
-					me.lookupReference('aplicaComiteRef').setReadOnly(false);
 		    		me.lookupReference('comboResolucionComite').setReadOnly(false);
 					me.lookupReference('fechaResolucionComiteRef').setReadOnly(false);
 					me.lookupReference('resolucionComiteIdRef').setReadOnly(false);
+	    			me.lookupReference('comboProveedorLlave').setReadOnly(false);	
+	    			me.lookupReference('fechaEntregaTrabajoRef').setReadOnly(false);
+	    			me.lookupReference('comboReceptorLlave').setReadOnly(false);
+	    			me.lookupReference('llavesNoAplicaRef').setReadOnly(false);
+	    			me.lookupReference('llavesMotivoRef').setReadOnly(false);
     			} else {
     				me.lookupReference('comboProveedorGestionEconomica').setReadOnly(false);
     				me.lookupReference('proveedorContactoCombo').setReadOnly(false);
@@ -1708,6 +1701,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			me.lookupReference('comboReceptorLlave').setReadOnly(true);
 			me.lookupReference('llavesNoAplicaRef').setReadOnly(true);
 			me.lookupReference('llavesMotivoRef').setReadOnly(true);
+			me.lookupReference('tomaDePosesion').setReadOnly(true);
     	} else {
     		me.lookupReference('comboProveedorGestionEconomica').setReadOnly(true);
     		me.lookupReference('proveedorContactoCombo').setReadOnly(true);
@@ -1745,6 +1739,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			me.lookupReference('comboReceptorLlave').setReadOnly(false);
 			me.lookupReference('llavesNoAplicaRef').setReadOnly(false);
 			me.lookupReference('llavesMotivoRef').setReadOnly(false);
+			me.lookupReference('tomaDePosesion').setReadOnly(false);
     	} else {
     		me.lookupReference('comboProveedorGestionEconomica').setReadOnly(false);
     		me.lookupReference('proveedorContactoCombo').setReadOnly(false);

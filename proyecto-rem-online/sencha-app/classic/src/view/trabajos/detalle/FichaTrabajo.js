@@ -122,7 +122,8 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 									fieldLabel: HreRem.i18n('fieldlabel.check.riesgo.urgente'),
 									bind: {
 										value: '{trabajo.urgente}'		
-									}
+									},
+									readOnly: true
 								},
 							 	{ 
 				                	xtype: 'checkboxfieldbase',
@@ -130,7 +131,8 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 				                	bind: {
 				                		value : '{trabajo.riesgosTerceros}' 
 				                	},
-				                	reference: 'riesgosTercerosRef'
+				                	reference: 'riesgosTercerosRef',
+				                	readOnly: true
 				                		
 				                },
 							 	{ 
@@ -139,7 +141,8 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 				                	bind:{
 				                		value: '{trabajo.aplicaComite}'
 				                	},
-				                	reference: 'aplicaComiteRef'
+				                	reference: 'aplicaComiteRef',
+				                	readOnly: true
 				                	
 				                }
 						]
@@ -199,7 +202,6 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 												xtype: 'datefieldbase',
 												name: 'fechaConcreta',
 												reference: 'fechaConcreta',
-												minValue: $AC.getCurrentDate(),
 												maxValue: null,
 												bind: {
 													value: '{trabajo.fechaConcreta}'
@@ -383,11 +385,11 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 			                	xtype: 'textfieldbase',
 			                	fieldLabel:  HreRem.i18n('fieldlabel.calificacion.motivo'),
 			                	reference: 'llavesMotivoRef',
+			                	flex: 3,
 			                	bind: {
 			                		disabled: '{!trabajo.llavesNoAplica}',
 			                		value: '{trabajo.llavesMotivo}'
-			                	},
-			                	flex: 3
+			                	}			                	
 			                }
 						]
 					},

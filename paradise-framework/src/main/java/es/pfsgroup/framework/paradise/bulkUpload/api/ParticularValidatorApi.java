@@ -1218,4 +1218,8 @@ public interface ParticularValidatorApi {
 
 	Boolean existeEmisor(String emisorNIF);
 
+	boolean existeMismoProveedorContactoInformado(String codProveedor, String numTrabajo);
+
+	boolean isTipoTarifaValidoEnConfiguracion(String codigoTarifa, String numTrabajo);
+
 }

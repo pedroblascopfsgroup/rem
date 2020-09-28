@@ -2120,17 +2120,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajo.setResolucionComiteId(dtoTrabajo.getResolucionComiteId());
 		}		
 		if (dtoTrabajo.getFechaConcretaString() != null && !dtoTrabajo.getFechaConcretaString().equals("")) {		
-			//
-			SimpleDateFormat formatoFechaString = new SimpleDateFormat("dd/MM/yyyy");
-			if(!"1970-01-01".equals(groovyft.format(formatoFechaString.parse(dtoTrabajo.getFechaConcretaString())))) {
+			if (!"01/01/1970".equals(dtoTrabajo.getFechaConcretaString())) {
 				SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
-				
-				SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm");
+				SimpleDateFormat formatoFechaString = new SimpleDateFormat("dd/MM/yyyy");
 				SimpleDateFormat formatoFechaHora = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-				String fecha = formatoFecha.format(formatoFechaString.parse(dtoTrabajo.getFechaConcretaString()));
-				String hora = formatoHora.format(formatoHora.parse(dtoTrabajo.getHoraConcretaString()));
-
+				String fecha = dtoTrabajo.getFechaConcretaString();
+				String hora = dtoTrabajo.getHoraConcretaString();
+				fecha = formatoFecha.format(formatoFechaString.parse(fecha));
 				Date fechaHoraConcreta = null;
 				try {
 					fechaHoraConcreta = formatoFechaHora.parse(fecha+" "+hora);

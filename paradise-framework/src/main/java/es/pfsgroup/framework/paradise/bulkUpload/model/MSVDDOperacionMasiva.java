@@ -114,6 +114,7 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 	public static final String CODE_FILE_BULKUPLOAD_MASIVO_CALIDAD_DATOS ="MCD";
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_MODIFICACION_LINEAS_DE_DETALLE ="CMMLD";
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_UNICA_GASTOS ="CMUG";
+	public static final String CODE_FILE_BULKUPLOAD_MASIVO_TARIFAS_PRESUPUESTO ="CMTARIFASPRESUP";
 	
 
 

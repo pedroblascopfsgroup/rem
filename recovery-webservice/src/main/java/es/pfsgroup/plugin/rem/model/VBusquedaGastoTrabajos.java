@@ -57,6 +57,9 @@ public class VBusquedaGastoTrabajos implements Serializable {
 	
 	@Column(name="DESCRIPCION_LINEA")
 	private String descripcionLinea;
+	
+	@Column(name="GLD_ID")
+	private Long idLinea;
 
 	public Long getId() {
 		return id;
@@ -168,6 +171,14 @@ public class VBusquedaGastoTrabajos implements Serializable {
 
 	public void setDescripcionLinea(String descripcionLinea) {
 		this.descripcionLinea = descripcionLinea;
+	}
+
+	public Long getIdLinea() {
+		return idLinea;
+	}
+
+	public void setIdLinea(Long idLinea) {
+		this.idLinea = idLinea;
 	}
 	
 

@@ -121,7 +121,8 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 									fieldLabel: HreRem.i18n('fieldlabel.check.riesgo.urgente'),
 									bind: {
 										value: '{trabajo.urgente}'		
-									}
+									},
+									readOnly: true
 								},
 							 	{ 
 				                	xtype: 'checkboxfieldbase',
@@ -129,7 +130,8 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 				                	bind: {
 				                		value : '{trabajo.riesgosTerceros}' 
 				                	},
-				                	reference: 'riesgosTercerosRef'
+				                	reference: 'riesgosTercerosRef',
+				                	readOnly: true
 				                		
 				                },
 							 	{ 
@@ -138,7 +140,8 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 				                	bind:{
 				                		value: '{trabajo.aplicaComite}'
 				                	},
-				                	reference: 'aplicaComiteRef'
+				                	reference: 'aplicaComiteRef',
+				                	readOnly: true
 				                	
 				                }
 						]
@@ -198,7 +201,6 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 												xtype: 'datefieldbase',
 												name: 'fechaConcreta',
 												reference: 'fechaConcreta',
-												minValue: $AC.getCurrentDate(),
 												maxValue: null,
 												bind: {
 													value: '{trabajo.fechaConcreta}'
@@ -345,7 +347,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 								bind: {
 									value: '{trabajo.fechaEntregaTrabajo}'
 								},
-								reference: 'fechaEntregaTrabajoRef',
+								reference: 'fechaEntregaTrabajoRef'
 							},
 					        {
 					        	//Combo proovededor. Pdte. de confirmar
@@ -364,7 +366,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 			                	bind: {
 			                		value : '{trabajo.llavesNoAplica}' 
 			                	},
-			                	reference: 'llavesNoAplicaRef',
+			                	reference: 'llavesNoAplicaRef'
 			                		
 			                },
 			                {
@@ -375,7 +377,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 			                		value: '{trabajo.llavesMotivo}'
 			                	},
 			                	flex: 3,
-			                	reference: 'llavesMotivoRef',
+			                	reference: 'llavesMotivoRef'
 			                }
 						]
 					},

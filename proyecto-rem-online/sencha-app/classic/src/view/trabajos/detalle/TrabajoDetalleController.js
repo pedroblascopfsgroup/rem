@@ -1637,6 +1637,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     				me.lookupReference('proveedorContactoCombo').setReadOnly(false);
 		    		me.lookupReference('gridtarifastrabajo').setTopBar(true)
 		    		me.lookupReference('gridpresupuestostrabajo').setTopBar(true)
+				    me.lookupReference('gridtarifastrabajo').setDisabled(false);
+				    me.lookupReference('gridpresupuestostrabajo').setDisabled(false);
     			}
     			
 	    	}else if(estadoTrabajo == "FIN" || estadoTrabajo == "SUB"){
@@ -1648,15 +1650,14 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     			} else {
 		    		me.lookupReference('gridtarifastrabajo').setTopBar(true)
 		    		me.lookupReference('gridpresupuestostrabajo').setTopBar(true)
+				    me.lookupReference('gridtarifastrabajo').setDisabled(false);
+				    me.lookupReference('gridpresupuestostrabajo').setDisabled(false);
     			}
 	    		
 	    	}else if(estadoTrabajo == "REJ" || estadoTrabajo == "13"){
 	    		
 	    		if(esFichaTrabajo){
     				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
-    			} else { 
-		    		me.lookupReference('gridtarifastrabajo').setTopBar(false)
-		    		me.lookupReference('gridpresupuestostrabajo').setTopBar(false)
     			}
 	    		
 	    	}
@@ -1671,6 +1672,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		    		me.lookupReference('checkSiniestroRef').setReadOnly(false);
     			} else {
 		    		me.lookupReference('gridtarifastrabajo').setTopBar(true)
+				    me.lookupReference('gridtarifastrabajo').setDisabled(false);
     			}
 	    		
 	    	}
@@ -1709,8 +1711,10 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	} else {
     		me.lookupReference('comboProveedorGestionEconomica').setReadOnly(true);
     		me.lookupReference('proveedorContactoCombo').setReadOnly(true);
-			me.lookupReference('gridtarifastrabajo').setTopBar(true)
-		    me.lookupReference('gridpresupuestostrabajo').setTopBar(true)
+			me.lookupReference('gridtarifastrabajo').setTopBar(false)
+		    me.lookupReference('gridpresupuestostrabajo').setTopBar(false)
+		    me.lookupReference('gridtarifastrabajo').setDisabled(true);
+		    me.lookupReference('gridpresupuestostrabajo').setDisabled(true);
     	}
 	},
     desbloqueaCamposTrabajo: function (esFichaTrabajo){
@@ -1744,8 +1748,10 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	} else {
     		me.lookupReference('comboProveedorGestionEconomica').setReadOnly(false);
     		me.lookupReference('proveedorContactoCombo').setReadOnly(false);
-			me.lookupReference('gridtarifastrabajo').setTopBar(false)
-		    me.lookupReference('gridpresupuestostrabajo').setTopBar(false)
+			me.lookupReference('gridtarifastrabajo').setTopBar(true)
+		    me.lookupReference('gridpresupuestostrabajo').setTopBar(true)
+		    me.lookupReference('gridtarifastrabajo').setDisabled(false);
+		    me.lookupReference('gridpresupuestostrabajo').setDisabled(false);
     	}
     },
  	valorComboSubtipo: function (){

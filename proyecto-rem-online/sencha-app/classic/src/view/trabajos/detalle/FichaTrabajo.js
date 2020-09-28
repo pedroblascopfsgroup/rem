@@ -19,8 +19,9 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
              me.items= [
             	 	{
             	 		xtype:'fieldsettable',
-						defaultType: 'textfieldbase',						
+						defaultType: 'textfieldbase',
 						title: HreRem.i18n('title.general'),
+						reference: 'generalFieldSetRef',
 						items : [
 							 	{ 
 				                	xtype: 'displayfieldbase',
@@ -267,6 +268,27 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 				            		store: '{comboEstadoSegunEstadoGdaOProveedor}',
 				            		value: '{trabajo.estadoCodigo}'
 				            	},
+				            	listeners:{
+		        					select: 
+		        					function(x, y, z){
+		        						//me.up().previousSibling("[reference='generalFieldSetRef']").down("[reference='aplicaComiteRef']")
+		        						var me = this;
+		        						if(me.getSelection().data.codigo == "13" && 
+		        								me.up().previousSibling("[reference='generalFieldSetRef']").down("[reference='aplicaComiteRef']").checked){
+		        							var oldValue = me.bind.value.lastValue;
+		        							if( me.up().previousSibling("[reference='comiteFieldSet']").down("[reference='comboResolucionComite']").getValue() == null
+		        								 || me.up().previousSibling("[reference='comiteFieldSet']").down("[reference='comboResolucionComite']").getValue() != "APR"){
+		        								Ext.MessageBox.alert("Error","No se puede validar un trabajo que aplique comité sin la aprobación del mismo");
+		        								for(var i = 0 ; i< me.getStore().getData().length ; i++){
+		        									if(me.getStore().getData().items[i].data.codigo == me.bind.value.lastValue){
+		        										me.setSelection(me.getStore().getData().items[i])
+		        										return;
+		        									}
+		        								}
+		        							}
+		        						}
+		        					}
+								},
 					        	reference: 'comboEstadoTrabajoRef',
 					        	colspan: 2
 					        },

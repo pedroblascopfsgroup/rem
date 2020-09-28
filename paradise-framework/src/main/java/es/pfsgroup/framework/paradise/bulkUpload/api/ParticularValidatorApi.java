@@ -1167,4 +1167,8 @@ public interface ParticularValidatorApi {
 
 	String getValidacionCampoCDC(String codCampo);
 
+	boolean existeMismoProveedorContactoInformado(String codProveedor, String numTrabajo);
+
+	boolean isTipoTarifaValidoEnConfiguracion(String codigoTarifa, String numTrabajo);
+
 }

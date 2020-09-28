@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Josep Ros
---## FECHA_CREACION=20200914
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20200928
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-11054
+--## INCIDENCIA_LINK=HREOS-11232
 --## PRODUCTO=NO
 --##
 --## Finalidad: Actualizar instrucciones
@@ -30,13 +30,12 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 	V_ID NUMBER(16); -- Vble. auxiliar para almacenar temporalmente el numero de la sequencia.
-	V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_SRE_SUBTIPO_REGISTRO_ESPARTA'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+	V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_MCO_MOTIVO_COMERCIALIZACION'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('TAS', 'Tasación'),
-      	T_TIPO_DATA('CAR', 'Carga')
+    	T_TIPO_DATA('04', 'GGAA a confirmar por Sareb')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN
@@ -50,30 +49,27 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
         --Comprobar el dato a insertar.
         V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' 
-					WHERE DD_SRE_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+					WHERE DD_MCO_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         IF V_NUM_TABLAS = 1 THEN
         DBMS_OUTPUT.PUT_LINE('[INFO]: El equipo '''||TRIM(V_TMP_TIPO_DATA(2))||''' ya existe');
        ELSE
-       	-- Si no existe se inserta.
-          V_MSQL := 'SELECT '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL FROM DUAL';
-          EXECUTE IMMEDIATE V_MSQL INTO V_ID;
           V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
-					  DD_SRE_ID,
-					  DD_SRE_CODIGO,
-					  DD_SRE_DESCRIPCION,
-					  DD_SRE_DESCRIPCION_LARGA,
+					  DD_MCO_ID,
+					  DD_MCO_CODIGO,
+					  DD_MCO_DESCRIPCION,
+					  DD_MCO_DESCRIPCION_LARGA,
 					  VERSION,
 					  USUARIOCREAR,
 					  FECHACREAR,
 					  BORRADO
 					  ) VALUES (
-					  '||V_ID||',
+					  '||V_ESQUEMA||'.S_DD_MCO_MOT_COMERCIALIZACION.NEXTVAL,
 					  '''||TRIM(V_TMP_TIPO_DATA(1))||''',
 					  '''||TRIM(V_TMP_TIPO_DATA(2))||''',
 					  '''||TRIM(V_TMP_TIPO_DATA(2))||''',
 					  0,
-					  ''HREOS-11054'',
+					  ''HREOS-11232'',
 					  SYSDATE,
 					  0
                       )';

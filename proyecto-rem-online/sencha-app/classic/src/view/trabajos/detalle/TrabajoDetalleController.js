@@ -1657,7 +1657,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     		
 	    } else if(esProvActivo){
 	    	
-	    	if(estadoTrabajo == "CUR" || estadoTrabajo == "REJ"){
+	    	if(estadoTrabajo == "CUR" /*|| estadoTrabajo == "REJ"*/){
 	    		
 	    		if(esFichaTrabajo){
     				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);

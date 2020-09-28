@@ -1,9 +1,11 @@
 package es.pfsgroup.plugin.rem.excel;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.VExportTrabajosAlbaranes;
@@ -188,12 +190,10 @@ public class TrabajosPrefacturaExcelReport extends AbstractExcelReport implement
 	}
 	
 	private String formatearImportes(Double importe) {
-		String importeInicial = String.format("%,.2f", importe);
-		String[] partes = importeInicial.split("[.]");
-		String parteEntera = partes[0].replace(",", ".");
-		String parteDecimal = partes[1];
-		
-		return parteEntera.concat(",").concat(parteDecimal).concat("€");
+		Locale currentLocale = new Locale ("es","ES");
+		NumberFormat numberFormatter = NumberFormat.getNumberInstance(currentLocale);
+		String importeFormateado =  numberFormatter.format(importe);
+		return importeFormateado.concat("€");
 		
 	}
 

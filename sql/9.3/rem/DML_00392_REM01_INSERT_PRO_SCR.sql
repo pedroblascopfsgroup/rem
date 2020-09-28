@@ -1,7 +1,7 @@
 --/*
 --######################################### 
 --## AUTOR=Cristian Montoya
---## FECHA_CREACION=20200922
+--## FECHA_CREACION=20200926
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11306
@@ -83,15 +83,15 @@ DECLARE
 			T_JBV('V85848422', '157'),
 			T_JBV('V84373000', '157'),
 			T_JBV('V85576239', '157'),
-			--T_JBV('V84533793', '157'),
-			--T_JBV('V85496008', '157'),
-			--T_JBV('V84901461', '157'),
-			--T_JBV('V84170901', '157'),
-			--T_JBV('V85653186', '157'),
-			--T_JBV('V84702752', '157'),
-			--T_JBV('V85257657', '157'),
-			--T_JBV('V85350304', '157'),
-			--T_JBV('V85839009', '157'),
+			T_JBV('V84533793', '157'),
+			T_JBV('V85496008', '157'),
+			T_JBV('V84901461', '157'),
+			T_JBV('V84170901', '157'),
+			T_JBV('V85653186', '157'),
+			T_JBV('V84702752', '157'),
+			T_JBV('V85257657', '157'),
+			T_JBV('V85350304', '157'),
+			T_JBV('V85839009', '157'),
 			T_JBV('V64241474', '157'),
 			T_JBV('V63511554', '157'),
 			T_JBV('V63803969', '157'),
@@ -116,7 +116,7 @@ DECLARE
 			T_JBV('B63625107', '158'),
 			T_JBV('B63442974', '158'),
 			T_JBV('B64986938', '158'),
-			--T_JBV('B63248579', '158'),
+			T_JBV('B63248579', '158'),
 			T_JBV('B63377212', '158')
 
 	); 
@@ -133,42 +133,46 @@ BEGIN
 				DD_SCR_ID := TRIM(V_TMP_JBV(2));
 
 
+				EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO WHERE PRO_DOCIDENTIF = '''||TRIM(V_TMP_JBV(1))||''' AND BORRADO = 0 AND ROWNUM = 1 ORDER BY FECHACREAR ASC' INTO V_COUNT;
+
 				
-				EXECUTE IMMEDIATE 'SELECT PRO_ID FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO WHERE PRO_DOCIDENTIF = '''||TRIM(V_TMP_JBV(1))||''' AND BORRADO = 0' INTO PRO_ID;
-				EXECUTE IMMEDIATE 'SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = '''||TRIM(V_TMP_JBV(2))||''' AND BORRADO = 0' INTO DD_SCR_ID;
-				
-				EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.PRO_SCR WHERE PRO_ID = '||PRO_ID INTO V_COUNT;
-				
-				IF V_COUNT = 0 THEN 								
-					V_SQL := 'INSERT INTO '||V_ESQUEMA||'.PRO_SCR (
-								  PRO_ID
-								, DD_SCR_ID
-								, FECHACREAR
-								, USUARIOCREAR
-								) VALUES (
-								 '||PRO_ID||'
-								,'||DD_SCR_ID||'
-								, SYSDATE
-								,'''||V_USUARIO||'''
-								)
-					';
-	      			DBMS_OUTPUT.PUT_LINE(V_SQL);	
-				    EXECUTE IMMEDIATE V_SQL;
-				
-					DBMS_OUTPUT.PUT_LINE('Insertada la relación entre el propietario con número de documento '''||TRIM(V_TMP_JBV(1))||''' y código de subcartera '''||TRIM(V_TMP_JBV(2))||'''');	
-		
-			
-				ELSE
-					 V_SQL := 'UPDATE '|| V_ESQUEMA ||'.PRO_SCR 
-								SET DD_SCR_ID = '||DD_SCR_ID||'
-								, FECHAMODIFICAR = SYSDATE
-								, USUARIOCREAR = '''||V_USUARIO||'''
-								WHERE PRO_ID = '||PRO_ID;
-	      			DBMS_OUTPUT.PUT_LINE(V_SQL);	
-          			EXECUTE IMMEDIATE V_SQL;
+				IF V_COUNT > 0 THEN
 					
-          			DBMS_OUTPUT.PUT_LINE('Actualizada la subcartera relacionada al propietario con número de documento '''||TRIM(V_TMP_JBV(1))||'''');	
-	
+					EXECUTE IMMEDIATE 'SELECT PRO_ID FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO WHERE PRO_DOCIDENTIF = '''||TRIM(V_TMP_JBV(1))||''' AND BORRADO = 0 AND ROWNUM = 1 ORDER BY FECHACREAR ASC' INTO PRO_ID;
+					EXECUTE IMMEDIATE 'SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = '''||TRIM(V_TMP_JBV(2))||''' AND BORRADO = 0' INTO DD_SCR_ID;
+					EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.PRO_SCR WHERE PRO_ID = '||PRO_ID INTO V_COUNT;
+					
+					IF V_COUNT = 0 THEN 								
+						V_SQL := 'INSERT INTO '||V_ESQUEMA||'.PRO_SCR (
+									  PRO_ID
+									, DD_SCR_ID
+									, FECHACREAR
+									, USUARIOCREAR
+									) VALUES (
+									 '||PRO_ID||'
+									,'||DD_SCR_ID||'
+									, SYSDATE
+									,'''||V_USUARIO||'''
+									)
+						';
+					    EXECUTE IMMEDIATE V_SQL;
+					
+						DBMS_OUTPUT.PUT_LINE('Insertada la relación entre el propietario con número de documento '''||TRIM(V_TMP_JBV(1))||''' y código de subcartera '''||TRIM(V_TMP_JBV(2))||'''');	
+			
+				
+					ELSE
+						 V_SQL := 'UPDATE '|| V_ESQUEMA ||'.PRO_SCR 
+									SET DD_SCR_ID = '||DD_SCR_ID||'
+									, FECHAMODIFICAR = SYSDATE
+									, USUARIOCREAR = '''||V_USUARIO||'''
+									WHERE PRO_ID = '||PRO_ID;
+	          			EXECUTE IMMEDIATE V_SQL;
+						
+	          			DBMS_OUTPUT.PUT_LINE('Actualizada la subcartera relacionada al propietario con número de documento '''||TRIM(V_TMP_JBV(1))||'''');	
+		
+					END IF;
+				ELSE
+					DBMS_OUTPUT.PUT_LINE('No se ha encontrado ningún propietario con número de documento '''||TRIM(V_TMP_JBV(1))||'''');	
 				END IF;
 
 	 END LOOP;			    

@@ -1,5 +1,7 @@
 --/*
 --##########################################
+--## AUTOR=GUILLEM REY
+--## FECHA_CREACION=20200918
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-8040

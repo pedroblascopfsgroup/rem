@@ -54,6 +54,10 @@ BEGIN
 		EXECUTE IMMEDIATE ' ALTER TABLE ' || V_ESQUEMA || '.' || V_TABLENAME || ' ADD (
 				   TIENE_ANEJOS_REGISTRALES NUMBER(16,0) DEFAULT '||V_ID_SINO||' NOT NULL, 
 				  CONSTRAINT fk_GCO_ID FOREIGN KEY (TIENE_ANEJOS_REGISTRALES) REFERENCES '||V_ESQUEMA_M||'.DD_SIN_SINO(DD_SIN_ID))';
+
+            V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLENAME||'.TIENE_ANEJOS_REGISTRALES IS ''Marca si el activo tiene anejos registrales''';
+            EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna ASA_NUMERO_DOMICILIO creado.');
 		DBMS_OUTPUT.PUT_LINE('[INFO] Se ha creado el campo con la clave foranea');
 		ELSE
 		DBMS_OUTPUT.PUT_LINE('[INFO] El Campo ya ha sido creado');

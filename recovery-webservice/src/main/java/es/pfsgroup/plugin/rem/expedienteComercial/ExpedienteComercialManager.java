@@ -98,6 +98,7 @@ import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.bulkAdvisoryNote.dao.BulkOfertaDao;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
@@ -351,6 +352,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Autowired
 	private BulkOfertaDao bulkOfertaDao;
+	
+	@Autowired
+	private TramitacionOfertasApi tramitacionOfertasManager;
 
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -1047,7 +1051,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (!Checks.esNulo(listaOfertasLBK) && !listaOfertasLBK.isEmpty()) {
 			ofertaApi.calculoComiteLBK(oferta.getId(), null);
 		}
-				
 		
 		if (!Checks.esNulo(dto.getTipoOfertaCodigo())) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoOfertaCodigo());
@@ -1288,6 +1291,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if ((!Checks.esNulo(dto.getNumVisita()) && ((!Checks.esNulo(visitaOferta) && Long.parseLong(dto.getNumVisita()) != visitaOferta.getNumVisitaRem()) || Checks.esNulo(visitaOferta)))
 				|| !Checks.esNulo(dto.getImporteOferta())) {
 			this.actualizarGastosExpediente(expedienteComercial, oferta);
+		}
+		
+		if (dto.getImporteOferta() != null && DDCartera.CODIGO_CARTERA_BBVA.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", tramitacionOfertasManager.calcularComiteBBVA(oferta));
+			DDComiteSancion comite = genericDao.get(DDComiteSancion.class, filtro);
+			expedienteComercial.setComitePropuesto(comite);
+			expedienteComercial.setComiteSancion(comite);
+			genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		}
 
 		return true;

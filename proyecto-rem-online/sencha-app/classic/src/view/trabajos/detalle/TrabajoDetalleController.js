@@ -1124,14 +1124,14 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	idTrabajo = parent.getBindRecord().get('idTrabajo'),
     	tipoTrabajoDescripcion = parent.getBindRecord().get('tipoTrabajoDescripcion'),
     	subtipoTrabajoDescripcion = parent.getBindRecord().get('subtipoTrabajoDescripcion'),
-    	codigoTipoProveedor = parent.getBindRecord().get('codigoTipoProveedor'),
+    	//codigoTipoProveedor = parent.getBindRecord().get('codigoTipoProveedor'),
     	idProveedor = parent.getBindRecord().get('idProveedor'),
     	idProveedorContacto = parent.getBindRecord().get('idProveedorContacto');
     	emailProveedorContacto = parent.getBindRecord().get('emailProveedorContacto');
     	nombreProveedorContacto = parent.getBindRecord().get('nombreProveedorContacto');
     	usuarioProveedorContacto = parent.getBindRecord().get('usuarioProveedorContacto');
 
-    	var window=Ext.create("HreRem.view.trabajos.detalle.ModificarPresupuesto", {idTrabajo: idTrabajo, tipoTrabajoDescripcion: tipoTrabajoDescripcion, subtipoTrabajoDescripcion: subtipoTrabajoDescripcion, codigoTipoProveedor: codigoTipoProveedor, idProveedor: idProveedor, idProveedorContacto: idProveedorContacto, emailProveedorContacto: emailProveedorContacto, nombreProveedorContacto: nombreProveedorContacto, usuarioProveedorContacto: usuarioProveedorContacto, parent: parent, modoEdicion: true, presupuesto: record}).show();
+    	var window=Ext.create("HreRem.view.trabajos.detalle.ModificarPresupuesto", {idTrabajo: idTrabajo, tipoTrabajoDescripcion: tipoTrabajoDescripcion, subtipoTrabajoDescripcion: subtipoTrabajoDescripcion, /*codigoTipoProveedor: codigoTipoProveedor,*/ idProveedor: idProveedor, idProveedorContacto: idProveedorContacto, emailProveedorContacto: emailProveedorContacto, nombreProveedorContacto: nombreProveedorContacto, usuarioProveedorContacto: usuarioProveedorContacto, parent: parent, modoEdicion: true, presupuesto: record}).show();
     	window.getViewModel().set('trabajo',me.getViewModel().get('trabajo'));
     },
     

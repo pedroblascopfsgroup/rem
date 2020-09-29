@@ -98,7 +98,9 @@ Ext.define('HreRem.view.trabajos.detalle.AnyadirNuevoPresupuesto', {
 										flex: 		1,
 										bind:		'{presupuesto.subtipoTrabajoDescripcion}'
 									},
-									{ 
+									
+									///
+									/*{ 
 							        	xtype: 'comboboxfieldbase',
 							        	fieldLabel: HreRem.i18n('fieldlabel.tipo.proveedor'),
 										flex: 		1,
@@ -118,7 +120,7 @@ Ext.define('HreRem.view.trabajos.detalle.AnyadirNuevoPresupuesto', {
 			    						listeners: {
 						                	select: 'onChangeComboProveedorGE'
 						            	}
-							        },
+							        },*/
 				    				{ 
 							        	xtype: 'comboboxfieldbase',
 							        	fieldLabel: HreRem.i18n('fieldlabel.nombre'),
@@ -129,9 +131,9 @@ Ext.define('HreRem.view.trabajos.detalle.AnyadirNuevoPresupuesto', {
 										reference: 'comboProveedorGestionEconomica2',
 										chainedReference: 'proveedorContactoCombo2',
 							        	bind: {
-						            		store: '{comboProveedorFilteredA}',
-						            		value: '{presupuesto.idProveedor}',
-						            		disabled: '{!presupuesto.codigoTipoProveedor}'
+						            		store: '{comboProveedorFiltradoManual}',
+						            		value: '{presupuesto.idProveedor}'
+						            		//disabled: '{!presupuesto.codigoTipoProveedor}'
 						            	},
 						            	displayField: 'nombreComercial',
 			    						valueField: 'idProveedor',
@@ -150,7 +152,7 @@ Ext.define('HreRem.view.trabajos.detalle.AnyadirNuevoPresupuesto', {
 							        	width: 		480,
 							        	chainedReference: 'labelUsuarioContacto2',
 							        	bind: {
-						            		store: '{comboProveedorContactoA}',
+						            		store: '{comboProveedorContacto}',
 						            		value: '{presupuesto.idProveedorContacto}',
 						            		disabled: '{!presupuesto.idProveedor}'
 						            	},
@@ -263,7 +265,7 @@ Ext.define('HreRem.view.trabajos.detalle.AnyadirNuevoPresupuesto', {
 		me.down('button[itemId=btnGuardar]').setVisible(!me.modoEdicion);
 		me.down('button[itemId=btnActualizar]').setVisible(me.modoEdicion);
 		//me.down('comboboxfieldbase[itemId=comboEstadoPresupuesto]').setVisible(me.modoEdicion);
-		me.lookupReference('comboTipoProveedorGestionEconomica2').setVisible(!me.modoEdicion);
+		//me.lookupReference('comboTipoProveedorGestionEconomica2').setVisible(!me.modoEdicion);
 		me.lookupReference('comboProveedorGestionEconomica2').setVisible(!me.modoEdicion);
 		me.lookupReference('proveedorContactoCombo2').setVisible(!me.modoEdicion);
     }

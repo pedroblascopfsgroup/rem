@@ -58,7 +58,7 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 							value: '{gestionEconomica.idProveedor}',
 							readOnly: '{!gestionEconomica.esProveedorEditable}'
 						},
-						displayField: 'nombre',
+						displayField: 'nombreComercial',
 						valueField: 'idProveedor',
 						filtradoEspecial: true,
 						listeners: {

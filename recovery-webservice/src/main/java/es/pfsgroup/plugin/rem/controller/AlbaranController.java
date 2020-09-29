@@ -129,7 +129,7 @@ public class AlbaranController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView comprobarValidarPrefactura(Long id, String lista, ModelMap model) {
+	public ModelAndView comprobarValidarPrefactura(Long id, String[] lista, ModelMap model) {
 		Boolean comprobar = false;
 		try {
 			comprobar = albaranApi.validarPrefactura(id,lista);

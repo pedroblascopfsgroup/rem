@@ -30,7 +30,7 @@ public interface AlbaranApi {
 	@BusinessOperationDefinition("albaranManager.findPrefectura")
 	public Page findPrefectura(DtoDetallePrefactura dto) ;
 	
-	public Boolean validarPrefactura(Long id, String listaString);
+	public Boolean validarPrefactura(Long id, String[] listaString);
 	
 	public Boolean validarAlbaran(Long id);
 	

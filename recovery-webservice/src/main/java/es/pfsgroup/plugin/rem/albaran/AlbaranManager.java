@@ -76,15 +76,17 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 	}
 	
 	@Transactional
-	public Boolean validarPrefactura(Long id, String listaString) {
-		List<DtoDetallePrefactura> lista = obtenerDtoDeString(listaString);
+	public Boolean validarPrefactura(Long id, String[] listaString) {
+		//List<DtoDetallePrefactura> lista = obtenerDtoDeString(listaString);
 		Prefactura prefactura = genericDao.get(Prefactura.class,
 				genericDao.createFilter(FilterType.EQUALS, "numPrefactura", id));
+		
 		if(prefactura.getEstadoPrefactura() != null && prefactura.getEstadoPrefactura().getCodigo() != null ) {
-			for (DtoDetallePrefactura dto : lista) {
-				if(dto.getCheckIncluirTrabajo()) {
-					Trabajo tbj = genericDao.get(Trabajo.class,
-							genericDao.createFilter(FilterType.EQUALS, "numTrabajo", dto.getNumTrabajo()));
+			for(int i = 0; i < listaString.length; i++) {
+				Long numTrabajo = Long.valueOf(listaString[i]);
+				Trabajo tbj = genericDao.get(Trabajo.class,
+						genericDao.createFilter(FilterType.EQUALS, "numTrabajo", numTrabajo));
+				if(tbj != null) {
 					tbj.setPrefactura(null);
 					genericDao.update(Trabajo.class, tbj);
 				}

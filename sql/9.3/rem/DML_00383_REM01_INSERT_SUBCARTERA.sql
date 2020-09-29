@@ -40,13 +40,11 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-  	T_TIPO_DATA('153' ,'BBVA','BBVA','16'),
     T_TIPO_DATA('154' ,'Anida','Anida','16'),
     T_TIPO_DATA('155' ,'CX','CX','16'),
     T_TIPO_DATA('156' ,'GAT','GAT','16'),
     T_TIPO_DATA('157' ,'EdT','EdT','16'),
-    T_TIPO_DATA('158' ,'Usgai','Usgai','16'),
-    T_TIPO_DATA('159' ,'BBVA','BBVA','16')--he preguntado a Mariano porque me ha vuelto a mandar BBVA con otro codigo. No se ha dado cuenta, por lo visto desaparecerá el 153. De momento lo dejamos asi.
+    T_TIPO_DATA('158' ,'Usgai','Usgai','16')
 
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

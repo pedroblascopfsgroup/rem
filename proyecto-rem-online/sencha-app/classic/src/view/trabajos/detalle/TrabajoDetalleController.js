@@ -1074,7 +1074,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	var me = this,
     	windowSeleccionTarifas = grid.up('window'),
     	idTrabajo = windowSeleccionTarifas.idTrabajo,
-    	newRecord = Ext.create('HreRem.model.TarifasTrabajo', {idConfigTarifa: record.getData().id, codigoTarifa: record.getData().codigoTarifa, precioUnitario: record.getData().precioUnitario, unidadMedida: record.getData().unidadmedida, idTrabajo: idTrabajo});
+    	newRecord = Ext.create('HreRem.model.TarifasTrabajo', {idConfigTarifa: record.getData().id, codigoTarifa: record.getData().codigoTarifa, precioUnitario: record.getData().precioUnitario, precioUnitarioCliente: record.getData().precioUnitarioCliente, unidadMedida: record.getData().unidadmedida, idTrabajo: idTrabajo});
 		//Ahora hacer el save en el store para que se llame al controller java
     	newRecord.save({
     		callback: function() {

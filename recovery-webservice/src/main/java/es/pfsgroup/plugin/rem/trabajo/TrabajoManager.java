@@ -897,6 +897,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		String codPestana = "DEC";
 		
 		if(!Checks.esNulo(dtoGestionEconomica.getIdProveedor())){
+			dtoHistorificador.setTabla(ConstantesTrabajo.NOMBRE_TABLA_ACTIVO_PROVEEDOR);
 			dtoHistorificador.setCampo(ConstantesTrabajo.NOMBRE_PROOVEDOR_DETALLE_ECONOMICO);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_NOMBRE_PROOVEDOR_DETALLE_ECONOMICO);
 			if(!Checks.esNulo(trabajo.getProveedorContacto()) && !Checks.esNulo(trabajo.getProveedorContacto().getProveedor())) {
@@ -915,6 +916,22 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			
 
+			guardarCambiosHistorificador(dtoHistorificador, codPestana);
+		}
+		
+		if(!Checks.esNulo(dtoGestionEconomica.getIdProveedorContacto())){
+			dtoHistorificador.setCampo(ConstantesTrabajo.PROVEEDOR_CONTACTO);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_PROVEEDOR_CONTACTO);
+			if(!Checks.esNulo(trabajo.getProveedorContacto())) {
+				dtoHistorificador.setValorAnterior(trabajo.getProveedorContacto().getApellidoNombre());
+			}
+			
+			Filter filtroIdProveedor = genericDao.createFilter(FilterType.EQUALS, "id", dtoGestionEconomica.getIdProveedorContacto());
+			ActivoProveedorContacto proveedorContacto = genericDao.get(ActivoProveedorContacto.class, filtroIdProveedor);
+			if(!Checks.esNulo(proveedorContacto)) {
+				dtoHistorificador.setValorNuevo(proveedorContacto.getApellidoNombre());
+			}
+			
 			guardarCambiosHistorificador(dtoHistorificador, codPestana);
 		}
 		

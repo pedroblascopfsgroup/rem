@@ -37,7 +37,7 @@ BEGIN
                 ) T2
             ON (T1.EDI_ID = T2.EDI_ID)
             WHEN MATCHED THEN UPDATE SET
-            T1.EDI_DESCRIPCION = T2.EDI_DESCRIPCION || CHR(13) ||'''||V_TEXT||''',
+            T1.EDI_DESCRIPCION = T2.EDI_DESCRIPCION || CHR(10) || CHR(10) ||'''||V_TEXT||''',
             T1.USUARIOMODIFICAR = '''||V_USUARIO||''', T1.FECHAMODIFICAR = SYSDATE';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Actualizado '||SQL%ROWCOUNT||' registros ');

@@ -1,7 +1,6 @@
 package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessCompositeValidators;
@@ -45,12 +43,12 @@ public class MSVValidatorTarifasPresupuestos extends MSVExcelValidatorAbstract {
 	private final static String ERROR_FALTAN_CAMPOS = "msg.error.masivo.tarifa.presupuesto.faltan.campos";
 	private final static String ERROR_PROVEEDOR_NO_COINCIDE = "msg.error.masivo.tarifa.presupuesto.proveedor.no.coincide";
 	private final static String ERROR_NO_EXISTE_CONFIGURACION_TARIFA="msg.error.masivo.tarifa.presupuesto.no.existe.configuracion.tarifa";
+	private final static String ERROR_ESTADO_TRABAJO_INCORRECTO_TARIFA="msg.error.masivo-tarifa.presupuesto.estado.trabajo.incorrecto.tarifa";
+	private final static String ERROR_ESTADO_TRABAJO_INCORRECTO_PRESUPUESTO="msg.error.masivo-tarifa.presupuesto.estado.trabajo.incorrecto.presupuesto";
 	
 	
 	//CAMPOS
-	private final static int FILA_CABECERA = 0;
 	private final static int FILA_DATOS = 1;
-	private final static int NUM_COLS = 8; 
 	private final static int NUM_COLS_ITER = 2; // Total de iteraciones
 	private final static int COL_NUM_TRABAJO = 0;
 	private final static int COL_TIPO_REGISTRO = 1;
@@ -62,6 +60,9 @@ public class MSVValidatorTarifasPresupuestos extends MSVExcelValidatorAbstract {
 	private final static int COL_IMPORTE = 7;
 	private final static String TIPO_TARIFA = "TRF";
 	private final static String TIPO_PRESUPUESTO = "PRS";
+	private final static String CODIGO_ESTADO_FINALIZADO = "FIN";
+	private final static String CODIGO_ESTADO_EN_CURSO = "CUR";
+	
 	private Integer numFilasHoja;
 	private Map<String, List<Integer>> mapaErrores;
 	private boolean validado = true;
@@ -83,11 +84,8 @@ public class MSVValidatorTarifasPresupuestos extends MSVExcelValidatorAbstract {
 	private MSVProcesoApi msvProcesoApi;
 
 	@Autowired
-	private ApiProxyFactory proxyFactory;
-
-	@Autowired
 	private MSVBusinessValidationFactory validationFactory;
-
+	
 	@Override
 	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) throws Exception {
 		Long idTipoOperacion = dtoFile.getIdTipoOperacion();
@@ -127,8 +125,6 @@ public class MSVValidatorTarifasPresupuestos extends MSVExcelValidatorAbstract {
 
 	private boolean validarFichero(MSVHojaExcel exc) {
 		mapaErrores = new HashMap<String, List<Integer>>();
-		ArrayList<Integer> numFilaErrorTrabajo = new ArrayList<Integer>();
-		ArrayList<Integer> numFilaErrorTipoRegistro = new ArrayList<Integer>();
 		
 		for (int fila = FILA_DATOS; fila < this.numFilasHoja; fila++) {
 			
@@ -139,9 +135,23 @@ public class MSVValidatorTarifasPresupuestos extends MSVExcelValidatorAbstract {
 					switch (columna) {
 					case COL_NUM_TRABAJO:
 						valorOK = particularValidator.existeTrabajo(celda);
-						if ( !valorOK) {
+						if (valorOK) {
+							String codigoEstadoTrabajo = particularValidator.getEstadoTrabajoByNumTrabajo(celda);
+							
+							if (!CODIGO_ESTADO_FINALIZADO.equals(codigoEstadoTrabajo)
+									&& !CODIGO_ESTADO_EN_CURSO.equals(codigoEstadoTrabajo)) {
+								this.validado = false;
+								if (TIPO_TARIFA.equals(exc.dameCelda(fila, COL_TIPO_REGISTRO))) {
+									addErrorToMap(ERROR_ESTADO_TRABAJO_INCORRECTO_TARIFA, fila);
+									
+								} else if (TIPO_TARIFA.equals(exc.dameCelda(fila, COL_TIPO_REGISTRO))) {
+									addErrorToMap(ERROR_ESTADO_TRABAJO_INCORRECTO_PRESUPUESTO, fila);
+									
+								}
+							}
+						} else {
 							this.validado = false;
-							numFilaErrorTrabajo.add(fila);
+							addErrorToMap(ERROR_TRABAJO_NO_EXISTE, fila);
 						}
 						break;
 					case COL_TIPO_REGISTRO:
@@ -150,7 +160,7 @@ public class MSVValidatorTarifasPresupuestos extends MSVExcelValidatorAbstract {
 							doValidationAccordingType(celda, exc, fila);
 						}else {
 							this.validado = false;
-							numFilaErrorTipoRegistro.add(fila);
+							addErrorToMap(ERROR_TIPO_REGISTRO, fila);
 						}
 						break;
 					}
@@ -163,11 +173,7 @@ public class MSVValidatorTarifasPresupuestos extends MSVExcelValidatorAbstract {
 				logger.error(e.getMessage());
 			}
 		}
-		if (!this.validado) {
-			mapaErrores.put(messageServices.getMessage(ERROR_TRABAJO_NO_EXISTE), numFilaErrorTrabajo);
-			mapaErrores.put(messageServices.getMessage(ERROR_TIPO_REGISTRO), numFilaErrorTipoRegistro);
-		}
-
+		
 		return this.validado;
 	}
 

@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.pagination.Page;
-import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
@@ -28,7 +27,6 @@ import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoRefacturable;
@@ -51,26 +49,29 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 	@Override
 	public DtoPage getListGastos(DtoGastosFilter dtoGastosFilter) {
 
-		HQLBuilder hb = this.rellenarFiltrosBusquedaGasto(dtoGastosFilter, false);
+		HQLBuilder hb = this.rellenarFiltrosBusquedaGasto(dtoGastosFilter, false, false);
+		HQLBuilder hbCount = this.rellenarFiltrosBusquedaGasto(dtoGastosFilter, false, true);
 
-		return this.getListadoGastosCompleto(dtoGastosFilter, hb);
+		return this.getListadoGastosCompleto(dtoGastosFilter, hb, hbCount);
 	}
 
 	@Override
 	public DtoPage getListGastosExcel(DtoGastosFilter dtoGastosFilter) {
 
-		HQLBuilder hb = this.rellenarFiltrosBusquedaGasto(dtoGastosFilter, true);
+		HQLBuilder hb = this.rellenarFiltrosBusquedaGasto(dtoGastosFilter, true, false);
+		HQLBuilder hbCount = this.rellenarFiltrosBusquedaGasto(dtoGastosFilter, true, true);
 
 		hb.orderBy("vgasto.numGastoHaya", HQLBuilder.ORDER_ASC);
 
-		return this.getListadoGastosCompletoExcel(dtoGastosFilter, hb);
+		return this.getListadoGastosCompletoExcel(dtoGastosFilter, hb, hbCount);
 	}
 
 	@Override
 	public DtoPage getListGastosFilteredByProveedorContactoAndGestoria(DtoGastosFilter dtoGastosFilter, Long idUsuario,
 			Boolean isGestoria, Boolean isGenerateExcel) {
 
-		HQLBuilder hb = this.rellenarFiltrosBusquedaGasto(dtoGastosFilter, isGenerateExcel);
+		HQLBuilder hb = this.rellenarFiltrosBusquedaGasto(dtoGastosFilter, isGenerateExcel, false);
+		HQLBuilder hbCount = this.rellenarFiltrosBusquedaGasto(dtoGastosFilter, isGenerateExcel, true);
 
 		List<String> nombresProveedor = proveedorDao.getNombreProveedorByIdUsuario(idUsuario);
 		if (!Checks.estaVacio(nombresProveedor)) {
@@ -93,15 +94,16 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		}
 
 		if (isGenerateExcel) {
-			return this.getListadoGastosCompletoExcel(dtoGastosFilter, hb);
+			return this.getListadoGastosCompletoExcel(dtoGastosFilter, hb, hbCount);
 		}
-		return this.getListadoGastosCompleto(dtoGastosFilter, hb);
+		return this.getListadoGastosCompleto(dtoGastosFilter, hb, hbCount);
 	}
 
 	@SuppressWarnings("unchecked")
-	private DtoPage getListadoGastosCompleto(DtoGastosFilter dtoGastosFilter, HQLBuilder hb) {
+	private DtoPage getListadoGastosCompleto(DtoGastosFilter dtoGastosFilter, HQLBuilder hb, HQLBuilder hbCount) {
 		
 		Page pageGastos = HibernateQueryUtils.page(this, hb, dtoGastosFilter);
+		Page pageGastosCount = HibernateQueryUtils.page(this, hb, dtoGastosFilter);
 		List<VGastosProveedor> gastos = (List<VGastosProveedor>) pageGastos.getResults();
 		if (dtoGastosFilter.getIdProvision() != null) {
 			dtoGastosFilter.setLimit(100000);
@@ -118,13 +120,14 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 				gasto.setImporteTotalAgrupacion(importeTotalAgrupacion);
 			}
 		}
-		return new DtoPage(gastos, pageGastos.getTotalCount());
+		return new DtoPage(gastos, pageGastosCount.getTotalCount());
 	}
 
 	@SuppressWarnings("unchecked")
-	private DtoPage getListadoGastosCompletoExcel(DtoGastosFilter dtoGastosFilter, HQLBuilder hb) {
+	private DtoPage getListadoGastosCompletoExcel(DtoGastosFilter dtoGastosFilter, HQLBuilder hb, HQLBuilder hbCount) {
 
 		Page pageGastos = HibernateQueryUtils.page(this, hb, dtoGastosFilter);
+		Page pageGastosCount = HibernateQueryUtils.page(this, hb, dtoGastosFilter);
 		List<VGastosProveedorExcel> gastos = (List<VGastosProveedorExcel>) pageGastos.getResults();
 		if (dtoGastosFilter.getIdProvision() != null) {
 			dtoGastosFilter.setLimit(100000);
@@ -141,11 +144,33 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 				gasto.setImporteTotalAgrupacion(importeTotalAgrupacion);
 			}
 		}
-		return new DtoPage(gastos, pageGastos.getTotalCount());
+		return new DtoPage(gastos, pageGastosCount.getTotalCount());
 	}
 
-	private HQLBuilder rellenarFiltrosBusquedaGasto(DtoGastosFilter dtoGastosFilter, Boolean isGenerateExcel) {
-		String select = "select vgasto ";
+	private HQLBuilder rellenarFiltrosBusquedaGasto(DtoGastosFilter dtoGastosFilter, Boolean isGenerateExcel, boolean isCount) {
+		String select;
+		
+		if(isCount) {
+			select = "select distinct"
+					+ " vgasto.id"
+					+ ", vgasto.numGastoHaya"
+					+ ", vgasto.numFactura"
+					+ ", vgasto.nombreProveedor"
+					+ ", vgasto.fechaEmision"
+					+ ", vgasto.importeTotal"
+					+ ", vgasto.fechaTopePago"		
+					+ ", vgasto.nombrePropietario"
+					+ ", vgasto.estadoGastoDescripcion"
+					+ ", vgasto.sujetoImpuestoIndirecto"
+					+ ", vgasto.nombreGestoria"
+					+ ", vgasto.entidadPropietariaDescripcion"
+					+ ", vgasto.motivoRechazo"
+					+ ", vgasto.motivoRechazoProp"
+					+ ", vgasto.docIdentifPropietario ";
+		}else {
+			select = "select vgasto ";
+		}
+		
 		String from;
 		if (isGenerateExcel) {
 			from = "from VGastosProveedorExcel vgasto";
@@ -159,7 +184,6 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		// Por si es necesario filtrar por datos de los activos del gasto
 		String fromGastoActivos = GastoActivosHqlHelper.getFrom(dtoGastosFilter);
 		if (!Checks.esNulo(fromGastoActivos)) {
-			select = "select distinct vgasto ";
 			from = from + fromGastoActivos;
 			where = where + GastoActivosHqlHelper.getWhereJoin(dtoGastosFilter, hasWhere);
 			hasWhere = true;

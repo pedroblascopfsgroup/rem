@@ -1,0 +1,202 @@
+--/*
+--######################################### 
+--## AUTOR=David Gonzalez
+--## FECHA_CREACION=20190917
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-7658
+--## PRODUCTO=NO
+--##            
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+DECLARE
+
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- #ESQUEMA# Configuracion Esquema
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.     
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_NUM_SEQUENCE NUMBER(16); --Vble .aux para almacenar el valor de la sequencia
+    V_NUM_MAXID NUMBER(16); --Vble .aux para almacenar el valor maximo de 
+    
+    V_SQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar         
+    V_COUNT NUMBER(16); -- Vble. para contar.
+    V_COUNT_UPDATE NUMBER(16):= 0; -- Vble. para contar updates
+    V_USUARIO VARCHAR2(32 CHAR):= 'MIG_BBVA';
+
+	PRO_DOCIDENTIF VARCHAR2(55 CHAR);
+	PRO_NOMBRE VARCHAR2(55 CHAR);
+	PRO_CODIGO_UVEM VARCHAR2(55 CHAR);
+
+    TYPE T_JBV IS TABLE OF VARCHAR2(32000);
+    TYPE T_ARRAY_JBV IS TABLE OF T_JBV; 
+	
+	V_JBV T_ARRAY_JBV := T_ARRAY_JBV(
+		  	T_JBV('ANIDA GRUPO INMOBILIARIO, S.L.', 'B78689841', '6066'),
+			T_JBV('CAMARATE GOLF, S.A.', 'A83827907', '6067'),
+			T_JBV('ANIDA OPERACIONES SINGULARES, SAU', 'A28515088', '6068'),
+			T_JBV('CATALUNYACAIXA IMMOBILIARIA SAU', 'A60118098', '6069'),
+			T_JBV('PORTICO PROCAM SL', 'B81260911', '6070'),
+			T_JBV('GESCAT LLEVANT, S.L.', 'B62563721', '6071'),
+			T_JBV('GESCAT POLSKA SP ZOO', '6342613565', '6072'),
+			T_JBV('ACTIVOS MACORP, S.L.', 'B64921083', '6073'),
+			T_JBV('GESCAT GESTIÓ DE SÒL, S.L.', 'B64921109', '6074'),
+			T_JBV('GESCAT VIVENDES EN COMERCIALITZACIÓ, S.L', 'B64921091', '6075'),
+			T_JBV('GESCAT LLOGUERS, S.L.', 'B65072803', '6076'),
+			T_JBV('NOIDIRI, S.L.', 'B43965037', '6077'),
+			T_JBV('SATICEM HOLDING S.L.', 'B63821383', '6078'),
+			T_JBV('CAIXA MANRESA ONCASA INMOBILIARIA S.L.', 'B64504731', '6079'),
+			T_JBV('SATICEM IMMOBLES EN ARRENDAMENT S.L.', 'B64929334', '6080'),
+			T_JBV('PROVIURE CZF PARC D HABITATGES,S.L.', 'B65853210', '6081'),
+			T_JBV('ALCALÁ 120 PROMOS. Y G.IM. SL', 'B81247983', '6082'),
+			T_JBV('JALE PROCAM SL', 'B11819935', '6083'),
+			T_JBV('PROMOCIONES MIES DEL VALLE, SL', 'B39488549', '6084'),
+			T_JBV('MBSCAT 2 FTA', 'V65146995', '6085'),
+			T_JBV('MBSCAT 1 FTA', 'V64980824', '6086'),
+			T_JBV('HIPOCAT 19 FTA', 'V65161754', '6087'),
+			T_JBV('HIPOCAT 10 FTA', 'V64241474', '6088'),
+			T_JBV('HIPOCAT 11 FTA', 'V64478373', '6089'),
+			T_JBV('HIPOCAT 9 FTA', 'V64006075', '6090'),
+			T_JBV('HIPOCAT 7 FTA', 'V63511554', '6091'),
+			T_JBV('GAT FTGENCAT 2008 FTA', 'V64915424', '6092'),
+			T_JBV('HIPOCAT 8 FTA', 'V63803969', '6093'),
+			T_JBV('HIPOCAT 20 FTA', 'V65332686', '6094'),
+			T_JBV('GAT FTGENCAT 2007', 'V64705924', '6095'),
+			T_JBV('HIPOCAT 17 FTA', 'V64998925', '6096'),
+			T_JBV('HIPOCAT 6 FTA', 'V63275259', '6097'),
+			T_JBV('GAT FTGENCAT 2006 FTA', 'V64302862', '6098'),
+			T_JBV('GAT FTGENCAT 2009 FTA', 'V65203275', '6099'),
+			T_JBV('BBVA RMBS 3 Fondo de Tit. de Activos', 'V85172252', '6100'),
+			T_JBV('BBVA HIPOTECARIO 3 Fondo de Tit. de Act.', 'V84373000', '6101'),
+			T_JBV('BBVA-4 PYME Fondo de Tit. de Activos', 'V84455740', '6102'),
+			T_JBV('BBVA-5 FTPYME Fondo de Tit. de Activos', 'V84859644', '6103'),
+			T_JBV('BBVA RMBS 1 Fondo de Tit. de Activos', 'V84994144', '6104'),
+			T_JBV('BBVA RMBS 2 Fondo de Tit. de Activos', 'V85044451', '6105'),
+			T_JBV('BBVA-6 FTPYME Fondo de Tit. de Activos', 'V85129138', '6106'),
+			T_JBV('BBVA LEASING 1 Fondo de Tit. de Activos', 'V85143931', '6107'),
+			T_JBV('BBVA RMBS 4 Fondo de Tit. de Activos', 'V85271229', '6108'),
+			T_JBV('BBVA CONSUMO 3 Fondo de Tit. de Activos', 'V85413359', '6109'),
+			T_JBV('BBVA RMBS 5 Fondo de Tit. de Activos', 'V85447654', '6110'),
+			T_JBV('BBVA RMBS 7 Fondo de Tit. de Activos', 'V85576239', '6111'),
+			T_JBV('BBVA RMBS 9 Fondo de Tit. de Activos', 'V85936391', '6112'),
+			T_JBV('BBVA EMPRESAS 3 FTA', 'V85848422', '6113'),
+			T_JBV('BBVA EMPRESAS 4 FTA', 'V86005485', '6114'),
+			T_JBV('BBVA RMBS 10 Fondo de Tit. de Activos', 'V86245453', '6115'),
+			T_JBV('BBVA EMPRESAS 5 Fondo de Tit. de Activos', 'V86170537', '6116'),
+			T_JBV('BBVA EMPRESAS 6 Fondo de Tit. de Activos', 'V86359734', '6117'),
+			T_JBV('BBVA RMBS 11FTA', 'V86488368', '6118'),
+			T_JBV('BBVA RMBS 12 FONDO DE TITULIZACION DE ACTIVOS', 'V86887791', '6119'),
+			T_JBV('ARRELS CT FINSOL SAU', 'A61650867', '6120'),
+			T_JBV('ARRELS CT PATRIMONI I PROJECTES SAU', 'A63128284', '6121'),
+			T_JBV('CATALONIA PROMODIS 4 SAU', 'A62812953', '6122'),
+			T_JBV('UNNIM SDAD PARA LA GESTION DE ACTIVOS SA', 'A65934101', '6123'),
+			T_JBV('PROMOTORA DEL VALLES SLU', 'B08253197', '6124'),
+			T_JBV('ARRAHONA IMMO SLU', 'B64986938', '6125'),
+			T_JBV('ARRAHONA NEXUS SLU', 'B63933758', '6126'),
+			T_JBV('PARCSUD PLANNER SLU', 'B63268601', '6127'),
+			T_JBV('PROMOU GLOBAL SLU', 'B63625107', '6128'),
+			T_JBV('FUNDACIÓ HABITATGE LLOGUER', 'G65142929', '6129'),
+			T_JBV('PROMOU CT GEBIRA S.L.U.', 'B63377212', '6130'),
+			T_JBV('ECOARENYS S.L.', 'B63442974', '6131'),
+			T_JBV('GARRAF MEDITERRANEA', 'A62445622', '6132'),
+			T_JBV('AXIACOM CR-1 SL', '', '6133'),
+			T_JBV('PROMOCIONS CAN CATA SL', '', '6134'),
+			T_JBV('HABITATGES FINVER SL', 'B63527667', '6135'),
+			T_JBV('GAT FTGENCAT 2008 FTA', 'V64915424', '6136'),--este esta duplicado y no lo inserta (6092)
+			T_JBV('GAT ICO FTVPO, FTH', 'V65102576', '6137'),
+			T_JBV('BBVA ADJUDICADOS', 'A48265169', '6138'),
+			T_JBV('TITULIZADOS', '', '6139'),
+			T_JBV('BBVA-9 PYME Fondo de Titulización de Activos', 'V86623634', '6140')
+
+	); 
+	V_TMP_JBV T_JBV;
+    
+BEGIN
+  
+	 DBMS_OUTPUT.PUT_LINE('[INICIO] Insertamos propietario de BBVA.');
+  
+     V_NUM_TABLAS := 0;
+     
+     FOR I IN V_JBV.FIRST .. V_JBV.LAST
+	 LOOP
+	 
+	 V_TMP_JBV := V_JBV(I);
+				  
+				PRO_NOMBRE := TRIM(V_TMP_JBV(1));
+				PRO_DOCIDENTIF := TRIM(V_TMP_JBV(2));
+				PRO_CODIGO_UVEM := TRIM(V_TMP_JBV(3));
+
+				EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO WHERE PRO_NOMBRE = '''||PRO_NOMBRE||'''' INTO V_COUNT;
+									
+				IF V_COUNT = 0 THEN 								
+					V_SQL := 'INSERT INTO '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO (
+					  PRO_ID
+					, FECHACREAR
+					, USUARIOCREAR
+					, PRO_DOCIDENTIF
+					, PRO_NOMBRE
+					, DD_CRA_ID
+					, PRO_CODIGO_UVEM
+					, DD_TDI_ID
+					) VALUES (
+					 '||V_ESQUEMA||'.S_ACT_PRO_PROPIETARIO.NEXTVAL
+					, SYSDATE
+					, '''||V_USUARIO||'''
+					, '''||PRO_DOCIDENTIF||'''
+					, '''||PRO_NOMBRE||'''
+					, (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = ''16'')
+					, '''||PRO_CODIGO_UVEM||'''
+					, (SELECT DD_TDI_ID FROM '||V_ESQUEMA||'.DD_TDI_TIPO_DOCUMENTO_ID WHERE DD_TDI_CODIGO = ''15'')
+					)
+				';
+			    EXECUTE IMMEDIATE V_SQL;
+			
+				DBMS_OUTPUT.PUT_LINE('Insertado el propietario '''||PRO_NOMBRE||'''');	
+
+				V_NUM_TABLAS := V_NUM_TABLAS+1;		
+			
+				ELSE
+					DBMS_OUTPUT.PUT_LINE('El propietario '''||PRO_NOMBRE||''' ya existia');
+				END IF;
+
+	 END LOOP;			    
+    
+	COMMIT;
+
+    EXECUTE IMMEDIATE 'INSERT INTO '||V_ESQUEMA||'.GUNSHOTS_MIGDIVARIAN_PFS (GUNSHOT_COD,GUNSHOT_DML,GUNSHOT_DESC,GUNSHOT_REGISTROS_ACTUALIZADOS,GUNSHOT_TIMESTAMP) VALUES (''GNS020'',''DML_020_REM01_INSERT_PROPIETARIOS_BBVA.sql'',''Para insertar propeitarios de BBVA si no los hubiera en REM.''
+    ,'||V_NUM_TABLAS||',SYSDATE)' ;
+
+    DBMS_OUTPUT.PUT_LINE('[INFO_MIGRA] [GNS020] Se inserta propietario de BBVA.');  
+    
+    COMMIT;
+    
+    DBMS_OUTPUT.PUT_LINE('[FIN]');    
+
+EXCEPTION
+  WHEN OTHERS THEN 
+    DBMS_OUTPUT.PUT_LINE('KO!');
+    err_num := SQLCODE;
+    err_msg := SQLERRM;
+    
+    DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+    DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+    DBMS_OUTPUT.put_line(err_msg);
+    
+    ROLLBACK;
+    RAISE;          
+
+END;
+
+/
+
+EXIT;

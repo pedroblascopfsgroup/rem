@@ -17,6 +17,7 @@ public class TrabajosGastoExcelReport extends AbstractExcelReport implements Exc
 	public List<String> getCabeceras() {
 		
 		List<String> listaCabeceras = new ArrayList<String>();
+		listaCabeceras.add("Id Línea de detalle");
 		listaCabeceras.add("Línea de detalle");
 		listaCabeceras.add("Num Trabajo");
 		listaCabeceras.add("Subtipo");
@@ -33,6 +34,10 @@ public class TrabajosGastoExcelReport extends AbstractExcelReport implements Exc
 		
 		for(VBusquedaGastoTrabajos trabajosGasto: listaTrabajos){
 			List<String> fila = new ArrayList<String>();
+			
+			if(trabajosGasto.getIdLinea() != null) {
+				fila.add(trabajosGasto.getIdLinea().toString());
+			}
 			fila.add(trabajosGasto.getDescripcionLinea());
 			fila.add(trabajosGasto.getNumTrabajo());
 			if(!Checks.esNulo(trabajosGasto.getDescripcionSubtipo())) {

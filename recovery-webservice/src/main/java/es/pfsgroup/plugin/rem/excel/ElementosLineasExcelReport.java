@@ -18,6 +18,7 @@ public class ElementosLineasExcelReport extends AbstractExcelReport implements E
 	public List<String> getCabeceras() {
 		
 		List<String> listaCabeceras = new ArrayList<String>();
+		listaCabeceras.add("Id línea");
 		listaCabeceras.add("Línea");
 		listaCabeceras.add("Tipo elemento");
 		listaCabeceras.add("ID elemento");
@@ -37,17 +38,23 @@ public class ElementosLineasExcelReport extends AbstractExcelReport implements E
 		for(VElementosLineaDetalle elemento: listaElementos){
 			List<String> fila = new ArrayList<String>();
 			
+			if(elemento.getIdLinea() != null) {
+				fila.add(elemento.getIdLinea().toString());
+			}
 			fila.add(elemento.getDescripcionLinea());
 			fila.add(elemento.getTipoElemento());
 			fila.add(elemento.getIdElemento().toString());
 			fila.add(elemento.getTipoActivo());
 			fila.add(elemento.getDireccion());
 			fila.add(elemento.getReferenciaCatastral());
-			fila.add(elemento.getParticipacion().toString() + "%");
-			
-			BigDecimal elementoBigDecimal  = BigDecimal.valueOf(elemento.getImporteProporcinalTotal());
-			elementoBigDecimal = elementoBigDecimal.round(new MathContext(4));
-			fila.add(elementoBigDecimal.toString());
+			if(elemento.getParticipacion() != null) {
+				fila.add(elemento.getParticipacion().toString() + "%");
+			}
+			if(elemento.getImporteProporcinalTotal() != null) {
+				BigDecimal elementoBigDecimal  = BigDecimal.valueOf(elemento.getImporteProporcinalTotal());
+				elementoBigDecimal = elementoBigDecimal.round(new MathContext(4));
+				fila.add(elementoBigDecimal.toString());
+			}
 			
 			valores.add(fila);
 		}

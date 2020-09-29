@@ -1222,4 +1222,6 @@ public interface ParticularValidatorApi {
 
 	boolean isTipoTarifaValidoEnConfiguracion(String codigoTarifa, String numTrabajo);
 
+	String getEstadoTrabajoByNumTrabajo(String numTrabajo);
+
 }

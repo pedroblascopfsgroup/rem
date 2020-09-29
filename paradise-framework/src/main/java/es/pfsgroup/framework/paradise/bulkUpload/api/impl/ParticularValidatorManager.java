@@ -4874,7 +4874,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String query = "SELECT COUNT(1) FROM ACT_TBJ_TRABAJO TBJ  "
 		+				"INNER JOIN ACT_PVC_PROVEEDOR_CONTACTO PVC ON TBJ.PVC_ID  = PVC.PVC_ID  " 
 		+ 				"INNER JOIN ACT_PVE_PROVEEDOR PVE ON PVC.PVE_ID = PVE.PVE_ID  "
-		+				"WHERE PVE.PVE_ID = "+codProveedor+" AND TBJ.TBJ_NUM_TRABAJO ="+ numTrabajo;
+		+				"WHERE PVE.PVE_COD_REM = "+codProveedor+" AND TBJ.TBJ_NUM_TRABAJO ="+ numTrabajo;
 		
 		
 		resultado = rawDao.getExecuteSQL(query);
@@ -4900,15 +4900,23 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			if ( tarifaId != null) {
 				 query = "SELECT COUNT(1) " + 
 							"FROM ACT_CFT_CONFIG_TARIFA CONFIG_TARIFA " + 
-							"WHERE  DD_TTR_ID   = "  + resultSet[0]
-							+ " AND DD_STR_ID  = "   + resultSet[1]
-							+ " AND DD_CRA_ID = "    + resultSet[2] 
-							+ " AND DD_TTF_ID = '"	 + tarifaId + "'";
+							"WHERE  DD_TTR_ID   = "   + resultSet[0]
+							+ " AND DD_STR_ID   = "   + resultSet[1]
+							+ " AND DD_CRA_ID   = "   + resultSet[2] 
+							+ " AND DD_TTF_ID   = "	  + tarifaId;
 					String resultado = rawDao.getExecuteSQL(query);
-					return Boolean.TRUE.equals("1".equals(resultado));
+					return Boolean.TRUE.equals(!"0".equals(resultado));
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public String getEstadoTrabajoByNumTrabajo(String numTrabajo) {
+		return rawDao.getExecuteSQL("SELECT DD_EST_CODIGO  " 
+								+"  FROM ACT_TBJ_TRABAJO TBJ " 
+								+"  INNER JOIN DD_EST_ESTADO_TRABAJO ESTADO ON ESTADO.DD_EST_ID = TBJ.DD_EST_ID " 
+								+"  WHERE TBJ_NUM_TRABAJO = " + numTrabajo);
 	}
 	
 	@Override

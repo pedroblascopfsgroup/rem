@@ -1223,12 +1223,13 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				gastoLineaDetalleEntidad.setEntidadGasto(tipoElemento);
 				if(DDEntidadGasto.CODIGO_ACTIVO.equals(dto.getTipoElemento())) {
 					Activo activo = activoDao.getActivoByNumActivo(dto.getIdElemento());
-					if(activo == null || gasto.getPropietario() == null || activo.getCartera() == null 
+					if(activo == null) {
+						error = ERROR_NO_EXISTE_ACTIVO;
+						return error;
+					}else if(gasto.getPropietario() == null || activo.getCartera() == null 
 						|| !activo.getCartera().equals(gasto.getPropietario().getCartera())) {
 						error = ERROR_CARTERA_DIFERENTE;
 						return error;
-					}else {
-						error = ERROR_NO_EXISTE_ACTIVO;
 					}
 					gastoLineaDetalleEntidad.setEntidad(activo.getId());
 				}else if(DDEntidadGasto.CODIGO_ACTIVO_GENERICO.contentEquals(dto.getTipoElemento())) {

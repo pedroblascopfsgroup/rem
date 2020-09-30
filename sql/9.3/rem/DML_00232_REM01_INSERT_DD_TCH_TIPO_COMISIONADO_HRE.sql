@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20200828
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20200922
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-10968
+--## INCIDENCIA_LINK=HREOS-11217
 --## PRODUCTO=NO
 --##
 --## Finalidad: Actualizar instrucciones
@@ -34,13 +34,12 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-	T_TIPO_DATA('COM', 'Comisión'),
-	T_TIPO_DATA('HGI', 'Honorarios Gestión Inmuebles'),
-    T_TIPO_DATA('CON', 'Consultoría'),
-	T_TIPO_DATA('ALT', 'Altas'),
-    T_TIPO_DATA('ALQ', 'Alquileres'),
-	T_TIPO_DATA('HGV', 'Honorarios Gestión Ventas'),
-    T_TIPO_DATA('GES', 'Gestoría')
+	T_TIPO_DATA('VEN_EXI', 'Venta éxito'),
+	T_TIPO_DATA('GES_ADM', 'Gestión y administración'),
+    T_TIPO_DATA('ALT', 'Altas'),
+	T_TIPO_DATA('ALQ', 'Alquiler'),
+    T_TIPO_DATA('GES', 'Gestoría'),
+	T_TIPO_DATA('DES_ACT', 'Desocupación activos')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN
@@ -73,7 +72,7 @@ BEGIN
 						  '''||TRIM(V_TMP_TIPO_DATA(2))||''',
 						  '''||TRIM(V_TMP_TIPO_DATA(2))||''',
 						  0,
-						  ''HREOS-10968'',
+						  ''HREOS-11217'',
 						  SYSDATE,
 						  0
 			     		)';

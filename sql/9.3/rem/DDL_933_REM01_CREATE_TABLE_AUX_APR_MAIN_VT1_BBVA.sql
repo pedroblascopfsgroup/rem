@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Dean Ibañez VIño
---## FECHA_CREACION=20200902
+--## FECHA_CREACION=20200930
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10918
@@ -108,6 +108,7 @@ BEGIN
                 ,PRECIO_TARIFA              VARCHAR2(14 CHAR)
                 ,FECHA_INICIO_TARIFA        VARCHAR2(10 CHAR)
                 ,PROMOCION                  VARCHAR2(18 CHAR)
+                ,OBRA                       VARCHAR2(9 CHAR)
             )
             LOGGING 
             NOCOMPRESS 

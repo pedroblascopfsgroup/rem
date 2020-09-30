@@ -84,11 +84,8 @@ BEGIN
 	  ,PAC_TRABAJOS_VIVOS
         )
         SELECT 
-          '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                       AS PAC_ID,
-          AUX.*
-        FROM (      
-          SELECT DISTINCT      
-          ACT2.ACT_ID,      
+          '||V_ESQUEMA||'.S_'||V_TABLA||'.NEXTVAL                       AS PAC_ID,    
+          ACT2.ACT_ID							AS ACT_ID,      
           PAC.PAC_INCLUIDO                                          	AS PAC_INCLUIDO,
           PAC.PAC_CHECK_TRA_ADMISION                                	AS PAC_CHECK_TRA_ADMISION,
           PAC.PAC_FECHA_TRA_ADMISION                                    AS PAC_FECHA_TRA_ADMISION,
@@ -109,17 +106,16 @@ BEGIN
           '''||V_USUARIO||'''                                           AS USUARIOCREAR,                            
           SYSDATE                                                       AS FECHACREAR,                             
           0                                                             AS BORRADO,
-          null							                                AS PAC_MOT_EXCL_COMERCIALIZAR
-  	  ,PAC.PAC_CHECK_PUBLICAR AS PAC_CHECK_PUBLICAR
-	  ,PAC.PAC_FECHA_PUBLICAR AS PAC_CHECK_PUBLICAR
-	  ,PAC.PAC_MOTIVO_PUBLICAR AS PAC_CHECK_PUBLICAR
-	  ,PAC.PAC_OFERTAS_VIVAS AS PAC_CHECK_PUBLICAR
-	  ,PAC.PAC_TRABAJOS_VIVOS AS PAC_CHECK_PUBLICAR
+          null							        AS PAC_MOT_EXCL_COMERCIALIZAR,
+  	  PAC.PAC_CHECK_PUBLICAR 					AS PAC_CHECK_PUBLICAR,
+	  PAC.PAC_FECHA_PUBLICAR 					AS PAC_FECHA_PUBLICAR,
+	  PAC.PAC_MOTIVO_PUBLICAR 					AS PAC_MOTIVO_PUBLICAR,
+	  PAC.PAC_OFERTAS_VIVAS 					AS PAC_OFERTAS_VIVAS,
+	  PAC.PAC_TRABAJOS_VIVOS 					AS PAC_TRABAJOS_VIVOS
 			FROM '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT 
 			JOIN '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO_ANT
 			JOIN '||V_ESQUEMA||'.'||V_TABLA_ACT||' ACT2 ON AUX.ACT_NUM_ACTIVO_NUV = ACT2.ACT_NUM_ACTIVO
 			JOIN '||V_ESQUEMA||'.'||V_TABLA||' PAC ON PAC.ACT_ID = ACT.ACT_ID
-        ) AUX
       '
       ;
       EXECUTE IMMEDIATE V_SENTENCIA;

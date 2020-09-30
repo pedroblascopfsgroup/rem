@@ -51,7 +51,7 @@ public interface GastoLineaDetalleApi {
 
 	List<DtoComboLineasDetalle> getLineasDetalleGastoCombo(Long idGasto);
 
-	boolean asociarElementosAgastos(DtoElementosAfectadosLinea dto);
+	String asociarElementosAgastos(DtoElementosAfectadosLinea dto);
 
 	boolean desasociarElementosAgastos(Long idElemento);
 

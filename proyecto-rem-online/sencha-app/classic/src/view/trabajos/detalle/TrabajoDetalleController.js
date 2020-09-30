@@ -1922,6 +1922,41 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	var me = this;
     	me.lookupReference('fechaTopeTrabajo').setValue(null)
     	me.lookupReference('fechaTopeTrabajo').allowBlank = true;
+    },
+
+    finalizacionTrabajoProveedor: function(combo, newValue, oldValue) {
+    	var me = this;
+    	var esProveedor = $AU.userIsRol(CONST.PERFILES['PROVEEDOR']);
+    	if (esProveedor && newValue === "FIN") {
+    		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+	    	var idTrabajo = combo.lookupViewModel().get("trabajo.id");
+	    	var urlDocumentoFinalizacionTrabajo = $AC.getRemoteUrl('trabajo/getDocumentosFinalizacionTrabajo');
+	    	Ext.Ajax.request({
+				  url:     urlDocumentoFinalizacionTrabajo,
+				  async:   false,
+				  method:  'GET',
+				  params:  {idTrabajo: idTrabajo},
+				  success: function(response, opts) {
+					  var decode = Ext.JSON.decode(response.responseText);
+					  var success = decode["success"];
+					  if(success === "false") {
+						  var data = decode["data"];
+						  var size = decode["size"];
+						  if(size === '1') {
+							  me.fireEvent("errorToast", data);
+						  } else {
+							  me.fireEvent("errorToastLong", data);
+						  }
+						  combo.setValue(oldValue);
+					  }
+					  me.getView().unmask();
+				  },
+				  failure: function () {
+					  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					  me.getView().unmask();
+				  }
+	      	});
+    	}
     }
- 	
+
 });

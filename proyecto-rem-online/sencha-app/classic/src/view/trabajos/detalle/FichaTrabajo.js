@@ -289,7 +289,8 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 		        								}
 		        							}
 		        						}
-		        					}
+		        					},
+		        					change: 'finalizacionTrabajoProveedor'
 								},
 					        	reference: 'comboEstadoTrabajoRef',
 					        	colspan: 2

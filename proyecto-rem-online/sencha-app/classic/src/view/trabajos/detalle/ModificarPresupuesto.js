@@ -222,18 +222,6 @@ Ext.define('HreRem.view.trabajos.detalle.ModificarPresupuesto', {
 										}
 									},
 									{
-										xtype: 'comboboxfieldbase',
-	    					        	fieldLabel:  HreRem.i18n('fieldlabel.estado'),
-	    					        	itemId: 'comboEstadoPresupuesto',
-	    					        	flex:	1,
-	    					        	bind: {
-	    				            		store: '{comboEstadoPresupuesto}',
-	    				            		value: '{presupuesto.estadoPresupuestoCodigo}'	    				            		
-	    				            	},
-	    				            	displayField: 'descripcion',
-	    	    						valueField: 'codigo'
-									},
-									{
 										fieldLabel: HreRem.i18n('fieldlabel.referencia.presupuesto.proveedor'),
 										flex: 		1,
 										name:		'refPresupuestoProveedor',

@@ -1,7 +1,8 @@
+
 --/*
 --######################################### 
 --## AUTOR=DAP
---## FECHA_CREACION=20200923
+--## FECHA_CREACION=20201001
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10574

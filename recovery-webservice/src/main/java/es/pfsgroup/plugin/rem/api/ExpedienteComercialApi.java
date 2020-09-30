@@ -1322,4 +1322,6 @@ public interface ExpedienteComercialApi {
 
 	boolean ofertasEnLaMismaTarea(BulkOferta blkOfr);
 
+	boolean sacarBulk(Long idExpediente);
+
 }

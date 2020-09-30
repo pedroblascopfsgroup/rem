@@ -1838,7 +1838,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		     }
 		});		
 	},
-
+	
 	onClickBotonCerrarClienteUrsus: function(btn){
 		var window = btn.up("window");
 		window.destroy();
@@ -4970,6 +4970,35 @@ comprobarFormatoModificar: function() {
 	 		    
 			});		
 		}		
+	},
+	
+	sacarBulk: function(btn){
+		var me = this,
+		form = btn.up('formBase');
+		url = $AC.getRemoteUrl('expedientecomercial/sacarBulk');
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+
+		Ext.Ajax.request({
+	  		    url: url,
+	  		    params: {
+	  		     	idExpediente : me.getViewModel().data.expediente.id
+	  		     	},	  		
+	  		    success: function(response, opts) {	  		    	
+	  		     	var data = Ext.decode(response.responseText);
+	  		     	if(data.success){
+						me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+						form.funcionRecargar();
+	  		     	}else{
+	  		     		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	  		     	}	  		     	
+		 			me.getView().unmask();		 			
+		    	},
+	 		    failure: function (a, operation) {
+	 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	 				me.getView().unmask();
+	 		    }
+	 		    
+			});
 	}
 	
 });

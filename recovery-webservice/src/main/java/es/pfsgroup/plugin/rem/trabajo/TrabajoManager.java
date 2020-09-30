@@ -108,6 +108,7 @@ import es.pfsgroup.plugin.rem.model.AdjuntoTrabajo;
 import es.pfsgroup.plugin.rem.model.AgendaTrabajo;
 import es.pfsgroup.plugin.rem.model.Albaran;
 import es.pfsgroup.plugin.rem.model.CFGComiteSancionador;
+import es.pfsgroup.plugin.rem.model.CFGFinalizarTrabajos;
 import es.pfsgroup.plugin.rem.model.CFGPlazosTareas;
 import es.pfsgroup.plugin.rem.model.CFGProveedorPredeterminado;
 import es.pfsgroup.plugin.rem.model.CFGVisualizarLlaves;
@@ -5717,5 +5718,52 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		
 		return null;
+	}
+	
+	@Override
+	public Map<String, String> getDocumentosFinalizacionTrabajo(Long idTrabajo) {
+		
+		Trabajo trabajo = null;
+		Map<String, String> mapaDocumentosFin = new HashMap<String, String>();
+		List<DDTipoDocumentoActivo> documentosFinalizacion = new ArrayList<DDTipoDocumentoActivo>();
+		List<DDTipoDocumentoActivo> documentosTrabajo = new ArrayList<DDTipoDocumentoActivo>();
+		
+		if (idTrabajo != null) {
+			trabajo = findOne(idTrabajo);
+		}
+		
+		if (trabajo != null && trabajo.getTipoTrabajo() != null && trabajo.getSubtipoTrabajo() != null) {
+			List<CFGFinalizarTrabajos> finalizarTrabajosList = genericDao.getList(CFGFinalizarTrabajos.class, genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.codigo", trabajo.getTipoTrabajo().getCodigo()),
+					genericDao.createFilter(FilterType.EQUALS, "subtipoTrabajo.codigo", trabajo.getSubtipoTrabajo().getCodigo()),
+					genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+			if (!finalizarTrabajosList.isEmpty()) {
+				for (CFGFinalizarTrabajos finalizarTrabajos : finalizarTrabajosList) {
+					documentosFinalizacion.add(finalizarTrabajos.getTipoDocumento());
+				}
+				List<AdjuntoTrabajo> adjTrabajoList = genericDao.getList(AdjuntoTrabajo.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId()),
+						genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+				if (!adjTrabajoList.isEmpty()) {
+					for (AdjuntoTrabajo adjuntoTrabajo : adjTrabajoList) {
+						documentosTrabajo.add(adjuntoTrabajo.getTipoDocumentoActivo());
+					}
+					documentosFinalizacion.removeAll(documentosTrabajo);
+				}
+			}
+		}
+
+		if (!documentosFinalizacion.isEmpty()) {
+			StringBuilder documentos = new StringBuilder();
+			for (DDTipoDocumentoActivo tipoDoc : documentosFinalizacion) {
+				if (tipoDoc.equals(documentosFinalizacion.get(0))) {
+					documentos.append(tipoDoc.getDescripcion());
+				} else {
+					documentos.append(", "+tipoDoc.getDescripcion());
+				}
+			}
+			mapaDocumentosFin.put("docs", documentos.toString());
+			mapaDocumentosFin.put("size", String.valueOf(documentosFinalizacion.size()));
+		}
+		
+		return mapaDocumentosFin;
 	}
 }

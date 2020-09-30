@@ -185,6 +185,7 @@ public class TrabajoController extends ParadiseJsonController {
 	private static final String ERROR_DUPLICADOS_CREAR_TRABAJOS = "El fichero contiene registros duplicados";
 	private static final String ERROR_GD_NO_EXISTE_CONTENEDOR = "No existe contenedor para este trabajo. Se creará uno nuevo.";
 	private static final String COMBO_MODIFICACION_NO = "02";
+	private static final String DOC_FINALIZACION_TRABAJO = "Para la finalizacion es necesario adjuntar: ";
 
 		
 	/**
@@ -2028,6 +2029,26 @@ public class TrabajoController extends ParadiseJsonController {
 		}
 		return new ModelAndView("jsonView", model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDocumentosFinalizacionTrabajo(Long idTrabajo, ModelMap model) {
+		try {
+			Map<String, String> tiposDocumentos = trabajoApi.getDocumentosFinalizacionTrabajo(idTrabajo);
+			if (tiposDocumentos.isEmpty()) {
+				model.put("success", true);
+			} else {
+				model.put("success", false);
+				model.put("data", DOC_FINALIZACION_TRABAJO+tiposDocumentos.get("docs"));
+				model.put("size", tiposDocumentos.get("size"));
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		
+		return new ModelAndView("jsonView", model);
+	}
+	
 
 }
 

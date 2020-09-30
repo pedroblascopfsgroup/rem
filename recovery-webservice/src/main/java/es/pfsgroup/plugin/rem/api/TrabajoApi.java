@@ -911,4 +911,6 @@ public interface TrabajoApi {
 
 	public List<VProveedores> getComboProveedorFilteredCreaTrabajo(String codCartera);
 
+	public Map<String, String> getDocumentosFinalizacionTrabajo(Long idTrabajo);
+
 }

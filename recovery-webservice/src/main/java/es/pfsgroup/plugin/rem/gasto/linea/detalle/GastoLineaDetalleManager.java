@@ -67,6 +67,12 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 @Service("gastoLineaDetalleManager")
 public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	
+	private static final String ERROR_GASTO_MAL_ESTADO = "Gasto con errores";
+	private static final String ERROR_NO_EXISTE_AGRUPACION = "La agrupación no existe";
+	private static final String ERROR_NO_EXISTE_ACTIVO = "El activo no existe";
+	private static final String ERROR_NO_EXISTE_ACTIVO_GENERICO= "El activo genérico no existe";
+	private static final String ERROR_CARTERA_DIFERENTE  ="El elemento es de una cartera diferente al gasto.";
+	
 	@Autowired
 	private GenericAdapter genericAdapter;
 	
@@ -1166,13 +1172,15 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	
 	@Override
 	@Transactional(readOnly = false)
-	public boolean asociarElementosAgastos(DtoElementosAfectadosLinea dto){
+	public String asociarElementosAgastos(DtoElementosAfectadosLinea dto){
+		String error = "";
 		if(dto.getIdElemento() != null && dto.getIdLinea() != null && dto.getTipoElemento() != null) {
 			
 			DDEntidadGasto tipoElemento = (DDEntidadGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDEntidadGasto.class, dto.getTipoElemento());
 			GastoLineaDetalle gastoLineaDetalle = getLineaDetalleByIdLinea(dto.getIdLinea());
 			if(tipoElemento == null || gastoLineaDetalle == null || gastoLineaDetalle.getGastoProveedor() == null ) {
-				return false;
+				error = ERROR_GASTO_MAL_ESTADO;
+				return error;
 			}
 			
 			gastoLineaDetalle.setLineaSinActivos(false);
@@ -1185,13 +1193,15 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				Filter filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS, "numAgrupRem", dto.getIdElemento());
 				ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtroAgrupacion);
 				if(agrupacion == null) {
-					return false;
+					error = ERROR_NO_EXISTE_AGRUPACION;
+					return error;
 				}
 				List<ActivoAgrupacionActivo> activosAgrupacionList= agrupacion.getActivos();
 				if(!activosAgrupacionList.isEmpty()) {
 					if(gasto.getPropietario() == null || activosAgrupacionList.get(0).getActivo().getCartera() == null 
 						|| !activosAgrupacionList.get(0).getActivo().getCartera().equals(gasto.getPropietario().getCartera())) {
-						return false;
+						error = ERROR_CARTERA_DIFERENTE;
+						return error;
 					}
 					DDEntidadGasto tipoElementoActivo = (DDEntidadGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDEntidadGasto.class, DDEntidadGasto.CODIGO_ACTIVO);
 					BigDecimal participacion = recalcularParticipacionElementos(dto.getIdLinea(), gastoLineaDetalleEntidadList, activosAgrupacionList.size());
@@ -1204,7 +1214,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 						gastoLineaDetalleEntidad.setAuditoria(Auditoria.getNewInstance());
 						genericDao.save(GastoLineaDetalleEntidad.class, gastoLineaDetalleEntidad);
 					}
-					return true;
+					return error;
 				}
 			}else{
 				
@@ -1215,7 +1225,10 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 					Activo activo = activoDao.getActivoByNumActivo(dto.getIdElemento());
 					if(activo == null || gasto.getPropietario() == null || activo.getCartera() == null 
 						|| !activo.getCartera().equals(gasto.getPropietario().getCartera())) {
-						return false;
+						error = ERROR_CARTERA_DIFERENTE;
+						return error;
+					}else {
+						error = ERROR_NO_EXISTE_ACTIVO;
 					}
 					gastoLineaDetalleEntidad.setEntidad(activo.getId());
 				}else if(DDEntidadGasto.CODIGO_ACTIVO_GENERICO.contentEquals(dto.getTipoElemento())) {
@@ -1235,7 +1248,8 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 						filtroAnyo = genericDao.createFilter(FilterType.NULL, "anyoActivoGenerico");
 						activoGenerico =  genericDao.get(ActivoGenerico.class, filtroNumActivoGen, filtroSubtipoGasto,filtroPropietario,filtroAnyo);
 						if(activoGenerico == null) {
-							return false;
+							error = ERROR_NO_EXISTE_ACTIVO_GENERICO;
+							return error;
 						}
 					}
 					gastoLineaDetalleEntidad.setEntidad(activoGenerico.getId());
@@ -1262,10 +1276,11 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				actualizarDiariosLbk(gasto.getId());
 			}
 			
-			return true;
+			return error;
 		}
 		
-		return false;
+		error = ERROR_GASTO_MAL_ESTADO;
+		return error;
 	}
 	
 	@Transactional(readOnly = false)

@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Cstian Montoya
---## FECHA_CREACION=20200927
+--## AUTOR=Carlos Augusto
+--## FECHA_CREACION=20200930
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11306
@@ -45,12 +45,8 @@ BEGIN
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS; 
 
     IF V_NUM_TABLAS = 1 THEN
-      DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA ||'.S_'||V_TABLA||'... Secuencia BORRADA.');  
-      EXECUTE IMMEDIATE 'DROP SEQUENCE '||V_ESQUEMA||'.S_'||V_TABLA||'';
-         DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA ||'.S_'||V_TABLA||'Se ha borrado la secuencia la volvemos a crear.');
-      V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TABLA||'';		
-	    EXECUTE IMMEDIATE V_MSQL;		
-	    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TABLA||' creada');
+     	
+	    DBMS_OUTPUT.PUT_LINE('[INFO] La secuencia ya existe');
       
     ELSE
      
@@ -65,13 +61,9 @@ BEGIN
     
     -- Si existe la tabla se borra
     IF V_NUM_TABLAS = 1 THEN 
-        DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA||'... Ya existe. Se borrará.');
-		EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.'||V_TABLA||' CASCADE CONSTRAINTS';
-		
-    END IF;
-
-     
-    	 --Creamos la tabla
+        DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA||'... Ya existe.');
+	    ELSE
+			 --Creamos la tabla
       DBMS_OUTPUT.PUT_LINE('[CREAMOS '||V_TABLA||']');
     	 V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||' (
     			  BBVA_ID                     	NUMBER(16,0)        NOT NULL
@@ -147,6 +139,10 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('Creados los comentarios en TABLA '|| V_ESQUEMA ||'.'||V_TABLA||'... OK');
     COMMIT;
     DBMS_OUTPUT.PUT_LINE('[INFO] COMMIT');
+    END IF;
+
+     
+    
     
 EXCEPTION
   WHEN OTHERS THEN

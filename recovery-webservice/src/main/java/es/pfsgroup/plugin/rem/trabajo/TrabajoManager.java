@@ -559,8 +559,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (dtoTrabajo.getImportePrecio() != null) {
 			dtoHistorificador.setCampo(ConstantesTrabajo.IMPORTE_TOTAL);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_IMPORTE_TOTAL);
-			if (trabajo.getImporteTotal() != null) {
-				dtoHistorificador.setValorAnterior(trabajo.getImporteTotal().toString());
+			if (trabajo.getImporteAsegurado() != null) {
+				dtoHistorificador.setValorAnterior(trabajo.getImporteAsegurado().toString());
 			}
 			dtoHistorificador.setValorNuevo(dtoTrabajo.getImportePrecio().toString());
 			
@@ -2898,8 +2898,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (trabajo.getCubreSeguro() != null) {//
 			dtoTrabajo.setCubreSeguro(trabajo.getCubreSeguro());
 		}
-		if (trabajo.getImporteTotal() != null) {
-			dtoTrabajo.setImportePrecio(trabajo.getImporteTotal());
+		if (trabajo.getImporteAsegurado() != null) {
+			dtoTrabajo.setImportePrecio(trabajo.getImporteAsegurado());
 		}
 		if (trabajo.getImportePresupuesto() != null) {
 			dtoTrabajo.setImportePresupuesto(trabajo.getImportePresupuesto());

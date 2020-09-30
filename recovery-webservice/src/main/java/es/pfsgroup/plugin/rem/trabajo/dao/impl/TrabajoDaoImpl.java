@@ -116,12 +116,7 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	   			listaTipo.add(dto.getCodigoTipo2());
 	   		}
 	   		HQLBuilder.addFiltroWhereInSiNotNull(hb, "tbj.codigoTipo", listaTipo);
-	   		
-	   		Collection<String> listaSubTipo = new ArrayList<String>();
-	   		if (dto.getCodigoSubtipo()!=null) {
-	   			listaSubTipo.add(dto.getCodigoSubtipo());
-	   		}
-	   		HQLBuilder.addFiltroWhereInSiNotNull(hb, "tbj.codigoSubtipo",listaSubTipo );
+	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoSubtipo",dto.getCodigoSubtipo());
 	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoEstado", dto.getCodigoEstado());
 	   		HQLBuilder.addFiltroLikeSiNotNull(hb, "tbj.descripcionPoblacion", dto.getDescripcionPoblacion(), true);
 	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.codigoProvincia", dto.getCodigoProvincia());

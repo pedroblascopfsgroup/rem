@@ -1,7 +1,7 @@
 --/*
 --######################################### 
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200309
+--## AUTOR=DAP
+--## FECHA_CREACION=20200929
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-9716
@@ -38,10 +38,12 @@ DECLARE
   V_COL T_ARRAY_COL := T_ARRAY_COL(
       -- Recordatorios
     T_COL(''||V_ESQUEMA||'', 'APR_AUX_GES_GASTOS_GR_REJ', 'EXISTE_RECARGO', 'NUMBER(1,0)', 'Existe recargo'),
+    T_COL(''||V_ESQUEMA||'', 'APR_AUX_GES_GASTOS_GR_REJ', 'TRIBUTOS_TERCEROS', 'VARCHAR2(5)', 'Tributos a terceros'),
     T_COL(''||V_ESQUEMA||'', 'H_GGR_GES_GASTOS_RECH', 'GPV_IDENTIFICADOR_UNICO', 'VARCHAR2(50 CHAR)', 'Identificador unico del gasto'),
     T_COL(''||V_ESQUEMA||'', 'H_GGR_GES_GASTOS_RECH', 'EXISTE_RECARGO', 'NUMBER(1,0)', 'Existe recargo'),
-    T_COL(''||V_ESQUEMA||'', 'H_GGR_GES_GASTOS_RECH', 'DD_TRG_CODIGO', 'VARCHAR2(20 CHAR)', 'Codigo identificador único del estado de la carga')
- 
+    T_COL(''||V_ESQUEMA||'', 'H_GGR_GES_GASTOS_RECH', 'DD_TRG_CODIGO', 'VARCHAR2(20 CHAR)', 'Codigo identificador único del estado de la carga'),
+    T_COL(''||V_ESQUEMA||'', 'H_GGR_GES_GASTOS_RECH', 'TRIBUTOS_TERCEROS', 'VARCHAR2(5)', 'Tributos a terceros')
+
   );  
   V_TMP_COL T_COL;
 

@@ -971,7 +971,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	
 	
 	onSearchClick: function(btn) {
-		
 		var me = this;
 		this.lookupReference('seleccionTrabajosGastoList').getStore().loadPage(1);
         
@@ -987,11 +986,17 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	paramLoading: function(store, operation, opts) {
 		
 		var me = this;
-		
 		var searchForm = me.lookupReference('seleccionTrabajosGastoSearch');
 		if (searchForm.isValid()) {
 			
 			var criteria = me.getFormCriteria(searchForm);
+			if(!Ext.isEmpty(criteria) && !Ext.isEmpty(criteria.codigoSubtipo)){
+				for(var i = 0; i < criteria.codigoSubtipo.length; i++){ 
+					if(Ext.isEmpty(criteria.codigoSubtipo[i])){ 
+						criteria.codigoSubtipo.splice(i,1)
+					}
+				}
+			}
 			store.getProxy().extraParams = criteria;
 			
 			return true;		
@@ -2380,7 +2385,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
                  idElemento: dataAnyadir.idElemento,
                  tipoElemento: dataAnyadir.tipoElemento
              },	    	
-			success: function(a, operation, c){
+			success: function(response, opts){
+				data = Ext.decode(response.responseText);
+
+				if(!Ext.isEmpty(data.data)){
+					me.fireEvent("errorToast", data.data);
+					return;
+				}
 				window.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar();
 				window.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
 				window.up('gastodetalle').down('contabilidadgasto').funcionRecargar();
@@ -2388,11 +2399,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 				
 				var idGasto = window.down('anyadirnuevogastoactivodetalle').up().idGasto;
 				var gridLineas = window.up('gastodetalle').down('detalleeconomicogasto').down('[reference=lineaDetalleGastoGrid]');
-				gridLineas.getStore().getProxy().setExtraParams({'idGasto':idGasto});
-		        gridLineas.getStore().load();
+				if(!Ext.isEmpty(gridLineas)){
+					gridLineas.getStore().getProxy().setExtraParams({'idGasto':idGasto});
+			        gridLineas.getStore().load();
+				}
 		        
 		        var gridActivosLbk = window.up('gastodetalle').down('contabilidadgasto').down('[reference=vImporteGastoLbkGrid]');
-		        if(gridActivosLbk && gridActivosLbk.getStore()){
+		        if(!Ext.isEmpty(gridActivosLbk) && !Ext.isEmpty(gridActivosLbk.getStore())){
 		        	gridActivosLbk.getStore().getProxy().setExtraParams({'idGasto':idGasto});
 		        	gridActivosLbk.getStore().load();
 		        }

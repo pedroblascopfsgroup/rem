@@ -308,7 +308,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				                	bind: {
 				                		store: '{comboTipoSegmento}',
 				                		value: '{activo.tipoSegmentoCodigo}',
-				                		hidden: '{!activo.isSubcarteraDivarian}'
+				                		hidden: '{!mostrarCamposDivarianandBbva}'
 				                	}
 				                }
 				            ]

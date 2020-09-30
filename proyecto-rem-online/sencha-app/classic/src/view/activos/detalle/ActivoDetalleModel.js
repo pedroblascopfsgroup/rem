@@ -2510,15 +2510,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'tipoDireccionComercial'}
 			}
 		},
-	     	
- 		comboTipoSegmento: {
-			model: 'HreRem.model.ComboBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'tipoSegmento'}
-			}
- 		},
  		
  		storeOrigenAnteriorActivo: {
 			model: 'HreRem.model.ComboBase',
@@ -2544,6 +2535,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getComboBBVATipoAlta',
 				extraParams: {idRecovery: '{activo.idRecovery}'}
+			}
+		},
+		
+		comboTipoSegmento: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getComboTipoSegmentoActivo',
+   				extraParams: {codSubcartera: '{activo.subcarteraCodigo}'}
 			}
 		}
      }

@@ -59,6 +59,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 				        	xtype: 'comboboxfieldbase',
 				        	fieldLabel: HreRem.i18n('fieldlabel.subcartera'),
 				        	name: 'subcarteraCodigo',
+				        	reference: 'comboSubcarteraRef',
 				        	bind: {
 			            		store: '{comboSubcartera}',
 			            		disabled: '{!comboCarteraSearch.selection}',
@@ -653,10 +654,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							    		fieldLabel: HreRem.i18n('fieldlabel.tipo.segmento'),
 							    		name: 'tipoSegmentoCodigo',
 							    		reference: 'tipoSegmentoRef',
-							    		hidden: true,
-							    		bind: {
-							    			store: '{comboTipoSegmento}'
-							    		}
+							    		hidden: true
 							    	},
 							    	{ 
 							    		xtype: 'comboboxfieldbase',

@@ -100,4 +100,6 @@ public interface ProveedoresDao extends AbstractDao<ActivoProveedor, Long>{
 	 * @return Devuelve un Booleano.
 	 */
 	public Boolean cambiaMediador(Long nActivo, String pveCodRem, String userName);
+
+	public List<VProveedores> getProveedoresCarterizados(String codCartera);
 }

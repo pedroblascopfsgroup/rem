@@ -335,6 +335,9 @@ public class Trabajo implements Serializable, Auditable {
 	@Column(name="TBJ_PRIM_TOMA_POS")
     private Boolean tomaPosesion;
 	
+	@Column(name = "TBJ_IMPORTE_ASEGURADO")
+   	private Double importeAsegurado;
+	
 	public Long getId() {
 		return id;
 	}
@@ -1119,6 +1122,14 @@ public class Trabajo implements Serializable, Auditable {
 
 	public void setTomaPosesion(Boolean tomaPosesion) {
 		this.tomaPosesion = tomaPosesion;
+	}
+
+	public Double getImporteAsegurado() {
+		return importeAsegurado;
+	}
+
+	public void setImporteAsegurado(Double importeAsegurado) {
+		this.importeAsegurado = importeAsegurado;
 	}
     
     

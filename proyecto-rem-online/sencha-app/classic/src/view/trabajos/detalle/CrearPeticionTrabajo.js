@@ -51,6 +51,8 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
     logadoGestorMantenimiento: null,
     
     gestorActivo: null,
+    
+    trabajoDesdeActivo: false,
 	
     initComponent: function() {
     	
@@ -152,48 +154,21 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 											            		},
 															allowBlank: false
 												        },
-												        { 
-												        	xtype: 'comboboxfieldbase',
-												        	fieldLabel: HreRem.i18n('fieldlabel.tipo.proveedor'),
-															flex: 		1,
-															colspan: 3,
-												        	labelWidth:	150,
-												        	width: 		300,
-															reference: 'comboTipoProveedorGestionEconomica2',
-												        	
-															chainedReference: 'comboProveedorGestionEconomica2',
-												        	bind: {
-											            		store: '{comboTipoProveedorFilteredCreaTrabajo}',
-											            		value: '{trabajo.codigoTipoProveedor}',
-											            		disabled: '{!trabajo.subtipoTrabajoCodigo}'
-											            	},
-											            	displayField: 'descripcion',
-								    						valueField: 'codigo',
-								    						allowBlank: false,
-								    						listeners: {
-											                	select: 'onChangeComboProveedorGE'
-											            	}
-												        },
 									    				{ 
 												        	xtype: 'comboboxfieldbase',
-												        	fieldLabel: HreRem.i18n('fieldlabel.nombre'),
+												        	fieldLabel: HreRem.i18n('fieldlabel.proveedor'),
 															flex: 		1,
 															colspan: 3,
-												        	labelWidth:	150,
-												        	width: 		300,
 															reference: 'comboProveedorGestionEconomica2',
 															chainedReference: 'proveedorContactoCombo2',
-												        	bind: {
-											            		store: '{comboProveedorFilteredCreaTrabajo}',
-											            		value: '{trabajo.idProveedor}',
-											            		disabled: '{!trabajo.codigoTipoProveedor}'
+											            	listeners: {
+											            		select: 'onChangeProveedorCombo'
 											            	},
+															disabled: true,
 											            	displayField: 'nombreComercial',
 								    						valueField: 'idProveedor',
-								    						allowBlank: false,
-								    						listeners: {
-											                	select: 'onChangeComboProveedorGE'
-											            	}
+								    						filtradoEspecial: true,
+								    						allowBlank: false
 												        },
 												        { 
 															xtype: 'comboboxfieldbase',
@@ -201,43 +176,11 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 												        	reference: 'proveedorContactoCombo2',
 															flex: 		1,
 															colspan: 3,
-												        	labelWidth:	150,
-												        	width: 		300,
-												        	bind: {
-											            		store: '{comboProveedorContactoCreaTrabajo}',
-											            		value: '{trabajo.idProveedorContacto}',
-											            		disabled: '{!trabajo.idProveedor}'
-											            	},
+															disabled: true,
 											            	displayField: 'nombre',
 								    						valueField: 'id',
-								    						allowBlank: false,
-								    						listeners: {
-								    							change: 'onChangeProveedor'
-								    						}
-//								    						validator: function(v){
-//								    							
-//								    							var email = me.lookupReference('labelEmailContacto2'),
-//								    							usuario = me.lookupReference('labelUsuarioContacto2');			    							
-//								    							if(!Ext.isDefined(email.getValue()) || !Ext.isDefined(usuario.getValue())){
-//								    								return "Debe seleccionar un Contacto con Email y Usuario";
-//								    							}else{
-//								    								this.clearInvalid();
-//								    								return true;
-//								    							}
-//								    						}
+								    						allowBlank: false
 												        }
-//												        { 
-//															xtype: 'comboboxfieldbase',
-//												        	fieldLabel:  HreRem.i18n('fieldlabel.proveedor.trabajo'),
-//												        	colspan: 3,
-//												        	reference:'comboProveedor',
-//												        	editable: false,
-//												        	bind: 
-//												        		{
-//												        		store: '{comboApiPrimario}'
-//											            		},
-//															allowBlank: false
-//												        }
 													]
 												},
 												{    
@@ -281,8 +224,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 																maxValue: null,
 																reference: 'fechaResolComite',
 																colspan: 3,
-																disabled: true,
-																allowBlank: false
+																disabled: true
 															},
 										        			{
 														        xtype: 'textfieldbase',
@@ -594,7 +536,12 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 																minValue: $AC.getCurrentDate(),
 																maxValue: null,
 																colspan:1,
-																allowBlank: false
+																listeners:{
+																	select : 'selectFechaConcreta'
+																},
+																bind: {
+																		allowBlank: false
+		        	   											}
 															},
 															{
 																xtype: 'timefieldbase',
@@ -603,7 +550,9 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 																fieldLabel: HreRem.i18n('fieldlabel.hora.concreta.trabajo'),
 																format: 'H:i',
 																increment: 30,
-																allowBlank: false
+																bind: {
+																	allowBlank: false
+																}
 															},	
 															{
 																xtype: 'datefieldbase',
@@ -612,7 +561,12 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 																minValue: $AC.getCurrentDate(),
 																maxValue: null,
 																colspan:1,
-																allowBlank: false
+																listeners:{
+																	select : 'selectFechaTope'
+																},
+																bind: {
+																	allowBlank: false
+																}
 															}
 														]
 														

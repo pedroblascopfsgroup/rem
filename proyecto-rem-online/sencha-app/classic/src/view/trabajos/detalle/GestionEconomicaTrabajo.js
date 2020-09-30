@@ -15,8 +15,9 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
                		'HreRem.view.common.FieldSetTable','HreRem.model.PresupuestoTrabajo','HreRem.model.ProvisionSuplido', 'HreRem.view.trabajos.detalle.HistorificacionDeCamposGrid'],
     totalProv	: null,
     totalCli	: null,
+    refreshaftersave: true,
     afterLoad: function () {
-    	this.lookupController().bloqueaCamposSegunEstadoTrabajo();
+    	this.lookupController().desbloqueaCamposSegunEstadoTrabajo(this);
     },
     initComponent: function () {
     	var me = this;
@@ -51,14 +52,18 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 						labelWidth: 150,
 						width: 480,
 						reference: 'comboProveedorGestionEconomica',
+						chainedReference: 'proveedorContactoCombo',
 						bind: {
 							store: '{comboProveedorFiltradoManual}',
 							value: '{gestionEconomica.idProveedor}',
 							readOnly: '{!gestionEconomica.esProveedorEditable}'
 						},
-						displayField: 'nombre',
+						displayField: 'nombreComercial',
 						valueField: 'idProveedor',
-						filtradoEspecial: true
+						filtradoEspecial: true,
+						listeners: {
+		                	select: 'onChangeComboProveedorGE'
+		            	}
 					},
 					{
 						fieldLabel: HreRem.i18n('fieldlabel.email.contacto'),
@@ -69,15 +74,25 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 						},
 						readOnly: true
 					},
-					{
-						fieldLabel: HreRem.i18n('fieldlabel.usuario.contacto'),
-						xtype: 'textfieldbase',
-						width: 480,
-						bind: {
-							value: '{gestionEconomica.usuarioProveedorContacto}'
-						},
-						readOnly: true
-					},
+					{ 
+						xtype: 'comboboxfieldbase',
+			        	fieldLabel:  HreRem.i18n('fieldlabel.proveedor.contacto'),
+			        	reference: 'proveedorContactoCombo',
+			        	labelWidth:	150,
+			        	width: 		480,
+			        	bind: {
+		            		store: '{comboProveedorContacto}',
+		            		value: '{gestionEconomica.idProveedorContacto}',
+		            		disabled: '{!gestionEconomica.idProveedor}'
+		            	},
+		            	displayField: 'nombre',
+						valueField: 'id',
+						allowBlank: true,
+						listeners: {
+							change: 'onChangeProveedor',
+							expand: 'onChangeProveedorGestionEconomica'
+						}
+			        },
 					{
 						fieldLabel: HreRem.i18n('fieldlabel.telefono.contacto'),
 						width: 480,
@@ -343,6 +358,7 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 			    				        	flex: 1
 			    				        },
 			    				        {   text: HreRem.i18n('header.proveedor'),
+			    				        	reference: 'proveedorDescripcionRef',
 			    				        	dataIndex: 'proveedorDescripcion',
 			    				        	flex: 1 
 			    				        },	

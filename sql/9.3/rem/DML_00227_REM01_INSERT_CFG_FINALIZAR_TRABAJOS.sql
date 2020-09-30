@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200712
+--## AUTOR=Alejandro Valverde
+--## FECHA_CREACION=20200930
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11161
@@ -35,15 +35,15 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-      T_TIPO_DATA('02','22','15','P00001'),
-      T_TIPO_DATA('02','23','16','P00002'),
-      T_TIPO_DATA('02','24','17','P00003'),
-      T_TIPO_DATA('02','20','13','P00004'),
-      T_TIPO_DATA('02','20','27','P00004'),
-      T_TIPO_DATA('02','18','11','P00005'),
-      T_TIPO_DATA('02','18','25','P00005'),
-      T_TIPO_DATA('02','18','118','P00005'),
-      T_TIPO_DATA('02','19','12','P00006')
+      T_TIPO_DATA('02','22','88','OP-13-CERT-07'),
+      T_TIPO_DATA('02','23','87','OP-13-CERT-10'),
+      T_TIPO_DATA('02','24','86','OP-13-CERT-11'),
+      T_TIPO_DATA('02','20','90','OP-13-LIPR-03'),
+      T_TIPO_DATA('02','20','121','OP-13-LIPR-14'),
+      T_TIPO_DATA('02','18','92','OP-13-CERT-05'),
+      T_TIPO_DATA('02','18','84','OP-13-CERT-25'),
+      T_TIPO_DATA('02','18','118','OP-13-CERT-30'),
+      T_TIPO_DATA('02','19','91','OP-13-LIPR-06')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

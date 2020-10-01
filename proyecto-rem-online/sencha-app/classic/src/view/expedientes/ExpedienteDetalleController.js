@@ -4981,7 +4981,7 @@ comprobarFormatoModificar: function() {
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		Ext.Msg.show({
 		   title: 'Excluir del Bulk',
-		   msg: '¿Quieres sacar la oferta del Bulk "' + bulk + '"?',
+		   msg: 'Está usted apunto de excluir la oferta del Bulk "'+bulk+'"</br>¿Está usted de acuerdo?',
 		   buttons: Ext.MessageBox.YESNO,
 		   fn: function(buttonId) {
 		   

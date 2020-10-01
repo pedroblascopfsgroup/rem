@@ -796,6 +796,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 					    	formatter: 'date("d/m/Y")',
 					    	width: '20%',
 					    	disabled: true,
+					    	maxValue: null,
 					    	reference: 'fechaVencTpoBonificacion',
 				        	bind: {
 				        		readOnly : '{!esGestorOrSupervisorAdmision}',

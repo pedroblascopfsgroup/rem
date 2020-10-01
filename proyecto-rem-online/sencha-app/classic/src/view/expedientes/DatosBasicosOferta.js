@@ -113,6 +113,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						xtype : 'fieldsettable',
 						defaultType : 'displayfieldbase',
 						title : 'Bulk Advisory Note',
+						collapsible: false,
 						bind: {
 							hidden: '{!esCarteraAppleOrRemaining}'
 						},

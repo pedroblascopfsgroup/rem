@@ -19,19 +19,19 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 	recordClass: "HreRem.model.ActivoDatosRegistrales",
 
     requires: ['HreRem.model.ActivoDatosRegistrales', 'HreRem.view.common.FieldSetTable', 'HreRem.view.common.TextFieldBase', 'HreRem.view.common.ComboBoxFieldBase', 'HreRem.model.ActivoPropietario',
-    	'HreRem.view.activos.detalle.CalificacionNegativaGrid', 'HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid'],
+    	'HreRem.view.activos.detalle.CalificacionNegativaGrid', 'HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid','HreRem.model.ActivoDeudorAcreditador'],
 
     initComponent: function () {
         var me = this;   
         me.setTitle(HreRem.i18n('title.titulo.informacion.registral'));
-        me.getViewModel().data.nClicks=0;
+        me.getViewModel().data.nClicks=0;      
         var items= [
 
 			{    
                 
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',
-				title: HreRem.i18n('title.datos.inscripcion'),
+				title: HreRem.i18n('title.datos.inscripcion'),				
 				items :
 					[
 						{
@@ -385,50 +385,40 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		            		store: '{storeOrigenAnteriorActivo}',
 		            		hidden: '{!mostrarCamposDivarianandBbva}',
 		            		value: '{datosRegistrales.origenAnteriorActivoCodigo}'
-		            		
-		            	
-		            		
-		            		
-		            		
 		            	}
 	            	},
 					{
 						xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
-						colspan: 2,
 						reference:'fechaTituloAnteriorRef',
 				        fieldLabel: HreRem.i18n('fieldlabel.fecha.titulo.anterior'),
 				        bind: {				        	
 				        	 hidden: '{!mostrarCamposDivarianandBbva}',
 				        	 value: '{datosRegistrales.fechaTituloAnterior}'
-				        	
-				        	
 				        }
 				       
 					},
 					{
 			        	xtype: 'comboboxfieldbase',
 			        	fieldLabel: HreRem.i18n('fieldlabel.sociedad.pago'),
-			        	colspan: 3,
 			        	reference:'sociedadPagoAnteriorRef',
 			        	
 			        	bind: {			        		
 			        		 store: '{comboSociedadAnteriorBBVA}',
 			        		 hidden: '{!isCarteraBbva}',			        		
 			        		 value:'{datosRegistrales.sociedadPagoAnterior}'
-			        		
-			        		 
 			        	}
-			        	
-			        	
 			        },
-			        
+			        {
+			        	bind: {	
+			        		hidden: '{!esSubcarteraDivarian}'
+			        	}
+			        },
 			        {
 						title: 'Listado de Propietarios',
 						itemId: 'listadoPropietarios',
 					    xtype: 'gridBaseEditableRow',
 					    topBar : true,
-					    colspan:4,
 						cls	: 'panel-base shadow-panel',
 						bind: {
 							store: '{storePropietario}',
@@ -549,6 +539,102 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							    });			
 							}					 	    				    	
 					 	}
+					},
+					//Se añade el grid de deudores
+			        {
+						title: HreRem.i18n('fieldlabel.listado.deudores'),
+						itemId: 'listadoDeudores',	
+					    xtype: 'gridBaseEditableRow',	
+					    idPrincipal:'idActivo',
+					    topBar : true,
+					    editOnSelect: '{isGestorAdmisionAndSuper}',
+						cls	: 'panel-base shadow-panel',					
+						bind: {
+							store: '{storeDeudores}',
+							topBar: '{isGestorAdmisionAndSuper}'						
+						},
+						listeners:{
+							afterrender:function(a,b,v,c){
+								var me = this;
+								var idAct= me.lookupController().getViewModel().data.activo.id;
+								me.lookupController().getViewModel().data.idActivo = idAct;
+							}
+						},
+						colspan: 3,						
+			              features: [{			              	
+					            id: 'summary',
+					            ftype: 'summary',
+					            hideGroupedHeader: true,
+					            enableGroupingMenu: false,					           
+					            dock: 'bottom'						       
+					           
+						    }],
+						columns: [
+						    {   text: HreRem.i18n('header.listado.deudores.fecha.alta'),						    
+						    	dataIndex:'fechaAlta',						    	
+								formatter: 'date("d/m/Y")',								
+					        	flex:1 
+					        },
+					        {   text:  HreRem.i18n('fieldlabel.listado.deudores.gestor.alta'), 
+					        	dataIndex: 'gestorAlta',
+					        	flex:1 
+					        },
+					        {   text: HreRem.i18n('fieldlabel.listado.deudores.tipo.doc'), 
+					        	dataIndex: 'tipoDocIdentificativoDesc',					        	
+					        	reference:	'tipoDocDeudor',
+					        	editor: {		                   					                  		 	 
+			        			xtype: 'comboboxfieldbase',
+								addUxReadOnlyEditFieldPlugin: false,
+				        		   labelWidth: '65%',
+						            width: '40%',
+				            		allowBlank: false,					        	
+				        		bind: {
+				            		store: '{comboTipoDocumento}',				            		
+				            		value: '{tipoDocIdentificativoDesc}',
+				            		readOnly: '{!isGestorAdmisionAndSuper}'
+				            	},
+				            	displayField: 'descripcion',
+								valueField: 'codigo'
+			        		
+		                	},
+					        	flex:1 
+					        },	
+					        {   text: HreRem.i18n('fieldlabel.listado.deudores.doc.identificativo'), 
+					        	dataIndex: 'docIdentificativo',					       
+					        	reference:	'tipoNumeroDocumentoDeudor',
+					        	editor: {										 
+										  cls: 'grid-no-seleccionable-field-editor',
+										  allowBlank: false
+										  },										 
+					        	flex:1 
+					        },	
+					        {   text: HreRem.i18n('fieldlabel.listado.deudores.nombre.razon.social'), 
+					        	dataIndex: 'nombre',				        
+					        	reference:	'razonSocialDeudor',
+					        	editor: {										 
+										  cls: 'grid-no-seleccionable-field-editor',
+										  allowBlank: false
+										  },
+					        	flex:2
+					        },
+					        {   text: HreRem.i18n('fieldlabel.listado.deudores.apellido.1'), 
+					        	dataIndex: 'apellido1',
+					        	reference:	'apellido1Deudor',
+					        	editor: {										 
+										  cls: 'grid-no-seleccionable-field-editor'
+					        	},
+					        	flex:2
+					        },
+					        {   text: HreRem.i18n('fieldlabel.listado.deudores.apellido.2'), 
+					        	dataIndex: 'apellido2',
+					        	reference:	'apellido2Deudor',
+					        	editor: {										 
+										  cls: 'grid-no-seleccionable-field-editor'										  
+										  },
+					        	flex:2 
+					        }         	        
+					    ]
+		 	    				    						 	
 					},
 					{
 						xtype:'fieldsettable',

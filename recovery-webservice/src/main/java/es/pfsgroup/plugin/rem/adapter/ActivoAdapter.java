@@ -90,102 +90,7 @@ import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
-import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
-import es.pfsgroup.plugin.rem.model.ActivoCargas;
-import es.pfsgroup.plugin.rem.model.ActivoCatastro;
-import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
-import es.pfsgroup.plugin.rem.model.ActivoConfigDocumento;
-import es.pfsgroup.plugin.rem.model.ActivoCopropietarioActivo;
-import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
-import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
-import es.pfsgroup.plugin.rem.model.ActivoFoto;
-import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
-import es.pfsgroup.plugin.rem.model.ActivoLlave;
-import es.pfsgroup.plugin.rem.model.ActivoMovimientoLlave;
-import es.pfsgroup.plugin.rem.model.ActivoObservacion;
-import es.pfsgroup.plugin.rem.model.ActivoOcupanteLegal;
-import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
-import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
-import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
-import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
-import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
-import es.pfsgroup.plugin.rem.model.ActivoTasacion;
-import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.ActivoVivienda;
-import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
-import es.pfsgroup.plugin.rem.model.AdjuntoPlusvalias;
-import es.pfsgroup.plugin.rem.model.ClienteComercial;
-import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
-import es.pfsgroup.plugin.rem.model.ClienteGDPR;
-import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
-import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
-import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
-import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
-import es.pfsgroup.plugin.rem.model.DtoActivoGridFilter;
-import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
-import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
-import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
-import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
-import es.pfsgroup.plugin.rem.model.DtoActivoVistaPatrimonioContrato;
-import es.pfsgroup.plugin.rem.model.DtoAdjunto;
-import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
-import es.pfsgroup.plugin.rem.model.DtoAgrupacionesActivo;
-import es.pfsgroup.plugin.rem.model.DtoAviso;
-import es.pfsgroup.plugin.rem.model.DtoCondicionHistorico;
-import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
-import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
-import es.pfsgroup.plugin.rem.model.DtoDistribucion;
-import es.pfsgroup.plugin.rem.model.DtoFoto;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
-import es.pfsgroup.plugin.rem.model.DtoIncrementoPresupuestoActivo;
-import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
-import es.pfsgroup.plugin.rem.model.DtoListadoTareas;
-import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
-import es.pfsgroup.plugin.rem.model.DtoLlaves;
-import es.pfsgroup.plugin.rem.model.DtoMovimientoLlave;
-import es.pfsgroup.plugin.rem.model.DtoNumPlantas;
-import es.pfsgroup.plugin.rem.model.DtoObservacion;
-import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
-import es.pfsgroup.plugin.rem.model.DtoPresupuestoGraficoActivo;
-import es.pfsgroup.plugin.rem.model.DtoPropietario;
-import es.pfsgroup.plugin.rem.model.DtoTasacion;
-import es.pfsgroup.plugin.rem.model.DtoTramite;
-import es.pfsgroup.plugin.rem.model.DtoUsuario;
-import es.pfsgroup.plugin.rem.model.DtoValoracion;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.GestorActivo;
-import es.pfsgroup.plugin.rem.model.GestorSustituto;
-import es.pfsgroup.plugin.rem.model.IncrementoPresupuesto;
-import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.OfertaExclusionBulk;
-import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
-import es.pfsgroup.plugin.rem.model.PerimetroActivo;
-import es.pfsgroup.plugin.rem.model.PresupuestoActivo;
-import es.pfsgroup.plugin.rem.model.TareaActivo;
-import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
-import es.pfsgroup.plugin.rem.model.Trabajo;
-import es.pfsgroup.plugin.rem.model.UsuarioCartera;
-import es.pfsgroup.plugin.rem.model.VActivoPatrimonioContrato;
-import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
-import es.pfsgroup.plugin.rem.model.VBusquedaActivoMatrizPresupuesto;
-import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
-import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
-import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivo;
-import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivoMatriz;
-import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
-import es.pfsgroup.plugin.rem.model.VCalculosActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
-import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
-import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
-import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
+import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
@@ -210,7 +115,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoCalificacionEnergetica;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGastoAsociado;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoGastoAsociado;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInfoComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
@@ -227,7 +134,6 @@ import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
 import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
-import es.pfsgroup.plugin.rem.rest.dto.HistoricoPropuestasPreciosDto;
 import es.pfsgroup.plugin.rem.restclient.exception.UnknownIdException;
 import es.pfsgroup.plugin.rem.service.TabActivoDatosBasicos;
 import es.pfsgroup.plugin.rem.service.TabActivoDatosRegistrales;
@@ -1946,6 +1852,51 @@ public class ActivoAdapter {
 		return listaDtoPropietarios;
 
 	}
+	
+	public List<DtoActivoDeudoresAcreditados> getListDeudoresById(Long id) {
+				
+	
+		List<DtoActivoDeudoresAcreditados> listaDtoDeudores = new ArrayList<DtoActivoDeudoresAcreditados>();
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", id);
+		Order order = new Order(OrderType.ASC, "fechaAlta");
+		List<ActivoDeudoresAcreditados> listaDeudores =(List<ActivoDeudoresAcreditados>)genericDao.getListOrdered(ActivoDeudoresAcreditados.class, order, filtro);
+	
+		for (ActivoDeudoresAcreditados deudor : listaDeudores) {
+			DtoActivoDeudoresAcreditados dto = new DtoActivoDeudoresAcreditados();
+			try {
+				BeanUtils.copyProperties(dto,deudor);
+				if(deudor.getFechaAlta()!=null) {
+				BeanUtils.copyProperty(dto,"fechaAlta",deudor.getFechaAlta());
+				}
+				if(deudor.getUsuario().getApellidoNombre()!=null) {
+				BeanUtils.copyProperty(dto, "gestorAlta",deudor.getUsuario().getApellidoNombre());
+				}
+				if(deudor.getTipoDocumento().getDescripcion()!=null) {
+					BeanUtils.copyProperty(dto, "tipoDocIdentificativoDesc",deudor.getTipoDocumento().getDescripcion());
+				}
+				if(deudor.getNumeroDocumentoDeudor()!=null) {
+					BeanUtils.copyProperty(dto,"docIdentificativo",deudor.getNumeroDocumentoDeudor());
+				}
+				if(deudor.getNombreDeudor()!=null) {
+					BeanUtils.copyProperty(dto,"nombre",deudor.getNombreDeudor());
+				}
+				if(deudor.getApellido1Deudor()!=null) {
+				BeanUtils.copyProperty(dto,"apellido1",deudor.getApellido1Deudor());
+				}
+				if(deudor.getApellido2Deudor()!=null) {
+				BeanUtils.copyProperty(dto,"apellido2",deudor.getApellido2Deudor());
+				}
+			}catch (IllegalAccessException e) {
+				logger.error("Error en ActivoAdapter", e);
+			} catch (InvocationTargetException e) {
+				logger.error("Error en ActivoAdapter", e);
+			}
+			listaDtoDeudores.add(dto);
+		}
+		
+		return listaDtoDeudores;
+
+	}
 
 	public List<DtoValoracion> getListValoracionesById(Long id) {
 
@@ -2699,11 +2650,41 @@ public class ActivoAdapter {
 	public String upload(WebFileItem webFileItem) throws Exception {
 		return uploadDocumento(webFileItem, null, null);
 	}
+	
+	public void uploadFactura(WebFileItem webFileItem) throws Exception {
+		if(webFileItem == null) return; //No seguimos
+		GastoAsociadoAdquisicion gas = null;
+		Filter filtro = null;
+		DDTipoDocumentoGastoAsociado tipoDocGastoAsociado = null;
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		Long idDocRestClient = null;
+		String username = usuarioLogado != null ? usuarioLogado.getUsername() : "DEFAULT";
+		boolean gestorDocumentalActivado = gestorDocumentalAdapterApi.modoRestClientActivado();
+		
+		gas = genericDao.get(GastoAsociadoAdquisicion.class, 
+				genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(webFileItem.getParameter("idEntidad"))));
+		filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
+		tipoDocGastoAsociado = genericDao.get(DDTipoDocumentoGastoAsociado.class, filtro);
+		if(tipoDocGastoAsociado != null) {
+			if(gestorDocumentalActivado) {
+				idDocRestClient = gestorDocumentalAdapterApi.upload(gas.getActivo(), webFileItem, username, tipoDocGastoAsociado.getMatricula());
+				activoApi.uploadFactura(webFileItem, idDocRestClient, gas, tipoDocGastoAsociado);
+			}else {
+				activoApi.uploadFactura(webFileItem, null, gas, tipoDocGastoAsociado);
+			}
+		}
+	}
 
 	public FileItem download(Long id,String nombreDocumento) throws UserException,Exception {
 		String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
 		Downloader dl = downloaderFactoryApi.getDownloader(key);
 		return dl.getFileItem(id,nombreDocumento);
+	}
+	
+	public FileItem downloadFactura(Long id,String nombreDocumento) throws UserException,Exception {
+		String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
+		Downloader dl = downloaderFactoryApi.getDownloader(key);
+		return dl.getFileItemFactura(id,nombreDocumento);
 	}
 	
 	public FileItem downloadComunicacionGencat(Long id,String nombreDocumento) throws Exception {
@@ -2726,7 +2707,6 @@ public class ActivoAdapter {
 		}
 		return borrado;
 	}
-
 	
 	public DtoAviso getAvisosActivoById(Long id) {
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
@@ -4707,5 +4687,23 @@ public class ActivoAdapter {
 	@Transactional(readOnly = false)
 	public Oferta clonateOfertaActivo(String idOferta) {
 		return genericAdapter.clonateOferta(idOferta, false);		
+	}
+
+	@Transactional(readOnly = false)
+	public boolean deleteFacturaGastoAsociado(Long idFactura) {
+		if(idFactura == null) return false;
+		AdjuntoGastoAsociado aga = genericDao.get(AdjuntoGastoAsociado.class, genericDao.createFilter(FilterType.EQUALS, "id", idFactura));
+		if(aga == null) return false;
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+			try {
+				if(aga.getIdentificadorGestorDocumental() != null && usuarioLogado != null)
+					gestorDocumentalAdapterApi.borrarAdjunto(aga.getIdentificadorGestorDocumental(), usuarioLogado.getUsername());
+			} catch (Exception e) {
+				logger.error("Error en ActivoAdapter", e);
+			}
+		}
+		genericDao.deleteById(AdjuntoGastoAsociado.class, aga.getId());
+		return true;
 	}
 }

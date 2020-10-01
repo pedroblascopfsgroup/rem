@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -82,6 +83,11 @@ public class GastoAsociadoAdquisicion implements Serializable, Auditable{
 
 	@Embedded
 	private Auditoria auditoria;
+	
+	@OneToOne(mappedBy = "gastoAsociadoAdquisicion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "GAA_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private AdjuntoGastoAsociado factura;
 	
 	public Long getId() {
 		return id;
@@ -178,6 +184,14 @@ public class GastoAsociadoAdquisicion implements Serializable, Auditable{
 
 	public void setNumGastoAsociado(Long numGastoAsociado) {
 		this.numGastoAsociado = numGastoAsociado;
+	}
+
+	public AdjuntoGastoAsociado getFactura() {
+		return factura;
+	}
+
+	public void setFactura(AdjuntoGastoAsociado factura) {
+		this.factura = factura;
 	}
 	
 }

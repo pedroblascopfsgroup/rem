@@ -4,7 +4,6 @@
 Ext.define('HreRem.model.GastoAsociadoAdquisicionModel', {
     extend: 'HreRem.model.Base',
 	idProperty: 'id',
-	requires: ['HreRem.model.Activo'],
 	
     fields: [    
    			{
@@ -35,7 +34,13 @@ Ext.define('HreRem.model.GastoAsociadoAdquisicionModel', {
     			name: 'importe'
     		},
     		{
+    			name: 'idFactura'
+    		},
+    		{
     			name: 'factura'
+    		},
+    		{
+    			name: 'tipoFactura'
     		},
     		{
     			name:'observaciones'

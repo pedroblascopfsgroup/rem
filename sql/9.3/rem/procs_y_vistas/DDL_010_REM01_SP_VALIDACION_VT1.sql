@@ -53,8 +53,17 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('  [INFO] Validando: '||vCodigo||' - '||vDescripcion||'...');
 
             -- Insertamos los registros en la tabla REJECTS que no han superado la validacion
-            V_SQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (ACT_NUM_ACTIVO, FECHA_PROCESADO, OPERACION, COD_ERROR, DESC_ERROR)
-                        VALUES (('||vQuery||'), SYSDATE, '''||vOperacion||''', '''||vCodigo||''', '''||vDescripcion||''')';
+            V_SQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (ACT_NUM_ACTIVO)
+                        '||vQuery||'';
+            EXECUTE IMMEDIATE V_SQL;
+            
+            V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' 
+                        SET FECHA_PROCESADO = SYSDATE,
+                        OPERACION = '''||vOperacion||''',
+                        COD_ERROR = '''||vCodigo||''',
+                        DESC_ERROR = '''||vDescripcion||'''
+                        WHERE FECHA_PROCESADO IS NULL
+                        ';
             EXECUTE IMMEDIATE V_SQL;
             
 

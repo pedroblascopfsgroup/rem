@@ -1,12 +1,14 @@
 package es.pfsgroup.plugin.rem.model.dd;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -23,7 +25,11 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDTipoDocumentoGastoAsociado implements Auditable, Dictionary{
 
-	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4729362446723011871L;
+
 	@Id
 	@Column(name = "DD_TPG_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoDocumentoGastoAsociado")
@@ -39,41 +45,77 @@ public class DDTipoDocumentoGastoAsociado implements Auditable, Dictionary{
 	@Column(name = "DD_TPG_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
 	
+	@Column(name = "DD_TPG_MATRICULA_GD")
+	private String matricula;
+
+	@Version   
+	private Long version;
+	
+	@Embedded
+	private Auditoria auditoria;
 	
 	@Override
 	public Long getId() {
-		// TODO Auto-generated method stub
-		return null;
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	@Override
 	public String getCodigo() {
-		// TODO Auto-generated method stub
-		return null;
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
 	}
 
 	@Override
 	public String getDescripcion() {
-		// TODO Auto-generated method stub
-		return null;
+		return descripcion;
+	}
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
 	}
 
 	@Override
 	public String getDescripcionLarga() {
-		// TODO Auto-generated method stub
-		return null;
+		return descripcionLarga;
+	}
+
+
+	public void setDescripcionLarga(String descripcionLarga) {
+		this.descripcionLarga = descripcionLarga;
+	}
+
+	public String getMatricula() {
+		return matricula;
+	}
+
+	public void setMatricula(String matricula) {
+		this.matricula = matricula;
 	}
 
 	@Override
 	public Auditoria getAuditoria() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.auditoria;
 	}
-
+	
 	@Override
 	public void setAuditoria(Auditoria auditoria) {
-		// TODO Auto-generated method stub
-		
+		this.auditoria = auditoria;
+	}
+
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 
 }

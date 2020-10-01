@@ -6,10 +6,6 @@ Ext.define('HreRem.view.activos.detalle.GastosAsociadosAdquisicionGrid', {
     addButton	: true,
     requires	: ['HreRem.model.GastoAsociadoAdquisicionModel'],    
     editOnSelect: true,	
-	controller: 'activodetalle',
-    viewModel: {
-       type: 'activodetalle'
-    },
     listeners: {
     	boxready: function() {
     		var me = this;
@@ -37,23 +33,15 @@ Ext.define('HreRem.view.activos.detalle.GastosAsociadosAdquisicionGrid', {
        }
     	
     },
-     store: Ext.create('Ext.data.Store', {
-		pageSize: $AC.getDefaultPageSize(),
-		model: 'HreRem.model.GastoAsociadoAdquisicionModel',
-		proxy: {
-			type: 'uxproxy',
-			remoteUrl: 'activo/getListGastosAsociadosAdquisicion',
-			extraParams: {
-				id: '{activo.id}'
-			}
-		}
-	}),
+    bind: {
+    	store: '{storeGastosAsociadosAdquisicion}'
+    },
     
     initComponent: function () {
     	
     	var me = this;
-    	
-        me.store.load();
+    	if(!Ext.isEmpty(me.getStore()))
+        	me.getStore().load();
     	
      	me.deleteSuccessFn = function(){
     		this.getStore().load()
@@ -136,17 +124,73 @@ Ext.define('HreRem.view.activos.detalle.GastosAsociadosAdquisicionGrid', {
                     dataIndex : 'importe'
                  }, {
                     text : HreRem.i18n('fieldlabel.gastos.asociados.factura'),
-                    flex : 1,
-                    dataIndex : 'factura'
-
-                 }, {
+                    flex : 3,
+                    align: 'right',
+                    dataIndex : 'factura',
+                    xtype: 'actioncolumn',
+                    items: [							
+							{
+                 				xtype: 'button',
+                  				handler: 'onClickDescargarFacturaGastoAsociado',
+                  				isDisabled: function(view, rowIndex, colIndex, item, record ) {
+					            	if (!Ext.isEmpty(record.get("factura"))) {
+					            		return false;
+					            	}
+					            	return true;		            	
+			            		},
+			            		getClass: function(v, metadata, record ) {					            	
+					            	return 'margen-derecha ico-download';					            
+					            }
+              		 		},
+              		 		{
+                 				xtype: 'button',                  				
+                  				handler: 'onClickCargarFacturaGastoAsociado',
+                  				isDisabled: function(view, rowIndex, colIndex, item, record ) {
+					            	if (Ext.isEmpty(record.get("factura"))) {
+					            		return false;
+					            	}
+					            	return true;		            	
+			            		},
+			            		getClass: function(v, metadata, record ) {					            	
+					            	return 'margen-derecha ico-upload-documento';					            
+					            }
+              		 		},
+              		 		{
+                 				xtype: 'button',
+                  				handler: 'onClickBorrarFacturaGastoAsociado',
+                  				isDisabled: function(view, rowIndex, colIndex, item, record ) {
+					            	if (!Ext.isEmpty(record.get("factura"))) {
+					            		return false;
+					            	}
+					            	return true;		            	
+			            		},
+			            		getClass: function(v, metadata, record ) {					            	
+					            	return 'ico-delete-documento';					            
+					            }
+              		 		}
+          		 	],
+          		 	renderer: function(value, metadata, record) {
+          		 		var tipo = null;
+          		 		if(!Ext.isEmpty(record.get("tipoFactura"))){
+          		 			tipo = record.get("tipoFactura");
+          		 		}
+          		 		if(Ext.isEmpty(record.get("factura"))) {
+			        		return '<div style="float:left; margin:3px; font-size: 11px; line-height: 1em;"></div>'
+			        	} else {
+			        		return '<div style="float:left; margin:3px; font-size: 11px; line-height: 1em;"><strong>'+value+'</strong> ('+tipo+')</div>'
+			        	}
+		        		
+		        	}
+			        
+				},
+				{
                     text : HreRem.i18n('fieldlabel.gastos.asociados.Observaciones'),
                     flex : 1,
                     dataIndex : 'observaciones',
                     editor: {
 		        		xtype: 'textareafield'
 		        	}
-                 }
+             	}
 
         ];
     
@@ -155,7 +199,9 @@ Ext.define('HreRem.view.activos.detalle.GastosAsociadosAdquisicionGrid', {
         		xtype : 'pagingtoolbar',
                 dock : 'bottom',
                 displayInfo : true,
-                store: me.store
+                bind: {
+                	store: '{storeGastosAsociadosAdquisicion}'
+                }
         	}
         ];
         

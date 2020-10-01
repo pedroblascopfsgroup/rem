@@ -21,7 +21,9 @@ public class DtoGastoAsociadoAdquisicion extends WebDto{
 	private Date fechaSolicitudGastoAsociado;
 	private Date fechaPagoGastoAsociado;
 	private Double importe;
-	private Double factura;
+	private Long idFactura;
+	private String factura;
+	private String tipoFactura;
 	private String observaciones;
 	public Long getId() {
 		return id;
@@ -70,11 +72,17 @@ public class DtoGastoAsociadoAdquisicion extends WebDto{
 	}
 	public void setImporte(Double importe) {
 		this.importe = importe;
+	}	
+	public Long getIdFactura() {
+		return idFactura;
 	}
-	public Double getFactura() {
+	public void setIdFactura(Long idFactura) {
+		this.idFactura = idFactura;
+	}
+	public String getFactura() {
 		return factura;
 	}
-	public void setFactura(Double factura) {
+	public void setFactura(String factura) {
 		this.factura = factura;
 	}
 	public String getObservaciones() {
@@ -83,6 +91,11 @@ public class DtoGastoAsociadoAdquisicion extends WebDto{
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
 	}
-	
-	
+	public String getTipoFactura() {
+		return tipoFactura;
+	}
+	public void setTipoFactura(String tipoFactura) {
+		this.tipoFactura = tipoFactura;
+	}
+		
 }

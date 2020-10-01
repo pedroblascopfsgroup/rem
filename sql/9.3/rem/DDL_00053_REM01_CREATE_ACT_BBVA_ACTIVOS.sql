@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=Carlos Augusto
---## FECHA_CREACION=20200729
+--## FECHA_CREACION=20200930
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-10762
+--## INCIDENCIA_LINK=HREOS-11306
 --## PRODUCTO=NO
 --## Finalidad: DDL Creación de la tabla ACT_BBVA_ACTIVOS
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Añadidos campos para alta activos en rem 3
 --##########################################
 --*/
 
@@ -44,12 +45,8 @@ BEGIN
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS; 
 
     IF V_NUM_TABLAS = 1 THEN
-      DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA ||'.S_'||V_TABLA||'... Secuencia BORRADA.');  
-      EXECUTE IMMEDIATE 'DROP SEQUENCE '||V_ESQUEMA||'.S_'||V_TABLA||'';
-         DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA ||'.S_'||V_TABLA||'Se ha borrado la secuencia la volvemos a crear.');
-      V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TABLA||'';		
-	    EXECUTE IMMEDIATE V_MSQL;		
-	    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TABLA||' creada');
+     	
+	    DBMS_OUTPUT.PUT_LINE('[INFO] La secuencia ya existe');
       
     ELSE
      
@@ -64,10 +61,9 @@ BEGIN
     
     -- Si existe la tabla se borra
     IF V_NUM_TABLAS = 1 THEN 
-            DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||'... Tabla YA EXISTE.'); 
-            ELSE
-     
-    	 --Creamos la tabla
+        DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA||'... Ya existe.');
+	    ELSE
+			 --Creamos la tabla
       DBMS_OUTPUT.PUT_LINE('[CREAMOS '||V_TABLA||']');
     	 V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||' (
     			  BBVA_ID                     	NUMBER(16,0)        NOT NULL
@@ -87,6 +83,9 @@ BEGIN
 				 ,BBVA_CONTRAPARTIDA            NUMBER(16,0)
                  ,BBVA_FOLIO                    NUMBER(16,0)
                  ,BBVA_CDPEN                    NUMBER(16,0)
+                 ,BBVA_COD_INMUEBLE             VARCHAR2(20 CHAR)
+                 ,BBVA_BIEN_HOST	            VARCHAR2(9 CHAR)
+                 ,BBVA_BIEN_PRAR	            VARCHAR2(9 CHAR)
 				 ,VERSION                       NUMBER(38,0)         DEFAULT 0
 				 ,USUARIOCREAR                  VARCHAR2(50 CHAR) 
 				 ,FECHACREAR                    TIMESTAMP(6)        DEFAULT SYSTIMESTAMP
@@ -125,6 +124,9 @@ BEGIN
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TABLA||'.BBVA_CONTRAPARTIDA IS ''Contrapartida de BBVA''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TABLA||'.BBVA_FOLIO IS ''Folio de BBVA''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TABLA||'.BBVA_CDPEN IS ''CDPEN DE BBVA''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TABLA||'.BBVA_COD_INMUEBLE IS ''Código Inmueble enviado por la tasadora en la respuesta de tasaciones. Permite la trazabilidad entre Heracles y el Centro de Tasaciones.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TABLA||'.BBVA_BIEN_HOST IS ''Identificador de bien con origen GyG.''';
+    EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TABLA||'.BBVA_BIEN_PRAR IS ''Identificador de bien con origen PRAR.''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TABLA||'.VERSION IS ''Indica la versión del registro''';  
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TABLA||'.USUARIOCREAR IS ''Indica el usuario que creó el registro''';
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.'||V_TABLA||'.FECHACREAR IS ''Indica la fecha en la que se creó el registro''';
@@ -137,8 +139,11 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('Creados los comentarios en TABLA '|| V_ESQUEMA ||'.'||V_TABLA||'... OK');
     COMMIT;
     DBMS_OUTPUT.PUT_LINE('[INFO] COMMIT');
-    
     END IF;
+
+     
+    
+    
 EXCEPTION
   WHEN OTHERS THEN
     ERR_NUM := SQLCODE;

@@ -372,4 +372,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	boolean activoFueraPerimetroHAYA(Long idActivo);
 
+	boolean isActivoBBVADivarian(Long idActivo);
+
 }

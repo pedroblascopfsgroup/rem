@@ -14,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
@@ -41,6 +42,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
 import es.pfsgroup.plugin.rem.model.DtoActivoComplementoTitulo;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
+import es.pfsgroup.plugin.rem.model.DtoActivoDeudoresAcreditados;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
@@ -75,6 +77,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoProveedorMediador;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
+import es.pfsgroup.plugin.rem.model.GastoAsociadoAdquisicion;
 import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -87,6 +90,7 @@ import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
 import es.pfsgroup.plugin.rem.rest.dto.ActivoCrearPeticionTrabajoDto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGastoAsociado;
 import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.HistoricoPropuestasPreciosDto;
@@ -1415,6 +1419,15 @@ public interface ActivoApi {
 	
 	Boolean createGastoAsociadoAdquisicion(String activoId, String gastoAsociado, String fechaSolicitudGastoAsociado,
 			String fechaPagoGastoAsociado, String importe, String observaciones);
+
+	Boolean destroyDeudorById(DtoActivoDeudoresAcreditados dto);
+	
+	Boolean updateDeudorAcreditado(DtoActivoDeudoresAcreditados dto);
+	
+	Boolean createDeudorAcreditado(Long idEntidad, String docIdentificativo,
+			String nombre, String apellido1, String apellido2, String tipoDocIdentificativoDesc);
+
+	String uploadFactura(WebFileItem webFileItem, Long idDocRestClient, GastoAsociadoAdquisicion gas, DDTipoDocumentoGastoAsociado tipoDocGastoAsociado) throws UserException;
 
 	
 }

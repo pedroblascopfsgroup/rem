@@ -784,7 +784,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		me.lookupReference('estadoDivHorizontalNoInscrita').setValue("");
     	}
     },
-    //Por programar
+    
     onComboTramitacionTituloAdicional: function(combo, value){
     	
     	var me = this,
@@ -812,15 +812,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	    	
     	if(disabled){
     		fieldsettableTituloAdicional.hide();
-	    	tipoTituloAdicional.setValue("");
-	    	fechaInscripcionRegistroAdicional.setValue(""); 
-			tipoTituloAdicional.setValue("");
-    		situacionTituloAdicional.setValue("");
-    		fechaInscripcionRegistroAdicional.setValue("");
-    		entregaTituloGestoriaAdicional.setValue("");
-    		fechaRetiradaDefinitivaRegistroAdicional.setValue("");
-    		fechaPresentacionHaciendaAdicional.setValue("");
-    		fieldlabelFechaNotaSimpleAdicional.setValue("");
     	}else{
     		fieldsettableTituloAdicional.show();
     	}
@@ -6074,7 +6065,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 											tituloInfoRegActivo.getViewModel().data.codMotivoClicked = codMotivoClicked;
 										});
 					}
-
 				}
 
 				this.lookupReference('tituloinformacionregistralactivo')
@@ -6136,28 +6126,92 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					} else {
 						fechaSubsanacion.setValue(null);
 					}
-
 					if (!Ext.isEmpty(datos.data.descMotivoInput)) {
 						descMotivoInput.setValue(datos.data.descMotivoInput);
 					} else {
 						descMotivoInput.setValue(null);
 					}
-
+					
 					descMotivoInput
 							.lookupController('tituloinformacionregistralactivo')
 							.getViewModel().data.codigoMotivo = datos.data.codigoMotivoCalificacionNegativa;
-
-				} else {
-					comboEstadoMotivo.setValue("");
-					comboResponsableSubsanar.setValue("");
-					fechaSubsanacion.setValue("");
-					descMotivoInput.setValue("");
-					descMotivoInput.setDisabled(true);
+					
+					} else {
+						comboEstadoMotivo.setValue("");
+						comboResponsableSubsanar.setValue("");
+						fechaSubsanacion.setValue("");
+						descMotivoInput.setValue("");
+						descMotivoInput.setDisabled(true);
+					}
+					
 				}
+			});
+		},
 
-			}
-		});
+    onChangeComboOcupado: function(combo, newValue, oldValue, eOpts) {
+    	var me = this;
+        var conTitulo = combo.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]');
+
+        if (newValue == 0 && oldValue == null) {
+            conTitulo.setDisabled(true);
+            conTitulo.setValue(null);
+        }else if (newValue == 1 && oldValue == null){
+            conTitulo.setValue(me.getViewModel().get('situacionPosesoria.conTitulo'));
+            conTitulo.setDisabled(false);
+        }else if (newValue == 0){
+            conTitulo.setDisabled(true);
+            conTitulo.reset();
+        }else {
+            conTitulo.setDisabled(false);
+            conTitulo.setValue(0);
+        }
+
 	},
+
+	enableChkPerimetroAlquiler: function(get){
+		 var me = this;
+		 var esGestorAlquiler = me.getViewModel().get('activo.esGestorAlquiler');
+		 var estadoAlquiler = me.getViewModel().get('patrimonio.estadoAlquiler');
+		 var tieneOfertaAlquilerViva = me.getViewModel().get('activo.tieneOfertaAlquilerViva');
+		 var incluidoEnPerimetro = me.getViewModel().get('activo.incluidoEnPerimetro');
+		 var tipoTituloCodigo = me.getViewModel().get('activo.tipoTituloCodigo');
+		 if($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || (esGestorAlquiler == true || esGestorAlquiler == "true")){
+			 var isAM = me.getViewModel().get('activo.activoMatriz'); /*Si el activo no es Activo Matriz devolverá undefined*/
+			 var dadaDeBaja = me.getViewModel().get('activo.agrupacionDadaDeBaja');
+			 
+			 if(isAM == true) {
+				 /*Comprobar si su PA está dada de baja*/
+				 if(dadaDeBaja == "true") {
+				   	return false; //El checkbox será editable.
+				   } else {
+				   	return true; //El checkbox no será editable.
+				   }
+			 }
+			 
+			 if((tipoTituloCodigo == CONST.TIPO_TITULO_ACTIVO['UNIDAD_ALQUILABLE'] && incluidoEnPerimetro) || (tieneOfertaAlquilerViva === true && (estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"]))){
+				return true;
+			} else {
+				return false;
+			}
+		 }else{
+			 return true;
+		 }
+	 },
+	 
+	 onChangeCheckPerimetroAlquiler: function(checkbox, newValue, oldValue, eOpts) {
+
+		 var me = this;
+		 var comboTipoAlquiler = me.lookupReference('comboTipoAlquilerRef');
+		 var comboAdecuacion = me.lookupReference('comboAdecuacionRef');
+
+	   	 if (!newValue) {
+		    		comboTipoAlquiler.setValue(null);
+		            comboAdecuacion.setValue(null);
+	   	 } 
+	},
+
+
+		
 	onClickActivoHRE : function() {
 		var me = this;
 		var containsFocus = me.lookupReference('labelLinkIdOrigenHRE').containsFocus;

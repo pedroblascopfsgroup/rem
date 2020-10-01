@@ -1123,7 +1123,7 @@ public class AgrupacionAdapter {
 		if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupacion.getTipoAgrupacion().getCodigo())
 				|| DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER
 						.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
-			saveAgrupacionLoteComercial(activo, agrupacion);
+			saveAgrupacionLoteComercial(activo, agrupacion);			
 		} else {
 			ActivoAgrupacionActivo activoAgrupacionActivo = new ActivoAgrupacionActivo();
 			activoAgrupacionActivo.setActivo(activo);
@@ -1331,6 +1331,13 @@ public class AgrupacionAdapter {
 		// Obtener agrupaciones del activo.
 		boolean incluidoAgrupacionRestringida = false;
 		List<Activo> activosList = new ArrayList<Activo>();
+		List<Activo> activosListActual = new ArrayList<Activo>();
+		List<ActivoAgrupacionActivo> activosAgrupacionActual = activoAgrupacionActivoDao.getListActivoAgrupacionActivoByAgrupacionIDAndActivos(agrupacion.getId(), null);
+		if(!Checks.estaVacio(activosAgrupacionActual)) {
+			for(ActivoAgrupacionActivo aga : activosAgrupacionActual) {
+				activosListActual.add(aga.getActivo());
+			}
+		}
 		List<ActivoAgrupacionActivo> agrupacionesActivo = activo.getAgrupaciones();
 		if (!Checks.estaVacio(agrupacionesActivo)) {
 
@@ -1346,28 +1353,30 @@ public class AgrupacionAdapter {
 						if(Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getFechaBaja()) && 
 								!Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getActivos())){
 							List<ActivoAgrupacionActivo> activosAgrupacion = activoAgrupacionActivo.getAgrupacion().getActivos();
+							
 							incluidoAgrupacionRestringida = true;
-						if (!Checks.estaVacio(activosAgrupacion)) {
-							// Obtener todos los activos de la agrupación
-							// restringida en la que se encuentra el activo a
-							// incluir en la agrupación lote comercial
-							// y almacenar una nueva relación de la agrupación
-							// lote comercial con cada activo.
-							for (ActivoAgrupacionActivo activoAgrupacion : activosAgrupacion) {
-								if (!activosList.contains(activoAgrupacion.getActivo())) {
-									// Este bucle se realiza para evitar
-									// posibles duplicados dado que un activo
-									// puede estar en más de una agrupación de
-									// tipo restringida.
-									activosList.add(activoAgrupacion.getActivo());
+							if (!Checks.estaVacio(activosAgrupacion)) {
+								// Obtener todos los activos de la agrupación
+								// restringida en la que se encuentra el activo a
+								// incluir en la agrupación lote comercial
+								// y almacenar una nueva relación de la agrupación
+								// lote comercial con cada activo.
+								for (ActivoAgrupacionActivo activoAgrupacion : activosAgrupacion) {
+									if (!activosList.contains(activoAgrupacion.getActivo()) 
+											&& !activosListActual.contains(activoAgrupacion.getActivo())) {
+										// Este bucle se realiza para evitar
+										// posibles duplicados dado que un activo
+										// puede estar en más de una agrupación de
+										// tipo restringida.
+										activosList.add(activoAgrupacion.getActivo());
+									}
 								}
 							}
 						}
 					}
 				}
 			}
-		}
-
+			
 			if (!Checks.estaVacio(activosList)) {
 				for (Activo act : activosList) {
 					ActivoAgrupacionActivo nuevaRelacionAgrupacionActivo = new ActivoAgrupacionActivo();

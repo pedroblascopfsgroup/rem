@@ -1230,7 +1230,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				// trabajo con "Agrupación activos Conjunta" --> "Trabajo"
 				if (isFirstLoop) {
 					idActivo = activo.getId();
-					trabajo.setEstado(getEstadoNuevoTrabajo(dtoTrabajo, activo));
+					DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.CODIGO_ESTADO_EN_CURSO));
+					trabajo.setEstado(estadoTrabajo);
 					trabajo.setActivo(activo); // En caso de ser un trabajo por
 												// agrupación, metemos el primer
 												// activo para sacar los datos
@@ -1665,7 +1666,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						trabajo.setUsuarioResponsableTrabajo(usuarioLogado);
 					}
 
-					trabajo.setEstado(getEstadoNuevoTrabajo(dtoTrabajo, activo));
+					DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.CODIGO_ESTADO_EN_CURSO));
+					trabajo.setEstado(estadoTrabajo);
 
 					// El gestor de activo se salta tareas de estos trámites y
 					// por tanto es necesario settear algunos datos
@@ -1802,7 +1804,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				trabajo.setSolicitante(genericAdapter.getUsuarioLogado());
 
 			}
-			trabajo.setEstado(getEstadoNuevoTrabajo(dtoTrabajo, activo));
+			DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.CODIGO_ESTADO_EN_CURSO));
+			trabajo.setEstado(estadoTrabajo);
 
 			ActivoTrabajo activoTrabajo = createActivoTrabajo(activo, trabajo, dtoTrabajo.getParticipacion());
 			trabajo.getActivosTrabajo().add(activoTrabajo);

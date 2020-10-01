@@ -28,8 +28,6 @@ public interface GastoLineaDetalleApi {
 	boolean deleteGastoLineaDetalle(Long idLineaDetalleGasto) throws Exception;
 
 	Double calcularPrincipioSujetoLineasDetalle(GastoProveedor gasto);
-	
-	List<Activo> devolverActivosDeLineasDeGasto(GastoProveedor gasto);
 
 	DtoLineaDetalleGasto calcularCuentasYPartidas(Long idGasto, Long idLineaDetalleGasto, String subtipoGastoCodigo);
 
@@ -53,7 +51,7 @@ public interface GastoLineaDetalleApi {
 
 	List<DtoComboLineasDetalle> getLineasDetalleGastoCombo(Long idGasto);
 
-	boolean asociarElementosAgastos(DtoElementosAfectadosLinea dto);
+	String asociarElementosAgastos(DtoElementosAfectadosLinea dto);
 
 	boolean desasociarElementosAgastos(Long idElemento);
 
@@ -78,6 +76,12 @@ public interface GastoLineaDetalleApi {
 	void actualizarParticipacionTrabajosAfterInsert(Long idGasto);
 
 	void actualizarDiariosLbk(Long idGasto);
+
+	List<Activo> devolverActivosDeLineasDeGasto(Long idLineaDetalleGasto);
+
+	boolean estanTodosActivosVendidos(Long idLineaDetalleGasto);
+
+	boolean estanTodosActivosAlquilados(Long idLineaDetalleGasto);
 	
 }
 

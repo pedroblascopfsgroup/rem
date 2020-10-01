@@ -58,7 +58,8 @@ DECLARE
     TYPE T_ARRAY_DROP IS TABLE OF T_DROP;
     V_DROP T_ARRAY_DROP := T_ARRAY_DROP(
     			-- NOMBRE CAMPO
-	T_DROP(  'PROVEEDOR_DEFECTO')
+	T_DROP(  'PROVEEDOR_DEFECTO'),
+	T_DROP(  'DD_STR_ID')
 		);
     V_T_DROP T_DROP;
     
@@ -78,9 +79,7 @@ DECLARE
     V_BUK T_ARRAY_BUK := T_ARRAY_BUK(
     			--NOMBRE UK 
     	T_BUK(	'CPP_STR_FK'),
-		T_BUK(	'UK_CPP_CRA_SCR_TTR_STR_PVE_BORRADO'),
-		T_BUK(	'UK_CPP_CRA_SCR_TTR_PRV_PVE_BORRADO'),
-		T_BUK(	'UK_CPP_CRA_SCR_TTR_PRV_STR_PVE_BORRADO')
+		T_BUK(	'UK_CPP_CRA_SCR_TTR_STR_PVE_BORRADO')
     );
     V_T_BUK T_BUK;
 
@@ -105,6 +104,59 @@ BEGIN
 		EXECUTE IMMEDIATE V_MSQL;
 	END IF;
 
+	IF V_BORRAR_UK = 'SI' THEN
+
+		-- Bucle que CREA las FK de las nuevas columnas del INFORME COMERCIAL
+		FOR I IN V_BUK.FIRST .. V_BUK.LAST
+		LOOP
+
+			V_T_BUK := V_BUK(I);	
+
+			-- Verificar si la FK ya existe. Si ya existe la FK, no se hace nada.
+			V_MSQL := 'select count(1) from all_constraints where OWNER = '''||V_ESQUEMA||''' and table_name = '''||V_TEXT_TABLA||''' and constraint_name = '''||V_T_BUK(1)||'''';
+			EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+			IF V_NUM_TABLAS = 1 THEN
+				--No existe la FK y la creamos
+				DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_BUK(1)||'] -------------------------------------------');
+				V_MSQL := '
+					ALTER TABLE '||V_TEXT_TABLA||'
+					DROP CONSTRAINT '||V_T_BUK(1)||'';
+
+				EXECUTE IMMEDIATE V_MSQL;
+				--DBMS_OUTPUT.PUT_LINE('[3] '||V_MSQL);
+				DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_BUK(1)||' borrada UK... OK');
+			END IF;
+
+		END LOOP;
+
+	END IF;
+
+	IF V_DROP_COLUMN = 'SI' THEN
+
+		-- Bucle que CREA las FK de las nuevas columnas del INFORME COMERCIAL
+		FOR I IN V_DROP.FIRST .. V_DROP.LAST
+		LOOP
+
+			V_T_DROP := V_DROP(I);	
+
+			-- Verificar si la FK ya existe. Si ya existe la FK, no se hace nada.
+			V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLS WHERE COLUMN_NAME = '''||V_T_DROP(1)||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+			EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+			IF V_NUM_TABLAS = 1 THEN
+				--No existe la FK y la creamos
+				DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_DROP(1)||'] -------------------------------------------');
+				V_MSQL := '
+					ALTER TABLE '||V_TEXT_TABLA||'
+					DROP COLUMN '||V_T_DROP(1)||'';
+
+				EXECUTE IMMEDIATE V_MSQL;
+				--DBMS_OUTPUT.PUT_LINE('[3] '||V_MSQL);
+				DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_DROP(1)||' borrada UK... OK');
+			END IF;
+
+		END LOOP;
+
+	END IF;
 	
 	-- Bucle que CREA las nuevas columnas 
 	FOR I IN V_ALTER.FIRST .. V_ALTER.LAST
@@ -134,34 +186,6 @@ BEGIN
 		END IF;
 
 	END LOOP;
-
-
-	IF V_BORRAR_UK = 'SI' THEN
-
-		-- Bucle que CREA las FK de las nuevas columnas del INFORME COMERCIAL
-		FOR I IN V_BUK.FIRST .. V_BUK.LAST
-		LOOP
-
-			V_T_BUK := V_BUK(I);	
-
-			-- Verificar si la FK ya existe. Si ya existe la FK, no se hace nada.
-			V_MSQL := 'select count(1) from all_constraints where OWNER = '''||V_ESQUEMA||''' and table_name = '''||V_TEXT_TABLA||''' and constraint_name = '''||V_T_BUK(1)||'''';
-			EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
-			IF V_NUM_TABLAS = 1 THEN
-				--No existe la FK y la creamos
-				DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_BUK(1)||'] -------------------------------------------');
-				V_MSQL := '
-					ALTER TABLE '||V_TEXT_TABLA||'
-					DROP CONSTRAINT '||V_T_BUK(1)||'';
-
-				EXECUTE IMMEDIATE V_MSQL;
-				--DBMS_OUTPUT.PUT_LINE('[3] '||V_MSQL);
-				DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_BUK(1)||' borrada UK... OK');
-			END IF;
-
-		END LOOP;
-
-	END IF;
 
 	-- Solo si esta activo el indicador de creacion FK, el script creara tambien las FK
 	IF V_CREAR_FK = 'SI' THEN

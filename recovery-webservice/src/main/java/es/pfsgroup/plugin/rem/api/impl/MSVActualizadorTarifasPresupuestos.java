@@ -1,0 +1,159 @@
+package es.pfsgroup.plugin.rem.api.impl;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
+import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
+import es.pfsgroup.plugin.rem.model.ConfiguracionTarifa;
+import es.pfsgroup.plugin.rem.model.PresupuestoTrabajo;
+import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.TrabajoConfiguracionTarifa;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTarifa;
+
+
+@Component
+public class MSVActualizadorTarifasPresupuestos extends AbstractMSVActualizador {
+
+	private final String VALID_OPERATION = MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_MASIVO_TARIFAS_PRESUPUESTO;
+
+	private final static int COL_NUM_TRABAJO = 0;
+	private final static int COL_TIPO_REGISTRO = 1;
+	private final static int COL_COD_TARIFA = 2;
+	private final static int COL_UNIDADES = 3;
+	private final static int COL_COD_PROVEEDOR = 4;
+	private final static int COL_REF_PRESUPUESTO = 5;
+	private final static int COL_FECHA = 6;
+	private final static int COL_IMPORTE = 7;
+	private final static String TIPO_TARIFA = "TRF";
+	private final static String TIPO_PRESUPUESTO = "PRS";
+	protected final Log logger = LogFactory.getLog(getClass());
+
+	@Autowired
+	private GenericABMDao genericDao;
+
+	@Autowired
+	private TrabajoApi trabajoApi;
+
+	@Override
+	public String getValidOperation() {
+		return VALID_OPERATION;
+	}
+
+	@Override
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
+			throws IOException, ParseException, JsonViewerException, SQLException, Exception {
+
+		String tipoRegistro = exc.dameCelda(fila, COL_TIPO_REGISTRO);
+		String numTrabajo = exc.dameCelda(fila, COL_NUM_TRABAJO);
+		Trabajo trabajo = trabajoApi.getTrabajoByNumeroTrabajo(Long.valueOf(numTrabajo));
+ 
+		if (TIPO_TARIFA.equals(tipoRegistro)) {
+
+			String codTarifa = exc.dameCelda(fila, COL_COD_TARIFA);
+			String unidades = exc.dameCelda(fila, COL_UNIDADES);
+
+			TrabajoConfiguracionTarifa trabajoConfig = new TrabajoConfiguracionTarifa();
+			ConfiguracionTarifa configuracionTarifa = getConfigTarifaByCodigoTarifaAndNumTrabajo(codTarifa, trabajo);
+
+			if (configuracionTarifa != null) {
+				trabajoConfig.setConfigTarifa(configuracionTarifa);
+				trabajoConfig.setTrabajo(trabajo);
+				if (unidades != null && !unidades.isEmpty()) {
+					trabajoConfig.setMedicion(Float.parseFloat(unidades));
+				}
+				genericDao.save(ConfiguracionTarifa.class, configuracionTarifa);
+			}
+
+		} else if (TIPO_PRESUPUESTO.equals(tipoRegistro)) {
+
+			// String codProveedor = exc.dameCelda(fila, COL_COD_PROVEEDOR); -> Se puede
+			// obtener desde el trabajo ( nos ahorramos una query )
+			String refPresupuesto = exc.dameCelda(fila, COL_REF_PRESUPUESTO);
+			String fecha = exc.dameCelda(fila, COL_FECHA);
+			String importe = exc.dameCelda(fila, COL_IMPORTE);
+
+			PresupuestoTrabajo presupuestoTrabajo = new PresupuestoTrabajo();
+
+			presupuestoTrabajo.setTrabajo(trabajo);
+			if (trabajo.getProveedorContacto() != null) {
+				presupuestoTrabajo.setProveedorContacto(trabajo.getProveedorContacto());
+				presupuestoTrabajo.setProveedor(trabajo.getProveedorContacto().getProveedor());
+				presupuestoTrabajo.setRefPresupuestoProveedor(refPresupuesto);
+				if (fecha != null && !fecha.isEmpty()) {
+					presupuestoTrabajo.setFecha(new SimpleDateFormat("dd/MM/yyyy").parse(fecha));
+				}
+				if (importe != null && !importe.isEmpty()) {
+					presupuestoTrabajo.setImporte(Float.parseFloat(importe));
+				}
+				genericDao.save(PresupuestoTrabajo.class, presupuestoTrabajo);
+			}
+
+		}
+
+		return new ResultadoProcesarFila();
+	}
+
+	private ConfiguracionTarifa getConfigTarifaByCodigoTarifaAndNumTrabajo(String codTarifa, Trabajo trabajo) {
+		Long idCartera = null;
+		Long idSubtipoTrabajo = null;
+		Long idTipoTrabajo = null;
+		Long idTipoTarifa = null;
+
+		if (trabajo.getTipoTrabajo() != null) {
+			idTipoTrabajo = trabajo.getTipoTrabajo().getId();
+
+			if (trabajo.getSubtipoTrabajo() != null) {
+				idSubtipoTrabajo = trabajo.getSubtipoTrabajo().getId();
+			}
+		}
+
+		DDTipoTarifa tipoTarifa = genericDao.get(DDTipoTarifa.class,
+				genericDao.createFilter(FilterType.EQUALS, "codigo", codTarifa));
+		if (tipoTarifa != null) {
+			idTipoTarifa = tipoTarifa.getId();
+		}
+
+		if (trabajo.getActivo() != null) {
+			idCartera = trabajo.getActivo().getCartera().getId();
+		} else {
+			List<ActivoTrabajo> activosTrabajo = genericDao.getList(ActivoTrabajo.class,
+					genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId()));
+			if (activosTrabajo != null && activosTrabajo.get(0) != null && activosTrabajo.get(0).getActivo() != null) {
+				idCartera = activosTrabajo.get(0).getActivo().getCartera().getId();
+			}
+		}
+
+		return getConfiguracionTarifa(idCartera, idTipoTrabajo, idSubtipoTrabajo, idTipoTarifa);
+	}
+
+	private ConfiguracionTarifa getConfiguracionTarifa(Long idTipoTarifa, Long idCartera, Long idTipoTrabajo,
+			Long idSubtipoTrabajo) {
+
+		if (idCartera != null && idTipoTrabajo != null && idSubtipoTrabajo != null && idTipoTarifa != null) {
+			Filter fCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.id", idCartera);
+			Filter fTipoTarifa = genericDao.createFilter(FilterType.EQUALS, "tipoTarifa.id", idTipoTarifa);
+			Filter fTipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.id", idTipoTrabajo);
+			Filter fSubtipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "subtipoTrabajo.id", idSubtipoTrabajo);
+
+			return genericDao.get(ConfiguracionTarifa.class, fCartera, fTipoTarifa, fTipoTrabajo, fSubtipoTrabajo);
+		}
+		return null;
+	}
+
+}

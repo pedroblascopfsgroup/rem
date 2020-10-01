@@ -29,10 +29,11 @@ Ext.define('HreRem.view.gastos.LineaDetalleGastoGrid', {
      	
 		me.columns = [
 				{ 
+					text: HreRem.i18n('header.elementos.afectados.id.linea.id'),
 		    		dataIndex: 'id',
 		    		reference: 'idLineaDetalle',
 		    		name: 'idLineaDetalle',
-		    		hidden: true
+		    		hidden: false
 	    		},
 	    		  {
 		            dataIndex: 'subtipoGasto',

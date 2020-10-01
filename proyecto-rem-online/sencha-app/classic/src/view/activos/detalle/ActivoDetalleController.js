@@ -655,7 +655,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			logadoGestorMantenimiento: true,
 			idAgrupacion: null,
 			idGestor: null, 
-			gestorActivo: gestorActivo});
+			gestorActivo: gestorActivo,
+			trabajoDesdeActivo: true});
 		btn.lookupViewModel().getView().add(ventana);
 		ventana.show();
 		me.getView().unmask();

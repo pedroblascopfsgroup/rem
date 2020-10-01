@@ -768,7 +768,7 @@ Ext.define('HreRem.ux.util.Constants', {
 
 	ESTADOS_TRABAJO: {
     	EN_CURSO : 'CUR',
-    	RECHAZADO: '03',
+    	RECHAZADO: 'REJ',
     	CANCELADO: 'CAN',
     	FINALIZADO: 'FIN',
     	SUBSANADO: 'SUB',
@@ -780,10 +780,16 @@ Ext.define('HreRem.ux.util.Constants', {
 		PENDIENTE: 'Pendiente'
 	},
 	
+	ESTADOS_ALBARANES: {
+		VALIDADO: 'Validado',
+		PENDIENTE: 'Pendiente'
+    },
+	
 	PES_PESTANYAS: {
 		DETALLE_ECONOMICO: 'DEC',
 		FICHA: 'FIC'
 	},
+
 	
 	TIPO_ELEMENTOS_GASTO:{
 		CODIGO_ACTIVO: 'ACT',
@@ -793,6 +799,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		CODIGO_SIN_ACTIVOS: 'SIN'
 	},
 	
+
 	ESTADO_ADMISION: {
 		CODIGO_PENDIENTE_TITULO: 'PET',
 		CODIGO_PENDIENTE_REVISION: 'PRT',
@@ -820,5 +827,11 @@ Ext.define('HreRem.ux.util.Constants', {
 		ACTIVO : 'activo',
 		SANEAMIENTO: 'saneamiento',
 		REVISION_TITULO: 'revisionTitulo'
+	},
+	
+	APROBACION_COMITE: {
+		SOLICITADO: 'SOL',
+		APROBADO: 'APR',
+		RECHAZADO: 'REC'
 	}
 });

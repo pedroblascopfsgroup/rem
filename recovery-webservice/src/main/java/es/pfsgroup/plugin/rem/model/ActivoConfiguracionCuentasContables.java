@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoActivoBDE;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComisionado;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoImporte;
+import es.pfsgroup.plugin.rem.model.dd.DDTributosTerceros;
 
 @Entity
 @Table(name = "ACT_CONFIG_CTAS_CONTABLES", schema = "${entity.schema}")
@@ -102,6 +103,13 @@ public class ActivoConfiguracionCuentasContables implements Serializable, Audita
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="DD_TCH_ID")
     private DDTipoComisionado ccctipoComisionado;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="DD_TRT_ID")
+    private DDTributosTerceros tributosTerceros;
+	
+	@Column(name="CCC_VENDIDO")
+    private Integer cccVendido;
 	
 	@Version   
 	 private Long version;
@@ -269,6 +277,21 @@ public class ActivoConfiguracionCuentasContables implements Serializable, Audita
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
-
 	
+	public DDTributosTerceros getTributosTerceros() {
+		return tributosTerceros;
+	}
+
+	public void setTributosTerceros(DDTributosTerceros tributosTerceros) {
+		this.tributosTerceros = tributosTerceros;
+	}
+
+	public Integer getCccVendido() {
+		return cccVendido;
+	}
+
+	public void setCccVendido(Integer cccVendido) {
+		this.cccVendido = cccVendido;
+	}
+
 }

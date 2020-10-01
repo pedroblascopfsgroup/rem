@@ -1,7 +1,8 @@
+
 --/*
 --######################################### 
 --## AUTOR=DAP
---## FECHA_CREACION=20200917
+--## FECHA_CREACION=20201001
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10574
@@ -179,25 +180,30 @@ BEGIN
                 END IF;
 
                 V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.GLD_TBJ (GLD_TBJ_ID, GLD_ID, TBJ_ID, DD_TEG_ID, USUARIOCREAR, FECHACREAR)
-                            SELECT '||V_ESQUEMA||'.S_GLD_TBJ.NEXTVAL GLD_TBJ_ID, GLD_ID, TBJ_ID, DD_TEG_ID, ''HREOS-10574'', CURRENT_TIMESTAMP(6)
-                            FROM (
-                                SELECT GLD.GLD_ID, GPV_TBJ.TBJ_ID, ROW_NUMBER() OVER(PARTITION BY GPV_TBJ.TBJ_ID ORDER BY GPV_TBJ.FECHACREAR) RN
-                                    , CASE WHEN PVE.PVE_ID IS NULL 
-                                        THEN DD_TEG_.DD_TEG_ID
-                                        ELSE DD_TEG.DD_TEG_ID
-                                        END DD_TEG_ID
-                                FROM '||V_ESQUEMA||'.'||V_TABLA||' GPV_TBJ
-                                JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GPV_TBJ.GPV_ID AND GPV.BORRADO = 0
-                                JOIN '||V_ESQUEMA||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV_TBJ.GPV_ID AND GLD.BORRADO = 0
-                                JOIN '||V_ESQUEMA||'.DD_TEG_TIPO_EMISOR_GLD DD_TEG ON DD_TEG.DD_TEG_CODIGO = ''HAY''
-                                JOIN '||V_ESQUEMA||'.DD_TEG_TIPO_EMISOR_GLD DD_TEG_ ON DD_TEG_.DD_TEG_CODIGO = ''OTR''
-                                LEFT JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_ID = GPV.PVE_ID_EMISOR AND PVE.BORRADO = 0
-                                    AND PVE.PVE_DOCIDENTIF IN (''A86744349'',''B86744349'')
-                                LEFT JOIN '||V_ESQUEMA||'.GLD_TBJ ON GLD_TBJ.GLD_ID = GLD.GLD_ID AND GLD_TBJ.TBJ_ID = GPV_TBJ.TBJ_ID AND GLD_TBJ.BORRADO = 0
-                                    AND GLD_TBJ.DD_TEG_ID <> CASE WHEN PVE.PVE_ID IS NULL THEN DD_TEG_.DD_TEG_ID ELSE DD_TEG.DD_TEG_ID END
-                                WHERE GPV_TBJ.BORRADO = 0 AND GLD_TBJ.GLD_TBJ_ID IS NULL
+                    SELECT '||V_ESQUEMA||'.S_GLD_TBJ.NEXTVAL GLD_TBJ_ID, GLD_ID, TBJ_ID, DD_TEG_ID, ''HREOS-10574'', CURRENT_TIMESTAMP(6)
+                    FROM (
+                        SELECT GLD.GLD_ID, GPV_TBJ.TBJ_ID, ROW_NUMBER() OVER(PARTITION BY GPV_TBJ.TBJ_ID ORDER BY GPV_TBJ.FECHACREAR) RN
+                            , CASE WHEN PVE.PVE_ID IS NULL 
+                                THEN DD_TEG_.DD_TEG_ID
+                                ELSE DD_TEG.DD_TEG_ID
+                                END DD_TEG_ID
+                        FROM '||V_ESQUEMA||'.GPV_TBJ_BACKUP GPV_TBJ
+                        JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GPV_TBJ.GPV_ID AND GPV.BORRADO = 0
+                        JOIN '||V_ESQUEMA||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV_TBJ.GPV_ID AND GLD.BORRADO = 0
+                        JOIN '||V_ESQUEMA||'.DD_TEG_TIPO_EMISOR_GLD DD_TEG ON DD_TEG.DD_TEG_CODIGO = ''HAY''
+                        JOIN '||V_ESQUEMA||'.DD_TEG_TIPO_EMISOR_GLD DD_TEG_ ON DD_TEG_.DD_TEG_CODIGO = ''OTR''
+                        LEFT JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_ID = GPV.PVE_ID_EMISOR AND PVE.BORRADO = 0
+                            AND PVE.PVE_DOCIDENTIF IN (''A86744349'',''B86744349'')
+                        WHERE GPV_TBJ.BORRADO = 0
+                            AND NOT EXISTS (
+                                SELECT 1
+                                FROM '||V_ESQUEMA||'.GLD_TBJ GTB
+                                WHERE GTB.BORRADO = 0
+                                    AND GTB.TBJ_ID = GPV_TBJ.TBJ_ID
+                                    AND GTB.DD_TEG_ID = CASE WHEN PVE.PVE_ID IS NULL THEN DD_TEG_.DD_TEG_ID ELSE DD_TEG.DD_TEG_ID END
                             )
-                            WHERE RN = 1';
+                    )
+                    WHERE RN = 1';
                 EXECUTE IMMEDIATE V_MSQL;
             	DBMS_OUTPUT.PUT_LINE('	[INFO] Tabla GLD_TBJ informada con '||SQL%ROWCOUNT||' registros.');
 	            END IF;

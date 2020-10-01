@@ -114,7 +114,7 @@ Ext.define('HreRem.view.trabajos.detalle.ModificarPresupuesto', {
 										flex: 		1,
 										bind:		'{presupuesto.subtipoTrabajoDescripcion}'
 									},
-									{ 
+									/*{ 
 							        	xtype: 'comboboxfieldbase',
 							        	fieldLabel: HreRem.i18n('fieldlabel.tipo.proveedor'),
 										flex: 		1,
@@ -134,7 +134,7 @@ Ext.define('HreRem.view.trabajos.detalle.ModificarPresupuesto', {
 			    						listeners: {
 						                	select: 'onChangeComboProveedorGE'
 						            	}
-							        },
+							        },*/
 				    				{ 
 							        	xtype: 'comboboxfieldbase',
 							        	fieldLabel: HreRem.i18n('fieldlabel.nombre'),
@@ -145,9 +145,9 @@ Ext.define('HreRem.view.trabajos.detalle.ModificarPresupuesto', {
 										reference: 'comboProveedorGestionEconomica3',
 										chainedReference: 'proveedorContactoCombo3',
 							        	bind: {
-						            		store: '{comboProveedorFilteredM}',
-						            		value: '{presupuesto.idProveedor}',
-						            		disabled: '{!presupuesto.codigoTipoProveedor}'
+						            		store: '{comboProveedorFiltradoManual}',
+						            		value: '{presupuesto.idProveedor}'
+						            		//disabled: '{!presupuesto.codigoTipoProveedor}'
 						            	},
 						            	displayField: 'nombreComercial',
 			    						valueField: 'idProveedor',
@@ -166,7 +166,7 @@ Ext.define('HreRem.view.trabajos.detalle.ModificarPresupuesto', {
 							        	width: 		480,
 							        	chainedReference: 'labelUsuarioContacto',
 							        	bind: {
-						            		store: '{comboProveedorContactoM}',
+						            		store: '{comboProveedorContacto}',
 						            		value: '{presupuesto.idProveedorContacto}',
 						            		disabled: '{!presupuesto.idProveedor}'
 						            	},
@@ -220,18 +220,6 @@ Ext.define('HreRem.view.trabajos.detalle.ModificarPresupuesto', {
 												me.lookupReference('proveedorContactoCombo3').validate();
 											}
 										}
-									},
-									{
-										xtype: 'comboboxfieldbase',
-	    					        	fieldLabel:  HreRem.i18n('fieldlabel.estado'),
-	    					        	itemId: 'comboEstadoPresupuesto',
-	    					        	flex:	1,
-	    					        	bind: {
-	    				            		store: '{comboEstadoPresupuesto}',
-	    				            		value: '{presupuesto.estadoPresupuestoCodigo}'	    				            		
-	    				            	},
-	    				            	displayField: 'descripcion',
-	    	    						valueField: 'codigo'
 									},
 									{
 										fieldLabel: HreRem.i18n('fieldlabel.referencia.presupuesto.proveedor'),

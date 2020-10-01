@@ -186,6 +186,7 @@ public class TrabajoController extends ParadiseJsonController {
 	private static final String ERROR_DUPLICADOS_CREAR_TRABAJOS = "El fichero contiene registros duplicados";
 	private static final String ERROR_GD_NO_EXISTE_CONTENEDOR = "No existe contenedor para este trabajo. Se creará uno nuevo.";
 	private static final String COMBO_MODIFICACION_NO = "02";
+	private static final String DOC_FINALIZACION_TRABAJO = "Para la finalizacion es necesario adjuntar: ";
 
 		
 	/**
@@ -236,6 +237,10 @@ public class TrabajoController extends ParadiseJsonController {
 			model.put("success", success);
 			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_TRABAJO, "trabajo", ACCION_CODIGO.CODIGO_MODIFICAR);
 
+		} catch (JsonViewerException e) {
+			model.put("success", false);
+			model.put("error", e.getMessage());
+			
 		} catch(Exception e) {
 			logger.error(e.getMessage());
 			model.put("error", e.getMessage());
@@ -945,12 +950,39 @@ public class TrabajoController extends ParadiseJsonController {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getComboProveedorFilteredCreaTrabajo(String cartera, WebDto webDto, ModelMap model) {
+		
+		model.put("data", trabajoApi.getComboProveedorFilteredCreaTrabajo(cartera));
+		model.put("success", true);
+
+		return new ModelAndView("jsonView", model);
+	}
+	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboTipoProveedorFiltered(Long idTrabajo, ModelMap model) {
 		
 		model.put("data", trabajoApi.getComboTipoProveedorFiltered(idTrabajo));
 		
 		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getComboProveedorContactoCreaTrabajo(Long idProveedor, WebDto webDto, ModelMap model) {
+			
+			try {
+				model.put("data", trabajoApi.getComboProveedorContacto(idProveedor));
+				model.put("success", true);
+			} catch (Exception e) {
+				model.put("success", false);
+				model.put("msg", "Se ha producido un error al ejecutar la petición.");
+				logger.error("error obteniendo contactos",e);
+			}
+			model.put("success", true);
+
+			return new ModelAndView("jsonView", model);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -1931,8 +1963,6 @@ public class TrabajoController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteAgendaTrabajo(@RequestParam Long id){
-
-		
 		
 		ModelMap model = new ModelMap();
 		
@@ -1969,11 +1999,22 @@ public class TrabajoController extends ParadiseJsonController {
 		excelReportGeneratorApi.generateAndSend(report, response);
 	}
 	
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getPlazoEjecucion(Long tipoTrabajo, Long subtipoTrabajo,Long cartera, Long subCartera, WebDto webDto, ModelMap model) {
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getPlazoEjecucion(String tipoTrabajo, String subtipoTrabajo,String cartera, String subCartera, WebDto webDto, ModelMap model) {
 		
 		try {
 			model.put("data", trabajoApi.getFechaConcretaParametrizada(tipoTrabajo,subtipoTrabajo,cartera,subCartera));
+			model.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ModelAndView("jsonView", model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getAplicaComiteParametrizado(String tipoTrabajo, String subtipoTrabajo,String cartera, String subCartera, WebDto webDto, ModelMap model) {
+		try {
+			model.put("data", trabajoApi.getAplicaComiteParametrizado(tipoTrabajo,subtipoTrabajo,cartera,subCartera));
 			model.put("success", true);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1990,6 +2031,38 @@ public class TrabajoController extends ParadiseJsonController {
 		
 		return new ModelAndView("jsonView", model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getProveedorParametrizado(Long idActivo, String tipoTrabajo, String subtipoTrabajo,String cartera, String subCartera, WebDto webDto, ModelMap model) {
+		try {
+			model.put("data", trabajoApi.getProveedorParametrizado(idActivo,tipoTrabajo,subtipoTrabajo,cartera,subCartera));
+			model.put("success", true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ModelAndView("jsonView", model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDocumentosFinalizacionTrabajo(Long idTrabajo, ModelMap model) {
+		try {
+			Map<String, String> tiposDocumentos = trabajoApi.getDocumentosFinalizacionTrabajo(idTrabajo);
+			if (tiposDocumentos.isEmpty()) {
+				model.put("success", true);
+			} else {
+				model.put("success", false);
+				model.put("data", DOC_FINALIZACION_TRABAJO+tiposDocumentos.get("docs"));
+				model.put("size", tiposDocumentos.get("size"));
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		
+		return new ModelAndView("jsonView", model);
+	}
+	
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)

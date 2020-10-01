@@ -96,14 +96,14 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
    				}
 			}
 		});
-		if(combo.getValue() == "02"){
-			me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(true);
-			me.lookupReference('checkEnglobaTodosActivosAgrRef').setValue(false);
+		/*if(combo.getValue() == "02"){
+//			me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(true);
+//			me.lookupReference('checkEnglobaTodosActivosAgrRef').setValue(false);
 			me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(true);
 			me.lookupReference('checkEnglobaTodosActivosRef').setValue(false);
 		}else{
-			me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(false);
-			me.lookupReference('checkEnglobaTodosActivosAgrRef').setValue(true);
+//			me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(false);
+//			me.lookupReference('checkEnglobaTodosActivosAgrRef').setValue(true);
 			me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(false);
 			me.lookupReference('checkEnglobaTodosActivosRef').setValue(true);
 		}
@@ -129,10 +129,9 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		} else {
 			me.lookupReference("codigoPromocionPrinex").setDisabled(true);
 			me.lookupReference("codigoPromocionPrinex").setValue(null);
-		}
-		
-		me.lookupReference("listaActivosSubidaRef").getColumnManager().getHeaderByDataIndex("activoEnPropuestaEnTramitacion").setVisible(false);
-    	
+		}*/
+
+		me.lookupReference("listaActivosSubidaRef").getColumnManager().getHeaderByDataIndex("activoEnPropuestaEnTramitacion").setVisible(false);  	
 		
     },
     
@@ -148,6 +147,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	var idActivo = combo.up("window").idActivo;
     	var idAgrupacion = combo.up("window").idAgrupacion
     	var codigoSubtipoTrabajo = combo.getValue();
+    	var codigoTrabajo = me.lookupReference('tipoTrabajo').getValue();
     	var advertencia;
     	var codCartera;
     	var codSubcartera;
@@ -162,13 +162,14 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			  			codigoSubtipoTrabajo : combo.getValue()
 			  			},
 			  success: function(response,opts){
-			  
 				  advertencia = Ext.JSON.decode(response.responseText).advertencia;
 				  me.lookupReference("textAdvertenciaCrearTrabajo").setText(advertencia);
 			  }
 		    });
 		}
     	var urlCfg = $AC.getRemoteUrl('trabajo/getPlazoEjecucion');
+    	var urlComite = $AC.getRemoteUrl('trabajo/getAplicaComiteParametrizado');
+    	var urlProveedorPredeterminado = $AC.getRemoteUrl('trabajo/getComboProveedorFilteredCreaTrabajo');
     	if(me.getView().codCartera != null){
     		codCartera = me.getView().codCartera;
     		codSubcartera = me.getView().codSubcartera;
@@ -176,27 +177,80 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	}else{
     		if(me.lookupReference('listaActivosSubidaRef').getStore().getData() != null 
     				&& me.lookupReference('listaActivosSubidaRef').getStore().getData().length > 0){
-//    			me.lookupReference('listaActivosSubidaRef').getStore().getData().items[0].data.codCartera;
-    			
+    			codCartera = me.lookupReference('listaActivosSubidaRef').getStore().getData().items[0].data.cartera;
     			parametrico = true;
     		}
     	}
-//    	Ext.Ajax.request({
-//			  url:urlCfg,
-//			  params:  {idActivo : combo.up("window").idActivo, 
-//			  			codigoSubtipoTrabajo : combo.getValue()},
-//			  success: function(response,opts){
-//			  
-//				  advertencia = Ext.JSON.decode(response.responseText).advertencia;
-//				  me.lookupReference("textAdvertenciaCrearTrabajo").setText(advertencia);
-//			  }
-//		});
+    	if(parametrico){
+        	Ext.Ajax.request({
+			  url:urlCfg,
+			  params:  {tipoTrabajo : codigoTrabajo, 
+				  		subtipoTrabajo : codigoSubtipoTrabajo,
+				  		cartera: codCartera,
+				  		subCartera: codSubcartera},
+			  success: function(response,opts){
+				  var decode = Ext.JSON.decode(response.responseText);
+				  var fecha = decode["data"];
+				  var prehora = fecha.split('T');
+				  fecha = new Date(fecha);
+				  me.lookupReference('fechaConcretaTrabajo').setValue(fecha);
+				  var hora = prehora[1];
+				  prehora = hora.split(':');
+				  if(prehora[1] >= 30){
+					  me.lookupReference('horaConcretaTrabajo').setSelection(prehora[0]*2 + 1);
+				  }else{
+					  me.lookupReference('horaConcretaTrabajo').setSelection(prehora[0]*2);
+				  }
+				  me.lookupReference('fechaTopeTrabajo').allowBlank = true;
+			  }
+        	});
+        	
+        	Ext.Ajax.request({
+  			  url:urlComite,
+  			  params:  {tipoTrabajo : codigoTrabajo, 
+  				  		subtipoTrabajo : codigoSubtipoTrabajo,
+  				  		cartera: codCartera,
+  				  		subCartera: codSubcartera},
+  			  success: function(response,opts){
+  				  var decode = Ext.JSON.decode(response.responseText);
+  				  var result = decode["data"];
+  				  if(result == "true"){
+  					  me.lookupReference('checkAplicaComite').setValue(true);
+  					  me.onCheckChangeAplicaComite(null,null,false,null);
+  				  }else{
+  					me.lookupReference('checkAplicaComite').setValue(false);
+  					me.onCheckChangeAplicaComite(null,null,true,null);
+  				  }
+  			  }
+          	});
+        	me.lookupReference('comboProveedorGestionEconomica2').setSelection(null);
+        	me.lookupReference('proveedorContactoCombo2').setSelection(null);
+        	Ext.Ajax.request({
+    			  url:urlProveedorPredeterminado,
+    			  params:  {cartera: codCartera},
+    			  success: function(response,opts){
+    				  var decode = Ext.JSON.decode(response.responseText);
+    				  var result = decode["data"];
+    				  if(result.length > 0){
+						me.lookupReference('comboProveedorGestionEconomica2').setStore(new Ext.data.Store({
+						model: 'HreRem.model.ComboBase',
+							    data: result
+						}));
+						me.onAfterLoadProveedor();
+						me.lookupReference('comboProveedorGestionEconomica2').setDisabled(false);
+						var comboProveedor = me.lookupReference('comboProveedorGestionEconomica2');
+						if (comboProveedor.getSelection() != null && comboProveedor.getSelection().getData().idProveedor != undefined) {
+						  me.loadComboProveedorContacto(comboProveedor.getSelection().getData().idProveedor);
+						}
+    				  }
+    			  }
+            	});
+    	}
+
     	
     	if(combo.getValue() == CONST.SUBTIPOS_TRABAJO['TRAMITAR_PROPUESTA_PRECIOS'] 
     		|| combo.getValue() == CONST.SUBTIPOS_TRABAJO['TRAMITAR_PROPUESTA_DESCUENTO']) {
-//    		me.lookupReference("checkEnglobaTodosActivosAgrRef").setValue(true);
     		me.lookupReference("checkEnglobaTodosActivosRef").setValue(true);
-//    		me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(true);
     		me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(true);
     		
     		me.lookupReference("listaActivosSubidaRef").getColumnManager().getHeaderByDataIndex("activoEnPropuestaEnTramitacion").setVisible(true);
@@ -208,7 +262,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     		me.lookupReference("listaActivosSubidaRef").getColumnManager().getHeaderByDataIndex("activoEnPropuestaEnTramitacion").setVisible(false);
     		
     		if(me.lookupReference("tipoTrabajo").getValue() != CONST.TIPOS_TRABAJO['OBTENCION_DOCUMENTACION']){
-//    			me.lookupReference("checkEnglobaTodosActivosAgrRef").setDisabled(false);
     			me.lookupReference("checkEnglobaTodosActivosRef").setDisabled(false);
     		}
     	}
@@ -229,11 +282,20 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		record = form.getBindRecord();
 		success = success || function() {me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));};  
 		
+		var checkTarifaPlana = form.getValues().checkTarifaPlana == "on";
+		var checkSiniestro = form.getValues().checkSiniestro == "on";
+
 		if(form.isFormValid()) {
 
 			form.mask(HreRem.i18n("msg.mask.espere"));
    
 			record.save({
+				params:{
+					fechaConcretaString: form.getValues().fechaConcreta,
+					horaConcretaString: form.getValues().horaConcreta,
+					tarifaPlana: checkTarifaPlana,
+					riesgoSiniestro: checkSiniestro
+				},
 			    success: success,
 			 	failure: function(record, operation) {
 			 		var response = Ext.decode(operation.getResponse().responseText);
@@ -242,7 +304,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 						if(me.getView().down("[reference=activosagrupaciontrabajo]") != null){
 			 				me.getView().down("[reference=activosagrupaciontrabajo]").deselectAll();
 			 			}
-						//me.fireEvent("errorToast", operation.getError());
 			 		}else{
 			 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 			 			if(me.getView().down("[reference=activosagrupaciontrabajo]") != null){
@@ -287,9 +348,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		
 		var success = function() {
 			me.getViewModel().set("editing", false);
-			/*btn.hide();
-			btn.up('tabbar').down('button[itemId=botoncancelar]').hide();
-			btn.up('tabbar').down('button[itemId=botoneditar]').show();*/
 			
 			Ext.Array.each(btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]'),
 							function (field, index) 
@@ -318,10 +376,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			activeTab.getBindRecord().reject();
 		}		
 		me.getViewModel().set("editing", false);
-		/*btn.hide();
-		btn.up('tabbar').down('button[itemId=botonguardar]').hide();
-		btn.up('tabbar').down('button[itemId=botoneditar]').show();*/
-		
 		Ext.Array.each(activeTab.query('field[isReadOnlyEdit]'),
 						function (field, index) 
 							{ 
@@ -336,9 +390,30 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		var activo= null;
 		var arraySelection= [];
 		var codPromo;
+		if(me.lookupReference('fechaTopeTrabajo').getValue() == null){
+			if(me.lookupReference('horaConcretaTrabajo').getValue() == null || me.lookupReference('horaConcretaTrabajo').getValue() == null){
+				Ext.MessageBox.alert("Error","La fecha concreta y la hora concreta no puede ser null cuando no hay fecha tope");
+				return false;
+			}
+		}else{
+			if(me.lookupReference('horaConcretaTrabajo').getValue() != null || me.lookupReference('horaConcretaTrabajo').getValue() != null){
+				Ext.MessageBox.alert("Error","La fecha concreta y la hora concreta tienen que ser null cuando hay fecha tope");
+				return false;
+			}
+		}
 		if(!Ext.isEmpty(me.getView().idAgrupacion)){
-			//arraySelection = me.getView().datos;
 			arraySelection = me.lookupReference('activosagrupaciontrabajo').getActivoIDPersistedSelection();
+			var datosComprobarPerimetro = me.lookupReference('activosagrupaciontrabajo').getStore().getData().items;
+            
+            if(arraySelection.length > 0){
+            	datosComprobarPerimetro = me.lookupReference('activosagrupaciontrabajo').getSelection();   
+            }
+            for(var i = 0; i < datosComprobarPerimetro.length; i++){
+	            if(datosComprobarPerimetro[i].data.tienePerimetroGestion != "1"){
+	            	Ext.MessageBox.alert(HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.titulo"), HreRem.i18n("msgbox.multiples.trabajos.seleccionado.sinGestion.mensaje.todos.agrupacion"));
+	                return false;
+	            }
+            }
 		}
 		
 		if(!Ext.isEmpty(me.getView().idActivo)){
@@ -392,16 +467,36 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			}
 		}
 		
+
+		var titleConfirm = HreRem.i18n("msgbox.multiples.trabajos.title");
+		var textConfirm = HreRem.i18n("msgbox.multiples.trabajos.seleccionados.check.mensaje");
+		if(!btn.up().up().down("[reference='checkEnglobaTodosActivosRef']").value){
+			textConfirm = HreRem.i18n("msgbox.multiples.trabajos.seleccionados.check.mensaje.multiples");
+		}
+		
+		if(Ext.isEmpty(me.getView().idAgrupacion) && Ext.isEmpty(me.getView().idActivo) && (Ext.isEmpty(storeListaActivosTrabajo) || storeListaActivosTrabajo.data.length == 0)){
+			Ext.MessageBox.alert(
+					HreRem.i18n("msgbox.multiples.trabajos.seleccionado.activo.no.seleccionado.titulo"),
+					HreRem.i18n("msgbox.multiples.trabajos.seleccionado.activo.no.seleccionado.mensaje")
+			);
+			return false;
+			
+		}
+
+		if(me.getView().trabajoDesdeActivo){
+			me.crearTrabajo(btn,arraySelection,null);
+		}else{
 		//
-		Ext.MessageBox.confirm(
-				HreRem.i18n("msgbox.multiples.trabajos.title"),
-				HreRem.i18n("msgbox.multiples.trabajos.seleccionados.check.mensaje"),
-				function(result) {
-		        	if(result === 'yes'){
-		        		me.crearTrabajo(btn,arraySelection,null);
-		        	}
-		    	}
-		);
+			Ext.MessageBox.confirm(
+					titleConfirm,
+					textConfirm,
+					function(result) {
+			        	if(result === 'yes'){
+			        		me.crearTrabajo(btn,arraySelection,null);
+			        	}
+			    	}
+			);
+		}
 
 	},
 	
@@ -539,7 +634,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			var idTarifas = me.obtenerIdTarifas(me.lookupReference('gridListaTarifas').getStore().getData());
 			//Nuevos Valores
 			
-			form.getBindRecord().set("idMediador",me.lookupReference('comboProveedor').getSelection().get('id'))
+//			form.getBindRecord().set("idMediador",me.lookupReference('comboProveedorGestionEconomica2').getSelection().get('id'))
 			if(me.lookupReference('checkAplicaComite').getValue()){
 				form.getBindRecord().set("resolucionComiteId",me.lookupReference('resolComiteId').getValue());
 				form.getBindRecord().set("fechaResolucionComite",me.lookupReference('fechaResolComite').getValue());
@@ -559,11 +654,12 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			form.getBindRecord().set("importePresupuesto",me.lookupReference('importePresupuesto').getValue());
 			form.getBindRecord().set("refImportePresupueso",me.lookupReference('referenciaImportePresupuesto').getValue());
 			form.getBindRecord().set("esTarifaPlanaEditable",me.lookupReference('tarifaPlana').getValue());
-			form.getBindRecord().set("riesgoInminenteTerceros",me.lookupReference('riesgoTerceros').getValue());
+			form.getBindRecord().set("riesgosTerceros",me.lookupReference('riesgosTerceros').getValue());
 			form.getBindRecord().set("urgente",me.lookupReference('urgente').getValue());
 			form.getBindRecord().set("esSiniestroEditable",me.lookupReference('siniestro').getValue());
 			form.getBindRecord().set("idTarifas",idTarifas);
 			form.getBindRecord().set("esSolicitudConjunta",me.lookupReference('checkEnglobaTodosActivosRef').getValue());
+			form.getBindRecord().set("proveedorContact",me.lookupReference('proveedorContactoCombo2').selection.data.id);
 			
 			form.getBindRecord().set("idActivo", idActivo);
 			form.getBindRecord().set("idAgrupacion", idAgrupacion);
@@ -572,6 +668,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			form.getBindRecord().set("codigoPromocionPrinex", codigoPromocionPrinex);
 			form.getBindRecord().set("codCartera", codCartera);
 			form.getBindRecord().set("codSubcartera", codSubcartera);
+			form.getBindRecord().set("fechaEjecucionTrabajo", null);
+			form.getBindRecord().set("fechaEntregaLlaves", null);
 					
 			var success = function(record, operation) {
 				me.getView().unmask();
@@ -891,12 +989,31 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		
 		
 	},
-	
+
 	onChangeProveedor: function(combo, value) {
 		var me = this;		
-		
+
 		me.getViewModel().set('proveedor', combo.getSelection());
 		//combo.validate();
+	},
+	onChangeProveedorGestionEconomica: function(combo, value){
+		var me = this;		
+		if (combo.store != null && combo.store.data != null && combo.store.data.items.length == 0) {
+			me.fireEvent("errorToastLong", HreRem.i18n("msg.combo.sin.contacto.proveedor"));
+		}
+	},
+
+	onChangeComboProveedorLlave: function(combo) {
+		var me = this;
+		var proveedorContactoCombo = combo.getValue();
+		if(proveedorContactoCombo != null && proveedorContactoCombo !== '' ){
+			me.lookupReference('comboReceptorLlave').setAllowBlank(false);
+		} else {
+			me.lookupReference('comboReceptorLlave').setAllowBlank(true);
+		}
+
+		me.lookupReference('comboReceptorLlave').validate();
+
 	},
 
 	onListadoTramitesTareasTrabajoDobleClick : function(gridView,record) {
@@ -957,7 +1074,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	var me = this,
     	windowSeleccionTarifas = grid.up('window'),
     	idTrabajo = windowSeleccionTarifas.idTrabajo,
-    	newRecord = Ext.create('HreRem.model.TarifasTrabajo', {idConfigTarifa: record.getData().id, codigoTarifa: record.getData().codigoTarifa, precioUnitario: record.getData().precioUnitario, unidadMedida: record.getData().unidadmedida, idTrabajo: idTrabajo});
+    	newRecord = Ext.create('HreRem.model.TarifasTrabajo', {idConfigTarifa: record.getData().id, codigoTarifa: record.getData().codigoTarifa, precioUnitario: record.getData().precioUnitario, precioUnitarioCliente: record.getData().precioUnitarioCliente, unidadMedida: record.getData().unidadmedida, idTrabajo: idTrabajo});
 		//Ahora hacer el save en el store para que se llame al controller java
     	newRecord.save({
     		callback: function() {
@@ -1007,14 +1124,14 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	idTrabajo = parent.getBindRecord().get('idTrabajo'),
     	tipoTrabajoDescripcion = parent.getBindRecord().get('tipoTrabajoDescripcion'),
     	subtipoTrabajoDescripcion = parent.getBindRecord().get('subtipoTrabajoDescripcion'),
-    	codigoTipoProveedor = parent.getBindRecord().get('codigoTipoProveedor'),
+    	//codigoTipoProveedor = parent.getBindRecord().get('codigoTipoProveedor'),
     	idProveedor = parent.getBindRecord().get('idProveedor'),
     	idProveedorContacto = parent.getBindRecord().get('idProveedorContacto');
     	emailProveedorContacto = parent.getBindRecord().get('emailProveedorContacto');
     	nombreProveedorContacto = parent.getBindRecord().get('nombreProveedorContacto');
     	usuarioProveedorContacto = parent.getBindRecord().get('usuarioProveedorContacto');
 
-    	var window=Ext.create("HreRem.view.trabajos.detalle.ModificarPresupuesto", {idTrabajo: idTrabajo, tipoTrabajoDescripcion: tipoTrabajoDescripcion, subtipoTrabajoDescripcion: subtipoTrabajoDescripcion, codigoTipoProveedor: codigoTipoProveedor, idProveedor: idProveedor, idProveedorContacto: idProveedorContacto, emailProveedorContacto: emailProveedorContacto, nombreProveedorContacto: nombreProveedorContacto, usuarioProveedorContacto: usuarioProveedorContacto, parent: parent, modoEdicion: true, presupuesto: record}).show();
+    	var window=Ext.create("HreRem.view.trabajos.detalle.ModificarPresupuesto", {idTrabajo: idTrabajo, tipoTrabajoDescripcion: tipoTrabajoDescripcion, subtipoTrabajoDescripcion: subtipoTrabajoDescripcion, /*codigoTipoProveedor: codigoTipoProveedor,*/ idProveedor: idProveedor, idProveedorContacto: idProveedorContacto, emailProveedorContacto: emailProveedorContacto, nombreProveedorContacto: nombreProveedorContacto, usuarioProveedorContacto: usuarioProveedorContacto, parent: parent, modoEdicion: true, presupuesto: record}).show();
     	window.getViewModel().set('trabajo',me.getViewModel().get('trabajo'));
     },
     
@@ -1103,7 +1220,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
         		params: params,
     	   		success: function(fp, o){
     	   			idProceso = Ext.JSON.decode(o.response.responseText).idProceso;
-    	   			
     	   			//btn.up('creartrabajowindow').getViewModel().getData().trabajo.getData().idProceso = idProceso;
     	   			//btn.up('creartrabajowindow').lookupReference('')form.getBindRecord().set("idActivo", idActivo);
     	   			var window = btn.up('crearpeticiontrabajowin');
@@ -1347,16 +1463,38 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
  		var me = this;
  		if(!checked){
  			me.lookupReference('comboResolucionComite').setDisabled(false);
+ 			me.lookupReference('comboResolucionComite').setAllowBlank(false);
+ 			me.lookupReference('comboResolucionComite').validate();
  	 		me.lookupReference('fechaResolComite').setDisabled(false);
  	 		me.lookupReference('resolComiteId').setDisabled(false);
  		}else{
  			me.lookupReference('comboResolucionComite').setDisabled(true);
+ 			me.lookupReference('comboResolucionComite').setAllowBlank(true);
+ 			me.lookupReference('comboResolucionComite').validate();
  	 		me.lookupReference('fechaResolComite').setDisabled(true);
  	 		me.lookupReference('resolComiteId').setDisabled(true);
  	 		me.lookupReference('resolComiteId').setValue(null);
  	 		me.lookupReference('fechaResolComite').setValue(null);
  	 		me.lookupReference('comboResolucionComite').setValue(null);
  		}
+ 	},
+ 	
+ 	requiredDateResolucionComite: function(){
+ 		var me = this;
+		var comboResolucion = me.lookupReference('comboResolucionComite').getValue();
+		if(comboResolucion != null && comboResolucion != '' ){
+			if (comboResolucion == CONST.APROBACION_COMITE['SOLICITADO']){
+				me.lookupReference('fechaResolComite').setAllowBlank(true);
+			}
+			else{
+				me.lookupReference('fechaResolComite').setAllowBlank(false);
+			}
+		}
+		else {
+			me.lookupReference('fechaResolComite').setAllowBlank(true);
+		}
+
+		me.lookupReference('fechaResolComite').validate();
  	},
  	
  	onClickBotonCancelarVentanaAgendaTrabajo: function(btn) {		
@@ -1471,7 +1609,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     			data = Ext.decode(response.responseText);
     			store.filter([{
                     filterFn: function(rec){
-                    	return data.data.includes(rec.getData().codigo);
+                    	return data.data.includes(rec.getData().codigo) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
                     }
                 }]);
     		},
@@ -1481,16 +1619,174 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	});
     	
     },
-    bloqueaCamposSegunEstadoTrabajo: function () {
+    desbloqueaCamposSegunEstadoTrabajo: function (pestanya) {
     	var me = this;
-    	var estadoTrabajo = me.getViewModel().get("trabajo.estadoTrabajo");
-    	//TODO: bloquear campos según estado.
+    	var estadoTrabajo = me.getViewModel().get("trabajo.estadoCodigo");
+    	var esGestorActivo = $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']);
+    	var esProvActivo = $AU.userIsRol(CONST.PERFILES['PROVEEDOR']);
+    	var esFichaTrabajo = pestanya.getReference() == "fichatrabajo";
+    	
+    	me.bloqueaCamposTrabajo(esFichaTrabajo)
+    	
+    	if($AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
+    	
+    		me.desbloqueaCamposTrabajo(esFichaTrabajo);
+    		
+    	} else if(esGestorActivo){
+    		
+    		if(esFichaTrabajo){
+    			me.lookupReference('comboGestorActivoResposable').setReadOnly(false);	
+    		}
+    		
+    		if(estadoTrabajo == "CUR" /*|| estadoTrabajo == "REJ"*/){
+    			
+    			if(esFichaTrabajo){
+    				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
+    				me.lookupReference('fechaEjecucionRef').setReadOnly(false);
+		    		me.lookupReference('checkTarifaPlanaRef').setReadOnly(false);
+		    		me.lookupReference('checkSiniestroRef').setReadOnly(false);
+		    		me.lookupReference('checkboxCubreSeguroRef').setReadOnly(false);
+					me.lookupReference('comboCiaAseguradora').setReadOnly(false);
+					me.lookupReference('importePrecioAseguradoRef').setReadOnly(false);
+		    		me.lookupReference('comboResolucionComite').setReadOnly(false);
+					me.lookupReference('fechaResolucionComiteRef').setReadOnly(false);
+					me.lookupReference('resolucionComiteIdRef').setReadOnly(false);
+	    			me.lookupReference('comboProveedorLlave').setReadOnly(false);	
+	    			me.lookupReference('fechaEntregaTrabajoRef').setReadOnly(false);
+	    			me.lookupReference('comboReceptorLlave').setReadOnly(false);
+	    			me.lookupReference('llavesNoAplicaRef').setReadOnly(false);
+	    			me.lookupReference('llavesMotivoRef').setReadOnly(false);
+    			} else {
+    				me.lookupReference('comboProveedorGestionEconomica').setReadOnly(false);
+    				me.lookupReference('proveedorContactoCombo').setReadOnly(false);
+		    		me.lookupReference('gridtarifastrabajo').setTopBar(true)
+		    		me.lookupReference('gridpresupuestostrabajo').setTopBar(true)
+				    me.lookupReference('gridtarifastrabajo').setDisabled(false);
+				    me.lookupReference('gridpresupuestostrabajo').setDisabled(false);
+    			}
+    			
+	    	}else if(estadoTrabajo == "FIN" || estadoTrabajo == "SUB"){
+	    		
+	    		if(esFichaTrabajo){
+    				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
+		    		me.lookupReference('checkTarifaPlanaRef').setReadOnly(false);
+		    		me.lookupReference('checkSiniestroRef').setReadOnly(false);
+    			} else {
+		    		me.lookupReference('gridtarifastrabajo').setTopBar(true)
+		    		me.lookupReference('gridpresupuestostrabajo').setTopBar(true)
+				    me.lookupReference('gridtarifastrabajo').setDisabled(false);
+				    me.lookupReference('gridpresupuestostrabajo').setDisabled(false);
+    			}
+	    		
+	    	}else if(estadoTrabajo == "REJ" || estadoTrabajo == "13"){
+	    		
+	    		if(esFichaTrabajo){
+    				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
+    			}
+	    		
+	    	}
+    		
+	    } else if(esProvActivo){
+	    	
+	    	if(estadoTrabajo == "CUR" /*|| estadoTrabajo == "REJ"*/){
+	    		
+	    		if(esFichaTrabajo){
+    				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
+		    		me.lookupReference('fechaEjecucionRef').setReadOnly(false);
+		    		me.lookupReference('checkSiniestroRef').setReadOnly(false);
+    			} else {
+		    		me.lookupReference('gridtarifastrabajo').setTopBar(true)
+				    me.lookupReference('gridtarifastrabajo').setDisabled(false);
+    			}
+	    		
+	    	}
+	    	
+	    }
+    	
+    },
+    bloqueaCamposTrabajo: function (esFichaTrabajo) {
+    	var me = this;
+    	
+		if(esFichaTrabajo){
+			me.lookupReference('comboGestorActivoResposable').setReadOnly(true);
+    		me.lookupReference('comboEstadoTrabajoRef').setReadOnly(true);
+    		me.lookupReference('fechaEjecucionRef').setReadOnly(true);
+			me.lookupReference('checkTarifaPlanaRef').setReadOnly(true);
+			me.lookupReference('checkSiniestroRef').setReadOnly(true);
+    		me.lookupReference('checkboxCubreSeguroRef').setReadOnly(true);
+			me.lookupReference('comboCiaAseguradora').setReadOnly(true);
+			me.lookupReference('importePrecioAseguradoRef').setReadOnly(true);
+			me.lookupReference('aplicaComiteRef').setReadOnly(true);
+    		me.lookupReference('comboResolucionComite').setReadOnly(true);
+			me.lookupReference('fechaResolucionComiteRef').setReadOnly(true);
+			me.lookupReference('resolucionComiteIdRef').setReadOnly(true);
+			me.lookupReference('riesgosTercerosRef').setReadOnly(true);
+			me.lookupReference('checkboxUrgente').setReadOnly(true);	
+			me.lookupReference('estadoGastoRef').setReadOnly(true);	
+			me.lookupReference('descripcionGeneralRef').setReadOnly(true);
+			me.lookupReference('fechaConcreta').setReadOnly(true);
+			me.lookupReference('horaConcreta').setReadOnly(true);
+			me.lookupReference('fechaTope').setReadOnly(true);
+			me.lookupReference('comboProveedorLlave').setReadOnly(true);	
+			me.lookupReference('fechaEntregaTrabajoRef').setReadOnly(true);
+			me.lookupReference('comboReceptorLlave').setReadOnly(true);
+			me.lookupReference('llavesNoAplicaRef').setReadOnly(true);
+			me.lookupReference('llavesMotivoRef').setReadOnly(true);
+			me.lookupReference('tomaDePosesion').setReadOnly(true);
+    	} else {
+    		me.lookupReference('comboProveedorGestionEconomica').setReadOnly(true);
+    		me.lookupReference('proveedorContactoCombo').setReadOnly(true);
+			me.lookupReference('gridtarifastrabajo').setTopBar(false)
+		    me.lookupReference('gridpresupuestostrabajo').setTopBar(false)
+		    me.lookupReference('gridtarifastrabajo').setDisabled(true);
+		    me.lookupReference('gridpresupuestostrabajo').setDisabled(true);
+    	}
+	},
+    desbloqueaCamposTrabajo: function (esFichaTrabajo){
+    	var me = this;
+    	
+    	if(esFichaTrabajo){
+    		me.lookupReference('comboGestorActivoResposable').setReadOnly(false);
+    		me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
+    		me.lookupReference('fechaEjecucionRef').setReadOnly(false);
+			me.lookupReference('checkTarifaPlanaRef').setReadOnly(false);
+			me.lookupReference('checkSiniestroRef').setReadOnly(false);
+    		me.lookupReference('checkboxCubreSeguroRef').setReadOnly(false);
+			me.lookupReference('comboCiaAseguradora').setReadOnly(false);
+			me.lookupReference('importePrecioAseguradoRef').setReadOnly(false);
+			me.lookupReference('aplicaComiteRef').setReadOnly(false);
+    		me.lookupReference('comboResolucionComite').setReadOnly(false);
+			me.lookupReference('fechaResolucionComiteRef').setReadOnly(false);
+			me.lookupReference('resolucionComiteIdRef').setReadOnly(false);
+			me.lookupReference('riesgosTercerosRef').setReadOnly(false);
+			me.lookupReference('checkboxUrgente').setReadOnly(false);	
+			me.lookupReference('estadoGastoRef').setReadOnly(false);	
+			me.lookupReference('descripcionGeneralRef').setReadOnly(false);
+			me.lookupReference('fechaConcreta').setReadOnly(false);
+			me.lookupReference('horaConcreta').setReadOnly(false);
+			me.lookupReference('fechaTope').setReadOnly(false);
+			me.lookupReference('comboProveedorLlave').setReadOnly(false);	
+			me.lookupReference('fechaEntregaTrabajoRef').setReadOnly(false);
+			me.lookupReference('comboReceptorLlave').setReadOnly(false);
+			me.lookupReference('llavesNoAplicaRef').setReadOnly(false);
+			me.lookupReference('llavesMotivoRef').setReadOnly(false);
+			me.lookupReference('tomaDePosesion').setReadOnly(false);
+    	} else {
+    		me.lookupReference('comboProveedorGestionEconomica').setReadOnly(false);
+    		me.lookupReference('proveedorContactoCombo').setReadOnly(false);
+			me.lookupReference('gridtarifastrabajo').setTopBar(true)
+		    me.lookupReference('gridpresupuestostrabajo').setTopBar(true)
+		    me.lookupReference('gridtarifastrabajo').setDisabled(false);
+		    me.lookupReference('gridpresupuestostrabajo').setDisabled(false);
+    	}
     },
  	valorComboSubtipo: function (){
  		var me = this;
  		var tipoTrabajo = me.lookupReference('tipoTrabajo').getValue();
  		var subTipoTrabajo = me.lookupReference('subtipoTrabajoCombo').getValue();
- 		var comboTomaPosesion = me.lookupReference('tomaDePosesion')
+ 		var comboTomaPosesion = me.lookupReference('tomaDePosesion');
+		me.lookupReference('comboProveedorGestionEconomica2').setDisabled(true);
+		me.lookupReference('proveedorContactoCombo2').setDisabled(true);
  		if (tipoTrabajo == CONST.TIPOS_TRABAJO['ACTUACION_TECNICA'] && subTipoTrabajo == CONST.SUBTIPOS_TRABAJO['TOMA_POSESION']) {
 
  			comboTomaPosesion.allowBlank= false;
@@ -1520,6 +1816,147 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
  			comboTomaPosesion.setHidden(true);
  		}
  		
- 	}
- 	
+ 	},
+    
+    onBeforeLoadProveedor: function(combo){
+    	var me = this;
+    	var idact;
+    	if(me.getView().idActivo != null){
+    		idact = me.getView().idActivo;
+    	}else{
+    		if(me.getView().idAgrupacion != null){
+    			idact = me.lookupReference('activosagrupaciontrabajo').getStore().getData().items[0].data.idActivo;
+    		}else{
+    			if(me.lookupReference('listaActivosSubidaRef').getStore().getData() != null && 
+    					me.lookupReference('listaActivosSubidaRef').getStore().getData().length > 0){
+    				idact = me.lookupReference('listaActivosSubidaRef').getStore().getData().items[0].data.idActivo;
+    			}
+    			
+    		}
+    	}
+    	combo.getProxy().setExtraParams({'idActivo' : idact});
+    },
+    
+    onAfterLoadProveedor: function(){
+    	var me = this;
+    	if(me.getView().idActivo != null){
+    		idact = me.getView().idActivo;
+    	}else{
+    		if(me.getView().idAgrupacion != null){
+    			idact = me.lookupReference('activosagrupaciontrabajo').getStore().getData().items[0].data.idActivo;
+    		}else{
+    			if(me.lookupReference('listaActivosSubidaRef').getStore().getData() != null && 
+    					me.lookupReference('listaActivosSubidaRef').getStore().getData().length > 0){
+    				idact = me.lookupReference('listaActivosSubidaRef').getStore().getData().items[0].data.idActivo;
+    			}
+    			
+    		}
+    	}
+    	var tipoTrabajo = me.lookupReference('tipoTrabajo').getValue();
+    	var subtipoTrabajo = me.lookupReference('subtipoTrabajoCombo').getValue();
+    	var cartera = me.getView().codCartera;
+    	var codSubcartera = me.getView().codSubcartera;
+    	
+    	Ext.Ajax.request({
+    		url: $AC.getRemoteUrl('trabajo/getProveedorParametrizado'),
+    		params: {	
+    					idActivo : idact,
+		    			tipoTrabajo: tipoTrabajo,
+		    			subtipoTrabajo : subtipoTrabajo,
+		    			cartera : cartera,
+		    			subCartera: codSubcartera
+    				},
+    		async: false,
+    		method: 'GET',
+    		success: function ( response , opts ) {
+    			data = Ext.decode(response.responseText);
+    			if(data != null && data.data != null && data.data.id != null){
+    				var idProveedor = data.data.id;
+    				me.getView().lookupReference('comboProveedorGestionEconomica2').setValue(idProveedor);
+    			}
+    		},
+    		failure: function () {
+    			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    		}
+    	});
+    },
+    
+    loadComboProveedorContacto: function(idProveedor) {
+    	var me = this;
+    	if (idProveedor != undefined) {
+    		var urlProveedorContacto = $AC.getRemoteUrl('trabajo/getComboProveedorContactoCreaTrabajo');
+        	Ext.Ajax.request({
+  			  url:urlProveedorContacto,
+  			  params:  {idProveedor: idProveedor},
+  			  success: function(response,opts){
+  				  var decode = Ext.JSON.decode(response.responseText);
+  				  var result = decode["data"];
+  				  if(result.length > 0){
+					  me.lookupReference('proveedorContactoCombo2').setStore(new Ext.data.Store({
+						  	model: 'HreRem.model.ComboBase',
+						    data: result
+					  }));
+	  				  me.lookupReference('proveedorContactoCombo2').setDisabled(false);
+  				  }
+  			  }
+          	});
+    	}
+    },
+    
+    onChangeProveedorCombo: function() {
+    	var me = this;
+    	var comboProveedor = me.lookupReference('comboProveedorGestionEconomica2');
+    	if (comboProveedor.getSelection() != null && comboProveedor.getSelection().getData().idProveedor != undefined) {
+        	me.loadComboProveedorContacto(comboProveedor.getSelection().getData().idProveedor);
+    	}
+    },
+    selectFechaTope: function(fecha){
+    	var me = this;
+    	me.lookupReference('fechaConcretaTrabajo').setValue(null);
+    	me.lookupReference('horaConcretaTrabajo').setSelection(null);
+    	me.lookupReference('fechaConcretaTrabajo').allowBlank = true;
+    	me.lookupReference('horaConcretaTrabajo').allowBlank = true;
+    },
+    
+    selectFechaConcreta: function(){
+    	var me = this;
+    	me.lookupReference('fechaTopeTrabajo').setValue(null)
+    	me.lookupReference('fechaTopeTrabajo').allowBlank = true;
+    },
+
+    finalizacionTrabajoProveedor: function(combo, newValue, oldValue) {
+    	var me = this;
+    	var esProveedor = $AU.userIsRol(CONST.PERFILES['PROVEEDOR']);
+    	if (esProveedor && newValue === "FIN") {
+    		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+	    	var idTrabajo = combo.lookupViewModel().get("trabajo.id");
+	    	var urlDocumentoFinalizacionTrabajo = $AC.getRemoteUrl('trabajo/getDocumentosFinalizacionTrabajo');
+	    	Ext.Ajax.request({
+				  url:     urlDocumentoFinalizacionTrabajo,
+				  async:   false,
+				  method:  'GET',
+				  params:  {idTrabajo: idTrabajo},
+				  success: function(response, opts) {
+					  var decode = Ext.JSON.decode(response.responseText);
+					  var success = decode["success"];
+					  if(success === "false") {
+						  var data = decode["data"];
+						  var size = decode["size"];
+						  if(size === '1') {
+							  me.fireEvent("errorToast", data);
+						  } else {
+							  me.fireEvent("errorToastLong", data);
+						  }
+						  combo.setValue(oldValue);
+					  }
+					  me.getView().unmask();
+				  },
+				  failure: function () {
+					  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					  me.getView().unmask();
+				  }
+	      	});
+    	}
+    }
+
 });

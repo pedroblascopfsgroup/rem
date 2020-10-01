@@ -1293,5 +1293,11 @@ public interface ParticularValidatorApi {
 
 	public Boolean codigoComercializacionIncorrecto(String codCampo);
 	
+	boolean existeMismoProveedorContactoInformado(String codProveedor, String numTrabajo);
+
+	boolean isTipoTarifaValidoEnConfiguracion(String codigoTarifa, String numTrabajo);
+
+	String getEstadoTrabajoByNumTrabajo(String numTrabajo);
+
 
 }

@@ -408,8 +408,6 @@ public interface GastoProveedorApi {
 
 		Double recalcularImporteTotalGasto(GastoDetalleEconomico gasto);
 
-		boolean estanTodosActivosAlquilados(GastoProveedor gasto);
-
 		boolean isGastoSareb(GastoProveedor gastoProveedor);
 
 		void anyadirGastosRefacturablesSiCumplenCondiciones(String idGasto, String gastosRefacturables, String nifPropietario) throws IllegalAccessException, InvocationTargetException;

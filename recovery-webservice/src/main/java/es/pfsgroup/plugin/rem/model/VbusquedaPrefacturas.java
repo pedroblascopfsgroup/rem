@@ -48,6 +48,9 @@ public class VbusquedaPrefacturas implements Serializable{
 	@Column(name = "NUM_GASTOS")
 	private Long numGasto;
 	
+	@Column(name= "ESTADO_GASTO")
+	private String estadoGasto;
+	
 	@Column(name = "PFA_FECHA_PREFACTURA")
 	private Date fechaPrefactura;
 
@@ -123,6 +126,13 @@ public class VbusquedaPrefacturas implements Serializable{
 		this.numeroTrabajos = numeroTrabajos;
 	}
 
+	public String getEstadoGasto() {
+		return estadoGasto;
+	}
+
+	public void setEstadoGasto(String estadoGasto) {
+		this.estadoGasto = estadoGasto;
+	}
 	public Long getNumGasto() {
 		return numGasto;
 	}

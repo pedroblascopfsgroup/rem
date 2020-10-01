@@ -19,8 +19,8 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 
 @Entity
@@ -46,7 +46,7 @@ public class CFGFinalizarTrabajos implements Serializable, Auditable {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TPD_ID")
-    private DDTipoDocumento tipoDocumento;
+    private DDTipoDocumentoActivo tipoDocumento;
 
     @Column(name = "DD_TPD_MATRICULA_GD")
     private String matricula;
@@ -81,11 +81,11 @@ public class CFGFinalizarTrabajos implements Serializable, Auditable {
 		this.subtipoTrabajo = subtipoTrabajo;
 	}
 
-	public DDTipoDocumento getTipoDocumento() {
+	public DDTipoDocumentoActivo getTipoDocumento() {
 		return tipoDocumento;
 	}
 
-	public void setTipoDocumento(DDTipoDocumento tipoDocumento) {
+	public void setTipoDocumento(DDTipoDocumentoActivo tipoDocumento) {
 		this.tipoDocumento = tipoDocumento;
 	}
 

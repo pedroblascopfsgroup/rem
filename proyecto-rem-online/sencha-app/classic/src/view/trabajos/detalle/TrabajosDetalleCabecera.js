@@ -112,7 +112,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleCabecera', {
 										                { 
 															fieldLabel: HreRem.i18n('fieldlabel.estado.y.fecha'),
 															cls: 'cabecera-info-field',
-															bind:		'{trabajo.estadoDescripcion}'
+															bind:		'{trabajo.estadoDescripcionyFecha}'
 														},		
 										                {
 									                   		fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
@@ -137,25 +137,25 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleCabecera', {
 									                   	{
 									                   		fieldLabel: HreRem.i18n('fieldlabel.nombre.ug'),
 									                   		cls: 'cabecera-info-field',
+									                   		hidden: true,
 															bind:{
-																value:'{trabajo.nombreUg}',
-																hidden:'{!trabajo.perteneceDNDtipoEdificacion}'
+																value:'{trabajo.nombreUg}'
 															}
 									                   	},
 														{ 
 															fieldLabel: HreRem.i18n('fieldlabel.nombre.expediente.trabajo'),
 															cls: 'cabecera-info-field',
+															hidden: true,
 															bind:{
-																value:'{trabajo.nombreExpediente}',
-																hidden:'{!trabajo.perteneceDNDtipoEdificacion}'
+																value:'{trabajo.nombreExpediente}'
 															}
 										                },
 									                   	{
 									                   		fieldLabel: HreRem.i18n('fieldlabel.nombre.proyecto'),
 									                   		cls: 'cabecera-info-field',
+									                   		hidden: true,
 									                   		bind:{
-																value:'{trabajo.nombreProyecto}',
-																hidden:'{!trabajo.perteneceDNDtipoEdificacion}'
+																value:'{trabajo.nombreProyecto}'
 															}
 															
 									                   	}

@@ -1354,7 +1354,8 @@ public class GastosProveedorController extends ParadiseJsonController {
 	public ModelAndView asociarElementosAgastos(DtoElementosAfectadosLinea dto, ModelMap model, HttpServletRequest request) {
 		
 		try {		
-			model.put("success", gastoLineaDetalleApi.asociarElementosAgastos(dto));
+			model.put("success", true);
+			model.put("data", gastoLineaDetalleApi.asociarElementosAgastos(dto));
 			trustMe.registrarSuceso(request, dto.getIdGasto(), ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "elementos", ACCION_CODIGO.CODIGO_VER);
 	
 		} catch (Exception e) {

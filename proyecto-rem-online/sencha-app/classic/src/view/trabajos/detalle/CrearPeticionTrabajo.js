@@ -51,6 +51,8 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
     logadoGestorMantenimiento: null,
     
     gestorActivo: null,
+    
+    trabajoDesdeActivo: false,
 	
     initComponent: function() {
     	
@@ -136,6 +138,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															xtype: 'comboboxfieldbase',
 												        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.trabajo'),
 												        	reference: 'subtipoTrabajoCombo',
+												        	chainedReference: 'comboTipoProveedorGestionEconomica2',
 												        	colspan: 3,
 												        	editable: false,
 												        	bind: 
@@ -151,17 +154,32 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 											            		},
 															allowBlank: false
 												        },
+									    				{ 
+												        	xtype: 'comboboxfieldbase',
+												        	fieldLabel: HreRem.i18n('fieldlabel.proveedor'),
+															flex: 		1,
+															colspan: 3,
+															reference: 'comboProveedorGestionEconomica2',
+															chainedReference: 'proveedorContactoCombo2',
+											            	listeners: {
+											            		select: 'onChangeProveedorCombo'
+											            	},
+															disabled: true,
+											            	displayField: 'nombreComercial',
+								    						valueField: 'idProveedor',
+								    						filtradoEspecial: true,
+								    						allowBlank: false
+												        },
 												        { 
 															xtype: 'comboboxfieldbase',
-												        	fieldLabel:  HreRem.i18n('fieldlabel.proveedor.trabajo'),
-												        	colspan: 3,
-												        	reference:'comboProveedor',
-												        	editable: false,
-												        	bind: 
-												        		{
-												        		store: '{comboApiPrimario}'
-											            		},
-															allowBlank: false
+												        	fieldLabel:  HreRem.i18n('fieldlabel.proveedor.contacto'),
+												        	reference: 'proveedorContactoCombo2',
+															flex: 		1,
+															colspan: 3,
+															disabled: true,
+											            	displayField: 'nombre',
+								    						valueField: 'id',
+								    						allowBlank: false
 												        }
 													]
 												},
@@ -191,10 +209,12 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 													        	editable: false,
 													        	disabled: true,
 													        	reference: 'comboResolucionComite',
+													        	listeners: {
+													        		change : 'requiredDateResolucionComite'
+													        	},
 													        	bind : {
 													        		store: '{comboAprobacionComite}'
-													        	},
-																allowBlank: false
+													        	}
 										        			},
 
 															{
@@ -204,8 +224,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 																maxValue: null,
 																reference: 'fechaResolComite',
 																colspan: 3,
-																disabled: true,
-																allowBlank: false
+																disabled: true
 															},
 										        			{
 														        xtype: 'textfieldbase',
@@ -517,7 +536,12 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 																minValue: $AC.getCurrentDate(),
 																maxValue: null,
 																colspan:1,
-																allowBlank: false
+																listeners:{
+																	select : 'selectFechaConcreta'
+																},
+																bind: {
+																		allowBlank: false
+		        	   											}
 															},
 															{
 																xtype: 'timefieldbase',
@@ -526,7 +550,9 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 																fieldLabel: HreRem.i18n('fieldlabel.hora.concreta.trabajo'),
 																format: 'H:i',
 																increment: 30,
-																allowBlank: false
+																bind: {
+																	allowBlank: false
+																}
 															},	
 															{
 																xtype: 'datefieldbase',
@@ -535,7 +561,12 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 																minValue: $AC.getCurrentDate(),
 																maxValue: null,
 																colspan:1,
-																allowBlank: false
+																listeners:{
+																	select : 'selectFechaTope'
+																},
+																bind: {
+																	allowBlank: false
+																}
 															}
 														]
 														
@@ -546,7 +577,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 													collapsible: false,
 													colspan: 3,
 													title: HreRem.i18n('title.peticion.presupuesto.trabajo'),
-													defaultType: 'textfieldbase',
+													defaultType: 'displayfieldbase',
 													items :
 														[
 															{ 
@@ -555,7 +586,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 																fieldLabel: HreRem.i18n('fieldlabel.precio.presupuesto')
 											                },
 											                { 
-																xtype: 'currencyfieldbase',
+																xtype: 'textfieldbase',
 																reference: 'referenciaImportePresupuesto',
 																fieldLabel: HreRem.i18n('fieldlabel.referencia.presupuesto')
 											                }
@@ -581,7 +612,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 															},
 															{
 																xtype: 'checkboxfieldbase',
-																reference: 'riesgoTerceros',
+																reference: 'riesgosTerceros',
 																boxLabel: HreRem.i18n('fieldlabel.check.riesgo.terceros'),
 																colspan:1,
 																checked: false
@@ -636,7 +667,6 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 
 		form.setBindRecord(form.getModelInstance());
 		form.reset();
-
 		me.idProceso = null;
 		me.getViewModel().set('idActivo', me.idActivo);
     	me.getViewModel().set('idAgrupacion', me.idAgrupacion);

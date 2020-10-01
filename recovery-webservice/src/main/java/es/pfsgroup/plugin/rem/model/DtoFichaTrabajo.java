@@ -65,8 +65,12 @@ public class DtoFichaTrabajo {
 	private Boolean esSolicitudConjunta;
 
 	private Date fechaConcreta;
+	
+	private String fechaConcretaString;
 
 	private Date horaConcreta;
+	
+	private String horaConcretaString;
 
 	private Date fechaTope;
 
@@ -194,7 +198,7 @@ public class DtoFichaTrabajo {
 	
 	private String idTarifas;
 	
-	private Long importePresupuesto;
+	private Double importePresupuesto;
 	
 	private String refImportePresupueso;
 	private Boolean riesgosTerceros;
@@ -231,7 +235,7 @@ public class DtoFichaTrabajo {
 	
 	private String proovedorCodigo;
 	
-	private Date fechaEntregaTrabajo;
+	private Date fechaEntregaLlaves;
 	
 	private String receptorCodigo;
 	
@@ -253,6 +257,8 @@ public class DtoFichaTrabajo {
 	
 	private Integer tomaPosesion;
 	
+	private Long proveedorContact;
+	private String estadoDescripcionyFecha;
 	
 	
 	public Long getIdTrabajo() {
@@ -490,12 +496,28 @@ public class DtoFichaTrabajo {
 		this.fechaConcreta = fechaConcreta;
 	}
 
+	public String getFechaConcretaString() {
+		return fechaConcretaString;
+	}
+
+	public void setFechaConcretaString(String fechaConcretaString) {
+		this.fechaConcretaString = fechaConcretaString;
+	}
+
 	public Date getHoraConcreta() {
 		return horaConcreta;
 	}
 
 	public void setHoraConcreta(Date horaConcreta) {
 		this.horaConcreta = horaConcreta;
+	}
+
+	public String getHoraConcretaString() {
+		return horaConcretaString;
+	}
+
+	public void setHoraConcretaString(String horaConcretaString) {
+		this.horaConcretaString = horaConcretaString;
 	}
 
 	public Date getFechaTope() {
@@ -1004,11 +1026,11 @@ public class DtoFichaTrabajo {
 		this.idTarifas = idTarifas;
 	}
 
-	public Long getImportePresupuesto() {
+	public Double getImportePresupuesto() {
 		return importePresupuesto;
 	}
 
-	public void setImportePresupuesto(Long importePresupuesto) {
+	public void setImportePresupuesto(Double importePresupuesto) {
 		this.importePresupuesto = importePresupuesto;
 	}
 
@@ -1152,14 +1174,6 @@ public class DtoFichaTrabajo {
 		this.proovedorCodigo = proovedorCodigo;
 	}
 
-	public Date getFechaEntregaTrabajo() {
-		return fechaEntregaTrabajo;
-	}
-
-	public void setFechaEntregaTrabajo(Date fechaEntregaTrabajo) {
-		this.fechaEntregaTrabajo = fechaEntregaTrabajo;
-	}
-
 	public String getReceptorCodigo() {
 		return receptorCodigo;
 	}
@@ -1279,6 +1293,14 @@ public class DtoFichaTrabajo {
 	public void setIdProveedorLlave(Long idProveedorLlave) {
 		this.idProveedorLlave = idProveedorLlave;
 	}
+
+	public Date getFechaEntregaLlaves() {
+		return fechaEntregaLlaves;
+	}
+
+	public void setFechaEntregaLlaves(Date fechaEntregaLlaves) {
+		this.fechaEntregaLlaves = fechaEntregaLlaves;
+	}
 	
 	public Integer getTomaPosesion() {
 		return tomaPosesion;
@@ -1288,5 +1310,22 @@ public class DtoFichaTrabajo {
 		this.tomaPosesion = tomaPosesion;
 
 	}
+	public Long getProveedorContact() {
+		return proveedorContact;
+	}
+
+	public void setProveedorContact(Long proveedorContact) {
+		this.proveedorContact = proveedorContact;
+	}
+
+	public String getEstadoDescripcionyFecha() {
+		return estadoDescripcionyFecha;
+	}
+
+	public void setEstadoDescripcionyFecha(String estadoDescripcionyFecha) {
+		this.estadoDescripcionyFecha = estadoDescripcionyFecha;
+	}
+	
+	
 	
 }

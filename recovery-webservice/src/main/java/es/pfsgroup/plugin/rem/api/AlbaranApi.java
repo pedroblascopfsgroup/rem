@@ -25,12 +25,12 @@ public interface AlbaranApi {
 	public Page findAll(DtoAlbaranFiltro dto);
 	
 	@BusinessOperationDefinition("albaranManager.findAllDetalle")
-	public Page findAllDetalle( DtoDetalleAlbaran numAlbaran);
+	public Page findAllDetalle( DtoDetalleAlbaran detalleAlbaran);
 	
 	@BusinessOperationDefinition("albaranManager.findPrefectura")
 	public Page findPrefectura(DtoDetallePrefactura dto) ;
 	
-	public Boolean validarPrefactura(Long id, String listaString);
+	public Boolean validarPrefactura(Long id, String[] listaString);
 	
 	public Boolean validarAlbaran(Long id);
 	

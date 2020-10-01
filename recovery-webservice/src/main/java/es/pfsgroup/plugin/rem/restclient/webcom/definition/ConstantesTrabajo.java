@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.restclient.webcom.definition;
 
 public class ConstantesTrabajo {
 	public static final String NOMBRE_TABLA ="ACT_TBJ_TRABAJO";
+	public static final String NOMBRE_TABLA_ACTIVO_PROVEEDOR ="ACT_PVC_PROVEEDOR_CONTACTO";
 	public static final String RESPONSABLE_TRABAJO = "Responsable trabajo";
 	public static final String COLUMNA_RESPONSABLE_TRABAJO = "TBJ_RESPONSABLE_TRABAJO"; 
 	public static final String DESCRIPCION = "Descripción";
@@ -54,7 +55,7 @@ public class ConstantesTrabajo {
 	public static final String DIRECCION = "Dirección";
 	public static final String COLUMNA_DIRECCION = "TBJ_TERCERO_DIRECCION";
 	public static final String NOMBRE_PROOVEDOR_DETALLE_ECONOMICO = "Nombre";
-	public static final String COLUMNA_NOMBRE_PROOVEDOR_DETALLE_ECONOMICO = "PVC_ID";
+	public static final String COLUMNA_NOMBRE_PROOVEDOR_DETALLE_ECONOMICO = "PVE_ID";
 	public static final String IMPORTE_PENALIZACION_DIARIO = "Importe penalización diario";
 	public static final String COLUMNA_IMPORTE_PENALIZACION_DIARIO = "TBJ_IMPORTE_PENAL_DIARIO";
 	public static final String COLUMNA_IMPORTE_TOTAL ="TBJ_IMPORTE_TOTAL";
@@ -71,6 +72,9 @@ public class ConstantesTrabajo {
 	public static final String TARIFA_PLANA ="Tarifa plana";
 	public static final String COLUMNA_SINIESTRO ="TBJ_SINIESTRO";
 	public static final String SINIESTRO ="Siniestro";
+	public static final String COLUMNA_RECEPTOR_LLAVES ="PVC_ID_LLAVES";
+	public static final String PROVEEDOR_ENTREGA_LLAVES ="Proveedor entrega llaves";
+	public static final String RECEPTOR_ENTREGA_LLAVES ="Preceptor entrega llaves";
 	public static final String COLUMNA_FECHA_ENTREGA_LLAVES ="TBJ_FECHA_ENTREGA_LLAVES";
 	public static final String FECHA_ENTREGA_LLAVES ="Fecha de entrega de las llaves";
 	public static final String COLUMNA_NO_APLICA_LLAVES ="TBJ_NO_APLICA_LLAVES";
@@ -83,4 +87,6 @@ public class ConstantesTrabajo {
 	public static final String DD_EST_ID ="Estado trabajo solicitado";
 	public static final String VALOR_BOL_SI = "Si";
 	public static final String VALOR_BOL_NO = "No";
+	public static final String PROVEEDOR_CONTACTO ="Proveedor contacto";
+	public static final String COLUMNA_PROVEEDOR_CONTACTO ="PVC_ID";
 }

@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.pagination.Page;
-import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
@@ -28,7 +27,6 @@ import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
-import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoRefacturable;
@@ -72,6 +70,7 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 
 		HQLBuilder hb = this.rellenarFiltrosBusquedaGasto(dtoGastosFilter, isGenerateExcel);
 
+
 		List<String> nombresProveedor = proveedorDao.getNombreProveedorByIdUsuario(idUsuario);
 		if (!Checks.estaVacio(nombresProveedor)) {
 			if (!isGestoria)
@@ -102,6 +101,7 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 	private DtoPage getListadoGastosCompleto(DtoGastosFilter dtoGastosFilter, HQLBuilder hb) {
 		
 		Page pageGastos = HibernateQueryUtils.page(this, hb, dtoGastosFilter);
+
 		List<VGastosProveedor> gastos = (List<VGastosProveedor>) pageGastos.getResults();
 		if (dtoGastosFilter.getIdProvision() != null) {
 			dtoGastosFilter.setLimit(100000);
@@ -146,6 +146,8 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 
 	private HQLBuilder rellenarFiltrosBusquedaGasto(DtoGastosFilter dtoGastosFilter, Boolean isGenerateExcel) {
 		String select = "select vgasto ";
+
+		
 		String from;
 		if (isGenerateExcel) {
 			from = "from VGastosProveedorExcel vgasto";
@@ -159,7 +161,6 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		// Por si es necesario filtrar por datos de los activos del gasto
 		String fromGastoActivos = GastoActivosHqlHelper.getFrom(dtoGastosFilter);
 		if (!Checks.esNulo(fromGastoActivos)) {
-			select = "select distinct vgasto ";
 			from = from + fromGastoActivos;
 			where = where + GastoActivosHqlHelper.getWhereJoin(dtoGastosFilter, hasWhere);
 			hasWhere = true;

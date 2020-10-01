@@ -123,6 +123,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 		},
 		
 	 	mostrarVentanaTrabajoGridActivo: function(get){
+	 		me = this;
 	 		var resultado = me.getView().idActivo == null ? true : false;
 	 		return resultado;
 	 	},

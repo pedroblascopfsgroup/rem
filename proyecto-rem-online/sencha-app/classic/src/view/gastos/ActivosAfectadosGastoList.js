@@ -336,8 +336,8 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
       	var me = this;
     	var url =  $AC.getRemoteUrl('gastosproveedor/updateElementosDetalle');
     	var data = context.newValues;
-    	
-    	if(Ext.isEmpty(data.idElemento)){
+
+    	if(Ext.isEmpty(data.idLinea)){
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ok.linea.detalle.informacion"));
 			return;
 		}

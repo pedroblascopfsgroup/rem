@@ -1226,8 +1226,8 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 					if(activo == null) {
 						error = ERROR_NO_EXISTE_ACTIVO;
 						return error;
-					}else if(gasto.getPropietario() == null || activo.getCartera() == null 
-						|| !activo.getCartera().equals(gasto.getPropietario().getCartera())) {
+					}else if(gasto.getPropietario() == null || activo.getCartera() == null || gasto.getPropietario().getCartera() == null 
+						|| !activo.getCartera().getCodigo().equals(gasto.getPropietario().getCartera().getCodigo())) {
 						error = ERROR_CARTERA_DIFERENTE;
 						return error;
 					}
@@ -1295,11 +1295,9 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			BigDecimal participacionConDecimales = null;
 			
 			if(!sumaParticipacion.equals(BigDecimal.valueOf(100))) {
-				BigDecimal decimal = sumaParticipacion.subtract(BigDecimal.valueOf(100));
-				if(decimal.compareTo(BigDecimal.ZERO) < 0) {
+				BigDecimal decimal = BigDecimal.valueOf(100).subtract(sumaParticipacion);
+				if(decimal.compareTo(BigDecimal.ZERO) != 0) {
 					participacionConDecimales = participacionMedia.add(decimal);
-				}else if(decimal.compareTo(BigDecimal.ZERO) > 0) {
-					participacionConDecimales = participacionMedia.subtract(decimal);
 				}
 			}
 			participacion = participacionMedia;

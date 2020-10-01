@@ -65,7 +65,7 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 	},
 	
 	initComponent : function() {
-
+		
 		var me = this;
 		
 		me.tbar =  {
@@ -336,11 +336,17 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
       	var me = this;
     	var url =  $AC.getRemoteUrl('gastosproveedor/updateElementosDetalle');
     	var data = context.newValues;
-
+    	var edicion = me.estadoParaEditar(me);
     	if(Ext.isEmpty(data.idLinea)){
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ok.linea.detalle.informacion"));
 			return;
 		}
+    	
+    	if(!edicion){
+    		me.getStore().load();
+    		return;
+    	}
+    	
  
     	me.mask(HreRem.i18n("msg.mask.loading"));	
     	Ext.Ajax.request({		    			
@@ -355,6 +361,8 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 				me.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar();
 				me.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
 				me.up('gastodetalle').down('contabilidadgasto').funcionRecargar();
+				me.down('toolbar').down('[itemId=addButton]').setDisabled(!edicion);
+
 			},
 			failure: function(a, operation){
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
@@ -365,6 +373,25 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 			}
 			
 		});   	
+    },
+    
+    estadoParaEditar: function(me){
+    	
+    	var estadoParaGuardar = me.lookupController().getView().getViewModel().getData().gasto.getData().estadoModificarLineasDetalleGasto;
+    	var isGastoRefacturado = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPorOtroGasto;
+    	var isGastoRefacturadoPadre = me.lookupController().getView().getViewModel().getData().gasto.getData().isGastoRefacturadoPadre;
+    	var edicion = true;
+    	
+    	if(me.up('gastodetallemain').getViewModel().get('gasto.asignadoATrabajos') || me.up('gastodetallemain').getViewModel().get('gasto.autorizado')){
+    		edicion = false;
+    	}
+    	
+		if( edicion && estadoParaGuardar && !isGastoRefacturado && !isGastoRefacturadoPadre){ 
+			edicion = true;
+		}else{
+			edicion = false;
+		}
+		return edicion;
     }
 
 });

@@ -82,13 +82,15 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 				genericDao.createFilter(FilterType.EQUALS, "numPrefactura", id));
 		
 		if(prefactura.getEstadoPrefactura() != null && prefactura.getEstadoPrefactura().getCodigo() != null ) {
-			for(int i = 0; i < listaString.length; i++) {
-				Long numTrabajo = Long.valueOf(listaString[i]);
-				Trabajo tbj = genericDao.get(Trabajo.class,
-						genericDao.createFilter(FilterType.EQUALS, "numTrabajo", numTrabajo));
-				if(tbj != null) {
-					tbj.setPrefactura(null);
-					genericDao.update(Trabajo.class, tbj);
+			if(listaString != null && listaString.length > 0) {
+				for(int i = 0; i < listaString.length; i++) {
+					Long numTrabajo = Long.valueOf(listaString[i]);
+					Trabajo tbj = genericDao.get(Trabajo.class,
+							genericDao.createFilter(FilterType.EQUALS, "numTrabajo", numTrabajo));
+					if(tbj != null) {
+						tbj.setPrefactura(null);
+						genericDao.update(Trabajo.class, tbj);
+					}
 				}
 			}
 			DDEstEstadoPrefactura estadoPrefactura = genericDao.get(DDEstEstadoPrefactura.class,

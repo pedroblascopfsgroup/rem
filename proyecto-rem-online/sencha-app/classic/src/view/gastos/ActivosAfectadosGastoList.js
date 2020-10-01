@@ -67,6 +67,8 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 	initComponent : function() {
 
 		var me = this;
+		var cartera = me.lookupController().getView().getViewModel().getData().gasto.getData().cartera
+		const esBBVA = CONST.CARTERA['BBVA'] === cartera;
 		
 		me.tbar =  {
 			xtype: 'toolbar',
@@ -152,7 +154,14 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 					text : HreRem.i18n('header.activos.afectados.subtipo.activo'),
 					dataIndex : 'tipoActivo',
 					flex : 1
-				}, {
+				}, 
+				{
+					text : HreRem.i18n('header.elementos.afectados.linea.factura'),
+					dataIndex : 'lineaFactura',
+					hidden : !esBBVA,
+					flex : 1
+				},
+				{
 					text : HreRem.i18n('header.activos.afectados.direccion'),
 					dataIndex : 'direccion',
 					flex : 1

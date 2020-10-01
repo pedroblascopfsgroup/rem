@@ -199,8 +199,14 @@ public class GastosProveedorController extends ParadiseJsonController {
 	public void generateExcelElementosGasto(Long idLinea, ModelMap model, HttpServletRequest request, HttpServletResponse response) throws IOException{
 
 		List<VElementosLineaDetalle> listaElementos = (List<VElementosLineaDetalle>) getElementosAfectados(idLinea, model, request).getModel().get("data");
-
-		ExcelReport report = new ElementosLineasExcelReport(listaElementos);
+		String cartera = null;
+		ExcelReport report = null;
+		if ( listaElementos != null && !listaElementos.isEmpty()) {
+			cartera = gastoProveedorApi.getCodigoCarteraGastoByIdGasto(listaElementos.get(0).getIdGasto());
+			report = new ElementosLineasExcelReport(listaElementos, cartera);
+		}else {
+			report = new ElementosLineasExcelReport(listaElementos);
+		}
 
 		excelReportGeneratorApi.generateAndSend(report, response);
 	}

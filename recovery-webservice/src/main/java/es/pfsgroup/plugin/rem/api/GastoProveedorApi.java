@@ -429,5 +429,7 @@ public interface GastoProveedorApi {
 
 		ActivoSubtipoGastoProveedorTrabajo getSubtipoGastoBySubtipoTrabajo(Trabajo trabajo);
 
+		String getCodigoCarteraGastoByIdGasto(Long idGasto);
+
 }
 

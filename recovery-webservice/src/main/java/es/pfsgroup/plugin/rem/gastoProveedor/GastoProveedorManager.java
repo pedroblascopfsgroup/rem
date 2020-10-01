@@ -110,6 +110,7 @@ import es.pfsgroup.plugin.rem.model.VActivosAfectosGencat;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
 import es.pfsgroup.plugin.rem.model.VDiarioCalculoLbk;
+import es.pfsgroup.plugin.rem.model.VElementosLineaDetalle;
 import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosRefacturados;
@@ -3755,5 +3756,15 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		return subtipoGastoTrabajo;
 	}
 
+	@Override
+	public String getCodigoCarteraGastoByIdGasto(Long idGasto) {
+		if (idGasto != null) {
+			GastoProveedor gasto = this.findOne(idGasto);
+			if (gasto != null && gasto.getPropietario() != null && gasto.getPropietario().getCartera() != null) {
+				return  gasto.getPropietario().getCartera().getCodigo();
+			}
+		}
+		return null;
+	}
 	
 }

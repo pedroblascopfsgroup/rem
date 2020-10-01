@@ -64,6 +64,9 @@ public class VElementosLineaDetalle implements Serializable{
 	
 	@Column(name = "GLD_IMPORTE_TOTAL")
 	private Double importeTotalLinea;
+	
+	@Column(name = "BBVA_LINEA_FACTURA")
+	private String lineaFactura;
 
 	public Long getId() {
 		return id;
@@ -176,5 +179,13 @@ public class VElementosLineaDetalle implements Serializable{
 	public void setImporteTotalLinea(Double importeTotalLinea) {
 		this.importeTotalLinea = importeTotalLinea;
 	}
-	
+
+	public String getLineaFactura() {
+		return lineaFactura;
+	}
+
+	public void setLineaFactura(String lineaFactura) {
+		this.lineaFactura = lineaFactura;
+	}
+
 }

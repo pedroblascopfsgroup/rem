@@ -39,7 +39,6 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 			defaultType : 'displayfieldbase',
 			layout: {
 		        type: 'table',
-		        // The total column count must be specified here
 		        columns: 3,
 		        tdAttrs: {
 		        	width: '33%',
@@ -87,14 +86,12 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						readOnly : true
 					}, {
 						xtype : 'textfieldbase',
-						fieldLabel : HreRem
-								.i18n('fieldlabel.canal.prescripcion'),
+						fieldLabel : HreRem.i18n('fieldlabel.canal.prescripcion'),
 						bind : '{datosbasicosoferta.canalPrescripcionDescripcion}',
 						readOnly : true
 					}, {
 						xtype : 'currencyfieldbase',
-						fieldLabel : HreRem
-								.i18n('fieldlabel.importe.inicial.oferta'),
+						fieldLabel : HreRem.i18n('fieldlabel.importe.inicial.oferta'),
 						bind : '{datosbasicosoferta.importeOferta}'
 					}, {
 						xtype : 'currencyfieldbase',
@@ -280,7 +277,6 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							columns: 1
 						},
 						collapsible: false,
-						margin : '0 10 10 10',
 						items : [
 							{
 									xtype: 'comboboxfieldbase',
@@ -288,7 +284,6 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 									itemId: 'comboClaseOferta',
 									reference: 'claseOferta',
 									name: 'claseOferta',
-				                	//colspan: 2,
 									bind: {
 										readOnly: '{datosbasicosoferta.estadoAprobadoLbk}',
 										store: '{comboClaseOferta}',
@@ -303,7 +298,6 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							}, {
 							xtype : 'comboboxfieldbase',
 							reference : 'comboComiteSeleccionado',
-							//colspan : 3,
 							readOnly : false,
 							bind : {
 								store : '{comboComites}',
@@ -324,8 +318,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							}
 						}, {
 							xtype : 'comboboxfieldbase',
-							fieldLabel : HreRem
-									.i18n('fieldlabel.comite.propuesto'),
+							fieldLabel : HreRem.i18n('fieldlabel.comite.propuesto'),
 							reference : 'comboComitePropuesto',
 							readOnly : true,
 							bind : {
@@ -341,11 +334,9 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							}
 						}, {
 							xtype : 'comboboxfieldbase',
-							fieldLabel : HreRem
-									.i18n('fieldlabel.comite.alquiler'),
+							fieldLabel : HreRem.i18n('fieldlabel.comite.alquiler'),
 							reference : 'comboComiteSeleccionadoAlquiler',
 							readOnly : false,
-							//colspan : 3,
 							bind : {
 								store : '{comboComitesAlquiler}',
 								value : '{datosbasicosoferta.comiteSancionadorCodigoAlquiler}',
@@ -369,8 +360,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 
 							{
 								xtype : 'comboboxfieldbase',
-								fieldLabel : HreRem
-										.i18n('fieldlabel.comite.propuesto'),
+								fieldLabel : HreRem.i18n('fieldlabel.comite.propuesto'),
 								reference : 'comboComitePropuesto',
 								readOnly : true,
 								bind : {
@@ -401,8 +391,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 
 					},
 					{
-						xtype : 'fieldsettable',
-						margin : '0 10 10 10',						
+						xtype : 'fieldsettable',					
 						collapsible: false,
 						title : HreRem.i18n('title.visita'),
 						layout : {type : 'table', columns: 1},
@@ -428,8 +417,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 
 							}, {
 								xtype : 'numberfieldbase',
-								fieldLabel : HreRem
-										.i18n('fieldlabel.numero.visita'),
+								fieldLabel : HreRem.i18n('fieldlabel.numero.visita'),
 								reference : 'numVistaFromOfertaRef',
 								bind : {
 									value : '{datosbasicosoferta.numVisita}'
@@ -442,21 +430,16 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 					},  {
 						xtype : 'fieldsettable',
 						title : HreRem.i18n('title.comerical.oferta'),
-						/*bind: {
-						    hidden: '{!esCarteraCajamar}'
-						},*/
 						colspan : 2,
 						layout: {
 							type: 'table',
-					        // The total column count must be specified here
 					        columns: 2,
 					        tdAttrs: {width: '50%'}
 						},
 						
 						items : [{
 							xtype : "textfieldbase",
-							fieldLabel : HreRem
-									.i18n('fieldlabel.comerical.oferta.detalle.cajamar.ofertaExpress'),
+							fieldLabel : HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.ofertaExpress'),
 							bind : {
 								value : '{datosbasicosoferta.ofertaExpress}',
 								hidden : '{esTipoAlquiler}'
@@ -480,6 +463,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						{
 							xtype : "textareafieldbase",
 							fieldLabel : HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.observaciones'),
+							labelAlign: 'top',
 							bind : {
 								value : '{datosbasicosoferta.observaciones}'
 							},

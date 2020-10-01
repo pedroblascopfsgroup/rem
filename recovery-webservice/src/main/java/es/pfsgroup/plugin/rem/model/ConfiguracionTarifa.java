@@ -94,6 +94,10 @@ public class ConfiguracionTarifa implements Serializable, Auditable {
     @Column(name = "CFT_PRECIO_UNITARIO_CLIENTE")
     private Double precioUnitarioCliente;
     
+    @Column(name = "CFT_TARIFA_PVE")
+    private Integer tarifaPve;
+    
+    
 	@Version   
 	private Long version;
 	
@@ -214,6 +218,14 @@ public class ConfiguracionTarifa implements Serializable, Auditable {
 
 	public void setPrecioUnitarioCliente(Double precioUnitarioCliente) {
 		this.precioUnitarioCliente = precioUnitarioCliente;
+	}
+
+	public Integer getTarifaPve() {
+		return tarifaPve;
+	}
+
+	public void setTarifaPve(Integer tarifaPve) {
+		this.tarifaPve = tarifaPve;
 	}
 
 

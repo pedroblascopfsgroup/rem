@@ -441,6 +441,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			ActivoTramite activoTramite = activoTramites.get(0);
 			tareaActivo = tareaActivoApi.getUltimaTareaActivoByIdTramite(activoTramite.getId());
 		}
+		
+		if(!Checks.esNulo(dtoTrabajo.getResolucionComiteCodigo()) && (DDAcoAprobacionComite.CODIGO_APROBADO.equals(dtoTrabajo.getResolucionComiteCodigo()) 
+				|| DDAcoAprobacionComite.CODIGO_RECHAZADO.equals(dtoTrabajo.getResolucionComiteCodigo()))) {
+			if(Checks.esNulo(dtoTrabajo.getFechaResolucionComite()) || Checks.esNulo(dtoTrabajo.getResolucionComiteId())) {
+				throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.comite.aprobado"));
+			}
+		}
 
 		
 		if(!Checks.esNulo(dtoTrabajo.getResolucionComiteCodigo()) && (DDAcoAprobacionComite.CODIGO_APROBADO.equals(dtoTrabajo.getResolucionComiteCodigo()) 

@@ -218,12 +218,12 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 								items : [{
 									xtype : 'button',
 									reference: 'btnSacarBulk',																
-									text : 'Excluir oferta del Bulk Advisory Note',
+									text : 'Excluir del Bulk',
 									handler : 'sacarBulk',
 									bind : {
 										hidden : '{!requisitosVisibleBotonExcluirBulk}'
 									},
-									margin : '10 10 10 10'
+									margin : '10 10 10 0'
 								}]
 		
 							}
@@ -267,10 +267,13 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 					{
 						xtype : 'container',
 						layout: 'vbox',
-						colspan: 1,
+						colspan: 1,	
+						width: '100%',
 						items: [
 					{
 						xtype : 'fieldsettable',
+						width: '100%',
+						margin: '0 10 10 0',
 						bind : { title : '{expediente.tituloCarteraLiberbankVenta}'},
 						layout: {
 							type: 'table',
@@ -350,15 +353,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 									this.bindStore(store);
 								}
 							}
-						}, {
-							xtype : 'container',
-							bind : {
-								hidden : '{!esCarteraBankia}'
-							},
-							layout : 'hbox',
-							items : [
-
-							{
+						},{
 								xtype : 'comboboxfieldbase',
 								fieldLabel : HreRem.i18n('fieldlabel.comite.propuesto'),
 								reference : 'comboComitePropuesto',
@@ -366,7 +361,8 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 								bind : {
 									store : '{comboComitesPropuestos}',
 									value : '{datosbasicosoferta.comitePropuestoCodigo}',
-									disabled : '{!esCarteraBankia}'
+									disabled : '{!esCarteraBankia}',
+									hidden : '{!esCarteraBankia}'
 								},
 								// TODO Sobreescribimos la función porque está dando problemas la carga del store. A veces llega null.
 								setStore : function(store) {
@@ -375,17 +371,26 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 									}
 								}
 							}, {
-								xtype : 'button',
-								text : HreRem.i18n('btn.consultar.comite'),
-								handler : 'consultarComiteSancionador',
-								margin : '0 40 0 0',
-								disabled : true,
+								xtype : 'container',
 								bind : {
-									disabled : '{!editing}'
-								}
-							}]
-
-						}
+									hidden : '{!esCarteraBankia}'
+								},
+								layout : 'hbox',
+								colspan: 1,
+								width: '100%',
+								items : [
+								 {
+									xtype : 'button',
+									text : HreRem.i18n('btn.consultar.comite'),
+									handler : 'consultarComiteSancionador',
+									disabled : true,
+									bind : {
+										disabled : '{!editing}'
+									},
+									margin : '10 10 10 0'
+								}]
+	
+							}
 
 						]
 
@@ -395,6 +400,8 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						collapsible: false,
 						title : HreRem.i18n('title.visita'),
 						layout : {type : 'table', columns: 1},
+						width: '100%',
+						margin: '0 10 10 0',
 						items : [{
 							xtype : 'comboboxfieldbase',
 							reference : 'comboEstadosVisita',
@@ -434,7 +441,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 						layout: {
 							type: 'table',
 					        columns: 2,
-					        tdAttrs: {width: '50%'}
+					        tdAttrs: {width: '50%', style: 'vertical-align: top'}
 						},
 						
 						items : [{
@@ -464,12 +471,13 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							xtype : "textareafieldbase",
 							fieldLabel : HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.observaciones'),
 							labelAlign: 'top',
+							grow: true,
+							anchor: '100%',
 							bind : {
 								value : '{datosbasicosoferta.observaciones}'
 							},
-							maxHeight : '100%',							
-							maxWidth : '100%',
-							rowspan: 2
+							width: '100%',
+							rowspan: 4
 						}
 
 						]

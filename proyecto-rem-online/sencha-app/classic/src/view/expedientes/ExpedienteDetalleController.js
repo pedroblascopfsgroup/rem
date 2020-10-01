@@ -4885,6 +4885,7 @@ comprobarFormatoModificar: function() {
 		    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 		 	}
 		});
+		
 	},
 	
 	onComiteChange: function(field, newValue, oldValue) {		
@@ -4974,31 +4975,45 @@ comprobarFormatoModificar: function() {
 	
 	sacarBulk: function(btn){
 		var me = this,
-		form = btn.up('formBase');
+		form = btn.up('formBase'),
+		bulk = me.getViewModel().get('datosbasicosoferta.idAdvisoryNote');
 		url = $AC.getRemoteUrl('expedientecomercial/sacarBulk');
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		Ext.Msg.show({
+		   title: 'Excluir del Bulk',
+		   msg: '¿Quieres sacar la oferta del Bulk "' + bulk + '"?',
+		   buttons: Ext.MessageBox.YESNO,
+		   fn: function(buttonId) {
+		   
+		        if (buttonId == 'yes') {			        	
 
-		Ext.Ajax.request({
-	  		    url: url,
-	  		    params: {
-	  		     	idExpediente : me.getViewModel().data.expediente.id
-	  		     	},	  		
-	  		    success: function(response, opts) {	  		    	
-	  		     	var data = Ext.decode(response.responseText);
-	  		     	if(data.success){
-						me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-						form.funcionRecargar();
-	  		     	}else{
-	  		     		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-	  		     	}	  		     	
-		 			me.getView().unmask();		 			
-		    	},
-	 		    failure: function (a, operation) {
-	 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-	 				me.getView().unmask();
-	 		    }
-	 		    
-			});
+					Ext.Ajax.request({
+			  		    url: url,
+			  		    params: {
+			  		     	idExpediente : me.getViewModel().data.expediente.id
+			  		     	},	  		
+			  		    success: function(response, opts) {	  		    	
+			  		     	var data = Ext.decode(response.responseText);
+			  		     	if(data.success){
+								me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+								form.funcionRecargar();
+			  		     	}else{
+			  		     		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			  		     	}	  		     	
+				 			me.getView().unmask();		 			
+				    	},
+			 		    failure: function (a, operation) {
+			 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			 				me.getView().unmask();
+			 		    }
+				 		    
+					});
+				}else{
+					 me.getView().unmask();
+				}
+			}
+		});
+		
 	}
 	
 });

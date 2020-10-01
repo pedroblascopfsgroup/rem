@@ -1518,12 +1518,77 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 	
 	@Override
+
 	public boolean isActivoBBVADivarian(Long idActivo) {
 		String sql = "          SELECT count(1)  " +
 				"				FROM REM01.ACT_ACTIVO  " +
 				"				WHERE ACT_ID = "+ idActivo +
 				"				AND DD_CRA_ID = 162 OR (DD_CRA_ID = 42 AND DD_SCR_ID IN (151, 152))" +
 				"				AND BORRADO = 0";
+
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
+		}
+		return false;
+
+	}
+
+
+	@Override
+	public boolean existeactivoIdHAYA(Long idActivo) {
+		String sql = "          SELECT count(1)  " +
+		" FROM REM01.ACT_ACTIVO  " +
+		" WHERE ACT_NUM_ACTIVO = "+ idActivo +
+		" AND BORRADO = 0";
+	
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
+		}
+		return false;
+
+	}
+	
+	@Override
+	public boolean activoPerteneceABBVAAndCERBERUS(Long idActivo) { 
+		String sql = "          SELECT count(1)  " +
+				"				FROM REM01.ACT_ACTIVO  " +
+				"				WHERE ACT_NUM_ACTIVO = "+ idActivo +
+				"				AND DD_CRA_ID IN ('162','42')		 "+
+				"				AND BORRADO = 0";
+
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
+		}
+		return false;
+
+	}
+	
+	@Override
+	public boolean activoEstadoVendido(Long idActivo) { 
+		String sql = "          SELECT count(1)  " + 
+				"				FROM REM01.ACT_ACTIVO  " +
+				"				WHERE ACT_NUM_ACTIVO = "+ idActivo +
+				"				AND DD_SCM_ID IN ('5')		 "+
+				"				AND BORRADO = 0 ";
+		
+	  
+
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
+		}
+		return false;
+
+	}
+	
+	@Override
+	public boolean activoFueraPerimetroHAYA(Long idActivo) { 
+		String sql = "          SELECT count(1)  " +
+				"				FROM REM01.ACT_ACTIVO ACT  " +
+				"				INNER JOIN ACT_PAC_PERIMETRO_ACTIVO PAC  on PAC.ACT_ID=ACT.ACT_ID"+
+				"				WHERE ACT.ACT_NUM_ACTIVO = "+ idActivo +
+				"				AND PAC.PAC_INCLUIDO = 0 "+
+				"				AND PAC.BORRADO = 0"  +
+				"				AND ACT.BORRADO = 0"	;
 
 		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
 			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;

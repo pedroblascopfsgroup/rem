@@ -348,5 +348,15 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	void actualizaDatoCDC(CalidadDatosConfig cdc, String valor, String identificador, String username);
 
+
 	boolean isActivoBBVADivarian(Long idActivo);
+
+	boolean existeactivoIdHAYA(Long idActivo); 
+
+	boolean activoPerteneceABBVAAndCERBERUS(Long idActivo); 
+
+	boolean activoEstadoVendido(Long idActivo); 
+
+	boolean activoFueraPerimetroHAYA(Long idActivo); 
+
 }

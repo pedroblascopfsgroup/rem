@@ -1624,34 +1624,41 @@ public class TabActivoDatosBasicos implements TabActivoService {
 							isCarteraBBVADivarian = activoDao.isActivoBBVADivarian(activoOrigenHRE.getId());
 							isVendido = activoApi.isVendido(activoOrigenHRE.getId());
 							isFueraPerimetro = !activoApi.isActivoIncluidoEnPerimetro(activoOrigenHRE.getId());
-						} else {
-							throw new JsonViewerException(messageServices.getMessage(ID_HAYA_NO_EXISTE));
-						}
 						
-						if (!isCarteraBBVADivarian) {
-							throw new JsonViewerException(messageServices.getMessage(ACTIVO_NO_DIVARIAN_BBVA));
-						}
-						if (!isVendido && !isFueraPerimetro) {
-							throw new JsonViewerException(messageServices.getMessage(ACTIVO_VENDIDO_FUERA_DE_PERIMETRO_HAYA));
-						}
-					
-						activoBbva.setIdOrigenHre(dto.getIdOrigenHre());
-						
-						if (activoOrigenHRE.getPropietarioPrincipal() != null) {
-							List<ActivoPropietarioActivo> actOriginal= activo.getPropietariosActivo();
-							if (!actOriginal.isEmpty()) {
-								ActivoPropietarioActivo actPropAct = actOriginal.get(0);
-								actPropAct.setPropietario(activoOrigenHRE.getPropietarioPrincipal());
+							boolean isOrigenHRE = !activoDao.existeactivoIdHAYA(dto.getIdOrigenHre()); 
+							isVendido = activoDao.activoEstadoVendido(dto.getIdOrigenHre()); 
+							boolean isCarteraBBVACERBERUS = !activoDao.activoPerteneceABBVAAndCERBERUS(dto.getIdOrigenHre()); 
+							isFueraPerimetro = activoDao.activoFueraPerimetroHAYA(dto.getIdOrigenHre()); 
+													
+							if(isOrigenHRE) {
+								throw new JsonViewerException(messageServices.getMessage(ID_HAYA_NO_EXISTE));
 							}
-						}
+							
+							if (!isCarteraBBVADivarian) {
+								throw new JsonViewerException(messageServices.getMessage(ACTIVO_NO_DIVARIAN_BBVA));
+							}
+							if (!isVendido && !isFueraPerimetro) {
+								throw new JsonViewerException(messageServices.getMessage(ACTIVO_VENDIDO_FUERA_DE_PERIMETRO_HAYA));
+							}
 						
-						if(activoOrigenHRE.getTipoTitulo()!= null) {
-							activo.setTipoTitulo(activoOrigenHRE.getTipoTitulo());
-						}
-						
-						if (DDTipoTituloActivo.tipoTituloNoJudicial.equals(activoOrigenHRE.getTipoTitulo().getCodigo())
-								&& activoOrigenHRE.getAdjNoJudicial() != null) {
-							activo.setFechaTituloAnterior(activoOrigenHRE.getAdjNoJudicial().getFechaTitulo());
+							activoBbva.setIdOrigenHre(dto.getIdOrigenHre());
+							
+							if (activoOrigenHRE.getPropietarioPrincipal() != null) {
+								List<ActivoPropietarioActivo> actOriginal= activo.getPropietariosActivo();
+								if (!actOriginal.isEmpty()) {
+									ActivoPropietarioActivo actPropAct = actOriginal.get(0);
+									actPropAct.setPropietario(activoOrigenHRE.getPropietarioPrincipal());
+								}
+							}
+							
+							if(activoOrigenHRE.getTipoTitulo()!= null) {
+								activo.setTipoTitulo(activoOrigenHRE.getTipoTitulo());
+							}
+							
+							if (DDTipoTituloActivo.tipoTituloNoJudicial.equals(activoOrigenHRE.getTipoTitulo().getCodigo())
+									&& activoOrigenHRE.getAdjNoJudicial() != null) {
+								activo.setFechaTituloAnterior(activoOrigenHRE.getAdjNoJudicial().getFechaTitulo());
+							}
 						}
 					}
 

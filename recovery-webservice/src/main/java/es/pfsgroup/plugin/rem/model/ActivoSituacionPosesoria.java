@@ -75,7 +75,7 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 	private Date fechaTomaPosesion;
 	
 	@Column(name = "SPS_OCUPADO")
-	private Integer ocupado;
+	private Integer ocupado = 0;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TPA_ID")
@@ -103,13 +103,13 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 	private Date fechaLanzamientoEfectivo;
 
 	@Column(name = "SPS_ACC_TAPIADO")
-	private Integer accesoTapiado;
+	private Integer accesoTapiado = 0;
 	
 	@Column(name = "SPS_FECHA_ACC_TAPIADO")
 	private Date fechaAccesoTapiado;
 	
 	@Column(name = "SPS_ACC_ANTIOCUPA")
-	private Integer accesoAntiocupa;
+	private Integer accesoAntiocupa = 0;
 	
 	@Column(name = "SPS_FECHA_ACC_ANTIOCUPA")
 	private Date fechaAccesoAntiocupa;

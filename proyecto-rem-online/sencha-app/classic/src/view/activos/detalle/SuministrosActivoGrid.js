@@ -122,7 +122,7 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 				flex:0.5,
 				editor: {
 					xtype: 'textfield',
-					allowBlank: false
+					allowBlank: true
 				}
 			},
 			{
@@ -131,7 +131,7 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 				flex:0.5,
 				editor: {
 					xtype: 'textfield',
-					allowBlank: false
+					allowBlank: true
 				}
 			},
 			{
@@ -153,7 +153,7 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 					},
 					displayField: 'descripcion',
 					valueField: 'id',
-					allowBlank: false
+					allowBlank: true
 				}
 			},
 			{
@@ -242,7 +242,7 @@ Ext.define('HreRem.view.activos.detalle.SuministrosActivoGrid', {
 					},
 					displayField: 'descripcion',
 					valueField: 'id',
-					allowBlank: false
+					allowBlank: true
 				}
 			}
 			

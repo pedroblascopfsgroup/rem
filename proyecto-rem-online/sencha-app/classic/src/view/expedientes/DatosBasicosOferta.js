@@ -211,8 +211,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 									hidden : '{!esSubcarteraRemainingOAppleOArrow}'
 								},						
 								readOnly : true
-							},
-							, {
+							}, {
 								xtype : "container",
 								layout : "hbox",
 								colspan : 3,

@@ -236,6 +236,10 @@ public class TrabajoController extends ParadiseJsonController {
 			model.put("success", success);
 			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_TRABAJO, "trabajo", ACCION_CODIGO.CODIGO_MODIFICAR);
 
+		} catch (JsonViewerException e) {
+			model.put("success", false);
+			model.put("error", e.getMessage());
+			
 		} catch(Exception e) {
 			logger.error(e.getMessage());
 			model.put("error", e.getMessage());

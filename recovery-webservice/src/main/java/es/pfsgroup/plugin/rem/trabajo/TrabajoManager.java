@@ -439,6 +439,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			ActivoTramite activoTramite = activoTramites.get(0);
 			tareaActivo = tareaActivoApi.getUltimaTareaActivoByIdTramite(activoTramite.getId());
 		}
+
+		
+		if(!Checks.esNulo(dtoTrabajo.getResolucionComiteCodigo()) && (DDAcoAprobacionComite.CODIGO_APROBADO.equals(dtoTrabajo.getResolucionComiteCodigo()) 
+				|| DDAcoAprobacionComite.CODIGO_RECHAZADO.equals(dtoTrabajo.getResolucionComiteCodigo()))) {
+			if(Checks.esNulo(dtoTrabajo.getFechaResolucionComite()) || Checks.esNulo(dtoTrabajo.getResolucionComiteId())) {
+				throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.comite.aprobado"));
+			}
+		}
+
 		try {
 			// Si estado trabajo = EMITIDO PENDIENTE PAGO y se ha rellenado
 			// "fecha pago", estado trabajo = PAGADO
@@ -450,7 +459,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					&& trabajo.getEstado().getCodigo().equals(DDEstadoTrabajo.ESTADO_PENDIENTE_PAGO)) {
 				dtoTrabajo.setEstadoCodigo(DDEstadoTrabajo.ESTADO_PAGADO);
 			}
-
+			
 			historificarCambiosFicha(dtoTrabajo, trabajo);
 			
 			dtoToTrabajo(dtoTrabajo, trabajo);

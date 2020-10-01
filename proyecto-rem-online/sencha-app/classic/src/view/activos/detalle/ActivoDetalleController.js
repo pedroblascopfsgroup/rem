@@ -700,7 +700,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		me.lookupReference('estadoDivHorizontalNoInscrita').setValue("");
     	}
     },
-    //Por programar
+    
     onComboTramitacionTituloAdicional: function(combo, value){
     	
     	var me = this,
@@ -728,15 +728,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	    	
     	if(disabled){
     		fieldsettableTituloAdicional.hide();
-	    	tipoTituloAdicional.setValue("");
-	    	fechaInscripcionRegistroAdicional.setValue(""); 
-			tipoTituloAdicional.setValue("");
-    		situacionTituloAdicional.setValue("");
-    		fechaInscripcionRegistroAdicional.setValue("");
-    		entregaTituloGestoriaAdicional.setValue("");
-    		fechaRetiradaDefinitivaRegistroAdicional.setValue("");
-    		fechaPresentacionHaciendaAdicional.setValue("");
-    		fieldlabelFechaNotaSimpleAdicional.setValue("");
     	}else{
     		fieldsettableTituloAdicional.show();
     	}

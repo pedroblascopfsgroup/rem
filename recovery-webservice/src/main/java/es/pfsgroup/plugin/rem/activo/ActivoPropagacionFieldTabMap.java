@@ -420,8 +420,8 @@ public class ActivoPropagacionFieldTabMap {
 					"poblacionRegistro",
 					"provinciaRegistro",
 					"localidadAnteriorCodigo",
-					//"tipoTituloCodigo", <-Eliminar según conversacion mantenida con Bruno 14-SEP-2017
-					//"subtipoTituloCodigo", <-Eliminar según conversacion mantenida con Bruno 14-SEP-2017
+					"tipoTituloCodigo", //<-Eliminar según conversacion mantenida con Bruno 14-SEP-2017
+					"subtipoTituloCodigo", //<-Eliminar según conversacion mantenida con Bruno 14-SEP-2017
 					"propiedadActivoDescripcion",
 					"propiedadActivoCodigo",
 					"propiedadActivoNif",

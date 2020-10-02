@@ -4980,7 +4980,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "JOIN ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID "
 				+" JOIN DD_EEC_EST_EXP_COMERCIAL EEC ON EEC.DD_EEC_ID = ECO.DD_EEC_ID "
 				+ "WHERE OFR_NUM_OFERTA = "+numOferta+" "
-				+ "AND EEC.DD_EEC_CODIGO = '34' "
+				+ "AND EEC.DD_EEC_CODIGO = '10' "
 				+ "AND OFR.BORRADO = 0");
 
 		return !"0".equals(resultado);

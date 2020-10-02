@@ -734,6 +734,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 return false;
 		 },
 		 
+		 isCarteraSareb: function(get){
+				 var isCarteraSareb = get('activo.isCarteraSareb');
+				 if(isCarteraSareb){
+					 return true;
+				 }
+				 return false;
+		 },
+		 
 		 isCarteraDivarian: function(get){
 			 var isDivarian = get('activo.isCarteraDivarian');
 			 if(isDivarian){
@@ -856,6 +864,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 	    esSuperUsuario: function(get){
 	    		return $AU.userIsRol(CONST.PERFILES["HAYASUPER"]);
+	    },
+	    
+	    esSuperUsuarioAndNoUA: function(get){
+	    	var UA = false;
+	    	if (get('activo.unidadAlquilable') != undefined) {
+	    		UA = get('activo.unidadAlquilable');
+	    	}
+    		return $AU.userIsRol(CONST.PERFILES["HAYASUPER"]) && !UA;
 	    },
 
     	esOtrosotivoAutorizacionTramitacion: function(get){
@@ -983,6 +999,24 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getComboMunicipio',
 					extraParams: {codigoProvincia: '{activo.provinciaCodigo}'}
+				}
+    		},
+    		
+    		comboProvinciaOE: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'provincias'}
+				}   	
+	    	},
+	    	
+    		comboMunicipioOE: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboMunicipio',
+					extraParams: {codigoProvincia: '{activo.provinciaCodigoOE}'}
 				}
     		},
     		
@@ -1543,6 +1577,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getComboSubtipoActivo',
 					extraParams: {codigoTipoActivo: '{activo.tipoActivoCodigo}'}
+				}
+    		},
+    		
+    		comboSubtipoActivoOE: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboSubtipoActivo',
+					extraParams: {codigoTipoActivo: '{activo.tipoActivoCodigoOE}'}
 				}
     		},
 	    	    		

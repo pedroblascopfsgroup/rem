@@ -32,6 +32,7 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private Integer divHorInscrito;
 	private Integer divHorizontal;
 	private Integer numDepartamento;
+	private Integer tieneAnejosRegistralesInt;
 	// FIXME STRING PARA BORRAR FECHAS
 	private Date fechaCfo;
 	private Integer gestionHre;
@@ -766,5 +767,11 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	public void setFechaTituloAnterior(Date fechaTituloAnterior) {
 		this.fechaTituloAnterior = fechaTituloAnterior;
 	}
-
+	public Integer getTieneAnejosRegistralesInt() {
+		return tieneAnejosRegistralesInt;
+	}
+	public void setTieneAnejosRegistralesInt(Integer tieneAnejosRegistralesInt) {
+		this.tieneAnejosRegistralesInt = tieneAnejosRegistralesInt;
+	}
+	
 }

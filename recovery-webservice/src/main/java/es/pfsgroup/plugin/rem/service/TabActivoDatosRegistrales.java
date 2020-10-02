@@ -12,7 +12,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.runtime.directive.Foreach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -56,7 +55,6 @@ import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoTramitacionTitulo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoTramitacionTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
@@ -70,6 +68,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 
@@ -444,6 +443,16 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			
 			}
 		}	
+		
+		if(activo.getInfoRegistral() != null && activo.getInfoRegistral().getTieneAnejosRegistrales() != null){
+			DDSinSiNo tiene = activo.getInfoRegistral().getTieneAnejosRegistrales();
+			if (DDSinSiNo.CODIGO_SI.equals(tiene.getCodigo())) {
+				activoDto.setTieneAnejosRegistralesInt(1);
+			} else {
+				activoDto.setTieneAnejosRegistralesInt(0);
+			}
+		}
+		
 		return activoDto;
 	}
 
@@ -561,6 +570,19 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 					activo.getInfoRegistral().getInfoRegistralBien().setProvincia(provincia);
 				}
 				
+			}
+			
+			if(dto.getTieneAnejosRegistralesInt() != null){
+				String anejos = null;
+				if (dto.getTieneAnejosRegistralesInt() == 1) {
+					anejos = DDSinSiNo.CODIGO_SI;
+				} else {
+					anejos = DDSinSiNo.CODIGO_NO;
+				}
+				
+				Filter filtroAjeos = genericDao.createFilter(FilterType.EQUALS, "codigo", anejos);
+				DDSinSiNo tieneAnejos = genericDao.get(DDSinSiNo.class, filtroAjeos);
+				activo.getInfoRegistral().setTieneAnejosRegistrales(tieneAnejos);
 			}
 			
 			activo.getInfoRegistral().setInfoRegistralBien((genericDao.save(NMBInformacionRegistralBien.class, activo.getInfoRegistral().getInfoRegistralBien())));

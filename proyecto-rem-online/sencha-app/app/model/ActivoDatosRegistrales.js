@@ -514,6 +514,9 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
 	    				}
     				}
     			}
+    		},
+    		{
+    			name: 'tieneAnejosRegistralesInt'
     		}
     ],
     

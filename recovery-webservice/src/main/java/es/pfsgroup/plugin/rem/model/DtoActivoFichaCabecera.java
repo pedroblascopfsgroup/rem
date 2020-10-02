@@ -30,29 +30,47 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String portal;
 	private String escalera;
 	private String puerta;
+	private String codPostalOE;
+	private String escaleraOE;
+	private String puertaOE;
 	private String barrio;
 	private String piso;
+	private String pisoOE;
 	private String numeroDomicilio;
 	private String nombreVia;
 	private String municipioCodigo;
+	private String numeroDomicilioOE;
+	private String nombreViaOE;
+	private String municipioCodigoOE;
 	private String inferiorMunicipioCodigo;
 	private String inferiorMunicipioDescripcion;
 	private String municipioDescripcion;
 	private String provinciaCodigo;
 	private String provinciaDescripcion;
+	private String municipioDescripcionOE;
+	private String provinciaCodigoOE;
+	private String provinciaDescripcionOE;
 	private String paisCodigo;
 	private String tipoViaCodigo;
 	private String tipoViaDescripcion;
+	private String tipoViaCodigoOE;
+	private String tipoViaDescripcionOE;
 	private String tipoActivoCodigo;
 	private String subtipoActivoCodigo;
 	private String tipoActivoDescripcion;
 	private String subtipoActivoDescripcion;
+	private String tipoActivoCodigoOE;
+	private String subtipoActivoCodigoOE;
+	private String tipoActivoDescripcionOE;
+	private String subtipoActivoDescripcionOE;
 	private String tipoActivoCodigoBde;
 	private String subtipoActivoCodigoBde;
 	private String tipoActivoDescripcionBde;
 	private String subtipoActivoDescripcionBde;
 	private String latitud;
 	private String longitud;
+	private String latitudOE;
+	private String longitudOE;
 	private String entidadPropietaria;
 	private String entidadPropietariaCodigo;
 	private String entidadPropietariaDescripcion;
@@ -2092,6 +2110,149 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setNumActivoDivarian(String numActivoDivarian) {
 		this.numActivoDivarian = numActivoDivarian;
 	}
-	
+
+	public String getTipoActivoCodigoOE() {
+		return tipoActivoCodigoOE;
+	}
+
+	public void setTipoActivoCodigoOE(String tipoActivoCodigoOE) {
+		this.tipoActivoCodigoOE = tipoActivoCodigoOE;
+	}
+
+	public String getSubtipoActivoCodigoOE() {
+		return subtipoActivoCodigoOE;
+	}
+
+	public void setSubtipoActivoCodigoOE(String subtipoActivoCodigoOE) {
+		this.subtipoActivoCodigoOE = subtipoActivoCodigoOE;
+	}
+
+	public String getTipoActivoDescripcionOE() {
+		return tipoActivoDescripcionOE;
+	}
+
+	public void setTipoActivoDescripcionOE(String tipoActivoDescripcionOE) {
+		this.tipoActivoDescripcionOE = tipoActivoDescripcionOE;
+	}
+
+	public String getSubtipoActivoDescripcionOE() {
+		return subtipoActivoDescripcionOE;
+	}
+
+	public void setSubtipoActivoDescripcionOE(String subtipoActivoDescripcionOE) {
+		this.subtipoActivoDescripcionOE = subtipoActivoDescripcionOE;
+	}
+
+	public String getCodPostalOE() {
+		return codPostalOE;
+	}
+
+	public void setCodPostalOE(String codPostalOE) {
+		this.codPostalOE = codPostalOE;
+	}
+
+	public String getEscaleraOE() {
+		return escaleraOE;
+	}
+
+	public void setEscaleraOE(String escaleraOE) {
+		this.escaleraOE = escaleraOE;
+	}
+
+	public String getPuertaOE() {
+		return puertaOE;
+	}
+
+	public void setPuertaOE(String puertaOE) {
+		this.puertaOE = puertaOE;
+	}
+
+	public String getPisoOE() {
+		return pisoOE;
+	}
+
+	public void setPisoOE(String pisoOE) {
+		this.pisoOE = pisoOE;
+	}
+
+	public String getNumeroDomicilioOE() {
+		return numeroDomicilioOE;
+	}
+
+	public void setNumeroDomicilioOE(String numeroDomicilioOE) {
+		this.numeroDomicilioOE = numeroDomicilioOE;
+	}
+
+	public String getNombreViaOE() {
+		return nombreViaOE;
+	}
+
+	public void setNombreViaOE(String nombreViaOE) {
+		this.nombreViaOE = nombreViaOE;
+	}
+
+	public String getMunicipioCodigoOE() {
+		return municipioCodigoOE;
+	}
+
+	public void setMunicipioCodigoOE(String municipioCodigoOE) {
+		this.municipioCodigoOE = municipioCodigoOE;
+	}
+
+	public String getMunicipioDescripcionOE() {
+		return municipioDescripcionOE;
+	}
+
+	public void setMunicipioDescripcionOE(String municipioDescripcionOE) {
+		this.municipioDescripcionOE = municipioDescripcionOE;
+	}
+
+	public String getProvinciaCodigoOE() {
+		return provinciaCodigoOE;
+	}
+
+	public void setProvinciaCodigoOE(String provinciaCodigoOE) {
+		this.provinciaCodigoOE = provinciaCodigoOE;
+	}
+
+	public String getProvinciaDescripcionOE() {
+		return provinciaDescripcionOE;
+	}
+
+	public void setProvinciaDescripcionOE(String provinciaDescripcionOE) {
+		this.provinciaDescripcionOE = provinciaDescripcionOE;
+	}
+
+	public String getTipoViaCodigoOE() {
+		return tipoViaCodigoOE;
+	}
+
+	public void setTipoViaCodigoOE(String tipoViaCodigoOE) {
+		this.tipoViaCodigoOE = tipoViaCodigoOE;
+	}
+
+	public String getTipoViaDescripcionOE() {
+		return tipoViaDescripcionOE;
+	}
+
+	public void setTipoViaDescripcionOE(String tipoViaDescripcionOE) {
+		this.tipoViaDescripcionOE = tipoViaDescripcionOE;
+	}
+
+	public String getLatitudOE() {
+		return latitudOE;
+	}
+
+	public void setLatitudOE(String latitudOE) {
+		this.latitudOE = latitudOE;
+	}
+
+	public String getLongitudOE() {
+		return longitudOE;
+	}
+
+	public void setLongitudOE(String longitudOE) {
+		this.longitudOE = longitudOE;
+	}
 	
 }

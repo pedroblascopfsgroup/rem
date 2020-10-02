@@ -4783,10 +4783,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				"SELECT VALIDACION FROM CDC_CALIDAD_DATOS_CONFIG "
 				+ "WHERE COD_CAMPO = '" + codCampo + "' AND BORRADO = 0"
 		);			
-	}
-	
-	
-	
+	}	
 
 	@Override
 	public Boolean esTipoRegimenProteccion(String codCampo) {
@@ -4843,7 +4840,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	
-
 	@Override
 	public Boolean existeActivoParaCMBBVA(String codCampo) {
 		if(Checks.esNulo(codCampo) || !StringUtils.isNumeric(codCampo)) {
@@ -4886,6 +4882,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			  AND act.borrado       = 0");
 		return !"0".equals(resultado);
 	}
+
 	
 	@Override
 	public Boolean esActivoIncluidoPerimetroParaCMBBVA(String numActivo){
@@ -4915,6 +4912,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 	
+	
 	@Override
 	public Boolean codigoComercializacionIncorrecto(String codCampo) {
 		if(Checks.esNulo(codCampo) || !StringUtils.isAlphanumeric(codCampo)) {
@@ -4924,7 +4922,67 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				"SELECT COUNT(1) FROM REM01.DD_TCO_TIPO_COMERCIALIZACION "
 						+ "WHERE DD_TCO_CODIGO = '" + codCampo + "'AND DD_TCO_CODIGO <> '04' AND BORRADO = 0 "
 		);
-		
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esOfertaBBVA(String numOferta) {
+		if (Checks.esNulo(numOferta) || !StringUtils.isNumeric(numOferta)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM OFR_OFERTAS OFR "
+				+ "JOIN ACT_OFR AO ON AO.OFR_ID = OFR.OFR_ID "
+				+ "JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AO.ACT_ID "
+				+ "JOIN DD_CRA_CARTERA CRA ON ACT.DD_CRA_ID = CRA.DD_CRA_ID "
+				+ "WHERE OFR_NUM_OFERTA = "+numOferta+" "
+				+ "AND DD_CRA_CODIGO = '16' "
+				+ "AND OFR.BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esOfertaVendida(String numOferta) {
+		if (Checks.esNulo(numOferta) || !StringUtils.isNumeric(numOferta)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM OFR_OFERTAS OFR "
+				+ "JOIN ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID "
+				+ "JOIN DD_EEC_EST_EXP_COMERCIAL EEC ON EEC.DD_EEC_ID = ECO.DD_EEC_ID "
+				+ "WHERE OFR_NUM_OFERTA = "+numOferta+" "
+				+ "AND EEC.DD_EEC_CODIGO = '08' "
+				+ "AND OFR.BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+
+	@Override
+	public Boolean esOfertaAnulada(String numOferta) {
+		if (Checks.esNulo(numOferta) || !StringUtils.isNumeric(numOferta)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM OFR_OFERTAS OFR "
+				+ "JOIN DD_EOF_ESTADOS_OFERTA EOF ON EOF.DD_EOF_ID = OFR.DD_EOF_ID "
+				+ "WHERE OFR_NUM_OFERTA = "+numOferta+" "
+				+ "AND EOF.DD_EOF_CODIGO = '02' "
+				+ "AND OFR.BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean esOfertaErronea(String numOferta) {
+		if (Checks.esNulo(numOferta) || !StringUtils.isNumeric(numOferta)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM OFR_OFERTAS OFR "
+				+ "JOIN ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID "
+				+" JOIN DD_EEC_EST_EXP_COMERCIAL EEC ON EEC.DD_EEC_ID = ECO.DD_EEC_ID "
+				+ "WHERE OFR_NUM_OFERTA = "+numOferta+" "
+				+ "AND EEC.DD_EEC_CODIGO = '34' "
+				+ "AND OFR.BORRADO = 0");
+
 		return !"0".equals(resultado);
 	}
 	

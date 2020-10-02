@@ -50,7 +50,7 @@ DECLARE
       T_TIPO_DATA('011','Estado físico del activo','ACT_ACTIVO','DD_EAC_ID','ACT_ID'),
       T_TIPO_DATA('012','Riesgo de ocupacion','ACT_SPS_SIT_POSESORIA','SPS_RIESGO_OCUPACION','ACT_ID'),
       T_TIPO_DATA('013','Puerta antiokupa','ACT_SPS_SIT_POSESORIA','SPS_ACC_ANTIOCUPA','ACT_ID'),
-      T_TIPO_DATA('014','Vigilancia','ACT_ZCO_ZONA_COMUN','ZCO_CONSERJE_VIGILANCIA','ACT_ID'),
+      T_TIPO_DATA('014','Vigilancia','ACT_ZCO_ZONA_COMUN','ZCO_CONSERJE_VIGILANCIA','ICO_ID'),
       T_TIPO_DATA('015','Alarma',NULL,NULL,NULL),
       T_TIPO_DATA('016','Ascensor','ACT_EDI_EDIFICIO','EDI_ASCENSOR','ACT_ID'),
       T_TIPO_DATA('017','Estado de inscripcion','ACT_TIT_TITULO','DD_ETI_ID','ACT_ID'),

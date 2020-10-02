@@ -3911,8 +3911,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		List<DtoTarifaTrabajo> tarifas = new ArrayList<DtoTarifaTrabajo>();
 
 		for (TrabajoConfiguracionTarifa trabajoTarifa : lista) {
-			BigDecimal precioUnitario = new BigDecimal(trabajoTarifa.getPrecioUnitario().toString());
-			BigDecimal precioUnitarioCliente = null;
+			BigDecimal precioUnitario = new BigDecimal("0.0");
+			if(trabajoTarifa.getPrecioUnitario() != null){
+				precioUnitario = new BigDecimal(trabajoTarifa.getPrecioUnitario().toString());
+			}
+			BigDecimal precioUnitarioCliente = new BigDecimal("0.0");
 			if(trabajoTarifa.getPrecioUnitarioCliente() != null) {
 				precioUnitarioCliente = new BigDecimal(trabajoTarifa.getPrecioUnitarioCliente().toString());
 			}

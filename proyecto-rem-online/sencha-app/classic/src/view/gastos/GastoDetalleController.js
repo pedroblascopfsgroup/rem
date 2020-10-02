@@ -1928,6 +1928,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var disabledOpExenta = false;
     	var cuota = 0;
     	
+    	if(Ext.isEmpty(baseSujeta)){
+    		formulario.findField('baseSujeta').setValue(0);
+    	}
+    	if(Ext.isEmpty(tipoImpositivo)){
+    		formulario.findField('tipoImpositivo').setValue(0);
+    	}
+    	
     	if(operacionExenta && !operacionExentaRenuncia){
     		disabledOpExenta = true;
     	}
@@ -1977,28 +1984,44 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		
 		if(baseSujeta != null){
 			importeTotal = importeTotal + baseSujeta;
+		}else{
+			formulario.findField('baseSujeta').setValue(0);
 		}
 		if(baseNoSujeta != null){
 			importeTotal = importeTotal + baseNoSujeta;
+		}else{
+			formulario.findField('baseNoSujeta').setValue(0);
 		}
 		if(recargo != null){
 			importeTotal = importeTotal + recargo;
+		}else{
+			formulario.findField('recargo').setValue(0);
 		}
 		if(interes != null){
 			importeTotal = importeTotal + interes;
+		}else{
+			formulario.findField('interes').setValue(0);
 		}
 		if(costas != null){
 			importeTotal = importeTotal + costas;
+		}else{
+			formulario.findField('costas').setValue(0);
 		}
 		if(otros != null){
 			importeTotal = importeTotal + otros;
+		}else{
+			formulario.findField('otros').setValue(0);
 		}
 		if(provSupl != null){
 			importeTotal = importeTotal + provSupl;
+		}else{
+			formulario.findField('provSupl').setValue(0);
 		}
 
 		if(cuota != null && (!operacionExentaImp || (operacionExentaImp && operacionExentaRenuncia))){
 			importeTotal = importeTotal + cuota;
+		}else{
+			formulario.findField('cuota').setValue(0);
 		}
 		
 		return importeTotal;

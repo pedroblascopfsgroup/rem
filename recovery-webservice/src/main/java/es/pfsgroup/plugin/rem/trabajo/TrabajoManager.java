@@ -441,6 +441,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			ActivoTramite activoTramite = activoTramites.get(0);
 			tareaActivo = tareaActivoApi.getUltimaTareaActivoByIdTramite(activoTramite.getId());
 		}
+		
+		if(!Checks.esNulo(dtoTrabajo.getResolucionComiteCodigo()) && (DDAcoAprobacionComite.CODIGO_APROBADO.equals(dtoTrabajo.getResolucionComiteCodigo()) 
+				|| DDAcoAprobacionComite.CODIGO_RECHAZADO.equals(dtoTrabajo.getResolucionComiteCodigo()))) {
+			if(Checks.esNulo(dtoTrabajo.getFechaResolucionComite()) || Checks.esNulo(dtoTrabajo.getResolucionComiteId())) {
+				throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.comite.aprobado"));
+			}
+		}
 
 		
 		if(!Checks.esNulo(dtoTrabajo.getResolucionComiteCodigo()) && (DDAcoAprobacionComite.CODIGO_APROBADO.equals(dtoTrabajo.getResolucionComiteCodigo()) 
@@ -3904,8 +3911,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		List<DtoTarifaTrabajo> tarifas = new ArrayList<DtoTarifaTrabajo>();
 
 		for (TrabajoConfiguracionTarifa trabajoTarifa : lista) {
-			BigDecimal precioUnitario = new BigDecimal(trabajoTarifa.getPrecioUnitario().toString());
-			BigDecimal precioUnitarioCliente = null;
+			BigDecimal precioUnitario = new BigDecimal("0.0");
+			if(trabajoTarifa.getPrecioUnitario() != null){
+				precioUnitario = new BigDecimal(trabajoTarifa.getPrecioUnitario().toString());
+			}
+			BigDecimal precioUnitarioCliente = new BigDecimal("0.0");
 			if(trabajoTarifa.getPrecioUnitarioCliente() != null) {
 				precioUnitarioCliente = new BigDecimal(trabajoTarifa.getPrecioUnitarioCliente().toString());
 			}
@@ -5643,6 +5653,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
  			for (DerivacionEstadoTrabajo derivacionEstadoTrabajo : estados) {
  				listadoEstados.add(derivacionEstadoTrabajo.getEstadoFinal());
 			}
+ 			if(trabajo.getEstado().getCodigo().equals(DDEstadoTrabajo.ESTADO_VALIDADO)) {
+ 				listadoEstados = new ArrayList<DDEstadoTrabajo>();
+ 				listadoEstados.add(trabajo.getEstado());
+ 				Filter filtroCancelado = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.CODIGO_ESTADO_CANCELADO);
+ 				DDEstadoTrabajo estadoCancelado = genericDao.get(DDEstadoTrabajo.class, filtroCancelado);
+ 				listadoEstados.add(estadoCancelado);
+ 			}
+ 			
  		}
  		
 		return listadoEstados;

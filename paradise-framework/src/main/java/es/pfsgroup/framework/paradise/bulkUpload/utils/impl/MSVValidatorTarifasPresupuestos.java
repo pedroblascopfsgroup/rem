@@ -222,7 +222,7 @@ public class MSVValidatorTarifasPresupuestos extends MSVExcelValidatorAbstract {
 			}
 
 		} catch (Exception e) {
-			mapaErrores.put("ERROR EN LA FILA" + fila + ": " +e.getMessage(), new ArrayList<Integer>(Arrays.asList(fila)));
+			mapaErrores.put(e.getMessage(), new ArrayList<Integer>(Arrays.asList(fila)));
 			logger.error(e.getMessage());
 		}
 

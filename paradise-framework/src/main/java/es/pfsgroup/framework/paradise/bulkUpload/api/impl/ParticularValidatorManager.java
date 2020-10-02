@@ -5188,9 +5188,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			if ( tarifaId != null) {
 				 query = "SELECT COUNT(1) " + 
 							"FROM ACT_CFT_CONFIG_TARIFA CONFIG_TARIFA " + 
-							"WHERE  DD_TTR_ID   = "   + resultSet[0]
-							+ " AND DD_STR_ID   = "   + resultSet[1]
-							+ " AND DD_CRA_ID   = "   + resultSet[2] 
+							//"WHERE  DD_TTR_ID   = "   + resultSet[0]
+							"WHERE DD_CRA_ID   = "    + resultSet[2] 
 							+ " AND DD_TTF_ID   = "	  + tarifaId;
 					String resultado = rawDao.getExecuteSQL(query);
 					return Boolean.TRUE.equals(!"0".equals(resultado));
@@ -5459,7 +5458,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = '"+numGasto+"' "
-				+ "AND DD_EGA_ID IN (SELECT DD_EGA_ID FROM DD_EGA_ESTADOS_GASTO WHERE DD_EGA_CODIGO IN('01','12'))");
+				+ "AND DD_EGA_ID IN (SELECT DD_EGA_ID FROM DD_EGA_ESTADOS_GASTO WHERE DD_EGA_CODIGO IN('01','12', '02','08'))");
 
 		return !"0".equals(resultado);
 	}

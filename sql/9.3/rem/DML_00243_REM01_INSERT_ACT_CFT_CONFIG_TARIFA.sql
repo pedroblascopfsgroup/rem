@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20201006
+--## AUTOR=Juan Angel Sánchez
+--## FECHA_CREACION=20201003
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-11161
+--## INCIDENCIA_LINK=HREOS-11427
 --## PRODUCTO=NO
 --##
 --## Finalidad: Actualizar instrucciones
@@ -30,7 +30,7 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 	  V_ID NUMBER(16); -- Vble. auxiliar para almacenar temporalmente el numero de la sequencia.
-	  V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'CFG_TARIFARIO_EXTRA'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+	  V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_CFT_CONFIG_TARIFA'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
@@ -573,11 +573,6 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
 
     -- LOOP para insertar los valores --
-    DBMS_OUTPUT.PUT_LINE('[INFO]: TRUNCAMOS TABLA '||V_TEXT_TABLA);
-    V_SQL := 'TRUNCATE TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA; 
-    EXECUTE IMMEDIATE V_SQL;
-    COMMIT;
-    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN '||V_TEXT_TABLA);
     DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN '||V_TEXT_TABLA);
     FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
       LOOP
@@ -590,25 +585,27 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
           AND PVE_ID = (SELECT PVE_ID FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR WHERE PVE_COD_REM = '''||TRIM(V_TMP_TIPO_DATA(3))||''' AND BORRADO = 0)
           AND DD_TTR_ID = (SELECT DD_TTR_ID FROM '||V_ESQUEMA||'.DD_TTR_TIPO_TRABAJO WHERE DD_TTR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(4))||''' AND BORRADO = 0) 
           AND DD_STR_ID = (SELECT DD_STR_ID FROM '||V_ESQUEMA||'.DD_STR_SUBTIPO_TRABAJO WHERE DD_STR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(5))||''' AND BORRADO = 0)
-          AND DD_TTF_ID = (SELECT DD_TTF_ID FROM '||V_ESQUEMA||'.DD_TTF_TIPO_TARIFA WHERE DD_TTF_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(6))||''' AND BORRADO = 0)';
+          AND DD_TTF_ID = (SELECT DD_TTF_ID FROM '||V_ESQUEMA||'.DD_TTF_TIPO_TARIFA WHERE DD_TTF_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(6))||''' AND BORRADO = 0)
+          AND CFT_TARIFA_PVE = 1';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         IF V_NUM_TABLAS = 1 THEN
           DBMS_OUTPUT.PUT_LINE('[INFO]: El valor '''||TRIM(V_TMP_TIPO_DATA(1))||''', '''||TRIM(V_TMP_TIPO_DATA(2))||''', '''||TRIM(V_TMP_TIPO_DATA(3))||''', '''||TRIM(V_TMP_TIPO_DATA(4))||''', '''||TRIM(V_TMP_TIPO_DATA(5))||''' y '''||TRIM(V_TMP_TIPO_DATA(6))||''' ya existe');
         ELSE
             V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
-              CTF_ID,
+              CFT_ID,
               DD_CRA_ID,
               DD_SCR_ID,
               PVE_ID,
               DD_TTR_ID,
               DD_STR_ID,
               DD_TTF_ID,
-              IMP_EXTRA_PVE,
-              IMP_EXTRA_CLIENTE,
+              CFT_PRECIO_UNITARIO,
+              CFT_PRECIO_UNITARIO_CLIENTE,
               VERSION,
               USUARIOCREAR,
               FECHACREAR,
-              BORRADO
+              BORRADO,
+              CFT_TARIFA_PVE
               ) VALUES (
               '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL,
               (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' AND BORRADO = 0),
@@ -620,9 +617,10 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
               '||TRIM(V_TMP_TIPO_DATA(7))||',
               '||TRIM(V_TMP_TIPO_DATA(8))||',
               0,
-              ''HREOS-11161'',
+              ''HREOS-11427'',
               SYSDATE,
-              0
+              0,
+              1
                         )';
             EXECUTE IMMEDIATE V_MSQL;
             DBMS_OUTPUT.PUT_LINE('[INFO]: Se ha insertado el valor '''||TRIM(V_TMP_TIPO_DATA(1))||''', '''||TRIM(V_TMP_TIPO_DATA(2))||''', '''||TRIM(V_TMP_TIPO_DATA(3))||''', '''||TRIM(V_TMP_TIPO_DATA(4))||''', '''||TRIM(V_TMP_TIPO_DATA(5))||''' y '''||TRIM(V_TMP_TIPO_DATA(6))||'''');

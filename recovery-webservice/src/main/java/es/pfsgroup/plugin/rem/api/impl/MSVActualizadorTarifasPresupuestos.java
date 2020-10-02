@@ -74,10 +74,18 @@ public class MSVActualizadorTarifasPresupuestos extends AbstractMSVActualizador 
 			if (configuracionTarifa != null) {
 				trabajoConfig.setConfigTarifa(configuracionTarifa);
 				trabajoConfig.setTrabajo(trabajo);
+				if(configuracionTarifa.getPrecioUnitario() != null) {
+					trabajoConfig.setPrecioUnitario(configuracionTarifa.getPrecioUnitario());
+				}
+				if(configuracionTarifa.getPrecioUnitarioCliente() != null) {
+					trabajoConfig.setPrecioUnitarioCliente(configuracionTarifa.getPrecioUnitarioCliente());
+				}
+				trabajoConfig.setMedicion(Float.valueOf(unidades));
 				if (unidades != null && !unidades.isEmpty()) {
 					trabajoConfig.setMedicion(Float.parseFloat(unidades));
 				}
-				genericDao.save(ConfiguracionTarifa.class, configuracionTarifa);
+				genericDao.save(TrabajoConfiguracionTarifa.class, trabajoConfig);
+				trabajoApi.actualizarImporteTotalTrabajo(trabajo.getId());
 			}
 
 		} else if (TIPO_PRESUPUESTO.equals(tipoRegistro)) {
@@ -102,6 +110,7 @@ public class MSVActualizadorTarifasPresupuestos extends AbstractMSVActualizador 
 					presupuestoTrabajo.setImporte(Float.parseFloat(importe));
 				}
 				genericDao.save(PresupuestoTrabajo.class, presupuestoTrabajo);
+				trabajoApi.actualizarImporteTotalTrabajo(trabajo.getId());
 			}
 
 		}
@@ -111,17 +120,17 @@ public class MSVActualizadorTarifasPresupuestos extends AbstractMSVActualizador 
 
 	private ConfiguracionTarifa getConfigTarifaByCodigoTarifaAndNumTrabajo(String codTarifa, Trabajo trabajo) {
 		Long idCartera = null;
-		Long idSubtipoTrabajo = null;
-		Long idTipoTrabajo = null;
+		//Long idSubtipoTrabajo = null;
+		//Long idTipoTrabajo = null;
 		Long idTipoTarifa = null;
 
-		if (trabajo.getTipoTrabajo() != null) {
-			idTipoTrabajo = trabajo.getTipoTrabajo().getId();
-
-			if (trabajo.getSubtipoTrabajo() != null) {
-				idSubtipoTrabajo = trabajo.getSubtipoTrabajo().getId();
-			}
-		}
+//		if (trabajo.getTipoTrabajo() != null) {
+//			idTipoTrabajo = trabajo.getTipoTrabajo().getId();
+//
+//			if (trabajo.getSubtipoTrabajo() != null) {
+//				idSubtipoTrabajo = trabajo.getSubtipoTrabajo().getId();
+//			}
+//		}
 
 		DDTipoTarifa tipoTarifa = genericDao.get(DDTipoTarifa.class,
 				genericDao.createFilter(FilterType.EQUALS, "codigo", codTarifa));
@@ -139,19 +148,19 @@ public class MSVActualizadorTarifasPresupuestos extends AbstractMSVActualizador 
 			}
 		}
 
-		return getConfiguracionTarifa(idCartera, idTipoTrabajo, idSubtipoTrabajo, idTipoTarifa);
+		return getConfiguracionTarifa(idTipoTarifa, idCartera);//, idTipoTrabajo, idSubtipoTrabajo);
 	}
 
-	private ConfiguracionTarifa getConfiguracionTarifa(Long idTipoTarifa, Long idCartera, Long idTipoTrabajo,
-			Long idSubtipoTrabajo) {
+	private ConfiguracionTarifa getConfiguracionTarifa(Long idTipoTarifa, Long idCartera) {//, Long idTipoTrabajo,
+			//Long idSubtipoTrabajo) {
 
-		if (idCartera != null && idTipoTrabajo != null && idSubtipoTrabajo != null && idTipoTarifa != null) {
+		if (idCartera != null && idTipoTarifa != null) {
 			Filter fCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.id", idCartera);
 			Filter fTipoTarifa = genericDao.createFilter(FilterType.EQUALS, "tipoTarifa.id", idTipoTarifa);
-			Filter fTipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.id", idTipoTrabajo);
-			Filter fSubtipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "subtipoTrabajo.id", idSubtipoTrabajo);
+//			Filter fTipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.id", idTipoTrabajo);
+//			Filter fSubtipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "subtipoTrabajo.id", idSubtipoTrabajo);
 
-			return genericDao.get(ConfiguracionTarifa.class, fCartera, fTipoTarifa, fTipoTrabajo, fSubtipoTrabajo);
+			return genericDao.get(ConfiguracionTarifa.class, fCartera, fTipoTarifa);//, fTipoTrabajo, fSubtipoTrabajo);
 		}
 		return null;
 	}

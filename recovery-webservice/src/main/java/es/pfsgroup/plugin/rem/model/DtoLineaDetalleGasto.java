@@ -20,21 +20,21 @@ public class DtoLineaDetalleGasto extends WebDto {
 	 
 	 private String subtipoGasto;  
 
-	 private Double baseSujeta;  
+	 private String baseSujeta;  
 
-	 private Double baseNoSujeta;  
+	 private String baseNoSujeta;  
 
-	 private Double recargo;  
+	 private String recargo;  
 
 	 private String tipoRecargo;  
 
-	 private Double interes;  
+	 private String interes;  
 
-	 private Double costas;  
+	 private String costas;  
 
-	 private Double otros;  
+	 private String otros;  
 
-	 private Double provSupl;  
+	 private String provSupl;  
 
 	 private String tipoImpuesto;  
 
@@ -42,13 +42,13 @@ public class DtoLineaDetalleGasto extends WebDto {
 
 	 private Boolean esRenunciaExenta;  
 
-	 private Double tipoImpositivo;  
+	 private String tipoImpositivo;  
 
-	 private Double cuota;  
+	 private String cuota;  
 	 
 	 private Boolean optaCriterio;
 
-	 private Double importeTotal;  
+	 private String importeTotal;  
 
 	 private String ccBase;  
 
@@ -97,7 +97,6 @@ public class DtoLineaDetalleGasto extends WebDto {
 	 private String subPartidas;
 	 
 	 private Boolean tieneCuentaContable;
-	 
 
 	public Long getId() {
 		return id;
@@ -106,7 +105,7 @@ public class DtoLineaDetalleGasto extends WebDto {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
 	public Long getIdGasto() {
 		return idGasto;
 	}
@@ -123,27 +122,27 @@ public class DtoLineaDetalleGasto extends WebDto {
 		this.subtipoGasto = subtipoGasto;
 	}
 
-	public Double getBaseSujeta() {
+	public String getBaseSujeta() {
 		return baseSujeta;
 	}
 
-	public void setBaseSujeta(Double baseSujeta) {
+	public void setBaseSujeta(String baseSujeta) {
 		this.baseSujeta = baseSujeta;
 	}
 
-	public Double getBaseNoSujeta() {
+	public String getBaseNoSujeta() {
 		return baseNoSujeta;
 	}
 
-	public void setBaseNoSujeta(Double baseNoSujeta) {
+	public void setBaseNoSujeta(String baseNoSujeta) {
 		this.baseNoSujeta = baseNoSujeta;
 	}
 
-	public Double getRecargo() {
+	public String getRecargo() {
 		return recargo;
 	}
 
-	public void setRecargo(Double recargo) {
+	public void setRecargo(String recargo) {
 		this.recargo = recargo;
 	}
 
@@ -155,35 +154,35 @@ public class DtoLineaDetalleGasto extends WebDto {
 		this.tipoRecargo = tipoRecargo;
 	}
 
-	public Double getInteres() {
+	public String getInteres() {
 		return interes;
 	}
 
-	public void setInteres(Double interes) {
+	public void setInteres(String interes) {
 		this.interes = interes;
 	}
 
-	public Double getCostas() {
+	public String getCostas() {
 		return costas;
 	}
 
-	public void setCostas(Double costas) {
+	public void setCostas(String costas) {
 		this.costas = costas;
 	}
 
-	public Double getOtros() {
+	public String getOtros() {
 		return otros;
 	}
 
-	public void setOtros(Double otros) {
+	public void setOtros(String otros) {
 		this.otros = otros;
 	}
 
-	public Double getProvSupl() {
+	public String getProvSupl() {
 		return provSupl;
 	}
 
-	public void setProvSupl(Double provSupl) {
+	public void setProvSupl(String provSupl) {
 		this.provSupl = provSupl;
 	}
 
@@ -211,19 +210,19 @@ public class DtoLineaDetalleGasto extends WebDto {
 		this.esRenunciaExenta = esRenunciaExenta;
 	}
 
-	public Double getTipoImpositivo() {
+	public String getTipoImpositivo() {
 		return tipoImpositivo;
 	}
 
-	public void setTipoImpositivo(Double tipoImpositivo) {
+	public void setTipoImpositivo(String tipoImpositivo) {
 		this.tipoImpositivo = tipoImpositivo;
 	}
 
-	public Double getCuota() {
+	public String getCuota() {
 		return cuota;
 	}
 
-	public void setCuota(Double cuota) {
+	public void setCuota(String cuota) {
 		this.cuota = cuota;
 	}
 
@@ -235,11 +234,11 @@ public class DtoLineaDetalleGasto extends WebDto {
 		this.optaCriterio = optaCriterio;
 	}
 
-	public Double getImporteTotal() {
+	public String getImporteTotal() {
 		return importeTotal;
 	}
 
-	public void setImporteTotal(Double importeTotal) {
+	public void setImporteTotal(String importeTotal) {
 		this.importeTotal = importeTotal;
 	}
 
@@ -434,6 +433,5 @@ public class DtoLineaDetalleGasto extends WebDto {
 	public void setTieneCuentaContable(Boolean tieneCuentaContable) {
 		this.tieneCuentaContable = tieneCuentaContable;
 	}
-
-   	
+	 
 }

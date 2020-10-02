@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import es.capgemini.devon.hibernate.pagination.PageHibernate;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
@@ -51,6 +52,7 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	
 	protected static final Log logger = LogFactory.getLog(TrabajoDaoImpl.class);
 	private static final String NIE_HAYA = "A86744349";
+	private static final String PERFIL_PROV = "HAYAPROV";
 	
 	
 	@Override
@@ -233,7 +235,7 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	}
 	
 	private Page getSeleccionTarifasTrabajoConSubcartera(DtoGestionEconomicaTrabajo filtro, Usuario usuarioLogado) {
-
+	    Integer tarifaPve = 0;
 		HQLBuilder hb = new HQLBuilder(" from ConfiguracionTarifa cfgTar");
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "cfgTar.tipoTrabajo.codigo", filtro.getTipoTrabajoCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "cfgTar.subtipoTrabajo.codigo", filtro.getSubtipoTrabajoCodigo());
@@ -242,12 +244,20 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "cfgTar.tipoTarifa.codigo", filtro.getCodigoTarifaTrabajo());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "cfgTar.tipoTarifa.descripcion", filtro.getDescripcionTarifaTrabajo());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "cfgTar.subcartera.codigo", filtro.getSubcarteraCodigo());
-
+		
+		for (Perfil prov : usuarioLogado.getPerfiles()) {
+			if(prov.getCodigo().equals(PERFIL_PROV)) {
+				tarifaPve = 1;
+				break;
+			}
+		}
+		
+		HQLBuilder.addFiltroIgualQue(hb, "cfgTar.tarifaPve", tarifaPve);
 		return HibernateQueryUtils.page(this, hb, filtro);
 	}
 	
 	private Page getSeleccionTarifasTrabajoSinSubcartera(DtoGestionEconomicaTrabajo filtro, Usuario usuarioLogado) {
-
+		Integer tarifaPve = 0;
 		HQLBuilder hb = new HQLBuilder(" from ConfiguracionTarifa cfgTar");
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "cfgTar.tipoTrabajo.codigo", filtro.getTipoTrabajoCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "cfgTar.subtipoTrabajo.codigo", filtro.getSubtipoTrabajoCodigo());
@@ -256,6 +266,14 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "cfgTar.tipoTarifa.codigo", filtro.getCodigoTarifaTrabajo());
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "cfgTar.tipoTarifa.descripcion", filtro.getDescripcionTarifaTrabajo());
 
+		for (Perfil prov : usuarioLogado.getPerfiles()) {
+			if(prov.getCodigo().equals(PERFIL_PROV)) {
+				tarifaPve = 1;
+				break;
+			}
+		}
+		
+		HQLBuilder.addFiltroIgualQue(hb, "cfgTar.tarifaPve", tarifaPve);
 		return HibernateQueryUtils.page(this, hb, filtro);
 	}
 	

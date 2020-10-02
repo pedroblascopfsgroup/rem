@@ -1518,7 +1518,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 	
 	@Override
-	public boolean existeactivoIdHAYA(Long idActivo) {
+	public boolean existeactivoIdHAYA(Long idActivo) { 
 		String sql = "          SELECT count(1)  " +
 				"				FROM REM01.ACT_ACTIVO  " +
 				"				WHERE ACT_NUM_ACTIVO = "+ idActivo +
@@ -1532,7 +1532,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 	
 	@Override
-	public boolean activoPerteneceABBVAAndCERBERUS(Long idActivo) {
+	public boolean activoPerteneceABBVAAndCERBERUS(Long idActivo) { 
 		String sql = "          SELECT count(1)  " +
 				"				FROM REM01.ACT_ACTIVO  " +
 				"				WHERE ACT_NUM_ACTIVO = "+ idActivo +
@@ -1547,8 +1547,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 	
 	@Override
-	public boolean activoEstadoVendido(Long idActivo) {
-		String sql = "          SELECT count(1)  " +
+	public boolean activoEstadoVendido(Long idActivo) { 
+		String sql = "          SELECT count(1)  " + 
 				"				FROM REM01.ACT_ACTIVO  " +
 				"				WHERE ACT_NUM_ACTIVO = "+ idActivo +
 				"				AND DD_SCM_ID IN ('5')		 "+
@@ -1564,7 +1564,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 	
 	@Override
-	public boolean activoFueraPerimetroHAYA(Long idActivo) {
+	public boolean activoFueraPerimetroHAYA(Long idActivo) { 
 		String sql = "          SELECT count(1)  " +
 				"				FROM REM01.ACT_ACTIVO ACT  " +
 				"				INNER JOIN ACT_PAC_PERIMETRO_ACTIVO PAC  on PAC.ACT_ID=ACT.ACT_ID"+

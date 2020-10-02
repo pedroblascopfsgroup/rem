@@ -1493,10 +1493,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 						Activo activoOrigenHRE = activoApi.getByNumActivo(dto.getIdOrigenHre());
 						
 						
-						boolean isOrigenHRE = !activoDao.existeactivoIdHAYA(dto.getIdOrigenHre());
-						boolean isVendido = activoDao.activoEstadoVendido(dto.getIdOrigenHre());
-						boolean isCarteraBBVACERBERUS = !activoDao.activoPerteneceABBVAAndCERBERUS(dto.getIdOrigenHre());
-						boolean isFueraPerimetro = activoDao.activoFueraPerimetroHAYA(dto.getIdOrigenHre());
+						boolean isOrigenHRE = !activoDao.existeactivoIdHAYA(dto.getIdOrigenHre()); 
+						boolean isVendido = activoDao.activoEstadoVendido(dto.getIdOrigenHre()); 
+						boolean isCarteraBBVACERBERUS = !activoDao.activoPerteneceABBVAAndCERBERUS(dto.getIdOrigenHre()); 
+						boolean isFueraPerimetro = activoDao.activoFueraPerimetroHAYA(dto.getIdOrigenHre()); 
 												
 						if(isOrigenHRE) {
 							throw new JsonViewerException(messageServices.getMessage(ID_HAYA_NO_EXISTE));

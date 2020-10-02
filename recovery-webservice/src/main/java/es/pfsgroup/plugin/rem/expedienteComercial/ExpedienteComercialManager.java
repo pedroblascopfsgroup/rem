@@ -98,6 +98,7 @@ import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.api.TramitacionOfertasApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.bulkAdvisoryNote.dao.BulkOfertaDao;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
@@ -351,6 +352,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Autowired
 	private BulkOfertaDao bulkOfertaDao;
+	
+	@Autowired
+	private TramitacionOfertasApi tramitacionOfertasManager;
 
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -1047,7 +1051,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (!Checks.esNulo(listaOfertasLBK) && !listaOfertasLBK.isEmpty()) {
 			ofertaApi.calculoComiteLBK(oferta.getId(), null);
 		}
-				
 		
 		if (!Checks.esNulo(dto.getTipoOfertaCodigo())) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoOfertaCodigo());
@@ -1288,6 +1291,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if ((!Checks.esNulo(dto.getNumVisita()) && ((!Checks.esNulo(visitaOferta) && Long.parseLong(dto.getNumVisita()) != visitaOferta.getNumVisitaRem()) || Checks.esNulo(visitaOferta)))
 				|| !Checks.esNulo(dto.getImporteOferta())) {
 			this.actualizarGastosExpediente(expedienteComercial, oferta);
+		}
+		
+		if (dto.getImporteOferta() != null && DDCartera.CODIGO_CARTERA_BBVA.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", tramitacionOfertasManager.calcularComiteBBVA(oferta));
+			DDComiteSancion comite = genericDao.get(DDComiteSancion.class, filtro);
+			expedienteComercial.setComitePropuesto(comite);
+			expedienteComercial.setComiteSancion(comite);
+			genericDao.save(ExpedienteComercial.class, expedienteComercial);
 		}
 
 		return true;
@@ -2283,10 +2294,65 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public DtoPage getActivosExpedienteVista(Long idExpediente) {
-		List<VListadoActivosExpediente> listadoActivos = genericDao.getList(VListadoActivosExpediente.class,
+		List<VListadoActivosExpediente> listadoActivos;
+		List<VListadoActivosExpedienteBBVA> listadoActivosBbva;
+		
+		if (DDCartera.CODIGO_CARTERA_BBVA.equals(getCodigoCarteraExpediente(idExpediente))) {
+			listadoActivosBbva = genericDao.getList(VListadoActivosExpedienteBBVA.class,
+					genericDao.createFilter(FilterType.EQUALS, "idExpediente", idExpediente));
+			
+			return new DtoPage(listadoActivosBbva, listadoActivosBbva.size());
+		} else {
+			listadoActivos = genericDao.getList(VListadoActivosExpediente.class,
 				genericDao.createFilter(FilterType.EQUALS, "idExpediente", idExpediente));
-
+		}
+			
 		return new DtoPage(listadoActivos, listadoActivos.size());
+	}
+	
+	@Override
+	public Boolean getActivoExpedienteEpa(ExpedienteComercial expediente) {
+		
+		List<ActivoOferta> listaActivosOferta = null;
+		
+		if(expediente != null && expediente.getOferta() != null && expediente.getOferta().getActivosOferta() != null) {
+			listaActivosOferta = expediente.getOferta().getActivosOferta();
+			if(listaActivosOferta.get(0) != null && listaActivosOferta.get(0).getPrimaryKey().getActivo() != null
+					&& DDCartera.CODIGO_CARTERA_BBVA.equals(listaActivosOferta.get(0).getPrimaryKey().getActivo().getCartera().getCodigo())) {
+				for (ActivoOferta activosOferta : listaActivosOferta) {
+					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activosOferta.getPrimaryKey().getActivo().getId());
+					ActivoBbvaActivos activoBbva  = genericDao.get(ActivoBbvaActivos.class, filtroActivo);
+					if(activoBbva != null && DDSinSiNo.CODIGO_SI.equals(activoBbva.getActivoEpa().getCodigo())) {
+						return true;
+					}
+				}
+			} else {
+				return false;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public Boolean getActivoExpedienteAlquilado(ExpedienteComercial expediente) {
+		
+		List<ActivoOferta> listaActivosOferta = null;
+		
+		if(expediente != null && expediente.getOferta() != null && expediente.getOferta().getActivosOferta() != null) {
+			listaActivosOferta = expediente.getOferta().getActivosOferta();
+			if(listaActivosOferta.get(0) != null && listaActivosOferta.get(0).getPrimaryKey().getActivo() != null
+					&& DDCartera.CODIGO_CARTERA_BBVA.equals(listaActivosOferta.get(0).getPrimaryKey().getActivo().getCartera().getCodigo())) {
+				for (ActivoOferta activosOferta : listaActivosOferta) {
+					Activo activo = activosOferta.getPrimaryKey().getActivo();
+					if(activo != null && activo.getSituacionPosesoria().getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloSi.contentEquals(activo.getSituacionPosesoria().getConTitulo().getCodigo())){
+						return true;
+					}
+				}
+			} else {
+				return false;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -9112,7 +9178,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public boolean checkDepositoDespublicacionSubido(TareaExterna tareaExterna) {
 
-		if (esApple(tareaExterna) || esDivarian(tareaExterna)) {
+		if (esApple(tareaExterna) || esDivarian(tareaExterna) || esBBVA(tareaExterna)) {
 			return true;
 		}
 
@@ -9178,7 +9244,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public boolean checkDepositoRelleno(TareaExterna tareaExterna) {
 
-		if (esApple(tareaExterna) || esDivarian(tareaExterna)) {
+		if (esApple(tareaExterna) || esDivarian(tareaExterna) || esBBVA(tareaExterna)) {
 			return true;
 		}
 
@@ -11274,6 +11340,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public boolean esBBVA(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		boolean esBBVA = false;
+		if (!Checks.esNulo(expedienteComercial) && !Checks.esNulo(expedienteComercial.getOferta())) {
+			Activo activo = expedienteComercial.getOferta().getActivoPrincipal();
+			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera())
+					&& !Checks.esNulo(activo.getSubcartera())) {
+				esBBVA = (DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo())
+						&& DDSubcartera.CODIGO_BBVA.equals(activo.getSubcartera().getCodigo()));
+			}
+		}
+		return esBBVA;
 	}
 	
 }

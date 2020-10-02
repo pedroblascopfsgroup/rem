@@ -308,18 +308,55 @@ Ext.define('HreRem.view.activos.ActivosController', {
     	}
     },
     
-    onChangeSubcartera: function(me, nValue, oValue){
-    	var comboTipoSegmento = me.up('activossearch').down('[reference="tipoSegmentoRef"]');
-    	var comboPerimetroMacc = me.up('activossearch').down('[reference="perimetroMaccRef"]');
-    	
-    	if(nValue == CONST.SUBCARTERA['APPLEINMOBILIARIO']){
+    onChangeSubcartera: function(){
+    	var me = this;
+    	var comboTipoSegmento = me.lookupReference('tipoSegmentoRef');
+    	var comboPerimetroMacc = me.lookupReference('perimetroMaccRef');
+    	var comboSubcartera = me.lookupReference('comboSubcarteraRef');
+    	var subCartera;
+    	if (!Ext.isEmpty(comboSubcartera.getSelection())) {
+    		subCartera = comboSubcartera.getSelection().data.codigo;
+    	}
+    	var reloadSegmento = false;
+
+    	if(subCartera == CONST.SUBCARTERA['APPLEINMOBILIARIO']){
     		comboPerimetroMacc.setHidden(false);
-    	} else if(nValue == CONST.SUBCARTERA['DIVARIANARROW'] || nValue == CONST.SUBCARTERA['DIVARIANREMAINING']){
+    		comboTipoSegmento.setHidden(true);
+    	} else if(subCartera == CONST.SUBCARTERA['DIVARIANARROW'] || subCartera == CONST.SUBCARTERA['DIVARIANREMAINING']){
     		comboPerimetroMacc.setHidden(false);
     		comboTipoSegmento.setHidden(false);
+    		reloadSegmento = true;
+    	} else if (subCartera == CONST.SUBCARTERA['BBVA'] || subCartera == CONST.SUBCARTERA['ANIDA'] || subCartera == CONST.SUBCARTERA['CX'] 
+    	|| subCartera == CONST.SUBCARTERA['GAT'] || subCartera == CONST.SUBCARTERA['EDT'] || subCartera == CONST.SUBCARTERA['USGAI']) {
+    		comboTipoSegmento.setHidden(false);
+    		comboPerimetroMacc.setHidden(true);
+    		reloadSegmento = true;
     	} else {
     		comboTipoSegmento.setHidden(true);
     		comboPerimetroMacc.setHidden(true);
     	}
+    	
+		if(reloadSegmento){
+			me.loadComboTipoSegmentoCarterizado(subCartera);
+		}
+    },
+    
+    loadComboTipoSegmentoCarterizado: function(subCartera){
+    	var me = this;
+     	Ext.Ajax.request({
+	  		  url:$AC.getRemoteUrl('activo/getComboTipoSegmento'),
+	  		  params:  {codSubcartera: subCartera},
+	  		  success: function(response,opts){
+	  		  var decode = Ext.JSON.decode(response.responseText);
+	  			  var result = decode["data"];
+	  			  if(result.length > 0){
+	  				me.lookupReference('tipoSegmentoRef').setStore(new Ext.data.Store({
+	  				model: 'HreRem.model.ComboBase',
+	  					    data: result
+	  				}));
+	  			  }
+	  		  }
+	  		});
     }
+    
 });

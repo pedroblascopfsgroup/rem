@@ -1,9 +1,13 @@
 package es.pfsgroup.plugin.rem.model.dd;
 
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -21,77 +25,86 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
  *
  */
 @Entity
-@Table(name = "DD_SCS_SEGMENTO_CRA_SCS", schema = "${entity.schema}")
+@Table(name = "DD_SCS_SEGMENTO_CRA_SCR", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDSegmentoCarteraSubcartera implements Auditable {
+public class DDSegmentoCarteraSubcartera implements Auditable, Serializable {
 
-	 @Id
-	 @Column(name = "DD_SCS_ID")
-	 private Long id;
+	 /**
+	 * 
+	 */
+	private static final long serialVersionUID = -9198832839568757464L;
+	
+	@Id
+	@Column(name = "DD_SCS_ID")
+	private Long id;
 	    
-	 @Column(name = "DD_TS_ID")   
-	 private Long idTipoSegmento;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_TS_ID")   
+	private DDTipoSegmento tipoSegmento;
 	 
-	 @Column(name = "DD_CRA_ID")   
-	 private Long cartera;
-	    
-	 @Column(name = "DD_SCR_ID")   
-	 private Long subcartera;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_CRA_ID")   
+	private DDCartera cartera;
+	   
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_SCR_ID")   
+	private DDSubcartera subcartera;
 	    		    
-	 @Version   
-	 private Long version;
-
-	 @Embedded
-	 private Auditoria auditoria;
-
+	@Version   
+	private Long version;
+	
+	@Embedded
+	private Auditoria auditoria;
+	
 	public Long getId() {
 		return id;
 	}
-
+	
 	public void setId(Long id) {
 		this.id = id;
 	}
-
-	public Long getIdTipoSegmento() {
-		return idTipoSegmento;
+	
+	public DDTipoSegmento getTipoSegmento() {
+		return tipoSegmento;
 	}
-
-	public void setIdTipoSegmento(Long idTipoSegmento) {
-		this.idTipoSegmento = idTipoSegmento;
+	
+	public void setTipoSegmento(DDTipoSegmento tipoSegmento) {
+		this.tipoSegmento = tipoSegmento;
 	}
-
-	public Long getCartera() {
+	
+	public DDCartera getCartera() {
 		return cartera;
 	}
-
-	public void setCartera(Long cartera) {
+	
+	public void setCartera(DDCartera cartera) {
 		this.cartera = cartera;
 	}
-
-	public Long getSubcartera() {
+	
+	public DDSubcartera getSubcartera() {
 		return subcartera;
 	}
-
-	public void setSubcartera(Long subcartera) {
+	
+	public void setSubcartera(DDSubcartera subcartera) {
 		this.subcartera = subcartera;
 	}
-
+	
 	public Long getVersion() {
 		return version;
 	}
-
+	
 	public void setVersion(Long version) {
 		this.version = version;
 	}
-
+	
 	public Auditoria getAuditoria() {
 		return auditoria;
 	}
-
+	
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+
 }
 
 

@@ -255,6 +255,15 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			            	hidden: '{esTipoAlquiler}'
 			            },
 			            hideable: false
+			       },
+			       {
+			    	   text: HreRem.i18n("title.activoEpa"),
+			    	   dataIndex: 'activoEPA',
+			    	   flex: 0.5,
+			    	   align: 'center',
+			            bind: {
+			            	hidden: '{!esCarteraBBVA}'
+			            }
 			       }
 			       	        
 			    ],

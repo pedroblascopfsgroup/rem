@@ -239,6 +239,9 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired
 	private MSVMasivaAltaBBVAValidator altaActivosBBVA;
+
+	@Autowired
+	private MSVSancionesBBVAExcelValidator sancionesBBVA;
 	
 
 	@Autowired
@@ -403,6 +406,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return altaActivosBBVA;
 		}else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_MASIVO_TARIFAS_PRESUPUESTO.equals(codTipoOperacion)) {
 			return validatorTarifasPresupuesto;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_SANCIONES_BBVA.equals(codTipoOperacion)) {
+			return sancionesBBVA;
 		}
 
 		return null;

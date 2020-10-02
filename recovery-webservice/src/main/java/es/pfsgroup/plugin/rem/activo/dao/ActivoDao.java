@@ -374,4 +374,5 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	boolean isActivoBBVADivarian(Long idActivo);
 
+
 }

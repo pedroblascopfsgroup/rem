@@ -91,6 +91,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
 import es.pfsgroup.plugin.rem.rest.dto.ActivoCrearPeticionTrabajoDto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGastoAsociado;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
 import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.HistoricoPropuestasPreciosDto;
@@ -1430,4 +1431,6 @@ public interface ActivoApi {
 	String uploadFactura(WebFileItem webFileItem, Long idDocRestClient, GastoAsociadoAdquisicion gas, DDTipoDocumentoGastoAsociado tipoDocGastoAsociado) throws UserException;
 
 	
+	public List<DDTipoSegmento> getComboTipoSegmento(String codSubcartera);
+
 }

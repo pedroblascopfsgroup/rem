@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.oferta;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -17,8 +16,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -78,6 +75,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
@@ -136,6 +134,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDOrigenComprador;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
@@ -148,6 +147,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
@@ -162,9 +162,6 @@ import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
-import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
-import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
-import es.pfsgroup.plugin.rem.restclient.httpsclient.HttpsClientException;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
@@ -4698,6 +4695,37 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public Integer isEpaAlquilado(Long idAgrupacion) {
+		List<ActivoAgrupacionActivo>  listaAgrupacionActivos = null;
+		Filter filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS ,"id", idAgrupacion);
+		listaAgrupacionActivos = genericDao.getList(ActivoAgrupacionActivo.class, filtroAgrupacion);
+		
+		if(listaAgrupacionActivos.get(0).getActivo() != null 
+				&& DDCartera.CODIGO_CARTERA_BBVA.equals(listaAgrupacionActivos.get(0).getActivo().getCartera().getCodigo())){
+			for (ActivoAgrupacionActivo activoAgrupacionActivo : listaAgrupacionActivos) {
+				Activo activo = activoAgrupacionActivo.getActivo();
+				if(activoAgrupacionActivo.getActivo() != null) {
+					Filter filtroactivo = genericDao.createFilter(FilterType.EQUALS ,"activo.id", activoAgrupacionActivo.getActivo().getId());
+					ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtroactivo);
+					if(activo.getSituacionPosesoria().getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloSi.contentEquals(activo.getSituacionPosesoria().getConTitulo().getCodigo()) && DDSinSiNo.CODIGO_SI.equals(activoBbva.getActivoEpa().getCodigo())) {
+						return 3;
+					}
+					if(activo.getSituacionPosesoria().getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloSi.contentEquals(activo.getSituacionPosesoria().getConTitulo().getCodigo())){
+						return 2;
+					}
+					if(DDSinSiNo.CODIGO_SI.equals(activoBbva.getActivoEpa().getCodigo())) {
+						return 1;
+					}
+					
+				}
+			}
+		}
+		
+		
+		return 0;
 	}
 	
 }

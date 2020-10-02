@@ -1299,5 +1299,13 @@ public interface ParticularValidatorApi {
 
 	String getEstadoTrabajoByNumTrabajo(String numTrabajo);
 
+	Boolean esOfertaBBVA(String numOferta);
+
+	Boolean esOfertaAnulada(String numOferta);
+
+	Boolean esOfertaVendida(String numOferta);
+
+	Boolean esOfertaErronea(String numOferta);
+
 
 }

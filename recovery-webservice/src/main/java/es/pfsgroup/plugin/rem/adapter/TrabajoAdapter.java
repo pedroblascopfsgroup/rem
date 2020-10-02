@@ -86,6 +86,8 @@ public class TrabajoAdapter {
     private AgrupacionAdapter agrupacionAdapter;
     
     BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+    
+    private static final String T017_TRAMITE_BBVA_DESCRIPCION = "Trámite comercial de venta BBVA";
 	
 	public List<ActivoTrabajo> getListadoActivoTrabajos(Long idActivo, String codigoSubtipotrabajo){
 		List<ActivoTrabajo> ActivoTrabajo = new ArrayList<ActivoTrabajo>();
@@ -123,10 +125,14 @@ public class TrabajoAdapter {
 					if(!Checks.esNulo(tramite.getTramitePadre())) {
 						beanUtilNotNull.copyProperty(dtoTramite, "idTramitePadre", tramite.getTramitePadre().getId());
 					}
-					/*if(!Checks.estaVacio(listaActivosTrabajo)) {
-						beanUtilNotNull.copyProperty(dtoTramite, "idActivo", listaActivosTrabajo.get(0).getIdActivo());
-					}*/
-					beanUtilNotNull.copyProperty(dtoTramite, "nombre", tramite.getTipoTramite().getDescripcion());
+					
+					if(DDCartera.CODIGO_CARTERA_BBVA.equalsIgnoreCase(tramite.getActivo().getCartera().getCodigo()) && 
+							DDSubcartera.CODIGO_BBVA.equals(tramite.getActivo().getSubcartera().getCodigo())) {
+						beanUtilNotNull.copyProperty(dtoTramite, "nombre", T017_TRAMITE_BBVA_DESCRIPCION);
+					}else {
+						beanUtilNotNull.copyProperty(dtoTramite, "nombre", tramite.getTipoTramite().getDescripcion());
+					}
+					
 					beanUtilNotNull.copyProperty(dtoTramite, "estado", tramite.getEstadoTramite().getDescripcion());
 					
 					List<TareaExterna> tareasTramite = activoTareaExternaApi.getTareasByIdTramite(tramite.getId());
@@ -151,7 +157,13 @@ public class TrabajoAdapter {
 						}
 						//idTramite necesario para poder abrir desde listado de tareas del trabajo
 						beanUtilNotNull.copyProperty(dtoListadoTareas, "idTramite", tramite.getId());
-						beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTramite", tramite.getTipoTramite().getDescripcion());
+						if(DDCartera.CODIGO_CARTERA_BBVA.equalsIgnoreCase(tramite.getActivo().getCartera().getCodigo()) && 
+								DDSubcartera.CODIGO_BBVA.equals(tramite.getActivo().getSubcartera().getCodigo())) {
+							beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTramite", T017_TRAMITE_BBVA_DESCRIPCION);
+						}else {
+							beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTramite", tramite.getTipoTramite().getDescripcion());
+						}
+						
 						beanUtilNotNull.copyProperty(dtoListadoTareas, "fechaInicio", tarea.getTareaPadre().getFechaInicio());
 						beanUtilNotNull.copyProperty(dtoListadoTareas, "fechaFin", tarea.getTareaPadre().getFechaFin());
 						beanUtilNotNull.copyProperty(dtoListadoTareas, "fechaVenc", tarea.getTareaPadre().getFechaVenc());

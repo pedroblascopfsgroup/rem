@@ -145,6 +145,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDOrigenDato;
 import es.pfsgroup.plugin.rem.model.dd.DDPeriodicidad;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoSolicitud;
+import es.pfsgroup.plugin.rem.model.dd.DDSegmentoCarteraSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -178,6 +179,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeticionPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRolMediador;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoSolicitudTributo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoSuministro;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
@@ -8418,6 +8420,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return false;
 	}
 	
+
 	@Transactional
 	@Override
 	public Boolean updateDeudorAcreditado(DtoActivoDeudoresAcreditados dto) {
@@ -8683,6 +8686,26 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			logger.error("Error en activoManager", e);
 			return false;
 		}
+	}
+
+	@Override
+	public List<DDTipoSegmento> getComboTipoSegmento(String codSubcartera) {
+		List<DDTipoSegmento> tiposSegmento = new ArrayList<DDTipoSegmento>();
+		Filter filtroSubcartera;
+		List<DDSegmentoCarteraSubcartera> segmentosSubcartera = null;
+		if (codSubcartera != null) {
+			filtroSubcartera = genericDao.createFilter(FilterType.EQUALS, "subcartera.codigo", codSubcartera);
+			segmentosSubcartera = genericDao.getList(DDSegmentoCarteraSubcartera.class, filtroSubcartera);
+			if (segmentosSubcartera != null) {
+				for (DDSegmentoCarteraSubcartera tipoSegmento : segmentosSubcartera) {
+					if (tipoSegmento.getTipoSegmento() != null) {
+						tiposSegmento.add(tipoSegmento.getTipoSegmento());
+					}
+					
+				}
+			}
+		}		
+		return tiposSegmento;
 	}
 
 

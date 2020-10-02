@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-08-03T11:14:29 -->
+<!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="OperativaVenta001" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="df415416-7b17-4495-a87b-cf5885d1390a">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
@@ -47,6 +46,8 @@
 	<parameter name="NoTotalActivos" class="java.lang.String"/>
 	<parameter name="NomCartera" class="java.lang.String"/>
 	<parameter name="nLote" class="java.lang.String"/>
+	<parameter name="lineaFactura" class="java.lang.String"/>
+	<parameter name="numPrestamo" class="java.lang.String"/>
 	<field name="listaComprador" class="java.util.List"/>
 	<background>
 		<band splitType="Stretch"/>
@@ -86,7 +87,7 @@
 		</band>
 	</pageHeader>
 	<detail>
-		<band height="682" splitType="Stretch">
+		<band height="666" splitType="Stretch">
 			<rectangle>
 				<reportElement x="-1" y="111" width="555" height="58" uuid="cbd675a2-91ff-43a1-ae9f-544726af6c66"/>
 			</rectangle>
@@ -382,21 +383,21 @@
 				<textFieldExpression><![CDATA[$P{tasacion716}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="348" y="297" width="115" height="13" uuid="e15b8c9b-2698-4971-bf88-aa610d7dec26"/>
+				<reportElement x="346" y="297" width="108" height="13" uuid="e15b8c9b-2698-4971-bf88-aa610d7dec26"/>
 				<textElement>
 					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 				</textElement>
 				<text><![CDATA[Financiación:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="348" y="316" width="115" height="13" uuid="f96ea92a-f0ad-4c4b-993b-1c060132e2a8"/>
+				<reportElement x="346" y="335" width="108" height="13" uuid="f96ea92a-f0ad-4c4b-993b-1c060132e2a8"/>
 				<textElement>
 					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 				</textElement>
 				<text><![CDATA[Tipo impuesto:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="348" y="335" width="115" height="13" uuid="185856d6-4c89-4f57-a22c-814b2ddabddf"/>
+				<reportElement x="346" y="354" width="108" height="13" uuid="185856d6-4c89-4f57-a22c-814b2ddabddf"/>
 				<textElement>
 					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 				</textElement>
@@ -410,21 +411,21 @@
 				<text><![CDATA[Fecha tasación:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="463" y="297" width="77" height="13" uuid="1b7c82e1-a775-49ce-9f08-1512361af6de"/>
+				<reportElement x="454" y="297" width="95" height="13" uuid="1b7c82e1-a775-49ce-9f08-1512361af6de"/>
 				<textElement textAlignment="Right">
 					<font fontName="Verdana" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{financiacion}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="463" y="316" width="77" height="13" uuid="0a4fec1c-f0dd-4656-9233-91b5ae3404a3"/>
+				<reportElement x="454" y="335" width="95" height="13" uuid="0a4fec1c-f0dd-4656-9233-91b5ae3404a3"/>
 				<textElement textAlignment="Right">
 					<font fontName="Verdana" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{tipoImpuesto}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="454" y="335" width="86" height="13" uuid="a475bd49-bce2-4ee7-b9f4-ff59b2f2fdfe"/>
+				<reportElement x="454" y="354" width="95" height="13" uuid="a475bd49-bce2-4ee7-b9f4-ff59b2f2fdfe"/>
 				<textElement textAlignment="Right">
 					<font fontName="Verdana" size="8"/>
 				</textElement>
@@ -692,7 +693,7 @@
 				<text><![CDATA[Dirección:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="94" y="58" width="426" height="13" uuid="1077d1d0-2d89-40eb-b28b-6d942f7f3511"/>
+				<reportElement x="94" y="58" width="183" height="13" uuid="1077d1d0-2d89-40eb-b28b-6d942f7f3511"/>
 				<textElement>
 					<font fontName="Verdana" size="8" isBold="false" isItalic="true"/>
 				</textElement>
@@ -746,6 +747,34 @@
 					<font fontName="Verdana" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{nLote}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="285" y="58" width="79" height="13" uuid="5d34f26e-9d33-4e17-aa01-2e33980ae707"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Línea de factura:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="346" y="316" width="108" height="13" uuid="fac71cb2-df1c-4596-8de8-624342f8a721"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Nº Préstamo: ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="454" y="316" width="95" height="13" uuid="9c937d0e-9d08-4e3e-9b97-bfe5acf35173"/>
+				<textElement textAlignment="Right">
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{numPrestamo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="364" y="58" width="95" height="13" uuid="82530852-2a50-4725-a7c7-aab377ea6132"/>
+				<textElement textAlignment="Right">
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{lineaFactura}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

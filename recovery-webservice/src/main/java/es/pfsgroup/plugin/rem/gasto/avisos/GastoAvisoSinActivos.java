@@ -26,7 +26,7 @@ public class GastoAvisoSinActivos implements GastoAvisadorApi {
 		if(gasto.getGastoLineaDetalleList() != null && !gasto.getGastoLineaDetalleList().isEmpty()) {
 			for (GastoLineaDetalle gastoLineaDetalle : gasto.getGastoLineaDetalleList()) {
 				if(gastoLineaDetalle.getGastoLineaEntidadList().isEmpty() && !gastoLineaDetalle.esAutorizadoSinActivos()) {
-					dtoAviso.setDescripcion("Tiene líneas sin activos");
+					dtoAviso.setDescripcion("Tiene líneas sin elementos");
 					dtoAviso.setId(String.valueOf(gasto.getId()));	
 					break;
 				}

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Angel Sánchez
---## FECHA_CREACION=20200914
+--## FECHA_CREACION=20201002
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10590
@@ -71,13 +71,10 @@ BEGIN
 			INNER JOIN ' || V_ESQUEMA || '.dd_est_estado_trabajo est 				ON (tbj.dd_est_id = est.dd_est_id AND est.borrado=0)
 			INNER JOIN ' || V_ESQUEMA || '.dd_ttr_tipo_trabajo ttr 					ON (ttr.dd_ttr_id = tbj.dd_ttr_id AND ttr.borrado = 0 AND ttr.dd_ttr_filtrar IS NULL)
 			INNER JOIN ' || V_ESQUEMA || '.dd_str_subtipo_trabajo str 				ON (str.dd_str_id = tbj.dd_str_id AND str.borrado = 0)
-			INNER JOIN ' || V_ESQUEMA || '.gac_gestor_add_activo gac 				ON gac.act_id = act.act_id 
-   			INNER JOIN ' || V_ESQUEMA || '.gee_gestor_entidad gee 					ON (gac.gee_id = gee.gee_id AND gee.borrado = 0)
-   			INNER JOIN ' || V_ESQUEMA_MASTER || '.dd_tge_tipo_gestor tge 			ON (tge.dd_tge_id = gee.dd_tge_id AND tge.dd_tge_codigo = ''GACT'' AND tge.borrado = 0)
           WHERE tbj.borrado = 0
-          	and nvl(tbj.tbj_importe_total, 0) > 0
-          	and nvl(tbj.TBJ_IMPORTE_PRESUPUESTO, 0) > 0
-          	and nvl(tbj.TBJ_IMPORTE_TOTAL, 0) >= nvl(tbj.TBJ_IMPORTE_PRESUPUESTO, 0)
+          	and nvl(tbj.tbj_importe_total, 0) <> 0
+          	and nvl(tbj.TBJ_IMPORTE_PRESUPUESTO, 0) <> 0
+          	and est.dd_est_codigo in (''05'',''13'')
        	  AND NOT EXISTS (
            	SELECT 1
            	FROM ' || V_ESQUEMA || '.gpv_gastos_proveedor gpv

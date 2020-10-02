@@ -5064,7 +5064,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = '"+numGasto+"' "
-				+ "AND DD_EGA_ID IN (SELECT DD_EGA_ID FROM DD_EGA_ESTADOS_GASTO WHERE DD_EGA_CODIGO IN('01','12'))");
+				+ "AND DD_EGA_ID IN (SELECT DD_EGA_ID FROM DD_EGA_ESTADOS_GASTO WHERE DD_EGA_CODIGO IN('01','12', '02','08'))");
 
 		return !"0".equals(resultado);
 	}

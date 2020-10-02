@@ -506,7 +506,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 			if(gasto.getEstadoGasto() != null && 
 				(DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo()) 
-				|| DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo()))
+				|| DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo())
+				|| DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo())
+				|| DDEstadoGasto.RECHAZADO_PROPIETARIO.equals(gasto.getEstadoGasto().getCodigo()))
 			) {
 				dto.setEstadoModificarLineasDetalleGasto(true);
 			}else {
@@ -3343,7 +3345,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					gastoRefacturableNuevo.setGastoProveedorRefacturado(gastoProveedorRefacturable.getId());
 					genericDao.save(GastoRefacturable.class, gastoRefacturableNuevo);			
 				}
-				
 			}
 		}		
 
@@ -3538,6 +3539,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public void anyadirGastosRefacturablesSiCumplenCondiciones(String idGasto, String gastosRefacturables, String nifPropietario) throws IllegalAccessException, InvocationTargetException {
 		List<String> gastosRefacturablesLista = new ArrayList<String>();
 		boolean gastoSinLineas = true;

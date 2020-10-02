@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Angel Sánchez
---## FECHA_CREACION=20201001
+--## FECHA_CREACION=20201002
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10590
@@ -74,6 +74,7 @@ BEGIN
           WHERE tbj.borrado = 0
           	and nvl(tbj.tbj_importe_total, 0) <> 0
           	and nvl(tbj.TBJ_IMPORTE_PRESUPUESTO, 0) <> 0
+          	and est.dd_est_codigo in (''05'',''13'')
        	  AND NOT EXISTS (
            	SELECT 1
            	FROM ' || V_ESQUEMA || '.gpv_gastos_proveedor gpv

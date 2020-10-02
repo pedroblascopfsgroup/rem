@@ -820,4 +820,6 @@ public interface OfertaApi {
 	//devuelve 1 si tiene la tarea, 2 si la tiene resuelta, 0 si no la tiene o NULL error
 	public Integer tieneTarea(ActivoTramite tramite, String codTarea);
 
+	public Integer isEpaAlquilado(Long idAgrupacion);
+
 }

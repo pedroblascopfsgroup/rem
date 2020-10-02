@@ -227,6 +227,9 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired
 	private MSVMasivaAltaBBVAValidator altaActivosBBVA;
+
+	@Autowired
+	private MSVSancionesBBVAExcelValidator sancionesBBVA;
 	
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
@@ -377,6 +380,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return cargaGastosAsociadosAdquisicion;
 		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_ALTA_ACTIVOS_BBVA.equals(codTipoOperacion)) {
 			return altaActivosBBVA;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_SANCIONES_BBVA.equals(codTipoOperacion)) {
+			return sancionesBBVA;
 		}
 		return null;
 	}

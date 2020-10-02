@@ -27,4 +27,6 @@ public interface TramitacionOfertasApi {
 	void doTramitacionAsincrona(Long idActivo, Long idTrabajo, Long idOferta, Long idExpedienteComercial);
 
 	public Boolean tieneFormalizacion(Long idExpediente);
+
+	String calcularComiteBBVA(Oferta oferta);
 }

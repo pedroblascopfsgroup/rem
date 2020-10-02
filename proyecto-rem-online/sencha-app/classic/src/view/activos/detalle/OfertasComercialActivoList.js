@@ -293,7 +293,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var estado = context.record.get("codigoEstadoOferta");
 		var gencat = context.record.get("gencat");
 		var idActivo = me.lookupController().getViewModel().getData().activo.id;
-
 		var msg = HreRem.i18n('msg.desea.aceptar.oferta');
 		if(CONST.ESTADOS_OFERTA['PENDIENTE'] != estado){
 			var activo = me.lookupController().getViewModel().get('activo');
@@ -327,42 +326,49 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				}
 				
 			} 
+			
 		}
 		
 		if(CONST.ESTADOS_OFERTA['ACEPTADA'] === estado){	
 			var url = $AC.getRemoteUrl('ofertas/isActivoEnDND');
-
-			Ext.Ajax.request({
-	    		url: url,
-	    		params: {idActivo: idActivo},
-	    		success: function(response, opts){
-	    			var data = Ext.decode(response.responseText);
-	    			if (gencat === "true") {
-	    				msg = HreRem.i18n('msg.desea.aceptar.oferta.activos.gencat');
-	    			}else if((data.isDND != undefined || data.isDND != null) && data.isDND === "true"){
-	    				msg = HreRem.i18n("msg.desea.aceptar.oferta.activos.dnd.sin.agrupacion") + HreRem.i18n("msg.desea.aceptar.oferta.esta.de.acuerdo");
-	    			}
-					Ext.Msg.show({
-					   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
-					   msg: msg,
-					   buttons: Ext.MessageBox.YESNO,
-					   fn: function(buttonId) {
-					        if (buttonId == 'yes') {
-					        	me.saveFn(editor, me, context);
-							} else{
-					    		me.getStore().load(); 	
-					    	}
-						}
-					});
-	    		},
-			 	failure: function(record, operation) {
-			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
-			    },
-			    callback: function(record, operation) {
-	    			me.getView().unmask();
-			    }
-	    	});
-
+				Ext.Ajax.request({
+		    		url: url,
+		    		params: {idActivo: idActivo},
+		    		success: function(response, opts){
+		    			var data = Ext.decode(response.responseText);
+		    			if(me.ofertaActivoEpaAlquilado(activo) == 1){
+		    				msg = HreRem.i18n('msg.activo.epa');
+		    			}else if(me.ofertaActivoEpaAlquilado(activo)==2){
+		    				msg = HreRem.i18n("msg.activo.alquilados");
+		    			}else if(me.ofertaActivoEpaAlquilado(activo)==3){
+		    				msg = HreRem.i18n("msg.activo.epa.alquilados");
+		    			}else if (gencat === "true") {
+		    				msg = HreRem.i18n('msg.desea.aceptar.oferta.activos.gencat');
+		    			}else if((data.isDND != undefined || data.isDND != null) && data.isDND === "true"){
+		    				msg = HreRem.i18n("msg.desea.aceptar.oferta.activos.dnd.sin.agrupacion") + HreRem.i18n("msg.desea.aceptar.oferta.esta.de.acuerdo");
+		    			}
+						Ext.Msg.show({
+						   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
+						   msg: msg,
+						   buttons: Ext.MessageBox.YESNO,
+						   fn: function(buttonId) {
+						        if (buttonId == 'yes') {
+						        	me.saveFn(editor, me, context);
+								} else{
+						    		me.getStore().load(); 	
+						    	}
+							}
+						});
+		    		},
+				 	failure: function(record, operation) {
+				 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+				    },
+				    callback: function(record, operation) {
+		    			me.getView().unmask();
+				    }
+		    	});
+			
+	
 		} else {
 			// HREOS-2814 El cambio a anulada/denegada (rechazada) abre el formulario de motivos de rechazo
 			if (CONST.ESTADOS_OFERTA['RECHAZADA'] == estado){
@@ -586,6 +592,20 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	        								|| me.lookupController().getViewModel().get('activo').data.subcarteraCodigo === CONST.SUBCARTERA['DIVARIAN'])*/
 	    								);
 		me.mostrarBotonClonarExpediente(mostrarCloneButtonExpediente);
+	},
+	
+	ofertaActivoEpaAlquilado: function (activo){
+		if(activo.get('entidadPropietariaCodigo')==CONST.CARTERA['BBVA']){
+			if(activo.get('tipoEstadoAlquiler') == CONST.COMBO_ESTADO_ALQUILER['ALQUILADO'] && activo.get('activoEpa') == true){
+				return 3;
+			} else if(activo.get('tipoEstadoAlquiler') == CONST.COMBO_ESTADO_ALQUILER['ALQUILADO']){
+				return 2;
+			}else if(activo.get('activoEpa') == true){
+				return 1;
+			}
+		}else{
+			return 0;
+		}
 	}
 
 

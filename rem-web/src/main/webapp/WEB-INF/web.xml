@@ -237,6 +237,17 @@
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
+	<servlet>
+		<servlet-name>Email Attachment Servlet</servlet-name>
+		<servlet-class>es.pfsgroup.plugin.rem.servlet.EmailAttachment</servlet-class>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Email Attachment Servlet</servlet-name>
+		<url-pattern>/email/attachment/*</url-pattern>
+	</servlet-mapping>
+
 	<!-- /WEB-INF/classes/ -->
 
 	<!-- Map all /resources requests to the Resource Servlet for handling -->

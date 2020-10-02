@@ -16,6 +16,7 @@ public class DtoComercialAgrupaciones extends WebDto {
 	private String motivoAutorizacionTramitacionCodigo;
 	private String observacionesAutoTram;
 
+
 	public Boolean getTramitable() {
 		return tramitable;
 	}

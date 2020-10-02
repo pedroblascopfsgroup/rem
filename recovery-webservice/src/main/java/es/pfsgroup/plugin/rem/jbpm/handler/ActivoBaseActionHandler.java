@@ -742,7 +742,8 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 						   && (DDSubcartera.CODIGO_ZEUS.equals(subcartera.getCodigo())
 								   || DDSubcartera.CODIGO_PROMONTORIA.equals(subcartera.getCodigo())))) 
 				&& (CODIGO_T004_SOLICITUD_EXTRAORDINARIA.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
-						|| CODIGO_T004_AUTORIZACION_PROPIETARIO.equals(tareaExterna.getTareaProcedimiento().getCodigo()))))){
+						|| CODIGO_T004_AUTORIZACION_PROPIETARIO.equals(tareaExterna.getTareaProcedimiento().getCodigo())))
+				|| DDCartera.CODIGO_CARTERA_BBVA.equals(cartera.getCodigo()))){
 			supervisor = userAssigantionService.getSupervisor(tareaExterna);
 			Usuario gestor = userAssigantionService.getUser(tareaExterna); 
 			

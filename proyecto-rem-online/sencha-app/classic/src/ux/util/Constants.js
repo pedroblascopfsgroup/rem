@@ -250,7 +250,13 @@ Ext.define('HreRem.ux.util.Constants', {
 		DIVARIAN: '150',
 		OMEGA: '65',
 		DIVARIANARROW:'151',
-		DIVARIANREMAINING:'152'
+		DIVARIANREMAINING:'152',
+		BBVA:'153',
+		ANIDA:'154',
+		CX:'155',
+		GAT:'156',
+		EDT:'157',
+		USGAI:'158'
     },
 
     NOMBRE_SUBCARTERA: {

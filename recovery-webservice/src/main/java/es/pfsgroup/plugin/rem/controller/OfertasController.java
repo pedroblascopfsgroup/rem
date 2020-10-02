@@ -47,6 +47,8 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.OfertasExcelReport;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
@@ -884,6 +886,22 @@ public class OfertasController {
 	
 		try {	
 			model.put("isDND", activo.getIsDnd());
+			model.put("success", true);
+		}catch(Exception e) {
+			model.put("success", false);
+			model.put("error", e.getMessage());
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView isEpaAlquilado(Long idAgrupacion, ModelMap model) {
+		Integer agrupacionEpaAlquilado = ofertaApi.isEpaAlquilado(idAgrupacion);
+	
+		try {	
+			model.put("agrupacionEpaAlquilado", agrupacionEpaAlquilado);
 			model.put("success", true);
 		}catch(Exception e) {
 			model.put("success", false);

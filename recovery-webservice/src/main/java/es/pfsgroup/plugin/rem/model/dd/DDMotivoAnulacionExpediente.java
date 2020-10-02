@@ -74,6 +74,19 @@ public class DDMotivoAnulacionExpediente implements Auditable, Dictionary {
 	public static final String CODIGO_FINANCIACION_DENEGADA = "901";
 	public static final String CODIGO_PBC_DENEGADO = "902";
 	public static final String CODIGO_EXCESIVO_TIEMPO_FIRMA = "903";
+	
+	public final static String CODIGO_INCUMPLIMIENTO_PLAZO = "904";
+	public final static String CODIGO_ORDEN_PROPIEDAD = "905";
+	public final static String CODIGO_DESESTIMIENTO_COMPRADOR = "906";
+	public final static String CODIGO_3_MESES_SIN_FORMALIZAR = "907";
+	public final static String CODIGO_SIN_NOTICIAS_COMPRADOR = "908";
+	public final static String CODIGO_FINANCIACION_RECHAZADA = "909";
+	public final static String CODIGO_SIN_DOC_PBC = "910";
+	public final static String CODIGO_PBC_RECHAZADO = "911";
+	public final static String CODIGO_EJERCE_GENCAT = "912";
+	public final static String CODIGO_VPO_DENEGADA = "913";
+	public final static String CODIGO_INCIDENCIA_JURIDICA_TECNICA = "914";
+	public final static String CODIGON_ALTA_OFERTA_ESPEJO = "915";
 
 	@Id
 	@Column(name = "DD_MAN_ID")

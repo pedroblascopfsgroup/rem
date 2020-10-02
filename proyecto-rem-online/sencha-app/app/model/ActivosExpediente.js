@@ -54,6 +54,9 @@ Ext.define('HreRem.model.ActivosExpediente', {
     		},
     		{
     			name:'idCondicion'
+    		},
+    		{
+    			name:'activoEPA'
     		}
     ],
     

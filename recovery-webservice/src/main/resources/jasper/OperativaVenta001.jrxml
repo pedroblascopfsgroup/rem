@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="OperativaVenta001" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="df415416-7b17-4495-a87b-cf5885d1390a">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
@@ -67,6 +67,8 @@
 	<parameter name="Impuestos" class="java.lang.String"/>
 	<parameter name="Comunidades" class="java.lang.String"/>
 	<parameter name="Otros" class="java.lang.String"/>
+	<parameter name="lineaFactura" class="java.lang.String"/>
+	<parameter name="numPrestamo" class="java.lang.String"/>
 	<field name="listaComprador" class="java.util.List"/>
 	<background>
 		<band splitType="Stretch"/>
@@ -435,6 +437,20 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{Folio}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="233" y="54" width="79" height="13" uuid="70bbe4cc-d847-452c-bb19-0e00bba0a115"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Línea de factura:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="312" y="54" width="77" height="13" uuid="9dd74bf5-28ad-4c13-a90e-04a6d650c61c"/>
+				<textElement textAlignment="Right">
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{lineaFactura}]]></textFieldExpression>
+			</textField>
 		</band>
 		<band height="75">
 			<rectangle>
@@ -741,14 +757,14 @@
 				<text><![CDATA[Financiación:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="349" y="36" width="115" height="13" uuid="f96ea92a-f0ad-4c4b-993b-1c060132e2a8"/>
+				<reportElement x="349" y="54" width="115" height="13" uuid="f96ea92a-f0ad-4c4b-993b-1c060132e2a8"/>
 				<textElement>
 					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 				</textElement>
 				<text><![CDATA[Tipo impuesto:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="349" y="55" width="115" height="13" uuid="185856d6-4c89-4f57-a22c-814b2ddabddf"/>
+				<reportElement x="349" y="74" width="115" height="13" uuid="185856d6-4c89-4f57-a22c-814b2ddabddf"/>
 				<textElement>
 					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
 				</textElement>
@@ -769,14 +785,14 @@
 				<textFieldExpression><![CDATA[$P{financiacion}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="464" y="36" width="77" height="13" uuid="0a4fec1c-f0dd-4656-9233-91b5ae3404a3"/>
+				<reportElement x="464" y="54" width="77" height="13" uuid="0a4fec1c-f0dd-4656-9233-91b5ae3404a3"/>
 				<textElement textAlignment="Right">
 					<font fontName="Verdana" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{tipoImpuesto}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="455" y="55" width="86" height="13" uuid="a475bd49-bce2-4ee7-b9f4-ff59b2f2fdfe"/>
+				<reportElement x="455" y="74" width="86" height="13" uuid="a475bd49-bce2-4ee7-b9f4-ff59b2f2fdfe"/>
 				<textElement textAlignment="Right">
 					<font fontName="Verdana" size="8"/>
 				</textElement>
@@ -788,6 +804,20 @@
 					<font fontName="Verdana" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{fechaTasacion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="349" y="36" width="115" height="13" uuid="a330ee8d-395d-4111-a260-e4be20a924b0"/>
+				<textElement>
+					<font fontName="Verdana" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Nº Préstamo:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="464" y="36" width="77" height="13" uuid="2cee0964-8781-4ceb-900b-d1399590357e"/>
+				<textElement textAlignment="Right">
+					<font fontName="Verdana" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{numPrestamo}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="143" splitType="Prevent">

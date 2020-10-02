@@ -1211,4 +1211,12 @@ public interface ParticularValidatorApi {
 
 	public Boolean codigoComercializacionIncorrecto(String codCampo);
 	
+	Boolean esOfertaBBVA(String numOferta);
+
+	Boolean esOfertaAnulada(String numOferta);
+
+	Boolean esOfertaVendida(String numOferta);
+
+	Boolean esOfertaErronea(String numOferta);
+
 }

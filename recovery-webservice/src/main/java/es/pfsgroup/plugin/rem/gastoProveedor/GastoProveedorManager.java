@@ -3345,7 +3345,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					gastoRefacturableNuevo.setGastoProveedorRefacturado(gastoProveedorRefacturable.getId());
 					genericDao.save(GastoRefacturable.class, gastoRefacturableNuevo);			
 				}
-				
 			}
 		}		
 
@@ -3540,6 +3539,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public void anyadirGastosRefacturablesSiCumplenCondiciones(String idGasto, String gastosRefacturables, String nifPropietario) throws IllegalAccessException, InvocationTargetException {
 		List<String> gastosRefacturablesLista = new ArrayList<String>();
 		boolean gastoSinLineas = true;

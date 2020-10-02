@@ -362,7 +362,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 											 				readOnly : '{!auComprador}',
 											 				value:'{infoAdministrativa.fechaEnvioComunicacionOrganismo}'
 											 			},
-											 			maxValue : null
+											 			maxValue : $AC.getCurrentDate()
 											 			
 										        },
 										        { 
@@ -372,7 +372,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 											 				readOnly : '{!auComprador}',
 											 				value:'{infoAdministrativa.fechaRecepcionRespuestaOrganismo}'
 											 			},
-											 		   maxValue : null
+											 		   maxValue : $AC.getCurrentDate()
 										        }
 											]
 							        },
@@ -796,6 +796,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 					    	formatter: 'date("d/m/Y")',
 					    	width: '20%',
 					    	disabled: true,
+					    	maxValue: null,
 					    	reference: 'fechaVencTpoBonificacion',
 				        	bind: {
 				        		readOnly : '{!esGestorOrSupervisorAdmision}',

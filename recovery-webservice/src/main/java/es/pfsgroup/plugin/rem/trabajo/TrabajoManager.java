@@ -5427,6 +5427,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
  			for (DerivacionEstadoTrabajo derivacionEstadoTrabajo : estados) {
  				listadoEstados.add(derivacionEstadoTrabajo.getEstadoFinal());
 			}
+ 			if(trabajo.getEstado().getCodigo().equals(DDEstadoTrabajo.ESTADO_VALIDADO)) {
+ 				listadoEstados = new ArrayList<DDEstadoTrabajo>();
+ 				listadoEstados.add(trabajo.getEstado());
+ 				Filter filtroCancelado = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.CODIGO_ESTADO_CANCELADO);
+ 				DDEstadoTrabajo estadoCancelado = genericDao.get(DDEstadoTrabajo.class, filtroCancelado);
+ 				listadoEstados.add(estadoCancelado);
+ 			}
+ 			
  		}
  		
 		return listadoEstados;

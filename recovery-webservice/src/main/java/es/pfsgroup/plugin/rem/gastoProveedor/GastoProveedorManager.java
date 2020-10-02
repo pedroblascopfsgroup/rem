@@ -506,7 +506,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 			if(gasto.getEstadoGasto() != null && 
 				(DDEstadoGasto.INCOMPLETO.equals(gasto.getEstadoGasto().getCodigo()) 
-				|| DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo()))
+				|| DDEstadoGasto.PENDIENTE.equals(gasto.getEstadoGasto().getCodigo())
+				|| DDEstadoGasto.RECHAZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo())
+				|| DDEstadoGasto.RECHAZADO_PROPIETARIO.equals(gasto.getEstadoGasto().getCodigo()))
 			) {
 				dto.setEstadoModificarLineasDetalleGasto(true);
 			}else {

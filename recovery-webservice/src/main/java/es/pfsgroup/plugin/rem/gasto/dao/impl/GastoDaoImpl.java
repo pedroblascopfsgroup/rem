@@ -26,7 +26,9 @@ import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoRefacturable;
@@ -42,6 +44,9 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 
 	@Autowired
 	ProveedoresDao proveedorDao;
+	
+	@Autowired
+	ActivoDao activoDao;
 	
 	@Autowired
 	private MSVRawSQLDao rawDao;
@@ -162,9 +167,15 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		String fromGastoActivos = GastoActivosHqlHelper.getFrom(dtoGastosFilter);
 		if (!Checks.esNulo(fromGastoActivos)) {
 			from = from + fromGastoActivos;
-			where = where + GastoActivosHqlHelper.getWhereJoin(dtoGastosFilter, hasWhere);
-			hasWhere = true;
+				where = where + GastoActivosHqlHelper.getWhereJoin(dtoGastosFilter, hasWhere);
+				hasWhere = true;
+		}
 
+		if(dtoGastosFilter.getSubentidadPropietariaCodigo() != null) {
+			String fromGastoActivosSubcartera = GastoActivosHqlHelper.getFromSubcartera(dtoGastosFilter);
+			from = from + fromGastoActivosSubcartera;
+			where = where + GastoActivosHqlHelper.getWhereJoinSubcartera(dtoGastosFilter, hasWhere);
+			hasWhere = true;
 		}
 
 		// Por si es necesario filtrar por datos de la provision de gastos
@@ -187,11 +198,16 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		if (hasWhere) {
 			hb.setHasWhere(true);
 		}
-
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gastoActivo.activo.numActivo", dtoGastosFilter.getNumActivo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gastoActivo.activo.subcartera.codigo",
-				dtoGastosFilter.getSubentidadPropietariaCodigo());
-
+		
+		if(dtoGastosFilter.getNumActivo() != null) {
+			Activo activo = activoDao.getActivoByNumActivo(dtoGastosFilter.getNumActivo());
+			if(activo != null) {
+				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gastoActivo.entidad", activo.getId());
+			}
+		}
+		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subcartera.codigo", dtoGastosFilter.getSubentidadPropietariaCodigo());
+	
 		if (!Checks.esNulo(dtoGastosFilter.getNumProvision())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "provision.numProvision",
 					Long.parseLong(dtoGastosFilter.getNumProvision()));

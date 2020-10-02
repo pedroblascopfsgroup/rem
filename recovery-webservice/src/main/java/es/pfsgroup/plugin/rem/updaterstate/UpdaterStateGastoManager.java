@@ -152,24 +152,11 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			
 			if(gasto.getGestoria() == null) {
 				for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
-					if(gastodetalleLinea.getTipoImpuesto() == null) {
+					if(gastodetalleLinea.getTipoImpuesto() == null && (gastodetalleLinea.getPrincipalSujeto() != 0.0 ||  gastodetalleLinea.getPrincipalSujeto() != null)) {
 						error = messageServices.getMessage(VALIDACION_GASTO_SIN_TIPO_IMP_INDIRECTO);
 						return error;
 					}
 				}	
-			}
-
-			
-			if(!Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(gasto.getPropietario().getCartera())){
-				String carteraPropietario = gasto.getPropietario().getCartera().getCodigo();
-				if(!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(carteraPropietario)){
-					for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
-						if(!DDCartera.CODIGO_CARTERA_BANKIA.equals(carteraPropietario) && gastodetalleLinea.getCccBase() == null) {
-							error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
-							return error;
-						}
-					}
-				}
 			}
 			
 			if(!Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(gasto.getPropietario().getCartera()) && !Checks.esNulo(gasto.getPropietario().getCartera().getCodigo())) {

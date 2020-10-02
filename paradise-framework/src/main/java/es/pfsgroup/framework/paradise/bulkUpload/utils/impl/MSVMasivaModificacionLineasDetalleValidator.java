@@ -59,7 +59,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	private static final String TIPO_ELEMENTO_NO_EXISTE = "El tipo de elemento no existe";
 	private static final String GASTO_REFACTURADO_PADRE = "No se puede modificar un gasto padre";
 	private static final String GASTOS_HIJOS = "No se puede modificar un gasto refacturado";
-	private static final String GASTO_EN_MAL_ESTADO = "El estado del gasto debe ser 'Pendiente de autorizar' o 'Incompleto'";
+	private static final String GASTO_EN_MAL_ESTADO = "El estado del gasto debe ser 'Pendiente de autorizar' o 'Incompleto' o 'Rechazado";
 
 	public static final Integer COL_ID_GASTO = 0;
 	public static final Integer COL_ACCION_LINEA_DETALLE = 1;

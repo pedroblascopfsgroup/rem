@@ -4,6 +4,9 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
+
+import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -52,6 +55,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	private static final String BUZON_OFR_APPLE = "buzonofrapple";
 	private static final String STR_MISSING_VALUE = "---";
 	public static final String[] DESTINATARIOS_CORREO_APROBACION = {"GESTCOMALQ", "SUPCOMALQ", "SCOM", "GCOM"};
+	private static final String ENLACE_DESCARGA = "email.attachment.folder.src";
 		
 	private List<String> mailsPara 	= new ArrayList<String>();
 	private List<String> mailsCC 	= new ArrayList<String>();
@@ -74,7 +78,10 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 
 	@Autowired
 	private UsuarioManager usuarioManager;
-
+	
+	@Resource
+	private Properties appProperties;
+	
 	/**
 	 * Cada vez que llegue una oferta de un activo, 
 	 * se enviará una notificación (correo) al gestor comercial correspondiente, 
@@ -607,4 +614,54 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				}
 		} 
 	}
+	
+	
+	public String enviarMailFichaComercial(Oferta oferta) {
+		
+		String errorCode = "";
+		Activo activo = oferta.getActivoPrincipal();
+		DtoSendNotificator dtoSendNotificator = new DtoSendNotificator();
+		List<DtoAdjuntoMail> adjuntos = new ArrayList<DtoAdjuntoMail>();
+		Usuario usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+		Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
+		String enlaceDescarga = appProperties.getProperty(ENLACE_DESCARGA);
+		if(!Checks.esNulo(usuarioBackOffice)){	
+			mailsPara.add(usuarioBackOffice.getEmail());
+		}
+		else {
+			mailsSustituto = usuarioRemApiImpl.getGestorSustitutoUsuario(usuarioBackOffice);
+			mailsPara.addAll(mailsSustituto);
+		}
+
+		mailsCC.add(buzonPfs.getEmail());
+		
+		if(!mailsPara.isEmpty()) {
+		
+			String asunto = "Ficha comercial de la oferta " + oferta.getNumOferta();
+			String cuerpo = "<p>La ficha comercial de la oferta  " + oferta.getNumOferta() + " esta lista para descargar.</p>";
+			cuerpo =  cuerpo + "<p>\n" + 
+					"			<a href=\"" + enlaceDescarga  + "\"\n" + 
+					"			   title=\"descarga el archivo\n" + 
+					"			          \">Ficha Comercial</a>\n" + 
+					"			</p>";
+			cuerpo = cuerpo + "<p>La ficha estará disponible para su descarga durante 7 días</p>";
+
+			dtoSendNotificator.setTitulo(asunto);
+			dtoSendNotificator.setNumActivo(activo.getNumActivo());
+			dtoSendNotificator.setDireccion(activo.getDireccionCompleta());
+			
+			String cuerpoMail = generateBody(dtoSendNotificator,cuerpo);
+			
+			genericAdapter.sendMail(mailsPara, mailsCC, asunto, cuerpoMail,adjuntos);
+			
+		}
+		else {
+			errorCode = "No se ha podido enviar email de la ficha comercial de la oferta.";
+		}
+		
+		return errorCode;
+	}
+	
+	
+	
 }

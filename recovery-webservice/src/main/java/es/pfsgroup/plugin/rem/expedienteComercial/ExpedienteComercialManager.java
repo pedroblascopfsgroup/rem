@@ -355,6 +355,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Autowired
 	private TramitacionOfertasApi tramitacionOfertasManager;
+	
+	@Autowired
+	private GestorActivoApi gestorActivoManager;
 
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -1980,6 +1983,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 		
+		if(!Checks.esNulo(oferta.getActivoPrincipal())) {
+			Usuario usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(oferta.getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+			if(!Checks.esNulo(usuarioBackOffice) && !Checks.esNulo(usuarioBackOffice.getEmail())) {
+				dto.setCorreoGestorBackoffice(usuarioBackOffice.getEmail());
+			}
+		}
 		
 		return dto;
 	}

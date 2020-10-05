@@ -489,6 +489,17 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							handler : 'onClickGenerarListadoDeActivos',
 							margin : '10 10 10 10'
 
+						},
+						{
+							xtype : 'button',
+							reference : 'btngenerarfichacomercial',
+							bind : {
+								hidden : '{!esBbva}',
+								disabled : '{!habilitarBotonGenerarFicha}'
+							},
+							text : HreRem.i18n('btn.generar.ficha.comercial'),
+							handler : 'onClickGenerarFichaComercial',
+							margin : '10 10 10 10'
 						}]
 					}]
 		}, {

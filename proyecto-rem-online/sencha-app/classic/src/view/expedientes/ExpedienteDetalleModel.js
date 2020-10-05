@@ -566,8 +566,26 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	 	esComiteHaya: function(get){
 	 		var me = this;
 	 		return me.get('expediente.esComiteHaya');
-	 	}
+	 	},
 	 	
+	 	habilitarBotonGenerarFicha: function(get){;
+			 var me = this;
+				if(get('expediente.codigoEstado') == '01' || get('expediente.codigoEstado') == '31' || get('expediente.codigoEstado') == '23'){
+					return true
+				}
+				else {
+					return false
+				}
+	 	},
+		esBbva: function(get) {
+			var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+	     	
+	     	if(CONST.CARTERA['BBVA'] == carteraCodigo){
+	     		return true;
+	     	}else{
+	     		return false;
+	     	}
+		}
 	 },
 	 
 

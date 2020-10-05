@@ -929,4 +929,34 @@ public class OfertasController {
 		
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView generarFichaComercial(ModelMap model, Long idOferta) {
+
+		try {
+
+			Oferta oferta = ofertaApi.getOfertaById(idOferta);
+			String errorCode = notificationOferta.enviarMailFichaComercial(oferta);
+
+			if(errorCode == null || errorCode.isEmpty()){
+				model.put("success", true);
+			}
+			else{
+				model.put("success", false);
+				model.put("errorCode", errorCode);
+			}
+
+
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("errorCode", e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+
+	}
+	
 }

@@ -63,8 +63,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 										store: '{comboSiNoRem}',
 	    								value: '{trabajo.tomaPosesion}'
 	    								
-	    									},
-									allowBlank: false
+	    									}
 //									listeners: {
 //										afterrender: 'hiddenComboTomaPosesion'
 //									}

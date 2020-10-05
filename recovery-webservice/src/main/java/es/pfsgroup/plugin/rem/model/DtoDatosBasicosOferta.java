@@ -125,6 +125,8 @@ public class DtoDatosBasicosOferta extends WebDto {
 	
 	private Boolean estadoAprobadoLbk;
 
+	private Boolean tareaAutorizacionPropiedadFinalizada;
+
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
 	}
@@ -555,6 +557,15 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setTareaAdvisoryNoteFinalizada(Boolean tareaAdvisoryNoteFinalizada) {
 		this.tareaAdvisoryNoteFinalizada = tareaAdvisoryNoteFinalizada;
+	}
+
+	public void setTareaAutorizacionPropiedadFinalizada(Boolean tieneTareaFinalizada) {
+		this.tareaAutorizacionPropiedadFinalizada = tieneTareaFinalizada;
+		
+	}
+	
+	public Boolean getTareaAutorizacionPropiedadFinalizada() {
+		return this.tareaAutorizacionPropiedadFinalizada;
 	}
 
 }

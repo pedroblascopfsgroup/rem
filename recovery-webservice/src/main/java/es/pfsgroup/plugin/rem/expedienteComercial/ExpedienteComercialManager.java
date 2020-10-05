@@ -1969,7 +1969,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		dto.setIsAdvisoryNoteEnTareas(ofertaDao.tieneTareaActivaOrFinalizada("T017_AdvisoryNote", oferta.getNumOferta().toString()));
 		dto.setTareaAdvisoryNoteFinalizada(ofertaDao.tieneTareaFinalizada("T017_AdvisoryNote", oferta.getNumOferta().toString()));
-		
+		dto.setTareaAutorizacionPropiedadFinalizada(ofertaDao.tieneTareaFinalizada("T017_ResolucionPROManzana", oferta.getNumOferta().toString()));
 			
 		
 
@@ -11386,6 +11386,24 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean sacarBulk(Long idExpediente) {
+		if(idExpediente == null) return false;
+		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", idExpediente));
+		if(expediente == null || expediente.getOferta() == null) return false;
+		
+		OfertaExclusionBulk oeb = genericDao.get(OfertaExclusionBulk.class, genericDao.createFilter(FilterType.EQUALS, "oferta", expediente.getOferta()));
+		oeb.setExclusionBulk(genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "01")));
+		genericDao.update(OfertaExclusionBulk.class, oeb);
+		
+		BulkOferta blkOfr = bulkOfertaDao.findOne(null, expediente.getOferta().getId(), false);
+		Auditoria.delete(blkOfr);	
+		bulkOfertaDao.update(blkOfr);
+		
+		return true;
 	}
 	
 }

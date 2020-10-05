@@ -1,0 +1,96 @@
+--/*
+--#########################################
+--## AUTOR=Viorel Remus Ovidiu
+--## FECHA_CREACION=20200928
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=REMVIP-8133
+--## PRODUCTO=NO
+--## 
+--## Finalidad: 
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+	
+    err_num NUMBER; -- Numero de error.
+    err_msg VARCHAR2(2048); -- Mensaje de error.
+    V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquemas.
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER'; -- Configuracion Esquemas.
+    V_USUARIOMODIFICAR VARCHAR(100 CHAR):= 'REMVIP-8133';
+    V_SQL VARCHAR2(32000 CHAR);
+
+BEGIN			
+			
+	DBMS_OUTPUT.PUT_LINE('[INICIO] MARCAMOS GASTOS PARA REENVIAR ');			
+
+
+	V_SQL := 'MERGE INTO ' || V_ESQUEMA || '.GGE_GASTOS_GESTION T1 USING
+			(
+			    SELECT GPV.GPV_ID, aux.GGE_FECHA_EAH, aux.DD_EAH_ID, aux.DD_EAP_ID, aux.GGE_FECHA_EAP, aux.GGE_MOTIVO_RECHAZO_PROP, aux.GGE_FECHA_ENVIO_PRPTRIO
+			    FROM ' || V_ESQUEMA || '.GPV_GASTOS_PROVEEDOR GPV
+			    INNER JOIN ' || V_ESQUEMA || '.GGE_GASTOS_GESTION GGE ON GGE.GPV_ID = GPV.GPV_ID 
+			    INNER JOIN '||V_ESQUEMA||'.AUX_REMVIP_8133_1 AUX ON GPV.GPV_ID = AUX.GPV_ID 
+			    
+			)T2 ON (T1.GPV_ID = T2.GPV_ID)
+			WHEN MATCHED THEN
+			UPDATE
+			SET T1.DD_EAH_ID = T2.DD_EAH_ID,
+			    T1.GGE_FECHA_EAH = TO_DATE(T2.GGE_FECHA_EAH, ''DD/MM/RR''),	
+			    T1.DD_EAP_ID = T2.DD_EAP_ID,
+			    T1.GGE_FECHA_EAP = TO_DATE(T2.GGE_FECHA_EAP, ''DD/MM/RR''),
+			    T1.GGE_MOTIVO_RECHAZO_PROP = T2.GGE_MOTIVO_RECHAZO_PROP,
+			    T1.GGE_FECHA_ENVIO_PRPTRIO = TO_DATE(T2.GGE_FECHA_ENVIO_PRPTRIO, ''DD/MM/RR''),
+			    T1.USUARIOMODIFICAR = ''REMVIP-8133_1'',
+			    T1.FECHAMODIFICAR = SYSDATE';
+
+        EXECUTE IMMEDIATE V_SQL;
+
+    	  DBMS_OUTPUT.PUT_LINE('[INFO] - Modificados '||SQL%ROWCOUNT||' registro/s en la GGE_GASTOS_GESTION.');
+
+	V_SQL := '
+		MERGE INTO ' || V_ESQUEMA || '.GPV_GASTOS_PROVEEDOR T1 USING
+		(
+		    SELECT GPV.GPV_ID, aux.DD_EGA_ID, aux.PRG_ID
+		    FROM ' || V_ESQUEMA || '.GPV_GASTOS_PROVEEDOR GPV
+		    INNER JOIN ' || V_ESQUEMA || '.GGE_GASTOS_GESTION GGE ON GGE.GPV_ID = GPV.GPV_ID
+		    INNER JOIN '||V_ESQUEMA||'.AUX_REMVIP_8133_2 AUX ON GPV.GPV_ID = AUX.GPV_ID  
+		)T2 ON (T1.GPV_ID = T2.GPV_ID)
+		WHEN MATCHED THEN
+			UPDATE
+			SET T1.DD_EGA_ID = T2.DD_EGA_ID,
+			    T1.PRG_ID = T2.PRG_ID,
+		    	    T1.USUARIOMODIFICAR = ''REMVIP-8133_2'',
+			    T1.FECHAMODIFICAR = SYSDATE';
+
+		EXECUTE IMMEDIATE V_SQL;
+
+    	  DBMS_OUTPUT.PUT_LINE('[INFO] - Modificados '||SQL%ROWCOUNT||' registro/s en la GPV_GASTOS_PROVEEDOR.');
+    	  DBMS_OUTPUT.PUT_LINE('[INFO] - Reenviados ' ||SQL%ROWCOUNT||' gasto/s.');
+
+	COMMIT;
+
+	DBMS_OUTPUT.PUT_LINE('[FIN] Proceso realizado');
+	
+
+EXCEPTION
+
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+        DBMS_OUTPUT.put_line(SQLERRM);
+        ROLLBACK;
+        RAISE;
+END;
+/
+EXIT

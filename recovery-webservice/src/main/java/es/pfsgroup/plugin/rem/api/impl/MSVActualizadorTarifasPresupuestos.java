@@ -120,6 +120,7 @@ public class MSVActualizadorTarifasPresupuestos extends AbstractMSVActualizador 
 
 	private ConfiguracionTarifa getConfigTarifaByCodigoTarifaAndNumTrabajo(String codTarifa, Trabajo trabajo) {
 		Long idCartera = null;
+		Long idSubcartera = null;
 		//Long idSubtipoTrabajo = null;
 		//Long idTipoTrabajo = null;
 		Long idTipoTarifa = null;
@@ -140,27 +141,30 @@ public class MSVActualizadorTarifasPresupuestos extends AbstractMSVActualizador 
 
 		if (trabajo.getActivo() != null) {
 			idCartera = trabajo.getActivo().getCartera().getId();
+			idSubcartera = trabajo.getActivo().getSubcartera().getId();
 		} else {
 			List<ActivoTrabajo> activosTrabajo = genericDao.getList(ActivoTrabajo.class,
 					genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId()));
 			if (activosTrabajo != null && activosTrabajo.get(0) != null && activosTrabajo.get(0).getActivo() != null) {
 				idCartera = activosTrabajo.get(0).getActivo().getCartera().getId();
+				idSubcartera = activosTrabajo.get(0).getActivo().getSubcartera().getId();
 			}
 		}
 
-		return getConfiguracionTarifa(idTipoTarifa, idCartera);//, idTipoTrabajo, idSubtipoTrabajo);
+		return getConfiguracionTarifa(idTipoTarifa, idCartera, idSubcartera);//, idTipoTrabajo, idSubtipoTrabajo);
 	}
 
-	private ConfiguracionTarifa getConfiguracionTarifa(Long idTipoTarifa, Long idCartera) {//, Long idTipoTrabajo,
+	private ConfiguracionTarifa getConfiguracionTarifa(Long idTipoTarifa, Long idCartera, Long idSubcartera) {//, Long idTipoTrabajo,
 			//Long idSubtipoTrabajo) {
 
-		if (idCartera != null && idTipoTarifa != null) {
+		if (idCartera != null && idTipoTarifa != null && idSubcartera != null) {
 			Filter fCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.id", idCartera);
 			Filter fTipoTarifa = genericDao.createFilter(FilterType.EQUALS, "tipoTarifa.id", idTipoTarifa);
+			Filter fSubcartera = genericDao.createFilter(FilterType.EQUALS, "subcartera.id", idSubcartera);
 //			Filter fTipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.id", idTipoTrabajo);
 //			Filter fSubtipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "subtipoTrabajo.id", idSubtipoTrabajo);
 
-			return genericDao.get(ConfiguracionTarifa.class, fCartera, fTipoTarifa);//, fTipoTrabajo, fSubtipoTrabajo);
+			return genericDao.get(ConfiguracionTarifa.class, fCartera, fTipoTarifa, fSubcartera);//, fTipoTrabajo, fSubtipoTrabajo);
 		}
 		return null;
 	}

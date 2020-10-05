@@ -548,16 +548,23 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					    idPrincipal:'idActivo',
 					    topBar : true,
 					    editOnSelect: '{isGestorAdmisionAndSuper}',
+					    reference: 'listadoDeudoresRef',
 						cls	: 'panel-base shadow-panel',					
 						bind: {
 							store: '{storeDeudores}',
 							topBar: '{isGestorAdmisionAndSuper}'						
 						},
 						listeners:{
-							afterrender:function(a,b,v,c){
-								var me = this;
+							afterrender:function(){
+								var me = this;								
 								var idAct= me.lookupController().getViewModel().data.activo.id;
 								me.lookupController().getViewModel().data.idActivo = idAct;
+								var entidadPropietaria = me.lookupController().getViewModel().data.activo.data.entidadPropietariaCodigo;
+								if (entidadPropietaria == CONST.CARTERA['BBVA']) {
+									me.setVisible(true);
+								}else{
+									me.setVisible(false);
+								}
 							}
 						},
 						colspan: 3,						

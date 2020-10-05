@@ -355,6 +355,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 	@Autowired
 	private TramitacionOfertasApi tramitacionOfertasManager;
+	
+	@Autowired
+	private GestorActivoApi gestorActivoManager;
 
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -1980,6 +1983,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 		
+		if(!Checks.esNulo(oferta.getActivoPrincipal())) {
+			Usuario usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(oferta.getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+			if(!Checks.esNulo(usuarioBackOffice) && !Checks.esNulo(usuarioBackOffice.getEmail())) {
+				dto.setCorreoGestorBackoffice(usuarioBackOffice.getEmail());
+			}
+		}
 		
 		return dto;
 	}
@@ -2344,7 +2353,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					&& DDCartera.CODIGO_CARTERA_BBVA.equals(listaActivosOferta.get(0).getPrimaryKey().getActivo().getCartera().getCodigo())) {
 				for (ActivoOferta activosOferta : listaActivosOferta) {
 					Activo activo = activosOferta.getPrimaryKey().getActivo();
-					if(activo != null && activo.getSituacionPosesoria().getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloSi.contentEquals(activo.getSituacionPosesoria().getConTitulo().getCodigo())){
+					if (activo != null && activo.getSituacionPosesoria().getOcupado() == 1
+							&& DDTipoTituloActivoTPA.tipoTituloSi
+									.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo())){
 						return true;
 					}
 				}

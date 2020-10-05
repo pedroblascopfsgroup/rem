@@ -61,8 +61,10 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -431,6 +433,21 @@ public class OfertasController {
 		excelReportGeneratorApi.sendReport(file, response);
 		Oferta oferta = ofertaApi.getOfertaById(idOferta);
 		notificationOferta.sendNotificationPropuestaOferta(oferta, new FileItem(file));
+	}
+	@RequestMapping(method = RequestMethod.GET)
+	public void generateExcelBBVA(DtoOfertasFilter dtoOfertasFilter, HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+		try {
+			
+				File file = null;
+				file = excelReportGeneratorApi.generateBbvaReport(dtoOfertasFilter,request);
+				excelReportGeneratorApi.sendReport(file, response);
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -860,6 +877,8 @@ public class OfertasController {
 		excelReportGeneratorApi.generateAndSend(report, response);
 	}
 	
+
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getClaseOferta(Long idExpediente, ModelMap model) {
@@ -910,4 +929,34 @@ public class OfertasController {
 		
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView generarFichaComercial(ModelMap model, Long idOferta) {
+
+		try {
+
+			Oferta oferta = ofertaApi.getOfertaById(idOferta);
+			String errorCode = notificationOferta.enviarMailFichaComercial(oferta);
+
+			if(errorCode == null || errorCode.isEmpty()){
+				model.put("success", true);
+			}
+			else{
+				model.put("success", false);
+				model.put("errorCode", errorCode);
+			}
+
+
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("errorCode", e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+
+	}
+	
 }

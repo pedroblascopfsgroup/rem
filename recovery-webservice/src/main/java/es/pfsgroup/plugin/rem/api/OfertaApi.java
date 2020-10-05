@@ -822,4 +822,5 @@ public interface OfertaApi {
 
 	public Integer isEpaAlquilado(Long idAgrupacion);
 
+
 }

@@ -461,6 +461,15 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							margin : '10 10 10 10'
 						}, {
 							xtype : 'button',
+							reference : 'btnGenerarFichaComercial',
+							bind : {/*hidden: '{!datosbasicosoferta.permiteProponer}'*/},
+							rowspan : 2,
+							text : HreRem.i18n('btn.propuesta.generar.ficha.comercial'),
+							handler : 'onClickGeneraFichaComercialHojaExcel',
+							margin : '10 10 10 10'
+						},
+						{
+							xtype : 'button',
 							reference : 'btnSendAprobacion',
 							bind : {
 								hidden : '{!esTipoAlquiler}',
@@ -480,6 +489,17 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							handler : 'onClickGenerarListadoDeActivos',
 							margin : '10 10 10 10'
 
+						},
+						{
+							xtype : 'button',
+							reference : 'btngenerarfichacomercial',
+							bind : {
+								hidden : '{!esBbva}',
+								disabled : '{!habilitarBotonGenerarFicha}'
+							},
+							text : HreRem.i18n('btn.generar.ficha.comercial'),
+							handler : 'onClickGenerarFichaComercial',
+							margin : '10 10 10 10'
 						}]
 					}]
 		}, {

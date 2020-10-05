@@ -124,6 +124,8 @@ public class DtoDatosBasicosOferta extends WebDto {
 	
 	
 	private Boolean estadoAprobadoLbk;
+	
+	private String correoGestorBackoffice;
 
 	public Boolean getEstadoAprobadoLbk() {
 		return estadoAprobadoLbk;
@@ -555,6 +557,14 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setTareaAdvisoryNoteFinalizada(Boolean tareaAdvisoryNoteFinalizada) {
 		this.tareaAdvisoryNoteFinalizada = tareaAdvisoryNoteFinalizada;
+	}
+
+	public String getCorreoGestorBackoffice() {
+		return correoGestorBackoffice;
+	}
+
+	public void setCorreoGestorBackoffice(String correoGestorBackoffice) {
+		this.correoGestorBackoffice = correoGestorBackoffice;
 	}
 
 }

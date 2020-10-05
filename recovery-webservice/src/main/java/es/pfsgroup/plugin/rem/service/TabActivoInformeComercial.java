@@ -37,15 +37,24 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoBanyo;
+import es.pfsgroup.plugin.rem.model.ActivoCarpinteriaExterior;
+import es.pfsgroup.plugin.rem.model.ActivoCarpinteriaInterior;
+import es.pfsgroup.plugin.rem.model.ActivoCocina;
 import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
+import es.pfsgroup.plugin.rem.model.ActivoInfraestructura;
+import es.pfsgroup.plugin.rem.model.ActivoInstalacion;
 import es.pfsgroup.plugin.rem.model.ActivoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoLocalComercial;
+import es.pfsgroup.plugin.rem.model.ActivoParamentoVertical;
 import es.pfsgroup.plugin.rem.model.ActivoPlazaAparcamiento;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoSolado;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
+import es.pfsgroup.plugin.rem.model.ActivoZonaComun;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -549,49 +558,85 @@ public class TabActivoInformeComercial implements TabActivoService {
 				
 
 				// Datos de Infraestructura
-				if (!Checks.esNulo(actInfoComercial.getInfraestructura())) {
-					beanUtilNotNull.copyProperties(actInfoComercial.getInfraestructura(), activoInformeDto);
+				if (Checks.esNulo(actInfoComercial.getInfraestructura())) {
+					ActivoInfraestructura infraestructura = new ActivoInfraestructura();
+					infraestructura.setInfoComercial(actInfoComercial);
+					actInfoComercial.setInfraestructura(infraestructura);
+					genericDao.save(ActivoInfraestructura.class, infraestructura);
 				}
-
+				beanUtilNotNull.copyProperties(actInfoComercial.getInfraestructura(), activoInformeDto);
+				
 				// Datos de CarpinteriaInterior
-				if (!Checks.esNulo(actInfoComercial.getCarpinteriaInterior())) {
-					beanUtilNotNull.copyProperties(actInfoComercial.getCarpinteriaInterior(), activoInformeDto);
+				if (Checks.esNulo(actInfoComercial.getCarpinteriaInterior())) {
+					ActivoCarpinteriaInterior carpInt = new ActivoCarpinteriaInterior();
+					carpInt.setInfoComercial(actInfoComercial);
+					actInfoComercial.setCarpinteriaInterior(carpInt);
+					genericDao.save(ActivoCarpinteriaInterior.class, carpInt);
 				}
+				beanUtilNotNull.copyProperties(actInfoComercial.getCarpinteriaInterior(), activoInformeDto);
 
 				// Datos de CarpinteriaExterior
-				if (!Checks.esNulo(actInfoComercial.getCarpinteriaExterior())) {
-					beanUtilNotNull.copyProperties(actInfoComercial.getCarpinteriaExterior(), activoInformeDto);
+				if (Checks.esNulo(actInfoComercial.getCarpinteriaExterior())) {
+					ActivoCarpinteriaExterior carpExt = new ActivoCarpinteriaExterior();
+					carpExt.setInfoComercial(actInfoComercial);
+					actInfoComercial.setCarpinteriaExterior(carpExt);
+					genericDao.save(ActivoCarpinteriaExterior.class, carpExt);
 				}
+				beanUtilNotNull.copyProperties(actInfoComercial.getCarpinteriaExterior(), activoInformeDto);
 
 				// Datos de ParamentoVertical
-				if (!Checks.esNulo(actInfoComercial.getParamentoVertical())) {
-					beanUtilNotNull.copyProperties(actInfoComercial.getParamentoVertical(), activoInformeDto);
+				if (Checks.esNulo(actInfoComercial.getParamentoVertical())) {
+					ActivoParamentoVertical paramentoVertical = new ActivoParamentoVertical();
+					paramentoVertical.setInfoComercial(actInfoComercial);
+					actInfoComercial.setParamentoVertical(paramentoVertical);
+					genericDao.save(ActivoParamentoVertical.class, paramentoVertical);					
 				}
+				beanUtilNotNull.copyProperties(actInfoComercial.getParamentoVertical(), activoInformeDto);
 
 				// Datos de Solado
-				if (!Checks.esNulo(actInfoComercial.getSolado())) {
-					beanUtilNotNull.copyProperties(actInfoComercial.getSolado(), activoInformeDto);
+				if (Checks.esNulo(actInfoComercial.getSolado())) {
+					ActivoSolado solado = new ActivoSolado();
+					solado.setInfoComercial(actInfoComercial);
+					actInfoComercial.setSolado(solado);
+					genericDao.save(ActivoSolado.class, solado);
 				}
+				beanUtilNotNull.copyProperties(actInfoComercial.getSolado(), activoInformeDto);
 
 				// Datos de Cocina
-				if (!Checks.esNulo(actInfoComercial.getCocina())) {
-					beanUtilNotNull.copyProperties(actInfoComercial.getCocina(), activoInformeDto);
+				if (Checks.esNulo(actInfoComercial.getCocina())) {
+					ActivoCocina cocina = new ActivoCocina();
+					cocina.setInfoComercial(actInfoComercial);
+					actInfoComercial.setCocina(cocina);
+					genericDao.save(ActivoCocina.class, cocina);
 				}
+				beanUtilNotNull.copyProperties(actInfoComercial.getCocina(), activoInformeDto);
 
 				// Datos de Banyo
-				if (!Checks.esNulo(actInfoComercial.getBanyo())) {
-					beanUtilNotNull.copyProperties(actInfoComercial.getBanyo(), activoInformeDto);
+				if (Checks.esNulo(actInfoComercial.getBanyo())) {
+					ActivoBanyo banyo = new ActivoBanyo();
+					banyo.setInfoComercial(actInfoComercial);
+					actInfoComercial.setBanyo(banyo);
+					genericDao.save(ActivoBanyo.class, banyo);
 				}
+				beanUtilNotNull.copyProperties(actInfoComercial.getBanyo(), activoInformeDto);
 
 				// Datos de Instalacion
-				if (!Checks.esNulo(actInfoComercial.getInstalacion())) {
-					beanUtilNotNull.copyProperties(actInfoComercial.getInstalacion(), activoInformeDto);
+				if (Checks.esNulo(actInfoComercial.getInstalacion())) {
+					ActivoInstalacion instalacion = new ActivoInstalacion();
+					instalacion.setInfoComercial(actInfoComercial);
+					actInfoComercial.setInstalacion(instalacion);
+					genericDao.save(ActivoInstalacion.class, instalacion);
 				}
+				beanUtilNotNull.copyProperties(actInfoComercial.getInstalacion(), activoInformeDto);
 
 				// Datos de ZonaComun
-				if (!Checks.esNulo(actInfoComercial.getZonaComun())) {
-					beanUtilNotNull.copyProperties(actInfoComercial.getZonaComun(), activoInformeDto);
+				if (Checks.esNulo(actInfoComercial.getZonaComun())) {
+					ActivoZonaComun zonaComun = new ActivoZonaComun();
+					zonaComun.setInfoComercial(actInfoComercial);
+					actInfoComercial.setZonaComun(zonaComun);
+					genericDao.save(ActivoZonaComun.class, zonaComun);
 				}
+				beanUtilNotNull.copyProperties(actInfoComercial.getZonaComun(), activoInformeDto);
 				
 				//// HREOS-3025 Valor estimado del mediador: No se copia donde debe
 				Boolean valorEstimadoVentaExists = false;

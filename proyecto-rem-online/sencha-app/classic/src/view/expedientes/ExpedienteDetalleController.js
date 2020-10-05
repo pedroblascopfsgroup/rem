@@ -4979,12 +4979,12 @@ comprobarFormatoModificar: function() {
 		config.url= $AC.getRemoteUrl("ofertas/generateExcelBBVA");
 		
 		me.fireEvent("downloadFile", config);
-	}
+	},
 	
 	onClickGenerarFichaComercial: function(btn) {
 		
 		var me = this;
-		var correo = me.getViewModel().get("datosbasicosoferta.correoGestorBackoffice")
+		var correo = me.getViewModel().get("datosbasicosoferta.correoGestorBackoffice");
 		
     	Ext.Msg.show({
 		    title: HreRem.i18n("title.generar.ficha.activo"),

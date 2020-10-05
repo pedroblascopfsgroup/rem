@@ -155,7 +155,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 								readOnly: '{!isCesionUsoEditable}',
 								store: '{comboCesionUso}',
 								value: '{patrimonio.cesionUso}',
-								hidden: '{!patrimonio.isCarteraCerberusDivarian}'
+								hidden: '{!patrimonio.isCarteraCerberusDivarianOBBVA}'
 							},
 							listeners: {
 								change: 'comboCesionUsoOnChage'

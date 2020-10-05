@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Javier Urban
---## FECHA_CREACION=20201001
+--## FECHA_CREACION=20201005
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11220
@@ -55,7 +55,7 @@ BEGIN
         and tar.tar_tarea_finalizada in (0)
         and tar.borrado = 0
         and act.borrado = 0
-        and tap.tap_codigo in (''T013_PBCReserva'', ''T017_PBCReserva'', ''T013_InstruccionesReserva'',''T013_ObtencionContratoReserva'')';
+        and tap.tap_codigo in (''T013_PBCReserva'', ''T017_PBCReserva'', ''T013_InstruccionesReserva'',''T013_ObtencionContratoReserva'',''T017_InstruccionesReserva'',''T017_ObtencionContratoReserva'')';
 
     EXECUTE IMMEDIATE V_MSQL;
 

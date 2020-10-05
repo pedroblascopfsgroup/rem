@@ -64,9 +64,10 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 	    								value: '{trabajo.tomaPosesion}'
 	    								
 	    									},
-									listeners: {
-										afterrender: 'hiddenComboTomaPosesion'
-									}
+									allowBlank: false
+//									listeners: {
+//										afterrender: 'hiddenComboTomaPosesion'
+//									}
         						},
 							 	{ 
 				                	xtype: 'textfieldbase',

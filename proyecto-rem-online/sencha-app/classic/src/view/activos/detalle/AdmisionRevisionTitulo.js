@@ -82,8 +82,8 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 						.i18n('fieldlabel.admision.revisionTitulo.tituloPropiedadEntrada'),
 				readOnly: true,
 				bind : {
-					store : '{storeTituloOrigenActivo}',
-					value : '{admisionRevisionTitulo.tipoTituloActivo}'
+					store : '{storeTituloOrigenActivo}',				
+					value : '{admisionRevisionTitulo.tipoTituloCodigo}'
 				}
 			},
 			{
@@ -92,8 +92,8 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 						.i18n('fieldlabel.admision.revisionTitulo.subtipoTituloEntrada'),
 				readOnly: true,
 				bind : {
-					store : '{comboSubtipoTituloActivo}',
-					value : '{admisionRevisionTitulo.subtipoTituloActivo}'
+					store: '{comboSubtipoTitulo}', 
+					value : '{admisionRevisionTitulo.subtipoTituloCodigo}'				
 				}
 			},
 			{

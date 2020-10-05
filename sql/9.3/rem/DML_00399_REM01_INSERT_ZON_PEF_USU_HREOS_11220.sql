@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Carlos Augusto
---## FECHA_CREACION=20200929
+--## FECHA_CREACION=20201005
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11220
@@ -39,8 +39,8 @@ DECLARE
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
     --			USU_USERNAME			CODIGO PERFIL
 	  T_FUNCION('dgutierrez',	'PERFGBOARDING'),
- 	  T_FUNCION('avila',	'PERFGBOARDING'),
- 	  T_FUNCION('alois',	'PERFGBOARDING')
+ 	  T_FUNCION('SUPER',	'PERFGBOARDING')
+ 	--  T_FUNCION('alois',	'PERFGBOARDING')
 
     );
     V_TMP_FUNCION T_FUNCION;

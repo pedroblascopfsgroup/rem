@@ -638,8 +638,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 
 		ServletContext sc = request.getSession().getServletContext();
 		FileOutputStream fileOutStream;
-		File poiFile = new File(sc.getRealPath("plantillas/plugin/AdvisoryNoteApple/a.xlsx"));
-		File fileOut = new File(poiFile.getAbsolutePath());
+		File poiFile = new File(sc.getRealPath("/plantillas/plugin/GenerarFichaComercialBbva/FichaComercialReport.xlsx"));
+		File fileOut = new File(poiFile.getAbsolutePath().replace("Report",""));
 		FileInputStream fis = new FileInputStream(poiFile);
 		fileOutStream = new FileOutputStream(fileOut);
 		try {			

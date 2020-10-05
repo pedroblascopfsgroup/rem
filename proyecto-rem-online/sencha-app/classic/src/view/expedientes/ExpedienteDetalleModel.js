@@ -7,7 +7,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
                 'HreRem.model.ComparecienteBusqueda', 'HreRem.model.Honorario','HreRem.model.HstcoSeguroRentas','HreRem.model.TipoDocumentoExpediente',
 				'HreRem.model.CompradorExpediente', 'HreRem.model.FichaComprador','HreRem.model.BloqueoActivo','HreRem.model.TanteoActivo',
 				'HreRem.model.ExpedienteScoring', 'HreRem.model.HistoricoExpedienteScoring', 'HreRem.model.SeguroRentasExpediente', 'HreRem.model.HistoricoCondiciones',
-				'HreRem.model.OfertasAgrupadasModel'],
+				'HreRem.model.OfertasAgrupadasModel', 'HreRem.model.OrigenLead'],
     
     data: {
     },
@@ -489,7 +489,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			var tarea = get('datosbasicosoferta.tareaAdvisoryNoteFinalizada');
 			return ($AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL_BO_INM']) && (tarea == false || tarea == 'false'));
 		},
-
+		requisitosVisibleBotonExcluirBulk: function(get){
+			var tareaAn = get('datosbasicosoferta.tareaAdvisoryNoteFinalizada');
+			var tareaPro = get('datosbasicosoferta.tareaAutorizacionPropiedadFinalizada');
+			var idAn = get('datosbasicosoferta.idAdvisoryNote');
+			var exclusion = get('datosbasicosoferta.exclusionBulk');
+			return ($AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL_BO_INM']) && !Ext.isEmpty(idAn) && !Ext.isEmpty(exclusion)
+			&& (tareaAn == true || tareaAn == 'true') && (tareaPro == false || tareaPro == 'false'));
+		},
 		esPerfilPMyCEs: function(get){
 			
 			var tipoOfertaDesc = get('datosbasicosoferta.estadoDescripcion');

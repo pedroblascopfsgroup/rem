@@ -3310,6 +3310,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		try {
 
 			beanUtilNotNull.copyProperties(tarifaTrabajo, tarifaDto);
+			if(tarifaDto.getPrecioUnitarioCliente() == null && tarifaDto.getPrecioUnitario() != null) {
+				if(Double.valueOf(tarifaDto.getPrecioUnitario()) > tarifaTrabajo.getPrecioUnitarioCliente()) {
+					tarifaTrabajo.setPrecioUnitarioCliente(Double.valueOf(tarifaDto.getPrecioUnitario()));
+				}
+			}
 			genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
 			actualizarImporteTotalTrabajo(tarifaTrabajo.getTrabajo().getId());
 

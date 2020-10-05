@@ -183,8 +183,11 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 	    				        		listeners:{
 	    				        			change: function(x, y, z){
 	    				        				var field = this;
-	    				        				field.up().down("[reference='preciounitarioclienteref']").setMinValue(field.value);
-	    				        				field.up().down("[reference='preciounitarioclienteref']").validate();
+	    				        				var precioUniCli = field.up().down("[reference='preciounitarioclienteref']");
+	    				        				if(!precioUniCli.hidden){
+	    				        					precioUniCli.setMinValue(field.value);
+	    				        					precioUniCli.validate();
+	    				        				}
 	    				        			}
 	    				        		}
 	    				        	},

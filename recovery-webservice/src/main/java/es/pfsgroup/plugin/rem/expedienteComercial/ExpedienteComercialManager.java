@@ -2344,7 +2344,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					&& DDCartera.CODIGO_CARTERA_BBVA.equals(listaActivosOferta.get(0).getPrimaryKey().getActivo().getCartera().getCodigo())) {
 				for (ActivoOferta activosOferta : listaActivosOferta) {
 					Activo activo = activosOferta.getPrimaryKey().getActivo();
-					if(activo != null && activo.getSituacionPosesoria().getOcupado() == 1 && DDTipoTituloActivoTPA.tipoTituloSi.contentEquals(activo.getSituacionPosesoria().getConTitulo().getCodigo())){
+					if (activo != null && activo.getSituacionPosesoria().getOcupado() == 1
+							&& DDTipoTituloActivoTPA.tipoTituloSi
+									.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo())){
 						return true;
 					}
 				}

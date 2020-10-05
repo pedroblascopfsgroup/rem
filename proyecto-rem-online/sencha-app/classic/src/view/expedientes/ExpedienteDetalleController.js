@@ -4970,6 +4970,15 @@ comprobarFormatoModificar: function() {
 	 		    
 			});		
 		}		
+	},
+	
+	onClickGeneraFichaComercialHojaExcel: function(btn) {
+		var me = this,
+		config = {};
+		
+		config.url= $AC.getRemoteUrl("ofertas/generateExcelBBVA");
+		
+		me.fireEvent("downloadFile", config);
 	}
 	
 });

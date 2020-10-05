@@ -45,6 +45,7 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.utils.FileUtils;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
+import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
 
@@ -171,6 +172,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 		return fileOut;
 		
 	}
+
 	
 	@Override
 	public File generateBankiaReport(List<DtoPropuestaAlqBankia> lDtoPropuestaAlq, HttpServletRequest request) throws IOException {
@@ -631,7 +633,26 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 		return MAX_ROW_LIMIT;
 	}
 	
-	
+	@Override
+	public File generateBbvaReport(DtoOfertasFilter  dtoOfertasFilter, HttpServletRequest request) throws IOException {
+
+		ServletContext sc = request.getSession().getServletContext();
+		FileOutputStream fileOutStream;
+		File poiFile = new File(sc.getRealPath("plantillas/plugin/AdvisoryNoteApple/a.xlsx"));
+		File fileOut = new File(poiFile.getAbsolutePath());
+		FileInputStream fis = new FileInputStream(poiFile);
+		fileOutStream = new FileOutputStream(fileOut);
+		try {			
+			XSSFWorkbook myWorkBook = new XSSFWorkbook (fis);
+			myWorkBook.write(fileOutStream);
+			fileOutStream.close();
+			
+			return fileOut;
+			
+		}finally {
+			fileOutStream.close();
+		}
+	}	
 	
 	@Override
 	public File getAdvisoryNoteReport(List<VReportAdvisoryNotes> listaAN, HttpServletRequest request) throws IOException {

@@ -4702,7 +4702,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		List<ActivoAgrupacionActivo>  listaAgrupacionActivos = null;
 		Filter filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS ,"id", idAgrupacion);
 		listaAgrupacionActivos = genericDao.getList(ActivoAgrupacionActivo.class, filtroAgrupacion);
-		
+		listaAgrupacionActivos.get(0).getActivo().getId();
 		if(listaAgrupacionActivos.get(0).getActivo() != null 
 				&& DDCartera.CODIGO_CARTERA_BBVA.equals(listaAgrupacionActivos.get(0).getActivo().getCartera().getCodigo())){
 			for (ActivoAgrupacionActivo activoAgrupacionActivo : listaAgrupacionActivos) {
@@ -4727,5 +4727,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		return 0;
 	}
+
+
 	
 }

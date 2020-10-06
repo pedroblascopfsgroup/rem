@@ -8,7 +8,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 	scrollable : 'y',
 	recordName : "condiciones",
 	recordClass : "HreRem.model.CondicionesExpediente",
-	requires : [ 'HreRem.model.CondicionesExpediente' ],
+	requires : [ 'HreRem.model.CondicionesExpediente','HreRem.view.common.GridBaseEditableRow'],
 	refreshAfterSave: true, 
 	listeners : {
 		boxready : 'cargarTabData'
@@ -495,6 +495,18 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 					}
 				]
 			},
+			{
+				xtype:'fieldsettable',
+				colspan: 3,
+				title: HreRem.i18n("title.expediente.condiciones.activos.alquilados"),
+				items :[
+					{
+						xtype: "activosAlquiladosGrid", 
+						reference: "activosAlquiladosGrid",
+						colspan: 3
+					}
+				]
+       		},
 			{
 				xtype : 'fieldset',
 				collapsible : true,

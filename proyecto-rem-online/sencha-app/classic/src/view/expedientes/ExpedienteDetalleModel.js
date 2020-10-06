@@ -1343,6 +1343,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        remoteUrl: 'expedientecomercial/getOrigenLead',
 		        extraParams: {idExpediente: '{expediente.id}'}
 	    	}
+		},
+		storeActivosAlquilados: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.ActivoAlquiladosGrid',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getActivosAlquilados',
+		        extraParams: {idExpediente: '{expediente.id}'}
+	    	},
+			autoLoad: true
 		}
 		
     }

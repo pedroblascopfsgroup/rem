@@ -4979,7 +4979,7 @@ comprobarFormatoModificar: function() {
 		config.url= $AC.getRemoteUrl("ofertas/generateExcelBBVA");
 		
 		me.fireEvent("downloadFile", config);
-	}
+	},
 	
 	onClickGenerarFichaComercial: function(btn) {
 		

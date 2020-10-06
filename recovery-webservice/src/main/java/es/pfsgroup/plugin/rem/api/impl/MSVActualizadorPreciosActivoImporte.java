@@ -191,6 +191,9 @@ public class MSVActualizadorPreciosActivoImporte extends AbstractMSVActualizador
 			Date fechaInicio = simpleDate.parse(fechaInicioExcel);
 			dtoActivoValoracion.setFechaInicio(fechaInicio);
 		} 
+		else {
+			dtoActivoValoracion.setFechaInicio(new Date());
+		}
 		if(!Checks.esNulo(fechaAprobacionExcel)){
 			Date fechaAprobacion = simpleDate.parse(fechaAprobacionExcel);
 			dtoActivoValoracion.setFechaAprobacion(fechaAprobacion);

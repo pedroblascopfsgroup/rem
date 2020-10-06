@@ -2159,6 +2159,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		} else {
 			trabajo.setRiesgoInminenteTerceros(false);
 		}
+		if(dtoTrabajo.getAplicaComite() != null && dtoTrabajo.getAplicaComite()) {
+			if(dtoTrabajo.getResolucionComiteCodigo() != null) {
+				DDAcoAprobacionComite AprobacionComite = genericDao.get(DDAcoAprobacionComite.class, 
+						genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dtoTrabajo.getResolucionComiteCodigo())));
+				trabajo.setAprobacionComite(AprobacionComite);
+			}
+		}else {
+			trabajo.setFechaResolucionComite(null);
+		}
 		
 		if (dtoTrabajo.getResolucionComiteCodigo() != null) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getResolucionComiteCodigo());
@@ -2285,15 +2294,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdMediador()));
 			trabajo.setMediador(mediador);
 		}
-		if(dtoTrabajo.getAplicaComite() != null && dtoTrabajo.getAplicaComite()) {
-			if(dtoTrabajo.getResolucionComiteCodigo() != null) {
-				DDAcoAprobacionComite AprobacionComite = genericDao.get(DDAcoAprobacionComite.class, 
-						genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dtoTrabajo.getResolucionComiteCodigo())));
-				trabajo.setAprobacionComite(AprobacionComite);
-			}
-		}else {
-			trabajo.setFechaResolucionComite(null);
-		}
+		
 		if(dtoTrabajo.getRefImportePresupueso() != null) {
 			trabajo.setResolucionImportePresupuesto(dtoTrabajo.getRefImportePresupueso());
 		}

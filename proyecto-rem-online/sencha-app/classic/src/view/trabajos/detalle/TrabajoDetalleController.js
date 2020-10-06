@@ -1662,6 +1662,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		    		me.lookupReference('comboResolucionComite').setReadOnly(false);
 					me.lookupReference('fechaResolucionComiteRef').setReadOnly(false);
 					me.lookupReference('resolucionComiteIdRef').setReadOnly(false);
+					me.lookupReference('tomaDePosesion').setReadOnly(false);
 	    			
     			} else {
     				me.lookupReference('comboProveedorGestionEconomica').setReadOnly(false);

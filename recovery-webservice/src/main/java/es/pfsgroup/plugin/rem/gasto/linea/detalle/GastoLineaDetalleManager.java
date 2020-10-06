@@ -33,6 +33,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoConfiguracionCuentasContables;
 import es.pfsgroup.plugin.rem.model.ActivoConfiguracionPtdasPrep;
 import es.pfsgroup.plugin.rem.model.ActivoGenerico;
+import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
 import es.pfsgroup.plugin.rem.model.ActivoSubtipoGastoProveedorTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoSubtipoTrabajoGastoImpuesto;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
@@ -53,11 +54,11 @@ import es.pfsgroup.plugin.rem.model.VParticipacionElementosLinea;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivoBDE;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEmisorGLD;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoImporte;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoGasto;
@@ -478,7 +479,16 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			Filter activableCcc = genericDao.createFilter(FilterType.EQUALS, "cccActivable", 1);
 			Filter tipoComisionadoCcc = genericDao.createFilter(FilterType.NULL, "ccctipoComisionado.id");
 			Filter tipoComisionadoCpp = genericDao.createFilter(FilterType.NULL, "cpptipoComisionado.id");
+			
 			Filter tipoActivoBDE = genericDao.createFilter(FilterType.NULL, "tipoActivoBDE");
+			
+			if(idLineaDetalleGasto != null) {			
+				DDTipoActivoBDE ddTipoBDE = calcularTipoBdePorIdLineaDetalleGasto(idLineaDetalleGasto);				
+				if( ddTipoBDE != null) {
+					tipoActivoBDE = genericDao.createFilter(FilterType.EQUALS, "tipoActivoBDE.id", ddTipoBDE.getId());
+				}				
+			}				
+			
 			Filter cccvendido = genericDao.createFilter(FilterType.EQUALS, "cccVendido", 0);
 			Filter cppvendido = genericDao.createFilter(FilterType.EQUALS, "cppVendido", 0);
 
@@ -585,6 +595,54 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		}
 	
 		return dtoLineaDetalleGasto;
+	}
+	
+	private DDTipoActivoBDE calcularTipoBdePorIdLineaDetalleGasto(Long idLineaDetalleGasto) {
+		List<Activo> activos = this.devolverActivosDeLineasDeGasto(idLineaDetalleGasto);
+		ActivoInfoLiberbank activoInfoLbk;
+		DDTipoActivoBDE ddTipoBDE = null;
+		
+		if(!Checks.estaVacio(activos)) {
+			
+			if(activos.size() == 1) {
+				activoInfoLbk = genericDao.get(ActivoInfoLiberbank.class,genericDao.createFilter(FilterType.EQUALS, "id", activos.get(0).getId()));
+				if(activoInfoLbk !=null) {
+					ddTipoBDE = activoInfoLbk.getTipoActivoBde();							
+				}
+			}else {
+				List<ActivoInfoLiberbank> lista = new ArrayList<ActivoInfoLiberbank>();
+				for (Activo activo : activos) {					
+					activoInfoLbk = genericDao.get(ActivoInfoLiberbank.class,genericDao.createFilter(FilterType.EQUALS, "id", activo.getId()));
+					if(activoInfoLbk != null) {
+						lista.add(activoInfoLbk);
+					}
+				}
+				
+				if(activos.size() == lista.size()) {
+					
+					boolean igualTipoBDE = true;
+					
+					if(lista.get(0).getTipoActivoBde() != null) {
+						String codigo = lista.get(0).getTipoActivoBde().getCodigo();
+						DDTipoActivoBDE tipo;						
+						for (int i = 1; i < lista.size() && igualTipoBDE; i++) {							
+							tipo = lista.get(i).getTipoActivoBde();
+							if(tipo != null && !tipo.getCodigo().equals(codigo) || tipo == null){
+								igualTipoBDE = false;
+							}							
+						}
+						if(igualTipoBDE) {
+							ddTipoBDE = lista.get(0).getTipoActivoBde();							
+						}
+						
+					}
+					
+				}
+				
+			}
+			
+		}
+		return ddTipoBDE;
 	}
 	
 	

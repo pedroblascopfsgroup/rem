@@ -1,15 +1,13 @@
 --/*
 --##########################################
---## AUTOR= Javier Esbri
---## FECHA_CREACION=20200908
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20201006
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-10924
+--## INCIDENCIA_LINK=HREOS-11236
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que para crear la función o funciones especificadas en el array y las asigna a los perfiles de indicados en la misma línea.
---## INSTRUCCIONES: T_FUNCION Contiene: POP_NOMBRE, POP_DIRECTORIO (ruta) Y DD_OPM_CODIGO
---##                V_USUARIO Contiene el usuario que crea, modifica o borra.
+--## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
@@ -28,7 +26,7 @@ DECLARE
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     V_TABLA_POP VARCHAR2 (30); -- Vble. para trabajar con la tabla del esquema.
     V_TABLA_OPM VARCHAR(50); --Vble. Nombre de la tabla OPM (Operación Masiva)
-    V_USUARIO VARCHAR2(50 CHAR):='HREOS-10924'; -- Vble. que indica el usuario que realiza la operación (USUARIOCREAR)
+    V_USUARIO VARCHAR2(50 CHAR):='HREOS-11236'; -- Vble. que indica el usuario que realiza la operación (USUARIOCREAR)
     V_AUTO_ID NUMBER(16); -- Vble. que indica el siquiente valor de una secuencia.
     V_DD_OPM_ID NUMBER(16); -- Identificador del registro de la tabla de operaciones masivas.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
@@ -38,7 +36,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-		  T_FUNCION('CARGA_MASIVA_TABLA_CONF3', 'plantillas/plugin/masivo/CARGA_MASIVA_RELLENAR_TABLA_CONF3.xls', 'CMURTC3')
+		  T_FUNCION('CARGA_MASIVA_ACTUALIZACION_CONVIVENCIA_SAREB', 'plantillas/plugin/masivo/CARGA_MASIVA_ACTUALIZACION_CONV_SAREB.xls', 'CMACCS')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_MSQL_1 VARCHAR2(4000 CHAR);

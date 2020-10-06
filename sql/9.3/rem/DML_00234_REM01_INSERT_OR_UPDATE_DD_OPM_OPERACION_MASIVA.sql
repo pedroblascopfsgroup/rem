@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20200908
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20201006
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-10924
+--## INCIDENCIA_LINK=HREOS-11236
 --## PRODUCTO=NO
 --##
 --## INSTRUCCIONES: 
@@ -25,7 +25,7 @@ DECLARE
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
-    V_USUARIO VARCHAR2(50 CHAR):= 'HREOS-10924';   
+    V_USUARIO VARCHAR2(50 CHAR):= 'HREOS-11236';   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 	
@@ -36,7 +36,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	    T_FUNCION('CMURTC3', 'Carga masiva nuevos campos convivencia Sareb','Carga masiva nuevos campos convivencia Sareb','CARGA_MASIVA_RELLENAR_TABLA_CONF3','n,n,s*,s,s*')
+	    T_FUNCION('CMACCS', 'Actualización de campos para convivencia Sareb','Actualización de campos para convivencia Sareb','CARGA_MASIVA_ACTUALIZACION_CONVIVENCIA_SAREB','n*,s*,s,s*,s,s,n')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_MSQL_1 VARCHAR2(4000 CHAR);

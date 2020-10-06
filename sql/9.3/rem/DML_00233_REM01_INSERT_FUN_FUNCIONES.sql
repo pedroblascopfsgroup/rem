@@ -1,14 +1,13 @@
 --/*
 --##########################################
---## AUTOR=Javier Esbri
---## FECHA_CREACION=20200908
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20201006
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-10924
+--## INCIDENCIA_LINK=HREOS-11236
 --## PRODUCTO=NO
 --##
---## Finalidad: INSERT en FUN_FUNCIONES los datos del T_ARRAY_FUNCION
---## INSTRUCCIONES:
+--## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
@@ -22,7 +21,7 @@ DECLARE
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
-    V_USUARIO VARCHAR2(50 CHAR):='HREOS-10924'; 
+    V_USUARIO VARCHAR2(50 CHAR):='HREOS-11236'; 
     seq_count number(3); -- Vble. para validar la existencia de las Secuencias.
     table_count number(3); -- Vble. para validar la existencia de las Tablas.
     v_column_count number(3); -- Vble. para validar la existencia de las Columnas.
@@ -35,7 +34,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-      T_FUNCION('Carga masiva que cargará la tabla de configuración CONF3', 'CARGA_MASIVA_RELLENAR_TABLA_CONF3')
+      T_FUNCION('Carga masiva actualización de campos convivencia Sareb', 'CARGA_MASIVA_ACTUALIZACION_CONVIVENCIA_SAREB')
     ); 
     V_TMP_FUNCION T_FUNCION;
 

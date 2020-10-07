@@ -38,6 +38,8 @@ import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.agenda.adapter.NotificacionAdapter;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
@@ -93,6 +95,7 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.DtoClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
+import es.pfsgroup.plugin.rem.model.DtoExcelFichaComercial;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOferta;
@@ -4746,6 +4749,115 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		
 		return 0;
+	}
+
+	@Override
+	public DtoExcelFichaComercial getListOfertasFilter(Long idExpediente) {
+		Order orderAsc = new Order(OrderType.ASC, "id");
+		Filter filtroAgrupacion = null;
+		String linkHaya = null;
+
+		DtoExcelFichaComercial dtoFichaComercial = new DtoExcelFichaComercial();
+		Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS ,"id", idExpediente);
+		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtroExpediente);
+		
+		Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS ,"id", expediente.getOferta().getId());
+		Oferta oferta = genericDao.get(Oferta.class, filtroOferta);
+		
+		Filter filtroActivoOferta = genericDao.createFilter(FilterType.EQUALS ,"oferta", expediente.getOferta().getId());
+		ActivoOferta activoOferta = genericDao.get(ActivoOferta.class, filtroActivoOferta);
+		
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS ,"id", activoOferta.getActivoId());
+		Activo activo = genericDao.get(Activo.class, filtroActivo);
+		
+		dtoFichaComercial.setNumExpediente(expediente.getNumExpediente());
+		dtoFichaComercial.setNumOferta(oferta.getNumOferta());
+
+		if(expediente.getComiteSancion() != null) {
+		if(DDComiteSancion.CODIGO_HAYA_BBVA.equals(expediente.getComiteSancion().getCodigo())) {
+			dtoFichaComercial.setComite("Si");
+		}else {
+			dtoFichaComercial.setComite("No");
+		}
+		}else {
+			dtoFichaComercial.setComite("");
+		}
+		
+		
+		dtoFichaComercial.setNumActivo(activo.getNumActivo());
+		if(oferta.getAgrupacion() != null) {
+			
+			dtoFichaComercial.setNumAgrupacion(oferta.getAgrupacion().getNumAgrupRem());
+			String direccion = "";
+			
+			filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS ,"agrupacion.id", oferta.getAgrupacion().getId());
+			ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class,filtroAgrupacion);
+			
+			if(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+
+				if(agrupacion.getActivoPrincipal() != null) {
+				 linkHaya = linkCabecera(agrupacion.getActivoPrincipal().getId());
+				}
+			}
+			if(agrupacion.getActivoPrincipal() != null && agrupacion.getActivoPrincipal().getDireccionTerritorial() != null) {
+				direccion = agrupacion.getActivoPrincipal().getDireccionTerritorial().getDescripcion();
+				agrupacion.getActivoPrincipal().getLocalidad().getDescripcion();
+				agrupacion.getActivoPrincipal().getProvincia();
+				agrupacion.getActivoPrincipal().getCodPostal();
+				
+			}else {
+				List<ActivoAgrupacionActivo> agrupacionOrdenada = genericDao.getListOrdered(ActivoAgrupacionActivo.class, orderAsc,filtroAgrupacion);
+				if(agrupacionOrdenada.get(0) != null && agrupacionOrdenada.get(0).getActivo() != null 
+						&& agrupacionOrdenada.get(0).getActivo().getDireccionTerritorial() != null) {
+					direccion = agrupacionOrdenada.get(0).getActivo().getDireccionTerritorial().getDescripcion();
+					
+				}
+				
+				
+			}
+			dtoFichaComercial.setDireccionComercial(direccion);
+		}else {
+			linkHaya = linkCabecera(activo.getId());
+			dtoFichaComercial.setVisitas(activo.getVisitas().size());
+			dtoFichaComercial.setTotalOfertas(activo.getOfertas().size());
+			
+		}
+			if(linkHaya != null) {
+				dtoFichaComercial.setLinkHaya(linkHaya);
+			}
+		
+		//dtoOfertasFilter.setDireccionComercial(activo.getDireccion());
+			dtoFichaComercial.setFechaAlta(oferta.getFechaAlta());
+
+		return dtoFichaComercial;
+	}
+	
+	public String linkCabecera(Long idActivo) {
+		String tipoActivoCodigo = "";
+		String tipoActivo = "vivienda";
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS ,"id", idActivo);
+		Activo activo = genericDao.get(Activo.class, filtroActivo);
+		
+		if(activo != null && activo.getTipoActivo() != null) {
+			tipoActivoCodigo = activo.getTipoActivo().getCodigo();
+			if(DDTipoActivo.COD_SUELO.equals(tipoActivoCodigo)){
+				tipoActivo = "terreno";
+			}else if(DDTipoActivo.COD_COMERCIAL.equals(tipoActivoCodigo)) {
+				tipoActivo = "local-comercial";
+			}else if(DDTipoActivo.COD_INDUSTRIAL.equals(tipoActivoCodigo)) {
+				tipoActivo = "nave-industrial";
+			}else if(DDTipoActivo.COD_EDIFICIO_COMPLETO.equals(tipoActivoCodigo)){
+				tipoActivo = "edificio";
+			}else if(DDTipoActivo.COD_EN_COSTRUCCION.equals(tipoActivoCodigo)){
+				tipoActivo = "en-construccion";
+			}else if(DDTipoActivo.COD_OTROS.equals(tipoActivoCodigo)) {
+				tipoActivo = "garaje-trastero";
+			}
+	 		return "<a href=\"https://www.haya.es/" + tipoActivo +"-"+activo.getNumActivo() +"?utm_source=rem&utm_medium=aplicacion&utm_campaign=activo \" target=\"_blank\"></a>";
+			
+		}
+
+		return null;
 	}
 
 

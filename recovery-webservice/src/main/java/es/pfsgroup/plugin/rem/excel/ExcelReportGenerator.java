@@ -47,6 +47,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
 
 
@@ -634,7 +635,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 	}
 	
 	@Override
-	public File generateBbvaReport(DtoOfertasFilter  dtoOfertasFilter, HttpServletRequest request) throws IOException {
+	public File generateBbvaReport(ExpedienteComercial expediente, HttpServletRequest request) throws IOException {
 
 		ServletContext sc = request.getSession().getServletContext();
 		FileOutputStream fileOutStream;
@@ -642,8 +643,30 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 		File fileOut = new File(poiFile.getAbsolutePath().replace("Report",""));
 		FileInputStream fis = new FileInputStream(poiFile);
 		fileOutStream = new FileOutputStream(fileOut);
+		
 		try {			
 			XSSFWorkbook myWorkBook = new XSSFWorkbook (fis);
+			boolean primero = true; 
+			
+			XSSFSheet mySheet;
+			CellReference cellReference;
+			XSSFRow r;
+			XSSFCell c;
+			SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+
+			if (primero) {
+				mySheet = myWorkBook.getSheetAt(0);
+				primero = false;
+			} else {
+				mySheet = myWorkBook.cloneSheet(1);
+			}
+			cellReference = new CellReference("K4");
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			
+				c.setCellValue("11111111");
+			
+			
 			myWorkBook.write(fileOutStream);
 			fileOutStream.close();
 			

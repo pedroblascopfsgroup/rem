@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
 
 public interface ExcelReportGeneratorApi {
@@ -31,6 +32,6 @@ public interface ExcelReportGeneratorApi {
 	
 	File getAdvisoryNoteReportArrow(List<VReportAdvisoryNotes> listaAN, HttpServletRequest request) throws IOException;
 
-	public File generateBbvaReport(DtoOfertasFilter DtoOfertasFilter, HttpServletRequest request) throws IOException;
+	public File generateBbvaReport(ExpedienteComercial expediente, HttpServletRequest request) throws IOException;
 
 }

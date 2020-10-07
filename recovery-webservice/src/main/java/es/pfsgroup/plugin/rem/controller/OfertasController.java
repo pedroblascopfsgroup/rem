@@ -25,6 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.config.ConfigManager;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
@@ -51,6 +52,8 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.AuditoriaExportaciones;
+import es.pfsgroup.plugin.rem.model.DtoExcelFichaComercial;
+import es.pfsgroup.plugin.rem.model.DtoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
@@ -435,13 +438,15 @@ public class OfertasController {
 		notificationOferta.sendNotificationPropuestaOferta(oferta, new FileItem(file));
 	}
 	@RequestMapping(method = RequestMethod.GET)
-	public void generateExcelBBVA(DtoOfertasFilter dtoOfertasFilter, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void generateExcelBBVA(Long idExpediente, HttpServletRequest request, HttpServletResponse response) throws IOException {
 
 		try {
-			
+			 	DtoExcelFichaComercial listaOfertasFilter = ofertaApi.getListOfertasFilter(idExpediente);
+				//Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "id", idExpediente);
+				//ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtroExpediente);
 				File file = null;
-				file = excelReportGeneratorApi.generateBbvaReport(dtoOfertasFilter,request);
-				excelReportGeneratorApi.sendReport(file, response);
+				//file = excelReportGeneratorApi.generateBbvaReport(expediente,request);
+				//excelReportGeneratorApi.sendReport(file, response);
 			
 
 		} catch (Exception e) {

@@ -1763,15 +1763,22 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
  		var comboTomaPosesion = me.lookupReference('tomaDePosesion');
 		me.lookupReference('comboProveedorGestionEconomica2').setDisabled(true);
 		me.lookupReference('proveedorContactoCombo2').setDisabled(true);
+		
+		var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+		var isGestorActivos = $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']);
+		var isGestorAlquiler = $AU.userGroupHasRole(CONST.PERFILES['GESTOR_ALQUILER_HPM']);
+		var isUserGestedi = $AU.userIsRol(CONST.PERFILES['GESTEDI']);
+		
  		if (tipoTrabajo == CONST.TIPOS_TRABAJO['ACTUACION_TECNICA'] && subTipoTrabajo == CONST.SUBTIPOS_TRABAJO['TOMA_POSESION']) {
 
- 			comboTomaPosesion.allowBlank= false;
  			comboTomaPosesion.setHidden(false);
  			comboTomaPosesion.setVisible(true);
  		}else{
 
- 			comboTomaPosesion.allowBlank= true;
  			comboTomaPosesion.setHidden(true);
+ 		}
+ 		if(!isSuper && !isGestorActivos && !isGestorAlquiler && isUserGestedi){
+ 			comboTomaPosesion.setDisabled(true);
  		}
  		 
  	},

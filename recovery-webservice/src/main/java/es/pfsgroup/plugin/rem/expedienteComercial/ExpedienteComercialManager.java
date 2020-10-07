@@ -11179,14 +11179,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 	}
 	
-	public void guardaExclusionBulk(Long idExclusion, Long idUsuario) {
+	public void guardaExclusionBulk(Long idExclusion) {
 		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
 		OfertaExclusionBulk ofertaExclusionBulk = genericDao.get(OfertaExclusionBulk.class, genericDao.createFilter(FilterType.EQUALS, "id", idExclusion));
-		Usuario user = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", idUsuario));
 		
 		ofertaExclusionBulk.setFechaFin(new Date());
-		ofertaExclusionBulk.setUsuarioAccion(user);
 		genericDao.update(OfertaExclusionBulk.class, ofertaExclusionBulk);
 
 		transactionManager.commit(transaction);
@@ -11281,14 +11279,28 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public boolean sacarBulk(Long idExpediente) {
 		if(idExpediente == null) return false;
 		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", idExpediente));
-		if(expediente == null || expediente.getOferta() == null) return false;
-		
-		OfertaExclusionBulk oeb = genericDao.get(OfertaExclusionBulk.class, genericDao.createFilter(FilterType.EQUALS, "oferta", expediente.getOferta()));
-		oeb.setExclusionBulk(genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "01")));
-		genericDao.update(OfertaExclusionBulk.class, oeb);
+		if(expediente == null || expediente.getOferta() == null) return false;		
 		
 		BulkOferta blkOfr = bulkOfertaDao.findOne(null, expediente.getOferta().getId(), false);
-		Auditoria.delete(blkOfr);	
+		if(blkOfr == null) return false;
+		
+		OfertaExclusionBulk exclusion = genericDao.get(OfertaExclusionBulk.class, 				
+				genericDao.createFilter(FilterType.EQUALS, "oferta", expediente.getOferta()),
+				genericDao.createFilter(FilterType.NULL, "fechaFin"));
+		
+		if(exclusion != null ) {			
+			exclusion.setFechaFin(new Date());
+			genericDao.update(OfertaExclusionBulk.class, exclusion);
+			bulkOfertaDao.flush();
+		}
+		
+		OfertaExclusionBulk oeb = new OfertaExclusionBulk();
+		oeb.setOferta(expediente.getOferta());
+		oeb.setExclusionBulk(genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI)));
+		oeb.setFechaInicio(new Date());
+		oeb.setUsuarioAccion(genericAdapter.getUsuarioLogado());
+		genericDao.save(OfertaExclusionBulk.class, oeb);
+		Auditoria.delete(blkOfr);
 		bulkOfertaDao.update(blkOfr);
 		
 		return true;

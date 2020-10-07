@@ -2336,6 +2336,18 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("Error en ExpedienteComercialController", e);
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView sacarBulk(ModelMap model, @RequestParam Long idExpediente) {
+		try {
+			boolean success = expedienteComercialApi.sacarBulk(idExpediente);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController::sacarBulk", e);
+		}
 
 		return createModelAndViewJson(model);
 	}

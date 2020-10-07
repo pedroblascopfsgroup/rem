@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=202001001
+--## FECHA_CREACION=202001007
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11215
@@ -43,7 +43,8 @@ DECLARE
       T_TIPO_DATA('005','Subtipo Activo OE','114','ACT'),
       T_TIPO_DATA('006','Uso dominante','006','ACT'),
       T_TIPO_DATA('007','Alquilado (Ocupado)','007','NO_ACT'),
-      T_TIPO_DATA('008','Origen Alquiler',NULL,NULL),
+      T_TIPO_DATA('008','Origen Alquiler','139','NO_ACT'),
+      T_TIPO_DATA('008','Origen Alquiler','140','WRN_CND'),
       T_TIPO_DATA('009','Situación: Ocupado ilegal',NULL,NULL),
       T_TIPO_DATA('010','Fecha cambio de estado Ocupado Ilegal',NULL,NULL),
       T_TIPO_DATA('011','Estado físico del activo','008','ACT'),
@@ -52,7 +53,7 @@ DECLARE
       T_TIPO_DATA('013','Puerta antiokupa','010','ACT'),
       T_TIPO_DATA('014','Vigilancia','011','ACT'),
       T_TIPO_DATA('015','Alarma','012','ACT'),
-      T_TIPO_DATA('016','Ascensor',NULL,NULL),
+      T_TIPO_DATA('016','Ascensor','128','ACT'),
       T_TIPO_DATA('017','Estado de inscripcion','013','ACT'),
       T_TIPO_DATA('017','Estado de inscripcion','014','WRN'),
       T_TIPO_DATA('018','Fecha de inscripción','015','ACT_CND'),
@@ -66,8 +67,8 @@ DECLARE
       T_TIPO_DATA('022','% Propiedad','023','ACT'),
       T_TIPO_DATA('023','Grado de propiedad','024','ACT'),
       T_TIPO_DATA('024','VPO','025','ACT'),
-      T_TIPO_DATA('025','Fecha Decreto',NULL,NULL),
-      T_TIPO_DATA('026','Fecha Testimonio/Fecha escritura dación',NULL,NULL),
+      T_TIPO_DATA('025','Fecha Decreto','129','ACT'),
+      T_TIPO_DATA('026','Fecha Testimonio/Fecha escritura dación','130','ACT'),
       T_TIPO_DATA('027','Fecha de señalamiento del lanzamiento','026','ACT'),
       T_TIPO_DATA('028','CIF/NIF Propietario','027','ACT'),
       T_TIPO_DATA('029','Con cargas','028','ACT'),
@@ -117,7 +118,7 @@ DECLARE
       T_TIPO_DATA('054','Municipio','063','WRN_CND'),
       T_TIPO_DATA('055','Municipio OE','122','ACT'),
       T_TIPO_DATA('056','Comunidad Autónoma','064','ACT'),
-      T_TIPO_DATA('057','País',NULL,NULL),
+      T_TIPO_DATA('057','País','131','ACT'),
       T_TIPO_DATA('058','Código Postal','065','ACT_CND'),
       T_TIPO_DATA('058','Código Postal','066','WRN_CND'),
       T_TIPO_DATA('059','Código Postal OE','123','ACT'),
@@ -135,7 +136,7 @@ DECLARE
       T_TIPO_DATA('069','Libro','075','ACT'),
       T_TIPO_DATA('070','Folio','076','ACT'),
       T_TIPO_DATA('071','Finca','077','ACT'),
-      T_TIPO_DATA('072','Subfinca',NULL,NULL),
+      T_TIPO_DATA('072','Subfinca','132','ACT'),
       T_TIPO_DATA('073','IDUFIR','078','ACT'),
       T_TIPO_DATA('074','Referencia catastral activo','079','ACT'),
       T_TIPO_DATA('075','Superficie construida','080','ACT'),
@@ -156,7 +157,7 @@ DECLARE
       T_TIPO_DATA('088','Orden de publicación Mayorista (instrucción enviada por SAREB para publicar)',NULL,NULL),
       T_TIPO_DATA('089','Bloqueo',NULL,NULL),
       T_TIPO_DATA('090','Motivo Bloqueo',NULL,NULL),
-      T_TIPO_DATA('091','Código Agrupación Obra nueva',NULL,NULL),
+      T_TIPO_DATA('091','Código Agrupación Obra nueva','133','ACT'),
       T_TIPO_DATA('092','¿Tiene CFO?','093','ACT'),
       T_TIPO_DATA('093','Fecha CFO','094','ACT'),
       T_TIPO_DATA('094','¿Tiene LPO?','095','ACT'),
@@ -164,7 +165,7 @@ DECLARE
       T_TIPO_DATA('096','Tapiado','097','ACT'),
       T_TIPO_DATA('096','Tapiado','098','WRN'),
       T_TIPO_DATA('097','Estado adecuación','099','ACT'),
-      T_TIPO_DATA('098','Fecha prevista fin adecuación',NULL,NULL),
+      T_TIPO_DATA('098','Fecha prevista fin adecuación','134','ACT'),
       T_TIPO_DATA('099','Precio de Venta WEB',NULL,NULL),
       T_TIPO_DATA('100','Precio de Renta WEB',NULL,NULL),
       T_TIPO_DATA('101','Precio Minimo Autorizado Venta',NULL,NULL),
@@ -182,10 +183,10 @@ DECLARE
       T_TIPO_DATA('113','Fecha inicio vigencia precio renta',NULL,NULL),
       T_TIPO_DATA('114','Fecha fin vigencia precio renta',NULL,NULL),
       T_TIPO_DATA('115','Precio Minimo Autorizado Renta',NULL,NULL),
-      T_TIPO_DATA('116','Valor unitario de la tasación relacionado con la superficie',NULL,NULL),
+      T_TIPO_DATA('116','Valor unitario de la tasación relacionado con la superficie','135','ACT'),
       T_TIPO_DATA('117','¿Es una unidad alquilable?','107','NO_ACT'),
       T_TIPO_DATA('118','Id activo padre UA (ID SAREB)','108','NO_ACT'),
-      T_TIPO_DATA('119','¿Es Anejos Registral?',NULL,NULL),
+      T_TIPO_DATA('119','¿Es Anejos Registral?','136','ACT'),
       T_TIPO_DATA('120','id activo padre Anejo registral',NULL,NULL),
       T_TIPO_DATA('121','¿es Anejo Anejos Comercial?',NULL,NULL),
       T_TIPO_DATA('122','id activo padre Anejo Comercial',NULL,NULL),
@@ -193,7 +194,7 @@ DECLARE
       T_TIPO_DATA('124','Fecha prevista fin adecuación alquileres',NULL,NULL),
       T_TIPO_DATA('125','Número de reserva','109','ACT'),
       T_TIPO_DATA('126','Fecha Contable de la reserva','110','ACT'),
-      T_TIPO_DATA('127','Fecha contable de la devolución de la reserva',NULL,NULL),
+      T_TIPO_DATA('127','Fecha contable de la devolución de la reserva','137','ACT'),
       T_TIPO_DATA('128','Cartera','111','NO_ACT'),
       T_TIPO_DATA('129','Subcartera','112','NO_ACT'),
       T_TIPO_DATA('130','Precomercialización (a futuro)',NULL,NULL),
@@ -206,7 +207,8 @@ DECLARE
       T_TIPO_DATA('137','Ruina (a futuro)',NULL,NULL),
       T_TIPO_DATA('138','Vandalizado (a futuro)',NULL,NULL),
       T_TIPO_DATA('139','CEE en trámite (a futuro)',NULL,NULL),
-      T_TIPO_DATA('140','Motivo',NULL,NULL)
+      T_TIPO_DATA('140','Motivo','138','ACT'),
+       T_TIPO_DATA('140','Motivo','141','WRN_CND')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

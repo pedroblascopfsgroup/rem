@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20201001
+--## FECHA_CREACION=20201007
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11215
@@ -40,6 +40,7 @@ DECLARE
       T_TIPO_DATA('004','Subtipo Activo','004','ACT_CND','OFR_NVU'),
       T_TIPO_DATA('004','Subtipo Activo','004','ACT_CND','MOD_REM'),
       T_TIPO_DATA('004','Subtipo Activo','005','WRN_CND','OFR_VUE'),
+      T_TIPO_DATA('008','Origen Alquiler','140','WRN_CND','CHK_SUB'),
       T_TIPO_DATA('011','Estado físico del activo','009','WRN_CND','INT_MOD'),
       T_TIPO_DATA('018','Fecha de inscripción','015','ACT_CND','MOD_REM'),
       T_TIPO_DATA('018','Fecha de inscripción','016','WRN_CND','ELI_VAL'),
@@ -109,7 +110,9 @@ DECLARE
       T_TIPO_DATA('083','¿Tiene Certificado energetico?','089','WRN_CND','CEE_OBT'),
       T_TIPO_DATA('083','¿Tiene Certificado energetico?','089','WRN_CND','CEE_NOB'),
       T_TIPO_DATA('086','Estado comercial','092','WRN_CND','ALQ_DIV'),
-      T_TIPO_DATA('086','Estado comercial','092','WRN_CND','RES_DIV')
+      T_TIPO_DATA('086','Estado comercial','092','WRN_CND','RES_DIV'),
+      T_TIPO_DATA('140','Motivo','141','WRN_CND','NUE_CAR'),
+      T_TIPO_DATA('140','Motivo','141','WRN_CND','OFR_VUE_CAR')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 BEGIN

@@ -94,6 +94,12 @@ Ext.define('HreRem.model.AdmisionRevisionTitulo', {
 						name : 'tipoTituloActivo'
 					}, {
 						name : 'subtipoTituloActivo'
+					},
+					{
+						name : 'tipoTituloActivoRef'
+					},
+					{
+						name : 'subtipoTituloActivoRef'
 					}
 
 			],

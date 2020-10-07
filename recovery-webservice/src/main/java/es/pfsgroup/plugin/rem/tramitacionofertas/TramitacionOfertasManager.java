@@ -60,8 +60,10 @@ import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.ActivosAlquilados;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
 import es.pfsgroup.plugin.rem.model.ClienteGDPR;
@@ -1992,5 +1994,35 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 		return null;
 	}
 	
+	@Transactional(readOnly = false)
+	private void crearActivoAlquilado(Activo activo) {
+		ActivosAlquilados activoAlquilado = new ActivosAlquilados();
+		activoAlquilado.setActivoAlq(activo);
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoPatrimonioContrato activoPatrimonioContrato = genericDao.get(ActivoPatrimonioContrato.class, filtro);
+		if(activoPatrimonioContrato != null) {
+			activoAlquilado.setAlqRentaMensual(activoPatrimonioContrato.getCuota());
+			if (activoPatrimonioContrato.getCuota() != null && activoPatrimonioContrato.getCuota() > 0) {
+				activoAlquilado.setAlqDeudas(1);
+			} else {
+				activoAlquilado.setAlqDeudas(0);
+			}
+			if(activoPatrimonioContrato.getInquilino() != null) {
+				activoAlquilado.setAlqInquilino(1);
+				activoAlquilado.setAlqOfertante(1);
+			} else {
+				activoAlquilado.setAlqInquilino(0);
+				activoAlquilado.setAlqOfertante(0);
+			}
+			if (activoPatrimonioContrato.getFechaFinContrato() !=  null) {
+				activoAlquilado.setAlqFechaFin(activoPatrimonioContrato.getFechaFinContrato());
+			}
+			if (activoPatrimonioContrato.getDeudaPendiente() != null) {
+				activoAlquilado.setAlqDeudaActual(activoPatrimonioContrato.getDeudaPendiente());
+			}
+		}
+		
+		genericDao.save(ActivosAlquilados.class, activoAlquilado);
+	}
 
 }

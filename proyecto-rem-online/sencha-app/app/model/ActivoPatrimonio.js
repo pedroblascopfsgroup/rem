@@ -45,6 +45,10 @@ Ext.define('HreRem.model.ActivoPatrimonio', {
     		{
     			name: 'isCarteraCerberusDivarian',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'isCarteraCerberusDivarianOBBVA',
+    			type: 'boolean'
     		}
     		
     ],

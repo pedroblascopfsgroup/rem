@@ -38,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDAdecuacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionUso;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -145,8 +146,12 @@ public class TabActivoPatrimonio implements TabActivoService {
 				activoPatrimonioDto.setPazSocial(patrimonioContrato.getPazSocial() ? DDSinSiNo.CODIGO_SI : DDSinSiNo.CODIGO_NO);
 			}
 			
-			activoPatrimonioDto.setIsCarteraCerberusDivarian(activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB)
-																|| activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB));
+			activoPatrimonioDto.setIsCarteraCerberusDivarian(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo()));
+			
+			activoPatrimonioDto.setIsCarteraCerberusDivarianOBBVA(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activo.getSubcartera().getCodigo())
+					|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo())
+					|| DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo()));
 			
 			if(!Checks.esNulo(activo.getTipoAlquiler())) {
 				activoPatrimonioDto.setTipoAlquilerCodigo(activo.getTipoAlquiler().getCodigo());

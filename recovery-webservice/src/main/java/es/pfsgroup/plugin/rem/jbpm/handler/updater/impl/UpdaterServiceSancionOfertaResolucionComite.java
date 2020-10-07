@@ -10,16 +10,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ComunicacionGencatApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
+import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
@@ -62,6 +67,12 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 	
 	@Autowired
 	private ComunicacionGencatApi comunicacionGencatApi;
+	
+	@Autowired
+	private  GestorExpedienteComercialApi gestorExpedienteComercialApi;
+	
+	@Autowired
+	private UsuarioApi usuarioApi;
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionComite.class);
 	 
@@ -71,11 +82,14 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 	private static final String CODIGO_TRAMITE_FINALIZADO = "11";
 	private static final String CODIGO_T013_RESOLUCION_COMITE = "T013_ResolucionComite";
 	private static final String COMITE_SANCIONADOR = "comiteSancionador";
+ 	private static final Integer RESERVA_SI = 1;
+
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {		
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+		GestorEntidadDto ge = new GestorEntidadDto();
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 
@@ -96,7 +110,17 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 							&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
 							expediente.setComiteSancion(expedienteComercialApi.comiteSancionadorByCodigo(valor.getValor()));
 					}
-					
+					if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null) {															
+						EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
+								.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
+						
+						ge.setIdEntidad(expediente.getId());
+						ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
+						ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gruboarding")).getId());	
+						ge.setIdTipoGestor(tipoGestorComercial.getId());
+						gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);																	
+						
+					}
 					if (COMBO_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 						if (DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {

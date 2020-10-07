@@ -33,6 +33,7 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	
 	private String pazSocial;
 	private Boolean isCarteraCerberusDivarian;
+	private Boolean isCarteraCerberusDivarianOBBVA;
 	
 	private List<?> activosPropagables;
 	private String cesionUso;
@@ -180,6 +181,12 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	}
 	public void setIsCarteraCerberusDivarian(Boolean isCarteraCerberusDivarian) {
 		this.isCarteraCerberusDivarian = isCarteraCerberusDivarian;
+	}
+	public Boolean getIsCarteraCerberusDivarianOBBVA() {
+		return isCarteraCerberusDivarianOBBVA;
+	}
+	public void setIsCarteraCerberusDivarianOBBVA(Boolean isCarteraCerberusDivarianOBBVA) {
+		this.isCarteraCerberusDivarianOBBVA = isCarteraCerberusDivarianOBBVA;
 	}
     
 }

@@ -11363,8 +11363,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			Activo activo = expedienteComercial.getOferta().getActivoPrincipal();
 			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera())
 					&& !Checks.esNulo(activo.getSubcartera())) {
-				esBBVA = (DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo())
-						&& DDSubcartera.CODIGO_BBVA.equals(activo.getSubcartera().getCodigo()));
+				esBBVA = DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo());
 			}
 		}
 		return esBBVA;

@@ -126,8 +126,7 @@ public class TrabajoAdapter {
 						beanUtilNotNull.copyProperty(dtoTramite, "idTramitePadre", tramite.getTramitePadre().getId());
 					}
 					
-					if(DDCartera.CODIGO_CARTERA_BBVA.equalsIgnoreCase(tramite.getActivo().getCartera().getCodigo()) && 
-							DDSubcartera.CODIGO_BBVA.equals(tramite.getActivo().getSubcartera().getCodigo())) {
+					if(DDCartera.CODIGO_CARTERA_BBVA.equalsIgnoreCase(tramite.getActivo().getCartera().getCodigo())) {
 						beanUtilNotNull.copyProperty(dtoTramite, "nombre", T017_TRAMITE_BBVA_DESCRIPCION);
 					}else {
 						beanUtilNotNull.copyProperty(dtoTramite, "nombre", tramite.getTipoTramite().getDescripcion());
@@ -157,8 +156,7 @@ public class TrabajoAdapter {
 						}
 						//idTramite necesario para poder abrir desde listado de tareas del trabajo
 						beanUtilNotNull.copyProperty(dtoListadoTareas, "idTramite", tramite.getId());
-						if(DDCartera.CODIGO_CARTERA_BBVA.equalsIgnoreCase(tramite.getActivo().getCartera().getCodigo()) && 
-								DDSubcartera.CODIGO_BBVA.equals(tramite.getActivo().getSubcartera().getCodigo())) {
+						if(DDCartera.CODIGO_CARTERA_BBVA.equalsIgnoreCase(tramite.getActivo().getCartera().getCodigo())) {
 							beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTramite", T017_TRAMITE_BBVA_DESCRIPCION);
 						}else {
 							beanUtilNotNull.copyProperty(dtoListadoTareas, "tipoTramite", tramite.getTipoTramite().getDescripcion());

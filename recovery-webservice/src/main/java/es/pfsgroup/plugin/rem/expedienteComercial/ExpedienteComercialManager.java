@@ -6907,7 +6907,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	@Override
-	public List<DtoUsuario> getComboUsuarios(long idTipoGestor) {
+	public List<DtoUsuario> getComboUsuarios(Long idTipoGestor) {
 		return activoAdapter.getComboUsuarios(idTipoGestor);
 	}
 

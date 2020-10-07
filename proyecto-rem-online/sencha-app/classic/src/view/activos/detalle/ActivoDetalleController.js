@@ -6002,8 +6002,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
        var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
        var isGestorActivos = $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']);
 	   var isGestorAlquiler = $AU.userGroupHasRole(CONST.PERFILES['GESTOR_ALQUILER_HPM']);
+	   var isUserGestedi = $AU.userIsRol(CONST.PERFILES['GESTEDI']);
 	   
-       return !enPerimetro || (!isSuper && !isGestorActivos && !isGestorAlquiler);
+       return !enPerimetro || (!isSuper && !isGestorActivos && !isGestorAlquiler && !isUserGestedi);
         					 
        
     }

@@ -1764,22 +1764,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		me.lookupReference('comboProveedorGestionEconomica2').setDisabled(true);
 		me.lookupReference('proveedorContactoCombo2').setDisabled(true);
 		
-		var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
-		var isGestorActivos = $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']);
-		var isGestorAlquiler = $AU.userGroupHasRole(CONST.PERFILES['GESTOR_ALQUILER_HPM']);
-		var isUserGestedi = $AU.userIsRol(CONST.PERFILES['GESTEDI']);
-		
- 		if (tipoTrabajo == CONST.TIPOS_TRABAJO['ACTUACION_TECNICA'] && subTipoTrabajo == CONST.SUBTIPOS_TRABAJO['TOMA_POSESION']) {
-
- 			comboTomaPosesion.setHidden(false);
- 			comboTomaPosesion.setVisible(true);
- 		}else{
-
- 			comboTomaPosesion.setHidden(true);
- 		}
- 		if(!isSuper && !isGestorActivos && !isGestorAlquiler && isUserGestedi){
- 			comboTomaPosesion.setDisabled(true);
- 		}
  		 
  	},
  	hiddenComboTomaPosesion: function(){
@@ -1940,6 +1924,15 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 				  }
 	      	});
     	}
+    },
+    
+    checkDisableCampoTomaPosesion: function(){
+    	var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+        var isGestorActivos = $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']);
+ 	   	var isGestorAlquiler = $AU.userGroupHasRole(CONST.PERFILES['GESTOR_ALQUILER_HPM']);
+ 	   	var isUserGestedi = $AU.userIsRol(CONST.PERFILES['GESTEDI']);
+ 	   	
+ 	   	return !isSuper && !isGestorActivos && !isGestorAlquiler && isUserGestedi; 
     }
 
 });

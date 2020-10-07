@@ -57,6 +57,8 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
     initComponent: function() {
     	
     	var me = this;
+    	
+    	var disableCampoTomaPosesion = me.lookupController().checkDisableCampoTomaPosesion();
 
     	me.setTitle(HreRem.i18n("title.peticion.trabajo.nuevo"));
     	
@@ -262,10 +264,9 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 																reference: 'tomaDePosesion',
 						        								bind: {
 					            										store: '{comboSiNoRem}',
-					            										hidden: true,
 					            	    								value: '{trabajo.tomaPosesion}'
 					            									},
-					            								
+					            								disabled: disableCampoTomaPosesion,
 					            								displayField: 'descripcion',
 							    								valueField: 'codigo'
 			            									

@@ -164,7 +164,14 @@ public class MSVActualizadorTarifasPresupuestos extends AbstractMSVActualizador 
 //			Filter fTipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.id", idTipoTrabajo);
 //			Filter fSubtipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "subtipoTrabajo.id", idSubtipoTrabajo);
 
-			return genericDao.get(ConfiguracionTarifa.class, fCartera, fTipoTarifa, fSubcartera);//, fTipoTrabajo, fSubtipoTrabajo);
+			ConfiguracionTarifa cfg = genericDao.get(ConfiguracionTarifa.class, fCartera, fTipoTarifa, fSubcartera);//, fTipoTrabajo, fSubtipoTrabajo);
+			if(cfg == null) {
+				List<ConfiguracionTarifa> listcfg = genericDao.getList(ConfiguracionTarifa.class, fCartera, fTipoTarifa);
+				if(listcfg != null) {
+					cfg = listcfg.get(0);
+				}
+			}
+			return cfg;
 		}
 		return null;
 	}

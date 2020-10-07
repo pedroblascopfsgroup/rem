@@ -2656,8 +2656,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 									|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activo.getSubcartera().getCodigo()))) {
 						esDivarian = true;
 					}
-					if (DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo()) &&
-							(DDSubcartera.CODIGO_BBVA.equals(activo.getSubcartera().getCodigo()))) {
+					if (DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo())) {
 						esBBVA = true;
 					}
 					

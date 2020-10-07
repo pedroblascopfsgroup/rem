@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgendaEvolucion;
@@ -42,6 +44,9 @@ public class MSVActualizadorEstadosAdmision extends AbstractMSVActualizador impl
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private GenericAdapter adapter;
 
 	public static final class COL_NUM {
 		static final int FILA_CABECERA = 0;
@@ -93,6 +98,8 @@ public class MSVActualizadorEstadosAdmision extends AbstractMSVActualizador impl
 				activo.setSubestadoAdmision(subestadoAdmision);
 				agendaEvolucion.setEstadoAdmision(estadoAdmision);
 				agendaEvolucion.setSubEstadoAdmision(subestadoAdmision);
+				agendaEvolucion.setFechaAgendaEv(new Date()); //
+				agendaEvolucion.setUsuarioId(adapter.getUsuarioLogado()); //
 				genericDao.save(ActivoAgendaEvolucion.class, agendaEvolucion);				
 					
 				genericDao.update(Activo.class, activo);

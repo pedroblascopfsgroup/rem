@@ -576,6 +576,34 @@ Ext.define('HreRem.view.trabajosMainMenu.albaranes.AlbaranesController', {
 		config.url= url;
 		
 		me.fireEvent("downloadFile", config);		
-	}
+	},
+	
+	mostrarTotalProveedor: function(get){
+    	var isGestorActivos = $AU.userIsRol('HAYAGESACT');
+    	var isSuper = $AU.userIsRol('HAYASUPER');
+    	var isProveedor = $AU.userIsRol('HAYAPROV');
+    	return !isGestorActivos && !isSuper && !isProveedor;
+    },
+    
+    mostrarTotalCliente: function(get){
+    	var me = this;
+    	var isGestorActivos = $AU.userIsRol('HAYAGESACT');
+    	var isSuper = $AU.userIsRol('HAYASUPER');
+    	var isUsuarioCliente;
+    	Ext.Ajax.request({
+			  url:$AC.getRemoteUrl('albaran/getEsUsuarioCLiente'),
+			  method: 'POST',
+			  success: function(response,opts){
+				  data = Ext.decode(response.responseText);
+				  if(data.success == "true"){
+					  isUsuarioCliente = data.data == "true";
+					  me.getView().lookupReference('importeTotalCliente').setHidden(!isGestorActivos && !isSuper && !isUsuarioCliente);
+					  me.getView().lookupReference('importeTotalClienteDetalle').setHidden(!isGestorActivos && !isSuper && !isUsuarioCliente);
+					  me.getView().lookupReference('importeTotalClientePrefactura').setHidden(!isGestorActivos && !isSuper && !isUsuarioCliente);
+				  }
+			  }
+			  
+		    });
+    }
 	
 });

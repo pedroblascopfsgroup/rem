@@ -42,5 +42,7 @@ public interface AlbaranApi {
 
 	public List<VbusquedaProveedoresCombo> getProveedores();
 
-	public Page obtenerDatosExportarTrabajosPrefactura(DtoAlbaranFiltro dto) throws ParseException;	
+	public Page obtenerDatosExportarTrabajosPrefactura(DtoAlbaranFiltro dto) throws ParseException;
+
+	public Boolean getEsUsuarioCliente();	
 }

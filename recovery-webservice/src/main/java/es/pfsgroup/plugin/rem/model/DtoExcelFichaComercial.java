@@ -20,6 +20,9 @@ public class DtoExcelFichaComercial extends WebDto {
 	private Long numExpediente;
 	private Date fechaAlta;
 	private String direccionComercial;
+	private String provincia;
+	private String Localidad;
+	private String codigoPostal;
 	private String comite;
 	private String linkHaya;
 	private Date fechaActualOferta;
@@ -30,8 +33,14 @@ public class DtoExcelFichaComercial extends WebDto {
 	private Double precioComiteSeisMesesOferta;
 	private Double precioComiteDoceMesesOferta;
 	private Double precioComiteDieciochoMesesOferta;
-	private Double precioWeb;
-	private Double tasacion;
+	private Double precioWebActual;
+	private Double precioWebSeisMesesOferta;
+	private Double precioWebDoceMesesOferta;
+	private Double precioWebDieciochoMesesOferta;
+	private Double tasacionActual;
+	private Double tasacionSeisMesesOferta;
+	private Double tasacionDoceMesesOferta;
+	private Double tasacionDieciochoMesesOferta;
 	private Double importeAdjuducacion;
 	private Double rentaMensual;
 	private Double totalSuperficie;
@@ -161,17 +170,17 @@ public class DtoExcelFichaComercial extends WebDto {
 	public void setPrecioComiteDieciochoMesesOferta(Double precioComiteDieciochoMesesOferta) {
 		this.precioComiteDieciochoMesesOferta = precioComiteDieciochoMesesOferta;
 	}
-	public Double getPrecioWeb() {
-		return precioWeb;
+	public Double getPrecioWebActual() {
+		return precioWebActual;
 	}
-	public void setPrecioWeb(Double precioWeb) {
-		this.precioWeb = precioWeb;
+	public void setPrecioWebActual(Double precioWebActual) {
+		this.precioWebActual = precioWebActual;
 	}
-	public Double getTasacion() {
-		return tasacion;
+	public Double getTasacionActual() {
+		return tasacionActual;
 	}
-	public void setTasacion(Double tasacion) {
-		this.tasacion = tasacion;
+	public void setTasacionActual(Double tasacionActual) {
+		this.tasacionActual = tasacionActual;
 	}
 	public Double getImporteAdjuducacion() {
 		return importeAdjuducacion;
@@ -316,6 +325,60 @@ public class DtoExcelFichaComercial extends WebDto {
 	}
 	public void setCorreoPrescriptor(String correoPrescriptor) {
 		this.correoPrescriptor = correoPrescriptor;
+	}
+	public String getProvincia() {
+		return provincia;
+	}
+	public void setProvincia(String provincia) {
+		this.provincia = provincia;
+	}
+	public String getLocalidad() {
+		return Localidad;
+	}
+	public void setLocalidad(String localidad) {
+		Localidad = localidad;
+	}
+	public String getCodigoPostal() {
+		return codigoPostal;
+	}
+	public void setCodigoPostal(String codigoPostal) {
+		this.codigoPostal = codigoPostal;
+	}
+	public Double getPrecioWebSeisMesesOferta() {
+		return precioWebSeisMesesOferta;
+	}
+	public void setPrecioWebSeisMesesOferta(Double precioWebSeisMesesOferta) {
+		this.precioWebSeisMesesOferta = precioWebSeisMesesOferta;
+	}
+	public Double getPrecioWebDoceMesesOferta() {
+		return precioWebDoceMesesOferta;
+	}
+	public void setPrecioWebDoceMesesOferta(Double precioWebDoceMesesOferta) {
+		this.precioWebDoceMesesOferta = precioWebDoceMesesOferta;
+	}
+	public Double getPrecioWebDieciochoMesesOferta() {
+		return precioWebDieciochoMesesOferta;
+	}
+	public void setPrecioWebDieciochoMesesOferta(Double precioWebDieciochoMesesOferta) {
+		this.precioWebDieciochoMesesOferta = precioWebDieciochoMesesOferta;
+	}
+	public Double getTasacionSeisMesesOferta() {
+		return tasacionSeisMesesOferta;
+	}
+	public void setTasacionSeisMesesOferta(Double tasacionSeisMesesOferta) {
+		this.tasacionSeisMesesOferta = tasacionSeisMesesOferta;
+	}
+	public Double getTasacionDoceMesesOferta() {
+		return tasacionDoceMesesOferta;
+	}
+	public void setTasacionDoceMesesOferta(Double tasacionDoceMesesOferta) {
+		this.tasacionDoceMesesOferta = tasacionDoceMesesOferta;
+	}
+	public Double getTasacionDieciochoMesesOferta() {
+		return tasacionDieciochoMesesOferta;
+	}
+	public void setTasacionDieciochoMesesOferta(Double tasacionDieciochoMesesOferta) {
+		this.tasacionDieciochoMesesOferta = tasacionDieciochoMesesOferta;
 	}
 	
 	

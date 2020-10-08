@@ -442,11 +442,9 @@ public class OfertasController {
 
 		try {
 			 	DtoExcelFichaComercial listaOfertasFilter = ofertaApi.getListOfertasFilter(idExpediente);
-				//Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "id", idExpediente);
-				//ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtroExpediente);
 				File file = null;
-				//file = excelReportGeneratorApi.generateBbvaReport(expediente,request);
-				//excelReportGeneratorApi.sendReport(file, response);
+				file = excelReportGeneratorApi.generateBbvaReport(listaOfertasFilter,request);
+				excelReportGeneratorApi.sendReport(file, response);
 			
 
 		} catch (Exception e) {

@@ -4753,45 +4753,72 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Override
 	public DtoExcelFichaComercial getListOfertasFilter(Long idExpediente) {
+		if(idExpediente != null) {
 		Order orderAsc = new Order(OrderType.ASC, "id");
 		Filter filtroAgrupacion = null;
 		String linkHaya = null;
-
+		ExpedienteComercial expediente = null;
+		Oferta oferta = null;
+		Activo activo = null;
+		ActivoOferta activoOferta = null;
+		ActivoAgrupacion agrupacion = null;
+		CompradorExpediente compradorExpediente = null;
+		Comprador comprador = null;
+		
 		DtoExcelFichaComercial dtoFichaComercial = new DtoExcelFichaComercial();
 		Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS ,"id", idExpediente);
-		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtroExpediente);
+		expediente = genericDao.get(ExpedienteComercial.class, filtroExpediente);
 		
+		if(expediente != null) {
 		Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS ,"id", expediente.getOferta().getId());
-		Oferta oferta = genericDao.get(Oferta.class, filtroOferta);
-		
+		oferta = genericDao.get(Oferta.class, filtroOferta);
 		Filter filtroActivoOferta = genericDao.createFilter(FilterType.EQUALS ,"oferta", expediente.getOferta().getId());
-		ActivoOferta activoOferta = genericDao.get(ActivoOferta.class, filtroActivoOferta);
+		activoOferta = genericDao.get(ActivoOferta.class, filtroActivoOferta);
 		
-		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS ,"id", activoOferta.getActivoId());
-		Activo activo = genericDao.get(Activo.class, filtroActivo);
+		Filter filtroCompradorExpediente = genericDao.createFilter(FilterType.EQUALS ,"expediente", expediente.getId());
+		compradorExpediente = genericDao.get(CompradorExpediente.class, filtroCompradorExpediente);
+		
+		if(compradorExpediente != null) {
+			Filter filtroComprador = genericDao.createFilter(FilterType.EQUALS ,"id", compradorExpediente.getComprador());
+			comprador = genericDao.get(Comprador.class, filtroComprador);
+			
+			if(comprador != null) {
+				dtoFichaComercial.setNombreYApellidosOfertante(comprador.getFullName());
+				dtoFichaComercial.setDniOfertante(comprador.getDocumento());
+			}
+		}
+		
 		
 		dtoFichaComercial.setNumExpediente(expediente.getNumExpediente());
-		dtoFichaComercial.setNumOferta(oferta.getNumOferta());
-
 		if(expediente.getComiteSancion() != null) {
-		if(DDComiteSancion.CODIGO_HAYA_BBVA.equals(expediente.getComiteSancion().getCodigo())) {
-			dtoFichaComercial.setComite("Si");
-		}else {
-			dtoFichaComercial.setComite("No");
+			if(DDComiteSancion.CODIGO_HAYA_BBVA.equals(expediente.getComiteSancion().getCodigo())) {
+				dtoFichaComercial.setComite("Si");
+			}else {
+				dtoFichaComercial.setComite("No");
+			}
+			}else {
+				dtoFichaComercial.setComite("");
+			}
 		}
-		}else {
-			dtoFichaComercial.setComite("");
+		if(activoOferta != null) {
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS ,"id", activoOferta.getActivoId());
+		activo = genericDao.get(Activo.class, filtroActivo);
 		}
 		
+		if(activo != null) {
+			dtoFichaComercial.setNumActivo(activo.getNumActivo());
+		}
 		
-		dtoFichaComercial.setNumActivo(activo.getNumActivo());
 		if(oferta.getAgrupacion() != null) {
+			filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS ,"id", oferta.getAgrupacion().getId());
+			agrupacion = genericDao.get(ActivoAgrupacion.class,filtroAgrupacion);
+			
+			dtoFichaComercial.setNumOferta(oferta.getNumOferta());
 			
 			dtoFichaComercial.setNumAgrupacion(oferta.getAgrupacion().getNumAgrupRem());
 			String direccion = "";
 			
-			filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS ,"agrupacion.id", oferta.getAgrupacion().getId());
-			ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class,filtroAgrupacion);
+			
 			
 			if(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 
@@ -4801,8 +4828,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			if(agrupacion.getActivoPrincipal() != null && agrupacion.getActivoPrincipal().getDireccionTerritorial() != null) {
 				direccion = agrupacion.getActivoPrincipal().getDireccionTerritorial().getDescripcion();
+				if(agrupacion.getActivoPrincipal().getLocalidad() != null)
 				agrupacion.getActivoPrincipal().getLocalidad().getDescripcion();
+				if(agrupacion.getActivoPrincipal().getProvincia() != null)
 				agrupacion.getActivoPrincipal().getProvincia();
+				if(agrupacion.getActivoPrincipal().getCodPostal() != null)
 				agrupacion.getActivoPrincipal().getCodPostal();
 				
 			}else {
@@ -4810,6 +4840,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if(agrupacionOrdenada.get(0) != null && agrupacionOrdenada.get(0).getActivo() != null 
 						&& agrupacionOrdenada.get(0).getActivo().getDireccionTerritorial() != null) {
 					direccion = agrupacionOrdenada.get(0).getActivo().getDireccionTerritorial().getDescripcion();
+					if(agrupacionOrdenada.get(0).getActivo().getLocalidad() != null)
+						agrupacionOrdenada.get(0).getActivo().getLocalidad().getDescripcion();
+						if(agrupacionOrdenada.get(0).getActivo().getProvincia() != null)
+							agrupacionOrdenada.get(0).getActivo().getProvincia();
+						if(agrupacionOrdenada.get(0).getActivo().getCodPostal() != null)
+							agrupacionOrdenada.get(0).getActivo().getCodPostal();
 					
 				}
 				
@@ -4818,18 +4854,29 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			dtoFichaComercial.setDireccionComercial(direccion);
 		}else {
 			linkHaya = linkCabecera(activo.getId());
+			if(activo.getVisitas() != null)
 			dtoFichaComercial.setVisitas(activo.getVisitas().size());
+			if(activo.getDireccionTerritorial() != null)
+			dtoFichaComercial.setDireccionComercial(activo.getDireccionTerritorial().getDescripcion());
+			if(activo.getOfertas()!=null)
 			dtoFichaComercial.setTotalOfertas(activo.getOfertas().size());
-			
+			if(activo.getLocalidad() != null && activo.getLocalidad().getProvincia() != null)
+			dtoFichaComercial.setProvincia(activo.getLocalidad().getProvincia().getDescripcion());
+			if(activo.getLocalidad() != null)
+			dtoFichaComercial.setLocalidad(activo.getLocalidad().getDescripcion());
+			if(activo.getCodPostal() != null)
+			dtoFichaComercial.setCodigoPostal(activo.getCodPostal());
 		}
 			if(linkHaya != null) {
 				dtoFichaComercial.setLinkHaya(linkHaya);
 			}
-		
-		//dtoOfertasFilter.setDireccionComercial(activo.getDireccion());
+			if(oferta.getFechaAlta() != null)
 			dtoFichaComercial.setFechaAlta(oferta.getFechaAlta());
 
-		return dtoFichaComercial;
+			return dtoFichaComercial;
+		}else {
+			return null;
+		}
 	}
 	
 	public String linkCabecera(Long idActivo) {

@@ -1218,4 +1218,6 @@ public interface ParticularValidatorApi {
 
 	Boolean existeEmisor(String emisorNIF);
 
+	Boolean existeGastoConElIdLinea(String idGasto, String idLinea);
+
 }

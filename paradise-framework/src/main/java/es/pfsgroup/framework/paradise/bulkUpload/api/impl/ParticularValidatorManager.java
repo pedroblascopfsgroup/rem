@@ -3801,7 +3801,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	@Override
 	public Boolean tipoDeElemento(String tipoElemento) {
 		if (!Checks.esNulo(tipoElemento)) {
-			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) from DD_ENT_ENTIDAD_GASTO \n" + 
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) from DD_ENT_ENTIDAD_GASTO  " + 
 					"WHERE DD_ENT_CODIGO =" + 
 					"'" + tipoElemento + "'");
 
@@ -4476,8 +4476,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	public Boolean existeTramiteTrabajo(String numTrabajo) {
 	    if (Boolean.TRUE.equals(Checks.esNulo(numTrabajo))) return false;
 	    String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
-	            + "    FROM ACT_TBJ_TRABAJO TBJ\n" 
-	            + "    JOIN ACT_TRA_TRAMITE TRA ON TRA.TBJ_ID = TBJ.TBJ_ID\n" 
+	            + "    FROM ACT_TBJ_TRABAJO TBJ " 
+	            + "    JOIN ACT_TRA_TRAMITE TRA ON TRA.TBJ_ID = TBJ.TBJ_ID " 
 	            + "    WHERE TBJ_NUM_TRABAJO = " + numTrabajo 
 	            + "    AND TRA.BORRADO = 0 " 
 	            + "    AND TBJ.BORRADO = 0 "
@@ -5164,6 +5164,16 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 	PVE_DOCIDENTIF = '"+emisorNIF+"' "
 				+ "		 	AND BORRADO = 0");
 
+		return !"0".equals(resultado);
+	}
+
+	@Override
+	public Boolean existeGastoConElIdLinea(String idGasto, String idLinea) {
+		String resultado = rawDao.getExecuteSQL("SELECT count(1) " + 
+				" FROM gld_gastos_linea_detalle linea " + 
+				" JOIN gpv_gastos_proveedor gasto ON gasto.gpv_id = linea.gpv_id AND GASTO.GPV_NUM_GASTO_HAYA = " + idGasto + 
+				" where GLD_ID = "+ idLinea +" AND gasto.borrado = 0 AND linea.borrado = 0");
+		
 		return !"0".equals(resultado);
 	}
 }

@@ -10,7 +10,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import es.pfsgroup.commons.utils.HQLBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +17,7 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
-import es.capgemini.pfs.core.api.usuario.UsuarioApi;
-import es.capgemini.pfs.users.domain.Perfil;
-import es.capgemini.pfs.users.domain.Usuario;
-import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessCompositeValidators;
@@ -42,23 +34,24 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 
 @Component
-public class MSVMasivaRellenarTablaConfiguracion3Validator extends MSVExcelValidatorAbstract {
+public class MSVActualizacionCamposConvivenciaSarebValidator extends MSVExcelValidatorAbstract {
 
-	private final String CAMPO_NO_EXISTE = "msg.error.masivo.gestores.campo.no.existe";
-	private final String AGRUPACION_NO_EXISTE = "msg.error.masivo.gestores.agrupacion.no.existe";
-	private final String EXPEDIENTE_COMERCIAL_NO_EXISTE = "msg.error.masivo.gestores.expediente.no.existe";
-	private final String TIPO_GESTOR_NO_EXISTE = "msg.error.masivo.gestores.tipo.gestor.no.existe";
-	private final String USERNAME_NO_EXISTE = "msg.error.masivo.gestores.username.no.existe";
+	private final String CAMPO_NO_EXISTE = "msg.error.masivo.convivencia.sareb.no.activo";
+	private final String ACTIVO_NO_EXISTE = "msg.error.masivo.convivencia.sareb.no.campo";
+	private final String DEPENCENCIA_SUBTIPO_REGISTRO = "msg.error.masivo.convivencia.sareb.vacio.subtipo";
+	private final String SUBTIPO_NO_EXISTE = "msg.error.masivo.convivencia.sareb.no.subtipo";
+	private final String IDENTIFICADOR_SUBTIPO_NO_EXISTE = "msg.error.masivo.convivencia.sareb.no.identificador";
 	
 	private final int FILA_CABECERA = 0;
 	private final int FILA_DATOS = 1;
 
-	private final int NUM_COLS = 5;	
+	private final int NUM_COLS = 7;	
 	private final int COL_NUM_ACTIVO = 0;
-	private final int COL_NUM_EXPEDIENTE = 1;
-	private final int COL_CAMPO = 2;
-	private final int COL_VALOR_ANTERIOR = 3;
-	private final int COL_VALOR_NUEVO = 4;
+	private final int COL_SUB_REGISTRO = 1;
+	private final int COL_ID_SUB_REGISTRO = 2;
+	private final int COL_CAMPO = 3;
+	private final int COL_VALOR_ACTUAL = 5;
+	private final int COL_VALOR_NUEVO = 6;
 	
 	private Integer numFilasHoja;	
 	private Map<String, List<Integer>> mapaErrores;	
@@ -79,14 +72,8 @@ public class MSVMasivaRellenarTablaConfiguracion3Validator extends MSVExcelValid
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
 
-	@Autowired
-	private ApiProxyFactory proxyFactory;
-
 	@Resource
 	MessageService messageServices;
-
-	@Autowired
-	private GenericABMDao genericDao;
 
 	@Override
 	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) throws Exception {
@@ -116,8 +103,16 @@ public class MSVMasivaRellenarTablaConfiguracion3Validator extends MSVExcelValid
 
 			Map<String, List<Integer>> mapaErrores = new HashMap<String, List<Integer>>();
 			mapaErrores.put(CAMPO_NO_EXISTE, isCampoNotExistsRows(exc));
+			mapaErrores.put(ACTIVO_NO_EXISTE, isActiveNotExistsRows(exc));
+			mapaErrores.put(SUBTIPO_NO_EXISTE, isSubtipoRegistroNotExistsRows(exc));
+			mapaErrores.put(DEPENCENCIA_SUBTIPO_REGISTRO, isSubtipoDependienteExistsRows(exc));
+			mapaErrores.put(IDENTIFICADOR_SUBTIPO_NO_EXISTE, isIdentificadorRegistroNotExistsRows(exc));
 			
 			if (!mapaErrores.get(CAMPO_NO_EXISTE).isEmpty() 
+				|| !mapaErrores.get(ACTIVO_NO_EXISTE).isEmpty() 
+				|| !mapaErrores.get(SUBTIPO_NO_EXISTE).isEmpty() 
+				|| !mapaErrores.get(DEPENCENCIA_SUBTIPO_REGISTRO).isEmpty() 
+				|| !mapaErrores.get(IDENTIFICADOR_SUBTIPO_NO_EXISTE).isEmpty() 
 				){
 		    
 				dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -176,8 +171,7 @@ public class MSVMasivaRellenarTablaConfiguracion3Validator extends MSVExcelValid
 	        try{
 	            for(int i=1; i<this.numFilasHoja;i++){
 	                try {
-	                    if(!Checks.esNulo(exc.dameCelda(i, COL_CAMPO)) 
-	                            && Boolean.FALSE.equals(particularValidator.existeCampo(exc.dameCelda(i, COL_CAMPO))))
+	                    if(!particularValidator.existeCampo(exc.dameCelda(i, COL_CAMPO)))
 	                        listaFilas.add(i);
 	                } catch (ParseException e) {
 	                    listaFilas.add(i);
@@ -191,7 +185,97 @@ public class MSVMasivaRellenarTablaConfiguracion3Validator extends MSVExcelValid
 	                e.printStackTrace();
 	            }
 	        return listaFilas;   
-	   }
+	}
 	
+	private List<Integer> isActiveNotExistsRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if(!particularValidator.existeActivo(exc.dameCelda(i, COL_NUM_ACTIVO)))
+						listaFilas.add(i);
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+			} catch (IllegalArgumentException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			} catch (IOException e) {
+				listaFilas.add(0);
+				e.printStackTrace();
+			}
+		return listaFilas;
+	}
+	
+	private List<Integer> isSubtipoRegistroNotExistsRows(MSVHojaExcel exc){
+	       List<Integer> listaFilas = new ArrayList<Integer>();
+
+	        try{
+	            for(int i=1; i<this.numFilasHoja;i++){
+	                try {
+	                    if(!Checks.esNulo(exc.dameCelda(i, COL_SUB_REGISTRO)) 
+	                            && Boolean.FALSE.equals(particularValidator.perteneceADiccionarioSubtipoRegistro(exc.dameCelda(i, COL_SUB_REGISTRO))))
+	                        listaFilas.add(i);
+	                } catch (ParseException e) {
+	                    listaFilas.add(i);
+	                }
+	            }
+	            } catch (IllegalArgumentException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            } catch (IOException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            }
+	        return listaFilas;   
+	}
+	
+	private List<Integer> isSubtipoDependienteExistsRows(MSVHojaExcel exc){
+	       List<Integer> listaFilas = new ArrayList<Integer>();
+
+	        try{
+	            for(int i=1; i<this.numFilasHoja;i++){
+	                try {
+	                    if(!Checks.esNulo(exc.dameCelda(i, COL_SUB_REGISTRO)) && Checks.esNulo(exc.dameCelda(i, COL_ID_SUB_REGISTRO))
+	                    		|| Checks.esNulo(exc.dameCelda(i, COL_SUB_REGISTRO)) && !Checks.esNulo(exc.dameCelda(i, COL_ID_SUB_REGISTRO)))
+	                        listaFilas.add(i);
+	                } catch (ParseException e) {
+	                    listaFilas.add(i);
+	                }
+	            }
+	            } catch (IllegalArgumentException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            } catch (IOException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            }
+	        return listaFilas;   
+	}
+	
+	private List<Integer> isIdentificadorRegistroNotExistsRows(MSVHojaExcel exc){
+	       List<Integer> listaFilas = new ArrayList<Integer>();
+
+	        try{
+	            for(int i=1; i<this.numFilasHoja;i++){
+	                try {
+	                    if(!Checks.esNulo(exc.dameCelda(i, COL_SUB_REGISTRO)) && !Checks.esNulo(exc.dameCelda(i, COL_ID_SUB_REGISTRO)) 
+	                            && Boolean.FALSE.equals(particularValidator.existeIdentificadorSubregistro(exc.dameCelda(i, COL_SUB_REGISTRO), exc.dameCelda(i, COL_ID_SUB_REGISTRO))))
+	                        listaFilas.add(i);
+	                } catch (ParseException e) {
+	                    listaFilas.add(i);
+	                }
+	            }
+	            } catch (IllegalArgumentException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            } catch (IOException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            }
+	        return listaFilas;   
+	}	
 	
 }

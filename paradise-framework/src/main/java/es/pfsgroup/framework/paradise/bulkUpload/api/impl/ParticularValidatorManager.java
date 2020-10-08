@@ -27,6 +27,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	public static final String COD_MEDIADOR = "04";
 	public static final String COD_FUERZA_VENTA_DIRECTA="18";
+	public static final String COD_DD_SRE_TASACION = "TAS";
+	public static final String COD_DD_SRE_CARGA = "CAR";
 	
 	@Override
 	public String getOneNumActivoAgrupacionRaw(String numAgrupacion){
@@ -4751,13 +4753,47 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeCampo(String numCampo){
-		if(Checks.esNulo(numCampo) || !StringUtils.isNumeric(numCampo))
+		if(Checks.esNulo(numCampo))
 			return false;
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 				+ "FROM dd_cos_campos_origen_conv_sareb COS "
-				+ "JOIN dd_ccs_campos_conv_sareb CCS ON CCS.dd_cos_id = COS.dd_cos_id AND CCS.BORRADO = 0"
 				+ "WHERE COS.dd_cos_codigo = '" + numCampo + "' AND COS.BORRADO = 0"
 				);
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean perteneceADiccionarioSubtipoRegistro(String subtipo) {
+		if(Checks.esNulo(subtipo)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) FROM DD_SRE_SUBTIPO_REGISTRO_ESPARTA " 
+				+ "WHERE DD_SRE_CODIGO = '"+ subtipo +"' AND SRE.BORRADO = 0"
+		);
+		
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeIdentificadorSubregistro(String subtipo, String identificador){
+		if(Checks.esNulo(subtipo) || Checks.esNulo(identificador) || !StringUtils.isNumeric(identificador)) {
+			return false;
+		}			
+		String resultado = "0";
+		
+		if (COD_DD_SRE_TASACION.equals(subtipo)) {
+			resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+					+ "		 FROM ACT_TAS_TASACION WHERE"
+					+ "		 	TAS_ID_EXTERNO ="+identificador+" "
+					+ "		 	AND BORRADO = 0");
+		} else if (COD_DD_SRE_CARGA.equals(subtipo)) {
+			resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+					+ "		 FROM ACT_CRG_CARGAS WHERE"
+					+ "		 	CRG_RECOVERY_ID ="+identificador+" "
+					+ "		 	AND BORRADO = 0");
+		}		
+		
 		return !"0".equals(resultado);
 	}
 }

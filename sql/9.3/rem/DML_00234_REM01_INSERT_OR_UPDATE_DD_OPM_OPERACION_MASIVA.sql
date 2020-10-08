@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20201006
+--## FECHA_CREACION=20201007
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11236
@@ -36,7 +36,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	    T_FUNCION('CMACCS', 'Actualización de campos para convivencia Sareb','Actualización de campos para convivencia Sareb','CARGA_MASIVA_ACTUALIZACION_CONVIVENCIA_SAREB','n*,s*,s,s*,s,s,n')
+	    T_FUNCION('CMACCS', 'Actualización de campos para convivencia Sareb','Actualización de campos para convivencia Sareb','CARGA_MASIVA_ACTUALIZACION_CONVIVENCIA_SAREB','n*,s,n,s*,s,s*,s')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_MSQL_1 VARCHAR2(4000 CHAR);

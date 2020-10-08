@@ -1169,4 +1169,8 @@ public interface ParticularValidatorApi {
 	
 	Boolean existeCampo(String numCampo);
 
+	Boolean perteneceADiccionarioSubtipoRegistro(String subtipo);
+
+	Boolean existeIdentificadorSubregistro(String subtipo, String identificador);
+
 }

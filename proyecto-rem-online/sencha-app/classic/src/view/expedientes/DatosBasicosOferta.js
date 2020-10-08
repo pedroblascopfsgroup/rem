@@ -496,14 +496,6 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							text : HreRem.i18n('btn.propuesta.oferta'),
 							handler : 'onClickGeneraOfertarHojaExcel',
 							margin : '10 10 10 10'
-						}, {
-							xtype : 'button',
-							reference : 'btnGenerarFichaComercial',
-							bind : {/*hidden: '{!datosbasicosoferta.permiteProponer}'*/},
-							rowspan : 2,
-							text : HreRem.i18n('btn.propuesta.generar.ficha.comercial'),
-							handler : 'onClickGeneraFichaComercialHojaExcel',
-							margin : '10 10 10 10'
 						},
 						{
 							xtype : 'button',
@@ -526,8 +518,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							handler : 'onClickGenerarListadoDeActivos',
 							margin : '10 10 10 10'
 
-						},
-						{
+						},{
 							xtype : 'button',
 							reference : 'btngenerarfichacomercial',
 							bind : {

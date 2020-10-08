@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
+import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
 
@@ -65,7 +66,7 @@ public class DtoExcelFichaComercial extends WebDto {
 	private String nombreYApellidosPrescriptor;
 	private Long telefonoPrescriptor;
 	private String correoPrescriptor;
-	
+	private List <DtoActivosFichaComercial> listaActivosFichaComercial;
 	
 	public Long getNumOferta() {
 		return numOferta;
@@ -326,6 +327,7 @@ public class DtoExcelFichaComercial extends WebDto {
 	public void setCorreoPrescriptor(String correoPrescriptor) {
 		this.correoPrescriptor = correoPrescriptor;
 	}
+
 	public String getProvincia() {
 		return provincia;
 	}
@@ -380,8 +382,12 @@ public class DtoExcelFichaComercial extends WebDto {
 	public void setTasacionDieciochoMesesOferta(Double tasacionDieciochoMesesOferta) {
 		this.tasacionDieciochoMesesOferta = tasacionDieciochoMesesOferta;
 	}
-	
-	
 
+	public List <DtoActivosFichaComercial> getListaActivosFichaComercial() {
+		return listaActivosFichaComercial;
+	}
+	public void setListaActivosFichaComercial(List <DtoActivosFichaComercial> listaActivosFichaComercial) {
+		this.listaActivosFichaComercial = listaActivosFichaComercial;
+	}
 	
 }

@@ -2470,8 +2470,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			model: 'HreRem.model.DDBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'estadosAdmision'}
+				remoteUrl: 'generic/getComboEstadoAdmision'//,
+				//extraParams: {diccionario: 'estadosAdmision'}
 			}
 		},
 		comboSubestadoAdmision: {//

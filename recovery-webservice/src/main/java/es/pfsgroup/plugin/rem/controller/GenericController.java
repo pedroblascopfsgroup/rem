@@ -696,5 +696,23 @@ public class GenericController extends ParadiseJsonController{
 	public ModelAndView getDiccionarioSubtipologiaAgendaSaneamiento(String codTipo){
 		return createModelAndViewJson(new ModelMap("data", genericApi.getSubtipologiaAgendaSaneamiento(codTipo)));	
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboEstadoAdmision(WebDto webDto, ModelMap model){
+
+		Set<String> tipoEstadoAdmisionCodigo = new HashSet<String>();
+
+		tipoEstadoAdmisionCodigo.add("NEN"); // Nueva Entrada
+		tipoEstadoAdmisionCodigo.add("PET"); // Pendiente título
+		tipoEstadoAdmisionCodigo.add("PRT"); // Pendiente revisión título
+		tipoEstadoAdmisionCodigo.add("PSR"); // Pendiente saneamiento registral
+		tipoEstadoAdmisionCodigo.add("SAR"); // Saneado registralmente
+
+		model.put("data", genericApi.getComboEstadoAdmisionFiltrado(tipoEstadoAdmisionCodigo));
+		
+
+		return new ModelAndView("jsonView", model);
+	}
  }
 

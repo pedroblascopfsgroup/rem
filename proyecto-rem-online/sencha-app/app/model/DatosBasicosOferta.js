@@ -212,6 +212,9 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		},
     		{
     			name:'ofertaSingular'
+    		},
+    		{
+    			name:'correoGestorBackoffice'
     		}
     ],
 

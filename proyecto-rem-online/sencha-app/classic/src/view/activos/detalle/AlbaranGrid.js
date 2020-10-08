@@ -18,6 +18,8 @@ Ext.define('HreRem.view.activos.detalle.AlbaranGrid', {
 
      	var me = this;
      	
+     	var mostrarTotalProveedor = me.lookupController().mostrarTotalProveedor();
+     	var mostrarTotalCliente = me.lookupController().mostrarTotalCliente();
      	
 		me.columns = [
 				{
@@ -56,7 +58,8 @@ Ext.define('HreRem.view.activos.detalle.AlbaranGrid', {
 		            flex: 1,
 		            reference: 'importeTotal',
 		            renderer: Utils.rendererCurrency,
-		            text: HreRem.i18n('fieldlabel.albaran.importeTotal')
+		            text: HreRem.i18n('fieldlabel.albaran.importeTotal'),
+		            hidden: mostrarTotalProveedor
 		        },
 		        {
 		            dataIndex: 'importeTotalCliente',

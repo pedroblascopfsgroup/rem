@@ -232,4 +232,23 @@ public class AlbaranController extends ParadiseJsonController{
 		excelReportGeneratorApi.generateAndSend(report, response);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getEsUsuarioCLiente(ModelMap model) {
+
+		try {
+			Boolean esCliente = albaranApi.getEsUsuarioCliente(); //AJUSTAR
+			model.put("data", esCliente);
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("error", e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+
+	}
+	
 }

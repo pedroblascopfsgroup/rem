@@ -7836,82 +7836,54 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (bloqueoVigente) {
 				codigoError = "imposible.bloquear.bloqueo.vigente";
 			} else {
-				// validamos condiciones
-				boolean seCumplenCondiciones = true;
-				for (ActivoOferta activoOferta : activosExpediente) {
-					Activo activo = activoOferta.getPrimaryKey().getActivo();
-					DtoCondicionesActivoExpediente condiciones = this.getCondicionesActivoExpediete(idExpediente,
-							activo.getId());
-
-					if (condiciones.getSituacionPosesoriaCodigo() != null
-							&& condiciones.getSituacionPosesoriaCodigoInformada() != null
-							&& condiciones.getSituacionPosesoriaCodigo()
-									.equals(condiciones.getSituacionPosesoriaCodigoInformada())
-							&& condiciones.getPosesionInicial() != null
-							&& condiciones.getPosesionInicialInformada() != null
-							&& condiciones.getPosesionInicial().equals(condiciones.getPosesionInicialInformada())
-							&& condiciones.getEstadoTitulo() != null && condiciones.getEstadoTituloInformada() != null
-							&& condiciones.getEstadoTitulo().equals(condiciones.getEstadoTituloInformada())) {
-						seCumplenCondiciones = true;
-
-					} else {
-						seCumplenCondiciones = false;
-						break;
-					}
-				}
-
-				if (!seCumplenCondiciones) {
-					codigoError = "imposible.bloquear.condiciones";
+				// validamos fecha posicionamiento
+				if (expediente.getPosicionamientos() == null || expediente.getPosicionamientos().size() < 1) {
+					codigoError = "imposible.bloquear.fecha.posicionamiento";
 				} else {
-					// validamos fecha posicionamiento
-					if (expediente.getPosicionamientos() == null || expediente.getPosicionamientos().size() < 1) {
-						codigoError = "imposible.bloquear.fecha.posicionamiento";
-					} else {
-						// el usuario logado tiene que ser gestoria
-						Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+					// el usuario logado tiene que ser gestoria
+					Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
-						if (DDCartera.CODIGO_CARTERA_CAJAMAR
-								.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
-							if (!genericAdapter.tienePerfil(PERFIL_GESTOR_MINUTAS, usuarioLogado)
-									&& !genericAdapter.tienePerfil(PERFIL_SUPERVISOR_MINUTAS, usuarioLogado)
-									&& !genericAdapter.isSuper(usuarioLogado)
-									&& !genericAdapter.tienePerfil(PERFIL_GESTOR_FORMALIZACION, usuarioLogado)
-									&& !genericAdapter.tienePerfil(PERFIL_GESTORIA_FORMALIZACION, usuarioLogado)) {
-								codigoError = "imposible.bloquear.expediente.cajamar";
-
-							} else {
-								// la financiación tiene que estar informada
-								DtoFormalizacionFinanciacion financiacion = new DtoFormalizacionFinanciacion();
-								financiacion.setId(String.valueOf(idExpediente));
-								financiacion = this.getFormalizacionFinanciacion(financiacion);
-								if (Checks.esNulo(financiacion.getSolicitaFinanciacion())) {
-									codigoError = "imposible.bloquear.financiacion.no.informada";
-								} else {
-									if (financiacion.getSolicitaFinanciacion() == 1
-											&& Checks.esNulo(financiacion.getEntidadFinancieraCodigo())) {
-										codigoError = "imposible.bloquear.entidad.financiera.no.informada";
-									}
-								}
-							}
+					if (DDCartera.CODIGO_CARTERA_CAJAMAR
+							.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
+						if (!genericAdapter.tienePerfil(PERFIL_GESTOR_MINUTAS, usuarioLogado)
+								&& !genericAdapter.tienePerfil(PERFIL_SUPERVISOR_MINUTAS, usuarioLogado)
+								&& !genericAdapter.isSuper(usuarioLogado)
+								&& !genericAdapter.tienePerfil(PERFIL_GESTOR_FORMALIZACION, usuarioLogado)
+								&& !genericAdapter.tienePerfil(PERFIL_GESTORIA_FORMALIZACION, usuarioLogado)) {
+							codigoError = "imposible.bloquear.expediente.cajamar";
 
 						} else {
-							if (!genericAdapter.isGestoria(usuarioLogado) && !genericAdapter.isSuper(usuarioLogado)
-									&& !genericAdapter.tienePerfil(PERFIL_GESTOR_FORMALIZACION, usuarioLogado)
-									&& !genericAdapter.tienePerfil(PERFIL_SUPERVISOR_FORMALIZACION, usuarioLogado)) {
-								codigoError = "imposible.bloquear.no.es.gestoria";
-
+							// la financiación tiene que estar informada
+							DtoFormalizacionFinanciacion financiacion = new DtoFormalizacionFinanciacion();
+							financiacion.setId(String.valueOf(idExpediente));
+							financiacion = this.getFormalizacionFinanciacion(financiacion);
+							if (Checks.esNulo(financiacion.getSolicitaFinanciacion())) {
+								codigoError = "imposible.bloquear.financiacion.no.informada";
 							} else {
-								// la financiación tiene que estar informada
-								DtoFormalizacionFinanciacion financiacion = new DtoFormalizacionFinanciacion();
-								financiacion.setId(String.valueOf(idExpediente));
-								financiacion = this.getFormalizacionFinanciacion(financiacion);
-								if (Checks.esNulo(financiacion.getSolicitaFinanciacion())) {
-									codigoError = "imposible.bloquear.financiacion.no.informada";
-								} else {
-									if (financiacion.getSolicitaFinanciacion() == 1
-											&& Checks.esNulo(financiacion.getEntidadFinancieraCodigo())) {
-										codigoError = "imposible.bloquear.entidad.financiera.no.informada";
-									}
+								if (financiacion.getSolicitaFinanciacion() == 1
+										&& Checks.esNulo(financiacion.getEntidadFinancieraCodigo())) {
+									codigoError = "imposible.bloquear.entidad.financiera.no.informada";
+								}
+							}
+						}
+
+					} else {
+						if (!genericAdapter.isGestoria(usuarioLogado) && !genericAdapter.isSuper(usuarioLogado)
+								&& !genericAdapter.tienePerfil(PERFIL_GESTOR_FORMALIZACION, usuarioLogado)
+								&& !genericAdapter.tienePerfil(PERFIL_SUPERVISOR_FORMALIZACION, usuarioLogado)) {
+							codigoError = "imposible.bloquear.no.es.gestoria";
+
+						} else {
+							// la financiación tiene que estar informada
+							DtoFormalizacionFinanciacion financiacion = new DtoFormalizacionFinanciacion();
+							financiacion.setId(String.valueOf(idExpediente));
+							financiacion = this.getFormalizacionFinanciacion(financiacion);
+							if (Checks.esNulo(financiacion.getSolicitaFinanciacion())) {
+								codigoError = "imposible.bloquear.financiacion.no.informada";
+							} else {
+								if (financiacion.getSolicitaFinanciacion() == 1
+										&& Checks.esNulo(financiacion.getEntidadFinancieraCodigo())) {
+									codigoError = "imposible.bloquear.entidad.financiera.no.informada";
 								}
 							}
 						}

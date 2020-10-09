@@ -7,6 +7,8 @@ import java.util.Locale;
 import java.util.Properties;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -55,7 +57,6 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	private static final String BUZON_OFR_APPLE = "buzonofrapple";
 	private static final String STR_MISSING_VALUE = "---";
 	public static final String[] DESTINATARIOS_CORREO_APROBACION = {"GESTCOMALQ", "SUPCOMALQ", "SCOM", "GCOM"};
-	private static final String ENLACE_DESCARGA = "email.attachment.folder.src";
 		
 	private List<String> mailsPara 	= new ArrayList<String>();
 	private List<String> mailsCC 	= new ArrayList<String>();
@@ -616,7 +617,10 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	}
 	
 	
-	public String enviarMailFichaComercial(Oferta oferta) {
+	public String enviarMailFichaComercial(Oferta oferta, String nameFile, HttpServletRequest request ) {
+		StringBuffer url = request.getRequestURL();
+		String uri = request.getRequestURI();
+		String base = url.substring(0, url.length() - uri.length());
 		
 		String errorCode = "";
 		Activo activo = oferta.getActivoPrincipal();
@@ -624,7 +628,6 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		List<DtoAdjuntoMail> adjuntos = new ArrayList<DtoAdjuntoMail>();
 		Usuario usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 		Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
-		String enlaceDescarga = appProperties.getProperty(ENLACE_DESCARGA);
 		if(!Checks.esNulo(usuarioBackOffice)){	
 			mailsPara.add(usuarioBackOffice.getEmail());
 		}
@@ -635,12 +638,14 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 
 		mailsCC.add(buzonPfs.getEmail());
 		
+		mailsPara.add("juan.sanchez@pfsgroup.es");
+		
 		if(!mailsPara.isEmpty()) {
 		
 			String asunto = "Ficha comercial de la oferta " + oferta.getNumOferta();
 			String cuerpo = "<p>La ficha comercial de la oferta  " + oferta.getNumOferta() + " esta lista para descargar.</p>";
 			cuerpo =  cuerpo + "<p>\n" + 
-					"			<a href=\"" + enlaceDescarga  + "\"\n" + 
+					"			<a href=\"" + base +"/pfs/email/attachment?file=" + nameFile + "\"\n" + 
 					"			   title=\"descarga el archivo\n" + 
 					"			          \">Ficha Comercial</a>\n" + 
 					"			</p>";

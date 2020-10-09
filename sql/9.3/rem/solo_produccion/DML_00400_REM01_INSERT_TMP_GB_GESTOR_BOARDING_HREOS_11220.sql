@@ -1,7 +1,7 @@
 --/*
 --#########################################
---## AUTOR=Javier Urban
---## FECHA_CREACION=20201001
+--## AUTOR=Carlos Augusto
+--## FECHA_CREACION=20201008
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11220
@@ -40,22 +40,20 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
       
     V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TMP_GB_GESTOR_BOARDING (ID, ECO_ID,USERNAME)
-        SELECT ROWNUM,eco.ECO_ID, (''gruboarding'') as USERNAME
-        FROM '||V_ESQUEMA||'.eco_expediente_comercial eco
-        inner join '||V_ESQUEMA||'.act_ofr actofr on actofr.ofr_id = eco.ofr_id
-        inner join '||V_ESQUEMA||'.act_activo act on act.act_id = actofr.act_id
-        inner join '||V_ESQUEMA||'.act_tra_tramite atr on eco.tbj_id = atr.tbj_id
-        inner join '||V_ESQUEMA||'.tac_tareas_activos tac on atr.tra_id = tac.tra_id
-        inner join '||V_ESQUEMA||'.tar_tareas_notificaciones tar on tar.tar_id = tac.tar_id
-        inner join '||V_ESQUEMA||'.tex_tarea_externa txt on txt.tar_id = tar.tar_id
-        inner join '||V_ESQUEMA||'.tap_tarea_procedimiento tap on txt.tap_id = tap.tap_id
-        inner join '||V_ESQUEMA_M||'.usu_usuarios usu on usu.usu_id = tac.usu_id
-        inner join '||V_ESQUEMA||'.dd_cra_cartera cra on cra.dd_cra_id = act.dd_cra_id
-        where eco.borrado = 0
-        and tar.tar_tarea_finalizada in (0)
-        and tar.borrado = 0
-        and act.borrado = 0
-        and tap.tap_codigo in (''T013_PBCReserva'', ''T017_PBCReserva'', ''T013_InstruccionesReserva'',''T013_ObtencionContratoReserva'')';
+                 SELECT  ROWNUM,eco.ECO_ID, (''gruboarding'') as USERNAME
+      FROM  '||V_ESQUEMA||'.eco_expediente_comercial eco
+      inner join '||V_ESQUEMA||'.act_tra_tramite atr on eco.tbj_id = atr.tbj_id
+      inner join '||V_ESQUEMA||'.tac_tareas_activos tac on atr.tra_id = tac.tra_id
+      inner join '||V_ESQUEMA||'.tar_tareas_notificaciones tar on tar.tar_id = tac.tar_id
+      inner join '||V_ESQUEMA||'.tex_tarea_externa txt on txt.tar_id = tar.tar_id
+      inner join '||V_ESQUEMA||'.tap_tarea_procedimiento tap on txt.tap_id = tap.tap_id
+      inner join '||V_ESQUEMA_M||'.usu_usuarios usu on usu.usu_id = tac.usu_id
+      where eco.borrado = 0
+      and tar.tar_tarea_finalizada in (0)
+      and tar.borrado = 0
+      and eco.dd_eec_id not in(2,8,15)
+      and tap.tap_codigo in (''T013_PBCReserva'', ''T017_PBCReserva'', ''T013_InstruccionesReserva'',''T013_ObtencionContratoReserva'',''T017_InstruccionesReserva'',''T017_ObtencionContratoReserva'')
+     and eco.eco_num_expediente not in (87143,86139,17261,17236)';
 
     EXECUTE IMMEDIATE V_MSQL;
 

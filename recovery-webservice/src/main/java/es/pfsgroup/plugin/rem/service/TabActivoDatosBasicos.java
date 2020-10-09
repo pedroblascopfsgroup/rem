@@ -90,6 +90,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivoBDE;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
@@ -126,6 +127,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private static final String ACTIVO_NO_BBVA = "msg.error.activo.hre.bbva.no.existe";
 	private static final String ACTIVO_VENDIDO_FUERA_DE_PERIMETRO_HAYA= "msg.error.activo.vendido.perimetro";
 	private static final String ACTIVO_NO_DIVARIAN_BBVA= "msg.error.activo.no.bbva.divarian";
+	//
+	private static final String ACTIVO_NO_EXISTE= "msg.error.activo.hre.bbva.no.existe.en.rem";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -1619,11 +1622,21 @@ public class TabActivoDatosBasicos implements TabActivoService {
 						boolean isVendido =  false;
 						boolean isCarteraBBVADivarian =  false;
 						boolean isFueraPerimetro =  false;
-						
+
 						if (activoOrigenHRE != null) {
-							isCarteraBBVADivarian = activoDao.isActivoBBVADivarian(activoOrigenHRE.getId());
+							
+							if (activoOrigenHRE.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA) 
+									|| (activoOrigenHRE.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CERBERUS) 
+									&& (activoOrigenHRE.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB)) 
+									|| activoOrigenHRE.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB))) {
+								isCarteraBBVADivarian=true;
+							}else {
+								isCarteraBBVADivarian=false;
+							}
+							//isCarteraBBVADivarian = activoDao.isActivoBBVADivarian(activoOrigenHRE.getId());
 							isVendido = activoApi.isVendido(activoOrigenHRE.getId());
 							isFueraPerimetro = !activoApi.isActivoIncluidoEnPerimetro(activoOrigenHRE.getId());
+							
 						
 							boolean isOrigenHRE = !activoDao.existeactivoIdHAYA(dto.getIdOrigenHre()); 
 							isVendido = activoDao.activoEstadoVendido(dto.getIdOrigenHre()); 
@@ -1640,6 +1653,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 							if (!isVendido && !isFueraPerimetro) {
 								throw new JsonViewerException(messageServices.getMessage(ACTIVO_VENDIDO_FUERA_DE_PERIMETRO_HAYA));
 							}
+							
 						
 							activoBbva.setIdOrigenHre(dto.getIdOrigenHre());
 							
@@ -1659,6 +1673,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 									&& activoOrigenHRE.getAdjNoJudicial() != null) {
 								activo.setFechaTituloAnterior(activoOrigenHRE.getAdjNoJudicial().getFechaTitulo());
 							}
+						} else {
+							throw new JsonViewerException(messageServices.getMessage(ACTIVO_NO_EXISTE));
 						}
 					}
 

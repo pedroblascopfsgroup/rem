@@ -7738,5 +7738,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 	}
 
+	@Override
+	public boolean isActivoExisteEnRem(Long idActivo) {
+		return activoDao.existeActivo(idActivo);
+	}
+
 
 }

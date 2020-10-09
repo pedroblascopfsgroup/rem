@@ -1392,4 +1392,6 @@ public interface ActivoApi {
 
 	String uploadFactura(WebFileItem webFileItem, Long idDocRestClient, GastoAsociadoAdquisicion gas, DDTipoDocumentoGastoAsociado tipoDocGastoAsociado) throws UserException;
 	
+	boolean isActivoExisteEnRem(Long idActivo);
+	
 }

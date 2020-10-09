@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=RLB
---## FECHA_CREACION=20181109
+--## AUTOR=GUILLEM REY
+--## FECHA_CREACION=20201009
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -82,11 +82,23 @@ BEGIN
 		CROSS JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
 		LEFT JOIN '|| V_ESQUEMA ||'.ACT_VAL_VALORACIONES VAL ON VAL.DD_TPC_ID = TPC.DD_TPC_ID AND VAL.ACT_ID = ACT.ACT_ID AND VAL.BORRADO=0
 		LEFT JOIN ' || V_ESQUEMA_MASTER || '.USU_USUARIOS GESTOR ON GESTOR.USU_ID = VAL.USU_ID
-		WHERE DD_TPC_TIPO = ''P''
+		WHERE DD_TPC_TIPO = ''P'' AND VAL.VAL_FECHA_FIN IS NULL 
     and act.borrado = 0';
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_PRECIOS_VIGENTES...Creada OK');
-  
+  EXCEPTION
+
+   WHEN OTHERS THEN
+        err_num := SQLCODE;
+        err_msg := SQLERRM;
+
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+        DBMS_OUTPUT.put_line(err_msg);
+
+        ROLLBACK;
+
+        RAISE;
 END;
 /
 

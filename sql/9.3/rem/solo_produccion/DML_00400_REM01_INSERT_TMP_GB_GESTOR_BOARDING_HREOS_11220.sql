@@ -48,10 +48,12 @@ BEGIN
       inner join '||V_ESQUEMA||'.tex_tarea_externa txt on txt.tar_id = tar.tar_id
       inner join '||V_ESQUEMA||'.tap_tarea_procedimiento tap on txt.tap_id = tap.tap_id
       inner join '||V_ESQUEMA_M||'.usu_usuarios usu on usu.usu_id = tac.usu_id
+      inner join '||V_ESQUEMA||'.coe_condicionantes_expediente coe on coe.eco_id=eco.eco_id
       where eco.borrado = 0
       and tar.tar_tarea_finalizada in (0)
       and tar.borrado = 0
       and eco.dd_eec_id not in(2,8,15)
+       and coe.coe_solicita_reserva=1
       and tap.tap_codigo in (''T013_PBCReserva'', ''T017_PBCReserva'', ''T013_InstruccionesReserva'',''T013_ObtencionContratoReserva'',''T017_InstruccionesReserva'',''T017_ObtencionContratoReserva'')
      and eco.eco_num_expediente not in (87143,86139,17261,17236)';
 

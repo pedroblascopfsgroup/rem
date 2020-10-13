@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
@@ -341,4 +342,6 @@ public interface GenericApi {
 	 * @return Devuelve una lista de los subtipologias de agenda de saneamiento relacionado con la tipologia de agenda de saneamiento seleccionada
 	 */
 	List<DDSubtipoAgendaSaneamiento> getSubtipologiaAgendaSaneamiento(String codTipo);
+	
+	List<DDEstadoAdmision> getComboEstadoAdmisionFiltrado(Set<String> tipoEstadoAdmisionCodigo);
 }

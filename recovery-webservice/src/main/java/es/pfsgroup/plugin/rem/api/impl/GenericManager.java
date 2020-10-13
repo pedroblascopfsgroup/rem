@@ -84,6 +84,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoLocalizacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
@@ -1426,5 +1427,19 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		
 		Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "tipoAgendaSaneamiento.codigo", codTipo);
 		return genericDao.getList(DDSubtipoAgendaSaneamiento.class, filtroId);
+	}
+
+	@Override
+	public List<DDEstadoAdmision> getComboEstadoAdmisionFiltrado(Set<String> tipoEstadoAdmisionCodigo) {		
+		Order order = new Order(GenericABMDao.OrderType.ASC, "codigo");
+		List<DDEstadoAdmision> lista = genericDao.getListOrdered(DDEstadoAdmision.class,order, genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+		List<DDEstadoAdmision> listaResultado = new ArrayList<DDEstadoAdmision>();
+
+		for (DDEstadoAdmision tipoEstadoAdmision : lista) {
+			if (tipoEstadoAdmisionCodigo.contains(tipoEstadoAdmision.getCodigo())) {
+				listaResultado.add(tipoEstadoAdmision);
+			}
+		}
+		return listaResultado;
 	}
 }

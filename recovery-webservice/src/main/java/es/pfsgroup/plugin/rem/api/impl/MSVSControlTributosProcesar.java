@@ -94,19 +94,19 @@ public class MSVSControlTributosProcesar extends AbstractMSVActualizador impleme
 		// PK Número de activo, Fecha presentación recurso o fecha de emisión y tipo de solicitud.
 		Activo activo;
 		DDTipoTributo tipoTributo;
-		Date fechaRecepcionTributo; 
-		Date fechaEmision;
-		Date fechaRecepcionPropietario;
-		Date fechaRecepcionGestoria;
+		Date fechaRecepcionTributo = null; 
+		Date fechaEmision = null;
+		Date fechaRecepcionPropietario = null;
+		Date fechaRecepcionGestoria = null;
 		DDTipoSolicitudTributo tipoSolicitudTributo;
 		String observaciones;
-		Date fechaRecepcionRecursoPropietario;
-		Date fechaRecepcionRecursoGestoria;
-		Date fechaRespuestaRecurso;
+		Date fechaRecepcionRecursoPropietario = null;
+		Date fechaRecepcionRecursoGestoria = null;
+		Date fechaRespuestaRecurso = null;
 		DDResultadoSolicitud resultado;
 		Long numGastoHaya = null;
 		ExpedienteComercial expediente;
-		Date fechaComunicadoDevolucionIngreso;
+		Date fechaComunicadoDevolucionIngreso = null;
 		Double importeRecuperado;
 		ActivoTributos activoTributos;
 		GastoProveedor gastoProveedor;
@@ -167,18 +167,25 @@ public class MSVSControlTributosProcesar extends AbstractMSVActualizador impleme
 		
 		try {
 			
-			fechaRecepcionPropietario = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_PROPIETARIO));
-			fechaRecepcionGestoria = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_GESTORIA));
-			fechaComunicadoDevolucionIngreso = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_COMUNICADO_DEVOLUCION_INGRESO));
+			if(!exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_PROPIETARIO).isEmpty())
+				fechaRecepcionPropietario = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_PROPIETARIO));
+			if(!exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_GESTORIA).isEmpty())
+				fechaRecepcionGestoria = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_GESTORIA));
+			if(!exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_COMUNICADO_DEVOLUCION_INGRESO).isEmpty())
+				fechaComunicadoDevolucionIngreso = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_COMUNICADO_DEVOLUCION_INGRESO));
 
 			observaciones = exc.dameCelda(fila, COL_NUM.COL_NUM_OBSERVACIONES);
-
-			fechaRecepcionRecursoPropietario = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_RECURSO_BANKIA));
-			fechaRecepcionRecursoGestoria = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_RECURSO_GESTORIA));
-			fechaRespuestaRecurso = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RESPUESTA));
-			fechaRecepcionTributo = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_TRIBUTO));
-
-			fechaComunicadoDevolucionIngreso = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_COMUNICADO_DEVOLUCION_INGRESO));
+			
+			if(!exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_RECURSO_BANKIA).isEmpty())
+				fechaRecepcionRecursoPropietario = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_RECURSO_BANKIA));
+			if(!exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_RECURSO_GESTORIA).isEmpty())
+				fechaRecepcionRecursoGestoria = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_RECURSO_GESTORIA));
+			if(!exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RESPUESTA).isEmpty())
+				fechaRespuestaRecurso = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RESPUESTA));
+			if(!exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_TRIBUTO).isEmpty())
+				fechaRecepcionTributo = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_TRIBUTO));
+			if(!exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_COMUNICADO_DEVOLUCION_INGRESO).isEmpty())
+				fechaComunicadoDevolucionIngreso = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_COMUNICADO_DEVOLUCION_INGRESO));
 			
 			Filter filtroResultado = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, COL_NUM.COL_NUM_RESULTADO_SOLICITUD));
 			resultado = genericDao.get(DDResultadoSolicitud.class, filtroResultado);

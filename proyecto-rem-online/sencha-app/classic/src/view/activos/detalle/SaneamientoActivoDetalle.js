@@ -338,7 +338,19 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 										title: HreRem.i18n("title.calificacion.negativa"),
 										bind:{
 											disabled:'{!datosRegistrales.noEstaInscrito}'
-										}
+										},
+										items :
+										[
+											{
+												xtype: "calificacionnegativaadicionalgrid", //calificacionnegativaadicionalgrid
+												// TODO Falta una funcion aqui que esta en informeComercialActivo de ese estilo
+												reference: "calificacionnegativagridad", 
+												colspan: 3,
+												bind:{
+													disabled:'{!datosRegistrales.puedeEditarCalificacionNegativa}'
+												}
+											}
+										]
 					           		},
 					           		{
 									   	xtype:'fieldsettable',
@@ -352,15 +364,6 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 										items :
 										[
 											{
-												xtype: "calificacionnegativaadicionalgrid", //calificacionnegativaadicionalgrid
-												// TODO Falta una funcion aqui que esta en informeComercialActivo de ese estilo
-												reference: "calificacionnegativagridad", 
-												colspan: 3,
-												bind:{
-													disabled:'{!datosRegistrales.puedeEditarCalificacionNegativa}'
-													}
-											},
-											{
 												xtype: "complementotitulogrid",
 												reference: "complementotitulogridref", 
 												colspan: 3,
@@ -369,11 +372,34 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 												}
 												
 											}
-										]  	
+										]  	 
 									   }
 								]
 							
-							},{
+							},
+							{
+							   	xtype:'fieldsettable',
+								defaultType: 'textfieldbase',
+								colspan: 3,
+								hidden: false, 
+								title: HreRem.i18n("title.complemento.titulo"),
+								bind:{
+									//disabled:'{!saneamiento.noEstaInscrito}'
+								},
+								items :
+								[
+									{
+										xtype: "complementotitulogrid",
+										reference: "complementotitulogridref", 
+										colspan: 3,
+										bind:{
+											//disabled:'{!saneamiento.puedeEditarCalificacionNegativa}'
+										}
+										
+									}
+								]  	
+							},
+							{
 							
 							
 							xtype:'fieldsettable',

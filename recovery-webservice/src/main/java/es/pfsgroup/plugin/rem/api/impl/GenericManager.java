@@ -961,9 +961,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Filter filtro;
 		Filter filtroCartera;
 		if(!Checks.esNulo(subcarteraCodigo)){
-			filtro = genericDao.createFilter(FilterType.EQUALS,"Subcartera.codigo", subcarteraCodigo);
+			
 			filtroCartera = genericDao.createFilter(FilterType.EQUALS,"cartera.codigo", carteraCodigo);
-			listaComites = genericDao.getList(DDComiteSancion.class,filtro,filtroCartera);
+			listaComites = genericDao.getList(DDComiteSancion.class,filtroCartera);
 
 		}
 		if(Checks.esNulo(subcarteraCodigo) || Checks.estaVacio(listaComites)){

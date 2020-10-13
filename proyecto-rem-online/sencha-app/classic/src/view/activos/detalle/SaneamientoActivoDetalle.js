@@ -18,7 +18,8 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 	
 	requires : ['HreRem.view.common.FieldSetTable','HreRem.model.Catastro', 'HreRem.model.DocumentacionAdministrativa'
 		,'HreRem.model.ActivoInformacionAdministrativa', 'HreRem.view.activos.detalle.ObservacionesActivo', 'HreRem.view.activos.detalle.CalificacionNegativaGrid'
-		, 'HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid'],
+		, 'HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', 'HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', 'HreRem.model.ActivoComplementoTituloModel'
+		, 'HreRem.view.activos.detalle.ComplementoTituloGrid'],
 	
     initComponent: function () {
         var me = this;
@@ -205,6 +206,7 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 											}
 										]
 					           		},
+					           		
 					           		//
        				           		{ //COMBO SI/NO PARA TITULO ADICIONAL 
 		    					    	xtype: 'comboboxfieldbase',							        	
@@ -348,6 +350,27 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 			
 								]
 							},
+							{
+				           		  xtype:'fieldsettable',
+				           		  defaultType: 'textfieldbase',
+				           		  colspan: 3,
+				           		  hidden: false,
+				           		  title: HreRem.i18n("title.complemento.titulo"),
+				           		  bind:{
+				           			  	//disabled:'{!saneamiento.noEstaInscrito}'
+				           		  },
+				           		  items :
+				           		  [
+				           		  		{
+				           		  		xtype: "complementotitulogrid",
+				           		  		reference: "complementotitulogridref",
+				           		  		colspan: 3,
+				           		  		bind:{
+				           		  			//disabled:'{!saneamiento.puedeEditarCalificacionNegativa}'
+				           		  		}
+				           		  	}
+				           		 ]
+				           	},
 				            {
 				            	xtype:'fieldsettable',
 								title:HreRem.i18n('title.cargas'),

@@ -8,7 +8,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		'HreRem.view.expedientes.ExpedienteDetalleController', 'HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', 
     		'HreRem.view.activos.detalle.InformeComercialActivo','HreRem.view.activos.detalle.AdministracionActivo',
     		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias','HreRem.view.activos.detalle.PlusvaliaActivo',
-    		'HreRem.model.ComercialActivoModel', 'HreRem.view.activos.detalle.CrearEvolucionObservaciones', 'HreRem.view.activos.detalle.SuministrosActivo', 'HreRem.view.activos.detalle.SaneamientoActivoDetalle'],
+    		'HreRem.model.ComercialActivoModel', 'HreRem.view.activos.detalle.CrearEvolucionObservaciones', 'HreRem.view.activos.detalle.SuministrosActivo', 
+    		'HreRem.view.activos.detalle.SaneamientoActivoDetalle', 'HreRem.view.activos.detalle.HistoricoTramitacionTituloGrid', 
+    		'HreRem.model.ActivoComplementoTituloModel', 'HreRem.view.activos.detalle.ComplementoTituloGrid'],
 
     control: {
          'documentosactivosimple gridBase': {
@@ -6260,5 +6262,69 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     onClickCerrarObservacionesEvolucion: function(btn) {
     	var me = this;
     	btn.up('window').hide();
-    }
+    },
+    
+    onClickBotonCancelarVentanaComplementoTitulo : function(btn) {
+    	btn.up('window').hide();
+    	},
+
+	onClickBotonAnyadirComplementoTitulo : function(btn) {
+
+	var me = this;
+	me.getView().mask(HreRem.i18n("msg.mask.loading"));
+	var correcto = true;
+	var form = btn.up().up().down("form");
+	url = $AC.getRemoteUrl("activo/createComplementoTitulo");
+	var idActivo =  me.getViewModel().data.activo;
+	var comboTipoTitulo = me.lookupReference('comboTipoTituloRef');
+	var fechaSolicitud = me.lookupReference('fechaSolicitudRef');
+	var fechaTitulo = me.lookupReference('fechaTituloRef');
+	var fechaRecepcion = me.lookupReference('fechaRecepcionRef');
+	var fechaInscripcion = me.lookupReference('fechaInscripcionRef');
+	var observaciones = me.lookupReference('observacionesRef');
+
+
+	if (fechaRecepcion.getValue() != null) {
+		if (fechaRecepcion.getValue() < fechaTitulo.getValue()) {
+				correcto = false;
+		}
+	}
+
+	if (fechaInscripcion.getValue() != null) {
+		if (fechaInscripcion.getValue() < fechaTitulo.getValue()) {
+			correcto = false;
+		}
+	}
+	if (correcto) {
+		if (form.isValid()) {
+			form.submit({
+				url : url,
+				params : {
+					activoId : idActivo,
+					codTitulo : comboTipoTitulo.getValue(),
+					fechaSolicitud : fechaSolicitud.getValue(),
+					fechaTitulo : fechaTitulo.getValue(),
+					fechaRecepcion : fechaRecepcion.getValue(),
+					fechaInscripcion : fechaInscripcion.getValue(),
+					observaciones : observaciones.getValue()
+				},
+				success : function(fp, o) {
+					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+					me.getView().fireEvent("refreshEntityOnActivate",CONST.ENTITY_TYPES['ACTIVO'], idActivo);
+					me.getView().unmask();
+					me.onClickBotonCancelarVentanaComplementoTitulo(btn);
+				},
+				failure : function(record, operation) {
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					me.unmask();
+				}
+			});
+		} else {
+			me.getView().unmask();
+		}
+	} else {
+		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.no.valida"));
+		me.getView().unmask();
+	}
+	}
 });

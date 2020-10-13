@@ -186,6 +186,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTributo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloComplemento;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
@@ -7954,9 +7955,171 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return false;
 	}
 
+	 @Transactional
+	 @Override
+	 public Boolean createComplementoTitulo(String activoId, String codTitulo, String fechaSolicitud,
+	 String fechaTitulo, String fechaRecepcion, String fechaInscripcion, String observaciones) {
+
+		 SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		 Date fechaSolicitudF = null;
+		 Date fechaTituloF = null;
+		 Date fechaRecepcionF = null;
+		 Date fechaInscripcionF = null;
 
 
-
+		 try {
+			 if(fechaSolicitud != null && !fechaSolicitud.isEmpty())
+			 fechaSolicitudF = df.parse(df.format(ft.parse(fechaSolicitud)));
+		
+			 if(fechaTitulo != null && !fechaTitulo.isEmpty())
+			 fechaTituloF = df.parse(df.format(ft.parse(fechaTitulo)));
+		
+			 if(fechaRecepcion != null && !fechaRecepcion.isEmpty())
+			 fechaRecepcionF = df.parse(df.format(ft.parse(fechaRecepcion)));
+		
+			 if(fechaInscripcion != null && !fechaInscripcion.isEmpty())
+			 fechaInscripcionF = df.parse(df.format(ft.parse(fechaInscripcion)));
+		
+			 Long idActivo = Long.parseLong(activoId);
 	
+			 Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			 Filter filtroCodTitulo = genericDao.createFilter(FilterType.EQUALS, "codigo", codTitulo);
+		
+			 DDTipoTituloComplemento ddt =  genericDao.get(DDTipoTituloComplemento.class, filtroBorrado, filtroCodTitulo);
+			 Activo activo = get(idActivo);
+			 ActivoComplementoTitulo activoComTitulo = new ActivoComplementoTitulo();
+		
+			 activoComTitulo.setActivo(activo);
+			 activoComTitulo.setTituloComplemento(ddt);
+			 activoComTitulo.setFechaSolicitud(fechaSolicitudF);
+			 activoComTitulo.setFechaComplementoTitulo(fechaTituloF);
+			 activoComTitulo.setFechaRecepcion(fechaRecepcionF);
+			 activoComTitulo.setFechaInscripcion(fechaInscripcionF);
+			 activoComTitulo.setObservaciones(observaciones);
+			 activoComTitulo.setFechaAlta(df.parse(df.format(new Date())));
+			 activoComTitulo.setGestorAlta(adapter.getUsuarioLogado());
+		
+			 genericDao.save(ActivoComplementoTitulo.class, activoComTitulo);
+	
+		 return true;
+		 } catch (Exception e) {
+			 logger.error("Error en activoManager", e);
+		 return false;
+		 }
+	}
+
+	 @Override
+	 public List<DtoActivoComplementoTitulo> getListComplementoTituloById(Long id) {
+	 List<DtoActivoComplementoTitulo> listDto = new ArrayList<DtoActivoComplementoTitulo>();
+
+		 if (id != null) {
+			 List<ActivoComplementoTitulo> act = genericDao.getListOrdered(ActivoComplementoTitulo.class,
+			 new Order(OrderType.DESC, "fechaAlta"),
+			 genericDao.createFilter(FilterType.EQUALS, "activo.id", id));
+
+		 if (act != null && !act.isEmpty()) {
+			 for (ActivoComplementoTitulo cTitulo : act) {
+				 DtoActivoComplementoTitulo dto = new DtoActivoComplementoTitulo();
+
+			 dto.setActivoId(id);
+			 dto.setId(cTitulo.getId());
+
+			 if (cTitulo.getFechaAlta() != null) {
+				 dto.setFechaAlta(cTitulo.getFechaAlta());
+			 }
+		
+			 if (cTitulo.getGestorAlta() != null) {
+				 dto.setGestorAlta(cTitulo.getGestorAlta().getUsername());
+			 }
+		
+			 if (cTitulo.getTituloComplemento() != null) {
+				 dto.setTipoTitulo(cTitulo.getTituloComplemento().getDescripcion());
+			 }
+		
+			 if (cTitulo.getFechaSolicitud() != null) {
+				 dto.setFechaSolicitud(cTitulo.getFechaSolicitud());
+			 }
+		
+			 if (cTitulo.getFechaComplementoTitulo() != null) {
+				 dto.setFechaTitulo(cTitulo.getFechaComplementoTitulo());
+			 }
+		
+			 if (cTitulo.getFechaRecepcion() != null) {
+				 dto.setFechaRecepcion(cTitulo.getFechaRecepcion());
+			 }
+		
+			 if (cTitulo.getFechaInscripcion() != null) {
+				 dto.setFechaInscripcion(cTitulo.getFechaInscripcion());
+			 }
+		
+			 if (cTitulo.getObservaciones() != null) {
+				 dto.setObservaciones(cTitulo.getObservaciones());
+			 }
+			 listDto.add(dto);
+		}
+	 }
+
+	 }
+
+	 return listDto;
+	 }
+	
+	 @Transactional
+	 @Override
+	 public Boolean updateActivoComplementoTitulo(DtoActivoComplementoTitulo cargaDto) {
+
+	 ActivoComplementoTitulo act = null;
+
+		 if (cargaDto != null) {
+	
+				 act = genericDao.get(ActivoComplementoTitulo.class,
+				 genericDao.createFilter(FilterType.EQUALS, "id", cargaDto.getId()));
+	
+		 if (act != null) {
+			 if (cargaDto.getTipoTitulo() != null) {
+				 DDTipoTituloComplemento ddTipo = genericDao.get(DDTipoTituloComplemento.class, genericDao
+						 .createFilter(FilterType.EQUALS, "codigo", cargaDto.getTipoTitulo()));
+				 act.setTituloComplemento(ddTipo);
+			 }
+	
+		 if (cargaDto.getFechaSolicitud() != null) {
+			 act.setFechaSolicitud(cargaDto.getFechaSolicitud());
+		 }
+	
+		 if (cargaDto.getFechaTitulo() != null) {
+			 act.setFechaComplementoTitulo(cargaDto.getFechaTitulo());
+		 }
+	
+		 if (cargaDto.getFechaRecepcion() != null) {
+			 act.setFechaRecepcion(cargaDto.getFechaRecepcion());
+		 }
+	
+		 if (cargaDto.getFechaInscripcion() != null) {
+			 act.setFechaInscripcion(cargaDto.getFechaInscripcion());
+		 }
+	
+		 if (cargaDto.getObservaciones() != null) {
+			 act.setObservaciones(cargaDto.getObservaciones());
+		 }
+	
+		 genericDao.save(ActivoComplementoTitulo.class, act);
+		 return true;
+		 }
+	 }
+
+	 return false;
+	 }
+	 
+	 @Transactional
+	 @Override
+	 public Boolean deleteActivoComplementoTitulo(DtoActivoComplementoTitulo cargaDto) {
+		 if (cargaDto.getId() != null) {
+			 genericDao.deleteById(ActivoComplementoTitulo.class, cargaDto.getId());
+	
+		 return true;
+		 }
+	
+		 return false;
+		 }
 }
 

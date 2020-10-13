@@ -38,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
+import es.pfsgroup.plugin.rem.model.DtoActivoComplementoTitulo;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
@@ -1367,6 +1368,35 @@ public interface ActivoApi {
 	
 	boolean destroyCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto);
 	
-	
+	 /**
+	* Devuelve la Lista de Dtos para rellenar un grid
+	*
+	* @param dto
+	* @return
+	*/
+	List<DtoActivoComplementoTitulo> getListComplementoTituloById(Long id);
+
+
+	/**
+	* Borrado de un complemento titulo
+	* @param cargaDto
+	* @return
+	*/
+	Boolean deleteActivoComplementoTitulo(DtoActivoComplementoTitulo cargaDto);
+
+	/**
+	*
+	* @param cargaDto
+	* @return
+	*/
+	Boolean updateActivoComplementoTitulo(DtoActivoComplementoTitulo cargaDto);
+
+	/**
+	* Anyade un Complemento titulo
+	* @param cargaDto
+	* @return
+	*/
+	Boolean createComplementoTitulo(String activoId, String codTitulo, String fechaSolicitud,
+	String fechaTitulo, String fechaRecepcion, String fechaInscripcion, String observaciones);
 	
 }

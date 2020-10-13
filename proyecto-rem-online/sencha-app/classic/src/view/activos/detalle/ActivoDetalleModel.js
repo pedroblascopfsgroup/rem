@@ -10,8 +10,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados','HreRem.model.CalificacionNegativaModel',
     'HreRem.model.HistoricoTramtitacionTituloModel', 'HreRem.model.HistoricoGestionGrid', 'HreRem.model.ListaActivoGrid', 'HreRem.model.HistoricoFasesDePublicacion',
     'HreRem.model.AdjuntoActivoAgrupacion','HreRem.model.AdjuntoActivoProyecto','HreRem.model.DocumentacionAdministrativa', 'HreRem.model.ActivoPatrimonio',
-    'HreRem.model.DocumentosTributosModel','HreRem.model.HistoricoSolicitudesPreciosModel','HreRem.model.SuministrosActivoModel', 'HreRem.model.ActivoEvolucion', 'HreRem.model.ActivoSaneamiento',
-    'HreRem.model.ActivoComplementoTituloModel'],
+    'HreRem.model.DocumentosTributosModel','HreRem.model.HistoricoSolicitudesPreciosModel','HreRem.model.SuministrosActivoModel', 'HreRem.model.ActivoEvolucion', 'HreRem.model.ActivoSaneamiento'],
 
     data: {
     	activo: null,
@@ -2738,25 +2737,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {id: '{activo.id}'}
 			},
 			autoLoad: true
-		},
-		
-		storeComplementoTitulo: {    
-			model : 'HreRem.model.ActivoComplementoTituloModel',
-			    proxy: {
-			       type: 'uxproxy',
-			       remoteUrl: 'activo/getListComplementoTituloById',
-			      extraParams: {id: '{activo.id}'}
-			    }
-			   
-		},
-		
-		storeTipoTituloComplemento: {
-			model: 'HreRem.model.ComboBase',
-			proxy: {
-			type: 'uxproxy',
-			remoteUrl: 'generic/getDiccionario',
-			extraParams: {diccionario: 'tipoTituloComplemento'}
-			}
 		}
 	 }
 });

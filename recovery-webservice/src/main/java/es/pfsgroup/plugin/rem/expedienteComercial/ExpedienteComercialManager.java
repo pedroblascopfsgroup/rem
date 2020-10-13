@@ -2387,13 +2387,31 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public Boolean comprobarExisteAdjuntoExpedienteComercial(Long idTrabajo, String codigoDocumento) {
-		Filter filtroTrabajoEC = genericDao.createFilter(FilterType.EQUALS, "expediente.trabajo.id", idTrabajo);
-		Filter filtroAdjuntoSubtipoCodigo = genericDao.createFilter(FilterType.EQUALS,
-				"subtipoDocumentoExpediente.codigo", codigoDocumento);
-
-		List<AdjuntoExpedienteComercial> adjuntos = genericDao.getList(AdjuntoExpedienteComercial.class,
-				filtroTrabajoEC, filtroAdjuntoSubtipoCodigo);
-
+		List<AdjuntoExpedienteComercial> adjuntos = new ArrayList<AdjuntoExpedienteComercial>();
+		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
+		
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			ExpedienteComercial expedienteComercial = this.findOneByTrabajo(trabajoApi.findOne(idTrabajo));
+			try {
+				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosExpedienteComercial(expedienteComercial);
+				for (DtoAdjunto adj : listaAdjuntos) {
+					AdjuntoExpedienteComercial adjuntoExpedienteComercial = expedienteComercial.getAdjuntoGD(adj.getId());
+					if (adjuntoExpedienteComercial != null && adjuntoExpedienteComercial.getSubtipoDocumentoExpediente() != null
+							&& codigoDocumento.equals(adjuntoExpedienteComercial.getSubtipoDocumentoExpediente().getCodigo())) {
+						adjuntos.add(adjuntoExpedienteComercial);
+					}
+				}
+			} catch (GestorDocumentalException gex) {
+				logger.error(gex.getMessage(), gex);
+			}
+		} else {
+			Filter filtroTrabajoEC = genericDao.createFilter(FilterType.EQUALS, "expediente.trabajo.id", idTrabajo);
+			Filter filtroAdjuntoSubtipoCodigo = genericDao.createFilter(FilterType.EQUALS,
+					"subtipoDocumentoExpediente.codigo", codigoDocumento);
+	
+			adjuntos = genericDao.getList(AdjuntoExpedienteComercial.class,
+					filtroTrabajoEC, filtroAdjuntoSubtipoCodigo);
+		}
 		return !Checks.estaVacio(adjuntos);
 	}
 

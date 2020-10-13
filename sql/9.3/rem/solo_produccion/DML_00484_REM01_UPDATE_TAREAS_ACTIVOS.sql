@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=IVAN REPISO
---## FECHA_CREACION=20201013
+--## FECHA_CREACION=20201014
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-8201
@@ -41,7 +41,7 @@ BEGIN
                         join '||V_ESQUEMA||'.ofr_ofertas ofr on eco.ofr_id = ofr.ofr_id AND OFR.BORRADO=0
                         JOIN '||V_ESQUEMA||'.ACT_OFR AOFR ON ofr.ofr_id=AOFR.ofr_id
                         JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON AOFR.ACT_ID = ACT.ACT_ID AND ACT.BORRADO=0
-                        JOIN '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS TAC ON TAC.ACT_ID=ACT.ACT_ID AND TAP.BORRADO=0
+                        JOIN '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS TAC ON TAC.ACT_ID=ACT.ACT_ID AND TAC.BORRADO=0
                         JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON TAR.TAR_ID=TAC.TAR_ID AND TAR.BORRADO=0
                         JOIN '||V_ESQUEMA||'.TEX_TAREA_EXTERNA TEX ON TEX.TAR_ID=TAR.TAR_ID AND TEX.BORRADO=0
                         JOIN '||V_ESQUEMA_M||'.USU_USUARIOS USU ON TAC.USU_ID = USU.USU_ID AND usu.BORRADO=0

@@ -5032,11 +5032,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(act.act_id) "
-				+ "			FROM DD_SCM_SITUACION_COMERCIAL scm, "
-				+ "			  ACT_ACTIVO act "
+				+ "			FROM rem01.DD_SCM_SITUACION_COMERCIAL scm, "
+				+ "			  REM01.ACT_ACTIVO act "
 				+ "			WHERE scm.dd_scm_id   = act.dd_scm_id "
 				+ "			  AND scm.dd_scm_codigo = '05' "
-				+ "			  AND act.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "			  AND act.ACT_NUM_ACTIVO = '"+numActivo+" '"
 				+ "			  AND act.borrado       = 0");
 		return !"0".equals(resultado);
 	}
@@ -5046,13 +5046,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
 			return false;
 		}
-		String resultado = rawDao.getExecuteSQL("SELECT act.ACT_ID "
-				+ "		FROM ACT_ACTIVO act "
-				+ "		LEFT JOIN ACT_PAC_PERIMETRO_ACTIVO pac "
+		String resultado = rawDao.getExecuteSQL("SELECT count(act.ACT_ID)"
+				+ "		FROM REM01.ACT_ACTIVO act "
+				+ "		LEFT JOIN REM01.ACT_PAC_PERIMETRO_ACTIVO pac "
 				+ "		ON act.ACT_ID            = pac.ACT_ID "
 				+ "		WHERE "
 				+ "		(pac.PAC_INCLUIDO = 1 or pac.PAC_ID is null)"
-				+ "		AND act.ACT_NUM_ACTIVO = "+numActivo+" ");
+				+ "		AND act.ACT_NUM_ACTIVO = '"+numActivo+"' ");
 		return !Checks.esNulo(resultado);
 	}
 	
@@ -5063,8 +5063,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
-				+ "			FROM ACT_BBVA_ACTIVOS act "
-				+ "			WHERE act.BBVA_NUM_ACTIVO = "+numActivo+" "
+				+ "			FROM REM01.ACT_BBVA_ACTIVOS act "
+				+ "			WHERE act.BBVA_NUM_ACTIVO = '"+numActivo+"' "
 				+ "			  AND act.borrado       = 0");
 		return !"0".equals(resultado);
 	}

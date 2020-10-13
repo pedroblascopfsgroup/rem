@@ -5,37 +5,22 @@ Ext.define('HreRem.view.activos.detalle.GastosAsociadosAdquisicionGrid', {
     topBar		: true,
     addButton	: true,
     requires	: ['HreRem.model.GastoAsociadoAdquisicionModel'],    
-    editOnSelect: true,	
-    listeners: {
-    	boxready: function() {
-    		var me = this;
-    		me.setStore(Ext.create('Ext.data.Store', {
-				model: 'HreRem.model.GastoAsociadoAdquisicionModel',
-				proxy: {
-					type: 'uxproxy',
-					remoteUrl: 'activo/getListGastosAsociadosAdquisicion',
-					extraParams: {
-						id: me.lookupViewModel('activodetalle').get('activo.id')
-					}
-				},
-				listeners:{
-    		          load:function(){
-    		        	  	me.relayEvents(this,['storeloadsuccess']);
-    		               this.fireEvent('storeloadsuccess');
-    		          }
-    		     }
-			}).load());
-    		
-    	},
-    	storeloadsuccess: function() {
-    		var me = this;
-            me.lookupController().cargarCamposCalculados(me);
-       }
-    	
-    },
+    editOnSelect: true,
     bind: {
     	store: '{storeGastosAsociadosAdquisicion}'
     },
+    listeners: {
+
+    	storeloadsuccess: function() {
+    		var me = this;
+    		me.lookupController().cargarCamposCalculados(me);
+	  		me.relayEvents(this,['storeloadsuccess']);
+       		this.fireEvent('storeloadsuccess');
+            
+       }
+    	
+    },
+    
     
     initComponent: function () {
     	

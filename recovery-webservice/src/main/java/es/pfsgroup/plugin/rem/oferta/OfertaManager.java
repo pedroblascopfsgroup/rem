@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.velocity.runtime.parser.node.SetExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -103,6 +104,7 @@ import es.pfsgroup.plugin.rem.model.DtoClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
 import es.pfsgroup.plugin.rem.model.DtoExcelFichaComercial;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoHcoComercialFichaComercial;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
@@ -4879,9 +4881,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dtoFichaComercial.setCodigoPostal(activo.getCodPostal());
 			}
 				
-			//if(linkHaya != null) {
-			//	dtoFichaComercial.setLinkHaya(linkHaya);
-			//}
+			if(linkHaya != null) {
+				dtoFichaComercial.setLinkHaya(linkHaya);
+			}
 			
 			if(oferta.getFechaAlta() != null) {
 			dtoFichaComercial.setFechaAlta(oferta.getFechaAlta());
@@ -4889,7 +4891,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 
 
-			
+			//Datos pestaña desglose y depuración
 			//Lista Dtoactivos ActivosFichaComercial
 				
 			List <DtoActivosFichaComercial> listaDtoActFichaComercial= new ArrayList<DtoActivosFichaComercial>();
@@ -4980,6 +4982,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							activosFichaComercial.setPrecioPublicacion(preciosWeb.get(0).getImporte());
 						}
 					}
+					
+					Filter filtroVnc = genericDao.createFilter(FilterType.EQUALS ,"tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT);
+					
+					List<ActivoValoraciones> valorNetoContable = genericDao.getListOrdered(ActivoValoraciones.class,orderDesc,filtroAct,filtroVnc);
+					
+					if(!Checks.esNulo(valorNetoContable) && !valorNetoContable.isEmpty()) {
+						if(!Checks.esNulo(valorNetoContable.get(0).getImporte())) {
+							activosFichaComercial.setPrecioPublicacion(valorNetoContable.get(0).getImporte());
+						}
+					}
 	
 					if(!Checks.esNulo(act.getBien().getAdjudicacion()) && !Checks.esNulo(act.getBien().getAdjudicacion().getImporteAdjudicacion())) {
 						activosFichaComercial.setImporteAdj(act.getBien().getAdjudicacion().getImporteAdjudicacion());
@@ -5039,6 +5051,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						}
 					}
 					
+					activosFichaComercial.setLink(linkCabecera(act.getId()));
+					
 					//garaje anejo (No cruza con ninguna tabla)
 					//trastero anejo ( No cruza con ninguna tabla)
 					//oferta neta (campo calculado)
@@ -5046,7 +5060,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					
 					
 					//pvp suelo epa
-					//vnc
 					//euros/m2
 					//gastos pendientes
 					//costes legales
@@ -5139,7 +5152,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						activosFichaComercial.setPrecioPublicacion(preciosWeb.get(0).getImporte());
 					}
 				}
-	
+				
+				Filter filtroVnc = genericDao.createFilter(FilterType.EQUALS ,"tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT);
+				
+				List<ActivoValoraciones> valorNetoContable = genericDao.getListOrdered(ActivoValoraciones.class,orderDesc,filtroActivo,filtroVnc);
+				
+				if(!Checks.esNulo(valorNetoContable) && !valorNetoContable.isEmpty()) {
+					if(!Checks.esNulo(valorNetoContable.get(0).getImporte())) {
+						activosFichaComercial.setPrecioPublicacion(valorNetoContable.get(0).getImporte());
+					}
+				}
+				
 				if(!Checks.esNulo(activo.getBien().getAdjudicacion()) && !Checks.esNulo(activo.getBien().getAdjudicacion().getImporteAdjudicacion())) {
 					activosFichaComercial.setImporteAdj(activo.getBien().getAdjudicacion().getImporteAdjudicacion());
 				}
@@ -5200,6 +5223,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 				}
 				
+				activosFichaComercial.setLink(linkCabecera(activo.getId()));
+				
 				//garaje anejo (No cruza con ninguna tabla)
 				//trastero anejo ( No cruza con ninguna tabla)
 				//oferta neta (campo calculado)
@@ -5207,8 +5232,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 				
 				//pvp suelo epa
-				//vnc
-				//link
 				//euros/m2
 				//gastos pendientes
 				//costes legales
@@ -5219,6 +5242,78 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 				dtoFichaComercial.getListaActivosFichaComercial().add(activosFichaComercial);
 			}
+			
+			
+			//Datos pestaña Historico de ofertas
+			
+			List <DtoHcoComercialFichaComercial> listaHistoricoOfertas = new ArrayList<DtoHcoComercialFichaComercial>();
+			
+			if(!Checks.esNulo(oferta.getIndicadorLoteRestringido())) {
+				if(oferta.getIndicadorLoteRestringido().equals(1)){
+				
+			
+				}
+			}
+			
+			if(Checks.esNulo(oferta.getAgrupacion())) {
+				
+
+				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS ,"activo", activoOferta.getActivoId());
+				Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS ,"activo.id", activoOferta.getActivoId());
+				Filter filtroId = genericDao.createFilter(FilterType.EQUALS ,"id", activoOferta.getActivoId());
+				List<ActivoOferta> ofertasActivo = genericDao.getListOrdered(ActivoOferta.class,orderDesc,filtroActivo);
+				for(ActivoOferta ofertas : ofertasActivo) {
+					DtoHcoComercialFichaComercial historicoOfertas = new DtoHcoComercialFichaComercial();
+					Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS ,"id", ofertas.getOferta());
+					Oferta ofertaActivo =  genericDao.get(Oferta.class, filtroOferta);
+					Activo act =  genericDao.get(Activo.class, filtroId);
+					historicoOfertas.setNumActivo(act.getNumActivo().toString());
+					if(!Checks.esNulo(ofertaActivo.getFechaAlta())) {
+						historicoOfertas.setFecha(ofertaActivo.getFechaAlta());
+					}
+					historicoOfertas.setNumOferta(ofertaActivo.getNumOferta().toString());
+
+					if(!Checks.esNulo(ofertaActivo.getCliente()) && Checks.esNulo(ofertaActivo.getCliente().getNombreCompleto())) {
+						historicoOfertas.setOfertante(ofertaActivo.getCliente().getNombreCompleto());
+					}
+					if(!Checks.esNulo(ofertaActivo.getEstadoOferta())) {
+						historicoOfertas.setEstado(ofertaActivo.getEstadoOferta().getDescripcion());
+					}
+					if(!Checks.esNulo(ofertaActivo.getMotivoRechazo())) {
+						historicoOfertas.setMotivoDesestimiento(ofertaActivo.getMotivoRechazo().getDescripcion());
+						historicoOfertas.setDesestimado("Desestimada");
+					}
+					
+					
+					historicoOfertas.setOferta(ofertas.getImporteActivoOferta());
+					Filter filtroPrecioWeb = genericDao.createFilter(FilterType.EQUALS ,"tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_PUBLICACION_WEB);
+					List<ActivoValoraciones> preciosWeb = genericDao.getListOrdered(ActivoValoraciones.class,orderDesc,filtroActivoId,filtroPrecioWeb);
+					
+					if(!Checks.esNulo(preciosWeb) && !preciosWeb.isEmpty()) {
+						if(!Checks.esNulo(preciosWeb.get(0).getImporte())) {
+							historicoOfertas.setPvpComite(preciosWeb.get(0).getImporte());
+						}
+					}
+					
+					ActivoTasacion tasacion = genericDao.get(ActivoTasacion.class,filtroActivoId);
+					if(!Checks.esNulo(tasacion)) {
+						if(!Checks.esNulo(tasacion.getImporteTasacionFin())) {
+							historicoOfertas.setTasacion(tasacion.getImporteTasacionFin());
+						}
+						
+					}
+					
+					//fecha sancion
+					//FFRR
+					
+					listaHistoricoOfertas.add(historicoOfertas);
+					
+				}
+				
+			}
+			
+			dtoFichaComercial.setListaHistoricoOfertas(listaHistoricoOfertas);
+			
 				
 			return dtoFichaComercial;
 		}
@@ -5250,7 +5345,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}else if(DDTipoActivo.COD_OTROS.equals(tipoActivoCodigo)) {
 				tipoActivo = "garaje-trastero";
 			}
-	 		return "<a href=\"https://www.haya.es/" + tipoActivo +"-"+activo.getNumActivo() +"?utm_source=rem&utm_medium=aplicacion&utm_campaign=activo \" target=\"_blank\"></a>";
+	 		return "https://www.haya.es/" + tipoActivo +"-"+activo.getNumActivo() +"?utm_source=rem&utm_medium=aplicacion&utm_campaign=activo";
 			
 		}
 

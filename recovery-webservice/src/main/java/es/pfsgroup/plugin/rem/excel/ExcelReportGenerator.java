@@ -25,19 +25,25 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFCreationHelper;
 import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFHyperlink;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFCreationHelper;
 import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -48,10 +54,12 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
 import es.pfsgroup.plugin.rem.model.DtoActivosFichaComercial;
 import es.pfsgroup.plugin.rem.model.DtoExcelFichaComercial;
+import es.pfsgroup.plugin.rem.model.DtoHcoComercialFichaComercial;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.VReportAdvisoryNotes;
+import net.sf.jasperreports.engine.type.HyperlinkTypeEnum;
 
 
 @Component
@@ -72,6 +80,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 	private static final String TEXTO_NO_PUBLICADO = "Sin Publicar";
 	
 	private static final int NUMERO_COLUMNAS_APPLE = 11;
+	
+	private static final String CONSTANTE_RUTA_EXCEL = "email.attachment.folder.src";
 	
 	
 	@Resource
@@ -655,9 +665,10 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
         	aleatorio = aleatorio.substring(0, 5);
         }
 		String nombreFichero = "FichaComercial_" + aleatorio +".xlsx";
+		String ruta = appProperties.getProperty(CONSTANTE_RUTA_EXCEL);
 		
 		File poiFile = new File(sc.getRealPath("/plantillas/plugin/GenerarFichaComercialBbva/FichaComercialReport.xlsx"));
-		File fileOut = new File("/recovery/app-server/pfs/attachment/" + nombreFichero);
+		File fileOut = new File(ruta + "/" + nombreFichero);
 		FileInputStream fis = new FileInputStream(poiFile);
 		fileOutStream = new FileOutputStream(fileOut);
 		
@@ -667,13 +678,18 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			XSSFSheet mySheet;
 			XSSFSheet mySheetDesglose;
 			XSSFSheet mySheetDepuracion;
+			XSSFSheet mySheetHistorico;
 			mySheet = myWorkBook.getSheetAt(0);
 			mySheetDesglose = myWorkBook.getSheetAt(1);
 			mySheetDepuracion= myWorkBook.getSheetAt(2);
+			mySheetHistorico= myWorkBook.getSheetAt(3);
 			CellReference cellReference;
 			XSSFRow r;
 			XSSFCell c;
 			SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+			XSSFHyperlink link = myWorkBook.getCreationHelper().createHyperlink(Hyperlink.LINK_URL);
+			
+
 			
 			//Rellenamos la primera hoja
 			//TODO
@@ -745,7 +761,9 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			r = mySheet.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());
 			if(dtoExcelFichaComercial.getLinkHaya() != null) {
-			c.setCellValue(dtoExcelFichaComercial.getLinkHaya());
+				c.setCellValue("Link web Haya");
+				link.setAddress(dtoExcelFichaComercial.getLinkHaya());
+				c.setHyperlink(link);
 			}else {
 				c.setCellValue("");
 			}
@@ -1578,7 +1596,10 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				r = mySheetDesglose.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(activoFichaComercial.getLink())) {
-					c.setCellValue(activoFichaComercial.getLink());
+					c.setCellValue("Link web Haya");
+					link.setAddress(activoFichaComercial.getLink());
+					c.setHyperlink(link);
+
 				} else {
 					c.setCellValue("");
 				}
@@ -1595,6 +1616,124 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				currentRowDesglose++;
 			}
 			
+			//Rellenamos hoja historico ofertas
+			int currentRowHistorico = 7;
+			for( DtoHcoComercialFichaComercial historico : dtoExcelFichaComercial.getListaHistoricoOfertas()) {
+				
+				
+			/*	cellReference = new CellReference("B" +Integer.toString(currentRowHistorico)); 
+				r = mySheetHistorico.getRow(cellReference.getRow()); 
+				c = r.getCell(cellReference.getCol()); 
+				if(!Checks.esNulo(historico.getNumActivo())) {
+				  c.setCellValue(historico.getNumActivo()); 
+				} else { 
+					  c.setCellValue(""); 
+				}
+				 
+
+				
+				cellReference = new CellReference("C" + Integer.toString(currentRowHistorico));
+				r = mySheetHistorico.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(historico.getFecha())) {
+					c.setCellValue(historico.getFecha());
+				} else {
+					c.setCellValue("");
+				}
+				
+				cellReference = new CellReference("D" + Integer.toString(currentRowHistorico));
+				r = mySheetHistorico.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(historico.getNumOferta())) {
+					c.setCellValue(historico.getNumOferta());
+				} else {
+					c.setCellValue("");
+				}
+				
+				cellReference = new CellReference("E" + Integer.toString(currentRowHistorico));
+				r = mySheetHistorico.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(historico.getFechaSancion())) {
+					c.setCellValue(historico.getFechaSancion());
+				} else {
+					c.setCellValue("");
+				}
+				
+				cellReference = new CellReference("F" + Integer.toString(currentRowHistorico));
+				r = mySheetHistorico.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(historico.getOfertante())) {
+					c.setCellValue(historico.getOfertante());
+				} else {
+					c.setCellValue("");
+				}
+				
+				cellReference = new CellReference("G" + Integer.toString(currentRowHistorico));
+				r = mySheetHistorico.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(historico.getEstado())) {
+					c.setCellValue(historico.getEstado());
+				} else {
+					c.setCellValue("");
+				}
+				
+				cellReference = new CellReference("H" + Integer.toString(currentRowHistorico));
+				r = mySheetHistorico.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(historico.getDesestimado())) {
+					c.setCellValue(historico.getDesestimado());
+				} else {
+					c.setCellValue("");
+				}
+				
+				cellReference = new CellReference("I" + Integer.toString(currentRowHistorico));
+				r = mySheetHistorico.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(historico.getMotivoDesestimiento())) {
+					c.setCellValue(historico.getMotivoDesestimiento());
+				} else {
+					c.setCellValue("");
+				}
+				
+				cellReference = new CellReference("J" + Integer.toString(currentRowHistorico));
+				r = mySheetHistorico.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(historico.getFfrr())) {
+					c.setCellValue(historico.getFfrr());
+				} else {
+					c.setCellValue("");
+				}
+				
+				cellReference = new CellReference("K" + Integer.toString(currentRowHistorico));
+				r = mySheetHistorico.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(historico.getOferta())) {
+					c.setCellValue(historico.getOferta());
+				} else {
+					c.setCellValue("");
+				}
+				
+				cellReference = new CellReference("B" + Integer.toString(currentRowHistorico));
+				r = mySheetHistorico.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(historico.getPvpComite())) {
+					c.setCellValue(historico.getPvpComite());
+				} else {
+					c.setCellValue("");
+				}
+				
+				cellReference = new CellReference("L" + Integer.toString(currentRowHistorico));
+				r = mySheetHistorico.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(historico.getTasacion())) {
+					c.setCellValue(historico.getTasacion());
+				} else {
+					c.setCellValue("");
+				}
+				
+				currentRowHistorico++;*/
+				
+			}
 			
 
 			

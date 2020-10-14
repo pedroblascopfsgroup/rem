@@ -1578,10 +1578,11 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	@Override
 	public boolean activoPerteneceABBVAAndCERBERUS(Long idActivo) { 
 		String sql = "          SELECT count(1)  " +
-				"				FROM REM01.ACT_ACTIVO  " +
-				"				WHERE ACT_NUM_ACTIVO = "+ idActivo +
-				"				AND DD_CRA_ID IN ('162','42')		 "+
-				"				AND BORRADO = 0";
+				"				FROM REM01.ACT_ACTIVO ACT " +
+				" 				inner join REM01.dd_cra_cartera car on act.dd_cra_id=car.dd_cra_id "+		
+				"				WHERE ACT.ACT_NUM_ACTIVO = "+ idActivo +
+				"				AND car.dd_cra_codigo	in('07','16') 		 "+
+				"				AND act.BORRADO = 0";
 
 		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
 			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
@@ -1593,10 +1594,11 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	@Override
 	public boolean activoEstadoVendido(Long idActivo) { 
 		String sql = "          SELECT count(1)  " + 
-				"				FROM REM01.ACT_ACTIVO  " +
-				"				WHERE ACT_NUM_ACTIVO = "+ idActivo +
-				"				AND DD_SCM_ID IN ('5')		 "+
-				"				AND BORRADO = 0 ";
+				"				FROM REM01.ACT_ACTIVO act " +
+				"				inner join rem01.dd_scm_situacion_comercial sit on act.dd_scm_id = sit.dd_scm_id "+
+				"				WHERE act.ACT_NUM_ACTIVO = "+ idActivo +
+				"				AND sit.dd_scm_codigo	in ('05')		 "+
+				"				AND act.BORRADO = 0 ";
 		
 	  
 

@@ -67,6 +67,7 @@ public class DtoExcelFichaComercial extends WebDto {
 	private Long telefonoPrescriptor;
 	private String correoPrescriptor;
 	private List <DtoActivosFichaComercial> listaActivosFichaComercial;
+	private List <DtoHcoComercialFichaComercial> listaHistoricoOfertas;
 	
 	public Long getNumOferta() {
 		return numOferta;
@@ -388,6 +389,12 @@ public class DtoExcelFichaComercial extends WebDto {
 	}
 	public void setListaActivosFichaComercial(List <DtoActivosFichaComercial> listaActivosFichaComercial) {
 		this.listaActivosFichaComercial = listaActivosFichaComercial;
+	}
+	public List<DtoHcoComercialFichaComercial> getListaHistoricoOfertas() {
+		return listaHistoricoOfertas;
+	}
+	public void setListaHistoricoOfertas(List<DtoHcoComercialFichaComercial> listaHistoricoOfertas) {
+		this.listaHistoricoOfertas = listaHistoricoOfertas;
 	}
 	
 }

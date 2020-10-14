@@ -1677,7 +1677,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	    	}else if(estadoTrabajo == "FIN" || estadoTrabajo == "SUB"){
 	    		
 	    		if(esFichaTrabajo){
-    				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
+	    			me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);	
 		    		me.lookupReference('checkTarifaPlanaRef').setReadOnly(false);
 		    		me.lookupReference('checkSiniestroRef').setReadOnly(false);
     			} else {
@@ -1697,7 +1697,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     		
 	    } else if(esProvActivo){
 	    	
-	    	if(estadoTrabajo == "CUR" /*|| estadoTrabajo == "REJ"*/){
+	    	if(estadoTrabajo == "CUR" || estadoTrabajo == "REJ"){
 	    		
 	    		if(esFichaTrabajo){
     				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);

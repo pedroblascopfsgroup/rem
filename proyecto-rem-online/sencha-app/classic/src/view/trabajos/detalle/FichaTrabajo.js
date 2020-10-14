@@ -275,6 +275,10 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 		        					function(x, y, z){
 		        						//me.up().previousSibling("[reference='generalFieldSetRef']").down("[reference='aplicaComiteRef']")
 		        						var me = this;
+		        						var sup = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+		        						var esGestorActivo = $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']);
+		        						var esProvActivo = $AU.userIsRol(CONST.PERFILES['PROVEEDOR']);
+		        						var readOnlyFinalizado = !sup && !esGestorActivo;
 		        						if(me.getSelection().data.codigo == "13" && 
 		        								me.up().previousSibling("[reference='generalFieldSetRef']").down("[reference='aplicaComiteRef']").checked){
 		        							var oldValue = me.bind.value.lastValue;
@@ -288,6 +292,17 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 		        									}
 		        								}
 		        							}
+		        						}
+		        						if(me.bind.value.lastValue == "FIN" && me.getValue() == "REJ"){
+		        							
+		        							me.up().down("[reference='fechaEjecucionRef']").setValue(null);
+		        							me.up().previousSibling("[reference='plazosFieldSet']").down("[reference='fechaConcreta']").setReadOnly(readOnlyFinalizado);
+		        							me.up().previousSibling("[reference='plazosFieldSet']").down("[reference='horaConcreta']").setReadOnly(readOnlyFinalizado);
+		        							me.up().previousSibling("[reference='plazosFieldSet']").down("[reference='fechaTope']").setReadOnly(readOnlyFinalizado);
+		        						}
+		        						if(me.bind.value.lastValue == "REJ" && me.getValue() == "SUB" && esProvActivo){
+		        							me.up().down("[reference='fechaEjecucionRef']").setAllowBlank(false);
+		        							me.up().down("[reference='fechaEjecucionRef']").validate();
 		        						}
 		        					},
 		        					change: 'finalizacionTrabajoProveedor'

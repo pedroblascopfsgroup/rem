@@ -57,6 +57,8 @@ IF V_NUM_TABLAS = 0 THEN
 	, ASUNTO VARCHAR2(4000 BYTE)
 	, CUERPO VARCHAR2(4000 BYTE)
 	, FECHA_ENVIO DATE
+	, FECHA_SANCION DATE
+	, FECHA_RATIFICACION DATE
 		
 	)
 	LOGGING 
@@ -106,6 +108,13 @@ IF V_NUM_TABLAS = 0 THEN
 			EXECUTE IMMEDIATE V_MSQL;
 			DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna FECHA_ENVIO creado.');
 
+	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHA_SANCION IS ''Fecha de sanción''';
+                        EXECUTE IMMEDIATE V_MSQL;
+                        DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna FECHA_SANCION creado.');
+
+	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHA_RATIFICACION IS ''Fecha de ratificación''';
+                        EXECUTE IMMEDIATE V_MSQL;
+                        DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna FECHA_RATIFICACION creado.');
 
 ELSE
 DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'... Ya existe.');

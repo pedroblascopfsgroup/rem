@@ -73,6 +73,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 	
 	private static final int NUMERO_COLUMNAS_APPLE = 11;
 	
+	private static final String CONSTANTE_RUTA_EXCEL = "email.attachment.folder.src";
+	
 	
 	@Resource
 	Properties appProperties;
@@ -655,9 +657,10 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
         	aleatorio = aleatorio.substring(0, 5);
         }
 		String nombreFichero = "FichaComercial_" + aleatorio +".xlsx";
+		String ruta = appProperties.getProperty(CONSTANTE_RUTA_EXCEL);
 		
 		File poiFile = new File(sc.getRealPath("/plantillas/plugin/GenerarFichaComercialBbva/FichaComercialReport.xlsx"));
-		File fileOut = new File("/recovery/app-server/pfs/attachment/" + nombreFichero);
+		File fileOut = new File(ruta + "/" + nombreFichero);
 		FileInputStream fis = new FileInputStream(poiFile);
 		fileOutStream = new FileOutputStream(fileOut);
 		

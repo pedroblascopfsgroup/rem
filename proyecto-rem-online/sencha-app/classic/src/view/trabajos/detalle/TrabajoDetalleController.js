@@ -638,7 +638,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			if(me.lookupReference('checkAplicaComite').getValue()){
 				form.getBindRecord().set("resolucionComiteId",me.lookupReference('resolComiteId').getValue());
 				form.getBindRecord().set("fechaResolucionComite",me.lookupReference('fechaResolComite').getValue());
-				form.getBindRecord().set("resolucionComiteCodigo",me.lookupReference('comboResolucionComite').getSelectedRecord().get('id'));
+				form.getBindRecord().set("resolucionComiteCodigo",me.lookupReference('comboResolucionComite').getSelectedRecord().get('codigo'));
 				form.getBindRecord().set("aplicaComite",me.lookupReference('checkAplicaComite').getValue());
 			}else{
 				form.getBindRecord().set("resolucionComiteId",null);

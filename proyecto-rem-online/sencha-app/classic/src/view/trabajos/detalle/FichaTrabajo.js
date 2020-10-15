@@ -300,8 +300,11 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 		        							me.up().previousSibling("[reference='plazosFieldSet']").down("[reference='horaConcreta']").setReadOnly(readOnlyFinalizado);
 		        							me.up().previousSibling("[reference='plazosFieldSet']").down("[reference='fechaTope']").setReadOnly(readOnlyFinalizado);
 		        						}
-		        						if(me.bind.value.lastValue == "REJ" && me.getValue() == "SUB" && esProvActivo){
+		        						if(((me.bind.value.lastValue == "REJ" && me.getValue() == "SUB") || me.getValue() == "FIN") && (esProvActivo || sup)){
 		        							me.up().down("[reference='fechaEjecucionRef']").setAllowBlank(false);
+		        							me.up().down("[reference='fechaEjecucionRef']").validate();
+		        						}else{
+		        							me.up().down("[reference='fechaEjecucionRef']").setAllowBlank(true);
 		        							me.up().down("[reference='fechaEjecucionRef']").validate();
 		        						}
 		        					},

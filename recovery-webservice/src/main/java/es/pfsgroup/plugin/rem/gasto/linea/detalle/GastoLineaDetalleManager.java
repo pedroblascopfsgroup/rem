@@ -1308,6 +1308,8 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 					}
 					DDEntidadGasto tipoElementoActivo = (DDEntidadGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDEntidadGasto.class, DDEntidadGasto.CODIGO_ACTIVO);
 					BigDecimal participacion = recalcularParticipacionElementos(dto.getIdLinea(), gastoLineaDetalleEntidadList, activosAgrupacionList.size());
+					BigDecimal sumaTotal = new BigDecimal(0);
+					List<GastoLineaDetalleEntidad> newEntidadGastoLineaDetalle = new ArrayList<GastoLineaDetalleEntidad>();
 					for (ActivoAgrupacionActivo activoAgrupacionActivo : activosAgrupacionList) {
 						GastoLineaDetalleEntidad gastoLineaDetalleEntidad = new GastoLineaDetalleEntidad();
 						gastoLineaDetalleEntidad.setGastoLineaDetalle(gastoLineaDetalle);
@@ -1315,8 +1317,21 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 						gastoLineaDetalleEntidad.setEntidad(activoAgrupacionActivo.getActivo().getId());
 						gastoLineaDetalleEntidad.setParticipacionGasto(participacion.doubleValue());
 						gastoLineaDetalleEntidad.setAuditoria(Auditoria.getNewInstance());
+						sumaTotal = sumaTotal.add(participacion);
+						newEntidadGastoLineaDetalle.add(gastoLineaDetalleEntidad);
 						genericDao.save(GastoLineaDetalleEntidad.class, gastoLineaDetalleEntidad);
 					}
+					
+					if(gastoLineaDetalleEntidadList.isEmpty()) {
+					BigDecimal resto = BigDecimal.valueOf(100).subtract(sumaTotal);
+						if(resto.compareTo(BigDecimal.ZERO) != 0) {
+							participacion = participacion.add(resto);
+							newEntidadGastoLineaDetalle.get(0).setParticipacionGasto(participacion.doubleValue());
+							genericDao.save(GastoLineaDetalleEntidad.class, newEntidadGastoLineaDetalle.get(0));
+							
+						}
+					}
+					
 					return error;
 				}
 			}else{
@@ -1376,7 +1391,8 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			}
 			
 			if(gasto != null && gasto.getPropietario() != null && gasto.getPropietario().getCartera() != null &&
-			DDCartera.CODIGO_CARTERA_LIBERBANK.equalsIgnoreCase(gasto.getPropietario().getCartera().getCodigo())) {
+			DDCartera.CODIGO_CARTERA_LIBERBANK.equalsIgnoreCase(gasto.getPropietario().getCartera().getCodigo())
+			&& !DDEntidadGasto.CODIGO_PROMOCION.equals(dto.getTipoElemento())) {
 				actualizarDiariosLbk(gasto.getId());
 			}
 			
@@ -1390,20 +1406,26 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	@Transactional(readOnly = false)
 	public BigDecimal recalcularParticipacionElementos(Long idLinea, List<GastoLineaDetalleEntidad> gastoLineaDetalleEntidadList, int numeroEntidades){
 		BigDecimal participacion = BigDecimal.valueOf(100L);
+		int cantidadEntidades = 0;
+		if(!gastoLineaDetalleEntidadList.isEmpty()) {
+			cantidadEntidades = gastoLineaDetalleEntidadList.size();
+		}
+		if((cantidadEntidades + numeroEntidades) == 0) {
+			return participacion;
+		}
+		BigDecimal participacionMedia = BigDecimal.valueOf(100).divide(BigDecimal.valueOf(cantidadEntidades + numeroEntidades), 2, RoundingMode.HALF_UP);
+		BigDecimal sumaParticipacion = participacionMedia.multiply(BigDecimal.valueOf(cantidadEntidades + numeroEntidades));
+		BigDecimal participacionConDecimales = null;
+		
+		if(!sumaParticipacion.equals(BigDecimal.valueOf(100))) {
+			BigDecimal decimal = BigDecimal.valueOf(100).subtract(sumaParticipacion);
+			if(decimal.compareTo(BigDecimal.ZERO) != 0) {
+				participacionConDecimales = participacionMedia.add(decimal);
+			}
+		}
+		participacion = participacionMedia;
 		
 		if(!gastoLineaDetalleEntidadList.isEmpty()) {
-
-			BigDecimal participacionMedia = BigDecimal.valueOf(100).divide(BigDecimal.valueOf(gastoLineaDetalleEntidadList.size() + numeroEntidades), 2, RoundingMode.HALF_UP);
-			BigDecimal sumaParticipacion = participacionMedia.multiply(BigDecimal.valueOf(gastoLineaDetalleEntidadList.size() + numeroEntidades));
-			BigDecimal participacionConDecimales = null;
-			
-			if(!sumaParticipacion.equals(BigDecimal.valueOf(100))) {
-				BigDecimal decimal = BigDecimal.valueOf(100).subtract(sumaParticipacion);
-				if(decimal.compareTo(BigDecimal.ZERO) != 0) {
-					participacionConDecimales = participacionMedia.add(decimal);
-				}
-			}
-			participacion = participacionMedia;
 			gastoLineaDetalleDao.updateParticipacionEntidadesLineaDetalle(idLinea, participacionMedia.doubleValue(), genericAdapter.getUsuarioLogado().getUsername());
 			
 			if(participacionConDecimales != null) {
@@ -1411,7 +1433,6 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				genericDao.save(GastoLineaDetalleEntidad.class, gastoLineaDetalleEntidadList.get(0));
 			}
 		}
-		
 		return participacion;
 	}
 	

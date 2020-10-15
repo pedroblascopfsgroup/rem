@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=Joaquin Bahamonde
---## FECHA_CREACION=20200919
+--## AUTOR= Lara Pablo
+--## FECHA_CREACION=20201015
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-11053
+--## INCIDENCIA_LINK=HREOS-11639
 --## PRODUCTO=NO
 --##
 --## VERSIONES:
@@ -38,7 +38,7 @@ IF TABLE_COUNT = 0 THEN
         DIARIO1                         VARCHAR2(2 CHAR),
         DIARIO1_BASE                  	NUMBER(16,2),
         DIARIO1_TIPO                    NUMBER(5,2),
-        DIARIO1_CUOTA                   VARCHAR2(255 CHAR),
+        DIARIO1_CUOTA                   NUMBER(16,2), 
         DIARIO2    			            VARCHAR2(2 CHAR),
         DIARIO2_BASE          			NUMBER(16,2),
         DIARIO2_TIPO       			    NUMBER(5,2),

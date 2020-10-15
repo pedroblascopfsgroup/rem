@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo Flores
---## FECHA_CREACION=20200921
+--## FECHA_CREACION=20200922
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11245
@@ -37,7 +37,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	  T_FUNCION('CMUG', 'Carga masiva única de gastos', 'Carga masiva única de gastos','CARGA_MASIVA_UNICA_GASTOS','n*,s*,s,s,s,s*,s*,s*,s*,f*,s,s,s,s,s,f,s,i,n,i,n,s,s,s,s,i*,s,n*,s*,i,i,s,i,i,i,i,i,s,s,s,n,s,n,s,n')
+	  T_FUNCION('CMUG', 'Carga masiva única de gastos', 'Carga masiva única de gastos','CARGA_MASIVA_UNICA_GASTOS','n*,s*,s,s,s,s*,s*,s*,s*,f*,s,s,s,s,s,f,s,i,i,i,i,s,s,s,s,i*,s,n*,s*,i,i,s,i,i,i,i,i,s,s,s,i,s,n,s,i')
     ); 																												
     V_TMP_FUNCION T_FUNCION;
     V_MSQL_1 VARCHAR2(4000 CHAR);

@@ -168,7 +168,10 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 														xtype: 'textfieldbase',
 														fieldLabel: HreRem.i18n('title.gasto.contabilidad.contabilidad.liberbank.diario2'),
 														reference : 'diario2',
-										                bind: {value: '{contabilidad.diario2}'},
+										                bind: {
+										                	value: '{contabilidad.diario2}',
+										                	hidden :'{contabilidad.isEmpty}'
+										                },
 										                colspan: 3,
 										                readOnly: true						
 													},	

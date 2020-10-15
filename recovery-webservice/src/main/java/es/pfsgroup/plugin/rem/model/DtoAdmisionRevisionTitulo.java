@@ -65,6 +65,10 @@ public class DtoAdmisionRevisionTitulo extends WebDto {
 	private String tipoIncidencia;
 	private String tipoTituloActivo;
 	private String subtipoTituloActivo;
+	//
+	private String tipoTituloActivoRef;
+	private String subtipoTituloActivoRef;
+	
 	
 	private boolean update = false;
 	
@@ -356,6 +360,18 @@ public class DtoAdmisionRevisionTitulo extends WebDto {
 	}
 	public void setSubtipoTituloActivo(String subtipoTituloActivo) {
 		this.subtipoTituloActivo = subtipoTituloActivo;
+	}
+	public String getSubtipoTituloActivoRef() {
+		return subtipoTituloActivoRef;
+	}
+	public void setSubtipoTituloActivoRef(String subtipoTituloActivoRef) {
+		this.subtipoTituloActivoRef = subtipoTituloActivoRef;
+	}
+	public String getTipoTituloActivoRef() {
+		return tipoTituloActivoRef;
+	}
+	public void setTipoTituloActivoRef(String tipoTituloActivoRef) {
+		this.tipoTituloActivoRef = tipoTituloActivoRef;
 	}
 	
 	

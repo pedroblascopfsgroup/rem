@@ -112,9 +112,9 @@ public class ActivoTributos implements Serializable, Auditable {
 	@Column(name = "ACT_TRI_IMPORTE_PAGADO")
 	private Double importePagado;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ECO_ID")
-    private ExpedienteComercial expediente;
+	
+    @Column(name = "NUM_EXPEDIENTE")
+    private Long expediente;
 	
 	@Column(name = "ACT_TRI_FECHA_COM_DEV_INGRESO")
 	private Date fechaComunicacionDevolucionIngreso;
@@ -312,11 +312,11 @@ public class ActivoTributos implements Serializable, Auditable {
 		this.importePagado = importePagado;
 	}
 
-	public ExpedienteComercial getExpediente() {
+	public Long getExpediente() {
 		return expediente;
 	}
 
-	public void setExpediente(ExpedienteComercial expediente) {
+	public void setExpediente(Long expediente) {
 		this.expediente = expediente;
 	}
 

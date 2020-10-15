@@ -287,6 +287,12 @@ public class AdmisionManager extends BusinessOperationOverrider<AdmisionApi> imp
 		beanUtilNotNull.copyProperty(dto, "tipoIncidencia", getCode(revisionTitulo.getTipoIncidencia()));
 		beanUtilNotNull.copyProperty(dto, "tipoTituloActivo", getCode(revisionTitulo.getTipoTituloActivo()));
 		beanUtilNotNull.copyProperty(dto, "subtipoTituloActivo", getCode(revisionTitulo.getSubtipoTituloActivo()));
+		if(revisionTitulo.getTipoTitActRef() != null) {
+			beanUtilNotNull.copyProperty(dto, "tipoTituloActivoRef", revisionTitulo.getTipoTitActRef().getDescripcion());
+		}
+		if(revisionTitulo.getSubtipoTitActRef() != null) {
+			beanUtilNotNull.copyProperty(dto, "subtipoTituloActivoRef", revisionTitulo.getSubtipoTitActRef().getDescripcion());	
+		}
 		
 		return dto;
 	}

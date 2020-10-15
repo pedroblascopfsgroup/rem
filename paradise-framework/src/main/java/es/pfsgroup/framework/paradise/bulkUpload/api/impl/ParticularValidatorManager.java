@@ -3708,7 +3708,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	public Boolean esResultadoValido(String codResultado) {
 		if(Checks.esNulo(codResultado)) {
-			return false;
+			return true;
 		}
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "FROM DD_RES_RESULTADO_SOLICITUD RES "

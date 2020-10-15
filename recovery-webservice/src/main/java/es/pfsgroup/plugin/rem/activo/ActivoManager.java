@@ -3078,7 +3078,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				dtoTributo.setImportePagado(tributo.getImportePagado());
 				
 				if(tributo.getExpediente() != null) {
-					dtoTributo.setNumExpediente(tributo.getExpediente().getNumExpediente());
+					dtoTributo.setNumExpediente(tributo.getExpediente());
 				}
 				if(tributo.getFechaComunicacionDevolucionIngreso() != null) {
 					dtoTributo.setFechaComunicacionDevolucionIngreso(tributo.getFechaComunicacionDevolucionIngreso().toString());
@@ -6264,13 +6264,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if(dto.getImportePagado() != null) {
 					tributo.setImportePagado(dto.getImportePagado());
 				}
-				if(!Checks.esNulo(dto.getNumExpediente())){
-					Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS, "numExpediente", dto.getNumExpediente());
-					ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtroExpediente);
-					
-					if(expediente != null){
-						tributo.setExpediente(expediente);
-					}
+				
+				if(dto.getNumExpediente() != null){
+					tributo.setExpediente(dto.getNumExpediente());
 				}
 				
 				if(!Checks.esNulo(dto.getFechaComunicacionDevolucionIngreso())){

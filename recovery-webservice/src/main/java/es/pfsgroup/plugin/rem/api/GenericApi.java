@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
@@ -348,9 +349,9 @@ public interface GenericApi {
 	 */
 	List<DDSubtipoAgendaSaneamiento> getSubtipologiaAgendaSaneamiento(String codTipo);
 
-
 	public List<DDTipoAlta> getComboBBVATipoAlta(Long idRecovery);
 
 	public List<DtoPropietario> getcomboSociedadAnteriorBBVA();
-
+	
+	List<DDEstadoAdmision> getComboEstadoAdmisionFiltrado(Set<String> tipoEstadoAdmisionCodigo);
 }

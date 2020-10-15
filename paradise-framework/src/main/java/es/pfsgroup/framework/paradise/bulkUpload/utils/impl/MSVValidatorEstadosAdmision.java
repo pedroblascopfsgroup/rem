@@ -113,7 +113,6 @@ public class MSVValidatorEstadosAdmision extends MSVExcelValidatorAbstract {
 		boolean esCorrecto = true;
 		
 		for (int fila = FILA_DATOS; fila < this.numFilasHoja; fila++) {
-			esCorrecto = true;
 			try {
 				String numActivo = exc.dameCelda(fila, COL_NUM_ACTIVO);
 				boolean activoExiste = particularValidator.existeActivo(numActivo);

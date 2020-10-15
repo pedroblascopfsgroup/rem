@@ -41,6 +41,18 @@ public class MSVValidatorConfiguracionPeriodosVoluntarios extends MSVExcelValida
 	private static final String POBLACION_NO_EXISTE = "msg.error.masivo.periodo.voluntarios.campo.localidad";
 	private static final String MUNICIPIO_NO_EXISTE = "msg.error.masivo.periodo.voluntarios.campo.municipio";
 	private static final String POBLACION_Y_MUNICIPIO_NO_COINCIDEN = "msg.error.masivo.periodo.voluntarios.campo.municipio.localidad.no.coincide";
+	
+	public static final String COD_AGUA = "103"; 
+	public static final String COD_ALCANTARILLADO = "104"; 
+	public static final String COD_BASURA = "105"; 
+	public static final String COD_EXACCIONES_MUNICIPALES = "106"; 
+	public static final String COD_OTRAS_TASAS_MUNICIPALES = "107"; 
+	public static final String COD_TASA_CANALONES = "108"; 
+	public static final String COD_TASA_INCENDIOS = "109"; 
+	public static final String COD_REGULACION_CATASTRAL = "110"; 
+	public static final String COD_TASAS_ADMINISTRATIVAS = "111"; 
+	public static final String COD_TRIBUTO_METROPOLITANO_MOVILIDAD = "112"; 
+	public static final String COD_VADO = "113"; 
 
 	public static final class COL_NUM {
 		static final int FILA_CABECERA = 0;
@@ -163,8 +175,21 @@ public class MSVValidatorConfiguracionPeriodosVoluntarios extends MSVExcelValida
 				String columnaTipoImpuesto = exc.dameCelda(i, COL_NUM.COL_NUM_TIPO_DE_IMPUESTO);
 
 				if (!particularValidator.existeCodImpuesto(columnaTipoImpuesto)
-						|| !(IBIURBANA.equals(columnaTipoImpuesto) || IBIRUSTICA.equals(columnaTipoImpuesto)
-								|| OTRASTASAS.equals(columnaTipoImpuesto)))
+						|| !(IBIURBANA.equals(columnaTipoImpuesto) 
+							|| 	IBIRUSTICA.equals(columnaTipoImpuesto)
+							|| 	OTRASTASAS.equals(columnaTipoImpuesto) 
+							|| 	COD_AGUA.equals(columnaTipoImpuesto) 
+							|| 	COD_ALCANTARILLADO.equals(columnaTipoImpuesto)
+							||	COD_BASURA.equals(columnaTipoImpuesto)
+							||	COD_EXACCIONES_MUNICIPALES.equals(columnaTipoImpuesto) 
+							||	COD_OTRAS_TASAS_MUNICIPALES.equals(columnaTipoImpuesto)
+							||	COD_TASA_CANALONES.equals(columnaTipoImpuesto) 
+							||	COD_TASA_INCENDIOS.equals(columnaTipoImpuesto) 
+							||	COD_REGULACION_CATASTRAL.equals(columnaTipoImpuesto)
+							||	COD_TASAS_ADMINISTRATIVAS.equals(columnaTipoImpuesto) 
+							|| 	COD_TRIBUTO_METROPOLITANO_MOVILIDAD.equals(columnaTipoImpuesto)
+							|| 	COD_VADO.equals(columnaTipoImpuesto))
+					)
 					listaFilas.add(i);
 
 			}

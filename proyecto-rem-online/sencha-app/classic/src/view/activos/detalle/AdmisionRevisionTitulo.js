@@ -77,23 +77,21 @@ Ext.define('HreRem.view.activos.detalle.AdmisionRevisionTitulo', {
 				}
 			},
 			{
-				xtype : 'comboboxfieldbase',
+				xtype : 'textfieldbase',
 				fieldLabel : HreRem
 						.i18n('fieldlabel.admision.revisionTitulo.tituloPropiedadEntrada'),
 				readOnly: true,
 				bind : {
-					store : '{storeTituloOrigenActivo}',
-					value : '{admisionRevisionTitulo.tipoTituloActivo}'
-				}
+					value : '{admisionRevisionTitulo.tipoTituloActivoRef}'
+				}				
 			},
 			{
-				xtype : 'comboboxfieldbase',
+				xtype : 'textfieldbase',
 				fieldLabel : HreRem
 						.i18n('fieldlabel.admision.revisionTitulo.subtipoTituloEntrada'),
 				readOnly: true,
-				bind : {
-					store : '{comboSubtipoTituloActivo}',
-					value : '{admisionRevisionTitulo.subtipoTituloActivo}'
+				bind : { 
+					value : '{admisionRevisionTitulo.subtipoTituloActivoRef}'				
 				}
 			},
 			{

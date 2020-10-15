@@ -1691,6 +1691,9 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	    		
 	    		if(esFichaTrabajo){
     				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
+    				me.lookupReference('fechaConcreta').setReadOnly(false);
+		    		me.lookupReference('horaConcreta').setReadOnly(false);
+		    		me.lookupReference('fechaTope').setReadOnly(false);
     			}
 	    		
 	    	}

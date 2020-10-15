@@ -1734,13 +1734,31 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				return Boolean.FALSE;
 			}
 		}
+		if(BigDecimal.ZERO.compareTo(totalAdquisicion) == 0) {
+			return false;
+		}
+		BigDecimal suma = new BigDecimal (0);
 		for(GastoLineaDetalleEntidad gastoLinea: gastoLineaDetalleActivoList ){
 			Filter filtroEntidad = genericDao.createFilter(FilterType.EQUALS, "activo.id", gastoLinea.getEntidad());
 			ActivoAdjudicacionNoJudicial actNJ = genericDao.get(ActivoAdjudicacionNoJudicial.class, filtroEntidad, filtroBorrado);
-			BigDecimal valorAdquisicion = new BigDecimal(actNJ.getValorAdquisicion());
-			BigDecimal porcentaje =valorAdquisicion.multiply(new BigDecimal(100)).divide(totalAdquisicion, RoundingMode.HALF_DOWN);
-			gastoLinea.setParticipacionGasto(porcentaje.doubleValue());
+			if(actNJ != null) {
+				BigDecimal valorAdquisicion = new BigDecimal(actNJ.getValorAdquisicion());
+				BigDecimal porcentaje =valorAdquisicion.multiply(new BigDecimal(100)).divide(totalAdquisicion, RoundingMode.HALF_DOWN);
+				suma = suma.add(porcentaje);
+				gastoLinea.setParticipacionGasto(porcentaje.doubleValue());
+			}else {
+				gastoLinea.setParticipacionGasto(new Double(0));
+			}
 			genericDao.update(GastoLineaDetalleEntidad.class, gastoLinea);
+		}
+		
+		BigDecimal resto = BigDecimal.valueOf(100).subtract(suma);
+		if(!gastoLineaDetalleActivoList.isEmpty() && resto.compareTo(BigDecimal.ZERO) != 0) {
+			BigDecimal porcentaje  = new BigDecimal(gastoLineaDetalleActivoList.get(0).getParticipacionGasto());
+			porcentaje = porcentaje.add(resto);
+			gastoLineaDetalleActivoList.get(0).setParticipacionGasto(porcentaje.doubleValue());
+			
+			genericDao.update(GastoLineaDetalleEntidad.class, gastoLineaDetalleActivoList.get(0));
 		}
 		
 		return Boolean.TRUE;

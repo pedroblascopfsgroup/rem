@@ -1327,7 +1327,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        remoteUrl: 'expedientecomercial/getOrigenLead',
 		        extraParams: {idExpediente: '{expediente.id}'}
 	    	}
-		}
+		},
+		comboMotivoAmpliacionArras: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivoAmpliacionArras'}
+			}
+	    }
 		
     }
 });

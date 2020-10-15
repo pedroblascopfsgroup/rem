@@ -131,6 +131,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosCivilesURSUS;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAmpliacionArras;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosDesbloqueo;
@@ -2017,6 +2018,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setFechaEnvio(reserva.getFechaEnvio());
 			dto.setFechaFirma(reserva.getFechaFirma());
 			dto.setFechaVencimiento(reserva.getFechaVencimiento());
+			dto.setFechaAmpliacionArras(reserva.getFechaAmpliacionArras());
+			dto.setFechaVigenciaArras(reserva.getFechaVigenciaArras());
+			dto.setSolicitudAmpliacionArras(reserva.getSolicitudAmpliacionArras());
+			
+			if(reserva.getMotivoAmpliacionArras() != null) {
+				dto.setMotivoAmpliacionArrasCodigo(reserva.getMotivoAmpliacionArras().getCodigo());				
+			}			
 
 			if (!Checks.esNulo(reserva.getEstadoReserva())) {
 				dto.setEstadoReservaDescripcion(reserva.getEstadoReserva().getDescripcion());
@@ -4076,6 +4084,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				DDTiposArras tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class,
 						dto.getTipoArrasCodigo());
 				reserva.setTipoArras(tipoArras);
+			}
+			
+			if(dto.getMotivoAmpliacionArrasCodigo()!=null) {
+				reserva.setMotivoAmpliacionArras(genericDao.get(DDMotivoAmpliacionArras.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMotivoAmpliacionArrasCodigo())));
 			}
 
 			if (!Checks.esNulo(dto.getCodigoSucursal())) {

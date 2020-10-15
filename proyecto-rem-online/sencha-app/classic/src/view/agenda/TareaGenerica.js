@@ -2469,7 +2469,13 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	var comboResolucion = me.down('[name=comboResolucion]');
     	var comboContraoferta = me.down('[name=numImporteContra]');
     	me.deshabilitarCampo(comboContraoferta);
-		
+    	
+    	  if(CONST.CARTERA['BBVA']===me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera')){   		   		  
+    		  me.down('[name=comboResolucion]').setFieldLabel(HreRem.i18n('title.resolucion'));
+    		  me.down('[name=numImporteContra]').setFieldLabel(HreRem.i18n('fieldlabel.importe.contraoferta'));
+    		  me.down('[name=fechaRespuesta]').setFieldLabel(HreRem.i18n('fieldlabel.fecha.respuesta'));
+  	  }
+        
     	comboResolucion.addListener('change', function(){
 	        if(comboResolucion.value == '03'){
 	        	me.habilitarCampo(comboContraoferta);

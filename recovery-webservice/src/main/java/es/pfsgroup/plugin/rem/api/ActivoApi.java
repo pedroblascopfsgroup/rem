@@ -1430,7 +1430,8 @@ public interface ActivoApi {
 
 	String uploadFactura(WebFileItem webFileItem, Long idDocRestClient, GastoAsociadoAdquisicion gas, DDTipoDocumentoGastoAsociado tipoDocGastoAsociado) throws UserException;
 
-	
 	public List<DDTipoSegmento> getComboTipoSegmento(String codSubcartera);
+
+	boolean isActivoExisteEnRem(Long idActivo);
 
 }

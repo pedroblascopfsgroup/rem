@@ -2878,8 +2878,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		        type: 'uxproxy',
 		        remoteUrl: 'activo/getListGastosAsociadosAdquisicion',
 		        extraParams: {id: '{activo.id}'}
-	    	 }
-
+		     },
+	 	 	autoload: true, 
+	        listeners: 
+	        	{
+       			 	load: 'cargarCamposCalculados'
+	        	}
 		},
 
 		comboTipoSegmento: {

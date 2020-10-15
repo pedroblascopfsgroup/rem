@@ -1512,8 +1512,6 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			listaDto.add(dtop);
 		}
 	return listaDto;
-		
-
 	}
 
 	@Override

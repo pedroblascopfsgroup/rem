@@ -1548,10 +1548,12 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	public boolean isActivoBBVADivarian(Long idActivo) {
 		String sql = "          SELECT count(1)  " +
-				"				FROM REM01.ACT_ACTIVO  " +
-				"				WHERE ACT_ID = "+ idActivo +
-				"				AND DD_CRA_ID = 162 OR (DD_CRA_ID = 42 AND DD_SCR_ID IN (151, 152))" +
-				"				AND BORRADO = 0";
+				"				FROM REM01.ACT_ACTIVO ACT  "+ 
+				"				INNER JOIN DD_CRA_CARTERA CRA ON ACT.dd_cra_id = CRA.dd_cra_id "+
+				"				INNER JOIN DD_SCR_SUBCARTERA SUBC ON act.dd_scr_id = SUBC.dd_scr_id" +
+				"				WHERE ACT.ACT_ID= "+ idActivo +
+				"				AND cra.dd_cra_codigo = '16' OR (cra.dd_cra_codigo = '07' AND SUBC.dd_scr_codigo IN ('151','152'))" +
+				"				AND ACT.BORRADO = 0";		
 
 		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
 			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;

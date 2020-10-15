@@ -7663,14 +7663,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 
 	cargarCamposCalculados : function(me) {
-		var listaGastos = me.getStore().getData().items;
-		
+		var grid = this.lookupReference('gastosasociadosadquisiciongridref');
+		var listaGastos = grid.getStore().getData().items
+
 		//Campos calculados
 		var itp = 0;
 		var plusvaliaAdquisicion = 0;
 		var notaria = 0;
 		var registro = 0;
 		var otrosGastos = 0;
+		//References
+		var iptRef= this.lookupReference('iptRef');
+		var plusvaliaAdquisicionRef = this.lookupReference('plusvaliaAdquisicionRef');
+		var notariaRef = this.lookupReference('notariaRef');
+		var registroRef = this.lookupReference('registroRef');
+		var otrosGastosRef = this.lookupReference('otrosGastosRef');
 		
 				
 		for(var i = 0; i < listaGastos.length; i++) {
@@ -7689,11 +7696,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		
 		}
 		
-		me.previousSibling().getComponent("itp").setValue(itp);
-		me.previousSibling().getComponent("plusvaliaAdquisicion").setValue(plusvaliaAdquisicion);
-		me.previousSibling().getComponent("notaria").setValue(notaria);
-		me.previousSibling().getComponent("registro").setValue(registro);
-		me.previousSibling().getComponent("otrosGastos").setValue(otrosGastos);
+		iptRef.setValue(itp);
+		plusvaliaAdquisicionRef.setValue(plusvaliaAdquisicion);
+		notariaRef.setValue(notaria);
+		registroRef.setValue(registro);
+		otrosGastosRef.setValue(otrosGastos);
 
 	},
 	

@@ -174,7 +174,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 									reference: 'fechaResolucionComiteRef'
 								},
 							 	{ 
-				                	xtype: 'numberfieldbase',
+				                	xtype: 'textfieldbase',
 				                	fieldLabel:  HreRem.i18n('title.resolucion.comite.id'),
 				                	bind: {
 				                		value: '{trabajo.resolucionComiteId}'

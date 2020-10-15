@@ -2053,7 +2053,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	}
     	
     	me.lookupReference('cuotaIRPFRetG').setValue(cuota);
-    	me.recalcularImporteTotal(me,checked);
+    	me.onChangeCuotaImpuestoDirecto(me,checked);
     },
     
     onChangeCuotaImpuestoDirecto: function(field, value){
@@ -2078,24 +2078,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		}
 		
 		me.lookupReference('importeTotalGastoDetalle').setValue(importeTotal);	 
-    },
-    
-    recalcularImporteTotal: function(me,aplicaRet){
-    	var cuotaRetG = me.lookupReference('cuotaIRPFRetG').getValue();
-    	var cuotaImpDirecto = me.lookupReference('cuotaIRPFImpD').getValue();
-    	var importeTotal = me.getImporteTotalLineasDetalle(me);
-    	
-    	if(aplicaRet && (cuotaRetG != null || cuotaRetG != undefined)){
-    		importeTotal = importeTotal - cuotaRetG;
-    	}
-    	
-    	if(cuotaImpDirecto != null || cuotaImpDirecto != undefined){
-    		importeTotal = importeTotal - cuotaImpDirecto;
-    	}
-    	
-    	
-    	return importeTotal;
-    	
     },
     
     getImporteTotalLineasDetalle: function(me){

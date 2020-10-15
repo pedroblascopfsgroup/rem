@@ -1,0 +1,82 @@
+--/*
+--##########################################
+--## AUTOR=Pablo Garcia Pallas	
+--## FECHA_CREACION=20201014
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-11659
+--## PRODUCTO=NO
+--##
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+
+DECLARE
+    V_SQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar
+    V_SQL_AUX VARCHAR2(32000 CHAR);
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    --V_COUNT NUMBER(16); -- Vble. para contar.
+    --V_COUNT_INSERT NUMBER(16):= 0; -- Vble. para contar inserts
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+	V_USUARIO VARCHAR2(32 CHAR):= 'HREOS-11659';
+	V_NUM_REG NUMBER(25);
+	V_ESTADOSUB NUMBER(16);
+	V_TEXT_TABLA VARCHAR2(300 CHAR) := 'TBJ_TPE_TRANS_PEF_ESTADO';
+
+
+ BEGIN
+	 
+	 V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' 
+		WHERE TPE_EST_INI IN 
+			(SELECT DD_EST_ID FROM '||V_ESQUEMA||'.DD_EST_ESTADO_TRABAJO WHERE DD_EST_CODIGO = ''REJ'')
+		AND TPE_EST_FIN IN 
+			(SELECT DD_EST_ID FROM '||V_ESQUEMA||'.DD_EST_ESTADO_TRABAJO WHERE DD_EST_CODIGO = ''FIN'')
+		AND PEF_ID IN 
+			(SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = ''HAYAPROV'')';
+	 
+	EXECUTE IMMEDIATE V_SQL INTO V_NUM_REG;
+	
+	IF V_NUM_REG > 0 THEN
+		
+		V_SQL_AUX := 'SELECT EST.DD_EST_ID FROM DD_EST_ESTADO_TRABAJO EST WHERE DD_EST_CODIGO = ''SUB'' ';
+		EXECUTE IMMEDIATE V_SQL_AUX INTO V_ESTADOSUB;
+		
+		
+    	V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' TPE
+			SET TPE.TPE_EST_FIN = '||V_ESTADOSUB||',
+			TPE.USUARIOMODIFICAR = '''||V_USUARIO||''',
+			TPE.FECHAMODIFICAR = SYSDATE
+			WHERE
+			  TPE.TPE_EST_INI IN (SELECT DD_EST_ID FROM '||V_ESQUEMA||'.DD_EST_ESTADO_TRABAJO WHERE DD_EST_CODIGO = ''REJ'')
+			AND TPE_EST_FIN IN (SELECT DD_EST_ID FROM '||V_ESQUEMA||'.DD_EST_ESTADO_TRABAJO WHERE DD_EST_CODIGO = ''FIN'')
+			AND PEF_ID IN (SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO =''HAYAPROV'')';
+		
+			
+		EXECUTE IMMEDIATE V_SQL;
+    END IF;
+
+	DBMS_OUTPUT.PUT_LINE('Se MODIFICADO el registro correctamente');
+
+ COMMIT;
+
+EXCEPTION
+     WHEN OTHERS THEN
+          ERR_NUM := SQLCODE;
+          ERR_MSG := SQLERRM;
+          DBMS_OUTPUT.PUT_LINE('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------');
+          DBMS_OUTPUT.PUT_LINE(ERR_MSG);
+          ROLLBACK;
+          RAISE;
+END;
+/
+EXIT;

@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.albaran.dao.AlbaranDao;
 import es.pfsgroup.plugin.rem.albaran.dto.DtoAlbaranFiltro;
 import es.pfsgroup.plugin.rem.api.AlbaranApi;
@@ -20,6 +22,7 @@ import es.pfsgroup.plugin.rem.model.DtoDetalleAlbaran;
 import es.pfsgroup.plugin.rem.model.DtoDetallePrefactura;
 import es.pfsgroup.plugin.rem.model.Prefactura;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VbusquedaProveedoresCombo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstEstadoPrefactura;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAlbaran;
@@ -33,6 +36,9 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 
 	@Autowired
 	private AlbaranDao albaranDao;
+	
+	@Autowired
+	private GenericAdapter adapter;
 
 	@Override
 	public String managerName() {
@@ -153,5 +159,11 @@ public class AlbaranManager extends BusinessOperationOverrider<AlbaranApi> imple
 	public Page obtenerDatosExportarTrabajosPrefactura(DtoAlbaranFiltro dto) throws ParseException {
 		return albaranDao.getTrabajosPrefacturas(dto);
 	}
-
+	
+	@Override
+	public Boolean getEsUsuarioCliente() {
+		Usuario usuariologado = adapter.getUsuarioLogado();
+		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS,"usuario.id" , usuariologado.getId()));
+		return usuarioCartera != null;
+	}
 }

@@ -182,7 +182,8 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																update: function(){
 																	if(Ext.isEmpty(this.getValue()))
 																		this.setValue(0);
-																}
+																},
+																change: 'onChangeCuotaRetencionGarantia'	
 														    													    		
 														    	
 														    }
@@ -202,7 +203,8 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																update: function(){
 																	if(Ext.isEmpty(this.getValue()))
 																		this.setValue(0);
-																}
+																},
+																change: 'onChangeCuotaRetencionGarantia'	
 														    														    		
 														    	
 														    }

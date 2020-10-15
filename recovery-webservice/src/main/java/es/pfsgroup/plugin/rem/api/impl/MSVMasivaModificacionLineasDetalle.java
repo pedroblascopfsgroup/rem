@@ -22,6 +22,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -41,23 +42,24 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 	private static final int DATOS_PRIMERA_FILA = 1;
 	private static final int ID_GASTO = 0;
 	private static final int ACCION_LINIA_DETALLE = 1;
-	private static final int SUBTIPO_GASTO = 2;
-	private static final int PRINCIPAL_SUJETO_A_IMPUESTO = 3;
-	private static final int PRINCIPAL_NO_SUJETO_A_IMPUESTO = 4;
-	private static final int TIPO_RECARGO = 5;
-	private static final int IMPORTE_RECARGO = 6;
-	private static final int INTERES_DEMORA = 7;
-	private static final int COSTES = 8;
-	private static final int OTROS_INCREMENTOS = 9;
-	private static final int PROVISIONES_SUPLIDOS = 10;
-	private static final int TIPO_IMPUESTO = 11;
-	private static final int OPERACION_EXENTA = 12;
-	private static final int RENUNCIA_EXENCION = 13;
-	private static final int TIPO_IMPOSITIVO = 14;
-	private static final int OPTA_POR_CRITERIO_DE_CAJA_EN_IVA = 15;
-	private static final int ID_ELEMENTO = 16;
-	private static final int TIPO_ELEMENTO = 17;
-	private static final int PARTICIPACION_LINEA_DETALLE = 18;
+	private static final int ID_LINEA = 2;
+	private static final int SUBTIPO_GASTO = 3;
+	private static final int PRINCIPAL_SUJETO_A_IMPUESTO = 4;
+	private static final int PRINCIPAL_NO_SUJETO_A_IMPUESTO = 5;
+	private static final int TIPO_RECARGO = 6;
+	private static final int IMPORTE_RECARGO = 7;
+	private static final int INTERES_DEMORA = 8;
+	private static final int COSTES = 9;
+	private static final int OTROS_INCREMENTOS = 10;
+	private static final int PROVISIONES_SUPLIDOS = 11;
+	private static final int TIPO_IMPUESTO = 12;
+	private static final int OPERACION_EXENTA = 13;
+	private static final int RENUNCIA_EXENCION = 14;
+	private static final int TIPO_IMPOSITIVO = 15;
+	private static final int OPTA_POR_CRITERIO_DE_CAJA_EN_IVA = 16;
+	private static final int ID_ELEMENTO = 17;
+	private static final int TIPO_ELEMENTO = 18;
+	private static final int PARTICIPACION_LINEA_DETALLE = 19;
 	
 	private static final String ACCION_BORRAR = "BORRAR";
 	private static final String ACCION_ANYADIR = "AÑADIR";
@@ -273,6 +275,18 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 								
 							}
 						}
+					}else if (DDEntidadGasto.CODIGO_ACTIVO.equals(entidadGasto.getCodigo())) {
+						
+						Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "numActivo",  Long.parseLong(exc.dameCelda(fila, ID_ELEMENTO)));
+						Activo activo = genericDao.get(Activo.class, filtroActivo);
+						
+						GastoLineaDetalleEntidad gastoLineaDetalleEntidad = new GastoLineaDetalleEntidad();
+						gastoLineaDetalleEntidad.setGastoLineaDetalle(gastoLineaDetalle);
+						gastoLineaDetalleEntidad.setEntidad(activo.getId());
+						gastoLineaDetalleEntidad.setEntidadGasto(entidadGasto);
+						gastoLineaDetalleEntidad.setParticipacionGasto(Double.parseDouble(exc.dameCelda(fila, PARTICIPACION_LINEA_DETALLE)));
+						genericDao.save(GastoLineaDetalleEntidad.class,gastoLineaDetalleEntidad);
+						
 					}else {
 						GastoLineaDetalleEntidad gastoLineaDetalleEntidad = new GastoLineaDetalleEntidad();
 						gastoLineaDetalleEntidad.setGastoLineaDetalle(gastoLineaDetalle);
@@ -289,23 +303,8 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 				Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", Long.parseLong(exc.dameCelda(fila, ID_GASTO)));
 				GastoProveedor gastoProveedor = genericDao.get(GastoProveedor.class, filtroGasto);
 				
-				Filter tipoImpuestoFilter;
-				Filter tipoImpositivoFilter;
-				
-				if(exc.dameCelda(fila, TIPO_IMPUESTO) == null || exc.dameCelda(fila, TIPO_IMPUESTO).isEmpty()) {
-					tipoImpuestoFilter = genericDao.createFilter(FilterType.NULL, "tipoImpuesto");
-				}else {
-					tipoImpuestoFilter = genericDao.createFilter(FilterType.EQUALS, "tipoImpuesto.codigo", exc.dameCelda(fila, TIPO_IMPUESTO));
-				}
-				
-				if(exc.dameCelda(fila, TIPO_IMPOSITIVO) == null || exc.dameCelda(fila, TIPO_IMPOSITIVO).isEmpty()) {
-					tipoImpositivoFilter = genericDao.createFilter(FilterType.NULL, "importeIndirectoTipoImpositivo");
-				}else {
-					tipoImpositivoFilter = genericDao.createFilter(FilterType.EQUALS, "importeIndirectoTipoImpositivo", Double.parseDouble(exc.dameCelda(fila, TIPO_IMPOSITIVO)));
-				}
-				
-				GastoLineaDetalle gastoLineaDetalle = genericDao.get(GastoLineaDetalle.class, genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gastoProveedor.getId()),
-						genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.codigo", exc.dameCelda(fila, SUBTIPO_GASTO)),tipoImpuestoFilter, tipoImpositivoFilter );
+				Filter filtroLinea = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(exc.dameCelda(fila, ID_LINEA)));
+				GastoLineaDetalle gastoLineaDetalle = genericDao.get(GastoLineaDetalle.class,filtroLinea);
 				
 				if(gastoLineaDetalle != null) {
 					List<GastoLineaDetalleEntidad> gastoLineaDetalleEntidadList = gastoLineaDetalle.getGastoLineaEntidadList();

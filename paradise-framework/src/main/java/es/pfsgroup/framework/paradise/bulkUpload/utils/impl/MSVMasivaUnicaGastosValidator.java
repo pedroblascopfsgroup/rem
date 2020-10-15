@@ -882,12 +882,12 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
              for(int i=1; i<this.numFilasHoja;i++){
                  try {
                      
-                	 if(!Checks.esNulo(exc.dameCelda(i, COL_TIPO_ELEMENTO)) && !Checks.esNulo(exc.dameCelda(i, COL_ID_ELEMENTO))){
+                	 if(!Checks.esNulo(exc.dameCelda(i, COL_NIF_PROPIETARIO)) && !Checks.esNulo(exc.dameCelda(i, COL_TIPO_ELEMENTO)) && !Checks.esNulo(exc.dameCelda(i, COL_ID_ELEMENTO))){
                 		 if((TIPO_ELEMENTO_ACTIVO.equalsIgnoreCase(exc.dameCelda(i, COL_TIPO_ELEMENTO)) || TIPO_ELEMENTO_ACTIVOGEN.equalsIgnoreCase(exc.dameCelda(i, COL_TIPO_ELEMENTO)))
-                				 && Boolean.FALSE.equals(particularValidator.esPropietarioYActivoMismaCartera(exc.dameCelda(i, COL_TIPO_ELEMENTO), exc.dameCelda(i, COL_ID_ELEMENTO)))) {
+                				 && Boolean.FALSE.equals(particularValidator.esPropietarioYActivoMismaCartera(exc.dameCelda(i, COL_NIF_PROPIETARIO), exc.dameCelda(i, COL_ID_ELEMENTO)))) {
                 			 listaFilas.add(i);
                 		 } else if((TIPO_ELEMENTO_AGRUPACION.equalsIgnoreCase(exc.dameCelda(i, COL_TIPO_ELEMENTO)))
-                				 && Boolean.FALSE.equals(particularValidator.esPropietarioYAgrupacionMismaCartera(exc.dameCelda(i, COL_TIPO_ELEMENTO), exc.dameCelda(i, COL_ID_ELEMENTO)))) {
+                				 && Boolean.FALSE.equals(particularValidator.esPropietarioYAgrupacionMismaCartera(exc.dameCelda(i, COL_NIF_PROPIETARIO), exc.dameCelda(i, COL_ID_ELEMENTO)))) {
                 			 listaFilas.add(i);
                 		 }
                 		 

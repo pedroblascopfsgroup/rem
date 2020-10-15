@@ -3873,7 +3873,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	@Override
 	public Boolean tipoDeElemento(String tipoElemento) {
 		if (!Checks.esNulo(tipoElemento)) {
-			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) from DD_ENT_ENTIDAD_GASTO \n" + 
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) from DD_ENT_ENTIDAD_GASTO  " + 
 					"WHERE DD_ENT_CODIGO =" + 
 					"'" + tipoElemento + "'");
 
@@ -5719,7 +5719,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 	
-	
 	@Override
 	public Boolean codigoComercializacionIncorrecto(String codCampo) {
 		if(Checks.esNulo(codCampo) || !StringUtils.isAlphanumeric(codCampo)) {
@@ -5793,4 +5792,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 
+	@Override
+	public Boolean existeGastoConElIdLinea(String idGasto, String idLinea) {
+		String resultado = rawDao.getExecuteSQL("SELECT count(1) " + 
+				" FROM gld_gastos_linea_detalle linea " + 
+				" JOIN gpv_gastos_proveedor gasto ON gasto.gpv_id = linea.gpv_id AND GASTO.GPV_NUM_GASTO_HAYA = " + idGasto + 
+				" where GLD_ID = "+ idLinea +" AND gasto.borrado = 0 AND linea.borrado = 0");
+		
+		return !"0".equals(resultado);
+	}
 }

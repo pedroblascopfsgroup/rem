@@ -152,7 +152,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			
 			if(gasto.getGestoria() == null) {
 				for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
-					if(gastodetalleLinea.getTipoImpuesto() == null && (gastodetalleLinea.getPrincipalSujeto() != 0.0 ||  gastodetalleLinea.getPrincipalSujeto() != null)) {
+					if((gastodetalleLinea.getTipoImpuesto() == null && gastodetalleLinea.getPrincipalSujeto() != null && gastodetalleLinea.getPrincipalSujeto() != 0.0 )) {
 						error = messageServices.getMessage(VALIDACION_GASTO_SIN_TIPO_IMP_INDIRECTO);
 						return error;
 					}

@@ -638,7 +638,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			if(me.lookupReference('checkAplicaComite').getValue()){
 				form.getBindRecord().set("resolucionComiteId",me.lookupReference('resolComiteId').getValue());
 				form.getBindRecord().set("fechaResolucionComite",me.lookupReference('fechaResolComite').getValue());
-				form.getBindRecord().set("resolucionComiteCodigo",me.lookupReference('comboResolucionComite').getSelectedRecord().get('id'));
+				form.getBindRecord().set("resolucionComiteCodigo",me.lookupReference('comboResolucionComite').getSelectedRecord().get('codigo'));
 				form.getBindRecord().set("aplicaComite",me.lookupReference('checkAplicaComite').getValue());
 			}else{
 				form.getBindRecord().set("resolucionComiteId",null);
@@ -1638,6 +1638,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     		
     		if(esFichaTrabajo){
     			me.lookupReference('comboGestorActivoResposable').setReadOnly(false);	
+    			me.lookupReference('descripcionGeneralRef').setReadOnly(false);
     		}
     		
     		if(estadoTrabajo == "CUR" /*|| estadoTrabajo == "REJ"*/){
@@ -1662,6 +1663,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		    		me.lookupReference('comboResolucionComite').setReadOnly(false);
 					me.lookupReference('fechaResolucionComiteRef').setReadOnly(false);
 					me.lookupReference('resolucionComiteIdRef').setReadOnly(false);
+					me.lookupReference('tomaDePosesion').setReadOnly(false);
 	    			
     			} else {
     				me.lookupReference('comboProveedorGestionEconomica').setReadOnly(false);
@@ -1675,7 +1677,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	    	}else if(estadoTrabajo == "FIN" || estadoTrabajo == "SUB"){
 	    		
 	    		if(esFichaTrabajo){
-    				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
+	    			me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);	
 		    		me.lookupReference('checkTarifaPlanaRef').setReadOnly(false);
 		    		me.lookupReference('checkSiniestroRef').setReadOnly(false);
     			} else {
@@ -1689,13 +1691,16 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	    		
 	    		if(esFichaTrabajo){
     				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
+    				me.lookupReference('fechaConcreta').setReadOnly(false);
+		    		me.lookupReference('horaConcreta').setReadOnly(false);
+		    		me.lookupReference('fechaTope').setReadOnly(false);
     			}
 	    		
 	    	}
     		
 	    } else if(esProvActivo){
 	    	
-	    	if(estadoTrabajo == "CUR" /*|| estadoTrabajo == "REJ"*/){
+	    	if(estadoTrabajo == "CUR" || estadoTrabajo == "REJ"){
 	    		
 	    		if(esFichaTrabajo){
     				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
@@ -1794,16 +1799,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
  		var comboTomaPosesion = me.lookupReference('tomaDePosesion');
 		me.lookupReference('comboProveedorGestionEconomica2').setDisabled(true);
 		me.lookupReference('proveedorContactoCombo2').setDisabled(true);
- 		if (tipoTrabajo == CONST.TIPOS_TRABAJO['ACTUACION_TECNICA'] && subTipoTrabajo == CONST.SUBTIPOS_TRABAJO['TOMA_POSESION']) {
-
- 			comboTomaPosesion.allowBlank= false;
- 			comboTomaPosesion.setHidden(false);
- 			comboTomaPosesion.setVisible(true);
- 		}else{
-
- 			comboTomaPosesion.allowBlank= true;
- 			comboTomaPosesion.setHidden(true);
- 		}
+		
  		 
  	},
  	hiddenComboTomaPosesion: function(){
@@ -1964,6 +1960,15 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 				  }
 	      	});
     	}
+    },
+    
+    checkDisableCampoTomaPosesion: function(){
+    	var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+        var isGestorActivos = $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']);
+ 	   	var isGestorAlquiler = $AU.userGroupHasRole(CONST.PERFILES['GESTOR_ALQUILER_HPM']);
+ 	   	var isUserGestedi = $AU.userIsRol(CONST.PERFILES['GESTEDI']);
+ 	   	
+ 	   	return !isSuper && !isGestorActivos && !isGestorAlquiler && isUserGestedi; 
     }
 
 });

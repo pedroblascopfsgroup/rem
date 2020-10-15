@@ -21,6 +21,8 @@ Ext.define('HreRem.view.activos.detalle.DetallePrefacturasGrid', {
      	var me = this;
      	me.data = [];
      	
+     	var mostrarTotalProveedor = me.lookupController().mostrarTotalProveedor();
+     	
 		me.columns = [
 				{
 					dataIndex: 'idTrabajo', 
@@ -70,7 +72,8 @@ Ext.define('HreRem.view.activos.detalle.DetallePrefacturasGrid', {
 		            reference: 'importeTotalPrefactura',
 		            renderer: Utils.rendererCurrency,
 		            flex: 1,
-		            text: HreRem.i18n('fieldlabel.albaran.importeTotalPrefactura')
+		            text: HreRem.i18n('fieldlabel.albaran.importeTotalPrefactura'),
+		            hidden: mostrarTotalProveedor
 		        },
 		        {
 		            dataIndex: 'importeTotalClientePrefactura',

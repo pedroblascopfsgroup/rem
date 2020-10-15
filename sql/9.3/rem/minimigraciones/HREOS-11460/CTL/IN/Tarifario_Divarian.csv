@@ -1,0 +1,299 @@
+CODIGO_TARIFA|DESCRIPCION_TARIFA|TIPO_TRABAJO|SUBTIPO_TRABAJO|PRECIO_UNITARIO|UNIDAD_MEDIDA
+DIV001|Paquete Servicio Básico Suelo-Sup. Activo ? 500 m2|Actuación Técnica|Paquete|39600|ud
+DIV002|Paquete Servicio Básico Suelo-500 m2 < Sup. Activo ? 2.000 m2|Actuación Técnica|Paquete|107800|ud
+DIV003|Paquete Servicio Básico Suelo-Sup. Activo > 2.000 m2|Actuación Técnica|Paquete|131800|ud
+DIV004|Paquete Dación En Pago Suelo-Sup. Activo ? 500 m2|Actuación Técnica|Paquete|39600|ud
+DIV005|Paquete Dación En Pago Suelo-500 m2 < Sup. Activo ? 2.000 m2|Actuación Técnica|Paquete|107800|ud
+DIV006|Paquete Dación En Pago Suelo-Sup. Activo > 2.000 m2|Actuación Técnica|Paquete|131800|ud
+DIV007|Paquete Entrega Voluntaria De Llaves Suelo-Sup. Activo ? 500 m2|Actuación Técnica|Paquete|39600|ud
+DIV008|Paquete Entrega Voluntaria De Llaves Suelo-500 m2 < Sup. Activo ? 2.000 m2|Actuación Técnica|Paquete|107800|ud
+DIV009|Paquete Entrega Voluntaria De Llaves Suelo-Sup. Activo > 2.000 m2|Actuación Técnica|Paquete|131800|ud
+DIV010|Paquete Lanzamiento Suelo-Sup. Activo ? 500 m2|Actuación Técnica|Paquete|39600|ud
+DIV011|Paquete Lanzamiento Suelo-500 m2 < Sup. Activo ? 2.000 m2|Actuación Técnica|Paquete|107800|ud
+DIV012|Paquete Lanzamiento Suelo-Sup. Activo > 2.000 m2|Actuación Técnica|Paquete|131800|ud
+DIV013|Paquete Servicio Basico-Sup. Activo ? 90 m2|Actuación Técnica|Paquete|51580|ud
+DIV014|Paquete Servicio Básico-90 m2 < Sup. Activo ? 150 m2|Actuación Técnica|Paquete|62220|ud
+DIV015|Paquete Servicio Básico-150 m2 < Sup. Activo ? 500 m2|Actuación Técnica|Paquete|76000|ud
+DIV016|Paquete Servicio Básico-Activos Singulares, Sup. Activo > 500 m2|Actuación Técnica|Paquete|91000|ud
+DIV017|Paquete Dación En Pago-Sup. Activo ? 90 m2|Actuación Técnica|Paquete|51580|ud
+DIV018|Paquete Dación En Pago-90 m2 < Sup. Activo ? 150 m2|Actuación Técnica|Paquete|62220|ud
+DIV019|Paquete Dación En Pago-150 m2 < Sup. Activo ? 500 m2|Actuación Técnica|Paquete|76000|ud
+DIV020|Paquete Dación En Pago-Activos Singulares, Sup. Activo > 500 m2|Actuación Técnica|Paquete|91000|ud
+DIV021|Paquete Entrega Voluntaria De Llaves-Sup. Activo ? 90 m2|Actuación Técnica|Paquete|51580|ud
+DIV022|Paquete Entrega Voluntaria De Llaves-90 m2 < Sup. Activo ? 150 m2|Actuación Técnica|Paquete|62220|ud
+DIV023|Paquete Entrega Voluntaria De Llaves-150 m2 < Sup. Activo ? 500 m2|Actuación Técnica|Paquete|76000|ud
+DIV024|Paquete Entrega Voluntaria De Llaves-Activos Singulares, Sup. Activo > 500 m2|Actuación Técnica|Paquete|91000|ud
+DIV025|Paquete Lanzamiento Activo-Sup. Activo ? 90 m2|Actuación Técnica|Paquete|51580|ud
+DIV026|Paquete Lanzamiento Activo-90 m2 < Sup. Activo ? 150 m2|Actuación Técnica|Paquete|62220|ud
+DIV027|Paquete Lanzamiento Activo-150 m2 < Sup. Activo ? 500 m2|Actuación Técnica|Paquete|76000|ud
+DIV028|Paquete Lanzamiento Activo-Activos Singulares, Sup. Activo > 500 m2|Actuación Técnica|Paquete|91000|ud
+DIV029|Intervención Mínima|Actuación Técnica|Intervención|4919|ud
+DIV030|Desplazamiento|Actuación Técnica|Intervención|5000|ud
+DIV031|Informe Técnico Vivienda Social|Obtención documentación|Informes|12000|ud
+DIV032|Informe Técnico Vivienda Social Y Cee|Obtención documentación|Informes|19000|ud
+DIV033|Servicio Informe - Cuestionario Y Reportaje Fotográfico|Obtención documentación|Informes|6000|ud
+DIV034|Servicio De Acompañamiento Múltiple A Terceros|Obtención documentación|Acompañamiento|7500|ud
+DIV035|Servicio De Asistencia A Terceros Marina|Obtención documentación|Acompañamiento|7500|ud
+DIV036|Retirada De Enseres-Sup. Activo ? 90 m2|Actuación Técnica|Retirada De Enseres|14514|ud
+DIV037|Retirada De Enseres-90 m2 < Sup. Activo ? 150 m2|Actuación Técnica|Retirada De Enseres|18614|ud
+DIV038|Retirada De Enseres-150 m2 < Sup. Activo ? 500 m2|Actuación Técnica|Retirada De Enseres|22710|ud
+DIV039|Retirada De Enseres-Sup. Activo > 500 m2|Actuación Técnica|Retirada De Enseres|40000|ud
+DIV040|Retirada De Animales Y Desinfección-Sup. Activo ? 90 m2|Actuación Técnica|Retirada Animales|17563|ud
+DIV041|Retirada De Animales Y Desinfección-90 m2 < Sup. Activo ? 150 m2|Actuación Técnica|Retirada Animales|22000|ud
+DIV042|Retirada De Animales Y Desinfección-150 m2 < Sup. Activo ? 500 m2|Actuación Técnica|Retirada Animales|28000|ud
+DIV043|Retirada De Animales Y Desinfección-Sup. Activo > 500 m2|Actuación Técnica|Retirada Animales|41000|ud
+DIV044|Retirada De Nidos-Retirada De Nidos (ud)|Actuación Técnica|Retirada Animales|6900|ud
+DIV045|Retirada De Buzón (ud)|Actuación Técnica|Retirada De Enseres|3680|ud
+DIV046|Retirada De Toldo (ud)|Actuación Técnica|Retirada De Enseres|5500|ud
+DIV047|Recogida De Toldo Y Colocación Con Sujeción (ud)|Actuación Técnica|Retirada De Enseres|6000|ud
+DIV048|Tratamientos D.D.D-Sup. Activo ? 90 m2|Actuación Técnica|Desinfección|18884|ud
+DIV049|Tratamientos D.D.D-90 m2 < Sup. Activo ? 150 m2|Actuación Técnica|Desinfección|26000|ud
+DIV050|Tratamientos D.D.D-150 m2 < Sup. Activo ? 500 m2|Actuación Técnica|Desinfección|35000|ud
+DIV051|Tratamientos D.D.D-500 m2 < Sup. Activo ? 2000 m2|Actuación Técnica|Desinfección|61000|ud
+DIV052|Tratamientos D.D.D-2.000 m2 < Sup. Activo ? 5.000 m2|Actuación Técnica|Desinfección|97000|ud
+DIV053|Tratamientos D.D.D-5.000 m2 < Sup. Activo ? 10.000 m2|Actuación Técnica|Desinfección|220000|ud
+DIV054|Tratamientos D.D.D-10.000 m2 < Sup. Activo ? 20.000 m2|Actuación Técnica|Desinfección|300000|ud
+DIV055|Tratamientos D.D.D-20.000 m2 < Sup. Activo ? 30.000 m2|Actuación Técnica|Desinfección|400000|ud
+DIV056|Tratamientos D.D.D-30.000 m2 < Sup. Activo ? 40.000 m2|Actuación Técnica|Desinfección|510000|ud
+DIV057|Tratamientos D.D.D-40.000 m2 < Sup. Activo ? 50.000 m2|Actuación Técnica|Desinfección|630000|ud
+DIV058|Tratamientos D.D.D-Sup. Activo > 50.000 m2|Actuación Técnica|Desinfección|780000|ud
+DIV059|Limpieza General Del Inmueble-Sup. Activo ? 90 m2|Actuación Técnica|Limpieza|8800|ud
+DIV060|Limpieza General Del Inmueble-90 m2 < Sup. Activo ? 150 m2|Actuación Técnica|Limpieza|12000|ud
+DIV061|Limpieza General Del Inmueble-150 m2 < Sup. Activo ? 500 m2|Actuación Técnica|Limpieza|17499|ud
+DIV062|Limpieza General Del Inmueble-500 m2 < Sup. Activo ? 2000 m2|Actuación Técnica|Limpieza|55000|ud
+DIV063|Limpieza General Del Inmueble-2.000 m2 < Sup. Activo ? 5.000 m2|Actuación Técnica|Limpieza|79000|ud
+DIV064|Limpieza General Del Inmueble-5.000 m2 < Sup. Activo ? 10.000 m2|Actuación Técnica|Limpieza|140000|ud
+DIV065|Limpieza General Del Inmueble-10.000 m2 < Sup. Activo ? 20.000 m2|Actuación Técnica|Limpieza|260000|ud
+DIV066|Limpieza General Del Inmueble-20.000 m2 < Sup. Activo ? 30.000 m2|Actuación Técnica|Limpieza|340000|ud
+DIV067|Limpieza General Del Inmueble-30.000 m2 < Sup. Activo ? 40.000 m2|Actuación Técnica|Limpieza|430000|ud
+DIV068|Limpieza General Del Inmueble-40.000 m2 < Sup. Activo ? 50.000 m2|Actuación Técnica|Limpieza|510000|ud
+DIV069|Limpieza General Del Inmueble-Activos Singulares,Sup. Activo > 50.000 m2|Actuación Técnica|Limpieza|620000|ud
+DIV070|Limpieza De Fachadas-Superficie De Fachada ? 90 m2|Actuación Técnica|Limpieza|15000|ud
+DIV071|Limpieza De Fachadas-90 m2 < Superficie De Fachada ? 150 m2|Actuación Técnica|Limpieza|27000|ud
+DIV072|Limpieza De Fachadas-150 m2 < Superficie De Fachada ? 500 m2|Actuación Técnica|Limpieza|55000|ud
+DIV073|Limpieza De Fachadas-Superficie De Fachada > 500 m2|Actuación Técnica|Limpieza|150000|ud
+DIV074|Limpieza De Garajes-Sup. Activo ? 90 m2|Actuación Técnica|Limpieza|8824|ud
+DIV075|Limpieza De Garajes-90 m2 < Sup. Activo ? 150 m2|Actuación Técnica|Limpieza|11376|ud
+DIV076|Limpieza De Garajes-150 m2 < Sup. Activo ? 500 m2|Actuación Técnica|Limpieza|14000|ud
+DIV077|Activos Singulares, Sup. Activo > 500 m2|Actuación Técnica|Limpieza|25500|ud
+DIV078|Limpieza De Piscinas (ud)|Actuación Técnica|Limpieza|24000|ud
+DIV079|Limpieza De Canalón (ml)|Actuación Técnica|Limpieza|2100|ml
+DIV080|Limpieza De Graffitti (ud)|Actuación Técnica|Limpieza|9700|ud
+DIV081|Limpieza De Sumideros, Rebosaderos Y/O Arquetas|Actuación Técnica|Limpieza|5000|ud
+DIV082|Desmontaje De Mobiliario De Cocina Completo -Sup. Activo ? 90 m2|Actuación Técnica|Mobiliario De Cocina|24572|ud
+DIV083|Desmontaje De Mobiliario De Cocina Completo -90 m2 < Sup. Activo ? 150 m2|Actuación Técnica|Mobiliario De Cocina|25200|ud
+DIV084|Desmontaje De Mobiliario De Cocina Completo -150 m2 < Sup. Activo ? 500 m2|Actuación Técnica|Mobiliario De Cocina|30300|ud
+DIV085|Desmontaje De Mobiliario De Cocina Completo -Activos Singulares, Sup. Activo > 500 m2|Actuación Técnica|Mobiliario De Cocina|38880|ud
+DIV086|Suministro Y Montaje De Mobiliario De Cocina Completo-Sup. Activo ? 90 m2|Actuación Técnica|Mobiliario De Cocina|112000|ud
+DIV087|Suministro Y Montaje De Mobiliario De Cocina Completo-90 m2 < Sup. Activo ? 150 m2|Actuación Técnica|Mobiliario De Cocina|160000|ud
+DIV088|Suministro Y Montaje De Mobiliario De Cocina Completo-150 m2 < Sup. Activo ? 500 m2|Actuación Técnica|Mobiliario De Cocina|172500|ud
+DIV089|Suministro Y Montaje De Mobiliario De Cocina Completo-Activos Singulares, Sup. Activo > 500 m2|Actuación Técnica|Mobiliario De Cocina|207000|ud
+DIV090|Desmontaje Y Montaje De Modulo Individual De Mobiliario De Cocina -Sup. Activo ? 90 m2|Actuación Técnica|Mobiliario De Cocina|6250|ud
+DIV091|Desmontaje Y Montaje De Modulo Individual De Mobiliario De Cocina -90 m2 < Sup. Activo ? 150 m2|Actuación Técnica|Mobiliario De Cocina|7740|ud
+DIV092|Desmontaje Y Montaje De Modulo Individual De Mobiliario De Cocina -150 m2 < Sup. Activo ? 500 m2|Actuación Técnica|Mobiliario De Cocina|7940|ud
+DIV093|Desmontaje Y Montaje De Modulo Individual De Mobiliario De Cocina -Sup. Activo > 500 m2|Actuación Técnica|Mobiliario De Cocina|8040|ud
+DIV094|Suministro Y Montaje De Modulo Individual De Mobiliario De Cocina (ud)|Actuación Técnica|Mobiliario De Cocina|18250|ud
+DIV095|Sustitución De Electrodoméstico (ud)|Actuación Técnica|Electrodomésticos|34375|ud
+DIV096|Modulo Individual De Elemento De Mobiliario De Cocina-Modulo Individual (ud)|Actuación Técnica|Mobiliario De Cocina|7753|ud
+DIV097|Suministro Y Montaje De Fregadero Acero Inoxidable|Actuación Técnica|Mobiliario De Cocina|8625|ud
+DIV098|Suministro E Instalación De Encimera (ud)|Actuación Técnica|Mobiliario De Cocina|7000|ud
+DIV099|Suministro E Instalación De Buzón (ud)|Actuación Técnica|Albañilería|2400|ud
+DIV100|Desmontaje Y Montaje De Persiana Enrollable (ud)|Actuación Técnica|Albañilería|6214|ud
+DIV101|Repaso De Mecanismo De Persiana (ud)|Actuación Técnica|Albañilería|3600|ud
+DIV102|Suministro De Persiana Enrollable Pvc (ud)|Actuación Técnica|Albañilería|8937|ud
+DIV103|Puerta De Entrada Blindada (ud)|Actuación Técnica|Carpintería|59000|ud
+DIV104|-Puerta Metálica Sencilla (ud)|Actuación Técnica|Carpintería|14500|ud
+DIV105|Puerta De Paso Interior (ud)|Actuación Técnica|Carpintería|27135|ud
+DIV106|Ajuste General De Puertas De Madera|Actuación Técnica|Carpintería|5000|ud
+DIV107|Ajuste De Puerta Metálica|Actuación Técnica|Carpintería|5000|ud
+DIV108|Ajuste De Puerta Grande Metálica|Actuación Técnica|Carpintería|18500|ud
+DIV109|Ajuste De Herrajes/Cierres En Carpintería De Aluminio|Actuación Técnica|Carpintería|5000|ud
+DIV110|Reposición De Herrajes, Manillas, Pomos, Tapajuntas|Actuación Técnica|Carpintería|5000|ud
+DIV111|Rejuntado De Mortero Fino-Rejuntado De Mortero Fino (m2)|Actuación Técnica|Adecuación Suelos|658|m2
+DIV112|Reparación/Suministro De Pavimento Flotante Sintético,Tarima, Parquet? (m²)|Actuación Técnica|Adecuación Suelos|4504|m2
+DIV113|Rodapié (ml)|Actuación Técnica|Adecuación Suelos|979|ml
+DIV114|Suministro E Instalación De Lona De Piscina (ud)|Actuación Técnica|Mobiliario|40000|ud
+DIV115|Pintura-Sup. Activo ? 90 m2|Actuación Técnica|Pintura|36000|ud
+DIV116|Pintura-90 m2 < Sup. Activo ? 150 m2|Actuación Técnica|Pintura|59500|ud
+DIV117|Pintura-150 m2 < Sup. Activo ? 500 m2|Actuación Técnica|Pintura|85000|ud
+DIV118|Pintura-Activos Singulares, Sup. Activo > 500 m2|Actuación Técnica|Pintura|214593|ud
+DIV119|Pintado De Zócalo (O Franja) En Garaje (m2)|Actuación Técnica|Pintura|811|m2
+DIV120|Pintado De Número En Plaza De Aparcamiento (ud)|Actuación Técnica|Pintura|700|ud
+DIV121|Cambio De Bombín O Cerradura De Seguridad Con Escudo Mauer|Actuación Técnica|Cambio De Cerradura|14386|ud
+DIV122|Cambio De Bombín, Cerradura Convencional O Candado|Actuación Técnica|Cambio De Cerradura|4400|ud
+DIV123|Cambio De Bombín O Cerradura De Seguridad|Actuación Técnica|Cambio De Cerradura|12700|ud
+DIV124|Copia Juego Completo De Llaves|Actuación Técnica|Copia De Llaves|5667|ud
+DIV125|Copia De Llave Cilindro Mauer O Cerradura Fac|Actuación Técnica|Copia De Llaves|700|ud
+DIV126|Copia De Llave Común|Actuación Técnica|Copia De Llaves|300|ud
+DIV127|Copia Mando / Tarjeta De Garaje|Actuación Técnica|Copia De Llaves|4500|ud
+DIV128|Copia De Llave Magnética|Actuación Técnica|Copia De Llaves|1500|ud
+DIV129|Copia De Llave Para Candado De Alta Seguridad|Actuación Técnica|Copia De Llaves|700|ud
+DIV130|Obtención De Llaves De Zonas Comunes|Actuación Técnica|Copia De Llaves|3900|ud
+DIV131|Cambio De Bombín O Cerradura De Seguridad Con Escudo Mauer -Coste 0 Euros|Actuación Técnica|Cambio De Cerradura|0|ud
+DIV132|Apertura De Cierre Manual O Motorizado (ud)|Actuación Técnica|Copia De Llaves|4000|ud
+DIV133|Tapado De Hueco En Paramento Vertical ( Fabrica O Pladur ) (m2)|Actuación Técnica|Albañilería|3100|m2
+DIV134|Tapado De Huecos Con Chapa Metálica Galvanizada (m2)|Actuación Técnica|Albañilería|3250|m2
+DIV135|Tapado De Hueco Con Tablero Hidrófugo (m2)|Actuación Técnica|Albañilería|4971|m2
+DIV136|Tapado De Hueco Con Policarbonato Compacto (m2)|Actuación Técnica|Albañilería|4500|m2
+DIV137|Tapado De Hueco Con Policarbonato Celular (m2)|Actuación Técnica|Albañilería|4117|m2
+DIV138|Tapado De Hueco Con Malla De Gallinero (m2)|Actuación Técnica|Albañilería|2000|m2
+DIV139|Tapado De Hueco Con Malla Antipájaros (m2)|Actuación Técnica|Albañilería|2000|m2
+DIV140|Tapado De Hueco Con Bloque De Hormigón (m2)|Actuación Técnica|Albañilería|5228|m2
+DIV141|Tapado De Hueco Con Fabrica De Ladrillo H/D Tabicón-(m2)|Actuación Técnica|Albañilería|3571|m2
+DIV142|Demolición Y/O Retirada De Tapados (m2)|Actuación Técnica|Albañilería|1800|m2
+DIV143|Tala O Arrancado De Árbol-Tala O Arrancado De Árbol (ud)|Actuación Técnica|Desbroce/Tala De Árboles|24500|ud
+DIV144|Acondicionamiento De Parcela-Sup. Activo ? 500 m2|Actuación Técnica|Desbroce/Tala De Árboles|43200|ud
+DIV145|Acondicionamiento De Parcela-500 m2 < Sup. Activo ? 2.000 m2|Actuación Técnica|Desbroce/Tala De Árboles|140000|ud
+DIV146|Acondicionamiento De Parcela-Sup. Activo > 2.000 m2|Actuación Técnica|Desbroce/Tala De Árboles|225000|ud
+DIV147|Limpieza Y Desbroce De Terreno-Sup. Activo ? 500 m2|Actuación Técnica|Desbroce/Tala De Árboles|58000|ud
+DIV148|Limpieza Y Desbroce De Terreno-500 m2 < Sup. Activo ? 2.000 m2|Actuación Técnica|Desbroce/Tala De Árboles|185000|ud
+DIV149|Limpieza Y Desbroce De Terreno-2.000 m2 < Sup. Activo ? 5.000 m2|Actuación Técnica|Desbroce/Tala De Árboles|330000|ud
+DIV150|Limpieza Y Desbroce De Terreno-5.000 m2 < Sup. Activo ? 10.000 m2|Actuación Técnica|Desbroce/Tala De Árboles|500000|ud
+DIV151|Limpieza Y Desbroce De Terreno-10.000 m2 < Sup. Activo ? 20.000 m2|Actuación Técnica|Desbroce/Tala De Árboles|750000|ud
+DIV152|Limpieza Y Desbroce De Terreno-20.000 m2 < Sup. Activo ? 30.000 m2|Actuación Técnica|Desbroce/Tala De Árboles|800000|ud
+DIV153|Limpieza Y Desbroce De Terreno-30.000 m2 < Sup. Activo ? 40.000 m2|Actuación Técnica|Desbroce/Tala De Árboles|900000|ud
+DIV154|Limpieza Y Desbroce De Terreno-40.000 m2 < Sup. Activo ? 50.000 m2|Actuación Técnica|Desbroce/Tala De Árboles|1000000|ud
+DIV155|Limpieza Y Desbroce De Terreno-Sup. Activo > 50.000 m2|Actuación Técnica|Desbroce/Tala De Árboles|1250000|ud
+DIV156|Vallado Móvil (ml)|Actuación Técnica|Vallado|1600|ml
+DIV157|Vallado Fijo (ml)|Actuación Técnica|Vallado|2278|ml
+DIV158|Reportaje Fotografico-Sup. Activo ? 90 m2|Obtención documentación|Fotografía|2000|ud
+DIV159|Reportaje Fotográfico-90 m2 < Sup. Activo ? 150 m2|Obtención documentación|Fotografía|2000|ud
+DIV160|Reportaje Fotográfico-150 m2 < Sup. Activo ? 500 m2|Obtención documentación|Fotografía|2500|ud
+DIV161|Reportaje Fotográfico-Activos Singulares, Sup. Activo > 500 m2|Obtención documentación|Fotografía|3000|ud
+DIV162|Suministro Cartel Ventana: Autoadhesivos Flexibles Interior ( Medidas 0,60 X 0,40 Mts )|Actuación Técnica|Cartelería|529|ud
+DIV163|Suministro Cartel Ventana: Autoadhesivos Flexibles Exterior ( Medidas 0,60 X 0,40 Mts )|Actuación Técnica|Cartelería|529|ud
+DIV164|Suministro Cartel Fachada: Autoadhesivos Flexibles Interior ( Medidas 1,20 X 0,80 Mts )|Actuación Técnica|Cartelería|990|ud
+DIV165|Suministro Cartel Fachada: Autoadhesivos Flexibles Interior  (Fuera De La Fachada )|Actuación Técnica|Cartelería|990|ud
+DIV166|Suministro Cartel Balcón: Semi-Rígidos De Pvc O Similar. ( Medidas 1.50 X 1,00 Mts )|Actuación Técnica|Cartelería|3622|ud
+DIV167|Suministro Cartel Balcón: Semi-Rígidos De Pvc O Similar. ( Medidas 2,00 X 1.50 Mts )|Actuación Técnica|Cartelería|6301|ud
+DIV168|Suministro Cartel Balcón: Semi-Rígidos De Pvc O Similar.  ( Medidas 3,00 X 2.00 Mts )|Actuación Técnica|Cartelería|14300|ud
+DIV169|Suministro Lonas: Tela, Pvc O Similar Medidas ( 5,00 X 1,00 Mts )-(Medidas 5,00 X 1,00 m)|Actuación Técnica|Cartelería|13508|ud
+DIV170|Suministro Lonas: Tela, Pvc O Similar Medidas ( 8,00 X 1,00 Mts )-(Medidas 8,00 X 1,00 m)|Actuación Técnica|Cartelería|14773|ud
+DIV171|Colocación Cartel Ventana: Autoadhesivo Flexibles Interior ( Medidas 0,60 X 0,40m)|Actuación Técnica|Cartelería|2074|ud
+DIV172|Colocación Cartel Ventana: Autoadhesivo Flexibles Exterior  ( Medidas 0,60 X 0,40m)|Actuación Técnica|Cartelería|2074|ud
+DIV173|Colocación Cartel Fachada: Autoadhesivo Flexibles Interior  ( Medidas 1,20 X 0,80m)|Actuación Técnica|Cartelería|2074|ud
+DIV174|Colocación Cartel Fachada: Autoadhesivo Flexibles Interior (Fuera De La Fachada )|Actuación Técnica|Cartelería|2074|ud
+DIV175|Colocación Cartel Balcón: Semi-Rígidos De Pvc O Similar. ( Medidas 1,50 X 1,00m)|Actuación Técnica|Cartelería|2074|ud
+DIV176|Retirada Cartel Balcón: Semi-Rígidos De Pvc O Similar  (Medidas 2,00 X 1,50 M.)|Actuación Técnica|Cartelería|2074|ud
+DIV177|Colocación Cartel Balcón: Semi-Rígidos De Pvc O Similar ( Medidas 3,00 X 2,00m)|Actuación Técnica|Cartelería|2074|ud
+DIV178|Colocación Lonas: Tela, Pvc, Similar ( Medidas 5,00 X 1,00m)|Actuación Técnica|Cartelería|6148|ud
+DIV179|Colocación Lonas: Tela, Pvc O Similar ( Medidas 8,00 X 1,00m)|Actuación Técnica|Cartelería|10248|ud
+DIV180|Colocación / Retirada Carteleria Para Activos De Suelo|Actuación Técnica|Cartelería|10000|ud
+DIV181|Retirada De Carteles Publicitarios, Rótulos O Similar Preexistentes-(ud)|Actuación Técnica|Cartelería|12000|ud
+DIV182|Acompañamiento A Tasador ( Tasación )-1 Activo|Obtención documentación|Acompañamiento|5000|ud
+DIV183|Acompañamiento A Tasador ( Tasación )-1 < Activos ? 5|Obtención documentación|Acompañamiento|13000|tramo
+DIV184|Acompañamiento A Tasador ( Tasación )-5 < Activos ? 15|Obtención documentación|Acompañamiento|20000|tramo
+DIV185|Acompañamiento A Tasador ( Tasación )-15 < Activos ? 50|Obtención documentación|Acompañamiento|30000|tramo
+DIV186|Acompañamiento A Tasador ( Tasación )-Activos > 50|Obtención documentación|Acompañamiento|40000|tramo
+DIV187|Acompañamiento A Tasador ( Cee )-1 Activo|Obtención documentación|Acompañamiento|5000|ud
+DIV188|Acompañamiento A Tasador ( Cee )-1 < Activos ? 5|Obtención documentación|Acompañamiento|13000|tramo
+DIV189|Acompañamiento A Tasador ( Cee )-5 < Activos ? 15|Obtención documentación|Acompañamiento|20000|tramo
+DIV190|Acompañamiento A Tasador ( Cee )-15 < Activos ? 50|Obtención documentación|Acompañamiento|30000|tramo
+DIV191|Acompañamiento A Tasador ( Cee )-Activos > 50|Obtención documentación|Acompañamiento|40000|tramo
+DIV192|Acompañamiento General A Terceros-1 Activo|Obtención documentación|Acompañamiento|5000|ud
+DIV193|Acompañamiento General A Terceros-1 < Activos ? 5|Obtención documentación|Acompañamiento|13000|tramo
+DIV194|Acompañamiento General A Terceros-5 < Activos ? 15|Obtención documentación|Acompañamiento|20000|tramo
+DIV195|Acompañamiento General A Terceros-15 < Activos ? 50|Obtención documentación|Acompañamiento|30000|tramo
+DIV196|Acompañamiento General A Terceros-Activos > 50|Obtención documentación|Acompañamiento|40000|tramo
+DIV197|Obtención De Boletines Y/O Certificado: Fontanería  ( 1 Activo )-1 Activo|Obtención documentación|Boletín Agua|12500|ud
+DIV198|Obtención De Boletines Y/O Certificado: Fontanería   ( De 2 A 15 Activos )-1 < Activos ? 15|Obtención documentación|Boletín Agua|96350|tramo
+DIV199|Obtención De Boletines Y O Certificado: Fontanería ( De 15 A 50 Activos )-15 < Activos ? 50|Obtención documentación|Boletín Agua|249813|tramo
+DIV200|Obtención De Boletines Y/O Certificado: Fontanería   ( Mas De 50 Activos )-Activos > 50|Obtención documentación|Boletín Agua|360000|tramo
+DIV201|Obtención De Boletines Y/O Certificado: Gas ( 1 Activo )-1 Activo|Obtención documentación|Boletín Gas|12889|ud
+DIV202|Obtención De Boletines Y/O Certificado: Gas ( De 2 A 15 Activos )-1 < Activos ? 15|Obtención documentación|Boletín Gas|90120|tramo
+DIV203|Obtención De Boletines Y/O Certificado: Gas ( De 15 A 50 Activos )-15 < Activos ? 50|Obtención documentación|Boletín Gas|248950|tramo
+DIV204|Obtención De Boletines Y/O Certificado: Gas ( Mas De 50 Activos )-Activos > 50|Obtención documentación|Boletín Gas|350000|tramo
+DIV205|Obtención De Boletines Y/O Certificado: Electricidad ( 1 Activo )-1 Activo|Obtención documentación|Boletín Electricidad|14551|ud
+DIV206|Obtención De Boletines Y/O Certificado: Electricidad ( De 2 A 15 Activos )-1 < Activos ? 15|Obtención documentación|Boletín Electricidad|105000|tramo
+DIV207|Obtención De Boletines Y/O Certificado: Electricidad ( De 15 A 50 Activos )-15 < Activos ? 50|Obtención documentación|Boletín Electricidad|250000|tramo
+DIV208|Obtención De Boletines Y/O Certificado: Electricidad ( Mas De 50 Activos )-Activos > 50|Obtención documentación|Boletín Electricidad|350000|tramo
+DIV209|Obtención De Boletines Y/O Certificado: Pci ( Garaje ) ( 1 Activo )-1 Activo|Obtención documentación|Obtención Certificados Y Documentación|15000|ud
+DIV210|Obtención De Boletines Y/O Certificado: Pci  (Garaje)   ( De 2 A 15  Activos ) -1 < Activos ? 15|Obtención documentación|Obtención Certificados Y Documentación|105000|tramo
+DIV211|Obtención De Boletines Y/O Certificado: Pci ( Garaje ) ( De 15 A 50 Activos )-15 < Activos ? 50|Obtención documentación|Obtención Certificados Y Documentación|250000|tramo
+DIV212|Obtención De Boletines Y O Certificado: Pci ( Garaje ) ( Mas De 50 Activos )-Activos > 50|Obtención documentación|Obtención Certificados Y Documentación|350000|tramo
+DIV213|Desmontaje Y Montaje De Aparatos Sanitarios ( Incluso Bañera O Plato De Ducha )|Actuación Técnica|Fontanería|6256|ud
+DIV214|Suministro E Instalación De Aparatos Sanitarios ( Incluso Bañera O Plato De Ducha )|Actuación Técnica|Fontanería|12500|ud
+DIV215|Reparación Puntual En Sanitario (ud)|Actuación Técnica|Fontanería|5000|ud
+DIV216|Sustitución De Elementos De Saneamiento (ud)|Actuación Técnica|Fontanería|6100|ud
+DIV217|Sellado De Sanitarios Con Silicona-Sup. Activo ? 90 m2|Actuación Técnica|Fontanería|3073|ud
+DIV218|Sellado De Sanitarios Con Silicona-90 m2 < Sup. Activo ? 150 m2|Actuación Técnica|Fontanería|4000|ud
+DIV219|Sellado De Sanitarios Con Silicona-150 m2 < Sup. Activo ? 500 m2|Actuación Técnica|Fontanería|3600|ud
+DIV220|Sellado De Sanitarios Con Silicona-Activos Singulares, Sup. Activo > 500 m2|Actuación Técnica|Fontanería|5600|ud
+DIV221|Desmontaje Y Montaje De Grifería (ud)|Actuación Técnica|Fontanería|2825|ud
+DIV222|Suministro E Instalación De Grifería(ud)|Actuación Técnica|Fontanería|7100|ud
+DIV223|Desmontaje Y Montaje De Radiador (ud)|Actuación Técnica|Fontanería|4100|ud
+DIV224|Suministro Y Colocación De Radiador (ud)|Actuación Técnica|Fontanería|10100|ud
+DIV225|Suministro E Instalación De Sumidero Sifonico De Pvc-(ud)|Actuación Técnica|Fontanería|5100|ud
+DIV226|Suministro Y Colocación De Rejilla Sumidero (ud)|Actuación Técnica|Fontanería|5000|ud
+DIV227|Reposición De Tapa De Bote Sifónico (ud)|Actuación Técnica|Fontanería|2870|ud
+DIV228|Suministro E Instalación De Barra De Ducha Y Teléfono-(ud)|Actuación Técnica|Fontanería|6680|ud
+DIV229|Suministro E Instalación De Tapón Cromado (ud)|Actuación Técnica|Fontanería|1377|ud
+DIV230|Suministro Y Colocación De Tapa De Wc O Bidé (ud)|Actuación Técnica|Fontanería|2900|ud
+DIV231|Sustitución De Mecanismo De Cisterna (ud)|Actuación Técnica|Fontanería|3726|ud
+DIV232|Sustitución De Puerta De Contador De Agua (ud)|Actuación Técnica|Fontanería|4900|ud
+DIV233|Suministro Y Colocación De Portarrollos / Toallero-(ud)|Actuación Técnica|Albañilería|3900|ud
+DIV234|Revisión De Caldera, Calentador Y/O Termo Eléctrico-(ud)|Actuación Técnica|Fontanería|11940|ud
+DIV235|Sustitución, Suministro Y Colocación De Calentador-(ud)|Actuación Técnica|Fontanería|28787|ud
+DIV236|Sustitución, Suministro Y Colocación De Termo Eléctrico-(ud)|Actuación Técnica|Fontanería|27775|ud
+DIV237|Sustitución, Suministro Y Colocación De Caldera-(ud)|Actuación Técnica|Fontanería|130000|ud
+DIV238|Punto: De Luz / De Electricidad / De Timbre / De Telefonillo-(ud)|Actuación Técnica|Electricidad|4000|ud
+DIV239|Suministro Y Colocación De Mecanismo De Interruptor-Con Placa Embellecedora Y Marco(ud)|Actuación Técnica|Electricidad|2000|ud
+DIV240|Suministro Y Colocación De Base Enchufe Con Toma De Tierra-(ud)|Actuación Técnica|Electricidad|3416|ud
+DIV241|Reparación De Punto De Luz O Enchufe (ud)|Actuación Técnica|Electricidad|3300|ud
+DIV242|Suministro Y Colocación De Conmutador (ud)|Actuación Técnica|Electricidad|3643|ud
+DIV243|Suministro Y Colocación De Emergencias De 150 Lúmenes(ud)|Actuación Técnica|Electricidad|5635|ud
+DIV244|Suministro Y Colocación De Termostato De Ambiente-(ud)|Actuación Técnica|Electricidad|5175|ud
+DIV245|Tapa Registro (ud)|Actuación Técnica|Electricidad|2000|ud
+DIV246|Revisión De Instalación Eléctrica En Vivienda-Sup. Activo ? 90 m2|Actuación Técnica|Electricidad|8500|ud
+DIV247|Revisión De Instalación Eléctrica En Vivienda-90 m2 < Sup. Activo ? 150 m2|Actuación Técnica|Electricidad|10000|ud
+DIV248|Revisión De Instalación Eléctrica En Vivienda-150 m2 < Sup. Activo ? 500 m2|Actuación Técnica|Electricidad|11500|ud
+DIV249|Revisión De Instalación Eléctrica En Vivienda-Activos Singulares, Sup. Activo > 500 m2|Actuación Técnica|Electricidad|24573|ud
+DIV250|Suministro Y Colocación De Diferencial-Suministro Y Colocación De Diferencial (ud)|Actuación Técnica|Electricidad|6440|ud
+DIV251|Suministro Y Colocación De Telefonillo En Vivienda- (ud)|Actuación Técnica|Electricidad|6440|ud
+DIV252|Suministro Y Colocación De Videoportero En Vivienda-(ud)|Actuación Técnica|Electricidad|52840|ud
+DIV253|Punto De Conexionado Para Futura Instalación De Telefonía-(ud)|Actuación Técnica|Electricidad|13359|ud
+DIV254|Reparación De Humedades (Hasta 15 m2)|Actuación Técnica|Albañilería|27155|ud
+DIV255|Acristalamiento De Luna Incolora Simple (m2)|Actuación Técnica|Cristalería|2492|m2
+DIV256|Sellado De Vidrio Con Silicona O Gomas (ml)|Actuación Técnica|Cristalería|690|ml
+DIV257|Sellado Exterior De Ventas / Balconeras De Carpintería(ml)|Actuación Técnica|Cristalería|690|ml
+DIV258|Ventana De Aluminio (ud)|Actuación Técnica|Cristalería|28060|ud
+DIV259|Candados De Alta Seguridad (ud)|Actuación Técnica|Cambio De Cerradura|6500|ud
+DIV260|Puerta Anti-Okupa (ud)|Actuación Técnica|Colocación puertas antiocupa|92500|ud
+DIV261|Puerta Blindada (ud)|Actuación Técnica|Carpintería|62200|ud
+DIV262|Puerta Metálica (ud)|Actuación Técnica|Carpintería|20000|ud
+DIV263|Ventana Anti-Okupa (m2)|Actuación Técnica|Carpintería|43367|m2
+DIV264|Rejas (m2)|Actuación Técnica|Carpintería|9500|m2
+DIV265|Vallado De Chapa Ciega (ml)|Actuación Técnica|Vallado|4361|ml
+DIV266|Malla De Simple Torsión (ml)|Actuación Técnica|Vallado|2363|ml
+DIV267|Malla Electrosoldada (m2)|Actuación Técnica|Vallado|2381|m2
+DIV268|Malla Electrosoldada De 5mm (m2)|Actuación Técnica|Vallado|2934|m2
+DIV269|Malla Electrosoldada De 5Mm Con Bastidor (m2)|Actuación Técnica|Vallado|3354|m2
+DIV270|Cadena De Acero Zincada (ml)|Actuación Técnica|Vallado|642|ml
+DIV271|Chapa De Acero Galvanizado (m2)|Actuación Técnica|Vallado|4500|m2
+DIV272|Pintado De Puerta Anti-Okupa (Fase Previa)|Actuación Técnica|Pintura|7000|ud
+DIV273|Pintado De Puerta Anti-Okupa (Fase Posterior)|Actuación Técnica|Pintura|11750|ud
+DIV274|Desmontaje Y Retirada De Puerta Anti-Okupa (ud)|Actuación Técnica|Carpintería|9475|ud
+DIV275|Desmontaje Y Retirada De Ventana Anti-Okupa (ud)|Actuación Técnica|Carpintería|8600|ud
+DIV276|Bloqueo De Accesos-Bloqueo De Accesos (ud)|Actuación Técnica|Aseguramiento De Accesos|4615|ud
+DIV277|Suministro Y Colocación De Sistema De Seguridad Para Evitar Acceso Y Ocupación De Plaza De Garaje|Actuación Técnica|Cepo Garaje|13292|ud
+DIV278|Trabajos De Soldadura (Pa)|Actuación Técnica|Albañilería|4000|ud
+DIV279|Cambio De Bombín O Cerradura De Seguridad (ud)|Actuación Técnica|Cambio De Cerradura|12700|ud
+DIV280|Revisión E Instalación De Aa-Sup. Activo ? 90 m2|Actuación Técnica|Electricidad|16970|ud
+DIV281|Revisión E Instalación De Aa-90 m2 < Sup. Activo ? 150 m2|Actuación Técnica|Electricidad|17725|ud
+DIV282|Revisión E Instalación De Aa-150 m2 < Sup. Activo ? 500 m2|Actuación Técnica|Electricidad|18000|ud
+DIV283|Revisión E Instalación De Aa-Activos Singulares, Sup. Activo > 500 m2|Actuación Técnica|Electricidad|32455|ud
+DIV284|Desmontaje De Barandillas/Rejas (m2)|Actuación Técnica|Albañilería|1026|m2
+DIV285|Suministro Y Montaje De Barandillas/Rejas (m2)|Actuación Técnica|Albañilería|9500|m2
+DIV286|Anclaje De Barandillas/Rejas (ud)|Actuación Técnica|Albañilería|4892|ud
+DIV287|Mantenimiento De Cerrajería Metálica (m2)|Actuación Técnica|Albañilería|1900|m2
+DIV288|Retiradas Especiales: Residuos Peligrosos, Inflamables, Tóxicos, Etc.|Actuación Técnica|Retirada De Enseres||
+DIV289|Siniestro|Actuación Técnica|Siniestro||
+DIV290|Retirada De Lonas: Tela, Pvc O Similar ( Medidas 5,00 X 1,00m)|Actuación Técnica|Cartelería|6148|ud
+DIV291|Retirada De Lonas: Tela, Pvc O Similar  ( Medidas 8,00 X 1,00m)|Actuación Técnica|Cartelería|10248|ud
+DIV292|Interposición Denuncia Vandalismo|Obtención documentación|Informes||
+DIV293|Retirada Cartel Balcón: Semi-Rígidos De Pvc O Similar (Medidas 1,50 X 1,00 m)|Actuación Técnica|Cartelería|2074|ud
+DIV294|Retirada Cartel Balcón: Semi-Rígidos De Pvc O Similar (Medidas 3,00 X 2,00 m)|Actuación Técnica|Cartelería|2074|ud
+DIV295|Retirada Cartel Fachada: Autoadhesivos Flexibles Int. (Fuera De La Fachada)(Medidas 1,20 X 0,80 m)|Actuación Técnica|Cartelería|2074|ud
+DIV296|Retirada Cartel Fachada: Autoadhesivos Flexibles Int. (Locales Comerciales)(Medidas 1,20 X 0,80 m)|Actuación Técnica|Cartelería|2074|ud
+DIV297|Retirada Cartel Ventana: Autoadhesivos Flexibles Interior (Medidas 0,60 X 0,40 m)|Actuación Técnica|Cartelería|2074|ud
+DIV298|Retirada Cartel Ventana: Autoadhesivos Flexibles Exterior (Medidas 0,60 X 0,40 m)|Actuación Técnica|Cartelería|2074|ud

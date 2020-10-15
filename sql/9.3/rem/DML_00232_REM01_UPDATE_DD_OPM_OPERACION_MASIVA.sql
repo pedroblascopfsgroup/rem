@@ -1,7 +1,7 @@
 --/*
 --#########################################
---## AUTOR=Lara Pablo
---## FECHA_CREACION=20200902
+--## AUTOR=Sergio Salt
+--## FECHA_CREACION=202001008
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11013
@@ -40,7 +40,7 @@ BEGIN
 	V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET 
 				  USUARIOMODIFICAR = '''||V_USUARIO||'''
 				, FECHAMODIFICAR = SYSDATE
-				, DD_OPM_VALIDACION_FORMATO = ''n*,s*,s*,i,i,s,i,i,i,i,i,s,s,s,n,s,s,s,n''
+				, DD_OPM_VALIDACION_FORMATO = ''n*,s*,i,s,i,i,s,i,i,i,i,i,s,s,s,n,s,s,s,n''
 				WHERE DD_OPM_CODIGO = ''CMMLD''
 				';
 

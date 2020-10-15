@@ -1371,8 +1371,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
        var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
        var isGestorActivos = $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']);
 	   var isGestorAlquiler = $AU.userGroupHasRole(CONST.PERFILES['GESTOR_ALQUILER_HPM']);
+	   var isUserGestedi = $AU.userIsRol(CONST.PERFILES['GESTEDI']);
 	   
-       return (!isSuper && !isGestorActivos && !isGestorAlquiler);
+       return (!isSuper && !isGestorActivos && !isGestorAlquiler && !isUserGestedi);
         					 
        
     }

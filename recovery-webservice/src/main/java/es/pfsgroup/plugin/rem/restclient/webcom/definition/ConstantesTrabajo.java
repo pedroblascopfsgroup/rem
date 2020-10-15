@@ -89,4 +89,6 @@ public class ConstantesTrabajo {
 	public static final String VALOR_BOL_NO = "No";
 	public static final String PROVEEDOR_CONTACTO ="Proveedor contacto";
 	public static final String COLUMNA_PROVEEDOR_CONTACTO ="PVC_ID";
+	public static final String PRIMERA_TOMA_POSESION ="Primera actuación Toma de posesión";
+	public static final String COLUMNA_PRIMERA_TOMA_POSESION ="TBJ_PRIM_TOMA_POS";
 }

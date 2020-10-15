@@ -351,29 +351,7 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 												}
 											}
 										]
-					           		},
-					           		{
-									   	xtype:'fieldsettable',
-										defaultType: 'textfieldbase',
-										colspan: 3,
-										hidden: false, 
-										title: HreRem.i18n("title.complemento.titulo"),
-										bind:{
-											//disabled:'{!saneamiento.noEstaInscrito}'
-										},
-										items :
-										[
-											{
-												xtype: "complementotitulogrid",
-												reference: "complementotitulogridref", 
-												colspan: 3,
-												bind:{
-													//disabled:'{!saneamiento.puedeEditarCalificacionNegativa}'
-												}
-												
-											}
-										]  	 
-									   }
+					           		}
 								]
 							
 							},

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin Arnal
---## FECHA_CREACION=20200905
+--## FECHA_CREACION=20201010
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10975
@@ -10,7 +10,8 @@
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - HREOS-10975
+--##        0.2 HREOS-11460 -- Añadimos OBRA
 --##########################################
 --*/
 
@@ -111,6 +112,7 @@ BEGIN
                 ,PRECIO_TARIFA              VARCHAR2(14 CHAR)
                 ,FECHA_INICIO_TARIFA        VARCHAR2(10 CHAR)
                 ,PROMOCION                  VARCHAR2(18 CHAR)
+		,OBRA	                    VARCHAR2(9 CHAR)
                 ,COD_ERROR_SAP              VARCHAR2(3 CHAR)
                 ,ERROR_SAP                  VARCHAR2(200 CHAR)
             )

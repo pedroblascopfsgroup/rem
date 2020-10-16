@@ -1638,6 +1638,26 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 							 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
 						}
 					}
+					
+					if(dtoTrabajo.getImportePresupuesto() != null) {
+						PresupuestoTrabajo presupuesto = new PresupuestoTrabajo();
+						DDEstadoPresupuesto estadoPresupuesto = genericDao.get(DDEstadoPresupuesto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "03"));
+						
+						presupuesto.setTrabajo(trabajo);
+						if(trabajo.getProveedorContacto() != null) {
+							presupuesto.setProveedorContacto(trabajo.getProveedorContacto());
+							presupuesto.setProveedor(trabajo.getProveedorContacto().getProveedor());
+						}
+						presupuesto.setFecha(new Date());
+						presupuesto.setEstadoPresupuesto(estadoPresupuesto);
+						presupuesto.setImporte(dtoTrabajo.getImportePresupuesto().floatValue());
+						if(dtoTrabajo.getRefImportePresupueso() != null) {
+							presupuesto.setRefPresupuestoProveedor(dtoTrabajo.getRefImportePresupueso());
+						}
+						
+						genericDao.save(PresupuestoTrabajo.class, presupuesto);
+					}
+					actualizarImporteTotalTrabajo(trabajo.getId());
 
 				}
 			}
@@ -1670,6 +1690,25 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
 					}
 				}
+				
+				if(dtoTrabajo.getImportePresupuesto() != null) {
+					PresupuestoTrabajo presupuesto = new PresupuestoTrabajo();
+					DDEstadoPresupuesto estadoPresupuesto = genericDao.get(DDEstadoPresupuesto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "03"));
+					
+					presupuesto.setTrabajo(trabajo);
+					if(trabajo.getProveedorContacto() != null) {
+						presupuesto.setProveedorContacto(trabajo.getProveedorContacto());
+						presupuesto.setProveedor(trabajo.getProveedorContacto().getProveedor());
+					}
+					presupuesto.setFecha(new Date());
+					presupuesto.setEstadoPresupuesto(estadoPresupuesto);
+					presupuesto.setImporte(dtoTrabajo.getImportePresupuesto().floatValue());
+					if(dtoTrabajo.getRefImportePresupueso() != null) {
+						presupuesto.setRefPresupuestoProveedor(dtoTrabajo.getRefImportePresupueso());
+					}
+					
+					genericDao.save(PresupuestoTrabajo.class, presupuesto);
+				}
 			}
 
 			participacionTotal = activotrabajoDao.getImporteParticipacionTotal(trabajo.getNumTrabajo());
@@ -1690,24 +1729,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				genericDao.update(ActivoTrabajo.class, activoTrabajoParaActualizar);
 			}
 			
-			if(dtoTrabajo.getImportePresupuesto() != null) {
-				PresupuestoTrabajo presupuesto = new PresupuestoTrabajo();
-				DDEstadoPresupuesto estadoPresupuesto = genericDao.get(DDEstadoPresupuesto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "03"));
-				
-				presupuesto.setTrabajo(trabajo);
-				if(trabajo.getProveedorContacto() != null) {
-					presupuesto.setProveedorContacto(trabajo.getProveedorContacto());
-					presupuesto.setProveedor(trabajo.getProveedorContacto().getProveedor());
-				}
-				presupuesto.setFecha(new Date());
-				presupuesto.setEstadoPresupuesto(estadoPresupuesto);
-				presupuesto.setImporte(dtoTrabajo.getImportePresupuesto().floatValue());
-				if(dtoTrabajo.getRefImportePresupueso() != null) {
-					presupuesto.setRefPresupuestoProveedor(dtoTrabajo.getRefImportePresupueso());
-				}
-				
-				genericDao.save(PresupuestoTrabajo.class, presupuesto);
-			}
 			actualizarImporteTotalTrabajo(trabajo.getId());
 
 		} catch (Exception e) {

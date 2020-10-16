@@ -38,6 +38,7 @@ import java.util.Properties;
 public class EmailAttachment extends HttpServlet {
 	private static final String FILE_NAME_PARAMETER = "file";
 	private static final String HOST_ENVIRONMENT_VAR_DEVON_DIRECTORY = "DEVON_HOME";
+	private static final String DEVON_PROPERTIES_FILE_NAME = "devon.properties";
 	private static final String FORM_USERNAME_NAME_PARAMETER = "username";
 	private static final String FORM_PASSWORD_NAME_PARAMETER = "password";
 
@@ -59,8 +60,7 @@ public class EmailAttachment extends HttpServlet {
 		beanFactory.autowireBean(this);
 
 		// Resource
-		String devonHome =  System.getProperty(HOST_ENVIRONMENT_VAR_DEVON_DIRECTORY);
-		File devonPropertiesFile = new File(devonHome);
+		File devonPropertiesFile = new File(this.getDevonPropertiesPath());
 		InputStream inputStream = null;
 		try {
 			inputStream = new FileInputStream(devonPropertiesFile);
@@ -77,6 +77,27 @@ public class EmailAttachment extends HttpServlet {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Este método obtiene la ruta física del archivo devon.properties en el servidor.
+	 *
+	 * @return Devuelve un literal con la ruta física del archivo devon.properties.
+	 */
+	private String getDevonPropertiesPath() {
+		String devonHomeEnv = System.getenv(HOST_ENVIRONMENT_VAR_DEVON_DIRECTORY);
+
+		if (!devonHomeEnv.startsWith(File.separator)) {
+			devonHomeEnv = File.separator.concat(devonHomeEnv);
+		}
+
+		if (!devonHomeEnv.endsWith(File.separator)) {
+			devonHomeEnv = devonHomeEnv.concat(File.separator);
+		}
+
+		devonHomeEnv = devonHomeEnv.concat(DEVON_PROPERTIES_FILE_NAME);
+
+		return devonHomeEnv;
 	}
 
 	/**

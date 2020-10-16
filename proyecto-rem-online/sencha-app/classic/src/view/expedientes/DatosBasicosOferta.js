@@ -518,7 +518,7 @@ recordClass: "HreRem.model.DatosBasicosOferta",
 							handler : 'onClickGenerarListadoDeActivos',
 							margin : '10 10 10 10'
 
-						},{
+						}, {
 							xtype : 'button',
 							reference : 'btngenerarfichacomercial',
 							bind : {

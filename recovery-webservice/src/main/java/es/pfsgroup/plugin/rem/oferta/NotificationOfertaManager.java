@@ -638,8 +638,6 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 
 		mailsCC.add(buzonPfs.getEmail());
 		
-		mailsPara.add("juan.sanchez@pfsgroup.es");
-		
 		if(!mailsPara.isEmpty()) {
 		
 			String asunto = "Ficha comercial de la oferta " + oferta.getNumOferta();
@@ -655,7 +653,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			dtoSendNotificator.setNumActivo(activo.getNumActivo());
 			dtoSendNotificator.setDireccion(activo.getDireccionCompleta());
 			
-			String cuerpoMail = generateBody(dtoSendNotificator,cuerpo);
+			String cuerpoMail = generateBodyMailFichaComercial(dtoSendNotificator,cuerpo,base);
 			
 			genericAdapter.sendMail(mailsPara, mailsCC, asunto, cuerpoMail,adjuntos);
 			

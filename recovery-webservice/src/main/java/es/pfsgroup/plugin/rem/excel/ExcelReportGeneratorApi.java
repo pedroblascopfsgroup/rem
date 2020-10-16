@@ -36,4 +36,5 @@ public interface ExcelReportGeneratorApi {
 	
 	public String generateBbvaReport(DtoExcelFichaComercial dtoExcelFichaComercial, HttpServletRequest request) throws IOException;
 
+
 }

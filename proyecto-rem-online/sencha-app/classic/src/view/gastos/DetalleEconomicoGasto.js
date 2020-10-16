@@ -340,7 +340,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 												    value: '{detalleeconomico.destinatariosPagoCodigo}',
 												    allowBlank: '{!importeRecargoVacio}'
 
-												},
+												}, 
 												allowBlank: true,
 												colspan: 2
 											},

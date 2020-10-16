@@ -497,11 +497,12 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	},
 	
 	onChangeFechaPago: function(field, value){
-		
 		var me= this,
-		fieldImportePagado = me.lookupReference('detalleEconomicoImportePagado'),
-		importePagado = Ext.isEmpty(value) ? 0 : me.getViewModel().get("calcularImporteTotalGasto");
-		fieldImportePagado.setValue(importePagado);
+		fieldImportePagado = me.lookupReference('detalleEconomicoImportePagado');
+		var valFechaPago = me.lookupReference('fechaPago').getValue();
+		if(!Ext.isEmpty(valFechaPago)){
+			fieldImportePagado.setValue(me.calcularImportePagadoTotalGasto());
+		}
 	},
 	
 	onChangeImporteTotal: function(field, value) {
@@ -2061,6 +2062,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var tipoImpositivo = me.lookupReference('tipoImpositivoIRPFImpD').getValue();
     	var base = me.lookupReference('baseIRPFImpD').getValue();
     	var cuotaRetG = me.lookupReference('cuotaIRPFRetG').getValue();
+    	var valFechaPago = me.lookupReference('fechaPago').getValue();
     	var cuota = 0;
  
     	if(tipoImpositivo != null && base != null){
@@ -2076,15 +2078,17 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		if(cuotaRetG != null && cuotaRetG != undefined){
 			importeTotal = importeTotal - cuotaRetG;
 		}
-		
-		me.lookupReference('importeTotalGastoDetalle').setValue(importeTotal);	 
+		me.lookupReference('importeTotalGastoDetalle').setValue(importeTotal);
+		if(!Ext.isEmpty(valFechaPago)){
+			me.lookupReference('detalleEconomicoImportePagado').setValue(importeTotal);
+    	}
     },
     
     getImporteTotalLineasDetalle: function(me){
     	var importeTotal = 0;
     	if(me.lookupReference('lineaDetalleGastoGrid').getStore() != null && me.lookupReference('lineaDetalleGastoGrid').getStore() != undefined){
     		for(var i = 0; i < me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items.length; i++){
-    			importeTotal+= me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('importeTotal');
+    			importeTotal+= parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('importeTotal'));
     		}
     	}
     	
@@ -2460,5 +2464,29 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     			gridT.down('[itemId=removeButton]').setHidden(record.data.lineasNoDeTrabajos);
     		}
     	}
-    }
+    },
+	
+	calcularImportePagadoTotalGasto: function(){
+		var me = this;
+    	var tipoImpositivo = me.lookupReference('tipoImpositivoIRPFImpD').getValue();
+    	var base = me.lookupReference('baseIRPFImpD').getValue();
+    	var cuotaRetG = me.lookupReference('cuotaIRPFRetG').getValue();
+    	var cuota = 0;
+ 
+    	if(tipoImpositivo != null && base != null){
+    		cuota = (tipoImpositivo * base)/100;
+    	}
+    	
+    	me.lookupReference('cuotaIRPFImpD').setValue(cuota);
+    	
+    	var importeTotal = me.getImporteTotalLineasDetalle(me);
+    	
+		importeTotal = importeTotal - parseFloat(cuota);
+		 
+		if(cuotaRetG != null && cuotaRetG != undefined){
+			importeTotal = importeTotal - parseFloat(cuotaRetG);
+		}
+		
+		return importeTotal;
+	}
 });

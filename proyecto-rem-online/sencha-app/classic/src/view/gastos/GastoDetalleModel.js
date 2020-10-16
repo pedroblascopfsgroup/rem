@@ -181,7 +181,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 		},
 
 		calcularImporteTotalGasto : function(get) {
-
 			var irpfCuota = get('detalleeconomico.irpfCuota');
 			var sumatorioConceptosGasto = get('sumatorioConceptosgasto');
 

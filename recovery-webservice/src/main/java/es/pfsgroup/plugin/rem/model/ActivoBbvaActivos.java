@@ -51,7 +51,7 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
     private Activo activo;
 	
     @Column(name = "BBVA_NUM_ACTIVO")
-    private Long numActivoBbva;
+    private String numActivoBbva;
     
 	@Column(name = "BBVA_ID_DIVARIAN")
 	private Long idDivarianBbva;
@@ -128,11 +128,11 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 		this.activo = activo;
 	}
 
-	public Long getNumActivoBbva() {
+	public String getNumActivoBbva() {
 		return numActivoBbva;
 	}
 
-	public void setNumActivoBbva(Long numActivoBbva) {
+	public void setNumActivoBbva(String numActivoBbva) {
 		this.numActivoBbva = numActivoBbva;
 	}
 

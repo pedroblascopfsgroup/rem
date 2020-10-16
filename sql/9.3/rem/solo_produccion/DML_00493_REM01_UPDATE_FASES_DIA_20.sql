@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=VIOREL REMUS OVIDIU
---## FECHA_CREACION=20201016
+--## FECHA_CREACION=20201017
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-7885
@@ -35,7 +35,8 @@ BEGIN
     V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_HFP_HIST_FASES_PUB T1 
     	       USING(SELECT HFP_ID FROM REM01.AUX_REMVIP_7885_1 WHERE HFP_TIPO = 1) T2
                 ON (T1.HFP_ID = T2.HFP_ID)
-            WHEN MATCHED THEN UPDATE SET		 		   		     
+            WHEN MATCHED THEN UPDATE SET 
+	    T1.BORRADO = 1,		 		   		     
             T1.FECHABORRAR = SYSDATE,
             T1.USUARIOBORRAR = ''REMVIP_7885_11'' ';
 
@@ -49,7 +50,8 @@ BEGIN
        V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_HFP_HIST_FASES_PUB T1 
     	       USING(SELECT HFP_ID FROM REM01.AUX_REMVIP_7885_1 WHERE HFP_TIPO = 2) T2
                 ON (T1.HFP_ID = T2.HFP_ID)
-            WHEN MATCHED THEN UPDATE SET		 		   		     
+            WHEN MATCHED THEN UPDATE SET
+	    T1.BORRADO = 1,		 		   		     
             T1.FECHABORRAR = SYSDATE,
             T1.USUARIOBORRAR = ''REMVIP_7885_12'' ';
             

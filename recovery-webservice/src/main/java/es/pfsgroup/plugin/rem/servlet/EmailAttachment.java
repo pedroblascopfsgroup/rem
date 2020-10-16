@@ -37,6 +37,7 @@ import java.util.Properties;
  */
 public class EmailAttachment extends HttpServlet {
 	private static final String FILE_NAME_PARAMETER = "file";
+	private static final String HOST_ENVIRONMENT_VAR_DEVON_DIRECTORY = "DEVON_HOME";
 	private static final String FORM_USERNAME_NAME_PARAMETER = "username";
 	private static final String FORM_PASSWORD_NAME_PARAMETER = "password";
 
@@ -58,7 +59,8 @@ public class EmailAttachment extends HttpServlet {
 		beanFactory.autowireBean(this);
 
 		// Resource
-		File devonPropertiesFile = new File("/recovery/app-server/devon.properties");
+		String devonHome =  System.getProperty(HOST_ENVIRONMENT_VAR_DEVON_DIRECTORY);
+		File devonPropertiesFile = new File(devonHome);
 		InputStream inputStream = null;
 		try {
 			inputStream = new FileInputStream(devonPropertiesFile);

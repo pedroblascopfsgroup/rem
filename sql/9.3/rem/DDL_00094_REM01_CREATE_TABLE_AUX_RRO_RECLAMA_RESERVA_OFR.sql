@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Josep Ros
---## FECHA_CREACION=20201008
+--## FECHA_CREACION=20201016
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11532

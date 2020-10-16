@@ -2737,6 +2737,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.habilitarCampo(me.down('[name=fechaIngreso]'));
 	        me.down('[name=fechaIngreso]').allowBlank = false;
 	        me.down('[name=fechaIngreso]').validate();
+		}else if(CONST.CARTERA['BBVA'] == codigoCartera){
+			me.down('[name=fechaIngreso]').allowBlank = false;
 		}
 
 		me.down('[name=checkboxVentaDirecta]').addListener('change', function(checkbox, newValue, oldValue, eOpts) {

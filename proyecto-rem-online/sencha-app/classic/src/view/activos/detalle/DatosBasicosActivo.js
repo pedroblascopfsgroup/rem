@@ -344,7 +344,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype:'textfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.activobbva.lineaFactura'),
 								bind: {
-									readOnly : '{esUA}',
+									readOnly : '{esUaSinImportarEstado}',
 									value: '{activo.lineaFactura}'
 								}
 							},

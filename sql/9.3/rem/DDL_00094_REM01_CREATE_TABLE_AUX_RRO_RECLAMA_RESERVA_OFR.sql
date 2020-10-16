@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Josep Ros
---## FECHA_CREACION=20201008
+--## FECHA_CREACION=20201017
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11532
@@ -44,8 +44,15 @@ BEGIN
 
 -- Verificar si la tabla ya existe
 V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
-EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
-IF V_NUM_TABLAS = 0 THEN
+EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+
+
+IF V_NUM_TABLAS = 1 THEN
+V_MSQL := 'DROP TABLE ' || V_ESQUEMA || '.'||V_TEXT_TABLA;
+                EXECUTE IMMEDIATE V_MSQL;
+DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'... Eliminada.');
+END IF;
+
 	-- Creamos la tabla
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
 	V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
@@ -116,10 +123,6 @@ IF V_NUM_TABLAS = 0 THEN
                         EXECUTE IMMEDIATE V_MSQL;
                         DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna FECHA_RATIFICACION creado.');
 
-ELSE
-DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'... Ya existe.');
-END IF;
-
 	COMMIT;
 
 
@@ -141,4 +144,3 @@ END;
 /
 
 EXIT;
-

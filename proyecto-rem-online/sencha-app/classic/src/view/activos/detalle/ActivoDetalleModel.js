@@ -820,6 +820,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				vendido = me.get('activo.isVendidoOEntramite');
 			return (vendido === true || esUA === true);
 		},
+		esUaSinImportarEstado: function(){
+			var me = this; 
+			var esUA = false;
+			
+			if(me.get('activo.unidadAlquilable') != undefined){
+				esUA = me.get('activo.unidadAlquilable');
+			}
+			
+			return esUA === true;
+		},
 		
 		editableTipoActivo: function(get){
 			//No se podrán editar las coordenadas de latitud y longitud si se trata de una UA

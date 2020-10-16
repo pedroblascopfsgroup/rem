@@ -413,8 +413,8 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 			    					},
 	
 			    				    listeners : [
-			    				    	{rowdblclick: 'onPresupuestosListDobleClick',
-			    				    	 rowclick: 'onPresupuestosListClick'
+			    				    	{rowdblclick: 'onPresupuestosListDobleClick'
+			    				    	 //rowclick: 'onPresupuestosListClick'
 			    				    	}
 			    				    ],
 			    				    saveSuccessFn: function () {

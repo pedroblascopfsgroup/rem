@@ -45,7 +45,7 @@ public class DtoActivosFichaComercial extends WebDto {
 	BigDecimal costesLegales;
 	BigDecimal ofertaNeta;
 	String link;
-	Long activoBbva;
+	String activoBbva;
 	
 	String tipoEntrada;
 	String depuracionJuridica;
@@ -256,10 +256,10 @@ public class DtoActivosFichaComercial extends WebDto {
 	public void setLink(String link) {
 		this.link = link;
 	}
-	public Long getActivoBbva() {
+	public String getActivoBbva() {
 		return activoBbva;
 	}
-	public void setActivoBbva(Long activoBbva) {
+	public void setActivoBbva(String activoBbva) {
 		this.activoBbva = activoBbva;
 	}
 	public String getTipoEntrada() {

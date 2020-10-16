@@ -450,7 +450,7 @@ public class TabActivoSaneamiento implements TabActivoService{
 				
 			}
 			if (activoDto.getFechaEntregaTituloGestAdicional() != null) {
-				actTituloAdicional.setFechaEntregaTitulo(activoDto.getFechaInscriptionRegistroAdicional());
+				actTituloAdicional.setFechaEntregaTitulo(activoDto.getFechaEntregaTituloGestAdicional());
 			}
 			if(activoDto.getFechaRetiradaDefinitivaRegAdicional() != null) {
 				actTituloAdicional.setFechaRetiradaReg(activoDto.getFechaRetiradaDefinitivaRegAdicional());

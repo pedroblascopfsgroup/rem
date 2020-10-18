@@ -236,7 +236,10 @@ Ext.define('HreRem.model.BusquedaActivoGrid', {
         	},
             {
                 name:'equipoGestion'
-            }
+            },
+			{
+				name: 'codPromocionBbva'
+			}
 	    		
     ],
     

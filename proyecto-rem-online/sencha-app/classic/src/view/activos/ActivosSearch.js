@@ -668,15 +668,19 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							    			store: '{comboSiNoRem}'
 							    		}
 							    	},
-                                        {
-                                            xtype: 'comboboxfieldbase',
-                                            fieldLabel: HreRem.i18n('fieldlabel.tipo.equipo.gestion'),
-                                            name: 'equipoGestion',
-                                            reference: 'equipoGestionRef',
-                                            bind: {
-                                                store: '{comboEquipoGestion}'
-                                            }
+                                    {
+                                        xtype: 'comboboxfieldbase',
+                                        fieldLabel: HreRem.i18n('fieldlabel.tipo.equipo.gestion'),
+                                        name: 'equipoGestion',
+                                        reference: 'equipoGestionRef',
+                                        bind: {
+                                            store: '{comboEquipoGestion}'
                                         }
+                                    },
+							        {
+							        	fieldLabel: HreRem.i18n('fieldlabel.activobbva.codPromocionBbva'),
+							        	name: 'codPromocionBbva'
+							        }
 								]
 			            }
 		            ]}

@@ -86,6 +86,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoRegistralActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDPromocionBBVA;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -1005,6 +1006,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setIdOrigenHre(activoBbva.getIdOrigenHre());
 			activoDto.setUicBbva(activoBbva.getUicBbva());
 			activoDto.setCexperBbva(activoBbva.getCexperBbva());
+			if(activoBbva.getPromocion() != null)
+				activoDto.setCodPromocionBbva(activoBbva.getPromocion().getDescripcion());
 		}
 		
 		return activoDto;
@@ -1531,15 +1534,26 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				activoDao.save(activo);
 			}
 			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
+			if(activoBbva != null) {
+				if(dto.getCodPromocionBbva() != null) {
+					DDPromocionBBVA pbb = genericDao.get(DDPromocionBBVA.class, genericDao.createFilter(FilterType.EQUALS, "descripcion", dto.getCodPromocionBbva()));
+					if(pbb != null) {
+						activoBbva.setPromocion(pbb);
+					}else {
+						throw new JsonViewerException("La Promoción con código \""+dto.getCodPromocionBbva()+"\" no existe.");
+					}
+				}else {
+					activoBbva.setPromocion(null);
+				}
+			}
 			if (dto.getTipoTransmisionCodigo() != null || dto.getTipoAltaCodigo() != null || dto.getActivoEpa() != null ||
 				dto.getEmpresa() != null || dto.getOficina() !=  null || dto.getContrapartida() != null ||
 				dto.getFolio() != null || dto.getCdpen() != null || dto.getNumActivoBbva() != null ||
 				dto.getIdDivarianBbva() !=  null || dto.getLineaFactura() != null || dto.getIdOrigenHre() != null ||
-				dto.getUicBbva() != null || dto.getCexperBbva() !=  null	
+				dto.getUicBbva() != null || dto.getCexperBbva() !=  null
 			) {
-				
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-				ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
 				
 				if (activoBbva != null) {
 					if (dto.getTipoTransmisionCodigo() != null) {

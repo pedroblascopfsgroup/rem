@@ -1028,6 +1028,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			
 			return false;
 		},
+
+		isGestorOSupervisorAdmisionAndSuper: function(){
+			return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) ||  $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']);
+			
+		},
+
 		isGestorAdmisionAndSuperComboTipoAltaBlo: function(get){
 			var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) 
 			|| $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) 

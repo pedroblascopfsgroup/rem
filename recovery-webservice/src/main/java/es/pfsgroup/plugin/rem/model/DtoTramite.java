@@ -97,6 +97,10 @@ public class DtoTramite extends WebDto {
 	
 	private Boolean esTareaSolicitudOAutorizacion;
 	
+	private Boolean esGestorAutorizado;
+	
+	private Boolean estaEnTareaReserva;
+	
 	
 	public Long getIdTramite() {
 		return idTramite;
@@ -440,5 +444,21 @@ public class DtoTramite extends WebDto {
 
 	public void setEsTareaSolicitudOAutorizacion(Boolean esTareaSolicitudOAutorizacion) {
 		this.esTareaSolicitudOAutorizacion = esTareaSolicitudOAutorizacion;
+	}
+
+	public Boolean getEsGestorAutorizado() {
+		return esGestorAutorizado;
+	}
+
+	public void setEsGestorAutorizado(Boolean esGestorAutorizado) {
+		this.esGestorAutorizado = esGestorAutorizado;
+	}
+
+	public Boolean getEstaEnTareaReserva() {
+		return estaEnTareaReserva;
+	}
+
+	public void setEstaEnTareaReserva(Boolean estaEnTareaReserva) {
+		this.estaEnTareaReserva = estaEnTareaReserva;
 	}
 }

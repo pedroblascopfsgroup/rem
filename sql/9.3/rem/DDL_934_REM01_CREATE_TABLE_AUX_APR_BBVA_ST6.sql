@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin Arnal
---## FECHA_CREACION=20201010
+--## FECHA_CREACION=20201011
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10975
@@ -108,7 +108,7 @@ BEGIN
                 ,REST_IDUFIR_1              VARCHAR2(225 CHAR)
                 ,REST_IDUFIR_2              VARCHAR2(225 CHAR)
                 ,PROCEDENCIA_LEASING        VARCHAR2(2 CHAR)
-                ,SIT_COMERCIAL              VARCHAR2(15 CHAR)
+                ,SIT_COMERCIAL              VARCHAR2(24 CHAR)
                 ,PRECIO_TARIFA              VARCHAR2(14 CHAR)
                 ,FECHA_INICIO_TARIFA        VARCHAR2(10 CHAR)
                 ,PROMOCION                  VARCHAR2(18 CHAR)

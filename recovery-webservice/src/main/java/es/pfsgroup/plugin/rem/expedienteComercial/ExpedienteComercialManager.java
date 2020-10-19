@@ -11383,6 +11383,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (activosExpediente != null && !activosExpediente.isEmpty()) {
 			for (ActivoOferta activoOferta: activosExpediente) {
 				
+				DtoActivosAlquiladosGrid dto = new DtoActivosAlquiladosGrid();
+				
+				dto.setId(activoOferta.getPrimaryKey().getActivo().getId());
+				dto.setNumActivo(activoOferta.getPrimaryKey().getActivo().getNumActivo());
+				dto.setSubTipoActivo(activoOferta.getPrimaryKey().getActivo().getSituacionComercial().getDescripcion());
+				dto.setMunicipio(activoOferta.getPrimaryKey().getActivo().getMunicipio());
+				dto.setDireccion(activoOferta.getPrimaryKey().getActivo().getDireccion());
+				
 				Long a = activoOferta.getPrimaryKey().getActivo().getId();
 				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activoAlq.id", a);
 				ActivosAlquilados activoAlquilado = genericDao.get(ActivosAlquilados.class, filtroActivo);
@@ -11391,14 +11399,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						&& activoAlquilado.getActivoAlq().getSituacionPosesoria().getOcupado() == 1 
 						&& activoAlquilado.getActivoAlq().getSituacionPosesoria().getConTitulo() != null 
 						&& DDTipoTituloActivoTPA.tipoTituloSi.contentEquals(activoAlquilado.getActivoAlq().getSituacionPosesoria().getConTitulo().getCodigo())){
-					DtoActivosAlquiladosGrid dto = new DtoActivosAlquiladosGrid();
-					dto.setId(activoOferta.getPrimaryKey().getActivo().getId());
-					dto.setNumActivo(activoOferta.getPrimaryKey().getActivo().getNumActivo());
-					dto.setSubTipoActivo(activoOferta.getPrimaryKey().getActivo().getSituacionComercial().getDescripcion());
-					dto.setMunicipio(activoOferta.getPrimaryKey().getActivo().getMunicipio());
-					dto.setDireccion(activoOferta.getPrimaryKey().getActivo().getDireccion());
+
 					dto.setRentaMensual(activoAlquilado.getAlqRentaMensual());
 					dto.setDeudaActual(activoAlquilado.getAlqDeudaActual());
+					
 					if (activoAlquilado.getAlqDeudas() == 1) {
 						dto.setConDeudas("Si");
 					} else {
@@ -11414,12 +11418,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					} else {
 						dto.setOfertante("No");
 					}
+					
 					dto.setFechaFinContrato(activoAlquilado.getAlqFechaFin());
+					
 					if (estadoExpediente != null && estadoExpediente.getCodigo() != null) {
 						dto.setEstadoExpediente(estadoExpediente.getCodigo());
 					}
-					dtoActivosAlquilados.add(dto);
+					
 				}
+				dtoActivosAlquilados.add(dto);
 			}
 		}
 		return dtoActivosAlquilados;

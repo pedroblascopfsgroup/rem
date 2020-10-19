@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo
---## FECHA_CREACION=20201015
+--## FECHA_CREACION=20201019
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11619
@@ -37,22 +37,22 @@ DECLARE
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
     --			USU_USERNAME			CODIGO PERFIL
-	  T_FUNCION('smoya',	'HAYASUPER'),
+      T_FUNCION('biglesias',	'HAYAADM'),
+	  T_FUNCION('biglesias',	'HAYASADM'),
+	  T_FUNCION('biglesias',	'HAYAGESTFORMADM'),
+    
       T_FUNCION('smoya',	'HAYAADM'),
 	  T_FUNCION('smoya',	'HAYASADM'),
 	  T_FUNCION('smoya',	'HAYAGESTFORMADM'),
 	  
-	  T_FUNCION('lcano',	'HAYASUPER'),
 	  T_FUNCION('lcano',	'HAYAADM'),
 	  T_FUNCION('lcano',	'HAYASADM'),
 	  T_FUNCION('lcano',	'HAYAGESTFORMADM'),
 	  
-	  T_FUNCION('le.adelgado',	'HAYASUPER'),
 	  T_FUNCION('le.adelgado',	'HAYAADM'),
 	  T_FUNCION('le.adelgado',	'HAYASADM'),
 	  T_FUNCION('le.adelgado',	'HAYAGESTFORMADM'),
 	  
-	  T_FUNCION('eluqu',	'HAYASUPER'),
 	  T_FUNCION('eluqu',	'HAYAADM'),
 	  T_FUNCION('eluqu',	'HAYASADM'),
 	  T_FUNCION('eluqu',	'HAYAGESTFORMADM')

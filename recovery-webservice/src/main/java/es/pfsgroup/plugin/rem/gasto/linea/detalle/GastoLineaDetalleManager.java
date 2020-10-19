@@ -460,9 +460,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			Filter filtroSubtipoGasto= genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.id", subtipoGasto.getId());
 			Filter filtroCartera= genericDao.createFilter(FilterType.NULL, "cartera");
 			Filter filtroSubcartera= genericDao.createFilter(FilterType.NULL, "subCartera.id");
-			Filter filtroCuentaArrendamiento= genericDao.createFilter(FilterType.EQUALS, "arrendamiento", 1);
-			Filter filtroCuentaNoArrendamiento= genericDao.createFilter(FilterType.EQUALS, "arrendamiento", 0);
-			
+			Filter filtroCuentaArrendamiento= genericDao.createFilter(FilterType.EQUALS, "arrendamiento", 0);			
 			
 			int filtrarRefacturar = 0;
 			if(gastoProveedorApi.esGastoRefacturable(gasto)) {
@@ -515,6 +513,9 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			}
 			if(idLineaDetalleGasto != null) {
 				todosActivoAlquilados = this.estanTodosActivosAlquilados(idLineaDetalleGasto); 
+				if(todosActivoAlquilados) {
+					filtroCuentaArrendamiento= genericDao.createFilter(FilterType.EQUALS, "arrendamiento", 1);
+				}
 				GastoLineaDetalle gastoLineaDetalle = getLineaDetalleByIdLinea(idLineaDetalleGasto);
 				if(gastoLineaDetalle != null) {
 					DDSubcartera subcartera  = this.getSubcarteraLinea(gastoLineaDetalle);
@@ -531,66 +532,26 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			}
 				
 			List<ActivoConfiguracionPtdasPrep> partidaArrendadaList = null;
-			List<ActivoConfiguracionPtdasPrep> partidaNoArrendadaList = null;
 			
-			
-			partidaArrendadaList = genericDao.getList(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroPropietario,filtroCuentaArrendamiento, filtroRefacturablePP, planVisitasCpp,activableCpp,tipoComisionadoCpp, tipoActivoBDE, cppvendido);
-			partidaNoArrendadaList = genericDao.getList(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroPropietario,filtroCuentaNoArrendamiento , filtroRefacturablePP, planVisitasCpp,activableCpp,tipoComisionadoCpp, tipoActivoBDE, cppvendido);
+			partidaArrendadaList = genericDao.getList(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroPropietario,filtroCartera, filtroSubcartera, filtroCuentaArrendamiento, filtroRefacturablePP, planVisitasCpp,activableCpp,tipoComisionadoCpp, tipoActivoBDE, cppvendido);
 				
-			if(partidaArrendadaList.isEmpty() && partidaNoArrendadaList.isEmpty()) {
-				partidaArrendadaList = genericDao.getList(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto, filtroCartera,filtroSubcartera,filtroCuentaArrendamiento, filtroRefacturablePP, planVisitasCpp,activableCpp,tipoComisionadoCpp, tipoActivoBDE, cppvendido);
-				partidaNoArrendadaList = genericDao.getList(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto, filtroCartera,filtroSubcartera,filtroCuentaNoArrendamiento , filtroRefacturablePP, planVisitasCpp,activableCpp,tipoComisionadoCpp, tipoActivoBDE, cppvendido);
-				if(partidaArrendadaList.isEmpty() && partidaNoArrendadaList.isEmpty()) {
-					partidaArrendadaList = genericDao.getList(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto, filtroCartera,filtroCuentaArrendamiento, filtroRefacturablePP, planVisitasCpp,activableCpp,tipoComisionadoCpp, tipoActivoBDE, cppvendido);
-					partidaNoArrendadaList = genericDao.getList(ActivoConfiguracionPtdasPrep.class, filtroEjercicioCuentaContable,filtroSubtipoGasto, filtroCartera,filtroCuentaNoArrendamiento , filtroRefacturablePP, planVisitasCpp,activableCpp,tipoComisionadoCpp, tipoActivoBDE, cppvendido);
-				}
-			}
-			
-			
 			List<ActivoConfiguracionPtdasPrep> partidaArrendadaFinales = elegirPartidasByPrincipales(partidaArrendadaList);
-			List<ActivoConfiguracionPtdasPrep> partidaNoArrendadaFinales = elegirPartidasByPrincipales(partidaNoArrendadaList);
-			if(!partidaArrendadaFinales.isEmpty() || !partidaNoArrendadaFinales.isEmpty()){
-				if(!todosActivoAlquilados && !partidaNoArrendadaFinales.isEmpty()){
-					for (ActivoConfiguracionPtdasPrep partidaNoArrendada : partidaArrendadaFinales) {
-						setPartidasPresupuestarias(dtoLineaDetalleGasto, partidaNoArrendada);
-					}
-				} else if(partidaArrendadaFinales.isEmpty()){
-					for (ActivoConfiguracionPtdasPrep partidaArrendada : partidaArrendadaFinales) {
-						setPartidasPresupuestarias(dtoLineaDetalleGasto, partidaArrendada);
-					}
+			if(!partidaArrendadaFinales.isEmpty()){
+				for (ActivoConfiguracionPtdasPrep partidaArrendada : partidaArrendadaFinales) {
+					setPartidasPresupuestarias(dtoLineaDetalleGasto, partidaArrendada);
 				}
 			}
 
 			List<ActivoConfiguracionCuentasContables> cuentaArrendadaList= null;
-			List<ActivoConfiguracionCuentasContables> cuentaNoArrendadaList= null;
-			
-			
-			cuentaArrendadaList= genericDao.getList(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroPropietario,filtroCuentaArrendamiento, filtroRefacturableCC,planVisitasCcc,activableCcc,tipoComisionadoCcc, tipoActivoBDE, cccvendido);
-			cuentaNoArrendadaList= genericDao.getList(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroPropietario,filtroCuentaNoArrendamiento, filtroRefacturableCC,planVisitasCcc,activableCcc,tipoComisionadoCcc, tipoActivoBDE, cccvendido);
 	
-			if(cuentaArrendadaList.isEmpty() && cuentaNoArrendadaList.isEmpty()) {
-				cuentaArrendadaList= genericDao.getList(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcartera,filtroCuentaArrendamiento, filtroRefacturableCC,planVisitasCcc,activableCcc,tipoComisionadoCcc, tipoActivoBDE, cccvendido);
-				cuentaNoArrendadaList= genericDao.getList(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,filtroSubtipoGasto, filtroCartera,filtroSubcartera,filtroCuentaNoArrendamiento, filtroRefacturableCC,planVisitasCcc,activableCcc,tipoComisionadoCcc, tipoActivoBDE, cccvendido);
-				if(cuentaArrendadaList.isEmpty() && cuentaNoArrendadaList.isEmpty()) {
-					cuentaArrendadaList= genericDao.getList(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroCuentaArrendamiento, filtroRefacturableCC,planVisitasCcc,activableCcc,tipoComisionadoCcc, tipoActivoBDE, cccvendido);
-					cuentaNoArrendadaList= genericDao.getList(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,filtroSubtipoGasto, filtroCartera,filtroCuentaNoArrendamiento, filtroRefacturableCC,planVisitasCcc,activableCcc,tipoComisionadoCcc, tipoActivoBDE, cccvendido);
-				}
-			}
-			
+			cuentaArrendadaList= genericDao.getList(ActivoConfiguracionCuentasContables.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroPropietario,filtroCartera, filtroSubcartera,filtroCuentaArrendamiento, filtroRefacturableCC,planVisitasCcc,activableCcc,tipoComisionadoCcc, tipoActivoBDE, cccvendido);
 			
 			List<ActivoConfiguracionCuentasContables> cuentaArrendadaFinal = elegirCuentasByPrincipales(cuentaArrendadaList);
-			List<ActivoConfiguracionCuentasContables> cuentaNoArrendadaFinal = elegirCuentasByPrincipales(cuentaNoArrendadaList);
-			
-			if(!cuentaArrendadaFinal.isEmpty() ||  !cuentaNoArrendadaFinal.isEmpty()){
-				if(!todosActivoAlquilados && !cuentaNoArrendadaFinal.isEmpty()){
-					for (ActivoConfiguracionCuentasContables cuentaNoArrendada : cuentaNoArrendadaFinal) {
-						setCuentasContables(dtoLineaDetalleGasto, cuentaNoArrendada);
-					}	
-				} else if(!cuentaArrendadaFinal.isEmpty()){
-					for (ActivoConfiguracionCuentasContables cuentaArrendada : cuentaArrendadaFinal) {
-						setCuentasContables(dtoLineaDetalleGasto, cuentaArrendada);	
-					}		
-				}
+
+			if(!cuentaArrendadaFinal.isEmpty()){			
+				for (ActivoConfiguracionCuentasContables cuentaArrendada : cuentaArrendadaFinal) {
+					setCuentasContables(dtoLineaDetalleGasto, cuentaArrendada);	
+				}			
 			}
 		}
 	
@@ -654,12 +615,16 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		String tipoImporte = cuenta.getTipoImporte().getCodigo();
 		if(DDTipoImporte.CODIGO_BASE.equals(tipoImporte)) {
 			dtoLineaDetalleGasto.setCcBase(cuenta.getCuentaContable());
+			dtoLineaDetalleGasto.setSubcuentaBase(cuenta.getSubcuentaContable());
 		}else if(DDTipoImporte.CODIGO_TASA.equals(tipoImporte)){
 			dtoLineaDetalleGasto.setCcTasas(cuenta.getCuentaContable());
+			dtoLineaDetalleGasto.setSubcuentaTasa(cuenta.getSubcuentaContable());
 		}else if(DDTipoImporte.CODIGO_RECARGO.equals(tipoImporte)){
 			dtoLineaDetalleGasto.setCcRecargo(cuenta.getCuentaContable());
+			dtoLineaDetalleGasto.setSubcuentaRecargo(cuenta.getSubcuentaContable());
 		}else if(DDTipoImporte.CODIGO_INTERES.equals(tipoImporte)) {
 			dtoLineaDetalleGasto.setCcInteres(cuenta.getCuentaContable());
+			dtoLineaDetalleGasto.setSubcuentaIntereses(cuenta.getSubcuentaContable());
 		}
 
 		return dtoLineaDetalleGasto;
@@ -674,14 +639,22 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		String tipoImporte = partida.getTipoImporte().getCodigo();
 		if(DDTipoImporte.CODIGO_BASE.equals(tipoImporte)) {
 			dtoLineaDetalleGasto.setPpBase(partida.getPartidaPresupuestaria());
+			dtoLineaDetalleGasto.setCapituloBase(partida.getCppCapitulo());
+			dtoLineaDetalleGasto.setApartadoBase(partida.getCppApartado());
 		}else if(DDTipoImporte.CODIGO_TASA.equals(tipoImporte)){
 			dtoLineaDetalleGasto.setPpTasas(partida.getPartidaPresupuestaria());
+			dtoLineaDetalleGasto.setCapituloTasa(partida.getCppCapitulo());
+			dtoLineaDetalleGasto.setApartadoTasa(partida.getCppApartado());
 		}else if(DDTipoImporte.CODIGO_RECARGO.equals(tipoImporte)){
 			dtoLineaDetalleGasto.setPpRecargo(partida.getPartidaPresupuestaria());
+			dtoLineaDetalleGasto.setCapituloRecargo(partida.getCppCapitulo());
+			dtoLineaDetalleGasto.setApartadoRecargo(partida.getCppApartado());
 		}else if(DDTipoImporte.CODIGO_INTERES.equals(tipoImporte)) {
 			dtoLineaDetalleGasto.setPpInteres(partida.getPartidaPresupuestaria());
+			dtoLineaDetalleGasto.setCapituloIntereses(partida.getCppCapitulo());
+			dtoLineaDetalleGasto.setApartadoIntereses(partida.getCppApartado());
 		}
-		
+
 		return dtoLineaDetalleGasto;
 	}
 	
@@ -1587,7 +1560,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				listaCuentas.add(ccc);
 			}else if(ccc.getGastosCuentasPrincipal().equals(listaCuentas.get(0).getGastosCuentasPrincipal()) && ccc.getGastosCuentasPrincipal()){
 				listaCuentas.clear();
-			}else if(!ccc.getGastosCuentasPrincipal().equals(listaCuentas.get(0).getGastosCuentasPrincipal()) && !ccc.getGastosCuentasPrincipal()) {
+			}else if(!ccc.getGastosCuentasPrincipal().equals(listaCuentas.get(0).getGastosCuentasPrincipal()) && ccc.getGastosCuentasPrincipal()) {
 				listaCuentas.clear();
 				listaCuentas.add(ccc);
 			}
@@ -2129,35 +2102,77 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	
 	private GastoLineaDetalle updatearCuentasYPartidasVacias(DtoLineaDetalleGasto dtoLineaDetalleGasto, GastoLineaDetalle gastoLineaDetalle) {
 		if(dtoLineaDetalleGasto != null) {
-			if(gastoLineaDetalle.getCccBase() == null) {
+			if(dtoLineaDetalleGasto.getCcBase() != null) {
 				gastoLineaDetalle.setCccBase(dtoLineaDetalleGasto.getCcBase());
 			}
-			if(gastoLineaDetalle.getCppBase() == null) {
+			if(dtoLineaDetalleGasto.getPpBase() != null) {
 				gastoLineaDetalle.setCppBase(dtoLineaDetalleGasto.getPpBase());
 			}
-			if(gastoLineaDetalle.getCccEsp() == null) {
+			if(dtoLineaDetalleGasto.getCcEsp() != null) {
 				gastoLineaDetalle.setCccEsp(dtoLineaDetalleGasto.getCcEsp());
 			}
-			if(gastoLineaDetalle.getCppEsp() == null) {
+			if(dtoLineaDetalleGasto.getPpEsp() != null) {
 				gastoLineaDetalle.setCppEsp(dtoLineaDetalleGasto.getPpEsp());
 			}
-			if(gastoLineaDetalle.getCccTasas() == null) {
+			if(dtoLineaDetalleGasto.getCcTasas() != null) {
 				gastoLineaDetalle.setCccTasas(dtoLineaDetalleGasto.getCcTasas());
 			}
-			if(gastoLineaDetalle.getCppTasas() == null) {
+			if(gastoLineaDetalle.getCppTasas() != null) {
 				gastoLineaDetalle.setCppTasas(dtoLineaDetalleGasto.getPpTasas());
 			}
-			if(gastoLineaDetalle.getCccRecargo() == null) {
+			if(dtoLineaDetalleGasto.getPpTasas() != null) {
 				gastoLineaDetalle.setCccRecargo(dtoLineaDetalleGasto.getCcRecargo());
 			}
-			if(gastoLineaDetalle.getCppRecargo() == null) {
+			if(dtoLineaDetalleGasto.getPpRecargo() != null) {
 				gastoLineaDetalle.setCppRecargo(dtoLineaDetalleGasto.getPpRecargo());
 			}
-			if(gastoLineaDetalle.getCccIntereses() == null) {
+			if(dtoLineaDetalleGasto.getCcInteres() != null) {
 				gastoLineaDetalle.setCccIntereses(dtoLineaDetalleGasto.getCcInteres());
 			}
-			if(gastoLineaDetalle.getCppIntereses() == null) {
+			if(dtoLineaDetalleGasto.getPpInteres() != null) {
 				gastoLineaDetalle.setCppIntereses(dtoLineaDetalleGasto.getPpInteres());
+			}
+			
+
+
+			
+			if(dtoLineaDetalleGasto.getSubcuentaBase() != null) {
+				gastoLineaDetalle.setSubcuentaBase(dtoLineaDetalleGasto.getSubcuentaBase());
+			}
+			if(dtoLineaDetalleGasto.getCapituloBase() != null) {
+				gastoLineaDetalle.setCapituloBase(dtoLineaDetalleGasto.getCapituloBase());
+			}
+			if(dtoLineaDetalleGasto.getApartadoBase() != null) {
+				gastoLineaDetalle.setApartadoBase(dtoLineaDetalleGasto.getApartadoBase());
+			}
+			if(gastoLineaDetalle.getSubcuentaTasa() != null) {
+				gastoLineaDetalle.setSubcuentaTasa(dtoLineaDetalleGasto.getSubcuentaTasa());
+			}
+			if(dtoLineaDetalleGasto.getCapituloTasa() != null) {
+				gastoLineaDetalle.setCapituloTasa(dtoLineaDetalleGasto.getCapituloTasa());
+			}
+			if(dtoLineaDetalleGasto.getApartadoTasa() != null) {
+				gastoLineaDetalle.setApartadoTasa(dtoLineaDetalleGasto.getApartadoTasa());
+			}
+			
+			
+			if(dtoLineaDetalleGasto.getSubcuentaRecargo() != null) {
+				gastoLineaDetalle.setSubcuentaRecargo(dtoLineaDetalleGasto.getSubcuentaRecargo());
+			}
+			if(dtoLineaDetalleGasto.getCapituloRecargo() != null) {
+				gastoLineaDetalle.setCapituloRecargo(dtoLineaDetalleGasto.getCapituloRecargo());
+			}
+			if(dtoLineaDetalleGasto.getApartadoRecargo() != null) {
+				gastoLineaDetalle.setApartadoRecargo(dtoLineaDetalleGasto.getApartadoRecargo());
+			}
+			if(dtoLineaDetalleGasto.getSubcuentaIntereses() != null) {
+				gastoLineaDetalle.setSubcuentaIntereses(dtoLineaDetalleGasto.getSubcuentaIntereses());
+			}
+			if(dtoLineaDetalleGasto.getCapituloIntereses() != null) {
+				gastoLineaDetalle.setCapituloIntereses(dtoLineaDetalleGasto.getCapituloIntereses());
+			}
+			if(dtoLineaDetalleGasto.getApartadoIntereses() != null) {
+				gastoLineaDetalle.setApartadoIntereses(dtoLineaDetalleGasto.getApartadoIntereses());
 			}
 		}
 		return gastoLineaDetalle;

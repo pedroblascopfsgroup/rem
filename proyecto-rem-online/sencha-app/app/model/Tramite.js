@@ -171,6 +171,14 @@ Ext.define('HreRem.model.Tramite', {
     		type: 'boolean'
     	},
     	{
+    		name: 'esGestorAutorizado',
+    		type: 'boolean'
+    	},
+    	{
+			name: 'estaEnTareaReserva',
+			type: 'boolean'
+    	},
+    	{
     		name: 'evaluarBtnReasignar',
     		calculate: function(data) {
     			return data.esTareaAutorizacionBankia == true || data.esTareaSolicitudOAutorizacion == true;
@@ -180,9 +188,10 @@ Ext.define('HreRem.model.Tramite', {
     	{
     		name: 'deshabilitarBotonResolucion',
     		calculate: function(data) {
-    			return data.estaEnTareaSiguienteResolucionExpediente == true || data.tramiteVentaAnulado == true;
+    			return data.estaEnTareaSiguienteResolucionExpediente == true || data.tramiteVentaAnulado == true ||
+    					(data.esGestorAutorizado == false && data.estaEnTareaReserva == false);
     		},
-    		depends:['estaEnTareaSiguienteResolucionExpediente','tramiteVentaAnulado']
+    		depends:['estaEnTareaSiguienteResolucionExpediente','tramiteVentaAnulado', 'esGestorAutorizado', 'estaEnTareaReserva']
     	}
     ],
 

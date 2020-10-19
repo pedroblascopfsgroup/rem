@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -22,8 +23,12 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.pfsgroup.plugin.rem.model.dd.DDPromocionBBVA;
+import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoMotivoCalificacionNegativa;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
+import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
 
@@ -105,11 +110,6 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 	@Embedded
 	private Auditoria auditoria;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DD_PBB_ID")
-  	private DDPromocionBBVA promocion;
-	
-	
 	public Auditoria getAuditoria() {
 		return auditoria;
 	}
@@ -261,14 +261,5 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 	public void setVersion(Long version) {
 		this.version = version;
 	}
-
-	public DDPromocionBBVA getPromocion() {
-		return promocion;
-	}
-
-	public void setPromocion(DDPromocionBBVA promocion) {
-		this.promocion = promocion;
-	}
-	
 	
 }

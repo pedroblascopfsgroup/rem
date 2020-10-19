@@ -1051,9 +1051,6 @@ Ext.define('HreRem.model.Activo', {
     				return data.entidadPropietariaCodigo == CONST.CARTERA['BBVA'];
     			},
     			depends: 'entidadPropietariaCodigo'
-    		},
-    		{
-    			name: 'codPromocionBbva'
     		}
     ],
     

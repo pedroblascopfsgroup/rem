@@ -20,17 +20,20 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
         var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']);
 		me.setTitle(HreRem.i18n('title.datos.basicos'));
         var items= [
-			{
-			xtype:'fieldsettable',
-	        title: HreRem.i18n('title.identificacion'),
-			items: [
-				{    
-				xtype:'container',
-				layout:'hbox',
-				colspan: 3,
+			{   
+				xtype:'fieldsettable',
+				layout: {
+					type: 'table',
+					columns: 1
+				},
 				defaultType: 'container',
+		        title: HreRem.i18n('title.identificacion'),
 				items :
-					[{ // Columna 1
+					[{
+						xtype:'fieldsettable',
+						defaultType: 'container',
+						items :
+							[{ // Columna 1
 							defaultType: 'textfieldbase',
 							flex: 1,
 							items:[
@@ -317,7 +320,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						defaultType: 'textfieldbase',
 						title: HreRem.i18n('title.bbva'),
 						border: true,
-						colspan: 3,
+						colapsible: false,
+						flex: 3,
 						items :
 							[
 							{
@@ -359,24 +363,14 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							            fn:'onClickActivoHRE'									       
 							        }
 								}
-							},
-							{
-								xtype:'textfieldbase',
-								reference:'tfcodpromocionbbva',
-								fieldLabel: HreRem.i18n('fieldlabel.activobbva.codPromocionBbva'),
-								bind: {
-									readOnly : '{!isGestorOSupervisorAdmisionAndSuper}',
-									value: '{activo.codPromocionBbva}'
-								}
 							}
-						],
+						]	,
 	                bind:{
 	                	hidden: '{!activo.isCarteraBbva}'
 	                }
 	                }
-				]
-				},				
-            	{    
+				]},
+            {    
                 
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',

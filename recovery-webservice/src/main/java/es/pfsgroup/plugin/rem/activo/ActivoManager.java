@@ -25,7 +25,6 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
@@ -207,6 +206,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String OPERACION_ALTA = "Alta";
 	public static final String ERROR_ANYADIR_PRESTACIONES_EN_REGISTRO = "Ya existe un registro 'Presentación en registro', y está activo";
 	public static final String ERROR_ANYADIR_EN_REGISTRO = "Ya existe un registro '%s', y está activo";
+	public static final String GRUPO_OFICIONA_KAM = "gruofikam";
 	
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
@@ -6873,6 +6873,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 		}		
 		return tiposSegmento;
+	}
+	
+	@Override
+	public Boolean isGrupoOficinaKAM() {
+		Boolean isGrupoOficinaKAM = false;
+		GrupoUsuario grupoOfiKAM = null;
+		Usuario logedUser = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		if (logedUser != null) {
+			grupoOfiKAM = genericDao.get(GrupoUsuario.class, genericDao.createFilter(FilterType.EQUALS, "grupo.username", GRUPO_OFICIONA_KAM), genericDao.createFilter(FilterType.EQUALS, "usuario.username", logedUser.getUsername()));
+			if (grupoOfiKAM != null) {
+				isGrupoOficinaKAM = true;
+			}
+		}
+		return isGrupoOficinaKAM;
 	}
 
 }

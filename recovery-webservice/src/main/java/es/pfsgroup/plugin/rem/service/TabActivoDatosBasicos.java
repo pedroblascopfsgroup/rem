@@ -908,6 +908,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 		}
 		
+		activoDto.setIsGrupoOficinaKAM(activoApi.isGrupoOficinaKAM());
+		
 		return activoDto;
 	}
 	

@@ -293,6 +293,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
     private String tipoAltaCodigo;
     private String tipoTransmisionDescripcion;
     private String tipoAltaDescripcion;
+    private Boolean isGrupoOficinaKAM;
 
 	
 	public Boolean getTieneOfertaAlquilerViva() {
@@ -2238,4 +2239,13 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setTipoAltaDescripcion(String tipoAltaDescripcion) {
 		this.tipoAltaDescripcion = tipoAltaDescripcion;
 	}
+
+	public Boolean getIsGrupoOficinaKAM() {
+		return isGrupoOficinaKAM;
+	}
+
+	public void setIsGrupoOficinaKAM(Boolean isGrupoOficinaKAM) {
+		this.isGrupoOficinaKAM = isGrupoOficinaKAM;
+	}
+	
 }

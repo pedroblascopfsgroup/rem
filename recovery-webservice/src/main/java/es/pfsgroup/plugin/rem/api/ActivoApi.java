@@ -1324,4 +1324,6 @@ public interface ActivoApi {
 	Boolean updateHistoricoSolicitudPrecios(HistoricoPropuestasPreciosDto historicoPropuestasPreciosDto) throws ParseException;
 
 	public List<DDTipoSegmento> getComboTipoSegmento(String codSubcartera);
+
+	public Boolean isGrupoOficinaKAM();
 }

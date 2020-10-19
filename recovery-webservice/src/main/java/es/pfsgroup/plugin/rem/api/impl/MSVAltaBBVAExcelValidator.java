@@ -418,16 +418,14 @@ public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implement
 					}					
 				}
 				if(pbNew == null) {
-					DDPromocionBBVA pb = genericDao.getListOrdered(DDPromocionBBVA.class, new Order(OrderType.DESC, "codigo")).get(0);
-					
-					String codi = String.valueOf(Long.valueOf(pb.getCodigo())+1L);
-
-					pbNew = new DDPromocionBBVA();
-					pbNew.setCodigo(codi);
+					pbNew = new DDPromocionBBVA();					
+					genericDao.save(DDPromocionBBVA.class, pbNew);
+					String codi = String.valueOf(pbNew.getId()+1L);					
 					String descripcion = "R" + String.format("%05d", Long.valueOf(codi)) + "-01";
+					pbNew.setCodigo(descripcion);
 					pbNew.setDescripcion(descripcion);
 					pbNew.setDescripcionLarga(descripcion);	
-					genericDao.save(DDPromocionBBVA.class, pbNew);
+					genericDao.update(DDPromocionBBVA.class, pbNew);
 					
 				}
 				activoBBVA.setPromocion(pbNew);

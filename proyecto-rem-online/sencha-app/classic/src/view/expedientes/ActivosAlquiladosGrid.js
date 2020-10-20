@@ -142,11 +142,10 @@ Ext.define('HreRem.view.expedientes.ActivosAlquiladosGrid', {
 		var me = this;
 		var codigoEstado = me.lookupController().getViewModel().data.expediente.data.codigoEstado;
 		if($AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL_BO_INM'])) {
-			if(!codigoEstado == CONST.ESTADOS_EXPEDIENTE['EN_TRAMITACION'] || !codigoEstado == CONST.ESTADOS_EXPEDIENTE['ANULADO'] 
-				|| !codigoEstado == CONST.ESTADOS_EXPEDIENTE['PENDIENTE_SANCION']){
-				me.setEditOnSelect(true);
-			} else {
+			if(codigoEstado == CONST.ESTADOS_EXPEDIENTE['ANULADO'] || codigoEstado == CONST.ESTADOS_EXPEDIENTE['PENDIENTE_SANCION']){
 				me.setEditOnSelect(false);
+			} else {
+				me.setEditOnSelect(true);
 			}
 		}else{
 			me.setEditOnSelect(false);

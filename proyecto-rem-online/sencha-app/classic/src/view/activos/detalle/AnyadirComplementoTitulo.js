@@ -89,7 +89,8 @@ Ext.define('HreRem.view.activos.detalle.AnyadirComplementoTitulo', {
 							xtype: 'datefieldbase',
 							reference: 'fechaSolicitudRef',
 							formatter: 'date("d/m/Y")',
-				        	fieldLabel:  HreRem.i18n('header.complemento.titulo.fecha.solicitud'),	
+				        	fieldLabel:  HreRem.i18n('header.complemento.titulo.fecha.solicitud'),
+				        	maxValue: null,
 				        	width: '400px',
 				        	name: 'fechasolicitud'
 			    		},
@@ -97,7 +98,8 @@ Ext.define('HreRem.view.activos.detalle.AnyadirComplementoTitulo', {
 		                	xtype: 'datefieldbase',
 		                	reference: 'fechaTituloRef',
 							formatter: 'date("d/m/Y")',
-				        	fieldLabel:  HreRem.i18n('header.complemento.titulo.fecha'),	
+				        	fieldLabel:  HreRem.i18n('header.complemento.titulo.fecha'),
+				        	maxValue: null,
 				        	width: '400px',
 				        	name: 'fechatitulo'
 	            		},
@@ -105,7 +107,8 @@ Ext.define('HreRem.view.activos.detalle.AnyadirComplementoTitulo', {
 		                	xtype: 'datefieldbase',
 							formatter: 'date("d/m/Y")',
 							reference: 'fechaRecepcionRef',
-				        	fieldLabel:  HreRem.i18n('header.complemento.titulo.fecha.recepcion'),	
+				        	fieldLabel:  HreRem.i18n('header.complemento.titulo.fecha.recepcion'),
+				        	maxValue: null,
 				        	width: '400px',
 				        	name: 'fecharecepcion'
 	            		},
@@ -114,6 +117,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirComplementoTitulo', {
 							formatter: 'date("d/m/Y")',
 							reference: 'fechaInscripcionRef',
 				        	fieldLabel:  HreRem.i18n('header.complemento.titulo.fecha.inscripcion'),
+				        	maxValue: null,
 				        	width: '400px',
 				        	name: 'fechainscripcion'
 	            		},

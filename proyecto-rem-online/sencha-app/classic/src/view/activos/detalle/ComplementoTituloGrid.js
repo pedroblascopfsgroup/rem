@@ -31,7 +31,23 @@ Ext.define('HreRem.view.activos.detalle.ComplementoTituloGrid', {
     	
     	me.topBar = ($AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['GESTORIA_ADMISION']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
     	me.editOnSelect = ($AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['GESTORIA_ADMISION']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
-		
+    	me.listeners = {
+			rowdblclick: function() {
+				me.getSelectionModel().deselectAll();
+	        	if(me.editable) {
+		        	if(me.getPlugin("rowEditingPlugin").editing) {
+		        		me.disableAddButton(true);
+		        		me.disablePagingToolBar(true);
+		        	}
+	        	}
+	        	me.disableRemoveButton(true);
+	        	me.down("[reference='fechaRecepcionRef']").field.setMinValue(null);
+	        	me.down("[reference='fechaInscripcionRef']").field.setMinValue(null);
+	        	me.down("[reference='fechaRecepcionRef']").field.validate()
+	        	me.down("[reference='fechaInscripcionRef']").field.validate();
+			}
+    	};
+
         me.columns = [
         		{
                     text : 'activoid',
@@ -85,25 +101,63 @@ Ext.define('HreRem.view.activos.detalle.ComplementoTituloGrid', {
                     text : HreRem.i18n('header.complemento.titulo.fecha'),
                     flex : 1,
                     dataIndex : 'fechaTitulo',
+                    reference: 'fechaTituloRef',
 					formatter: 'date("d/m/Y")',
 					editor: {
-		        		xtype: 'datefield'					
+		        		xtype: 'datefield',
+		        		listeners: {
+			        		select: function() {
+			        			var field = this;
+			        			var fechaRecepcion = field.up('complementotitulogrid').down("[reference='fechaRecepcionRef']").field;
+			        			var fechaInscripcion = field.up('complementotitulogrid').down("[reference='fechaInscripcionRef']").field;
+			        			if (fechaRecepcion.getValue() != null && fechaRecepcion.getValue() < field.getValue() ||
+			        					fechaInscripcion.getValue() != null && fechaInscripcion.getValue() < field.getValue()) {
+			        				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.no.valida"));
+			        			}
+			        			fechaRecepcion.setMinValue(field.value);
+			        			fechaInscripcion.setMinValue(field.value);
+			        			fechaRecepcion.validate();
+			        			fechaInscripcion.validate();
+			        		}
+			        	}
 		        	}
                  }, {
                     text : HreRem.i18n('header.complemento.titulo.fecha.recepcion'),
                     flex : 1,
                     dataIndex : 'fechaRecepcion',
+                    reference: 'fechaRecepcionRef',
 					formatter: 'date("d/m/Y")',
 					editor: {
-		        		xtype: 'datefield'
+		        		xtype: 'datefield',
+		        		listeners: {
+			        		expand: function() {
+			        			var field = this;
+			        			var fechaTitulo = field.up('complementotitulogrid').down("[reference='fechaTituloRef']").field;
+			        			field.setMinValue(fechaTitulo.value);
+			        			if (field.getValue() != null && field.getValue() < fechaTitulo.getValue()) {
+			        				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.no.valida"));
+			        			}
+			        		}
+			        	}
 		        	}
                  }, {
                     text : HreRem.i18n('header.complemento.titulo.fecha.inscripcion'),
                     flex : 1,
                     dataIndex : 'fechaInscripcion',
+                    reference: 'fechaInscripcionRef',
 					formatter: 'date("d/m/Y")',
 					editor: {
-		        		xtype: 'datefield'
+		        		xtype: 'datefield',
+		        		listeners: {
+			        		expand: function() {
+			        			var field = this;
+			        			var fechaTitulo = field.up('complementotitulogrid').down("[reference='fechaTituloRef']").field;
+			        			field.setMinValue(fechaTitulo.value);
+			        			if (field.getValue() != null && field.getValue() < fechaTitulo.getValue()) {
+			        				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.no.valida"));
+			        			}
+			        		}
+			        	}
 		        	}
                  }, {
                     text : HreRem.i18n('header.complemento.titulo.observaciones'),

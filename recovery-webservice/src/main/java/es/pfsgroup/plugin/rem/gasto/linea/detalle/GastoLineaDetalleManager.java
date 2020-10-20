@@ -22,6 +22,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GastoLineaDetalleApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
@@ -99,6 +100,9 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 
 	@Autowired
 	private UpdaterStateGastoApi updaterStateGastoApi;
+	
+	@Autowired
+	private ActivoApi activoApi;
 	
 	@Override 
 	public GastoLineaDetalle getLineaDetalleByIdLinea(Long idLinea) {
@@ -478,14 +482,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			Filter tipoComisionadoCcc = genericDao.createFilter(FilterType.NULL, "ccctipoComisionado.id");
 			Filter tipoComisionadoCpp = genericDao.createFilter(FilterType.NULL, "cpptipoComisionado.id");
 			
-			Filter tipoActivoBDE = genericDao.createFilter(FilterType.NULL, "tipoActivoBDE");
-			
-			if(idLineaDetalleGasto != null) {			
-				DDTipoActivoBDE ddTipoBDE = calcularTipoBdePorIdLineaDetalleGasto(idLineaDetalleGasto);				
-				if( ddTipoBDE != null) {
-					tipoActivoBDE = genericDao.createFilter(FilterType.EQUALS, "tipoActivoBDE.id", ddTipoBDE.getId());
-				}				
-			}				
+			Filter tipoActivoBDE = genericDao.createFilter(FilterType.NULL, "tipoActivoBDE");			
 			
 			Filter cccvendido = genericDao.createFilter(FilterType.EQUALS, "cccVendido", 0);
 			Filter cppvendido = genericDao.createFilter(FilterType.EQUALS, "cppVendido", 0);
@@ -512,23 +509,28 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				}
 			}
 			if(idLineaDetalleGasto != null) {
-				todosActivoAlquilados = this.estanTodosActivosAlquilados(idLineaDetalleGasto); 
+				List<Activo> activos = this.devolverActivosDeLineasDeGasto(idLineaDetalleGasto);
+
+				todosActivoAlquilados = activoApi.estanTodosActivosAlquilados(activos); 
 				if(todosActivoAlquilados) {
 					filtroCuentaArrendamiento= genericDao.createFilter(FilterType.EQUALS, "arrendamiento", 1);
 				}
-				GastoLineaDetalle gastoLineaDetalle = getLineaDetalleByIdLinea(idLineaDetalleGasto);
-				if(gastoLineaDetalle != null) {
-					DDSubcartera subcartera  = this.getSubcarteraLinea(gastoLineaDetalle);
-					if(subcartera != null) {
-						filtroSubcartera= genericDao.createFilter(FilterType.EQUALS, "subCartera.id", subcartera.getId());
-					}
+			
+				DDSubcartera subcartera  = this.getSubcarteraLinea(activos);
+				if(subcartera != null) {
+					filtroSubcartera= genericDao.createFilter(FilterType.EQUALS, "subCartera.id", subcartera.getId());
 				}
 				
-				boolean todosActivosVendidos = this.estanTodosActivosVendidos(idLineaDetalleGasto);
+				boolean todosActivosVendidos = activoApi.estanTodosActivosVendidos(activos);
 				if(todosActivosVendidos && isLbk) {
 					cccvendido = genericDao.createFilter(FilterType.EQUALS, "cccVendido", 1);
 					cppvendido = genericDao.createFilter(FilterType.EQUALS, "cppVendido", 1);
 				}
+				
+				DDTipoActivoBDE ddTipoBDE = this.calcularTipoBdePorIdLineaDetalleGasto(activos);				
+				if( ddTipoBDE != null) {
+					tipoActivoBDE = genericDao.createFilter(FilterType.EQUALS, "tipoActivoBDE.id", ddTipoBDE.getId());
+				}	
 			}
 				
 			List<ActivoConfiguracionPtdasPrep> partidaArrendadaList = null;
@@ -558,8 +560,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		return dtoLineaDetalleGasto;
 	}
 	
-	private DDTipoActivoBDE calcularTipoBdePorIdLineaDetalleGasto(Long idLineaDetalleGasto) {
-		List<Activo> activos = this.devolverActivosDeLineasDeGasto(idLineaDetalleGasto);
+	private DDTipoActivoBDE calcularTipoBdePorIdLineaDetalleGasto(List<Activo> activos) {
 		ActivoInfoLiberbank activoInfoLbk;
 		DDTipoActivoBDE ddTipoBDE = null;
 		
@@ -667,7 +668,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		if(tipoEntidad == null || gastoLineaDetalle == null ) {
 			return activos;
 		}
-		List<GastoLineaDetalleEntidad> gastoLineaDetalleActivoList;
+		List<GastoLineaDetalleEntidad> gastoLineaDetalleActivoList;  
 		Filter filtroEntidadActivo = genericDao.createFilter(FilterType.EQUALS, "entidadGasto.id", tipoEntidad.getId());	
 		Filter filtroGastoDetalleLinea = genericDao.createFilter(FilterType.EQUALS, "gastoLineaDetalle.id", gastoLineaDetalle.getId());
 		gastoLineaDetalleActivoList = genericDao.getList(GastoLineaDetalleEntidad.class, filtroGastoDetalleLinea, filtroEntidadActivo);
@@ -1664,19 +1665,11 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	}
 	
 	@Override
-	public DDSubcartera getSubcarteraLinea(GastoLineaDetalle gastoLineaDetalle) {
+	public DDSubcartera getSubcarteraLinea(List<Activo> activos) {
 		DDSubcartera subcartera =  null;
-		if(gastoLineaDetalle.getGastoLineaEntidadList() != null) {
-			for (GastoLineaDetalleEntidad gastoLineaDetalleEntidad : gastoLineaDetalle.getGastoLineaEntidadList()) {
-				if(gastoLineaDetalleEntidad.getEntidadGasto() != null 
-				&& DDEntidadGasto.CODIGO_ACTIVO.equals(gastoLineaDetalleEntidad.getEntidadGasto().getCodigo())) {
-					Activo activo = activoDao.getActivoById(gastoLineaDetalleEntidad.getEntidad());
-					if(activo != null) {
-						subcartera = activo.getSubcartera();
-						break;
-					}
-				}
-			}
+
+		if(activos != null && !activos.isEmpty()) {
+			subcartera = activos.get(0).getSubcartera();
 		}
 		
 		return subcartera;
@@ -2248,59 +2241,4 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		gastoLineaDetalleDao.actualizarDiariosLbk(idGasto, genericAdapter.getUsuarioLogado().getUsername());
 	}
 	
-	
-	@Override
-	public boolean estanTodosActivosVendidos(Long idLineaDetalleGasto) {
-		boolean estanTodosVendidos = false;
-		boolean auxiliarSalir = true;
-		
-		List<Activo> activos = this.devolverActivosDeLineasDeGasto(idLineaDetalleGasto);
-
-		if(activos != null && !activos.isEmpty()) {
-			for (Activo activo : activos) {
-				if(activo.getSituacionComercial() != null && DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo())) {
-					estanTodosVendidos = true;
-					auxiliarSalir = false;
-				}
-				if(auxiliarSalir) {
-					estanTodosVendidos = false;
-					break;
-				}
-				
-				auxiliarSalir = true;
-			}
-		}
-
-		return estanTodosVendidos;
-	}
-	
-	@Override
-	public boolean estanTodosActivosAlquilados(Long idLineaDetalleGasto) {
-		boolean todosActivoAlquilados = false;
-		boolean auxiliarSalir = true;
-		
-		List<Activo> activos = this.devolverActivosDeLineasDeGasto(idLineaDetalleGasto);
-
-		if(activos != null && !activos.isEmpty()) {
-			for (Activo activo : activos) {
-				
-				if(activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getOcupado() != null
-						&& activo.getSituacionPosesoria().getConTitulo() != null &&  activo.getSituacionPosesoria().getOcupado() == 1
-						&& DDTipoTituloActivoTPA.tipoTituloSi.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo())
-						&& activo.getSituacionPosesoria().getTipoTituloPosesorio() != null 
-						&&  DDTipoTituloPosesorio.CODIGO_ARRENDAMIENTO.equals(activo.getSituacionPosesoria().getTipoTituloPosesorio().getCodigo())) {
-							todosActivoAlquilados = true;
-							auxiliarSalir = false;
-				}
-				if(auxiliarSalir) {
-					todosActivoAlquilados = false;
-					break;
-				}
-				
-				auxiliarSalir = true;
-			}
-		}
-
-		return todosActivoAlquilados;
-	}
 }

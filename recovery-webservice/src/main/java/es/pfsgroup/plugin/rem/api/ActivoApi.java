@@ -1319,4 +1319,8 @@ public interface ActivoApi {
 	Boolean createHistoricoSolicitudPrecios(HistoricoPropuestasPreciosDto historicoPropuestasPreciosDto) throws ParseException;
 
 	Boolean updateHistoricoSolicitudPrecios(HistoricoPropuestasPreciosDto historicoPropuestasPreciosDto) throws ParseException;
+
+	boolean estanTodosActivosVendidos(List<Activo> activos);
+
+	boolean estanTodosActivosAlquilados(List<Activo> activos);
 }

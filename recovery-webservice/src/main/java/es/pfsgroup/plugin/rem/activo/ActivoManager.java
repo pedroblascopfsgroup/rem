@@ -169,6 +169,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoRolMediador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoSolicitudTributo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
@@ -6841,6 +6842,59 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return false;
+	}
+	
+	@Override
+	public boolean estanTodosActivosVendidos(List<Activo> activos) {
+		boolean estanTodosVendidos = false;
+		boolean auxiliarSalir = true;
+		
+
+		if(activos != null && !activos.isEmpty()) {
+			for (Activo activo : activos) {
+				if(activo.getSituacionComercial() != null && DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo())) {
+					estanTodosVendidos = true;
+					auxiliarSalir = false;
+				}
+				if(auxiliarSalir) {
+					estanTodosVendidos = false;
+					break;
+				}
+				
+				auxiliarSalir = true;
+			}
+		}
+
+		return estanTodosVendidos;
+	}
+	
+	@Override
+	public boolean estanTodosActivosAlquilados(List<Activo> activos) {
+		boolean todosActivoAlquilados = false;
+		boolean auxiliarSalir = true;
+		
+
+		if(activos != null && !activos.isEmpty()) {
+			for (Activo activo : activos) {
+				
+				if(activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getOcupado() != null
+						&& activo.getSituacionPosesoria().getConTitulo() != null &&  activo.getSituacionPosesoria().getOcupado() == 1
+						&& DDTipoTituloActivoTPA.tipoTituloSi.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo())
+						&& activo.getSituacionPosesoria().getTipoTituloPosesorio() != null 
+						&&  DDTipoTituloPosesorio.CODIGO_ARRENDAMIENTO.equals(activo.getSituacionPosesoria().getTipoTituloPosesorio().getCodigo())) {
+							todosActivoAlquilados = true;
+							auxiliarSalir = false;
+				}
+				if(auxiliarSalir) {
+					todosActivoAlquilados = false;
+					break;
+				}
+				
+				auxiliarSalir = true;
+			}
+		}
+
+		return todosActivoAlquilados;
 	}
 
 }

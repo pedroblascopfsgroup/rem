@@ -82,11 +82,7 @@ public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
 	
 	@Column(name="CPP_REFACTURABLE")
     private Integer refacturable;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SGT_ID")
-	private ActivoSubtipoGastoProveedorTrabajo activoSubtivoGastoProveedorTrabajo;
-	
+
 	@Column(name="CPP_PRINCIPAL")
     private Boolean gastosPartidasPresupuestariasPrincipal;
 	
@@ -209,15 +205,6 @@ public class ActivoConfiguracionPtdasPrep implements Serializable, Auditable {
 
 	public void setRefacturable(Integer refacturable) {
 		this.refacturable = refacturable;
-	}
-
-	public ActivoSubtipoGastoProveedorTrabajo getActivoSubtivoGastoProveedorTrabajo() {
-		return activoSubtivoGastoProveedorTrabajo;
-	}
-
-	public void setActivoSubtivoGastoProveedorTrabajo(
-			ActivoSubtipoGastoProveedorTrabajo activoSubtivoGastoProveedorTrabajo) {
-		this.activoSubtivoGastoProveedorTrabajo = activoSubtivoGastoProveedorTrabajo;
 	}
 
 	public Boolean getGastosPartidasPresupuestariasPrincipal() {

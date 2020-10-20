@@ -61,8 +61,6 @@ public interface GastoLineaDetalleApi {
 
 	boolean updateLineaSinActivos(Long idLinea);
 
-	DDSubcartera getSubcarteraLinea(GastoLineaDetalle gastoLineaDetalle);
-
 	DDCartera getCarteraLinea(GastoLineaDetalle gastoLineaDetalle);
 
 	boolean actualizarReparto(Long idLinea);
@@ -79,9 +77,7 @@ public interface GastoLineaDetalleApi {
 
 	List<Activo> devolverActivosDeLineasDeGasto(Long idLineaDetalleGasto);
 
-	boolean estanTodosActivosVendidos(Long idLineaDetalleGasto);
-
-	boolean estanTodosActivosAlquilados(Long idLineaDetalleGasto);
+	DDSubcartera getSubcarteraLinea(List<Activo> activos);
 	
 }
 

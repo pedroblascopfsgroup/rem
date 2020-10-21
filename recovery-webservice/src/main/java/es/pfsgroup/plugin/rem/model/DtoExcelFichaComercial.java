@@ -1,9 +1,12 @@
 package es.pfsgroup.plugin.rem.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 
 /**
  * Dto para el filtro de Visitas
@@ -42,16 +45,16 @@ public class DtoExcelFichaComercial extends WebDto {
 	private Double tasacionSeisMesesOferta;
 	private Double tasacionDoceMesesOferta;
 	private Double tasacionDieciochoMesesOferta;
-	private Double importeAdjuducacion;
+	private BigDecimal importeAdjuducacion;
 	private Double rentaMensual;
-	private Double totalSuperficie;
+	private BigDecimal totalSuperficie;
 	private Double comisionHayaDivarian;
 	private Double gastosPendientes;
 	private Double costesLegales;
 	private Date fechaUltimoPrecioAprobado;
 	private Integer dtoComite;
 	private Integer visitas;
-	private Integer leads;
+	private String leads;
 	private Integer totalOfertas;
 	private String publicado;
 	private Date fechaPublicado;
@@ -61,7 +64,7 @@ public class DtoExcelFichaComercial extends WebDto {
 	private String nombreYApellidosOfertante;
 	private String dniOfertante;
 	private String nombreYApellidosComercial;
-	private Long telefonoComercial;
+	private String telefonoComercial;
 	private String correoComercial;
 	private String nombreYApellidosPrescriptor;
 	private Long telefonoPrescriptor;
@@ -69,6 +72,39 @@ public class DtoExcelFichaComercial extends WebDto {
 	private List <DtoActivosFichaComercial> listaActivosFichaComercial;
 	private List <DtoHcoComercialFichaComercial> listaHistoricoOfertas;
 	private List <DtoListFichaAutorizacion> listaFichaAutorizacion;
+	
+	private Long pisosTotales;
+	private Long otros;
+	private Long garajesTotales;
+	private Long viviendasTotalGeneral;
+	private Long ofertaViviendas;
+	private Long ofertaPisos;
+	private Long ofertaOtros;
+	private Long ofertaGaraje;
+	private Long ofertaTotalGeneral;
+	private Long viviendasComite;
+	private Long pisosComite;
+	private Long otrosComite;
+	private Long garajeComite;
+	private Long comiteTotalGeneral;
+	
+	/*public int viviendasTotales() {
+		
+		 int viviendas = 0;
+		
+		if(!Checks.esNulo(this.getListaActivosFichaComercial())) {
+			for (DtoActivosFichaComercial dtoActivosFichaComercial : listaActivosFichaComercial) {
+				if(DDTipoActivo.COD_VIVIENDA.equals(dtoActivosFichaComercial.getTipologia())) {
+					viviendas = viviendas + 1; 
+				}
+				
+			}
+		}
+		
+
+		return viviendas;
+	}*/
+		
 	
 	public Long getNumOferta() {
 		return numOferta;
@@ -185,10 +221,10 @@ public class DtoExcelFichaComercial extends WebDto {
 	public void setTasacionActual(Double tasacionActual) {
 		this.tasacionActual = tasacionActual;
 	}
-	public Double getImporteAdjuducacion() {
+	public BigDecimal getImporteAdjuducacion() {
 		return importeAdjuducacion;
 	}
-	public void setImporteAdjuducacion(Double importeAdjuducacion) {
+	public void setImporteAdjuducacion(BigDecimal importeAdjuducacion) {
 		this.importeAdjuducacion = importeAdjuducacion;
 	}
 	public Double getRentaMensual() {
@@ -197,10 +233,10 @@ public class DtoExcelFichaComercial extends WebDto {
 	public void setRentaMensual(Double rentaMensual) {
 		this.rentaMensual = rentaMensual;
 	}
-	public Double getTotalSuperficie() {
+	public BigDecimal getTotalSuperficie() {
 		return totalSuperficie;
 	}
-	public void setTotalSuperficie(Double totalSuperficie) {
+	public void setTotalSuperficie(BigDecimal totalSuperficie) {
 		this.totalSuperficie = totalSuperficie;
 	}
 	public Double getComisionHayaDivarian() {
@@ -239,10 +275,10 @@ public class DtoExcelFichaComercial extends WebDto {
 	public void setVisitas(Integer visitas) {
 		this.visitas = visitas;
 	}
-	public Integer getLeads() {
+	public String getLeads() {
 		return leads;
 	}
-	public void setLeads(Integer leads) {
+	public void setLeads(String leads) {
 		this.leads = leads;
 	}
 	public Integer getTotalOfertas() {
@@ -299,10 +335,10 @@ public class DtoExcelFichaComercial extends WebDto {
 	public void setNombreYApellidosComercial(String nombreYApellidosComercial) {
 		this.nombreYApellidosComercial = nombreYApellidosComercial;
 	}
-	public Long getTelefonoComercial() {
+	public String getTelefonoComercial() {
 		return telefonoComercial;
 	}
-	public void setTelefonoComercial(Long telefonoComercial) {
+	public void setTelefonoComercial(String telefonoComercial) {
 		this.telefonoComercial = telefonoComercial;
 	}
 	public String getCorreoComercial() {

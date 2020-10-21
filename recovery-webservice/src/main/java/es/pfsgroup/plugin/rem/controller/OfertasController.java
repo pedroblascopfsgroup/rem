@@ -919,6 +919,22 @@ public class OfertasController {
 		return createModelAndViewJson(model);
 	}
 	
+	@RequestMapping(method = RequestMethod.GET)
+		public void generateExcelBBVA(Long idExpediente, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	
+			try {
+				 	DtoExcelFichaComercial listaOfertasFilter = ofertaApi.getListOfertasFilter(idExpediente);
+					File file = null;
+					file = excelReportGeneratorApi.generateBbvaReportPrueba(listaOfertasFilter,request);
+					excelReportGeneratorApi.sendReport(file, response);
+				
+	
+			} catch (Exception e) {
+				e.printStackTrace();
+	 
+			}
+		}
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView generarFichaComercial(ModelMap model, Long idOferta, Long idExpediente, HttpServletRequest request) {

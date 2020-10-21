@@ -4987,7 +4987,7 @@ comprobarFormatoModificar: function() {
 		        if (btn === 'ok') {
 					var url = $AC.getRemoteUrl("ofertas/generarFichaComercial");
 					var parametros = {
-							idOferta: me.getViewModel().get("datosbasicosoferta.idEco"),
+							idOferta: me.getViewModel().get("datosbasicosoferta.idOferta"),
 							idExpediente : me.getViewModel().data.expediente.id
 					};
 					
@@ -5009,8 +5009,8 @@ comprobarFormatoModificar: function() {
 		        }
 		    }
 		});  
-	}, 
-
+	},
+	
 	sacarBulk: function(btn){
 		var me = this,
 		form = btn.up('formBase'),

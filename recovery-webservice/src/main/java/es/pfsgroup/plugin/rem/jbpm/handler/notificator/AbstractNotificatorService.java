@@ -328,6 +328,63 @@ public abstract class AbstractNotificatorService {
 		return cuerpo;
 	}
 	
+	
+	protected String generateBodyMailFichaComercial(DtoSendNotificator dtoSendNotificator, String contenido, String url) {
+		String urlImages = url + "/pfs/js/plugin/rem/resources/images/notificator/";
+		String cuerpo = "<html>" + "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'>" + "<html>"
+				+ "<head>" + "<META http-equiv='Content-Type' content='text/html; charset=utf-8'>" + "</head>"
+				+ "<body>" + "	<div>" + "		<div style='font-family: Arial,&amp; amp;'>"
+				+ "			<div style='border-radius: 12px 12px 0px 0px; background: #b7ddf0; width: 300px; height: 60px; display: table'>"
+				+ "				<img src='" + urlImages + "ico_notificacion.png' "
+				+ "					style='display: table-cell; padding: 12px; display: inline-block' />"
+				+ "				<div style='font-size: 20px; vertical-align: top; color: #333; display: table-cell; padding: 12px'> "
+				+ dtoSendNotificator.getTitulo() + "</div>" + "			</div>"
+				+ "			<div style='background: #b7ddf0; width: 785px; min-height: 600px; border-radius: 0px 20px 20px 20px; padding: 20px'>"
+				+ "				<div style='background: #054664; width: 600px; height: 375px; border-radius: 20px; color: #fff; display: inline-block'>"
+				+ "					<div style='display: table; margin: 20px;'>";
+		cuerpo = cuerpo + "						<div style='display: table-row;'>"
+				+ "							<div style='display: table-cell; vertical-align: middle; padding: 10px;'>"
+				+ "								<img src='" + urlImages + "ico_activos.png' />"
+				+ "							</div>"
+				+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
+				+ "								Asset number: <strong>" + dtoSendNotificator.getNumActivo() + "</strong>"
+				+ "							</div>" + "						</div>"
+				+ "						<div style='display: table-row;'>"
+				+ "							<div style='display: table-cell; vertical-align: middle; padding: 10px;'>"
+				+ "								<img src='" + urlImages + "ico_direccion.png' />"
+				+ "							</div>"
+				+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
+				+ "								Address: <strong>" + dtoSendNotificator.getDireccion() + "</strong>"
+				+ "							</div>" + "						</div>"
+				+ "						<div style='display: table-row;'>"
+				+ "							<div style='display: table-cell; vertical-align: middle; padding: 10px;'>"
+				+ "								<img src='" + urlImages + "ico_agrupaciones.png' />"
+				+ "							</div>"
+				+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
+				+ "								Asset group number: <strong>"
+				+ (!Checks.esNulo(dtoSendNotificator.getNumAgrupacion()) ? dtoSendNotificator.getNumAgrupacion() : "-")
+				+ "</strong>" + "							</div>" + "						</div>"
+				+ "					</div>" + "				</div>"
+				+ "				<div style='display: inline-block; width: 140px; vertical-align: top'>"
+				+ "					<img src='" + urlImages + "logo_haya.png' "
+				+ "						style='display: block; margin: 30px auto' /> " + "					<img src='"
+				+ urlImages + "logo_rem.png' "
+				+ "						style='display: block; margin: 30px auto' /> " + "				</div>"
+				+ "				<div style='background: #fff; color: #333; border-radius: 20px; padding: 25px; line-height: 22px; text-align: justify; margin-top: 20px; font-size: 16px'>"
+				+ contenido + "				</div>"
+				+ "				<div style='color: #333; margin: 23px 0px 0px 65px; font-size: 16px; display: table;'>"
+				+ "					<div style='display: table-cell'>" + "						<img src='"
+				+ urlImages + "ico_advertencia.png' />" + "					</div>"
+				+ "					<div style='display: table-cell; vertical-align: middle; padding: 5px;'>"
+				+ "						This message is an automatic notification. Don't respond to this email.</div>"
+				+ "				</div>" + "			</div>" + "		</div>" + "</body>" + "</html>";
+
+		return cuerpo;
+	}
+	
+	
+	
+	
 	private String getUrlImagenes() {
 		String url = appProperties.getProperty("url");
 

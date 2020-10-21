@@ -2180,6 +2180,7 @@ public class ActivoAdapter {
 			beanUtilNotNull.copyProperty(dtoTramite, "estaTareaPendienteDevolucion", false);
 			beanUtilNotNull.copyProperty(dtoTramite, "estaEnTareaSiguienteResolucionExpediente", false);
 			beanUtilNotNull.copyProperty(dtoTramite, "estaTareaRespuestaBankiaAnulacionDevolucion", false);
+			Boolean estaEnTareaReserva = false; 
 			if(!Checks.estaVacio(listaTareas)){
 				for(TareaProcedimiento tarea : listaTareas){
 					if(ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION.equals(tarea.getCodigo())){
@@ -2194,8 +2195,21 @@ public class ActivoAdapter {
 						beanUtilNotNull.copyProperty(dtoTramite, "estaTareaRespuestaBankiaAnulacionDevolucion", true);
 						beanUtilNotNull.copyProperty(dtoTramite, "estaEnTareaSiguienteResolucionExpediente", true);
 					}
+					
+					if(ComercialUserAssigantionService.CODIGO_T013_PBC_RESERVA.equals(tarea.getCodigo()) ||
+							ComercialUserAssigantionService.CODIGO_T017_PBC_RESERVA.equals(tarea.getCodigo()) ||
+							ComercialUserAssigantionService.CODIGO_T013_INSTRUCCIONES_RESERVA.equals(tarea.getCodigo()) ||
+							ComercialUserAssigantionService.CODIGO_T013_OBTENCION_CONTRATO_RESERVA.equals(tarea.getCodigo()) ||
+							ComercialUserAssigantionService.CODIGO_T017_INSTRUCCIONES_RESERVA.equals(tarea.getCodigo()) ||
+							ComercialUserAssigantionService.CODIGO_T017_OBTENCION_CONTRATO_RESERVA.equals(tarea.getCodigo())) {
+						estaEnTareaReserva = true;
+					}
 				}
 			}
+			String codigoGestor = gestorActivoApi.getCodigoGestorPorUsuario(usuarioManager.getUsuarioLogado().getId());
+			Boolean esGestorAutorizado = !codigoGestor.contains("GBOAR");
+			beanUtilNotNull.copyProperty(dtoTramite, "esGestorAutorizado", esGestorAutorizado);
+			beanUtilNotNull.copyProperty(dtoTramite, "estaEnTareaReserva", estaEnTareaReserva);
 			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(tramite.getActivo().getId());
 			boolean aplicaGestion = !Checks.esNulo(perimetroActivo) && Integer.valueOf(1).equals(perimetroActivo.getAplicaGestion())? true: false;
 			beanUtilNotNull.copyProperty(dtoTramite, "activoAplicaGestion", aplicaGestion);

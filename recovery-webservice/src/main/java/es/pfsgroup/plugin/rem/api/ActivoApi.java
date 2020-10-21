@@ -1434,4 +1434,5 @@ public interface ActivoApi {
 
 	boolean isActivoExisteEnRem(Long idActivo);
 
+	public Boolean isGrupoOficinaKAM();
 }

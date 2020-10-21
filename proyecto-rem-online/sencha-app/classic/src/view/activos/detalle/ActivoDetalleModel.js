@@ -1093,6 +1093,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		    }
 		    return false;
 		 },
+		 
+		 editarSegmentoDivarianandBbva: function(get){
+			var isSubcarteraDivarian = get('activo.isSubcarteraDivarian');			
+		    var isBbva = get('activo.isCarteraBbva');
+		    var isGrupoOficinaKAM = get('activo.isGrupoOficinaKAM');
+		    if(isBbva && (isGrupoOficinaKAM || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) || isSubcarteraDivarian){
+			return true;
+		    }
+		    return false;
+		},
 		
 		isGestorAdmisionAndSuperUA: function(){
 			var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) ||  $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);

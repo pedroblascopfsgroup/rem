@@ -1007,6 +1007,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setCexperBbva(activoBbva.getCexperBbva());
 		}
 		
+		activoDto.setIsGrupoOficinaKAM(activoApi.isGrupoOficinaKAM());
+		
 		return activoDto;
 	}
 	

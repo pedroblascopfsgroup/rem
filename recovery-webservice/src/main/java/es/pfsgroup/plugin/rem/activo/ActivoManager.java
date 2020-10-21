@@ -228,6 +228,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String DESC_SI = "Sí";
 	private static final String DESC_NO = "No";
 
+	public static final String GRUPO_OFICIONA_KAM = "gruofikam";
 	
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
@@ -8702,6 +8703,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 		}		
 		return tiposSegmento;
+	}
+	
+	@Override
+	public Boolean isGrupoOficinaKAM() {
+		Boolean isGrupoOficinaKAM = false;
+		GrupoUsuario grupoOfiKAM = null;
+		Usuario logedUser = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		if (logedUser != null) {
+			grupoOfiKAM = genericDao.get(GrupoUsuario.class, genericDao.createFilter(FilterType.EQUALS, "grupo.username", GRUPO_OFICIONA_KAM), genericDao.createFilter(FilterType.EQUALS, "usuario.username", logedUser.getUsername()));
+			if (grupoOfiKAM != null) {
+				isGrupoOficinaKAM = true;
+			}
+		}
+		return isGrupoOficinaKAM;
 	}
 
 	@Override

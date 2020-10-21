@@ -154,7 +154,7 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'gestoresactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_GESTORES');
     	if($AU.getUser().codigoCartera == CONST.CARTERA['BANKIA'] && me.lookupController().getViewModel().get('activo').get('isCarteraBankia')){
 			if($AU.userIsRol(CONST.PERFILES['USUARIO_CONSULTA']) || $AU.userHasFunction('TAB_ACTIVO_OBSERVACIONES')){
-				me.add({xtype: 'observacionesactivo', launch: CONST.OBSERVACIONES_TAB_LAUNCH['OBSERVACIONES_ACTIVO'], ocultarBotonesEdicion: true});
+				me.add({xtype: 'observacionesactivo', launch: CONST.OBSERVACIONES_TAB_LAUNCH['ACTIVO'], ocultarBotonesEdicion: true});
 			}
 		}else{
 			$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'observacionesactivo',launch: CONST.OBSERVACIONES_TAB_LAUNCH['ACTIVO'], ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_OBSERVACIONES');

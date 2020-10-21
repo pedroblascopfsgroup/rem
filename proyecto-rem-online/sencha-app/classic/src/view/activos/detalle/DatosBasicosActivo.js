@@ -285,15 +285,16 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								},
 								{
 									xtype:'comboboxfieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.activobbva.tipoAlta'),
+									reference: 'tipoAltaRef',
+									fieldLabel: HreRem.i18n('fieldlabel.activobbva.tipoAlta'),									
 									bind: {
 										readOnly : '{!isGestorAdmisionAndSuperComboTipoAltaBlo}',										
 										store: '{comboBBVATipoAlta}',
 										hidden: '{!activo.isCarteraBbva}',
 										value: '{activo.tipoAltaCodigo}'
-									},listener:{
-										afterrender:'{isGestorAdmisionAndSuperComboTipoAlta}'
-									}
+									}/*,listeners:{
+										beforerender:'isGestorAdmisionAndSuperComboTipoAlta'
+									}*/
 									
 								},
 				                {
@@ -1235,7 +1236,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
             
      ];
 	me.addPlugin({ptype: 'lazyitems', items: items });
-    me.callParent();    	
+    me.callParent();    
+    
    
 
     },

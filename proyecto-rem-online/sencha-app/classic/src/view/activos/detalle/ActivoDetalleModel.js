@@ -1028,26 +1028,38 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			
 			return false;
 		},
-		
 		isGestorAdmisionAndSuperComboTipoAltaBlo: function(get){
-			var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) ||  $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);
-			var me = this; 		
+			var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) 
+			|| $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) 
+			||  $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);
+			var me = this;
 			
-			var comboAltaAutomatica = get('activo.tipoAltaCodigo'); 
-			var comboActivoRecovery = get('activo.idRecovery');
+			var tipoAltaCodigo = me.getView().getViewModel().get('activo.tipoAltaCodigo');
+			var comboActivoRecovery = me.getView().getViewModel().get('activo.idRecovery');
+			var comboTipoAltaRef = me.getView().down("[reference='tipoAltaRef']");
 			
 			
-			if(gestores){	
-				if(comboAltaAutomatica == CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']) {
-         			return false;
-         		} else {
-         			return true;
-         			}
-				
-				
-				return true;
+			if(gestores){
+				if (comboActivoRecovery != null) {
+					comboTipoAltaRef.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
+					return false;
+				}else{
+					if(tipoAltaCodigo == CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']) {
+						comboTipoAltaRef.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
+         				return false;
+         			} else if (tipoAltaCodigo != CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']) {
+         				if (tipoAltaCodigo != null) {        					
+         					return true;
+         				}else{
+         					return false;
+         				}
+         				
+         			} 
+
 				}
-				
+
+				}
+								
 			
 			return false;
 		},

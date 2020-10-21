@@ -1615,7 +1615,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 						activoBbva.setLineaFactura(dto.getLineaFactura());
 					}
 
-					if (dto.getIdOrigenHre() != null) {
+					if (dto.getIdOrigenHre() != null && !"".equals(String.valueOf(dto.getIdOrigenHre()))) {
 						
 						Activo activoOrigenHRE = activoApi.getByNumActivo(dto.getIdOrigenHre());
 						

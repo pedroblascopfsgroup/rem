@@ -1204,10 +1204,7 @@ public interface ParticularValidatorApi {
 
 	boolean isProveedorSuministroVigente(String codRem);
 
+	Boolean existePais(String pais);
 
-	
-	
-
-	
-	
+	Boolean existeMunicipioDeProvinciaByCodigo(String codProvincia, String codigoMunicipio);
 }

@@ -83,6 +83,8 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	public static final String CODIGO_T017_RESOLUCION_DIVARIAN = "T017_ResolucionDivarian";
 	public static final String CODIGO_T017_RESOLUCION_ARROW = "T017_ResolucionArrow";
 	
+	public static final String USUARIO_GESTOR_FORMALIZACION = "gestform";
+	
 	@Autowired
 	private ActivoApi activoApi;
 	
@@ -129,6 +131,8 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	@Override
 	public Usuario getUser(TareaExterna tareaExterna) {
 		TareaActivo tareaActivo = (TareaActivo)tareaExterna.getTareaPadre();
+		String codigoCartera =tareaActivo.getActivo().getCartera().getCodigo();
+		Usuario usuarioDevolver;
 		
 		boolean isFdv = this.isFuerzaVentaDirecta(tareaExterna);
 		boolean isConFormalizacion = this.isConFormalizacion(tareaExterna);
@@ -234,6 +238,21 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		
 		if(CODIGO_T017_RESOLUCION_DIVARIAN.equals(codigoTarea) || CODIGO_T017_RESOLUCION_ARROW.equals(codigoTarea)) {
 			return gestorActivoApi.usuarioTareaDivarian(codigoTarea);
+		}
+			
+		
+		if((DDCartera.CODIGO_CARTERA_CERBERUS.equals(codigoCartera) && (CODIGO_T017_PBC_VENTA.equals(codigoTarea) || CODIGO_T017_PBC_RESERVA.equals(codigoTarea))) 
+				|| ((DDCartera.CODIGO_CARTERA_BANKIA.equals(codigoCartera)
+						|| DDCartera.CODIGO_CARTERA_LIBERBANK.equals(codigoCartera)
+						|| DDCartera.CODIGO_CARTERA_SAREB.equals(codigoCartera)
+						|| DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codigoCartera))
+						&& CODIGO_T013_RESULTADO_PBC.equals(codigoTarea))) {		
+			Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "username", USUARIO_GESTOR_FORMALIZACION);
+			usuarioDevolver = genericDao.get(Usuario.class, filtroUsuario);
+			
+			if(usuarioDevolver != null) {
+				return usuarioDevolver;
+			}	
 		}
 		
 		if(GestorActivoApi.CODIGO_GESTOR_FORMALIZACION.equals(codigoGestor) || GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION.equals(codigoGestor) 

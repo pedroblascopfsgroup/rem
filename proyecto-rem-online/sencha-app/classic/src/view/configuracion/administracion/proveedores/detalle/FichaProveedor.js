@@ -204,7 +204,6 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 									xtype: 'textfieldbase',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.numero.ursus.bankia'),	
 						        	reference: 'numUrsusRef',
-						        	colspan: 3,
 						        	bind: '{proveedor.codProveedorUvem}',
 						        	listeners:{
 						        		render: function(){
@@ -220,7 +219,34 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 						        			}
 						        		}
 						        	}
-						        },
+					            
+						        },						       
+								{
+									xtype: 'textfieldbase',
+						        	fieldLabel:  HreRem.i18n('fieldlabel.proveedorapi.codigo'),						        	
+						        	bind: {
+						        		value:'{proveedor.codigoApiProveedor}',
+						        		hidden: '{!esTipoOficina}'
+						        	}
+									
+						        },						        
+								{ 
+									xtype: 'comboboxsearchfieldbase',
+									fieldLabel:  HreRem.i18n('fieldlabel.proveedores.mediador'),						
+									reference: 'cbmediadorProveedor',
+									colspan:2,
+								    bind : {
+								      store : '{comboMediador}',								      
+								      value : '{proveedor.idMediadorRelacionado}'
+								    },								    
+								    displayField: 'nombre',								    
+			    					valueField: 'codigoProveedorRem',
+			    					emptyText: 'Introduzca nombre mediador',
+			    					autoLoadOnValue: false,
+			    					loadOnBind: false,
+			    					forceSelection: false,
+			    					addUxReadOnlyEditFieldPlugin: true			    						    				   
+								},						        
 					         // Fila 7 (Ámbito)
 					            {
 									xtype:'fieldsettable',
@@ -551,7 +577,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 		            }
         ];
 
-    	me.callParent();    	
+    	me.callParent();
     },
     
     funcionRecargar: function() {

@@ -1,5 +1,5 @@
 Ext.define('HreRem.view.common.ComboBoxSearchFieldBase', { 	
-	extend			: 'Ext.form.field.ComboBox',
+	extend			: 'HreRem.view.common.ComboBoxFieldBase',
     xtype			: 'comboboxsearchfieldbase',
     displayField	: 'descripcion',      
     valueField		: 'codigo',    
@@ -9,8 +9,8 @@ Ext.define('HreRem.view.common.ComboBoxSearchFieldBase', {
 	minLength: 3,
 	queryMode: 'local',
 	triggerAction: 'query',
-	anyMatch: true,
-	
+	anyMatch: true,	
+	addUxReadOnlyEditFieldPlugin: false,
 	privates: {
 	onRender: function(){
 		this.store.clearFilter(true);

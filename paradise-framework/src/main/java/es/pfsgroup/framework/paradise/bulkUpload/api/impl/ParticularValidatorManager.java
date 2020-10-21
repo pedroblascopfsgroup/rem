@@ -5190,17 +5190,42 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
             return false;
 	    }
 	
-	    String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
-	    				+ "              FROM ACT_AGR_AGRUPACION AGR "
-	    				+ "              JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AGR.AGR_ACT_PRINCIPAL "
-	    				+ "              JOIN DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID "
-	    				+ "				 WHERE AGR.AGR_NUM_AGRUP_REM = '" + numAgrupacion + "' AND ACT.DD_CRA_ID = "
-	    						+ "(SELECT CRA.DD_CRA_ID "
-	    						+ "FROM ACT_PRO_PROPIETARIO PRO "
-	    						+ "JOIN DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID	"
-	    						+ "WHERE PRO.PRO_DOCIDENTIF LIKE '" + docIdentificadorPropietario + "')"
-	                    );
-	    return !"0".equals(resultado);
+	    String carteraGasto = rawDao.getExecuteSQL("SELECT APRO.DD_CRA_ID FROM ACT_PRO_PROPIETARIO APRO " + 
+				"         WHERE APRO.pro_docidentif = '"+docIdentificadorPropietario+"' AND  APRO.BORRADO = 0 ");
+		
+		String carteraAgrupacion = null;
+		String masDeUnaCartera = rawDao.getExecuteSQL("SELECT count(*) FROM (SELECT DISTINCT ACT.DD_CRA_ID " + 
+				"		FROM ACT_ACTIVO ACT " + 
+				"		WHERE EXISTS ( " + 
+				"		   SELECT 1 " + 
+				"		   FROM ACT_AGR_AGRUPACION AGR " + 
+				"		   JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = AGR.AGR_ID " + 
+				"		   WHERE AGR.AGR_NUM_AGRUP_REM = '"+numAgrupacion+"' " + 
+				"		       AND AGA.ACT_ID  = ACT.ACT_ID " + 
+				"		       AND AGR.BORRADO = 0 " + 
+				"		       AND AGR.AGR_FECHA_BAJA IS NULL " + 
+				"		))");
+		
+		if("1".equals(masDeUnaCartera)) {
+			carteraAgrupacion = rawDao.getExecuteSQL("SELECT DISTINCT ACT.DD_CRA_ID " + 
+					"		FROM ACT_ACTIVO ACT " + 
+					"		WHERE EXISTS ( " + 
+					"		   SELECT 1 " + 
+					"		   FROM ACT_AGR_AGRUPACION AGR " + 
+					"		   JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = AGR.AGR_ID " + 
+					"		   WHERE AGR.AGR_NUM_AGRUP_REM = '"+numAgrupacion+"' " + 
+					"		       AND AGA.ACT_ID  = ACT.ACT_ID " + 
+					"		       AND AGR.BORRADO = 0 " + 
+					"		       AND AGR.AGR_FECHA_BAJA IS NULL " + 
+					"		)");
+		}
+		if(Checks.esNulo(carteraGasto) || Checks.esNulo(carteraAgrupacion)) {
+			return false;
+		}
+		
+		
+		
+		return carteraGasto.equals(carteraAgrupacion);
     }
 	
 	@Override

@@ -1402,6 +1402,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean existeMunicipioDeProvinciaByCodigo(String codProvincia, String codigoMunicipio) {
+		if(codigoMunicipio == null || codProvincia == null) {
+			return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ${master.schema}.DD_LOC_LOCALIDAD LOC"
+				+ "		 INNER JOIN ${master.schema}.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_ID = LOC.DD_PRV_ID"
+				+ "		 WHERE PRV.DD_PRV_CODIGO = '"+codProvincia+"' AND"
+				+ "		 LOC.DD_LOC_CODIGO = '" + codigoMunicipio + "'");
+
+		return !"0".equals(resultado);
+	}
 
 	@Override
 	public Boolean existeUnidadInferiorMunicipioByCodigo(String codigoUnidadInferiorMunicipio) {
@@ -4747,6 +4762,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				"SELECT VALIDACION FROM CDC_CALIDAD_DATOS_CONFIG "
 				+ "WHERE COD_CAMPO = '" + codCampo + "' AND BORRADO = 0"
 		);			
+	}
+
+	@Override
+	public Boolean existePais(String pais) {
+		if(pais == null || pais.isEmpty()) return null;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM DD_PAI_PAISES WHERE DD_PAI_CODIGO = '"+pais+"'");
+		return "1".equals(resultado);
 	}
 	
 }

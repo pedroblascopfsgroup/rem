@@ -1167,4 +1167,8 @@ public interface ParticularValidatorApi {
 
 	String getValidacionCampoCDC(String codCampo);
 
+	Boolean existePais(String pais);
+
+	Boolean existeMunicipioDeProvinciaByCodigo(String codProvincia, String codigoMunicipio);
+
 }

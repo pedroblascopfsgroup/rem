@@ -4,10 +4,20 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.DireccionesDelegacionesModel',
                 'HreRem.model.PersonasContactoModel', 'HreRem.model.ActivosIntegradosModel', 'HreRem.model.AdjuntoProveedor',
-                'HreRem.model.ComboLocalidadBase', 'HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor'],
+                'HreRem.model.ComboLocalidadBase', 'HreRem.view.common.adjuntos.AdjuntarDocumentoProveedor','HreRem.model.ComboProveedorHistoricoMediadorModel'],
     
     data: {
     	proveedor: null
+    },
+    formulas:{
+    	esTipoOficina: function(get){
+    		
+    		return !Ext.isEmpty( get('proveedor.subtipoProveedorCodigo')) &&
+    		(get('proveedor.subtipoProveedorCodigo') == CONST.SUBTIPOS_PROVEEDOR['OFICINA_BBVA']
+    		|| get('proveedor.subtipoProveedorCodigo') == CONST.SUBTIPOS_PROVEEDOR['OFICINA_LIBERBANK'] 
+    		|| get('proveedor.subtipoProveedorCodigo') == CONST.SUBTIPOS_PROVEEDOR['OFICINA_CAJAMAR']
+    		|| get('proveedor.subtipoProveedorCodigo') == CONST.SUBTIPOS_PROVEEDOR['OFICINA_BANKIA'])
+    	}
     },
     
     stores: {
@@ -42,6 +52,17 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Proveed
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'tipoPersona'}
 				}
+		},
+		comboMediador: {
+			model: 'HreRem.model.ComboProveedorHistoricoMediadorModel',
+				proxy: {
+					timeout: 600000,
+					type: 'uxproxy',					
+					remoteUrl: 'proveedores/getMediadoresActivos'					
+				},
+				autoLoad: true,
+				session: true,
+				remoteFilter: false
 		},
 		comboTipoActivosCartera: {
 			model: 'HreRem.model.ComboBase',

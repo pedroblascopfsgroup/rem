@@ -287,11 +287,11 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			gastoLineaDetalle.setCostas(Double.parseDouble(dto.getCostas().replace(",", ".")));
 		}
 	
-		if(!Checks.esNulo(dto.getOtros() != null)) {
+		if(!Checks.esNulo(dto.getOtros())) {
 			gastoLineaDetalle.setOtrosIncrementos(Double.parseDouble(dto.getOtros().replace(",", ".")));
 		}
 		
-		if(!Checks.esNulo(dto.getProvSupl() != null)){
+		if(!Checks.esNulo(dto.getProvSupl())){
 			gastoLineaDetalle.setProvSuplidos(Double.parseDouble(dto.getProvSupl().replace(",", ".")));
 		}
 		

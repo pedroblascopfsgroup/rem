@@ -42,4 +42,7 @@ public class BulkOfertaDaoImpl extends AbstractEntityDao<BulkOferta, Long> imple
 		return q.list();
 	}
 	
+	public void flush() {
+		this.getSessionFactory().getCurrentSession().flush();
+	}
 }

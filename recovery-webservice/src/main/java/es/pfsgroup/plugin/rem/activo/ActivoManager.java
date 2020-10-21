@@ -1029,13 +1029,31 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	@BusinessOperationDefinition("activoManager.comprobarExisteAdjuntoActivo")
 	public Boolean comprobarExisteAdjuntoActivo(Long idActivo, String codigoDocumento) {
-		Filter idActivoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
-		Filter codigoDocumentoFilter = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.codigo",
-				codigoDocumento);
-
-		List<ActivoAdjuntoActivo> adjuntosActivo = genericDao.getList(ActivoAdjuntoActivo.class, idActivoFilter,
-				codigoDocumentoFilter);
-
+		List<ActivoAdjuntoActivo> adjuntosActivo = new ArrayList<ActivoAdjuntoActivo>();
+		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
+		
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			Activo activo = this.get(idActivo);
+			try {
+				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosActivo(activo);
+				for (DtoAdjunto adj : listaAdjuntos) {
+					ActivoAdjuntoActivo activoAdjuntoActivo = activo.getAdjuntoGD(adj.getId());
+					if (activoAdjuntoActivo != null && activoAdjuntoActivo.getTipoDocumentoActivo() != null
+							&& codigoDocumento.equals(activoAdjuntoActivo.getTipoDocumentoActivo().getCodigo())) {
+						adjuntosActivo.add(activoAdjuntoActivo);
+					}
+				}
+			} catch (GestorDocumentalException gex) {
+				logger.error(gex.getMessage(), gex);
+			}
+		} else {		
+			Filter idActivoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+			Filter codigoDocumentoFilter = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.codigo",
+					codigoDocumento);
+	
+			adjuntosActivo = genericDao.getList(ActivoAdjuntoActivo.class, idActivoFilter,
+					codigoDocumentoFilter);
+		}
 		return !Checks.estaVacio(adjuntosActivo);
 	}
 

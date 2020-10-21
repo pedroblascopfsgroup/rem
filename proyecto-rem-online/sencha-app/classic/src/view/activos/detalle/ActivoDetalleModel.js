@@ -1091,10 +1091,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     		comboUsuarios: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'activo/getComboUsuarios',
-				extraParams: {idTipoGestor: '{tipoGestor.selection.id}'}
-				}
+					type: 'uxproxy',
+					remoteUrl: 'activo/getComboUsuarios',
+					extraParams: {idTipoGestor: '{tipoGestor.selection.id}'}
+				},
+				autoLoad: false,
+				remoteFilter: false,
+				remoteSort: false
+				
     		},
     		
     		comboTiposCarga: {

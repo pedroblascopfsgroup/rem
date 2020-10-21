@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin Arnal
---## FECHA_CREACION=20200910
+--## FECHA_CREACION=20200911
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10975
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 HREOS-11680 - JAD - reformulamos la vista VI_NOR_BBVA_VT1
+--##        0.3 HREOS-11680 - JAD - quitamos el num_linia es vacio que esta mal
 --##########################################
 --*/
 
@@ -168,7 +169,7 @@ BEGIN
         FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
         LEFT JOIN '||V_ESQUEMA||'.VI_BBVA_SIT_COMER ON VI_BBVA_SIT_COMER.ACT_ID = ACT.ACT_ID
         LEFT JOIN '||V_ESQUEMA||'.DD_EAC_ESTADO_ACTIVO EAC ON EAC.DD_EAC_ID = ACT.DD_EAC_ID
-        JOIN '||V_ESQUEMA||'.ACT_BBVA_ACTIVOS BBVA ON BBVA.ACT_ID = ACT.ACT_ID AND BBVA.BBVA_LINEA_FACTURA IS NULL
+        JOIN '||V_ESQUEMA||'.ACT_BBVA_ACTIVOS BBVA ON BBVA.ACT_ID = ACT.ACT_ID
         JOIN '||V_ESQUEMA||'.BIE_BIEN BIEN ON BIEN.BIE_ID = ACT.BIE_ID
         JOIN '||V_ESQUEMA||'.BIE_LOCALIZACION BIEL ON BIEN.BIE_ID = BIEL.BIE_ID
         JOIN '||V_ESQUEMA_MASTER||'.DD_LOC_LOCALIDAD LOC2 ON LOC2.DD_LOC_ID = BIEL.DD_LOC_ID

@@ -751,7 +751,7 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 	
 	private boolean stringToBoolean(String valor){
 		boolean bool = false;
-		if(!Checks.esNulo(valor) && !Arrays.asList(listaValidosPositivos).contains(valor.toUpperCase())) {
+		if(!Checks.esNulo(valor) && Arrays.asList(listaValidosPositivos).contains(valor.toUpperCase())) {
 			bool = true;
 		}
 		

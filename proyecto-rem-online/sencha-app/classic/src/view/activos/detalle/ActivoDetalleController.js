@@ -292,6 +292,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 							tabData.models[0].data.valorEstimadoRenta = record.infoComercial.data.valorEstimadoRenta;
 						}
 					}
+				} else if (tabData.models[0].name === "datosbasicos") {
+					record = form.getBindRecord();
+					if (record != null) {
+						tabData.models[0].data.cexperBbva = record.data.cexperBbva;
+						tabData.models[0].data.uicBbva = record.data.uicBbva;
+					}
 				}
 			}
 

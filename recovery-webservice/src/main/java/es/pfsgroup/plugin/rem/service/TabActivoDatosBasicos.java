@@ -1678,13 +1678,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 						}
 					}
 
-					if (dto.getUicBbva() != null) {
-						activoBbva.setUicBbva(dto.getUicBbva());
-					}
-
-					if (dto.getCexperBbva() != null) {
-						activoBbva.setCexperBbva(dto.getCexperBbva());
-					}
+					activoBbva.setUicBbva(dto.getUicBbva());
+					activoBbva.setCexperBbva(dto.getCexperBbva());
+					
 				}else {
 					throw new JsonViewerException(messageServices.getMessage(ACTIVO_NO_BBVA));
 				}

@@ -972,6 +972,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}else {
 			activoDto.setEsEditableActivoEstadoRegistral(!perimetroAdmision);
 		}
+		
+		if(activo.getTipoTransmision() != null) {
+			activoDto.setTipoTransmisionCodigo(activo.getTipoTransmision().getCodigo());
+			activoDto.setTipoTransmisionDescripcion(activo.getTipoTransmision().getDescripcion());
+		}
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 		ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
@@ -1153,6 +1158,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				DDSubtipoActivo subtipoActivo = (DDSubtipoActivo) diccionarioApi.dameValorDiccionarioByCod(DDSubtipoActivo.class,  dto.getSubtipoActivoCodigo());
 				activo.setSubtipoActivo(subtipoActivo);
 				reiniciarPBC = true;
+			}
+			
+			if (dto.getTipoTransmisionCodigo() != null) {
+				Filter filtroTr1 = genericDao.createFilter(FilterType.EQUALS, "codigo",
+						dto.getTipoTransmisionCodigo());
+				DDTipoTransmision ddtr1 = genericDao.get(DDTipoTransmision.class, filtroTr1);
+				activo.setTipoTransmision(ddtr1);
 			}
 			
 			Filter filterLbk = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
@@ -1415,6 +1427,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				activo.setSelloCalidad(false);
 			}
 			
+			
 			// Activo bancario -------------
 			// Solo se guardan los datos si el usuario ha cambiado algun campo del activo bancario.
 			// El control de cambios se realiza revisando los datos que transporta el dto
@@ -1496,7 +1509,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}else {
 					activo.setPerimetroMacc(0);
 				}
-			}		
+			}
+			
 
 			if (!Checks.esNulo(activo)) {
 				boolean isUnidadAlquilable = activoDao.isUnidadAlquilable(activo.getId());
@@ -1719,8 +1733,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					activoBbva.setUicBbva(dto.getUicBbva());
 					activoBbva.setCexperBbva(dto.getCexperBbva());
 					
+					if (dto.getCexperBbva() != null) {
+						activoBbva.setCexperBbva(dto.getCexperBbva());
+					}
+					
 				}else {
-					throw new JsonViewerException(messageServices.getMessage(ACTIVO_NO_BBVA));
+					//throw new JsonViewerException(messageServices.getMessage(ACTIVO_NO_BBVA));
 				}
 			}
 		} catch(JsonViewerException jve) {

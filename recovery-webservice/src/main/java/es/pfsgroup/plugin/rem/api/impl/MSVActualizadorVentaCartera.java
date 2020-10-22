@@ -824,7 +824,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 						vDatosComprador.setCodTipoPersona(DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA);
 					}
 					vDatosComprador.setNombreRazonSocial(nombreRazonSocial);
-					vDatosComprador.setApellidos(nombreRazonSocial);
+					vDatosComprador.setApellidos("-");
 					vDatosComprador.setCodTipoDocumento(exc.dameCelda(fila,
 							MSVVentaDeCarteraExcelValidator.COL_NUM.TIPO_DOCUMENTO_TITULAR_2 + contadorColumnas));
 					vDatosComprador.setNumDocumento(exc.dameCelda(fila,
@@ -852,8 +852,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 					}
 
 					vDatosComprador.setCodigoRegimenMatrimonial(regimenMatrimonial);
-					
-					vDatosComprador.setApellidos(nombreRazonSocial);
+
 					vDatosComprador.setCodigoPais(exc.dameCelda(fila,
 							MSVVentaDeCarteraExcelValidator.COL_NUM.PAIS_TITULAR_2 + contadorColumnas));
 					String codProvincia = exc.dameCelda(fila,
@@ -869,9 +868,9 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 					String nombreRazonSocialRte = exc.dameCelda(fila,
 							MSVVentaDeCarteraExcelValidator.COL_NUM.NOMBRE_RTE_TITULAR_2 + contadorColumnas);
 					if(nombreRazonSocialRte != null && !nombreRazonSocialRte.isEmpty()) {
-						vDatosComprador.setNombreRazonSocialRte(nombreRazonSocialRte);
-						vDatosComprador.setApellidosRte(nombreRazonSocialRte);
+						vDatosComprador.setNombreRazonSocialRte(nombreRazonSocialRte);						
 					}
+					vDatosComprador.setApellidosRte("-");
 					vDatosComprador.setCodTipoDocumentoRte(exc.dameCelda(fila,
 							MSVVentaDeCarteraExcelValidator.COL_NUM.TIPO_DOCUMENTO_RTE_TITULAR_2 + contadorColumnas));
 					vDatosComprador.setNumDocumentoRte(exc.dameCelda(fila,

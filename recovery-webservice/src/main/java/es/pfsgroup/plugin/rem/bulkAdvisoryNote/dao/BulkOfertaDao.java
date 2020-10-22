@@ -22,4 +22,6 @@ public interface BulkOfertaDao extends AbstractDao<BulkOferta, Long>{
 	 */
 	public List<BulkOferta> getListBulkOfertasByIdBulk(Long idBulk);
 	
+	public void flush();
+	
 }

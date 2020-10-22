@@ -235,6 +235,7 @@ BEGIN
                 else ''No definido''
             end SITUACION_COMERCIAL_BBVA
         from '||V_ESQUEMA||'.act_activo ACT
+            JOIN '||V_ESQUEMA||'.ACT_BBVA_ACTIVOS BBVA ON BBVA.ACT_ID = ACT.ACT_ID
             left join '||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL SCM ON SCM.DD_SCM_ID = ACT.DD_SCM_ID
             left join last_oferta on last_oferta.ACT_ID = ACT.ACT_ID
             left join '||V_ESQUEMA||'.V_COND_PUBLICACION VCP on VCP.ACT_ID = ACT.ACT_ID

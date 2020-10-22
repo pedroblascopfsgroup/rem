@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Juan Beltrán
---## FECHA_CREACION=20200918
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20201022
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-8070
+--## INCIDENCIA_LINK=REMVIP-8058
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##
@@ -16,6 +16,7 @@
 --##		0.4 Sumar participación y porcentaje mismo activo en gasto
 --##		0.5 Añadir filtros de borrado
 --##		0.6 REMVIP-8070 Error división entre 0
+--##		0.7 REMVIP-8058 Corregido suma con la tabla Prinex debido a gastos con precio duplicado
 --##########################################
 --*/
 

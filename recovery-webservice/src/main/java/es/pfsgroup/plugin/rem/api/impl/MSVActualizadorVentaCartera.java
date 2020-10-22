@@ -940,7 +940,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			vDatosComprador.setNombreRazonSocial(nombreRazonSocial);
 			// falta ursus conyuge
 
-			vDatosComprador.setApellidos(" ");
+			vDatosComprador.setApellidos("-");
 			vDatosComprador.setCodigoPais(codPais);
 			if(codProvincia != null && !codProvincia.isEmpty())
 				vDatosComprador.setProvinciaCodigo(codProvincia);
@@ -950,7 +950,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			vDatosComprador.setCodTipoDocumentoRte(codTipoDocumentoRte);
 			vDatosComprador.setNumDocumentoRte(numDocumentoRte);
 			vDatosComprador.setNombreRazonSocialRte(nombreRazonSocialRte);
-			vDatosComprador.setApellidosRte(" ");
+			vDatosComprador.setApellidosRte("-");
 			vDatosComprador.setCodigoPaisRte(codPaisRte);
 			if(codProvinciaRte != null && !codProvinciaRte.isEmpty())
 				vDatosComprador.setProvinciaRteCodigo(codProvinciaRte);

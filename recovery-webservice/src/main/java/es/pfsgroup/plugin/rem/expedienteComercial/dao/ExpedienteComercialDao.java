@@ -98,4 +98,6 @@ public interface ExpedienteComercialDao extends AbstractDao<ExpedienteComercial,
 	
 	List<VListadoOfertasAgrupadasLbk> getListActivosOfertaPrincipal(Long numOferta);
 	
+	String getUltimaFasePublicacion(Long id);
+	
 }

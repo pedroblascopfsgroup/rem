@@ -12,14 +12,18 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
@@ -35,6 +39,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
+import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -43,6 +48,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
@@ -93,6 +99,8 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 	@Autowired
 	private ComunicacionGencatApi comunicacionGencatApi;
 	
+	@Autowired
+	private ExpedienteComercialDao expedienteDao;
 	
 	@Autowired
 	private ActivoTramiteDao activoTramiteDao;
@@ -105,6 +113,9 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
 	
 	@Autowired
 	private NotificationOfertaManager notificationOfertaManager;
@@ -195,6 +206,44 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 					}
 
 					if(MOTIVO_ANULACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+						//Se restaura aqui las fases de la publicacion
+						String maxId = expedienteDao.getUltimaFasePublicacion(activo.getId());
+//						String maxId = rawDao.getExecuteSQL("select max(hfp_id) from ACT_HFP_HIST_FASES_PUB where act_id = "+ activo.getId() + " and hfp_fecha_fin is not null and borrado = 0");
+						Filter filtroHist = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(maxId));
+						HistoricoFasePublicacionActivo histo = genericDao.get(HistoricoFasePublicacionActivo.class, filtroHist);
+						Filter filtroFecha = genericDao.createFilter(FilterType.NULL, "fechaFin");
+						Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+						HistoricoFasePublicacionActivo histoActual = genericDao.get(HistoricoFasePublicacionActivo.class, filtroFecha,filtroActivo);
+						
+						if(histoActual != null) {
+							histoActual.setFechaFin(new Date());
+							genericDao.update(HistoricoFasePublicacionActivo.class, histoActual);
+						}
+						HistoricoFasePublicacionActivo histoNuevo = new HistoricoFasePublicacionActivo();
+						if(histo.getFasePublicacion() != null) {
+							histoNuevo.setFasePublicacion(histo.getFasePublicacion());
+						}
+						if(histo.getComentario() != null) {
+							histoNuevo.setComentario(histo.getComentario());
+						}
+						if(histo.getSubFasePublicacion() != null) {
+							histoNuevo.setSubFasePublicacion(histo.getSubFasePublicacion());
+						}
+						if(histo.getVersion() != null) {
+							histoNuevo.setVersion(histo.getVersion());
+						}
+						if(histo.getActivo() != null) {
+							histoNuevo.setActivo(histo.getActivo());
+						}
+						Usuario usu= proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+						histoNuevo.setUsuario(usu);
+						histoNuevo.setFechaInicio(new Date());
+						Auditoria aut = new Auditoria();
+						aut.setFechaCrear(new Date());
+						aut.setUsuarioCrear(usu.getUsername());
+						histoNuevo.setAuditoria(aut);
+						genericDao.save(HistoricoFasePublicacionActivo.class, histoNuevo);
+						
 						// Se incluye un motivo de anulacion del expediente, si se indico en la tarea
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());
 						DDMotivoAnulacionExpediente motivoAnulacion = genericDao.get(DDMotivoAnulacionExpediente.class, filtro);

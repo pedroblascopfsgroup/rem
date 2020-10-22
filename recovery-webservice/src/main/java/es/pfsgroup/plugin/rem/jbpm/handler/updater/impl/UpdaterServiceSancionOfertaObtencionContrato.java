@@ -1,18 +1,25 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import es.pfsgroup.plugin.rem.model.*;
+
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -27,6 +34,8 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
+import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 
 @Component
 public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterService {
@@ -54,6 +63,9 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 
 	@Autowired
 	private ActivoAdapter activoAdapter;
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
 
 	private static final String CODIGO_T013_OBTENCION_CONTRATO_RESERVA = "T013_ObtencionContratoReserva";
 	private static final String CODIGO_T017_OBTENCION_CONTRATO_RESERVA = "T017_ObtencionContratoReserva";
@@ -124,6 +136,33 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 							gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
 						}
 					}
+					
+					HistoricoFasePublicacionActivo histoFasePubAct = new HistoricoFasePublicacionActivo();
+					DDFasePublicacion fasePublicacion = new DDFasePublicacion();
+					DDSubfasePublicacion subfasePublicacion = new DDSubfasePublicacion();
+
+					Usuario usu= proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", activoOferta.getPrimaryKey().getActivo().getId());
+					activo = genericDao.get(Activo.class, filtroActivo);
+//					histoFasePubAct = genericDao.get(HistoricoFasePublicacionActivo.class, filtroActivo);
+					Filter filtroFecha = genericDao.createFilter(FilterType.NULL, "fechaFin");
+					Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+					HistoricoFasePublicacionActivo histoActual = genericDao.get(HistoricoFasePublicacionActivo.class, filtroFecha,filtroActivoId);
+					Filter filtroFaseActual = genericDao.createFilter(FilterType.EQUALS, "codigo", DDFasePublicacion.CODIGO_FASE_V_INCIDENCIAS_PUBLICACION);
+					fasePublicacion = genericDao.get(DDFasePublicacion.class, filtroFaseActual);
+					Filter filtroSubFaseActual = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubfasePublicacion.CODIGO_ARRAS_RESERVADO);
+					subfasePublicacion = genericDao.get(DDSubfasePublicacion.class, filtroSubFaseActual);
+
+					histoFasePubAct.setActivo(activo);
+					histoFasePubAct.setFechaInicio(new Date());
+					histoFasePubAct.setUsuario(usu);
+					histoFasePubAct.setFasePublicacion(fasePublicacion);
+					histoFasePubAct.setSubFasePublicacion(subfasePublicacion);
+
+					genericDao.save(HistoricoFasePublicacionActivo.class, histoFasePubAct);
+					
+					histoActual.setFechaFin(new Date());
+					genericDao.save(HistoricoFasePublicacionActivo.class, histoActual);
 				}
 	
 				activo = ofertaAceptada.getActivoPrincipal();

@@ -3,9 +3,12 @@ package es.pfsgroup.plugin.rem.expedienteComercial.dao.impl;
 import java.util.List;
 
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
+
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.dto.WebDto;
@@ -20,6 +23,9 @@ import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
 
 @Repository("ExpedienteComercialDao")
 public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteComercial, Long> implements ExpedienteComercialDao {
+	
+	@Autowired
+	private MSVRawSQLDao rawDao;
 
 	@Override
 	public Page getCompradoresByExpediente(Long idExpediente, WebDto webDto, boolean activoBankia) {
@@ -147,6 +153,12 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 
 		return (List<VListadoOfertasAgrupadasLbk>)  this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 
+	}
+	
+	public String getUltimaFasePublicacion(Long id) {
+		
+		String maxId = rawDao.getExecuteSQL("select max(hfp_id) from ACT_HFP_HIST_FASES_PUB where act_id = "+ id + " and hfp_fecha_fin is not null and borrado = 0");
+		return maxId;
 	}
 	
 }

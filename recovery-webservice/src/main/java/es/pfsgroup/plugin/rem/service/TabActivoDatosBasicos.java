@@ -62,6 +62,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
@@ -80,10 +81,12 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
+import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
+import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivoBDE;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
@@ -1244,10 +1247,60 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}
 				activo.setFechaRevisionSelloCalidad(new Date());
 				activo.setSelloCalidad(true);
+				
+				//HREOS-11733 Cambio en las fases de publicacion ( Se puede sacar a una funcion externa ) 
+				Filter filtroFecha = genericDao.createFilter(FilterType.NULL, "fechaFin");
+				Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+				HistoricoFasePublicacionActivo histActivo = genericDao.get(HistoricoFasePublicacionActivo.class, filtroFecha,filtroActivoId);
+				
+				if(histActivo != null && histActivo.getFasePublicacion() != null && DDFasePublicacion.CODIGO_FASE_VI_CALIDAD_COMPROBADA.equals(histActivo.getFasePublicacion().getCodigo()) && 
+						histActivo.getSubFasePublicacion() != null && !DDSubfasePublicacion.CODIGO_CALIDAD_COMPROBADA.equals(histActivo.getSubFasePublicacion().getCodigo())) {
+					Filter filtroSubFase = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubfasePublicacion.CODIGO_CALIDAD_COMPROBADA);
+					DDSubfasePublicacion subfase = genericDao.get(DDSubfasePublicacion.class, filtroSubFase);
+					histActivo.setFechaFin(new Date());
+					HistoricoFasePublicacionActivo histoNuevo = new HistoricoFasePublicacionActivo();
+					genericDao.update(HistoricoFasePublicacionActivo.class, histActivo);
+					
+					try {
+						BeanUtils.copyProperties(histoNuevo, histActivo);
+						histoNuevo.setSubFasePublicacion(subfase);
+						histoNuevo.setFechaFin(null);
+						genericDao.save(HistoricoFasePublicacionActivo.class, histoNuevo);
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					} catch (InvocationTargetException e) {
+						e.printStackTrace();
+					}
+				}
 			}else if(!Checks.esNulo(dto.getSelloCalidad()) && !dto.getSelloCalidad()){
 				activo.setGestorSelloCalidad(null);
 				activo.setFechaRevisionSelloCalidad(null);
 				activo.setSelloCalidad(false);
+				
+				//HREOS-11733 Cambio en las fases de publicacion
+				Filter filtroFecha = genericDao.createFilter(FilterType.NULL, "fechaFin");
+				Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+				HistoricoFasePublicacionActivo histActivo = genericDao.get(HistoricoFasePublicacionActivo.class, filtroFecha,filtroActivoId);
+				
+				if(histActivo != null && histActivo.getFasePublicacion() != null && DDFasePublicacion.CODIGO_FASE_VI_CALIDAD_COMPROBADA.equals(histActivo.getFasePublicacion().getCodigo()) && 
+						histActivo.getSubFasePublicacion() != null && DDSubfasePublicacion.CODIGO_CALIDAD_COMPROBADA.equals(histActivo.getSubFasePublicacion().getCodigo())) {
+					Filter filtroSubFase = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSubfasePublicacion.CODIGO_SIN_INCIDENCIAS);
+					DDSubfasePublicacion subfase = genericDao.get(DDSubfasePublicacion.class, filtroSubFase);
+					histActivo.setFechaFin(new Date());
+					HistoricoFasePublicacionActivo histoNuevo = new HistoricoFasePublicacionActivo();
+					genericDao.save(HistoricoFasePublicacionActivo.class, histActivo);
+					
+					try {
+						BeanUtils.copyProperties(histoNuevo, histActivo);
+						histoNuevo.setSubFasePublicacion(subfase);
+						histoNuevo.setFechaFin(null);
+						genericDao.save(HistoricoFasePublicacionActivo.class, histoNuevo);
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					} catch (InvocationTargetException e) {
+						e.printStackTrace();
+					}
+				}
 			}
 			
 			// Activo bancario -------------

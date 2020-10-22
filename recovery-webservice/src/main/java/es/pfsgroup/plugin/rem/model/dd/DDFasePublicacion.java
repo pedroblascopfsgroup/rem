@@ -32,11 +32,9 @@ public class DDFasePublicacion implements Auditable, Dictionary {
 	public static final String CODIGO_FASE_I_PENDIENTE_ACTUACIONES_PREVIAS = "03";
 	public static final String CODIGO_FASE_II_PENDIENTE_LLAVES = "04";
 	public static final String CODIGO_FASE_III_PENDIENTE_INFORMACION = "05";
-	public static final String CODIGO_CLASIFICADO = "06";
-	public static final String CODIGO_DEVUELTO = "07";
-	public static final String CODIGO_FASE_IV_PENDIENTE_PRECIO = "08";
-	public static final String CODIGO_FASE_V_INCIDENCIAS_PUBLICACION = "09";
-	public static final String CODIGO_FASE_VI_CALIDAD_COMPROBADA = "10";
+	public static final String CODIGO_FASE_IV_PENDIENTE_PRECIO = "06";
+	public static final String CODIGO_FASE_V_INCIDENCIAS_PUBLICACION = "07";
+	public static final String CODIGO_FASE_VI_CALIDAD_COMPROBADA = "08";
 
 
 	@Id

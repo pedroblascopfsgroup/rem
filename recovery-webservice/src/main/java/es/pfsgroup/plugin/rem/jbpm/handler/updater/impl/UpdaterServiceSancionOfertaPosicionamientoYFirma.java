@@ -73,7 +73,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
-
+		
 		ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		if (!Checks.esNulo(ofertaAceptada)) {
@@ -83,7 +83,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 			for (TareaExternaValor valor : valores) {
 
 				if (COMBO_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-					if (DDSiNo.SI.equals(valor.getValor())) {
+					if (DDSiNo.SI.equals(valor.getValor())) {						
 						String codCartera = ofertaAceptada.getActivoPrincipal().getCartera().getCodigo();
 						if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(codCartera)
 								|| (Checks.esNulo(expediente.getFechaContabilizacionPropietario())
@@ -135,6 +135,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class,
 								filtro);
 						expediente.setEstado(estado);
+						expediente.setFechaGrabacionVenta(new Date());
 					} else {
 						filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
 								DDEstadosExpedienteComercial.ANULADO);
@@ -223,7 +224,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 
 				if (ASISTENCIA_PBC_OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 					expediente.setObsAsisPbc(valor.getValor());
-				}
+				}				
 			}
 			boolean paseAVendido = false;
 			if (filtro != null) {

@@ -2653,7 +2653,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return rawDao.getExecuteSQL("SELECT tco.DD_TCO_CODIGO FROM ACT_ACTIVO act "
 				+ " INNER JOIN DD_TCO_TIPO_COMERCIALIZACION tco ON act.DD_TCO_ID = tco.DD_TCO_ID "
-				+ " WHERE act.ACT_NUM_ACTIVO = '"+numActivo+"'");
+				+ " WHERE act.ACT_NUM_ACTIVO = "+numActivo+" AND act.BORRADO = 0");
 	}
 
 	@Override

@@ -28,8 +28,12 @@ import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoTributoDaoImpl;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTributos;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoExento;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoSolicitud;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoSolicitudTributo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTributo;
 
 
 @Component
@@ -54,18 +58,26 @@ public class MSVSControlTributosProcesar extends AbstractMSVActualizador impleme
 		static final int DATOS_PRIMERA_FILA = 1;
 
 		static final int COL_NUM_ACTIVO = 0;
-		static final int COL_NUM_FECHA_EMISION = 1;
-		static final int COL_NUM_FECHA_RECEPCION_PROPIETARIO = 2;
-		static final int COL_NUM_FECHA_RECEPCION_GESTORIA = 3;
-		static final int COL_NUM_TIPO_SOLICITUD = 4;
-		static final int COL_NUM_OBSERVACIONES = 5;
-		static final int COL_NUM_FECHA_RECEPCION_RECURSO_PROPIETARIO = 6;
-		static final int COL_NUM_FECHA_RECEPCION_RECURSO_GESTORIA = 7;
-		static final int COL_NUM_FECHA_RESPUESTA = 8;
-		static final int COL_NUM_RESULTADO_SOLICITUD = 9;
-		static final int COL_NUM_HAYA_VINCULADO = 10;
-		static final int COL_NUM_ACCION = 11;
-		static final int COL_ID_TRIBUTO = 12;
+		static final int COL_NUM_TIPO_TRIBUTO=1;
+		static final int COL_NUM_FECHA_RECEPCION_TRIBUTO=2;
+		static final int COL_NUM_EXENTO=3;
+		static final int COL_NUM_MOTIVO_EXENTO=4;
+		static final int COL_NUM_FECHA_EMISION = 5;
+		static final int COL_NUM_FECHA_RECEPCION_PROPIETARIO = 6;
+		static final int COL_NUM_FECHA_RECEPCION_GESTORIA = 7;
+		static final int COL_NUM_TIPO_SOLICITUD = 8;
+		static final int COL_NUM_OBSERVACIONES = 9;
+		static final int COL_NUM_FECHA_RECEPCION_RECURSO_BANKIA = 10;
+		static final int COL_NUM_FECHA_RECEPCION_RECURSO_GESTORIA = 11;
+		static final int COL_NUM_FECHA_RESPUESTA = 12;
+		static final int COL_NUM_RESULTADO_SOLICITUD = 13;
+		static final int COL_NUM_HAYA_VINCULADO=14;
+		static final int COL_NUM_EXISTE_DOC=15;
+		static final int COL_NUM_NUMERO_EXPEDIENTE=16;
+		static final int COL_NUM_FECHA_COMUNICADO_DEVOLUCION_INGRESO=17;
+		static final int COL_NUM_IMPORTE_RECUPERADO=18;
+		static final int COL_NUM_ACCION = 19;
+		static final int COL_ID_TRIBUTO = 20;
 	}
 
 	@Override
@@ -81,17 +93,25 @@ public class MSVSControlTributosProcesar extends AbstractMSVActualizador impleme
 
 		// PK Número de activo, Fecha presentación recurso o fecha de emisión y tipo de solicitud.
 		Activo activo;
-		Date fechaEmision;
-		Date fechaRecepcionPropietario;
-		Date fechaRecepcionGestoria;
+		DDTipoTributo tipoTributo;
+		Date fechaRecepcionTributo = null; 
+		Date fechaEmision = null;
+		Date fechaRecepcionPropietario = null;
+		Date fechaRecepcionGestoria = null;
 		DDTipoSolicitudTributo tipoSolicitudTributo;
 		String observaciones;
-		Date fechaRecepcionRecursoPropietario;
-		Date fechaRecepcionRecursoGestoria;
-		Date fechaRespuestaRecurso;
-		DDFavorable resultado;
+		Date fechaRecepcionRecursoPropietario = null;
+		Date fechaRecepcionRecursoGestoria = null;
+		Date fechaRespuestaRecurso = null;
+		DDResultadoSolicitud resultado;
+		Long numGastoHaya = null;
+		ExpedienteComercial expediente;
+		Date fechaComunicadoDevolucionIngreso = null;
+		Double importeRecuperado;
 		ActivoTributos activoTributos;
 		GastoProveedor gastoProveedor;
+		DDMotivoExento motivoExento;
+		String tributoExento;
 
 		final String DD_ACM_ADD = "01";
 		final String DD_ACM_DEL = "02";
@@ -103,21 +123,28 @@ public class MSVSControlTributosProcesar extends AbstractMSVActualizador impleme
 		String celdaActivo = exc.dameCelda(fila, COL_NUM.COL_NUM_ACTIVO);
 		String celdaEmision = exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_EMISION);
 		String celdaSolicitud = exc.dameCelda(fila, COL_NUM.COL_NUM_TIPO_SOLICITUD);
-		String celdaGasto = exc.dameCelda(fila, COL_NUM.COL_NUM_HAYA_VINCULADO);
+		if (exc.dameCelda(fila, COL_NUM.COL_NUM_HAYA_VINCULADO) != null
+				&& exc.dameCelda(fila, COL_NUM.COL_NUM_HAYA_VINCULADO).length() > 0  ) {
+			numGastoHaya = Long.parseLong(exc.dameCelda(fila, COL_NUM.COL_NUM_HAYA_VINCULADO));
+		}
 		String celdaIdTributo = exc.dameCelda(fila, COL_NUM.COL_ID_TRIBUTO);
+		String celdaExisteDoc = exc.dameCelda(fila, COL_NUM.COL_NUM_EXISTE_DOC);
+		String celdaTributExento = exc.dameCelda(fila, COL_NUM.COL_NUM_EXENTO);
+		if(exc.dameCelda(fila, COL_NUM.COL_NUM_IMPORTE_RECUPERADO) != null && !exc.dameCelda(fila, COL_NUM.COL_NUM_IMPORTE_RECUPERADO).isEmpty())
+			importeRecuperado = Double.parseDouble(exc.dameCelda(fila, COL_NUM.COL_NUM_IMPORTE_RECUPERADO));
 		
 		if(accion.equals(DD_ACM_ADD)) {
 			
-		activoTributos = new ActivoTributos();	
+			activoTributos = new ActivoTributos();	
 		
-		activo = activoApi.getByNumActivo(Long.parseLong(celdaActivo));
-		fechaEmision = formatter.parse(celdaEmision);
-		Filter filtroSolicitud = genericDao.createFilter(FilterType.EQUALS, "codigo", celdaSolicitud);
-		tipoSolicitudTributo = genericDao.get(DDTipoSolicitudTributo.class, filtroSolicitud);			
-		
-		activoTributos.setActivo(activo);
-		activoTributos.setFechaPresentacionRecurso(fechaEmision);
-		activoTributos.setTipoSolicitudTributo(tipoSolicitudTributo);
+			activo = activoApi.getByNumActivo(Long.parseLong(celdaActivo));
+			fechaEmision = formatter.parse(celdaEmision);
+			Filter filtroSolicitud = genericDao.createFilter(FilterType.EQUALS, "codigo", celdaSolicitud);
+			tipoSolicitudTributo = genericDao.get(DDTipoSolicitudTributo.class, filtroSolicitud);			
+			
+			activoTributos.setActivo(activo);
+			activoTributos.setFechaPresentacionRecurso(fechaEmision);
+			activoTributos.setTipoSolicitudTributo(tipoSolicitudTributo);
 		
 		}else {
 			
@@ -140,32 +167,76 @@ public class MSVSControlTributosProcesar extends AbstractMSVActualizador impleme
 		
 		try {
 			
-			fechaRecepcionPropietario = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_PROPIETARIO));
-			fechaRecepcionGestoria = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_GESTORIA));
+			if(!exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_PROPIETARIO).isEmpty())
+				fechaRecepcionPropietario = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_PROPIETARIO));
+			if(!exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_GESTORIA).isEmpty())
+				fechaRecepcionGestoria = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_GESTORIA));
+			if(!exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_COMUNICADO_DEVOLUCION_INGRESO).isEmpty())
+				fechaComunicadoDevolucionIngreso = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_COMUNICADO_DEVOLUCION_INGRESO));
 
 			observaciones = exc.dameCelda(fila, COL_NUM.COL_NUM_OBSERVACIONES);
-
-			fechaRecepcionRecursoPropietario = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_RECURSO_PROPIETARIO));
-			fechaRecepcionRecursoGestoria = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_RECURSO_GESTORIA));
-			fechaRespuestaRecurso = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RESPUESTA));			
-
+			
+			if(!exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_RECURSO_BANKIA).isEmpty())
+				fechaRecepcionRecursoPropietario = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_RECURSO_BANKIA));
+			if(!exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_RECURSO_GESTORIA).isEmpty())
+				fechaRecepcionRecursoGestoria = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_RECURSO_GESTORIA));
+			if(!exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RESPUESTA).isEmpty())
+				fechaRespuestaRecurso = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RESPUESTA));
+			if(!exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_TRIBUTO).isEmpty())
+				fechaRecepcionTributo = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_RECEPCION_TRIBUTO));
+			if(!exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_COMUNICADO_DEVOLUCION_INGRESO).isEmpty())
+				fechaComunicadoDevolucionIngreso = formatter.parse(exc.dameCelda(fila, COL_NUM.COL_NUM_FECHA_COMUNICADO_DEVOLUCION_INGRESO));
+			
 			Filter filtroResultado = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, COL_NUM.COL_NUM_RESULTADO_SOLICITUD));
-			resultado = genericDao.get(DDFavorable.class, filtroResultado);
+			resultado = genericDao.get(DDResultadoSolicitud.class, filtroResultado);
+			Filter filtroMotivoExento = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, COL_NUM.COL_NUM_MOTIVO_EXENTO));
+			motivoExento = genericDao.get(DDMotivoExento.class, filtroMotivoExento);
+			
+			
+			if(exc.dameCelda(fila, COL_NUM.COL_NUM_NUMERO_EXPEDIENTE) != null && !exc.dameCelda(fila, COL_NUM.COL_NUM_NUMERO_EXPEDIENTE).isEmpty()) {
+				Long numExpediente = Long.parseLong(exc.dameCelda(fila, COL_NUM.COL_NUM_NUMERO_EXPEDIENTE));
+				activoTributos.setExpediente(numExpediente);
+			}
 
-			if(!Checks.esNulo(celdaGasto)) {
-				Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya",	Long.parseLong(celdaGasto));				
+			Filter filtroTipoTributo = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(exc.dameCelda(fila, COL_NUM.COL_NUM_TIPO_TRIBUTO)));
+			tipoTributo = genericDao.get(DDTipoTributo.class, filtroTipoTributo);
+			
+			if ( numGastoHaya != null ) {
+				Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya",	numGastoHaya);
 				gastoProveedor = genericDao.get(GastoProveedor.class, filtroGasto);
+				if(celdaExisteDoc != null) {
+					if("S".equalsIgnoreCase(celdaExisteDoc) || "SI".equalsIgnoreCase(celdaExisteDoc)) {
+						gastoProveedor.setExisteDocumento(1);
+					}else {
+						gastoProveedor.setExisteDocumento(0);
+					}
+				}
 				activoTributos.setGastoProveedor(gastoProveedor);
+			}
+
+			if(celdaTributExento != null) {
+				if(celdaTributExento.equals("1")) {
+					activoTributos.setTributoExento(true);
+				}else {
+					activoTributos.setTributoExento(false);
+				}
+			}
+			if(exc.dameCelda(fila, COL_NUM.COL_NUM_IMPORTE_RECUPERADO) != null && !exc.dameCelda(fila, COL_NUM.COL_NUM_IMPORTE_RECUPERADO).isEmpty()) {
+				importeRecuperado = Double.parseDouble(exc.dameCelda(fila, COL_NUM.COL_NUM_IMPORTE_RECUPERADO));
+				activoTributos.setImporteRecuperadoRecurso(importeRecuperado);
 			}
 			
 			activoTributos.setFechaRecepcionPropietario(fechaRecepcionPropietario);
 			activoTributos.setFechaRecepcionGestoria(fechaRecepcionGestoria);
-			
+			activoTributos.setFechaRecepcionTributo(fechaRecepcionTributo);
 			activoTributos.setObservaciones(observaciones);
 			activoTributos.setFechaRecepcionRecursoPropietario(fechaRecepcionRecursoPropietario);
 			activoTributos.setFechaRecepcionRecursoGestoria(fechaRecepcionRecursoGestoria);
 			activoTributos.setFechaRespuestaRecurso(fechaRespuestaRecurso);
-			activoTributos.setFavorable(resultado);
+			activoTributos.setResultadoSolicitud(resultado);
+			activoTributos.setTipoTributo(tipoTributo);
+			activoTributos.setFechaComunicacionDevolucionIngreso(fechaComunicadoDevolucionIngreso);			
+			activoTributos.setMotivoExento(motivoExento);
 						
 			if(Checks.esNulo(celdaIdTributo)) {
 				Long numMaxTributo = tributoDaoImpl.getNumMaxTributo();

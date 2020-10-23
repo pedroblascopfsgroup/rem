@@ -288,8 +288,13 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 				}
 				if(!Checks.esNulo(proveedor.getCodProveedorUvem())) {
 					beanUtilNotNull.copyProperty(dto, "codProveedorUvem", proveedor.getCodProveedorUvem());
+				}				
+				if(proveedor.getCodigoApiProveedor()!=null) {
+					beanUtilNotNull.copyProperty(dto, "codigoApiProveedor", proveedor.getCodigoApiProveedor());
 				}
-				
+				if(proveedor.getMediadorRelacionado()!=null) {
+					beanUtilNotNull.copyProperty(dto, "idMediadorRelacionado", proveedor.getMediadorRelacionado().getCodigoProveedorRem());
+				}
 			} catch (IllegalAccessException e) {
 				logger.error(e.getMessage());
 			} catch (InvocationTargetException e) {
@@ -510,6 +515,19 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 			}
 			if(!Checks.esNulo(dto.getCodProveedorUvem())) {
 				beanUtilNotNull.copyProperty(proveedor, "codProveedorUvem", dto.getCodProveedorUvem());
+			}
+			
+			if(dto.getCodigoApiProveedor()!=null) {
+				beanUtilNotNull.copyProperty(proveedor, "codigoApiProveedor", dto.getCodigoApiProveedor());
+			}
+			
+			if(dto.getIdMediadorRelacionado()!=null) {
+				ActivoProveedor mediadorRelacionado = genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",dto.getIdMediadorRelacionado()));
+				
+				if(mediadorRelacionado!=null) {
+					beanUtilNotNull.copyProperty(proveedor, "mediadorRelacionado", mediadorRelacionado);	
+				}
+				
 			}
 
 		} catch (IllegalAccessException e) {

@@ -5863,7 +5863,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			
 			contenido = "<p>El gestor del activo "+dtoSendNotificator.getNumActivo()+" ha validado negativamente su ejecución del trabajo "+dtoSendNotificator.getTipoContrato()+" "
 					 + "(Número REM "+trabajo.getActivo().getNumActivoRem()+"), relativo al activo nº "+dtoSendNotificator.getNumActivo()+", situación en "+dtoSendNotificator.getDireccion()+"</p>"
-					 + ((listAgenda !=null && !listAgenda.isEmpty()) ? "<p>El motivo del rechazo es "+listAgenda.get(0).getObservaciones()+".</p>" : "")
+					 + ((listAgenda !=null && !listAgenda.isEmpty()) ? "<p>El motivo del rechazo es: "+listAgenda.get(0).getObservaciones()+".</p>" : "")
 					 + "<p>Se le ha concedido un plazo para que subsane las deficiencias hasta el día "+dtoSendNotificator.getFechaFinalizacion()+"</p>"
 	  		  		 + "<p>Por favor, entre en la aplicación REM y compruebe las condiciones del trabajo.</p>"
 	  		  		 + "<p>Gracias.</p>";
@@ -5933,7 +5933,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				+ "				<div style='font-size: 20px; vertical-align: top; color: #333; display: table-cell; padding: 12px'> "
 				+ dtoSendNotificator.getTitulo() + "</div>" + "			</div>"
 				+ "			<div style='background: #b7ddf0; width: 785px; min-height: 600px; border-radius: 0px 20px 20px 20px; padding: 20px'>"
-				+ "				<div style='background: #054664; width: 600px; height: 375px; border-radius: 20px; color: #fff; display: inline-block'>" //AJUSTAR height si se da el OK
+				+ "				<div style='background: #054664; width: 600px; height: 475px; border-radius: 20px; color: #fff; display: inline-block'>"
 				+ "					<div style='display: table; margin: 20px;'>";
 
 		if (dtoSendNotificator.getNumTrabajo() != null) {

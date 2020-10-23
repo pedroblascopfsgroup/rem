@@ -256,7 +256,6 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoElemento", DDEntidadGasto.class);
 		mapa.put("tipoApunte", DDTipoApunte.class);
 		mapa.put("tiposGastos", DDTipoGasto.class);
-		
 		mapa.put("tributacionAdquisicion", DDTributacionAdquisicion.class);
 		mapa.put("tipoTributo", DDTipoTributo.class);
 		mapa.put("tipoSuministro", DDTipoSuministro.class);

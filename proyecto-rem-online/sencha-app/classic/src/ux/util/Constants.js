@@ -777,7 +777,6 @@ Ext.define('HreRem.ux.util.Constants', {
 		FICHA: 'FIC'
 	},
 
-	
 	TIPO_ELEMENTOS_GASTO:{
 		CODIGO_ACTIVO: 'ACT',
 		CODIGO_AGRUPACION: 'AGR',

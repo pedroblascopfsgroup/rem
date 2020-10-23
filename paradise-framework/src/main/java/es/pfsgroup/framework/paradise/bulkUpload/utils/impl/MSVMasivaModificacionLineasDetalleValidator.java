@@ -2,6 +2,7 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,8 +53,8 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	private static final String TIPO_SIN_ELEMENTO = "El tipo no tiene ningún elemento";
 	private static final String SUBTIPO_GASTO_NO_EXISTE ="El subtipo de gasto no existe";
 	private static final String NO_EXISTE_AGRUPACION = "La agrupación no existe";
-	private static final String AGRUPACION_GASTO_DIFERENTE_CARTERA = "La agrupación y el gasto no tienen la misma cartera";
-	private static final String ACTIVO_GASTO_DIFERENTE_CARTERA = "El activo y el gasto no tienen la misma cartera";
+	private static final String AGRUPACION_GASTO_DIFERENTE_CARTERA = "La agrupación y el gasto no tienen el mismo propietario";
+	private static final String ACTIVO_GASTO_DIFERENTE_CARTERA = "El activo y el gasto no tienen el mismo propietario";
 	private static final String VALORES_SI_NO_EXENTA = "El campo operación exenta debe tener valor Si/No o estar vacío";
 	private static final String VALORES_SI_NO_RENUNCIA = "Este campo renuncia exenta debe tener valor Si/No o estar vacío";
 	private static final String VALORES_SI_NO_CRITERIO_CAJA = "El campo criterio caja debe tener valor Si/No o estar vacío";
@@ -481,9 +482,11 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 		            				participacionLinea += Double.parseDouble(participacionSeparado[1]);
 		            			}
 							}
-		            		if(participacionLinea != 100.0) {
-		            			listaFilas.add(i);
-		            		}
+		            		BigDecimal porcentajeLinea = new BigDecimal(participacionLinea);
+							porcentajeLinea = porcentajeLinea.setScale(2, BigDecimal.ROUND_HALF_UP);
+							if(porcentajeLinea.compareTo(new BigDecimal(100.0)) != 0) {
+								 listaFilas.add(i);
+							}
 		            	}else {
 		            		listaFilas.add(i);
 		            	}
@@ -669,7 +672,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
                     try {
                     	if(!Checks.esNulo(exc.dameCelda(i,COL_TIPO_ELEMENTO)) && VALOR_AGRUPACION.equalsIgnoreCase(exc.dameCelda(i,COL_TIPO_ELEMENTO))
                     		&& !Checks.esNulo(exc.dameCelda(i, COL_ID_ELEMENTO)) &&  Boolean.FALSE.equals(particularValidator.agrupacionSinActivos(exc.dameCelda(i, COL_ID_ELEMENTO)))) {
-                			if(Boolean.FALSE.equals(particularValidator.isAgrupacionMismaCarteraGasto(exc.dameCelda(i, COL_ID_ELEMENTO), exc.dameCelda(i, COL_ID_GASTO)))){
+                			if(Boolean.FALSE.equals(particularValidator.esGastoYAgrupacionMismoPropietarioByNumGasto(exc.dameCelda(i, COL_ID_ELEMENTO), exc.dameCelda(i, COL_ID_GASTO)))){
                 				listaFilas.add(i);
                 			}	
 	                    }
@@ -695,7 +698,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
                     try {
                     	if(!Checks.esNulo(exc.dameCelda(i,COL_TIPO_ELEMENTO)) && VALOR_ACTIVO.equalsIgnoreCase(exc.dameCelda(i,COL_TIPO_ELEMENTO))
                     		&& !Checks.esNulo(exc.dameCelda(i, COL_ID_ELEMENTO))) {
-                			if(Boolean.FALSE.equals(particularValidator.isActivoMismaCarteraGasto(exc.dameCelda(i, COL_ID_ELEMENTO), exc.dameCelda(i, COL_ID_GASTO)))){
+                			if(Boolean.FALSE.equals(particularValidator.esGastoYActivoMismoPropietarioByNumGasto(exc.dameCelda(i, COL_ID_ELEMENTO), exc.dameCelda(i, COL_ID_GASTO)))){
                 				listaFilas.add(i);
                 			}	
 	                    }

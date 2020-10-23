@@ -3,6 +3,7 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 @Component
 public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 		
-	public static final String ELEMENTOS_PERTENECER_MISMA_CARTERA = "Los elementos del gasto deben pertenecer a la misma cartera que el gasto.";
+	public static final String ELEMENTOS_PERTENECER_MISMA_CARTERA = "Los elementos del gasto deben pertenecer al mismo propietario que el gasto.";
 	public static final String TIPO_GASTO_NO_EXISTE = "El código introducido en el campo 'Tipo de Gasto' no existe";
 	public static final String PERIODICIDAD_NO_EXISTE = "El código introducido en el campo 'Periodicidad del gasto' no existe";
 	public static final String DESTINATARIO_NO_EXISTE = "El código introducido en el campo 'Destinatario' no existe";
@@ -856,7 +857,9 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 	            	for (String string : cadenaInformacionParticipacion) {
 	            		String[] lineaGasto = string.split("-");
 						if(lineaGasto[0].equals(agrupacionLineaGasto) && lineaGasto.length == 2) {
-							if(!Double.valueOf(lineaGasto[1]).equals(100.0)) {
+							BigDecimal porcentajeLinea = new BigDecimal(lineaGasto[1]);
+							porcentajeLinea = porcentajeLinea.setScale(2, BigDecimal.ROUND_HALF_UP);
+							if(porcentajeLinea.compareTo(new BigDecimal(100.0)) != 0) {
 								 listaFilas.add(i);
 							}
 							break;
@@ -885,10 +888,10 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
                      
                 	 if(!Checks.esNulo(exc.dameCelda(i, COL_NIF_PROPIETARIO)) && !Checks.esNulo(exc.dameCelda(i, COL_TIPO_ELEMENTO)) && !Checks.esNulo(exc.dameCelda(i, COL_ID_ELEMENTO))){
                 		 if((TIPO_ELEMENTO_ACTIVO.equalsIgnoreCase(exc.dameCelda(i, COL_TIPO_ELEMENTO)) || TIPO_ELEMENTO_ACTIVOGEN.equalsIgnoreCase(exc.dameCelda(i, COL_TIPO_ELEMENTO)))
-                				 && Boolean.FALSE.equals(particularValidator.esPropietarioYActivoMismaCartera(exc.dameCelda(i, COL_NIF_PROPIETARIO), exc.dameCelda(i, COL_ID_ELEMENTO)))) {
+                				 && Boolean.FALSE.equals(particularValidator.esGastoYActivoMismoPropietario(exc.dameCelda(i, COL_NIF_PROPIETARIO), exc.dameCelda(i, COL_ID_ELEMENTO)))) {
                 			 listaFilas.add(i);
                 		 } else if((TIPO_ELEMENTO_AGRUPACION.equalsIgnoreCase(exc.dameCelda(i, COL_TIPO_ELEMENTO)))
-                				 && Boolean.FALSE.equals(particularValidator.esPropietarioYAgrupacionMismaCartera(exc.dameCelda(i, COL_NIF_PROPIETARIO), exc.dameCelda(i, COL_ID_ELEMENTO)))) {
+                				 && Boolean.FALSE.equals(particularValidator.esGastoYAgrupacionMismoPropietario(exc.dameCelda(i, COL_NIF_PROPIETARIO), exc.dameCelda(i, COL_ID_ELEMENTO)))) {
                 			 listaFilas.add(i);
                 		 }
                 		 

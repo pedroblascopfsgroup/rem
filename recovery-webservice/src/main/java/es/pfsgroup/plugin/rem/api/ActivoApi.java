@@ -9,8 +9,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.web.servlet.ModelAndView;
-
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
@@ -1333,6 +1331,7 @@ public interface ActivoApi {
 	boolean estanTodosActivosVendidos(List<Activo> activos);
 
 	boolean estanTodosActivosAlquilados(List<Activo> activos);
+
 	List<ReqFaseVentaDto> getReqFaseVenta(Long idActivo);
 
 	Boolean createReqFaseVenta(ReqFaseVentaDto reqFaseVentaDto) throws ParseException;
@@ -1372,7 +1371,5 @@ public interface ActivoApi {
 	boolean createCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto) throws JsonViewerException, Exception;
 	
 	boolean destroyCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto);
-	
-	
-	
+
 }

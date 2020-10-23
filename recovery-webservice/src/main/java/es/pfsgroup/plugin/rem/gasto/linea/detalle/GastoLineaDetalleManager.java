@@ -75,7 +75,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	private static final String ERROR_NO_EXISTE_AGRUPACION = "La agrupación no existe";
 	private static final String ERROR_NO_EXISTE_ACTIVO = "El activo no existe";
 	private static final String ERROR_NO_EXISTE_ACTIVO_GENERICO= "El activo genérico no existe";
-	private static final String ERROR_CARTERA_DIFERENTE  ="El elemento es de una cartera diferente al gasto.";
+	private static final String ERROR_CARTERA_DIFERENTE  ="El elemento es de un propietario diferente al gasto.";
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
@@ -266,7 +266,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		if(!Checks.esNulo(dto.getBaseSujeta())) {
 			gastoLineaDetalle.setPrincipalSujeto(Double.parseDouble(dto.getBaseSujeta().replace(",", ".")));
 		}
-		if(!Checks.esNulo(dto.getBaseNoSujeta() != null)) {
+		if(!Checks.esNulo(dto.getBaseNoSujeta())) {
 			gastoLineaDetalle.setPrincipalNoSujeto(Double.parseDouble(dto.getBaseNoSujeta().replace(",", ".")));
 		}
 		
@@ -1275,8 +1275,8 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				}
 				List<ActivoAgrupacionActivo> activosAgrupacionList= agrupacion.getActivos();
 				if(!activosAgrupacionList.isEmpty()) {
-					if(gasto.getPropietario() == null || activosAgrupacionList.get(0).getActivo().getCartera() == null 
-						|| !activosAgrupacionList.get(0).getActivo().getCartera().equals(gasto.getPropietario().getCartera())) {
+					if(gasto.getPropietario() == null || activosAgrupacionList.get(0).getActivo().getPropietarioPrincipal() == null 
+						|| !activosAgrupacionList.get(0).getActivo().getPropietarioPrincipal().equals(gasto.getPropietario())) {
 						error = ERROR_CARTERA_DIFERENTE;
 						return error;
 					}
@@ -1318,8 +1318,8 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 					if(activo == null) {
 						error = ERROR_NO_EXISTE_ACTIVO;
 						return error;
-					}else if(gasto.getPropietario() == null || activo.getCartera() == null || gasto.getPropietario().getCartera() == null 
-						|| !activo.getCartera().getCodigo().equals(gasto.getPropietario().getCartera().getCodigo())) {
+					}else if(gasto.getPropietario() == null || activo.getPropietarioPrincipal() == null 
+						|| !activo.getPropietarioPrincipal().equals(gasto.getPropietario())) {
 						error = ERROR_CARTERA_DIFERENTE;
 						return error;
 					}

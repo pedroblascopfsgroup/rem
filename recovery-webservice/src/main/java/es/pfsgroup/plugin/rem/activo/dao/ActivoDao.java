@@ -360,5 +360,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	void actualizaDatoCDC(CalidadDatosConfig cdc, String valor, String identificador, String username);
 
 	Long getComunidadAutonomaId(Activo activo);
+
 	List<ActivoCalificacionNegativaAdicional> getListActivoCalificacionNegativaAdicionalByIdActivo(Long idActivo);
+
 }

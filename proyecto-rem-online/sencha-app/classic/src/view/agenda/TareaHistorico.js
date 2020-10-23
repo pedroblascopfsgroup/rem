@@ -146,6 +146,15 @@ Ext.define('HreRem.view.agenda.TareaHistorico',{
 								camposFiltrados.push(me.campos[i]);
 								break;
 								
+							case 'numberfield2':
+			                	me.campos[i].xtype = 'numberfield';
+			                    me.campos[i].hideTrigger = true;
+			                    me.campos[i].minValue = 0;
+			                    me.campos[i].maxValue = 99;
+			                    me.campos[i].allowBlank = me.campos[i].noObligatorio;
+			                    camposFiltrados.push(me.campos[i]);
+			                    break;
+								
 							case 'datemaxtoday':
 								me.campos[i].xtype = 'datefield';
 								me.campos[i].maxValue = $AC.getCurrentDate();

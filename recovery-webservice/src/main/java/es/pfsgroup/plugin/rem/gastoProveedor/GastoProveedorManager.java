@@ -454,7 +454,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 			if (!Checks.esNulo(gasto.getGastoDetalleEconomico())) {
 				if(!Checks.esNulo(gasto.getGastoDetalleEconomico().getImporteTotal())){
-					dto.setImporteTotal(gasto.getGastoDetalleEconomico().getImporteTotal()+gastoTotal);
+					dto.setImporteTotal(gasto.getGastoDetalleEconomico().getImporteTotal());
 				}else{
 					dto.setImporteTotal(gastoTotal);
 				}

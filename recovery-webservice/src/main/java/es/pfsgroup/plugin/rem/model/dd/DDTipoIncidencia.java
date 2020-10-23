@@ -19,49 +19,52 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de tipos de incidencia.
+ * Modelo que gestiona el diccionario de Tipo de Incidencia.
  * 
- * @author Daniel Gutiérrez
+ * @author Gabriel De Toni
  *
  */
 @Entity
-@Table(name = "DD_TIN_TIPO_INCI", schema = "${entity.schema}")
+@Table(name = "DD_TDA_TIPO_INCIDENCIA", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDTipoIncidencia implements Auditable, Dictionary {
-    
-    public static final String CODIGO_EQUIPO_TECNICO = "01";
-    public static final String CODIGO_GESTION_COMERCIAL = "02";
-    public static final String CODIGO_GESTION_OCUPACIONAL = "03";
-    public static final String CODIGO_GESTION_RECUPERACIONES = "04";
-    public static final String CODIGO_FIRMA = "05";
-    public static final String CODIGO_SIN_GESTION = "06";
-    public static final String CODIGO_INCIDENCIA = "07";    
-    
-    
+
+	public static final String CODIGO_DISCREPANCIA_FISICO_JURIDICA_EXCESO_CABIDA_MAYOR_AL_20_PORCIERTO = "01";
+	public static final String CODIGO_DISCREPANCIA_FISICO_JURIDICA_EXCESO_CABIDA_MENOR_AL_20_PORCIERTO = "02";
+	public static final String CODIGO_DISCREPANCIA_FISICO_JURIDICA_SIN_INMATRICULAR = "03";
+	public static final String CODIGO_DISCREPANCIA_FISICO_JURIDICA_CAMBIO_DE_USO = "04";
+	public static final String CODIGO_DISCREPANCIA_FISICO_JURIDICA_CAMBIO_DESCRIPCION_REGISTRAL = "05";
+	public static final String CODIGO_DISCREPANCIA_FISICO_JURIDICA_DIVISION_HORIZONTAL = "06";
+	public static final String CODIGO_CONSTRUCCION_ILEGAL_IRREGULARIDADES_URBANISTICAS = "07";
+	public static final String CODIGO_CONSTRUCCION_ILEGAL_FUERA_DE_ORDENACION = "08";
+	public static final String CODIGO_ACTIVO_IRREGULAR = "09";
+
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "DD_TIN_ID")
+	@Column(name = "DD_TDA_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoIncidenciaGenerator")
-	@SequenceGenerator(name = "DDTipoIncidenciaGenerator", sequenceName = "S_DD_TIN_TIPO_INCI")
+	@SequenceGenerator(name = "DDTipoIncidenciaGenerator", sequenceName = "S_DD_TDA_TIPO_INCIDENCIA")
 	private Long id;
-	    
-	@Column(name = "DD_TIN_CODIGO")   
+	 
+	@Column(name = "DD_TDA_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_TIN_DESCRIPCION")   
+	@Column(name = "DD_TDA_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_TIN_DESCRIPCION_LARGA")   
-	private String descripcionLarga;	    
-
+	@Column(name = "DD_TDA_DESCRIPCION_LARGA")   
+	private String descripcionLarga;
+	
+	    
 	@Version   
 	private Long version;
 
 	@Embedded
-	private Auditoria auditoria;
-
+	private Auditoria auditoria;	 
+	 
+	 
 	public Long getId() {
 		return id;
 	}
@@ -93,6 +96,7 @@ public class DDTipoIncidencia implements Auditable, Dictionary {
 	public void setDescripcionLarga(String descripcionLarga) {
 		this.descripcionLarga = descripcionLarga;
 	}
+	
 
 	public Long getVersion() {
 		return version;

@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.web.servlet.ModelAndView;
+
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
@@ -42,9 +44,11 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.DtoActivoSuministros;
 import es.pfsgroup.plugin.rem.model.DtoActivoTributos;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoCalificacionNegativaAdicional;
 import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
 import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
@@ -56,6 +60,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoDiarioGestion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoTramitacionTitulo;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoTramitacionTituloAdicional;
 import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoMotivoAnulacionExpediente;
@@ -83,6 +88,8 @@ import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.HistoricoPropuestasPreciosDto;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
+import es.pfsgroup.plugin.rem.rest.dto.ReqFaseVentaDto;
+import es.pfsgroup.plugin.rem.rest.dto.SaneamientoAgendaDto;
 
 
 public interface ActivoApi {
@@ -1261,7 +1268,7 @@ public interface ActivoApi {
 
 	List<DtoActivoTributos> getActivoTributosByActivo(Long idActivo, WebDto dto) throws GestorDocumentalException;
 	
-	boolean saveOrUpdateActivoTributo(DtoActivoTributos dto, Long idActivo);
+	boolean saveOrUpdateActivoTributo(DtoActivoTributos dto, Long idActivo) throws ParseException;
 	
 	boolean deleteActivoTributo(DtoActivoTributos dto);
 	
@@ -1326,4 +1333,46 @@ public interface ActivoApi {
 	boolean estanTodosActivosVendidos(List<Activo> activos);
 
 	boolean estanTodosActivosAlquilados(List<Activo> activos);
+	List<ReqFaseVentaDto> getReqFaseVenta(Long idActivo);
+
+	Boolean createReqFaseVenta(ReqFaseVentaDto reqFaseVentaDto) throws ParseException;
+
+	Boolean deleteReqFaseVenta(ReqFaseVentaDto reqFaseVentaDto) throws ParseException;
+	
+	/*
+	 * Métodos que gestionan los datos de la pestaña Suministros de un Activo
+	 */
+	List<DtoActivoSuministros> getSuministrosActivo(Long idActivo);
+	Boolean createSuministroActivo(DtoActivoSuministros dtoActivoSuministros) throws ParseException;
+	Boolean updateSuministroActivo(DtoActivoSuministros dtoActivoSuministros) throws ParseException;
+	Boolean deleteSuministroActivo(DtoActivoSuministros dtoActivoSuministros) throws ParseException;
+	
+	public Boolean crearEstadoAdmision(String activoId, String codEstadoAdmision, String codSubestadoAdmision, String observaciones);
+
+	List<SaneamientoAgendaDto> getSaneamientosAgendaByActivo(Long idActivo);
+
+	Boolean createSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto);
+
+	Boolean deleteSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto);
+
+	Boolean updateSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto);
+	
+	boolean createHistoricoTramitacionTituloAdicional(DtoHistoricoTramitacionTituloAdicional tramitacionDto, Long idActivo) throws HistoricoTramitacionException;
+	
+	boolean updateHistoricoTramitacionTituloAdicional(DtoHistoricoTramitacionTituloAdicional tramitacionDto) throws Exception, HistoricoTramitacionException;
+	
+	boolean destroyHistoricoTramitacionTituloAdicional(DtoHistoricoTramitacionTituloAdicional tramitacionDto);
+	
+	List<DtoHistoricoTramitacionTituloAdicional> getHistoricoTramitacionTituloAdicional(Long id);
+	
+	List<DtoCalificacionNegativaAdicional> getActivoCalificacionNegativaAdicional(Long idActivo);
+
+	boolean updateCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto);
+	
+	boolean createCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto) throws JsonViewerException, Exception;
+	
+	boolean destroyCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto);
+	
+	
+	
 }

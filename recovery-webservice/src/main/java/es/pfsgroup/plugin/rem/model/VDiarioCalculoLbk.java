@@ -8,7 +8,11 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-
+/**
+ * Vista que recoge los datos necesario para el calculo comité liberbank.
+ * 
+ * @author Jonathan Ovalle
+ */
 @Entity
 @Table(name = "V_DIARIOS_CALCULO_LBK", schema = "${entity.schema}")
 public class VDiarioCalculoLbk implements Serializable {

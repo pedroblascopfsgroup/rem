@@ -3,6 +3,10 @@ package es.pfsgroup.framework.paradise.agenda.adapter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
@@ -15,9 +19,18 @@ import es.pfsgroup.framework.paradise.agenda.dao.TareaDao;
 
 @Service
 public class TareaAdapter {
+	
+	private static final String URL = "endpoint.haya.existe.endpoint";
+	private static final String PORT = "edpoint.haya.existe.tarea.port";
+	private static final String SERVICE = "endpoint.haya.existe.tarea.service";
+	private static final String DEV = "DEV";
+	
+	@Resource
+	private Properties appProperties;
     
     @Autowired
     private TareaDao tareaDao;	
+    
     
     public Object findOne(Long id) {
     	return tareaDao.findOne(id);
@@ -48,5 +61,16 @@ public class TareaAdapter {
         }
         return listaValores;
     }
+
+	public String getExisteTareaHayaEndpoint() {
+		String url = appProperties.getProperty(URL);
+		String port = appProperties.getProperty(PORT);
+		String service = appProperties.getProperty(SERVICE);
+		if ( url == null || port == null || service == null ) {
+			return DEV;
+		} else {
+			return String.format("%s%s%s",url, port,service);
+		}
+	}
 
 }

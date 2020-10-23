@@ -362,7 +362,22 @@ public class StockDto implements WebcomRESTDto{
 
 	@WebcomRequired
 	private BooleanDataType perimetroMacc;
-
+	
+	@WebcomRequired
+	private StringDataType scomEmail;
+	
+	@WebcomRequired
+	private StringDataType scomNombre;
+	
+	@WebcomRequired
+	private StringDataType scomTelefono;
+	
+	@WebcomRequired
+	private StringDataType codTipoComercializar;
+	
+	@WebcomRequired
+	private StringDataType codEquipoGestion;
+	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
 	}
@@ -1024,6 +1039,36 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setPerimetroMacc(BooleanDataType perimetroMacc) {
 		this.perimetroMacc = perimetroMacc;
+	}
+	public StringDataType getScomEmail() {
+		return scomEmail;
+	}
+	public void setScomEmail(StringDataType scomEmail) {
+		this.scomEmail = scomEmail;
+	}
+	public StringDataType getScomNombre() {
+		return scomNombre;
+	}
+	public void setScomNombre(StringDataType scomNombre) {
+		this.scomNombre = scomNombre;
+	}
+	public StringDataType getScomTelefono() {
+		return scomTelefono;
+	}
+	public void setScomTelefono(StringDataType scomTelefono) {
+		this.scomTelefono = scomTelefono;
+	}
+	public StringDataType getCodTipoComercializar() {
+		return codTipoComercializar;
+	}
+	public void setCodTipoComercializar(StringDataType codTipoComercializar) {
+		this.codTipoComercializar = codTipoComercializar;
+	}
+	public StringDataType getCodEquipoGestion() {
+		return codEquipoGestion;
+	}
+	public void setCodEquipoGestion(StringDataType codEquipoGestion) {
+		this.codEquipoGestion = codEquipoGestion;
 	}
 	
 }

@@ -252,7 +252,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 													            xtype : 'numberfieldbase',
 													            reference:'idTarea',
 													            fieldLabel : HreRem.i18n('fieldlabel.id.tarea.trabajo'),
-													            //allowBlank: false,
+													            allowBlank: true,
 													            maxLength:10
 				        									},
 				        									{ 

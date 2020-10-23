@@ -80,9 +80,17 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract {
 
 	public static final String FICHERO_VACIO = "El fichero debe tener al menos una fila. La primera columna es obligatoria.";
 	public static final String ACTIVO_EN_AGRUPACION_RESTRINGIDA = "El activo está en una agrupación restringida.";
-
+	
+	public static final String OBLIGATORIO_DATOS_RTE = "Ya que ha puesto un titular que será tipo persona Jurídica, es obligatorio rellenar los campos * del Representante";
+	public static final String OBLIGATORIO_DATOS_LOCALIZACION = "Es obligatorio rellenar los datos de localización del titular";
+	public static final String PAIS_NO_EXISTE = "El país indicado no existe";
+	public static final String PROVINCIA_NO_EXISTE = "La provincia indicada no existe";
+	public static final String MUNICIPIO_NO_EXISTE = "El municipio indicado no existe o no es de esa provincia";
+	public static final String CODIGO_PAIS_ESPANYA = "28";
+	
 	public static final class COL_NUM {
-
+		public static final int NUM_CAMPOS_COMPRADOR = 18;
+		
 		public static final int FILA_CABECERA = 2;
 		public static final int DATOS_PRIMERA_FILA = 3;
 
@@ -118,36 +126,81 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract {
 		public static final int NUMERO_URSUS_CONYUGE_TITULAR = 19;
 		public static final int PORCENTAJE_COMPRA_TITULAR = 20;
 		public static final int REGIMEN_MATRIMONIAL = 21;
+		public static final int PAIS_TITULAR = 22;
+		public static final int PROVINCIA_TITULAR = 23;
+		public static final int MUNICIPIO_TITULAR = 24;
+		public static final int DIRECCION_TITULAR = 25;
+		public static final int NOMBRE_RTE_TITULAR = 26;
+		public static final int RAZON_SOCIAL_RTE_TITULAR = 27;
+		public static final int TIPO_DOCUMENTO_RTE_TITULAR = 28;
+		public static final int DOC_IDENTIFICACION_RTE_TITULAR = 29;
+		public static final int PAIS_RTE_TITULAR = 30;
+		public static final int PROVINCIA_RTE_TITULAR = 31;
+		public static final int MUNICIPIO_RTE_TITULAR = 32;
+		
 
 		// Titular 2
-		public static final int NOMBRE_TITULAR_2 = 22;
-		public static final int RAZON_SOCIAL_TITULAR_2 = 23;
-		public static final int TIPO_DOCUMENTO_TITULAR_2 = 24;
-		public static final int DOC_IDENTIFICACION_TITULAR_2 = 25;
-		public static final int NUMERO_URSUS_TITULAR_2 = 26;
-		public static final int NUMERO_URSUS_CONYUGE_TITULAR_2 = 27;
-		public static final int PORCENTAJE_COMPRA_TITULAR_2 = 28;
-		public static final int REGIMEN_MATRIMONIAL_2 = 29;
+		public static final int NOMBRE_TITULAR_2 = 33;
+		public static final int RAZON_SOCIAL_TITULAR_2 = 34;
+		public static final int TIPO_DOCUMENTO_TITULAR_2 = 35;
+		public static final int DOC_IDENTIFICACION_TITULAR_2 = 36;
+		public static final int NUMERO_URSUS_TITULAR_2 = 37;
+		public static final int NUMERO_URSUS_CONYUGE_TITULAR_2 = 38;
+		public static final int PORCENTAJE_COMPRA_TITULAR_2 = 39;
+		public static final int REGIMEN_MATRIMONIAL_2 = 40;
+		public static final int PAIS_TITULAR_2 = 41;
+		public static final int PROVINCIA_TITULAR_2 = 42;
+		public static final int MUNICIPIO_TITULAR_2 = 43;
+		public static final int DIRECCION_TITULAR_2 = 44;
+		public static final int NOMBRE_RTE_TITULAR_2 = 45;
+		public static final int RAZON_SOCIAL_RTE_TITULAR_2 = 46;
+		public static final int TIPO_DOCUMENTO_RTE_TITULAR_2 = 47;
+		public static final int DOC_IDENTIFICACION_RTE_TITULAR_2 = 48;
+		public static final int PAIS_RTE_TITULAR_2 = 49;
+		public static final int PROVINCIA_RTE_TITULAR_2 = 50;
+		public static final int MUNICIPIO_RTE_TITULAR_2 = 51;
 
 		// Titular 3
-		public static final int NOMBRE_TITULAR_3 = 30;
-		public static final int RAZON_SOCIAL_TITULAR_3 = 31;
-		public static final int TIPO_DOCUMENTO_TITULAR_3 = 32;
-		public static final int DOC_IDENTIFICACION_TITULAR_3 = 33;
-		public static final int NUMERO_URSUS_TITULAR_3 = 34;
-		public static final int NUMERO_URSUS_CONYUGE_TITULAR_3 = 35;
-		public static final int PORCENTAJE_COMPRA_TITULAR_3 = 36;
-		public static final int REGIMEN_MATRIMONIAL_3 = 37;
+		public static final int NOMBRE_TITULAR_3 = 52;
+		public static final int RAZON_SOCIAL_TITULAR_3 = 53;
+		public static final int TIPO_DOCUMENTO_TITULAR_3 = 54;
+		public static final int DOC_IDENTIFICACION_TITULAR_3 = 55;
+		public static final int NUMERO_URSUS_TITULAR_3 = 56;
+		public static final int NUMERO_URSUS_CONYUGE_TITULAR_3 = 57;
+		public static final int PORCENTAJE_COMPRA_TITULAR_3 = 58;
+		public static final int REGIMEN_MATRIMONIAL_3 = 59;
+		public static final int PAIS_TITULAR_3 = 60;
+		public static final int PROVINCIA_TITULAR_3 = 61;
+		public static final int MUNICIPIO_TITULAR_3 = 62;
+		public static final int DIRECCION_TITULAR_3 = 63;
+		public static final int NOMBRE_RTE_TITULAR_3 = 64;
+		public static final int RAZON_SOCIAL_RTE_TITULAR_3 = 65;
+		public static final int TIPO_DOCUMENTO_RTE_TITULAR_3 = 66;
+		public static final int DOC_IDENTIFICACION_RTE_TITULAR_3 = 67;
+		public static final int PAIS_RTE_TITULAR_3 = 68;
+		public static final int PROVINCIA_RTE_TITULAR_3 = 69;
+		public static final int MUNICIPIO_RTE_TITULAR_3 = 70;
 
 		// Titular 4
-		public static final int NOMBRE_TITULAR_4 = 38;
-		public static final int RAZON_SOCIAL_TITULAR_4 = 39;
-		public static final int TIPO_DOCUMENTO_TITULAR_4 = 40;
-		public static final int DOC_IDENTIFICACION_TITULAR_4 = 41;
-		public static final int NUMERO_URSUS_TITULAR_4 = 42;
-		public static final int NUMERO_URSUS_CONYUGE_TITULAR_4 = 43;
-		public static final int PORCENTAJE_COMPRA_TITULAR_4 = 44;
-		public static final int REGIMEN_MATRIMONIAL_4 = 45;
+		public static final int NOMBRE_TITULAR_4 = 71;
+		public static final int RAZON_SOCIAL_TITULAR_4 = 72;
+		public static final int TIPO_DOCUMENTO_TITULAR_4 = 73;
+		public static final int DOC_IDENTIFICACION_TITULAR_4 = 74;
+		public static final int NUMERO_URSUS_TITULAR_4 = 75;
+		public static final int NUMERO_URSUS_CONYUGE_TITULAR_4 = 76;
+		public static final int PORCENTAJE_COMPRA_TITULAR_4 = 77;
+		public static final int REGIMEN_MATRIMONIAL_4 = 78;
+		public static final int PAIS_TITULAR_4 = 79;
+		public static final int PROVINCIA_TITULAR_4 = 80;
+		public static final int MUNICIPIO_TITULAR_4 = 81;
+		public static final int DIRECCION_TITULAR_4 = 82;
+		public static final int NOMBRE_RTE_TITULAR_4 = 83;
+		public static final int RAZON_SOCIAL_RTE_TITULAR_4 = 84;
+		public static final int TIPO_DOCUMENTO_RTE_TITULAR_4 = 85;
+		public static final int DOC_IDENTIFICACION_RTE_TITULAR_4 = 86;
+		public static final int PAIS_RTE_TITULAR_4 = 87;
+		public static final int PROVINCIA_RTE_TITULAR_4 = 88;
+		public static final int MUNICIPIO_RTE_TITULAR_4 = 89;
 	}
 
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -254,6 +307,11 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract {
 				// esCampoNullByRows(exc,COL_NUM.DOC_IDENTIFICACION_TITULAR_3));
 				// mapaErrores.put(DOC_OBLIGATORIO,
 				// esCampoNullByRows(exc,COL_NUM.DOC_IDENTIFICACION_TITULAR_4));
+				mapaErrores.put(PAIS_NO_EXISTE, existePais(exc));
+				mapaErrores.put(PROVINCIA_NO_EXISTE, existeProvincia(exc));
+				mapaErrores.put(MUNICIPIO_NO_EXISTE, existeMunicipio(exc));
+				mapaErrores.put(OBLIGATORIO_DATOS_LOCALIZACION, datosLocalizacionTitularObligatorios(exc));
+				mapaErrores.put(OBLIGATORIO_DATOS_RTE, datosRepresentantesObligatorios(exc));
 
 				for (Entry<String, List<Integer>> registro : mapaErrores.entrySet()) {
 					if (!registro.getValue().isEmpty()) {
@@ -958,6 +1016,370 @@ public class MSVVentaDeCarteraExcelValidator extends MSVExcelValidatorAbstract {
 			e.printStackTrace();
 		}
 
+		return listaFilas;
+	}
+	
+	private List<Integer> existePais(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		try {
+			for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+				String pais = exc.dameCelda(i, COL_NUM.PAIS_TITULAR);
+				String paisRte = exc.dameCelda(i, COL_NUM.PAIS_TITULAR);
+				if(pais != null && !pais.isEmpty()) {
+					Boolean resultado = particularValidator.existePais(pais);
+					if(resultado == null || !resultado) {
+						listaFilas.add(i);
+					}else {
+						if(paisRte != null && !paisRte.isEmpty()) {
+							resultado = particularValidator.existePais(paisRte);
+							if(resultado == null || !resultado) {
+								listaFilas.add(i);
+							}else {
+								String pais2 = exc.dameCelda(i, COL_NUM.PAIS_TITULAR_2);
+								String paisRte2 = exc.dameCelda(i, COL_NUM.PAIS_TITULAR_2);
+								if(pais2 != null && !pais2.isEmpty()) {
+									Boolean resultado2 = particularValidator.existePais(pais2);
+									if(resultado2 == null || !resultado2) {
+										listaFilas.add(i);
+									}else {
+										if(paisRte2 != null && !paisRte2.isEmpty()) {
+											resultado2 = particularValidator.existePais(paisRte2);
+											if(resultado2 == null || !resultado2) {
+												listaFilas.add(i);
+											}
+										}else {
+											String pais3 = exc.dameCelda(i, COL_NUM.PAIS_TITULAR_3);
+											String paisRte3 = exc.dameCelda(i, COL_NUM.PAIS_TITULAR_3);
+											if(pais3 != null && !pais3.isEmpty()) {
+												Boolean resultado3 = particularValidator.existePais(pais3);
+												if(resultado3 == null || !resultado3) {
+													listaFilas.add(i);
+												}else {
+													if(paisRte3 != null && !paisRte3.isEmpty()) {
+														resultado3 = particularValidator.existePais(paisRte3);
+														if(resultado3 == null || !resultado3) {
+															listaFilas.add(i);
+														}
+													}else {
+														String pais4 = exc.dameCelda(i, COL_NUM.PAIS_TITULAR_4);
+														String paisRte4 = exc.dameCelda(i, COL_NUM.PAIS_TITULAR_4);
+														if(pais3 != null && !pais4.isEmpty()) {
+															Boolean resultado4 = particularValidator.existePais(pais4);
+															if(resultado4 == null || !resultado4) {
+																listaFilas.add(i);
+															}else {
+																if(paisRte4 != null && !paisRte4.isEmpty()) {
+																	resultado4 = particularValidator.existePais(paisRte4);
+																	if(resultado4 == null || !resultado4) {
+																		listaFilas.add(i);
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				
+				
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return listaFilas;
+	}
+	
+	private List<Integer> existeProvincia(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		try {
+			for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+				String provincia = exc.dameCelda(i, COL_NUM.PROVINCIA_TITULAR);
+				String provinciaRte = exc.dameCelda(i, COL_NUM.PROVINCIA_RTE_TITULAR);
+				if(provincia != null && !provincia.isEmpty()) {
+					Boolean resultado = particularValidator.existeProvinciaByCodigo(provincia);
+					if(resultado == null || !resultado) {
+						listaFilas.add(i);
+					}else {
+						if(provinciaRte != null && !provinciaRte.isEmpty()) {
+							resultado = particularValidator.existeProvinciaByCodigo(provinciaRte);
+							if(resultado == null || !resultado) {
+								listaFilas.add(i);
+							}else {
+								String provincia2 = exc.dameCelda(i, COL_NUM.PROVINCIA_TITULAR_2);
+								String provinciaRte2 = exc.dameCelda(i, COL_NUM.PROVINCIA_RTE_TITULAR_2);
+								if(provincia2 != null && !provincia2.isEmpty()) {
+									Boolean resultado2 = particularValidator.existeProvinciaByCodigo(provincia2);
+									if(resultado2 == null || !resultado2) {
+										listaFilas.add(i);
+									}else {
+										if(provinciaRte2 != null && !provinciaRte2.isEmpty()) {
+											resultado2 = particularValidator.existeProvinciaByCodigo(provinciaRte2);
+											if(resultado2 == null || !resultado2) {
+												listaFilas.add(i);
+											}
+										}else {
+											String provincia3 = exc.dameCelda(i, COL_NUM.PROVINCIA_TITULAR_3);
+											String provinciaRte3 = exc.dameCelda(i, COL_NUM.PROVINCIA_RTE_TITULAR_3);
+											if(provincia3 != null && !provincia3.isEmpty()) {
+												Boolean resultado3 = particularValidator.existeProvinciaByCodigo(provincia3);
+												if(resultado3 == null || !resultado3) {
+													listaFilas.add(i);
+												}else {
+													if(provinciaRte3 != null && !provinciaRte3.isEmpty()) {
+														resultado3 = particularValidator.existeProvinciaByCodigo(provinciaRte3);
+														if(resultado3 == null || !resultado3) {
+															listaFilas.add(i);
+														}
+													}else {
+														String provincia4 = exc.dameCelda(i, COL_NUM.PROVINCIA_TITULAR_4);
+														String provinciaRte4 = exc.dameCelda(i, COL_NUM.PROVINCIA_RTE_TITULAR_4);
+														if(provincia4 != null && !provincia4.isEmpty()) {
+															Boolean resultado4 = particularValidator.existeProvinciaByCodigo(provincia4);
+															if(resultado4 == null || !resultado4) {
+																listaFilas.add(i);
+															}else {
+																if(provinciaRte4 != null && !provinciaRte4.isEmpty()) {
+																	resultado4 = particularValidator.existeProvinciaByCodigo(provinciaRte4);
+																	if(resultado4 == null || !resultado4) {
+																		listaFilas.add(i);
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				
+				
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return listaFilas;
+	}
+	
+	private List<Integer> existeMunicipio(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		try {
+			for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+				String municipio = exc.dameCelda(i, COL_NUM.MUNICIPIO_TITULAR);
+				String municipioRte = exc.dameCelda(i, COL_NUM.MUNICIPIO_RTE_TITULAR);
+				String provincia = exc.dameCelda(i, COL_NUM.PROVINCIA_TITULAR);
+				String provinciaRte = exc.dameCelda(i, COL_NUM.PROVINCIA_RTE_TITULAR);
+				if(municipio != null && !municipio.isEmpty() && provincia != null && !provincia.isEmpty()) {
+					Boolean resultado = particularValidator.existeMunicipioDeProvinciaByCodigo(provincia, municipio);
+					if(resultado == null || !resultado) {
+						listaFilas.add(i);
+					}else {
+						if(municipioRte != null && !municipioRte.isEmpty() && provinciaRte != null && !provinciaRte.isEmpty()) {
+							resultado = particularValidator.existeMunicipioDeProvinciaByCodigo(provinciaRte, municipioRte);
+							if(resultado == null || !resultado) {
+								listaFilas.add(i);
+							}else {
+								String municipio2 = exc.dameCelda(i, COL_NUM.MUNICIPIO_TITULAR_2);
+								String municipioRte2 = exc.dameCelda(i, COL_NUM.MUNICIPIO_RTE_TITULAR_2);
+								String provincia2 = exc.dameCelda(i, COL_NUM.PROVINCIA_TITULAR_2);
+								String provinciaRte2 = exc.dameCelda(i, COL_NUM.PROVINCIA_RTE_TITULAR_2);
+								if(municipio2 != null && !municipio2.isEmpty() && provincia2 != null && !provincia2.isEmpty()) {
+									Boolean resultado2 = particularValidator.existeMunicipioDeProvinciaByCodigo(provincia2, municipio2);
+									if(resultado2 == null || !resultado2) {
+										listaFilas.add(i);
+									}else {
+										if(municipioRte2 != null && !municipioRte2.isEmpty() && provinciaRte2 != null && !provinciaRte2.isEmpty()) {
+											resultado = particularValidator.existeMunicipioDeProvinciaByCodigo(provinciaRte2, municipioRte2);
+											if(resultado2 == null || !resultado2) {
+												listaFilas.add(i);
+											}else {
+												String municipio3 = exc.dameCelda(i, COL_NUM.MUNICIPIO_TITULAR_3);
+												String municipioRte3 = exc.dameCelda(i, COL_NUM.MUNICIPIO_RTE_TITULAR_3);
+												String provincia3 = exc.dameCelda(i, COL_NUM.PROVINCIA_TITULAR_3);
+												String provinciaRte3 = exc.dameCelda(i, COL_NUM.PROVINCIA_RTE_TITULAR_3);
+												if(municipio3 != null && !municipio3.isEmpty() && provincia3 != null && !provincia3.isEmpty()) {
+													Boolean resultado3 = particularValidator.existeMunicipioDeProvinciaByCodigo(provincia3, municipio3);
+													if(resultado3 == null || !resultado3) {
+														listaFilas.add(i);
+													}else {
+														if(municipioRte3 != null && !municipioRte3.isEmpty() && provinciaRte3 != null && !provinciaRte3.isEmpty()) {
+															resultado = particularValidator.existeMunicipioDeProvinciaByCodigo(provinciaRte3, municipioRte3);
+															if(resultado3 == null || !resultado3) {
+																listaFilas.add(i);
+															}else {
+																String municipio4 = exc.dameCelda(i, COL_NUM.MUNICIPIO_TITULAR_4);
+																String municipioRte4 = exc.dameCelda(i, COL_NUM.MUNICIPIO_RTE_TITULAR_4);
+																String provincia4 = exc.dameCelda(i, COL_NUM.PROVINCIA_TITULAR_4);
+																String provinciaRte4 = exc.dameCelda(i, COL_NUM.PROVINCIA_RTE_TITULAR_4);
+																if(municipio4 != null && !municipio4.isEmpty() && provincia4 != null && !provincia4.isEmpty()) {
+																	Boolean resultado4 = particularValidator.existeMunicipioDeProvinciaByCodigo(provincia4, municipio4);
+																	if(resultado4 == null || !resultado4) {
+																		listaFilas.add(i);
+																	}else {
+																		if(municipioRte4 != null && !municipioRte4.isEmpty() && provinciaRte4 != null && !provinciaRte4.isEmpty()) {
+																			resultado = particularValidator.existeMunicipioDeProvinciaByCodigo(provinciaRte4, municipioRte4);
+																			if(resultado4 == null || !resultado4) {
+																				listaFilas.add(i);
+																			}else {
+																				
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				
+				
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return listaFilas;
+	}
+	
+	private List<Integer> datosLocalizacionTitularObligatorios(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		try {
+			for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+				String pais = exc.dameCelda(i, COL_NUM.PAIS_TITULAR);
+				String provincia = exc.dameCelda(i, COL_NUM.PROVINCIA_TITULAR);
+				String municipio = exc.dameCelda(i, COL_NUM.MUNICIPIO_TITULAR);
+				String direccion = exc.dameCelda(i, COL_NUM.DIRECCION_TITULAR);
+				if (direccion == null || direccion.isEmpty() || pais == null || pais.isEmpty() || (CODIGO_PAIS_ESPANYA.equals(pais) 
+						&& (provincia == null || provincia.isEmpty() || municipio == null || municipio.isEmpty()))) {
+					listaFilas.add(i);
+					
+				}else if(exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_2) != null && !exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_2).isEmpty()){				
+					String pais2 = exc.dameCelda(i, COL_NUM.PAIS_TITULAR_2);
+					String provincia2 = exc.dameCelda(i, COL_NUM.PROVINCIA_TITULAR_2);
+					String municipio2 = exc.dameCelda(i, COL_NUM.MUNICIPIO_TITULAR_2);
+					String direccion2 = exc.dameCelda(i, COL_NUM.DIRECCION_TITULAR_2);
+					if (direccion2 == null || direccion2.isEmpty() || pais2 == null || pais2.isEmpty() || (CODIGO_PAIS_ESPANYA.equals(pais2) 
+							&& (provincia2 == null || provincia2.isEmpty() || municipio2 == null || municipio2.isEmpty()))) {
+						listaFilas.add(i);
+						
+					}else if(exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_3) != null && !exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_3).isEmpty()){
+						String pais3 = exc.dameCelda(i, COL_NUM.PAIS_TITULAR_3);
+						String provincia3 = exc.dameCelda(i, COL_NUM.PROVINCIA_TITULAR_3);
+						String municipio3 = exc.dameCelda(i, COL_NUM.MUNICIPIO_TITULAR_3);
+						String direccion3 = exc.dameCelda(i, COL_NUM.DIRECCION_TITULAR_3);
+						if (direccion3 == null || direccion3.isEmpty() || pais3 == null || pais3.isEmpty() || (CODIGO_PAIS_ESPANYA.equals(pais3) 
+								&& (provincia3 == null || provincia3.isEmpty() || municipio3 == null || municipio3.isEmpty()))) {
+							listaFilas.add(i);
+						}else if(exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_4) != null && !exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_4).isEmpty()){
+							String pais4 = exc.dameCelda(i, COL_NUM.PAIS_TITULAR_4);
+							String provincia4 = exc.dameCelda(i, COL_NUM.PROVINCIA_TITULAR_4);
+							String municipio4 = exc.dameCelda(i, COL_NUM.MUNICIPIO_TITULAR_4);
+							String direccion4 = exc.dameCelda(i, COL_NUM.DIRECCION_TITULAR_4);
+							if (direccion4 == null || direccion4.isEmpty() || pais4 == null || pais4.isEmpty() || (CODIGO_PAIS_ESPANYA.equals(pais4) 
+									&& (provincia4 == null || provincia4.isEmpty() || municipio4 == null || municipio4.isEmpty()))) {
+								listaFilas.add(i);
+							}
+						}
+					}
+				}
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return listaFilas;
+	}
+	
+	private List<Integer> datosRepresentantesObligatorios(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		try {
+			for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < this.numFilasHoja; i++) {
+				String razonSocial = exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR);
+				String tipoDocRte = exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_RTE_TITULAR);
+				String docRte = exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_RTE_TITULAR);
+				String nombreRte = exc.dameCelda(i, COL_NUM.NOMBRE_RTE_TITULAR);
+				String razonSocialRte = exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_RTE_TITULAR);
+				String paisRte = exc.dameCelda(i, COL_NUM.PAIS_RTE_TITULAR);
+				String provinciaRte = exc.dameCelda(i, COL_NUM.PROVINCIA_RTE_TITULAR);
+				String municipioRte = exc.dameCelda(i, COL_NUM.MUNICIPIO_RTE_TITULAR);
+				if (razonSocial != null && !razonSocial.isEmpty()
+						&& (tipoDocRte == null || tipoDocRte.isEmpty() || docRte == null || docRte.isEmpty() 
+							|| paisRte == null || paisRte.isEmpty()
+							|| (nombreRte == null || nombreRte.isEmpty() || ((razonSocialRte == null || razonSocialRte.isEmpty()) && nombreRte.isEmpty()))
+							|| (CODIGO_PAIS_ESPANYA.equals(paisRte) && (provinciaRte == null || provinciaRte.isEmpty() 
+							|| municipioRte == null || municipioRte.isEmpty())))) {
+					listaFilas.add(i);
+				}else if(exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_2) != null && !exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_2).isEmpty()){
+					String razonSocial2 = exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR_2);
+					String tipoDocRte2 = exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_RTE_TITULAR_2);
+					String docRte2 = exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_RTE_TITULAR_2);
+					String nombreRte2 = exc.dameCelda(i, COL_NUM.NOMBRE_RTE_TITULAR_2);
+					String razonSocialRte2 = exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_RTE_TITULAR_2);
+					String paisRte2 = exc.dameCelda(i, COL_NUM.PAIS_RTE_TITULAR_2);
+					String provinciaRte2 = exc.dameCelda(i, COL_NUM.PROVINCIA_RTE_TITULAR_2);
+					String municipioRte2 = exc.dameCelda(i, COL_NUM.MUNICIPIO_RTE_TITULAR_2);
+					if (razonSocial2 != null && !razonSocial2.isEmpty()
+							&& (tipoDocRte2 == null || tipoDocRte2.isEmpty() || docRte2 == null || docRte2.isEmpty() 
+								|| paisRte2 == null || paisRte2.isEmpty()
+								|| (nombreRte2 == null || nombreRte2.isEmpty() || ((razonSocialRte2 == null || razonSocialRte2.isEmpty()) && nombreRte2.isEmpty()))
+								|| (CODIGO_PAIS_ESPANYA.equals(paisRte2) && (provinciaRte2 == null || provinciaRte2.isEmpty() 
+								|| municipioRte2 == null || municipioRte2.isEmpty())))) {
+						listaFilas.add(i);
+					}else if(exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_3) != null && !exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_3).isEmpty()){
+						String razonSocial3 = exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR_3);
+						String tipoDocRte3 = exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_RTE_TITULAR_3);
+						String docRte3 = exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_RTE_TITULAR_3);
+						String nombreRte3 = exc.dameCelda(i, COL_NUM.NOMBRE_RTE_TITULAR_3);
+						String razonSocialRte3 = exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_RTE_TITULAR_3);
+						String paisRte3 = exc.dameCelda(i, COL_NUM.PAIS_RTE_TITULAR_3);
+						String provinciaRte3 = exc.dameCelda(i, COL_NUM.PROVINCIA_RTE_TITULAR_3);
+						String municipioRte3 = exc.dameCelda(i, COL_NUM.MUNICIPIO_RTE_TITULAR_3);
+						if (razonSocial3 != null && !razonSocial3.isEmpty()
+								&& (tipoDocRte3 == null || tipoDocRte3.isEmpty() || docRte3 == null || docRte3.isEmpty() 
+									|| paisRte3 == null || paisRte3.isEmpty()
+									|| (nombreRte3 == null || nombreRte3.isEmpty() || ((razonSocialRte3 == null || razonSocialRte3.isEmpty()) && nombreRte3.isEmpty()))
+									|| (CODIGO_PAIS_ESPANYA.equals(paisRte3) && (provinciaRte3 == null || provinciaRte3.isEmpty() 
+									|| municipioRte3 == null || municipioRte3.isEmpty())))) {
+							listaFilas.add(i);
+						}else if(exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_4) != null && !exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_TITULAR_4).isEmpty()){
+							String razonSocial4 = exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_TITULAR_4);
+							String tipoDocRte4 = exc.dameCelda(i, COL_NUM.TIPO_DOCUMENTO_RTE_TITULAR_4);
+							String docRte4 = exc.dameCelda(i, COL_NUM.DOC_IDENTIFICACION_RTE_TITULAR_4);
+							String nombreRte4 = exc.dameCelda(i, COL_NUM.NOMBRE_RTE_TITULAR_4);
+							String razonSocialRte4 = exc.dameCelda(i, COL_NUM.RAZON_SOCIAL_RTE_TITULAR_4);
+							String paisRte4 = exc.dameCelda(i, COL_NUM.PAIS_RTE_TITULAR_4);
+							String provinciaRte4 = exc.dameCelda(i, COL_NUM.PROVINCIA_RTE_TITULAR_4);
+							String municipioRte4 = exc.dameCelda(i, COL_NUM.MUNICIPIO_RTE_TITULAR_4);
+							if (razonSocial4 != null && !razonSocial4.isEmpty()
+									&& (tipoDocRte4 == null || tipoDocRte4.isEmpty() || docRte4 == null || docRte4.isEmpty() 
+										|| paisRte4 == null || paisRte4.isEmpty()
+										|| (nombreRte4 == null || nombreRte4.isEmpty() || ((razonSocialRte4 == null || razonSocialRte4.isEmpty()) && nombreRte4.isEmpty()))
+										|| (CODIGO_PAIS_ESPANYA.equals(paisRte4) && (provinciaRte4 == null || provinciaRte4.isEmpty() 
+										|| municipioRte4 == null || municipioRte4.isEmpty())))) {
+								listaFilas.add(i);
+							}
+						}
+					}
+				}
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 		return listaFilas;
 	}
 

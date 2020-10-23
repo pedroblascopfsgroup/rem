@@ -49,7 +49,6 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.DtoCargaMasivaUnicaGastos;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
@@ -124,7 +123,7 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 	
 	protected static final Log logger = LogFactory.getLog(MSVMasivaUnicaGastosDetalle.class);
 	
-	private static DtoCargaMasivaUnicaGastos dtoGastos;
+	//private static DtoCargaMasivaUnicaGastos dtoGastos;
 	
 	@Autowired
 	private GenericABMDao genericDao;

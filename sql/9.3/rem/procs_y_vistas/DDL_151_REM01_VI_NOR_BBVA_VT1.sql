@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin Arnal
---## FECHA_CREACION=20200911
+--## FECHA_CREACION=20200913
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10975
@@ -94,7 +94,7 @@ BEGIN
         , COALESCE(CAT.CAT_REF_CATASTRAL,''NULL'') AS REFERENCIA_CATASTRAL
         , COALESCE(CAT.CAT_SUPERFICIE_CONSTRUIDA,0) AS SUPERFICIE
         , ''NULL'' AS OFICINA_VENDEDORA
-        , ''NULL'' AS COMISION_EXTERNA
+        , coalesce(eco_gex.sum_gex,0) AS COMISION_EXTERNA
         , COALESCE(OFR.OFR_IMPORTE,0) AS PRECIO_VENTA
         , ''NULL'' AS NOMBRE_CLIENTE
         , ''NULL'' AS APELLIDO_1
@@ -160,7 +160,7 @@ BEGIN
             THEN TO_CHAR(VAL.VAL_FECHA_INICIO,''DD.MM.YYYY'')
             ELSE ''NULL''
         END AS FECHA_INICIO_TARIFA
-        ,''NULL'' AS PROMOCION
+        ,COALESCE(BBVA.bbva_cod_promocion,''NULL'') AS PROMOCION
         ,CASE
             WHEN EAC.DD_EAC_CODIGO in (''02'',''06'') 
             THEN ''EN CURSO''
@@ -206,7 +206,11 @@ BEGIN
         ) last_oferta ON last_oferta.ACT_ID = ACT.ACT_ID 
         left join '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_ID = last_oferta.OFR_ID
         left JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID 
-        left JOIN CEX_COMPRADOR_EXPEDIENTE CCEX ON CCEX.ECO_ID = ECO.ECO_ID AND CCEX.CEX_TITULAR_CONTRATACION = 1
+        left join (
+            select gex.eco_id, sum(gex.gex_importe_final) sum_gex from '||V_ESQUEMA||'.gex_gastos_expediente gex where gex.gex_aprobado = 1 and gex.borrado = 0
+            group by gex.eco_id
+        ) eco_gex on eco_gex.eco_id = ECO.eco_id 
+        left JOIN '||V_ESQUEMA||'.CEX_COMPRADOR_EXPEDIENTE CCEX ON CCEX.ECO_ID = ECO.ECO_ID AND CCEX.CEX_TITULAR_CONTRATACION = 1
         left JOIN '||V_ESQUEMA||'.COM_COMPRADOR COM ON COM.COM_ID = CCEX.COM_ID
         left JOIN '||V_ESQUEMA||'.DD_TPE_TIPO_PERSONA TPE ON TPE.DD_TPE_ID = COM.DD_TPE_ID
         left JOIN '||V_ESQUEMA_MASTER||'.DD_PRV_PROVINCIA PRV2 ON PRV2.DD_PRV_ID = COM.DD_PRV_ID

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin Arnal
---## FECHA_CREACION=20200910
+--## FECHA_CREACION=20200911
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11680
@@ -86,7 +86,7 @@ BEGIN
             case 
                 when 
                         SCM.DD_SCM_CODIGO in (''02'',''09'') -- 09	Disponible condicionado o 02	Disponible para la venta             
-                        AND last_oferta.DD_EOF_CODIGO in (''02'',''03'',''04'') AND ((VCP.COND_PUBL_VENTA = 0 OR VCP.COND_PUBL_ALQUILER = 0) OR (VCP.COND_PUBL_VENTA = 1 and VCP.COND_PUBL_ALQUILER = 1))
+                        AND ((VCP.COND_PUBL_VENTA = 0 OR VCP.COND_PUBL_ALQUILER = 0) OR (VCP.COND_PUBL_VENTA = 1 and VCP.COND_PUBL_ALQUILER = 1))
                     then ''Libre en venta''
                 when 
                         SCM.DD_SCM_CODIGO = ''03'' --	Disponible para la venta con oferta
@@ -167,9 +167,6 @@ BEGIN
                         AND ECO.ECO_ESTADO_PBC is null 
                         AND ECO.ECO_FECHA_VENTA is null
                     then ''Libre en Alquiler''
-                when 
-                        SCM.DD_SCM_CODIGO = ''10'' --	Alquilado
-                    then ''Alquilado''
                 /*when last_oferta.DD_EOF_CODIGO in (''01'')    
                     then ''Uso propio''
                 when last_oferta.DD_EOF_CODIGO in (''01'')
@@ -232,6 +229,9 @@ BEGIN
                         AND RES.RES_FECHA_FIRMA is not null
                         AND (ECO.ECO_ESTADO_PBC = 1 or ECO.ECO_ESTADO_PBC is null)   
                     then ''Alquilado Contratado''
+                when 
+                        SCM.DD_SCM_CODIGO = ''10'' --	Alquilado
+                    then ''Alquilado''
                 else ''No definido''
             end SITUACION_COMERCIAL_BBVA
         from '||V_ESQUEMA||'.act_activo ACT

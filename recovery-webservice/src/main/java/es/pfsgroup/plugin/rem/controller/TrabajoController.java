@@ -428,9 +428,9 @@ public class TrabajoController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getSeleccionTarifasTrabajo(DtoGestionEconomicaTrabajo dto,String cartera, String tipoTrabajo, String subtipoTrabajo
-			, String codigoTarifa, String descripcionTarifa){
+			, String codigoTarifa, String descripcionTarifa, String subcarteraCodigo){
 
-		DtoPage page = trabajoApi.getSeleccionTarifasTrabajo(dto, cartera, tipoTrabajo, subtipoTrabajo, codigoTarifa, descripcionTarifa);
+		DtoPage page = trabajoApi.getSeleccionTarifasTrabajo(dto, cartera, tipoTrabajo, subtipoTrabajo, codigoTarifa, descripcionTarifa,subcarteraCodigo);
 		
 		ModelMap model = new ModelMap();
 		model.put("data", page.getResults());

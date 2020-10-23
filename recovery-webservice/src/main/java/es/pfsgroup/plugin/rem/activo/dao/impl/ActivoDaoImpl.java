@@ -46,10 +46,12 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
+import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativaAdicional;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlusvalia;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoSuministros;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.CalidadDatosConfig;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
@@ -64,6 +66,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoPeticionesPrecios;
+import es.pfsgroup.plugin.rem.model.HistoricoRequisitosFaseVenta;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
@@ -1148,6 +1151,22 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		//return  HibernateUtils.castList(ActivoCalificacionNegativa.class, this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list());
 
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivoCalificacionNegativaAdicional> getListActivoCalificacionNegativaAdicionalByIdActivo(Long idActivo) {
+		String hql = "select acn from ActivoCalificacionNegativaAdicional acn ";
+		HQLBuilder hb = new HQLBuilder(hql);
+		hb.appendWhere(" acn.activo.id =  "+idActivo+" ");
+		hb.appendWhere(" acn.auditoria.borrado = 0 ");
+
+		List<ActivoCalificacionNegativaAdicional> lista = (List<ActivoCalificacionNegativaAdicional>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		if(!Checks.estaVacio(lista)) {
+			return HibernateUtils.castList(ActivoCalificacionNegativaAdicional.class, lista);
+		}
+		return lista;
+
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -1862,6 +1881,18 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	public List<HistoricoPeticionesPrecios> getHistoricoSolicitudesPrecios(Long idActivo) {
 		Order order = new Order(OrderType.DESC,"auditoria.fechaCrear");
 		return genericDao.getListOrdered(HistoricoPeticionesPrecios.class, order, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo));
+	}
+	
+	@Override
+	public List<HistoricoRequisitosFaseVenta> getReqFaseVenta(Long idActivo) {
+		Order order = new Order(OrderType.DESC,"auditoria.fechaCrear");
+		return genericDao.getListOrdered(HistoricoRequisitosFaseVenta.class, order, genericDao.createFilter(FilterType.EQUALS, "activoInfAdministrativa.activo.id", idActivo));
+	}
+
+	@Override
+	public List<ActivoSuministros> getSuministrosByIdActivo(Long idActivo) {
+		Order order = new Order(OrderType.DESC,"auditoria.fechaCrear");
+		return genericDao.getListOrdered(ActivoSuministros.class, order, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo));
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 Ext.define('HreRem.view.common.ComboBoxSearchFieldBase', { 	
-	extend			: 'Ext.form.field.ComboBox',
+	extend			: 'HreRem.view.common.ComboBoxFieldBase',
     xtype			: 'comboboxsearchfieldbase',
     displayField	: 'descripcion',      
     valueField		: 'codigo',    
@@ -9,8 +9,8 @@ Ext.define('HreRem.view.common.ComboBoxSearchFieldBase', {
 	minLength: 3,
 	queryMode: 'local',
 	triggerAction: 'query',
-	anyMatch: true,
-	
+	anyMatch: true,	
+	addUxReadOnlyEditFieldPlugin: false,
 	privates: {
 	onRender: function(){
 		this.store.clearFilter(true);
@@ -18,27 +18,28 @@ Ext.define('HreRem.view.common.ComboBoxSearchFieldBase', {
 	},
 		
 	onTriggerClick: function() {
-		if(!Ext.isEmpty(this.rawValue) && this.rawValue.length >= 3)
+		if(!Ext.isEmpty(this.rawValue) && this.rawValue.length >= this.minLength)
 			this.expand();
 		else
 			this.collapse();
 	},
 	
     onExpand: function(){
-    	if(!Ext.isEmpty(this.rawValue) && this.rawValue.length >= 3)
+    	if(!Ext.isEmpty(this.rawValue) && this.rawValue.length >= this.minLength)
 			this.expand();
 		else
 			this.collapse();					
 	},
 	onChange: function(newValue, oldValue){
 		if(!Ext.isEmpty(newValue)){
-			if(newValue.length < 3){
+			if(newValue.length < this.minLength){
 				this.collapse();
 			}else{
 				this.store.filter(
 						{
-							property: 'descripcion',
+							property: this.displayField,
 							anyMatch: true,
+							caseSensitive: false,
 							value: newValue
 						}
 				);

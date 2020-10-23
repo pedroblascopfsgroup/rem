@@ -118,6 +118,58 @@ Ext.define('HreRem.model.ActivoInformacionAdministrativa', {
     		{
     			name:'noTitularOtraVivienda'
     		},    		
+
+    		{
+    			name:'tributacionAdq'
+    		},
+    		{
+				name:'fechaVencTpoBonificacion',
+				type:'date',
+    			dateFormat: 'c'
+			},
+			{
+    			name:'fechaSoliCertificado',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name:'fechaComAdquisicion', 
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name:'fechaLiqComplementaria',
+    			type:'date',
+    			dateFormat: 'c'
+			},
+			{
+    			name:'fechaComRegDemandantes', //
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		
+    		{
+    			name:'fechaEnvioComunicacionOrganismo', //
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		
+    		{
+    			name:'fechaRecepcionRespuestaOrganismo', //
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name: 'fechaVencimiento',
+    			type: 'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name:'estadoVentaCodigo'
+    		},
+    		
+    		
+
     		
     		
     		{

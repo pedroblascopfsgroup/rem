@@ -546,7 +546,7 @@ public class ActivoAdapter {
 	}
 
 	@Transactional(readOnly = false)
-	public boolean saveObservacionesActivo(DtoObservacion dtoObservacion) {
+	public boolean saveObservacion(DtoObservacion dtoObservacion) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(dtoObservacion.getId()));
 		ActivoObservacion activoObservacion = genericDao.get(ActivoObservacion.class, filtro);
 
@@ -571,7 +571,7 @@ public class ActivoAdapter {
 	}
 
 	@Transactional(readOnly = false)
-	public boolean createObservacionesActivo(DtoObservacion dtoObservacion, Long idActivo) {
+	public boolean createObservacion(DtoObservacion dtoObservacion, Long idActivo) {
 		ActivoObservacion activoObservacion = new ActivoObservacion();
 		Activo activo = activoApi.get(idActivo);
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
@@ -2735,9 +2735,8 @@ public class ActivoAdapter {
 		if(tipoDocumento != null && activoEntrada != null) {
 			DtoActivoSituacionPosesoria dto = new DtoActivoSituacionPosesoria();
 			BeanUtils.copyProperties(dto, activoEntrada.getSituacionPosesoria());
-			if(activoEntrada.getSituacionPosesoria() != null && activoEntrada.getSituacionPosesoria().getConTitulo() != null) {
+			if (activoEntrada.getSituacionPosesoria().getConTitulo() != null)
 				dto.setConTitulo(activoEntrada.getSituacionPosesoria().getConTitulo().getCodigo());
-			}
 			activoApi.compruebaParaEnviarEmailAvisoOcupacion(dto, activoEntrada.getId());
 		}
 		return null;

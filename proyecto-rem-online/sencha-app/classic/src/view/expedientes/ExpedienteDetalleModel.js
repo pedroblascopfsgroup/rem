@@ -1183,7 +1183,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			type: 'uxproxy',
 			remoteUrl: 'expedientecomercial/getComboUsuarios',
 			extraParams: {idTipoGestor: '{tipoGestor.selection.id}'}
-			}
+			},
+			autoLoad: false,
+			remoteFilter: false,
+			remoteSort: false
 		},
 		
 		storeGestores: {
@@ -1345,7 +1348,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        remoteUrl: 'expedientecomercial/getAuditoriaDesbloqueo',
 		        extraParams: {idExpediente: '{expediente.id}'}
 	    	}
-		}
+		},
+		
+		comboMotivoAmpliacionArras: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivoAmpliacionArras'}
+			}
+	    }
 		
     }
 });

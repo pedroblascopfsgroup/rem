@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Juan Beltrán
---## FECHA_CREACION=20200918
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20201022
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-8070
+--## INCIDENCIA_LINK=REMVIP-8058
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##
@@ -16,6 +16,7 @@
 --##		0.4 Sumar participación y porcentaje mismo activo en gasto
 --##		0.5 Añadir filtros de borrado
 --##		0.6 REMVIP-8070 Error división entre 0
+--##		0.7 REMVIP-8058 Corregido suma con la tabla Prinex debido a gastos con precio duplicado
 --##########################################
 --*/
 
@@ -166,13 +167,13 @@ SELECT
 				GGE.GGE_OBSERVACIONES,
 				GPV.GPV_NUM_GASTO_HAYA,
 				GDE.GDE_FECHA_PAGO,
-                		NVL(NVL(GDE.GDE_PRINCIPAL_SUJETO,GDE.GDE_PRINCIPAL_NO_SUJETO),0)+NVL((SELECT SUM(GPL.GPL_IMPORTE_GASTO)
+                		NVL(NVL(GDE.GDE_PRINCIPAL_SUJETO,GDE.GDE_PRINCIPAL_NO_SUJETO),NVL((SELECT SUM(GPL.GPL_IMPORTE_GASTO)
                                     FROM '||V_ESQUEMA||'.GPL_GASTOS_PRINEX_LBK GPL
                                      WHERE GPL.GPV_ID = GPVACT.GPV_ID
                                      AND GPL.ACT_ID IS NOT NULL
                                      AND GPL.GPL_IMPORTE_GASTO IS NOT NULL
                                      GROUP BY GPL.GPV_ID
-                                ),0) GDE_IMPORTE_TOTAL,
+                                ),0)) GDE_IMPORTE_TOTAL,
 				EGA.DD_EGA_CODIGO,
 				EGA.DD_EGA_DESCRIPCION,
         ATBJ.ACT_TBJ_PARTICIPACION,

@@ -50,6 +50,15 @@ public class DtoReserva extends WebDto {
 	private String estadoReservaCodigo;
 	
 	private Double depositoReserva;
+	
+	private String motivoAmpliacionArrasCodigo;
+	
+	private String solicitudAmpliacionArras;
+	
+	private Date fechaVigenciaArras;
+	
+	private Date fechaAmpliacionArras;
+	
 
 	public Double getDepositoReserva() {
 		return depositoReserva;
@@ -193,6 +202,38 @@ public class DtoReserva extends WebDto {
 
 	public void setEstadoReservaCodigo(String estadoReservaCodigo) {
 		this.estadoReservaCodigo = estadoReservaCodigo;
+	}
+
+	public String getMotivoAmpliacionArrasCodigo() {
+		return motivoAmpliacionArrasCodigo;
+	}
+
+	public void setMotivoAmpliacionArrasCodigo(String motivoAmpliacionArrasCodigo) {
+		this.motivoAmpliacionArrasCodigo = motivoAmpliacionArrasCodigo;
+	}
+
+	public String getSolicitudAmpliacionArras() {
+		return solicitudAmpliacionArras;
+	}
+
+	public void setSolicitudAmpliacionArras(String solicitudAmpliacionArras) {
+		this.solicitudAmpliacionArras = solicitudAmpliacionArras;
+	}
+
+	public Date getFechaVigenciaArras() {
+		return fechaVigenciaArras;
+	}
+
+	public void setFechaVigenciaArras(Date fechaVigenciaArras) {
+		this.fechaVigenciaArras = fechaVigenciaArras;
+	}
+
+	public Date getFechaAmpliacionArras() {
+		return fechaAmpliacionArras;
+	}
+
+	public void setFechaAmpliacionArras(Date fechaAmpliacionArras) {
+		this.fechaAmpliacionArras = fechaAmpliacionArras;
 	}
 	
 	

@@ -103,6 +103,14 @@ rem_mirror|func-rem-spartaMasivo
 rem_mirror|R-Tomago
 2.20.9-20071001-rem|R-Tomago
 rem_mirror|parche-rem-Divarian-F5
-rem_mirror|func-rem-spartaMasivo
 2.20.9-20071001-rem|parche-rem-Divarian-F5
 parche-rem-Divarian-F5|R-Tomago
+func-HREOS-10425|func-rem-supervisionGestorias-F2
+rem_mirror|func-rem-supervisionGestorias-F2
+2.20.9-20071001-rem|func-rem-supervisionGestorias-F2
+func-rem-nuevasEntradasAdmision|func-HREOS-10487
+func-HREOS-10487|func-rem-nuevasEntradasAdmision
+rem_mirror|func-rem-nuevasEntradasAdmision
+2.20.9-20071001-rem|func-rem-nuevasEntradasAdmision
+func-rem-nuevasEntradasAdmision|func-rem-supervisionGestorias-F2
+version-2.21.5-rem|version-2.22.1-rem

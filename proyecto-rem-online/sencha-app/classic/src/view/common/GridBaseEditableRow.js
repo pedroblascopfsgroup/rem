@@ -248,7 +248,6 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 	},
 	
 	onAddClick: function(btn){
-    	
 		var me = this;
 		var rec = Ext.create(me.getStore().config.model);
 		me.getStore().sorters.clear();

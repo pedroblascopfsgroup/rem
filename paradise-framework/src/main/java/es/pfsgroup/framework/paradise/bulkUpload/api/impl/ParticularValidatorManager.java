@@ -5521,6 +5521,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				" FROM gld_gastos_linea_detalle linea " + 
 				" JOIN gpv_gastos_proveedor gasto ON gasto.gpv_id = linea.gpv_id AND GASTO.GPV_NUM_GASTO_HAYA = " + idGasto + 
 				" where GLD_ID = "+ idLinea +" AND gasto.borrado = 0 AND linea.borrado = 0");
+		return !"0".equals(resultado);
+	}
 		
 	public Boolean existePoblacionByDescripcion(String codigoPoblacion) {
 		if(Checks.esNulo(codigoPoblacion)) {

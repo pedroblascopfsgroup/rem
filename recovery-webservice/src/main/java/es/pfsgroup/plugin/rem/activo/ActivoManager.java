@@ -7516,6 +7516,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		return todosActivoAlquilados;
+	}
+	
 	public List<ReqFaseVentaDto> getReqFaseVenta(Long idActivo) {
 		List<HistoricoRequisitosFaseVenta> listHistorico = activoDao.getReqFaseVenta(idActivo);
 		List<ReqFaseVentaDto> listDto = new ArrayList<ReqFaseVentaDto>();

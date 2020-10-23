@@ -84,6 +84,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivoBDE;
@@ -922,6 +923,17 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				BeanUtils.copyProperty(activoDto, "longitudOE", activoSareb.getLongitudOE());
 			}
 		}
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoSareb activoSarebReo = genericDao.get(ActivoSareb.class, filtro);
+		
+		if (activoSarebReo != null && activoSarebReo.getReoContabilizado() != null) 
+		{
+			if (DDSinSiNo.CODIGO_SI.equals(activoSarebReo.getReoContabilizado().getCodigo())) {
+				activoDto.setReoContabilizadoSap(true);
+			} else {
+				activoDto.setReoContabilizadoSap(false);
+			}
+		}
 		
 		return activoDto;
 	}
@@ -1497,7 +1509,27 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				
 				genericDao.update(ActivoSareb.class, activoSareb);
 			}
-		
+			
+			if(dto.getReoContabilizadoSap() != null) 
+			{
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+				ActivoSareb activoSarebReo = genericDao.get(ActivoSareb.class, filtro);
+				if(activoSarebReo != null) {
+					if(dto.getReoContabilizadoSap()!=null) 
+					{
+						if(dto.getReoContabilizadoSap() == true) {
+							Filter filtroSi = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI);
+							DDSinSiNo codigoSi = genericDao.get(DDSinSiNo.class, filtroSi);
+							activoSarebReo.setReoContabilizado(codigoSi);
+						}else {
+							Filter filtroNo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO);
+							DDSinSiNo codigoNo = genericDao.get(DDSinSiNo.class, filtroNo);
+							activoSarebReo.setReoContabilizado(codigoNo);
+						}
+						
+					}
+				}
+			}
 
 		} catch(JsonViewerException jve) {
 			throw jve;

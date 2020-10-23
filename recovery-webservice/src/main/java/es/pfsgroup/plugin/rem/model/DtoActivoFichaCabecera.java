@@ -293,6 +293,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	private Boolean pazSocial;
 	private String numActivoDivarian;
+	private Boolean reoContabilizadoSap;
 
 	
 	public Boolean getTieneOfertaAlquilerViva() {
@@ -2254,5 +2255,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setLongitudOE(String longitudOE) {
 		this.longitudOE = longitudOE;
 	}
+
+	public Boolean getReoContabilizadoSap() {
+		return reoContabilizadoSap;
+	}
+
+	public void setReoContabilizadoSap(Boolean reoContabilizadoSap) {
+		this.reoContabilizadoSap = reoContabilizadoSap;
+	}
+	
 	
 }

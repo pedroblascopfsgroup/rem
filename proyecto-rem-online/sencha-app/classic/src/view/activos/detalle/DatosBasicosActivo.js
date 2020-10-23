@@ -308,6 +308,19 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                		value: '{activo.tipoSegmentoCodigo}',
 			                		hidden: '{!activo.isSubcarteraDivarian}'
 			                	}
+			                },
+			                {
+			                	xtype: 'comboboxfieldbase',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.reo.contabilizado.sap'),
+			                	name: 'comboreocontabilizadosap',
+			                	reference: 'comboreocontabilizadosapRef',
+			                	bind: {	
+				                	readOnly : !$AU.userIsRol("HAYASUPER"),
+			                		store: '{comboSiNoBoolean}',
+									value: '{activo.reoContabilizadoSap}',
+			                		hidden: '{!activo.isCarteraSareb}'
+			                	}
+			                
 			                }
 						]
 					}]

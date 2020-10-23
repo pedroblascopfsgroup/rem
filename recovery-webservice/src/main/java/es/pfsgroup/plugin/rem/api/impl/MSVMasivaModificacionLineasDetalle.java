@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -61,8 +62,8 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 	private static final int TIPO_ELEMENTO = 18;
 	private static final int PARTICIPACION_LINEA_DETALLE = 19;
 	
-	private static final String ACCION_BORRAR = "BORRAR";
-	private static final String ACCION_ANYADIR = "AÑADIR";
+	private static final String[] listaCampoAccionAnyadir = { "AÑADIR" , "A" };
+	private static final String[] listaCampoAccionBorrar = { "BORRAR" , "B" };
 	
 	private static final String SI = "SI";
 	private static final String S = "S";
@@ -89,7 +90,7 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 			
 			String accionRealizar = exc.dameCelda(fila, ACCION_LINIA_DETALLE);
 			
-			if(ACCION_ANYADIR.equalsIgnoreCase(accionRealizar)) {
+			if(Arrays.asList(listaCampoAccionAnyadir).contains(accionRealizar.toUpperCase())) {
 				Double importeTotal = 0.0;
 				GastoLineaDetalle gastoLineaDetalle = new GastoLineaDetalle();
 				
@@ -298,7 +299,7 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 					}
 				}
 
-			}else if(ACCION_BORRAR.equalsIgnoreCase(accionRealizar)) {
+			}else if(Arrays.asList(listaCampoAccionBorrar).contains(accionRealizar.toUpperCase())) {
 				Double importeTotal = 0.0;
 				Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "numGastoHaya", Long.parseLong(exc.dameCelda(fila, ID_GASTO)));
 				GastoProveedor gastoProveedor = genericDao.get(GastoProveedor.class, filtroGasto);

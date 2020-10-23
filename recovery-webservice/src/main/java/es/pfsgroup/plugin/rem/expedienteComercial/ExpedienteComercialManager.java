@@ -2396,9 +2396,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public Boolean comprobarExisteAdjuntoExpedienteComercial(Long idTrabajo, String codigoDocumento) {
 		List<AdjuntoExpedienteComercial> adjuntos = new ArrayList<AdjuntoExpedienteComercial>();
-		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
+		//List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
 		
-		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+		/*if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			ExpedienteComercial expedienteComercial = this.findOneByTrabajo(trabajoApi.findOne(idTrabajo));
 			try {
 				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosExpedienteComercial(expedienteComercial);
@@ -2412,14 +2412,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			} catch (GestorDocumentalException gex) {
 				logger.error(gex.getMessage(), gex);
 			}
-		} else {
+		} else {*/
 			Filter filtroTrabajoEC = genericDao.createFilter(FilterType.EQUALS, "expediente.trabajo.id", idTrabajo);
 			Filter filtroAdjuntoSubtipoCodigo = genericDao.createFilter(FilterType.EQUALS,
 					"subtipoDocumentoExpediente.codigo", codigoDocumento);
 	
 			adjuntos = genericDao.getList(AdjuntoExpedienteComercial.class,
 					filtroTrabajoEC, filtroAdjuntoSubtipoCodigo);
-		}
+		//}
 		return !Checks.estaVacio(adjuntos);
 	}
 

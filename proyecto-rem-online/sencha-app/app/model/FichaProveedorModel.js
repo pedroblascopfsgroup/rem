@@ -174,6 +174,12 @@ Ext.define('HreRem.model.FichaProveedorModel', {
             },
             {
             	name: 'codProveedorUvem'
+            },
+            {
+            	name: 'codigoApiProveedor'
+            },
+            {
+            	name:'idMediadorRelacionado'
             }
     ],
 

@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=GUILLEM REY
---## FECHA_CREACION=20201009
+--## AUTOR=Alejandro Valverde
+--## FECHA_CREACION=20201020
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -10,7 +10,8 @@
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial (Guillem Rey).
+--##        0.2 (Alejandro Valverde) HREOS-11760 - Filtrado de fecha fin a nulo dependiendo del tipo de precio.
 --##########################################
 --*/
 
@@ -82,7 +83,7 @@ BEGIN
 		CROSS JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
 		LEFT JOIN '|| V_ESQUEMA ||'.ACT_VAL_VALORACIONES VAL ON VAL.DD_TPC_ID = TPC.DD_TPC_ID AND VAL.ACT_ID = ACT.ACT_ID AND VAL.BORRADO=0
 		LEFT JOIN ' || V_ESQUEMA_MASTER || '.USU_USUARIOS GESTOR ON GESTOR.USU_ID = VAL.USU_ID
-		WHERE DD_TPC_TIPO = ''P'' AND VAL.VAL_FECHA_FIN IS NULL 
+		WHERE DD_TPC_TIPO = ''P'' AND ((TPC.DD_TPC_CODIGO = ''07'' OR TPC.DD_TPC_CODIGO = ''13'') OR (TPC.DD_TPC_CODIGO <> ''07'' AND TPC.DD_TPC_CODIGO <> ''13'' AND VAL.VAL_FECHA_FIN IS NULL)) 
     and act.borrado = 0';
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_PRECIOS_VIGENTES...Creada OK');

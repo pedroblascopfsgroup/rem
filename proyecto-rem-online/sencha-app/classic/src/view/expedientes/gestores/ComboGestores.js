@@ -59,6 +59,7 @@ Ext.define('HreRem.view.expedientes.gestores.ComboGestores', {
 						        	fieldLabel: 'Usuario:',
 						        	reference: 'usuarioGestor',
 						        	name: 'usuarioGestor',
+									queryMode: 'local',
 						        	bind: {
 					            		store: '{comboUsuarios}',
 					            		disabled: '{!tipoGestor.selection}'

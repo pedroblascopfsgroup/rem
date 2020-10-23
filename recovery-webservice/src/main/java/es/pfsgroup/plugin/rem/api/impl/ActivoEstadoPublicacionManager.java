@@ -1477,7 +1477,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				
 			} else if(DDFasePublicacion.CODIGO_FASE_III_PENDIENTE_INFORMACION.equals(fasePublicacionCod) && DDSubfasePublicacion.CODIGO_PENDIENTE_DE_INFORMACION.equals(subFasePublicacionCod) ) {
 				cuerpo = String.format("El activo "+activo.getNumActivo()+" ha entrado en la siguiente fase de publicación: Fase III: Pendiente de información.");
-				mailsPara.add(activo.getInfoComercial().getMediadorInforme().getEmail());
+				if (activo.getInfoComercial() != null && activo.getInfoComercial().getMediadorInforme() != null) {
+					mailsPara.add(activo.getInfoComercial().getMediadorInforme().getEmail());
+				}
 			}
 			if(!Checks.estaVacio(mailsPara) || !Checks.estaVacio(mailsCC)) {
 				notificationActivoManager.sendMailFasePublicacion(activo, asunto,cuerpo,mailsPara,mailsCC);

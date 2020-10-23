@@ -505,6 +505,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		
 		trabajoDao.saveOrUpdate(trabajo);
+		actualizarImporteTotalTrabajo(trabajo.getId());
 
 		return true;
 	}
@@ -1064,6 +1065,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		importeTarifasTotalCliente += importePresupuestosTrabajo;
 		importeTarifasTotalProveedor += importePresupuestosTrabajo;
+		importeTarifasTotalProveedor -= trabajo.getImportePenalizacionTotal();
 		
 		trabajo.setImporteTotal(importeTarifasTotalCliente);
 		trabajo.setImportePresupuesto(importeTarifasTotalProveedor);
@@ -2266,6 +2268,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					e.printStackTrace();
 				}
 				trabajo.setFechaHoraConcreta(fechaHoraConcreta);
+				trabajo.setFechaCompromisoEjecucion(fechaHoraConcreta);
 			}else {
 				trabajo.setFechaHoraConcreta(null);
 			}
@@ -2273,6 +2276,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (dtoTrabajo.getFechaTope() != null) {
 			if(!"1970-01-01".equals(groovyft.format(dtoTrabajo.getFechaTope()))) {
 				trabajo.setFechaTope(dtoTrabajo.getFechaTope());
+				trabajo.setFechaCompromisoEjecucion(dtoTrabajo.getFechaTope());
 			}else {
 				trabajo.setFechaTope(null);
 			}
@@ -3183,6 +3187,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setEsUsuarioCliente(true);
 		}else {
 			dtoTrabajo.setEsUsuarioCliente(false);
+		}
+		if(trabajo.getFechaCompromisoEjecucion() != null) {
+			dtoTrabajo.setFechaCompromisoEjecucion(trabajo.getFechaCompromisoEjecucion());
 		}
 
 		return dtoTrabajo;

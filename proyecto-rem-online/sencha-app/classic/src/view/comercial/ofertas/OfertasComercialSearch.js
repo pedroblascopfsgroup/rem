@@ -221,6 +221,7 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 					        	fieldLabel: HreRem.i18n('fieldlabel.gestor'),
 					        	reference: 'usuarioGestor',
 					        	name: 'usuarioGestor',
+								queryMode: 'local',
 					        	bind: {
 				            		store: '{comboUsuarios}',
 				            		disabled: '{!tipoGestor.selection}',

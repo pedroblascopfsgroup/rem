@@ -44,6 +44,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEntidadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoRegistralActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenAnterior;
@@ -53,6 +54,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTerritorio;
@@ -521,6 +523,14 @@ public class Activo implements Serializable, Auditable {
     @Column(name = "ACT_DND", columnDefinition = "tinyint default false")
    	private boolean isDnd;
     
+    @ManyToOne
+	@JoinColumn(name = "DD_EAA_ID")
+	private DDEstadoAdmision estadoAdmision;
+    
+    @ManyToOne
+	@JoinColumn(name = "DD_SAA_ID")
+	private DDSubestadoAdmision subestadoAdmision;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_ERA_ID")
     private DDEstadoRegistralActivo estadoRegistral; 
@@ -2034,6 +2044,22 @@ public class Activo implements Serializable, Auditable {
 	public void setFechaTituloAnterior(Date fechaTituloAnterior) {
 		this.fechaTituloAnterior = fechaTituloAnterior;
 	}
+	
+	public DDEstadoAdmision getEstadoAdmision() {
+		return estadoAdmision;
+	}
+
+	public void setEstadoAdmision(DDEstadoAdmision estadoAdmision) {
+		this.estadoAdmision = estadoAdmision;
+	}
+
+	public DDSubestadoAdmision getSubestadoAdmision() {
+		return subestadoAdmision;
+	}
+
+	public void setSubestadoAdmision(DDSubestadoAdmision subestadoAdmision) {
+		this.subestadoAdmision = subestadoAdmision;
+	}
 
 	public DDEstadoRegistralActivo getEstadoRegistral() {
 		return estadoRegistral;
@@ -2042,4 +2068,5 @@ public class Activo implements Serializable, Auditable {
 	public void setEstadoRegistral(DDEstadoRegistralActivo estadoRegistral) {
 		this.estadoRegistral = estadoRegistral;
 	}
+
 }

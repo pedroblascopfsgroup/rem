@@ -383,7 +383,9 @@ public class HQLBuilder {
 			} else {
 				first = false;
 			}
+			this.stringBuilder.append("'");
 			this.stringBuilder.append(v);
+			this.stringBuilder.append("'");
 		}
 
 		this.stringBuilder.append("))");
@@ -500,7 +502,9 @@ public class HQLBuilder {
 	private void initWhereClause(boolean quiereOr) {
 		if (hasWhere && quiereOr) {
 			this.stringBuilder.append(" or (");
-		} else if(!hasWhere) {
+		}else if (hasWhere && !quiereOr) {
+			this.stringBuilder.append(" and (");
+		}else if(!hasWhere) {
 			this.stringBuilder.append(" where (");
 			this.hasWhere = true;
 		}

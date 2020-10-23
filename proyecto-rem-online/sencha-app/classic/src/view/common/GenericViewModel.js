@@ -106,7 +106,12 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 			        {"codigo":undefined, "descripcion":"-"}
 			    ]
     		},
-    		
+    		comboSiNoDict: {
+    			data : [
+			        {"codigo":"01", "descripcion": eval(String.fromCharCode(34,83,237,34))},
+			        {"codigo":"02", "descripcion":"No"}
+			    ]
+    		},
     		comboBuenoMaloRem: {
     			data : [
 			        {"codigo":"1", "descripcion":"Bueno"},
@@ -212,6 +217,14 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'estadosTitulo'}
+				}/*,autoLoad: true*/
+    		},
+    		comboTipoTituloInfoRegistral: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tipoTituloInfoRegistal'}
 				}/*,autoLoad: true*/
     		},
     		comboCalificacionNegativa: {
@@ -556,7 +569,45 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 	    			remoteUrl: 'activo/getComboImpideVenta',
 	    			extraParams: {codEstadoCarga: '{comboestadocargaref.value}'}
     			}
+    		},
+    		// Stores para el grid observaciones. Se crean 3 para solucionar problemas de instancia 
+    		/*
+
+    		 * Valor de la constante 
+    		  	OBSERVACIONES_TAB_LAUNCH: {
+				ACTIVO : 'activo',
+				SANEAMIENTO: 'saneamiento',
+				REVISION_TITULO: 'revisionTitulo'
+			}*/
+    		storeObservaciones_activo: {    
+    		 pageSize: $AC.getDefaultPageSize(),
+    		 model: 'HreRem.model.Observaciones',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'activo/getListObservaciones',
+		        extraParams: {} // Dynamic.
+	    	 },
+	    	 autoLoad: true
+    		},
+    		storeObservaciones_saneamiento: {    
+    		 pageSize: $AC.getDefaultPageSize(),
+    		 model: 'HreRem.model.Observaciones',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'activo/getListObservaciones',
+		        extraParams: {} // Dynamic.
+	    	 },
+	    	 autoLoad: true
+    		},
+    		storeObservaciones_revisionTitulo: {    
+    		 pageSize: $AC.getDefaultPageSize(),
+    		 model: 'HreRem.model.Observaciones',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'activo/getListObservaciones',
+		        extraParams: {} // Dynamic.
+	    	 },
+	    	 autoLoad: true
     		}
-			
      }    
 });

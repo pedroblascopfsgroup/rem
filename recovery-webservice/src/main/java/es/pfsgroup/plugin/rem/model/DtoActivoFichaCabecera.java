@@ -86,6 +86,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean tieneRegistroContrato;
 	private Integer diasCambioEstadoActivo;
 	private String tipoSegmentoCodigo;
+	private String estadoRegistralCodigo;
 
 	// Comunidad de propietarios
 	private String tipoCuotaCodigo;
@@ -294,6 +295,24 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean pazSocial;
 	private String numActivoDivarian;
 	private Boolean reoContabilizadoSap;
+	
+	//Estado Admision
+	private Boolean incluidoEnPerimetroAdmision;
+	private String estadoAdmisionCodigo;
+	private String subestadoAdmisionCodigo;
+	private String estadoAdmisionCodigoNuevo;
+	private String subestadoAdmisionCodigoNuevo;
+	private String observacionesAdmision;
+	private Boolean perimetroAdmision;
+	private String fechaPerimetroAdmision;
+	private String motivoPerimetroAdmision;
+	private String estadoAdmisionDesc;
+	private String subestadoAdmisionDesc;
+	private String estadoAdmisionCodCabecera;
+	private String subestadoAdmisionCodCabecera;
+	private String estadoAdmisionDescCabecera;
+	private String subestadoAdmisionDescCabecera;
+	private Boolean esEditableActivoEstadoRegistral;
 
 	
 	public Boolean getTieneOfertaAlquilerViva() {
@@ -2264,5 +2283,141 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.reoContabilizadoSap = reoContabilizadoSap;
 	}
 	
+	public Boolean getPerimetroAdmision() {
+		return perimetroAdmision;
+	}
+
+	public void setPerimetroAdmision(Boolean perimetroAdmision) {
+		this.perimetroAdmision = perimetroAdmision;
+	}
+
+
+	public String getFechaPerimetroAdmision() {
+		return fechaPerimetroAdmision;
+	}
+
+	public void setFechaPerimetroAdmision(String fechaPerimetroAdmision) {
+		this.fechaPerimetroAdmision = fechaPerimetroAdmision;
+	}
+
+	public String getMotivoPerimetroAdmision() {
+		return motivoPerimetroAdmision;
+	}
+
+	public void setMotivoPerimetroAdmision(String motivoPerimetroAdmision) {
+		this.motivoPerimetroAdmision = motivoPerimetroAdmision;
+	}
+
+	public Boolean getIncluidoEnPerimetroAdmision() {
+		return incluidoEnPerimetroAdmision;
+	}
+
+	public void setIncluidoEnPerimetroAdmision(Boolean incluidoEnPerimetroAdmision) {
+		this.incluidoEnPerimetroAdmision = incluidoEnPerimetroAdmision;
+	}
+
+	public String getEstadoAdmisionCodigo() {
+		return estadoAdmisionCodigo;
+	}
+
+	public void setEstadoAdmisionCodigo(String estadoAdmisionCodigo) {
+		this.estadoAdmisionCodigo = estadoAdmisionCodigo;
+	}
+
+	public String getSubestadoAdmisionCodigo() {
+		return subestadoAdmisionCodigo;
+	}
+
+	public void setSubestadoAdmisionCodigo(String subestadoAdmisionCodigo) {
+		this.subestadoAdmisionCodigo = subestadoAdmisionCodigo;
+	}
+
+	public String getEstadoAdmisionCodigoNuevo() {
+		return estadoAdmisionCodigoNuevo;
+	}
+
+	public void setEstadoAdmisionCodigoNuevo(String estadoAdmisionCodigoNuevo) {
+		this.estadoAdmisionCodigoNuevo = estadoAdmisionCodigoNuevo;
+	}
+
+	public String getSubestadoAdmisionCodigoNuevo() {
+		return subestadoAdmisionCodigoNuevo;
+	}
+
+	public void setSubestadoAdmisionCodigoNuevo(String subestadoAdmisionCodigoNuevo) {
+		this.subestadoAdmisionCodigoNuevo = subestadoAdmisionCodigoNuevo;
+	}
+
+	public String getObservacionesAdmision() {
+		return observacionesAdmision;
+	}
+
+	public void setObservacionesAdmision(String observacionesAdmision) {
+		this.observacionesAdmision = observacionesAdmision;
+	}
+
+	public String getEstadoAdmisionDesc() {
+		return estadoAdmisionDesc;
+	}
+
+	public void setEstadoAdmisionDesc(String estadoAdmisionDesc) {
+		this.estadoAdmisionDesc = estadoAdmisionDesc;
+	}
+
+	public String getSubestadoAdmisionDesc() {
+		return subestadoAdmisionDesc;
+	}
+
+	public void setSubestadoAdmisionDesc(String subestadoAdmisionDesc) {
+		this.subestadoAdmisionDesc = subestadoAdmisionDesc;
+	}
+
+	public String getEstadoAdmisionCodCabecera() {
+		return estadoAdmisionCodCabecera;
+	}
+
+	public void setEstadoAdmisionCodCabecera(String estadoAdmisionCodCabecera) {
+		this.estadoAdmisionCodCabecera = estadoAdmisionCodCabecera;
+	}
+
+	public String getSubestadoAdmisionCodCabecera() {
+		return subestadoAdmisionCodCabecera;
+	}
+
+	public void setSubestadoAdmisionCodCabecera(String subestadoAdmisionCodCabecera) {
+		this.subestadoAdmisionCodCabecera = subestadoAdmisionCodCabecera;
+	}
+
+	public String getEstadoAdmisionDescCabecera() {
+		return estadoAdmisionDescCabecera;
+	}
+
+	public void setEstadoAdmisionDescCabecera(String estadoAdmisionDescCabecera) {
+		this.estadoAdmisionDescCabecera = estadoAdmisionDescCabecera;
+	}
+
+	public String getSubestadoAdmisionDescCabecera() {
+		return subestadoAdmisionDescCabecera;
+	}
+
+	public void setSubestadoAdmisionDescCabecera(String subestadoAdmisionDescCabecera) {
+		this.subestadoAdmisionDescCabecera = subestadoAdmisionDescCabecera;
+	}
+
+	public String getEstadoRegistralCodigo() {
+		return estadoRegistralCodigo;
+	}
+
+	public void setEstadoRegistralCodigo(String estadoRegistralCodigo) {
+		this.estadoRegistralCodigo = estadoRegistralCodigo;
+	}
+
+	public Boolean getEsEditableActivoEstadoRegistral() {
+		return esEditableActivoEstadoRegistral;
+	}
+
+	public void setEsEditableActivoEstadoRegistral(Boolean esEditableActivoEstadoRegistral) {
+		this.esEditableActivoEstadoRegistral = esEditableActivoEstadoRegistral;
+	}	
 	
 }

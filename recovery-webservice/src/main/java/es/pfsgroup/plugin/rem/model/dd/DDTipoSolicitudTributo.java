@@ -31,10 +31,11 @@ public class DDTipoSolicitudTributo implements Auditable, Dictionary {
 	
 	public static final String COD_DERIVACION_DEUDA ="01";
 	public static final String COD_HIPOTECA_LEGAL ="02";
-	public static final String COD_SANCION ="03";
+	public static final String COD_MULTA_SANCION ="03";
 	public static final String COD_MULTA_COERCITIVA ="04";
 	public static final String COD_SOL_BONIFICACION ="05";
 	public static final String COD_SOL_SUSPENSION ="06";
+	public static final String COD_INGRESOS_INDEBIDOS ="07";
 
 	private static final long serialVersionUID = 2307957295534774606L;
 

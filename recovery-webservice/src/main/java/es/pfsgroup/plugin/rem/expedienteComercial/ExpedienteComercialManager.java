@@ -131,6 +131,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosCivilesURSUS;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAmpliacionArras;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosDesbloqueo;
@@ -2017,6 +2018,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setFechaEnvio(reserva.getFechaEnvio());
 			dto.setFechaFirma(reserva.getFechaFirma());
 			dto.setFechaVencimiento(reserva.getFechaVencimiento());
+			dto.setFechaAmpliacionArras(reserva.getFechaAmpliacionArras());
+			dto.setFechaVigenciaArras(reserva.getFechaVigenciaArras());
+			dto.setSolicitudAmpliacionArras(reserva.getSolicitudAmpliacionArras());
+			
+			if(reserva.getMotivoAmpliacionArras() != null) {
+				dto.setMotivoAmpliacionArrasCodigo(reserva.getMotivoAmpliacionArras().getCodigo());				
+			}			
 
 			if (!Checks.esNulo(reserva.getEstadoReserva())) {
 				dto.setEstadoReservaDescripcion(reserva.getEstadoReserva().getDescripcion());
@@ -2387,13 +2395,31 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public Boolean comprobarExisteAdjuntoExpedienteComercial(Long idTrabajo, String codigoDocumento) {
-		Filter filtroTrabajoEC = genericDao.createFilter(FilterType.EQUALS, "expediente.trabajo.id", idTrabajo);
-		Filter filtroAdjuntoSubtipoCodigo = genericDao.createFilter(FilterType.EQUALS,
-				"subtipoDocumentoExpediente.codigo", codigoDocumento);
-
-		List<AdjuntoExpedienteComercial> adjuntos = genericDao.getList(AdjuntoExpedienteComercial.class,
-				filtroTrabajoEC, filtroAdjuntoSubtipoCodigo);
-
+		List<AdjuntoExpedienteComercial> adjuntos = new ArrayList<AdjuntoExpedienteComercial>();
+		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
+		
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			ExpedienteComercial expedienteComercial = this.findOneByTrabajo(trabajoApi.findOne(idTrabajo));
+			try {
+				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosExpedienteComercial(expedienteComercial);
+				for (DtoAdjunto adj : listaAdjuntos) {
+					DDSubtipoDocumentoExpediente subtipoDocumento = genericDao.get(DDSubtipoDocumentoExpediente.class, 
+							genericDao.createFilter(FilterType.EQUALS, "matricula", adj.getMatricula()));
+					if (subtipoDocumento != null && codigoDocumento.equals(subtipoDocumento.getCodigo())) {
+						return true;
+					}
+				}
+			} catch (GestorDocumentalException gex) {
+				logger.error(gex.getMessage(), gex);
+			}
+		} else {
+			Filter filtroTrabajoEC = genericDao.createFilter(FilterType.EQUALS, "expediente.trabajo.id", idTrabajo);
+			Filter filtroAdjuntoSubtipoCodigo = genericDao.createFilter(FilterType.EQUALS,
+					"subtipoDocumentoExpediente.codigo", codigoDocumento);
+	
+			adjuntos = genericDao.getList(AdjuntoExpedienteComercial.class,
+					filtroTrabajoEC, filtroAdjuntoSubtipoCodigo);
+		}
 		return !Checks.estaVacio(adjuntos);
 	}
 
@@ -4058,6 +4084,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				DDTiposArras tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class,
 						dto.getTipoArrasCodigo());
 				reserva.setTipoArras(tipoArras);
+			}
+			
+			if(dto.getMotivoAmpliacionArrasCodigo()!=null) {
+				reserva.setMotivoAmpliacionArras(genericDao.get(DDMotivoAmpliacionArras.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMotivoAmpliacionArrasCodigo())));
 			}
 
 			if (!Checks.esNulo(dto.getCodigoSucursal())) {
@@ -7836,82 +7867,54 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (bloqueoVigente) {
 				codigoError = "imposible.bloquear.bloqueo.vigente";
 			} else {
-				// validamos condiciones
-				boolean seCumplenCondiciones = true;
-				for (ActivoOferta activoOferta : activosExpediente) {
-					Activo activo = activoOferta.getPrimaryKey().getActivo();
-					DtoCondicionesActivoExpediente condiciones = this.getCondicionesActivoExpediete(idExpediente,
-							activo.getId());
-
-					if (condiciones.getSituacionPosesoriaCodigo() != null
-							&& condiciones.getSituacionPosesoriaCodigoInformada() != null
-							&& condiciones.getSituacionPosesoriaCodigo()
-									.equals(condiciones.getSituacionPosesoriaCodigoInformada())
-							&& condiciones.getPosesionInicial() != null
-							&& condiciones.getPosesionInicialInformada() != null
-							&& condiciones.getPosesionInicial().equals(condiciones.getPosesionInicialInformada())
-							&& condiciones.getEstadoTitulo() != null && condiciones.getEstadoTituloInformada() != null
-							&& condiciones.getEstadoTitulo().equals(condiciones.getEstadoTituloInformada())) {
-						seCumplenCondiciones = true;
-
-					} else {
-						seCumplenCondiciones = false;
-						break;
-					}
-				}
-
-				if (!seCumplenCondiciones) {
-					codigoError = "imposible.bloquear.condiciones";
+				// validamos fecha posicionamiento
+				if (expediente.getPosicionamientos() == null || expediente.getPosicionamientos().size() < 1) {
+					codigoError = "imposible.bloquear.fecha.posicionamiento";
 				} else {
-					// validamos fecha posicionamiento
-					if (expediente.getPosicionamientos() == null || expediente.getPosicionamientos().size() < 1) {
-						codigoError = "imposible.bloquear.fecha.posicionamiento";
-					} else {
-						// el usuario logado tiene que ser gestoria
-						Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+					// el usuario logado tiene que ser gestoria
+					Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
-						if (DDCartera.CODIGO_CARTERA_CAJAMAR
-								.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
-							if (!genericAdapter.tienePerfil(PERFIL_GESTOR_MINUTAS, usuarioLogado)
-									&& !genericAdapter.tienePerfil(PERFIL_SUPERVISOR_MINUTAS, usuarioLogado)
-									&& !genericAdapter.isSuper(usuarioLogado)
-									&& !genericAdapter.tienePerfil(PERFIL_GESTOR_FORMALIZACION, usuarioLogado)
-									&& !genericAdapter.tienePerfil(PERFIL_GESTORIA_FORMALIZACION, usuarioLogado)) {
-								codigoError = "imposible.bloquear.expediente.cajamar";
-
-							} else {
-								// la financiación tiene que estar informada
-								DtoFormalizacionFinanciacion financiacion = new DtoFormalizacionFinanciacion();
-								financiacion.setId(String.valueOf(idExpediente));
-								financiacion = this.getFormalizacionFinanciacion(financiacion);
-								if (Checks.esNulo(financiacion.getSolicitaFinanciacion())) {
-									codigoError = "imposible.bloquear.financiacion.no.informada";
-								} else {
-									if (financiacion.getSolicitaFinanciacion() == 1
-											&& Checks.esNulo(financiacion.getEntidadFinancieraCodigo())) {
-										codigoError = "imposible.bloquear.entidad.financiera.no.informada";
-									}
-								}
-							}
+					if (DDCartera.CODIGO_CARTERA_CAJAMAR
+							.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
+						if (!genericAdapter.tienePerfil(PERFIL_GESTOR_MINUTAS, usuarioLogado)
+								&& !genericAdapter.tienePerfil(PERFIL_SUPERVISOR_MINUTAS, usuarioLogado)
+								&& !genericAdapter.isSuper(usuarioLogado)
+								&& !genericAdapter.tienePerfil(PERFIL_GESTOR_FORMALIZACION, usuarioLogado)
+								&& !genericAdapter.tienePerfil(PERFIL_GESTORIA_FORMALIZACION, usuarioLogado)) {
+							codigoError = "imposible.bloquear.expediente.cajamar";
 
 						} else {
-							if (!genericAdapter.isGestoria(usuarioLogado) && !genericAdapter.isSuper(usuarioLogado)
-									&& !genericAdapter.tienePerfil(PERFIL_GESTOR_FORMALIZACION, usuarioLogado)
-									&& !genericAdapter.tienePerfil(PERFIL_SUPERVISOR_FORMALIZACION, usuarioLogado)) {
-								codigoError = "imposible.bloquear.no.es.gestoria";
-
+							// la financiación tiene que estar informada
+							DtoFormalizacionFinanciacion financiacion = new DtoFormalizacionFinanciacion();
+							financiacion.setId(String.valueOf(idExpediente));
+							financiacion = this.getFormalizacionFinanciacion(financiacion);
+							if (Checks.esNulo(financiacion.getSolicitaFinanciacion())) {
+								codigoError = "imposible.bloquear.financiacion.no.informada";
 							} else {
-								// la financiación tiene que estar informada
-								DtoFormalizacionFinanciacion financiacion = new DtoFormalizacionFinanciacion();
-								financiacion.setId(String.valueOf(idExpediente));
-								financiacion = this.getFormalizacionFinanciacion(financiacion);
-								if (Checks.esNulo(financiacion.getSolicitaFinanciacion())) {
-									codigoError = "imposible.bloquear.financiacion.no.informada";
-								} else {
-									if (financiacion.getSolicitaFinanciacion() == 1
-											&& Checks.esNulo(financiacion.getEntidadFinancieraCodigo())) {
-										codigoError = "imposible.bloquear.entidad.financiera.no.informada";
-									}
+								if (financiacion.getSolicitaFinanciacion() == 1
+										&& Checks.esNulo(financiacion.getEntidadFinancieraCodigo())) {
+									codigoError = "imposible.bloquear.entidad.financiera.no.informada";
+								}
+							}
+						}
+
+					} else {
+						if (!genericAdapter.isGestoria(usuarioLogado) && !genericAdapter.isSuper(usuarioLogado)
+								&& !genericAdapter.tienePerfil(PERFIL_GESTOR_FORMALIZACION, usuarioLogado)
+								&& !genericAdapter.tienePerfil(PERFIL_SUPERVISOR_FORMALIZACION, usuarioLogado)) {
+							codigoError = "imposible.bloquear.no.es.gestoria";
+
+						} else {
+							// la financiación tiene que estar informada
+							DtoFormalizacionFinanciacion financiacion = new DtoFormalizacionFinanciacion();
+							financiacion.setId(String.valueOf(idExpediente));
+							financiacion = this.getFormalizacionFinanciacion(financiacion);
+							if (Checks.esNulo(financiacion.getSolicitaFinanciacion())) {
+								codigoError = "imposible.bloquear.financiacion.no.informada";
+							} else {
+								if (financiacion.getSolicitaFinanciacion() == 1
+										&& Checks.esNulo(financiacion.getEntidadFinancieraCodigo())) {
+									codigoError = "imposible.bloquear.entidad.financiera.no.informada";
 								}
 							}
 						}

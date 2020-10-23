@@ -57,6 +57,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoTramitacionTitulo;
+import es.pfsgroup.plugin.rem.model.dd.ActivoAdmisionRevisionTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadEjecutante;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdjudicacion;
@@ -938,6 +939,20 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 						}
 					}
 				}
+			//Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			
+			ActivoAdmisionRevisionTitulo actAdmRevTit = genericDao.get(ActivoAdmisionRevisionTitulo.class, filterActivo);
+			if (actAdmRevTit != null && actAdmRevTit.getTipoTitActRef() == null) {
+				DDTipoTituloActivo tipoTitulo = (DDTipoTituloActivo) 
+						diccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivo.class, dto.getTipoTituloCodigo());
+				actAdmRevTit.setTipoTitActRef(tipoTitulo);
+				
+				if (actAdmRevTit.getSubtipoTitActRef() == null) {
+					DDSubtipoTituloActivo subtipoTitulo = (DDSubtipoTituloActivo) 
+							diccionarioApi.dameValorDiccionarioByCod(DDSubtipoTituloActivo.class, dto.getSubtipoTituloCodigo());
+					actAdmRevTit.setSubtipoTitActRef(subtipoTitulo);
+				}
+			}
 			
 		} catch (JsonViewerException jvex) {
 			throw jvex;

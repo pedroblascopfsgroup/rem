@@ -333,6 +333,9 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			        columns: 3,
 			        tdAttrs: {width: '25%'}
 				},
+				listeners: {
+					afterrender: 'ocultarCamposIdOrigen'
+				},
 				items :
 					[
 					{

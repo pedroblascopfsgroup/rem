@@ -7458,6 +7458,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			fechatituloAnterior.setReadOnly(false);
 			sociedadPagoAnterior.setReadOnly(false);
 		}
+		//Comprobar de nuevo este metodo solo si tiene IdOrigen (PARA ACTIVOS BBVA)
+		var idOrigen = me.getView().getViewModel().get('activo.idOrigenHre');
+		if (idOrigen != null) {
+			me.ocultarCamposIdOrigen();
+		}
 	},
 
 	/*isGestorAdmisionAndSuperComboTipoAlta : function(combo, value, oldValue,
@@ -7647,6 +7652,25 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						me.getView().unmask();
 					}
 				});
+	},
+	ocultarCamposIdOrigen: function(){
+		var me = this;
+		var idOrigen = me.getView().getViewModel().get('activo.idOrigenHre');
+		var comboOrigen = me.lookupReference('comboOrigenAnteriorActivoRef');
+		var fechaOrigen = me.lookupReference('fechaTituloAnteriorRef');
+		var sociedadOrigen = me.lookupReference('sociedadPagoAnteriorRef');
+		
+		if (idOrigen != null) {
+			comboOrigen.setReadOnly(true);
+			fechaOrigen.setReadOnly(true);
+			sociedadOrigen.setReadOnly(true);
+		}else{
+			comboOrigen.setReadOnly(false);
+			fechaOrigen.setReadOnly(false);
+			sociedadOrigen.setReadOnly(false);
+		}
 	}
+		
+		
 
 });

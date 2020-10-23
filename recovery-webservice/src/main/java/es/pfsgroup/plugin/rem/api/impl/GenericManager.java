@@ -61,6 +61,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorReducido;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.CarteraCondicionesPrecios;
 import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
@@ -70,7 +71,6 @@ import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.DtoUsuarios;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.GastoInfoContabilidad;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GestionCCPP;
@@ -87,13 +87,16 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoLocalizacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoAgendaSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
@@ -1411,5 +1414,58 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			}
 		}
 		return entidades;
+	}
+	
+	public List<ActivoProveedorReducido> getComboActivoProveedorSuministro() {
+		List<ActivoProveedorReducido> listaActivoProveedor = new ArrayList<ActivoProveedorReducido>();
+		
+		Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_SUMINISTRO);
+		Filter filtroEstado = genericDao.createFilter(FilterType.EQUALS, "estadoProveedor.codigo", DDEstadoProveedor.ESTADO_BIGENTE);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		List<ActivoProveedor> listProveedorSuministroVigente = genericDao.getList(ActivoProveedor.class, filtroSubtipo, filtroEstado, filtroBorrado);
+		
+		for (ActivoProveedor psv : listProveedorSuministroVigente) {
+			ActivoProveedorReducido p = new ActivoProveedorReducido();
+			p.setId(psv.getId());
+			p.setNombre(psv.getNombre());
+			listaActivoProveedor.add(p);
+		}
+		return listaActivoProveedor;
+
+	}
+
+	@Override
+	public List<DDSubestadoAdmision> getcomboSubestadoAdmisionNuevoFiltrado(String codEstadoAdmisionNuevo) {
+		
+		List<DDSubestadoAdmision> listaSubestados = new ArrayList<DDSubestadoAdmision>();
+		if (!Checks.esNulo(codEstadoAdmisionNuevo)) {
+			Filter filtroTipo = genericDao.createFilter(FilterType.EQUALS, "estadoAdmision.codigo", codEstadoAdmisionNuevo);
+			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			Order order = new Order(OrderType.ASC, "codigo");
+			listaSubestados = genericDao.getListOrdered(DDSubestadoAdmision.class, order, filtroTipo, filtroBorrado);
+		}
+
+		return listaSubestados;
+	}
+	
+	@Override
+	public List<DDSubtipoAgendaSaneamiento> getSubtipologiaAgendaSaneamiento(String codTipo) {
+		
+		Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "tipoAgendaSaneamiento.codigo", codTipo);
+		return genericDao.getList(DDSubtipoAgendaSaneamiento.class, filtroId);
+	}
+
+	@Override
+	public List<DDEstadoAdmision> getComboEstadoAdmisionFiltrado(Set<String> tipoEstadoAdmisionCodigo) {		
+		Order order = new Order(GenericABMDao.OrderType.ASC, "codigo");
+		List<DDEstadoAdmision> lista = genericDao.getListOrdered(DDEstadoAdmision.class,order, genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+		List<DDEstadoAdmision> listaResultado = new ArrayList<DDEstadoAdmision>();
+
+		for (DDEstadoAdmision tipoEstadoAdmision : lista) {
+			if (tipoEstadoAdmisionCodigo.contains(tipoEstadoAdmision.getCodigo())) {
+				listaResultado.add(tipoEstadoAdmision);
+			}
+		}
+		return listaResultado;
 	}
 }

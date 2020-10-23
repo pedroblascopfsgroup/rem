@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=IVAN REPISO
---## FECHA_CREACION=20201008
+--## FECHA_CREACION=20201013
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-8204
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
+--##        0.2 Reemplazar <BR> por CHR(10)
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -30,7 +31,7 @@ DECLARE
 BEGIN
     DBMS_OUTPUT.PUT_LINE('[INICIO]');
       
-    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.TMP_REMVIP_8204 T1 USING (
+    /*V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.TMP_REMVIP_8204 T1 USING (
                 SELECT EDI.EDI_ID, EDI.EDI_DESCRIPCION FROM '||V_ESQUEMA||'.act_activo act
                 join '||V_ESQUEMA||'.act_ico_info_comercial ico on ico.act_id = act.act_id and ICO.BORRADO = 0
                 join '||V_ESQUEMA||'.act_edi_edificio edi on ico.ico_id = edi.ico_id AND EDI.BORRADO = 0
@@ -43,7 +44,7 @@ BEGIN
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Insertados '||SQL%ROWCOUNT||' registros ');
 
-    COMMIT;
+    COMMIT;*/
 
     V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_EDI_EDIFICIO T1 USING (
                 SELECT EDI.EDI_ID, aux.EDI_DESCRIPCION FROM '||V_ESQUEMA||'.act_activo act
@@ -54,7 +55,7 @@ BEGIN
                 ) T2
             ON (T1.EDI_ID = T2.EDI_ID)
             WHEN MATCHED THEN UPDATE SET
-            T1.EDI_DESCRIPCION = T2.EDI_DESCRIPCION,
+            T1.EDI_DESCRIPCION = REPLACE(T2.EDI_DESCRIPCION, ''<BR>'', CHR(10)),
             T1.USUARIOMODIFICAR = '''||V_USUARIO||''', T1.FECHAMODIFICAR = SYSDATE';
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Actualizado '||SQL%ROWCOUNT||' registros ');

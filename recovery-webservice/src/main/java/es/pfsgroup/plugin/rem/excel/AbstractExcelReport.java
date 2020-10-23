@@ -29,6 +29,7 @@ public abstract class AbstractExcelReport {
 	public static final String LISTA_DE_OFERTAS_AGRUPADAS_XLS = "Lista_de_ofertas_agrupadas.xls";
 	public static final String LISTA_DE_OFERTAS_CES_XLS = "LISTA_OFERTAS_CES.xls";
 	public static final String LISTA_DE_ELEMENTOS_DE_LINEA_XLS = "Lista_de_elementos_de_línea.xls";
+	public static final String LISTA_EVOLUCION_ADMISION_ACTIVO = "LISTA_EVOLUCION_ADMISION_ACTIVO.xls";
 	
 	protected SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 	

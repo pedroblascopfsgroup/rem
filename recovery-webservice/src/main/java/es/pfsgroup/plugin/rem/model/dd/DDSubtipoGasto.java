@@ -40,6 +40,19 @@ public class DDSubtipoGasto implements Auditable, Dictionary {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	public static final String COD_AGUA = "103"; 
+	public static final String COD_ALCANTARILLADO = "104"; 
+	public static final String COD_BASURA = "105"; 
+	public static final String COD_EXACCIONES_MUNICIPALES = "106"; 
+	public static final String COD_OTRAS_TASAS_MUNICIPALES = "107"; 
+	public static final String COD_TASA_CANALONES = "108"; 
+	public static final String COD_TASA_INCENDIOS = "109"; 
+	public static final String COD_REGULACION_CATASTRAL = "110"; 
+	public static final String COD_TASAS_ADMINISTRATIVAS = "111"; 
+	public static final String COD_TRIBUTO_METROPOLITANO_MOVILIDAD = "112"; 
+	public static final String COD_VADO = "113"; 
+	
 
 	@Id
 	@Column(name = "DD_STG_ID")

@@ -167,13 +167,13 @@ SELECT
 				GGE.GGE_OBSERVACIONES,
 				GPV.GPV_NUM_GASTO_HAYA,
 				GDE.GDE_FECHA_PAGO,
-                		NVL(NVL(GLD.GLD_PRINCIPAL_SUJETO,GLD.GLD_PRINCIPAL_NO_SUJETO),0)+NVL((SELECT SUM(GPL.GPL_IMPORTE_GASTO)
+                		NVL(NVL(GLD.GLD_PRINCIPAL_SUJETO,GLD.GLD_PRINCIPAL_NO_SUJETO),NVL((SELECT SUM(GPL.GPL_IMPORTE_GASTO)
                                     FROM '||V_ESQUEMA||'.GPL_GASTOS_PRINEX_LBK GPL
                                      WHERE GPL.GPV_ID = GLD.GPV_ID
                                      AND GPL.ACT_ID IS NOT NULL
                                      AND GPL.GPL_IMPORTE_GASTO IS NOT NULL
                                      GROUP BY GPL.GPV_ID
-                                ),0) GDE_IMPORTE_TOTAL,
+                                ),0)) GDE_IMPORTE_TOTAL,
 				EGA.DD_EGA_CODIGO,
 				EGA.DD_EGA_DESCRIPCION,
         ATBJ.ACT_TBJ_PARTICIPACION,

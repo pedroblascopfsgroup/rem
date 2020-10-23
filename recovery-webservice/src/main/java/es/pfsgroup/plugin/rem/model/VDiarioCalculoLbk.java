@@ -1,13 +1,11 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
 
 @Entity
 @Table(name = "V_DIARIOS_CALCULO_LBK", schema = "${entity.schema}")

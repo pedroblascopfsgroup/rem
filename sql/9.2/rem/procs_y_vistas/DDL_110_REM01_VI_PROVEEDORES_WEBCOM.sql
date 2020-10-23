@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Adrián Molina
---## FECHA_CREACION=20200713
+--## AUTOR=Juan Bautista Alfonso
+--## FECHA_CREACION=20200920
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-7586
+--## INCIDENCIA_LINK=REMVIP-8153
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico de los proveedores enviadas a webcom.
 --##           
@@ -15,6 +15,7 @@
 --##        0.3 AMG- Añadir array de código de carteras
 --##        0.4 JBH - Optimización Vistas WEBCOM
 --##        0.5 AMG- Aumentar capacidad del campo codPedania
+--##		0.6 JAC- Añadir campo nuevo ID_PROVEEDOR_REM_ASOCIADO
 --##########################################
 --*/
 
@@ -171,9 +172,11 @@ BEGIN
                   (SELECT USU.USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS USU 
 					WHERE USU.USU_USERNAME = ''REM-USER'')) AS NUMBER (16, 0)) 					AS ID_USUARIO_REM_ACCION,
 		CAST(PRD.NUM_DELEGACIONES AS NUMBER (16, 0)) 			AS NUMERO_DELEGACIONES,
-		CAST(CRA.DD_CRA_CODIGO AS VARCHAR2(20 CHAR))	    							        AS ARR_COD_CARTERA_AMBITO_COD_CARTERA
+		CAST(CRA.DD_CRA_CODIGO AS VARCHAR2(20 CHAR))	    							        AS ARR_COD_CARTERA_AMBITO_COD_CARTERA,
+		CAST(PVE2.PVE_COD_REM AS NUMBER(16,0))													AS ID_PROVEEDOR_REM_ASOCIADO
 		FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE
 		LEFT JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR DDTPR ON DDTPR.DD_TPR_ID = PVE.DD_TPR_ID
+		LEFT JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE2 ON PVE.PVE_ID_MEDIADOR_REL=PVE2.PVE_ID
 		LEFT JOIN DOMICILIO_SOCIAL SOC ON SOC.PVE_ID = PVE.PVE_ID AND SOC.DD_TDP_CODIGO = ''01''
     	LEFT JOIN DELEGACION DEL ON DEL.PVE_ID = PVE.PVE_ID AND DEL.DD_TDP_CODIGO = ''02''
     	LEFT JOIN '||V_ESQUEMA||'.ACT_ETP_ENTIDAD_PROVEEDOR ETP ON ETP.PVE_ID = PVE.PVE_ID

@@ -94,6 +94,10 @@ public class GenericAdapter {
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 	
+	private static final String DD_SUBTIPO_GASTO_IBI_RUSTICA = "01";
+	private static final String DD_SUBTIPO_GASTO_IBI_URBANA = "02";
+	private static final String DD_SUBTIPO_GASTO_OTRAS_TASAS_AYUNTAMIENTO = "17";
+	
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<Dictionary> getDiccionario(String diccionario) {
@@ -156,24 +160,42 @@ public class GenericAdapter {
 		return lista;
 	}
 	
-	
-
 	public List<Dictionary> getDiccionarioDeGastos(String diccionario) {
 		
 		Class<?> clase = null;
-		String ibiRustica ="01";
-		String ibiUrbana ="02";
-		String otrasTasas ="17";
+
 		List<Dictionary> listaImpuestos = new ArrayList<Dictionary>();
 			
 			clase = DiccionarioTargetClassMap.convertToTargetClass(diccionario);
-			DDSubtipoGasto impuestoRustico = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, ibiRustica);
-			DDSubtipoGasto impuestoUrbano = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, ibiUrbana);
-			DDSubtipoGasto impuestoOtrosAyuntamiento = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, otrasTasas);
+			DDSubtipoGasto impuestoRustico = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DD_SUBTIPO_GASTO_IBI_RUSTICA);
+			DDSubtipoGasto impuestoUrbano = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DD_SUBTIPO_GASTO_IBI_URBANA);
+			DDSubtipoGasto impuestoOtrosAyuntamiento = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DD_SUBTIPO_GASTO_OTRAS_TASAS_AYUNTAMIENTO);
+			DDSubtipoGasto impuestoAgua = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DDSubtipoGasto.COD_AGUA);
+			DDSubtipoGasto impuestoAlcantarillado = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DDSubtipoGasto.COD_ALCANTARILLADO);
+			DDSubtipoGasto impuestoBasura = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DDSubtipoGasto.COD_BASURA);
+			DDSubtipoGasto impuestoExaccionesMunicipales = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DDSubtipoGasto.COD_EXACCIONES_MUNICIPALES);
+			DDSubtipoGasto impuestoOtrasTasasMunicipales = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DDSubtipoGasto.COD_OTRAS_TASAS_MUNICIPALES);
+			DDSubtipoGasto impuestoTasaCanalones = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DDSubtipoGasto.COD_TASA_CANALONES);
+			DDSubtipoGasto impuestoTasaIncendios = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DDSubtipoGasto.COD_TASA_INCENDIOS);
+			DDSubtipoGasto impuestoRegulacionCatastral = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DDSubtipoGasto.COD_REGULACION_CATASTRAL);
+			DDSubtipoGasto impuestoTasasAdministrativas = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DDSubtipoGasto.COD_TASAS_ADMINISTRATIVAS);
+			DDSubtipoGasto impuestoTributoMetroMov = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DDSubtipoGasto.COD_TRIBUTO_METROPOLITANO_MOVILIDAD);
+			DDSubtipoGasto impuestoVado = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, DDSubtipoGasto.COD_VADO);
+			
 			listaImpuestos.add(impuestoUrbano);
 			listaImpuestos.add(impuestoOtrosAyuntamiento);
 			listaImpuestos.add(impuestoRustico);
-				
+			listaImpuestos.add(impuestoAgua);
+			listaImpuestos.add(impuestoAlcantarillado);
+			listaImpuestos.add(impuestoBasura);
+			listaImpuestos.add(impuestoExaccionesMunicipales);
+			listaImpuestos.add(impuestoOtrasTasasMunicipales);
+			listaImpuestos.add(impuestoTasaCanalones);
+			listaImpuestos.add(impuestoTasaIncendios);
+			listaImpuestos.add(impuestoRegulacionCatastral);
+			listaImpuestos.add(impuestoTasasAdministrativas);
+			listaImpuestos.add(impuestoTributoMetroMov);
+			listaImpuestos.add(impuestoVado);
 				
 		return listaImpuestos;
 	}

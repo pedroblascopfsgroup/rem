@@ -4,10 +4,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import es.pfsgroup.plugin.rem.recoveryComunicacion.RecoveryComunicacionManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.pfsgroup.commons.utils.Checks;
@@ -23,6 +26,10 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionMasiva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.ui.ModelMap;
+
+import javax.annotation.Resource;
 
 /***
  * Clase que procesa el fichero de carga masiva valores perímetro Apple
@@ -35,7 +42,14 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 
 	@Autowired
 	private GenericABMDao genericDao;
-	
+
+	@Autowired
+	private RecoveryComunicacionManager recoveryComunicacionManager;
+
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
+
+
 	protected static final Log logger = LogFactory.getLog(MSVActualizadorInformacionInscripcionCargaMasiva.class);
 	
 	public static final class COL_NUM {
@@ -71,6 +85,9 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 		final String fechaRetirada = exc.dameCelda(fila, COL_NUM.FECHA_RETIRADA_REGISTRO);
 		final String fechaNota = exc.dameCelda(fila, COL_NUM.FECHA_NOTA_SIMPLE);
 		final String codAccion = exc.dameCelda(fila, COL_NUM.ACCION);
+
+		TransactionStatus transaction = null;
+		transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		
 
 		// Número de Activo
@@ -148,7 +165,12 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 					titulo.setFechaNotaSimple(obtenerDateExcel(fechaNota));
 				}
 			}
+
 			genericDao.save(ActivoTitulo.class, titulo);
+
+			transactionManager.commit(transaction);
+
+			recoveryComunicacionManager.datosCliente(activo, new ModelMap());
 		}
 		return new ResultadoProcesarFila();
 	}

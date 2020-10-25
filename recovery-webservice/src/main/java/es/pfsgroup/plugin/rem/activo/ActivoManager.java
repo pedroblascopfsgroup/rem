@@ -24,6 +24,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
+import es.pfsgroup.plugin.rem.recoveryComunicacion.RecoveryComunicacionManager;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -208,6 +209,7 @@ import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
 import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
+import org.springframework.ui.ModelMap;
 
 @Service("activoManager")
 public class ActivoManager extends BusinessOperationOverrider<ActivoApi> implements ActivoApi {
@@ -365,6 +367,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private EXTGrupoUsuariosDao extGrupoUsuariosDao;
+
+	@Autowired
+	private RecoveryComunicacionManager recoveryComunicacionManager;
 
 	@Override
 	public String managerName() {
@@ -4016,16 +4021,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Transactional(readOnly = false)
 	public Boolean saveActivoCarga(DtoActivoCargas cargaDto) {
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		ActivoCargas cargaSeleccionada = null;
 		NMBBienCargas cargaBien = null;
+		Activo activo = null;
 		if (!Checks.esNulo(cargaDto.getIdActivoCarga())) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", cargaDto.getIdActivoCarga());
 			cargaSeleccionada = genericDao.get(ActivoCargas.class, filtro);
+			activo = cargaSeleccionada.getActivo();
 			cargaBien = cargaSeleccionada.getCargaBien();
 		} else {
 			cargaSeleccionada = new ActivoCargas();
 			cargaBien = new NMBBienCargas();
-			Activo activo = get(cargaDto.getIdActivo());
+			activo = get(cargaDto.getIdActivo());
 
 			cargaSeleccionada.setActivo(activo);
 			DDTipoCarga tipoCargaBien = (DDTipoCarga) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCarga.class,
@@ -4102,6 +4110,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			activoCargasDao.calcularEstadoCargaActivo(cargaSeleccionada.getActivo().getId(),
 					genericAdapter.getUsuarioLogado().getUsername(), true);
 			activoAdapter.actualizarEstadoPublicacionActivo(cargaSeleccionada.getActivo().getId());
+		}
+
+		transactionManager.commit(transaction);
+
+		if(activo != null){
+			recoveryComunicacionManager.datosCliente(activo, new ModelMap());
 		}
 
 		return true;
@@ -4935,6 +4949,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	@Transactional
 	public boolean updateCalificacionNegativa(DtoActivoDatosRegistrales dto) {
+
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
 		try {
 
 			if (!Checks.esNulo(dto)) {
@@ -4987,6 +5004,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 
 				genericDao.update(ActivoCalificacionNegativa.class, activoCalificacionNegativa);
+
+				transactionManager.commit(transaction);
+
+				recoveryComunicacionManager.datosCliente(activoCalificacionNegativa.getActivo(), new ModelMap());
+
 				return true;
 			}
 
@@ -5002,6 +5024,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	@Transactional
 	public boolean createCalificacionNegativa(DtoActivoDatosRegistrales dto) throws Exception {
+
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
 		try {
 
 			if (!Checks.esNulo(dto)) {
@@ -5084,6 +5109,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					activoCalificacionNegativa.setHistoricoTramitacionTitulo(historicoTramitacionTituloList.get(0));
 				}
 				genericDao.save(ActivoCalificacionNegativa.class, activoCalificacionNegativa);
+
+				transactionManager.commit(transaction);
+
+				recoveryComunicacionManager.datosCliente(activo, new ModelMap());
 
 				return true;
 			}

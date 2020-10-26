@@ -28,6 +28,9 @@ public class VSubdivisionesAgrupacion implements Serializable {
     @Column(name = "DESCRIPCION")
     private String descripcion;
     
+    @Column(name = "COD_SUBTIPO_ACTIVO")
+    private String codigoSubtipoActivo;
+    
     @Column(name = "NUM_ACTIVOS")
    	private Integer numActivos;
     
@@ -85,6 +88,14 @@ public class VSubdivisionesAgrupacion implements Serializable {
 
 	public void setPlantas(Integer plantas) {
 		this.plantas = plantas;
+	}
+
+	public String getCodigoSubtipoActivo() {
+		return codigoSubtipoActivo;
+	}
+
+	public void setCodigoSubtipoActivo(String codigoSubtipoActivo) {
+		this.codigoSubtipoActivo = codigoSubtipoActivo;
 	}
 
 

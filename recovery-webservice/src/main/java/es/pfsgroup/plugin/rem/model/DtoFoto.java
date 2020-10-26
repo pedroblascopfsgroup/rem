@@ -27,6 +27,8 @@ public class DtoFoto extends WebDto {
 	private Long id;
     private String nombre;
 	private String descripcion;
+	private String codigoDescripcionFoto;
+	private String codigoSubtipoActivo;
 	private String subdivisionDescripcion;
 	private Date fechaDocumento;
 	private Integer orden;
@@ -167,6 +169,28 @@ public class DtoFoto extends WebDto {
 	public void setNumeroActivo(String numeroActivo) {
 		this.numeroActivo = numeroActivo;
 	}
+
+
+	public String getCodigoDescripcionFoto() {
+		return codigoDescripcionFoto;
+	}
+
+
+	public void setCodigoDescripcionFoto(String codigoDescripcionFoto) {
+		this.codigoDescripcionFoto = codigoDescripcionFoto;
+	}
+
+
+	public String getCodigoSubtipoActivo() {
+		return codigoSubtipoActivo;
+	}
+
+
+	public void setCodigoSubtipoActivo(String codigoSubtipoActivo) {
+		this.codigoSubtipoActivo = codigoSubtipoActivo;
+	}
+
+
 
 	
 }

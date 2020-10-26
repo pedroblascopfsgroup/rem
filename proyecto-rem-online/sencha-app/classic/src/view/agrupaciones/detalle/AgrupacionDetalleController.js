@@ -280,14 +280,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     
     cargarTabFotos: function (form) {
 
-		var me = this,
-		idAgrupacion = me.getViewModel().get("agrupacionficha.id");
-		me.getView().mask(HreRem.i18n("msg.mask.loading"));
-
-		me.getViewModel().data.storeFotos.getProxy().setExtraParams({'id':idAgrupacion});
-		me.getViewModel().data.storeFotos.on('load',function(){
-			me.getView().unmask();
-		});
+		var me = this;
 		me.getViewModel().data.storeFotos.load();
 		
 	},
@@ -315,11 +308,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		
 		var me = this,
 		idAgrupacion = me.getViewModel().get("agrupacionficha.id"),
-		idSubdivision = me.getViewModel().get("subdivisionFoto.id");
+		idSubdivision = me.getViewModel().get("subdivisionFoto.id"),
+		codigoSubtipoActivo = me.getViewModel().get("subdivisionFoto.codigoSubtipoActivo");
 		if(Ext.isEmpty(idSubdivision)) {
 			me.fireEvent("warnToast", HreRem.i18n("msg.error.necesario.seleccionar.subdivision"));
 		} else {
-			Ext.create("HreRem.view.common.adjuntos.AdjuntarFotoSubdivision", {idSubdivision: idSubdivision, idAgrupacion: idAgrupacion, parentToRefresh: btn.up("form"), storeSubdivision: me.getViewModel().data.storeFotosSubdivision }).show();
+			Ext.create("HreRem.view.common.adjuntos.AdjuntarFotoSubdivision", {idSubdivision: idSubdivision, idAgrupacion: idAgrupacion, codigoSubtipoActivo:codigoSubtipoActivo, parentToRefresh: btn.up("form"), storeSubdivision: me.getViewModel().data.storeFotosSubdivision }).show();
 		}		
 	},
 	

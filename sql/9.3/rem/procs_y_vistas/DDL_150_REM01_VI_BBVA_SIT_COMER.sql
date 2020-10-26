@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin Arnal
---## FECHA_CREACION=20200911
+--## FECHA_CREACION=20200913
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11680
@@ -85,8 +85,9 @@ BEGIN
             last_oferta.OFR_ID,
             case 
                 when 
-                        SCM.DD_SCM_CODIGO in (''02'',''09'') -- 09	Disponible condicionado o 02	Disponible para la venta             
-                        AND ((VCP.COND_PUBL_VENTA = 0 OR VCP.COND_PUBL_ALQUILER = 0) OR (VCP.COND_PUBL_VENTA = 1 and VCP.COND_PUBL_ALQUILER = 1))
+                        -- SCM.DD_SCM_CODIGO in (''02'',''09'') -- 09	Disponible condicionado o 02	Disponible para la venta             
+                        -- AND
+                        ((VCP.COND_PUBL_VENTA = 0 OR VCP.COND_PUBL_ALQUILER = 0) OR (VCP.COND_PUBL_VENTA = 1 and VCP.COND_PUBL_ALQUILER = 1))
                     then ''Libre en venta''
                 when 
                         SCM.DD_SCM_CODIGO = ''03'' --	Disponible para la venta con oferta

@@ -47,7 +47,7 @@ BEGIN
 			(
 				TPA_ID           			NUMBER(16),                  
 				SAC_ID          	 		NUMBER(16),                 
-				DESCRIPCION_FOTO			VARCHAR2(100 CHAR),
+				DESCRIPCION_FOTO			VARCHAR2(100 CHAR)
 			)';
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA_1||'.'||V_TABLA||' CREADA');  

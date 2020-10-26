@@ -80,10 +80,6 @@ public class ActivoConfiguracionCuentasContables implements Serializable, Audita
 	@Column(name="CCC_REFACTURABLE")
     private Integer refacturable;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SGT_ID")
-	private ActivoSubtipoGastoProveedorTrabajo activoSubtivoGastoProveedorTrabajo;
-	
 	@Column(name="CCC_PRINCIPAL")
     private Boolean gastosCuentasPrincipal;
 		
@@ -203,15 +199,6 @@ public class ActivoConfiguracionCuentasContables implements Serializable, Audita
 
 	public void setRefacturable(Integer refacturable) {
 		this.refacturable = refacturable;
-	}
-
-	public ActivoSubtipoGastoProveedorTrabajo getActivoSubtivoGastoProveedorTrabajo() {
-		return activoSubtivoGastoProveedorTrabajo;
-	}
-
-	public void setActivoSubtivoGastoProveedorTrabajo(
-			ActivoSubtipoGastoProveedorTrabajo activoSubtivoGastoProveedorTrabajo) {
-		this.activoSubtivoGastoProveedorTrabajo = activoSubtivoGastoProveedorTrabajo;
 	}
 
 	public Boolean getGastosCuentasPrincipal() {

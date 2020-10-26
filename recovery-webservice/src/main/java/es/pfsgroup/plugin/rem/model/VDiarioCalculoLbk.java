@@ -12,7 +12,6 @@ import javax.persistence.Table;
  * 
  * @author Jonathan Ovalle
  */
-
 @Entity
 @Table(name = "V_DIARIOS_CALCULO_LBK", schema = "${entity.schema}")
 public class VDiarioCalculoLbk implements Serializable {
@@ -21,7 +20,6 @@ public class VDiarioCalculoLbk implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
 	
 	@Id
 	@Column(name="GPV_ID")
@@ -125,5 +123,3 @@ public class VDiarioCalculoLbk implements Serializable {
 
 	
 }
-	
-

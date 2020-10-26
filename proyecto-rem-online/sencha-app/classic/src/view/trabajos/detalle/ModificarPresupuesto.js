@@ -267,7 +267,7 @@ Ext.define('HreRem.view.trabajos.detalle.ModificarPresupuesto', {
     
 		me.down('button[itemId=btnGuardar]').setVisible(!me.modoEdicion);
 		me.down('button[itemId=btnActualizar]').setVisible(me.modoEdicion);
-		me.down('comboboxfieldbase[itemId=comboEstadoPresupuesto]').setVisible(me.modoEdicion);
+		//me.down('comboboxfieldbase[itemId=comboEstadoPresupuesto]').setVisible(me.modoEdicion);
 		
 		
     }

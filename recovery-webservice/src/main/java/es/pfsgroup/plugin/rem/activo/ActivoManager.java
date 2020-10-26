@@ -185,6 +185,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoSuministro;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloComplemento;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTributo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
@@ -1085,12 +1086,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@BusinessOperationDefinition("activoManager.comprobarExisteAdjuntoActivo")
 	public Boolean comprobarExisteAdjuntoActivo(Long idActivo, String codigoDocumento) {
 		Filter idActivoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
-		Filter codigoDocumentoFilter = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.codigo",
-				codigoDocumento);
-
-		List<ActivoAdjuntoActivo> adjuntosActivo = genericDao.getList(ActivoAdjuntoActivo.class, idActivoFilter,
-				codigoDocumentoFilter);
-
+		Filter codigoDocumentoFilter = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.codigo", codigoDocumento);
+		
+		List<ActivoAdjuntoActivo> adjuntosActivo = genericDao.getList(ActivoAdjuntoActivo.class, idActivoFilter, codigoDocumentoFilter);
+		
 		return !Checks.estaVacio(adjuntosActivo);
 	}
 
@@ -7735,6 +7734,58 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
+	public boolean estanTodosActivosVendidos(List<Activo> activos) {
+		boolean estanTodosVendidos = false;
+		boolean auxiliarSalir = true;
+		
+
+		if(activos != null && !activos.isEmpty()) {
+			for (Activo activo : activos) {
+				if(activo.getSituacionComercial() != null && DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo())) {
+					estanTodosVendidos = true;
+					auxiliarSalir = false;
+				}
+				if(auxiliarSalir) {
+					estanTodosVendidos = false;
+					break;
+				}
+				
+				auxiliarSalir = true;
+			}
+		}
+
+		return estanTodosVendidos;
+	}
+	
+	@Override
+	public boolean estanTodosActivosAlquilados(List<Activo> activos) {
+		boolean todosActivoAlquilados = false;
+		boolean auxiliarSalir = true;
+		
+
+		if(activos != null && !activos.isEmpty()) {
+			for (Activo activo : activos) {
+				
+				if(activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getOcupado() != null
+						&& activo.getSituacionPosesoria().getConTitulo() != null &&  activo.getSituacionPosesoria().getOcupado() == 1
+						&& DDTipoTituloActivoTPA.tipoTituloSi.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo())
+						&& activo.getSituacionPosesoria().getTipoTituloPosesorio() != null 
+						&&  DDTipoTituloPosesorio.CODIGO_ARRENDAMIENTO.equals(activo.getSituacionPosesoria().getTipoTituloPosesorio().getCodigo())) {
+							todosActivoAlquilados = true;
+							auxiliarSalir = false;
+				}
+				if(auxiliarSalir) {
+					todosActivoAlquilados = false;
+					break;
+				}
+				
+				auxiliarSalir = true;
+			}
+		}
+
+		return todosActivoAlquilados;
+	}
+	
 	public List<ReqFaseVentaDto> getReqFaseVenta(Long idActivo) {
 		List<HistoricoRequisitosFaseVenta> listHistorico = activoDao.getReqFaseVenta(idActivo);
 		List<ReqFaseVentaDto> listDto = new ArrayList<ReqFaseVentaDto>();

@@ -541,7 +541,6 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 	    			extraParams: {codEstadoCarga: '{comboestadocargaref.value}'}
     			}
     		},
-
     		comboTiposGastos: {
 		    	model: 'HreRem.model.ComboBase',
 		    	proxy: {

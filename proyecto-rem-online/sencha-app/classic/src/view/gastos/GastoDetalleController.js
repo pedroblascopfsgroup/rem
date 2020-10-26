@@ -2211,6 +2211,43 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		if(!Ext.isEmpty(data.ppInteres)){
 			ventana.down('[reference=ppInteres]').setValue(data.ppInteres);
 		}
+		if(!Ext.isEmpty(!data.subcuentaBase)){
+			ventana.down('[reference=subcuentaBase]').setValue(data.subcuentaBase);
+		}
+		if(!Ext.isEmpty(data.apartadoBase)){
+			ventana.down('[reference=apartadoBase]').setValue(data.apartadoBase);
+		}
+		if(!Ext.isEmpty(data.capituloBase)){
+			ventana.down('[reference=capituloBase]').setValue(data.capituloBase);
+		}
+		if(!Ext.isEmpty(!data.subcuentaRecargo)){
+			ventana.down('[reference=subcuentaRecargo]').setValue(data.subcuentaRecargo);
+		}
+		if(!Ext.isEmpty(data.apartadoRecargo)){
+			ventana.down('[reference=apartadoRecargo]').setValue(data.apartadoRecargo);
+		}
+		if(!Ext.isEmpty(data.capituloRecargo)){
+			ventana.down('[reference=capituloRecargo]').setValue(data.capituloRecargo);
+		}	
+		if(!Ext.isEmpty(!data.subcuentaTasa)){
+			ventana.down('[reference=subcuentaTasa]').setValue(data.subcuentaTasa);
+		}
+		if(!Ext.isEmpty(data.apartadoTasa)){
+			ventana.down('[reference=apartadoTasa]').setValue(data.apartadoTasa);
+		}
+		if(!Ext.isEmpty(data.capituloTasa)){
+			ventana.down('[reference=capituloTasa]').setValue(data.capituloTasa);
+		}	
+		if(!Ext.isEmpty(!data.subcuentaIntereses)){
+			ventana.down('[reference=subcuentaIntereses]').setValue(data.subcuentaIntereses);
+		}
+		if(!Ext.isEmpty(data.apartadoIntereses)){
+			ventana.down('[reference=apartadoIntereses]').setValue(data.apartadoIntereses);
+		}
+		if(!Ext.isEmpty(data.capituloIntereses)){
+			ventana.down('[reference=capituloIntereses]').setValue(data.capituloIntereses);
+		}
+		
     },
     
     cargarTabDataCambiarRefacturables: function (form,grid) {

@@ -9,9 +9,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.ui.ModelMap;
-import org.springframework.web.servlet.ModelAndView;
-
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.exception.UserException;
@@ -89,9 +86,9 @@ import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDFasePublicacion;
-import es.pfsgroup.plugin.rem.rest.dto.ActivoCrearPeticionTrabajoDto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGastoAsociado;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
+import es.pfsgroup.plugin.rem.rest.dto.ActivoCrearPeticionTrabajoDto;
 import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.HistoricoPropuestasPreciosDto;
@@ -1337,8 +1334,12 @@ public interface ActivoApi {
 	Boolean createHistoricoSolicitudPrecios(HistoricoPropuestasPreciosDto historicoPropuestasPreciosDto) throws ParseException;
 
 	Boolean updateHistoricoSolicitudPrecios(HistoricoPropuestasPreciosDto historicoPropuestasPreciosDto) throws ParseException;
-	
+
 	ActivoCrearPeticionTrabajoDto getActivoParaCrearPeticionTrabajobyId(Long activoId);
+
+	boolean estanTodosActivosVendidos(List<Activo> activos);
+
+	boolean estanTodosActivosAlquilados(List<Activo> activos);
 
 	List<ReqFaseVentaDto> getReqFaseVenta(Long idActivo);
 
@@ -1435,4 +1436,5 @@ public interface ActivoApi {
 	boolean isActivoExisteEnRem(Long idActivo);
 
 	public Boolean isGrupoOficinaKAM();
+
 }

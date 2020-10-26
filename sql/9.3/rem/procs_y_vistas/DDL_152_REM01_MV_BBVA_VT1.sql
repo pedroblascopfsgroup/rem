@@ -55,32 +55,62 @@ BEGIN
   EXECUTE IMMEDIATE 'CREATE MATERIALIZED VIEW ' || V_ESQUEMA || '.MV_BBVA_VT1 
     REFRESH ON DEMAND
 	AS
-    select
-       ACT_BBVA_ACTIVOS.BBVA_CEXPER as CEXPER_MORA
-       , ''null'' as SOCIEDAD
-       , ACT_ACTIVO.ACT_NUM_ACTIVO as ACT_NUM_ACTIVO
-       , BIE_LOCALIZACION.BIE_LOC_COD_POST as CP_PROMOCION
-       , ''null'' as DEPURADO_JURID
-       , ACT_AJD_ADJJUDICIAL.AJD_FECHA_ADJUDICACION as FECHA_DESP_JURID
-       , ACT_AJD_ADJJUDICIAL.AJD_NUM_AUTO as NUM_AUTOS
-       , ''null'' as NUM_JUZGADO
-       , ACT_CAT_CATASTRO.CAT_REF_CATASTRAL as REF_CATASTRAL
-       , ACT_CAT_CATASTRO.CAT_SUPERFICIE_CONSTRUIDA as SUPERFICIE_CONSTRUIDA
-       , ''null'' as OFICINA_VENDEDORA
-       , ''null'' as SUM_COMISIONES
-       , ''null'' as PRECIO_CONTRATO_TOTAL
-       , ACT_ACTIVO.ACT_VENTA_EXTERNA_FECHA as FECHA_ESCRITURA
-       , ''null'' as TIPO_CONTRATO
-       , ''null'' as PORC_PROINDIVISO
-       , ''null'' as POLIVALENTE
-       , ''null'' as IUC
-       , ACT_ACTIVO.DD_SCM_ID as SITUACION_COMERCIAL
-    FROM '||V_ESQUEMA||'.ACT_ACTIVO
-       JOIN '||V_ESQUEMA||'.ACT_BBVA_ACTIVOS ON ACT_BBVA_ACTIVOS.ACT_ID = ACT_ACTIVO.ACT_ID
-       JOIN '||V_ESQUEMA||'.ACT_CAT_CATASTRO ON ACT_CAT_CATASTRO.ACT_ID = ACT_ACTIVO.ACT_ID
-       JOIN '||V_ESQUEMA||'.ACT_AJD_ADJJUDICIAL ON ACT_AJD_ADJJUDICIAL.ACT_ID = ACT_ACTIVO.ACT_ID
-       JOIN '||V_ESQUEMA||'.BIE_BIEN ON BIE_BIEN.BIE_ID = ACT_ACTIVO.BIE_ID
-       JOIN '||V_ESQUEMA||'.BIE_LOCALIZACION ON BIE_LOCALIZACION.BIE_ID = BIE_BIEN.BIE_ID
+        SELECT
+    act_id,
+    cexper_mora,
+    sociedad,
+    numero_activo_sap,
+    subnumero_activo_sap,
+    num_interno,
+    clase,
+    tipo_inmueble,
+    calle_inmueble,
+    numero_inmueble,
+    calle_inmueble_2,
+    numero_inmueble_2,
+    localidad,
+    provincia,
+    codigo_postal,
+    pais,
+    dep_juridicamente,
+    fecha_dep_juridica,
+    num_autos,
+    calle_juzgado,
+    numero_juzgado,
+    num_finca_registral,
+    catastro,
+    referencia_catastral,
+    superficie,
+    oficina_vendedora,
+    comision_externa,
+    precio_venta,
+    nombre_cliente,
+    apellido_1,
+    apellido_2,
+    tipo_identificador,
+    nif_comprador,
+    calle_comprador,
+    numero_comprador,
+    cp_comprador,
+    localidad_comprador,
+    provincia_comprador,
+    pais_comprador,
+    fecha_venta,
+    tipo_contrato, RESTO_FINCAS,
+    proindiviso,
+    polivalente,
+    cod_empresa_titulizadora,
+    nif_empresa_titulizadora,
+    iuc,
+    idufir,
+    rest_idufir,
+    procedencia_leasing,
+    sit_comercial,
+    precio_tarifa, FECHA_INICIO_TARIFA,
+    promocion,
+    obra
+FROM
+    vi_nor_bbva_vt1
     ';
 		
 

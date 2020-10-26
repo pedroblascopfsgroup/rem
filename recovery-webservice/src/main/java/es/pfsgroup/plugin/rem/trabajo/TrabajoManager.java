@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
@@ -129,6 +131,7 @@ import es.pfsgroup.plugin.rem.model.DtoProveedorFiltradoManual;
 import es.pfsgroup.plugin.rem.model.DtoProveedorMediador;
 import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
+import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
@@ -206,6 +209,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	private static final String PERFIL_GESTOR_ACTIVO = "HAYAGESACT";
 	private static final String PERFIL_PROVEEDOR = "HAYAPROV";
 	private static final String PERFIL_SUPER = "HAYASUPER";
+	
+	private static final String EMAIL_CREACION = "CREACION";
+	private static final String EMAIL_RECHAZADO = "RECHAZADO";
+	private static final String EMAIL_VALIDADO = "VALIDADO";
+	private static final String BUZON_ELECNOR = "buzonelecnor";
+	private static final String ELECNOR ="---------.29";
+	private static final String BUZON_BANKIA_ASISTA	= "buzonbankiaasista";
+	private static final String BANKIA_ASISTA = "---------.5";
 	
 
 	@Autowired
@@ -345,6 +356,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
 	
+	@Resource
+	private Properties appProperties;
+	
 	@Override
 	public String managerName() {
 		return "trabajoManager";
@@ -445,15 +459,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		if(!Checks.esNulo(dtoTrabajo.getResolucionComiteCodigo()) && (DDAcoAprobacionComite.CODIGO_APROBADO.equals(dtoTrabajo.getResolucionComiteCodigo()) 
 				|| DDAcoAprobacionComite.CODIGO_RECHAZADO.equals(dtoTrabajo.getResolucionComiteCodigo()))) {
-			if(Checks.esNulo(dtoTrabajo.getFechaResolucionComite()) || Checks.esNulo(dtoTrabajo.getResolucionComiteId())) {
-				throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.comite.aprobado"));
-			}
-		}
-
-		
-		if(!Checks.esNulo(dtoTrabajo.getResolucionComiteCodigo()) && (DDAcoAprobacionComite.CODIGO_APROBADO.equals(dtoTrabajo.getResolucionComiteCodigo()) 
-				|| DDAcoAprobacionComite.CODIGO_RECHAZADO.equals(dtoTrabajo.getResolucionComiteCodigo()))) {
-			if(Checks.esNulo(dtoTrabajo.getFechaResolucionComite()) || Checks.esNulo(dtoTrabajo.getResolucionComiteId())) {
+			if((Checks.esNulo(dtoTrabajo.getFechaResolucionComite()) && trabajo.getFechaResolucionComite() == null) || (Checks.esNulo(dtoTrabajo.getResolucionComiteId())) && trabajo.getResolucionComiteId() == null ) {
 				throw new JsonViewerException(messageServices.getMessage("trabajo.advertencia.comite.aprobado"));
 			}
 		}
@@ -485,13 +491,21 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					editarTramites(trabajo);
 				}
 			}
-			
+			if(trabajo.getEstado() != null) {
+				if(DDEstadoTrabajo.CODIGO_ESTADO_RECHAZADO.equals(trabajo.getEstado().getCodigo()) || DDEstadoTrabajo.ESTADO_RECHAZADO.equals(trabajo.getEstado().getCodigo())) {
+					EnviarCorreoTrabajos(trabajo, EMAIL_RECHAZADO);
+				}else if (DDEstadoTrabajo.ESTADO_VALIDADO.equals(trabajo.getEstado().getCodigo())) {
+					EnviarCorreoTrabajos(trabajo, EMAIL_VALIDADO);
+				}
+				
+			}
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
 		
 		trabajoDao.saveOrUpdate(trabajo);
+		actualizarImporteTotalTrabajo(trabajo.getId());
 
 		return true;
 	}
@@ -1051,6 +1065,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		importeTarifasTotalCliente += importePresupuestosTrabajo;
 		importeTarifasTotalProveedor += importePresupuestosTrabajo;
+		importeTarifasTotalProveedor -= trabajo.getImportePenalizacionTotal();
 		
 		trabajo.setImporteTotal(importeTarifasTotalCliente);
 		trabajo.setImportePresupuesto(importeTarifasTotalProveedor);
@@ -1240,6 +1255,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				trabajo.setEsTarificado(false);
 			}
 		}
+		EnviarCorreoTrabajos(trabajo, EMAIL_CREACION);
 		
 		return trabajo.getId();
 	}
@@ -2252,6 +2268,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					e.printStackTrace();
 				}
 				trabajo.setFechaHoraConcreta(fechaHoraConcreta);
+				trabajo.setFechaCompromisoEjecucion(fechaHoraConcreta);
 			}else {
 				trabajo.setFechaHoraConcreta(null);
 			}
@@ -2259,6 +2276,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (dtoTrabajo.getFechaTope() != null) {
 			if(!"1970-01-01".equals(groovyft.format(dtoTrabajo.getFechaTope()))) {
 				trabajo.setFechaTope(dtoTrabajo.getFechaTope());
+				trabajo.setFechaCompromisoEjecucion(dtoTrabajo.getFechaTope());
 			}else {
 				trabajo.setFechaTope(null);
 			}
@@ -2429,6 +2447,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		if (!Checks.esNulo(dtoTrabajo.getRequerimiento())) {
 			trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
+		}
+		if(trabajo.getFechaHoraConcreta() != null) {
+			trabajo.setFechaCompromisoEjecucion(trabajo.getFechaHoraConcreta());
+		}
+		else if (trabajo.getFechaTope() != null) {
+			trabajo.setFechaCompromisoEjecucion(trabajo.getFechaTope());
 		}
 	}
 
@@ -3175,6 +3199,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}else {
 			dtoTrabajo.setEsUsuarioCliente(false);
 		}
+		if(trabajo.getFechaCompromisoEjecucion() != null) {
+			dtoTrabajo.setFechaCompromisoEjecucion(trabajo.getFechaCompromisoEjecucion());
+		}
 
 		return dtoTrabajo;
 
@@ -3911,12 +3938,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@SuppressWarnings("unchecked")
 	@Override
 	public DtoPage getSeleccionTarifasTrabajo(DtoGestionEconomicaTrabajo filtro, String cartera, String tipoTrabajo,
-			String subtipoTrabajo, String codigoTarifa, String descripcionTarifa) {
+			String subtipoTrabajo, String codigoTarifa, String descripcionTarifa, String subcarteraCodigo) {
 
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		filtro.setCarteraCodigo(cartera);
 		filtro.setTipoTrabajoCodigo(tipoTrabajo);
-		filtro.setSubtipoTrabajoCodigo(subtipoTrabajo);	
+		filtro.setSubtipoTrabajoCodigo(subtipoTrabajo);
+		filtro.setSubcarteraCodigo(subcarteraCodigo);
 		
 		if (!Checks.esNulo(filtro.getIdTrabajo())) {
 			Trabajo trabajo = findOne(filtro.getIdTrabajo());
@@ -6089,5 +6117,229 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		
 		return mapaDocumentosFin;
+	}
+	
+	private void EnviarCorreoTrabajos(Trabajo trabajo, String origen) {
+		
+		if(trabajo == null || trabajo.getTipoTrabajo() == null || !DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo())) {
+			return;
+		}
+		
+		DtoSendNotificator dtoSendNotificator = trabajoToDtoSendNotificator(trabajo);
+		
+		List<String> mailsPara = new ArrayList<String>();
+		//List<String> mailsCC = new ArrayList<String>();
+		
+	    String correos = "";
+	   
+	    if(!Checks.esNulo(trabajo.getProveedorContacto())){   	
+	    	correos = trabajo.getProveedorContacto().getEmail();
+	    	if(!Checks.esNulo(trabajo.getProveedorContacto().getUsuario())){
+	    		if(ELECNOR.equals(trabajo.getProveedorContacto().getUsuario().getUsername())) {
+	    			Usuario buzonElecnor = usuarioManager.getByUsername(BUZON_ELECNOR);			    	
+					correos += !Checks.esNulo(buzonElecnor) ? ";" + buzonElecnor.getEmail() : "";
+	    		}else {
+	    			if(trabajo.getActivosTrabajo() != null &&  !trabajo.getActivosTrabajo().isEmpty() && trabajo.getActivosTrabajo().get(0).getActivo().getCartera() != null &&
+	    				DDCartera.CODIGO_CARTERA_BANKIA.equals(trabajo.getActivosTrabajo().get(0).getActivo().getCartera().getCodigo()) 
+	    				&& BANKIA_ASISTA.equals(trabajo.getProveedorContacto().getUsuario().getUsername())) {
+	    				Usuario buzonBankiaAsista = usuarioManager.getByUsername(BUZON_BANKIA_ASISTA);
+	    				correos = !Checks.esNulo(buzonBankiaAsista) ? buzonBankiaAsista.getEmail() : "";
+	    			}
+	    		}
+	    	}		    
+	    }
+	    
+		if(!Checks.esNulo(correos) && !correos.equals("")) {
+			Collections.addAll(mailsPara, correos.split(";"));
+		}
+	   
+		//mailsCC.add(this.getCorreoFrom());
+		
+		String contenido = "";
+		String titulo = "";
+		String descripcionTrabajo = !Checks.esNulo(trabajo.getDescripcion()) ? (trabajo.getDescripcion() + " - ") : "";
+
+		/*EMAIL_CREACION, EMAIL_RECHAZADO, EMAIL_VALIDADO */
+		
+		if(EMAIL_RECHAZADO.equals(origen)){
+			List<AgendaTrabajo> listAgenda = null;
+			Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+			Filter filtroCodigoGestion = genericDao.createFilter(FilterType.EQUALS, "tipoGestion.codigo", DDTipoApunte.CODIGO_GESTION);
+			
+			Order order  = new Order(OrderType.DESC, "fecha");
+			
+			listAgenda = genericDao.getListOrdered(AgendaTrabajo.class, order, filtroTrabajo, filtroCodigoGestion);
+			
+			contenido = "<p>El gestor "+ trabajo.getGestorAlta().getApellidoNombre() +" del activo "+dtoSendNotificator.getNumActivo()+" ha validado negativamente su ejecución del trabajo "+dtoSendNotificator.getTipoContrato()+" "
+					 + "(Número REM "+trabajo.getActivo().getNumActivoRem()+"), relativo al activo nº "+dtoSendNotificator.getNumActivo()+", situación en "+dtoSendNotificator.getDireccion()+"</p>"
+					 + ((listAgenda !=null && !listAgenda.isEmpty()) ? "<p>El motivo del rechazo es: "+listAgenda.get(0).getObservaciones()+".</p>" : "")
+					 + "<p>Se le ha concedido un plazo para que subsane las deficiencias hasta el día "+dtoSendNotificator.getFechaFinalizacion()+"</p>"
+	  		  		 + "<p>Por favor, entre en la aplicación REM y compruebe las condiciones del trabajo.</p>"
+	  		  		 + "<p>Gracias.</p>";
+			titulo = "Notificación de incorrección de ejecución de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+		}else if(EMAIL_CREACION.equals(origen)){
+			contenido = "<p>Desde HAYA RE se le ha asignado una actuación técnica del tipo "+dtoSendNotificator.getTipoContrato()+", la cual se ha abierto en REM con "
+	  		  		 + "el número de trabajo " +trabajo.getNumTrabajo() + ".</p>"
+	  		  		 + "<p>El activo objeto de la actuación es el número " +dtoSendNotificator.getNumActivo() + ", situado en "+dtoSendNotificator.getDireccion()+"</p>"
+	  		  		 + "<p>La fecha de finalización del trabajo por su parte es el "+dtoSendNotificator.getFechaFinalizacion()+"</p>"
+	  		  		 + "<p>Por favor, entre en la aplicación REM y compruebe las condiciones del trabajo.</p>"
+	  		  		 + "<p>Gracias.</p>";
+			titulo = "Notificación de encargo de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+trabajo.getNumTrabajo()+")";
+		}else if (EMAIL_VALIDADO.equals(origen)) {
+			contenido = "<p>Desde HAYA RE le informamos de que el gestor "+trabajo.getGestorAlta().getApellidoNombre()+" del activo "+dtoSendNotificator.getNumActivo()+" ha validado positivamente su ejecución del trabajo "+dtoSendNotificator.getTipoContrato()+" "
+					 + "(Número REM "+trabajo.getActivo().getNumActivoRem()+"), relativo al activo nº "+dtoSendNotificator.getNumActivo()+", situado en "+dtoSendNotificator.getDireccion()+" "
+					 + ", por lo que se ha procedido a su cierre económico."
+			  		 + "<p>Un saludo.</p>";
+		
+		titulo = "Notificación de aceptación de ejecución de trabajo en REM (" + descripcionTrabajo + " Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+		}
+		
+			  
+		//genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpoCorreo(dtoSendNotificator, contenido));
+		genericAdapter.sendMail(mailsPara, null, titulo, generateCuerpo(dtoSendNotificator, contenido));
+		
+	}
+
+	private DtoSendNotificator trabajoToDtoSendNotificator(Trabajo trabajo) {
+		DtoSendNotificator dtoSendNotificator = new DtoSendNotificator();
+		if (trabajo != null && trabajo.getSubtipoTrabajo() != null) {
+			dtoSendNotificator.setTipoContrato(trabajo.getSubtipoTrabajo().getDescripcion());
+			dtoSendNotificator.setNumTrabajo(trabajo.getNumTrabajo());
+			dtoSendNotificator.setFechaFinalizacion(generateFechaTrabajo(trabajo));
+			dtoSendNotificator.setNumActivo(trabajo.getActivo().getNumActivo());
+			if(!Checks.esNulo(trabajo.getActivo().getDireccionCompleta())) {
+				dtoSendNotificator.setDireccion(trabajo.getActivo().getDireccionCompleta());
+			}
+			if(!Checks.esNulo(trabajo.getActivo().getLocalidad())) {
+				dtoSendNotificator.setMunicipio(trabajo.getActivo().getLocalidad().getDescripcion());
+			}
+			if(!Checks.esNulo(trabajo.getActivo().getLocalizacionActual().getProvincia())) {
+				dtoSendNotificator.setProvincia(trabajo.getActivo().getLocalizacionActual().getProvincia().getDescripcion());
+			}
+		}
+		return dtoSendNotificator;
+	}
+	
+	private String generateFechaTrabajo(Trabajo trabajo) {
+		String fecha = null;
+		DateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+		DateFormat formatoFechaHora = new SimpleDateFormat("dd/MM/yyyy hh:mm aaa");
+
+		if (!Checks.esNulo(trabajo.getFechaHoraConcreta()))
+			fecha = formatoFechaHora.format(trabajo.getFechaHoraConcreta());
+		else if (!Checks.esNulo(trabajo.getFechaTope()))
+			fecha = formatoFecha.format(trabajo.getFechaTope());
+		return fecha == null ? "" : fecha;
+	}
+	
+	private String generateCuerpo(DtoSendNotificator dtoSendNotificator, String contenido) {
+		String cuerpo = "<html>" + "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'>" + "<html>"
+				+ "<head>" + "<META http-equiv='Content-Type' content='text/html; charset=utf-8'>" + "</head>"
+				+ "<body>" + "	<div>" + "		<div style='font-family: Arial,&amp; amp;'>"
+				+ "			<div style='border-radius: 12px 12px 0px 0px; background: #b7ddf0; width: 300px; height: 60px; display: table'>"
+				+ "				<img src='" + getUrlImagenes() + "ico_notificacion.png' "
+				+ "					style='display: table-cell; padding: 12px; display: inline-block' />"
+				+ "				<div style='font-size: 20px; vertical-align: top; color: #333; display: table-cell; padding: 12px'> "
+				+ dtoSendNotificator.getTitulo() + "</div>" + "			</div>"
+				+ "			<div style='background: #b7ddf0; width: 785px; min-height: 600px; border-radius: 0px 20px 20px 20px; padding: 20px'>"
+				+ "				<div style='background: #054664; width: 600px; height: 375px; border-radius: 20px; color: #fff; display: inline-block'>"
+				+ "					<div style='display: table; margin: 20px;'>";
+
+		if (dtoSendNotificator.getNumTrabajo() != null) {
+			cuerpo = cuerpo + "						<div style='display: table-row;'>"
+					+ "							<div style='display: table-cell; vertical-align: middle; padding: 10px;'>"
+					+ "								<img src='" + getUrlImagenes() + "ico_trabajos.png' />"
+					+ "							</div>"
+					+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
+					+ "								Nº Trabajo:<strong>" + dtoSendNotificator.getNumTrabajo()
+					+ "</strong>" + "							</div>" + "						</div>";
+		}
+
+		if (dtoSendNotificator.getTipoContrato() != null) {
+			cuerpo = cuerpo + "						<div style='display: table-row;'>"
+					+ "							<div style='display: table-cell; vertical-align: middle; padding: 10px;'>"
+					+ "								<img src='" + getUrlImagenes() + "ico_tipo.png' />"
+					+ "							</div>"
+					+ "						<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
+					+ "								Tipo de trabajo: <strong>" + dtoSendNotificator.getTipoContrato()
+					+ "</strong>" + "							</div>" + "						</div>";
+		}
+
+		if (dtoSendNotificator.getFechaFinalizacion() != null) {
+			cuerpo = cuerpo + "						<div style='display: table-row;'>"
+					+ "							<div style='display: table-cell; vertical-align: middle; padding: 10px;'>"
+					+ "								<img src='" + getUrlImagenes() + "ico_fecha.png' />"
+					+ "							</div>"
+					+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
+					+ "								Fecha finalización trabajo: <strong>"
+					+ dtoSendNotificator.getFechaFinalizacion() + "</strong>" + "							</div>"
+					+ "						</div>";
+		}
+		if (dtoSendNotificator.getProvincia() != null) {
+			cuerpo = cuerpo + "						<div style='display: table-row;'>"
+					+ "							<div style='display: table-cell; vertical-align: middle; padding: 10px;'>"
+					+ "								<img src='" + getUrlImagenes() + "ico_direccion.png' />"
+					+ "							</div>"
+					+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
+					+ "								Provincia: <strong>"
+					+ dtoSendNotificator.getProvincia() + "</strong>" + "							</div>"
+					+ "						</div>";
+		}
+		if (dtoSendNotificator.getMunicipio() != null) {
+			cuerpo = cuerpo + "						<div style='display: table-row;'>"
+					+ "							<div style='display: table-cell; vertical-align: middle; padding: 10px;'>"
+					+ "								<img src='" + getUrlImagenes() + "ico_direccion.png' />"
+					+ "							</div>"
+					+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
+					+ "								Localidad: <strong>"
+					+ dtoSendNotificator.getMunicipio() + "</strong>" + "							</div>"
+					+ "						</div>";
+		}
+		cuerpo = cuerpo + "						<div style='display: table-row;'>"
+				+ "							<div style='display: table-cell; vertical-align: middle; padding: 10px;'>"
+				+ "								<img src='" + getUrlImagenes() + "ico_activos.png' />"
+				+ "							</div>"
+				+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
+				+ "								Nº Activo: <strong>" + dtoSendNotificator.getNumActivo() + "</strong>"
+				+ "							</div>" + "						</div>"
+				+ "						<div style='display: table-row;'>"
+				+ "							<div style='display: table-cell; vertical-align: middle; padding: 10px;'>"
+				+ "								<img src='" + getUrlImagenes() + "ico_direccion.png' />"
+				+ "							</div>"
+				+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
+				+ "								Dirección: <strong>" + dtoSendNotificator.getDireccion() + "</strong>"
+				+ "							</div>" + "						</div>"
+				+ "						<div style='display: table-row;'>"
+				+ "							<div style='display: table-cell; vertical-align: middle; padding: 10px;'>"
+				+ "								<img src='" + getUrlImagenes() + "ico_agrupaciones.png' />"
+				+ "							</div>"
+				+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
+				+ "								Nº Agrupación: <strong>"
+				+ (!Checks.esNulo(dtoSendNotificator.getNumAgrupacion()) ? dtoSendNotificator.getNumAgrupacion() : "-")
+				+ "</strong>" + "							</div>" + "						</div>"
+				+ "					</div>" + "				</div>"
+				+ "				<div style='display: inline-block; width: 140px; vertical-align: top'>"
+				+ "					<img src='" + getUrlImagenes() + "logo_haya.png' "
+				+ "						style='display: block; margin: 30px auto' /> " 
+				+ "					<img src='"	+ getUrlImagenes() + "logo_rem.png' "
+				+ "						style='display: block; margin: 30px auto' /> " 
+				+ "				</div>"
+				+ "				<div style='background: #fff; color: #333; border-radius: 20px; padding: 25px; line-height: 22px; text-align: justify; margin-top: 20px; font-size: 16px'>"
+				+ contenido + "				</div>"
+				+ "				<div style='color: #333; margin: 23px 0px 0px 65px; font-size: 16px; display: table;'>"
+				+ "					<div style='display: table-cell'>" 
+				+ "						<img src='" + getUrlImagenes() + "ico_advertencia.png' />" 
+				+ "					</div>"
+				+ "					<div style='display: table-cell; vertical-align: middle; padding: 5px;'>"
+				+ "						Este mensaje es una notificación automática. No responda a este correo.</div>"
+				+ "				</div>" + "			</div>" + "		</div>" + "</body>" + "</html>";
+
+		return cuerpo;
+	}
+	
+	private String getUrlImagenes() {
+		String url = appProperties.getProperty("url");
+
+		return url + "/pfs/js/plugin/rem/resources/images/notificator/";
 	}
 }

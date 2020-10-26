@@ -30,8 +30,11 @@ import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
+import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.multigestor.model.EXTTipoGestorPropiedad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
@@ -1529,43 +1532,86 @@ public class ActivoAdapter {
 		return activoDao.getBusquedaActivosGrid(dto, usuarioLogado, devolverPage);
 	}
 
-	public List<DtoUsuario> getComboUsuarios(long idTipoGestor) {
+	public List<DtoUsuario> getComboUsuarios(Long idTipoGestor) {
 		
 		List<DespachoExterno> listDespachoExterno = null;
-		try {
-			listDespachoExterno = coreextensionApi.getListAllDespachos(idTipoGestor, false);
-		}catch(NullPointerException e) {
-			logger.error("Error en ActivoAdapter - getComboUsuarios - getListAllDespachos (idTipoGestor = "+idTipoGestor+") ", e);
-		}
+		EXTTipoGestorPropiedad tipoGestorPropiedad = null;
 		List<DtoUsuario> listaUsuariosDto = new ArrayList<DtoUsuario>();
-
-		if (!Checks.estaVacio(listDespachoExterno)) {
-			try {
-				for (DespachoExterno despachoExterno : listDespachoExterno) {
-					List<Usuario> listaUsuarios = null;
-					try {
-						listaUsuarios = coreextensionApi.getListAllUsuariosData(despachoExterno.getId(), false);
-					}catch(NullPointerException e) {
-						logger.error("Error en ActivoAdapter - getComboUsuarios - getListAllUsuariosData (idTipoGestor = "+idTipoGestor+", despachoExterno.getId() = "+despachoExterno.getId()+") ", e);
-					}
-					if (!Checks.estaVacio(listaUsuarios)) {
-						for (Usuario usuario : listaUsuarios) {
-							DtoUsuario dtoUsuario = new DtoUsuario();
-							BeanUtils.copyProperties(dtoUsuario, usuario);
-							listaUsuariosDto.add(dtoUsuario);
+		
+		if(idTipoGestor != null) {
+			
+			tipoGestorPropiedad = genericDao.get(EXTTipoGestorPropiedad.class, 
+					genericDao.createFilter(FilterType.EQUALS, "clave", EXTTipoGestorPropiedad.TGP_CLAVE_DESPACHOS_VALIDOS),
+					genericDao.createFilter(FilterType.EQUALS, "tipoGestor.id", idTipoGestor));
+			
+			if(tipoGestorPropiedad != null) {
+				String[] listaTiposDespachos = null;
+				listaTiposDespachos = tipoGestorPropiedad.getValor().split(",");
+				if(listaTiposDespachos != null && listaTiposDespachos.length > 0) {
+					for(String tipoDespacho : listaTiposDespachos){
+						DDTipoDespachoExterno ddTiposDespacho = genericDao.get(DDTipoDespachoExterno.class, 
+								genericDao.createFilter(FilterType.EQUALS, "codigo", tipoDespacho),
+								genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+						
+						if(ddTiposDespacho != null){
+							Order orden = new Order(OrderType.ASC, "id");
+							listDespachoExterno = genericDao.getListOrdered(DespachoExterno.class, orden, 
+									genericDao.createFilter(FilterType.EQUALS, "tipoDespacho.codigo", tipoDespacho),
+									genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 						}
 					}
 				}
-			} catch (IllegalAccessException e) {
-				logger.error("Error en ActivoAdapter", e);
-			} catch (InvocationTargetException e) {
-				logger.error("Error en ActivoAdapter", e);
-			}
+				
+				
+				if (listDespachoExterno != null && !listDespachoExterno.isEmpty()) {
+					
+					for (DespachoExterno despachoExterno : listDespachoExterno) {
+						List<Usuario> listaUsuarios = null;
+						List<GestorDespacho> listaGestorDespacho = null;
+						
+						listaGestorDespacho = genericDao.getList(GestorDespacho.class, 
+								genericDao.createFilter(FilterType.EQUALS, "despachoExterno", despachoExterno));
+						
+						if(listaGestorDespacho != null && !listaGestorDespacho.isEmpty()) {
+							listaUsuarios = new ArrayList<Usuario>();
+							for(GestorDespacho gestorDespacho : listaGestorDespacho) {
+								if(gestorDespacho.getUsuario() != null)
+									listaUsuarios.add(gestorDespacho.getUsuario());
+								
+							}
+						}
+						
+						if (listaUsuarios != null && !listaUsuarios.isEmpty()) {
+							for (Usuario usuario : listaUsuarios) {
+								
+								boolean existe = false;
+								for(DtoUsuario dto : listaUsuariosDto) {
+									if(dto.getId().equals(usuario.getId()))
+										existe = true;
+								}
+								
+								if(!existe) {
+									try {
+										
+										DtoUsuario dtoUsuario = new DtoUsuario();
+										BeanUtils.copyProperties(dtoUsuario, usuario);									
+										listaUsuariosDto.add(dtoUsuario);
+										
+									} catch (IllegalAccessException e) {
+										logger.error("Error en ActivoAdapter", e);
+									} catch (InvocationTargetException e) {
+										logger.error("Error en ActivoAdapter", e);
+									}
+								}
+								
+							}
+						}
+					}				
+				}
+			}		
+			if(!listaUsuariosDto.isEmpty())
+				Collections.sort(listaUsuariosDto);		
 		}
-		
-		Collections.sort(listaUsuariosDto);
-		
-
 		return listaUsuariosDto;
 	}
 	
@@ -2665,7 +2711,8 @@ public class ActivoAdapter {
 		if(tipoDocumento != null && activoEntrada != null) {
 			DtoActivoSituacionPosesoria dto = new DtoActivoSituacionPosesoria();
 			BeanUtils.copyProperties(dto, activoEntrada.getSituacionPosesoria());
-			dto.setConTitulo(activoEntrada.getSituacionPosesoria().getConTitulo().getCodigo());
+			if (activoEntrada.getSituacionPosesoria().getConTitulo() != null)
+				dto.setConTitulo(activoEntrada.getSituacionPosesoria().getConTitulo().getCodigo());
 			activoApi.compruebaParaEnviarEmailAvisoOcupacion(dto, activoEntrada.getId());
 		}
 		return null;

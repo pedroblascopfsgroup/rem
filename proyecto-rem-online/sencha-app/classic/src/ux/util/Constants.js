@@ -103,7 +103,12 @@ Ext.define('HreRem.ux.util.Constants', {
 
 	SUBTIPOS_PROVEEDOR: {
 		SOCIEDAD_TASADORA: '02',
-		MEDIADOR: '04'
+		MEDIADOR: '04',
+		OFICINA_BBVA:'39',
+		OFICINA_LIBERBANK:'38',
+		OFICINA_BANKIA: '28',
+		OFICINA_CAJAMAR: '29'
+		
 	},
 
 	MAP_TAB_ACTIVO_XTYPE: {
@@ -767,7 +772,10 @@ Ext.define('HreRem.ux.util.Constants', {
 		CODIGO_HAYA_APPLE: '42'
 	},
 	
+<<<<<<< HEAD
 
+=======
+>>>>>>> R-Entrefina
 	BTN: {
 		CREAR_TRABAJO: 'BtnCrearTrabajo'
 	},
@@ -796,7 +804,6 @@ Ext.define('HreRem.ux.util.Constants', {
 		FICHA: 'FIC'
 	},
 
-	
 	TIPO_ELEMENTOS_GASTO:{
 		CODIGO_ACTIVO: 'ACT',
 		CODIGO_AGRUPACION: 'AGR',
@@ -839,5 +846,34 @@ Ext.define('HreRem.ux.util.Constants', {
 		SOLICITADO: 'SOL',
 		APROBADO: 'APR',
 		RECHAZADO: 'REC'
+	},
+	
+	ESTADO_ADMISION: {
+		CODIGO_PENDIENTE_TITULO: 'PET',
+		CODIGO_PENDIENTE_REVISION: 'PRT',
+		CODIGO_PENDIENTE_SANEAMIENTO: 'PSR',
+		CODIGO_SANEADO_REGISTRALMENTE: 'SAR'
+	},
+	
+	SUBESTADO_ADMISION: {
+		CODIGO_PENDIENTE_INSCRIPCION: 'PIN',
+		CODIGO_INCIDENCIA_INSC: 'IIN',
+		CODIGO_PENDIENTE_CARGAS: 'PCA',
+		CODIGO_CONCURSO_ACREEDORES: 'CAC'
+
+	},
+	DD_TOB_TIPO_OBSERVACION: {
+		STOCK: '01',
+		POSESION: '02',
+		INSCRIPCION: '03',
+		CARGAS: '04',
+		LLAVES: '05',
+		SANEAMIENTO: '06',
+		REVISION_TITULO: '07'
+	},
+	OBSERVACIONES_TAB_LAUNCH: {
+		ACTIVO : 'activo',
+		SANEAMIENTO: 'saneamiento',
+		REVISION_TITULO: 'revisionTitulo'
 	}
 });

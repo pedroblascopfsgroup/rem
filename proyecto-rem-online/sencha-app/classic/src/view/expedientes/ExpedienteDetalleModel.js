@@ -500,8 +500,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			var tareaPro = get('datosbasicosoferta.tareaAutorizacionPropiedadFinalizada');
 			var idAn = get('datosbasicosoferta.idAdvisoryNote');
 			var exclusion = get('datosbasicosoferta.exclusionBulk');
-			return ($AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL_BO_INM']) && !Ext.isEmpty(idAn) && !Ext.isEmpty(exclusion)
-			&& (tareaAn == true || tareaAn == 'true') && (tareaPro == false || tareaPro == 'false'));
+			return (($AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL_BO_INM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+				&& !Ext.isEmpty(idAn) && !Ext.isEmpty(exclusion) && (tareaAn == true || tareaAn == 'true') 
+				&& (tareaPro == false || tareaPro == 'false'));
 		},
 		esPerfilPMyCEs: function(get){
 			
@@ -1197,7 +1198,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			type: 'uxproxy',
 			remoteUrl: 'expedientecomercial/getComboUsuarios',
 			extraParams: {idTipoGestor: '{tipoGestor.selection.id}'}
-			}
+			},
+			autoLoad: false,
+			remoteFilter: false,
+			remoteSort: false
 		},
 		
 		storeGestores: {
@@ -1360,7 +1364,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        extraParams: {idExpediente: '{expediente.id}'}
 	    	},
 			autoLoad: true
-		}
+		},
+		comboMotivoAmpliacionArras: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivoAmpliacionArras'}
+			}
+	    }
 		
     }
 });

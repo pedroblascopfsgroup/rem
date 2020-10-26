@@ -390,6 +390,10 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		var activo= null;
 		var arraySelection= [];
 		var codPromo;
+		var idTarea = me.lookupReference('idTarea').getValue();
+		var campoIdTareaInformado = idTarea != null;
+		var existeTarea = null;
+		
 		if(me.lookupReference('fechaTopeTrabajo').getValue() == null){
 			if(me.lookupReference('horaConcretaTrabajo').getValue() == null || me.lookupReference('horaConcretaTrabajo').getValue() == null){
 				Ext.MessageBox.alert("Error","La fecha concreta y la hora concreta no puede ser null cuando no hay fecha tope");
@@ -482,7 +486,38 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			return false;
 			
 		}
+		
+		if ( campoIdTareaInformado ) {
+			var url = me.getExisteTareaEndpoint();
+			if ( 'DEV' === url ){
+				// La respuesta del metodo es 'DEV' en entornos previos. El campo debe de estar vacio
+				  me.fireEvent("errorToast", HreRem.i18n("msg.error.conection.haya"));
+				  existeTarea = false;
+				  return false;
+			} else {
+				url += '/' + idTarea;
+		    	Ext.Ajax.request({
+					  url:     url,
+					  async:   false,
+					  method:  'GET',
+					  success: function(response, opts) {
+						  var decode = Ext.JSON.decode(response.responseText);
+						  existeTarea = true;
+					  },
+					  failure: function () {
+						  existeTarea = false;
+						  me.fireEvent("errorToast", HreRem.i18n("msg.error.conection.haya"));
+					  }
+		      	});
+		    	
+		    	if ( !existeTarea ) {
+		    		me.fireEvent("errorToast", HreRem.i18n("msg.no.existe.tarea"));
+		    		return false;
+		    	}
+			}
+		}
 
+		
 		if(me.getView().trabajoDesdeActivo){
 			me.crearTrabajo(btn,arraySelection,null);
 		}else{
@@ -497,7 +532,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			    	}
 			);
 		}
-
 	},
 	
 	// Este método es llamado cuando se pulsa el botón de 'crear' en la ventana pop-up
@@ -1687,7 +1721,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 				    me.lookupReference('gridpresupuestostrabajo').setDisabled(false);
     			}
 	    		
-	    	}else if(estadoTrabajo == "REJ" || estadoTrabajo == "13"){
+	    	}else if(estadoTrabajo == "REJ"){
 	    		
 	    		if(esFichaTrabajo){
     				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
@@ -1696,12 +1730,27 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		    		me.lookupReference('fechaTope').setReadOnly(false);
     			}
 	    		
+	    	} else if (estadoTrabajo == "13"){
+	    		if(esFichaTrabajo){
+    				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
+    			}
 	    	}
     		
 	    } else if(esProvActivo){
 	    	
-	    	if(estadoTrabajo == "CUR" || estadoTrabajo == "REJ"){
+	    	if(estadoTrabajo == "CUR"){
 	    		
+	    		if(esFichaTrabajo){
+    				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
+		    		me.lookupReference('fechaEjecucionRef').setReadOnly(false);
+		    		me.lookupReference('checkSiniestroRef').setReadOnly(false);
+    			} else {
+    				me.lookupReference('gridtarifastrabajo').setTopBar(true)
+    	    		me.lookupReference('gridpresupuestostrabajo').setTopBar(true)
+    			    me.lookupReference('gridtarifastrabajo').setDisabled(false);
+    			    me.lookupReference('gridpresupuestostrabajo').setDisabled(false);    			}
+	    		
+	    	} else if (estadoTrabajo == "REJ"){
 	    		if(esFichaTrabajo){
     				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
 		    		me.lookupReference('fechaEjecucionRef').setReadOnly(false);
@@ -1710,7 +1759,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		    		me.lookupReference('gridtarifastrabajo').setTopBar(true)
 				    me.lookupReference('gridtarifastrabajo').setDisabled(false);
     			}
-	    		
 	    	}
 	    	
 	    }
@@ -1969,6 +2017,25 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
  	   	var isUserGestedi = $AU.userIsRol(CONST.PERFILES['GESTEDI']);
  	   	
  	   	return !isSuper && !isGestorActivos && !isGestorAlquiler && isUserGestedi; 
+    },
+    
+    getExisteTareaEndpoint: function () {
+    	var url = $AC.getRemoteUrl('tarea/getEndpointExisteTareaHaya');
+    	var endpoint = null;
+    	Ext.Ajax.request({
+			  url:     url,
+			  async:   false, 
+			  method:  'GET',
+			  success: function(response, opts) {
+				  var decode = Ext.JSON.decode(response.responseText); 
+				  endpoint = decode['endpoint'];
+			  },
+			  failure: function (err) {
+				  console.error(err);
+			  }
+      	});
+    	
+    	return endpoint;
     }
 
 });

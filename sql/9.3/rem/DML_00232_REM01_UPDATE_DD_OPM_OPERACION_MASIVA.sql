@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=Sergio Salt
---## FECHA_CREACION=202001008
+--## AUTOR= Lara Pablo 
+--## FECHA_CREACION=202001021
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-11013
+--## INCIDENCIA_LINK=HREOS-11720
 --## PRODUCTO=NO
 --## 
 --## Finalidad: 
@@ -28,7 +28,7 @@ DECLARE
     V_COUNT_UPDATE NUMBER(16):= 0; -- Vble. para contar updates
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_USUARIO VARCHAR2(32 CHAR):= 'HREOS-11013';
+    V_USUARIO VARCHAR2(32 CHAR):= 'HREOS-11720';
 	ACT_NUM_ACTIVO_UVEM NUMBER(32);
 	DD_SCR_DESCRIPCION VARCHAR2(72 CHAR);
 	ACT_NUM_ACTIVO_OLD NUMBER(32);
@@ -40,7 +40,7 @@ BEGIN
 	V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET 
 				  USUARIOMODIFICAR = '''||V_USUARIO||'''
 				, FECHAMODIFICAR = SYSDATE
-				, DD_OPM_VALIDACION_FORMATO = ''n*,s*,i,s,i,i,s,i,i,i,i,i,s,s,s,n,s,s,s,n''
+				, DD_OPM_VALIDACION_FORMATO = ''n*,s*,i,s,i,i,s,i,i,i,i,i,s,s,s,i,s,s,s,i''
 				WHERE DD_OPM_CODIGO = ''CMMLD''
 				';
 

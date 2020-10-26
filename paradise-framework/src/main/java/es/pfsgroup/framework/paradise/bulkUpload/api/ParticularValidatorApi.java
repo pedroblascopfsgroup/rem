@@ -1214,7 +1214,6 @@ public interface ParticularValidatorApi {
 
 	public Boolean esTipoRegimenProteccion(String codCampo);
 
-
 	Boolean mismaCarteraLineaDetalleGasto(String numGasto, String tipoElemento);
 
 	Boolean isActivoBankia(String numActivo);
@@ -1235,9 +1234,9 @@ public interface ParticularValidatorApi {
 
 	Boolean agrupacionSinActivos(String numAgrupacion);
 
-	Boolean isAgrupacionMismaCarteraGasto(String numAgrupacion, String carteraGasto);
+	Boolean esGastoYAgrupacionMismoPropietarioByNumGasto(String numAgrupacion, String numGasto);
 
-	Boolean isActivoMismaCarteraGasto(String numActivo, String numGastoHaya);
+	Boolean esGastoYActivoMismoPropietarioByNumGasto(String numActivo, String numGastoHaya);
 
 	Boolean existeEntidadGasto(String entidad);
 
@@ -1261,9 +1260,9 @@ public interface ParticularValidatorApi {
 
 	Boolean esPropietarioDeCarteraByCodigo(String docIdentificadorPropietario, String cartera);
 
-	Boolean esPropietarioYActivoMismaCartera(String docIdentificadorPropietario, String numActivo);
+	Boolean esGastoYActivoMismoPropietario(String docIdentificadorPropietario, String numActivo);
 
-	Boolean esPropietarioYAgrupacionMismaCartera(String docIdentificadorPropietario, String numAgrupacion);
+	Boolean esGastoYAgrupacionMismoPropietario(String docIdentificadorPropietario, String numAgrupacion);
 
 	Boolean existeEmisor(String emisorNIF);
 
@@ -1309,5 +1308,8 @@ public interface ParticularValidatorApi {
 
 	Boolean esOfertaErronea(String numOferta);
 
+	Boolean existePais(String pais);
+
+	Boolean existeMunicipioDeProvinciaByCodigo(String codProvincia, String codigoMunicipio);
 
 }

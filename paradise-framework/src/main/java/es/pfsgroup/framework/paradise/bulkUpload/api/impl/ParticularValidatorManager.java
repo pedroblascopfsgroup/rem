@@ -1422,6 +1422,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean existeMunicipioDeProvinciaByCodigo(String codProvincia, String codigoMunicipio) {
+		if(codigoMunicipio == null || codProvincia == null) {
+			return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ${master.schema}.DD_LOC_LOCALIDAD LOC"
+				+ "		 INNER JOIN ${master.schema}.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_ID = LOC.DD_PRV_ID"
+				+ "		 WHERE PRV.DD_PRV_CODIGO = '"+codProvincia+"' AND"
+				+ "		 LOC.DD_LOC_CODIGO = '" + codigoMunicipio + "'");
+
+		return !"0".equals(resultado);
+	}
 
 	@Override
 	public Boolean existeUnidadInferiorMunicipioByCodigo(String codigoUnidadInferiorMunicipio) {
@@ -2745,7 +2760,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return rawDao.getExecuteSQL("SELECT tco.DD_TCO_CODIGO FROM ACT_ACTIVO act "
 				+ " INNER JOIN DD_TCO_TIPO_COMERCIALIZACION tco ON act.DD_TCO_ID = tco.DD_TCO_ID "
-				+ " WHERE act.ACT_NUM_ACTIVO = '"+numActivo+"'");
+				+ " WHERE act.ACT_NUM_ACTIVO = "+numActivo+" AND act.BORRADO = 0");
 	}
 
 	@Override
@@ -5157,6 +5172,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	@Override
+	public Boolean existePais(String pais) {
+		if(pais == null || pais.isEmpty()) return null;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM DD_PAI_PAISES WHERE DD_PAI_CODIGO = '"+pais+"'");
+		return "1".equals(resultado);
+	}
+
+	@Override
 	public boolean existeMismoProveedorContactoInformado(String codProveedor, String numTrabajo) {
 		String resultado = null;
 		String query = "SELECT COUNT(1) FROM ACT_TBJ_TRABAJO TBJ  "
@@ -5288,64 +5310,62 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
-	public Boolean isAgrupacionMismaCarteraGasto(String numAgrupacion, String numGastoHaya) {
+	public Boolean esGastoYAgrupacionMismoPropietarioByNumGasto(String numAgrupacion, String numGastoHaya) {
 		if (Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion) || Checks.esNulo(numGastoHaya) || !StringUtils.isNumeric(numGastoHaya))
 			return false;
 		
-		String carteraGasto = rawDao.getExecuteSQL("SELECT APRO.DD_CRA_ID FROM ACT_PRO_PROPIETARIO APRO " + 
+		String carteraGasto = rawDao.getExecuteSQL("SELECT APRO.PRO_ID FROM ACT_PRO_PROPIETARIO APRO " + 
 				"         JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.PRO_ID = APRO.PRO_ID " + 
 				"         WHERE GPV.GPV_NUM_GASTO_HAYA = '"+numGastoHaya+"' AND GPV.BORRADO = 0 AND APRO.BORRADO = 0 ");
-		
-		String carteraAgrupacion = null;
-		String masDeUnaCartera = rawDao.getExecuteSQL("SELECT count(*) FROM (SELECT DISTINCT ACT.DD_CRA_ID " + 
-				"		FROM ACT_ACTIVO ACT " + 
-				"		WHERE EXISTS ( " + 
-				"		   SELECT 1 " + 
-				"		   FROM ACT_AGR_AGRUPACION AGR " + 
-				"		   JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = AGR.AGR_ID " + 
-				"		   WHERE AGR.AGR_NUM_AGRUP_REM = '"+numAgrupacion+"' " + 
-				"		       AND AGA.ACT_ID  = ACT.ACT_ID " + 
-				"		       AND AGR.BORRADO = 0 " + 
-				"		       AND AGR.AGR_FECHA_BAJA IS NULL " + 
-				"		))");
-		
-		if("1".equals(masDeUnaCartera)) {
-			carteraAgrupacion = rawDao.getExecuteSQL("SELECT DISTINCT ACT.DD_CRA_ID " + 
-					"		FROM ACT_ACTIVO ACT " + 
+					
+			String carteraAgrupacion = null;
+			String masDeUnaCartera = rawDao.getExecuteSQL("SELECT count(*) FROM (SELECT DISTINCT PACT.PRO_ID   " + 
+					"		FROM ACT_PAC_PROPIETARIO_ACTIVO PACT " + 
 					"		WHERE EXISTS ( " + 
 					"		   SELECT 1 " + 
 					"		   FROM ACT_AGR_AGRUPACION AGR " + 
 					"		   JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = AGR.AGR_ID " + 
 					"		   WHERE AGR.AGR_NUM_AGRUP_REM = '"+numAgrupacion+"' " + 
-					"		       AND AGA.ACT_ID  = ACT.ACT_ID " + 
+					"		       AND AGA.ACT_ID  = PACT.ACT_ID " + 
 					"		       AND AGR.BORRADO = 0 " + 
 					"		       AND AGR.AGR_FECHA_BAJA IS NULL " + 
-					"		)");
-		}
-		if(Checks.esNulo(carteraGasto) || Checks.esNulo(carteraAgrupacion)) {
-			return false;
-		}
-		
-		
-		
-		return carteraGasto.equals(carteraAgrupacion);
+					"		))");
+			
+			if("1".equals(masDeUnaCartera)) {
+				carteraAgrupacion = rawDao.getExecuteSQL("SELECT DISTINCT PACT.PRO_ID " + 
+						"		FROM ACT_PAC_PROPIETARIO_ACTIVO PACT " + 
+						"		WHERE EXISTS ( " + 
+						"		   SELECT 1 " + 
+						"		   FROM ACT_AGR_AGRUPACION AGR " + 
+						"		   JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = AGR.AGR_ID " + 
+						"		   WHERE AGR.AGR_NUM_AGRUP_REM = '"+numAgrupacion+"' " + 
+						"		       AND AGA.ACT_ID  = PACT.ACT_ID " + 
+						"		       AND AGR.BORRADO = 0 " + 
+						"		       AND AGR.AGR_FECHA_BAJA IS NULL " + 
+						"		)");
+			}
+			if(Checks.esNulo(carteraGasto) || Checks.esNulo(carteraAgrupacion)) {
+				return false;
+			}
+						
+			return carteraGasto.equals(carteraAgrupacion);
 	}
 
 	@Override
-	public Boolean isActivoMismaCarteraGasto(String numActivo, String numGastoHaya) {
+	public Boolean esGastoYActivoMismoPropietarioByNumGasto(String numActivo, String numGastoHaya) {
 		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo) || Checks.esNulo(numGastoHaya) || !StringUtils.isNumeric(numGastoHaya))
 			return false;
 		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) " +
 				"FROM ACT_ACTIVO ACT " +
 				"WHERE EXISTS ( "+
-				   "SELECT APRO.DD_CRA_ID "+
-				   "FROM ACT_PRO_PROPIETARIO APRO "+
+				   "SELECT APRO.PRO_ID "+
+				   "FROM ACT_PAC_PROPIETARIO_ACTIVO APRO "+
 				   "JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.PRO_ID = APRO.PRO_ID "+
 				       "AND GPV.BORRADO = 0 "+
 				   "WHERE APRO.BORRADO = 0 "+
 				       "AND GPV.GPV_NUM_GASTO_HAYA = '"+numGastoHaya+"' "+
-				       "AND APRO.DD_CRA_ID = ACT.DD_CRA_ID) "+
+				       "AND APRO.ACT_ID = ACT.ACT_ID) "+
 				   "AND ACT.BORRADO = 0 "+
 				   "AND ACT.ACT_NUM_ACTIVO = '"+numActivo+"'");
 		return !"0".equals(resultado);
@@ -5561,39 +5581,64 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
     }
 	
 	@Override
-    public Boolean esPropietarioYActivoMismaCartera(String docIdentificadorPropietario, String numActivo) {
+    public Boolean esGastoYActivoMismoPropietario(String docIdentificadorPropietario, String numActivo) {
 	    if(Checks.esNulo(docIdentificadorPropietario) && Checks.esNulo(numActivo)) {
             return false;
 	    }
 	
 	    String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 	    				+ "              FROM ACT_ACTIVO ACT "
-	    				+ "				 WHERE ACT.ACT_NUM_ACTIVO = '" + numActivo + "' AND ACT.DD_CRA_ID = "
-	    						+ "(SELECT CRA.DD_CRA_ID "
+	    				+ "				 JOIN ACT_PAC_PROPIETARIO_ACTIVO PACT ON ACT.ACT_ID = PACT.ACT_ID"
+	    				+ "				 WHERE ACT.ACT_NUM_ACTIVO = '" + numActivo + "' AND PACT.PRO_ID = "
+	    						+ "(SELECT PRO.PRO_ID "
 	    						+ "FROM ACT_PRO_PROPIETARIO PRO "
-	    						+ "JOIN DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID	"
 	    						+ "WHERE PRO.PRO_DOCIDENTIF LIKE '" + docIdentificadorPropietario + "')"
 	                    );
 	    return !"0".equals(resultado);
     }
 	
 	@Override
-    public Boolean esPropietarioYAgrupacionMismaCartera(String docIdentificadorPropietario, String numAgrupacion) {
+    public Boolean esGastoYAgrupacionMismoPropietario(String docIdentificadorPropietario, String numAgrupacion) {
 	    if(Checks.esNulo(docIdentificadorPropietario) && Checks.esNulo(numAgrupacion)) {
             return false;
 	    }
 	
-	    String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
-	    				+ "              FROM ACT_AGR_AGRUPACION AGR "
-	    				+ "              JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AGR.AGR_ACT_PRINCIPAL "
-	    				+ "              JOIN DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID "
-	    				+ "				 WHERE AGR.AGR_NUM_AGRUP_REM = '" + numAgrupacion + "' AND ACT.DD_CRA_ID = "
-	    						+ "(SELECT CRA.DD_CRA_ID "
-	    						+ "FROM ACT_PRO_PROPIETARIO PRO "
-	    						+ "JOIN DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID	"
-	    						+ "WHERE PRO.PRO_DOCIDENTIF LIKE '" + docIdentificadorPropietario + "')"
-	                    );
-	    return !"0".equals(resultado);
+	    String carteraGasto = rawDao.getExecuteSQL("SELECT APRO.PRO_ID FROM ACT_PRO_PROPIETARIO APRO " + 
+				"         WHERE APRO.pro_docidentif = '"+docIdentificadorPropietario+"' AND  APRO.BORRADO = 0 ");
+		
+		String carteraAgrupacion = null;
+		String masDeUnaCartera = rawDao.getExecuteSQL("SELECT count(*) FROM (SELECT DISTINCT PACT.PRO_ID   " + 
+				"		FROM ACT_PAC_PROPIETARIO_ACTIVO PACT " + 
+				"		WHERE EXISTS ( " + 
+				"		   SELECT 1 " + 
+				"		   FROM ACT_AGR_AGRUPACION AGR " + 
+				"		   JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = AGR.AGR_ID " + 
+				"		   WHERE AGR.AGR_NUM_AGRUP_REM = '"+numAgrupacion+"' " + 
+				"		       AND AGA.ACT_ID  = PACT.ACT_ID " + 
+				"		       AND AGR.BORRADO = 0 " + 
+				"		       AND AGR.AGR_FECHA_BAJA IS NULL " + 
+				"		))");
+		
+		if("1".equals(masDeUnaCartera)) {
+			carteraAgrupacion = rawDao.getExecuteSQL("SELECT DISTINCT PACT.PRO_ID " + 
+					"		FROM ACT_PAC_PROPIETARIO_ACTIVO PACT " + 
+					"		WHERE EXISTS ( " + 
+					"		   SELECT 1 " + 
+					"		   FROM ACT_AGR_AGRUPACION AGR " + 
+					"		   JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.AGR_ID = AGR.AGR_ID " + 
+					"		   WHERE AGR.AGR_NUM_AGRUP_REM = '"+numAgrupacion+"' " + 
+					"		       AND AGA.ACT_ID  = PACT.ACT_ID " + 
+					"		       AND AGR.BORRADO = 0 " + 
+					"		       AND AGR.AGR_FECHA_BAJA IS NULL " + 
+					"		)");
+		}
+		if(Checks.esNulo(carteraGasto) || Checks.esNulo(carteraAgrupacion)) {
+			return false;
+		}
+		
+		
+		
+		return carteraGasto.equals(carteraAgrupacion);
     }
 	
 	@Override
@@ -5798,7 +5843,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				" FROM gld_gastos_linea_detalle linea " + 
 				" JOIN gpv_gastos_proveedor gasto ON gasto.gpv_id = linea.gpv_id AND GASTO.GPV_NUM_GASTO_HAYA = " + idGasto + 
 				" where GLD_ID = "+ idLinea +" AND gasto.borrado = 0 AND linea.borrado = 0");
-		
+
 		return !"0".equals(resultado);
-	}
+	}		
+
 }

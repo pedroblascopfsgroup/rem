@@ -247,6 +247,11 @@ public class MSVExcelValidatorFactoryImpl {
 	@Autowired
 	private MSVValidatorTarifasPresupuestos validatorTarifasPresupuesto;
 
+<<<<<<< HEAD
+=======
+	@Autowired
+	private MSVValidatorConfiguracionPeriodosVoluntarios cargaMasivaConfiguracionPeriodosVoluntarios;
+>>>>>>> R-Entrefina
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 
@@ -406,8 +411,13 @@ public class MSVExcelValidatorFactoryImpl {
 			return altaActivosBBVA;
 		}else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_MASIVO_TARIFAS_PRESUPUESTO.equals(codTipoOperacion)) {
 			return validatorTarifasPresupuesto;
+<<<<<<< HEAD
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_SANCIONES_BBVA.equals(codTipoOperacion)) {
 			return sancionesBBVA;
+=======
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_CONFIGURACION_PERIODOS_VOLUNTARIOS.equals(codTipoOperacion)) {
+			return cargaMasivaConfiguracionPeriodosVoluntarios;
+>>>>>>> R-Entrefina
 		}
 
 		return null;

@@ -413,8 +413,8 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 			    					},
 	
 			    				    listeners : [
-			    				    	{rowdblclick: 'onPresupuestosListDobleClick',
-			    				    	 rowclick: 'onPresupuestosListClick'
+			    				    	{rowdblclick: 'onPresupuestosListDobleClick'
+			    				    	 //rowclick: 'onPresupuestosListClick'
 			    				    	}
 			    				    ],
 			    				    saveSuccessFn: function () {
@@ -430,6 +430,68 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 	    					}
 	    	            ]
 	            	},
+	            	{
+						//Bloque de penalizacion
+					
+		            	xtype: 'fieldsettable',
+		            	defaultType: 'textfieldbase',
+		            	title: HreRem.i18n('title.penalizacion.retraso'),
+						bind: {
+							disabled: '{disablePorCierreEconomico}'
+						},
+		            	items: [
+							{
+								xtype: 'datefieldbase',
+								maxValue: null,
+								readOnly: true,
+								fieldLabel:  HreRem.i18n('fieldlabel.fecha.compromiso.ejecucion'),
+								//width: 		260,
+								bind: '{gestionEconomica.fechaCompromisoEjecucion}'
+							},
+							{
+								xtype: 'displayfieldbase',
+								fieldLabel:  HreRem.i18n('fieldlabel.dias.retraso.origen'),
+								//width: 		260,
+								bind: '{gestionEconomica.diasRetrasoOrigen}'
+							},
+							{
+								xtype: 'currencyfieldbase',
+								readOnly: true,
+								fieldLabel:  HreRem.i18n('fieldlabel.importe.penalizacion.total'),
+								//width: 		260,
+								bind: '{gestionEconomica.importePenalizacionTotal}',
+	        	            	reference: 'importepenalizaciontotalref'
+							},
+							{
+								xtype: 'datefieldbase',
+								maxValue: null,
+								readOnly: true,
+								fieldLabel:  HreRem.i18n('fieldlabel.fecha.ejecucion.real'),
+								//width: 		260,
+								bind: '{gestionEconomica.fechaEjecucionReal}'
+							},
+							{
+								xtype: 'displayfieldbase',
+								fieldLabel:  HreRem.i18n('fieldlabel.dias.retraso.mes.curso'),
+								//width: 		260,
+								bind: '{gestionEconomica.diasRetrasoMesCurso}'
+							},
+							{
+								xtype: 'currencyfieldbase',
+								readOnly: true,
+								fieldLabel:  HreRem.i18n('fieldlabel.importe.penalizacion.mes.curso'),
+								//width: 		260,
+								bind: '{gestionEconomica.importePenalizacionMesCurso}'
+							},
+							{
+								xtype: 'currencyfieldbase',
+								fieldLabel:  HreRem.i18n('fieldlabel.importe.penalizacion.diario'),
+								//width: 		260,
+								bind: '{gestionEconomica.importePenalizacionDiario}'
+							}
+		            	]
+	    	          
+					},
 					//Bloque de base imponible
 					{
 						xtype:'fieldset',

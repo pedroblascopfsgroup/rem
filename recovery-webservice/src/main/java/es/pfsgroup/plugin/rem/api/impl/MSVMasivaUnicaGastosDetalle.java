@@ -12,6 +12,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,7 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.gasto.linea.detalle.dao.GastoLineaDetalleDao;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
@@ -121,6 +123,8 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 	
 	protected static final Log logger = LogFactory.getLog(MSVMasivaUnicaGastosDetalle.class);
 	
+	//private static DtoCargaMasivaUnicaGastos dtoGastos;
+	
 	@Autowired
 	private GenericABMDao genericDao;
 	
@@ -186,6 +190,7 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 						}
 					}	
 				}
+			
 				
 				if(!Checks.esNulo(idGasto))	{
 					newGastoProveedor = genericDao.get(GastoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", idGasto)); 
@@ -420,6 +425,18 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 								
 							}
 						}
+					}else if (DDEntidadGasto.CODIGO_ACTIVO.equals(entidadGasto.getCodigo())) {
+						
+						Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "numActivo",  Long.parseLong(exc.dameCelda(fila, COL_ID_ELEMENTO)));
+						Activo activo = genericDao.get(Activo.class, filtroActivo);
+						
+						GastoLineaDetalleEntidad gastoLineaDetalleEntidad = new GastoLineaDetalleEntidad();
+						gastoLineaDetalleEntidad.setGastoLineaDetalle(newGastoLineaDetalle);
+						gastoLineaDetalleEntidad.setEntidad(activo.getId());
+						gastoLineaDetalleEntidad.setEntidadGasto(entidadGasto);
+						gastoLineaDetalleEntidad.setParticipacionGasto(Double.parseDouble(exc.dameCelda(fila, COL_PARTICIPACION_LINEA_DETALLE)));
+						genericDao.save(GastoLineaDetalleEntidad.class,gastoLineaDetalleEntidad);
+						
 					}else {
 						GastoLineaDetalleEntidad gastoLineaDetalleEntidad = new GastoLineaDetalleEntidad();
 						gastoLineaDetalleEntidad.setGastoLineaDetalle(newGastoLineaDetalle);
@@ -459,7 +476,7 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 						gastoDetalleEconomico.setFechaConexion(new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, COL_F_CONEXION)));
 					}
 					
-					if(exc.dameCelda(fila, COL_OFICINA) != null && exc.dameCelda(fila, COL_OFICINA).isEmpty()) {
+					if(exc.dameCelda(fila, COL_OFICINA) != null && !exc.dameCelda(fila, COL_OFICINA).isEmpty()) {
 						gastoDetalleEconomico.setOficinaBankia(exc.dameCelda(fila, COL_OFICINA));
 					}
 					
@@ -696,12 +713,11 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 				
 				listaAsociaciones.put(exc.dameCelda(fila, COL_ID_AGRUPADOR_GASTO), newGastoProveedor.getId());
 				listaAsociaciones.put(exc.dameCelda(fila, COL_ID_AGRUPADOR_GASTO).concat(exc.dameCelda(fila, COL_COD_AGRUPACION_LINEA_DETALLE)), newGastoLineaDetalle.getId());
-				context.put(ProcesoMasivoContext.LISTA_ASOCIACIONES, listaAsociaciones);
-			
+				context.put(ProcesoMasivoContext.LISTA_ASOCIACIONES, listaAsociaciones);	
 		} catch (Exception e) {
 			logger.error("Error en MSVMasivaModificacionLineasDetalle", e);
 		}
-		
+	
 		return new ResultadoProcesarFila();
 	}
 
@@ -746,12 +762,13 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 				}
 			}
 		}
+		
 		return listaAsociacion;
 	}
 	
 	private boolean stringToBoolean(String valor){
 		boolean bool = false;
-		if(!Checks.esNulo(valor) && !Arrays.asList(listaValidosPositivos).contains(valor.toUpperCase())) {
+		if(!Checks.esNulo(valor) && Arrays.asList(listaValidosPositivos).contains(valor.toUpperCase())) {
 			bool = true;
 		}
 		

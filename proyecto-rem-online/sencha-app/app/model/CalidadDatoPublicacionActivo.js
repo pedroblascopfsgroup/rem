@@ -3,18 +3,21 @@ Ext.define('HreRem.model.CalidadDatoPublicacionActivo', {
 	idProperty: 'idActivo',
 
 	fields: [
+	//FASE0
 		{
-			name: 'comentario'
+			name: 'idActivo'
 		}
-	]/*,
+	//FASE3
+		//FASE4
+	],
 
 	proxy: {
 		type: 'uxproxy',
 		api: {
-			create: 'activo/saveFasePublicacionActivo',
-			read: 'activo/getFasePublicacionActivo',
-			update: 'activo/saveFasePublicacionActivo'
-		},
-		extraParams: {tab: 'fasepublicacionactivo'}
-	}*/
+			//create: 'activo/saveFasePublicacionActivo',
+			read: 'activo/getCalidadDatoPublicacionActivo'//,
+			//update: 'activo/saveFasePublicacionActivo'
+		}/*,
+		extraParams: {tab: 'calidaddatopublicacion'}*/
+	}
 });

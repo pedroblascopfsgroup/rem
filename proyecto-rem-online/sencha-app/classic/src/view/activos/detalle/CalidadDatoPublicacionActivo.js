@@ -6,12 +6,12 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 	scrollable : 'y',
 	refreshAfterSave : true,
 	disableValidation : false,
-	//records : ['calidaddatopublicacionactivo'],
-	//recordsClass : ['HreRem.model.CalidadDatoPublicacionActivo'],
-	//requires	:['HreRem.view.common.FieldSetTable'],
-	/*listeners : {
+	recordName : "calidaddatopublicacionactivo",
+	recordClass : "HreRem.model.CalidadDatoPublicacionActivo",
+	requires	:['HreRem.view.common.FieldSetTable', 'HreRem.model.CalidadDatoPublicacionActivo'],
+	listeners : {
 		boxready : 'cargarTabData'
-	},*/ 
+	},
 	initComponent : function() {
 		var me = this;
 		me.setTitle(HreRem.i18n('publicacion.calidad.datos.titulo'));
@@ -42,13 +42,23 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 			}]
 		
 		},
-		
+		{
+			
+			cls: 'no-pointer',
+			title: HreRem.i18n('publicacion.calidad.datos.correcto'),
+			style:{
+				backgroundColor: 'white'
+			},
+			bind: {
+				iconCls:'{getIconClsDQCorrecto}'
+			}
+		},
 		{
 			xtype:'fieldsettable',
 			cls	 :  'fieldsetCabecera',
 			title : HreRem.i18n('publicacion.calidad.datos.fase0'),
 			collapsible : true,
-			collapsed : false,
+			collapsed : false//,
 			/*items : [{
 				xtype : 'textfieldbase',
 				fieldLabel : HreRem
@@ -58,12 +68,23 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 					value : '{calidaddatopublicacionactivo.comentario}'
 				}
 			}]*/
-		}, {
+		}, 
+		{
+			cls: 'no-pointer',
+			title: HreRem.i18n('publicacion.calidad.datos.correcto'),
+			style:{
+				backgroundColor: 'white'
+			},
+			bind: {
+				iconCls:'{getIconClsDQCorrecto}'
+			}
+		},
+		{
 			xtype:'fieldsettable',
 			cls	 :  'fieldsetCabecera',
 			title : HreRem.i18n('publicacion.calidad.datos.fase3'),
 			collapsible : true,
-			collapsed : true,
+			collapsed : true//,
 			/*items : [{
 				xtype : 'textareafieldbase',
 				fieldLabel : HreRem
@@ -73,12 +94,23 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 					value : '{calidaddatopublicacionactivo.comentario}'
 				}
 			}]*/
-		}, {
+		}, 
+		{
+			cls: 'no-pointer',
+			title: HreRem.i18n('publicacion.calidad.datos.correcto'),
+			style:{
+				backgroundColor: 'white'
+			},
+			bind: {
+				iconCls:'{getIconClsDQCorrecto}'
+			}
+		},	
+		{
 			xtype:'fieldsettable',
 			cls	 :  'fieldsetCabecera',
 			title : HreRem.i18n('publicacion.calidad.datos.fase4'),
 			collapsible : true,
-			collapsed : true,
+			collapsed : true//,
 			/*items : [{
 				xtype : 'textareafieldbase',
 				fieldLabel : HreRem

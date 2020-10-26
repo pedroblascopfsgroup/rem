@@ -3439,4 +3439,12 @@ public class ActivoController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getCalidadDatoPublicacionActivo(Long id, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, activoEstadoPublicacionApi.getCalidadDatoPublicacionActivo(id));
+		model.put(RESPONSE_SUCCESS_KEY, true);
+
+		return createModelAndViewJson(model);
+	}
 }

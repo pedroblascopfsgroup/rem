@@ -54,6 +54,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTransicionesFasesPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
+import es.pfsgroup.plugin.rem.model.DtoCalidadDatoPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
@@ -1559,5 +1560,17 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			}
 		}
 		return listaDtoHistoricoFasesDePublicacion;
+	}
+
+	@Override
+	public DtoCalidadDatoPublicacionActivo getCalidadDatoPublicacionActivo(Long idActivo) {
+		DtoCalidadDatoPublicacionActivo dto = new DtoCalidadDatoPublicacionActivo();
+		Activo activo = activoDao.get(idActivo);
+		if(activo != null) {
+			dto.setIdActivo(activo.getId());	
+		}
+		
+		
+		return dto;
 	}
 }

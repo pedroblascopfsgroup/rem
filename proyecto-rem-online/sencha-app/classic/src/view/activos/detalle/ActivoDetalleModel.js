@@ -963,7 +963,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				return true;
 			else
 				return false;
-		}
+		},
+		
+	     getIconClsDQCorrecto: function(get) {
+	     	//var estadoAdmision = get('activo.admision');
+	     	return 'app-tbfiedset-ico icono-tickok';
+	     	//return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	//return 'app-tbfiedset-ico icono-tickko';
+	     	
+	     }
 	 }, 
 	 
 	 stores: {

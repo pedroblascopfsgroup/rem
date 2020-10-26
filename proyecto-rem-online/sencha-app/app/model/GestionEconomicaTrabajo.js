@@ -98,7 +98,8 @@ Ext.define('HreRem.model.GestionEconomicaTrabajo', {
      					return 0;
      				}
      				
-    			}  
+    			},
+    			depends: ['importePenalizacionDiario', 'diasRetrasoOrigen']
     		},
     		{
     			name: 'importePenalizacionMesCurso',
@@ -110,7 +111,8 @@ Ext.define('HreRem.model.GestionEconomicaTrabajo', {
      				{
      					return 0;
      				}
-    			}  
+    			},
+    			depends: ['importePenalizacionDiario', 'diasRetrasoOrigen']  
     		},
     		{
     			name: 'idProveedor'

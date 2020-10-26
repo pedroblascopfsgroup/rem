@@ -2448,6 +2448,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (!Checks.esNulo(dtoTrabajo.getRequerimiento())) {
 			trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
 		}
+		if(trabajo.getFechaHoraConcreta() != null) {
+			trabajo.setFechaCompromisoEjecucion(trabajo.getFechaHoraConcreta());
+		}
+		else if (trabajo.getFechaTope() != null) {
+			trabajo.setFechaCompromisoEjecucion(trabajo.getFechaTope());
+		}
 	}
 
 	private void dtoGestionEconomicaToTrabajo(DtoGestionEconomicaTrabajo dtoGestionEconomica, Trabajo trabajo)

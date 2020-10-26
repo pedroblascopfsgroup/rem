@@ -771,11 +771,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		CODIGO_HAYA_REMAINING: '41',
 		CODIGO_HAYA_APPLE: '42'
 	},
-	
-<<<<<<< HEAD
 
-=======
->>>>>>> R-Entrefina
 	BTN: {
 		CREAR_TRABAJO: 'BtnCrearTrabajo'
 	},

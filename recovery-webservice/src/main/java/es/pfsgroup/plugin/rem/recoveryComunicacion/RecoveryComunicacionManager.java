@@ -1,9 +1,14 @@
 package es.pfsgroup.plugin.rem.recoveryComunicacion;
 
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.RecoveryComunicacionApi;
+import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoHistoricoDao;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustWebService;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
@@ -41,6 +46,9 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
 
     @Autowired
     private LogTrustWebService trustMe;
+
+	@Autowired
+	private GestorActivoHistoricoDao gestorActivoDao;
 
     @Resource
     private Properties appProperties;
@@ -133,6 +141,17 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
             }
             model.put("defectos", listaDefectos);
             model.put("cargas", listaCargas);
+            
+            Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "GGADM");
+    		EXTDDTipoGestor ddTipoGestor = genericDao.get(EXTDDTipoGestor.class, filtro );
+            
+            List<Usuario> list = gestorActivoDao.getListUsuariosGestoresActivoByTipoYActivo(ddTipoGestor.getId(), activo);
+            
+            if(list != null && !list.isEmpty()) {
+    			if(list.get(0).getUsername() != null) {
+    				model.put("gestoria", list.get(0).getUsername());
+    			}
+    		}
 
             ObjectMapper mapper = new ObjectMapper();
             try {
@@ -181,6 +200,9 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
                 map.put("fechaCalificacionNeg", calificaciones.getHistoricoTramitacionTitulo().getFechaCalificacion().getTime());
             }else{
                 map.put("fechaCalificacionNeg", null);
+            }
+            if(calificaciones.getMotivoCalificacionNegativa() != null) {
+            	map.put("tipoDefecto", calificaciones.getMotivoCalificacionNegativa().getCodigo());
             }
             map.put("descripcion", calificaciones.getDescripcion());
 

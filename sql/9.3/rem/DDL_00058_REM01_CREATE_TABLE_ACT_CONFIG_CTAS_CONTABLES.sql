@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200713
+--## AUTOR=DAP
+--## FECHA_CREACION=20201024
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-10527
+--## INCIDENCIA_LINK=HREOS-11745
 --## PRODUCTO=NO
 --## Finalidad: Creación diccionario ACT_CONFIG_CTAS_CONTABLES
 --##           
@@ -44,158 +44,223 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_TABLA|| '********'); 
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comprobaciones previas');
 	
-	
 	-- Verificar si la tabla ya existe
 	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
 	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
 	IF V_NUM_TABLAS = 1 THEN
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'... Ya existe.');
-	ELSE
-		-- Creamos la tabla
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
-		V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
-		(
-			CCC_CTAS_ID           		 NUMBER(16) NOT NULL,
-			CCC_CUENTA_CONTABLE   		 VARCHAR2(50 CHAR) NOT NULL,
-			DD_TGA_ID             		 NUMBER(16),
-			DD_STG_ID             		 NUMBER(16),
-			DD_TIM_ID             		 NUMBER(16),
-			DD_CRA_ID             		 NUMBER(16),
-			DD_SCR_ID             		 NUMBER(16),
-			PRO_ID                		 NUMBER(16),
-			EJE_ID                		 NUMBER(16),
-			CCC_ARRENDAMIENTO    		 NUMBER(1),
-			CCC_REFACTURABLE      		 NUMBER(1),
-			VERSION 					 NUMBER(38,0) 		    	DEFAULT 0 NOT NULL ENABLE, 
-			USUARIOCREAR 				 VARCHAR2(50 CHAR) 	    	NOT NULL ENABLE, 
-			FECHACREAR 					 TIMESTAMP (6) 		    	NOT NULL ENABLE, 
-			USUARIOMODIFICAR 			 VARCHAR2(50 CHAR), 
-			FECHAMODIFICAR 				 TIMESTAMP (6), 
-			USUARIOBORRAR 				 VARCHAR2(50 CHAR), 
-			FECHABORRAR 				 TIMESTAMP (6), 
-			BORRADO 					 NUMBER(1,0) 		    	DEFAULT 0 NOT NULL ENABLE
-		)
-		LOGGING 
-		NOCOMPRESS 
-		NOCACHE
-		NOPARALLEL
-		NOMONITORING
-		';
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'... Ya existe. Se borrará.');
+		V_MSQL := 'DROP TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' PURGE';
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');
-		
-		-- Creamos indice	
-		V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.PK_ACT_CONFIG_CTAS_CONTABLES ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(CCC_CTAS_ID ASC) TABLESPACE '||V_TABLESPACE_IDX;		
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.PK_ACT_CONFIG_CTAS_CONTABLES... Indice creado.');
-		
-		-- Creamos primary key
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT PK_ACT_CONFIG_CTAS_CONTABLES PRIMARY KEY (CCC_CTAS_ID) USING INDEX)';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.PK_ACT_CONFIG_CTAS_CONTABLES... PK creada.');
 
-		-- Creamos FK constraint
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT FK_CCC_DD_STG_ID FOREIGN KEY (DD_STG_ID) REFERENCES '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO(DD_STG_ID)';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] FK_CCC_DD_STG_ID... FK creada.');
-
-		-- Creamos FK constraint
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT FK_CCC_DD_TGA_ID FOREIGN KEY (DD_TGA_ID) REFERENCES '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO(DD_TGA_ID)';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] FK_CCC_DD_TGA_ID... FK creada.');
-
-		-- Creamos FK constraint
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT FK_CCC_DD_TIM_ID FOREIGN KEY (DD_TIM_ID) REFERENCES '||V_ESQUEMA||'.DD_TIM_TIPO_IMPORTE(DD_TIM_ID) ON DELETE SET NULL';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] FK_CCC_DD_TIM_ID... FK creada.');
-
-		-- Creamos FK constraint
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD CONSTRAINT FK_CCC_PRO_ID FOREIGN KEY (PRO_ID) REFERENCES '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO(PRO_ID)';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] FK_CCC_PRO_ID... FK creada.');
-		
-		-- Creamos comentario	
-		V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';		
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');		
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CCC_CTAS_ID IS ''Identificador único''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna CCC_CTAS_ID creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CCC_CUENTA_CONTABLE IS ''Cuenta contable''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna CCC_CUENTA_CONTABLE creado.');	
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TGA_ID IS ''Identificador único del tipo de gasto''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_TGA_ID creado.');	
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_STG_ID IS ''Identificador único del subtipo de gasto''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_STG_ID creado.');	
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TIM_ID IS ''Identificador único del tipo de importe al que pertenece la configuración''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_TIM_ID creado.');	
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_CRA_ID IS ''Identificador único de la cartera a la que pertenece la configuración''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_CRA_ID creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_SCR_ID IS ''Identificador único de la subcartera a la que pertenece la configuración''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_SCR_ID creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PRO_ID IS ''Identificador único del propietario''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna PRO_ID creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.EJE_ID IS ''Identificador único del ejercicio al que pertenece la configuració''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna EJE_ID creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CCC_ARRENDAMIENTO IS ''Marca si la cuenta contable es de arrendamiento''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna CCC_ARRENDAMIENTO creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CCC_REFACTURABLE IS ''Marca si la cuenta contable es refacturable''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna CCC_REFACTURABLE creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.VERSION IS ''Indica la versión del registro.''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna VERSION creado.');
-		
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOCREAR IS ''Indica el usuario que creó el registro.''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna USUARIOCREAR creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHACREAR IS ''Indica la fecha en la que se creó el registro.''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna FECHACREAR creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOMODIFICAR IS ''Indica el usuario que modificó el registro.''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna USUARIOMODIFICAR creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHAMODIFICAR IS ''Indica la fecha en la que se modificó el registro.''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna FECHAMODIFICAR creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOBORRAR IS ''Indica el usuario que borró el registro.''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna USUARIOBORRAR creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHABORRAR IS ''Indica la fecha en la que se borró el registro.''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna FECHABORRAR creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BORRADO IS ''Indicador de borrado.''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna BORRADO creado.');
-		
 	END IF;
+
+	-- Creamos la tabla
+	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
+	V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'
+	(
+	    "CCC_CTAS_ID"             NUMBER(16, 0)
+	        NOT NULL ENABLE
+	    , "CCC_CUENTA_CONTABLE"     VARCHAR2(50 CHAR)
+	        NOT NULL ENABLE
+	    , "DD_TGA_ID"               NUMBER(16, 0)
+	        NOT NULL ENABLE
+	    , "DD_STG_ID"               NUMBER(16, 0)
+	        NOT NULL ENABLE
+	    , "DD_TIM_ID"               NUMBER(16, 0)
+	        NOT NULL ENABLE
+	    , "DD_CRA_ID"               NUMBER(16, 0)
+	        NOT NULL ENABLE
+	    , "DD_SCR_ID"               NUMBER(16, 0)
+	    , "PRO_ID"                  NUMBER(16, 0)
+	        NOT NULL ENABLE
+	    , "EJE_ID"                  NUMBER(16, 0)
+	        NOT NULL ENABLE
+	    , "CCC_ARRENDAMIENTO"       NUMBER(1, 0) DEFAULT 0
+	    , "CCC_REFACTURABLE"        NUMBER(1, 0) DEFAULT 0
+	        NOT NULL ENABLE
+	    , "VERSION"                 NUMBER(38, 0) DEFAULT 0
+	        NOT NULL ENABLE
+	    , "USUARIOCREAR"            VARCHAR2(50 CHAR)
+	        NOT NULL ENABLE
+	    , "FECHACREAR"              TIMESTAMP(6)
+	        NOT NULL ENABLE
+	    , "USUARIOMODIFICAR"        VARCHAR2(50 CHAR)
+	    , "FECHAMODIFICAR"          TIMESTAMP(6)
+	    , "USUARIOBORRAR"           VARCHAR2(50 CHAR)
+	    , "FECHABORRAR"             TIMESTAMP(6)
+	    , "BORRADO"                 NUMBER(1, 0) DEFAULT 0
+	        NOT NULL ENABLE
+	    , "DD_TBE_ID"               NUMBER(16, 0)
+	    , "CCC_SUBCUENTA_CONTABLE"  VARCHAR2(50 CHAR)
+	    , "CCC_ACTIVABLE"           NUMBER(1, 0) DEFAULT 0
+	        NOT NULL ENABLE
+	    , "CCC_PLAN_VISITAS"        NUMBER(1, 0) DEFAULT 0
+	        NOT NULL ENABLE
+	    , "DD_TCH_ID"               NUMBER(16, 0)
+	    , "CCC_PRINCIPAL"           NUMBER(1, 0) DEFAULT 0
+	        NOT NULL ENABLE
+	    , "DD_TRT_ID"               NUMBER(16, 0)
+	    , "CCC_VENDIDO"             NUMBER(1, 0) DEFAULT 0
+	    , CONSTRAINT "PK_ACT_CONFIG_CTAS_CONTABLES" PRIMARY KEY ( "CCC_CTAS_ID" )
+	        USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS
+	            STORAGE ( INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645 PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL
+	            DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT )
+	        TABLESPACE '||V_TABLESPACE_IDX||'
+	    ENABLE
+	    , CONSTRAINT "UK_CCC_CTAS_CONTABLES" UNIQUE ( "DD_TGA_ID"
+	    , "DD_STG_ID"
+	    , "DD_TIM_ID"
+	    , "DD_CRA_ID"
+	    , "DD_SCR_ID"
+	    , "PRO_ID"
+	    , "EJE_ID"
+	    , "CCC_ARRENDAMIENTO"
+	    , "CCC_REFACTURABLE"
+	    , "DD_TBE_ID"
+	    , "CCC_ACTIVABLE"
+	    , "CCC_PLAN_VISITAS"
+	    , "DD_TCH_ID"
+	    , "CCC_PRINCIPAL"
+	    , "DD_TRT_ID"
+	    , "CCC_VENDIDO"
+	    , "BORRADO" )
+	        USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS
+	            STORAGE ( INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645 PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL
+	            DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT )
+	        TABLESPACE '||V_TABLESPACE_IDX||'
+	    ENABLE
+	    , CONSTRAINT "CK_CCC_CAMPOS_LBK" CHECK ( ( DD_CRA_ID = 43
+	       AND CCC_PLAN_VISITAS IN ( 0, 1 ) )
+	        OR ( DD_CRA_ID <> 43
+	       AND DD_TBE_ID IS NULL
+	       AND DD_TCH_ID IS NULL
+	       AND CCC_PLAN_VISITAS = 0 ) ) ENABLE
+	    , CONSTRAINT "CK_CCC_ACTIVABLE" CHECK ( ( DD_CRA_ID IN ( 43, 162 )
+	       AND CCC_ACTIVABLE IN ( 0, 1 ) )
+	        OR ( DD_CRA_ID NOT IN ( 43, 162 )
+	       AND CCC_ACTIVABLE = 0 ) ) ENABLE
+	    , CONSTRAINT "CK_CCC_CON_ACTIVOS" CHECK ( ( DD_SCR_ID IS NOT NULL
+	       AND CCC_ARRENDAMIENTO IS NOT NULL
+	       AND CCC_VENDIDO IS NOT NULL )
+	        OR ( DD_SCR_ID IS NULL
+	       AND CCC_ARRENDAMIENTO IS NULL
+	       AND CCC_VENDIDO IS NULL ) ) ENABLE
+	    , CONSTRAINT "FK_CCC_DD_STG_ID" FOREIGN KEY ( "DD_STG_ID" )
+	        REFERENCES '||V_ESQUEMA||'."DD_STG_SUBTIPOS_GASTO" ( "DD_STG_ID" )
+	    ENABLE
+	    , CONSTRAINT "FK_CCC_DD_TGA_ID" FOREIGN KEY ( "DD_TGA_ID" )
+	        REFERENCES '||V_ESQUEMA||'."DD_TGA_TIPOS_GASTO" ( "DD_TGA_ID" )
+	    ENABLE
+	    , CONSTRAINT "FK_CCC_DD_TIM_ID" FOREIGN KEY ( "DD_TIM_ID" )
+	        REFERENCES '||V_ESQUEMA||'."DD_TIM_TIPO_IMPORTE" ( "DD_TIM_ID" )
+	            ON DELETE SET NULL
+	    ENABLE
+	    , CONSTRAINT "FK_CCC_PRO_ID" FOREIGN KEY ( "PRO_ID" )
+	        REFERENCES '||V_ESQUEMA||'."ACT_PRO_PROPIETARIO" ( "PRO_ID" )
+	    ENABLE
+	    , CONSTRAINT "FK_CCC_DD_CRA_ID" FOREIGN KEY ( "DD_CRA_ID" )
+	        REFERENCES '||V_ESQUEMA||'."DD_CRA_CARTERA" ( "DD_CRA_ID" )
+	    ENABLE
+	    , CONSTRAINT "FK_CCC_DD_SCR_ID" FOREIGN KEY ( "DD_SCR_ID" )
+	        REFERENCES '||V_ESQUEMA||'."DD_SCR_SUBCARTERA" ( "DD_SCR_ID" )
+	    ENABLE
+	    , CONSTRAINT "FK_CCC_EJE_ID" FOREIGN KEY ( "EJE_ID" )
+	        REFERENCES '||V_ESQUEMA||'."ACT_EJE_EJERCICIO" ( "EJE_ID" )
+	    ENABLE
+	    , CONSTRAINT "FK_CCC_DD_TBE" FOREIGN KEY ( "DD_TBE_ID" )
+	        REFERENCES '||V_ESQUEMA||'."DD_TBE_TIPO_ACTIVO_BDE" ( "DD_TBE_ID" )
+	    ENABLE
+	    , CONSTRAINT "FK_CCC_DD_TCH" FOREIGN KEY ( "DD_TCH_ID" )
+	        REFERENCES '||V_ESQUEMA||'."DD_TCH_TIPO_COMISIONADO_HRE" ( "DD_TCH_ID" )
+	    ENABLE
+	    , CONSTRAINT "FK_CCC_DD_TRT_ID" FOREIGN KEY ( "DD_TRT_ID" )
+	        REFERENCES '||V_ESQUEMA||'."DD_TRT_TRIBUTOS_A_TERCEROS" ( "DD_TRT_ID" )
+	    ENABLE
+	)
+	';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');
+	
+	-- Creamos comentario	
+	V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';		
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');		
+
+	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CCC_CTAS_ID IS ''Identificador único''';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna CCC_CTAS_ID creado.');
+
+	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CCC_CUENTA_CONTABLE IS ''Cuenta contable''';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna CCC_CUENTA_CONTABLE creado.');	
+
+	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TGA_ID IS ''Identificador único del tipo de gasto''';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_TGA_ID creado.');	
+
+	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_STG_ID IS ''Identificador único del subtipo de gasto''';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_STG_ID creado.');	
+
+	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TIM_ID IS ''Identificador único del tipo de importe al que pertenece la configuración''';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_TIM_ID creado.');	
+
+	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_CRA_ID IS ''Identificador único de la cartera a la que pertenece la configuración''';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_CRA_ID creado.');
+
+	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_SCR_ID IS ''Identificador único de la subcartera a la que pertenece la configuración''';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_SCR_ID creado.');
+
+	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PRO_ID IS ''Identificador único del propietario''';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna PRO_ID creado.');
+
+	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.EJE_ID IS ''Identificador único del ejercicio al que pertenece la configuració''';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna EJE_ID creado.');
+
+	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CCC_ARRENDAMIENTO IS ''Marca si la cuenta contable es de arrendamiento''';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna CCC_ARRENDAMIENTO creado.');
+
+	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CCC_REFACTURABLE IS ''Marca si la cuenta contable es refacturable''';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna CCC_REFACTURABLE creado.');
+
+	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.VERSION IS ''Indica la versión del registro.''';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna VERSION creado.');
+	
+	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOCREAR IS ''Indica el usuario que creó el registro.''';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna USUARIOCREAR creado.');
+
+	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHACREAR IS ''Indica la fecha en la que se creó el registro.''';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna FECHACREAR creado.');
+
+	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOMODIFICAR IS ''Indica el usuario que modificó el registro.''';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna USUARIOMODIFICAR creado.');
+
+	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHAMODIFICAR IS ''Indica la fecha en la que se modificó el registro.''';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna FECHAMODIFICAR creado.');
+
+	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.USUARIOBORRAR IS ''Indica el usuario que borró el registro.''';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna USUARIOBORRAR creado.');
+
+	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHABORRAR IS ''Indica la fecha en la que se borró el registro.''';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna FECHABORRAR creado.');
+
+	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BORRADO IS ''Indicador de borrado.''';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna BORRADO creado.');
 
 	-- Comprobamos si existe la secuencia
 	V_SQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_'||V_TEXT_TABLA||''' and SEQUENCE_OWNER = '''||V_ESQUEMA||'''';
@@ -204,13 +269,51 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA ||'.S_'||V_TEXT_TABLA||'... Ya existe.');  
 	ELSE
 		-- Creamos sequence
-		V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';		
+		V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';
 		EXECUTE IMMEDIATE V_MSQL;		
 		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');
 		
 	END IF;
 
-	COMMIT;
+	-- Verificar si la tabla ya existe
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''TMP_'||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.TMP_'||V_TEXT_TABLA||'... Ya existe. Se borrará.');
+		V_MSQL := 'DROP TABLE '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||' PURGE';
+		EXECUTE IMMEDIATE V_MSQL;
+
+	END IF;
+
+	-- Creamos la tabla
+	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA|| '.TMP_'||V_TEXT_TABLA||'...');
+	V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||'
+	(
+	    "CCC_CTAS_ID"             NUMBER(16, 0)
+	    , "CCC_CUENTA_CONTABLE"     VARCHAR2(50 CHAR)
+	    , "DD_TGA_ID"               NUMBER(16, 0)
+	    , "DD_STG_ID"               NUMBER(16, 0)
+	    , "DD_TIM_ID"               NUMBER(16, 0)
+	    , "DD_CRA_ID"               NUMBER(16, 0)
+	    , "DD_SCR_ID"               NUMBER(16, 0)
+	    , "PRO_ID"                  NUMBER(16, 0)
+	    , "EJE_ID"                  NUMBER(16, 0)
+	    , "CCC_ARRENDAMIENTO"       NUMBER(1, 0)
+	    , "CCC_REFACTURABLE"        NUMBER(1, 0)
+	    , "FECHACREAR"              TIMESTAMP(6)
+	    , "BORRADO"                 NUMBER(1, 0)
+	    , "DD_TBE_ID"               NUMBER(16, 0)
+	    , "CCC_SUBCUENTA_CONTABLE"  VARCHAR2(50 CHAR)
+	    , "CCC_ACTIVABLE"           NUMBER(1, 0)
+	    , "CCC_PLAN_VISITAS"        NUMBER(1, 0)
+	    , "DD_TCH_ID"               NUMBER(16, 0)
+	    , "CCC_PRINCIPAL"           NUMBER(1, 0)
+	    , "DD_TRT_ID"               NUMBER(16, 0)
+	    , "CCC_VENDIDO"             NUMBER(1, 0)
+	)
+	';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||'... Tabla creada.');
 
 EXCEPTION
      WHEN OTHERS THEN 

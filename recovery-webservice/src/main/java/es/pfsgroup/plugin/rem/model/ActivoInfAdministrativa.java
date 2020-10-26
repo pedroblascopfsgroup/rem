@@ -23,7 +23,10 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoVenta;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
+import es.pfsgroup.plugin.rem.model.dd.DDTributacionAdquisicion;
 
 
 
@@ -139,17 +142,52 @@ public class ActivoInfAdministrativa implements Serializable, Auditable {
 	
 	@Column(name = "ADM_NO_TITULAR_VIVIENDA")
 	private Integer noTitularOtraVivienda;
-    
-    
 	
-	@Version   
+	@Column(name = "ADM_FECHA_SOL_CERTIFICADO")
+	private Date fechaSolCertificado;
+	
+	@Column(name = "ADM_FECHA_COM_ADQUISICION")
+	private Date fechaComAdquision;
+	
+	@Column(name = "ADM_FECHA_COM_REG_DEM")
+	private Date fechaComRegDem;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ADM_ACTUALIZA_PRECIO_MAX")
+	private DDSinSiNo actualizaPrecioMax; 
+	
+	@Column(name = "ADM_FECHA_VENCIMIENTO")
+	private Date fechaVencimiento;
+
+	@Column(name = "ADM_PRECIO_MAX_VENTA")
+	private Double precioMaxVenta;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TRA_ID")
+	private DDTributacionAdquisicion tributacionAdquisicion; 
+	
+	@Column(name = "ACT_ADM_FECHA_VENC_TIP_BON")
+	private Date fechaVencTpoBonificacion;
+	
+	@Column(name = "ACT_ADM_FECHA_LIQ_COMPLEM")
+	private Date fechaLiqComplementaria;
+	
+	@Column(name = "ADM_FECHA_ENVIO_COM_ORG")
+	private Date fechaEnvioComunicacionOrganismo;
+
+	@Column(name = "ADM_FECHA_RECEPCION_RESP_ORG")
+	private Date fechaRecepcionRespuestaOrganismo;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ADM_ESTADO_VENTA")
+	private DDEstadoVenta estadoVenta; 
+	
+	@Version
 	private Long version;
 	
 	@Embedded
 	private Auditoria auditoria;
 
-	
-	
 	public Long getId() {
 		return id;
 	}
@@ -406,7 +444,109 @@ public class ActivoInfAdministrativa implements Serializable, Auditable {
 	public void setNoTitularOtraVivienda(Integer noTitularOtraVivienda) {
 		this.noTitularOtraVivienda = noTitularOtraVivienda;
 	}
+
+	public Date getFechaSolCertificado() {
+		return fechaSolCertificado;
+	}
+
+	public void setFechaSolCertificado(Date fechaSolCertificado) {
+		this.fechaSolCertificado = fechaSolCertificado;
+	}
+
+	public Date getFechaComAdquision() {
+		return fechaComAdquision;
+	}
+
+	public void setFechaComAdquisicion(Date fechaComAdquision) {
+		this.fechaComAdquision = fechaComAdquision;
+	}
+
+	public Date getFechaComRegDem() {
+		return fechaComRegDem;
+	}
+
+	public void setFechaComRegDem(Date fechaComRegDem) {
+		this.fechaComRegDem = fechaComRegDem;
+	}
+
+	public DDSinSiNo getActualizaPrecioMax() {
+		return actualizaPrecioMax;
+	}
+
+	public void setActualizaPrecioMax(DDSinSiNo actualizaPrecioMax) {
+		this.actualizaPrecioMax = actualizaPrecioMax;
+	}
+
+	public Date getFechaVencimiento() {
+		return fechaVencimiento;
+	}
+
+	public void setFechaVencimiento(Date fechaVencimiento) {
+		this.fechaVencimiento = fechaVencimiento;
+	}
 	
-}	
+	public Double getPrecioMaxVenta() {
+		return precioMaxVenta;
+	}
+
+	public void setPrecioMaxVenta(Double precioMaxVenta) {
+		this.precioMaxVenta = precioMaxVenta;
+	}
+
+	public Date getFechaVencTpoBonificacion() {
+		return fechaVencTpoBonificacion;
+	}
+
+	public void setFechaVencTpoBonificacion(Date fechaVencTpoBonificacion) {
+		this.fechaVencTpoBonificacion = fechaVencTpoBonificacion;
+	}
+
+	public Date getFechaLiqComplementaria() {
+		return fechaLiqComplementaria;
+	}
+
+	public void setFechaLiqComplementaria(Date fechaLiqComplementaria) {
+		this.fechaLiqComplementaria = fechaLiqComplementaria;
+	}
+
+	public DDTributacionAdquisicion getTributacionAdquisicion() {
+		return tributacionAdquisicion;
+	}
+
+	public void setTributacionAdquisicion(DDTributacionAdquisicion tributacionAdquisicion) {
+		this.tributacionAdquisicion = tributacionAdquisicion;
+	}
+
+	public Date getFechaEnvioComunicacionOrganismo() {
+		return fechaEnvioComunicacionOrganismo;
+	}
+
+	public void setFechaEnvioComunicacionOrganismo(Date fechaEnvioComunicacionOrganismo) {
+		this.fechaEnvioComunicacionOrganismo = fechaEnvioComunicacionOrganismo;
+	}
+
+	public Date getFechaRecepcionRespuestaOrganismo() {
+		return fechaRecepcionRespuestaOrganismo;
+	}
+
+	public void setFechaRecepcionRespuestaOrganismo(Date fechaRecepcionRespuestaOrganismo) {
+		this.fechaRecepcionRespuestaOrganismo = fechaRecepcionRespuestaOrganismo;
+	}
+
+	public DDEstadoVenta getEstadoVenta() {
+		return estadoVenta;
+	}
+
+	public void setEstadoVenta(DDEstadoVenta estadoVenta) {
+		this.estadoVenta = estadoVenta;
+	}
+
+	public void setFechaComAdquision(Date fechaComAdquision) {
+		this.fechaComAdquision = fechaComAdquision;
+	}
+	
+	
+	
+}
 
 

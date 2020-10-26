@@ -686,13 +686,48 @@ public class GenericController extends ParadiseJsonController{
 	public ModelAndView getPartidaPresupuestaria(Long idSubpartida){
 		return createModelAndViewJson(new ModelMap("data", genericApi.getPartidaPresupuestaria(idSubpartida)));	
 	}
+	
 	@RequestMapping(method= RequestMethod.GET)
 	public ModelAndView getComboBBVATipoAlta(Long idRecovery) {
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboBBVATipoAlta(idRecovery)));	
 	}
+
 	@RequestMapping(method= RequestMethod.GET)
 	public ModelAndView getcomboSociedadAnteriorBBVA() {
 		return createModelAndViewJson(new ModelMap("data", genericApi.getcomboSociedadAnteriorBBVA()));	
+	}
+
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboActivoProveedorSuministro(){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboActivoProveedorSuministro()));	
+	}
+
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView comboSubestadoAdmisionNuevoFiltrado(String codEstadoAdmisionNuevo){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getcomboSubestadoAdmisionNuevoFiltrado(codEstadoAdmisionNuevo)));	
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDiccionarioSubtipologiaAgendaSaneamiento(String codTipo){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getSubtipologiaAgendaSaneamiento(codTipo)));	
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboEstadoAdmision(WebDto webDto, ModelMap model){
+
+		Set<String> tipoEstadoAdmisionCodigo = new HashSet<String>();
+
+		tipoEstadoAdmisionCodigo.add("NEN"); // Nueva Entrada
+		tipoEstadoAdmisionCodigo.add("PET"); // Pendiente título
+		tipoEstadoAdmisionCodigo.add("PRT"); // Pendiente revisión título
+		tipoEstadoAdmisionCodigo.add("PSR"); // Pendiente saneamiento registral
+		tipoEstadoAdmisionCodigo.add("SAR"); // Saneado registralmente
+
+		model.put("data", genericApi.getComboEstadoAdmisionFiltrado(tipoEstadoAdmisionCodigo));
+		
+
+		return new ModelAndView("jsonView", model);
 	}
  }
 

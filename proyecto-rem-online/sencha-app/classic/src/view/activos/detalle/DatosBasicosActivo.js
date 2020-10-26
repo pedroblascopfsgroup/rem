@@ -6,13 +6,13 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
     disableValidation: true,
     reference: 'datosbasicosactivo',
     scrollable	: 'y',
-
+    refreshAfterSave : true,
 	recordName: "activo",
 	
 	recordClass: "HreRem.model.Activo",
     
     requires: ['HreRem.model.Activo','HreRem.view.activos.detalle.HistoricoDestinoComercialActivo'],
-
+    
     initComponent: function () {
 
         var me = this;
@@ -584,7 +584,6 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						bind:		'{activo.trabajosVivos}',
 						readOnly	: true
 					},
-					
 		            {    
 		                
 						xtype:'fieldsettable',
@@ -632,7 +631,29 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								bind:		'{activo.motivoAplicaTramiteAdmision}',
 								hidden: true
 							},
-
+							//Fila Admision
+							{
+								xtype: 'checkboxfieldbase',
+								reference: 'perimetroAdmision',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.admision'),
+								bind : {
+									value : '{activo.perimetroAdmision}'
+								}
+							},
+							{
+								xtype: 'datefieldbase',
+								bind: '{activo.fechaPerimetroAdmision}',
+								reference: 'datefieldPerimetroAdmision',
+								readOnly: true
+							},
+							{
+								xtype: 'textfieldbase',
+								reference: 'textFieldPerimetroAdmision',
+								bind:{
+									value: '{activo.motivoPerimetroAdmision}'
+								}
+							},
+							
 							//Fila gestion
 							{
 								xtype:'checkboxfieldbase',
@@ -1188,7 +1209,11 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
    
 
     },
-    
+    afterLoad: function(){
+    	var me = this;
+    	me.lookupController().checkAdmision();
+    	
+    },
     funcionRecargar: function() {
     	var me = this; 
 		me.recargar = false;

@@ -2881,12 +2881,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@SuppressWarnings("unchecked")
 	@Override
 	public DtoPage getSeleccionTarifasTrabajo(DtoGestionEconomicaTrabajo filtro, String cartera, String tipoTrabajo,
-			String subtipoTrabajo, String codigoTarifa, String descripcionTarifa) {
+			String subtipoTrabajo, String codigoTarifa, String descripcionTarifa, String subcarteraCodigo) {
 
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		filtro.setCarteraCodigo(cartera);
 		filtro.setTipoTrabajoCodigo(tipoTrabajo);
-		filtro.setSubtipoTrabajoCodigo(subtipoTrabajo);	
+		filtro.setSubtipoTrabajoCodigo(subtipoTrabajo);
+		filtro.setSubcarteraCodigo(subcarteraCodigo);
 		
 		if (!Checks.esNulo(filtro.getIdTrabajo())) {
 			Trabajo trabajo = findOne(filtro.getIdTrabajo());

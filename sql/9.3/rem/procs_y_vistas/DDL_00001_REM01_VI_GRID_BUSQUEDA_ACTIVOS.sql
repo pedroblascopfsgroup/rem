@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Guillem Rey
---## FECHA_CREACION=20200918
+--## FECHA_CREACION=20201026
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-8040
+--## INCIDENCIA_LINK=HREOS-11739
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Crear vista para rellenar el grid de la busqueda de activos
@@ -16,6 +16,7 @@
 --##        0.3 [HREOS-10769] Añadir campos BBVA_NUM_ACTIVO y BBVA_ID_DIVARIAN
 --##		0.4 Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
 --##		0.5 Guillem Rey -- REMVIP-8040 - APU - Destino Comercial
+--##		0.7 Guillem Rey -- HREOS-11739 - CODIGO PROMOCION BBVA
 --#########################################
 --*/
 

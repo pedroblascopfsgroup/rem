@@ -2417,7 +2417,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosExpedienteComercial(expedienteComercial);
 				for (DtoAdjunto adj : listaAdjuntos) {
 					DDSubtipoDocumentoExpediente subtipoDocumento = genericDao.get(DDSubtipoDocumentoExpediente.class, 
-							genericDao.createFilter(FilterType.EQUALS, "descripcion", adj.getTdn2_desc()));
+							genericDao.createFilter(FilterType.EQUALS, "matricula", adj.getMatricula()));
 					if (subtipoDocumento != null && codigoDocumento.equals(subtipoDocumento.getCodigo())) {
 						return true;
 					}

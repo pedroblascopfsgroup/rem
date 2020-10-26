@@ -105,9 +105,8 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 	@Embedded
 	private Auditoria auditoria;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "DD_PBB_ID")
-  	private DDPromocionBBVA promocion;
+	@Column(name = "BBVA_COD_PROMOCION")
+  	private String codPromocion;
 	
 	
 	public Auditoria getAuditoria() {
@@ -262,13 +261,12 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 		this.version = version;
 	}
 
-	public DDPromocionBBVA getPromocion() {
-		return promocion;
+	public String getCodPromocion() {
+		return codPromocion;
 	}
 
-	public void setPromocion(DDPromocionBBVA promocion) {
-		this.promocion = promocion;
+	public void setCodPromocion(String codPromocion) {
+		this.codPromocion = codPromocion;
 	}
-	
 	
 }

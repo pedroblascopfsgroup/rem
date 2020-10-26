@@ -406,32 +406,32 @@ public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implement
 			}
 			
 			if(colPromocion != null && !colPromocion.isEmpty()) {
-				DDPromocionBBVA pbNew = null;
+				String pbNew = null;
 				List<String> promocionesAnteriores = new ArrayList<String>();
 				for(int i = fila; i >= COL_NUM.DATOS_PRIMERA_FILA; i--) {
 					if(!promocionesAnteriores.contains(colPromocion)) {	
 						promocionesAnteriores.add(exc.dameCelda(i-1, COL_NUM.COD_PROMOCION));
 					}else {
 						pbNew = genericDao.get(ActivoBbvaActivos.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", 
-									Long.valueOf(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)))).getPromocion();
+									Long.valueOf(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)))).getCodPromocion();
 						break;
 					}					
 				}
-				if(pbNew == null) {
-					pbNew = new DDPromocionBBVA();					
-					genericDao.save(DDPromocionBBVA.class, pbNew);
-					String codi = String.valueOf(pbNew.getId()+1L);					
+				if(pbNew == null || pbNew.isEmpty()) {
+					DDPromocionBBVA pbN = new DDPromocionBBVA();					
+					genericDao.save(DDPromocionBBVA.class, pbN);
+					String codi = String.valueOf(pbN.getId());
 					String descripcion = "R" + String.format("%05d", Long.valueOf(codi)) + "-01";
-					pbNew.setCodigo(descripcion);
-					pbNew.setDescripcion(descripcion);
-					pbNew.setDescripcionLarga(descripcion);	
-					genericDao.update(DDPromocionBBVA.class, pbNew);
-					
+					pbN.setCodigo(descripcion);
+					pbN.setDescripcion(descripcion);
+					pbN.setDescripcionLarga(descripcion);	
+					genericDao.update(DDPromocionBBVA.class, pbN);
+					pbNew = descripcion;
 				}
-				activoBBVA.setPromocion(pbNew);
+				activoBBVA.setCodPromocion(pbNew);
 			}
 			
-			genericDao.save(ActivoBbvaActivos.class,activoBBVA);
+			genericDao.save(ActivoBbvaActivos.class, activoBBVA);
 			
 			
 			//ACT_ADM_INF_ADMINISTRATIVA

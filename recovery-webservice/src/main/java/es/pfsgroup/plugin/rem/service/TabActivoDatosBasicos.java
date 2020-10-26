@@ -1006,8 +1006,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setIdOrigenHre(activoBbva.getIdOrigenHre());
 			activoDto.setUicBbva(activoBbva.getUicBbva());
 			activoDto.setCexperBbva(activoBbva.getCexperBbva());
-			if(activoBbva.getPromocion() != null)
-				activoDto.setCodPromocionBbva(activoBbva.getPromocion().getDescripcion());
+			if(activoBbva.getCodPromocion() != null)
+				activoDto.setCodPromocionBbva(activoBbva.getCodPromocion());
 		}
 		
 		return activoDto;
@@ -1538,14 +1538,16 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
 			if(activoBbva != null) {
 				if(dto.getCodPromocionBbva() != null) {
+					List<ActivoBbvaActivos> activosPromocion = genericDao.getList(ActivoBbvaActivos.class, 
+							genericDao.createFilter(FilterType.EQUALS, "codPromocion", dto.getCodPromocionBbva()));
 					DDPromocionBBVA pbb = genericDao.get(DDPromocionBBVA.class, genericDao.createFilter(FilterType.EQUALS, "descripcion", dto.getCodPromocionBbva()));
-					if(pbb != null) {
-						activoBbva.setPromocion(pbb);
+					if(activosPromocion != null && !activosPromocion.isEmpty() || pbb != null) {
+						activoBbva.setCodPromocion(dto.getCodPromocionBbva());
 					}else {
 						throw new JsonViewerException("La Promoción con código \""+dto.getCodPromocionBbva()+"\" no existe.");
 					}
 				}else {
-					activoBbva.setPromocion(null);
+					activoBbva.setCodPromocion(null);
 				}
 			}
 			if (dto.getTipoTransmisionCodigo() != null || dto.getTipoAltaCodigo() != null || dto.getActivoEpa() != null ||

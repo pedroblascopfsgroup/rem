@@ -2086,10 +2086,6 @@ public class ActivoAdapter {
 						BeanUtils.copyProperty(tasacionDto, "importeValorTasacion",
 								activo.getTasacion().get(i).getImporteTasacionFin());
 					}
-					if (DDCartera.CODIGO_CARTERA_BBVA.equals(activo.getCartera().getCodigo())) {
-						BeanUtils.copyProperty(tasacionDto, "codigoFirma",
-								activo.getTasacion().get(i).getCodigoFirmaBbva());
-					}
 				} catch (IllegalAccessException e) {
 					logger.error("Error en ActivoAdapter", e);
 				} catch (InvocationTargetException e) {

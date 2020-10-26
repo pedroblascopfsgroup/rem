@@ -103,6 +103,9 @@ func-rem-gestionActivos|R-Entrefina
 func-rem-facturacionModeloNuevo|R-Entrefina
 R-Cadenera|R-Entrefina
 func-rem-gestionActivos-HREOS-11149|func-rem-gestionActivos
+rem_mirror|func-rem-BBVA-F1
+func-rem-BBVA-F1|func-rem-BBVA-F2
+func-rem-BBVA-F2|func-rem-BBVA-F3
 func-HREOS-10425|func-rem-supervisionGestorias-F2
 rem_mirror|func-rem-supervisionGestorias-F2
 2.20.9-20071001-rem|func-rem-supervisionGestorias-F2

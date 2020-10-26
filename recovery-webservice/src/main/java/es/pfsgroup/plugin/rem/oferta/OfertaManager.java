@@ -50,6 +50,8 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistralBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
+import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
+import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionHistoricoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
@@ -88,6 +90,8 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -141,7 +145,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
@@ -209,6 +216,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private ActivoAgrupacionApi activoAgrupacionApi;
+	
+	@Autowired
+	private ActivoPublicacionHistoricoDao activoPublicacionHistoricoDao;
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -261,6 +271,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
+	
+	@Autowired
+	private ActivoPublicacionDao activoPublicacionDao;
 
 	@Autowired
 	GastosExpedienteApi gastosExpedienteApi;
@@ -4777,7 +4790,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ActivoAgrupacion agrupacion = null;
 			CompradorExpediente compradorExpediente = null;
 			Comprador comprador = null;
-			
+			ActivoTasacion activoTasacion = null;
+			List<ActivoValoraciones> activoValoraciones = null;
+			GastosExpediente gastosExpediente = null;
 			DtoExcelFichaComercial dtoFichaComercial = new DtoExcelFichaComercial();
 			Filter filtroExpediente = genericDao.createFilter(FilterType.EQUALS ,"id", idExpediente);
 			expediente = genericDao.get(ExpedienteComercial.class, filtroExpediente);
@@ -4824,6 +4839,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			if(activo != null) {
 				dtoFichaComercial.setNumActivo(activo.getNumActivo());
+				ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(activo.getId());
+				if(activoPublicacion != null) {
+					dtoFichaComercial.setFechaPublicado(activoPublicacion.getFechaCambioPubVenta());
+					if(DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA.equals(activoPublicacion.getEstadoPublicacionVenta().getCodigo())) {
+						dtoFichaComercial.setPublicado("Si");
+					}else {
+						dtoFichaComercial.setPublicado("No");
+					}
+				}
 			}
 			
 			if(oferta.getAgrupacion() != null) {
@@ -5194,7 +5218,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 				Filter filtroPrecioAprobado = genericDao.createFilter(FilterType.EQUALS ,"tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
 				
-				List<ActivoValoraciones> preciosAprobados = genericDao.getListOrdered(ActivoValoraciones.class,orderDesc,filtroActivo,filtroPrecioAprobado);
+				List<ActivoValoraciones> preciosAprobados = genericDao.getListOrdered(ActivoValoraciones.class,orderDesc,/*filtroPrecioAprobado,*/filtroActivo);
 				
 				if(!Checks.esNulo(preciosAprobados) && !preciosAprobados.isEmpty()) {
 					if(!Checks.esNulo(preciosAprobados.get(0).getImporte())) {
@@ -5281,6 +5305,37 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						activosFichaComercial.setPosesion("No");
 					}
 				}
+				if(oferta != null && oferta.getPrescriptor() != null) {
+				dtoFichaComercial.setNombreYApellidosComercial(oferta.getPrescriptor().getNombreComercial());
+				dtoFichaComercial.setTelefonoComercial(oferta.getPrescriptor().getTelefono1());
+				dtoFichaComercial.setCorreoComercial(oferta.getPrescriptor().getEmail());
+				dtoFichaComercial.setLeads(oferta.getOrigenComprador().getDescripcion());	
+				}
+				activoValoraciones = genericDao.getList(ActivoValoraciones.class,
+						genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+				
+				if(activoValoraciones != null ) {
+					for (ActivoValoraciones activoValoracion : activoValoraciones) {
+						if(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(activoValoracion.getTipoPrecio().getCodigo()))
+							dtoFichaComercial.setPrecioComiteActual(activoValoracion.getImporte());
+						if(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(activoValoracion.getTipoPrecio().getCodigo()))
+							dtoFichaComercial.setPrecioWebActual(activoValoracion.getImporte());
+					}
+				}
+				Filter filtroTasacion= genericDao.createFilter(FilterType.EQUALS ,"activo.id", activo.getId());
+				activoTasacion = genericDao.get(ActivoTasacion.class, filtroTasacion);
+				if(activoTasacion != null) {
+					dtoFichaComercial.setTasacionActual(activoTasacion.getImporteTasacionFin());
+				}
+				if(activo.getBien() != null && activo.getBien().getAdjudicacion() != null && activo.getBien().getAdjudicacion().getImporteAdjudicacion() != null) {
+					dtoFichaComercial.setImporteAdjuducacion(activo.getBien().getAdjudicacion().getImporteAdjudicacion());
+					dtoFichaComercial.setTotalSuperficie(activo.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida());
+				}
+				Filter filtroGastosExpediente= genericDao.createFilter(FilterType.EQUALS ,"expediente.id", expediente.getId());
+				gastosExpediente = genericDao.get(GastosExpediente.class, filtroGastosExpediente);
+				if(gastosExpediente != null) {
+					dtoFichaComercial.setComisionHayaDivarian(gastosExpediente.getImporteFinal());
+				}
 				
 				activosFichaComercial.setLink(linkCabecera(activo.getId()));
 				
@@ -5303,6 +5358,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				//depuracion juridica
 				//colectivo social
 				//sociedad Titular
+
+				//dtoFichaComercial.viviendasTotales();
+				dtoFichaComercial.setDiasPublicado(this.obtenerTotalDeDiasEnEstadoPublicadoVenta(activo.getId()));
+				dtoFichaComercial.setMesesEnVenta(this.obtenerTotalDeMesesEnEstadoPublicadoVenta(activo.getId()));
+
 				dtoFichaComercial.getListaActivosFichaComercial().add(activosFichaComercial);
 			}
 			
@@ -5501,5 +5561,56 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 		return null;
 	}
+
+	
+	private Integer obtenerTotalDeDiasEnEstadoPublicadoVenta(Long idActivo) {
+		Integer dias = 0;
+
+		Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		Filter filterEstadoPublicacion = genericDao.createFilter(FilterType.EQUALS, "estadoPublicacionVenta.codigo", DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA);
+		Filter filterAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Filter filterFecha = genericDao.createFilter(FilterType.NULL, "fechaFinVenta");
+		Order orden = new Order(OrderType.DESC, "id");
+		
+		List<ActivoPublicacionHistorico> listaActivoPublicacionesHistoricas = 
+				genericDao.getListOrdered(ActivoPublicacionHistorico.class, orden, filterActivo, filterEstadoPublicacion, filterAuditoria, filterFecha);
+		
+		if(!Checks.estaVacio(listaActivoPublicacionesHistoricas)){
+			ActivoPublicacionHistorico ultimaPublicacion = listaActivoPublicacionesHistoricas.get(0);
+			try {
+				dias = (int)(long)activoPublicacionHistoricoDao.obtenerDiasPorEstadoPublicacionVentaActivo(ultimaPublicacion);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return dias;
+	}
+	
+	private Integer obtenerTotalDeMesesEnEstadoPublicadoVenta(Long idActivo) {
+		Integer meses = 0;
+
+		Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		Filter filterEstadoPublicacion = genericDao.createFilter(FilterType.EQUALS, "estadoPublicacionVenta.codigo", DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA);
+		Filter filterAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Filter filterFecha = genericDao.createFilter(FilterType.NULL, "fechaFinVenta");
+		Order orden = new Order(OrderType.DESC, "id");
+		
+		List<ActivoPublicacionHistorico> listaActivoPublicacionesHistoricas = 
+				genericDao.getListOrdered(ActivoPublicacionHistorico.class, orden, filterActivo, filterEstadoPublicacion, filterAuditoria, filterFecha);
+		
+		if(!Checks.estaVacio(listaActivoPublicacionesHistoricas)){
+			ActivoPublicacionHistorico ultimaPublicacion = listaActivoPublicacionesHistoricas.get(0);
+			try {
+				meses = (int)(long)activoPublicacionHistoricoDao.obtenerMesesPorEstadoPublicacionVentaActivo(ultimaPublicacion);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return meses;
+	}
+
+
 	
 }

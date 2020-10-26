@@ -942,7 +942,7 @@ Ext.define('HreRem.model.Activo', {
     			name: 'numActivoDivarian'
     		},
     		{
-    			name: 'perimetroAdmision',
+    			name: 'activoEpa',
     			type: 'boolean'
     		},
 			{
@@ -996,10 +996,6 @@ Ext.define('HreRem.model.Activo', {
 	 			name: 'esEditableActivoEstadoRegistral',
     			type: 'boolean'	 			
 			},
-			{
-    			name: 'activoEpa',
-    			type: 'boolean'
-    		},
     		{
     			name: 'empresa'
     		},
@@ -1013,7 +1009,15 @@ Ext.define('HreRem.model.Activo', {
     			name: 'folio'
     		},
     		{
-    			name: 'cdpen'
+				name: 'cdpen'
+			},
+			{
+    			name: 'isGrupoOficinaKAM',
+    			type: 'boolean'
+			},
+			{
+    			name: 'perimetroAdmision',
+    			type: 'boolean'
     		},
     		{
     			name: 'numActivoBbva'
@@ -1053,9 +1057,15 @@ Ext.define('HreRem.model.Activo', {
     			depends: 'entidadPropietariaCodigo'
     		},
     		{
-    			name: 'isGrupoOficinaKAM',
-    			type: 'boolean'
-    		}
+    			name: 'subestadoAdmisionDescCabecera'
+			},
+			{
+	 			name: 'estadoRegistralCodigo'
+			},
+			{
+	 			name: 'esEditableActivoEstadoRegistral',
+    			type: 'boolean'	 			
+			}
     ],
     
 	proxy: {

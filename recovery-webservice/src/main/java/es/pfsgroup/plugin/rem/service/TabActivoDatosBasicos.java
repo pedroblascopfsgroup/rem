@@ -88,7 +88,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoRegistralActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
-import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
@@ -98,6 +97,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivoBDE;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
@@ -105,7 +105,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProductoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAlta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
@@ -129,6 +128,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private static final String ACTIVO_NO_DIVARIAN_BBVA= "msg.error.activo.no.bbva.divarian";
 	//
 	private static final String ACTIVO_NO_EXISTE= "msg.error.activo.hre.bbva.no.existe.en.rem";
+	private static final String ACTIVO_VENDIDO= "msg.error.activo.vendido";
+	private static final String ACTIVO_FUERA_DE_PERIMETRO_HAYA= "msg.error.activo.fuera.perimetro";
+	private static final String ACTIVO_NO_COINCIDE_CON_CERBERUS_BBVA= "msg.error.activo.no.bbva.divarian";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -899,6 +901,42 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));
 		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
+		
+		if(activoBbva != null) {
+			if(activoBbva.getActivoEpa() != null) {
+				if(DDSinSiNo.CODIGO_SI.equals(activoBbva.getActivoEpa().getCodigo())){
+					activoDto.setActivoEpa(true);
+				}else {
+					activoDto.setActivoEpa(false);
+				}
+			}
+			activoDto.setEmpresa(activoBbva.getEmpresa());
+			activoDto.setOficina(activoBbva.getOficina());
+			activoDto.setContrapartida(activoBbva.getContrapartida());
+			activoDto.setFolio(activoBbva.getFolio());
+			activoDto.setCdpen(activoBbva.getCdpen());
+			
+			
+			if(activoBbva.getTipoTransmision() != null) {
+				activoDto.setTipoTransmisionCodigo(activoBbva.getTipoTransmision().getCodigo());
+				activoDto.setTipoTransmisionDescripcion(activoBbva.getTipoTransmision().getDescripcion());
+			}
+			
+			if(activoBbva.getTipoAlta() != null) {
+				activoDto.setTipoAltaCodigo(activoBbva.getTipoAlta().getCodigo());
+				activoDto.setTipoAltaDescripcion(activoBbva.getTipoAlta().getDescripcion());
+			}
+			
+			activoDto.setNumActivoBbva(activoBbva.getNumActivoBbva());
+			activoDto.setIdDivarianBbva(activoBbva.getIdDivarianBbva());
+			activoDto.setLineaFactura(activoBbva.getLineaFactura());
+			activoDto.setIdOrigenHre(activoBbva.getIdOrigenHre());
+			activoDto.setUicBbva(activoBbva.getUicBbva());
+			activoDto.setCexperBbva(activoBbva.getCexperBbva());
+		}
+			
 		if(perimetroActivo.getAplicaAdmision() != null) {
 			activoDto.setPerimetroAdmision(perimetroActivo.getAplicaAdmision());
 		}
@@ -969,42 +1007,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setEsEditableActivoEstadoRegistral(puedeEditar);
 		}else {
 			activoDto.setEsEditableActivoEstadoRegistral(!perimetroAdmision);
-		}
-
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-		ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
-		
-		if(activoBbva != null) {
-			if(activoBbva.getActivoEpa() != null) {
-				if(DDSinSiNo.CODIGO_SI.equals(activoBbva.getActivoEpa().getCodigo())){
-					activoDto.setActivoEpa(true);
-				}else {
-					activoDto.setActivoEpa(false);
-				}
-			}
-			activoDto.setEmpresa(activoBbva.getEmpresa());
-			activoDto.setOficina(activoBbva.getOficina());
-			activoDto.setContrapartida(activoBbva.getContrapartida());
-			activoDto.setFolio(activoBbva.getFolio());
-			activoDto.setCdpen(activoBbva.getCdpen());
-			
-			
-			if(activoBbva.getTipoTransmision() != null) {
-				activoDto.setTipoTransmisionCodigo(activoBbva.getTipoTransmision().getCodigo());
-				activoDto.setTipoTransmisionDescripcion(activoBbva.getTipoTransmision().getDescripcion());
-			}
-			
-			if(activoBbva.getTipoAlta() != null) {
-				activoDto.setTipoAltaCodigo(activoBbva.getTipoAlta().getCodigo());
-				activoDto.setTipoAltaDescripcion(activoBbva.getTipoAlta().getDescripcion());
-			}
-			
-			activoDto.setNumActivoBbva(activoBbva.getNumActivoBbva());
-			activoDto.setIdDivarianBbva(activoBbva.getIdDivarianBbva());
-			activoDto.setLineaFactura(activoBbva.getLineaFactura());
-			activoDto.setIdOrigenHre(activoBbva.getIdOrigenHre());
-			activoDto.setUicBbva(activoBbva.getUicBbva());
-			activoDto.setCexperBbva(activoBbva.getCexperBbva());
 		}
 		
 		activoDto.setIsGrupoOficinaKAM(activoApi.isGrupoOficinaKAM());
@@ -1519,6 +1521,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					}
 				}
 			}
+
 			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
 			
 			if(dto.getPerimetroAdmision() != null) {

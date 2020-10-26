@@ -3,7 +3,9 @@ package es.pfsgroup.plugin.rem.activo.publicacion.dao.impl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -221,6 +223,23 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 		}
 
 		return dias;
+	}
+	
+	@Override
+	public Long obtenerMesesPorEstadoPublicacionVentaActivo(ActivoPublicacionHistorico estadoActivo) throws ParseException {
+		Long meses = 0L;
+
+		if (!Checks.esNulo(estadoActivo.getFechaInicioVenta())) {
+			Date fechaDesdeSinTiempo = this.sdfFecha.parse(this.sdfFecha.format(estadoActivo.getFechaInicioVenta()));
+			Date fechaHastaSinTiempo = new Date();
+			if (!Checks.esNulo(estadoActivo.getFechaFinVenta())) {
+				fechaHastaSinTiempo = this.sdfFecha.parse(this.sdfFecha.format(estadoActivo.getFechaFinVenta()));
+			}
+			long diffYear = fechaHastaSinTiempo.getYear()- fechaDesdeSinTiempo.getYear();
+			meses =  diffYear * 12 + fechaHastaSinTiempo.getMonth() - fechaDesdeSinTiempo.getMonth();
+		}
+
+		return meses;
 	}
 
 	@Override

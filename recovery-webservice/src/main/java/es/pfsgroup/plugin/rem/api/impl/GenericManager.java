@@ -1433,8 +1433,23 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		}
 		return entidades;
 	}
+	
+	public List<DtoPropietario> getcomboSociedadAnteriorBBVA() {
+	
+		List<ActivoPropietario> listaDD= activoPropietarioDao.getPropietarioIdDescripcionCodigo();
+		List<DtoPropietario> listaDto = new ArrayList<DtoPropietario>();
 		
-	@Override
+		for (ActivoPropietario activoPropietario : listaDD) {
+			DtoPropietario dtop = new DtoPropietario();	
+			dtop.setId(activoPropietario.getId());
+			dtop.setDescripcion(activoPropietario.getNombre());
+			dtop.setCodigo(activoPropietario.getDocIdentificativo());		
+			listaDto.add(dtop);
+		}
+		return listaDto;
+	}
+
+
 	public List<ActivoProveedorReducido> getComboActivoProveedorSuministro() {
 		List<ActivoProveedorReducido> listaActivoProveedor = new ArrayList<ActivoProveedorReducido>();
 		
@@ -1494,21 +1509,6 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		}
 
 		return listaTiposFiltered;
-	}
-
-	public List<DtoPropietario> getcomboSociedadAnteriorBBVA() {
-	
-		List<ActivoPropietario> listaDD= activoPropietarioDao.getPropietarioIdDescripcionCodigo();
-		List<DtoPropietario> listaDto = new ArrayList<DtoPropietario>();
-		
-		for (ActivoPropietario activoPropietario : listaDD) {
-			DtoPropietario dtop = new DtoPropietario();	
-			dtop.setId(activoPropietario.getId());
-			dtop.setDescripcion(activoPropietario.getNombre());
-			dtop.setCodigo(activoPropietario.getDocIdentificativo());		
-			listaDto.add(dtop);
-		}
-	return listaDto;
 	}
 
 	@Override

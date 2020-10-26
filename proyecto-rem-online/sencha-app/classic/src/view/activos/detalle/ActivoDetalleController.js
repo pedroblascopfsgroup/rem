@@ -7349,7 +7349,37 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
        return !enPerimetro || (!isSuper && !isGestorActivos && !isGestorAlquiler && !isUserGestedi);
         					 
        
-    },
+	},
+	
+    gestoresEstadoNotarialAndIDHayaNotNull:function(combo, value, oldValue, eOpts){
+    		var me = this; 	
+    		var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) ||  $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);
+			var valorIdHaya = me.lookupReference('labelLinkIdOrigenHRE').getValue();
+			var origenAnteriorActivo = me.lookupReference('comboOrigenAnteriorActivoRef');
+			var fechatituloAnterior = me.lookupReference('fechaTituloAnteriorRef');
+			var sociedadPagoAnterior = me.lookupReference('sociedadPagoAnteriorRef');
+			if( value == CONST.DD_STA_SUBTIPO_TITULO_ACTIVO['NOTARIAL_RECOMPRA'] && valorIdHaya != null && gestores){
+				origenAnteriorActivo.setReadOnly(true);
+				fechatituloAnterior.setReadOnly(true);
+				sociedadPagoAnterior.setReadOnly(true);
+    		}else{
+	    		origenAnteriorActivo.setReadOnly(false);
+				fechatituloAnterior.setReadOnly(false);
+				sociedadPagoAnterior.setReadOnly(false);
+    		}
+   	 },
+   	 isGestorAdmisionAndSuperComboTipoAlta: function(combo, value, oldValue, eOpts){
+   	 		var me = this; 	
+			var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) ||  $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);		
+			var comboActivoRecovery = me.lookupReference('idRecovery');			
+			if(comboActivoRecovery!=null && gestores){					
+				combo.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
+				combo.setReadOnly(true);
+			}else{
+				combo.setReadOnly(false);
+			}
+							
+   	 },
 	
     onChangeComboTributacionAdqusicion: function(combo, newValue, oldValue){
     	var me = this;
@@ -7765,4 +7795,3 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	}
 
 });
-

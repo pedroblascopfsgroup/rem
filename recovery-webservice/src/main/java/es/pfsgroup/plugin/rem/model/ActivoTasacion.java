@@ -137,7 +137,11 @@ public class ActivoTasacion implements Serializable, Auditable {
 	@Embedded
 	private Auditoria auditoria;
 
+	@Column(name = "TAS_CODIGO_FIRMA_BBVA")
+	private String codigoFirmaBbva;
 	
+	@Column(name = "TAS_ID_EXTERNO_BBVA")
+	private String idExternoBbva;
 	
 	
 	public Long getId() {
@@ -379,6 +383,22 @@ public class ActivoTasacion implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public String getCodigoFirmaBbva() {
+		return codigoFirmaBbva;
+	}
+
+	public void setCodigoFirmaBbva(String codigoFirmaBbva) {
+		this.codigoFirmaBbva = codigoFirmaBbva;
+	}
+
+	public String getIdExternoBbva() {
+		return idExternoBbva;
+	}
+
+	public void setIdExternoBbva(String idExternoBbva) {
+		this.idExternoBbva = idExternoBbva;
 	}
 
 }

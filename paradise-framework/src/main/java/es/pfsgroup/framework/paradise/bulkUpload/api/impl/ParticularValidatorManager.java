@@ -4945,6 +4945,22 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean esActivoBBVA(String numActivo) {
+		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) "
+												+"		FROM ACT_ACTIVO ACT "
+												+"		WHERE ACT.DD_CRA_ID IN (SELECT DD_CRA_ID FROM DD_CRA_CARTERA "
+												+"								WHERE DD_CRA_CODIGO = '16' "
+												+"								AND BORRADO = 0) "
+											+"		AND ACT.ACT_NUM_ACTIVO = "+ numActivo +""
+				);
+		return !"0".equals(resultado);
+	}
+	
+	@Override
     public Boolean existeTipoSuministroByCod(String codigo) {
             if(Checks.esNulo(codigo)) {
                     return false;
@@ -5107,23 +5123,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		
 		return true;
-	}
-
-	@Override
-	public Boolean esActivoBBVA(String numActivo) {
-		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
-			return false;
-		}
-		String resultado = rawDao.getExecuteSQL(
-				"SELECT COUNT(1) "
-												+"		FROM ACT_ACTIVO ACT "
-												+"		WHERE ACT.DD_CRA_ID IN (SELECT DD_CRA_ID FROM DD_CRA_CARTERA "
-												+"								WHERE DD_CRA_CODIGO = '16' "
-												+"								AND BORRADO = 0) "
-											+"		AND ACT.ACT_NUM_ACTIVO = "+ numActivo +""
-				);
-		return !"0".equals(resultado);
-
 	}
 		
 	@Override
@@ -5843,8 +5842,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				" FROM gld_gastos_linea_detalle linea " + 
 				" JOIN gpv_gastos_proveedor gasto ON gasto.gpv_id = linea.gpv_id AND GASTO.GPV_NUM_GASTO_HAYA = " + idGasto + 
 				" where GLD_ID = "+ idLinea +" AND gasto.borrado = 0 AND linea.borrado = 0");
-
+		
 		return !"0".equals(resultado);
-	}		
+	}
 
 }

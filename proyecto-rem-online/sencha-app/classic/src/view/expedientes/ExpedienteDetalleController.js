@@ -4973,6 +4973,16 @@ comprobarFormatoModificar: function() {
 		}		
 	},
 	
+	onClickGeneraFichaComercialHojaExcel: function(btn) {
+				var me = this, config = {};
+		
+				config.params = {};
+				config.params.idExpediente = me.getViewModel().get("expediente.id");
+				config.url= $AC.getRemoteUrl("ofertas/generateExcelBBVA");
+				
+				me.fireEvent("downloadFile", config);
+			},
+	
 	onClickGenerarFichaComercial: function(btn) {
 		
 		var me = this;

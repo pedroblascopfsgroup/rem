@@ -560,6 +560,22 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 		    	
 	    	},
 			
+    		comboTipoTransmision: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tipoTransmision'}
+				}/*,autoLoad: true*/
+    		},
+    		comboTipoAlta: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tipoAlta'}
+				}/*,autoLoad: true*/
+			},
     		// Stores para el grid observaciones. Se crean 3 para solucionar problemas de instancia 
     		/*
 
@@ -598,22 +614,6 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 		        extraParams: {} // Dynamic.
 	    	 },
 	    	 autoLoad: true
-    		},
-    		comboTipoTransmision: {
-				model: 'HreRem.model.ComboBase',
-				proxy: {
-					type: 'uxproxy',
-					remoteUrl: 'generic/getDiccionario',
-					extraParams: {diccionario: 'tipoTransmision'}
-				}/*,autoLoad: true*/
-    		},
-    		comboTipoAlta: {
-				model: 'HreRem.model.ComboBase',
-				proxy: {
-					type: 'uxproxy',
-					remoteUrl: 'generic/getDiccionario',
-					extraParams: {diccionario: 'tipoAlta'}
-				}/*,autoLoad: true*/
     		}
      }    
 });

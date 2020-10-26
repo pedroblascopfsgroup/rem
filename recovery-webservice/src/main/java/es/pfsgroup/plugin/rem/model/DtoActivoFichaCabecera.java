@@ -313,7 +313,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
     private String tipoTransmisionDescripcion;
     private String tipoAltaDescripcion;
     private Boolean isGrupoOficinaKAM;
-
 	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -2130,6 +2129,142 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setNumActivoDivarian(String numActivoDivarian) {
 		this.numActivoDivarian = numActivoDivarian;
 	}
+	
+	public Boolean getActivoEpa() {
+		return activoEpa;
+	}
+
+	public void setActivoEpa(Boolean activoEpa) {
+		this.activoEpa = activoEpa;
+	}
+
+	public Long getEmpresa() {
+		return empresa;
+	}
+
+	public void setEmpresa(Long empresa) {
+		this.empresa = empresa;
+	}
+
+	public Long getOficina() {
+		return oficina;
+	}
+
+	public void setOficina(Long oficina) {
+		this.oficina = oficina;
+	}
+
+	public Long getContrapartida() {
+		return contrapartida;
+	}
+
+	public void setContrapartida(Long contrapartida) {
+		this.contrapartida = contrapartida;
+	}
+
+	public Long getFolio() {
+		return folio;
+	}
+
+	public void setFolio(Long folio) {
+		this.folio = folio;
+	}
+
+	public Long getCdpen() {
+		return cdpen;
+	}
+
+	public void setCdpen(Long cdpen) {
+		this.cdpen = cdpen;
+	}
+
+	public String getNumActivoBbva() {
+		return numActivoBbva;
+	}
+
+	public void setNumActivoBbva(String numActivoBbva) {
+		this.numActivoBbva = numActivoBbva;
+	}
+
+	public Long getIdDivarianBbva() {
+		return idDivarianBbva;
+	}
+
+	public void setIdDivarianBbva(Long idDivarianBbva) {
+		this.idDivarianBbva = idDivarianBbva;
+	}
+
+	public Long getLineaFactura() {
+		return lineaFactura;
+	}
+
+	public void setLineaFactura(Long lineaFactura) {
+		this.lineaFactura = lineaFactura;
+	}
+
+	public Long getIdOrigenHre() {
+		return idOrigenHre;
+	}
+
+	public void setIdOrigenHre(Long idOrigenHre) {
+		this.idOrigenHre = idOrigenHre;
+	}
+
+	public String getUicBbva() {
+		return uicBbva;
+	}
+
+	public void setUicBbva(String uicBbva) {
+		this.uicBbva = uicBbva;
+	}
+
+	public String getCexperBbva() {
+		return cexperBbva;
+	}
+
+	public void setCexperBbva(String cexperBbva) {
+		this.cexperBbva = cexperBbva;
+	}
+
+	public String getTipoTransmisionCodigo() {
+		return tipoTransmisionCodigo;
+	}
+
+	public void setTipoTransmisionCodigo(String tipoTransmisionCodigo) {
+		this.tipoTransmisionCodigo = tipoTransmisionCodigo;
+	}
+
+	public String getTipoAltaCodigo() {
+		return tipoAltaCodigo;
+	}
+
+	public void setTipoAltaCodigo(String tipoAltaCodigo) {
+		this.tipoAltaCodigo = tipoAltaCodigo;
+	}
+
+	public String getTipoTransmisionDescripcion() {
+		return tipoTransmisionDescripcion;
+	}
+
+	public void setTipoTransmisionDescripcion(String tipoTransmisionDescripcion) {
+		this.tipoTransmisionDescripcion = tipoTransmisionDescripcion;
+	}
+
+	public String getTipoAltaDescripcion() {
+		return tipoAltaDescripcion;
+	}
+
+	public void setTipoAltaDescripcion(String tipoAltaDescripcion) {
+		this.tipoAltaDescripcion = tipoAltaDescripcion;
+	}
+
+	public Boolean getIsGrupoOficinaKAM() {
+		return isGrupoOficinaKAM;
+	}
+
+	public void setIsGrupoOficinaKAM(Boolean isGrupoOficinaKAM) {
+		this.isGrupoOficinaKAM = isGrupoOficinaKAM;
+	}
 
 	public Boolean getPerimetroAdmision() {
 		return perimetroAdmision;
@@ -2266,142 +2401,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setEsEditableActivoEstadoRegistral(Boolean esEditableActivoEstadoRegistral) {
 		this.esEditableActivoEstadoRegistral = esEditableActivoEstadoRegistral;
-	}	
-	
-	public Boolean getActivoEpa() {
-		return activoEpa;
-	}
-
-	public void setActivoEpa(Boolean activoEpa) {
-		this.activoEpa = activoEpa;
-	}
-
-	public Long getEmpresa() {
-		return empresa;
-	}
-
-	public void setEmpresa(Long empresa) {
-		this.empresa = empresa;
-	}
-
-	public Long getOficina() {
-		return oficina;
-	}
-
-	public void setOficina(Long oficina) {
-		this.oficina = oficina;
-	}
-
-	public Long getContrapartida() {
-		return contrapartida;
-	}
-
-	public void setContrapartida(Long contrapartida) {
-		this.contrapartida = contrapartida;
-	}
-
-	public Long getFolio() {
-		return folio;
-	}
-
-	public void setFolio(Long folio) {
-		this.folio = folio;
-	}
-
-	public Long getCdpen() {
-		return cdpen;
-	}
-
-	public void setCdpen(Long cdpen) {
-		this.cdpen = cdpen;
-	}
-
-	public String getNumActivoBbva() {
-		return numActivoBbva;
-	}
-
-	public void setNumActivoBbva(String numActivoBbva) {
-		this.numActivoBbva = numActivoBbva;
-	}
-
-	public Long getIdDivarianBbva() {
-		return idDivarianBbva;
-	}
-
-	public void setIdDivarianBbva(Long idDivarianBbva) {
-		this.idDivarianBbva = idDivarianBbva;
-	}
-
-	public Long getLineaFactura() {
-		return lineaFactura;
-	}
-
-	public void setLineaFactura(Long lineaFactura) {
-		this.lineaFactura = lineaFactura;
-	}
-
-	public Long getIdOrigenHre() {
-		return idOrigenHre;
-	}
-
-	public void setIdOrigenHre(Long idOrigenHre) {
-		this.idOrigenHre = idOrigenHre;
-	}
-
-	public String getUicBbva() {
-		return uicBbva;
-	}
-
-	public void setUicBbva(String uicBbva) {
-		this.uicBbva = uicBbva;
-	}
-
-	public String getCexperBbva() {
-		return cexperBbva;
-	}
-
-	public void setCexperBbva(String cexperBbva) {
-		this.cexperBbva = cexperBbva;
-	}
-
-	public String getTipoTransmisionCodigo() {
-		return tipoTransmisionCodigo;
-	}
-
-	public void setTipoTransmisionCodigo(String tipoTransmisionCodigo) {
-		this.tipoTransmisionCodigo = tipoTransmisionCodigo;
-	}
-
-	public String getTipoAltaCodigo() {
-		return tipoAltaCodigo;
-	}
-
-	public void setTipoAltaCodigo(String tipoAltaCodigo) {
-		this.tipoAltaCodigo = tipoAltaCodigo;
-	}
-
-	public String getTipoTransmisionDescripcion() {
-		return tipoTransmisionDescripcion;
-	}
-
-	public void setTipoTransmisionDescripcion(String tipoTransmisionDescripcion) {
-		this.tipoTransmisionDescripcion = tipoTransmisionDescripcion;
-	}
-
-	public String getTipoAltaDescripcion() {
-		return tipoAltaDescripcion;
-	}
-
-	public void setTipoAltaDescripcion(String tipoAltaDescripcion) {
-		this.tipoAltaDescripcion = tipoAltaDescripcion;
-	}
-
-	public Boolean getIsGrupoOficinaKAM() {
-		return isGrupoOficinaKAM;
-	}
-
-	public void setIsGrupoOficinaKAM(Boolean isGrupoOficinaKAM) {
-		this.isGrupoOficinaKAM = isGrupoOficinaKAM;
 	}
 	
 }

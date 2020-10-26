@@ -1078,6 +1078,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			
 			return false;
 		},
+
 		 isCarteraBbva: function(get){
 			 var isBbva = get('activo.isCarteraBbva');
 			 if(isBbva){
@@ -1085,6 +1086,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 }
 			 return false;
 		 },
+
 		 mostrarCamposDivarianandBbva: function(get){
 			var isSubcarteraDivarian = get('activo.isSubcarteraDivarian');			
 		    var isBbva = get('activo.isCarteraBbva');
@@ -1108,13 +1110,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) ||  $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);
 			var me = this; 
 			var esUA = false;
-		
-			
+
 			if(gestores){						
-			return true;
-				}
-				
-			
+				return true;
+			}	
 			return false;
 		
 	 	},
@@ -1125,6 +1124,32 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					return true;
 				}
 				return false;
+		},
+
+		esSupervisionGestorias: function(get){
+			
+			return $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']); 
+		},
+		
+		auComprador: function(get){
+			
+			return $AU.userIsRol(CONST.PERFILES['GESTOR_FORM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_FORM']) || $AU.userIsRol(CONST.PERFILES['GESTIAFORM']); 
+		},
+		
+		editarCheckValidado: function(get){
+			//Desactivamos la columna de validado en función del usuario:			
+			return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMINISTRACION']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMINISTRACION']);
+		},
+		
+		estadoAdmisionVisible : function(get){
+			
+			var retorno = !($AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']) 
+							|| $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) 
+							|| $AU.userIsRol(CONST.PERFILES['HAYASUPER']));				
+			if (!retorno){
+				retorno = !(get('activo.incluidoEnPerimetroAdmision') == "true");
+			}
+			return retorno;
 		}
 	 
     },
@@ -2613,6 +2638,23 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'activo/getHistoricoSolicitudesPrecios',
 				extraParams: {id: '{activo.id}'}
+			}
+		},
+		comboBBVATipoAlta:{
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboBBVATipoAlta',
+				extraParams: {idRecovery: '{activo.idRecovery}'}
+			}
+		},
+		
+		comboTipoSegmento: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getComboTipoSegmentoActivo',
+   				extraParams: {codSubcartera: '{activo.subcarteraCodigo}'}
 			}
 		},
 

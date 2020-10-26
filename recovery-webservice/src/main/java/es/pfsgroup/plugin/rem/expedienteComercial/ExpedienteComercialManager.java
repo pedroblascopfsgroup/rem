@@ -2403,10 +2403,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			try {
 				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosExpedienteComercial(expedienteComercial);
 				for (DtoAdjunto adj : listaAdjuntos) {
-					AdjuntoExpedienteComercial adjuntoExpedienteComercial = expedienteComercial.getAdjuntoGD(adj.getId());
-					if (adjuntoExpedienteComercial != null && adjuntoExpedienteComercial.getSubtipoDocumentoExpediente() != null
-							&& codigoDocumento.equals(adjuntoExpedienteComercial.getSubtipoDocumentoExpediente().getCodigo())) {
-						adjuntos.add(adjuntoExpedienteComercial);
+					DDSubtipoDocumentoExpediente subtipoDocumento = genericDao.get(DDSubtipoDocumentoExpediente.class, 
+							genericDao.createFilter(FilterType.EQUALS, "matricula", adj.getMatricula()));
+					if (subtipoDocumento != null && codigoDocumento.equals(subtipoDocumento.getCodigo())) {
+						return true;
 					}
 				}
 			} catch (GestorDocumentalException gex) {

@@ -156,6 +156,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubestadoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoAgendaSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoSuministro;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
@@ -1029,31 +1030,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	@BusinessOperationDefinition("activoManager.comprobarExisteAdjuntoActivo")
 	public Boolean comprobarExisteAdjuntoActivo(Long idActivo, String codigoDocumento) {
-		List<ActivoAdjuntoActivo> adjuntosActivo = new ArrayList<ActivoAdjuntoActivo>();
-		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
+		Filter idActivoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		Filter codigoDocumentoFilter = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.codigo", codigoDocumento);
 		
-		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-			Activo activo = this.get(idActivo);
-			try {
-				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosActivo(activo);
-				for (DtoAdjunto adj : listaAdjuntos) {
-					ActivoAdjuntoActivo activoAdjuntoActivo = activo.getAdjuntoGD(adj.getId());
-					if (activoAdjuntoActivo != null && activoAdjuntoActivo.getTipoDocumentoActivo() != null
-							&& codigoDocumento.equals(activoAdjuntoActivo.getTipoDocumentoActivo().getCodigo())) {
-						adjuntosActivo.add(activoAdjuntoActivo);
-					}
-				}
-			} catch (GestorDocumentalException gex) {
-				logger.error(gex.getMessage(), gex);
-			}
-		} else {		
-			Filter idActivoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
-			Filter codigoDocumentoFilter = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.codigo",
-					codigoDocumento);
-	
-			adjuntosActivo = genericDao.getList(ActivoAdjuntoActivo.class, idActivoFilter,
-					codigoDocumentoFilter);
-		}
+		List<ActivoAdjuntoActivo> adjuntosActivo = genericDao.getList(ActivoAdjuntoActivo.class, idActivoFilter, codigoDocumentoFilter);
+		
 		return !Checks.estaVacio(adjuntosActivo);
 	}
 

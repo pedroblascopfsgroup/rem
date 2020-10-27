@@ -94,7 +94,8 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 	private static final String IRPF_BASE_VACIA = "Si el campo 'IRPF Porcentaje' está informado, 'IRPF Base' no puede estar vacío.";
 	private static final String RETENCION_BASE_VACIA = "Si el campo 'Retención garantía Porcentaje' está informado, 'Retención garantía Base' no puede estar vacío.";
 	private static final String LINEA_DIFERENTE_STG_TIM_TIIM = "A esta línea ya se le ha asignado anteriormente un subtipo de gasto, tipo impositivo y tipo de impuesto, debe coincidir.";
-		
+	private static final String GASTO_REPETIDO_BBDD = "El gasto ya existe";
+	private static final String GASTO_REPETIDO_CARGA = "Gasto repetido";
 	
 	public static final Integer COL_ID_AGRUPADOR_GASTO = 0;
 	public static final Integer COL_TIPO_GASTO = 1;
@@ -251,6 +252,8 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 			mapaErrores.put(IRPF_BASE_VACIA, esIrpfBaseVacio(exc));
 			mapaErrores.put(RETENCION_BASE_VACIA, esRetencionGarantiaBaseVacio(exc));
 			mapaErrores.put(LINEA_DIFERENTE_STG_TIM_TIIM, mismaLineaDiferenteTipo(exc));
+			mapaErrores.put(GASTO_REPETIDO_BBDD, gastoRepetidoBBDD(exc));
+			mapaErrores.put(GASTO_REPETIDO_CARGA, gastoRepetidoEnCarga(exc));
 			
 
 
@@ -291,6 +294,8 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 					|| !mapaErrores.get(RETENCION_BASE_VACIA).isEmpty()
 					|| !mapaErrores.get(LINEA_DIFERENTE_STG_TIM_TIIM).isEmpty()
 					|| !mapaErrores.get(ACTIVABLE_SOLO_BBVA_LBK).isEmpty()
+					|| !mapaErrores.get(GASTO_REPETIDO_BBDD).isEmpty()
+					|| !mapaErrores.get(GASTO_REPETIDO_CARGA).isEmpty()
 					){
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -1208,27 +1213,73 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 	    }
 	 
 	 private List<Integer> campoSoloParaMultiplesCarteras(MSVHojaExcel exc, Integer campo){
-	        List<Integer> listaFilas = new ArrayList<Integer>();
+        List<Integer> listaFilas = new ArrayList<Integer>();
 
-	         try{
-	             for(int i=1; i<this.numFilasHoja;i++){
-	            	 try {
-	            		 if(!Checks.esNulo(exc.dameCelda(i, COL_NIF_PROPIETARIO)) && !Checks.esNulo(exc.dameCelda(i, campo))
-	            			&& Boolean.FALSE.equals(particularValidator.esPropietarioDeCarteraByCodigo(exc.dameCelda(i, COL_NIF_PROPIETARIO), COD_LBK))
-	            			&& Boolean.FALSE.equals(particularValidator.esPropietarioDeCarteraByCodigo(exc.dameCelda(i, COL_NIF_PROPIETARIO), COD_BBVA))) 
-	            				listaFilas.add(i);
-	           			               
-	                 } catch (ParseException e) {
-	                     listaFilas.add(i);
-	                 }
-	             }
-             } catch (IllegalArgumentException e) {
-                 listaFilas.add(0);
-                 e.printStackTrace();
-             } catch (IOException e) {
-                 listaFilas.add(0);
-                 e.printStackTrace();
+         try{
+             for(int i=1; i<this.numFilasHoja;i++){
+            	 try {
+            		 if(!Checks.esNulo(exc.dameCelda(i, COL_NIF_PROPIETARIO)) && !Checks.esNulo(exc.dameCelda(i, campo))
+            			&& Boolean.FALSE.equals(particularValidator.esPropietarioDeCarteraByCodigo(exc.dameCelda(i, COL_NIF_PROPIETARIO), COD_LBK))
+            			&& Boolean.FALSE.equals(particularValidator.esPropietarioDeCarteraByCodigo(exc.dameCelda(i, COL_NIF_PROPIETARIO), COD_BBVA))) 
+            				listaFilas.add(i);
+           			               
+                 } catch (ParseException e) {
+                     listaFilas.add(i);
+                 }
              }
-	         return listaFilas;   
-	    }
+         } catch (IllegalArgumentException e) {
+             listaFilas.add(0);
+             e.printStackTrace();
+         } catch (IOException e) {
+             listaFilas.add(0);
+             e.printStackTrace();
+         }
+         return listaFilas;   
+	 }
+	 
+	 private List<Integer> gastoRepetidoBBDD(MSVHojaExcel exc){
+        List<Integer> listaFilas = new ArrayList<Integer>();
+
+         try{
+             for(int i=1; i<this.numFilasHoja;i++){
+            	 try {
+            		 if(!Checks.esNulo(exc.dameCelda(i, COL_TIPO_ELEMENTO)) && Checks.esNulo(exc.dameCelda(i, COL_ID_ELEMENTO))) { 
+            			listaFilas.add(i);
+            		 }        
+                 } catch (ParseException e) {
+                     listaFilas.add(i);
+                 }
+             }
+         } catch (IllegalArgumentException e) {
+             listaFilas.add(0);
+             e.printStackTrace();
+         } catch (IOException e) {
+             listaFilas.add(0);
+             e.printStackTrace();
+         }
+         return listaFilas;   
+	 }
+	 
+	 private List<Integer> gastoRepetidoEnCarga(MSVHojaExcel exc){
+        List<Integer> listaFilas = new ArrayList<Integer>();
+
+         try{
+             for(int i=1; i<this.numFilasHoja;i++){
+            	 try {
+            		 if(!Checks.esNulo(exc.dameCelda(i, COL_TIPO_ELEMENTO)) && Checks.esNulo(exc.dameCelda(i, COL_ID_ELEMENTO))) { 
+            			listaFilas.add(i);
+            		 }        
+                 } catch (ParseException e) {
+                     listaFilas.add(i);
+                 }
+             }
+         } catch (IllegalArgumentException e) {
+             listaFilas.add(0);
+             e.printStackTrace();
+         } catch (IOException e) {
+             listaFilas.add(0);
+             e.printStackTrace();
+         }
+         return listaFilas;   
+	 }
 }

@@ -6,35 +6,27 @@ import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ProcesoMasivoContext;
@@ -42,13 +34,16 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.GastoLineaDetalleApi;
+import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
-import es.pfsgroup.plugin.rem.gasto.linea.detalle.dao.GastoLineaDetalleDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.DtoCargaMasivaUnicaGastos;
+import es.pfsgroup.plugin.rem.model.DtoLineaDetalleGasto;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
@@ -123,40 +118,29 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 	
 	protected static final Log logger = LogFactory.getLog(MSVMasivaUnicaGastosDetalle.class);
 	
-	//private static DtoCargaMasivaUnicaGastos dtoGastos;
+	private static DtoCargaMasivaUnicaGastos dtoGastos;
 	
 	@Autowired
 	private GenericABMDao genericDao;
 	
 	@Autowired
 	private GastoDao gastoDao;
-	
-	@Autowired
-	private GastoLineaDetalleDao gastoLineaDetalleDao;
-	
+
 	@Autowired
 	private GenericAdapter genericAdapter;
 	
+	@Autowired
+	private GastoProveedorApi gastoProveedorApi;
+	
+	@Autowired
+	private GastoLineaDetalleApi gastoLineaDetalleApi;
+	
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
-	
-	private MSVHojaExcel excel;
-		
+
 	@Override
 	public String getValidOperation() {
 		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_UNICA_GASTOS;
-	}
-	
-	@Transactional(readOnly = false)
-	@Override
-	public void preProcesado(MSVHojaExcel exc, ProcesoMasivoContext context) throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
-		excel = exc;
-		TransactionStatus transaction = null;
-		transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-		HashMap<String, Long> listaAsociaciones = asociarIdsGldyGpv(excel);
-		transactionManager.commit(transaction);
-		context.put(ProcesoMasivoContext.LISTA_ASOCIACIONES, listaAsociaciones);
-
 	}
 	
 	@Transactional(readOnly = false)
@@ -169,35 +153,19 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 			throws IOException, ParseException, JsonViewerException, SQLException, Exception {
 		String usuario = genericAdapter.getUsuarioLogado().getUsername();
 		try {
-			
-				Double importeTotal = 0.0;
 				GastoProveedor newGastoProveedor = null;
 				GastoLineaDetalle newGastoLineaDetalle = null;
-				Map<String, Long> listaAsociaciones = (HashMap<String, Long>) context.get(ProcesoMasivoContext.LISTA_ASOCIACIONES);
-				Long idGasto = null;
-				Long idLinea = null;
-				if (context.containsKey(ProcesoMasivoContext.LISTA_ASOCIACIONES)){
-					String asociacionLinea = exc.dameCelda(fila, COL_ID_AGRUPADOR_GASTO).concat(exc.dameCelda(fila, COL_COD_AGRUPACION_LINEA_DETALLE));
-					Iterator<Entry<String, Long>> it = listaAsociaciones.entrySet().iterator();
-					
-					while (it.hasNext()) {
-						Map.Entry e = (Map.Entry)it.next();
-						if(e.getKey().equals(exc.dameCelda(fila, COL_ID_AGRUPADOR_GASTO))) {
-							idGasto = (Long) e.getValue();
-						}
-						if(e.getKey().equals(asociacionLinea)) {
-							idLinea = (Long) e.getValue();
-						}
-					}	
-				}
-			
+				Double importeTotal = 0.0;
+
+				dtoGastos = DtoCargaMasivaUnicaGastos.getDtoCargaMasivaUnicaGastos(exc.dameCelda(fila, COL_ID_AGRUPADOR_GASTO));
 				
-				if(!Checks.esNulo(idGasto))	{
-					newGastoProveedor = genericDao.get(GastoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", idGasto)); 
+				if(dtoGastos.getIdAgrupador() == null) {
+					dtoGastos.setIdAgrupador(exc.dameCelda(fila, COL_ID_AGRUPADOR_GASTO));	
+				}else {
+					newGastoProveedor = dtoGastos.getGastoProveedor();
 				}
 				
-				
-				if(Checks.esNulo(newGastoProveedor)) {
+				if(newGastoProveedor == null) {
 					
 					newGastoProveedor = new GastoProveedor();
 					
@@ -264,28 +232,27 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 							newGastoProveedor.setTipoOperacion(tipoOperacion);
 						}
 					}
-					Auditoria auditoria = new Auditoria();
-					auditoria.setBorrado(false);
-					auditoria.setFechaCrear(new Date());
-					auditoria.setUsuarioCrear(usuario);
-					newGastoProveedor.setAuditoria(auditoria);
+					
+					newGastoProveedor.setAuditoria(Auditoria.getNewInstance());
 	
-					gastoDao.saveGasto(newGastoProveedor);
+					
+					genericDao.save(GastoProveedor.class, newGastoProveedor);
+
+					
+					dtoGastos.setGastoProveedor(newGastoProveedor);
 				}
 				 
 				////////////////////////////////////////////
 				/// Comienza inserción GastoLineaDetalle ///
 				////////////////////////////////////////////
 				
+				newGastoLineaDetalle = dtoGastos.getGastoLineaDetalle(exc.dameCelda(fila, COL_COD_AGRUPACION_LINEA_DETALLE));
 
-				if (!Checks.esNulo(idLinea)){
-					newGastoLineaDetalle = genericDao.get(GastoLineaDetalle.class, genericDao.createFilter(FilterType.EQUALS, "id", idLinea)); 
-				}
 				
 				if(Checks.esNulo(newGastoLineaDetalle)) {
+					dtoGastos.setGastoLineaDetalle(exc.dameCelda(fila, COL_COD_AGRUPACION_LINEA_DETALLE));
 					
-					newGastoLineaDetalle = new GastoLineaDetalle();
-
+					newGastoLineaDetalle = dtoGastos.getGastoLineaDetalle(exc.dameCelda(fila, COL_COD_AGRUPACION_LINEA_DETALLE));
 					newGastoLineaDetalle.setGastoProveedor(newGastoProveedor);
 					
 					if(exc.dameCelda(fila, COL_SUBTIPO_GASTO) != null && !exc.dameCelda(fila, COL_SUBTIPO_GASTO).isEmpty()) {
@@ -355,6 +322,7 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 					if(exc.dameCelda(fila, COL_TIPO_IMPOSITIVO) != null && !exc.dameCelda(fila, COL_TIPO_IMPOSITIVO).isEmpty()) {
 						newGastoLineaDetalle.setImporteIndirectoTipoImpositivo(Double.parseDouble(exc.dameCelda(fila, COL_TIPO_IMPOSITIVO)));
 					}
+					
 					boolean anyadirCuota = true;
 					if(exc.dameCelda(fila, COL_TIPO_IMPOSITIVO) != null && !exc.dameCelda(fila, COL_TIPO_IMPOSITIVO).isEmpty()) {
 						newGastoLineaDetalle.setImporteIndirectoCuota(Double.parseDouble(exc.dameCelda(fila, COL_TIPO_IMPOSITIVO)) / 100);
@@ -372,14 +340,11 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 					
 					newGastoLineaDetalle.setImporteTotal(importeTotal);
 					
-					Auditoria auditoria = new Auditoria();
-					auditoria.setBorrado(false);
-					auditoria.setFechaCrear(new Date());
-					auditoria.setUsuarioCrear(usuario);
-					newGastoLineaDetalle.setAuditoria(auditoria);
-					gastoLineaDetalleDao.saveGastoLineaDetalle(newGastoLineaDetalle);
+					newGastoLineaDetalle.setAuditoria(Auditoria.getNewInstance());
+					genericDao.save(GastoLineaDetalle.class, newGastoLineaDetalle);
+					
 				}
-				
+				dtoGastos.getGastoLineaDetalleList().add(newGastoLineaDetalle);
 				///////////////////////////////////////////////////
 				/// Comienza inserción GastoLineaDetalleEntidad ///
 				///////////////////////////////////////////////////
@@ -458,8 +423,13 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 				Filter filtroGastoEconomico = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", newGastoProveedor.getId());
 				GastoDetalleEconomico gastoDetalleEconomico = genericDao.get(GastoDetalleEconomico.class, filtroGastoEconomico);
 				
-				if(!Checks.esNulo(gastoDetalleEconomico)) {
+				if(gastoDetalleEconomico == null){
 					
+					gastoDetalleEconomico = new GastoDetalleEconomico();
+					gastoDetalleEconomico.setGastoProveedor(newGastoProveedor);
+					gastoDetalleEconomico.setAuditoria(Auditoria.getNewInstance());
+				
+				
 					if(exc.dameCelda(fila, COL_REPERCUTIBLE_INQUILINO) != null && !exc.dameCelda(fila, COL_REPERCUTIBLE_INQUILINO).isEmpty()) {
 						gastoDetalleEconomico.setRepercutibleInquilino(Boolean.TRUE.compareTo(stringToBoolean(exc.dameCelda(fila, COL_REPERCUTIBLE_INQUILINO))));
 					}
@@ -507,71 +477,11 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 					if(exc.dameCelda(fila, COL_C_GASTO_REFACTURABLE) != null && !exc.dameCelda(fila, COL_C_GASTO_REFACTURABLE).isEmpty()) {
 						gastoDetalleEconomico.setGastoRefacturable(stringToBoolean(exc.dameCelda(fila, COL_C_GASTO_REFACTURABLE)));
 					}
-					
-					
-					// TODO recalcular importe total del gasto
-					
-					genericDao.update(GastoDetalleEconomico.class, gastoDetalleEconomico);
-
-				} 
-				else {
-					gastoDetalleEconomico = new GastoDetalleEconomico();
-					gastoDetalleEconomico.setGastoProveedor(newGastoProveedor);
-					
-					if(exc.dameCelda(fila, COL_REPERCUTIBLE_INQUILINO) != null && !exc.dameCelda(fila, COL_REPERCUTIBLE_INQUILINO).isEmpty()) {
-						gastoDetalleEconomico.setRepercutibleInquilino(Boolean.TRUE.compareTo(stringToBoolean(exc.dameCelda(fila, COL_REPERCUTIBLE_INQUILINO))));
-					}
-					
-					if(exc.dameCelda(fila, COL_C_PAGO_CONEXION) != null && !exc.dameCelda(fila, COL_C_PAGO_CONEXION).isEmpty()) {
-						gastoDetalleEconomico.setPagadoConexionBankia(Boolean.TRUE.compareTo(stringToBoolean(exc.dameCelda(fila, COL_C_PAGO_CONEXION))));
-					}
-					
-					if(exc.dameCelda(fila, COL_NUM_CONEXION) != null && !exc.dameCelda(fila, COL_NUM_CONEXION).isEmpty()) {
-						gastoDetalleEconomico.setNumeroConexionBankia(exc.dameCelda(fila, COL_NUM_CONEXION));
-					}
-					
-					if(exc.dameCelda(fila, COL_F_CONEXION) != null && !exc.dameCelda(fila, COL_F_CONEXION).isEmpty()) {
-						gastoDetalleEconomico.setFechaConexion(new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, COL_F_CONEXION)));
-					}
-					
-					if(exc.dameCelda(fila, COL_OFICINA) != null && exc.dameCelda(fila, COL_OFICINA).isEmpty()) {
-						gastoDetalleEconomico.setOficinaBankia(exc.dameCelda(fila, COL_OFICINA));
-					}
-					
-					if(exc.dameCelda(fila, COL_RETENCION_GARANTIA_BASE) != null && !exc.dameCelda(fila, COL_RETENCION_GARANTIA_BASE).isEmpty()) {
-						gastoDetalleEconomico.setRetencionGarantiaBase(Double.parseDouble(exc.dameCelda(fila, COL_RETENCION_GARANTIA_BASE)));
-					}
-					
-					if(exc.dameCelda(fila, COL_RETENCION_GARANTIA_PORCENTAJE) != null && !exc.dameCelda(fila, COL_RETENCION_GARANTIA_PORCENTAJE).isEmpty()) {
-						gastoDetalleEconomico.setRetencionGarantiaTipoImpositivo(Double.parseDouble(exc.dameCelda(fila, COL_RETENCION_GARANTIA_PORCENTAJE)));
-					}
-					
-					if(exc.dameCelda(fila, COL_IRPF_BASE) != null && !exc.dameCelda(fila, COL_IRPF_BASE).isEmpty()) {
-						gastoDetalleEconomico.setIrpfBase(Double.parseDouble(exc.dameCelda(fila, COL_IRPF_BASE)));
-					}
-					
-					if(exc.dameCelda(fila, COL_IRPF_PORCENTAJE) != null && !exc.dameCelda(fila, COL_IRPF_PORCENTAJE).isEmpty()) {
-						gastoDetalleEconomico.setIrpfTipoImpositivo(Double.parseDouble(exc.dameCelda(fila, COL_IRPF_PORCENTAJE)));
-					}
-					
-					if(exc.dameCelda(fila, COL_IRPF_CLAVE) != null && !exc.dameCelda(fila, COL_IRPF_CLAVE).isEmpty()) {
-						gastoDetalleEconomico.setIrpfClave(exc.dameCelda(fila, COL_IRPF_CLAVE));
-					}
-					
-					if(exc.dameCelda(fila, COL_IRPF_SUBCLAVE) != null && !exc.dameCelda(fila, COL_IRPF_SUBCLAVE).isEmpty()) {
-						gastoDetalleEconomico.setIrpfSubclave(exc.dameCelda(fila, COL_IRPF_SUBCLAVE));
-					}
-					
-					if(exc.dameCelda(fila, COL_C_GASTO_REFACTURABLE) != null && !exc.dameCelda(fila, COL_C_GASTO_REFACTURABLE).isEmpty()) {
-						gastoDetalleEconomico.setGastoRefacturable(stringToBoolean(exc.dameCelda(fila, COL_C_GASTO_REFACTURABLE)));
-					}
-					
-					
-					// TODO recalcular importe total del gasto
-					
+						
 					genericDao.save(GastoDetalleEconomico.class, gastoDetalleEconomico);
 				}
-				
+			
+				dtoGastos.setGastoDetalleEconomico(gastoDetalleEconomico);
 
 				////////////////////////////////////////////////
 				/// Comienza inserción GastoGestion ////////////
@@ -583,13 +493,11 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 				
 				 if(gastoInfoGestion == null) {
 					 gastoInfoGestion = new GastoGestion(); 
-				 }else {
-					 gastoInfoGestion.getAuditoria().setFechaModificar(new Date());
-					 gastoInfoGestion.getAuditoria().setUsuarioModificar(usuario);
+					 gastoInfoGestion.setGastoProveedor(newGastoProveedor);
+					 
+					 genericDao.save(GastoGestion.class, gastoInfoGestion);
 				 }
-				 gastoInfoGestion.setGastoProveedor(newGastoProveedor);
 				 
-				 genericDao.save(GastoGestion.class, gastoInfoGestion);
 				
 				////////////////////////////////////////////////
 				/// Comienza inserción GastoInfoContabilidad ///
@@ -600,57 +508,10 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 				GastoInfoContabilidad gastoInfoContabilidad = genericDao.get(GastoInfoContabilidad.class, filtroInfoContabilidad);
 				
 				
-				if(!Checks.esNulo(gastoInfoContabilidad)) {
-					if(exc.dameCelda(fila, COL_ACTIVABLE) !=  null && !exc.dameCelda(fila, COL_ACTIVABLE).isEmpty()) {
-						if(stringToBoolean(exc.dameCelda(fila, COL_ACTIVABLE))) {
-							gastoInfoContabilidad.setActivable(genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI)));
-						} else {
-							gastoInfoContabilidad.setActivable(genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO)));
-						}
-					}
-					
-					if(exc.dameCelda(fila, COL_PLAN_VISITAS) != null && !exc.dameCelda(fila, COL_PLAN_VISITAS).isEmpty()) {
-						if(stringToBoolean(exc.dameCelda(fila, COL_PLAN_VISITAS))) {
-							gastoInfoContabilidad.setGicPlanVisitas(genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI)));
-						} else {
-							gastoInfoContabilidad.setGicPlanVisitas(genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO)));
-						}
-					}
-					
-					if(exc.dameCelda(fila, COL_TIPO_COMISIONADO) != null && !exc.dameCelda(fila, COL_TIPO_COMISIONADO).isEmpty()) {
-						Filter filtroTipoEntidad = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, COL_TIPO_ELEMENTO));
-						DDTipoComisionado tipoComisionado = genericDao.get(DDTipoComisionado.class, filtroTipoEntidad);
-						if(!Checks.esNulo(tipoComisionado)) {
-							gastoInfoContabilidad.setTipoComisionadoHre(tipoComisionado);
-						}
-					}
-					
-
-					Filter filtroEjercicio = genericDao.createFilter(FilterType.EQUALS, "anyo", exc.dameCelda(fila, COL_EJERCICIO));
-					Ejercicio ejercicio = genericDao.get(Ejercicio.class, filtroEjercicio);
-					
-					if(ejercicio != null) {
-						gastoInfoContabilidad.setEjercicio(ejercicio);
-					}else {
-						Date hoy = new Date();
-						Calendar calendar = new GregorianCalendar();
-						calendar.setTime(hoy);
-						String year =  Integer.toString(calendar.get(Calendar.YEAR));
-						filtroEjercicio = genericDao.createFilter(FilterType.EQUALS, "anyo", year);
-						ejercicio = genericDao.get(Ejercicio.class, filtroEjercicio);
-						gastoInfoContabilidad.setEjercicio(ejercicio);
-					}
-					
-					gastoInfoContabilidad.setEjercicio(ejercicio);
-					
-					genericDao.update(GastoInfoContabilidad.class, gastoInfoContabilidad);
-					
-				}
-				
-				else {
+				if(gastoInfoContabilidad == null) {
 					
 					gastoInfoContabilidad = new GastoInfoContabilidad();
-					
+					gastoInfoContabilidad.setAuditoria(Auditoria.getNewInstance());
 					gastoInfoContabilidad.setGastoProveedor(newGastoProveedor);
 					
 					if(exc.dameCelda(fila, COL_ACTIVABLE) !=  null && !exc.dameCelda(fila, COL_ACTIVABLE).isEmpty()) {
@@ -704,16 +565,42 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 				
 				if(exc.dameCelda(fila, COL_OPTA_CRITERIO_CAJA_IVA) != null && !exc.dameCelda(fila, COL_OPTA_CRITERIO_CAJA_IVA).isEmpty()) {
 					ActivoProveedor emisor = genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", exc.dameCelda(fila, COL_NIF_EMISOR)));
-					if(!Checks.esNulo(emisor)) {
+					if(emisor != null) {
 						emisor.setCriterioCajaIVA(Boolean.TRUE.compareTo(stringToBoolean(exc.dameCelda(fila, COL_OPTA_CRITERIO_CAJA_IVA))));
+						emisor.getAuditoria().setUsuarioModificar(usuario);
+						emisor.getAuditoria().setFechaModificar(new Date());
 						genericDao.update(ActivoProveedor.class, emisor);
 					}
+				}
+				
+				if((exc.getNumeroFilas() -1 ) ==  fila) {
+					List<GastoDetalleEconomico> gastosList = dtoGastos.getAllGastoDetalleEconomico();
+
+					if(gastosList != null && !gastosList.isEmpty()) {
+						for (GastoDetalleEconomico gastoDetalle : gastosList) {
+								importeTotal = gastoProveedorApi.recalcularImporteTotalGasto(gastoDetalle);
+								gastoDetalle.setImporteTotal(importeTotal);
+								GastoDetalleEconomico updateGastoDetalleEconomico = HibernateUtils.merge(gastoDetalle);
+								genericDao.update(GastoDetalleEconomico.class, updateGastoDetalleEconomico);
+						}
+					}
+					
+					List<GastoLineaDetalle> gastoLineaDetalleList = dtoGastos.getAllLineasDetalle();
+					if(gastoLineaDetalleList != null && !gastoLineaDetalleList.isEmpty()) {
+						for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleList) {
+							String subtipoGastoCodigo = gastoLineaDetalle.getSubtipoGasto().getCodigo();
+							DtoLineaDetalleGasto dtoLinea = gastoLineaDetalleApi.calcularCuentasYPartidas(gastoLineaDetalle.getGastoProveedor(), gastoLineaDetalle.getId(), subtipoGastoCodigo);	
+							gastoLineaDetalle = gastoLineaDetalleApi.setCuentasPartidasDtoToObject( gastoLineaDetalle, dtoLinea);
+							GastoLineaDetalle updateLinea = HibernateUtils.merge(gastoLineaDetalle);
+							genericDao.update(GastoLineaDetalle.class, updateLinea);
+						}
+					}
+					
+					dtoGastos.vaciarInstancias();
 					
 				}
 				
-				listaAsociaciones.put(exc.dameCelda(fila, COL_ID_AGRUPADOR_GASTO), newGastoProveedor.getId());
-				listaAsociaciones.put(exc.dameCelda(fila, COL_ID_AGRUPADOR_GASTO).concat(exc.dameCelda(fila, COL_COD_AGRUPACION_LINEA_DETALLE)), newGastoLineaDetalle.getId());
-				context.put(ProcesoMasivoContext.LISTA_ASOCIACIONES, listaAsociaciones);	
+
 		} catch (Exception e) {
 			logger.error("Error en MSVMasivaModificacionLineasDetalle", e);
 		}
@@ -725,53 +612,12 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 	public int getFilaInicial() {
 		return DATOS_PRIMERA_FILA;
 	}
-	
-	
-	/**
-	 * Obtener los ids de la GLD y la GPV 
-	 * y asociarlos a los identificadores de la excel
-	 * 
-	 * @param exc
-	 * @throws IllegalArgumentException
-	 * @throws IOException
-	 * @throws ParseException
-	 */
-	@Transactional(readOnly = false)
-	private HashMap<String, Long> asociarIdsGldyGpv(MSVHojaExcel exc)
-			throws IllegalArgumentException, IOException, ParseException {
-		HashMap<String, Long> listaAsociacion = new HashMap<String, Long>();
-		String codigoGpvGld = null;
-		Long id = 0L;
-		for (int i = this.getFilaInicial(); i <= excel.getNumeroFilas() - 1; i++) {
-			if(i == this.getFilaInicial()) {
-				codigoGpvGld = exc.dameCelda(i, COL_ID_AGRUPADOR_GASTO);
-				listaAsociacion.put(codigoGpvGld, id);
-				codigoGpvGld = exc.dameCelda(i, COL_ID_AGRUPADOR_GASTO).concat(exc.dameCelda(i, COL_COD_AGRUPACION_LINEA_DETALLE));
-				listaAsociacion.put(codigoGpvGld, id);
-			}
-			else {
-				if(!exc.dameCelda(i, COL_ID_AGRUPADOR_GASTO).equals(exc.dameCelda(i-1, COL_ID_AGRUPADOR_GASTO))){
-					codigoGpvGld = exc.dameCelda(i, COL_ID_AGRUPADOR_GASTO);
-					listaAsociacion.put(codigoGpvGld, id);
-					codigoGpvGld = exc.dameCelda(i, COL_ID_AGRUPADOR_GASTO).concat(exc.dameCelda(i, COL_COD_AGRUPACION_LINEA_DETALLE));
-					listaAsociacion.put(codigoGpvGld, id);
-				}
-				if(!exc.dameCelda(i, COL_COD_AGRUPACION_LINEA_DETALLE).equals(exc.dameCelda(i-1, COL_COD_AGRUPACION_LINEA_DETALLE))){
-					codigoGpvGld = exc.dameCelda(i, COL_ID_AGRUPADOR_GASTO).concat(exc.dameCelda(i, COL_COD_AGRUPACION_LINEA_DETALLE));
-					listaAsociacion.put(codigoGpvGld, id);
-				}
-			}
-		}
-		
-		return listaAsociacion;
-	}
-	
+
 	private boolean stringToBoolean(String valor){
 		boolean bool = false;
 		if(!Checks.esNulo(valor) && Arrays.asList(listaValidosPositivos).contains(valor.toUpperCase())) {
 			bool = true;
 		}
-		
 		
 		return bool;
 	}

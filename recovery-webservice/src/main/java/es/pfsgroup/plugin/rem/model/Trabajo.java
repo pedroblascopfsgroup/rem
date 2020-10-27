@@ -311,7 +311,7 @@ public class Trabajo implements Serializable, Auditable {
     private Usuario gestorAlta;
 	
 	@Column(name="TBJ_ID_TAREA")
-    private Long idTarea;
+    private String idTarea;
 	
 	@Column(name="TBJ_APLICA_COMITE")
     private Boolean aplicaComite;
@@ -1060,11 +1060,11 @@ public class Trabajo implements Serializable, Auditable {
 		this.gestorAlta = gestorAlta;
 	}
 
-	public Long getIdTarea() {
+	public String getIdTarea() {
 		return idTarea;
 	}
 
-	public void setIdTarea(Long idTarea) {
+	public void setIdTarea(String idTarea) {
 		this.idTarea = idTarea;
 	}
 

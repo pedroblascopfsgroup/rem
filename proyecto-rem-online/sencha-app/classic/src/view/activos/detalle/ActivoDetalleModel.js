@@ -1082,6 +1082,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			return false;
 		},
 
+
 		 isCarteraBbva: function(get){
 			 var isBbva = get('activo.isCarteraBbva');
 			 if(isBbva){
@@ -1094,6 +1095,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var isSubcarteraDivarian = get('activo.isSubcarteraDivarian');			
 		    var isBbva = get('activo.isCarteraBbva');
 		    if(isBbva || isSubcarteraDivarian ){
+			return true;
+		    }
+		    return false;
+		 },
+		 
+		 mostrarCamposDivarian: function(get){
+	 	 	var isSubcarteraDivarian = get('activo.isSubcarteraDivarian');
+		    if(isSubcarteraDivarian){
 			return true;
 		    }
 		    return false;

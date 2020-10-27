@@ -7501,18 +7501,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				|| $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION'])
 				|| $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);
 		var valorIdHaya = me.lookupReference('labelLinkIdOrigenHRE').getValue();
-		var origenAnteriorActivo = me
-				.lookupReference('comboOrigenAnteriorActivoRef');
+		var origenAnteriorActivo = me.lookupReference('comboOrigenAnteriorActivoRef');
+		var origenAnteriorActivoBbva = me.lookupReference('comboOrigenAnteriorActivoBBVARef');		
 		var fechatituloAnterior = me.lookupReference('fechaTituloAnteriorRef');
 		var sociedadPagoAnterior = me
 				.lookupReference('sociedadPagoAnteriorRef');
 		if (value == CONST.DD_STA_SUBTIPO_TITULO_ACTIVO['NOTARIAL_RECOMPRA']
 				&& valorIdHaya != null && gestores) {
 			origenAnteriorActivo.setReadOnly(true);
+			origenAnteriorActivoBbva.setReadOnly(true);
 			fechatituloAnterior.setReadOnly(true);
 			sociedadPagoAnterior.setReadOnly(true);
 		} else {
 			origenAnteriorActivo.setReadOnly(false);
+			origenAnteriorActivoBbva.setReadOnly(false);
 			fechatituloAnterior.setReadOnly(false);
 			sociedadPagoAnterior.setReadOnly(false);
 		}
@@ -7715,15 +7717,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this;
 		var idOrigen = me.getView().getViewModel().get('activo.idOrigenHre');
 		var comboOrigen = me.lookupReference('comboOrigenAnteriorActivoRef');
+		var origenAnteriorActivoBbva = me.lookupReference('comboOrigenAnteriorActivoBBVARef');
 		var fechaOrigen = me.lookupReference('fechaTituloAnteriorRef');
 		var sociedadOrigen = me.lookupReference('sociedadPagoAnteriorRef');
 		
 		if (idOrigen != null) {
 			comboOrigen.setReadOnly(true);
+			origenAnteriorActivoBbva.setReadOnly(true);
 			fechaOrigen.setReadOnly(true);
 			sociedadOrigen.setReadOnly(true);
 		}else{
 			comboOrigen.setReadOnly(false);
+			origenAnteriorActivoBbva.setReadOnly(false);
 			fechaOrigen.setReadOnly(false);
 			sociedadOrigen.setReadOnly(false);
 		}

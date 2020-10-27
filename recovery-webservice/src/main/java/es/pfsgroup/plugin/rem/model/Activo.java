@@ -535,6 +535,10 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "DD_ERA_ID")
     private DDEstadoRegistralActivo estadoRegistral; 
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TTA_ID_BBVA")
+    private DDTipoTituloActivo tipoTituloBbva;
+    
     @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
@@ -2080,6 +2084,14 @@ public class Activo implements Serializable, Auditable {
 
 	public void setEstadoRegistral(DDEstadoRegistralActivo estadoRegistral) {
 		this.estadoRegistral = estadoRegistral;
+	}
+
+	public DDTipoTituloActivo getTipoTituloBbva() {
+		return tipoTituloBbva;
+	}
+
+	public void setTipoTituloBbva(DDTipoTituloActivo tipoTituloBbva) {
+		this.tipoTituloBbva = tipoTituloBbva;
 	}
 
 }

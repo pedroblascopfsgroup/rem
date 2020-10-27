@@ -59,6 +59,7 @@ import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
+import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
@@ -1007,8 +1008,24 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setIdOrigenHre(activoBbva.getIdOrigenHre());
 			activoDto.setUicBbva(activoBbva.getUicBbva());
 			activoDto.setCexperBbva(activoBbva.getCexperBbva());
+
 			if(activoBbva.getCodPromocion() != null)
 				activoDto.setCodPromocionBbva(activoBbva.getCodPromocion());
+
+			
+			if (activoBbva != null && activoBbva.getIdOrigenHre() != null) {
+				Activo activoOrigenHRE = activoApi.getByNumActivo(activoBbva.getIdOrigenHre());
+				if (activoOrigenHRE != null) {
+					if (activo.getSociedadDePagoAnterior() != null 
+							&& activoBbva.getIdOrigenHre() != null
+							&& (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activoOrigenHRE.getCartera().getCodigo())) 
+								&& (DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activoOrigenHRE.getSubcartera().getCodigo()) 
+										|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activoOrigenHRE.getSubcartera().getCodigo()))) {
+						
+						activoDto.setSociedadPagoAnterior(activo.getPropietarioPrincipal().getDocIdentificativo());				
+					}
+				}
+			}			
 		}
 		
 		return activoDto;
@@ -1684,11 +1701,16 @@ public class TabActivoDatosBasicos implements TabActivoService {
 							
 							if(activoOrigenHRE.getTipoTitulo()!= null) {
 								activo.setTipoTitulo(activoOrigenHRE.getTipoTitulo());
+								activo.setTipoTituloBbva(activoOrigenHRE.getTipoTitulo());
 							}
 							
 							if (DDTipoTituloActivo.tipoTituloNoJudicial.equals(activoOrigenHRE.getTipoTitulo().getCodigo())
 									&& activoOrigenHRE.getAdjNoJudicial() != null) {
 								activo.setFechaTituloAnterior(activoOrigenHRE.getAdjNoJudicial().getFechaTitulo());
+							}
+
+							if(activoOrigenHRE.getSociedadDePagoAnterior() != null) {
+								activo.setSociedadDePagoAnterior(activoOrigenHRE.getSociedadDePagoAnterior());
 							}
 						} else {
 							throw new JsonViewerException(messageServices.getMessage(ACTIVO_NO_EXISTE));

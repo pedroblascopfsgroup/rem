@@ -1629,21 +1629,106 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if(actDatosDq.getFolioDdq()!=null) {
 			dto.setDqFolioFase1(actDatosDq.getFolioDdq());
 		}
+		
+		//VPO
+	
+		//Uso Dominant
+		if(actDatosDq.getTipoUsoDestino().getDescripcion()!=null) {
+			dto.setDqUsoDominanteFase1(actDatosDq.getTipoUsoDestino().getDescripcion());
+		}
+			/* 
+			 	* da muchos problemas		if(activo.getTipoUsoDestino().getDescripcion()!=null) {
+			dto.setDrUsoDominanteFase1(activo.getTipoUsoDestino().getDescripcion());
+		}*/
 
 		if(activo.getInfoRegistral().getInfoRegistralBien().getProvincia().getDescripcion()!=null) {
 			dto.setDrProvinciaDelRegistroFase1(activo.getInfoRegistral().getInfoRegistralBien().getProvincia().getDescripcion());
 		}
-		//TODO NUMEOR DE REGISTRO
+		//numero de registro
+		if(actDatosDq.getNumRegistroDdq()!=null) {
+			dto.setDqNumeroDelRegistroFase1(actDatosDq.getNumRegistroDdq());
+		}
+		if(activo.getInfoRegistral().getInfoRegistralBien().getNumRegistro()!=null) {
+			dto.setDrNumeroDelRegistroFase1(activo.getInfoRegistral().getInfoRegistralBien().getNumRegistro());
+		}
+		//Municipio del registro
+		if(actDatosDq.getLocalidadReg()!=null) {
+			dto.setDqMunicipioDelRegistroFase1(actDatosDq.getLocalidadReg().getDescripcion());
+		}
+		if(activo.getLocalidad().getDescripcionLarga()!=null) {
+			dto.setDrMunicipioDelRegistroFase1(activo.getLocalidad().getDescripcionLarga());
+		}
+		
+		//Provincia del registro
+		if(actDatosDq.getProvincia().getDescripcion()!=null) {
+			dto.setDqProvinciaDelRegistroFase1(actDatosDq.getProvincia().getDescripcion());
+		}
+		if(activo.getProvincia()!=null) {
+			dto.setDrProvinciaDelRegistroFase1(activo.getProvincia());
+		}
 		if(actDatosDq.getVpo()!=null) {
-			dto.setDqNumeroDelRegistroFase1(actDatosDq.getVpo().toString());
+			if(actDatosDq.getVpo().TRUE) {
+				dto.setDqVpoFase1("Si");
+				
+			}else {
+				dto.setDqVpoFase1("No");
+			}
+		}
+		if(activo.getVpo()!=null) {
+			if(activo.getVpo().equals(1)) {
+				dto.setDrVpoFase1("Si");
+			}else {
+				dto.setDrVpoFase1("No");
+			}
 		}
 		
 		if(actDatosDq.getAnyoConstruccion()!=null) {
 			dto.setDqAnyoConstruccionFase1(actDatosDq.getAnyoConstruccion());
 		}	
+		
+		if(activo.getInfoComercial().getAnyoConstruccion()!=null) {
+			dto.setDrAnyoConstruccionFase1(activo.getInfoComercial().getAnyoConstruccion().toString());
+		}
 		if(actDatosDq.getDescripcionCargas()!=null) {
 			dto.setDescripcionCargasInformacionCargasFase1(actDatosDq.getDescripcionCargas());
 		}
+		//Tipologia
+		if(activo.getTipoActivo().getDescripcion()!=null) {
+			dto.setDrTipologianFase1(activo.getTipoActivo().getDescripcion());
+		}
+		if(actDatosDq.getTipoActivo().getDescripcion()!=null) {
+			dto.setDqTipologiaFase1(actDatosDq.getTipoActivo().getDescripcion());
+		}
+		//Subtipologia
+		if(activo.getSubtipoTitulo().getDescripcion()!=null) {
+			dto.setDrSubtipologianFase1(activo.getSubtipoTitulo().getDescripcion());
+		}
+		if(actDatosDq.getSubtipoTitulo().getDescripcion()!=null) {
+			dto.setDqSubtipologiaFase1(actDatosDq.getSubtipoTitulo().getDescripcion());
+		}
+		//Informacion Cargas
+		if(actDatosDq.getCargas()!=null) {
+			if(actDatosDq.getCargas().TRUE) {
+				dto.setDqInformacionCargasFase1("Si");
+				
+			}else {
+				dto.setDqInformacionCargasFase1("No");
+			}
+		}
+		//Inscripcion Correcta
+		if(actDatosDq.getInscripcion()!=null) {
+				if(actDatosDq.getInscripcion().booleanValue()) {
+					dto.setDqInscripcionCorrectaFase1("Inscrito");
+				}else {
+					dto.setDqInscripcionCorrectaFase1("No Inscrito");
+				}
+		}
+		//Propiedad
+		if(actDatosDq.getPropiedadDdq()!=null) {
+			dto.setDqPor100PropiedadFase1(actDatosDq.getPropiedadDdq().toString());
+		}
+		
+		
 		return dto;
 	}
 

@@ -979,6 +979,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			else
 				return false;
 		},
+		
+		activarCamposGridPreciosVigentes: function(){
+			var gestorPrecios = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_PRECIOS']);
+			if(gestorPrecios){
+				return true;
+			}
+			return false;
+		},
+		
 		esSupervisionGestorias: function(get){
 			
 			return $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']); 

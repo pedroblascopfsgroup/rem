@@ -4,7 +4,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
     cls	: 'panel-base shadow-panel',
     collapsed: false,
     refreshAfterSave: true,
-    disableValidation: true,
+    disableValidation: false,
     reference: 'situacionposesoriaactivoref',
     scrollable	: 'y',
     listeners: {
@@ -124,7 +124,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 					            		change: function(combo, value) {
 					            			var me = this;
 					            			if(value=='1') {
-					            				me.up('formBase').down('[reference=datefieldTapiado]').allowBlank = false;
+					            				me.up('formBase').down('[reference=datefieldTapiado]').allowBlank = true;
 					            				me.up('formBase').down('[reference=datefieldTapiado]').setDisabled(false);
 					            				me.up('formBase').down('[reference=datefieldTapiado]').validate();
 					            			} else {
@@ -170,7 +170,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 					            		change: function(combo, value) {
 					            			var me = this;
 					            			if(value=='1') {
-					            				me.up('formBase').down('[reference=datefieldPuertaAntiocupa]').allowBlank = false;
+					            				me.up('formBase').down('[reference=datefieldPuertaAntiocupa]').allowBlank = true;
 					            				me.up('formBase').down('[reference=datefieldPuertaAntiocupa]').setDisabled(false);
 					            				me.up('formBase').down('[reference=datefieldPuertaAntiocupa]').validate();
 					            			} else {
@@ -208,7 +208,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						},{ 
 							xtype:'datefieldbase',
 							reference: 'fechaTomaPosesion',
-							allowBlank: false,
+							allowBlank: true,
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.obtencion.posesion'),
 		                	bind:	{
 		                		value: '{situacionPosesoria.fechaTomaPosesion}',
@@ -226,12 +226,12 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						},
 		                {
 				        	xtype: 'comboboxfieldbase',
-				        	allowBlank: false,
-				        	reference: "comboOcupadoRef",
+				        	allowBlank: true,
+				        	reference: 'comboOcupadoRef',
 							fieldLabel: HreRem.i18n('fieldlabel.ocupado'),
 				        	bind: {
 			            		store: '{comboSiNoRem}',
-			            		value : '{situacionPosesoriesTipoEstadoAlquilerAlquiladoa.ocupado}',
+			            		value : '{situacionPosesoria.ocupado}',
 			            		readOnly: '{esTipoEstadoAlquilerAlquilado}'
 			            	},
 			            	listeners: {
@@ -284,8 +284,8 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							        xtype: 'comboboxfieldbase',
 							        reference: 'comboSituacionPosesoriaConTitulo',
 									fieldLabel: HreRem.i18n('fieldlabel.con.titulo'),
-									allowBlank: false,
-							        bind: {
+									
+							        bind: {        
 							        	store : '{comboDDTipoTituloActivoTPA}',
 						            	value: '{situacionPosesoria.conTitulo}',			                           
 			                            readOnly: '{disabledComboConTituloTPA}'			                            
@@ -479,7 +479,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 					[
 						{ 
 							xtype:'comboboxfieldbase',
-							allowBlank: false,
+							allowBlank: true,
 							editable: false,
 							fieldLabel: 'Llaves necesarias',
 				        	bind: {
@@ -500,7 +500,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						},
 						{ 
 							xtype:'comboboxfieldbase',
-							allowBlank: false,
+							allowBlank: true,
 							editable: false,
 							reference: 'comboLlaveHre',
 							fieldLabel: 'Llaves en poder de HRE',
@@ -569,6 +569,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 		me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();
     },
+    
 
     getErrorsExtendedFormBase: function() {
    		var me = this,
@@ -579,26 +580,41 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
    		fechaSolDesahucio = me.down('[reference=fechaSolDesahucio]'),
    		fechaLanzamiento = me.down('[reference=fechaLanzamiento]'),
    		fechaLanzamientoEfectivo = me.down('[reference=fechaLanzamientoEfectivo]');
+   	//	conTitulo = me.down('[reference=comboSituacionPosesoriaConTitulo]');
+   	//	ocupadoRef = me.down('[reference=comboOcupadoRef]');
 //   	datefieldFechaTitulo = me.down('[reference=datefieldFechaTitulo]'),
 //   	datefieldFechaVencTitulo = me.down('[reference=datefieldFechaVencTitulo]');
 
-   		if(!Ext.isEmpty(fechaTomaPosesion.getValue()) && fechaTomaPosesion.getValue() > fechaRevisionEstadoPosesorio.getValue()) {
+   		
+   		
+   		
+   		if((!Ext.isEmpty(fechaTomaPosesion.getValue()) || !fechaTomaPosesion.getValue() == null)  && (!Ext.isEmpty(fechaRevisionEstadoPosesorio.getValue()) || !fechaRevisionEstadoPosesorio.getValue() == null)  && fechaTomaPosesion.getValue() > fechaRevisionEstadoPosesorio.getValue()) {
 		    error = HreRem.i18n("txt.validacion.fechaTomaPosesion.mayor.fechaRevisionEstadoPosesorio");
    			errores.push(error);
    			fechaTomaPosesion.markInvalid(error);   			
    		}  		
 
-   		if(!Ext.isEmpty(fechaLanzamiento.getValue()) && fechaLanzamiento.getValue() < fechaSolDesahucio.getValue()) {
+   		if((!Ext.isEmpty(fechaLanzamiento.getValue()) || !fechaLanzamiento.getValue() == null)  && (!Ext.isEmpty(fechaSolDesahucio.getValue()) || !fechaSolDesahucio.getValue() == null) && fechaLanzamiento.getValue() < fechaSolDesahucio.getValue() ) {
 		    error = HreRem.i18n("txt.validacion.fechaLanzamiento.menor.fechaSolDesahucio");
    			errores.push(error);
    			fechaLanzamiento.markInvalid(error);   			
    		}
 
-   		if(!Ext.isEmpty(fechaLanzamientoEfectivo.getValue()) && fechaLanzamientoEfectivo.getValue() < fechaLanzamiento.getValue()) {
+   		if((!Ext.isEmpty(fechaLanzamientoEfectivo.getValue()) || !fechaLanzamientoEfectivo.getValue() == null)  && (!Ext.isEmpty(fechaLanzamiento.getValue()) || !fechaLanzamiento.getValue() == null) && fechaLanzamientoEfectivo.getValue() < fechaLanzamiento.getValue()) {
 		    error = HreRem.i18n("txt.validacion.fechaLanzamientoEfectivo.menor.fechaLanzamiento");
    			errores.push(error);
    			fechaLanzamientoEfectivo.markInvalid(error);   			
-   		}  	
+   		}
+   		
+   		/*if((Ext.isEmpty(conTitulo.getValue()) || !conTitulo.getValue()== null)  && ocupadoRef.getValue() == 1) {
+		    
+   			error = HreRem.i18n("Error");
+   			errores.push(error);
+   			ocupadoRef.markInvalid(error);   			
+   		} */
+   		
+   		
+   		
 
 //   		//La fecha de t�tulo posesorio debe ser anterior a la fecha de vencimiento
 //   		if(!Ext.isEmpty(datefieldFechaTitulo.getValue()) && datefieldFechaTitulo.getValue() >= datefieldFechaVencTitulo.getValue()) {
@@ -609,6 +625,8 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 
    		me.addExternalErrors(errores);
    },
+   
+
 
     funcionRecargar: function() {
 		var me = this; 

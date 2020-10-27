@@ -1433,40 +1433,6 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		}
 		return entidades;
 	}
-	
-	public List<DtoPropietario> getcomboSociedadAnteriorBBVA() {
-	
-		List<ActivoPropietario> listaDD= activoPropietarioDao.getPropietarioIdDescripcionCodigo();
-		List<DtoPropietario> listaDto = new ArrayList<DtoPropietario>();
-		
-		for (ActivoPropietario activoPropietario : listaDD) {
-			DtoPropietario dtop = new DtoPropietario();	
-			dtop.setId(activoPropietario.getId());
-			dtop.setDescripcion(activoPropietario.getNombre());
-			dtop.setCodigo(activoPropietario.getDocIdentificativo());		
-			listaDto.add(dtop);
-		}
-		return listaDto;
-	}
-
-
-	public List<ActivoProveedorReducido> getComboActivoProveedorSuministro() {
-		List<ActivoProveedorReducido> listaActivoProveedor = new ArrayList<ActivoProveedorReducido>();
-		
-		Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_SUMINISTRO);
-		Filter filtroEstado = genericDao.createFilter(FilterType.EQUALS, "estadoProveedor.codigo", DDEstadoProveedor.ESTADO_BIGENTE);
-		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		List<ActivoProveedor> listProveedorSuministroVigente = genericDao.getList(ActivoProveedor.class, filtroSubtipo, filtroEstado, filtroBorrado);
-		
-		for (ActivoProveedor psv : listProveedorSuministroVigente) {
-			ActivoProveedorReducido p = new ActivoProveedorReducido();
-			p.setId(psv.getId());
-			p.setNombre(psv.getNombre());
-			listaActivoProveedor.add(p);
-		}
-		return listaActivoProveedor;
-
-	}
 
 	@Override
 	public List<DDSubestadoAdmision> getcomboSubestadoAdmisionNuevoFiltrado(String codEstadoAdmisionNuevo) {
@@ -1487,7 +1453,6 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		
 		Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "tipoAgendaSaneamiento.codigo", codTipo);
 		return genericDao.getList(DDSubtipoAgendaSaneamiento.class, filtroId);
-
 	}
 	
 	@Override
@@ -1504,11 +1469,44 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			} else if(idRecovery!=null && DDTipoAlta.CODIGO_AUT.equals(tipo.getCodigo())){	
 					listaTiposFiltered.add(tipo);
 			}
-								
-			
 		}
 
 		return listaTiposFiltered;
+	}
+
+
+	@Override
+	public List<DtoPropietario> getcomboSociedadAnteriorBBVA() {
+	
+		List<ActivoPropietario> listaDD= activoPropietarioDao.getPropietarioIdDescripcionCodigo();
+		List<DtoPropietario> listaDto = new ArrayList<DtoPropietario>();
+		
+		for (ActivoPropietario activoPropietario : listaDD) {
+			DtoPropietario dtop = new DtoPropietario();	
+			dtop.setId(activoPropietario.getId());
+			dtop.setDescripcion(activoPropietario.getNombre());
+			dtop.setCodigo(activoPropietario.getDocIdentificativo());		
+			listaDto.add(dtop);
+		}
+		return listaDto;
+	}
+
+
+	public List<ActivoProveedorReducido> getComboActivoProveedorSuministro() {
+		List<ActivoProveedorReducido> listaActivoProveedor = new ArrayList<ActivoProveedorReducido>();
+		Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_SUMINISTRO);
+		Filter filtroEstado = genericDao.createFilter(FilterType.EQUALS, "estadoProveedor.codigo", DDEstadoProveedor.ESTADO_BIGENTE);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		List<ActivoProveedor> listProveedorSuministroVigente = genericDao.getList(ActivoProveedor.class, filtroSubtipo, filtroEstado, filtroBorrado);
+		
+		for (ActivoProveedor psv : listProveedorSuministroVigente) {
+			ActivoProveedorReducido p = new ActivoProveedorReducido();
+			p.setId(psv.getId());
+			p.setNombre(psv.getNombre());
+			listaActivoProveedor.add(p);
+		}
+		return listaActivoProveedor;
+
 	}
 
 	@Override
@@ -1516,7 +1514,6 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Order order = new Order(GenericABMDao.OrderType.ASC, "codigo");
 		List<DDEstadoAdmision> lista = genericDao.getListOrdered(DDEstadoAdmision.class,order, genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 		List<DDEstadoAdmision> listaResultado = new ArrayList<DDEstadoAdmision>();
-
 		for (DDEstadoAdmision tipoEstadoAdmision : lista) {
 			if (tipoEstadoAdmisionCodigo.contains(tipoEstadoAdmision.getCodigo())) {
 				listaResultado.add(tipoEstadoAdmision);
@@ -1524,4 +1521,5 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		}
 		return listaResultado;
 	}
+
 }

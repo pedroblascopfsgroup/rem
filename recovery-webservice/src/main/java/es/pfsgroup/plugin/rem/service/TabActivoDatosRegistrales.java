@@ -64,6 +64,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoTramitacionTitulo;
 import es.pfsgroup.plugin.rem.model.dd.ActivoAdmisionRevisionTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadEjecutante;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdjudicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDivHorizontal;
@@ -75,6 +76,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 
@@ -240,6 +242,9 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				}
 				if (!Checks.esNulo(activo.getFechaTituloAnterior())) {
 					BeanUtils.copyProperty(activoDto, "fechaTituloAnterior", activo.getFechaTituloAnterior());
+				}
+				if (activo.getTipoTituloBbva() != null) {
+					BeanUtils.copyProperty(activoDto, "origenAnteriorActivoBbvaCodigo", activo.getTipoTituloBbva().getCodigo());
 				}
 			}
 		
@@ -460,8 +465,19 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		
 		
 		
-		if (!Checks.esNulo(activo.getPropietarioPrincipal())) {
-			activoDto.setSociedadPagoAnterior(activo.getPropietarioPrincipal().getDocIdentificativo());
+		if (!Checks.esNulo(activo.getPropietarioPrincipal()) && activoBbva != null) {
+			if (activoBbva != null && activoBbva.getIdOrigenHre() != null) {
+				Activo activoPadre = activoApi.getByNumActivo(activoBbva.getIdOrigenHre());
+				if (activoPadre != null 
+						&& !(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activoPadre.getCartera().getCodigo()) 
+								&& (DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activoPadre.getSubcartera().getCodigo()) 
+										|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activoPadre.getSubcartera().getCodigo())))) {
+					activoDto.setSociedadPagoAnterior(activo.getPropietarioPrincipal().getDocIdentificativo());
+				}
+			}else if(activoBbva != null && activo.getPropietarioPrincipal() != null && activo.getPropietarioPrincipal().getDocIdentificativo() != null) {
+				activoDto.setSociedadPagoAnterior(activo.getPropietarioPrincipal().getDocIdentificativo());
+			}
+			
 		}
 		
 		return activoDto;
@@ -611,6 +627,11 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			}
 			if (dto.getFechaTituloAnterior() != null) {
 				activo.setFechaTituloAnterior(dto.getFechaTituloAnterior());
+			}
+			if (dto.getOrigenAnteriorActivoBbvaCodigo() != null) {
+				DDTipoTituloActivo origenAnteriorBbva = (DDTipoTituloActivo) 
+				diccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivo.class, dto.getOrigenAnteriorActivoBbvaCodigo());
+				activo.setTipoTituloBbva(origenAnteriorBbva);
 			}
                      
 			if (activo.getTipoTitulo() != null) {

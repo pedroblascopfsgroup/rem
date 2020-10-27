@@ -5047,6 +5047,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
                         );
         return !"0".equals(resultado);
     }
+
 	public Boolean esActivoIncluidoPerimetroAdmision(String numActivo) {
 		if(numActivo == null) {
 			return false;
@@ -5134,7 +5135,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				"SELECT VALIDACION FROM CDC_CALIDAD_DATOS_CONFIG "
 				+ "WHERE COD_CAMPO = '" + codCampo + "' AND BORRADO = 0"
 		);			
-	}	
+	}
 	
 	@Override
 	public Boolean relacionPoblacionLocalidad(String columnaPoblacion, String columnaMunicipio) {
@@ -5845,5 +5846,4 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		return !"0".equals(resultado);
 	}
-
 }

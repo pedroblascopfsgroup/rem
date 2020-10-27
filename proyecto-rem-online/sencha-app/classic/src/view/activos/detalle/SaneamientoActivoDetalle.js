@@ -352,11 +352,11 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 											}
 										]
 					           		}
+			
 								]
 							
-							},
-							{
-							   	xtype:'fieldsettable',
+							},{
+								xtype:'fieldsettable',
 								defaultType: 'textfieldbase',
 								colspan: 3,
 								hidden: false, 
@@ -364,8 +364,7 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 								bind:{
 									//disabled:'{!saneamiento.noEstaInscrito}'
 								},
-								items :
-								[
+								items:[
 									{
 										xtype: "complementotitulogrid",
 										reference: "complementotitulogridref", 
@@ -373,11 +372,9 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 										bind:{
 											//disabled:'{!saneamiento.puedeEditarCalificacionNegativa}'
 										}
-										
 									}
-								]  	
-							},
-							{
+								]
+							},{
 							
 							
 							xtype:'fieldsettable',
@@ -819,8 +816,8 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 								border: false,
 								items :[
 									{
-										xtype: "saneamientoagendagrid",
-										reference: "saneamientoagendagridref"
+										xtype: "saneamientoagendagrid", 
+										reference: "saneamientoagendagridref"										
 									}
 								]
 							}

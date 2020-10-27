@@ -86,6 +86,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoRegistralActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDPromocionBBVA;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
@@ -901,42 +902,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));
 		
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-		ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
-		
-		if(activoBbva != null) {
-			if(activoBbva.getActivoEpa() != null) {
-				if(DDSinSiNo.CODIGO_SI.equals(activoBbva.getActivoEpa().getCodigo())){
-					activoDto.setActivoEpa(true);
-				}else {
-					activoDto.setActivoEpa(false);
-				}
-			}
-			activoDto.setEmpresa(activoBbva.getEmpresa());
-			activoDto.setOficina(activoBbva.getOficina());
-			activoDto.setContrapartida(activoBbva.getContrapartida());
-			activoDto.setFolio(activoBbva.getFolio());
-			activoDto.setCdpen(activoBbva.getCdpen());
-			
-			
-			if(activoBbva.getTipoTransmision() != null) {
-				activoDto.setTipoTransmisionCodigo(activoBbva.getTipoTransmision().getCodigo());
-				activoDto.setTipoTransmisionDescripcion(activoBbva.getTipoTransmision().getDescripcion());
-			}
-			
-			if(activoBbva.getTipoAlta() != null) {
-				activoDto.setTipoAltaCodigo(activoBbva.getTipoAlta().getCodigo());
-				activoDto.setTipoAltaDescripcion(activoBbva.getTipoAlta().getDescripcion());
-			}
-			
-			activoDto.setNumActivoBbva(activoBbva.getNumActivoBbva());
-			activoDto.setIdDivarianBbva(activoBbva.getIdDivarianBbva());
-			activoDto.setLineaFactura(activoBbva.getLineaFactura());
-			activoDto.setIdOrigenHre(activoBbva.getIdOrigenHre());
-			activoDto.setUicBbva(activoBbva.getUicBbva());
-			activoDto.setCexperBbva(activoBbva.getCexperBbva());
-		}
-			
 		if(perimetroActivo.getAplicaAdmision() != null) {
 			activoDto.setPerimetroAdmision(perimetroActivo.getAplicaAdmision());
 		}
@@ -1010,6 +975,60 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		
 		activoDto.setIsGrupoOficinaKAM(activoApi.isGrupoOficinaKAM());
+
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
+		
+		if(activoBbva != null) {
+			if(activoBbva.getActivoEpa() != null) {
+				if(DDSinSiNo.CODIGO_SI.equals(activoBbva.getActivoEpa().getCodigo())){
+					activoDto.setActivoEpa(true);
+				}else {
+					activoDto.setActivoEpa(false);
+				}
+			}
+			activoDto.setEmpresa(activoBbva.getEmpresa());
+			activoDto.setOficina(activoBbva.getOficina());
+			activoDto.setContrapartida(activoBbva.getContrapartida());
+			activoDto.setFolio(activoBbva.getFolio());
+			activoDto.setCdpen(activoBbva.getCdpen());
+			
+			
+			if(activoBbva.getTipoTransmision() != null) {
+				activoDto.setTipoTransmisionCodigo(activoBbva.getTipoTransmision().getCodigo());
+				activoDto.setTipoTransmisionDescripcion(activoBbva.getTipoTransmision().getDescripcion());
+			}
+			
+			if(activoBbva.getTipoAlta() != null) {
+				activoDto.setTipoAltaCodigo(activoBbva.getTipoAlta().getCodigo());
+				activoDto.setTipoAltaDescripcion(activoBbva.getTipoAlta().getDescripcion());
+			}
+			
+			activoDto.setNumActivoBbva(activoBbva.getNumActivoBbva());
+			activoDto.setIdDivarianBbva(activoBbva.getIdDivarianBbva());
+			activoDto.setLineaFactura(activoBbva.getLineaFactura());
+			activoDto.setIdOrigenHre(activoBbva.getIdOrigenHre());
+			activoDto.setUicBbva(activoBbva.getUicBbva());
+			activoDto.setCexperBbva(activoBbva.getCexperBbva());
+
+			if(activoBbva.getCodPromocion() != null)
+				activoDto.setCodPromocionBbva(activoBbva.getCodPromocion());
+
+			
+			if (activoBbva != null && activoBbva.getIdOrigenHre() != null) {
+				Activo activoOrigenHRE = activoApi.getByNumActivo(activoBbva.getIdOrigenHre());
+				if (activoOrigenHRE != null) {
+					if (activo.getSociedadDePagoAnterior() != null 
+							&& activoBbva.getIdOrigenHre() != null
+							&& (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activoOrigenHRE.getCartera().getCodigo())) 
+								&& (DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(activoOrigenHRE.getSubcartera().getCodigo()) 
+										|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(activoOrigenHRE.getSubcartera().getCodigo()))) {
+						
+						activoDto.setSociedadPagoAnterior(activo.getPropietarioPrincipal().getDocIdentificativo());				
+					}
+				}
+			}			
+		}
 		
 		return activoDto;
 	}
@@ -1536,15 +1555,28 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				activoDao.save(activo);
 			}
 			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
+			if(activoBbva != null) {
+				if(dto.getCodPromocionBbva() != null) {
+					List<ActivoBbvaActivos> activosPromocion = genericDao.getList(ActivoBbvaActivos.class, 
+							genericDao.createFilter(FilterType.EQUALS, "codPromocion", dto.getCodPromocionBbva()));
+					DDPromocionBBVA pbb = genericDao.get(DDPromocionBBVA.class, genericDao.createFilter(FilterType.EQUALS, "descripcion", dto.getCodPromocionBbva()));
+					if(activosPromocion != null && !activosPromocion.isEmpty() || pbb != null) {
+						activoBbva.setCodPromocion(dto.getCodPromocionBbva());
+					}else {
+						throw new JsonViewerException("La Promoción con código \""+dto.getCodPromocionBbva()+"\" no existe.");
+					}
+				}else {
+					activoBbva.setCodPromocion(null);
+				}
+			}
 			if (dto.getTipoTransmisionCodigo() != null || dto.getTipoAltaCodigo() != null || dto.getActivoEpa() != null ||
 				dto.getEmpresa() != null || dto.getOficina() !=  null || dto.getContrapartida() != null ||
 				dto.getFolio() != null || dto.getCdpen() != null || dto.getNumActivoBbva() != null ||
 				dto.getIdDivarianBbva() !=  null || dto.getLineaFactura() != null || dto.getIdOrigenHre() != null ||
-				dto.getUicBbva() != null || dto.getCexperBbva() !=  null	
+				dto.getUicBbva() != null || dto.getCexperBbva() !=  null
 			) {
-				
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-				ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
 				
 				if (activoBbva != null) {
 					if (dto.getTipoTransmisionCodigo() != null) {
@@ -1620,7 +1652,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 						activoBbva.setLineaFactura(dto.getLineaFactura());
 					}
 
-					if (dto.getIdOrigenHre() != null) {
+					if (dto.getIdOrigenHre() != null && !"".equals(String.valueOf(dto.getIdOrigenHre()))) {
 						
 						Activo activoOrigenHRE = activoApi.getByNumActivo(dto.getIdOrigenHre());
 						
@@ -1672,24 +1704,25 @@ public class TabActivoDatosBasicos implements TabActivoService {
 							
 							if(activoOrigenHRE.getTipoTitulo()!= null) {
 								activo.setTipoTitulo(activoOrigenHRE.getTipoTitulo());
+								activo.setTipoTituloBbva(activoOrigenHRE.getTipoTitulo());
 							}
 							
 							if (DDTipoTituloActivo.tipoTituloNoJudicial.equals(activoOrigenHRE.getTipoTitulo().getCodigo())
 									&& activoOrigenHRE.getAdjNoJudicial() != null) {
 								activo.setFechaTituloAnterior(activoOrigenHRE.getAdjNoJudicial().getFechaTitulo());
 							}
+
+							if(activoOrigenHRE.getSociedadDePagoAnterior() != null) {
+								activo.setSociedadDePagoAnterior(activoOrigenHRE.getSociedadDePagoAnterior());
+							}
 						} else {
 							throw new JsonViewerException(messageServices.getMessage(ACTIVO_NO_EXISTE));
 						}
 					}
 
-					if (dto.getUicBbva() != null) {
-						activoBbva.setUicBbva(dto.getUicBbva());
-					}
-
-					if (dto.getCexperBbva() != null) {
-						activoBbva.setCexperBbva(dto.getCexperBbva());
-					}
+					activoBbva.setUicBbva(dto.getUicBbva());
+					activoBbva.setCexperBbva(dto.getCexperBbva());
+					
 				}else {
 					throw new JsonViewerException(messageServices.getMessage(ACTIVO_NO_BBVA));
 				}

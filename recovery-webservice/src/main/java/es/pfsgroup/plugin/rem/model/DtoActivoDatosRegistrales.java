@@ -137,6 +137,8 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	
 	private Boolean unidadAlquilable;
 	private String tipoTituloActivoMatriz;
+	
+	private String origenAnteriorActivoBbvaCodigo;
 	/*
 
     private NMBAdjudicacionBien adjudicacionBien;
@@ -779,5 +781,11 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	}
 	public void setSociedadPagoAnterior(String sociedadPagoAnterior) {
 		this.sociedadPagoAnterior = sociedadPagoAnterior;
+	}
+	public String getOrigenAnteriorActivoBbvaCodigo() {
+		return origenAnteriorActivoBbvaCodigo;
+	}
+	public void setOrigenAnteriorActivoBbvaCodigo(String origenAnteriorActivoBbvaCodigo) {
+		this.origenAnteriorActivoBbvaCodigo = origenAnteriorActivoBbvaCodigo;
 	}
 }

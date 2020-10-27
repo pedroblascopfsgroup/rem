@@ -106,7 +106,13 @@ Ext.define('HreRem.view.activos.detalle.GastosAsociadosAdquisicionGrid', {
                  }, {
                     text : HreRem.i18n('fieldlabel.gastos.asociados.importe'),
                     flex : 1,
-                    dataIndex : 'importe'
+                    dataIndex : 'importe',
+                    editor: {
+                    	xtype:'textfield',
+		        		maskRe: /[0-9.]/,
+		        		allowNegative: false,
+		        		minValue: 0
+		        	}
                  }, {
                     text : HreRem.i18n('fieldlabel.gastos.asociados.factura'),
                     flex : 3,

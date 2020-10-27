@@ -997,7 +997,7 @@ Ext.define('HreRem.model.Activo', {
     			type: 'boolean'	 			
 			},
     		{
-    			name: 'empresa'
+				name: 'empresa'
     		},
     		{
     			name: 'oficina'
@@ -1057,15 +1057,8 @@ Ext.define('HreRem.model.Activo', {
     			depends: 'entidadPropietariaCodigo'
     		},
     		{
-    			name: 'subestadoAdmisionDescCabecera'
-			},
-			{
-	 			name: 'estadoRegistralCodigo'
-			},
-			{
-	 			name: 'esEditableActivoEstadoRegistral',
-    			type: 'boolean'	 			
-			}
+    			name: 'codPromocionBbva'
+    		}
     ],
     
 	proxy: {

@@ -20,20 +20,17 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
         var usuariosValidos = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) || $AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMISION']);
 		me.setTitle(HreRem.i18n('title.datos.basicos'));
         var items= [
-			{   
-				xtype:'fieldsettable',
-				layout: {
-					type: 'table',
-					columns: 1
-				},
+			{
+			xtype:'fieldsettable',
+	        title: HreRem.i18n('title.identificacion'),
+			items: [
+				{    
+				xtype:'container',
+				layout:'hbox',
+				colspan: 3,
 				defaultType: 'container',
-		        title: HreRem.i18n('title.identificacion'),
 				items :
-					[{
-						xtype:'fieldsettable',
-						defaultType: 'container',
-						items :
-							[{ // Columna 1
+					[{ // Columna 1
 							defaultType: 'textfieldbase',
 							flex: 1,
 							items:[
@@ -245,15 +242,32 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						                }
 									]
 								},
+								//PARA DIVARIAN
 						        {
 						        	xtype: 'comboboxfieldbase',
 						        	fieldLabel: HreRem.i18n('fieldlabel.sociedad.pago'),
 						        	bind: { 
 						        		value:'{activo.sociedadPagoAnterior}',
 						        		store: '{comboSituacionPagoAnterior}',
-						        		readOnly: '{!activo.isSubcarteraDivarian}'
+						        		//store: '{comboSociedadAnteriorBBVA}',
+						        		readOnly: '{!activo.isSubcarteraDivarian}',
+						        		hidden: '{activo.isCarteraBbva}'
 						        	},
-						        	
+						        	displayField: 'descripcion',
+						        	style:'margin-left:10px'
+						        },
+						        //PARA BBVA
+						        {
+						        	xtype: 'comboboxfieldbase',
+						        	fieldLabel: HreRem.i18n('fieldlabel.sociedad.pago'),
+						        	bind: { 
+						        		value:'{activo.sociedadPagoAnterior}',
+						        		//store: '{comboSituacionPagoAnterior}',
+						        		store: '{comboSociedadAnteriorBBVA}',
+						        		readOnly: '{!activo.isSubcarteraDivarian}',
+						        		hidden: '{!activo.isCarteraBbva}'
+						        	},
+						        	displayField: 'descripcion',
 						        	style:'margin-left:10px'
 						        }
 								
@@ -285,15 +299,16 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								},
 								{
 									xtype:'comboboxfieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.activobbva.tipoAlta'),
+									reference: 'tipoAltaRef',
+									fieldLabel: HreRem.i18n('fieldlabel.activobbva.tipoAlta'),									
 									bind: {
 										readOnly : '{!isGestorAdmisionAndSuperComboTipoAltaBlo}',										
 										store: '{comboBBVATipoAlta}',
 										hidden: '{!activo.isCarteraBbva}',
 										value: '{activo.tipoAltaCodigo}'
-									},listener:{
-										afterrender:'{isGestorAdmisionAndSuperComboTipoAlta}'
-									}
+									}/*,listeners:{
+										beforerender:'isGestorAdmisionAndSuperComboTipoAlta'
+									}*/
 									
 								},
 				                {
@@ -321,8 +336,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						defaultType: 'textfieldbase',
 						title: HreRem.i18n('title.bbva'),
 						border: true,
-						colapsible: false,
-						flex: 3,
+						colspan: 3,
 						items :
 							[
 							{
@@ -364,14 +378,24 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							            fn:'onClickActivoHRE'									       
 							        }
 								}
+							},
+							{
+								xtype:'textfieldbase',
+								reference:'tfcodpromocionbbva',
+								fieldLabel: HreRem.i18n('fieldlabel.activobbva.codPromocionBbva'),
+								bind: {
+									readOnly : '{!isGestorOSupervisorAdmisionAndSuper}',
+									value: '{activo.codPromocionBbva}'
+								}
 							}
-						]	,
+						],
 	                bind:{
 	                	hidden: '{!activo.isCarteraBbva}'
 	                }
 	                }
-				]},
-            {    
+				]
+				},				
+            	{    
                 
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',
@@ -1236,7 +1260,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
             
      ];
 	me.addPlugin({ptype: 'lazyitems', items: items });
-    me.callParent();    	
+    me.callParent();    
+    
    
 
     },

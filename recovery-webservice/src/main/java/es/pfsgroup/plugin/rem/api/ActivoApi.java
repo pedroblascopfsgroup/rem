@@ -1364,22 +1364,6 @@ public interface ActivoApi {
 	Boolean deleteSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto);
 
 	Boolean updateSaneamientoAgenda(SaneamientoAgendaDto saneamientoAgendaDto);
-	
-	boolean createHistoricoTramitacionTituloAdicional(DtoHistoricoTramitacionTituloAdicional tramitacionDto, Long idActivo) throws HistoricoTramitacionException;
-	
-	boolean updateHistoricoTramitacionTituloAdicional(DtoHistoricoTramitacionTituloAdicional tramitacionDto) throws Exception, HistoricoTramitacionException;
-	
-	boolean destroyHistoricoTramitacionTituloAdicional(DtoHistoricoTramitacionTituloAdicional tramitacionDto);
-	
-	List<DtoHistoricoTramitacionTituloAdicional> getHistoricoTramitacionTituloAdicional(Long id);
-	
-	List<DtoCalificacionNegativaAdicional> getActivoCalificacionNegativaAdicional(Long idActivo);
-
-	boolean updateCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto);
-	
-	boolean createCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto) throws JsonViewerException, Exception;
-	
-	boolean destroyCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto);
 
 	
 	/**
@@ -1436,5 +1420,21 @@ public interface ActivoApi {
 	boolean isActivoExisteEnRem(Long idActivo);
 
 	public Boolean isGrupoOficinaKAM();
+
+	boolean createHistoricoTramitacionTituloAdicional(DtoHistoricoTramitacionTituloAdicional tramitacionDto, Long idActivo) throws HistoricoTramitacionException;
+	
+	boolean updateHistoricoTramitacionTituloAdicional(DtoHistoricoTramitacionTituloAdicional tramitacionDto) throws Exception, HistoricoTramitacionException;
+	
+	boolean destroyHistoricoTramitacionTituloAdicional(DtoHistoricoTramitacionTituloAdicional tramitacionDto);
+	
+	List<DtoHistoricoTramitacionTituloAdicional> getHistoricoTramitacionTituloAdicional(Long id);
+	
+	List<DtoCalificacionNegativaAdicional> getActivoCalificacionNegativaAdicional(Long idActivo);
+
+	boolean updateCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto);
+	
+	boolean createCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto) throws JsonViewerException, Exception;
+	
+	boolean destroyCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto);
 
 }

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Guillem Rey
---## FECHA_CREACION=20200918
+--## FECHA_CREACION=20201026
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=REMVIP-8040
+--## INCIDENCIA_LINK=HREOS-11739
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Crear vista para rellenar el grid de la busqueda de activos
@@ -15,7 +15,8 @@
 --##        0.2 [REMVIP-7161] Añadir campo equipo de gestión
 --##        0.3 [HREOS-10769] Añadir campos BBVA_NUM_ACTIVO y BBVA_ID_DIVARIAN
 --##		0.4 Juan Bautista Alfonso - - REMVIP-7935 - Modificado fecha posesion para que cargue de la vista V_FECHA_POSESION_ACTIVO
---##      	0.5 Guillem Rey -- REMVIP-8040 - APU - Destino Comercial
+--##		0.5 Guillem Rey -- REMVIP-8040 - APU - Destino Comercial
+--##		0.7 Guillem Rey -- HREOS-11739 - CODIGO PROMOCION BBVA
 --#########################################
 --*/
 
@@ -120,7 +121,8 @@ BEGIN
 			TIPOSEG.DD_TS_CODIGO 								AS TIPO_SEGMENTO_CODIGO,
             EQG.DD_EQG_CODIGO                           AS DD_EQG_EQUIPO_GESTION,
 			BBVA.BBVA_NUM_ACTIVO						AS BBVA_NUM_ACTIVO,
-			BBVA.BBVA_ID_DIVARIAN						AS BBVA_ID_DIVARIAN
+			BBVA.BBVA_ID_DIVARIAN						AS BBVA_ID_DIVARIAN,
+			BBVA.BBVA_COD_PROMOCION						AS BBVA_COD_PROMOCION
             
 		FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT 
 		LEFT JOIN '|| V_ESQUEMA ||'.ACT_LOC_LOCALIZACION ACT_LOC 							ON ACT_LOC.ACT_ID = ACT.ACT_ID

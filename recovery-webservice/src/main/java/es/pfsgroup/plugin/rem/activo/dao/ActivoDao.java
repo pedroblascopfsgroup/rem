@@ -361,7 +361,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	Long getComunidadAutonomaId(Activo activo);
 	
-	List<ActivoCalificacionNegativaAdicional> getListActivoCalificacionNegativaAdicionalByIdActivo(Long idActivo);
 
 	boolean existeactivoIdHAYA(Long idActivo);
 
@@ -369,8 +368,10 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	boolean activoEstadoVendido(Long idActivo);
 
-	boolean activoFueraPerimetroHAYA(Long idActivo);
-
 	boolean isActivoBBVADivarian(Long idActivo);
+
+	boolean activoFueraPerimetroHAYA(Long idActivo); 
+
+	List<ActivoCalificacionNegativaAdicional> getListActivoCalificacionNegativaAdicionalByIdActivo(Long idActivo);
 
 }

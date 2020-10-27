@@ -503,6 +503,9 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
     		{
     			name: 'origenAnteriorActivoCodigo'
     		},
+    		    		{
+    			name: 'origenAnteriorActivoBbvaCodigo'
+    		},
     		{
     			name:'fechaTituloAnterior',
     			convert: function(value) {

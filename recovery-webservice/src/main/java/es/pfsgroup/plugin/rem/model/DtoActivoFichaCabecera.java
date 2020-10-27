@@ -313,6 +313,16 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
     private String tipoTransmisionDescripcion;
     private String tipoAltaDescripcion;
     private Boolean isGrupoOficinaKAM;
+    
+
+	private Boolean activoChkPerimetroAlquiler;
+	private List<?> activosAgrupacionRestringida;
+
+	private Boolean tieneOkTecnico;
+
+	private Long activoPrincipalRestringida;
+	
+	private String codPromocionBbva;
 	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -361,13 +371,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setOcupado(int ocupado) {
 		this.ocupado = ocupado;
 	}
-
-	private Boolean activoChkPerimetroAlquiler;
-	private List<?> activosAgrupacionRestringida;
-
-	private Boolean tieneOkTecnico;
-
-	private Long activoPrincipalRestringida;
 
 	public Boolean getTieneOkTecnico() {
 		return tieneOkTecnico;
@@ -2265,7 +2268,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setIsGrupoOficinaKAM(Boolean isGrupoOficinaKAM) {
 		this.isGrupoOficinaKAM = isGrupoOficinaKAM;
 	}
-
 	public Boolean getPerimetroAdmision() {
 		return perimetroAdmision;
 	}
@@ -2402,5 +2404,12 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setEsEditableActivoEstadoRegistral(Boolean esEditableActivoEstadoRegistral) {
 		this.esEditableActivoEstadoRegistral = esEditableActivoEstadoRegistral;
 	}
-	
+
+	public String getCodPromocionBbva() {
+		return codPromocionBbva;
+	}
+
+	public void setCodPromocionBbva(String codPromocionBbva) {
+		this.codPromocionBbva = codPromocionBbva;
+	}
 }

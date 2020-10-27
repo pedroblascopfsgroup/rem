@@ -104,6 +104,10 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 	@Embedded
 	private Auditoria auditoria;
 
+	@Column(name = "BBVA_COD_PROMOCION")
+  	private String codPromocion;
+	
+	
 	public Auditoria getAuditoria() {
 		return auditoria;
 	}
@@ -254,6 +258,14 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 
 	public void setVersion(Long version) {
 		this.version = version;
+	}
+
+	public String getCodPromocion() {
+		return codPromocion;
+	}
+
+	public void setCodPromocion(String codPromocion) {
+		this.codPromocion = codPromocion;
 	}
 	
 }

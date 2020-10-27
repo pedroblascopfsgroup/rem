@@ -284,6 +284,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 							tabData.models[0].data.valorEstimadoRenta = record.infoComercial.data.valorEstimadoRenta;
 						}
 					}
+				} else if (tabData.models[0].name === "datosbasicos") {
+					record = form.getBindRecord();
+					if (record != null) {
+						tabData.models[0].data.cexperBbva = record.data.cexperBbva;
+						tabData.models[0].data.uicBbva = record.data.uicBbva;
+					}
 				}
 			}
 
@@ -627,40 +633,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	
     	
     },
-    destroyWindowCrearActivoAdmision: function (btn){
-    	var me = this;
-    	btn.up('window').destroy();
-    },
-    
-    hideWindowCrearActivoAdmision: function(btn) {
-    	var me = this;
-    	btn.up('window').hide();   	
-    },
-    
-    onClickCrearTrabajo: function (btn) {
-    	var me = this;
-    	
-    	me.getView().mask(HreRem.i18n("msg.mask.loading"));	
-    	
-    	var idActivo = me.getViewModel().get("activo.id");
-    	var codSubcartera = me.getViewModel().get("activo.subcarteraCodigo");
-    	var codCartera = me.getViewModel().get("activo.entidadPropietariaCodigo");
-    	var gestorActivo = $AU.getUser().userName;
-    	
-    	var ventana = Ext.create("HreRem.view.trabajos.detalle.CrearPeticionTrabajo", {
-			idActivo: idActivo, 
-			codCartera: codCartera, 
-			codSubcartera: codSubcartera, 
-			logadoGestorMantenimiento: true,
-			idAgrupacion: null,
-			idGestor: null, 
-			gestorActivo: gestorActivo,
-			trabajoDesdeActivo: true});
-		btn.lookupViewModel().getView().add(ventana);
-		ventana.show();
-		me.getView().unmask();
-
-    },
     
     onAnyadirPropietarioClick: function (btn) {    	
     	var me = this;
@@ -873,8 +845,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     onEstadoDivHorizontalAdmisionSelect: function(combo, value) {
     	
     	var me = this;
-    	disabled = (value == 1 || Ext.isEmpty(value)) ;
-
+		disabled = (value == 1 || Ext.isEmpty(value)) ;
+		
     	me.lookupReference('estadoDivHorizontalNoInscritaAdmision').allowBlank = disabled
     	me.lookupReference('estadoDivHorizontalNoInscritaAdmision').setDisabled(disabled);
 
@@ -883,7 +855,40 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			me.lookupReference('estadoDivHorizontalNoInscritaAdmision').allowBlank = true;    		
     	}
     	
-    },    
+    },  
+
+	destroyWindowCrearActivoAdmision : function(btn) {
+		var me = this;
+		btn.up('window').destroy();
+	},
+
+	hideWindowCrearActivoAdmision : function(btn) {
+		var me = this;
+		btn.up('window').hide();
+	},
+
+	onClickCrearTrabajo : function(btn) {
+		var me = this;
+		var idActivo = me.getViewModel().get("activo.id");
+		var codSubcartera = me.getViewModel().get("activo.subcarteraCodigo");
+		var codCartera = me.getViewModel()
+				.get("activo.entidadPropietariaCodigo");
+		me.getView().fireEvent('openModalWindow',
+				"HreRem.view.trabajos.detalle.CrearTrabajo", {
+					idActivo : idActivo,
+					idAgrupacion : null,
+					codCartera : codCartera,
+					codSubcartera : codSubcartera,
+					logadoGestorMantenimiento : true
+				});
+	},
+
+	onAnyadirPropietarioClick : function(btn) {
+		var me = this;
+		var idActivo = me.getViewModel().get("activo.id");
+		me.getView().fireEvent('openModalWindow',
+				"HreRem.view.activos.detalle.AnyadirPropietario");
+	},
     
     onChangeProvincia: function(combo, value, oldValue, eOpts){
     	var me = this;
@@ -7314,86 +7319,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	getVisiblityOfBotons : function() {
 		return this.getViewModel().get('activo.unidadAlquilable');
 	},
-	
-	validarEdicionHistoricoSolicitudesPrecios: function(editor, grid) {
-    	var me = this;
-    	
-    	if($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_PRECIOS']) || $AU.userIsRol(CONST.PERFILES['GESTOR_PUBLICACION'])) {
-    		return grid.record.data.esEditable;
-    	}
-    	
-    	return false;
-    	
-    },
 
-    checkVisibilityOfBtnCrearTrabajo: function () {
-       var me = this;
-       var enPerimetro = me.getViewModel().get('activo.incluidoEnPerimetro') == 'true';
-       var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
-       var isGestorActivos = $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']);
-	   var isGestorAlquiler = $AU.userGroupHasRole(CONST.PERFILES['GESTOR_ALQUILER_HPM']);
-	   var isUserGestedi = $AU.userIsRol(CONST.PERFILES['GESTEDI']);
-	   
-       return !enPerimetro || (!isSuper && !isGestorActivos && !isGestorAlquiler && !isUserGestedi);
-        					 
-       
-	},
-	
-    gestoresEstadoNotarialAndIDHayaNotNull:function(combo, value, oldValue, eOpts){
-    		var me = this; 	
-    		var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) ||  $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);
-			var valorIdHaya = me.lookupReference('labelLinkIdOrigenHRE').getValue();
-			var origenAnteriorActivo = me.lookupReference('comboOrigenAnteriorActivoRef');
-			var fechatituloAnterior = me.lookupReference('fechaTituloAnteriorRef');
-			var sociedadPagoAnterior = me.lookupReference('sociedadPagoAnteriorRef');
-			if( value == CONST.DD_STA_SUBTIPO_TITULO_ACTIVO['NOTARIAL_RECOMPRA'] && valorIdHaya != null && gestores){
-				origenAnteriorActivo.setReadOnly(true);
-				fechatituloAnterior.setReadOnly(true);
-				sociedadPagoAnterior.setReadOnly(true);
-    		}else{
-	    		origenAnteriorActivo.setReadOnly(false);
-				fechatituloAnterior.setReadOnly(false);
-				sociedadPagoAnterior.setReadOnly(false);
-    		}
-   	 },
-   	 isGestorAdmisionAndSuperComboTipoAlta: function(combo, value, oldValue, eOpts){
-   	 		var me = this; 	
-			var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) ||  $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);		
-			var comboActivoRecovery = me.lookupReference('idRecovery');			
-			if(comboActivoRecovery!=null && gestores){					
-				combo.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
-				combo.setReadOnly(true);
-			}else{
-				combo.setReadOnly(false);
-			}
-							
-   	 },
-	
-    onChangeComboTributacionAdqusicion: function(combo, newValue, oldValue){
-    	var me = this;
-		var fechaVencTpoBonificacion = me.lookupReference('fechaVencTpoBonificacion');
-		var fechaLiqComplementaria = me.lookupReference('fechaLiqComplementaria');
+	checkVisibilityOfBtnCrearTrabajo: function () {
+		var me = this;
+		var enPerimetro = me.getViewModel().get('activo.incluidoEnPerimetro') == 'true';
+		var isSuper = $AU.userIsRol(CONST.PERFILES['HAYASUPER']);
+		var isGestorActivos = $AU.userIsRol(CONST.PERFILES['GESTOR_ACTIVOS']);
+		var isGestorAlquiler = $AU.userGroupHasRole(CONST.PERFILES['GESTOR_ALQUILER_HPM']);
+		var isUserGestedi = $AU.userIsRol(CONST.PERFILES['GESTEDI']);
 		
-		if(newValue == "BON"){
-			fechaVencTpoBonificacion.setDisabled(false);
-			fechaLiqComplementaria.setDisabled(false);
-		}else if(newValue == "ORD" && oldValue != null){
-			fechaVencTpoBonificacion.setDisabled(true);
-			fechaVencTpoBonificacion.setValue("");
-			fechaLiqComplementaria.setDisabled(true);
-			fechaLiqComplementaria.setValue("");
-		}else{
-			fechaVencTpoBonificacion.setDisabled(true);
-			fechaLiqComplementaria.setDisabled(true);
-		}
-    },
-
-    onSaveFormularioCompletoTabAdmisionTitulo: function(btn , form){
-    	// Redireccion al controlador de la vista para mantener todos los m�todos ordenados, sin alterar la arquitectura del tab principal. 
-    	form.lookupController().saveTabData(btn, form);
-	},
-
-
+		return !enPerimetro || (!isSuper && !isGestorActivos && !isGestorAlquiler && !isUserGestedi);
+							  
+		
+	 },
 
 	validarEdicionHistoricoSolicitudesPrecios : function(editor, grid) {
 		var me = this;
@@ -7406,6 +7344,44 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		return false;
 
+	},
+
+	onSaveFormularioCompletoTabAdmisionTitulo : function(btn, form) {
+		// Redireccion al controlador de la vista para mantener todos los
+		// m�todos ordenados, sin alterar la arquitectura del tab principal.
+		form.lookupController().saveTabData(btn, form);
+	},
+
+	isGestorAdmisionAndSuperComboTipoAlta: function(combo, value, oldValue, eOpts){
+		var me = this; 	
+		var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) ||  $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);		
+		var comboActivoRecovery = me.lookupReference('idRecovery');			
+		if(comboActivoRecovery!=null && gestores){					
+			combo.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
+			combo.setReadOnly(true);
+		}else{
+			combo.setReadOnly(false);
+		}
+					
+	},
+
+	onChangeComboTributacionAdqusicion: function(combo, newValue, oldValue){
+		var me = this;
+		var fechaVencTpoBonificacion = me.lookupReference('fechaVencTpoBonificacion');
+		var fechaLiqComplementaria = me.lookupReference('fechaLiqComplementaria');
+
+		if(newValue == "BON"){
+			fechaVencTpoBonificacion.setDisabled(false);
+			fechaLiqComplementaria.setDisabled(false);
+		}else if(newValue == "ORD" && oldValue != null){
+			fechaVencTpoBonificacion.setDisabled(true);
+			fechaVencTpoBonificacion.setValue("");
+			fechaLiqComplementaria.setDisabled(true);
+			fechaLiqComplementaria.setValue("");
+		}else{
+			fechaVencTpoBonificacion.setDisabled(true);
+			fechaLiqComplementaria.setDisabled(true);
+		}
 	},
 
 
@@ -7461,21 +7437,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		} else if (!isDisabled && enPerimetroAdmision) {
 			component.setDisabled(true);
 		}
-    },
-    
-    mostrarObservacionesGrid: function(event, target, options) {   	
-    	var me = this;
-    	var observacionesAdmision = target.data.observacionesEvolucion;
-  	
-    	me.getView().fireEvent('openModalWindow', "HreRem.view.activos.detalle.CrearEvolucionObservaciones", {
-            observacionesAdmision: observacionesAdmision
-        });
-        
-    },
-    
-    onClickCerrarObservacionesEvolucion: function(btn) {
-    	var me = this;
-    	btn.up('window').hide();
 	},
 
 	mostrarObservacionesGrid : function(event, target, options) {
@@ -7598,38 +7559,67 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				|| $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION'])
 				|| $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);
 		var valorIdHaya = me.lookupReference('labelLinkIdOrigenHRE').getValue();
-		var origenAnteriorActivo = me
-				.lookupReference('comboOrigenAnteriorActivoRef');
+		var origenAnteriorActivo = me.lookupReference('comboOrigenAnteriorActivoRef');
+		var origenAnteriorActivoBbva = me.lookupReference('comboOrigenAnteriorActivoBBVARef');		
 		var fechatituloAnterior = me.lookupReference('fechaTituloAnteriorRef');
 		var sociedadPagoAnterior = me
 				.lookupReference('sociedadPagoAnteriorRef');
 		if (value == CONST.DD_STA_SUBTIPO_TITULO_ACTIVO['NOTARIAL_RECOMPRA']
 				&& valorIdHaya != null && gestores) {
 			origenAnteriorActivo.setReadOnly(true);
+			origenAnteriorActivoBbva.setReadOnly(true);
 			fechatituloAnterior.setReadOnly(true);
 			sociedadPagoAnterior.setReadOnly(true);
 		} else {
 			origenAnteriorActivo.setReadOnly(false);
+			origenAnteriorActivoBbva.setReadOnly(false);
 			fechatituloAnterior.setReadOnly(false);
 			sociedadPagoAnterior.setReadOnly(false);
 		}
+		//Comprobar de nuevo este metodo solo si tiene IdOrigen (PARA ACTIVOS BBVA)
+		var idOrigen = me.getView().getViewModel().get('activo.idOrigenHre');
+		if (idOrigen != null) {
+			me.ocultarCamposIdOrigen();
+		}
 	},
 
-	isGestorAdmisionAndSuperComboTipoAlta : function(combo, value, oldValue,
+	/*isGestorAdmisionAndSuperComboTipoAlta : function(combo, value, oldValue,
 			eOpts) {
 		var me = this;
+		var tipoAlta = me.lookupReference('tipoAltaRef');
+		
 		var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER'])
 				|| $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION'])
 				|| $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);
-		var comboActivoRecovery = me.lookupReference('idRecovery');
-		if (comboActivoRecovery != null && !gestores) {
-			combo.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
-			combo.setReadOnly(true);
+		//var comboActivoRecovery = me.lookupReference('idRecovery');
+		var tipoAltaCodigo = me.getViewModel().get('activo.tipoAltaCodigo');		
+		var activoRecovery=me.getViewModel().get('activo.idRecovery');
+		if (activoRecovery != null && !gestores) {
+			tipoAlta.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
+			tipoAlta.setReadOnly(true);
 		} else {
-			combo.setReadOnly(false);
+			//tipoAlta.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
+			tipoAlta.setReadOnly(false);
+		}
+		if (gestores) {
+			if (activoRecovery == null) {
+				
+				tipoAlta.setReadOnly(false);
+			}else{
+				if (tipoAltaCodigo.getValue() != CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA'] ) {
+					
+					tipoAlta.setReadOnly(false);
+				}else if (tipoAltaCodigo.getValue() == CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA'] ){
+					
+					tipoAlta.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
+					tipoAlta.setReadOnly(true);
+				}
+			}
+		}else{
+			tipoAlta.setReadOnly(true);
 		}
 
-	},
+	},*/
 
 	onClickBotonCancelarVentanaGastoAsociado : function(btn) {
 		var me = this;
@@ -7780,6 +7770,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						me.getView().unmask();
 					}
 				});
+	},
+	ocultarCamposIdOrigen: function(){
+		var me = this;
+		var idOrigen = me.getView().getViewModel().get('activo.idOrigenHre');
+		var comboOrigen = me.lookupReference('comboOrigenAnteriorActivoRef');
+		var origenAnteriorActivoBbva = me.lookupReference('comboOrigenAnteriorActivoBBVARef');
+		var fechaOrigen = me.lookupReference('fechaTituloAnteriorRef');
+		var sociedadOrigen = me.lookupReference('sociedadPagoAnteriorRef');
+		
+		if (idOrigen != null) {
+			comboOrigen.setReadOnly(true);
+			origenAnteriorActivoBbva.setReadOnly(true);
+			fechaOrigen.setReadOnly(true);
+			sociedadOrigen.setReadOnly(true);
+		}else{
+			comboOrigen.setReadOnly(false);
+			origenAnteriorActivoBbva.setReadOnly(false);
+			fechaOrigen.setReadOnly(false);
+			sociedadOrigen.setReadOnly(false);
+		}
 	}
+		
+		
 
 });

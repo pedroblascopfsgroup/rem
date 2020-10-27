@@ -333,6 +333,9 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			        columns: 3,
 			        tdAttrs: {width: '25%'}
 				},
+				listeners: {
+					afterrender: 'ocultarCamposIdOrigen'
+				},
 				items :
 					[
 					{
@@ -375,6 +378,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		            	},
 		            	allowBlank: true
 			        },
+			        //ESTE ES EL COMBO QUE APARECE PARA LOS ACTIVOS DE DIVARIAN
 			        {
 			        	xtype: 'comboboxfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.origen.anterior.activo'),
@@ -383,8 +387,23 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		            	bind: {
 		            		
 		            		store: '{storeOrigenAnteriorActivo}',
-		            		hidden: '{!mostrarCamposDivarianandBbva}',
+		            		//hidden: '{!mostrarCamposDivarianandBbva}',
+		            		hidden: '{!mostrarCamposDivarian}',
 		            		value: '{datosRegistrales.origenAnteriorActivoCodigo}'
+		            	}
+	            	},
+	            	//ESTE ES EL COMBO QUE APARECE PARA LOS ACTIVOS DE BBVA
+			        {
+			        	xtype: 'comboboxfieldbase',
+						fieldLabel: HreRem.i18n('fieldlabel.origen.anterior.activo'),
+						reference: 'comboOrigenAnteriorActivoBBVARef',
+						
+						labelWidth: 200,					
+		            	bind: {
+		            		store: '{storeTituloOrigenActivo}',
+		            		//hidden: '{!mostrarCamposDivarianandBbva}',
+		            		hidden: '{!isCarteraBbva}',
+		            		value: '{datosRegistrales.origenAnteriorActivoBbvaCodigo}'
 		            	}
 	            	},
 					{
@@ -405,7 +424,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			        	
 			        	bind: {			        		
 			        		 store: '{comboSociedadAnteriorBBVA}',
-			        		 hidden: '{!isCarteraBbva}',			        		
+			        		 hidden: '{!isCarteraBbva}',
+			        		 readOnly:'{!isCarteraBbva}',
 			        		 value:'{datosRegistrales.sociedadPagoAnterior}'
 			        	}
 			        },

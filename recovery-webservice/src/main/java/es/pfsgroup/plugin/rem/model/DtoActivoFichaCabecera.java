@@ -2395,7 +2395,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setEsEditableActivoEstadoRegistral(Boolean esEditableActivoEstadoRegistral) {
 		this.esEditableActivoEstadoRegistral = esEditableActivoEstadoRegistral;
-	}	
+	}
 
 	public String getCodPromocionBbva() {
 		return codPromocionBbva;

@@ -181,9 +181,10 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
         ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 
         Map<String, Object> map = null;
-        map = new HashMap<String, Object>();
 
         for(ActivoCalificacionNegativa calificaciones : calificacionesList){
+
+            map = new HashMap<String, Object>();
 
             map.put("idDefecto", calificaciones.getId());
             map.put("estado", calificaciones.getEstadoMotivoCalificacionNegativa().getCodigo());
@@ -223,9 +224,10 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
         ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 
         Map<String, Object> map = null;
-        map = new HashMap<String, Object>();
 
         for(ActivoCargas cargas : cargasList){
+
+            map = new HashMap<String, Object>();
 
             map.put("idCarga", cargas.getId());
             map.put("origenDato", cargas.getOrigenDato().getCodigo());

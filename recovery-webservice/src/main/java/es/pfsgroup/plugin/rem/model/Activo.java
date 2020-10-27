@@ -65,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 
 /**
@@ -124,6 +125,10 @@ public class Activo implements Serializable, Auditable {
     
     @Column(name="ACT_CON_CARGAS")
     private Integer conCargas;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_TTR_ID")
+  	private DDTipoTransmision tipoTransmision;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TPA_ID")
@@ -2085,7 +2090,7 @@ public class Activo implements Serializable, Auditable {
 	public void setEstadoRegistral(DDEstadoRegistralActivo estadoRegistral) {
 		this.estadoRegistral = estadoRegistral;
 	}
-
+	
 	public DDTipoTituloActivo getTipoTituloBbva() {
 		return tipoTituloBbva;
 	}
@@ -2094,4 +2099,11 @@ public class Activo implements Serializable, Auditable {
 		this.tipoTituloBbva = tipoTituloBbva;
 	}
 
+	public DDTipoTransmision getTipoTransmision() {
+		return tipoTransmision;
+	}
+
+	public void setTipoTransmision(DDTipoTransmision tipoTransmision) {
+		this.tipoTransmision = tipoTransmision;
+	}
 }

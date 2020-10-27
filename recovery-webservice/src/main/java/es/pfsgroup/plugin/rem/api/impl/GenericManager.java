@@ -26,6 +26,8 @@ import org.hibernate.LazyInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.utils.MessageUtils;
@@ -59,6 +61,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorReducido;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.CarteraCondicionesPrecios;
 import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
@@ -111,7 +114,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.propietario.dao.ActivoPropietarioDao;
-import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
 import es.pfsgroup.plugin.rem.trabajo.dao.DDSubtipoTrabajoDao;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
@@ -119,8 +121,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.sojo.interchange.json.JsonParser;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
 
 @Service("genericManager")
 public class GenericManager extends BusinessOperationOverrider<GenericApi> implements GenericApi {
@@ -1453,8 +1453,24 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			dtop.setCodigo(activoPropietario.getDocIdentificativo());		
 			listaDto.add(dtop);
 		}
-	return listaDto;
+		return listaDto;
+	}
+
+	public List<ActivoProveedorReducido> getComboActivoProveedorSuministro() {
+		List<ActivoProveedorReducido> listaActivoProveedor = new ArrayList<ActivoProveedorReducido>();
+		Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_SUMINISTRO);
+		Filter filtroEstado = genericDao.createFilter(FilterType.EQUALS, "estadoProveedor.codigo", DDEstadoProveedor.ESTADO_BIGENTE);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		List<ActivoProveedor> listProveedorSuministroVigente = genericDao.getList(ActivoProveedor.class, filtroSubtipo, filtroEstado, filtroBorrado);
 		
+		for (ActivoProveedor psv : listProveedorSuministroVigente) {
+			ActivoProveedorReducido p = new ActivoProveedorReducido();
+			p.setId(psv.getId());
+			p.setNombre(psv.getNombre());
+			listaActivoProveedor.add(p);
+		}
+		return listaActivoProveedor;
+
 	}
 
 	@Override
@@ -1462,7 +1478,6 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Order order = new Order(GenericABMDao.OrderType.ASC, "codigo");
 		List<DDEstadoAdmision> lista = genericDao.getListOrdered(DDEstadoAdmision.class,order, genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 		List<DDEstadoAdmision> listaResultado = new ArrayList<DDEstadoAdmision>();
-
 		for (DDEstadoAdmision tipoEstadoAdmision : lista) {
 			if (tipoEstadoAdmisionCodigo.contains(tipoEstadoAdmision.getCodigo())) {
 				listaResultado.add(tipoEstadoAdmision);
@@ -1470,4 +1485,5 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		}
 		return listaResultado;
 	}
+
 }

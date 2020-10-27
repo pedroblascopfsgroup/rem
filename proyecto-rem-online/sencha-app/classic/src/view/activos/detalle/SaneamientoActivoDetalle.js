@@ -29,7 +29,6 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 	
     initComponent: function () {
         var me = this;
-
         me.setTitle(HreRem.i18n('title.admision.saneamiento'));
 
         var items= [
@@ -212,32 +211,170 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 												}
 											}
 										]
-									   },{
-									   	xtype:'fieldsettable',
+
+					           		},
+					           		//
+       				           		{ //COMBO SI/NO PARA TITULO ADICIONAL 
+		    					    	xtype: 'comboboxfieldbase',							        	
+			        					fieldLabel:  HreRem.i18n('fieldlabel.titulo.adicional'),
+			        					reference: 'combotituloadicionalref',
+			        					bind: 
+			        						{
+		            							store: '{comboSiNoRem}',
+		            							value: '{saneamiento.tieneTituloAdicional}'
+		            							//readOnly: '{datosRegistrales.unidadAlquilable}'
+	            							},
+										listeners: 
+											{
+		                						change: 'onComboTramitacionTituloAdicional'
+		            						}
+				        			}
+
+								]
+
+						},
+						{
+							xtype:'fieldsettable',
+							defaultType: 'textfieldbase',
+							title: HreRem.i18n('title.tramitacion.titulo.adicional'),
+							hidden:true,
+							reference: 'fieldsettableTituloAdicional',
+							items :
+								[
+									{ 
+				        				xtype: 'comboboxfieldbase',				        	
+								 		fieldLabel: HreRem.i18n('fieldlabel.tipo.titulo.adicional'),
+								 		reference:'tipoTituloAdicional',
+								 		//readOnly: true,
+							        	bind: 
+							        		{
+					            			store: '{comboTipoTituloInfoRegistral}', //DD_TTA_TIPO_TITULO_ADICIONAL
+						            		value: '{saneamiento.tipoTituloAdicional}'						            		
+            								}	            			
+                        			},
+									{ 
+							        	xtype: 'comboboxfieldbase',				        	
+								 		fieldLabel: HreRem.i18n('fieldlabel.situacion.titulo.adicional'),
+								 		reference: 'situacionTituloAdicional',
+								 		readOnly: true,
+							        	bind: 
+							        		{
+						            		store: '{comboEstadoTitulo}', //DD_ETI_ESTADO_TITULO
+						            		value: '{saneamiento.estadoTituloAdicional}'
+			
+				            				}
+			
+			                        },
+							        {
+										xtype:'datefieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.fecha.inscripcion.registro.adicional'),
+										reference:'fechaInscripcionRegistroAdicional',
+										readOnly: true,
+								 		bind: {
+								 			value: '{saneamiento.fechaInscriptionRegistroAdicional}'
+								 			//readOnly: '{datosRegistrales.unidadAlquilable}'
+								 			}
+			                      	},
+									{
+										xtype:'datefieldbase',
+								 		fieldLabel: HreRem.i18n('fielblabel.fecha.entrega.titulo.gestoria.adicional'),
+								 		reference: 'entregaTituloGestoriaAdicional',
+								 		bind: 
+								 			{
+								 			value: '{saneamiento.fechaEntregaTituloGestAdicional}'
+								 			//readOnly: '{datosRegistrales.unidadAlquilable}'
+								 			}
+			
+									},
+									{
+										xtype:'datefieldbase',
+								 		fieldLabel: HreRem.i18n('fielblabel.fecha.retirada.definitiva.registro.adicional'),
+								 		reference:'fechaRetiradaDefinitivaRegistroAdicional',
+								 		bind: 
+								 			{
+								 			value: '{saneamiento.fechaRetiradaDefinitivaRegAdicional}'
+								 			}
+									},
+									{
+										xtype:'datefieldbase',
+								 		fieldLabel: HreRem.i18n('fieldlabel.fecha.presentacion.hacienda.adicional'),
+								 		reference: 'fechaPresentacionHaciendaAdicional',
+								 		bind: 
+								 			{
+								 			value: '{saneamiento.fechaPresentacionHaciendaAdicional}'
+								 			}
+									},
+									{
+										xtype:'datefieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.fecha.nota.simple.adicional'),
+										reference: 'fieldlabelFechaNotaSimpleAdicional',
+								 		bind: 
+								 			{
+								 			value: '{saneamiento.fechaNotaSimpleAdicional}'
+								 			},
+								 		colspan: 3
+									},
+									{
+										xtype:'fieldsettable',
 										defaultType: 'textfieldbase',
 										colspan: 3,
+										reference:'historicotramitaciontituloadicional',
 										hidden: false, 
-										title: HreRem.i18n("title.complemento.titulo"),
+										title: HreRem.i18n("title.historico.presentacion.registros"),
+										items :
+										[
+											{
+												xtype: "historicotramitaciontituloadicionalgrid", // historicotramitaciontituloadicionalgrid
+												reference: "historicotramitaciontituloadref", 
+												colspan: 3
+											}
+										]
+					           		},
+					           		{
+										xtype:'fieldsettable',
+										defaultType: 'textfieldbase',
+										colspan: 3,
+										reference:'calificacionNegativaAd',
+										hidden: false, 
+										title: HreRem.i18n("title.calificacion.negativa"),
 										bind:{
-											//disabled:'{!saneamiento.noEstaInscrito}'
+											disabled:'{!datosRegistrales.noEstaInscrito}'
 										},
 										items :
 										[
 											{
-												xtype: "complementotitulogrid",
-												reference: "complementotitulogridref", 
+												xtype: "calificacionnegativaadicionalgrid", //calificacionnegativaadicionalgrid
+												// TODO Falta una funcion aqui que esta en informeComercialActivo de ese estilo
+												reference: "calificacionnegativagridad", 
 												colspan: 3,
 												bind:{
-													//disabled:'{!saneamiento.puedeEditarCalificacionNegativa}'
-												}
-												
+													disabled:'{!datosRegistrales.puedeEditarCalificacionNegativa}'
+													}
 											}
 										]
-									   	
-									   	
-									   }
+					           		}
+			
 								]
 							
+							},{
+								xtype:'fieldsettable',
+								defaultType: 'textfieldbase',
+								colspan: 3,
+								hidden: false, 
+								title: HreRem.i18n("title.complemento.titulo"),
+								bind:{
+									//disabled:'{!saneamiento.noEstaInscrito}'
+								},
+								items:[
+									{
+										xtype: "complementotitulogrid",
+										reference: "complementotitulogridref", 
+										colspan: 3,
+										bind:{
+											//disabled:'{!saneamiento.puedeEditarCalificacionNegativa}'
+										}
+									}
+								]
 							},{
 							
 							
@@ -431,6 +568,30 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 													 	fieldLabel : HreRem.i18n('fieldlabel.vigencia'),
 													 	bind : '{saneamiento.vigencia}',
 													 	maxValue : null
+													},
+									                {
+									                	xtype: 'datefieldbase',
+												 		fieldLabel: HreRem.i18n('fieldlabel.fechaSoliCertificado'),
+												 		bind: {
+												 				value: '{saneamiento.fechaSoliCertificado}'
+												 			},
+												 		maxValue : null
+													},
+									                {
+									                	xtype: 'datefieldbase',
+												 		fieldLabel: HreRem.i18n('fieldlabel.fechaComAdquisicion'),
+												 		bind: {
+												 				value:'{saneamiento.fechaComAdquisicion}'
+												 			},
+												 		maxValue : null
+													},
+									                {
+									                	xtype: 'datefieldbase',
+												 		fieldLabel: HreRem.i18n('fieldlabel.fechaComRegDemandantes'),
+												 		bind: {
+											 					value:'{saneamiento.fechaComRegDemandantes}'
+												 			},
+												 		maxValue : null
 													}
 												]
 											},
@@ -467,11 +628,10 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 									items : [
 								        {
 								        	xtype :'fieldsettable',
-								        	height : 300,
 								        	margin : '0 10 10 0',
 											layout : {
 										 		type : 'table',
-								         		columns : 3
+								         		columns : 2
 								        	},
 											defaultType : 'textfieldbase',
 											title : HreRem.i18n("title.requisitos.fase.venta"),
@@ -499,8 +659,27 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 														{
 															xtype : 'currencyfieldbase',
 															fieldLabel : HreRem.i18n('fieldlabel.precio.maximo.venta.vpo'),
-									                		bind : '{saneamiento.maxPrecioVenta}'
+									                		bind : '{saneamiento.maxPrecioVenta}',
+									                		readOnly: true
+									                		
 												        },
+												        {
+										                	xtype: 'comboboxfieldbase',
+										                	fieldLabel: HreRem.i18n('fieldlabel.actualizaPrecioMax'),
+										                	bind: {
+					            									store: '{comboSiNoRem}',
+					            									value: '{saneamiento.actualizaPrecioMaxId}'
+					            								  }
+										                },
+										                {
+										                	xtype: 'datefieldbase',
+													 		fieldLabel: HreRem.i18n('fieldlabel.fechaVencimiento'),
+													 		bind: {
+													 				value:'{saneamiento.fechaVencimiento}'
+													 			},
+													 		maxValue : null,
+													 		readOnly: true
+														},
 												        {
 															xtype : 'comboboxfieldbase',
 															fieldLabel : HreRem.i18n('fieldlabel.devolucion.ayudas'),
@@ -589,12 +768,49 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
 							            						value : '{saneamiento.noTitularOtraVivienda}'
 							            					}
 														}]
-													}]
-								        	}]
-										}]
+												},
+												{
+										        	xtype:'fieldset',
+										        	colspan: 3,
+										        	margin: '0 10 10 10',
+										        	layout: {
+								 						type: 'table',
+						         						columns: 3
+						        					},
+													defaultType: 'textfieldbase',
+													title: HreRem.i18n("title.autorizacionComprador"),
+													items : [
+														{
+												        	xtype: 'comboboxfieldbase',
+												        	fieldLabel:  HreRem.i18n('fieldlabel.estadoVenta'),
+												        	bind: {
+				            									store: '{comboEstadoVenta}',
+				            									value: '{saneamiento.estadoVentaCodigo}'
+												        	}
+												        },
+												        {
+												        	xtype: 'datefieldbase',
+													 		fieldLabel: HreRem.i18n('fieldlabel.fechaEnvioComunicacionOrganismo'),
+													 		bind: {
+												 				value:'{saneamiento.fechaEnvioComunicacionOrganismo}'
+												 			},
+												 			maxValue : null
+												        },
+												        {
+												        	xtype: 'datefieldbase',
+													 		fieldLabel: HreRem.i18n('fieldlabel.fechaRecepcionRespuestaOrganismo'),
+													 		bind: {
+												 				value:'{saneamiento.fechaRecepcionRespuestaOrganismo}'
+												 			},
+												 		    maxValue : null
+												        }
+												   ]
+											  }]
+								         }]
+									}]
 								}]
 				            },
-				            {       	  
+				            {
 								xtype:'fieldsettable',
 								title:HreRem.i18n('title.admision.agenda'),
 								defaultType: 'textfieldbase',
@@ -613,7 +829,7 @@ Ext.define('HreRem.view.activos.detalle.SaneamientoActivoDetalle', {
     },
 
     funcionRecargar: function() {
-		var me = this; 
+		var me = this;
 		me.recargar = false;
 		me.lookupController().cargarTabData(me);
 		Ext.Array.each(me.query('grid'), function(grid) {

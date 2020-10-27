@@ -8,7 +8,7 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     			'HreRem.view.activos.detalle.FotosActivo','HreRem.view.activos.detalle.TabDocumentosActivo','HreRem.view.activos.detalle.GestionActivo',
     			'HreRem.view.activos.detalle.PreciosActivo','HreRem.view.activos.detalle.Publicacion','HreRem.view.activos.detalle.ComercialActivo',
     			'HreRem.view.activos.detalle.AdministracionActivo', 'HreRem.view.activos.detalle.DocumentosActivoPromocion','HreRem.view.activos.detalle.DocumentosActivoSimple',
-			'HreRem.view.activos.detalle.PatrimonioActivo', 'HreRem.view.activos.detalle.PlusvaliaActivo'],
+			'HreRem.view.activos.detalle.PatrimonioActivo', 'HreRem.view.activos.detalle.PlusvaliaActivo', 'HreRem.view.activos.detalle.SuministrosActivo'],
 
 	listeners: {
     	boxready: function (tabPanel) {
@@ -154,7 +154,7 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'gestoresactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_GESTORES');
     	if($AU.getUser().codigoCartera == CONST.CARTERA['BANKIA'] && me.lookupController().getViewModel().get('activo').get('isCarteraBankia')){
 			if($AU.userIsRol(CONST.PERFILES['USUARIO_CONSULTA']) || $AU.userHasFunction('TAB_ACTIVO_OBSERVACIONES')){
-				me.add({xtype: 'observacionesactivo', launch: CONST.OBSERVACIONES_TAB_LAUNCH['OBSERVACIONES_ACTIVO'], ocultarBotonesEdicion: true});
+				me.add({xtype: 'observacionesactivo', launch: CONST.OBSERVACIONES_TAB_LAUNCH['ACTIVO'], ocultarBotonesEdicion: true});
 			}
 		}else{
 			$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'observacionesactivo',launch: CONST.OBSERVACIONES_TAB_LAUNCH['ACTIVO'], ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_OBSERVACIONES');
@@ -183,6 +183,7 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     	me.add({xtype: 'patrimonioactivo', ocultarBotonesEdicion: true});
 
     	me.add({xtype: 'plusvaliaactivo', ocultarBotonesEdicion: !$AU.userHasFunction('EDITAR_TAB_ACTIVO_PLUSVALIA')});
+
     	
     	
     	

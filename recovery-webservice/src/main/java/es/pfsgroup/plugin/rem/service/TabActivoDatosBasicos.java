@@ -89,7 +89,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDPromocionBBVA;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
-import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSociedadPagoAnterior;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
@@ -99,6 +98,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivoBDE;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
@@ -106,7 +106,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProductoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoSegmento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAlta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
@@ -130,7 +129,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private static final String ACTIVO_NO_DIVARIAN_BBVA= "msg.error.activo.no.bbva.divarian";
 	//
 	private static final String ACTIVO_NO_EXISTE= "msg.error.activo.hre.bbva.no.existe.en.rem";
-
+	private static final String ACTIVO_VENDIDO= "msg.error.activo.vendido";
+	private static final String ACTIVO_FUERA_DE_PERIMETRO_HAYA= "msg.error.activo.fuera.perimetro";
+	private static final String ACTIVO_NO_COINCIDE_CON_CERBERUS_BBVA= "msg.error.activo.no.bbva.divarian";
 	@Autowired
 	private GenericABMDao genericDao;
 	

@@ -11,6 +11,7 @@ import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorReducido;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
@@ -323,6 +324,11 @@ public interface GenericApi {
 	 * @return Devuelve la partida presupuestaria relacionada con la subpartida presupuestaria
 	 */
 	public String getPartidaPresupuestaria(Long idSubpartida);
+
+	/*
+	 * Devuelve los proveedores de Suministros que están vigentes.
+	 */
+	List<ActivoProveedorReducido> getComboActivoProveedorSuministro();
 	
 	/***
 	 * 

@@ -203,7 +203,10 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 					extraParams: {
 						idTipoGestor: '{tipoGestor.selection.id}'
 					}
-				}
+				},
+				autoLoad: false,
+				remoteFilter: false,
+				remoteSort: false
 			},
 
 			comboAdecuaciones: {

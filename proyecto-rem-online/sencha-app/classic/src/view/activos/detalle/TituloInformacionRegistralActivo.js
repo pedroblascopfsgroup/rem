@@ -989,7 +989,10 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
         			}
 				]
 
+
+
             }
+
 		];
 
 		me.addPlugin({ptype: 'lazyitems', items: items });

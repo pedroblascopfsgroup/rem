@@ -208,6 +208,14 @@ public class ActivoAdmisionRevisionTitulo implements Auditable,Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "SUBTIPO_TITULO_ACTIVO_ENTRADA")
 	private DDSubtipoTituloActivo subtipoTituloActivo;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "TIPO_TIT_ACT_ENT_REF")
+	private DDTipoTituloActivo tipoTitActRef;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "SUBTIPO_TIT_ACT_ENT_REF")
+	private DDSubtipoTituloActivo subtipoTitActRef;
 
 	@Version
 	private Long version;
@@ -593,6 +601,22 @@ public class ActivoAdmisionRevisionTitulo implements Auditable,Serializable {
 
 	public void setSubtipoTituloActivo(DDSubtipoTituloActivo subtipoTituloActivo) {
 		this.subtipoTituloActivo = subtipoTituloActivo;
+	}
+
+	public DDTipoTituloActivo getTipoTitActRef() {
+		return tipoTitActRef;
+	}
+
+	public void setTipoTitActRef(DDTipoTituloActivo tipoTitActRef) {
+		this.tipoTitActRef = tipoTitActRef;
+	}
+
+	public DDSubtipoTituloActivo getSubtipoTitActRef() {
+		return subtipoTitActRef;
+	}
+
+	public void setSubtipoTitActRef(DDSubtipoTituloActivo subtipoTitActRef) {
+		this.subtipoTitActRef = subtipoTitActRef;
 	}
 	
 

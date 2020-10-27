@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -25,17 +26,23 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoHistoricoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoInfAdministrativa;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
+import es.pfsgroup.plugin.rem.model.ActivoTituloAdicional;
 import es.pfsgroup.plugin.rem.model.DtoActivoSaneamiento;
 import es.pfsgroup.plugin.rem.model.HistoricoTramitacionTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresentacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoVenta;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloAdicional;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
+import es.pfsgroup.plugin.rem.rest.dto.ReqFaseVentaDto;
 
 @Component
 public class TabActivoSaneamiento implements TabActivoService{
@@ -59,6 +66,9 @@ public class TabActivoSaneamiento implements TabActivoService{
 
 	@Autowired
 	private ActivoDao activoDao;
+	
+	@Autowired
+	private ActivoApi activoApi;
 	
 	@Autowired
 	private UsuarioApi usuarioApi;
@@ -285,7 +295,81 @@ public class TabActivoSaneamiento implements TabActivoService{
 			activoDto.setIngresosInfNivel(activo.getInfoAdministrativa().getIngresosInfNivel());
 			activoDto.setResidenciaComAutonoma(activo.getInfoAdministrativa().getResidenciaComAutonoma());
 			activoDto.setNoTitularOtraVivienda(activo.getInfoAdministrativa().getNoTitularOtraVivienda());
+			activoDto.setFechaSoliCertificado(activo.getInfoAdministrativa().getFechaSolCertificado());
+			activoDto.setFechaComAdquisicion(activo.getInfoAdministrativa().getFechaComAdquision());
+			activoDto.setFechaComRegDemandantes(activo.getInfoAdministrativa().getFechaComRegDem());
+			activoDto.setFechaVencimiento(activo.getInfoAdministrativa().getFechaVencimiento());
+			
+			if(activo.getInfoAdministrativa().getActualizaPrecioMax() != null) {
+				activoDto.setActualizaPrecioMaxId(activo.getInfoAdministrativa().getActualizaPrecioMax().getCodigo().equals(DDSinSiNo.CODIGO_NO) ? 0L : 1L);				
+			}
+			if(activo.getInfoAdministrativa().getFechaRecepcionRespuestaOrganismo() != null) {
+				activoDto.setFechaRecepcionRespuestaOrganismo(activo.getInfoAdministrativa().getFechaRecepcionRespuestaOrganismo());
+			}
+			if(activo.getInfoAdministrativa().getFechaEnvioComunicacionOrganismo() != null) {
+				activoDto.setFechaEnvioComunicacionOrganismo(activo.getInfoAdministrativa().getFechaEnvioComunicacionOrganismo());
+			}
+			if(activo.getInfoAdministrativa().getEstadoVenta() != null) {
+				activoDto.setEstadoVentaCodigo(activo.getInfoAdministrativa().getEstadoVenta().getCodigo());
+			}
+			try {
+				List<ReqFaseVentaDto> requisitosVenta = activoApi.getReqFaseVenta(activo.getId());
+						
+				if(requisitosVenta != null && !requisitosVenta.isEmpty()) {
+					for (int i = 0; i < requisitosVenta.size(); i++) {
+						ReqFaseVentaDto req = requisitosVenta.get(i);
+						if(req.getFechavencimiento() != null && req.getPreciomaximo() != null) {
+							activoDto.setMaxPrecioVenta("" + req.getPreciomaximo());
+							String dateStr = req.getFechavencimiento().split(" ")[0];
+						    Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dateStr);  
+							activoDto.setFechaVencimiento(date);
+							break;
+						}
+					}
+				}
+			}catch (Exception e) {
+				logger.error(e.getMessage());
+			}
 		}
+		
+		//TITULO ADICIONAL SANEAMIENTO
+		
+		Filter filtroTituloAdicional = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoTituloAdicional actTituloAdicional = genericDao.get(ActivoTituloAdicional.class, filtroTituloAdicional);
+		
+
+		if (actTituloAdicional != null && actTituloAdicional.getTituloAdicional() != null) {
+			
+			activoDto.setTieneTituloAdicional(actTituloAdicional.getTituloAdicional());
+			
+			if (actTituloAdicional.getEstadoTitulo() != null) {
+				activoDto.setEstadoTituloAdicional(actTituloAdicional.getEstadoTitulo().getCodigo());
+			}
+			if (actTituloAdicional.getTipoTitulo() != null) {
+				activoDto.setTipoTituloAdicional(actTituloAdicional.getTipoTitulo().getCodigo());
+			}
+			if (actTituloAdicional.getFechaInscripcionReg() != null) {
+				activoDto.setFechaInscriptionRegistroAdicional(actTituloAdicional.getFechaInscripcionReg());
+			}
+			if (actTituloAdicional.getFechaEntregaTitulo() != null) {
+				activoDto.setFechaEntregaTituloGestAdicional(actTituloAdicional.getFechaEntregaTitulo());
+			}
+			
+			if (actTituloAdicional.getFechaRetiradaReg() != null) {
+				activoDto.setFechaRetiradaDefinitivaRegAdicional(actTituloAdicional.getFechaRetiradaReg());
+			}
+			if (actTituloAdicional.getFechaPresentHacienda() != null) {
+				activoDto.setFechaPresentacionHaciendaAdicional(actTituloAdicional.getFechaPresentHacienda());
+			}
+			if (actTituloAdicional.getFechaNotaSimple() != null) {
+				activoDto.setFechaNotaSimpleAdicional(actTituloAdicional.getFechaNotaSimple());
+			}
+			
+		}else {
+			activoDto.setTieneTituloAdicional(0);
+		}
+			
+				
 		 
 		return activoDto;
 	}
@@ -298,7 +382,9 @@ public class TabActivoSaneamiento implements TabActivoService{
 		if(activoDto != null){
 
 			ActivoTitulo  actTitulo = genericDao.get(ActivoTitulo.class, genericDao.createFilter(FilterType.EQUALS,"activo.id", activo.getId()));
-			
+
+			ActivoTituloAdicional actTituloAdicional = genericDao.get(ActivoTituloAdicional.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+
 			if(actTitulo == null) {
 				actTitulo = new ActivoTitulo();
 				actTitulo.setActivo(activo);
@@ -343,32 +429,105 @@ public class TabActivoSaneamiento implements TabActivoService{
 			
 			genericDao.save(ActivoTitulo.class, actTitulo);
 			
+			
+			if (actTituloAdicional == null) {
+				actTituloAdicional = new ActivoTituloAdicional();
+				actTituloAdicional.setActivo(activo);
+				
+			}
+			if (activoDto.getTipoTituloAdicional() != null) {
+				actTituloAdicional.setTipoTitulo( (DDTipoTituloAdicional) diccionarioApi.dameValorDiccionarioByCod(DDTipoTituloAdicional.class, activoDto.getTipoTituloAdicional()));
+			}
+			if (activoDto.getTieneTituloAdicional() != null) {
+				actTituloAdicional.setTituloAdicional(activoDto.getTieneTituloAdicional());
+			}
+			if (activoDto.getEstadoTituloAdicional() != null) {
+				
+				actTituloAdicional.setEstadoTitulo((DDEstadoTitulo) diccionarioApi.dameValorDiccionarioByCod(DDEstadoTitulo.class, activoDto.getEstadoTituloAdicional()));
+			}
+			if (activoDto.getFechaInscriptionRegistroAdicional() != null) {
+				actTituloAdicional.setFechaInscripcionReg(activoDto.getFechaInscriptionRegistroAdicional());
+				
+			}
+			if (activoDto.getFechaEntregaTituloGestAdicional() != null) {
+				actTituloAdicional.setFechaEntregaTitulo(activoDto.getFechaEntregaTituloGestAdicional());
+			}
+			if(activoDto.getFechaRetiradaDefinitivaRegAdicional() != null) {
+				actTituloAdicional.setFechaRetiradaReg(activoDto.getFechaRetiradaDefinitivaRegAdicional());
+			}
+			if (activoDto.getFechaPresentacionHaciendaAdicional() != null) {
+				actTituloAdicional.setFechaPresentHacienda(activoDto.getFechaPresentacionHaciendaAdicional());
+			}
+			if (activoDto.getFechaNotaSimpleAdicional() != null) {
+				actTituloAdicional.setFechaNotaSimple(activoDto.getFechaNotaSimpleAdicional());
+			}
+			
+			genericDao.save(ActivoTituloAdicional.class, actTituloAdicional);
+			
+			
+			
+			
 		}
 
 		if (activoDto.getFechaRevisionCarga() != null) {
 			activo.setFechaRevisionCarga(activoDto.getFechaRevisionCarga());
 		}
-		
-		
-		if (activo.getInfoAdministrativa() == null) {
-			activo.setInfoAdministrativa(new ActivoInfAdministrativa());
-			activo.getInfoAdministrativa().setActivo(activo);
-		}
+
 		try {
+			if (activo.getInfoAdministrativa() == null) {
+				activo.setInfoAdministrativa(new ActivoInfAdministrativa());
+				activo.getInfoAdministrativa().setActivo(activo);
+			}
+				
 			beanUtilNotNull.copyProperties(activo.getInfoAdministrativa(), activoDto);
+	
+			activo.setInfoAdministrativa(genericDao.save(ActivoInfAdministrativa.class, activo.getInfoAdministrativa()));
+			ActivoInfAdministrativa infoAdministrativa = activo.getInfoAdministrativa();
+			
+			if (activoDto.getTipoVpoCodigo() != null) {
+				DDTipoVpo tipoVpo = (DDTipoVpo) diccionarioApi.dameValorDiccionarioByCod(DDTipoVpo.class, activoDto.getTipoVpoCodigo());
+				infoAdministrativa.setTipoVpo(tipoVpo);
+			}
+			
+			if(infoAdministrativa.getTipoVpo() != null) {
+				
+				if(activoDto.getFechaSoliCertificado() != null) {
+					infoAdministrativa.setFechaSolCertificado(activoDto.getFechaSoliCertificado());					
+				}
+				if(activoDto.getFechaComAdquisicion() != null) {
+					infoAdministrativa.setFechaComAdquisicion(activoDto.getFechaComAdquisicion());
+				}
+				if(activoDto.getFechaComRegDemandantes() != null) {
+					infoAdministrativa.setFechaComRegDem(activoDto.getFechaComRegDemandantes());					
+				}
+				if(activoDto.getActualizaPrecioMaxId() != null) {
+					Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", (activoDto.getActualizaPrecioMaxId() == 0) ? DDSinSiNo.CODIGO_NO : DDSinSiNo.CODIGO_SI);
+					DDSinSiNo mapeadoSinSiNo =genericDao.get(DDSinSiNo.class, filter); 
+					infoAdministrativa.setActualizaPrecioMax(mapeadoSinSiNo);					
+				}
+				if(activoDto.getFechaVencimiento() != null) {
+					infoAdministrativa.setFechaVencimiento(activoDto.getFechaVencimiento());					
+				}
+				if(activoDto.getFechaEnvioComunicacionOrganismo() != null) {
+					infoAdministrativa.setFechaEnvioComunicacionOrganismo(activoDto.getFechaEnvioComunicacionOrganismo());
+				}
+				if(activoDto.getFechaRecepcionRespuestaOrganismo() != null) {
+					infoAdministrativa.setFechaRecepcionRespuestaOrganismo(activoDto.getFechaRecepcionRespuestaOrganismo());
+				}
+				if(activoDto.getEstadoVentaCodigo() != null) {
+					Filter filterEstadoVenta = genericDao.createFilter(FilterType.EQUALS, "codigo", activoDto.getEstadoVentaCodigo());
+					DDEstadoVenta ddEstadoVenta = genericDao.get(DDEstadoVenta.class, filterEstadoVenta); 
+					infoAdministrativa.setEstadoVenta(ddEstadoVenta);	
+				}
+			}
+			
+			activo.setInfoAdministrativa(genericDao.save(ActivoInfAdministrativa.class, activo.getInfoAdministrativa()));
+			
 		} catch (IllegalAccessException e) {
 			logger.error(e.getMessage());
 		} catch (InvocationTargetException e) {
 			logger.error(e.getMessage());
 		}
-		activo.setInfoAdministrativa(genericDao.save(ActivoInfAdministrativa.class, activo.getInfoAdministrativa()));
-		if (activoDto.getTipoVpoCodigo() != null) {
-			DDTipoVpo tipoVpo = (DDTipoVpo) diccionarioApi.dameValorDiccionarioByCod(DDTipoVpo.class, activoDto.getTipoVpoCodigo());
-			activo.getInfoAdministrativa().setTipoVpo(tipoVpo);
-		}
-		
-		
-		genericDao.save(Activo.class, activo);
 		
 		return activo;
 	}	

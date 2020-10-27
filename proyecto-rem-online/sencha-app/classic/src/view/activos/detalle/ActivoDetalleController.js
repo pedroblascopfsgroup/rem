@@ -1,57 +1,48 @@
 Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
-	extend : 'Ext.app.ViewController',
-	alias : 'controller.activodetalle',
+    extend: 'Ext.app.ViewController',
+    alias: 'controller.activodetalle',
 
-	requires : ['HreRem.view.activos.detalle.TituloInformacionRegistralActivo',
-			'HreRem.view.activos.detalle.AnyadirEntidadActivo',
-			'HreRem.view.activos.detalle.CargaDetalle',
-			'HreRem.view.activos.detalle.OpcionesPropagacionCambios',
-			'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion',
-			'HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle',
-			'HreRem.view.expedientes.ExpedienteDetalleController',
-			'HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion',
-			'HreRem.view.activos.detalle.InformeComercialActivo',
-			'HreRem.view.activos.detalle.AdministracionActivo',
-			'HreRem.model.ActivoTributos',
-			'HreRem.view.activos.detalle.AdjuntosPlusvalias',
-			'HreRem.view.activos.detalle.PlusvaliaActivo',
-			'HreRem.model.ComercialActivoModel',
-			'HreRem.view.activos.detalle.CrearEvolucionObservaciones',
-			'HreRem.view.activos.detalle.SaneamientoActivoDetalle'],
+    requires: ['HreRem.view.activos.detalle.TituloInformacionRegistralActivo','HreRem.view.activos.detalle.AnyadirEntidadActivo' , 
+    		'HreRem.view.activos.detalle.CargaDetalle','HreRem.view.activos.detalle.OpcionesPropagacionCambios', 
+    		'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion','HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 
+    		'HreRem.view.expedientes.ExpedienteDetalleController', 'HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', 
+    		'HreRem.view.activos.detalle.InformeComercialActivo','HreRem.view.activos.detalle.AdministracionActivo',
+    		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias','HreRem.view.activos.detalle.PlusvaliaActivo',
+    		'HreRem.model.ComercialActivoModel', 'HreRem.view.activos.detalle.CrearEvolucionObservaciones', 'HreRem.view.activos.detalle.SuministrosActivo', 'HreRem.view.activos.detalle.SaneamientoActivoDetalle'],
 
-	control : {
-		'documentosactivosimple gridBase' : {
-			abrirFormulario : 'abrirFormularioAdjuntarDocumentos',
-			onClickRemove : 'borrarDocumentoAdjunto',
-			download : 'downloadDocumentoAdjunto',
-			afterupload : function(grid) {
-				grid.getStore().load();
-			},
-			afterdelete : function(grid) {
-				grid.getStore().load();
-			}
-		},
+    control: {
+         'documentosactivosimple gridBase': {
+             abrirFormulario: 'abrirFormularioAdjuntarDocumentos',
+             onClickRemove: 'borrarDocumentoAdjunto',
+             download: 'downloadDocumentoAdjunto',
+             afterupload: function(grid) {
+             	grid.getStore().load();
+             },
+             afterdelete: function(grid) {
+             	grid.getStore().load();
+             }
+         },
 
-		'documentosactivopromocion gridBase' : {
-			abrirFormulario : 'abrirFormularioAdjuntarDocPromo',
-			onClickRemove : 'borrarDocumentoAdjunto',
-			download : 'downloadDocumentoAdjuntoPromocion',
-			afterupload : function(grid) {
-				grid.getStore().load();
-			}
-		},
+         'documentosactivopromocion gridBase': {
+             abrirFormulario: 'abrirFormularioAdjuntarDocPromo',
+             onClickRemove: 'borrarDocumentoAdjunto',
+             download: 'downloadDocumentoAdjuntoPromocion',
+             afterupload: function(grid) {
+             	grid.getStore().load();
+             }
+         },
 
-		'documentosactivoproyecto gridBase' : {
-			abrirFormulario : 'abrirFormularioAdjuntarDocProyecto',
-			onClickRemove : 'borrarDocumentoAdjunto',
-			download : 'downloadDocumentoAdjuntoProyecto',
-			afterupload : function(grid) {
-				grid.getStore().load();
-			},
-			afterdelete : function(grid) {
-				grid.getStore().load();
-			}
-		},
+         'documentosactivoproyecto gridBase': {
+             abrirFormulario: 'abrirFormularioAdjuntarDocProyecto',
+             onClickRemove: 'borrarDocumentoAdjunto',
+             download: 'downloadDocumentoAdjuntoProyecto',
+             afterupload: function(grid) {
+             	grid.getStore().load();
+             },
+             afterdelete: function(grid) {
+              	grid.getStore().load();
+              }
+         },
 
 		'documentosactivoofertacomercial textfieldbase' : {
 			abrirFormulario : 'abrirFormularioAdjuntarDocumentoOferta',
@@ -654,6 +645,41 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 
 	},
+
+    onComboTramitacionTituloAdicional: function(combo, value){
+    	
+    	var me = this,
+    	disabled = value == 0;
+    	
+    	var fieldsettableTituloAdicional =me.lookupReference('fieldsettableTituloAdicional');
+    	var tipoTituloAdicional = me.lookupReference('tipoTituloAdicional');
+    	var situacionTituloAdicional = me.lookupReference('situacionTituloAdicional');
+    	var fechaInscripcionRegistroAdicional = me.lookupReference('fechaInscripcionRegistroAdicional');
+    	var entregaTituloGestoriaAdicional = me.lookupReference('entregaTituloGestoriaAdicional');
+    	var fechaRetiradaDefinitivaRegistroAdicional = me.lookupReference('fechaRetiradaDefinitivaRegistroAdicional');
+    	var fechaPresentacionHaciendaAdicional = me.lookupReference('fechaPresentacionHaciendaAdicional');
+    	var fieldlabelFechaNotaSimpleAdicional = me.lookupReference('fieldlabelFechaNotaSimpleAdicional');
+    	
+    	
+    	fieldsettableTituloAdicional.setDisabled(disabled);
+    	tipoTituloAdicional.setDisabled(disabled);
+    	situacionTituloAdicional.setDisabled(disabled);
+    	fechaInscripcionRegistroAdicional.setDisabled(disabled);
+    	entregaTituloGestoriaAdicional.setDisabled(disabled);
+    	fechaRetiradaDefinitivaRegistroAdicional.setDisabled(disabled);
+    	fechaPresentacionHaciendaAdicional.setDisabled(disabled);
+    	fieldlabelFechaNotaSimpleAdicional.setDisabled(disabled);
+    	
+    	    	
+    	if(disabled){
+    		fieldsettableTituloAdicional.hide();
+    	}else{
+    		fieldsettableTituloAdicional.show();
+    	}
+    	
+    	
+    },
+
 	destroyWindowCrearActivoAdmision : function(btn) {
 		var me = this;
 		btn.up('window').destroy();
@@ -7267,6 +7293,38 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		// Redireccion al controlador de la vista para mantener todos los
 		// m�todos ordenados, sin alterar la arquitectura del tab principal.
 		form.lookupController().saveTabData(btn, form);
+	},
+
+	isGestorAdmisionAndSuperComboTipoAlta: function(combo, value, oldValue, eOpts){
+		var me = this; 	
+		var gestores = $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTOR_ADMISION']) ||  $AU.userIsRol(CONST.PERFILES['SUPERUSUARO_ADMISION']);		
+		var comboActivoRecovery = me.lookupReference('idRecovery');			
+		if(comboActivoRecovery!=null && gestores){					
+			combo.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
+			combo.setReadOnly(true);
+		}else{
+			combo.setReadOnly(false);
+		}
+					
+	},
+
+	onChangeComboTributacionAdqusicion: function(combo, newValue, oldValue){
+		var me = this;
+		var fechaVencTpoBonificacion = me.lookupReference('fechaVencTpoBonificacion');
+		var fechaLiqComplementaria = me.lookupReference('fechaLiqComplementaria');
+
+		if(newValue == "BON"){
+			fechaVencTpoBonificacion.setDisabled(false);
+			fechaLiqComplementaria.setDisabled(false);
+		}else if(newValue == "ORD" && oldValue != null){
+			fechaVencTpoBonificacion.setDisabled(true);
+			fechaVencTpoBonificacion.setValue("");
+			fechaLiqComplementaria.setDisabled(true);
+			fechaLiqComplementaria.setValue("");
+		}else{
+			fechaVencTpoBonificacion.setDisabled(true);
+			fechaLiqComplementaria.setDisabled(true);
+		}
 	},
 
 	onClickDescargarExcelEvolucion : function(btn) {

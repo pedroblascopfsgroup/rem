@@ -899,6 +899,10 @@ public interface ParticularValidatorApi {
 	public Boolean esAccionValido(String codAccion);
 
 	public Boolean esResultadoValido(String codResultado);
+	
+	public Boolean esTipoTributoValido(String codTipoTributo);
+	
+	public Boolean esMotivoExento(String codResultado);
 
 	public Boolean esSolicitudValido(String codSolicitud);
 
@@ -907,6 +911,8 @@ public interface ParticularValidatorApi {
 	public String getIdActivoTributo(String numActivo, String fechaRecurso, String tipoSolicitud, String idTributo);
 
 	public Boolean esNumHayaVinculado(Long numGasto, String numActivo);
+	
+	public Boolean esnNumExpedienteValido(Long expComercial);
 	
 	Boolean existeJunta(String numActivo,  String fechaJunta);
 	
@@ -1175,6 +1181,18 @@ public interface ParticularValidatorApi {
 
 	public Boolean relacionEstadoSubestadoAdmisionValido(String codEstadoAdmision, String codSubestadoAdmision);
 
+	Boolean existeTipoSuministroByCod(String codigo);
+
+	Boolean existeSubtipoSuministroByCod(String codigo);
+
+	Boolean existePeriodicidadByCod(String codigo);
+
+	Boolean existeMotivoAltaSuministroByCod(String codigo);
+
+	Boolean existeMotivoBajaSuministroByCod(String codigo);
+
+	Boolean esMismoTipoGestorActivo(String codigo, String numActivo);
+
 	Boolean esActivoBBVA(String numActivo);
 	
 	String getValidacionCampoCDC(String codCampo);
@@ -1211,4 +1229,16 @@ public interface ParticularValidatorApi {
 
 	public Boolean codigoComercializacionIncorrecto(String codCampo);
 	
+	Boolean relacionPoblacionLocalidad(String columnaPoblacion, String columnaMunicipio);
+
+
+	Boolean existeMunicipioByDescripcion(String columnaMunicipio);
+
+	Boolean existePoblacionByDescripcion(String columnaPoblacion);
+
+	boolean isProveedorSuministroVigente(String codRem);
+
+	Boolean existePais(String pais);
+
+	Boolean existeMunicipioDeProvinciaByCodigo(String codProvincia, String codigoMunicipio);
 }

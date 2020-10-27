@@ -29,6 +29,7 @@ DECLARE
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.  
     V_TEXT_TABLA VARCHAR2(150 CHAR):= 'ACT_BBVA_ACTIVOS'; -- Vble. con el nombre de la tabla.
+    V_COL VARCHAR2(50 CHAR):= 'BBVA_NUM_ACTIVO'; --Nombre de la columna
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
@@ -38,15 +39,19 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('******** '||V_TEXT_TABLA||' ********'); 
     DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comprobaciones previas'); 
 
-    V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
-    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+    V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLS WHERE COLUMN_NAME = '''||V_COL||''' and DATA_TYPE = ''NUMBER'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+    EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
     
-    IF V_NUM_TABLAS = 1 THEN     
+    IF V_NUM_TABLAS = 1 THEN
+        V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA|| ' SET '||V_COL||' = '''' ';
+        EXECUTE IMMEDIATE V_MSQL;
+        DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_COL||' Columna BORRADA en la Tabla');
+
     	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' MODIFY BBVA_NUM_ACTIVO VARCHAR2(20 CHAR)';        	
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'... Tabla modificada');
     ELSE
-        DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... La Tabla NO YA EXISTE.');
+        DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... No ha sido posible modificar la Columna.');
     END IF;
 
 COMMIT;

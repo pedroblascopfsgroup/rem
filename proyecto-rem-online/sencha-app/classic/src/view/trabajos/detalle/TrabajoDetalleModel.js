@@ -178,6 +178,15 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 				}  		
     		},
     		
+    		comboSubtipoTrabajoFicha: {    		
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboSubtipoTrabajo',
+					extraParams: {tipoTrabajoCodigo: '{trabajo.tipoTrabajoCodigo}',idActivo: '{trabajo.idActivo}'}
+				}  		
+    		},
+    		
     		comboSubtipoTrabajoCreaFiltered: {    		
 				model: 'HreRem.model.ComboBase',
 				proxy: {
@@ -323,6 +332,17 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 					remoteUrl: 'generic/getComboTipoTrabajoCreaFiltered',
 					extraParams: {
 						idActivo: '{idActivo}'
+					}
+				}
+    		},
+    		
+    		storeTipoTrabajoFichaFiltered: {
+	    		model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboTipoTrabajoCreaFiltered',
+					extraParams: {
+						idActivo: '{trabajo.idActivo}'
 					}
 				}
     		},

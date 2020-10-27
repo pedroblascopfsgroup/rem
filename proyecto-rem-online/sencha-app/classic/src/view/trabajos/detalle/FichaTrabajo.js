@@ -68,6 +68,49 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 										afterrender: 'hiddenComboTomaPosesion'
 									}
         						},
+        						{ 
+						        	xtype: 'comboboxfieldbase',
+						        	editable: false,
+						        	fieldLabel: HreRem.i18n('fieldlabel.tipo.trabajo'),
+									reference: 'tipoTrabajoFicha',
+						        	chainedStore: 'comboSubtipoTrabajoFicha',
+									chainedReference: 'subtipoTrabajoComboFicha',
+						        	bind: 
+						        		{
+					            			store: '{storeTipoTrabajoFichaFiltered}',
+					            			value: '{trabajo.tipoTrabajoCodigo}'
+				            			},
+		    						listeners: 
+		    							{
+					                		select: 'onChangeChainedCombo'
+					                		
+					            		},
+					            	allowBlank: false
+						        },
+						        { 
+									xtype: 'comboboxfieldbase',
+						        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.trabajo'),
+						        	reference: 'subtipoTrabajoComboFicha',
+						        	editable: false,
+						        	bind: 
+						        		{
+				            				store: '{comboSubtipoTrabajoFicha}',
+					            			value: '{trabajo.subtipoTrabajoCodigo}',
+					            			disabled: '{!trabajo.tipoTrabajoCodigo}'
+					            		},
+									allowBlank: false
+						        },
+        						{
+        							xtype : 'numberfieldbase',
+						            reference:'idTarea',
+						            fieldLabel : HreRem.i18n('fieldlabel.id.tarea.trabajo'),
+						            allowBlank: true,
+						            maxLength:10,
+						            readOnly: true,
+						            bind: {
+	    								value: '{trabajo.idTarea}'
+	    							}
+        						},
 							 	{ 
 				                	xtype: 'textfieldbase',
 				                	fieldLabel:  HreRem.i18n('title.general.albaran.numAlbaran'),

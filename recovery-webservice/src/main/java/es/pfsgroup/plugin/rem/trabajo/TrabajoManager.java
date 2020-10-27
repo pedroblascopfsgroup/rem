@@ -808,9 +808,28 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
 		}
-
-
-		
+		if(dtoTrabajo.getTipoTrabajoCodigo() != null && !dtoTrabajo.getTipoTrabajoCodigo().equals(trabajo.getTipoTrabajo().getCodigo())) {
+			Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getTipoTrabajoCodigo());
+			DDTipoTrabajo tipo = genericDao.get(DDTipoTrabajo.class, filter);
+			dtoHistorificador.setCampo(ConstantesTrabajo.TIPO_TRABAJO);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_TIPO_TRABAJO);
+			dtoHistorificador.setValorNuevo(tipo.getDescripcion());
+			if (trabajo.getTomaPosesion() != null) {
+				dtoHistorificador.setValorAnterior(trabajo.getTipoTrabajo().getDescripcion());
+			}
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
+		}
+		if(dtoTrabajo.getSubtipoTrabajoCodigo() != null && !dtoTrabajo.getSubtipoTrabajoCodigo().equals(trabajo.getSubtipoTrabajo().getCodigo())) {
+			Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getSubtipoTrabajoCodigo());
+			DDSubtipoTrabajo subtipo = genericDao.get(DDSubtipoTrabajo.class, filter);
+			dtoHistorificador.setCampo(ConstantesTrabajo.SUBTIPO_TRABAJO);
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_SUBTIPO_TRABAJO);
+			dtoHistorificador.setValorNuevo(subtipo.getDescripcion());
+			if (trabajo.getTomaPosesion() != null) {
+				dtoHistorificador.setValorAnterior(trabajo.getSubtipoTrabajo().getDescripcion());
+			}
+			guardarCambiosHistorificador(dtoHistorificador,codPestana);
+		}
 	}
 	
 	@Transactional

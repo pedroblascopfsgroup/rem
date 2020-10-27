@@ -7732,8 +7732,129 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			fechaOrigen.setReadOnly(false);
 			sociedadOrigen.setReadOnly(false);
 		}
+	},
+	
+	comprobarNIF: function(record){
+		var me = this;
+		//record.validateValue(record.getValue()
+		var fieldTipoDoc;
+		var items = record.up().items.items;
+		var botones = record.up().floatingButtons.items.items;
+		var fieldDoc;
+		var campoDocumento;
+		if(botones != null && !Ext.isEmpty(botones)){
+			for(var j = 0 ; j<botones.length ; j++){
+				if(!Ext.isEmpty(botones[j].itemId) && botones[j].itemId == "update"){
+					botonGuardar = botones[j].id;
+				}
+			}
+		}
+		if(!Ext.isEmpty(items)){
+			for(var i = 0 ; i<items.length ; i++){
+				if(!Ext.isEmpty(items[i].column) && items[i].column.reference == "tipoDocDeudor"){
+					fieldTipoDoc = items[i].column.field.value;
+					
+				}
+				if(!Ext.isEmpty(items[i].column) && items[i].column.reference == "tipoNumeroDocumentoDeudor"){
+					fieldDoc = items[i].column.field.value;
+					campoDocumento = items[i];
+				}
+			}
+		}
+		campoDocumento.allowBlank = false;
+		if(fieldDoc.length < 6){
+			 Ext.getCmp(botonGuardar).disable();
+			 campoDocumento.allowBlank = true;
+			 return false;
+		}else{
+			if(fieldTipoDoc == "02" || fieldTipoDoc == "15"
+				|| fieldTipoDoc == "03" || fieldTipoDoc == "01" || fieldTipoDoc == "NIF" || fieldTipoDoc == "CIF"){
+				 Ext.getCmp(botonGuardar).disable();
+				 var validChars = 'TRWAGMYFPDXBNJZSQVHLCKET';
+				 var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+				 var nieRexp = /^[XYZ]{1}[0-9]{7}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+				 var str = fieldDoc.toString().toUpperCase();
+
+				 if (!nifRexp.test(str) && !nieRexp.test(str)){			 
+		        	 //me.fireEvent("errorToast", HreRem.i18n("msg.documento.identificativo"));
+		        	 //record.markInvalid("")
+					 Ext.getCmp(botonGuardar).disable();
+		        	 return false;
+				 }
+
+				 var nie = str
+				     .replace(/^[X]/, '0')
+				     .replace(/^[Y]/, '1')
+				     .replace(/^[Z]/, '2');
+
+				 var letter = str.substr(-1);
+				 var charIndex = parseInt(nie.substr(0, 8)) % 23;
+
+				 if (validChars.charAt(charIndex) === letter){
+					 Ext.getCmp(botonGuardar).enable();
+					 return true;
+					
+				 }else{
+		        	// me.fireEvent("errorToast", HreRem.i18n("msg.documento.identificativo"));
+		        	// record.markInvalid("")
+					 Ext.getCmp(botonGuardar).disable();
+		        	 return false;
+				 }
+
+			}else if(fieldTipoDoc== "03" || fieldTipoDoc == "01" || fieldTipoDoc == "NIF" || fieldTipoDoc == "CIF"){
+				Ext.getCmp(botonGuardar).disable();
+				var texto=fieldDoc;
+		        var pares = 0; 
+		        var impares = 0; 
+		        var suma; 
+		        var ultima; 
+		        var unumero; 
+		        var uletra = new Array("J", "A", "B", "C", "D", "E", "F", "G", "H", "I"); 
+		        var xxx; 
+		         
+		        texto = texto.toUpperCase(); 
+		         
+		        var regular = new RegExp(/^[ABCDEFGHKLMNPQS]\d\d\d\d\d\d\d[0-9,A-J]$/g); 
+	        	if (!regular.exec(texto)) {
+		        	// me.fireEvent("errorToast", HreRem.i18n("msg.documento.identificativo"));
+		        	// record.markInvalid("")
+	        		Ext.getCmp(botonGuardar).disable();
+		        	 return false;
+				}
+		        ultima = texto.substr(8,1); 
+		 
+		        for (var cont = 1 ; cont < 7 ; cont ++){ 
+		             xxx = (2 * parseInt(texto.substr(cont++,1))).toString() + "0"; 
+		             impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+		             pares += parseInt(texto.substr(cont,1)); 
+		         } 
+		         
+		         xxx = (2 * parseInt(texto.substr(cont,1))).toString() + "0"; 
+		         impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+		          
+		         suma = (pares + impares).toString(); 
+		         unumero = parseInt(suma.substr(suma.length - 1, 1)); 
+		         unumero = (10 - unumero).toString(); 
+		         if(unumero == 10){
+		        	 unumero = 0; 
+		         }
+		          
+		         if ((ultima == unumero) || (ultima == uletra[unumero])) {
+		        	 Ext.getCmp(botonGuardar).enable();
+		        	 return true;
+		         }else{
+		        	// me.fireEvent("errorToast", HreRem.i18n("msg.documento.identificativo"));
+		        	// record.markInvalid("");
+		        	 Ext.getCmp(botonGuardar).disable();
+		        	 return false;
+		         }
+			} else {
+				Ext.getCmp(botonGuardar).enable();
+				return true;
+			}
+		}
+		
+		
 	}
-		
-		
 
 });

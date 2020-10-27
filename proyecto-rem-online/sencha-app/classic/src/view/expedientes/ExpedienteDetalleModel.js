@@ -578,12 +578,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	 	
 	 	habilitarBotonGenerarFicha: function(get){;
 			 var me = this;
-				if(get('expediente.codigoEstado') == '01' || get('expediente.codigoEstado') == '31' || get('expediente.codigoEstado') == '23'){
-					return true
-				}
-				else {
-					return false
-				}
+			 var codExpediente = get('expediente.codigoEstado');
+			 	if (CONST.ESTADOS_EXPEDIENTE['EN_TRAMITACION'] == codExpediente
+			 		|| CONST.ESTADOS_EXPEDIENTE['PENDIENTE_SANCION'] == codExpediente
+			 		|| CONST.ESTADOS_EXPEDIENTE['PEN_RES_OFER_COM'] == codExpediente) {
+			 		
+			 		return true;
+			 	}else{
+			 		return false;
+			 	}
+				
 	 	},
 		esBbva: function(get) {
 			var carteraCodigo = get('expediente.entidadPropietariaCodigo');

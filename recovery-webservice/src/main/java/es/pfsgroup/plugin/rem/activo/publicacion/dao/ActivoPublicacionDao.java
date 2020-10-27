@@ -77,9 +77,9 @@ public interface ActivoPublicacionDao extends AbstractDao<ActivoPublicacion, Lon
 	HistoricoFasePublicacionActivo getFasePublicacionVigentePorIdActivo(Long idActivo);
 	
 	/**
-	* Este método obtiene un obheto donde vinculan los datosDq
-	* @param idActivo
-	* @return ActivoDatosDq
-	*/
+	 * Este método obtiene un obheto donde vinculan los datosDq
+	 * @param idActivo
+	 * @return ActivoDatosDq
+	 */
 	ActivoDatosDq getActivoDatosDqPorIdActivo(Long idActivo);
 }

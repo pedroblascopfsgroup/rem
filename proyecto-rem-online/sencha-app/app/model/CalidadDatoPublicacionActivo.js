@@ -104,11 +104,96 @@ Ext.define('HreRem.model.CalidadDatoPublicacionActivo', {
 			name: 'dqPor100PropiedadFase1'
 		},{
 			name: 'correctoPor100PropiedadFase1'
-		}
-		
-		
+		},
 	//FASE3
 		//FASE4
+		
+		//Fotos
+		{
+			name: 'numFotos'
+		},
+		{
+			name: 'numFotosExterior'
+		},
+		{
+			name: 'numFotosInterior'
+		},
+		{
+			name: 'numFotosObra'
+		},
+		{
+			name: 'numFotosMinimaResolucion'
+		},
+		{
+			name: 'numFotosMinimaResolucionY'
+		},
+		{
+			name: 'numFotosMinimaResolucionX'
+		},
+		{
+			name: 'correctoFotos'
+		},
+		{
+			name: 'mensajeDQFotos'
+		}, //Descripcion
+		{
+			name: 'drFase4Descripcion'
+		},
+		{
+			name: 'dqFase4Descripcion'
+		},
+		{
+			name: 'correctoDescripcion'
+		}, //Localizacion
+		{
+			name: 'drf4LocalizacionLatitud'
+		},
+		{
+			name: 'dqF4Localizacionlatitud'
+		},
+		{
+			name: 'drf4LocalizacionLongitud'
+		},
+		{
+			name: 'dqf4LocalizacionLongitud'
+		},
+		{
+			name: 'correctoLocalizacion'
+		},
+		{
+			name: 'geodistanciaDQ'
+		},
+		{ //CEE
+			name: 'etiquetaCEERem'
+		},
+		{
+			name: 'numEtiquetaA'
+		},
+		{
+			name: 'numEtiquetaB'
+		},
+		{
+			name: 'numEtiquetaC'
+		},
+		{
+			name: 'numEtiquetaD'
+		},
+		{
+			name: 'numEtiquetaE'
+		},
+		{
+			name: 'numEtiquetaF'
+		},
+		{
+			name: 'numEtiquetaG'
+		},
+		{
+			name: 'correctoCEE'
+		},
+		{
+			name: 'mensajeDQCEE'
+		}
+		
 	],
 
 	proxy: {

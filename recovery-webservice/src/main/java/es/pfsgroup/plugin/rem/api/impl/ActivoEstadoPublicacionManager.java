@@ -1570,12 +1570,18 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		Activo activo = activoDao.get(idActivo);
 		if(activo != null) {
 			dto.setIdActivo(activo.getId());	
-		}
-		//FASE 1
-		Filter filter = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		}		
+		ActivoDatosDq actDatosDq = activoPublicacionDao.getActivoDatosDqPorIdActivo(idActivo);
 		
-		ActivoDatosDq actDatosDq=activoPublicacionDao.getActivoDatosDqPorIdActivo(idActivo);
+		dto = setDataFase0a2(actDatosDq, activo, dto);
+		dto = setDataFase4(actDatosDq, activo, dto);
+			
 		
+		
+		return dto;
+	}
+	
+	private DtoCalidadDatoPublicacionActivo setDataFase0a2(ActivoDatosDq actDatosDq, Activo activo, DtoCalidadDatoPublicacionActivo dto) {
 		if(actDatosDq.getIdufirDdq()!=null) {
 			dto.setDqIdufirFase1(actDatosDq.getIdufirDdq());
 		}
@@ -1631,7 +1637,68 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if(actDatosDq.getDescripcionCargas()!=null) {
 			dto.setDescripcionCargasInformacionCargasFase1(actDatosDq.getDescripcionCargas());
 		}
+		return dto;
+	}
+
+	private DtoCalidadDatoPublicacionActivo setDataFase4(ActivoDatosDq activoDatosDq, Activo activo, DtoCalidadDatoPublicacionActivo dto) {
 		
+		//FOTOS
+		if(activoDatosDq.getNumImagenes() != null)
+			dto.setNumFotos(activoDatosDq.getNumImagenes().toString());
+		if(activoDatosDq.getNumImagenesExt() != null)
+			dto.setNumFotosExterior(activoDatosDq.getNumImagenesExt().toString());
+		if(activoDatosDq.getNumImagenesInt() != null)
+			dto.setNumFotosInterior(activoDatosDq.getNumImagenesInt().toString());
+		if(activoDatosDq.getNumImagenesObra() != null)
+			dto.setNumFotosObra(activoDatosDq.getNumImagenesObra().toString());
+		if(activoDatosDq.getNumImagenesMinRes() != null)
+			dto.setNumFotosMinimaResolucion(activoDatosDq.getNumImagenesMinRes().toString());
+		if(activoDatosDq.getNumImagenesMinResY() != null)
+			dto.setNumFotosMinimaResolucionY(activoDatosDq.getNumImagenesMinResY().toString());
+		if(activoDatosDq.getNumImagenesMinResX() != null)
+			dto.setNumFotosMinimaResolucionX(activoDatosDq.getNumImagenesMinResX().toString());
+		if(activoDatosDq.getImagenesMensaje() != null)
+			dto.setMensajeDQFotos(activoDatosDq.getImagenesMensaje());
+		
+		// Descripcion
+		// FALTA EL DR Descripcion
+		
+		if(activoDatosDq.getDescripcion() != null) {
+			dto.setDrFase4Descripcion(activoDatosDq.getDescripcion());
+		}
+		
+		
+		// LOCALIZACION
+		// FALTA LATITUD REM
+		if(activoDatosDq.getLatitudDdq() != null) 
+			dto.setDqF4Localizacionlatitud(activoDatosDq.getLatitudDdq().toString());
+		
+		
+		//FALTA LONGITUD REM
+		if(activoDatosDq.getLongitudDdq() != null) 
+			dto.setDqf4LocalizacionLongitud(activoDatosDq.getLongitudDdq().toString());
+		if(activoDatosDq.getGeodistancia() != null)
+			dto.setGeodistanciaDQ(activoDatosDq.getGeodistancia().toString());
+		
+		//CEE
+		if(activoDatosDq.getEstCee() != null)
+			dto.setEtiquetaCEERem(activoDatosDq.getEstCee());
+		if(activoDatosDq.getEtiCeeA() != null)
+			dto.setNumEtiquetaA(activoDatosDq.getEtiCeeA());
+		if(activoDatosDq.getEtiCeeB() != null)
+			dto.setNumEtiquetaB(activoDatosDq.getEtiCeeB());
+		if(activoDatosDq.getEtiCeeC() != null)
+			dto.setNumEtiquetaC(activoDatosDq.getEtiCeeC());
+		if(activoDatosDq.getEtiCeeD() != null)
+			dto.setNumEtiquetaD(activoDatosDq.getEtiCeeD());
+		if(activoDatosDq.getEtiCeeE() != null)
+			dto.setNumEtiquetaE(activoDatosDq.getEtiCeeE());
+		if(activoDatosDq.getEtiCeeF() != null)
+			dto.setNumEtiquetaF(activoDatosDq.getEtiCeeF());
+		if(activoDatosDq.getEtiCeeG() != null)
+			dto.setNumEtiquetaG(activoDatosDq.getEtiCeeG());
+		if(activoDatosDq.getMensajeCee() != null)
+			dto.setMensajeDQCEE(activoDatosDq.getMensajeCee().toString());
 		
 		return dto;
 	}

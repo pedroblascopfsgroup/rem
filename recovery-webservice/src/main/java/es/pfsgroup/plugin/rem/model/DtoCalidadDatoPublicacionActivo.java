@@ -451,17 +451,268 @@ public class DtoCalidadDatoPublicacionActivo extends WebDto{
 		this.correctoPor100PropiedadFase1 = correctoPor100PropiedadFase1;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-	
-
 	//FASE 3
 	
 	
 	
 
 	//FASE 4 +
+	
+	//Fotos
+	
+	private String numFotos;
+	
+	private String numFotosExterior;
+	
+	private String numFotosInterior;
+	
+	private String numFotosObra;
+	
+	private String numFotosMinimaResolucion;
+	
+	private String numFotosMinimaResolucionY;
+	
+	private String numFotosMinimaResolucionX;
+	
+	private String mensajeDQFotos;
+	
+	// Descripcion
+	
+	private String drFase4Descripcion;
+	
+	private String dqFase4Descripcion;
+	
+	// Localizacion
+	
+	private String drf4LocalizacionLatitud;
+	
+	private String dqF4Localizacionlatitud;
+	
+	private String drf4LocalizacionLongitud;
+	
+	private String dqf4LocalizacionLongitud;
+	
+	private String geodistanciaDQ;
+	
+	//CEE
+	
+	private String etiquetaCEERem;
+	
+	private String numEtiquetaA;
+	
+	private String numEtiquetaB;
+	
+	private String numEtiquetaC;
+	
+	private String numEtiquetaD;
+	
+	private String numEtiquetaE;
+	
+	private String numEtiquetaF;
+	
+	private String numEtiquetaG;
+	
+	private String mensajeDQCEE;
+	
+	public String getNumFotos() {
+		return numFotos;
+	}
+
+	public void setNumFotos(String numFotos) {
+		this.numFotos = numFotos;
+	}
+
+	public String getNumFotosExterior() {
+		return numFotosExterior;
+	}
+
+	public void setNumFotosExterior(String numFotosExterior) {
+		this.numFotosExterior = numFotosExterior;
+	}
+
+	public String getNumFotosInterior() {
+		return numFotosInterior;
+	}
+
+	public void setNumFotosInterior(String numFotosInterior) {
+		this.numFotosInterior = numFotosInterior;
+	}
+
+	public String getNumFotosObra() {
+		return numFotosObra;
+	}
+
+	public void setNumFotosObra(String numFotosObra) {
+		this.numFotosObra = numFotosObra;
+	}
+
+	public String getNumFotosMinimaResolucion() {
+		return numFotosMinimaResolucion;
+	}
+
+	public void setNumFotosMinimaResolucion(String numFotosMinimaResolucion) {
+		this.numFotosMinimaResolucion = numFotosMinimaResolucion;
+	}
+
+	public String getNumFotosMinimaResolucionY() {
+		return numFotosMinimaResolucionY;
+	}
+
+	public void setNumFotosMinimaResolucionY(String numFotosMinimaResolucionY) {
+		this.numFotosMinimaResolucionY = numFotosMinimaResolucionY;
+	}
+
+	public String getNumFotosMinimaResolucionX() {
+		return numFotosMinimaResolucionX;
+	}
+
+	public void setNumFotosMinimaResolucionX(String numFotosMinimaResolucionX) {
+		this.numFotosMinimaResolucionX = numFotosMinimaResolucionX;
+	}
+
+	public String getMensajeDQFotos() {
+		return mensajeDQFotos;
+	}
+
+	public void setMensajeDQFotos(String mensajeDQFotos) {
+		this.mensajeDQFotos = mensajeDQFotos;
+	}
+
+
+	public String getGeodistanciaDQ() {
+		return geodistanciaDQ;
+	}
+
+	public void setGeodistanciaDQ(String geodistanciaDQ) {
+		this.geodistanciaDQ = geodistanciaDQ;
+	}
+
+	public String getEtiquetaCEERem() {
+		return etiquetaCEERem;
+	}
+
+	public void setEtiquetaCEERem(String etiquetaCEERem) {
+		this.etiquetaCEERem = etiquetaCEERem;
+	}
+
+	public String getDrFase4Descripcion() {
+		return drFase4Descripcion;
+	}
+
+	public void setDrFase4Descripcion(String drFase4Descripcion) {
+		this.drFase4Descripcion = drFase4Descripcion;
+	}
+
+	public String getDqFase4Descripcion() {
+		return dqFase4Descripcion;
+	}
+
+	public void setDqFase4Descripcion(String dqFase4Descripcion) {
+		this.dqFase4Descripcion = dqFase4Descripcion;
+	}
+
+	public String getDrf4LocalizacionLatitud() {
+		return drf4LocalizacionLatitud;
+	}
+
+	public void setDrf4LocalizacionLatitud(String drf4LocalizacionLatitud) {
+		this.drf4LocalizacionLatitud = drf4LocalizacionLatitud;
+	}
+
+	public String getDqF4Localizacionlatitud() {
+		return dqF4Localizacionlatitud;
+	}
+
+	public void setDqF4Localizacionlatitud(String dqF4Localizacionlatitud) {
+		this.dqF4Localizacionlatitud = dqF4Localizacionlatitud;
+	}
+
+	public String getDrf4LocalizacionLongitud() {
+		return drf4LocalizacionLongitud;
+	}
+
+	public void setDrf4LocalizacionLongitud(String drf4LocalizacionLongitud) {
+		this.drf4LocalizacionLongitud = drf4LocalizacionLongitud;
+	}
+
+	public String getDqf4LocalizacionLongitud() {
+		return dqf4LocalizacionLongitud;
+	}
+
+	public void setDqf4LocalizacionLongitud(String dqf4LocalizacionLongitud) {
+		this.dqf4LocalizacionLongitud = dqf4LocalizacionLongitud;
+	}
+
+	public String getNumEtiquetaA() {
+		return numEtiquetaA;
+	}
+
+	public void setNumEtiquetaA(String numEtiquetaA) {
+		this.numEtiquetaA = numEtiquetaA;
+	}
+
+	public String getNumEtiquetaB() {
+		return numEtiquetaB;
+	}
+
+	public void setNumEtiquetaB(String numEtiquetaB) {
+		this.numEtiquetaB = numEtiquetaB;
+	}
+
+	public String getNumEtiquetaC() {
+		return numEtiquetaC;
+	}
+
+	public void setNumEtiquetaC(String numEtiquetaC) {
+		this.numEtiquetaC = numEtiquetaC;
+	}
+
+	public String getNumEtiquetaD() {
+		return numEtiquetaD;
+	}
+
+	public void setNumEtiquetaD(String numEtiquetaD) {
+		this.numEtiquetaD = numEtiquetaD;
+	}
+
+	public String getNumEtiquetaE() {
+		return numEtiquetaE;
+	}
+
+	public void setNumEtiquetaE(String numEtiquetaE) {
+		this.numEtiquetaE = numEtiquetaE;
+	}
+
+	public String getNumEtiquetaF() {
+		return numEtiquetaF;
+	}
+
+	public void setNumEtiquetaF(String numEtiquetaF) {
+		this.numEtiquetaF = numEtiquetaF;
+	}
+
+	public String getNumEtiquetaG() {
+		return numEtiquetaG;
+	}
+
+	public void setNumEtiquetaG(String numEtiquetaG) {
+		this.numEtiquetaG = numEtiquetaG;
+	}
+
+	public String getMensajeDQCEE() {
+		return mensajeDQCEE;
+	}
+
+	public void setMensajeDQCEE(String mensajeDQCEE) {
+		this.mensajeDQCEE = mensajeDQCEE;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+
+	
 	private Long idActivo;
 
 	public Long getIdActivo() {

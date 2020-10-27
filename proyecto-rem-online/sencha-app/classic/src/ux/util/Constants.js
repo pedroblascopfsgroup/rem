@@ -352,7 +352,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	AP_CES_PTE_MAN: '36',
     	CONT_CES: '38',
     	RES_PTE_MAN: '39',
-    	AP_PTE_MAN : '40'
+    	AP_PTE_MAN : '40',
+    	PEN_RES_OFER_COM : '43'
     },
 
     ESTADOS_GASTO: {

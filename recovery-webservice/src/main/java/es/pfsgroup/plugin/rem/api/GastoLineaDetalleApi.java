@@ -29,7 +29,7 @@ public interface GastoLineaDetalleApi {
 
 	Double calcularPrincipioSujetoLineasDetalle(GastoProveedor gasto);
 
-	DtoLineaDetalleGasto calcularCuentasYPartidas(Long idGasto, Long idLineaDetalleGasto, String subtipoGastoCodigo);
+	DtoLineaDetalleGasto calcularCuentasYPartidas(GastoProveedor gasto, Long idLineaDetalleGasto, String subtipoGastoCodigo);
 
 	HashSet<String> devolverNumeroLineas(List<GastoLineaDetalle> gastoLineaDetalleList, HashSet<String> tipoGastoImporteList);
 
@@ -78,6 +78,8 @@ public interface GastoLineaDetalleApi {
 	List<Activo> devolverActivosDeLineasDeGasto(Long idLineaDetalleGasto);
 
 	DDSubcartera getSubcarteraLinea(List<Activo> activos);
+
+	GastoLineaDetalle setCuentasPartidasDtoToObject(GastoLineaDetalle gastoLineaDetalle, DtoLineaDetalleGasto dto);
 	
 }
 

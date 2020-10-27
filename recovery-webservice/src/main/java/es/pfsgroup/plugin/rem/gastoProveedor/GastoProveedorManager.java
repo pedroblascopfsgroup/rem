@@ -3492,7 +3492,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		Double importeTotal = 0.0;
 		
 		if(gasto.getGastoProveedor() != null) {
-			List<GastoLineaDetalle> gastoLineaDetalleList = gasto.getGastoProveedor().getGastoLineaDetalleList();
+
+			Filter filter = genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getGastoProveedor().getId());
+			List<GastoLineaDetalle> gastoLineaDetalleList = genericDao.getList(GastoLineaDetalle.class, filter);
 	
 			if(gastoLineaDetalleList != null && !gastoLineaDetalleList.isEmpty()){
 				for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleList) {

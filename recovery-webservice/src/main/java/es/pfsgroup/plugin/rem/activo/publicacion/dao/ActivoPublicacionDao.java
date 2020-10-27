@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.activo.publicacion.dao;
 
 import es.capgemini.pfs.dao.AbstractDao;
+import es.pfsgroup.plugin.rem.model.ActivoDatosDq;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.HistoricoFasePublicacionActivo;
@@ -74,4 +75,11 @@ public interface ActivoPublicacionDao extends AbstractDao<ActivoPublicacion, Lon
 	 * @return Devuelve un objeto HistoricoFasePublicacionActivo si el activo consta alguna fase de publicacion vigente, null de otro modo.
 	 */
 	HistoricoFasePublicacionActivo getFasePublicacionVigentePorIdActivo(Long idActivo);
+	
+	/**
+	* Este método obtiene un obheto donde vinculan los datosDq
+	* @param idActivo
+	* @return ActivoDatosDq
+	*/
+	ActivoDatosDq getActivoDatosDqPorIdActivo(Long idActivo);
 }

@@ -62,7 +62,7 @@ BEGIN
             LEFT JOIN '||V_ESQUEMA||'.ACT_ETD_ENT_TDI ETD ON ETD.ENT_ID = GEN.ENT_ID
                 AND ETD.BORRADO = 0
             WHERE GEN.BORRADO = 0
-                AND ENT.DD_ENT_CODIGO = ''ACT''
+                AND ENT.DD_ENT_CODIGO IN (''ACT'', ''GEN'')
                 AND GLD.GPV_ID = '||GPV_ID;
         EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
 
@@ -86,7 +86,7 @@ BEGIN
             EXECUTE IMMEDIATE V_SQL;
 
             RESULTADO := 'KO';
-            COD_RETORNO := 'El gasto no tiene distribución por activos o han sido eliminados. (Información actualizada el '||V_FECHA||')';
+            COD_RETORNO := 'El gasto no tiene distribución por activos/genéricos o han sido eliminados. (Información actualizada el '||V_FECHA||')';
 
         ELSE
 
@@ -98,7 +98,7 @@ BEGIN
                     AND GEN.BORRADO = 0
                 JOIN '||V_ESQUEMA||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GLD_ID = GEN.GLD_ID
                     AND GLD.BORRADO = 0
-                WHERE ENT.DD_ENT_CODIGO = ''ACT''
+                WHERE ENT.DD_ENT_CODIGO IN (''ACT'', ''GEN'')
                     AND ETD.BORRADO = 0
                     AND GLD.GPV_ID = '||GPV_ID;
             EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
@@ -106,7 +106,7 @@ BEGIN
             IF V_COUNT = 0 THEN
 
                 RESULTADO := 'KO';
-                COD_RETORNO := 'Sin información de tipos de diario para los activos del gasto. (Información actualizada el '||V_FECHA||')';
+                COD_RETORNO := 'Sin información de tipos de diario para los activos/genéricos del gasto. (Información actualizada el '||V_FECHA||')';
 
             ELSE
 

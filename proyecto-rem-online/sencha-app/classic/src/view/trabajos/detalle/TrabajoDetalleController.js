@@ -391,7 +391,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		var arraySelection= [];
 		var codPromo;
 		var idTarea = me.lookupReference('idTarea').getValue();
-		var campoIdTareaInformado = idTarea != null;
+		var campoIdTareaInformado = (idTarea != null && idTarea.length > 0);
 		var existeTarea = null;
 		
 		if(me.lookupReference('fechaTopeTrabajo').getValue() == null){
@@ -491,7 +491,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 					  method:  'GET',
 					  success: function(response, opts) {
 						  var decode = Ext.JSON.decode(response.responseText);
-						  existeTarea = true;
+						  existeTarea = 'true' == decode['tareaExistente'] ;
 					  },
 					  failure: function () {
 						  existeTarea = false;

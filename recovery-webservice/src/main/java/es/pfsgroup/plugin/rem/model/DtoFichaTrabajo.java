@@ -194,7 +194,7 @@ public class DtoFichaTrabajo {
 	
 	private Boolean esEstadoEditable;
 	
-	private Long idTarea;
+	private String idTarea;
 	
 	private String idTarifas;
 	
@@ -1005,11 +1005,11 @@ public class DtoFichaTrabajo {
 	}
 
 
-	public Long getIdTarea() {
+	public String getIdTarea() {
 		return idTarea;
 	}
 
-	public void setIdTarea(Long idTarea) {
+	public void setIdTarea(String idTarea) {
 		this.idTarea = idTarea;
 	}
 

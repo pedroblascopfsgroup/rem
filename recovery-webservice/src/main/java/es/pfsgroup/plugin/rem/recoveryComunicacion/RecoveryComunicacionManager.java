@@ -67,7 +67,8 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
         String usuario = "sdiaz";
         String contrasenya = "1234";
         String schema = "HAYA06";
-        String urlLogin = "http://192.168.44.123:8080/recovery-api/login";
+        String urlLogin = !Checks.esNulo(appProperties.getProperty("rest.client.autenticacion.recovery"))
+                ? appProperties.getProperty("rest.client.autenticacion.recovery") : "";
         jsonResp.put("username", usuario);
         jsonResp.put("password", contrasenya);
         jsonResp.put("schema", schema);
@@ -157,7 +158,8 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
             try {
                 json = mapper.writeValueAsString(model);
                 System.out.println("ResultingJSONstring = " + json);
-                urlEnvio = "http://192.168.44.123:8080/recovery-api/rs/bien/modificar";
+                urlEnvio = !Checks.esNulo(appProperties.getProperty("rest.client.convivencia.recovery"))
+                        ? appProperties.getProperty("rest.client.convivencia.recovery") : "";
 
                 llamada = procesarPeticion(this.httpClientFacade, urlEnvio, POST_METHOD, headers, json, 30, "UTF-8");
 

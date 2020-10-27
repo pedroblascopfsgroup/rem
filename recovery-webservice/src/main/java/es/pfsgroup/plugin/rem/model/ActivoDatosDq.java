@@ -105,7 +105,7 @@ public class ActivoDatosDq implements Serializable, Auditable {
    	private Boolean inscripcion;
     
     @Column(name = "ANYO_CONSTRUCCION")
-   	private String anyoConstruccion;
+   	private Long anyoConstruccion;
     
     @Column(name = "DDQ_REFERENCIA_CATASTRAL")
    	private String referenciaCatastralDdq;
@@ -348,11 +348,11 @@ public class ActivoDatosDq implements Serializable, Auditable {
 		this.inscripcion = inscripcion;
 	}
 
-	public String getAnyoConstruccion() {
+	public Long getAnyoConstruccion() {
 		return anyoConstruccion;
 	}
 
-	public void setAnyoConstruccion(String anyoConstruccion) {
+	public void setAnyoConstruccion(Long anyoConstruccion) {
 		this.anyoConstruccion = anyoConstruccion;
 	}
 

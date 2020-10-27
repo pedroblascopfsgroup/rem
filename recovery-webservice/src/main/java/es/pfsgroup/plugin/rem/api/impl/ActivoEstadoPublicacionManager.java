@@ -49,7 +49,6 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoDatosDq;
-import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
@@ -1568,20 +1567,35 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	public DtoCalidadDatoPublicacionActivo getCalidadDatoPublicacionActivo(Long idActivo) {
 		DtoCalidadDatoPublicacionActivo dto = new DtoCalidadDatoPublicacionActivo();
 		Activo activo = activoDao.get(idActivo);
-		if(activo != null) {
-			dto.setIdActivo(activo.getId());	
-		}		
 		ActivoDatosDq actDatosDq = activoPublicacionDao.getActivoDatosDqPorIdActivo(idActivo);
+		HistoricoFasePublicacionActivo fasePublicacion =  activoPublicacionDao.getFasePublicacionVigentePorIdActivo(idActivo);
 		
-		dto = setDataFase0a2(actDatosDq, activo, dto);
-		dto = setDataFase4(actDatosDq, activo, dto);
-			
-		
+		if(fasePublicacion.getFasePublicacion() != null) {
+			if(DDFasePublicacion.CODIGO_FASE_0_CALIDAD_PENDIENTE.equals(fasePublicacion.getFasePublicacion().getCodigo())
+					|| DDFasePublicacion.CODIGO_FASE_I_PENDIENTE_ACTUACIONES_PREVIAS.equals(fasePublicacion.getFasePublicacion().getCodigo())
+					|| DDFasePublicacion.CODIGO_FASE_II_PENDIENTE_LLAVES.equals(fasePublicacion.getFasePublicacion().getCodigo())
+			){
+				
+				dto = setDataFase0a2(actDatosDq, activo, dto);
+				
+			}else if(DDFasePublicacion.CODIGO_FASE_III_PENDIENTE_INFORMACION.equals(fasePublicacion.getFasePublicacion().getCodigo())
+					) {
+				
+				setDataFase3(dto, activo, actDatosDq);
+				
+			}else if(DDFasePublicacion.CODIGO_FASE_IV_PENDIENTE_PRECIO.equals(fasePublicacion.getFasePublicacion().getCodigo())
+							|| DDFasePublicacion.CODIGO_FASE_V_INCIDENCIAS_PUBLICACION.equals(fasePublicacion.getFasePublicacion().getCodigo())
+							|| DDFasePublicacion.CODIGO_FASE_VI_CALIDAD_COMPROBADA.equals(fasePublicacion.getFasePublicacion().getCodigo())
+					) {
+				dto = setDataFase4(actDatosDq, activo, dto);
+			}
+		}
 		
 		return dto;
 	}
 	
 	private DtoCalidadDatoPublicacionActivo setDataFase0a2(ActivoDatosDq actDatosDq, Activo activo, DtoCalidadDatoPublicacionActivo dto) {
+		
 		if(actDatosDq.getIdufirDdq()!=null) {
 			dto.setDqIdufirFase1(actDatosDq.getIdufirDdq());
 		}
@@ -1615,14 +1629,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if(actDatosDq.getFolioDdq()!=null) {
 			dto.setDqFolioFase1(actDatosDq.getFolioDdq());
 		}
-		//TODO USO DOMINANTE
-		/*
-		if(activo.getInfoRegistral().getInfoRegistralBien().getMunicipoLibro()!=null) {
-			dto.setDrMunicipioDelRegistroFase1(Long.parseLong(activo.getInfoRegistral().getInfoRegistralBien().getMunicipoLibro()));
-		}*/
-		/*if(actDatosDq.getLocalidadReg()!=null) {
-			dto.setDqMunicipioDelRegistroFase1(actDatosDq.getLocalidadReg());
-		}*/
+
 		if(activo.getInfoRegistral().getInfoRegistralBien().getProvincia().getDescripcion()!=null) {
 			dto.setDrProvinciaDelRegistroFase1(activo.getInfoRegistral().getInfoRegistralBien().getProvincia().getDescripcion());
 		}
@@ -1667,12 +1674,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setDrFase4Descripcion(activoDatosDq.getDescripcion());
 		}
 		
-		
 		// LOCALIZACION
 		// FALTA LATITUD REM
 		if(activoDatosDq.getLatitudDdq() != null) 
 			dto.setDqF4Localizacionlatitud(activoDatosDq.getLatitudDdq().toString());
-		
 		
 		//FALTA LONGITUD REM
 		if(activoDatosDq.getLongitudDdq() != null) 
@@ -1701,5 +1706,44 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setMensajeDQCEE(activoDatosDq.getMensajeCee().toString());
 		
 		return dto;
+	}
+
+	private void setDataFase3(DtoCalidadDatoPublicacionActivo dto, Activo activo, ActivoDatosDq actDatosDq) {
+		
+		if(activo.getInfoRegistral() != null && activo.getInfoRegistral().getInfoRegistralBien() != null) {
+			dto.setDrF3ReferenciaCatastral(activo.getInfoRegistral().getInfoRegistralBien().getReferenciaCatastralBien());
+			dto.setDrF3SuperficieConstruida(activo.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida());
+			dto.setDrF3SuperficieUtil(activo.getInfoRegistral().getSuperficieUtil());
+		}
+		if(activo.getInfoComercial() != null) {
+			
+			dto.setDrF3AnyoConstruccion(activo.getInfoComercial().getAnyoConstruccion());
+		}
+			
+		dto.setDqF3ReferenciaCatastral(actDatosDq.getReferenciaCatastralDdq());
+		dto.setDqF3SuperficieConstruida(actDatosDq.getSuperficieConstruidaDdq());
+		dto.setDqF3SuperficieUtil(actDatosDq.getSuperficieUtilDdq());
+		dto.setDqF3AnyoConstruccion(actDatosDq.getAnyoConstruccion());
+		
+		if(activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien() != null) {
+			dto.setDrF3TipoVia(activo.getLocalizacion().getLocalizacionBien().getTipoVia().getDescripcion());
+			dto.setDrF3NomCalle(activo.getLocalizacion().getLocalizacionBien().getNombreVia());
+			dto.setDrF3CP(activo.getLocalizacion().getLocalizacionBien().getCodPostal());
+			dto.setDrF3Municipio(activo.getLocalizacion().getLocalizacionBien().getLocalidad().getDescripcion());
+			dto.setDrF3Provincia(activo.getLocalizacion().getLocalizacionBien().getProvincia().getDescripcion());
+		}
+		
+		dto.setDqF3TipoVia(actDatosDq.getTipoVia().getDescripcion());
+		dto.setDqF3NomCalle(actDatosDq.getNombreViaDdq());
+		dto.setProbabilidadCalleCorrecta(actDatosDq.getCalleCorrectaProb());
+		dto.setDqF3CP(actDatosDq.getCodigoPostalDdq());
+		
+		if(actDatosDq.getLocalidad() != null) {
+			dto.setDqF3Municipio(actDatosDq.getLocalidad().getDescripcion());
+		}
+		
+		if(actDatosDq.getProvincia() != null) {
+			dto.setDqF3Provincia(actDatosDq.getProvincia().getDescripcion());
+		}
 	}
 }

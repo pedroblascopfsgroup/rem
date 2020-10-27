@@ -3,10 +3,38 @@ Ext.define('HreRem.model.CalidadDatoPublicacionActivo', {
 	idProperty: 'idActivo',
 
 	fields: [
-	//FASE0
+	
 		{
-			name: 'idActivo'
-		},{
+			name: 'drF3ReferenciaCatastral'
+		},
+		{
+			name: 'dqF3ReferenciaCatastral'
+		},
+		{
+			name: 'correctoF3ReferenciaCatastral'
+		},
+		{
+			name: 'drF3SuperficieConstruida'
+		},
+		{
+			name: 'dqF3SuperficieConstruida'
+		},
+		{
+			name: 'correctoF3SuperficieConstruida'
+		},
+		{
+			name: 'drF3SuperficieUtil'
+		},
+		{
+			name: 'dqF3SuperficieUtil'
+		},
+		{
+			name: 'drF3AnyoConstruccion'
+		},
+		{
+			name: 'dqF3AnyoConstruccion'
+		},
+		{
 			name: 'drIdufirFase1'
 		},{
 			name: 'dqIdufirFase1'
@@ -105,10 +133,6 @@ Ext.define('HreRem.model.CalidadDatoPublicacionActivo', {
 		},{
 			name: 'correctoPor100PropiedadFase1'
 		},
-	//FASE3
-		//FASE4
-		
-		//Fotos
 		{
 			name: 'numFotos'
 		},
@@ -192,8 +216,39 @@ Ext.define('HreRem.model.CalidadDatoPublicacionActivo', {
 		},
 		{
 			name: 'mensajeDQCEE'
-		}
-		
+		},{
+			name: 'drF3TipoVia'
+		},
+		{
+			name: 'dqF3TipoVia'
+		},
+		{
+			name: 'drF3NomCalle'
+		},
+		{
+			name: 'dqF3NomCalle'
+		},
+		{
+			name: 'probabilidadCalleCorrecta'
+		},
+		{
+			name: 'drF3CP'
+		},
+		{
+			name: 'dqF3CP'
+		},
+		{
+			name: 'drF3Municipio'
+		},
+		{
+			name: 'dqF3Municipio'
+		},
+		{
+			name: 'drF3Provincia'
+		},
+		{
+			name: 'dqF3Provincia'
+		}		
 	],
 
 	proxy: {

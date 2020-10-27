@@ -20,7 +20,6 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 		{
 			xtype:'fieldsettable',
 			layout:'hbox',
-			defaultType: 'container',
 			collapsible: false,
 			border: false,
 			style:{
@@ -37,25 +36,13 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 				cls : 'boton-cabecera',
 				iconCls : 'ico-refrescar',
 	        	iconAlign: 'right',
-				//handler	: 'onClickBotonRefrescar',
+				//handler	: me.funcionRecargar,
 				tooltip : HreRem.i18n('btn.refrescar')
 			}]
 		
 		},
 		{
-			
-			cls: 'no-pointer',
-			title: HreRem.i18n('publicacion.calidad.datos.correcto'),
-			style:{
-				backgroundColor: 'white'
-			},
-			bind: {
-				iconCls:'{getIconClsDQCorrecto}'
-			}
-		},
-		{
-			xtype:'fieldsettable',
-			cls	 :  'fieldsetCabecera',
+			xtype:'toolfieldset',
 			title : HreRem.i18n('publicacion.calidad.datos.fase0'),
 			collapsible : true,
 			collapsed : false,
@@ -64,7 +51,8 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 				title : HreRem.i18n('publicacion.calidad.datos.datos.registrales'),
 				items : [{
 						xtype : 'fieldsettable',
-						 collapsible : false,
+						collapsible : false,
+						colspan: 3,
 						title :HreRem.i18n('publicacion.calidad.datos.idufir'),
 									items : [{
 									xtype : 'textfieldbase',
@@ -95,6 +83,7 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 						},{
 							xtype : 'fieldsettable',
 							collapsible : false,
+							colspan: 3,
 							title :HreRem.i18n('publicacion.calidad.datos.finca.registral'),
 								items : [{
 									xtype : 'textfieldbase',
@@ -121,8 +110,9 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 								}*/]
 						
 						},{
-							xtype : 'fieldsettable',
-						 collapsible : false,
+						xtype : 'fieldsettable',
+						collapsible : false,
+						colspan: 3,
 						title :HreRem.i18n('publicacion.calidad.datos.tomo'),
 								items : [{
 									xtype : 'textfieldbase',
@@ -154,6 +144,7 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 						},{
 							xtype : 'fieldsettable',
 						 collapsible : false,
+						 colspan: 3,
 						title :HreRem.i18n('publicacion.calidad.datos.libro'),
 								items : [{
 									xtype : 'textfieldbase',
@@ -185,6 +176,7 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 						},{
 							xtype : 'fieldsettable',
 							collapsible : false,
+							colspan: 3,
 							title :HreRem.i18n('publicacion.calidad.datos.folio'),
 								items : [{
 									xtype : 'textfieldbase',
@@ -212,6 +204,7 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 						},{
 							xtype : 'fieldsettable',
 						 collapsible : false,
+						 colspan: 3,
 						title :HreRem.i18n('publicacion.calidad.datos.uso.dominante'),
 								items : [{
 									xtype : 'textfieldbase',
@@ -240,10 +233,12 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 						,{
 							xtype : 'fieldsettable',
 						 collapsible : false,
+						 colspan: 3,
 						title :HreRem.i18n('publicacion.calidad.datos.datos.del.registro'),
 								items : [{
 									xtype : 'fieldsettable',
 									collapsible : false,
+									colspan: 3,
 									title :HreRem.i18n('publicacion.calidad.datos.datos.del.registro.municipio'),
 									items : [{
 									xtype : 'textfieldbase',
@@ -272,6 +267,7 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 								},{
 									xtype : 'fieldsettable',
 									collapsible : false,
+									colspan: 3,
 									title :HreRem.i18n('publicacion.calidad.datos.datos.del.registro.provincia'),
 									items : [{
 									xtype : 'textfieldbase',
@@ -292,14 +288,14 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 									xtype : 'numberfield',
 									fieldLabel :HreRem.i18n('publicacion.calidad.datos.correcto'),
 									reference : 'correctoProvinciaDelRegistroFase1'
-								
-									
+
 								}*/]
 									
 									
 								},{
 									xtype : 'fieldsettable',
 									collapsible : false,
+									colspan: 3,
 									title :HreRem.i18n('publicacion.calidad.datos.datos.del.registro.numero'),
 									items : [{
 									xtype : 'textfieldbase',
@@ -321,21 +317,16 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 									fieldLabel :HreRem.i18n('publicacion.calidad.datos.correcto'),
 									reference : 'correctoNumeroDelRegistroFase1'
 								
-									
 								}*/]
-									
-									
+
 								}
 								]
 						
-						},{
-							
 						}
-							
-						
 						,{
 							xtype : 'fieldsettable',
 						 collapsible : false,
+						 colspan: 3,
 						title :HreRem.i18n('publicacion.calidad.datos.vpo'),				
 							items : [{
 									xtype : 'textfieldbase',
@@ -363,6 +354,7 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 						},{
 							xtype : 'fieldsettable',
 						 collapsible : false,
+						 colspan: 3,
 						title :HreRem.i18n('publicacion.calidad.datos.anyo.construccion'),
 							items : [{
 									xtype : 'textfieldbase',
@@ -390,6 +382,7 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 						},{
 							xtype : 'fieldsettable',
 						 collapsible : false,
+						 colspan: 3,
 						title :HreRem.i18n('publicacion.calidad.datos.tipologia'),
 								items : [{
 									xtype : 'textfieldbase',
@@ -417,6 +410,7 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 						},{
 							xtype : 'fieldsettable',
 						 collapsible : false,
+						 colspan: 3,
 						title :HreRem.i18n('publicacion.calidad.datos.subtipologia'),
 							items : [{
 									xtype : 'textfieldbase',
@@ -444,6 +438,7 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 						},{
 							xtype : 'fieldsettable',
 						 collapsible : false,
+						 colspan: 3,
 						title :HreRem.i18n('publicacion.calidad.datos.informacion.cargas'),
 								items : [{
 									xtype : 'textfieldbase',
@@ -482,6 +477,7 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 						},{
 							xtype : 'fieldsettable',
 						 collapsible : false,
+						 colspan: 3,
 						title :HreRem.i18n('publicacion.calidad.datos.inscripcion.correcta'),
 								items : [{
 									xtype : 'textfieldbase',
@@ -509,6 +505,7 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 						},{
 							xtype : 'fieldsettable',
 						 collapsible : false,
+						 colspan: 3,
 						title :HreRem.i18n('publicacion.calidad.datos.porcien.propiedad'),
 									items : [{
 									xtype : 'textfieldbase',
@@ -540,134 +537,381 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 			}]
 		}, 
 		{
-			cls: 'no-pointer',
-			title: HreRem.i18n('publicacion.calidad.datos.correcto'),
-			style:{
-				backgroundColor: 'white'
-			},
-			bind: {
-				iconCls:'{getIconClsDQCorrecto}'
-			}
-		},
-		{
-			xtype:'fieldsettable',
-			cls	 :  'fieldsetCabecera',
+			xtype:'toolfieldset',
 			title : HreRem.i18n('publicacion.calidad.datos.fase3'),
 			collapsible : true,
-			collapsed : true//,
-			/*items : [{
-				xtype : 'textareafieldbase',
-				fieldLabel : HreRem
-						.i18n('fieldlabel.fases.de.publicacion.comentario'),
-				reference : 'faseComentario',
-				bind : {
-					value : '{calidaddatopublicacionactivo.comentario}'
-				}
-			}]*/
-		}, 
-		{
-			cls: 'no-pointer',
-			title: HreRem.i18n('publicacion.calidad.datos.correcto'),
-			style:{
-				backgroundColor: 'white'
+			collapsed : false,
+			layout: {
+		        type: 'table',
+		        columns: 2,
+		        tdAttrs: {width: '33%'},
+		        tableAttrs: {
+		            style: {
+		                width: '100%'
+					}
+		        }
 			},
-			bind: {
-				iconCls:'{getIconClsDQCorrecto}'
-			}
-		}, {
-			 // FASE 4
-			xtype:'fieldsettable',
+			tools: [
+				{
+					xtype: 'button',
+					cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+					bind: {
+						iconCls:'{getIconClsDQCorrecto}'
+					}
+				}
+			],
+			items : [{
+				xtype:'fieldsettable',
+				title: HreRem.i18n('header.activos.afectados.referencia.catastral'),
+				collapsible: false,
+				collapsed : false,
+				
+				items: [{
+							xtype: 'textfieldbase',
+							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.rem'),
+							bind: '{calidaddatopublicacionactivo.drF3ReferenciaCatastral}',
+							readOnly: true
+						},
+						{
+							xtype: 'textfieldbase',
+							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.dq'),
+							bind: '{calidaddatopublicacionactivo.dqF3ReferenciaCatastral}',
+							readOnly: true
+						},{
+						xtype: 'button',
+						cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+						bind: {
+							iconCls:'{getIconClsDQCorrecto}'
+						}
+					}]
+			},
+			{
+				xtype:'toolfieldset',
+				title: HreRem.i18n('fieldlabel.superficie.construida'),
+				collapsible: false,
+				collapsed : false,
+				tools: [
+					{
+						xtype: 'button',
+						cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+						bind: {
+							iconCls:'{getIconClsDQCorrecto}'
+						}
+					}
+				],
+				items: [{
+							xtype: 'textfieldbase',
+							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.rem'),
+							bind: '{calidaddatopublicacionactivo.drF3SuperficieConstruida}',
+							readOnly: true
+						},
+						{
+							xtype: 'textfieldbase',
+							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.dq'),
+							bind: '{calidaddatopublicacionactivo.dqF3SuperficieConstruida}',
+							readOnly: true
+						}
+				]
+			},
+			{
+				xtype:'toolfieldset',
+				title: HreRem.i18n('fieldlabel.superficie.util'),
+				collapsible: false,
+				collapsed : false,
+				tools: [
+					{
+						xtype: 'button',
+						cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+						bind: {
+							iconCls:'{getIconClsDQCorrecto}'
+						}
+					}
+				],
+				items: [{
+							xtype: 'textfieldbase',
+							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.rem'),
+							bind: '{calidaddatopublicacionactivo.drF3SuperficieUtil}',
+							readOnly: true
+						},
+						{
+							xtype: 'textfieldbase',
+							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.dq'),
+							bind: '{calidaddatopublicacionactivo.dqF3SuperficieUtil}',
+							readOnly: true
+						}]
+			},
+			{
+				xtype:'toolfieldset',
+				title: HreRem.i18n('fieldlabel.anyo.construccion'),
+				collapsible: false,
+				collapsed : false,
+				tools: [
+					{
+						xtype: 'button',
+						cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+						bind: {
+							iconCls:'{getIconClsDQCorrecto}'
+						}
+					}
+				],
+				items: [{
+							xtype: 'textfieldbase',
+							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.rem'),
+							bind: '{calidaddatopublicacionactivo.drF3AnyoConstruccion}',
+							readOnly: true
+						},
+						{
+							xtype: 'textfieldbase',
+							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.dq'),
+							bind: '{calidaddatopublicacionactivo.dqF3AnyoConstruccion}',
+							readOnly: true
+						}]
+			},
+			{
+				xtype:'fieldsettable',
+				title: HreRem.i18n('header.direccion'),
+				collapsible: false,
+				collapsed : false,
+				colspan: 2,
+				items: [{
+					xtype:'toolfieldset',
+					title: HreRem.i18n('fieldlabel.tipo.via'),
+					collapsible: false,
+					colspan: 3,
+					tools: [
+						{
+							xtype: 'button',
+							cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+							bind: {
+								iconCls:'{getIconClsDQCorrecto}'
+							}
+						}
+					],
+					items: [{
+							xtype: 'textfieldbase',
+							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.rem'),
+							bind: '{calidaddatopublicacionactivo.drF3TipoVia}',
+							readOnly: true
+						},
+						{
+							xtype: 'textfieldbase',
+							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.dq'),
+							bind: '{calidaddatopublicacionactivo.dqF3TipoVia}',
+							readOnly: true
+						}]
+				},
+				{
+					xtype:'toolfieldset',
+					title: HreRem.i18n('publicacion.calidad.datos.nombre.calle'),
+					collapsible: false,
+					colspan: 3,
+					tools: [
+						{
+							xtype: 'button',
+							cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+							bind: {
+								iconCls:'{getIconClsDQCorrecto}'
+							}
+						}
+					],
+					items: [{
+								xtype: 'textfieldbase',
+								fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.rem'),
+								bind: '{calidaddatopublicacionactivo.drF3NomCalle}',
+								readOnly: true
+							},
+							{
+								xtype: 'textfieldbase',
+								fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.dq'),
+								bind: '{calidaddatopublicacionactivo.dqF3NomCalle}',
+								readOnly: true
+							},{
+								xtype: 'textfieldbase',
+								fieldLabel:  HreRem.i18n('publicacion.calidad.datos.probabilidad.calle.correcta'),
+								bind: '{calidaddatopublicacionactivo.probabilidadCalleCorrecta}',
+								readOnly: true
+							}
+					]
+				},
+				{
+					xtype:'toolfieldset',
+					title: HreRem.i18n('publicacion.calidad.datos.cp'),
+					collapsible: false,
+					colspan: 3,
+					tools: [
+						{
+							xtype: 'button',
+							cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+							bind: {
+								iconCls:'{getIconClsDQCorrecto}'
+							}
+						}
+					],
+					items: [{
+							xtype: 'textfieldbase',
+							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.rem'),
+							bind: '{calidaddatopublicacionactivo.drF3CP}',
+							readOnly: true
+						},
+						{
+							xtype: 'textfieldbase',
+							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.dq'),
+							bind: '{calidaddatopublicacionactivo.dqF3CP}',
+							readOnly: true
+						}]
+				},
+				{
+					xtype:'toolfieldset',
+					title: HreRem.i18n('fieldlabel.municipio'),
+					collapsible: false,
+					colspan: 3,
+					tools: [
+						{
+							xtype: 'button',
+							cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+							bind: {
+								iconCls:'{getIconClsDQCorrecto}'
+							}
+						}
+					],
+					items: [{
+							xtype: 'textfieldbase',
+							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.rem'),
+							bind: '{calidaddatopublicacionactivo.drF3Municipio}',
+							readOnly: true
+						},
+						{
+							xtype: 'textfieldbase',
+							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.dq'),
+							bind: '{calidaddatopublicacionactivo.dqF3Municipio}',
+							readOnly: true
+						}]
+				},
+				{
+					xtype:'toolfieldset',
+					title: HreRem.i18n('fieldlabel.provincia'),
+					collapsible: false,
+					colspan: 3,
+					tools: [
+						{
+							xtype: 'button',
+							cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+							bind: {
+								iconCls:'{getIconClsDQCorrecto}'
+							}
+						}
+					],
+					items: [{
+							xtype: 'textfieldbase',
+							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.rem'),
+							bind: '{calidaddatopublicacionactivo.drF3Provincia}',
+							readOnly: true
+						},
+						{
+							xtype: 'textfieldbase',
+							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.dq'),
+							bind: '{calidaddatopublicacionactivo.dqF3Provincia}',
+							readOnly: true
+						}]
+				}]
+			}]
+		}, 	
+		{
+			xtype:'toolfieldset',
 			title : HreRem.i18n('publicacion.calidad.datos.fase4'),
 			collapsible : true,
 			collapsed : true,
-			layout: {
-		        type: 'table',
-		        columns: 2
-			},
-			items : [
-			{
-				// Apartado Fotos
-				xtype:'fieldsettable',
-				title:HreRem.i18n('publicacion.calidad.datos.fase4.fotos'),
-				defaultType:'textfieldbase',
-				items : [{
-					xtype:'textfieldbase',
-					fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.fotos.numero.imagenes'),
-					reference: 'numFotosRef',
-					readOnly: true,
-					bind: {
-						value: '{calidaddatopublicacionactivo.numFotos}'
-					}
-					
-
-				},{
-					xtype:'textfieldbase',
-					fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.fotos.numero.imagenes.exterior'),
-					reference: 'numFotosExteriorRef',
-					readOnly: true,
-					bind: {
-						value: '{calidaddatopublicacionactivo.numFotosExterior}'
-					}					
-				},{
-					xtype:'textfieldbase',
-					fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.fotos.numero.imagenes.interior'),
-					reference: 'numFotosInteriorRef',
-					readOnly: true,
-					bind: {
-						value: '{calidaddatopublicacionactivo.numFotosInterior}'
-					}
-				},{
-					xtype:'textfieldbase',
-					fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.fotos.numero.imagenes.obra'),
-					reference: 'numFotosObraRef',
-					readOnly: true,
-					bind: {
-						value: '{calidaddatopublicacionactivo.numFotosObra}'
-					}					
-				},{
-					xtype:'textfieldbase',
-					fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.fotos.numero.imagenes.minima.resolucion'),
-					reference: 'numFotosMinimaRef',
-					readOnly: true,
-					bind: {
-						value: '{calidaddatopublicacionactivo.numFotosMinimaResolucion}'
-					}
-				}, {
-					xtype:'textfieldbase',
-					fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.fotos.numero.imagenes.minima.resolucion.y'),
-					reference: 'numFotosMinimaYRef',
-					readOnly: true,
-					bind: {
-						value: '{calidaddatopublicacionactivo.numFotosMinimaResolucionY}'
-					}
-				}, {
-					xtype:'textfieldbase',
-					fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.fotos.numero.imagenes.minima.resolucion.x'),
-					reference: 'numFotosMinimaXRef',
-					readOnly: true,
-					bind: {
-						value: '{calidaddatopublicacionactivo.numFotosMinimaResolucionX}'
-					}
-				},
+			tools: [
 				{
-					xtype:'image',
-					fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.fotos.correcto'),
-					reference: 'correctoRef',
-					readOnly: true
-					/*bind: {
-						value: '{calidaddatopublicacionactivo.correctoFotos}'
-					}*/
-				},{
-					xtype:'textfieldbase',
-					fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.fotos.mensaje.dq'),
-					reference: 'fotosMensajeDQRef',
-					readOnly: true,
+					xtype: 'button',
+					cls: 'btn-tbfieldset delete-focus-bg no-pointer',
 					bind: {
-						value: '{calidaddatopublicacionactivo.mensajeDQFotos}'
+						iconCls:'{getIconClsDQCorrecto}'
 					}
 				}
-				]
-			},{
+			],
+			items : [
+				{
+					// Apartado Fotos
+					xtype:'fieldsettable',
+					title:HreRem.i18n('publicacion.calidad.datos.fase4.fotos'),
+					defaultType:'textfieldbase',
+					items : [{
+						xtype:'textfieldbase',
+						fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.fotos.numero.imagenes'),
+						reference: 'numFotosRef',
+						readOnly: true,
+						bind: {
+							value: '{calidaddatopublicacionactivo.numFotos}'
+						}
+
+					},{
+						xtype:'textfieldbase',
+						fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.fotos.numero.imagenes.exterior'),
+						reference: 'numFotosExteriorRef',
+						readOnly: true,
+						bind: {
+							value: '{calidaddatopublicacionactivo.numFotosExterior}'
+						}					
+					},{
+						xtype:'textfieldbase',
+						fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.fotos.numero.imagenes.interior'),
+						reference: 'numFotosInteriorRef',
+						readOnly: true,
+						bind: {
+							value: '{calidaddatopublicacionactivo.numFotosInterior}'
+						}
+					},{
+						xtype:'textfieldbase',
+						fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.fotos.numero.imagenes.obra'),
+						reference: 'numFotosObraRef',
+						readOnly: true,
+						bind: {
+							value: '{calidaddatopublicacionactivo.numFotosObra}'
+						}					
+					},{
+						xtype:'textfieldbase',
+						fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.fotos.numero.imagenes.minima.resolucion'),
+						reference: 'numFotosMinimaRef',
+						readOnly: true,
+						bind: {
+							value: '{calidaddatopublicacionactivo.numFotosMinimaResolucion}'
+						}
+					}, {
+						xtype:'textfieldbase',
+						fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.fotos.numero.imagenes.minima.resolucion.y'),
+						reference: 'numFotosMinimaYRef',
+						readOnly: true,
+						bind: {
+							value: '{calidaddatopublicacionactivo.numFotosMinimaResolucionY}'
+						}
+					}, {
+						xtype:'textfieldbase',
+						fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.fotos.numero.imagenes.minima.resolucion.x'),
+						reference: 'numFotosMinimaXRef',
+						readOnly: true,
+						bind: {
+							value: '{calidaddatopublicacionactivo.numFotosMinimaResolucionX}'
+						}
+					},
+					{
+						xtype:'image',
+						fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.fotos.correcto'),
+						reference: 'correctoRef',
+						readOnly: true
+						/*bind: {
+							value: '{calidaddatopublicacionactivo.correctoFotos}'
+						}*/
+					},{
+						xtype:'textfieldbase',
+						fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.fotos.mensaje.dq'),
+						reference: 'fotosMensajeDQRef',
+						readOnly: true,
+						bind: {
+							value: '{calidaddatopublicacionactivo.mensajeDQFotos}'
+						}
+					}]
+				},{
 				// Apartado Descripcion
 				xtype:'fieldsettable',
 				title:HreRem.i18n('publicacion.calidad.datos.fase4.descripcion'),

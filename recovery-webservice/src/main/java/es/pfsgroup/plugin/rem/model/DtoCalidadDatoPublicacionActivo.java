@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
+import java.math.BigDecimal;
+
 import es.capgemini.devon.dto.WebDto;
 
 public class DtoCalidadDatoPublicacionActivo extends WebDto{
@@ -41,7 +43,7 @@ public class DtoCalidadDatoPublicacionActivo extends WebDto{
 	private String dqVpoFase1;
 	private String correctoVpoFase1;
 	private String drAnyoConstruccionFase1;
-	private String dqAnyoConstruccionFase1;
+	private Long dqAnyoConstruccionFase1;
 	private String correctoAnyoConstruccionFase1;
 	private String drTipologianFase1;
 	private String dqTipologiaFase1;
@@ -307,11 +309,11 @@ public class DtoCalidadDatoPublicacionActivo extends WebDto{
 		this.drAnyoConstruccionFase1 = drAnyoConstruccionFase1;
 	}
 
-	public String getDqAnyoConstruccionFase1() {
+	public Long getDqAnyoConstruccionFase1() {
 		return dqAnyoConstruccionFase1;
 	}
 
-	public void setDqAnyoConstruccionFase1(String dqAnyoConstruccionFase1) {
+	public void setDqAnyoConstruccionFase1(Long dqAnyoConstruccionFase1) {
 		this.dqAnyoConstruccionFase1 = dqAnyoConstruccionFase1;
 	}
 
@@ -451,12 +453,67 @@ public class DtoCalidadDatoPublicacionActivo extends WebDto{
 		this.correctoPor100PropiedadFase1 = correctoPor100PropiedadFase1;
 	}
 
-	//FASE 3
+		private String drF3ReferenciaCatastral;
 	
 	
+		private String dqF3ReferenciaCatastral;
 	
-
-	//FASE 4 +
+	
+		private String correctoF3ReferenciaCatastral;
+	
+	
+		private BigDecimal drF3SuperficieConstruida;
+	
+	
+		private Long dqF3SuperficieConstruida;
+	
+	
+		private String correctoF3SuperficieConstruida;
+	
+	
+		private Float drF3SuperficieUtil;
+	
+	
+		private Long dqF3SuperficieUtil;
+	
+	
+		private Integer drF3AnyoConstruccion;
+	
+	
+		private Long dqF3AnyoConstruccion;
+	
+	
+		private String drF3TipoVia;
+	
+	
+		private String dqF3TipoVia;
+	
+	
+		private String drF3NomCalle;
+	
+	
+		private String dqF3NomCalle;
+	
+	
+		private Long probabilidadCalleCorrecta;
+	
+	
+		private String drF3CP;
+	
+	
+		private String dqF3CP;
+	
+	
+		private String drF3Municipio;
+	
+	
+		private String dqF3Municipio;
+	
+	
+		private String drF3Provincia;
+	
+	
+		private String dqF3Provincia;
 	
 	//Fotos
 	
@@ -711,16 +768,172 @@ public class DtoCalidadDatoPublicacionActivo extends WebDto{
 		return serialVersionUID;
 	}
 
-
-	
-	private Long idActivo;
-
-	public Long getIdActivo() {
-		return idActivo;
+	public String getDrF3ReferenciaCatastral() {
+		return drF3ReferenciaCatastral;
 	}
 
-	public void setIdActivo(Long idActivo) {
-		this.idActivo = idActivo;
+	public void setDrF3ReferenciaCatastral(String drF3ReferenciaCatastral) {
+		this.drF3ReferenciaCatastral = drF3ReferenciaCatastral;
+	}
+
+	public String getDqF3ReferenciaCatastral() {
+		return dqF3ReferenciaCatastral;
+	}
+
+	public void setDqF3ReferenciaCatastral(String dqF3ReferenciaCatastral) {
+		this.dqF3ReferenciaCatastral = dqF3ReferenciaCatastral;
+	}
+
+	public String getCorrectoF3ReferenciaCatastral() {
+		return correctoF3ReferenciaCatastral;
+	}
+
+	public void setCorrectoF3ReferenciaCatastral(String correctoF3ReferenciaCatastral) {
+		this.correctoF3ReferenciaCatastral = correctoF3ReferenciaCatastral;
+	}
+
+	public BigDecimal getDrF3SuperficieConstruida() {
+		return drF3SuperficieConstruida;
+	}
+
+	public void setDrF3SuperficieConstruida(BigDecimal drF3SuperficieConstruida) {
+		this.drF3SuperficieConstruida = drF3SuperficieConstruida;
+	}
+
+	public Long getDqF3SuperficieConstruida() {
+		return dqF3SuperficieConstruida;
+	}
+
+	public void setDqF3SuperficieConstruida(Long dqF3SuperficieConstruida) {
+		this.dqF3SuperficieConstruida = dqF3SuperficieConstruida;
+	}
+
+	public String getCorrectoF3SuperficieConstruida() {
+		return correctoF3SuperficieConstruida;
+	}
+
+	public void setCorrectoF3SuperficieConstruida(String correctoF3SuperficieConstruida) {
+		this.correctoF3SuperficieConstruida = correctoF3SuperficieConstruida;
+	}
+
+	public Float getDrF3SuperficieUtil() {
+		return drF3SuperficieUtil;
+	}
+
+	public void setDrF3SuperficieUtil(Float drF3SuperficieUtil) {
+		this.drF3SuperficieUtil = drF3SuperficieUtil;
+	}
+
+	public Long getDqF3SuperficieUtil() {
+		return dqF3SuperficieUtil;
+	}
+
+	public void setDqF3SuperficieUtil(Long dqF3SuperficieUtil) {
+		this.dqF3SuperficieUtil = dqF3SuperficieUtil;
+	}
+
+	public Integer getDrF3AnyoConstruccion() {
+		return drF3AnyoConstruccion;
+	}
+
+	public void setDrF3AnyoConstruccion(Integer drF3AnyoConstruccion) {
+		this.drF3AnyoConstruccion = drF3AnyoConstruccion;
+	}
+
+	public Long getDqF3AnyoConstruccion() {
+		return dqF3AnyoConstruccion;
+	}
+
+	public void setDqF3AnyoConstruccion(Long dqF3AnyoConstruccion) {
+		this.dqF3AnyoConstruccion = dqF3AnyoConstruccion;
+	}
+
+	public String getDrF3TipoVia() {
+		return drF3TipoVia;
+	}
+
+	public void setDrF3TipoVia(String drF3TipoVia) {
+		this.drF3TipoVia = drF3TipoVia;
+	}
+
+	public String getDqF3TipoVia() {
+		return dqF3TipoVia;
+	}
+
+	public void setDqF3TipoVia(String dqF3TipoVia) {
+		this.dqF3TipoVia = dqF3TipoVia;
+	}
+
+	public String getDrF3NomCalle() {
+		return drF3NomCalle;
+	}
+
+	public void setDrF3NomCalle(String drF3NomCalle) {
+		this.drF3NomCalle = drF3NomCalle;
+	}
+
+	public String getDqF3NomCalle() {
+		return dqF3NomCalle;
+	}
+
+	public void setDqF3NomCalle(String dqF3NomCalle) {
+		this.dqF3NomCalle = dqF3NomCalle;
+	}
+
+	public Long getProbabilidadCalleCorrecta() {
+		return probabilidadCalleCorrecta;
+	}
+
+	public void setProbabilidadCalleCorrecta(Long probabilidadCalleCorrecta) {
+		this.probabilidadCalleCorrecta = probabilidadCalleCorrecta;
+	}
+
+	public String getDrF3CP() {
+		return drF3CP;
+	}
+
+	public void setDrF3CP(String drF3CP) {
+		this.drF3CP = drF3CP;
+	}
+
+	public String getDqF3CP() {
+		return dqF3CP;
+	}
+
+	public void setDqF3CP(String dqF3CP) {
+		this.dqF3CP = dqF3CP;
+	}
+
+	public String getDrF3Municipio() {
+		return drF3Municipio;
+	}
+
+	public void setDrF3Municipio(String drF3Municipio) {
+		this.drF3Municipio = drF3Municipio;
+	}
+
+	public String getDqF3Municipio() {
+		return dqF3Municipio;
+	}
+
+	public void setDqF3Municipio(String dqF3Municipio) {
+		this.dqF3Municipio = dqF3Municipio;
+	}
+
+	public String getDrF3Provincia() {
+		return drF3Provincia;
+	}
+
+	public void setDrF3Provincia(String drF3Provincia) {
+		this.drF3Provincia = drF3Provincia;
+	}
+
+	public String getDqF3Provincia() {
+		return dqF3Provincia;
+	}
+
+	public void setDqF3Provincia(String dqF3Provincia) {
+		this.dqF3Provincia = dqF3Provincia;
 	}
 	
 }

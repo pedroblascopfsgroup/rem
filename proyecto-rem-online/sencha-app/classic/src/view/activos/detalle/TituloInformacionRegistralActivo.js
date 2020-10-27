@@ -610,20 +610,20 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					        	dataIndex: 'tipoDocIdentificativoDesc',					        	
 					        	reference:	'tipoDocDeudor',
 					        	editor: {		                   					                  		 	 
-			        			xtype: 'comboboxfieldbase',
-								addUxReadOnlyEditFieldPlugin: false,
-				        		   labelWidth: '65%',
-						            width: '40%',
-				            		allowBlank: false,					        	
-				        		bind: {
-				            		store: '{comboTipoDocumento}',				            		
-				            		value: '{tipoDocIdentificativoDesc}',
-				            		readOnly: '{!isGestorAdmisionAndSuper}'
-				            	},
-				            	displayField: 'descripcion',
-								valueField: 'codigo'
-			        		
-		                	},
+				        			xtype: 'combobox',
+									addUxReadOnlyEditFieldPlugin: false,
+					        		   labelWidth: '65%',
+							            width: '40%',
+					            		allowBlank: false,					        	
+					        		bind: {
+					            		store: '{comboTipoDocumento}',				            		
+					            		value: '{tipoDocIdentificativoDesc}',
+					            		readOnly: '{!isGestorAdmisionAndSuper}'
+					            	},
+					            	displayField: 'descripcion',
+									valueField: 'codigo'
+				        		
+			                	},
 					        	flex:1 
 					        },	
 					        {   text: HreRem.i18n('fieldlabel.listado.deudores.doc.identificativo'), 
@@ -631,8 +631,11 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					        	reference:	'tipoNumeroDocumentoDeudor',
 					        	editor: {										 
 										  cls: 'grid-no-seleccionable-field-editor',
-										  allowBlank: false
-										  },										 
+										  allowBlank:false,
+										  listeners:{
+									        	change: 'comprobarNIF'
+									        		}
+										  },
 					        	flex:1 
 					        },	
 					        {   text: HreRem.i18n('fieldlabel.listado.deudores.nombre.razon.social'), 
@@ -640,8 +643,12 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					        	reference:	'razonSocialDeudor',
 					        	editor: {										 
 										  cls: 'grid-no-seleccionable-field-editor',
-										  allowBlank: false
+										  allowBlank: false,
+										  listeners:{
+									        	change: 'comprobarNIF'
+									        		}
 										  },
+										 
 					        	flex:2
 					        },
 					        {   text: HreRem.i18n('fieldlabel.listado.deudores.apellido.1'), 
@@ -1082,6 +1089,9 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 
    		me.addExternalErrors(errores);
    },
+   
+   
+   
    funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;

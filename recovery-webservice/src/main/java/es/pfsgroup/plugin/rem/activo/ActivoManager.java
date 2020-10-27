@@ -27,6 +27,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.xmlbeans.impl.xb.xsdschema.PatternDocument.Pattern;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -217,6 +218,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	protected static final Log logger = LogFactory.getLog(ActivoManager.class);
 	private static final String AVISO_MEDIADOR_NO_EXISTE = "activo.aviso.mediador.no.existe";
+	private static final String ERROR_NIF_CIF_INVALIDO = "msg.error.documento.identificativo";
 	private static final String AVISO_MEDIADOR_BAJA = "activo.aviso.mediador.baja";
 	private static final String EMAIL_OCUPACIONES = "emailOcupaciones";
 	private static final String KEY_GDPR = "gdpr.data.key";

@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
+--## AUTOR=DAP
 --## FECHA_CREACION=20200928
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3

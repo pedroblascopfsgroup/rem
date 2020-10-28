@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=Daniel
+--## AUTOR=DAP
 --## FECHA_CREACION=20201023
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
@@ -43,7 +43,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     -- CUENTA_CONTABLE   DD_TGA_CODIGO  DD_TIM_CODIGO   DD_SCR_CODIGO
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-		T_TIPO_DATA('Z01', 'Actuación técnica y mantenimiento', 'Actuación post-venta'),
+T_TIPO_DATA('Z01', 'Actuación técnica y mantenimiento', 'Actuación post-venta'),
 T_TIPO_DATA('Z01', 'Actuación técnica y mantenimiento', 'Cambio de cerradura'),
 T_TIPO_DATA('Z01', 'Actuación técnica y mantenimiento', 'Colocación puerta antiocupa'),
 T_TIPO_DATA('Z01', 'Actuación técnica y mantenimiento', 'Control de actuaciones (dirección técnica)'),
@@ -68,13 +68,13 @@ T_TIPO_DATA('Z33', 'Comunidad de propietarios', 'Cuota extraordinaria (derrama)'
 T_TIPO_DATA('Z33', 'Comunidad de propietarios', 'Cuota ordinaria'),
 T_TIPO_DATA('Z17', 'Gestoría', 'Honorarios gestión activos'),
 T_TIPO_DATA('Z17', 'Gestoría', 'Honorarios gestión ventas'),
-T_TIPO_DATA('Z35', 'Impuesto', 'IAAEE'),
-T_TIPO_DATA('Z34', 'Impuesto', 'IBI urbana'),
-T_TIPO_DATA('Z34', 'Impuesto', 'IBI rústica'),
+T_TIPO_DATA('Z66', 'Impuesto', 'IAAEE'),
+T_TIPO_DATA('Z39', 'Impuesto', 'IBI urbana'),
+T_TIPO_DATA('Z39', 'Impuesto', 'IBI rústica'),
 T_TIPO_DATA('ZA07', 'Impuesto', 'ICIO'),
 T_TIPO_DATA('Z38', 'Impuesto', 'ITPAJD'),
-T_TIPO_DATA('Z37', 'Impuesto', 'Plusvalía (IIVTNU) compra'),
-T_TIPO_DATA('Z37', 'Impuesto', 'Plusvalía (IIVTNU) venta'),
+T_TIPO_DATA('Z62', 'Impuesto', 'Plusvalía (IIVTNU) compra'),
+T_TIPO_DATA('Z62', 'Impuesto', 'Plusvalía (IIVTNU) venta'),
 T_TIPO_DATA('Z48', 'Impuesto', 'Recargos e intereses'),
 T_TIPO_DATA('Z08', 'Informes técnicos y obtención documentos', 'Boletín instalaciones y suministros'),
 T_TIPO_DATA('Z17', 'Informes técnicos y obtención documentos', 'Cédula Habitabilidad'),
@@ -83,7 +83,7 @@ T_TIPO_DATA('Z08', 'Informes técnicos y obtención documentos', 'Certificado Fi
 T_TIPO_DATA('Z08', 'Informes técnicos y obtención documentos', 'Informe topográfico'),
 T_TIPO_DATA('Z08', 'Informes técnicos y obtención documentos', 'Informes'),
 T_TIPO_DATA('Z08', 'Informes técnicos y obtención documentos', 'Inspección técnica de edificios'),
-T_TIPO_DATA('Z36', 'Informes técnicos y obtención documentos', 'Licencia Primera Ocupación (LPO)'),
+T_TIPO_DATA('Z40', 'Informes técnicos y obtención documentos', 'Licencia Primera Ocupación (LPO)'),
 T_TIPO_DATA('Z08', 'Informes técnicos y obtención documentos', 'Nota simple actualizada'),
 T_TIPO_DATA('Z08', 'Informes técnicos y obtención documentos', 'Obtención certificados y documentación'),
 T_TIPO_DATA('Z08', 'Informes técnicos y obtención documentos', 'VPO: Autorización de venta'),
@@ -99,8 +99,8 @@ T_TIPO_DATA('Z33', 'Otras entidades en que se integra el activo', 'Otros'),
 
 T_TIPO_DATA('Z23', 'Otros gastos', 'Mensajería/correos/copias'),
 
-T_TIPO_DATA('Z36', 'Otros tributos', 'Contribución especial'),
-T_TIPO_DATA('Z36', 'Otros tributos', 'Otros'),
+T_TIPO_DATA('Z40', 'Otros tributos', 'Contribución especial'),
+T_TIPO_DATA('Z40', 'Otros tributos', 'Otros'),
 T_TIPO_DATA('Z50', 'Publicidad', 'Publicidad'),
 T_TIPO_DATA('Z46', 'Sanción', 'Multa coercitiva'),
 T_TIPO_DATA('Z46', 'Sanción', 'Otros'),
@@ -128,17 +128,17 @@ T_TIPO_DATA('Z29', 'Suministro', 'Agua'),
 T_TIPO_DATA('Z30', 'Suministro', 'Electricidad'),
 T_TIPO_DATA('Z31', 'Suministro', 'Gas'),
 
-T_TIPO_DATA('Z36', 'Tasa', 'Agua'),
-T_TIPO_DATA('Z36', 'Tasa', 'Alcantarillado'),
-T_TIPO_DATA('Z36', 'Tasa', 'Basura'),
-T_TIPO_DATA('Z36', 'Tasa', 'Ecotasa'),
-T_TIPO_DATA('Z36', 'Tasa', 'Expedición documentos'),
-T_TIPO_DATA('Z36', 'Tasa', 'Judicial'),
-T_TIPO_DATA('Z36', 'Tasa', 'Obras / Rehabilitación / Mantenimiento'),
-T_TIPO_DATA('Z36', 'Tasa', 'Otras tasas'),
-T_TIPO_DATA('Z36', 'Tasa', 'Otras tasas ayuntamiento'),
-T_TIPO_DATA('Z36', 'Tasa', 'Regularización catastral'),
-T_TIPO_DATA('Z36', 'Tasa', 'Vado'),
+T_TIPO_DATA('Z40', 'Tasa', 'Agua'),
+T_TIPO_DATA('Z40', 'Tasa', 'Alcantarillado'),
+T_TIPO_DATA('Z40', 'Tasa', 'Basura'),
+T_TIPO_DATA('Z40', 'Tasa', 'Ecotasa'),
+T_TIPO_DATA('Z40', 'Tasa', 'Expedición documentos'),
+T_TIPO_DATA('Z40', 'Tasa', 'Judicial'),
+T_TIPO_DATA('Z40', 'Tasa', 'Obras / Rehabilitación / Mantenimiento'),
+T_TIPO_DATA('Z40', 'Tasa', 'Otras tasas'),
+T_TIPO_DATA('Z40', 'Tasa', 'Otras tasas ayuntamiento'),
+T_TIPO_DATA('Z40', 'Tasa', 'Regularización catastral'),
+T_TIPO_DATA('Z40', 'Tasa', 'Vado'),
 T_TIPO_DATA('Z03', 'Vigilancia y seguridad', 'Alarmas'),
 T_TIPO_DATA('Z24', 'Vigilancia y seguridad', 'Servicios auxiliares'),
 T_TIPO_DATA('Z24', 'Vigilancia y seguridad', 'Vigilancia y seguridad')
@@ -159,13 +159,6 @@ BEGIN
                 WHERE DD_CRA_CODIGO = ''16''';
     EXECUTE IMMEDIATE V_SQL INTO V_DD_CRA_ID;
 
-    DBMS_OUTPUT.PUT_LINE('[INFO] Recogemos el valor id del año, porque es el mismo para todos.');
-
-    V_SQL :=    'SELECT EJE_ID 
-                FROM '||V_ESQUEMA||'.ACT_EJE_EJERCICIO 
-                WHERE EJE_ANYO = 2020';
-    EXECUTE IMMEDIATE V_SQL INTO V_EJE_ID;
-
 	 
     -- LOOP para insertar los valores -----------------------------------------------------------------
     DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN TMP_'||V_TEXT_TABLA||' ');
@@ -184,21 +177,20 @@ BEGIN
           WHERE CCC_CUENTA_CONTABLE = '''||TRIM(V_TMP_TIPO_DATA(1))||''' 
             AND TGA.DD_TGA_DESCRIPCION = '''||V_TMP_TIPO_DATA(2)||'''
             AND STG.DD_STG_DESCRIPCION = '''||V_TMP_TIPO_DATA(3)||'''
-            AND DD_CRA_ID = (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = ''16'')
-            AND EJE_ID = (SELECT EJE_ID FROM '||V_ESQUEMA||'.ACT_EJE_EJERCICIO WHERE EJE_ANYO = 2020)';
+            AND DD_CRA_ID = (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = ''16'')';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         IF V_NUM_TABLAS = 1 THEN
           DBMS_OUTPUT.PUT_LINE('[INFO]: La CCC '''||TRIM(V_TMP_TIPO_DATA(1))||''' ya existe');
         ELSE
           DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   
-          V_ID := I;
+          V_ID := I;	
           V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.TMP_'||V_TEXT_TABLA||' (' ||
-                      'CCC_CTAS_ID, CCC_CUENTA_CONTABLE, DD_TGA_ID, DD_STG_ID, DD_CRA_ID, EJE_ID, FECHACREAR, BORRADO) VALUES (' ||
+                      'CCC_CTAS_ID, CCC_CUENTA_CONTABLE, DD_TGA_ID, DD_STG_ID, DD_CRA_ID, FECHACREAR, BORRADO) VALUES (' ||
                       ''|| V_ID ||','''||V_TMP_TIPO_DATA(1)||''',(SELECT DD_TGA_ID FROM '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO WHERE DD_TGA_DESCRIPCION = '''||V_TMP_TIPO_DATA(2)||'''),'||
                       '(SELECT DD_STG_ID FROM '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG '||
                       ' JOIN '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_ID = STG.DD_TGA_ID AND TGA.DD_TGA_DESCRIPCION = '''||V_TMP_TIPO_DATA(2)||''''||
                       ' WHERE STG.DD_STG_DESCRIPCION = '''||V_TMP_TIPO_DATA(3)||'''),'||
-                      ' '''||TRIM(V_DD_CRA_ID)||''', '''||TRIM(V_EJE_ID)||''',SYSDATE,0)';
+                      ' '''||TRIM(V_DD_CRA_ID)||''', SYSDATE, 0)';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
         END IF;
@@ -309,7 +301,7 @@ BEGIN
               , SCR.DD_SCR_ID
               , PRO.PRO_ID
               , TMP.PRO_ID TMP_PRO
-              , TMP.EJE_ID
+              , EJE.EJE_ID
               , ARR.NUMERO CCC_ARRENDAMIENTO
               , 0 CCC_REFACTURABLE
               , NULL DD_TBE_ID
@@ -321,7 +313,7 @@ BEGIN
               , NULL DD_TRT_ID
               , VEN.NUMERO CCC_VENDIDO
               , RANK() OVER(
-                  PARTITION BY TMP.DD_TGA_ID, TMP.DD_STG_ID, TMP.DD_TIM_ID, TMP.DD_CRA_ID, SCR.DD_SCR_ID, TMP.EJE_ID, PRO.PRO_ID, TMP.CCC_PRINCIPAL
+                  PARTITION BY TMP.DD_TGA_ID, TMP.DD_STG_ID, TMP.DD_TIM_ID, TMP.DD_CRA_ID, SCR.DD_SCR_ID, EJE.EJE_ID, PRO.PRO_ID, TMP.CCC_PRINCIPAL
                   ORDER BY 
                       CASE 
                           WHEN TMP.PRO_ID IS NOT NULL AND NVL(PRO.PRO_ID, 0) = NVL(TMP.PRO_ID, 0) THEN 0
@@ -336,6 +328,7 @@ BEGIN
               AND PRO.BORRADO = 0
           JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_CRA_ID = TMP.DD_CRA_ID
               AND SCR.BORRADO = 0
+          JOIN '||V_ESQUEMA||'.ACT_EJE_EJERCICIO EJE ON EJE.EJE_ANYO <> 2020
           JOIN '||V_ESQUEMA||'.AUX_CERO_UNO ARR ON 1 = 1
           JOIN '||V_ESQUEMA||'.AUX_CERO_UNO VEN ON 1 = 1
           WHERE TMP.BORRADO = 0

@@ -50,6 +50,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoDatosDq;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
@@ -93,7 +94,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private static final Integer ESTADO_PUBLICACION_NARANJA = 0;
 	private static final Integer ESTADO_PUBLICACION_AZUL = 1;
 	private static final Integer ESTADO_PUBLICACION_AMARILLO = 2;
-
+	private static final String SI = "Si";
+	private static final String NO = "No";
+	private static final String INSCRITO = "Inscrito";
+	private static final String NO_INSCRITO = "No Inscrito";
+	
+	
 	@Resource
 	private MessageService messageServices;
 	
@@ -1599,6 +1605,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	}
 	
 	private DtoCalidadDatoPublicacionActivo setDataFase0a2(ActivoDatosDq actDatosDq, Activo activo, DtoCalidadDatoPublicacionActivo dto) {
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoPropietarioActivo activoPropietario  = genericDao.get(ActivoPropietarioActivo.class, filter);
 		
 		if(actDatosDq.getIdufirDdq()!=null) {
 			dto.setDqIdufirFase1(actDatosDq.getIdufirDdq());
@@ -1614,6 +1622,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setDrLibroFase1(activo.getInfoRegistral().getInfoRegistralBien().getLibro());
 			dto.setDrTomoFase1(activo.getInfoRegistral().getInfoRegistralBien().getTomo());
 			dto.setDrFolioFase1(activo.getInfoRegistral().getInfoRegistralBien().getFolio());
+			if(activo.getInfoRegistral().getInfoRegistralBien().getFechaInscripcion()!=null) {
+				dto.setDrInscripcionCorrectaFase1(INSCRITO);
+			}else {
+				dto.setDrInscripcionCorrectaFase1(NO_INSCRITO);
+			}
+			
 		}
 		
 		if(actDatosDq.getNumFincaDdq()!=null) {
@@ -1669,18 +1683,18 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setDrProvinciaDelRegistroFase1(activo.getProvincia());
 		}
 		if(actDatosDq.getVpo()!=null) {
-			if(actDatosDq.getVpo().TRUE) {
-				dto.setDqVpoFase1("Si");
+			if(actDatosDq.getVpo().booleanValue()) {
+				dto.setDqVpoFase1(SI);
 				
 			}else {
-				dto.setDqVpoFase1("No");
+				dto.setDqVpoFase1(NO);
 			}
 		}
 		if(activo.getVpo()!=null) {
 			if(activo.getVpo().equals(1)) {
-				dto.setDrVpoFase1("Si");
-			}else {
-				dto.setDrVpoFase1("No");
+				dto.setDrVpoFase1(SI);
+			}else if(activo.getVpo().equals(0)) {
+				dto.setDrVpoFase1(NO);
 			}
 		}
 		
@@ -1707,28 +1721,46 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}
 		if(actDatosDq.getSubtipoTitulo() !=null ) {
 			dto.setDqSubtipologiaFase1(actDatosDq.getSubtipoTitulo().getDescripcion());
+			
 		}
 		//Informacion Cargas
 		if(actDatosDq.getCargas()!=null) {
-			if(actDatosDq.getCargas().TRUE) {
-				dto.setDqInformacionCargasFase1("Si");
-				
+			if(actDatosDq.getCargas().booleanValue()==true) {
+				dto.setDqInformacionCargasFase1(SI);				
 			}else {
-				dto.setDqInformacionCargasFase1("No");
+				dto.setDqInformacionCargasFase1(NO);
 			}
+		}
+		if(activo.getConCargas()!=null) {
+			if(activo.getConCargas().equals(1)) {
+				dto.setDrInscripcionCorrectaFase1(SI);
+			}else if(activo.getConCargas().equals(0)) {
+				dto.setDrInscripcionCorrectaFase1(NO);
+			}
+			
+			
 		}
 		//Inscripcion Correcta
 		if(actDatosDq.getInscripcion()!=null) {
-				if(actDatosDq.getInscripcion().booleanValue()) {
-					dto.setDqInscripcionCorrectaFase1("Inscrito");
+				if(actDatosDq.getInscripcion().booleanValue()==true) {
+					dto.setDqInscripcionCorrectaFase1(INSCRITO);
 				}else {
-					dto.setDqInscripcionCorrectaFase1("No Inscrito");
+					dto.setDqInscripcionCorrectaFase1(NO_INSCRITO);
 				}
 		}
+		
+		
 		//Propiedad
 		if(actDatosDq.getPropiedadDdq()!=null) {
 			dto.setDqPor100PropiedadFase1(actDatosDq.getPropiedadDdq().toString());
 		}
+		
+		if(activoPropietario!=null) {
+			if(activoPropietario.getPorcPropiedad()!=null) {
+				dto.setDrPor100PropiedadFase1(activoPropietario.getPorcPropiedad().toString());
+			}
+		}
+		
 		
 		return dto;
 	}

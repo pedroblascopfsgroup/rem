@@ -51,8 +51,6 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
     private Activo activo;
 	
     @Column(name = "BBVA_NUM_ACTIVO")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "NumActivoBbvaGenerator")
-    @SequenceGenerator(name = "NumActivoBbvaGenerator", sequenceName = "S_BBVA_NUM_ACTIVO")
     private String numActivoBbva;
     
 	@Column(name = "BBVA_ID_DIVARIAN")

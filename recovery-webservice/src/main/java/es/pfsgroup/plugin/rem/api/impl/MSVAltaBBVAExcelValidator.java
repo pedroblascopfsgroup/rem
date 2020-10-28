@@ -360,7 +360,7 @@ public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implement
 				activoBBVA.setActivo(activo);
 			}			
 			if(colNActivoBBVA!=null && !colNActivoBBVA.isEmpty()) {
-				activoBBVA.setNumActivoBbva(activoDao.getNextBbvaNumActivo().toString());
+				activoBBVA.setNumActivoBbva(colNActivoBBVA);
 			}
 			if(colIdAppDivarian!=null && !colIdAppDivarian.isEmpty()) {
 				activoBBVA.setIdDivarianBbva(Long.parseLong(colIdAppDivarian));

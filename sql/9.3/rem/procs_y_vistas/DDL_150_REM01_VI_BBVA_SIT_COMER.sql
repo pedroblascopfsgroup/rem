@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin Arnal
---## FECHA_CREACION=20200914
+--## FECHA_CREACION=20200915
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11680
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial - HREOS-11680 - JAD
+--##        0.1 Versión inicial - HREOS-11680 - Quitamos no definido
 --##########################################
 --*/
 
@@ -232,7 +233,7 @@ BEGIN
                 when 
                         SCM.DD_SCM_CODIGO = ''10'' --	Alquilado
                     then ''Alquilado''
-                else ''No definido''
+                else null
             end SITUACION_COMERCIAL_BBVA
         from '||V_ESQUEMA||'.act_activo ACT
             JOIN '||V_ESQUEMA||'.ACT_BBVA_ACTIVOS BBVA ON BBVA.ACT_ID = ACT.ACT_ID

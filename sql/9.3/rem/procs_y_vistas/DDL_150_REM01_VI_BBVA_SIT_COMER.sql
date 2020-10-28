@@ -145,16 +145,16 @@ BEGIN
                     then ''Contratado''
                 when 
                         SCM.DD_SCM_CODIGO = ''05'' --	Vendido
-                        AND last_oferta.DD_EOF_CODIGO in (''01'') 
-                        AND EEC.DD_EEC_CODIGO in (''11'')  -- Aprobado
-                        AND ACT_SPS_SIT_POSESORIA.SPS_OCUPADO in (0,1)
-                        AND DD_TPA_TIPO_TITULO_ACT.DD_TPA_CODIGO = ''02''
-                        AND (COE_CONDICIONANTES_EXPEDIENTE.COE_SOLICITA_RESERVA = 1 OR COE_CONDICIONANTES_EXPEDIENTE.COE_SOLICITA_RESERVA is null)
-                        AND (ECO.ECO_ESTADO_PBC_R = 1 OR ECO.ECO_ESTADO_PBC_R is null)
-                        AND DD_ERE_ESTADOS_RESERVA.DD_ERE_CODIGO is not null
-                        AND RES.RES_FECHA_FIRMA is not null
-                        AND ECO.ECO_ESTADO_PBC = 1 
-                        AND ECO.ECO_FECHA_VENTA is not null
+                        -- AND last_oferta.DD_EOF_CODIGO in (''01'') 
+                        -- AND EEC.DD_EEC_CODIGO in (''11'')  -- Aprobado
+                        -- AND ACT_SPS_SIT_POSESORIA.SPS_OCUPADO in (0,1)
+                        -- AND DD_TPA_TIPO_TITULO_ACT.DD_TPA_CODIGO = ''02''
+                        -- AND (COE_CONDICIONANTES_EXPEDIENTE.COE_SOLICITA_RESERVA = 1 OR COE_CONDICIONANTES_EXPEDIENTE.COE_SOLICITA_RESERVA is null)
+                        -- AND (ECO.ECO_ESTADO_PBC_R = 1 OR ECO.ECO_ESTADO_PBC_R is null)
+                        -- AND DD_ERE_ESTADOS_RESERVA.DD_ERE_CODIGO is not null
+                        -- AND RES.RES_FECHA_FIRMA is not null
+                        -- AND ECO.ECO_ESTADO_PBC = 1 
+                        -- AND ECO.ECO_FECHA_VENTA is not null
                     then ''Escriturado''
                 when    
                         last_oferta.DD_EOF_CODIGO is null 
@@ -184,8 +184,8 @@ BEGIN
                     then ''Contrato privado''*/
                 when 
                         SCM.DD_SCM_CODIGO = ''03'' --	Disponible para la venta con oferta
-                        AND last_oferta.DD_EOF_CODIGO is null
-                        AND ACT_PAC_PERIMETRO_ACTIVO.PAC_INCLUIDO = 0
+                        -- AND last_oferta.DD_EOF_CODIGO is null
+                        -- AND ACT_PAC_PERIMETRO_ACTIVO.PAC_INCLUIDO = 0
                     then ''Baja contable''
                 when
                         SCM.DD_SCM_CODIGO = ''10'' 

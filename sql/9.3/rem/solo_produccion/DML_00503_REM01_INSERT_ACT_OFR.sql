@@ -67,7 +67,13 @@ BEGIN
         IF V_NUM_TABLAS = 0 THEN
 
           V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.ACT_OFR (ACT_ID, OFR_ID, ACT_OFR_IMPORTE, OFR_ACT_PORCEN_PARTICIPACION) VALUES (
-                      '||V_ACTIVO||','||V_OFERTA||', '||V_IMPORTE||','''||V_PORCEN||''')';
+                      (SELECT ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO 
+                                  WHERE ACT_NUM_ACTIVO = '||V_ACTIVO||'
+                                  AND BORRADO = 0),
+                      (SELECT OFR_ID FROM '||V_ESQUEMA||'.OFR_OFERTAS 
+                                WHERE OFR_NUM_OFERTA = '||V_OFERTA||'
+                                AND BORRADO = 0),
+                      '||V_IMPORTE||','''||V_PORCEN||''')';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
         

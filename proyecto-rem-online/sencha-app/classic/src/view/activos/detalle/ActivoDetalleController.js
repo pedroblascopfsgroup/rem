@@ -5777,7 +5777,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         if (newValue == 0 || newValue == null) {
         	
         	conTitulo.setDisabled(true);
-        	conTitulo.reset();
+        	conTitulo.setValue('');
         	//conTitulo.allowBlank = true;
         	conTitulo.setAllowBlank(true);
         	
@@ -5785,6 +5785,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         	 
         	 conTitulo.setDisabled(false);
         	// conTitulo.allowBlank = false;
+        	 //conTitulo.setValue(me.getViewModel().get('situacionPosesoria.conTitulo'));
         	 conTitulo.setAllowBlank(false);
         	conTitulo.validateValue(conTitulo.getValue());
             

@@ -1568,26 +1568,30 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		DtoCalidadDatoPublicacionActivo dto = new DtoCalidadDatoPublicacionActivo();
 		Activo activo = activoDao.get(idActivo);
 		ActivoDatosDq actDatosDq = activoPublicacionDao.getActivoDatosDqPorIdActivo(idActivo);
-		HistoricoFasePublicacionActivo fasePublicacion =  activoPublicacionDao.getFasePublicacionVigentePorIdActivo(idActivo);
 		
-		if(fasePublicacion.getFasePublicacion() != null) {
-			if(DDFasePublicacion.CODIGO_FASE_0_CALIDAD_PENDIENTE.equals(fasePublicacion.getFasePublicacion().getCodigo())
-					|| DDFasePublicacion.CODIGO_FASE_I_PENDIENTE_ACTUACIONES_PREVIAS.equals(fasePublicacion.getFasePublicacion().getCodigo())
-					|| DDFasePublicacion.CODIGO_FASE_II_PENDIENTE_LLAVES.equals(fasePublicacion.getFasePublicacion().getCodigo())
-			){
-				
-				dto = setDataFase0a2(actDatosDq, activo, dto);
-				
-			}else if(DDFasePublicacion.CODIGO_FASE_III_PENDIENTE_INFORMACION.equals(fasePublicacion.getFasePublicacion().getCodigo())
-					) {
-				
-				setDataFase3(dto, activo, actDatosDq);
-				
-			}else if(DDFasePublicacion.CODIGO_FASE_IV_PENDIENTE_PRECIO.equals(fasePublicacion.getFasePublicacion().getCodigo())
-							|| DDFasePublicacion.CODIGO_FASE_V_INCIDENCIAS_PUBLICACION.equals(fasePublicacion.getFasePublicacion().getCodigo())
-							|| DDFasePublicacion.CODIGO_FASE_VI_CALIDAD_COMPROBADA.equals(fasePublicacion.getFasePublicacion().getCodigo())
-					) {
-				dto = setDataFase4(actDatosDq, activo, dto);
+		if(actDatosDq != null) {
+			
+			HistoricoFasePublicacionActivo fasePublicacion =  activoPublicacionDao.getFasePublicacionVigentePorIdActivo(idActivo);
+			
+			if(fasePublicacion.getFasePublicacion() != null) {
+				if(DDFasePublicacion.CODIGO_FASE_0_CALIDAD_PENDIENTE.equals(fasePublicacion.getFasePublicacion().getCodigo())
+						|| DDFasePublicacion.CODIGO_FASE_I_PENDIENTE_ACTUACIONES_PREVIAS.equals(fasePublicacion.getFasePublicacion().getCodigo())
+						|| DDFasePublicacion.CODIGO_FASE_II_PENDIENTE_LLAVES.equals(fasePublicacion.getFasePublicacion().getCodigo())
+				){
+					
+					dto = setDataFase0a2(actDatosDq, activo, dto);
+					
+				}else if(DDFasePublicacion.CODIGO_FASE_III_PENDIENTE_INFORMACION.equals(fasePublicacion.getFasePublicacion().getCodigo())
+						) {
+					
+					setDataFase3(dto, activo, actDatosDq);
+					
+				}else if(DDFasePublicacion.CODIGO_FASE_IV_PENDIENTE_PRECIO.equals(fasePublicacion.getFasePublicacion().getCodigo())
+								|| DDFasePublicacion.CODIGO_FASE_V_INCIDENCIAS_PUBLICACION.equals(fasePublicacion.getFasePublicacion().getCodigo())
+								|| DDFasePublicacion.CODIGO_FASE_VI_CALIDAD_COMPROBADA.equals(fasePublicacion.getFasePublicacion().getCodigo())
+						) {
+					dto = setDataFase4(actDatosDq, activo, dto);
+				}
 			}
 		}
 		

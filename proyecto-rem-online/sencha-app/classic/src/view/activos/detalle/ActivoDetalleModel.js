@@ -1049,17 +1049,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				if (comboActivoRecovery != null) {
 					comboTipoAltaRef.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
 					return false;
+				}else if(comboActivoRecovery == null && tipoAltaCodigo == CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']){
+					return true;
 				}else{
 					if(tipoAltaCodigo == CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']) {
 						comboTipoAltaRef.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
          				return false;
-         			} else if (tipoAltaCodigo != CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']) {
-         				if (tipoAltaCodigo != null) {        					
-         					return true;
-         				}else{
-         					return false;
-         				}
-         				
+         			} else if (tipoAltaCodigo != CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA'] || tipoAltaCodigo == null) {
+         				return true;         				
          			} 
 
 				}

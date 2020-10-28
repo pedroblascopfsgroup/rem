@@ -396,7 +396,7 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 									fieldLabel :HreRem.i18n('publicacion.calidad.datos.dato.dq'),
 									reference : 'dqTipologianFase1',
 									bind : {
-										value : '{calidaddatopublicacionactivo.dqTipologianFase1}'
+										value : '{calidaddatopublicacionactivo.dqTipologiaFase1}'
 									}
 								}/*,{
 				
@@ -424,7 +424,7 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 									fieldLabel :HreRem.i18n('publicacion.calidad.datos.dato.dq'),
 									reference : 'dqSubtipologianFase1',
 									bind : {
-										value : '{calidaddatopublicacionactivo.dqSubtipologianFase1}'
+										value : '{calidaddatopublicacionactivo.dqSubtipologiaFase1}'
 									}
 								}/*,{
 				

@@ -1733,9 +1733,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}
 		if(activo.getConCargas()!=null) {
 			if(activo.getConCargas().equals(1)) {
-				dto.setDrInscripcionCorrectaFase1(SI);
+				dto.setDrInformacionCargasFase1(SI);
 			}else if(activo.getConCargas().equals(0)) {
-				dto.setDrInscripcionCorrectaFase1(NO);
+				dto.setDrInformacionCargasFase1(NO);
 			}
 			
 			

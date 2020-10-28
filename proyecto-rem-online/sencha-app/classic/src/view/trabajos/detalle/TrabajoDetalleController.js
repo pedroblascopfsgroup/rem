@@ -488,6 +488,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		    	Ext.Ajax.request({
 					  url:     url,
 					  async:   false,
+					  disableCaching: false,
 					  method:  'GET',
 					  success: function(response, opts) {
 						  var decode = Ext.JSON.decode(response.responseText);

@@ -5157,7 +5157,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 				+ "			FROM ACT_BBVA_ACTIVOS act "
-				+ "			WHERE act.BBVA_NUM_ACTIVO = "+numActivo+" "
+				+ "			WHERE act.BBVA_NUM_ACTIVO = '"+numActivo+"' "
 				+ "			  AND act.borrado       = 0");
 		return !"0".equals(resultado);
 	}

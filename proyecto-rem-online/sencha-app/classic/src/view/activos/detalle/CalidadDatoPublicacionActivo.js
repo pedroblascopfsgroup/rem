@@ -578,7 +578,6 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 							bind: '{calidaddatopublicacionactivo.dqF3ReferenciaCatastral}',
 							readOnly: true
 						},{
-						xtype: 'button',
 						cls: 'btn-tbfieldset delete-focus-bg no-pointer',
 						bind: {
 							iconCls:'{getIconClsDQCorrecto}'
@@ -586,19 +585,15 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 					}]
 			},
 			{
-				xtype:'toolfieldset',
+				xtype:'fieldsettable',
 				title: HreRem.i18n('fieldlabel.superficie.construida'),
 				collapsible: false,
 				collapsed : false,
-				tools: [
-					{
-						xtype: 'button',
-						cls: 'btn-tbfieldset delete-focus-bg no-pointer',
-						bind: {
-							iconCls:'{getIconClsDQCorrecto}'
-						}
-					}
-				],
+				layout: {
+			        type: 'table',
+			        columns: 2
+				},
+				
 				items: [{
 							xtype: 'textfieldbase',
 							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.rem'),
@@ -610,23 +605,23 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.dq'),
 							bind: '{calidaddatopublicacionactivo.dqF3SuperficieConstruida}',
 							readOnly: true
-						}
-				]
-			},
-			{
-				xtype:'toolfieldset',
-				title: HreRem.i18n('fieldlabel.superficie.util'),
-				collapsible: false,
-				collapsed : false,
-				tools: [
-					{
-						xtype: 'button',
+						},{
 						cls: 'btn-tbfieldset delete-focus-bg no-pointer',
 						bind: {
 							iconCls:'{getIconClsDQCorrecto}'
 						}
 					}
-				],
+				]
+			},
+			{
+				xtype:'fieldsettable',
+				title: HreRem.i18n('fieldlabel.superficie.util'),
+				collapsible: false,
+				collapsed : false,
+				layout: {
+			        type: 'table',
+			        columns: 2
+				},
 				items: [{
 							xtype: 'textfieldbase',
 							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.rem'),
@@ -638,22 +633,23 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.dq'),
 							bind: '{calidaddatopublicacionactivo.dqF3SuperficieUtil}',
 							readOnly: true
-						}]
-			},
-			{
-				xtype:'toolfieldset',
-				title: HreRem.i18n('fieldlabel.anyo.construccion'),
-				collapsible: false,
-				collapsed : false,
-				tools: [
-					{
-						xtype: 'button',
+						},{
 						cls: 'btn-tbfieldset delete-focus-bg no-pointer',
 						bind: {
 							iconCls:'{getIconClsDQCorrecto}'
 						}
-					}
-				],
+					}]
+			},
+			{
+				xtype:'fieldsettable',
+				title: HreRem.i18n('fieldlabel.anyo.construccion'),
+				collapsible: false,
+				collapsed : false,
+				layout: {
+			        type: 'table',
+			        columns: 2
+				},
+				
 				items: [{
 							xtype: 'textfieldbase',
 							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.rem'),
@@ -665,7 +661,12 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.dq'),
 							bind: '{calidaddatopublicacionactivo.dqF3AnyoConstruccion}',
 							readOnly: true
-						}]
+						},{
+						cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+						bind: {
+							iconCls:'{getIconClsDQCorrecto}'
+						}
+					}]
 			},
 			{
 				xtype:'fieldsettable',
@@ -674,19 +675,15 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 				collapsed : false,
 				colspan: 2,
 				items: [{
-					xtype:'toolfieldset',
+					xtype:'fieldsettable',
 					title: HreRem.i18n('fieldlabel.tipo.via'),
 					collapsible: false,
 					colspan: 3,
-					tools: [
-						{
-							xtype: 'button',
-							cls: 'btn-tbfieldset delete-focus-bg no-pointer',
-							bind: {
-								iconCls:'{getIconClsDQCorrecto}'
-							}
-						}
-					],
+					layout: {
+				        type: 'table',
+				        columns: 2
+				       
+					},
 					items: [{
 							xtype: 'textfieldbase',
 							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.rem'),
@@ -698,22 +695,24 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.dq'),
 							bind: '{calidaddatopublicacionactivo.dqF3TipoVia}',
 							readOnly: true
-						}]
+						},{
+						cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+						bind: {
+							iconCls:'{getIconClsDQCorrecto}'
+						}
+					}]
 				},
 				{
-					xtype:'toolfieldset',
+					xtype:'fieldsettable',
 					title: HreRem.i18n('publicacion.calidad.datos.nombre.calle'),
 					collapsible: false,
 					colspan: 3,
-					tools: [
-						{
-							xtype: 'button',
-							cls: 'btn-tbfieldset delete-focus-bg no-pointer',
-							bind: {
-								iconCls:'{getIconClsDQCorrecto}'
-							}
-						}
-					],
+					layout: {
+				        type: 'table',
+				        columns: 2
+				        
+					},
+					
 					items: [{
 								xtype: 'textfieldbase',
 								fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.rem'),
@@ -730,23 +729,24 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 								fieldLabel:  HreRem.i18n('publicacion.calidad.datos.probabilidad.calle.correcta'),
 								bind: '{calidaddatopublicacionactivo.probabilidadCalleCorrecta}',
 								readOnly: true
-							}
+							},{
+						cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+						bind: {
+							iconCls:'{getIconClsDQCorrecto}'
+						}
+					}
 					]
 				},
 				{
-					xtype:'toolfieldset',
+					xtype:'fieldsettable',
 					title: HreRem.i18n('publicacion.calidad.datos.cp'),
 					collapsible: false,
 					colspan: 3,
-					tools: [
-						{
-							xtype: 'button',
-							cls: 'btn-tbfieldset delete-focus-bg no-pointer',
-							bind: {
-								iconCls:'{getIconClsDQCorrecto}'
-							}
-						}
-					],
+					layout: {
+				        type: 'table',
+				        columns: 2
+					},
+					
 					items: [{
 							xtype: 'textfieldbase',
 							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.rem'),
@@ -758,22 +758,23 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.dq'),
 							bind: '{calidaddatopublicacionactivo.dqF3CP}',
 							readOnly: true
-						}]
+						},{
+						cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+						bind: {
+							iconCls:'{getIconClsDQCorrecto}'
+						}
+					}]
 				},
 				{
-					xtype:'toolfieldset',
+					xtype:'fieldsettable',
 					title: HreRem.i18n('fieldlabel.municipio'),
 					collapsible: false,
 					colspan: 3,
-					tools: [
-						{
-							xtype: 'button',
-							cls: 'btn-tbfieldset delete-focus-bg no-pointer',
-							bind: {
-								iconCls:'{getIconClsDQCorrecto}'
-							}
-						}
-					],
+					layout: {
+				        type: 'table',
+				        columns: 2
+				        
+					},
 					items: [{
 							xtype: 'textfieldbase',
 							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.rem'),
@@ -785,22 +786,23 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.dq'),
 							bind: '{calidaddatopublicacionactivo.dqF3Municipio}',
 							readOnly: true
-						}]
+						},{
+						cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+						bind: {
+							iconCls:'{getIconClsDQCorrecto}'
+						}
+					}]
 				},
 				{
-					xtype:'toolfieldset',
+					xtype:'fieldsettable',
 					title: HreRem.i18n('fieldlabel.provincia'),
 					collapsible: false,
 					colspan: 3,
-					tools: [
-						{
-							xtype: 'button',
-							cls: 'btn-tbfieldset delete-focus-bg no-pointer',
-							bind: {
-								iconCls:'{getIconClsDQCorrecto}'
-							}
-						}
-					],
+					layout: {
+				        type: 'table',
+				        columns: 2
+					},
+					
 					items: [{
 							xtype: 'textfieldbase',
 							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.rem'),
@@ -812,7 +814,12 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.dq'),
 							bind: '{calidaddatopublicacionactivo.dqF3Provincia}',
 							readOnly: true
-						}]
+						},{
+						cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+						bind: {
+							iconCls:'{getIconClsDQCorrecto}'
+						}
+					}]
 				}]
 			}]
 		}, 	

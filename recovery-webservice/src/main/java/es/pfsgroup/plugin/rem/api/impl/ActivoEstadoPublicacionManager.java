@@ -1599,68 +1599,66 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if(actDatosDq.getIdufirDdq()!=null) {
 			dto.setDqIdufirFase1(actDatosDq.getIdufirDdq());
 		}
-		if(activo.getInfoRegistral().getIdufir()!=null) {
-			dto.setDrIdufirFase1(activo.getInfoRegistral().getIdufir());
-		}
-		if(actDatosDq.getFolioDdq()!=null) {
-			dto.setDqFolioFase1(actDatosDq.getFolioDdq());
-		}
-		if(activo.getInfoRegistral().getInfoRegistralBien().getNumFinca()!=null){
-			dto.setDrFincaRegistralFase1(activo.getInfoRegistral().getInfoRegistralBien().getNumFinca());
-		}
-		if(actDatosDq.getNumFincaDdq()!=null) {
-			dto.setDqFincaRegistralFase1(actDatosDq.getNumFincaDdq());
-		}
-		if(activo.getInfoRegistral().getInfoRegistralBien().getTomo()!=null) {
-			dto.setDrTomoFase1(activo.getInfoRegistral().getInfoRegistralBien().getTomo());
-		}
-		if(actDatosDq.getTomoDdq()!=null) {
-			dto.setDqTomoFase1(actDatosDq.getTomoDdq());
-		}
-		if(activo.getInfoRegistral().getInfoRegistralBien().getLibro()!=null) {
-			dto.setDrLibroFase1(activo.getInfoRegistral().getInfoRegistralBien().getLibro());
-		}
-		if(actDatosDq.getLibroDdq()!=null){
-			dto.setDqLibroFase1(actDatosDq.getLibroDdq());
-		}
-		if(activo.getInfoRegistral().getInfoRegistralBien().getFolio()!=null) {
-			dto.setDrFolioFase1(activo.getInfoRegistral().getInfoRegistralBien().getFolio());
-		}
+		
 		if(actDatosDq.getFolioDdq()!=null) {
 			dto.setDqFolioFase1(actDatosDq.getFolioDdq());
 		}
 		
-		//VPO
+		if(activo.getInfoRegistral()!=null && activo.getInfoRegistral().getInfoRegistralBien() != null){
+			dto.setDrIdufirFase1(activo.getInfoRegistral().getIdufir());
+			dto.setDrFincaRegistralFase1(activo.getInfoRegistral().getInfoRegistralBien().getNumFinca());
+			dto.setDrLibroFase1(activo.getInfoRegistral().getInfoRegistralBien().getLibro());
+			dto.setDrTomoFase1(activo.getInfoRegistral().getInfoRegistralBien().getTomo());
+			dto.setDrFolioFase1(activo.getInfoRegistral().getInfoRegistralBien().getFolio());
+		}
+		
+		if(actDatosDq.getNumFincaDdq()!=null) {
+			dto.setDqFincaRegistralFase1(actDatosDq.getNumFincaDdq());
+		}
+		
+		if(actDatosDq.getTomoDdq()!=null) {
+			dto.setDqTomoFase1(actDatosDq.getTomoDdq());
+		}
 	
-		//Uso Dominant
-		if(actDatosDq.getTipoUsoDestino().getDescripcion()!=null) {
+		if(actDatosDq.getLibroDdq()!=null){
+			dto.setDqLibroFase1(actDatosDq.getLibroDdq());
+		}
+		
+		if(actDatosDq.getFolioDdq()!=null) {
+			dto.setDqFolioFase1(actDatosDq.getFolioDdq());
+		}
+		
+		if(actDatosDq.getTipoUsoDestino() != null) {
 			dto.setDqUsoDominanteFase1(actDatosDq.getTipoUsoDestino().getDescripcion());
 		}
-			/* 
-			 	* da muchos problemas		if(activo.getTipoUsoDestino().getDescripcion()!=null) {
+		if(activo.getTipoUsoDestino() !=null ) {
 			dto.setDrUsoDominanteFase1(activo.getTipoUsoDestino().getDescripcion());
-		}*/
+		}
 
-		if(activo.getInfoRegistral().getInfoRegistralBien().getProvincia().getDescripcion()!=null) {
-			dto.setDrProvinciaDelRegistroFase1(activo.getInfoRegistral().getInfoRegistralBien().getProvincia().getDescripcion());
+		if(activo.getInfoRegistral() != null 
+				&& activo.getInfoRegistral().getInfoRegistralBien() != null) {
+			
+			dto.setDrNumeroDelRegistroFase1(activo.getInfoRegistral().getInfoRegistralBien().getNumRegistro());
+			
+			if(activo.getInfoRegistral().getInfoRegistralBien().getProvincia() != null) {
+				dto.setDrProvinciaDelRegistroFase1(activo.getInfoRegistral().getInfoRegistralBien().getProvincia().getDescripcion());
+			}
 		}
 		//numero de registro
 		if(actDatosDq.getNumRegistroDdq()!=null) {
 			dto.setDqNumeroDelRegistroFase1(actDatosDq.getNumRegistroDdq());
 		}
-		if(activo.getInfoRegistral().getInfoRegistralBien().getNumRegistro()!=null) {
-			dto.setDrNumeroDelRegistroFase1(activo.getInfoRegistral().getInfoRegistralBien().getNumRegistro());
-		}
+		
 		//Municipio del registro
 		if(actDatosDq.getLocalidadReg()!=null) {
 			dto.setDqMunicipioDelRegistroFase1(actDatosDq.getLocalidadReg().getDescripcion());
 		}
-		if(activo.getLocalidad().getDescripcionLarga()!=null) {
+		if(activo.getLocalidad() !=null ) {
 			dto.setDrMunicipioDelRegistroFase1(activo.getLocalidad().getDescripcionLarga());
 		}
 		
 		//Provincia del registro
-		if(actDatosDq.getProvincia().getDescripcion()!=null) {
+		if(actDatosDq.getProvincia() !=null ) {
 			dto.setDqProvinciaDelRegistroFase1(actDatosDq.getProvincia().getDescripcion());
 		}
 		if(activo.getProvincia()!=null) {
@@ -1686,24 +1684,24 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setDqAnyoConstruccionFase1(actDatosDq.getAnyoConstruccion());
 		}	
 		
-		if(activo.getInfoComercial().getAnyoConstruccion()!=null) {
+		if(activo.getInfoComercial() !=null ) {
 			dto.setDrAnyoConstruccionFase1(activo.getInfoComercial().getAnyoConstruccion().toString());
 		}
 		if(actDatosDq.getDescripcionCargas()!=null) {
 			dto.setDescripcionCargasInformacionCargasFase1(actDatosDq.getDescripcionCargas());
 		}
 		//Tipologia
-		if(activo.getTipoActivo().getDescripcion()!=null) {
+		if(activo.getTipoActivo() !=null ) {
 			dto.setDrTipologianFase1(activo.getTipoActivo().getDescripcion());
 		}
-		if(actDatosDq.getTipoActivo().getDescripcion()!=null) {
+		if(actDatosDq.getTipoActivo() !=null) {
 			dto.setDqTipologiaFase1(actDatosDq.getTipoActivo().getDescripcion());
 		}
 		//Subtipologia
-		if(activo.getSubtipoTitulo().getDescripcion()!=null) {
+		if(activo.getSubtipoTitulo() !=null ) {
 			dto.setDrSubtipologianFase1(activo.getSubtipoTitulo().getDescripcion());
 		}
-		if(actDatosDq.getSubtipoTitulo().getDescripcion()!=null) {
+		if(actDatosDq.getSubtipoTitulo() !=null ) {
 			dto.setDqSubtipologiaFase1(actDatosDq.getSubtipoTitulo().getDescripcion());
 		}
 		//Informacion Cargas
@@ -1727,7 +1725,6 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if(actDatosDq.getPropiedadDdq()!=null) {
 			dto.setDqPor100PropiedadFase1(actDatosDq.getPropiedadDdq().toString());
 		}
-		
 		
 		return dto;
 	}
@@ -1788,7 +1785,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if(activoDatosDq.getEtiCeeG() != null)
 			dto.setNumEtiquetaG(activoDatosDq.getEtiCeeG());
 		if(activoDatosDq.getMensajeCee() != null)
-			dto.setMensajeDQCEE(activoDatosDq.getMensajeCee().toString());
+			dto.setMensajeDQCEE(activoDatosDq.getMensajeCee());
 		
 		return dto;
 	}

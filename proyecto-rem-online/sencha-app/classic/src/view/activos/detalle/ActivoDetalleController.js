@@ -285,8 +285,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					}
 				} else if (tabData.models[0].name === "datosbasicos") {
 					record = form.getBindRecord();
-					if (record != null) {
+					if (record != null && record.data.cexperBbva != undefined) {
 						tabData.models[0].data.cexperBbva = record.data.cexperBbva;
+					}
+					if (record != null && record.data.uicBbva != undefined) {
 						tabData.models[0].data.uicBbva = record.data.uicBbva;
 					}
 				}

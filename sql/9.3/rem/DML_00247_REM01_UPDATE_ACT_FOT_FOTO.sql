@@ -38,7 +38,7 @@ BEGIN
     V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' T1 
                     USING (SELECT DISTINCT FOT.FOT_ID,DD.DD_DFA_ID
                     FROM '||V_ESQUEMA||'.'||V_TABLA||' FOT
-                    INNER JOIN '||V_ESQUEMA||'.DD_DFA_DESCRIPCION_FOTO_ACTIVO DD ON DD.SAC_ID = 23
+                    INNER JOIN '||V_ESQUEMA||'.DD_DFA_DESCRIPCION_FOTO_ACTIVO DD ON DD.dd_SAC_ID = 23
                     WHERE FOT.BORRADO = 0 AND FOT.ACT_ID IS NULL AND FOT.SDV_ID IS NULL
                     AND LOWER(DD.DD_DFA_DESCRIPCION) = LOWER(FOT.FOT_DESCRIPCION)) T2
                     ON (T1.FOT_ID = T2.FOT_ID)
@@ -91,7 +91,7 @@ BEGIN
                     FROM '||V_ESQUEMA||'.'||V_TABLA||' FOT
                     INNER JOIN '||V_ESQUEMA||'.V_SUBDIVISIONES_AGRUPACION VIS ON FOT.SDV_ID = VIS.ID
                     INNER JOIN '||V_ESQUEMA||'.DD_SAC_SUBTIPO_aCTIVO SAC ON SAC.DD_SAC_CODIGO = vis.COD_SUBTIPO_ACTIVO
-                    INNER JOIN '||V_ESQUEMA||'.DD_DFA_DESCRIPCION_FOTO_ACTIVO DD ON sac.dd_sac_id = dd.sac_id
+                    INNER JOIN '||V_ESQUEMA||'.DD_DFA_DESCRIPCION_FOTO_ACTIVO DD ON sac.dd_sac_id = dd.dd_sac_id
                     WHERE FOT.BORRADO = 0 AND FOT.DD_DFA_ID IS NULL AND FOT.ACT_ID IS NULL AND FOT.SDV_ID IS NOT NULL
                     AND dd.DD_DFA_DESCRIPCION = ''Otros'' ) T2
                     ON (T1.FOT_ID = T2.FOT_ID)

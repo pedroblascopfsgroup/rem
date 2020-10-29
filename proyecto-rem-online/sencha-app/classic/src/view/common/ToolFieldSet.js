@@ -76,6 +76,10 @@ Ext.define('HreRem.view.common.ToolFieldSet', {
         
         return Ext.widget(toolbarCfg);
     	
+    },
+    
+    setCollapsed : function(collapsed) {
+        return this.setExpanded(!collapsed);
     }
 
 });

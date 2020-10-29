@@ -972,6 +972,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     	//return 'app-tbfiedset-ico icono-tickko';
 	     	
 	     }
+	     
+	
 	 }, 
 	 
 	 stores: {

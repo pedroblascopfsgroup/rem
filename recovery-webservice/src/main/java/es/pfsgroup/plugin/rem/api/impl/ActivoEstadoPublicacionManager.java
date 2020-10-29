@@ -1574,7 +1574,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		DtoCalidadDatoPublicacionActivo dto = new DtoCalidadDatoPublicacionActivo();
 		Activo activo = activoDao.get(idActivo);
 		ActivoDatosDq actDatosDq = activoPublicacionDao.getActivoDatosDqPorIdActivo(idActivo);
-		
+		dto.setDesplegable0Collapsed(true);
+		dto.setDesplegable1Collapsed(true);
+		dto.setDesplegable2Collapsed(true);
 		if(actDatosDq != null) {
 			
 			HistoricoFasePublicacionActivo fasePublicacion =  activoPublicacionDao.getFasePublicacionVigentePorIdActivo(idActivo);
@@ -1584,19 +1586,20 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 						|| DDFasePublicacion.CODIGO_FASE_I_PENDIENTE_ACTUACIONES_PREVIAS.equals(fasePublicacion.getFasePublicacion().getCodigo())
 						|| DDFasePublicacion.CODIGO_FASE_II_PENDIENTE_LLAVES.equals(fasePublicacion.getFasePublicacion().getCodigo())
 				){
-					
+					dto.setDesplegable0Collapsed(false);
 					dto = setDataFase0a2(actDatosDq, activo, dto);
 					
 				}else if(DDFasePublicacion.CODIGO_FASE_III_PENDIENTE_INFORMACION.equals(fasePublicacion.getFasePublicacion().getCodigo())
 						) {
-					
+					dto.setDesplegable1Collapsed(false);
 					setDataFase3(dto, activo, actDatosDq);
 					
 				}else if(DDFasePublicacion.CODIGO_FASE_IV_PENDIENTE_PRECIO.equals(fasePublicacion.getFasePublicacion().getCodigo())
 								|| DDFasePublicacion.CODIGO_FASE_V_INCIDENCIAS_PUBLICACION.equals(fasePublicacion.getFasePublicacion().getCodigo())
 								|| DDFasePublicacion.CODIGO_FASE_VI_CALIDAD_COMPROBADA.equals(fasePublicacion.getFasePublicacion().getCodigo())
 						) {
-					dto = setDataFase4(actDatosDq, activo, dto);
+							dto.setDesplegable2Collapsed(false);
+							dto = setDataFase4(actDatosDq, activo, dto);
 				}
 			}
 		}

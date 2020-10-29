@@ -60,7 +60,36 @@ public class DtoCalidadDatoPublicacionActivo extends WebDto{
 	private String correctoInscripcionCorrectaFase1;
 	private String drPor100PropiedadFase1;
 	private String dqPor100PropiedadFase1;
-	private String correctoPor100PropiedadFase1;	
+	private String correctoPor100PropiedadFase1;
+	private Boolean desplegable0Collapsed;
+	private Boolean desplegable1Collapsed;
+	private Boolean desplegable2Collapsed;
+	
+
+	public Boolean getDesplegable0Collapsed() {
+		return desplegable0Collapsed;
+	}
+
+	public void setDesplegable0Collapsed(Boolean desplegable0Collapsed) {
+		this.desplegable0Collapsed = desplegable0Collapsed;
+	}
+
+	public Boolean getDesplegable1Collapsed() {
+		return desplegable1Collapsed;
+	}
+
+	public void setDesplegable1Collapsed(Boolean desplegable1Collapsed) {
+		this.desplegable1Collapsed = desplegable1Collapsed;
+	}
+
+	public Boolean getDesplegable2Collapsed() {
+		return desplegable2Collapsed;
+	}
+
+	public void setDesplegable2Collapsed(Boolean desplegable2Collapsed) {
+		this.desplegable2Collapsed = desplegable2Collapsed;
+	}
+
 	public String getDrIdufirFase1() {
 		return drIdufirFase1;
 	}

@@ -201,6 +201,48 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	
 	},
 	
+	cargarTabDataCalidadDato: function (form) {
+		var me = this,
+		model = null,
+		models = null,
+		nameModels = null,
+		id = me.getViewModel().get("activo.id");
+		form.mask(HreRem.i18n("msg.mask.loading"));
+		if(!form.saveMultiple) {	
+			model = form.getModelInstance(),
+			model.setId(id);
+			if(Ext.isDefined(model.getProxy().getApi().read)) {
+				// Si la API tiene metodo de lectura (read).
+				model.load({
+				    success: function(record,b,c,d) {
+				    	form.setBindRecord(record);			    	
+				    	form.unmask();
+				    	me.lookupReference('toolFieldFase0').setCollapsed(record.data.desplegable0Collapsed);
+				    	me.lookupReference('toolFieldFase1').setCollapsed(record.data.desplegable1Collapsed);
+				    	me.lookupReference('toolFieldFase2').setCollapsed(record.data.desplegable2Collapsed);
+				    	if(Ext.isFunction(form.afterLoad)) {
+				    		form.afterLoad();
+				    	}
+				    },
+				    failure: function(operation) {		    	
+				    	form.up("tabpanel").unmask();
+				    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+				    }
+				});
+			} else {
+				// Si la API no contiene metodo de lectura (read).
+				form.setBindRecord(model);			    	
+		    	form.unmask();
+		    	if(Ext.isFunction(form.afterLoad)) {
+		    		form.afterLoad();
+		    	}
+			}
+		} else {
+			models = form.getModelsInstance();
+			me.cargarTabDataMultiple(form, 0, models, form.records);
+		}
+	},
+	
 	onListadoPropietariosDobleClick: function (grid, record) {
     	var me = this
     	
@@ -3753,9 +3795,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	propagableData = [];
     	var records = [],
     	models = [];
-    
     	if(form.saveMultiple) {
-    		records = records.concat(form.getBindRecords()) 
+    		records = records.concat(form.getBindRecords()) ;
     	} else {
     		records.push(form.getBindRecord());
     	}
@@ -3766,7 +3807,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	});
 
     	Ext.Array.each(tabData.models, function(model, index) {
-    		
     		var data = {},
     		modelHasData = false;
     		Ext.Array.each(camposPropagables[model.name], function(campo, index){
@@ -4119,7 +4159,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			    		    			var superficieElementosComunesAcumulables= parseFloat("0",10);
 			    		    			var superficieParcelaAcumulable= parseFloat("0",10);
 			    		    			var superficieUtilAcumulable= parseFloat("0",10);
-			    		    			
 			    		    			for(var i = 0; i < activosSeleccionados.length; i++){
 			    		    				if(activosSeleccionados[i].superficieConstruida == undefined){
 			    		    					activosSeleccionados[i].superficieConstruida = parseFloat("0",10);
@@ -4160,7 +4199,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    								tabPropagableData = me.createFormPropagableData(form, tabData);
 		    								if (!Ext.isEmpty(tabPropagableData)) {
 		    									// sacamos el activo actual del listado
-		    								
 		    									if(tabPropagableData.models[0].data.numFinca != undefined){
 		    										tabPropagableData.models[0].data.numFinca = me.pad(tabPropagableData.models[0].data.numFinca, 4);
 		    									}
@@ -4230,10 +4268,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 															// sacamos el activo actual del listado
 															var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
 															var tieneDatosPropagables = false;
-															if(!Ext.isEmpty(form)) {
+															/*if(!Ext.isEmpty(form)) {
 													    		
 													    		var fields = form.getForm().getFields();
-
 													    		fields.each(function(field) {
 													    			
 													    			if (!Ext.isEmpty(field) && !Ext.isEmpty(field.bind) && !Ext.isEmpty(field.bind.value) && !Ext.isEmpty(field.bind.value.stub)  ) {
@@ -4249,15 +4286,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 													    				});
 													    			}
 													    		});
-													    	}
+													    	}*/
 															
-															if(tieneDatosPropagables) {
+															//if(tieneDatosPropagables) {
 																// Abrimos la ventana de selección de activos
 																var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {form: form, activoActual: activo, activos: activosPropagables, tabData: tabData, propagableData: tabPropagableData}).show();
 																	me.getView().add(ventanaOpcionesPropagacionCambios);
 																	me.getView().unmask();
 																	return false;
-															}
+															//}
 														}
 													}
 							
@@ -4272,6 +4309,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 							
 													if(restringida == true){
 														me.saveActivosAgrRestringida(tabData, successFn);
+
 													} else {
 														me.getView().fireEvent("No hay activos propagables");
 														me.saveActivo(tabData, successFn);
@@ -5977,5 +6015,26 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	
     	return false;
     	
+    },
+    
+    aplicarDescripcion: function(btn, form) {
+   	 	var me = this;
+	   	Ext.Msg.show({
+			   title: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.aplicar'),
+			   msg: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.aplicar.desea'),
+			   buttons: Ext.MessageBox.YESNO,
+			   fn: function(buttonId) {
+			        if (buttonId == 'yes') {
+			        	machacarDatoDq(btn, form);
+			        } else if(buttonId == 'no') {
+			        	this.close();
+			        }
+			   }
+		});
+    },
+    
+    machacarDatoDq: function(btn, form) {
     }
+    
+    
 });

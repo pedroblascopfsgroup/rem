@@ -10,8 +10,9 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 	recordClass : "HreRem.model.CalidadDatoPublicacionActivo",
 	requires	:['HreRem.view.common.FieldSetTable', 'HreRem.model.CalidadDatoPublicacionActivo'],
 	listeners : {
-		boxready : 'cargarTabData'
+		boxready : 'cargarTabDataCalidadDato',
 	},
+
 	initComponent : function() {
 		var me = this;
 		me.setTitle(HreRem.i18n('publicacion.calidad.datos.titulo'));
@@ -36,7 +37,7 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 				cls : 'boton-cabecera',
 				iconCls : 'ico-refrescar',
 	        	iconAlign: 'right',
-				//handler	: me.funcionRecargar,
+				handler	: me.funcionRecargar,
 				tooltip : HreRem.i18n('btn.refrescar')
 			}]
 		
@@ -45,7 +46,8 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 			xtype:'toolfieldset',
 			title : HreRem.i18n('publicacion.calidad.datos.fase0'),
 			collapsible : true,
-			collapsed : false,
+			reference: 'toolFieldFase0',
+			collapsed : '{colapsarDesplegable}',
 			items : [{
 				xtype : 'fieldsettable',
 				title : HreRem.i18n('publicacion.calidad.datos.datos.registrales'),
@@ -539,8 +541,9 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 		{
 			xtype:'toolfieldset',
 			title : HreRem.i18n('publicacion.calidad.datos.fase3'),
+			reference: 'toolFieldFase1',
 			collapsible : true,
-			collapsed : false,
+			collapsed : '{colapsarDesplegable}',
 			layout: {
 		        type: 'table',
 		        columns: 2,
@@ -825,9 +828,10 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 		}, 	
 		{
 			xtype:'toolfieldset',
+			reference: 'toolFieldFase2',
 			title : HreRem.i18n('publicacion.calidad.datos.fase4'),
 			collapsible : true,
-			collapsed : true,
+			collapsed : '{colapsarDesplegable}',		
 			tools: [
 				{
 					xtype: 'button',
@@ -951,7 +955,9 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 					xtype:'button',
 					text: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.boton.aplicar'),
 					reference: 'btnAplicaDescripcionRef',
-					readOnly: true
+					readOnly: true,
+					handler: 'aplicarDescripcion'
+
 				}]
 			},{
 				// Apartado Localicacion
@@ -1104,7 +1110,6 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 			}]
 		} 
 		];
-
 		me.callParent();
 
 	},
@@ -1112,6 +1117,6 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 	funcionRecargar : function() {
 		var me = this;
 		me.recargar = false;
-		me.lookupController().cargarTabData(me);
+		me.lookupController().cargarTabDataCalidadDato(me);
 	}
 });

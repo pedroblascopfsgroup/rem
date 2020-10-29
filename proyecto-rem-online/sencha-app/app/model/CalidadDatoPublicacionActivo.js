@@ -248,6 +248,18 @@ Ext.define('HreRem.model.CalidadDatoPublicacionActivo', {
 		},
 		{
 			name: 'dqF3Provincia'
+		},
+		{
+			name: 'desplegable0Collapsed',
+			type: 'boolean'
+		},
+		{
+			name: 'desplegable1Collapsed',
+			type: 'boolean'
+		},
+		{
+			name: 'desplegable2Collapsed',
+			type: 'boolean'
 		}		
 	],
 

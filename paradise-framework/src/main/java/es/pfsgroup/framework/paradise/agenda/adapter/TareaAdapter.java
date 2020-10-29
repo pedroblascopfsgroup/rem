@@ -23,7 +23,7 @@ public class TareaAdapter {
 	private static final String URL = "endpoint.haya.existe.endpoint";
 	private static final String PORT = "edpoint.haya.existe.tarea.port";
 	private static final String SERVICE = "endpoint.haya.existe.tarea.service";
-	private static final String DEV = "DEV";
+	public static final String DEV = "DEV";
 	
 	@Resource
 	private Properties appProperties;
@@ -61,6 +61,7 @@ public class TareaAdapter {
         }
         return listaValores;
     }
+
 
 	public String getExisteTareaHayaEndpoint() {
 		String url = appProperties.getProperty(URL);

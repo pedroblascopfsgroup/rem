@@ -2053,6 +2053,13 @@ public class TrabajoController extends ParadiseJsonController {
 		return new ModelAndView("jsonView", model);
 	}
 	
+    @SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+    public ModelAndView getExisteTareaWebServiceHaya(String idTareaHaya, ModelMap model) {
+    	model.put("response", trabajoApi.getExisteTareaWebServiceHaya(idTareaHaya));
+    	model.put("success", true);
+    	return createModelAndViewJson(model);
+    }
 
 }
 

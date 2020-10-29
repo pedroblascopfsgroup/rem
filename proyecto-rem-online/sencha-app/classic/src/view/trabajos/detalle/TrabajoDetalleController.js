@@ -477,22 +477,23 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		}
 		
 		if ( campoIdTareaInformado ) {
-			var url = me.getExisteTareaEndpoint();
-			if ( 'DEV' === url ){
-				// La respuesta del metodo es 'DEV' en entornos previos. El campo debe de estar vacio
-				  me.fireEvent("errorToast", HreRem.i18n("msg.error.conection.haya"));
-				  existeTarea = false;
-				  return false;
-			} else {
-				url += '/' + idTarea;
+			var isDev = false;
+			var url = $AC.getRemoteUrl('trabajo/getExisteTareaWebServiceHaya');
 		    	Ext.Ajax.request({
 					  url:     url,
 					  async:   false,
-					  disableCaching: false,
 					  method:  'GET',
+					  params: {
+						  idTareaHaya: idTarea  
+					  },
 					  success: function(response, opts) {
 						  var decode = Ext.JSON.decode(response.responseText);
-						  existeTarea = 'true' == decode['tareaExistente'] ;
+						  if ( "DEV" === decode['response']){
+							  isDev = true;
+						  } else {
+							  existeTarea = 'true' == decode['response'];
+						  }
+						  
 					  },
 					  failure: function () {
 						  existeTarea = false;
@@ -500,11 +501,14 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 					  }
 		      	});
 		    	
+		    	if ( isDev ){
+		    		me.fireEvent("errorToast", HreRem.i18n("msg.error.conection.haya"));
+		    		return false;
+		    	}
 		    	if ( !existeTarea ) {
 		    		me.fireEvent("errorToast", HreRem.i18n("msg.no.existe.tarea"));
 		    		return false;
 		    	}
-			}
 		}
 
 		
@@ -1997,7 +2001,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	Ext.Ajax.request({
 			  url:     url,
 			  async:   false,
-			  disableCaching: false,
 			  method:  'GET',
 			  success: function(response, opts) {
 				  var decode = Ext.JSON.decode(response.responseText); 

@@ -138,5 +138,12 @@ public class DtoCargaMasivaUnicaGastos {
 		 return gastos;
 	 }
 	 
-    
+    public List<GastoProveedor> getAllGastoProveedor(){
+    	List<GastoProveedor> gastoProveedorList = new ArrayList<GastoProveedor>();
+		 for(Entry<String, DtoCargaMasivaUnicaGastos> entryGasto: instances.entrySet()) {
+			 gastoProveedorList.add(entryGasto.getValue().getGastoProveedor());
+		}
+		 
+		 return gastoProveedorList;
+    }
 }

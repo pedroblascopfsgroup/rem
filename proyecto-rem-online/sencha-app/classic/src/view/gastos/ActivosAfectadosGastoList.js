@@ -12,7 +12,7 @@ var sumaValores = function(record, field) {
 Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 	extend : 'HreRem.view.common.GridBaseEditableRow',
 	xtype : 'activosafectadosgastolist',
-	requires: ['HreRem.view.gastos.AnyadirNuevoGastoActivo'],
+	requires: ['HreRem.view.gastos.AnyadirNuevoGastoActivo', 'HreRem.model.LineaDetalleGastoGridModel'],
 	cls : 'panel-base shadow-panel',
 	idPrincipal : 'id',
 	bind : {
@@ -300,7 +300,14 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 		    	success: function(response, opts) {		    		
 					me.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
 					me.up('gastodetalle').down('detalleeconomicogasto').funcionRecargar();
-					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));					
+					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));		
+
+    	    		var gridActivosLbk = me.up('gastodetalle').down('contabilidadgasto').down('[reference=vImporteGastoLbkGrid]');
+	 		        if(gridActivosLbk && gridActivosLbk.getStore()){
+	 		        	var idGasto  =  me.lookupController().getView().getViewModel().get("gasto.id");
+	 		        	gridActivosLbk.getStore().getProxy().setExtraParams({'idGasto':idGasto});
+	 		        	gridActivosLbk.getStore().load();
+	 		        }
 		    	},
 	   			failure: function(response) {
 					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));

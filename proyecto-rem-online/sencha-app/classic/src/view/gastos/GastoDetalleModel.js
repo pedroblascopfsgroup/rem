@@ -4,7 +4,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase',
 			'HreRem.model.GastoActivo', 'HreRem.model.GestionGasto',
 			'HreRem.model.BusquedaTrabajo', 'HreRem.model.AdjuntoGasto',
-			'HreRem.model.GastoRefacturableGridExistenteStore', 'HreRem.model.BusquedaTrabajoGasto'],
+			'HreRem.model.GastoRefacturableGridExistenteStore', 'HreRem.model.BusquedaTrabajoGasto',
+			'HreRem.model.LineaDetalleGastoGridModel'],
 
 	data : {
 		gasto : null,

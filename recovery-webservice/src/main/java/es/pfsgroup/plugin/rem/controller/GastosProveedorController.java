@@ -1270,7 +1270,8 @@ public class GastosProveedorController extends ParadiseJsonController {
 			
 		ModelMap model = new ModelMap();
 		try {
-			DtoLineaDetalleGasto linea = gastoLineaDetalleApi.calcularCuentasYPartidas(idGasto, idLineaDetalleGasto, subtipoGastoCodigo);
+			GastoProveedor gasto = gastoProveedorApi.findOne(idGasto);
+			DtoLineaDetalleGasto linea = gastoLineaDetalleApi.calcularCuentasYPartidas(gasto, idLineaDetalleGasto, subtipoGastoCodigo);
 			model.put("data", linea);
 			model.put("success", true);
 			

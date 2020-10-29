@@ -91,4 +91,9 @@ public class ConstantesTrabajo {
 	public static final String COLUMNA_PROVEEDOR_CONTACTO ="PVC_ID";
 	public static final String PRIMERA_TOMA_POSESION ="Primera actuación Toma de posesión";
 	public static final String COLUMNA_PRIMERA_TOMA_POSESION ="TBJ_PRIM_TOMA_POS";
+	
+	public static final String COLUMNA_TIPO_TRABAJO ="DD_TTR_ID";
+	public static final String COLUMNA_SUBTIPO_TRABAJO ="DD_STR_ID";
+	public static final String TIPO_TRABAJO ="Tipo trabajo";
+	public static final String SUBTIPO_TRABAJO ="Subtipo trabajo";
 }

@@ -499,6 +499,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		    	Ext.Ajax.request({
 					  url:     url,
 					  async:   false,
+					  disableCaching: false,
 					  method:  'GET',
 					  success: function(response, opts) {
 						  var decode = Ext.JSON.decode(response.responseText);
@@ -1698,6 +1699,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 					me.lookupReference('fechaResolucionComiteRef').setReadOnly(false);
 					me.lookupReference('resolucionComiteIdRef').setReadOnly(false);
 					me.lookupReference('tomaDePosesion').setReadOnly(false);
+					me.lookupReference('subtipoTrabajoComboFicha').setReadOnly(false);
+					me.lookupReference('tipoTrabajoFicha').setReadOnly(false);
 	    			
     			} else {
     				me.lookupReference('comboProveedorGestionEconomica').setReadOnly(false);
@@ -1714,6 +1717,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	    			me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);	
 		    		me.lookupReference('checkTarifaPlanaRef').setReadOnly(false);
 		    		me.lookupReference('checkSiniestroRef').setReadOnly(false);
+		    		me.lookupReference('subtipoTrabajoComboFicha').setReadOnly(false);
+					me.lookupReference('tipoTrabajoFicha').setReadOnly(false);
     			} else {
 		    		me.lookupReference('gridtarifastrabajo').setTopBar(true)
 		    		me.lookupReference('gridpresupuestostrabajo').setTopBar(true)
@@ -1728,12 +1733,20 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     				me.lookupReference('fechaConcreta').setReadOnly(false);
 		    		me.lookupReference('horaConcreta').setReadOnly(false);
 		    		me.lookupReference('fechaTope').setReadOnly(false);
+    				me.lookupReference('subtipoTrabajoComboFicha').setReadOnly(false);
+    				me.lookupReference('tipoTrabajoFicha').setReadOnly(false);
     			}
 	    		
 	    	} else if (estadoTrabajo == "13"){
+	    		
 	    		if(esFichaTrabajo){
     				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
+    				if(!me.getViewModel().get("trabajo.numAlbaran")){
+    					me.lookupReference('subtipoTrabajoComboFicha').setReadOnly(false);
+    					me.lookupReference('tipoTrabajoFicha').setReadOnly(false);
+    				}
     			}
+	    		
 	    	}
     		
 	    } else if(esProvActivo){
@@ -1793,6 +1806,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			me.lookupReference('llavesNoAplicaRef').setReadOnly(true);
 			me.lookupReference('llavesMotivoRef').setReadOnly(true);
 			me.lookupReference('tomaDePosesion').setReadOnly(true);
+			me.lookupReference('subtipoTrabajoComboFicha').setReadOnly(true);
+			me.lookupReference('tipoTrabajoFicha').setReadOnly(true);
     	} else {
     		me.lookupReference('comboProveedorGestionEconomica').setReadOnly(true);
     		me.lookupReference('proveedorContactoCombo').setReadOnly(true);
@@ -1831,6 +1846,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			me.lookupReference('llavesNoAplicaRef').setReadOnly(false);
 			me.lookupReference('llavesMotivoRef').setReadOnly(false);
 			me.lookupReference('tomaDePosesion').setReadOnly(false);
+			me.lookupReference('subtipoTrabajoComboFicha').setReadOnly(false);
+			me.lookupReference('tipoTrabajoFicha').setReadOnly(false);
     	} else {
     		me.lookupReference('comboProveedorGestionEconomica').setReadOnly(false);
     		me.lookupReference('proveedorContactoCombo').setReadOnly(false);
@@ -2024,7 +2041,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	var endpoint = null;
     	Ext.Ajax.request({
 			  url:     url,
-			  async:   false, 
+			  async:   false,
+			  disableCaching: false,
 			  method:  'GET',
 			  success: function(response, opts) {
 				  var decode = Ext.JSON.decode(response.responseText); 

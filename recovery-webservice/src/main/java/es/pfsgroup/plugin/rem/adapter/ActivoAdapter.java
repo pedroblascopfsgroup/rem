@@ -191,7 +191,6 @@ import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacio
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDDescripcionFotoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
@@ -438,19 +437,8 @@ public class ActivoAdapter {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoFoto.getId());
 		ActivoFoto activoFoto = genericDao.get(ActivoFoto.class, filtro);
 		boolean resultado = false;
-		String descripcion = null;
 		try {
-			
-			beanUtilNotNull.copyProperties(activoFoto, dtoFoto);
-			if(!Checks.esNulo(dtoFoto.getOrden())) {
-				activoFoto.setOrden(dtoFoto.getOrden());
-			}
-			if (dtoFoto.getDescripcion() != null) {
-				DDDescripcionFotoActivo ddDescripcionFoto = genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dtoFoto.getDescripcion()));
-				descripcion = ddDescripcionFoto.getDescripcion();
-				activoFoto.setDescripcionFoto(ddDescripcionFoto);
-				activoFoto.setDescripcion(descripcion);
-			}
+
 			if (gestorDocumentalFotos.isActive()) {
 				PRINCIPAL principal = null;
 				SITUACION situacion = null;
@@ -469,10 +457,14 @@ public class ActivoAdapter {
 					}
 				}
 				FileResponse fileReponse = gestorDocumentalFotos.update(activoFoto.getRemoteId(), dtoFoto.getNombre(),
-						null, descripcion, principal, situacion, dtoFoto.getOrden());
+						null, dtoFoto.getDescripcion(), principal, situacion, dtoFoto.getOrden());
 				if (fileReponse.getError() != null && !fileReponse.getError().isEmpty()) {
 					throw new RuntimeException(fileReponse.getError());
 				}
+			}
+			beanUtilNotNull.copyProperties(activoFoto, dtoFoto);
+			if(!Checks.esNulo(dtoFoto.getOrden())) {
+				activoFoto.setOrden(dtoFoto.getOrden());
 			}
 			genericDao.save(ActivoFoto.class, activoFoto);
 

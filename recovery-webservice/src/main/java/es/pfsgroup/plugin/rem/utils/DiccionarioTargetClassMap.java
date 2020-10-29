@@ -93,7 +93,6 @@ public class DiccionarioTargetClassMap{
 		mapa.put("valoracionTrabajo", DDTipoCalidad.class);
 		mapa.put("tiposDocumento", DDTipoDocumentoActivo.class);
 		mapa.put("tiposFoto", DDTipoFoto.class);
-		mapa.put("descripcionesFoto", DDDescripcionFotoActivo.class);//IVAN REPISO
 		mapa.put("tiposTramite", TipoProcedimiento.class);
 		mapa.put("tiposCalculo", DDTipoCalculo.class);
 		mapa.put("tiposRecargo", DDTipoRecargoProveedor.class);

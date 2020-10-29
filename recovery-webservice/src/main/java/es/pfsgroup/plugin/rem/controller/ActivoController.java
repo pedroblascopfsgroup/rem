@@ -1142,14 +1142,6 @@ public class ActivoController extends ParadiseJsonController {
 							}
 
 							BeanUtils.copyProperties(fotoDto, aListaActivoFoto);
-							
-							if(aListaActivoFoto.getDescripcionFoto() != null) {
-								BeanUtils.copyProperty(fotoDto, "codigoDescripcionFoto", aListaActivoFoto.getDescripcionFoto().getCodigo());
-								BeanUtils.copyProperty(fotoDto, "descripcion", aListaActivoFoto.getDescripcionFoto().getDescripcion());
-								if (aListaActivoFoto.getDescripcionFoto().getSubtipo() != null) {
-									BeanUtils.copyProperty(fotoDto, "codigoSubtipoActivo", aListaActivoFoto.getDescripcionFoto().getSubtipo().getCodigo());
-								}
-							}
 
 							if (aListaActivoFoto.getPrincipal() != null && aListaActivoFoto.getPrincipal()) {
 								if (aListaActivoFoto.getInteriorExterior() != null) {

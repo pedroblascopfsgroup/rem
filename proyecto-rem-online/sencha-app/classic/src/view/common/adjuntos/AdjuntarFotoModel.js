@@ -5,19 +5,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarFotoModel', {
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase'],
     
     stores: {
-    	storeDescripcionAdjuntarFoto: {
-			model: 'HreRem.model.ComboBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'descripcionesFoto'}
-			},
-			autoLoad: false,
-			remoteFilter: false,
-			filters: {
-    			property: 'codigoSubtipoActivo',
-    			value: '{codigoSubtipoActivo}' 
-    		}
-    	}	   
+    	
+	   
     }
 });

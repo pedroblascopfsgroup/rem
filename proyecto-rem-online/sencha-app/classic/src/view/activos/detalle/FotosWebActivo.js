@@ -78,11 +78,9 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
                 	} else {
                 		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[0].hide();
                 		this.up('form').down('fieldcontainer[reference=radiogroupinterior]').items.items[1].hide();
-					}
-					Ext.global.console.log(record.data);
+                	}
+                	Ext.global.console.log(record.data);
 	        		this.up('form').setBindRecord(record.data);
-	        		this.lookupController().getViewModel().set('fotoSelected', record);
-	        		this.lookupController().getViewModel().notify();
 	        	}
             }
         });
@@ -126,14 +124,11 @@ Ext.define('HreRem.view.activos.detalle.FotosWebActivo', {
 							}
 		                },
 		                { 
-		                	xtype: 'comboboxfieldbase',
+		                	xtype: 'textareafieldbase',
 		                	name: 'descripcion',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.descripcion'),
-				        	editable: false,
-				        	queryMode: 'local',
 		                	bind: {
-		                		store: '{storeDescripcionFoto}',
-				        		value: '{codigoDescripcionFoto}'
+								value: '{descripcion}'
 							}
 		                },
 		                { 

@@ -480,14 +480,6 @@ public class AgrupacionController extends ParadiseJsonController {
 						}
 
 						BeanUtils.copyProperties(fotoDto, listaFotos.get(i));
-						
-						if(listaFotos.get(i).getDescripcionFoto() != null) {
-							BeanUtils.copyProperty(fotoDto, "codigoDescripcionFoto", listaFotos.get(i).getDescripcionFoto().getCodigo());
-							BeanUtils.copyProperty(fotoDto, "descripcion", listaFotos.get(i).getDescripcionFoto().getDescripcion());
-							if (listaFotos.get(i).getDescripcionFoto().getSubtipo() != null) {
-								BeanUtils.copyProperty(fotoDto, "codigoSubtipoActivo", listaFotos.get(i).getDescripcionFoto().getSubtipo().getCodigo());
-							}
-						}
 
 						listaDtoFotos.add(fotoDto);
 
@@ -520,15 +512,7 @@ public class AgrupacionController extends ParadiseJsonController {
 						}
 						BeanUtils.copyProperties(fotoDto, listaFotos.get(i));
 						BeanUtils.copyProperty(fotoDto, "numeroActivo", listaFotos.get(i).getActivo().getId());
-						
-						if(listaFotos.get(i).getDescripcionFoto() != null) {
-							BeanUtils.copyProperty(fotoDto, "codigoDescripcionFoto", listaFotos.get(i).getDescripcionFoto().getCodigo());
-							BeanUtils.copyProperty(fotoDto, "descripcion", listaFotos.get(i).getDescripcionFoto().getDescripcion());
-							if (listaFotos.get(i).getDescripcionFoto().getSubtipo() != null) {
-								BeanUtils.copyProperty(fotoDto, "codigoSubtipoActivo", listaFotos.get(i).getDescripcionFoto().getSubtipo().getCodigo());
-							}
-						}
-						
+
 						listaDtoFotos.add(fotoDto);
 
 					} catch (IllegalAccessException e) {
@@ -580,15 +564,7 @@ public class AgrupacionController extends ParadiseJsonController {
 							BeanUtils.copyProperty(fotoDto, "tituloFoto", "Principal EXTERIOR");
 						}
 					}
-					
-					if(listaFotos.get(i).getDescripcionFoto() != null) {
-						BeanUtils.copyProperty(fotoDto, "codigoDescripcionFoto", listaFotos.get(i).getDescripcionFoto().getCodigo());
-						BeanUtils.copyProperty(fotoDto, "descripcion", listaFotos.get(i).getDescripcionFoto().getDescripcion());
-						if (listaFotos.get(i).getDescripcionFoto().getSubtipo() != null) {
-							BeanUtils.copyProperty(fotoDto, "codigoSubtipoActivo", listaFotos.get(i).getDescripcionFoto().getSubtipo().getCodigo());
-						}
-					}
-					
+
 					listaDtoFotos.add(fotoDto);
 
 				} catch (IllegalAccessException e) {

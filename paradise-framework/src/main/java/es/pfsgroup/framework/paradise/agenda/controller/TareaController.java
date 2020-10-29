@@ -101,9 +101,6 @@ public class TareaController extends ParadiseJsonController{
 		dto.setValues(valores);
 		return dto;
 	}
-    @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView getEndpointExisteTareaHaya() {
-    	
-    	return createModelAndViewJson(new ModelMap("endpoint",tareaAdapter.getExisteTareaHayaEndpoint()));
-    }
+    
+
 }

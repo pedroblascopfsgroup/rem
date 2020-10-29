@@ -58,6 +58,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.framework.paradise.agenda.adapter.TareaAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelManagerApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.impl.MSVProcesoManager;
@@ -176,6 +177,7 @@ import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
+import es.pfsgroup.plugin.rem.restclient.httpclient.HttpSimpleGetRequest;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.ConstantesTrabajo;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
@@ -352,6 +354,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	
 	@Autowired
 	private DerivacionEstadoTrabajoDao derivacionEstadoTrabajoDao;
+	
+	@Autowired
+	private TareaAdapter tareaAdapter;
 	
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -6358,5 +6363,18 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		String url = appProperties.getProperty("url");
 
 		return url + "/pfs/js/plugin/rem/resources/images/notificator/";
+	}
+
+	
+	@Override
+	public Object getExisteTareaWebServiceHaya(String idTareaHaya) {
+		String endpoint = tareaAdapter.getExisteTareaHayaEndpoint();
+		if (TareaAdapter.DEV.equals(endpoint)) {
+			return TareaAdapter.DEV;
+		}else {
+			endpoint += idTareaHaya;
+			HttpSimpleGetRequest request = new HttpSimpleGetRequest(endpoint);
+			return request.get();
+		}
 	}
 }

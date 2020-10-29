@@ -881,9 +881,10 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 			tools: [
 				{
 					xtype: 'button',
-					cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+					cls: 'no-pointer',
+					style: 'background: transparent; border: none;',
 					bind: {
-						iconCls:'{getIconClsDQCorrecto}'
+						iconCls:'{getIconClsDQCP}'
 					}
 				}
 			],
@@ -950,15 +951,13 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 						bind: {
 							value: '{calidaddatopublicacionactivo.numFotosMinimaResolucionX}'
 						}
-					},
-					{
-						xtype:'image',
-						fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.fotos.correcto'),
-						reference: 'correctoRef',
-						readOnly: true
-						/*bind: {
-							value: '{calidaddatopublicacionactivo.correctoFotos}'
-						}*/
+					},{
+						xtype: 'button',
+						cls: 'no-pointer',
+						style: 'background: transparent; border: none;',
+						bind: {
+							iconCls:'{getIconClsDQFotos}'
+						}
 					},{
 						xtype:'textfieldbase',
 						fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.fotos.mensaje.dq'),
@@ -990,20 +989,19 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 						value: '{calidaddatopublicacionactivo.dqFase4Descripcion}'
 					}
 				},{
-					xtype:'textfieldbase',
-					fieldLabel: HreRem.i18n('publicacion.calidad.datos.fase4.fotos.correcto'),
-					reference: 'descripcionCorrectoRef',
-					readOnly: true,
+					xtype: 'button',
+					cls: 'no-pointer',
+					style: 'background: transparent; border: none;',
 					bind: {
-						value: '{calidaddatopublicacionactivo.correctoDescripcion}'
-					}					
+						iconCls:'{getIconClsDQescripcion}'
+					}
 				},{
 					xtype:'button',
 					text: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.boton.aplicar'),
 					reference: 'btnAplicaDescripcionRef',
 					readOnly: true,
-					handler: 'aplicarDescripcion'
-
+					handler: 'aplicarDescripcion',
+					disabled: '{disableBtnDescF1}'
 				}]
 			},{
 				// Apartado Localicacion
@@ -1059,6 +1057,13 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 					readOnly: true,
 					bind: {
 						value: '{calidaddatopublicacionactivo.geodistanciaDQ}'
+					}
+				},{
+					xtype: 'button',
+					cls: 'no-pointer',
+					style: 'background: transparent; border: none;',
+					bind: {
+						iconCls:'{getIconClsDQCP}'
 					}
 				}]
 			}, {
@@ -1151,6 +1156,13 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 					readOnly: true,
 					bind: {
 						value: '{calidaddatopublicacionactivo.mensajeDQCEE}'
+					}
+				},{
+					xtype: 'button',
+					cls: 'no-pointer',
+					style: 'background: transparent; border: none;',
+					bind: {
+						iconCls:'{getIconClsDQCP}'
 					}
 				}]
 			}]

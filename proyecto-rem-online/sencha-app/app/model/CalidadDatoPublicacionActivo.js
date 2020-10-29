@@ -176,7 +176,11 @@ Ext.define('HreRem.model.CalidadDatoPublicacionActivo', {
 		},
 		{
 			name: 'correctoDescripcion'
-		}, //Localizacion
+		},
+		{
+			name: 'disableDescripcion'
+		},
+		//Localizacion
 		{
 			name: 'drf4LocalizacionLatitud'
 		},

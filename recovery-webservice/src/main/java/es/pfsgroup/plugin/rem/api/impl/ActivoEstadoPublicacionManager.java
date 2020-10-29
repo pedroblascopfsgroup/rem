@@ -2007,13 +2007,17 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}
 		
 		// LOCALIZACION
-		// FALTA LATITUD REM
+		if(activo.getLocalizacion() != null) {
+			dto.setDrf4LocalizacionLatitud(activo.getLocalizacion().getLatitud().toString());
+			dto.setDrf4LocalizacionLongitud(activo.getLocalizacion().getLongitud().toString());
+		}
+		
 		if(activoDatosDq.getLatitudDdq() != null) 
 			dto.setDqF4Localizacionlatitud(activoDatosDq.getLatitudDdq().toString());
 		
-		//FALTA LONGITUD REM
 		if(activoDatosDq.getLongitudDdq() != null) 
 			dto.setDqf4LocalizacionLongitud(activoDatosDq.getLongitudDdq().toString());
+		
 		if(activoDatosDq.getGeodistancia() != null)
 			dto.setGeodistanciaDQ(activoDatosDq.getGeodistancia().toString());
 		
@@ -2037,7 +2041,68 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if(activoDatosDq.getMensajeCee() != null)
 			dto.setMensajeDQCEE(activoDatosDq.getMensajeCee());
 		
+		
+		//COMPROBACION CAMPOS CORRECTO
+
+		setCorrectoFase4(activoDatosDq, dto);
+		
+		
 		return dto;
+	}
+
+	private void setCorrectoFase4(ActivoDatosDq activoDatosDq, DtoCalidadDatoPublicacionActivo dto) {
+		boolean interrogante = false, cruzroja = false;
+		
+		//FOTOS
+		if(activoDatosDq.getImagenesEst() == null) {
+			dto.setCorrectoFotos(ICONO_TICK_INTERROGANTE);
+			interrogante = true;
+		}else if(activoDatosDq.getImagenesEst() != null 
+				&& (ICONO_TICK_OK.equals(activoDatosDq.getImagenesEst()))) {
+			dto.setCorrectoFotos(ICONO_TICK_OK);
+		}else {
+			dto.setCorrectoFotos(ICONO_TICK_KO);
+			cruzroja = true;
+		}
+		
+		//DESCRIPCION
+		if(dto.getDqFase4Descripcion() == null) {
+			dto.setCorrectoDescripcion(ICONO_TICK_INTERROGANTE);
+			interrogante = true;
+			dto.setDisableDescripcion(true);
+		}else if(dto.getDrFase4Descripcion() != null 
+				&& (dto.getDrFase4Descripcion().equals(dto.getDqFase4Descripcion()))) {
+			dto.setCorrectoDescripcion(ICONO_TICK_OK);
+			dto.setDisableDescripcion(true);
+		}else {
+			dto.setCorrectoDescripcion(ICONO_TICK_KO);
+			cruzroja = true;
+			dto.setDisableDescripcion(false);
+		}
+		
+		//LOCALIZACION
+		if(dto.getDqF4Localizacionlatitud() == null) {
+			dto.setCorrectoLocalizacion(ICONO_TICK_INTERROGANTE);
+			interrogante = true;
+		}else if(dto.getDrf4LocalizacionLatitud() != null 
+				&& (dto.getDrf4LocalizacionLatitud().equals(dto.getDqF4Localizacionlatitud()))) {
+			dto.setCorrectoFotos(ICONO_TICK_OK);
+		}else {
+			dto.setCorrectoFotos(ICONO_TICK_KO);
+			cruzroja = true;
+		}
+		
+		//CEE
+		if(dto.getEtiquetaCEERem() == null) {
+			dto.setCorrectoCEE(ICONO_TICK_INTERROGANTE);
+			interrogante = true;
+		}else if(dto.getEtiquetaCEERem() != null 
+				&& (ICONO_TICK_OK.equals(dto.getEtiquetaCEERem()))) {
+			dto.setCorrectoCEE(ICONO_TICK_OK);
+		}else {
+			dto.setCorrectoCEE(ICONO_TICK_KO);
+			cruzroja = true;
+		}
 	}
 
 	private void setDataFase3(DtoCalidadDatoPublicacionActivo dto, Activo activo, ActivoDatosDq actDatosDq) {

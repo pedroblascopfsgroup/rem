@@ -1260,6 +1260,71 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     	}else{
 	     		return 'app-tbfiedset-ico icono-tickinterrogante';
 	     	}
+	     },
+	     
+	     getIconClsDQFotos: function(get) {
+	     	var correctoF1Fotos = get('calidaddatopublicacionactivo.correctoFotos');
+	     	
+	     	if("0" == correctoF1Fotos){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF1Fotos){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },
+	     
+	       getIconClsDQescripcion: function(get) {
+	     	var correctoF1Descripcion = get('calidaddatopublicacionactivo.correctoDescripcion');
+	     	
+	     	if("0" == correctoF1Descripcion){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF1Descripcion){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },
+	     
+	       getIconClsDQLocalizacion: function(get) {
+	     	var correctoF1escripcion = get('calidaddatopublicacionactivo.correctoLocalizacion');
+	     	
+	     	if("0" == correctoF1escripcion){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF1escripcion){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },
+	     
+	       getIconClsDQCEE: function(get) {
+	     	var correctoF1CEE = get('calidaddatopublicacionactivo.correctoCEE');
+	     	
+	     	if("0" == correctoF1CEE){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF1CEE){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },
+	     
+	     
+	     
+	     
+	     disableBtnDescF1: function(get){
+	     	var disableF1escripcion = get('calidaddatopublicacionactivo.disableDescripcion');
+	     	
+	     	if(disableF1escripcion){
+	     		return true;
+	     	}else{
+	     		return false;
+	     	}
+	     		
 	     }
 	     
 	

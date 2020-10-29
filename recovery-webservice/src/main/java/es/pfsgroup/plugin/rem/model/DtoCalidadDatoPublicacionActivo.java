@@ -561,11 +561,17 @@ public class DtoCalidadDatoPublicacionActivo extends WebDto{
 	
 	private String mensajeDQFotos;
 	
+	private String correctoFotos;
+	
 	// Descripcion
 	
 	private String drFase4Descripcion;
 	
 	private String dqFase4Descripcion;
+	
+	private String correctoDescripcion;
+	
+	private Boolean disableDescripcion;
 	
 	// Localizacion
 	
@@ -578,6 +584,8 @@ public class DtoCalidadDatoPublicacionActivo extends WebDto{
 	private String dqf4LocalizacionLongitud;
 	
 	private String geodistanciaDQ;
+	
+	private String correctoLocalizacion;
 	
 	//CEE
 	
@@ -598,6 +606,8 @@ public class DtoCalidadDatoPublicacionActivo extends WebDto{
 	private String numEtiquetaG;
 	
 	private String mensajeDQCEE;
+	
+	private String correctoCEE;
 	
 	public String getNumFotos() {
 		return numFotos;
@@ -1034,6 +1044,46 @@ public class DtoCalidadDatoPublicacionActivo extends WebDto{
 
 	public void setCorrectoDatosRegistralesFase1(String correctoDatosRegistralesFase1) {
 		this.correctoDatosRegistralesFase1 = correctoDatosRegistralesFase1;
+	}
+
+	public String getCorrectoFotos() {
+		return correctoFotos;
+	}
+
+	public void setCorrectoFotos(String correctoFotos) {
+		this.correctoFotos = correctoFotos;
+	}
+
+	public String getCorrectoDescripcion() {
+		return correctoDescripcion;
+	}
+
+	public void setCorrectoDescripcion(String correctoDescripcion) {
+		this.correctoDescripcion = correctoDescripcion;
+	}
+
+	public Boolean getDisableDescripcion() {
+		return disableDescripcion;
+	}
+
+	public void setDisableDescripcion(Boolean disableDescripcion) {
+		this.disableDescripcion = disableDescripcion;
+	}
+
+	public String getCorrectoLocalizacion() {
+		return correctoLocalizacion;
+	}
+
+	public void setCorrectoLocalizacion(String correctoLocalizacion) {
+		this.correctoLocalizacion = correctoLocalizacion;
+	}
+
+	public String getCorrectoCEE() {
+		return correctoCEE;
+	}
+
+	public void setCorrectoCEE(String correctoCEE) {
+		this.correctoCEE = correctoCEE;
 	}
 	
 }

@@ -338,6 +338,14 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 					}
 					
 					
+					if(exc.dameCelda(fila, COL_TIPO_ELEMENTO) != null && !exc.dameCelda(fila, COL_TIPO_ELEMENTO).isEmpty()) {
+						Filter filtroTipoEntidad = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, COL_TIPO_ELEMENTO));
+						DDEntidadGasto entidadGasto = genericDao.get(DDEntidadGasto.class, filtroTipoEntidad);
+						
+						if(entidadGasto != null && DDEntidadGasto.CODIGO_SIN_ACTIVOS.equals(entidadGasto.getCodigo())) {
+							newGastoLineaDetalle.setLineaSinActivos(true);
+						}
+					}
 					newGastoLineaDetalle.setImporteTotal(importeTotal);
 					
 					newGastoLineaDetalle.setAuditoria(Auditoria.getNewInstance());
@@ -401,6 +409,8 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 						gastoLineaDetalleEntidad.setEntidadGasto(entidadGasto);
 						gastoLineaDetalleEntidad.setParticipacionGasto(Double.parseDouble(exc.dameCelda(fila, COL_PARTICIPACION_LINEA_DETALLE)));
 						genericDao.save(GastoLineaDetalleEntidad.class,gastoLineaDetalleEntidad);
+						
+					}else if(DDEntidadGasto.CODIGO_SIN_ACTIVOS.equals(entidadGasto.getCodigo())) {		
 						
 					}else {
 						GastoLineaDetalleEntidad gastoLineaDetalleEntidad = new GastoLineaDetalleEntidad();
@@ -602,6 +612,7 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 				
 
 		} catch (Exception e) {
+			dtoGastos.vaciarInstancias();
 			logger.error("Error en MSVMasivaModificacionLineasDetalle", e);
 		}
 	

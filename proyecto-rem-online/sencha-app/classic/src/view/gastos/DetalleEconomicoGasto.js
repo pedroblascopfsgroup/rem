@@ -9,7 +9,8 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 	recordName: "detalleeconomico",
 	recordClass: "HreRem.model.DetalleEconomicoGasto",
     refreshAfterSave: true,
-    requires: ['HreRem.model.DetalleEconomicoGasto','HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes','HreRem.model.AdjuntoGasto', 'HreRem.model.GastoRefacturableGridExistenteStore'],
+    requires: ['HreRem.model.DetalleEconomicoGasto','HreRem.view.administracion.gastos.GastoRefacturadoGridExistentes',
+    	'HreRem.model.AdjuntoGasto', 'HreRem.model.GastoRefacturableGridExistenteStore','HreRem.model.LineaDetalleGastoGridModel'],
     
     listeners: {
 		boxready:'cargarTabData',

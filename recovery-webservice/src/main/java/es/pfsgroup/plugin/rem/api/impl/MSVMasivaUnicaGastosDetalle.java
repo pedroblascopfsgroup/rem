@@ -51,6 +51,7 @@ import es.pfsgroup.plugin.rem.model.GastoInfoContabilidad;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
@@ -381,16 +382,13 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 									gastoLineaDetalleEntidad.setGastoLineaDetalle(newGastoLineaDetalle);
 									gastoLineaDetalleEntidad.setEntidad(activoAgrupacionActivo.getActivo().getId());
 									gastoLineaDetalleEntidad.setEntidadGasto(entidadGastoActivo);
-									sumaParticipacion = sumaParticipacion.add(participacionPorActivo);
-								   if((i++ == activosAgrupacion.size() - 1) && sumaParticipacion != participacion){
+									 sumaParticipacion = sumaParticipacion.add(participacionPorActivo);
+								    if((i++ == activosAgrupacion.size() - 1) && sumaParticipacion != participacion){
 										BigDecimal decimal = sumaParticipacion.subtract(participacion);
-										if(decimal.compareTo(BigDecimal.ZERO) < 0) {
-											participacionPorActivo = participacionPorActivo.add(decimal);
-										}else if(decimal.compareTo(BigDecimal.ZERO) > 0) {
-											participacionPorActivo = participacionPorActivo.subtract(decimal);
-										}										
-								    }
+										participacionPorActivo = participacionPorActivo.subtract(decimal);									
+								     }
 									 
+								  
 								   gastoLineaDetalleEntidad.setParticipacionGasto(participacionPorActivo.doubleValue());
 								   genericDao.save(GastoLineaDetalleEntidad.class,gastoLineaDetalleEntidad);
 								}
@@ -603,6 +601,16 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 							gastoLineaDetalle = gastoLineaDetalleApi.setCuentasPartidasDtoToObject( gastoLineaDetalle, dtoLinea);
 							GastoLineaDetalle updateLinea = HibernateUtils.merge(gastoLineaDetalle);
 							genericDao.update(GastoLineaDetalle.class, updateLinea);
+						}
+					}
+					
+					List<GastoProveedor> listaGastoProveedor = dtoGastos.getAllGastoProveedor();
+					
+					if(listaGastoProveedor != null && !listaGastoProveedor.isEmpty()) {
+						for (GastoProveedor gastoProveedor : listaGastoProveedor) {
+							if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gastoProveedor.getPropietario().getCartera().getCodigo())) {
+								gastoLineaDetalleApi.actualizarDiariosLbk(gastoProveedor.getId());
+							}
 						}
 					}
 					

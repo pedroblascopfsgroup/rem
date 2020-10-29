@@ -11,7 +11,7 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGasto', {
 		
 	recordClass: "HreRem.model.GastoProveedor",
     
-    requires: ['HreRem.model.GastoProveedor', 'HreRem.view.gastos.ActivosAfectadosGastoList'],
+    requires: ['HreRem.model.GastoProveedor', 'HreRem.view.gastos.ActivosAfectadosGastoList', 'HreRem.model.LineaDetalleGastoGridModel'],
 
     listeners: {
 		activate: function(me, eOpts) {

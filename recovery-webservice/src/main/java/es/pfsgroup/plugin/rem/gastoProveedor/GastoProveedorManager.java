@@ -3502,12 +3502,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						importeTotal+= gastoLineaDetalle.getImporteTotal();
 					}
 				}
-				if(gasto.getIrpfCuota() != null) {
-					importeTotal = importeTotal - gasto.getIrpfCuota();
-				}
-				if(gasto.getRetencionGarantiaCuota() != null && gasto.getRetencionGarantiaAplica() != null && gasto.getRetencionGarantiaAplica()) {
-					importeTotal = importeTotal - gasto.getRetencionGarantiaCuota();
-				}
+			}
+			
+			if(gasto.getIrpfCuota() != null) {
+				importeTotal = importeTotal - gasto.getIrpfCuota();
+			}
+			if(gasto.getRetencionGarantiaCuota() != null && gasto.getRetencionGarantiaAplica() != null && gasto.getRetencionGarantiaAplica()) {
+				importeTotal = importeTotal - gasto.getRetencionGarantiaCuota();
 			}
 
 		}		

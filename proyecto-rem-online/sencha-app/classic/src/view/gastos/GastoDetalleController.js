@@ -2,7 +2,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.gastodetalle',
     
-    requires: ['HreRem.view.gastos.SeleccionTrabajosGasto','HreRem.view.common.adjuntos.AdjuntarDocumentoGasto','HreRem.view.administracion.gastos.GastoRefacturadoGrid'],
+    requires: ['HreRem.view.gastos.SeleccionTrabajosGasto','HreRem.view.common.adjuntos.AdjuntarDocumentoGasto',
+    	'HreRem.view.administracion.gastos.GastoRefacturadoGrid', 'HreRem.model.LineaDetalleGastoGridModel'],
     
     control: {
     	
@@ -1159,6 +1160,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	onChangeRetencionGarantiaAplica: function(field, checked){
 		var me= this;
 		// Habilitamos/deshabilitamos campos
+		
 		me.lookupReference('baseIRPFRetG').setDisabled(!checked);
 		me.lookupReference('irpfTipoImpositivoRetG').setDisabled(!checked);
 		me.lookupReference('cuotaIRPFRetG').setDisabled(!checked);;
@@ -2048,7 +2050,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var base = me.lookupReference('baseIRPFRetG').getValue();
     	var cuotaImpDirecto = me.lookupReference('cuotaIRPFImpD').getValue();
     	var cuota = 0;
-    	
+    
     	if(tipoImpositivo != null && base != null){
     		cuota = (tipoImpositivo * base)/100;
     	}
@@ -2064,7 +2066,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var cuotaRetG = me.lookupReference('cuotaIRPFRetG').getValue();
     	var valFechaPago = me.lookupReference('fechaPago').getValue();
     	var cuota = 0;
- 
+    
     	if(tipoImpositivo != null && base != null){
     		cuota = (tipoImpositivo * base)/100;
     	}
@@ -2075,7 +2077,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	
 		importeTotal = importeTotal - cuota;
 		 
-		if(cuotaRetG != null && cuotaRetG != undefined){
+		if(cuotaRetG != null && cuotaRetG != undefined && value){
 			importeTotal = importeTotal - cuotaRetG;
 		}
 		me.lookupReference('importeTotalGastoDetalle').setValue(importeTotal);
@@ -2322,6 +2324,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 						    	if(data.data == 'true') {
 			    	    			var grid = me.lookupReference('listadoActivosAfectadosRef');
 				    	    		grid.getStore().load();
+
+				    	    		var gridActivosLbk = grid.up('gastodetalle').down('contabilidadgasto').down('[reference=vImporteGastoLbkGrid]');
+					 		        if(gridActivosLbk && gridActivosLbk.getStore()){
+					 		        	var idGasto  =  grid.lookupController().getView().getViewModel().get("gasto.id");
+					 		        	gridActivosLbk.getStore().getProxy().setExtraParams({'idGasto':idGasto});
+					 		        	gridActivosLbk.getStore().load();
+					 		        }
 			    	    		}
 			    	    		else{
 			    	    			me.fireEvent("errorToast", HreRem.i18n("msg.error.adquisicion.noactivo"));

@@ -352,9 +352,6 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		
 		if(gasto != null && gasto.getGastoDetalleEconomico() != null) {
 			Double importeTotal = gastoProveedorApi.recalcularImporteTotalGasto(gasto.getGastoDetalleEconomico());
-			if(dto.getId() == null && !Checks.esNulo(dto.getImporteTotal())) {
-				importeTotal = importeTotal+ gastoLineaDetalle.getImporteTotal();
-			}
 			gasto.getGastoDetalleEconomico().setImporteTotal(importeTotal);
 			genericDao.update(GastoDetalleEconomico.class, gasto.getGastoDetalleEconomico());
 		}
@@ -373,11 +370,9 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	public boolean deleteGastoLineaDetalle(Long idLineaDetalleGasto) throws Exception{
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idLineaDetalleGasto);
 		GastoLineaDetalle gastoLineaDetalle = genericDao.get(GastoLineaDetalle.class, filtro);
-		Double importeLinea;
 		if(gastoLineaDetalle == null || gastoLineaDetalle.getGastoProveedor() == null) {
 			return false;
 		}
-		importeLinea = gastoLineaDetalle.getImporteTotal();
 		gastoLineaDetalle.getAuditoria().setBorrado(true);
 		gastoLineaDetalle.getAuditoria().setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
 		gastoLineaDetalle.getAuditoria().setFechaBorrar(new Date());
@@ -411,7 +406,6 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		GastoProveedor gasto = gastoLineaDetalle.getGastoProveedor();
 		if( gasto != null && gasto.getGastoDetalleEconomico() != null) {
 			Double importeTotal = gastoProveedorApi.recalcularImporteTotalGasto(gasto.getGastoDetalleEconomico());
-			importeTotal = importeTotal - importeLinea;
 			gasto.getGastoDetalleEconomico().setImporteTotal(importeTotal);
 			genericDao.update(GastoDetalleEconomico.class, gasto.getGastoDetalleEconomico());
 		}
@@ -1306,8 +1300,6 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 							
 						}
 					}
-					
-					return error;
 				}
 			}else{
 				
@@ -1728,6 +1720,13 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			genericDao.update(GastoLineaDetalleEntidad.class, gastoLineaDetalleActivoList.get(0));
 		}
 		
+		Filter filtroLinea = genericDao.createFilter(FilterType.EQUALS, "id", idLinea);
+		GastoLineaDetalle linea = genericDao.get(GastoLineaDetalle.class, filtroLinea);
+		if(linea != null && linea.getGastoProveedor() != null && linea.getGastoProveedor().getPropietario() != null 
+			&& linea.getGastoProveedor().getPropietario().getCartera() != null && 
+			DDCartera.CODIGO_CARTERA_LIBERBANK.equals(linea.getGastoProveedor().getPropietario().getCartera().getCodigo())) {
+			actualizarDiariosLbk(linea.getGastoProveedor().getId());
+		}
 		return Boolean.TRUE;
 	}
 	

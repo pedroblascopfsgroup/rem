@@ -43,7 +43,7 @@ public class DtoCalidadDatoPublicacionActivo extends WebDto{
 	private String dqVpoFase1;
 	private String correctoVpoFase1;
 	private String drAnyoConstruccionFase1;
-	private Long dqAnyoConstruccionFase1;
+	private String dqAnyoConstruccionFase1;
 	private String correctoAnyoConstruccionFase1;
 	private String drTipologianFase1;
 	private String dqTipologiaFase1;
@@ -90,6 +90,9 @@ public class DtoCalidadDatoPublicacionActivo extends WebDto{
 		this.desplegable2Collapsed = desplegable2Collapsed;
 	}
 
+	
+	private String correctoDatosRegistralesFase1;
+	
 	public String getDrIdufirFase1() {
 		return drIdufirFase1;
 	}
@@ -338,11 +341,11 @@ public class DtoCalidadDatoPublicacionActivo extends WebDto{
 		this.drAnyoConstruccionFase1 = drAnyoConstruccionFase1;
 	}
 
-	public Long getDqAnyoConstruccionFase1() {
+	public String getDqAnyoConstruccionFase1() {
 		return dqAnyoConstruccionFase1;
 	}
 
-	public void setDqAnyoConstruccionFase1(Long dqAnyoConstruccionFase1) {
+	public void setDqAnyoConstruccionFase1(String dqAnyoConstruccionFase1) {
 		this.dqAnyoConstruccionFase1 = dqAnyoConstruccionFase1;
 	}
 
@@ -1023,6 +1026,14 @@ public class DtoCalidadDatoPublicacionActivo extends WebDto{
 
 	public void setCorrectoF3BloqueFase3(String correctoF3BloqueFase3) {
 		this.correctoF3BloqueFase3 = correctoF3BloqueFase3;
+	}
+	
+	public String getCorrectoDatosRegistralesFase1() {
+		return correctoDatosRegistralesFase1;
+	}
+
+	public void setCorrectoDatosRegistralesFase1(String correctoDatosRegistralesFase1) {
+		this.correctoDatosRegistralesFase1 = correctoDatosRegistralesFase1;
 	}
 	
 }

@@ -1093,6 +1093,173 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     		return 'app-tbfiedset-ico icono-tickinterrogante';
 	     	}
 	     	
+	     },getIconClsIdufirCorrecto:function(get){
+	     	//Logica completamente diferente
+	     	var correctoIdufirFase1 = get('calidaddatopublicacionactivo.correctoIdufirFase1');
+	     	
+	     	if("0"==correctoIdufirFase1)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else {
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}
+	     },getIconClsFincaRegistralCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoFincaRegistralFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsTomoCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoTomoFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsLibroCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoLibroFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsFolioCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoFolioFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsUsoDominanteCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoUsoDominanteFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsMunicipioDelRegistroCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoMunicipioDelRegistroFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsProvinciaDelRegistroCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoProvinciaDelRegistroFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsProvinciaNumeroDelRegistroCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoNumeroDelRegistroFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsVPOCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoVpoFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsAnyoConstruccionCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoAnyoConstruccionFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsTipologiaCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoTipologiaFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsSubtipologiaCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoSubtipologiaFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsInformacionCargasCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoInformacionCargasFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsInscripcionCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoInscripcionCorrectaFase1');	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getIconClsPorCienCorrecto:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoPor100PropiedadFase1');		
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     },getCorrectoDatosRegistralesFase0a2:function(get){
+	     	var correcto = get('calidaddatopublicacionactivo.correctoDatosRegistralesFase1');
+	     	
+	     	if("0"==correcto)  {
+	     		return 'app-tbfiedset-ico icono-tickok';
+	     	}else if("1"==correcto){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
 	     }
 	     
 	

@@ -10,7 +10,7 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 	recordClass : "HreRem.model.CalidadDatoPublicacionActivo",
 	requires	:['HreRem.view.common.FieldSetTable', 'HreRem.model.CalidadDatoPublicacionActivo'],
 	listeners : {
-		boxready : 'cargarTabDataCalidadDato',
+		boxready : 'cargarTabDataCalidadDato'
 	},
 
 	initComponent : function() {
@@ -51,15 +51,18 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 			tools: [
 				{
 					xtype: 'button',
-					cls: 'btn-tbfieldset delete-focus-bg no-pointer',
-					bind: {
-						iconCls:'{getIconClsDQCorrecto}'
+								cls: 'no-pointer',
+								style: 'background: transparent; border: none;',
+								reference : 'correctoIdufirFase1',
+								bind: {
+										iconCls:'{getCorrectoDatosRegistralesFase0a2}'	
+							}
 					}
-				}
 			],
 			items : [{
 				xtype : 'fieldsettable',
 				title : HreRem.i18n('publicacion.calidad.datos.datos.registrales'),
+				
 				items : [{
 						xtype : 'fieldsettable',
 						collapsible : false,
@@ -79,18 +82,15 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 									bind : {
 										value : '{calidaddatopublicacionactivo.dqIdufirFase1}'
 									}
-								}/*,{
-				
+								},{
+								xtype: 'button',
 									cls: 'no-pointer',
-									title: HreRem.i18n('publicacion.calidad.datos.correcto'),
+									style: 'background: transparent; border: none;',
 									reference : 'correctoIdufirFase1',
 									bind: {
-										iconCls:'{getIconClsDQCorrecto}',
-										value : '{calidaddatopublicacionactivo.correctoIdufirFase1}'
-									
-									}
-									
-								}*/]
+										iconCls:'{getIconClsIdufirCorrecto}'									
+									}									
+								}]
 						},{
 							xtype : 'fieldsettable',
 							collapsible : false,
@@ -110,15 +110,15 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 									bind : {
 										value : '{calidaddatopublicacionactivo.dqFincaRegistralFase1}'
 									}
-								}/*,{
-				
+								},{
+									xtype: 'button',
 									cls: 'no-pointer',
-									title: HreRem.i18n('publicacion.calidad.datos.correcto'),
+									style: 'background: transparent; border: none;',
+									reference : 'correctoIdufirFase1',
 									bind: {
-										iconCls:'{getIconClsDQCorrecto}',
-										value : '{calidaddatopublicacionactivo.correctoFincaRegistralFase1}'
-									}																								
-								}*/]
+										iconCls:'{getIconClsFincaRegistralCorrecto}'									
+									}									
+								}]
 						
 						},{
 						xtype : 'fieldsettable',
@@ -139,18 +139,15 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 									bind : {
 										value : '{calidaddatopublicacionactivo.dqTomoFase1}'
 									}
-								}/*,{
-				
-									
-									fieldLabel :HreRem.i18n('publicacion.calidad.datos.correcto'),
-									reference : 'correctoTomoFase1',
+								},{
+									xtype: 'button',
+									cls: 'no-pointer',
+									style: 'background: transparent; border: none;',
+									reference : 'correctoIdufirFase1',
 									bind: {
-										iconCls:'{getIconClsDQCorrecto}',
-										value : '{calidaddatopublicacionactivo.correctoTomoFase1}'
-									}	
-								*
-									
-								}*/]
+										iconCls:'{getIconClsTomoCorrecto}'									
+									}									
+								}]
 						
 						},{
 							xtype : 'fieldsettable',
@@ -171,18 +168,15 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 									bind : {
 										value : '{calidaddatopublicacionactivo.dqLibroFase1}'
 									}
-								}/*,{
-				
-									
-									fieldLabel :HreRem.i18n('publicacion.calidad.datos.correcto'),
-									reference : 'correctoLibroFase1',
+								},{
+									xtype: 'button',
+									cls: 'no-pointer',
+									style: 'background: transparent; border: none;',
+									reference : 'correctoIdufirFase1',
 									bind: {
-										iconCls:'{getIconClsDQCorrecto}',
-										value : '{calidaddatopublicacionactivo.correctoLibroFase1}'
-									}	
-								
-									
-								}*/]
+										iconCls:'{getIconClsLibroCorrecto}'									
+									}									
+								}]
 						
 						},{
 							xtype : 'fieldsettable',
@@ -203,14 +197,15 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 									bind : {
 										value : '{calidaddatopublicacionactivo.dqFolioFase1}'
 									}
-								}/*,{
-				
-									xtype : 'numberfield',
-									fieldLabel :HreRem.i18n('publicacion.calidad.datos.correcto'),
-									reference : 'correctoFolioFase1'
-								
-									
-								}*/]
+								},{
+									xtype: 'button',
+									cls: 'no-pointer',
+									style: 'background: transparent; border: none;',
+									reference : 'correctoIdufirFase1',
+									bind: {
+										iconCls:'{getIconClsFolioCorrecto}'									
+									}									
+								}]
 						
 						},{
 							xtype : 'fieldsettable',
@@ -231,14 +226,15 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 									bind : {
 										value : '{calidaddatopublicacionactivo.dqUsoDominanteFase1}'
 									}
-								}/*,{
-				
-									xtype : 'numberfield',
-									fieldLabel :HreRem.i18n('publicacion.calidad.datos.correcto'),
-									reference : 'correctoUsoDominanteFase1'
-								
-									
-								}*/]
+								},{
+									xtype: 'button',
+									cls: 'no-pointer',
+									style: 'background: transparent; border: none;',
+									reference : 'correctoIdufirFase1',
+									bind: {
+										iconCls:'{getIconClsUsoDominanteCorrecto}'									
+									}									
+								}]
 						
 						}
 						,{
@@ -265,14 +261,15 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 									bind : {
 										value : '{calidaddatopublicacionactivo.dqMunicipioDelRegistroFase1}'
 									}
-								}/*,{
-				
-									xtype : 'numberfield',
-									fieldLabel :HreRem.i18n('publicacion.calidad.datos.correcto'),
-									reference : 'correctoMunicipioDelRegistroFase1'
-								
-									
-								}*/]
+								},{
+									xtype: 'button',
+									cls: 'no-pointer',
+									style: 'background: transparent; border: none;',
+									reference : 'correctoIdufirFase1',
+									bind: {
+										iconCls:'{getIconClsMunicipioDelRegistroCorrecto}'									
+									}									
+								}]
 									
 									
 								},{
@@ -294,13 +291,15 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 									bind : {
 										value : '{calidaddatopublicacionactivo.dqProvinciaDelRegistroFase1}'
 									}
-								}/*,{
-				
-									xtype : 'numberfield',
-									fieldLabel :HreRem.i18n('publicacion.calidad.datos.correcto'),
-									reference : 'correctoProvinciaDelRegistroFase1'
-
-								}*/]
+								},{
+									xtype: 'button',
+									cls: 'no-pointer',
+									style: 'background: transparent; border: none;',
+									reference : 'correctoIdufirFase1',
+									bind: {
+										iconCls:'{getIconClsProvinciaDelRegistroCorrecto}'									
+									}									
+								}]
 									
 									
 								},{
@@ -322,13 +321,15 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 									bind : {
 										value : '{calidaddatopublicacionactivo.dqNumeroDelRegistroFase1}'
 									}
-								}/*,{
-				
-									xtype : 'numberfield',
-									fieldLabel :HreRem.i18n('publicacion.calidad.datos.correcto'),
-									reference : 'correctoNumeroDelRegistroFase1'
-								
-								}*/]
+								},{
+									xtype: 'button',
+									cls: 'no-pointer',
+									style: 'background: transparent; border: none;',
+									reference : 'correctoIdufirFase1',
+									bind: {
+										iconCls:'{getIconClsProvinciaNumeroDelRegistroCorrecto}'									
+									}									
+								}]
 
 								}
 								]
@@ -353,14 +354,15 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 									bind : {
 										value : '{calidaddatopublicacionactivo.dqVpoFase1}'
 									}
-								}/*,{
-				
-									xtype : 'numberfield',
-									fieldLabel :HreRem.i18n('publicacion.calidad.datos.correcto'),
-									reference : 'correctoVpoFase1'
-								
-									
-								}*/]
+								},{
+									xtype: 'button',
+									cls: 'no-pointer',
+									style: 'background: transparent; border: none;',
+									reference : 'correctoIdufirFase1',
+									bind: {
+										iconCls:'{getIconClsVPOCorrecto}'									
+									}									
+								}]
 						
 						},{
 							xtype : 'fieldsettable',
@@ -381,14 +383,15 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 									bind : {
 										value : '{calidaddatopublicacionactivo.dqAnyoConstruccionFase1}'
 									}
-								}/*,{
-				
-									xtype : 'numberfield',
-									fieldLabel :HreRem.i18n('publicacion.calidad.datos.correcto'),
-									reference : 'correctoAnyoConstruccionFase1'
-								
-									
-								}*/]
+								},{
+									xtype: 'button',
+									cls: 'no-pointer',
+									style: 'background: transparent; border: none;',
+									reference : 'correctoIdufirFase1',
+									bind: {
+										iconCls:'{getIconClsAnyoConstruccionCorrecto}'									
+									}									
+								}]
 						
 						},{
 							xtype : 'fieldsettable',
@@ -409,14 +412,15 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 									bind : {
 										value : '{calidaddatopublicacionactivo.dqTipologiaFase1}'
 									}
-								}/*,{
-				
-									xtype : 'numberfield',
-									fieldLabel :HreRem.i18n('publicacion.calidad.datos.correcto'),
-									reference : 'correctoTipologianFase1'
-								
-									
-								}*/]
+								},{
+									xtype: 'button',
+									cls: 'no-pointer',
+									style: 'background: transparent; border: none;',
+									reference : 'correctoIdufirFase1',
+									bind: {
+										iconCls:'{getIconClsTipologiaCorrecto}'									
+									}									
+								}]
 						
 						},{
 							xtype : 'fieldsettable',
@@ -437,14 +441,15 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 									bind : {
 										value : '{calidaddatopublicacionactivo.dqSubtipologiaFase1}'
 									}
-								}/*,{
-				
-									xtype : 'numberfield',
-									fieldLabel :HreRem.i18n('publicacion.calidad.datos.correcto'),
-									reference : 'correctoSubtipologianFase1'
-								
-									
-								}*/]
+								},{
+									xtype: 'button',
+									cls: 'no-pointer',
+									style: 'background: transparent; border: none;',
+									reference : 'correctoIdufirFase1',
+									bind: {
+										iconCls:'{getIconClsSubtipologiaCorrecto}'									
+									}									
+								}]
 						
 						},{
 							xtype : 'fieldsettable',
@@ -465,14 +470,18 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 									bind : {
 										value : '{calidaddatopublicacionactivo.dqInformacionCargasFase1}'
 									}
-								},/*,{
+								},{
 				
-									xtype : 'numberfield',
-									fieldLabel :HreRem.i18n('publicacion.calidad.datos.correcto'),
-									reference : 'correctoInformacionCargasFase1'
+									xtype: 'button',
+									cls: 'no-pointer',
+									style: 'background: transparent; border: none;',
+									reference : 'correctoIdufirFase1',
+									bind: {
+										iconCls:'{getIconClsInformacionCargasCorrecto}'									
+									}
 								
 									
-								},*/{
+								},{
 				
 									xtype : 'textfieldbase',
 									fieldLabel :HreRem.i18n('publicacion.calidad.datos.descripcion.cargas'),
@@ -504,14 +513,15 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 										bind : {
 										value : '{calidaddatopublicacionactivo.dqInscripcionCorrectaFase1}'
 									}
-								}/*,{
-				
-									xtype : 'numberfield',
-									fieldLabel :HreRem.i18n('publicacion.calidad.datos.correcto'),
-									reference : 'correctoInscripcionCorrectaFase1'
-								
-									
-								}*/]
+								},{
+									xtype: 'button',
+									cls: 'no-pointer',
+									style: 'background: transparent; border: none;',
+									reference : 'correctoInscripcionCorrectaFase1',
+									bind: {
+										iconCls:'{getIconClsInscripcionCorrecto}'									
+									}									
+								}]
 						
 						},{
 							xtype : 'fieldsettable',
@@ -532,14 +542,15 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 									bind : {
 										value : '{calidaddatopublicacionactivo.dqPor100PropiedadFase1}'
 									}
-								}/*,{
-				
-									xtype : 'numberfield',
-									fieldLabel :HreRem.i18n('publicacion.calidad.datos.correcto'),
-									reference : 'correctoPor100PropiedadFase1'
-								
-									
-								}*/]
+								},{
+									xtype: 'button',
+									cls: 'no-pointer',
+									style: 'background: transparent; border: none;',
+									reference : 'correctoPor100PropiedadFase1',
+									bind: {
+										iconCls:'{getIconClsPorCienCorrecto}'									
+									}									
+								}]
 						
 						}
 						

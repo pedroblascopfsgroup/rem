@@ -111,7 +111,7 @@ public class ActivoDatosDq implements Serializable, Auditable {
    	private String referenciaCatastralDdq;
     
     @Column(name = "DDQ_PORC_PROPIEDAD")
-   	private Long propiedadDdq;
+   	private Float propiedadDdq;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TVI_ID")
@@ -364,11 +364,11 @@ public class ActivoDatosDq implements Serializable, Auditable {
 		this.referenciaCatastralDdq = referenciaCatastralDdq;
 	}
 
-	public Long getPropiedadDdq() {
+	public Float getPropiedadDdq() {
 		return propiedadDdq;
 	}
 
-	public void setPropiedadDdq(Long propiedadDdq) {
+	public void setPropiedadDdq(Float propiedadDdq) {
 		this.propiedadDdq = propiedadDdq;
 	}
 

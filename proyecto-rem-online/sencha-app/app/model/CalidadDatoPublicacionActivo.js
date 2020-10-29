@@ -45,6 +45,8 @@ Ext.define('HreRem.model.CalidadDatoPublicacionActivo', {
 		},{
 			name: 'dqIdufirFase1'
 		},{
+			name: 'correctoDatosRegistralesFase1'
+		},{
 			name: 'correctoIdufirFase1'
 		},{
 			name: 'drFincaRegistralFase1'

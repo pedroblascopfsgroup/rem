@@ -1687,16 +1687,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setDqMunicipioDelRegistroFase1(actDatosDq.getLocalidadReg().getDescripcion());
 		}
 		if(activo.getLocalidad() !=null ) {
-			dto.setDrMunicipioDelRegistroFase1(activo.getLocalidad().getDescripcionLarga());
+			dto.setDrMunicipioDelRegistroFase1(activo.getLocalidad().getDescripcion());
 		}
 		
 		//Provincia del registro
 		if(actDatosDq.getProvincia() !=null ) {
 			dto.setDqProvinciaDelRegistroFase1(actDatosDq.getProvincia().getDescripcion());
 		}
-		if(activo.getProvincia()!=null) {
-			dto.setDrProvinciaDelRegistroFase1(activo.getProvincia());
-		}
+				
 		if(actDatosDq.getVpo()!=null) {
 			if(actDatosDq.getVpo().booleanValue()) {
 				dto.setDqVpoFase1(SI);
@@ -1714,7 +1712,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}
 		
 		if(actDatosDq.getAnyoConstruccion()!=null) {
-			dto.setDqAnyoConstruccionFase1(actDatosDq.getAnyoConstruccion());
+			dto.setDqAnyoConstruccionFase1(actDatosDq.getAnyoConstruccion().toString());
 		}	
 		
 		if(activo.getInfoComercial() !=null ) {
@@ -1776,7 +1774,206 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			}
 		}
 		
+		//Comprobaciones Correcto
+		boolean interrogante=false;
+		boolean ko = false;
+		//IDUFIR
+		if(dto.getDqIdufirFase1()==null) {
+			dto.setCorrectoIdufirFase1(ICONO_TICK_OK);
+		}else {
+			dto.setCorrectoIdufirFase1(ICONO_TICK_KO);
+			ko=true;
+		}
+		//FINCA REGISTRAL
+		if(dto.getDqFincaRegistralFase1()==null) {
+			dto.setCorrectoFincaRegistralFase1(ICONO_TICK_INTERROGANTE);
+			interrogante=true;
+		}else if(dto.getDrFincaRegistralFase1()!=null
+				&& (dto.getDrFincaRegistralFase1().equals(dto.getDqFincaRegistralFase1()))) {
+			dto.setCorrectoFincaRegistralFase1(ICONO_TICK_OK);
+		}else {
+			dto.setCorrectoFincaRegistralFase1(ICONO_TICK_KO);
+			ko=true;
+		}
+		//TOMO
+		if(dto.getDqTomoFase1()==null) {
+			dto.setCorrectoTomoFase1(ICONO_TICK_INTERROGANTE);
+			interrogante=true;
+		}else if(dto.getDrFincaRegistralFase1()!=null
+				&& (dto.getDrTomoFase1().equals(dto.getDqTomoFase1()))) {
+			dto.setCorrectoTomoFase1(ICONO_TICK_OK);
+		}else {
+			dto.setCorrectoTomoFase1(ICONO_TICK_KO);
+			ko=true;
+		}
+		//LIBRO
+		if(dto.getDqLibroFase1()==null) {
+			dto.setCorrectoLibroFase1(ICONO_TICK_INTERROGANTE);
+			interrogante = true;
+		}else if(dto.getDrLibroFase1()!=null
+				&& (dto.getDrLibroFase1().equals(dto.getDqLibroFase1()))) {
+			dto.setCorrectoLibroFase1(ICONO_TICK_OK);
+		}else {
+			dto.setCorrectoLibroFase1(ICONO_TICK_KO);
+			ko=true;
+		}
 		
+		//FOLIO
+		if(dto.getDqFolioFase1()==null) {
+			dto.setCorrectoFolioFase1(ICONO_TICK_INTERROGANTE);
+			interrogante= true;
+		}else if(dto.getDrFolioFase1()!=null
+				&& (dto.getDrFolioFase1().equals(dto.getDqFolioFase1()))) {
+			dto.setCorrectoFolioFase1(ICONO_TICK_OK);
+		}else {
+			dto.setCorrectoFolioFase1(ICONO_TICK_KO);
+			ko=true;
+		}
+		
+		
+		//USO DOMINANTE
+		if(dto.getDqUsoDominanteFase1()==null) {
+			dto.setCorrectoUsoDominanteFase1(ICONO_TICK_INTERROGANTE);
+			interrogante=true;
+		}else if(dto.getDrUsoDominanteFase1()!=null
+				&& (dto.getDrUsoDominanteFase1().equals(dto.getDqUsoDominanteFase1()))) {
+			dto.setCorrectoUsoDominanteFase1(ICONO_TICK_OK);
+		}else {
+			dto.setCorrectoUsoDominanteFase1(ICONO_TICK_KO);
+			ko=true;
+		}
+		
+		//MUNICIPIO DEL REGISTRO
+		if(dto.getDqMunicipioDelRegistroFase1()==null) {
+			dto.setCorrectoUsoDominanteFase1(ICONO_TICK_INTERROGANTE);
+			interrogante = true;
+		}else if(dto.getDrMunicipioDelRegistroFase1()!=null
+				&& (dto.getDrMunicipioDelRegistroFase1().equals(dto.getDqMunicipioDelRegistroFase1()))) {
+			dto.setCorrectoMunicipioDelRegistroFase1(ICONO_TICK_OK);
+		}else {
+			dto.setCorrectoMunicipioDelRegistroFase1(ICONO_TICK_KO);
+			ko=true;
+		}
+		
+		//PROVINCIA DEL REGISTRO
+		if(dto.getDqProvinciaDelRegistroFase1()==null) {
+			dto.setCorrectoProvinciaDelRegistroFase1(ICONO_TICK_INTERROGANTE);
+			interrogante=true;
+		}else if(dto.getDrProvinciaDelRegistroFase1()!=null
+				&& (dto.getDrProvinciaDelRegistroFase1().equals(dto.getDqProvinciaDelRegistroFase1()))) {
+			dto.setCorrectoProvinciaDelRegistroFase1(ICONO_TICK_OK);
+		}else {
+			dto.setCorrectoProvinciaDelRegistroFase1(ICONO_TICK_KO);
+			ko = true;
+		}
+		
+		//NUMERO DE REGISTRO
+		if(dto.getDqNumeroDelRegistroFase1()==null) {
+			dto.setCorrectoNumeroDelRegistroFase1(ICONO_TICK_INTERROGANTE);
+			interrogante= true;
+		}else if(dto.getDrNumeroDelRegistroFase1()!=null 
+				&& (dto.getDrNumeroDelRegistroFase1().equals(dto.getDqNumeroDelRegistroFase1()))) {
+			dto.setCorrectoNumeroDelRegistroFase1(ICONO_TICK_OK);
+		}else {
+			dto.setCorrectoNumeroDelRegistroFase1(ICONO_TICK_KO);
+			ko=true;
+		}
+		
+		
+		//VPO
+		if(dto.getDqVpoFase1()==null) {
+			interrogante= true;
+			dto.setCorrectoVpoFase1(ICONO_TICK_INTERROGANTE);
+		}else if(dto.getDrVpoFase1()!=null 
+				&& (dto.getDrVpoFase1().equals(dto.getDqVpoFase1()))) {
+			dto.setCorrectoVpoFase1(ICONO_TICK_OK);
+		}else {
+			dto.setCorrectoVpoFase1(ICONO_TICK_KO);
+			ko=true;
+		}
+					
+		//ANYO CONSTRUCCION
+		
+		if(dto.getDqAnyoConstruccionFase1()==null) {
+			interrogante=true;
+			dto.setCorrectoAnyoConstruccionFase1(ICONO_TICK_INTERROGANTE);
+		}else if(dto.getDrAnyoConstruccionFase1()!=null && 
+				(dto.getDrAnyoConstruccionFase1().equals(dto.getDqAnyoConstruccionFase1()))) {
+			dto.setCorrectoAnyoConstruccionFase1(ICONO_TICK_OK);
+		}else {
+			dto.setCorrectoAnyoConstruccionFase1(ICONO_TICK_KO);
+			ko=true;
+		}
+				
+		//TIPOLOGIA
+		
+		if(dto.getDqTipologiaFase1()==null) {
+			interrogante=true;
+			dto.setCorrectoTipologiaFase1(ICONO_TICK_INTERROGANTE);
+		}else if(dto.getDrTipologianFase1()!=null 
+				&& (dto.getDrTipologianFase1().equals(dto.getDqTipologiaFase1()))) {
+			dto.setCorrectoTipologiaFase1(ICONO_TICK_OK);
+		}else {
+			dto.setCorrectoTipologiaFase1(ICONO_TICK_KO);
+			ko=true;
+		}
+				
+		//SUBTIPOLOGIA
+		if(dto.getDqTipologiaFase1()==null) {
+			dto.setCorrectoSubtipologiaFase1(ICONO_TICK_INTERROGANTE);
+			interrogante=true;
+		}else if(dto.getDrSubtipologianFase1()!=null 
+				&& (dto.getDrSubtipologianFase1().equals(dto.getDqSubtipologiaFase1()))) {
+			dto.setCorrectoSubtipologiaFase1(ICONO_TICK_OK);
+		}else {
+			dto.setCorrectoSubtipologiaFase1(ICONO_TICK_KO);
+			ko=true;
+		}
+				
+		//INFORMACION CARGAS
+		if(dto.getDqInformacionCargasFase1()==null) {
+			dto.setCorrectoInformacionCargasFase1(ICONO_TICK_INTERROGANTE);
+			interrogante=true;
+		}else if(dto.getDrInformacionCargasFase1()!=null && (dto.getDrInformacionCargasFase1().equals(dto.getDqInformacionCargasFase1()))) {
+			dto.setCorrectoInformacionCargasFase1(ICONO_TICK_OK);
+		}else {
+			dto.setCorrectoInformacionCargasFase1(ICONO_TICK_KO);
+			ko=true;
+		}
+				
+		//INSCRIPCION CORRECTA
+		if(dto.getDqInscripcionCorrectaFase1()==null) {
+			dto.setCorrectoInscripcionCorrectaFase1(ICONO_TICK_INTERROGANTE);
+			interrogante=true;
+		}else if(dto.getDrInscripcionCorrectaFase1()!=null &&
+				(dto.getDrInscripcionCorrectaFase1().equals(dto.getDqInscripcionCorrectaFase1()))) {
+			dto.setCorrectoInscripcionCorrectaFase1(ICONO_TICK_OK);
+		}else {
+			dto.setCorrectoInscripcionCorrectaFase1(ICONO_TICK_KO);
+			ko=true;
+		}
+		
+		//% PROPIEDAD
+		
+		if(dto.getDqPor100PropiedadFase1()==null) {
+			dto.setCorrectoPor100PropiedadFase1(ICONO_TICK_INTERROGANTE);
+			interrogante=true;
+		}else if(dto.getDrPor100PropiedadFase1()!=null && 
+				(dto.getDrPor100PropiedadFase1().equals(dto.getDqPor100PropiedadFase1()))) {
+			dto.setCorrectoPor100PropiedadFase1(ICONO_TICK_OK);
+		}else {
+			dto.setCorrectoPor100PropiedadFase1(ICONO_TICK_KO);
+			ko =true;
+		}
+		
+		if(ko) {
+			dto.setCorrectoDatosRegistralesFase1(ICONO_TICK_KO);
+		}else if(interrogante) {
+			dto.setCorrectoDatosRegistralesFase1(ICONO_TICK_INTERROGANTE);
+		}else {
+			dto.setCorrectoDatosRegistralesFase1(ICONO_TICK_OK);
+		}
+				
 		return dto;
 	}
 

@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20200922
+--## FECHA_CREACION=20200929
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11250
@@ -34,6 +34,7 @@ COD_RETORNO VARCHAR2(4000 CHAR);
 RESULTADO VARCHAR2(4000 CHAR);
 V_FECHA VARCHAR2(19 CHAR);
 ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+V_NUM_GASTO NUMBER(16);
 
 BEGIN
 
@@ -44,9 +45,9 @@ BEGIN
     V_SQL := 'SELECT COUNT(1)
         FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR
         WHERE GPV_ID = '||GPV_ID;
-    EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_GASTO;
 
-    IF V_COUNT = 0 THEN
+    IF V_NUM_GASTO IS NULL THEN
 
         RESULTADO := 'KO';
         COD_RETORNO := 'No existe el gasto. (Información actualizada el '||V_FECHA||')';
@@ -86,7 +87,7 @@ BEGIN
             EXECUTE IMMEDIATE V_SQL;
 
             RESULTADO := 'KO';
-            COD_RETORNO := 'El gasto no tiene distribución por activos/genéricos o han sido eliminados. (Información actualizada el '||V_FECHA||')';
+            COD_RETORNO := 'El gasto '||V_NUM_GASTO||' no tiene distribución por activos/genéricos o han sido eliminados. (Información actualizada el '||V_FECHA||')';
 
         ELSE
 
@@ -106,7 +107,7 @@ BEGIN
             IF V_COUNT = 0 THEN
 
                 RESULTADO := 'KO';
-                COD_RETORNO := 'Sin información de tipos de diario para los activos/genéricos del gasto. (Información actualizada el '||V_FECHA||')';
+                COD_RETORNO := 'Sin información de tipos de diario para los activos/genéricos del gasto '||V_NUM_GASTO||'. (Información actualizada el '||V_FECHA||')';
 
             ELSE
 
@@ -219,19 +220,19 @@ BEGIN
                     IF V_COUNT_IMPORTES > 0 THEN
 
                         RESULTADO := 'OK';
-                        COD_RETORNO := 'La información de diarios ('||V_COUNT_DIARIOS||') y repartos ('||V_COUNT_IMPORTES||') del gasto '||GPV_ID||', se ha fusionado. (Información actualizada el '||V_FECHA||')';
+                        COD_RETORNO := 'La información de diarios ('||V_COUNT_DIARIOS||') y repartos ('||V_COUNT_IMPORTES||') del gasto '||V_NUM_GASTO||', se ha fusionado. (Información actualizada el '||V_FECHA||')';
 
                     ELSE
 
                         RESULTADO := 'KO';
-                        COD_RETORNO := 'Se ha fusionado la información de diarios ('||V_COUNT_DIARIOS||') del gasto '||GPV_ID||', pero no ha podido fusionarse la de repartos ('||V_COUNT_IMPORTES||'). (Información actualizada el '||V_FECHA||')';
+                        COD_RETORNO := 'Se ha fusionado la información de diarios ('||V_COUNT_DIARIOS||') del gasto '||V_NUM_GASTO||', pero no ha podido fusionarse la de repartos ('||V_COUNT_IMPORTES||'). (Información actualizada el '||V_FECHA||')';
 
                     END IF;
 
                 ELSE
 
                     RESULTADO := 'KO';
-                    COD_RETORNO := 'No ha sido posible fusionar la información de los diarios del gasto '||GPV_ID||'. (Información actualizada el '||V_FECHA||')';
+                    COD_RETORNO := 'No ha sido posible fusionar la información de los diarios del gasto '||V_NUM_GASTO||'. (Información actualizada el '||V_FECHA||')';
 
                 END IF;
 

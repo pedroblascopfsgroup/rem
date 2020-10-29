@@ -1313,9 +1313,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     	
 	     },
 	     
-	     
-	     
-	     
+	       getIconClsDQBloqueFase4: function(get) {
+	     	var correctoF4BloqueFase4 = get('calidaddatopublicacionactivo.correctoF4BloqueFase4');
+	     	
+	     	if("0" == correctoF4BloqueFase4){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF4BloqueFase4){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },
+
 	     disableBtnDescF1: function(get){
 	     	var disableF1escripcion = get('calidaddatopublicacionactivo.disableDescripcion');
 	     	

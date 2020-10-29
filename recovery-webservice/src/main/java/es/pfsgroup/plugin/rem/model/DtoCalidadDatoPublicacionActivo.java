@@ -609,6 +609,8 @@ public class DtoCalidadDatoPublicacionActivo extends WebDto{
 	
 	private String correctoCEE;
 	
+	private String correctoF4BloqueFase4;
+	
 	public String getNumFotos() {
 		return numFotos;
 	}
@@ -1084,6 +1086,14 @@ public class DtoCalidadDatoPublicacionActivo extends WebDto{
 
 	public void setCorrectoCEE(String correctoCEE) {
 		this.correctoCEE = correctoCEE;
+	}
+
+	public String getCorrectoF4BloqueFase4() {
+		return correctoF4BloqueFase4;
+	}
+
+	public void setCorrectoF4BloqueFase4(String correctoF4BloqueFase4) {
+		this.correctoF4BloqueFase4 = correctoF4BloqueFase4;
 	}
 	
 }

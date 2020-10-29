@@ -884,7 +884,7 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 					cls: 'no-pointer',
 					style: 'background: transparent; border: none;',
 					bind: {
-						iconCls:'{getIconClsDQCP}'
+						iconCls:'{getIconClsDQBloqueFase4}'
 					}
 				}
 			],

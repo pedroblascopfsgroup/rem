@@ -2103,6 +2103,16 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setCorrectoCEE(ICONO_TICK_KO);
 			cruzroja = true;
 		}
+		
+		if(cruzroja) {
+			dto.setCorrectoF4BloqueFase4(ICONO_TICK_KO);
+		}else if(interrogante) {
+			dto.setCorrectoF4BloqueFase4(ICONO_TICK_INTERROGANTE);
+		}else {
+			dto.setCorrectoF4BloqueFase4(ICONO_TICK_OK);
+		}
+		
+		
 	}
 
 	private void setDataFase3(DtoCalidadDatoPublicacionActivo dto, Activo activo, ActivoDatosDq actDatosDq) {
@@ -2133,14 +2143,24 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		dto.setDqF3AnyoConstruccion(actDatosDq.getAnyoConstruccion());
 		
 		if(activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien() != null) {
-			dto.setDrF3TipoVia(activo.getLocalizacion().getLocalizacionBien().getTipoVia().getDescripcion());
+			if(activo.getLocalizacion().getLocalizacionBien().getTipoVia() != null) {
+				dto.setDrF3TipoVia(activo.getLocalizacion().getLocalizacionBien().getTipoVia().getDescripcion());	
+			}
+			
 			dto.setDrF3NomCalle(activo.getLocalizacion().getLocalizacionBien().getNombreVia());
 			dto.setDrF3CP(activo.getLocalizacion().getLocalizacionBien().getCodPostal());
-			dto.setDrF3Municipio(activo.getLocalizacion().getLocalizacionBien().getLocalidad().getDescripcion());
-			dto.setDrF3Provincia(activo.getLocalizacion().getLocalizacionBien().getProvincia().getDescripcion());
+			if(activo.getLocalizacion().getLocalizacionBien().getLocalidad() != null) {
+				dto.setDrF3Municipio(activo.getLocalizacion().getLocalizacionBien().getLocalidad().getDescripcion());	
+			}
+			if(activo.getLocalizacion().getLocalizacionBien().getProvincia() != null) {
+				dto.setDrF3Provincia(activo.getLocalizacion().getLocalizacionBien().getProvincia().getDescripcion());	
+			}
+			
+		}
+		if(actDatosDq.getTipoVia() != null) {
+			dto.setDqF3TipoVia(actDatosDq.getTipoVia().getDescripcion());
 		}
 		
-		dto.setDqF3TipoVia(actDatosDq.getTipoVia().getDescripcion());
 		dto.setDqF3NomCalle(actDatosDq.getNombreViaDdq());
 
 		if(actDatosDq.getCalleCorrectaProb() == null) {

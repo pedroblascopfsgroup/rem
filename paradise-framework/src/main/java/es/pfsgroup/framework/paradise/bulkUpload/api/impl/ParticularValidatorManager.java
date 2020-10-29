@@ -2337,9 +2337,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	@Override
 	public Boolean subcarteraPerteneceCartera(String subcartera, String cartera){
 		if(!Checks.esNulo(cartera) && !Checks.esNulo(subcartera)){
-			String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM DD_SCR_SUBCARTERA SCR "
-					+ "JOIN DD_CRA_CARTERA CRA ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.DD_CRA_CODIGO = '"+cartera+"' "
-					+ "WHERE DD_SCR_CODIGO = '"+subcartera+"'");
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM REM01.DD_SCR_SUBCARTERA SCR "
+					+ "JOIN REM01.DD_CRA_CARTERA CRA ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND CRA.DD_CRA_CODIGO = "+cartera+" "
+					+ "WHERE DD_SCR_CODIGO = "+subcartera+"");
 
 			return (Integer.valueOf(resultado) > 0);
 		}
@@ -2356,9 +2356,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			if(!StringUtils.isNumeric(tipoTitulo) || !StringUtils.isNumeric(subtipo)) {
 				return false;
 			} else {
-				resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM DD_STA_SUBTIPO_TITULO_ACTIVO STA "
-					+ "JOIN DD_TTA_TIPO_TITULO_ACTIVO TTA ON STA.DD_TTA_ID = TTA.DD_TTA_ID AND TTA.DD_TTA_CODIGO = '"+tipoTitulo+"' "
-					+ "WHERE STA.DD_STA_CODIGO = '"+subtipo+"'");
+				resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM REM01.DD_STA_SUBTIPO_TITULO_ACTIVO STA "
+					+ "JOIN REM01.DD_TTA_TIPO_TITULO_ACTIVO TTA ON STA.DD_TTA_ID = TTA.DD_TTA_ID AND TTA.DD_TTA_CODIGO = "+tipoTitulo+" "
+					+ "WHERE STA.DD_STA_CODIGO = "+subtipo+"");
 			}
 
 			return (Integer.valueOf(resultado) > 0);

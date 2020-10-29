@@ -484,65 +484,61 @@ public class DtoCalidadDatoPublicacionActivo extends WebDto{
 
 		private String drF3ReferenciaCatastral;
 	
-	
 		private String dqF3ReferenciaCatastral;
-	
 	
 		private String correctoF3ReferenciaCatastral;
 	
-	
 		private BigDecimal drF3SuperficieConstruida;
 	
-	
-		private Long dqF3SuperficieConstruida;
-	
+		private BigDecimal dqF3SuperficieConstruida;
 	
 		private String correctoF3SuperficieConstruida;
 	
+		private BigDecimal drF3SuperficieUtil;
 	
-		private Float drF3SuperficieUtil;
+		private BigDecimal dqF3SuperficieUtil;
+		
+		private String correctoF3SuperficieUtil;
 	
-	
-		private Long dqF3SuperficieUtil;
-	
-	
-		private Integer drF3AnyoConstruccion;
-	
+		private Long drF3AnyoConstruccion;
 	
 		private Long dqF3AnyoConstruccion;
 	
+		private String correctoF3AnyoConstruccion;
 	
 		private String drF3TipoVia;
 	
-	
 		private String dqF3TipoVia;
 	
+		private String correctoF3TipoVia;
 	
 		private String drF3NomCalle;
 	
-	
 		private String dqF3NomCalle;
 	
+		private String correctoF3NomCalle;
 	
-		private Long probabilidadCalleCorrecta;
-	
+		private String probabilidadCalleCorrecta;
 	
 		private String drF3CP;
 	
-	
 		private String dqF3CP;
 	
-	
+		private String correctoF3CP;
+		
 		private String drF3Municipio;
 	
-	
 		private String dqF3Municipio;
-	
+
+		private String correctoF3Municipio;
 	
 		private String drF3Provincia;
 	
-	
 		private String dqF3Provincia;
+		
+		private String correctoF3Provincia;
+		
+		private String correctoF3BloqueFase3;
 	
 	//Fotos
 	
@@ -829,11 +825,11 @@ public class DtoCalidadDatoPublicacionActivo extends WebDto{
 		this.drF3SuperficieConstruida = drF3SuperficieConstruida;
 	}
 
-	public Long getDqF3SuperficieConstruida() {
+	public BigDecimal getDqF3SuperficieConstruida() {
 		return dqF3SuperficieConstruida;
 	}
 
-	public void setDqF3SuperficieConstruida(Long dqF3SuperficieConstruida) {
+	public void setDqF3SuperficieConstruida(BigDecimal dqF3SuperficieConstruida) {
 		this.dqF3SuperficieConstruida = dqF3SuperficieConstruida;
 	}
 
@@ -845,27 +841,27 @@ public class DtoCalidadDatoPublicacionActivo extends WebDto{
 		this.correctoF3SuperficieConstruida = correctoF3SuperficieConstruida;
 	}
 
-	public Float getDrF3SuperficieUtil() {
+	public BigDecimal getDrF3SuperficieUtil() {
 		return drF3SuperficieUtil;
 	}
 
-	public void setDrF3SuperficieUtil(Float drF3SuperficieUtil) {
+	public void setDrF3SuperficieUtil(BigDecimal drF3SuperficieUtil) {
 		this.drF3SuperficieUtil = drF3SuperficieUtil;
 	}
 
-	public Long getDqF3SuperficieUtil() {
+	public BigDecimal getDqF3SuperficieUtil() {
 		return dqF3SuperficieUtil;
 	}
 
-	public void setDqF3SuperficieUtil(Long dqF3SuperficieUtil) {
+	public void setDqF3SuperficieUtil(BigDecimal dqF3SuperficieUtil) {
 		this.dqF3SuperficieUtil = dqF3SuperficieUtil;
 	}
 
-	public Integer getDrF3AnyoConstruccion() {
+	public Long getDrF3AnyoConstruccion() {
 		return drF3AnyoConstruccion;
 	}
 
-	public void setDrF3AnyoConstruccion(Integer drF3AnyoConstruccion) {
+	public void setDrF3AnyoConstruccion(Long drF3AnyoConstruccion) {
 		this.drF3AnyoConstruccion = drF3AnyoConstruccion;
 	}
 
@@ -909,11 +905,11 @@ public class DtoCalidadDatoPublicacionActivo extends WebDto{
 		this.dqF3NomCalle = dqF3NomCalle;
 	}
 
-	public Long getProbabilidadCalleCorrecta() {
+	public String getProbabilidadCalleCorrecta() {
 		return probabilidadCalleCorrecta;
 	}
 
-	public void setProbabilidadCalleCorrecta(Long probabilidadCalleCorrecta) {
+	public void setProbabilidadCalleCorrecta(String probabilidadCalleCorrecta) {
 		this.probabilidadCalleCorrecta = probabilidadCalleCorrecta;
 	}
 
@@ -963,6 +959,70 @@ public class DtoCalidadDatoPublicacionActivo extends WebDto{
 
 	public void setDqF3Provincia(String dqF3Provincia) {
 		this.dqF3Provincia = dqF3Provincia;
+	}
+
+	public String getCorrectoF3SuperficieUtil() {
+		return correctoF3SuperficieUtil;
+	}
+
+	public void setCorrectoF3SuperficieUtil(String correctoF3SuperficieUtil) {
+		this.correctoF3SuperficieUtil = correctoF3SuperficieUtil;
+	}
+
+	public String getCorrectoF3AnyoConstruccion() {
+		return correctoF3AnyoConstruccion;
+	}
+
+	public void setCorrectoF3AnyoConstruccion(String correctoF3AnyoConstruccion) {
+		this.correctoF3AnyoConstruccion = correctoF3AnyoConstruccion;
+	}
+
+	public String getCorrectoF3TipoVia() {
+		return correctoF3TipoVia;
+	}
+
+	public void setCorrectoF3TipoVia(String correctoF3TipoVia) {
+		this.correctoF3TipoVia = correctoF3TipoVia;
+	}
+
+	public String getCorrectoF3NomCalle() {
+		return correctoF3NomCalle;
+	}
+
+	public void setCorrectoF3NomCalle(String correctoF3NomCalle) {
+		this.correctoF3NomCalle = correctoF3NomCalle;
+	}
+
+	public String getCorrectoF3CP() {
+		return correctoF3CP;
+	}
+
+	public void setCorrectoF3CP(String correctoF3CP) {
+		this.correctoF3CP = correctoF3CP;
+	}
+
+	public String getCorrectoF3Municipio() {
+		return correctoF3Municipio;
+	}
+
+	public void setCorrectoF3Municipio(String correctoF3Municipio) {
+		this.correctoF3Municipio = correctoF3Municipio;
+	}
+
+	public String getCorrectoF3Provincia() {
+		return correctoF3Provincia;
+	}
+
+	public void setCorrectoF3Provincia(String correctoF3Provincia) {
+		this.correctoF3Provincia = correctoF3Provincia;
+	}
+
+	public String getCorrectoF3BloqueFase3() {
+		return correctoF3BloqueFase3;
+	}
+
+	public void setCorrectoF3BloqueFase3(String correctoF3BloqueFase3) {
+		this.correctoF3BloqueFase3 = correctoF3BloqueFase3;
 	}
 	
 }

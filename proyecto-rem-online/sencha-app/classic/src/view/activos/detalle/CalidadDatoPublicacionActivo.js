@@ -48,6 +48,15 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 			collapsible : true,
 			reference: 'toolFieldFase0',
 			collapsed : '{colapsarDesplegable}',
+			tools: [
+				{
+					xtype: 'button',
+					cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+					bind: {
+						iconCls:'{getIconClsDQCorrecto}'
+					}
+				}
+			],
 			items : [{
 				xtype : 'fieldsettable',
 				title : HreRem.i18n('publicacion.calidad.datos.datos.registrales'),
@@ -557,9 +566,10 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 			tools: [
 				{
 					xtype: 'button',
-					cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+					cls: 'no-pointer',
+					style: 'background: transparent; border: none;',
 					bind: {
-						iconCls:'{getIconClsDQCorrecto}'
+						iconCls:'{getIconClsDQBloqueFase3}'
 					}
 				}
 			],
@@ -568,22 +578,31 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 				title: HreRem.i18n('header.activos.afectados.referencia.catastral'),
 				collapsible: false,
 				collapsed : false,
+				layout: {
+			        type: 'table',
+			        columns: 2
+				},
 				
 				items: [{
 							xtype: 'textfieldbase',
 							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.rem'),
+							reference: 'drRefCatastral',
 							bind: '{calidaddatopublicacionactivo.drF3ReferenciaCatastral}',
 							readOnly: true
+							
 						},
 						{
 							xtype: 'textfieldbase',
 							fieldLabel:  HreRem.i18n('publicacion.calidad.datos.dato.dq'),
+							reference: 'dqRefCatastral',
 							bind: '{calidaddatopublicacionactivo.dqF3ReferenciaCatastral}',
 							readOnly: true
 						},{
-						cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+						xtype: 'button',
+						cls: 'no-pointer',
+						style: 'background: transparent; border: none;',
 						bind: {
-							iconCls:'{getIconClsDQCorrecto}'
+							iconCls:'{getIconClsDQRefCatastral}'
 						}
 					}]
 			},
@@ -609,9 +628,11 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 							bind: '{calidaddatopublicacionactivo.dqF3SuperficieConstruida}',
 							readOnly: true
 						},{
-						cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+						xtype: 'button',
+						cls: 'no-pointer',
+						style: 'background: transparent; border: none;',
 						bind: {
-							iconCls:'{getIconClsDQCorrecto}'
+							iconCls:'{getIconClsDQSupConstruida}'
 						}
 					}
 				]
@@ -637,9 +658,11 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 							bind: '{calidaddatopublicacionactivo.dqF3SuperficieUtil}',
 							readOnly: true
 						},{
-						cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+						xtype: 'button',
+						cls: 'no-pointer',
+						style: 'background: transparent; border: none;',
 						bind: {
-							iconCls:'{getIconClsDQCorrecto}'
+							iconCls:'{getIconClsDQSuperficieUtil}'
 						}
 					}]
 			},
@@ -665,9 +688,11 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 							bind: '{calidaddatopublicacionactivo.dqF3AnyoConstruccion}',
 							readOnly: true
 						},{
-						cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+						xtype: 'button',
+						cls: 'no-pointer',
+						style: 'background: transparent; border: none;',
 						bind: {
-							iconCls:'{getIconClsDQCorrecto}'
+							iconCls:'{getIconClsDQAnyoConstruccion}'
 						}
 					}]
 			},
@@ -699,9 +724,11 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 							bind: '{calidaddatopublicacionactivo.dqF3TipoVia}',
 							readOnly: true
 						},{
-						cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+						xtype: 'button',
+						cls: 'no-pointer',
+						style: 'background: transparent; border: none;',
 						bind: {
-							iconCls:'{getIconClsDQCorrecto}'
+							iconCls:'{getIconClsDQTipoVia}'
 						}
 					}]
 				},
@@ -728,16 +755,18 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 								bind: '{calidaddatopublicacionactivo.dqF3NomCalle}',
 								readOnly: true
 							},{
+								xtype: 'button',
+								cls: 'no-pointer',
+								style: 'background: transparent; border: none;',
+								bind: {
+									iconCls:'{getIconClsDQNomCalle}'
+								}
+							},{
 								xtype: 'textfieldbase',
 								fieldLabel:  HreRem.i18n('publicacion.calidad.datos.probabilidad.calle.correcta'),
 								bind: '{calidaddatopublicacionactivo.probabilidadCalleCorrecta}',
 								readOnly: true
-							},{
-						cls: 'btn-tbfieldset delete-focus-bg no-pointer',
-						bind: {
-							iconCls:'{getIconClsDQCorrecto}'
-						}
-					}
+							}
 					]
 				},
 				{
@@ -762,9 +791,11 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 							bind: '{calidaddatopublicacionactivo.dqF3CP}',
 							readOnly: true
 						},{
-						cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+						xtype: 'button',
+						cls: 'no-pointer',
+						style: 'background: transparent; border: none;',
 						bind: {
-							iconCls:'{getIconClsDQCorrecto}'
+							iconCls:'{getIconClsDQCP}'
 						}
 					}]
 				},
@@ -790,9 +821,11 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 							bind: '{calidaddatopublicacionactivo.dqF3Municipio}',
 							readOnly: true
 						},{
-						cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+						xtype: 'button',
+						cls: 'no-pointer',
+						style: 'background: transparent; border: none;',
 						bind: {
-							iconCls:'{getIconClsDQCorrecto}'
+							iconCls:'{getIconClsDQMunicipio}'
 						}
 					}]
 				},
@@ -818,9 +851,11 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 							bind: '{calidaddatopublicacionactivo.dqF3Provincia}',
 							readOnly: true
 						},{
-						cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+						xtype: 'button',
+						cls: 'no-pointer',
+						style: 'background: transparent; border: none;',
 						bind: {
-							iconCls:'{getIconClsDQCorrecto}'
+							iconCls:'{getIconClsDQProvincia}'
 						}
 					}]
 				}]
@@ -1114,9 +1149,13 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 
 	},
 
-	funcionRecargar : function() {
+	 funcionRecargar : function() {
 		var me = this;
 		me.recargar = false;
-		me.lookupController().cargarTabDataCalidadDato(me);
+		if(me.xtype == "button") {
+			me.lookupController().cargarTabDataCalidadDato(me.up().up());
+		} else {
+			me.lookupController().cargarTabDataCalidadDato(me);
+		}
 	}
 });

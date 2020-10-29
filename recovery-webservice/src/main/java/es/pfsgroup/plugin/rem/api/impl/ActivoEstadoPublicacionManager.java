@@ -1,6 +1,9 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -98,6 +101,15 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private static final String NO = "No";
 	private static final String INSCRITO = "Inscrito";
 	private static final String NO_INSCRITO = "No Inscrito";
+	private static final String ICONO_TICK_OK = "0";
+	private static final String ICONO_TICK_KO = "1";
+	private static final String ICONO_TICK_INTERROGANTE = "2";
+	
+	private static final String PROB_MUY_BAJA = "Muy baja";
+	private static final String PROB_BAJA = "Baja";
+	private static final String PROB_MEDIA = "Media";
+	private static final String PROB_ALTA = "Alta";
+	private static final String PROB_MUY_ALTA = "Muy alta";
 	
 	
 	@Resource
@@ -1789,10 +1801,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setMensajeDQFotos(activoDatosDq.getImagenesMensaje());
 		
 		// Descripcion
-		// FALTA EL DR Descripcion
+		if(activo.getInfoComercial() != null) {
+			dto.setDrFase4Descripcion(activo.getInfoComercial().getDescripcionComercial());
+		}
 		
 		if(activoDatosDq.getDescripcion() != null) {
-			dto.setDrFase4Descripcion(activoDatosDq.getDescripcion());
+			dto.setDqFase4Descripcion(activoDatosDq.getDescripcion());
 		}
 		
 		// LOCALIZACION
@@ -1834,16 +1848,26 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if(activo.getInfoRegistral() != null && activo.getInfoRegistral().getInfoRegistralBien() != null) {
 			dto.setDrF3ReferenciaCatastral(activo.getInfoRegistral().getInfoRegistralBien().getReferenciaCatastralBien());
 			dto.setDrF3SuperficieConstruida(activo.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida());
-			dto.setDrF3SuperficieUtil(activo.getInfoRegistral().getSuperficieUtil());
+			if(activo.getInfoRegistral().getSuperficieUtil() != null) {
+				dto.setDrF3SuperficieUtil(new BigDecimal(activo.getInfoRegistral().getSuperficieUtil()));
+			}
+			
 		}
 		if(activo.getInfoComercial() != null) {
 			
-			dto.setDrF3AnyoConstruccion(activo.getInfoComercial().getAnyoConstruccion());
+			dto.setDrF3AnyoConstruccion(new Long(activo.getInfoComercial().getAnyoConstruccion()));
 		}
 			
 		dto.setDqF3ReferenciaCatastral(actDatosDq.getReferenciaCatastralDdq());
-		dto.setDqF3SuperficieConstruida(actDatosDq.getSuperficieConstruidaDdq());
-		dto.setDqF3SuperficieUtil(actDatosDq.getSuperficieUtilDdq());
+		
+		if(actDatosDq.getSuperficieConstruidaDdq() != null) {
+			dto.setDqF3SuperficieConstruida(new BigDecimal(actDatosDq.getSuperficieConstruidaDdq()));	
+		}
+		
+		if(actDatosDq.getSuperficieUtilDdq() != null) {
+			dto.setDqF3SuperficieUtil(new BigDecimal(actDatosDq.getSuperficieUtilDdq()));	
+		}
+		
 		dto.setDqF3AnyoConstruccion(actDatosDq.getAnyoConstruccion());
 		
 		if(activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien() != null) {
@@ -1856,7 +1880,21 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		
 		dto.setDqF3TipoVia(actDatosDq.getTipoVia().getDescripcion());
 		dto.setDqF3NomCalle(actDatosDq.getNombreViaDdq());
-		dto.setProbabilidadCalleCorrecta(actDatosDq.getCalleCorrectaProb());
+
+		if(actDatosDq.getCalleCorrectaProb() == null) {
+			dto.setProbabilidadCalleCorrecta(null);	
+		}else if(actDatosDq.getCalleCorrectaProb() >= 0 && actDatosDq.getCalleCorrectaProb() <= 0.2){
+			dto.setProbabilidadCalleCorrecta(PROB_MUY_BAJA);
+		}else if(actDatosDq.getCalleCorrectaProb() > 0.2 && actDatosDq.getCalleCorrectaProb() <= 0.4) {
+			dto.setProbabilidadCalleCorrecta(PROB_BAJA);			
+		}else if(actDatosDq.getCalleCorrectaProb() > 0.4 && actDatosDq.getCalleCorrectaProb() <= 0.6) {
+			dto.setProbabilidadCalleCorrecta(PROB_MEDIA);
+		}else if(actDatosDq.getCalleCorrectaProb() > 0.6 && actDatosDq.getCalleCorrectaProb() <= 0.8) {
+			dto.setProbabilidadCalleCorrecta(PROB_ALTA);
+		}else if(actDatosDq.getCalleCorrectaProb() > 0.8 && actDatosDq.getCalleCorrectaProb() <= 1) {
+			dto.setProbabilidadCalleCorrecta(PROB_MUY_ALTA);
+		}
+		
 		dto.setDqF3CP(actDatosDq.getCodigoPostalDdq());
 		
 		if(actDatosDq.getLocalidad() != null) {
@@ -1866,5 +1904,142 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if(actDatosDq.getProvincia() != null) {
 			dto.setDqF3Provincia(actDatosDq.getProvincia().getDescripcion());
 		}
+	
+		//COMPROBACIONES DE LOS BLOQUES
+		setCorrectoFase3(dto);
+		
+	}
+
+	private void setCorrectoFase3(DtoCalidadDatoPublicacionActivo dto) {
+
+		boolean interrogante = false, cruzroja = false;
+			
+		//bloque ref catastral
+		if(dto.getDqF3ReferenciaCatastral() == null) {
+			dto.setCorrectoF3ReferenciaCatastral(ICONO_TICK_INTERROGANTE);
+			interrogante = true;
+		}else if(dto.getDrF3ReferenciaCatastral() != null 
+				&& (dto.getDrF3ReferenciaCatastral().equals(dto.getDqF3ReferenciaCatastral()))) {
+			dto.setCorrectoF3ReferenciaCatastral(ICONO_TICK_OK);
+		}else {
+			dto.setCorrectoF3ReferenciaCatastral(ICONO_TICK_KO);
+			cruzroja = true;
+		}
+		
+		//superficie construida ESPECIAL
+		if(dto.getDqF3SuperficieConstruida() == null) {
+			dto.setCorrectoF3SuperficieConstruida(ICONO_TICK_INTERROGANTE);
+			interrogante = true;
+		}else{
+			BigDecimal calcSupConstruida = dto.getDrF3SuperficieConstruida().divide(dto.getDqF3SuperficieConstruida(), 2, RoundingMode.HALF_UP); 
+			DecimalFormat df = new DecimalFormat("#.##");
+			Double supConstruida = new Double(df.format(calcSupConstruida));
+			
+			if(supConstruida >= 0.8 && supConstruida <= 1.2 ) {
+				dto.setCorrectoF3SuperficieConstruida(ICONO_TICK_OK);
+			}else {
+				dto.setCorrectoF3SuperficieConstruida(ICONO_TICK_KO);
+				cruzroja = true;	
+			}
+		}
+		
+		//superficie util ESPECIAL
+		
+		if(dto.getDqF3SuperficieUtil() == null) {
+			dto.setCorrectoF3SuperficieUtil(ICONO_TICK_INTERROGANTE);
+			interrogante = true;
+		}else{
+			BigDecimal calcSupUtil = dto.getDrF3SuperficieUtil().divide(dto.getDqF3SuperficieUtil(), 2, RoundingMode.HALF_UP); 
+			DecimalFormat df = new DecimalFormat("#.##");
+			Double supUtil = new Double(df.format(calcSupUtil));
+			
+			if(supUtil >= 0.8 && supUtil <= 1.2 ) {
+				dto.setCorrectoF3SuperficieUtil(ICONO_TICK_OK);
+			}else {
+				dto.setCorrectoF3SuperficieUtil(ICONO_TICK_KO);
+				cruzroja = true;	
+			}
+		}
+		
+		//ANYO CONSTRUCCION
+		if(dto.getDqF3AnyoConstruccion() == null) {
+			dto.setCorrectoF3AnyoConstruccion(ICONO_TICK_INTERROGANTE);
+			interrogante = true;
+		}else if(dto.getDrF3AnyoConstruccion() != null 
+				&& (dto.getDrF3AnyoConstruccion() == dto.getDqF3AnyoConstruccion())) {
+			dto.setCorrectoF3AnyoConstruccion(ICONO_TICK_OK);
+		}else {
+			dto.setCorrectoF3AnyoConstruccion(ICONO_TICK_KO);
+			cruzroja = true;
+		}
+		
+		//TIPO VIA
+		if(dto.getDqF3TipoVia() == null) {
+			dto.setCorrectoF3TipoVia(ICONO_TICK_INTERROGANTE);
+			interrogante = true;
+		}else if(dto.getDrF3TipoVia() != null 
+				&& (dto.getDrF3TipoVia().equals(dto.getDqF3TipoVia()))) {
+			dto.setCorrectoF3TipoVia(ICONO_TICK_OK);
+		}else {
+			dto.setCorrectoF3TipoVia(ICONO_TICK_KO);
+			cruzroja = true;
+		}
+		
+		//NOMBRE CALLE ESPECIAL
+		if(dto.getDqF3NomCalle() == null) {
+			dto.setCorrectoF3NomCalle(ICONO_TICK_INTERROGANTE);
+			interrogante = true;
+		}else if(dto.getDrF3NomCalle() != null 
+				&& (dto.getDrF3NomCalle().equals(dto.getDqF3NomCalle()))) {
+			dto.setCorrectoF3TipoVia(ICONO_TICK_OK);
+		}else {
+			dto.setCorrectoF3TipoVia(ICONO_TICK_KO);
+			cruzroja = true;
+		}
+		
+		//CP
+		if(dto.getDqF3CP() == null) {
+			dto.setCorrectoF3CP(ICONO_TICK_INTERROGANTE);
+			interrogante = true;
+		}else if(dto.getDrF3CP() != null 
+				&& (dto.getDrF3CP().equals(dto.getDqF3CP()))) {
+			dto.setCorrectoF3CP(ICONO_TICK_OK);
+		}else {
+			dto.setCorrectoF3CP(ICONO_TICK_KO);
+			cruzroja = true;
+		}
+		
+		//MUNICIPIO
+		if(dto.getDqF3Municipio() == null) {
+			dto.setCorrectoF3Municipio(ICONO_TICK_INTERROGANTE);
+			interrogante = true;
+		}else if(dto.getDrF3Municipio() != null 
+				&& (dto.getDrF3Municipio().equals(dto.getDqF3Municipio()))) {
+			dto.setCorrectoF3Municipio(ICONO_TICK_OK);
+		}else {
+			dto.setCorrectoF3Municipio(ICONO_TICK_KO);
+			cruzroja = true;
+		}
+		
+		//PROVINCIA
+		if(dto.getDqF3Provincia() == null) {
+			dto.setCorrectoF3Provincia(ICONO_TICK_INTERROGANTE);
+			interrogante = true;
+		}else if(dto.getDrF3Provincia() != null 
+				&& (dto.getDrF3Provincia().equals(dto.getDqF3Provincia()))) {
+			dto.setCorrectoF3Provincia(ICONO_TICK_OK);
+		}else {
+			dto.setCorrectoF3Provincia(ICONO_TICK_KO);
+			cruzroja = true;
+		}
+		
+		if(cruzroja) {
+			dto.setCorrectoF3BloqueFase3(ICONO_TICK_KO);
+		}else if(interrogante) {
+			dto.setCorrectoF3BloqueFase3(ICONO_TICK_INTERROGANTE);
+		}else {
+			dto.setCorrectoF3BloqueFase3(ICONO_TICK_OK);
+		}
+
 	}
 }

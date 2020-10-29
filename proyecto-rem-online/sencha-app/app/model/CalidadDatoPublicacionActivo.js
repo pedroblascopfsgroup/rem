@@ -29,10 +29,16 @@ Ext.define('HreRem.model.CalidadDatoPublicacionActivo', {
 			name: 'dqF3SuperficieUtil'
 		},
 		{
+			name: 'correctoF3SuperficieUtil'
+		},
+		{
 			name: 'drF3AnyoConstruccion'
 		},
 		{
 			name: 'dqF3AnyoConstruccion'
+		},
+		{
+			name: 'correctoF3AnyoConstruccion'
 		},
 		{
 			name: 'drIdufirFase1'
@@ -216,17 +222,24 @@ Ext.define('HreRem.model.CalidadDatoPublicacionActivo', {
 		},
 		{
 			name: 'mensajeDQCEE'
-		},{
+		},
+		{
 			name: 'drF3TipoVia'
 		},
 		{
 			name: 'dqF3TipoVia'
 		},
 		{
+			name: 'correctoF3TipoVia'
+		},
+		{
 			name: 'drF3NomCalle'
 		},
 		{
 			name: 'dqF3NomCalle'
+		},
+		{
+			name: 'correctoF3NomCalle'
 		},
 		{
 			name: 'probabilidadCalleCorrecta'
@@ -238,10 +251,16 @@ Ext.define('HreRem.model.CalidadDatoPublicacionActivo', {
 			name: 'dqF3CP'
 		},
 		{
+			name: 'correctoF3CP'
+		},
+		{
 			name: 'drF3Municipio'
 		},
 		{
 			name: 'dqF3Municipio'
+		},
+		{
+			name: 'correctoF3Municipio'
 		},
 		{
 			name: 'drF3Provincia'
@@ -260,7 +279,13 @@ Ext.define('HreRem.model.CalidadDatoPublicacionActivo', {
 		{
 			name: 'desplegable2Collapsed',
 			type: 'boolean'
-		}		
+		},{		
+			name: 'correctoF3Provincia'
+		},
+		{
+			name: 'correctoF3BloqueFase3'
+		}
+		
 	],
 
 	proxy: {

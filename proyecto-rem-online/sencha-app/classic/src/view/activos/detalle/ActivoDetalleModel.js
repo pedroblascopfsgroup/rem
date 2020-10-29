@@ -965,11 +965,133 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				return false;
 		},
 		
-	     getIconClsDQCorrecto: function(get) {
-	     	//var estadoAdmision = get('activo.admision');
-	     	return 'app-tbfiedset-ico icono-tickok';
-	     	//return 'app-tbfiedset-ico icono-tickinterrogante';
-	     	//return 'app-tbfiedset-ico icono-tickko';
+	     getIconClsDQRefCatastral: function(get) {
+	     	var correctoF3ReferenciaCatastral = get('calidaddatopublicacionactivo.correctoF3ReferenciaCatastral');
+	     	
+	     	if("0" == correctoF3ReferenciaCatastral){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF3ReferenciaCatastral){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },
+	     
+	     getIconClsDQSupConstruida: function(get) {
+	     	var correctoF3ReferenciaCatastral = get('calidaddatopublicacionactivo.correctoF3ReferenciaCatastral');
+	     	
+	     	if("0" == correctoF3ReferenciaCatastral){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF3ReferenciaCatastral){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },
+	     
+	     getIconClsDQSuperficieUtil: function(get) {
+	     	var correctoF3SuperficieUtil = get('calidaddatopublicacionactivo.correctoF3SuperficieUtil');
+	     	
+	     	if("0" == correctoF3SuperficieUtil){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF3SuperficieUtil){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },
+	     
+	     getIconClsDQAnyoConstruccion: function(get) {
+	     	var correctoF3AnyoConstruccion = get('calidaddatopublicacionactivo.correctoF3AnyoConstruccion');
+	     	
+	     	if("0" == correctoF3AnyoConstruccion){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF3AnyoConstruccion){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },
+	     
+	     getIconClsDQTipoVia: function(get) {
+	     	var correctoF3TipoVia = get('calidaddatopublicacionactivo.correctoF3TipoVia');
+	     	
+	     	if("0" == correctoF3TipoVia){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF3TipoVia){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },
+	     
+	     getIconClsDQNomCalle: function(get) {
+	     	var correctoF3NomCalle = get('calidaddatopublicacionactivo.correctoF3NomCalle');
+	     	
+	     	if("0" == correctoF3NomCalle){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF3NomCalle){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },
+	     
+	     getIconClsDQCP: function(get) {
+	     	var correctoF3CP = get('calidaddatopublicacionactivo.correctoF3CP');
+	     	
+	     	if("0" == correctoF3CP){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF3CP){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },
+	     
+	     getIconClsDQMunicipio: function(get) {
+	     	var correctoF3Municipio = get('calidaddatopublicacionactivo.correctoF3Municipio');
+	     	
+	     	if("0" == correctoF3Municipio){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF3Municipio){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },
+	     
+	     getIconClsDQProvincia: function(get) {
+	     	var correctoF3Provincia = get('calidaddatopublicacionactivo.correctoF3Provincia');
+	     	
+	     	if("0" == correctoF3Provincia){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF3Provincia){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
+	     	
+	     },
+	     
+	     getIconClsDQBloqueFase3: function(get) {
+	     	var correctoF3BloqueFase3 = get('calidaddatopublicacionactivo.correctoF3BloqueFase3');
+	     	
+	     	if("0" == correctoF3BloqueFase3){
+	     		return 'app-tbfiedset-ico icono-tickok';	
+	     	}else if("1" == correctoF3BloqueFase3){
+	     		return 'app-tbfiedset-ico icono-tickko';
+	     	}else{
+	     		return 'app-tbfiedset-ico icono-tickinterrogante';
+	     	}
 	     	
 	     }
 	     

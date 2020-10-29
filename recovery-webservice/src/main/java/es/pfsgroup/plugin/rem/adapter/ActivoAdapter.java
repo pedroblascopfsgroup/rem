@@ -3682,7 +3682,9 @@ public class ActivoAdapter {
 		updaterState.updaterStateDisponibilidadComercial(activo);
 
 		if(tabActivoService instanceof TabActivoSaneamiento || tabActivoService instanceof TabActivoCargas){
-			recoveryComunicacionManager.datosCliente(activo, new ModelMap());
+			if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)){
+				recoveryComunicacionManager.datosCliente(activo, new ModelMap());
+			}
 		}
 
 	}

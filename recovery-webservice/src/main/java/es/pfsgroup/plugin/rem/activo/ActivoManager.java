@@ -4114,7 +4114,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		transactionManager.commit(transaction);
 
-		if(activo != null){
+		if(activo != null && activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)){
 			recoveryComunicacionManager.datosCliente(activo, new ModelMap());
 		}
 
@@ -4455,6 +4455,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	@Transactional(readOnly = false)
 	public Boolean deleteCarga(DtoActivoCargas dto) {
+
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
 		ActivoCargas carga = null;
 		if (!Checks.esNulo(dto.getIdActivoCarga())) {
 			carga = genericDao.get(ActivoCargas.class,
@@ -4468,6 +4471,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 			} else {
 				return false;
+			}
+		}
+
+		transactionManager.commit(transaction);
+
+		if(carga != null){
+			if(carga.getActivo() != null && carga.getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)){
+				recoveryComunicacionManager.datosCliente(carga.getActivo(), new ModelMap());
 			}
 		}
 
@@ -5007,7 +5018,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 				transactionManager.commit(transaction);
 
-				recoveryComunicacionManager.datosCliente(activoCalificacionNegativa.getActivo(), new ModelMap());
+				if(activoCalificacionNegativa.getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)){
+					recoveryComunicacionManager.datosCliente(activoCalificacionNegativa.getActivo(), new ModelMap());
+				}
 
 				return true;
 			}
@@ -5112,7 +5125,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 				transactionManager.commit(transaction);
 
-				recoveryComunicacionManager.datosCliente(activo, new ModelMap());
+				if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)){
+					recoveryComunicacionManager.datosCliente(activo, new ModelMap());
+				}
 
 				return true;
 			}
@@ -5129,8 +5144,26 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	@Transactional
 	public boolean destroyCalificacionNegativa(DtoActivoDatosRegistrales dto) {
+
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
+		ActivoCalificacionNegativa activoCalificacionNegativa = genericDao.get(ActivoCalificacionNegativa.class,
+				genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(dto.getIdMotivo())));
+
+		Activo activo = null;
+
+		if(activoCalificacionNegativa != null){
+			activo = activoCalificacionNegativa.getActivo();
+		}
+
 		if (!Checks.esNulo(dto.getIdMotivo())) {
 			genericDao.deleteById(ActivoCalificacionNegativa.class, Long.valueOf(dto.getIdMotivo()));
+
+			transactionManager.commit(transaction);
+
+			if(activo != null && activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)){
+				recoveryComunicacionManager.datosCliente(activo, new ModelMap());
+			}
 
 			return true;
 		}
@@ -6623,6 +6656,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public boolean createHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto, Long idActivo)
 			throws HistoricoTramitacionException {
 
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
+		Activo activo = activoAdapter.getActivoById(idActivo);
 		HistoricoTramitacionTitulo htt = new HistoricoTramitacionTitulo();
 		ActivoTitulo titulo = activoAdapter.getActivoById(idActivo).getTitulo();
 		Order order = new Order(OrderType.DESC, "id");
@@ -6693,6 +6729,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		genericDao.save(HistoricoTramitacionTitulo.class, htt);
+
+		transactionManager.commit(transaction);
+
+		if(activo != null && activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)) {
+			recoveryComunicacionManager.datosCliente(activo, new ModelMap());
+		}
+
 		return true;
 	}
 	
@@ -6770,10 +6813,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public boolean updateHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto)
 			throws Exception, HistoricoTramitacionException {
 
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+
 		HistoricoTramitacionTitulo htt = genericDao.get(HistoricoTramitacionTitulo.class,
 				genericDao.createFilter(FilterType.EQUALS, "id", tramitacionDto.getIdHistorico()));
 		String estadoTitulo = null;
 		ActivoTitulo activoTitulo = htt.getTitulo();
+
+		Activo activo = activoTitulo.getActivo();
+
 		Order order = new Order(OrderType.DESC, "id");
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "titulo.activo.id", tramitacionDto.getIdActivo());
 		List<HistoricoTramitacionTitulo> listasTramitacion = genericDao.getListOrdered(HistoricoTramitacionTitulo.class,
@@ -6873,6 +6921,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			genericDao.save(ActivoTitulo.class, activoTitulo);
 		}
 		genericDao.save(HistoricoTramitacionTitulo.class, htt);
+
+		transactionManager.commit(transaction);
+
+		if(activo != null && activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)) {
+			recoveryComunicacionManager.datosCliente(activo, new ModelMap());
+		}
+
 		return true;
 	}
 
@@ -6972,9 +7027,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public Boolean destroyHistoricoTramtitacionTitulo(DtoHistoricoTramitacionTitulo tramitacionDto) {
 		HistoricoTramitacionTitulo htt = genericDao.get(HistoricoTramitacionTitulo.class,
 				genericDao.createFilter(FilterType.EQUALS, "id", tramitacionDto.getIdHistorico()));
+
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+		Activo activo = null;
+		ActivoTitulo titulo = null;
+
 		if (htt != null) {
 			if (htt.getTitulo() != null) {
-				ActivoTitulo titulo = htt.getTitulo();
+				titulo = htt.getTitulo();
 				if (titulo != null) {
 					
 					List<ActivoCalificacionNegativa> calNegList = genericDao.getList(ActivoCalificacionNegativa.class,
@@ -7013,7 +7073,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							.dameValorDiccionarioByCod(DDEstadoTitulo.class, codEstadoPres);
 					titulo.setEstado(estadoTitulo);
 					genericDao.save(ActivoTitulo.class, titulo);
+
 				}
+			}
+
+			if(titulo != null){
+				activo = titulo.getActivo();
+			}
+
+			transactionManager.commit(transaction);
+
+			if(activo != null && activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)) {
+				recoveryComunicacionManager.datosCliente(activo, new ModelMap());
 			}
 
 			return true;

@@ -109,36 +109,42 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
             model.put("numActivo", activo.getNumActivo());
             model.put("idAsuntoRecovery", activoAdjudicacionJudicial.getIdAsunto());
             model.put("codigoCartera", activo.getCartera().getCodigo());
-            model.put("situacionTitulo", activo.getTitulo().getEstado().getCodigo());
-            if(actTitulo.getFechaEntregaGestoria() != null){
-                model.put("fechaRecepcionTitulo", actTitulo.getFechaEntregaGestoria().getTime());
-            }else{
-                model.put("fechaRecepcionTitulo", null);
-            }
-            if(actTitulo.getFechaPresHacienda() != null){
-                model.put("fechaPresentacionHacienda", actTitulo.getFechaPresHacienda().getTime());
-            }else{
-                model.put("fechaPresentacionHacienda", null);
-            }
-            if(actTitulo.getFechaPres1Registro() != null){
-                model.put("fechaPresentacionReg", actTitulo.getFechaPres1Registro().getTime());
-            }else{
-                model.put("fechaPresentacionReg", null);
-            }
-            if(actTitulo.getFechaEnvioAuto() != null){
-                model.put("fechaAutoAdicion", actTitulo.getFechaEnvioAuto().getTime());
-            }else{
-                model.put("fechaAutoAdicion", null);
-            }
-            if(actTitulo.getFechaInscripcionReg() != null){
-                model.put("fechaInscripcionReg", actTitulo.getFechaInscripcionReg().getTime());
-            }else{
-                model.put("fechaInscripcionReg", null);
-            }
-            if(actTitulo.getFechaPres2Registro() != null){
-                model.put("fechaUltimaPresentacionReg", actTitulo.getFechaPres2Registro().getTime());
-            }else{
-                model.put("fechaUltimaPresentacionReg", null);
+            if(activo.getTitulo() != null){
+                if(activo.getTitulo().getEstado() != null){
+                    model.put("situacionTitulo", activo.getTitulo().getEstado().getCodigo());
+                }else{
+                    model.put("situacionTitulo", null);
+                }
+                if(actTitulo.getFechaEntregaGestoria() != null){
+                    model.put("fechaRecepcionTitulo", actTitulo.getFechaEntregaGestoria().getTime());
+                }else{
+                    model.put("fechaRecepcionTitulo", null);
+                }
+                if(actTitulo.getFechaPresHacienda() != null){
+                    model.put("fechaPresentacionHacienda", actTitulo.getFechaPresHacienda().getTime());
+                }else{
+                    model.put("fechaPresentacionHacienda", null);
+                }
+                if(actTitulo.getFechaPres1Registro() != null){
+                    model.put("fechaPresentacionReg", actTitulo.getFechaPres1Registro().getTime());
+                }else{
+                    model.put("fechaPresentacionReg", null);
+                }
+                if(actTitulo.getFechaEnvioAuto() != null){
+                    model.put("fechaAutoAdicion", actTitulo.getFechaEnvioAuto().getTime());
+                }else{
+                    model.put("fechaAutoAdicion", null);
+                }
+                if(actTitulo.getFechaInscripcionReg() != null){
+                    model.put("fechaInscripcionReg", actTitulo.getFechaInscripcionReg().getTime());
+                }else{
+                    model.put("fechaInscripcionReg", null);
+                }
+                if(actTitulo.getFechaPres2Registro() != null){
+                    model.put("fechaUltimaPresentacionReg", actTitulo.getFechaPres2Registro().getTime());
+                }else{
+                    model.put("fechaUltimaPresentacionReg", null);
+                }
             }
             model.put("defectos", listaDefectos);
             model.put("cargas", listaCargas);
@@ -163,6 +169,8 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
 
                 llamada = procesarPeticion(this.httpClientFacade, urlEnvio, POST_METHOD, headers, json, 30, "UTF-8");
 
+                registrarLlamada(urlEnvio, json, llamada.getString("success"), llamada.getString("data"));
+
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
@@ -171,7 +179,6 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
             e.printStackTrace();
         }
 
-        registrarLlamada(urlEnvio, json, llamada.getString("success"), llamada.getString("data"));
     }
 
     private ArrayList<Map<String, Object>> calificacionesNegativasInfo(Activo activo) {

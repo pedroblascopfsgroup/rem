@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.recoveryComunicacion.RecoveryComunicacionManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -170,7 +171,9 @@ public class MSVActualizadorInformacionInscripcionCargaMasiva extends AbstractMS
 
 			transactionManager.commit(transaction);
 
-			recoveryComunicacionManager.datosCliente(activo, new ModelMap());
+			if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BBVA)){
+				recoveryComunicacionManager.datosCliente(activo, new ModelMap());
+			}
 		}
 		return new ResultadoProcesarFila();
 	}

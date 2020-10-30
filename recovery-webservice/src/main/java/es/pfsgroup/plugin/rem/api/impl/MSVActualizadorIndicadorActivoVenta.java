@@ -27,7 +27,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 public class MSVActualizadorIndicadorActivoVenta extends AbstractMSVActualizador implements MSVLiberator {
 
 	private static final int POSICION_COLUMNA_ID_ACTIVO_HAYA = 0;
-	private static final int POSICION_COLUMNA_MOSTRAR_PRECIO = 1;
+	private static final int POSICION_COLUMNA_OCULTAR_PRECIO = 1;
 	private static final int POSICION_COLUMNA_PUBLICAR_SIN_PRECIO = 2;
 
 	private static final String COD_SI = "S";
@@ -58,7 +58,7 @@ public class MSVActualizadorIndicadorActivoVenta extends AbstractMSVActualizador
 			ActivoPublicacion activoPublicacion = null;
 
 			String idActivoHaya = exc.dameCelda(fila, POSICION_COLUMNA_ID_ACTIVO_HAYA);
-			String mostrarPrecio = exc.dameCelda(fila, POSICION_COLUMNA_MOSTRAR_PRECIO);
+			String ocultarPrecio = exc.dameCelda(fila, POSICION_COLUMNA_OCULTAR_PRECIO);
 			String publicarSinPrecio = exc.dameCelda(fila, POSICION_COLUMNA_PUBLICAR_SIN_PRECIO);
 
 			if (!Checks.esNulo(idActivoHaya)) {
@@ -71,9 +71,9 @@ public class MSVActualizadorIndicadorActivoVenta extends AbstractMSVActualizador
 				Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 				activoPublicacion = genericDao.get(ActivoPublicacion.class, filtroActivo, filtroBorrado);
 
-				if (COD_SI.equals(mostrarPrecio)) {
+				if (COD_SI.equals(ocultarPrecio)) {
 					activoPublicacion.setCheckOcultarPrecioVenta(true);
-				} else if (COD_NO.equals(mostrarPrecio)) {
+				} else if (COD_NO.equals(ocultarPrecio)) {
 					activoPublicacion.setCheckOcultarPrecioVenta(false);
 				}
 

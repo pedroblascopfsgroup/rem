@@ -69,14 +69,18 @@ public class MaestroDeActivos {
 				dto.setMotivoOperacion(MOTIVO_OPERACION);
 				dto.setIdCliente(cartera);
 			
-				dto.setEvent(dto.EVENTO_ALTA_ACTIVOS);
+				dto.setEvent(ActivoInputDto.EVENTO_ALTA_ACTIVOS);
 				
-
-				ActivoOutputDto activoOutput =  new ActivoOutputDto();
 				logger.error("[SE EJECUTA EL MAESTRO DE ACTIVOS]");
 				logger.error(dto.toString());
-				BeanUtils.copyProperties(gestorDocumentalMaestroManager
-						.ejecutar(dto), activoOutput);
+				
+				ActivoOutputDto activoOutput =  null;
+				Object output = gestorDocumentalMaestroManager.ejecutar(dto);
+				
+				if(output != null) {
+					activoOutput =  new ActivoOutputDto();
+					BeanUtils.copyProperties(output, activoOutput);
+				}
 				
 				if (!Checks.esNulo(activoOutput) && SIMULACRO.equals(activoOutput.getResultDescription())) {
 					logger.error("[MAESTRO DE ACTIVOS] SIMULACION DE VALORES DE PRUEBA");

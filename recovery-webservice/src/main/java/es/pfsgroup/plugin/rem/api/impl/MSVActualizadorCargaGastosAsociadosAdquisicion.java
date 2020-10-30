@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,6 +19,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.impl.MSVSDocAdministrativaProcesar.COL_NUM;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -38,7 +40,8 @@ public class MSVActualizadorCargaGastosAsociadosAdquisicion extends AbstractMSVA
 	static final int COL_TIPO_GASTO = 1;
 	static final int COL_F_SOLICITUD = 2;
 	static final int COL_F_PAGO = 3;
-	static final int COL_OBSERVACIONES = 4;
+	static final int COL_IMPORTE = 4;
+	static final int COL_OBSERVACIONES = 5;
 	}
 	
 	@Autowired
@@ -49,6 +52,9 @@ public class MSVActualizadorCargaGastosAsociadosAdquisicion extends AbstractMSVA
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private GenericAdapter adapter;
 
 	@Override
 	public String getValidOperation() {
@@ -63,6 +69,7 @@ public class MSVActualizadorCargaGastosAsociadosAdquisicion extends AbstractMSVA
 		final String celdaTipoGasto = exc.dameCelda(fila, COL_NUM.COL_TIPO_GASTO);
 		final String celdaFSolicitud = exc.dameCelda(fila, COL_NUM.COL_F_SOLICITUD);
 		final String celdaFPago = exc.dameCelda(fila, COL_NUM.COL_F_PAGO);
+		final String celdaImporte = exc.dameCelda(fila, COL_NUM.COL_IMPORTE);
 		final String celdaObservaciones = exc.dameCelda(fila, COL_NUM.COL_OBSERVACIONES);
 
 		
@@ -92,10 +99,20 @@ public class MSVActualizadorCargaGastosAsociadosAdquisicion extends AbstractMSVA
 			gasAdq.setFechaPagoGastoAsociado(formato.parse(celdaFPago));
 		}
 		
+		if(celdaImporte!=null) {
+			
+			gasAdq.setImporte(Double.parseDouble(celdaImporte));
+		}
+		
 		//Observaciones
 		if(celdaObservaciones!=null) {
 			gasAdq.setObservaciones(celdaObservaciones);
 		}
+		
+		
+		gasAdq.setFechaAltaGastoAsociado(new Date());
+		gasAdq.setUsuarioGestordeAlta(adapter.getUsuarioLogado());
+		
 		
 		genericDao.save(GastoAsociadoAdquisicion.class, gasAdq);
 		return new ResultadoProcesarFila();		

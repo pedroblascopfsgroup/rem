@@ -50,13 +50,14 @@ public class MSVValidatorCargaGastosAsociadosAdquisicion extends MSVExcelValidat
 	private final int FILA_CABECERA = 0;
 	private final int FILA_DATOS = 1;
 
-	private final int NUM_COLS = 5;
+	private final int NUM_COLS = 6;
 
 	private final int COL_NUM_ACTIVO_HAYA = 0;
 	private final int COL_TIPO_GASTO = 1;
 	private final int COL_F_SOLICITUD = 2;
 	private final int COL_F_PAGO = 3;
-	private final int COL_OBSERVACIONES = 4;
+	private final int COL_IMPORTE = 4;
+	private final int COL_OBSERVACIONES = 5;
 	
 	private Map<String, List<Integer>> mapaErrores;
 	

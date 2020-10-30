@@ -30,6 +30,8 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoExento;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoSolicitud;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 
@@ -102,6 +104,17 @@ public class ActivoPlusvalia implements Serializable, Auditable {
 	@JoinColumn(name = "DD_EGP_ID")  
     @ManyToOne(fetch = FetchType.LAZY)
    	private DDEstadoGestionPlusv estadoGestion;
+	
+	@Column(name = "NUM_EXPEDIENTE")
+	private Long numExpediente;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_MOE_ID")
+	private DDMotivoExento motivoExento;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_RES_ID")
+	private DDResultadoSolicitud resultadoSolicitud;
    
 	@Version
 	private Long version;
@@ -269,5 +282,29 @@ public class ActivoPlusvalia implements Serializable, Auditable {
 	public void setEstadoGestion(DDEstadoGestionPlusv estadoGestion) {
 		this.estadoGestion = estadoGestion;
 	}	 
+	
+	public Long getNumExpediente() {
+		return numExpediente;
+	}
+
+	public void setNumExpediente(Long numExpediente) {
+		this.numExpediente = numExpediente;
+	}
+
+	public DDMotivoExento getMotivoExento() {
+		return motivoExento;
+	}
+
+	public void setMotivoExento(DDMotivoExento motivoExento) {
+		this.motivoExento = motivoExento;
+	}
+
+	public DDResultadoSolicitud getResultadoSolicitud() {
+		return resultadoSolicitud;
+	}
+
+	public void setResultadoSolicitud(DDResultadoSolicitud resultadoSolicitud) {
+		this.resultadoSolicitud = resultadoSolicitud;
+	}
 }
 	

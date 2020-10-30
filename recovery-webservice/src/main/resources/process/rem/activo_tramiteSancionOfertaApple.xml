@@ -115,44 +115,21 @@
 	</decision> <!--Decision Resolucion CES : "Fork :Informe Juridico / Advisory Note / PBC (Reserva/Venta) dependiendo de si tiene reserva o no"-->
 
     <fork name="forkReservaSi">  
-        <transition to="T017_InformeJuridico" name="informe"></transition>	
         <transition to="T017_AdvisoryNote" name="advisoryNote"></transition>
         <transition to="T017_PBCReserva" name="reserva"></transition>
     </fork><!--Fork Resolucion CES ACEPTA CON RESERVA -->
     <fork name="forkReservaNo">  
-        <transition to="T017_InformeJuridico" name="informe"></transition>	
         <transition to="T017_AdvisoryNote" name="advisoryNote"></transition>
         <transition to="T017_PBCVenta" name="venta"></transition>
     </fork><!--Fork Resolucion CES ACEPTA SIN RESERVA-->
+
     <fork name="forkReservaSiBbva">  
-        <transition to="T017_InformeJuridico" name="informe"></transition>	
         <transition to="T017_PBCReserva" name="reserva"></transition>
     </fork>
     <fork name="forkReservaNoBbva">  
-        <transition to="T017_InformeJuridico" name="informe"></transition>	
         <transition to="T017_PBCVenta" name="venta"></transition>
     </fork>
-	<state name="T017_InformeJuridico">
-		<event type="node-enter">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					activoGenericEnterActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>
-					activoGenericLeaveActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<transition to="join1" name="avanzaBPM"></transition>
-	</state> <!--Transicion directa a nodo de union --> 
+
     <state name="T017_AdvisoryNote">
 		<event type="node-enter">
 			<action name="miTarea"

@@ -10,8 +10,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados','HreRem.model.CalificacionNegativaModel',
     'HreRem.model.HistoricoTramtitacionTituloModel', 'HreRem.model.HistoricoGestionGrid', 'HreRem.model.ListaActivoGrid', 'HreRem.model.HistoricoFasesDePublicacion',
     'HreRem.model.AdjuntoActivoAgrupacion','HreRem.model.AdjuntoActivoProyecto','HreRem.model.DocumentacionAdministrativa', 'HreRem.model.ActivoPatrimonio',
-    'HreRem.model.DocumentosTributosModel','HreRem.model.HistoricoSolicitudesPreciosModel', 'HreRem.model.ActivoEvolucion', 'HreRem.model.ActivoSaneamiento','HreRem.model.ActivoComplementoTituloModel',
-    'HreRem.model.GastoAsociadoAdquisicionModel','HreRem.model.AgendaRevisionTituloGridModel','HreRem.model.SaneamientoAgenda','HreRem.model.SuministrosActivoModel'],
+    'HreRem.model.DocumentosTributosModel','HreRem.model.HistoricoSolicitudesPreciosModel','HreRem.model.SuministrosActivoModel', 'HreRem.model.ActivoEvolucion', 'HreRem.model.ActivoSaneamiento',
+	'HreRem.model.ReqFaseVentaModel', 'HreRem.model.AgendaRevisionTituloGridModel', 'HreRem.model.SaneamientoAgenda', 'HreRem.model.CalificacionNegativaAdicionalModel',
+	'HreRem.model.HistoricoTramitacionTituloAdicionalModel'],
 
     data: {
     	activo: null,
@@ -1063,17 +1064,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				if (comboActivoRecovery != null) {
 					comboTipoAltaRef.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
 					return false;
+				}else if(comboActivoRecovery == null && tipoAltaCodigo == CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']){
+					return true;
 				}else{
 					if(tipoAltaCodigo == CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']) {
 						comboTipoAltaRef.setValue(CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']);
          				return false;
-         			} else if (tipoAltaCodigo != CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA']) {
-         				if (tipoAltaCodigo != null) {        					
-         					return true;
-         				}else{
-         					return false;
-         				}
-         				
+         			} else if (tipoAltaCodigo != CONST.DD_TAL_TIPO_ALTA['ALTA_AUTOMATICA'] || tipoAltaCodigo == null) {
+         				return true;         				
          			} 
 
 				}

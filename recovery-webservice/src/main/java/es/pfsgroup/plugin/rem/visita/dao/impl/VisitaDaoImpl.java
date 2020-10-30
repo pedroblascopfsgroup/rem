@@ -192,7 +192,7 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 			try{
 				resultado = HibernateQueryUtils.uniqueResult(this, hql);
 			}catch(Exception e){
-				logger.error("Error obteniendo visita por idwebcom",e);
+				logger.error("Error obteniendo visita por idwebcom");
 			}
 		}
 		return resultado;

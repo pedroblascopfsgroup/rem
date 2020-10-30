@@ -548,6 +548,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@BusinessOperation(overrides = "activoManager.saveActivoValoracion")
 	@Transactional(readOnly = false)
 	public boolean saveActivoValoracion(Activo activo, ActivoValoraciones activoValoracion, DtoPrecioVigente dto) {
+		String codigoTipoPrecio = dto.getCodigoTipoPrecio();
 		try {
 			// Actualizacion Valoracion existente
 			if (!Checks.esNulo(activoValoracion)) {
@@ -573,25 +574,24 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 				activoValoracion.setGestor(adapter.getUsuarioLogado());
 				
-				
-				
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoValoracion.getActivo().getId());
 				ActivoPublicacion activoPublicacion = genericDao.get(ActivoPublicacion.class,filtro);
-				
-				if(dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA) 
-						|| dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO) 
-						||dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_DESC_APROBADO) 
-						||dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO)){
-					activoPublicacion.setFechaCambioValorVenta(new Date());
+				if(activoPublicacion != null){
 					
+					if(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(codigoTipoPrecio)
+							|| DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(codigoTipoPrecio)
+							|| DDTipoPrecio.CODIGO_TPC_DESC_APROBADO.equals(codigoTipoPrecio)
+							|| DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO.equals(codigoTipoPrecio)) {
+						activoPublicacion.setFechaCambioValorVenta(new Date());
+					}
+					
+					if(DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA.equals(codigoTipoPrecio)){
+						activoPublicacion.setFechaCambioValorAlq(new Date());
+					}
+					
+					genericDao.update(ActivoPublicacion.class,activoPublicacion);
 				}
-				
-				if(dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA)){
-					activoPublicacion.setFechaCambioValorAlq(new Date());
-				}
-
 				genericDao.update(ActivoValoraciones.class, activoValoracion);
-				genericDao.update(ActivoPublicacion.class,activoPublicacion);
 
 			} else {
 				// Si no existia una valoracion del tipo indicado, crea una
@@ -605,20 +605,22 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 				activoValoracion.setActivo(activo);
 				activoValoracion.setTipoPrecio(tipoPrecio);
+				activoValoracion.setImporte(dto.getImporte());
 				activoValoracion.setGestor(adapter.getUsuarioLogado());
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoValoracion.getActivo().getId());
 				ActivoPublicacion activoPublicacion = genericDao.get(ActivoPublicacion.class,filtro);
-				if(dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA) 
-						|| dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO) 
-						||dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_DESC_APROBADO) 
-						||dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO)){
+				
+				if(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(codigoTipoPrecio)
+						|| DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(codigoTipoPrecio)
+						|| DDTipoPrecio.CODIGO_TPC_DESC_APROBADO.equals(codigoTipoPrecio)
+						|| DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO.equals(codigoTipoPrecio)) {
 					activoPublicacion.setFechaCambioValorVenta(new Date());
-					
 				}
-				if(dto.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA)){
+				
+				if(DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA.equals(codigoTipoPrecio)){
 					activoPublicacion.setFechaCambioValorAlq(new Date());
-				}
-
+				}	
+				
 				genericDao.save(ActivoValoraciones.class, activoValoracion);
 				genericDao.update(ActivoPublicacion.class,activoPublicacion);
 			}

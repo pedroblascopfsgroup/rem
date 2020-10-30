@@ -102,6 +102,7 @@ R-Cadenera|R-Entrefina
 rem_mirror|func-rem-gestionActivos
 2.20.9-20071001-rem|func-rem-gestionActivos
 func-rem-gestionActivos-HREOS-11149|func-rem-gestionActivos
+rem_mirror|func-rem-BBVA-F1
 func-HREOS-10425|func-rem-supervisionGestorias-F2
 rem_mirror|func-rem-supervisionGestorias-F2
 2.20.9-20071001-rem|func-rem-supervisionGestorias-F2
@@ -110,6 +111,7 @@ func-HREOS-10487|func-rem-nuevasEntradasAdmision
 rem_mirror|func-rem-nuevasEntradasAdmision
 2.20.9-20071001-rem|func-rem-nuevasEntradasAdmision
 func-rem-nuevasEntradasAdmision|func-rem-supervisionGestorias-F2
+rem_mirror|parche-rem-Divarian-F5
 rem_mirror|func-rem-spartaMasivo
 rem_mirror|parche-rem-Divarian-F5
 2.20.9-20071001-rem|parche-rem-Divarian-F5

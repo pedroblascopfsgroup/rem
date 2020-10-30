@@ -9,9 +9,15 @@ Ext.define('HreRem.view.gastos.VImporteGastoLbkGrid', {
 	},
 	
     initComponent: function () {
-
-
      	var me = this;
+     	
+     	me.features = [{
+            id: 'summary',
+            ftype: 'summary',
+            hideGroupedHeader: true,
+            enableGroupingMenu: false,
+            dock: 'bottom'
+		}];
      	
      	me.setTitle(HreRem.i18n('title.importe.gasto.liberbank')),
      	
@@ -28,12 +34,33 @@ Ext.define('HreRem.view.gastos.VImporteGastoLbkGrid', {
 				                dataIndex: 'tipoElemento'
 				            },
 				            {
-					            text: HreRem.i18n('header.gasto.contabilidad.importe'),
-					            dataIndex: 'importeGasto',
-					            renderer: Utils.rendererCurrency,
-								flex	: 3
-					            
-					        }
+								text 	 : HreRem.i18n('header.gasto.contabilidad.importe'),
+								flex 	 : 2,
+								dataIndex: 'importeGasto',
+
+					        	renderer: function(value, cell, record) {
+					        		if(!Ext.isEmpty(value) && value != '0.0'){
+					        			return Utils.rendererCurrency(value);
+					        		}
+					        		else{
+					        			return '0.00'+' \u20AC';
+					        		}
+					        	},
+					        	
+								summaryType: 'sum',
+					            summaryRenderer: function(value, summaryData, dataIndex) {
+					            	var suma = 0;
+					            	var dataStore = this.up('vImporteGastoLbkGrid').store.getData().items;
+					            	for(var i = 0; i < dataStore.length; i++){
+					            		if(!Ext.isEmpty(dataStore[i].data)  && !Ext.isEmpty(dataStore[i].data.importeGasto)){
+					            			suma += parseFloat(dataStore[i].data.importeGasto);
+					            		}
+					            	}
+					            	suma = Ext.util.Format.number(suma, '0.00');
+					            	var msg = HreRem.i18n("header.gasto.contabilidad.importe.total") + ": " + suma + " \u20AC";		
+					            	return msg;
+					            }
+							}
 				 
 		    ];
 			

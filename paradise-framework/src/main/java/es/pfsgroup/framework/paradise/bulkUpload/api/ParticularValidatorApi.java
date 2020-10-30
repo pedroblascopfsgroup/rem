@@ -1193,6 +1193,8 @@ public interface ParticularValidatorApi {
 
 	Boolean esMismoTipoGestorActivo(String codigo, String numActivo);
 
+	Boolean esActivoBBVA(String numActivo);
+	
 	String getValidacionCampoCDC(String codCampo);
 
 	Boolean mismaCarteraLineaDetalleGasto(String numGasto, String tipoElemento);

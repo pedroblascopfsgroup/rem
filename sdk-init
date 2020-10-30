@@ -194,7 +194,6 @@ function sdk_appserver_update () {
 		return
 	fi
 
-
 	docker cp ./rem-web/target/pfs-3.0.0-REM.war ${SDK_DOCKER_CONTAINER_NAME}:/recovery/app-server && \
 	docker exec -d ${SDK_DOCKER_CONTAINER_NAME} /recovery/app-server/stopAndUpdateWar.sh && \
 	sdk_appserver_log

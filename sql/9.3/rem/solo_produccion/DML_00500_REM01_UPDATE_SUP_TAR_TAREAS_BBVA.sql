@@ -60,7 +60,7 @@ BEGIN
                     WHERE ECO.BORRADO = 0 
                     AND TAR.TAR_TAREA_FINALIZADA = 0 
                     AND TAP.TAP_CODIGO IN (''T017_PBCReserva'')
-                    AND CRA.DD_CRA_CODIGO = (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_DESCRIPCION = ''BBVA'')
+                    AND CRA.DD_CRA_CODIGO = (SELECT DD_CRA_CODIGO FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_DESCRIPCION = ''BBVA'')
                     AND EEC.DD_EEC_CODIGO != ''02'' AND EOF.DD_EOF_CODIGO != ''02'') AUX 
                     ON (TAC.TAR_ID = AUX.TAR_ID)
                 WHEN MATCHED THEN UPDATE SET 

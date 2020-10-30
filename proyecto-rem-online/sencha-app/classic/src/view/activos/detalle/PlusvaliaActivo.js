@@ -96,6 +96,9 @@ Ext.define('HreRem.view.activos.detalle.PlusvaliaActivo', {
 	                store : '{comboSiNoPlusvalia}',
 	                value : '{plusvalia.exento}'
 	            },
+	            listeners: {
+	            	change: 'onChangeExento'
+	            },
 	            allowBlank: false
 	        }, {
 	        	xtype : 'comboboxfieldbase',
@@ -135,7 +138,29 @@ Ext.define('HreRem.view.activos.detalle.PlusvaliaActivo', {
             		value: '{plusvalia.observaciones}'
             	},
             	allowBlank: false
-	        } ]
+	        } ,{
+	            xtype : 'numberfieldbase',
+	            fieldLabel : HreRem.i18n('fieldlabel.plusvalia.numExpediente'),
+	            bind : {
+	                value : '{plusvalia.numExpediente}'
+	            }
+	        },{
+	        	xtype : 'comboboxfieldbase',
+	        	reference:'motExento',
+	            fieldLabel : HreRem.i18n('fieldlabel.plusvalia.motivoExento'),
+	            bind : {
+	                store : '{comboMotivoExento}',
+					value : '{plusvalia.motivoExento}'
+				},
+	            blankText: 'Obligatorio si campo Exento es SI'
+	        },{
+	        	xtype : 'comboboxfieldbase',
+	            fieldLabel : HreRem.i18n('fieldlabel.plusvalia.resSolicitud'),
+	            bind : {
+	                store : '{comboResultadoSolicitud}',
+	                value : '{plusvalia.resultadoSolicitud}'
+	            }
+	        }]
 	    },{
 	    	
 	    xtype : 'fieldsettable',

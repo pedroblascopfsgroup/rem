@@ -6332,6 +6332,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
     },
     
+    onChangeExento: function(combo, value){
+		var me = this;
+		var res = me.lookupReference('motExento');
+		if(value == '01'){
+			res.allowBlank=false;
+		}else{
+			res.allowBlank=true;
+		}
+	},
+    
     mostrarObservacionesGrid: function(event, target, options) {   	
     	var me = this;
     	var observacionesAdmision = target.data.observacionesEvolucion;

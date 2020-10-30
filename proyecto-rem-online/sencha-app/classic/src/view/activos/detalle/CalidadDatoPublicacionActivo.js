@@ -1000,9 +1000,9 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 					text: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.boton.aplicar'),
 					reference: 'btnAplicaDescripcionRef',
 					handler: 'aplicarDescripcion',
-					bind: {
-						disabled: '{disableBtnDescF1}'
-					}
+					disabled: false
+					//disabled: '{disableBtnDescF1}'
+					
 				}]
 			},{
 				// Apartado Localicacion

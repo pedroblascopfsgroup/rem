@@ -6034,7 +6034,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     
     machacarDatoDq: function(btn, form) {
-    }
+    },
+    
+    disableBtnDescF1: function(get){
+     	return get('calidaddatopublicacionactivo.disableDescripcion');
+     }
     
     
 });

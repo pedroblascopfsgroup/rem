@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -135,19 +136,19 @@ public class ActivoDatosDq implements Serializable, Auditable {
     private DDProvincia provincia;
     
     @Column(name = "DDQ_LATITUD")
-   	private Long latitudDdq;
+   	private BigDecimal latitudDdq;
     
     @Column(name = "DDQ_LONGITUD")
-   	private Long longitudDdq;
+   	private BigDecimal longitudDdq;
     
     @Column(name = "GEODISTANCIA")
-   	private Long geodistancia;
+   	private BigDecimal geodistancia;
     
     @Column(name = "DDQ_SUPERFICIE_CONSTRUIDA")
-   	private Long superficieConstruidaDdq;
+   	private BigDecimal superficieConstruidaDdq;
     
     @Column(name = "DDQ_SUPERFICIE_UTIL")
-   	private Long superficieUtilDdq;
+   	private BigDecimal superficieUtilDdq;
     
     @Column(name = "NUM_IMAGENES")
    	private Long numImagenes;
@@ -420,43 +421,43 @@ public class ActivoDatosDq implements Serializable, Auditable {
 		this.provincia = provincia;
 	}
 
-	public Long getLatitudDdq() {
+	public BigDecimal getLatitudDdq() {
 		return latitudDdq;
 	}
 
-	public void setLatitudDdq(Long latitudDdq) {
+	public void setLatitudDdq(BigDecimal latitudDdq) {
 		this.latitudDdq = latitudDdq;
 	}
 
-	public Long getLongitudDdq() {
+	public BigDecimal getLongitudDdq() {
 		return longitudDdq;
 	}
 
-	public void setLongitudDdq(Long longitudDdq) {
+	public void setLongitudDdq(BigDecimal longitudDdq) {
 		this.longitudDdq = longitudDdq;
 	}
 
-	public Long getGeodistancia() {
+	public BigDecimal getGeodistancia() {
 		return geodistancia;
 	}
 
-	public void setGeodistancia(Long geodistancia) {
+	public void setGeodistancia(BigDecimal geodistancia) {
 		this.geodistancia = geodistancia;
 	}
 
-	public Long getSuperficieConstruidaDdq() {
+	public BigDecimal getSuperficieConstruidaDdq() {
 		return superficieConstruidaDdq;
 	}
 
-	public void setSuperficieConstruidaDdq(Long superficieConstruidaDdq) {
+	public void setSuperficieConstruidaDdq(BigDecimal superficieConstruidaDdq) {
 		this.superficieConstruidaDdq = superficieConstruidaDdq;
 	}
 
-	public Long getSuperficieUtilDdq() {
+	public BigDecimal getSuperficieUtilDdq() {
 		return superficieUtilDdq;
 	}
 
-	public void setSuperficieUtilDdq(Long superficieUtilDdq) {
+	public void setSuperficieUtilDdq(BigDecimal superficieUtilDdq) {
 		this.superficieUtilDdq = superficieUtilDdq;
 	}
 

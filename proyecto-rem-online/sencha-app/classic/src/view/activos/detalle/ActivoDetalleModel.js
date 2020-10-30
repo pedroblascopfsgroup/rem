@@ -979,7 +979,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     },
 	     
 	     getIconClsDQSupConstruida: function(get) {
-	     	var correctoF3ReferenciaCatastral = get('calidaddatopublicacionactivo.correctoF3ReferenciaCatastral');
+	     	var correctoF3ReferenciaCatastral = get('calidaddatopublicacionactivo.correctoF3SuperficieConstruida');
 	     	
 	     	if("0" == correctoF3ReferenciaCatastral){
 	     		return 'app-tbfiedset-ico icono-tickok';	
@@ -1019,7 +1019,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     
 	     getIconClsDQTipoVia: function(get) {
 	     	var correctoF3TipoVia = get('calidaddatopublicacionactivo.correctoF3TipoVia');
-	     	
+
 	     	if("0" == correctoF3TipoVia){
 	     		return 'app-tbfiedset-ico icono-tickok';	
 	     	}else if("1" == correctoF3TipoVia){
@@ -1327,16 +1327,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     },
 
 	     disableBtnDescF1: function(get){
-	     	var disableF1escripcion = get('calidaddatopublicacionactivo.disableDescripcion');
 	     	
-	     	if(disableF1escripcion){
-	     		return true;
-	     	}else{
-	     		return false;
-	     	}
-	     		
+	     	return get('calidaddatopublicacionactivo.disableDescripcion');
 	     }
-	     
 	
 	 }, 
 	 

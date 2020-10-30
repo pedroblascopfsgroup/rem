@@ -2121,7 +2121,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setDrF3ReferenciaCatastral(activo.getInfoRegistral().getInfoRegistralBien().getReferenciaCatastralBien());
 			dto.setDrF3SuperficieConstruida(activo.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida());
 			if(activo.getInfoRegistral().getSuperficieUtil() != null) {
-				dto.setDrF3SuperficieUtil(new BigDecimal(activo.getInfoRegistral().getSuperficieUtil()));
+				dto.setDrF3SuperficieUtil(new BigDecimal(activo.getInfoRegistral().getSuperficieUtil()).setScale(2, RoundingMode.HALF_UP));
 			}
 			
 		}
@@ -2133,11 +2133,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		dto.setDqF3ReferenciaCatastral(actDatosDq.getReferenciaCatastralDdq());
 		
 		if(actDatosDq.getSuperficieConstruidaDdq() != null) {
-			dto.setDqF3SuperficieConstruida(new BigDecimal(actDatosDq.getSuperficieConstruidaDdq()));	
+			dto.setDqF3SuperficieConstruida(actDatosDq.getSuperficieConstruidaDdq());	
 		}
 		
 		if(actDatosDq.getSuperficieUtilDdq() != null) {
-			dto.setDqF3SuperficieUtil(new BigDecimal(actDatosDq.getSuperficieUtilDdq()));	
+			dto.setDqF3SuperficieUtil(actDatosDq.getSuperficieUtilDdq().setScale(2, RoundingMode.HALF_UP));	
 		}
 		
 		dto.setDqF3AnyoConstruccion(actDatosDq.getAnyoConstruccion());
@@ -2247,9 +2247,13 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if(dto.getDqF3AnyoConstruccion() == null) {
 			dto.setCorrectoF3AnyoConstruccion(ICONO_TICK_INTERROGANTE);
 			interrogante = true;
-		}else if(dto.getDrF3AnyoConstruccion() != null 
-				&& (dto.getDrF3AnyoConstruccion() == dto.getDqF3AnyoConstruccion())) {
-			dto.setCorrectoF3AnyoConstruccion(ICONO_TICK_OK);
+		}else if(dto.getDrF3AnyoConstruccion() != null) {
+			if(dto.getDrF3AnyoConstruccion().compareTo(dto.getDqF3AnyoConstruccion()) == 0) {
+				dto.setCorrectoF3AnyoConstruccion(ICONO_TICK_OK);	
+			}else {
+				dto.setCorrectoF3AnyoConstruccion(ICONO_TICK_KO);
+				cruzroja = true;
+			}
 		}else {
 			dto.setCorrectoF3AnyoConstruccion(ICONO_TICK_KO);
 			cruzroja = true;

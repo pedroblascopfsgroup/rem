@@ -98,6 +98,10 @@ func-rem-precios|HREOS-9492
 rem_mirror|func-rem-spartaMasivo
 rem_mirror|func-rem-BBVA-F1
 func-rem-BBVA-F1|func-rem-BBVA-F2
+rem_mirror|func-rem-alaskaIntegracion
+func-HREOS-10425|func-rem-supervisionGestorias-F2
+rem_mirror|func-rem-supervisionGestorias-F2
+2.20.9-20071001-rem|func-rem-supervisionGestorias-F2
 func-rem-nuevasEntradasAdmision|func-HREOS-10487
 func-HREOS-10487|func-rem-nuevasEntradasAdmision
 rem_mirror|func-rem-nuevasEntradasAdmision
@@ -107,7 +111,6 @@ rem_mirror|func-rem-BBVA-F1
 func-rem-BBVA-F1|func-rem-BBVA-F2
 func-rem-BBVA-F2|R-Ricalate
 func-rem-alaskaIntegracion|R-Ricalate
-rem_mirror|func-rem-alaskaIntegracion
 rem_mirror|parche-rem-Divarian-F5
 2.20.9-20071001-rem|parche-rem-Divarian-F5
 func-rem-nuevasEntradasAdmision|func-rem-supervisionGestorias-F2

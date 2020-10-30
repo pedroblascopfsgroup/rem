@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200728
+--## AUTOR=DAP
+--## FECHA_CREACION=20201029
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.15.3-rem
---## INCIDENCIA_LINK=HREOS-10666
+--## INCIDENCIA_LINK=HREOS-11761
 --## PRODUCTO=NO
 --## Finalidad: Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación. Liberbank.
 --## Info: https://link-doc.pfsgroup.es/confluence/display/REOS/SP_EXT_PR_ACT_GASTOS
@@ -19,6 +19,7 @@
 --##	    1.03 Se añaden modificaciones según el ítem REMVIP-2891.
 --##	    1.04 Se añaden modificaciones según el ítem REMVIP-5417.
 --##	    1.05 Se añaden modificaciones según el ítem HREOS-10666.
+--##        1.06 Se añaden modificaciones según el ítem HREOS-11761.
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -41,7 +42,9 @@ create or replace PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_GASTOS (
     DD_TIT_CODIGO				IN VARCHAR2,
     GLD_IMP_IND_TIPO_IMPOSITIVO IN VARCHAR2,
     DD_TIM_CODIGO				IN VARCHAR2,
-    
+    PRO_CODIGO_ENTIDAD          IN VARCHAR2,
+    GPV_REF_EMISOR              IN VARCHAR2,
+    PVE_COD_ORIGEN              IN VARCHAR2,
 
     --Variables de salida
     COD_RETORNO                 OUT VARCHAR2 -- 0 OK / 1 KO
@@ -81,6 +84,8 @@ create or replace PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_GASTOS (
     DD_EAP_ID_NUEVO		            NUMBER(16) := -1;
     DD_EAH_ID_ANTERIOR		        NUMBER(16) := -1;
     DD_EAH_ID_NUEVO		            NUMBER(16) := -1;
+    V_GASTO_BBVA                    NUMBER(1)  := 0;
+    V_GPV_NUMERO_FACTURA            VARCHAR2(256);
 
     --Info
     V_OP_1_DESC                     VARCHAR2(400 CHAR) := '[OPERATORIA] Para todos los registros con FECHA DE CONTABILIZACION relacionado con un gasto cuyo estado no sea "Rechazado administración","Contabilizado","Pagado" "Rechazado propietario" o "Anulado".';
@@ -250,6 +255,9 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('DD_TIT_CODIGO: '||DD_TIT_CODIGO);
     DBMS_OUTPUT.PUT_LINE('GLD_IMP_IND_TIPO_IMPOSITIVO: '||GLD_IMP_IND_TIPO_IMPOSITIVO);
     DBMS_OUTPUT.PUT_LINE('DD_TIM_CODIGO: '||DD_TIM_CODIGO);
+    DBMS_OUTPUT.PUT_LINE('PRO_CODIGO_ENTIDAD: '||PRO_CODIGO_ENTIDAD);
+    DBMS_OUTPUT.PUT_LINE('GPV_REF_EMISOR: '||GPV_REF_EMISOR);
+    DBMS_OUTPUT.PUT_LINE('PVE_COD_ORIGEN: '||PVE_COD_ORIGEN);
 
     --Seteamos la descripción del error correspondiente a la imposibilidad de convertir el parametro de entrada a DATE.
     V_ERROR_DESC := '[ERROR] No se ha podido convertir la fecha a DATE, comprobar máscara. Paramos la ejecución.';
@@ -265,12 +273,58 @@ BEGIN
     V_ERROR_DESC := '';
 
     --1. Comprobación de los parametros de ENTRADA.
+    IF GPV_NUM_GASTO_HAYA IS NULL THEN
+        
+        V_MSQL := V_COUNT || '
+            FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV
+            JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID
+                AND PRO.BORRADO = 0
+            JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_ID = GPV.PVE_ID_EMISOR
+                AND PVE.BORRADO = 0
+            WHERE GPV.BORRADO = 0
+                AND GPV.GPV_REF_EMISOR = '''||GPV_REF_EMISOR||'''
+                AND PRO.PRO_CODIGO_ENTIDAD = '''||PRO_CODIGO_ENTIDAD||'''
+                AND PVE.PVE_COD_ORIGEN = '''||PVE_COD_ORIGEN||'''';
+
+        EXECUTE IMMEDIATE V_MSQL INTO V_NUM;
+
+        IF V_NUM = 1 THEN
+
+            V_MSQL := 'SELECT GPV_NUM_GASTO_HAYA
+            FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV
+            JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID
+                AND PRO.BORRADO = 0
+            JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_ID = GPV.PVE_ID_EMISOR
+                AND PVE.BORRADO = 0
+            WHERE GPV.BORRADO = 0
+                AND GPV.GPV_REF_EMISOR = '''||GPV_REF_EMISOR||'''
+                AND PRO.PRO_CODIGO_ENTIDAD = '''||PRO_CODIGO_ENTIDAD||'''
+                AND PVE.PVE_COD_ORIGEN = '''||PVE_COD_ORIGEN||'''';
+
+            EXECUTE IMMEDIATE V_MSQL INTO V_GPV_NUM_GASTO_HAYA;
+
+            V_MSQL := V_COUNT || '
+                FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV
+                JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID
+                    AND PRO.BORRADO = 0
+                JOIN '||V_ESQUEMA||'DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID
+                    AND CRA.BORRADO = 0
+                WHERE GPV.BORRADO = 0
+                    AND CRA.DD_CRA_CODIGO = ''16''
+                    AND GPV.GPV_NUM_GASTO_HAYA = '''||V_GPV_NUM_GASTO_HAYA||'''';
+
+            EXECUTE IMMEDIATE V_MSQL INTO V_GASTO_BBVA;
+
+        END IF;
+
+    END IF;
+
     -------------------------------------------------------
     --Aquí comenzamos directamente con el CASE, ya que al ser el inicio, está claro que COD_RETORNO = 0.
     CASE
-        --1. NO SE INSERTA GPV_NUM_GASTO_HAYA
-        WHEN GPV_NUM_GASTO_HAYA IS NULL
-            THEN V_ERROR_DESC := '[ERROR] No se ha informado GPV_NUM_GASTO_HAYA. Por favor, informe éste parámetro. Paramos la ejecución.';
+        --1. NO SE INSERTA O ENCUENTRA GPV_NUM_GASTO_HAYA
+        WHEN GPV_NUM_GASTO_HAYA IS NULL AND V_GPV_NUM_GASTO_HAYA IS NULL
+            THEN V_ERROR_DESC := '[ERROR] No se ha informado GPV_NUM_GASTO_HAYA o no se encuentra. Por favor, informe éste parámetro. Paramos la ejecución.';
                  COD_RETORNO := 1;
         --2. NO SE INSERTA FECHA_PAGO NI FECHA_CONTABILIZACION
         WHEN FECHA_PAGO IS NULL AND FECHA_CONTABILIZACION IS NULL
@@ -283,7 +337,13 @@ BEGIN
 
     ELSE
         COD_RETORNO := 0;
-        V_GPV_NUM_GASTO_HAYA            := GPV_NUM_GASTO_HAYA;
+
+        IF V_GPV_NUM_GASTO_HAYA IS NULL THEN
+
+            V_GPV_NUM_GASTO_HAYA            := GPV_NUM_GASTO_HAYA;
+
+        END IF;
+
         V_DD_STG_CODIGO                 := DD_STG_CODIGO;
         V_DD_TIT_CODIGO                 := DD_TIT_CODIGO;
         V_GLD_IMP_IND_TIPO_IMPOSITIVO   := GLD_IMP_IND_TIPO_IMPOSITIVO;
@@ -406,10 +466,16 @@ BEGIN
             --PASO 2/6 Actualizar la referencia de la factura (GPV_GASTOS_PROVEEDOR.GPV_NUMERO_FACTURA_UVEM) con el número de gasto del destinatario.
             --Recuperamos el NUEVO valor
             V_VALOR_NUEVO := NUM_GASTO_DESTINATARIO;
-            --Realizamos la actuación
+            --Realizamos actuación
+            IF V_GASTO_BBVA = 1 THEN
+                V_GPV_NUMERO_FACTURA := 'GPV_NUM_GASTO_DESTINATARIO';
+            ELSE
+                V_GPV_NUMERO_FACTURA := 'GPV_NUMERO_FACTURA_UVEM';
+            END IF;
+
             V_MSQL := '
             UPDATE '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR
-            SET GPV_NUMERO_FACTURA_UVEM = '''||V_VALOR_NUEVO||''',
+            SET '||V_GPV_NUMERO_FACTURA||' = '''||V_VALOR_NUEVO||''',
             USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
             FECHAMODIFICAR = SYSDATE
             WHERE GPV_ID = '||V_GPV_ID||'
@@ -423,7 +489,7 @@ BEGIN
                 --Logado en HLD_HIST_LANZA_PER_DETA
                 PARAM1 := 'GPV_GASTOS_PROVEEDOR';
                 PARAM2 := 'GPV_ID';
-                PARAM3 := 'GPV_NUMERO_FACTURA_UVEM';
+                PARAM3 := V_GPV_NUMERO_FACTURA;
                 HLD_HIST_LANZA_PER_DETA (TO_CHAR(V_GPV_NUM_GASTO_HAYA), PARAM1, PARAM2, V_GPV_ID, PARAM3, V_NUM_FACTUR_UVEM, V_VALOR_NUEVO);
                 --Reseteamos el V_VALOR_NUEVO
                 V_VALOR_NUEVO := '';

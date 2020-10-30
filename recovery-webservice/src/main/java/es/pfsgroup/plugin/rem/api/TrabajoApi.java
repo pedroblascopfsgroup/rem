@@ -923,4 +923,6 @@ public interface TrabajoApi {
 
 	public Map<String, String> getDocumentosFinalizacionTrabajo(Long idTrabajo);
 
+	public Object getExisteTareaWebServiceHaya(String idTareaHaya);
+
 }

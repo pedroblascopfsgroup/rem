@@ -51,6 +51,7 @@ import es.pfsgroup.plugin.rem.model.GastoInfoContabilidad;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
@@ -338,6 +339,14 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 					}
 					
 					
+					if(exc.dameCelda(fila, COL_TIPO_ELEMENTO) != null && !exc.dameCelda(fila, COL_TIPO_ELEMENTO).isEmpty()) {
+						Filter filtroTipoEntidad = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, COL_TIPO_ELEMENTO));
+						DDEntidadGasto entidadGasto = genericDao.get(DDEntidadGasto.class, filtroTipoEntidad);
+						
+						if(entidadGasto != null && DDEntidadGasto.CODIGO_SIN_ACTIVOS.equals(entidadGasto.getCodigo())) {
+							newGastoLineaDetalle.setLineaSinActivos(true);
+						}
+					}
 					newGastoLineaDetalle.setImporteTotal(importeTotal);
 					
 					newGastoLineaDetalle.setAuditoria(Auditoria.getNewInstance());
@@ -373,16 +382,13 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 									gastoLineaDetalleEntidad.setGastoLineaDetalle(newGastoLineaDetalle);
 									gastoLineaDetalleEntidad.setEntidad(activoAgrupacionActivo.getActivo().getId());
 									gastoLineaDetalleEntidad.setEntidadGasto(entidadGastoActivo);
-									sumaParticipacion = sumaParticipacion.add(participacionPorActivo);
-								   if((i++ == activosAgrupacion.size() - 1) && sumaParticipacion != participacion){
+									 sumaParticipacion = sumaParticipacion.add(participacionPorActivo);
+								    if((i++ == activosAgrupacion.size() - 1) && sumaParticipacion != participacion){
 										BigDecimal decimal = sumaParticipacion.subtract(participacion);
-										if(decimal.compareTo(BigDecimal.ZERO) < 0) {
-											participacionPorActivo = participacionPorActivo.add(decimal);
-										}else if(decimal.compareTo(BigDecimal.ZERO) > 0) {
-											participacionPorActivo = participacionPorActivo.subtract(decimal);
-										}										
-								    }
+										participacionPorActivo = participacionPorActivo.subtract(decimal);									
+								     }
 									 
+								  
 								   gastoLineaDetalleEntidad.setParticipacionGasto(participacionPorActivo.doubleValue());
 								   genericDao.save(GastoLineaDetalleEntidad.class,gastoLineaDetalleEntidad);
 								}
@@ -401,6 +407,8 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 						gastoLineaDetalleEntidad.setEntidadGasto(entidadGasto);
 						gastoLineaDetalleEntidad.setParticipacionGasto(Double.parseDouble(exc.dameCelda(fila, COL_PARTICIPACION_LINEA_DETALLE)));
 						genericDao.save(GastoLineaDetalleEntidad.class,gastoLineaDetalleEntidad);
+						
+					}else if(DDEntidadGasto.CODIGO_SIN_ACTIVOS.equals(entidadGasto.getCodigo())) {		
 						
 					}else {
 						GastoLineaDetalleEntidad gastoLineaDetalleEntidad = new GastoLineaDetalleEntidad();
@@ -596,12 +604,23 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 						}
 					}
 					
+					List<GastoProveedor> listaGastoProveedor = dtoGastos.getAllGastoProveedor();
+					
+					if(listaGastoProveedor != null && !listaGastoProveedor.isEmpty()) {
+						for (GastoProveedor gastoProveedor : listaGastoProveedor) {
+							if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gastoProveedor.getPropietario().getCartera().getCodigo())) {
+								gastoLineaDetalleApi.actualizarDiariosLbk(gastoProveedor.getId());
+							}
+						}
+					}
+					
 					dtoGastos.vaciarInstancias();
 					
 				}
 				
 
 		} catch (Exception e) {
+			dtoGastos.vaciarInstancias();
 			logger.error("Error en MSVMasivaModificacionLineasDetalle", e);
 		}
 	

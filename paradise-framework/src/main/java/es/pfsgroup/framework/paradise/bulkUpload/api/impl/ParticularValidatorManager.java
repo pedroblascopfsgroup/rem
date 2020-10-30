@@ -1,6 +1,8 @@
 package es.pfsgroup.framework.paradise.bulkUpload.api.impl;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -5666,6 +5668,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return !"0".equals(resultado);
 	}
+
 	@Override
 	public Boolean estaPerimetroAdmision(String activoId) {
 		if (activoId == null || !StringUtils.isNumeric(activoId)) {
@@ -5843,6 +5846,27 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				" FROM gld_gastos_linea_detalle linea " + 
 				" JOIN gpv_gastos_proveedor gasto ON gasto.gpv_id = linea.gpv_id AND GASTO.GPV_NUM_GASTO_HAYA = " + idGasto + 
 				" where GLD_ID = "+ idLinea +" AND gasto.borrado = 0 AND linea.borrado = 0");
+		
+		return !"0".equals(resultado);
+	}
+
+	@Override
+	public Boolean gastoRepetido(String factura, String fechaEmision, String nifEmisor, String nifPropietario) {
+		String resultado = "0";
+	
+			if(factura == null || fechaEmision == null || nifEmisor == null || nifPropietario == null) {
+				return false;
+			}
+		
+			resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+					+ "		 FROM GPV_GASTOS_PROVEEDOR WHERE "
+					+ "		 GPV_REF_EMISOR = '" + factura + "'"
+					+ " 	 AND TRUNC(GPV_FECHA_EMISION) = TO_DATE( '"+fechaEmision+"', 'DD/MM/YY') AND "
+					+ "		 PVE_ID_EMISOR IN "
+					+ "		 (SELECT PVE_ID FROM ACT_PVE_PROVEEDOR WHERE PVE_DOCIDENTIF = '"+nifEmisor+"' AND BORRADO = 0 AND PVE_FECHA_BAJA IS NULL) AND "
+					+ " 	 PRO_ID IN (SELECT PRO_ID FROM ACT_PRO_PROPIETARIO WHERE PRO_DOCIDENTIF = '"+nifPropietario+"' AND BORRADO = 0) "
+					+ "		 AND BORRADO = 0");
+
 		
 		return !"0".equals(resultado);
 	}

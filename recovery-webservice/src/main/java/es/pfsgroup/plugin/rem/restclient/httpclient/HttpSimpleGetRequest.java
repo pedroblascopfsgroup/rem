@@ -21,6 +21,7 @@ public class HttpSimpleGetRequest {
 	private static final int TIMEOUT = 60000;
 	private URL url;
 	private HttpURLConnection con;
+	private int status = -1;
 	
 	
 	public HttpSimpleGetRequest(String url) {
@@ -36,11 +37,10 @@ public class HttpSimpleGetRequest {
 		try {
 			this.con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("GET");
-			con.setRequestProperty("Content-type", "application/json");
 			con.setConnectTimeout(TIMEOUT);
 			con.setReadTimeout(TIMEOUT);
-			con.setInstanceFollowRedirects(false);
-			int status = con.getResponseCode();
+			con.getURL(); 
+			this.status = con.getResponseCode();
 			BufferedReader reader = new BufferedReader(getReader(status));
 			response = parsedResponse(status, reader);
 			reader.close();
@@ -72,8 +72,12 @@ public class HttpSimpleGetRequest {
 		while((inputLine = reader.readLine()) != null) {
 			content.append(inputLine);
 		}
+		content.append("status : " + status); 
 		ObjectMapper mapper = new ObjectMapper();
 		return mapper.writeValueAsString(content.toString());
 	}
+	
+	
+	public int getStatus() { return this.status; };
 
 }

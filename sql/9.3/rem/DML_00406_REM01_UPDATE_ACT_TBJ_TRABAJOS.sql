@@ -67,8 +67,8 @@ BEGIN
             WHEN MATCHED THEN
                 UPDATE SET 
             TBJ.DD_EST_ID = AUX.DD_EST_ID
-            /*, TBJ.USUARIOMODIFICAR = '''||V_USR||'''
-            , TBJ.FECHAMODIFICAR = SYSDATE*/';
+            , TBJ.USUARIOMODIFICAR = '''||V_USR||'''
+            , TBJ.FECHAMODIFICAR = SYSDATE';
 
 	EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Fijación plazo de ejecución del trabajo: ' || SQL%ROWCOUNT || ' registros actualizados');
@@ -109,8 +109,8 @@ BEGIN
             WHEN MATCHED THEN
                 UPDATE SET 
             TBJ.DD_EST_ID = AUX.DD_EST_ID
-            /*, TBJ.USUARIOMODIFICAR = '''||V_USR||'''
-            , TBJ.FECHAMODIFICAR = SYSDATE*/';
+            , TBJ.USUARIOMODIFICAR = '''||V_USR||'''
+            , TBJ.FECHAMODIFICAR = SYSDATE';
 
 	EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Resultado actuación técnica tarificada y Resultado actuación técnica no tarificada: ' || SQL%ROWCOUNT || ' registros actualizados');
@@ -151,8 +151,8 @@ BEGIN
         WHEN MATCHED THEN
             UPDATE SET 
         TBJ.DD_EST_ID = AUX.DD_EST_ID
-        /*, TBJ.USUARIOMODIFICAR = '''||V_USR||'''
-        , TBJ.FECHAMODIFICAR = SYSDATE*/';
+        , TBJ.USUARIOMODIFICAR = '''||V_USR||'''
+        , TBJ.FECHAMODIFICAR = SYSDATE';
 
 	EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Solicitud documento por proveedor: ' || SQL%ROWCOUNT || ' registros actualizados');
@@ -193,8 +193,8 @@ BEGIN
         WHEN MATCHED THEN
             UPDATE SET 
         TBJ.DD_EST_ID = AUX.DD_EST_ID
-        /*, TBJ.USUARIOMODIFICAR = '''||V_USR||'''
-        , TBJ.FECHAMODIFICAR = SYSDATE*/';
+        , TBJ.USUARIOMODIFICAR = '''||V_USR||'''
+        , TBJ.FECHAMODIFICAR = SYSDATE';
 
 	EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Solicitud documento por Gestor Interno y  Solicitud Cédula por gestoría: ' || SQL%ROWCOUNT || ' registros actualizados');
@@ -235,8 +235,8 @@ BEGIN
         WHEN MATCHED THEN
             UPDATE SET 
         TBJ.DD_EST_ID = AUX.DD_EST_ID
-        /*, TBJ.USUARIOMODIFICAR = '''||V_USR||'''
-        , TBJ.FECHAMODIFICAR = SYSDATE*/';
+        , TBJ.USUARIOMODIFICAR = '''||V_USR||'''
+        , TBJ.FECHAMODIFICAR = SYSDATE';
 
 	EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Obtencion documento por proveedor: ' || SQL%ROWCOUNT || ' registros actualizados');
@@ -265,8 +265,8 @@ BEGIN
                 WHEN MATCHED THEN
                     UPDATE SET 
                 TBJ.DD_EST_ID = AUX.DD_EST_ID
-                /*, TBJ.USUARIOMODIFICAR = '''||V_USR||'''
-                , TBJ.FECHAMODIFICAR = SYSDATE*/';
+                , TBJ.USUARIOMODIFICAR = '''||V_USR||'''
+                , TBJ.FECHAMODIFICAR = SYSDATE';
 
 	EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] Estados de trabajos nuevos: ' || SQL%ROWCOUNT || ' registros actualizados');

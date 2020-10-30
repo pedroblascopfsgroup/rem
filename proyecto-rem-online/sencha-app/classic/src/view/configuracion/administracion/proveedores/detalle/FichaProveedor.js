@@ -11,7 +11,6 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
                'HreRem.view.configuracion.administracion.proveedores.detalle.DireccionesDelegacionesList',
                'HreRem.view.configuracion.administracion.proveedores.detalle.PersonasContactoList',
                'HreRem.view.configuracion.administracion.proveedores.detalle.ActivosIntegradosList'],
-
     initComponent: function () {
         var me = this;
         
@@ -44,209 +43,217 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 						collapsible: true,
 						items :
 							[
-				             // Fila 0  
-				                { 
-				                	xtype: 'textfieldbase',
-				                	fieldLabel: HreRem.i18n('fieldlabel.proveedores.codigo'),
-				                	bind: '{proveedor.codigo}',
-				                	readOnly: true
-				                },				                
-				                { 
-				                	xtype: 'textfieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.nombre'),
-									bind: '{proveedor.nombreProveedor}',
-									maxLength: 250
-				                },
-				                {
-						        	xtype: 'datefieldbase',
-						        	fieldLabel: HreRem.i18n('fieldlabel.fecha.alta'),
-									bind: '{proveedor.fechaAltaProveedor}'
-								},
-							// Fila 1
 								{
-									 xtype : 'comboboxfieldbase',
-									 fieldLabel: HreRem.i18n('fieldlabel.tipo'),
-									 allowBlank: false,
-									 reference: 'cbTipoProveedor',
-									 chainedStore: 'comboSubtipoProveedor',
-									 chainedReference: 'cbSubtipoProveedor',
-								     bind : {
-								       store : '{comboTipoProveedor}',
-								       value : '{proveedor.tipoProveedorCodigo}'
-								     },
-								     listeners: {
-					                   select: 'onChangeChainedCombo',
-					                   change: 'onTipoProveedorChange'
-					            	 }
-								},
-						        { 
-				                	xtype: 'textfieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.proveedores.nombrecomercial'),
-									bind: '{proveedor.nombreComercialProveedor}',
-									maxLength: 250
-				                },
-				                {
-						        	xtype: 'datefieldbase',
-						        	fieldLabel: HreRem.i18n('fieldlabel.fecha.baja'),
-									bind: '{proveedor.fechaBajaProveedor}'
-								},
-							// Fila 2
-								{ 
-									xtype: 'comboboxfieldbase',
-						        	fieldLabel: HreRem.i18n('fieldlabel.subtipo'),
-						        	allowBlank: false,
-						        	reference: 'cbSubtipoProveedor',
-						        	valueField: 'codigo',
-						        	bind: {
-					            		store: '{comboSubtipoProveedor}',
-					            		value: '{proveedor.subtipoProveedorCodigo}',
-					            		disabled: '{!proveedor.tipoProveedorCodigo}'
-					            	}
-						        },
-						        {
-						        	xtype : 'comboboxfieldbase',
-						        	fieldLabel: HreRem.i18n('fieldlabel.tipoDocumento'),
-						        	reference: 'cbTipoDocumento',
-						        	bind : {
-									      store : '{comboTipoDocumento}',
-									      value : '{proveedor.tipoDocumentoCodigo}'
-									}
-						        },
-						        { 
-				                	xtype: 'textfieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.proveedores.nif'),
-									bind: '{proveedor.nifProveedor}',
-									maxLength: 20
-				                },
-				             // Fila 3
-				                	{
-									xtype : 'comboboxfieldbase',
-								    fieldLabel : HreRem.i18n('fieldlabel.proveedor.localizada'),
-								    reference: 'cbLocalizada',
-								    bind : {
-								      store : '{comboSiNoRem}',
-								      disabled: '{!proveedor.isEntidad}',
-								      value : '{proveedor.localizadaProveedorCodigo}'
-								    }
-								},
-								{ 
-									xtype: 'textfieldbase',
-									vtype: 'email',
-									fieldLabel: HreRem.i18n('fieldlabel.proveedor.email'),
-									bind: '{proveedor.email}',
-									maxLength: 50
-				                },
-						        { 
-									xtype: 'textareafieldbase',
-						        	fieldLabel:  HreRem.i18n('fieldlabel.observaciones'),						        	
-						        	bind: '{proveedor.observacionesProveedor}',
-									maxLength: 200,
-						        	rowspan: 2,
-						        	height: 80
-						        },
-						     // Fila 4
-						        { 
-									xtype: 'comboboxfieldbase',
-						        	fieldLabel:  HreRem.i18n('fieldlabel.estado'),
-						        	reference: 'cbEstadoProveedor',
-						        	bind: {
-									      store: '{comboEstadoProveedor}',
-									      value: '{proveedor.estadoProveedorCodigo}'
-						        	}
-						        },
-						        {
-									xtype : 'comboboxfieldbase',
-								    fieldLabel : HreRem.i18n('fieldlabel.proveedores.tipopersona'),
-								    reference: 'cbTipoPersona',
-								    bind : {
-								      store : '{comboTipoPersona}',
-								      disabled: '{!proveedor.isProveedor}',
-								      value : '{proveedor.tipoPersonaProveedorCodigo}'
-								    }
-								},
-								 // Fila 5
-						        {
-									xtype: 'textfieldbase',
-						        	fieldLabel:  HreRem.i18n('fieldlabel.url.web'),						        	
-						        	bind: '{proveedor.webUrlProveedor}',
-									maxLength: 50
-						        },
-						        {
-									xtype: 'checkboxfieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.autorizado.web'),
-									bind: '{proveedor.autorizacionWeb}',
-									readOnly: false
-								},
-					        
-					            {// Siempre oculto por el momento.
-					            	xtype: 'comboboxfieldbase',
-						        	fieldLabel:  HreRem.i18n('fieldlabel.proveedores.operativa'),
-						        	reference: 'cbOperativaProveedor',
-						        	bind: {
-									      store: '{comboOperativa}',
-									      value: '{proveedor.operativaCodigo}'
-						        	},
-						        	hidden: true
-					            },
-					            {
-			        				xtype: 'datefieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.proveedor.fecha.constitucion'),
-									reference: 'dateConstitucionProveedor',
-									
-									//colspan: 2,
-									bind: {
-										disabled: '{!proveedor.isEntidad}',
-										value: '{proveedor.fechaConstitucionProveedor}'
-									}
-					            },
-					             // Fila 6
-						        {
-									xtype: 'textfieldbase',
-						        	fieldLabel:  HreRem.i18n('fieldlabel.numero.ursus.bankia'),	
-						        	reference: 'numUrsusRef',
-						        	bind: '{proveedor.codProveedorUvem}',
-						        	listeners:{
-						        		render: function(){
-						        			var me = this;						        			
-						        			var codigoCartera = me.up('proveedoresdetallemain').getViewModel().get('proveedor.carteraCodigo');
-						        			if(Ext.isDefined(codigoCartera) && codigoCartera != null && codigoCartera.includes(CONST.CARTERA["BANKIA"])){						        				
-						        				me.allowBlank = false;
-						        				me.setReadOnly(false);
-						        				
-						        			}else{						        				
-						        				me.allowBlank = true;
-						        				me.setReadOnly(true);
-						        			}
-						        		}
-						        	}
-					            
-						        },						       
-								{
-									xtype: 'textfieldbase',
-						        	fieldLabel:  HreRem.i18n('fieldlabel.proveedorapi.codigo'),						        	
-						        	bind: {
-						        		value:'{proveedor.codigoApiProveedor}',
-						        		hidden: '{!esTipoOficina}'
-						        	}
-									
-						        },						        
-								{ 
-									xtype: 'comboboxsearchfieldbase',
-									fieldLabel:  HreRem.i18n('fieldlabel.proveedores.mediador'),						
-									reference: 'cbmediadorProveedor',
-									colspan:2,
-								    bind : {
-								      store : '{comboMediador}',								      
-								      value : '{proveedor.idMediadorRelacionado}'
-								    },								    
-								    displayField: 'nombre',								    
-			    					valueField: 'codigoProveedorRem',
-			    					emptyText: 'Introduzca nombre mediador',
-			    					autoLoadOnValue: false,
-			    					loadOnBind: false,
-			    					forceSelection: false,
-			    					addUxReadOnlyEditFieldPlugin: true			    						    				   
-								},						        
+									xtype:'fieldsettable',
+									border:false,
+									collapsible:false,
+									colspan:3,
+									items:[
+										// Fila 0  
+						                { 
+						                	xtype: 'textfieldbase',
+						                	fieldLabel: HreRem.i18n('fieldlabel.proveedores.codigo'),
+						                	bind: '{proveedor.codigo}',
+						                	readOnly: true
+						                },				                
+						                { 
+						                	xtype: 'textfieldbase',
+											fieldLabel: HreRem.i18n('fieldlabel.nombre'),
+											bind: '{proveedor.nombreProveedor}',
+											maxLength: 250
+						                },
+						                {
+								        	xtype: 'datefieldbase',
+								        	fieldLabel: HreRem.i18n('fieldlabel.fecha.alta'),
+											bind: '{proveedor.fechaAltaProveedor}'
+										},
+									// Fila 1
+										{
+											 xtype : 'comboboxfieldbase',
+											 fieldLabel: HreRem.i18n('fieldlabel.tipo'),
+											 allowBlank: false,
+											 reference: 'cbTipoProveedor',
+											 chainedStore: 'comboSubtipoProveedor',
+											 chainedReference: 'cbSubtipoProveedor',
+										     bind : {
+										       store : '{comboTipoProveedor}',
+										       value : '{proveedor.tipoProveedorCodigo}'
+										     },
+										     listeners: {
+							                   select: 'onChangeChainedCombo',
+							                   change: 'onTipoProveedorChange'
+							            	 }
+										},
+								        { 
+						                	xtype: 'textfieldbase',
+											fieldLabel: HreRem.i18n('fieldlabel.proveedores.nombrecomercial'),
+											bind: '{proveedor.nombreComercialProveedor}',
+											maxLength: 250
+						                },
+						                {
+								        	xtype: 'datefieldbase',
+								        	fieldLabel: HreRem.i18n('fieldlabel.fecha.baja'),
+											bind: '{proveedor.fechaBajaProveedor}'
+										},
+									// Fila 2
+										{ 
+											xtype: 'comboboxfieldbase',
+								        	fieldLabel: HreRem.i18n('fieldlabel.subtipo'),
+								        	allowBlank: false,
+								        	reference: 'cbSubtipoProveedor',
+								        	valueField: 'codigo',
+								        	bind: {
+							            		store: '{comboSubtipoProveedor}',
+							            		value: '{proveedor.subtipoProveedorCodigo}',
+							            		disabled: '{!proveedor.tipoProveedorCodigo}'
+							            	}
+								        },
+								        {
+								        	xtype : 'comboboxfieldbase',
+								        	fieldLabel: HreRem.i18n('fieldlabel.tipoDocumento'),
+								        	reference: 'cbTipoDocumento',
+								        	bind : {
+											      store : '{comboTipoDocumento}',
+											      value : '{proveedor.tipoDocumentoCodigo}'
+											}
+								        },
+								        { 
+						                	xtype: 'textfieldbase',
+											fieldLabel: HreRem.i18n('fieldlabel.proveedores.nif'),
+											bind: '{proveedor.nifProveedor}',
+											maxLength: 20
+						                },
+						             // Fila 3
+						                	{
+											xtype : 'comboboxfieldbase',
+										    fieldLabel : HreRem.i18n('fieldlabel.proveedor.localizada'),
+										    reference: 'cbLocalizada',
+										    bind : {
+										      store : '{comboSiNoRem}',
+										      disabled: '{!proveedor.isEntidad}',
+										      value : '{proveedor.localizadaProveedorCodigo}'
+										    }
+										},
+										{ 
+											xtype: 'textfieldbase',
+											vtype: 'email',
+											fieldLabel: HreRem.i18n('fieldlabel.proveedor.email'),
+											bind: '{proveedor.email}',
+											maxLength: 50
+						                },
+								        { 
+											xtype: 'textareafieldbase',
+								        	fieldLabel:  HreRem.i18n('fieldlabel.observaciones'),						        	
+								        	bind: '{proveedor.observacionesProveedor}',
+											maxLength: 200,
+								        	rowspan: 2,
+								        	height: 80
+								        },
+								     // Fila 4
+								        { 
+											xtype: 'comboboxfieldbase',
+								        	fieldLabel:  HreRem.i18n('fieldlabel.estado'),
+								        	reference: 'cbEstadoProveedor',
+								        	bind: {
+											      store: '{comboEstadoProveedor}',
+											      value: '{proveedor.estadoProveedorCodigo}'
+								        	}
+								        },
+								        {
+											xtype : 'comboboxfieldbase',
+										    fieldLabel : HreRem.i18n('fieldlabel.proveedores.tipopersona'),
+										    reference: 'cbTipoPersona',
+										    bind : {
+										      store : '{comboTipoPersona}',
+										      disabled: '{!proveedor.isProveedor}',
+										      value : '{proveedor.tipoPersonaProveedorCodigo}'
+										    }
+										},
+										 // Fila 5
+								        {
+											xtype: 'textfieldbase',
+								        	fieldLabel:  HreRem.i18n('fieldlabel.url.web'),						        	
+								        	bind: '{proveedor.webUrlProveedor}',
+											maxLength: 50
+								        },
+								        {
+											xtype: 'checkboxfieldbase',
+											fieldLabel: HreRem.i18n('fieldlabel.autorizado.web'),
+											bind: '{proveedor.autorizacionWeb}',
+											readOnly: false
+										},
+							        
+							            {// Siempre oculto por el momento.
+							            	xtype: 'comboboxfieldbase',
+								        	fieldLabel:  HreRem.i18n('fieldlabel.proveedores.operativa'),
+								        	reference: 'cbOperativaProveedor',
+								        	bind: {
+											      store: '{comboOperativa}',
+											      value: '{proveedor.operativaCodigo}'
+								        	},
+								        	hidden: true
+							            },
+							            {
+					        				xtype: 'datefieldbase',
+											fieldLabel: HreRem.i18n('fieldlabel.proveedor.fecha.constitucion'),
+											reference: 'dateConstitucionProveedor',
+											
+											//colspan: 2,
+											bind: {
+												disabled: '{!proveedor.isEntidad}',
+												value: '{proveedor.fechaConstitucionProveedor}'
+											}
+							            },
+							             // Fila 6
+								        {
+											xtype: 'textfieldbase',
+								        	fieldLabel:  HreRem.i18n('fieldlabel.numero.ursus.bankia'),	
+								        	reference: 'numUrsusRef',
+								        	bind: '{proveedor.codProveedorUvem}',
+								        	listeners:{
+								        		render: function(){
+								        			var me = this;
+								        			var codigoCartera = me.up('proveedoresdetallemain').getViewModel().get('proveedor.carteraCodigo');
+								        			if(Ext.isDefined(codigoCartera) && codigoCartera != null && codigoCartera.includes(CONST.CARTERA["BANKIA"])){						        				
+								        				me.allowBlank = false;
+								        				me.setReadOnly(false);
+								        				
+								        			}else{						        				
+								        				me.allowBlank = true;
+								        				me.setReadOnly(true);
+								        			}						        			
+								        		}
+								        	}
+							            
+								        },
+										{
+											xtype: 'textfieldbase',
+								        	fieldLabel:  HreRem.i18n('fieldlabel.proveedorapi.codigo'),						        	
+								        	bind: {
+								        		value:'{proveedor.codigoApiProveedor}',
+								        		hidden: '{!esTipoOficina}'
+								        	}
+											
+								        },						        
+										{ 
+											xtype: 'comboboxsearchfieldbase',
+											fieldLabel:  HreRem.i18n('fieldlabel.proveedores.mediador'),						
+											reference: 'cbmediadorProveedor',											
+										    bind : {
+										      store : '{comboMediador}',								      
+										      value : '{proveedor.idMediadorRelacionado}',
+										      hidden: '{!esTipoOficina}'
+										    },								    
+										    displayField: 'nombre',								    
+					    					valueField: 'codigoProveedorRem',
+					    					emptyText: 'Introduzca nombre mediador',					    					
+					    					autoLoadOnValue: false,
+					    					loadOnBind: false,
+					    					forceSelection: false,
+					    					addUxReadOnlyEditFieldPlugin: true
+										}
+									]
+								},				             				        
 					         // Fila 7 (Ámbito)
 					            {
 									xtype:'fieldsettable',
@@ -576,7 +583,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.FichaPr
 								]
 		            }
         ];
-
+        
     	me.callParent();
     },
     

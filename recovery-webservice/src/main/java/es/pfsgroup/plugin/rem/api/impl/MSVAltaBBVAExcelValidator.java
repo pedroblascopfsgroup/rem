@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTransmision;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 import es.pfsgroup.plugin.rem.service.AltaActivoThirdPartyService;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 
 @Component
 public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implements MSVLiberator{
@@ -61,6 +62,9 @@ public class MSVAltaBBVAExcelValidator extends AbstractMSVActualizador implement
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
+	
+	@Autowired
+	private ActivoDao activoDao;
 	
 	public static final class COL_NUM{
 		static final int FILA_CABECERA = 1;

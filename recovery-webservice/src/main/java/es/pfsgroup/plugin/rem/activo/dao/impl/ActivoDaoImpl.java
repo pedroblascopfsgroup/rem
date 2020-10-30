@@ -1980,4 +1980,12 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		session.createSQLQuery(sb.toString()).executeUpdate();
 	}
 
+	
+	@Override
+	public Long getNextBbvaNumActivo() {
+		String sql = "SELECT S_BBVA_NUM_ACTIVO.NEXTVAL FROM DUAL ";
+		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())
+				.longValue();
+
+	}
 }

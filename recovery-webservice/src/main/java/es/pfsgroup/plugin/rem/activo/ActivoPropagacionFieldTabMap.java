@@ -29,7 +29,6 @@ public class ActivoPropagacionFieldTabMap {
     public static final String TAB_CALIFICACION_NEGATIVA = "calificacionNegativa";
     public static final String TAB_PLUSVALIA = "plusvalia";
     public static final String TAB_FASE_PUBLICACION = "fasepublicacionactivo";
-    
 
 
     static {
@@ -564,6 +563,13 @@ public class ActivoPropagacionFieldTabMap {
     				"fechaEscritoAyt",
     				"observaciones"
 
+    			));
+      	
+    	pmap.put(TAB_FASE_PUBLICACION,
+    			Arrays.asList(
+    				"fasePublicacionCodigo",
+    				"subfasePublicacion",
+    				"comentario"
     			));
 
         map = Collections.unmodifiableMap(pmap);

@@ -3753,9 +3753,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	propagableData = [];
     	var records = [],
     	models = [];
-    
     	if(form.saveMultiple) {
-    		records = records.concat(form.getBindRecords()) 
+    		records = records.concat(form.getBindRecords()) ;
     	} else {
     		records.push(form.getBindRecord());
     	}
@@ -3766,7 +3765,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	});
 
     	Ext.Array.each(tabData.models, function(model, index) {
-    		
     		var data = {},
     		modelHasData = false;
     		Ext.Array.each(camposPropagables[model.name], function(campo, index){
@@ -4119,7 +4117,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			    		    			var superficieElementosComunesAcumulables= parseFloat("0",10);
 			    		    			var superficieParcelaAcumulable= parseFloat("0",10);
 			    		    			var superficieUtilAcumulable= parseFloat("0",10);
-			    		    			
 			    		    			for(var i = 0; i < activosSeleccionados.length; i++){
 			    		    				if(activosSeleccionados[i].superficieConstruida == undefined){
 			    		    					activosSeleccionados[i].superficieConstruida = parseFloat("0",10);
@@ -4160,7 +4157,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    								tabPropagableData = me.createFormPropagableData(form, tabData);
 		    								if (!Ext.isEmpty(tabPropagableData)) {
 		    									// sacamos el activo actual del listado
-		    								
 		    									if(tabPropagableData.models[0].data.numFinca != undefined){
 		    										tabPropagableData.models[0].data.numFinca = me.pad(tabPropagableData.models[0].data.numFinca, 4);
 		    									}
@@ -4230,10 +4226,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 															// sacamos el activo actual del listado
 															var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
 															var tieneDatosPropagables = false;
-															if(!Ext.isEmpty(form)) {
+															/*if(!Ext.isEmpty(form)) {
 													    		
 													    		var fields = form.getForm().getFields();
-
 													    		fields.each(function(field) {
 													    			
 													    			if (!Ext.isEmpty(field) && !Ext.isEmpty(field.bind) && !Ext.isEmpty(field.bind.value) && !Ext.isEmpty(field.bind.value.stub)  ) {
@@ -4249,15 +4244,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 													    				});
 													    			}
 													    		});
-													    	}
+													    	}*/
 															
-															if(tieneDatosPropagables) {
+															//if(tieneDatosPropagables) {
 																// Abrimos la ventana de selección de activos
 																var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {form: form, activoActual: activo, activos: activosPropagables, tabData: tabData, propagableData: tabPropagableData}).show();
 																	me.getView().add(ventanaOpcionesPropagacionCambios);
 																	me.getView().unmask();
 																	return false;
-															}
+															//}
 														}
 													}
 							

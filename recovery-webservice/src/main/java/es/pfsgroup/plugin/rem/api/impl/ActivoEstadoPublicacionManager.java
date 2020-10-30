@@ -33,6 +33,7 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.perimetro.dao.PerimetroDao;
@@ -52,6 +53,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoDatosDq;
+import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
@@ -170,6 +172,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	
 	@Autowired
 	private UsuarioRemApi usuarioRemApiImpl;
+	
+	@Autowired
+	private ActivoAgrupacionDao activoAgrupacionDao;
 
 	@Override
 	public DtoDatosPublicacionActivo getDatosPublicacionActivo(Long idActivo) {
@@ -2303,5 +2308,21 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setCorrectoF3BloqueFase3(ICONO_TICK_OK);
 		}
 
+	}
+	
+	@Transactional
+	@Override
+	public Boolean saveDatoRemCalidadDatoPublicacion(Long id, String datoDq) {
+		Activo activo = activoDao.get(id);
+		ActivoDatosDq actDatosDq = activoPublicacionDao.getActivoDatosDqPorIdActivo(id);
+		ActivoInfoComercial actInfoComercial = activo.getInfoComercial(); 
+		if(actInfoComercial != null)
+			actInfoComercial.setDescripcionComercial(datoDq);
+		
+		activoDao.saveOrUpdate(activo);
+		
+		//activoAgrupacionDao.getA
+	
+		return true;
 	}
 }

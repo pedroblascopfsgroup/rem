@@ -217,4 +217,6 @@ public interface ActivoEstadoPublicacionApi {
 	 * @return DtoFasePublicacionActivo
 	 */
 	DtoCalidadDatoPublicacionActivo getCalidadDatoPublicacionActivo(Long idActivo);
+	
+	Boolean saveDatoRemCalidadDatoPublicacion(Long id, String datoDq);
 }

@@ -1000,8 +1000,8 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 					text: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.boton.aplicar'),
 					reference: 'btnAplicaDescripcionRef',
 					readOnly: true,
-					handler: 'aplicarDescripcion',
-					disabled: '{disableBtnDescF1}'
+					handler: 'aplicarDescripcion'
+					//disabled: '{disableBtnDescF1}'
 				}]
 			},{
 				// Apartado Localicacion
@@ -1175,6 +1175,7 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 	 funcionRecargar : function() {
 		var me = this;
 		me.recargar = false;
+		
 		if(me.xtype == "button") {
 			me.lookupController().cargarTabDataCalidadDato(me.up().up());
 		} else {

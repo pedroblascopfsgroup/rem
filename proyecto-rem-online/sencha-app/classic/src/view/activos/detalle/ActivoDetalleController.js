@@ -208,7 +208,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		nameModels = null,
 		id = me.getViewModel().get("activo.id");
 		form.mask(HreRem.i18n("msg.mask.loading"));
-		if(!form.saveMultiple) {	
+		if(!form.saveMultiple) {
+			debugger;
 			model = form.getModelInstance(),
 			model.setId(id);
 			if(Ext.isDefined(model.getProxy().getApi().read)) {
@@ -6019,22 +6020,88 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     
     aplicarDescripcion: function(btn, form) {
    	 	var me = this;
-	   	Ext.Msg.show({
+   	 	url =  $AC.getRemoteUrl('activo/getActivosPropagables');
+   	 	var formu = btn.up().up().up();
+   	 	var idActivo = btn.up().up().up().getBindRecord().data.idActivo;
+		Ext.Ajax.request({
+			url: url,
+			method : 'POST',
+			params: {idActivo: idActivo},
+			success: function(response, opts){
+            	debugger;
+            		var models = [];
+            		var createFormPropagableData = [];
+					var activosPropagables = Ext.decode(response.responseText).data.activosPropagables;
+					var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
+					activosPropagables.push(idActivo);
+					activosPropagables.push(100);
+					activosPropagables.push(167);
+					models.push(btn.up().up().up().getBindRecord().data.dqFase4Descripcion);
+					createFormPropagableData.models = models;
+					/*if(me.getViewModel() != null){
+						if(me.getViewModel().get('activo') != null){
+							if(me.getViewModel().get('activo').data != null){
+								me.getViewModel().get('activo').data.activosPropagables = activosPropagables;
+							}
+						}
+					}*/
+					var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambiosMatrizExpediente", {form: formu, activoActual: activo, activos: activosPropagables, tabData: null, propagableData: createFormPropagableData}).show();
+					me.getView().add(ventanaOpcionesPropagacionCambios);
+					me.getView().unmask();
+					return false;
+			}, failure: function (a, operation, context) {
+            	debugger;
+            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+            }
+		     
+		 });
+	   	/*Ext.Msg.show({
 			   title: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.aplicar'),
 			   msg: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.aplicar.desea'),
 			   buttons: Ext.MessageBox.YESNO,
 			   fn: function(buttonId) {
 			        if (buttonId == 'yes') {
-			        	machacarDatoDq(btn, form);
+			        	
+			        	/*debugger;
+			        	var url =  $AC.getRemoteUrl('activo/saveDatoRemCalidadDatoPublicacion');
+			        	var dqFase4Descripcion = btn.up().up().up().getBindRecord().data.dqFase4Descripcion;
+			        	var activoId = btn.up().up().up().getBindRecord().data.idActivo;
+			    		Ext.Ajax.request({
+			    			
+							url: url,
+							params: {activoId : activoId,
+								dqFase4Descripcion : dqFase4Descripcion},
+							
+							success: function (response,opts) {
+								
+								if(Ext.decode(response.responseText).success == "false") {
+									me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+								} else {
+									//me.cargarTabDataCalidadDato(btn.up().up().up());
+									debugger;
+									//me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+								}
+								
+							},
+                                
+                            failure: function (a, operation, context) {
+                            	debugger;
+                            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                            }
+			    		     
+			    		 });
 			        } else if(buttonId == 'no') {
 			        	this.close();
 			        }
 			   }
-		});
+		});*/
     },
     
-    machacarDatoDq: function(btn, form) {
+    comprobacionAgrupacionActivo: function(activoId) {
+    	
     }
+    
+
     
     
 });

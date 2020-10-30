@@ -36,7 +36,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVAltaActivosExcelValidator.COL_NUM;
 
 @Component
-public class MSVOkTecnicoExcelValidator extends MSVExcelValidatorAbstract {
+public class MSVOkTecnicoSelloCalidadExcelValidator extends MSVExcelValidatorAbstract {
 
 	private static final String SEPARATOR = ", ";
 

@@ -866,7 +866,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		ActivoAdmisionRevisionTitulo actRevTitulo = genericDao.get(ActivoAdmisionRevisionTitulo.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
 		DDEstadoRegistralActivo ddEstadoReg = new DDEstadoRegistralActivo();
-		boolean perimetroAdmision = perimetroActivo.getAplicaAdmision();
+		boolean perimetroAdmision = false;
+		if(perimetroActivo.getAplicaAdmision() != null) {
+			perimetroAdmision = perimetroActivo.getAplicaAdmision();
+			activoDto.setPerimetroAdmision(perimetroAdmision);
+		}
+				
 		if(perimetroAdmision && actRevTitulo != null) {
 			if(actRevTitulo.getTipoIncidenciaRegistral() != null) {
 				ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getTipoIncidenciaRegistral().getDescripcion()));
@@ -882,11 +887,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setEstadoRegistralCodigo(activo.getEstadoRegistral().getCodigo());
 		}
 		
-		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));
-		
-		if(perimetroActivo.getAplicaAdmision() != null) {
-			activoDto.setPerimetroAdmision(perimetroActivo.getAplicaAdmision());
-		}
+		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));		
 			
 		if(perimetroActivo.getFechaAplicaAdmision() != null) {
 			activoDto.setFechaPerimetroAdmision(perimetroActivo.getFechaAplicaAdmision().toString());

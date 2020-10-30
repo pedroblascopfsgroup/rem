@@ -2213,16 +2213,22 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			dto.setCorrectoF3SuperficieConstruida(ICONO_TICK_INTERROGANTE);
 			interrogante = true;
 		}else{
-			BigDecimal calcSupConstruida = dto.getDrF3SuperficieConstruida().divide(dto.getDqF3SuperficieConstruida(), 2, RoundingMode.HALF_UP); 
-			DecimalFormat df = new DecimalFormat("#.##");
-			Double supConstruida = new Double(df.format(calcSupConstruida));
-			
-			if(supConstruida >= 0.8 && supConstruida <= 1.2 ) {
-				dto.setCorrectoF3SuperficieConstruida(ICONO_TICK_OK);
+			if(new BigDecimal(0).equals(dto.getDqF3SuperficieConstruida())) {
+				BigDecimal calcSupConstruida = dto.getDrF3SuperficieConstruida().divide(dto.getDqF3SuperficieConstruida(), 2, RoundingMode.HALF_UP); 
+				DecimalFormat df = new DecimalFormat("#.##");
+				Double supConstruida = new Double(df.format(calcSupConstruida));
+				
+				if(supConstruida >= 0.8 && supConstruida <= 1.2 ) {
+					dto.setCorrectoF3SuperficieConstruida(ICONO_TICK_OK);
+				}else {
+					dto.setCorrectoF3SuperficieConstruida(ICONO_TICK_KO);
+					cruzroja = true;	
+				}
 			}else {
 				dto.setCorrectoF3SuperficieConstruida(ICONO_TICK_KO);
 				cruzroja = true;	
 			}
+			
 		}
 		
 		//superficie util ESPECIAL

@@ -63,8 +63,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosWebAgrupacion', {
             listeners: {
                 itemclick: function(dataview,record) {
 	        		this.up('form').setBindRecord(record.data);
-	        		this.lookupController().getViewModel().set('fotoSelected', record);
-	        		this.lookupController().getViewModel().notify();
 	        	}
             }
             
@@ -117,14 +115,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.FotosWebAgrupacion', {
 							}
 		                },
 		                { 
-		                	xtype: 'comboboxfieldbase',
 		                	name: 'descripcion',
+		                	xtype: 'textareafieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.descripcion'),
-				        	editable: false,
-				        	queryMode: 'local',
 		                	bind: {
-		                		store: '{storeDescripcionFoto}',
-				        		value: '{codigoDescripcionFoto}'
+								value: '{descripcion}'
 							}
 		                },
 		                { 

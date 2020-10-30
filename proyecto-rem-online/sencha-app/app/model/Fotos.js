@@ -19,12 +19,6 @@ Ext.define('HreRem.model.Fotos', {
     			name:'descripcion'
     		},
     		{
-    			name:'codigoDescripcionFoto'
-    		},
-    		{
-    			name:'codigoSubtipoActivo'
-    		},
-    		{
     			name:'fechaDocumento',
     			type:'date',
     			dateFormat: 'c'

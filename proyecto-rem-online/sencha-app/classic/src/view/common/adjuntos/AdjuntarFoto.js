@@ -18,7 +18,6 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarFoto', {
      * @type 
      */
     idEntidad: null,
-    codigoSubtipoActivo: null,
     /**
      * Párametro para saber que componente abre la ventana, y poder refrescarlo después.
      * @type 
@@ -50,9 +49,6 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarFoto', {
 				extraParams: {diccionario: 'tiposFoto'}
 			}
     	});
-
-		me.getViewModel().set('codigoSubtipoActivo', me.codigoSubtipoActivo);
-		me.getViewModel().notify();
     	
     	me.buttons = [ { itemId: 'btnGuardar', text: 'Adjuntar', handler: 'onClickBotonAdjuntarFoto'},{ itemId: 'btnCancelar', text: 'Cancelar',  handler: 'closeWindow', scope: this}];
 
@@ -134,19 +130,12 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarFoto', {
 				                	width: '100%'				                	
 			            		},*/
 						        {
-									xtype: 'combobox',
-						        	fieldLabel:  HreRem.i18n('fieldlabel.descripcion'),
-						        	name: 'descripcion',
-						        	editable: false,
-					            	bind: {
-						        		store: '{storeDescripcionAdjuntarFoto}'
-						        	},
-					            	displayField	: 'descripcion',
-								    valueField		: 'codigo', 
-									allowBlank: false,
-									msgTarget: 'side',
-									width: '100%'
-								},
+				                	xtype: 'textarea',
+				                	fieldLabel: HreRem.i18n('fieldlabel.descripcion'),
+				                	name: 'descripcion',
+				                	maxLength: 256,
+				                	width: '100%'				                	
+				            	},
 				            	{ 
 			                		xtype : 'checkboxfield',
 			                		fieldLabel:  HreRem.i18n('fieldlabel.principal'),
@@ -188,7 +177,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarFoto', {
     					  ]
     				}
     	];
-   		
+    	
     	me.callParent();
     },
     

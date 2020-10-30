@@ -26,6 +26,8 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoExento;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoSolicitud;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.plusvalia.NotificationPlusvaliaManager;
 
@@ -99,6 +101,18 @@ public class TabActivoPlusvalia implements TabActivoService {
 			
 			if(!Checks.esNulo(activoPlusvalia.getEstadoGestion())) {
 				activoPlusvaliaDto.setEstadoGestion(activoPlusvalia.getEstadoGestion().getCodigo());
+			}
+			
+			if(!Checks.esNulo(activoPlusvalia.getNumExpediente())) {
+				activoPlusvaliaDto.setNumExpediente(activoPlusvalia.getNumExpediente());
+			}
+			
+			if(!Checks.esNulo(activoPlusvalia.getMotivoExento())) {
+				activoPlusvaliaDto.setMotivoExento(activoPlusvalia.getMotivoExento().getCodigo());
+			}
+			
+			if(!Checks.esNulo(activoPlusvalia.getResultadoSolicitud())) {
+				activoPlusvaliaDto.setResultadoSolicitud(activoPlusvalia.getResultadoSolicitud().getCodigo());
 			}
 		}
 		
@@ -197,6 +211,24 @@ public class TabActivoPlusvalia implements TabActivoService {
 				
 			}
  		}
+ 		
+ 		if(!Checks.esNulo(activoPlusvaliaDto.getNumExpediente())) {
+ 			activoPlusvalia.setNumExpediente(activoPlusvaliaDto.getNumExpediente());
+		}
+		
+		if(!Checks.esNulo(activoPlusvaliaDto.getMotivoExento())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoPlusvaliaDto.getMotivoExento());
+			DDMotivoExento motivo = new DDMotivoExento();
+			motivo = genericDao.get(DDMotivoExento.class, filtro);
+			activoPlusvalia.setMotivoExento(motivo);
+		}
+		
+		if(!Checks.esNulo(activoPlusvaliaDto.getResultadoSolicitud())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoPlusvaliaDto.getResultadoSolicitud());
+			DDResultadoSolicitud res = new DDResultadoSolicitud();
+			res = genericDao.get(DDResultadoSolicitud.class, filtro);
+			activoPlusvalia.setResultadoSolicitud(res);
+		}
 	
 		
 		genericDao.save(ActivoPlusvalia.class, activoPlusvalia);

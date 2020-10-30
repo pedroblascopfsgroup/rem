@@ -122,7 +122,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
-import es.pfsgroup.plugin.rem.model.dd.DDDescripcionFotoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGestionPlusv;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
@@ -910,8 +909,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
 		DDTipoFoto tipoFoto = genericDao.get(DDTipoFoto.class, filtro);
 		TIPO tipo = null;
-		FileResponse fileReponse = null;
-		ActivoFoto activoFoto = null;
+		FileResponse fileReponse;
+		ActivoFoto activoFoto;
 		SITUACION situacion;
 		PRINCIPAL principal;
 		Integer orden = activoDao.getMaxOrdenFotoById(Long.parseLong(fileItem.getParameter("idEntidad")));
@@ -942,18 +941,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				} else {
 					situacion = SITUACION.EXTERIOR;
 				}
-				
-				if (fileItem.getParameter("descripcion") != null) {
 
-					fileReponse = gestorDocumentalFotos.upload(fileItem.getFileItem().getFile(),
-							fileItem.getFileItem().getFileName(), PROPIEDAD.ACTIVO, activo.getNumActivo(), tipo,
-							genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("descripcion"))).getDescripcion(),
-							principal, situacion, orden);
-					
-				}
-				
+				fileReponse = gestorDocumentalFotos.upload(fileItem.getFileItem().getFile(),
+						fileItem.getFileItem().getFileName(), PROPIEDAD.ACTIVO, activo.getNumActivo(), tipo,
+						fileItem.getParameter("descripcion"), principal, situacion, orden);
 				activoFoto = new ActivoFoto(fileReponse.getData());
-				
+
 			} else {
 				activoFoto = new ActivoFoto(fileItem.getFileItem());
 			}
@@ -963,7 +956,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			activoFoto.setTamanyo(fileItem.getFileItem().getLength());
 			activoFoto.setNombre(fileItem.getFileItem().getFileName());
 			activoFoto.setDescripcion(fileItem.getParameter("descripcion"));
-			activoFoto.setDescripcionFoto(genericDao.get(DDDescripcionFotoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("descripcion"))));
 			activoFoto.setPrincipal(Boolean.valueOf(fileItem.getParameter("principal")));
 			activoFoto.setFechaDocumento(new Date());
 			activoFoto.setInteriorExterior(Boolean.valueOf(fileItem.getParameter("interiorExterior")));

@@ -739,7 +739,7 @@ public interface ExpedienteComercialApi {
 	 * @param idTipoGestor
 	 * @return
 	 */
-	List<DtoUsuario> getComboUsuarios(long idTipoGestor);
+	List<DtoUsuario> getComboUsuarios(Long idTipoGestor);
 
 	/**
 	 * Inserta un gestor en el expediente comercial

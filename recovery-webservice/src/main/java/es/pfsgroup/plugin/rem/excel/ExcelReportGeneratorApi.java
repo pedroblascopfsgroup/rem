@@ -34,6 +34,8 @@ public interface ExcelReportGeneratorApi {
 	
 	File getAdvisoryNoteReportArrow(List<VReportAdvisoryNotes> listaAN, HttpServletRequest request) throws IOException;
 	
+	public File generateBbvaReportPrueba(DtoExcelFichaComercial dtoExcelFichaComercial, HttpServletRequest request) throws IOException;
+	
 	public String generateBbvaReport(DtoExcelFichaComercial dtoExcelFichaComercial, HttpServletRequest request) throws IOException;
 
 

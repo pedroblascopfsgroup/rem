@@ -103,14 +103,18 @@ Ext.define('HreRem.ux.util.Constants', {
 
 	SUBTIPOS_PROVEEDOR: {
 		SOCIEDAD_TASADORA: '02',
-		MEDIADOR: '04'
+		MEDIADOR: '04',
+		OFICINA_BBVA:'39',
+		OFICINA_LIBERBANK:'38',
+		OFICINA_BANKIA: '28',
+		OFICINA_CAJAMAR: '29'
+		
 	},
 
 	MAP_TAB_ACTIVO_XTYPE: {
 		FICHA:			'datosgeneralesactivo',
 		INFOREG:		'datosgeneralesactivo.tituloinformacionregistralactivo',
 		INFOADM:		'datosgeneralesactivo.informacionadministrativaactivo',
-		CARGAS:			'datosgeneralesactivo.cargasactivo',
 		POSESORIA:		'datosgeneralesactivo.situacionposesoriaactivo',
 		VALORACION:		'datosgeneralesactivo.valoracionesactivo',
 		INFOCOM:		'datosgeneralesactivo.informacioncomercialactivo',
@@ -124,7 +128,6 @@ Ext.define('HreRem.ux.util.Constants', {
 		DOCU:			'documentosactivo',
 		AGRUPACIONES:	'agrupacionesactivo',
 		ADMISION:		'admisionactivo',
-		CHECKINFO:		'admisionactivo.admisioncheckinfoactivo',
 		CHECKDOC:		'admisionactivo.admisioncheckdocactivo',
 		GESTION:		'gestionactivo',
 		HISTORICO:		'gestionactivo.historicopeticionesactivo',
@@ -309,7 +312,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		GESTOR_PRECIOS:'HAYAGESTPREC',
 		GESTOR_PUBLICACION:'HAYAGESTPUBL',
 		SUPER_EDITA_COMPRADOR: 'SUPEREDITACOMPRADOR',
-		SUPERVISOR_ADMISION: 'HAYASUPADM'
+		SUPERVISOR_ADMISION: 'HAYASUPADM',
+		SUPERVISOR_ADMISION:'HAYASUPADM'
     },
 
     TIPOS_OFERTA: {
@@ -348,7 +352,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	AP_CES_PTE_MAN: '36',
     	CONT_CES: '38',
     	RES_PTE_MAN: '39',
-    	AP_PTE_MAN : '40'
+    	AP_PTE_MAN : '40',
+    	PEN_RES_OFER_COM : '43'
     },
 
     ESTADOS_GASTO: {
@@ -493,6 +498,11 @@ Ext.define('HreRem.ux.util.Constants', {
 	COMBO_SI_NO: {
 		SI: 1,
 		NO: 0
+	},
+	
+	COMBO_SIN_SINO: {
+		SI: '01',
+		NO: '02'
 	},
 	
 	COMBO_TRUE_FALSE: {
@@ -760,5 +770,34 @@ Ext.define('HreRem.ux.util.Constants', {
 	COMITE_SANCIONADOR: {
 		CODIGO_HAYA_REMAINING: '41',
 		CODIGO_HAYA_APPLE: '42'
+	},
+	
+	ESTADO_ADMISION: {
+		CODIGO_PENDIENTE_TITULO: 'PET',
+		CODIGO_PENDIENTE_REVISION: 'PRT',
+		CODIGO_PENDIENTE_SANEAMIENTO: 'PSR',
+		CODIGO_SANEADO_REGISTRALMENTE: 'SAR'
+	},
+	
+	SUBESTADO_ADMISION: {
+		CODIGO_PENDIENTE_INSCRIPCION: 'PIN',
+		CODIGO_INCIDENCIA_INSC: 'IIN',
+		CODIGO_PENDIENTE_CARGAS: 'PCA',
+		CODIGO_CONCURSO_ACREEDORES: 'CAC'
+
+	},
+	DD_TOB_TIPO_OBSERVACION: {
+		STOCK: '01',
+		POSESION: '02',
+		INSCRIPCION: '03',
+		CARGAS: '04',
+		LLAVES: '05',
+		SANEAMIENTO: '06',
+		REVISION_TITULO: '07'
+	},
+	OBSERVACIONES_TAB_LAUNCH: {
+		ACTIVO : 'activo',
+		SANEAMIENTO: 'saneamiento',
+		REVISION_TITULO: 'revisionTitulo'
 	}
 });

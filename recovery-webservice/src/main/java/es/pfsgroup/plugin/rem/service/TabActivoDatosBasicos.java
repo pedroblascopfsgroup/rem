@@ -21,6 +21,7 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -70,6 +71,7 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VTramitacionOfertaActivo;
+import es.pfsgroup.plugin.rem.model.dd.ActivoAdmisionRevisionTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDCesionUso;
@@ -82,6 +84,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoRegistralActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDServicerActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
@@ -122,6 +125,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private static final String ACTIVO_VENDIDO= "msg.error.activo.vendido";
 	private static final String ACTIVO_FUERA_DE_PERIMETRO_HAYA= "msg.error.activo.fuera.perimetro";
 	private static final String ACTIVO_NO_COINCIDE_CON_CERBERUS_BBVA= "msg.error.activo.no.bbva.divarian";
+	private static final String NO_GESTIONADO_POR_ADMISION = "msg.no.gestionado.admision";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -237,7 +241,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 			}
 			
-		}
+		}	 
 		
 		if(!Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
 			BeanUtils.copyProperty(activoDto, "nombreMediador", activo.getInfoComercial().getMediadorInforme().getNombre());
@@ -869,6 +873,29 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setTipoSegmentoCodigo(activo.getTipoSegmento().getCodigo());
 		}
 		
+		ActivoAdmisionRevisionTitulo actRevTitulo = genericDao.get(ActivoAdmisionRevisionTitulo.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+		DDEstadoRegistralActivo ddEstadoReg = new DDEstadoRegistralActivo();
+		boolean perimetroAdmision = false;
+		if(perimetroActivo.getAplicaAdmision() != null) {
+			perimetroAdmision = perimetroActivo.getAplicaAdmision();
+			activoDto.setPerimetroAdmision(perimetroAdmision);
+		}
+				
+		if(perimetroAdmision && actRevTitulo != null) {
+			if(actRevTitulo.getTipoIncidenciaRegistral() != null) {
+				ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getTipoIncidenciaRegistral().getDescripcion()));
+			}else if(actRevTitulo.getSituacionConstructivaRegistral() != null) {
+				ddEstadoReg = genericDao.get(DDEstadoRegistralActivo.class, genericDao.createFilter(FilterType.EQUALS ,"descripcion", actRevTitulo.getSituacionConstructivaRegistral().getDescripcion()));
+			}
+			
+			if(ddEstadoReg != null) {
+				activoDto.setEstadoRegistralCodigo(ddEstadoReg.getCodigo());	
+			}
+			
+		}else if(activo.getEstadoRegistral() != null){
+			activoDto.setEstadoRegistralCodigo(activo.getEstadoRegistral().getCodigo());
+		}
+		
 		activoDto.setIsUA(activoDao.isUnidadAlquilable(activo.getId()));
 		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
@@ -905,7 +932,78 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setIdOrigenHre(activoBbva.getIdOrigenHre());
 			activoDto.setUicBbva(activoBbva.getUicBbva());
 			activoDto.setCexperBbva(activoBbva.getCexperBbva());
+		}
 			
+		if(perimetroActivo.getAplicaAdmision() != null) {
+			activoDto.setPerimetroAdmision(perimetroActivo.getAplicaAdmision());
+		}
+			
+		if(perimetroActivo.getFechaAplicaAdmision() != null) {
+			activoDto.setFechaPerimetroAdmision(perimetroActivo.getFechaAplicaAdmision().toString());
+		}
+		if(perimetroActivo.getMotivoAplicaAdmision() != null) {
+			activoDto.setMotivoPerimetroAdmision(perimetroActivo.getMotivoAplicaAdmision());
+		}
+		
+		activoDto.setIncluidoEnPerimetroAdmision(perimetroActivo.getAplicaAdmision());
+		
+		if(activo.getEstadoAdmision() != null) {
+			activoDto.setEstadoAdmisionCodigo(activo.getEstadoAdmision().getCodigo());
+			activoDto.setEstadoAdmisionDesc(activo.getEstadoAdmision().getDescripcion());
+		}
+		if (activo.getSubestadoAdmision() != null) {
+			activoDto.setSubestadoAdmisionCodigo(activo.getSubestadoAdmision().getCodigo());
+			activoDto.setSubestadoAdmisionDesc(activo.getSubestadoAdmision().getDescripcion());
+		}
+		
+		if(perimetroActivo.getAplicaAdmision() == null || (perimetroActivo.getAplicaAdmision() != null && !perimetroActivo.getAplicaAdmision())) {
+			
+			BeanUtils.copyProperty(activoDto, "estadoAdmisionDescCabecera", messageServices.getMessage(NO_GESTIONADO_POR_ADMISION));
+			
+		}else if (perimetroActivo.getAplicaAdmision() != null && perimetroActivo.getAplicaAdmision()){
+			
+			if(activo.getEstadoAdmision() != null) {
+				BeanUtils.copyProperty(activoDto, "estadoAdmisionCodCabecera", activo.getEstadoAdmision().getCodigo());
+				BeanUtils.copyProperty(activoDto, "estadoAdmisionDescCabecera", activo.getEstadoAdmision().getDescripcion());
+			}
+			
+			if(activo.getSubestadoAdmision() != null) {
+				BeanUtils.copyProperty(activoDto, "subestadoAdmisionCodCabecera", activo.getSubestadoAdmision().getCodigo());
+				BeanUtils.copyProperty(activoDto, "subestadoAdmisionDescCabecera", activo.getSubestadoAdmision().getDescripcion());
+			}
+		}
+
+		ActivoAdmisionRevisionTitulo activoAdmisionRevisionTitulo = genericDao.get(ActivoAdmisionRevisionTitulo.class, genericDao.createFilter(FilterType.EQUALS,  "activo.id", activo.getId()));
+		
+		if(activoAdmisionRevisionTitulo != null) {
+						
+
+			String codigoHayaSuper = "HAYASUPER";
+			String codigoGestorEdificacion = "GESTEDI";
+			
+			List<Perfil> perfilesUsuarioLogado = usuarioLogado.getPerfiles();
+			
+			boolean esUsuarioConPermisos = false;
+			boolean revision = false;
+			
+			if(activoAdmisionRevisionTitulo.getRevisado() != null) {
+				revision = DDSinSiNo.CODIGO_SI.equals(activoAdmisionRevisionTitulo.getRevisado().getCodigo());	
+			}
+			
+			for(Perfil pef : perfilesUsuarioLogado){
+				if(codigoHayaSuper.equals(pef.getCodigo()) || codigoGestorEdificacion.equals(pef.getCodigo())) {
+					esUsuarioConPermisos = true;
+					break;
+				}				
+			}
+			
+			
+			boolean puedeEditar = (esUsuarioConPermisos == true && (perimetroAdmision == false || (perimetroAdmision == true && revision == true)));
+	     
+			
+			activoDto.setEsEditableActivoEstadoRegistral(puedeEditar);
+		}else {
+			activoDto.setEsEditableActivoEstadoRegistral(!perimetroAdmision);
 		}
 		
 		activoDto.setIsGrupoOficinaKAM(activoApi.isGrupoOficinaKAM());
@@ -1549,6 +1647,19 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}
 			}
 			
+			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
+			
+			if(dto.getPerimetroAdmision() != null) {
+				perimetroActivo.setAplicaAdmision(dto.getPerimetroAdmision());
+				perimetroActivo.setFechaAplicaAdmision(new Date());
+				perimetroActivo.setMotivoAplicaAdmision(dto.getMotivoPerimetroAdmision());
+				activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);
+			}
+			DDEstadoRegistralActivo ddEstadoReg = (DDEstadoRegistralActivo) diccionarioApi.dameValorDiccionarioByCod(DDEstadoRegistralActivo.class, dto.getEstadoRegistralCodigo());
+			if(ddEstadoReg != null) {
+				activo.setEstadoRegistral(ddEstadoReg);
+				activoDao.save(activo);
+			}
 		} catch(JsonViewerException jve) {
 			throw jve;
 		} catch (IllegalAccessException e) {

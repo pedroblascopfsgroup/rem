@@ -500,8 +500,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			var tareaPro = get('datosbasicosoferta.tareaAutorizacionPropiedadFinalizada');
 			var idAn = get('datosbasicosoferta.idAdvisoryNote');
 			var exclusion = get('datosbasicosoferta.exclusionBulk');
-			return ($AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL_BO_INM']) && !Ext.isEmpty(idAn) && !Ext.isEmpty(exclusion)
-			&& (tareaAn == true || tareaAn == 'true') && (tareaPro == false || tareaPro == 'false'));
+			return (($AU.userIsRol(CONST.PERFILES['GESTOR_COMERCIAL_BO_INM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) 
+				&& !Ext.isEmpty(idAn) && !Ext.isEmpty(exclusion) && (tareaAn == true || tareaAn == 'true') 
+				&& (tareaPro == false || tareaPro == 'false'));
 		},
 		esPerfilPMyCEs: function(get){
 			
@@ -577,12 +578,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	 	
 	 	habilitarBotonGenerarFicha: function(get){;
 			 var me = this;
-				if(get('expediente.codigoEstado') == '01' || get('expediente.codigoEstado') == '31' || get('expediente.codigoEstado') == '23'){
-					return true
-				}
-				else {
-					return false
-				}
+			 var codExpediente = get('expediente.codigoEstado');
+			 	if (CONST.ESTADOS_EXPEDIENTE['EN_TRAMITACION'] == codExpediente
+			 		|| CONST.ESTADOS_EXPEDIENTE['PENDIENTE_SANCION'] == codExpediente
+			 		|| CONST.ESTADOS_EXPEDIENTE['PEN_RES_OFER_COM'] == codExpediente) {
+			 		
+			 		return true;
+			 	}else{
+			 		return false;
+			 	}
+				
 	 	},
 		esBbva: function(get) {
 			var carteraCodigo = get('expediente.entidadPropietariaCodigo');
@@ -1197,7 +1202,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			type: 'uxproxy',
 			remoteUrl: 'expedientecomercial/getComboUsuarios',
 			extraParams: {idTipoGestor: '{tipoGestor.selection.id}'}
-			}
+			},
+			autoLoad: false,
+			remoteFilter: false,
+			remoteSort: false
 		},
 		
 		storeGestores: {
@@ -1351,6 +1359,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        extraParams: {idExpediente: '{expediente.id}'}
 	    	}
 		},
+
 		storeActivosAlquilados: {
 			pageSize: $AC.getDefaultPageSize(),
 	    	model: 'HreRem.model.ActivoAlquiladosGrid',
@@ -1360,7 +1369,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        extraParams: {idExpediente: '{expediente.id}'}
 	    	},
 			autoLoad: true
-		}
+		},
+
+		comboMotivoAmpliacionArras: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivoAmpliacionArras'}
+			}
+	    }
 		
     }
 });

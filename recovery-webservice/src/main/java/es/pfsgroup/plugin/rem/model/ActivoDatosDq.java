@@ -121,7 +121,7 @@ public class ActivoDatosDq implements Serializable, Auditable {
    	private String nombreViaDdq;
     
     @Column(name = "PROB_CALLE_CORRECTA")
-   	private Long calleCorrectaProb;
+   	private Float calleCorrectaProb;
     
     @Column(name = "DDQ_COD_POST")
    	private String codigoPostalDdq;
@@ -388,11 +388,11 @@ public class ActivoDatosDq implements Serializable, Auditable {
 		this.nombreViaDdq = nombreViaDdq;
 	}
 
-	public Long getCalleCorrectaProb() {
+	public Float getCalleCorrectaProb() {
 		return calleCorrectaProb;
 	}
 
-	public void setCalleCorrectaProb(Long calleCorrectaProb) {
+	public void setCalleCorrectaProb(Float calleCorrectaProb) {
 		this.calleCorrectaProb = calleCorrectaProb;
 	}
 

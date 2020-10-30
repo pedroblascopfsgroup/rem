@@ -2188,11 +2188,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}
 	
 		//COMPROBACIONES DE LOS BLOQUES
-		setCorrectoFase3(dto);
+		setCorrectoFase3(dto,actDatosDq);
 		
 	}
 
-	private void setCorrectoFase3(DtoCalidadDatoPublicacionActivo dto) {
+	private void setCorrectoFase3(DtoCalidadDatoPublicacionActivo dto,ActivoDatosDq actDatosDq) {
 
 		boolean interrogante = false, cruzroja = false;
 			
@@ -2268,14 +2268,15 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}
 		
 		//NOMBRE CALLE ESPECIAL
-		if(dto.getDqF3NomCalle() == null) {
+		
+		
+		if(actDatosDq.getCalleCorrectaProb() == null) {
 			dto.setCorrectoF3NomCalle(ICONO_TICK_INTERROGANTE);
 			interrogante = true;
-		}else if(dto.getDrF3NomCalle() != null 
-				&& (dto.getDrF3NomCalle().equals(dto.getDqF3NomCalle()))) {
-			dto.setCorrectoF3TipoVia(ICONO_TICK_OK);
+		}else if(actDatosDq.getCalleCorrectaProb() > 0.8) {
+			dto.setCorrectoF3NomCalle(ICONO_TICK_OK);
 		}else {
-			dto.setCorrectoF3TipoVia(ICONO_TICK_KO);
+			dto.setCorrectoF3NomCalle(ICONO_TICK_KO);
 			cruzroja = true;
 		}
 		

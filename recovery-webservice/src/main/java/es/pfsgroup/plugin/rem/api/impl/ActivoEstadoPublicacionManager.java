@@ -1691,8 +1691,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}
 		
 		//Provincia del registro
-		if(actDatosDq.getProvincia() !=null ) {
-			dto.setDqProvinciaDelRegistroFase1(actDatosDq.getProvincia().getDescripcion());
+		if(actDatosDq.getProvinciaReg() !=null ) {
+			dto.setDqProvinciaDelRegistroFase1(actDatosDq.getProvinciaReg().getDescripcion());
 		}
 				
 		if(actDatosDq.getVpo()!=null) {

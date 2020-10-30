@@ -48,7 +48,6 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	public static final String CODIGO_T013_RESOLUCION_COMITE = "T013_ResolucionComite";
 	public static final String CODIGO_T013_RESPUESTA_OFERTANTE = "T013_RespuestaOfertante";
 	public static final String CODIGO_T013_DOBLE_FIRMA = "T013_DobleFirma";
-	public static final String CODIGO_T013_INFORME_JURIDICO = "T013_InformeJuridico";
 	public static final String CODIGO_T013_INSTRUCCIONES_RESERVA = "T013_InstruccionesReserva";
 	public static final String CODIGO_T013_OBTENCION_CONTRATO_RESERVA = "T013_ObtencionContratoReserva";
 	public static final String CODIGO_T013_RESOLUCION_TANTEO = "T013_ResolucionTanteo";
@@ -68,7 +67,6 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	public static final String CODIGO_T017_RATIFICACION_COMITE_CES ="T017_RatificacionComiteCES";
 	//public static final String CODIGO_T017_RESPUESTA_OFERTANTE_PM ="T017_RespuestaOfertantePM";
 	public static final String CODIGO_T017_RESPUESTA_OFERTANTE_CES ="T017_RespuestaOfertanteCES";
-	public static final String CODIGO_T017_INFORME_JURIDICO ="T017_InformeJuridico";
 	public static final String CODIGO_T017_ADVISORY_NOTE ="T017_AdvisoryNote";
 	public static final String CODIGO_T017_PBC_RESERVA ="T017_PBCReserva";
 	public static final String CODIGO_T017_PBC_VENTA ="T017_PBCVenta";
@@ -116,12 +114,12 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	public String[] getCodigoTarea() {
 		//TODO: poner los códigos de tipos de tareas
 		return new String[]{CODIGO_T013_DEFINICION_OFERTA, CODIGO_T013_FIRMA_PROPIETARIO, CODIGO_T013_CIERRE_ECONOMICO, CODIGO_T013_RESOLUCION_COMITE,
-				 	CODIGO_T013_RESPUESTA_OFERTANTE, CODIGO_T013_DOBLE_FIRMA, CODIGO_T013_INFORME_JURIDICO, CODIGO_T013_INSTRUCCIONES_RESERVA,
+				 	CODIGO_T013_RESPUESTA_OFERTANTE, CODIGO_T013_DOBLE_FIRMA, CODIGO_T013_INSTRUCCIONES_RESERVA,
 				 	CODIGO_T013_OBTENCION_CONTRATO_RESERVA, CODIGO_T013_RESOLUCION_TANTEO, CODIGO_T013_RESULTADO_PBC, CODIGO_T013_POSICIONAMIENTO_FIRMA, 
 				 	CODIGO_T013_DEVOLUCION_LLAVES, CODIGO_T013_DOCUMENTOS_POSTVENTA, CODIGO_T013_RESOLUCION_EXPEDIENTE, CODIGO_T013_RATIFICACION_COMITE,
 				 	CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION, CODIGO_T013_PENDIENTE_DEVOLUCION, CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION, 
 				 	CODIGO_T013_VALIDACION_CLIENTES,CODIGO_T017_DEFINICION_OFERTA,CODIGO_T017_RESOLUCION_CES,CODIGO_T017_RESPUESTA_OFERTANTE_CES,
-				 	CODIGO_T017_INFORME_JURIDICO,CODIGO_T017_ADVISORY_NOTE,CODIGO_T017_PBC_RESERVA,CODIGO_T017_PBC_VENTA,CODIGO_T017_RECOMENDACION_CES,
+				 	CODIGO_T017_ADVISORY_NOTE,CODIGO_T017_PBC_RESERVA,CODIGO_T017_PBC_VENTA,CODIGO_T017_RECOMENDACION_CES,
 				 	CODIGO_T017_RESOLUCION_PRO_MANZANA,CODIGO_T017_RESOLUCION_EXPEDIENTE,CODIGO_T017_INSTRUCCIONES_RESERVA,CODIGO_T017_OBTENCION_CONTRATO_RESERVA,
 				 	CODIGO_T017_POSICIONAMIENTO_FIRMA,CODIGO_T017_DOCUMENTOS_POSTVENTA,CODIGO_T017_CIERRE_ECONOMICO, CODIGO_T017_RESOLUCION_DIVARIAN, CODIGO_T017_RESOLUCION_ARROW,
 				 	CODIGO_T017_RATIFICACION_COMITE_CES};
@@ -536,7 +534,6 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_OBTENCION_CONTRATO_RESERVA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DOCUMENTOS_POSTVENTA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESULTADO_PBC, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_INFORME_JURIDICO, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_TANTEO, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEVOLUCION_LLAVES, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_POSICIONAMIENTO_FIRMA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
@@ -580,11 +577,9 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESPUESTA_OFERTANTE_CES, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RATIFICACION_COMITE_CES, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);		
 			if (isActivoRemaining) {
-				mapa.put(ComercialUserAssigantionService.CODIGO_T017_INFORME_JURIDICO, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION); 
 				mapa.put(ComercialUserAssigantionService.CODIGO_T017_OBTENCION_CONTRATO_RESERVA, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 				mapa.put(ComercialUserAssigantionService.CODIGO_T017_PBC_RESERVA, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
 			} else {
-				mapa.put(ComercialUserAssigantionService.CODIGO_T017_INFORME_JURIDICO, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION); 
 				mapa.put(ComercialUserAssigantionService.CODIGO_T017_OBTENCION_CONTRATO_RESERVA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 				mapa.put(ComercialUserAssigantionService.CODIGO_T017_PBC_RESERVA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 			}			
@@ -602,7 +597,6 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_DIVARIAN, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_ARROW, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESPUESTA_OFERTANTE_CES, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
-			mapa.put(ComercialUserAssigantionService.CODIGO_T017_INFORME_JURIDICO, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_ADVISORY_NOTE, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_PBC_RESERVA, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_PBC_VENTA, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
@@ -700,7 +694,6 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DOCUMENTOS_POSTVENTA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESULTADO_PBC, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_INFORME_JURIDICO, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_TANTEO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEVOLUCION_LLAVES, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_POSICIONAMIENTO_FIRMA, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
@@ -734,7 +727,6 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DOCUMENTOS_POSTVENTA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESULTADO_PBC, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_INFORME_JURIDICO, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_TANTEO, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEVOLUCION_LLAVES, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_POSICIONAMIENTO_FIRMA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
@@ -776,7 +768,6 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DOCUMENTOS_POSTVENTA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESULTADO_PBC, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_INFORME_JURIDICO, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_TANTEO, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEVOLUCION_LLAVES, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_POSICIONAMIENTO_FIRMA, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
@@ -821,7 +812,6 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_DEFINICION_OFERTA, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RATIFICACION_COMITE_CES, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESPUESTA_OFERTANTE_CES, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
-			mapa.put(ComercialUserAssigantionService.CODIGO_T017_INFORME_JURIDICO, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);  
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_ADVISORY_NOTE, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_PBC_RESERVA, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_PBC_VENTA, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
@@ -842,7 +832,6 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_DIVARIAN, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESOLUCION_ARROW, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_RESPUESTA_OFERTANTE_CES, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
-			mapa.put(ComercialUserAssigantionService.CODIGO_T017_INFORME_JURIDICO, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);  
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_ADVISORY_NOTE, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_PBC_RESERVA, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
 			mapa.put(ComercialUserAssigantionService.CODIGO_T017_PBC_VENTA, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
@@ -925,7 +914,6 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DOCUMENTOS_POSTVENTA, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESULTADO_PBC, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_INFORME_JURIDICO, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_TANTEO, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEVOLUCION_LLAVES, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_POSICIONAMIENTO_FIRMA, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
@@ -959,7 +947,6 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_CIERRE_ECONOMICO, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DOCUMENTOS_POSTVENTA, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESULTADO_PBC, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
-		mapa.put(ComercialUserAssigantionService.CODIGO_T013_INFORME_JURIDICO, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_TANTEO, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_DEVOLUCION_LLAVES, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);
 		mapa.put(ComercialUserAssigantionService.CODIGO_T013_POSICIONAMIENTO_FIRMA, GestorActivoApi.CODIGO_SUPERVISOR_FORMALIZACION);

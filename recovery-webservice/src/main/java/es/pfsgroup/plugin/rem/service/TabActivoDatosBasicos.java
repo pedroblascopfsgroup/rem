@@ -881,8 +881,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		ActivoAdmisionRevisionTitulo actRevTitulo = genericDao.get(ActivoAdmisionRevisionTitulo.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
 		DDEstadoRegistralActivo ddEstadoReg = new DDEstadoRegistralActivo();
 		boolean perimetroAdmision = false;
-		if(perimetroActivo.getAplicaAdmision()!=null) {
-			perimetroAdmision=perimetroActivo.getAplicaAdmision();
+		if(perimetroActivo.getAplicaAdmision() != null) {
+			perimetroAdmision = perimetroActivo.getAplicaAdmision();
+			activoDto.setPerimetroAdmision(perimetroAdmision);
 		}
 		if(perimetroAdmision && actRevTitulo != null) {
 			if(actRevTitulo.getTipoIncidenciaRegistral() != null) {

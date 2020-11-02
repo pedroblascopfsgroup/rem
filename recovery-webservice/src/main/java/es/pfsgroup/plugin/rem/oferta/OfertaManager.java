@@ -5373,8 +5373,59 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			if(!Checks.esNulo(oferta.getIndicadorLoteRestringido())) {
 				if(oferta.getIndicadorLoteRestringido().equals(1)){
-				
-			
+					for (ActivoOferta actOfr : oferta.getActivosOferta()) {
+						Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS ,"activo", actOfr.getActivoId());
+						Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS ,"activo.id", actOfr.getActivoId());
+						Filter filtroId = genericDao.createFilter(FilterType.EQUALS ,"id", actOfr.getActivoId());
+						List<ActivoOferta> ofertasActivo = genericDao.getListOrdered(ActivoOferta.class,orderDesc,filtroActivo);
+						for(ActivoOferta ofertas : ofertasActivo) {
+							DtoHcoComercialFichaComercial historicoOfertas = new DtoHcoComercialFichaComercial();
+							Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS ,"id", ofertas.getOferta());
+							Oferta ofertaActivo =  genericDao.get(Oferta.class, filtroOferta);
+							Activo act =  genericDao.get(Activo.class, filtroId);
+							historicoOfertas.setNumActivo(act.getNumActivo().toString());
+							if(!Checks.esNulo(ofertaActivo.getFechaAlta())) {
+								historicoOfertas.setFecha(ofertaActivo.getFechaAlta());
+							}
+							historicoOfertas.setNumOferta(ofertaActivo.getNumOferta().toString());
+
+							if(!Checks.esNulo(ofertaActivo.getCliente()) && Checks.esNulo(ofertaActivo.getCliente().getNombreCompleto())) {
+								historicoOfertas.setOfertante(ofertaActivo.getCliente().getNombreCompleto());
+							}
+							if(!Checks.esNulo(ofertaActivo.getEstadoOferta())) {
+								historicoOfertas.setEstado(ofertaActivo.getEstadoOferta().getDescripcion());
+							}
+							if(!Checks.esNulo(ofertaActivo.getMotivoRechazo())) {
+								historicoOfertas.setMotivoDesestimiento(ofertaActivo.getMotivoRechazo().getDescripcion());
+								historicoOfertas.setDesestimado("Desestimada");
+							}
+							
+							historicoOfertas.setOferta(ofertas.getImporteActivoOferta());
+							Filter filtroPrecioWeb = genericDao.createFilter(FilterType.EQUALS ,"tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_PUBLICACION_WEB);
+							List<ActivoValoraciones> preciosWeb = genericDao.getListOrdered(ActivoValoraciones.class,orderDesc,filtroActivoId,filtroPrecioWeb);
+							
+							if(!Checks.esNulo(preciosWeb) && !preciosWeb.isEmpty()) {
+								if(!Checks.esNulo(preciosWeb.get(0).getImporte())) {
+									historicoOfertas.setPvpComite(preciosWeb.get(0).getImporte());
+								}
+							}
+							
+							ActivoTasacion tasacion = genericDao.get(ActivoTasacion.class,filtroActivoId);
+							if(!Checks.esNulo(tasacion)) {
+								if(!Checks.esNulo(tasacion.getImporteTasacionFin())) {
+									historicoOfertas.setTasacion(tasacion.getImporteTasacionFin());
+								}
+								
+							}
+							
+							//Campos faltantes
+							//fecha sancion
+							//FFRR
+							
+							listaHistoricoOfertas.add(historicoOfertas);
+							
+						}
+					}
 				}
 			}
 			

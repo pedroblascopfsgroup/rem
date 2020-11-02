@@ -32,7 +32,10 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambiosDq', {
 
     	me.setTitle(HreRem.i18n("title.seleccion.cambios.masivo"));
     	
-    	me.buttons = [ { itemId: 'btnGuardar', text: HreRem.i18n("btn.saveBtnText"), handler: "onClickGuardarPropagarCambios"}, { itemId: 'btnCancelar', text: HreRem.i18n("btn.cancelBtnText"), handler: 'onClickCancelarPropagarCambios'}];
+    	me.buttons = [ 
+    		{ itemId: 'btnGuardar', text: HreRem.i18n("btn.saveBtnText"), handler: "onClickGuardarPropagarCambiosEq"}, 
+    		{ itemId: 'btnCancelar', text: HreRem.i18n("btn.cancelBtnText"), handler: 'onClickCancelarPropagarCambios'}
+    	];
     	
     	me.items = [
     	
@@ -99,8 +102,8 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambiosDq', {
 			        	
 			        },
 			        items: [
-			        	{ boxLabel: HreRem.i18n("label.solo.activo.actual"), name: 'seleccion', inputValue: '1', checked: !Ext.isEmpty(me.form), hidden: Ext.isEmpty(me.form) },
-			            { boxLabel: HreRem.i18n("label.activos.agrupacion.pertenece"), name: 'seleccion', inputValue: '2', checked: Ext.isEmpty(me.form)},
+			        	{ boxLabel: HreRem.i18n("label.solo.activo.actual"), name: 'seleccion', inputValue: '1' },
+			            { boxLabel: HreRem.i18n("label.activos.agrupacion.pertenece"), name: 'seleccion', inputValue: '2', checked: true},
 			            { boxLabel: HreRem.i18n("label.activos.subdivision.pertenece"), name: 'seleccion', inputValue: '3'},
 			            { boxLabel: HreRem.i18n("label.siguientes.activos.seleccionados"), name: 'seleccion', inputValue: '4' }
 			        ]			        
@@ -338,6 +341,7 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambiosDq', {
     	me.down("grid").setStore(store);
     	
     	me.down("[reference=displayListaActivos]").setValue("Seleccionados 0 de " + store.getCount());
+    	debugger;
     	if(Ext.isEmpty(me.form)) { 
     		me.down("grid").getSelectionModel().selectAll();
     	}
@@ -354,7 +358,8 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambiosDq', {
 			case "1": 
 				checkColumn.setVisible(false);
 				grid.getSelectionModel().deselectAll();
-				grid.getStore().clearFilter();
+				grid.getStore().filter('id', me.activoActual.id);
+				grid.getSelectionModel().selectAll();
 				break;
 				
 			case "2":			        				

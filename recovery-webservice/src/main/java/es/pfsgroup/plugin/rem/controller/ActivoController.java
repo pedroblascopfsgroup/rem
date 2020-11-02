@@ -3450,9 +3450,9 @@ public class ActivoController extends ParadiseJsonController {
 	
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveDatoRemCalidadDatoPublicacion(List<Long> activoIdList, String dqFase4Descripcion, ModelMap model) {
+	public ModelAndView saveDatoRemCalidadDatoPublicacion(List<Long> activosSeleccionados, String dqFase4Descripcion, boolean quieroActualizar, ModelMap model) {
 		try {
-			model.put(RESPONSE_SUCCESS_KEY, activoEstadoPublicacionApi.saveDatoRemCalidadDatoPublicacion(activoIdList, dqFase4Descripcion));
+			model.put(RESPONSE_SUCCESS_KEY, activoEstadoPublicacionApi.saveDatoRemCalidadDatoPublicacion(activosSeleccionados, dqFase4Descripcion, quieroActualizar));
 		} catch (JsonViewerException jvex) {
 			model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
 			model.put(RESPONSE_SUCCESS_KEY, false);

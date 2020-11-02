@@ -209,7 +209,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		id = me.getViewModel().get("activo.id");
 		form.mask(HreRem.i18n("msg.mask.loading"));
 		if(!form.saveMultiple) {
-			debugger;
 			model = form.getModelInstance(),
 			model.setId(id);
 			if(Ext.isDefined(model.getProxy().getApi().read)) {
@@ -6019,88 +6018,75 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     
     aplicarDescripcion: function(btn, form) {
-   	 	var me = this;
-   	 	url =  $AC.getRemoteUrl('activo/getActivosPropagables');
-   	 	var formu = btn.up().up().up();
-   	 	var idActivo = btn.up().up().up().getBindRecord().data.idActivo;
-		Ext.Ajax.request({
-			url: url,
-			method : 'POST',
-			params: {idActivo: idActivo},
-			success: function(response, opts){
-            	debugger;
-            		var models = [];
-            		var createFormPropagableData = [];
-					var activosPropagables = Ext.decode(response.responseText).data.activosPropagables;
-					activosPropagables.push(idActivo);
-					activosPropagables.push(100);
-					activosPropagables.push(167);
-					var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
-					var valor = btn.up().up().up().getBindRecord().data.dqFase4Descripcion;
-
-					models.push(valor);
-					createFormPropagableData.models = models;
-					/*if(me.getViewModel() != null){
-						if(me.getViewModel().get('activo') != null){
-							if(me.getViewModel().get('activo').data != null){
-								me.getViewModel().get('activo').data.activosPropagables = activosPropagables;
-							}
-						}
-					}*/
-					var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambiosDq", {activoActual: activo, activos: activosPropagables, valor: valor}).show();
-					me.getView().add(ventanaOpcionesPropagacionCambios);
-					me.getView().unmask();
-					return false;
-			}, failure: function (a, operation, context) {
-            	debugger;
-            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-            }
-		     
-		 });
-	   	/*Ext.Msg.show({
-			   title: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.aplicar'),
-			   msg: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.aplicar.desea'),
-			   buttons: Ext.MessageBox.YESNO,
-			   fn: function(buttonId) {
-			        if (buttonId == 'yes') {
-			        	
-			        	/*debugger;
-			        	var url =  $AC.getRemoteUrl('activo/saveDatoRemCalidadDatoPublicacion');
-			        	var dqFase4Descripcion = btn.up().up().up().getBindRecord().data.dqFase4Descripcion;
-			        	var activoId = btn.up().up().up().getBindRecord().data.idActivo;
-			    		Ext.Ajax.request({
-			    			
-							url: url,
-							params: {activoId : activoId,
-								dqFase4Descripcion : dqFase4Descripcion},
+    	Ext.Msg.show({
+		   title: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.aplicar'),
+		   msg: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.aplicar.desea'),
+		   buttons: Ext.MessageBox.YESNO,
+		   fn: function(buttonId) {
+		        if (buttonId == 'yes') {
+		        	
+		        	debugger;
+		        	var url =  $AC.getRemoteUrl('activo/saveDatoRemCalidadDatoPublicacion');
+		        	var dqFase4Descripcion = btn.up("form").getBindRecord().data.dqFase4Descripcion;
+		        	var activoId = btn.up().up().up().getBindRecord().data.idActivo;
+		    		Ext.Ajax.request({
+		    			
+						url: url,
+						params: {activoId : activoId,
+							dqFase4Descripcion : dqFase4Descripcion},
+						
+						success: function (response,opts) {
+							var me = this;
+							//COmprobar si es Obra nueva   Para ello en el modelo. ViewModel está 'pertenceAgrupacionRestringida' y pertenceAgrupacionObraNueva
+							// Para llegar a estos datos, desde donde estás, subir al controller (me.lookupController().getView().getModel())
+							//if obra nueva
+					
+					   	 	var url =  $AC.getRemoteUrl('activo/getActivosPropagables');
+					   	 	var formu = btn.up("form");
+					   	 	var idActivo = btn.up("form").getBindRecord().data.idActivo;
+							Ext.Ajax.request({
+								url: url,
+								method : 'POST',
+								params: {idActivo: idActivo},
+								success: function(response, opts){
+										var activosPropagables = Ext.decode(response.responseText).data.activosPropagables;
+										var arrayPropagables = [];
+										for(var i = 0; i < activosPropagables.length; i++){
+											arrayPropagables.push(activosPropagables[i]);
+										}
+										var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
+										var valor = btn.up("form").getBindRecord().data.dqFase4Descripcion;
+						
+										var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambiosDq", {activoActual: activo, activos: arrayPropagables, valor: valor}).show();
+										me.getView().add(ventanaOpcionesPropagacionCambios);
+										me.getView().unmask();
+								}, failure: function (a, operation, context) {
+					            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					            }
+							     
+							 });
 							
-							success: function (response,opts) {
-								
-								if(Ext.decode(response.responseText).success == "false") {
-									me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-								} else {
-									//me.cargarTabDataCalidadDato(btn.up().up().up());
-									debugger;
-									//me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-								}
-								
-							},
-                                
-                            failure: function (a, operation, context) {
-                            	debugger;
-                            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-                            }
-			    		     
-			    		 });
-			        } else if(buttonId == 'no') {
-			        	this.close();
-			        }
-			   }
-		});*/
+							// END IF ELSE ES RESTRINGIDA (AJAX NUMACTIVO (lista), VALORPROPAGAR, SOYRESTRINGIDAYQUIEROACTUALIZAR actualizarPropagacionEq) 
+							// actualizar todo si = actualizarPropagacionEq true
+							// actualizar todo no = actualizarPropagacionEq false
+							//Else no estoy en ninguna agrupación y quiero actualizar (AJAX NUMACTIVO (lista), VALORPROPAGAR, SOYRESTRINGIDAYQUIEROACTUALIZAR actualizarPropagacionEq) 
+							// actualizarPropagacionEq false
+						},
+                            
+                        failure: function (a, operation, context) {
+                        	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                        }
+		    		     
+		    		 });
+		        } else if(buttonId == 'no') {
+		        	this.close();
+		        }
+		   }
+		});
     },
     
-    onChangePropagarEq: function() {
-        debugger;
+    onClickGuardarPropagarCambiosEq: function(btn) {
+    	debugger;
         var me = this,
     	window = btn.up("window"),
     	grid = me.lookupReference("listaActivos"),
@@ -6108,29 +6094,39 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	activosSeleccionados = grid.getSelectionModel().getSelection(),
     	opcionPropagacion = radioGroup.getValue().seleccion,
     	url =  $AC.getRemoteUrl('activo/getActivosPropagables');
-    	
-    	me.fireEvent("log", cambios);
-    	
     	if (opcionPropagacion == "4" &&  activosSeleccionados.length == 0) {
         	me.fireEvent("errorToast", HreRem.i18n("msg.no.activos.seleccionados"));
         	return false;
     	}
     	
-    	Ext.Ajax.request({
-			url: url,
-			method : 'POST',
-			params: {activosSeleccionados: activosSeleccionados},
-			success: function(response, opts){
-				
-			}, failure: function (a, operation, context) {
-            	debugger;
-            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-            }
-		     
-		 });
+    	var activosParaPropagar = [];
+    	for(var i = 0; i < activosSeleccionados.length; i++){
+    		activosParaPropagar.push(activosSeleccionados[i].id);
+		}
+    	// Comprobar si en la lista activosParaPropagar está el activoActual. Si no está se añade.
+    	
+    	me.actualizarPropagacionEq(activosParaPropagar, window.valor, false);
+    	
     }
 
     
+    actualizarPropagacionEq: function(activosParaPropagar, valor, soyRestringidaQuieroActualizar ){
+    	Ext.Ajax.request({
+			url: url,
+			method : 'POST',
+			params: {
+				activosSeleccionados: activosParaPropagar,
+				dqFase4Descripcion: valor,
+				soyRestringidaQuieroActualizar: soyRestringidaQuieroActualizar
+			},
+			success: function(response, opts){
+				
+			}, failure: function (a, operation, context) {
+            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+            }
+		     
+    	});
+    }
 
     
     

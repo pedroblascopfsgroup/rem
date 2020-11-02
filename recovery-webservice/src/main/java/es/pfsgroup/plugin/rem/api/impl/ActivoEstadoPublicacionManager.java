@@ -2312,20 +2312,25 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	
 	@Transactional
 	@Override
-	public Boolean saveDatoRemCalidadDatoPublicacion(List<Long> idList, String datoDq) {
+	public Boolean saveDatoRemCalidadDatoPublicacion(List<Long> idList, String datoDq, boolean quieroActualizar) {
 		
-		for (Long id : idList) {
-			Activo activo = activoDao.get(id);
-			ActivoDatosDq actDatosDq = activoPublicacionDao.getActivoDatosDqPorIdActivo(id);
-			ActivoInfoComercial actInfoComercial = activo.getInfoComercial(); 
-			if(actInfoComercial != null)
-				actInfoComercial.setDescripcionComercial(datoDq);
-			
-			activoDao.saveOrUpdate(activo);
+		
+		if(idList.tamaño == 1 && quieroActualizar) {
+			devuelvemeAgrupaciónRestringida (ya existe función);
+			actualizo todos los activos de la descripción (act_aga_agrupación_activo / act_agr_agrupación)
+			actualizar para cada activo
+		}
+		else {
+			for (Long id : idList) {
+				Activo activo = activoDao.get(id);
+				ActivoInfoComercial actInfoComercial = activo.getInfoComercial(); 
+				if(actInfoComercial != null) {
+					actInfoComercial.setDescripcionComercial(datoDq);
+					activoDao.saveOrUpdate(activo);
+				}			
+			}
 		}
 
-		
-		//activoAgrupacionDao.getA
 	
 		return true;
 	}

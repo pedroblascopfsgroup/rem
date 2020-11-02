@@ -25,6 +25,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoComplementoTitulo;
@@ -42,6 +43,9 @@ public class MSVActualizadorComplementoTituloCargaMasiva extends AbstractMSVActu
 
 	@Autowired
 	ProcessAdapter processAdapter;
+	
+	@Autowired
+	private GenericAdapter adapter;
 	
 	@Autowired
 	private ActivoApi activoApi;
@@ -129,6 +133,12 @@ public class MSVActualizadorComplementoTituloCargaMasiva extends AbstractMSVActu
 			if (colObservaciones != null && !colObservaciones.isEmpty()) {
 				activoComplemento.setObservaciones(colObservaciones);
 			}
+			
+			activoComplemento.setFechaAlta(new Date());
+			activoComplemento.setGestorAlta(adapter.getUsuarioLogado());
+			
+			
+			
 			
 			genericDao.save(ActivoComplementoTitulo.class,activoComplemento);
 			

@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Juan Angel Sánchez
---## FECHA_CREACION=20201002
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20201102
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-10590
+--## INCIDENCIA_LINK=HREOS-11928
 --## PRODUCTO=SI
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--#########################################
 --*/
 
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -40,11 +41,9 @@ BEGIN
 		SELECT /*+ leading(rn act agr) use_hash(act) use_hash(agr) */
 			DISTINCT
 			tbj.tbj_id, 
-			tbj.tbj_num_trabajo, 
-			tbj.tbj_webcom_id, 
+			tbj.tbj_num_trabajo,
 			tbj.tbj_cubre_seguro, 
 			tbj.tbj_importe_total, 
-			tbj.tbj_fecha_ejecutado,
 			ttr.dd_ttr_codigo, 
 			ttr.dd_ttr_descripcion, 
 			str.dd_str_codigo, 
@@ -55,10 +54,6 @@ BEGIN
 			pve.pve_nombre AS proveedor, 
 			actpro.pro_id AS propietario,
 			pve.pve_id,
-			DECODE (tbj.tbj_fecha_cierre_economico, NULL, 0, 1) AS con_cierre_economico,
-          	tbj.tbj_fecha_cierre_economico, 
-			DECODE (tbj.TBJ_FECHA_EMISION_FACTURA , NULL, DECODE(tbj.TBJ_IMPORTE_TOTAL, NULL, 1, 0, 1, 0), 1) AS facturado, 
-			ttr.dd_ttr_filtrar,
 			tbj.TBJ_IMPORTE_PRESUPUESTO
 
      	FROM ' || V_ESQUEMA || '.act_tbj_trabajo tbj 

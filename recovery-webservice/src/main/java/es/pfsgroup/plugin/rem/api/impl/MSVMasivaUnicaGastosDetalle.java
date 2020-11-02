@@ -325,16 +325,22 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 					}
 					
 					boolean anyadirCuota = true;
-					if(exc.dameCelda(fila, COL_TIPO_IMPOSITIVO) != null && !exc.dameCelda(fila, COL_TIPO_IMPOSITIVO).isEmpty()) {
-						newGastoLineaDetalle.setImporteIndirectoCuota(Double.parseDouble(exc.dameCelda(fila, COL_TIPO_IMPOSITIVO)) / 100);
-						if(stringToBoolean(exc.dameCelda(fila, COL_OPERACION_EXENTA))){
-							anyadirCuota = false;
-						}
-						if(!anyadirCuota && stringToBoolean(exc.dameCelda(fila, COL_RENUNCIA_EXENCION))) {
-							anyadirCuota = true;
-						}
-						if(anyadirCuota) {
-							importeTotal = importeTotal + newGastoLineaDetalle.getImporteIndirectoCuota();
+					if(exc.dameCelda(fila, COL_TIPO_IMPOSITIVO) != null && !exc.dameCelda(fila, COL_TIPO_IMPOSITIVO).isEmpty() && 
+					exc.dameCelda(fila, COL_PRINCIPAL_SUJETO_IMPUESTOS) != null && !exc.dameCelda(fila, COL_PRINCIPAL_SUJETO_IMPUESTOS).isEmpty()) {
+						BigDecimal tipoImpositivo = new BigDecimal(exc.dameCelda(fila, COL_TIPO_IMPOSITIVO));
+						BigDecimal principalSujeto = new BigDecimal(exc.dameCelda(fila, COL_PRINCIPAL_SUJETO_IMPUESTOS));
+						if(BigDecimal.ZERO.compareTo(tipoImpositivo) != 0 && BigDecimal.ZERO.compareTo(principalSujeto) != 0) {
+							BigDecimal cuota = tipoImpositivo.multiply(principalSujeto).divide(new BigDecimal(100));
+							newGastoLineaDetalle.setImporteIndirectoCuota(cuota.doubleValue());
+							if(stringToBoolean(exc.dameCelda(fila, COL_OPERACION_EXENTA))){
+								anyadirCuota = false;
+							}
+							if(!anyadirCuota && stringToBoolean(exc.dameCelda(fila, COL_RENUNCIA_EXENCION))) {
+								anyadirCuota = true;
+							}
+							if(anyadirCuota) {
+								importeTotal = importeTotal + newGastoLineaDetalle.getImporteIndirectoCuota();
+							}
 						}
 					}
 					

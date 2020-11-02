@@ -78,14 +78,15 @@ create or replace PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_GASTOS (
     V_DD_TIT_CODIGO                 VARCHAR2(20 CHAR);
     V_DD_TIM_CODIGO                 VARCHAR2(20 CHAR);
     V_GLD_IMP_IND_TIPO_IMPOSITIVO   VARCHAR2(4 CHAR);
-    DD_DEG_ID 			            NUMBER(16) := -1;
-    DD_DEG_ID_CONTABILIZA 	        NUMBER(16) := -1;
-    DD_EAP_ID_ANTERIOR		        NUMBER(16) := -1;
-    DD_EAP_ID_NUEVO		            NUMBER(16) := -1;
-    DD_EAH_ID_ANTERIOR		        NUMBER(16) := -1;
-    DD_EAH_ID_NUEVO		            NUMBER(16) := -1;
+    DD_DEG_ID                       NUMBER(16) := -1;
+    DD_DEG_ID_CONTABILIZA           NUMBER(16) := -1;
+    DD_EAP_ID_ANTERIOR              NUMBER(16) := -1;
+    DD_EAP_ID_NUEVO                 NUMBER(16) := -1;
+    DD_EAH_ID_ANTERIOR              NUMBER(16) := -1;
+    DD_EAH_ID_NUEVO                 NUMBER(16) := -1;
     V_GASTO_BBVA                    NUMBER(1)  := 0;
     V_GPV_NUMERO_FACTURA            VARCHAR2(256);
+    V_CC_PP                         NUMBER(1)  := 0;
 
     --Info
     V_OP_1_DESC                     VARCHAR2(400 CHAR) := '[OPERATORIA] Para todos los registros con FECHA DE CONTABILIZACION relacionado con un gasto cuyo estado no sea "Rechazado administración","Contabilizado","Pagado" "Rechazado propietario" o "Anulado".';
@@ -117,22 +118,25 @@ create or replace PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_GASTOS (
                                                             GDE.GDE_FECHA_PAGO,
                                                             GIC.GIC_ID,
                                                             GDE.GDE_ID,
-															GLD.GLD_ID ';
+                                                            GLD.GLD_ID ';
 
-    V_FROM_GASTO                    VARCHAR2(2000 CHAR) := 'FROM #ESQUEMA#.GPV_GASTOS_PROVEEDOR GPV
-															LEFT JOIN #ESQUEMA#.GLD_GASTOS_LINEA_DETALLE GLD
-																ON GLD.GPV_ID = GPV.GPV_ID
-                                                            LEFT JOIN #ESQUEMA#.GDE_GASTOS_DETALLE_ECONOMICO GDE
+    V_FROM_GASTO                    VARCHAR2(2000 CHAR) := 'FROM REM01.GPV_GASTOS_PROVEEDOR GPV
+                                                            LEFT JOIN REM01.GLD_GASTOS_LINEA_DETALLE GLD
+                                                                ON GLD.GPV_ID = GPV.GPV_ID
+                                                            LEFT JOIN REM01.GDE_GASTOS_DETALLE_ECONOMICO GDE
                                                                 ON GDE.GPV_ID = GPV.GPV_ID
-                                                            LEFT JOIN #ESQUEMA#.GIC_GASTOS_INFO_CONTABILIDAD GIC
+                                                            LEFT JOIN REM01.GIC_GASTOS_INFO_CONTABILIDAD GIC
                                                                 ON GIC.GPV_ID = GPV.GPV_ID
-                                                            LEFT JOIN #ESQUEMA#.DD_EGA_ESTADOS_GASTO EGA
+                                                            LEFT JOIN REM01.DD_EGA_ESTADOS_GASTO EGA
                                                                 ON EGA.DD_EGA_ID = GPV.DD_EGA_ID
                                                             WHERE GPV.GPV_NUM_GASTO_HAYA = :1
-                                                                AND GLD.DD_STG_ID = (SELECT DD_STG_ID FROM #ESQUEMA#.DD_STG_SUBTIPOS_GASTO WHERE DD_STG_CODIGO = :2)
-                                                                AND GLD.DD_TIT_ID = (SELECT DD_TIT_ID FROM #ESQUEMA#.DD_TIT_TIPOS_IMPUESTO WHERE DD_TIT_CODIGO = :3)
-                                                                AND GLD.GLD_IMP_IND_TIPO_IMPOSITIVO = :4
                                                                 AND GLD.BORRADO = 0';
+
+    V_DD_STG_FROM                   VARCHAR2(2000 CHAR) := ' AND GLD.DD_STG_ID = (SELECT DD_STG_ID FROM REM01.DD_STG_SUBTIPOS_GASTO WHERE DD_STG_CODIGO = :2)';
+
+    V_DD_TIT_FROM                   VARCHAR2(2000 CHAR) := ' AND GLD.DD_TIT_ID = (SELECT DD_TIT_ID FROM REM01.DD_TIT_TIPOS_IMPUESTO WHERE DD_TIT_CODIGO = :3)';
+
+    V_DD_IMP_FROM                   VARCHAR2(2000 CHAR) := ' AND GLD.GLD_IMP_IND_TIPO_IMPOSITIVO = :4';
 
     V_LOGAR_HDL                     VARCHAR2(1400 CHAR) := 'HLD_HIST_LANZA_PER_DETA(''SP_EXT_PR_ACT_GASTOS'',:1,:2,:3,:4,:5,:6,:7)'; -- 1 HLD_SP_CARGA, 2 HLD_CODIGO_REG, 3 HLD_TABLA_MODIFICAR, 4 HLD_TABLA_MODIFICAR_CLAVE, 5 HLD_TABLA_MODIFICAR_CLAVE_ID, 6 HLD_CAMPO_MODIFICAR, 7 HLD_VALOR_ORIGINAL, 8 HLD_VALOR_ACTUALIZADO
 
@@ -226,7 +230,7 @@ create or replace PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_GASTOS (
       FROM DUAL
       ';
       EXECUTE IMMEDIATE V_MSQL;
-      
+
 
       IF SQL%ROWCOUNT = 1 THEN
          DBMS_OUTPUT.PUT_LINE('[INFO] HLP_HISTORICO_LANZA_PERIODICO | Registro insertado correctamente, no comiteado.');
@@ -274,8 +278,8 @@ BEGIN
 
     --1. Comprobación de los parametros de ENTRADA.
     IF GPV_NUM_GASTO_HAYA IS NULL THEN
-        
-        V_MSQL := V_COUNT || '
+
+        V_MSQL := 'SELECT COUNT(1)
             FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV
             JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID
                 AND PRO.BORRADO = 0
@@ -303,17 +307,34 @@ BEGIN
 
             EXECUTE IMMEDIATE V_MSQL INTO V_GPV_NUM_GASTO_HAYA;
 
-            V_MSQL := V_COUNT || '
+            V_MSQL := 'SELECT COUNT(1)
                 FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV
                 JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID
                     AND PRO.BORRADO = 0
-                JOIN '||V_ESQUEMA||'DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID
+                JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID
                     AND CRA.BORRADO = 0
                 WHERE GPV.BORRADO = 0
                     AND CRA.DD_CRA_CODIGO = ''16''
                     AND GPV.GPV_NUM_GASTO_HAYA = '''||V_GPV_NUM_GASTO_HAYA||'''';
 
             EXECUTE IMMEDIATE V_MSQL INTO V_GASTO_BBVA;
+            
+        ELSE
+        
+            DBMS_OUTPUT.PUT_LINE('QUERY: '||V_MSQL);
+            
+        END IF;
+
+    END IF;
+
+    IF GLD_CCC_VALOR IS NOT NULL OR GLD_CPP_VALOR IS NOT NULL THEN
+
+        V_CC_PP := 1;
+
+        IF DD_STG_CODIGO IS NULL THEN
+
+            V_ERROR_DESC := '[ERROR] No se ha informado DD_STG_CODIGO o no se encuentra. Por favor, informe éste parámetro. Paramos la ejecución.';
+            COD_RETORNO := 1;
 
         END IF;
 
@@ -347,6 +368,7 @@ BEGIN
         V_DD_STG_CODIGO                 := DD_STG_CODIGO;
         V_DD_TIT_CODIGO                 := DD_TIT_CODIGO;
         V_GLD_IMP_IND_TIPO_IMPOSITIVO   := GLD_IMP_IND_TIPO_IMPOSITIVO;
+
     END CASE;
 
     --1.1 Comprobación de las TABLAS donde vamos a escribir.
@@ -371,8 +393,33 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('V_DD_STG_CODIGO: '||V_DD_STG_CODIGO);
         DBMS_OUTPUT.PUT_LINE('V_DD_TIT_CODIGO: '||V_DD_TIT_CODIGO);
         DBMS_OUTPUT.PUT_LINE('V_GLD_IMP_IND_TIPO_IMPOSITIVO: '||V_GLD_IMP_IND_TIPO_IMPOSITIVO);
-        V_MSQL := V_COUNT||V_FROM_GASTO;
-        EXECUTE IMMEDIATE V_MSQL INTO V_NUM USING V_GPV_NUM_GASTO_HAYA, V_DD_STG_CODIGO, V_DD_TIT_CODIGO, V_GLD_IMP_IND_TIPO_IMPOSITIVO;
+        
+        IF V_DD_STG_CODIGO IS NULL THEN
+        
+            V_MSQL := V_COUNT||V_FROM_GASTO;
+            EXECUTE IMMEDIATE V_MSQL INTO V_NUM USING V_GPV_NUM_GASTO_HAYA;
+            
+        ELSIF V_DD_STG_CODIGO IS NOT NULL AND V_DD_TIT_CODIGO IS NULL AND V_GLD_IMP_IND_TIPO_IMPOSITIVO IS NULL THEN
+        
+            V_MSQL := V_COUNT||V_FROM_GASTO||V_DD_STG_FROM;
+            EXECUTE IMMEDIATE V_MSQL INTO V_NUM USING V_GPV_NUM_GASTO_HAYA, V_DD_STG_CODIGO;
+            
+        ELSIF V_DD_STG_CODIGO IS NOT NULL AND V_DD_TIT_CODIGO IS NOT NULL AND V_GLD_IMP_IND_TIPO_IMPOSITIVO IS NULL THEN
+        
+            V_MSQL := V_COUNT||V_FROM_GASTO||V_DD_STG_FROM||V_DD_TIT_FROM;
+            EXECUTE IMMEDIATE V_MSQL INTO V_NUM USING V_GPV_NUM_GASTO_HAYA, V_DD_STG_CODIGO, V_DD_TIT_CODIGO;
+
+        ELSIF V_DD_STG_CODIGO IS NOT NULL AND V_DD_TIT_CODIGO IS NULL AND V_GLD_IMP_IND_TIPO_IMPOSITIVO IS NOT NULL THEN
+        
+            V_MSQL := V_COUNT||V_FROM_GASTO||V_DD_STG_FROM||V_DD_IMP_FROM;
+            EXECUTE IMMEDIATE V_MSQL INTO V_NUM USING V_GPV_NUM_GASTO_HAYA, V_DD_STG_CODIGO, V_GLD_IMP_IND_TIPO_IMPOSITIVO;
+
+        ELSIF V_DD_STG_CODIGO IS NOT NULL AND V_DD_TIT_CODIGO IS NOT NULL AND V_GLD_IMP_IND_TIPO_IMPOSITIVO IS NOT NULL THEN
+        
+            V_MSQL := V_COUNT||V_FROM_GASTO||V_DD_STG_FROM||V_DD_TIT_FROM||V_DD_IMP_FROM;
+            EXECUTE IMMEDIATE V_MSQL INTO V_NUM USING V_GPV_NUM_GASTO_HAYA, V_DD_STG_CODIGO, V_DD_TIT_CODIGO, V_GLD_IMP_IND_TIPO_IMPOSITIVO;
+
+        END IF;
 
         IF DD_TIM_CODIGO = 'BAS' OR DD_TIM_CODIGO IS NULL THEN
             V_COL_CUENTA_CONTABLE := 'GLD_CCC_BASE';
@@ -388,8 +435,28 @@ BEGIN
             V_COL_PTDA_PRESUPESTARIA := 'GLD_CPP_INTERESES';
         END IF;
 
-        IF V_NUM > 0 THEN
+        IF V_NUM > 0 AND V_DD_STG_CODIGO IS NULL THEN
             V_MSQL := REPLACE(V_SELECT_GASTO, 'TIM_CODIGO', ''''||DD_TIM_CODIGO||'''')||V_FROM_GASTO;
+            EXECUTE IMMEDIATE V_MSQL
+            INTO V_GPV_ID, V_TIT_ID, V_EGA_CODIGO, V_EGA_ID, V_NUM_FACTUR_UVEM, V_FEC_CONTABILIZACION, V_EJE_ID, V_CUENTA_CONTABLE, V_PTDA_PRESUPESTARIA, V_FECHA_PAGO, V_GIC_ID, V_GDE_ID, V_GLD_ID
+            USING V_GPV_NUM_GASTO_HAYA;
+        ELSIF V_NUM > 0 AND V_DD_STG_CODIGO IS NOT NULL AND V_DD_TIT_CODIGO IS NULL AND V_GLD_IMP_IND_TIPO_IMPOSITIVO IS NULL THEN
+            V_MSQL := REPLACE(V_SELECT_GASTO, 'TIM_CODIGO', ''''||DD_TIM_CODIGO||'''')||V_FROM_GASTO||V_DD_STG_FROM;
+            EXECUTE IMMEDIATE V_MSQL
+            INTO V_GPV_ID, V_TIT_ID, V_EGA_CODIGO, V_EGA_ID, V_NUM_FACTUR_UVEM, V_FEC_CONTABILIZACION, V_EJE_ID, V_CUENTA_CONTABLE, V_PTDA_PRESUPESTARIA, V_FECHA_PAGO, V_GIC_ID, V_GDE_ID, V_GLD_ID
+            USING V_GPV_NUM_GASTO_HAYA;
+        ELSIF V_NUM > 0 AND V_DD_STG_CODIGO IS NOT NULL AND V_DD_TIT_CODIGO IS NOT NULL AND V_GLD_IMP_IND_TIPO_IMPOSITIVO IS NULL THEN
+            V_MSQL := REPLACE(V_SELECT_GASTO, 'TIM_CODIGO', ''''||DD_TIM_CODIGO||'''')||V_FROM_GASTO||V_DD_STG_FROM||V_DD_TIT_FROM;
+            EXECUTE IMMEDIATE V_MSQL
+            INTO V_GPV_ID, V_TIT_ID, V_EGA_CODIGO, V_EGA_ID, V_NUM_FACTUR_UVEM, V_FEC_CONTABILIZACION, V_EJE_ID, V_CUENTA_CONTABLE, V_PTDA_PRESUPESTARIA, V_FECHA_PAGO, V_GIC_ID, V_GDE_ID, V_GLD_ID
+            USING V_GPV_NUM_GASTO_HAYA, V_DD_STG_CODIGO, V_DD_TIT_CODIGO;
+        ELSIF V_NUM > 0 AND V_DD_STG_CODIGO IS NOT NULL AND V_DD_TIT_CODIGO IS NULL AND V_GLD_IMP_IND_TIPO_IMPOSITIVO IS NOT NULL THEN
+            V_MSQL := REPLACE(V_SELECT_GASTO, 'TIM_CODIGO', ''''||DD_TIM_CODIGO||'''')||V_FROM_GASTO||V_DD_STG_FROM||V_DD_IMP_FROM;
+            EXECUTE IMMEDIATE V_MSQL
+            INTO V_GPV_ID, V_TIT_ID, V_EGA_CODIGO, V_EGA_ID, V_NUM_FACTUR_UVEM, V_FEC_CONTABILIZACION, V_EJE_ID, V_CUENTA_CONTABLE, V_PTDA_PRESUPESTARIA, V_FECHA_PAGO, V_GIC_ID, V_GDE_ID, V_GLD_ID
+            USING V_GPV_NUM_GASTO_HAYA, V_DD_STG_CODIGO, V_GLD_IMP_IND_TIPO_IMPOSITIVO;
+        ELSIF V_NUM > 0 AND V_DD_STG_CODIGO IS NOT NULL AND V_DD_TIT_CODIGO IS NOT NULL AND V_GLD_IMP_IND_TIPO_IMPOSITIVO IS NOT NULL THEN
+            V_MSQL := REPLACE(V_SELECT_GASTO, 'TIM_CODIGO', ''''||DD_TIM_CODIGO||'''')||V_FROM_GASTO||V_DD_STG_FROM||V_DD_TIT_FROM||V_DD_IMP_FROM;
             EXECUTE IMMEDIATE V_MSQL
             INTO V_GPV_ID, V_TIT_ID, V_EGA_CODIGO, V_EGA_ID, V_NUM_FACTUR_UVEM, V_FEC_CONTABILIZACION, V_EJE_ID, V_CUENTA_CONTABLE, V_PTDA_PRESUPESTARIA, V_FECHA_PAGO, V_GIC_ID, V_GDE_ID, V_GLD_ID
             USING V_GPV_NUM_GASTO_HAYA, V_DD_STG_CODIGO, V_DD_TIT_CODIGO, V_GLD_IMP_IND_TIPO_IMPOSITIVO;
@@ -468,7 +535,7 @@ BEGIN
             V_VALOR_NUEVO := NUM_GASTO_DESTINATARIO;
             --Realizamos actuación
             IF V_GASTO_BBVA = 1 THEN
-                V_GPV_NUMERO_FACTURA := 'GPV_NUM_GASTO_DESTINATARIO';
+                V_GPV_NUMERO_FACTURA := 'NUM_GASTO_DESTINATARIO';
             ELSE
                 V_GPV_NUMERO_FACTURA := 'GPV_NUMERO_FACTURA_UVEM';
             END IF;
@@ -530,33 +597,33 @@ BEGIN
                 COD_RETORNO := 1;
                 V_ERROR_DESC := '[ERROR] No se ha podido informar el campo GIC_FECHA_CONTABILIZACION para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Paramos la ejecución.';
             END IF;
-            
+
             ------------------------------------------------------------
             -----MODIFICACIONES NUEVAS -- REMVIP-1698
             ------------------------------------------------------------       
             EXECUTE IMMEDIATE 'SELECT DD_DEG_ID_CONTABILIZA FROM '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD WHERE GIC_ID = '||V_GIC_ID INTO DD_DEG_ID_CONTABILIZA;
             EXECUTE IMMEDIATE 'SELECT DD_DEG_ID FROM '||V_ESQUEMA||'.DD_DEG_DESTINATARIOS_GASTO WHERE DD_DEG_CODIGO = ''03'' ' INTO DD_DEG_ID;
-            
+
             --Comprobamos si el gasto pertenece a la cartera Liberbank. REMVIP-5417
             EXECUTE IMMEDIATE 'SELECT COUNT(*)
-				FROM '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD GIC
-				JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GIC.GPV_ID
-				JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID
-				JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID
-				WHERE GIC.GIC_ID = '||V_GIC_ID||'
-				AND CRA.DD_CRA_CODIGO = ''08''' INTO V_NUM;
-            
-			IF V_NUM = 1 THEN
-				V_MSQL := '
-	            UPDATE '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD
-	            SET DD_DEG_ID_CONTABILIZA = '||DD_DEG_ID||',
-	            USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
-	            FECHAMODIFICAR = SYSDATE
-	            WHERE GIC_ID = '||V_GIC_ID||'
-	            ';
-	            EXECUTE IMMEDIATE V_MSQL; 			
-			END IF;			
-           
+                FROM '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD GIC
+                JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GIC.GPV_ID
+                JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID
+                JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID
+                WHERE GIC.GIC_ID = '||V_GIC_ID||'
+                AND CRA.DD_CRA_CODIGO = ''08''' INTO V_NUM;
+
+            IF V_NUM = 1 THEN
+                V_MSQL := '
+                UPDATE '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD
+                SET DD_DEG_ID_CONTABILIZA = '||DD_DEG_ID||',
+                USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
+                FECHAMODIFICAR = SYSDATE
+                WHERE GIC_ID = '||V_GIC_ID||'
+                ';
+                EXECUTE IMMEDIATE V_MSQL;           
+            END IF;         
+
             --Comprobamos si se ha actualizado o no
             IF SQL%ROWCOUNT > 0 THEN
                 DBMS_OUTPUT.PUT_LINE('[INFO] Se ha informado el campo DD_DEG_ID_CONTABILIZA para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Continuamos la ejecución.');
@@ -569,16 +636,16 @@ BEGIN
                 COD_RETORNO := 1;
                 V_ERROR_DESC := '[ERROR] No se ha podido informar el campo DD_DEG_ID_CONTABILIZA para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Paramos la ejecución.';
             END IF;
-    
-	    EXECUTE IMMEDIATE 'SELECT GGE_ID FROM '||V_ESQUEMA||'.GGE_GASTOS_GESTION WHERE GPV_ID = '||V_GPV_ID||' AND ROWNUM = 1' INTO V_GGE_ID;
-	    EXECUTE IMMEDIATE 'SELECT DD_EAP_ID FROM '||V_ESQUEMA||'.GGE_GASTOS_GESTION WHERE GPV_ID = '||V_GPV_ID||' AND ROWNUM = 1' INTO DD_EAP_ID_ANTERIOR;
+
+        EXECUTE IMMEDIATE 'SELECT GGE_ID FROM '||V_ESQUEMA||'.GGE_GASTOS_GESTION WHERE GPV_ID = '||V_GPV_ID||' AND ROWNUM = 1' INTO V_GGE_ID;
+        EXECUTE IMMEDIATE 'SELECT DD_EAP_ID FROM '||V_ESQUEMA||'.GGE_GASTOS_GESTION WHERE GPV_ID = '||V_GPV_ID||' AND ROWNUM = 1' INTO DD_EAP_ID_ANTERIOR;
             EXECUTE IMMEDIATE 'SELECT DD_EAP_ID FROM '||V_ESQUEMA||'.DD_EAP_ESTADOS_AUTORIZ_PROP WHERE DD_EAP_CODIGO = ''07'' ' INTO DD_EAP_ID_NUEVO;
             V_MSQL := '
             UPDATE '||V_ESQUEMA||'.GGE_GASTOS_GESTION
             SET DD_EAP_ID = '||DD_EAP_ID_NUEVO||',
-			GGE_FECHA_EAP = SYSDATE,
-			USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
-			FECHAMODIFICAR = SYSDATE
+            GGE_FECHA_EAP = SYSDATE,
+            USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
+            FECHAMODIFICAR = SYSDATE
             WHERE GPV_ID = '||V_GPV_ID||'
             ';
             EXECUTE IMMEDIATE V_MSQL;
@@ -594,20 +661,20 @@ BEGIN
                 COD_RETORNO := 1;
                 V_ERROR_DESC := '[ERROR] No se ha podido informar el campo DD_EAP_ID para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Paramos la ejecución.';
             END IF;
-                 
+
         END IF;
         --------------
         -- PASO 4/7 -- 
         --------------
-	    EXECUTE IMMEDIATE 'SELECT GGE_ID FROM '||V_ESQUEMA||'.GGE_GASTOS_GESTION WHERE GPV_ID = '||V_GPV_ID||' AND ROWNUM = 1' INTO V_GGE_ID;
-	    EXECUTE IMMEDIATE 'SELECT DD_EAH_ID FROM '||V_ESQUEMA||'.GGE_GASTOS_GESTION WHERE GPV_ID = '||V_GPV_ID||' AND ROWNUM = 1' INTO DD_EAH_ID_ANTERIOR;
+        EXECUTE IMMEDIATE 'SELECT GGE_ID FROM '||V_ESQUEMA||'.GGE_GASTOS_GESTION WHERE GPV_ID = '||V_GPV_ID||' AND ROWNUM = 1' INTO V_GGE_ID;
+        EXECUTE IMMEDIATE 'SELECT DD_EAH_ID FROM '||V_ESQUEMA||'.GGE_GASTOS_GESTION WHERE GPV_ID = '||V_GPV_ID||' AND ROWNUM = 1' INTO DD_EAH_ID_ANTERIOR;
             EXECUTE IMMEDIATE 'SELECT DD_EAH_ID FROM '||V_ESQUEMA||'.DD_EAH_ESTADOS_AUTORIZ_HAYA WHERE DD_EAH_CODIGO = ''03'' ' INTO DD_EAH_ID_NUEVO;
             V_MSQL := '
             UPDATE '||V_ESQUEMA||'.GGE_GASTOS_GESTION
             SET DD_EAH_ID = '||DD_EAH_ID_NUEVO||',
-			GGE_FECHA_EAH = SYSDATE,
-			USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
-			FECHAMODIFICAR = SYSDATE
+            GGE_FECHA_EAH = SYSDATE,
+            USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
+            FECHAMODIFICAR = SYSDATE
             WHERE GPV_ID = '||V_GPV_ID||'
             ';
             EXECUTE IMMEDIATE V_MSQL;
@@ -623,7 +690,7 @@ BEGIN
                 COD_RETORNO := 1;
                 V_ERROR_DESC := '[ERROR] No se ha podido informar el campo DD_EAH_ID para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Paramos la ejecución.';
             END IF;
-    
+
         --------------
         -- PASO 5/7 -- OPCIONAL
         --------------
@@ -735,9 +802,9 @@ BEGIN
                 COD_RETORNO := 1;
                 V_ERROR_DESC := '[ERROR] No se ha podido actualizar la partida presupuestaria a '||V_VALOR_NUEVO||' para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Paramos la ejecución.';
             END IF;
-            V_PASOS := V_PASOS+1;
         END IF;
 
+        DBMS_OUTPUT.PUT_LINE('[INFO] Pasos ejecutados: '||V_PASOS||'.');
         ----------------------
         -- FIN OPERATORIA 1 --
         ----------------------
@@ -745,25 +812,25 @@ BEGIN
         IF COD_RETORNO = 0 THEN
             CASE
                 --Si hemos informado los 6/7 parámetros (Nunca pueden ser 7 ya que informamos FECHA_PAGO o FECHA_CONTABILIZACION).
-                WHEN GPV_NUM_GASTO_HAYA IS NOT NULL AND NUM_GASTO_DESTINATARIO IS NOT NULL AND (FECHA_PAGO IS NOT NULL OR FECHA_CONTABILIZACION IS NOT NULL) AND EJERCICIO IS NOT NULL AND GLD_CCC_VALOR IS NOT NULL AND GLD_CPP_VALOR IS NOT NULL
+                WHEN V_GPV_NUM_GASTO_HAYA IS NOT NULL AND NUM_GASTO_DESTINATARIO IS NOT NULL AND (FECHA_PAGO IS NOT NULL OR FECHA_CONTABILIZACION IS NOT NULL) AND EJERCICIO IS NOT NULL AND GLD_CCC_VALOR IS NOT NULL AND GLD_CPP_VALOR IS NOT NULL
                 THEN IF V_OP_1_PASOS != V_PASOS THEN
                         COD_RETORNO := 1;
                         V_ERROR_DESC := V_ERROR_DESC||'[ERROR] No se han cumplido todos los pasos de la operatoria. Paramos la ejecución.';
                      END IF;
                 --Si informamos 5/7 parámetros.
-                WHEN GPV_NUM_GASTO_HAYA IS NOT NULL AND NUM_GASTO_DESTINATARIO IS NOT NULL AND (FECHA_PAGO IS NOT NULL OR FECHA_CONTABILIZACION IS NOT NULL) AND EJERCICIO IS NOT NULL AND GLD_CCC_VALOR IS NOT NULL AND GLD_CPP_VALOR IS NULL
+                WHEN V_GPV_NUM_GASTO_HAYA IS NOT NULL AND NUM_GASTO_DESTINATARIO IS NOT NULL AND (FECHA_PAGO IS NOT NULL OR FECHA_CONTABILIZACION IS NOT NULL) AND EJERCICIO IS NOT NULL AND GLD_CCC_VALOR IS NOT NULL AND GLD_CPP_VALOR IS NULL
                 THEN IF (V_OP_1_PASOS-1) != V_PASOS THEN
                         COD_RETORNO := 1;
                         V_ERROR_DESC := V_ERROR_DESC||'[ERROR] No se han cumplido todos los pasos de la operatoria. Paramos la ejecución.';
                      END IF;
                 --Si informamos 4/7 parámetros.
-                WHEN GPV_NUM_GASTO_HAYA IS NOT NULL AND NUM_GASTO_DESTINATARIO IS NOT NULL AND (FECHA_PAGO IS NOT NULL OR FECHA_CONTABILIZACION IS NOT NULL) AND EJERCICIO IS NOT NULL AND GLD_CCC_VALOR IS NULL AND GLD_CPP_VALOR IS NULL
+                WHEN V_GPV_NUM_GASTO_HAYA IS NOT NULL AND NUM_GASTO_DESTINATARIO IS NOT NULL AND (FECHA_PAGO IS NOT NULL OR FECHA_CONTABILIZACION IS NOT NULL) AND EJERCICIO IS NOT NULL AND GLD_CCC_VALOR IS NULL AND GLD_CPP_VALOR IS NULL
                 THEN IF (V_OP_1_PASOS-2) != V_PASOS THEN
                         COD_RETORNO := 1;
                         V_ERROR_DESC := V_ERROR_DESC||'[ERROR] No se han cumplido todos los pasos de la operatoria. Paramos la ejecución.';
                      END IF;
                 --Si informamos 3/7 parámetros.
-                WHEN GPV_NUM_GASTO_HAYA IS NOT NULL AND NUM_GASTO_DESTINATARIO IS NOT NULL AND (FECHA_PAGO IS NOT NULL OR FECHA_CONTABILIZACION IS NOT NULL) AND EJERCICIO IS NULL AND GLD_CCC_VALOR IS NULL AND GLD_CPP_VALOR IS NULL
+                WHEN V_GPV_NUM_GASTO_HAYA IS NOT NULL AND NUM_GASTO_DESTINATARIO IS NOT NULL AND (FECHA_PAGO IS NOT NULL OR FECHA_CONTABILIZACION IS NOT NULL) AND EJERCICIO IS NULL AND GLD_CCC_VALOR IS NULL AND GLD_CPP_VALOR IS NULL
                 THEN IF (V_OP_1_PASOS-3) != V_PASOS THEN
                         COD_RETORNO := 1;
                         V_ERROR_DESC := V_ERROR_DESC||'[ERROR] No se han cumplido todos los pasos de la operatoria. Paramos la ejecución.';
@@ -901,33 +968,33 @@ BEGIN
                 COD_RETORNO := 1;
                 V_ERROR_DESC := '[ERROR] No se ha podido informar el campo GIC_FECHA_CONTABILIZACION para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Paramos la ejecución.';
             END IF;
-            
+
             ------------------------------------------------------------
             -----MODIFICACIONES NUEVAS -- REMVIP-1698
             ------------------------------------------------------------       
             EXECUTE IMMEDIATE 'SELECT DD_DEG_ID_CONTABILIZA FROM '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD WHERE GIC_ID = '||V_GIC_ID INTO DD_DEG_ID_CONTABILIZA;
             EXECUTE IMMEDIATE 'SELECT DD_DEG_ID FROM '||V_ESQUEMA||'.DD_DEG_DESTINATARIOS_GASTO WHERE DD_DEG_CODIGO = ''03'' ' INTO DD_DEG_ID;
-            
+
             --Comprobamos si el gasto pertenece a la cartera Liberbank. REMVIP-5417
             EXECUTE IMMEDIATE 'SELECT COUNT(*)
-				FROM '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD GIC
-				JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GIC.GPV_ID
-				JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID
-				JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID
-				WHERE GIC.GIC_ID = '||V_GIC_ID||'
-				AND CRA.DD_CRA_CODIGO = ''08''' INTO V_NUM;
-            
-			IF V_NUM = 1 THEN
-				V_MSQL := '
-	            UPDATE '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD
-	            SET DD_DEG_ID_CONTABILIZA = '||DD_DEG_ID||',
-	            USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
-	            FECHAMODIFICAR = SYSDATE
-	            WHERE GIC_ID = '||V_GIC_ID||'
-	            ';
-	            EXECUTE IMMEDIATE V_MSQL; 
-			END IF;           
-            
+                FROM '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD GIC
+                JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GIC.GPV_ID
+                JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID
+                JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID
+                WHERE GIC.GIC_ID = '||V_GIC_ID||'
+                AND CRA.DD_CRA_CODIGO = ''08''' INTO V_NUM;
+
+            IF V_NUM = 1 THEN
+                V_MSQL := '
+                UPDATE '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD
+                SET DD_DEG_ID_CONTABILIZA = '||DD_DEG_ID||',
+                USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
+                FECHAMODIFICAR = SYSDATE
+                WHERE GIC_ID = '||V_GIC_ID||'
+                ';
+                EXECUTE IMMEDIATE V_MSQL; 
+            END IF;           
+
             --Comprobamos si se ha actualizado o no
             IF SQL%ROWCOUNT > 0 THEN
                 DBMS_OUTPUT.PUT_LINE('[INFO] Se ha informado el campo DD_DEG_ID_CONTABILIZA para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Continuamos la ejecución.');
@@ -940,16 +1007,16 @@ BEGIN
                 COD_RETORNO := 1;
                 V_ERROR_DESC := '[ERROR] No se ha podido informar el campo DD_DEG_ID_CONTABILIZA para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Paramos la ejecución.';
             END IF;
-    
-			EXECUTE IMMEDIATE 'SELECT GGE_ID FROM '||V_ESQUEMA||'.GGE_GASTOS_GESTION WHERE GPV_ID = '||V_GPV_ID||' AND ROWNUM = 1' INTO V_GGE_ID;
-			EXECUTE IMMEDIATE 'SELECT DD_EAP_ID FROM '||V_ESQUEMA||'.GGE_GASTOS_GESTION WHERE GPV_ID = '||V_GPV_ID||' AND ROWNUM = 1' INTO DD_EAP_ID_ANTERIOR;
+
+            EXECUTE IMMEDIATE 'SELECT GGE_ID FROM '||V_ESQUEMA||'.GGE_GASTOS_GESTION WHERE GPV_ID = '||V_GPV_ID||' AND ROWNUM = 1' INTO V_GGE_ID;
+            EXECUTE IMMEDIATE 'SELECT DD_EAP_ID FROM '||V_ESQUEMA||'.GGE_GASTOS_GESTION WHERE GPV_ID = '||V_GPV_ID||' AND ROWNUM = 1' INTO DD_EAP_ID_ANTERIOR;
             EXECUTE IMMEDIATE 'SELECT DD_EAP_ID FROM '||V_ESQUEMA||'.DD_EAP_ESTADOS_AUTORIZ_PROP WHERE DD_EAP_CODIGO = ''07'' ' INTO DD_EAP_ID_NUEVO;
             V_MSQL := '
             UPDATE '||V_ESQUEMA||'.GGE_GASTOS_GESTION
             SET DD_EAP_ID = '||DD_EAP_ID_NUEVO||',
-			GGE_FECHA_EAP = SYSDATE,
-			USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
-			FECHAMODIFICAR = SYSDATE
+            GGE_FECHA_EAP = SYSDATE,
+            USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
+            FECHAMODIFICAR = SYSDATE
             WHERE GPV_ID = '||V_GPV_ID||'
             ';
             EXECUTE IMMEDIATE V_MSQL;
@@ -965,22 +1032,22 @@ BEGIN
                 COD_RETORNO := 1;
                 V_ERROR_DESC := '[ERROR] No se ha podido informar el campo DD_EAP_ID para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Paramos la ejecución.';
             END IF;
-            
+
         END IF;
 
         --------------
         -- PASO 4/8 -- 
         --------------
 
-	    EXECUTE IMMEDIATE 'SELECT GGE_ID FROM '||V_ESQUEMA||'.GGE_GASTOS_GESTION WHERE GPV_ID = '||V_GPV_ID||' AND ROWNUM = 1' INTO V_GGE_ID;
-	    EXECUTE IMMEDIATE 'SELECT DD_EAH_ID FROM '||V_ESQUEMA||'.GGE_GASTOS_GESTION WHERE GPV_ID = '||V_GPV_ID||' AND ROWNUM = 1' INTO DD_EAH_ID_ANTERIOR;
+        EXECUTE IMMEDIATE 'SELECT GGE_ID FROM '||V_ESQUEMA||'.GGE_GASTOS_GESTION WHERE GPV_ID = '||V_GPV_ID||' AND ROWNUM = 1' INTO V_GGE_ID;
+        EXECUTE IMMEDIATE 'SELECT DD_EAH_ID FROM '||V_ESQUEMA||'.GGE_GASTOS_GESTION WHERE GPV_ID = '||V_GPV_ID||' AND ROWNUM = 1' INTO DD_EAH_ID_ANTERIOR;
             EXECUTE IMMEDIATE 'SELECT DD_EAH_ID FROM '||V_ESQUEMA||'.DD_EAH_ESTADOS_AUTORIZ_HAYA WHERE DD_EAH_CODIGO = ''03'' ' INTO DD_EAH_ID_NUEVO;
             V_MSQL := '
             UPDATE '||V_ESQUEMA||'.GGE_GASTOS_GESTION
             SET DD_EAH_ID = '||DD_EAH_ID_NUEVO||',
-			GGE_FECHA_EAH = SYSDATE,
-			USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
-			FECHAMODIFICAR = SYSDATE
+            GGE_FECHA_EAH = SYSDATE,
+            USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
+            FECHAMODIFICAR = SYSDATE
             WHERE GPV_ID = '||V_GPV_ID||'
             ';
             EXECUTE IMMEDIATE V_MSQL;
@@ -1233,7 +1300,7 @@ EXCEPTION
           DBMS_OUTPUT.PUT_LINE('-----------------------------------------------------------');
           DBMS_OUTPUT.PUT_LINE(SQLERRM);
           DBMS_OUTPUT.PUT_LINE(V_MSQL);
-          COD_RETORNO := 1;          
+          COD_RETORNO := 1;  
           HLP_HISTORICO_LANZA_PERIODICO (TO_CHAR(V_GPV_NUM_GASTO_HAYA), 1, SQLERRM);
           COMMIT;
           RAISE;

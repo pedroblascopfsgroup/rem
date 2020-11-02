@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin Arnal
---## FECHA_CREACION=20200914
+--## FECHA_CREACION=20200915
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11680
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial - HREOS-11680 - JAD
+--##        0.1 Versión inicial - HREOS-11680 - Quitamos no definido
 --##########################################
 --*/
 
@@ -130,7 +131,7 @@ BEGIN
                         AND RES.RES_FECHA_FIRMA is null
                         AND ECO.ECO_ESTADO_PBC = 1
                     then ''Reservado''
-                when
+                /* when
                         SCM.DD_SCM_CODIGO = ''04'' --	Disponible para la venta con reserva
                         AND last_oferta.DD_EOF_CODIGO in (''01'') 
                         AND EEC.DD_EEC_CODIGO in (''06'')  -- Reservado
@@ -141,19 +142,22 @@ BEGIN
                         AND DD_ERE_ESTADOS_RESERVA.DD_ERE_CODIGO = ''02''
                         AND RES.RES_FECHA_FIRMA is not null
                         AND (ECO.ECO_ESTADO_PBC = 1 or ECO.ECO_ESTADO_PBC is null)
-                    then ''Contratado''
+                    then ''Contratado'' */
+                when
+                        SCM.DD_SCM_CODIGO = ''04'' --	Disponible para la venta con reserva
+                    then ''Contratado'' 
                 when 
                         SCM.DD_SCM_CODIGO = ''05'' --	Vendido
-                        AND last_oferta.DD_EOF_CODIGO in (''01'') 
-                        AND EEC.DD_EEC_CODIGO in (''11'')  -- Aprobado
-                        AND ACT_SPS_SIT_POSESORIA.SPS_OCUPADO in (0,1)
-                        AND DD_TPA_TIPO_TITULO_ACT.DD_TPA_CODIGO = ''02''
-                        AND (COE_CONDICIONANTES_EXPEDIENTE.COE_SOLICITA_RESERVA = 1 OR COE_CONDICIONANTES_EXPEDIENTE.COE_SOLICITA_RESERVA is null)
-                        AND (ECO.ECO_ESTADO_PBC_R = 1 OR ECO.ECO_ESTADO_PBC_R is null)
-                        AND DD_ERE_ESTADOS_RESERVA.DD_ERE_CODIGO is not null
-                        AND RES.RES_FECHA_FIRMA is not null
-                        AND ECO.ECO_ESTADO_PBC = 1 
-                        AND ECO.ECO_FECHA_VENTA is not null
+                        -- AND last_oferta.DD_EOF_CODIGO in (''01'') 
+                        -- AND EEC.DD_EEC_CODIGO in (''11'')  -- Aprobado
+                        -- AND ACT_SPS_SIT_POSESORIA.SPS_OCUPADO in (0,1)
+                        -- AND DD_TPA_TIPO_TITULO_ACT.DD_TPA_CODIGO = ''02''
+                        -- AND (COE_CONDICIONANTES_EXPEDIENTE.COE_SOLICITA_RESERVA = 1 OR COE_CONDICIONANTES_EXPEDIENTE.COE_SOLICITA_RESERVA is null)
+                        -- AND (ECO.ECO_ESTADO_PBC_R = 1 OR ECO.ECO_ESTADO_PBC_R is null)
+                        -- AND DD_ERE_ESTADOS_RESERVA.DD_ERE_CODIGO is not null
+                        -- AND RES.RES_FECHA_FIRMA is not null
+                        -- AND ECO.ECO_ESTADO_PBC = 1 
+                        -- AND ECO.ECO_FECHA_VENTA is not null
                     then ''Escriturado''
                 when    
                         last_oferta.DD_EOF_CODIGO is null 
@@ -183,8 +187,8 @@ BEGIN
                     then ''Contrato privado''*/
                 when 
                         SCM.DD_SCM_CODIGO = ''03'' --	Disponible para la venta con oferta
-                        AND last_oferta.DD_EOF_CODIGO is null
-                        AND ACT_PAC_PERIMETRO_ACTIVO.PAC_INCLUIDO = 0
+                        -- AND last_oferta.DD_EOF_CODIGO is null
+                        -- AND ACT_PAC_PERIMETRO_ACTIVO.PAC_INCLUIDO = 0
                     then ''Baja contable''
                 when
                         SCM.DD_SCM_CODIGO = ''10'' 
@@ -193,7 +197,7 @@ BEGIN
                         AND ACT_SPS_SIT_POSESORIA.SPS_OCUPADO = 1
                         AND DD_TPA_TIPO_TITULO_ACT.DD_TPA_CODIGO = ''01''
                     then ''Alquilado Libre en Venta''
-                when 
+                /*when 
                         SCM.DD_SCM_CODIGO = ''03'' --	Disponible para la venta con oferta
                         AND last_oferta.DD_EOF_CODIGO in (''01'') 
                         AND EEC.DD_EEC_CODIGO in (''11'')  -- Aprobada
@@ -216,8 +220,11 @@ BEGIN
                         AND DD_ERE_ESTADOS_RESERVA.DD_ERE_CODIGO is null
                         AND RES.RES_FECHA_FIRMA is null
                         AND ECO.ECO_ESTADO_PBC = 1
-                    then ''Alquilado Reservado''
+                    then ''Alquilado Reservado''*/
                 when 
+                        SCM.DD_SCM_CODIGO = ''03'' --	Disponible para la venta con oferta
+                    then ''Alquilado Reservado''
+                /* when 
                         SCM.DD_SCM_CODIGO = ''04'' --	Disponible para la venta con reserva
                         AND last_oferta.DD_EOF_CODIGO in (''01'') 
                         AND EEC.DD_EEC_CODIGO in (''11'')  -- Aprobada
@@ -228,15 +235,18 @@ BEGIN
                         AND DD_ERE_ESTADOS_RESERVA.DD_ERE_CODIGO = ''02''
                         AND RES.RES_FECHA_FIRMA is not null
                         AND (ECO.ECO_ESTADO_PBC = 1 or ECO.ECO_ESTADO_PBC is null)   
-                    then ''Alquilado Contratado''
+                    then ''Alquilado Contratado'' */
+                when 
+                        SCM.DD_SCM_CODIGO = ''04'' --	Disponible para la venta con reserva
+                    then ''Alquilado Contratado''    
                 when 
                         SCM.DD_SCM_CODIGO = ''10'' --	Alquilado
                     then ''Alquilado''
-                else ''No definido''
+                else null
             end SITUACION_COMERCIAL_BBVA
         from '||V_ESQUEMA||'.act_activo ACT
             JOIN '||V_ESQUEMA||'.ACT_BBVA_ACTIVOS BBVA ON BBVA.ACT_ID = ACT.ACT_ID
-            left join '||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL SCM ON SCM.DD_SCM_ID = ACT.DD_SCM_ID
+            join '||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL SCM ON SCM.DD_SCM_ID = ACT.DD_SCM_ID
             left join last_oferta on last_oferta.ACT_ID = ACT.ACT_ID
             left join '||V_ESQUEMA||'.V_COND_PUBLICACION VCP on VCP.ACT_ID = ACT.ACT_ID
             left join '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = last_oferta.OFR_ID

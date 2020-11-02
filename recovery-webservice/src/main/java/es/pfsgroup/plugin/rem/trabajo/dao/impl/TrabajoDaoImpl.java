@@ -391,9 +391,12 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
    		
    		
    		if (dto.getCodigoSubtipo()!=null) {
-   			List<String> listaSubTipo = new ArrayList<String>(Arrays.asList(dto.getCodigoSubtipo().split(",")));
-   			HQLBuilder.addFiltroWhereInStringSiNotNull(hb, "tbj.codigoSubtipo",listaSubTipo );
-   		}		
+   		  List<String> listaSubTipo = new ArrayList<String>();
+   		  for (String subTipo : dto.getCodigoSubtipo().split(",")) {
+   			  listaSubTipo.add("'" + subTipo + "'");
+   		  }
+   		  HQLBuilder.addFiltroWhereInSiNotNull(hb, "tbj.codigoSubtipo",listaSubTipo);
+   		} 		
 		
 		if(gasto.getProveedor().getDocIdentificativo().equals(NIE_HAYA)) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.propietario", gasto.getPropietario().getId());

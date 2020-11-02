@@ -6032,11 +6032,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             		var models = [];
             		var createFormPropagableData = [];
 					var activosPropagables = Ext.decode(response.responseText).data.activosPropagables;
-					var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
 					activosPropagables.push(idActivo);
 					activosPropagables.push(100);
 					activosPropagables.push(167);
-					models.push(btn.up().up().up().getBindRecord().data.dqFase4Descripcion);
+					var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
+					var valor = btn.up().up().up().getBindRecord().data.dqFase4Descripcion;
+
+					models.push(valor);
 					createFormPropagableData.models = models;
 					/*if(me.getViewModel() != null){
 						if(me.getViewModel().get('activo') != null){
@@ -6045,7 +6047,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 							}
 						}
 					}*/
-					var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambiosMatrizExpediente", {form: formu, activoActual: activo, activos: activosPropagables, tabData: null, propagableData: createFormPropagableData}).show();
+					var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambiosDq", {activoActual: activo, activos: activosPropagables, valor: valor}).show();
 					me.getView().add(ventanaOpcionesPropagacionCambios);
 					me.getView().unmask();
 					return false;
@@ -6097,9 +6099,37 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		});*/
     },
     
-    comprobacionAgrupacionActivo: function(activoId) {
+    onChangePropagarEq: function() {
+        debugger;
+        var me = this,
+    	window = btn.up("window"),
+    	grid = me.lookupReference("listaActivos"),
+    	radioGroup = me.lookupReference("opcionesPropagacion"),
+    	activosSeleccionados = grid.getSelectionModel().getSelection(),
+    	opcionPropagacion = radioGroup.getValue().seleccion,
+    	url =  $AC.getRemoteUrl('activo/getActivosPropagables');
     	
+    	me.fireEvent("log", cambios);
+    	
+    	if (opcionPropagacion == "4" &&  activosSeleccionados.length == 0) {
+        	me.fireEvent("errorToast", HreRem.i18n("msg.no.activos.seleccionados"));
+        	return false;
+    	}
+    	
+    	Ext.Ajax.request({
+			url: url,
+			method : 'POST',
+			params: {activosSeleccionados: activosSeleccionados},
+			success: function(response, opts){
+				
+			}, failure: function (a, operation, context) {
+            	debugger;
+            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+            }
+		     
+		 });
     }
+
     
 
     

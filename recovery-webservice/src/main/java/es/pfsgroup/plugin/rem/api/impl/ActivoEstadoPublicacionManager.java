@@ -2074,7 +2074,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				&& (dto.getDrFase4Descripcion().equals(dto.getDqFase4Descripcion()))) {
 			dto.setCorrectoDescripcion(ICONO_TICK_OK);
 			dto.setDisableDescripcion(true);
-		}else {
+		}else {				
 			dto.setCorrectoDescripcion(ICONO_TICK_KO);
 			cruzroja = true;
 			dto.setDisableDescripcion(false);

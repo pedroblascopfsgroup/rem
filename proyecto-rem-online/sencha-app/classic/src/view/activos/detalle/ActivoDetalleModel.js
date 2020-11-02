@@ -1324,6 +1324,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     		return 'app-tbfiedset-ico icono-tickinterrogante';
 	     	}
 	     	
+	     },
+	     
+	       disableBtnDescF1: function(get) {
+	     
+	       	if(get('calidaddatopublicacionactivo.disableDescripcion')=='false'){
+	       		return false;
+	       	}else{
+	       		return true;
+	       	}
+	  	        	
 	     }
 	
 	 }, 

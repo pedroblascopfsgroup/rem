@@ -999,9 +999,11 @@ Ext.define('HreRem.view.activos.detalle.CalidadDatoPublicacionActivo', {
 					xtype:'button',
 					text: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.boton.aplicar'),
 					reference: 'btnAplicaDescripcionRef',
-					handler: 'aplicarDescripcion',
-					disabled: false
-					//disabled: '{disableBtnDescF1}'
+					handler: 'aplicarDescripcion',					
+					bind:{
+						disabled: '{disableBtnDescF1}'
+					}
+					
 					
 				}]
 			},{

@@ -247,12 +247,8 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							        	fieldLabel:  HreRem.i18n('fieldlabel.bancario.numactivoBBVA'),
 							        	labelWidth:	150,
 							        	name: 'numActivoBbva'
-							        },
-							        {
-							        	fieldLabel:  HreRem.i18n('fieldlabel.bancario.idappdivarianBbva'),
-							        	labelWidth:	150,
-							        	name: 'idDivarianBbva'
 							        }
+							        
 							        
 
 								]

@@ -348,14 +348,6 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							},
 							{
 								xtype:'textfieldbase',
-								fieldLabel: HreRem.i18n('fieldlabel.activobbva.idDivarian'),
-								bind: {
-									readOnly : 'true',
-									value: '{activo.idDivarianBbva}'
-								}
-							},
-							{
-								xtype:'textfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.activobbva.lineaFactura'),
 								bind: {
 									readOnly : '{esUaSinImportarEstado}',

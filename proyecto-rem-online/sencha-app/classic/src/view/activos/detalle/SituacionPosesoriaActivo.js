@@ -189,6 +189,52 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        	bind: '{situacionPosesoria.fechaAccesoAntiocupa}',
 					            	labelWidth: 80,
 					            	width: 200
+						        },
+						        {
+						        	xtype: 'comboboxfieldbase',						        	
+						        	fieldLabel: 'Alarma',
+						        	bind: {
+					            		store: '{comboSiNoRem}',
+					            		value: '{situacionPosesoria.tieneAlarma}'
+					            	}
+						        	},{
+						        		xtype:'datefieldbase',
+							        	reference: 'datefielInstalaciondAlarma',
+							        	fieldLabel: 'Fecha de instalaci&oacute;n Alarma',
+							        	bind: '{situacionPosesoria.fechaInstalacionAlarma}',
+						            	labelWidth: 80,
+						            	width: 200
+						        	},{
+						        		colspan:2,
+						        		xtype:'datefieldbase',
+							        	reference: 'datefielDesinstalaciondAlarma',
+							        	fieldLabel: 'Fecha de desinstalaci&oacute;n Alarma',
+							        	bind: '{situacionPosesoria.fechaDesinstalacionAlarma}',
+						            	labelWidth: 80,
+						            	width: 200
+						        	},{
+						        	
+						        		xtype: 'comboboxfieldbase',						        	
+						        	fieldLabel: 'Vigilancia',
+						        	bind: {
+					            		store: '{comboSiNoRem}',
+					            		value: '{situacionPosesoria.tieneVigilancia}'
+					            	}
+						       		},{
+						       			xtype:'datefieldbase',
+							        	reference: 'datefielInstalaciondVigilancia',
+							        	fieldLabel: 'Fecha de instalaci&oacute;n Vigilancia',
+							        	bind: '{situacionPosesoria.fechaInstalacionVigilancia}',
+						            	labelWidth: 80,
+						            	width: 200
+						        },{
+						        	colspan:2,
+						        	xtype:'datefieldbase',
+							        	reference: 'datefielDesinstalaciondVigilancia',
+							        	fieldLabel: 'Fecha de desinstalaci&oacute;n Vigilancia',
+							        	bind: '{situacionPosesoria.fechaDesinstalacionVigilancia}',
+						            	labelWidth: 80,
+						            	width: 200
 						        }
 							]
 						},

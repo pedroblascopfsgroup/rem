@@ -159,6 +159,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresupuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDIdentificadorReam;
 import es.pfsgroup.plugin.rem.model.dd.DDPestanas;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -1501,7 +1502,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					 tarifaTrabajo.setConfigTarifa(config);
 					 tarifaTrabajo.setTrabajo(trabajo);
 					 //pendiente revision
-					 tarifaTrabajo.setMedicion(0F);
+					 tarifaTrabajo.setMedicion(1F);
 					 tarifaTrabajo.setPrecioUnitario(config.getPrecioUnitario());
 					 tarifaTrabajo.setPrecioUnitarioCliente(config.getPrecioUnitarioCliente());
 					 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
@@ -1675,7 +1676,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 							 tarifaTrabajo.setConfigTarifa(config);
 							 tarifaTrabajo.setTrabajo(trabajo);
 							 //pendiente revision
-							 tarifaTrabajo.setMedicion(0F);
+							 tarifaTrabajo.setMedicion(1F);
 							 tarifaTrabajo.setPrecioUnitario(config.getPrecioUnitario());
 							 tarifaTrabajo.setPrecioUnitarioCliente(config.getPrecioUnitarioCliente());
 							 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
@@ -1727,7 +1728,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						 tarifaTrabajo.setConfigTarifa(config);
 						 tarifaTrabajo.setTrabajo(trabajo);
 						 //pendiente revision
-						 tarifaTrabajo.setMedicion(0F);
+						 tarifaTrabajo.setMedicion(1F);
 						 tarifaTrabajo.setPrecioUnitario(config.getPrecioUnitario());
 						 tarifaTrabajo.setPrecioUnitarioCliente(config.getPrecioUnitarioCliente());
 						 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
@@ -2082,7 +2083,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						 tarifaTrabajo.setConfigTarifa(config);
 						 tarifaTrabajo.setTrabajo(trabajo);
 						 //pendiente revision
-						 tarifaTrabajo.setMedicion(0F);
+						 tarifaTrabajo.setMedicion(1F);
 						 tarifaTrabajo.setPrecioUnitario(config.getPrecioUnitario());
 						 tarifaTrabajo.setPrecioUnitarioCliente(config.getPrecioUnitarioCliente());
 						 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
@@ -2480,6 +2481,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		else if(trabajo.getFechaHoraConcreta() != null) {
 			trabajo.setFechaCompromisoEjecucion(trabajo.getFechaHoraConcreta());
+		}
+		if(dtoTrabajo.getIdentificadorReamCodigo() != null) {
+			DDIdentificadorReam identificador = genericDao.get(DDIdentificadorReam.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getIdentificadorReamCodigo()));
+			trabajo.setIdentificadorReam(identificador);
 		}
 	}
 
@@ -3119,6 +3124,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 		}
 
+		if(trabajo.getIdentificadorReam() != null) {
+			dtoTrabajo.setIdentificadorReamCodigo(trabajo.getIdentificadorReam().getCodigo());
+		}
 
 		List<ActivoTramite> tramitesTrabajo = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
 		

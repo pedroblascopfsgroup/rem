@@ -272,6 +272,33 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 				        									}
 													]
 												},
+												{
+													xtype:'fieldsettable',
+													collapsible: false,
+													defaultType: 'textfieldbase',
+													colspan:3,
+													border:0,
+													items :
+														[
+				        									{ 
+				        										xtype: 'comboboxfieldbase',
+						        								fieldLabel: HreRem.i18n('fieldlabel.trabajo.area.peticionaria'),
+						        								collapsible: false,
+						        								allowBlank: false,
+																border:0,
+																reference: 'identificadorReamRef',
+						        								bind: {
+					            										store: '{comboIdentificadorReam}',
+					            	    								value: '{trabajo.identificadorReamCodigo}'
+					            									},
+					            								//disabled: disableCampoTomaPosesion,
+					            								displayField: 'descripcion',
+							    								valueField: 'codigo'
+			            									
+				        									}
+													]
+	        										
+	        									},
 										        {
 								                	xtype: 'label',
 								                	reference: 'textAdvertenciaCrearTrabajo',

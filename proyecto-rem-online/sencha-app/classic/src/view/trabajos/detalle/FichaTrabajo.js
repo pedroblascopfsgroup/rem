@@ -187,6 +187,17 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 				                	reference: 'aplicaComiteRef',
 				                	readOnly: true
 				                	
+				                },
+				                {
+				                	xtype: 'comboboxfieldbase',
+				                	fieldLabel:  HreRem.i18n('fieldlabel.trabajo.area.peticionaria'),
+				                	bind:{
+				                		store: '{comboIdentificadorReam}',
+				                		value: '{trabajo.identificadorReamCodigo}'
+				                	},
+				                	editable: false,
+				                	reference: 'comboIdentificadorReamRef',
+				                	readOnly: false
 				                }
 						]
             	 	},

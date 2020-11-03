@@ -63,7 +63,9 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	private static final String GASTO_REFACTURADO_PADRE = "No se puede modificar un gasto padre";
 	private static final String GASTOS_HIJOS = "No se puede modificar un gasto refacturado";
 	private static final String GASTO_EN_MAL_ESTADO = "El estado del gasto debe ser 'Pendiente de autorizar' o 'Incompleto' o 'Rechazado";
+	private static final String TIPO_IMPOS_IMPUEST_RELLENO = "Cuando el tipo impositivo está relleno el tipo impuesto debe estarlo, y viceversa.";
 
+	
 	public static final Integer COL_ID_GASTO = 0;
 	public static final Integer COL_ACCION_LINEA_DETALLE = 1;
 	public static final Integer COL_ID_LINEA = 2;
@@ -168,6 +170,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 			mapaErrores.put(GASTO_REFACTURADO_PADRE, gastoPadreNoEditable(exc));
 			mapaErrores.put(GASTOS_HIJOS, gastoHijoNoEditable(exc));
 			mapaErrores.put(GASTO_EN_MAL_ESTADO, gastoEstadoPendienteIncompleto(exc));
+			mapaErrores.put(TIPO_IMPOS_IMPUEST_RELLENO, tipoImpositivoEimpuestoRellenos(exc));
 			
 
 			if (!mapaErrores.get(GASTO_NO_EXISTE).isEmpty() 
@@ -193,6 +196,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 					|| !mapaErrores.get(GASTO_REFACTURADO_PADRE).isEmpty()
 					|| !mapaErrores.get(GASTOS_HIJOS).isEmpty()
 					|| !mapaErrores.get(GASTO_EN_MAL_ESTADO).isEmpty()
+					|| !mapaErrores.get(TIPO_IMPOS_IMPUEST_RELLENO).isEmpty()
 					
 				){
 
@@ -944,4 +948,28 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	            }
 	        return listaFilas;   
 	   }
+	   
+	   private List<Integer> tipoImpositivoEimpuestoRellenos(MSVHojaExcel exc){
+	        List<Integer> listaFilas = new ArrayList<Integer>();
+
+	         try{
+	        	 for(int i=1; i<this.numFilasHoja;i++){
+	               if((!Checks.esNulo( exc.dameCelda(i, COL_TIPO_IMPOSITIVO)) && Checks.esNulo( exc.dameCelda(i, COL_TIPO_IMPUESTO))) ||
+	                (Checks.esNulo( exc.dameCelda(i, COL_TIPO_IMPOSITIVO)) && !Checks.esNulo( exc.dameCelda(i, COL_TIPO_IMPUESTO)))) {
+	            	   listaFilas.add(i);
+	               }
+	        	 }
+	        	
+	         } catch (IllegalArgumentException e) {
+	             listaFilas.add(0);
+	             e.printStackTrace();
+	         } catch (IOException e) {
+	             listaFilas.add(0);
+	             e.printStackTrace();
+	         } catch (ParseException e) {
+	        	 listaFilas.add(0);
+				e.printStackTrace();
+			}
+	         return listaFilas;   
+		 }
 }

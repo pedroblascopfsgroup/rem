@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20200928
+--## FECHA_CREACION=20201103
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-11217
+--## INCIDENCIA_LINK=HREOS-11745
 --## PRODUCTO=NO
 --##
 --## Finalidad: Actualizar instrucciones

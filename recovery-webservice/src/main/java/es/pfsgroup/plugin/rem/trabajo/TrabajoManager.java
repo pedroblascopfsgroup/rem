@@ -1367,7 +1367,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					 tarifaTrabajo.setConfigTarifa(config);
 					 tarifaTrabajo.setTrabajo(trabajo);
 					 //pendiente revision
-					 tarifaTrabajo.setMedicion(0F);
+					 tarifaTrabajo.setMedicion(1F);
 					 tarifaTrabajo.setPrecioUnitario(config.getPrecioUnitario());
 					 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
 				}
@@ -1539,7 +1539,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 							 tarifaTrabajo.setConfigTarifa(config);
 							 tarifaTrabajo.setTrabajo(trabajo);
 							 //pendiente revision
-							 tarifaTrabajo.setMedicion(0F);
+							 tarifaTrabajo.setMedicion(1F);
 							 tarifaTrabajo.setPrecioUnitario(config.getPrecioUnitario());
 							 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
 						}
@@ -1570,7 +1570,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						 tarifaTrabajo.setConfigTarifa(config);
 						 tarifaTrabajo.setTrabajo(trabajo);
 						 //pendiente revision
-						 tarifaTrabajo.setMedicion(0F);
+						 tarifaTrabajo.setMedicion(1F);
 						 tarifaTrabajo.setPrecioUnitario(config.getPrecioUnitario());
 						 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
 					}
@@ -1901,7 +1901,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						 tarifaTrabajo.setConfigTarifa(config);
 						 tarifaTrabajo.setTrabajo(trabajo);
 						 //pendiente revision
-						 tarifaTrabajo.setMedicion(0F);
+						 tarifaTrabajo.setMedicion(1F);
 						 tarifaTrabajo.setPrecioUnitario(config.getPrecioUnitario());
 						 tarifaTrabajo.setPrecioUnitarioCliente(config.getPrecioUnitarioCliente());
 						 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);

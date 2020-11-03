@@ -1,7 +1,7 @@
 --/*
 --######################################### 
---## AUTOR=Josep Ros
---## FECHA_CREACION=20200915
+--## AUTOR=Joaquin Arnal
+--## FECHA_CREACION=20200918
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11054
@@ -11,7 +11,8 @@
 --##            
 --## INSTRUCCIONES:  
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 - Versión inicial - Josep Ros
+--##        0.2 - Joaquin Arnal - HREOS-11851 Añadimos el nuevo
 --#########################################
 --*/
 
@@ -59,6 +60,7 @@ LOOP
 		, VALOR_NUEVO VARCHAR2(3500 CHAR)
 		, SUBTIPO_REGISTRO VARCHAR2(3500 CHAR)
 		, ID_REGISTRO NUMBER(16)
+        , NUEVO NUMBER(1)
 		  )';
 	ELSIF contador = 2 THEN
 	V_SQL :='CREATE TABLE '||V_ESQUEMA||'.ESPARTA_EXCEL'||contador||'(      
@@ -68,6 +70,7 @@ LOOP
                 , VALOR_NUEVO VARCHAR2(3500 CHAR)
                 , SUBTIPO_REGISTRO VARCHAR2(3500 CHAR)
                 , ID_REGISTRO NUMBER(16)
+                , NUEVO NUMBER(1)
                   )';
 
 	ELSE
@@ -79,6 +82,7 @@ LOOP
 		, DESCRIPCION VARCHAR2(3500 CHAR)
 		, SUBTIPO_REGISTRO VARCHAR2(3500 CHAR)
 		, ID_REGISTRO NUMBER(16)
+        , NUEVO NUMBER(1)
 		  )';
 
 	END IF;

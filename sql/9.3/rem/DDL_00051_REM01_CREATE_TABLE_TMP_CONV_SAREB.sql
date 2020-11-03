@@ -1,7 +1,7 @@
 --/*
 --#########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200914
+--## AUTOR=Joaquin Arnal
+--## FECHA_CREACION=20200918
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10500
@@ -11,7 +11,8 @@
 --##			
 --## INSTRUCCIONES:  
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial- Daniel Algaba
+--##        0.2 Joaquin Arnal - 20201102 - HREOS-11851 añadimos el campo
 --#########################################
 ----*/
 
@@ -56,6 +57,7 @@ BEGIN
 		, VALOR_NUEVO	VARCHAR2(250 CHAR)
 		, SUBTIPO_REGISTRO VARCHAR2(3500 CHAR)
 		, ID_REGISTRO NUMBER(16)
+        , NUEVO NUMBER(1)
 	)';
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] LA TABLA '''||V_TABLA||''' HA SIDO CREADA CON ÉXITO.');

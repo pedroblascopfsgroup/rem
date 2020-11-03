@@ -99,7 +99,8 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 	private static final String LINEA_SIN_ACTIVOS_CON_ACTIVOS = "Esta línea ha sido marcada sin activos y se le han añadido activos.";
 	private static final String LINEA_SIN_ACTIVOS_REPETIDA = "Esta línea ya ha sido marcada como sin activos.";
 	private static final String LINEA_SIN_ACTIVOS_CON_ID_PARTICIPACION = "Una línea marcada sin activos no puede tener ni Id elemento ni participación de elemento.";
-	
+	private static final String TIPO_IMPOS_IMPUEST_RELLENO = "Cuando el tipo impositivo está relleno el tipo impuesto debe estarlo, y viceversa.";
+
 
 	
 	public static final Integer COL_ID_AGRUPADOR_GASTO = 0;
@@ -263,6 +264,7 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 			mapaErrores.put(LINEA_SIN_ACTIVOS_CON_ACTIVOS, masUnaLineaSinActivos(exc));
 			mapaErrores.put(LINEA_SIN_ACTIVOS_REPETIDA, lineaYaMarcadaSinActivos(exc));
 			mapaErrores.put(LINEA_SIN_ACTIVOS_CON_ID_PARTICIPACION, lineaSinActivosElementoyPorcentajeVacio(exc));
+			mapaErrores.put(TIPO_IMPOS_IMPUEST_RELLENO, tipoImpositivoEimpuestoRellenos(exc));
 			
 
 
@@ -307,7 +309,8 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 					|| !mapaErrores.get(GASTO_REPETIDO_CARGA).isEmpty()
 					|| !mapaErrores.get(LINEA_SIN_ACTIVOS_CON_ACTIVOS).isEmpty()
 					|| !mapaErrores.get(LINEA_SIN_ACTIVOS_REPETIDA).isEmpty()
-					|| !mapaErrores.get(LINEA_SIN_ACTIVOS_CON_ID_PARTICIPACION).isEmpty()		
+					|| !mapaErrores.get(LINEA_SIN_ACTIVOS_CON_ID_PARTICIPACION).isEmpty()
+					|| !mapaErrores.get(TIPO_IMPOS_IMPUEST_RELLENO).isEmpty()
 					){
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -1403,6 +1406,30 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
         		(!Checks.esNulo( exc.dameCelda(i, COL_ID_ELEMENTO)) || !Checks.esNulo( exc.dameCelda(i, COL_PARTICIPACION_LINEA_DETALLE)))) {
         			listaFilas.add(i);
         		}
+        	 }
+        	
+         } catch (IllegalArgumentException e) {
+             listaFilas.add(0);
+             e.printStackTrace();
+         } catch (IOException e) {
+             listaFilas.add(0);
+             e.printStackTrace();
+         } catch (ParseException e) {
+        	 listaFilas.add(0);
+			e.printStackTrace();
+		}
+         return listaFilas;   
+	 }
+	
+	private List<Integer> tipoImpositivoEimpuestoRellenos(MSVHojaExcel exc){
+        List<Integer> listaFilas = new ArrayList<Integer>();
+
+         try{
+        	 for(int i=1; i<this.numFilasHoja;i++){
+               if((!Checks.esNulo( exc.dameCelda(i, COL_TIPO_IMPOSITIVO)) && Checks.esNulo( exc.dameCelda(i, COL_TIPO_IMPUESTO))) ||
+                (Checks.esNulo( exc.dameCelda(i, COL_TIPO_IMPOSITIVO)) && !Checks.esNulo( exc.dameCelda(i, COL_TIPO_IMPUESTO)))) {
+            	   listaFilas.add(i);
+               }
         	 }
         	
          } catch (IllegalArgumentException e) {

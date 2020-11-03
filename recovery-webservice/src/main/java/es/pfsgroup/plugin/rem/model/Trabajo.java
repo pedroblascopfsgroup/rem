@@ -37,6 +37,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDAcoAprobacionComite;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDIdentificadorReam;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAdelanto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalidad;
@@ -265,6 +266,10 @@ public class Trabajo implements Serializable, Auditable {
 	@Column(name="TBJ_NOMBRE_EXPEDIENTE_TRABAJO")
     private String nombreExpedienteTrabajo;
     
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="DD_IRE_ID")
+    private DDIdentificadorReam identificadorReam; 
+	
     public Usuario getUsuarioResponsableTrabajo() {
 		return usuarioResponsableTrabajo;
 	}
@@ -1130,6 +1135,14 @@ public class Trabajo implements Serializable, Auditable {
 
 	public void setImporteAsegurado(Double importeAsegurado) {
 		this.importeAsegurado = importeAsegurado;
+	}
+
+	public DDIdentificadorReam getIdentificadorReam() {
+		return identificadorReam;
+	}
+
+	public void setIdentificadorReam(DDIdentificadorReam identificadorReam) {
+		this.identificadorReam = identificadorReam;
 	}
     
     

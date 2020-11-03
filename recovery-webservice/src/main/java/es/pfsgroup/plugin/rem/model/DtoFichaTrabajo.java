@@ -256,6 +256,8 @@ public class DtoFichaTrabajo {
 	
 	private Long proveedorContact;
 	
+	private String identificadorReamCodigo;
+	
 	public Long getIdTrabajo() {
 		return idTrabajo;
 	}
@@ -1296,6 +1298,13 @@ public class DtoFichaTrabajo {
 		this.proveedorContact = proveedorContact;
 	}
 	
+	public String getIdentificadorReamCodigo() {
+		return identificadorReamCodigo;
+	}
+
+	public void setIdentificadorReamCodigo(String identificadorReamCodigo) {
+		this.identificadorReamCodigo = identificadorReamCodigo;
+	}
 	
 	
 }

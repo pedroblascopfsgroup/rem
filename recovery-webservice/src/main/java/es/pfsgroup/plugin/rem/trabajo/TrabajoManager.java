@@ -158,6 +158,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresupuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDIdentificadorReam;
 import es.pfsgroup.plugin.rem.model.dd.DDPestanas;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
@@ -2245,6 +2246,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (!Checks.esNulo(dtoTrabajo.getRequerimiento())) {
 			trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
 		}
+		if(dtoTrabajo.getIdentificadorReamCodigo() != null) {
+			DDIdentificadorReam identificador = genericDao.get(DDIdentificadorReam.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getIdentificadorReamCodigo()));
+			trabajo.setIdentificadorReam(identificador);
+		}
 	}
 
 	private void dtoGestionEconomicaToTrabajo(DtoGestionEconomicaTrabajo dtoGestionEconomica, Trabajo trabajo)
@@ -2843,7 +2848,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 		}
 		
-		
+		if(trabajo.getIdentificadorReam() != null) {
+			dtoTrabajo.setIdentificadorReamCodigo(trabajo.getIdentificadorReam().getCodigo());
+		}
 
 		List<ActivoTramite> tramitesTrabajo = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
 		

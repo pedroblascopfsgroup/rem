@@ -1673,6 +1673,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 					me.lookupReference('resolucionComiteIdRef').setReadOnly(false);
 					me.lookupReference('subtipoTrabajoComboFicha').setReadOnly(false);
 					me.lookupReference('tipoTrabajoFicha').setReadOnly(false);
+					me.lookupReference('comboIdentificadorReamRef').setReadOnly(false);
 	    			
     			} else {
     				me.lookupReference('comboProveedorGestionEconomica').setReadOnly(false);
@@ -1691,6 +1692,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		    		me.lookupReference('checkSiniestroRef').setReadOnly(false);
 		    		me.lookupReference('subtipoTrabajoComboFicha').setReadOnly(false);
 					me.lookupReference('tipoTrabajoFicha').setReadOnly(false);
+					me.lookupReference('comboIdentificadorReamRef').setReadOnly(false);
     			} else {
 		    		me.lookupReference('gridtarifastrabajo').setTopBar(true)
 		    		me.lookupReference('gridpresupuestostrabajo').setTopBar(true)
@@ -1704,6 +1706,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
     				me.lookupReference('subtipoTrabajoComboFicha').setReadOnly(false);
     				me.lookupReference('tipoTrabajoFicha').setReadOnly(false);
+    				me.lookupReference('comboIdentificadorReamRef').setReadOnly(false);
     			}
 	    		
 	    	}else if(estadoTrabajo == "13"){
@@ -1713,6 +1716,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     				if(!me.getViewModel().get("trabajo.numAlbaran")){
     					me.lookupReference('subtipoTrabajoComboFicha').setReadOnly(false);
     					me.lookupReference('tipoTrabajoFicha').setReadOnly(false);
+    					me.lookupReference('comboIdentificadorReamRef').setReadOnly(false);
     				}
     			}
 	    		
@@ -1767,6 +1771,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			me.lookupReference('tomaDePosesion').setReadOnly(true);
 			me.lookupReference('subtipoTrabajoComboFicha').setReadOnly(true);
 			me.lookupReference('tipoTrabajoFicha').setReadOnly(true);
+			me.lookupReference('comboIdentificadorReamRef').setReadOnly(true);
     	} else {
     		me.lookupReference('comboProveedorGestionEconomica').setReadOnly(true);
     		me.lookupReference('proveedorContactoCombo').setReadOnly(true);
@@ -1807,6 +1812,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			me.lookupReference('tomaDePosesion').setReadOnly(false);
 			me.lookupReference('subtipoTrabajoComboFicha').setReadOnly(false);
 			me.lookupReference('tipoTrabajoFicha').setReadOnly(false);
+			me.lookupReference('comboIdentificadorReamRef').setReadOnly(false);
     	} else {
     		me.lookupReference('comboProveedorGestionEconomica').setReadOnly(false);
     		me.lookupReference('proveedorContactoCombo').setReadOnly(false);

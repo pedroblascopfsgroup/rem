@@ -197,6 +197,30 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        		readOnly: '{!isGestorSeguridad}',
 					            		store: '{comboSiNoRem}',
 					            		value: '{situacionPosesoria.tieneAlarma}'
+					            	},listeners: {
+					            		change: function(combo, value) {
+					            			var me = this;
+					            			if(value=='1') {
+					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').allowBlank = true;
+					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').setDisabled(false);
+					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').validate();
+					            				
+					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').allowBlank = true;
+					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').setValue("");
+					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').setDisabled(true);
+					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').validate();
+					            				
+					            			} else {
+					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').allowBlank = true;
+					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').setDisabled(false);
+					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').validate();
+					            				
+					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').allowBlank = true;
+					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').setValue("");
+					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').setDisabled(true);
+					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').validate();
+					            			}
+					            		}
 					            	}
 						        	},{
 						        		xtype:'datefieldbase',
@@ -229,6 +253,31 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        		readOnly: '{!isGestorSeguridad}',
 					            		store: '{comboSiNoRem}',
 					            		value: '{situacionPosesoria.tieneVigilancia}'
+					            		,listeners: {
+					            		change: function(combo, value) {
+					            			var me = this;
+					            			if(value=='1') {
+					            				me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').allowBlank = true;
+					            				me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').setDisabled(false);
+					            				me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').validate();
+					            				
+					            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').allowBlank = true;
+					            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').setValue("");
+					            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').setDisabled(true);
+					            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').validate();
+					            				
+					            			} else {
+					            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').allowBlank = true;
+					            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').setDisabled(false);
+					            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').validate();
+					            				
+					            				me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').allowBlank = true;
+					            				me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').setValue("");
+					            				me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').setDisabled(true);
+					            				me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').validate();
+					            			}
+					            		}
+					            	}
 					            	}
 						       		},{
 						       			xtype:'datefieldbase',

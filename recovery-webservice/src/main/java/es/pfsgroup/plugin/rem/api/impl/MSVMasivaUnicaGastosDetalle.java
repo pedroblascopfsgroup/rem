@@ -341,6 +341,8 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 							if(anyadirCuota) {
 								importeTotal = importeTotal + newGastoLineaDetalle.getImporteIndirectoCuota();
 							}
+						}else {
+							newGastoLineaDetalle.setImporteIndirectoCuota(new Double(0));
 						}
 					}
 					

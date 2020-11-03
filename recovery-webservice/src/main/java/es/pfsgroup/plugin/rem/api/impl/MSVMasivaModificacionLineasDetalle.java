@@ -217,11 +217,13 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 						
 					}
 				}
-				if(gastoLineaDetalle.getPrincipalSujeto() != null && gastoLineaDetalle.getImporteIndirectoTipoImpositivo() != null) {
+				if(gastoLineaDetalle.getPrincipalSujeto() != null && gastoLineaDetalle.getImporteIndirectoTipoImpositivo() != null && 
+					gastoLineaDetalle.getPrincipalSujeto() != 0 && gastoLineaDetalle.getImporteIndirectoTipoImpositivo() != 0) {
 					
-					Double importe = (gastoLineaDetalle.getPrincipalSujeto() * gastoLineaDetalle.getImporteIndirectoTipoImpositivo())/100;
+					BigDecimal importe =  (new BigDecimal(gastoLineaDetalle.getPrincipalSujeto()).multiply(new BigDecimal(gastoLineaDetalle.getImporteIndirectoTipoImpositivo())));
+					importe = importe.divide(new BigDecimal(100));
 					
-					gastoLineaDetalle.setImporteIndirectoCuota(importe);
+					gastoLineaDetalle.setImporteIndirectoCuota(importe.doubleValue());
 				}else {
 					gastoLineaDetalle.setImporteIndirectoCuota(0.0);
 				}
@@ -260,14 +262,10 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 									gastoLineaDetalleEntidad.setEntidad(activoAgrupacionActivo.getActivo().getId());
 									gastoLineaDetalleEntidad.setEntidadGasto(entidadGastoActivo);
 									sumaParticipacion = sumaParticipacion.add(participacionPorActivo);
-								   if((i++ == activosAgrupacion.size() - 1) && sumaParticipacion != participacion){
+									if((i++ == activosAgrupacion.size() - 1) && sumaParticipacion != participacion){
 										BigDecimal decimal = sumaParticipacion.subtract(participacion);
-										if(decimal.compareTo(BigDecimal.ZERO) < 0) {
-											participacionPorActivo = participacionPorActivo.add(decimal);
-										}else if(decimal.compareTo(BigDecimal.ZERO) > 0) {
-											participacionPorActivo = participacionPorActivo.subtract(decimal);
-										}										
-								    }
+										participacionPorActivo = participacionPorActivo.subtract(decimal);									
+								     }
 									 
 								   gastoLineaDetalleEntidad.setParticipacionGasto(participacionPorActivo.doubleValue());
 								   genericDao.save(GastoLineaDetalleEntidad.class,gastoLineaDetalleEntidad);

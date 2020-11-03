@@ -1818,7 +1818,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.gasto.linea.detalle.no.importe"));
 			return;
 		}
-
+		
 		if(form.isValid()){
 			form.submit({                
 				waitMsg: HreRem.i18n('msg.mask.loading'),

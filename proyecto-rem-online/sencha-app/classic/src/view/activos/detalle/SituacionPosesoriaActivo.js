@@ -194,6 +194,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        	xtype: 'comboboxfieldbase',						        	
 						        	fieldLabel: 'Alarma',
 						        	bind: {
+						        		readOnly: '{!isGestorSeguridad}',
 					            		store: '{comboSiNoRem}',
 					            		value: '{situacionPosesoria.tieneAlarma}'
 					            	}
@@ -201,7 +202,11 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        		xtype:'datefieldbase',
 							        	reference: 'datefielInstalaciondAlarma',
 							        	fieldLabel: 'Fecha de instalaci&oacute;n Alarma',
-							        	bind: '{situacionPosesoria.fechaInstalacionAlarma}',
+							        	readOnly: '{!isGestorSeguridad}',
+							        	bind: {
+								        	value:'{situacionPosesoria.fechaInstalacionAlarma}',
+								        	readOnly: '{!isGestorSeguridad}'
+							        	},
 						            	labelWidth: 80,
 						            	width: 200
 						        	},{
@@ -209,7 +214,11 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        		xtype:'datefieldbase',
 							        	reference: 'datefielDesinstalaciondAlarma',
 							        	fieldLabel: 'Fecha de desinstalaci&oacute;n Alarma',
-							        	bind: '{situacionPosesoria.fechaDesinstalacionAlarma}',
+							        	readOnly: '{!isGestorSeguridad}',
+							        	bind:{
+							        		value: '{situacionPosesoria.fechaDesinstalacionAlarma}',
+							        		readOnly: '{!isGestorSeguridad}'
+							        	},
 						            	labelWidth: 80,
 						            	width: 200
 						        	},{
@@ -217,6 +226,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        		xtype: 'comboboxfieldbase',						        	
 						        	fieldLabel: 'Vigilancia',
 						        	bind: {
+						        		readOnly: '{!isGestorSeguridad}',
 					            		store: '{comboSiNoRem}',
 					            		value: '{situacionPosesoria.tieneVigilancia}'
 					            	}
@@ -224,7 +234,11 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						       			xtype:'datefieldbase',
 							        	reference: 'datefielInstalaciondVigilancia',
 							        	fieldLabel: 'Fecha de instalaci&oacute;n Vigilancia',
-							        	bind: '{situacionPosesoria.fechaInstalacionVigilancia}',
+							        	readOnly: '{!isGestorSeguridad}',
+							        	bind:{
+							        		value:'{situacionPosesoria.fechaInstalacionVigilancia}',
+							        		readOnly: '{!isGestorSeguridad}'
+							        	},
 						            	labelWidth: 80,
 						            	width: 200
 						        },{
@@ -232,7 +246,11 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        	xtype:'datefieldbase',
 							        	reference: 'datefielDesinstalaciondVigilancia',
 							        	fieldLabel: 'Fecha de desinstalaci&oacute;n Vigilancia',
-							        	bind: '{situacionPosesoria.fechaDesinstalacionVigilancia}',
+							        	bind: {
+							        		value:'{situacionPosesoria.fechaDesinstalacionVigilancia}',
+							        		readOnly: '{!isGestorSeguridad}'
+							        	},
+							        	readOnly: '{!isGestorSeguridad}',
 						            	labelWidth: 80,
 						            	width: 200
 						        }

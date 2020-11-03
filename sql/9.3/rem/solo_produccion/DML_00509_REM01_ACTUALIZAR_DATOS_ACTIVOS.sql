@@ -23,7 +23,7 @@ DECLARE
 
     -- Esquemas
     V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
-    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     -- Errores
@@ -36,6 +36,7 @@ DECLARE
     V_TABLA_LOC  VARCHAR2(100 CHAR):= 'ACT_LOC_LOCALIZACION';
     V_TABLA_REG  VARCHAR2(100 CHAR):= 'ACT_REG_INFO_REGISTRAL';
     V_TABLA_CAT  VARCHAR2(100 CHAR):= 'ACT_CAT_CATASTRO';
+    V_TABLA_PAC  VARCHAR2(100 CHAR):= 'ACT_PAC_PERIMETRO_ACTIVO';
     
     -- IDs
     V_ID NUMBER(16);
@@ -141,7 +142,7 @@ BEGIN
 	 IF V_NUM_TABLAS > 0 THEN
 	
 		--Comprobar si existe en la tabla el activo.
-		V_MSQL := 'SELECT BIE_LOC_ID FROM '||V_ESQUEMA||'.'||V_TABLA_REG||' WHERE ACT_ID = '''||V_ID||'''';
+		V_MSQL := 'SELECT BIE_DREG_ID FROM '||V_ESQUEMA||'.'||V_TABLA_REG||' WHERE ACT_ID = '''||V_ID||'''';
 		EXECUTE IMMEDIATE V_MSQL INTO V_BIE_REG;
         
                 V_MSQL :='UPDATE '||V_ESQUEMA||'.BIE_DATOS_REGISTRALES  
@@ -151,7 +152,7 @@ BEGIN
                 BIE_DREG_SUPERFICIE_CONSTRUIDA = '''||V_TMP_TIPO_DATA(10)||''',
                 USUARIOMODIFICAR = '''||V_USUARIO||''', 
                 FECHAMODIFICAR = SYSDATE 
-                WHERE BIE_LOC_ID = '||V_BIE_LOC||'';
+                WHERE BIE_DREG_ID = '||V_BIE_REG||'';
 
           	EXECUTE IMMEDIATE V_MSQL;
 
@@ -170,7 +171,7 @@ BEGIN
         IF V_NUM_TABLAS > 0 THEN
 
                 V_MSQL :='UPDATE '||V_ESQUEMA||'.ACT_REG_INFO_REGISTRAL   
-                SET REG_IDUFIR = '''||V_TMP_TIPO_DATA(7)||''',
+                SET REG_IDUFIR = '''||V_TMP_TIPO_DATA(9)||''',
                 REG_SUPERFICIE_UTIL = '''||V_TMP_TIPO_DATA(11)||''',
                 USUARIOMODIFICAR = '''||V_USUARIO||''', 
                 FECHAMODIFICAR = SYSDATE 
@@ -194,7 +195,7 @@ BEGIN
 
                 V_MSQL :='UPDATE '||V_ESQUEMA||'.ACT_CAT_CATASTRO   
                 SET CAT_REF_CATASTRAL = '''||V_TMP_TIPO_DATA(12)||''',
-                CAT_SUPERFIFIE_CONSTRUIDA = '''||V_TMP_TIPO_DATA(10)||''',
+                CAT_SUPERFICIE_CONSTRUIDA = '''||V_TMP_TIPO_DATA(10)||''',
                 USUARIOMODIFICAR = '''||V_USUARIO||''', 
                 FECHAMODIFICAR = SYSDATE 
                 WHERE ACT_ID = '||V_ID||'';
@@ -209,8 +210,53 @@ BEGIN
 
 	END IF;
 
-      END LOOP;
+END LOOP;
+      
+      DBMS_OUTPUT.PUT_LINE('[INFO]: SACAMOS DE PERIMETRO EL ACTIVO 7265361 Y HACEMOS UN BORRADO LOGICO');
+      
+      --Obtener ACT_ID a través del ACT_NUM_ACTIVO
+        V_MSQL := 'SELECT ACT_ID FROM '||V_ESQUEMA||'.'||V_TABLA_ACTIVO||' WHERE ACT_NUM_ACTIVO = 7265361';
+        EXECUTE IMMEDIATE V_MSQL INTO V_ID;
+        DBMS_OUTPUT.PUT_LINE(V_ID);
+          
+        --Comprobar si existe en la tabla el activo.
+        V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_PAC||' WHERE ACT_ID = '''||V_ID||'''';
+        EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+        DBMS_OUTPUT.PUT_LINE(V_ID);
+        IF V_NUM_TABLAS > 0 THEN
+        
+		V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO PAC SET
+								  PAC_INCLUIDO = 0
+								, PAC_CHECK_TRA_ADMISION = 0
+								, PAC_CHECK_GESTIONAR = 0
+								, PAC_CHECK_ASIGNAR_MEDIADOR = 0
+								, PAC_CHECK_COMERCIALIZAR = 0
+								, PAC_CHECK_PUBLICAR = 0
+								, PAC_CHECK_FORMALIZAR = 0
+								, USUARIOMODIFICAR  = '''||V_USUARIO||''' 
+		  						, FECHAMODIFICAR    = SYSDATE 
+							WHERE PAC.ACT_ID = '||V_ID||'';
+							
+		EXECUTE IMMEDIATE V_MSQL;
+							
+		DBMS_OUTPUT.PUT_LINE('[INFO]: Se ha modificado EL ACTIVO 7265361 EN LA TABLA ACT_PAC_PERIMETRO_ACTIVO');
+		
+		V_MSQL :='UPDATE '||V_ESQUEMA||'.'||V_TABLA_ACTIVO||' 
+                SET BORRADO = 1,
+                USUARIOBORRAR = '''||V_USUARIO||''', 
+                FECHABORRAR = SYSDATE 
+                WHERE ACT_NUM_ACTIVO = 7265361';
+                
+                EXECUTE IMMEDIATE V_MSQL;
+                
+                DBMS_OUTPUT.PUT_LINE('[INFO]: Se ha BORRADO EL ACTIVO 7265361');
 
+	ELSE
+
+		DBMS_OUTPUT.PUT_LINE('[INFO]: El activo  7265361  no existe');
+
+	END IF;
+        
     COMMIT;
 
     DBMS_OUTPUT.PUT_LINE('[FIN]: Activos MODIFICADOS con éxito');

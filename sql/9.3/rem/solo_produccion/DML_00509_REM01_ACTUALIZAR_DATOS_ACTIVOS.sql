@@ -117,7 +117,7 @@ BEGIN
 		V_MSQL := 'SELECT BIE_LOC_ID FROM '||V_ESQUEMA||'.'||V_TABLA_LOC||' WHERE ACT_ID = '''||V_ID||'''';
 		EXECUTE IMMEDIATE V_MSQL INTO V_BIE_LOC;
         
-                V_MSQL :='UPDATE '||V_ESQUEMA||'.BIE_LOC_LOCALIZACION 
+                V_MSQL :='UPDATE '||V_ESQUEMA||'.BIE_LOCALIZACION 
                 SET BIE_LOC_PISO = '''||V_TMP_TIPO_DATA(5)||''',
                 BIE_LOC_PUERTA = '''||V_TMP_TIPO_DATA(6)||''',
                 USUARIOMODIFICAR = '''||V_USUARIO||''', 

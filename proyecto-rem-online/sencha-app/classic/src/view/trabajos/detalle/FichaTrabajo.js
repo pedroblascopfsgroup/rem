@@ -246,6 +246,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 												name: 'fechaConcreta',
 												reference: 'fechaConcreta',
 												maxValue: null,
+												allowBlank: false,
 												bind: {
 													value: '{trabajo.fechaConcreta}'
 												},
@@ -254,7 +255,6 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
     				        							var field = this;
     				        							field.up("[reference='plazosFieldSet']").down("[reference='fechaTope']").setMinValue(field.value);
     				        							field.up("[reference='plazosFieldSet']").down("[reference='fechaTope']").validate();
-    				        							field.up().nextSibling().items.items[0].setValue(null);
     				        							}
 	    				        					}
 											},
@@ -266,6 +266,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 												//colspan:2,			
 												format: 'H:i',
 												increment: 30,
+												allowBlank: false,
 												bind: {
 													value:  '{trabajo.horaConcreta}'
 												}
@@ -284,6 +285,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 											xtype: 'datefieldbase',
 											reference: 'fechaTope',
 											maxValue: null,
+											allowBlank: false,
 											bind: {
 												value: '{trabajo.fechaTope}'
 											},
@@ -292,8 +294,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 	    				        					function(x, y, z){
 	    				        						var field = this;
 	    				        						field.setMinValue(field.up().up().down("[reference='fechaConcreta']").value);
-	    				        						field.up().up().down("[reference='fechaConcreta']").setValue(null);
-	    				        						field.up().up().down("[reference='horaConcreta']").setValue(null);
+	    				        						field.validate();
 	    				        					}
 												}
 										}

@@ -1919,7 +1919,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}
 				
 		//SUBTIPOLOGIA
-		if(dto.getDqTipologiaFase1()==null) {
+		if(dto.getDqSubtipologiaFase1()==null) {
 			dto.setCorrectoSubtipologiaFase1(ICONO_TICK_INTERROGANTE);
 			interrogante=true;
 		}else if(dto.getDrSubtipologianFase1()!=null 

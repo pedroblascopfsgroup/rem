@@ -100,7 +100,7 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 	private static final String LINEA_SIN_ACTIVOS_REPETIDA = "Esta línea ya ha sido marcada como sin activos.";
 	private static final String LINEA_SIN_ACTIVOS_CON_ID_PARTICIPACION = "Una línea marcada sin activos no puede tener ni Id elemento ni participación de elemento.";
 	private static final String TIPO_IMPOS_IMPUEST_RELLENO = "Cuando el tipo impositivo está relleno el tipo impuesto debe estarlo, y viceversa.";
-
+	private static final String SIN_ACTIVOS_NO_VALIDO_CARTERA = "Cuando el propietario es de la cartera: Sareb, Tango o Giants no se puede marcar como línea sin activos.";
 
 	
 	public static final Integer COL_ID_AGRUPADOR_GASTO = 0;
@@ -163,6 +163,10 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 	private static final String COD_BANKIA = "03";
 	private static final String COD_LBK = "08";
 	private static final String COD_BBVA = "16";
+	
+	private static final String COD_SAREB = "02";
+	private static final String COD_TANGO = "10";
+	private static final String COD_GIANTS = "12";
 	
 	
 	@Autowired
@@ -265,8 +269,8 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 			mapaErrores.put(LINEA_SIN_ACTIVOS_REPETIDA, lineaYaMarcadaSinActivos(exc));
 			mapaErrores.put(LINEA_SIN_ACTIVOS_CON_ID_PARTICIPACION, lineaSinActivosElementoyPorcentajeVacio(exc));
 			mapaErrores.put(TIPO_IMPOS_IMPUEST_RELLENO, tipoImpositivoEimpuestoRellenos(exc));
+			mapaErrores.put(SIN_ACTIVOS_NO_VALIDO_CARTERA, sinActivosNoValidoCartera(exc));
 			
-
 
 			if (!mapaErrores.get(TIPO_GASTO_NO_EXISTE).isEmpty() 
 					|| !mapaErrores.get(PERIODICIDAD_NO_EXISTE).isEmpty()
@@ -311,6 +315,7 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 					|| !mapaErrores.get(LINEA_SIN_ACTIVOS_REPETIDA).isEmpty()
 					|| !mapaErrores.get(LINEA_SIN_ACTIVOS_CON_ID_PARTICIPACION).isEmpty()
 					|| !mapaErrores.get(TIPO_IMPOS_IMPUEST_RELLENO).isEmpty()
+					|| !mapaErrores.get(SIN_ACTIVOS_NO_VALIDO_CARTERA).isEmpty()
 					){
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -1430,6 +1435,35 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
                 (Checks.esNulo( exc.dameCelda(i, COL_TIPO_IMPOSITIVO)) && !Checks.esNulo( exc.dameCelda(i, COL_TIPO_IMPUESTO)))) {
             	   listaFilas.add(i);
                }
+        	 }
+        	
+         } catch (IllegalArgumentException e) {
+             listaFilas.add(0);
+             e.printStackTrace();
+         } catch (IOException e) {
+             listaFilas.add(0);
+             e.printStackTrace();
+         } catch (ParseException e) {
+        	 listaFilas.add(0);
+			e.printStackTrace();
+		}
+         return listaFilas;   
+	 }
+	
+	private List<Integer> sinActivosNoValidoCartera(MSVHojaExcel exc){
+        List<Integer> listaFilas = new ArrayList<Integer>();
+
+         try{
+        	 for(int i=1; i<this.numFilasHoja;i++){
+        		 String tipoElemento = exc.dameCelda(i, COL_TIPO_ELEMENTO);
+        		 String docIdent = exc.dameCelda(i, COL_NIF_PROPIETARIO);
+         		 if(!Checks.esNulo(tipoElemento) && TIPO_ELEMENTO_SIN_ELEMENTO.equalsIgnoreCase(tipoElemento)) {
+         			 List<String> listaCarteras = Arrays.asList(COD_SAREB, COD_GIANTS, COD_TANGO);
+         			 if(Boolean.TRUE.equals(particularValidator.propietarioPerteneceCartera(docIdent, listaCarteras))) {
+         				 listaFilas.add(i);
+         			 }
+         			 
+         		 }
         	 }
         	
          } catch (IllegalArgumentException e) {

@@ -1270,4 +1270,8 @@ public interface ParticularValidatorApi {
 	Boolean existeMunicipioDeProvinciaByCodigo(String codProvincia, String codigoMunicipio);
 
 	Boolean gastoRepetido(String factura, String fechaEmision, String nifEmisor, String nifPropietario);
+
+	Boolean propietarioPerteneceCartera(String docIdent, List<String> listaCodigoCarteras);
+
+	String getDocIdentfPropietarioByNumGasto(String numGasto);
 }

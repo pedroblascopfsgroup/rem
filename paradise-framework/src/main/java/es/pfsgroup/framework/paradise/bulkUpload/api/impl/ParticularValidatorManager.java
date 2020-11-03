@@ -5590,4 +5590,42 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean propietarioPerteneceCartera(String docIdent , List<String> listaCodigoCarteras) {
+		if(Checks.estaVacio(listaCodigoCarteras) || Checks.esNulo(docIdent)) {
+			return false;
+		}
+		String carteras = "";
+		for (String string : listaCodigoCarteras) {
+			carteras = carteras + " '" + string + "',";
+		}
+		
+		carteras = carteras.substring(0, carteras.length() - 1);
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_PRO_PROPIETARIO PRO JOIN"
+				+ "		 	DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID AND CRA.DD_CRA_CODIGO IN ("+carteras+") "
+				+ "			WHERE PRO.PRO_DOCIDENTIF = '"+docIdent+"' "
+				+ "		 	AND CRA.BORRADO = 0 AND PRO.BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public String getDocIdentfPropietarioByNumGasto(String numGasto) {
+		if(Checks.esNulo(numGasto)) {
+			return null;
+		}
+	
+		
+		String resultado = rawDao.getExecuteSQL("SELECT pro_docidentif "
+				+ "		 	FROM ACT_PRO_PROPIETARIO PRO JOIN"
+				+ "		 	GPV_GASTOS_PROVEEDOR GPV ON GPV.PRO_ID = PRO.PRO_ID AND GPV.GPV_NUM_GASTO_HAYA = '"+numGasto+"'"
+				+ "		 	AND GPV.BORRADO = 0 AND PRO.BORRADO = 0");
+
+	
+		return resultado;
+	}
+
 }

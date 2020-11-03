@@ -1,6 +1,6 @@
 Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambiosDq', {
     extend		: 'HreRem.view.common.WindowBase',
-    xtype		: 'opcionespropagacioncambios',
+    xtype		: 'opcionespropagacioncambiosdq',
         
     layout	: {
     	type: 'hbox',
@@ -341,7 +341,6 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambiosDq', {
     	me.down("grid").setStore(store);
     	
     	me.down("[reference=displayListaActivos]").setValue("Seleccionados 0 de " + store.getCount());
-    	debugger;
     	if(Ext.isEmpty(me.form)) { 
     		me.down("grid").getSelectionModel().selectAll();
     	}

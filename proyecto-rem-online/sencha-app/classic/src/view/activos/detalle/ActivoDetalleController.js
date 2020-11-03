@@ -7,7 +7,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion','HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 
     		'HreRem.view.expedientes.ExpedienteDetalleController', 'HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', 
     		'HreRem.view.activos.detalle.InformeComercialActivo','HreRem.view.activos.detalle.AdministracionActivo',
-    		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias','HreRem.view.activos.detalle.PlusvaliaActivo', 'HreRem.model.ComercialActivoModel'],
+    		'HreRem.model.ActivoTributos', 'HreRem.view.activos.detalle.AdjuntosPlusvalias','HreRem.view.activos.detalle.PlusvaliaActivo',
+    		'HreRem.model.ComercialActivoModel', 'HreRem.view.activos.detalle.OpcionesPropagacionCambiosDq'],
 
     control: {
          'documentosactivosimple gridBase': {
@@ -6018,6 +6019,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     
     aplicarDescripcion: function(btn, form) {
+    	
+    	var me = btn.up();
     	Ext.Msg.show({
 		   title: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.aplicar'),
 		   msg: HreRem.i18n('publicacion.calidad.datos.fase4.descripcion.aplicar.desea'),
@@ -6045,17 +6048,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 									   buttons: Ext.MessageBox.YESNO,
 									   fn: function(buttonId) {
 									        if (buttonId == 'yes') {      	
-									        	btn.up().lookupController().crearVentanaPropagacionCalidadDato(valor);
+									        	me.lookupController().actualizarPropagacionEq(listIdActivo, valor, true);
 											
 									        } else if(buttonId == 'no') {
-									        	btn.up().lookupController().actualizarPropagacionEq(listIdActivo, valor, false);
+									        	me.lookupController().actualizarPropagacionEq(listIdActivo, valor, false);
 									        	this.close();
 									        }
 									   }
 									});
 								
 							} else {
-								//me.actualizarPropagacionEq(listIdActivo, valor, false);
+								me.lookupController().actualizarPropagacionEq(listIdActivo, valor, false);
 							}
 
 						
@@ -6069,7 +6072,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     crearVentanaPropagacionCalidadDato: function(valor) {
    	 	var url =  $AC.getRemoteUrl('activo/getActivosPropagables');
    	 	var activo = this.getViewModel().get("activo.id");
-   	 	//var formu = btn.up("form");
+   	 	var me = this;
    	 	debugger;
 		Ext.Ajax.request({
 			url: url,
@@ -6081,28 +6084,24 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					for(var i = 0; i < activosPropagables.length; i++){
 						arrayPropagables.push(activosPropagables[i]);
 					}
-					
-					debugger;
-	
 					var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambiosDq", {activoActual: activo, activos: arrayPropagables, valor: valor}).show();
 					me.getView().add(ventanaOpcionesPropagacionCambios);
 					me.getView().unmask();
 			}, failure: function (a, operation, context) {
             	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-            	debugger;
             }
 		     
 		 });
     },
     
-    onClickGuardarPropagarCambiosEq: function(btn, quieroActualizar) {
+    onClickGuardarPropagarCambiosEq: function(btn) {
     	debugger;
-        var me = this,
+        var me = this;
     	window = btn.up("window"),
     	grid = me.lookupReference("listaActivos"),
     	radioGroup = me.lookupReference("opcionesPropagacion"),
     	activosSeleccionados = grid.getSelectionModel().getSelection(),
-    	opcionPropagacion = radioGroup.getValue().seleccion,
+    	opcionPropagacion = radioGroup.getValue().seleccion;
         var estaActivoActual = false;
     	if (opcionPropagacion == "4" &&  activosSeleccionados.length == 0) {
         	me.fireEvent("errorToast", HreRem.i18n("msg.no.activos.seleccionados"));
@@ -6112,21 +6111,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var activosParaPropagar = [];
     	for(var i = 0; i < activosSeleccionados.length; i++){
     		activosParaPropagar.push(activosSeleccionados[i].id);
-    		//if (activosParaPropagar[i].get('id'))
 		}
-    	if(quieroActualizar == null ){
-    		quieroActualizar == true;
-    	}
     	
+    	if(!activosParaPropagar.includes(window.activoActual)) {
+    		activosParaPropagar.push(window.activoActual);
+    	}
     	// Comprobar si en la lista activosParaPropagar está el activoActual. Si no está se añade.
     	
-    	me.actualizarPropagacionEq(activosParaPropagar, window.valor, quieroActualizar);
+    	me.actualizarPropagacionEq(activosParaPropagar, window.valor, false);
     	
     },
 
     
     actualizarPropagacionEq: function(activosParaPropagar, valor, soyRestringidaQuieroActualizar ){
-    	debugger;
+    	var me = this;
     	var url = $AC.getRemoteUrl('activo/saveDatoRemCalidadDatoPublicacion');
     	Ext.Ajax.request({
 			url: url,
@@ -6137,9 +6135,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				soyRestringidaQuieroActualizar: soyRestringidaQuieroActualizar
 			},
 			success: function(response, opts){
+				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 				debugger
 			}, failure: function (a, operation, context) {
-				debugger
+	
             	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
             }
 		     

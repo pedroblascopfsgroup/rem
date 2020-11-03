@@ -2317,35 +2317,29 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	@Override
 	public Boolean saveDatoRemCalidadDatoPublicacion(List<Long> idList, String datoDq, boolean quieroActualizar) {
 		
-		
+		if(idList == null || datoDq == null || idList.isEmpty()) {
+			return false;
+		}
 		if(idList.size() == 1 && quieroActualizar) {
 			Activo activo = activoDao.get(idList.get(0));
 			Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 			Filter filterTipoAgrupacion = genericDao.createFilter(FilterType.EQUALS, "numActivo", activo.getId());
 			List<ActivoAgrupacionActivo> agList = genericDao.getList(ActivoAgrupacionActivo.class, filterActivo);
 			
-			if(agList != null && !agList.isEmpty()) {
-				for (ActivoAgrupacionActivo activoAgrupacionActivo : agList) {
-					if(activoAgrupacionActivo.getAgrupacion() != null && activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion() != null
-							&& DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
-						List<ActivoAgrupacionActivo> agListRestringida = activoAgrupacionActivo.getAgrupacion().getActivos();
-						for (ActivoAgrupacionActivo activoAgrupacionActivo2 : agListRestringida) {
-							Activo activoSub = activoAgrupacionActivo2.getActivo();
-							ActivoInfoComercial actInfoComercial = activoSub.getInfoComercial(); 
-							if(actInfoComercial != null) {
-								actInfoComercial.setDescripcionComercial(datoDq);
-								activoDao.saveOrUpdate(activo);
-							}	
-						}
+			for (ActivoAgrupacionActivo activoAgrupacionActivo : agList) {
+				if(activoAgrupacionActivo.getAgrupacion() != null && activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion() != null
+						&& DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+					List<ActivoAgrupacionActivo> agListRestringida = activoAgrupacionActivo.getAgrupacion().getActivos();
+					for (ActivoAgrupacionActivo activoAgrupacionActivo2 : agListRestringida) {
+						Activo activoSub = activoAgrupacionActivo2.getActivo();
+						ActivoInfoComercial actInfoComercial = activoSub.getInfoComercial(); 
+						if(actInfoComercial != null) {
+							actInfoComercial.setDescripcionComercial(datoDq);
+							activoDao.saveOrUpdate(activo);
+						}	
 					}
-					
-				}
-				
+				}				
 			}
-			
-			/*devuelvemeAgrupaciónRestringida (ya existe función);
-			actualizo todos los activos de la descripción (act_aga_agrupación_activo / act_agr_agrupación)
-			actualizar para cada activo*/
 		}
 		else {
 			for (Long id : idList) {

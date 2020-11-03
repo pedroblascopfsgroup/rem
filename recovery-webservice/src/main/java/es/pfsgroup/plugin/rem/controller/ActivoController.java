@@ -108,6 +108,7 @@ import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionHistorico;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionDq;
 import es.pfsgroup.plugin.rem.model.DtoDistribucion;
 import es.pfsgroup.plugin.rem.model.DtoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
@@ -3450,9 +3451,9 @@ public class ActivoController extends ParadiseJsonController {
 	
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveDatoRemCalidadDatoPublicacion(List<Long> activosSeleccionados, String dqFase4Descripcion, boolean soyRestringidaQuieroActualizar, ModelMap model) {
+	public ModelAndView saveDatoRemCalidadDatoPublicacion(DtoDatosPublicacionDq dtoDq, ModelMap model) {
 		try {
-			model.put(RESPONSE_SUCCESS_KEY, activoEstadoPublicacionApi.saveDatoRemCalidadDatoPublicacion(activosSeleccionados, dqFase4Descripcion, soyRestringidaQuieroActualizar));
+			model.put(RESPONSE_SUCCESS_KEY, activoEstadoPublicacionApi.saveDatoRemCalidadDatoPublicacion(dtoDq.getActivosSeleccionados(), dtoDq.getDqFase4Descripcion(), dtoDq.isSoyRestringidaQuieroActualizar()));
 		} catch (JsonViewerException jvex) {
 			model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
 			model.put(RESPONSE_SUCCESS_KEY, false);

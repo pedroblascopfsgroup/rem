@@ -495,25 +495,30 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 						gastoDetalleEconomico.setGastoRefacturable(stringToBoolean(exc.dameCelda(fila, COL_C_GASTO_REFACTURABLE)));
 					}
 					
-					BigDecimal irpfPorcentaje = new BigDecimal(exc.dameCelda(fila, COL_IRPF_BASE));
-					BigDecimal irpfBase = new BigDecimal(exc.dameCelda(fila, COL_IRPF_PORCENTAJE));
-					if(BigDecimal.ZERO.compareTo(irpfPorcentaje) != 0 && BigDecimal.ZERO.compareTo(irpfBase) != 0) {
-						BigDecimal cuota = irpfPorcentaje.multiply(irpfBase).divide(new BigDecimal(100));
-						gastoDetalleEconomico.setIrpfCuota(cuota.doubleValue());
-					}else {
-						gastoDetalleEconomico.setIrpfCuota(new Double(0));
+					if(!Checks.esNulo(exc.dameCelda(fila, COL_IRPF_BASE)) && !Checks.esNulo(exc.dameCelda(fila, COL_IRPF_PORCENTAJE))) {
+						BigDecimal irpfPorcentaje = new BigDecimal(exc.dameCelda(fila, COL_IRPF_BASE));
+						BigDecimal irpfBase = new BigDecimal(exc.dameCelda(fila, COL_IRPF_PORCENTAJE));
+						if(BigDecimal.ZERO.compareTo(irpfPorcentaje) != 0 && BigDecimal.ZERO.compareTo(irpfBase) != 0) {
+							BigDecimal cuota = irpfPorcentaje.multiply(irpfBase).divide(new BigDecimal(100));
+							gastoDetalleEconomico.setIrpfCuota(cuota.doubleValue());
+						}else {
+							gastoDetalleEconomico.setIrpfCuota(new Double(0));
+						}
 					}
 					
-					BigDecimal retencionGarantiaPorcentaje = new BigDecimal(exc.dameCelda(fila, COL_RETENCION_GARANTIA_BASE));
-					BigDecimal retencionGarantiaBase = new BigDecimal(exc.dameCelda(fila, COL_RETENCION_GARANTIA_PORCENTAJE));
-					if(BigDecimal.ZERO.compareTo(retencionGarantiaPorcentaje) != 0 && BigDecimal.ZERO.compareTo(retencionGarantiaBase) != 0) {
-						BigDecimal cuota = retencionGarantiaPorcentaje.multiply(retencionGarantiaBase).divide(new BigDecimal(100));
-						gastoDetalleEconomico.setRetencionGarantiaCuota(cuota.doubleValue());
-					}else {
-						gastoDetalleEconomico.setRetencionGarantiaCuota(new Double(0));
+					if(!Checks.esNulo(exc.dameCelda(fila, COL_RETENCION_GARANTIA_BASE)) && !Checks.esNulo(exc.dameCelda(fila, COL_RETENCION_GARANTIA_PORCENTAJE))) {
+						BigDecimal retencionGarantiaPorcentaje = new BigDecimal(exc.dameCelda(fila, COL_RETENCION_GARANTIA_BASE));
+						BigDecimal retencionGarantiaBase = new BigDecimal(exc.dameCelda(fila, COL_RETENCION_GARANTIA_PORCENTAJE));
+						gastoDetalleEconomico.setRetencionGarantiaAplica(true);
+						if(BigDecimal.ZERO.compareTo(retencionGarantiaPorcentaje) != 0 && BigDecimal.ZERO.compareTo(retencionGarantiaBase) != 0) {
+							BigDecimal cuota = retencionGarantiaPorcentaje.multiply(retencionGarantiaBase).divide(new BigDecimal(100));
+							gastoDetalleEconomico.setRetencionGarantiaCuota(cuota.doubleValue());
+						}else {
+							gastoDetalleEconomico.setRetencionGarantiaCuota(new Double(0));
+						}
+							
+						genericDao.save(GastoDetalleEconomico.class, gastoDetalleEconomico);
 					}
-						
-					genericDao.save(GastoDetalleEconomico.class, gastoDetalleEconomico);
 				}
 			
 				dtoGastos.setGastoDetalleEconomico(gastoDetalleEconomico);

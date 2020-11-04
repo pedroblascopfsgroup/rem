@@ -13,6 +13,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.NonUniqueResultException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -341,6 +342,8 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 							if(anyadirCuota) {
 								importeTotal = importeTotal + newGastoLineaDetalle.getImporteIndirectoCuota();
 							}
+						}else {
+							newGastoLineaDetalle.setImporteIndirectoCuota(new Double(0));
 						}
 					}
 					
@@ -491,8 +494,31 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 					if(exc.dameCelda(fila, COL_C_GASTO_REFACTURABLE) != null && !exc.dameCelda(fila, COL_C_GASTO_REFACTURABLE).isEmpty()) {
 						gastoDetalleEconomico.setGastoRefacturable(stringToBoolean(exc.dameCelda(fila, COL_C_GASTO_REFACTURABLE)));
 					}
-						
-					genericDao.save(GastoDetalleEconomico.class, gastoDetalleEconomico);
+					
+					if(!Checks.esNulo(exc.dameCelda(fila, COL_IRPF_BASE)) && !Checks.esNulo(exc.dameCelda(fila, COL_IRPF_PORCENTAJE))) {
+						BigDecimal irpfPorcentaje = new BigDecimal(exc.dameCelda(fila, COL_IRPF_BASE));
+						BigDecimal irpfBase = new BigDecimal(exc.dameCelda(fila, COL_IRPF_PORCENTAJE));
+						if(BigDecimal.ZERO.compareTo(irpfPorcentaje) != 0 && BigDecimal.ZERO.compareTo(irpfBase) != 0) {
+							BigDecimal cuota = irpfPorcentaje.multiply(irpfBase).divide(new BigDecimal(100));
+							gastoDetalleEconomico.setIrpfCuota(cuota.doubleValue());
+						}else {
+							gastoDetalleEconomico.setIrpfCuota(new Double(0));
+						}
+					}
+					
+					if(!Checks.esNulo(exc.dameCelda(fila, COL_RETENCION_GARANTIA_BASE)) && !Checks.esNulo(exc.dameCelda(fila, COL_RETENCION_GARANTIA_PORCENTAJE))) {
+						BigDecimal retencionGarantiaPorcentaje = new BigDecimal(exc.dameCelda(fila, COL_RETENCION_GARANTIA_BASE));
+						BigDecimal retencionGarantiaBase = new BigDecimal(exc.dameCelda(fila, COL_RETENCION_GARANTIA_PORCENTAJE));
+						gastoDetalleEconomico.setRetencionGarantiaAplica(true);
+						if(BigDecimal.ZERO.compareTo(retencionGarantiaPorcentaje) != 0 && BigDecimal.ZERO.compareTo(retencionGarantiaBase) != 0) {
+							BigDecimal cuota = retencionGarantiaPorcentaje.multiply(retencionGarantiaBase).divide(new BigDecimal(100));
+							gastoDetalleEconomico.setRetencionGarantiaCuota(cuota.doubleValue());
+						}else {
+							gastoDetalleEconomico.setRetencionGarantiaCuota(new Double(0));
+						}
+							
+						genericDao.save(GastoDetalleEconomico.class, gastoDetalleEconomico);
+					}
 				}
 			
 				dtoGastos.setGastoDetalleEconomico(gastoDetalleEconomico);
@@ -578,12 +604,16 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 				/////////////////////////////////////////
 				
 				if(exc.dameCelda(fila, COL_OPTA_CRITERIO_CAJA_IVA) != null && !exc.dameCelda(fila, COL_OPTA_CRITERIO_CAJA_IVA).isEmpty()) {
-					ActivoProveedor emisor = genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", exc.dameCelda(fila, COL_NIF_EMISOR)));
-					if(emisor != null) {
-						emisor.setCriterioCajaIVA(Boolean.TRUE.compareTo(stringToBoolean(exc.dameCelda(fila, COL_OPTA_CRITERIO_CAJA_IVA))));
-						emisor.getAuditoria().setUsuarioModificar(usuario);
-						emisor.getAuditoria().setFechaModificar(new Date());
-						genericDao.update(ActivoProveedor.class, emisor);
+					List<ActivoProveedor> emisorList = genericDao.getList(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", exc.dameCelda(fila, COL_NIF_EMISOR)));
+					if(emisorList != null && !emisorList.isEmpty()) {
+						for (ActivoProveedor emisor : emisorList) {
+							if(emisor != null) {
+								emisor.setCriterioCajaIVA(Boolean.TRUE.compareTo(stringToBoolean(exc.dameCelda(fila, COL_OPTA_CRITERIO_CAJA_IVA))));
+								emisor.getAuditoria().setUsuarioModificar(usuario);
+								emisor.getAuditoria().setFechaModificar(new Date());
+								genericDao.update(ActivoProveedor.class, emisor);
+							}
+						}	
 					}
 				}
 				
@@ -623,8 +653,16 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 					dtoGastos.vaciarInstancias();
 					
 				}
-				
-
+		
+		}catch (NumberFormatException e){
+			dtoGastos.vaciarInstancias();
+			logger.error("Error en MSVMasivaModificacionLineasDetalle", e);
+		}catch (ParseException e){
+			dtoGastos.vaciarInstancias();
+			logger.error("Error en MSVMasivaModificacionLineasDetalle", e);
+		}catch (NonUniqueResultException e){
+			dtoGastos.vaciarInstancias();
+			logger.error("Error en MSVMasivaModificacionLineasDetalle", e);
 		} catch (Exception e) {
 			dtoGastos.vaciarInstancias();
 			logger.error("Error en MSVMasivaModificacionLineasDetalle", e);

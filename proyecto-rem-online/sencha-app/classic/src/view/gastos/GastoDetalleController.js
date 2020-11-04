@@ -1809,6 +1809,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		}
 		
 		var tipoImpositivo = form.getForm().findField('tipoImpositivo').getValue();
+		var tipoImpuesto = form.getForm().findField('tipoImpuesto').getValue();
 		
 		if(tipoImpositivo > 100){
 			me.fireEvent("errorToast",  HreRem.i18n("msg.operacion.ko.gasto.tipoImpositivo.mayor.cien"));
@@ -1818,7 +1819,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.gasto.linea.detalle.no.importe"));
 			return;
 		}
-
+		
+		if(!Ext.isEmpty(tipoImpositivo) && Ext.isEmpty(tipoImpuesto)){
+			me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.gasto.linea.detalle.no.tipo.impositivo"));
+			return;
+		}
+		
+		
 		if(form.isValid()){
 			form.submit({                
 				waitMsg: HreRem.i18n('msg.mask.loading'),

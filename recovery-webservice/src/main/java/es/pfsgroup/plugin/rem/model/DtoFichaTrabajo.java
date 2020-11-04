@@ -261,6 +261,8 @@ public class DtoFichaTrabajo {
 	private String estadoDescripcionyFecha;
 	
 	
+	private String identificadorReamCodigo;
+	
 	public Long getIdTrabajo() {
 		return idTrabajo;
 	}
@@ -1326,6 +1328,13 @@ public class DtoFichaTrabajo {
 		this.estadoDescripcionyFecha = estadoDescripcionyFecha;
 	}
 	
+	public String getIdentificadorReamCodigo() {
+		return identificadorReamCodigo;
+	}
+
+	public void setIdentificadorReamCodigo(String identificadorReamCodigo) {
+		this.identificadorReamCodigo = identificadorReamCodigo;
+	}
 	
 	
 }

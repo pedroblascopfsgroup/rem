@@ -182,7 +182,8 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			}
 
 			for (GastoLineaDetalle gastoLineaDetalle : gastoListaDetalleList) {
-				if(gastoLineaDetalle.getGastoLineaEntidadList().isEmpty() && !gastoLineaDetalle.esAutorizadoSinActivos()) {
+				if((gastoLineaDetalle.getGastoLineaEntidadList() == null && !gastoLineaDetalle.esAutorizadoSinActivos()) 
+					|| (gastoLineaDetalle.getGastoLineaEntidadList().isEmpty() && !gastoLineaDetalle.esAutorizadoSinActivos())) {
 					error = messageServices.getMessage(VALIDACION_ACTIVOS_ASIGNADOS); 
 					return error;
 				}

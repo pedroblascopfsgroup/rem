@@ -301,6 +301,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoGastoAsociado", DDTipoGastoAsociado.class);
 		mapa.put("tipoDocGastoAsociado", DDTipoDocumentoGastoAsociado.class);
 		mapa.put("motivoAmpliacionArras", DDMotivoAmpliacionArras.class);
+		mapa.put("identificadorReam", DDIdentificadorReam.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

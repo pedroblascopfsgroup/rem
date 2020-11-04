@@ -1358,8 +1358,8 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			}
 			
 			if(gasto != null && gasto.getPropietario() != null && gasto.getPropietario().getCartera() != null &&
-			DDCartera.CODIGO_CARTERA_LIBERBANK.equalsIgnoreCase(gasto.getPropietario().getCartera().getCodigo())
-			&& !DDEntidadGasto.CODIGO_PROMOCION.equals(dto.getTipoElemento())) {
+			DDCartera.CODIGO_CARTERA_LIBERBANK.equalsIgnoreCase(gasto.getPropietario().getCartera().getCodigo()))
+			{
 				actualizarDiariosLbk(gasto.getId());
 			}
 			

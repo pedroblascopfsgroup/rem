@@ -332,7 +332,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 												trAttrs: {height: '30px', width: '90%'},
 												columns: 1,
 												tableAttrs: {
-										            style: { width: '90%' }
+										            style: { width: '90%' } 
 										        }
 											},				    
 					    					items: [
@@ -347,7 +347,10 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 													valueField: 'codigo',
 								    				bind: {
 								    					store: '{comboTipoImpuesto}'
-								    				}
+								    				},
+								    				listeners: {
+				    									change: 'onChangeCuota'
+				    								}
 								    				
 								    			},
 								    			{

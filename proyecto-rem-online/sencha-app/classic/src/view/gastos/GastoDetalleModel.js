@@ -181,13 +181,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 
 		},
 
-		calcularImporteTotalGasto : function(get) {
-			var irpfCuota = get('detalleeconomico.irpfCuota');
-			var sumatorioConceptosGasto = get('sumatorioConceptosgasto');
-
-			return sumatorioConceptosGasto - irpfCuota;
-
-		},
+//		calcularImporteTotalGasto : function(get) {
+//			var irpfCuota = get('detalleeconomico.irpfCuota');
+//			var sumatorioConceptosGasto = get('sumatorioConceptosgasto');
+//
+//			return sumatorioConceptosGasto - irpfCuota;
+//
+//		},
 
 		esGastoAnulado : function(get) {
 			var e = !Ext.isEmpty(get('gestion.comboMotivoAnulado'));

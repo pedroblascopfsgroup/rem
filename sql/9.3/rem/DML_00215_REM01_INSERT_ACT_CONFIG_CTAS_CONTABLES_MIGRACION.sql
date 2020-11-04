@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20201023
+--## FECHA_CREACION=20201103
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11745
@@ -37,18 +37,48 @@ DECLARE
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_CONFIG_CTAS_CONTABLES'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_DD_CRA_ID VARCHAR(50 CHAR); -- Vble. que almacena el id de la cartera.
 	  V_EJE_ID VARCHAR(50 CHAR); -- Vble. que almacena el id del año.
+
+    V_CONSTRAINT_NAME VARCHAR2(30 CHAR);
+
+    CURSOR CONSTRAINTS_ENABLED IS SELECT CONSTRAINT_NAME
+      FROM ALL_CONSTRAINTS
+      WHERE TABLE_NAME = 'ACT_CONFIG_CTAS_CONTABLES'
+          AND STATUS = 'ENABLED'
+          AND CONSTRAINT_TYPE IN ('C', 'U', 'F', 'P');
+
+    CURSOR CONSTRAINTS_DISABLED IS SELECT CONSTRAINT_NAME 
+      FROM ALL_CONSTRAINTS
+      WHERE TABLE_NAME = 'ACT_CONFIG_CTAS_CONTABLES'
+          AND STATUS = 'DISABLED'
+          AND CONSTRAINT_TYPE IN ('C', 'U', 'F', 'P');
     
 BEGIN	
 
-    DBMS_OUTPUT.PUT_LINE('[INICIO] Vaciamos tabla temporal... ');
+    DBMS_OUTPUT.PUT_LINE('[INICIO]');
+
+    --DESACTIVAMOS CLAVES ANTES DE EMPEZAR PARA MEJORAR EL DESEMPEÑO
+    FOR CLAVES IN CONSTRAINTS_ENABLED 
+      LOOP
+
+        V_CONSTRAINT_NAME := CLAVES.CONSTRAINT_NAME; 
+
+        V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'
+          DISABLE CONSTRAINT '||V_CONSTRAINT_NAME;
+        EXECUTE IMMEDIATE V_MSQL;
+
+        DBMS_OUTPUT.PUT_LINE('[INFO] Desactivada la clave '||V_CONSTRAINT_NAME);
+
+      END LOOP;
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] Vaciamos tabla temporal... ');
     V_SQL := 'TRUNCATE TABLE '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA;
     EXECUTE IMMEDIATE V_SQL;
 
     DBMS_OUTPUT.PUT_LINE('[INFO] Recogemos el valor id de la cartera a eliminar.');
 
-    V_SQL :=    'SELECT DD_CRA_ID 
-                FROM '||V_ESQUEMA||'.DD_CRA_CARTERA 
-                WHERE DD_CRA_CODIGO = ''08''';
+    V_SQL := 'SELECT DD_CRA_ID 
+      FROM '||V_ESQUEMA||'.DD_CRA_CARTERA 
+      WHERE DD_CRA_CODIGO = ''08''';
     EXECUTE IMMEDIATE V_SQL INTO V_DD_CRA_ID;
 	 
     DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN TMP_'||V_TEXT_TABLA||' ');
@@ -337,10 +367,25 @@ BEGIN
           )';
     EXECUTE IMMEDIATE V_MSQL;
     --DBMS_OUTPUT.PUT_LINE(V_MSQL);
-    DBMS_OUTPUT.PUT_LINE('[FIN] '||SQL%ROWCOUNT||' cuentas sin subcartera inicial insertadas');
+    DBMS_OUTPUT.PUT_LINE('[INFO] '||SQL%ROWCOUNT||' cuentas sin subcartera inicial insertadas');
 
-    COMMIT;  
-   
+    COMMIT;
+
+    --ACTIVAMOS CLAVES ANTES DE EMPEZAR PARA MEJORAR EL DESEMPEÑO
+    FOR CLAVES IN CONSTRAINTS_DISABLED 
+      LOOP
+
+        V_CONSTRAINT_NAME := CLAVES.CONSTRAINT_NAME; 
+
+        V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'
+          ENABLE CONSTRAINT '||V_CONSTRAINT_NAME;
+        EXECUTE IMMEDIATE V_MSQL;
+
+        DBMS_OUTPUT.PUT_LINE('[INFO] Activada la clave '||V_CONSTRAINT_NAME);
+
+      END LOOP;
+
+    DBMS_OUTPUT.PUT_LINE('[FIN]');
 
 EXCEPTION
      WHEN OTHERS THEN

@@ -194,6 +194,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 				  var prehora = fecha.split('T');
 				  fecha = new Date(fecha);
 				  me.lookupReference('fechaConcretaTrabajo').setValue(fecha);
+				  me.lookupReference('fechaTopeTrabajo').setValue(fecha);
 				  var hora = prehora[1];
 				  prehora = hora.split(':');
 				  if(prehora[1] >= 30){
@@ -201,7 +202,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 				  }else{
 					  me.lookupReference('horaConcretaTrabajo').setSelection(prehora[0]*2);
 				  }
-				  me.lookupReference('fechaTopeTrabajo').allowBlank = true;
 			  }
         	});
         	
@@ -397,11 +397,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		if(me.lookupReference('fechaTopeTrabajo').getValue() == null){
 			if(me.lookupReference('horaConcretaTrabajo').getValue() == null || me.lookupReference('horaConcretaTrabajo').getValue() == null){
 				Ext.MessageBox.alert("Error","La fecha concreta y la hora concreta no puede ser null cuando no hay fecha tope");
-				return false;
-			}
-		}else{
-			if(me.lookupReference('horaConcretaTrabajo').getValue() != null || me.lookupReference('horaConcretaTrabajo').getValue() != null){
-				Ext.MessageBox.alert("Error","La fecha concreta y la hora concreta tienen que ser null cuando hay fecha tope");
 				return false;
 			}
 		}
@@ -1705,6 +1700,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 					me.lookupReference('tomaDePosesion').setReadOnly(false);
 					me.lookupReference('subtipoTrabajoComboFicha').setReadOnly(false);
 					me.lookupReference('tipoTrabajoFicha').setReadOnly(false);
+					me.lookupReference('comboIdentificadorReamRef').setReadOnly(false);
 	    			
     			} else {
     				me.lookupReference('comboProveedorGestionEconomica').setReadOnly(false);
@@ -1723,6 +1719,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		    		me.lookupReference('checkSiniestroRef').setReadOnly(false);
 		    		me.lookupReference('subtipoTrabajoComboFicha').setReadOnly(false);
 					me.lookupReference('tipoTrabajoFicha').setReadOnly(false);
+					me.lookupReference('comboIdentificadorReamRef').setReadOnly(false);
     			} else {
 		    		me.lookupReference('gridtarifastrabajo').setTopBar(true)
 		    		me.lookupReference('gridpresupuestostrabajo').setTopBar(true)
@@ -1739,6 +1736,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		    		me.lookupReference('fechaTope').setReadOnly(false);
     				me.lookupReference('subtipoTrabajoComboFicha').setReadOnly(false);
     				me.lookupReference('tipoTrabajoFicha').setReadOnly(false);
+    				me.lookupReference('comboIdentificadorReamRef').setReadOnly(false);
     			}
 	    		
 	    	} else if (estadoTrabajo == "13"){
@@ -1748,6 +1746,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     				if(!me.getViewModel().get("trabajo.numAlbaran")){
     					me.lookupReference('subtipoTrabajoComboFicha').setReadOnly(false);
     					me.lookupReference('tipoTrabajoFicha').setReadOnly(false);
+    					me.lookupReference('comboIdentificadorReamRef').setReadOnly(false);
     				}
     			}
 	    		
@@ -1812,6 +1811,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			me.lookupReference('tomaDePosesion').setReadOnly(true);
 			me.lookupReference('subtipoTrabajoComboFicha').setReadOnly(true);
 			me.lookupReference('tipoTrabajoFicha').setReadOnly(true);
+			me.lookupReference('comboIdentificadorReamRef').setReadOnly(true);
     	} else {
     		me.lookupReference('comboProveedorGestionEconomica').setReadOnly(true);
     		me.lookupReference('proveedorContactoCombo').setReadOnly(true);
@@ -1852,6 +1852,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			me.lookupReference('tomaDePosesion').setReadOnly(false);
 			me.lookupReference('subtipoTrabajoComboFicha').setReadOnly(false);
 			me.lookupReference('tipoTrabajoFicha').setReadOnly(false);
+			me.lookupReference('comboIdentificadorReamRef').setReadOnly(false);
     	} else {
     		me.lookupReference('comboProveedorGestionEconomica').setReadOnly(false);
     		me.lookupReference('proveedorContactoCombo').setReadOnly(false);
@@ -1981,19 +1982,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     	if (comboProveedor.getSelection() != null && comboProveedor.getSelection().getData().idProveedor != undefined) {
         	me.loadComboProveedorContacto(comboProveedor.getSelection().getData().idProveedor);
     	}
-    },
-    selectFechaTope: function(fecha){
-    	var me = this;
-    	me.lookupReference('fechaConcretaTrabajo').setValue(null);
-    	me.lookupReference('horaConcretaTrabajo').setSelection(null);
-    	me.lookupReference('fechaConcretaTrabajo').allowBlank = true;
-    	me.lookupReference('horaConcretaTrabajo').allowBlank = true;
-    },
-    
-    selectFechaConcreta: function(){
-    	var me = this;
-    	me.lookupReference('fechaTopeTrabajo').setValue(null)
-    	me.lookupReference('fechaTopeTrabajo').allowBlank = true;
     },
 
     finalizacionTrabajoProveedor: function(combo, newValue, oldValue) {

@@ -63,7 +63,10 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	private static final String GASTO_REFACTURADO_PADRE = "No se puede modificar un gasto padre";
 	private static final String GASTOS_HIJOS = "No se puede modificar un gasto refacturado";
 	private static final String GASTO_EN_MAL_ESTADO = "El estado del gasto debe ser 'Pendiente de autorizar' o 'Incompleto' o 'Rechazado";
+	private static final String TIPO_IMPOS_IMPUEST_RELLENO = "Cuando el tipo impositivo está relleno el tipo impuesto debe estarlo, y viceversa.";
+	private static final String SIN_ACTIVOS_NO_VALIDO_CARTERA = "Cuando el propietario es de la cartera: Sareb, Tango o Giants no se puede marcar como línea sin activos.";
 
+	
 	public static final Integer COL_ID_GASTO = 0;
 	public static final Integer COL_ACCION_LINEA_DETALLE = 1;
 	public static final Integer COL_ID_LINEA = 2;
@@ -94,6 +97,12 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	private static final String[] listaValidos = { "S", "N", "SI", "NO" };
 	private static final String[] listaCampoAccion = { "AÑADIR", "BORRAR", "A", "B" };
 	private static final String[] listaCampoAccionBorrar = { "BORRAR", "B", "Borrar", "b", "borrar" };
+	private static final String TIPO_ELEMENTO_SIN_ELEMENTO = "SIN";
+	
+	private static final String COD_SAREB = "02";
+	private static final String COD_TANGO = "10";
+	private static final String COD_GIANTS = "12";
+	
 	
 	private Integer numFilasHoja;	
 
@@ -168,6 +177,8 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 			mapaErrores.put(GASTO_REFACTURADO_PADRE, gastoPadreNoEditable(exc));
 			mapaErrores.put(GASTOS_HIJOS, gastoHijoNoEditable(exc));
 			mapaErrores.put(GASTO_EN_MAL_ESTADO, gastoEstadoPendienteIncompleto(exc));
+			mapaErrores.put(TIPO_IMPOS_IMPUEST_RELLENO, tipoImpositivoEimpuestoRellenos(exc));
+			mapaErrores.put(SIN_ACTIVOS_NO_VALIDO_CARTERA, sinActivosNoValidoCartera(exc));
 			
 
 			if (!mapaErrores.get(GASTO_NO_EXISTE).isEmpty() 
@@ -193,6 +204,8 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 					|| !mapaErrores.get(GASTO_REFACTURADO_PADRE).isEmpty()
 					|| !mapaErrores.get(GASTOS_HIJOS).isEmpty()
 					|| !mapaErrores.get(GASTO_EN_MAL_ESTADO).isEmpty()
+					|| !mapaErrores.get(TIPO_IMPOS_IMPUEST_RELLENO).isEmpty()
+					|| !mapaErrores.get(SIN_ACTIVOS_NO_VALIDO_CARTERA).isEmpty()
 					
 				){
 
@@ -944,4 +957,57 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	            }
 	        return listaFilas;   
 	   }
+	   
+	   private List<Integer> tipoImpositivoEimpuestoRellenos(MSVHojaExcel exc){
+	        List<Integer> listaFilas = new ArrayList<Integer>();
+
+	         try{
+	        	 for(int i=1; i<this.numFilasHoja;i++){
+	               if((!Checks.esNulo( exc.dameCelda(i, COL_TIPO_IMPOSITIVO)) && Checks.esNulo( exc.dameCelda(i, COL_TIPO_IMPUESTO))) ||
+	                (Checks.esNulo( exc.dameCelda(i, COL_TIPO_IMPOSITIVO)) && !Checks.esNulo( exc.dameCelda(i, COL_TIPO_IMPUESTO)))) {
+	            	   listaFilas.add(i);
+	               }
+	        	 }
+	        	
+	         } catch (IllegalArgumentException e) {
+	             listaFilas.add(0);
+	             e.printStackTrace();
+	         } catch (IOException e) {
+	             listaFilas.add(0);
+	             e.printStackTrace();
+	         } catch (ParseException e) {
+	        	 listaFilas.add(0);
+				e.printStackTrace();
+			}
+	         return listaFilas;   
+		 }
+	   
+	   private List<Integer> sinActivosNoValidoCartera(MSVHojaExcel exc){
+	        List<Integer> listaFilas = new ArrayList<Integer>();
+
+	         try{
+	        	 for(int i=1; i<this.numFilasHoja;i++){
+	        		 String tipoElemento = exc.dameCelda(i, COL_TIPO_ELEMENTO);
+	        		 String docIdent = particularValidator.getDocIdentfPropietarioByNumGasto(exc.dameCelda(i, COL_ID_GASTO));
+	         		 if(!Checks.esNulo(tipoElemento) && TIPO_ELEMENTO_SIN_ELEMENTO.equalsIgnoreCase(tipoElemento)) {
+	         			 List<String> listaCarteras = Arrays.asList(COD_SAREB, COD_GIANTS, COD_TANGO);
+	         			 if(Boolean.TRUE.equals(particularValidator.propietarioPerteneceCartera(docIdent, listaCarteras))) {
+	         				 listaFilas.add(i);
+	         			 }
+	         			 
+	         		 }
+	        	 }
+	        	
+	         } catch (IllegalArgumentException e) {
+	             listaFilas.add(0);
+	             e.printStackTrace();
+	         } catch (IOException e) {
+	             listaFilas.add(0);
+	             e.printStackTrace();
+	         } catch (ParseException e) {
+	        	 listaFilas.add(0);
+				e.printStackTrace();
+			}
+	         return listaFilas;   
+		 }
 }

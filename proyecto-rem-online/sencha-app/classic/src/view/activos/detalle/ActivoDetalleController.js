@@ -6069,9 +6069,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		});
     },
     
-    machacarDatoDq: function(btn, form) {
-    },
-    
     disableBtnDescF1: function(get){
      	return get('calidaddatopublicacionactivo.disableDescripcion');
 	 },
@@ -6102,7 +6099,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     
     onClickGuardarPropagarCambiosEq: function(btn) {
         var me = this;
-    	window = btn.up("window"),
+    	var window = btn.up("window"),
     	grid = me.lookupReference("listaActivos"),
     	radioGroup = me.lookupReference("opcionesPropagacion"),
     	activosSeleccionados = grid.getSelectionModel().getSelection(),
@@ -6115,20 +6112,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	
     	var activosParaPropagar = [];
     	for(var i = 0; i < activosSeleccionados.length; i++){
-    		activosParaPropagar.push(activosSeleccionados[i].id);
+    		activosParaPropagar.push(activosSeleccionados[i].data.activoId);
 		}
     	
-    	if(!activosParaPropagar.includes(window.activoActual)) {
+    	if(!activosParaPropagar.indexOf(window.activoActual.toString())) {
     		activosParaPropagar.push(window.activoActual);
     	}
     	// Comprobar si en la lista activosParaPropagar está el activoActual. Si no está se añade.
     	
-    	me.actualizarPropagacionEq(activosParaPropagar, window.valor, false);
+    	me.actualizarPropagacionEq(activosParaPropagar, window.valor, false, window);
     	
     },
 
     
-    actualizarPropagacionEq: function(activosParaPropagar, valor, soyRestringidaQuieroActualizar ){
+    actualizarPropagacionEq: function(activosParaPropagar, valor, soyRestringidaQuieroActualizar, window ){
     	var me = this;
     	var url = $AC.getRemoteUrl('activo/saveDatoRemCalidadDatoPublicacion');
     	Ext.Ajax.request({
@@ -6141,7 +6138,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			},
 			success: function(response, opts){
 				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				window.close();
 			}, failure: function (a, operation, context) {
+				window.close();
             	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
             }
 		     

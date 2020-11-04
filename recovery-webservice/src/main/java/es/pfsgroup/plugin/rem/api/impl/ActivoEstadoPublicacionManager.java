@@ -1595,8 +1595,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		dto.setDesplegable0Collapsed(true);
 		dto.setDesplegable1Collapsed(true);
 		dto.setDesplegable2Collapsed(true);
-		//Corregir
-		dto = setDataFase4(actDatosDq, activo, dto);
+
 		if(actDatosDq != null) {
 			
 			HistoricoFasePublicacionActivo fasePublicacion =  activoPublicacionDao.getFasePublicacionVigentePorIdActivo(idActivo);

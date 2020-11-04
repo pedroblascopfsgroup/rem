@@ -108,6 +108,7 @@ import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionHistorico;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionDq;
 import es.pfsgroup.plugin.rem.model.DtoDistribucion;
 import es.pfsgroup.plugin.rem.model.DtoFasePublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
@@ -3447,4 +3448,22 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveDatoRemCalidadDatoPublicacion(DtoDatosPublicacionDq dtoDq, ModelMap model) {
+		try {
+			model.put(RESPONSE_SUCCESS_KEY, activoEstadoPublicacionApi.saveDatoRemCalidadDatoPublicacion(dtoDq.getActivosSeleccionados(), dtoDq.getDqFase4Descripcion(), dtoDq.isSoyRestringidaQuieroActualizar()));
+		} catch (JsonViewerException jvex) {
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		} catch (Exception e) {
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error al guardar Dato dQ", e);
+		} 
+		
+		return createModelAndViewJson(model);
+	}
+
 }

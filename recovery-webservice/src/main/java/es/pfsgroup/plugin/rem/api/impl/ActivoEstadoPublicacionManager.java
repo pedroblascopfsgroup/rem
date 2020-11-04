@@ -33,6 +33,7 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.perimetro.dao.PerimetroDao;
@@ -52,6 +53,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoDatosDq;
+import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
@@ -83,6 +85,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivosOcultacion;
 import es.pfsgroup.plugin.rem.model.dd.DDPortal;
 import es.pfsgroup.plugin.rem.model.dd.DDSubfasePublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
@@ -170,6 +173,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	
 	@Autowired
 	private UsuarioRemApi usuarioRemApiImpl;
+	
+	@Autowired
+	private ActivoAgrupacionDao activoAgrupacionDao;
 
 	@Override
 	public DtoDatosPublicacionActivo getDatosPublicacionActivo(Long idActivo) {
@@ -1589,6 +1595,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		dto.setDesplegable0Collapsed(true);
 		dto.setDesplegable1Collapsed(true);
 		dto.setDesplegable2Collapsed(true);
+		//Corregir
+		dto = setDataFase4(actDatosDq, activo, dto);
 		if(actDatosDq != null) {
 			
 			HistoricoFasePublicacionActivo fasePublicacion =  activoPublicacionDao.getFasePublicacionVigentePorIdActivo(idActivo);
@@ -2335,4 +2343,49 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}
 
 	}
+	
+	@Transactional
+	@Override
+	public Boolean saveDatoRemCalidadDatoPublicacion(List<Long> idList, String datoDq, boolean quieroActualizar) {
+		
+		if(idList == null || datoDq == null || idList.isEmpty()) {
+			return false;
+		}
+		if(idList.size() == 1 && quieroActualizar) {
+			Activo activo = activoDao.get(idList.get(0));
+			Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			Filter filterTipoAgrupacion = genericDao.createFilter(FilterType.EQUALS, "numActivo", activo.getId());
+			List<ActivoAgrupacionActivo> agList = genericDao.getList(ActivoAgrupacionActivo.class, filterActivo);
+			
+			for (ActivoAgrupacionActivo activoAgrupacionActivo : agList) {
+				if(activoAgrupacionActivo.getAgrupacion() != null && activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion() != null
+						&& DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+					List<ActivoAgrupacionActivo> agListRestringida = activoAgrupacionActivo.getAgrupacion().getActivos();
+					for (ActivoAgrupacionActivo activoAgrupacionActivo2 : agListRestringida) {
+						Activo activoSub = activoAgrupacionActivo2.getActivo();
+						ActivoInfoComercial actInfoComercial = activoSub.getInfoComercial(); 
+						if(actInfoComercial != null) {
+							actInfoComercial.setDescripcionComercial(datoDq);
+							activoDao.saveOrUpdate(activo);
+						}	
+					}
+				}				
+			}
+		}
+		else {
+			for (Long id : idList) {
+				Activo activo = activoDao.get(id);
+				ActivoInfoComercial actInfoComercial = activo.getInfoComercial(); 
+				if(actInfoComercial != null) {
+					actInfoComercial.setDescripcionComercial(datoDq);
+					activoDao.saveOrUpdate(activo);
+				}			
+			}
+		}
+
+	
+		return true;
+	}
+	
+	
 }

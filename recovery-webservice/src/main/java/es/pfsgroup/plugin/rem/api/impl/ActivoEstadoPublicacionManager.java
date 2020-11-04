@@ -2081,14 +2081,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}
 		
 		//LOCALIZACION
-		if(dto.getDqF4Localizacionlatitud() == null) {
+		if(dto.getGeodistanciaDQ() == null) {
 			dto.setCorrectoLocalizacion(ICONO_TICK_INTERROGANTE);
 			interrogante = true;
-		}else if(dto.getDrf4LocalizacionLatitud() != null 
-				&& (dto.getDrf4LocalizacionLatitud().equals(dto.getDqF4Localizacionlatitud()))) {
-			dto.setCorrectoFotos(ICONO_TICK_OK);
+		}else if(dto.getGeodistanciaDQ() != null 
+				&& (ICONO_TICK_OK.equals(dto.getGeodistanciaDQ()))) {
+			dto.setCorrectoLocalizacion(ICONO_TICK_OK);
 		}else {
-			dto.setCorrectoFotos(ICONO_TICK_KO);
+			dto.setCorrectoLocalizacion(ICONO_TICK_KO);
 			cruzroja = true;
 		}
 		

@@ -1288,11 +1288,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     },
 	     
 	       getIconClsDQLocalizacion: function(get) {
-	     	var correctoF1escripcion = get('calidaddatopublicacionactivo.correctoLocalizacion');
+	     	var correctoF1Descripcion = get('calidaddatopublicacionactivo.correctoLocalizacion');
 	     	
-	     	if("0" == correctoF1escripcion){
+	     	if("0" == correctoF1Descripcion){
 	     		return 'app-tbfiedset-ico icono-tickok';	
-	     	}else if("1" == correctoF1escripcion){
+	     	}else if("1" == correctoF1Descripcion){
 	     		return 'app-tbfiedset-ico icono-tickko';
 	     	}else{
 	     		return 'app-tbfiedset-ico icono-tickinterrogante';

@@ -2092,12 +2092,13 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if(dto.getGeodistanciaDQ() == null) {
 			dto.setCorrectoLocalizacion(ICONO_TICK_INTERROGANTE);
 			interrogante = true;
-		}else if(dto.getGeodistanciaDQ() != null 
-				&& (ICONO_TICK_OK.equals(dto.getGeodistanciaDQ()))) {
-			dto.setCorrectoLocalizacion(ICONO_TICK_OK);
-		}else {
-			dto.setCorrectoLocalizacion(ICONO_TICK_KO);
-			cruzroja = true;
+		}else{
+			if(Double.valueOf(dto.getGeodistanciaDQ()) <= 0.3) {
+				dto.setCorrectoLocalizacion(ICONO_TICK_OK);	
+			}else {
+				dto.setCorrectoLocalizacion(ICONO_TICK_KO);
+				cruzroja = true;
+			}
 		}
 		
 		//CEE

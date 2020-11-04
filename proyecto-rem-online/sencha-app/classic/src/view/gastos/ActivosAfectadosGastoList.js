@@ -6,7 +6,7 @@ var sumaValores = function(record, field) {
     for (; j < lenn; ++j) {
        total = total + parseFloat(record[j].get(field));
     }
-    return total.toFixed(2);
+    return total;
 };
 
 Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
@@ -137,6 +137,7 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 					dataIndex : 'direccion',
 					flex : 1
 				}, {
+					xtype: 'numbercolumn',
 					text : HreRem.i18n('header.activos.afectados.porcentaje.participacion.gasto'),
 					dataIndex : 'participacion',
 					renderer: function(value) {
@@ -181,11 +182,10 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 		            	var value2 = formatter.format(value);
 		            	var msg = HreRem.i18n("fieldlabel.participacion.total") + " " + value2 + "%";
 		            	var style = "style= 'color: black'";
-		            	if(parseFloat(value) != parseFloat('100.00')) {
-		            		//msg = HreRem.i18n("fieldlabel.participacion.total.error")	
+		            	if(parseFloat(value).toFixed(4) != parseFloat('100.00')) {
 		            		style = "style= 'color: red'";
 		            	}			            	
-		            	return "<span "+style+ ">"+msg+"</span>"
+		            	return "<span "+style+ ">"+msg+"</span>";
 		            }
 				}, {
 					xtype: 'numbercolumn', 
@@ -229,15 +229,15 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 		            	var value2 = formatter.format(value);
 		            	var msg = HreRem.i18n("header.activos.afectados.importe.proporcional.total") + " " + value2 + "\u20AC";
 		            	var style = "style= 'color: black'";
-		            	var importeTotal = formatter.format(me.store.getData().items[0].get('importeTotalGasto'));
-		            	if(importeTotal==""){
-		            		importeTotal = formatter.format(0);
-		            	}
-		            	if(value2 != importeTotal) {
-		            		//msg = HreRem.i18n("fieldlabel.participacion.total.error")	
+
+		            	var importeTotal = 0;
+		            	if(!Ext.isEmpty(me.store.getData().items[0])){
+							importeTotal = me.store.getData().items[0].get('importeTotalGasto');
+						}
+		            	if(parseFloat(value).toFixed(2) != parseFloat(importeTotal).toFixed(2)) {		            		
 		            		style = "style= 'color: red'";
 		            	}			            	
-		            	return "<span "+style+ ">"+msg+"</span>"
+		            	return "<span "+style+ ">"+msg+"</span>";
 		            }
 
 				}

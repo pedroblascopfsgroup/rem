@@ -1585,6 +1585,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}else {
 					activoBbva.setCodPromocion(null);
 				}
+				//No comprobar los nulos, porque siempre se van a setear,
+				//controlado por sencha (onSaveFormularioCompleto de ActivoDetalleController.js)
+				activoBbva.setUicBbva(dto.getUicBbva());
+				activoBbva.setCexperBbva(dto.getCexperBbva());
 			}
 			if (dto.getTipoTransmisionCodigo() != null || dto.getTipoAltaCodigo() != null || dto.getActivoEpa() != null ||
 				dto.getEmpresa() != null || dto.getOficina() !=  null || dto.getContrapartida() != null ||
@@ -1726,6 +1730,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 									&& activoOrigenHRE.getAdjNoJudicial() != null) {
 								activo.setFechaTituloAnterior(activoOrigenHRE.getAdjNoJudicial().getFechaTitulo());
 							}
+							if (DDTipoTituloActivo.tipoTituloJudicial.equals(activoOrigenHRE.getTipoTitulo().getCodigo())
+									&& activoOrigenHRE.getAdjJudicial() != null) {
+								activo.setFechaTituloAnterior(activoOrigenHRE.getAdjJudicial().getFechaAdjudicacion());
+							}
 
 							if(activoOrigenHRE.getSociedadDePagoAnterior() != null) {
 								activo.setSociedadDePagoAnterior(activoOrigenHRE.getSociedadDePagoAnterior());
@@ -1735,12 +1743,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 						}
 					}
 
-					activoBbva.setUicBbva(dto.getUicBbva());
-					activoBbva.setCexperBbva(dto.getCexperBbva());
 					
-					if (dto.getCexperBbva() != null) {
-						activoBbva.setCexperBbva(dto.getCexperBbva());
-					}
+					
 					
 				}else {
 					//throw new JsonViewerException(messageServices.getMessage(ACTIVO_NO_BBVA));

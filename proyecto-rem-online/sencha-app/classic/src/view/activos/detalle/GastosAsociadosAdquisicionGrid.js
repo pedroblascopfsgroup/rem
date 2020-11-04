@@ -17,6 +17,8 @@ Ext.define('HreRem.view.activos.detalle.GastosAsociadosAdquisicionGrid', {
 	  		me.relayEvents(this,['storeloadsuccess']);
        		this.fireEvent('storeloadsuccess');
             
+       		
+       		
        }
     	
     },
@@ -261,6 +263,7 @@ Ext.define('HreRem.view.activos.detalle.GastosAsociadosAdquisicionGrid', {
 						
                   }
                });                            
+      		me.disableAddButton(false);
       		me.disablePagingToolBar(false);
       		me.getSelectionModel().deselectAll();
       		editor.isNew = false;

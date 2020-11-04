@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin Arnal 
---## FECHA_CREACION=20201001
+--## FECHA_CREACION=20201002
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10918
@@ -52,7 +52,7 @@ BEGIN
 		V_MSQL := 'DROP TABLE ' ||V_ESQUEMA||'.'||V_TABLA||'';
             EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'... Tabla borrada.');
-    ELSE
+    END IF;
             -- Creamos la tabla
             DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TABLA||'...');
             V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TABLA||'
@@ -122,8 +122,6 @@ BEGIN
             ';
             EXECUTE IMMEDIATE V_MSQL;
             DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'... Tabla creada.');
-
-    END IF;
 
 	COMMIT;
 

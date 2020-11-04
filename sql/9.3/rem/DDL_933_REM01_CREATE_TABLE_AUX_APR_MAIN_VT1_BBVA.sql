@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Dean Ibañez VIño
---## FECHA_CREACION=20200930
+--## AUTOR=Joaquin Arnal 
+--## FECHA_CREACION=20201001
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10918
@@ -10,7 +10,9 @@
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - Dean Ibañez VIño 
+--##        0.2 HREOS-11853 - Joaquin Arnal -  Cambiamos fecha y añadimos borrado para incluir obra
+
 --##########################################
 --*/
 
@@ -46,8 +48,10 @@ BEGIN
 	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TABLA||''' and owner = '''||V_ESQUEMA||'''';
 	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
 	IF V_NUM_TABLAS = 1 THEN
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA||'... Ya existe.');
-		
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TABLA||'... Ya existe. Procedemos a borrarla.');
+		V_MSQL := 'DROP TABLE ' ||V_ESQUEMA||'.'||V_TABLA||'';
+            EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'... Tabla borrada.');
     ELSE
             -- Creamos la tabla
             DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TABLA||'...');

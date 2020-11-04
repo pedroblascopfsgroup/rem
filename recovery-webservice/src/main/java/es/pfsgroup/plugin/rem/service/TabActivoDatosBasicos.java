@@ -1726,6 +1726,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 									&& activoOrigenHRE.getAdjNoJudicial() != null) {
 								activo.setFechaTituloAnterior(activoOrigenHRE.getAdjNoJudicial().getFechaTitulo());
 							}
+							if (DDTipoTituloActivo.tipoTituloJudicial.equals(activoOrigenHRE.getTipoTitulo().getCodigo())
+									&& activoOrigenHRE.getAdjJudicial() != null) {
+								activo.setFechaTituloAnterior(activoOrigenHRE.getAdjJudicial().getFechaAdjudicacion());
+							}
 
 							if(activoOrigenHRE.getSociedadDePagoAnterior() != null) {
 								activo.setSociedadDePagoAnterior(activoOrigenHRE.getSociedadDePagoAnterior());

@@ -355,7 +355,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								}
 							},
 			                {
-								xtype:'textfieldbase',
+								xtype:'numberfieldbase',
 								reference:'labelLinkIdOrigenHRE',
 								fieldLabel: HreRem.i18n('fieldlabel.activobbva.idOrigenHre'),
 								bind: {

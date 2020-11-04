@@ -140,10 +140,6 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 					text : HreRem.i18n('header.activos.afectados.porcentaje.participacion.gasto'),
 					dataIndex : 'participacion',
 					renderer: function(value) {
-//						var dataStore = me.getStore().getData().items;
-//						console.log(dataStore[rowCounter]);
-//						value = dataStore[rowCounter].data.importeTotalGasto / sumaValores(dataStore, ['importeTotalGasto']) * 100;/*Calculamos el porcentaje individual*/
-//						rowCounter++;
 						const formatter = new Intl.NumberFormat('es-ES', {
 	            		   minimumFractionDigits: 2,      
 	            		   maximumFractionDigits: 4
@@ -151,7 +147,10 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 			          return formatter.format(value) + "%";
 			        },
 					flex : 1,
-					editor: 'numberfield',
+					editor: {
+						xtype: 'numberfield',
+						decimalPrecision: 4
+					},
 					summaryType: function(){
 						var store = this;
 	                    var records = store.getData().items;
@@ -190,15 +189,42 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 		            }
 				}, {
 					xtype: 'numbercolumn', 
-					renderer: Utils.rendererCurrency,
+					renderer: function(value) {
+						const formatter = new Intl.NumberFormat('es-ES', {
+	            		   minimumFractionDigits: 2,      
+	            		   maximumFractionDigits: 4
+	            		});
+			          return formatter.format(value) + "\u20AC";
+			        },
 					text : HreRem.i18n('header.activos.afectados.importe.proporcional.total'),
 					dataIndex : 'importeProporcinalTotal',
 					flex : 1,
-					summaryType: 'sum',
+					summaryType: function(){
+						var store = this;
+	                    var records = store.getData().items;
+	                    var field = ['importeProporcinalTotal'];
+	                    
+	                    if (this.isGrouped()) {
+	                        var groups = this.getGroups();
+	                        var i = 0;
+	                        var len = groups.length;
+	                        var out = {};
+	                        var group;
+	                        for (; i < len; i++) {
+	                            group = groups[i];
+	                            out[group.name] = sumaValores.apply(store, [group.children].concat(field));
+	                        }
+	                        var groupSum = out[groups[w].name];
+	                        w++;
+	                        return groupSum;
+	                    } else {
+	                        return sumaValores.apply(store, [records].concat(field));
+	                    }
+					},
 		            summaryRenderer: function(value, summaryData, dataIndex) {
 		            	const formatter = new Intl.NumberFormat('es-ES', {
 		            		   minimumFractionDigits: 2,      
-		            		   maximumFractionDigits: 4
+		            		   maximumFractionDigits: 2
 		            		});
 		            	var value2 = formatter.format(value);
 		            	var msg = HreRem.i18n("header.activos.afectados.importe.proporcional.total") + " " + value2 + "\u20AC";

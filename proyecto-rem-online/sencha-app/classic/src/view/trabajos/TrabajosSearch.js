@@ -244,13 +244,13 @@ Ext.define('HreRem.view.trabajos.TrabajosSearch', {
 											layout: 'column',
 											items :	[
 														{
-															fieldLabel: HreRem.i18n('fieldlabel.gestor.activo'),
+															fieldLabel: HreRem.i18n('fieldlabel.gestor.activo.responsable'),
 															labelWidth:	150,
 															name:		'gestorActual'
 														},
 														{ 
 										                	xtype:'datefield',
-													 		fieldLabel: HreRem.i18n('fieldlabel.fecha.peticion.desde'),
+													 		fieldLabel: HreRem.i18n('fieldlabel.fecha.estado.desde'),
 													 		labelWidth:	150,
 													 		//width: 		275,
 													 		name: 'fechaCambioEstadoDesde',
@@ -267,7 +267,7 @@ Ext.define('HreRem.view.trabajos.TrabajosSearch', {
 														},
 														{ 
 										                	xtype:'datefield',
-													 		fieldLabel: HreRem.i18n('fieldlabel.fecha.peticion.hasta'),
+													 		fieldLabel: HreRem.i18n('fieldlabel.fecha.estado.hasta'),
 													 		labelWidth:	150,
 													 		//width: 		275,
 													 		name: 'fechaCambioEstadoHasta',

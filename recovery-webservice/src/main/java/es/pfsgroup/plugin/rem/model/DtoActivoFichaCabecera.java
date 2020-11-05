@@ -303,7 +303,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
     private Long cdpen;
     
 	private String numActivoBbva;
-    private Long idDivarianBbva;
     private Long lineaFactura;
     private Long idOrigenHre;
     private String uicBbva;
@@ -2186,14 +2185,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setNumActivoBbva(String numActivoBbva) {
 		this.numActivoBbva = numActivoBbva;
-	}
-
-	public Long getIdDivarianBbva() {
-		return idDivarianBbva;
-	}
-
-	public void setIdDivarianBbva(Long idDivarianBbva) {
-		this.idDivarianBbva = idDivarianBbva;
 	}
 
 	public Long getLineaFactura() {

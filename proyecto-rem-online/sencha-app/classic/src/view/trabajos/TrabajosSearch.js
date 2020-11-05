@@ -181,6 +181,7 @@ Ext.define('HreRem.view.trabajos.TrabajosSearch', {
 											items :	[
 														{
 															fieldLabel: HreRem.i18n('fieldlabel.municipio'),
+															labelWidth:	150,
 											            	name:		'descripcionPoblacion'
 														 },
 														 {
@@ -188,6 +189,7 @@ Ext.define('HreRem.view.trabajos.TrabajosSearch', {
 												        	fieldLabel: HreRem.i18n('fieldlabel.provincia'),
 												        	name: 'codigoProvincia',
 												        	addUxReadOnlyEditFieldPlugin: false,
+												        	labelWidth:	150,
 												        	bind: {
 											            		store: '{comboFiltroProvincias}'
 											            	},
@@ -197,6 +199,7 @@ Ext.define('HreRem.view.trabajos.TrabajosSearch', {
 												         }, 
 														 {
 															fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
+															labelWidth:	150,
 											                name:		'codPostal'
 														 }
 											]
@@ -214,17 +217,62 @@ Ext.define('HreRem.view.trabajos.TrabajosSearch', {
 											items :	[
 														 {
 															fieldLabel: HreRem.i18n('fieldlabel.gestor.activo'),
+															labelWidth:	150,
 											            	name:		'gestorActivo'
 														 },
 														 { 
 												        	xtype: 'comboboxfieldbase',
 					    									addUxReadOnlyEditFieldPlugin: false,
+					    									labelWidth:	150,
 												        	fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
 												        	name: 'cartera',
 												        	bind: {
 											            		store: '{comboEntidadPropietaria}'
 											            	}
 												        }
+											]
+							                
+							            },
+							            
+							            {    			                
+											xtype:'fieldset',
+											cls	 : 'fieldsetBase',
+											collapsible: true,
+											defaultType: 'textfield',
+											defaults: {
+												anchor: '100%', style: 'width: 33%'},
+											layout: 'column',
+											items :	[
+														{
+															fieldLabel: HreRem.i18n('fieldlabel.gestor.activo.responsable'),
+															labelWidth:	150,
+															name:		'gestorActual'
+														},
+														{ 
+										                	xtype:'datefield',
+													 		fieldLabel: HreRem.i18n('fieldlabel.fecha.estado.desde'),
+													 		labelWidth:	150,
+													 		//width: 		275,
+													 		name: 'fechaCambioEstadoDesde',
+											            	formatter: 'date("d/m/Y")',
+								            	        	listeners : {
+												            	change: function (a, b) {
+												            		//Eliminar la fechaCreacionhasta e instaurar
+												            		//como minValue a su campo el velor de fechaCreacionDesde
+												            		var me = this;
+												            		me.next().reset();
+												            		me.next().setMinValue(me.getValue());
+												                }
+											            	}
+														},
+														{ 
+										                	xtype:'datefield',
+													 		fieldLabel: HreRem.i18n('fieldlabel.fecha.estado.hasta'),
+													 		labelWidth:	150,
+													 		//width: 		275,
+													 		name: 'fechaCambioEstadoHasta',
+													 		formatter: 'date("d/m/Y")'
+														}
 											]
 							                
 							            }

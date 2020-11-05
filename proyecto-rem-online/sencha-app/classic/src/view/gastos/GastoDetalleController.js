@@ -1820,7 +1820,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			return;
 		}
 		
-		if(!Ext.isEmpty(tipoImpositivo) && Ext.isEmpty(tipoImpuesto)){
+		if(!Ext.isEmpty(tipoImpositivo) && Ext.isEmpty(tipoImpuesto) && tipoImpositivo != 0){
 			me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.gasto.linea.detalle.no.tipo.impositivo"));
 			return;
 		}

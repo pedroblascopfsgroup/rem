@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import org.hibernate.LazyInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GastoLineaDetalleApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.gasto.linea.detalle.dao.GastoLineaDetalleDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
@@ -35,6 +37,7 @@ import es.pfsgroup.plugin.rem.model.ActivoConfiguracionCuentasContables;
 import es.pfsgroup.plugin.rem.model.ActivoConfiguracionPtdasPrep;
 import es.pfsgroup.plugin.rem.model.ActivoGenerico;
 import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
+import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoSubtipoGastoProveedorTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoSubtipoTrabajoGastoImpuesto;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
@@ -103,6 +106,9 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private GastoDao gastoDao;
 	
 	@Override 
 	public GastoLineaDetalle getLineaDetalleByIdLinea(Long idLinea) {
@@ -466,7 +472,30 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				filtrarRefacturar = 1;
 			}
 			
-			Filter filtroPropietario= genericDao.createFilter(FilterType.EQUALS, "activoPropietario.id", gasto.getPropietario().getId());
+			Long idPropietario;
+			DDCartera cartera;
+			//Filter filtroPropietario2 = genericDao.createFilter(FilterType.EQUALS, "propietario", gasto.getPropietario());
+			//ActivoPropietario propietario = genericDao.get(ActivoPropietario.class,filtroPropietario2);
+			try {
+				idPropietario = gasto.getPropietario().getId();
+				cartera = gasto.getCartera();
+			}catch (LazyInitializationException e){
+				idPropietario = gastoDao.getIdProveedorByGasto(gasto);
+				Long idCartera = gastoDao.getIdCarteraByGasto(gasto);
+				cartera = genericDao.get(DDCartera.class, genericDao.createFilter(FilterType.EQUALS, "id", idCartera));
+			}
+			if(idPropietario == null ) {
+				return null;
+			}
+			
+			if(cartera != null) {
+				filtroCartera= genericDao.createFilter(FilterType.EQUALS, "cartera.id", cartera.getId());
+				if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(cartera.getCodigo())){
+					isLbk = true;
+				}
+			}
+			
+			Filter filtroPropietario= genericDao.createFilter(FilterType.EQUALS, "activoPropietario.id", idPropietario);
 			
 			Filter filtroRefacturablePP = genericDao.createFilter(FilterType.EQUALS, "refacturable", filtrarRefacturar);
 			Filter filtroRefacturableCC = genericDao.createFilter(FilterType.EQUALS, "refacturable", filtrarRefacturar);
@@ -497,12 +526,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				tipoComisionadoCpp = genericDao.createFilter(FilterType.EQUALS, "cpptipoComisionado.id", gastoInfoContabilidad.getTipoComisionadoHre().getId());
 			}
 			
-			if(gasto.getCartera() != null) {
-				filtroCartera= genericDao.createFilter(FilterType.EQUALS, "cartera.id", gasto.getCartera().getId());
-				if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getCartera().getCodigo())){
-					isLbk = true;
-				}
-			}
+			
 			if(idLineaDetalleGasto != null) {
 				List<Activo> activos = this.devolverActivosDeLineasDeGasto(idLineaDetalleGasto);
 
@@ -2244,6 +2268,9 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	@Override
 	public GastoLineaDetalle setCuentasPartidasDtoToObject(GastoLineaDetalle gastoLineaDetalle, DtoLineaDetalleGasto dto) {
 		
+		if(dto == null) {
+			return gastoLineaDetalle;
+		}
 		gastoLineaDetalle.setCccBase(dto.getCcBase());
 		gastoLineaDetalle.setCppBase(dto.getPpBase());
 		gastoLineaDetalle.setCccEsp(dto.getCcEsp());

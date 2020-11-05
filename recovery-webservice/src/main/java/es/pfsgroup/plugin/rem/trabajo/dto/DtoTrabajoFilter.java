@@ -1,5 +1,9 @@
 package es.pfsgroup.plugin.rem.trabajo.dto;
 
+import java.util.Date;
+
+import javax.persistence.Column;
+
 import es.capgemini.devon.dto.WebDto;
 
 /**
@@ -72,6 +76,12 @@ public class DtoTrabajoFilter extends WebDto {
 	private Integer filtrar;
 	
 	private Long numGasto;
+	
+	private String fechaCambioEstadoDesde;
+	
+	private String fechaCambioEstadoHasta;
+	
+	private String GestorActual;
 
 	public String getIdTrabajo() {
 		return idTrabajo;
@@ -303,6 +313,30 @@ public class DtoTrabajoFilter extends WebDto {
 
 	public void setSubcartera(String subcartera) {
 		this.subcartera = subcartera;
+	}
+
+	public String getFechaCambioEstadoDesde() {
+		return fechaCambioEstadoDesde;
+	}
+
+	public void setFechaCambioEstadoDesde(String fechaCambioEstadoDesde) {
+		this.fechaCambioEstadoDesde = fechaCambioEstadoDesde;
+	}
+
+	public String getFechaCambioEstadoHasta() {
+		return fechaCambioEstadoHasta;
+	}
+
+	public void setFechaCambioEstadoHasta(String fechaCambioEstadoHasta) {
+		this.fechaCambioEstadoHasta = fechaCambioEstadoHasta;
+	}
+
+	public String getGestorActual() {
+		return GestorActual;
+	}
+
+	public void setGestorActual(String gestorActual) {
+		GestorActual = gestorActual;
 	}
 
 }

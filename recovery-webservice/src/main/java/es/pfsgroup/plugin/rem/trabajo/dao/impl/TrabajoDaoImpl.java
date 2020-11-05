@@ -133,6 +133,7 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.conCierreEconomico", dto.getConCierreEconomico());
 	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.facturado", dto.getFacturado());
 	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.numActivo", dto.getNumActivo());
+	   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tbj.gestorActual", dto.getGestorActual());
 
 	   		if(!Checks.esNulo(dto.getIdProveedor())) {
 	   			hb.appendWhere("tbj.importeTotal > " +BigDecimal.ZERO);
@@ -159,6 +160,22 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
 					calendar.add(Calendar.DAY_OF_YEAR, 1);  // numero de días a añadir, o restar en caso de días<0
 
 					HQLBuilder.addFiltroBetweenSiNotNull(hb, "tbj.fechaSolicitud", null, calendar.getTime());
+				}
+				
+				if (dto.getFechaCambioEstadoDesde() != null) {
+					Date fechaDesde = DateFormat.toDate(dto.getFechaCambioEstadoDesde());
+					HQLBuilder.addFiltroBetweenSiNotNull(hb, "tbj.fechaCambioEstado", fechaDesde, null);
+				}
+				
+				if (dto.getFechaCambioEstadoHasta() != null) {
+					Date fechaHasta = DateFormat.toDate(dto.getFechaCambioEstadoHasta());
+			
+					// Se le añade un día para que encuentre las fechas del día anterior hasta las 23:59
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime(fechaHasta); // Configuramos la fecha que se recibe
+					calendar.add(Calendar.DAY_OF_YEAR, 1);  // numero de días a añadir, o restar en caso de días<0
+
+					HQLBuilder.addFiltroBetweenSiNotNull(hb, "tbj.fechaCambioEstado", null, calendar.getTime());
 				}
 				
 	   		} catch (ParseException e) {

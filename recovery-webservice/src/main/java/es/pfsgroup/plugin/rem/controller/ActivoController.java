@@ -3345,19 +3345,19 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveFasePublicacionActivo(DtoFasePublicacionActivo dto, ModelMap model) {
+	public ModelAndView saveFasePublicacionActivo(DtoFasePublicacionActivo dto, @RequestParam Long id, ModelMap model) {
 		try {
-			model.put(RESPONSE_SUCCESS_KEY, activoEstadoPublicacionApi.saveFasePublicacionActivo(dto));
+			dto.setIdActivo(id);
+			model.put(RESPONSE_DATA_KEY, activoEstadoPublicacionApi.saveFasePublicacionActivo(dto));
+			model.put(RESPONSE_SUCCESS_KEY, true);
 		} catch (JsonViewerException jvex) {
-			model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
-			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("success", false);
+			model.put("msgError", jvex.getMessage());
 		} catch (Exception e) {
-			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
-			logger.error("Error al guardar la fase de publicacion del activo", e);
 		} 
 		
 		return createModelAndViewJson(model);

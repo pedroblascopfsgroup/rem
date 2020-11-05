@@ -568,7 +568,7 @@ public class ActivoPropagacionFieldTabMap {
     	pmap.put(TAB_FASE_PUBLICACION,
     			Arrays.asList(
     				"fasePublicacionCodigo",
-    				"subfasePublicacion",
+    				"subfasePublicacionCodigo",
     				"comentario"
     			));
 

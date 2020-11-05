@@ -26,6 +26,7 @@ public class ActivoPropagacionUAsFieldTabMap {
     public static final String TAB_COMERCIAL = "comercial";
     public static final String TAB_ADMINISTRACION = "administracion";
     public static final String TAB_PATRIMONIO = "patrimonio";
+    public static final String TAB_FASE_PUBLICACION = "fasepublicacionactivo";
 
     static {
     	Map<String, List<String>> pmap = new HashMap<String, List<String>>();
@@ -274,6 +275,13 @@ public class ActivoPropagacionUAsFieldTabMap {
 			Arrays.asList(
 					"chkPerimetroAlquiler"
 		   	));
+		
+    	pmap.put(TAB_FASE_PUBLICACION,
+    			Arrays.asList(
+    				"fasePublicacionCodigo",
+    				"subfasePublicacionCodigo",
+    				"comentario"
+    			));
 
 
         mapUAs = Collections.unmodifiableMap(pmap);

@@ -83,6 +83,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.notificacion.NotificationActivoManager;
 import es.pfsgroup.plugin.rem.usuarioRem.UsuarioRemApi;
 import es.pfsgroup.recovery.api.UsuarioApi;
+import es.pfsgroup.plugin.rem.service.TabActivoService;
 
 @Service("activoEstadoPublicacionManager")
 public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionApi{
@@ -221,6 +222,13 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			if ( canal.getFechaUltimaPublicacionMay() != null ) {
 				dto.setFechaUltimaPublicacionMay(canal.getFechaUltimaPublicacionMay());
 			}
+		}
+		
+		if(activoPublicacion != null && activoDao.isActivoMatriz(activoPublicacion.getId())) {	
+			dto.setCamposPropagablesUas(TabActivoService.TAB_DATOS_PUBLICACION);
+		}else {
+			// Buscamos los campos que pueden ser propagados para esta pestaña
+			dto.setCamposPropagables(TabActivoService.TAB_DATOS_PUBLICACION);
 		}
     	return dto;
 	}
@@ -1513,7 +1521,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	public DtoFasePublicacionActivo getFasePublicacionActivo(Long idActivo) {
 		DtoFasePublicacionActivo dto = new DtoFasePublicacionActivo();
 		HistoricoFasePublicacionActivo fasePublicacionActivoVigente = activoPublicacionDao.getFasePublicacionVigentePorIdActivo(idActivo);
-		
+		Activo activo = activoDao.getActivoById(idActivo);
 		if (Checks.esNulo(fasePublicacionActivoVigente)) {
 			return dto;
 		}
@@ -1526,6 +1534,13 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}
 		if (!Checks.esNulo(fasePublicacionActivoVigente.getComentario())) {
 			dto.setComentario(fasePublicacionActivoVigente.getComentario());
+		}
+		
+		if(!Checks.esNulo(activo) && activoDao.isActivoMatriz(activo.getId())) {	
+			dto.setCamposPropagablesUas(TabActivoService.TAB_FASE_PUBLICACION);
+		}else {
+			// Buscamos los campos que pueden ser propagados para esta pestaña
+			dto.setCamposPropagables(TabActivoService.TAB_FASE_PUBLICACION);
 		}
 		
 		return dto;

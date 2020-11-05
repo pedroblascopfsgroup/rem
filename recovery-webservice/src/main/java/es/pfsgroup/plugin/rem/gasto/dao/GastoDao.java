@@ -49,5 +49,9 @@ public interface GastoDao extends AbstractDao<GastoProveedor, Long> {
 	Boolean updateGastosRefacturablesSiExiste(Long id, Long idPadre, String usuario);
 
 	void saveGasto(GastoProveedor gasto);
+
+	Long getIdProveedorByGasto(GastoProveedor gasto);
+
+	Long getIdCarteraByGasto(GastoProveedor gasto);
 	
 }

@@ -7857,6 +7857,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 		
 		
+	},
+	onChangeDebeComprobarNIF: function(combo,newValue,oldValue,eOpts){
+			this.comprobarNIF(combo);
 	}
-
+	
 });

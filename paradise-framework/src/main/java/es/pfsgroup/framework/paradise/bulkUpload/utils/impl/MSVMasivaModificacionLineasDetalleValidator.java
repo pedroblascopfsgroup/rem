@@ -734,7 +734,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
                     try {
                     	if(!Checks.esNulo(exc.dameCelda(i,COL_TIPO_ELEMENTO)) && VALOR_ACTIVO.equalsIgnoreCase(exc.dameCelda(i,COL_TIPO_ELEMENTO))
                     		&& !Checks.esNulo(exc.dameCelda(i, COL_ID_ELEMENTO))) {
-                			if(Boolean.FALSE.equals(particularValidator.esGastoYActivoMismoPropietarioByNumGasto(exc.dameCelda(i, COL_ID_ELEMENTO), exc.dameCelda(i, COL_ID_GASTO)))){
+                			if(Boolean.FALSE.equals(particularValidator.esGastoYActivoMismoPropietarioByNumGasto(exc.dameCelda(i, COL_ID_ELEMENTO), exc.dameCelda(i, COL_ID_GASTO), exc.dameCelda(i, COL_TIPO_ELEMENTO)))){
                 				listaFilas.add(i);
                 			}	
 	                    }

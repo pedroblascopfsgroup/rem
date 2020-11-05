@@ -115,6 +115,7 @@ public class DtoActivoFilter extends WebDto {
 	private String perimetroMacc;
 	private String equipoGestion;
 	private Long numActivoBbva;
+
 	
 	public String getNumActivo() {
 		return numActivo;

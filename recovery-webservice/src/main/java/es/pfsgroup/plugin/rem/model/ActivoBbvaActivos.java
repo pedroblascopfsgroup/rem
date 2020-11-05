@@ -53,6 +53,7 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
     @Column(name = "BBVA_NUM_ACTIVO")
     private String numActivoBbva;
     
+
     @Column(name = "BBVA_LINEA_FACTURA")
 	private Long lineaFactura;
     

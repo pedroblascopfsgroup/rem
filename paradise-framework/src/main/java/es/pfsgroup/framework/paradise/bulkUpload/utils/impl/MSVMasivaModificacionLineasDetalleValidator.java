@@ -66,6 +66,10 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	private static final String TIPO_IMPOS_IMPUEST_RELLENO = "Cuando el tipo impositivo está relleno el tipo impuesto debe estarlo, y viceversa.";
 	private static final String SIN_ACTIVOS_NO_VALIDO_CARTERA = "Cuando el propietario es de la cartera: Sareb, Tango o Giants no se puede marcar como línea sin activos.";
 
+	private static final String LINEA_SIN_ACTIVOS_CON_ACTIVOS = "Esta línea ha sido marcada sin activos y se le han añadido activos.";
+	private static final String LINEA_SIN_ACTIVOS_REPETIDA = "Esta línea ya ha sido marcada como sin activos.";
+	private static final String LINEA_SIN_ACTIVOS_CON_ID_PARTICIPACION = "Una línea marcada sin activos no puede tener ni Id elemento ni participación de elemento.";
+	
 	
 	public static final Integer COL_ID_GASTO = 0;
 	public static final Integer COL_ACCION_LINEA_DETALLE = 1;
@@ -90,13 +94,12 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	
 
 	public static final String CHECK_VALOR_SI = "SI";
-	public static final String VALOR_ANYADIR = "Añadir";
-	public static final String VALOR_BORRAR = "Borrar";
 	public static final String VALOR_ACTIVO = "ACT";
 	public static final String VALOR_AGRUPACION = "AGR";
 	private static final String[] listaValidos = { "S", "N", "SI", "NO" };
 	private static final String[] listaCampoAccion = { "AÑADIR", "BORRAR", "A", "B" };
 	private static final String[] listaCampoAccionBorrar = { "BORRAR", "B", "Borrar", "b", "borrar" };
+	private static final String[] listaCampoAccionAnyadir = { "A", "AÑADIR", "Añadir", "a", "añadir" };
 	private static final String TIPO_ELEMENTO_SIN_ELEMENTO = "SIN";
 	
 	private static final String COD_SAREB = "02";
@@ -162,8 +165,8 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 			mapaErrores.put(YA_EXISTE_UN_SUBTIPO_TIPO_IMPOSITIVO_TIPO_IMPUESTO, existeUnsubtipoGastoIgual(exc));
 			mapaErrores.put(SUMA_100, participaciones(exc));
 			mapaErrores.put(TIPO_IMPUESTO_NO_EXISTE, tipoImpuestoNoExiste(exc));
-			mapaErrores.put(ELEMENTO_SIN_PARTICIPACION, participacionSinActivos(exc));
-			mapaErrores.put(PARTICIPACION_SIN_ELEMENTO, activoSinParticipacion(exc));
+			mapaErrores.put(PARTICIPACION_SIN_ELEMENTO, participacionSinActivos(exc));
+			mapaErrores.put(ELEMENTO_SIN_PARTICIPACION, activoSinParticipacion(exc));
 			mapaErrores.put(ELEMENTO_SIN_TIPO, elementosSinTipo(exc));
 			mapaErrores.put(TIPO_SIN_ELEMENTO, tipoSinElementos(exc));
 			mapaErrores.put(NO_EXISTE_AGRUPACION, agrupacionNoExiste(exc));
@@ -179,8 +182,10 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 			mapaErrores.put(GASTO_EN_MAL_ESTADO, gastoEstadoPendienteIncompleto(exc));
 			mapaErrores.put(TIPO_IMPOS_IMPUEST_RELLENO, tipoImpositivoEimpuestoRellenos(exc));
 			mapaErrores.put(SIN_ACTIVOS_NO_VALIDO_CARTERA, sinActivosNoValidoCartera(exc));
+			mapaErrores.put(LINEA_SIN_ACTIVOS_CON_ACTIVOS, masUnaLineaSinActivos(exc));
+			mapaErrores.put(LINEA_SIN_ACTIVOS_REPETIDA, lineaYaMarcadaSinActivos(exc));
+			mapaErrores.put(LINEA_SIN_ACTIVOS_CON_ID_PARTICIPACION, lineaSinActivosElementoyPorcentajeVacio(exc));
 			
-
 			if (!mapaErrores.get(GASTO_NO_EXISTE).isEmpty() 
 					|| !mapaErrores.get(ACTIVO_NO_EXISTE).isEmpty()
 					|| !mapaErrores.get(BANKIA_MAS_DE_UNA_LINEA).isEmpty()
@@ -206,6 +211,9 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 					|| !mapaErrores.get(GASTO_EN_MAL_ESTADO).isEmpty()
 					|| !mapaErrores.get(TIPO_IMPOS_IMPUEST_RELLENO).isEmpty()
 					|| !mapaErrores.get(SIN_ACTIVOS_NO_VALIDO_CARTERA).isEmpty()
+					|| !mapaErrores.get(LINEA_SIN_ACTIVOS_CON_ACTIVOS).isEmpty()
+					|| !mapaErrores.get(LINEA_SIN_ACTIVOS_REPETIDA).isEmpty()
+					|| !mapaErrores.get(LINEA_SIN_ACTIVOS_CON_ID_PARTICIPACION).isEmpty()
 					
 				){
 
@@ -320,9 +328,10 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
                     	boolean addError = false;
                     	String tipoAccion = exc.dameCelda(i, COL_ACCION_LINEA_DETALLE);
                         if(!Checks.esNulo(exc.dameCelda(i, COL_ID_GASTO)) && Boolean.TRUE.equals(particularValidator.perteneceGastoBankia(exc.dameCelda(i, COL_ID_GASTO)))) {
-                        	if(VALOR_ANYADIR.equals(tipoAccion)) {
+                        	if(!Checks.esNulo(tipoAccion) && Arrays.asList(listaCampoAccionAnyadir).contains(tipoAccion.toUpperCase())) {
 	                        	for(int x = 1; x<i;x++) {
-	                        		if(exc.dameCelda(x, COL_ID_GASTO).equals(exc.dameCelda(i, COL_ID_GASTO)) && VALOR_ANYADIR.equals(exc.dameCelda(x, COL_ACCION_LINEA_DETALLE))) {
+	                        		if(exc.dameCelda(x, COL_ID_GASTO).equals(exc.dameCelda(i, COL_ID_GASTO)) && 
+	                        		Arrays.asList(listaCampoAccionAnyadir).contains(exc.dameCelda(x, COL_ACCION_LINEA_DETALLE).toUpperCase())) {
 	                        			listaFilas.add(i);
 	                        			addError = true;
 	                        			break;
@@ -330,7 +339,8 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	                        	}
                         	if(Boolean.TRUE.equals(particularValidator.gastoTieneLineaDetalle(exc.dameCelda(i, COL_ID_GASTO))) && !addError) {
                         		for(int x = 1; x<i;x++) {
-                            		if(exc.dameCelda(x, COL_ID_GASTO).equals(exc.dameCelda(i, COL_ID_GASTO)) && VALOR_BORRAR.equals(exc.dameCelda(x, COL_ACCION_LINEA_DETALLE))) {
+                            		if(exc.dameCelda(x, COL_ID_GASTO).equals(exc.dameCelda(i, COL_ID_GASTO)) && 
+                            		Arrays.asList(listaCampoAccionBorrar).contains(exc.dameCelda(x, COL_ACCION_LINEA_DETALLE).toUpperCase())) {
                             			tieneBorrar = true;
                             			break;
                             		}
@@ -412,7 +422,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 		                						filaErrorAnyadida = true;
 		                						existeMatchAnterior = true;
 		                						break;
-		                				}else if(VALOR_BORRAR.equalsIgnoreCase(gastoSubtipoImpuesto[0])) {
+		                				}else if(!Checks.esNulo(gastoSubtipoImpuesto[0]) && Arrays.asList(listaCampoAccionBorrar).contains(gastoSubtipoImpuesto[0].toUpperCase())) {
 		                					existenBorradosAnteriores = true;
 		                				}
 		                			}
@@ -423,7 +433,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 				                if(existeMatchAnterior &&  !existenBorradosAnteriores) {
 				                	listaFilas.add(i);
 				                }else {
-				                	if(VALOR_ANYADIR.equalsIgnoreCase(gastoSubtipoImpuestoActual[0]) && !existenBorradosAnteriores) {
+				                	if(Arrays.asList(listaCampoAccionAnyadir).contains(gastoSubtipoImpuestoActual[0].toUpperCase()) && !existenBorradosAnteriores) {
 				                		if(!Checks.esNulo(exc.dameCelda(i, COL_ID_GASTO)) && !Checks.esNulo(exc.dameCelda(i, COL_SUBTIPO_GASTO))
 				  			                   && Boolean.TRUE.equals(particularValidator.lineaSubtipoDeGastoRepetida(exc.dameCelda(i, COL_ID_GASTO), exc.dameCelda(i, COL_SUBTIPO_GASTO),exc.dameCelda(i, COL_TIPO_IMPOSITIVO),exc.dameCelda(i, COL_TIPO_IMPUESTO)))){
 				                 			listaFilas.add(i);
@@ -452,7 +462,9 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 		   
 		   String subtipoGastoImpuestImpositivo = gastoSubtipoImpuestoImpositivo(subtipoGasto, tipoImpositivo, tipoImpuesto, gasto);
 		   
-
+		   if(TIPO_ELEMENTO_SIN_ELEMENTO.equalsIgnoreCase(tipoElemento)) {
+			   activo = "vacio";
+		   }
 		   if(!Checks.esNulo(tipoElemento) && !Checks.esNulo(activo)) {
 			   activoTipo = "," + tipoElemento + "-" + activo;
 		   }
@@ -474,35 +486,42 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	   private List<Integer> participaciones(MSVHojaExcel exc){
 		   List<Integer> listaFilas = new ArrayList<Integer>();
 		   List<String> cadenaInformacionParticipacion =  new ArrayList <String>();
+		   List<String> cadenaSinActivos =  new ArrayList <String>();
 	        try{
 	        	for(int i=1; i<this.numFilasHoja;i++){
-	        		if(!Checks.esNulo(exc.dameCelda(i, COL_PARTICIPACION_LINEA_DETALLE)) && !Checks.esNulo(exc.dameCelda(i, COL_ID_ELEMENTO)) && VALOR_ANYADIR.equals(exc.dameCelda(i, COL_ACCION_LINEA_DETALLE))) {
+	        		if(Arrays.asList(listaCampoAccionAnyadir).contains(exc.dameCelda(i, COL_ACCION_LINEA_DETALLE).toUpperCase())) {
 						String participacion =  gastoSubtipoImpuestoImpositivo(exc.dameCelda(i, COL_SUBTIPO_GASTO), exc.dameCelda(i, COL_TIPO_IMPOSITIVO), exc.dameCelda(i, COL_TIPO_IMPUESTO), exc.dameCelda(i, COL_ID_GASTO));
-						participacion = participacion + "," + exc.dameCelda(i, COL_PARTICIPACION_LINEA_DETALLE);
-						cadenaInformacionParticipacion.add(participacion);
+						if(TIPO_ELEMENTO_SIN_ELEMENTO.equalsIgnoreCase(exc.dameCelda(i, COL_TIPO_ELEMENTO))) {
+							cadenaSinActivos.add(participacion);
+						}else if( !Checks.esNulo(exc.dameCelda(i, COL_ID_ELEMENTO)) && !Checks.esNulo(exc.dameCelda(i, COL_PARTICIPACION_LINEA_DETALLE))){
+							participacion = participacion + "," + exc.dameCelda(i, COL_PARTICIPACION_LINEA_DETALLE);
+							cadenaInformacionParticipacion.add(participacion);	
+						}
 	        		}
 	        	}
 	            for(int i=1; i<this.numFilasHoja;i++){
-	            	if(!Checks.esNulo(exc.dameCelda(i, COL_PARTICIPACION_LINEA_DETALLE)) && !Checks.esNulo(exc.dameCelda(i, COL_ID_ELEMENTO)) && VALOR_ANYADIR.equals(exc.dameCelda(i, COL_ACCION_LINEA_DETALLE))) {
+	            	if(!Checks.esNulo(exc.dameCelda(i, COL_PARTICIPACION_LINEA_DETALLE)) && !Checks.esNulo(exc.dameCelda(i, COL_ID_ELEMENTO)) && Arrays.asList(listaCampoAccionAnyadir).contains(exc.dameCelda(i, COL_ACCION_LINEA_DETALLE).toUpperCase())) {
 		            	String result =  gastoSubtipoImpuestoImpositivo(exc.dameCelda(i, COL_SUBTIPO_GASTO), exc.dameCelda(i, COL_TIPO_IMPOSITIVO), exc.dameCelda(i, COL_TIPO_IMPUESTO), exc.dameCelda(i, COL_ID_GASTO));
-		            	result = result + "," + exc.dameCelda(i, COL_PARTICIPACION_LINEA_DETALLE);
-		            	String[] participacionSeparadoActual = result.split(",");
-		            	Double participacionLinea = 0.0;
-		            	if(!Checks.estaVacio(cadenaInformacionParticipacion)) {
-		            		for (String participacion : cadenaInformacionParticipacion) {
-		            			String[] participacionSeparado = participacion.split(",");
-		            			if(participacionSeparado[0].equalsIgnoreCase(participacionSeparadoActual[0])) {
-		            				participacionLinea += Double.parseDouble(participacionSeparado[1]);
-		            			}
-							}
-		            		BigDecimal porcentajeLinea = new BigDecimal(participacionLinea);
-							porcentajeLinea = porcentajeLinea.setScale(2, BigDecimal.ROUND_HALF_UP);
-							if(porcentajeLinea.compareTo(new BigDecimal(100.0)) != 0) {
-								 listaFilas.add(i);
-							}
-		            	}else {
-		            		listaFilas.add(i);
-		            	}
+			            if(!cadenaSinActivos.contains(result)) {	
+		            		result = result + "," + exc.dameCelda(i, COL_PARTICIPACION_LINEA_DETALLE);
+			            	String[] participacionSeparadoActual = result.split(",");
+			            	Double participacionLinea = 0.0;
+			            	if(!Checks.estaVacio(cadenaInformacionParticipacion)) {
+			            		for (String participacion : cadenaInformacionParticipacion) {
+			            			String[] participacionSeparado = participacion.split(",");
+			            			if(participacionSeparado[0].equalsIgnoreCase(participacionSeparadoActual[0])) {
+			            				participacionLinea += Double.parseDouble(participacionSeparado[1]);
+			            			}
+								}
+			            		BigDecimal porcentajeLinea = new BigDecimal(participacionLinea);
+								porcentajeLinea = porcentajeLinea.setScale(2, BigDecimal.ROUND_HALF_UP);
+								if(porcentajeLinea.compareTo(new BigDecimal(100.0)) != 0) {
+									 listaFilas.add(i);
+								}
+			            	}else {
+			            		listaFilas.add(i);
+			            	}
+			            }
 	            	}
 	            }
         	}
@@ -570,7 +589,9 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	        try{
 	            for(int i=1; i<this.numFilasHoja;i++){
 	                try {
-	                    if(Checks.esNulo(exc.dameCelda(i, COL_PARTICIPACION_LINEA_DETALLE)) && !Checks.esNulo(exc.dameCelda(i, COL_ID_ELEMENTO)))
+	                	String tipoElemento = exc.dameCelda(i, COL_TIPO_ELEMENTO);
+	                    if(Checks.esNulo(exc.dameCelda(i, COL_PARTICIPACION_LINEA_DETALLE)) && !Checks.esNulo(exc.dameCelda(i, COL_ID_ELEMENTO)) &&
+	                    	!Checks.esNulo(tipoElemento) && TIPO_ELEMENTO_SIN_ELEMENTO.equalsIgnoreCase(tipoElemento))
 	                        listaFilas.add(i);
 	                } catch (ParseException e) {
 	                    listaFilas.add(i);
@@ -592,7 +613,9 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	        try{
 	            for(int i=1; i<this.numFilasHoja;i++){
 	                try {
-	                    if(!Checks.esNulo(exc.dameCelda(i, COL_TIPO_ELEMENTO)) && Checks.esNulo(exc.dameCelda(i, COL_ID_ELEMENTO)))
+	                	String tipoElemento = exc.dameCelda(i, COL_TIPO_ELEMENTO);
+	                    if(!Checks.esNulo(tipoElemento)&& !TIPO_ELEMENTO_SIN_ELEMENTO.equalsIgnoreCase(tipoElemento) 
+	                    		&& Checks.esNulo(exc.dameCelda(i, COL_ID_ELEMENTO)))
 	                        listaFilas.add(i);
 	                } catch (ParseException e) {
 	                    listaFilas.add(i);
@@ -1010,4 +1033,94 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 			}
 	         return listaFilas;   
 		 }
+	   
+	   private List<Integer> masUnaLineaSinActivos(MSVHojaExcel exc){
+        List<Integer> listaFilas = new ArrayList<Integer>();
+
+         try{
+        	 List<String> listaCadenasSIN = new ArrayList<String>();
+        	 for(int i=1; i<this.numFilasHoja;i++){
+                String tipoElemento = exc.dameCelda(i, COL_TIPO_ELEMENTO);
+        		if(!Checks.esNulo(tipoElemento) && TIPO_ELEMENTO_SIN_ELEMENTO.equalsIgnoreCase(tipoElemento)) {
+					String cadenaSin =  gastoSubtipoImpuestoImpositivo(exc.dameCelda(i, COL_SUBTIPO_GASTO), exc.dameCelda(i, COL_TIPO_IMPOSITIVO), exc.dameCelda(i, COL_TIPO_IMPUESTO), exc.dameCelda(i, COL_ID_GASTO));
+        			listaCadenasSIN.add(cadenaSin);
+        		}
+        	 }
+        	 
+        	 for(int i=1; i<this.numFilasHoja;i++){
+	                String tipoElemento = exc.dameCelda(i, COL_TIPO_ELEMENTO);
+	                String gastoLinea =  gastoSubtipoImpuestoImpositivo(exc.dameCelda(i, COL_SUBTIPO_GASTO), exc.dameCelda(i, COL_TIPO_IMPOSITIVO), exc.dameCelda(i, COL_TIPO_IMPUESTO), exc.dameCelda(i, COL_ID_GASTO));
+	        		if(listaCadenasSIN.contains(gastoLinea) && !Checks.esNulo(tipoElemento) && !TIPO_ELEMENTO_SIN_ELEMENTO.equalsIgnoreCase(tipoElemento)) {
+	        			listaFilas.add(i);
+	        		}
+	        	 }
+
+         } catch (IllegalArgumentException e) {
+             listaFilas.add(0);
+             e.printStackTrace();
+         } catch (IOException e) {
+             listaFilas.add(0);
+             e.printStackTrace();
+         } catch (ParseException e) {
+        	 listaFilas.add(0);
+			e.printStackTrace();
+		}
+         return listaFilas;   
+	 }
+	   
+	   
+   private List<Integer> lineaYaMarcadaSinActivos(MSVHojaExcel exc){
+        List<Integer> listaFilas = new ArrayList<Integer>();
+
+         try{
+        	 List<String> listaCadenasSIN = new ArrayList<String>();
+        	 for(int i=1; i<this.numFilasHoja;i++){
+                String tipoElemento = exc.dameCelda(i, COL_TIPO_ELEMENTO);
+        		if(!Checks.esNulo(tipoElemento) && TIPO_ELEMENTO_SIN_ELEMENTO.equalsIgnoreCase(tipoElemento)) {
+					String cadenaSin =  gastoSubtipoImpuestoImpositivo(exc.dameCelda(i, COL_SUBTIPO_GASTO), exc.dameCelda(i, COL_TIPO_IMPOSITIVO), exc.dameCelda(i, COL_TIPO_IMPUESTO), exc.dameCelda(i, COL_ID_GASTO));
+        			if(listaCadenasSIN.contains(cadenaSin)) {
+        				listaFilas.add(i);
+        			}else {
+        				listaCadenasSIN.add(cadenaSin);
+        			}	
+        		}
+        	 }
+        	
+         } catch (IllegalArgumentException e) {
+             listaFilas.add(0);
+             e.printStackTrace();
+         } catch (IOException e) {
+             listaFilas.add(0);
+             e.printStackTrace();
+         } catch (ParseException e) {
+        	 listaFilas.add(0);
+			e.printStackTrace();
+		}
+         return listaFilas;   
+	 }
+   
+   private List<Integer> lineaSinActivosElementoyPorcentajeVacio(MSVHojaExcel exc){
+       List<Integer> listaFilas = new ArrayList<Integer>();
+
+        try{
+       	 for(int i=1; i<this.numFilasHoja;i++){
+               String tipoElemento = exc.dameCelda(i, COL_TIPO_ELEMENTO);
+       		if(!Checks.esNulo(tipoElemento) && TIPO_ELEMENTO_SIN_ELEMENTO.equalsIgnoreCase(tipoElemento) &&
+       		(!Checks.esNulo( exc.dameCelda(i, COL_ID_ELEMENTO)) || !Checks.esNulo( exc.dameCelda(i, COL_PARTICIPACION_LINEA_DETALLE)))) {
+       			listaFilas.add(i);
+       		}
+       	 }
+       	
+        } catch (IllegalArgumentException e) {
+            listaFilas.add(0);
+            e.printStackTrace();
+        } catch (IOException e) {
+            listaFilas.add(0);
+            e.printStackTrace();
+        } catch (ParseException e) {
+       	 listaFilas.add(0);
+			e.printStackTrace();
+		}
+        return listaFilas;   
+	 }
 }

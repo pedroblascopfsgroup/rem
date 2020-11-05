@@ -490,4 +490,43 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		}
 	}
 	
+	
+	@Override
+	public Long getIdProveedorByGasto(GastoProveedor gasto) {
+		try {
+			Session session = this.getSessionFactory().getCurrentSession();
+			Query query = session.createSQLQuery(
+					"SELECT GPV.PRO_ID FROM  gpv_gastos_proveedor GPV "
+						+ "WHERE GPV.GPV_ID = "+ gasto.getId() +" AND GPV.BORRADO = 0 ");
+	
+			String contador = query.uniqueResult().toString();
+	
+			if(contador != null) {
+				return Long.parseLong(contador);
+			}
+		}catch(NumberFormatException e){
+			
+		}
+		return null;
+	}
+	
+	@Override
+	public Long getIdCarteraByGasto(GastoProveedor gasto) {
+		try {
+			Session session = this.getSessionFactory().getCurrentSession();
+			Query query = session.createSQLQuery(
+					"SELECT PRO.DD_CRA_ID FROM  gpv_gastos_proveedor GPV  "
+						+ " JOIN ACT_PRO_PROPIETARIO PRO ON GPV.PRO_ID = PRO.PRO_ID AND "
+						+ " GPV.GPV_ID = "+ gasto.getId() +" AND GPV.BORRADO = 0 AND PRO.BORRADO = 0");
+	
+			String contador = query.uniqueResult().toString();
+	
+			if(contador != null) {
+				return Long.parseLong(contador);
+			}
+		}catch(NumberFormatException e){
+			
+		}
+		return null;
+	}
 }

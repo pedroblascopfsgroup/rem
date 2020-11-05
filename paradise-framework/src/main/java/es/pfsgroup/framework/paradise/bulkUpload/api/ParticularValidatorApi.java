@@ -1242,7 +1242,7 @@ public interface ParticularValidatorApi {
 
 	Boolean esPropietarioDeCarteraByCodigo(String docIdentificadorPropietario, String cartera);
 
-	Boolean esGastoYActivoMismoPropietario(String docIdentificadorPropietario, String numActivo);
+	Boolean esGastoYActivoMismoPropietario(String docIdentificadorPropietario, String numElemento, String tipoElemento);
 
 	Boolean esGastoYAgrupacionMismoPropietario(String docIdentificadorPropietario, String numAgrupacion);
 

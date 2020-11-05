@@ -1011,7 +1011,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 			
 			activoDto.setNumActivoBbva(activoBbva.getNumActivoBbva());
-			activoDto.setIdDivarianBbva(activoBbva.getIdDivarianBbva());
 			activoDto.setLineaFactura(activoBbva.getLineaFactura());
 			activoDto.setIdOrigenHre(activoBbva.getIdOrigenHre());
 			activoDto.setUicBbva(activoBbva.getUicBbva());
@@ -1593,7 +1592,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			if (dto.getTipoTransmisionCodigo() != null || dto.getTipoAltaCodigo() != null || dto.getActivoEpa() != null ||
 				dto.getEmpresa() != null || dto.getOficina() !=  null || dto.getContrapartida() != null ||
 				dto.getFolio() != null || dto.getCdpen() != null || dto.getNumActivoBbva() != null ||
-				dto.getIdDivarianBbva() !=  null || dto.getLineaFactura() != null || dto.getIdOrigenHre() != null ||
+				dto.getLineaFactura() != null || dto.getIdOrigenHre() != null ||
 				dto.getUicBbva() != null || dto.getCexperBbva() !=  null
 			) {
 				
@@ -1661,10 +1660,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 					if (dto.getNumActivoBbva() != null) {
 						activoBbva.setNumActivoBbva(dto.getNumActivoBbva());
-					}
-
-					if (dto.getIdDivarianBbva() != null) {
-						activoBbva.setIdDivarianBbva(dto.getIdDivarianBbva());
 					}
 
 					if (dto.getLineaFactura() != null) {

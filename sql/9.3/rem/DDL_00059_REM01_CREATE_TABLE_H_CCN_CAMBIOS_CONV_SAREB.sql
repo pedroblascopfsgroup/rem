@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200915
+--## FECHA_CREACION=20201105
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-10459
+--## INCIDENCIA_LINK=HREOS-11966
 --## PRODUCTO=NO
 --## Finalidad: Creación diccionario H_CCN_CAMBIOS_CONV_SAREB
 --##           
@@ -58,7 +58,7 @@ BEGIN
 			CCN_ID		           		NUMBER(16,0)                NOT NULL,
 			ACT_ID        				NUMBER(16,0),
 			DD_COS_ID      				NUMBER(16,0),
-			VALOR					VARCHAR2(4000 CHAR)			NOT NULL,
+			VALOR						VARCHAR2(4000 CHAR),
 			VERSION 					NUMBER(38,0) 		    	DEFAULT 0 NOT NULL ENABLE, 
 			USUARIOCREAR 				VARCHAR2(50 CHAR) 	    	NOT NULL ENABLE, 
 			FECHACREAR 					TIMESTAMP (6) 		    	NOT NULL ENABLE, 

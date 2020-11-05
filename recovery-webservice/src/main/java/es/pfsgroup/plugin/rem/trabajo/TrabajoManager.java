@@ -4179,6 +4179,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Override
 	public boolean checkBankia(Trabajo trabajo) {
+		
 		if (!Checks.esNulo(trabajo)) {
 			Activo primerActivo = trabajo.getActivo();
 			if (!Checks.esNulo(primerActivo)) {
@@ -4186,6 +4187,18 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 		}
 		return false;
+	}
+	
+	 @Override
+	public boolean checkBBVA(TareaExterna tareaExterna) {
+		 Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);	
+		 if (!Checks.esNulo(trabajo)) {
+				Activo primerActivo = trabajo.getActivo();
+				if (!Checks.esNulo(primerActivo)) {
+					return (DDCartera.CODIGO_CARTERA_BBVA.equals(primerActivo.getCartera().getCodigo()));
+				}
+			}
+			return false;
 	}
 	
 	@Override

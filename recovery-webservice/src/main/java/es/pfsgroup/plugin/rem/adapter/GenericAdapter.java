@@ -141,19 +141,21 @@ public class GenericAdapter {
 				}
 			} else if (clase.equals(DDCartera.class)) {
 				Usuario usuarioLogado = getUsuarioLogado();
-				UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
+				List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class,
 						genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-				if (!Checks.esNulo(usuarioCartera)) { 	
-					listaPeriodicidad.add(diccionarioApi.dameValorDiccionarioByCod(clase, usuarioCartera.getCartera().getCodigo()));
+				if (usuarioCartera != null && !usuarioCartera.isEmpty()) { 	
+					listaPeriodicidad.add(diccionarioApi.dameValorDiccionarioByCod(clase, usuarioCartera.get(0).getCartera().getCodigo()));
 					lista = listaPeriodicidad;	
 				}
-			}else if (clase.equals(DDSubcartera.class)) {
+			} else if (clase.equals(DDSubcartera.class)) {
 				Usuario usuarioLogado = getUsuarioLogado();
-				UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
+				List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class,
 						genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-				if (!Checks.esNulo(usuarioCartera) && !Checks.esNulo(usuarioCartera.getSubCartera()) && !Checks.esNulo(usuarioCartera.getSubCartera().getCodigo())) {
-					listaPeriodicidad.add(diccionarioApi.dameValorDiccionarioByCod(DDSubcartera.class, usuarioCartera.getSubCartera().getCodigo()));
-					lista = listaPeriodicidad;
+				for (UsuarioCartera uca : usuarioCartera) {
+					if(uca.getSubCartera() != null) {
+						listaPeriodicidad.add(diccionarioApi.dameValorDiccionarioByCod(DDSubcartera.class, uca.getSubCartera().getCodigo()));
+						lista = listaPeriodicidad;
+					}
 				}
 			}
 		}

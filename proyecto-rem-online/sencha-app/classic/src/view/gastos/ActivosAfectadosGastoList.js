@@ -6,7 +6,7 @@ var sumaValores = function(record, field) {
     for (; j < lenn; ++j) {
        total = total + parseFloat(record[j].get(field));
     }
-    return total.toFixed(2);
+    return total;
 };
 
 Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
@@ -177,7 +177,10 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 			          return formatter.format(value) + "%";
 			        },
 					flex : 1,
-					editor: 'numberfield',
+					editor: {
+						xtype: 'numberfield',
+						decimalPrecision: 4
+					},
 					summaryType: function(){
 						var store = this;
 	                    var records = store.getData().items;
@@ -210,19 +213,23 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 		            	var value2 = formatter.format(value);
 		            	var msg = HreRem.i18n("fieldlabel.participacion.total") + " " + value2 + "%";
 		            	var style = "style= 'color: black'";
-		            	if(parseFloat(value) != parseFloat('100.00')) {
-		            		//msg = HreRem.i18n("fieldlabel.participacion.total.error")	
+		            	if(parseFloat(value).toFixed(4) != parseFloat('100.00')) {
 		            		style = "style= 'color: red'";
 		            	}			            	
-		            	return "<span "+style+ ">"+msg+"</span>"
+		            	return "<span "+style+ ">"+msg+"</span>";
 		            }
 				}, {
 					xtype: 'numbercolumn', 
-					renderer: Utils.rendererCurrency,
+					renderer: function(value) {
+						const formatter = new Intl.NumberFormat('es-ES', {
+	            		   minimumFractionDigits: 2,      
+	            		   maximumFractionDigits: 4
+	            		});
+			          return formatter.format(value) + "\u20AC";
+			        },
 					text : HreRem.i18n('header.activos.afectados.importe.proporcional.total'),
 					dataIndex : 'importeProporcinalTotal',
 					flex : 1,
-
 					summaryType: 'sum',
 		            summaryRenderer: function(value, summaryData, dataIndex) {
 		            	const formatter = new Intl.NumberFormat('es-ES', {

@@ -1,7 +1,7 @@
 --/*
 --######################################### 
 --## AUTOR=Viorel Remus Ovidiu
---## FECHA_CREACION=20201022
+--## FECHA_CREACION=20201103
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-8144
@@ -84,7 +84,7 @@ BEGIN
             EXECUTE IMMEDIATE V_SQL INTO V_ID;
 
               V_SQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET
-                        ICO_WEBCOM_ID = '|| TRIM(V_TMP_TIPO_DATA(1)) ||' ,
+                        ICO_WEBCOM_ID = '|| TRIM(V_TMP_TIPO_DATA(2)) ||' ,
                         USUARIOMODIFICAR = '''||V_USUARIO||''', 
                         FECHAMODIFICAR = SYSDATE
                         WHERE ACT_ID='||V_ID||'';

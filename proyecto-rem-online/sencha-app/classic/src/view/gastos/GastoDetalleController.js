@@ -284,12 +284,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	onClickBotonRefrescar : function(btn) {
 		var me = this;
 
-		tabPanel = me.getView().down("tabpanel");
-		var activeTab = tabPanel.getActiveTab();
-		if (activeTab.xtype == "activosafectadosgasto"
-		&& CONST.CARTERA["LIBERBANK"] === me.getViewModel().get("gasto.cartera")) {
-			me.updateGastoByPrinexLBK();
-		}
 		me.refrescarGasto(true);
 	},
 	
@@ -713,6 +707,47 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	
     },
 
+    asociarGastoConActivos: function(idGasto, numeroActivo, numeroAgrupacion, detalle, form, window) {
+    	
+    	var me = this;
+    	
+    	detalle.getModelInstance().getProxy().extraParams.idGasto = idGasto;
+		detalle.getModelInstance().getProxy().extraParams.numActivo = numeroActivo;
+		detalle.getModelInstance().getProxy().extraParams.numAgrupacion = numeroAgrupacion;
+		detalle.getModelInstance().save({
+			
+			success: function(a, operation, c){
+				var data = Ext.decode(operation._response.responseText);
+				window.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
+				window.up('gastodetalle').down('contabilidadgasto').funcionRecargar();
+				if(!Ext.isEmpty(data) && data.success == "true") {
+					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				} else {
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				}
+			},
+			failure: function(a, operation){
+				var data = {};
+                try {
+                	data = Ext.decode(operation._response.responseText);
+                }
+                catch (e){ };
+                if (!Ext.isEmpty(data.msg)) {
+                	me.fireEvent("errorToast", data.msg);
+                } else {
+                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                }
+			},
+			callback: function(records, operation, success) {
+				form.reset();
+				if (numeroActivo != null) window.unmask();
+				window.parent.funcionRecargar();
+				window.close();
+			}
+			
+		});
+    	
+    },
     
    	onEnlaceActivosClick: function(tableView, indiceFila, indiceColumna) {
    		var me = this;

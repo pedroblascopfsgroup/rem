@@ -118,6 +118,12 @@ Ext.define('HreRem.view.masivo.MasivoController', {
         parameters.idOperation = this.getView().down('grid').selection.data.tipoOperacionId;
     	var url =  $AC.getRemoteUrl('masivo/procesarMasivo');
     	me.getView().mask(HreRem.i18n('msg.mask.loading'));
+    	btn.up('grid').getSelectionModel().deselectAll();
+		btn.up('grid').getSelectionModel().clearSelections();
+		btn.up('grid').down('#validarButton').setDisabled(true);
+		btn.up('grid').down('#procesarButton').setDisabled(true);
+		btn.up('grid').down('#downloadButton').setDisabled(true);
+		btn.up('grid').down('#resultadoButton').setDisabled(true);
 		Ext.Ajax.request({
 			 method: 'GET',
 		     url: url,
@@ -132,10 +138,6 @@ Ext.define('HreRem.view.masivo.MasivoController', {
 		       
 		         me.getView().unmask();
 		         btn.up('grid').getStore().load();
-			     btn.up('grid').getSelectionModel().deselectAll();
-                 btn.up('grid').getSelectionModel().clearSelections();
-                 btn.up('grid').down('#procesarButton').setDisabled(true);
-				 btn.up('grid').down('#downloadButton').setDisabled(true);
 			     me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 		     },
 		     failure: function(response, opts) {
@@ -147,10 +149,6 @@ Ext.define('HreRem.view.masivo.MasivoController', {
 				     success: function(response, opts) {
 				     	me.getView().unmask();
 				     	btn.up('grid').getStore().load();
-				     	btn.up('grid').getSelectionModel().deselectAll();
-                        btn.up('grid').getSelectionModel().clearSelections();
-                        btn.up('grid').down('#procesarButton').setDisabled(true);
-    					btn.up('grid').down('#downloadButton').setDisabled(true);
 				     	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 				     },
 				     failure: function(response, opts) {

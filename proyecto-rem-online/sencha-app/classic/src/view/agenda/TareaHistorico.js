@@ -410,8 +410,7 @@ Ext.define('HreRem.view.agenda.TareaHistorico',{
 				        }
 				       
 						if(CONST.CARTERA['LIBERBANK'] != codigoCartera) {
-							me.down('[name=fechaReunionComite]').hide();
-							me.down('[name=comiteInternoSancionador]').hide();
+							me.down('[name=fechaReunionComite]').hide();							
 							me.ocultarCampo(comitePropuesto);
 							me.ocultarCampo(importeTotalOfertaAgrupada);
 						}else{

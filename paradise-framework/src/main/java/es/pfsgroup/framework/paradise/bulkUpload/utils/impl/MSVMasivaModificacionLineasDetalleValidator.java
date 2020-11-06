@@ -54,7 +54,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	private static final String SUBTIPO_GASTO_NO_EXISTE ="El subtipo de gasto no existe";
 	private static final String NO_EXISTE_AGRUPACION = "La agrupación no existe";
 	private static final String AGRUPACION_GASTO_DIFERENTE_CARTERA = "La agrupación y el gasto no tienen el mismo propietario";
-	private static final String ACTIVO_GASTO_DIFERENTE_CARTERA = "El activo y el gasto no tienen el mismo propietario";
+	private static final String ACTIVO_GASTO_DIFERENTE_CARTERA = "El activo o activo genérico y el gasto no tienen el mismo propietario";
 	private static final String VALORES_SI_NO_EXENTA = "El campo operación exenta debe tener valor Si/No o estar vacío";
 	private static final String VALORES_SI_NO_RENUNCIA = "Este campo renuncia exenta debe tener valor Si/No o estar vacío";
 	private static final String VALORES_SI_NO_CRITERIO_CAJA = "El campo criterio caja debe tener valor Si/No o estar vacío";
@@ -96,6 +96,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	public static final String CHECK_VALOR_SI = "SI";
 	public static final String VALOR_ACTIVO = "ACT";
 	public static final String VALOR_AGRUPACION = "AGR";
+	public static final String ACTIVO_GENERICO = "GEN";
 	private static final String[] listaValidos = { "S", "N", "SI", "NO" };
 	private static final String[] listaCampoAccion = { "AÑADIR", "BORRAR", "A", "B" };
 	private static final String[] listaCampoAccionBorrar = { "BORRAR", "B", "Borrar", "b", "borrar" };
@@ -732,7 +733,8 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
             try{
                 for(int i=1; i<this.numFilasHoja;i++){
                     try {
-                    	if(!Checks.esNulo(exc.dameCelda(i,COL_TIPO_ELEMENTO)) && VALOR_ACTIVO.equalsIgnoreCase(exc.dameCelda(i,COL_TIPO_ELEMENTO))
+                    	if(!Checks.esNulo(exc.dameCelda(i,COL_TIPO_ELEMENTO)) 
+                    		&& (VALOR_ACTIVO.equalsIgnoreCase(exc.dameCelda(i,COL_TIPO_ELEMENTO)) || ACTIVO_GENERICO.equalsIgnoreCase(exc.dameCelda(i,COL_TIPO_ELEMENTO)))
                     		&& !Checks.esNulo(exc.dameCelda(i, COL_ID_ELEMENTO))) {
                 			if(Boolean.FALSE.equals(particularValidator.esGastoYActivoMismoPropietarioByNumGasto(exc.dameCelda(i, COL_ID_ELEMENTO), exc.dameCelda(i, COL_ID_GASTO), exc.dameCelda(i, COL_TIPO_ELEMENTO)))){
                 				listaFilas.add(i);

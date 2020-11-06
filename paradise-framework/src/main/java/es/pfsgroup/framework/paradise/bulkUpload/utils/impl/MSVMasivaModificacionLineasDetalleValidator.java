@@ -64,7 +64,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	private static final String GASTOS_HIJOS = "No se puede modificar un gasto refacturado";
 	private static final String GASTO_EN_MAL_ESTADO = "El estado del gasto debe ser 'Pendiente de autorizar' o 'Incompleto' o 'Rechazado";
 	private static final String TIPO_IMPOS_IMPUEST_RELLENO = "Cuando el tipo impositivo está relleno el tipo impuesto debe estarlo, y viceversa.";
-	private static final String SIN_ACTIVOS_NO_VALIDO_CARTERA = "Cuando el propietario es de la cartera: Sareb, Tango o Giants no se puede marcar como línea sin activos.";
+	private static final String SIN_ACTIVOS_NO_VALIDO_CARTERA = "Cuando el propietario es de la cartera: Sareb, Tango, Liberbank o Giants no se puede marcar como línea sin activos.";
 
 	private static final String LINEA_SIN_ACTIVOS_CON_ACTIVOS = "Esta línea ha sido marcada sin activos y se le han añadido activos.";
 	private static final String LINEA_SIN_ACTIVOS_REPETIDA = "Esta línea ya ha sido marcada como sin activos.";
@@ -106,6 +106,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	private static final String COD_SAREB = "02";
 	private static final String COD_TANGO = "10";
 	private static final String COD_GIANTS = "12";
+	private static final String COD_LBK = "08";
 	
 	
 	private Integer numFilasHoja;	
@@ -1015,7 +1016,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	        		 String tipoElemento = exc.dameCelda(i, COL_TIPO_ELEMENTO);
 	        		 String docIdent = particularValidator.getDocIdentfPropietarioByNumGasto(exc.dameCelda(i, COL_ID_GASTO));
 	         		 if(!Checks.esNulo(tipoElemento) && TIPO_ELEMENTO_SIN_ELEMENTO.equalsIgnoreCase(tipoElemento)) {
-	         			 List<String> listaCarteras = Arrays.asList(COD_SAREB, COD_GIANTS, COD_TANGO);
+	         			 List<String> listaCarteras = Arrays.asList(COD_SAREB, COD_GIANTS, COD_TANGO, COD_LBK);
 	         			 if(Boolean.TRUE.equals(particularValidator.propietarioPerteneceCartera(docIdent, listaCarteras))) {
 	         				 listaFilas.add(i);
 	         			 }

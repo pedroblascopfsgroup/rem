@@ -219,7 +219,7 @@ BEGIN
 
                     IF V_COUNT_IMPORTES > 0 THEN
 
-                        V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.GIL_GASTOS_IMPORTES_LIBERBANK T1
+                        V_SQL := 'MERGE INTO '||V_ESQUEMA||'.GIL_GASTOS_IMPORTES_LIBERBANK T1
                             USING (
                                 SELECT GIL.GIL_ID
                                     , CASE

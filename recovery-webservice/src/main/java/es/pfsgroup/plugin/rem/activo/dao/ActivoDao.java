@@ -367,4 +367,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	List<ActivoCalificacionNegativaAdicional> getListActivoCalificacionNegativaAdicionalByIdActivo(Long idActivo);
 	
 	Long getNextBbvaNumActivo();
+
+	public Activo existeActivoUsuarioCarterizado(Long numActivo, Long idCartera, List<Long> idSubcarteras);
 }

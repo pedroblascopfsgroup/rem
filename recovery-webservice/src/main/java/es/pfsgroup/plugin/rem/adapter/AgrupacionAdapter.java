@@ -42,8 +42,10 @@ import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberatorsFactory;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDEstadoProceso;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVProcesoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
@@ -2590,17 +2592,26 @@ public class AgrupacionAdapter {
 	public Boolean procesarMasivo(Long idProcess, Long idOperation) throws Exception {
 
 		MSVDocumentoMasivo document = ficheroDao.findByIdProceso(idProcess);
-		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(document);
-		MSVDDOperacionMasiva tipoOperacion = msvProcesoApi.getOperacionMasiva(idOperation);
-		MSVLiberator lib = factoriaLiberators.dameLiberator(tipoOperacion);
-		Integer numFilas = exc.getNumeroFilasByHoja(0,document.getProcesoMasivo().getTipoOperacion())-lib.getFilaInicial();
-		processAdapter.setStateProcessing(document.getProcesoMasivo().getId(),new Long(numFilas));
-		Usuario usu=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		
-		Thread liberarFicheroThread = new Thread(new LiberarFichero(idProcess, idOperation, usu.getUsername(), msvREMUtils.getExtraArgs()));
-		liberarFicheroThread.start();
+		MSVProcesoMasivo proceso = document.getProcesoMasivo();
+		if (proceso == null) {
+			return false;
+		} 			
+		if (proceso.getEstadoProceso() != null && MSVDDEstadoProceso.CODIGO_VALIDADO.equals(proceso.getEstadoProceso().getCodigo())) {
+			MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(document);
+			MSVDDOperacionMasiva tipoOperacion = msvProcesoApi.getOperacionMasiva(idOperation);
+			MSVLiberator lib = factoriaLiberators.dameLiberator(tipoOperacion);
+			Integer numFilas = exc.getNumeroFilasByHoja(0,document.getProcesoMasivo().getTipoOperacion())-lib.getFilaInicial();			
+			processAdapter.setStateProcessing(document.getProcesoMasivo().getId(),new Long(numFilas));
+			Usuario usu=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+			
+			Thread liberarFicheroThread = new Thread(new LiberarFichero(idProcess, idOperation, usu.getUsername(), msvREMUtils.getExtraArgs()));
+			liberarFicheroThread.start();
 
-		return true;
+			Thread.sleep(1000);
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Transactional(readOnly = false)

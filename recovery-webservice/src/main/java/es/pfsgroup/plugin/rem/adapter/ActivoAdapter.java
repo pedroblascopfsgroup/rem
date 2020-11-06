@@ -1521,14 +1521,8 @@ public class ActivoAdapter {
 	public Object getBusquedaActivosGrid(DtoActivoGridFilter dto, boolean devolverPage) {
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		DDIdentificacionGestoria gestoria = gestorActivoApi.isGestoria(usuarioLogado);
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
 		dto.setGestoria(gestoria != null ? gestoria.getId() : null);
-		if (usuarioCartera != null) {
-			dto.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
-			if (usuarioCartera.getSubCartera() != null) {			
-				dto.setSubcarteraCodigo(usuarioCartera.getSubCartera().getCodigo());
-			}
-		}		
+		
 		return activoDao.getBusquedaActivosGrid(dto, usuarioLogado, devolverPage);
 	}
 

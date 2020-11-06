@@ -1,13 +1,13 @@
 --/*
 --#########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20200929
+--## FECHA_CREACION=20201106
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-11250
+--## INCIDENCIA_LINK=HREOS-12016
 --## PRODUCTO=NO
 --## 
---## Finalidad:  Creación del SP SP_EXT_TIPO_DIARIO
+--## Finalidad:  Creación del SP
 --##            
 --## INSTRUCCIONES:  
 --## VERSIONES:
@@ -218,6 +218,39 @@ BEGIN
                     V_COUNT_IMPORTES := V_COUNT_IMPORTES + SQL%ROWCOUNT;
 
                     IF V_COUNT_IMPORTES > 0 THEN
+
+                        V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.GIL_GASTOS_IMPORTES_LIBERBANK T1
+                            USING (
+                                SELECT GIL.GIL_ID
+                                    , CASE
+                                        WHEN DCL.DIARIO1 = ''20'' THEN 
+                                            (NVL(P20.P20_GASTO, 100) / 100 * DCL.DIARIO1_CUOTA + DCL.DIARIO1_BASE + NVL(DCL.DIARIO2_BASE, 0)) 
+                                                - SUM(GIL.IMPORTE_ACTIVO) OVER(ORDER BY GIL.GPV_ID)
+                                        WHEN DCL.DIARIO1 = ''1'' THEN
+                                            (DCL.DIARIO1_BASE + NVL(DCL.DIARIO2_BASE, 0)) 
+                                                - SUM(GIL.IMPORTE_ACTIVO) OVER(ORDER BY GIL.GPV_ID)
+                                        WHEN DCL.DIARIO1 = ''2'' THEN 
+                                            (DCL.DIARIO1_CUOTA + DCL.DIARIO1_BASE + NVL(DCL.DIARIO2_BASE, 0)) 
+                                                - SUM(GIL.IMPORTE_ACTIVO) OVER(ORDER BY GIL.GPV_ID)
+                                        WHEN DCL.DIARIO1 = ''60'' THEN
+                                            (DCL.DIARIO1_BASE) 
+                                                - SUM(GIL.IMPORTE_ACTIVO) OVER(ORDER BY GIL.GPV_ID)
+                                        END RESTO
+                                    , ROW_NUMBER() OVER(PARTITION BY GIL.GPV_ID ORDER BY GIL.IMPORTE_ACTIVO DESC) RN
+                                FROM '||V_ESQUEMA||'.GIL_GASTOS_IMPORTES_LIBERBANK GIL
+                                JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GIL.GPV_ID
+                                    AND GPV.BORRADO = 0
+                                JOIN '||V_ESQUEMA||'.GDL_GASTOS_DIARIOS_LIBERBANK DCL ON DCL.GPV_ID = GPV.GPV_ID
+                                    AND DCL.BORRADO = 0
+                                LEFT JOIN '||V_ESQUEMA||'.ACT_P20_PRORRATA_DIARIO20 P20 ON P20.PRO_ID = GPV.PRO_ID
+                                    AND P20.BORRADO = 0
+                                WHERE GIL.GPV_ID = '||GPV_ID||'
+                                    AND GIL.BORRADO = 0
+                            ) T2
+                            ON (T1.GIL_ID = T2.GIL_ID AND T2.RN = 1)
+                            WHEN MATCHED THEN
+                                UPDATE SET T1.IMPORTE_ACTIVO = T1.IMPORTE_ACTIVO + T2.RESTO';
+                        EXECUTE IMMEDIATE V_SQL;
 
                         RESULTADO := 'OK';
                         COD_RETORNO := 'La información de diarios ('||V_COUNT_DIARIOS||') y repartos ('||V_COUNT_IMPORTES||') del gasto '||V_NUM_GASTO||', se ha fusionado. (Información actualizada el '||V_FECHA||')';

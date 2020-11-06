@@ -180,9 +180,6 @@ public class VGastosProveedorExcel implements Serializable {
 	@Column(name="GGE_MOTIVO_RECHAZO_PROP")
 	private String motivoRechazoProp;
 	
-	@Column(name="ACT_NUM_ACTIVO")
-	private String numActivo;
-	
 	@Column(name="PTDA_PRESUPUESTARIA")
 	private String ptdaPresupuestaria;
 		
@@ -191,6 +188,66 @@ public class VGastosProveedorExcel implements Serializable {
 	
 	@Column(name="PROVISION_FONDOS")
 	private String provisionFondos;
+	
+	@Column(name = "ID_LINEA")
+	private Long idLinea;
+	
+	@Column(name="CC_TASAS")
+	private String cuentaContableTasas;
+	
+	@Column(name="PP_TASAS")
+	private String ptdaPresupuestariaTasas;
+	
+	@Column(name="CC_RECARGO")
+	private String cuentaContableRecargo;
+	
+	@Column(name="PP_RECARGO")
+	private String ptdaPresupuestariaRecargo;
+	
+	@Column(name="CC_INTERESES")
+	private String cuentaContableIntereses;
+	
+	@Column(name="PP_INTERESES")
+	private String ptdaPresupuestariaIntereses;
+	
+	@Column(name="SC_BASE")
+	private String subcuentaContableBase;
+	
+	@Column(name="APDO_BASE")
+	private String apartadoBase;
+	
+	@Column(name="CAP_BASE")
+	private String capituloBase;
+	
+	@Column(name="SC_RECARGO")
+	private String subcuentaContableRecargo;
+	
+	@Column(name="APDO_RECARGO")
+	private String apartadoRecargo;
+	
+	@Column(name="CAP_RECARGO")
+	private String capituloRecargo;
+	
+	@Column(name="SC_TASA")
+	private String subcuentaContableTasa;
+	
+	@Column(name="APDO_TASA")
+	private String apartadoTasa;
+	
+	@Column(name="CAP_TASA")
+	private String capituloTasa;
+	
+	@Column(name="SC_INTERESES")
+	private String subcuentaContableIntereses;
+	
+	@Column(name="APDO_INTERESES")
+	private String apartadoIntereses;
+	
+	@Column(name="CAP_INTERESES")
+	private String capituloIntereses;
+	
+	@Column(name = "ELEMENTO")
+	private String elemento;
 	
 	@Transient
 	private boolean esGastoAgrupado; 
@@ -627,14 +684,6 @@ public class VGastosProveedorExcel implements Serializable {
 		this.idVista = idVista;
 	}
 
-	public String getNumActivo() {
-		return numActivo;
-	}
-
-	public void setNumActivo(String numActivo) {
-		this.numActivo = numActivo;
-	}
-
 	public String getMotivoRechazoProp() {
 		return motivoRechazoProp;
 	}
@@ -665,6 +714,174 @@ public class VGastosProveedorExcel implements Serializable {
 
 	public void setProvisionFondos(String provisionFondos) {
 		this.provisionFondos = provisionFondos;
+	}
+
+	public String getIdVista() {
+		return idVista;
+	}
+
+	public void setIdVista(String idVista) {
+		this.idVista = idVista;
+	}
+
+	public Long getIdLinea() {
+		return idLinea;
+	}
+
+	public void setIdLinea(Long idLinea) {
+		this.idLinea = idLinea;
+	}
+
+	public String getCuentaContableTasas() {
+		return cuentaContableTasas;
+	}
+
+	public void setCuentaContableTasas(String cuentaContableTasas) {
+		this.cuentaContableTasas = cuentaContableTasas;
+	}
+
+	public String getPtdaPresupuestariaTasas() {
+		return ptdaPresupuestariaTasas;
+	}
+
+	public void setPtdaPresupuestariaTasas(String ptdaPresupuestariaTasas) {
+		this.ptdaPresupuestariaTasas = ptdaPresupuestariaTasas;
+	}
+
+	public String getCuentaContableRecargo() {
+		return cuentaContableRecargo;
+	}
+
+	public void setCuentaContableRecargo(String cuentaContableRecargo) {
+		this.cuentaContableRecargo = cuentaContableRecargo;
+	}
+
+	public String getPtdaPresupuestariaRecargo() {
+		return ptdaPresupuestariaRecargo;
+	}
+
+	public void setPtdaPresupuestariaRecargo(String ptdaPresupuestariaRecargo) {
+		this.ptdaPresupuestariaRecargo = ptdaPresupuestariaRecargo;
+	}
+
+	public String getCuentaContableIntereses() {
+		return cuentaContableIntereses;
+	}
+
+	public void setCuentaContableIntereses(String cuentaContableIntereses) {
+		this.cuentaContableIntereses = cuentaContableIntereses;
+	}
+
+	public String getPtdaPresupuestariaIntereses() {
+		return ptdaPresupuestariaIntereses;
+	}
+
+	public void setPtdaPresupuestariaIntereses(String ptdaPresupuestariaIntereses) {
+		this.ptdaPresupuestariaIntereses = ptdaPresupuestariaIntereses;
+	}
+
+	public String getSubcuentaContableBase() {
+		return subcuentaContableBase;
+	}
+
+	public void setSubcuentaContableBase(String subcuentaContableBase) {
+		this.subcuentaContableBase = subcuentaContableBase;
+	}
+
+	public String getApartadoBase() {
+		return apartadoBase;
+	}
+
+	public void setApartadoBase(String apartadoBase) {
+		this.apartadoBase = apartadoBase;
+	}
+
+	public String getCapituloBase() {
+		return capituloBase;
+	}
+
+	public void setCapituloBase(String capituloBase) {
+		this.capituloBase = capituloBase;
+	}
+
+	public String getSubcuentaContableRecargo() {
+		return subcuentaContableRecargo;
+	}
+
+	public void setSubcuentaContableRecargo(String subcuentaContableRecargo) {
+		this.subcuentaContableRecargo = subcuentaContableRecargo;
+	}
+
+	public String getApartadoRecargo() {
+		return apartadoRecargo;
+	}
+
+	public void setApartadoRecargo(String apartadoRecargo) {
+		this.apartadoRecargo = apartadoRecargo;
+	}
+
+	public String getCapituloRecargo() {
+		return capituloRecargo;
+	}
+
+	public void setCapituloRecargo(String capituloRecargo) {
+		this.capituloRecargo = capituloRecargo;
+	}
+
+	public String getSubcuentaContableTasa() {
+		return subcuentaContableTasa;
+	}
+
+	public void setSubcuentaContableTasa(String subcuentaContableTasa) {
+		this.subcuentaContableTasa = subcuentaContableTasa;
+	}
+
+	public String getApartadoTasa() {
+		return apartadoTasa;
+	}
+
+	public void setApartadoTasa(String apartadoTasa) {
+		this.apartadoTasa = apartadoTasa;
+	}
+
+	public String getCapituloTasa() {
+		return capituloTasa;
+	}
+
+	public void setCapituloTasa(String capituloTasa) {
+		this.capituloTasa = capituloTasa;
+	}
+
+	public String getSubcuentaContableIntereses() {
+		return subcuentaContableIntereses;
+	}
+
+	public void setSubcuentaContableIntereses(String subcuentaContableIntereses) {
+		this.subcuentaContableIntereses = subcuentaContableIntereses;
+	}
+
+	public String getApartadoIntereses() {
+		return apartadoIntereses;
+	}
+
+	public void setApartadoIntereses(String apartadoIntereses) {
+		this.apartadoIntereses = apartadoIntereses;
+	}
+
+	public String getCapituloIntereses() {
+		return capituloIntereses;
+	}
+
+	public void setCapituloIntereses(String capituloIntereses) {
+		this.capituloIntereses = capituloIntereses;
+	}
+
+	public String getElemento() {
+		return elemento;
+	}
+
+	public void setElemento(String elemento) {
+		this.elemento = elemento;
 	}	
 	
 	

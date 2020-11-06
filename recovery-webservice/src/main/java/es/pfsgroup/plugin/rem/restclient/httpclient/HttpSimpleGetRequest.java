@@ -72,13 +72,11 @@ public class HttpSimpleGetRequest {
 		String inputLine;
 		StringBuilder content = new StringBuilder();
 		while((inputLine = reader.readLine()) != null) {
-			content.append(inputLine);
+			content.append(inputLine.trim());
 		}
-		ObjectMapper mapper = new ObjectMapper();
-		String respInString = mapper.writeValueAsString(content);
-		JSONObject jsonObject = JSONObject.fromObject(respInString);
-		jsonObject.accumulate("status", this.status);
-		return jsonObject;
+		JSONObject jsonObject = JSONObject.fromObject(content.toString());
+		jsonObject.accumulate("status", this.status); 
+		return jsonObject; 
 	}
 	
 	public int getStatus() { return this.status; };

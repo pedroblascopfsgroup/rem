@@ -2000,25 +2000,5 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
  	   	var isUserGestedi = $AU.userIsRol(CONST.PERFILES['GESTEDI']);
  	   	
  	   	return !isSuper && !isGestorActivos && !isGestorAlquiler && isUserGestedi; 
-    },
-    
-    getExisteTareaEndpoint: function () {
-    	var url = $AC.getRemoteUrl('tarea/getEndpointExisteTareaHaya');
-    	var endpoint = null;
-    	Ext.Ajax.request({
-			  url:     url,
-			  async:   false,
-			  method:  'GET',
-			  success: function(response, opts) {
-				  var decode = Ext.JSON.decode(response.responseText); 
-				  endpoint = decode['endpoint'];
-			  },
-			  failure: function (err) {
-				  console.error(err);
-			  }
-      	});
-    	
-    	return endpoint;
     }
-
 });

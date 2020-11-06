@@ -360,4 +360,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	void actualizaDatoCDC(CalidadDatosConfig cdc, String valor, String identificador, String username);
 
 	List<ActivoCalificacionNegativaAdicional> getListActivoCalificacionNegativaAdicionalByIdActivo(Long idActivo);
+	
+	public Activo existeActivoUsuarioCarterizado(Long numActivo, Long idCartera, List<Long> idSubcarteras);
 }

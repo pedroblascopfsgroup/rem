@@ -52,7 +52,7 @@ public class ComunicacionGencatUserAssignationService implements UserAssigantion
 		String codigoCartera = activo.getCartera().getCodigo();
 		EXTDDTipoGestor tipoGestor = null;
 		
-		if(CODIGO_T016_COMUNICAR_GENCAT.equals(codigoTarea)
+		if((CODIGO_T016_COMUNICAR_GENCAT.equals(codigoTarea) || CODIGO_T016_PROCESO_ADECUACION.equals(codigoTarea))
 				&& (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(codigoCartera)
 						|| DDCartera.CODIGO_CARTERA_BANKIA.equals(codigoCartera)
 						|| DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codigoCartera)

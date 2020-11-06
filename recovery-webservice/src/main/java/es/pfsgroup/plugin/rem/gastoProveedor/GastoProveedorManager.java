@@ -1628,7 +1628,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idGasto",gastosActivosList.get(0).getGastoLineaDetalle().getGastoProveedor().getId());
 		gastoPrinexList = genericDao.getList(GastoPrinex.class, filtro);
 		if(!Checks.estaVacio(gastoPrinexList)) {
-		GastoPrinex gastoPrinex = new GastoPrinex();
+		GastoPrinex gastoPrinex = null;
 		int contador = 0;
 		Double porcentajePrinex = 0d;
 		for (GastoLineaDetalleEntidad gastoProveedorItem : gastosActivosList) {

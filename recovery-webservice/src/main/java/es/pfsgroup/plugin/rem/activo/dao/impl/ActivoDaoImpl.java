@@ -68,6 +68,7 @@ import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoPeticionesPrecios;
 import es.pfsgroup.plugin.rem.model.HistoricoRequisitosFaseVenta;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
+import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
@@ -1885,10 +1886,30 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 	@Override
 	public Object getBusquedaActivosGrid(DtoActivoGridFilter dto, Usuario usuLogado, boolean devolverPage) {
+		List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class,genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuLogado.getId()));
+		List<String> subcarteras = new ArrayList<String>();
+		
 		HQLBuilder hb = new HQLBuilder(" select vgrid from VGridBusquedaActivos vgrid ");
 		
+		if (usuarioCartera != null && !usuarioCartera.isEmpty()) {
+			dto.setCarteraCodigo(usuarioCartera.get(0).getCartera().getCodigo());
+			
+			if (dto.getSubcarteraCodigo() == null) {
+				for (UsuarioCartera uca : usuarioCartera) {
+					if (uca.getSubCartera() != null)
+						subcarteras.add(uca.getSubCartera().getCodigo());
+				}
+			}
+		}
+		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.carteraCodigo", dto.getCarteraAvanzadaCodigo() != null ?  dto.getCarteraAvanzadaCodigo() : dto.getCarteraCodigo());		
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subcarteraCodigo", dto.getSubcarteraAvanzadaCodigo() != null ?  dto.getSubcarteraAvanzadaCodigo() : dto.getSubcarteraCodigo());		
+		
+		if (subcarteras != null && !subcarteras.isEmpty()) {
+			HQLBuilder.addFiltroWhereInSiNotNull(hb, "vgrid.subcarteraCodigo", subcarteras);
+		} else {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subcarteraCodigo", dto.getSubcarteraAvanzadaCodigo() != null ?  dto.getSubcarteraAvanzadaCodigo() : dto.getSubcarteraCodigo());
+		}
+		
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "vgrid.localidadDescripcion", dto.getLocalidadAvanzadaDescripcion() != null ?  dto.getLocalidadAvanzadaDescripcion() : dto.getLocalidadDescripcion(), true);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.provinciaCodigo", dto.getProvinciaAvanzadaCodigo() != null ?  dto.getProvinciaAvanzadaCodigo() : dto.getProvinciaCodigo());	
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numFinca", dto.getNumFincaAvanzada() != null ?  dto.getNumFincaAvanzada() : dto.getNumFinca());		
@@ -2026,5 +2047,21 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			return Long.valueOf(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult().toString());
 		}
 		return null;
+	}
+
+	@Override
+	public Activo existeActivoUsuarioCarterizado(Long numActivo, Long idCartera, List<Long> idSubcarteras) {
+		
+		HQLBuilder hql = new HQLBuilder("from Activo");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "numActivo", numActivo);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "cartera.id", idCartera);
+		HQLBuilder.addFiltroWhereInSiNotNull(hql, "subcartera.id", idSubcarteras);
+		List<Activo> activos = HibernateQueryUtils.list(this, hql);
+		
+		if (activos != null && !activos.isEmpty()) {
+			return activos.get(0);
+		} else {
+			return null;
+		}
 	}
 }

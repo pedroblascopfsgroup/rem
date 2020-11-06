@@ -956,7 +956,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			dto.setImporteProvisionesSuplidos(detalleGasto.getImporteProvisionesSuplidos());
 			
 			if(!Checks.esNulo(detalleGasto.getGastoProveedor())) {
-				GastoPrinex gastoPrinex = new GastoPrinex();
+				GastoPrinex gastoPrinex = null;
 				List<GastoPrinex> listGastoPrinex = new ArrayList<GastoPrinex>();
 				Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "idGasto",gasto.getId());
 				Order order = new Order(OrderType.ASC, "id");
@@ -1662,7 +1662,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idGasto",gastosActivosList.get(0).getGastoProveedor().getId());
 		gastoPrinexList = genericDao.getList(GastoPrinex.class, filtro);
 		if(!Checks.estaVacio(gastoPrinexList)) {
-		GastoPrinex gastoPrinex = new GastoPrinex();
+		GastoPrinex gastoPrinex = null;
 		int contador = 0;
 		Float porcentajePrinex = 0f;
 		for (GastoProveedorActivo gastoProveedorItem : gastosActivosList) {

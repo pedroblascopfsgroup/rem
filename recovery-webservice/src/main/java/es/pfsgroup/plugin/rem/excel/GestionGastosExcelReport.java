@@ -25,11 +25,31 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 	private static final String CAB_NOMBRE_GESTORIA = "Nombre Gestoría";
 	private static final String CAB_CARTERA = "Cartera";
 	private static final String CAB_SUBCARTERA = "Subcartera";
-	private static final String CAB_NUM_ACTIVO = "Nº Activo";
+	private static final String CAB_ELEMENTO = "Número del activo/genérico/promoción";
 	private static final String CAB_MOTIVO_RECHAZO_PROP = "Motivo Rechazo Prop.";
 	private static final String CAB_PTDA_PRESUPUESTARIA = "Partida Presupuestaria";
 	private static final String CAB_CONCEPTO_CONTABLE = "Concepto Contable";
 	private static final String CAB_PROVISION_FONDOS = "Provisión fondos";
+	private static final String CAB_ID_LINEA = "Línea detalle";
+	private static final String CAB_CC_TASAS = "Cuenta Contable Tasas";
+	private static final String CAB_PP_TASAS = "Partida Presupuestaria Tasas";
+	private static final String CAB_CC_RECARGO = "Cuenta Contable Recargo";
+	private static final String CAB_PP_RECARGO = "Partida Presupuestaria Recargo";
+	private static final String CAB_CC_INTERESES = "Cuenta Contable Intereses";
+	private static final String CAB_PP_INTERESES = "Partida Presupuestaria Intereses";
+	private static final String CAB_SC_BASE = "Subcuenta Contable Base";
+	private static final String CAB_APDO_BASE = "Apartado Base";
+	private static final String CAB_CAP_BASE = "Capítulo Base";
+	private static final String CAB_SC_RECARGO = "Subcuenta Contable Recargo";
+	private static final String CAB_APDO_RECARGO = "Apartado Recargo";
+	private static final String CAB_CAP_RECARGO = "Capítulo Recargo";
+	private static final String CAB_SC_TASA = "Subcuenta Contable Tasa";
+	private static final String CAB_APDO_TASA = "Apartado Recargo Tasa";
+	private static final String CAB_CAP_TASA = "Capítulo Recargo Tasa";
+	private static final String CAB_SC_INTERESES = "Subcuenta Contable Intereses";
+	private static final String CAB_APDO_INTERESES = "Apartado Recargo Intereses";
+	private static final String CAB_CAP_INTERESES = "Capítulo Recargo Intereses";
+	
 	
 	private List<VGastosProveedorExcel> listaGastosProveedor;
 
@@ -41,7 +61,7 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 
 		List<String> listaCabeceras = new ArrayList<String>();
 		listaCabeceras.add(CAB_NUM_GASTO);
-		listaCabeceras.add(CAB_NUM_ACTIVO);
+		listaCabeceras.add(CAB_ELEMENTO);
 		listaCabeceras.add(CAB_NUM_FACTURA_LUQUIDACION);
 		listaCabeceras.add(CAB_TIPO);
 		listaCabeceras.add(CAB_SUBTIPO);
@@ -63,6 +83,25 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 		listaCabeceras.add(CAB_PTDA_PRESUPUESTARIA);
 		listaCabeceras.add(CAB_CONCEPTO_CONTABLE);
 		listaCabeceras.add(CAB_PROVISION_FONDOS);
+		listaCabeceras.add(CAB_ID_LINEA);
+		listaCabeceras.add(CAB_CC_TASAS);
+		listaCabeceras.add(CAB_PP_TASAS);
+		listaCabeceras.add(CAB_CC_RECARGO);
+		listaCabeceras.add(CAB_PP_RECARGO);
+		listaCabeceras.add(CAB_CC_INTERESES);
+		listaCabeceras.add(CAB_PP_INTERESES);
+		listaCabeceras.add(CAB_SC_BASE);
+		listaCabeceras.add(CAB_APDO_BASE);
+		listaCabeceras.add(CAB_CAP_BASE);
+		listaCabeceras.add(CAB_SC_RECARGO);
+		listaCabeceras.add(CAB_APDO_RECARGO);
+		listaCabeceras.add(CAB_CAP_RECARGO);
+		listaCabeceras.add(CAB_SC_TASA);
+		listaCabeceras.add(CAB_APDO_TASA);
+		listaCabeceras.add(CAB_CAP_TASA);
+		listaCabeceras.add(CAB_SC_INTERESES);
+		listaCabeceras.add(CAB_APDO_INTERESES);
+		listaCabeceras.add(CAB_CAP_INTERESES);
 		
 		return listaCabeceras;
 	}
@@ -74,7 +113,7 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 		for (VGastosProveedorExcel gastoProveedor : listaGastosProveedor) {
 			List<String> fila = new ArrayList<String>();
 			fila.add(String.valueOf(gastoProveedor.getNumGastoHaya()));
-			fila.add(gastoProveedor.getNumActivo());
+			fila.add(gastoProveedor.getElemento());
 			fila.add(gastoProveedor.getNumFactura());
 			fila.add(gastoProveedor.getTipoDescripcion());
 			fila.add(gastoProveedor.getSubtipoDescripcion());
@@ -96,6 +135,25 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 			fila.add(gastoProveedor.getPtdaPresupuestaria());
 			fila.add(gastoProveedor.getConceptoContable());
 			fila.add(gastoProveedor.getProvisionFondos());
+			fila.add(String.valueOf(gastoProveedor.getIdLinea()));
+			fila.add(gastoProveedor.getCuentaContableTasas());
+			fila.add(gastoProveedor.getPtdaPresupuestariaTasas());
+			fila.add(gastoProveedor.getCuentaContableRecargo());
+			fila.add(gastoProveedor.getPtdaPresupuestariaRecargo());
+			fila.add(gastoProveedor.getCuentaContableIntereses());
+			fila.add(gastoProveedor.getPtdaPresupuestariaIntereses());
+			fila.add(gastoProveedor.getSubcuentaContableBase());
+			fila.add(gastoProveedor.getApartadoBase());
+			fila.add(gastoProveedor.getCapituloBase());
+			fila.add(gastoProveedor.getSubcuentaContableRecargo());
+			fila.add(gastoProveedor.getApartadoRecargo());
+			fila.add(gastoProveedor.getCapituloRecargo());
+			fila.add(gastoProveedor.getSubcuentaContableTasa());
+			fila.add(gastoProveedor.getApartadoTasa());
+			fila.add(gastoProveedor.getCapituloTasa());
+			fila.add(gastoProveedor.getSubcuentaContableIntereses());
+			fila.add(gastoProveedor.getApartadoIntereses());
+			fila.add(gastoProveedor.getCapituloIntereses());
 
 			valores.add(fila);
 		}

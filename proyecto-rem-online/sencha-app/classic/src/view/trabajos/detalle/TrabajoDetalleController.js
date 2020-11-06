@@ -497,7 +497,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 						  if ( "DEV" === decode['response']){
 							  isDev = true;
 						  } else {
-							  existeTarea = 'true' == decode['response'];
+							  response = decode['response']
+							  existeTarea = 'true' == response['tareaExistente'];
 						  }
 						  
 					  },

@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;

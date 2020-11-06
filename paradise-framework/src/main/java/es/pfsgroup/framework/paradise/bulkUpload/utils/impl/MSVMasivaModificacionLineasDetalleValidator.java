@@ -96,6 +96,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	public static final String CHECK_VALOR_SI = "SI";
 	public static final String VALOR_ACTIVO = "ACT";
 	public static final String VALOR_AGRUPACION = "AGR";
+	public static final String ACTIVO_GENERICO = "GEN";
 	private static final String[] listaValidos = { "S", "N", "SI", "NO" };
 	private static final String[] listaCampoAccion = { "AÑADIR", "BORRAR", "A", "B" };
 	private static final String[] listaCampoAccionBorrar = { "BORRAR", "B", "Borrar", "b", "borrar" };
@@ -732,9 +733,10 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
             try{
                 for(int i=1; i<this.numFilasHoja;i++){
                     try {
-                    	if(!Checks.esNulo(exc.dameCelda(i,COL_TIPO_ELEMENTO)) && VALOR_ACTIVO.equalsIgnoreCase(exc.dameCelda(i,COL_TIPO_ELEMENTO))
+                    	if(!Checks.esNulo(exc.dameCelda(i,COL_TIPO_ELEMENTO)) 
+                    		&& (VALOR_ACTIVO.equalsIgnoreCase(exc.dameCelda(i,COL_TIPO_ELEMENTO)) || ACTIVO_GENERICO.equalsIgnoreCase(exc.dameCelda(i,COL_TIPO_ELEMENTO)))
                     		&& !Checks.esNulo(exc.dameCelda(i, COL_ID_ELEMENTO))) {
-                			if(Boolean.FALSE.equals(particularValidator.esGastoYActivoMismoPropietarioByNumGasto(exc.dameCelda(i, COL_ID_ELEMENTO), exc.dameCelda(i, COL_ID_GASTO)))){
+                			if(Boolean.FALSE.equals(particularValidator.esGastoYActivoMismoPropietarioByNumGasto(exc.dameCelda(i, COL_ID_ELEMENTO), exc.dameCelda(i, COL_ID_GASTO), exc.dameCelda(i, COL_TIPO_ELEMENTO)))){
                 				listaFilas.add(i);
                 			}	
 	                    }

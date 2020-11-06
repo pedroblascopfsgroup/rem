@@ -184,7 +184,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		try{
 			Usuario usuario = adapter.getUsuarioLogado();
 			Filter filtroUca = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
-			UsuarioCartera uca = genericDao.get(UsuarioCartera.class, filtroUca);
+			List<UsuarioCartera> uca = genericDao.getList(UsuarioCartera.class, filtroUca);
 
 			Filter filtroGru = genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId());
 			List<GrupoUsuario> gruUsu = genericDao.getList(GrupoUsuario.class, filtroGru);
@@ -230,8 +230,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 			authData.setEsGestorSustituto(esGestorSustituto(usuario));
 
-			if(!Checks.esNulo(uca)){
-				authData.setCodigoCartera(uca.getCartera().getCodigo());
+			if (uca != null && !uca.isEmpty()) {
+				authData.setCodigoCartera(uca.get(0).getCartera().getCodigo());
 			}
 
 			authData.setJwt(createJwtForTheSession(usuario.getUsername(), roles));

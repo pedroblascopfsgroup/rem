@@ -360,5 +360,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	Long getComunidadAutonomaId(Activo activo);
 
 	List<ActivoCalificacionNegativaAdicional> getListActivoCalificacionNegativaAdicionalByIdActivo(Long idActivo);
-
+	
+	public Activo existeActivoUsuarioCarterizado(Long numActivo, Long idCartera, List<Long> idSubcarteras);
 }

@@ -56,6 +56,8 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.HQLBuilder;
+import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
@@ -5259,54 +5261,47 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	public Long getActivoExists(Long numActivo) {
-
-		String idActivo = null;
-		String idCartera = null;
 		Boolean esGestoria = false;
 		Boolean esGestoriaDelActivo = false;
 		
 		try {
 			Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 			DDIdentificacionGestoria ige = gestorActivoManager.isGestoria(usuarioLogado);
+			List<UsuarioCartera> usuarioCartera = genericDao.getList(UsuarioCartera.class,genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+			List<Long> subcarteras = new ArrayList<Long>();
+			Activo activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo));
 			esGestoria = !Checks.esNulo(ige);
-			Filter numActivoFilter = genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo);
-			Activo activo = genericDao.get(Activo.class, numActivoFilter);
 			
-			if (esGestoria) {
-				esGestoriaDelActivo = Long.parseLong(rawDao.getExecuteSQL("SELECT COUNT(*) "
-						 + "FROM V_BUSQUEDA_ACTIVOS_GESTORIAS "
-						 + "WHERE DD_IGE_ID = "+ige.getId()+ " AND ACT_ID = "+activo.getId())) >= 1;
-						 
-				if (esGestoriaDelActivo) {
-					idCartera = rawDao.getExecuteSQL(
-							"SELECT DD_CRA_ID FROM UCA_USUARIO_CARTERA WHERE USU_ID = " + genericAdapter.getUsuarioLogado().getId());
-					
-					if(!Checks.esNulo(idCartera)) {
-						idActivo = rawDao.getExecuteSQL(
-								"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND DD_CRA_ID = " + idCartera + " AND BORRADO = 0");
-					} else {
-						idActivo = rawDao.getExecuteSQL(
-								"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND BORRADO = 0");
+			if (activo != null) {
+				for (UsuarioCartera uca : usuarioCartera) {
+					if (uca.getSubCartera() != null) {
+						subcarteras.add(uca.getSubCartera().getId());
 					}
+				}
+				
+				if (esGestoria) {
+					esGestoriaDelActivo = Long.parseLong(rawDao.getExecuteSQL("SELECT COUNT(*) "
+							 + "FROM V_BUSQUEDA_ACTIVOS_GESTORIAS "
+							 + "WHERE DD_IGE_ID = "+ige.getId()+ " AND ACT_ID = "+activo.getId())) >= 1;
+							 
+					if (!esGestoriaDelActivo) {
+						return null;
+					}
+				}
 					
-					return Long.parseLong(idActivo);
+				if(usuarioCartera != null && !usuarioCartera.isEmpty()) {
+					activo = activoDao.existeActivoUsuarioCarterizado(numActivo, usuarioCartera.get(0).getCartera().getId(), subcarteras);
+					if (activo != null) {
+						return activo.getId();
+					} else {
+						return null;
+					}
 				} else {
-					return null;
+					return activo.getId();
 				}
 			} else {
-				idCartera = rawDao.getExecuteSQL(
-						"SELECT DD_CRA_ID FROM UCA_USUARIO_CARTERA WHERE USU_ID = " + genericAdapter.getUsuarioLogado().getId());
-				
-				if(!Checks.esNulo(idCartera)) {
-					idActivo = rawDao.getExecuteSQL(
-							"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND DD_CRA_ID = " + idCartera + " AND BORRADO = 0");
-				} else {
-					idActivo = rawDao.getExecuteSQL(
-							"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND BORRADO = 0");
-				}
-				
-				return Long.parseLong(idActivo);
-			}
+				return null;
+			}			
 		} catch (Exception e) {
 			return null;
 		}

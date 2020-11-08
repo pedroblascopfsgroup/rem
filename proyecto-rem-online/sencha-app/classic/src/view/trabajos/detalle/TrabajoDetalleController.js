@@ -497,7 +497,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 						  if ( "DEV" === decode['response']){
 							  isDev = true;
 						  } else {
-							  existeTarea = 'true' == decode['response'];
+							  response = decode['response']
+							  existeTarea = 'true' == response['tareaExistente'];
 						  }
 						  
 					  },
@@ -2026,25 +2027,5 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
  	   	var isUserGestedi = $AU.userIsRol(CONST.PERFILES['GESTEDI']);
  	   	
  	   	return !isSuper && !isGestorActivos && !isGestorAlquiler && isUserGestedi; 
-    },
-    
-    getExisteTareaEndpoint: function () {
-    	var url = $AC.getRemoteUrl('tarea/getEndpointExisteTareaHaya');
-    	var endpoint = null;
-    	Ext.Ajax.request({
-			  url:     url,
-			  async:   false,
-			  method:  'GET',
-			  success: function(response, opts) {
-				  var decode = Ext.JSON.decode(response.responseText); 
-				  endpoint = decode['endpoint'];
-			  },
-			  failure: function (err) {
-				  console.error(err);
-			  }
-      	});
-    	
-    	return endpoint;
     }
-
 });

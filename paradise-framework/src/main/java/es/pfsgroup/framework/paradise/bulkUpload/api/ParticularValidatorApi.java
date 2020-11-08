@@ -1236,7 +1236,7 @@ public interface ParticularValidatorApi {
 
 	Boolean esGastoYAgrupacionMismoPropietarioByNumGasto(String numAgrupacion, String numGasto);
 
-	Boolean esGastoYActivoMismoPropietarioByNumGasto(String numActivo, String numGastoHaya, String tipoElemento);
+	Boolean esGastoYActivoMismoPropietarioByNumGasto(String numElemento, String numGastoHaya, String tipoElemento);
 
 	Boolean existeEntidadGasto(String entidad);
 

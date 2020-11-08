@@ -90,6 +90,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 	private static final String CODIGO_CARTERA_THIRD_PARTY = "11";
 	private static final Integer RESERVA_SI = 1;
 	public static final String CODIGO_CARTERA_BANKIA = "03";
+	public static final String CODIGO_CARTERA_LIBERBANK = "08";
 	
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -146,7 +147,19 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 					gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);																	
 					
 				}
-				
+				if(expediente.getCondicionante().getSolicitaReserva()!=null 
+						&& RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null 
+						&& CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())) {															
+					EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
+					
+					if (tipoGestorComercial != null && DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) {
+						ge.setIdEntidad(expediente.getId());
+						ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
+						ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gruboarding")).getId());	
+						ge.setIdTipoGestor(tipoGestorComercial.getId());
+						gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);
+					}
+				}
 				// Una vez aprobado el expediente, se congelan el resto de
 				// ofertas que no estén rechazadas (aceptadas y pendientes)
 				List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());

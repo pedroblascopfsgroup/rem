@@ -378,8 +378,10 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 			if((exc.getNumeroFilas() -1 ) ==  fila) {
 				if(nuevasLineasList != null && !nuevasLineasList.isEmpty()) {
 					for (GastoLineaDetalle gastoLineaDetalle : nuevasLineasList) {
-						String subtipoGastoCodigo = gastoLineaDetalle.getSubtipoGasto().getCodigo();
-						DtoLineaDetalleGasto dtoLinea = gastoLineaDetalleApi.calcularCuentasYPartidas(gastoLineaDetalle.getGastoProveedor(), gastoLineaDetalle.getId(), subtipoGastoCodigo);	
+						String subtipoGastoCodigo = gastoLineaDetalle.getSubtipoGasto().getCodigo(); 
+						Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "id", gastoLineaDetalle.getGastoProveedor().getId());
+						GastoProveedor gastoProveedor = genericDao.get(GastoProveedor.class, filtroGasto);
+						DtoLineaDetalleGasto dtoLinea = gastoLineaDetalleApi.calcularCuentasYPartidas(gastoProveedor, gastoLineaDetalle.getId(), subtipoGastoCodigo);	
 						gastoLineaDetalle = gastoLineaDetalleApi.setCuentasPartidasDtoToObject( gastoLineaDetalle, dtoLinea);
 						GastoLineaDetalle updateLinea = HibernateUtils.merge(gastoLineaDetalle);
 						genericDao.update(GastoLineaDetalle.class, updateLinea);

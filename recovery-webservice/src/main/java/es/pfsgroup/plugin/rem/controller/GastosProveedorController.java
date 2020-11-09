@@ -1517,5 +1517,22 @@ public class GastosProveedorController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveCuentasPartidasGastoLineaDetalle(HttpServletRequest request, DtoLineaDetalleGasto dtoLineaDetalleGasto) {
+		
+		
+		ModelMap model = new ModelMap();
+		try {
+			model.put("success", gastoLineaDetalleApi.updateCuentasPartidas(dtoLineaDetalleGasto));
+			
+		}catch (Exception e) {
+			logger.error("error en GastosProveedorController", e);
+			model.put("success", false);
+			model.put("errorMessage", "Error al crear/modificar LíneaDetalleGasto.");
+		}
+		
+		return createModelAndViewJson(model);
+	}
 	
 }

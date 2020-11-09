@@ -44,9 +44,6 @@ public interface GastoLineaDetalleApi {
 
 	void recalcularPorcentajeParticipacion(GastoProveedor gasto);
 
-	List<String> crearLineasRefacturadasAGastosExistentes(Long idGastoPadre, GastoLineaDetalle lineaGastoDetalle, List<String> lineasDetallePadreListString, boolean esSareb)
-			throws IllegalAccessException, InvocationTargetException;
-
 	void eliminarLineasRefacturadas(Long gastoPadre);
 
 	List<DtoComboLineasDetalle> getLineasDetalleGastoCombo(Long idGasto);
@@ -80,6 +77,8 @@ public interface GastoLineaDetalleApi {
 	DDSubcartera getSubcarteraLinea(List<Activo> activos);
 
 	GastoLineaDetalle setCuentasPartidasDtoToObject(GastoLineaDetalle gastoLineaDetalle, DtoLineaDetalleGasto dto);
+
+	boolean updateCuentasPartidas(DtoLineaDetalleGasto dto);
 	
 }
 

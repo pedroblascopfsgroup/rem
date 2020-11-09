@@ -246,6 +246,10 @@ public class MSVExcelValidatorFactoryImpl {
 	@Autowired
 	private MSVValidatorTarifasPresupuestos validatorTarifasPresupuesto;
 
+	@Autowired
+	private MSVValidatorCargaCamposAccesibilidad cargaCamposAccesibilidad;
+	
+
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 
 		if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPATION_RESTRICTED.equals(codTipoOperacion)) {
@@ -406,6 +410,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return validatorTarifasPresupuesto;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_SANCIONES_BBVA.equals(codTipoOperacion)) {
 			return sancionesBBVA;
+		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_CAMPOS_ACCESIBILIDAD.equals(codTipoOperacion)) {
+			return cargaCamposAccesibilidad;
 		}
 
 		return null;

@@ -472,18 +472,9 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				filtrarRefacturar = 1;
 			}
 			
-			Long idPropietario;
-			DDCartera cartera;
-			//Filter filtroPropietario2 = genericDao.createFilter(FilterType.EQUALS, "propietario", gasto.getPropietario());
-			//ActivoPropietario propietario = genericDao.get(ActivoPropietario.class,filtroPropietario2);
-			try {
-				idPropietario = gasto.getPropietario().getId();
-				cartera = gasto.getCartera();
-			}catch (LazyInitializationException e){
-				idPropietario = gastoDao.getIdProveedorByGasto(gasto);
-				Long idCartera = gastoDao.getIdCarteraByGasto(gasto);
-				cartera = genericDao.get(DDCartera.class, genericDao.createFilter(FilterType.EQUALS, "id", idCartera));
-			}
+			Long idPropietario = gasto.getPropietario().getId();
+			DDCartera cartera = gasto.getCartera();
+	
 			if(idPropietario == null ) {
 				return null;
 			}

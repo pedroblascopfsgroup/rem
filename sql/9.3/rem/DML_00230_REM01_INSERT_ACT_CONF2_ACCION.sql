@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=202001007
+--## FECHA_CREACION=20201109
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-11215
+--## INCIDENCIA_LINK=HREOS-11966
 --## PRODUCTO=NO
 --##
 --## Finalidad: Actualizar instrucciones

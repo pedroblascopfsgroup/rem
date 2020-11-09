@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Joaquin Arnal 
---## FECHA_CREACION=20200722
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20201109
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-11246
+--## INCIDENCIA_LINK=HREOS-11966
 --## PRODUCTO=NO
 --##
 --## Finalidad: Actualizar instrucciones
@@ -14,6 +14,7 @@
 --## 	    0.2 Joaquin Arnal - HREOS-10499 - Añadimos Campos QUERY_ACT
 --## 	    0.3 Joaquin Arnal - HREOS-11246 - Cambios en los alcances de los condicionados
 --##        0.4 Joaquin Arnal - HREOS-11233 - Añadimos seis condiciones
+--##        0.5 Daniel Algaba - HREOS-11966 - Corrección de consulta de Tapiado
 --##########################################
 --*/
 
@@ -34,22 +35,22 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 	  V_ID NUMBER(16); -- Vble. auxiliar para almacenar temporalmente el numero de la sequencia.
 	  V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_CND_CONDICIONES_CONV_SAREB'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_ITEM VARCHAR2(2400 CHAR) := 'HREOS-10499';
+    V_ITEM VARCHAR2(2400 CHAR) := 'HREOS-11966';
 
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(32000 CHAR);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-      T_TIPO_DATA('OFR_VUE', 'Si hay ofertas en vuelo', 'Si hay ofertas en vuelo'
+      T_TIPO_DATA('OFR_VUE', 'Hay ofertas en vuelo', 'Hay ofertas en vuelo'
             ,''
             ,'SELECT distinct ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT JOIN '||V_ESQUEMA||'.TMP_CONV_SAREB TMP ON TMP.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO WHERE EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR JOIN '||V_ESQUEMA||'.ACT_OFR ACTO ON OFR.OFR_ID = ACTO.OFR_ID JOIN '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID AND EOF.BORRADO = 0 WHERE OFR.BORRADO = 0 AND EOF.DD_EOF_CODIGO = ''''01'''' AND ACTO.ACT_ID = ACT.ACT_ID)'
             ,'0')
             
-      ,T_TIPO_DATA('OFR_NVU', 'Sino hay ofertas en vuelo', 'Sino hay ofertas en vuelo'
+      ,T_TIPO_DATA('OFR_NVU', 'No hay ofertas en vuelo', 'No hay ofertas en vuelo'
             ,''
             ,'SELECT distinct ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT JOIN '||V_ESQUEMA||'.tmp_conv_sareb   tmp ON tmp.act_num_activo = act.act_num_activo minus SELECT distinct ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT JOIN '||V_ESQUEMA||'.TMP_CONV_SAREB TMP ON TMP.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO WHERE EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR JOIN '||V_ESQUEMA||'.ACT_OFR ACTO ON OFR.OFR_ID = ACTO.OFR_ID JOIN '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID AND EOF.BORRADO = 0 WHERE OFR.BORRADO = 0 AND EOF.DD_EOF_CODIGO = ''''01'''' AND ACTO.ACT_ID = ACT.ACT_ID)'
             ,'0')
             
-      , T_TIPO_DATA('MOD_REM', 'PENDIENTE - Primera modificado en REM, deja de actualizarse', 'Si se han modificado los datos en REM, deja de actualizarse este campo con la información del Data Tape y permanece la de REM'
+      , T_TIPO_DATA('MOD_REM', 'Primera vez modificado en REM, deja de actualizarse', 'Si se han modificado los datos en REM, deja de actualizarse este campo con la información del Data Tape y permanece la de REM'
             ,''
             ,''
             ,'0')
@@ -62,7 +63,7 @@ DECLARE
             ,''
             ,'1')
             
-      , T_TIPO_DATA('ELI_VAL', 'Si se elimina el valor (vacía el campo)', 'Si se elimina el valor (vacía el campo)'
+      , T_TIPO_DATA('ELI_VAL', 'Se elimina el valor (vacía el campo)', 'Se elimina el valor (vacía el campo)'
             ,'AND TMP.VALOR_NUEVO is null'
             ,''
             ,'0')
@@ -74,60 +75,60 @@ DECLARE
             ,''
             ,'SELECT distinct ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT JOIN '||V_ESQUEMA||'.TMP_CONV_SAREB TMP ON TMP.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO AND TMP.ORIGEN = ''''019'''' AND TMP.VALOR_NUEVO in (''''Adjudicación judicial'''',''''Colateral (PDV)'''',''''Colateral – Liquidación de colaterales'''') JOIN '||V_ESQUEMA||'.DD_TTA_TIPO_TITULO_ACTIVO TTA ON TTA.DD_TTA_ID = ACT.DD_TTA_ID AND DD_TTA_CODIGO = ''''02'''''
             ,'0')
-      , T_TIPO_DATA('NUE_CAR', 'Si aparecen cargas en un activo que no tenía cargas', 'Bloque datos cargas: Si aparecen cargas en un activo que no tenía cargas'
+      , T_TIPO_DATA('NUE_CAR', 'Aparecen cargas en un activo que no tenía cargas', 'Bloque datos cargas: Si aparecen cargas en un activo que no tenía cargas'
             ,''
             ,'SELECT distinct ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT JOIN '||V_ESQUEMA||'.TMP_CONV_SAREB TMP ON TMP.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO AND TMP.ORIGEN = ''''029'''' AND TMP.VALOR_NUEVO = ''''1'''' WHERE ACT.BORRADO = 0 AND NOT EXISTS (SELECT 1 FROM ACT_CRG_CARGAS CRG WHERE CRG.BORRADO = 0 AND CRG.CRG_FECHA_CANCEL_REGISTRAL is null AND CRG.ACT_ID = ACT.ACT_ID)'
             ,'0')
-      , T_TIPO_DATA('OFR_VUE_CAR', 'Si teniendo ofertas en vuelo, aparecen o desaparecen cargas', 'Bloque datos cargas: Si teniendo ofertas en vuelo, aparecen o desaparecen cargas'
+      , T_TIPO_DATA('OFR_VUE_CAR', 'Tiene ofertas en vuelo y aparecen o desaparecen cargas', 'Bloque datos cargas: tiene ofertas en vuelo, aparecen o desaparecen cargas'
             ,''
             ,'SELECT ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT JOIN '||V_ESQUEMA||'.TMP_CONV_SAREB TMP ON TMP.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO WHERE EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR JOIN '||V_ESQUEMA||'.ACT_OFR ACTO ON OFR.OFR_ID = ACTO.OFR_ID JOIN '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID AND EOF.BORRADO = 0 AND EOF.DD_EOF_CODIGO = ''''01'''' WHERE OFR.BORRADO = 0 AND ACTO.ACT_ID = ACT.ACT_ID AND EXISTS (SELECT 1 from ACT_CRG_CARGAS CRG WHERE CRG.ACT_ID = ACT.ACT_ID AND CRG.FECHACREAR > OFR.OFR_FECHA_ALTA AND CRG.CRG_FECHA_CANCEL_REGISTRAL > OFR.OFR_FECHA_ALTA AND CRG.BORRADO = 0))'
             ,'0')
-      , T_TIPO_DATA('CEE_OBT', 'Si el activo no tiene estado de la etiqueta de efi. energética y se recibe una S', 'Si el activo no tiene estado de la etiqueta de eficiencia energética y se recibe una S desde Sareb'
+      , T_TIPO_DATA('CEE_OBT', 'El activo no tiene estado de la etiqueta de efi. energética y se recibe una S', 'El activo no tiene estado de la etiqueta de eficiencia energética y se recibe una S desde Sareb'
             ,''
             ,'SELECT distinct ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT JOIN '||V_ESQUEMA||'.TMP_CONV_SAREB TMP ON TMP.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO AND TMP.ORIGEN = ''''083'''' AND TMP.VALOR_NUEVO = ''''1'''' WHERE  ACT.BORRADO = 0 AND NOT EXISTS (SELECT ACT2.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT2 JOIN '||V_ESQUEMA||'.ACT_ADO_ADMISION_DOCUMENTO ADO ON ADO.ACT_ID = ACT2.ACT_ID AND ADO.BORRADO = 0 JOIN '||V_ESQUEMA||'.DD_EDC_ESTADO_DOCUMENTO EDC ON EDC.DD_EDC_ID = ADO.DD_EDC_ID AND EDC.DD_EDC_CODIGO != ''''01'''' JOIN '||V_ESQUEMA||'.ACT_CFD_CONFIG_DOCUMENTO CFD ON CFD.CFD_ID = ADO.CFD_ID AND CFD.BORRADO = 0 JOIN '||V_ESQUEMA||'.DD_TPD_TIPO_DOCUMENTO TPD ON TPD.DD_TPD_ID = CFD.DD_TPD_ID AND TPD.BORRADO = 0 AND DD_TPD_CODIGO = ''''25'''' WHERE ACT2.ACT_ID = ACT.ACT_ID)'
             ,'0')
-      , T_TIPO_DATA('CEE_NOB', 'Si el activo tiene estado de la etiqueta de efi. energética y se recibe una N', 'Si el activo tiene estado de la etiqueta de eficiencia energética y se recibe una N desde Sareb'
+      , T_TIPO_DATA('CEE_NOB', 'El activo tiene estado de la etiqueta de efi. energética y se recibe una N', 'El activo tiene estado de la etiqueta de eficiencia energética y se recibe una N desde Sareb'
             ,''
             ,'SELECT distinct ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT JOIN '||V_ESQUEMA||'.TMP_CONV_SAREB TMP ON TMP.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO AND TMP.ORIGEN = ''''083'''' AND TMP.VALOR_NUEVO = ''''0'''' WHERE ACT.BORRADO = 0 AND EXISTS (SELECT ACT2.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT2 JOIN '||V_ESQUEMA||'.ACT_ADO_ADMISION_DOCUMENTO ADO ON ADO.ACT_ID = ACT2.ACT_ID AND ADO.BORRADO = 0 JOIN '||V_ESQUEMA||'.DD_EDC_ESTADO_DOCUMENTO EDC ON EDC.DD_EDC_ID = ADO.DD_EDC_ID AND EDC.DD_EDC_CODIGO = ''''01'''' JOIN '||V_ESQUEMA||'.ACT_CFD_CONFIG_DOCUMENTO CFD ON CFD.CFD_ID = ADO.CFD_ID AND CFD.BORRADO = 0 JOIN '||V_ESQUEMA||'.DD_TPD_TIPO_DOCUMENTO TPD ON TPD.DD_TPD_ID = CFD.DD_TPD_ID AND TPD.BORRADO = 0 AND DD_TPD_CODIGO = ''''25'''' WHERE ACT2.ACT_ID = ACT.ACT_ID)'
             ,'0')
-      , T_TIPO_DATA('ALQ_DIV', 'Si se recibe alquilado y no está alquilado o viceversa', 'Si se recibe alquilado y en REM no está alquilado o viceversa'
+      , T_TIPO_DATA('ALQ_DIV', 'Se recibe alquilado y no está alquilado o viceversa', 'Se recibe alquilado y en REM no está alquilado o viceversa'
             ,''
             ,'SELECT distinct ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT JOIN '||V_ESQUEMA||'.TMP_CONV_SAREB TMP ON TMP.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO AND TMP.ORIGEN = ''''007'''' AND TMP.VALOR_NUEVO = ''''1'''' JOIN '||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL SCM ON SCM.DD_SCM_ID = ACT.DD_SCM_ID AND SCM.DD_SCM_CODIGO != ''''10'''' JOIN '||V_ESQUEMA||'.TMP_CONV_SAREB TMP ON TMP.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO UNION SELECT ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT JOIN '||V_ESQUEMA||'.TMP_CONV_SAREB TMP ON TMP.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO AND TMP.ORIGEN = ''''007'''' AND TMP.VALOR_NUEVO != ''''1'''' JOIN '||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL SCM ON SCM.DD_SCM_ID = ACT.DD_SCM_ID AND SCM.DD_SCM_CODIGO = ''''10'''' JOIN '||V_ESQUEMA||'.TMP_CONV_SAREB TMP ON TMP.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO'
             ,'0')
-      , T_TIPO_DATA('RES_DIV', 'Si se recibe reservado y el estado anterior a dicho estado, o viceversa', 'Si se recibe reservado y el estado en REM es anterior a dicho estado, o viceversa'
+      , T_TIPO_DATA('RES_DIV', 'Se recibe reservado y el estado anterior a dicho estado, o viceversa', 'Se recibe reservado y el estado en REM es anterior a dicho estado, o viceversa'
             ,''
             ,'SELECT distinct ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT JOIN '||V_ESQUEMA||'.TMP_CONV_SAREB TMP ON TMP.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO JOIN '||V_ESQUEMA||'.ACT_OFR AO ON AO.ACT_ID = ACT.ACT_ID JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_ID = AO.OFR_ID and OFR.BORRADO = 0 JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID and ECO.BORRADO = 0 WHERE ACT.BORRADO = 0'
             ,'0')
-      , T_TIPO_DATA('INT_MOD', 'Si se modifica el valor existente en REM', 'Si se modifica el valor existente en REM'
+      , T_TIPO_DATA('INT_MOD', 'Se modifica el valor existente en REM', 'Se modifica el valor existente en REM'
             ,''
             ,''
             ,'0')            
             
-        , T_TIPO_DATA('MOD_EFA', 'Si se modifica el valor existente en REM para estado físico del activo', 'Si se modifica el valor existente en REM para estado físico del activo'
+        , T_TIPO_DATA('MOD_EFA', 'Se modifica el valor existente en REM para estado físico del activo', 'Se modifica el valor existente en REM para estado físico del activo'
             ,''
             ,'SELECT distinct ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT JOIN '||V_ESQUEMA||'.TMP_CONV_SAREB TMP ON TMP.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO AND TMP.ORIGEN = ''''011'''' JOIN '||V_ESQUEMA||'.dd_eac_estado_activo eac ON eac.DD_eac_ID = ACT.DD_eac_ID WHERE TMP.VALOR_NUEVO != eac.DD_eac_ID'
             ,'0')   
-        , T_TIPO_DATA('MOD_FIN', 'Si se modifica el valor existente en REM para la fecha de inscripción', 'Si se modifica el valor existente en REM para la fecha de inscripción'
+        , T_TIPO_DATA('MOD_FIN', 'Se modifica el valor existente en REM para la fecha de inscripción', 'Se modifica el valor existente en REM para la fecha de inscripción'
             ,''
             ,'SELECT distinct ACT.ACT_ID 
                 FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT JOIN '||V_ESQUEMA||'.TMP_CONV_SAREB TMP ON TMP.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO AND TMP.ORIGEN = ''''018'''' minus SELECT distinct ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT JOIN '||V_ESQUEMA||'.TMP_CONV_SAREB TMP ON TMP.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO AND TMP.ORIGEN = ''''018'''' JOIN '||V_ESQUEMA||'.ACT_TIT_TITULO TIT ON TIT.ACT_ID = ACT.ACT_ID AND TIT.BORRADO = 0 WHERE TMP.VALOR_NUEVO = to_char(TIT.TIT_FECHA_INSC_REG,''''YYYYMMDD'''')'
             ,'0')
-        , T_TIPO_DATA('VAC_FIN', 'Si se elimina el valor -vacía el campo- para la fecha de inscripción', 'Si se elimina el valor -vacía el campo- para la fecha de inscripción'
+        , T_TIPO_DATA('VAC_FIN', 'Se elimina el valor -vacía el campo- para la fecha de inscripción', 'Se elimina el valor -vacía el campo- para la fecha de inscripción'
             ,''
             ,'SELECT distinct ACT.ACT_ID 
                 FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT JOIN '||V_ESQUEMA||'.TMP_CONV_SAREB TMP ON TMP.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO AND TMP.ORIGEN = ''''018''''  WHERE TMP.VALOR_NUEVO is null'
             ,'0')
-        , T_TIPO_DATA('MOD_FTP', 'Si se modifica el valor existente en REM para la fecha de toma de posesión', 'Si se modifica el valor existente en REM para la fecha de toma de posesión'
+        , T_TIPO_DATA('MOD_FTP', 'Se modifica el valor existente en REM para la fecha de toma de posesión', 'Se modifica el valor existente en REM para la fecha de toma de posesión'
             ,''
             ,'SELECT distinct ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT JOIN '||V_ESQUEMA||'.TMP_CONV_SAREB TMP ON TMP.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO AND TMP.ORIGEN = ''''021'''' minus SELECT distinct ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT JOIN '||V_ESQUEMA||'.TMP_CONV_SAREB TMP ON TMP.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO AND TMP.ORIGEN = ''''021'''' JOIN '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA SPS ON SPS.ACT_ID = SPS.ACT_ID and SPS.BORRADO = 0 WHERE TMP.VALOR_NUEVO = to_char(SPS.SPS_FECHA_TOMA_POSESION,''''YYYYMMDD'''')'
             ,'0')
-        , T_TIPO_DATA('VAC_FTP', 'Si se elimina el valor (vacía el campo) para la fecha de toma posesión', 'Si se elimina el valor (vacía el campo) para la fecha de toma posesión'
+        , T_TIPO_DATA('VAC_FTP', 'Se elimina el valor (vacía el campo) para la fecha de toma posesión', 'Se elimina el valor (vacía el campo) para la fecha de toma posesión'
             ,''
             ,'SELECT distinct ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT JOIN '||V_ESQUEMA||'.TMP_CONV_SAREB TMP ON TMP.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO AND TMP.ORIGEN = ''''021'''' WHERE TMP.VALOR_NUEVO is null'
             ,'0')
-        , T_TIPO_DATA('MOD_TAP', 'Si se modifica el valor existente en REM para Tapiado', 'Si se modifica el valor existente en REM para Tapiado'
+        , T_TIPO_DATA('MOD_TAP', 'Se modifica el valor existente en REM para Tapiado', 'Se modifica el valor existente en REM para Tapiado'
             ,''
-            ,'SELECT distinct ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT JOIN '||V_ESQUEMA||'.TMP_CONV_SAREB TMP ON TMP.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO AND TMP.ORIGEN = ''''021'''' minus SELECT distinct ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT JOIN '||V_ESQUEMA||'.TMP_CONV_SAREB TMP ON TMP.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO AND TMP.ORIGEN = ''''021'''' JOIN '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA SPS ON SPS.ACT_ID = SPS.ACT_ID and SPS.BORRADO = 0 WHERE TMP.VALOR_NUEVO = SPS.SPS_ACC_TAPIADO'
+            ,'SELECT distinct ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT JOIN '||V_ESQUEMA||'.TMP_CONV_SAREB TMP ON TMP.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO AND TMP.ORIGEN = ''''096'''' minus SELECT distinct ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT JOIN '||V_ESQUEMA||'.TMP_CONV_SAREB TMP ON TMP.ACT_NUM_ACTIVO = ACT.ACT_NUM_ACTIVO AND TMP.ORIGEN = ''''096'''' JOIN '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA SPS ON SPS.ACT_ID = SPS.ACT_ID and SPS.BORRADO = 0 WHERE TMP.VALOR_NUEVO = SPS.SPS_ACC_TAPIADO'
             ,'0')
             
             

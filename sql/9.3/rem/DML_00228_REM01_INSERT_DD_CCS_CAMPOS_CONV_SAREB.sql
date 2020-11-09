@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20201007
+--## FECHA_CREACION=20201109
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-11215
+--## INCIDENCIA_LINK=HREOS-11966
 --## PRODUCTO=NO
 --##
 --## Finalidad: Actualizar instrucciones
@@ -52,7 +52,7 @@ DECLARE
       T_TIPO_DATA('013','Puerta antiokupa','ACT_SPS_SIT_POSESORIA','SPS_ACC_ANTIOCUPA','ACT_ID'),
       T_TIPO_DATA('014','Vigilancia','ACT_ZCO_ZONA_COMUN','ZCO_CONSERJE_VIGILANCIA','ICO_ID'),
       T_TIPO_DATA('015','Alarma',NULL,NULL,NULL),
-      T_TIPO_DATA('016','Ascensor','ACT_EDI_EDIFICIO','EDI_ASCENSOR','ACT_ID'),
+      T_TIPO_DATA('016','Ascensor','ACT_EDI_EDIFICIO','EDI_ASCENSOR','ICO_ID'),
       T_TIPO_DATA('017','Estado de inscripcion','ACT_TIT_TITULO','DD_ETI_ID','ACT_ID'),
       T_TIPO_DATA('018','Fecha de inscripción','ACT_TIT_TITULO','TIT_FECHA_INSC_REG','ACT_ID'),
       T_TIPO_DATA('019','Tipo de Titulo','ACT_ACTIVO','DD_TTA_ID','ACT_ID'),
@@ -141,10 +141,10 @@ DECLARE
       T_TIPO_DATA('102','¿tiene Tasacion?',NULL,NULL,NULL),
       T_TIPO_DATA('103','Fecha tasación','BIE_VALORACIONES','BIE_FECHA_VALOR_TASACION','BIE_ID'),
       T_TIPO_DATA('104','Fecha solicitud tasación','BIE_VALORACIONES','BIE_F_SOL_TASACION','BIE_ID'),
-      T_TIPO_DATA('105','Fecha recepción tasación','ACT_TAS_TASACION','TAS_FECHA_RECEPCION_TASACION','TAS_ID'),
+      T_TIPO_DATA('105','Fecha recepción tasación','ACT_TAS_TASACION','TAS_FECHA_RECEPCION_TASACION','ACT_ID'),
       T_TIPO_DATA('106','Técnico tasadora asociado','BIE_VALORACIONES','DD_TRA_ID','BIE_ID'),
-      T_TIPO_DATA('107','Importe tasación finalizado','ACT_TAS_TASACION','TAS_IMPORTE_TAS_FIN','TAS_ID'),
-      T_TIPO_DATA('108','Tipo de tasación','ACT_TAS_TASACION','DD_TTS_ID','TAS_ID'),
+      T_TIPO_DATA('107','Importe tasación finalizado','ACT_TAS_TASACION','TAS_IMPORTE_TAS_FIN','ACT_ID'),
+      T_TIPO_DATA('108','Tipo de tasación','ACT_TAS_TASACION','DD_TTS_ID','ACT_ID'),
       T_TIPO_DATA('109','Precio visible venta','ACT_VAL_VALORACIONES','DD_TPC_ID','ACT_ID'),
       T_TIPO_DATA('110','Fecha inicio vigencia precio venta','ACT_VAL_VALORACIONES','VAL_FECHA_INICIO','ACT_ID'),
       T_TIPO_DATA('111','Fecha fin vigencia precio venta','ACT_VAL_VALORACIONES','VAL_FECHA_FIN','ACT_ID'),

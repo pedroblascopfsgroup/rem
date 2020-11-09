@@ -101,7 +101,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 									allowBlank: false
 						        },
         						{
-        							xtype : 'numberfieldbase',
+        							xtype : 'textfieldbase',
 						            reference:'idTarea',
 						            fieldLabel : HreRem.i18n('fieldlabel.id.tarea.trabajo'),
 						            allowBlank: true,

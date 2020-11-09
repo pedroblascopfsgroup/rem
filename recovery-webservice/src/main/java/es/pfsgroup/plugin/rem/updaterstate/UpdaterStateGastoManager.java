@@ -41,6 +41,8 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	private static final String VALIDACION_DOCUMENTO_ADJUNTO_GASTO = "msg.validacion.gasto.documento.adjunto";
 	private static final String VALIDACION_ACTIVOS_ASIGNADOS = "msg.validacion.gasto.activos.asignados";
 	private static final String VALIDACION_PARTIDA_PRESUPUESTARIA = "msg.validacion.gasto.partida.presupuestaria";
+	private static final String VALIDACION_AL_MENOS_CUENTAS_O_PARTIDAS = "msg.validacion.gasto.al.menos.cuenta.partida";
+	private static final String VALIDACION_CUENTA_PARTIDAS_APARTADO_CAPITULO = "msg.validacion.gasto.partida.contable.lbk";
 	private static final String VALIDACION_CUENTA_CONTABLE = "msg.validacion.gasto.cuenta.contable";
 	private static final String VALIDACION_IMPORTE_TOTAL = "msg.validacion.gasto.importe.total";
 	private static final String VALIDACION_TIPO_PERIODICIDAD = "msg.validacion.gasto.tipo.periodicidad";
@@ -160,7 +162,41 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			}
 			
 			if(!Checks.esNulo(gasto.getPropietario()) && !Checks.esNulo(gasto.getPropietario().getCartera()) && !Checks.esNulo(gasto.getPropietario().getCartera().getCodigo())) {
-				if(!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo()) && !DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo())){
+				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo())) {
+					if(gasto.getGestoria() == null) {
+						for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
+							if(gastodetalleLinea.getCppBase() == null) {
+								error = messageServices.getMessage(VALIDACION_PARTIDA_PRESUPUESTARIA);
+								return error;
+							}
+						}
+					}else {
+						for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
+							if(gastodetalleLinea.getCppBase() == null && gastodetalleLinea.getCccBase() == null) {
+								error = messageServices.getMessage(VALIDACION_AL_MENOS_CUENTAS_O_PARTIDAS);
+								return error;
+							}
+						}
+					}
+				}
+				if(DDCartera.CODIGO_CARTERA_BBVA.equals(gasto.getPropietario().getCartera().getCodigo())){
+						for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
+							if(gastodetalleLinea.getCccBase() == null) {
+								error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
+								return error;
+							}
+						}
+				}
+				if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo())) {
+					for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
+						if(gastodetalleLinea.getCccBase() == null || gastodetalleLinea.getCppBase() == null || gastodetalleLinea.getCapituloBase() == null || gastodetalleLinea.getApartadoBase() == null) {
+							error = messageServices.getMessage(VALIDACION_CUENTA_PARTIDAS_APARTADO_CAPITULO);
+							return error;
+						}
+					}
+				}else if(!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo()) && !DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo())
+						&& !DDCartera.CODIGO_CARTERA_BBVA.equals(gasto.getPropietario().getCartera().getCodigo())){
+					
 					for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
 						if(gastodetalleLinea.getCccBase() == null) {
 							error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);

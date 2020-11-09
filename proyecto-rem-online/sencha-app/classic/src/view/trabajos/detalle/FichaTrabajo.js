@@ -48,7 +48,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 						        	fieldLabel: HreRem.i18n('fieldlabel.gestor.activo.responsable'),
 						        	bind: {
 					            		store: '{comboGestorActivoResponsable}',
-					            		value: '{trabajo.gestorActivoCodigo}'
+					            		value: '{trabajo.idGestorActivoResponsable}'
 					            	},
 					            	displayField: 'apellidoNombre',
 		    						valueField: 'id',

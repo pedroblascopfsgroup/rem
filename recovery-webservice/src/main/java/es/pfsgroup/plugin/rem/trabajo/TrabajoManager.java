@@ -526,9 +526,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		if(!Checks.esNulo(dtoTrabajo.getGestorActivoCodigo())){
 			dtoHistorificador.setCampo(ConstantesTrabajo.RESPONSABLE_TRABAJO);
-			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_RESPONSABLE_TRABAJO);
-			if(!Checks.esNulo(trabajo.getGestorAlta())) {
-				dtoHistorificador.setValorAnterior(trabajo.getGestorAlta().getApellidoNombre());
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_GESTOR_ACTUAL);
+			if(!Checks.esNulo(trabajo.getUsuarioGestorActivoResponsable())) {
+				dtoHistorificador.setValorAnterior(trabajo.getUsuarioGestorActivoResponsable().getApellidoNombre());
 			}
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getGestorActivoCodigo());
 			Usuario responsable = genericDao.get(Usuario.class, filtro);
@@ -2217,6 +2217,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		beanUtilNotNull.copyProperties(trabajo, dtoTrabajo);
 		
 		trabajo.setGestorAlta(genericAdapter.getUsuarioLogado());
+		trabajo.setUsuarioResponsableTrabajo(genericAdapter.getUsuarioLogado());
 		
 		if(dtoTrabajo.getProveedorContact() != null) {
 			Filter filtroPVC = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getProveedorContact());
@@ -2232,7 +2233,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (dtoTrabajo.getGestorActivoCodigo() != null) {					
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getGestorActivoCodigo());
 			Usuario usuario = genericDao.get(Usuario.class, filtro);
-			trabajo.setGestorAlta(usuario);
+			trabajo.setUsuarioGestorActivoResponsable(usuario);
 			//trabajo.setUsuarioResponsableTrabajo(usuario);		
 		}
 
@@ -2866,6 +2867,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		if(trabajo.getGestorAlta() != null) {
 			dtoTrabajo.setGestorActivo(trabajo.getGestorAlta().getApellidoNombre());
+			dtoTrabajo.setGestorActivoCodigo(trabajo.getGestorAlta().getId());
+		}
+		if(trabajo.getUsuarioGestorActivoResponsable() != null) {
+			
 		}
 
 		dtoTrabajo.setHoraConcreta(trabajo.getFechaHoraConcreta());
@@ -3023,9 +3028,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		//
 		if (trabajo.getDescripcion() != null) {
 			dtoTrabajo.setDescripcionGeneral(trabajo.getDescripcion());
-		}
-		if (trabajo.getGestorAlta() != null) {
-			dtoTrabajo.setGestorActivoCodigo(trabajo.getGestorAlta().getId());
 		}
 		if (trabajo.getCubreSeguro() != null) {//
 			dtoTrabajo.setCubreSeguro(trabajo.getCubreSeguro());

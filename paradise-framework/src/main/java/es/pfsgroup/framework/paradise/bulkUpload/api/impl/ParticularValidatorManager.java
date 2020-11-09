@@ -5190,6 +5190,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		resultado = rawDao.getExecuteSQL(query);
 		return Boolean.TRUE.equals("1".equals(resultado));
 	}
+	
+	@Override
+	public boolean existeProveedor(String codProveedor) {
+		String resultado = null;
+		String query = "SELECT COUNT(1) FROM ACT_PVE_PROVEEDOR WHERE PVE_COD_REM = "+codProveedor;
+		
+		
+		resultado = rawDao.getExecuteSQL(query);
+		return Boolean.TRUE.equals("1".equals(resultado));
+	}
+	
 
 	@Override
 	public boolean isTipoTarifaValidoEnConfiguracion(String codigoTarifa, String numTrabajo) {

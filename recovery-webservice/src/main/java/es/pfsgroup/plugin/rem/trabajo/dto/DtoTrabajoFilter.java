@@ -82,6 +82,10 @@ public class DtoTrabajoFilter extends WebDto {
 	private String fechaCambioEstadoHasta;
 	
 	private String GestorActual;
+	
+	private String areaPeticionaria;
+	
+	private String responsableTrabajo;
 
 	public String getIdTrabajo() {
 		return idTrabajo;
@@ -337,6 +341,22 @@ public class DtoTrabajoFilter extends WebDto {
 
 	public void setGestorActual(String gestorActual) {
 		GestorActual = gestorActual;
+	}
+
+	public String getAreaPeticionaria() {
+		return areaPeticionaria;
+	}
+
+	public void setAreaPeticionaria(String areaPeticionaria) {
+		this.areaPeticionaria = areaPeticionaria;
+	}
+
+	public String getResponsableTrabajo() {
+		return responsableTrabajo;
+	}
+
+	public void setResponsableTrabajo(String responsableTrabajo) {
+		this.responsableTrabajo = responsableTrabajo;
 	}
 
 }

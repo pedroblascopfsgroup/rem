@@ -99,7 +99,16 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
     			itemId: 'btnGuardar', 
     			text: 'Guardar', 
     			handler: 'onClickGuardarLineaDetalleGasto',
-    			disabled: (!estadoParaGuardar || isGastoRefacturado || isGastoRefacturadoPadre)
+    			disabled: (!estadoParaGuardar || isGastoRefacturado || isGastoRefacturadoPadre),
+    			hidden: isGastoRefacturadoPadre
+    		},
+    		{ 
+    			formBind: true, 
+    			itemId: 'btnGuardarCuentasYPartidas', 
+    			text: 'Guardar cuentas y partidas', 
+    			handler: 'onClickGuardarCuentasYPartidas',
+    			disabled: !estadoParaGuardar,
+    			hidden: !isGastoRefacturadoPadre
     		},
     		{ 
     			itemId: 'btnCancelar', 

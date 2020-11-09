@@ -46,6 +46,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDAcoAprobacionComite;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDIdentificadorReam;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
@@ -927,5 +928,7 @@ public interface TrabajoApi {
 	public Map<String, String> getDocumentosFinalizacionTrabajo(Long idTrabajo);
 
 	public Object getExisteTareaWebServiceHaya(String idTareaHaya);
+	
+	public List<DDIdentificadorReam>getComboAreaPeticionaria();
 
 }

@@ -138,6 +138,9 @@ public class VBusquedaTrabajos implements Serializable {
 	@Column(name = "DESCRIPCIONSUBCARTERA")
 	private String descripcionSubcartera;
 
+	@Column(name = "GESTORRESPONSABLE")
+	private String responsableTrabajo;
+	
 	public Integer getCubreSeguro() {
 		return cubreSeguro;
 	}
@@ -414,6 +417,14 @@ public class VBusquedaTrabajos implements Serializable {
 
 	public void setDescripcionSubcartera(String descripcionSubcartera) {
 		this.descripcionSubcartera = descripcionSubcartera;
+	}
+
+	public String getResponsableTrabajo() {
+		return responsableTrabajo;
+	}
+
+	public void setResponsableTrabajo(String responsableTrabajo) {
+		this.responsableTrabajo = responsableTrabajo;
 	}
 	
 }

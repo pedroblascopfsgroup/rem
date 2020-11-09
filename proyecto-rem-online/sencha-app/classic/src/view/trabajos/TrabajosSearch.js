@@ -121,7 +121,19 @@ Ext.define('HreRem.view.trabajos.TrabajosSearch', {
 				            	fieldLabel: HreRem.i18n('fieldlabel.proveedor'),
 				            	name: 'proveedor',
 				            	width: 		230
-						    }
+						    },
+				            { 
+					        	xtype: 'combo',
+					        	fieldLabel:  HreRem.i18n('fieldlabel.trabajo.area.peticionaria'),
+					        	labelWidth:	150,
+					        	width: 		230,
+					        	name: 'areaPeticionaria',
+					        	bind: {
+				            		store: '{filtroComboAreaPeticionaria}'
+				            	},
+				            	displayField: 'descripcion',
+								valueField: 'descripcion'
+					        }
 					        
 					     ]
 					},
@@ -229,7 +241,12 @@ Ext.define('HreRem.view.trabajos.TrabajosSearch', {
 												        	bind: {
 											            		store: '{comboEntidadPropietaria}'
 											            	}
-												        }
+												        },
+												        {
+															fieldLabel: HreRem.i18n('fieldlabel.usuario.responsable.trabajo'),
+															labelWidth:	150,
+											            	name:		'responsableTrabajo'
+														}
 											]
 							                
 							            },
@@ -244,7 +261,7 @@ Ext.define('HreRem.view.trabajos.TrabajosSearch', {
 											layout: 'column',
 											items :	[
 														{
-															fieldLabel: HreRem.i18n('fieldlabel.gestor.activo.responsable'),
+															fieldLabel: HreRem.i18n('fieldlabel.usuario.ultima.edicion'),
 															labelWidth:	150,
 															name:		'gestorActual'
 														},

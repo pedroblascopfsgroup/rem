@@ -2088,6 +2088,13 @@ public class TrabajoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 		
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboAreaPeticionaria(WebDto webDto, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, trabajoApi.getComboAreaPeticionaria());
+
+		return new ModelAndView("jsonView", model);
+	}
 
 }
 

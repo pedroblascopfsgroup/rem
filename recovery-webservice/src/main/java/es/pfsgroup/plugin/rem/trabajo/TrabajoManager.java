@@ -6403,4 +6403,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			return request.get();
 		}
 	}
+	
+	public List<DDIdentificadorReam> getComboAreaPeticionaria(){
+		List<DDIdentificadorReam> list = new ArrayList<DDIdentificadorReam>();
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "borrado", 0);
+		try {
+			list = genericDao.getList(DDIdentificadorReam.class, filtro);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 }

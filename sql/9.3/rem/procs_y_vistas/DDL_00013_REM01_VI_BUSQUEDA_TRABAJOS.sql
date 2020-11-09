@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Julián Dolz
---## FECHA_CREACION=20201105
+--## FECHA_CREACION=20201109
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-12002
+--## INCIDENCIA_LINK=HREOS-12030
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -20,6 +20,7 @@
 --##		0.8 HREOS-9586 Añadimos cruce act_tbj
 --##		0.8 HREOS-10618 Adaptación de consulta al nuevo modelo de facturación
 --##		1.0 HREOS-12002 Agregar campos solicitados
+--##		1.1 HREOS-12030 Ajustar campos solicitados
 --##########################################
 --*/
 
@@ -104,7 +105,8 @@ BEGIN
 			DECODE (gtb.tbj_id, NULL, 0, 1) AS EN_OTRO_GASTO,
 			IRE.DD_IRE_DESCRIPCION,
     		TBJ.TBJ_FECHA_CAMBIO_ESTADO,
-            usu2.usu_username as TBJ_RESPONSABLE_TRABAJO
+            usu2.usu_username as TBJ_RESPONSABLE_TRABAJO,
+			usu3.usu_username AS GestorResponsable
 
      	FROM ' || V_ESQUEMA || '.act_tbj_trabajo tbj 
 			JOIN ' || V_ESQUEMA || '.act_tbj atj 							ON atj.tbj_id = tbj.tbj_id
@@ -131,6 +133,7 @@ BEGIN
 			LEFT JOIN ' || V_ESQUEMA || '.gld_tbj gtb                       ON tbj.tbj_id = gtb.tbj_id AND GTB.BORRADO = 0
 			LEFT JOIN ' || V_ESQUEMA || '.DD_IRE_IDENTIFICADOR_REAM IRE		ON TBJ.DD_IRE_ID = IRE.DD_IRE_ID
 			LEFT JOIN ' || V_ESQUEMA_MASTER || '.usu_usuarios usu2	 		ON usu2.usu_id = tbj.TBJ_RESPONSABLE_TRABAJO
+			LEFT JOIN ' || V_ESQUEMA_MASTER || '.usu_usuarios usu3	 		ON usu3.usu_id = tbj.TBJ_GESTOR_ACTIVO_RESPONSABLE
           where tbj.borrado = 0
           ';
 

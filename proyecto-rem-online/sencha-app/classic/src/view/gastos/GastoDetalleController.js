@@ -2576,5 +2576,42 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		}
 		
 		return importeTotal;
-	}
+	},
+    
+    onClickGuardarCuentasYPartidas: function(btn){
+    	var me = this;
+    	
+    	var window = btn.up('[reference=ventanaCrearLineaDetalleGasto]');
+		var form = window.down('[reference=crearLineaDetalleGastoForm]');
+		
+		var url =  $AC.getRemoteUrl('gastosproveedor/saveCuentasPartidasGastoLineaDetalle');
+		form.form.url = url;
+		form.submit({                
+			waitMsg: HreRem.i18n('msg.mask.loading'),
+            params: {
+            	idGasto: window.idGasto,
+            	id: window.idLineaDetalleGasto
+            },
+
+            success: function(fp, o) {
+            	if(o.result.success == "false") {
+            		window.fireEvent("errorToast", o.result.errorMessage);
+            	}
+            	else {
+            		window.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+            	}
+            	
+            	if(!Ext.isEmpty(window.parent)) {
+            		window.parent.fireEvent("aftercreate", window.parent);
+            	}
+            	var grid = window.lookupController().getView().down('[reference=lineaDetalleGastoGrid]');
+            	grid.getStore().load();
+            	window.close();
+            	
+            },
+            failure: function(fp, o) {
+            	window.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+            }
+        });
+    }
 });

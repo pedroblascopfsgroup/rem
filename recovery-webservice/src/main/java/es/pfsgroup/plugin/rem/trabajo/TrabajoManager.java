@@ -104,6 +104,7 @@ import es.pfsgroup.plugin.rem.model.ActivoObservacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
+import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo.ActivoTrabajoPk;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -455,10 +456,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public boolean saveFichaTrabajo(DtoFichaTrabajo dtoTrabajo, Long id) {
 		Trabajo trabajo = trabajoDao.get(id);
 		TareaActivo tareaActivo = null;
-
+		Activo activo = trabajo.getActivo();
+		ActivoSituacionPosesoria situacionPosesoria = activo.getSituacionPosesoria();
+		ActivoTramite activoTramite = new ActivoTramite();
+		
  		List<ActivoTramite> activoTramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());		
 		if (!activoTramites.isEmpty()) {
-			ActivoTramite activoTramite = activoTramites.get(0);
+			activoTramite = activoTramites.get(0);
 			tareaActivo = tareaActivoApi.getUltimaTareaActivoByIdTramite(activoTramite.getId());
 		}
 		
@@ -500,6 +504,21 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				if(DDEstadoTrabajo.CODIGO_ESTADO_RECHAZADO.equals(trabajo.getEstado().getCodigo()) || DDEstadoTrabajo.ESTADO_RECHAZADO.equals(trabajo.getEstado().getCodigo())) {
 					EnviarCorreoTrabajos(trabajo, EMAIL_RECHAZADO);
 				}else if (DDEstadoTrabajo.ESTADO_VALIDADO.equals(trabajo.getEstado().getCodigo())) {
+					
+					if(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo())) {					
+						if(DDSubtipoTrabajo.CODIGO_VIGILANCIA_SEGURIDAD.equals(trabajo.getSubtipoTrabajo().getCodigo())) {																		
+							situacionPosesoria.setConVigilancia(1);
+							situacionPosesoria.setFechaInstalacionVigilancia(new Date());
+							genericDao.save(ActivoSituacionPosesoria.class, situacionPosesoria);
+						}
+						
+						if(DDSubtipoTrabajo.CODIGO_ALARMAS.equals(trabajo.getSubtipoTrabajo().getCodigo())) {						
+							situacionPosesoria.setConAlarma(1);
+							situacionPosesoria.setFechaInstalacionAlarma(new Date());
+							genericDao.save(ActivoSituacionPosesoria.class, situacionPosesoria);
+						}
+					}
+					
 					EnviarCorreoTrabajos(trabajo, EMAIL_VALIDADO);
 				}
 				

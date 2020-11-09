@@ -41,10 +41,13 @@ public class MSVValidatorTarifasPresupuestos extends MSVExcelValidatorAbstract {
 	private final static String ERROR_TIPO_INCORRECTO_INFORMADO_TARIFA = "msg.error.masivo.tarifa.presupuesto.tipo.incorrecto.tarifa";
 	private final static String ERROR_TIPO_INCORRECTO_INFORMADO_PRESUPUESTO = "msg.error.masivo.tarifa.presupuesto.tipo.incorrecto.presupuesto";
 	private final static String ERROR_FALTAN_CAMPOS = "msg.error.masivo.tarifa.presupuesto.faltan.campos";
+	private final static String ERROR_FALTAN_CAMPOS_TARIFA = "msg.error.masivo.tarifa.presupuesto.faltan.campos.tarifa";
+	private final static String ERROR_FALTAN_CAMPOS_PRESUPUESTO = "msg.error.masivo.tarifa.presupuesto.faltan.campos.presupuesto";
 	private final static String ERROR_PROVEEDOR_NO_COINCIDE = "msg.error.masivo.tarifa.presupuesto.proveedor.no.coincide";
 	private final static String ERROR_NO_EXISTE_CONFIGURACION_TARIFA="msg.error.masivo.tarifa.presupuesto.no.existe.configuracion.tarifa";
 	private final static String ERROR_ESTADO_TRABAJO_INCORRECTO_TARIFA="msg.error.masivo-tarifa.presupuesto.estado.trabajo.incorrecto.tarifa";
 	private final static String ERROR_ESTADO_TRABAJO_INCORRECTO_PRESUPUESTO="msg.error.masivo-tarifa.presupuesto.estado.trabajo.incorrecto.presupuesto";
+	private final static String ERROR_NO_EXISTE_PROVEEDOR="msg.error.masivo-tarifa.presupuesto.proveedor.no.existe";
 	
 	
 	//CAMPOS
@@ -62,6 +65,7 @@ public class MSVValidatorTarifasPresupuestos extends MSVExcelValidatorAbstract {
 	private final static String TIPO_PRESUPUESTO = "PRS";
 	private final static String CODIGO_ESTADO_FINALIZADO = "FIN";
 	private final static String CODIGO_ESTADO_EN_CURSO = "CUR";
+	
 	
 	private Integer numFilasHoja;
 	private Map<String, List<Integer>> mapaErrores;
@@ -127,7 +131,7 @@ public class MSVValidatorTarifasPresupuestos extends MSVExcelValidatorAbstract {
 		mapaErrores = new HashMap<String, List<Integer>>();
 		
 		for (int fila = FILA_DATOS; fila < this.numFilasHoja; fila++) {
-			
+			 
 			try {
 				for (int columna = 0; columna < NUM_COLS_ITER; columna++) {
 					String celda = exc.dameCelda(fila, columna);
@@ -189,7 +193,7 @@ public class MSVValidatorTarifasPresupuestos extends MSVExcelValidatorAbstract {
 			if (TIPO_TARIFA.equals(tipo)) {
 				if (codigoTarifa == null || unidades == null || codigoTarifa.isEmpty() || unidades.isEmpty()) {
 					this.validado = false;
-					addErrorToMap(ERROR_FALTAN_CAMPOS, fila);
+					addErrorToMap(ERROR_FALTAN_CAMPOS_TARIFA, fila);
 				}
 				if ((codProveedor != null && !codProveedor.isEmpty()) 
 					|| (refPresupuesto != null && !refPresupuesto.isEmpty())
@@ -212,14 +216,23 @@ public class MSVValidatorTarifasPresupuestos extends MSVExcelValidatorAbstract {
 					|| (fecha == null || fecha.isEmpty()) 
 					|| (importe == null || importe.isEmpty())) {
 					this.validado = false;
-					addErrorToMap(ERROR_FALTAN_CAMPOS, fila);
+					addErrorToMap(ERROR_FALTAN_CAMPOS_PRESUPUESTO, fila);
 				}
-				if ( (codProveedor != null && !codProveedor.isEmpty()) 
-				&& !particularValidator.existeMismoProveedorContactoInformado(codProveedor, exc.dameCelda(fila, COL_NUM_TRABAJO))) {
-					this.validado = false;
-					addErrorToMap(ERROR_PROVEEDOR_NO_COINCIDE, fila);
-				}
+				
 			}
+				if ( codProveedor != null && !codProveedor.isEmpty()) {
+					if (!particularValidator.existeProveedor(codProveedor)) {
+						this.validado = false;
+						addErrorToMap(ERROR_NO_EXISTE_PROVEEDOR, fila);
+					} else if (!particularValidator.existeMismoProveedorContactoInformado(codProveedor, exc.dameCelda(fila, COL_NUM_TRABAJO))) {
+						this.validado = false;
+						addErrorToMap(ERROR_PROVEEDOR_NO_COINCIDE, fila);
+					}
+					
+				}
+				
+			
+			
 
 		} catch (Exception e) {
 			mapaErrores.put(e.getMessage(), new ArrayList<Integer>(Arrays.asList(fila)));

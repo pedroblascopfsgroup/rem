@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algba
---## FECHA_CREACION=20200922
+--## FECHA_CREACION=202001110
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11239
@@ -58,8 +58,7 @@ DECLARE
     TYPE T_ARRAY_DROP IS TABLE OF T_DROP;
     V_DROP T_ARRAY_DROP := T_ARRAY_DROP(
     			-- NOMBRE CAMPO
-	T_DROP(  'PROVEEDOR_DEFECTO'),
-	T_DROP(  'DD_STR_ID')
+	T_DROP(  'PROVEEDOR_DEFECTO')
 		);
     V_T_DROP T_DROP;
     

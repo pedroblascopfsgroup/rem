@@ -1873,5 +1873,12 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			);
 		session.createSQLQuery(sb.toString()).executeUpdate();
 	}
+	
+	@Override
+	public String getUltimaFasePublicacion(Long id) {
+		
+		String maxId = rawDao.getExecuteSQL("select max(hfp_id) from ACT_HFP_HIST_FASES_PUB where act_id = "+ id + " and hfp_fecha_fin is not null and borrado = 0");
+		return maxId;
+	}
 
 }

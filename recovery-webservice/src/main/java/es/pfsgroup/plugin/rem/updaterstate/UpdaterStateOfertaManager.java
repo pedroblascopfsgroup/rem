@@ -13,6 +13,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.impl.UpdaterServiceSancionOfertaResolucionExpediente;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -32,6 +33,9 @@ public class UpdaterStateOfertaManager implements UpdaterStateOfertaApi{
 	
 	@Autowired
     private OfertaApi ofertaApi;
+	
+	@Autowired
+    private ActivoApi activoApi;
 	
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionExpediente.class);
 	
@@ -76,6 +80,7 @@ public class UpdaterStateOfertaManager implements UpdaterStateOfertaApi{
 				
 				genericDao.save(Reserva.class, reserva);
 			}
+			activoApi.devolucionFasePublicacionAnterior(tramite.getActivo());
 		} else {
 			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.EN_DEVOLUCION);
 			DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);

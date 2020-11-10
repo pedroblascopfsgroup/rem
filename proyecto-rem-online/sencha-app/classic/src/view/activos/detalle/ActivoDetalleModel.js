@@ -560,7 +560,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var codComercializacion = get('activo.tipoComercializacionCodigo');
 			
 	        if((!Ext.isEmpty(estadoAlquiler) && estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"]) 
-	        	|| (!Ext.isEmpty(estadoAlquiler) && CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'] != codComercializacion)){
+	        	|| (!Ext.isEmpty(codComercializacion) && CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'] != codComercializacion)){
 	        	return true;
 	        } else {
 	            return false;
@@ -725,6 +725,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var comboEstadoAlquiler = get('patrimonio.estadoAlquiler');
 
 			return (Ext.isEmpty(comboEstadoAlquiler) && comboEstadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["LIBRE"]);
+		},
+		
+		enableSubrogado: function(get){
+			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
+			var situacionActivo = get('patrimonio.estadoAlquiler');
+			var isDivarian = get('patrimonio.isCarteraCerberusDivarian');
+
+			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" ) && CONST.COMBO_ESTADO_ALQUILER['ALQUILADO'] == situacionActivo && !isDivarian){
+				return false;
+			}else{
+				return true;
+			}
 		},
 
 

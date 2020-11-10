@@ -102,6 +102,20 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 	private static final String TIPO_IMPOS_IMPUEST_RELLENO = "Cuando el tipo impositivo está relleno el tipo impuesto debe estarlo, y viceversa.";
 	private static final String SIN_ACTIVOS_NO_VALIDO_CARTERA = "Cuando el propietario es de la cartera: Sareb, Tango, Liberbank o Giants no se puede marcar como línea sin activos.";
 
+	private static final String COLUMNA_TEXTO_RET_GARANTIA_BASE ="Se ha cambiado la celda de Retención garantía base a tipo texto";
+	private static final String COLUMNA_TEXTO_RET_GARANTIA_PORCENTAJE="Se ha cambiado la celda de Retención garantía porcentje a tipo texto";
+	private static final String COLUMNA_TEXTO_IRPF_BASE="Se ha cambiado la celda de IRPF Base a tipo texto";
+	private static final String COLUMNA_TEXTO_IRPF_PORCENTAJE="Se ha cambiado la celda de IRPF Porcentaje a tipo texto";
+	private static final String COLUMNA_TEXTO_PPAL_SUJETO_A_IMPUESTO="Se ha cambiado la celda de Principal sujeto a impuesto a tipo texto";
+	private static final String COLUMNA_TEXTO_PPAL_NO_SUJETO_A_IMPUESTO="Se ha cambiado la celda de Principal no sujeto a impuesto a tipo texto";
+	private static final String COLUMNA_TEXTO_IMPORTE_RECARGO="Se ha cambiado la celda de Importe recargo a tipo texto";
+	private static final String COLUMNA_TEXTO_INTERES_DEMORA="Se ha cambiado la celda de Interes de demora a tipo texto";
+	private static final String COLUMNA_TEXTO_COSTES="Se ha cambiado la celda de Costes a tipo texto";
+	private static final String COLUMNA_TEXTO_OTROS_INCREMENTOS="Se ha cambiado la celda de Otros Incrementos a tipo texto";
+	private static final String COLUMNA_TEXTO_PROVISIONES_Y_SUPLIDOS="Se ha cambiado la celda de Provisiones y suplidos a tipo texto";
+	private static final String COLUMNA_TEXTO_TIPO_IMPOSITIVO="Se ha cambiado la celda de Tipo impositivo a tipo texto";
+	private static final String COLUMNA_TEXTO_PARTI_LINEA_DETALLE="Se ha cambiado la celda de Participación en la linea de detalle a tipo texto";
+
 	
 	public static final Integer COL_ID_AGRUPADOR_GASTO = 0;
 	public static final Integer COL_TIPO_GASTO = 1;
@@ -270,7 +284,21 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 			mapaErrores.put(LINEA_SIN_ACTIVOS_CON_ID_PARTICIPACION, lineaSinActivosElementoyPorcentajeVacio(exc));
 			mapaErrores.put(TIPO_IMPOS_IMPUEST_RELLENO, tipoImpositivoEimpuestoRellenos(exc));
 			mapaErrores.put(SIN_ACTIVOS_NO_VALIDO_CARTERA, sinActivosNoValidoCartera(exc));
-			
+			mapaErrores.put(COLUMNA_TEXTO_RET_GARANTIA_BASE,comprobarDouble(exc,COL_RETENCION_GARANTIA_BASE));
+			mapaErrores.put(COLUMNA_TEXTO_RET_GARANTIA_PORCENTAJE,comprobarDouble(exc,COL_RETENCION_GARANTIA_PORCENTAJE));
+			mapaErrores.put(COLUMNA_TEXTO_IRPF_BASE,comprobarDouble(exc,COL_IRPF_BASE));
+			mapaErrores.put(COLUMNA_TEXTO_IRPF_PORCENTAJE,comprobarDouble(exc,COL_IRPF_PORCENTAJE));
+			mapaErrores.put(COLUMNA_TEXTO_PPAL_SUJETO_A_IMPUESTO,comprobarDouble(exc,COL_PRINCIPAL_SUJETO_IMPUESTOS));
+			mapaErrores.put(COLUMNA_TEXTO_PPAL_NO_SUJETO_A_IMPUESTO,comprobarDouble(exc,COL_PRINCIPAL_NO_SUJETO_IMPUESTOS));
+			mapaErrores.put(COLUMNA_TEXTO_IMPORTE_RECARGO,comprobarDouble(exc,COL_IMPORTE_RECARGO));
+			mapaErrores.put(COLUMNA_TEXTO_INTERES_DEMORA,comprobarDouble(exc,COL_INTERES_DEMORA));
+			mapaErrores.put(COLUMNA_TEXTO_COSTES,comprobarDouble(exc,COL_COSTES));
+			mapaErrores.put(COLUMNA_TEXTO_OTROS_INCREMENTOS,comprobarDouble(exc,COL_OTROS_INCREMENTOS));
+			mapaErrores.put(COLUMNA_TEXTO_PROVISIONES_Y_SUPLIDOS,comprobarDouble(exc,COL_PROVISIONES_Y_SUPLIDOS));
+			mapaErrores.put(COLUMNA_TEXTO_TIPO_IMPOSITIVO,comprobarDouble(exc,COL_TIPO_IMPOSITIVO));
+			mapaErrores.put(COLUMNA_TEXTO_PARTI_LINEA_DETALLE,comprobarDouble(exc,COL_PARTICIPACION_LINEA_DETALLE));
+
+
 
 			if (!mapaErrores.get(TIPO_GASTO_NO_EXISTE).isEmpty() 
 					|| !mapaErrores.get(PERIODICIDAD_NO_EXISTE).isEmpty()
@@ -316,6 +344,20 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 					|| !mapaErrores.get(LINEA_SIN_ACTIVOS_CON_ID_PARTICIPACION).isEmpty()
 					|| !mapaErrores.get(TIPO_IMPOS_IMPUEST_RELLENO).isEmpty()
 					|| !mapaErrores.get(SIN_ACTIVOS_NO_VALIDO_CARTERA).isEmpty()
+					|| !mapaErrores.get(COLUMNA_TEXTO_RET_GARANTIA_BASE).isEmpty()
+					|| !mapaErrores.get(COLUMNA_TEXTO_RET_GARANTIA_PORCENTAJE).isEmpty()
+					|| !mapaErrores.get(COLUMNA_TEXTO_IRPF_BASE).isEmpty()
+					|| !mapaErrores.get(COLUMNA_TEXTO_IRPF_PORCENTAJE).isEmpty()
+					|| !mapaErrores.get(COLUMNA_TEXTO_PPAL_NO_SUJETO_A_IMPUESTO).isEmpty()
+					|| !mapaErrores.get(COLUMNA_TEXTO_PPAL_SUJETO_A_IMPUESTO).isEmpty()
+					|| !mapaErrores.get(COLUMNA_TEXTO_IMPORTE_RECARGO).isEmpty()
+					|| !mapaErrores.get(COLUMNA_TEXTO_INTERES_DEMORA).isEmpty()
+					|| !mapaErrores.get(COLUMNA_TEXTO_COSTES).isEmpty()
+					|| !mapaErrores.get(COLUMNA_TEXTO_OTROS_INCREMENTOS).isEmpty()
+					|| !mapaErrores.get(COLUMNA_TEXTO_PROVISIONES_Y_SUPLIDOS).isEmpty()
+					|| !mapaErrores.get(COLUMNA_TEXTO_TIPO_IMPOSITIVO).isEmpty()
+					|| !mapaErrores.get(COLUMNA_TEXTO_PARTI_LINEA_DETALLE).isEmpty()
+
 					){
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -1478,4 +1520,34 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 		}
          return listaFilas;   
 	 }
+	 private List<Integer> comprobarDouble(MSVHojaExcel exc, int columna){
+	       List<Integer> listaFilas = new ArrayList<Integer>();
+
+	        try{
+	       	 for(int i=1; i<this.numFilasHoja;i++){
+	       		 
+	               String valorColumna = exc.dameCelda(i, columna);
+	               if(!Checks.esNulo(valorColumna)) {
+	            	  try {
+	            	    Double.parseDouble(valorColumna);
+	            	  }catch(NumberFormatException e){
+	            		listaFilas.add(i); 
+	            	  }
+	            	  
+	               }
+	       	 }
+	       	
+	        } catch (IllegalArgumentException e) {
+	        	
+	            listaFilas.add(0);
+	            e.printStackTrace();
+	        } catch (IOException e) {
+	            listaFilas.add(0);
+	            e.printStackTrace();
+	        } catch (ParseException e) {
+	       	 listaFilas.add(0);
+				e.printStackTrace();
+			}
+	        return listaFilas;   
+		 }
 }

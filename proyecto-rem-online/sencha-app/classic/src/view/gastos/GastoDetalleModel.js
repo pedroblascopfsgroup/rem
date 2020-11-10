@@ -773,6 +773,18 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 				}
 			},
 			autoLoad: true
+		},
+		
+		comboTipoRetencion : {
+			model : 'HreRem.model.ComboBase',
+			proxy : {
+				type : 'uxproxy',
+				remoteUrl : 'generic/getDiccionario',
+				extraParams : {
+					diccionario : 'tipoRetencion'
+				}
+			},
+			autoLoad: true
 		}
 	}
 });

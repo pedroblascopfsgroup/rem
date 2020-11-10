@@ -52,6 +52,7 @@ DECLARE
         T_TIPO_DATA('12126826'),
         T_TIPO_DATA('12126829')
     ); 
+    
     V_TMP_TIPO_DATA T_TIPO_DATA;
 
 BEGIN		
@@ -134,7 +135,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] ');
 
 -----------------------------------------------------------------------------------------------------------------      
 
-	 V_PAR := '9451610,10878701,11181953';	
+	 V_PAR := '12038647, 12126826, 12126829';	
 
    	REM01.SP_EXT_REENVIO_GASTO ( V_PAR , V_USUARIOMODIFICAR, V_RET );
 

@@ -1262,15 +1262,24 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					}
 				}
 				
-				if((dto.getRetencionGarantiaAplica() != null && dto.getRetencionGarantiaAplica()) || detalleGasto.getRetencionGarantiaAplica()) {
-					if(dto.getTipoRetencionCodigo() != null) {
-					DDTipoRetencion tipoRetencion = (DDTipoRetencion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoRetencion.class, dto.getTipoRetencionCodigo());
-					if(tipoRetencion != null) {
-						detalleGasto.setTipoRetencion(tipoRetencion);
+				if(dto.getRetencionGarantiaAplica() != null) {
+					if(dto.getRetencionGarantiaAplica()) {
+						DDTipoRetencion tipoRetencion = (DDTipoRetencion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoRetencion.class, dto.getTipoRetencionCodigo());
+						if(tipoRetencion != null) {
+							detalleGasto.setTipoRetencion(tipoRetencion);
+						}
+					}else {
+						detalleGasto.setTipoRetencion(null);
 					}
+				}else if(detalleGasto.getRetencionGarantiaAplica() != null) {
+					if(detalleGasto.getRetencionGarantiaAplica()) {
+						DDTipoRetencion tipoRetencion = (DDTipoRetencion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoRetencion.class, dto.getTipoRetencionCodigo());
+						if(tipoRetencion != null) {
+							detalleGasto.setTipoRetencion(tipoRetencion);
+						}
+					}else {
+						detalleGasto.setTipoRetencion(null);
 					}
-				}else {
-					detalleGasto.setTipoRetencion(null);
 				}
 				
 				DtoDetalleEconomicoGasto dtoFin = detalleEconomicoToDtoDetalleEconomico(gasto);

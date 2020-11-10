@@ -582,12 +582,17 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_ACTUACION_CUBIERTA);
 			
 			if(!Checks.esNulo(trabajo.getCubreSeguro())) {
-				dtoHistorificador.setValorAnterior(trabajo.getCubreSeguro().toString());
+				if (!trabajo.getCubreSeguro()) {
+				dtoHistorificador.setValorAnterior(ConstantesTrabajo.VALOR_BOL_NO);
+				}else {
+					dtoHistorificador.setValorAnterior(ConstantesTrabajo.VALOR_BOL_SI);
+				}
 			}
 			if (!dtoTrabajo.getCubreSeguro()) {
 				dtoHistorificador.setValorNuevo(ConstantesTrabajo.VALOR_BOL_NO);
 			}else {
 				dtoHistorificador.setValorNuevo(ConstantesTrabajo.VALOR_BOL_SI);
+				
 			}
 			
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
@@ -608,8 +613,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if(!Checks.esNulo(dtoTrabajo.getCiaAseguradora())){
 			dtoHistorificador.setCampo(ConstantesTrabajo.COMPAÑIA_ASEGURADORA);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_COMPAÑIA_ASEGURADORA);
+			
 			if(!Checks.esNulo(trabajo.getCiaAseguradora())) {
-				dtoHistorificador.setValorAnterior(trabajo.getCiaAseguradora());
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(trabajo.getCiaAseguradora()));
+				ActivoProveedor actProv = genericDao.get(ActivoProveedor.class, filtro);
+				dtoHistorificador.setValorAnterior(actProv.getNombre());				
 			}
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dtoTrabajo.getCiaAseguradora()));
 			ActivoProveedor actProv = genericDao.get(ActivoProveedor.class, filtro);
@@ -674,7 +682,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_FINALIZADO);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_FECHA_FINALIZADO);
 			if(!Checks.esNulo(trabajo.getFechaTope())) {
-				dtoHistorificador.setValorAnterior(trabajo.getFechaTope().toString());
+				dtoHistorificador.setValorAnterior(formatoFechaString.format(trabajo.getFechaTope()));
 			}
 			SimpleDateFormat formatoDelTexto = new SimpleDateFormat("dd/MM/yyyy");
 			String fechaFormateada = null;
@@ -690,7 +698,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoHistorificador.setCampo(ConstantesTrabajo.URGENTE);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_URGENTE);
 			if(!Checks.esNulo(trabajo.getUrgente())) {
-				dtoHistorificador.setValorAnterior(trabajo.getUrgente().toString());
+				if (!trabajo.getUrgente()) {
+					dtoHistorificador.setValorAnterior(ConstantesTrabajo.VALOR_BOL_NO);
+				}else {
+					dtoHistorificador.setValorAnterior(ConstantesTrabajo.VALOR_BOL_SI);
+				}
 			}
 			if (!dtoTrabajo.getUrgente()) {
 				dtoHistorificador.setValorNuevo(ConstantesTrabajo.VALOR_BOL_NO);
@@ -707,7 +719,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoHistorificador.setCampo(ConstantesTrabajo.CON_RIESGO);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_CON_RIESGO);
 			if(!Checks.esNulo(trabajo.getRiesgoInminenteTerceros())) {
-				dtoHistorificador.setValorAnterior(trabajo.getRiesgoInminenteTerceros().toString());
+				if (!trabajo.getRiesgoInminenteTerceros()) {
+					dtoHistorificador.setValorAnterior(ConstantesTrabajo.VALOR_BOL_NO);
+				}else {
+					dtoHistorificador.setValorAnterior(ConstantesTrabajo.VALOR_BOL_SI);
+				}
 			}
 			if (!dtoTrabajo.getRiesgosTerceros()) {
 				dtoHistorificador.setValorNuevo(ConstantesTrabajo.VALOR_BOL_NO);
@@ -740,7 +756,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_RES_COMITE);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_FECHA_RES_COMITE);
 			if(!Checks.esNulo(trabajo.getFechaResolucionComite())) {
-				dtoHistorificador.setValorAnterior(trabajo.getFechaResolucionComite().toString());
+				dtoHistorificador.setValorAnterior(formatoFechaString.format(trabajo.getFechaResolucionComite()));
 			}
 			SimpleDateFormat formatoDelTexto = new SimpleDateFormat("dd/MM/yyyy");
 			String fechaFormateada = null;
@@ -765,7 +781,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_EJECUTADO);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_FECHA_EJECUTADO);
 			if(!Checks.esNulo(trabajo.getFechaEjecucionReal())) {
-				dtoHistorificador.setValorAnterior(trabajo.getFechaEjecucionReal().toString());
+				dtoHistorificador.setValorAnterior(formatoFechaString.format(trabajo.getFechaEjecucionReal()));
 			}
 			SimpleDateFormat formatoDelTexto = new SimpleDateFormat("dd/MM/yyyy");
 			String fechaFormateada = null;
@@ -839,7 +855,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_ENTREGA_LLAVES);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_FECHA_ENTREGA_LLAVES);
 			if(!Checks.esNulo(trabajo.getFechaEntregaLlaves())) {
-				dtoHistorificador.setValorAnterior(trabajo.getFechaEntregaLlaves().toString());
+				dtoHistorificador.setValorAnterior(formatoFechaString.format(trabajo.getFechaEntregaLlaves()));
 			}
 			SimpleDateFormat formatoDelTexto = new SimpleDateFormat("dd/MM/yyyy");
 			String fechaFormateada = null;
@@ -853,7 +869,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoHistorificador.setCampo(ConstantesTrabajo.NO_APLICA_LLAVES);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_NO_APLICA_LLAVES);
 			if (trabajo.getNoAplicaLlaves() != null) {
-				dtoHistorificador.setValorAnterior(trabajo.getNoAplicaLlaves().toString());
+				if (!trabajo.getNoAplicaLlaves()) {
+					dtoHistorificador.setValorAnterior(ConstantesTrabajo.VALOR_BOL_NO);
+				}else {
+					dtoHistorificador.setValorAnterior(ConstantesTrabajo.VALOR_BOL_SI);
+				}
 			}
 			if (!dtoTrabajo.getLlavesNoAplica()) {
 				dtoHistorificador.setValorNuevo(ConstantesTrabajo.VALOR_BOL_NO);
@@ -868,7 +888,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_INICIO);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_FECHA_INICIO);
 			if(!Checks.esNulo(trabajo.getFechaInicio())) {
-				dtoHistorificador.setValorAnterior(trabajo.getFechaInicio().toString());
+				dtoHistorificador.setValorAnterior(formatoFechaString.format(trabajo.getFechaInicio()));
 			}
 			SimpleDateFormat formatoDelTexto = new SimpleDateFormat("dd/MM/yyyy");
 			String fechaFormateada = null;
@@ -895,7 +915,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_FIN);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_FECHA_FIN);
 			if(!Checks.esNulo(trabajo.getFechaFin())) {
-				dtoHistorificador.setValorAnterior(trabajo.getFechaFin().toString());
+				dtoHistorificador.setValorAnterior(formatoFechaString.format(trabajo.getFechaFin()));
 			}
 			SimpleDateFormat formatoDelTexto = new SimpleDateFormat("dd/MM/yyyy");
 			String fechaFormateada = null;
@@ -935,7 +955,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoHistorificador.setCampo(ConstantesTrabajo.TIPO_TRABAJO);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_TIPO_TRABAJO);
 			dtoHistorificador.setValorNuevo(tipo.getDescripcion());
-			if (trabajo.getTomaPosesion() != null) {
+			if (trabajo.getTipoTrabajo() != null) {
 				dtoHistorificador.setValorAnterior(trabajo.getTipoTrabajo().getDescripcion());
 			}
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
@@ -946,7 +966,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoHistorificador.setCampo(ConstantesTrabajo.SUBTIPO_TRABAJO);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_SUBTIPO_TRABAJO);
 			dtoHistorificador.setValorNuevo(subtipo.getDescripcion());
-			if (trabajo.getTomaPosesion() != null) {
+			if (trabajo.getSubtipoTrabajo() != null) {
 				dtoHistorificador.setValorAnterior(trabajo.getSubtipoTrabajo().getDescripcion());
 			}
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);

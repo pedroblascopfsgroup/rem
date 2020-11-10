@@ -160,6 +160,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresupuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDIdentificadorReam;
 import es.pfsgroup.plugin.rem.model.dd.DDPestanas;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -544,9 +545,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		if(!Checks.esNulo(dtoTrabajo.getGestorActivoCodigo())){
 			dtoHistorificador.setCampo(ConstantesTrabajo.RESPONSABLE_TRABAJO);
-			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_RESPONSABLE_TRABAJO);
-			if(!Checks.esNulo(trabajo.getGestorAlta())) {
-				dtoHistorificador.setValorAnterior(trabajo.getGestorAlta().getApellidoNombre());
+			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_GESTOR_ACTUAL);
+			if(!Checks.esNulo(trabajo.getUsuarioGestorActivoResponsable())) {
+				dtoHistorificador.setValorAnterior(trabajo.getUsuarioGestorActivoResponsable().getApellidoNombre());
 			}
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getGestorActivoCodigo());
 			Usuario responsable = genericDao.get(Usuario.class, filtro);
@@ -600,12 +601,17 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_ACTUACION_CUBIERTA);
 			
 			if(!Checks.esNulo(trabajo.getCubreSeguro())) {
-				dtoHistorificador.setValorAnterior(trabajo.getCubreSeguro().toString());
+				if (!trabajo.getCubreSeguro()) {
+				dtoHistorificador.setValorAnterior(ConstantesTrabajo.VALOR_BOL_NO);
+				}else {
+					dtoHistorificador.setValorAnterior(ConstantesTrabajo.VALOR_BOL_SI);
+				}
 			}
 			if (!dtoTrabajo.getCubreSeguro()) {
 				dtoHistorificador.setValorNuevo(ConstantesTrabajo.VALOR_BOL_NO);
 			}else {
 				dtoHistorificador.setValorNuevo(ConstantesTrabajo.VALOR_BOL_SI);
+				
 			}
 			
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
@@ -626,8 +632,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if(!Checks.esNulo(dtoTrabajo.getCiaAseguradora())){
 			dtoHistorificador.setCampo(ConstantesTrabajo.COMPAÑIA_ASEGURADORA);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_COMPAÑIA_ASEGURADORA);
+			
 			if(!Checks.esNulo(trabajo.getCiaAseguradora())) {
-				dtoHistorificador.setValorAnterior(trabajo.getCiaAseguradora());
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(trabajo.getCiaAseguradora()));
+				ActivoProveedor actProv = genericDao.get(ActivoProveedor.class, filtro);
+				dtoHistorificador.setValorAnterior(actProv.getNombre());				
 			}
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dtoTrabajo.getCiaAseguradora()));
 			ActivoProveedor actProv = genericDao.get(ActivoProveedor.class, filtro);
@@ -692,7 +701,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_FINALIZADO);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_FECHA_FINALIZADO);
 			if(!Checks.esNulo(trabajo.getFechaTope())) {
-				dtoHistorificador.setValorAnterior(trabajo.getFechaTope().toString());
+				dtoHistorificador.setValorAnterior(formatoFechaString.format(trabajo.getFechaTope()));
 			}
 			SimpleDateFormat formatoDelTexto = new SimpleDateFormat("dd/MM/yyyy");
 			String fechaFormateada = null;
@@ -708,7 +717,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoHistorificador.setCampo(ConstantesTrabajo.URGENTE);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_URGENTE);
 			if(!Checks.esNulo(trabajo.getUrgente())) {
-				dtoHistorificador.setValorAnterior(trabajo.getUrgente().toString());
+				if (!trabajo.getUrgente()) {
+					dtoHistorificador.setValorAnterior(ConstantesTrabajo.VALOR_BOL_NO);
+				}else {
+					dtoHistorificador.setValorAnterior(ConstantesTrabajo.VALOR_BOL_SI);
+				}
 			}
 			if (!dtoTrabajo.getUrgente()) {
 				dtoHistorificador.setValorNuevo(ConstantesTrabajo.VALOR_BOL_NO);
@@ -725,7 +738,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoHistorificador.setCampo(ConstantesTrabajo.CON_RIESGO);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_CON_RIESGO);
 			if(!Checks.esNulo(trabajo.getRiesgoInminenteTerceros())) {
-				dtoHistorificador.setValorAnterior(trabajo.getRiesgoInminenteTerceros().toString());
+				if (!trabajo.getRiesgoInminenteTerceros()) {
+					dtoHistorificador.setValorAnterior(ConstantesTrabajo.VALOR_BOL_NO);
+				}else {
+					dtoHistorificador.setValorAnterior(ConstantesTrabajo.VALOR_BOL_SI);
+				}
 			}
 			if (!dtoTrabajo.getRiesgosTerceros()) {
 				dtoHistorificador.setValorNuevo(ConstantesTrabajo.VALOR_BOL_NO);
@@ -758,7 +775,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_RES_COMITE);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_FECHA_RES_COMITE);
 			if(!Checks.esNulo(trabajo.getFechaResolucionComite())) {
-				dtoHistorificador.setValorAnterior(trabajo.getFechaResolucionComite().toString());
+				dtoHistorificador.setValorAnterior(formatoFechaString.format(trabajo.getFechaResolucionComite()));
 			}
 			SimpleDateFormat formatoDelTexto = new SimpleDateFormat("dd/MM/yyyy");
 			String fechaFormateada = null;
@@ -783,7 +800,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_EJECUTADO);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_FECHA_EJECUTADO);
 			if(!Checks.esNulo(trabajo.getFechaEjecucionReal())) {
-				dtoHistorificador.setValorAnterior(trabajo.getFechaEjecucionReal().toString());
+				dtoHistorificador.setValorAnterior(formatoFechaString.format(trabajo.getFechaEjecucionReal()));
 			}
 			SimpleDateFormat formatoDelTexto = new SimpleDateFormat("dd/MM/yyyy");
 			String fechaFormateada = null;
@@ -857,7 +874,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_ENTREGA_LLAVES);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_FECHA_ENTREGA_LLAVES);
 			if(!Checks.esNulo(trabajo.getFechaEntregaLlaves())) {
-				dtoHistorificador.setValorAnterior(trabajo.getFechaEntregaLlaves().toString());
+				dtoHistorificador.setValorAnterior(formatoFechaString.format(trabajo.getFechaEntregaLlaves()));
 			}
 			SimpleDateFormat formatoDelTexto = new SimpleDateFormat("dd/MM/yyyy");
 			String fechaFormateada = null;
@@ -871,7 +888,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoHistorificador.setCampo(ConstantesTrabajo.NO_APLICA_LLAVES);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_NO_APLICA_LLAVES);
 			if (trabajo.getNoAplicaLlaves() != null) {
-				dtoHistorificador.setValorAnterior(trabajo.getNoAplicaLlaves().toString());
+				if (!trabajo.getNoAplicaLlaves()) {
+					dtoHistorificador.setValorAnterior(ConstantesTrabajo.VALOR_BOL_NO);
+				}else {
+					dtoHistorificador.setValorAnterior(ConstantesTrabajo.VALOR_BOL_SI);
+				}
 			}
 			if (!dtoTrabajo.getLlavesNoAplica()) {
 				dtoHistorificador.setValorNuevo(ConstantesTrabajo.VALOR_BOL_NO);
@@ -886,7 +907,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_INICIO);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_FECHA_INICIO);
 			if(!Checks.esNulo(trabajo.getFechaInicio())) {
-				dtoHistorificador.setValorAnterior(trabajo.getFechaInicio().toString());
+				dtoHistorificador.setValorAnterior(formatoFechaString.format(trabajo.getFechaInicio()));
 			}
 			SimpleDateFormat formatoDelTexto = new SimpleDateFormat("dd/MM/yyyy");
 			String fechaFormateada = null;
@@ -913,7 +934,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_FIN);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_FECHA_FIN);
 			if(!Checks.esNulo(trabajo.getFechaFin())) {
-				dtoHistorificador.setValorAnterior(trabajo.getFechaFin().toString());
+				dtoHistorificador.setValorAnterior(formatoFechaString.format(trabajo.getFechaFin()));
 			}
 			SimpleDateFormat formatoDelTexto = new SimpleDateFormat("dd/MM/yyyy");
 			String fechaFormateada = null;
@@ -953,7 +974,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoHistorificador.setCampo(ConstantesTrabajo.TIPO_TRABAJO);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_TIPO_TRABAJO);
 			dtoHistorificador.setValorNuevo(tipo.getDescripcion());
-			if (trabajo.getTomaPosesion() != null) {
+			if (trabajo.getTipoTrabajo() != null) {
 				dtoHistorificador.setValorAnterior(trabajo.getTipoTrabajo().getDescripcion());
 			}
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
@@ -964,7 +985,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoHistorificador.setCampo(ConstantesTrabajo.SUBTIPO_TRABAJO);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_SUBTIPO_TRABAJO);
 			dtoHistorificador.setValorNuevo(subtipo.getDescripcion());
-			if (trabajo.getTomaPosesion() != null) {
+			if (trabajo.getSubtipoTrabajo() != null) {
 				dtoHistorificador.setValorAnterior(trabajo.getSubtipoTrabajo().getDescripcion());
 			}
 			guardarCambiosHistorificador(dtoHistorificador,codPestana);
@@ -1520,7 +1541,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					 tarifaTrabajo.setConfigTarifa(config);
 					 tarifaTrabajo.setTrabajo(trabajo);
 					 //pendiente revision
-					 tarifaTrabajo.setMedicion(0F);
+					 tarifaTrabajo.setMedicion(1F);
 					 tarifaTrabajo.setPrecioUnitario(config.getPrecioUnitario());
 					 tarifaTrabajo.setPrecioUnitarioCliente(config.getPrecioUnitarioCliente());
 					 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
@@ -1694,7 +1715,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 							 tarifaTrabajo.setConfigTarifa(config);
 							 tarifaTrabajo.setTrabajo(trabajo);
 							 //pendiente revision
-							 tarifaTrabajo.setMedicion(0F);
+							 tarifaTrabajo.setMedicion(1F);
 							 tarifaTrabajo.setPrecioUnitario(config.getPrecioUnitario());
 							 tarifaTrabajo.setPrecioUnitarioCliente(config.getPrecioUnitarioCliente());
 							 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
@@ -1746,7 +1767,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						 tarifaTrabajo.setConfigTarifa(config);
 						 tarifaTrabajo.setTrabajo(trabajo);
 						 //pendiente revision
-						 tarifaTrabajo.setMedicion(0F);
+						 tarifaTrabajo.setMedicion(1F);
 						 tarifaTrabajo.setPrecioUnitario(config.getPrecioUnitario());
 						 tarifaTrabajo.setPrecioUnitarioCliente(config.getPrecioUnitarioCliente());
 						 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
@@ -2101,7 +2122,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						 tarifaTrabajo.setConfigTarifa(config);
 						 tarifaTrabajo.setTrabajo(trabajo);
 						 //pendiente revision
-						 tarifaTrabajo.setMedicion(0F);
+						 tarifaTrabajo.setMedicion(1F);
 						 tarifaTrabajo.setPrecioUnitario(config.getPrecioUnitario());
 						 tarifaTrabajo.setPrecioUnitarioCliente(config.getPrecioUnitarioCliente());
 						 genericDao.save(TrabajoConfiguracionTarifa.class, tarifaTrabajo);
@@ -2235,6 +2256,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		beanUtilNotNull.copyProperties(trabajo, dtoTrabajo);
 		
 		trabajo.setGestorAlta(genericAdapter.getUsuarioLogado());
+		trabajo.setUsuarioResponsableTrabajo(genericAdapter.getUsuarioLogado());
 		
 		if(dtoTrabajo.getProveedorContact() != null) {
 			Filter filtroPVC = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getProveedorContact());
@@ -2250,7 +2272,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (dtoTrabajo.getGestorActivoCodigo() != null) {					
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getGestorActivoCodigo());
 			Usuario usuario = genericDao.get(Usuario.class, filtro);
-			trabajo.setGestorAlta(usuario);
+			trabajo.setUsuarioGestorActivoResponsable(usuario);
 			//trabajo.setUsuarioResponsableTrabajo(usuario);		
 		}
 
@@ -2494,11 +2516,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (!Checks.esNulo(dtoTrabajo.getRequerimiento())) {
 			trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
 		}
-		if(trabajo.getFechaHoraConcreta() != null) {
+		if (trabajo.getFechaTope() != null) {
+			trabajo.setFechaCompromisoEjecucion(trabajo.getFechaTope());
+		}
+		else if(trabajo.getFechaHoraConcreta() != null) {
 			trabajo.setFechaCompromisoEjecucion(trabajo.getFechaHoraConcreta());
 		}
-		else if (trabajo.getFechaTope() != null) {
-			trabajo.setFechaCompromisoEjecucion(trabajo.getFechaTope());
+		if(dtoTrabajo.getIdentificadorReamCodigo() != null) {
+			DDIdentificadorReam identificador = genericDao.get(DDIdentificadorReam.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getIdentificadorReamCodigo()));
+			trabajo.setIdentificadorReam(identificador);
 		}
 	}
 
@@ -2880,6 +2906,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		if(trabajo.getGestorAlta() != null) {
 			dtoTrabajo.setGestorActivo(trabajo.getGestorAlta().getApellidoNombre());
+			dtoTrabajo.setGestorActivoCodigo(trabajo.getGestorAlta().getId());
+		}
+		if(trabajo.getUsuarioGestorActivoResponsable() != null) {
+			
 		}
 
 		dtoTrabajo.setHoraConcreta(trabajo.getFechaHoraConcreta());
@@ -3038,9 +3068,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (trabajo.getDescripcion() != null) {
 			dtoTrabajo.setDescripcionGeneral(trabajo.getDescripcion());
 		}
-		if (trabajo.getGestorAlta() != null) {
-			dtoTrabajo.setGestorActivoCodigo(trabajo.getGestorAlta().getId());
-		}
 		if (trabajo.getCubreSeguro() != null) {//
 			dtoTrabajo.setCubreSeguro(trabajo.getCubreSeguro());
 		}
@@ -3143,6 +3170,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 		}
 
+		if(trabajo.getIdentificadorReam() != null) {
+			dtoTrabajo.setIdentificadorReamCodigo(trabajo.getIdentificadorReam().getCodigo());
+		}
 
 		List<ActivoTramite> tramitesTrabajo = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
 		
@@ -5296,6 +5326,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Override
 	public boolean checkBankia(Trabajo trabajo) {
+		
 		if (!Checks.esNulo(trabajo)) {
 			Activo primerActivo = trabajo.getActivo();
 			if (!Checks.esNulo(primerActivo)) {
@@ -5303,6 +5334,18 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 		}
 		return false;
+	}
+	
+	 @Override
+	public boolean checkBBVA(TareaExterna tareaExterna) {
+		 Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);	
+		 if (!Checks.esNulo(trabajo)) {
+				Activo primerActivo = trabajo.getActivo();
+				if (!Checks.esNulo(primerActivo)) {
+					return (DDCartera.CODIGO_CARTERA_BBVA.equals(primerActivo.getCartera().getCodigo()));
+				}
+			}
+			return false;
 	}
 	
 	@Override
@@ -6400,5 +6443,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			HttpSimpleGetRequest request = new HttpSimpleGetRequest(endpoint);
 			return request.get();
 		}
+	}
+	
+	public List<DDIdentificadorReam> getComboAreaPeticionaria(){
+		List<DDIdentificadorReam> list = new ArrayList<DDIdentificadorReam>();
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "borrado", 0);
+		try {
+			list = genericDao.getList(DDIdentificadorReam.class, filtro);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 }

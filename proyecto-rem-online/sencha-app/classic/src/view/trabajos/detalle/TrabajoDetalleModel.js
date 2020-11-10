@@ -647,6 +647,14 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 					type: 'uxproxy',
 					remoteUrl: 'trabajo/getComboEstadoGasto'
 				}
+    		},
+    		comboIdentificadorReam: {
+	    		model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'identificadorReam'}
+				}
     		}
     		
     }

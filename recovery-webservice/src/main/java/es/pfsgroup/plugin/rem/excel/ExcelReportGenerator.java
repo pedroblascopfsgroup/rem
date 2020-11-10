@@ -12,6 +12,8 @@ import java.security.SecureRandom;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -649,7 +651,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 	
 	@Override
 	public File generateBbvaReportPrueba(DtoExcelFichaComercial dtoExcelFichaComercial, HttpServletRequest request) throws IOException {
-		ServletContext sc = request.getSession().getServletContext();
+		/*ServletContext sc = request.getSession().getServletContext();
 		FileOutputStream fileOutStream;
 		SecureRandom random = new SecureRandom();
 		long n = random.nextLong();
@@ -681,7 +683,93 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			CellReference cellReference;
 			XSSFRow r;
 			XSSFCell c;
+			SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");*/
+		
+		ServletContext sc = request.getSession().getServletContext();
+		FileOutputStream fileOutStream;
+		SecureRandom random = new SecureRandom();
+		long n = random.nextLong();
+        if (n == Long.MIN_VALUE) {
+            n = 0;
+        } else {
+            n = Math.abs(n);
+        }
+        String aleatorio = Long.toString(n);
+        if(aleatorio.length() > 5){
+        	aleatorio = aleatorio.substring(0, 5);
+        }
+		String nombreFichero = "FichaComercial_" + aleatorio +".xlsx";
+		String ruta = appProperties.getProperty(CONSTANTE_RUTA_EXCEL);
+		
+		File poiFile = new File(sc.getRealPath("/plantillas/plugin/GenerarFichaComercialBbva/FichaComercialReport.xlsx"));
+		File fileOut = new File(ruta + "/" + nombreFichero);
+		FileInputStream fis = new FileInputStream(poiFile);
+		fileOutStream = new FileOutputStream(fileOut);
+		
+		try {			
+			XSSFWorkbook myWorkBook = new XSSFWorkbook (fis);
+
+			XSSFSheet mySheet;
+			XSSFSheet mySheetDesglose;
+			XSSFSheet mySheetDepuracion;
+			XSSFSheet mySheetHistorico;
+			XSSFSheet mySheetAutorizacion;
+			mySheet = myWorkBook.getSheetAt(0);
+			mySheetDesglose = myWorkBook.getSheetAt(1);
+			mySheetDepuracion= myWorkBook.getSheetAt(2);
+			mySheetHistorico= myWorkBook.getSheetAt(3);
+			mySheetAutorizacion = myWorkBook.getSheetAt(5);
+			CellReference cellReference;
+			XSSFRow r;
+			XSSFCell c;
 			SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+			XSSFHyperlink link = myWorkBook.getCreationHelper().createHyperlink(Hyperlink.LINK_URL);
+			
+			
+			// Estilos celdas
+			XSSFFont  font = myWorkBook.createFont();
+		    
+			//Celda con Bordes
+			XSSFCellStyle styleBordesCompletos= myWorkBook.createCellStyle();
+			styleBordesCompletos.setBorderBottom(XSSFCellStyle.BORDER_THIN);
+			styleBordesCompletos.setBorderTop(XSSFCellStyle.BORDER_THIN);
+			styleBordesCompletos.setBorderRight(XSSFCellStyle.BORDER_THIN);
+			styleBordesCompletos.setBorderLeft(XSSFCellStyle.BORDER_THIN);
+			font = styleBordesCompletos.getFont();
+			font.setFontHeightInPoints((short)8);
+			styleBordesCompletos.setFont(font);
+			styleBordesCompletos.setAlignment(XSSFCellStyle.ALIGN_CENTER);
+			
+			//Celda con Borde inferior
+			XSSFCellStyle styleBordesInferior= myWorkBook.createCellStyle();
+			font = styleBordesInferior.getFont();
+			font.setFontHeightInPoints((short)8);
+			styleBordesInferior.setFont(font);
+			styleBordesInferior.setBottomBorderColor(new XSSFColor(new java.awt.Color(192, 192, 192)));
+			styleBordesInferior.setBorderBottom(XSSFCellStyle.BORDER_THIN);
+			styleBordesInferior.setAlignment(XSSFCellStyle.ALIGN_CENTER);
+
+			//Celda fondo amarillo claro
+			XSSFCellStyle styleFondoAmarillo = myWorkBook.createCellStyle();
+			font = styleFondoAmarillo.getFont();
+			font.setFontHeightInPoints((short)8);
+			styleFondoAmarillo.setFont(font);
+			styleFondoAmarillo.setBorderBottom(XSSFCellStyle.BORDER_THIN);
+			styleFondoAmarillo.setBottomBorderColor(new XSSFColor(new java.awt.Color(192, 192, 192)));
+			styleFondoAmarillo.setFillForegroundColor(new XSSFColor(new java.awt.Color(255, 255, 224)));
+			styleFondoAmarillo.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
+			styleFondoAmarillo.setAlignment(XSSFCellStyle.ALIGN_CENTER);
+			
+			//Celda fondo azul claro
+			XSSFCellStyle styleFondoAzul = myWorkBook.createCellStyle();
+			font = styleFondoAzul.getFont();
+			font.setFontHeightInPoints((short)8);
+			styleFondoAzul.setFont(font);
+			styleFondoAzul.setBorderBottom(XSSFCellStyle.BORDER_THIN);
+			styleFondoAzul.setBottomBorderColor(new XSSFColor(new java.awt.Color(192, 192, 192)));
+			styleFondoAzul.setFillForegroundColor(new XSSFColor(new java.awt.Color(176, 196, 222)));
+		    styleFondoAzul.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
+		    styleFondoAzul.setAlignment(XSSFCellStyle.ALIGN_CENTER);
 			
 			//Rellenamos la primera hoja
 			//TODO
@@ -1612,8 +1700,676 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				currentRowDesglose++;
 			}
 			
+			//Rellenamos hoja historico ofertas
 			
+			int currentRowHistorico = 7;
+			int countNumActDuplicate = 0;
+			int totalFFRR = 0;
+			int totalOferta = 0;
+			int totalpvpComite = 0;
+			int totalvTas = 0;
+			String numActivo = "";
+			List<String> numActivosList = new ArrayList<String>();
+			XSSFCellStyle styleBottomColumnsHistorico = myWorkBook.createCellStyle();
+			for(DtoHcoComercialFichaComercial historico : dtoExcelFichaComercial.getListaHistoricoOfertas()) {
+				numActivosList.add(historico.getNumActivo());
+			}
+			for(DtoHcoComercialFichaComercial historico : dtoExcelFichaComercial.getListaHistoricoOfertas()) {
+				
+				int numActivoDuplicate = Collections.frequency(numActivosList, historico.getNumActivo());
+				countNumActDuplicate++;
+				
+				XSSFCellStyle styleActivoTitleHistorico = myWorkBook.createCellStyle();
+				font = myWorkBook.createFont();
+				font.setFontHeight(11);
+				font.setBold(true);
+				styleActivoTitleHistorico.setFont(font);
+				styleActivoTitleHistorico.setBorderBottom(XSSFCellStyle.BORDER_THIN);
+				styleActivoTitleHistorico.setBottomBorderColor(new XSSFColor(new java.awt.Color(157, 195, 230)));
+				styleActivoTitleHistorico.setFillForegroundColor(new XSSFColor(new java.awt.Color(222, 235, 247)));
+				styleActivoTitleHistorico.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
+				styleActivoTitleHistorico.setAlignment(XSSFCellStyle.ALIGN_CENTER);
+				
+				XSSFCellStyle styleTopColumnsHistorico = myWorkBook.createCellStyle();
+				font = myWorkBook.createFont();
+				font.setFontHeight(11);
+				font.setBold(true);
+				styleTopColumnsHistorico.setFont(font);
+				styleTopColumnsHistorico.setBorderBottom(XSSFCellStyle.BORDER_THIN);
+				styleTopColumnsHistorico.setBottomBorderColor(new XSSFColor(new java.awt.Color(157, 195, 230)));
+				styleTopColumnsHistorico.setFillForegroundColor(new XSSFColor(new java.awt.Color(222, 235, 247)));
+				styleTopColumnsHistorico.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
+				styleTopColumnsHistorico.setAlignment(XSSFCellStyle.ALIGN_LEFT);
+				
+				styleBottomColumnsHistorico = myWorkBook.createCellStyle();
+				font = myWorkBook.createFont();
+				font.setFontHeight(11);
+				font.setBold(true);
+				styleBottomColumnsHistorico.setFont(font);
+				styleBottomColumnsHistorico.setBorderTop(XSSFCellStyle.BORDER_THIN);
+				styleBottomColumnsHistorico.setTopBorderColor(new XSSFColor(new java.awt.Color(157, 195, 230)));
+				styleBottomColumnsHistorico.setFillForegroundColor(new XSSFColor(new java.awt.Color(222, 235, 247)));
+				styleBottomColumnsHistorico.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
+				styleBottomColumnsHistorico.setAlignment(XSSFCellStyle.ALIGN_LEFT);
+				
+				XSSFCellStyle styleDataHistoricoBold = myWorkBook.createCellStyle();
+				font = myWorkBook.createFont();
+				font.setFontHeight(11);
+				font.setBold(true);
+				styleDataHistoricoBold.setFont(font);
+				
+				XSSFCellStyle styleDataHistorico = myWorkBook.createCellStyle();
+				font = myWorkBook.createFont();
+				font.setFontHeight(11);
+				font.setBold(false);
+				styleDataHistorico.setFont(font);
+				
+				if (historico.getNumActivo() != null && !numActivo.equals(historico.getNumActivo())) {
+					cellReference = new CellReference("B" +Integer.toString(currentRowHistorico)); 
+					r = mySheetHistorico.getRow(cellReference.getRow());
+					if (r == null) {
+						r = mySheetHistorico.createRow(cellReference.getRow());
+					}
+					c = r.getCell(cellReference.getCol());
+					if (c == null) {
+						c = r.createCell(cellReference.getCol());
+					}
+					if(!Checks.esNulo(historico.getNumActivo())) {
+						c.setCellValue("Activo "+historico.getNumActivo());
+						numActivo = historico.getNumActivo();
+					} else { 
+						c.setCellValue(""); 
+					}
+					mySheetHistorico.addMergedRegion(new CellRangeAddress(currentRowHistorico-1, currentRowHistorico-1, 1, 11));
+					c.setCellStyle(styleActivoTitleHistorico);
 
+					currentRowHistorico++;
+					
+					cellReference = new CellReference("B" + Integer.toString(currentRowHistorico));
+					r = mySheetHistorico.getRow(cellReference.getRow());
+					if (r == null) {
+						r = mySheetHistorico.createRow(cellReference.getRow());
+					}
+					c = r.getCell(cellReference.getCol());
+					if (c == null) {
+						c = r.createCell(cellReference.getCol());
+					}
+					c.setCellValue("Fecha   ");
+					c.setCellStyle(styleTopColumnsHistorico);
+					
+					cellReference = new CellReference("C" + Integer.toString(currentRowHistorico));
+					r = mySheetHistorico.getRow(cellReference.getRow());
+					if (r == null) {
+						r = mySheetHistorico.createRow(cellReference.getRow());
+					}
+					c = r.getCell(cellReference.getCol());
+					if (c == null) {
+						c = r.createCell(cellReference.getCol());
+					}
+					c.setCellValue("Nº oferta   ");
+					c.setCellStyle(styleTopColumnsHistorico);
+					
+					cellReference = new CellReference("D" + Integer.toString(currentRowHistorico));
+					r = mySheetHistorico.getRow(cellReference.getRow());
+					if (r == null) {
+						r = mySheetHistorico.createRow(cellReference.getRow());
+					}
+					c = r.getCell(cellReference.getCol());
+					if (c == null) {
+						c = r.createCell(cellReference.getCol());
+					}
+					c.setCellValue("Fecha Sanción   ");
+					c.setCellStyle(styleTopColumnsHistorico);
+					
+					cellReference = new CellReference("E" + Integer.toString(currentRowHistorico));
+					r = mySheetHistorico.getRow(cellReference.getRow());
+					if (r == null) {
+						r = mySheetHistorico.createRow(cellReference.getRow());
+					}
+					c = r.getCell(cellReference.getCol());
+					if (c == null) {
+						c = r.createCell(cellReference.getCol());
+					}
+					c.setCellValue("Nombre ofertante:   ");
+					c.setCellStyle(styleTopColumnsHistorico);
+					
+					cellReference = new CellReference("F" + Integer.toString(currentRowHistorico));
+					r = mySheetHistorico.getRow(cellReference.getRow());
+					if (r == null) {
+						r = mySheetHistorico.createRow(cellReference.getRow());
+					}
+					c = r.getCell(cellReference.getCol());
+					if (c == null) {
+						c = r.createCell(cellReference.getCol());
+					}
+					c.setCellValue("Estado de Oferta   ");
+					c.setCellStyle(styleTopColumnsHistorico);
+					
+					cellReference = new CellReference("G" + Integer.toString(currentRowHistorico));
+					r = mySheetHistorico.getRow(cellReference.getRow());
+					if (r == null) {
+						r = mySheetHistorico.createRow(cellReference.getRow());
+					}
+					c = r.getCell(cellReference.getCol());
+					if (c == null) {
+						c = r.createCell(cellReference.getCol());
+					}
+					c.setCellValue("¿Desestimado?   ");
+					c.setCellStyle(styleTopColumnsHistorico);
+					
+					cellReference = new CellReference("H" + Integer.toString(currentRowHistorico));
+					r = mySheetHistorico.getRow(cellReference.getRow());
+					if (r == null) {
+						r = mySheetHistorico.createRow(cellReference.getRow());
+					}
+					c = r.getCell(cellReference.getCol());
+					if (c == null) {
+						c = r.createCell(cellReference.getCol());
+					}
+					c.setCellValue("Motivo del desestimiento   ");
+					c.setCellStyle(styleTopColumnsHistorico);
+					
+					cellReference = new CellReference("I" + Integer.toString(currentRowHistorico));
+					r = mySheetHistorico.getRow(cellReference.getRow());
+					if (r == null) {
+						r = mySheetHistorico.createRow(cellReference.getRow());
+					}
+					c = r.getCell(cellReference.getCol());
+					if (c == null) {
+						c = r.createCell(cellReference.getCol());
+					}
+					c.setCellValue("FF.RR.   ");
+					c.setCellStyle(styleTopColumnsHistorico);
+					
+					cellReference = new CellReference("J" + Integer.toString(currentRowHistorico));
+					r = mySheetHistorico.getRow(cellReference.getRow());
+					if (r == null) {
+						r = mySheetHistorico.createRow(cellReference.getRow());
+					}
+					c = r.getCell(cellReference.getCol());
+					if (c == null) {
+						c = r.createCell(cellReference.getCol());
+					}
+					c.setCellValue("OFERTA   ");
+					c.setCellStyle(styleTopColumnsHistorico);
+					
+					cellReference = new CellReference("K" + Integer.toString(currentRowHistorico));
+					r = mySheetHistorico.getRow(cellReference.getRow());
+					if (r == null) {
+						r = mySheetHistorico.createRow(cellReference.getRow());
+					}
+					c = r.getCell(cellReference.getCol());
+					if (c == null) {
+						c = r.createCell(cellReference.getCol());
+					}
+					c.setCellValue("PVP Comité   ");
+					c.setCellStyle(styleTopColumnsHistorico);
+					
+					cellReference = new CellReference("L" + Integer.toString(currentRowHistorico));
+					r = mySheetHistorico.getRow(cellReference.getRow());
+					if (r == null) {
+						r = mySheetHistorico.createRow(cellReference.getRow());
+					}
+					c = r.getCell(cellReference.getCol());
+					if (c == null) {
+						c = r.createCell(cellReference.getCol());
+					}
+					c.setCellValue("V Tas   ");
+					c.setCellStyle(styleTopColumnsHistorico);
+					
+					currentRowHistorico++;
+				}
+				
+				cellReference = new CellReference("B" + Integer.toString(currentRowHistorico));
+				r = mySheetHistorico.getRow(cellReference.getRow());
+				if (r == null) {
+					r = mySheetHistorico.createRow(cellReference.getRow());
+				}
+				c = r.getCell(cellReference.getCol());
+				if (c == null) {
+					c = r.createCell(cellReference.getCol());
+				}
+				if (!Checks.esNulo(historico.getFecha())) {
+					c.setCellValue(historico.getFecha());
+				} else {
+					c.setCellValue("");
+				}
+				c.setCellStyle(styleDataHistoricoBold);
+				
+				cellReference = new CellReference("C" + Integer.toString(currentRowHistorico));
+				r = mySheetHistorico.getRow(cellReference.getRow());
+				if (r == null) {
+					r = mySheetHistorico.createRow(cellReference.getRow());
+				}
+				c = r.getCell(cellReference.getCol());
+				if (c == null) {
+					c = r.createCell(cellReference.getCol());
+				}
+				if (!Checks.esNulo(historico.getNumOferta())) {
+					c.setCellValue(historico.getNumOferta());
+				} else {
+					c.setCellValue("");
+				}
+				c.setCellStyle(styleDataHistoricoBold);
+				
+				cellReference = new CellReference("D" + Integer.toString(currentRowHistorico));
+				r = mySheetHistorico.getRow(cellReference.getRow());
+				if (r == null) {
+					r = mySheetHistorico.createRow(cellReference.getRow());
+				}
+				c = r.getCell(cellReference.getCol());
+				if (c == null) {
+					c = r.createCell(cellReference.getCol());
+				}
+				if (!Checks.esNulo(historico.getFechaSancion())) {
+					c.setCellValue(historico.getFechaSancion());
+				} else {
+					c.setCellValue("");
+				}
+				c.setCellStyle(styleDataHistoricoBold);
+				
+				cellReference = new CellReference("E" + Integer.toString(currentRowHistorico));
+				r = mySheetHistorico.getRow(cellReference.getRow());
+				if (r == null) {
+					r = mySheetHistorico.createRow(cellReference.getRow());
+				}
+				c = r.getCell(cellReference.getCol());
+				if (c == null) {
+					c = r.createCell(cellReference.getCol());
+				}
+				if (!Checks.esNulo(historico.getOfertante())) {
+					c.setCellValue(historico.getOfertante());
+				} else {
+					c.setCellValue("");
+				}
+				c.setCellStyle(styleDataHistorico);
+				
+				cellReference = new CellReference("F" + Integer.toString(currentRowHistorico));
+				r = mySheetHistorico.getRow(cellReference.getRow());
+				if (r == null) {
+					r = mySheetHistorico.createRow(cellReference.getRow());
+				}
+				c = r.getCell(cellReference.getCol());
+				if (c == null) {
+					c = r.createCell(cellReference.getCol());
+				}
+				if (!Checks.esNulo(historico.getEstado())) {
+					c.setCellValue(historico.getEstado());
+				} else {
+					c.setCellValue("");
+				}
+				c.setCellStyle(styleDataHistoricoBold);
+				
+				cellReference = new CellReference("G" + Integer.toString(currentRowHistorico));
+				r = mySheetHistorico.getRow(cellReference.getRow());
+				if (r == null) {
+					r = mySheetHistorico.createRow(cellReference.getRow());
+				}
+				c = r.getCell(cellReference.getCol());
+				if (c == null) {
+					c = r.createCell(cellReference.getCol());
+				}
+				if (!Checks.esNulo(historico.getDesestimado())) {
+					c.setCellValue(historico.getDesestimado());
+				} else {
+					c.setCellValue("");
+				}
+				c.setCellStyle(styleDataHistorico);
+				
+				cellReference = new CellReference("H" + Integer.toString(currentRowHistorico));
+				r = mySheetHistorico.getRow(cellReference.getRow());
+				if (r == null) {
+					r = mySheetHistorico.createRow(cellReference.getRow());
+				}
+				c = r.getCell(cellReference.getCol());
+				if (c == null) {
+					c = r.createCell(cellReference.getCol());
+				}
+				if (!Checks.esNulo(historico.getMotivoDesestimiento())) {
+					c.setCellValue(historico.getMotivoDesestimiento());
+				} else {
+					c.setCellValue("");
+				}
+				c.setCellStyle(styleDataHistoricoBold);
+				
+				cellReference = new CellReference("I" + Integer.toString(currentRowHistorico));
+				r = mySheetHistorico.getRow(cellReference.getRow());
+				if (r == null) {
+					r = mySheetHistorico.createRow(cellReference.getRow());
+				}
+				c = r.getCell(cellReference.getCol());
+				if (c == null) {
+					c = r.createCell(cellReference.getCol());
+				}
+				if (!Checks.esNulo(historico.getFfrr())) {
+					c.setCellValue(historico.getFfrr());
+				} else {
+					c.setCellValue("");
+				}
+				c.setCellStyle(styleDataHistorico);
+				
+				cellReference = new CellReference("J" + Integer.toString(currentRowHistorico));
+				r = mySheetHistorico.getRow(cellReference.getRow());
+				if (r == null) {
+					r = mySheetHistorico.createRow(cellReference.getRow());
+				}
+				c = r.getCell(cellReference.getCol());
+				if (c == null) {
+					c = r.createCell(cellReference.getCol());
+				}
+				if (!Checks.esNulo(historico.getOferta())) {
+					c.setCellValue(historico.getOferta());
+				} else {
+					c.setCellValue("");
+				}
+				c.setCellStyle(styleDataHistorico);
+				
+				cellReference = new CellReference("K" + Integer.toString(currentRowHistorico+1));
+				r = mySheetHistorico.getRow(cellReference.getRow());
+				if (r == null) {
+					r = mySheetHistorico.createRow(cellReference.getRow());
+				}
+				c = r.getCell(cellReference.getCol());
+				if (c == null) {
+					c = r.createCell(cellReference.getCol());
+				}
+				if (!Checks.esNulo(historico.getPvpComite())) {
+					c.setCellValue(historico.getPvpComite());
+				} else {
+					c.setCellValue("");
+				}
+				c.setCellStyle(styleDataHistorico);
+				
+				cellReference = new CellReference("L" + Integer.toString(currentRowHistorico));
+				r = mySheetHistorico.getRow(cellReference.getRow());
+				if (r == null) {
+					r = mySheetHistorico.createRow(cellReference.getRow());
+				}
+				c = r.getCell(cellReference.getCol());
+				if (c == null) {
+					c = r.createCell(cellReference.getCol());
+				}
+				if (!Checks.esNulo(historico.getTasacion())) {
+					c.setCellValue(historico.getTasacion());
+				} else {
+					c.setCellValue("");
+				}
+				c.setCellStyle(styleDataHistorico);
+				
+				currentRowHistorico++;
+				
+				if (numActivoDuplicate == countNumActDuplicate) {
+					cellReference = new CellReference("B" +Integer.toString(currentRowHistorico)); 
+					r = mySheetHistorico.getRow(cellReference.getRow());
+					if (r == null) {
+						r = mySheetHistorico.createRow(cellReference.getRow());
+					}
+					c = r.getCell(cellReference.getCol());
+					if (c == null) {
+						c = r.createCell(cellReference.getCol());
+					}
+					if(!Checks.esNulo(historico.getNumActivo())) {
+						c.setCellValue("Total Activo "+historico.getNumActivo()); 
+					} else { 
+						c.setCellValue("Total Activo"); 
+					}
+					mySheetHistorico.addMergedRegion(new CellRangeAddress(currentRowHistorico-1, currentRowHistorico-1, 1, 7));
+					c.setCellStyle(styleBottomColumnsHistorico);
+					
+					String formula = "SUM(I"+String.valueOf(numActivoDuplicate-1)+":I"+String.valueOf(currentRowHistorico-1)+")";
+					cellReference = new CellReference("I" + Integer.toString(currentRowHistorico));
+					r = mySheetHistorico.getRow(cellReference.getRow());
+					if (r == null) {
+						r = mySheetHistorico.createRow(cellReference.getRow());
+					}
+					c = r.getCell(cellReference.getCol());
+					if (c == null) {
+						c = r.createCell(cellReference.getCol());
+					}
+					c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+					c.setCellFormula(formula);
+					c.setCellStyle(styleBottomColumnsHistorico);
+					//totalFFRR += c.getNumericCellValue();
+					
+					formula = "SUM(J"+String.valueOf(numActivoDuplicate-1)+":J"+String.valueOf(currentRowHistorico-1)+")";
+					cellReference = new CellReference("J" + Integer.toString(currentRowHistorico));
+					r = mySheetHistorico.getRow(cellReference.getRow());
+					if (r == null) {
+						r = mySheetHistorico.createRow(cellReference.getRow());
+					}
+					c = r.getCell(cellReference.getCol());
+					if (c == null) {
+						c = r.createCell(cellReference.getCol());
+					}
+					c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+					c.setCellFormula(formula);
+					c.setCellStyle(styleBottomColumnsHistorico);
+					//totalOferta += c.getNumericCellValue();
+					
+					formula = "SUM(K"+String.valueOf(numActivoDuplicate-1)+":K"+String.valueOf(currentRowHistorico-1)+")";
+					cellReference = new CellReference("K" + Integer.toString(currentRowHistorico));
+					r = mySheetHistorico.getRow(cellReference.getRow());
+					if (r == null) {
+						r = mySheetHistorico.createRow(cellReference.getRow());
+					}
+					c = r.getCell(cellReference.getCol());
+					if (c == null) {
+						c = r.createCell(cellReference.getCol());
+					}
+					c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+					c.setCellFormula(formula);
+					c.setCellStyle(styleBottomColumnsHistorico);
+					//totalpvpComite += c.getNumericCellValue();
+					
+					formula = "SUM(L"+String.valueOf(numActivoDuplicate-1)+":L"+String.valueOf(currentRowHistorico-1)+")";
+					cellReference = new CellReference("L" + Integer.toString(currentRowHistorico));
+					r = mySheetHistorico.getRow(cellReference.getRow());
+					if (r == null) {
+						r = mySheetHistorico.createRow(cellReference.getRow());
+					}
+					c = r.getCell(cellReference.getCol());
+					if (c == null) {
+						c = r.createCell(cellReference.getCol());
+					}
+					c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+					c.setCellFormula(formula);
+					c.setCellStyle(styleBottomColumnsHistorico);
+					//totalvTas += c.getNumericCellValue();
+					
+					currentRowHistorico+=2;
+					countNumActDuplicate=0;
+				}
+				
+			}
+			
+			cellReference = new CellReference("B" +Integer.toString(currentRowHistorico)); 
+			r = mySheetHistorico.getRow(cellReference.getRow());
+			if (r == null) {
+				r = mySheetHistorico.createRow(cellReference.getRow());
+			}
+			c = r.getCell(cellReference.getCol());
+			if (c == null) {
+				c = r.createCell(cellReference.getCol());
+			}
+			c.setCellValue("Total General   "); 
+			mySheetHistorico.addMergedRegion(new CellRangeAddress(currentRowHistorico-1, currentRowHistorico-1, 1, 7));
+			c.setCellStyle(styleBottomColumnsHistorico);
+			
+			cellReference = new CellReference("I" + Integer.toString(currentRowHistorico));
+			r = mySheetHistorico.getRow(cellReference.getRow());
+			if (r == null) {
+				r = mySheetHistorico.createRow(cellReference.getRow());
+			}
+			c = r.getCell(cellReference.getCol());
+			if (c == null) {
+				c = r.createCell(cellReference.getCol());
+			}
+			c.setCellValue(totalFFRR); 
+			c.setCellStyle(styleBottomColumnsHistorico);
+			
+			cellReference = new CellReference("J" + Integer.toString(currentRowHistorico));
+			r = mySheetHistorico.getRow(cellReference.getRow());
+			if (r == null) {
+				r = mySheetHistorico.createRow(cellReference.getRow());
+			}
+			c = r.getCell(cellReference.getCol());
+			if (c == null) {
+				c = r.createCell(cellReference.getCol());
+			}
+			c.setCellValue(totalOferta);
+			c.setCellStyle(styleBottomColumnsHistorico);
+			
+			cellReference = new CellReference("K" + Integer.toString(currentRowHistorico));
+			r = mySheetHistorico.getRow(cellReference.getRow());
+			if (r == null) {
+				r = mySheetHistorico.createRow(cellReference.getRow());
+			}
+			c = r.getCell(cellReference.getCol());
+			if (c == null) {
+				c = r.createCell(cellReference.getCol());
+			}
+			c.setCellValue(totalpvpComite);
+			c.setCellStyle(styleBottomColumnsHistorico);
+			
+			cellReference = new CellReference("L" + Integer.toString(currentRowHistorico));
+			r = mySheetHistorico.getRow(cellReference.getRow());
+			if (r == null) {
+				r = mySheetHistorico.createRow(cellReference.getRow());
+			}
+			c = r.getCell(cellReference.getCol());
+			if (c == null) {
+				c = r.createCell(cellReference.getCol());
+			}
+			c.setCellValue(totalvTas);
+			c.setCellStyle(styleBottomColumnsHistorico);
+			
+			currentRowHistorico+=2;
+			countNumActDuplicate=0;
+			
+			for (int x=1; x<12; x++) {
+				mySheetHistorico.autoSizeColumn(x);
+			}
+			
+			
+			//rellenamos la quinta hoja
+			
+			int currentRowComercial = 27;
+			for( DtoListFichaAutorizacion autorizacion : dtoExcelFichaComercial.getListaFichaAutorizacion()) {
+				
+				if(currentRowComercial!= 27) {
+					r = mySheetAutorizacion.createRow(currentRowComercial);
+					c = r.createCell(1);
+				    c.setCellStyle(styleBordesCompletos);
+				    c = r.createCell(2);
+				    c.setCellStyle(styleBordesCompletos);
+				    c = r.createCell(3);
+				    c.setCellStyle(styleBordesCompletos);
+				    c = r.createCell(4);
+				    c.setCellStyle(styleBordesCompletos);
+				    c = r.createCell(5);
+				    c.setCellStyle(styleBordesCompletos);
+				    c = r.createCell(6);
+				    c.setCellStyle(styleBordesCompletos);
+				    c = r.createCell(7);
+				    c.setCellStyle(styleBordesCompletos);
+				    c = r.createCell(8);
+				    c.setCellStyle(styleBordesCompletos);
+				    c = r.createCell(9);
+				    c.setCellStyle(styleBordesCompletos);
+				    c = r.createCell(10);
+				    c.setCellStyle(styleBordesCompletos);
+				    c = r.createCell(11);
+				    c.setCellStyle(styleBordesCompletos);
+				    c = r.createCell(12);
+				    c.setCellStyle(styleBordesCompletos);
+				    c = r.createCell(13);
+				    c.setCellStyle(styleBordesCompletos);
+				}
+			
+				cellReference = new CellReference("B" + Integer.toString(currentRowComercial));
+				r = mySheetAutorizacion.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(autorizacion.getIdActivo())) {
+					c.setCellValue(autorizacion.getIdActivo());
+				} else {
+					c.setCellValue("");
+				}
+				
+				cellReference = new CellReference("C" + Integer.toString(currentRowComercial));
+				r = mySheetAutorizacion.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(autorizacion.getFinca())) {
+					c.setCellValue(autorizacion.getFinca());
+				} else {
+					c.setCellValue("");
+				}
+				
+				cellReference = new CellReference("D" + Integer.toString(currentRowComercial));
+				r = mySheetAutorizacion.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(autorizacion.getRegPropiedad())) {
+					c.setCellValue(autorizacion.getRegPropiedad());
+				} else {
+					c.setCellValue("");
+				}
+				
+				cellReference = new CellReference("E" + Integer.toString(currentRowComercial));
+				r = mySheetAutorizacion.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(autorizacion.getLocalidadRegProp())) {
+					c.setCellValue(autorizacion.getLocalidadRegProp());
+				} else {
+					c.setCellValue("");
+				}
+				
+				cellReference = new CellReference("F" + Integer.toString(currentRowComercial));
+				r = mySheetAutorizacion.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(autorizacion.getPrecioVenta())) {
+					c.setCellValue(autorizacion.getPrecioVenta());
+				} else {
+					c.setCellValue("");
+				}
+				
+				cellReference = new CellReference("G" + Integer.toString(currentRowComercial));
+				r = mySheetAutorizacion.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(autorizacion.getDireccion())) {
+					c.setCellValue(autorizacion.getDireccion());
+				} else {
+					c.setCellValue("");
+				}
+				
+				cellReference = new CellReference("I" + Integer.toString(currentRowComercial));
+				r = mySheetAutorizacion.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(autorizacion.getLocalidad())) {
+					c.setCellValue(autorizacion.getLocalidad());
+				} else {
+					c.setCellValue("");
+				}
+				
+				cellReference = new CellReference("L" + Integer.toString(currentRowComercial));
+				r = mySheetAutorizacion.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(autorizacion.getProvincia())) {
+					c.setCellValue(autorizacion.getProvincia());
+				} else {
+					c.setCellValue("");
+				}
+				
+				cellReference = new CellReference("N" + Integer.toString(currentRowComercial));
+				r = mySheetAutorizacion.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(autorizacion.getCondicionesVenta())) {
+					c.setCellValue(autorizacion.getCondicionesVenta());
+				} else {
+					c.setCellValue("");
+				}
+				
+				currentRowComercial++;
+
+			}
 			
 			myWorkBook.write(fileOutStream);
 			fileOutStream.close();

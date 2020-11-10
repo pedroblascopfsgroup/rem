@@ -76,7 +76,7 @@ public class MSVActualizadorSancionesBBVA extends AbstractMSVActualizador implem
 		Oferta oferta = ofertaApi.getOfertaByNumOfertaRem(Long.parseLong(exc.dameCelda(fila, 0)));
 		String fechaRespuestaComite = exc.dameCelda(fila, 1);
 		String resolucionComite = exc.dameCelda(fila, 2); 	
-		String importeContraoferta = exc.dameCelda(fila, 3);
+		String importe = exc.dameCelda(fila, 3);
 		
 		TransactionStatus transaction = null;
 		//Long idTareaExterna = null;
@@ -85,8 +85,6 @@ public class MSVActualizadorSancionesBBVA extends AbstractMSVActualizador implem
 		//ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 		
-		Filter filterTap01 = genericDao.createFilter(FilterType.EQUALS, "codigo", "T013_ResolucionComite");
-		Long idResolucionComite = genericDao.get(TareaProcedimiento.class, filterTap01).getId();
 		
 		// Obtenemos el tramite del expediente, y de este sus tareas.
 		List<ActivoTramite> listaTramites = activoTramiteApi
@@ -95,20 +93,34 @@ public class MSVActualizadorSancionesBBVA extends AbstractMSVActualizador implem
 				.getActivasByIdTramiteTodas(listaTramites.get(0).getId());
 		//idTareaExterna = tareasTramite.get(0).getId();
 
-		
 		Map<String, String[]> valoresTarea = new HashMap<String, String[]>();
 		DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 		Date date = format.parse(fechaRespuestaComite);
-		valoresTarea.put("fechaRespuesta", new String[] { format.format(date) });
-		valoresTarea.put("comboResolucion", new String[] { resolucionComite });
-		if(resolucionComite.equals("03")) {
-			valoresTarea.put("numImporteContra",  new String[] { importeContraoferta });
-		} 
-		valoresTarea.put("observaciones", new String[] { "Masivo Sanciones BBVA" });
-		valoresTarea.put("idTarea", new String[] { tareasTramite.get(0).getTareaPadre().getId().toString() });
 		
-		agendaAdapter.save(valoresTarea);
-		transactionManager.commit(transaction);
+		//T017_RatificacionComiteCES
+		if ("T017_ResolucionCES".equals(tareasTramite.get(0).getTareaProcedimiento().getCodigo())) {
+			valoresTarea.put("fechaRespuesta", new String[] { format.format(date) });
+			valoresTarea.put("comboResolucion", new String[] { resolucionComite });
+			if(resolucionComite.equals("03")) {
+				valoresTarea.put("numImporteContra",  new String[] { importe });
+			} 
+			valoresTarea.put("observaciones", new String[] { "Masivo Sanciones BBVA" });
+			valoresTarea.put("idTarea", new String[] { tareasTramite.get(0).getTareaPadre().getId().toString() });
+		//T017_ResolucionCES	
+		}else if ("T017_RatificacionComiteCES".equals(tareasTramite.get(0).getTareaProcedimiento().getCodigo())) {
+			valoresTarea.put("fechaRatificacion", new String[] { format.format(date) });
+			valoresTarea.put("comboRatificacion", new String[] { resolucionComite });
+			if (importe != null && importe.length() < 0 && resolucionComite.equals("03")) {
+				valoresTarea.put("numImporteOferta",  new String[] { importe });
+			}
+			valoresTarea.put("observaciones", new String[] { "Masivo Sanciones BBVA" });
+			valoresTarea.put("idTarea", new String[] { tareasTramite.get(0).getTareaPadre().getId().toString() });
+		}
+		
+		if (!valoresTarea.isEmpty()) {
+			agendaAdapter.save(valoresTarea);
+			transactionManager.commit(transaction);
+		}		
 		
 	} catch (Exception e) {
 		transactionManager.rollback(transaction);

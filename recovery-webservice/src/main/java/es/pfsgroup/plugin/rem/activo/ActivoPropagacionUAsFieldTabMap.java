@@ -42,7 +42,6 @@ public class ActivoPropagacionUAsFieldTabMap {
     	    		"tipoTransmision",
     	    		
     	    		// identificación BBVA
-	    			"idDivarianBbva",
 	    			"lineaFactura",
 	    			"idOrigenHre",
     	    		

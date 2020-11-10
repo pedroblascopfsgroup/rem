@@ -13,6 +13,8 @@ import org.apache.commons.logging.LogFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import net.sf.json.JSONObject;
+
 
 
 public class HttpSimpleGetRequest {
@@ -70,13 +72,12 @@ public class HttpSimpleGetRequest {
 		String inputLine;
 		StringBuilder content = new StringBuilder();
 		while((inputLine = reader.readLine()) != null) {
-			content.append(inputLine);
+			content.append(inputLine.trim());
 		}
-		content.append("status : " + status); 
-		ObjectMapper mapper = new ObjectMapper();
-		return mapper.writeValueAsString(content.toString());
+		JSONObject jsonObject = JSONObject.fromObject(content.toString());
+		jsonObject.accumulate("status", this.status); 
+		return jsonObject; 
 	}
-	
 	
 	public int getStatus() { return this.status; };
 

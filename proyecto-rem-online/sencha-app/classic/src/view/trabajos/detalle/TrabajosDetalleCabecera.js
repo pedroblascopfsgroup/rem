@@ -122,7 +122,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleCabecera', {
 									                   	{
 									                   		fieldLabel: HreRem.i18n('fieldlabel.gestor.activo'),
 									                   		cls: 'cabecera-info-field',
-															bind:		'{trabajo.gestorActivo}'
+															//bind:		'{trabajo.gestorActivo}'
+									                   		bind:		'{trabajo.gestorActivoResponsable}'
 									                   	},
 									                   	{
 									                   		fieldLabel: HreRem.i18n('fieldlabel.propietario'),
@@ -156,6 +157,14 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleCabecera', {
 									                   		hidden: true,
 									                   		bind:{
 																value:'{trabajo.nombreProyecto}'
+															}
+															
+									                   	},
+									                   	{
+									                   		fieldLabel: HreRem.i18n('fieldlabel.usuario.ultima.edicion'),
+									                   		cls: 'cabecera-info-field',
+									                   		bind:{
+																value:'{trabajo.responsableTrabajo}'
 															}
 															
 									                   	}

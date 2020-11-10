@@ -973,7 +973,10 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'estadoAdmisionDesc' 
-    		},
+			},
+			{
+				name: 'lineaFactura'
+			},
     		{
     			name: 'subestadoAdmisionDesc'
     		},
@@ -1021,9 +1024,6 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'numActivoBbva'
-    		},
-    		{
-    			name: 'idDivarianBbva'
     		},
     		{
     			name: 'lineaFactura'

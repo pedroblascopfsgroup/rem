@@ -168,6 +168,19 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 												       			change: 'onChangeRetencionGarantiaAplica'
 												       		}
 										           		},
+										           		{		
+										           			xtype:'comboboxfieldbase',
+															fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.tipo.retencion'),
+															reference: 'comboTipoRetencionRef',
+											        		bind: {
+										            			store: '{comboTipoRetencion}',
+										            			value: '{detalleeconomico.tipoRetencionCodigo}',
+										            			allowBlank: '{!detalleeconomico.retencionGarantiaAplica}',
+										            			disabled:'{!detalleeconomico.retencionGarantiaAplica}'
+
+															}, 
+															allowBlank: true
+										           		},
 														{ 
 															xtype: 'currencyfieldbase',
 															symbol: HreRem.i18n("symbol.euro"),

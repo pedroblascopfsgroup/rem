@@ -284,12 +284,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	onClickBotonRefrescar : function(btn) {
 		var me = this;
 
-		tabPanel = me.getView().down("tabpanel");
-		var activeTab = tabPanel.getActiveTab();
-		if (activeTab.xtype == "activosafectadosgasto"
-		&& CONST.CARTERA["LIBERBANK"] === me.getViewModel().get("gasto.cartera")) {
-			me.updateGastoByPrinexLBK();
-		}
 		me.refrescarGasto(true);
 	},
 	
@@ -713,6 +707,47 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	
     },
 
+    asociarGastoConActivos: function(idGasto, numeroActivo, numeroAgrupacion, detalle, form, window) {
+    	
+    	var me = this;
+    	
+    	detalle.getModelInstance().getProxy().extraParams.idGasto = idGasto;
+		detalle.getModelInstance().getProxy().extraParams.numActivo = numeroActivo;
+		detalle.getModelInstance().getProxy().extraParams.numAgrupacion = numeroAgrupacion;
+		detalle.getModelInstance().save({
+			
+			success: function(a, operation, c){
+				var data = Ext.decode(operation._response.responseText);
+				window.up('gastodetalle').down('datosgeneralesgasto').funcionRecargar();
+				window.up('gastodetalle').down('contabilidadgasto').funcionRecargar();
+				if(!Ext.isEmpty(data) && data.success == "true") {
+					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				} else {
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				}
+			},
+			failure: function(a, operation){
+				var data = {};
+                try {
+                	data = Ext.decode(operation._response.responseText);
+                }
+                catch (e){ };
+                if (!Ext.isEmpty(data.msg)) {
+                	me.fireEvent("errorToast", data.msg);
+                } else {
+                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                }
+			},
+			callback: function(records, operation, success) {
+				form.reset();
+				if (numeroActivo != null) window.unmask();
+				window.parent.funcionRecargar();
+				window.close();
+			}
+			
+		});
+    	
+    },
     
    	onEnlaceActivosClick: function(tableView, indiceFila, indiceColumna) {
    		var me = this;
@@ -1163,8 +1198,15 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		
 		me.lookupReference('baseIRPFRetG').setDisabled(!checked);
 		me.lookupReference('irpfTipoImpositivoRetG').setDisabled(!checked);
-		me.lookupReference('cuotaIRPFRetG').setDisabled(!checked);;
+		me.lookupReference('cuotaIRPFRetG').setDisabled(!checked);
+		me.lookupReference('comboTipoRetencionRef').setDisabled(!checked);
+		me.lookupReference('comboTipoRetencionRef').setAllowBlank(!checked);
+		if(!checked){
+			me.lookupReference('comboTipoRetencionRef').setValue('');
+		}
 		me.onChangeCuotaRetencionGarantia(checked);
+		
+		
 		
 		
 	},
@@ -1809,6 +1851,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		}
 		
 		var tipoImpositivo = form.getForm().findField('tipoImpositivo').getValue();
+		var tipoImpuesto = form.getForm().findField('tipoImpuesto').getValue();
 		
 		if(tipoImpositivo > 100){
 			me.fireEvent("errorToast",  HreRem.i18n("msg.operacion.ko.gasto.tipoImpositivo.mayor.cien"));
@@ -1818,7 +1861,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.gasto.linea.detalle.no.importe"));
 			return;
 		}
-
+		
+		if(!Ext.isEmpty(tipoImpositivo) && Ext.isEmpty(tipoImpuesto) && tipoImpositivo != 0){
+			me.fireEvent("errorToast", HreRem.i18n("msg.fieldlabel.gasto.linea.detalle.no.tipo.impositivo"));
+			return;
+		}
+		
+		
 		if(form.isValid()){
 			form.submit({                
 				waitMsg: HreRem.i18n('msg.mask.loading'),
@@ -2534,5 +2583,42 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		}
 		
 		return importeTotal;
-	}
+	},
+    
+    onClickGuardarCuentasYPartidas: function(btn){
+    	var me = this;
+    	
+    	var window = btn.up('[reference=ventanaCrearLineaDetalleGasto]');
+		var form = window.down('[reference=crearLineaDetalleGastoForm]');
+		
+		var url =  $AC.getRemoteUrl('gastosproveedor/saveCuentasPartidasGastoLineaDetalle');
+		form.form.url = url;
+		form.submit({                
+			waitMsg: HreRem.i18n('msg.mask.loading'),
+            params: {
+            	idGasto: window.idGasto,
+            	id: window.idLineaDetalleGasto
+            },
+
+            success: function(fp, o) {
+            	if(o.result.success == "false") {
+            		window.fireEvent("errorToast", o.result.errorMessage);
+            	}
+            	else {
+            		window.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+            	}
+            	
+            	if(!Ext.isEmpty(window.parent)) {
+            		window.parent.fireEvent("aftercreate", window.parent);
+            	}
+            	var grid = window.lookupController().getView().down('[reference=lineaDetalleGastoGrid]');
+            	grid.getStore().load();
+            	window.close();
+            	
+            },
+            failure: function(fp, o) {
+            	window.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+            }
+        });
+    }
 });

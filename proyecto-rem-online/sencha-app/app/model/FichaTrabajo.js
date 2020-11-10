@@ -137,6 +137,9 @@ Ext.define('HreRem.model.FichaTrabajo', {
     		{
     			name: 'visualizarLlaves',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'identificadorReamCodigo'
     		}
     		
     ],

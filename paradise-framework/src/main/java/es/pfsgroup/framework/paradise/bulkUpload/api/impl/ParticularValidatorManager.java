@@ -1,8 +1,6 @@
 package es.pfsgroup.framework.paradise.bulkUpload.api.impl;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -5192,6 +5190,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		resultado = rawDao.getExecuteSQL(query);
 		return Boolean.TRUE.equals("1".equals(resultado));
 	}
+	
+	@Override
+	public boolean existeProveedor(String codProveedor) {
+		String resultado = null;
+		String query = "SELECT COUNT(1) FROM ACT_PVE_PROVEEDOR WHERE PVE_COD_REM = "+codProveedor;
+		
+		
+		resultado = rawDao.getExecuteSQL(query);
+		return Boolean.TRUE.equals("1".equals(resultado));
+	}
+	
 
 	@Override
 	public boolean isTipoTarifaValidoEnConfiguracion(String codigoTarifa, String numTrabajo) {
@@ -5354,24 +5363,53 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	@Override
-	public Boolean esGastoYActivoMismoPropietarioByNumGasto(String numActivo, String numGastoHaya) {
-		if (Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo) || Checks.esNulo(numGastoHaya) || !StringUtils.isNumeric(numGastoHaya))
+	public Boolean esGastoYActivoMismoPropietarioByNumGasto(String numElemento, String numGastoHaya, String tipoElemento) {
+		if (Checks.esNulo(numElemento) || !StringUtils.isNumeric(numElemento) || Checks.esNulo(numGastoHaya) || !StringUtils.isNumeric(numGastoHaya))
 			return false;
 		
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) " +
-				"FROM ACT_ACTIVO ACT " +
-				"WHERE EXISTS ( "+
-				   "SELECT APRO.PRO_ID "+
-				   "FROM ACT_PAC_PROPIETARIO_ACTIVO APRO "+
-				   "JOIN GPV_GASTOS_PROVEEDOR GPV ON GPV.PRO_ID = APRO.PRO_ID "+
-				       "AND GPV.BORRADO = 0 "+
-				   "WHERE APRO.BORRADO = 0 "+
-				       "AND GPV.GPV_NUM_GASTO_HAYA = '"+numGastoHaya+"' "+
-				       "AND APRO.ACT_ID = ACT.ACT_ID) "+
-				   "AND ACT.BORRADO = 0 "+
-				   "AND ACT.ACT_NUM_ACTIVO = '"+numActivo+"'");
+		String resultado = rawDao.getExecuteSQL("WITH GENERICO AS (\n" + 
+				"    SELECT COUNT(1) ES_GEN\n" + 
+				"    FROM REM01.DD_ENT_ENTIDAD_GASTO\n" + 
+				"    WHERE DD_ENT_CODIGO = 'GEN'\n" + 
+				"        AND 'GEN' = '"+tipoElemento+"'\n" + 
+				"), ACTIVO AS (\n" + 
+				"    SELECT COUNT(1) ES_ACT\n" + 
+				"    FROM REM01.DD_ENT_ENTIDAD_GASTO\n" + 
+				"    WHERE DD_ENT_CODIGO = 'ACT'\n" + 
+				"        AND 'ACT' = '"+tipoElemento+"'\n" + 
+				"), PAC AS (\n" + 
+				"    SELECT PAC.PRO_ID\n" + 
+				"    FROM REM01.ACT_ACTIVO ACT\n" + 
+				"    JOIN REM01.ACT_PAC_PROPIETARIO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID\n" + 
+				"        AND PAC.BORRADO = 0\n" + 
+				"    JOIN ACTIVO ON ACTIVO.ES_ACT = 1\n" + 
+				"    WHERE ACT.BORRADO = 0\n" + 
+				"        AND ACT.ACT_NUM_ACTIVO = '"+numElemento+"'\n" + 
+				"), AGS AS (\n" + 
+				"    SELECT AGS.PRO_ID\n" + 
+				"    FROM REM01.ACT_AGS_ACTIVO_GENERICO_STG AGS\n" + 
+				"    JOIN GENERICO ON GENERICO.ES_GEN = 1\n" + 
+				"    WHERE AGS.BORRADO = 0\n" + 
+				"        AND AGS.AGS_ACTIVO_GENERICO = '"+numElemento+"'\n" + 
+				")\n" + 
+				"SELECT COUNT(1) \n" + 
+				"FROM REM01.GPV_GASTOS_PROVEEDOR GPV\n" + 
+				"WHERE GPV.GPV_NUM_GASTO_HAYA = '"+numGastoHaya+"'\n" + 
+				"    AND GPV.BORRADO = 0\n" + 
+				"    AND (\n" + 
+				"        EXISTS (\n" + 
+				"        SELECT 1\n" + 
+				"        FROM PAC\n" + 
+				"        WHERE PAC.PRO_ID = GPV.PRO_ID\n" + 
+				"        ) OR EXISTS (\n" + 
+				"        SELECT 1\n" + 
+				"        FROM AGS\n" + 
+				"        WHERE AGS.PRO_ID = GPV.PRO_ID\n" + 
+				"        )\n" + 
+				"    )");
+
 		return !"0".equals(resultado);
-		}
+	}
 
 	@Override
 	public boolean existeTipoDeGastoAsociadoCMGA (String codTipoGasto) {
@@ -5398,7 +5436,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 						+ "WHERE DD_TTR_CODIGO = '" + codCampo + "' AND BORRADO = 0 "
 		);
 
-		
 		return !"0".equals(resultado);
 	}
 	
@@ -5583,19 +5620,51 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
     }
 	
 	@Override
-    public Boolean esGastoYActivoMismoPropietario(String docIdentificadorPropietario, String numActivo) {
-	    if(Checks.esNulo(docIdentificadorPropietario) && Checks.esNulo(numActivo)) {
+    public Boolean esGastoYActivoMismoPropietario(String docIdentificadorPropietario, String numElemento, String tipoElemento) {
+	    if(Checks.esNulo(docIdentificadorPropietario) && Checks.esNulo(numElemento) && Checks.esNulo(tipoElemento)) {
             return false;
 	    }
-	
-	    String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
-	    				+ "              FROM ACT_ACTIVO ACT "
-	    				+ "				 JOIN ACT_PAC_PROPIETARIO_ACTIVO PACT ON ACT.ACT_ID = PACT.ACT_ID"
-	    				+ "				 WHERE ACT.ACT_NUM_ACTIVO = '" + numActivo + "' AND PACT.PRO_ID = "
-	    						+ "(SELECT PRO.PRO_ID "
-	    						+ "FROM ACT_PRO_PROPIETARIO PRO "
-	    						+ "WHERE PRO.PRO_DOCIDENTIF LIKE '" + docIdentificadorPropietario + "')"
-	                    );
+	    
+	    String resultado = rawDao.getExecuteSQL("WITH GENERICO AS (\n" + 
+	    		"    SELECT COUNT(1) ES_GEN\n" + 
+	    		"    FROM REM01.DD_ENT_ENTIDAD_GASTO\n" + 
+	    		"    WHERE DD_ENT_CODIGO = 'GEN'\n" + 
+	    		"        AND 'GEN' = '" + tipoElemento + "'\n" + 
+	    		"), ACTIVO AS (\n" + 
+	    		"    SELECT COUNT(1) ES_ACT\n" + 
+	    		"    FROM REM01.DD_ENT_ENTIDAD_GASTO\n" + 
+	    		"    WHERE DD_ENT_CODIGO = 'ACT'\n" + 
+	    		"        AND 'ACT' = '" + tipoElemento + "'\n" + 
+	    		"), PAC AS (\n" + 
+	    		"    SELECT PAC.PRO_ID\n" + 
+	    		"    FROM REM01.ACT_ACTIVO ACT\n" + 
+	    		"    JOIN REM01.ACT_PAC_PROPIETARIO_ACTIVO PAC ON PAC.ACT_ID = ACT.ACT_ID\n" + 
+	    		"        AND PAC.BORRADO = 0\n" + 
+	    		"    JOIN ACTIVO ON ACTIVO.ES_ACT = 1\n" + 
+	    		"    WHERE ACT.BORRADO = 0\n" + 
+	    		"        AND ACT.ACT_NUM_ACTIVO = '" + numElemento + "'\n" + 
+	    		"), AGS AS (\n" + 
+	    		"    SELECT AGS.PRO_ID\n" + 
+	    		"    FROM REM01.ACT_AGS_ACTIVO_GENERICO_STG AGS\n" + 
+	    		"    JOIN GENERICO ON GENERICO.ES_GEN = 1\n" + 
+	    		"    WHERE AGS.BORRADO = 0\n" + 
+	    		"        AND AGS.AGS_ACTIVO_GENERICO = '" + numElemento + "'\n" + 
+	    		")\n" + 
+	    		"SELECT COUNT(DISTINCT PRO.PRO_ID)\n" + 
+	    		"FROM REM01.ACT_PRO_PROPIETARIO PRO\n" + 
+	    		"WHERE PRO.BORRADO = 0\n" + 
+	    		"    AND PRO.PRO_DOCIDENTIF = '" + docIdentificadorPropietario + "'\n" + 
+	    		"    AND (EXISTS (\n" + 
+	    		"        SELECT 1\n" + 
+	    		"        FROM PAC \n" + 
+	    		"        WHERE PAC.PRO_ID = PRO.PRO_ID\n" + 
+	    		"        ) OR EXISTS (\n" + 
+	    		"        SELECT 1\n" + 
+	    		"        FROM AGS \n" + 
+	    		"        WHERE AGS.PRO_ID = PRO.PRO_ID\n" + 
+	    		"        )\n" + 
+	    		"    )");
+	    
 	    return !"0".equals(resultado);
     }
 	
@@ -5834,7 +5903,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "JOIN ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID "
 				+" JOIN DD_EEC_EST_EXP_COMERCIAL EEC ON EEC.DD_EEC_ID = ECO.DD_EEC_ID "
 				+ "WHERE OFR_NUM_OFERTA = "+numOferta+" "
-				+ "AND EEC.DD_EEC_CODIGO NOT IN '10' "
+				+ "AND EEC.DD_EEC_CODIGO = '10' "
 				+ "AND OFR.BORRADO = 0");
 
 		return !"0".equals(resultado);
@@ -5870,4 +5939,42 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean propietarioPerteneceCartera(String docIdent , List<String> listaCodigoCarteras) {
+		if(Checks.estaVacio(listaCodigoCarteras) || Checks.esNulo(docIdent)) {
+			return false;
+		}
+		String carteras = "";
+		for (String string : listaCodigoCarteras) {
+			carteras = carteras + " '" + string + "',";
+		}
+		
+		carteras = carteras.substring(0, carteras.length() - 1);
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_PRO_PROPIETARIO PRO JOIN"
+				+ "		 	DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID AND CRA.DD_CRA_CODIGO IN ("+carteras+") "
+				+ "			WHERE PRO.PRO_DOCIDENTIF = '"+docIdent+"' "
+				+ "		 	AND CRA.BORRADO = 0 AND PRO.BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public String getDocIdentfPropietarioByNumGasto(String numGasto) {
+		if(Checks.esNulo(numGasto)) {
+			return null;
+		}
+	
+		
+		String resultado = rawDao.getExecuteSQL("SELECT pro_docidentif "
+				+ "		 	FROM ACT_PRO_PROPIETARIO PRO JOIN"
+				+ "		 	GPV_GASTOS_PROVEEDOR GPV ON GPV.PRO_ID = PRO.PRO_ID AND GPV.GPV_NUM_GASTO_HAYA = '"+numGasto+"'"
+				+ "		 	AND GPV.BORRADO = 0 AND PRO.BORRADO = 0");
+
+	
+		return resultado;
+	}
+
 }

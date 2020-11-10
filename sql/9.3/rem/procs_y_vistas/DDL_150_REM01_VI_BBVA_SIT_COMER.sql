@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquin Arnal
---## FECHA_CREACION=20200915
+--## FECHA_CREACION=20200916
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11680
@@ -186,7 +186,7 @@ BEGIN
                         last_oferta.DD_EOF_CODIGO in (''01'') 
                     then ''Contrato privado''*/
                 when 
-                        SCM.DD_SCM_CODIGO = ''03'' --	Disponible para la venta con oferta
+                        SCM.DD_SCM_CODIGO = ''06'' --	Disponible para la venta con oferta
                         -- AND last_oferta.DD_EOF_CODIGO is null
                         -- AND ACT_PAC_PERIMETRO_ACTIVO.PAC_INCLUIDO = 0
                     then ''Baja contable''

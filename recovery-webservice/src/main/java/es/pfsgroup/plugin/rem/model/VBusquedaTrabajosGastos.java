@@ -26,9 +26,6 @@ public class VBusquedaTrabajosGastos implements Serializable {
 		
     @Column(name = "TBJ_NUM_TRABAJO")
     private String numTrabajo;
-    
-    @Column(name = "TBJ_WEBCOM_ID")
-    private Long idTrabajoWebcom;
 
     @Column(name = "DD_TTR_CODIGO")
 	private String codigoTipo;
@@ -60,29 +57,14 @@ public class VBusquedaTrabajosGastos implements Serializable {
 	@Column(name="TBJ_CUBRE_SEGURO")
 	private Integer cubreSeguro;
 	
-	@Column(name="CON_CIERRE_ECONOMICO")
-	private Integer conCierreEconomico;
-	
-	@Column(name="FACTURADO")
-	private Integer facturado;
-	
 	@Column(name="TBJ_IMPORTE_TOTAL")
 	private Double importeTotal;
-	
-	@Column(name="TBJ_FECHA_CIERRE_ECONOMICO")
-	private Date fechaCierreEconomico;
-	
-	@Column(name="DD_TTR_FILTRAR")
-	private Integer filtrar;
 	
 	@Column(name="PROPIETARIO")
 	private Long propietario;
 	
 	@Column(name="TBJ_IMPORTE_PRESUPUESTO")
 	private Double importePresupuesto;
-	
-	@Column(name="TBJ_FECHA_EJECUTADO")
-	private Date fechaEjecutado;
 	
 	public Integer getCubreSeguro() {
 		return cubreSeguro;
@@ -106,14 +88,6 @@ public class VBusquedaTrabajosGastos implements Serializable {
 
 	public void setNumTrabajo(String numTrabajo) {
 		this.numTrabajo = numTrabajo;
-	}
-	
-	public Long getIdTrabajoWebcom() {
-		return idTrabajoWebcom;
-	}
-
-	public void setIdTrabajoWebcom(Long idTrabajoWebcom) {
-		this.idTrabajoWebcom = idTrabajoWebcom;
 	}
 
 	public String getCodigoTipo() {
@@ -197,30 +171,6 @@ public class VBusquedaTrabajosGastos implements Serializable {
 		this.idProveedor = idProveedor;
 	}
 
-	public Integer getConCierreEconomico() {
-		return conCierreEconomico;
-	}
-
-	public void setConCierreEconomico(Integer conCierreEconomico) {
-		this.conCierreEconomico = conCierreEconomico;
-	}
-
-	public Date getFechaCierreEconomico() {
-		return fechaCierreEconomico;
-	}
-
-	public void setFechaCierreEconomico(Date fechaCierreEconomico) {
-		this.fechaCierreEconomico = fechaCierreEconomico;
-	}
-
-	public Integer getFiltrar() {
-		return filtrar;
-	}
-
-	public void setFiltrar(Integer filtrar) {
-		this.filtrar = filtrar;
-	}
-
 	public Long getPropietario() {
 		return propietario;
 	}
@@ -236,14 +186,6 @@ public class VBusquedaTrabajosGastos implements Serializable {
 
 	public void setImportePresupuesto(Double importePresupuesto) {
 		this.importePresupuesto = importePresupuesto;
-	}
-
-	public Date getFechaEjecutado() {
-		return fechaEjecutado;
-	}
-
-	public void setFechaEjecutado(Date fechaEjecutado) {
-		this.fechaEjecutado = fechaEjecutado;
 	}
 	
 }

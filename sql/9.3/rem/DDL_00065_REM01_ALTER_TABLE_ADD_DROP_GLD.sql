@@ -187,7 +187,7 @@ BEGIN
                                 THEN DD_TEG_.DD_TEG_ID
                                 ELSE DD_TEG.DD_TEG_ID
                                 END DD_TEG_ID
-                        FROM '||V_ESQUEMA||'.GPV_TBJ_BACKUP GPV_TBJ
+                        FROM '||V_ESQUEMA||'.'||V_TABLA||' GPV_TBJ
                         JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GPV_TBJ.GPV_ID AND GPV.BORRADO = 0
                         JOIN '||V_ESQUEMA||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV_TBJ.GPV_ID AND GLD.BORRADO = 0
                         JOIN '||V_ESQUEMA||'.DD_TEG_TIPO_EMISOR_GLD DD_TEG ON DD_TEG.DD_TEG_CODIGO = ''HAY''

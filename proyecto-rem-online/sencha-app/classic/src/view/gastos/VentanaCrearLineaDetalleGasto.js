@@ -99,7 +99,16 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
     			itemId: 'btnGuardar', 
     			text: 'Guardar', 
     			handler: 'onClickGuardarLineaDetalleGasto',
-    			disabled: (!estadoParaGuardar || isGastoRefacturado || isGastoRefacturadoPadre)
+    			disabled: (!estadoParaGuardar || isGastoRefacturado || isGastoRefacturadoPadre),
+    			hidden: isGastoRefacturadoPadre
+    		},
+    		{ 
+    			formBind: true, 
+    			itemId: 'btnGuardarCuentasYPartidas', 
+    			text: 'Guardar cuentas y partidas', 
+    			handler: 'onClickGuardarCuentasYPartidas',
+    			disabled: !estadoParaGuardar,
+    			hidden: !isGastoRefacturadoPadre
     		},
     		{ 
     			itemId: 'btnCancelar', 
@@ -332,7 +341,7 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 												trAttrs: {height: '30px', width: '90%'},
 												columns: 1,
 												tableAttrs: {
-										            style: { width: '90%' }
+										            style: { width: '90%' } 
 										        }
 											},				    
 					    					items: [
@@ -347,7 +356,10 @@ Ext.define('HreRem.view.gastos.VentanaCrearLineaDetalleGasto', {
 													valueField: 'codigo',
 								    				bind: {
 								    					store: '{comboTipoImpuesto}'
-								    				}
+								    				},
+								    				listeners: {
+				    									change: 'onChangeCuota'
+				    								}
 								    				
 								    			},
 								    			{

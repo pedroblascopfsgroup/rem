@@ -621,8 +621,10 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					            		readOnly: '{!isGestorAdmisionAndSuper}'
 					            	},
 					            	displayField: 'descripcion',
-									valueField: 'codigo'
-				        		
+									valueField: 'codigo',
+									listeners:{
+				                		change:'onChangeDebeComprobarNIF'
+				                	}
 			                	},
 					        	flex:1 
 					        },	

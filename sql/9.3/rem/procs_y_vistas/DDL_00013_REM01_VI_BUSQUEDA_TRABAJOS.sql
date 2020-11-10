@@ -1,11 +1,11 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200723
+--## AUTOR=Julián Dolz
+--## FECHA_CREACION=20201109
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-10618
---## PRODUCTO=SI
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HREOS-12030
+--## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
@@ -19,6 +19,8 @@
 --##		0.7 Añadimos idActivo, numActivo, numAgrupacion
 --##		0.8 HREOS-9586 Añadimos cruce act_tbj
 --##		0.8 HREOS-10618 Adaptación de consulta al nuevo modelo de facturación
+--##		1.0 HREOS-12002 Agregar campos solicitados
+--##		1.1 HREOS-12030 Ajustar campos solicitados
 --##########################################
 --*/
 
@@ -92,13 +94,19 @@ BEGIN
 			act.act_num_activo AS numactivo,
 			agr.agr_num_agrup_rem AS numagrupacion, 
 			cra.dd_cra_codigo AS cartera,
+			cra.dd_cra_descripcion AS descripcionCartera,
 			scr.dd_scr_codigo AS subcartera,
+			scr.dd_scr_descripcion AS descripcionSubcartera,
 			usu.usu_username AS gestor_activo, 
 			DECODE (tbj.tbj_fecha_cierre_economico, NULL, 0, 1) AS con_cierre_economico,
           	tbj.tbj_fecha_cierre_economico, 
 			DECODE (tbj.TBJ_FECHA_EMISION_FACTURA , NULL, DECODE(tbj.TBJ_IMPORTE_TOTAL, NULL, 1, 0, 1, 0), 1) AS facturado, 
 			ttr.dd_ttr_filtrar,
-			DECODE (gtb.tbj_id, NULL, 0, 1) AS EN_OTRO_GASTO
+			DECODE (gtb.tbj_id, NULL, 0, 1) AS EN_OTRO_GASTO,
+			IRE.DD_IRE_DESCRIPCION,
+    		TBJ.TBJ_FECHA_CAMBIO_ESTADO,
+            usu2.usu_username as TBJ_RESPONSABLE_TRABAJO,
+			usu3.usu_username AS GestorResponsable
 
      	FROM ' || V_ESQUEMA || '.act_tbj_trabajo tbj 
 			JOIN ' || V_ESQUEMA || '.act_tbj atj 							ON atj.tbj_id = tbj.tbj_id
@@ -123,6 +131,9 @@ BEGIN
 			LEFT JOIN ' || V_ESQUEMA || '.act_pve_proveedor pve2 			ON pve2.pve_id = tbj.mediador_id
 			LEFT JOIN ' || V_ESQUEMA_MASTER || '.usu_usuarios solic 		ON solic.usu_id = tbj.usu_id
 			LEFT JOIN ' || V_ESQUEMA || '.gld_tbj gtb                       ON tbj.tbj_id = gtb.tbj_id AND GTB.BORRADO = 0
+			LEFT JOIN ' || V_ESQUEMA || '.DD_IRE_IDENTIFICADOR_REAM IRE		ON TBJ.DD_IRE_ID = IRE.DD_IRE_ID
+			LEFT JOIN ' || V_ESQUEMA_MASTER || '.usu_usuarios usu2	 		ON usu2.usu_id = tbj.TBJ_RESPONSABLE_TRABAJO
+			LEFT JOIN ' || V_ESQUEMA_MASTER || '.usu_usuarios usu3	 		ON usu3.usu_id = tbj.TBJ_GESTOR_ACTIVO_RESPONSABLE
           where tbj.borrado = 0
           ';
 

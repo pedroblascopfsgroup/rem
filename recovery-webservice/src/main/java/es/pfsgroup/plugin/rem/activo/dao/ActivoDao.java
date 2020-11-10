@@ -373,7 +373,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	boolean activoFueraPerimetroHAYA(Long idActivo); 
 
 	List<ActivoCalificacionNegativaAdicional> getListActivoCalificacionNegativaAdicionalByIdActivo(Long idActivo);
-
+	
 	Long getNextBbvaNumActivo();
-
+	
+	public Activo existeActivoUsuarioCarterizado(Long numActivo, Long idCartera, List<Long> idSubcarteras);
 }

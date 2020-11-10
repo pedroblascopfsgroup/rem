@@ -22,6 +22,8 @@ public interface ParticularValidatorApi {
 	Boolean activoEnAgrupacionRestringida(Long numActivo);
 
 	Boolean esActivoEnAgrupacion(Long idActivo, Long idAgrupacion);
+	
+	boolean existeProveedor(String codProveedor);
 
 	Boolean esActivoEnAgrupacionPorTipo(Long numActivo, String codTipoAgrupacion);
 
@@ -1236,7 +1238,7 @@ public interface ParticularValidatorApi {
 
 	Boolean esGastoYAgrupacionMismoPropietarioByNumGasto(String numAgrupacion, String numGasto);
 
-	Boolean esGastoYActivoMismoPropietarioByNumGasto(String numActivo, String numGastoHaya);
+	Boolean esGastoYActivoMismoPropietarioByNumGasto(String numElemento, String numGastoHaya, String tipoElemento);
 
 	Boolean existeEntidadGasto(String entidad);
 
@@ -1260,7 +1262,7 @@ public interface ParticularValidatorApi {
 
 	Boolean esPropietarioDeCarteraByCodigo(String docIdentificadorPropietario, String cartera);
 
-	Boolean esGastoYActivoMismoPropietario(String docIdentificadorPropietario, String numActivo);
+	Boolean esGastoYActivoMismoPropietario(String docIdentificadorPropietario, String numElemento, String tipoElemento);
 
 	Boolean esGastoYAgrupacionMismoPropietario(String docIdentificadorPropietario, String numAgrupacion);
 
@@ -1313,4 +1315,8 @@ public interface ParticularValidatorApi {
 	Boolean existeMunicipioDeProvinciaByCodigo(String codProvincia, String codigoMunicipio);
 
 	Boolean gastoRepetido(String factura, String fechaEmision, String nifEmisor, String nifPropietario);
+
+	Boolean propietarioPerteneceCartera(String docIdent, List<String> listaCodigoCarteras);
+
+	String getDocIdentfPropietarioByNumGasto(String numGasto);
 }

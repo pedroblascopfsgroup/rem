@@ -122,7 +122,25 @@ public class VBusquedaTrabajos implements Serializable {
 	
 	@Column(name="EN_OTRO_GASTO")
 	private Boolean enOtroGasto;
+	
+	@Column(name="TBJ_FECHA_CAMBIO_ESTADO")
+	private Date fechaCambioEstado;
+	
+	@Column(name="TBJ_RESPONSABLE_TRABAJO")
+	private String gestorActual;
+	
+	@Column(name = "DD_IRE_DESCRIPCION")
+	private String descripcionAreaPeticionaria;
+	
+	@Column(name = "DESCRIPCIONCARTERA")
+	private String descripcionCartera;
+	
+	@Column(name = "DESCRIPCIONSUBCARTERA")
+	private String descripcionSubcartera;
 
+	@Column(name = "GESTORRESPONSABLE")
+	private String responsableTrabajo;
+	
 	public Integer getCubreSeguro() {
 		return cubreSeguro;
 	}
@@ -359,6 +377,54 @@ public class VBusquedaTrabajos implements Serializable {
 
 	public void setEnOtroGasto(Boolean enOtroGasto) {
 		this.enOtroGasto = enOtroGasto;
+	}
+
+	public Date getFechaCambioEstado() {
+		return fechaCambioEstado;
+	}
+
+	public void setFechaCambioEstado(Date fechaCambioEstado) {
+		this.fechaCambioEstado = fechaCambioEstado;
+	}
+
+	public String getGestorActual() {
+		return gestorActual;
+	}
+
+	public void setGestorActual(String gestorActual) {
+		this.gestorActual = gestorActual;
+	}
+
+	public String getDescripcionAreaPeticionaria() {
+		return descripcionAreaPeticionaria;
+	}
+
+	public void setDescripcionAreaPeticionaria(String descripcionAreaPeticionaria) {
+		this.descripcionAreaPeticionaria = descripcionAreaPeticionaria;
+	}
+
+	public String getDescripcionCartera() {
+		return descripcionCartera;
+	}
+
+	public void setDescripcionCartera(String descripcionCartera) {
+		this.descripcionCartera = descripcionCartera;
+	}
+
+	public String getDescripcionSubcartera() {
+		return descripcionSubcartera;
+	}
+
+	public void setDescripcionSubcartera(String descripcionSubcartera) {
+		this.descripcionSubcartera = descripcionSubcartera;
+	}
+
+	public String getResponsableTrabajo() {
+		return responsableTrabajo;
+	}
+
+	public void setResponsableTrabajo(String responsableTrabajo) {
+		this.responsableTrabajo = responsableTrabajo;
 	}
 	
 }

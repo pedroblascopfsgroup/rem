@@ -268,7 +268,7 @@ private List<Integer> esOfertaErronea(MSVHojaExcel exc) {
 		try {
 			for(i=1; i<this.numFilasHoja;i++){
 				numOferta = exc.dameCelda(i, COL_NUM.NUM_OFERTA_BBVA);
-				if(Boolean.TRUE.equals(particularValidator.esOfertaErronea(numOferta)))
+				if(!particularValidator.esOfertaErronea(numOferta))
 					listaFilas.add(i);
 			}
 		} catch (Exception e) {

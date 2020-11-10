@@ -5,28 +5,38 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
+import javax.persistence.NonUniqueResultException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.LazyInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.GastoLineaDetalleApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.DtoLineaDetalleGasto;
 import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalleEntidad;
@@ -70,12 +80,20 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 	
 	protected static final Log logger = LogFactory.getLog(MSVMasivaModificacionLineasDetalle.class);
 	
+	private static List<GastoLineaDetalle> nuevasLineasList;
+	
 	@Autowired
 	private GenericABMDao genericDao;
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
-		
+	
+	@Autowired
+	private GastoLineaDetalleApi gastoLineaDetalleApi;
+	
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
+			
 	@Override
 	public String getValidOperation() {
 		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_MODIFICACION_LINEAS_DE_DETALLE;
@@ -83,11 +101,15 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 	
 
 	@Override
+	@Transactional
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
 			throws IOException, ParseException, JsonViewerException, SQLException, Exception {
 		
 		try {
 			
+			if(nuevasLineasList == null) {
+				nuevasLineasList = new ArrayList<GastoLineaDetalle>();
+			}
 			String accionRealizar = exc.dameCelda(fila, ACCION_LINIA_DETALLE);
 			
 			if(Arrays.asList(listaCampoAccionAnyadir).contains(accionRealizar.toUpperCase())) {
@@ -117,123 +139,127 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 				GastoLineaDetalle gastoLineaDetalleExistente = genericDao.get(GastoLineaDetalle.class, genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gastoProveedor.getId()),
 						genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.codigo", exc.dameCelda(fila, SUBTIPO_GASTO)),tipoImpuestoFilter, tipoImpositivoFilter );
 				
-				if(gastoLineaDetalleExistente != null) {
-					gastoLineaDetalle = gastoLineaDetalleExistente;
-				}
-				
-				gastoLineaDetalle.setGastoProveedor(gastoProveedor);
-				
-				Filter filtroSubGasto = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, SUBTIPO_GASTO));
-				DDSubtipoGasto subtipoGasto = genericDao.get(DDSubtipoGasto.class, filtroSubGasto);
-				
-				gastoLineaDetalle.setSubtipoGasto(subtipoGasto);
-				
-				if(exc.dameCelda(fila, PRINCIPAL_SUJETO_A_IMPUESTO) != null && !exc.dameCelda(fila, PRINCIPAL_SUJETO_A_IMPUESTO).isEmpty()) {
-					gastoLineaDetalle.setPrincipalSujeto(Double.parseDouble(exc.dameCelda(fila, PRINCIPAL_SUJETO_A_IMPUESTO)));
-					importeTotal = importeTotal + Double.parseDouble(exc.dameCelda(fila, PRINCIPAL_SUJETO_A_IMPUESTO));
-				}
-				
-				if(exc.dameCelda(fila, PRINCIPAL_NO_SUJETO_A_IMPUESTO) != null && !exc.dameCelda(fila, PRINCIPAL_NO_SUJETO_A_IMPUESTO).isEmpty()) {
-					gastoLineaDetalle.setPrincipalNoSujeto(Double.parseDouble(exc.dameCelda(fila, PRINCIPAL_NO_SUJETO_A_IMPUESTO)));
-					importeTotal = importeTotal + Double.parseDouble(exc.dameCelda(fila, PRINCIPAL_NO_SUJETO_A_IMPUESTO));
-				}
-				
-				if(exc.dameCelda(fila, TIPO_RECARGO) != null && !exc.dameCelda(fila, TIPO_RECARGO).isEmpty()) {
-					Filter filtroTipoRecargo = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, TIPO_RECARGO));
-					DDTipoRecargoGasto tipoRecargoGasto = genericDao.get(DDTipoRecargoGasto.class, filtroTipoRecargo);
+				if(gastoLineaDetalleExistente == null) {
+					gastoLineaDetalle.setGastoProveedor(gastoProveedor);
 					
-					gastoLineaDetalle.setTipoRecargoGasto(tipoRecargoGasto);
-				}
-				
-				if(exc.dameCelda(fila, IMPORTE_RECARGO) != null && !exc.dameCelda(fila, IMPORTE_RECARGO).isEmpty()) {
-					gastoLineaDetalle.setRecargo(Double.parseDouble(exc.dameCelda(fila, IMPORTE_RECARGO)));
-					importeTotal = importeTotal + Double.parseDouble(exc.dameCelda(fila, IMPORTE_RECARGO));
-				}
-				
-				if(exc.dameCelda(fila, INTERES_DEMORA) != null && !exc.dameCelda(fila, INTERES_DEMORA).isEmpty()) {
-					gastoLineaDetalle.setInteresDemora(Double.parseDouble(exc.dameCelda(fila, INTERES_DEMORA)));
-					importeTotal = importeTotal + Double.parseDouble(exc.dameCelda(fila, INTERES_DEMORA));
-				}
-				
-				if(exc.dameCelda(fila, COSTES) != null && !exc.dameCelda(fila, COSTES).isEmpty()) {
-					gastoLineaDetalle.setCostas(Double.parseDouble(exc.dameCelda(fila, COSTES)));
-					importeTotal = importeTotal + Double.parseDouble(exc.dameCelda(fila, COSTES));
-				}
-				
-				if(exc.dameCelda(fila, OTROS_INCREMENTOS) != null && !exc.dameCelda(fila, OTROS_INCREMENTOS).isEmpty()) {
-					gastoLineaDetalle.setOtrosIncrementos(Double.parseDouble(exc.dameCelda(fila, OTROS_INCREMENTOS)));
-					importeTotal = importeTotal + Double.parseDouble(exc.dameCelda(fila, OTROS_INCREMENTOS));
-				}
-				
-				if(exc.dameCelda(fila, PROVISIONES_SUPLIDOS) != null && !exc.dameCelda(fila, PROVISIONES_SUPLIDOS).isEmpty()) {
-					gastoLineaDetalle.setProvSuplidos(Double.parseDouble(exc.dameCelda(fila, PROVISIONES_SUPLIDOS)));
-					importeTotal = importeTotal + Double.parseDouble(exc.dameCelda(fila, PROVISIONES_SUPLIDOS));
-				}
-				
-				if(exc.dameCelda(fila, TIPO_IMPUESTO) != null && !exc.dameCelda(fila, TIPO_IMPUESTO).isEmpty()) {
-					Filter filtroTipoImpuesto= genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, TIPO_IMPUESTO));
-					DDTiposImpuesto tipoImpuesto = genericDao.get(DDTiposImpuesto.class, filtroTipoImpuesto);
+					Filter filtroSubGasto = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, SUBTIPO_GASTO));
+					DDSubtipoGasto subtipoGasto = genericDao.get(DDSubtipoGasto.class, filtroSubGasto);
 					
-					gastoLineaDetalle.setTipoImpuesto(tipoImpuesto);
-				}
-				
-				if(exc.dameCelda(fila, OPERACION_EXENTA) != null && !exc.dameCelda(fila, OPERACION_EXENTA).isEmpty()) {
+					gastoLineaDetalle.setSubtipoGasto(subtipoGasto);
 					
-					if(SI.equalsIgnoreCase(exc.dameCelda(fila, OPERACION_EXENTA)) || S.equalsIgnoreCase(exc.dameCelda(fila, OPERACION_EXENTA))) {
-						gastoLineaDetalle.setEsImporteIndirectoExento(true);
-					} else {
-						gastoLineaDetalle.setEsImporteIndirectoExento(false);
+					if(exc.dameCelda(fila, PRINCIPAL_SUJETO_A_IMPUESTO) != null && !exc.dameCelda(fila, PRINCIPAL_SUJETO_A_IMPUESTO).isEmpty()) {
+						gastoLineaDetalle.setPrincipalSujeto(Double.parseDouble(exc.dameCelda(fila, PRINCIPAL_SUJETO_A_IMPUESTO)));
+						importeTotal = importeTotal + Double.parseDouble(exc.dameCelda(fila, PRINCIPAL_SUJETO_A_IMPUESTO));
 					}
-				}
-				
-				if(exc.dameCelda(fila, RENUNCIA_EXENCION) != null && !exc.dameCelda(fila, RENUNCIA_EXENCION).isEmpty()) {
 					
-					if(SI.equalsIgnoreCase(exc.dameCelda(fila, RENUNCIA_EXENCION)) || S.equalsIgnoreCase(exc.dameCelda(fila, RENUNCIA_EXENCION))) {
-						gastoLineaDetalle.setEsImporteIndirectoRenunciaExento(true);
-					} else {
-						gastoLineaDetalle.setEsImporteIndirectoRenunciaExento(false);
+					if(exc.dameCelda(fila, PRINCIPAL_NO_SUJETO_A_IMPUESTO) != null && !exc.dameCelda(fila, PRINCIPAL_NO_SUJETO_A_IMPUESTO).isEmpty()) {
+						gastoLineaDetalle.setPrincipalNoSujeto(Double.parseDouble(exc.dameCelda(fila, PRINCIPAL_NO_SUJETO_A_IMPUESTO)));
+						importeTotal = importeTotal + Double.parseDouble(exc.dameCelda(fila, PRINCIPAL_NO_SUJETO_A_IMPUESTO));
 					}
-				}
-				
-				if(exc.dameCelda(fila, TIPO_IMPOSITIVO) != null && !exc.dameCelda(fila, TIPO_IMPOSITIVO).isEmpty()) {
-					gastoLineaDetalle.setImporteIndirectoTipoImpositivo(Double.parseDouble(exc.dameCelda(fila, TIPO_IMPOSITIVO)));
-				}
-				
-				if(exc.dameCelda(fila, OPTA_POR_CRITERIO_DE_CAJA_EN_IVA) != null && !exc.dameCelda(fila, OPTA_POR_CRITERIO_DE_CAJA_EN_IVA).isEmpty()) {
-					int optaCajaIvas= 0;
-					if(SI.equalsIgnoreCase(exc.dameCelda(fila, OPTA_POR_CRITERIO_DE_CAJA_EN_IVA)) || S.equalsIgnoreCase(exc.dameCelda(fila, OPTA_POR_CRITERIO_DE_CAJA_EN_IVA))) {
-						optaCajaIvas= 1;
+					
+					if(exc.dameCelda(fila, TIPO_RECARGO) != null && !exc.dameCelda(fila, TIPO_RECARGO).isEmpty()) {
+						Filter filtroTipoRecargo = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, TIPO_RECARGO));
+						DDTipoRecargoGasto tipoRecargoGasto = genericDao.get(DDTipoRecargoGasto.class, filtroTipoRecargo);
+						
+						gastoLineaDetalle.setTipoRecargoGasto(tipoRecargoGasto);
 					}
-					if(gastoLineaDetalle.getGastoProveedor() != null && gastoLineaDetalle.getGastoProveedor().getProveedor() != null ) {
-						if(gastoLineaDetalle.getGastoProveedor().getProveedor().getCriterioCajaIVA() != null ) {
-							if(gastoLineaDetalle.getGastoProveedor().getProveedor().getCriterioCajaIVA() != optaCajaIvas) {
+					
+					if(exc.dameCelda(fila, IMPORTE_RECARGO) != null && !exc.dameCelda(fila, IMPORTE_RECARGO).isEmpty()) {
+						gastoLineaDetalle.setRecargo(Double.parseDouble(exc.dameCelda(fila, IMPORTE_RECARGO)));
+						importeTotal = importeTotal + Double.parseDouble(exc.dameCelda(fila, IMPORTE_RECARGO));
+					}
+					
+					if(exc.dameCelda(fila, INTERES_DEMORA) != null && !exc.dameCelda(fila, INTERES_DEMORA).isEmpty()) {
+						gastoLineaDetalle.setInteresDemora(Double.parseDouble(exc.dameCelda(fila, INTERES_DEMORA)));
+						importeTotal = importeTotal + Double.parseDouble(exc.dameCelda(fila, INTERES_DEMORA));
+					}
+					
+					if(exc.dameCelda(fila, COSTES) != null && !exc.dameCelda(fila, COSTES).isEmpty()) {
+						gastoLineaDetalle.setCostas(Double.parseDouble(exc.dameCelda(fila, COSTES)));
+						importeTotal = importeTotal + Double.parseDouble(exc.dameCelda(fila, COSTES));
+					}
+					
+					if(exc.dameCelda(fila, OTROS_INCREMENTOS) != null && !exc.dameCelda(fila, OTROS_INCREMENTOS).isEmpty()) {
+						gastoLineaDetalle.setOtrosIncrementos(Double.parseDouble(exc.dameCelda(fila, OTROS_INCREMENTOS)));
+						importeTotal = importeTotal + Double.parseDouble(exc.dameCelda(fila, OTROS_INCREMENTOS));
+					}
+					
+					if(exc.dameCelda(fila, PROVISIONES_SUPLIDOS) != null && !exc.dameCelda(fila, PROVISIONES_SUPLIDOS).isEmpty()) {
+						gastoLineaDetalle.setProvSuplidos(Double.parseDouble(exc.dameCelda(fila, PROVISIONES_SUPLIDOS)));
+						importeTotal = importeTotal + Double.parseDouble(exc.dameCelda(fila, PROVISIONES_SUPLIDOS));
+					}
+					
+					if(exc.dameCelda(fila, TIPO_IMPUESTO) != null && !exc.dameCelda(fila, TIPO_IMPUESTO).isEmpty()) {
+						Filter filtroTipoImpuesto= genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, TIPO_IMPUESTO));
+						DDTiposImpuesto tipoImpuesto = genericDao.get(DDTiposImpuesto.class, filtroTipoImpuesto);
+						
+						gastoLineaDetalle.setTipoImpuesto(tipoImpuesto);
+					}
+					
+					if(exc.dameCelda(fila, OPERACION_EXENTA) != null && !exc.dameCelda(fila, OPERACION_EXENTA).isEmpty()) {
+						
+						if(SI.equalsIgnoreCase(exc.dameCelda(fila, OPERACION_EXENTA)) || S.equalsIgnoreCase(exc.dameCelda(fila, OPERACION_EXENTA))) {
+							gastoLineaDetalle.setEsImporteIndirectoExento(true);
+						} else {
+							gastoLineaDetalle.setEsImporteIndirectoExento(false);
+						}
+					}
+					
+					if(exc.dameCelda(fila, RENUNCIA_EXENCION) != null && !exc.dameCelda(fila, RENUNCIA_EXENCION).isEmpty()) {
+						
+						if(SI.equalsIgnoreCase(exc.dameCelda(fila, RENUNCIA_EXENCION)) || S.equalsIgnoreCase(exc.dameCelda(fila, RENUNCIA_EXENCION))) {
+							gastoLineaDetalle.setEsImporteIndirectoRenunciaExento(true);
+						} else {
+							gastoLineaDetalle.setEsImporteIndirectoRenunciaExento(false);
+						}
+					}
+					
+					if(exc.dameCelda(fila, TIPO_IMPOSITIVO) != null && !exc.dameCelda(fila, TIPO_IMPOSITIVO).isEmpty()) {
+						gastoLineaDetalle.setImporteIndirectoTipoImpositivo(Double.parseDouble(exc.dameCelda(fila, TIPO_IMPOSITIVO)));
+					}
+					
+					if(exc.dameCelda(fila, OPTA_POR_CRITERIO_DE_CAJA_EN_IVA) != null && !exc.dameCelda(fila, OPTA_POR_CRITERIO_DE_CAJA_EN_IVA).isEmpty()) {
+						int optaCajaIvas= 0;
+						if(SI.equalsIgnoreCase(exc.dameCelda(fila, OPTA_POR_CRITERIO_DE_CAJA_EN_IVA)) || S.equalsIgnoreCase(exc.dameCelda(fila, OPTA_POR_CRITERIO_DE_CAJA_EN_IVA))) {
+							optaCajaIvas= 1;
+						}
+						if(gastoLineaDetalle.getGastoProveedor() != null && gastoLineaDetalle.getGastoProveedor().getProveedor() != null ) {
+							if(gastoLineaDetalle.getGastoProveedor().getProveedor().getCriterioCajaIVA() != null ) {
+								if(gastoLineaDetalle.getGastoProveedor().getProveedor().getCriterioCajaIVA() != optaCajaIvas) {
+									gastoLineaDetalle.getGastoProveedor().getProveedor().setCriterioCajaIVA(optaCajaIvas);
+									genericDao.update(ActivoProveedor.class, gastoLineaDetalle.getGastoProveedor().getProveedor());
+								}
+							}else {
 								gastoLineaDetalle.getGastoProveedor().getProveedor().setCriterioCajaIVA(optaCajaIvas);
 								genericDao.update(ActivoProveedor.class, gastoLineaDetalle.getGastoProveedor().getProveedor());
 							}
-						}else {
-							gastoLineaDetalle.getGastoProveedor().getProveedor().setCriterioCajaIVA(optaCajaIvas);
-							genericDao.update(ActivoProveedor.class, gastoLineaDetalle.getGastoProveedor().getProveedor());
+							
 						}
-						
 					}
-				}
-				if(gastoLineaDetalle.getPrincipalSujeto() != null && gastoLineaDetalle.getImporteIndirectoTipoImpositivo() != null) {
+					if(gastoLineaDetalle.getPrincipalSujeto() != null && gastoLineaDetalle.getImporteIndirectoTipoImpositivo() != null && 
+						gastoLineaDetalle.getPrincipalSujeto() != 0 && gastoLineaDetalle.getImporteIndirectoTipoImpositivo() != 0) {
+						
+						BigDecimal importe =  (new BigDecimal(gastoLineaDetalle.getPrincipalSujeto()).multiply(new BigDecimal(gastoLineaDetalle.getImporteIndirectoTipoImpositivo())));
+						importe = importe.divide(new BigDecimal(100));
+						
+						gastoLineaDetalle.setImporteIndirectoCuota(importe.doubleValue());
+					}else {
+						gastoLineaDetalle.setImporteIndirectoCuota(0.0);
+					}
 					
-					Double importe = (gastoLineaDetalle.getPrincipalSujeto() * gastoLineaDetalle.getImporteIndirectoTipoImpositivo())/100;
+					importeTotal =  importeTotal+ gastoLineaDetalle.getImporteIndirectoCuota();
+					gastoLineaDetalle.setImporteTotal(importeTotal);
 					
-					gastoLineaDetalle.setImporteIndirectoCuota(importe);
-				}else {
-					gastoLineaDetalle.setImporteIndirectoCuota(0.0);
-				}
 				
-				importeTotal =  importeTotal+ gastoLineaDetalle.getImporteIndirectoCuota();
-				gastoLineaDetalle.setImporteTotal(importeTotal);
-				
-				if(gastoLineaDetalleExistente != null) {
-					genericDao.update(GastoLineaDetalle.class, gastoLineaDetalle);
-				}else {
 					genericDao.save(GastoLineaDetalle.class, gastoLineaDetalle);
+					
+					nuevasLineasList.add(gastoLineaDetalle);
+					
+				}else {
+					gastoLineaDetalle = gastoLineaDetalleExistente;
 				}
+				
+				
 				
 
 				if(exc.dameCelda(fila, ID_ELEMENTO) != null && !exc.dameCelda(fila, ID_ELEMENTO).isEmpty()) {
@@ -260,14 +286,10 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 									gastoLineaDetalleEntidad.setEntidad(activoAgrupacionActivo.getActivo().getId());
 									gastoLineaDetalleEntidad.setEntidadGasto(entidadGastoActivo);
 									sumaParticipacion = sumaParticipacion.add(participacionPorActivo);
-								   if((i++ == activosAgrupacion.size() - 1) && sumaParticipacion != participacion){
+									if((i++ == activosAgrupacion.size() - 1) && sumaParticipacion != participacion){
 										BigDecimal decimal = sumaParticipacion.subtract(participacion);
-										if(decimal.compareTo(BigDecimal.ZERO) < 0) {
-											participacionPorActivo = participacionPorActivo.add(decimal);
-										}else if(decimal.compareTo(BigDecimal.ZERO) > 0) {
-											participacionPorActivo = participacionPorActivo.subtract(decimal);
-										}										
-								    }
+										participacionPorActivo = participacionPorActivo.subtract(decimal);									
+								     }
 									 
 								   gastoLineaDetalleEntidad.setParticipacionGasto(participacionPorActivo.doubleValue());
 								   genericDao.save(GastoLineaDetalleEntidad.class,gastoLineaDetalleEntidad);
@@ -353,10 +375,37 @@ public class MSVMasivaModificacionLineasDetalle extends AbstractMSVActualizador 
 				}
 			}
 			
-		} catch (Exception e) {
+			if((exc.getNumeroFilas() -1 ) ==  fila) {
+				if(nuevasLineasList != null && !nuevasLineasList.isEmpty()) {
+					for (GastoLineaDetalle gastoLineaDetalle : nuevasLineasList) {
+						String subtipoGastoCodigo = gastoLineaDetalle.getSubtipoGasto().getCodigo(); 
+						Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "id", gastoLineaDetalle.getGastoProveedor().getId());
+						GastoProveedor gastoProveedor = genericDao.get(GastoProveedor.class, filtroGasto);
+						DtoLineaDetalleGasto dtoLinea = gastoLineaDetalleApi.calcularCuentasYPartidas(gastoProveedor, gastoLineaDetalle.getId(), subtipoGastoCodigo);	
+						gastoLineaDetalle = gastoLineaDetalleApi.setCuentasPartidasDtoToObject( gastoLineaDetalle, dtoLinea);
+						GastoLineaDetalle updateLinea = HibernateUtils.merge(gastoLineaDetalle);
+						genericDao.update(GastoLineaDetalle.class, updateLinea);
+					}
+				}
+				nuevasLineasList.clear();
+			}
+			
+		}catch (NumberFormatException e){
+			nuevasLineasList.clear();
 			logger.error("Error en MSVMasivaModificacionLineasDetalle", e);
-		}
-		
+		}catch (ParseException e){
+			nuevasLineasList.clear();
+			logger.error("Error en MSVMasivaModificacionLineasDetalle", e);
+		}catch (NonUniqueResultException e){
+			nuevasLineasList.clear();
+			logger.error("Error en MSVMasivaModificacionLineasDetalle", e);
+		}catch (LazyInitializationException e){
+			nuevasLineasList.clear();
+			logger.error("Error en MSVMasivaModificacionLineasDetalle", e);
+		}catch (Exception e) {
+			nuevasLineasList.clear();
+			logger.error("Error en MSVMasivaModificacionLineasDetalle", e);
+		}	
 		return new ResultadoProcesarFila();
 	}
 

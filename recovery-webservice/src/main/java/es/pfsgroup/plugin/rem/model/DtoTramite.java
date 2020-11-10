@@ -101,6 +101,10 @@ public class DtoTramite extends WebDto {
 	
 	private Boolean estaEnTareaReserva;
 	
+	private String codigoEstadoExpedienteComercial;
+	
+	private Boolean esActivoBBVA;
+	
 	
 	public Long getIdTramite() {
 		return idTramite;
@@ -460,5 +464,21 @@ public class DtoTramite extends WebDto {
 
 	public void setEstaEnTareaReserva(Boolean estaEnTareaReserva) {
 		this.estaEnTareaReserva = estaEnTareaReserva;
+	}
+
+	public String getCodigoEstadoExpedienteComercial() {
+		return codigoEstadoExpedienteComercial;
+	}
+
+	public void setCodigoEstadoExpedienteComercial(String codigoEstadoExpedienteComercial) {
+		this.codigoEstadoExpedienteComercial = codigoEstadoExpedienteComercial;
+	}
+
+	public Boolean getEsActivoBBVA() {
+		return esActivoBBVA;
+	}
+
+	public void setEsActivoBBVA(Boolean esActivoBBVA) {
+		this.esActivoBBVA = esActivoBBVA;
 	}
 }

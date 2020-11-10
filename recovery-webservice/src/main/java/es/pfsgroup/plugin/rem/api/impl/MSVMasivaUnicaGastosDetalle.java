@@ -448,11 +448,11 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 				
 				
 					if(exc.dameCelda(fila, COL_REPERCUTIBLE_INQUILINO) != null && !exc.dameCelda(fila, COL_REPERCUTIBLE_INQUILINO).isEmpty()) {
-						gastoDetalleEconomico.setRepercutibleInquilino(Boolean.TRUE.compareTo(stringToBoolean(exc.dameCelda(fila, COL_REPERCUTIBLE_INQUILINO))));
+						gastoDetalleEconomico.setRepercutibleInquilino(booleanToInt(stringToBoolean(exc.dameCelda(fila, COL_REPERCUTIBLE_INQUILINO))));
 					}
 					
 					if(exc.dameCelda(fila, COL_C_PAGO_CONEXION) != null && !exc.dameCelda(fila, COL_C_PAGO_CONEXION).isEmpty()) {
-						gastoDetalleEconomico.setPagadoConexionBankia(Boolean.TRUE.compareTo(stringToBoolean(exc.dameCelda(fila, COL_C_PAGO_CONEXION))));
+						gastoDetalleEconomico.setPagadoConexionBankia(booleanToInt(stringToBoolean(exc.dameCelda(fila, COL_C_PAGO_CONEXION))));
 					}
 					
 					if(exc.dameCelda(fila, COL_NUM_CONEXION) != null && !exc.dameCelda(fila, COL_NUM_CONEXION).isEmpty()) {
@@ -608,7 +608,7 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 					if(emisorList != null && !emisorList.isEmpty()) {
 						for (ActivoProveedor emisor : emisorList) {
 							if(emisor != null) {
-								emisor.setCriterioCajaIVA(Boolean.TRUE.compareTo(stringToBoolean(exc.dameCelda(fila, COL_OPTA_CRITERIO_CAJA_IVA))));
+								emisor.setCriterioCajaIVA(booleanToInt(stringToBoolean(exc.dameCelda(fila, COL_OPTA_CRITERIO_CAJA_IVA))));
 								emisor.getAuditoria().setUsuarioModificar(usuario);
 								emisor.getAuditoria().setFechaModificar(new Date());
 								genericDao.update(ActivoProveedor.class, emisor);
@@ -681,7 +681,14 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 		if(!Checks.esNulo(valor) && Arrays.asList(listaValidosPositivos).contains(valor.toUpperCase())) {
 			bool = true;
 		}
-		
 		return bool;
 	}
+	
+	private int booleanToInt(Boolean b) {
+		int i = b ? 1 : 0;
+		
+		return i;
+	}
+	
+	
 }

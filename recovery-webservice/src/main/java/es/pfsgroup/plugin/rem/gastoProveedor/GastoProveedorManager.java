@@ -141,6 +141,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
@@ -1032,8 +1033,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			dto.setBaseRetG(detalleGasto.getRetencionGarantiaBase());
 			dto.setRetencionGarantiaAplica(detalleGasto.getRetencionGarantiaAplica());
 			dto.setIrpfCuotaRetG(detalleGasto.getRetencionGarantiaCuota());
-			
-		
+			if(detalleGasto.getTipoRetencion() != null) {
+				dto.setTipoRetencionCodigo(detalleGasto.getTipoRetencion().getCodigo());
+			}
 			// TIPO IMPUESTO DIRECTO
 
 			dto.setImporteTotal(detalleGasto.getImporteTotal());
@@ -1260,6 +1262,27 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						detalleGasto.setFechaAnticipo(null);
 					}
 				}
+				
+				if(dto.getRetencionGarantiaAplica() != null) {
+					if(dto.getRetencionGarantiaAplica()) {
+						DDTipoRetencion tipoRetencion = (DDTipoRetencion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoRetencion.class, dto.getTipoRetencionCodigo());
+						if(tipoRetencion != null) {
+							detalleGasto.setTipoRetencion(tipoRetencion);
+						}
+					}else {
+						detalleGasto.setTipoRetencion(null);
+					}
+				}else if(detalleGasto.getRetencionGarantiaAplica() != null) {
+					if(detalleGasto.getRetencionGarantiaAplica()) {
+						DDTipoRetencion tipoRetencion = (DDTipoRetencion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoRetencion.class, dto.getTipoRetencionCodigo());
+						if(tipoRetencion != null) {
+							detalleGasto.setTipoRetencion(tipoRetencion);
+						}
+					}else {
+						detalleGasto.setTipoRetencion(null);
+					}
+				}
+				
 				DtoDetalleEconomicoGasto dtoFin = detalleEconomicoToDtoDetalleEconomico(gasto);
 				
 				if(!Checks.esNulo(dto.getGastoRefacturableB())) {
@@ -1296,13 +1319,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				if( dto.getBaseRetG() != null) {
 					detalleGasto.setRetencionGarantiaBase(dto.getBaseRetG());
 				}
-				if( dto.getRetencionGarantiaAplica() != null) {
-					detalleGasto.setRetencionGarantiaAplica(dto.getRetencionGarantiaAplica());
-				}
+
 				if(dto.getIrpfCuotaRetG() != null) {
 					detalleGasto.setRetencionGarantiaCuota(dto.getIrpfCuotaRetG());
 				}
-				
 				
 				Double importeTotal = recalcularImporteTotalGasto(detalleGasto);
 				detalleGasto.setImporteTotal(importeTotal);

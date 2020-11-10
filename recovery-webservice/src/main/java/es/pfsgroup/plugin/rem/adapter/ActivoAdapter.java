@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -46,6 +47,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -2093,6 +2095,7 @@ public class ActivoAdapter {
 			if(DDCartera.CODIGO_CARTERA_BBVA.equalsIgnoreCase(tramite.getActivo().getCartera().getCodigo())) {
 				beanUtilNotNull.copyProperty(dtoTramite, "nombre", T017_TRAMITE_BBVA_DESCRIPCION);
 				beanUtilNotNull.copyProperty(dtoTramite, "tipoTramite", T017_TRAMITE_BBVA_DESCRIPCION);
+				dtoTramite.setEsActivoBBVA(true);
 			}else {
 				beanUtilNotNull.copyProperty(dtoTramite, "tipoTramite", tramite.getTipoTramite().getDescripcion());
 				beanUtilNotNull.copyProperty(dtoTramite, "nombre", tramite.getTipoTramite().getDescripcion());	
@@ -2215,6 +2218,16 @@ public class ActivoAdapter {
 					if(expedienteComercial.getEstado() != null) {
 						beanUtilNotNull.copyProperty(dtoTramite, "descripcionEstadoEC",
 								expedienteComercial.getEstado().getDescripcion());
+						beanUtilNotNull.copyProperty(dtoTramite, "codigoEstadoExpedienteComercial",
+								expedienteComercial.getEstado().getCodigo());
+						if (Boolean.TRUE.equals(dtoTramite.getEsActivoBBVA())) {
+							boolean isGestorBoarding = perteneceGrupoBoarding(genericAdapter.getUsuarioLogado());
+							boolean expedienteComercialNoAprobado = expedienteComercialNoAprobado(dtoTramite.getCodigoEstadoExpedienteComercial());
+							if ( isGestorBoarding && expedienteComercialNoAprobado) {
+								dtoTramite.setOcultarBotonResolucion(true);
+							}
+							
+						}
 					}
 					beanUtilNotNull.copyProperty(dtoTramite, "numEC", expedienteComercial.getNumExpediente());
 				}
@@ -2265,6 +2278,28 @@ public class ActivoAdapter {
 		}
 
 		return dtoTramite;
+	}
+
+	private boolean expedienteComercialNoAprobado(String codigoEstadoExpedienteComercial) {
+		List<String> estadosRestringidos =
+				new ArrayList<String>(Arrays.asList(DDEstadosExpedienteComercial.EN_TRAMITACION
+													,DDEstadosExpedienteComercial.PTE_SANCION
+													,DDEstadosExpedienteComercial.PDTE_RESPUESTA_OFERTANTE_CES
+													,DDEstadosExpedienteComercial.CONTRAOFERTADO));
+				
+				
+		return Boolean.TRUE.equals(estadosRestringidos.contains(codigoEstadoExpedienteComercial));
+	}
+
+	private boolean perteneceGrupoBoarding(Usuario usuarioLogado) {
+		boolean perteneceGruppoBoarding = false;
+		
+		for (Perfil perfil : usuarioLogado.getPerfiles()) {
+			if ("PERFGBOARDING".equals(perfil.getCodigo())){
+				perteneceGruppoBoarding = true;
+			}
+		}
+		return perteneceGruppoBoarding;
 	}
 
 	public List<DtoListadoTareas> getTareasTramite(Long idTramite) {

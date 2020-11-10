@@ -75,6 +75,7 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	private String subclave;
 	private Boolean retencionGarantiaAplica;
 	private Double importeBrutoLbk;
+	private String tipoRetencionCodigo;
 
 	public Long getGastoProveedor() {
 		return gastoProveedor;
@@ -403,5 +404,12 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	public void setImporteBrutoLbk(Double importeBrutoLbk) {
 		this.importeBrutoLbk = importeBrutoLbk;
 	}
+	public String getTipoRetencionCodigo() {
+		return tipoRetencionCodigo;
+	}
+	public void setTipoRetencionCodigo(String tipoRetencionCodigo) {
+		this.tipoRetencionCodigo = tipoRetencionCodigo;
+	}
+	
 
 }

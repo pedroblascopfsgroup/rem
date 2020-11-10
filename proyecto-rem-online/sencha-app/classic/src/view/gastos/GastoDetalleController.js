@@ -1198,8 +1198,15 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		
 		me.lookupReference('baseIRPFRetG').setDisabled(!checked);
 		me.lookupReference('irpfTipoImpositivoRetG').setDisabled(!checked);
-		me.lookupReference('cuotaIRPFRetG').setDisabled(!checked);;
+		me.lookupReference('cuotaIRPFRetG').setDisabled(!checked);
+		me.lookupReference('comboTipoRetencionRef').setDisabled(!checked);
+		me.lookupReference('comboTipoRetencionRef').setAllowBlank(!checked);
+		if(!checked){
+			me.lookupReference('comboTipoRetencionRef').setValue('');
+		}
 		me.onChangeCuotaRetencionGarantia(checked);
+		
+		
 		
 		
 	},

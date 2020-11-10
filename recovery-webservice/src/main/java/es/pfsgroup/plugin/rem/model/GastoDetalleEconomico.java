@@ -28,6 +28,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioPago;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPago;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoRetencion;
 
 
 /**
@@ -150,6 +151,10 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
    
    @Column(name = "GDE_RET_GAR_APLICA")
    private Boolean retencionGarantiaAplica;
+   
+   @ManyToOne(fetch = FetchType.LAZY)
+   @JoinColumn(name = "DD_TRE_ID")
+   private DDTipoRetencion tipoRetencion;
 
 	@Version   
 	private Long version;
@@ -428,6 +433,14 @@ public class GastoDetalleEconomico implements Serializable, Auditable {
 
 	public void setRetencionGarantiaAplica(Boolean retencionGarantiaAplica) {
 		this.retencionGarantiaAplica = retencionGarantiaAplica;
+	}
+
+	public DDTipoRetencion getTipoRetencion() {
+		return tipoRetencion;
+	}
+
+	public void setTipoRetencion(DDTipoRetencion tipoRetencion) {
+		this.tipoRetencion = tipoRetencion;
 	}
 	
 	

@@ -260,6 +260,9 @@ Ext.define('HreRem.model.DetalleEconomicoGasto', {
 			name: 'importeBrutoLbk',
 			type: 'number',
 			defaultValue: 0
+		},
+		{
+			name: 'tipoRetencionCodigo'
 		}
 	],
     

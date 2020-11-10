@@ -115,6 +115,10 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 	private static final String COLUMNA_TEXTO_PROVISIONES_Y_SUPLIDOS="Se ha cambiado la celda de Provisiones y suplidos a tipo texto";
 	private static final String COLUMNA_TEXTO_TIPO_IMPOSITIVO="Se ha cambiado la celda de Tipo impositivo a tipo texto";
 	private static final String COLUMNA_TEXTO_PARTI_LINEA_DETALLE="Se ha cambiado la celda de Participación en la linea de detalle a tipo texto";
+	
+	private static final String TIPO_RETENCION_NO_EXISTE="El tipo de retención no existe.";
+	private static final String TIPO_RETENCION_VACIO="Si no están rellenos los campos de Retención garantía base y retención garantía porcentaje, el campo de tipo retención debe estar vacío.";
+	private static final String TIPO_RETENCION_RELLENO="Si los campos de Retención garantía base y Retención garantía porcentaje están rellenos el campo de tipo debe estar relleno.";
 
 	
 	public static final Integer COL_ID_AGRUPADOR_GASTO = 0;
@@ -136,32 +140,33 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 	public static final Integer COL_OFICINA = 16;
 	public static final Integer COL_RETENCION_GARANTIA_BASE = 17;
 	public static final Integer COL_RETENCION_GARANTIA_PORCENTAJE = 18;
-	public static final Integer COL_IRPF_BASE = 19;
-	public static final Integer COL_IRPF_PORCENTAJE = 20;
-	public static final Integer COL_IRPF_CLAVE = 21;
-	public static final Integer COL_IRPF_SUBCLAVE = 22;
-	public static final Integer COL_PLAN_VISITAS = 23;
-	public static final Integer COL_ACTIVABLE = 24;
-	public static final Integer COL_EJERCICIO = 25;
-	public static final Integer COL_TIPO_COMISIONADO = 26;
-	public static final Integer COL_COD_AGRUPACION_LINEA_DETALLE = 27;
-	public static final Integer COL_SUBTIPO_GASTO = 28;
-	public static final Integer COL_PRINCIPAL_SUJETO_IMPUESTOS = 29;
-	public static final Integer COL_PRINCIPAL_NO_SUJETO_IMPUESTOS = 30;
-	public static final Integer COL_TIPO_RECARGO = 31;
-	public static final Integer COL_IMPORTE_RECARGO = 32;
-	public static final Integer COL_INTERES_DEMORA = 33;
-	public static final Integer COL_COSTES = 34;
-	public static final Integer COL_OTROS_INCREMENTOS = 35;
-	public static final Integer COL_PROVISIONES_Y_SUPLIDOS = 36;
-	public static final Integer COL_TIPO_IMPUESTO = 37;
-	public static final Integer COL_OPERACION_EXENTA = 38;
-	public static final Integer COL_RENUNCIA_EXENCION = 39;
-	public static final Integer COL_TIPO_IMPOSITIVO = 40;
-	public static final Integer COL_OPTA_CRITERIO_CAJA_IVA = 41;
-	public static final Integer COL_ID_ELEMENTO = 42;
-	public static final Integer COL_TIPO_ELEMENTO = 43;
-	public static final Integer COL_PARTICIPACION_LINEA_DETALLE = 44;
+	public static final Integer COL_TIPO_RETENCION = 19;
+	public static final Integer COL_IRPF_BASE = 20;
+	public static final Integer COL_IRPF_PORCENTAJE = 21;
+	public static final Integer COL_IRPF_CLAVE = 22;
+	public static final Integer COL_IRPF_SUBCLAVE = 23;
+	public static final Integer COL_PLAN_VISITAS = 24;
+	public static final Integer COL_ACTIVABLE = 25;
+	public static final Integer COL_EJERCICIO = 26;
+	public static final Integer COL_TIPO_COMISIONADO = 27;
+	public static final Integer COL_COD_AGRUPACION_LINEA_DETALLE = 28;
+	public static final Integer COL_SUBTIPO_GASTO = 29;
+	public static final Integer COL_PRINCIPAL_SUJETO_IMPUESTOS = 30;
+	public static final Integer COL_PRINCIPAL_NO_SUJETO_IMPUESTOS = 31;
+	public static final Integer COL_TIPO_RECARGO = 32;
+	public static final Integer COL_IMPORTE_RECARGO = 33;
+	public static final Integer COL_INTERES_DEMORA = 34;
+	public static final Integer COL_COSTES = 35;
+	public static final Integer COL_OTROS_INCREMENTOS = 36;
+	public static final Integer COL_PROVISIONES_Y_SUPLIDOS = 37;
+	public static final Integer COL_TIPO_IMPUESTO = 38;
+	public static final Integer COL_OPERACION_EXENTA = 39;
+	public static final Integer COL_RENUNCIA_EXENCION = 40;
+	public static final Integer COL_TIPO_IMPOSITIVO = 41;
+	public static final Integer COL_OPTA_CRITERIO_CAJA_IVA = 42;
+	public static final Integer COL_ID_ELEMENTO = 43;
+	public static final Integer COL_TIPO_ELEMENTO = 44;
+	public static final Integer COL_PARTICIPACION_LINEA_DETALLE = 45;
 
 	
 	
@@ -297,6 +302,9 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 			mapaErrores.put(COLUMNA_TEXTO_PROVISIONES_Y_SUPLIDOS,comprobarDouble(exc,COL_PROVISIONES_Y_SUPLIDOS));
 			mapaErrores.put(COLUMNA_TEXTO_TIPO_IMPOSITIVO,comprobarDouble(exc,COL_TIPO_IMPOSITIVO));
 			mapaErrores.put(COLUMNA_TEXTO_PARTI_LINEA_DETALLE,comprobarDouble(exc,COL_PARTICIPACION_LINEA_DETALLE));
+			mapaErrores.put(TIPO_RETENCION_NO_EXISTE,tipoRetencionNoExiste(exc));
+			mapaErrores.put(TIPO_RETENCION_VACIO,tipoRetencionVacio(exc));
+			mapaErrores.put(TIPO_RETENCION_RELLENO,tipoRetencionRelleno(exc));
 
 
 
@@ -357,6 +365,9 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 					|| !mapaErrores.get(COLUMNA_TEXTO_PROVISIONES_Y_SUPLIDOS).isEmpty()
 					|| !mapaErrores.get(COLUMNA_TEXTO_TIPO_IMPOSITIVO).isEmpty()
 					|| !mapaErrores.get(COLUMNA_TEXTO_PARTI_LINEA_DETALLE).isEmpty()
+					|| !mapaErrores.get(TIPO_RETENCION_NO_EXISTE).isEmpty()
+					|| !mapaErrores.get(TIPO_RETENCION_VACIO).isEmpty()
+					|| !mapaErrores.get(TIPO_RETENCION_RELLENO).isEmpty()
 
 					){
 				dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -1521,33 +1532,108 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
          return listaFilas;   
 	 }
 	 private List<Integer> comprobarDouble(MSVHojaExcel exc, int columna){
-	       List<Integer> listaFilas = new ArrayList<Integer>();
+       List<Integer> listaFilas = new ArrayList<Integer>();
 
-	        try{
-	       	 for(int i=1; i<this.numFilasHoja;i++){
-	       		 
-	               String valorColumna = exc.dameCelda(i, columna);
-	               if(!Checks.esNulo(valorColumna)) {
-	            	  try {
-	            	    Double.parseDouble(valorColumna);
-	            	  }catch(NumberFormatException e){
-	            		listaFilas.add(i); 
-	            	  }
-	            	  
-	               }
-	       	 }
-	       	
-	        } catch (IllegalArgumentException e) {
-	        	
-	            listaFilas.add(0);
-	            e.printStackTrace();
-	        } catch (IOException e) {
-	            listaFilas.add(0);
-	            e.printStackTrace();
-	        } catch (ParseException e) {
-	       	 listaFilas.add(0);
-				e.printStackTrace();
-			}
-	        return listaFilas;   
-		 }
+        try{
+       	 for(int i=1; i<this.numFilasHoja;i++){
+       		 
+               String valorColumna = exc.dameCelda(i, columna);
+               if(!Checks.esNulo(valorColumna)) {
+            	  try {
+            	    Double.parseDouble(valorColumna);
+            	  }catch(NumberFormatException e){
+            		listaFilas.add(i); 
+            	  }
+            	  
+               }
+       	 }
+       	
+        } catch (IllegalArgumentException e) {
+        	
+            listaFilas.add(0);
+            e.printStackTrace();
+        } catch (IOException e) {
+            listaFilas.add(0);
+            e.printStackTrace();
+        } catch (ParseException e) {
+       	 listaFilas.add(0);
+			e.printStackTrace();
+		}
+        return listaFilas;   
+	 }
+	 
+	 private List<Integer> tipoRetencionNoExiste(MSVHojaExcel exc){
+       List<Integer> listaFilas = new ArrayList<Integer>();
+
+        try{
+       	 for(int i=1; i<this.numFilasHoja;i++){
+	       	  if(!Checks.esNulo(exc.dameCelda(i, COL_TIPO_RETENCION))  
+	       		&& Boolean.FALSE.equals(particularValidator.existeTipoRetencion(exc.dameCelda(i, COL_TIPO_RETENCION)))) {
+	       		  listaFilas.add(i);
+	       	  }
+       	 }
+       	
+        } catch (IllegalArgumentException e) {
+        	
+            listaFilas.add(0);
+            e.printStackTrace();
+        } catch (IOException e) {
+            listaFilas.add(0);
+            e.printStackTrace();
+        } catch (ParseException e) {
+       	 listaFilas.add(0);
+			e.printStackTrace();
+		}
+        return listaFilas;   
+	 }
+	 
+	 private List<Integer> tipoRetencionRelleno(MSVHojaExcel exc){
+       List<Integer> listaFilas = new ArrayList<Integer>();
+
+        try{
+       	 for(int i=1; i<this.numFilasHoja;i++){
+               if(Checks.esNulo(exc.dameCelda(i, COL_TIPO_RETENCION))  &&  !Checks.esNulo(exc.dameCelda(i, COL_RETENCION_GARANTIA_BASE)) 
+            	&& !Checks.esNulo(exc.dameCelda(i, COL_RETENCION_GARANTIA_PORCENTAJE))) {
+            	   listaFilas.add(i);
+               }
+       	 }
+       	
+        } catch (IllegalArgumentException e) {
+        	
+            listaFilas.add(0);
+            e.printStackTrace();
+        } catch (IOException e) {
+            listaFilas.add(0);
+            e.printStackTrace();
+        } catch (ParseException e) {
+       	 listaFilas.add(0);
+			e.printStackTrace();
+		}
+        return listaFilas;   
+	 }
+	 
+	 private List<Integer> tipoRetencionVacio(MSVHojaExcel exc){
+       List<Integer> listaFilas = new ArrayList<Integer>();
+
+        try{
+       	 for(int i=1; i<this.numFilasHoja;i++){
+               if(!Checks.esNulo(exc.dameCelda(i, COL_TIPO_RETENCION))  && ( Checks.esNulo(exc.dameCelda(i, COL_RETENCION_GARANTIA_BASE)) 
+            	|| Checks.esNulo(exc.dameCelda(i, COL_RETENCION_GARANTIA_PORCENTAJE)))) {
+            	   listaFilas.add(i);
+               }
+       	 }
+       	
+        } catch (IllegalArgumentException e) {
+        	
+            listaFilas.add(0);
+            e.printStackTrace();
+        } catch (IOException e) {
+            listaFilas.add(0);
+            e.printStackTrace();
+        } catch (ParseException e) {
+       	 listaFilas.add(0);
+			e.printStackTrace();
+		}
+        return listaFilas;   
+	 }
 }

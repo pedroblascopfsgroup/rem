@@ -63,12 +63,14 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 
 
 @Component
 public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador implements MSVLiberator {
 	private static final int DATOS_PRIMERA_FILA = 1;
+	
 	public static final Integer COL_ID_AGRUPADOR_GASTO = 0;
 	public static final Integer COL_TIPO_GASTO = 1;
 	public static final Integer COL_PEDIODICIDAD_GASTO = 2;
@@ -88,32 +90,34 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 	public static final Integer COL_OFICINA = 16;
 	public static final Integer COL_RETENCION_GARANTIA_BASE = 17;
 	public static final Integer COL_RETENCION_GARANTIA_PORCENTAJE = 18;
-	public static final Integer COL_IRPF_BASE = 19;
-	public static final Integer COL_IRPF_PORCENTAJE = 20;
-	public static final Integer COL_IRPF_CLAVE = 21;
-	public static final Integer COL_IRPF_SUBCLAVE = 22;
-	public static final Integer COL_PLAN_VISITAS = 23;
-	public static final Integer COL_ACTIVABLE = 24;
-	public static final Integer COL_EJERCICIO = 25;
-	public static final Integer COL_TIPO_COMISIONADO = 26;
-	public static final Integer COL_COD_AGRUPACION_LINEA_DETALLE = 27;
-	public static final Integer COL_SUBTIPO_GASTO = 28;
-	public static final Integer COL_PRINCIPAL_SUJETO_IMPUESTOS = 29;
-	public static final Integer COL_PRINCIPAL_NO_SUJETO_IMPUESTOS = 30;
-	public static final Integer COL_TIPO_RECARGO = 31;
-	public static final Integer COL_IMPORTE_RECARGO = 32;
-	public static final Integer COL_INTERES_DEMORA = 33;
-	public static final Integer COL_COSTES = 34;
-	public static final Integer COL_OTROS_INCREMENTOS = 35;
-	public static final Integer COL_PROVISIONES_Y_SUPLIDOS = 36;
-	public static final Integer COL_TIPO_IMPUESTO = 37;
-	public static final Integer COL_OPERACION_EXENTA = 38;
-	public static final Integer COL_RENUNCIA_EXENCION = 39;
-	public static final Integer COL_TIPO_IMPOSITIVO = 40;
-	public static final Integer COL_OPTA_CRITERIO_CAJA_IVA = 41;
-	public static final Integer COL_ID_ELEMENTO = 42;
-	public static final Integer COL_TIPO_ELEMENTO = 43;
-	public static final Integer COL_PARTICIPACION_LINEA_DETALLE = 44;
+	public static final Integer COL_TIPO_RETENCION = 19;
+	public static final Integer COL_IRPF_BASE = 20;
+	public static final Integer COL_IRPF_PORCENTAJE = 21;
+	public static final Integer COL_IRPF_CLAVE = 22;
+	public static final Integer COL_IRPF_SUBCLAVE = 23;
+	public static final Integer COL_PLAN_VISITAS = 24;
+	public static final Integer COL_ACTIVABLE = 25;
+	public static final Integer COL_EJERCICIO = 26;
+	public static final Integer COL_TIPO_COMISIONADO = 27;
+	public static final Integer COL_COD_AGRUPACION_LINEA_DETALLE = 28;
+	public static final Integer COL_SUBTIPO_GASTO = 29;
+	public static final Integer COL_PRINCIPAL_SUJETO_IMPUESTOS = 30;
+	public static final Integer COL_PRINCIPAL_NO_SUJETO_IMPUESTOS = 31;
+	public static final Integer COL_TIPO_RECARGO = 32;
+	public static final Integer COL_IMPORTE_RECARGO = 33;
+	public static final Integer COL_INTERES_DEMORA = 34;
+	public static final Integer COL_COSTES = 35;
+	public static final Integer COL_OTROS_INCREMENTOS = 36;
+	public static final Integer COL_PROVISIONES_Y_SUPLIDOS = 37;
+	public static final Integer COL_TIPO_IMPUESTO = 38;
+	public static final Integer COL_OPERACION_EXENTA = 39;
+	public static final Integer COL_RENUNCIA_EXENCION = 40;
+	public static final Integer COL_TIPO_IMPOSITIVO = 41;
+	public static final Integer COL_OPTA_CRITERIO_CAJA_IVA = 42;
+	public static final Integer COL_ID_ELEMENTO = 43;
+	public static final Integer COL_TIPO_ELEMENTO = 44;
+	public static final Integer COL_PARTICIPACION_LINEA_DETALLE = 45;
+
 	
 	
 	private static final String[] listaValidosPositivos = { "S", "SI" };
@@ -510,6 +514,12 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 						BigDecimal retencionGarantiaPorcentaje = new BigDecimal(exc.dameCelda(fila, COL_RETENCION_GARANTIA_BASE));
 						BigDecimal retencionGarantiaBase = new BigDecimal(exc.dameCelda(fila, COL_RETENCION_GARANTIA_PORCENTAJE));
 						gastoDetalleEconomico.setRetencionGarantiaAplica(true);
+						
+						DDTipoRetencion tipoRetencion = genericDao.get(DDTipoRetencion.class, genericDao.createFilter(FilterType.EQUALS, "codigo",  exc.dameCelda(fila, COL_TIPO_RETENCION)));
+						
+						if(tipoRetencion != null) {
+							gastoDetalleEconomico.setTipoRetencion(tipoRetencion);
+						}
 						if(BigDecimal.ZERO.compareTo(retencionGarantiaPorcentaje) != 0 && BigDecimal.ZERO.compareTo(retencionGarantiaBase) != 0) {
 							BigDecimal cuota = retencionGarantiaPorcentaje.multiply(retencionGarantiaBase).divide(new BigDecimal(100));
 							gastoDetalleEconomico.setRetencionGarantiaCuota(cuota.doubleValue());

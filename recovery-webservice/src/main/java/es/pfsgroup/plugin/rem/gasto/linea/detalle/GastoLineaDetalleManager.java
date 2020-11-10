@@ -1640,7 +1640,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			ActivoAdjudicacionNoJudicial actNJ = genericDao.get(ActivoAdjudicacionNoJudicial.class, filtroEntidad, filtroBorrado);
 			if(actNJ != null) {
 				BigDecimal valorAdquisicion = new BigDecimal(actNJ.getValorAdquisicion());
-				BigDecimal porcentaje =valorAdquisicion.multiply(new BigDecimal(100)).divide(totalAdquisicion, RoundingMode.HALF_DOWN);
+				BigDecimal porcentaje =valorAdquisicion.multiply(new BigDecimal(100)).divide(totalAdquisicion,2, RoundingMode.HALF_DOWN);
 				suma = suma.add(porcentaje);
 				gastoLinea.setParticipacionGasto(porcentaje.doubleValue());
 			}else {

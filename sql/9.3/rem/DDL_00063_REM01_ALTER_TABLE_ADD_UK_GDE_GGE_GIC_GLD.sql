@@ -1,7 +1,7 @@
 --/*
 --######################################### 
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20200915
+--## AUTOR=DAP
+--## FECHA_CREACION=20201110
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-10527
@@ -80,7 +80,7 @@ BEGIN
                 EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
             
                 IF V_NUM_TABLAS = 0 THEN
-                    DBMS_OUTPUT.PUT_LINE('  [INFO] Añadiendo índice '||V_TMP_COL(3)||'');		 
+                    DBMS_OUTPUT.PUT_LINE('  [INFO] Añadiendo índice '||V_TMP_COL(3)||'');        
                     EXECUTE IMMEDIATE 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TMP_COL(3)||' ON '||V_ESQUEMA|| '.'||V_TMP_COL(2)||'('||V_TMP_COL(4)||')';
                 ELSE
                     DBMS_OUTPUT.PUT_LINE('  [INFO] La restricción '||V_TMP_COL(3)||' ya existe.');
@@ -208,20 +208,26 @@ BEGIN
             EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
             
             IF V_NUM_TABLAS = 1 THEN              
-                V_SQL := 'DELETE FROM '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD
-                            WHERE GIC_ID IN (
-                            SELECT AUX.GIC_ID FROM (
-                                SELECT GIC.GIC_ID, ROW_NUMBER() OVER(PARTITION BY GPV.GPV_ID ORDER BY GIC.FECHACREAR) RN
-                                FROM '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD GIC
-                                JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GIC.GPV_ID
-                                JOIN (SELECT AUX_GPV.GPV_ID 
-                                    FROM '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD AUX_GPV
-                                    WHERE AUX_GPV.BORRADO = 1
-                                    GROUP BY AUX_GPV.GPV_ID
-                                    HAVING COUNT(1) > 1) DUP ON DUP.GPV_ID = GIC.GPV_ID
-                                ) AUX
-                                WHERE AUX.RN > 1
-                            )';
+                V_SQL := 'MERGE INTO '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD T1
+                    USING (
+                        WITH DUPLICADOS AS (
+                            SELECT GPV_ID
+                            FROM '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD
+                            WHERE BORRADO = 0
+                            GROUP BY GPV_ID
+                            HAVING COUNT(1) > 1
+                        )
+                        SELECT GPV.GPV_NUM_GASTO_HAYA, EGA.DD_EGA_DESCRIPCION, GIC.GIC_ID, ROW_NUMBER() OVER(PARTITION BY GPV.GPV_ID ORDER BY GIC.FECHACREAR) RN
+                        FROM '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD GIC
+                        JOIN '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV ON GPV.GPV_ID = GIC.GPV_ID
+                        JOIN '||V_ESQUEMA||'.DD_EGA_ESTADOS_GASTO EGA ON EGA.DD_EGA_ID = GPV.DD_EGA_ID
+                        JOIN DUPLICADOS DUP ON DUP.GPV_ID = GIC.GPV_ID
+                    ) T2
+                    ON (T1.GIC_ID = T2.GIC_ID AND T2.RN > 1)
+                    WHEN MATCHED THEN UPDATE SET
+                        T1.USUARIOBORRAR = ''HREOS-10527''
+                        , T1.FECHABORRAR = CURRENT_TIMESTAMP(6)
+                        , T1.BORRADO = 1';
                 EXECUTE IMMEDIATE V_SQL;        
             ELSE
                 DBMS_OUTPUT.PUT_LINE('  [INFO] La tabla '||V_TMP_COL(2)||'... No existe.');

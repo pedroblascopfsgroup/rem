@@ -745,11 +745,18 @@ public class Trabajo implements Serializable, Auditable {
 			Date fechaActual = new Date();
 			Date fechaCompromiso = new Date();
 			Integer diasRetraso = null;
+			Date fechaFin = null;
+			if (getFechaEjecucionReal()== null ) {
+				fechaFin= fechaActual;
+			}else {
+				fechaFin = getFechaEjecucionReal();
+			}
 			
+				
 			if((getFechaCompromisoEjecucion() != null && getFechaFin() == null) || (getFechaCompromisoEjecucion() != null && fechaActual.before(getFechaFin()))){
 				fechaCompromiso = getFechaCompromisoEjecucion();
 				if(fechaActual != null){
-					Long retrasoLong = TimeUnit.DAYS.convert(new Long(fechaActual.getTime() - fechaCompromiso.getTime()), TimeUnit.MILLISECONDS);
+					Long retrasoLong = TimeUnit.DAYS.convert(new Long(fechaFin.getTime() - fechaCompromiso.getTime()), TimeUnit.MILLISECONDS);
 					diasRetraso = new Integer(retrasoLong.intValue());
 				}
 			}

@@ -5696,5 +5696,16 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 		return resultado;
 	}
+	
+	@Override
+	public boolean existeTipoRetencion(String tipoRetencion){
+		String res = rawDao.getExecuteSQL("		SELECT COUNT(1) "
+				+ "     FROM DD_TRE_TIPO_RETENCION tit			"
+				+ "		WHERE tit.BORRADO = 0					"
+				+ "		AND tit.DD_TRE_CODIGO = '"+tipoRetencion+"' "
+				);
+
+		return !res.equals("0");
+	}
 
 }

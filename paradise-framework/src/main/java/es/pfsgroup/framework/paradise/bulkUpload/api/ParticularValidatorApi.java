@@ -1276,4 +1276,6 @@ public interface ParticularValidatorApi {
 	Boolean propietarioPerteneceCartera(String docIdent, List<String> listaCodigoCarteras);
 
 	String getDocIdentfPropietarioByNumGasto(String numGasto);
+
+	boolean existeTipoRetencion(String tipoRetencion);
 }

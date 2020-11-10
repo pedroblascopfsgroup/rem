@@ -1016,6 +1016,17 @@ Ext.define('HreRem.model.Activo', {
     			type: 'boolean'
 			},
 			{
+				name: 'fechaFinPrevistaAdecuacion',
+				type:'date',
+				dateFormat: 'c'
+			},
+    		{
+    			name:'estadoAdecuacionSarebCodigo'
+    		},
+    		{
+    			name:'estadoAdecuacionSarebDescripcion'
+    		},
+			{
     			name: 'perimetroAdmision',
     			type: 'boolean'
     		},

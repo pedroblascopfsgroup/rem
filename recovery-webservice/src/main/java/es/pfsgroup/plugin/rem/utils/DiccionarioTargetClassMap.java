@@ -292,6 +292,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoTituloInfoRegistal", DDTipoTituloAdicional.class);
 		mapa.put("estadoRegistral", DDEstadoRegistralActivo.class);
 		mapa.put("motivoAmpliacionArras", DDMotivoAmpliacionArras.class);
+		mapa.put("estadoAdecuacionSareb", DDEstadoAdecucionSareb.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

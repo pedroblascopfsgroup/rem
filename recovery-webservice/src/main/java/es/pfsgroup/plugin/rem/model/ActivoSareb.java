@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -24,6 +25,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdecucionSareb;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
@@ -92,6 +94,13 @@ public class ActivoSareb implements Serializable, Auditable {
 	
 	@Column(name = "ASA_LONGITUD")
 	private BigDecimal longitudOE;
+	
+	@OneToOne
+	@JoinColumn(name = "DD_EAS_ID")
+	private DDEstadoAdecucionSareb estadoAdecuacionSareb;
+	
+    @Column(name = "FECHA_PREV_ADECUACION")
+    private Date fechaFinPrevistaAdecuacion;
 
 	@Version   
 	private Long version;
@@ -241,5 +250,21 @@ public class ActivoSareb implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
-	}	
+	}
+
+	public DDEstadoAdecucionSareb getEstadoAdecuacionSareb() {
+		return estadoAdecuacionSareb;
+	}
+
+	public void setEstadoAdecuacionSareb(DDEstadoAdecucionSareb estadoAdecuacionSareb) {
+		this.estadoAdecuacionSareb = estadoAdecuacionSareb;
+	}
+
+	public Date getFechaFinPrevistaAdecuacion() {
+		return fechaFinPrevistaAdecuacion;
+	}
+
+	public void setFechaFinPrevistaAdecuacion(Date fechaFinPrevistaAdecuacion) {
+		this.fechaFinPrevistaAdecuacion = fechaFinPrevistaAdecuacion;
+	}
 }

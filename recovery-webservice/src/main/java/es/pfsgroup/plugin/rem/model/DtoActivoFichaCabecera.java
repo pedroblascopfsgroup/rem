@@ -71,6 +71,10 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String longitud;
 	private String latitudOE;
 	private String longitudOE;
+	private Boolean reoContabilizadoSap;
+	private Date fechaFinPrevistaAdecuacion;
+	private String estadoAdecuacionSarebCodigo;
+	private String estadoAdecuacionSarebDescripcion;
 	private String entidadPropietaria;
 	private String entidadPropietariaCodigo;
 	private String entidadPropietariaDescripcion;
@@ -294,7 +298,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	private Boolean pazSocial;
 	private String numActivoDivarian;
-	private Boolean reoContabilizadoSap;
 	
 	//Estado Admision
 	private Boolean incluidoEnPerimetroAdmision;
@@ -2418,6 +2421,30 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setEsEditableActivoEstadoRegistral(Boolean esEditableActivoEstadoRegistral) {
 		this.esEditableActivoEstadoRegistral = esEditableActivoEstadoRegistral;
-	}	
+	}
+
+	public Date getFechaFinPrevistaAdecuacion() {
+		return fechaFinPrevistaAdecuacion;
+	}
+
+	public void setFechaFinPrevistaAdecuacion(Date fechaFinPrevistaAdecuacion) {
+		this.fechaFinPrevistaAdecuacion = fechaFinPrevistaAdecuacion;
+	}
+
+	public String getEstadoAdecuacionSarebCodigo() {
+		return estadoAdecuacionSarebCodigo;
+	}
+
+	public void setEstadoAdecuacionSarebCodigo(String estadoAdecuacionSarebCodigo) {
+		this.estadoAdecuacionSarebCodigo = estadoAdecuacionSarebCodigo;
+	}
+
+	public String getEstadoAdecuacionSarebDescripcion() {
+		return estadoAdecuacionSarebDescripcion;
+	}
+
+	public void setEstadoAdecuacionSarebDescripcion(String estadoAdecuacionSarebDescripcion) {
+		this.estadoAdecuacionSarebDescripcion = estadoAdecuacionSarebDescripcion;
+	}
 	
 }

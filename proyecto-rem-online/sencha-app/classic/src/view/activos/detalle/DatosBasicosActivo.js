@@ -328,7 +328,33 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                		hidden: '{!activo.isCarteraSareb}'
 			                	}
 			                
+			                },
+			                {
+			                	xtype: 'comboboxfieldbase',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.estado.adecuacion.sareb'),
+			                	name: 'comboreoadecuacionsareb',
+			                	reference: 'comboreoadecuacionsarebRef',
+			                	bind: {	
+				                	readOnly : !$AU.userIsRol("HAYASUPER"),
+			                		store: '{comboEstadoAdecuacionSareb}',
+									value: '{activo.estadoAdecuacionSarebCodigo}',
+			                		hidden: '{!activo.isCarteraSareb}'
+			                	}
+			                
+			                },
+			                {
+			                	xtype: 'datefieldbase',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.fin.prevista.adecuacion'),
+			                	name: 'fechaFinPrevistaAdecuacion',
+			                	reference: 'fechaFinPrevistaAdecuacionRef',
+			                	bind: {	
+				                	readOnly : !$AU.userIsRol("HAYASUPER"),
+									value: '{activo.fechaFinPrevistaAdecuacion}',
+			                		hidden: '{!activo.isCarteraSareb}'
+			                	}
+			                
 			                }
+			                
 						]
 					}]
             },

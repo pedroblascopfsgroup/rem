@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20201109
+--## FECHA_CREACION=20201110
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11966
@@ -133,8 +133,8 @@ DECLARE
       T_TIPO_DATA('094','¿Tiene LPO?',NULL,NULL,NULL),
       T_TIPO_DATA('095','Fecha LPO','ACT_ADO_ADMISION_DOCUMENTO','ADO_FECHA_OBTENCION','ACT_ID'),
       T_TIPO_DATA('096','Tapiado','ACT_SPS_SIT_POSESORIA','SPS_ACC_TAPIADO','ACT_ID'),
-      T_TIPO_DATA('097','Estado adecuación','ACT_PTA_PATRIMONIO_ACTIVO','DD_ADA_ID','ACT_ID'),
-      T_TIPO_DATA('098','Fecha prevista fin adecuación',NULL,NULL,NULL),
+      T_TIPO_DATA('097','Estado adecuación','ACT_SAREB_ACTIVOS','DD_EAS_ID','ACT_ID'),
+      T_TIPO_DATA('098','Fecha prevista fin adecuación','ACT_SAREB_ACTIVOS','FECHA_PREV_ADECUACION','ACT_ID'),
       T_TIPO_DATA('099','Precio de Venta WEB','ACT_VAL_VALORACIONES','DD_TPC_ID','ACT_ID'),
       T_TIPO_DATA('100','Precio de Renta WEB','ACT_VAL_VALORACIONES','DD_TPC_ID','ACT_ID'),
       T_TIPO_DATA('101','Precio Minimo Autorizado Venta','ACT_VAL_VALORACIONES','DD_TPC_ID','ACT_ID'),

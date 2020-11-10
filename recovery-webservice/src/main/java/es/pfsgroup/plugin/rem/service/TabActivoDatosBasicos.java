@@ -79,6 +79,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdecucionSareb;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
@@ -949,18 +950,26 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			if (activoSareb.getLongitudOE() != null) {
 				BeanUtils.copyProperty(activoDto, "longitudOE", activoSareb.getLongitudOE());
 			}
-		}
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-		ActivoSareb activoSarebReo = genericDao.get(ActivoSareb.class, filtro);
-		
-		if (activoSarebReo != null && activoSarebReo.getReoContabilizado() != null) 
-		{
-			if (DDSinSiNo.CODIGO_SI.equals(activoSarebReo.getReoContabilizado().getCodigo())) {
-				activoDto.setReoContabilizadoSap(true);
-			} else {
-				activoDto.setReoContabilizadoSap(false);
+			
+			if (activoSareb.getFechaFinPrevistaAdecuacion() != null) {
+				BeanUtils.copyProperty(activoDto, "fechaFinPrevistaAdecuacion", activoSareb.getFechaFinPrevistaAdecuacion());
+			}
+			
+			if (activoSareb.getEstadoAdecuacionSareb() != null) {
+				BeanUtils.copyProperty(activoDto, "estadoAdecuacionSarebCodigo", activoSareb.getEstadoAdecuacionSareb().getCodigo());	
+				BeanUtils.copyProperty(activoDto, "estadoAdecuacionSarebDescripcion", activoSareb.getEstadoAdecuacionSareb().getDescripcion());
+			}
+			
+			if (activoSareb != null && activoSareb.getReoContabilizado() != null) {
+				if (DDSinSiNo.CODIGO_SI.equals(activoSareb.getReoContabilizado().getCodigo())) {
+					activoDto.setReoContabilizadoSap(true);
+				} else {
+					activoDto.setReoContabilizadoSap(false);
+				}
 			}
 		}
+		
+
 		if(perimetroActivo.getAplicaAdmision() != null) {
 			activoDto.setPerimetroAdmision(perimetroActivo.getAplicaAdmision());
 		}
@@ -1605,28 +1614,39 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					activoSareb.setLongitudOE(new BigDecimal(dto.getLongitud()));
 				}
 				
-				genericDao.update(ActivoSareb.class, activoSareb);
-			}
-			
-			if(dto.getReoContabilizadoSap() != null) 
-			{
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-				ActivoSareb activoSarebReo = genericDao.get(ActivoSareb.class, filtro);
-				if(activoSarebReo != null) {
-					if(dto.getReoContabilizadoSap()!=null) 
-					{
+				if (dto.getEstadoAdecuacionSarebCodigo() != null) {
+					DDEstadoAdecucionSareb estadoAdecuacionSareb = (DDEstadoAdecucionSareb) diccionarioApi.dameValorDiccionarioByCod(DDEstadoAdecucionSareb.class,  dto.getEstadoAdecuacionSarebCodigo());
+					activoSareb.setEstadoAdecuacionSareb(estadoAdecuacionSareb);
+				}
+				if (dto.getFechaFinPrevistaAdecuacion() != null) {
+					activoSareb.setFechaFinPrevistaAdecuacion(dto.getFechaFinPrevistaAdecuacion());
+				}
+				
+				if(dto.getReoContabilizadoSap() != null) {
+					if(activoSareb != null) {
 						if(dto.getReoContabilizadoSap() == true) {
 							Filter filtroSi = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI);
 							DDSinSiNo codigoSi = genericDao.get(DDSinSiNo.class, filtroSi);
-							activoSarebReo.setReoContabilizado(codigoSi);
+							activoSareb.setReoContabilizado(codigoSi);	
+							
+							PerimetroActivo perimetroActivoSAP = activoApi.getPerimetroByIdActivo(activoSareb.getActivo().getId());
+							if (perimetroActivoSAP != null) {
+								perimetroActivoSAP.setAplicaComercializar(1);
+								perimetroActivoSAP.setFechaAplicaComercializar(new Date());
+								perimetroActivoSAP.setAplicaFormalizar(1);
+								perimetroActivoSAP.setFechaAplicaFormalizar(new Date());
+								activoApi.saveOrUpdatePerimetroActivo(perimetroActivoSAP);
+								updaterState.updaterStateDisponibilidadComercial(activoSareb.getActivo());
+							}		
 						}else {
 							Filter filtroNo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO);
 							DDSinSiNo codigoNo = genericDao.get(DDSinSiNo.class, filtroNo);
-							activoSarebReo.setReoContabilizado(codigoNo);
+							activoSareb.setReoContabilizado(codigoNo);
 						}
-						
 					}
-				}
+				}				
+				
+				genericDao.update(ActivoSareb.class, activoSareb);
 			}
 
 			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());

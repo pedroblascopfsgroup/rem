@@ -45,7 +45,7 @@ public class DDTributosTerceros implements Auditable, Dictionary {
 	@Id
 	@Column(name = "DD_TRT_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTributosTercerosGenerator")
-	@SequenceGenerator(name = "DDTributosTercerosGenerator", sequenceName = "DD_TRT_TRIBUTOS_A_TERCEROS")
+	@SequenceGenerator(name = "DDTributosTercerosGenerator", sequenceName = "S_DD_TRT_TRIBUTOS_A_TERCEROS")
 	private Long id;
 	
 	@Column(name = "DD_TRT_CODIGO")   

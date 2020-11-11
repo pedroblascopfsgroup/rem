@@ -11,7 +11,7 @@ public class DtoHcoComercialFichaComercial extends WebDto {
 	 */
 	private static final long serialVersionUID = -5644535812738414346L;
 	
-	Date fecha;
+	String fecha;
 	String numActivo;
 	String numOferta;
 	String fechaSancion;
@@ -24,10 +24,10 @@ public class DtoHcoComercialFichaComercial extends WebDto {
 	Double pvpComite;
 	Double tasacion;
 	
-	public Date getFecha() {
+	public String getFecha() {
 		return fecha;
 	}
-	public void setFecha(Date fecha) {
+	public void setFecha(String fecha) {
 		this.fecha = fecha;
 	}
 	public String getNumActivo() {

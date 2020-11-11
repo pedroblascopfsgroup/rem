@@ -529,4 +529,12 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		}
 		return null;
 	}
+	
+	@Override
+    public void deleteGastoSuplido(Long id) {
+		
+    	StringBuilder sb = new StringBuilder("delete from GastoSuplido gss where gss.id='"+id+"'");
+		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
+		
+	}
 }

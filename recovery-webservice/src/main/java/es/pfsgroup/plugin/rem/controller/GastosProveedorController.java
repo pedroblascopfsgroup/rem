@@ -1537,6 +1537,25 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("success", false);
 			model.put("errorMessage", "Error al crear/modificar LíneaDetalleGasto.");
 		}
+
+			return createModelAndViewJson(model);
+	}
+
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getAvisosSuplidos(Long idGasto, ModelMap model) {
+		
+		String validacion = gastoProveedorApi.validarAutorizacionSuplido(idGasto);
+		
+		model.put("error", validacion);
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView validacionNifEmisorFactura(DtoFichaGastoProveedor dto, Long idGasto, ModelMap model) {
+		String validacion = gastoProveedorApi.validacionNifEmisorFactura(dto, idGasto);
+		
+		model.put("error", validacion);
 		
 		return createModelAndViewJson(model);
 	}

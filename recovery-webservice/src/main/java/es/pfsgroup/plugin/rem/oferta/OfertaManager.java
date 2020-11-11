@@ -5070,9 +5070,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					ActivoBbvaActivos actBbva = genericDao.get(ActivoBbvaActivos.class,filtroAct);
 					if(!Checks.esNulo(actBbva)) {
 						activosFichaComercial.setActivoBbva(actBbva.getNumActivoBbva());
-					}
-					if(!Checks.esNulo(actBbva.getActivoEpa())) {
-						activosFichaComercial.setEpa(actBbva.getActivoEpa().getDescripcion());
+						if(actBbva.getActivoEpa() != null) {
+							activosFichaComercial.setEpa(actBbva.getActivoEpa().getDescripcion());
+						}
 					}
 					
 					List<ActivoCargas> cargas  = genericDao.getList(ActivoCargas.class,filtroAct);
@@ -5374,6 +5374,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if(!Checks.esNulo(oferta.getIndicadorLoteRestringido())) {
 				if(oferta.getIndicadorLoteRestringido().equals(1)){
 					for (ActivoOferta actOfr : oferta.getActivosOferta()) {
+						
+						SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 						Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS ,"activo", actOfr.getActivoId());
 						Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS ,"activo.id", actOfr.getActivoId());
 						Filter filtroId = genericDao.createFilter(FilterType.EQUALS ,"id", actOfr.getActivoId());
@@ -5385,13 +5387,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							Activo act =  genericDao.get(Activo.class, filtroId);
 							historicoOfertas.setNumActivo(act.getNumActivo().toString());
 							if(!Checks.esNulo(ofertaActivo.getFechaAlta())) {
-								historicoOfertas.setFecha(ofertaActivo.getFechaAlta());
+								historicoOfertas.setFecha(dateFormat.format(ofertaActivo.getFechaAlta()));
 							}
 							historicoOfertas.setNumOferta(ofertaActivo.getNumOferta().toString());
-
-							if(!Checks.esNulo(ofertaActivo.getCliente()) && Checks.esNulo(ofertaActivo.getCliente().getNombreCompleto())) {
-								historicoOfertas.setOfertante(ofertaActivo.getCliente().getNombreCompleto());
+							
+							ExpedienteComercial expComercial = expedienteComercialDao.getExpedienteComercialByIdOferta(ofertas.getOferta());
+							if(expComercial != null && expComercial.getFechaSancion() != null) {
+								historicoOfertas.setFechaSancion(dateFormat.format(expComercial.getFechaSancion()));
+								historicoOfertas.setOfertante(expComercial.getCompradorPrincipal().getFullName());
 							}
+							
 							if(!Checks.esNulo(ofertaActivo.getEstadoOferta())) {
 								historicoOfertas.setEstado(ofertaActivo.getEstadoOferta().getDescripcion());
 							}
@@ -5415,11 +5420,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 								if(!Checks.esNulo(tasacion.getImporteTasacionFin())) {
 									historicoOfertas.setTasacion(tasacion.getImporteTasacionFin());
 								}
-								
 							}
 							
 							//Campos faltantes
-							//fecha sancion
 							//FFRR
 							
 							listaHistoricoOfertas.add(historicoOfertas);
@@ -5431,7 +5434,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			if(Checks.esNulo(oferta.getAgrupacion())) {
 				
-
+				SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS ,"activo", activoOferta.getActivoId());
 				Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS ,"activo.id", activoOferta.getActivoId());
 				Filter filtroId = genericDao.createFilter(FilterType.EQUALS ,"id", activoOferta.getActivoId());
@@ -5443,21 +5446,23 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					Activo act =  genericDao.get(Activo.class, filtroId);
 					historicoOfertas.setNumActivo(act.getNumActivo().toString());
 					if(!Checks.esNulo(ofertaActivo.getFechaAlta())) {
-						historicoOfertas.setFecha(ofertaActivo.getFechaAlta());
+						historicoOfertas.setFecha(dateFormat.format(ofertaActivo.getFechaAlta()));
 					}
 					historicoOfertas.setNumOferta(ofertaActivo.getNumOferta().toString());
-
-					if(!Checks.esNulo(ofertaActivo.getCliente()) && Checks.esNulo(ofertaActivo.getCliente().getNombreCompleto())) {
-						historicoOfertas.setOfertante(ofertaActivo.getCliente().getNombreCompleto());
+					
+					ExpedienteComercial expComercial = expedienteComercialDao.getExpedienteComercialByIdOferta(ofertas.getOferta());
+					if(expComercial != null && expComercial.getFechaSancion() != null) {
+						historicoOfertas.setFechaSancion(dateFormat.format(expComercial.getFechaSancion()));
+						historicoOfertas.setOfertante(expComercial.getCompradorPrincipal().getFullName());
 					}
+					
 					if(!Checks.esNulo(ofertaActivo.getEstadoOferta())) {
 						historicoOfertas.setEstado(ofertaActivo.getEstadoOferta().getDescripcion());
 					}
 					if(!Checks.esNulo(ofertaActivo.getMotivoRechazo())) {
 						historicoOfertas.setMotivoDesestimiento(ofertaActivo.getMotivoRechazo().getDescripcion());
 						historicoOfertas.setDesestimado("Desestimada");
-					}
-					
+					}					
 					
 					historicoOfertas.setOferta(ofertas.getImporteActivoOferta());
 					Filter filtroPrecioWeb = genericDao.createFilter(FilterType.EQUALS ,"tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_PUBLICACION_WEB);
@@ -5474,17 +5479,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						if(!Checks.esNulo(tasacion.getImporteTasacionFin())) {
 							historicoOfertas.setTasacion(tasacion.getImporteTasacionFin());
 						}
-						
 					}
 					
 					//Campos faltantes
-					//fecha sancion
 					//FFRR
 					
 					listaHistoricoOfertas.add(historicoOfertas);
 					
 				}
-				
 			}
 			
 			dtoFichaComercial.setListaHistoricoOfertas(listaHistoricoOfertas);

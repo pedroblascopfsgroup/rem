@@ -25,7 +25,7 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_USU VARCHAR2(30 CHAR) := 'REMVIP-8351'; -- USUARIOCREAR/USUARIOMODIFICAR.
-	V_TBJ_ID NUMBER(16):= 754345;
+	V_TBJ_ID NUMBER(16):= 745345;
     
 BEGIN		
 

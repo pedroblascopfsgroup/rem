@@ -135,21 +135,8 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 				expediente.setEstado(estado);
 				
-				if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null 
-						&& CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {															
-					EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
-							.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
-					
-					ge.setIdEntidad(expediente.getId());
-					ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
-					ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gruboarding")).getId());	
-					ge.setIdTipoGestor(tipoGestorComercial.getId());
-					gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);																	
-					
-				}
 				if(expediente.getCondicionante().getSolicitaReserva()!=null 
-						&& RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null 
-						&& CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())) {															
+						&& RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null) {
 					EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
 					
 					if (tipoGestorComercial != null && DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) {

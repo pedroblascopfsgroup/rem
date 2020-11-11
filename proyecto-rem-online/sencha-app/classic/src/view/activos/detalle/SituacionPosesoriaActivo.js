@@ -201,9 +201,10 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 					            		change: function(combo, value) {
 					            			var me = this;
 					            			if(value=='1') {
-					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').allowBlank = true;
+					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').allowBlank = false;
 					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').setDisabled(false);
 					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').validate();
+					            				
 					            				
 					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').allowBlank = true;
 					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').setValue("");
@@ -211,7 +212,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').validate();
 					            				
 					            			} else {
-					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').allowBlank = true;
+					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').allowBlank = false;
 					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').setDisabled(false);
 					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').validate();
 					            				
@@ -255,7 +256,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 					            		change: function(combo, value) {
 					            			var me = this;
 					            			if(value=='1') {
-					            				me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').allowBlank = true;
+					            				me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').allowBlank = false;
 					            				me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').setDisabled(false);
 					            				me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').validate();
 					            				
@@ -265,7 +266,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 					            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').validate();
 					            				
 					            			} else {
-					            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').allowBlank = true;
+					            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').allowBlank = false;
 					            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').setDisabled(false);
 					            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').validate();
 					            				

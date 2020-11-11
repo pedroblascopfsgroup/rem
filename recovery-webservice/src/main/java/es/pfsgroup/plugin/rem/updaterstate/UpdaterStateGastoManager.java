@@ -17,14 +17,17 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
+import es.pfsgroup.plugin.rem.model.GastoDetalleEconomico;
 import es.pfsgroup.plugin.rem.model.GastoGestion;
 import es.pfsgroup.plugin.rem.model.GastoLineaDetalle;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.GastoSuplido;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionHaya;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionPropietario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProvisionGastos;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 
 @Service("updaterStateGastoManager")
 public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
@@ -49,6 +52,9 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	private static final String VALIDACION_TIPO_OPERACION = "msg.validacion.gasto.tipo.operacion";
 	private static final String VALIDACION_PROPIETARIO = "msg.validacion.gasto.propietario";
 	private static final String VALIDACION_TIPO_SUBTIPO = "msg.validacion.gasto.tipo.subtipo";
+	private static final String VALIDACION_SUPLIDOS_NIF_EMISOR_CUENTA = "msg.validacion.gasto.suplidos.nif.emisor.cuenta";
+	private static final String VALIDACION_SUPLIDOS_NIF_ESTADO_GASTO = "msg.validacion.gasto.suplidos.nif.estado.gasto";
+	private static final String VALIDACION_SUPLIDOS_ABONO_CUENTA = "msg.validacion.gasto.suplidos.abono.cuenta";
 	
 	private static final String COD_DESTINATARIO_HAYA = "02";
 
@@ -633,4 +639,72 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 		}
 		
 	}*/
+
+	@Override
+	public String validarAutorizacionSuplido(GastoProveedor gasto) {
+		
+		String error = null;
+		
+		if(isGastoSuplido(gasto)) {
+			
+			GastoSuplido gastoSuplido = genericDao.get(GastoSuplido.class, genericDao.createFilter(FilterType.EQUALS, "gastoProveedorSuplido", gasto));
+			GastoProveedor gastoPrincipal = null;
+			
+			if(gastoSuplido != null) {
+				gastoPrincipal = gastoSuplido.getGastoProveedorPadre();
+			}
+			
+			GastoDetalleEconomico detalleGasto = genericDao.get(GastoDetalleEconomico.class, genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId()));
+			
+			if(detalleGasto != null && gastoPrincipal != null && gastoPrincipal.getProveedor() != null
+					&& ((detalleGasto.getNifTitularCuentaAbonar() != null &&   !detalleGasto.getNifTitularCuentaAbonar().equals(gastoPrincipal.getProveedor().getDocIdentificativo()))
+					|| (gastoPrincipal.getProveedor() == null || detalleGasto == null))) {
+				if(error == null) {
+					error = "";
+				}
+				error += "- " + messageServices.getMessage(VALIDACION_SUPLIDOS_NIF_EMISOR_CUENTA) + "<br/>";
+			}
+			
+			if(gastoPrincipal != null && gastoPrincipal.getEstadoGasto() != null
+					&& !DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(gastoPrincipal.getEstadoGasto().getCodigo())) {
+				if(error == null) {
+					error = "";
+				}
+				error += "- " + messageServices.getMessage(VALIDACION_SUPLIDOS_NIF_ESTADO_GASTO) + "<br/>";
+			}
+			
+		}
+		return error;
+		
+	}
+	
+	@Override
+	public Boolean isGastoSuplido(GastoProveedor gasto) {
+		if(((gasto.getSuplidosVinculados() != null && DDSinSiNo.CODIGO_NO.equals(gasto.getSuplidosVinculados().getCodigo())) || gasto.getSuplidosVinculados() == null)
+				&& gasto.getNumeroFacturaPrincipal() != null) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public String validarDatosPagoGastoPrincipal(GastoProveedor gasto) {
+		
+		String error = null;
+		
+		if(gasto != null && isGastoSuplido(gasto)) {
+			GastoDetalleEconomico detalleGasto = genericDao.get(GastoDetalleEconomico.class,
+					genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gasto.getId()));
+			
+			if(detalleGasto == null || detalleGasto.getAbonoCuenta() == null ||
+					detalleGasto.getAbonoCuenta() == 0)  {
+				error = messageServices.getMessage(VALIDACION_SUPLIDOS_ABONO_CUENTA);
+			}			
+			
+		}
+
+		return error;
+		
+	}
 }

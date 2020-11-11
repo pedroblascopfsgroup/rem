@@ -33,7 +33,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
@@ -179,7 +179,14 @@ public class GastoProveedor implements Serializable, Auditable {
 	
 	@Column(name="GPV_FECHA_REC_HAYA")
 	private Date fechaRecHaya;
-
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="GPV_SUPLIDOS_VINCULADOS")
+	private DDSinSiNo suplidosVinculados;
+	
+	@Column(name="GPV_NUMERO_FACTURA_PPAL")
+	private String numeroFacturaPrincipal;
+    
 	@Version   
 	private Long version;
 
@@ -503,4 +510,19 @@ public class GastoProveedor implements Serializable, Auditable {
 		this.gastoLineaDetalleList = gastoLineaDetalleList;
 	}
 
+	public DDSinSiNo getSuplidosVinculados() {
+		return suplidosVinculados;
+	}
+
+	public void setSuplidosVinculados(DDSinSiNo suplidosVinculados) {
+		this.suplidosVinculados = suplidosVinculados;
+	}
+
+	public String getNumeroFacturaPrincipal() {
+		return numeroFacturaPrincipal;
+	}
+
+	public void setNumeroFacturaPrincipal(String numeroFacturaPrincipal) {
+		this.numeroFacturaPrincipal = numeroFacturaPrincipal;
+	}
 }

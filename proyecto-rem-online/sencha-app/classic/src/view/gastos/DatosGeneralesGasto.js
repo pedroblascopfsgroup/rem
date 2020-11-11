@@ -85,6 +85,8 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 										xtype: 'textfieldbase',
 										fieldLabel:  HreRem.i18n('fieldlabel.gasto.referencia.emisor'),
 						                bind:		'{gasto.referenciaEmisor}',
+						               	reference: 'referenciaEmisor',
+						               	name: 'referenciaEmisor',
 						                allowBlank: false
 									},
 							    	{ 
@@ -96,6 +98,32 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 							           		value: '{gasto.tipoGastoCodigo}'
 							         	},
 							         	allowBlank: false
+							    	},
+							    	{
+							    		xtype: 'comboboxfieldbase',
+						               	fieldLabel:  HreRem.i18n('fieldlabel.suplidos.vinculados'),
+						               	reference: 'suplidosVinculados',
+						               	name: 'suplidosVinculados',
+								      	bind: {
+							           		store: '{comboSiNoGastos}',
+							           		value: '{gasto.suplidosVinculadosCod}',
+							           		hidden: '{!gasto.visibleSuplidos}'
+							         	},
+							         	listeners: {
+						                	select: 'onChangeComboSuplidos'
+						            	},
+							         	allowBlank: false
+							    	},
+							    	{
+							    		xtype: 'textfieldbase',
+						               	fieldLabel:  HreRem.i18n('fieldlabel.numero.factura.principal'),
+						               	reference: 'facturaPrincipalSuplido',
+						               	name: 'facturaPrincipalSuplido',
+								      	bind: {
+							           		value: '{gasto.facturaPrincipalSuplido}',
+							           		disabled: '{!gasto.suplidoVinculadoNo}',
+							           		hidden: '{!gasto.visibleSuplidos}'
+							         	}
 							    	}
 								]
 							},
@@ -111,6 +139,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 											xtype: 'textfieldbase',
 											fieldLabel: HreRem.i18n('fieldlabel.gasto.nif.emisor'),		
 											reference: 'buscadorNifEmisorField',
+						               		name: 'buscadorNifEmisor',
 											bind: {
 												value:'{gasto.buscadorNifEmisor}',
 												readOnly: '{emisorSoloLectura}'

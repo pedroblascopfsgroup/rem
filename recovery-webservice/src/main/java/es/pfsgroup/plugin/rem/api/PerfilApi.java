@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
 
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.perfilAdministracion.dto.DtoPerfilAdministracionFilter;

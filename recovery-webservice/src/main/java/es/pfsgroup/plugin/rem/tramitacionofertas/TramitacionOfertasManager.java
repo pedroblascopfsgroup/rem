@@ -61,6 +61,7 @@ import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoBbvaActivos;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
@@ -106,6 +107,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
@@ -1629,9 +1631,11 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 	
 	private String calcularComiteBBVAporActivo(Activo activo, Oferta oferta) {
 		String comite = DDComiteSancion.CODIGO_HAYA_BBVA;
-
-		if (activo.getSituacionComercial() != null
-				&& DDSituacionComercial.CODIGO_ALQUILADO.equals(activo.getSituacionComercial().getCodigo())) {
+		ActivoPatrimonio patrimonio = null;
+		patrimonio = genericDao.get(ActivoPatrimonio.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+		
+		if(patrimonio != null && patrimonio.getTipoEstadoAlquiler() != null 
+				&& DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO.equals(patrimonio.getTipoEstadoAlquiler().getCodigo())) {
 			comite = DDComiteSancion.CODIGO_BBVA;
 		}
 
@@ -1650,48 +1654,55 @@ public class TramitacionOfertasManager implements TramitacionOfertasApi {
 			Filter filtroActivoPublicacion = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 			Filter filtroFechaHastaNull = genericDao.createFilter(FilterType.NULL, "fechaFinVenta");
 			ActivoPublicacion activoPublicacion = genericDao.get(ActivoPublicacion.class, filtroActivoPublicacion);
+			ActivoPublicacionHistorico activoPublicacionHist = null;
 			List<ActivoPublicacionHistorico> activoPublicacionList = genericDao.getListOrdered(ActivoPublicacionHistorico.class,
 					new Order(OrderType.DESC, "id"), filtroActivoPublicacion,filtroFechaHastaNull);
-			if(activoPublicacionList != null && !activoPublicacionList.isEmpty()) {
-				ActivoPublicacionHistorico activoPublicacionHist = activoPublicacionList.get(0);
+			if(activoPublicacionList != null && !activoPublicacionList.isEmpty()) 
+				activoPublicacionHist = activoPublicacionList.get(0);
 	
-				if (activoPublicacion.getCheckOcultarPrecioVenta() || (activoPublicacion.getEstadoPublicacionVenta() != null
-						&& !DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA.equals(activoPublicacion.getEstadoPublicacionVenta().getCodigo()))) {
-					comite = DDComiteSancion.CODIGO_BBVA;
-					
-				}else {	
-					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo", activo.getId());
-					Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "oferta", oferta.getId());
-					ActivoOferta activoOferta = genericDao.get(ActivoOferta.class, filtroActivo, filtroOferta);				
-					ActivoValoraciones valoracion = getValoracionAprobadoVenta(activo);
-	
-					Double importeActivoOferta = activoOferta.getImporteActivoOferta();
-					Double importePublicado = valoracion.getImporte();
-	
-					if (importeActivoOferta < importePublicado) {
-						Date fechaPublicacionVenta = activoPublicacionHist.getFechaInicioVenta() != null ? activoPublicacionHist.getFechaInicioVenta() :
-								activoPublicacion.getFechaCambioPubVenta() != null ? activoPublicacion.getFechaCambioPubVenta()
-								: activoPublicacion.getFechaInicioVenta();
-	
-						Calendar calendar = Calendar.getInstance();
-						calendar.setTime(new Date());
-						calendar.add(Calendar.DAY_OF_MONTH, -15);
-	
-						Date diasPublicacion = calendar.getTime();
-	
-						if (diasPublicacion.compareTo(fechaPublicacionVenta) <= 0) {
+			if (activoPublicacion.getCheckOcultarPrecioVenta() || (activoPublicacion.getEstadoPublicacionVenta() != null
+					&& !DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA.equals(activoPublicacion.getEstadoPublicacionVenta().getCodigo()))) {
+				comite = DDComiteSancion.CODIGO_BBVA;
+				
+			}else {	
+				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo", activo.getId());
+				Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "oferta", oferta.getId());
+				ActivoOferta activoOferta = genericDao.get(ActivoOferta.class, filtroActivo, filtroOferta);				
+				ActivoValoraciones valoracion = getValoracionAprobadoVenta(activo);
+
+				Double importeActivoOferta = activoOferta.getImporteActivoOferta();
+				Double importePublicado = valoracion.getImporte();
+
+				if (importeActivoOferta < importePublicado) {
+					Date fechaPublicacionVenta = activoPublicacionHist != null ? 
+													activoPublicacionHist.getFechaInicioVenta() != null ? 
+														activoPublicacionHist.getFechaInicioVenta() 
+															: activoPublicacion.getFechaCambioPubVenta() != null ? 
+																	activoPublicacion.getFechaCambioPubVenta() 
+																	: activoPublicacion.getFechaInicioVenta()
+													: activoPublicacion.getFechaCambioPubVenta() != null ? 
+															activoPublicacion.getFechaCambioPubVenta() 
+															: activoPublicacion.getFechaInicioVenta();
+
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime(new Date());
+					calendar.add(Calendar.DAY_OF_MONTH, -15);
+
+					Date diasPublicacion = calendar.getTime();
+
+					if (diasPublicacion.compareTo(fechaPublicacionVenta) <= 0) {
+						comite = DDComiteSancion.CODIGO_BBVA;
+					} else {	
+						Date fechaPrecioVenta = valoracion.getFechaAprobacion() == null ? new Date() : valoracion.getFechaAprobacion();
+						if (diasPublicacion.compareTo(fechaPrecioVenta) <= 0) {
 							comite = DDComiteSancion.CODIGO_BBVA;
-						} else {	
-							Date fechaPrecioVenta = valoracion.getFechaAprobacion() == null ? new Date() : valoracion.getFechaAprobacion();
-							if (diasPublicacion.compareTo(fechaPrecioVenta) <= 0) {
-								comite = DDComiteSancion.CODIGO_BBVA;
-							} else {
-								comite = validarImporteDescuentoBBVA(oferta);
-							}
+						} else {
+							comite = validarImporteDescuentoBBVA(oferta);
 						}
 					}
 				}
 			}
+			
 		}
 
 		return comite;

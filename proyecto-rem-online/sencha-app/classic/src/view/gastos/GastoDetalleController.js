@@ -99,6 +99,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	onSaveFormularioCompleto: function(btn, form, success) {
 		
 		var me = this;
+		var facturaPrincipalSuplido, abonoCuenta, idGasto;
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones
 		if(form.isFormValid() && !form.disableValidation || form.disableValidation) {
 //			var fechaMax = new Date();
@@ -113,7 +114,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 //
 //			}else{
 //				
-				
+
 				Ext.Array.each(form.query('field[isReadOnlyEdit]'),
 							function (field, index){field.fireEvent('update'); field.fireEvent('save');}
 						);
@@ -141,33 +142,129 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 			                    }
 			                    
 				                form.getBindRecord().data.gastoRefacturadoGrid=valoresGrid;
-								
-				               
-								form.getBindRecord().save({
-									success: success,				            
-						            failure: function (a, operation) {
-						            	
-						            	var data = {};
-			                            try {
-			                            	data = Ext.decode(operation._response.responseText);
-			                            }
-			                            catch (e){ };
-			                            if (!Ext.isEmpty(data.msg)) {
-			                            	me.fireEvent("errorToast", data.msg);
-			                            } else {
-			                            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-			                            }
-			                            if(me.getView().getXType() != "anyadirnuevogasto"){
-			                            	var comboEmisor = me.getView().lookupReference("comboProveedores");
+				                
+				                var params;
+				                
+				                if(form.getXType() == "datosgeneralesgasto"){
+				                	facturaPrincipalSuplido = form.getValues().facturaPrincipalSuplido;
+				                	idGasto = me.getViewModel().get("gasto.id");
+				                	params = {facturaPrincipalSuplido: facturaPrincipalSuplido};
+				                } else if(form.getXType() == "detalleeconomicogasto"){
+				                	abonoCuenta = form.down('[name="abonoCuenta"]').value;
+				                	params = {abonoCuenta: abonoCuenta};
+				                }
+				                
+				                if(form.getXType() == "datosgeneralesgasto"){
+				                	var referenciaEmisor = form.getValues().referenciaEmisor;
+				                	var codigoProveedorRem = form.getValues().codigoProveedorRem;
+				                	var url = $AC.getRemoteUrl('gastosproveedor/validacionNifEmisorFactura');	
+    	
+							    	Ext.Ajax.request({
+										url: url,
+										params: {idGasto: idGasto, referenciaEmisor: referenciaEmisor, codigoProveedorRem: codigoProveedorRem},
+										success: function(response, opts) {
+											
+											var data = {};
+											try {
+												data = Ext.decode(response.responseText);
+												}
+											catch (e){ };
+											if(data.error != null){
+												var msg = "Advertencias:<br/>";
+												msg += "<br/>" + data.error + "<br/>";
+												msg += "<br/>" + HreRem.i18n("msg.desea.editar.gasto");
+												
+												me.getView().unmask();
+												
+												Ext.Msg.show({
+											   	title: HreRem.i18n('title.mensaje.confirmacion'),
+											   	msg: msg,
+											   	buttons: Ext.MessageBox.YESNO,
+											   	fn: function(buttonId) {
+											   		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+											   		if (buttonId == 'yes') {
+											   			form.getBindRecord().save({
+															params: params,
+															success: success,				            
+												            failure: function (a, operation) {
+												            	var data = {};
+									                            try {
+									                            	data = Ext.decode(operation._response.responseText);
+									                            }
+									                            catch (e){ };
+									                            if (!Ext.isEmpty(data.msg)) {
+									                            	me.fireEvent("errorToast", data.msg);
+									                            } else {
+									                            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+									                            }
+																var comboEmisor = me.getView().lookupReference("comboProveedores");
+																var nifEmisor = me.getViewModel().data.gasto.data.nifEmisor;
+																comboEmisor.getStore().getProxy().extraParams.nifProveedor = nifEmisor;	
+																comboEmisor.getStore().load();
+																me.refrescarGasto(form.refreshAfterSave);
+																
+												            }
+														});
+											   		}else{
+											   			me.refrescarGasto(form.refreshAfterSave);
+											   		}
+											   		me.getView().unmask();
+											   	}
+										   	});
+												
+											} else {
+												form.getBindRecord().save({
+													params: params,
+													success: success,				            
+										            failure: function (a, operation) {
+										            	var data = {};
+							                            try {
+							                            	data = Ext.decode(operation._response.responseText);
+							                            }
+							                            catch (e){ };
+							                            if (!Ext.isEmpty(data.msg)) {
+							                            	me.fireEvent("errorToast", data.msg);
+							                            } else {
+							                            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+							                            }
+														var comboEmisor = me.getView().lookupReference("comboProveedores");
+														var nifEmisor = me.getViewModel().data.gasto.data.nifEmisor;
+														comboEmisor.getStore().getProxy().extraParams.nifProveedor = nifEmisor;	
+														comboEmisor.getStore().load();
+														me.refrescarGasto(form.refreshAfterSave);
+														me.getView().unmask();
+										            }
+												});
+											}
+											
+											
+										}
+							    	});
+				                }else{
+				                	form.getBindRecord().save({
+										params: params,
+										success: success,				            
+							            failure: function (a, operation) {
+							            	var data = {};
+				                            try {
+				                            	data = Ext.decode(operation._response.responseText);
+				                            }
+				                            catch (e){ };
+				                            if (!Ext.isEmpty(data.msg)) {
+				                            	me.fireEvent("errorToast", data.msg);
+				                            } else {
+				                            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				                            }
+											var comboEmisor = me.getView().lookupReference("comboProveedores");
 											var nifEmisor = me.getViewModel().data.gasto.data.nifEmisor;
 											comboEmisor.getStore().getProxy().extraParams.nifProveedor = nifEmisor;	
 											comboEmisor.getStore().load();
 											me.refrescarGasto(form.refreshAfterSave);
-			                            }
-
-										me.getView().unmask();
-						            }
-								});
+											me.getView().unmask();
+							            }
+									});
+				                }
+				                
 							}
 						//Guardamos múltiples records	
 						} else {
@@ -1397,14 +1494,35 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	onClickAutorizar: function(btn) {
     	var me = this;
     	
-    	Ext.Msg.show({
-		   title: HreRem.i18n('title.mensaje.confirmacion'),
-		   msg: HreRem.i18n('msg.desea.autorizar.gasto'),
-		   buttons: Ext.MessageBox.YESNO,
-		   fn: function(buttonId) {
-		        if (buttonId == 'yes') {
-					var url =  $AC.getRemoteUrl('gastosproveedor/autorizarGasto'),		
-					idGasto = me.getViewModel().get("gasto.id");		
+    	me.getView().mask(HreRem.i18n("msg.mask.loading"));
+    	
+    	var idGasto = idGasto = me.getViewModel().get("gasto.id");
+    	var url = $AC.getRemoteUrl('gastosproveedor/getAvisosSuplidos');	
+    	
+    	Ext.Ajax.request({
+			url: url,
+			params: {idGasto: idGasto},
+			success: function(response, opts) {
+				var data = {};
+				try {
+					data = Ext.decode(response.responseText);
+					}
+				catch (e){ };
+				if(data.error != null){
+					var msg = "Advertencias:<br/>";
+					msg += "<br/>" + data.error + "<br/>";
+					msg += HreRem.i18n('msg.desea.autorizar.gasto');
+				} else {
+					msg = HreRem.i18n('msg.desea.autorizar.gasto');
+				}
+				me.getView().unmask();	
+				Ext.Msg.show({
+				   	title: HreRem.i18n('title.mensaje.confirmacion'),
+				   	msg: msg,
+				   	buttons: Ext.MessageBox.YESNO,
+				   	fn: function(buttonId) {
+				   		if (buttonId == 'yes') {
+					url =  $AC.getRemoteUrl('gastosproveedor/autorizarGasto');		
 	
 					me.getView().mask(HreRem.i18n("msg.mask.loading"));
 	
@@ -1448,7 +1566,9 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 				    		    
 				    });
 		        }
-		   }
+				   	}});
+						
+			}
 		});
     	
     	
@@ -2326,6 +2446,16 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 		    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
 		    }
 		});
+	},
+	
+	onChangeComboSuplidos: function(combo, values){
+		var me = this;
+		
+		var comboFacturaPrincipal = me.lookupReference('facturaPrincipalSuplido');
+		if(CONST.COMBO_SIN_NO['SI'] == values.getData().codigo){
+			comboFacturaPrincipal.setValue(null)
+		}
+		
 	},
 	
     onChangeLineaDetalleStore: function(){

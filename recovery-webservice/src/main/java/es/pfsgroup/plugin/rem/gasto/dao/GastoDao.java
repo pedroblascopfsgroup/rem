@@ -54,4 +54,5 @@ public interface GastoDao extends AbstractDao<GastoProveedor, Long> {
 
 	Long getIdCarteraByGasto(GastoProveedor gasto);
 	
+	void deleteGastoSuplido(Long id);
 }

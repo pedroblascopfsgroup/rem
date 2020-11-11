@@ -95,6 +95,10 @@ func-rem-Divarian-F5|parche-rem-Divarian-F5
 func-rem-precios|R-Newhall-backup
 HREOS-9492|func-rem-precios
 func-rem-precios|HREOS-9492
+rem_mirror|func-rem-gastosSuplidos
+func-rem-gastosSuplidos|R-Tomago
+rem_mirror|func-rem-comisionamiento-F2
+func-rem-comisionamiento-F2|R-Tomago
 rem_mirror|func-rem-spartaMasivo
 rem_mirror|func-rem-facturacionModeloNuevo
 rem_mirror|func-rem-gestionActivos
@@ -112,6 +116,11 @@ rem_mirror|func-rem-gestionActivos
 func-rem-gestionActivos-HREOS-11149|func-rem-gestionActivos
 rem_mirror|func-rem-spartaMasivo
 rem_mirror|func-rem-BBVA-F1
+rem_mirror|R-Tomago
+2.20.9-20071001-rem|R-Tomago
+rem_mirror|parche-rem-Divarian-F5
+2.20.9-20071001-rem|parche-rem-Divarian-F5
+parche-rem-Divarian-F5|R-Tomago
 func-HREOS-10425|func-rem-supervisionGestorias-F2
 rem_mirror|func-rem-supervisionGestorias-F2
 2.20.9-20071001-rem|func-rem-supervisionGestorias-F2

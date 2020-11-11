@@ -21,7 +21,6 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.runtime.directive.Foreach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +35,6 @@ import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
-import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -74,7 +72,7 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoSubtipoGastoProveedorTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
-import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
+import es.pfsgroup.plugin.rem.model.ConfiguracionSuplidos;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -99,15 +97,14 @@ import es.pfsgroup.plugin.rem.model.GastoLineaDetalleTrabajo;
 import es.pfsgroup.plugin.rem.model.GastoPrinex;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoRefacturable;
+import es.pfsgroup.plugin.rem.model.GastoSuplido;
 import es.pfsgroup.plugin.rem.model.GastosDiariosLBK;
 import es.pfsgroup.plugin.rem.model.GastosImportesLBK;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.OfertasAgrupadasLbk;
 import es.pfsgroup.plugin.rem.model.ProvisionGastos;
 import es.pfsgroup.plugin.rem.model.SubTipoGpvTrabajo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
-import es.pfsgroup.plugin.rem.model.VActivosAfectosGencat;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
 import es.pfsgroup.plugin.rem.model.VDiarioCalculoLbk;
@@ -116,7 +113,6 @@ import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosRefacturados;
 import es.pfsgroup.plugin.rem.model.VImporteBrutoGastoLBK;
-import es.pfsgroup.plugin.rem.model.VImportesGastoLBK;
 import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
@@ -132,21 +128,19 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAutorizacionHaya;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencionPago;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
-import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComisionado;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRetencion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComisionado;
 import es.pfsgroup.plugin.rem.provisiongastos.dao.ProvisionGastosDao;
+import es.pfsgroup.plugin.rem.thread.ActualizaSuplidosAsync;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateGastoApi;
 
 @Service("gastoProveedorManager")
@@ -331,12 +325,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		return gastoDao.getListGastosExcel(dtoGastosFilter);
 	}
 
+	@SuppressWarnings("unused")
 	private DtoFichaGastoProveedor gastoToDtoFichaGasto(GastoProveedor gasto) {
 
 		DtoFichaGastoProveedor dto = new DtoFichaGastoProveedor();
 
 		if (!Checks.esNulo(gasto)) {
 
+			dto.setVisibleSuplidos(false);
 			dto.setIdGasto(gasto.getId());
 			dto.setNumGastoHaya(gasto.getNumGastoHaya());
 			dto.setNumGastoGestoria(gasto.getNumGastoGestoria());
@@ -353,6 +349,36 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if (!Checks.esNulo(gasto.getTipoGasto())) {
 				dto.setTipoGastoCodigo(gasto.getTipoGasto().getCodigo());
 				dto.setTipoGastoDescripcion(gasto.getTipoGasto().getDescripcion());
+			}
+			
+			
+			if(dto.getCartera() != null && dto.getSubcartera() != null && dto.getTipoGastoCodigo() != null) {
+				
+				Boolean filtroSubtipoGasto = true;
+				
+				if(dto.getSubtipoGastoCodigo() == null || 
+						(dto.getTipoGastoCodigo() != null && DDTipoGasto.CODIGO_SERV_PROF_INDEPENDIENTES.equals(dto.getTipoGastoCodigo()))) {
+					filtroSubtipoGasto = false;
+				}
+				
+				ConfiguracionSuplidos config = null;
+				
+				if(filtroSubtipoGasto) {
+					config = genericDao.get(ConfiguracionSuplidos.class,
+							genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", dto.getCartera()),
+							genericDao.createFilter(FilterType.EQUALS, "subCartera.codigo", dto.getSubcartera()),
+							genericDao.createFilter(FilterType.EQUALS, "tipoGasto.codigo", dto.getTipoGastoCodigo()),
+							genericDao.createFilter(FilterType.EQUALS, "subtipoGasto.codigo", dto.getSubtipoGastoCodigo()));
+				} else {
+					config = genericDao.get(ConfiguracionSuplidos.class,
+							genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", dto.getCartera()),
+							genericDao.createFilter(FilterType.EQUALS, "subCartera.codigo", dto.getSubcartera()),
+							genericDao.createFilter(FilterType.EQUALS, "tipoGasto.codigo", dto.getTipoGastoCodigo()));
+				}
+				
+				if(config != null) {
+					dto.setVisibleSuplidos(true);
+				}
 			}
 			
 			if (!Checks.esNulo(gasto.getEstadoGasto())) {
@@ -540,6 +566,13 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			
 			dto.setIsGastoRefacturadoPorOtroGasto(this.isGastoRefacturadoPorOtroGasto(gasto.getId()));
 			
+			if(gasto.getSuplidosVinculados() != null) {
+				dto.setSuplidosVinculadosCod(gasto.getSuplidosVinculados().getCodigo());
+			} else {
+				dto.setSuplidosVinculadosCod(DDSinSiNo.CODIGO_NO);
+			}
+			
+			dto.setFacturaPrincipalSuplido(gasto.getNumeroFacturaPrincipal());
 		}
 
 		return dto;
@@ -590,7 +623,27 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		gastoProveedor.setGastoDetalleEconomico(detalleEconomico);
 		gastoProveedor.setGastoGestion(gestion);
 		gastoProveedor.setGastoInfoContabilidad(contabilidad);
+		
+		if(dto.getSuplidosVinculadosCod() != null) {
+			DDSinSiNo suplidoVinculado = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getSuplidosVinculadosCod()));
+			gastoProveedor.setSuplidosVinculados(suplidoVinculado);
+		}
+		
+		if(dto.getFacturaPrincipalSuplido() != null) {
 			
+			GastoSuplido gastoSuplido = new GastoSuplido();
+			
+			GastoProveedor gastoPrincipal = genericDao.get(GastoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "referenciaEmisor", dto.getFacturaPrincipalSuplido()));
+			
+			gastoSuplido.setGastoProveedorPadre(gastoPrincipal);
+			gastoSuplido.setGastoProveedorSuplido(gastoProveedor);
+			
+			genericDao.save(GastoSuplido.class, gastoSuplido);
+			
+			
+			gastoProveedor.setNumeroFacturaPrincipal(dto.getFacturaPrincipalSuplido());
+		}
+		
 		//creamos el contenedor en el gestor documental
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			Integer idExpediente;
@@ -684,7 +737,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	@Override
 	@Transactional(readOnly = false)
 	public boolean saveGastosProveedor(DtoFichaGastoProveedor dto, Long id) {
+		
+		validacionPreviaSaveUpdateGasto(dto, id);
 
+		Boolean actualizaSuplidos = false;
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
 		GastoProveedor gastoProveedor = genericDao.get(GastoProveedor.class, filtro);
 		DtoFichaGastoProveedor dtoIni = gastoToDtoFichaGasto(gastoProveedor);
@@ -704,6 +761,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			}
 		}
 		
+		if(gastoProveedor != null && gastoProveedor.getSuplidosVinculados() != null &&
+				DDSinSiNo.CODIGO_SI.equals(gastoProveedor.getSuplidosVinculados().getCodigo()) && 
+				(dto.getReferenciaEmisor() != null && !dto.getReferenciaEmisor().equals(gastoProveedor.getReferenciaEmisor()))) {
+			actualizaSuplidos = true;
+		}
+		
 		try {
 			beanUtilNotNull.copyProperties(gastoProveedor, dto);
 
@@ -716,6 +779,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				Filter filtroCodigoEmisorRem = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", dto.getCodigoProveedorRem());
 				ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filtroCodigoEmisorRem);
 				gastoProveedor.setProveedor(proveedor);
+				if(gastoProveedor != null && gastoProveedor.getSuplidosVinculados() != null &&
+						DDSinSiNo.CODIGO_SI.equals(gastoProveedor.getSuplidosVinculados().getCodigo())) {
+					actualizaSuplidos = true;
+				}
 			} else {
 				throw new JsonViewerException("No se puede cambiar el emisor, este gasto refacturable está incluido en el gasto: "+numGastoPadre);
 			}
@@ -793,12 +860,58 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}else {
 			updaterStateApi.updaterStates(gastoProveedor, null);
 		}
-
+		
+		if(dto.getSuplidosVinculadosCod() != null) {
+			DDSinSiNo suplidoVinculado = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getSuplidosVinculadosCod()));
+			gastoProveedor.setSuplidosVinculados(suplidoVinculado);
+		}else if(gastoProveedor.getSuplidosVinculados() == null) {
+			DDSinSiNo suplidoVinculado = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO));
+			gastoProveedor.setSuplidosVinculados(suplidoVinculado);
+		}
+		
+		if(dto.getFacturaPrincipalSuplido() != null && !dto.getFacturaPrincipalSuplido().isEmpty() 
+				&& !dto.getFacturaPrincipalSuplido().equals(gastoProveedor.getNumeroFacturaPrincipal())) {
+			GastoSuplido gastoSuplido = genericDao.get(GastoSuplido.class, genericDao.createFilter(FilterType.EQUALS, "gastoProveedorSuplido", gastoProveedor), filtroBorrado);
+				
+			if(gastoSuplido == null) {
+				gastoSuplido = new GastoSuplido();
+					
+				gastoSuplido.setGastoProveedorSuplido(gastoProveedor);
+			}
+			
+			Filter filtroSuplidos = genericDao.createFilter(FilterType.EQUALS,"suplidosVinculados.codigo", DDSinSiNo.CODIGO_SI);				
+			GastoProveedor gastoPrincipal = genericDao.get(GastoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "referenciaEmisor", dto.getFacturaPrincipalSuplido()), filtroSuplidos);
+			
+			if(esGastoAutorizado(gastoPrincipal)) {
+				throw new JsonViewerException("No se puede añadir como suplido al gasto "+gastoPrincipal.getNumGastoHaya()+ ", ya que este se encuentra autorizado.");
+			}
+			
+			gastoSuplido.setGastoProveedorPadre(gastoPrincipal);
+			genericDao.save(GastoSuplido.class, gastoSuplido);
+			
+			gastoProveedor.setNumeroFacturaPrincipal(dto.getFacturaPrincipalSuplido());
+		}else if(dto.getFacturaPrincipalSuplido() == null || dto.getFacturaPrincipalSuplido().isEmpty()) {
+			GastoSuplido gastoSuplido = genericDao.get(GastoSuplido.class, genericDao.createFilter(FilterType.EQUALS, "gastoProveedorSuplido", gastoProveedor), filtroBorrado);
+			
+			if(gastoSuplido != null) {
+				gastoDao.deleteGastoSuplido(gastoSuplido.getId());
+				
+				gastoProveedor.setNumeroFacturaPrincipal(null);
+			}
+		}
+		
 		genericDao.update(GastoProveedor.class, gastoProveedor);
+		
+		if(actualizaSuplidos) {
+			Thread actualizaSuplidosAsync = new Thread(new ActualizaSuplidosAsync(gastoProveedor.getId(),
+					dto.getCodigoProveedorRem(), dto.getReferenciaEmisor(), genericAdapter.getUsuarioLogado().getUsername()));
+
+			actualizaSuplidosAsync.start();
+		}
 
 		return true;
 	}
-	
+
 	private void updateEjercicio(GastoProveedor gasto) {
 		
 		Filter filtroGIC = genericDao.createFilter(FilterType.EQUALS, "GPV_ID", gasto.getId());
@@ -2793,6 +2906,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		if (validarAutorizacion) {
 			String error = updaterStateApi.validarCamposMinimos(gasto);
+			
+			if(error == null && updaterStateApi.isGastoSuplido(gasto)) {
+				error = updaterStateApi.validarDatosPagoGastoPrincipal(gasto);
+			}
+			
 			if (!Checks.esNulo(error)) {
 				throw new JsonViewerException("El gasto " + gasto.getNumGastoHaya() + " no se puede autorizar: " + error);
 			}
@@ -3283,6 +3401,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		return listaGastosFinales;
 	}
+	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getGastosNoRefacturados(String gastos, List<String> gastosRefacturables) {
 		List<String> gastosTotales = new ArrayList<String>();
@@ -3650,6 +3770,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	
 	@Override
 	public List<DDSubtipoTrabajo> getSubTiposTrabajoByIdGasto(Long idGasto){
+		
 		GastoProveedor gastoProveedor = this.findOne(Long.valueOf(idGasto));
 		List<DDSubtipoTrabajo> listaSubTipoTrabajo = new ArrayList<DDSubtipoTrabajo>();
 		
@@ -3662,11 +3783,67 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			for(SubTipoGpvTrabajo gpv : ListGpv) {
 				if(!listaSubTipoTrabajo.contains(gpv.getSubtipoTrabajo())) {
 					listaSubTipoTrabajo.add(gpv.getSubtipoTrabajo());
+
 				}
 			}
 		}
 		
 		return listaSubTipoTrabajo;
+	}
+					
+
+	private void validacionPreviaSaveUpdateGasto(DtoFichaGastoProveedor dto, Long id) {
+		
+		GastoProveedor gastoProveedor = null;
+		List<GastoSuplido> gastosSuplidos = null;
+		
+		Filter filtroProveedorPadre = null;
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		
+		if(id != null) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
+			gastoProveedor = genericDao.get(GastoProveedor.class, filtro);
+		}
+		
+		if(dto.getFacturaPrincipalSuplido() != null && !dto.getFacturaPrincipalSuplido().isEmpty()) {
+			
+			Filter filtroFactura = genericDao.createFilter(FilterType.EQUALS, "referenciaEmisor", dto.getFacturaPrincipalSuplido());
+			Filter filtroSuplidos = genericDao.createFilter(FilterType.EQUALS,"suplidosVinculados.codigo", DDSinSiNo.CODIGO_SI);
+			List<GastoProveedor> gastosProveedor = genericDao.getList(GastoProveedor.class, filtroFactura, filtroSuplidos);
+			
+			if(gastosProveedor == null || gastosProveedor.isEmpty()) {
+				throw new JsonViewerException("No existe ninguna factura " + dto.getFacturaPrincipalSuplido() + " en un gasto con 'Suplido vinculado'");
+			} else if(gastosProveedor != null && !gastosProveedor.isEmpty() && gastosProveedor.size() > 1) {
+				throw new JsonViewerException("No se puede dar de alta un 'Suplido vinculado' cuyo numero de factura esta en más de un gasto");
+			} else {
+				gastoProveedor = gastosProveedor.get(0);
+				
+				if(gastoProveedor != null && (gastoProveedor.getSuplidosVinculados() == null || DDSinSiNo.CODIGO_NO.equals(gastoProveedor.getSuplidosVinculados().getCodigo()))) {
+					throw new JsonViewerException("No se puede dar de alta ya que el gasto de la factura indicada tiene 'Suplido vinculado' a 'No'");
+				}
+			}
+			
+		}
+		
+		if(dto.getSuplidosVinculadosCod() != null) {
+			
+			if(DDSinSiNo.CODIGO_SI.equals(dto.getSuplidosVinculadosCod())) {
+				if(gastoProveedor != null && gastoProveedor.getNumeroFacturaPrincipal() != null) {
+					throw new JsonViewerException("No se puede actualizar el campo 'Suplidos vinculados' a 'Si' si tiene factura principal");
+				}
+			} else {
+				if(gastoProveedor != null) {
+					
+					filtroProveedorPadre = genericDao.createFilter(FilterType.EQUALS, "gastoProveedorPadre", gastoProveedor);
+					gastosSuplidos = genericDao.getList(GastoSuplido.class, filtroProveedorPadre, filtroBorrado);
+					
+					if(gastosSuplidos != null && !gastosSuplidos.isEmpty()) {
+						throw new JsonViewerException("No se puede actualizar el campo 'Suplidos vinculados' a 'No' si tiene suplidos vinculados");
+					}
+				}
+			}
+		}
+		
 	}
 
 	
@@ -3766,5 +3943,89 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		return null;
 	}
 	
-
+	@Override
+	public String validarAutorizacionSuplido(long idGasto) {
+		
+		GastoProveedor gasto = genericDao.get(GastoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", idGasto));
+		
+		return updaterStateApi.validarAutorizacionSuplido(gasto);
+	}
+	
+	private Boolean esGastoAutorizado(GastoProveedor gasto) {
+		
+		if(gasto != null && gasto.getEstadoGasto() != null) {
+			return DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo()) || DDEstadoGasto.AUTORIZADO_PROPIETARIO.equals(gasto.getEstadoGasto().getCodigo())
+					|| DDEstadoGasto.CONTABILIZADO.equals(gasto.getEstadoGasto().getCodigo()) || DDEstadoGasto.PAGADO.equals(gasto.getEstadoGasto().getCodigo());
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public String validacionNifEmisorFactura(DtoFichaGastoProveedor dto, Long idGasto) {
+		
+		GastoProveedor gastoProveedor = null;
+		String error = null;
+		
+		if(idGasto != null) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
+			gastoProveedor = genericDao.get(GastoProveedor.class, filtro);
+		}
+		
+		if(gastoProveedor != null && gastoProveedor.getSuplidosVinculados() != null	&& DDSinSiNo.CODIGO_SI.equals(gastoProveedor.getSuplidosVinculados().getCodigo())
+				&& ((dto.getReferenciaEmisor() != null && !dto.getReferenciaEmisor().equals(gastoProveedor.getReferenciaEmisor())) 
+						|| (dto.getCodigoProveedorRem() != null && !dto.getCodigoProveedorRem().equals(gastoProveedor.getProveedor().getCodigoProveedorRem())))) {
+			
+			Filter filtroProveedorPadre = genericDao.createFilter(FilterType.EQUALS, "gastoProveedorPadre", gastoProveedor);
+			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			List<GastoSuplido> gastosSuplidos = genericDao.getList(GastoSuplido.class, filtroProveedorPadre, filtroBorrado);
+			
+			if(gastosSuplidos != null && !gastosSuplidos.isEmpty()) {
+				if(error == null) {
+					error = "";
+				}
+				error = "- No se debe modificar los campos 'Nº Factura / liquidacion' y 'NIF Emisor' mientras el gasto tenga suplidos";
+			}
+		}
+		
+		return error;
+	}
+	
+	@Transactional
+	public void actualizaSuplidosAsync(Long idGasto, Long codProveedorRem, String referenciaEmisor) {
+		
+		if(idGasto != null) {
+			GastoProveedor gastoPrincipal = genericDao.get(GastoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", idGasto));
+			
+			if(gastoPrincipal != null) {
+				
+				List<GastoSuplido> gastosSuplidos = genericDao.getList(GastoSuplido.class, genericDao.createFilter(FilterType.EQUALS, "gastoProveedorPadre", gastoPrincipal));
+				
+				for(GastoSuplido suplido: gastosSuplidos) {
+					
+					GastoProveedor gastoSuplido = suplido.getGastoProveedorSuplido();
+					
+					if(codProveedorRem != null) {
+						Filter filtroCodigoEmisorRem = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", codProveedorRem);
+						ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filtroCodigoEmisorRem);
+						
+						GastoDetalleEconomico detalleGasto = genericDao.get(GastoDetalleEconomico.class, genericDao.createFilter(FilterType.EQUALS, "gastoProveedor.id", gastoSuplido.getId()));
+						
+						if(detalleGasto != null && detalleGasto.getAbonoCuenta() != null && detalleGasto.getAbonoCuenta() == 1
+								&& proveedor != null && proveedor.getDocIdentificativo() != null) {
+							detalleGasto.setNifTitularCuentaAbonar(proveedor.getDocIdentificativo());
+							
+							genericDao.update(GastoDetalleEconomico.class, detalleGasto);
+						}
+						
+					}
+					if(referenciaEmisor != null) {
+						gastoSuplido.setNumeroFacturaPrincipal(referenciaEmisor);
+					}
+					genericDao.update(GastoProveedor.class, gastoSuplido);
+				}
+			}
+		}
+		
+	}
 }

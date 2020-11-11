@@ -153,6 +153,8 @@ public class DtoFichaExpediente extends WebDto {
 
 	private Boolean esComiteHaya;
 	
+	private Boolean finalizadoCierreEconomico;
+	
 	public Long getId() {
 		return id;
 	}
@@ -776,6 +778,14 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setEsComiteHaya(Boolean esComiteHaya) {
 		this.esComiteHaya = esComiteHaya;
+	}
+
+	public Boolean getFinalizadoCierreEconomico() {
+		return finalizadoCierreEconomico;
+	}
+
+	public void setFinalizadoCierreEconomico(Boolean finalizadoCierreEconomico) {
+		this.finalizadoCierreEconomico = finalizadoCierreEconomico;
 	}
 	
 	

@@ -83,6 +83,9 @@ public class DtoFichaGastoProveedor extends WebDto {
 	private Boolean isGastoRefacturadoPadre;
 	private Boolean tieneTrabajos;
 	private Boolean lineasNoDeTrabajos;
+   	private String suplidosVinculadosCod;
+   	private String facturaPrincipalSuplido;
+   	private Boolean visibleSuplidos;
 	
 	public Long getIdGasto() {
 		return idGasto;
@@ -456,4 +459,22 @@ public class DtoFichaGastoProveedor extends WebDto {
 		this.lineasNoDeTrabajos = lineasNoDeTrabajos;
 	}
 	
+	public String getSuplidosVinculadosCod() {
+		return suplidosVinculadosCod;
+	}
+	public void setSuplidosVinculadosCod(String suplidosVinculadosCod) {
+		this.suplidosVinculadosCod = suplidosVinculadosCod;
+	}
+	public String getFacturaPrincipalSuplido() {
+		return facturaPrincipalSuplido;
+	}
+	public void setFacturaPrincipalSuplido(String facturaPrincipalSuplido) {
+		this.facturaPrincipalSuplido = facturaPrincipalSuplido;
+	}
+	public Boolean getVisibleSuplidos() {
+		return visibleSuplidos;
+	}
+	public void setVisibleSuplidos(Boolean visibleSuplidos) {
+		this.visibleSuplidos = visibleSuplidos;
+	}
 }

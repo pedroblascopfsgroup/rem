@@ -29,6 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -45,6 +46,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFDataFormat;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -1704,65 +1706,86 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			
 			int currentRowHistorico = 7;
 			int countNumActDuplicate = 0;
-			int totalFFRR = 0;
-			int totalOferta = 0;
-			int totalpvpComite = 0;
-			int totalvTas = 0;
+			String totalFFRR = "";
+			String totalOferta = "";
+			String totalpvpComite = "";
+			String totalvTas = "";
 			String numActivo = "";
-			List<String> numActivosList = new ArrayList<String>();
+			List<String> numActivosList = new ArrayList<String>();			
+			XSSFDataFormat dataFormat = myWorkBook.createDataFormat();
+			
+			XSSFCellStyle styleActivoTitleHistorico = myWorkBook.createCellStyle();
+			font = myWorkBook.createFont();
+			font.setFontHeight(11);
+			font.setBold(true);
+			styleActivoTitleHistorico.setFont(font);
+			styleActivoTitleHistorico.setBorderBottom(XSSFCellStyle.BORDER_THIN);
+			styleActivoTitleHistorico.setBottomBorderColor(new XSSFColor(new java.awt.Color(157, 195, 230)));
+			styleActivoTitleHistorico.setFillForegroundColor(new XSSFColor(new java.awt.Color(222, 235, 247)));
+			styleActivoTitleHistorico.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
+			styleActivoTitleHistorico.setAlignment(XSSFCellStyle.ALIGN_CENTER);
+			
+			XSSFCellStyle styleTopColumnsHistorico = myWorkBook.createCellStyle();
+			font = myWorkBook.createFont();
+			font.setFontHeight(11);
+			font.setBold(true);
+			styleTopColumnsHistorico.setFont(font);
+			styleTopColumnsHistorico.setBorderBottom(XSSFCellStyle.BORDER_THIN);
+			styleTopColumnsHistorico.setBottomBorderColor(new XSSFColor(new java.awt.Color(157, 195, 230)));
+			styleTopColumnsHistorico.setFillForegroundColor(new XSSFColor(new java.awt.Color(222, 235, 247)));
+			styleTopColumnsHistorico.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
+			styleTopColumnsHistorico.setAlignment(XSSFCellStyle.ALIGN_LEFT);
+			
 			XSSFCellStyle styleBottomColumnsHistorico = myWorkBook.createCellStyle();
+			font = myWorkBook.createFont();
+			font.setFontHeight(11);
+			font.setBold(true);
+			styleBottomColumnsHistorico.setFont(font);
+			styleBottomColumnsHistorico.setBorderTop(XSSFCellStyle.BORDER_THIN);
+			styleBottomColumnsHistorico.setTopBorderColor(new XSSFColor(new java.awt.Color(157, 195, 230)));
+			styleBottomColumnsHistorico.setFillForegroundColor(new XSSFColor(new java.awt.Color(222, 235, 247)));
+			styleBottomColumnsHistorico.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
+			styleBottomColumnsHistorico.setAlignment(XSSFCellStyle.ALIGN_LEFT);
+			
+			XSSFCellStyle styleBottomColumnsEHistorico = myWorkBook.createCellStyle();
+			font = myWorkBook.createFont();
+			font.setFontHeight(11);
+			font.setBold(true);
+			styleBottomColumnsEHistorico.setFont(font);
+			styleBottomColumnsEHistorico.setBorderTop(XSSFCellStyle.BORDER_THIN);
+			styleBottomColumnsEHistorico.setTopBorderColor(new XSSFColor(new java.awt.Color(157, 195, 230)));
+			styleBottomColumnsEHistorico.setFillForegroundColor(new XSSFColor(new java.awt.Color(222, 235, 247)));
+			styleBottomColumnsEHistorico.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
+			styleBottomColumnsEHistorico.setAlignment(XSSFCellStyle.ALIGN_LEFT);
+			styleBottomColumnsEHistorico.setDataFormat(dataFormat.getFormat("#,##0\\ \"€\";\\-#,##0\\ \"€\""));
+			
+			XSSFCellStyle styleDataHistoricoBold = myWorkBook.createCellStyle();
+			font = myWorkBook.createFont();
+			font.setFontHeight(11);
+			font.setBold(true);
+			styleDataHistoricoBold.setFont(font);
+			
+			XSSFCellStyle styleDataHistorico = myWorkBook.createCellStyle();
+			font = myWorkBook.createFont();
+			font.setFontHeight(11);
+			font.setBold(false);
+			styleDataHistorico.setFont(font);
+			
+			XSSFCellStyle styleDataEHistoricoBold = myWorkBook.createCellStyle();
+			font = myWorkBook.createFont();
+			font.setFontHeight(11);
+			font.setBold(true);
+			styleDataEHistoricoBold.setFont(font);
+			styleDataEHistoricoBold.setDataFormat(dataFormat.getFormat("#,##0\\ \"€\";\\-#,##0\\ \"€\""));
+			
 			for(DtoHcoComercialFichaComercial historico : dtoExcelFichaComercial.getListaHistoricoOfertas()) {
 				numActivosList.add(historico.getNumActivo());
 			}
+			
 			for(DtoHcoComercialFichaComercial historico : dtoExcelFichaComercial.getListaHistoricoOfertas()) {
 				
 				int numActivoDuplicate = Collections.frequency(numActivosList, historico.getNumActivo());
 				countNumActDuplicate++;
-				
-				XSSFCellStyle styleActivoTitleHistorico = myWorkBook.createCellStyle();
-				font = myWorkBook.createFont();
-				font.setFontHeight(11);
-				font.setBold(true);
-				styleActivoTitleHistorico.setFont(font);
-				styleActivoTitleHistorico.setBorderBottom(XSSFCellStyle.BORDER_THIN);
-				styleActivoTitleHistorico.setBottomBorderColor(new XSSFColor(new java.awt.Color(157, 195, 230)));
-				styleActivoTitleHistorico.setFillForegroundColor(new XSSFColor(new java.awt.Color(222, 235, 247)));
-				styleActivoTitleHistorico.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
-				styleActivoTitleHistorico.setAlignment(XSSFCellStyle.ALIGN_CENTER);
-				
-				XSSFCellStyle styleTopColumnsHistorico = myWorkBook.createCellStyle();
-				font = myWorkBook.createFont();
-				font.setFontHeight(11);
-				font.setBold(true);
-				styleTopColumnsHistorico.setFont(font);
-				styleTopColumnsHistorico.setBorderBottom(XSSFCellStyle.BORDER_THIN);
-				styleTopColumnsHistorico.setBottomBorderColor(new XSSFColor(new java.awt.Color(157, 195, 230)));
-				styleTopColumnsHistorico.setFillForegroundColor(new XSSFColor(new java.awt.Color(222, 235, 247)));
-				styleTopColumnsHistorico.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
-				styleTopColumnsHistorico.setAlignment(XSSFCellStyle.ALIGN_LEFT);
-				
-				styleBottomColumnsHistorico = myWorkBook.createCellStyle();
-				font = myWorkBook.createFont();
-				font.setFontHeight(11);
-				font.setBold(true);
-				styleBottomColumnsHistorico.setFont(font);
-				styleBottomColumnsHistorico.setBorderTop(XSSFCellStyle.BORDER_THIN);
-				styleBottomColumnsHistorico.setTopBorderColor(new XSSFColor(new java.awt.Color(157, 195, 230)));
-				styleBottomColumnsHistorico.setFillForegroundColor(new XSSFColor(new java.awt.Color(222, 235, 247)));
-				styleBottomColumnsHistorico.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
-				styleBottomColumnsHistorico.setAlignment(XSSFCellStyle.ALIGN_LEFT);
-				
-				XSSFCellStyle styleDataHistoricoBold = myWorkBook.createCellStyle();
-				font = myWorkBook.createFont();
-				font.setFontHeight(11);
-				font.setBold(true);
-				styleDataHistoricoBold.setFont(font);
-				
-				XSSFCellStyle styleDataHistorico = myWorkBook.createCellStyle();
-				font = myWorkBook.createFont();
-				font.setFontHeight(11);
-				font.setBold(false);
-				styleDataHistorico.setFont(font);
 				
 				if (historico.getNumActivo() != null && !numActivo.equals(historico.getNumActivo())) {
 					cellReference = new CellReference("B" +Integer.toString(currentRowHistorico)); 
@@ -1794,7 +1817,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 					if (c == null) {
 						c = r.createCell(cellReference.getCol());
 					}
-					c.setCellValue("Fecha   ");
+					c.setCellValue("Fecha");
 					c.setCellStyle(styleTopColumnsHistorico);
 					
 					cellReference = new CellReference("C" + Integer.toString(currentRowHistorico));
@@ -1806,7 +1829,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 					if (c == null) {
 						c = r.createCell(cellReference.getCol());
 					}
-					c.setCellValue("Nº oferta   ");
+					c.setCellValue("Nº oferta");
 					c.setCellStyle(styleTopColumnsHistorico);
 					
 					cellReference = new CellReference("D" + Integer.toString(currentRowHistorico));
@@ -1814,11 +1837,12 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 					if (r == null) {
 						r = mySheetHistorico.createRow(cellReference.getRow());
 					}
+					r.setHeight((short)600);
 					c = r.getCell(cellReference.getCol());
 					if (c == null) {
 						c = r.createCell(cellReference.getCol());
 					}
-					c.setCellValue("Fecha Sanción   ");
+					c.setCellValue("Fecha \nSanción");
 					c.setCellStyle(styleTopColumnsHistorico);
 					
 					cellReference = new CellReference("E" + Integer.toString(currentRowHistorico));
@@ -1830,7 +1854,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 					if (c == null) {
 						c = r.createCell(cellReference.getCol());
 					}
-					c.setCellValue("Nombre ofertante:   ");
+					c.setCellValue("Nombre ofertante:");
 					c.setCellStyle(styleTopColumnsHistorico);
 					
 					cellReference = new CellReference("F" + Integer.toString(currentRowHistorico));
@@ -1838,11 +1862,12 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 					if (r == null) {
 						r = mySheetHistorico.createRow(cellReference.getRow());
 					}
+					r.setHeight((short)600);
 					c = r.getCell(cellReference.getCol());
 					if (c == null) {
 						c = r.createCell(cellReference.getCol());
 					}
-					c.setCellValue("Estado de Oferta   ");
+					c.setCellValue("Estado de \nOferta");
 					c.setCellStyle(styleTopColumnsHistorico);
 					
 					cellReference = new CellReference("G" + Integer.toString(currentRowHistorico));
@@ -1854,7 +1879,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 					if (c == null) {
 						c = r.createCell(cellReference.getCol());
 					}
-					c.setCellValue("¿Desestimado?   ");
+					c.setCellValue("¿Desestimado?");
 					c.setCellStyle(styleTopColumnsHistorico);
 					
 					cellReference = new CellReference("H" + Integer.toString(currentRowHistorico));
@@ -1862,11 +1887,12 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 					if (r == null) {
 						r = mySheetHistorico.createRow(cellReference.getRow());
 					}
+					r.setHeight((short)600);
 					c = r.getCell(cellReference.getCol());
 					if (c == null) {
 						c = r.createCell(cellReference.getCol());
 					}
-					c.setCellValue("Motivo del desestimiento   ");
+					c.setCellValue("Motivo del \ndesestimiento");
 					c.setCellStyle(styleTopColumnsHistorico);
 					
 					cellReference = new CellReference("I" + Integer.toString(currentRowHistorico));
@@ -1878,7 +1904,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 					if (c == null) {
 						c = r.createCell(cellReference.getCol());
 					}
-					c.setCellValue("FF.RR.   ");
+					c.setCellValue("FF.RR.");
 					c.setCellStyle(styleTopColumnsHistorico);
 					
 					cellReference = new CellReference("J" + Integer.toString(currentRowHistorico));
@@ -1890,7 +1916,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 					if (c == null) {
 						c = r.createCell(cellReference.getCol());
 					}
-					c.setCellValue("OFERTA   ");
+					c.setCellValue("OFERTA");
 					c.setCellStyle(styleTopColumnsHistorico);
 					
 					cellReference = new CellReference("K" + Integer.toString(currentRowHistorico));
@@ -1898,11 +1924,12 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 					if (r == null) {
 						r = mySheetHistorico.createRow(cellReference.getRow());
 					}
+					r.setHeight((short)600);
 					c = r.getCell(cellReference.getCol());
 					if (c == null) {
 						c = r.createCell(cellReference.getCol());
 					}
-					c.setCellValue("PVP Comité   ");
+					c.setCellValue("PVP \nComité");
 					c.setCellStyle(styleTopColumnsHistorico);
 					
 					cellReference = new CellReference("L" + Integer.toString(currentRowHistorico));
@@ -1914,7 +1941,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 					if (c == null) {
 						c = r.createCell(cellReference.getCol());
 					}
-					c.setCellValue("V Tas   ");
+					c.setCellValue("V Tas");
 					c.setCellStyle(styleTopColumnsHistorico);
 					
 					currentRowHistorico++;
@@ -2062,7 +2089,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				} else {
 					c.setCellValue("");
 				}
-				c.setCellStyle(styleDataHistorico);
+				c.setCellStyle(styleDataEHistoricoBold);
 				
 				cellReference = new CellReference("K" + Integer.toString(currentRowHistorico+1));
 				r = mySheetHistorico.getRow(cellReference.getRow());
@@ -2078,7 +2105,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				} else {
 					c.setCellValue("");
 				}
-				c.setCellStyle(styleDataHistorico);
+				c.setCellStyle(styleDataEHistoricoBold);
 				
 				cellReference = new CellReference("L" + Integer.toString(currentRowHistorico));
 				r = mySheetHistorico.getRow(cellReference.getRow());
@@ -2094,7 +2121,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				} else {
 					c.setCellValue("");
 				}
-				c.setCellStyle(styleDataHistorico);
+				c.setCellStyle(styleDataEHistoricoBold);				
 				
 				currentRowHistorico++;
 				
@@ -2129,7 +2156,11 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 					c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
 					c.setCellFormula(formula);
 					c.setCellStyle(styleBottomColumnsHistorico);
-					//totalFFRR += c.getNumericCellValue();
+					if (totalFFRR.isEmpty()) {
+						totalFFRR = formula;
+					} else {
+						totalFFRR = totalFFRR+"+"+formula;
+					}
 					
 					formula = "SUM(J"+String.valueOf(numActivoDuplicate-1)+":J"+String.valueOf(currentRowHistorico-1)+")";
 					cellReference = new CellReference("J" + Integer.toString(currentRowHistorico));
@@ -2143,8 +2174,12 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 					}
 					c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
 					c.setCellFormula(formula);
-					c.setCellStyle(styleBottomColumnsHistorico);
-					//totalOferta += c.getNumericCellValue();
+					c.setCellStyle(styleBottomColumnsEHistorico);
+					if (totalOferta.isEmpty()) {
+						totalOferta = formula;
+					} else {
+						totalOferta = totalOferta+"+"+formula;
+					}
 					
 					formula = "SUM(K"+String.valueOf(numActivoDuplicate-1)+":K"+String.valueOf(currentRowHistorico-1)+")";
 					cellReference = new CellReference("K" + Integer.toString(currentRowHistorico));
@@ -2158,8 +2193,12 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 					}
 					c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
 					c.setCellFormula(formula);
-					c.setCellStyle(styleBottomColumnsHistorico);
-					//totalpvpComite += c.getNumericCellValue();
+					c.setCellStyle(styleBottomColumnsEHistorico);
+					if (totalpvpComite.isEmpty()) {
+						totalpvpComite = formula;
+					} else {
+						totalpvpComite = totalpvpComite+"+"+formula;
+					}
 					
 					formula = "SUM(L"+String.valueOf(numActivoDuplicate-1)+":L"+String.valueOf(currentRowHistorico-1)+")";
 					cellReference = new CellReference("L" + Integer.toString(currentRowHistorico));
@@ -2173,13 +2212,16 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 					}
 					c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
 					c.setCellFormula(formula);
-					c.setCellStyle(styleBottomColumnsHistorico);
-					//totalvTas += c.getNumericCellValue();
+					c.setCellStyle(styleBottomColumnsEHistorico);
+					if (totalvTas.isEmpty()) {
+						totalvTas = formula;
+					} else {
+						totalvTas = totalvTas+"+"+formula;
+					}
 					
 					currentRowHistorico+=2;
 					countNumActDuplicate=0;
 				}
-				
 			}
 			
 			cellReference = new CellReference("B" +Integer.toString(currentRowHistorico)); 
@@ -2204,7 +2246,10 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			if (c == null) {
 				c = r.createCell(cellReference.getCol());
 			}
-			c.setCellValue(totalFFRR); 
+			c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+			if (!totalFFRR.isEmpty()) {
+				c.setCellFormula(totalFFRR);
+			}
 			c.setCellStyle(styleBottomColumnsHistorico);
 			
 			cellReference = new CellReference("J" + Integer.toString(currentRowHistorico));
@@ -2216,8 +2261,11 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			if (c == null) {
 				c = r.createCell(cellReference.getCol());
 			}
-			c.setCellValue(totalOferta);
-			c.setCellStyle(styleBottomColumnsHistorico);
+			c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+			if (!totalOferta.isEmpty()) {
+				c.setCellFormula(totalOferta);
+			}
+			c.setCellStyle(styleBottomColumnsEHistorico);
 			
 			cellReference = new CellReference("K" + Integer.toString(currentRowHistorico));
 			r = mySheetHistorico.getRow(cellReference.getRow());
@@ -2228,8 +2276,11 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			if (c == null) {
 				c = r.createCell(cellReference.getCol());
 			}
-			c.setCellValue(totalpvpComite);
-			c.setCellStyle(styleBottomColumnsHistorico);
+			c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+			if (!totalpvpComite.isEmpty()) {
+				c.setCellFormula(totalpvpComite);
+			}
+			c.setCellStyle(styleBottomColumnsEHistorico);
 			
 			cellReference = new CellReference("L" + Integer.toString(currentRowHistorico));
 			r = mySheetHistorico.getRow(cellReference.getRow());
@@ -2240,8 +2291,11 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			if (c == null) {
 				c = r.createCell(cellReference.getCol());
 			}
-			c.setCellValue(totalvTas);
-			c.setCellStyle(styleBottomColumnsHistorico);
+			c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+			if (!totalvTas.isEmpty()) {
+				c.setCellFormula(totalvTas);
+			}
+			c.setCellStyle(styleBottomColumnsEHistorico);
 			
 			currentRowHistorico+=2;
 			countNumActDuplicate=0;

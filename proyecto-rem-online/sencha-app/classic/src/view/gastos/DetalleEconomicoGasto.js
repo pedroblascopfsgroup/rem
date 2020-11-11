@@ -179,7 +179,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 										            			disabled:'{!detalleeconomico.retencionGarantiaAplica}'
 
 															}, 
-															allowBlank: true,
+															allowBlank: true
 										           		},
 														{ 
 															xtype: 'currencyfieldbase',

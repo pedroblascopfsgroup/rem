@@ -165,15 +165,15 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo())) {
 					if(gasto.getGestoria() == null) {
 						for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
-							if(gastodetalleLinea.getCppBase() == null) {
-								error = messageServices.getMessage(VALIDACION_PARTIDA_PRESUPUESTARIA);
+							if(gastodetalleLinea.getCppBase() == null && gastodetalleLinea.getCccBase() == null) {
+								error = messageServices.getMessage(VALIDACION_AL_MENOS_CUENTAS_O_PARTIDAS);
 								return error;
 							}
 						}
 					}else {
 						for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
-							if(gastodetalleLinea.getCppBase() == null && gastodetalleLinea.getCccBase() == null) {
-								error = messageServices.getMessage(VALIDACION_AL_MENOS_CUENTAS_O_PARTIDAS);
+							if(gastodetalleLinea.getCppBase() == null) {
+								error = messageServices.getMessage(VALIDACION_PARTIDA_PRESUPUESTARIA);
 								return error;
 							}
 						}

@@ -1,12 +1,12 @@
 --/*
 --##########################################
 --## AUTOR=Vicente Martinez Cifre
---## FECHA_CREACION=20191201
+--## FECHA_CREACION=20201112
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-11756
 --## PRODUCTO=NO
---## Finalidad: Ampliar la tabla ACT_ICO_INFO_COMERCIAL
+--## Finalidad: Ampliar la tabla OFR_OFERTAS
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -46,8 +46,8 @@ DECLARE
     			-- NOMBRE CAMPO						TIPO CAMPO							DESCRIPCION
     	T_ALTER(  'OFR_VENTA_CARTERA',				'NUMBER(1)',			'Check que marca si la oferta es de una venta de cartera'	),
     	T_ALTER(  'OFR_OFERTA_ESPECIAL',			'NUMBER(1)',			'Check que marca si la oferta es de tipo especial'	),
-    	T_ALTER(  'OFR_INFORME_JURIDICO',			'NUMBER(1)',			'Ckeck que marca si se solicita el informe jurídico correspondiente'	),
-    	T_ALTER(  'DD_ROP_ID',						'NUMBER(16)',			'Identificador único del iesgo de la operación'	)
+    	T_ALTER(  'OFR_VENTA_SOBRE_PLANO',			'NUMBER(1)',			'Ckeck que marca si es una venta sobre plano'	),
+    	T_ALTER(  'DD_ROP_ID',						'NUMBER(16)',			'Identificador único del riesgo de la operación'	)
 		);
     V_T_ALTER T_ALTER;
     

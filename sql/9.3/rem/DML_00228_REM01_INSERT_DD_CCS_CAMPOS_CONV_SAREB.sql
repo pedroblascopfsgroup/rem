@@ -163,7 +163,6 @@ DECLARE
       T_TIPO_DATA('124','Fecha prevista fin adecuación alquileres',NULL,NULL,NULL),
       T_TIPO_DATA('125','Número de reserva','RES_RESERVAS','RES_NUM_RESERVA','RES_ID'),
       T_TIPO_DATA('126','Fecha Contable de la reserva','RES_RESERVAS','RES_FECHA_FIRMA','RES_ID'),
-      T_TIPO_DATA('126','Fecha Contable de la reserva','RES_RESERVAS','RES_FECHA_CONTABILIZACION','RES_ID'),
       T_TIPO_DATA('127','Fecha contable de la devolución de la reserva','ECO_EXPEDIENTE_COMERCIAL','ECO_FECHA_DEV_ENTREGAS','ECO_ID'),
       T_TIPO_DATA('128','Cartera','ACT_ACTIVO','DD_CRA_ID','ACT_ID'),
       T_TIPO_DATA('129','Subcartera','ACT_ACTIVO','DD_SCR_ID','ACT_ID'),

@@ -100,7 +100,7 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
 	private static final String LINEA_SIN_ACTIVOS_REPETIDA = "Esta línea ya ha sido marcada como sin activos.";
 	private static final String LINEA_SIN_ACTIVOS_CON_ID_PARTICIPACION = "Una línea marcada sin activos no puede tener ni Id elemento ni participación de elemento.";
 	private static final String TIPO_IMPOS_IMPUEST_RELLENO = "Cuando el tipo impositivo está relleno el tipo impuesto debe estarlo, y viceversa.";
-	private static final String SIN_ACTIVOS_NO_VALIDO_CARTERA = "Cuando el propietario es de la cartera: Sareb, Tango, Liberbank o Giants no se puede marcar como línea sin activos.";
+	private static final String SIN_ACTIVOS_NO_VALIDO_CARTERA = "Cuando el propietario es de la cartera: Sareb, Tango o Giants no se puede marcar como línea sin activos.";
 
 	private static final String COLUMNA_TEXTO_RET_GARANTIA_BASE ="Se ha cambiado la celda de Retención garantía base a tipo texto";
 	private static final String COLUMNA_TEXTO_RET_GARANTIA_PORCENTAJE="Se ha cambiado la celda de Retención garantía porcentje a tipo texto";
@@ -1511,7 +1511,7 @@ public class MSVMasivaUnicaGastosValidator extends MSVExcelValidatorAbstract {
         		 String tipoElemento = exc.dameCelda(i, COL_TIPO_ELEMENTO);
         		 String docIdent = exc.dameCelda(i, COL_NIF_PROPIETARIO);
          		 if(!Checks.esNulo(tipoElemento) && TIPO_ELEMENTO_SIN_ELEMENTO.equalsIgnoreCase(tipoElemento)) {
-         			 List<String> listaCarteras = Arrays.asList(COD_SAREB, COD_GIANTS, COD_TANGO, COD_LBK);
+         			 List<String> listaCarteras = Arrays.asList(COD_SAREB, COD_GIANTS, COD_TANGO);
          			 if(Boolean.TRUE.equals(particularValidator.propietarioPerteneceCartera(docIdent, listaCarteras))) {
          				 listaFilas.add(i);
          			 }

@@ -29,11 +29,14 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;

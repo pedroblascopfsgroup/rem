@@ -229,7 +229,8 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        	},{
 						        		xtype:'datefieldbase',
 							        	reference: 'datefielInstalaciondAlarma',
-							        	fieldLabel: HreRem.i18n('fieldlabel.situacion.posesoria.accesibilidad.fecha.instalacion.alarma'),							        	
+							        	fieldLabel: HreRem.i18n('fieldlabel.situacion.posesoria.accesibilidad.fecha.instalacion.alarma'),
+							        	disabled:true,
 							        	bind: {
 								        	value:'{situacionPosesoria.fechaInstalacionAlarma}',
 								        	readOnly: '{!isGestorSeguridad}'
@@ -240,6 +241,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        		colspan:2,
 						        		xtype:'datefieldbase',
 							        	reference: 'datefielDesinstalaciondAlarma',
+							        	disabled:true,
 							        	fieldLabel: HreRem.i18n('fieldlabel.situacion.posesoria.accesibilidad.fecha.desinstalacion.alarma'),							        
 							        	bind:{
 							        		value: '{situacionPosesoria.fechaDesinstalacionAlarma}',
@@ -286,6 +288,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						       		},{
 						       			xtype:'datefieldbase',
 							        	reference: 'datefielInstalaciondVigilancia',
+							        	disabled:true,
 							        	fieldLabel: HreRem.i18n('fieldlabel.situacion.posesoria.accesibilidad.fecha.instalacion.vigilancia'),						        	
 							        	bind:{
 							        		value:'{situacionPosesoria.fechaInstalacionVigilancia}',
@@ -297,6 +300,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        	colspan:2,
 						        	xtype:'datefieldbase',
 							        	reference: 'datefielDesinstalaciondVigilancia',
+							        	disabled:true,
 							        	fieldLabel: HreRem.i18n('fieldlabel.situacion.posesoria.accesibilidad.fecha.desinstalacion.vigilancia'),
 							        	bind: {
 							        		value:'{situacionPosesoria.fechaDesinstalacionVigilancia}',

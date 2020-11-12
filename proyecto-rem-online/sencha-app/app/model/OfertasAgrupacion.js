@@ -59,6 +59,21 @@ Ext.define('HreRem.model.OfertasAgrupacion', {
     	},
     	{
     		name: 'gencat'
+    	},
+    	{
+    		name: 'ventaCartera',
+			type: 'boolean'
+    	},
+    	{
+    		name: 'ofertaEspecial',
+			type: 'boolean'
+    	},
+    	{
+    		name: 'ventaSobrePlano',
+			type: 'boolean'
+    	},
+    	{
+    		name: 'codRiesgoOperacion'
     	}
     		
     ],

@@ -23,7 +23,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		TRAMITE: 3,
 		TAREA: 4,
 		EXPEDIENTE: 5,
-		GASTO: 6
+		GASTO: 6,
+		AGRUPACION: 7
 	},
 
 	TIPOS_COMERCIALIZACION: {

@@ -103,6 +103,8 @@ Ext.define('HreRem.view.agrupacion.detalle.ComercialAgrupacion', {
 		if(me.up('agrupacionesdetallemain').lookupReference('ofertascomercialagrupacionlistref')){
 			me.up('agrupacionesdetallemain').lookupReference('ofertascomercialagrupacionlistref').calcularMostrarBotonClonarExpediente();
 		}
+
+		me.up('agrupacionesdetallemain').lookupReference('ofertascomercialagrupacionref').funcionRecargar();
 		me.lookupController().cargarTabData(me);
 		me.lookupController().usuarioTieneFuncionTramitarOferta();
     },

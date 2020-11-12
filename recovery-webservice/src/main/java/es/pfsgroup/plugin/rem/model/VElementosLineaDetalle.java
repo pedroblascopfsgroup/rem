@@ -64,6 +64,12 @@ public class VElementosLineaDetalle implements Serializable{
 	
 	@Column(name = "GLD_IMPORTE_TOTAL")
 	private Double importeTotalLinea;
+	
+	@Column(name = "IMPORTE_SUJETO_TOTAL")
+	private Double importeTotalSujetoLinea;
+	
+	@Column(name = "IMPORTE_PROPORCIONAL_SUJETO")
+	private Double importeProporcinalSujeto;
 
 	public Long getId() {
 		return id;
@@ -176,5 +182,22 @@ public class VElementosLineaDetalle implements Serializable{
 	public void setImporteTotalLinea(Double importeTotalLinea) {
 		this.importeTotalLinea = importeTotalLinea;
 	}
+
+	public Double getImporteTotalSujetoLinea() {
+		return importeTotalSujetoLinea;
+	}
+
+	public void setImporteTotalSujetoLinea(Double importeTotalSujetoLinea) {
+		this.importeTotalSujetoLinea = importeTotalSujetoLinea;
+	}
+
+	public Double getImporteProporcinalSujeto() {
+		return importeProporcinalSujeto;
+	}
+
+	public void setImporteProporcinalSujeto(Double importeProporcinalSujeto) {
+		this.importeProporcinalSujeto = importeProporcinalSujeto;
+	}
+
 	
 }

@@ -228,7 +228,7 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 			          return formatter.format(value) + "\u20AC";
 			        },
 					text : HreRem.i18n('header.activos.afectados.importe.proporcional.total'),
-					dataIndex : 'importeProporcinalTotal',
+					dataIndex : 'importeProporcinalSujeto',
 					flex : 1,
 					summaryType: 'sum',
 		            summaryRenderer: function(value, summaryData, dataIndex) {
@@ -241,14 +241,14 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 			            	var dataStore = store.getData().items;
 			            	var sumaValue = parseFloat(0.0);
 			            	for(var i = 0; i < dataStore.length; i++){
-			            		if(!Ext.isEmpty(dataStore[i].data)  && !Ext.isEmpty(dataStore[i].data.importeProporcinalTotal)){
-			            			sumaValue = sumaValue + parseFloat(dataStore[i].data.importeProporcinalTotal);
+			            		if(!Ext.isEmpty(dataStore[i].data)  && !Ext.isEmpty(dataStore[i].data.importeProporcinalSujeto)){
+			            			sumaValue = sumaValue + parseFloat(dataStore[i].data.importeProporcinalSujeto);
 			            		}
 			            	}
 			            	var value2 = formatter.format(sumaValue);
 			            	var msg = HreRem.i18n("header.activos.afectados.importe.proporcional.total") + " " + value2 + "\u20AC";
 			            	var style = "style= 'color: black'";
-			            	var importeTotal = formatter.format(dataStore[0].get('importeTotalLinea'));
+			            	var importeTotal = formatter.format(dataStore[0].get('importeTotalSujetoLinea'));
 			            	if(importeTotal==""){
 			            		importeTotal = formatter.format(0);
 			            	}

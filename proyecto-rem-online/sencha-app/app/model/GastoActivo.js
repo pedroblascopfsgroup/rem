@@ -63,6 +63,14 @@ Ext.define('HreRem.model.GastoActivo', {
             {
             	name: 'importeTotalLinea',
             	type: 'number'
+            },
+            {
+            	name: 'importeTotalSujetoLinea',
+            	type: 'number'
+            },
+            {
+            	name: 'importeProporcinalSujeto',
+            	type: 'number'
             }
             
     ],

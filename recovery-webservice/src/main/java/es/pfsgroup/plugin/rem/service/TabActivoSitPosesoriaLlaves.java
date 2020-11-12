@@ -332,6 +332,13 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			if(dto.getFechaInstalacionAlarma()!=null) {
 				activoSituacionPosesoria.setFechaInstalacionAlarma(dto.getFechaInstalacionAlarma());
 			}
+			if(dto.getTieneAlarma()!=null && activoSituacionPosesoria.getFechaDesinstalacionAlarma()!=null) {
+				if(dto.getTieneAlarma()==1) {
+					activoSituacionPosesoria.setConAlarma(dto.getTieneAlarma());
+					activoSituacionPosesoria.setFechaDesinstalacionAlarma(null);
+				}
+			}
+			
 			if(dto.getTieneVigilancia()!=null) {
 				activoSituacionPosesoria.setConVigilancia(dto.getTieneVigilancia());
 			}
@@ -341,6 +348,14 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			if(dto.getFechaInstalacionVigilancia()!=null) {
 				activoSituacionPosesoria.setFechaInstalacionVigilancia(dto.getFechaInstalacionVigilancia());
 			}
+			
+			if(dto.getTieneVigilancia()!=null && activoSituacionPosesoria.getFechaDesinstalacionVigilancia()!=null) {
+				if(dto.getTieneVigilancia()==1) {
+					activoSituacionPosesoria.setConVigilancia(dto.getTieneVigilancia());
+					activoSituacionPosesoria.setFechaDesinstalacionVigilancia(null);
+				}
+			}
+			
 		}
 		
 		activo.setSituacionPosesoria(genericDao.save(ActivoSituacionPosesoria.class, activoSituacionPosesoria));

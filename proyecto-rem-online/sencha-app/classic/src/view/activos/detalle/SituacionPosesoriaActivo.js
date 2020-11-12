@@ -197,7 +197,10 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        		readOnly: '{!isGestorSeguridad}',
 					            		store: '{comboSiNoRem}',
 					            		value: '{situacionPosesoria.tieneAlarma}'
-					            	},listeners: {
+					            	},
+					            	labelWidth: 80,
+					            	width: 180,
+					            	listeners: {
 					            		change: function(combo, value) {
 					            			var me = this;
 					            			if(value=='1') {
@@ -215,7 +218,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').allowBlank = false;
 					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').setDisabled(false);
 					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').validate();
-					            				
+					            				me.up('formBase').down('[reference=datefielDesinstalaciondAlarma]').setMinValue(me.up('formBase').down('[reference=datefielInstalaciondAlarma]').value);
 					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').allowBlank = true;
 					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').setValue("");
 					            				me.up('formBase').down('[reference=datefielInstalaciondAlarma]').setDisabled(true);
@@ -248,6 +251,8 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        	
 						        		xtype: 'comboboxfieldbase',						        	
 						        	fieldLabel: HreRem.i18n('fieldlabel.situacion.posesoria.accesibilidad.vigilancia'),
+					            	labelWidth: 80,
+					            	width: 180,
 						        	bind: {
 						        		readOnly: '{!isGestorSeguridad}',
 					            		store: '{comboSiNoRem}',
@@ -269,7 +274,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 					            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').allowBlank = false;
 					            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').setDisabled(false);
 					            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').validate();
-					            				
+					            				me.up('formBase').down('[reference=datefielDesinstalaciondVigilancia]').setMinValue(me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').value);
 					            				me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').allowBlank = true;
 					            				me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').setValue("");
 					            				me.up('formBase').down('[reference=datefielInstalaciondVigilancia]').setDisabled(true);

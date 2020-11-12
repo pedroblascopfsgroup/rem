@@ -1116,10 +1116,12 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 					vElementoLineaDetalle.setDescripcionLinea("Línea marcada sin activos");	
 					
 				}		
-				vElementoLineaDetalle.setImporteProporcinalTotal(100.0);
+
 				vElementoLineaDetalle.setParticipacion(100.0);
 				vElementoLineaDetalle.setImporteProporcinalTotal(0.0);
 				vElementoLineaDetalle.setImporteTotalLinea(0.0);
+				vElementoLineaDetalle.setImporteTotalSujetoLinea(0.0);
+				vElementoLineaDetalle.setImporteProporcinalSujeto(0.0);
 				vElementoLineaDetalle.setIdElemento("");
 				
 				elementosLineaDetalleList.add(vElementoLineaDetalle);

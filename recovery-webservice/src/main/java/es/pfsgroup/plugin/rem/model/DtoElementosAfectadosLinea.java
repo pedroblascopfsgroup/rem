@@ -42,6 +42,8 @@ public class DtoElementosAfectadosLinea extends WebDto {
 	 
 	 private Double importeTotalLinea;
 	 
+	 private Double importeTotalSujetoLinea;
+	 
 
 	public Long getId() {
 		return id;
@@ -154,6 +156,15 @@ public class DtoElementosAfectadosLinea extends WebDto {
 	public void setImporteTotalLinea(Double importeTotalLinea) {
 		this.importeTotalLinea = importeTotalLinea;
 	}
+
+	public Double getImporteTotalSujetoLinea() {
+		return importeTotalSujetoLinea;
+	}
+
+	public void setImporteTotalSujetoLinea(Double importeTotalSujetoLinea) {
+		this.importeTotalSujetoLinea = importeTotalSujetoLinea;
+	}
+
 	
 	
 

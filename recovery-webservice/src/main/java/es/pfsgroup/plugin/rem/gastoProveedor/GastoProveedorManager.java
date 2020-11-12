@@ -72,6 +72,9 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoSubtipoGastoProveedorTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
+import es.pfsgroup.plugin.rem.model.ConfigCuentaContable;
+import es.pfsgroup.plugin.rem.model.ConfigPdaPresupuestaria;
+import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
 import es.pfsgroup.plugin.rem.model.ConfiguracionSuplidos;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
@@ -139,6 +142,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.provisiongastos.dao.ProvisionGastosDao;
 import es.pfsgroup.plugin.rem.thread.ActualizaSuplidosAsync;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateGastoApi;
@@ -859,6 +866,45 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				|| DDEstadoGasto.SUBSANADO.equals(gastoProveedor.getEstadoGasto().getCodigo()))) {
 		}else {
 			updaterStateApi.updaterStates(gastoProveedor, null);
+		}
+		
+		if(dto.getSuplidosVinculadosCod() != null) {
+			DDSinSiNo suplidoVinculado = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getSuplidosVinculadosCod()));
+			gastoProveedor.setSuplidosVinculados(suplidoVinculado);
+		}else if(gastoProveedor.getSuplidosVinculados() == null) {
+			DDSinSiNo suplidoVinculado = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO));
+			gastoProveedor.setSuplidosVinculados(suplidoVinculado);
+		}
+		
+		if(dto.getFacturaPrincipalSuplido() != null && !dto.getFacturaPrincipalSuplido().isEmpty() 
+				&& !dto.getFacturaPrincipalSuplido().equals(gastoProveedor.getNumeroFacturaPrincipal())) {
+			GastoSuplido gastoSuplido = genericDao.get(GastoSuplido.class, genericDao.createFilter(FilterType.EQUALS, "gastoProveedorSuplido", gastoProveedor), filtroBorrado);
+				
+			if(gastoSuplido == null) {
+				gastoSuplido = new GastoSuplido();
+					
+				gastoSuplido.setGastoProveedorSuplido(gastoProveedor);
+			}
+			
+			Filter filtroSuplidos = genericDao.createFilter(FilterType.EQUALS,"suplidosVinculados.codigo", DDSinSiNo.CODIGO_SI);				
+			GastoProveedor gastoPrincipal = genericDao.get(GastoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "referenciaEmisor", dto.getFacturaPrincipalSuplido()), filtroSuplidos);
+			
+			if(esGastoAutorizado(gastoPrincipal)) {
+				throw new JsonViewerException("No se puede añadir como suplido al gasto "+gastoPrincipal.getNumGastoHaya()+ ", ya que este se encuentra autorizado.");
+			}
+			
+			gastoSuplido.setGastoProveedorPadre(gastoPrincipal);
+			genericDao.save(GastoSuplido.class, gastoSuplido);
+			
+			gastoProveedor.setNumeroFacturaPrincipal(dto.getFacturaPrincipalSuplido());
+		}else if(dto.getFacturaPrincipalSuplido() == null || dto.getFacturaPrincipalSuplido().isEmpty()) {
+			GastoSuplido gastoSuplido = genericDao.get(GastoSuplido.class, genericDao.createFilter(FilterType.EQUALS, "gastoProveedorSuplido", gastoProveedor), filtroBorrado);
+			
+			if(gastoSuplido != null) {
+				gastoDao.deleteGastoSuplido(gastoSuplido.getId());
+				
+				gastoProveedor.setNumeroFacturaPrincipal(null);
+			}
 		}
 		
 		if(dto.getSuplidosVinculadosCod() != null) {

@@ -541,17 +541,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					 if(dadaDeBaja == "true") {
 					   	return false; //El checkbox será editable.
 					   } else {
-					   	return true; //El checkbox no será editable.
+					   	return get('disableCheckHpm'); //El checkbox no será editable.
 					   }
 				 }
 				 
 				 if((tipoTituloCodigo == CONST.TIPO_TITULO_ACTIVO['UNIDAD_ALQUILABLE'] && incluidoEnPerimetro) || (tieneOfertaAlquilerViva === true && (estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] || estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["CON_DEMANDAS"]))){
-					return true;
+					return get('disableCheckHpm');
 				} else {
 					return false;
 				}
 			 }else{
-				 return true;
+				 return get('disableCheckHpm');
 			 }
 		 },
 		 

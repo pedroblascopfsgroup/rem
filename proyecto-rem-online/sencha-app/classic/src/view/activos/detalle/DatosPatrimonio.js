@@ -33,10 +33,10 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 							xtype: 'checkboxfieldbase',
 							fieldLabel: HreRem.i18n('title.patrimonio.perimetroAlquiler'),
 							reference: 'chkPerimetroAlquilerRef',
-							disabled: true,
+							//disabled: true,
 							bind: {
 								value: '{patrimonio.chkPerimetroAlquiler}',
-								disabled: '{disableCheckHpm}',
+								//disabled: '{disableCheckHpm}',
 								readOnly: '{enableEdicionCheckHpm}'								
 							},
 							listeners: {
@@ -85,10 +85,10 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 							xtype: 'checkboxfieldbase',
 							fieldLabel: HreRem.i18n('checkboxfieldbase.patrimonio.subrogado'),
 							reference: 'subrogadoCheckbox',
-							disabled: true,
-							readOnly: true,
+							//disabled: true,
+							//readOnly: true,
 							bind: {
-								disabled: '{enableSubrogado}',
+								//disabled: '{enableSubrogado}',
 								readOnly: '{enableSubrogado}',
 								value: '{patrimonio.chkSubrogado}'// Es posible que se vea discordancia con Base de datos. Esto se debe a que este valor cambia en java. En TabActivoPatrimonio.getTabData()
 							},

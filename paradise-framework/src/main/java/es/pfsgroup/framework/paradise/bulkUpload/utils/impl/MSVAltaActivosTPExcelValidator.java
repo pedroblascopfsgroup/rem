@@ -47,24 +47,31 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 
 	// Textos con errores de validacion
 	public static final String ACTIVE_EXISTS = "El activo existe.";
+	public static final String ACTIVE_IS_NULL = "El activo no puede ser nulo.";
 	public static final String SUBCARTERA_IS_NULL = "La subcartera del activo no puede estar vacío.";
 	public static final String SUBCARTERA_NOT_EXISTS = "La subcartera no existe";
 	public static final String SUBTIPO_TITULO_IS_NULL = "El subtipo de título del activo no puede estar vacío.";
+	public static final String SUBTIPO_TITULO_NOT_EXISTS = "El código subtipo de título del activo indicado no existe";
 	public static final String NUM_ACT_EXTERNO_IS_NULL = "El número de activo externo no puede estar vacío";
 	public static final String TIPO_ACTIVO_IS_NULL = "El tipo de activo no puede estar vacío.";
 	public static final String TIPO_ACTIVO_NOT_EXISTS = "El tipo de activo no existe";
 	public static final String SUBTIPO_ACTIVO_IS_NULL = "El subtipo de activo no puede estar vacío.";
 	public static final String SUBTIPO_ACTIVO_NOT_EXISTS = "El subtipo de activo no existe";
 	public static final String ESTADO_FISICO_ACTIVO_IS_NULL = "El estado físico del activo no puede estar vacío.";
+	public static final String EST_FISICO_NOT_EXISTS = "El código estado físico indicado no existe";
 	public static final String USO_DOMINANTE_ACTIVO_IS_NULL = "El uso dominante del activo no puede estar vacío.";
+	public static final String USO_DOMINANTE_ACTIVO_NOT_EXISTS = "El uso dominante del activo indicado no existe.";
 	public static final String DESC_ACTIVO_IS_NULL = "La descripción del activo no puede estar vacío.";
 	public static final String TIPO_VIA_IS_NULL = "El tipo de vía no puede estar vacía.";
+	public static final String TIPO_VIA_NOT_EXISTS = "El código tipo de vía indicado no existe";
 	public static final String NOMBRE_VIA_IS_NULL = "El nombre de la vía no puede estar vacía.";
 	public static final String NUM_VIA_IS_NULL = "El número de la vía no puede estar vacía.";
 	public static final String UNIDAD_INFERIOR_MUNICIPIO_IS_NULL = "La unidad inferior al municipio no puede estar vacía.";
 	public static final String CODIGO_POSTAL_IS_NULL = "El código postal no puede estar vacío.";
+	public static final String DESTINO_COMERCIAL_NOT_EXISTS = "El código destino comercial indicado no existe";
 	public static final String DESTINO_COMERCIAL_IS_NULL = "El destino comercial no puede estar vacío.";
-	public static final String TIPO_ALQUILER_IS_NULL = "El tipo de alquiler no puede estar vacío si el destino comercial incluye alquiler.";
+	public static final String TIPO_ALQUILER_IS_NULL = "El tipo de alquiler no puede estar vacío si el destino comercial es \"Alquiler\" o \"Alquiler y venta\".";
+	public static final String TIPO_ALQUILER_NOT_EXISTS = "El código tipo de alquiler indicado no existe";
 	public static final String NUM_PRESTAMO_IS_NULL = "El número de prestamo no puede estar vacío.";
 	public static final String NIF_SOCIEDAD_ACREEDORA_IS_NULL = "El NIF de la sociedad acreedora no puede estar vacío.";
 	public static final String CODIGO_SOCIEDAD_ACREEDORA_IS_NULL = "El código de la sociedad acreedora no puede estar vacío.";
@@ -89,6 +96,7 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 	public static final String FECHA_TASACION_DATE_FORMAT = "El valor indicado en FECHA TASACIÓN no cumple con el formato de fecha correcto (DD/MM/AAAA)";
 	public static final String SOCIEDAD_ACREEDORA_NOT_EXISTS = "El NIF indicado para la sociedad acreedora no se encuentra dado de alta";
 	public static final String MEDIADOR_NOT_EXISTS = "El NIF indicado para el mediador no se encuentra dado de alta";
+	public static final String MEDIADOR_IS_NULL = "El NIF para el mediador no puede estar vacío";
 	public static final String CODIGO_SOCIEDAD_ACREEDORA_IS_NAN = "El código de la sociedad acreedora no tiene un formato numérico válido";
 	public static final String NUM_ACTIVO_HAYA_IS_NAN = "El código haya del activo no tiene un formato numérico válido";
 	public static final String NUM_ACTIVO_CARTERA_IS_NAN = "El número de activo por cartera no tiene un formato numérico válido";
@@ -96,8 +104,11 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 	public static final String ID_ASUNTO_RECOVERY_IS_NAN = "El ID del asunto en recovery no tiene un formato numérico válido";
 	public static final String ID_GARANTIA_IS_NAN = "El ID de garantía no tiene un formato numérico válido";
 	public static final String TOMO_REGISTRO_IS_NAN = "El tomo del registro no tiene un formato numérico válido";
+	public static final String TOMO_IS_NULL = "El tomo no puede estar vacío";
 	public static final String LIBRO_REGISTRO_IS_NAN = "El libro del registro no tiene un formato numérico válido";
+	public static final String LIBRO_IS_NULL = "El libro no puede estar vacío";
 	public static final String FOLIO_REGISTRO_IS_NAN = "El folio del registro no tiene un formato numérico válido";
+	public static final String FOLIO_IS_NULL = "El folio no puede estar vacío";
 	public static final String SUPERFICIE_CONSTRUIDA_REGISTRO_IS_NAN = "La superficie construida indicada del registro no tiene un formato numérico válido";
 	public static final String SUPERFICIE_UTIL_REGISTRO_IS_NAN = "La superficie útil no tiene un formato numérico válido";
 	public static final String SUPERFICIE_REPERCUSION_EECC_REGISTRO_IS_NAN = "La superficie con repercusión no tiene un formato numérico válido";
@@ -106,6 +117,9 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 	public static final String PORCENTAJE_SUPERIOR = "El porcentaje de propiedad no se encuentra en un rango válido";
 	public static final String CODIGO_POSTAL_IS_NAN = "El código postal no tiene un formato numérico válido o no contiene 5 posiciones";
 	public static final String MUNICIPIO_NOT_EXISTS = "El código de municipio especificado no existe";
+	public static final String MUNICIPIO_IS_NULL = "El código de municipio no puede estar vacío";
+	public static final String PROVINCIA_IS_NULL = "El código de provincia no puede estar vacía";
+	public static final String PROVINCIA_NOT_EXISTS = "El código de provincia indicado no existe";
 	public static final String UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS = "El código de la unidad inferior al municipio especificado no existe";
 	public static final String GESTOR_COMERCIAL_IS_NULL = "El gestor comercial no puede estar vacío";
 	public static final String GESTOR_COMERCIAL_NOT_EXISTS = "El gestor comercial no existe";
@@ -123,6 +137,12 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 	public static final String GESTORIA_FORMALIZACION_NOT_EXISTS ="La gestoría de formalización no existe";
 	public static final String TIPO_DE_COMERCIALIZACION_INCORRECTO = "El tipo de comercialización es incorrecto";
 	public static final String TIPO_DE_COMERCIALIZACION_IS_NULL = "El tipo de comercialización no puede estar vacía";
+	public static final String NIF_CIF_PROPIETARIO_IS_NULL = "El NIF/CIF del propietario no puede estar vacío";
+	public static final String NIF_CIF_PROPIETARIO_NOT_EXISTS = "El NIF/CIF del propietario indicado no existe";
+	public static final String CALIFICACION_CEE_NOT_EXISTS = "El tipo de calificación energética indicado no existe";
+	public static final String GRADO_PROPIEDAD_NOT_EXISTS = "El código grado de propiedad indicado no existe";
+	public static final String CLASE_ACTIVO_NOT_EXISTS = "La clase de activo indicada no existe";
+	public static final String CLASE_ACTIVO_IS_NULL = "La clase de activo indicada no puede estar vacía";
 	
 
 	// Posicion fija de Columnas excel, para cualquier referencia por posicion
@@ -220,7 +240,7 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 		static final int CARGAS = 68;
 		
 		//
-		static final int TIPO_ACTIVO = 69;
+		static final int CLASE_ACTIVO = 69;
 		static final int FORMALIZACION = 70;
 		
 		//Datos propietarios
@@ -275,6 +295,7 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 			Map<String, List<Integer>> mapaErrores = new HashMap<String, List<Integer>>();
 			mapaErrores.put(ACTIVE_EXISTS, isActiveExistsRows(exc));
+			mapaErrores.put(ACTIVE_IS_NULL, isColumnNullByRows(exc, COL_NUM.NUM_ACTIVO_HAYA));
 			mapaErrores.put(SUBCARTERA_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_CARTERA));
 			mapaErrores.put(SUBCARTERA_NOT_EXISTS, subCarteraNotExistsByRows(exc,COL_NUM.COD_CARTERA));
 			mapaErrores.put(SUBTIPO_TITULO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_SUBTIPO_TITULO));
@@ -282,7 +303,7 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 			mapaErrores.put(TIPO_ACTIVO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_TIPO_ACTIVO));
 			mapaErrores.put(TIPO_ACTIVO_NOT_EXISTS, tipoActivoNotExistsByRows(exc,COL_NUM.COD_TIPO_ACTIVO));
 			mapaErrores.put(SUBTIPO_ACTIVO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_SUBTIPO_ACTIVO));
-			mapaErrores.put(SUBTIPO_ACTIVO_NOT_EXISTS, tipoSubActivoNotExistsByRows(exc, COL_NUM.COD_SUBTIPO_ACTIVO));
+			mapaErrores.put(SUBTIPO_ACTIVO_NOT_EXISTS, subtipoActivoNotExistsByRows(exc, COL_NUM.COD_SUBTIPO_ACTIVO));
 			mapaErrores.put(ESTADO_FISICO_ACTIVO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_ESTADO_FISICO));
 			mapaErrores.put(USO_DOMINANTE_ACTIVO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_USO_DOMINANTE));
 			mapaErrores.put(DESC_ACTIVO_IS_NULL, isColumnNullByRows(exc, COL_NUM.DESC_ACTIVO));
@@ -346,8 +367,33 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 			mapaErrores.put(MUNICIPIO_NOT_EXISTS, isCodigoMunicipioValido(exc, COL_NUM.COD_MUNICIPIO));
 			mapaErrores.put(UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS,
 					isCodigoUnidadInferiorMunicipioValido(exc, COL_NUM.COD_UNIDAD_MUNICIPIO));
+			
+			mapaErrores.put(PROVINCIA_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_PROVINCIA));
+			mapaErrores.put(MUNICIPIO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_MUNICIPIO));
+			mapaErrores.put(TOMO_IS_NULL, isColumnNullByRows(exc, COL_NUM.TOMO));
+			mapaErrores.put(LIBRO_IS_NULL, isColumnNullByRows(exc, COL_NUM.LIBRO));
+			mapaErrores.put(FOLIO_IS_NULL, isColumnNullByRows(exc, COL_NUM.FOLIO));
+			mapaErrores.put(MEDIADOR_IS_NULL, isColumnNullByRows(exc, COL_NUM.NIF_MEDIADOR));
+			mapaErrores.put(NIF_CIF_PROPIETARIO_IS_NULL, isColumnNullByRows(exc, COL_NUM.NIF_CIF_PROPIETARIO));
+			mapaErrores.put(CLASE_ACTIVO_IS_NULL, isColumnNullByRows(exc, COL_NUM.CLASE_ACTIVO));
+			mapaErrores.put(TIPO_ALQUILER_IS_NULL, isTipoAlquilerNullByRowsIfDestComAlq(exc, COL_NUM.COD_TIPO_ALQUILER, COL_NUM.COD_DESTINO_COMER));
+			
+			mapaErrores.put(CALIFICACION_CEE_NOT_EXISTS, calificacionNotExistsByRows(exc, COL_NUM.CALIFICACION_CEE));
+			mapaErrores.put(USO_DOMINANTE_ACTIVO_NOT_EXISTS, usoDominanteNotExistsByRows(exc, COL_NUM.COD_USO_DOMINANTE));
+			mapaErrores.put(GRADO_PROPIEDAD_NOT_EXISTS, gradoPropiedadNotExistsByRows(exc, COL_NUM.GRADO_PROPIEDAD));
+			mapaErrores.put(DESTINO_COMERCIAL_NOT_EXISTS, destComercialNotExistsByRows(exc, COL_NUM.COD_DESTINO_COMER));
+			mapaErrores.put(TIPO_ALQUILER_NOT_EXISTS, tipoAlquilerNotExistsByRows(exc, COL_NUM.COD_TIPO_ALQUILER));
+			mapaErrores.put(TIPO_VIA_NOT_EXISTS, tipoViaNotExistsByRows(exc, COL_NUM.COD_TIPO_VIA));
+			mapaErrores.put(SUBTIPO_TITULO_NOT_EXISTS, subtipoTituloNotExistsByRows(exc, COL_NUM.COD_SUBTIPO_TITULO));
+			mapaErrores.put(PROVINCIA_NOT_EXISTS, codProvinciaNotExistsByRows(exc, COL_NUM.COD_PROVINCIA));
+			mapaErrores.put(EST_FISICO_NOT_EXISTS, estFisicoNotExistsByRows(exc, COL_NUM.COD_ESTADO_FISICO));
+			mapaErrores.put(NIF_CIF_PROPIETARIO_NOT_EXISTS, nifCifPropietarioNotExistsByRows(exc, COL_NUM.NIF_CIF_PROPIETARIO));
+			mapaErrores.put(CLASE_ACTIVO_NOT_EXISTS, claseActivoNotExistsByRows(exc, COL_NUM.CLASE_ACTIVO));
 
-			if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(SUBCARTERA_IS_NULL).isEmpty() //ok
+
+
+			if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(ACTIVE_IS_NULL).isEmpty() //ok
+					|| !mapaErrores.get(SUBCARTERA_IS_NULL).isEmpty()
 					|| !mapaErrores.get(SUBCARTERA_NOT_EXISTS).isEmpty()
 					|| !mapaErrores.get(SUBTIPO_TITULO_IS_NULL).isEmpty()
 					|| !mapaErrores.get(NUM_ACT_EXTERNO_IS_NULL).isEmpty()
@@ -399,7 +445,26 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 					|| !mapaErrores.get(GESTOR_ACTIVOS_IS_NULL).isEmpty()
 					|| !mapaErrores.get(GESTOR_ACTIVOS_NOT_EXISTS).isEmpty()
 					|| !mapaErrores.get(GESTORIA_FORMALIZACION_NOT_EXISTS).isEmpty()					
-					|| !mapaErrores.get(UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS).isEmpty())
+					|| !mapaErrores.get(PROVINCIA_IS_NULL).isEmpty()
+					|| !mapaErrores.get(MUNICIPIO_IS_NULL).isEmpty()
+					|| !mapaErrores.get(TOMO_IS_NULL).isEmpty()
+					|| !mapaErrores.get(LIBRO_IS_NULL).isEmpty()
+					|| !mapaErrores.get(FOLIO_IS_NULL).isEmpty()
+					|| !mapaErrores.get(MEDIADOR_IS_NULL).isEmpty()
+					|| !mapaErrores.get(NIF_CIF_PROPIETARIO_IS_NULL).isEmpty()
+					|| !mapaErrores.get(NIF_CIF_PROPIETARIO_NOT_EXISTS).isEmpty()
+					|| !mapaErrores.get(EST_FISICO_NOT_EXISTS).isEmpty()
+					|| !mapaErrores.get(PROVINCIA_NOT_EXISTS).isEmpty()
+					|| !mapaErrores.get(SUBTIPO_TITULO_NOT_EXISTS).isEmpty()
+					|| !mapaErrores.get(TIPO_VIA_NOT_EXISTS).isEmpty()
+					|| !mapaErrores.get(TIPO_ALQUILER_NOT_EXISTS).isEmpty()
+					|| !mapaErrores.get(DESTINO_COMERCIAL_NOT_EXISTS).isEmpty()
+					|| !mapaErrores.get(GRADO_PROPIEDAD_NOT_EXISTS).isEmpty()
+					|| !mapaErrores.get(CALIFICACION_CEE_NOT_EXISTS).isEmpty()
+					|| !mapaErrores.get(CLASE_ACTIVO_IS_NULL).isEmpty()
+					|| !mapaErrores.get(CLASE_ACTIVO_NOT_EXISTS).isEmpty()
+					|| !mapaErrores.get(TIPO_ALQUILER_IS_NULL).isEmpty()
+					|| !mapaErrores.get(USO_DOMINANTE_ACTIVO_NOT_EXISTS).isEmpty())
 				{
 
 				dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -466,9 +531,11 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 		} catch (IllegalArgumentException e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
+			listaFilas.add(i);
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
+			listaFilas.add(i);
 		} catch (ParseException e) {
 			logger.error(e.getMessage());
 			listaFilas.add(i);
@@ -498,9 +565,11 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 			} catch (IllegalArgumentException e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			} catch (IOException e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			} catch (ParseException e) {
 				logger.error(e.getMessage());
 				listaFilas.add(i);
@@ -628,9 +697,11 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 			} catch (IllegalArgumentException e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			} catch (IOException e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			} catch (ParseException e) {
 				logger.error(e.getMessage());
 				listaFilas.add(i);
@@ -668,9 +739,11 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 			} catch (IllegalArgumentException e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			} catch (IOException e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			} catch (ParseException e) {
 				logger.error(e.getMessage());
 				listaFilas.add(i);
@@ -701,9 +774,11 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 			} catch (IllegalArgumentException e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			} catch (IOException e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			} catch (ParseException e) {
 				logger.error(e.getMessage());
 				listaFilas.add(i);
@@ -713,6 +788,430 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 		return listaFilas;
 	}
 
+	/**
+	 * Este método comprueba si el certificado energético indicado en la excel se
+	 * encuentra dado de alta en la DB.
+	 * 
+	 * @param exc
+	 *            : documento excel con los datos.
+	 * @param columnNumber
+	 *            : número de columna a comprobar.
+	 * @return Devuelve una lista con los errores econtrados. Tantos registros
+	 *         como errores.
+	 */
+	private List<Integer> calificacionNotExistsByRows(MSVHojaExcel exc, int columnNumber) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
+				if (!particularValidator.existeCalifEnergeticaByDesc(exc.dameCelda(i, columnNumber)))
+					listaFilas.add(i);
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			}
+		}
+
+		return listaFilas;
+	}
+	
+	/**
+	 * Este método comprueba si el código de grado de propiedad indicado en la excel se
+	 * encuentra dado de alta en la DB.
+	 * 
+	 * @param exc
+	 *            : documento excel con los datos.
+	 * @param columnNumber
+	 *            : número de columna a comprobar.
+	 * @return Devuelve una lista con los errores econtrados. Tantos registros
+	 *         como errores.
+	 */
+	private List<Integer> gradoPropiedadNotExistsByRows(MSVHojaExcel exc, int columnNumber) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
+				if (!particularValidator.existeGradoPropiedadByCod(exc.dameCelda(i, columnNumber)))
+					listaFilas.add(i);
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			}
+		}
+
+		return listaFilas;
+	}
+	
+	/**
+	 * Este método comprueba si el código destino comercial indicado en la excel se
+	 * encuentra dado de alta en la DB.
+	 * 
+	 * @param exc
+	 *            : documento excel con los datos.
+	 * @param columnNumber
+	 *            : número de columna a comprobar.
+	 * @return Devuelve una lista con los errores econtrados. Tantos registros
+	 *         como errores.
+	 */
+	private List<Integer> destComercialNotExistsByRows(MSVHojaExcel exc, int columnNumber) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
+				if (!particularValidator.existeDestComercialByCod(exc.dameCelda(i, columnNumber)))
+					listaFilas.add(i);
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			}
+		}
+
+		return listaFilas;
+	}
+	
+	/**
+	 * Este método comprueba si el código tipo alquiler indicado en la excel es
+	 * nulo si destino comercial contiene alquiler.
+	 * 
+	 * @param exc
+	 *            : documento excel con los datos.
+	 * @param columnNumber
+	 *            : número de columna a comprobar.
+	 * @param destCom
+	 *            : número de columna destino comercial.
+	 * @return Devuelve una lista con los errores econtrados. Tantos registros
+	 *         como errores.
+	 */
+	private List<Integer> isTipoAlquilerNullByRowsIfDestComAlq(MSVHojaExcel exc, int columnNumber, int destCom) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
+				if (particularValidator.destComercialContieneAlquiler(exc.dameCelda(i, destCom))) {
+					if (Checks.esNulo(exc.dameCelda(i, columnNumber)))
+						listaFilas.add(i);
+				}
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			}
+		}
+
+		return listaFilas;
+	}
+	
+	/**
+	 * Este método comprueba si el código tipo alquiler indicado en la excel se
+	 * encuentra dado de alta en la DB.
+	 * 
+	 * @param exc
+	 *            : documento excel con los datos.
+	 * @param columnNumber
+	 *            : número de columna a comprobar.
+	 * @return Devuelve una lista con los errores econtrados. Tantos registros
+	 *         como errores.
+	 */
+	private List<Integer> tipoAlquilerNotExistsByRows(MSVHojaExcel exc, int columnNumber) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
+				if (!particularValidator.existeTipoAlquilerByCod(exc.dameCelda(i, columnNumber)))
+					listaFilas.add(i);
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			}
+		}
+
+		return listaFilas;
+	}
+	
+	/**
+	 * Este método comprueba si el certificado energético indicado en la excel se
+	 * encuentra dado de alta en la DB.
+	 * 
+	 * @param exc
+	 *            : documento excel con los datos.
+	 * @param columnNumber
+	 *            : número de columna a comprobar.
+	 * @return Devuelve una lista con los errores econtrados. Tantos registros
+	 *         como errores.
+	 */
+	private List<Integer> tipoViaNotExistsByRows(MSVHojaExcel exc, int columnNumber) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
+				if (!particularValidator.existeTipoViaByCod(exc.dameCelda(i, columnNumber)))
+					listaFilas.add(i);
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			}
+		}
+
+		return listaFilas;
+	}
+	
+	/**
+	 * Este método comprueba si el uso dominante indicado en la excel se
+	 * encuentra dado de alta en la DB.
+	 * 
+	 * @param exc
+	 *            : documento excel con los datos.
+	 * @param columnNumber
+	 *            : número de columna a comprobar.
+	 * @return Devuelve una lista con los errores econtrados. Tantos registros
+	 *         como errores.
+	 */
+	private List<Integer> usoDominanteNotExistsByRows(MSVHojaExcel exc, int columnNumber) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
+				if (!particularValidator.existeUsoDominanteByCod(exc.dameCelda(i, columnNumber)))
+					listaFilas.add(i);
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			}
+		}
+
+		return listaFilas;
+	}
+	
+	/**
+	 * Este método comprueba si el código subtipo titulo indicado en la excel se
+	 * encuentra dado de alta en la DB.
+	 * 
+	 * @param exc
+	 *            : documento excel con los datos.
+	 * @param columnNumber
+	 *            : número de columna a comprobar.
+	 * @return Devuelve una lista con los errores econtrados. Tantos registros
+	 *         como errores.
+	 */
+	private List<Integer> subtipoTituloNotExistsByRows(MSVHojaExcel exc, int columnNumber) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
+				if (!particularValidator.existeSubtipoTituloByCod(exc.dameCelda(i, columnNumber)))
+					listaFilas.add(i);
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			}
+		}
+
+		return listaFilas;
+	}
+	
+	/**
+	 * Este método comprueba si el código provincia indicado en la excel se
+	 * encuentra dado de alta en la DB.
+	 * 
+	 * @param exc
+	 *            : documento excel con los datos.
+	 * @param columnNumber
+	 *            : número de columna a comprobar.
+	 * @return Devuelve una lista con los errores econtrados. Tantos registros
+	 *         como errores.
+	 */
+	private List<Integer> codProvinciaNotExistsByRows(MSVHojaExcel exc, int columnNumber) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
+				if (!particularValidator.existeProvinciaByCod(exc.dameCelda(i, columnNumber)))
+					listaFilas.add(i);
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			}
+		}
+
+		return listaFilas;
+	}
+	
+	/**
+	 * Este método comprueba si el código estado físico indicado en la excel se
+	 * encuentra dado de alta en la DB.
+	 * 
+	 * @param exc
+	 *            : documento excel con los datos.
+	 * @param columnNumber
+	 *            : número de columna a comprobar.
+	 * @return Devuelve una lista con los errores econtrados. Tantos registros
+	 *         como errores.
+	 */
+	private List<Integer> estFisicoNotExistsByRows(MSVHojaExcel exc, int columnNumber) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
+				if (!particularValidator.existeEstadoFisicoByCod(exc.dameCelda(i, columnNumber)))
+					listaFilas.add(i);
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			}
+		}
+
+		return listaFilas;
+	}
+	
+	/**
+	 * Este método comprueba si el certificado energético indicado en la excel se
+	 * encuentra dado de alta en la DB.
+	 * 
+	 * @param exc
+	 *            : documento excel con los datos.
+	 * @param columnNumber
+	 *            : número de columna a comprobar.
+	 * @return Devuelve una lista con los errores econtrados. Tantos registros
+	 *         como errores.
+	 */
+	private List<Integer> claseActivoNotExistsByRows(MSVHojaExcel exc, int columnNumber) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
+				if (!particularValidator.existeClaseActivoByDesc(exc.dameCelda(i, columnNumber)))
+					listaFilas.add(i);
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			}
+		}
+
+		return listaFilas;
+	}
+	
+	/**
+	 * Este método comprueba si el certificado energético indicado en la excel se
+	 * encuentra dado de alta en la DB.
+	 * 
+	 * @param exc
+	 *            : documento excel con los datos.
+	 * @param columnNumber
+	 *            : número de columna a comprobar.
+	 * @return Devuelve una lista con los errores econtrados. Tantos registros
+	 *         como errores.
+	 */
+	private List<Integer> nifCifPropietarioNotExistsByRows(MSVHojaExcel exc, int columnNumber) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
+				if (!particularValidator.existePropietario(exc.dameCelda(i, columnNumber)))
+					listaFilas.add(i);
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				listaFilas.add(i);
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			}
+		}
+
+		return listaFilas;
+	}
+	
 	/**
 	 * Este método comprueba si el NIF indicado en la excel para el mediador se
 	 * encuentra dado de alta en la DB.
@@ -734,9 +1233,11 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 			} catch (IllegalArgumentException e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			} catch (IOException e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			} catch (ParseException e) {
 				logger.error(e.getMessage());
 				listaFilas.add(i);
@@ -769,9 +1270,11 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 			} catch (IllegalArgumentException e){
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			} catch (IOException e){
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			} catch (ParseException e){
 				logger.error(e.getMessage());
 				listaFilas.add(i);
@@ -792,9 +1295,11 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 			} catch (IllegalArgumentException e){
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			} catch (IOException e){
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			} catch (ParseException e){
 				logger.error(e.getMessage());
 				listaFilas.add(i);
@@ -804,7 +1309,7 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 		return listaFilas;
 	}
 	
-	private List<Integer> tipoSubActivoNotExistsByRows(MSVHojaExcel exc, int columnNumber){
+	private List<Integer> subtipoActivoNotExistsByRows(MSVHojaExcel exc, int columnNumber){
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
 		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++){
@@ -814,9 +1319,11 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 			} catch (IllegalArgumentException e){
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			} catch (IOException e){
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			} catch (ParseException e){
 				logger.error(e.getMessage());
 				listaFilas.add(i);
@@ -889,9 +1396,11 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 			}catch (IllegalArgumentException e){
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			}catch (IOException e){
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			}catch (ParseException e){
 				logger.error(e.getMessage());
 				listaFilas.add(i);
@@ -923,12 +1432,15 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 				}
 			} catch (NumberFormatException e) {
 				logger.error(e.getMessage());
+				e.printStackTrace();
 				listaFilas.add(i);
 			} catch (IOException e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			} catch (ParseException e) {
 				logger.error(e.getMessage());
+				e.printStackTrace();
 				listaFilas.add(i);
 			}
 		}
@@ -953,11 +1465,14 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 			} catch (IllegalArgumentException e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			} catch (IOException e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			} catch (ParseException e) {
 				logger.error(e.getMessage());
+				e.printStackTrace();
 				listaFilas.add(i);
 			}
 		}
@@ -1007,9 +1522,11 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 			} catch (IllegalArgumentException e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			} catch (IOException e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			} catch (ParseException e) {
 				logger.error(e.getMessage());
 				listaFilas.add(i);
@@ -1029,9 +1546,11 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 			} catch (IllegalArgumentException e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			} catch (IOException e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			} catch (ParseException e) {
 				logger.error(e.getMessage());
 				listaFilas.add(i);
@@ -1051,9 +1570,11 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 			} catch (IllegalArgumentException e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			} catch (IOException e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
+				listaFilas.add(i);
 			} catch (ParseException e) {
 				logger.error(e.getMessage());
 				listaFilas.add(i);
@@ -1074,12 +1595,18 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 			} catch (IllegalArgumentException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				logger.error(e.getMessage());
+				listaFilas.add(i);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				logger.error(e.getMessage());
+				listaFilas.add(i);
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				logger.error(e.getMessage());
+				listaFilas.add(i);
 			}
 		}
 				

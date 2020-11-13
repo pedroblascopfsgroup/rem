@@ -153,14 +153,17 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		boolean hasWhere = false;
 		HQLBuilder hb = null;
 
-		// Por si es necesario filtrar por datos de los activos del gasto
-		String fromGastoActivos = GastoActivosHqlHelper.getFrom(dtoGastosFilter);
-		if (!Checks.esNulo(fromGastoActivos)) {
-			select = "select distinct vgasto ";
-			from = from + fromGastoActivos;
-			where = where + GastoActivosHqlHelper.getWhereJoin(dtoGastosFilter, hasWhere);
-			hasWhere = true;
+		
+		if(!isGenerateExcel) {
+			// Por si es necesario filtrar por datos de los activos del gasto
+			String fromGastoActivos = GastoActivosHqlHelper.getFrom(dtoGastosFilter);
+			if (!Checks.esNulo(fromGastoActivos)) {
+				select = "select distinct vgasto ";
+				from = from + fromGastoActivos;
+				where = where + GastoActivosHqlHelper.getWhereJoin(dtoGastosFilter, hasWhere);
+				hasWhere = true;
 
+			}
 		}
 
 		// Por si es necesario filtrar por datos de la provision de gastos
@@ -183,11 +186,19 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		if (hasWhere) {
 			hb.setHasWhere(true);
 		}
-
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gastoActivo.activo.numActivo", dtoGastosFilter.getNumActivo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gastoActivo.activo.subcartera.codigo",
-				dtoGastosFilter.getSubentidadPropietariaCodigo());
-
+		
+		if(isGenerateExcel) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.numActivo", dtoGastosFilter.getNumActivo());
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgasto.subentidadPropietariaCodigo",
+					dtoGastosFilter.getSubentidadPropietariaCodigo());
+		}else {
+		
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gastoActivo.activo.numActivo", dtoGastosFilter.getNumActivo());
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gastoActivo.activo.subcartera.codigo",
+					dtoGastosFilter.getSubentidadPropietariaCodigo());
+		
+		}
+		
 		if (!Checks.esNulo(dtoGastosFilter.getNumProvision())) {
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "provision.numProvision",
 					Long.parseLong(dtoGastosFilter.getNumProvision()));

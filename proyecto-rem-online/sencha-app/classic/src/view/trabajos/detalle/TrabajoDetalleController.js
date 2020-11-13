@@ -1702,6 +1702,9 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 					me.lookupReference('subtipoTrabajoComboFicha').setReadOnly(false);
 					me.lookupReference('tipoTrabajoFicha').setReadOnly(false);
 					me.lookupReference('comboIdentificadorReamRef').setReadOnly(false);
+					me.lookupReference('fechaConcreta').setReadOnly(false);
+		    		me.lookupReference('horaConcreta').setReadOnly(false);
+		    		me.lookupReference('fechaTope').setReadOnly(false);
 	    			
     			} else {
     				me.lookupReference('comboProveedorGestionEconomica').setReadOnly(false);
@@ -1721,6 +1724,13 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		    		me.lookupReference('subtipoTrabajoComboFicha').setReadOnly(false);
 					me.lookupReference('tipoTrabajoFicha').setReadOnly(false);
 					me.lookupReference('comboIdentificadorReamRef').setReadOnly(false);
+					me.lookupReference('aplicaComiteRef').setReadOnly(false);
+					me.lookupReference('comboResolucionComite').setReadOnly(false);
+					me.lookupReference('comboProveedorLlave').setReadOnly(false);	
+	    			me.lookupReference('fechaEntregaTrabajoRef').setReadOnly(false);
+	    			me.lookupReference('comboReceptorLlave').setReadOnly(false);
+	    			me.lookupReference('llavesNoAplicaRef').setReadOnly(false);
+	    			me.lookupReference('llavesMotivoRef').setReadOnly(false);
     			} else {
 		    		me.lookupReference('gridtarifastrabajo').setTopBar(true)
 		    		me.lookupReference('gridpresupuestostrabajo').setTopBar(true)
@@ -1738,6 +1748,11 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     				me.lookupReference('subtipoTrabajoComboFicha').setReadOnly(false);
     				me.lookupReference('tipoTrabajoFicha').setReadOnly(false);
     				me.lookupReference('comboIdentificadorReamRef').setReadOnly(false);
+    				me.lookupReference('comboProveedorLlave').setReadOnly(false);	
+	    			me.lookupReference('fechaEntregaTrabajoRef').setReadOnly(false);
+	    			me.lookupReference('comboReceptorLlave').setReadOnly(false);
+	    			me.lookupReference('llavesNoAplicaRef').setReadOnly(false);
+	    			me.lookupReference('llavesMotivoRef').setReadOnly(false);
     			}
 	    		
 	    	} else if (estadoTrabajo == "13"){
@@ -2027,5 +2042,28 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
  	   	var isUserGestedi = $AU.userIsRol(CONST.PERFILES['GESTEDI']);
  	   	
  	   	return !isSuper && !isGestorActivos && !isGestorAlquiler && isUserGestedi; 
+    },
+    
+    calcularObligatoriedadCamposLlaves: function(){
+    	var me = this;
+    	if(me.getViewModel().get("trabajo.visualizarLlaves") && me.getViewModel().get("trabajo.llavesObligatoriasEstadoTrabajo")){
+    		if(me.lookupReference('llavesNoAplicaRef').getValue()){
+    			me.lookupReference('comboProveedorLlave').setAllowBlank(true);
+	    		me.lookupReference('fechaEntregaTrabajoRef').setAllowBlank(true);
+	    		me.lookupReference('comboReceptorLlave').setAllowBlank(true);
+	    		me.lookupReference('llavesMotivoRef').setAllowBlank(false);
+    		}else{
+	    		me.lookupReference('comboProveedorLlave').setAllowBlank(false);
+        		me.lookupReference('fechaEntregaTrabajoRef').setAllowBlank(false);
+        		me.lookupReference('comboReceptorLlave').setAllowBlank(false);
+        		me.lookupReference('llavesMotivoRef').setAllowBlank(true);
+    		}
+    	}else{
+    		me.lookupReference('comboProveedorLlave').setAllowBlank(true);
+    		me.lookupReference('fechaEntregaTrabajoRef').setAllowBlank(true);
+    		me.lookupReference('comboReceptorLlave').setAllowBlank(true);
+    		me.lookupReference('llavesMotivoRef').setAllowBlank(true);
+    	}
+    	
     }
 });

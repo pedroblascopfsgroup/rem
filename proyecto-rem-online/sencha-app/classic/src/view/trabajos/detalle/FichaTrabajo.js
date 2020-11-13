@@ -15,7 +15,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
     initComponent: function () {
         var me = this;
         me.setTitle(HreRem.i18n('title.ficha'));
-        me.idTrabajo= me.lookupController().getViewModel().get('trabajo').get('id')
+    	me.idTrabajo= me.lookupController().getViewModel().get('trabajo').get('id')
              me.items= [
             	 	{
             	 		xtype:'fieldsettable',
@@ -362,6 +362,11 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 		        							me.up().down("[reference='fechaEjecucionRef']").setAllowBlank(true);
 		        							me.up().down("[reference='fechaEjecucionRef']").validate();
 		        						}
+		        						me.lookupController().getViewModel().get('trabajo').data.llavesObligatoriasEstadoTrabajo = false;
+		        						if((me.bind.value.lastValue == "CUR" && me.getValue() == "FIN") || (me.bind.value.lastValue == "SUB" && me.getValue() == "13")){
+		        							me.lookupController().getViewModel().get('trabajo').data.llavesObligatoriasEstadoTrabajo = true;
+		        						}
+		        						me.lookupController().calcularObligatoriedadCamposLlaves();
 		        					},
 		        					change: 'finalizacionTrabajoProveedor'
 								},
@@ -453,7 +458,10 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 			                	reference: 'llavesNoAplicaRef',
 			                	bind: {
 			                		value : '{trabajo.llavesNoAplica}'
-			                	}
+			                	},
+			                	listeners: {
+									change: 'calcularObligatoriedadCamposLlaves'
+								}
 			                },
 			                {
 			                	xtype: 'textfieldbase',
@@ -463,7 +471,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 			                	bind: {
 			                		disabled: '{!trabajo.llavesNoAplica}',
 			                		value: '{trabajo.llavesMotivo}'
-			                	}			                	
+			                	}
 			                }
 						]
 					},

@@ -1258,7 +1258,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	@Override
 	public Boolean existeProveedorMediadorByNIF(String proveedorMediadorNIF) {
 		if(Checks.esNulo(proveedorMediadorNIF)) {
-			return false;
+			return true;
 		}
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
@@ -1273,7 +1273,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	@Override
 	public Boolean existeProveedorMediadorByNIFConFVD(String proveedorMediadorNIF) {
 		if(Checks.esNulo(proveedorMediadorNIF)) {
-			return false;
+			return true;
 		}
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
@@ -1282,6 +1282,175 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ " 	 AND DD_TPR_ID = (SELECT DD_TPR_ID FROM DD_TPR_TIPO_PROVEEDOR WHERE DD_TPR_CODIGO = '04')" // Mediador-Colaborador-API.
 				+ " 	 OR DD_TPR_ID = (SELECT DD_TPR_ID FROM DD_TPR_TIPO_PROVEEDOR WHERE DD_TPR_CODIGO = '18')"  // Fuerza de Venta Directa
 				+ "		 AND BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeCalifEnergeticaByDesc(String califEnergeticaDesc) {
+		if(Checks.esNulo(califEnergeticaDesc)) {
+			return true;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_TCE_TIPO_CALIF_ENERGETICA WHERE"
+				+ "		 DD_TCE_DESCRIPCION = '" + califEnergeticaDesc + "'"
+				+ " 	 AND BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeGradoPropiedadByCod(String gradPropiedadCod) {
+		if(Checks.esNulo(gradPropiedadCod)) {
+			return true;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_TGP_TIPO_GRADO_PROPIEDAD WHERE"
+				+ "		 DD_TGP_CODIGO = '" + gradPropiedadCod + "'"
+				+ " 	 AND BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeDestComercialByCod(String destComercialCod) {
+		if(Checks.esNulo(destComercialCod)) {
+			return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_TCO_TIPO_COMERCIALIZACION WHERE"
+				+ "		 DD_TCO_CODIGO = '" + destComercialCod + "'"
+				+ " 	 AND BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeTipoAlquilerByCod(String tipoAlquilerCod) {
+		if(Checks.esNulo(tipoAlquilerCod)) {
+			return true;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_TAL_TIPO_ALQUILER WHERE"
+				+ "		 DD_TAL_CODIGO = '" + tipoAlquilerCod + "'"
+				+ " 	 AND BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeTipoViaByCod(String tipoViaCod) {
+		if(Checks.esNulo(tipoViaCod)) {
+			return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ${master.schema}.DD_TVI_TIPO_VIA WHERE"
+				+ "		 DD_TVI_CODIGO = '" + tipoViaCod + "'"
+				+ " 	 AND BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeSubtipoTituloByCod(String subtipoTituloCod) {
+		if(Checks.esNulo(subtipoTituloCod)) {
+			return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_STA_SUBTIPO_TITULO_ACTIVO WHERE"
+				+ "		 DD_STA_CODIGO = '" + subtipoTituloCod + "'"
+				+ " 	 AND BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeUsoDominanteByCod(String usoDominanteCod) {
+		if(Checks.esNulo(usoDominanteCod)) {
+			return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_TUD_TIPO_USO_DESTINO WHERE"
+				+ "		 DD_TUD_CODIGO = '" + usoDominanteCod + "'"
+				+ " 	 AND BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeEstadoExpRiesgoByCod(String estadoExpRiesgoCod) {
+		if(Checks.esNulo(estadoExpRiesgoCod)) {
+			return true;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_EER_EST_EXP_RIESGO WHERE"
+				+ "		 DD_EER_CODIGO = '" + estadoExpRiesgoCod + "'"
+				+ " 	 AND BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeProvinciaByCod(String provCod) {
+		if(Checks.esNulo(provCod)) {
+			return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ${master.schema}.DD_PRV_PROVINCIA WHERE"
+				+ "		 DD_PRV_CODIGO = '" + provCod + "'"
+				+ " 	 AND BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeEstadoFisicoByCod(String estFisicoCod) {
+		if(Checks.esNulo(estFisicoCod)) {
+			return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_EAC_ESTADO_ACTIVO WHERE"
+				+ "		 DD_EAC_CODIGO = '" + estFisicoCod + "'"
+				+ " 	 AND BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeClaseActivoByDesc(String claseActivoDesc) {
+		if(Checks.esNulo(claseActivoDesc)) {
+			return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_CLA_CLASE_ACTIVO WHERE"
+				+ "		 DD_CLA_DESCRIPCION = '" + claseActivoDesc + "'"
+				+ " 	 AND BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean destComercialContieneAlquiler(String destComercialCod) {
+		if(Checks.esNulo(destComercialCod)) {
+			return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_TCO_TIPO_COMERCIALIZACION WHERE"
+				+ "		 DD_TCO_CODIGO = '" + destComercialCod + "'"
+				+ "		 AND LOWER(DD_TCO_DESCRIPCION) LIKE '%alquiler%'"
+				+ " 	 AND BORRADO = 0");
 
 		return !"0".equals(resultado);
 	}

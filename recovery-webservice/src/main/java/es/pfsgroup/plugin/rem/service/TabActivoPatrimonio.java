@@ -112,8 +112,7 @@ public class TabActivoPatrimonio implements TabActivoService {
 				activoPatrimonioDto.setComboRentaAntigua(activoP.getComboRentaAntigua());
 			}
 			if(!Checks.esNulo(activoP.getCheckSubrogado())){
-				// Si paz social es True, subrogado tiene que ser True tambien.
-				activoPatrimonioDto.setChkSubrogado((!Checks.esNulo(patrimonioContrato) && !Checks.esNulo(patrimonioContrato.getPazSocial()) && patrimonioContrato.getPazSocial()) ? true : activoP.getCheckSubrogado());
+				activoPatrimonioDto.setChkSubrogado(activoP.getCheckSubrogado());
 			}
 			if(!Checks.esNulo(activoP.getAdecuacionAlquiler())) {
 				activoPatrimonioDto.setCodigoAdecuacion(activoP.getAdecuacionAlquiler().getCodigo());
@@ -143,11 +142,16 @@ public class TabActivoPatrimonio implements TabActivoService {
 			
 			if(!Checks.esNulo(patrimonioContrato) && !Checks.esNulo(patrimonioContrato.getPazSocial())) {
 				activoPatrimonioDto.setPazSocial(patrimonioContrato.getPazSocial() ? DDSinSiNo.CODIGO_SI : DDSinSiNo.CODIGO_NO);
+				if ((activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB)
+					|| activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB)) && !Checks.esNulo(activoP.getCheckSubrogado())) {
+				// Si paz social es True, subrogado tiene que ser True tambien.
+				activoPatrimonioDto.setChkSubrogado((!Checks.esNulo(patrimonioContrato) && !Checks.esNulo(patrimonioContrato.getPazSocial()) && patrimonioContrato.getPazSocial()) ? true : activoP.getCheckSubrogado());
+				}
 			}
 			
 			activoPatrimonioDto.setIsCarteraCerberusDivarian(activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB)
 																|| activo.getSubcartera().getCodigo().equals(DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB));
-			
+						
 			if(!Checks.esNulo(activo.getTipoAlquiler())) {
 				activoPatrimonioDto.setTipoAlquilerCodigo(activo.getTipoAlquiler().getCodigo());
 			}

@@ -24,7 +24,11 @@ Ext.define('HreRem.view.masivo.MasivoModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'process/getTiposOperacion'
-			}
+			},
+			session: true,
+			autoLoad: true,
+			remoteFilter: false,
+			remoteSort: false
     	}    
     
     }

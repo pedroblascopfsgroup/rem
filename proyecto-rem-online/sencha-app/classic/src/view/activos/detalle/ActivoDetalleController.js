@@ -4896,6 +4896,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         var me = this;
         var comboEstadoAlquiler = me.lookupReference('comboEstadoAlquilerRef');
         var chkPerimetroAlquiler = me.lookupReference('chkPerimetroAlquilerRef');
+		var subrogadoCheckbox = me.lookupReference('subrogadoCheckbox');
         var comboTipoInquilino = me.lookupReference('comboTipoInquilinoRef');
         var  tipoComercializacion = me.getViewModel().get('activo.tipoComercializacionCodigo');
         var comboValue = comboEstadoAlquiler.value;
@@ -4910,7 +4911,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             	}else if(CONST.TIPOS_COMERCIALIZACION['ALQUILER'] == tipoComercializacion){
             		chkPerimetroAlquiler.setValue(true);
             	}
-            }
+				subrogadoCheckbox.setValue(false);
+            }else{
+				subrogadoCheckbox.setValue(false);
+			}
         }
     },
     

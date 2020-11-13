@@ -214,7 +214,7 @@ public class MSVValidatorCargaCamposAccesibilidad extends MSVExcelValidatorAbstr
 					
 					
 					if(!colTapiado.isEmpty() || colTapiado!=null) {							
-						if(codigosValidos.contains(colTapiado) && colFTapiado==null) {
+						if(codigosValidos.contains(colTapiado) && colFTapiado.isEmpty()) {
 							mapaErrores.get(messageServices.getMessage(CHECK_TAPIADO_SI)).add(fila);
 							esCorrecto = false;
 						}
@@ -240,7 +240,7 @@ public class MSVValidatorCargaCamposAccesibilidad extends MSVExcelValidatorAbstr
 					
 					
 					if(!colPuertaAntiocupa.isEmpty() || colPuertaAntiocupa!=null) {
-						if(codigosValidos.contains(colPuertaAntiocupa) && colFColocacionPuertaAntiocupa==null) {
+						if(codigosValidos.contains(colPuertaAntiocupa) && colFColocacionPuertaAntiocupa.isEmpty()) {
 							mapaErrores.get(messageServices.getMessage(CHECK_PUERTA_ANTIOCUPA_SI)).add(fila);
 							esCorrecto = false;
 						}

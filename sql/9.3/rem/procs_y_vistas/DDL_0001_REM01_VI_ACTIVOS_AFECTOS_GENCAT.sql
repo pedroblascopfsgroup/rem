@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=David Gonzalez
---## FECHA_CREACION=20200428
+--## AUTOR=Dean Ibañez Viño
+--## FECHA_CREACION=20201113
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.4.0
---## INCIDENCIA_LINK=REMVIP-7155
+--## INCIDENCIA_LINK=HREOS-12150
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -14,6 +14,7 @@
 --##        0.2 Utiliza tabla ACT_EXG_EXCLUSION_GENCAT para excluir activos de la vista
 --##		    0.3 Se añade Cerberus - Apple - Vicente Martinez
 --##        0.4 Se añaden subcarteras de Divarian
+--##        0.5 Se añaden subcarteras de BBVA
 --##########################################
 --*/
 
@@ -112,7 +113,7 @@ BEGIN
         ,(''02'',''04'')
         ,(''01'',''02'')
         ,(''08'',''18''),(''08'',''56''),(''08'',''57''),(''08'',''58''),(''08'',''59''),(''08'',''60''),(''08'',''136''),(''08'',''64'')
-        ,(''06'',''16''),(''07'',''138''),(''07'',''151''),(''07'',''152'')
+        ,(''06'',''16''),(''07'',''138''),(''07'',''151''),(''07'',''152''), (''16'', ''153''), (''16'', ''159'')
         )
 	AND NOT EXISTS ( SELECT 1
 			 FROM '|| V_ESQUEMA ||'.ACT_EXG_EXCLUSION_GENCAT EXG

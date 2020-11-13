@@ -29,8 +29,8 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDSubtipoRegistroEsparta implements Auditable, Dictionary {
 	
-	public static final String CODIGO_TASACION = "TAS";
-	public static final String CODIGO_CARGAS = "CAR";	
+	public static final String CODIGO_TASACION = "TASACION";
+	public static final String CODIGO_CARGAS = "CARGA";	
 
 	private static final long serialVersionUID = 1L;
 

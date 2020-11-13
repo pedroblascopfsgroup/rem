@@ -5246,7 +5246,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		String resultado = rawDao.getExecuteSQL(
 				"SELECT COUNT(1) FROM DD_SRE_SUBTIPO_REGISTRO_ESPARTA " 
-				+ "WHERE DD_SRE_CODIGO = '"+ subtipo +"' AND SRE.BORRADO = 0"
+				+ "WHERE DD_SRE_CODIGO = '"+ subtipo +"' AND BORRADO = 0"
 		);
 		
 		return !"0".equals(resultado);

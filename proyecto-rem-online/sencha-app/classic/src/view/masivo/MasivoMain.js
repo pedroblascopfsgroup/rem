@@ -38,18 +38,34 @@ Ext.define('HreRem.view.masivo.MasivoMain', {
 					items: [
 	
 				    		{ 
-								xtype: 'combobox',
+								xtype: 'combo',
 								reference:'comboTipoOperacionRef',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
 					        	name: 'idTipoOperacion',
-					        	editable: false,
 					        	bind: {
 				            		store: '{comboTipoOperacion}'
 					        	},
 				            	displayField	: 'descripcion',							    							
 							    valueField		: 'id',
 								allowBlank: false,
-								filtradoEspecial: true,
+								mode: 'local',
+								queryMode: 'local',
+	    						emptyText: 'Introduzca un tipo de operación',
+	    						enableKeyEvents:true,
+    						    listeners: {
+    						     'keyup': function() {
+    						    	   this.getStore().clearFilter();
+    						    	   this.getStore().filter({
+    						        	    property: 'descripcion',
+    						        	    value: this.getRawValue(),
+    						        	    anyMatch: true,
+    						        	    caseSensitive: false
+    						        	})
+    						     },
+    						     'beforequery': function(queryEvent) {
+    						           queryEvent.combo.onLoad();
+    						     }
+    						    },
 								width: '50%'
 								
 					        },

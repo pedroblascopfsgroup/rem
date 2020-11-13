@@ -39,21 +39,28 @@ public class MSVValidatorCargaCamposAccesibilidad extends MSVExcelValidatorAbstr
 	private final String CHECK_NUM_ACTIVO_NO_EXISTE = "msg.error.masivo.campos.accesibilidad.activo.no.valido";
 	private final String CHECK_TAPIADO_SI = "msg.error.masivo.campos.accesibilidad.tapiado.si";
 	private final String CHECK_TAPIADO_NO = "msg.error.masivo.campos.accesibilidad.tapiado.no";
+	private final String CHECK_CAMPOS_CORRECTOS_TAPIADO="msg.error.masivo.campos.accesibilidad.generico.valores.correctos.tapiado";
+	private final String CHECK_F_TAPIADO="msg.error.masivo.campos.accesibilidad.tapiado.vacio";
 	
 	private final String CHECK_PUERTA_ANTIOCUPA_SI ="msg.error.masivo.campos.accesibilidad.puerta.antiocupa.si";
 	private final String CHECK_PUERTA_ANTIOCUPA_NO ="msg.error.masivo.campos.accesibilidad.puerta.antiocupa.no";
+	private final String CHECK_CAMPOS_CORRECTOS_PUERTA_ANTIOCUPA="msg.error.masivo.campos.accesibilidad.generico.valores.correctos.puerta.antiocupa";
+	private final String CHECK_F_PUERTA_ANTIOCUPA="msg.error.masivo.campos.accesibilidad.puerta.antiocupa.vacio";
 	
 	private final String CHECK_ALARMA_SI="msg.error.masivo.campos.accesibilidad.alarma.si";
 	private final String CHECK_ALARMA_SI_DESINSTALACION="msg.error.masivo.campos.accesibilidad.alarma.si.desisntalacion";
 	private final String CHECK_F_ALARMA="msg.error.masivo.campos.accesibilidad.alarma.f.vacia";
 	private final String CHECK_ALARMA_NO="msg.error.masivo.campos.accesibilidad.alarma.no";
 	private final String CHECK_ALARMA_NO_DESINSTALACION="msg.error.masivo.campos.accesibilidad.alarma.no.desisntalacion";
+	private final String CHECK_CAMPOS_CORRECTOS_ALARMA="msg.error.masivo.campos.accesibilidad.generico.valores.correctos.alarma";
 	
 	private final String CHECK_VIGILANCIA_SI="msg.error.masivo.campos.accesibilidad.vigilancia.si";
 	private final String CHECK_VIGILANCIA_SI_DESINSTALACION="msg.error.masivo.campos.accesibilidad.vigilancia.si.desinstalacion";
 	private final String CHECK_F_VIGILANCIA="msg.error.masivo.campos.accesibilidad.vigilancia.f.vacia";
 	private final String CHECK_VIGILANCIA_NO="msg.error.masivo.campos.accesibilidad.vigilancia.no";
 	private final String CHECK_VIGILANCIA_NO_DESINSTALACION="msg.error.masivo.campos.accesibilidad.alarma.no.desisntalacion";
+	private final String CHECK_CAMPOS_CORRECTOS_VIGILANCIA="msg.error.masivo.campos.accesibilidad.generico.valores.correctos.vigilancia";
+	
 	
 	
 	private static final String COD_VALIDOS_S ="S";
@@ -172,6 +179,13 @@ public class MSVValidatorCargaCamposAccesibilidad extends MSVExcelValidatorAbstr
 		mapaErrores.put(messageServices.getMessage(CHECK_VIGILANCIA_NO), new ArrayList<Integer>());
 		mapaErrores.put(messageServices.getMessage(CHECK_VIGILANCIA_NO_DESINSTALACION), new ArrayList<Integer>());
 		
+		mapaErrores.put(messageServices.getMessage(CHECK_CAMPOS_CORRECTOS_TAPIADO), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(CHECK_F_TAPIADO), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(CHECK_CAMPOS_CORRECTOS_PUERTA_ANTIOCUPA), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(CHECK_F_PUERTA_ANTIOCUPA), new ArrayList<Integer>());
+		mapaErrores.put(messageServices.getMessage(CHECK_CAMPOS_CORRECTOS_ALARMA), new ArrayList<Integer>());	
+		mapaErrores.put(messageServices.getMessage(CHECK_CAMPOS_CORRECTOS_VIGILANCIA), new ArrayList<Integer>());
+		
 	}
 	
 	private boolean validarFichero(MSVHojaExcel exc) {
@@ -193,6 +207,7 @@ public class MSVValidatorCargaCamposAccesibilidad extends MSVExcelValidatorAbstr
 				String colFDesinstalacionVigilancia = exc.dameCelda(fila, COL_F_DESINSTALACION_VIGILANCIA);	
 				List<String> codigosValidos = Arrays.asList(COD_VALIDOS_S,COD_VALIDOS_SI,COD_VALIDOS_SI_MINUSCULA,COD_VALIDOS_SI_MINUSCULA_2,COD_VALIDOS_SI_NUMERICO);
 				List<String> codigosNoValidos = Arrays.asList(COD_VALIDOS_N,COD_VALIDOS_NO,COD_VALIDOS_NO_MINUSCULA,COD_VALIDOS_NO_MINUSCULA_2,COD_VALIDOS_NO_NUMERICO);
+				List<String> codigosCorrectos = Arrays.asList(COD_VALIDOS_S,COD_VALIDOS_SI,COD_VALIDOS_SI_MINUSCULA,COD_VALIDOS_SI_MINUSCULA_2,COD_VALIDOS_SI_NUMERICO,COD_VALIDOS_N,COD_VALIDOS_NO,COD_VALIDOS_NO_MINUSCULA,COD_VALIDOS_NO_MINUSCULA_2,COD_VALIDOS_NO_NUMERICO);
 				boolean activoExiste = particularValidator.existeActivo(numActivo);
 				 		
 				if(activoExiste) {
@@ -209,6 +224,19 @@ public class MSVValidatorCargaCamposAccesibilidad extends MSVExcelValidatorAbstr
 						}
 						
 					}
+					if(colTapiado.isEmpty() || colTapiado==null) {
+						if(colFTapiado!=null && !colFTapiado.isEmpty()) {
+							mapaErrores.get(messageServices.getMessage(CHECK_F_TAPIADO)).add(fila);
+							esCorrecto = false;
+						}
+					}
+					
+					if(!colTapiado.isEmpty() && colTapiado!=null) {
+						if(!codigosCorrectos.contains(colTapiado)) {
+							mapaErrores.get(messageServices.getMessage(CHECK_CAMPOS_CORRECTOS_TAPIADO)).add(fila);
+							esCorrecto = false;
+						}
+					}
 					
 					
 					if(!colPuertaAntiocupa.isEmpty() || colPuertaAntiocupa!=null) {
@@ -218,6 +246,19 @@ public class MSVValidatorCargaCamposAccesibilidad extends MSVExcelValidatorAbstr
 						}
 						if(codigosNoValidos.contains(colPuertaAntiocupa) && !colFColocacionPuertaAntiocupa.isEmpty() ) {
 							mapaErrores.get(messageServices.getMessage(CHECK_PUERTA_ANTIOCUPA_NO)).add(fila);
+							esCorrecto = false;
+						}
+					}
+					
+					if(!colPuertaAntiocupa.isEmpty() && colPuertaAntiocupa!=null) {
+						if(!codigosCorrectos.contains(colPuertaAntiocupa)) {
+							mapaErrores.get(messageServices.getMessage(CHECK_CAMPOS_CORRECTOS_PUERTA_ANTIOCUPA)).add(fila);
+							esCorrecto = false;
+						}
+					}
+					if(colPuertaAntiocupa.isEmpty() || colPuertaAntiocupa==null) {
+						if(colFColocacionPuertaAntiocupa!=null && !colFColocacionPuertaAntiocupa.isEmpty()) {
+							mapaErrores.get(messageServices.getMessage(CHECK_F_PUERTA_ANTIOCUPA)).add(fila);
 							esCorrecto = false;
 						}
 					}
@@ -242,6 +283,20 @@ public class MSVValidatorCargaCamposAccesibilidad extends MSVExcelValidatorAbstr
 						}
 						if(codigosValidos.contains(colConVigilancia) && !colFDesinstalacionVigilancia.isEmpty()){
 							mapaErrores.get(messageServices.getMessage(CHECK_VIGILANCIA_SI_DESINSTALACION)).add(fila);
+							esCorrecto = false;
+						}
+					}
+					
+					if(!colConAlarma.isEmpty() && colConAlarma!=null) {
+						if(!codigosCorrectos.contains(colConAlarma)) {
+							mapaErrores.get(messageServices.getMessage(CHECK_CAMPOS_CORRECTOS_ALARMA)).add(fila);
+							esCorrecto = false;
+						}
+					}
+					
+					if(!colConVigilancia.isEmpty() && colConVigilancia!=null) {
+						if(!codigosCorrectos.contains(colConVigilancia)) {
+							mapaErrores.get(messageServices.getMessage(CHECK_CAMPOS_CORRECTOS_VIGILANCIA)).add(fila);
 							esCorrecto = false;
 						}
 					}
@@ -286,6 +341,7 @@ public class MSVValidatorCargaCamposAccesibilidad extends MSVExcelValidatorAbstr
 						mapaErrores.get(messageServices.getMessage(CHECK_F_VIGILANCIA)).add(fila);
 						esCorrecto = false;
 					}
+					
 					
 				}
 				else {

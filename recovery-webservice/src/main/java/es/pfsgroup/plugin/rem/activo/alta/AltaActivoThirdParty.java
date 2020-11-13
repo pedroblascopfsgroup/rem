@@ -534,11 +534,13 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				
 				//ActivoBancario
 				String str = dtoAATP.getTipoActivo();
-				String claseActivo = str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
 				ActivoBancario activoBancario = new ActivoBancario();
 				activoBancario.setActivo(activo);
-				beanUtilNotNull.copyProperty(activoBancario, "claseActivo", utilDiccionarioApi.dameValorDiccionarioByDes(DDClaseActivoBancario.class, claseActivo));
-				genericDao.save(ActivoBancario.class, activoBancario);
+				if(str != null) {
+					String claseActivo = str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
+					beanUtilNotNull.copyProperty(activoBancario, "claseActivo", utilDiccionarioApi.dameValorDiccionarioByDes(DDClaseActivoBancario.class, claseActivo));
+					genericDao.save(ActivoBancario.class, activoBancario);
+				}
 				if(DDClaseActivoBancario.CODIGO_INMOBILIARIO.equals(activoBancario.getClaseActivo().getCodigo())){
 					PresupuestoActivo presupuesto = new PresupuestoActivo();
 					presupuesto.setImporteInicial(50000.00);

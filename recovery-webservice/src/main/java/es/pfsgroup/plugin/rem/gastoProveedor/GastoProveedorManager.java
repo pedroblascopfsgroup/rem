@@ -3099,7 +3099,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			cartera = (DDCartera) utilDiccionarioApi.dameValorDiccionarioByCod(DDCartera.class, DDCartera.CODIGO_CARTERA_SAREB);
 		}
 		
-		if (!Checks.esNulo(gastoInfoContabilidad) && !Checks.esNulo(cartera)) {
+		if (!Checks.esNulo(gastoInfoContabilidad) && !Checks.esNulo(cartera)
+				&& (gasto.getGastoProveedorActivos()!=null && !gasto.getGastoProveedorActivos().isEmpty() )) {
 
 			Ejercicio ejercicio = gastoInfoContabilidad.getEjercicio();
 			

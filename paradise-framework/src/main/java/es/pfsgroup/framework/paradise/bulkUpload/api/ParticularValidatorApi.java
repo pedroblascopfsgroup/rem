@@ -380,7 +380,31 @@ public interface ParticularValidatorApi {
 	boolean comprobarDistintoPropietarioListaActivos(String[] activos);
 
 	boolean activoConOfertasTramitadas(String numActivo);
+	
+	Boolean existeCalifEnergeticaByDesc(String califEnergeticaDesc);
+	
+	Boolean existeGradoPropiedadByCod(String gradPropiedadCod);
+	
+	Boolean existeDestComercialByCod(String destComercialCod);
+	
+	Boolean destComercialContieneAlquiler(String destComercialCod);
+	
+	Boolean existeTipoAlquilerByCod(String tipoAlquilerCod);
+	
+	Boolean existeTipoViaByCod(String tipoViaCod);
+	
+	Boolean existeSubtipoTituloByCod(String subtipoTituloCod);
 
+	Boolean existeUsoDominanteByCod(String usoDominanteCod);
+	
+	Boolean existeEstadoExpRiesgoByCod(String estadoExpRiesgoCod);
+	
+	Boolean existeProvinciaByCod(String provCod);
+	
+	Boolean existeEstadoFisicoByCod(String estFisicoCod);
+	
+	Boolean existeClaseActivoByDesc(String claseActivoDesc);
+	
 	Boolean existeProveedorMediadorByNIFConFVD(String proveedorMediadorNIF);
 
 	boolean isMismoTipoComercializacionActivoPrincipalAgrupacion(String numActivo, String numAgrupacion);
@@ -1321,4 +1345,6 @@ public interface ParticularValidatorApi {
 	String getDocIdentfPropietarioByNumGasto(String numGasto);
 
 	boolean existeTipoRetencion(String tipoRetencion);
+
+	boolean existeLineaEnGasto(String idLinea, String numGasto);
 }

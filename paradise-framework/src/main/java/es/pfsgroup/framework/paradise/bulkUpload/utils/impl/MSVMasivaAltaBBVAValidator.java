@@ -61,6 +61,7 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 	public static final String NOMBRE_VIA_IS_NULL = "El nombre de la vía no puede estar vacía.";
 	public static final String NUM_VIA_IS_NULL = "El número de la vía no puede estar vacía.";
 	public static final String UNIDAD_INFERIOR_MUNICIPIO_IS_NULL = "La unidad inferior al municipio no puede estar vacía.";
+	public static final String MUNICIPIO_IS_NULL = "El municipio no puede estar vacío";
 	public static final String CODIGO_POSTAL_IS_NULL = "El código postal no puede estar vacío.";
 	public static final String DESTINO_COMERCIAL_IS_NULL = "El destino comercial no puede estar vacío.";
 	public static final String TIPO_ALQUILER_IS_NULL = "El tipo de alquiler no puede estar vacío si el destino comercial incluye alquiler.";
@@ -135,6 +136,8 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 	public static final String DEUDOR_ACREDITADO_CAMPOS_OB5 = "Revise los campos del deudor acreditado 5 si esta informado un campo de Tipo Documento, Nº Documento o Nombre/Razón social deben estar incluidos todos los campos.";
 	public static final String NUM_ACTIVO_BBVA_REPETIDO = "El campo Número Activo BBVA tiene un valor que ya se ha introducido anteriormente";
 	public static final String COD_COMERCIALIZACION_INCORRECTO="El campo Destino comercial es incorrecto.";
+	public static final String NIF_CIF_PROPIETARIO_INCORRECTO ="El formato del NIF/CIF es incorrecto.";
+	public static final String NIF_CIF_PROPIETARIO_IS_NULL ="El Campo NIF/CIF propietario no puede estar vacio .";
 	
 	// Posicion fija de Columnas excel, para cualquier referencia por posicion
 	public static final class COL_NUM {
@@ -365,6 +368,7 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 			mapaErrores.put(NOMBRE_VIA_IS_NULL, isColumnNullByRows(exc, COL_NUM.NOMBRE_VIA));
 			mapaErrores.put(NUM_VIA_IS_NULL, isColumnNullByRows(exc, COL_NUM.NUM_VIA));
 			mapaErrores.put(UNIDAD_INFERIOR_MUNICIPIO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_UNIDAD_MUNICIPIO));
+			mapaErrores.put(MUNICIPIO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_MUNICIPIO));
 			mapaErrores.put(CODIGO_POSTAL_IS_NULL, isColumnNullByRows(exc, COL_NUM.CODPOSTAL));
 			mapaErrores.put(DESTINO_COMERCIAL_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_DESTINO_COMER));
 			mapaErrores.put(TIPO_DE_COMERCIALIZACION_INCORRECTO, isTipoDeComercializacionCorrecto(exc, COL_NUM.COD_TIPO_DE_COMERCIALIZACION));
@@ -373,7 +377,7 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 			mapaErrores.put(FINCA_IS_NULL, isColumnNullByRows(exc, COL_NUM.FINCA));
 			mapaErrores.put(NIF_PROPIETARIO_IS_NULL, isColumnNullByRows(exc, COL_NUM.NIF_PROPIETARIO));
 			mapaErrores.put(VPO_IS_NULL, isColumnNullByRows(exc, COL_NUM.VPO));
-			mapaErrores.put(PRECIO_VENTA_WEB_IS_NULL, isColumnNullByRows(exc, COL_NUM.PRECIO_VENTA_WEB));
+			//mapaErrores.put(PRECIO_VENTA_WEB_IS_NULL, isColumnNullByRows(exc, COL_NUM.PRECIO_VENTA_WEB));
 			mapaErrores.put(PRECIO_VENTA_WEB_IS_NAN, isColumnNANPrecioIncorrectoByRows(exc, COL_NUM.PRECIO_VENTA_WEB));
 			mapaErrores.put(VALOR_TASACION_IS_NAN, isColumnNANPrecioIncorrectoByRows(exc, COL_NUM.VALOR_TASACION));
 			mapaErrores.put(PRECIO_VENTA_WEB_IS_ZERO, isColumnZeroPrecioIncorrectoByRows(exc, COL_NUM.PRECIO_VENTA_WEB));
@@ -427,6 +431,8 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 			mapaErrores.put(DEUDOR_ACREDITADO_CAMPOS_OB5, bloquesDeudorAcreditadoRellenos5(exc));
 			mapaErrores.put(NUM_ACTIVO_BBVA_REPETIDO, numeroActivoBBVAIntroducidoAnteriormente(exc, COL_NUM.ACTIVO_BBVA));
 			mapaErrores.put(COD_COMERCIALIZACION_INCORRECTO, codigoComercializacionIncorrecto(exc, COL_NUM.COD_DESTINO_COMER));
+			mapaErrores.put(NIF_CIF_PROPIETARIO_INCORRECTO, isCifNifValido(exc, COL_NUM.NIF_CIF_PROPIETARIO));
+			mapaErrores.put(NIF_CIF_PROPIETARIO_IS_NULL, isColumnNullByRows(exc, COL_NUM.NIF_CIF_PROPIETARIO));
 			
 			if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(SUBCARTERA_IS_NULL).isEmpty() //ok
 					|| !mapaErrores.get(SUBCARTERA_NOT_EXISTS).isEmpty()
@@ -499,7 +505,12 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 					|| !mapaErrores.get(TIPO_DE_TITULO_BBVA_IS_NULL).isEmpty()
 					|| !mapaErrores.get(INDICADOR_ACTIVO_EPA_BBVA_IS_NULL).isEmpty()
 					|| !mapaErrores.get(TIPO_DE_ALTA_BBVA).isEmpty()
-					|| !mapaErrores.get(UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS).isEmpty())
+					|| !mapaErrores.get(UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS).isEmpty()
+					|| !mapaErrores.get(NIF_CIF_PROPIETARIO_INCORRECTO).isEmpty()
+					|| !mapaErrores.get(NIF_CIF_PROPIETARIO_IS_NULL).isEmpty()
+					|| !mapaErrores.get(MUNICIPIO_IS_NULL).isEmpty()
+					
+					)
 				
 					
 				
@@ -1096,8 +1107,11 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 
 		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
 			try {
-				if (!particularValidator.existeMunicipioByCodigo(exc.dameCelda(i, columnNumber)))
-					listaFilas.add(i);
+				if ((exc.dameCelda(i, columnNumber) != null) && !exc.dameCelda(i, columnNumber).isEmpty()) {
+					if (!particularValidator.existeMunicipioByCodigo(exc.dameCelda(i, columnNumber)))
+						listaFilas.add(i);
+				}			
+				
 			} catch (IllegalArgumentException e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
@@ -1667,4 +1681,32 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 		
 		return listaFilas;
 	}
+	
+	private List<Integer> isCifNifValido(MSVHojaExcel exc, int columnNumber) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
+				if ((exc.dameCelda(i, columnNumber) != null) && !exc.dameCelda(i, columnNumber).isEmpty()) {
+					if (!particularValidator.esNIFValido(exc.dameCelda(i, columnNumber)))
+						listaFilas.add(i);
+				}
+				
+				
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			}
+		}
+
+		return listaFilas;
+	}
+	
+	
 }

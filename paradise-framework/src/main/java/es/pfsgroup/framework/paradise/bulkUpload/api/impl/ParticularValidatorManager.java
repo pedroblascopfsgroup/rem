@@ -5988,4 +5988,15 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !res.equals("0");
 	}
 
+	@Override
+	public boolean existeLineaEnGasto(String idLinea, String numGasto){
+		
+		String res = rawDao.getExecuteSQL("		SELECT COUNT(1) "
+				+ "     FROM gld_gastos_linea_detalle GLD			"
+				+ "		JOIN gpv_gastos_proveedor GPV  ON GLD.GPV_ID = GPV.GPV_ID AND GPV.GPV_NUM_GASTO_HAYA = '"+numGasto+"' "
+				+ "		WHERE GPV.BORRADO = 0 AND GLD.BORRADO = 0 AND GLD.GLD_ID = '"+ idLinea+"' "
+				);
+
+		return !res.equals("0");
+	}
 }

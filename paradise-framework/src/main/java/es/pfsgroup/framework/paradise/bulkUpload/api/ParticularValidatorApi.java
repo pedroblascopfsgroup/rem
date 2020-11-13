@@ -1321,4 +1321,6 @@ public interface ParticularValidatorApi {
 	String getDocIdentfPropietarioByNumGasto(String numGasto);
 
 	boolean existeTipoRetencion(String tipoRetencion);
+
+	boolean existeLineaEnGasto(String idLinea, String numGasto);
 }

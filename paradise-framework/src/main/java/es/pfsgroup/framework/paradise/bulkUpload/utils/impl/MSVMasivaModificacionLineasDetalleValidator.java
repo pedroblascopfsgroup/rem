@@ -41,7 +41,7 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	private static final String GASTO_NO_EXISTE = "El gasto no existe";
 	private static final String ACTIVO_NO_EXISTE = "El activo no existe";
 	private static final String BANKIA_MAS_DE_UNA_LINEA = "La cartera Bankia no puede tener más de una línea";
-	private static final String ACCION_BORRAR_ID_LINEA_REQUERIDO = "El id de línea es requerido siel tipo de acción es 'Borrar'";
+	private static final String ACCION_BORRAR_ID_LINEA_REQUERIDO = "El id de línea es requerido si el tipo de acción es 'Borrar'";
 	private static final String ID_LINEA_EXISTE = "El id de línea no existe";
 	private static final String SUBTIPO_DIFERENTE_GASTO = "El subtipo es de un tipo diferente del gasto";
 	private static final String YA_EXISTE_UN_SUBTIPO_TIPO_IMPOSITIVO_TIPO_IMPUESTO = "Ya existe una línea con el mismo subtipo de gasto, tipo impositivo y tipo impuesto";
@@ -79,6 +79,9 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 	private static final String COLUMNA_TEXTO_PROVISIONES_Y_SUPLIDOS ="Se ha cambiado la celda de Provisiones y Suplidos a tipo texto";
 	private static final String COLUMNA_TEXTO_TIPO_IMPOSITIVO ="Se ha cambiado la celda de Tipo Impositivo a tipo texto";
 	private static final String COLUMNA_TEXTO_PRT_LINEA_DETALLE ="Se ha cambiado la celda de Participción en la linea de detalle a tipo texto";
+	
+	private static final String LINEA_BORRAR_REPETIDA ="Esta línea ya se ha marcado para borrar";
+	private static final String LINEA_NO_EXISTE_EN_GASTO ="Esta línea no existe en el gasto";
 
 
 
@@ -208,6 +211,9 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 			mapaErrores.put(COLUMNA_TEXTO_PROVISIONES_Y_SUPLIDOS,comprobarDouble(exc,COL_PROVISIONES_SUPLIDOS));
 			mapaErrores.put(COLUMNA_TEXTO_TIPO_IMPOSITIVO,comprobarDouble(exc,COL_TIPO_IMPOSITIVO));
 			mapaErrores.put(COLUMNA_TEXTO_PRT_LINEA_DETALLE,comprobarDouble(exc,COL_PARTICIPACION_LINEA_DETALLE));
+			mapaErrores.put(LINEA_BORRAR_REPETIDA,borrarExisteLinea(exc));
+			mapaErrores.put(LINEA_NO_EXISTE_EN_GASTO,lineaNoExisteEnGasto(exc));
+			
 
 
 
@@ -251,6 +257,8 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
 					|| !mapaErrores.get(COLUMNA_TEXTO_PROVISIONES_Y_SUPLIDOS).isEmpty()
 					|| !mapaErrores.get(COLUMNA_TEXTO_TIPO_IMPOSITIVO).isEmpty()
 					|| !mapaErrores.get(COLUMNA_TEXTO_PRT_LINEA_DETALLE).isEmpty()
+					|| !mapaErrores.get(LINEA_BORRAR_REPETIDA).isEmpty()
+					|| !mapaErrores.get(LINEA_NO_EXISTE_EN_GASTO).isEmpty()
 
 
 
@@ -1179,6 +1187,62 @@ public class MSVMasivaModificacionLineasDetalleValidator extends MSVExcelValidat
             	  }
             	  
                }
+       	 }
+       	
+        } catch (IllegalArgumentException e) {
+        	
+            listaFilas.add(0);
+            e.printStackTrace();
+        } catch (IOException e) {
+            listaFilas.add(0);
+            e.printStackTrace();
+        } catch (ParseException e) {
+       	 listaFilas.add(0);
+			e.printStackTrace();
+		}
+        return listaFilas;   
+	 }
+   
+   private List<Integer> borrarExisteLinea(MSVHojaExcel exc){
+       List<Integer> listaFilas = new ArrayList<Integer>();
+       List<String> errorRepetidos = new ArrayList<String>();
+       
+        try{
+       	 for(int i=1; i<this.numFilasHoja;i++){
+       		String tipoAccion = exc.dameCelda(i, COL_ACCION_LINEA_DETALLE);
+       		if(tipoAccion != null && Arrays.asList(listaCampoAccionBorrar).contains(tipoAccion.toUpperCase()) && !Checks.esNulo(exc.dameCelda(i, COL_ID_LINEA))) {
+        		if(!errorRepetidos.contains(exc.dameCelda(i, COL_ID_LINEA))) {
+        			errorRepetidos.add(exc.dameCelda(i, COL_ID_LINEA));
+        		}else {
+        			listaFilas.add(i);
+        		}
+        	}
+       	 }
+       	
+        } catch (IllegalArgumentException e) {
+        	
+            listaFilas.add(0);
+            e.printStackTrace();
+        } catch (IOException e) {
+            listaFilas.add(0);
+            e.printStackTrace();
+        } catch (ParseException e) {
+       	 listaFilas.add(0);
+			e.printStackTrace();
+		}
+        return listaFilas;   
+	 }
+
+   private List<Integer> lineaNoExisteEnGasto(MSVHojaExcel exc){
+       List<Integer> listaFilas = new ArrayList<Integer>();
+       
+        try{
+       	 for(int i=1; i<this.numFilasHoja;i++){
+       		String tipoAccion = exc.dameCelda(i, COL_ACCION_LINEA_DETALLE);
+       		if(tipoAccion != null && Arrays.asList(listaCampoAccionBorrar).contains(tipoAccion.toUpperCase()) && !Checks.esNulo(exc.dameCelda(i, COL_ID_LINEA))
+       		&& Boolean.FALSE.equals(particularValidator.existeLineaEnGasto(exc.dameCelda(i, COL_ID_LINEA), exc.dameCelda(i, COL_ID_GASTO)))) {
+       			listaFilas.add(i);
+        	}
        	 }
        	
         } catch (IllegalArgumentException e) {

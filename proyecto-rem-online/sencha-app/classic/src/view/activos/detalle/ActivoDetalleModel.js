@@ -541,17 +541,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					 if(dadaDeBaja == "true") {
 					   	return false; //El checkbox será editable.
 					   } else {
-					   	return true; //El checkbox no será editable.
+					   	return get('disableCheckHpm'); //El checkbox no será editable.
 					   }
 				 }
 				 
 				 if((tipoTituloCodigo == CONST.TIPO_TITULO_ACTIVO['UNIDAD_ALQUILABLE'] && incluidoEnPerimetro) || (tieneOfertaAlquilerViva === true && (estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] || estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["CON_DEMANDAS"]))){
-					return true;
+					return get('disableCheckHpm');
 				} else {
 					return false;
 				}
 			 }else{
-				 return true;
+				 return get('disableCheckHpm');
 			 }
 		 },
 		 
@@ -560,7 +560,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var codComercializacion = get('activo.tipoComercializacionCodigo');
 			
 	        if((!Ext.isEmpty(estadoAlquiler) && estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"]) 
-	        	|| (!Ext.isEmpty(estadoAlquiler) && CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'] != codComercializacion)){
+	        	|| (!Ext.isEmpty(codComercializacion) && CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'] != codComercializacion)){
 	        	return true;
 	        } else {
 	            return false;
@@ -725,6 +725,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var comboEstadoAlquiler = get('patrimonio.estadoAlquiler');
 
 			return (Ext.isEmpty(comboEstadoAlquiler) && comboEstadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["LIBRE"]);
+		},
+		
+		enableSubrogado: function(get){
+			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
+			var situacionActivo = get('patrimonio.estadoAlquiler');
+			var isDivarian = get('patrimonio.isCarteraCerberusDivarian');
+
+			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" ) && CONST.COMBO_ESTADO_ALQUILER['ALQUILADO'] == situacionActivo && !isDivarian){
+				return false;
+			}else{
+				return true;
+			}
 		},
 
 

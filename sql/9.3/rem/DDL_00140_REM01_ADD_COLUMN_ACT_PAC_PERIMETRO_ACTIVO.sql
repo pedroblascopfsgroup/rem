@@ -45,7 +45,7 @@ DECLARE
          T_ALTER(  'PAC_CHECK_GESTION_COMERCIAL','NUMBER(1,0)','Check gestión comercial',''),
          T_ALTER(  'PAC_EXCLUIR_VALIDACIONES','NUMBER(16,0)','Excluir validaciones FK a DD_SIN_SINO ','DEFAULT.'||V_ID_SIN||''),
          T_ALTER(  'PAC_FECHA_GESTION_COMERCIAL','DATE','Fecha gestión Comercial',''),
-         T_ALTER(  'PAC_MOTIVO_GESTION_COMERCIAL','NUMBER(16,0)','Tipo de Transmision FK a DD_MGC_MOTIVO_GEST_COMERCIAL','')
+         T_ALTER(  'PAC_MOTIVO_GESTION_COMERCIAL','NUMBER(16,0)','Motivo gestión comercial FK DD_MGC_MOTIVO_GEST_COMERCIAL','')
         );
     V_T_ALTER T_ALTER;
     

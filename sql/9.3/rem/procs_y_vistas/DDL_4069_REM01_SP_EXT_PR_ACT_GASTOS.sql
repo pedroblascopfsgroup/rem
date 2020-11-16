@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20201029
+--## FECHA_CREACION=20201116
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.15.3-rem
---## INCIDENCIA_LINK=HREOS-11761
+--## INCIDENCIA_LINK=HREOS-12163
 --## PRODUCTO=NO
 --## Finalidad: Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación. Liberbank.
 --## Info: https://link-doc.pfsgroup.es/confluence/display/REOS/SP_EXT_PR_ACT_GASTOS
@@ -20,6 +20,7 @@
 --##	    1.04 Se añaden modificaciones según el ítem REMVIP-5417.
 --##	    1.05 Se añaden modificaciones según el ítem HREOS-10666.
 --##        1.06 Se añaden modificaciones según el ítem HREOS-11761.
+--##        1.07 Se añaden modificaciones según el ítem HREOS-12163.
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -31,7 +32,7 @@ SET DEFINE OFF;
 create or replace PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_GASTOS (
 
     --Parametros de entrada
-    GPV_NUM_GASTO_HAYA          IN VARCHAR2,   --Obligatorio
+    GPV_NUM_GASTO_HAYA          IN VARCHAR2,   --Obligatorio si no es de BBVA
     NUM_GASTO_DESTINATARIO      IN VARCHAR2,
     FECHA_PAGO                  IN VARCHAR2,   --Obligatorio Opcion1
     FECHA_CONTABILIZACION       IN VARCHAR2,   --Obligatorio Opcion2
@@ -42,9 +43,9 @@ create or replace PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_GASTOS (
     DD_TIT_CODIGO				IN VARCHAR2,
     GLD_IMP_IND_TIPO_IMPOSITIVO IN VARCHAR2,
     DD_TIM_CODIGO				IN VARCHAR2,
-    PRO_CODIGO_ENTIDAD          IN VARCHAR2,
-    GPV_REF_EMISOR              IN VARCHAR2,
-    PVE_COD_ORIGEN              IN VARCHAR2,
+    PRO_CODIGO_ENTIDAD          IN VARCHAR2,   --Obligatorio si es de BBVA
+    GPV_REF_EMISOR              IN VARCHAR2,   --Obligatorio si es de BBVA
+    PVE_DOCIDENTIF              IN VARCHAR2,   --Obligatorio si es de BBVA
 
     --Variables de salida
     COD_RETORNO                 OUT VARCHAR2 -- 0 OK / 1 KO
@@ -261,7 +262,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('DD_TIM_CODIGO: '||DD_TIM_CODIGO);
     DBMS_OUTPUT.PUT_LINE('PRO_CODIGO_ENTIDAD: '||PRO_CODIGO_ENTIDAD);
     DBMS_OUTPUT.PUT_LINE('GPV_REF_EMISOR: '||GPV_REF_EMISOR);
-    DBMS_OUTPUT.PUT_LINE('PVE_COD_ORIGEN: '||PVE_COD_ORIGEN);
+    DBMS_OUTPUT.PUT_LINE('PVE_DOCIDENTIF: '||PVE_DOCIDENTIF);
 
     --Seteamos la descripción del error correspondiente a la imposibilidad de convertir el parametro de entrada a DATE.
     V_ERROR_DESC := '[ERROR] No se ha podido convertir la fecha a DATE, comprobar máscara. Paramos la ejecución.';
@@ -288,7 +289,7 @@ BEGIN
             WHERE GPV.BORRADO = 0
                 AND GPV.GPV_REF_EMISOR = '''||GPV_REF_EMISOR||'''
                 AND PRO.PRO_CODIGO_ENTIDAD = '''||PRO_CODIGO_ENTIDAD||'''
-                AND PVE.PVE_COD_ORIGEN = '''||PVE_COD_ORIGEN||'''';
+                AND PVE.PVE_DOCIDENTIF = '''||PVE_DOCIDENTIF||'''';
 
         EXECUTE IMMEDIATE V_MSQL INTO V_NUM;
 
@@ -303,7 +304,7 @@ BEGIN
             WHERE GPV.BORRADO = 0
                 AND GPV.GPV_REF_EMISOR = '''||GPV_REF_EMISOR||'''
                 AND PRO.PRO_CODIGO_ENTIDAD = '''||PRO_CODIGO_ENTIDAD||'''
-                AND PVE.PVE_COD_ORIGEN = '''||PVE_COD_ORIGEN||'''';
+                AND PVE.PVE_DOCIDENTIF = '''||PVE_DOCIDENTIF||'''';
 
             EXECUTE IMMEDIATE V_MSQL INTO V_GPV_NUM_GASTO_HAYA;
 

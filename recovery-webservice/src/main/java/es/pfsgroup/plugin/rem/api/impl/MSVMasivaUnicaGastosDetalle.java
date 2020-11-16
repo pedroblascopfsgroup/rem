@@ -544,6 +544,8 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 				 if(gastoInfoGestion == null) {
 					 gastoInfoGestion = new GastoGestion(); 
 					 gastoInfoGestion.setGastoProveedor(newGastoProveedor);
+					 gastoInfoGestion.setFechaAlta(new Date());
+					 gastoInfoGestion.setUsuarioAlta(genericAdapter.getUsuarioLogado());
 					 
 					 genericDao.save(GastoGestion.class, gastoInfoGestion);
 				 }

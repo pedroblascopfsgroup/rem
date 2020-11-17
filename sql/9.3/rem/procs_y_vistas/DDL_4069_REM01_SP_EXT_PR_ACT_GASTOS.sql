@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20201117
+--## FECHA_CREACION=20201118
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.20
 --## INCIDENCIA_LINK=HREOS-12163
@@ -65,7 +65,7 @@ create or replace PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_GASTOS (
     V_EGA_CODIGO                    VARCHAR2(10 CHAR) := '';
     V_NUM_FACTUR_UVEM               VARCHAR2(20 CHAR) := '';
     V_GDE_ID                        NUMBER(16) := -1;
-    V_GLD_ID                        NUMBER(16) := -1;
+    V_GLD_ID                        NUMBER(16);
     V_GGE_ID                        NUMBER(16) := -1;
     V_EJE_ID                        NUMBER(16) := -1;
     V_FEC_CONTABILIZACION           VARCHAR2(10 CHAR) := '';
@@ -105,6 +105,17 @@ create or replace PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_GASTOS (
                                                             GPV.GPV_NUMERO_FACTURA_UVEM,
                                                             GIC.GIC_FECHA_CONTABILIZACION,
                                                             GIC.EJE_ID,
+                                                            GDE.GDE_FECHA_PAGO,
+                                                            GIC.GIC_ID,
+                                                            GDE.GDE_ID';
+                                                            
+    V_SELECT_GASTO_GLD              VARCHAR2(2000 CHAR)  := 'SELECT
+                                                            GPV.GPV_ID,
+                                                            EGA.DD_EGA_CODIGO,
+                                                            EGA.DD_EGA_ID,
+                                                            GPV.GPV_NUMERO_FACTURA_UVEM,
+                                                            GIC.GIC_FECHA_CONTABILIZACION,
+                                                            GIC.EJE_ID,
                                                             CASE WHEN ''BAS'' = TIM_CODIGO OR TIM_CODIGO IS NULL THEN GLD.GLD_CCC_BASE
                                                                 WHEN ''TAS'' = TIM_CODIGO THEN GLD.GLD_CCC_TASAS
                                                                 WHEN ''REC'' = TIM_CODIGO THEN GLD.GLD_CCC_RECARGO
@@ -131,7 +142,7 @@ create or replace PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_GASTOS (
                                                                 AND GDE.BORRADO = 0
                                                                 AND GIC.BORRADO = 0
                                                                 AND EGA.BORRADO = 0';
-                                                                
+
     V_FROM_GASTO_GLD                VARCHAR2(2000 CHAR) := ' FROM REM01.GPV_GASTOS_PROVEEDOR GPV
                                                             JOIN REM01.GLD_GASTOS_LINEA_DETALLE GLD
                                                                 ON GLD.GPV_ID = GPV.GPV_ID
@@ -363,7 +374,7 @@ BEGIN
 
     ELSE
         COD_RETORNO := 0;
-        
+
         V_DD_STG_CODIGO                 := DD_STG_CODIGO;
         V_DD_TIT_CODIGO                 := DD_TIT_CODIGO;
         V_GLD_IMP_IND_TIPO_IMPOSITIVO   := GLD_IMP_IND_TIPO_IMPOSITIVO;
@@ -373,9 +384,9 @@ BEGIN
             V_GPV_NUM_GASTO_HAYA := GPV_NUM_GASTO_HAYA;
 
         END IF;
-        
+
         IF DD_STG_CODIGO IS NOT NULL THEN
-        
+
             V_MSQL := 'SELECT COUNT(1)
                 FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV
                 JOIN '||V_ESQUEMA||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV.GPV_ID
@@ -390,9 +401,9 @@ BEGIN
                     AND NVL(GLD.GLD_IMP_IND_TIPO_IMPOSITIVO, 0) = NVL('''||V_GLD_IMP_IND_TIPO_IMPOSITIVO||''', 0)
                     AND GPV.GPV_NUM_GASTO_HAYA = '||V_GPV_NUM_GASTO_HAYA;
             EXECUTE IMMEDIATE V_MSQL INTO V_NUM;
-            
+
             IF V_NUM = 1 THEN
-            
+
                 V_MSQL := 'SELECT GLD.GLD_ID
                     FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR GPV
                     JOIN '||V_ESQUEMA||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV.GPV_ID
@@ -407,27 +418,27 @@ BEGIN
                         AND NVL(GLD.GLD_IMP_IND_TIPO_IMPOSITIVO, 0) = NVL('''||V_GLD_IMP_IND_TIPO_IMPOSITIVO||''', 0)
                         AND GPV.GPV_NUM_GASTO_HAYA = '||V_GPV_NUM_GASTO_HAYA;
                 EXECUTE IMMEDIATE V_MSQL INTO V_GLD_ID;
-            
+
             ELSE
-            
+
                 V_ERROR_DESC := '[ERROR] No se han informado el subtipo de gasto, tipo impositivo y tipo de impuesto; o no se encuentran. Por favor, informe estos parámetros correctamente para poder localizar la línea de detalle. Paramos la ejecución.';
                 COD_RETORNO := 1;
-            
+
             END IF;
-        
+
         END IF;
-    
+
         IF GLD_CCC_VALOR IS NOT NULL OR GLD_CPP_VALOR IS NOT NULL THEN
-    
+
             V_CC_PP := 1;
-    
+
             IF V_GLD_ID IS NULL THEN
-    
+
                 V_ERROR_DESC := '[ERROR] No se han informado el subtipo de gasto, tipo impositivo y tipo de impuesto o no se encuentran. Por favor, informe estos parámetros para poder localizar la línea de detalle. Paramos la ejecución.';
                 COD_RETORNO := 1;
-    
+
             END IF;
-    
+
         END IF;
 
     END CASE;
@@ -462,10 +473,10 @@ BEGIN
             EXECUTE IMMEDIATE V_MSQL INTO V_NUM USING V_GPV_NUM_GASTO_HAYA;
 
         ELSIF V_GLD_ID IS NOT NULL THEN
-        
+
             V_MSQL := V_COUNT||V_FROM_GASTO_GLD;
             EXECUTE IMMEDIATE V_MSQL INTO V_NUM USING V_GPV_NUM_GASTO_HAYA, V_GLD_ID;
-        
+
         /*ELSIF V_DD_STG_CODIGO IS NOT NULL AND V_DD_TIT_CODIGO IS NULL AND V_GLD_IMP_IND_TIPO_IMPOSITIVO IS NULL THEN
 
             V_MSQL := V_COUNT||V_FROM_GASTO||V_DD_STG_FROM;
@@ -489,41 +500,41 @@ BEGIN
         END IF;
 
         IF DD_TIM_CODIGO = 'BAS' OR DD_TIM_CODIGO IS NULL THEN
-        
+
             V_COL_CUENTA_CONTABLE := 'GLD_CCC_BASE';
             V_COL_PTDA_PRESUPESTARIA := 'GLD_CPP_BASE';
-            
+
         ELSIF DD_TIM_CODIGO = 'TAS' THEN
-        
+
             V_COL_CUENTA_CONTABLE := 'GLD_CCC_TASAS';
             V_COL_PTDA_PRESUPESTARIA := 'GLD_CPP_TASAS';
-            
+
         ELSIF DD_TIM_CODIGO = 'REC' THEN
-        
+
             V_COL_CUENTA_CONTABLE := 'GLD_CCC_RECARGO';
             V_COL_PTDA_PRESUPESTARIA := 'GLD_CPP_RECARGO';
-            
+
         ELSIF DD_TIM_CODIGO = 'INT' THEN
-        
+
             V_COL_CUENTA_CONTABLE := 'GLD_CCC_INTERESES';
             V_COL_PTDA_PRESUPESTARIA := 'GLD_CPP_INTERESES';
-            
+
         END IF;
 
         IF V_NUM = 1 AND V_GLD_ID IS NULL THEN
-        
+
             V_MSQL := REPLACE(V_SELECT_GASTO, 'TIM_CODIGO', ''''||DD_TIM_CODIGO||'''')||V_FROM_GASTO;
             EXECUTE IMMEDIATE V_MSQL
-            INTO V_GPV_ID, V_EGA_CODIGO, V_EGA_ID, V_NUM_FACTUR_UVEM, V_FEC_CONTABILIZACION, V_EJE_ID, V_CUENTA_CONTABLE, V_PTDA_PRESUPESTARIA, V_FECHA_PAGO, V_GIC_ID, V_GDE_ID
+            INTO V_GPV_ID, V_EGA_CODIGO, V_EGA_ID, V_NUM_FACTUR_UVEM, V_FEC_CONTABILIZACION, V_EJE_ID, V_FECHA_PAGO, V_GIC_ID, V_GDE_ID
             USING V_GPV_NUM_GASTO_HAYA;
-        
+
         ELSIF V_NUM = 1 AND V_GLD_ID IS NOT NULL THEN
-        
-            V_MSQL := REPLACE(V_SELECT_GASTO, 'TIM_CODIGO', ''''||DD_TIM_CODIGO||'''')||V_FROM_GASTO_GLD;
+
+            V_MSQL := REPLACE(V_SELECT_GASTO_GLD, 'TIM_CODIGO', ''''||DD_TIM_CODIGO||'''')||V_FROM_GASTO_GLD;
             EXECUTE IMMEDIATE V_MSQL
             INTO V_GPV_ID, V_EGA_CODIGO, V_EGA_ID, V_NUM_FACTUR_UVEM, V_FEC_CONTABILIZACION, V_EJE_ID, V_CUENTA_CONTABLE, V_PTDA_PRESUPESTARIA, V_FECHA_PAGO, V_GIC_ID, V_GDE_ID
             USING V_GPV_NUM_GASTO_HAYA, V_GLD_ID;
-            
+
         /*ELSIF V_NUM > 0 AND V_DD_STG_CODIGO IS NOT NULL AND V_DD_TIT_CODIGO IS NULL AND V_GLD_IMP_IND_TIPO_IMPOSITIVO IS NULL THEN
             V_MSQL := REPLACE(V_SELECT_GASTO, 'TIM_CODIGO', ''''||DD_TIM_CODIGO||'''')||V_FROM_GASTO||V_DD_STG_FROM;
             EXECUTE IMMEDIATE V_MSQL
@@ -548,7 +559,7 @@ BEGIN
             --Si no existe el gasto, asignamos COD_RETORNO = 1 para finalizar el proceso.
             COD_RETORNO := 1;
             V_ERROR_DESC := '[ERROR] NO existe gasto con el NÚMERO DE GASTO HAYA '||V_GPV_NUM_GASTO_HAYA||', o está duplicado. Paramos la ejecución.';
-            
+
         END IF;
 
     END IF;

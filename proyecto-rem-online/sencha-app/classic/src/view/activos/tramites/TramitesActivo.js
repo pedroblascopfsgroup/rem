@@ -43,7 +43,10 @@ Ext.define('HreRem.view.activos.tramites.TramitesActivo', {
     	                     {
     	                    	 text: 'Subtipo de trabajo',
     	                    	 flex: 1,
-    	                    	 dataIndex: 'subtipoTrabajo'
+    	                    	 dataIndex: 'subtipoTrabajo',
+    	                    	 bind: {
+    	                    		 hidden:'{esUsuarioBBVA}'
+    	                    	 }
     	                     },
     	                     {
     	                    	 text: 'Estado',

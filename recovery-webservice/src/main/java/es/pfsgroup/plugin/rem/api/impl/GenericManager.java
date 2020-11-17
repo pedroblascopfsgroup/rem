@@ -311,6 +311,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		Scanner scan = null;
 		Object obj = null;
+		Usuario usuarioLogado = adapter.getUsuarioLogado();
+		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
+				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
 
 		// Leemos el fichero completo
 		try {
@@ -332,22 +335,41 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		for (Object item : menuItems) {
 			String secFunPermToRender = null;
+			String nombreEntidad = null;
 			JSONObject itemObject = JSONObject.fromObject(item);
-
+			
+			if (itemObject.containsKey("text")) {
+				nombreEntidad = itemObject.getString("text");
+			}
 			if (itemObject.containsKey("secFunPermToRender")) {
 				secFunPermToRender = itemObject.getString("secFunPermToRender");
 			}
-
+			
 			if (secFunPermToRender == null || authData.getAuthorities().contains(secFunPermToRender)) {
 				DtoMenuItem menuItem = new DtoMenuItem();
-				try {
-					beanUtilNotNull.copyProperties(menuItem, itemObject);
+				if(usuarioCartera != null) {
+					boolean esUsuCarteraBBVA = DDCartera.CODIGO_CARTERA_BBVA.equals(usuarioCartera.getCartera().getCodigo()); 
+					if((esUsuCarteraBBVA && !nombreEntidad.toLowerCase().equals("trabajos") && !nombreEntidad.toLowerCase().equals("gastos")) ||
+							!esUsuCarteraBBVA) {
+						try {
+							beanUtilNotNull.copyProperties(menuItem, itemObject);
+	
+						} catch (Exception e) {
+							logger.error(e.getCause());
+						}
+						menuItemsPerm.add(menuItem);
+					} 
+				} else {
+					try {
+						beanUtilNotNull.copyProperties(menuItem, itemObject);
 
-				} catch (Exception e) {
-					logger.error(e.getCause());
+					} catch (Exception e) {
+						logger.error(e.getCause());
+					}
+					menuItemsPerm.add(menuItem);
 				}
-				menuItemsPerm.add(menuItem);
 			}
+		
 		}
 
 		return menuItemsPerm;

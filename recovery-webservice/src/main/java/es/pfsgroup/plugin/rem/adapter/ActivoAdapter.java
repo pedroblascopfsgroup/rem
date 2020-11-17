@@ -1837,8 +1837,21 @@ public class ActivoAdapter {
 
 	public List<DtoListadoTramites> getTramitesActivo(Long idActivo, WebDto webDto) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo);
+		List<String> listaCodigosTramite = new ArrayList<String>() {
+			{
+				add(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC);
+				add(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEE);
+				add(ActivoTramiteApi.CODIGO_TRAMITE_ACTUACION_TECNICA);
+				add(ActivoTramiteApi.CODIGO_TRAMITE_TASACION);
+				add(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEDULA);
+			}
+		};
 		List<DtoListadoTramites> listadoTramitesDto = new ArrayList<DtoListadoTramites>();
 		List<VBusquedaTramitesActivo> tramitesActivo = genericDao.getList(VBusquedaTramitesActivo.class, filtro);
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
+				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+		
 		for (VBusquedaTramitesActivo tramite : tramitesActivo) {
 			DtoListadoTramites dtoTramite = new DtoListadoTramites();
 			try {
@@ -1849,7 +1862,14 @@ public class ActivoAdapter {
 			} catch (InvocationTargetException e) {
 				logger.error("Error en ActivoAdapter", e);
 			}
-			listadoTramitesDto.add(dtoTramite);
+			if(DDCartera.CODIGO_CARTERA_BBVA.equals(usuarioCartera.getCartera())) {
+				if(!listaCodigosTramite.contains(tramite.getCodigoTipoTramite())) {
+					listadoTramitesDto.add(dtoTramite);
+				}
+			} else {
+				listadoTramitesDto.add(dtoTramite);
+			}
+						
 		}
 		if (activoDao.isActivoMatriz(idActivo)) {
 			List<DtoListadoTramites> listadoTramitesDtoActivoMatriz = new ArrayList<DtoListadoTramites>();
@@ -1857,7 +1877,11 @@ public class ActivoAdapter {
 				Filter fTramite = genericDao.createFilter(FilterType.EQUALS, "idTramite", tramite.getIdTramite());
 				List<VBusquedaTramitesActivoMatriz> tramiteAM = genericDao.getList(VBusquedaTramitesActivoMatriz.class, fTramite);
 				if (tramiteAM.size() == 1) {
-					listadoTramitesDtoActivoMatriz.add(tramite);
+					if(DDCartera.CODIGO_CARTERA_BBVA.equals(usuarioCartera.getCartera())) {
+							listadoTramitesDtoActivoMatriz.add(tramite);							
+					} else {
+						listadoTramitesDtoActivoMatriz.add(tramite);
+					}				
 				}
 			}
 			return listadoTramitesDtoActivoMatriz;

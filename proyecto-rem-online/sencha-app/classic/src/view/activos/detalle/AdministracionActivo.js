@@ -161,6 +161,9 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 			xtype:'fieldsettable',
 			title: HreRem.i18n('title.administracion.activo.listado.gastos'),
 			collapsible: false,
+			bind: {
+				hidden: '{esUsuarioBBVA}'
+			},
 			items :	[
 				{
 				    xtype		: 'gridBase',

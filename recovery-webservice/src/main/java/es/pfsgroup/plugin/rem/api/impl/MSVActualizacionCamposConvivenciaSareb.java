@@ -6,15 +6,15 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -25,18 +25,20 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTasadora;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdjudicacionBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienCargas;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistralBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
-import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoCargas;
+import es.pfsgroup.plugin.rem.model.ActivoConfigDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
@@ -50,7 +52,6 @@ import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
-import es.pfsgroup.plugin.rem.model.ActivoZonaComun;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
@@ -60,6 +61,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdecucionSareb;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoCarga;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDPortal;
@@ -71,6 +74,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
@@ -78,23 +82,26 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 
+@Component
 public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualizador implements MSVLiberator {
 	
-	private static final int DATOS_PRIMERA_FILA = 2;
+	private static final int DATOS_PRIMERA_FILA = 1;
 	private static final int NUM_ACTIVO = 0;
+	private static final int ID_SUB_REGISTRO = 2;
 	private static final int CAMPO_CAMBIO = 3;
 	private static final int VALOR_NUEVO = 5;
+	private static final int NUEVO = 7;
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private ActivoDao activoDao;
 		
 	@Override
 	public String getValidOperation() {
-		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_TRABAJOS;
+		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZACION_CAMPOS_ESPARTAR_CONVIVENCIA_SAREB;
 	}
-	
-	@Autowired
-	private TrabajoApi trabajoApi;
 	
 	@Override
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
@@ -142,73 +149,61 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 					activo.setEstadoActivo(estadoActivo);
 				}
 				genericDao.save(Activo.class, activo);
-			}else if("ACT_ADO_ADMISION_DOCUMENTO".equalsIgnoreCase(convivencia.getTabla())) {
-				ActivoAdmisionDocumento activoAdmisionDoc = genericDao.get(ActivoAdmisionDocumento.class,genericDao.createFilter(FilterType.EQUALS, "activo.numActivo" ,Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO))));
-				if("082".equals(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/YYYY");
-					Date fechaObtener = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
-					activoAdmisionDoc.setFechaObtencion(fechaObtener);
-				}else if("095".equals(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/YYYY");
-					Date fechaObtener = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
-					activoAdmisionDoc.setFechaObtencion(fechaObtener);
-				}
-				genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDoc);
 			}else if("ACT_AGR_AGRUPACION".equalsIgnoreCase(convivencia.getTabla())) {
 				//Pone en la el CCS que agrupa por agrupacion Id
 				ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class,genericDao.createFilter(FilterType.EQUALS, "numAgrupRem" ,Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO))));
 				if("091".equals(campo)) {
 					agrupacion.setCodigoOnSareb(exc.dameCelda(fila, VALOR_NUEVO));
-					genericDao.save(ActivoAgrupacion.class, agrupacion);
 				}
+				genericDao.save(ActivoAgrupacion.class, agrupacion);
 			}else if("ACT_AJD_ADJJUDICIAL".equalsIgnoreCase(convivencia.getTabla())){
 				ActivoAdjudicacionJudicial activoAdjJudicial = genericDao.get(ActivoAdjudicacionJudicial.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO))));
 				if("025".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/YYYY");
+					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
 					Date fechaAdj = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
-					activoAdjJudicial.setFechaAdjudicacion(fechaAdj);
-					genericDao.save(ActivoAdjudicacionJudicial.class, activoAdjJudicial);
+					activoAdjJudicial.setFechaAdjudicacion(fechaAdj);	
 				}
+				genericDao.save(ActivoAdjudicacionJudicial.class, activoAdjJudicial);
 			}else if("ACT_APU_ACTIVO_PUBLICACION".equalsIgnoreCase(convivencia.getTabla())) {
 				ActivoPublicacion activoPub = genericDao.get(ActivoPublicacion.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO))));
 				if("085".equalsIgnoreCase(campo)) {
 					DDPortal portal = genericDao.get(DDPortal.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
 					activoPub.setPortal(portal);
-					genericDao.save(ActivoPublicacion.class, activoPub);
 				}
+				genericDao.save(ActivoPublicacion.class, activoPub);
 			}else if("ACT_CAN_CALIFICACION_NEG".equalsIgnoreCase(convivencia.getTabla())) {
 				ActivoCalificacionNegativa activoCalNeg = genericDao.get(ActivoCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO))));
 				if("140".equalsIgnoreCase(campo)) {
 					DDMotivoCalificacionNegativa motivo = genericDao.get(DDMotivoCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
 					activoCalNeg.setMotivoCalificacionNegativa(motivo);
-					genericDao.save(ActivoCalificacionNegativa.class, activoCalNeg);
 				}
-			}else if("ACT_CRG_CARGAS".equalsIgnoreCase(convivencia.getTabla())) {
-				ActivoCargas activoCargas = genericDao.get(ActivoCargas.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO))));
-				if("029".equalsIgnoreCase(campo)) {
-					//Setear el id del activo cargas ?????
-//					activoCargas.setId(Long.parseLong(exc.dameCelda(fila, VALOR_NUEVO)));
-				}else if("031".equalsIgnoreCase(campo)) {
-					DDTipoCargaActivo tipoCarga = genericDao.get(DDTipoCargaActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
-					activoCargas.setTipoCargaActivo(tipoCarga);
-				}else if("032".equalsIgnoreCase(campo)) {
-					DDSubtipoCarga subtipoCarga = genericDao.get(DDSubtipoCarga.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
-					activoCargas.setSubtipoCarga(subtipoCarga);
-				}else if("035".equalsIgnoreCase(campo) || "036".equalsIgnoreCase(campo)) {
-					DDEstadoCarga estadoCarga = genericDao.get(DDEstadoCarga.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
-					activoCargas.setEstadoCarga(estadoCarga);
-				}else if("039".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/YYYY");
-					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
-					activoCargas.setFechaCancelacionRegistral(fecha);
+				genericDao.save(ActivoCalificacionNegativa.class, activoCalNeg);
+			}else if("ACT_CRG_CARGAS".equalsIgnoreCase(convivencia.getTabla()) && Integer.parseInt(exc.dameCelda(fila, NUEVO)) == 0) {
+				Long idCarga = activoDao.getCarga(exc.dameCelda(fila, ID_SUB_REGISTRO));
+				if (idCarga != null) {
+					ActivoCargas activoCargas = genericDao.get(ActivoCargas.class, genericDao.createFilter(FilterType.EQUALS, "id", idCarga));
+					if("031".equalsIgnoreCase(campo)) {
+						DDTipoCargaActivo tipoCarga = genericDao.get(DDTipoCargaActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
+						activoCargas.setTipoCargaActivo(tipoCarga);
+					}else if("032".equalsIgnoreCase(campo)) {
+						DDSubtipoCarga subtipoCarga = genericDao.get(DDSubtipoCarga.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
+						activoCargas.setSubtipoCarga(subtipoCarga);
+					}else if("035".equalsIgnoreCase(campo) || "036".equalsIgnoreCase(campo)) {
+						DDEstadoCarga estadoCarga = genericDao.get(DDEstadoCarga.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
+						activoCargas.setEstadoCarga(estadoCarga);
+					}else if("039".equalsIgnoreCase(campo)) {
+						SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
+						Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+						activoCargas.setFechaCancelacionRegistral(fecha);
+					}
+					genericDao.save(ActivoCargas.class, activoCargas);
 				}
-				genericDao.save(ActivoCargas.class, activoCargas);
 			} else if("ACT_EDI_EDIFICIO".equalsIgnoreCase(convivencia.getTabla())) {
 				ActivoEdificio activoEdi = genericDao.get(ActivoEdificio.class, genericDao.createFilter(FilterType.EQUALS, "infoComercial.activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO))));
 				if("029".equalsIgnoreCase(campo)) {
 					activoEdi.setAscensorEdificio(Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)));
-					genericDao.save(ActivoEdificio.class, activoEdi);
 				}
+				genericDao.save(ActivoEdificio.class, activoEdi);
 			}else if("ACT_LOC_LOCALIZACION".equalsIgnoreCase(convivencia.getTabla())) {
 				ActivoLocalizacion activoLoc = genericDao.get(ActivoLocalizacion.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO))));
 				if("060".equalsIgnoreCase(campo)) {
@@ -234,7 +229,7 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 			}else if("ACT_PTA_PATRIMONIO_ACTIVO".equalsIgnoreCase(convivencia.getTabla())) {
 				ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO))));
 				if("008".equalsIgnoreCase(campo)) {
-					Boolean res = Boolean.parseBoolean(exc.dameCelda(fila, VALOR_NUEVO));
+					Boolean res = Integer.parseInt(exc.dameCelda(fila, NUEVO)) == 1 ? true : false;
 					activoPatrimonio.setCheckSubrogado(res);
 				}else if("123".equalsIgnoreCase(campo)) {
 					DDAdecuacionAlquiler ada = genericDao.get(DDAdecuacionAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
@@ -252,7 +247,7 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 				}else if("077".equalsIgnoreCase(campo)) {
 					infoRegistral.setSuperficieParcela(Float.parseFloat(exc.dameCelda(fila, VALOR_NUEVO)));
 				}else if("093".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/YYYY");
+					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
 					Date fechaCfo = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
 					infoRegistral.setFechaCfo(fechaCfo);
 				}else if("119".equalsIgnoreCase(campo)) {
@@ -289,49 +284,69 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 					activoSareb.setLocalidadOE(localidad);
 				}else if("059".equalsIgnoreCase(campo)) {
 					activoSareb.setCodPostalOE(exc.dameCelda(fila, VALOR_NUEVO));
-				}else if("061".equalsIgnoreCase(campo) || "063".equalsIgnoreCase(campo)) {
+				}else if("061".equalsIgnoreCase(campo)) {
 					BigDecimal bd = new BigDecimal(exc.dameCelda(fila, VALOR_NUEVO));
 					activoSareb.setLatitudOE(bd);
-				}else if("141".equalsIgnoreCase(campo)) {
-					DDSinSiNo res = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
-					activoSareb.setReoContabilizado(res);
+				}else if("063".equalsIgnoreCase(campo)) {
+					BigDecimal bd = new BigDecimal(exc.dameCelda(fila, VALOR_NUEVO));
+					activoSareb.setLongitudOE(bd);
 				}else if("097".equalsIgnoreCase(campo)) {
 					DDEstadoAdecucionSareb adecuacion = genericDao.get(DDEstadoAdecucionSareb.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
 					activoSareb.setEstadoAdecuacionSareb(adecuacion);
 				}else if("098".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/YYYY");
+					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
 					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
 					activoSareb.setFechaFinPrevistaAdecuacion(fecha);
+				}else if("141".equalsIgnoreCase(campo)) {
+					DDSinSiNo res = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
+					activoSareb.setReoContabilizado(res);
 				}
 				genericDao.save(ActivoSareb.class, activoSareb);
 			}else if("ACT_SPS_SIT_POSESORIA".equalsIgnoreCase(convivencia.getTabla())) {
 				ActivoSituacionPosesoria situacionPosesioria = genericDao.get(ActivoSituacionPosesoria.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO))));
 				if("007".equalsIgnoreCase(campo)) {
-					//Un mismo numero actualiza dos campos ???
+					DDTipoTituloActivoTPA tipoTituloActivo = null;
 					situacionPosesioria.setOcupado(Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)));
-					DDTipoTituloActivoTPA tipoTituloActivo = genericDao.get(DDTipoTituloActivoTPA.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
+					if (Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)) == 1) {
+						tipoTituloActivo = genericDao.get(DDTipoTituloActivoTPA.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoTituloActivoTPA.tipoTituloSi));
+					}
 					situacionPosesioria.setConTitulo(tipoTituloActivo);
+					situacionPosesioria.setFechaUltCambioTit(new Date());
 				}else if("009".equalsIgnoreCase(campo)) {
-					//Un mismo numero actualiza dos campos ???
+					DDTipoTituloActivoTPA tipoTituloActivo = null;
 					situacionPosesioria.setOcupado(Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)));
-					DDTipoTituloActivoTPA tipoTituloActivo = genericDao.get(DDTipoTituloActivoTPA.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
+					if (Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)) == 1) {
+						tipoTituloActivo = genericDao.get(DDTipoTituloActivoTPA.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoTituloActivoTPA.tipoTituloNo));
+					}
 					situacionPosesioria.setConTitulo(tipoTituloActivo);
+					situacionPosesioria.setFechaUltCambioTit(new Date());
 				}else if("012".equalsIgnoreCase(campo)) {
 					situacionPosesioria.setRiesgoOcupacion(Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)));
 				}else if("013".equalsIgnoreCase(campo)) {
 					situacionPosesioria.setAccesoAntiocupa(Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)));
+					if (Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)) == 1) {
+						situacionPosesioria.setFechaAccesoAntiocupa(new Date());
+					} else {
+						situacionPosesioria.setFechaAccesoAntiocupa(null);
+					}					
 				}else if("021".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/YYYY");
+					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
 					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
 					situacionPosesioria.setFechaTomaPosesion(fecha);
 				}else if("096".equalsIgnoreCase(campo)) {
 					situacionPosesioria.setAccesoTapiado(Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)));
+					if (Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)) == 1) {
+						situacionPosesioria.setFechaAccesoTapiado(new Date());
+					} else {
+						situacionPosesioria.setFechaAccesoTapiado(null);
+					}
+					situacionPosesioria.setFechaUltCambioTapiado(new Date());
 				}
 				genericDao.save(ActivoSituacionPosesoria.class, situacionPosesioria);
-			}else if("ACT_TAS_TASACION".equalsIgnoreCase(convivencia.getTabla())) {
-				ActivoTasacion tasacion = genericDao.get(ActivoTasacion.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO))));
+			}else if("ACT_TAS_TASACION".equalsIgnoreCase(convivencia.getTabla()) && Integer.parseInt(exc.dameCelda(fila, NUEVO)) == 0) {
+				ActivoTasacion tasacion = genericDao.get(ActivoTasacion.class, genericDao.createFilter(FilterType.EQUALS, "activo.idExterno",Long.parseLong(exc.dameCelda(fila, ID_SUB_REGISTRO))));
 				if("105".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/YYYY");
+					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
 					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
 					tasacion.setFechaRecepcionTasacion(fecha);
 				}else if("107".equalsIgnoreCase(campo)) {
@@ -347,82 +362,99 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 					DDEstadoTitulo estadoTitulo = genericDao.get(DDEstadoTitulo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
 					activoTitulo.setEstado(estadoTitulo);
 				}else if("018".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/YYYY");
+					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
 					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
 					activoTitulo.setFechaInscripcionReg(fecha);
 				}
 				genericDao.save(ActivoTitulo.class, activoTitulo);
-			}else if("ACT_VAL_VALORACIONES".equalsIgnoreCase(convivencia.getTabla())) {
-				ActivoValoraciones activoVal = genericDao.get(ActivoValoraciones.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO))));
+			}else if("ACT_VAL_VALORACIONES".equalsIgnoreCase(convivencia.getTabla()) || "115".equalsIgnoreCase(campo)) {
+				ActivoValoraciones activoVal = null;
 				if("099".equalsIgnoreCase(campo)) {
-					DDTipoPrecio tipoPrecio = genericDao.get(DDTipoPrecio.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
-					activoVal.setTipoPrecio(tipoPrecio);
+					activoVal = genericDao.get(ActivoValoraciones.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
+							, genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA));
+					activoVal.setImporte(Double.parseDouble(exc.dameCelda(fila, VALOR_NUEVO)));
 				}else if("100".equalsIgnoreCase(campo)) {
-					DDTipoPrecio tipoPrecio = genericDao.get(DDTipoPrecio.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
-					activoVal.setTipoPrecio(tipoPrecio);
+					activoVal = genericDao.get(ActivoValoraciones.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
+							, genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA));
+					activoVal.setImporte(Double.parseDouble(exc.dameCelda(fila, VALOR_NUEVO)));
 				}else if("101".equalsIgnoreCase(campo)) {
-					DDTipoPrecio tipoPrecio = genericDao.get(DDTipoPrecio.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
-					activoVal.setTipoPrecio(tipoPrecio);
+					activoVal = genericDao.get(ActivoValoraciones.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
+							, genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO));
+					activoVal.setImporte(Double.parseDouble(exc.dameCelda(fila, VALOR_NUEVO)));
 				}else if("109".equalsIgnoreCase(campo)) {
-					DDTipoPrecio tipoPrecio = genericDao.get(DDTipoPrecio.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
-					activoVal.setTipoPrecio(tipoPrecio);
+					activoVal = genericDao.get(ActivoValoraciones.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
+							, genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA));
+					activoVal.setImporte(Double.parseDouble(exc.dameCelda(fila, VALOR_NUEVO)));
 				}else if("110".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/YYYY");
+					activoVal = genericDao.get(ActivoValoraciones.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
+							, genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA));
+					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
 					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
 					activoVal.setFechaInicio(fecha);
 				}else if("111".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/YYYY");
+					activoVal = genericDao.get(ActivoValoraciones.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
+							, genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA));
+					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
 					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
 					activoVal.setFechaFin(fecha);
 				}else if("112".equalsIgnoreCase(campo)) {
-					DDTipoPrecio tipoPrecio = genericDao.get(DDTipoPrecio.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
-					activoVal.setTipoPrecio(tipoPrecio);
+					activoVal = genericDao.get(ActivoValoraciones.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
+							, genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA));
+					activoVal.setImporte(Double.parseDouble(exc.dameCelda(fila, VALOR_NUEVO)));
 				}else if("113".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/YYYY");
+					activoVal = genericDao.get(ActivoValoraciones.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
+							, genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA));
+					activoVal.setImporte(Double.parseDouble(exc.dameCelda(fila, VALOR_NUEVO)));
+					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
 					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
 					activoVal.setFechaInicio(fecha);
 				}else if("114".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/YYYY");
+					activoVal = genericDao.get(ActivoValoraciones.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
+							, genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA));
+					activoVal.setImporte(Double.parseDouble(exc.dameCelda(fila, VALOR_NUEVO)));
+					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
 					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
 					activoVal.setFechaFin(fecha);
+				}else if("115".equalsIgnoreCase(campo)) {
+					activoVal = genericDao.get(ActivoValoraciones.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
+							, genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_MIN_AUT_PROP_RENTA));
+					activoVal.setImporte(Double.parseDouble(exc.dameCelda(fila, VALOR_NUEVO)));
 				}
 				genericDao.save(ActivoValoraciones.class, activoVal);
-			}else if("ACT_ZCO_ZONA_COMUN".equalsIgnoreCase(convivencia.getTabla())) {
-				ActivoZonaComun activoZonaComun = genericDao.get(ActivoZonaComun.class, genericDao.createFilter(FilterType.EQUALS, "infoComercial.activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO))));
-				if("014".equalsIgnoreCase(campo)) {
-					activoZonaComun.setConserjeVigilancia(Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)));
-					genericDao.save(ActivoZonaComun.class, activoZonaComun);
-				}
 			}else if("BIE_ADJ_ADJUDICACION".equalsIgnoreCase(convivencia.getTabla())) {
 				NMBAdjudicacionBien nmbAdj = genericDao.get(NMBAdjudicacionBien.class,genericDao.createFilter(FilterType.EQUALS, "bien",activo.getBien()));
 				if("026".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/YYYY");
+					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
 					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
 					nmbAdj.setFechaDecretoFirme(fecha);
 				}else if("027".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/YYYY");
+					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
 					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
 					nmbAdj.setFechaSenalamientoLanzamiento(fecha);
 				}
 				genericDao.save(NMBAdjudicacionBien.class,nmbAdj);
-			}else if("BIE_CAR_CARGAS".equalsIgnoreCase(convivencia.getTabla())) {
-				NMBBienCargas bienCargas = genericDao.get(NMBBienCargas.class, genericDao.createFilter(FilterType.EQUALS, "bien",activo.getBien()));
-				if("030".equalsIgnoreCase(campo)){
-					//BIE_CAR_ID_RECOVERY no aparece en el class
-				}else if("033".equalsIgnoreCase(campo)) {
-					bienCargas.setTitular(exc.dameCelda(fila, VALOR_NUEVO));
-				}else if("034".equalsIgnoreCase(campo)) {
-					bienCargas.setImporteRegistral(Float.parseFloat(exc.dameCelda(fila, VALOR_NUEVO)));
-				}else if("037".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/YYYY");
-					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
-					bienCargas.setFechaCancelacion(fecha);
-				}else if("038".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/YYYY");
-					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
-					bienCargas.setFechaPresentacion(fecha);
+			}else if("BIE_CAR_CARGAS".equalsIgnoreCase(convivencia.getTabla()) && Integer.parseInt(exc.dameCelda(fila, NUEVO)) == 0) {
+				NMBBienCargas bienCargas = null;
+				ActivoCargas activoCargas = null;
+				Long idCarga = activoDao.getCarga(exc.dameCelda(fila, ID_SUB_REGISTRO));
+				if (idCarga != null) {
+					activoCargas = genericDao.get(ActivoCargas.class, genericDao.createFilter(FilterType.EQUALS, "id", idCarga));
+					bienCargas = activoCargas.getCargaBien();
+					if("033".equalsIgnoreCase(campo)) {
+						bienCargas.setTitular(exc.dameCelda(fila, VALOR_NUEVO));
+					}else if("034".equalsIgnoreCase(campo)) {
+						bienCargas.setImporteRegistral(Float.parseFloat(exc.dameCelda(fila, VALOR_NUEVO)));
+					}else if("037".equalsIgnoreCase(campo)) {
+						SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
+						Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+						bienCargas.setFechaCancelacion(fecha);
+					}else if("038".equalsIgnoreCase(campo)) {
+						SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
+						Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+						bienCargas.setFechaPresentacion(fecha);
+					}
+					genericDao.save(NMBBienCargas.class, bienCargas);
 				}
-				genericDao.save(NMBBienCargas.class, bienCargas);
 			}else if("BIE_DATOS_REGISTRALES".equalsIgnoreCase(convivencia.getTabla())) {
 				NMBInformacionRegistralBien datos = genericDao.get(NMBInformacionRegistralBien.class, genericDao.createFilter(FilterType.EQUALS, "bien",activo.getBien()));
 				if("065".equalsIgnoreCase(campo)){
@@ -479,14 +511,29 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 					localizacion.setCodPostal(exc.dameCelda(fila, VALOR_NUEVO));
 				}
 				genericDao.save(NMBLocalizacionesBien.class, localizacion);
-			}else if("BIE_VALORACIONES".equalsIgnoreCase(convivencia.getTabla())) {
+			}else if("BIE_VALORACIONES".equalsIgnoreCase(convivencia.getTabla()) && exc.dameCelda(fila, NUEVO) == null) {
 				NMBValoracionesBien valoraciones = genericDao.get(NMBValoracionesBien.class, genericDao.createFilter(FilterType.EQUALS, "bien",activo.getBien()));
 				if("103".equalsIgnoreCase(campo)){
-					SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/YYYY");
+					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
 					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
 					valoraciones.setFechaValorTasacion(fecha);
 				}else if("104".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/YYYY");
+					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
+					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					valoraciones.setFechaSolicitudTasacion(fecha);
+				}else if("106".equalsIgnoreCase(campo)) {
+					DDTasadora tasadora = genericDao.get(DDTasadora.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
+					valoraciones.setTasadora(tasadora);
+				}
+				genericDao.save(NMBValoracionesBien.class, valoraciones);
+			}else if("BIE_VALORACIONES".equalsIgnoreCase(convivencia.getTabla()) && Integer.parseInt(exc.dameCelda(fila, NUEVO)) == 0) {
+				NMBValoracionesBien valoraciones = genericDao.get(NMBValoracionesBien.class, genericDao.createFilter(FilterType.EQUALS, "bien",activo.getBien()));
+				if("103".equalsIgnoreCase(campo)){
+					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
+					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					valoraciones.setFechaValorTasacion(fecha);
+				}else if("104".equalsIgnoreCase(campo)) {
+					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
 					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
 					valoraciones.setFechaSolicitudTasacion(fecha);
 				}else if("106".equalsIgnoreCase(campo)) {
@@ -495,14 +542,21 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 				}
 				genericDao.save(NMBValoracionesBien.class, valoraciones);
 			}else if("ECO_EXPEDIENTE_COMERCIAL".equalsIgnoreCase(convivencia.getTabla())) {
-				//LA clase Activo Oferta tiene una codificacion diferente de los modelos nuevos.
-				List<ActivoOferta> actOferta = genericDao.getList(ActivoOferta.class, genericDao.createFilter(FilterType.EQUALS, "activo",activo.getId()));
-				if("127".equalsIgnoreCase(campo) && actOferta.size() > 0) {
-					Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "activosOferta",actOferta));
+				List<ActivoOferta> ofertas = activo.getOfertas();
+				Oferta oferta = null;
+				for (ActivoOferta ofertaIter : ofertas) {
+					if (ofertaIter.getPrimaryKey() != null 
+							&& ofertaIter.getPrimaryKey().getOferta() != null
+							&& DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaIter.getPrimaryKey().getOferta().getEstadoOferta().getCodigo())) {
+						oferta = ofertaIter.getPrimaryKey().getOferta();
+					}
+				}
+				
+				if("127".equalsIgnoreCase(campo) && oferta != null) {
 					if(oferta != null ) {
-						ExpedienteComercial exp = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta",oferta));
+						ExpedienteComercial exp = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
 						if(exp != null) {
-							SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/YYYY");
+							SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
 							Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
 							exp.setFechaDevolucionEntregas(fecha);
 							genericDao.save(ExpedienteComercial.class, exp);
@@ -510,32 +564,205 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 					}
 				}
 			}else if("RES_RESERVAS".equalsIgnoreCase(convivencia.getTabla())) {
-				List<ActivoOferta> actOferta = genericDao.getList(ActivoOferta.class, genericDao.createFilter(FilterType.EQUALS, "activo",activo.getId()));
-				if(actOferta.size() > 0){
-					Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "activosOferta",actOferta));
-					if(oferta != null) {
-						ExpedienteComercial exp = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta",oferta));
-						if(exp != null) {
-							Reserva reserva = genericDao.get(Reserva.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id",exp.getId()));
-							if(reserva != null) {
-								if("126".equalsIgnoreCase(campo)){
-									SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/YYYY");
-									Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
-									reserva.setFechaContabilizacionReserva(fecha);
-									reserva.setFechaFirma(fecha);
-								}else if("125".equalsIgnoreCase(campo)) {
-									reserva.setNumReserva(Long.parseLong(exc.dameCelda(fila, VALOR_NUEVO)));
-								}
-								genericDao.save(Reserva.class, reserva);
+				List<ActivoOferta> ofertas = activo.getOfertas();
+				Oferta oferta = null;
+				for (ActivoOferta ofertaIter : ofertas) {
+					if (ofertaIter.getPrimaryKey() != null 
+							&& ofertaIter.getPrimaryKey().getOferta() != null
+							&& DDEstadoOferta.CODIGO_ACEPTADA.equals(ofertaIter.getPrimaryKey().getOferta().getEstadoOferta().getCodigo())) {
+						oferta = ofertaIter.getPrimaryKey().getOferta();
+					}
+				}
+				
+				if(oferta != null){
+					ExpedienteComercial exp = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
+					if(exp != null) {
+						Reserva reserva = genericDao.get(Reserva.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", exp.getId()));
+						if(reserva != null) {
+							if("126".equalsIgnoreCase(campo)){
+								SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
+								Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+								reserva.setFechaFirma(fecha);
+							}else if("125".equalsIgnoreCase(campo)) {
+								reserva.setNumReserva(Long.parseLong(exc.dameCelda(fila, VALOR_NUEVO)));
 							}
+							genericDao.save(Reserva.class, reserva);
 						}
 					}
 				}
+			// Creación de registros nuevos
+			}else if(("078".equalsIgnoreCase(campo) || "079".equalsIgnoreCase(campo) || "080".equalsIgnoreCase(campo)
+					|| "081".equalsIgnoreCase(campo) || "083".equalsIgnoreCase(campo) || "084".equalsIgnoreCase(campo)
+					|| "092".equalsIgnoreCase(campo) || "093".equalsIgnoreCase(campo) || "082".equalsIgnoreCase(campo))
+					|| "093".equalsIgnoreCase(campo) || "095".equalsIgnoreCase(campo)) {
+				String tipoDocumento = null;
+				if ("078".equalsIgnoreCase(campo)) {
+					tipoDocumento = "15";
+				} else if ("079".equalsIgnoreCase(campo)) {
+					tipoDocumento = "16";
+				} else if ("080".equalsIgnoreCase(campo)) {
+					tipoDocumento = "17";
+				} else if ("081".equalsIgnoreCase(campo) || "082".equalsIgnoreCase(campo)) {
+					tipoDocumento = "13";
+				} else if ("083".equalsIgnoreCase(campo)) {
+					tipoDocumento = "11";
+				} else if ("084".equalsIgnoreCase(campo)) {
+					tipoDocumento = "19";
+				} else if ("092".equalsIgnoreCase(campo) || "093".equalsIgnoreCase(campo)) {
+					tipoDocumento = "14";
+				} else if ("094".equalsIgnoreCase(campo) || "095".equalsIgnoreCase(campo)) {
+					tipoDocumento = "12";
+				}
+				
+				if (tipoDocumento != null) {
+					DDTipoDocumentoActivo tipoDocumentoActivo = genericDao.get(DDTipoDocumentoActivo.class,genericDao.createFilter(FilterType.EQUALS, "codigo", tipoDocumento));
+					if (tipoDocumentoActivo != null) {
+						ActivoConfigDocumento configDocumento = genericDao.get(ActivoConfigDocumento.class,genericDao.createFilter(FilterType.EQUALS, "tipoActivo.codigo", activo.getTipoActivo().getCodigo())
+								,genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.codigo", tipoDocumentoActivo.getCodigo()));
+						if (configDocumento != null) {
+							ActivoAdmisionDocumento activoAdmisionDoc = genericDao.get(ActivoAdmisionDocumento.class,genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
+									,genericDao.createFilter(FilterType.EQUALS, "configDocumento.id", configDocumento.getId()));
+							if (activoAdmisionDoc == null) {
+								activoAdmisionDoc = new ActivoAdmisionDocumento();
+								activoAdmisionDoc.setActivo(activo);
+								activoAdmisionDoc.setConfigDocumento(configDocumento);
+								DDEstadoDocumento estadoDocumento = genericDao.get(DDEstadoDocumento.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDocumento.CODIGO_ESTADO_OBTENIDO));
+								activoAdmisionDoc.setEstadoDocumento(estadoDocumento);
+							}
+							if("082".equals(campo)) {
+								SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
+								Date fechaObtener = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+								activoAdmisionDoc.setFechaObtencion(fechaObtener);
+								DDEstadoDocumento estadoDocumento = genericDao.get(DDEstadoDocumento.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDocumento.CODIGO_ESTADO_OBTENIDO));
+								activoAdmisionDoc.setEstadoDocumento(estadoDocumento);
+							}else if("095".equals(campo)) {
+								SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
+								Date fechaObtener = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+								activoAdmisionDoc.setFechaObtencion(fechaObtener);
+								DDEstadoDocumento estadoDocumento = genericDao.get(DDEstadoDocumento.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDocumento.CODIGO_ESTADO_OBTENIDO));
+								activoAdmisionDoc.setEstadoDocumento(estadoDocumento);
+							} else {
+								activoAdmisionDoc.setFechaObtencion(new Date());
+							}
+							genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDoc);
+						}
+					}
+				}
+			}else if(("033".equalsIgnoreCase(campo) || "034".equalsIgnoreCase(campo) || "037".equalsIgnoreCase(campo)
+					|| "038".equalsIgnoreCase(campo) || "031".equalsIgnoreCase(campo) || "032".equalsIgnoreCase(campo)
+					|| "035".equalsIgnoreCase(campo) || "039".equalsIgnoreCase(campo)) && Integer.parseInt(exc.dameCelda(fila, NUEVO)) == 1) {
+				boolean crearBieCar = false;
+				NMBBienCargas bienCargas = null;
+				ActivoCargas activoCargas = null;
+				Long idCarga = activoDao.getCarga(exc.dameCelda(fila, ID_SUB_REGISTRO));
+				if (idCarga != null) {
+					activoCargas = genericDao.get(ActivoCargas.class, genericDao.createFilter(FilterType.EQUALS, "id", idCarga));
+				}
+				
+				if (activoCargas != null) {
+					bienCargas = activoCargas.getCargaBien();
+				}
+				
+				if (bienCargas == null) {
+					bienCargas = new NMBBienCargas();
+					bienCargas.setBien(activo.getBien());
+					DDTipoCarga tipoCargaBien = genericDao.get(DDTipoCarga.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "0"));
+					bienCargas.setTipoCarga(tipoCargaBien);
+					bienCargas.setEconomica(false);
+					crearBieCar = true;
+				}
+				
+				if("033".equalsIgnoreCase(campo)) {
+					bienCargas.setTitular(exc.dameCelda(fila, VALOR_NUEVO));
+				}else if("034".equalsIgnoreCase(campo)) {
+					bienCargas.setImporteRegistral(Float.parseFloat(exc.dameCelda(fila, VALOR_NUEVO)));
+				}else if("037".equalsIgnoreCase(campo)) {
+					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
+					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					bienCargas.setFechaCancelacion(fecha);
+				}else if("038".equalsIgnoreCase(campo)) {
+					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
+					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					bienCargas.setFechaPresentacion(fecha);
+				}
+				
+				if (activoCargas == null) {
+					genericDao.save(NMBBienCargas.class, bienCargas);
+					activoCargas = new ActivoCargas();
+					activoCargas.setActivo(activo);
+					activoCargas.setCargaBien(bienCargas);
+					activoCargas.setCargaRecoveryId(Long.parseLong(exc.dameCelda(fila, ID_SUB_REGISTRO)));
+					DDSiNo impideVenta = genericDao.get(DDSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSiNo.NO));
+					activoCargas.setImpideVenta(impideVenta);
+				}
+				
+				if("031".equalsIgnoreCase(campo)) {
+					DDTipoCargaActivo tipoCarga = genericDao.get(DDTipoCargaActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
+					activoCargas.setTipoCargaActivo(tipoCarga);
+				}else if("032".equalsIgnoreCase(campo)) {
+					DDSubtipoCarga subtipoCarga = genericDao.get(DDSubtipoCarga.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
+					activoCargas.setSubtipoCarga(subtipoCarga);
+				}else if("035".equalsIgnoreCase(campo) || "036".equalsIgnoreCase(campo)) {
+					DDEstadoCarga estadoCarga = genericDao.get(DDEstadoCarga.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
+					activoCargas.setEstadoCarga(estadoCarga);
+				}else if("039".equalsIgnoreCase(campo)) {
+					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
+					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					activoCargas.setFechaCancelacionRegistral(fecha);
+				}
+				genericDao.save(ActivoCargas.class, activoCargas);
+				if (crearBieCar) {
+					activoDao.actualizaBieCarIdRecovery(activoCargas.getCargaBien().getIdCarga(), Long.parseLong(exc.dameCelda(fila, ID_SUB_REGISTRO)));
+				}
+			}else if(("103".equalsIgnoreCase(campo) || "104".equalsIgnoreCase(campo) || "106".equalsIgnoreCase(campo)
+					|| "105".equalsIgnoreCase(campo) || "107".equalsIgnoreCase(campo) || "108".equalsIgnoreCase(campo)) 
+					&& Integer.parseInt(exc.dameCelda(fila, NUEVO)) == 1) {
+				ActivoTasacion tasacion = genericDao.get(ActivoTasacion.class, genericDao.createFilter(FilterType.EQUALS, "idExterno",Long.parseLong(exc.dameCelda(fila, ID_SUB_REGISTRO))));
+				NMBValoracionesBien valoracion = null;
+				if (tasacion != null) {
+					valoracion = tasacion.getValoracionBien();
+				} else {
+					valoracion = new NMBValoracionesBien();
+					valoracion.setBien(activo.getBien());
+				}
+				
+				if("103".equalsIgnoreCase(campo)){
+					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
+					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					valoracion.setFechaValorTasacion(fecha);
+				}else if("104".equalsIgnoreCase(campo)) {
+					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
+					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					valoracion.setFechaSolicitudTasacion(fecha);
+				}else if("106".equalsIgnoreCase(campo)) {
+					DDTasadora tasadora = genericDao.get(DDTasadora.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
+					valoracion.setTasadora(tasadora);
+				}
+				
+				if (tasacion == null) {
+					genericDao.save(NMBValoracionesBien.class, valoracion);
+					tasacion = new ActivoTasacion();
+					tasacion.setActivo(activo);
+					tasacion.setIdExterno(Long.parseLong(exc.dameCelda(fila, ID_SUB_REGISTRO)));
+					tasacion.setValoracionBien(valoracion);
+				}
+
+				if("105".equalsIgnoreCase(campo)) {
+					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
+					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					tasacion.setFechaRecepcionTasacion(fecha);
+				}else if("107".equalsIgnoreCase(campo)) {
+					tasacion.setImporteTasacionFin(Double.parseDouble(exc.dameCelda(fila, VALOR_NUEVO)));
+				}else if("108".equalsIgnoreCase(campo)) {
+					DDTipoTasacion tipoTasacion = genericDao.get(DDTipoTasacion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
+					tasacion.setTipoTasacion(tipoTasacion);
+				}				
+				genericDao.save(ActivoTasacion.class, tasacion);
 			}
 			
 		}
 		
-		return new ResultadoProcesarFila();
+		return resultado;
 	}
 
 	

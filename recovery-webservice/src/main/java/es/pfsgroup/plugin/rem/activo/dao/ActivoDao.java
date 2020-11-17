@@ -360,4 +360,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	List<ActivoCalificacionNegativaAdicional> getListActivoCalificacionNegativaAdicionalByIdActivo(Long idActivo);
 	
 	public Activo existeActivoUsuarioCarterizado(Long numActivo, Long idCartera, List<Long> idSubcarteras);
+
+	public Long getCarga(String idBieCarRecovery);
+
+	public void actualizaBieCarIdRecovery(Long idBieCar, Long bieCarIdRecovery);
 }

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
@@ -36,23 +37,24 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 @Component
 public class MSVActualizacionCamposConvivenciaSarebValidator extends MSVExcelValidatorAbstract {
 
-	private final String CAMPO_NO_EXISTE = "msg.error.masivo.convivencia.sareb.no.activo";
-	private final String ACTIVO_NO_EXISTE = "msg.error.masivo.convivencia.sareb.no.campo";
-	private final String DEPENCENCIA_SUBTIPO_REGISTRO = "msg.error.masivo.convivencia.sareb.vacio.subtipo";
-	private final String SUBTIPO_NO_EXISTE = "msg.error.masivo.convivencia.sareb.no.subtipo";
-	private final String IDENTIFICADOR_SUBTIPO_NO_EXISTE = "msg.error.masivo.convivencia.sareb.no.identificador";
+	private static final String CAMPO_NO_EXISTE = "msg.error.masivo.convivencia.sareb.no.campo";
+	private static final String ACTIVO_NO_EXISTE = "msg.error.masivo.convivencia.sareb.no.activo";
+	private static final String DEPENCENCIA_SUBTIPO_REGISTRO = "msg.error.masivo.convivencia.sareb.vacio.subtipo";
+	private static final String SUBTIPO_NO_EXISTE = "msg.error.masivo.convivencia.sareb.no.subtipo";
+	private static final String IDENTIFICADOR_SUBTIPO_NO_EXISTE = "msg.error.masivo.convivencia.sareb.no.identificador";
+	private static final String VALOR_NUEVO = "msg.error.masivo.convivencia.sareb.valor.nuevo";
 	
-	private final int FILA_CABECERA = 0;
-	private final int FILA_DATOS = 1;
+	private static final int FILA_CABECERA = 0;
+	private static final int FILA_DATOS = 1;
 
-	private final int NUM_COLS = 8;	
-	private final int COL_NUM_ACTIVO = 0;
-	private final int COL_SUB_REGISTRO = 1;
-	private final int COL_ID_SUB_REGISTRO = 2;
-	private final int COL_CAMPO = 3;
-	private final int COL_VALOR_ACTUAL = 4;
-	private final int COL_VALOR_NUEVO = 5;
-	private final int COL_NUEVO = 7;
+	private static final int NUM_COLS = 8;	
+	private static final int COL_NUM_ACTIVO = 0;
+	private static final int COL_SUB_REGISTRO = 1;
+	private static final int COL_ID_SUB_REGISTRO = 2;
+	private static final int COL_CAMPO = 3;
+	private static final int COL_VALOR_ACTUAL = 4;
+	private static final int COL_VALOR_NUEVO = 5;
+	private static final int COL_NUEVO = 7;
 	
 	private Integer numFilasHoja;	
 	private Map<String, List<Integer>> mapaErrores;	
@@ -103,25 +105,20 @@ public class MSVActualizacionCamposConvivenciaSarebValidator extends MSVExcelVal
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 
 			Map<String, List<Integer>> mapaErrores = new HashMap<String, List<Integer>>();
-			mapaErrores.put(CAMPO_NO_EXISTE, isCampoNotExistsRows(exc));
-			mapaErrores.put(ACTIVO_NO_EXISTE, isActiveNotExistsRows(exc));
-			mapaErrores.put(SUBTIPO_NO_EXISTE, isSubtipoRegistroNotExistsRows(exc));
-			mapaErrores.put(DEPENCENCIA_SUBTIPO_REGISTRO, isSubtipoDependienteExistsRows(exc));
-			mapaErrores.put(IDENTIFICADOR_SUBTIPO_NO_EXISTE, isIdentificadorRegistroNotExistsRows(exc));
+			mapaErrores.put(messageServices.getMessage(CAMPO_NO_EXISTE), isCampoNotExistsRows(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_EXISTE), isActiveNotExistsRows(exc));
+			mapaErrores.put(messageServices.getMessage(SUBTIPO_NO_EXISTE), isSubtipoRegistroNotExistsRows(exc));
+			mapaErrores.put(messageServices.getMessage(DEPENCENCIA_SUBTIPO_REGISTRO), isSubtipoDependienteExistsRows(exc));
+			mapaErrores.put(messageServices.getMessage(IDENTIFICADOR_SUBTIPO_NO_EXISTE), isIdentificadorRegistroNotExistsRows(exc));
+			mapaErrores.put(messageServices.getMessage(VALOR_NUEVO), isNuevoCorrecto(exc));
 			
-			if (!mapaErrores.get(CAMPO_NO_EXISTE).isEmpty() 
-				|| !mapaErrores.get(ACTIVO_NO_EXISTE).isEmpty() 
-				|| !mapaErrores.get(SUBTIPO_NO_EXISTE).isEmpty() 
-				|| !mapaErrores.get(DEPENCENCIA_SUBTIPO_REGISTRO).isEmpty() 
-				|| !mapaErrores.get(IDENTIFICADOR_SUBTIPO_NO_EXISTE).isEmpty() 
-				){
-		    
-				dtoValidacionContenido.setFicheroTieneErrores(true);
-				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
-				FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
-				dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
-			}
+			for (Entry<String, List<Integer>> registros : mapaErrores.entrySet()) {
+				if(!registros.getValue().isEmpty()) {
+					dtoValidacionContenido.setFicheroTieneErrores(true);
+					dtoValidacionContenido.setExcelErroresFormato(new FileItem(new File(exc.crearExcelErroresMejorado(mapaErrores))));
+					break;
+				}
+			}		
 		}
 		exc.cerrar();
 		
@@ -239,10 +236,9 @@ public class MSVActualizacionCamposConvivenciaSarebValidator extends MSVExcelVal
 	        try{
 	            for(int i=1; i<this.numFilasHoja;i++){
 	                try {
-	                    if(!Checks.esNulo(exc.dameCelda(i, COL_SUB_REGISTRO)) && Checks.esNulo(exc.dameCelda(i, COL_ID_SUB_REGISTRO))
-	                    		|| Checks.esNulo(exc.dameCelda(i, COL_SUB_REGISTRO)) && !Checks.esNulo(exc.dameCelda(i, COL_ID_SUB_REGISTRO))
-	                    		|| !Checks.esNulo(exc.dameCelda(i, COL_NUEVO)) && Checks.esNulo(exc.dameCelda(i, COL_SUB_REGISTRO)) 
-	                    		|| !Checks.esNulo(exc.dameCelda(i, COL_NUEVO)) && Checks.esNulo(exc.dameCelda(i, COL_ID_SUB_REGISTRO)))
+	                    if(!Checks.esNulo(exc.dameCelda(i, COL_SUB_REGISTRO)) && (Checks.esNulo(exc.dameCelda(i, COL_ID_SUB_REGISTRO)) || Checks.esNulo(exc.dameCelda(i, COL_NUEVO)))
+	                    		|| !Checks.esNulo(exc.dameCelda(i, COL_ID_SUB_REGISTRO)) && (Checks.esNulo(exc.dameCelda(i, COL_SUB_REGISTRO)) || Checks.esNulo(exc.dameCelda(i, COL_NUEVO)))
+	                    		|| !Checks.esNulo(exc.dameCelda(i, COL_NUEVO)) && (Checks.esNulo(exc.dameCelda(i, COL_SUB_REGISTRO)) || Checks.esNulo(exc.dameCelda(i, COL_ID_SUB_REGISTRO))))
 	                        listaFilas.add(i);
 	                } catch (ParseException e) {
 	                    listaFilas.add(i);
@@ -264,8 +260,31 @@ public class MSVActualizacionCamposConvivenciaSarebValidator extends MSVExcelVal
 	        try{
 	            for(int i=1; i<this.numFilasHoja;i++){
 	                try {
-	                    if(!Checks.esNulo(exc.dameCelda(i, COL_SUB_REGISTRO)) && !Checks.esNulo(exc.dameCelda(i, COL_ID_SUB_REGISTRO)) 
+	                    if(!Checks.esNulo(exc.dameCelda(i, COL_SUB_REGISTRO)) && !Checks.esNulo(exc.dameCelda(i, COL_ID_SUB_REGISTRO)) && Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 0
 	                            && Boolean.FALSE.equals(particularValidator.existeIdentificadorSubregistro(exc.dameCelda(i, COL_SUB_REGISTRO), exc.dameCelda(i, COL_ID_SUB_REGISTRO))))
+	                        listaFilas.add(i);
+	                } catch (ParseException e) {
+	                    listaFilas.add(i);
+	                }
+	            }
+	            } catch (IllegalArgumentException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            } catch (IOException e) {
+	                listaFilas.add(0);
+	                e.printStackTrace();
+	            }
+	        return listaFilas;   
+	}	
+	
+	private List<Integer> isNuevoCorrecto(MSVHojaExcel exc){
+	       List<Integer> listaFilas = new ArrayList<Integer>();
+
+	        try{
+	            for(int i=1; i<this.numFilasHoja;i++){
+	                try {
+	                    if(!Checks.esNulo(exc.dameCelda(i, COL_SUB_REGISTRO)) && !Checks.esNulo(exc.dameCelda(i, COL_ID_SUB_REGISTRO)) && !Checks.esNulo(exc.dameCelda(i, COL_NUEVO)) 
+	                            && !(Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 1 || Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 0))
 	                        listaFilas.add(i);
 	                } catch (ParseException e) {
 	                    listaFilas.add(i);

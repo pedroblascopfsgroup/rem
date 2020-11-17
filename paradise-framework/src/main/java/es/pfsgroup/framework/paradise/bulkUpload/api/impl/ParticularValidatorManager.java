@@ -27,8 +27,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	public static final String COD_MEDIADOR = "04";
 	public static final String COD_FUERZA_VENTA_DIRECTA="18";
-	public static final String COD_DD_SRE_TASACION = "TAS";
-	public static final String COD_DD_SRE_CARGA = "CAR";
+	public static final String COD_DD_SRE_TASACION = "TASACION";
+	public static final String COD_DD_SRE_CARGA = "CARGA";
 	
 	@Override
 	public String getOneNumActivoAgrupacionRaw(String numAgrupacion){
@@ -5266,9 +5266,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 					+ "		 	AND BORRADO = 0");
 		} else if (COD_DD_SRE_CARGA.equals(subtipo)) {
 			resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
-					+ "		 FROM ACT_CRG_CARGAS WHERE"
-					+ "		 	CRG_RECOVERY_ID ="+identificador+" "
-					+ "		 	AND BORRADO = 0");
+					+ "		 FROM BIE_CAR_CARGAS BIE_CAR "
+					+ "		 JOIN ACT_CRG_CARGAS CRG ON CRG.BIE_CAR_ID = BIE_CAR.BIE_CAR_ID AND CRG.BORRADO = 0"
+					+ "		 WHERE BIE_CAR.BORRADO = 0"
+					+ "		 	AND BIE_CAR.BIE_CAR_ID_RECOVERY ="+identificador);
 		}
 		return !"0".equals(resultado);
 	}	

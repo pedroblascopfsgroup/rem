@@ -5440,4 +5440,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return !"0".equals(resultado);
 	}
+	
+	public boolean conEstadoGasto(String idGasto,String codigoEstado) {
+		if(Checks.esNulo(idGasto) || Checks.esNulo(codigoEstado) || !StringUtils.isNumeric(idGasto) ) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "FROM GPV_GASTOS_PROVEEDOR GASTOS "
+				+ "JOIN DD_EGA_ESTADOS_GASTO DD on GASTOS.DD_EGA_ID = DD.DD_EGA_ID "
+				+ "WHERE GASTOS.GPV_NUM_GASTO_HAYA = "+idGasto+" "
+				+ "AND DD.DD_EGA_CODIGO = '"+codigoEstado+"'"
+				+ "AND GASTOS.BORRADO = 0");
+		return !"0".equals(resultado);
+	}
 }

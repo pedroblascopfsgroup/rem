@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=IVAN REPISO
---## FECHA_CREACION=20201117
+--## FECHA_CREACION=20201116
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-8208
@@ -86,7 +86,7 @@ BEGIN
                     INNER JOIN '||V_ESQUEMA||'.GAH_GESTOR_ACTIVO_HISTORICO GAH ON GAH.GEH_ID = GEH.GEH_ID
                     INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = GAH.ACT_ID AND ACT.BORRADO = 0
                     WHERE ACT.DD_SCR_ID IN (443,444) AND GEH.DD_TGE_ID = 369 AND GEH.BORRADO = 0 
-                    AND GEH.GEH_FECHA_HASTA IS NULL AND GEH.USU_ID = '|| V_USU_ID ||') T2
+                    AND GEH.GEH_FECHA_HASTA IS NULL) T2
                 ON (T1.GEH_ID = T2.GEH_ID)
                 WHEN MATCHED THEN UPDATE SET
                 T1.GEH_FECHA_HASTA = SYSDATE,		     
@@ -102,8 +102,7 @@ BEGIN
                     SELECT GEE.GEE_ID FROM '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE 
                     INNER JOIN '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO GAC ON GAC.GEE_ID = GEE.GEE_ID
                     INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = GAC.ACT_ID AND ACT.BORRADO = 0
-                    WHERE ACT.DD_SCR_ID IN (443,444) AND GEE.DD_TGE_ID = 369 AND GEE.BORRADO = 0 
-                    AND GEE.USU_ID = '|| V_USU_ID ||') T2
+                    WHERE ACT.DD_SCR_ID IN (443,444) AND GEE.DD_TGE_ID = 369 AND GEE.BORRADO = 0) T2
                 ON (T1.GEE_ID = T2.GEE_ID)
                 WHEN MATCHED THEN UPDATE SET
                 T1.BORRADO = 1,	     

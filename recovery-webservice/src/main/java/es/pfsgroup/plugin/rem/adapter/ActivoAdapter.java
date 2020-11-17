@@ -1844,6 +1844,7 @@ public class ActivoAdapter {
 				add(ActivoTramiteApi.CODIGO_TRAMITE_ACTUACION_TECNICA);
 				add(ActivoTramiteApi.CODIGO_TRAMITE_TASACION);
 				add(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEDULA);
+				add(ActivoTramiteApi.CODIGO_TRAMITE_INFORME);
 			}
 		};
 		List<DtoListadoTramites> listadoTramitesDto = new ArrayList<DtoListadoTramites>();
@@ -1851,22 +1852,24 @@ public class ActivoAdapter {
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
 				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+		boolean esUsuarioBBVA = false;
+		if(usuarioCartera != null && usuarioCartera.getCartera() != null) {
+			esUsuarioBBVA = DDCartera.CODIGO_CARTERA_BBVA.equals(usuarioCartera.getCartera().getCodigo());
+		}
+		
 		
 		for (VBusquedaTramitesActivo tramite : tramitesActivo) {
-			DtoListadoTramites dtoTramite = new DtoListadoTramites();
-			try {
-				beanUtilNotNull.copyProperties(dtoTramite, tramite);
+			
+			if((esUsuarioBBVA && !listaCodigosTramite.contains(tramite.getCodigoTipoTramite())) || !esUsuarioBBVA) {
+				DtoListadoTramites dtoTramite = new DtoListadoTramites();
+				try {
+					beanUtilNotNull.copyProperties(dtoTramite, tramite);
 
-			} catch (IllegalAccessException e) {
-				logger.error("Error en ActivoAdapter", e);
-			} catch (InvocationTargetException e) {
-				logger.error("Error en ActivoAdapter", e);
-			}
-			if(DDCartera.CODIGO_CARTERA_BBVA.equals(usuarioCartera.getCartera())) {
-				if(!listaCodigosTramite.contains(tramite.getCodigoTipoTramite())) {
-					listadoTramitesDto.add(dtoTramite);
+				} catch (IllegalAccessException e) {
+					logger.error("Error en ActivoAdapter", e);
+				} catch (InvocationTargetException e) {
+					logger.error("Error en ActivoAdapter", e);
 				}
-			} else {
 				listadoTramitesDto.add(dtoTramite);
 			}
 						
@@ -1876,13 +1879,9 @@ public class ActivoAdapter {
 			for (DtoListadoTramites tramite : listadoTramitesDto ) {
 				Filter fTramite = genericDao.createFilter(FilterType.EQUALS, "idTramite", tramite.getIdTramite());
 				List<VBusquedaTramitesActivoMatriz> tramiteAM = genericDao.getList(VBusquedaTramitesActivoMatriz.class, fTramite);
-				if (tramiteAM.size() == 1) {
-					if(DDCartera.CODIGO_CARTERA_BBVA.equals(usuarioCartera.getCartera())) {
-							listadoTramitesDtoActivoMatriz.add(tramite);							
-					} else {
-						listadoTramitesDtoActivoMatriz.add(tramite);
-					}				
-				}
+				if(tramiteAM.size() == 1) {
+						listadoTramitesDtoActivoMatriz.add(tramite);							
+				}								
 			}
 			return listadoTramitesDtoActivoMatriz;
 		}

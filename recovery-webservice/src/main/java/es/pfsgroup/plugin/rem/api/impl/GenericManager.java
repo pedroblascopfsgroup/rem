@@ -314,7 +314,11 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Usuario usuarioLogado = adapter.getUsuarioLogado();
 		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
 				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-
+		boolean esUsuCarteraBBVA = false;
+		if(usuarioCartera != null && usuarioCartera.getCartera() != null) {
+			esUsuCarteraBBVA = DDCartera.CODIGO_CARTERA_BBVA.equals(usuarioCartera.getCartera().getCodigo()); 
+		}
+			
 		// Leemos el fichero completo
 		try {
 			scan = new Scanner(menuItemsJsonFile);
@@ -344,32 +348,20 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			if (itemObject.containsKey("secFunPermToRender")) {
 				secFunPermToRender = itemObject.getString("secFunPermToRender");
 			}
-			
-			if (secFunPermToRender == null || authData.getAuthorities().contains(secFunPermToRender)) {
+						
+			if((secFunPermToRender == null || authData.getAuthorities().contains(secFunPermToRender)) && 
+					((esUsuCarteraBBVA && !nombreEntidad.toLowerCase().equals("trabajos") && !nombreEntidad.toLowerCase().equals("gastos")) ||
+					!esUsuCarteraBBVA)) {
 				DtoMenuItem menuItem = new DtoMenuItem();
-				if(usuarioCartera != null) {
-					boolean esUsuCarteraBBVA = DDCartera.CODIGO_CARTERA_BBVA.equals(usuarioCartera.getCartera().getCodigo()); 
-					if((esUsuCarteraBBVA && !nombreEntidad.toLowerCase().equals("trabajos") && !nombreEntidad.toLowerCase().equals("gastos")) ||
-							!esUsuCarteraBBVA) {
-						try {
-							beanUtilNotNull.copyProperties(menuItem, itemObject);
-	
-						} catch (Exception e) {
-							logger.error(e.getCause());
-						}
-						menuItemsPerm.add(menuItem);
-					} 
-				} else {
-					try {
-						beanUtilNotNull.copyProperties(menuItem, itemObject);
+				try {
+					beanUtilNotNull.copyProperties(menuItem, itemObject);
 
-					} catch (Exception e) {
-						logger.error(e.getCause());
-					}
-					menuItemsPerm.add(menuItem);
+				} catch (Exception e) {
+					logger.error(e.getCause());
 				}
-			}
-		
+				menuItemsPerm.add(menuItem);
+			} 
+				
 		}
 
 		return menuItemsPerm;

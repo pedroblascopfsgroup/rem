@@ -581,7 +581,10 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						xtype: 'textfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.perimetro.trabajos.vivos'),
 						colspan: 2,
-						bind:		'{activo.trabajosVivos}',
+						bind: {
+							value: '{activo.trabajosVivos}',
+							hidden: '{esUsuarioBBVA}'
+						},
 						readOnly	: true
 					},
 		            {    

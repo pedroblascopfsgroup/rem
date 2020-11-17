@@ -137,6 +137,7 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	
 	private Boolean unidadAlquilable;
 	private String tipoTituloActivoMatriz;
+	private Long idAsuntoRecAlaska;
 	/*
 
     private NMBAdjudicacionBien adjudicacionBien;
@@ -779,5 +780,12 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	}
 	public void setSociedadPagoAnterior(String sociedadPagoAnterior) {
 		this.sociedadPagoAnterior = sociedadPagoAnterior;
+	}
+	public Long getIdAsuntoRecAlaska() {
+		return idAsuntoRecAlaska;
+	}
+
+	public void setIdAsuntoRecAlaska(Long idAsuntoRecAlaska) {
+		this.idAsuntoRecAlaska = idAsuntoRecAlaska;
 	}
 }

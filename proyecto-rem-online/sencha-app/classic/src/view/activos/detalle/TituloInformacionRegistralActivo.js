@@ -823,6 +823,13 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
                                 	readOnly: '{datosRegistrales.unidadAlquilable}'
                                 }
                             },
+                            {
+                                fieldLabel: HreRem.i18n('fieldlabel.id.asunto.recovery'),
+                                bind: {
+                                    value: '{datosRegistrales.idAsuntoRecAlaska}',
+                                    readOnly: 'true'
+                                }
+                            },
 							{
 								fieldLabel : HreRem
 										.i18n('fieldlabel.id.proceso.origen'),

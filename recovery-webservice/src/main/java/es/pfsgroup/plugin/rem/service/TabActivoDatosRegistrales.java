@@ -180,6 +180,9 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			
 			if (activo.getAdjNoJudicial() != null) {
 				BeanUtils.copyProperties(activoDto, activo.getAdjNoJudicial());
+				if(Checks.esNulo(activo.getAdjNoJudicial().getIdAsuntoRecAlaska())) {
+					activoDto.setIdAsuntoRecAlaska(null);
+				}
 			}
 		}
 

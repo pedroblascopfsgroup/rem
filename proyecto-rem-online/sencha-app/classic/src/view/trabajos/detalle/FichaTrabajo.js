@@ -98,6 +98,9 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 					            			value: '{trabajo.subtipoTrabajoCodigo}',
 					            			disabled: '{!trabajo.tipoTrabajoCodigo}'
 					            		},
+					            		listeners:{
+					            			change:'bloquearCombosFechaConcretayHoraPorSubtipoTomaPosesionYPaquetes'
+					            		},
 									allowBlank: false
 						        },
         						{

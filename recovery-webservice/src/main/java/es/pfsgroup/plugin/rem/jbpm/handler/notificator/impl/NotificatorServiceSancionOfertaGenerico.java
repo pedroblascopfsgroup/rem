@@ -87,6 +87,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	
 	//Variables de buzones	
 	private static final String BUZON_REM = "buzonrem";
+	private static final String BUZON_RESERVA_HAYA = "reservashaya";
 	private static final String BUZON_PFS = "buzonpfs";
 	private static final String BUZON_FDV = "buzonfdv";
 	private static final String BUZON_OFR_APPLE = "buzonofrapple";
@@ -268,20 +269,10 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				}
 
 				if(oferta.getActivoPrincipal() != null){
-					if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
-							|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-							|| DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-							|| DDCartera.CODIGO_CARTERA_TANGO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-							|| DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-							|| DDCartera.CODIGO_CARTERA_THIRD_PARTY.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-							|| DDCartera.CODIGO_CARTERA_EGEO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
-							|| DDCartera.CODIGO_CARTERA_HYT.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
-						usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
-						if(!Checks.esNulo(usuarioBackOffice)){
-							destinatarios.add(usuarioBackOffice.getEmail());
-						}	
-					}
-
+					usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+					if(!Checks.esNulo(usuarioBackOffice)){
+						destinatarios.add(usuarioBackOffice.getEmail());
+					}	
 					if(DDSubcartera.CODIGO_DIVARIAN_ARROW_INMB.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())
 							|| DDSubcartera.CODIGO_DIVARIAN_REMAINING_INMB.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())){
 						preescriptor= ofertaApi.getPreescriptor(oferta);
@@ -440,6 +431,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		
 		Usuario buzonRem = usuarioManager.getByUsername(BUZON_REM);
 		Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
+		Usuario buzonReservaHaya = usuarioManager.getByUsername(BUZON_RESERVA_HAYA);
 		Usuario buzonOfertaApple = null;
 		ActivoProveedor preescriptor= null;
 		Usuario gestorBackoffice = null;
@@ -462,9 +454,13 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 
 		String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
 		
-		if (!Checks.esNulo(buzonRem)) {
+		if (!Checks.esNulo(buzonRem) && DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())) {
 			destinatarios.add(buzonRem.getEmail());
 		}
+		if (buzonReservaHaya != null && !DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())) {
+			destinatarios.add(buzonReservaHaya.getEmail());
+		}
+		
 		if (!Checks.esNulo(buzonPfs)) {
 			destinatarios.add(buzonPfs.getEmail());
 		}

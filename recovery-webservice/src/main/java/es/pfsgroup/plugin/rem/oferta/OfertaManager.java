@@ -134,6 +134,8 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
+import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
+import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VDatosCalculoLBK;
 import es.pfsgroup.plugin.rem.model.VListOfertasCES;
 import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
@@ -146,6 +148,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
@@ -5107,24 +5110,48 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					activosFichaComercial.setLink(linkCabecera(act.getId()));
 					
 					if(!Checks.esNulo(oferta.getImporteOferta())) {
-						//TODO hay que restarle al importe de la oferta la comision de haya
-						activosFichaComercial.setOfertaNeta(oferta.getImporteOferta());
+						Double importeOfertaNeta = oferta.getImporteOferta();
+						Double honorarios  = Double.valueOf(0);
+						if ( expediente != null && expediente.getHonorarios() != null && !expediente.getHonorarios().isEmpty()) {
+							for (GastosExpediente gastoExpediente : expediente.getHonorarios()) {
+								if ( gastoExpediente.getImporteFinal() != null) {
+									honorarios += gastoExpediente.getImporteFinal();
+								}
+							}
+						}
+						activosFichaComercial.setComisionHaya(honorarios);
+						activosFichaComercial.setOfertaNeta(importeOfertaNeta - honorarios);
+					}
+					Integer numGastosPendientes = new Integer(0);
+					Long idActivo = act.getId();
+					Filter filtroGastoActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo);
+					List<VBusquedaGastoActivo> gastosActivos = genericDao.getList(VBusquedaGastoActivo.class, filtroGastoActivo);
+					if ( gastosActivos != null && !gastosActivos.isEmpty() ) {
+						for( VBusquedaGastoActivo gasto : gastosActivos ) {
+							String estadoGasto = gasto.getEstadoGastoCodigo();
+							if ( DDEstadoGasto.PENDIENTE.equals(estadoGasto)) {
+								numGastosPendientes += 1;
+							}
+						}
+					}
+					activosFichaComercial.setGastosPendientes(Double.valueOf(numGastosPendientes));
+					
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+					ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
+					if (activoBbva != null && activoBbva.getTipoAlta() != null) {
+						activosFichaComercial.setTipoEntrada(activoBbva.getTipoAlta().getDescripcion());
 					}
 					
-					//TODO (Campos faltantes)
-					
+					if (act.getPropietarioPrincipal() != null) {
+						activosFichaComercial.setSociedadTitular(act.getPropietarioPrincipal().getNombre());
+					}
 					// Pestaña Desglose 
-					//oferta neta (campo calculado)
-					//comision haya 
-					//pvp suelo epa
-					//gastos pendientes
-					//costes legales
+					//pvp suelo epa -> por definir
+					//costes legales -> por definir
 					
 					//Pestaña depuracion
-					//tipo entrada
-					//depuracion juridica
-					//colectivo social
-					//sociedad Titular
+					//depuracion juridica -> por definir
+					//colectivo social -> por definir
 					
 					dtoFichaComercial.getListaActivosFichaComercial().add(activosFichaComercial);
 					
@@ -5340,18 +5367,46 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				activosFichaComercial.setLink(linkCabecera(activo.getId()));
 				
 				if(!Checks.esNulo(oferta.getImporteOferta())) {
-					//TODO hay que restarle la comision de haya
-					activosFichaComercial.setOfertaNeta(oferta.getImporteOferta());
+					Double importeOfertaNeta = oferta.getImporteOferta();
+					Double honorarios  = Double.valueOf(0);
+					if ( expediente != null && expediente.getHonorarios() != null && !expediente.getHonorarios().isEmpty()) {
+						for (GastosExpediente gastoExpediente : expediente.getHonorarios()) {
+							if ( gastoExpediente.getImporteFinal() != null) {
+								honorarios += gastoExpediente.getImporteFinal();
+							}
+						}
+					}
+					activosFichaComercial.setComisionHaya(honorarios);
+					activosFichaComercial.setOfertaNeta(importeOfertaNeta - honorarios);
+				}
+				Activo act = oferta.getActivoPrincipal();
+				Integer numGastosPendientes = new Integer(0);
+				Long idActivo = act.getId();
+				Filter filtroGastoActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo);
+				List<VBusquedaGastoActivo> gastosActivos = genericDao.getList(VBusquedaGastoActivo.class, filtroGastoActivo);
+				if ( gastosActivos != null && !gastosActivos.isEmpty() ) {
+					for( VBusquedaGastoActivo gasto : gastosActivos ) {
+						String estadoGasto = gasto.getEstadoGastoCodigo();
+						if ( DDEstadoGasto.PENDIENTE.equals(estadoGasto)) {
+							numGastosPendientes += 1;
+						}
+					}
+				}
+				activosFichaComercial.setGastosPendientes(Double.valueOf(numGastosPendientes));
+				
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+				ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
+				if (activoBbva != null && activoBbva.getTipoAlta() != null) {
+					activosFichaComercial.setTipoEntrada(activoBbva.getTipoAlta().getDescripcion());
 				}
 				
-				//TODO (Campos faltantes)
+				if (act.getPropietarioPrincipal() != null) {
+					activosFichaComercial.setSociedadTitular(act.getPropietarioPrincipal().getNombre());
+				}
 				
 				// Pestaña Desglose 
-				//oferta neta (campo calculado)
-				//comision haya 
-				//pvp suelo epa
-				//gastos pendientes
-				//costes legales
+				//pvp suelo epa -> por definir
+				//costes legales -> por definir
 				
 				//Pestaña depuracion
 				//tipo entrada
@@ -5360,8 +5415,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				//sociedad Titular
 
 				//dtoFichaComercial.viviendasTotales();
-				dtoFichaComercial.setDiasPublicado(this.obtenerTotalDeDiasEnEstadoPublicadoVenta(activo.getId()));
-				dtoFichaComercial.setMesesEnVenta(this.obtenerTotalDeMesesEnEstadoPublicadoVenta(activo.getId()));
+				//depuracion juridica -> por definir
+				//colectivo social -> por definir
+				
+				dtoFichaComercial.setDiasPublicado(this.obtenerTotalDeDiasEnEstadoPublicadoVenta(oferta.getActivoPrincipal().getId()));
+				dtoFichaComercial.setMesesEnVenta(this.obtenerTotalDeMesesEnEstadoPublicadoVenta(oferta.getActivoPrincipal().getId()));
 
 				dtoFichaComercial.getListaActivosFichaComercial().add(activosFichaComercial);
 			}

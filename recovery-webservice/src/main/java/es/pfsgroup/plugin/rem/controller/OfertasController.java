@@ -919,7 +919,7 @@ public class OfertasController {
 		return createModelAndViewJson(model);
 	}
 	
-	@RequestMapping(method = RequestMethod.GET)
+	/*@RequestMapping(method = RequestMethod.GET)
 		public void generateExcelBBVA(Long idExpediente, HttpServletRequest request, HttpServletResponse response) throws IOException {
 	
 			try {
@@ -933,7 +933,7 @@ public class OfertasController {
 				e.printStackTrace();
 	 
 			}
-		}
+		}*/
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)

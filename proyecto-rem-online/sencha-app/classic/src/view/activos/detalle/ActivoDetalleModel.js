@@ -1697,16 +1697,27 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getComboSubtipoActivo',
-					extraParams: {codigoTipoActivo: '{activo.tipoActivoCodigo}'}
+					extraParams: {codigoTipoActivo: '{activo.tipoActivoCodigo}',idActivo: '{activo.id}'}
 				}
     		},
+    		
+    		//
+    		comboFiltroSubtipoActivo: {
+				model: 'HreRem.model.ComboBase',
+	    		proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboSubtipoActivoFiltered',
+					extraParams: {codTipoActivo: '{activo.tipoActivoCodigo}'}
+				}
+    		},
+    		//
 	    	    		
     		comboSubtipoActivoAdmision: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getComboSubtipoActivo',
-					extraParams: {codigoTipoActivo: '{activoAdmision.tipoActivoCodigo}'}
+					extraParams: {codigoTipoActivo: '{activoAdmision.tipoActivoCodigo}',idActivo: '{activoAdmision.id}'}
 				}
     		},
 
@@ -1715,7 +1726,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getComboSubtipoActivo',
-					extraParams: {codigoTipoActivo: '{activoInforme.tipoActivoCodigo}'}
+					extraParams: {codigoTipoActivo: '{activoInforme.tipoActivoCodigo}',idActivo: '{activoInforme.id}'}
 				}
     		},
 
@@ -1724,7 +1735,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getComboSubtipoActivo',
-					extraParams: {codigoTipoActivo: '{infoComercial.tipoActivoCodigo}'}
+					extraParams: {codigoTipoActivo: '{infoComercial.tipoActivoCodigo}',idActivo: '{infoComercial.id}'}
 				}
     		},    		
     		    		
@@ -2255,7 +2266,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getComboSubtipoActivo',
-				extraParams: {codigoTipoActivo: '{activo.tipoActivoCodigo}'}
+				extraParams: {codigoTipoActivo: '{activo.tipoActivoCodigo}',idActivo: '{activo.id}'}
 			}
 		},
 

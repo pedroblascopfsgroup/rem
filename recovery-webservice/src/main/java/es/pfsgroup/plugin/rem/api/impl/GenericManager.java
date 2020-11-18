@@ -32,6 +32,7 @@ import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.users.domain.Funcion;
 import es.capgemini.pfs.users.domain.Perfil;
@@ -89,6 +90,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoLocalizacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoGestion;
@@ -455,11 +457,25 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	@Override
 	@BusinessOperationDefinition("genericManager.getComboSubtipoActivo")
-	public List<DDSubtipoActivo> getComboSubtipoActivo(String codigoTipo) {
-
+	public List<DDSubtipoActivo> getComboSubtipoActivo(String codigoTipo, String idActivo) {
+		Activo act = null;
+		if (idActivo != null) {
+			act = activoApi.get(Long.parseLong(idActivo));
+		}
+		
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "tipoActivo.codigo", codigoTipo);
-		return genericDao.getListOrdered(DDSubtipoActivo.class, order, filter);
+		Filter filtroNoEsEnBbva = genericDao.createFilter(FilterType.EQUALS, "enBbva",false);
+		
+		if (act != null && DDCartera.CODIGO_CARTERA_BBVA.equals(act.getCartera().getCodigo())) {
+			return genericDao.getListOrdered(DDSubtipoActivo.class, order, filter);
+		}else {
+			if (act != null) {
+				return genericDao.getListOrdered(DDSubtipoActivo.class, order, filter, filtroNoEsEnBbva);
+			}else {
+				return genericDao.getListOrdered(DDSubtipoActivo.class, order, filter);
+			}		
+		}
 
 	}
 

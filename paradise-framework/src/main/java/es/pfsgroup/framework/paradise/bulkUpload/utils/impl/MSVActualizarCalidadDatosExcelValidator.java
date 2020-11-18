@@ -3,6 +3,7 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 import java.io.File;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,12 @@ public class MSVActualizarCalidadDatosExcelValidator extends MSVExcelValidatorAb
 	private final int COL_IDENTIFICADOR = 0;
 	private final int COL_CAMPO = 1;
 	private final int COL_VALOR = 2;
+	
+	private final String CAMPO_SUBTIPO_ACTIVO = "05";
+	private final String CODIGO_APARTAMENTO_TURISTICO = "40";
+	private final String CODIGO_HOSTELERO = "41";
+	private final String CODIGO_SUELO_URBANO_NO_CONSOLIDADO = "42";
+	
 	
 
 	@Resource
@@ -137,7 +144,8 @@ public class MSVActualizarCalidadDatosExcelValidator extends MSVExcelValidatorAb
 						break;
 						
 					case COL_VALOR:
-						valorOK = Checks.esNulo(celda) 	|| tipoCampo != null && esValorCorrectoCDC(tipoCampo, celda);
+						valorOK = Checks.esNulo(celda) 	|| tipoCampo != null && esValorCorrectoCDC(tipoCampo, celda) 
+								|| tipoCampo != null && comprobarCarteraYSubtipo(tipoCampo, exc.dameCelda(fila, COL_IDENTIFICADOR), celda);
 						break;						
 					}
 
@@ -175,6 +183,19 @@ public class MSVActualizarCalidadDatosExcelValidator extends MSVExcelValidatorAb
 			} catch (ParseException e) {
 				esCorrecto = false;
 				logger.error(e.getMessage());
+			}
+		}
+		return esCorrecto;
+	}
+	
+	private boolean comprobarCarteraYSubtipo(String tipoCampo, String numeroActivo, String celda) {
+		boolean esCorrecto = true;
+		List<String> listaCodigos = Arrays.asList(CODIGO_APARTAMENTO_TURISTICO,CODIGO_HOSTELERO,CODIGO_SUELO_URBANO_NO_CONSOLIDADO);
+		
+		if (CAMPO_SUBTIPO_ACTIVO.equals(tipoCampo) && (numeroActivo != null && !particularValidator.esActivoBBVA(numeroActivo))) {
+			String codigoSubtipo = particularValidator.sacarCodigoSubtipoActivo(celda);
+			if (codigoSubtipo == null || listaCodigos.contains(codigoSubtipo)) {
+				esCorrecto = false;	
 			}
 		}
 		return esCorrecto;

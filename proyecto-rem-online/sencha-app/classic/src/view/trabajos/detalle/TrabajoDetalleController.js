@@ -193,15 +193,28 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 				  var fecha = decode["data"];
 				  var prehora = fecha.split('T');
 				  fecha = new Date(fecha);
-				  me.lookupReference('fechaConcretaTrabajo').setValue(fecha);
+				 				 
+				  if(me.lookupReference("tipoTrabajo").getValue() == CONST.TIPOS_TRABAJO['ACTUACION_TECNICA'] && 
+				  ( me.getViewModel().get("trabajo.subtipoTrabajoCodigo") == CONST.SUBTIPOS_TRABAJO['PAQUETES'])
+				  ||  me.getViewModel().get("trabajo.subtipoTrabajoCodigo") == CONST.SUBTIPOS_TRABAJO['TOMA_POSESION']){
+				  	 me.lookupReference('fechaConcretaTrabajo').setValue(fecha);
+				  	 var hora = prehora[1];
+				  	 me.lookupReference('fechaConcretaTrabajo').setAllowBlank(false);
+				  	 me.lookupReference('horaConcretaTrabajo').setAllowBlank(false);
+				  	 
+						  prehora = hora.split(':');
+						  if(prehora[1] >= 30){
+							  me.lookupReference('horaConcretaTrabajo').setSelection(prehora[0]*2 + 1);
+						  }else{
+							  me.lookupReference('horaConcretaTrabajo').setSelection(prehora[0]*2);
+						  }
+					 }else{
+					 	 me.lookupReference('fechaConcretaTrabajo').setAllowBlank(true);
+				 		 me.lookupReference('horaConcretaTrabajo').setAllowBlank(true);
+					 }
+				 
 				  me.lookupReference('fechaTopeTrabajo').setValue(fecha);
-				  var hora = prehora[1];
-				  prehora = hora.split(':');
-				  if(prehora[1] >= 30){
-					  me.lookupReference('horaConcretaTrabajo').setSelection(prehora[0]*2 + 1);
-				  }else{
-					  me.lookupReference('horaConcretaTrabajo').setSelection(prehora[0]*2);
-				  }
+				
 			  }
         	});
         	
@@ -394,12 +407,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		var campoIdTareaInformado = (idTarea != null && idTarea.length > 0);
 		var existeTarea = null;
 		
-		if(me.lookupReference('fechaTopeTrabajo').getValue() == null){
-			if(me.lookupReference('horaConcretaTrabajo').getValue() == null || me.lookupReference('horaConcretaTrabajo').getValue() == null){
-				Ext.MessageBox.alert("Error","La fecha concreta y la hora concreta no puede ser null cuando no hay fecha tope");
-				return false;
-			}
-		}
 		if(!Ext.isEmpty(me.getView().idAgrupacion)){
 			arraySelection = me.lookupReference('activosagrupaciontrabajo').getActivoIDPersistedSelection();
 			var datosComprobarPerimetro = me.lookupReference('activosagrupaciontrabajo').getStore().getData().items;
@@ -2065,5 +2072,19 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     		me.lookupReference('llavesMotivoRef').setAllowBlank(true);
     	}
     	
+    },
+    bloquearCombosFechaConcretayHoraPorSubtipoTomaPosesionYPaquetes:function(){
+    	var me = this;
+    	var subtipoTrabajoCodigo = me.lookupReference('subtipoTrabajoComboFicha').getValue();  	
+ 		
+    	if (subtipoTrabajoCodigo == CONST.SUBTIPOS_TRABAJO['TOMA_POSESION'] || 
+    			subtipoTrabajoCodigo == CONST.SUBTIPOS_TRABAJO['PAQUETES']) {
+    		me.lookupReference('fechaConcreta').setAllowBlank(false);
+    		me.lookupReference('horaConcreta').setAllowBlank(false);
+    		
+  		  }else{
+    		me.lookupReference('fechaConcreta').setAllowBlank(true);
+    		me.lookupReference('horaConcreta').setAllowBlank(true);
+    	}
     }
 });

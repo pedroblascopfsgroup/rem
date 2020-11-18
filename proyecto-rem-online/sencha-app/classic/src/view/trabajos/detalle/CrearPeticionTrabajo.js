@@ -562,8 +562,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 																reference: 'fechaConcretaTrabajo',
 																minValue: $AC.getCurrentDate(),
 																maxValue: null,
-																colspan:1,
-																allowBlank: false
+																colspan:1
 															},
 															{
 																xtype: 'timefieldbase',
@@ -571,8 +570,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearPeticionTrabajo', {
 																reference: 'horaConcretaTrabajo',
 																fieldLabel: HreRem.i18n('fieldlabel.hora.concreta.trabajo'),
 																format: 'H:i',
-																increment: 30,
-																allowBlank: false
+																increment: 30
 															},	
 															{
 																xtype: 'datefieldbase',

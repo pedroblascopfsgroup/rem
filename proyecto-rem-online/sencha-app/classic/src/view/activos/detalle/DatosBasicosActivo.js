@@ -717,6 +717,37 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 									value: '{activo.motivoAplicaFormalizar}'
 								}
 							},
+							//Fila Condiciones de inclusión en perímetro Haya
+							{
+								xtype:'checkboxfieldbase',
+								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.visibleGestionComercial'),
+								reference: 'chkbxgestionComercial',
+								bind: {
+									value: '{activo.checkGestorComercial}',
+									readOnly: '{activo.restringido}'
+
+								},
+								listeners: {
+									change: 'onChkbxPerimetroChange'
+								}
+							},
+							{
+								xtype: 'datefieldbase',
+								bind:		'{activo.fechaGestionComercial}',
+								reference: 'datefieldFechaGestionComercial',
+								readOnly: '{activo.restringido}'
+							},
+							{
+								xtype: 'comboboxfieldbase',
+								reference: 'comboMotivoGestionComercial',
+								bind: {
+									store: '{comboMotivoGestionComercialActivo}',
+									value: '{activo.motivoGestionComercialCodigo}',
+									visible: '{activo.checkGestorComercial}',
+									readOnly: '{activo.restringido}'
+
+								}
+							},
 							//Bloque Comercialización
 							{    
 								xtype:'fieldsettable',

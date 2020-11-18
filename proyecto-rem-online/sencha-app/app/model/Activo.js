@@ -994,6 +994,26 @@ Ext.define('HreRem.model.Activo', {
 			{
 	 			name: 'esEditableActivoEstadoRegistral',
     			type: 'boolean'	 			
+			},
+			{
+				name:'excluirValidaciones',
+    			type: 'boolean'	 			
+			},
+			{
+	 			name: 'fechaGestionComercial',
+				type:'date',
+				dateFormat: 'c'
+			},
+			{
+	 			name: 'motivoGestionComercialDescripcion'
+			},
+			{
+	 			name: 'checkGestorComercial',
+	 			type: 'boolean'
+
+			},
+			{
+	 			name: 'restringido'
 			}
     		
     ],

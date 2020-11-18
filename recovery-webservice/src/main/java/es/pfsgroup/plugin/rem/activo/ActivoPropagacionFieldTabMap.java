@@ -66,6 +66,8 @@ public class ActivoPropagacionFieldTabMap {
 	    			"aplicaPublicar",
 	    			"aplicaFormalizar",
 	    			"aplicaComercializar",
+	    			"motivoGestionComercialCodigo",
+	    			"checkGestorComercial",
 
 	    			// comercializacion
     				"tipoComercializarCodigo",

@@ -127,7 +127,7 @@ public class PerimetroActivo implements Serializable, Auditable {
 	private String motivoAplicaAdmision;
 	
 	@Column(name = "PAC_CHECK_GESTION_COMERCIAL")
-	private Integer checkGestorComercial;
+	private Boolean checkGestorComercial;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PAC_EXCLUIR_VALIDACIONES")
@@ -381,11 +381,11 @@ public class PerimetroActivo implements Serializable, Auditable {
 		this.motivoAplicaPublicar = motivoAplicaPublicar;
 	}
 
-	public Integer getCheckGestorComercial() {
+	public Boolean getCheckGestorComercial() {
 		return checkGestorComercial;
 	}
 
-	public void setCheckGestorComercial(Integer checkGestorComercial) {
+	public void setCheckGestorComercial(Boolean checkGestorComercial) {
 		this.checkGestorComercial = checkGestorComercial;
 	}
 

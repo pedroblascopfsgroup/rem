@@ -294,7 +294,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String estadoAdmisionDescCabecera;
 	private String subestadoAdmisionDescCabecera;
 	private Boolean esEditableActivoEstadoRegistral;
-
+	
+	//Visible Gestion comercial
+	private Boolean excluirValidaciones;
+	private Date fechaGestionComercial;
+	private Boolean checkGestorComercial;
+	private String motivoGestionComercialCodigo;
+	private String motivoGestionComercialDescripcion;
+	private Boolean restringido;
 	
 	public Boolean getTieneOfertaAlquilerViva() {
 		return tieneOfertaAlquilerViva;
@@ -2247,6 +2254,58 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setEsEditableActivoEstadoRegistral(Boolean esEditableActivoEstadoRegistral) {
 		this.esEditableActivoEstadoRegistral = esEditableActivoEstadoRegistral;
-	}	
+	}
+
+	public Boolean getExcluirValidaciones() {
+		return excluirValidaciones;
+	}
+
+	public void setExcluirValidaciones(Boolean excluirValidaciones) {
+		this.excluirValidaciones = excluirValidaciones;
+	}
+
+	public Date getFechaGestionComercial() {
+		return fechaGestionComercial;
+	}
+
+	public void setFechaGestionComercial(Date fechaGestionComercial) {
+		this.fechaGestionComercial = fechaGestionComercial;
+	}
+
+
+	public String getMotivoGestionComercialCodigo() {
+		return motivoGestionComercialCodigo;
+	}
+
+	public void setMotivoGestionComercialCodigo(String motivoGestionComercialCodigo) {
+		this.motivoGestionComercialCodigo = motivoGestionComercialCodigo;
+	}
+
+	public String getMotivoGestionComercialDescripcion() {
+		return motivoGestionComercialDescripcion;
+	}
+
+	public void setMotivoGestionComercialDescripcion(String motivoGestionComercialDescripcion) {
+		this.motivoGestionComercialDescripcion = motivoGestionComercialDescripcion;
+	}
+
+	public Boolean getCheckGestorComercial() {
+		return checkGestorComercial;
+	}
+
+	public void setCheckGestorComercial(Boolean checkGestorComercial) {
+		this.checkGestorComercial = checkGestorComercial;
+	}
+
+	public Boolean getRestringido() {
+		return restringido;
+	}
+
+	public void setRestringido(Boolean restringido) {
+		this.restringido = restringido;
+	}
+
+	
+	
 	
 }

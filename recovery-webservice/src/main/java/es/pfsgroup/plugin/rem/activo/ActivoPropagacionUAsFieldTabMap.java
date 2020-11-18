@@ -65,6 +65,10 @@ public class ActivoPropagacionUAsFieldTabMap {
     	    		"motivoAplicaFormalizar",
     	    		"motivoAplicaComercializarCodigo",
 	    			"aplicaFormalizar",
+	    			"motivoGestionComercialCodigo",
+	    			"motivoGestionComercialDescripcion",
+	    			"checkGestorComercial",
+
     				
 	    			// comercializacion
     				"tipoComercializarCodigo",

@@ -433,7 +433,7 @@ public class AgendaAdapter {
 								errores= errores + "El valor del diccionario "+tfi.getNombre()+" debe ser un 01 o 02. ";
 							}
 						}else if("DDMotivoAnulacionExpediente".equals(tfi.getValuesBusinessOperation())) {
-							Filter filtroCodigo = genericDao.createFilter(FilterType.EQUALS, "codigo", tfi.getValue());
+							Filter filtroCodigo = genericDao.createFilter(FilterType.EQUALS, "codigo", valor[0]);
 							Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 							DDMotivoAnulacionExpediente diccionario = genericDao.get(DDMotivoAnulacionExpediente.class, filtroCodigo, filtroBorrado);
 							if(Checks.esNulo(diccionario)) {

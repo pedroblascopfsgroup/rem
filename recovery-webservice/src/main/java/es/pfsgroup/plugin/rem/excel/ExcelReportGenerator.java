@@ -652,7 +652,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 	}
 	
 	@Override
-	public File generateBbvaReportPrueba(DtoExcelFichaComercial dtoExcelFichaComercial, HttpServletRequest request) throws IOException {
+	public String generateBbvaReport(DtoExcelFichaComercial dtoExcelFichaComercial, HttpServletRequest request) throws IOException {
 		ServletContext sc = request.getSession().getServletContext();
 		FileOutputStream fileOutStream;
 		SecureRandom random = new SecureRandom();
@@ -1642,7 +1642,10 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				r = mySheetDesglose.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(activoFichaComercial.getOfertaNeta())) {
-					c.setCellValue(activoFichaComercial.getOfertaNeta().toString());
+					Locale locale = Locale.GERMANY;
+					NumberFormat numberFormat = NumberFormat.getCurrencyInstance(locale);
+					String importeOfertaNeta = numberFormat.format(activoFichaComercial.getOfertaNeta());
+					c.setCellValue(importeOfertaNeta);
 				} else {
 					c.setCellValue("");
 				}
@@ -2429,14 +2432,14 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			myWorkBook.write(fileOutStream);
 			fileOutStream.close();
 			
-			return fileOut;
+			return nombreFichero;
 			
 		}finally {
 			fileOutStream.close();
 		}
 	}
 	
-	@Override
+	/*@Override
 	public String generateBbvaReport(DtoExcelFichaComercial dtoExcelFichaComercial, HttpServletRequest request) throws IOException {
 		ServletContext sc = request.getSession().getServletContext();
 		FileOutputStream fileOutStream;
@@ -3625,7 +3628,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				
 				currentRowHistorico++;*/
 				
-			}
+			/*}
 			
 			
 			//rellenamos la quinta hoja
@@ -3756,7 +3759,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 		}finally {
 			fileOutStream.close();
 		}
-	}	
+	}*/	
 	
 	@Override
 	public File getAdvisoryNoteReport(List<VReportAdvisoryNotes> listaAN, HttpServletRequest request) throws IOException {

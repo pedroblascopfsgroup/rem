@@ -34,6 +34,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 
+
 @Component
 public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract {
 	
@@ -71,6 +72,7 @@ public class MSVMasivaDatosSobreGastoValidator extends MSVExcelValidatorAbstract
 	private Map<String, List<Integer>> mapaErrores;	
 	private final Log logger = LogFactory.getLog(getClass());
 	private boolean existeGasto = false;
+	
 	
 	
 

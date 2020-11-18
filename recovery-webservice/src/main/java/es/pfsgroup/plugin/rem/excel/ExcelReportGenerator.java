@@ -652,41 +652,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 	}
 	
 	@Override
-	public File generateBbvaReportPrueba(DtoExcelFichaComercial dtoExcelFichaComercial, HttpServletRequest request) throws IOException {
-		/*ServletContext sc = request.getSession().getServletContext();
-		FileOutputStream fileOutStream;
-		SecureRandom random = new SecureRandom();
-		long n = random.nextLong();
-        if (n == Long.MIN_VALUE) {
-            n = 0;
-        } else {
-            n = Math.abs(n);
-        }
-        String aleatorio = Long.toString(n);
-        if(aleatorio.length() > 5){
-        	aleatorio = aleatorio.substring(0, 5);
-        }
-		String nombreFichero = "FichaComercial_" + aleatorio +".xlsx";
-		
-		File poiFile = new File(sc.getRealPath("/plantillas/plugin/GenerarFichaComercialBbva/FichaComercialReport.xlsx"));
-		File fileOut = new File(poiFile.getAbsolutePath().replace("Report",""));
-		FileInputStream fis = new FileInputStream(poiFile);
-		fileOutStream = new FileOutputStream(fileOut);
-		
-		try {			
-			XSSFWorkbook myWorkBook = new XSSFWorkbook (fis);
-
-			XSSFSheet mySheet;
-			XSSFSheet mySheetDesglose;
-			XSSFSheet mySheetDepuracion;
-			mySheet = myWorkBook.getSheetAt(0);
-			mySheetDesglose = myWorkBook.getSheetAt(1);
-			mySheetDepuracion= myWorkBook.getSheetAt(2);
-			CellReference cellReference;
-			XSSFRow r;
-			XSSFCell c;
-			SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");*/
-		
+	public String generateBbvaReport(DtoExcelFichaComercial dtoExcelFichaComercial, HttpServletRequest request) throws IOException {
 		ServletContext sc = request.getSession().getServletContext();
 		FileOutputStream fileOutStream;
 		SecureRandom random = new SecureRandom();
@@ -738,7 +704,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			styleBordesCompletos.setBorderRight(XSSFCellStyle.BORDER_THIN);
 			styleBordesCompletos.setBorderLeft(XSSFCellStyle.BORDER_THIN);
 			font = styleBordesCompletos.getFont();
-			font.setFontHeightInPoints((short)8);
+			font.setFontHeight(11);
 			styleBordesCompletos.setFont(font);
 			styleBordesCompletos.setAlignment(XSSFCellStyle.ALIGN_CENTER);
 			
@@ -1676,7 +1642,10 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				r = mySheetDesglose.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(activoFichaComercial.getOfertaNeta())) {
-					c.setCellValue(activoFichaComercial.getOfertaNeta().toString());
+					Locale locale = Locale.GERMANY;
+					NumberFormat numberFormat = NumberFormat.getCurrencyInstance(locale);
+					String importeOfertaNeta = numberFormat.format(activoFichaComercial.getOfertaNeta());
+					c.setCellValue(importeOfertaNeta);
 				} else {
 					c.setCellValue("");
 				}
@@ -1745,7 +1714,6 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			styleBottomColumnsHistorico.setTopBorderColor(new XSSFColor(new java.awt.Color(157, 195, 230)));
 			styleBottomColumnsHistorico.setFillForegroundColor(new XSSFColor(new java.awt.Color(222, 235, 247)));
 			styleBottomColumnsHistorico.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
-			styleBottomColumnsHistorico.setAlignment(XSSFCellStyle.ALIGN_LEFT);
 			
 			XSSFCellStyle styleBottomColumnsEHistorico = myWorkBook.createCellStyle();
 			font = myWorkBook.createFont();
@@ -1771,12 +1739,12 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			font.setBold(false);
 			styleDataHistorico.setFont(font);
 			
-			XSSFCellStyle styleDataEHistoricoBold = myWorkBook.createCellStyle();
+			XSSFCellStyle styleDataEHistorico = myWorkBook.createCellStyle();
 			font = myWorkBook.createFont();
 			font.setFontHeight(11);
-			font.setBold(true);
-			styleDataEHistoricoBold.setFont(font);
-			styleDataEHistoricoBold.setDataFormat(dataFormat.getFormat("#,##0\\ \"€\";\\-#,##0\\ \"€\""));
+			font.setBold(false);
+			styleDataEHistorico.setFont(font);
+			styleDataEHistorico.setDataFormat(dataFormat.getFormat("#,##0\\ \"€\";\\-#,##0\\ \"€\""));
 			
 			for(DtoHcoComercialFichaComercial historico : dtoExcelFichaComercial.getListaHistoricoOfertas()) {
 				numActivosList.add(historico.getNumActivo());
@@ -2057,7 +2025,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				} else {
 					c.setCellValue("");
 				}
-				c.setCellStyle(styleDataHistoricoBold);
+				c.setCellStyle(styleDataHistorico);
 				
 				cellReference = new CellReference("I" + Integer.toString(currentRowHistorico));
 				r = mySheetHistorico.getRow(cellReference.getRow());
@@ -2089,9 +2057,9 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				} else {
 					c.setCellValue("");
 				}
-				c.setCellStyle(styleDataEHistoricoBold);
+				c.setCellStyle(styleDataEHistorico);
 				
-				cellReference = new CellReference("K" + Integer.toString(currentRowHistorico+1));
+				cellReference = new CellReference("K" + Integer.toString(currentRowHistorico));
 				r = mySheetHistorico.getRow(cellReference.getRow());
 				if (r == null) {
 					r = mySheetHistorico.createRow(cellReference.getRow());
@@ -2105,7 +2073,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				} else {
 					c.setCellValue("");
 				}
-				c.setCellStyle(styleDataEHistoricoBold);
+				c.setCellStyle(styleDataEHistorico);
 				
 				cellReference = new CellReference("L" + Integer.toString(currentRowHistorico));
 				r = mySheetHistorico.getRow(cellReference.getRow());
@@ -2121,7 +2089,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				} else {
 					c.setCellValue("");
 				}
-				c.setCellStyle(styleDataEHistoricoBold);				
+				c.setCellStyle(styleDataEHistorico);				
 				
 				currentRowHistorico++;
 				
@@ -2143,7 +2111,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 					mySheetHistorico.addMergedRegion(new CellRangeAddress(currentRowHistorico-1, currentRowHistorico-1, 1, 7));
 					c.setCellStyle(styleBottomColumnsHistorico);
 					
-					String formula = "SUM(I"+String.valueOf(numActivoDuplicate-1)+":I"+String.valueOf(currentRowHistorico-1)+")";
+					String formula = "SUM(I"+String.valueOf(currentRowHistorico-numActivoDuplicate)+":I"+String.valueOf(currentRowHistorico-1)+")";
 					cellReference = new CellReference("I" + Integer.toString(currentRowHistorico));
 					r = mySheetHistorico.getRow(cellReference.getRow());
 					if (r == null) {
@@ -2162,7 +2130,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 						totalFFRR = totalFFRR+"+"+formula;
 					}
 					
-					formula = "SUM(J"+String.valueOf(numActivoDuplicate-1)+":J"+String.valueOf(currentRowHistorico-1)+")";
+					formula = "SUM(J"+String.valueOf(currentRowHistorico-numActivoDuplicate)+":J"+String.valueOf(currentRowHistorico-1)+")";
 					cellReference = new CellReference("J" + Integer.toString(currentRowHistorico));
 					r = mySheetHistorico.getRow(cellReference.getRow());
 					if (r == null) {
@@ -2181,7 +2149,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 						totalOferta = totalOferta+"+"+formula;
 					}
 					
-					formula = "SUM(K"+String.valueOf(numActivoDuplicate-1)+":K"+String.valueOf(currentRowHistorico-1)+")";
+					formula = "SUM(K"+String.valueOf(currentRowHistorico-numActivoDuplicate)+":K"+String.valueOf(currentRowHistorico-1)+")";
 					cellReference = new CellReference("K" + Integer.toString(currentRowHistorico));
 					r = mySheetHistorico.getRow(cellReference.getRow());
 					if (r == null) {
@@ -2200,7 +2168,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 						totalpvpComite = totalpvpComite+"+"+formula;
 					}
 					
-					formula = "SUM(L"+String.valueOf(numActivoDuplicate-1)+":L"+String.valueOf(currentRowHistorico-1)+")";
+					formula = "SUM(L"+String.valueOf(currentRowHistorico-numActivoDuplicate)+":L"+String.valueOf(currentRowHistorico-1)+")";
 					cellReference = new CellReference("L" + Integer.toString(currentRowHistorico));
 					r = mySheetHistorico.getRow(cellReference.getRow());
 					if (r == null) {
@@ -2309,117 +2277,153 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			
 			int currentRowComercial = 27;
 			for( DtoListFichaAutorizacion autorizacion : dtoExcelFichaComercial.getListaFichaAutorizacion()) {
-				
-				if(currentRowComercial!= 27) {
-					r = mySheetAutorizacion.createRow(currentRowComercial);
-					c = r.createCell(1);
-				    c.setCellStyle(styleBordesCompletos);
-				    c = r.createCell(2);
-				    c.setCellStyle(styleBordesCompletos);
-				    c = r.createCell(3);
-				    c.setCellStyle(styleBordesCompletos);
-				    c = r.createCell(4);
-				    c.setCellStyle(styleBordesCompletos);
-				    c = r.createCell(5);
-				    c.setCellStyle(styleBordesCompletos);
-				    c = r.createCell(6);
-				    c.setCellStyle(styleBordesCompletos);
-				    c = r.createCell(7);
-				    c.setCellStyle(styleBordesCompletos);
-				    c = r.createCell(8);
-				    c.setCellStyle(styleBordesCompletos);
-				    c = r.createCell(9);
-				    c.setCellStyle(styleBordesCompletos);
-				    c = r.createCell(10);
-				    c.setCellStyle(styleBordesCompletos);
-				    c = r.createCell(11);
-				    c.setCellStyle(styleBordesCompletos);
-				    c = r.createCell(12);
-				    c.setCellStyle(styleBordesCompletos);
-				    c = r.createCell(13);
-				    c.setCellStyle(styleBordesCompletos);
-				}
-			
+							
 				cellReference = new CellReference("B" + Integer.toString(currentRowComercial));
 				r = mySheetAutorizacion.getRow(cellReference.getRow());
+				if (r == null) {
+					r = mySheetAutorizacion.createRow(cellReference.getRow());
+				}
 				c = r.getCell(cellReference.getCol());
+				if (c == null) {
+					c = r.createCell(cellReference.getCol());
+				}
 				if (!Checks.esNulo(autorizacion.getIdActivo())) {
 					c.setCellValue(autorizacion.getIdActivo());
 				} else {
 					c.setCellValue("");
 				}
+				c.setCellStyle(styleBordesCompletos);
 				
 				cellReference = new CellReference("C" + Integer.toString(currentRowComercial));
 				r = mySheetAutorizacion.getRow(cellReference.getRow());
+				if (r == null) {
+					r = mySheetAutorizacion.createRow(cellReference.getRow());
+				}
 				c = r.getCell(cellReference.getCol());
+				if (c == null) {
+					c = r.createCell(cellReference.getCol());
+				}
 				if (!Checks.esNulo(autorizacion.getFinca())) {
 					c.setCellValue(autorizacion.getFinca());
 				} else {
 					c.setCellValue("");
 				}
+				c.setCellStyle(styleBordesCompletos);
 				
 				cellReference = new CellReference("D" + Integer.toString(currentRowComercial));
 				r = mySheetAutorizacion.getRow(cellReference.getRow());
+				if (r == null) {
+					r = mySheetAutorizacion.createRow(cellReference.getRow());
+				}
 				c = r.getCell(cellReference.getCol());
+				if (c == null) {
+					c = r.createCell(cellReference.getCol());
+				}
 				if (!Checks.esNulo(autorizacion.getRegPropiedad())) {
 					c.setCellValue(autorizacion.getRegPropiedad());
 				} else {
 					c.setCellValue("");
 				}
+				c.setCellStyle(styleBordesCompletos);
 				
 				cellReference = new CellReference("E" + Integer.toString(currentRowComercial));
 				r = mySheetAutorizacion.getRow(cellReference.getRow());
+				if (r == null) {
+					r = mySheetAutorizacion.createRow(cellReference.getRow());
+				}
 				c = r.getCell(cellReference.getCol());
+				if (c == null) {
+					c = r.createCell(cellReference.getCol());
+				}
 				if (!Checks.esNulo(autorizacion.getLocalidadRegProp())) {
 					c.setCellValue(autorizacion.getLocalidadRegProp());
 				} else {
 					c.setCellValue("");
 				}
+				c.setCellStyle(styleBordesCompletos);
 				
 				cellReference = new CellReference("F" + Integer.toString(currentRowComercial));
 				r = mySheetAutorizacion.getRow(cellReference.getRow());
+				if (r == null) {
+					r = mySheetAutorizacion.createRow(cellReference.getRow());
+				}
 				c = r.getCell(cellReference.getCol());
+				if (c == null) {
+					c = r.createCell(cellReference.getCol());
+				}
 				if (!Checks.esNulo(autorizacion.getPrecioVenta())) {
 					c.setCellValue(autorizacion.getPrecioVenta());
 				} else {
 					c.setCellValue("");
 				}
+				c.setCellStyle(styleBordesCompletos);
 				
 				cellReference = new CellReference("G" + Integer.toString(currentRowComercial));
 				r = mySheetAutorizacion.getRow(cellReference.getRow());
+				if (r == null) {
+					r = mySheetAutorizacion.createRow(cellReference.getRow());
+				}
 				c = r.getCell(cellReference.getCol());
+				if (c == null) {
+					c = r.createCell(cellReference.getCol());
+				}
 				if (!Checks.esNulo(autorizacion.getDireccion())) {
 					c.setCellValue(autorizacion.getDireccion());
 				} else {
 					c.setCellValue("");
 				}
+				mySheetAutorizacion.addMergedRegion(new CellRangeAddress(currentRowComercial-1, currentRowComercial-1, 6, 7));
+				c.setCellStyle(styleBordesCompletos);
 				
 				cellReference = new CellReference("I" + Integer.toString(currentRowComercial));
 				r = mySheetAutorizacion.getRow(cellReference.getRow());
+				if (r == null) {
+					r = mySheetAutorizacion.createRow(cellReference.getRow());
+				}
 				c = r.getCell(cellReference.getCol());
+				if (c == null) {
+					c = r.createCell(cellReference.getCol());
+				}
 				if (!Checks.esNulo(autorizacion.getLocalidad())) {
 					c.setCellValue(autorizacion.getLocalidad());
 				} else {
 					c.setCellValue("");
 				}
+				mySheetAutorizacion.addMergedRegion(new CellRangeAddress(currentRowComercial-1, currentRowComercial-1, 8, 10));
+				c.setCellStyle(styleBordesCompletos);
 				
 				cellReference = new CellReference("L" + Integer.toString(currentRowComercial));
 				r = mySheetAutorizacion.getRow(cellReference.getRow());
+				if (r == null) {
+					r = mySheetAutorizacion.createRow(cellReference.getRow());
+				}
 				c = r.getCell(cellReference.getCol());
+				if (c == null) {
+					c = r.createCell(cellReference.getCol());
+				}
 				if (!Checks.esNulo(autorizacion.getProvincia())) {
 					c.setCellValue(autorizacion.getProvincia());
 				} else {
 					c.setCellValue("");
 				}
+				mySheetAutorizacion.addMergedRegion(new CellRangeAddress(currentRowComercial-1, currentRowComercial-1, 11, 12));
+				c.setCellStyle(styleBordesCompletos);
 				
 				cellReference = new CellReference("N" + Integer.toString(currentRowComercial));
 				r = mySheetAutorizacion.getRow(cellReference.getRow());
+				if (r == null) {
+					r = mySheetAutorizacion.createRow(cellReference.getRow());
+				}
 				c = r.getCell(cellReference.getCol());
+				if (c == null) {
+					c = r.createCell(cellReference.getCol());
+				}
 				if (!Checks.esNulo(autorizacion.getCondicionesVenta())) {
 					c.setCellValue(autorizacion.getCondicionesVenta());
 				} else {
 					c.setCellValue("");
 				}
+				c.setCellStyle(styleBordesCompletos);
 				
 				currentRowComercial++;
 
@@ -2428,14 +2432,14 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			myWorkBook.write(fileOutStream);
 			fileOutStream.close();
 			
-			return fileOut;
+			return nombreFichero;
 			
 		}finally {
 			fileOutStream.close();
 		}
 	}
 	
-	@Override
+	/*@Override
 	public String generateBbvaReport(DtoExcelFichaComercial dtoExcelFichaComercial, HttpServletRequest request) throws IOException {
 		ServletContext sc = request.getSession().getServletContext();
 		FileOutputStream fileOutStream;
@@ -3624,7 +3628,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				
 				currentRowHistorico++;*/
 				
-			}
+			/*}
 			
 			
 			//rellenamos la quinta hoja
@@ -3755,7 +3759,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 		}finally {
 			fileOutStream.close();
 		}
-	}	
+	}*/	
 	
 	@Override
 	public File getAdvisoryNoteReport(List<VReportAdvisoryNotes> listaAN, HttpServletRequest request) throws IOException {

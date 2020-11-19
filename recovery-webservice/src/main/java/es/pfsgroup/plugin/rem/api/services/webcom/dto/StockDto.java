@@ -352,7 +352,7 @@ public class StockDto implements WebcomRESTDto{
 	
 	@WebcomRequired
 	private String codSubfasePublicacion;
-	
+		
 	@WebcomRequired
 	@NestedDto(groupBy="idActivoHaya", type=PoseedorLlavesDto.class)
 	private List<PoseedorLlavesDto> arrProveedorLlavesRem;
@@ -377,6 +377,12 @@ public class StockDto implements WebcomRESTDto{
 	
 	@WebcomRequired
 	private StringDataType codEquipoGestion;
+	
+	@WebcomRequired
+	private LongDataType OnvComercializacion;
+	
+	@WebcomRequired
+	private StringDataType OnvComercializacionFecha;
 	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
@@ -1069,6 +1075,18 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setCodEquipoGestion(StringDataType codEquipoGestion) {
 		this.codEquipoGestion = codEquipoGestion;
+	}
+	public LongDataType getOnvComercializacion() {
+		return OnvComercializacion;
+	}
+	public void setOnvComercializacion(LongDataType onvComercializacion) {
+		OnvComercializacion = onvComercializacion;
+	}
+	public StringDataType getOnvComercializacionFecha() {
+		return OnvComercializacionFecha;
+	}
+	public void setOnvComercializacionFecha(StringDataType onvComercializacionFecha) {
+		OnvComercializacionFecha = onvComercializacionFecha;
 	}
 	
 }

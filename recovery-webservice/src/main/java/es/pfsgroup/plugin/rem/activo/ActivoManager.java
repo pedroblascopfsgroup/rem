@@ -3858,14 +3858,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					guardadoAsincrono.start();
 				}
 			}
-		if(dto.getActivoObraNuevaComercializacion()!=null) {
-			DDSinSiNo siono = (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, dto.getActivoObraNuevaComercializacion());
-			if(siono!=null) {
-				activo.setTieneObraNuevaAEfectosComercializacion(siono);				
+			if(dto.getActivoObraNuevaComercializacion()!=null) {
+				DDSinSiNo siono = (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, dto.getActivoObraNuevaComercializacion());
+				if(siono!=null) {
+					activo.setTieneObraNuevaAEfectosComercializacion(siono);				
+				}
+				activo.setObraNuevaAEfectosComercializacionFecha(new Date());
+				
 			}
-			activo.setObraNuevaAEfectosComercializacionFecha(new Date());
-			
-		}
 			
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);

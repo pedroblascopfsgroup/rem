@@ -584,6 +584,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	 		var me = this;
 	 		return me.get('expediente.esComiteHaya');
 	 	},
+
+	 	readOnlyGestBoarding: function(get){
+	 		var me = this;	 		
+	 		var perfBoarding = $AU.userIsRol(CONST.PERFILES['GESTBOARDING']);
+	 		return perfBoarding;
+	 	},
+
 	 	
 	 	habilitarBotonGenerarFicha: function(get){;
 			 var me = this;

@@ -7,6 +7,7 @@ import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.rem.api.RecoveryComunicacionApi;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoHistoricoDao;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustWebService;
@@ -102,6 +103,10 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
             ActivoAdjudicacionJudicial activoAdjudicacionJudicial = genericDao.get(ActivoAdjudicacionJudicial.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS,"activo.id", activo.getId()));
             ArrayList<Map<String, Object>> listaDefectos = new ArrayList<Map<String, Object>>();
             ArrayList<Map<String, Object>> listaCargas = new ArrayList<Map<String, Object>>();
+            Order order = new Order(GenericABMDao.OrderType.DESC, "id");
+            List<HistoricoTramitacionTitulo> listaObjeto = genericDao.getListOrdered(
+                    HistoricoTramitacionTitulo.class, order,
+                    genericDao.createFilter(FilterType.EQUALS, "titulo", actTitulo));
 
             listaDefectos = this.calificacionesNegativasInfo(activo);
             listaCargas = this.cargasInfo(activo);
@@ -125,11 +130,17 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
                 }else{
                     model.put("fechaPresentacionHacienda", null);
                 }
-                if(actTitulo.getFechaPres1Registro() != null){
-                    model.put("fechaPresentacionReg", actTitulo.getFechaPres1Registro().getTime());
-                }else{
-                    model.put("fechaPresentacionReg", null);
+                if (!Checks.esNulo(listaObjeto) && !Checks.estaVacio(listaObjeto)) {
+                    for(HistoricoTramitacionTitulo htt : listaObjeto){
+                        if(listaObjeto.get(0).getFechaPresentacionRegistro() != null){
+                            model.put("fechaPresentacionReg", htt.getFechaPresentacionRegistro().getTime());
+                        }else{
+                            model.put("fechaPresentacionReg", null);
+                        }
+                    }
                 }
+
+
                 if(actTitulo.getFechaEnvioAuto() != null){
                     model.put("fechaAutoAdicion", actTitulo.getFechaEnvioAuto().getTime());
                 }else{

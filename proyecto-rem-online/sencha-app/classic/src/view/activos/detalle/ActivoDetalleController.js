@@ -7835,13 +7835,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			}
 		}
 		campoDocumento.allowBlank = false;
-		if(fieldDoc.length < 6){
-			 Ext.getCmp(botonGuardar).disable();
-			 campoDocumento.allowBlank = true;
-			 return false;
-		}else{
-			if(fieldTipoDoc == "02" || fieldTipoDoc == "15"
-				|| fieldTipoDoc == "03" || fieldTipoDoc == "01" || fieldTipoDoc == "NIF" || fieldTipoDoc == "CIF"){
+		
+			if(fieldTipoDoc == "15"
+				|| fieldTipoDoc == "01" || fieldTipoDoc == "NIF"){
 				 Ext.getCmp(botonGuardar).disable();
 				 var validChars = 'TRWAGMYFPDXBNJZSQVHLCKET';
 				 var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
@@ -7854,7 +7850,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					 Ext.getCmp(botonGuardar).disable();
 		        	 return false;
 				 }
-
+				if(fieldDoc.length < 6){
+			 		Ext.getCmp(botonGuardar).disable();
+					 campoDocumento.allowBlank = true;
+					 return false;
+				}
 				 var nie = str
 				     .replace(/^[X]/, '0')
 				     .replace(/^[Y]/, '1')
@@ -7874,7 +7874,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		        	 return false;
 				 }
 
-			}else if(fieldTipoDoc== "03" || fieldTipoDoc == "01" || fieldTipoDoc == "NIF" || fieldTipoDoc == "CIF"){
+			}else if(fieldTipoDoc== "02" || fieldTipoDoc == "CIF"){
 				Ext.getCmp(botonGuardar).disable();
 				var texto=fieldDoc;
 		        var pares = 0; 
@@ -7925,7 +7925,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				Ext.getCmp(botonGuardar).enable();
 				return true;
 			}
-		}
+		
 		
 		
 	},

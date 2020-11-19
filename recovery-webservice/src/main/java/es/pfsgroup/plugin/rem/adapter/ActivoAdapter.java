@@ -2095,7 +2095,6 @@ public class ActivoAdapter {
 			if(DDCartera.CODIGO_CARTERA_BBVA.equalsIgnoreCase(tramite.getActivo().getCartera().getCodigo())) {
 				beanUtilNotNull.copyProperty(dtoTramite, "nombre", T017_TRAMITE_BBVA_DESCRIPCION);
 				beanUtilNotNull.copyProperty(dtoTramite, "tipoTramite", T017_TRAMITE_BBVA_DESCRIPCION);
-				dtoTramite.setEsActivoBBVA(true);
 			}else {
 				beanUtilNotNull.copyProperty(dtoTramite, "tipoTramite", tramite.getTipoTramite().getDescripcion());
 				beanUtilNotNull.copyProperty(dtoTramite, "nombre", tramite.getTipoTramite().getDescripcion());	
@@ -2220,14 +2219,11 @@ public class ActivoAdapter {
 								expedienteComercial.getEstado().getDescripcion());
 						beanUtilNotNull.copyProperty(dtoTramite, "codigoEstadoExpedienteComercial",
 								expedienteComercial.getEstado().getCodigo());
-						if (Boolean.TRUE.equals(dtoTramite.getEsActivoBBVA())) {
 							boolean isGestorBoarding = perteneceGrupoBoarding(genericAdapter.getUsuarioLogado());
 							boolean expedienteComercialNoAprobado = expedienteComercialNoAprobado(dtoTramite.getCodigoEstadoExpedienteComercial());
 							if ( isGestorBoarding && expedienteComercialNoAprobado) {
 								dtoTramite.setOcultarBotonResolucion(true);
 							}
-							
-						}
 					}
 					beanUtilNotNull.copyProperty(dtoTramite, "numEC", expedienteComercial.getNumExpediente());
 				}

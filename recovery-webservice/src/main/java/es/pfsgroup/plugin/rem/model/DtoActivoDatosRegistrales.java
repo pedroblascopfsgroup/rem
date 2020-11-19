@@ -139,6 +139,7 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private String tipoTituloActivoMatriz;
 	
 	private String origenAnteriorActivoBbvaCodigo;
+	private Long idAsuntoRecAlaska;
 	/*
 
     private NMBAdjudicacionBien adjudicacionBien;
@@ -787,5 +788,11 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	}
 	public void setOrigenAnteriorActivoBbvaCodigo(String origenAnteriorActivoBbvaCodigo) {
 		this.origenAnteriorActivoBbvaCodigo = origenAnteriorActivoBbvaCodigo;
+	}
+	public Long getIdAsuntoRecAlaska() {
+		return idAsuntoRecAlaska;
+	}
+	public void setIdAsuntoRecAlaska(Long idAsuntoRecAlaska) {
+		this.idAsuntoRecAlaska = idAsuntoRecAlaska;
 	}
 }

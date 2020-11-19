@@ -1,17 +1,18 @@
 --/*
 --#########################################
---## AUTOR=DAP
---## FECHA_CREACION=20201106
+--## AUTOR= Lara Pablo 
+--## FECHA_CREACION=20201116
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-12016
+--## INCIDENCIA_LINK=HREOS-12154
 --## PRODUCTO=NO
 --## 
 --## Finalidad:  Creación del SP
 --##            
 --## INSTRUCCIONES:  
 --## VERSIONES:
---##        0.1-Versión inicial
+--##        0.1-Versión inicial DAP
+--##		0.2-Cambio de count(1) en V_NUM_GASTO por GPV_NUM_GASTO_HAYA
 --#########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -42,7 +43,7 @@ BEGIN
         FROM DUAL';
     EXECUTE IMMEDIATE V_SQL INTO V_FECHA;
 
-    V_SQL := 'SELECT COUNT(1)
+    V_SQL := 'SELECT GPV_NUM_GASTO_HAYA
         FROM '||V_ESQUEMA||'.GPV_GASTOS_PROVEEDOR
         WHERE GPV_ID = '||GPV_ID;
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_GASTO;

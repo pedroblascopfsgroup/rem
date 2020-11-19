@@ -319,6 +319,9 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
     			name:'idAsunto'
     		},
     		{
+                name:'idAsuntoRecAlaska'
+            },
+    		{
     			name:'numExpRiesgoAdj'
     		},
     		{

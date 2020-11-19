@@ -44,7 +44,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 	private static final String VALIDACION_DOCUMENTO_ADJUNTO_GASTO = "msg.validacion.gasto.documento.adjunto";
 	private static final String VALIDACION_ACTIVOS_ASIGNADOS = "msg.validacion.gasto.activos.asignados";
 	private static final String VALIDACION_PARTIDA_PRESUPUESTARIA = "msg.validacion.gasto.partida.presupuestaria";
-	private static final String VALIDACION_AL_MENOS_CUENTAS_O_PARTIDAS = "msg.validacion.gasto.al.menos.cuenta.partida";
+	private static final String VALIDACION_AL_MENOS_CUENTAS_Y_PARTIDAS = "msg.validacion.gasto.al.menos.cuenta.partida";
 	private static final String VALIDACION_CUENTA_PARTIDAS_APARTADO_CAPITULO = "msg.validacion.gasto.partida.contable.lbk";
 	private static final String VALIDACION_CUENTA_CONTABLE = "msg.validacion.gasto.cuenta.contable";
 	private static final String VALIDACION_IMPORTE_TOTAL = "msg.validacion.gasto.importe.total";
@@ -172,7 +172,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 					if(gasto.getGestoria() == null) {
 						for (GastoLineaDetalle gastodetalleLinea : gastoListaDetalleList){
 							if(gastodetalleLinea.getCppBase() == null && gastodetalleLinea.getCccBase() == null) {
-								error = messageServices.getMessage(VALIDACION_AL_MENOS_CUENTAS_O_PARTIDAS);
+								error = messageServices.getMessage(VALIDACION_AL_MENOS_CUENTAS_Y_PARTIDAS);
 								return error;
 							}
 						}

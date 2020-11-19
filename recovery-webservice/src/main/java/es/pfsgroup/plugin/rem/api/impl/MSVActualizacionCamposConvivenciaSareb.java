@@ -109,11 +109,15 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 		
 		//Aqui empieza la persistencia.
 		ResultadoProcesarFila resultado = new ResultadoProcesarFila();
+		SimpleDateFormat sdfOri = new SimpleDateFormat("yyyy/MM/dd"); 
+		SimpleDateFormat sdfSal = new SimpleDateFormat("dd/MM/yyyy"); 
 		if(exc.dameCelda(fila, NUM_ACTIVO) != null) {
 			String campo;
+			DDCamposConvivenciaSareb convivencia = null;
 			campo = exc.dameCelda(fila, CAMPO_CAMBIO);
 			Filter filtroCampo = genericDao.createFilter(FilterType.EQUALS, "cos.codigo",campo);
-			DDCamposConvivenciaSareb convivencia = genericDao.get(DDCamposConvivenciaSareb.class, filtroCampo);
+			List<DDCamposConvivenciaSareb> convivencias = genericDao.getList(DDCamposConvivenciaSareb.class, filtroCampo);
+			convivencia = convivencias.get(0);
 			Activo activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO))));
 			if("ACT_ACTIVO".equalsIgnoreCase(convivencia.getTabla())) {
 				if("001".equalsIgnoreCase(campo)){
@@ -159,8 +163,9 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 			}else if("ACT_AJD_ADJJUDICIAL".equalsIgnoreCase(convivencia.getTabla())){
 				ActivoAdjudicacionJudicial activoAdjJudicial = genericDao.get(ActivoAdjudicacionJudicial.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO))));
 				if("025".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-					Date fechaAdj = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fechaAdj = sdfSal.parse(fechaString);
 					activoAdjJudicial.setFechaAdjudicacion(fechaAdj);	
 				}
 				genericDao.save(ActivoAdjudicacionJudicial.class, activoAdjJudicial);
@@ -192,8 +197,9 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 						DDEstadoCarga estadoCarga = genericDao.get(DDEstadoCarga.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
 						activoCargas.setEstadoCarga(estadoCarga);
 					}else if("039".equalsIgnoreCase(campo)) {
-						SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-						Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+						Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+						String fechaString = sdfSal.format(fechaOri);
+						Date fecha = sdfSal.parse(fechaString);
 						activoCargas.setFechaCancelacionRegistral(fecha);
 					}
 					genericDao.save(ActivoCargas.class, activoCargas);
@@ -247,8 +253,9 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 				}else if("077".equalsIgnoreCase(campo)) {
 					infoRegistral.setSuperficieParcela(Float.parseFloat(exc.dameCelda(fila, VALOR_NUEVO)));
 				}else if("093".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-					Date fechaCfo = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fechaCfo = sdfSal.parse(fechaString);
 					infoRegistral.setFechaCfo(fechaCfo);
 				}else if("119".equalsIgnoreCase(campo)) {
 					DDSinSiNo res = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
@@ -294,8 +301,9 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 					DDEstadoAdecucionSareb adecuacion = genericDao.get(DDEstadoAdecucionSareb.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
 					activoSareb.setEstadoAdecuacionSareb(adecuacion);
 				}else if("098".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
 					activoSareb.setFechaFinPrevistaAdecuacion(fecha);
 				}else if("141".equalsIgnoreCase(campo)) {
 					DDSinSiNo res = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
@@ -330,8 +338,9 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 						situacionPosesioria.setFechaAccesoAntiocupa(null);
 					}					
 				}else if("021".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
 					situacionPosesioria.setFechaTomaPosesion(fecha);
 				}else if("096".equalsIgnoreCase(campo)) {
 					situacionPosesioria.setAccesoTapiado(Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)));
@@ -344,10 +353,11 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 				}
 				genericDao.save(ActivoSituacionPosesoria.class, situacionPosesioria);
 			}else if("ACT_TAS_TASACION".equalsIgnoreCase(convivencia.getTabla()) && Integer.parseInt(exc.dameCelda(fila, NUEVO)) == 0) {
-				ActivoTasacion tasacion = genericDao.get(ActivoTasacion.class, genericDao.createFilter(FilterType.EQUALS, "activo.idExterno",Long.parseLong(exc.dameCelda(fila, ID_SUB_REGISTRO))));
+				ActivoTasacion tasacion = genericDao.get(ActivoTasacion.class, genericDao.createFilter(FilterType.EQUALS, "idExterno",Long.parseLong(exc.dameCelda(fila, ID_SUB_REGISTRO))));
 				if("105".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
 					tasacion.setFechaRecepcionTasacion(fecha);
 				}else if("107".equalsIgnoreCase(campo)) {
 					tasacion.setImporteTasacionFin(Double.parseDouble(exc.dameCelda(fila, VALOR_NUEVO)));
@@ -362,8 +372,9 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 					DDEstadoTitulo estadoTitulo = genericDao.get(DDEstadoTitulo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
 					activoTitulo.setEstado(estadoTitulo);
 				}else if("018".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
 					activoTitulo.setFechaInscripcionReg(fecha);
 				}
 				genericDao.save(ActivoTitulo.class, activoTitulo);
@@ -388,14 +399,16 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 				}else if("110".equalsIgnoreCase(campo)) {
 					activoVal = genericDao.get(ActivoValoraciones.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
 							, genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA));
-					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
 					activoVal.setFechaInicio(fecha);
 				}else if("111".equalsIgnoreCase(campo)) {
 					activoVal = genericDao.get(ActivoValoraciones.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
 							, genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA));
-					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
 					activoVal.setFechaFin(fecha);
 				}else if("112".equalsIgnoreCase(campo)) {
 					activoVal = genericDao.get(ActivoValoraciones.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
@@ -405,15 +418,17 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 					activoVal = genericDao.get(ActivoValoraciones.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
 							, genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA));
 					activoVal.setImporte(Double.parseDouble(exc.dameCelda(fila, VALOR_NUEVO)));
-					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
 					activoVal.setFechaInicio(fecha);
 				}else if("114".equalsIgnoreCase(campo)) {
 					activoVal = genericDao.get(ActivoValoraciones.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
 							, genericDao.createFilter(FilterType.EQUALS, "tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA));
 					activoVal.setImporte(Double.parseDouble(exc.dameCelda(fila, VALOR_NUEVO)));
-					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
 					activoVal.setFechaFin(fecha);
 				}else if("115".equalsIgnoreCase(campo)) {
 					activoVal = genericDao.get(ActivoValoraciones.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
@@ -424,12 +439,14 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 			}else if("BIE_ADJ_ADJUDICACION".equalsIgnoreCase(convivencia.getTabla())) {
 				NMBAdjudicacionBien nmbAdj = genericDao.get(NMBAdjudicacionBien.class,genericDao.createFilter(FilterType.EQUALS, "bien",activo.getBien()));
 				if("026".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
 					nmbAdj.setFechaDecretoFirme(fecha);
 				}else if("027".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
 					nmbAdj.setFechaSenalamientoLanzamiento(fecha);
 				}
 				genericDao.save(NMBAdjudicacionBien.class,nmbAdj);
@@ -445,12 +462,14 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 					}else if("034".equalsIgnoreCase(campo)) {
 						bienCargas.setImporteRegistral(Float.parseFloat(exc.dameCelda(fila, VALOR_NUEVO)));
 					}else if("037".equalsIgnoreCase(campo)) {
-						SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-						Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+						Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+						String fechaString = sdfSal.format(fechaOri);
+						Date fecha = sdfSal.parse(fechaString);
 						bienCargas.setFechaCancelacion(fecha);
 					}else if("038".equalsIgnoreCase(campo)) {
-						SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-						Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+						Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+						String fechaString = sdfSal.format(fechaOri);
+						Date fecha = sdfSal.parse(fechaString);
 						bienCargas.setFechaPresentacion(fecha);
 					}
 					genericDao.save(NMBBienCargas.class, bienCargas);
@@ -514,12 +533,14 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 			}else if("BIE_VALORACIONES".equalsIgnoreCase(convivencia.getTabla()) && exc.dameCelda(fila, NUEVO) == null) {
 				NMBValoracionesBien valoraciones = genericDao.get(NMBValoracionesBien.class, genericDao.createFilter(FilterType.EQUALS, "bien",activo.getBien()));
 				if("103".equalsIgnoreCase(campo)){
-					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
 					valoraciones.setFechaValorTasacion(fecha);
 				}else if("104".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
 					valoraciones.setFechaSolicitudTasacion(fecha);
 				}else if("106".equalsIgnoreCase(campo)) {
 					DDTasadora tasadora = genericDao.get(DDTasadora.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
@@ -529,12 +550,14 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 			}else if("BIE_VALORACIONES".equalsIgnoreCase(convivencia.getTabla()) && Integer.parseInt(exc.dameCelda(fila, NUEVO)) == 0) {
 				NMBValoracionesBien valoraciones = genericDao.get(NMBValoracionesBien.class, genericDao.createFilter(FilterType.EQUALS, "bien",activo.getBien()));
 				if("103".equalsIgnoreCase(campo)){
-					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
 					valoraciones.setFechaValorTasacion(fecha);
 				}else if("104".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
 					valoraciones.setFechaSolicitudTasacion(fecha);
 				}else if("106".equalsIgnoreCase(campo)) {
 					DDTasadora tasadora = genericDao.get(DDTasadora.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
@@ -556,8 +579,9 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 					if(oferta != null ) {
 						ExpedienteComercial exp = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
 						if(exp != null) {
-							SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-							Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+							Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+							String fechaString = sdfSal.format(fechaOri);
+							Date fecha = sdfSal.parse(fechaString);
 							exp.setFechaDevolucionEntregas(fecha);
 							genericDao.save(ExpedienteComercial.class, exp);
 						}
@@ -580,8 +604,9 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 						Reserva reserva = genericDao.get(Reserva.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", exp.getId()));
 						if(reserva != null) {
 							if("126".equalsIgnoreCase(campo)){
-								SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-								Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+								Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+								String fechaString = sdfSal.format(fechaOri);
+								Date fecha = sdfSal.parse(fechaString);
 								reserva.setFechaFirma(fecha);
 							}else if("125".equalsIgnoreCase(campo)) {
 								reserva.setNumReserva(Long.parseLong(exc.dameCelda(fila, VALOR_NUEVO)));
@@ -630,14 +655,16 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 								activoAdmisionDoc.setEstadoDocumento(estadoDocumento);
 							}
 							if("082".equals(campo)) {
-								SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-								Date fechaObtener = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+								Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+								String fechaString = sdfSal.format(fechaOri);
+								Date fechaObtener = sdfSal.parse(fechaString);
 								activoAdmisionDoc.setFechaObtencion(fechaObtener);
 								DDEstadoDocumento estadoDocumento = genericDao.get(DDEstadoDocumento.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDocumento.CODIGO_ESTADO_OBTENIDO));
 								activoAdmisionDoc.setEstadoDocumento(estadoDocumento);
 							}else if("095".equals(campo)) {
-								SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-								Date fechaObtener = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+								Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+								String fechaString = sdfSal.format(fechaOri);
+								Date fechaObtener = sdfSal.parse(fechaString);
 								activoAdmisionDoc.setFechaObtencion(fechaObtener);
 								DDEstadoDocumento estadoDocumento = genericDao.get(DDEstadoDocumento.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDocumento.CODIGO_ESTADO_OBTENIDO));
 								activoAdmisionDoc.setEstadoDocumento(estadoDocumento);
@@ -677,12 +704,14 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 				}else if("034".equalsIgnoreCase(campo)) {
 					bienCargas.setImporteRegistral(Float.parseFloat(exc.dameCelda(fila, VALOR_NUEVO)));
 				}else if("037".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
 					bienCargas.setFechaCancelacion(fecha);
 				}else if("038".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
 					bienCargas.setFechaPresentacion(fecha);
 				}
 				
@@ -706,8 +735,9 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 					DDEstadoCarga estadoCarga = genericDao.get(DDEstadoCarga.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
 					activoCargas.setEstadoCarga(estadoCarga);
 				}else if("039".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
 					activoCargas.setFechaCancelacionRegistral(fecha);
 				}
 				genericDao.save(ActivoCargas.class, activoCargas);
@@ -727,12 +757,14 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 				}
 				
 				if("103".equalsIgnoreCase(campo)){
-					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
 					valoracion.setFechaValorTasacion(fecha);
 				}else if("104".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
 					valoracion.setFechaSolicitudTasacion(fecha);
 				}else if("106".equalsIgnoreCase(campo)) {
 					DDTasadora tasadora = genericDao.get(DDTasadora.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
@@ -748,8 +780,9 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 				}
 
 				if("105".equalsIgnoreCase(campo)) {
-					SimpleDateFormat sdf = new SimpleDateFormat("YYYY/MM/DD");
-					Date fecha = sdf.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+					String fechaString = sdfSal.format(fechaOri);
+					Date fecha = sdfSal.parse(fechaString);
 					tasacion.setFechaRecepcionTasacion(fecha);
 				}else if("107".equalsIgnoreCase(campo)) {
 					tasacion.setImporteTasacionFin(Double.parseDouble(exc.dameCelda(fila, VALOR_NUEVO)));

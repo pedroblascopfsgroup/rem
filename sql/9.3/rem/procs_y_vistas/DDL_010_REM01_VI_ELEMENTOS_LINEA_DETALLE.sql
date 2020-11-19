@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR= Lara Pablo
---## FECHA_CREACION=20200916
+--## FECHA_CREACION=20201121
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-11091
@@ -74,8 +74,8 @@ BEGIN
             (STG.DD_STG_DESCRIPCION || '' '' || NVL(TIT.DD_TIT_DESCRIPCION, '' - '') || '' '' || NVL2(GLD.GLD_IMP_IND_TIPO_IMPOSITIVO, TO_CHAR(GLD.GLD_IMP_IND_TIPO_IMPOSITIVO) || '' %'', '' - '')) 
                 DESCRIPCION_LINEA,
             GLD.GLD_IMPORTE_TOTAL,
-			(NVL(gld.gld_principal_sujeto, 0)) AS IMPORTE_SUJETO_TOTAL,
-			(((NVL(gld.gld_principal_sujeto, 0)) * GLDENT.GLD_PARTICIPACION_GASTO)/100) AS IMPORTE_PROPORCIONAL_SUJETO
+			((NVL(gld.gld_principal_sujeto, 0)) + (NVL(gld.GLD_PRINCIPAL_NO_SUJETO, 0)))  AS IMPORTE_SUJETO_TOTAL,
+			((((NVL(gld.gld_principal_sujeto, 0)) + (NVL(gld.GLD_PRINCIPAL_NO_SUJETO, 0))) * GLDENT.GLD_PARTICIPACION_GASTO)/100) AS IMPORTE_PROPORCIONAL_SUJETO
 
 		FROM ' || V_ESQUEMA || '.GLD_ENT GLDENT
         JOIN ' || V_ESQUEMA || '.gld_gastos_linea_detalle GLD ON GLDENT.GLD_ID = GLD.gld_id 

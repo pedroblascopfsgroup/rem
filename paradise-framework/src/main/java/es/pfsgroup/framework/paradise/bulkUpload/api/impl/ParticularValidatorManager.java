@@ -141,7 +141,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				"                                        INNER JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID " +
 				"                                        INNER JOIN ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID and AGR.BORRADO  = 0 " +
 				"                                        INNER join DD_TAG_TIPO_AGRUPACION TAG ON AGR.DD_TAG_ID = TAG.DD_TAG_ID " +
-				"                                        WHERE ACT.ACT_NUM_ACTIVO = " + numActivo + " (AGA.AGA_PRINCIPAL = 1 OR AGR.AGR_ACT_PRINCIPAL = ACT.ACT_ID)) " +
+				"                                        WHERE ACT.ACT_NUM_ACTIVO = " + numActivo + " and (AGA.AGA_PRINCIPAL = 1 OR AGR.AGR_ACT_PRINCIPAL = ACT.ACT_ID)) " +
 				"ELSE 1 " +
 				"END as validacion " +
 				"FROM ACT_ACTIVO ACT " +

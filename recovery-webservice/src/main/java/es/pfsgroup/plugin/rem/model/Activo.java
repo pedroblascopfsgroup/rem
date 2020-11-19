@@ -535,6 +535,13 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "DD_ERA_ID")
     private DDEstadoRegistralActivo estadoRegistral; 
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_OVN_COMERC")
+    private DDSinSiNo tieneObraNuevaAEfectosComercializacion;
+    
+    @Column(name = "ACT_OVN_COMERC_FECHA")
+	private Date obraNuevaAEfectosComercializacionFecha;
+    
     // Getters del activo --------------------------------------------
     
     public Long getId() {
@@ -2068,5 +2075,23 @@ public class Activo implements Serializable, Auditable {
 	public void setEstadoRegistral(DDEstadoRegistralActivo estadoRegistral) {
 		this.estadoRegistral = estadoRegistral;
 	}
+
+	public DDSinSiNo getTieneObraNuevaAEfectosComercializacion() {
+		return tieneObraNuevaAEfectosComercializacion;
+	}
+
+	public void setTieneObraNuevaAEfectosComercializacion(DDSinSiNo tieneObraNuevaAEfectosComercializacion) {
+		this.tieneObraNuevaAEfectosComercializacion = tieneObraNuevaAEfectosComercializacion;
+	}
+
+	public Date getObraNuevaAEfectosComercializacionFecha() {
+		return obraNuevaAEfectosComercializacionFecha;
+	}
+
+	public void setObraNuevaAEfectosComercializacionFecha(Date obraNuevaAEfectosComercializacionFecha) {
+		this.obraNuevaAEfectosComercializacionFecha = obraNuevaAEfectosComercializacionFecha;
+	}
+
+
 
 }

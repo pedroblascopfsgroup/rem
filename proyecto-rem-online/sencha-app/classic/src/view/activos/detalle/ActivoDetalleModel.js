@@ -1026,6 +1026,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				retorno = !(get('activo.incluidoEnPerimetroAdmision') == "true");
 			}
 			return retorno;
+		},
+		esPerfilSuperYSupercomercial :function(get){
+			
+		 	return $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['SUPERCOMERCIAL']);
+				
 		}
 	 }, 
 	 

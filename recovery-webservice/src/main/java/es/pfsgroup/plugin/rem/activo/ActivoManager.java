@@ -3790,6 +3790,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		dto.setTramitable(this.isTramitable(activo));
 		
+		if(activo!=null) {
+			if(activo.getTieneObraNuevaAEfectosComercializacion()!=null) {
+				dto.setActivoObraNuevaComercializacion(activo.getTieneObraNuevaAEfectosComercializacion().getCodigo());
+			}
+			if(activo.getObraNuevaAEfectosComercializacionFecha()!=null) {
+				dto.setActivoObraNuevaComercializacionFecha(activo.getObraNuevaAEfectosComercializacionFecha());
+			}
+		}
 		return dto;
 	}
 
@@ -3850,6 +3858,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					guardadoAsincrono.start();
 				}
 			}
+		if(dto.getActivoObraNuevaComercializacion()!=null) {
+			DDSinSiNo siono = (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSinSiNo.class, dto.getActivoObraNuevaComercializacion());
+			if(siono!=null) {
+				activo.setTieneObraNuevaAEfectosComercializacion(siono);				
+			}
+			activo.setObraNuevaAEfectosComercializacionFecha(new Date());
+			
+		}
 			
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);

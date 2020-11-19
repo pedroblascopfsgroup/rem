@@ -101,6 +101,7 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
 
             ActivoTitulo actTitulo = genericDao.get(ActivoTitulo.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS,"activo.id", activo.getId()));
             ActivoAdjudicacionJudicial activoAdjudicacionJudicial = genericDao.get(ActivoAdjudicacionJudicial.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS,"activo.id", activo.getId()));
+            ActivoAdjudicacionNoJudicial activoAdjudicacionNoJudicial = genericDao.get(ActivoAdjudicacionNoJudicial.class, genericDao.createFilter(GenericABMDao.FilterType.EQUALS,"activo.id", activo.getId()));
             ArrayList<Map<String, Object>> listaDefectos = new ArrayList<Map<String, Object>>();
             ArrayList<Map<String, Object>> listaCargas = new ArrayList<Map<String, Object>>();
             Order order = new Order(GenericABMDao.OrderType.DESC, "id");
@@ -112,7 +113,15 @@ public class RecoveryComunicacionManager extends BusinessOperationOverrider<Reco
             listaCargas = this.cargasInfo(activo);
 
             model.put("numActivo", activo.getNumActivo());
-            model.put("idAsuntoRecovery", activoAdjudicacionJudicial.getIdAsunto());
+            if(activoAdjudicacionJudicial.getIdAsunto() != null){
+                model.put("idAsuntoRecovery", activoAdjudicacionJudicial.getIdAsunto());
+            }
+            if(activoAdjudicacionNoJudicial.getIdAsuntoRecAlaska() != null){
+                model.put("idAsuntoRecovery", activoAdjudicacionNoJudicial.getIdAsuntoRecAlaska());
+            }
+            if(activoAdjudicacionNoJudicial.getIdAsuntoRecAlaska() == null && activoAdjudicacionJudicial.getIdAsunto() == null){
+                model.put("idAsuntoRecovery", null);
+            }
             model.put("codigoCartera", activo.getCartera().getCodigo());
             if(activo.getTitulo() != null){
                 if(activo.getTitulo().getEstado() != null){

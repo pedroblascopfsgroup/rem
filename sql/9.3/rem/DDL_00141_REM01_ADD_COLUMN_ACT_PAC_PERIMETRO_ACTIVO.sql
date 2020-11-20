@@ -43,7 +43,6 @@ DECLARE
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
                 -- NOMBRE CAMPO                     TIPO CAMPO                          DESCRIPCION
          T_ALTER(  'PAC_CHECK_GESTION_COMERCIAL','NUMBER(1,0)','Check gestión comercial',''),
-         T_ALTER(  'PAC_EXCLUIR_VALIDACIONES','NUMBER(16,0)','Excluir validaciones FK a DD_SIN_SINO ','DEFAULT '||V_ID_SIN||''),
          T_ALTER(  'PAC_FECHA_GESTION_COMERCIAL','DATE','Fecha gestión Comercial',''),
          T_ALTER(  'PAC_MOTIVO_GESTION_COMERCIAL','NUMBER(16,0)','Motivo gestión comercial FK DD_MGC_MOTIVO_GEST_COMERCIAL','')
         );
@@ -60,6 +59,16 @@ DECLARE
     );
     V_T_FK T_FK;
 
+        /* -- ARRAY CON COLUMNAS NUEVAS CON DEFAULT */
+    TYPE T_DEFAULT IS TABLE OF VARCHAR2(4000);
+    TYPE T_ARRAY_DEFAULT IS TABLE OF T_DEFAULT;
+    V_DEFAULT T_ARRAY_DEFAULT := T_ARRAY_DEFAULT(
+                --NOMBRE FK                         CAMPO FK                TABLA DESTINO FK                            CAMPO DESTINO FK
+        T_DEFAULT('PAC_EXCLUIR_VALIDACIONES','NUMBER(16,0)','Excluir validaciones FK a DD_SIN_SINO ')
+
+    );
+    V_T_DEFAULT T_DEFAULT;
+
 
 BEGIN
 
@@ -67,10 +76,6 @@ BEGIN
     
     DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_TABLA|| '********'); 
     DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comprobaciones previas *************************************************');
-    
-    V_SQL := 'SELECT DD_SIN_ID FROM '||V_ESQUEMA_M||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''02''';  
-    EXECUTE IMMEDIATE V_SQL INTO V_ID_SIN; 
-
     
     -- Bucle que CREA las nuevas columnas 
     FOR I IN V_ALTER.FIRST .. V_ALTER.LAST
@@ -102,9 +107,40 @@ BEGIN
 
     END LOOP;
 
+    FOR I IN V_DEFAULT.FIRST .. V_DEFAULT.LAST
+    LOOP
+        V_T_DEFAULT := V_DEFAULT(I);
 
-    
-    -- Solo si esta activo el indicador de creacion FK, el script creara tambien las FK
+        -- Verificar si la columna ya existe. Si ya existe la columna, no se hace nada con esta (no tiene en cuenta si al existir los tipos coinciden)
+        V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLS WHERE COLUMN_NAME = '''||V_T_DEFAULT(1)||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+        EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS; 
+        IF V_NUM_TABLAS = 0 THEN
+
+            V_SQL := 'SELECT DD_SIN_ID FROM '||V_ESQUEMA_M||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''02''';  
+            EXECUTE IMMEDIATE V_SQL INTO V_ID_SIN; 
+
+            --No existe la columna y la creamos
+
+            DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_DEFAULT(1)||'] -------------------------------------------');
+            V_MSQL := 'ALTER TABLE '||V_TEXT_TABLA|| ' 
+                       ADD ('||V_T_DEFAULT(1)||' '||V_T_DEFAULT(2)||' DEFAULT '||V_ID_SIN||')
+            ';
+            DBMS_OUTPUT.PUT_LINE(V_MSQL);
+
+            EXECUTE IMMEDIATE V_MSQL;
+            --DBMS_OUTPUT.PUT_LINE('[1] '||V_MSQL);
+            DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_DEFAULT(1)||' Columna INSERTADA en tabla, con tipo '||V_T_DEFAULT(2));
+
+            -- Creamos comentario   
+            V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_T_DEFAULT(1)||' IS '''||V_T_DEFAULT(3)||'''';      
+            EXECUTE IMMEDIATE V_MSQL;
+            --DBMS_OUTPUT.PUT_LINE('[2] '||V_MSQL);
+            DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario en columna creado.');
+        END IF;
+
+    END LOOP;
+
+        -- Solo si esta activo el indicador de creacion FK, el script creara tambien las FK
     IF V_CREAR_FK = 'SI' THEN
 
         -- Bucle que CREA las FK de las nuevas columnas del INFORME COMERCIAL

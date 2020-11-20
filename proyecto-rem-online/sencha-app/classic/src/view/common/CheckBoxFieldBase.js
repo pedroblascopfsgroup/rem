@@ -22,7 +22,8 @@ Ext.define('HreRem.view.common.CheckBoxFieldBase', {
 		 */
 		onBindNotify: function(value, oldValue, binding) {
 	        binding.syncing = (binding.syncing + 1) || 1;
-	        this.lastValue = value;
+	        if(binding._config.names.set == 'setValue')
+	            this.lastValue = value;	   
 	        this[binding._config.names.set](value);
 	        --binding.syncing;
 	        

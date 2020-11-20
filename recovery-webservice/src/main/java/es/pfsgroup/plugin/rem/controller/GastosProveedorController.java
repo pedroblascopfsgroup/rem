@@ -477,6 +477,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
+			model.put("msg", e.getMessage());
 			model.put("success", false);
 			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "contabilidad", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}

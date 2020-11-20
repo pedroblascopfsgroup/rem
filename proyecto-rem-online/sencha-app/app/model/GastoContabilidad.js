@@ -113,6 +113,9 @@ Ext.define('HreRem.model.GastoContabilidad', {
         {
         	name:'resultadoDiarios',
         	type:'boolean'
+        },
+        {
+        	name:'inversionSujetoPasivoBoolean'
         }
 
     ],

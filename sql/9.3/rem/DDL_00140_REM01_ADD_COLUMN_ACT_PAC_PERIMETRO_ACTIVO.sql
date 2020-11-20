@@ -43,7 +43,7 @@ DECLARE
     V_ALTER T_ARRAY_ALTER := T_ARRAY_ALTER(
                 -- NOMBRE CAMPO                     TIPO CAMPO                          DESCRIPCION
          T_ALTER(  'PAC_CHECK_GESTION_COMERCIAL','NUMBER(1,0)','Check gestión comercial',''),
-         T_ALTER(  'PAC_EXCLUIR_VALIDACIONES','NUMBER(16,0)','Excluir validaciones FK a DD_SIN_SINO ','DEFAULT.'||V_ID_SIN||''),
+         T_ALTER(  'PAC_EXCLUIR_VALIDACIONES','NUMBER(16,0)','Excluir validaciones FK a DD_SIN_SINO ','DEFAULT '||V_ID_SIN||''),
          T_ALTER(  'PAC_FECHA_GESTION_COMERCIAL','DATE','Fecha gestión Comercial',''),
          T_ALTER(  'PAC_MOTIVO_GESTION_COMERCIAL','NUMBER(16,0)','Motivo gestión comercial FK DD_MGC_MOTIVO_GEST_COMERCIAL','')
         );
@@ -68,7 +68,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_TABLA|| '********'); 
     DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comprobaciones previas *************************************************');
     
-    V_SQL := 'SELECT DD_SIN_SINO.DD_SIN_ID FROM '||V_ESQUEMA_M||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''02''';  
+    V_SQL := 'SELECT DD_SIN_ID FROM '||V_ESQUEMA_M||'.DD_SIN_SINO WHERE DD_SIN_CODIGO = ''02''';  
     EXECUTE IMMEDIATE V_SQL INTO V_ID_SIN; 
 
     

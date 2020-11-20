@@ -118,7 +118,7 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 															store: '{comboSiNoBoolean}',
 															value: '{contabilidad.inversionSujetoPasivoBoolean}'
 														},
-                                                        hidden: !isCarteraLiberbank,					
+                                                        hidden: !isCarteraLiberbank					
 													}
 										]
 					           },

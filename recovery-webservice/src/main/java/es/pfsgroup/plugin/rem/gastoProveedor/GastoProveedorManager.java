@@ -72,9 +72,6 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoSubtipoGastoProveedorTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
-import es.pfsgroup.plugin.rem.model.ConfigCuentaContable;
-import es.pfsgroup.plugin.rem.model.ConfigPdaPresupuestaria;
-import es.pfsgroup.plugin.rem.model.ConfiguracionSubpartidasPresupuestarias;
 import es.pfsgroup.plugin.rem.model.ConfiguracionSuplidos;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
@@ -141,10 +138,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoGasto;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.provisiongastos.dao.ProvisionGastosDao;
 import es.pfsgroup.plugin.rem.thread.ActualizaSuplidosAsync;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateGastoApi;
@@ -2055,14 +2048,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean updateGastoContabilidad(DtoInfoContabilidadGasto dtoContabilidadGasto, Long idGasto) {
+	public boolean updateGastoContabilidad(DtoInfoContabilidadGasto dtoContabilidadGasto, Long idGasto) throws Exception {
 		
 		try {
 			DDSinSiNo codSiNo = new DDSinSiNo();
 
 			GastoProveedor gasto = findOne(idGasto);
 			GastoInfoContabilidad contabilidadGasto = gasto.getGastoInfoContabilidad();
-			DtoInfoContabilidadGasto dtoIni = infoContabilidadToDtoInfoContabilidad(gasto);
+			DtoInfoContabilidadGasto dtoIni = infoContabilidadToDtoInfoContabilidad(gasto);			
 			if (!Checks.esNulo(contabilidadGasto)) {
 				
 				beanUtilNotNull.copyProperties(contabilidadGasto, dtoContabilidadGasto);
@@ -2073,14 +2066,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 					contabilidadGasto.setEjercicio(ejercicio);
 				}
-				/*
-				if(dtoContabilidadGasto.getIdSubpartidaPresupuestaria() != null) {
-					Filter filtroSubpartidaPresupuestaria = genericDao.createFilter(FilterType.EQUALS, "id", dtoContabilidadGasto.getIdSubpartidaPresupuestaria());
-					ConfiguracionSubpartidasPresupuestarias cps = genericDao.get(ConfiguracionSubpartidasPresupuestarias.class, filtroSubpartidaPresupuestaria);
-					
-					contabilidadGasto.setConfiguracionSubpartidasPresupuestarias(cps);
-				}
-				*/
 
 				if(!Checks.esNulo(dtoContabilidadGasto.getComboActivable())) {
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoContabilidadGasto.getComboActivable());
@@ -2139,8 +2124,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			return true;
 
 		} catch (Exception e) {
-			logger.error(e.getMessage());
-			return false;
+			throw e;
 		}
 	}
 

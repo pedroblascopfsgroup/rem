@@ -5239,4 +5239,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean existeActivoConONMarcadoSi(String columnaActivo) {
+		if(Checks.esNulo(columnaActivo)) {
+			return false;
+		}
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "		 FROM REM01.ACT_ACTIVO ACT  "
+				+ "      INNER JOIN REMMASTER.DD_SIN_SINO dd on act.act_ovn_comerc = dd.DD_SIN_ID"
+				+"		 WHERE dd.dd_sin_codigo='01' "
+				+ "		 AND act.act_num_activo = '" + columnaActivo + "'"
+				+ "		 AND act.BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
 }

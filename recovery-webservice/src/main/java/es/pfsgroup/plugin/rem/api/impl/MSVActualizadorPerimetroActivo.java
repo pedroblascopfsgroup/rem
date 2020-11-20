@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSinSiNo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubestadoAdmision;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -119,6 +120,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			Integer tmpPerimetroMacc =  getCheckValue(exc.dameCelda(fila, 16));			
 			String admision = exc.dameCelda(fila, 17);
 			String motivoAdmision = exc.dameCelda(fila, 18);
+			String checkOnEfectosComercializacion = exc.dameCelda(fila, 19);
 			
 			Activo activo = activoApi.getByNumActivo(numActivo);
 			ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
@@ -328,6 +330,22 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 				activo.setEstadoAdmision(null);
 				perimetroActivo.setMotivoAplicaAdmision(motivoAdmision);
 				activo.setSubestadoAdmision(null);
+			}
+			
+			if(checkOnEfectosComercializacion!=null && !checkOnEfectosComercializacion.isEmpty()) {
+				DDSinSiNo diccionarioSi =  (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(
+						DDSinSiNo.class, DDSinSiNo.CODIGO_SI);
+				DDSinSiNo diccionarioNo =  (DDSinSiNo) utilDiccionarioApi.dameValorDiccionarioByCod(
+						DDSinSiNo.class, DDSinSiNo.CODIGO_NO);
+				
+				
+					if(Arrays.asList(listaValidosPositivos).contains(checkOnEfectosComercializacion.toUpperCase())) {
+						activo.setTieneObraNuevaAEfectosComercializacion(diccionarioSi);					
+					}else if(Arrays.asList(listaValidosNegativos).contains(checkOnEfectosComercializacion.toUpperCase())){
+						activo.setTieneObraNuevaAEfectosComercializacion(diccionarioNo);
+					}
+					activo.setObraNuevaAEfectosComercializacionFecha(new Date());
+				
 			}
 
 			activoApi.saveOrUpdatePerimetroActivo(perimetroActivo);

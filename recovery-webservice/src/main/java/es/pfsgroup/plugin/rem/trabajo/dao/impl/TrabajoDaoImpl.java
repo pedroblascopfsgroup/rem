@@ -181,7 +181,10 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.idActivo", dto.getIdActivo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.estadoContable", dto.getEstadoContable());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.codigoEstado", dto.getEstadoCodigo());
-		
+		if(dto.getSort() == null) {
+			dto.setSort("numActivo");
+			dto.setDir("ASC");
+		}
    		return HibernateQueryUtils.page(this, hb, dto);
 	}
 

@@ -43,6 +43,7 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	private String tipoComisionadoHreDescripcion;
 	private String errorDiarios;
 	private boolean resultadoDiarios;
+	private Boolean inversionSujetoPasivoBoolean;
 	
 
 	public Long getEjercicioImputaGasto() {
@@ -182,6 +183,12 @@ public class DtoInfoContabilidadGasto extends WebDto {
 	}
 	public void setResultadoDiarios(boolean resultadoDiarios) {
 		this.resultadoDiarios = resultadoDiarios;
+	}
+	public Boolean getInversionSujetoPasivoBoolean() {
+		return inversionSujetoPasivoBoolean;
+	}
+	public void setInversionSujetoPasivoBoolean(Boolean inversionSujetoPasivoBoolean) {
+		this.inversionSujetoPasivoBoolean = inversionSujetoPasivoBoolean;
 	}
 	
 	

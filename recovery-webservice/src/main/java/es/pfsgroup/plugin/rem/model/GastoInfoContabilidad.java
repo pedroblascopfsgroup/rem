@@ -88,6 +88,10 @@ public class GastoInfoContabilidad implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "GIC_PLAN_VISITAS")
 	private DDSinSiNo gicPlanVisitas;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "GIC_INV_SUJ_PASIVO")
+	private DDSinSiNo inversionSujetoPasivo;
 
 	@Version   
 	private Long version;
@@ -195,6 +199,14 @@ public class GastoInfoContabilidad implements Serializable, Auditable {
 
 	public void setGicPlanVisitas(DDSinSiNo gicPlanVisitas) {
 		this.gicPlanVisitas = gicPlanVisitas;
+	}
+
+	public DDSinSiNo getInversionSujetoPasivo() {
+		return inversionSujetoPasivo;
+	}
+
+	public void setInversionSujetoPasivo(DDSinSiNo inversionSujetoPasivo) {
+		this.inversionSujetoPasivo = inversionSujetoPasivo;
 	}
 	
 

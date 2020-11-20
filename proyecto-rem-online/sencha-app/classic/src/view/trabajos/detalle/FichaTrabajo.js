@@ -353,7 +353,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 		        						}
 		        						if(me.bind.value.lastValue == "FIN" && me.getValue() == "REJ"){
 		        							
-		        							me.up().down("[reference='fechaEjecucionRef']").setValue(null);
+		        							//me.up().down("[reference='fechaEjecucionRef']").setValue(null);
 		        							me.up().previousSibling("[reference='plazosFieldSet']").down("[reference='fechaConcreta']").setReadOnly(readOnlyFinalizado);
 		        							me.up().previousSibling("[reference='plazosFieldSet']").down("[reference='horaConcreta']").setReadOnly(readOnlyFinalizado);
 		        							me.up().previousSibling("[reference='plazosFieldSet']").down("[reference='fechaTope']").setReadOnly(readOnlyFinalizado);

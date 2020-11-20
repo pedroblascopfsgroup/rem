@@ -54,6 +54,8 @@ public class MSVSituacionImpuestosExcelValidator extends MSVExcelValidatorAbstra
 	public static final String ACTIVE_EXISTS = "No se ha encontrado ningun activo para el identificado = ";
 	public static final String CATASTRO_EXISTS =  "No se ha encontrado ningun catastro para el identificado = ";
 	public static final String FECHA_EMVIO = "EL formato de la fecha solicitud901 no es correcto ";
+	public static final String VAL_CAT_CONSTRUCCION_VALIDO = "EL formato del valor catastral de construccion no es correcto ";
+	public static final String VAL_CAT_SUELO_VALIDO = "EL formato del valor catastral de suelo no es correcto ";
 
 
 	// Posicion fija de Columnas excel, para cualquier referencia por posicion
@@ -64,8 +66,10 @@ public class MSVSituacionImpuestosExcelValidator extends MSVExcelValidatorAbstra
 		static final int NUM_ACTIVO_HAYA = 0;
 		static final int CATASTRO = 1;
 		static final int FECHA901 = 2;
-		static final int RESULTADO = 3;
-		static final int OBERVACIONES = 4;
+		static final int VAL_CAT_CONSTRUCCION = 3;
+		static final int VAL_CAT_SUELO = 4;
+		static final int RESULTADO = 5;
+		static final int OBERVACIONES = 6;
 		
 	}
 	@Autowired
@@ -129,9 +133,14 @@ public class MSVSituacionImpuestosExcelValidator extends MSVExcelValidatorAbstra
 
 
 			mapaErrores.put(FECHA_EMVIO, isColumnNotDateByRows(exc, COL_NUM.FECHA901));
+			
+			mapaErrores.put(VAL_CAT_CONSTRUCCION_VALIDO, isColumnNANValorIncorrectoByRows(exc, COL_NUM.VAL_CAT_CONSTRUCCION));
+			mapaErrores.put(VAL_CAT_SUELO_VALIDO, isColumnNANValorIncorrectoByRows(exc, COL_NUM.VAL_CAT_SUELO));
+
 
 			
-				if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(FECHA_EMVIO).isEmpty() || !mapaErrores.get(CATASTRO_EXISTS).isEmpty() ) 
+				if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(FECHA_EMVIO).isEmpty() || !mapaErrores.get(CATASTRO_EXISTS).isEmpty() ||
+						!mapaErrores.get(VAL_CAT_CONSTRUCCION_VALIDO).isEmpty() || !mapaErrores.get(VAL_CAT_SUELO_VALIDO).isEmpty()) 
 			 {
 
 					dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -443,6 +452,56 @@ public class MSVSituacionImpuestosExcelValidator extends MSVExcelValidatorAbstra
 				if (!Checks.esNulo(valorDate)) {
 					ft.parse(valorDate);
 				}
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage(),e);
+				e.printStackTrace();
+			} catch (IOException e) {
+				logger.error(e.getMessage(),e);
+				e.printStackTrace();
+			} catch (ParseException e) {
+				logger.error(e.getMessage(),e);
+				listaFilas.add(i);
+			}
+		}
+
+		return listaFilas;
+	}
+	
+	/**
+	 * Método genérico para comprobar si el valor de una columna, es de tipo numérico.
+	 * 
+	 * @param exc
+	 *            : documento excel con los datos.
+	 * @param columnNumber
+	 *            : número de columna a comprobar.
+	 * @return Devuelve una lista con los errores econtrados. Tantos registros
+	 *         como errores.
+	 */
+	private List<Integer> isColumnNANValorIncorrectoByRows(MSVHojaExcel exc, int columnNumber) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		Double numero = null;
+
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
+				
+				String value = exc.dameCelda(i, columnNumber);
+				if(value != null && !value.isEmpty()){
+					if(value.contains(",")){
+						value = value.replace(",", ".");
+					}
+				}
+				
+				numero = !Checks.esNulo(value)
+						? Double.parseDouble(value) : null;
+
+				// Si el numero no es un número válido.
+				if (!Checks.esNulo(numero) && numero.isNaN()) {
+					listaFilas.add(i);
+				}
+					
+			} catch (NumberFormatException e) {
+				logger.error(e.getMessage(),e);
+				listaFilas.add(i);
 			} catch (IllegalArgumentException e) {
 				logger.error(e.getMessage(),e);
 				e.printStackTrace();

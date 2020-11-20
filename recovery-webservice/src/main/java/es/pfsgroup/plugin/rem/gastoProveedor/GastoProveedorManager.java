@@ -2046,7 +2046,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean updateGastoContabilidad(DtoInfoContabilidadGasto dtoContabilidadGasto, Long idGasto) {
+	public boolean updateGastoContabilidad(DtoInfoContabilidadGasto dtoContabilidadGasto, Long idGasto) throws Exception {
 		
 		try {
 			DDSinSiNo codSiNo = new DDSinSiNo();
@@ -2054,6 +2054,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			GastoProveedor gasto = findOne(idGasto);
 			GastoInfoContabilidad contabilidadGasto = gasto.getGastoInfoContabilidad();
 			DtoInfoContabilidadGasto dtoIni = infoContabilidadToDtoInfoContabilidad(gasto);
+					
 			if (!Checks.esNulo(contabilidadGasto)) {
 				
 				beanUtilNotNull.copyProperties(contabilidadGasto, dtoContabilidadGasto);
@@ -2064,14 +2065,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 					contabilidadGasto.setEjercicio(ejercicio);
 				}
-				/*
-				if(dtoContabilidadGasto.getIdSubpartidaPresupuestaria() != null) {
-					Filter filtroSubpartidaPresupuestaria = genericDao.createFilter(FilterType.EQUALS, "id", dtoContabilidadGasto.getIdSubpartidaPresupuestaria());
-					ConfiguracionSubpartidasPresupuestarias cps = genericDao.get(ConfiguracionSubpartidasPresupuestarias.class, filtroSubpartidaPresupuestaria);
-					
-					contabilidadGasto.setConfiguracionSubpartidasPresupuestarias(cps);
-				}
-				*/
 
 				if(!Checks.esNulo(dtoContabilidadGasto.getComboActivable())) {
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoContabilidadGasto.getComboActivable());
@@ -2118,8 +2111,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			return true;
 
 		} catch (Exception e) {
-			logger.error(e.getMessage());
-			return false;
+			throw e;
 		}
 	}
 

@@ -108,6 +108,17 @@ Ext.define('HreRem.view.gastos.ContabilidadGasto', {
 															value: '{contabilidad.tipoComisionadoHreCodigo}'
 														},
                                                         hidden: true						
+													},
+													
+													{ 
+														xtype: 'comboboxfieldbase',
+														fieldLabel: HreRem.i18n('fieldlabel.gasto.inversion.sujeto.pasivo'),
+														reference: 'inversionSujetoPasivo',
+														bind: {
+															store: '{comboSiNoBoolean}',
+															value: '{contabilidad.inversionSujetoPasivoBoolean}'
+														},
+                                                        hidden: !isCarteraLiberbank					
 													}
 										]
 					           },

@@ -2031,6 +2031,16 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					}
 				}
 				
+				if (contabilidadGasto.getInversionSujetoPasivo() != null) {
+					if(DDSinSiNo.CODIGO_SI.equals(contabilidadGasto.getInversionSujetoPasivo().getCodigo())){
+						dto.setInversionSujetoPasivoBoolean(true);
+					}else {
+						dto.setInversionSujetoPasivoBoolean(false);
+					}
+				}
+				
+				
+				
 				if (contabilidadGasto.getTipoComisionadoHre() != null) {
 					dto.setTipoComisionadoHreCodigo(contabilidadGasto.getTipoComisionadoHre().getCodigo());
 					dto.setTipoComisionadoHreDescripcion(contabilidadGasto.getTipoComisionadoHre().getDescripcion());
@@ -2087,6 +2097,18 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO);
 						codSiNo = genericDao.get(DDSinSiNo.class, filtro);
 						contabilidadGasto.setGicPlanVisitas(codSiNo);
+					}
+				}
+				
+				if(dtoContabilidadGasto.getInversionSujetoPasivoBoolean() != null) {
+					if (dtoContabilidadGasto.getInversionSujetoPasivoBoolean() == true) {
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_SI);
+						codSiNo = genericDao.get(DDSinSiNo.class, filtro);
+						contabilidadGasto.setInversionSujetoPasivo(codSiNo);
+					} else {
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSinSiNo.CODIGO_NO);
+						codSiNo = genericDao.get(DDSinSiNo.class, filtro);
+						contabilidadGasto.setInversionSujetoPasivo(codSiNo);
 					}
 				}
 				

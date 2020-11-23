@@ -129,9 +129,8 @@ public interface GastoProveedorApi {
 		/**
 		 * Método que actualiza la la contabilidad de un gasto
 		 * @return
-		 * @throws Exception 
 		 */
-		boolean updateGastoContabilidad(DtoInfoContabilidadGasto dtoContabilidadGasto, Long idGasto) throws Exception;
+		boolean updateGastoContabilidad(DtoInfoContabilidadGasto dtoContabilidadGasto, Long idGasto);
 
 		/**
 		 * crea un gasto

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20201109
+--## FECHA_CREACION=20201123
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-12016
+--## INCIDENCIA_LINK=HREOS-12178
 --## PRODUCTO=NO
 --## Finalidad: Vista para calcular el importe bruto de los gastos de Liberbank
 --##           
@@ -51,31 +51,21 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_IMPORTE_BRUTO_GASTO_LBK...');
   EXECUTE IMMEDIATE 'CREATE VIEW '|| V_ESQUEMA ||'.V_IMPORTE_BRUTO_GASTO_LBK 
   AS
-    WITH IMPORTE_BRUTO AS (
-        SELECT GPV_ID
-            , CAST(
-                SUM(
-                    NVL(GLD.GLD_PRINCIPAL_SUJETO,0)
-                    + NVL(GLD.GLD_PRINCIPAL_NO_SUJETO,0)
-                    + NVL(GLD.GLD_RECARGO,0)
-                    + NVL(GLD.GLD_INTERES_DEMORA,0)
-                    + NVL(GLD.GLD_COSTAS,0)
-                    + NVL(GLD.GLD_OTROS_INCREMENTOS,0)
-                    + NVL(GLD.GLD_PROV_SUPLIDOS,0)
-                )
-                AS NUMBER(16,2)
-            ) AS IMPORTE_BRUTO
-        FROM '|| V_ESQUEMA ||'.GLD_GASTOS_LINEA_DETALLE GLD
-        WHERE GLD.BORRADO = 0
-        GROUP BY GLD.GPV_ID
-    )
     SELECT GPV.GPV_ID
-        , CASE
-            WHEN NVL(TRE.DD_TRE_CODIGO, '''') = ''ANT'' THEN NVL(IMB.IMPORTE_BRUTO, 0) + NVL(GDE.GDE_RET_GAR_CUOTA, 0)
-            ELSE NVL(IMB.IMPORTE_BRUTO, 0)
-        END IMPORTE_BRUTO
+        , CAST(
+            SUM(
+                NVL(GLD.GLD_PRINCIPAL_SUJETO, 0)
+                + NVL(GLD.GLD_PRINCIPAL_NO_SUJETO, 0)
+                + NVL(GLD.GLD_RECARGO, 0)
+                + NVL(GLD.GLD_INTERES_DEMORA, 0)
+                + NVL(GLD.GLD_COSTAS, 0)
+                + NVL(GLD.GLD_OTROS_INCREMENTOS, 0)
+                + NVL(GLD.GLD_PROV_SUPLIDOS, 0)
+            ) AS NUMBER(16,2)
+        ) IMPORTE_BRUTO
     FROM '|| V_ESQUEMA ||'.GPV_GASTOS_PROVEEDOR GPV
-    JOIN IMPORTE_BRUTO IMB ON IMB.GPV_ID = GPV.GPV_ID
+    JOIN '|| V_ESQUEMA ||'.GLD_GASTOS_LINEA_DETALLE GLD ON GLD.GPV_ID = GPV.GPV_ID
+        AND GLD.BORRADO = 0
     JOIN '|| V_ESQUEMA ||'.ACT_PRO_PROPIETARIO PRO ON PRO.PRO_ID = GPV.PRO_ID 
         AND PRO.BORRADO = 0
     JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = PRO.DD_CRA_ID 
@@ -85,7 +75,8 @@ BEGIN
     LEFT JOIN '|| V_ESQUEMA ||'.DD_TRE_TIPO_RETENCION TRE ON TRE.DD_TRE_ID = GDE.DD_TRE_ID
         AND TRE.BORRADO = 0
     WHERE GPV.BORRADO = 0
-        AND CRA.DD_CRA_CODIGO = ''08''';
+        AND CRA.DD_CRA_CODIGO = ''08''
+    GROUP BY GPV.GPV_ID';
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_IMPORTE_BRUTO_GASTO_LBK...Creada OK');
   

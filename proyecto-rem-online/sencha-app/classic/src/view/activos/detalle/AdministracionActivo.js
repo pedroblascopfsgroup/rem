@@ -11,8 +11,10 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
     		me.lookupController().cargarTabData(me);
     	
     		if (!$AU.userIsRol(CONST.PERFILES['GESTOR_ADMINISTRACION']) && !$AU.userIsRol(CONST.PERFILES['SUPERVISOR_ADMINISTRACION']) && !$AU.userIsRol(CONST.PERFILES['HAYASUPER'])){
-    			me.lookupController().lookupReference('tributosGrid').setEditOnSelect(false);
-    			me.lookupController().lookupReference('tributosGrid').setTopBar(false);
+    			if(!Ext.isEmpty(me.lookupController().lookupReference('tributosGrid'))){
+	    			me.lookupController().lookupReference('tributosGrid').setEditOnSelect(false);
+	    			me.lookupController().lookupReference('tributosGrid').setTopBar(false);
+    			}
     		}
     	}
     },

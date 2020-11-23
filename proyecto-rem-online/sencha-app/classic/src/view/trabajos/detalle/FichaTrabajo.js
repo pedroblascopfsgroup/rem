@@ -260,17 +260,26 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 												name: 'fechaConcreta',
 												reference: 'fechaConcreta',
 												maxValue: null,
-												allowBlank: false,
+												allowBlank: true,
 												bind: {
 													value: '{trabajo.fechaConcreta}'
 												},
 												listeners:{
     				        						select: function(x, y, z){
-    				        							var field = this;
+    				        							var field = this; 
     				        							field.up("[reference='plazosFieldSet']").down("[reference='fechaTope']").setMinValue(field.value);
     				        							field.up("[reference='plazosFieldSet']").down("[reference='fechaTope']").validate();
-    				        							}
-	    				        					}
+	    				        					},
+	    				        					change: function(x, y, z){
+														var field = this;
+														if(!Ext.isEmpty(field.value)){
+															field.up('[reference = fechaConcretaFieldSet]').down('[reference=horaConcreta]').allowBlank = false;
+														}else{
+															field.up('[reference = fechaConcretaFieldSet]').down('[reference=horaConcreta]').allowBlank = true;
+															field.up('[reference = fechaConcretaFieldSet]').down('[reference=horaConcreta]').validate();
+														}
+													}
+												}
 											},
 											{
 												fieldLabel: HreRem.i18n('fieldlabel.plazos.fecha.hora.simple'),
@@ -280,9 +289,20 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 												//colspan:2,			
 												format: 'H:i',
 												increment: 30,
-												allowBlank: false,
+												allowBlank: true,
 												bind: {
 													value:  '{trabajo.horaConcreta}'
+												},
+												listeners:{
+													change: function(x, y, z){
+														var field = this;
+														if(!Ext.isEmpty(field.value)){
+															field.up('[reference = fechaConcretaFieldSet]').down('[reference=fechaConcreta]').allowBlank = false;
+														}else{
+															field.up('[reference = fechaConcretaFieldSet]').down('[reference=fechaConcreta]').allowBlank = true;
+															field.up('[reference = fechaConcretaFieldSet]').down('[reference=fechaConcreta]').validate();
+														}
+													}
 												}
 											}
 									]

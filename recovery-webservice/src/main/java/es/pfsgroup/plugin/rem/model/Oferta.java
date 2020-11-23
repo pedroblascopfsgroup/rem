@@ -303,6 +303,9 @@ public class Oferta implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="OFR_ID_REALIZA_ORI_LEAD")
 	private ActivoProveedor proveedorRealizadorRemOrigenLead;
+	
+	@Column(name = "ID_OFERTA_ORIGEN")
+    private Long idOfertaOrigen;
 
 
 	public Date getFechaAlta() {
@@ -912,5 +915,13 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setProveedorRealizadorRemOrigenLead(ActivoProveedor proveedorRealizadorRemOrigenLead) {
 		this.proveedorRealizadorRemOrigenLead = proveedorRealizadorRemOrigenLead;
+	}
+	
+	public Long getIdOfertaOrigen() {
+		return this.idOfertaOrigen;
+	}
+	
+	public void setIdOfertaOrigen(Long idOfertaOrigen) {
+		this.idOfertaOrigen = idOfertaOrigen;
 	}
 }

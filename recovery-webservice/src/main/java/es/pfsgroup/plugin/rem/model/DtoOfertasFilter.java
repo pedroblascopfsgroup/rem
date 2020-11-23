@@ -81,7 +81,11 @@ public class DtoOfertasFilter extends WebDto {
 	
 	//REMVIP-4116
 	private String subcarteraCodigo;
+	
+	//REMVIP-8377
+	private Long idOfertaOrigen;
 		
+	
 	public Long getNumOferta() {
 		return numOferta;
 	}
@@ -476,6 +480,17 @@ public class DtoOfertasFilter extends WebDto {
 	}
 	public void setClaseOferta(String claseOferta) {
 		this.claseOferta = claseOferta;
+	}
+	
+	
+	
+	
+	//REMVIP-8377
+	public Long getIdOfertaOrigen() {
+		return idOfertaOrigen;
+	}
+	public void setIdOfertaOrigen(Long idOfertaOrigen) {
+		this.idOfertaOrigen = idOfertaOrigen;
 	}
 	
 }

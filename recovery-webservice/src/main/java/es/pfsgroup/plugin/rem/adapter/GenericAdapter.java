@@ -418,12 +418,21 @@ public class GenericAdapter {
 				dtoOfertaNueva.setTipoOferta(ofertaOrigen.getTipoOferta().getCodigo());
 				
 				ClienteComercial clienteOfertaOrigen = ofertaOrigen.getCliente();
-				dtoOfertaNueva.setTipoDocumento(clienteOfertaOrigen.getTipoDocumento().getCodigo());
+				
+				if(clienteOfertaOrigen.getTipoDocumento() != null) {
+					dtoOfertaNueva.setTipoDocumento(clienteOfertaOrigen.getTipoDocumento().getCodigo());
+				}
+
 				dtoOfertaNueva.setNombreCliente(clienteOfertaOrigen.getNombre());
 				dtoOfertaNueva.setApellidosCliente(clienteOfertaOrigen.getApellidos());
 				dtoOfertaNueva.setNumDocumentoCliente(clienteOfertaOrigen.getDocumento());
 				dtoOfertaNueva.setRazonSocialCliente(clienteOfertaOrigen.getRazonSocial());
-				dtoOfertaNueva.setTipoPersona(clienteOfertaOrigen.getTipoPersona().getCodigo());
+				
+				if(clienteOfertaOrigen.getTipoPersona() != null) {
+					dtoOfertaNueva.setTipoPersona(clienteOfertaOrigen.getTipoPersona().getCodigo());
+				}
+				
+				dtoOfertaNueva.setIdOfertaOrigen(numIdOferta);
 				
 				if(!Checks.esNulo(clienteOfertaOrigen.getEstadoCivil())) {
 					dtoOfertaNueva.setEstadoCivil(clienteOfertaOrigen.getEstadoCivil().getCodigo());

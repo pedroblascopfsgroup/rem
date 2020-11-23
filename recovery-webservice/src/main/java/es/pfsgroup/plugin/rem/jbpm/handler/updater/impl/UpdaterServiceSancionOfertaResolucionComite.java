@@ -83,6 +83,7 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 	private static final String CODIGO_T013_RESOLUCION_COMITE = "T013_ResolucionComite";
 	private static final String COMITE_SANCIONADOR = "comiteSancionador";
  	private static final Integer RESERVA_SI = 1;
+ 	private static final String T017 = "T017";
 
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -90,9 +91,10 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {		
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		GestorEntidadDto ge = new GestorEntidadDto();
+		String tipoTramite = tramite.getTipoTramite().getCodigo();
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
-
+			
 			if (!Checks.esNulo(expediente)) {
 						
 				for (TareaExternaValor valor : valores) {
@@ -110,7 +112,9 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 							&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
 							expediente.setComiteSancion(expedienteComercialApi.comiteSancionadorByCodigo(valor.getValor()));
 					}
-					if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null) {															
+					if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null
+							&& !T017.equals(tipoTramite) //REMVIP-8388, solo t013 hasta que digan lo contrario
+							&& gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GBOAR") == null) {															
 						EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
 								.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
 						

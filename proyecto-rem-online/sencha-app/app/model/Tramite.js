@@ -188,10 +188,9 @@ Ext.define('HreRem.model.Tramite', {
     	{
     		name: 'deshabilitarBotonResolucion',
     		calculate: function(data) {
-    			return data.estaEnTareaSiguienteResolucionExpediente == true || data.tramiteVentaAnulado == true ||
-    					(data.esGestorAutorizado == false && data.estaEnTareaReserva == false);
+    			return data.estaEnTareaSiguienteResolucionExpediente == true || data.tramiteVentaAnulado == true;
     		},
-    		depends:['estaEnTareaSiguienteResolucionExpediente','tramiteVentaAnulado', 'esGestorAutorizado', 'estaEnTareaReserva']
+    		depends:['estaEnTareaSiguienteResolucionExpediente','tramiteVentaAnulado']
     	}
     ],
 

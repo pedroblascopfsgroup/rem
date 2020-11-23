@@ -1364,9 +1364,21 @@ position:fixed !important;
 .x-fieldset {
   overflow: visible;
 }
-.x-fieldset-header-default > .x-fieldset-header {
+.x-fieldset-header-default {
+	overflow: visible;
 	position:static;
 }
 .x-fieldset-header-default > .x-fieldset-header-text {
 	position:static;
+}
+//.x-fieldset-header-tool-default > .x-tool-toggle {
+//	position:static;
+//	overflow: visible;
+//}
+legend.x-fieldset-header {
+	overflow: visible;
+	position: static;
+}
+div.x-tool-toggle{
+	overflow: visible;
 }

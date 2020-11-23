@@ -139,7 +139,9 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 						&& RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null) {
 					EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
 					
-					if (tipoGestorComercial != null && DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) {
+					if (tipoGestorComercial != null && DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo()) 
+							&& !T017.equals(tipoTramite) //REMVIP-8388, solo t013 hasta que digan lo contrario
+							&& gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GBOAR") == null) {
 						ge.setIdEntidad(expediente.getId());
 						ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
 						ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gruboarding")).getId());	

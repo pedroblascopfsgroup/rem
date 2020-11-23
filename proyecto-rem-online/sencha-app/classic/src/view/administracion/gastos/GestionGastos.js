@@ -1,6 +1,7 @@
 Ext.define('HreRem.view.administracion.gastos.GestionGastos', {
     extend		: 'Ext.panel.Panel',
     xtype		: 'gestiongastos',
+	//title		: HreRem.i18n("title.gastos.gestion.gastos"),
     scrollable: 'y',
     layout: {
         type: 'vbox',

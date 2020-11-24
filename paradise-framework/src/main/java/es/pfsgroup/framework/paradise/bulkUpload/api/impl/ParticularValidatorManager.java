@@ -439,6 +439,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "				     WHERE DD_EPU_CODIGO IN ('06')) )");
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean bankiaPublicado(String numActivo){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		FROM ACT_ACTIVO WHERE"
+				+ "			ACT_NUM_ACTIVO ='"+numActivo+"' "
+				+ "	AND DD_CRA_ID = '21' AND BORRADO = 0 "
+				+ "			AND ( DD_EPU_ID IS NULL "
+				+ "			      OR DD_EPU_ID IN (SELECT DD_EPU_ID"
+				+ "				     FROM DD_EPU_ESTADO_PUBLICACION EPU"
+				+ "				     WHERE DD_EPU_CODIGO IN ('06')) )");
+		return "1".equals(resultado);
+	}
+	
+	
 
 	@Override
 	public Boolean estadoOcultaractivo(String numActivo){
@@ -4669,6 +4684,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean estadoExpedienteComercial(String activo) {
+		if(Checks.esNulo(activo) || !StringUtils.isNumeric(activo))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT count(1) FROM eco_expediente_comercial where ofr_id in (SELECT ofr_id FROM ofr_ofertas where "
+				+"		ofr_id in (SELECT ofr_id FROM act_ofr where act_id in (SELECT act_id from act_activo where "
+				+"		act_num_activo = '"+activo+"'))) and eco_expediente_comercial.dd_eec_id not in ('03','06','08') ");
+
+		return "1".equals(resultado);
+	}
+	
+	@Override
 	public Boolean coincideTipoJuzgadoPoblacionJuzgado(String codigoTipoJuzgado, String codigoPoblacionJuzgado) {
 		if(Checks.esNulo(codigoTipoJuzgado) || Checks.esNulo(codigoPoblacionJuzgado))
 			return false;
@@ -4715,7 +4741,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+" JOIN ACT_ACTIVO act ON act.ACT_ID = pta.ACT_ID AND act.ACT_NUM_ACTIVO = " +  numActivo
 				+" WHERE pta.PTA_TRAMITE_ALQ_SOCIAL = 1"
 				);
-		return !"0".equals(resultado); 
+		return "0".equals(resultado); 
 	}
 	
 	@Override
@@ -4875,6 +4901,91 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				"FROM HPP_HISTORICO_PETICIONES_PRECIOS HPP "+ 
 				"WHERE HPP.HPP_ID = " + codPeticion +
 				" AND HPP.borrado = 0");
+		return "1".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existeCodigoMotivoAdmision(String codMotivo) {
+		
+		 if(codMotivo == null || codMotivo.isEmpty())
+			 return true;// Si codigo peticion viene nula es porque se va a crear nueva peticion.
+		 
+		 if(Boolean.FALSE.equals(StringUtils.isNumeric(codMotivo)))
+			 return false;
+
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) "+ 
+				"FROM DD_MGC_MOTIVO_GEST_COMERCIAL MGC"+ 
+				" WHERE MGC.DD_MGC_CODIGO = '" + codMotivo +
+				"' AND MGC.borrado = 0");
+		return "1".equals(resultado);
+	}
+	
+	@Override
+	public Boolean tieneFechaVentaExterna(String activo) {
+		
+		 if(activo == null || activo.isEmpty())
+			 return true;// Si codigo peticion viene nula es porque se va a crear nueva peticion.
+		 
+		 if(Boolean.FALSE.equals(StringUtils.isNumeric(activo)))
+			 return false;
+
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) "+ 
+				"FROM act_activo act"+ 
+				" WHERE act.act_num_activo = '" + activo +
+				"' AND act.act_venta_externa_fecha is null AND act.borrado = 0");
+		return "1".equals(resultado);
+	}
+	
+	@Override
+	public Boolean activoNoComercializable(String activo) {
+		
+		 if(activo == null || activo.isEmpty())
+			 return true;// Si codigo peticion viene nula es porque se va a crear nueva peticion.
+		 
+		 if(Boolean.FALSE.equals(StringUtils.isNumeric(activo)))
+			 return false;
+
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) "+ 
+				"FROM act_pac_perimetro_activo pac"+ 
+				" WHERE pac.pac_check_formalizar = '1'"+
+				" AND pac.act_id = (select act_id from act_activo where act_num_activo = '"+activo+"') AND pac.borrado = 0");
+		return "1".equals(resultado);
+	}
+	
+	@Override
+	public Boolean estadoPublicacion(String activo) {
+		
+		 if(activo == null || activo.isEmpty())
+			 return true;// Si codigo peticion viene nula es porque se va a crear nueva peticion.
+		 
+		 if(Boolean.FALSE.equals(StringUtils.isNumeric(activo)))
+			 return false;
+
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) "+ 
+				"FROM act_activo act"+ 
+				" WHERE act.dd_tco_id = '03'"+
+				" AND act.act_num_activo ='"+activo+"' AND act.dd_epu_id <> '06'  AND act.borrado = 0");
+		return "1".equals(resultado);
+	}
+	
+	@Override
+	public Boolean maccConCargas(String activo) {
+		
+		 if(activo == null || activo.isEmpty())
+			 return true;// Si codigo peticion viene nula es porque se va a crear nueva peticion.
+		 
+		 if(Boolean.FALSE.equals(StringUtils.isNumeric(activo)))
+			 return false;
+
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) "+ 
+				"FROM act_activo act"+ 
+				" WHERE act.act_num_activo ='"+activo+"'S"+
+				" AND  AND act.act_con_cargas = '01'  AND act.borrado = 0");
 		return "1".equals(resultado);
 	}
 	
@@ -5124,6 +5235,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		return "1".equals(resultado);
 	}
+	
+	@Override
+	public Boolean isCheckVisibleGestionComercial(String numActivo,Integer celdaVisibleGestionComercial) {
+		if(celdaVisibleGestionComercial == null || celdaVisibleGestionComercial == 2|| Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
+			return false;
+		}
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) FROM ACT_PAC_PERIMETRO_ACTIVO " 
+				+ "WHERE ACT_ID = (select act_id from act_activo where act_num_activo = '"+ numActivo+"' ) AND PAC_CHECK_GESTION_COMERCIAL = "+ celdaVisibleGestionComercial +""
+				+ "AND BORRADO = 0"
+		);
+		
+		return "0".equals(resultado);
+	}
+	
 	
 	@Override
 	public Boolean subestadoAdmisionValido(String codSubestadoAdmision) {

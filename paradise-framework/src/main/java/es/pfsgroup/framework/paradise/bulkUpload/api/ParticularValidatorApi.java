@@ -1233,4 +1233,20 @@ public interface ParticularValidatorApi {
 	Boolean existePais(String pais);
 
 	Boolean existeMunicipioDeProvinciaByCodigo(String codProvincia, String codigoMunicipio);
+
+	Boolean existeCodigoMotivoAdmision(String codMotivo);
+	
+	Boolean isCheckVisibleGestionComercial(String numActivo,Integer celdaVisibleGestionComercial);
+
+	Boolean tieneFechaVentaExterna(String activo);
+
+	Boolean bankiaPublicado(String activo);
+
+	Boolean activoNoComercializable(String activo);
+
+	Boolean estadoPublicacion(String activo);
+
+	Boolean maccConCargas(String activo);
+
+	Boolean estadoExpedienteComercial(String activo);
 }

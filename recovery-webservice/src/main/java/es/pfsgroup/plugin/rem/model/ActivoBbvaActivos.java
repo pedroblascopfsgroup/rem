@@ -52,10 +52,7 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 	
     @Column(name = "BBVA_NUM_ACTIVO")
     private String numActivoBbva;
-    
-	@Column(name = "BBVA_ID_DIVARIAN")
-	private Long idDivarianBbva;
-    
+
     @Column(name = "BBVA_LINEA_FACTURA")
 	private Long lineaFactura;
     
@@ -104,6 +101,10 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 	@Embedded
 	private Auditoria auditoria;
 
+	@Column(name = "BBVA_COD_PROMOCION")
+  	private String codPromocion;
+	
+	
 	public Auditoria getAuditoria() {
 		return auditoria;
 	}
@@ -134,14 +135,6 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 
 	public void setNumActivoBbva(String numActivoBbva) {
 		this.numActivoBbva = numActivoBbva;
-	}
-
-	public Long getIdDivarianBbva() {
-		return idDivarianBbva;
-	}
-
-	public void setIdDivarianBbva(Long idDivarianBbva) {
-		this.idDivarianBbva = idDivarianBbva;
 	}
 
 	public Long getLineaFactura() {
@@ -254,6 +247,14 @@ public class ActivoBbvaActivos implements Serializable, Auditable {
 
 	public void setVersion(Long version) {
 		this.version = version;
+	}
+
+	public String getCodPromocion() {
+		return codPromocion;
+	}
+
+	public void setCodPromocion(String codPromocion) {
+		this.codPromocion = codPromocion;
 	}
 	
 }

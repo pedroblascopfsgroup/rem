@@ -942,10 +942,6 @@ Ext.define('HreRem.model.Activo', {
     			name: 'numActivoDivarian'
     		},
     		{
-    			name: 'activoEpa',
-    			type: 'boolean'
-    		},
-    		{
     			name: 'empresa'
     		},
     		{
@@ -964,9 +960,6 @@ Ext.define('HreRem.model.Activo', {
     			name: 'numActivoBbva'
     		},
     		{
-    			name: 'idDivarianBbva'
-    		},
-    		{
     			name: 'lineaFactura'
     		},
     		{
@@ -979,6 +972,20 @@ Ext.define('HreRem.model.Activo', {
     			name: 'cexperBbva'
     		},
     		{
+    			name: 'subestadoAdmisionDescCabecera'
+			},
+			{
+	 			name: 'estadoRegistralCodigo'
+			},
+			{
+	 			name: 'esEditableActivoEstadoRegistral',
+    			type: 'boolean'	 			
+			},
+			{
+    			name: 'activoEpa',
+				type: 'boolean'
+			},
+			{
     			name: 'tipoTransmisionCodigo'
     		},
     		{
@@ -1047,15 +1054,8 @@ Ext.define('HreRem.model.Activo', {
     			name: 'estadoAdmisionDescCabecera' 
     		},
     		{
-    			name: 'subestadoAdmisionDescCabecera'
-			},
-			{
-	 			name: 'estadoRegistralCodigo'
-			},
-			{
-	 			name: 'esEditableActivoEstadoRegistral',
-    			type: 'boolean'	 			
-			}
+    			name: 'codPromocionBbva'
+    		}
     ],
     
 	proxy: {

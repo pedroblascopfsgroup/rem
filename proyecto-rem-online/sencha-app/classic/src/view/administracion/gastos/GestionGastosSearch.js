@@ -2,10 +2,7 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosSearch', {
     extend: 'HreRem.view.common.FormBase',
     xtype: 'gestiongastossearch',
     isSearchFormGastos: true,
-    layout: {
-        type: 'vbox',
-        align: 'stretch'
-    },
+  	layout: 'column',
 	defaults: {
         xtype: 'fieldsettable',
         columnWidth: 1,

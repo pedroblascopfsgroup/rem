@@ -277,6 +277,25 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean pazSocial;
 	private String numActivoDivarian;
 	
+	private Boolean activoEpa;
+    private Long empresa;
+    private Long oficina;
+    private Long contrapartida;
+    private Long folio;
+    private Long cdpen;
+    
+	private String numActivoBbva;
+    private Long idDivarianBbva;
+    private Long lineaFactura;
+    private Long idOrigenHre;
+    private String uicBbva;
+    private String cexperBbva;
+    private String tipoTransmisionCodigo;
+    private String tipoAltaCodigo;
+    private String tipoTransmisionDescripcion;
+    private String tipoAltaDescripcion;
+    private Boolean isGrupoOficinaKAM;
+
 	//Estado Admision
 	private Boolean incluidoEnPerimetroAdmision;
 	private String estadoAdmisionCodigo;
@@ -293,26 +312,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String subestadoAdmisionCodCabecera;
 	private String estadoAdmisionDescCabecera;
 	private String subestadoAdmisionDescCabecera;
-	private Boolean esEditableActivoEstadoRegistral;
-
-	private Boolean activoEpa;
-    private Long empresa;
-    private Long oficina;
-    private Long contrapartida;
-    private Long folio;
-    private Long cdpen;
-    
-	private String numActivoBbva;
-    private Long lineaFactura;
-    private Long idOrigenHre;
-    private String uicBbva;
-    private String cexperBbva;
-    private String tipoTransmisionCodigo;
-    private String tipoAltaCodigo;
-    private String tipoTransmisionDescripcion;
-    private String tipoAltaDescripcion;
-    private Boolean isGrupoOficinaKAM;
-    
+	private Boolean esEditableActivoEstadoRegistral;  
 
 	private Boolean activoChkPerimetroAlquiler;
 	private List<?> activosAgrupacionRestringida;
@@ -2259,6 +2259,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setIsGrupoOficinaKAM(Boolean isGrupoOficinaKAM) {
 		this.isGrupoOficinaKAM = isGrupoOficinaKAM;
 	}
+
 	public Boolean getPerimetroAdmision() {
 		return perimetroAdmision;
 	}

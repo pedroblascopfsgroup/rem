@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoProyecto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoTributo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GastoAsociadoAdquisicion;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -134,4 +135,5 @@ public interface GestorDocumentalAdapterApi {
 	public List<DtoAdjunto> getAdjuntosProveedor(ActivoProveedor proveedor) throws GestorDocumentalException;
 
 	Runnable crearProyecto(Activo activo, ActivoProyecto proyecto, String usuarioLogado, String tipoExpediente) throws GestorDocumentalException;
+
 }

@@ -919,21 +919,21 @@ public class OfertasController {
 		return createModelAndViewJson(model);
 	}
 	
-	/*@RequestMapping(method = RequestMethod.GET)
-		public void generateExcelBBVA(Long idExpediente, HttpServletRequest request, HttpServletResponse response) throws IOException {
-	
-			try {
-				 	DtoExcelFichaComercial listaOfertasFilter = ofertaApi.getListOfertasFilter(idExpediente);
-					File file = null;
-					file = excelReportGeneratorApi.generateBbvaReportPrueba(listaOfertasFilter,request);
-					excelReportGeneratorApi.sendReport(file, response);
-				
-	
-			} catch (Exception e) {
-				e.printStackTrace();
-	 
-			}
-		}*/
+	@RequestMapping(method = RequestMethod.GET)
+	public void generateExcelBBVA(Long idExpediente, HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+		try {
+			 	DtoExcelFichaComercial listaOfertasFilter = ofertaApi.getListOfertasFilter(idExpediente);
+				File file = null;
+				file = excelReportGeneratorApi.generateBbvaReportGetFile(listaOfertasFilter,request);
+				excelReportGeneratorApi.sendReport(file, response);
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+ 
+		}
+	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -943,7 +943,7 @@ public class OfertasController {
 
 			Oferta oferta = ofertaApi.getOfertaById(idOferta);
 			DtoExcelFichaComercial dtoExcelFichaComercial = ofertaApi.getListOfertasFilter(idExpediente);
-			String nameFile = excelReportGeneratorApi.generateBbvaReport(dtoExcelFichaComercial,request);
+			String nameFile = excelReportGeneratorApi.generateBbvaReportGetName(dtoExcelFichaComercial,request);
 			String errorCode = notificationOferta.enviarMailFichaComercial(oferta, nameFile,request);
 
 			if(errorCode == null || errorCode.isEmpty()){

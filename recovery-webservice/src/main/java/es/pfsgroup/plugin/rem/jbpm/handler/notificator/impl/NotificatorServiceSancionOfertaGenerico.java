@@ -1256,7 +1256,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			}
 			// ADJUNTOS SI ES SAREB
 			else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)) {
-				f1 = FileItemUtils.fromResource("docs/instrucciones_de_reserva.docx");
+				f1 = FileItemUtils.fromResource("docs/Instrucciones_de_reserva_v2.docx");
 				if (f1 != null) {
 					adjuntos.add(createAdjunto(f1, "Instrucciones_de_reserva.docx"));
 				}
@@ -1264,7 +1264,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			}
 			// ADJUNTOS SI ES BANKIA
 			else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)) {
-				f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_Bankia_v9.docx");
+				f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_Bankia_v10.docx");
 				if (f1 != null) {
 					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_Bankia.docx"));
 				}
@@ -1289,14 +1289,14 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			 */
 			// ADJUNTOS SI ES LIBERBANK
 			else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
-				f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_y_formalizacion_Liberbank.docx");
+				f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_y_formalizacion_Liberbank_v2.docx");
 				if (f1 != null) {
 					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_y_formalizacion_Liberbank.docx"));
 				}
 				// ADJUNTOS SI ES CERBERUS APPLE
 			} else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CERBERUS)
 					&& DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
-				f2 = FileItemUtils.fromResource("docs/instrucciones_reserva_y_formalizacion_APPLE.docx");
+				f2 = FileItemUtils.fromResource("docs/instrucciones_reserva_y_formalizacion_APPLE_v2.docx");
 				if ( f2 != null ) {
 					adjuntos.add(createAdjunto(f2, "instrucciones_reserva_y_formalizacion_APPLE.docx"));
 				}

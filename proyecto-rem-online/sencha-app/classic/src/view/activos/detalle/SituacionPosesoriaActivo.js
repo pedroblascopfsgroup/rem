@@ -67,8 +67,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 					            	}//,
 //					            	labelWidth: 80,
 //					            	width: 200
-						        },
-						        {
+						        },{
 						        	xtype:'textfieldbase',
 						        	fieldLabel: HreRem.i18n('fieldlabel.ultima.modificacion'),
 						        	readOnly: true,
@@ -193,7 +192,20 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						        }
 							]
 						},
-						{ 
+						{
+						        	xtype: 'comboboxfieldbase',
+									reference: 'posesionNegociada',
+									fieldLabel: HreRem.i18n('fieldlabel.situacion.posesoria.llaves.negociacion'),
+						        	bind: {				        		
+						        		store: '{comboSiNoPosesionNegociada}',
+					            		value: '{situacionPosesoria.posesionNegociada}',
+					            		readOnly: '{!tienePosesion}'
+					            	},
+					            	displayField: 'descripcion',
+					            	valueField: 'codigo'
+					            	
+					            	
+						},{ 
 							xtype:'datefieldbase',
 							reference: 'fechaTomaPosesion',
 							allowBlank: false,
@@ -219,7 +231,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							fieldLabel: HreRem.i18n('fieldlabel.ocupado'),
 				        	bind: {
 			            		store: '{comboSiNoRem}',
-			            		value : '{situacionPosesoria.ocupado}',
+			            		value : '{situacionPosesoriesTipoEstadoAlquilerAlquiladoa.ocupado}',
 			            		readOnly: '{esTipoEstadoAlquilerAlquilado}'
 			            	},
 			            	listeners: {

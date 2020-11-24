@@ -61,6 +61,7 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 	public static final String NOMBRE_VIA_IS_NULL = "El nombre de la vía no puede estar vacía.";
 	public static final String NUM_VIA_IS_NULL = "El número de la vía no puede estar vacía.";
 	public static final String UNIDAD_INFERIOR_MUNICIPIO_IS_NULL = "La unidad inferior al municipio no puede estar vacía.";
+	public static final String MUNICIPIO_IS_NULL = "El municipio no puede estar vacío";
 	public static final String CODIGO_POSTAL_IS_NULL = "El código postal no puede estar vacío.";
 	public static final String DESTINO_COMERCIAL_IS_NULL = "El destino comercial no puede estar vacío.";
 	public static final String TIPO_ALQUILER_IS_NULL = "El tipo de alquiler no puede estar vacío si el destino comercial incluye alquiler.";
@@ -74,10 +75,8 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 	public static final String NIF_PROPIETARIO_IS_NULL = "El NIF de propietario no puede estar vacío.";
 	public static final String VPO_IS_NULL = "El VPO no puede estar vacío.";
 	public static final String PRECIO_VENTA_WEB_IS_NULL = "El precio de venta web no puede estar vacío.";
-	public static final String PRECIO_MINIMO_IS_NAN = "El importe indicado en precio mínimo no es un valor numérico correcto";
 	public static final String PRECIO_VENTA_WEB_IS_NAN = "El importe indicado en precio venta web no es un valor numérico correcto";
 	public static final String VALOR_TASACION_IS_NAN = "El importe indicado en el valor de tasación no es un valor numérico correcto";
-	public static final String PRECIO_MINIMO_IS_ZERO = "El importe indicado en el precio mínimo ha de ser mayor a 0";
 	public static final String PRECIO_VENTA_WEB_IS_ZERO = "El importe indicado en el precio mínimo ha de ser mayor a 0";
 	public static final String VALOR_TASACION_IS_ZERO = "El importe indicado en el precio mínimo ha de ser mayor a 0";
 	public static final String INTEGRADO_DIVISION_HORIZONTAL_NOT_BOOL = "El valor indicado en INTEGRADO DIVISION HORIZONTAL no es un valor Si/No correcto";
@@ -85,7 +84,6 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 	public static final String TRASTERO_ANEJO_NOT_BOOL = "El valor indicado en TRASTERO ANEJO no es un valor Si/No correcto";
 	public static final String FECHA_TASACION_DATE_FORMAT = "El valor indicado en FECHA TASACIÓN no cumple con el formato de fecha correcto (DD/MM/AAAA)";
 	public static final String SOCIEDAD_ACREEDORA_NOT_EXISTS = "El NIF indicado para la sociedad acreedora no se encuentra dado de alta";
-	public static final String MEDIADOR_NOT_EXISTS = "El NIF indicado para el mediador no se encuentra dado de alta";
 	public static final String CODIGO_SOCIEDAD_ACREEDORA_IS_NAN = "El código de la sociedad acreedora no tiene un formato numérico válido";
 	public static final String NUM_ACTIVO_HAYA_IS_NAN = "El código haya del activo no tiene un formato numérico válido";
 	public static final String NUM_ACTIVO_CARTERA_IS_NAN = "El número de activo por cartera no tiene un formato numérico válido";
@@ -104,21 +102,11 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 	public static final String CODIGO_POSTAL_IS_NAN = "El código postal no tiene un formato numérico válido o no contiene 5 posiciones";
 	public static final String MUNICIPIO_NOT_EXISTS = "El código de municipio especificado no existe";
 	public static final String UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS = "El código de la unidad inferior al municipio especificado no existe";
-	public static final String GESTOR_COMERCIAL_NOT_EXISTS = "El gestor comercial no existe";
-	public static final String SUPERVISOR_COMERCIAL_NOT_EXISTS = "El supervisor comercial no existe";
-	public static final String GESTOR_FORMALIZACION_NOT_EXISTS = "El gestor de formalización no existe";
-	public static final String SUPERVISOR_FORMALIZACION_NOT_EXISTS = "El supervisor de formalización no existe";
-	public static final String GESTOR_ADMISION_NOT_EXISTS ="El gestor de admisión no existe";
-	public static final String GESTOR_ACTIVOS_NOT_EXISTS = "El gestor de mantenimiento no existe";
 	public static final String GESTORIA_FORMALIZACION_IS_NULL = "La gestoría de formalización no puede estar vacía";
 	public static final String GESTORIA_FORMALIZACION_NOT_EXISTS ="La gestoría de formalización no existe";
 	public static final String TIPO_DE_COMERCIALIZACION_INCORRECTO = "El tipo de comercialización es incorrecto";
-	public static final String NUM_ACTIVO_BBVA_IS_NULL ="El Número de Activo BBVA no puede estar vacío";
 	public static final String TIPO_DE_TITULO_BBVA_IS_NULL = "El campo Tipo de Titulo (BBVA) no puede estar vacío";
-	public static final String TIPO_DE_TRANSMISION_BBVA_IS_NULL ="El campo Tipo de Transmisión (BBVA) no puede estar vacío";
 	public static final String INDICADOR_ACTIVO_EPA_BBVA_IS_NULL ="El campo Indicador Activo EPA (BBVA) no puede estar vacío";
-	public static final String NUM_ACTIVO_BBVA_IS_NAN = "El Número de Activo BBVA (BBVA) no tiene un formato numérico válido";
-	public static final String ID_APP_DIVARIAN_IS_NAN = "El ID App Divarian no tiene un formato numérico válido";
 	public static final String ID_HAYA_ORIGEN_IS_NAN = "El ID HAYA Origen no tiene un formato numérico válido";
 	public static final String EMPRESA_CM_IS_NAN = "El campo Empresa (Cuenta de mora) no tiene un formato numérico válido";
 	public static final String OFICINA_CM_IS_NAN = "El campo Oficina (Cuenta de mora) no tiene un formato numérico válido";
@@ -148,6 +136,8 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 	public static final String DEUDOR_ACREDITADO_CAMPOS_OB5 = "Revise los campos del deudor acreditado 5 si esta informado un campo de Tipo Documento, Nº Documento o Nombre/Razón social deben estar incluidos todos los campos.";
 	public static final String NUM_ACTIVO_BBVA_REPETIDO = "El campo Número Activo BBVA tiene un valor que ya se ha introducido anteriormente";
 	public static final String COD_COMERCIALIZACION_INCORRECTO="El campo Destino comercial es incorrecto.";
+	public static final String NIF_CIF_PROPIETARIO_INCORRECTO ="El formato del NIF/CIF es incorrecto.";
+	public static final String NIF_CIF_PROPIETARIO_IS_NULL ="El Campo NIF/CIF propietario no puede estar vacio .";
 	
 	// Posicion fija de Columnas excel, para cualquier referencia por posicion
 	public static final class COL_NUM {
@@ -156,107 +146,107 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 		
 		//lalves
 		static final int NUM_ACTIVO_HAYA = 0;
-		static final int COD_CARTERA = 1;
-		static final int COD_SUBTIPO_TITULO = 2;
-		static final int NUM_ACTIVO_EXTERNO = 3;
-		static final int COD_TIPO_ACTIVO = 4;
-		static final int COD_SUBTIPO_ACTIVO = 5;
-		static final int COD_ESTADO_FISICO = 6;
-		static final int COD_USO_DOMINANTE = 7;
-		static final int DESC_ACTIVO = 8;
+		static final int COD_PROMOCION = 1;
+		static final int COD_CARTERA = 2;
+		static final int COD_SUBTIPO_TITULO = 3;
+		static final int NUM_ACTIVO_EXTERNO = 4;
+		static final int COD_TIPO_ACTIVO = 5;
+		static final int COD_SUBTIPO_ACTIVO = 6;
+		static final int COD_ESTADO_FISICO = 7;
+		static final int COD_USO_DOMINANTE = 8;
+		static final int DESC_ACTIVO = 9;
 		
 		//Dirección
-		static final int COD_TIPO_VIA = 9;
-		static final int NOMBRE_VIA = 10;
-		static final int NUM_VIA = 11;
-		static final int ESCALERA = 12;
-		static final int PLANTA = 13;
-		static final int PUERTA = 14;
-		static final int COD_PROVINCIA = 15;
-		static final int COD_MUNICIPIO = 16;
-		static final int COD_UNIDAD_MUNICIPIO = 17;
-		static final int CODPOSTAL = 18;
+		static final int COD_TIPO_VIA = 10;
+		static final int NOMBRE_VIA = 11;
+		static final int NUM_VIA = 12;
+		static final int ESCALERA = 13;
+		static final int PLANTA = 14;
+		static final int PUERTA = 15;
+		static final int COD_PROVINCIA = 16;
+		static final int COD_MUNICIPIO = 17;
+		static final int COD_UNIDAD_MUNICIPIO = 18;
+		static final int CODPOSTAL = 19;
 		
 		//Comercializacion
-		static final int COD_DESTINO_COMER = 19;
-		static final int COD_TIPO_ALQUILER = 20;
-		static final int COD_TIPO_DE_COMERCIALIZACION = 21;
+		static final int COD_DESTINO_COMER = 20;
+		static final int COD_TIPO_ALQUILER = 21;
+		static final int COD_TIPO_DE_COMERCIALIZACION = 22;
 		
 		//Inscripción
-		static final int POBL_REGISTRO = 22;
-		static final int NUM_REGISTRO = 23;
-		static final int TOMO = 24;
-		static final int LIBRO = 25;
-		static final int FOLIO = 26;
-		static final int FINCA = 27;
-		static final int IDUFIR_CRU = 28;
-		static final int SUPERFICIE_CONSTRUIDA_M2 = 29;
-		static final int SUPERFICIE_UTIL_M2 = 30;
-		static final int SUPERFICIE_REPERCUSION_EE_CC = 31;
-		static final int PARCELA = 32; // (INCLUIDA OCUPADA EDIFICACION)
-		static final int ES_INTEGRADO_DIV_HORIZONTAL = 33;
+		static final int POBL_REGISTRO = 23;
+		static final int NUM_REGISTRO = 24;
+		static final int TOMO = 25;
+		static final int LIBRO = 26;
+		static final int FOLIO = 27;
+		static final int FINCA = 28;
+		static final int IDUFIR_CRU = 29;
+		static final int SUPERFICIE_CONSTRUIDA_M2 = 30;
+		static final int SUPERFICIE_UTIL_M2 = 31;
+		static final int SUPERFICIE_REPERCUSION_EE_CC = 32;
+		static final int PARCELA = 33; // (INCLUIDA OCUPADA EDIFICACION)
+		static final int ES_INTEGRADO_DIV_HORIZONTAL = 34;
 		
 		//Titulo
-		static final int NIF_PROPIETARIO = 34;
-		static final int GRADO_PROPIEDAD = 35;
-		static final int PERCENT_PROPIEDAD = 36;
-		static final int PROP_ANTERIOR = 37;
+		static final int NIF_PROPIETARIO = 35;
+		static final int GRADO_PROPIEDAD = 36;
+		static final int PERCENT_PROPIEDAD = 37;
+		static final int PROP_ANTERIOR = 38;
 		
 		//
-		static final int REF_CATASTRAL = 38;
-		static final int VPO = 39;
-		static final int CALIFICACION_CEE = 40;
-		static final int CED_HABITABILIDAD = 41;
+		static final int REF_CATASTRAL = 39;
+		static final int VPO = 40;
+		static final int CALIFICACION_CEE = 41;
+		static final int CED_HABITABILIDAD = 42;
 		
 		//Información publicación
-		static final int NIF_MEDIADOR = 42;
-		static final int VIVIENDA_NUM_PLANTAS = 43;
-		static final int VIVIENDA_NUM_BANYOS = 44;
-		static final int VIVIENDA_NUM_ASEOS = 45;
-		static final int VIVIENDA_NUM_DORMITORIOS = 46;
-		static final int TRASTERO_ANEJO = 47;
-		static final int GARAJE_ANEJO = 48;
-		static final int ASCENSOR = 49;
+		static final int NIF_MEDIADOR = 43;
+		static final int VIVIENDA_NUM_PLANTAS = 44;
+		static final int VIVIENDA_NUM_BANYOS = 45;
+		static final int VIVIENDA_NUM_ASEOS = 46;
+		static final int VIVIENDA_NUM_DORMITORIOS = 47;
+		static final int TRASTERO_ANEJO = 48;
+		static final int GARAJE_ANEJO = 49;
+		static final int ASCENSOR = 50;
 		
 		//Información precios
-		static final int PRECIO_MINIMO = 50;
-		static final int PRECIO_VENTA_WEB = 51;
-		static final int VALOR_TASACION = 52;
-		static final int FECHA_TASACION = 53;
+		static final int PRECIO_MINIMO = 51;
+		static final int PRECIO_VENTA_WEB = 52;
+		static final int VALOR_TASACION = 53;
+		static final int FECHA_TASACION = 54;
 		
 		//Gestores del activo
-		static final int GESTOR_COMERCIAL = 54;
-		static final int SUPER_GESTOR_COMERCIAL = 55;
-		static final int GESTOR_FORMALIZACION = 56;
-		static final int SUPER_GESTOR_FORMALIZACION = 57;
-		static final int GESTOR_ADMISION = 58;
-		static final int GESTOR_ACTIVOS = 59;
-		static final int GESTORIA_DE_FORMALIZACION= 60;
+		static final int GESTOR_COMERCIAL = 55;
+		static final int SUPER_GESTOR_COMERCIAL = 56;
+		static final int GESTOR_FORMALIZACION = 57;
+		static final int SUPER_GESTOR_FORMALIZACION = 58;
+		static final int GESTOR_ADMISION = 59;
+		static final int GESTOR_ACTIVOS = 60;
+		static final int GESTORIA_DE_FORMALIZACION= 61;
 		
 		//Datos relevantes admisión
-		static final int FECHA_INSCRIPCION = 61;
-		static final int FECHA_OBT_TITULO = 62;
-		static final int FECHA_TOMA_POSESION = 63;
-		static final int FECHA_LANZAMIENTO = 64;
-		static final int OCUPADO = 65;
-		static final int TIENE_TITULO = 66;
-		static final int LLAVES = 67;
-		static final int CARGAS = 68;
+		static final int FECHA_INSCRIPCION = 62;
+		static final int FECHA_OBT_TITULO = 63;
+		static final int FECHA_TOMA_POSESION = 64;
+		static final int FECHA_LANZAMIENTO = 65;
+		static final int OCUPADO = 66;
+		static final int TIENE_TITULO = 67;
+		static final int LLAVES = 68;
+		static final int CARGAS = 69;
 		
 		//
-		static final int TIPO_ACTIVO = 69;
-		static final int FORMALIZACION = 70;
+		static final int TIPO_ACTIVO = 70;
+		static final int FORMALIZACION = 71;
 		
 		//Datos propietarios
-		static final int NOMBRE_PROPIETARIO = 71;
-		static final int APELLIDO1_PROPIETARIO = 72;
-		static final int APELLIDO2_PROPIETARIO = 73;
-		static final int TIPO_PROPIETARIO = 74;
-		static final int NIF_CIF_PROPIETARIO = 75;
+		static final int NOMBRE_PROPIETARIO = 72;
+		static final int APELLIDO1_PROPIETARIO = 73;
+		static final int APELLIDO2_PROPIETARIO = 74;
+		static final int TIPO_PROPIETARIO = 75;
+		static final int NIF_CIF_PROPIETARIO = 76;
 		
 		//BBVA
-		static final int ACTIVO_BBVA = 76;
-		static final int ID_APP_DIVARIAN_BBVA = 77;
+		static final int ACTIVO_BBVA = 77;
 		static final int TIPO_TITULO_BBVA = 78;
 		static final int SEGMENTO_BBVA = 79;
 		static final int ID_HAYA_ORIGEN_BBVA = 80;
@@ -317,11 +307,7 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 		static final int RAZON_SOCIAL_DEUDOR5 = 120;
 		static final int APELLIDO_DEUDOR5 = 121;
 		static final int APELLIDO2_DEUDOR5 = 122;
-		
-		
-		
 				
-		
 	};
 
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -382,6 +368,7 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 			mapaErrores.put(NOMBRE_VIA_IS_NULL, isColumnNullByRows(exc, COL_NUM.NOMBRE_VIA));
 			mapaErrores.put(NUM_VIA_IS_NULL, isColumnNullByRows(exc, COL_NUM.NUM_VIA));
 			mapaErrores.put(UNIDAD_INFERIOR_MUNICIPIO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_UNIDAD_MUNICIPIO));
+			mapaErrores.put(MUNICIPIO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_MUNICIPIO));
 			mapaErrores.put(CODIGO_POSTAL_IS_NULL, isColumnNullByRows(exc, COL_NUM.CODPOSTAL));
 			mapaErrores.put(DESTINO_COMERCIAL_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_DESTINO_COMER));
 			mapaErrores.put(TIPO_DE_COMERCIALIZACION_INCORRECTO, isTipoDeComercializacionCorrecto(exc, COL_NUM.COD_TIPO_DE_COMERCIALIZACION));
@@ -390,52 +377,31 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 			mapaErrores.put(FINCA_IS_NULL, isColumnNullByRows(exc, COL_NUM.FINCA));
 			mapaErrores.put(NIF_PROPIETARIO_IS_NULL, isColumnNullByRows(exc, COL_NUM.NIF_PROPIETARIO));
 			mapaErrores.put(VPO_IS_NULL, isColumnNullByRows(exc, COL_NUM.VPO));
-			mapaErrores.put(PRECIO_VENTA_WEB_IS_NULL, isColumnNullByRows(exc, COL_NUM.PRECIO_VENTA_WEB));
-			mapaErrores.put(PRECIO_MINIMO_IS_NAN, isColumnNANPrecioIncorrectoByRows(exc, COL_NUM.PRECIO_MINIMO));
+			//mapaErrores.put(PRECIO_VENTA_WEB_IS_NULL, isColumnNullByRows(exc, COL_NUM.PRECIO_VENTA_WEB));
 			mapaErrores.put(PRECIO_VENTA_WEB_IS_NAN, isColumnNANPrecioIncorrectoByRows(exc, COL_NUM.PRECIO_VENTA_WEB));
 			mapaErrores.put(VALOR_TASACION_IS_NAN, isColumnNANPrecioIncorrectoByRows(exc, COL_NUM.VALOR_TASACION));
-			mapaErrores.put(PRECIO_MINIMO_IS_ZERO, isColumnZeroPrecioIncorrectoByRows(exc, COL_NUM.PRECIO_MINIMO));
-			mapaErrores.put(PRECIO_VENTA_WEB_IS_ZERO,
-					isColumnZeroPrecioIncorrectoByRows(exc, COL_NUM.PRECIO_VENTA_WEB));
+			mapaErrores.put(PRECIO_VENTA_WEB_IS_ZERO, isColumnZeroPrecioIncorrectoByRows(exc, COL_NUM.PRECIO_VENTA_WEB));
 			mapaErrores.put(VALOR_TASACION_IS_ZERO, isColumnZeroPrecioIncorrectoByRows(exc, COL_NUM.VALOR_TASACION));
-			mapaErrores.put(INTEGRADO_DIVISION_HORIZONTAL_NOT_BOOL,
-					isColumnNotBoolByRows(exc, COL_NUM.ES_INTEGRADO_DIV_HORIZONTAL));
+			mapaErrores.put(INTEGRADO_DIVISION_HORIZONTAL_NOT_BOOL, isColumnNotBoolByRows(exc, COL_NUM.ES_INTEGRADO_DIV_HORIZONTAL));
 			mapaErrores.put(GARAJE_ANEJO_NOT_BOOL, isColumnNotBoolByRows(exc, COL_NUM.GARAJE_ANEJO));
 			mapaErrores.put(TRASTERO_ANEJO_NOT_BOOL, isColumnNotBoolByRows(exc, COL_NUM.TRASTERO_ANEJO));
 			mapaErrores.put(FECHA_TASACION_DATE_FORMAT, isColumnNotDateByRows(exc, COL_NUM.FECHA_TASACION));
-
-			mapaErrores.put(MEDIADOR_NOT_EXISTS, mediadorNotExistsByRows(exc, COL_NUM.NIF_MEDIADOR));
 			mapaErrores.put(NUM_ACTIVO_HAYA_IS_NAN, isColumnNANByRows(exc, COL_NUM.NUM_ACTIVO_HAYA));
-
 			mapaErrores.put(TOMO_REGISTRO_IS_NAN, isColumnNANByRows(exc, COL_NUM.TOMO));
 			mapaErrores.put(LIBRO_REGISTRO_IS_NAN, isColumnNANByRows(exc, COL_NUM.LIBRO));
 			mapaErrores.put(FOLIO_REGISTRO_IS_NAN, isColumnNANByRows(exc, COL_NUM.FOLIO));
-			mapaErrores.put(SUPERFICIE_CONSTRUIDA_REGISTRO_IS_NAN,
-					isColumnFloatNANByRows(exc, COL_NUM.SUPERFICIE_CONSTRUIDA_M2));
+			mapaErrores.put(SUPERFICIE_CONSTRUIDA_REGISTRO_IS_NAN,isColumnFloatNANByRows(exc, COL_NUM.SUPERFICIE_CONSTRUIDA_M2));
 			mapaErrores.put(SUPERFICIE_UTIL_REGISTRO_IS_NAN, isColumnFloatNANByRows(exc, COL_NUM.SUPERFICIE_UTIL_M2));
-			mapaErrores.put(SUPERFICIE_REPERCUSION_EECC_REGISTRO_IS_NAN,
-					isColumnFloatNANByRows(exc, COL_NUM.SUPERFICIE_REPERCUSION_EE_CC));
-			mapaErrores.put(GESTOR_COMERCIAL_NOT_EXISTS, gestorNotExistsByRows(exc, COL_NUM.GESTOR_COMERCIAL));
-			mapaErrores.put(SUPERVISOR_COMERCIAL_NOT_EXISTS, gestorNotExistsByRows(exc,COL_NUM.SUPER_GESTOR_COMERCIAL));
-			mapaErrores.put(GESTOR_FORMALIZACION_NOT_EXISTS, gestorNotExistsByRows(exc,COL_NUM.GESTOR_FORMALIZACION));
-			mapaErrores.put(SUPERVISOR_FORMALIZACION_NOT_EXISTS, gestorNotExistsByRows(exc,COL_NUM.SUPER_GESTOR_FORMALIZACION));
-			mapaErrores.put(GESTOR_ADMISION_NOT_EXISTS, gestorNotExistsByRows(exc,COL_NUM.GESTOR_ADMISION));
-			mapaErrores.put(GESTOR_ACTIVOS_NOT_EXISTS, gestorNotExistsByRows(exc,COL_NUM.GESTOR_ACTIVOS));
+			mapaErrores.put(SUPERFICIE_REPERCUSION_EECC_REGISTRO_IS_NAN,isColumnFloatNANByRows(exc, COL_NUM.SUPERFICIE_REPERCUSION_EE_CC));
 			mapaErrores.put(GESTORIA_FORMALIZACION_NOT_EXISTS, gestorNotExistsByRows(exc,COL_NUM.GESTORIA_DE_FORMALIZACION));
-			
 			mapaErrores.put(PARCELA_REGISTRO_IS_NAN, isColumnFloatNANByRows(exc, COL_NUM.PARCELA));
 			mapaErrores.put(PORCENTAJE_IS_NAN, isColumnFloatNANByRows(exc, COL_NUM.PERCENT_PROPIEDAD));
 			mapaErrores.put(PORCENTAJE_SUPERIOR, isColumnPorcentajeSuperiorByRows(exc, COL_NUM.PERCENT_PROPIEDAD));
 			mapaErrores.put(CODIGO_POSTAL_IS_NAN, isColumnCodigoPostalValido(exc, COL_NUM.CODPOSTAL));
 			mapaErrores.put(MUNICIPIO_NOT_EXISTS, isCodigoMunicipioValido(exc, COL_NUM.COD_MUNICIPIO));
-			mapaErrores.put(UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS,
-					isCodigoUnidadInferiorMunicipioValido(exc, COL_NUM.COD_UNIDAD_MUNICIPIO));
-			mapaErrores.put(NUM_ACTIVO_BBVA_IS_NULL, isColumnNullByRows(exc, COL_NUM.ACTIVO_BBVA));
+			mapaErrores.put(UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS, isCodigoUnidadInferiorMunicipioValido(exc, COL_NUM.COD_UNIDAD_MUNICIPIO));
 			mapaErrores.put(TIPO_DE_TITULO_BBVA_IS_NULL, isColumnNullByRows(exc, COL_NUM.TIPO_TITULO_BBVA));
-			mapaErrores.put(TIPO_DE_TRANSMISION_BBVA_IS_NULL, isColumnNullByRows(exc, COL_NUM.TIPO_TRANSMISION_BBVA));
 			mapaErrores.put(INDICADOR_ACTIVO_EPA_BBVA_IS_NULL, isColumnNullByRows(exc, COL_NUM.INDICADOR_ACTIVO_EPA_BBVA));
-			mapaErrores.put(NUM_ACTIVO_BBVA_IS_NAN, isColumnNANByRows(exc, COL_NUM.ACTIVO_BBVA));
-			mapaErrores.put(ID_APP_DIVARIAN_IS_NAN, isColumnNANByRowsParaCampoSinObligacion(exc, COL_NUM.ID_APP_DIVARIAN_BBVA));
 			mapaErrores.put(ID_HAYA_ORIGEN_IS_NAN, isColumnNANByRowsParaCampoSinObligacion(exc, COL_NUM.ID_HAYA_ORIGEN_BBVA));
 			mapaErrores.put(EMPRESA_CM_IS_NAN, isColumnNANByRowsParaCampoSinObligacion(exc, COL_NUM.EMPRESA_CM));
 			mapaErrores.put(OFICINA_CM_IS_NAN, isColumnNANByRowsParaCampoSinObligacion(exc, COL_NUM.OFICINA_CM));
@@ -465,6 +431,8 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 			mapaErrores.put(DEUDOR_ACREDITADO_CAMPOS_OB5, bloquesDeudorAcreditadoRellenos5(exc));
 			mapaErrores.put(NUM_ACTIVO_BBVA_REPETIDO, numeroActivoBBVAIntroducidoAnteriormente(exc, COL_NUM.ACTIVO_BBVA));
 			mapaErrores.put(COD_COMERCIALIZACION_INCORRECTO, codigoComercializacionIncorrecto(exc, COL_NUM.COD_DESTINO_COMER));
+			mapaErrores.put(NIF_CIF_PROPIETARIO_INCORRECTO, isCifNifValido(exc, COL_NUM.NIF_CIF_PROPIETARIO));
+			mapaErrores.put(NIF_CIF_PROPIETARIO_IS_NULL, isColumnNullByRows(exc, COL_NUM.NIF_CIF_PROPIETARIO));
 			
 			if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(SUBCARTERA_IS_NULL).isEmpty() //ok
 					|| !mapaErrores.get(SUBCARTERA_NOT_EXISTS).isEmpty()
@@ -498,17 +466,12 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 					
 					|| !mapaErrores.get(NIF_PROPIETARIO_IS_NULL).isEmpty()
 					|| !mapaErrores.get(VPO_IS_NULL).isEmpty()
-					|| !mapaErrores.get(PRECIO_MINIMO_IS_NAN).isEmpty()
-					|| !mapaErrores.get(PRECIO_MINIMO_IS_ZERO).isEmpty()
 					|| !mapaErrores.get(GARAJE_ANEJO_NOT_BOOL).isEmpty()
 					|| !mapaErrores.get(TRASTERO_ANEJO_NOT_BOOL).isEmpty()
-					|| !mapaErrores.get(MEDIADOR_NOT_EXISTS).isEmpty()
 					|| !mapaErrores.get(TOMO_REGISTRO_IS_NAN).isEmpty()
 					|| !mapaErrores.get(LIBRO_REGISTRO_IS_NAN).isEmpty()
 					|| !mapaErrores.get(FOLIO_REGISTRO_IS_NAN).isEmpty()
 					
-					|| !mapaErrores.get(NUM_ACTIVO_BBVA_IS_NAN).isEmpty()
-					|| !mapaErrores.get(ID_APP_DIVARIAN_IS_NAN).isEmpty()
 					|| !mapaErrores.get(ID_HAYA_ORIGEN_IS_NAN).isEmpty()
 					|| !mapaErrores.get(EMPRESA_CM_IS_NAN).isEmpty()
 					|| !mapaErrores.get(OFICINA_CM_IS_NAN).isEmpty()
@@ -538,19 +501,16 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 					|| !mapaErrores.get(CODIGO_POSTAL_IS_NAN).isEmpty()
 					|| !mapaErrores.get(MUNICIPIO_NOT_EXISTS).isEmpty()
 					|| !mapaErrores.get(FINCA_IS_NULL).isEmpty()
-					|| !mapaErrores.get(GESTOR_COMERCIAL_NOT_EXISTS).isEmpty()
-					|| !mapaErrores.get(SUPERVISOR_COMERCIAL_NOT_EXISTS).isEmpty()
-					|| !mapaErrores.get(GESTOR_FORMALIZACION_NOT_EXISTS).isEmpty()
-					|| !mapaErrores.get(SUPERVISOR_FORMALIZACION_NOT_EXISTS).isEmpty()
-					|| !mapaErrores.get(GESTOR_ADMISION_NOT_EXISTS).isEmpty()
-					|| !mapaErrores.get(GESTOR_ACTIVOS_NOT_EXISTS).isEmpty()
-					|| !mapaErrores.get(GESTORIA_FORMALIZACION_NOT_EXISTS).isEmpty()	
-					|| !mapaErrores.get(NUM_ACTIVO_BBVA_IS_NULL).isEmpty()
+					|| !mapaErrores.get(GESTORIA_FORMALIZACION_NOT_EXISTS).isEmpty()
 					|| !mapaErrores.get(TIPO_DE_TITULO_BBVA_IS_NULL).isEmpty()
-					|| !mapaErrores.get(TIPO_DE_TRANSMISION_BBVA_IS_NULL).isEmpty()
 					|| !mapaErrores.get(INDICADOR_ACTIVO_EPA_BBVA_IS_NULL).isEmpty()
 					|| !mapaErrores.get(TIPO_DE_ALTA_BBVA).isEmpty()
-					|| !mapaErrores.get(UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS).isEmpty())
+					|| !mapaErrores.get(UNIDAD_INFERIOR_MUNICIPIO_NOT_EXISTS).isEmpty()
+					|| !mapaErrores.get(NIF_CIF_PROPIETARIO_INCORRECTO).isEmpty()
+					|| !mapaErrores.get(NIF_CIF_PROPIETARIO_IS_NULL).isEmpty()
+					|| !mapaErrores.get(MUNICIPIO_IS_NULL).isEmpty()
+					
+					)
 				
 					
 				
@@ -1000,38 +960,6 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 		for(int i = COL_NUM.DATOS_PRIMERA_FILA; i< numFilasHoja; i++){
 			try{
 				switch (columnNumber) {
-				case COL_NUM.GESTOR_COMERCIAL:
-												if (!particularValidator.existeGestorComercialByUsername(exc.dameCelda(i, columnNumber))){
-														listaFilas.add(i);
-												}
-												break;
-				case COL_NUM.SUPER_GESTOR_COMERCIAL:
-												if (!particularValidator.existeSupervisorComercialByUsername(exc.dameCelda(i, columnNumber))){
-													listaFilas.add(i);
-												}
-												break;
-				case COL_NUM.GESTOR_FORMALIZACION:
-												if (!Checks.esNulo(exc.dameCelda(i, columnNumber))){
-													if (!particularValidator.existeGestorFormalizacionByUsername(exc.dameCelda(i, columnNumber))){
-														listaFilas.add(i);
-													}
-												}
-												break;
-				case COL_NUM.SUPER_GESTOR_FORMALIZACION:
-												if (!particularValidator.existeSupervisorFormalizacionByUsername(exc.dameCelda(i, columnNumber))){
-													listaFilas.add(i);
-												}
-												break;
-				case COL_NUM.GESTOR_ADMISION:
-												if (!particularValidator.existeGestorAdmisionByUsername(exc.dameCelda(i, columnNumber))){
-													listaFilas.add(i);
-												}
-												break;
-				case COL_NUM.GESTOR_ACTIVOS:
-												if (!particularValidator.existeGestorActivosByUsername(exc.dameCelda(i, columnNumber))){
-													listaFilas.add(i);
-												}
-												break;
 				case COL_NUM.GESTORIA_DE_FORMALIZACION:
 												if (!Checks.esNulo(exc.dameCelda(i, columnNumber))){
 													if (!particularValidator.existeGestoriaDeFormalizacionByUsername(exc.dameCelda(i, columnNumber))){
@@ -1179,8 +1107,11 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 
 		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
 			try {
-				if (!particularValidator.existeMunicipioByCodigo(exc.dameCelda(i, columnNumber)))
-					listaFilas.add(i);
+				if ((exc.dameCelda(i, columnNumber) != null) && !exc.dameCelda(i, columnNumber).isEmpty()) {
+					if (!particularValidator.existeMunicipioByCodigo(exc.dameCelda(i, columnNumber)))
+						listaFilas.add(i);
+				}			
+				
 			} catch (IllegalArgumentException e) {
 				logger.error(e.getMessage());
 				e.printStackTrace();
@@ -1223,7 +1154,8 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 				
 		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
 			try {
-				if (!Checks.esNulo(exc.dameCelda(i, columnNumber)) && !exc.dameCelda(i, columnNumber).equals("01") && !exc.dameCelda(i, columnNumber).equals("02")){
+				if (!Checks.esNulo(exc.dameCelda(i, columnNumber)) && !exc.dameCelda(i, columnNumber).equals("01") 
+						&& !exc.dameCelda(i, columnNumber).equals("02")){
 					listaFilas.add(i);
 				}
 			} catch (IllegalArgumentException e) {
@@ -1749,4 +1681,32 @@ public class MSVMasivaAltaBBVAValidator extends MSVExcelValidatorAbstract{
 		
 		return listaFilas;
 	}
+	
+	private List<Integer> isCifNifValido(MSVHojaExcel exc, int columnNumber) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
+				if ((exc.dameCelda(i, columnNumber) != null) && !exc.dameCelda(i, columnNumber).isEmpty()) {
+					if (!particularValidator.esNIFValido(exc.dameCelda(i, columnNumber)))
+						listaFilas.add(i);
+				}
+				
+				
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (IOException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			} catch (ParseException e) {
+				logger.error(e.getMessage());
+				listaFilas.add(i);
+			}
+		}
+
+		return listaFilas;
+	}
+	
+	
 }

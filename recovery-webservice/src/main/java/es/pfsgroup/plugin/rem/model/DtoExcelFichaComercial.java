@@ -52,10 +52,12 @@ public class DtoExcelFichaComercial extends WebDto {
 	private Double gastosPendientes;
 	private Double costesLegales;
 	private Date fechaUltimoPrecioAprobado;
-	private Integer dtoComite;
+	private Double dtoComite;
 	private Integer visitas;
 	private String leads;
 	private Integer totalOfertas;
+	private Double totalOferta;
+	private Double totalOfertaNeta;
 	private String publicado;
 	private Date fechaPublicado;
 	private Integer mesesEnVenta;
@@ -263,10 +265,10 @@ public class DtoExcelFichaComercial extends WebDto {
 	public void setFechaUltimoPrecioAprobado(Date fechaUltimoPrecioAprobado) {
 		this.fechaUltimoPrecioAprobado = fechaUltimoPrecioAprobado;
 	}
-	public Integer getDtoComite() {
+	public Double getDtoComite() {
 		return dtoComite;
 	}
-	public void setDtoComite(Integer dtoComite) {
+	public void setDtoComite(Double dtoComite) {
 		this.dtoComite = dtoComite;
 	}
 	public Integer getVisitas() {
@@ -286,6 +288,18 @@ public class DtoExcelFichaComercial extends WebDto {
 	}
 	public void setTotalOfertas(Integer totalOfertas) {
 		this.totalOfertas = totalOfertas;
+	}
+	public Double getTotalOferta() {
+		return totalOferta;
+	}
+	public void setTotalOferta(Double totalOferta) {
+		this.totalOferta = totalOferta;
+	}
+	public Double getTotalOfertaNeta() {
+		return totalOfertaNeta;
+	}
+	public void setTotalOfertaNeta(Double totalOfertaNeta) {
+		this.totalOfertaNeta = totalOfertaNeta;
 	}
 	public String getPublicado() {
 		return publicado;

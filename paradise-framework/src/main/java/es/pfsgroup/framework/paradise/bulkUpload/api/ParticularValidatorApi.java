@@ -1220,6 +1220,18 @@ public interface ParticularValidatorApi {
 	Boolean esActivoBBVA(String numActivo);
 	
 	String getValidacionCampoCDC(String codCampo);
+	
+	public boolean incluidoActivoIdOrigenBBVA (String numActivo);
+
+	Boolean estaPerimetroHaya(String activoId);
+	
+	Boolean estaPerimetroAdmision(String activoId);
+	
+	Boolean existeActivoPorId(String activoId);
+	
+	Boolean comprobarCodigoTipoTitulo(String codTipoTitulo);
+	
+	public boolean existeTipoDeGastoAsociadoCMGA(String codTipoGasto);
 
 	public Boolean esTipoAltaBBVAMenosAltaAutamatica(String codCampo);
 

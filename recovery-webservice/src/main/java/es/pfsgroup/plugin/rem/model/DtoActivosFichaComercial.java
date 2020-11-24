@@ -52,6 +52,7 @@ public class DtoActivosFichaComercial extends WebDto {
 	String cargas;
 	String posesion;
 	String ocupado;
+	String ocupadoIlegal;
 	String colectivo;
 	
 	
@@ -301,6 +302,12 @@ public class DtoActivosFichaComercial extends WebDto {
 	}
 	public void setOcupado(String ocupado) {
 		this.ocupado = ocupado;
+	}
+	public String getOcupadoIlegal() {
+		return ocupadoIlegal;
+	}
+	public void setOcupadoIlegal(String ocupadoIlegal) {
+		this.ocupadoIlegal = ocupadoIlegal;
 	}
 	public String getColectivo() {
 		return colectivo;

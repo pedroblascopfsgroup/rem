@@ -428,7 +428,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				Usuario usu = genericDao.get(Usuario.class, f1);
 				GestorEntidadDto dto = new GestorEntidadDto();
 				dto.setIdEntidad(activo.getId());
-				dto.setIdUsuario(usu.getId());
+				if (usu != null) {
+					dto.setIdUsuario(usu.getId());
+				}
 				dto.setIdTipoGestor(tipoGestorComercial.getId());
 				activoAdapter.insertarGestorAdicional(dto);
 		
@@ -438,7 +440,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				Usuario usu2 = genericDao.get(Usuario.class, f2);
 				GestorEntidadDto dto2 = new GestorEntidadDto();
 				dto2.setIdEntidad(activo.getId());
-				dto2.setIdUsuario(usu2.getId());
+				if (usu2 != null) {
+					dto2.setIdUsuario(usu2.getId());
+				}
 				dto2.setIdTipoGestor(tipoSupervisorComercial.getId());
 				activoAdapter.insertarGestorAdicional(dto2);
 		
@@ -449,7 +453,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 					Usuario usu3 = genericDao.get(Usuario.class, f3);
 					GestorEntidadDto dto3 = new GestorEntidadDto();
 					dto3.setIdEntidad(activo.getId());
-					dto3.setIdUsuario(usu3.getId());
+					if (usu3 != null) {
+						dto3.setIdUsuario(usu3.getId());
+					}
 					dto3.setIdTipoGestor(tipoGestorFormalizacion.getId());
 					activoAdapter.insertarGestorAdicional(dto3);
 				}
@@ -460,7 +466,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				Usuario usu4 = genericDao.get(Usuario.class, f4);
 				GestorEntidadDto dto4 = new GestorEntidadDto();
 				dto4.setIdEntidad(activo.getId());
-				dto4.setIdUsuario(usu4.getId());
+				if (usu4 != null) {
+					dto4.setIdUsuario(usu4.getId());
+				}
 				dto4.setIdTipoGestor(tipoSupervisorFormalizacion.getId());
 				activoAdapter.insertarGestorAdicional(dto4);
 		
@@ -470,7 +478,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				Usuario usu5 = genericDao.get(Usuario.class, f5);
 				GestorEntidadDto dto5 = new GestorEntidadDto();
 				dto5.setIdEntidad(activo.getId());
-				dto5.setIdUsuario(usu5.getId());
+				if (usu5 != null) {
+					dto5.setIdUsuario(usu5.getId());
+				}
 				dto5.setIdTipoGestor(tipoGestorAdmision.getId());
 				activoAdapter.insertarGestorAdicional(dto5);
 		
@@ -480,7 +490,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				Usuario usu6 = genericDao.get(Usuario.class, f6);
 				GestorEntidadDto dto6 = new GestorEntidadDto();
 				dto6.setIdEntidad(activo.getId());
-				dto6.setIdUsuario(usu6.getId());
+				if (usu6 != null) {
+					dto6.setIdUsuario(usu6.getId());
+				}
 				dto6.setIdTipoGestor(tipoGestorActivos.getId());
 				activoAdapter.insertarGestorAdicional(dto6);
 		
@@ -491,7 +503,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 					Usuario usu7 = genericDao.get(Usuario.class, f7);
 					GestorEntidadDto dto7 = new GestorEntidadDto();
 					dto7.setIdEntidad(activo.getId());
-					dto7.setIdUsuario(usu7.getId());
+					if (usu7 != null) {
+						dto7.setIdUsuario(usu7.getId());
+					}
 					dto7.setIdTipoGestor(tipoGestoriaFormalizacion.getId());
 					activoAdapter.insertarGestorAdicional(dto7);
 				}

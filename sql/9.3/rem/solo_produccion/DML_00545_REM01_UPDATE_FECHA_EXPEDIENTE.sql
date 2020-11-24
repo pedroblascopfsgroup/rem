@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=IVAN REPISO
---## FECHA_CREACION=20201124
+--## FECHA_CREACION=20201123
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=REMVIP-8391
@@ -55,9 +55,11 @@ BEGIN
 
             IF V_COUNT = 1 THEN 				
                     
-                V_MSQL := 'UPDATE '||V_ESQUEMA||'.OFR_OFERTAS SET OFR_FECHA_RESOLUCION_CES = TO_DATE('''||V_TMP_TIPO_DATA(2)||''',''DD/MM/YYYY'')
-                            WHERE OFR_NUM_OFERTA = '''||V_TMP_TIPO_DATA(1)||''' AND BORRADO = 0';
+                V_MSQL := 'UPDATE '||V_ESQUEMA||'.OFR_OFERTAS
+                        SET OFR_FECHA_APROBACION_PRO_MANZANA = TO_DATE('''||V_TMP_TIPO_DATA(2)||''',''DD/MM/YYYY'')
+                        WHERE OFR_NUM_OFERTA = '''||V_TMP_TIPO_DATA(1)||''' AND BORRADO = 0';
                 EXECUTE IMMEDIATE V_MSQL;
+
 
                 DBMS_OUTPUT.PUT_LINE('[INFO] MODIFICADA FECHA APROBACIÓN PROPIEDAD DE LA OFERTA '''||V_TMP_TIPO_DATA(1)||'''');
                     
@@ -91,7 +93,17 @@ BEGIN
     
     END LOOP;
 
+    V_MSQL := 'UPDATE '||V_ESQUEMA||'.OFR_OFERTAS SET OFR_FECHA_RESOLUCION_CES = TO_DATE(''02/10/2020'',''DD/MM/YYYY'')
+                        WHERE OFR_NUM_OFERTA = ''90273414'' AND BORRADO = 0';
+    EXECUTE IMMEDIATE V_MSQL;
+
+    V_MSQL := 'UPDATE '||V_ESQUEMA||'.OFR_OFERTAS SET OFR_FECHA_RESOLUCION_CES = NULL
+                        WHERE OFR_NUM_OFERTA = ''6012527'' AND BORRADO = 0';
+    EXECUTE IMMEDIATE V_MSQL;
+
     COMMIT;
+
+    DBMS_OUTPUT.PUT_LINE('[FIN]');
 
 EXCEPTION
     WHEN OTHERS THEN

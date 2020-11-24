@@ -5302,8 +5302,18 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		return rawDao.getExecuteSQL(
 				"SELECT VALIDACION FROM CDC_CALIDAD_DATOS_CONFIG "
-				+ "WHERE COD_CAMPO = '" + codCampo + "' AND BORRADO = 0"
-		);			
+				+ "WHERE COD_CAMPO = '" + codCampo + "' AND BORRADO = 0");
+	}
+	
+	@Override
+	public boolean incluidoActivoIdOrigenBBVA (String numActivo) {
+		if (numActivo == null || !StringUtils.isNumeric(numActivo)) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_BBVA_ACTIVOS ABA " + 												 
+												"WHERE ABA.BBVA_ID_ORIGEN_HRE =" + numActivo +"");
+		return !"0".equals(resultado);
 	}
 	
 	@Override
@@ -5437,17 +5447,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return !"0".equals(resultado);
 
-	}
-	
-	@Override
-	public boolean incluidoActivoIdOrigenBBVA (String numActivo) {
-		if (numActivo == null || !StringUtils.isNumeric(numActivo)) {
-			return false;
-		}
-		
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_BBVA_ACTIVOS ABA " + 												 
-												"WHERE ABA.BBVA_ID_ORIGEN_HRE =" + numActivo +"");
-		return !"0".equals(resultado);
 	}
 
 	@Override

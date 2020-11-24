@@ -976,7 +976,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		
 		activoDto.setIsGrupoOficinaKAM(activoApi.isGrupoOficinaKAM());
-		
 		if(activo.getTipoTransmision() != null) {
 			activoDto.setTipoTransmisionCodigo(activo.getTipoTransmision().getCodigo());
 			activoDto.setTipoTransmisionDescripcion(activo.getTipoTransmision().getDescripcion());

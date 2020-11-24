@@ -6,6 +6,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +17,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.runtime.parser.node.SetExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -48,6 +48,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistralBien;
+import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
@@ -135,7 +136,6 @@ import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
-import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VDatosCalculoLBK;
 import es.pfsgroup.plugin.rem.model.VListOfertasCES;
 import es.pfsgroup.plugin.rem.model.VListadoOfertasAgrupadasLbk;
@@ -147,10 +147,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDClaseOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEquipoGestion;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -318,6 +316,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Autowired
 	private ActivoAdapter activoAdapter;
+	
+	@Autowired
+	private ActivoManager activoManager;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -4785,6 +4786,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			return null;
 		}
 		
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 			Order orderAsc = new Order(OrderType.ASC, "id");
 			Order orderDesc = new Order(OrderType.DESC, "id");
 			Filter filtroAgrupacion = null;
@@ -4825,6 +4827,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						dtoFichaComercial.setComite("Si");
 					}else {
 						dtoFichaComercial.setComite("No");
+						if(oferta.getImporteOferta() <= 150000) {
+							dtoFichaComercial.setDtoComite(0.10);
+						} else {
+							dtoFichaComercial.setDtoComite(0.05);
+						}
 					}
 				}
 				else {
@@ -4911,9 +4918,101 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if(oferta.getFechaAlta() != null) {
 			dtoFichaComercial.setFechaAlta(oferta.getFechaAlta());
 			}
-
-
-
+			
+			Calendar calendar = Calendar.getInstance();
+			Date hoy = calendar.getTime();
+			dtoFichaComercial.setFechaActualOferta(hoy);
+			calendar.add(Calendar.MONTH, -6);
+			Date seisMesesAtras = calendar.getTime();
+			dtoFichaComercial.setFechaSeisMesesOferta(seisMesesAtras);
+			calendar.add(Calendar.MONTH, -6);
+			Date doceMesesAtras = calendar.getTime();
+			dtoFichaComercial.setFechaDoceMesesOferta(doceMesesAtras);
+			calendar.add(Calendar.MONTH, -6);
+			Date dieciochoMesesAtras = calendar.getTime();
+			dtoFichaComercial.setFechaDieciochoMesesOferta(dieciochoMesesAtras);
+			
+			List<ActivoValoraciones> valoracionesList = genericDao.getListOrdered(ActivoValoraciones.class, 
+					new Order(OrderType.ASC, "fechaInicio"), 
+					genericDao.createFilter(FilterType.EQUALS ,"activo.id", oferta.getActivoPrincipal().getId()));
+			
+			if(!valoracionesList.isEmpty()) {
+				for(ActivoValoraciones actVal : valoracionesList) {
+					if(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(actVal.getTipoPrecio().getCodigo())) {					
+						if(actVal.getFechaInicio() != null && actVal.getFechaInicio().before(dieciochoMesesAtras) && actVal.getImporte() != null) {
+							dtoFichaComercial.setPrecioComiteDieciochoMesesOferta(actVal.getImporte());
+						} else if(actVal.getFechaInicio() != null && actVal.getFechaInicio().before(doceMesesAtras) && actVal.getImporte() != null) {
+							dtoFichaComercial.setPrecioComiteDoceMesesOferta(actVal.getImporte());
+						} else if(actVal.getFechaInicio() != null && actVal.getFechaInicio().before(seisMesesAtras) && actVal.getImporte() != null) {
+							dtoFichaComercial.setPrecioComiteSeisMesesOferta(actVal.getImporte());
+						} 
+						if(actVal.getFechaInicio() != null && actVal.getFechaFin() == null && actVal.getImporte() != null) {
+							dtoFichaComercial.setFechaUltimoPrecioAprobado(actVal.getFechaInicio());
+							dtoFichaComercial.setPrecioComiteActual(actVal.getImporte());
+						}
+					} else if(DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO.equals(actVal.getTipoPrecio().getCodigo())) {
+						if(actVal.getFechaInicio() != null && actVal.getFechaInicio().before(dieciochoMesesAtras) && actVal.getImporte() != null) {
+							dtoFichaComercial.setPrecioWebDieciochoMesesOferta(actVal.getImporte());
+						} else if(actVal.getFechaInicio() != null && actVal.getFechaInicio().before(doceMesesAtras) && actVal.getImporte() != null) {
+							dtoFichaComercial.setPrecioWebDoceMesesOferta(actVal.getImporte());
+						} else if(actVal.getFechaInicio() != null && actVal.getFechaInicio().before(seisMesesAtras) && actVal.getImporte() != null) {
+							dtoFichaComercial.setPrecioWebSeisMesesOferta(actVal.getImporte());
+						} 
+						if(actVal.getFechaInicio() != null && actVal.getFechaFin() == null && actVal.getImporte() != null) {
+							dtoFichaComercial.setPrecioWebActual(actVal.getImporte());
+						}
+					}
+				}
+			}
+			
+			List<ActivoTasacion> tasacionesList = genericDao.getListOrdered(ActivoTasacion.class, 
+					new Order(OrderType.ASC, "fechaInicioTasacion"), 
+					genericDao.createFilter(FilterType.EQUALS ,"activo.id", oferta.getActivoPrincipal().getId()));
+			if(!tasacionesList.isEmpty()) {
+				for(ActivoTasacion actTas : tasacionesList) {
+					if(actTas.getFechaInicioTasacion() != null && actTas.getFechaInicioTasacion().before(dieciochoMesesAtras) && actTas.getImporteTasacionFin() != null) {
+						dtoFichaComercial.setTasacionDieciochoMesesOferta(actTas.getImporteTasacionFin());
+					} else if(actTas.getFechaInicioTasacion() != null && actTas.getFechaInicioTasacion().before(doceMesesAtras) && actTas.getImporteTasacionFin() != null) {
+						dtoFichaComercial.setTasacionDoceMesesOferta(actTas.getImporteTasacionFin());
+					} else if(actTas.getFechaInicioTasacion() != null && actTas.getFechaInicioTasacion().before(seisMesesAtras) && actTas.getImporteTasacionFin() != null) {
+						dtoFichaComercial.setTasacionSeisMesesOferta(actTas.getImporteTasacionFin());
+					} else if(actTas.getImporteTasacionFin() != null) {
+						dtoFichaComercial.setTasacionActual(actTas.getImporteTasacionFin());
+					}
+				}
+			}
+			
+			if(oferta.getImporteOferta() != null) {
+				Double importeOferta = oferta.getImporteOferta();
+				Double honorarios  = Double.valueOf(0);
+				if (expediente != null && expediente.getHonorarios() != null && !expediente.getHonorarios().isEmpty()) {
+					for (GastosExpediente gastoExpediente : expediente.getHonorarios()) {
+						if (gastoExpediente.getImporteFinal() != null) {
+							honorarios += gastoExpediente.getImporteFinal();
+						}
+					}
+				}
+				dtoFichaComercial.setTotalOferta(importeOferta);
+				dtoFichaComercial.setTotalOfertaNeta(importeOferta - honorarios);
+			}
+			
+			ActivosAlquilados alquilado = genericDao.get(ActivosAlquilados.class, genericDao.createFilter(FilterType.EQUALS ,"id", oferta.getActivoPrincipal().getId()));
+			if(alquilado != null && alquilado.getAlqRentaMensual() != null) {
+				dtoFichaComercial.setRentaMensual(alquilado.getAlqRentaMensual());
+			}
+			
+			Double gastosPendientes = 0.0;
+			List<VBusquedaGastoActivo> gastoActivoList = genericDao.getList(VBusquedaGastoActivo.class, genericDao.createFilter(FilterType.EQUALS, "idActivo", oferta.getActivoPrincipal().getId()));
+			if (gastoActivoList != null && !gastoActivoList.isEmpty()) {
+				for(VBusquedaGastoActivo gastoAct : gastoActivoList ) {
+					String estadoGasto = gastoAct.getEstadoGastoCodigo();
+					if (DDEstadoGasto.PENDIENTE.equals(estadoGasto)) {
+						gastosPendientes += gastoAct.getImporteTotalGasto();
+					}
+				}
+			}
+			dtoFichaComercial.setGastosPendientes(gastosPendientes);
+			
 			//Datos pestaña desglose y depuración
 				
 			List <DtoActivosFichaComercial> listaDtoActFichaComercial= new ArrayList<DtoActivosFichaComercial>();
@@ -5332,22 +5431,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dtoFichaComercial.setCorreoComercial(oferta.getPrescriptor().getEmail());
 				dtoFichaComercial.setLeads(oferta.getOrigenComprador().getDescripcion());	
 				}
-				activoValoraciones = genericDao.getList(ActivoValoraciones.class,
-						genericDao.createFilter(FilterType.EQUALS, "activo.id", oferta.getActivoPrincipal().getId()));
 				
-				if(activoValoraciones != null ) {
-					for (ActivoValoraciones activoValoracion : activoValoraciones) {
-						if(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(activoValoracion.getTipoPrecio().getCodigo()))
-							dtoFichaComercial.setPrecioComiteActual(activoValoracion.getImporte());
-						if(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(activoValoracion.getTipoPrecio().getCodigo()))
-							dtoFichaComercial.setPrecioWebActual(activoValoracion.getImporte());
-					}
-				}
-				Filter filtroTasacion= genericDao.createFilter(FilterType.EQUALS ,"activo.id", oferta.getActivoPrincipal().getId());
-				activoTasacion = genericDao.get(ActivoTasacion.class, filtroTasacion);
-				if(activoTasacion != null) {
-					dtoFichaComercial.setTasacionActual(activoTasacion.getImporteTasacionFin());
-				}
 				if(oferta.getActivoPrincipal().getBien() != null && oferta.getActivoPrincipal().getBien().getAdjudicacion() != null && oferta.getActivoPrincipal().getBien().getAdjudicacion().getImporteAdjudicacion() != null) {
 					dtoFichaComercial.setImporteAdjuducacion(oferta.getActivoPrincipal().getBien().getAdjudicacion().getImporteAdjudicacion());
 					dtoFichaComercial.setTotalSuperficie(oferta.getActivoPrincipal().getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida());
@@ -5426,7 +5510,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if(agrupacion != null && agrupacion.getTipoAgrupacion() != null && DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 				for(ActivoAgrupacionActivo aaaHcoOfr : agrupacion.getActivos()) {
 					
-					SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS ,"activo", aaaHcoOfr.getActivo().getId());
 					Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS ,"activo.id", aaaHcoOfr.getActivo().getId());
 					Filter filtroId = genericDao.createFilter(FilterType.EQUALS ,"id", aaaHcoOfr.getActivo().getId());
@@ -5484,7 +5567,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			if(Checks.esNulo(oferta.getAgrupacion())) {
 				
-				SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS ,"activo", oferta.getActivoPrincipal().getId());
 				Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS ,"activo.id", oferta.getActivoPrincipal().getId());
 				Filter filtroId = genericDao.createFilter(FilterType.EQUALS ,"id", oferta.getActivoPrincipal().getId());

@@ -379,10 +379,10 @@ public class StockDto implements WebcomRESTDto{
 	private StringDataType codEquipoGestion;
 	
 	@WebcomRequired
-	private LongDataType OnvComercializacion;
+	private LongDataType onvComercializacion;
 	
 	@WebcomRequired
-	private StringDataType OnvComercializacionFecha;
+	private StringDataType onvComercializacionFecha;
 	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
@@ -1077,16 +1077,17 @@ public class StockDto implements WebcomRESTDto{
 		this.codEquipoGestion = codEquipoGestion;
 	}
 	public LongDataType getOnvComercializacion() {
-		return OnvComercializacion;
+		return onvComercializacion;
 	}
 	public void setOnvComercializacion(LongDataType onvComercializacion) {
-		OnvComercializacion = onvComercializacion;
+		this.onvComercializacion = onvComercializacion;
 	}
 	public StringDataType getOnvComercializacionFecha() {
-		return OnvComercializacionFecha;
+		return onvComercializacionFecha;
 	}
 	public void setOnvComercializacionFecha(StringDataType onvComercializacionFecha) {
-		OnvComercializacionFecha = onvComercializacionFecha;
+		this.onvComercializacionFecha = onvComercializacionFecha;
 	}
+
 	
 }

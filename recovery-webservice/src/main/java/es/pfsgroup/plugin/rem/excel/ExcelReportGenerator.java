@@ -1460,8 +1460,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				cellReference = new CellReference("N" + Integer.toString(currentRowDesglose));
 				r = mySheetDepuracion.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(activoFichaComercial.getOcupado())) {
-					c.setCellValue(activoFichaComercial.getOcupado());
+				if (!Checks.esNulo(activoFichaComercial.getOcupadoIlegal())) {
+					c.setCellValue(activoFichaComercial.getOcupadoIlegal());
 				} else {
 					c.setCellValue("");
 				}

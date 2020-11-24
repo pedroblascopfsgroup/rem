@@ -1958,8 +1958,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.estadoComunicacionGencatCodigo", dto.getEstadoComunicacionGencatCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.direccionComercialCodigo", dto.getDireccionComercialCodigo());
 		
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoSegmentoCodigo", dto.getTipoSegmentoCodigo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.perimetroMacc", dto.getPerimetroMacc());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoSegmentoCodigo", dto.getTipoSegmentoCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.perimetroMacc", dto.getPerimetroMacc());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.equipoGestion", dto.getEquipoGestion());
 
 		return devolverPage ? HibernateQueryUtils.page(this, hb, dto) : HibernateQueryUtils.list(this, hb);	

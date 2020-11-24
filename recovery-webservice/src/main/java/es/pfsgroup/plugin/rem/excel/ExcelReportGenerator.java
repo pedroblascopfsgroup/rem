@@ -707,6 +707,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			CellReference cellReference;
 			XSSFRow r;
 			XSSFCell c;
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 			SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
 			XSSFHyperlink link = myWorkBook.getCreationHelper().createHyperlink(Hyperlink.LINK_URL);
 			
@@ -835,7 +836,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			r = mySheet.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());
 			if(dtoExcelFichaComercial.getFechaActualOferta() != null) {
-			c.setCellValue(format.format(dtoExcelFichaComercial.getFechaActualOferta()));
+			c.setCellValue(dateFormat.format(dtoExcelFichaComercial.getFechaActualOferta()));
 			}else {
 				c.setCellValue("");
 
@@ -844,7 +845,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			r = mySheet.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());
 			if(dtoExcelFichaComercial.getFechaSeisMesesOferta() != null) {
-			c.setCellValue(format.format(dtoExcelFichaComercial.getFechaSeisMesesOferta()));
+			c.setCellValue(dateFormat.format(dtoExcelFichaComercial.getFechaSeisMesesOferta()));
 			}else {
 				c.setCellValue("");
 			}
@@ -853,7 +854,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			r = mySheet.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());
 			if(dtoExcelFichaComercial.getFechaDoceMesesOferta() != null) {
-			c.setCellValue(format.format(dtoExcelFichaComercial.getFechaDoceMesesOferta()));
+			c.setCellValue(dateFormat.format(dtoExcelFichaComercial.getFechaDoceMesesOferta()));
 			}else {
 				c.setCellValue("");
 			}
@@ -862,7 +863,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			r = mySheet.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());
 			if(dtoExcelFichaComercial.getFechaDieciochoMesesOferta() != null) {
-			c.setCellValue(format.format(dtoExcelFichaComercial.getFechaDieciochoMesesOferta()));
+			c.setCellValue(dateFormat.format(dtoExcelFichaComercial.getFechaDieciochoMesesOferta()));
 			}else {
 				c.setCellValue("");
 			}
@@ -939,7 +940,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			c.setCellValue("");
 			}
 			
-			cellReference = new CellReference("J31");
+			cellReference = new CellReference("J32");
 			r = mySheet.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());
 			if(dtoExcelFichaComercial.getFechaUltimoPrecioAprobado() != null) {
@@ -948,7 +949,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			c.setCellValue("");
 			}
 			
-			cellReference = new CellReference("K31");
+			cellReference = new CellReference("K32");
 			r = mySheet.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());
 			if(dtoExcelFichaComercial.getComite() != null) {
@@ -957,7 +958,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			c.setCellValue("");
 			}
 			
-			cellReference = new CellReference("L31");
+			cellReference = new CellReference("L32");
 			r = mySheet.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());
 			if(dtoExcelFichaComercial.getDtoComite() != null) {
@@ -1020,6 +1021,15 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				c.setCellValue("");	
 			}
 			
+			cellReference = new CellReference("E39");
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if(dtoExcelFichaComercial.getTotalOferta()!= null) {
+				c.setCellValue(dtoExcelFichaComercial.getTotalOferta());	
+			}else {
+				c.setCellValue("");	
+			}
+			
 			cellReference = new CellReference("E40");
 			r = mySheet.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());
@@ -1052,6 +1062,15 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			c = r.getCell(cellReference.getCol());
 			if(dtoExcelFichaComercial.getCostesLegales() != null) {
 			c.setCellValue(dtoExcelFichaComercial.getCostesLegales());
+			}else {
+				c.setCellValue("");			
+			}
+			
+			cellReference = new CellReference("E44");
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if(dtoExcelFichaComercial.getTotalOfertaNeta() != null) {
+			c.setCellValue(dtoExcelFichaComercial.getTotalOfertaNeta());
 			}else {
 				c.setCellValue("");			
 			}

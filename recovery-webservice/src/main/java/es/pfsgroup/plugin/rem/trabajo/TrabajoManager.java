@@ -653,7 +653,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		
 		
-		if(dtoTrabajo.getFechaConcretaString() != null && (trabajo.getFechaHoraConcreta() == null || !dtoTrabajo.getFechaConcretaString().equals(formatoFechaString.format(trabajo.getFechaHoraConcreta())))){
+		if(dtoTrabajo.getFechaConcretaString() != null && !dtoTrabajo.getFechaConcretaString().isEmpty() && dtoTrabajo.getFechaConcreta() != null
+			&& (trabajo.getFechaHoraConcreta() == null || !dtoTrabajo.getFechaConcretaString().equals(formatoFechaString.format(trabajo.getFechaHoraConcreta())))){
 			dtoHistorificador.setCampo(ConstantesTrabajo.FECHA_REALIZACION_TRABAJO);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_FECHA_REALIZACION_TRABAJO);
 			if(!Checks.esNulo(trabajo.getFechaHoraConcreta())) {
@@ -666,7 +667,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		
 		
-		if(dtoTrabajo.getHoraConcretaString() != null && (trabajo.getFechaHoraConcreta() == null || !dtoTrabajo.getHoraConcretaString().equals(formatoHora.format(trabajo.getFechaHoraConcreta())))){
+		if(dtoTrabajo.getHoraConcretaString() != null && !dtoTrabajo.getHoraConcretaString().isEmpty() 
+				&& (trabajo.getFechaHoraConcreta() == null || !dtoTrabajo.getHoraConcretaString().equals(formatoHora.format(trabajo.getFechaHoraConcreta())))){
 			dtoHistorificador.setCampo(ConstantesTrabajo.HORA_REALIZACION_TRABAJO);
 			dtoHistorificador.setColumna(ConstantesTrabajo.COLUMNA_HORA_REALIZACION_TRABAJO);
 			if(!Checks.esNulo(trabajo.getFechaHoraConcreta())) {
@@ -2301,27 +2303,43 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (dtoTrabajo.getResolucionComiteId() != null) {
 			trabajo.setResolucionComiteId(dtoTrabajo.getResolucionComiteId());
 		}		
-		if (dtoTrabajo.getFechaConcretaString() != null && !dtoTrabajo.getFechaConcretaString().equals("")) {		
-			if (!"01/01/1970".equals(dtoTrabajo.getFechaConcretaString())) {
-				SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
-				SimpleDateFormat formatoFechaString = new SimpleDateFormat("dd/MM/yyyy");
-				SimpleDateFormat formatoFechaHora = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+		if ((dtoTrabajo.getFechaConcretaString() != null && !dtoTrabajo.getFechaConcretaString().isEmpty()) 
+			|| (dtoTrabajo.getHoraConcretaString() != null && !dtoTrabajo.getHoraConcretaString().isEmpty())) {		
+			//
+			SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm");
+			SimpleDateFormat formatoFechaHora = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
+			SimpleDateFormat formatoFechaString = new SimpleDateFormat("dd/MM/yyyy");
+			Date fechaHoraConcreta = null;
+			
+			if(dtoTrabajo.getFechaConcretaString().isEmpty()) {
+				String hora = dtoTrabajo.getHoraConcretaString();
+				fechaHoraConcreta = formatoHora.parse(hora);
+				trabajo.setFechaHoraConcreta(fechaHoraConcreta);
+				trabajo.setFechaCompromisoEjecucion(fechaHoraConcreta);
+			}else if(!"1970-01-01".equals(groovyft.format(formatoFechaString.parse(dtoTrabajo.getFechaConcretaString())))) {
 
 				String fecha = dtoTrabajo.getFechaConcretaString();
 				String hora = dtoTrabajo.getHoraConcretaString();
 				fecha = formatoFecha.format(formatoFechaString.parse(fecha));
-				Date fechaHoraConcreta = null;
 				try {
-					fechaHoraConcreta = formatoFechaHora.parse(fecha+" "+hora);
+					if(!hora.isEmpty() && !fecha.isEmpty()) {
+						fechaHoraConcreta = formatoFechaHora.parse(fecha+" "+hora);
+					}else if(hora.isEmpty()){
+						fechaHoraConcreta = formatoFecha.parse(fecha);   
+					}		
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
 				trabajo.setFechaHoraConcreta(fechaHoraConcreta);
 				trabajo.setFechaCompromisoEjecucion(fechaHoraConcreta);
-			}else {
-				trabajo.setFechaHoraConcreta(null);
 			}
+		
+		}else {
+			trabajo.setFechaHoraConcreta(null);
 		}
+
 		if (dtoTrabajo.getFechaTope() != null) {
 			if(!"1970-01-01".equals(groovyft.format(dtoTrabajo.getFechaTope()))) {
 				trabajo.setFechaTope(dtoTrabajo.getFechaTope());
@@ -2893,8 +2911,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			
 		}
 
+		if(trabajo.getFechaHoraConcreta() != null && !"1970-01-01".equals(groovyft.format(trabajo.getFechaHoraConcreta()))) {
+			dtoTrabajo.setFechaConcreta(trabajo.getFechaHoraConcreta());
+		}
 		dtoTrabajo.setHoraConcreta(trabajo.getFechaHoraConcreta());
-		dtoTrabajo.setFechaConcreta(trabajo.getFechaHoraConcreta());
 
 		if (trabajo.getAgrupacion() != null) {
 			dtoTrabajo.setNumAgrupacion(trabajo.getAgrupacion().getNumAgrupRem());

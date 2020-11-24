@@ -130,9 +130,6 @@ Ext.define('HreRem.model.BusquedaActivoGrid', {
           		name:'numActivoBbva'
         	},
 			{
-          		name:'idDivarianBbva'
-        	},
-			{
           		name:'tipoViaCodigo'
         	},
 			{
@@ -236,7 +233,10 @@ Ext.define('HreRem.model.BusquedaActivoGrid', {
         	},
             {
                 name:'equipoGestion'
-            }
+            },
+			{
+				name: 'codPromocionBbva'
+			}
 	    		
     ],
     

@@ -1538,12 +1538,31 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 	
 	@Override
-	public boolean existeactivoIdHAYA(Long idActivo) { 
-		String sql = "          SELECT count(1)  " +
-				"				FROM REM01.ACT_ACTIVO  " +
-				"				WHERE ACT_NUM_ACTIVO = "+ idActivo +
-				"				AND BORRADO = 0";
 
+	public boolean isActivoBBVADivarian(Long idActivo) {
+		String sql = "          SELECT count(1)  " +
+				"				FROM REM01.ACT_ACTIVO ACT  "+ 
+				"				INNER JOIN DD_CRA_CARTERA CRA ON ACT.dd_cra_id = CRA.dd_cra_id "+
+				"				INNER JOIN DD_SCR_SUBCARTERA SUBC ON act.dd_scr_id = SUBC.dd_scr_id" +
+				"				WHERE ACT.ACT_ID= "+ idActivo +
+				"				AND cra.dd_cra_codigo = '16' OR (cra.dd_cra_codigo = '07' AND SUBC.dd_scr_codigo IN ('151','152'))" +
+				"				AND ACT.BORRADO = 0";		
+
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
+		}
+		return false;
+
+	}
+
+
+	@Override
+	public boolean existeactivoIdHAYA(Long idActivo) {
+		String sql = "          SELECT count(1)  " +
+		" FROM REM01.ACT_ACTIVO  " +
+		" WHERE ACT_NUM_ACTIVO = "+ idActivo +
+		" AND BORRADO = 0";
+	
 		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
 			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
 		}
@@ -1601,7 +1620,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		return false;
 
 	}
-	
 
 	@Override
 	public boolean activoUAsconTrabajos(Long idActivo) {
@@ -1909,7 +1927,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.claseActivoBancarioCodigo", dto.getClaseActivoBancarioCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subclaseActivoBancarioCodigo", dto.getSubclaseActivoBancarioCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivoBbva", dto.getNumActivoBbva());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.idDivarianBbva", dto.getIdDivarianBbva());
 		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoActivoCodigo", dto.getTipoActivoCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subtipoActivoCodigo", dto.getSubtipoActivoCodigo());
@@ -1958,9 +1975,10 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.estadoComunicacionGencatCodigo", dto.getEstadoComunicacionGencatCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.direccionComercialCodigo", dto.getDireccionComercialCodigo());
 		
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoSegmentoCodigo", dto.getTipoSegmentoCodigo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.perimetroMacc", dto.getPerimetroMacc());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoSegmentoCodigo", dto.getTipoSegmentoCodigo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.perimetroMacc", dto.getPerimetroMacc());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.equipoGestion", dto.getEquipoGestion());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.codPromocionBbva", dto.getCodPromocionBbva());
 
 		return devolverPage ? HibernateQueryUtils.page(this, hb, dto) : HibernateQueryUtils.list(this, hb);	
 	}

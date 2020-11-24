@@ -141,7 +141,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				"                                        INNER JOIN ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID " +
 				"                                        INNER JOIN ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID and AGR.BORRADO  = 0 " +
 				"                                        INNER join DD_TAG_TIPO_AGRUPACION TAG ON AGR.DD_TAG_ID = TAG.DD_TAG_ID " +
-				"                                        WHERE ACT.ACT_NUM_ACTIVO = " + numActivo + " aND AGA.AGA_PRINCIPAL = 1) " +
+				"                                        WHERE ACT.ACT_NUM_ACTIVO = " + numActivo + " and (AGA.AGA_PRINCIPAL = 1 OR AGR.AGR_ACT_PRINCIPAL = ACT.ACT_ID)) " +
 				"ELSE 1 " +
 				"END as validacion " +
 				"FROM ACT_ACTIVO ACT " +
@@ -581,7 +581,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	@Override
 	public Boolean esActivoIncluidoPerimetro(String numActivo){
 		String resultado = rawDao.getExecuteSQL("SELECT act.ACT_ID "
-				+ "		FROM ACT_ACTIVO act "
+				+ "		FROM ACT_ACTIVO act "	
 				+ "		LEFT JOIN ACT_PAC_PERIMETRO_ACTIVO pac "
 				+ "		ON act.ACT_ID            = pac.ACT_ID "
 				+ "		WHERE "
@@ -5096,6 +5096,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
                         );
         return !"0".equals(resultado);
     }
+
 	public Boolean esActivoIncluidoPerimetroAdmision(String numActivo) {
 		if(numActivo == null) {
 			return false;
@@ -5181,8 +5182,18 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		return rawDao.getExecuteSQL(
 				"SELECT VALIDACION FROM CDC_CALIDAD_DATOS_CONFIG "
-				+ "WHERE COD_CAMPO = '" + codCampo + "' AND BORRADO = 0"
-		);			
+				+ "WHERE COD_CAMPO = '" + codCampo + "' AND BORRADO = 0");
+	}
+	
+	@Override
+	public boolean incluidoActivoIdOrigenBBVA (String numActivo) {
+		if (numActivo == null || !StringUtils.isNumeric(numActivo)) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_BBVA_ACTIVOS ABA " + 												 
+												"WHERE ABA.BBVA_ID_ORIGEN_HRE =" + numActivo +"");
+		return !"0".equals(resultado);
 	}
 	
 	@Override
@@ -5233,6 +5244,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public boolean existeTipoDeGastoAsociadoCMGA (String codTipoGasto) {
+		if (codTipoGasto == null || !StringUtils.isAlphanumeric(codTipoGasto)) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT COUNT(1) FROM  DD_TGA_TPO_GASTO_ASOCIADO TGA " 
+				+ "WHERE TGA.DD_TGA_CODIGO = '"+ codTipoGasto +"' "
+				+ "AND TGA.BORRADO = 0"
+				);
+		
+		return !"0".equals(resultado);
+	}
+	
+	@Override
 	public Boolean esTipoDeTransmisionBBVA(String codCampo) {
 		if(Checks.esNulo(codCampo) || !StringUtils.isAlphanumeric(codCampo)) {
 			return false;
@@ -5257,6 +5283,56 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		return !"0".equals(resultado);
 	}
+
+	@Override
+	public Boolean estaPerimetroHaya(String activoId) {
+		if (activoId == null || !StringUtils.isNumeric(activoId)) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT act_pac_perimetro_activo.pac_incluido "
+												+"from rem01.act_pac_perimetro_activo"
+												+"		WHERE act_id = "+ activoId +""
+				);
+		return !"0".equals(resultado);
+	}
+
+	@Override
+	public Boolean existeActivoPorId(String activoId) {
+		if(Checks.esNulo(activoId) || !StringUtils.isNumeric(activoId))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_ACTIVO WHERE"
+				+ "		 	ACT_ID ="+activoId+" "
+				+ "		 	AND BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+
+	@Override
+	public Boolean estaPerimetroAdmision(String activoId) {
+		if (activoId == null || !StringUtils.isNumeric(activoId)) {
+			return false;
+		}
+		
+		String resultado = rawDao.getExecuteSQL(
+				"SELECT act_pac_perimetro_activo.pac_check_admision "
+												+"from rem01.act_pac_perimetro_activo"
+												+"		WHERE act_id = "+ activoId +""
+				);
+		return !"0".equals(resultado);
+	}
+
+	@Override
+	public Boolean comprobarCodigoTipoTitulo(String codTipoTitulo) {
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_TTC_TIPO_TITULO_COMPLEM WHERE"
+				+ "		 	DD_TTC_CODIGO = '"+codTipoTitulo+"' "
+				+ "		 	AND BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+
+	
 	
 	
 	@Override
@@ -5293,11 +5369,11 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(act.act_id) "
-				+ "			FROM DD_SCM_SITUACION_COMERCIAL scm, "
-				+ "			  ACT_ACTIVO act "
+				+ "			FROM rem01.DD_SCM_SITUACION_COMERCIAL scm, "
+				+ "			  REM01.ACT_ACTIVO act "
 				+ "			WHERE scm.dd_scm_id   = act.dd_scm_id "
 				+ "			  AND scm.dd_scm_codigo = '05' "
-				+ "			  AND act.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "			  AND act.ACT_NUM_ACTIVO = '"+numActivo+" '"
 				+ "			  AND act.borrado       = 0");
 		return !"0".equals(resultado);
 	}
@@ -5308,13 +5384,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo)) {
 			return false;
 		}
-		String resultado = rawDao.getExecuteSQL("SELECT act.ACT_ID "
-				+ "		FROM ACT_ACTIVO act "
-				+ "		LEFT JOIN ACT_PAC_PERIMETRO_ACTIVO pac "
+		String resultado = rawDao.getExecuteSQL("SELECT count(act.ACT_ID)"
+				+ "		FROM REM01.ACT_ACTIVO act "
+				+ "		LEFT JOIN REM01.ACT_PAC_PERIMETRO_ACTIVO pac "
 				+ "		ON act.ACT_ID            = pac.ACT_ID "
 				+ "		WHERE "
 				+ "		(pac.PAC_INCLUIDO = 1 or pac.PAC_ID is null)"
-				+ "		AND act.ACT_NUM_ACTIVO = "+numActivo+" ");
+				+ "		AND act.ACT_NUM_ACTIVO = '"+numActivo+"' ");
 		return !Checks.esNulo(resultado);
 	}
 	
@@ -5325,8 +5401,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
-				+ "			FROM ACT_BBVA_ACTIVOS act "
-				+ "			WHERE act.BBVA_NUM_ACTIVO = "+numActivo+" "
+				+ "			FROM REM01.ACT_BBVA_ACTIVOS act "
+				+ "			WHERE act.BBVA_NUM_ACTIVO = '"+numActivo+"' "
 				+ "			  AND act.borrado       = 0");
 		return !"0".equals(resultado);
 	}

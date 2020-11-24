@@ -2597,22 +2597,22 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
    		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.estadoContable", dto.getEstadoContable());
    		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.codigoEstado", dto.getEstadoCodigo());
    		
-   		ArrayList<Filter> filtros = new ArrayList<Filter>();
-   		if(!Checks.esNulo(dto.getIdTrabajo())){
-   			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idTrabajo", dto.getIdTrabajo());
-   			filtros.add(filtro);
-   		}
-   		if(!Checks.esNulo(dto.getIdActivo())){
-   			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", dto.getIdActivo());
-   			filtros.add(filtro);
-   		}
-   		
-   		Filter[] filtrosArray = new Filter[filtros.size()];
-   		int i = 0;
-   		for(Filter f : filtros){
-   			filtrosArray[i] = f;
-   			i++;
-   		}
+//   		ArrayList<Filter> filtros = new ArrayList<Filter>();
+//   		if(!Checks.esNulo(dto.getIdTrabajo())){
+//   			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idTrabajo", dto.getIdTrabajo());
+//   			filtros.add(filtro);
+//   		}
+//   		if(!Checks.esNulo(dto.getIdActivo())){
+//   			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", dto.getIdActivo());
+//   			filtros.add(filtro);
+//   		}
+//   		
+//   		Filter[] filtrosArray = new Filter[filtros.size()];
+//   		int i = 0;
+//   		for(Filter f : filtros){
+//   			filtrosArray[i] = f;
+//   			i++;
+//   		}
    		
 		//flashDao.getList(VBusquedaActivosTrabajoParticipa.class,filtrosArray);
 		return trabajoDao.getListActivosTrabajo(dto);

@@ -84,7 +84,6 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 	private static final String CODIGO_T013_RESOLUCION_COMITE = "T013_ResolucionComite";
 	private static final String COMITE_SANCIONADOR = "comiteSancionador";
  	private static final Integer RESERVA_SI = 1;
- 	private static final String T017 = "T017";
 
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");

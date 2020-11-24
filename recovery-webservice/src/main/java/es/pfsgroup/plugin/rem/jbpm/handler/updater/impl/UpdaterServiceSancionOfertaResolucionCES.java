@@ -116,17 +116,18 @@ public class UpdaterServiceSancionOfertaResolucionCES implements UpdaterService 
 									ofertaApi.congelarOferta(oferta);
 								}
 							}
-							if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null) {															
-								EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
-										.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
-								
-								ge.setIdEntidad(expediente.getId());
-								ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
-								ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gruboarding")).getId());	
-								ge.setIdTipoGestor(tipoGestorComercial.getId());
-								gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);																	
-								
-							}
+							//REMVIP-8388
+//							if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva()) && ge!=null) {															
+//								EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
+//										.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
+//								
+//								ge.setIdEntidad(expediente.getId());
+//								ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
+//								ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gruboarding")).getId());	
+//								ge.setIdTipoGestor(tipoGestorComercial.getId());
+//								gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);																	
+//								
+//							}
 									
 														
 						} else {

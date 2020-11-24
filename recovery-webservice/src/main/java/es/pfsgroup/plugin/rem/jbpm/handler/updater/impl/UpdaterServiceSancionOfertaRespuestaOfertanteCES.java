@@ -12,14 +12,18 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -51,6 +55,12 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 	
 	@Autowired
 	private OfertaDao ofertaDao;
+	
+	@Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
+	
+	@Autowired
+	private GestorExpedienteComercialApi gestorExpedienteComercialApi;
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaRespuestaOfertanteCES.class);
 	 
@@ -59,7 +69,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
  	private static final String COMBO_RESPUESTA = "comboRespuesta";
  	private static final String FECHA_RESPUESTA = "fechaRespuesta";
  	private static final String IMPORTE_CONTRAOFERTA_OFERTANTE = "importeContraofertaOfertante";
- 
+ 	private static final Integer RESERVA_SI = 1;
  	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
  
  	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {	
@@ -81,6 +91,20 @@ public class UpdaterServiceSancionOfertaRespuestaOfertanteCES implements Updater
 	 					Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo" , DDEstadosExpedienteComercial.APROBADO_CES_PTE_PRO_MANZANA);
 	 					DDEstadosExpedienteComercial aprobado = genericDao.get(DDEstadosExpedienteComercial.class, f1);
 	 					expediente.setEstado(aprobado);
+	 					//REMVIP-8388
+//	 					if(expediente.getCondicionante().getSolicitaReserva()!=null && RESERVA_SI.equals(expediente.getCondicionante().getSolicitaReserva())) {															
+//							EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
+//									.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GBOAR");
+//
+//							if(gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GBOAR") == null) {
+//								GestorEntidadDto ge = new GestorEntidadDto();
+//								ge.setIdEntidad(expediente.getId());
+//								ge.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
+//								ge.setIdUsuario(genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "username","gruboarding")).getId());								
+//								ge.setIdTipoGestor(tipoGestorComercial.getId());
+//								gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(ge);																	
+//							}
+//						}
 	 				}else if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
 	 					ofertaApi.rechazarOferta(ofertaAceptada);
 	 					Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.DENEGADA_OFERTA_CES);

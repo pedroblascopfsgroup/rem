@@ -166,6 +166,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
@@ -4832,7 +4833,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 			
-			if(oferta.getActivoPrincipal() != null) {
+			if(oferta.getActivoPrincipal() != null) { 
 				dtoFichaComercial.setNumActivo(oferta.getActivoPrincipal().getNumActivo());
 				ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(oferta.getActivoPrincipal().getId());
 				if(activoPublicacion != null) {
@@ -4862,14 +4863,38 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					 linkHaya = linkCabecera(agrupacion.getActivoPrincipal().getId());
 					}
 				}
-				if(agrupacion.getActivoPrincipal() != null && agrupacion.getActivoPrincipal().getDireccionTerritorial() != null) {
-					direccion = agrupacion.getActivoPrincipal().getDireccionTerritorial().getDescripcion();
-					if(agrupacion.getActivoPrincipal().getLocalidad() != null)
-					agrupacion.getActivoPrincipal().getLocalidad().getDescripcion();
-					if(agrupacion.getActivoPrincipal().getProvincia() != null)
-					agrupacion.getActivoPrincipal().getProvincia();
-					if(agrupacion.getActivoPrincipal().getCodPostal() != null)
-					agrupacion.getActivoPrincipal().getCodPostal();
+				if(agrupacion.getActivoPrincipal() != null) {
+					if ( agrupacion.getActivoPrincipal().getDireccionTerritorial() != null) {
+						direccion = agrupacion.getActivoPrincipal().getDireccionTerritorial().getDescripcion();
+					}
+					
+					if(agrupacion.getActivoPrincipal().getLocalidad() != null) {
+						dtoFichaComercial.setLocalidad(agrupacion.getActivoPrincipal().getLocalidad().getDescripcion());
+					}
+					if(agrupacion.getActivoPrincipal().getProvincia() != null) {
+						dtoFichaComercial.setProvincia(agrupacion.getActivoPrincipal().getProvincia());
+					}
+					
+					if(agrupacion.getActivoPrincipal().getCodPostal() != null) {
+						dtoFichaComercial.setCodigoPostal(agrupacion.getActivoPrincipal().getCodPostal());
+					}
+					
+					if(agrupacion.getActivoPrincipal().getVisitas() != null) {
+						dtoFichaComercial.setVisitas(oferta.getActivoPrincipal().getVisitas().size());
+					}
+					
+					if(agrupacion.getActivoPrincipal().getOfertas()!=null) {
+						dtoFichaComercial.setTotalOfertas(agrupacion.getActivoPrincipal().getOfertas().size());
+					}
+					if ( agrupacion.getActivoPrincipal().getInfoRegistral() != null
+							&& agrupacion.getActivoPrincipal().getInfoRegistral().getInfoRegistralBien() != null) {
+							dtoFichaComercial.setTotalSuperficie(agrupacion.getActivoPrincipal().getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida());
+							
+						}
+					
+					
+					dtoFichaComercial.setDiasPublicado(this.obtenerTotalDeDiasEnEstadoPublicadoVenta(oferta.getActivoPrincipal().getId()));
+					dtoFichaComercial.setMesesEnVenta(this.obtenerTotalDeMesesEnEstadoPublicadoVenta(oferta.getActivoPrincipal().getId()));
 					
 				}else {
 					List<ActivoAgrupacionActivo> agrupacionOrdenada = genericDao.getListOrdered(ActivoAgrupacionActivo.class, orderAsc,filtroAgrupacion);
@@ -4877,15 +4902,41 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							&& agrupacionOrdenada.get(0).getActivo().getDireccionTerritorial() != null) {
 						direccion = agrupacionOrdenada.get(0).getActivo().getDireccionTerritorial().getDescripcion();
 						if(agrupacionOrdenada.get(0).getActivo().getLocalidad() != null)
-							agrupacionOrdenada.get(0).getActivo().getLocalidad().getDescripcion();
-							if(agrupacionOrdenada.get(0).getActivo().getProvincia() != null)
-								agrupacionOrdenada.get(0).getActivo().getProvincia();
-							if(agrupacionOrdenada.get(0).getActivo().getCodPostal() != null)
-								agrupacionOrdenada.get(0).getActivo().getCodPostal();
+							dtoFichaComercial.setLocalidad(agrupacionOrdenada.get(0).getActivo().getLocalidad().getDescripcion());
+						if(agrupacionOrdenada.get(0).getActivo().getProvincia() != null)
+							dtoFichaComercial.setProvincia(agrupacionOrdenada.get(0).getActivo().getProvincia());
+						if(agrupacionOrdenada.get(0).getActivo().getCodPostal() != null)
+							dtoFichaComercial.setCodigoPostal(agrupacionOrdenada.get(0).getActivo().getCodPostal());
+						
+						if(agrupacionOrdenada.get(0).getActivo().getVisitas() != null)
+							dtoFichaComercial.setVisitas(oferta.getActivoPrincipal().getVisitas().size());
+						
+						if(agrupacionOrdenada.get(0).getActivo().getOfertas()!=null)
+							dtoFichaComercial.setTotalOfertas(agrupacionOrdenada.get(0).getActivo().getOfertas().size());
+						
+						dtoFichaComercial.setDiasPublicado(this.obtenerTotalDeDiasEnEstadoPublicadoVenta(agrupacionOrdenada.get(0).getActivo().getId()));
+						dtoFichaComercial.setMesesEnVenta(this.obtenerTotalDeMesesEnEstadoPublicadoVenta(agrupacionOrdenada.get(0).getActivo().getId()));
+						
+						if(agrupacionOrdenada.get(0).getActivo().getBien() != null 
+							&& agrupacionOrdenada.get(0).getActivo().getBien().getAdjudicacion() != null
+							&& agrupacionOrdenada.get(0).getActivo().getBien().getAdjudicacion().getImporteAdjudicacion() != null) {
+							dtoFichaComercial.setImporteAdjuducacion(agrupacionOrdenada.get(0).getActivo().getBien().getAdjudicacion().getImporteAdjudicacion());
+						}
+						if (agrupacionOrdenada.get(0).getActivo().getInfoRegistral() != null
+							&& agrupacionOrdenada.get(0).getActivo().getInfoRegistral().getInfoRegistralBien() != null) {
+							dtoFichaComercial.setTotalSuperficie(agrupacionOrdenada.get(0).getActivo().getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida());
+							
+						}
 						
 					}
-					
-					
+				}
+				if(oferta != null && oferta.getPrescriptor() != null) {
+					dtoFichaComercial.setNombreYApellidosComercial(oferta.getPrescriptor().getNombreComercial());
+					dtoFichaComercial.setTelefonoComercial(oferta.getPrescriptor().getTelefono1());
+					dtoFichaComercial.setCorreoComercial(oferta.getPrescriptor().getEmail());
+				}
+				if (oferta != null && oferta.getOrigenComprador() != null) {
+					dtoFichaComercial.setLeads(oferta.getOrigenComprador().getDescripcion());	
 				}
 				dtoFichaComercial.setDireccionComercial(direccion);
 			}else {
@@ -4929,6 +4980,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					
 					Activo act = activos.getActivo();
 					Filter filtroAct = genericDao.createFilter(FilterType.EQUALS ,"id", act.getId());
+					Filter filtroAct_id = genericDao.createFilter(FilterType.EQUALS ,"activo.id", act.getId());
 					
 					//TODO es la misma oferta para toda la agrupacion?
 					
@@ -4991,7 +5043,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 					
 					if(!Checks.esNulo(act.getSubtipoActivo())) {
-						activosFichaComercial.setTipologia(act.getSubtipoActivo().getDescripcion());
+						activosFichaComercial.setSubtipologia(act.getSubtipoActivo().getDescripcion());
 					}
 					
 					if(!Checks.esNulo(act.getSituacionComercial())) {
@@ -5009,36 +5061,40 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							activosFichaComercial.setProvincia(act.getLocalidad().getProvincia().getDescripcion());
 						}
 					}
+					activoValoraciones = genericDao.getList(ActivoValoraciones.class,
+							genericDao.createFilter(FilterType.EQUALS, "activo.id", act.getId()));
 					
-					Filter filtroPrecioAprobado = genericDao.createFilter(FilterType.EQUALS ,"tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA);
-					
-					List<ActivoValoraciones> preciosAprobados = genericDao.getListOrdered(ActivoValoraciones.class,orderDesc,filtroAct,filtroPrecioAprobado);
-					
-					if(!Checks.esNulo(preciosAprobados) && !preciosAprobados.isEmpty()) {
-						if(!Checks.esNulo(preciosAprobados.get(0).getImporte())) {
-							activosFichaComercial.setPrecioComite(preciosAprobados.get(0).getImporte());
+					if(activoValoraciones != null ) {
+						for (ActivoValoraciones activoValoracion : activoValoraciones) {
+							if (activoValoracion.getTipoPrecio() == null ) {
+								continue;
+							}
+							
+							boolean esVigente = activoValoracion.getFechaFin() == null;
+							String tipoPrecioCodigo = activoValoracion.getTipoPrecio().getCodigo();
+							Double importe = activoValoracion.getImporte();
+							
+							if(esVigente && DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(tipoPrecioCodigo)) {
+								dtoFichaComercial.setPrecioComiteActual(importe);	
+								
+							}else if(esVigente && DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(tipoPrecioCodigo)) {
+								dtoFichaComercial.setPrecioWebActual(importe);
+								
+							}else if (esVigente && DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(tipoPrecioCodigo)){
+								activosFichaComercial.setPrecioComite(importe);
+								
+							}else if (esVigente && DDTipoPrecio.CODIGO_TPC_PUBLICACION_WEB.equals(tipoPrecioCodigo)) {
+								activosFichaComercial.setPrecioPublicacion(importe);
+							}
 						}
 					}
 					
-					Filter filtroPrecioWeb = genericDao.createFilter(FilterType.EQUALS ,"tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_PUBLICACION_WEB);
-					
-					List<ActivoValoraciones> preciosWeb = genericDao.getListOrdered(ActivoValoraciones.class,orderDesc,filtroAct,filtroPrecioWeb);
-					
-					if(!Checks.esNulo(preciosWeb) && !preciosWeb.isEmpty()) {
-						if(!Checks.esNulo(preciosWeb.get(0).getImporte())) {
-							activosFichaComercial.setPrecioPublicacion(preciosWeb.get(0).getImporte());
-						}
+					Filter filtroTasacion= genericDao.createFilter(FilterType.EQUALS ,"activo.id", act.getId());
+					List<ActivoTasacion> activoTasacionList = genericDao.getListOrdered(ActivoTasacion.class, orderDesc, filtroTasacion);
+					if(activoTasacionList != null && activoTasacionList.get(0) != null && dtoFichaComercial.getTasacionActual() == null) {
+						dtoFichaComercial.setTasacionActual(activoTasacionList.get(0).getImporteTasacionFin());							
 					}
-					
-					Filter filtroVnc = genericDao.createFilter(FilterType.EQUALS ,"tipoPrecio.codigo", DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT);
-					
-					List<ActivoValoraciones> valorNetoContable = genericDao.getListOrdered(ActivoValoraciones.class,orderDesc,filtroAct,filtroVnc);
-					
-					if(!Checks.esNulo(valorNetoContable) && !valorNetoContable.isEmpty()) {
-						if(!Checks.esNulo(valorNetoContable.get(0).getImporte())) {
-							activosFichaComercial.setPrecioPublicacion(valorNetoContable.get(0).getImporte());
-						}
-					}
+
 	
 					if(!Checks.esNulo(act.getBien().getAdjudicacion()) && !Checks.esNulo(act.getBien().getAdjudicacion().getImporteAdjudicacion())) {
 						activosFichaComercial.setImporteAdj(act.getBien().getAdjudicacion().getImporteAdjudicacion().doubleValue());
@@ -5062,7 +5118,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						activosFichaComercial.setOferta(oferta.getImporteOferta());
 					}
 					
-					ActivoBbvaActivos actBbva = genericDao.get(ActivoBbvaActivos.class,filtroAct);
+					
+					ActivoBbvaActivos actBbva = genericDao.get(ActivoBbvaActivos.class,filtroAct_id);
 					if(!Checks.esNulo(actBbva)) {
 						activosFichaComercial.setActivoBbva(actBbva.getNumActivoBbva());
 						if(actBbva.getActivoEpa() != null) {
@@ -5078,7 +5135,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						activosFichaComercial.setCargas("No");
 					}
 					
-					ActivoSituacionPosesoria actSitPos  = genericDao.get(ActivoSituacionPosesoria.class,filtroAct);
+					ActivoSituacionPosesoria actSitPos  = genericDao.get(ActivoSituacionPosesoria.class,filtroAct_id);
 					if(!Checks.esNulo(actSitPos)) {
 						if(!Checks.esNulo(actSitPos.getConTitulo())) {
 							activosFichaComercial.setTituloPropiedad(actSitPos.getConTitulo().getDescripcion());
@@ -5096,6 +5153,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						}
 						else {
 							activosFichaComercial.setPosesion("No");
+						}
+						
+						if ( Integer.valueOf(1).equals(actSitPos.getOcupado()) &&
+								(DDTipoTituloActivoTPA.tipoTituloNo.equals(actSitPos.getConTitulo())
+								|| DDTipoTituloActivoTPA.tipoTituloNoConIndicios.equals(actSitPos.getConTitulo()))) {
+							activosFichaComercial.setOcupadoIlegal("Si");
+						}else {
+							activosFichaComercial.setOcupadoIlegal("No");
 						}
 					}
 					
@@ -5129,7 +5194,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 
 					activosFichaComercial.setGastosPendientes(Double.valueOf(numGastosPendientes));
-					
+					dtoFichaComercial.setGastosPendientes(Double.valueOf(numGastosPendientes));
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 					ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
 					if (activoBbva != null && activoBbva.getTipoAlta() != null) {
@@ -5139,6 +5204,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					if (act.getPropietarioPrincipal() != null) {
 						activosFichaComercial.setSociedadTitular(act.getPropietarioPrincipal().getNombre());
 					}
+					if ( act.getTipoAlquiler() != null ) {
+						if (!DDTipoAlquiler.CODIGO_ORDINARIO.equals(act.getTipoAlquiler().getCodigo()) 
+						&& !DDTipoAlquiler.CODIGO_ALQUILER_OPCION_COMPRA.equals(act.getTipoAlquiler().getCodigo())
+						&& !DDTipoAlquiler.CODIGO_ESPECIAL.equals(act.getTipoAlquiler().getCodigo())
+						&& !DDTipoAlquiler.CODIGO_NO_DEFINIDO.equals(act.getTipoAlquiler().getCodigo())){
+							 activosFichaComercial.setColectivo("Si");
+						}else {
+							activosFichaComercial.setColectivo("No");
+						}
+					}
+
 					// Pestaña Desglose 
 					//pvp suelo epa -> por definir
 					//costes legales -> por definir
@@ -5146,11 +5222,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					//Pestaña depuracion
 					//depuracion juridica -> por definir
 					//colectivo social -> por definir
-					
 					dtoFichaComercial.getListaActivosFichaComercial().add(activosFichaComercial);
 					
 				}
 				
+				Filter filtroGastosExpediente= genericDao.createFilter(FilterType.EQUALS ,"expediente.id", expediente.getId());
+				gastosExpediente = genericDao.get(GastosExpediente.class, filtroGastosExpediente);
+				if(gastosExpediente != null) {
+					dtoFichaComercial.setComisionHayaDivarian(gastosExpediente.getImporteFinal());
+				}
 				
 			}
 			else {
@@ -5217,7 +5297,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 				
 				if(!Checks.esNulo(oferta.getActivoPrincipal().getSubtipoActivo())) {
-					activosFichaComercial.setTipologia(oferta.getActivoPrincipal().getSubtipoActivo().getDescripcion());
+					activosFichaComercial.setSubtipologia(oferta.getActivoPrincipal().getSubtipoActivo().getDescripcion());
 				}
 				
 				if(!Checks.esNulo(oferta.getActivoPrincipal().getSituacionComercial())) {
@@ -5330,7 +5410,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dtoFichaComercial.setNombreYApellidosComercial(oferta.getPrescriptor().getNombreComercial());
 				dtoFichaComercial.setTelefonoComercial(oferta.getPrescriptor().getTelefono1());
 				dtoFichaComercial.setCorreoComercial(oferta.getPrescriptor().getEmail());
-				dtoFichaComercial.setLeads(oferta.getOrigenComprador().getDescripcion());	
 				}
 				activoValoraciones = genericDao.getList(ActivoValoraciones.class,
 						genericDao.createFilter(FilterType.EQUALS, "activo.id", oferta.getActivoPrincipal().getId()));
@@ -5348,10 +5427,23 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if(activoTasacion != null) {
 					dtoFichaComercial.setTasacionActual(activoTasacion.getImporteTasacionFin());
 				}
+				
+				if ( oferta.getOrigenComprador() != null) {
+					dtoFichaComercial.setLeads(oferta.getOrigenComprador().getDescripcion());	
+				}
+				
+				activoValoraciones = genericDao.getList(ActivoValoraciones.class,
+						genericDao.createFilter(FilterType.EQUALS, "activo.id", oferta.getActivoPrincipal().getId()));
+				
 				if(oferta.getActivoPrincipal().getBien() != null && oferta.getActivoPrincipal().getBien().getAdjudicacion() != null && oferta.getActivoPrincipal().getBien().getAdjudicacion().getImporteAdjudicacion() != null) {
 					dtoFichaComercial.setImporteAdjuducacion(oferta.getActivoPrincipal().getBien().getAdjudicacion().getImporteAdjudicacion());
+				}
+				
+				if (oferta.getActivoPrincipal().getInfoRegistral() != null
+						&& oferta.getActivoPrincipal().getInfoRegistral().getInfoRegistralBien() != null) {
 					dtoFichaComercial.setTotalSuperficie(oferta.getActivoPrincipal().getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida());
 				}
+				
 				Filter filtroGastosExpediente= genericDao.createFilter(FilterType.EQUALS ,"expediente.id", expediente.getId());
 				gastosExpediente = genericDao.get(GastosExpediente.class, filtroGastosExpediente);
 				if(gastosExpediente != null) {
@@ -5415,6 +5507,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dtoFichaComercial.setDiasPublicado(this.obtenerTotalDeDiasEnEstadoPublicadoVenta(oferta.getActivoPrincipal().getId()));
 				dtoFichaComercial.setMesesEnVenta(this.obtenerTotalDeMesesEnEstadoPublicadoVenta(oferta.getActivoPrincipal().getId()));
 
+				if ( oferta.getActivoPrincipal().getTipoAlquiler() != null ) {
+					if (!DDTipoAlquiler.CODIGO_ORDINARIO.equals(oferta.getActivoPrincipal().getTipoAlquiler().getCodigo()) 
+					&& !DDTipoAlquiler.CODIGO_ALQUILER_OPCION_COMPRA.equals(oferta.getActivoPrincipal().getTipoAlquiler().getCodigo())
+					&& !DDTipoAlquiler.CODIGO_ESPECIAL.equals(oferta.getActivoPrincipal().getTipoAlquiler().getCodigo())
+					&& !DDTipoAlquiler.CODIGO_NO_DEFINIDO.equals(oferta.getActivoPrincipal().getTipoAlquiler().getCodigo())){
+						 activosFichaComercial.setColectivo("Si");
+					}else {
+						activosFichaComercial.setColectivo("No");
+					}
+				}
 				dtoFichaComercial.getListaActivosFichaComercial().add(activosFichaComercial);
 			}
 			

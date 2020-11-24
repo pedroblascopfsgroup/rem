@@ -2927,7 +2927,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						activoDeVisita = visita.getActivo();
 						listActivosAgr = activoDeVisita.getAgrupaciones();
 						
-						contieneActPrincAgrObraNueva = this.perteneceAgrupacionObraNueva(listActivosAgr);
+						//contieneActPrincAgrObraNueva = this.perteneceAgrupacionObraNueva(listActivosAgr);
+											
+						
+						if (activo != null && activo.getTieneObraNuevaAEfectosComercializacion() != null ) {
+							contieneActPrincAgrObraNueva = DDSinSiNo.CODIGO_SI.equals(activo.getTieneObraNuevaAEfectosComercializacion().getCodigo());
+							
+						}
+						
+						
 						
 						if(contieneActPrincAgrObraNueva) {
 							listActOfr = oferta.getActivosOferta();
@@ -2996,14 +3004,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 				}else {
 
-					contieneActPrincAgrObraNueva = this.perteneceAgrupacionObraNueva(activo.getAgrupaciones());
+					//contieneActPrincAgrObraNueva = this.perteneceAgrupacionObraNueva(activo.getAgrupaciones());
 
+					if (activo != null && activo.getTieneObraNuevaAEfectosComercializacion() != null ) {
+						contieneActPrincAgrObraNueva = DDSinSiNo.CODIGO_SI.equals(activo.getTieneObraNuevaAEfectosComercializacion().getCodigo());
+						
+					}
+					
 					if(contieneActPrincAgrObraNueva && !Checks.esNulo(visita)){
 						consultaComisionDto.setComercialType(DD_TCR_CODIGO_OBRA_NUEVA);
+						
 					}
 
 					try {
 						calculoComision = comisionamientoApi.createCommission(consultaComisionDto);
+						
 					} catch (Exception e) {
 						logger.error("Error en la llamada al comisionamiento: " + e);
 					}

@@ -686,7 +686,6 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 		
 		File poiFile = new File(sc.getRealPath("/plantillas/plugin/GenerarFichaComercialBbva/FichaComercialReport.xlsx"));
 		File fileOut = new File(ruta + "/" + nombreFichero);
-		fileOut.getName();
 		FileInputStream fis = new FileInputStream(poiFile);
 		fileOutStream = new FileOutputStream(fileOut);
 		Map<String, File> dataFileWithName = new HashMap<String, File>();
@@ -1460,8 +1459,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				cellReference = new CellReference("N" + Integer.toString(currentRowDesglose));
 				r = mySheetDepuracion.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(activoFichaComercial.getOcupado())) {
-					c.setCellValue(activoFichaComercial.getOcupado());
+				if (!Checks.esNulo(activoFichaComercial.getOcupadoIlegal())) {
+					c.setCellValue(activoFichaComercial.getOcupadoIlegal());
 				} else {
 					c.setCellValue("");
 				}

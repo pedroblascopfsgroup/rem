@@ -4,9 +4,11 @@ import java.util.List;
 
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoRefacturable;
+import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VGastosRefacturados;
 
 public interface GastoDao extends AbstractDao<GastoProveedor, Long> {
@@ -45,4 +47,6 @@ public interface GastoDao extends AbstractDao<GastoProveedor, Long> {
 	List<GastoRefacturable> getGastosRefacturablesDelGasto(Long id);
 
 	Boolean updateGastosRefacturablesSiExiste(Long id, Long idPadre, String usuario);
+
+	List<VBusquedaGastoActivo> getListGastosByActivos(List<Activo> activos);
 }

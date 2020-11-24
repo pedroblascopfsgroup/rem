@@ -26,9 +26,12 @@ import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivosAlquilados;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoRefacturable;
+import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
 import es.pfsgroup.plugin.rem.model.VGastosProvision;
@@ -456,5 +459,23 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		}
 		
 		return existeGasto;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VBusquedaGastoActivo> getListGastosByActivos(List<Activo> activos) {
+
+		List<Long> idActivos = new ArrayList<Long>();
+		for(Activo act : activos) {
+			idActivos.add(act.getId());
+		}
+		
+		HQLBuilder hql = new HQLBuilder("from VBusquedaGastoActivo ");
+		HQLBuilder.addFiltroWhereInSiNotNull(hql, "idActivo", idActivos);
+		
+		List<VBusquedaGastoActivo> actAlquiladosList = (List<VBusquedaGastoActivo>) this.getSessionFactory().getCurrentSession()
+				.createQuery(hql.toString()).list();
+		
+		return actAlquiladosList;
 	}
 }

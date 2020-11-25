@@ -198,11 +198,29 @@ public class GastosProveedorController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public void generateExcelElementosGasto(Long idLinea, ModelMap model, HttpServletRequest request, HttpServletResponse response) throws IOException{
 
-		List<VElementosLineaDetalle> listaElementos = (List<VElementosLineaDetalle>) getElementosAfectados(idLinea, model, request).getModel().get("data");
+		List<VElementosLineaDetalle> listaElementos = null;
 
-		ExcelReport report = new ElementosLineasExcelReport(listaElementos);
+		try {
+			if(idLinea != -1) {
+				listaElementos = gastoLineaDetalleApi.getTodosElementosAfectados(idLinea);
+				model.put("data", listaElementos);
+				
+				trustMe.registrarSuceso(request, idLinea, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "elementos", ACCION_CODIGO.CODIGO_VER);
+			}
+			model.put("success", true);
+			
+			ExcelReport report = new ElementosLineasExcelReport(listaElementos);
 
-		excelReportGeneratorApi.generateAndSend(report, response);
+			excelReportGeneratorApi.generateAndSend(report, response);
+			
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			logger.error("error cargarElemetnosAfectados");
+			model.put("success", false);
+			trustMe.registrarError(request, idLinea, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "elementos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+		}
+
 	}
 
 

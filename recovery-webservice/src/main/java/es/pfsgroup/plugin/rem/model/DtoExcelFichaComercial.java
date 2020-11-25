@@ -73,40 +73,22 @@ public class DtoExcelFichaComercial extends WebDto {
 	private String correoPrescriptor;
 	private List <DtoActivosFichaComercial> listaActivosFichaComercial;
 	private List <DtoHcoComercialFichaComercial> listaHistoricoOfertas;
-	private List <DtoListFichaAutorizacion> listaFichaAutorizacion;
-	
-	private Long pisosTotales;
-	private Long otros;
-	private Long garajesTotales;
-	private Long viviendasTotalGeneral;
-	private Long ofertaViviendas;
-	private Long ofertaPisos;
-	private Long ofertaOtros;
-	private Long ofertaGaraje;
-	private Long ofertaTotalGeneral;
-	private Long viviendasComite;
-	private Long pisosComite;
-	private Long otrosComite;
-	private Long garajeComite;
-	private Long comiteTotalGeneral;
-	
-	/*public int viviendasTotales() {
-		
-		 int viviendas = 0;
-		
-		if(!Checks.esNulo(this.getListaActivosFichaComercial())) {
-			for (DtoActivosFichaComercial dtoActivosFichaComercial : listaActivosFichaComercial) {
-				if(DDTipoActivo.COD_VIVIENDA.equals(dtoActivosFichaComercial.getTipologia())) {
-					viviendas = viviendas + 1; 
-				}
-				
-			}
-		}
-		
-
-		return viviendas;
-	}*/
-		
+	private List <DtoListFichaAutorizacion> listaFichaAutorizacion;	
+	private Integer nroViviendas;
+	private Integer nroPisos;
+	private Integer nroOtros;
+	private Integer nroGaraje;
+	private Double ofertaViviendas;
+	private Double ofertaPisos;
+	private Double ofertaOtros;
+	private Double ofertaGaraje;
+	private Double pvpComiteViviendas;
+	private Double pvpComitePisos;
+	private Double pvpComiteOtros;
+	private Double pvpComiteGaraje;
+	private Integer nroTotal;
+	private Double ofertaTotal;
+	private Double pvpComiteTotal;		
 	
 	public Long getNumOferta() {
 		return numOferta;
@@ -453,5 +435,94 @@ public class DtoExcelFichaComercial extends WebDto {
 	public void setListaFichaAutorizacion(List <DtoListFichaAutorizacion> listaFichaAutorizacion) {
 		this.listaFichaAutorizacion = listaFichaAutorizacion;
 	}
-	
+	public Integer getNroViviendas() {
+		return nroViviendas;
+	}
+	public void setNroViviendas(Integer nroViviendas) {
+		this.nroViviendas = nroViviendas;
+	}
+	public Integer getNroPisos() {
+		return nroPisos;
+	}
+	public void setNroPisos(Integer nroPisos) {
+		this.nroPisos = nroPisos;
+	}
+	public Integer getNroOtros() {
+		return nroOtros;
+	}
+	public void setNroOtros(Integer nroOtros) {
+		this.nroOtros = nroOtros;
+	}
+	public Integer getNroGaraje() {
+		return nroGaraje;
+	}
+	public void setNroGaraje(Integer nroGaraje) {
+		this.nroGaraje = nroGaraje;
+	}
+	public Double getOfertaViviendas() {
+		return ofertaViviendas;
+	}
+	public void setOfertaViviendas(Double ofertaViviendas) {
+		this.ofertaViviendas = ofertaViviendas;
+	}
+	public Double getOfertaPisos() {
+		return ofertaPisos;
+	}
+	public void setOfertaPisos(Double ofertaPisos) {
+		this.ofertaPisos = ofertaPisos;
+	}
+	public Double getOfertaOtros() {
+		return ofertaOtros;
+	}
+	public void setOfertaOtros(Double ofertaOtros) {
+		this.ofertaOtros = ofertaOtros;
+	}
+	public Double getOfertaGaraje() {
+		return ofertaGaraje;
+	}
+	public void setOfertaGaraje(Double ofertaGaraje) {
+		this.ofertaGaraje = ofertaGaraje;
+	}
+	public Double getPvpComiteViviendas() {
+		return pvpComiteViviendas;
+	}
+	public void setPvpComiteViviendas(Double pvpComiteViviendas) {
+		this.pvpComiteViviendas = pvpComiteViviendas;
+	}
+	public Double getPvpComitePisos() {
+		return pvpComitePisos;
+	}
+	public void setPvpComitePisos(Double pvpComitePisos) {
+		this.pvpComitePisos = pvpComitePisos;
+	}
+	public Double getPvpComiteOtros() {
+		return pvpComiteOtros;
+	}
+	public void setPvpComiteOtros(Double pvpComiteOtros) {
+		this.pvpComiteOtros = pvpComiteOtros;
+	}
+	public Double getPvpComiteGaraje() {
+		return pvpComiteGaraje;
+	}
+	public void setPvpComiteGaraje(Double pvpComiteGaraje) {
+		this.pvpComiteGaraje = pvpComiteGaraje;
+	}
+	public Integer getNroTotal() {
+		return nroTotal;
+	}
+	public void setNroTotal(Integer nroTotal) {
+		this.nroTotal = nroTotal;
+	}
+	public Double getOfertaTotal() {
+		return ofertaTotal;
+	}
+	public void setOfertaTotal(Double ofertaTotal) {
+		this.ofertaTotal = ofertaTotal;
+	}
+	public Double getPvpComiteTotal() {
+		return pvpComiteTotal;
+	}
+	public void setPvpComiteTotal(Double pvpComiteTotal) {
+		this.pvpComiteTotal = pvpComiteTotal;
+	}
 }

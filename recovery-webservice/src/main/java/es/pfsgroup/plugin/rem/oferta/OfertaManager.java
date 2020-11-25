@@ -4991,6 +4991,65 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			dtoFichaComercial.setFechaAlta(oferta.getFechaAlta());
 			}
 			
+			Integer nroViviendas = 0;
+			Integer nroPisos = 0;
+			Integer nroOtros = 0;
+			Integer nroGaraje = 0;
+			Double ofertaViviendas = 0.0;
+			Double ofertaPisos = 0.0;
+			Double ofertaOtros  = 0.0;
+			Double ofertaGaraje = 0.0;
+			Integer nroTotal = 0;
+			Double ofertaTotal = 0.0;
+			
+			List<Long> listIdActivos = new ArrayList<Long>();
+			List<Activo> listActivos = new ArrayList<Activo>();
+			
+			if(oferta.getAgrupacion() != null) {
+				for(ActivoAgrupacionActivo aga : oferta.getAgrupacion().getActivos()) {
+					listIdActivos.add(aga.getActivo().getId());
+					listActivos.add(aga.getActivo());
+				}				
+			} else {
+				listIdActivos.add(oferta.getActivoPrincipal().getId());
+				listActivos.add(oferta.getActivoPrincipal());
+			}
+			
+			for(Activo act : listActivos) {
+				ActivoOferta actOfr = genericDao.get(ActivoOferta.class, 
+						genericDao.createFilter(FilterType.EQUALS ,"activo", act.getId()), 
+						genericDao.createFilter(FilterType.EQUALS ,"oferta", oferta.getId()));
+				if(DDTipoActivo.COD_VIVIENDA.equals(act.getTipoActivo().getCodigo())) {
+					nroViviendas++;
+					ofertaViviendas += actOfr.getImporteActivoOferta();
+					if(DDSubtipoActivo.CODIGO_SUBTIPO_PISO.equals(act.getSubtipoActivo().getCodigo())) {
+						nroPisos++;
+						ofertaPisos += actOfr.getImporteActivoOferta();
+					}
+				} else {
+					nroOtros++;
+					ofertaOtros += actOfr.getImporteActivoOferta();
+					if(DDSubtipoActivo.COD_GARAJE.equals(act.getSubtipoActivo().getCodigo())) {
+						nroGaraje++;
+						ofertaGaraje += actOfr.getImporteActivoOferta();
+					}
+				}
+			}
+			
+			dtoFichaComercial.setNroViviendas(nroViviendas);
+			dtoFichaComercial.setNroPisos(nroPisos);
+			dtoFichaComercial.setNroOtros(nroOtros);
+			dtoFichaComercial.setNroGaraje(nroGaraje);
+			nroTotal = nroViviendas+nroPisos+nroOtros+nroGaraje;
+			dtoFichaComercial.setNroTotal(nroTotal);
+			
+			dtoFichaComercial.setOfertaViviendas(ofertaViviendas);
+			dtoFichaComercial.setOfertaPisos(ofertaPisos);
+			dtoFichaComercial.setOfertaOtros(ofertaOtros);
+			dtoFichaComercial.setOfertaGaraje(ofertaGaraje);
+			ofertaTotal = ofertaViviendas+ofertaPisos+ofertaOtros+ofertaGaraje;
+			dtoFichaComercial.setOfertaTotal(ofertaTotal);
+			
 			Calendar calendar = Calendar.getInstance();
 			Date hoy = calendar.getTime();
 			dtoFichaComercial.setFechaActualOferta(hoy);
@@ -5003,16 +5062,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			calendar.add(Calendar.MONTH, -6);
 			Date dieciochoMesesAtras = calendar.getTime();
 			dtoFichaComercial.setFechaDieciochoMesesOferta(dieciochoMesesAtras);
-			
-			List<Long> listIdActivos = new ArrayList<Long>();
-			
-			if(oferta.getAgrupacion() != null) {
-				for(ActivoAgrupacionActivo aga : oferta.getAgrupacion().getActivos()) {
-					listIdActivos.add(aga.getActivo().getId());
-				}
-			} else {
-				listIdActivos.add(oferta.getActivoPrincipal().getId());
-			}
 			
 			List<ActivoValoraciones> valoracionesList = activoValoracionDao.getListActivoValoracionesByIdActivos(listIdActivos);
 			
@@ -5027,6 +5076,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				Double precioWebSeisMeses = 0.0;
 				Double precioWebActual = 0.0;
 				
+				Double pvpComiteViviendas = 0.0;
+				Double pvpComitePisos = 0.0;
+				Double pvpComiteOtros = 0.0;
+				Double pvpComiteGaraje = 0.0;
+				Double pvpComiteTotal = 0.0;
+				
 				for(ActivoValoraciones actVal : valoracionesList) {
 					if(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(actVal.getTipoPrecio().getCodigo())) {					
 						if(actVal.getFechaInicio() != null && actVal.getFechaInicio().before(dieciochoMesesAtras) && actVal.getImporte() != null) {
@@ -5039,6 +5094,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						if(actVal.getFechaInicio() != null && actVal.getFechaFin() == null && actVal.getImporte() != null) {
 							dtoFichaComercial.setFechaUltimoPrecioAprobado(actVal.getFechaInicio());
 							precioComiteActual += actVal.getImporte();
+							if(DDTipoActivo.COD_VIVIENDA.equals(actVal.getActivo().getTipoActivo().getCodigo())) {
+								pvpComiteViviendas += actVal.getImporte();
+								if(DDSubtipoActivo.CODIGO_SUBTIPO_PISO.equals(actVal.getActivo().getSubtipoActivo().getCodigo())) {
+									pvpComitePisos += actVal.getImporte();
+								}
+							} else {
+								pvpComiteOtros += actVal.getImporte();
+								if(DDSubtipoActivo.COD_GARAJE.equals(actVal.getActivo().getSubtipoActivo().getCodigo())) {
+									pvpComiteGaraje += actVal.getImporte();
+								}
+							}
 						}
 					} else if(DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO.equals(actVal.getTipoPrecio().getCodigo())) {
 						if(actVal.getFechaInicio() != null && actVal.getFechaInicio().before(dieciochoMesesAtras) && actVal.getImporte() != null) {
@@ -5063,6 +5129,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dtoFichaComercial.setPrecioWebDoceMesesOferta(precioWebDoceMeses);
 				dtoFichaComercial.setPrecioWebSeisMesesOferta(precioWebSeisMeses);
 				dtoFichaComercial.setPrecioWebActual(precioWebActual);
+				
+				dtoFichaComercial.setPvpComiteViviendas(pvpComiteViviendas);
+				dtoFichaComercial.setPvpComitePisos(pvpComitePisos);
+				dtoFichaComercial.setPvpComiteOtros(pvpComiteOtros);
+				dtoFichaComercial.setPvpComiteGaraje(pvpComiteGaraje);
+				pvpComiteTotal = pvpComiteViviendas+pvpComitePisos+pvpComiteOtros+pvpComiteGaraje;
+				dtoFichaComercial.setPvpComiteTotal(pvpComiteTotal);
 			}
 			
 			List<ActivoTasacion> tasacionesList = activoDao.getListActivoTasacionByIdActivos(listIdActivos);

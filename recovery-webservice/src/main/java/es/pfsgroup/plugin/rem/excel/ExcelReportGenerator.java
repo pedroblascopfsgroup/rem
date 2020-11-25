@@ -831,6 +831,141 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				c.setCellValue("");
 			}
 			
+			cellReference = new CellReference("D18");
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if(dtoExcelFichaComercial.getNroViviendas() != null) {
+			c.setCellValue(dtoExcelFichaComercial.getNroViviendas());
+			}else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("E18");
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if(dtoExcelFichaComercial.getOfertaViviendas() != null) {
+			c.setCellValue(dtoExcelFichaComercial.getOfertaViviendas());
+			}else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("F18");
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if(dtoExcelFichaComercial.getPvpComiteViviendas() != null) {
+			c.setCellValue(dtoExcelFichaComercial.getPvpComiteViviendas());
+			}else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("D19");
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if(dtoExcelFichaComercial.getNroPisos() != null) {
+			c.setCellValue(dtoExcelFichaComercial.getNroPisos());
+			}else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("E19");
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if(dtoExcelFichaComercial.getOfertaPisos() != null) {
+			c.setCellValue(dtoExcelFichaComercial.getOfertaPisos());
+			}else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("F19");
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if(dtoExcelFichaComercial.getPvpComitePisos() != null) {
+			c.setCellValue(dtoExcelFichaComercial.getPvpComitePisos());
+			}else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("D20");
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if(dtoExcelFichaComercial.getNroOtros() != null) {
+			c.setCellValue(dtoExcelFichaComercial.getNroOtros());
+			}else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("E20");
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if(dtoExcelFichaComercial.getOfertaOtros() != null) {
+			c.setCellValue(dtoExcelFichaComercial.getOfertaOtros());
+			}else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("F20");
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if(dtoExcelFichaComercial.getPvpComiteOtros() != null) {
+			c.setCellValue(dtoExcelFichaComercial.getPvpComiteOtros());
+			}else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("D21");
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if(dtoExcelFichaComercial.getNroGaraje() != null) {
+			c.setCellValue(dtoExcelFichaComercial.getNroGaraje());
+			}else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("E21");
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if(dtoExcelFichaComercial.getOfertaGaraje() != null) {
+			c.setCellValue(dtoExcelFichaComercial.getOfertaGaraje());
+			}else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("F21");
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if(dtoExcelFichaComercial.getPvpComiteGaraje() != null) {
+			c.setCellValue(dtoExcelFichaComercial.getPvpComiteGaraje());
+			}else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("D22");
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if(dtoExcelFichaComercial.getNroTotal() != null) {
+			c.setCellValue(dtoExcelFichaComercial.getNroTotal());
+			}else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("E22");
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if(dtoExcelFichaComercial.getOfertaTotal() != null) {
+			c.setCellValue(dtoExcelFichaComercial.getOfertaTotal());
+			}else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("F22");
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if(dtoExcelFichaComercial.getPvpComiteTotal() != null) {
+			c.setCellValue(dtoExcelFichaComercial.getPvpComiteTotal());
+			}else {
+				c.setCellValue("");
+			}
+			
 			cellReference = new CellReference("E31");
 			r = mySheet.getRow(cellReference.getRow());
 			c = r.getCell(cellReference.getCol());

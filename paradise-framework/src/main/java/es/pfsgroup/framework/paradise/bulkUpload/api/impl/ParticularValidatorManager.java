@@ -5516,7 +5516,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return !"0".equals(resultado);
 	}
-	
+
+	@Override
 	public boolean conEstadoGasto(String idGasto,String codigoEstado) {
 		if(Checks.esNulo(idGasto) || Checks.esNulo(codigoEstado) || !StringUtils.isNumeric(idGasto) ) {
 			return false;
@@ -5528,5 +5529,19 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "AND DD.DD_EGA_CODIGO = "+codigoEstado+" "
 				+ "AND GASTOS.BORRADO = 0");
 		return !"0".equals(resultado);
+	}
+
+	@Override
+	public String sacarCodigoSubtipoActivo(String descripcion) {
+
+		if (descripcion == null) {
+			return null;
+		}
+		String resultado = rawDao.getExecuteSQL("SELECT SAC.DD_SAC_CODIGO " 
+				+ "		FROM REM01.DD_SAC_SUBTIPO_ACTIVO SAC" 
+				+ "		WHERE SAC.DD_SAC_DESCRIPCION = '"+ descripcion + "'"
+				+ "		AND SAC.BORRADO = 0");
+		
+		return resultado;
 	}
 }

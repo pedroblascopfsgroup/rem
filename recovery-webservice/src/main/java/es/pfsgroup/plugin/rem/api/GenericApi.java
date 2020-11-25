@@ -80,7 +80,7 @@ public interface GenericApi {
 	 * @return
 	 */
 	@BusinessOperationDefinition("genericManager.getComboSubtipoActivo")
-	public List<DDSubtipoActivo> getComboSubtipoActivo(String codigoTipo);	
+	public List<DDSubtipoActivo> getComboSubtipoActivo(String codigoTipo, String idActivo);	
 	
 	/**
 	 * Devuelve los subtipos de carga del tipo que recibe

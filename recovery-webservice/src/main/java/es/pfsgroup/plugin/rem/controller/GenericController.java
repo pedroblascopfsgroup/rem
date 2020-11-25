@@ -284,8 +284,8 @@ public class GenericController extends ParadiseJsonController{
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboSubtipoActivo(String codigoTipoActivo){
-		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubtipoActivo(codigoTipoActivo)));	
+	public ModelAndView getComboSubtipoActivo(String codigoTipoActivo, String idActivo){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubtipoActivo(codigoTipoActivo,idActivo)));	
 	}	
 
 	@SuppressWarnings("unchecked")

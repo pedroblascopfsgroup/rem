@@ -278,8 +278,11 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			
 			//Vible para gestion comercial
 			if(visibleGestionComercial != null) {
-				perimetroActivo.setCheckGestorComercial(visibleGestionComercial);
-
+				if(visibleGestionComercial == 1) {
+					perimetroActivo.setCheckGestorComercial(true);
+				}else {
+					perimetroActivo.setCheckGestorComercial(false);
+				}
 				perimetroActivo.setMotivoGestionComercial((DDMotivoGestionComercial) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDMotivoGestionComercial.class, motivoGestionComercial.substring(0, 2)));
 				perimetroActivo.setExcluirValidaciones(((DDSinSiNo) utilDiccionarioApi
@@ -440,8 +443,8 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			perimetro.setAplicaTramiteAdmision(CHECK_VALOR_NO);
 			perimetro.setFechaAplicaTramiteAdmision(new Date());
 		}
-		if(!CHECK_VALOR_NO.equals(perimetro.getCheckGestorComercial())) {
-			perimetro.setCheckGestorComercial(CHECK_VALOR_NO);
+		if(!perimetro.getCheckGestorComercial()) {
+			perimetro.setCheckGestorComercial(false);
 			perimetro.setFechaGestionComercial(new Date());
 		}
 		if(perimetro.getAplicaPublicar()) {

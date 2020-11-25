@@ -47,7 +47,7 @@ BEGIN
                         SELECT OFR.OFR_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
                         INNER JOIN '||V_ESQUEMA||'.'||V_TABLA||' AOFR ON ACT.ACT_ID = AOFR.ACT_ID 
                         INNER JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_ID = AOFR.OFR_ID AND OFR.BORRADO = 1
-                        WHERE ACT.ACT_NUM_ACTIVO = '||V_ACT_ID||')';
+                        WHERE ACT.ACT_ID = '||V_ACT_ID||')';
         EXECUTE IMMEDIATE V_MSQL;
 
         DBMS_OUTPUT.PUT_LINE('[INFO] ELIMINADOS '||SQL%ROWCOUNT||' ACTIVOS RELACIONADOS CONFLICTIVOS');  

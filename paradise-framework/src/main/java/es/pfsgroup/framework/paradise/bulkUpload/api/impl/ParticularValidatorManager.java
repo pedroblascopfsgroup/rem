@@ -5447,10 +5447,10 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if (descripcion == null) {
 			return null;
 		}
-		String resultado = rawDao.getExecuteSQL("SELECT DD_SAC_CODIGO " 
-				+ "		FROM DD_SAC_SUBTIPO_ACTIVO " 
-				+ "		WHERE DD_SAC_DESCRIPCION = '"+ descripcion + "'"
-				+ "		AND BORRADO = 0");
+		String resultado = rawDao.getExecuteSQL("SELECT SAC.DD_SAC_CODIGO " 
+				+ "		FROM REM01.DD_SAC_SUBTIPO_ACTIVO SAC" 
+				+ "		WHERE SAC.DD_SAC_DESCRIPCION = '"+ descripcion + "'"
+				+ "		AND SAC.BORRADO = 0");
 		
 		return resultado;
 		

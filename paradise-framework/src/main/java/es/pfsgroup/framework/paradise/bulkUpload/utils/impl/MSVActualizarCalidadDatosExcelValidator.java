@@ -120,7 +120,7 @@ public class MSVActualizarCalidadDatosExcelValidator extends MSVExcelValidatorAb
 		ArrayList<ArrayList<Integer>> listasError = new ArrayList<ArrayList<Integer>>();
 		ArrayList<Integer> errList = null;		
 		String celda, tipoCampo;
-
+		boolean valorOK = true;
 		for (int columna = 0; columna < NUM_COLS; columna++) {
 			listasError.add(columna, new ArrayList<Integer>());
 		}		
@@ -131,7 +131,7 @@ public class MSVActualizarCalidadDatosExcelValidator extends MSVExcelValidatorAb
 				for (int columna = 0; columna < NUM_COLS; columna++) {
 					errList = listasError.get(columna);					
 					celda = exc.dameCelda(fila, columna);
-					boolean valorOK = true;
+					
 
 					switch (columna) {
 					case COL_IDENTIFICADOR:
@@ -144,8 +144,8 @@ public class MSVActualizarCalidadDatosExcelValidator extends MSVExcelValidatorAb
 						break;
 						
 					case COL_VALOR:
-						valorOK = Checks.esNulo(celda) 	|| tipoCampo != null && esValorCorrectoCDC(tipoCampo, celda) 
-								|| tipoCampo != null && comprobarCarteraYSubtipo(tipoCampo, exc.dameCelda(fila, COL_IDENTIFICADOR), celda);
+						valorOK = Checks.esNulo(celda) 	|| (tipoCampo != null && esValorCorrectoCDC(tipoCampo, celda)) 
+								&& (tipoCampo != null && comprobarCarteraYSubtipo(exc.dameCelda(fila, COL_CAMPO), exc.dameCelda(fila, COL_IDENTIFICADOR), celda));
 						break;						
 					}
 
@@ -188,11 +188,10 @@ public class MSVActualizarCalidadDatosExcelValidator extends MSVExcelValidatorAb
 		return esCorrecto;
 	}
 	
-	private boolean comprobarCarteraYSubtipo(String tipoCampo, String numeroActivo, String celda) {
+	private boolean comprobarCarteraYSubtipo(String codigoCampo, String numeroActivo, String celda) {
 		boolean esCorrecto = true;
 		List<String> listaCodigos = Arrays.asList(CODIGO_APARTAMENTO_TURISTICO,CODIGO_HOSTELERO,CODIGO_SUELO_URBANO_NO_CONSOLIDADO);
-		
-		if (CAMPO_SUBTIPO_ACTIVO.equals(tipoCampo) && (numeroActivo != null && !particularValidator.esActivoBBVA(numeroActivo))) {
+		if (CAMPO_SUBTIPO_ACTIVO.equals(codigoCampo) && (numeroActivo != null && !particularValidator.esActivoBBVA(numeroActivo))) {
 			String codigoSubtipo = particularValidator.sacarCodigoSubtipoActivo(celda);
 			if (codigoSubtipo == null || listaCodigos.contains(codigoSubtipo)) {
 				esCorrecto = false;	

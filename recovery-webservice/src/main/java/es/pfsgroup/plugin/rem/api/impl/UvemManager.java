@@ -1573,7 +1573,7 @@ public class UvemManager implements UvemManagerApi {
 		} else if (DDMotivoAnulacionReserva.CODIGO_DECISION_HAYA.equals(codigoMotivoAnulacionReserva)) {
 			return MOTIVO_ANULACION.DECISION_HAYA;
 		} else {
-			return null;
+			return MOTIVO_ANULACION.NO_APLICA;
 		}
 	}
 

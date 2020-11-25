@@ -2046,12 +2046,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ActivoTasacion> getListActivoTasacionByActivos(List<Activo> activos) {
-		
-		List<Long> idActivos = new ArrayList<Long>();
-		for(Activo act : activos) {
-			idActivos.add(act.getId());
-		}
+	public List<ActivoTasacion> getListActivoTasacionByIdActivos(List<Long> idActivos) {
 
 		HQLBuilder hql = new HQLBuilder("from ActivoTasacion ");
 		HQLBuilder.addFiltroWhereInSiNotNull(hql, "activo", idActivos);
@@ -2065,12 +2060,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ActivosAlquilados> getListActivosAlquiladosByActivos(List<Activo> activos) {
-		
-		List<Long> idActivos = new ArrayList<Long>();
-		for(Activo act : activos) {
-			idActivos.add(act.getId());
-		}
+	public List<ActivosAlquilados> getListActivosAlquiladosByIdActivos(List<Long> idActivos) {
 
 		HQLBuilder hql = new HQLBuilder("from ActivosAlquilados ");
 		HQLBuilder.addFiltroWhereInSiNotNull(hql, "activoAlq", idActivos);

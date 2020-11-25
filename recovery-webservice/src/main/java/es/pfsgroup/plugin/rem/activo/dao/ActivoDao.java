@@ -375,7 +375,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	public Activo existeActivoUsuarioCarterizado(Long numActivo, Long idCartera, List<Long> idSubcarteras);
 
-	public List<ActivoTasacion> getListActivoTasacionByActivos(List<Activo> activos);
+	public List<ActivoTasacion> getListActivoTasacionByIdActivos(List<Long> idActivos);
 
-	public List<ActivosAlquilados> getListActivosAlquiladosByActivos(List<Activo> activos);
+	public List<ActivosAlquilados> getListActivosAlquiladosByIdActivos(List<Long> idActivos);
 }

@@ -5004,17 +5004,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			Date dieciochoMesesAtras = calendar.getTime();
 			dtoFichaComercial.setFechaDieciochoMesesOferta(dieciochoMesesAtras);
 			
-			List<Activo> listActivos = new ArrayList<Activo>();
+			List<Long> listIdActivos = new ArrayList<Long>();
 			
 			if(oferta.getAgrupacion() != null) {
 				for(ActivoAgrupacionActivo aga : oferta.getAgrupacion().getActivos()) {
-					listActivos.add(aga.getActivo());
+					listIdActivos.add(aga.getActivo().getId());
 				}
 			} else {
-				listActivos.add(oferta.getActivoPrincipal());
+				listIdActivos.add(oferta.getActivoPrincipal().getId());
 			}
 			
-			List<ActivoValoraciones> valoracionesList = activoValoracionDao.getListActivoValoracionesByActivos(listActivos);
+			List<ActivoValoraciones> valoracionesList = activoValoracionDao.getListActivoValoracionesByIdActivos(listIdActivos);
 			
 			if(!valoracionesList.isEmpty()) {
 				Double precioComiteDieciochoMeses = 0.0;
@@ -5065,7 +5065,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dtoFichaComercial.setPrecioWebActual(precioWebActual);
 			}
 			
-			List<ActivoTasacion> tasacionesList = activoDao.getListActivoTasacionByActivos(listActivos);
+			List<ActivoTasacion> tasacionesList = activoDao.getListActivoTasacionByIdActivos(listIdActivos);
 			
 			if(!tasacionesList.isEmpty()) {
 				Double tasacionDieciochoMeses = 0.0;
@@ -5105,7 +5105,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dtoFichaComercial.setTotalOfertaNeta(importeOferta - honorarios);
 			}
 			
-			List<ActivosAlquilados> actAlquiladosList = activoDao.getListActivosAlquiladosByActivos(listActivos);
+			List<ActivosAlquilados> actAlquiladosList = activoDao.getListActivosAlquiladosByIdActivos(listIdActivos);
 			Double rentaMensual = 0.0;
 			
 			if(!actAlquiladosList.isEmpty()) {
@@ -5117,7 +5117,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			dtoFichaComercial.setRentaMensual(rentaMensual);
 			
-			List<VBusquedaGastoActivo> gastoActivoList = gastoDao.getListGastosByActivos(listActivos);
+			List<VBusquedaGastoActivo> gastoActivoList = gastoDao.getListGastosByIdActivos(listIdActivos);
 			Double gastosPendientes = 0.0;
 			
 			if (!gastoActivoList.isEmpty()) {

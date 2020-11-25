@@ -463,12 +463,7 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<VBusquedaGastoActivo> getListGastosByActivos(List<Activo> activos) {
-
-		List<Long> idActivos = new ArrayList<Long>();
-		for(Activo act : activos) {
-			idActivos.add(act.getId());
-		}
+	public List<VBusquedaGastoActivo> getListGastosByIdActivos(List<Long> idActivos) {
 		
 		HQLBuilder hql = new HQLBuilder("from VBusquedaGastoActivo ");
 		HQLBuilder.addFiltroWhereInSiNotNull(hql, "idActivo", idActivos);

@@ -470,12 +470,7 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 	}
 	
 	@Override
-	public List<ActivoValoraciones> getListActivoValoracionesByActivos(List<Activo> activos) {
-		
-		List<Long> idActivos = new ArrayList<Long>();
-		for(Activo act : activos) {
-			idActivos.add(act.getId());
-		}
+	public List<ActivoValoraciones> getListActivoValoracionesByIdActivos(List<Long> idActivos) {
 		
 		HQLBuilder hql = new HQLBuilder("from ActivoValoraciones ");
 		HQLBuilder.addFiltroWhereInSiNotNull(hql, "activo", idActivos);

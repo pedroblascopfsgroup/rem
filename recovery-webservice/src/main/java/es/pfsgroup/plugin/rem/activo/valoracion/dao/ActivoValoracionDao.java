@@ -43,5 +43,5 @@ public interface ActivoValoracionDao extends AbstractDao<ActivoValoraciones, Lon
 	 */
 	Double getImporteValoracionRentaWebPorIdAgrupacion(Long idAgrupacion);
 
-	List<ActivoValoraciones> getListActivoValoracionesByActivos(List<Activo> activos);
+	List<ActivoValoraciones> getListActivoValoracionesByIdActivos(List<Long> idActivos);
 }

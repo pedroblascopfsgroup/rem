@@ -48,5 +48,5 @@ public interface GastoDao extends AbstractDao<GastoProveedor, Long> {
 
 	Boolean updateGastosRefacturablesSiExiste(Long id, Long idPadre, String usuario);
 
-	List<VBusquedaGastoActivo> getListGastosByActivos(List<Activo> activos);
+	List<VBusquedaGastoActivo> getListGastosByIdActivos(List<Long> idActivos);
 }

@@ -115,6 +115,7 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		return genericDao.get(GastoLineaDetalle.class, genericDao.createFilter(FilterType.EQUALS, "id", idLinea));
 	}
 	
+	
 	@Override 
 	public GastoLineaDetalleEntidad getLineaDetalleEntidadByIdLineaEntidad(Long idEntidad) {
 		return genericDao.get(GastoLineaDetalleEntidad.class, genericDao.createFilter(FilterType.EQUALS, "id", idEntidad));
@@ -1129,6 +1130,8 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		}
 		return elementosLineaDetalleList;		
 	}
+	
+	
 	
 	@Override
 	public List<DtoComboLineasDetalle> getLineasDetalleGastoCombo(Long idGasto){
@@ -2229,6 +2232,32 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		
 	
 		return true;
+	}
+	
+	@Override
+	public List<VElementosLineaDetalle> getTodosElementosAfectados (Long idLinea){
+		Long idGasto = null;
+		List<VElementosLineaDetalle> elementosLineaDetalleList = new ArrayList<VElementosLineaDetalle>();
+		GastoLineaDetalle gastoLineaDetalle = getLineaDetalleByIdLinea(idLinea);
+		if (gastoLineaDetalle != null)
+			idGasto = gastoLineaDetalle.getGastoProveedor().getId();
+		if(idGasto != null) {
+			Filter filter = genericDao.createFilter(FilterType.EQUALS, "idGasto", idGasto);	
+			elementosLineaDetalleList = genericDao.getList(VElementosLineaDetalle.class, filter);
+			if(elementosLineaDetalleList.isEmpty()) {
+				VElementosLineaDetalle vElementoLineaDetalle  = new VElementosLineaDetalle();	
+
+				vElementoLineaDetalle.setParticipacion(100.0);
+				vElementoLineaDetalle.setImporteProporcinalTotal(0.0);
+				vElementoLineaDetalle.setImporteTotalLinea(0.0);
+				vElementoLineaDetalle.setImporteTotalSujetoLinea(0.0);
+				vElementoLineaDetalle.setImporteProporcinalSujeto(0.0);
+				vElementoLineaDetalle.setIdElemento("");
+				
+				elementosLineaDetalleList.add(vElementoLineaDetalle);
+			}
+		}
+		return elementosLineaDetalleList;			
 	}
 	
 }

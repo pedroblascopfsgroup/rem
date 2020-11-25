@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.api.impl;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -471,10 +472,6 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 						gastoDetalleEconomico.setOficinaBankia(exc.dameCelda(fila, COL_OFICINA));
 					}
 					
-					if(exc.dameCelda(fila, COL_RETENCION_GARANTIA_BASE) != null && !exc.dameCelda(fila, COL_RETENCION_GARANTIA_BASE).isEmpty()) {
-						gastoDetalleEconomico.setRetencionGarantiaBase(Double.parseDouble(exc.dameCelda(fila, COL_RETENCION_GARANTIA_BASE)));
-					}
-					
 					if(exc.dameCelda(fila, COL_RETENCION_GARANTIA_PORCENTAJE) != null && !exc.dameCelda(fila, COL_RETENCION_GARANTIA_PORCENTAJE).isEmpty()) {
 						gastoDetalleEconomico.setRetencionGarantiaTipoImpositivo(Double.parseDouble(exc.dameCelda(fila, COL_RETENCION_GARANTIA_PORCENTAJE)));
 					}
@@ -635,7 +632,15 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 					if(gastosList != null && !gastosList.isEmpty()) {
 						for (GastoDetalleEconomico gastoDetalle : gastosList) {
 								importeTotal = gastoProveedorApi.recalcularImporteTotalGasto(gastoDetalle);
+								Double importeGarantiaBase = gastoProveedorApi.recalcularImporteRetencionGarantia(gastoDetalle);
+								if(gastoDetalle.getRetencionGarantiaTipoImpositivo() != null) {
+									Double importeCuota = (gastoDetalle.getRetencionGarantiaTipoImpositivo() * importeGarantiaBase) / 100;
+									BigDecimal importeCuotaBig = new BigDecimal(importeCuota);
+									importeCuotaBig = importeCuotaBig.round(new MathContext(2));
+									gastoDetalle.setRetencionGarantiaCuota(importeCuotaBig.doubleValue());
+								}
 								gastoDetalle.setImporteTotal(importeTotal);
+								gastoDetalle.setRetencionGarantiaBase(importeGarantiaBase);
 								GastoDetalleEconomico updateGastoDetalleEconomico = HibernateUtils.merge(gastoDetalle);
 								genericDao.update(GastoDetalleEconomico.class, updateGastoDetalleEconomico);
 						}

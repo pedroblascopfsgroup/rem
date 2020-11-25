@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.gasto.linea.detalle;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -358,8 +359,19 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		}
 		
 		if(gasto != null && gasto.getGastoDetalleEconomico() != null) {
+			
+			Double importeGarantiaBase = gastoProveedorApi.recalcularImporteRetencionGarantia(gasto.getGastoDetalleEconomico());
+			if(gasto.getGastoDetalleEconomico().getRetencionGarantiaTipoImpositivo() != null) {
+				Double importeCuota = (gasto.getGastoDetalleEconomico().getRetencionGarantiaTipoImpositivo() * importeGarantiaBase) / 100;
+				BigDecimal importeCuotaBig = new BigDecimal(importeCuota);
+				importeCuotaBig = importeCuotaBig.round(new MathContext(2));
+				gasto.getGastoDetalleEconomico().setRetencionGarantiaCuota(importeCuotaBig.doubleValue());
+			}
+			gasto.getGastoDetalleEconomico().setRetencionGarantiaBase(importeGarantiaBase);
+			
 			Double importeTotal = gastoProveedorApi.recalcularImporteTotalGasto(gasto.getGastoDetalleEconomico());
 			gasto.getGastoDetalleEconomico().setImporteTotal(importeTotal);
+			
 			genericDao.update(GastoDetalleEconomico.class, gasto.getGastoDetalleEconomico());
 		}
 		
@@ -412,6 +424,16 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		
 		GastoProveedor gasto = gastoLineaDetalle.getGastoProveedor();
 		if( gasto != null && gasto.getGastoDetalleEconomico() != null) {
+			Double importeGarantiaBase = gastoProveedorApi.recalcularImporteRetencionGarantia(gasto.getGastoDetalleEconomico());
+			if(gasto.getGastoDetalleEconomico().getRetencionGarantiaTipoImpositivo() != null) {
+				Double importeCuota = (gasto.getGastoDetalleEconomico().getRetencionGarantiaTipoImpositivo() * importeGarantiaBase) / 100;
+				BigDecimal importeCuotaBig = new BigDecimal(importeCuota);
+				importeCuotaBig = importeCuotaBig.round(new MathContext(2));
+				gasto.getGastoDetalleEconomico().setRetencionGarantiaCuota(importeCuotaBig.doubleValue());
+			}
+			
+			gasto.getGastoDetalleEconomico().setRetencionGarantiaBase(importeGarantiaBase);
+			
 			Double importeTotal = gastoProveedorApi.recalcularImporteTotalGasto(gasto.getGastoDetalleEconomico());
 			gasto.getGastoDetalleEconomico().setImporteTotal(importeTotal);
 			genericDao.update(GastoDetalleEconomico.class, gasto.getGastoDetalleEconomico());
@@ -779,6 +801,16 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			}
 		}	
 		
+		
+		Double importeGarantiaBase = gastoProveedorApi.recalcularImporteRetencionGarantia(gastoProveedor.getGastoDetalleEconomico());
+		if(gastoProveedor.getGastoDetalleEconomico().getRetencionGarantiaTipoImpositivo() != null) {
+			Double importeCuota = (gastoProveedor.getGastoDetalleEconomico().getRetencionGarantiaTipoImpositivo() * importeGarantiaBase) / 100;
+			BigDecimal importeCuotaBig = new BigDecimal(importeCuota);
+			importeCuotaBig = importeCuotaBig.round(new MathContext(2));
+			gastoProveedor.getGastoDetalleEconomico().setRetencionGarantiaCuota(importeCuotaBig.doubleValue());
+		}
+		
+		gastoProveedor.getGastoDetalleEconomico().setRetencionGarantiaBase(importeGarantiaBase);
 		Double importeTotal = gastoProveedorApi.recalcularImporteTotalGasto(gastoProveedor.getGastoDetalleEconomico());	
 		gastoProveedor.getGastoDetalleEconomico().setImporteTotal(importeTotal);
 		
@@ -794,6 +826,10 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				genericDao.save(GastoLineaDetalle.class, gastoLineaDetalle);
 			
 			}
+		}
+		
+		if(DDCartera.CODIGO_CARTERA_LIBERBANK.equalsIgnoreCase(gastoProveedor.getPropietario().getCartera().getCodigo())) {
+			actualizarDiariosLbk(gastoProveedor.getId());
 		}
 		
 		
@@ -1829,22 +1865,26 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 				}
 			}
 		}
-		boolean actualizarParticipacionCorrectamente = true;
-		BigDecimal importeTotalGDE = new BigDecimal(0.0);
-		for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleList) {
-			if(!actualizarParticipacionCorrectamente) {
-				return false;
-			}
-			if(gastoLineaDetalle.getImporteTotal() != null) {
-				importeTotalGDE = importeTotalGDE.add(new BigDecimal(gastoLineaDetalle.getImporteTotal()));
-			}
+
+		Double importeTotal = gastoProveedorApi.recalcularImporteTotalGasto(gasto.getGastoDetalleEconomico());
+		Double importeGarantiaBase = gastoProveedorApi.recalcularImporteRetencionGarantia(gasto.getGastoDetalleEconomico());
+		if(gasto.getGastoDetalleEconomico().getRetencionGarantiaTipoImpositivo() != null) {
+			Double importeCuota = (gasto.getGastoDetalleEconomico().getRetencionGarantiaTipoImpositivo() * importeGarantiaBase) / 100;
+			BigDecimal importeCuotaBig = new BigDecimal(importeCuota);
+			importeCuotaBig = importeCuotaBig.round(new MathContext(2));
+			gasto.getGastoDetalleEconomico().setRetencionGarantiaCuota(importeCuotaBig.doubleValue());
 		}
 		
+		
 		if(gasto.getGastoDetalleEconomico() != null) {
-			gasto.getGastoDetalleEconomico().setImporteTotal(importeTotalGDE.doubleValue());
+			gasto.getGastoDetalleEconomico().setRetencionGarantiaBase(importeGarantiaBase);	
+			gasto.getGastoDetalleEconomico().setImporteTotal(importeTotal);
 			genericDao.save(GastoDetalleEconomico.class, gasto.getGastoDetalleEconomico());
 		}
 		
+		if(DDCartera.CODIGO_CARTERA_LIBERBANK.equalsIgnoreCase(gasto.getPropietario().getCartera().getCodigo())) {
+			actualizarDiariosLbk(gasto.getId());
+		}
 		
 		return true;
 	}
@@ -2030,8 +2070,29 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 			}
 		}
 
-	
-
+		
+		if(gasto.getGastoDetalleEconomico() != null) {
+			Double importeGarantiaBase = gastoProveedorApi.recalcularImporteRetencionGarantia(gasto.getGastoDetalleEconomico());
+			
+			if(gasto.getGastoDetalleEconomico().getRetencionGarantiaTipoImpositivo() != null) {
+				Double importeCuota = (gasto.getGastoDetalleEconomico().getRetencionGarantiaTipoImpositivo() * importeGarantiaBase) / 100;
+				BigDecimal importeCuotaBig = new BigDecimal(importeCuota);
+				importeCuotaBig = importeCuotaBig.round(new MathContext(2));
+				gasto.getGastoDetalleEconomico().setRetencionGarantiaCuota(importeCuotaBig.doubleValue());
+			}
+			
+			gasto.getGastoDetalleEconomico().setRetencionGarantiaBase(importeGarantiaBase);
+			
+			Double importeTotal = gastoProveedorApi.recalcularImporteTotalGasto(gasto.getGastoDetalleEconomico());
+			gasto.getGastoDetalleEconomico().setImporteTotal(importeTotal);
+			
+			genericDao.save(GastoDetalleEconomico.class, gasto.getGastoDetalleEconomico());
+		}
+		
+		if(DDCartera.CODIGO_CARTERA_LIBERBANK.equalsIgnoreCase(gasto.getPropietario().getCartera().getCodigo())) {
+			actualizarDiariosLbk(gasto.getId());
+		}
+		
 		return true;
 		
 	}

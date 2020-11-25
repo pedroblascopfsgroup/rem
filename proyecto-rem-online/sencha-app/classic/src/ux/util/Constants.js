@@ -825,5 +825,9 @@ Ext.define('HreRem.ux.util.Constants', {
 		ACTIVO : 'activo',
 		SANEAMIENTO: 'saneamiento',
 		REVISION_TITULO: 'revisionTitulo'
+	},
+	TIPO_RETENCION: {
+		ANTES : 'ANT',
+		DESPUES: 'DESP'
 	}
 });

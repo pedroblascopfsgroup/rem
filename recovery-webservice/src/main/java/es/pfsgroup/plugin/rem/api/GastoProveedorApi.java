@@ -426,5 +426,7 @@ public interface GastoProveedorApi {
 		
 		String validacionNifEmisorFactura(DtoFichaGastoProveedor dto, Long idGasto);
 
+		Double recalcularImporteRetencionGarantia(GastoDetalleEconomico gasto);
+
 }
 

@@ -131,6 +131,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	protected static final Log logger = LogFactory.getLog(GenericManager.class);
 
+	private static final String MENU_TRABAJOS= "MENU_TRABAJOS";
+	private static final String MENU_ADMINISTRACION = "MENU_ADMINISTRACION";
+	
 	@Autowired
 	private GenericABMDao genericDao;
 
@@ -355,7 +358,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			}
 						
 			if((secFunPermToRender == null || authData.getAuthorities().contains(secFunPermToRender)) && 
-					((esUsuCarteraBBVA && !nombreEntidad.toLowerCase().equals("trabajos") && !nombreEntidad.toLowerCase().equals("gastos")) ||
+					((esUsuCarteraBBVA && !MENU_ADMINISTRACION.equalsIgnoreCase(secFunPermToRender) && !MENU_TRABAJOS.equalsIgnoreCase(secFunPermToRender)) ||
 					!esUsuCarteraBBVA)) {
 				DtoMenuItem menuItem = new DtoMenuItem();
 				try {

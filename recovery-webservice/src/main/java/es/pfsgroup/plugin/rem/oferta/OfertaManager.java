@@ -5202,6 +5202,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 			dtoFichaComercial.setGastosPendientes(gastosPendientes);
+			dtoFichaComercial.setCostesLegales(0.0);
 			
 			
 			
@@ -5213,6 +5214,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 			DtoActivosFichaComercial activosFichaComercial = null;
 			
+			Double m2EdificableTotal = 0.0;
+			Double precioComiteTotal = 0.0;
+			Double precioPublicacionTotal = 0.0;
+			Double precioSueloEpaTotal = 0.0; //Por definir
+			Double tasacionTotal = 0.0;
+			Double vncTotal = 0.0;
+			Double importeAdjTotal = 0.0;
+			Double rentaTotal = 0.0;
+			Double ofertaTotalDesglose = 0.0;
+			Double eurosM2Total = 0.0;
+			Double comisionHayaTotal = 0.0;
+			Double gastosPendientesTotal = 0.0;
+			Double costesLegalesTotal = 0.0; //Por definir
+			Double ofertaNetaTotal = 0.0;
 			
 			if(oferta.getAgrupacion() != null) {
 				for(ActivoAgrupacionActivo activos : oferta.getAgrupacion().getActivos()) {
@@ -5233,6 +5248,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						}
 						if(!Checks.esNulo(infoRegistral.getSuperficieConstruida())) {
 							activosFichaComercial.setM2Edificable(infoRegistral.getSuperficieConstruida().doubleValue());
+							m2EdificableTotal += infoRegistral.getSuperficieConstruida().doubleValue();
 						}
 						if (!Checks.esNulo(infoRegistral.getReferenciaCatastralBien())) {
 							activosFichaComercial.setNumRefCatastral(infoRegistral.getReferenciaCatastralBien());
@@ -5253,6 +5269,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						
 						if(!Checks.esNulo(infoRegistral.getSuperficieConstruida()) && !Checks.esNulo(oferta.getImporteOferta())) { 
 							activosFichaComercial.setEurosM2(oferta.getImporteOferta()/infoRegistral.getSuperficieConstruida().doubleValue());
+							eurosM2Total += oferta.getImporteOferta()/infoRegistral.getSuperficieConstruida().doubleValue();
 						}
 					}
 					
@@ -5316,9 +5333,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							
 							if (esVigente && DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(tipoPrecioCodigo)){
 								activosFichaComercial.setPrecioComite(importe);
+								precioComiteTotal += importe;
 								
 							}else if (esVigente && DDTipoPrecio.CODIGO_TPC_PUBLICACION_WEB.equals(tipoPrecioCodigo)) {
 								activosFichaComercial.setPrecioPublicacion(importe);
+								precioPublicacionTotal += importe;
+								
+							} else if (esVigente && DDTipoPrecio.CODIGO_TPC_VALOR_NETO_CONT.equals(tipoPrecioCodigo)) {
+								activosFichaComercial.setVnc(importe);
+								vncTotal += importe;
 							}
 						}
 					}
@@ -5326,18 +5349,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					Filter filtroTasacion= genericDao.createFilter(FilterType.EQUALS ,"activo.id", act.getId());
 					List<ActivoTasacion> activoTasacionList = genericDao.getListOrdered(ActivoTasacion.class, orderDesc, filtroTasacion);
 					if(activoTasacionList != null && activoTasacionList.get(0) != null && dtoFichaComercial.getTasacionActual() == null) {
-						dtoFichaComercial.setTasacionActual(activoTasacionList.get(0).getImporteTasacionFin());							
+						dtoFichaComercial.setTasacionActual(activoTasacionList.get(0).getImporteTasacionFin());
 					}
 
 	
 					if(!Checks.esNulo(act.getBien().getAdjudicacion()) && !Checks.esNulo(act.getBien().getAdjudicacion().getImporteAdjudicacion())) {
 						activosFichaComercial.setImporteAdj(act.getBien().getAdjudicacion().getImporteAdjudicacion().doubleValue());
+						importeAdjTotal += act.getBien().getAdjudicacion().getImporteAdjudicacion().doubleValue();
 					}
 					
 					ActivoTasacion tasacion = genericDao.get(ActivoTasacion.class,filtroAct);
 					if(!Checks.esNulo(tasacion)) {
 						if(!Checks.esNulo(tasacion.getImporteTasacionFin())) {
 							activosFichaComercial.setTasacion(tasacion.getImporteTasacionFin());
+							tasacionTotal += tasacion.getImporteTasacionFin();
 						}
 						
 					}
@@ -5345,11 +5370,15 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					ActivosAlquilados actAlq = genericDao.get(ActivosAlquilados.class,filtroAct);
 					if(!Checks.esNulo(actAlq)) {
 						activosFichaComercial.setRenta(actAlq.getAlqRentaMensual());
+						rentaTotal += actAlq.getAlqRentaMensual();
 					}
 					
-					
-					if(!Checks.esNulo(oferta.getImporteOferta())){
-						activosFichaComercial.setOferta(oferta.getImporteOferta());
+					ActivoOferta actOfrAgr = genericDao.get(ActivoOferta.class, 
+							genericDao.createFilter(FilterType.EQUALS ,"activo", act.getId()), 
+							genericDao.createFilter(FilterType.EQUALS ,"oferta", oferta.getId()));
+					if(!Checks.esNulo(actOfrAgr) && !Checks.esNulo(actOfrAgr.getImporteActivoOferta())){
+						activosFichaComercial.setOferta(actOfrAgr.getImporteActivoOferta());
+						ofertaTotalDesglose += actOfrAgr.getImporteActivoOferta();
 					}
 					
 					
@@ -5400,8 +5429,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					
 					activosFichaComercial.setLink(linkCabecera(act.getId()));
 					
-					if(!Checks.esNulo(oferta.getImporteOferta())) {
-						Double importeOfertaNeta = oferta.getImporteOferta();
+					if(!Checks.esNulo(actOfrAgr) && !Checks.esNulo(actOfrAgr.getPorcentajeParticipacion())) {
+						Double importeOfertaParticipacion = actOfrAgr.getImporteActivoOferta();
 						Double honorarios  = Double.valueOf(0);
 						if ( expediente != null && expediente.getHonorarios() != null && !expediente.getHonorarios().isEmpty()) {
 							for (GastosExpediente gastoExpediente : expediente.getHonorarios()) {
@@ -5409,9 +5438,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 									honorarios += gastoExpediente.getImporteFinal();
 								}
 							}
+							honorarios = honorarios*(actOfrAgr.getPorcentajeParticipacion()/100.0);
 						}
 						activosFichaComercial.setComisionHaya(honorarios);
-						activosFichaComercial.setOfertaNeta(importeOfertaNeta - honorarios);					
+						comisionHayaTotal += honorarios;
+						activosFichaComercial.setOfertaNeta(importeOfertaParticipacion - honorarios);
+						ofertaNetaTotal += importeOfertaParticipacion - honorarios;
 					}
 					Integer numGastosPendientes = new Integer(0);
 					Long idActivo = act.getId();
@@ -5426,6 +5458,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						}
 					}
 					activosFichaComercial.setGastosPendientes(Double.valueOf(numGastosPendientes));
+					gastosPendientesTotal += numGastosPendientes;
 					dtoFichaComercial.setGastosPendientes(Double.valueOf(numGastosPendientes));
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 					ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
@@ -5477,6 +5510,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 					if(!Checks.esNulo(infoRegistral.getSuperficieConstruida())) {
 						activosFichaComercial.setM2Edificable(infoRegistral.getSuperficieConstruida().doubleValue());
+						m2EdificableTotal += infoRegistral.getSuperficieConstruida().doubleValue();
 					}
 					if (!Checks.esNulo(infoRegistral.getReferenciaCatastralBien())) {
 						activosFichaComercial.setNumRefCatastral(infoRegistral.getReferenciaCatastralBien());
@@ -5496,6 +5530,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					
 					if(!Checks.esNulo(infoRegistral.getSuperficieConstruida()) && !Checks.esNulo(oferta.getImporteOferta())) { 
 						activosFichaComercial.setEurosM2(oferta.getImporteOferta()/infoRegistral.getSuperficieConstruida().doubleValue());
+						eurosM2Total += oferta.getImporteOferta()/infoRegistral.getSuperficieConstruida().doubleValue();
 					}
 				}
 				
@@ -5556,6 +5591,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if(!Checks.esNulo(preciosAprobados) && !preciosAprobados.isEmpty()) {
 					if(!Checks.esNulo(preciosAprobados.get(0).getImporte())) {
 						activosFichaComercial.setPrecioComite(preciosAprobados.get(0).getImporte());
+						precioComiteTotal += preciosAprobados.get(0).getImporte();
 					}
 				}
 				
@@ -5566,6 +5602,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				if(!Checks.esNulo(preciosWeb) && !preciosWeb.isEmpty()) {
 					if(!Checks.esNulo(preciosWeb.get(0).getImporte())) {
 						activosFichaComercial.setPrecioPublicacion(preciosWeb.get(0).getImporte());
+						precioPublicacionTotal += preciosWeb.get(0).getImporte();
 					}
 				}
 				
@@ -5575,18 +5612,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 				if(!Checks.esNulo(valorNetoContable) && !valorNetoContable.isEmpty()) {
 					if(!Checks.esNulo(valorNetoContable.get(0).getImporte())) {
-						activosFichaComercial.setPrecioPublicacion(valorNetoContable.get(0).getImporte());
+						activosFichaComercial.setVnc(valorNetoContable.get(0).getImporte());
+						vncTotal += valorNetoContable.get(0).getImporte();
 					}
 				}
 				
 				if(!Checks.esNulo(oferta.getActivoPrincipal().getBien().getAdjudicacion()) && !Checks.esNulo(oferta.getActivoPrincipal().getBien().getAdjudicacion().getImporteAdjudicacion())) {
 					activosFichaComercial.setImporteAdj(oferta.getActivoPrincipal().getBien().getAdjudicacion().getImporteAdjudicacion().doubleValue());
+					importeAdjTotal += oferta.getActivoPrincipal().getBien().getAdjudicacion().getImporteAdjudicacion().doubleValue();
 				}
 				
 				ActivoTasacion tasacion = genericDao.get(ActivoTasacion.class,filtroActivo);
 				if(!Checks.esNulo(tasacion)) {
 					if(!Checks.esNulo(tasacion.getImporteTasacionFin())) {
 						activosFichaComercial.setTasacion(tasacion.getImporteTasacionFin());
+						tasacionTotal += tasacion.getImporteTasacionFin();
 					}
 					
 				}
@@ -5594,10 +5634,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				ActivosAlquilados actAlq = genericDao.get(ActivosAlquilados.class,filtroActivo);
 				if(!Checks.esNulo(actAlq)) {
 					activosFichaComercial.setRenta(actAlq.getAlqRentaMensual());
+					rentaTotal += actAlq.getAlqRentaMensual();
 				}
 				
 				if(!Checks.esNulo(oferta.getImporteOferta())){
 					activosFichaComercial.setOferta(oferta.getImporteOferta());
+					ofertaTotalDesglose += oferta.getImporteOferta();
 				}
 				
 	
@@ -5679,7 +5721,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						}
 					}
 					activosFichaComercial.setComisionHaya(honorarios);
+					comisionHayaTotal += honorarios;
 					activosFichaComercial.setOfertaNeta(importeOfertaNeta - honorarios);
+					ofertaNetaTotal += importeOfertaNeta - honorarios;
 				}
 				Activo act = oferta.getActivoPrincipal();
 				Integer numGastosPendientes = new Integer(0);
@@ -5695,6 +5739,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 				}
 				activosFichaComercial.setGastosPendientes(Double.valueOf(numGastosPendientes));
+				gastosPendientesTotal += numGastosPendientes;
 				
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 				ActivoBbvaActivos activoBbva = genericDao.get(ActivoBbvaActivos.class, filtro);
@@ -5728,6 +5773,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 				dtoFichaComercial.getListaActivosFichaComercial().add(activosFichaComercial);
 			}
+			
+			dtoFichaComercial.setM2EdificableTotal(m2EdificableTotal);
+			dtoFichaComercial.setPrecioComiteTotal(precioComiteTotal);
+			dtoFichaComercial.setPrecioPublicacionTotal(precioPublicacionTotal);
+			dtoFichaComercial.setPrecioSueloEpaTotal(precioSueloEpaTotal);
+			dtoFichaComercial.setTasacionTotal(tasacionTotal);
+			dtoFichaComercial.setVncTotal(vncTotal);
+			dtoFichaComercial.setImporteAdjTotal(importeAdjTotal);
+			dtoFichaComercial.setRentaTotal(rentaTotal);
+			dtoFichaComercial.setOfertaTotalDesglose(ofertaTotalDesglose);
+			dtoFichaComercial.setEurosM2Total(eurosM2Total);
+			dtoFichaComercial.setComisionHayaTotal(comisionHayaTotal);
+			dtoFichaComercial.setGastosPendientesTotal(gastosPendientesTotal);
+			dtoFichaComercial.setCostesLegalesTotal(costesLegalesTotal);
+			dtoFichaComercial.setOfertaNetaTotal(ofertaNetaTotal);
 			
 			
 			//Datos pestaña Historico de ofertas

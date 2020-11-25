@@ -709,7 +709,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 			SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
 			XSSFHyperlink link = myWorkBook.getCreationHelper().createHyperlink(Hyperlink.LINK_URL);
-			
+			XSSFDataFormat dataFormat = myWorkBook.createDataFormat();
 			
 			// Estilos celdas
 			XSSFFont  font = myWorkBook.createFont();
@@ -1360,7 +1360,6 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			}else {
 				c.setCellValue("0");	
 			}*/
-				
 			
 			
 			int currentRowDesglose = 8;
@@ -1841,6 +1840,135 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				currentRowDesglose++;
 			}
 			
+			cellReference = new CellReference("L5");
+			r = mySheetDesglose.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if (!Checks.esNulo(dtoExcelFichaComercial.getEurosM2Total())) {
+				c.setCellValue(dtoExcelFichaComercial.getEurosM2Total().toString());
+			} else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("T5");
+			r = mySheetDesglose.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if (!Checks.esNulo(dtoExcelFichaComercial.getPrecioComiteTotal())) {
+				c.setCellValue(dtoExcelFichaComercial.getPrecioComiteTotal());
+			} else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("U5");
+			r = mySheetDesglose.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if (!Checks.esNulo(dtoExcelFichaComercial.getPrecioPublicacionTotal())) {
+				c.setCellValue(dtoExcelFichaComercial.getPrecioPublicacionTotal());
+			} else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("V5");
+			r = mySheetDesglose.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if (!Checks.esNulo(dtoExcelFichaComercial.getPrecioSueloEpaTotal())) {
+				c.setCellValue(dtoExcelFichaComercial.getPrecioSueloEpaTotal());
+			} else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("W5");
+			r = mySheetDesglose.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if (!Checks.esNulo(dtoExcelFichaComercial.getTasacionTotal())) {
+				c.setCellValue(dtoExcelFichaComercial.getTasacionTotal());
+			} else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("X5");
+			r = mySheetDesglose.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if (!Checks.esNulo(dtoExcelFichaComercial.getVncTotal())) {
+				c.setCellValue(dtoExcelFichaComercial.getVncTotal());
+			} else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("Y5");
+			r = mySheetDesglose.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if (!Checks.esNulo(dtoExcelFichaComercial.getImporteAdjTotal())) {
+				c.setCellValue(dtoExcelFichaComercial.getImporteAdjTotal());
+			} else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("Z5");
+			r = mySheetDesglose.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if (!Checks.esNulo(dtoExcelFichaComercial.getRentaTotal())) {
+				c.setCellValue(dtoExcelFichaComercial.getRentaTotal());
+			} else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("AA5");
+			r = mySheetDesglose.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if (!Checks.esNulo(dtoExcelFichaComercial.getOfertaTotalDesglose())) {
+				c.setCellValue(dtoExcelFichaComercial.getOfertaTotalDesglose());
+			} else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("AB5");
+			r = mySheetDesglose.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if (!Checks.esNulo(dtoExcelFichaComercial.getEurosM2Total())) {
+				c.setCellValue(dtoExcelFichaComercial.getEurosM2Total().toString());
+			} else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("AC5");
+			r = mySheetDesglose.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if (!Checks.esNulo(dtoExcelFichaComercial.getComisionHayaTotal())) {
+				c.setCellValue(dtoExcelFichaComercial.getComisionHayaTotal());
+			} else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("AD5");
+			r = mySheetDesglose.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if (!Checks.esNulo(dtoExcelFichaComercial.getGastosPendientesTotal())) {
+				c.setCellValue(dtoExcelFichaComercial.getGastosPendientesTotal());
+			} else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("AE5");
+			r = mySheetDesglose.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if (!Checks.esNulo(dtoExcelFichaComercial.getCostesLegalesTotal())) {
+				c.setCellValue(dtoExcelFichaComercial.getCostesLegalesTotal());
+			} else {
+				c.setCellValue("");
+			}
+			
+			cellReference = new CellReference("AF5");
+			r = mySheetDesglose.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if (!Checks.esNulo(dtoExcelFichaComercial.getOfertaNetaTotal())) {
+				Locale locale = Locale.GERMANY;
+				NumberFormat numFormat = NumberFormat.getCurrencyInstance(locale);
+				String importeOfertaTotal = numFormat.format(dtoExcelFichaComercial.getOfertaNetaTotal());
+				c.setCellValue(importeOfertaTotal);
+			} else {
+				c.setCellValue("");
+			}			
+			
 			//Rellenamos hoja historico ofertas
 			
 			int currentRowHistorico = 7;
@@ -1850,8 +1978,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			String totalpvpComite = "";
 			String totalvTas = "";
 			String numActivo = "";
-			List<String> numActivosList = new ArrayList<String>();			
-			XSSFDataFormat dataFormat = myWorkBook.createDataFormat();
+			List<String> numActivosList = new ArrayList<String>();
 			
 			XSSFCellStyle styleActivoTitleHistorico = myWorkBook.createCellStyle();
 			font = myWorkBook.createFont();
@@ -2435,14 +2562,6 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			}
 			c.setCellStyle(styleBottomColumnsEHistorico);
 			
-			currentRowHistorico+=2;
-			countNumActDuplicate=0;
-			
-			for (int x=1; x<12; x++) {
-				mySheetHistorico.autoSizeColumn(x);
-			}
-			
-			
 			//rellenamos la quinta hoja
 			
 			int currentRowComercial = 27;
@@ -2597,6 +2716,13 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				
 				currentRowComercial++;
 
+			}
+			
+			for (int x=1; x<35; x++) {
+				mySheet.autoSizeColumn(x);
+				mySheetDesglose.autoSizeColumn(x);
+				mySheetDepuracion.autoSizeColumn(x);
+				mySheetHistorico.autoSizeColumn(x);
 			}
 			
 			myWorkBook.write(fileOutStream);

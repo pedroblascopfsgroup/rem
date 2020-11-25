@@ -1292,7 +1292,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	onChangeRetencionGarantiaAplica: function(field, checked){
 		var me= this;
 		// Habilitamos/deshabilitamos campos
-		
+
 		me.lookupReference('baseIRPFRetG').setDisabled(!checked);
 		me.lookupReference('irpfTipoImpositivoRetG').setDisabled(!checked);
 		me.lookupReference('cuotaIRPFRetG').setDisabled(!checked);
@@ -2216,15 +2216,25 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     onChangeCuotaRetencionGarantia: function(checked){
     	var me = this;
     	var tipoImpositivo = me.lookupReference('irpfTipoImpositivoRetG').getValue();
-    	var base = me.lookupReference('baseIRPFRetG').getValue();
+    	var base = 0;
     	var cuotaImpDirecto = me.lookupReference('cuotaIRPFImpD').getValue();
     	var cuota = 0;
+    	var tipoRetencion = me.lookupReference('comboTipoRetencionRef').getValue();
+    	var despues = false;
+    	
+    	if(CONST.TIPO_RETENCION['DESPUES'] == tipoRetencion ){
+    		despues = true;
+    	}
+
+    	base = me.getImporteRetencionLineasDetalle(me, despues);
     
     	if(tipoImpositivo != null && base != null){
     		cuota = (tipoImpositivo * base)/100;
     	}
-    	
+
+    	me.lookupReference('baseIRPFRetG').setValue(base);
     	me.lookupReference('cuotaIRPFRetG').setValue(cuota);
+
     	me.onChangeCuotaImpuestoDirecto(me,checked);
     },
     
@@ -2750,5 +2760,21 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
             	window.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
             }
         });
+    },
+    
+    getImporteRetencionLineasDetalle: function(me, despues){
+    	var importeTotal = 0;
+
+    	if(me.lookupReference('lineaDetalleGastoGrid').getStore() != null && me.lookupReference('lineaDetalleGastoGrid').getStore() != undefined){
+    		for(var i = 0; i < me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items.length; i++){
+    			importeTotal+= parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('baseSujeta'));
+    			importeTotal+= parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('baseNoSujeta'));
+    			if(despues){
+    				importeTotal+= parseFloat(me.lookupReference('lineaDetalleGastoGrid').getStore().getData().items[i].get('cuota'));
+    			}
+    		}
+    	}
+    	
+    	return importeTotal;
     }
 });

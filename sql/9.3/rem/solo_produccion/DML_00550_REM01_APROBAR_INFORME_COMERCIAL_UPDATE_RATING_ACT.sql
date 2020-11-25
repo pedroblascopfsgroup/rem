@@ -21,7 +21,6 @@ DECLARE
     V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
-    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
     V_NUM_FILAS NUMBER(16); -- Vble. para validar la existencia de un registro.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
@@ -122,7 +121,7 @@ BEGIN
 
 	DBMS_OUTPUT.PUT_LINE('[INICIO] Ejecutándose SP recálculo de la situación comercial ');
 
-    	V_SQL := ' MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO ACT
+    	V_MSQL := ' MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO ACT
 		  USING
 		  (
 
@@ -152,7 +151,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INICIO] Ejecutándose SP cambio estado de publicación ');
      
      	-- Busca los activos que no están en una agrupación asistida ni restringida:
-    	V_SQL := ' SELECT DISTINCT ACT.ACT_ID
+    	V_MSQL := ' SELECT DISTINCT ACT.ACT_ID
 		   FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT,
 			'||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX
 		   WHERE 1 = 1			   
@@ -173,7 +172,7 @@ BEGIN
 				  )
 		 ' ;
 
-	OPEN v_cursor FOR V_SQL;
+	OPEN v_cursor FOR V_MSQL;
    
    	V_COUNT := 0;
    
@@ -195,7 +194,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INICIO] Ejecutándose SP cambio estado de publicación en caso de agrupaciones asistidas ');
      
      	-- Busca los activos que sí están en una agrupación asistida ni restringida:
-    	V_SQL := ' SELECT DISTINCT AGR.AGR_ID
+    	V_MSQL := ' SELECT DISTINCT AGR.AGR_ID
 		   FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT,
 			'||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX,
 			'||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA,
@@ -213,7 +212,7 @@ BEGIN
 		   AND ACT.BORRADO = 0 
 		 ' ;
 
-	OPEN v_cursor FOR V_SQL;
+	OPEN v_cursor FOR V_MSQL;
    
    	V_COUNT := 0;
    
@@ -234,7 +233,7 @@ BEGIN
 
 	DBMS_OUTPUT.PUT_LINE('[INICIO] CARGAR RATING INFORMADO');
 
-	V_SQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO T1 USING (
+	V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO T1 USING (
 			   SELECT ACT.ACT_ID, RTG.DD_RTG_ID
 		   		FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT 
 		   		INNER JOIN '||V_ESQUEMA||'.'||V_TABLA_AUX||' AUX ON ACT.ACT_NUM_ACTIVO_UVEM = AUX.ACT_NUM_ACTIVO

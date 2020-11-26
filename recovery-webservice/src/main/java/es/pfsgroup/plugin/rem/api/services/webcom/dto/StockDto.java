@@ -1082,5 +1082,29 @@ public class StockDto implements WebcomRESTDto{
 	public void setCodEquipoGestion(StringDataType codEquipoGestion) {
 		this.codEquipoGestion = codEquipoGestion;
 	}
+	public BooleanDataType getCheckGestionComercial() {
+		return checkGestionComercial;
+	}
+	public void setCheckGestionComercial(BooleanDataType checkGestionComercial) {
+		this.checkGestionComercial = checkGestionComercial;
+	}
+	public LongDataType getExcluirValidaciones() {
+		return excluirValidaciones;
+	}
+	public void setExcluirValidaciones(LongDataType excluirValidaciones) {
+		this.excluirValidaciones = excluirValidaciones;
+	}
+	public DateDataType getFechaGestionComercial() {
+		return fechaGestionComercial;
+	}
+	public void setFechaGestionComercial(DateDataType fechaGestionComercial) {
+		this.fechaGestionComercial = fechaGestionComercial;
+	}
+	public LongDataType getMotivoGestionComercial() {
+		return motivoGestionComercial;
+	}
+	public void setMotivoGestionComercial(LongDataType motivoGestionComercial) {
+		this.motivoGestionComercial = motivoGestionComercial;
+	}
 	
 }

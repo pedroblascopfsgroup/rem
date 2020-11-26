@@ -587,11 +587,18 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					{
 						xtype: 'textfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.perimetro.ofertas.vivas'),
+						colspan: 1,
 						bind:{
-								value:'{activo.ofertasVivas}'
-									
+								value:'{activo.ofertasVivas}'		
 						},
-						readOnly	: true
+						readOnly	: true,
+						listeners: {
+						   'render': function(panel) {
+						       if($AU.getUser().codigoCartera == CONST.CARTERA['BBVA']){
+						    	  this.colspan = 3;
+						       }
+						    }
+						}
 					},
 					{
 						xtype: 'textfieldbase',
@@ -603,6 +610,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						},
 						readOnly	: true
 					},
+					
 		            {    
 		                
 						xtype:'fieldsettable',

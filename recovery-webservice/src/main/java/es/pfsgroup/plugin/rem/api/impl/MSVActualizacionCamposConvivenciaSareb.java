@@ -117,7 +117,12 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 			campo = exc.dameCelda(fila, CAMPO_CAMBIO);
 			Filter filtroCampo = genericDao.createFilter(FilterType.EQUALS, "cos.codigo",campo);
 			List<DDCamposConvivenciaSareb> convivencias = genericDao.getList(DDCamposConvivenciaSareb.class, filtroCampo);
-			convivencia = convivencias.get(0);
+			if (!convivencias.isEmpty() && convivencias != null) {
+				convivencia = convivencias.get(0);
+			} else {
+				convivencia = new DDCamposConvivenciaSareb();
+				convivencia.setTabla("CampoNoIncluido");
+			}
 			Activo activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO))));
 			if("ACT_ACTIVO".equalsIgnoreCase(convivencia.getTabla())) {
 				if("001".equalsIgnoreCase(campo)){
@@ -242,7 +247,7 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 					activoPatrimonio.setAdecuacionAlquiler(ada);
 				}
 				genericDao.save(ActivoPatrimonio.class, activoPatrimonio);
-			}else if("ACT_REG_INFO_REGISTRAL".equalsIgnoreCase(convivencia.getTabla())) {
+			}else if("ACT_REG_INFO_REGISTRAL".equalsIgnoreCase(convivencia.getTabla()) && !"093".equalsIgnoreCase(campo)) {
 				ActivoInfoRegistral infoRegistral = genericDao.get(ActivoInfoRegistral.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO))));
 				if("064".equalsIgnoreCase(campo)) {
 					infoRegistral.setDivHorInscrito(Integer.parseInt(exc.dameCelda(fila, VALOR_NUEVO)));
@@ -252,11 +257,6 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 					infoRegistral.setSuperficieUtil(Float.parseFloat(exc.dameCelda(fila, VALOR_NUEVO)));
 				}else if("077".equalsIgnoreCase(campo)) {
 					infoRegistral.setSuperficieParcela(Float.parseFloat(exc.dameCelda(fila, VALOR_NUEVO)));
-				}else if("093".equalsIgnoreCase(campo)) {
-					Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
-					String fechaString = sdfSal.format(fechaOri);
-					Date fechaCfo = sdfSal.parse(fechaString);
-					infoRegistral.setFechaCfo(fechaCfo);
 				}else if("119".equalsIgnoreCase(campo)) {
 					DDSinSiNo res = genericDao.get(DDSinSiNo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, VALOR_NUEVO)));
 					infoRegistral.setTieneAnejosRegistrales(res);
@@ -616,10 +616,10 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 					}
 				}
 			// Creación de registros nuevos
-			}else if(("078".equalsIgnoreCase(campo) || "079".equalsIgnoreCase(campo) || "080".equalsIgnoreCase(campo)
+			}else if((("078".equalsIgnoreCase(campo) || "079".equalsIgnoreCase(campo) || "080".equalsIgnoreCase(campo)
 					|| "081".equalsIgnoreCase(campo) || "083".equalsIgnoreCase(campo) || "084".equalsIgnoreCase(campo)
-					|| "092".equalsIgnoreCase(campo) || "093".equalsIgnoreCase(campo) || "082".equalsIgnoreCase(campo))
-					|| "093".equalsIgnoreCase(campo) || "095".equalsIgnoreCase(campo)) {
+					|| "092".equalsIgnoreCase(campo) || "093".equalsIgnoreCase(campo) ) && "1".equals(exc.dameCelda(fila, VALOR_NUEVO)))
+					|| "093".equalsIgnoreCase(campo) || "095".equalsIgnoreCase(campo) || "082".equalsIgnoreCase(campo)) {
 				String tipoDocumento = null;
 				if ("078".equalsIgnoreCase(campo)) {
 					tipoDocumento = "15";
@@ -668,8 +668,55 @@ public class MSVActualizacionCamposConvivenciaSareb extends AbstractMSVActualiza
 								activoAdmisionDoc.setFechaObtencion(fechaObtener);
 								DDEstadoDocumento estadoDocumento = genericDao.get(DDEstadoDocumento.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDocumento.CODIGO_ESTADO_OBTENIDO));
 								activoAdmisionDoc.setEstadoDocumento(estadoDocumento);
-							} else {
+							} else if ("093".equals(campo)) {
+								ActivoInfoRegistral infoRegistral = genericDao.get(ActivoInfoRegistral.class, genericDao.createFilter(FilterType.EQUALS, "activo.numActivo",Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO))));
+								Date fechaOri = sdfOri.parse(exc.dameCelda(fila, VALOR_NUEVO));
+								String fechaString = sdfSal.format(fechaOri);
+								Date fechaCfo = sdfSal.parse(fechaString);
+								infoRegistral.setFechaCfo(fechaCfo);
+								genericDao.save(ActivoInfoRegistral.class, infoRegistral);
+								activoAdmisionDoc.setFechaObtencion(fechaCfo);
+								DDEstadoDocumento estadoDocumento = genericDao.get(DDEstadoDocumento.class,genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoDocumento.CODIGO_ESTADO_OBTENIDO));
+								activoAdmisionDoc.setEstadoDocumento(estadoDocumento);
+							}else {
 								activoAdmisionDoc.setFechaObtencion(new Date());
+							}
+							genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDoc);
+						}
+					}
+				}
+			}else if((("078".equalsIgnoreCase(campo) || "079".equalsIgnoreCase(campo) || "080".equalsIgnoreCase(campo)
+					|| "081".equalsIgnoreCase(campo) || "083".equalsIgnoreCase(campo) || "084".equalsIgnoreCase(campo)) && "0".equals(exc.dameCelda(fila, VALOR_NUEVO)))) {
+				String tipoDocumento = null;
+				if ("078".equalsIgnoreCase(campo)) {
+					tipoDocumento = "15";
+				} else if ("079".equalsIgnoreCase(campo)) {
+					tipoDocumento = "16";
+				} else if ("080".equalsIgnoreCase(campo)) {
+					tipoDocumento = "17";
+				} else if ("081".equalsIgnoreCase(campo)) {
+					tipoDocumento = "13";
+				} else if ("083".equalsIgnoreCase(campo)) {
+					tipoDocumento = "11";
+				} else if ("084".equalsIgnoreCase(campo)) {
+					tipoDocumento = "19";
+				} else if ("092".equalsIgnoreCase(campo)) {
+					tipoDocumento = "14";
+				} else if ("094".equalsIgnoreCase(campo)) {
+					tipoDocumento = "12";
+				}
+				
+				if (tipoDocumento != null) {
+					DDTipoDocumentoActivo tipoDocumentoActivo = genericDao.get(DDTipoDocumentoActivo.class,genericDao.createFilter(FilterType.EQUALS, "codigo", tipoDocumento));
+					if (tipoDocumentoActivo != null) {
+						ActivoConfigDocumento configDocumento = genericDao.get(ActivoConfigDocumento.class,genericDao.createFilter(FilterType.EQUALS, "tipoActivo.codigo", activo.getTipoActivo().getCodigo())
+								,genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.codigo", tipoDocumentoActivo.getCodigo()));
+						if (configDocumento != null) {
+							ActivoAdmisionDocumento activoAdmisionDoc = genericDao.get(ActivoAdmisionDocumento.class,genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", Long.parseLong(exc.dameCelda(fila, NUM_ACTIVO)))
+									,genericDao.createFilter(FilterType.EQUALS, "configDocumento.id", configDocumento.getId()));
+							if (activoAdmisionDoc != null) {
+								activoAdmisionDoc.setFechaObtencion(null);
+								activoAdmisionDoc.setEstadoDocumento(null);
 							}
 							genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDoc);
 						}

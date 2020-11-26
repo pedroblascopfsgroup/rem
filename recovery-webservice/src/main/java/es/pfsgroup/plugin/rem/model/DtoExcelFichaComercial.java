@@ -62,7 +62,7 @@ public class DtoExcelFichaComercial extends WebDto {
 	private Date fechaPublicado;
 	private Integer mesesEnVenta;
 	private Integer diasPublicado;
-	private Double diasPVP;
+	private Long diasPVP;
 	private String nombreYApellidosOfertante;
 	private String dniOfertante;
 	private String nombreYApellidosComercial;
@@ -321,10 +321,10 @@ public class DtoExcelFichaComercial extends WebDto {
 	public void setDiasPublicado(Integer diasPublicado) {
 		this.diasPublicado = diasPublicado;
 	}
-	public Double getDiasPVP() {
+	public Long getDiasPVP() {
 		return diasPVP;
 	}
-	public void setDiasPVP(Double diasPVP) {
+	public void setDiasPVP(Long diasPVP) {
 		this.diasPVP = diasPVP;
 	}
 	public String getNombreYApellidosOfertante() {

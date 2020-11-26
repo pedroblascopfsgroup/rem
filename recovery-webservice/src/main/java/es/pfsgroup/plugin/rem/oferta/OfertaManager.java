@@ -4856,19 +4856,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 			
-			if(oferta.getActivoPrincipal() != null) { 
-				dtoFichaComercial.setNumActivo(oferta.getActivoPrincipal().getNumActivo());
-				ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(oferta.getActivoPrincipal().getId());
-				if(activoPublicacion != null) {
-					dtoFichaComercial.setFechaPublicado(activoPublicacion.getFechaCambioPubVenta());
-					if(DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA.equals(activoPublicacion.getEstadoPublicacionVenta().getCodigo())) {
-						dtoFichaComercial.setPublicado("Si");
-					}else {
-						dtoFichaComercial.setPublicado("No");
-					}
-				}
-			}
-			
 			if(oferta.getAgrupacion() != null) {
 				filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS ,"id", oferta.getAgrupacion().getId());
 				agrupacion = genericDao.get(ActivoAgrupacion.class,filtroAgrupacion);
@@ -4878,12 +4865,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dtoFichaComercial.setNumAgrupacion(oferta.getAgrupacion().getNumAgrupRem());
 				String direccion = "";
 				
-				
-				
 				if(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 	
 					if(agrupacion.getActivoPrincipal() != null) {
-					 linkHaya = linkCabecera(agrupacion.getActivoPrincipal().getId());
+						linkHaya = linkCabecera(agrupacion.getActivoPrincipal().getId());
+						dtoFichaComercial.setNumActivo(agrupacion.getActivoPrincipal().getNumActivo());
+						ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(agrupacion.getActivoPrincipal().getId());
+						if(activoPublicacion != null) {
+							if(DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA.equals(activoPublicacion.getEstadoPublicacionVenta().getCodigo())) {
+								dtoFichaComercial.setFechaPublicado(activoPublicacion.getFechaInicioVenta());
+								dtoFichaComercial.setPublicado("Si");
+							}else {
+								dtoFichaComercial.setPublicado("No");
+							}
+						}
 					}
 				}
 				if(agrupacion.getActivoPrincipal() != null) {
@@ -4968,6 +4963,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 				dtoFichaComercial.setDireccionComercial(direccion);
 			}else {
+				
+				if(oferta.getActivoPrincipal() != null) { 
+					dtoFichaComercial.setNumActivo(oferta.getActivoPrincipal().getNumActivo());
+					ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(oferta.getActivoPrincipal().getId());
+					if(activoPublicacion != null) {
+						if(DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA.equals(activoPublicacion.getEstadoPublicacionVenta().getCodigo())) {
+							dtoFichaComercial.setFechaPublicado(activoPublicacion.getFechaInicioVenta());
+							dtoFichaComercial.setPublicado("Si");
+						}else {
+							dtoFichaComercial.setPublicado("No");
+						}
+					}
+				}
+				
 				linkHaya = linkCabecera(oferta.getActivoPrincipal().getId());
 				if(oferta.getActivoPrincipal().getVisitas() != null)
 				dtoFichaComercial.setVisitas(oferta.getActivoPrincipal().getVisitas().size());
@@ -5003,33 +5012,30 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			Double ofertaTotal = 0.0;
 			
 			List<Long> listIdActivos = new ArrayList<Long>();
-			List<Activo> listActivos = new ArrayList<Activo>();
 			
 			if(oferta.getAgrupacion() != null) {
 				for(ActivoAgrupacionActivo aga : oferta.getAgrupacion().getActivos()) {
 					listIdActivos.add(aga.getActivo().getId());
-					listActivos.add(aga.getActivo());
 				}				
 			} else {
 				listIdActivos.add(oferta.getActivoPrincipal().getId());
-				listActivos.add(oferta.getActivoPrincipal());
 			}
 			
-			for(Activo act : listActivos) {
+			for(Long idAct : listIdActivos) {
 				ActivoOferta actOfr = genericDao.get(ActivoOferta.class, 
-						genericDao.createFilter(FilterType.EQUALS ,"activo", act.getId()), 
+						genericDao.createFilter(FilterType.EQUALS ,"activo", idAct), 
 						genericDao.createFilter(FilterType.EQUALS ,"oferta", oferta.getId()));
-				if(DDTipoActivo.COD_VIVIENDA.equals(act.getTipoActivo().getCodigo())) {
+				if(DDTipoActivo.COD_VIVIENDA.equals(actOfr.getPrimaryKey().getActivo().getTipoActivo().getCodigo())) {
 					nroViviendas++;
 					ofertaViviendas += actOfr.getImporteActivoOferta();
-					if(DDSubtipoActivo.CODIGO_SUBTIPO_PISO.equals(act.getSubtipoActivo().getCodigo())) {
+					if(DDSubtipoActivo.CODIGO_SUBTIPO_PISO.equals(actOfr.getPrimaryKey().getActivo().getSubtipoActivo().getCodigo())) {
 						nroPisos++;
 						ofertaPisos += actOfr.getImporteActivoOferta();
 					}
 				} else {
 					nroOtros++;
 					ofertaOtros += actOfr.getImporteActivoOferta();
-					if(DDSubtipoActivo.COD_GARAJE.equals(act.getSubtipoActivo().getCodigo())) {
+					if(DDSubtipoActivo.COD_GARAJE.equals(actOfr.getPrimaryKey().getActivo().getSubtipoActivo().getCodigo())) {
 						nroGaraje++;
 						ofertaGaraje += actOfr.getImporteActivoOferta();
 					}
@@ -5105,6 +5111,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 									pvpComiteGaraje += actVal.getImporte();
 								}
 							}
+						}
+						
+						if((agrupacion != null && agrupacion.getTipoAgrupacion() != null && DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) || 
+								(agrupacion == null && oferta.getActivoPrincipal() != null)) {
+							long diff = Math.abs(new Date().getTime() - actVal.getFechaInicio().getTime());
+							long diffDays = diff / (24 * 60 * 60 * 1000);
+							dtoFichaComercial.setDiasPVP(diffDays);
 						}
 					} else if(DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO.equals(actVal.getTipoPrecio().getCodigo())) {
 						if(actVal.getFechaInicio() != null && actVal.getFechaInicio().before(dieciochoMesesAtras) && actVal.getImporte() != null) {

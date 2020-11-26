@@ -40,6 +40,7 @@ import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -720,8 +721,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			styleBordesCompletos.setBorderTop(XSSFCellStyle.BORDER_THIN);
 			styleBordesCompletos.setBorderRight(XSSFCellStyle.BORDER_THIN);
 			styleBordesCompletos.setBorderLeft(XSSFCellStyle.BORDER_THIN);
-			font = styleBordesCompletos.getFont();
-			font.setFontHeight(11);
+			font = myWorkBook.createFont();
+			font.setFontHeight(12);
 			styleBordesCompletos.setFont(font);
 			styleBordesCompletos.setAlignment(XSSFCellStyle.ALIGN_CENTER);
 			
@@ -741,7 +742,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			styleFondoAmarillo.setFont(font);
 			styleFondoAmarillo.setBorderBottom(XSSFCellStyle.BORDER_THIN);
 			styleFondoAmarillo.setBottomBorderColor(new XSSFColor(new java.awt.Color(192, 192, 192)));
-			styleFondoAmarillo.setFillForegroundColor(new XSSFColor(new java.awt.Color(255, 255, 224)));
+			styleFondoAmarillo.setFillForegroundColor(new XSSFColor(new java.awt.Color(255, 255, 204)));
 			styleFondoAmarillo.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
 			styleFondoAmarillo.setAlignment(XSSFCellStyle.ALIGN_CENTER);
 			
@@ -752,7 +753,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			styleFondoAzul.setFont(font);
 			styleFondoAzul.setBorderBottom(XSSFCellStyle.BORDER_THIN);
 			styleFondoAzul.setBottomBorderColor(new XSSFColor(new java.awt.Color(192, 192, 192)));
-			styleFondoAzul.setFillForegroundColor(new XSSFColor(new java.awt.Color(176, 196, 222)));
+			styleFondoAzul.setFillForegroundColor(new XSSFColor(new java.awt.Color(222, 235, 247)));
 		    styleFondoAzul.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
 		    styleFondoAzul.setAlignment(XSSFCellStyle.ALIGN_CENTER);
 			
@@ -1720,6 +1721,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				cellReference = new CellReference("V" + Integer.toString(currentRowDesglose));
 				r = mySheetDesglose.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
+				c.setCellStyle(styleFondoAmarillo);
 				if (!Checks.esNulo(activoFichaComercial.getPrecioSueloEpa())) {
 					c.setCellValue(activoFichaComercial.getPrecioSueloEpa().toString());
 				} else {
@@ -1738,6 +1740,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				cellReference = new CellReference("X" + Integer.toString(currentRowDesglose));
 				r = mySheetDesglose.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
+				c.setCellStyle(styleFondoAzul);
 				if (!Checks.esNulo(activoFichaComercial.getVnc())) {
 					c.setCellValue(activoFichaComercial.getVnc().toString());
 				} else {
@@ -1792,6 +1795,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				cellReference = new CellReference("AD" + Integer.toString(currentRowDesglose));
 				r = mySheetDesglose.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
+				c.setCellStyle(styleFondoAmarillo);
 				if (!Checks.esNulo(activoFichaComercial.getGastosPendientes())) {
 					c.setCellValue(activoFichaComercial.getGastosPendientes().toString());
 				} else {
@@ -1801,6 +1805,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				cellReference = new CellReference("AE" + Integer.toString(currentRowDesglose));
 				r = mySheetDesglose.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
+				c.setCellStyle(styleFondoAmarillo);
 				if (!Checks.esNulo(activoFichaComercial.getCostesLegales())) {
 					c.setCellValue(activoFichaComercial.getCostesLegales().toString());
 				} else {
@@ -2661,8 +2666,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				} else {
 					c.setCellValue("");
 				}
-				mySheetAutorizacion.addMergedRegion(new CellRangeAddress(currentRowComercial-1, currentRowComercial-1, 6, 7));
 				c.setCellStyle(styleBordesCompletos);
+				mySheetAutorizacion.addMergedRegion(new CellRangeAddress(currentRowComercial-1, currentRowComercial-1, 6, 7));
 				
 				cellReference = new CellReference("I" + Integer.toString(currentRowComercial));
 				r = mySheetAutorizacion.getRow(cellReference.getRow());
@@ -2678,8 +2683,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				} else {
 					c.setCellValue("");
 				}
-				mySheetAutorizacion.addMergedRegion(new CellRangeAddress(currentRowComercial-1, currentRowComercial-1, 8, 10));
 				c.setCellStyle(styleBordesCompletos);
+				mySheetAutorizacion.addMergedRegion(new CellRangeAddress(currentRowComercial-1, currentRowComercial-1, 8, 10));
 				
 				cellReference = new CellReference("L" + Integer.toString(currentRowComercial));
 				r = mySheetAutorizacion.getRow(cellReference.getRow());
@@ -2695,8 +2700,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				} else {
 					c.setCellValue("");
 				}
-				mySheetAutorizacion.addMergedRegion(new CellRangeAddress(currentRowComercial-1, currentRowComercial-1, 11, 12));
 				c.setCellStyle(styleBordesCompletos);
+				mySheetAutorizacion.addMergedRegion(new CellRangeAddress(currentRowComercial-1, currentRowComercial-1, 11, 12));
 				
 				cellReference = new CellReference("N" + Integer.toString(currentRowComercial));
 				r = mySheetAutorizacion.getRow(cellReference.getRow());
@@ -2720,8 +2725,6 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			
 			for (int x=1; x<35; x++) {
 				mySheet.autoSizeColumn(x);
-				mySheetDesglose.autoSizeColumn(x);
-				mySheetDepuracion.autoSizeColumn(x);
 				mySheetHistorico.autoSizeColumn(x);
 			}
 			

@@ -377,6 +377,18 @@ public class StockDto implements WebcomRESTDto{
 	
 	@WebcomRequired
 	private StringDataType codEquipoGestion;
+
+	@WebcomRequired
+	private BooleanDataType checkGestionComercial;
+	
+	@WebcomRequired
+	private LongDataType excluirValidaciones;
+	
+	@WebcomRequired
+	private DateDataType fechaGestionComercial;
+	
+	@WebcomRequired
+	private LongDataType motivoGestionComercial;
 	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;

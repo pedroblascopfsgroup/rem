@@ -52,6 +52,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.framework.paradise.action.utils.BeanUtilsActionsExceptions;
 import es.pfsgroup.framework.paradise.agenda.adapter.NotificacionAdapter;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
@@ -2057,7 +2058,6 @@ public class ActivoAdapter {
 
 		Activo activo = activoApi.get(id);
 		List<DtoTasacion> listaDtoTasacion = new ArrayList<DtoTasacion>();
-
 		if (activo.getTasacion() != null) {
 			for (int i = 0; i < activo.getTasacion().size(); i++) {
 
@@ -2078,6 +2078,13 @@ public class ActivoAdapter {
 						BeanUtils.copyProperty(tasacionDto, "importeValorTasacion",
 								activo.getTasacion().get(i).getImporteTasacionFin());
 					}
+					
+					if (activo.getTasacion().get(i).isIlocalizable()) {
+						BeanUtils.copyProperty(tasacionDto, "ilocalizable", activo.getTasacion().get(i).isIlocalizable());
+					}else if (!activo.getTasacion().get(i).isIlocalizable()) {
+						BeanUtils.copyProperty(tasacionDto, "ilocalizable", activo.getTasacion().get(i).isIlocalizable());
+					}
+					
 				} catch (IllegalAccessException e) {
 					logger.error("Error en ActivoAdapter", e);
 				} catch (InvocationTargetException e) {

@@ -1909,7 +1909,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.claseActivoBancarioCodigo", dto.getClaseActivoBancarioCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subclaseActivoBancarioCodigo", dto.getSubclaseActivoBancarioCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.numActivoBbva", dto.getNumActivoBbva());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.idDivarianBbva", dto.getIdDivarianBbva());
+		//HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.idDivarianBbva", dto.getIdDivarianBbva());
 		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.tipoActivoCodigo", dto.getTipoActivoCodigo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vgrid.subtipoActivoCodigo", dto.getSubtipoActivoCodigo());

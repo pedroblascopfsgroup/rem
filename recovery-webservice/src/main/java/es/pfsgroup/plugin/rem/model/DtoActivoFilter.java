@@ -115,7 +115,7 @@ public class DtoActivoFilter extends WebDto {
 	private String perimetroMacc;
 	private String equipoGestion;
 	private Long numActivoBbva;
-	private Long idDivarianBbva;
+	//private Long idDivarianBbva;
 	
 	public String getNumActivo() {
 		return numActivo;
@@ -796,11 +796,11 @@ public class DtoActivoFilter extends WebDto {
 	public void setNumActivoBbva(Long numActivoBbva) {
 		this.numActivoBbva = numActivoBbva;
 	}
-	public Long getIdDivarianBbva() {
+	/*public Long getIdDivarianBbva() {
 		return idDivarianBbva;
 	}
 	public void setIdDivarianBbva(Long idDivarianBbva) {
 		this.idDivarianBbva = idDivarianBbva;
-	}
+	}*/
 	
 }

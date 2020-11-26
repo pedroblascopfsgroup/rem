@@ -964,9 +964,6 @@ Ext.define('HreRem.model.Activo', {
     			name: 'numActivoBbva'
     		},
     		{
-    			name: 'idDivarianBbva'
-    		},
-    		{
     			name: 'lineaFactura'
     		},
     		{

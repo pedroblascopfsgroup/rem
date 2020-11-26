@@ -166,6 +166,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTerritorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgendaSaneamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
@@ -7945,10 +7946,5 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return false;
 	}
-
-
-
-
-	
 }
 

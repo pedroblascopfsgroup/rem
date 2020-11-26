@@ -721,7 +721,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							{
 								xtype:'checkboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.visibleGestionComercial'),
-								reference: 'chkbxgestionComercial',
+								reference: 'chkbxGestionComercial',
 								bind: {
 									value: '{activo.checkGestorComercial}',
 									readOnly: '{activo.restringido}'
@@ -742,8 +742,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								reference: 'comboMotivoGestionComercial',
 								bind: {
 									store: '{comboMotivoGestionComercialActivo}',
-									value: '{activo.motivoGestionComercialCodigo}',
-									visible: '{activo.checkGestorComercial}',
+									value: '{activo.motivoGestionComercialCodigo}', 
 									readOnly: '{activo.restringido}'
 
 								}

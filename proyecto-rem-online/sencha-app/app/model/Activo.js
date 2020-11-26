@@ -1013,7 +1013,8 @@ Ext.define('HreRem.model.Activo', {
 
 			},
 			{
-	 			name: 'restringido'
+	 			name: 'restringido',
+	 			type: 'boolean'
 			}
     		
     ],

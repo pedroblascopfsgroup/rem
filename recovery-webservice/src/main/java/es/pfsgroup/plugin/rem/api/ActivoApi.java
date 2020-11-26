@@ -1367,6 +1367,4 @@ public interface ActivoApi {
 	
 	boolean destroyCalificacionNegativaAdicional(DtoCalificacionNegativaAdicional dto);
 	
-	
-	
 }

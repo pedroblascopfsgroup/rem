@@ -1969,7 +1969,7 @@ BEGIN
                   AND NVL(AUX.DD_SCR_ID, 0) = NVL(CCC.DD_SCR_ID, NVL(AUX.DD_SCR_ID, 0))
                   AND AUX.PRO_ID = CCC.PRO_ID
                   AND AUX.EJE_ID = CCC.EJE_ID
-                  AND NVL(AUX.CCC_ARRENDAMIENTO, 0) = NVL(CCC.CCC_ARRENDAMIENTO, NVL(AUX.CCC_ARRENDAMIENTO, 0))
+                  AND AUX.CCC_ARRENDAMIENTO = CCC.CCC_ARRENDAMIENTO
                   AND AUX.CCC_REFACTURABLE = CCC.CCC_REFACTURABLE
                   AND NVL(AUX.DD_TBE_ID, 0) = NVL(CCC.DD_TBE_ID, 0)
                   AND AUX.CCC_ACTIVABLE = CCC.CCC_ACTIVABLE
@@ -1977,7 +1977,7 @@ BEGIN
                   AND NVL(AUX.DD_TCH_ID, 0) = NVL(CCC.DD_TCH_ID, 0)
                   AND AUX.CCC_PRINCIPAL = CCC.CCC_PRINCIPAL
                   AND NVL(AUX.DD_TRT_ID, 0) = NVL(CCC.DD_TRT_ID, 0)
-                  AND NVL(AUX.CCC_VENDIDO, 0) = NVL(CCC.CCC_VENDIDO, NVL(AUX.CCC_VENDIDO, 0))
+                  AND AUX.CCC_VENDIDO = CCC.CCC_VENDIDO
                   AND AUX.BORRADO = 0
           )';
     EXECUTE IMMEDIATE V_MSQL;
@@ -2032,7 +2032,7 @@ BEGIN
           , CCC.DD_TRT_ID
           , CCC.CCC_VENDIDO
       FROM (
-          SELECT TMP.CCC_CUENTA_CONTABLE
+          SELECT DISTINCT TMP.CCC_CUENTA_CONTABLE
               , TMP.CCC_SUBCUENTA_CONTABLE
               , TMP.DD_TGA_ID
               , TMP.DD_STG_ID
@@ -2041,7 +2041,7 @@ BEGIN
               , NULL DD_SCR_ID
               , TMP.PRO_ID
               , TMP.EJE_ID
-              , NULL CCC_ARRENDAMIENTO
+              , 0 CCC_ARRENDAMIENTO
               , 0 CCC_REFACTURABLE
               , TMP.DD_TBE_ID
               , TMP.CCC_ACTIVABLE
@@ -2054,18 +2054,19 @@ BEGIN
           JOIN '||V_ESQUEMA||'.AUX_CERO_UNO ARR ON 1 = 1
           WHERE NVL(TMP.BORRADO, 0) = 0
           		AND TMP.DD_TBE_ID IS NULL
+          		AND TMP.CCC_VENDIDO = 0
       ) CCC
       WHERE NOT EXISTS (
               SELECT 1
               FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' AUX
               WHERE AUX.DD_TGA_ID = CCC.DD_TGA_ID
-                  AND AUX.DD_STG_ID = CCC.DD_STG_ID
+				  AND AUX.DD_STG_ID = CCC.DD_STG_ID
                   AND AUX.DD_TIM_ID = CCC.DD_TIM_ID
                   AND AUX.DD_CRA_ID = CCC.DD_CRA_ID
-                  AND NVL(AUX.DD_SCR_ID, 0) = NVL(CCC.DD_SCR_ID, NVL(AUX.DD_SCR_ID, 0))
+                  AND NVL(AUX.DD_SCR_ID, 0) = NVL(CCC.DD_SCR_ID, 0)
                   AND AUX.PRO_ID = CCC.PRO_ID
                   AND AUX.EJE_ID = CCC.EJE_ID
-                  AND NVL(AUX.CCC_ARRENDAMIENTO, 0) = NVL(CCC.CCC_ARRENDAMIENTO, NVL(AUX.CCC_ARRENDAMIENTO, 0))
+                  AND AUX.CCC_ARRENDAMIENTO = CCC.CCC_ARRENDAMIENTO
                   AND AUX.CCC_REFACTURABLE = CCC.CCC_REFACTURABLE
                   AND NVL(AUX.DD_TBE_ID, 0) = NVL(CCC.DD_TBE_ID, 0)
                   AND AUX.CCC_ACTIVABLE = CCC.CCC_ACTIVABLE
@@ -2073,7 +2074,7 @@ BEGIN
                   AND NVL(AUX.DD_TCH_ID, 0) = NVL(CCC.DD_TCH_ID, 0)
                   AND AUX.CCC_PRINCIPAL = CCC.CCC_PRINCIPAL
                   AND NVL(AUX.DD_TRT_ID, 0) = NVL(CCC.DD_TRT_ID, 0)
-                  AND NVL(AUX.CCC_VENDIDO, 0) = NVL(CCC.CCC_VENDIDO, NVL(AUX.CCC_VENDIDO, 0))
+                  AND AUX.CCC_VENDIDO = CCC.CCC_VENDIDO
                   AND AUX.BORRADO = 0
           )';
     EXECUTE IMMEDIATE V_MSQL;

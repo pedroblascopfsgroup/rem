@@ -2007,7 +2007,7 @@ BEGIN
                   AND NVL(AUX.DD_SCR_ID, 0) = NVL(CPP.DD_SCR_ID, NVL(AUX.DD_SCR_ID, 0))
                   AND AUX.PRO_ID = CPP.PRO_ID
                   AND AUX.EJE_ID = CPP.EJE_ID
-                  AND NVL(AUX.CPP_ARRENDAMIENTO, 0) = NVL(CPP.CPP_ARRENDAMIENTO, NVL(AUX.CPP_ARRENDAMIENTO, 0))
+                  AND AUX.CPP_ARRENDAMIENTO = CPP.CPP_ARRENDAMIENTO
                   AND AUX.CPP_REFACTURABLE = CPP.CPP_REFACTURABLE
                   AND NVL(AUX.DD_TBE_ID, 0) = NVL(CPP.DD_TBE_ID, 0)
                   AND AUX.CPP_ACTIVABLE = CPP.CPP_ACTIVABLE
@@ -2015,7 +2015,7 @@ BEGIN
                   AND NVL(AUX.DD_TCH_ID, 0) = NVL(CPP.DD_TCH_ID, 0)
                   AND AUX.CPP_PRINCIPAL = CPP.CPP_PRINCIPAL
                   AND NVL(AUX.DD_TRT_ID, 0) = NVL(CPP.DD_TRT_ID, 0)
-                  AND NVL(AUX.CPP_VENDIDO, 0) = NVL(CPP.CPP_VENDIDO, NVL(AUX.CPP_VENDIDO, 0))
+                  AND AUX.CPP_VENDIDO = CPP.CPP_VENDIDO
                   AND AUX.BORRADO = 0
           )';
     EXECUTE IMMEDIATE V_MSQL;
@@ -2072,7 +2072,7 @@ BEGIN
           , CPP.DD_TRT_ID
           , CPP.CPP_VENDIDO
       FROM (
-          SELECT TMP.CPP_PARTIDA_PRESUPUESTARIA
+          SELECT DISTINCT TMP.CPP_PARTIDA_PRESUPUESTARIA
           	  , TMP.CPP_APARTADO
           	  , TMP.CPP_CAPITULO
               , TMP.DD_TGA_ID
@@ -2082,7 +2082,7 @@ BEGIN
               , NULL DD_SCR_ID
               , TMP.PRO_ID
               , TMP.EJE_ID
-              , NULL CPP_ARRENDAMIENTO
+              , 0 CPP_ARRENDAMIENTO
               , 0 CPP_REFACTURABLE
               , TMP.DD_TBE_ID
               , TMP.CPP_ACTIVABLE
@@ -2095,18 +2095,19 @@ BEGIN
           JOIN '||V_ESQUEMA||'.AUX_CERO_UNO ARR ON 1 = 1
           WHERE NVL(TMP.BORRADO, 0) = 0
           		AND TMP.DD_TBE_ID IS NULL
+          		AND TMP.CPP_VENDIDO = 0
       ) CPP
       WHERE NOT EXISTS (
               SELECT 1
               FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' AUX
               WHERE AUX.DD_TGA_ID = CPP.DD_TGA_ID
-                  AND AUX.DD_STG_ID = CPP.DD_STG_ID
+				  AND AUX.DD_STG_ID = CPP.DD_STG_ID
                   AND AUX.DD_TIM_ID = CPP.DD_TIM_ID
                   AND AUX.DD_CRA_ID = CPP.DD_CRA_ID
-                  AND NVL(AUX.DD_SCR_ID, 0) = NVL(CPP.DD_SCR_ID, NVL(AUX.DD_SCR_ID, 0))
+                  AND NVL(AUX.DD_SCR_ID, 0) = NVL(CPP.DD_SCR_ID, 0)
                   AND AUX.PRO_ID = CPP.PRO_ID
                   AND AUX.EJE_ID = CPP.EJE_ID
-                  AND NVL(AUX.CPP_ARRENDAMIENTO, 0) = NVL(CPP.CPP_ARRENDAMIENTO, NVL(AUX.CPP_ARRENDAMIENTO, 0))
+                  AND AUX.CPP_ARRENDAMIENTO = CPP.CPP_ARRENDAMIENTO
                   AND AUX.CPP_REFACTURABLE = CPP.CPP_REFACTURABLE
                   AND NVL(AUX.DD_TBE_ID, 0) = NVL(CPP.DD_TBE_ID, 0)
                   AND AUX.CPP_ACTIVABLE = CPP.CPP_ACTIVABLE
@@ -2114,7 +2115,7 @@ BEGIN
                   AND NVL(AUX.DD_TCH_ID, 0) = NVL(CPP.DD_TCH_ID, 0)
                   AND AUX.CPP_PRINCIPAL = CPP.CPP_PRINCIPAL
                   AND NVL(AUX.DD_TRT_ID, 0) = NVL(CPP.DD_TRT_ID, 0)
-                  AND NVL(AUX.CPP_VENDIDO, 0) = NVL(CPP.CPP_VENDIDO, NVL(AUX.CPP_VENDIDO, 0))
+                  AND AUX.CPP_VENDIDO = CPP.CPP_VENDIDO
                   AND AUX.BORRADO = 0
           )';
     EXECUTE IMMEDIATE V_MSQL;

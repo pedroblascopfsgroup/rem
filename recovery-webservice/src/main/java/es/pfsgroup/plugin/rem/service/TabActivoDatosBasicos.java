@@ -1860,10 +1860,21 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	private void activoConCargas(DtoActivoFichaCabecera dto, Activo activo) {
 		
-		if (activo.getPerimetroMacc() != null && activo.getPerimetroMacc() == 0) {
+		if (activo.getPerimetroMacc() != null && activo.getPerimetroMacc() == 1) {
+			
+			Filter filtroCheckGestorComercialMarcado = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+	 		PerimetroActivo perimetroActivo  = genericDao.get(PerimetroActivo.class, filtroCheckGestorComercialMarcado);
+	 		
+	 		if (perimetroActivo != null && perimetroActivo.getCheckGestorComercial() != null && perimetroActivo.getCheckGestorComercial() == false) {
+				perimetroActivo.setCheckGestorComercial(true);
+			}
+			
+		} else {
+			
 			if (activo.getConCargas() != null && activo.getConCargas() == 1) {
 				throw new JsonViewerException("Activo con cargas");
 			}
+			
 		}
 	}
 	

@@ -1682,6 +1682,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		    		me.lookupReference('gridtarifastrabajo').setTopBar(true)
 		    		me.lookupReference('gridpresupuestostrabajo').setTopBar(true)
 				    me.lookupReference('gridtarifastrabajo').setDisabled(false);
+				    me.lookupReference('gridSuplidos').setTopBar(true);
+				    me.lookupReference('gridSuplidos').setDisabled(false);
 				    me.lookupReference('gridpresupuestostrabajo').setDisabled(false);
     			}
     			
@@ -1698,6 +1700,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		    		me.lookupReference('gridtarifastrabajo').setTopBar(true)
 		    		me.lookupReference('gridpresupuestostrabajo').setTopBar(true)
 				    me.lookupReference('gridtarifastrabajo').setDisabled(false);
+				    me.lookupReference('gridSuplidos').setTopBar(true);
+				    me.lookupReference('gridSuplidos').setDisabled(false);
 				    me.lookupReference('gridpresupuestostrabajo').setDisabled(false);
     			}
 	    		
@@ -1708,6 +1712,18 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     				me.lookupReference('subtipoTrabajoComboFicha').setReadOnly(false);
     				me.lookupReference('tipoTrabajoFicha').setReadOnly(false);
     				me.lookupReference('comboIdentificadorReamRef').setReadOnly(false);
+    				me.lookupReference('comboProveedorLlave').setReadOnly(false);	
+	    			me.lookupReference('fechaEntregaTrabajoRef').setReadOnly(false);
+	    			me.lookupReference('comboReceptorLlave').setReadOnly(false);
+	    			me.lookupReference('llavesNoAplicaRef').setReadOnly(false);
+					me.lookupReference('llavesMotivoRef').setReadOnly(false);
+					me.lookupReference('fechaConcreta').setReadOnly(false);
+		    		me.lookupReference('horaConcreta').setReadOnly(false);
+		    		me.lookupReference('fechaTope').setReadOnly(false);
+
+    			}else{
+    				me.lookupReference('gridSuplidos').setTopBar(true);
+				    me.lookupReference('gridSuplidos').setDisabled(false);
     			}
 	    		
 	    	}else if(estadoTrabajo == "13"){
@@ -1732,8 +1748,24 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		    		me.lookupReference('fechaEjecucionRef').setReadOnly(false);
 		    		me.lookupReference('checkSiniestroRef').setReadOnly(false);
     			} else {
+    				me.lookupReference('gridtarifastrabajo').setTopBar(true)
+    	    		me.lookupReference('gridpresupuestostrabajo').setTopBar(true)
+    			    me.lookupReference('gridtarifastrabajo').setDisabled(false);
+    			    me.lookupReference('gridpresupuestostrabajo').setDisabled(false);   
+    			    me.lookupReference('gridSuplidos').setTopBar(true);
+				    me.lookupReference('gridSuplidos').setDisabled(false);
+    			    }
+	    		
+	    	} else if (estadoTrabajo == "REJ"){
+	    		if(esFichaTrabajo){
+    				me.lookupReference('comboEstadoTrabajoRef').setReadOnly(false);
+		    		me.lookupReference('fechaEjecucionRef').setReadOnly(false);
+		    		me.lookupReference('checkSiniestroRef').setReadOnly(false);
+    			} else {
 		    		me.lookupReference('gridtarifastrabajo').setTopBar(true)
 				    me.lookupReference('gridtarifastrabajo').setDisabled(false);
+				    me.lookupReference('gridSuplidos').setTopBar(true);
+				    me.lookupReference('gridSuplidos').setDisabled(false);
     			}
 	    		
 	    	}
@@ -1779,6 +1811,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			me.lookupReference('gridtarifastrabajo').setTopBar(false)
 		    me.lookupReference('gridpresupuestostrabajo').setTopBar(false)
 		    me.lookupReference('gridtarifastrabajo').setDisabled(true);
+		    me.lookupReference('gridSuplidos').setTopBar(false);
+			me.lookupReference('gridSuplidos').setDisabled(true);
 		    me.lookupReference('gridpresupuestostrabajo').setDisabled(true);
     	}
 	},
@@ -1820,6 +1854,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 			me.lookupReference('gridtarifastrabajo').setTopBar(true)
 		    me.lookupReference('gridpresupuestostrabajo').setTopBar(true)
 		    me.lookupReference('gridtarifastrabajo').setDisabled(false);
+		    me.lookupReference('gridSuplidos').setTopBar(true);
+			me.lookupReference('gridSuplidos').setDisabled(false);
 		    me.lookupReference('gridpresupuestostrabajo').setDisabled(false);
     	}
     },

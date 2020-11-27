@@ -5809,7 +5809,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			
 			List <DtoHcoComercialFichaComercial> listaHistoricoOfertas = new ArrayList<DtoHcoComercialFichaComercial>();
 			
-			if(agrupacion != null && agrupacion.getTipoAgrupacion() != null && DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+			if(agrupacion != null) {
 				for(ActivoAgrupacionActivo aaaHcoOfr : agrupacion.getActivos()) {
 					
 					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS ,"activo", aaaHcoOfr.getActivo().getId());

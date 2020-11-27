@@ -1144,24 +1144,8 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 		if(gastoLineaDetalle != null) {
 			Filter filter = genericDao.createFilter(FilterType.EQUALS, "idLinea", idLinea);	
 			elementosLineaDetalleList = genericDao.getList(VElementosLineaDetalle.class, filter);
-			if(elementosLineaDetalleList.isEmpty()) {
-				VElementosLineaDetalle vElementoLineaDetalle  = new VElementosLineaDetalle();	
-				if(!gastoLineaDetalle.esAutorizadoSinActivos()) {
-					vElementoLineaDetalle.setDescripcionLinea("Línea sin elementos asignados");
-
-				}else {
-					vElementoLineaDetalle.setDescripcionLinea("Línea marcada sin activos");	
-					
-				}		
-
-				vElementoLineaDetalle.setParticipacion(100.0);
-				vElementoLineaDetalle.setImporteProporcinalTotal(0.0);
-				vElementoLineaDetalle.setImporteTotalLinea(0.0);
-				vElementoLineaDetalle.setImporteTotalSujetoLinea(0.0);
-				vElementoLineaDetalle.setImporteProporcinalSujeto(0.0);
-				vElementoLineaDetalle.setIdElemento("");
-				
-				elementosLineaDetalleList.add(vElementoLineaDetalle);
+			if(elementosLineaDetalleList.isEmpty()) {			
+				elementosLineaDetalleList.add(this.getLineaVacia(gastoLineaDetalle));
 			}
 		}
 		return elementosLineaDetalleList;		
@@ -2296,29 +2280,69 @@ public class GastoLineaDetalleManager implements GastoLineaDetalleApi {
 	}
 	
 	@Override
-	public List<VElementosLineaDetalle> getTodosElementosAfectados (Long idLinea){
-		Long idGasto = null;
+	public List<VElementosLineaDetalle> getTodosElementosAfectados (Long idGasto){
 		List<VElementosLineaDetalle> elementosLineaDetalleList = new ArrayList<VElementosLineaDetalle>();
-		GastoLineaDetalle gastoLineaDetalle = getLineaDetalleByIdLinea(idLinea);
-		if (gastoLineaDetalle != null)
-			idGasto = gastoLineaDetalle.getGastoProveedor().getId();
-		if(idGasto != null) {
-			Filter filter = genericDao.createFilter(FilterType.EQUALS, "idGasto", idGasto);	
-			elementosLineaDetalleList = genericDao.getList(VElementosLineaDetalle.class, filter);
-			if(elementosLineaDetalleList.isEmpty()) {
-				VElementosLineaDetalle vElementoLineaDetalle  = new VElementosLineaDetalle();	
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "idGasto", idGasto);	
+		elementosLineaDetalleList = genericDao.getList(VElementosLineaDetalle.class, filter);
+		List<Long> lineasVista = new ArrayList<Long>();
+		if(!elementosLineaDetalleList.isEmpty()) {
+			List<Long> idLineasDetalle = this.getAllIdLineaByIdGasto(idGasto);
+			for (VElementosLineaDetalle elementoLinea : elementosLineaDetalleList) {
+				lineasVista.add(elementoLinea.getIdLinea());
+			}
+			idLineasDetalle.removeAll(lineasVista);
+			
+			if(!idLineasDetalle.isEmpty()) {
+				for (Long idLinea : idLineasDetalle) {
+					GastoLineaDetalle gld = this.getLineaDetalleByIdLinea(idLinea);
+					if(gld != null) {
+						elementosLineaDetalleList.add(this.getLineaVacia(gld));
+					}
+				}
+			}
+			
+		}
 
-				vElementoLineaDetalle.setParticipacion(100.0);
-				vElementoLineaDetalle.setImporteProporcinalTotal(0.0);
-				vElementoLineaDetalle.setImporteTotalLinea(0.0);
-				vElementoLineaDetalle.setImporteTotalSujetoLinea(0.0);
-				vElementoLineaDetalle.setImporteProporcinalSujeto(0.0);
-				vElementoLineaDetalle.setIdElemento("");
-				
-				elementosLineaDetalleList.add(vElementoLineaDetalle);
+		return elementosLineaDetalleList;			
+	}
+	
+	
+	private List<Long> getAllIdLineaByIdGasto(Long idGasto){
+
+		List<Long> idLineasDetalle = new ArrayList<Long>();
+		GastoProveedor gasto = gastoProveedorApi.findOne(idGasto);
+		
+		if(gasto != null) {
+			List<GastoLineaDetalle> gastoLineaDetalleList = gasto.getGastoLineaDetalleList();
+			if(gastoLineaDetalleList != null && !gastoLineaDetalleList.isEmpty()) {
+				for (GastoLineaDetalle gastoLineaDetalle : gastoLineaDetalleList) {
+					idLineasDetalle.add(gastoLineaDetalle.getId());
+				}
 			}
 		}
-		return elementosLineaDetalleList;			
+		
+		return idLineasDetalle;
+	}
+	
+	private VElementosLineaDetalle getLineaVacia (GastoLineaDetalle gastoLineaDetalle) {
+		VElementosLineaDetalle vElementoLineaDetalle  = new VElementosLineaDetalle();	
+		if(!gastoLineaDetalle.esAutorizadoSinActivos()) {
+			vElementoLineaDetalle.setDescripcionLinea("Línea sin elementos asignados");
+
+		}else {
+			vElementoLineaDetalle.setDescripcionLinea("Línea marcada sin activos");	
+			
+		}		
+		vElementoLineaDetalle.setId(null);
+		vElementoLineaDetalle.setParticipacion(100.0);
+		vElementoLineaDetalle.setImporteProporcinalTotal(0.0);
+		vElementoLineaDetalle.setImporteTotalLinea(0.0);
+		vElementoLineaDetalle.setImporteTotalSujetoLinea(0.0);
+		vElementoLineaDetalle.setImporteProporcinalSujeto(0.0);
+		vElementoLineaDetalle.setIdElemento("");
+		
+		return vElementoLineaDetalle;
+		
 	}
 	
 }

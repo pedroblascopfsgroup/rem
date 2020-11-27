@@ -196,16 +196,16 @@ public class GastosProveedorController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public void generateExcelElementosGasto(Long idLinea, ModelMap model, HttpServletRequest request, HttpServletResponse response) throws IOException{
+	public void generateExcelElementosGasto(Long idGasto, ModelMap model, HttpServletRequest request, HttpServletResponse response) throws IOException{
 
 		List<VElementosLineaDetalle> listaElementos = null;
 
 		try {
-			if(idLinea != -1) {
-				listaElementos = gastoLineaDetalleApi.getTodosElementosAfectados(idLinea);
+			if(idGasto != -1 && idGasto != null) {
+				listaElementos = gastoLineaDetalleApi.getTodosElementosAfectados(idGasto);
 				model.put("data", listaElementos);
 				
-				trustMe.registrarSuceso(request, idLinea, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "elementos", ACCION_CODIGO.CODIGO_VER);
+				trustMe.registrarSuceso(request, idGasto, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "elementos", ACCION_CODIGO.CODIGO_VER);
 			}
 			model.put("success", true);
 			
@@ -218,7 +218,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			logger.error(e.getMessage());
 			logger.error("error cargarElemetnosAfectados");
 			model.put("success", false);
-			trustMe.registrarError(request, idLinea, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "elementos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+			trustMe.registrarError(request, idGasto, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "elementos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 	}

@@ -287,6 +287,7 @@ public class DtoActivoGridFilter extends WebDto {
 	public void setNumActivoBbva(String numActivoBbva) {
 		this.numActivoBbva = numActivoBbva;
 	}
+
 	public String getTipoViaCodigo() {
 		return tipoViaCodigo;
 	}

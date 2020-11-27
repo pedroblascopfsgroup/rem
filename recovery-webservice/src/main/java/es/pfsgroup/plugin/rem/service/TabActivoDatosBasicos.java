@@ -1590,6 +1590,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				dto.getFolio() != null || dto.getCdpen() != null || dto.getNumActivoBbva() != null ||
 				dto.getLineaFactura() != null || dto.getIdOrigenHre() != null ||
 				dto.getUicBbva() != null || dto.getCexperBbva() !=  null
+
 			) {
 				
 				if (activoBbva != null) {

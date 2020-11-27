@@ -130,6 +130,12 @@ public class ActivoTasacion implements Serializable, Auditable {
 	@Column(name = "TAS_OBSERVACIONES")
     private String observaciones; 
 	
+	@Column(name = "TAS_ILOCALIZABLE")
+	private Boolean ilocalizable;
+	
+	@Column(name = "TAS_ID_EXTERNO_BBVA")
+    private String externoBbva;
+	
 	
 	@Version   
 	private Long version;
@@ -379,6 +385,22 @@ public class ActivoTasacion implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public Boolean isIlocalizable() {
+		return ilocalizable;
+	}
+
+	public void setIlocalizable(Boolean ilocalizable) {
+		this.ilocalizable = ilocalizable;
+	}
+
+	public String getExternoBbva() {
+		return externoBbva;
+	}
+
+	public void setExternoBbva(String externoBbva) {
+		this.externoBbva = externoBbva;
 	}
 
 }

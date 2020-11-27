@@ -984,17 +984,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	
 	onExportClickActivos: function(btn){
     	var me = this;
-    	var idLinea = me.lookupReference('comboLineasDetalleReference').getValue();
+    	var idGasto = me.getViewModel().get("gasto.id");
 
-    	if(Ext.isEmpty(idLinea)){
-    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-    		return;
-    	}
 		var url =  $AC.getRemoteUrl('gastosproveedor/generateExcelElementosGasto');
 		
 		var config = {};
 
-		var initialData = {idLinea: idLinea};
+		var initialData = {idGasto: idGasto};
 		var params = Ext.apply(initialData);
 
 		Ext.Object.each(params, function(key, val) {

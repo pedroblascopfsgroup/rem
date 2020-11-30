@@ -37,7 +37,7 @@ DECLARE
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_CONFIG_CTAS_CONTABLES'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_DD_CRA_ID VARCHAR(50 CHAR); -- Vble. que almacena el id de la cartera.
 	  V_EJE_ID VARCHAR(50 CHAR); -- Vble. que almacena el id del año.
-
+    
     V_CONSTRAINT_NAME VARCHAR2(30 CHAR);
 
     V_DURACION INTERVAL DAY(0) TO SECOND;
@@ -58,29 +58,110 @@ DECLARE
           AND STATUS = 'DISABLED'
           AND CONSTRAINT_TYPE IN ('C', 'U', 'F', 'P');
     
-    
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     -- CUENTA_CONTABLE   DD_TGA_CODIGO  DD_TIM_CODIGO   DD_SCR_CODIGO
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('6312000', '01', 'TAS', '151'),
-        T_TIPO_DATA('6315000', '01', 'INT', '151'),
-        T_TIPO_DATA('6780000', '01', 'REC', '151'),
-        T_TIPO_DATA('6312000', '02', 'TAS', '151'),
-        T_TIPO_DATA('6315000', '02', 'INT', '151'),
-        T_TIPO_DATA('6780000', '02', 'REC', '151'),
-        T_TIPO_DATA('6312000', '01', 'TAS', '152'),
-        T_TIPO_DATA('6315000', '01', 'INT', '152'),
-        T_TIPO_DATA('6780000', '01', 'REC', '152'),
-        T_TIPO_DATA('6312000', '02', 'TAS', '152'),
-        T_TIPO_DATA('6315000', '02', 'INT', '152'),
-        T_TIPO_DATA('6780000', '02', 'REC', '152'),
-        T_TIPO_DATA('6310000110', '01', 'TAS', '138'),
-        T_TIPO_DATA('6780100000', '01', 'INT', '138'),
-        T_TIPO_DATA('6780000010', '01', 'REC', '138'),
-        T_TIPO_DATA('6310000110', '02', 'TAS', '138'),
-        T_TIPO_DATA('6780100000', '02', 'INT', '138'),
-        T_TIPO_DATA('6780000010', '02', 'REC', '138')
+		T_TIPO_DATA('Z01','15','84'),
+T_TIPO_DATA('Z01','15','70'),
+T_TIPO_DATA('Z01','15','82'),
+T_TIPO_DATA('Z01','15','81'),
+T_TIPO_DATA('Z02','15','73'),
+T_TIPO_DATA('Z02','15','76'),
+T_TIPO_DATA('Z02','15','75'),
+T_TIPO_DATA('Z02','15','74'),
+T_TIPO_DATA('Z01','15','83'),
+T_TIPO_DATA('ZA06','15','80'),
+T_TIPO_DATA('Z01','15','79'),
+T_TIPO_DATA('Z02','15','72'),
+T_TIPO_DATA('Z01','15','77'),
+T_TIPO_DATA('Z01','15','71'),
+T_TIPO_DATA('Z01','15','78'),
+
+
+T_TIPO_DATA('Z04','13','55'),
+T_TIPO_DATA('Z33','06','29'),
+T_TIPO_DATA('Z33','06','28'),
+T_TIPO_DATA('Z33','05','93'),
+T_TIPO_DATA('Z33','05','27'),
+T_TIPO_DATA('Z33','05','26'),
+T_TIPO_DATA('Z17','12','53'),
+T_TIPO_DATA('Z17','12','54'),
+T_TIPO_DATA('Z35','01','05'),
+T_TIPO_DATA('Z34','01','01'),
+T_TIPO_DATA('Z34','01','02'),
+T_TIPO_DATA('ZA07','01','06'),
+T_TIPO_DATA('Z38','01','07'),
+T_TIPO_DATA('Z37','01','03'),
+T_TIPO_DATA('Z37','01','04'),
+T_TIPO_DATA('Z48','01','92'),
+T_TIPO_DATA('Z08','14','62'),
+T_TIPO_DATA('Z17','14','60'),
+T_TIPO_DATA('Z06','14','58'),
+T_TIPO_DATA('Z08','14','61'),
+T_TIPO_DATA('Z08','14','69'),
+T_TIPO_DATA('Z08','14','57'),
+T_TIPO_DATA('Z08','14','68'),
+T_TIPO_DATA('Z36','14','59'),
+T_TIPO_DATA('Z08','14','64'),
+T_TIPO_DATA('Z08','14','63'),
+T_TIPO_DATA('Z08','14','67'),
+T_TIPO_DATA('Z08','14','66'),
+T_TIPO_DATA('Z08','14','65'),
+T_TIPO_DATA('Z33','07','31'),
+T_TIPO_DATA('Z33','07','30'),
+T_TIPO_DATA('Z33','08','33'),
+T_TIPO_DATA('Z33','08','32'),
+T_TIPO_DATA('Z33','08','34'),
+
+
+
+T_TIPO_DATA('Z23','18','89'),
+
+T_TIPO_DATA('Z36','03','19'),
+T_TIPO_DATA('Z36','03','20'),
+T_TIPO_DATA('Z50','17','88'),
+T_TIPO_DATA('Z46','04','24'),
+T_TIPO_DATA('Z46','04','25'),
+T_TIPO_DATA('Z46','04','23'),
+T_TIPO_DATA('Z46','04','22'),
+T_TIPO_DATA('Z46','04','21'),
+T_TIPO_DATA('Z26','10','42'),
+T_TIPO_DATA('Z26','10','41'),
+T_TIPO_DATA('Z26','10','40'),
+T_TIPO_DATA('Z26','10','39'),
+T_TIPO_DATA('Z13','11','97'),
+T_TIPO_DATA('Z13','11','96'),
+T_TIPO_DATA('Z13','11','95'),
+T_TIPO_DATA('Z13','11','48'),
+T_TIPO_DATA('Z21','11','49'),
+T_TIPO_DATA('Z13','11','94'),
+T_TIPO_DATA('Z15','11','44'),
+T_TIPO_DATA('Z13','11','52'),
+T_TIPO_DATA('Z13','11','47'),
+T_TIPO_DATA('Z15','11','46'),
+T_TIPO_DATA('Z19','11','43'),
+T_TIPO_DATA('Z05','11','51'),
+T_TIPO_DATA('Z08','11','50'),
+T_TIPO_DATA('Z29','09','36'),
+T_TIPO_DATA('Z30','09','35'),
+T_TIPO_DATA('Z31','09','37'),
+
+T_TIPO_DATA('Z36','02','10'),
+T_TIPO_DATA('Z36','02','09'),
+T_TIPO_DATA('Z36','02','08'),
+T_TIPO_DATA('Z36','02','12'),
+T_TIPO_DATA('Z36','02','14'),
+T_TIPO_DATA('Z36','02','16'),
+T_TIPO_DATA('Z36','02','15'),
+T_TIPO_DATA('Z36','02','18'),
+T_TIPO_DATA('Z36','02','17'),
+T_TIPO_DATA('Z36','02','13'),
+T_TIPO_DATA('Z36','02','11'),
+T_TIPO_DATA('Z03','16','86'),
+T_TIPO_DATA('Z24','16','87'),
+T_TIPO_DATA('Z24','16','85')
+
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -90,11 +171,12 @@ BEGIN
 
     --ANALIZAMOS LA TABLA
     #ESQUEMA#.OPERACION_DDL.DDL_TABLE('ANALYZE','ACT_CONFIG_CTAS_CONTABLES');
-
+    
     V_PASO_FIN := SYSTIMESTAMP;
     V_DURACION := V_PASO_FIN - V_INICIO;
     DBMS_OUTPUT.PUT_LINE('[INFO] Tabla '||V_TEXT_TABLA||' analizada. '||V_DURACION);
     V_PASO_INI := SYSTIMESTAMP;
+
     /*--DESACTIVAMOS CLAVES ANTES DE EMPEZAR PARA MEJORAR EL DESEMPEÑO
     FOR CLAVES IN CONSTRAINTS_ENABLED 
       LOOP
@@ -102,29 +184,29 @@ BEGIN
         V_CONSTRAINT_NAME := CLAVES.CONSTRAINT_NAME; 
 
         V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'
-          DISABLE CONSTRAINT '||V_CONSTRAINT_NAME;
+           DISABLE CONSTRAINT '||V_CONSTRAINT_NAME;
         EXECUTE IMMEDIATE V_MSQL;
 
         DBMS_OUTPUT.PUT_LINE('[INFO] Desactivada la clave '||V_CONSTRAINT_NAME);
 
       END LOOP;*/
-      
+
     DBMS_OUTPUT.PUT_LINE('[INFO] Vaciamos tabla temporal... ');
     V_SQL := 'TRUNCATE TABLE '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA;
     EXECUTE IMMEDIATE V_SQL;
 
     DBMS_OUTPUT.PUT_LINE('[INFO] Recogemos el valor id de la cartera, porque es el mismo para todos.');
 
-    V_SQL := 'SELECT DD_CRA_ID 
-      FROM '||V_ESQUEMA||'.DD_CRA_CARTERA 
-      WHERE DD_CRA_CODIGO = ''07''';
+    V_SQL := 'SELECT DD_CRA_ID
+       FROM '||V_ESQUEMA||'.DD_CRA_CARTERA
+       WHERE DD_CRA_CODIGO = ''16''';
     EXECUTE IMMEDIATE V_SQL INTO V_DD_CRA_ID;
 
     DBMS_OUTPUT.PUT_LINE('[INFO] Recogemos el valor id del año, porque es el mismo para todos.');
 
-    V_SQL := 'SELECT EJE_ID 
-      FROM '||V_ESQUEMA||'.ACT_EJE_EJERCICIO 
-      WHERE EJE_ANYO = 2020';
+    V_SQL := 'SELECT EJE_ID
+       FROM '||V_ESQUEMA||'.ACT_EJE_EJERCICIO
+       WHERE EJE_ANYO = 2020';
     EXECUTE IMMEDIATE V_SQL INTO V_EJE_ID;
 
 	 
@@ -135,27 +217,35 @@ BEGIN
       
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
        
-        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||' WHERE CCC_CUENTA_CONTABLE = '''||TRIM(V_TMP_TIPO_DATA(1))||''' 
-          AND DD_TGA_ID = (SELECT DD_TGA_ID FROM '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO WHERE DD_TGA_CODIGO = '''||V_TMP_TIPO_DATA(2)||''')
-          AND DD_TIM_ID = (SELECT DD_TIM_ID FROM '||V_ESQUEMA||'.DD_TIM_TIPO_IMPORTE WHERE DD_TIM_CODIGO = '''||V_TMP_TIPO_DATA(3)||''')
-          AND DD_CRA_ID = (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = ''07'')
-          AND DD_SCR_ID = (SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = '''||V_TMP_TIPO_DATA(4)||''')
-          AND EJE_ID = (SELECT EJE_ID FROM '||V_ESQUEMA||'.ACT_EJE_EJERCICIO WHERE EJE_ANYO = 2020)';
+        V_SQL := 'SELECT COUNT(1) 
+          FROM '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||' TMP
+          JOIN '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA ON TMP.DD_TGA_ID = TGA.DD_TGA_ID
+            AND TGA.BORRADO = 0
+          JOIN '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG ON TMP.DD_STG_ID = STG.DD_STG_ID
+            AND STG.DD_TGA_ID = TGA.DD_TGA_ID
+            AND STG.BORRADO = 0
+          WHERE CCC_CUENTA_CONTABLE = '''||TRIM(V_TMP_TIPO_DATA(1))||'''
+            AND TGA.DD_TGA_CODIGO = '''||V_TMP_TIPO_DATA(2)||'''
+            AND STG.DD_STG_CODIGO = '''||V_TMP_TIPO_DATA(3)||'''
+            AND DD_CRA_ID = (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = ''16'')
+            AND EJE_ID = (SELECT EJE_ID FROM '||V_ESQUEMA||'.ACT_EJE_EJERCICIO WHERE EJE_ANYO = 2020)';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         IF V_NUM_TABLAS = 1 THEN
           DBMS_OUTPUT.PUT_LINE('[INFO]: La CCC '''||TRIM(V_TMP_TIPO_DATA(1))||''' ya existe');
         ELSE
           DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   
-          V_ID := I;	
+          V_ID := I;
           V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.TMP_'||V_TEXT_TABLA||' (' ||
-            'CCC_CTAS_ID, CCC_CUENTA_CONTABLE, DD_TGA_ID, DD_TIM_ID, DD_CRA_ID, DD_SCR_ID, EJE_ID, FECHACREAR, BORRADO) VALUES (' ||
-            ''|| V_ID ||','''||V_TMP_TIPO_DATA(1)||''',(SELECT DD_TGA_ID FROM '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO WHERE DD_TGA_CODIGO = '''||V_TMP_TIPO_DATA(2)||'''),'||
-            ' (SELECT DD_TIM_ID FROM '||V_ESQUEMA||'.DD_TIM_TIPO_IMPORTE WHERE DD_TIM_CODIGO = '''||V_TMP_TIPO_DATA(3)||'''),'||
-            ' '''||TRIM(V_DD_CRA_ID)||''','||
-            ' (SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = '''||V_TMP_TIPO_DATA(4)||'''),'||
-            ' '''||TRIM(V_EJE_ID)||''',SYSDATE,0)';
+                      'CCC_CTAS_ID, CCC_CUENTA_CONTABLE, DD_TGA_ID, DD_STG_ID, DD_CRA_ID, EJE_ID, FECHACREAR, BORRADO) VALUES (' ||
+                      ''|| V_ID ||','''||V_TMP_TIPO_DATA(1)||''',(SELECT DD_TGA_ID FROM '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO WHERE DD_TGA_CODIGO = '''||V_TMP_TIPO_DATA(2)||'''),'||
+                      '(SELECT DD_STG_ID FROM '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG '||
+                      ' JOIN '||V_ESQUEMA||'.DD_TGA_TIPOS_GASTO TGA ON TGA.DD_TGA_ID = STG.DD_TGA_ID AND TGA.DD_TGA_CODIGO = '''||V_TMP_TIPO_DATA(2)||''''||
+                      ' WHERE STG.DD_STG_CODIGO = '''||V_TMP_TIPO_DATA(3)||'''),'||
+                      ' '''||TRIM(V_DD_CRA_ID)||''', '''||TRIM(V_EJE_ID)||''',SYSDATE,0)';
           EXECUTE IMMEDIATE V_MSQL;
-          DBMS_OUTPUT.PUT_LINE('[INFO]: '||SQL%ROWCOUNT||' REGISTRO/S INSERTADO/S CORRECTAMENTE.');
+          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
+	  EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA INTO V_NUM_TABLAS;
+          DBMS_OUTPUT.PUT_LINE('[INFO]: '||V_NUM_TABLAS||' registros en la tabla TMP_'||V_TEXT_TABLA);
         END IF;
 
       END LOOP;
@@ -210,129 +300,12 @@ BEGIN
 
     V_MSQL := 'DELETE FROM '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||'
       WHERE BORRADO = 1';
-    EXECUTE IMMEDIATE V_MSQL;
+    --EXECUTE IMMEDIATE V_MSQL;
 
     V_PASO_FIN := SYSTIMESTAMP;
     V_DURACION := V_PASO_FIN - V_PASO_INI;
-    DBMS_OUTPUT.PUT_LINE('[INFO]: Cuentas preparadas. '||V_DURACION);
-    V_PASO_INI := SYSTIMESTAMP;
+    DBMS_OUTPUT.PUT_LINE('[INFO]: Cuentas 2020 preparadas. '||V_DURACION);
 
-    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (
-          CCC_CTAS_ID
-          , CCC_CUENTA_CONTABLE
-          , DD_TGA_ID
-          , DD_STG_ID
-          , DD_TIM_ID
-          , DD_CRA_ID
-          , DD_SCR_ID
-          , PRO_ID
-          , EJE_ID
-          , CCC_ARRENDAMIENTO
-          , CCC_REFACTURABLE
-          , USUARIOCREAR
-          , FECHACREAR
-          , DD_TBE_ID
-          , CCC_SUBCUENTA_CONTABLE
-          , CCC_ACTIVABLE
-          , CCC_PLAN_VISITAS
-          , DD_TCH_ID
-          , CCC_PRINCIPAL
-          , DD_TRT_ID
-          , CCC_VENDIDO
-      )
-      SELECT '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL
-          , CCC.CCC_CUENTA_CONTABLE
-          , CCC.DD_TGA_ID
-          , CCC.DD_STG_ID
-          , CCC.DD_TIM_ID
-          , CCC.DD_CRA_ID
-          , CCC.DD_SCR_ID
-          , CCC.PRO_ID
-          , CCC.EJE_ID
-          , CCC.CCC_ARRENDAMIENTO
-          , CCC.CCC_REFACTURABLE
-          , '''||V_ITEM||'''
-          , SYSDATE
-          , CCC.DD_TBE_ID
-          , CCC.CCC_SUBCUENTA_CONTABLE
-          , CCC.CCC_ACTIVABLE
-          , CCC.CCC_PLAN_VISITAS
-          , CCC.DD_TCH_ID
-          , CCC.CCC_PRINCIPAL
-          , CCC.DD_TRT_ID
-          , CCC.CCC_VENDIDO
-      FROM (
-          SELECT TMP.CCC_CUENTA_CONTABLE
-              , TMP.DD_TGA_ID
-              , STG.DD_STG_ID
-              , TMP.DD_TIM_ID
-              , TMP.DD_CRA_ID
-              , TMP.DD_SCR_ID
-              , PRO.PRO_ID
-              , TMP.PRO_ID TMP_PRO
-              , TMP.EJE_ID
-              , ARR.NUMERO CCC_ARRENDAMIENTO
-              , 0 CCC_REFACTURABLE
-              , NULL DD_TBE_ID
-              , TMP.CCC_SUBCUENTA_CONTABLE
-              , 0 CCC_ACTIVABLE
-              , 0 CCC_PLAN_VISITAS
-              , NULL DD_TCH_ID
-              , TMP.CCC_PRINCIPAL
-              , NULL DD_TRT_ID
-              , VEN.NUMERO CCC_VENDIDO
-              , RANK() OVER(
-                  PARTITION BY TMP.DD_TGA_ID, STG.DD_STG_ID, TMP.DD_TIM_ID, TMP.DD_CRA_ID, TMP.DD_SCR_ID, TMP.EJE_ID, PRO.PRO_ID, TMP.CCC_PRINCIPAL
-                  ORDER BY 
-                      CASE 
-                          WHEN TMP.PRO_ID IS NOT NULL AND NVL(PRO.PRO_ID, 0) = NVL(TMP.PRO_ID, 0) THEN 0
-                          WHEN TMP.PRO_ID IS NULL AND NVL(PRO.PRO_ID, 0) <> NVL(TMP.PRO_ID, 0) THEN 1
-                          ELSE 2
-                      END
-                  ) RN 
-          FROM '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA||' TMP
-          JOIN '||V_ESQUEMA||'.DD_STG_SUBTIPOS_GASTO STG ON STG.DD_TGA_ID = TMP.DD_TGA_ID
-              AND STG.BORRADO = 0
-          JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = TMP.DD_CRA_ID
-              AND CRA.BORRADO = 0
-          JOIN '||V_ESQUEMA||'.ACT_PRO_PROPIETARIO PRO ON PRO.DD_CRA_ID = TMP.DD_CRA_ID
-              AND PRO.BORRADO = 0
-          JOIN '||V_ESQUEMA||'.AUX_CERO_UNO ARR ON 1 = 1
-          JOIN '||V_ESQUEMA||'.AUX_CERO_UNO VEN ON 1 = 1
-          WHERE TMP.DD_SCR_ID IS NOT NULL
-              AND TMP.BORRADO = 0
-      ) CCC
-      WHERE CCC.RN = 1
-          AND (CCC.TMP_PRO = CCC.PRO_ID OR CCC.TMP_PRO IS NULL)
-          AND NOT EXISTS (
-              SELECT 1
-              FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' AUX
-              WHERE AUX.DD_TGA_ID = CCC.DD_TGA_ID
-                  AND AUX.DD_STG_ID = CCC.DD_STG_ID
-                  AND AUX.DD_TIM_ID = CCC.DD_TIM_ID
-                  AND AUX.DD_CRA_ID = CCC.DD_CRA_ID
-                  AND NVL(AUX.DD_SCR_ID, 0) = NVL(CCC.DD_SCR_ID, NVL(AUX.DD_SCR_ID, 0))
-                  AND AUX.PRO_ID = CCC.PRO_ID
-                  AND AUX.EJE_ID = CCC.EJE_ID
-                  AND NVL(AUX.CCC_ARRENDAMIENTO, 0) = NVL(CCC.CCC_ARRENDAMIENTO, NVL(AUX.CCC_ARRENDAMIENTO, 0))
-                  AND AUX.CCC_REFACTURABLE = CCC.CCC_REFACTURABLE
-                  AND NVL(AUX.DD_TBE_ID, 0) = NVL(CCC.DD_TBE_ID, 0)
-                  AND AUX.CCC_ACTIVABLE = CCC.CCC_ACTIVABLE
-                  AND AUX.CCC_PLAN_VISITAS = CCC.CCC_PLAN_VISITAS
-                  AND NVL(AUX.DD_TCH_ID, 0) = NVL(CCC.DD_TCH_ID, 0)
-                  AND AUX.CCC_PRINCIPAL = CCC.CCC_PRINCIPAL
-                  AND NVL(AUX.DD_TRT_ID, 0) = NVL(CCC.DD_TRT_ID, 0)
-                  AND NVL(AUX.CCC_VENDIDO, 0) = NVL(CCC.CCC_VENDIDO, NVL(AUX.CCC_VENDIDO, 0))
-                  AND AUX.BORRADO = 0
-          )';
-    EXECUTE IMMEDIATE V_MSQL;
-
-    V_PASO_FIN := SYSTIMESTAMP;
-    V_DURACION := V_PASO_FIN - V_PASO_INI;
-    DBMS_OUTPUT.PUT_LINE('[INFO] '||SQL%ROWCOUNT||' cuentas insertadas '||V_DURACION);
-
-    COMMIT;  
-   
     --ACTIVAMOS CLAVES ANTES DE EMPEZAR PARA MEJORAR EL DESEMPEÑO
     FOR CLAVES IN CONSTRAINTS_DISABLED 
       LOOP
@@ -346,6 +319,9 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('[INFO] Activada la clave '||V_CONSTRAINT_NAME);
 
       END LOOP;
+
+    EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.TMP_'||V_TEXT_TABLA INTO V_NUM_TABLAS;
+    DBMS_OUTPUT.PUT_LINE('[INFO]: '||V_NUM_TABLAS||' registros en la tabla TMP_'||V_TEXT_TABLA);
 
     V_FIN := SYSTIMESTAMP;
     V_DURACION := V_FIN - V_INICIO;
@@ -368,4 +344,3 @@ END;
 /
 
 EXIT
-

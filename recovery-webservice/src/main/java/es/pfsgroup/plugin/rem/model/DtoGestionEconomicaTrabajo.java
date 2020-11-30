@@ -75,6 +75,8 @@ public class DtoGestionEconomicaTrabajo extends WebDto {
 	
 	private Double importePresupuesto;
 	
+	private Boolean esGridSuplidosEditable;
+	
 	public Long getIdTrabajo() {
 		return idTrabajo;
 	}
@@ -315,4 +317,13 @@ public class DtoGestionEconomicaTrabajo extends WebDto {
 	public void setImportePresupuesto(Double importePresupuesto) {
 		this.importePresupuesto = importePresupuesto;
 	}
+
+	public Boolean isEsGridSuplidosEditable() {
+		return esGridSuplidosEditable;
+	}
+
+	public void setEsGridSuplidosEditable(Boolean esGridSuplidosEditable) {
+		this.esGridSuplidosEditable = esGridSuplidosEditable;
+	}
+
 }

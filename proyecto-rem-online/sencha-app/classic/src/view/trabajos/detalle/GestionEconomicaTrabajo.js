@@ -530,6 +530,111 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 						]
 					},
 					//Bloque de provisiones y suplidos
+					{
+		            	xtype:'fieldsettable',
+						defaultType: 'textfieldbase',
+		            	title: HreRem.i18n('title.provisiones.suplidos'),		            	
+						bind: {
+							disabled: '{disablePorCierreEconomicoSuplidos}'
+						},	
+		            	items: [
+		    	            {
+		    				    xtype		: 'gridBaseEditableRow',
+		    				    idPrincipal: 'trabajo.id',
+		    					layout:'fit',
+		    					minHeight: 150,
+		    					colspan:	3,
+		    					topBar: true,
+		    					reference:'gridSuplidos',
+		    					cls	: 'panel-base shadow-panel',
+		    					secFunToEdit: 'EDITAR_LIST_PROVSUPLI_TRABAJO',		    					
+		    					secButtons: {
+		    						secFunPermToEnable : 'EDITAR_LIST_PROVSUPLI_TRABAJO'
+		    					},	
+		    					bind: {
+		    						store: '{storeProvisionesSuplidos}',
+		    						topBar:'{!gestionEconomica.esGridSuplidosEditable}',
+		    						editOnSelect: '{!gestionEconomica.esGridSuplidosEditable}'
+		    					},
+		    					columns: [
+		    					    {   text: HreRem.i18n('header.tipo'),
+		    				        	dataIndex: 'tipoCodigo',
+		    				        	editor: {
+							        		xtype: 'combobox',								        		
+							            	store: new Ext.data.Store({
+								    			model: 'HreRem.model.ComboBase',
+												proxy: {
+													type: 'uxproxy',
+													remoteUrl: 'generic/getDiccionario',
+													extraParams: {diccionario: 'tiposAdelanto'}
+												},
+												autoLoad: true
+											}),
+											displayField: 'descripcion',
+											valueField: 'codigo'
+							        	},								        							        	
+							        	renderer: function(value) {								        		
+							        		var me = this,
+							        		comboEditor = me.columns  && me.columns[0].getEditor ? me.columns[0].getEditor() : me.getEditor ? me.getEditor() : null,
+							        		store,record;
+							        		
+							        		if(!Ext.isEmpty(comboEditor)) {
+								        		store = comboEditor.getStore(),							        		
+								        		record = store.findRecord("codigo", value);
+								        		if(!Ext.isEmpty(record)) {								        			
+								        			return record.get("descripcion");								        		
+								        		} else {
+								        			comboEditor.setValue(value);								        			
+								        		}	
+							        		}
+							        	},			    				        	
+		    				        	flex: 1
+		    				        },
+		    				        {   text: HreRem.i18n('header.concepto'),
+		    				        	dataIndex: 'concepto',
+		    				        	editor: {
+		    				        		xtype: 'textfield'
+		    				        	},
+		    				        	flex: 4
+		    				        },
+		    				        {
+		    				        	text: HreRem.i18n('header.fecha'),
+		    				            dataIndex: 'fecha',
+		    				            editor: {
+		    				        		xtype: 'datefield'
+		    				        	},
+		    				            flex: 1
+		    				            
+		    				        },
+		    				        {   text: HreRem.i18n('header.importe'),
+		    				        	dataIndex: 'importe',
+		    				        	editor: {
+		        							xtype:'numberfield', 
+		        							hideTrigger: true,
+		        							keyNavEnable: false,
+		        							mouseWheelEnable: false
+		        						},
+		    				        	flex: 1,
+		    				        	renderer: function (value, column, record) {
+		    				        		if(!Ext.isEmpty(value)){
+		    				        			if(record.get("tipoCodigo")== "01") {
+		    				        				return "<span class='numero-negativo'> - "+ Ext.util.Format.currency(value) +"</span>"	
+		    				        			}else {
+		    				        				return Ext.util.Format.currency(value);	
+		    				        			}
+		    				        			
+		    				        				  
+		    				        		} else {
+		    				        			return "";
+		    				        		}  		  				        		
+		    				        		
+		    				        	}
+		    				        }
+		    				    ]
+		    				}
+		            
+		    	        ]    	            	
+		            },
 		            {
 							xtype:'fieldsettable',
 							defaultType: 'textfieldbase',

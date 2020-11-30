@@ -765,8 +765,23 @@ Ext.define('HreRem.ux.util.Constants', {
     	RECHAZADO: 'REJ',
     	CANCELADO: 'CAN',
     	FINALIZADO: 'FIN',
-    	SUBSANADO: 'SUB',
-    	VALIDADO: '13'
+    	SUBSANADO: 'SUB', 	
+    	PDTE_CIERRE:'PCI',
+    	CIERRE:'CIE',
+    	SOLICITADO:'01',
+    	ANULADO:'02',
+    	RECHAZADO_COD:'03',
+    	EN_TRAMITE:'04',
+    	PDTE_PAGO:'05',
+    	PAGADO:'06',
+    	IMPOSIBLE_OBTENCION:'07',
+    	FALLIDO:'08',
+    	CON_CEE_PDTE_ETIQUETA:'09',
+    	FINALIZADO_PDTE_VALIDACION:'10',
+    	PDTE_CIERRE_ECONOMICO:'11',
+    	FINALIZADO_COD:'12',
+    	VALIDADO: '13',
+    	PAGADO_CON_TARIFA_PLANA:'14'
     },
     
 	ESTADOS_PREFACTURAS: {

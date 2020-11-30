@@ -382,13 +382,13 @@ public class StockDto implements WebcomRESTDto{
 	private BooleanDataType checkGestionComercial;
 	
 	@WebcomRequired
-	private LongDataType excluirValidaciones;
+	private BooleanDataType excluirValidaciones;
 	
 	@WebcomRequired
 	private DateDataType fechaGestionComercial;
 	
 	@WebcomRequired
-	private LongDataType motivoGestionComercial;
+	private StringDataType motivoGestionComercial;
 	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
@@ -1088,10 +1088,10 @@ public class StockDto implements WebcomRESTDto{
 	public void setCheckGestionComercial(BooleanDataType checkGestionComercial) {
 		this.checkGestionComercial = checkGestionComercial;
 	}
-	public LongDataType getExcluirValidaciones() {
+	public BooleanDataType getExcluirValidaciones() {
 		return excluirValidaciones;
 	}
-	public void setExcluirValidaciones(LongDataType excluirValidaciones) {
+	public void setExcluirValidaciones(BooleanDataType excluirValidaciones) {
 		this.excluirValidaciones = excluirValidaciones;
 	}
 	public DateDataType getFechaGestionComercial() {
@@ -1100,10 +1100,10 @@ public class StockDto implements WebcomRESTDto{
 	public void setFechaGestionComercial(DateDataType fechaGestionComercial) {
 		this.fechaGestionComercial = fechaGestionComercial;
 	}
-	public LongDataType getMotivoGestionComercial() {
+	public StringDataType getMotivoGestionComercial() {
 		return motivoGestionComercial;
 	}
-	public void setMotivoGestionComercial(LongDataType motivoGestionComercial) {
+	public void setMotivoGestionComercial(StringDataType motivoGestionComercial) {
 		this.motivoGestionComercial = motivoGestionComercial;
 	}
 	

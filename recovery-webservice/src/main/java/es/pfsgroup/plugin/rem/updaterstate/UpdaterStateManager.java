@@ -164,10 +164,13 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		
 		if(activoApi.isActivoVendido(activo)) {
 			codigo = DDSituacionComercial.CODIGO_VENDIDO;
-		}else if (!Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion()) && (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())) && (activoApi.isActivoAlquilado(activo) || activoApi.isOcupadoConTituloOrEstadoAlquilado(activo))) {
+		}else if (!Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion()) && (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())) 
+				&& (!activoApi.isActivoMatriz(activo.getId()) && (activoApi.isActivoAlquilado(activo) || activoApi.isOcupadoConTituloOrEstadoAlquilado(activo)) 
+				|| (activoApi.isActivoMatriz(activo.getId()) && activoApi.isAlquiladoTotalmente(activo.getId())))) {
 			codigo = DDSituacionComercial.CODIGO_ALQUILADO;
 		}
-		else if (!Checks.esNulo(activo.getTipoComercializacion()) && (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())) && (activoApi.isActivoMatriz(activo.getId()) && activoApi.isAlquiladoParcialmente(activo.getId()))) {
+		else if (!Checks.esNulo(activo.getTipoComercializacion()) && (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())) 
+				&& (activoApi.isActivoMatriz(activo.getId()) && activoApi.isAlquiladoParcialmente(activo.getId()))) {
 			codigo = DDSituacionComercial.CODIGO_ALQUILADO_PARCIALMENTE;
 		}
 		else if(activoApi.isActivoConReservaByEstado(activo,DDEstadosReserva.CODIGO_FIRMADA)) {

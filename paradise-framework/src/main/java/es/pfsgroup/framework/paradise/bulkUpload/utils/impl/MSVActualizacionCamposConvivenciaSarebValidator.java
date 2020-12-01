@@ -260,8 +260,8 @@ public class MSVActualizacionCamposConvivenciaSarebValidator extends MSVExcelVal
 	        try{
 	            for(int i=1; i<this.numFilasHoja;i++){
 	                try {
-	                    if(!Checks.esNulo(exc.dameCelda(i, COL_SUB_REGISTRO)) && !Checks.esNulo(exc.dameCelda(i, COL_ID_SUB_REGISTRO)) && !Checks.esNulo(exc.dameCelda(i, COL_NUEVO))  
-	                    		&& Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 0
+	                    if(!Checks.esNulo(exc.dameCelda(i, COL_SUB_REGISTRO)) && !Checks.esNulo(exc.dameCelda(i, COL_ID_SUB_REGISTRO)) 
+	                    		&& (!Checks.esNulo(exc.dameCelda(i, COL_NUEVO)) ? Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 0 : false)
 	                    		&& Boolean.FALSE.equals(particularValidator.existeIdentificadorSubregistro(exc.dameCelda(i, COL_SUB_REGISTRO), exc.dameCelda(i, COL_ID_SUB_REGISTRO))))
 	                        listaFilas.add(i);
 	                } catch (ParseException e) {
@@ -284,8 +284,8 @@ public class MSVActualizacionCamposConvivenciaSarebValidator extends MSVExcelVal
 	        try{
 	            for(int i=1; i<this.numFilasHoja;i++){
 	                try {
-	                    if(!Checks.esNulo(exc.dameCelda(i, COL_SUB_REGISTRO)) && !Checks.esNulo(exc.dameCelda(i, COL_ID_SUB_REGISTRO)) && !Checks.esNulo(exc.dameCelda(i, COL_NUEVO)) 
-	                            && !(Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 1 || Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 0))
+	                    if(!Checks.esNulo(exc.dameCelda(i, COL_SUB_REGISTRO)) && !Checks.esNulo(exc.dameCelda(i, COL_ID_SUB_REGISTRO)) 
+	                    		&& (!Checks.esNulo(exc.dameCelda(i, COL_NUEVO)) ? !(Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 1 || Integer.parseInt(exc.dameCelda(i, COL_NUEVO)) == 0) : false))
 	                        listaFilas.add(i);
 	                } catch (ParseException e) {
 	                    listaFilas.add(i);

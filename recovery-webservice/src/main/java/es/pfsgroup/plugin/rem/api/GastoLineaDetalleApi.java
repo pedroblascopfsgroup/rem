@@ -81,6 +81,8 @@ public interface GastoLineaDetalleApi {
 	boolean updateCuentasPartidas(DtoLineaDetalleGasto dto);
 	
 	List<VElementosLineaDetalle> getTodosElementosAfectados (Long idLinea);
+
+	List<Activo> devolverActivoDePromocionesDeLineasDeGasto(Long idLineaDetalleGasto);
 	
 }
 

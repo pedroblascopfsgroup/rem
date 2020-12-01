@@ -188,7 +188,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	GIANTS: '12',
     	EGEO: '13',
     	GALEON:'15',
-    	ZEUS: '14'
+    	ZEUS: '14',
+    	BBVA: '16'
     },
 
     NOMBRE_CARTERA:	{

@@ -1471,15 +1471,10 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				}
 
 				Double importeGarantiaBase = recalcularImporteRetencionGarantia(detalleGasto);
-				
-				if(detalleGasto.getRetencionGarantiaTipoImpositivo() != null) {
-					Double importeCuota = (detalleGasto.getRetencionGarantiaTipoImpositivo() * importeGarantiaBase) / 100;
-					BigDecimal importeCuotaBig = new BigDecimal(importeCuota);
-					importeCuotaBig = importeCuotaBig.round(new MathContext(2));
-					detalleGasto.setRetencionGarantiaCuota(importeCuotaBig.doubleValue());
-				}
-	
 				detalleGasto.setRetencionGarantiaBase(importeGarantiaBase);
+				Double importeCuota = this.recalcularCuotaRetencionGarantia(gasto.getGastoDetalleEconomico(), importeGarantiaBase);
+				gasto.getGastoDetalleEconomico().setRetencionGarantiaCuota(importeCuota);
+				
 				
 				Double importeTotal = recalcularImporteTotalGasto(detalleGasto);
 				detalleGasto.setImporteTotal(importeTotal);
@@ -4088,13 +4083,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	public Double recalcularImporteRetencionGarantia(GastoDetalleEconomico gasto) {
 		
 		BigDecimal importeRetencionGarantia = new BigDecimal(0);
-		boolean aplicaGarantia = false;
 		boolean esDespues = false;
-		
-		if(gasto.getRetencionGarantiaAplica() != null && gasto.getRetencionGarantiaAplica()) {
-			aplicaGarantia = true;
-		}
-		
+				
 		if(gasto.getTipoRetencion() != null && DDTipoRetencion.CODIGO_TRE_DESPUES.equals(gasto.getTipoRetencion().getCodigo())) {
 			esDespues = true;
 		}
@@ -4112,10 +4102,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					if(gastoLineaDetalle.getPrincipalNoSujeto() != null) {
 						importeRetencionGarantia = importeRetencionGarantia.add(new BigDecimal(gastoLineaDetalle.getPrincipalNoSujeto()));
 					}
-					if(aplicaGarantia) {
-						if(esDespues && gastoLineaDetalle.getImporteIndirectoCuota() != null) {
-							importeRetencionGarantia = importeRetencionGarantia.add(new BigDecimal(gastoLineaDetalle.getImporteIndirectoCuota()));
-						}
+
+					if(esDespues && gastoLineaDetalle.getImporteIndirectoCuota() != null) {
+						importeRetencionGarantia = importeRetencionGarantia.add(new BigDecimal(gastoLineaDetalle.getImporteIndirectoCuota()));
 					}
 				}
 			}
@@ -4123,4 +4112,17 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		return importeRetencionGarantia.doubleValue();
 	}
+	
+	@Override 
+	public Double recalcularCuotaRetencionGarantia(GastoDetalleEconomico detalleGasto, Double importeGarantiaBase) {
+		BigDecimal importeCuotaBig  = new BigDecimal(0);
+		if(detalleGasto.getRetencionGarantiaTipoImpositivo() != null) {
+			Double importeCuota = (detalleGasto.getRetencionGarantiaTipoImpositivo() * importeGarantiaBase) / 100;
+			importeCuotaBig = new BigDecimal(importeCuota);
+			importeCuotaBig = importeCuotaBig.round(new MathContext(16, RoundingMode.HALF_UP)); 
+		}
+		
+		return importeCuotaBig.doubleValue();
+	}
+	
 }

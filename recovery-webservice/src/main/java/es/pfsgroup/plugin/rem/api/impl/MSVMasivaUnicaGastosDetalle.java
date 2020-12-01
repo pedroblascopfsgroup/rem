@@ -631,16 +631,14 @@ public class MSVMasivaUnicaGastosDetalle extends AbstractMSVActualizador impleme
 
 					if(gastosList != null && !gastosList.isEmpty()) {
 						for (GastoDetalleEconomico gastoDetalle : gastosList) {
-								importeTotal = gastoProveedorApi.recalcularImporteTotalGasto(gastoDetalle);
+								
 								Double importeGarantiaBase = gastoProveedorApi.recalcularImporteRetencionGarantia(gastoDetalle);
-								if(gastoDetalle.getRetencionGarantiaTipoImpositivo() != null) {
-									Double importeCuota = (gastoDetalle.getRetencionGarantiaTipoImpositivo() * importeGarantiaBase) / 100;
-									BigDecimal importeCuotaBig = new BigDecimal(importeCuota);
-									importeCuotaBig = importeCuotaBig.round(new MathContext(2));
-									gastoDetalle.setRetencionGarantiaCuota(importeCuotaBig.doubleValue());
-								}
-								gastoDetalle.setImporteTotal(importeTotal);
 								gastoDetalle.setRetencionGarantiaBase(importeGarantiaBase);
+								Double importeCuota = gastoProveedorApi.recalcularCuotaRetencionGarantia(gastoDetalle, importeGarantiaBase);
+								gastoDetalle.setRetencionGarantiaCuota(importeCuota);
+								
+								importeTotal = gastoProveedorApi.recalcularImporteTotalGasto(gastoDetalle);
+								gastoDetalle.setImporteTotal(importeTotal);
 								GastoDetalleEconomico updateGastoDetalleEconomico = HibernateUtils.merge(gastoDetalle);
 								genericDao.update(GastoDetalleEconomico.class, updateGastoDetalleEconomico);
 						}

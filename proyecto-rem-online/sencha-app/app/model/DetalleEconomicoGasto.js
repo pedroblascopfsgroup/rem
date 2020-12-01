@@ -232,12 +232,12 @@ Ext.define('HreRem.model.DetalleEconomicoGasto', {
    			defaultValue: 0
 		},
 		{
-			name : 'cuotaIRPFRetG',
+			name : 'irpfCuotaRetG',
 			type: 'number',
 			defaultValue: 0
 		},
 		{
-			name : 'baseIRPFRetG',
+			name : 'baseRetG',
 			type: 'number',
 			defaultValue: 0
 		},
